@@ -7,6 +7,7 @@ WF="$ROOT/.github/workflows/rust-l1-nightly-health.yml"
 required_paths=(
   "trillionnium/**"
   "scripts/**"
+  "config/alert-policy/**"
   ".github/workflows/rust-l1-nightly-health.yml"
 )
 

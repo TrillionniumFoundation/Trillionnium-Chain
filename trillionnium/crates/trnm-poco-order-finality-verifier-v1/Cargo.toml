@@ -1,0 +1,54 @@
+[package]
+name = "trnm-poco-order-finality-verifier-v1"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-ai-v1-order-finality-verifier-candidate"
+protocol = "poco-ai-native-v1"
+classification = "candidate-non-normative"
+scope = "pinned-fresh-genesis-rooted-direct-bounded-finality"
+raw_cev1_strict_decode = true
+exact_byte_reencoding = true
+shared_order_types_v1_codec = true
+private_header_vote_qc_codec = false
+absolute_input_byte_bounds_before_hash_decode = true
+max_retained_views_consumed = true
+strict_ed25519_qc_verification = true
+checked_weighted_quorum = true
+application_state_sparse_membership = true
+execution_binding_claim_strict_cev1 = true
+execution_binding_claim_absolute_input_bound = true
+execution_binding_claim_distinct_ordered_witnesses = true
+execution_binding_positive_carrier_defined = true
+registered_execution_binding_state_object = true
+deterministic_execution_binding_create_material = true
+authoritative_execution_binding_state_writer = true
+canonical_execution_binding_claim_from_writer_receipt = true
+normal_execution_binding_issuer = true
+order_state_membership_binding = true
+raw_execution_binding_claim_self_authorizing = false
+caller_supplied_trust_self_authorizing = false
+tc_supported = false
+ordinary_target_supported = true
+certified_chain_ordinary_ancestry = true
+epoch_handoff_supported = false
+global_light_client_complete = false
+node_authority_integration = false
+production_candidate = false
+activation = false
+
+[features]
+default = []
+test-support = []
+
+[dependencies]
+ed25519-dalek = { version = "2.2", default-features = false }
+sha2 = "0.10"
+trnm-poco-order-types-v1 = { path = "../trnm-poco-order-types-v1" }
+
+[dev-dependencies]
+serde_json = "1"

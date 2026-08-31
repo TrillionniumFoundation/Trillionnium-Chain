@@ -1,0 +1,108 @@
+# PoCO-BFT v0 P0 reference profile.
+# These values are deterministic test/shadow inputs, not audited mainnet economics.
+
+schema = "trnm_poco_bft_parameters_v0"
+protocol_version = 0
+profile = "p0-reference-shadow-only"
+production_activation = false
+
+[encoding]
+canonical_codec = "CEV0"
+hash_algorithm = "sha256"
+signature_scheme = "ed25519"
+hash_bytes = 32
+public_key_bytes = 32
+signature_bytes = 64
+max_chain_id_bytes = 128
+max_validator_id_bytes = 128
+# Exact consensus-validity measure: CEV0 header plus u32-framed application
+# payload and u32-count/u32-length-framed canonically ordered evidence objects.
+max_block_bytes = 4194304
+# Decoded/reassembled transport-body admission limit after decompression and
+# before external framing; it does not redefine a nested logical block/QC.
+max_consensus_message_bytes = 8388608
+
+[consensus]
+genesis_height = 0
+first_block_height = 1
+first_view = 1
+min_validators = 4
+max_validators = 100
+quorum_numerator = 2
+quorum_denominator = 3
+quorum_addend = 1
+finality_certified_chain_length = 3
+max_total_voting_power = 1152921504606846975
+max_block_time_step_ms = 60000
+leader_schedule = "canonical-validator-round-robin"
+require_full_payload_before_vote = true
+base_timeout_ms = 1000
+timeout_multiplier_numerator = 3
+timeout_multiplier_denominator = 2
+timeout_max_ms = 30000
+
+[epoch]
+# length_blocks includes the checkpoint and the two mandatory empty seal
+# blocks and is immutable across every transition authorized by protocol v0.
+length_blocks = 10000
+seal_blocks = 2
+# Consensus validity requires
+# finality_certified_chain_length <= snapshot_lead_blocks and
+# length_blocks > snapshot_lead_blocks + seal_blocks. Protocol v0 fixes the
+# finality-certified chain length at 3, so 3 is the minimum valid lead.
+snapshot_lead_blocks = 100
+joint_handoff_old_quorum = true
+joint_handoff_new_quorum = true
+upgrade_notice_epochs = 2
+max_protocol_version_jump = 1
+
+[weights]
+arithmetic = "checked-u128-floor"
+scale_ppm = 1000000
+maturity_epochs = 2
+max_certificate_age_epochs = 20
+decay_step_ppm_per_epoch = 50000
+per_certificate_unit_cap = 1000000
+per_consumer_provider_epoch_unit_cap = 10000000
+per_task_provider_epoch_unit_cap = 50000000
+per_provider_epoch_unit_cap = 500000000
+units_per_power = 1000000
+bond_atomic_units_per_power = 1000000000
+min_validator_power = 1
+max_validator_power = 1000000
+max_validator_share_ppm = 250000
+capped_weight_alpha_ppm = 250000
+full_weight_alpha_ppm = 1000000
+
+[rollout]
+current_phase = "shadow"
+minimum_shadow_epochs = 10
+minimum_eligibility_only_epochs = 10
+minimum_capped_weight_epochs = 20
+promotion = "finalized-governance-at-epoch-boundary"
+automatic_promotion = false
+
+[accountability]
+evidence_window_epochs = 28
+unbonding_delay_epochs = 30
+jail_duration_epochs = 2
+double_sign_slash_fraction_status = "UNDECIDED"
+other_slash_fractions_status = "UNDECIDED"
+
+[light_client]
+trusting_period_epochs = 21
+require_trusting_period_less_than_evidence_window = true
+require_evidence_window_not_greater_than_unbonding_delay = true
+stale_client_action = "fail-closed-require-new-trusted-checkpoint"
+
+[status]
+transport_container = "protobuf-v0-frozen; framing-and-multiplexing-undecided"
+aggregate_signatures = "DEFERRED"
+weighted_leader_selection = "DEFERRED"
+committee_sampling = "DEFERRED"
+mainnet_economic_values = "UNDECIDED"
+slash_fractions = "UNDECIDED"
+governance_upgrade_payload = "UNDECIDED"
+meter_registry = "UNDECIDED"
+related_party_policy = "UNDECIDED"
+privacy_preserving_consumption_proofs = "UNDECIDED"

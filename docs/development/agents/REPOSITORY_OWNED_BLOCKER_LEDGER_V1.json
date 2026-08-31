@@ -1,0 +1,69 @@
+{
+  "schema": "trnm-repository-owned-blocker-ledger-v1",
+  "base_commit": "cb74b776b255d745c18dac208a547215e3746eeb",
+  "base_tree": "92907a1c946cc45f432a9ecea779bbe8759d4f5e",
+  "classification": "candidate-non-normative",
+  "status": "IMPLEMENTATION_IN_PROGRESS",
+  "repository_owned_work": [
+    {
+      "id": "RPO-TRUTH-001",
+      "severity": "P0",
+      "status": "candidate-implemented",
+      "exit": "single policy, boundary, generated release-status and deterministic truth validator"
+    },
+    {
+      "id": "RPO-CI-001",
+      "severity": "P0",
+      "status": "candidate-implemented",
+      "exit": "actor-independent GitHub-hosted baseline runs on every pull request"
+    },
+    {
+      "id": "RPO-REVIEW-001",
+      "severity": "P0",
+      "status": "candidate-implemented",
+      "exit": "critical CODEOWNERS and PR evidence contract present"
+    },
+    {
+      "id": "RPO-SECURITY-001",
+      "severity": "P0",
+      "status": "candidate-implemented",
+      "exit": "security scope follows native PoCO-BFT rather than superseded Comet path"
+    },
+    {
+      "id": "RPO-EXT-INGEST-001",
+      "severity": "P0",
+      "status": "candidate-implemented",
+      "exit": "external evidence is schema-bound and release gate is fail-closed"
+    }
+  ],
+  "settings_blockers": [
+    {
+      "id": "RPO-GITHUB-SETTINGS-001",
+      "severity": "P0",
+      "status": "external-admin-action-required",
+      "exit": "protect main; require repository-truth, rust-baseline and external-evidence-contract; require two approvals, CODEOWNER and last-push approval; block force-push/deletion"
+    }
+  ],
+  "external_evidence_blockers": [
+    "EXT-REVIEW-001",
+    "EXT-G1-CAMPAIGN-001",
+    "EXT-ANCHOR-HSM-001",
+    "EXT-POWERLOSS-001",
+    "EXT-AUDIT-001",
+    "EXT-SOAK-ACTIVATION-001"
+  ],
+  "non_claims": {
+    "g0_exit": false,
+    "g1_exit": false,
+    "g1_5_exit": false,
+    "g2_0_exit": false,
+    "g2_exit": false,
+    "g3_exit": false,
+    "g4_exit": false,
+    "g5_exit": false,
+    "public_testnet_ready": false,
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "release_ready": false
+  }
+}

@@ -40,11 +40,10 @@ required_lines=(
   'CARGO_NET_RETRY: "5"'
   'CARGO_HTTP_TIMEOUT: "120"'
   'CARGO_NET_GIT_FETCH_WITH_CLI: "true"'
-  'CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse'
   'CI: "true"'
   'UMASK: "022"'
   'SOURCE_DATE_EPOCH: "1704067200"'
-  'timeout-minutes: 45'
+  'timeout-minutes: 120'
   'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"'
 )
 

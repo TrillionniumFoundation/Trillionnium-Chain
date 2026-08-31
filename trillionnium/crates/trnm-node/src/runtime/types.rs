@@ -44,7 +44,7 @@ pub(crate) use ordering::*;
 #[command(
     name = "trnm-node",
     version,
-    about = "Trillionnium Rust node (mock execution loop)"
+    about = "Trillionnium development-only legacy simulator (mock execution loop; not a production node)"
 )]
 pub(crate) struct Args {
     #[arg(long, default_value = "configs/node1.toml")]

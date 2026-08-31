@@ -1,0 +1,279 @@
+{
+  "activation": {
+    "blocking_open_findings": [
+      "AI-001",
+      "DA-001",
+      "ECO-001",
+      "KEY-001",
+      "SYNC-001",
+      "OPS-001"
+    ],
+    "production_activation": false,
+    "production_candidate": false,
+    "public_testnet_ready": false
+  },
+  "claim_class": "harness-only",
+  "claim_policy": {
+    "independent_reproduction_teams": 0,
+    "ingress_tps_is_committed_goodput": false,
+    "surpass_claim_allowed": false
+  },
+  "comparator": {
+    "artifact_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+    "name": "exact-comparator-placeholder",
+    "same_hardware_required": true,
+    "same_workload_required": true
+  },
+  "dependencies": {
+    "G0": "open",
+    "G1": "open",
+    "G1.5": "candidate",
+    "G2.0": "candidate",
+    "G2A": "candidate",
+    "G2B": "candidate",
+    "G2C": "candidate",
+    "G2D": "candidate",
+    "G2E": "candidate",
+    "G2F": "candidate"
+  },
+  "fault_schedule": {
+    "events": [
+      {
+        "duration_ms": 5000,
+        "event_id": "f1",
+        "fault": "leader-crash",
+        "start_ms": 1000,
+        "target_id": "p0",
+        "target_type": "process"
+      },
+      {
+        "duration_ms": 10000,
+        "event_id": "f2",
+        "fault": "partition",
+        "start_ms": 10000,
+        "target_id": "r1",
+        "target_type": "region"
+      },
+      {
+        "duration_ms": 5000,
+        "event_id": "f3",
+        "fault": "disk-full",
+        "start_ms": 25000,
+        "target_id": "h2",
+        "target_type": "host"
+      }
+    ]
+  },
+  "identity": {
+    "binary_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "container_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "plan_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "protocol_manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "sbom_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "source_commit": "cccccccccccccccccccccccccccccccccccccccc",
+    "source_tree": "dddddddddddddddddddddddddddddddddddddddd"
+  },
+  "measurement": {
+    "committed_goodput_definition": "transactions finalized and replay-verified per second",
+    "duration_seconds": 1800,
+    "finality_definition": "proposal admission to three-chain finality event",
+    "metrics": [],
+    "percentile_denominator": "all-finalized-transactions",
+    "raw_trace_root": null,
+    "replicates": 3,
+    "results_present": false,
+    "seed": 1,
+    "warmup_seconds": 60
+  },
+  "schema": "trnm-benchmark-security-ops-manifest-v1",
+  "signatures": [],
+  "threat_register": {
+    "rows": [
+      {
+        "evidence_root": null,
+        "id": "AI-001",
+        "invariant": "profile provenance is exact",
+        "mutant": "wrong-model-digest",
+        "owner": "A14",
+        "severity": "High",
+        "status": "open",
+        "threat": "model/data substitution"
+      },
+      {
+        "evidence_root": null,
+        "id": "DA-001",
+        "invariant": "certified bytes remain retrievable",
+        "mutant": "withhold-certified-object",
+        "owner": "A11",
+        "severity": "Critical",
+        "status": "open",
+        "threat": "certified withholding"
+      },
+      {
+        "evidence_root": null,
+        "id": "ECO-001",
+        "invariant": "one intent has one terminal receipt",
+        "mutant": "replay-after-commit",
+        "owner": "A15",
+        "severity": "Critical",
+        "status": "open",
+        "threat": "duplicate settlement"
+      },
+      {
+        "evidence_root": null,
+        "id": "KEY-001",
+        "invariant": "external watermark never decreases",
+        "mutant": "rollback-signer-journal",
+        "owner": "A05",
+        "severity": "Critical",
+        "status": "open",
+        "threat": "signer rollback"
+      },
+      {
+        "evidence_root": null,
+        "id": "SYNC-001",
+        "invariant": "sync root equals finalized Order root",
+        "mutant": "replace-sync-chunk",
+        "owner": "A16",
+        "severity": "Critical",
+        "status": "open",
+        "threat": "state-root substitution"
+      },
+      {
+        "evidence_root": null,
+        "id": "OPS-001",
+        "invariant": "raw traces are immutable",
+        "mutant": "delete-failed-run",
+        "owner": "A17",
+        "severity": "High",
+        "status": "open",
+        "threat": "incident evidence loss"
+      }
+    ]
+  },
+  "topology": {
+    "claim_label": "7-process/3-host/3-operator/2-region",
+    "counts": {
+      "custody_domains": 3,
+      "hosts": 3,
+      "operators": 3,
+      "processes": 7,
+      "regions": 2
+    },
+    "links": [
+      {
+        "loss_bps": 0,
+        "rtt_ms": 20,
+        "source": "p0",
+        "target": "p1"
+      },
+      {
+        "loss_bps": 0,
+        "rtt_ms": 21,
+        "source": "p1",
+        "target": "p2"
+      },
+      {
+        "loss_bps": 0,
+        "rtt_ms": 22,
+        "source": "p2",
+        "target": "p3"
+      },
+      {
+        "loss_bps": 0,
+        "rtt_ms": 23,
+        "source": "p3",
+        "target": "p4"
+      },
+      {
+        "loss_bps": 0,
+        "rtt_ms": 24,
+        "source": "p4",
+        "target": "p5"
+      },
+      {
+        "loss_bps": 0,
+        "rtt_ms": 25,
+        "source": "p5",
+        "target": "p6"
+      }
+    ],
+    "processes": [
+      {
+        "custody_domain": "c0",
+        "host_id": "h0",
+        "operator_id": "o0",
+        "process_id": "p0",
+        "region_id": "r0"
+      },
+      {
+        "custody_domain": "c1",
+        "host_id": "h1",
+        "operator_id": "o1",
+        "process_id": "p1",
+        "region_id": "r1"
+      },
+      {
+        "custody_domain": "c2",
+        "host_id": "h2",
+        "operator_id": "o2",
+        "process_id": "p2",
+        "region_id": "r0"
+      },
+      {
+        "custody_domain": "c0",
+        "host_id": "h0",
+        "operator_id": "o0",
+        "process_id": "p3",
+        "region_id": "r1"
+      },
+      {
+        "custody_domain": "c1",
+        "host_id": "h1",
+        "operator_id": "o1",
+        "process_id": "p4",
+        "region_id": "r0"
+      },
+      {
+        "custody_domain": "c2",
+        "host_id": "h2",
+        "operator_id": "o2",
+        "process_id": "p5",
+        "region_id": "r1"
+      },
+      {
+        "custody_domain": "c0",
+        "host_id": "h0",
+        "operator_id": "o0",
+        "process_id": "p6",
+        "region_id": "r0"
+      }
+    ]
+  },
+  "workload": {
+    "profiles": [
+      {
+        "bytes_per_operation": 512,
+        "enabled_ai_profile": null,
+        "exact_bytes_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "id": "W0",
+        "mix_bps": 4000
+      },
+      {
+        "bytes_per_operation": 2048,
+        "enabled_ai_profile": null,
+        "exact_bytes_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "id": "W1",
+        "mix_bps": 4000
+      },
+      {
+        "bytes_per_operation": 4096,
+        "enabled_ai_profile": "deterministic-reexecution-v1",
+        "exact_bytes_sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "id": "AI1",
+        "mix_bps": 2000
+      }
+    ],
+    "submitted_tps_is_goodput": false
+  }
+}

@@ -1,0 +1,60 @@
+[package]
+name = "trnm-consensus-unix-fleet-signer"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-stage1-unix-fleet-root-signer-seam"
+protocol = "poco-bft-v0"
+unix_socket_transport = true
+bounded_length_prefixed_frames = true
+request_purpose_binding = true
+request_origin_binding = true
+request_validator_set_binding = true
+request_signing_root_binding = true
+request_nonce_binding = true
+exact_response_replay = true
+durable_append_only_hash_chain = true
+exclusive_namespace_lock = true
+cross_process_authority = true
+private_key_handling = false
+fixture_private_key = false
+external_monotonic_watermark = false
+safety_rules_evaluation = false
+consensus_runtime_integration = false
+runtime_activation = false
+production_activation = false
+production_candidate = false
+
+[features]
+default = []
+# The only private-key code is a deterministic subprocess fixture used by
+# tests. It is deliberately excluded from the default build.
+test-fixture = ["dep:ed25519-dalek"]
+
+[dependencies]
+fs2 = "0.4"
+libc = "0.2"
+sha2 = { version = "0.10", default-features = false }
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+
+[dependencies.ed25519-dalek]
+version = "2.2"
+optional = true
+
+[dev-dependencies]
+tempfile = "3"
+
+[[bin]]
+name = "trnm-fleet-root-signer-test-fixture"
+path = "src/bin/test_fixture.rs"
+required-features = ["test-fixture"]
+
+[[bin]]
+name = "trnm-fleet-root-signer-authority-fixture"
+path = "src/bin/authority_fixture.rs"
+required-features = ["test-fixture"]

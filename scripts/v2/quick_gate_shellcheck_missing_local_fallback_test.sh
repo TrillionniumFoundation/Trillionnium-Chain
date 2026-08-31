@@ -16,14 +16,13 @@ chmod +x "$TARGET_DIR/sample.sh"
 
 FAKE_BIN="$TMP_DIR/fake-bin"
 mkdir -p "$FAKE_BIN"
-python3_path="$(command -v python3 2>/dev/null || true)"
-if [[ -n "$python3_path" ]]; then
-  ln -s "$python3_path" "$FAKE_BIN/python3"
-fi
+for required_tool in awk bash cat date dirname find mkdir sha256sum sort; do
+  ln -s "$(command -v "$required_tool")" "$FAKE_BIN/$required_tool"
+done
 
 SUMMARY="$TMP_DIR/summary.json"
 BASH_BIN="$(command -v bash)"
-PATH="$FAKE_BIN:/usr/bin:/bin:/usr/sbin:/sbin" QUICK_GATE_SUMMARY_PATH="$SUMMARY" "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
+PATH="$FAKE_BIN" CI=false QUICK_GATE_SUMMARY_PATH="$SUMMARY" "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
 
 python3 - <<'PY' "$SUMMARY"
 import json, sys

@@ -1,0 +1,733 @@
+{
+  "schema": "trnm_poco_bft_cev0_logical_schema_v0",
+  "schema_version": 0,
+  "scope": "B2-A certificate kernel only",
+  "status": "closed_for_listed_objects_only",
+  "hash_construction": {
+    "algorithm": "sha256",
+    "hash_prefix_ascii": "trnm.cev0.hash.v0",
+    "preimage_fields": [
+      "Frame(hash_prefix)",
+      "Frame(domain_ascii)",
+      "Frame(CEV0(logical_value))"
+    ],
+    "frame_length": "u32_be"
+  },
+  "hard_limits": {
+    "max_chain_id_bytes": "128",
+    "max_validator_id_bytes": "128",
+    "max_validator_count": "100",
+    "max_qc_signature_count": "100",
+    "max_tc_entry_count": "100",
+    "max_tc_reference_count": "100",
+    "max_tc_aggregate_qc_signature_count": "10000"
+  },
+  "primitives": [
+    {
+      "name": "u8",
+      "encoding": "unsigned_big_endian",
+      "bytes": 1
+    },
+    {
+      "name": "u16",
+      "encoding": "unsigned_big_endian",
+      "bytes": 2
+    },
+    {
+      "name": "u32",
+      "encoding": "unsigned_big_endian",
+      "bytes": 4
+    },
+    {
+      "name": "u64",
+      "encoding": "unsigned_big_endian",
+      "bytes": 8
+    },
+    {
+      "name": "u128",
+      "encoding": "unsigned_big_endian",
+      "bytes": 16
+    },
+    {
+      "name": "bool",
+      "encoding": "u8_discriminant",
+      "values": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "FixedBytes<N>",
+      "encoding": "exactly_N_raw_bytes"
+    },
+    {
+      "name": "Bytes",
+      "encoding": "u32_be_length_then_raw_bytes"
+    },
+    {
+      "name": "ConsensusString",
+      "encoding": "u16_be_length_then_restricted_ascii",
+      "grammar": "[a-z0-9][a-z0-9._:-]{0,127}",
+      "hard_max_bytes": "128"
+    },
+    {
+      "name": "List<T>",
+      "encoding": "u32_be_count_then_concatenated_items"
+    },
+    {
+      "name": "Optional<T>",
+      "encoding": "u8_presence_then_value_when_present",
+      "presence_values": [
+        0,
+        1
+      ]
+    }
+  ],
+  "aliases": [
+    {
+      "name": "Hash32",
+      "type": "fixed_bytes",
+      "bytes": 32
+    },
+    {
+      "name": "PublicKey32",
+      "type": "fixed_bytes",
+      "bytes": 32
+    },
+    {
+      "name": "Signature64",
+      "type": "fixed_bytes",
+      "bytes": 64
+    }
+  ],
+  "enums": [
+    {
+      "name": "MessageKindV0",
+      "encoding": "u8",
+      "coverage": "closed",
+      "variants": [
+        {
+          "name": "proposal",
+          "value": 0
+        },
+        {
+          "name": "vote",
+          "value": 1
+        },
+        {
+          "name": "timeout",
+          "value": 2
+        },
+        {
+          "name": "old_set_handoff_vote",
+          "value": 3
+        },
+        {
+          "name": "new_set_handoff_vote",
+          "value": 4
+        }
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "name": "CommonConsensusContextV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16",
+          "equals": "0"
+        },
+        {
+          "name": "genesis_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "chain_id",
+          "type": "ConsensusString"
+        },
+        {
+          "name": "protocol_version",
+          "type": "u32",
+          "equals": "0"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "validator_set_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "view",
+          "type": "u64"
+        },
+        {
+          "name": "message_kind",
+          "type": "MessageKindV0"
+        }
+      ]
+    },
+    {
+      "name": "ValidatorV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "validator_id",
+          "type": "Bytes",
+          "min_bytes": "1",
+          "max_bytes": "128"
+        },
+        {
+          "name": "consensus_public_key",
+          "type": "PublicKey32"
+        },
+        {
+          "name": "effective_weight",
+          "type": "u64",
+          "min": "1"
+        }
+      ]
+    },
+    {
+      "name": "ValidatorSetV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16",
+          "equals": "0"
+        },
+        {
+          "name": "genesis_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "chain_id",
+          "type": "ConsensusString"
+        },
+        {
+          "name": "protocol_version",
+          "type": "u32",
+          "equals": "0"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "consensus_parameters_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "validators",
+          "type": {
+            "kind": "list",
+            "item": "ValidatorV0",
+            "max_count": "100"
+          }
+        }
+      ]
+    },
+    {
+      "name": "SignatureShareV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "validator_id",
+          "type": "Bytes",
+          "min_bytes": "1",
+          "max_bytes": "128"
+        },
+        {
+          "name": "signature",
+          "type": "Signature64"
+        }
+      ]
+    },
+    {
+      "name": "VoteSignV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "context",
+          "type": "CommonConsensusContextV0",
+          "required_message_kind": "vote"
+        },
+        {
+          "name": "height",
+          "type": "u64"
+        },
+        {
+          "name": "block_id",
+          "type": "Hash32"
+        }
+      ]
+    },
+    {
+      "name": "QuorumCertificateV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16",
+          "equals": "0"
+        },
+        {
+          "name": "genesis_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "chain_id",
+          "type": "ConsensusString"
+        },
+        {
+          "name": "protocol_version",
+          "type": "u32",
+          "equals": "0"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "validator_set_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "view",
+          "type": "u64"
+        },
+        {
+          "name": "height",
+          "type": "u64"
+        },
+        {
+          "name": "block_id",
+          "type": "Hash32"
+        },
+        {
+          "name": "signatures",
+          "type": {
+            "kind": "list",
+            "item": "SignatureShareV0",
+            "max_count": "100"
+          }
+        }
+      ]
+    },
+    {
+      "name": "HighQCSummaryV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "qc_digest",
+          "type": "Hash32"
+        },
+        {
+          "name": "qc_epoch",
+          "type": "u64"
+        },
+        {
+          "name": "qc_view",
+          "type": "u64"
+        },
+        {
+          "name": "qc_height",
+          "type": "u64"
+        },
+        {
+          "name": "qc_block_id",
+          "type": "Hash32"
+        }
+      ]
+    },
+    {
+      "name": "TimeoutSignV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "context",
+          "type": "CommonConsensusContextV0",
+          "required_message_kind": "timeout"
+        },
+        {
+          "name": "high_qc",
+          "type": "HighQCSummaryV0"
+        }
+      ]
+    },
+    {
+      "name": "TimeoutEntryV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "validator_id",
+          "type": "Bytes",
+          "min_bytes": "1",
+          "max_bytes": "128"
+        },
+        {
+          "name": "high_qc",
+          "type": "HighQCSummaryV0"
+        },
+        {
+          "name": "signature",
+          "type": "Signature64"
+        }
+      ]
+    },
+    {
+      "name": "TimeoutCertificateV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16",
+          "equals": "0"
+        },
+        {
+          "name": "genesis_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "chain_id",
+          "type": "ConsensusString"
+        },
+        {
+          "name": "protocol_version",
+          "type": "u32",
+          "equals": "0"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "validator_set_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "timed_out_view",
+          "type": "u64"
+        },
+        {
+          "name": "entries",
+          "type": {
+            "kind": "list",
+            "item": "TimeoutEntryV0",
+            "max_count": "100"
+          }
+        },
+        {
+          "name": "referenced_qcs",
+          "type": {
+            "kind": "list",
+            "item": "QuorumCertificateV0",
+            "max_count": "100"
+          },
+          "aggregate_item_field": "signatures",
+          "aggregate_max_count": "10000"
+        },
+        {
+          "name": "selected_high_qc_digest",
+          "type": "Hash32"
+        }
+      ]
+    }
+  ],
+  "domains": [
+    {
+      "id": "validator_set",
+      "ascii": "trnm.poco-bft.validator-set.v0",
+      "logical_object": "ValidatorSetV0",
+      "coverage": "closed"
+    },
+    {
+      "id": "vote",
+      "ascii": "trnm.poco-bft.vote.v0",
+      "logical_object": "VoteSignV0",
+      "coverage": "closed"
+    },
+    {
+      "id": "qc",
+      "ascii": "trnm.poco-bft.qc.v0",
+      "logical_object": "QuorumCertificateV0",
+      "coverage": "closed"
+    },
+    {
+      "id": "timeout",
+      "ascii": "trnm.poco-bft.timeout.v0",
+      "logical_object": "TimeoutSignV0",
+      "coverage": "closed"
+    },
+    {
+      "id": "tc",
+      "ascii": "trnm.poco-bft.tc.v0",
+      "logical_object": "TimeoutCertificateV0",
+      "coverage": "closed"
+    }
+  ],
+  "transport_enums": [
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "proto_enum": "MessageKind",
+      "logical_enum": "MessageKindV0",
+      "variants": [
+        {
+          "proto_name": "MESSAGE_KIND_PROPOSAL",
+          "logical_name": "proposal",
+          "value": 0
+        },
+        {
+          "proto_name": "MESSAGE_KIND_VOTE",
+          "logical_name": "vote",
+          "value": 1
+        },
+        {
+          "proto_name": "MESSAGE_KIND_TIMEOUT",
+          "logical_name": "timeout",
+          "value": 2
+        },
+        {
+          "proto_name": "MESSAGE_KIND_OLD_SET_HANDOFF_VOTE",
+          "logical_name": "old_set_handoff_vote",
+          "value": 3
+        },
+        {
+          "proto_name": "MESSAGE_KIND_NEW_SET_HANDOFF_VOTE",
+          "logical_name": "new_set_handoff_vote",
+          "value": 4
+        }
+      ]
+    }
+  ],
+  "transport_projections": [
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "proto_message": "CommonConsensusContext",
+      "logical_object": "CommonConsensusContextV0",
+      "fields": [
+        { "number": 1, "name": "schema_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "schema_version" },
+        { "number": 2, "name": "genesis_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "genesis_hash" },
+        { "number": 3, "name": "chain_id", "proto_type": "string", "cardinality": "singular", "role": "canonical", "logical_field": "chain_id" },
+        { "number": 4, "name": "protocol_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "protocol_version" },
+        { "number": 5, "name": "epoch", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "epoch" },
+        { "number": 6, "name": "validator_set_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "validator_set_hash" },
+        { "number": 7, "name": "view", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "view" },
+        { "number": 8, "name": "message_kind", "proto_type": "MessageKind", "cardinality": "singular", "role": "canonical", "logical_field": "message_kind" },
+        { "number": 9, "name": "consensus_parameters_hash", "proto_type": "bytes", "cardinality": "singular", "role": "redundant", "binding": "must equal the enclosing validator-set parameter hash" }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "proto_message": "Validator",
+      "logical_object": "ValidatorV0",
+      "fields": [
+        { "number": 1, "name": "validator_id", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "validator_id" },
+        { "number": 2, "name": "consensus_public_key", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "consensus_public_key" },
+        { "number": 3, "name": "effective_weight", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "effective_weight" }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "proto_message": "ValidatorSet",
+      "logical_object": "ValidatorSetV0",
+      "fields": [
+        { "number": 1, "name": "schema_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "schema_version" },
+        { "number": 2, "name": "genesis_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "genesis_hash" },
+        { "number": 3, "name": "chain_id", "proto_type": "string", "cardinality": "singular", "role": "canonical", "logical_field": "chain_id" },
+        { "number": 4, "name": "protocol_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "protocol_version" },
+        { "number": 5, "name": "epoch", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "epoch" },
+        { "number": 6, "name": "consensus_parameters_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "consensus_parameters_hash" },
+        { "number": 7, "name": "validators", "proto_type": "Validator", "cardinality": "repeated", "role": "canonical", "logical_field": "validators" },
+        { "number": 8, "name": "validator_set_hash", "proto_type": "bytes", "cardinality": "singular", "role": "derived", "derivation": "Digest(validator_set, ValidatorSetV0)" }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "proto_message": "SignatureShare",
+      "logical_object": "SignatureShareV0",
+      "fields": [
+        { "number": 1, "name": "validator_id", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "validator_id" },
+        { "number": 2, "name": "signature", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "signature" }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "proto_message": "HighQCSummary",
+      "logical_object": "HighQCSummaryV0",
+      "fields": [
+        { "number": 1, "name": "qc_digest", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "qc_digest" },
+        { "number": 2, "name": "qc_epoch", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "qc_epoch" },
+        { "number": 3, "name": "qc_view", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "qc_view" },
+        { "number": 4, "name": "qc_height", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "qc_height" },
+        { "number": 5, "name": "qc_block_id", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "qc_block_id" }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "Vote",
+      "logical_object": "VoteSignV0",
+      "fields": [
+        { "number": 1, "name": "context", "proto_type": "CommonConsensusContext", "cardinality": "singular", "role": "canonical", "logical_field": "context" },
+        { "number": 2, "name": "height", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "height" },
+        { "number": 3, "name": "block_id", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "block_id" },
+        { "number": 4, "name": "author_validator_id", "proto_type": "bytes", "cardinality": "singular", "role": "sidecar", "binding": "signature authorization identity" },
+        { "number": 5, "name": "signature", "proto_type": "bytes", "cardinality": "singular", "role": "sidecar", "binding": "signature over VoteSignV0 digest" }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "QuorumCertificate",
+      "logical_object": "QuorumCertificateV0",
+      "fields": [
+        { "number": 1, "name": "schema_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "schema_version" },
+        { "number": 2, "name": "genesis_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "genesis_hash" },
+        { "number": 3, "name": "chain_id", "proto_type": "string", "cardinality": "singular", "role": "canonical", "logical_field": "chain_id" },
+        { "number": 4, "name": "protocol_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "protocol_version" },
+        { "number": 5, "name": "epoch", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "epoch" },
+        { "number": 6, "name": "validator_set_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "validator_set_hash" },
+        { "number": 7, "name": "consensus_parameters_hash", "proto_type": "bytes", "cardinality": "singular", "role": "redundant", "binding": "must equal the enclosing validator-set parameter hash" },
+        { "number": 8, "name": "view", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "view" },
+        { "number": 9, "name": "height", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "height" },
+        { "number": 10, "name": "block_id", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "block_id" },
+        { "number": 11, "name": "signatures", "proto_type": "SignatureShare", "cardinality": "repeated", "role": "canonical", "logical_field": "signatures" },
+        { "number": 12, "name": "qc_digest", "proto_type": "bytes", "cardinality": "singular", "role": "derived", "derivation": "Digest(qc, QuorumCertificateV0)" }
+      ]
+    },
+    {
+      "projection_id": "timeout_vote_signing_projection",
+      "usage": "standalone timeout vote authorization",
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "TimeoutVote",
+      "logical_object": "TimeoutSignV0",
+      "fields": [
+        { "number": 1, "name": "context", "proto_type": "CommonConsensusContext", "cardinality": "singular", "role": "canonical", "logical_field": "context" },
+        { "number": 2, "name": "high_qc", "proto_type": "HighQCSummary", "cardinality": "singular", "role": "canonical", "logical_field": "high_qc" },
+        { "number": 3, "name": "author_validator_id", "proto_type": "bytes", "cardinality": "singular", "role": "sidecar", "binding": "signature authorization identity" },
+        { "number": 4, "name": "signature", "proto_type": "bytes", "cardinality": "singular", "role": "sidecar", "binding": "signature over TimeoutSignV0 digest" }
+      ]
+    },
+    {
+      "projection_id": "timeout_vote_as_tc_entry_projection",
+      "usage": "TimeoutCertificate.entries item; enclosing TC reconstructs the shared context",
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "TimeoutVote",
+      "logical_object": "TimeoutEntryV0",
+      "fields": [
+        { "number": 1, "name": "context", "proto_type": "CommonConsensusContext", "cardinality": "singular", "role": "redundant", "binding": "canonical CommonConsensusContextV0 fields must equal the context reconstructed from the enclosing TC scope and timed_out_view; transport consensus_parameters_hash must equal the enclosing TC validator-set parameter hash" },
+        { "number": 2, "name": "high_qc", "proto_type": "HighQCSummary", "cardinality": "singular", "role": "canonical", "logical_field": "high_qc" },
+        { "number": 3, "name": "author_validator_id", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "validator_id" },
+        { "number": 4, "name": "signature", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "signature" }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "TimeoutCertificate",
+      "logical_object": "TimeoutCertificateV0",
+      "fields": [
+        { "number": 1, "name": "schema_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "schema_version" },
+        { "number": 2, "name": "genesis_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "genesis_hash" },
+        { "number": 3, "name": "chain_id", "proto_type": "string", "cardinality": "singular", "role": "canonical", "logical_field": "chain_id" },
+        { "number": 4, "name": "protocol_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "protocol_version" },
+        { "number": 5, "name": "epoch", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "epoch" },
+        { "number": 6, "name": "validator_set_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "validator_set_hash" },
+        { "number": 7, "name": "consensus_parameters_hash", "proto_type": "bytes", "cardinality": "singular", "role": "redundant", "binding": "must equal the enclosing validator-set parameter hash" },
+        { "number": 8, "name": "timed_out_view", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "timed_out_view" },
+        { "number": 9, "name": "entries", "proto_type": "TimeoutVote", "cardinality": "repeated", "role": "canonical", "logical_field": "entries", "item_projection_id": "timeout_vote_as_tc_entry_projection" },
+        { "number": 10, "name": "referenced_qcs", "proto_type": "QuorumCertificate", "cardinality": "repeated", "role": "canonical", "logical_field": "referenced_qcs" },
+        { "number": 11, "name": "selected_high_qc_digest", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "selected_high_qc_digest" },
+        { "number": 12, "name": "tc_digest", "proto_type": "bytes", "cardinality": "singular", "role": "derived", "derivation": "Digest(tc, TimeoutCertificateV0)" },
+        { "number": 13, "name": "epoch_anchor_authorization", "proto_type": "EpochAnchorAuthorization", "cardinality": "singular", "role": "sidecar", "binding": "authorization for a referenced synthetic epoch anchor; excluded from TC CEV0" }
+      ]
+    }
+  ],
+  "implementation_mappings": [
+    {
+      "implementation": "Rust trnm_consensus_types::QcRef",
+      "logical_object": "HighQCSummaryV0",
+      "fields": [
+        { "implementation_field": "qc_id", "role": "canonical", "logical_field": "qc_digest" },
+        { "implementation_field": "epoch", "role": "canonical", "logical_field": "qc_epoch" },
+        { "implementation_field": "view", "role": "canonical", "logical_field": "qc_view" },
+        { "implementation_field": "height", "role": "canonical", "logical_field": "qc_height" },
+        { "implementation_field": "block_id", "role": "canonical", "logical_field": "qc_block_id" },
+        { "implementation_field": "validator_set_id", "role": "derived", "derivation": "enclosing consensus context validator_set_hash; not encoded in HighQCSummaryV0" }
+      ]
+    }
+  ],
+  "decoder_error_codes": [
+    { "code": "unexpected_eof", "class": "structural" },
+    { "code": "trailing_bytes", "class": "structural" },
+    { "code": "length_limit_exceeded", "class": "structural" },
+    { "code": "count_limit_exceeded", "class": "structural" },
+    { "code": "aggregate_limit_exceeded", "class": "structural" },
+    { "code": "invalid_schema_version", "class": "semantic" },
+    { "code": "invalid_protocol_version", "class": "semantic" },
+    { "code": "invalid_consensus_string", "class": "canonical" },
+    { "code": "unauthorized_synthetic_qc", "class": "authorization" },
+    { "code": "zero_genesis_hash", "class": "semantic" },
+    { "code": "zero_public_key", "class": "semantic" },
+    { "code": "zero_voting_power", "class": "semantic" },
+    { "code": "empty_validator_set", "class": "semantic" },
+    { "code": "duplicate_validator_id", "class": "canonical" },
+    { "code": "duplicate_public_key", "class": "canonical" },
+    { "code": "noncanonical_validator_order", "class": "canonical" },
+    { "code": "context_mismatch", "class": "semantic" },
+    { "code": "unknown_signer", "class": "semantic" },
+    { "code": "duplicate_signer", "class": "canonical" },
+    { "code": "noncanonical_signer_order", "class": "canonical" },
+    { "code": "noncanonical_reference_order", "class": "canonical" },
+    { "code": "conflicting_same_view_qc", "class": "safety" },
+    { "code": "insufficient_quorum", "class": "semantic" },
+    { "code": "invalid_referenced_qc", "class": "semantic" },
+    { "code": "empty_tc", "class": "semantic" },
+    { "code": "duplicate_reference", "class": "canonical" },
+    { "code": "future_reference_view", "class": "semantic" },
+    { "code": "same_block_different_coordinates", "class": "safety" },
+    { "code": "reference_summary_mismatch", "class": "semantic" },
+    { "code": "unreferenced_qc", "class": "semantic" },
+    { "code": "selected_not_maximum", "class": "semantic" }
+  ],
+  "rust_decoder_error_exclusions": [
+    { "code": "invalid_block_kind", "scope": "B2-B block/handoff endpoint only" },
+    { "code": "invalid_optional_tag", "scope": "B2-B block/handoff endpoint only" },
+    { "code": "invalid_block_header", "scope": "B2-B block/handoff endpoint only" },
+    { "code": "invalid_handoff_descriptor", "scope": "B2-B block/handoff endpoint only" },
+    { "code": "invalid_handoff_certificate", "scope": "B2-B block/handoff endpoint only" },
+    { "code": "invalid_epoch_anchor_relations", "scope": "B2-B block/handoff endpoint only" },
+    { "code": "invalid_boolean", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_rollout_phase", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_fallback_reason", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_next_epoch_commitment", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_utf8", "scope": "B2-D ordinary block body endpoint only" },
+    { "code": "noncanonical_event_attribute_order", "scope": "B2-D ordinary block body endpoint only" },
+    { "code": "invalid_double_vote_evidence", "scope": "B2-D ordinary block body endpoint only" },
+    { "code": "invalid_leader_schedule", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_consensus_parameters", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_finality_proof", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_checkpoint_two_seal", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_sign_intent_tag", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_sign_intent", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_handoff_sign_intent_role", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_handoff_sign_intent", "scope": "node-local signer-intent endpoint only" }
+  ],
+  "admission_error_codes": [
+    { "code": "invalid_message_kind", "class": "signing_value_semantic" },
+    { "code": "invalid_signature", "class": "cryptographic_admission" },
+    { "code": "digest_mismatch", "class": "cryptographic_admission" }
+  ],
+  "gate_error_codes": [
+    { "code": "schema_manifest_invalid", "class": "manifest" },
+    { "code": "proto_projection_drift", "class": "manifest" }
+  ],
+  "excluded": [
+    "protobuf envelope decoding and transport admission",
+    "proposal and block canonical bodies",
+    "synthetic-anchor authorization decoding",
+    "epoch transition, evidence, receipts, consumption certificates, and light clients"
+  ]
+}

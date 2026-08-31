@@ -99,7 +99,7 @@ for wf in "${WORKFLOW_FILES[@]}"; do
         && ! printf '%s\n' "$line" | LC_ALL=C grep -Eq "^[[:space:]]*-[[:space:]]*['\"]?(scripts|trillionnium/scripts)/"; then
         printf '%s\n' "$ref" >>"$non_dot_refs_file"
       fi
-    done < <(printf '%s\n' "$line" | LC_ALL=C grep -Eo '(\./scripts|scripts|trillionnium/scripts)/[[:alnum:]_./-]+\.(sh|py)' || true)
+    done < <(printf '%s\n' "$line" | LC_ALL=C grep -Eo '(\./trillionnium/scripts|\./scripts|scripts|trillionnium/scripts)/[[:alnum:]_./-]+\.(sh|py)' || true)
   done <"$wf"
 done
 

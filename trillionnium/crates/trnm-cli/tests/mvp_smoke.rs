@@ -1,8 +1,11 @@
 use std::{
+    io::Write,
     path::PathBuf,
-    process::Command,
+    process::{Command, Output, Stdio},
     time::{SystemTime, UNIX_EPOCH},
 };
+
+use ed25519_dalek::{Signature, VerifyingKey};
 
 fn bin() -> String {
     if let Ok(v) = std::env::var("CARGO_BIN_EXE_trnm-cli") {
@@ -47,6 +50,30 @@ fn tmp_dir(label: &str) -> PathBuf {
     p
 }
 
+fn import_wallet(store: &std::path::Path, name: &str, private_key: &str) -> Output {
+    let mut child = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            name,
+            "--private-key-stdin",
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let _ = child
+        .stdin
+        .take()
+        .expect("piped wallet import stdin")
+        .write_all(private_key.as_bytes());
+    child.wait_with_output().unwrap()
+}
+
 #[test]
 fn smoke_wallet_create_and_address() {
     let store = tmp_dir("wallet-create");
@@ -81,22 +108,10 @@ fn smoke_wallet_create_and_address() {
 }
 
 #[test]
-fn smoke_wallet_import_accepts_wrapped_private_key_hex() {
+fn smoke_wallet_import_accepts_wrapped_private_key_from_stdin() {
     let store = tmp_dir("wallet-import-wrapped");
     let pk = " \u{2068}<\"0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\">\u{2069}\n";
-    let out = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let out = import_wallet(&store, "alice", pk);
     assert!(
         out.status.success(),
         "stderr: {}",
@@ -105,6 +120,35 @@ fn smoke_wallet_import_accepts_wrapped_private_key_hex() {
     let s = String::from_utf8_lossy(&out.stdout);
     assert!(s.contains("wallet_name=alice"));
     assert!(s.contains("address=trnm1"));
+    assert!(s.contains("public_key="));
+}
+
+#[test]
+fn smoke_wallet_import_rejects_private_key_in_argv() {
+    let store = tmp_dir("wallet-import-argv-rejected");
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+
+    assert!(!out.status.success(), "argv private key must fail closed");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("--private-key-hex is disabled")
+            && stderr.contains("shell history and process listings")
+            && stderr.contains("development-only"),
+        "unexpected stderr: {stderr}"
+    );
+    assert!(!store.join("alice.key").exists());
 }
 
 #[cfg(unix)]
@@ -156,19 +200,11 @@ fn smoke_wallet_import_rejects_symlinked_final_out_path() {
     create_owner_only_dir_all(&real_store);
     symlink(&real_store, &linked_store).unwrap();
 
-    let out = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "--out",
-            linked_store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let out = import_wallet(
+        &linked_store,
+        "alice",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    );
 
     assert!(
         !out.status.success(),
@@ -190,19 +226,7 @@ fn smoke_wallet_import_rejects_symlinked_final_out_path() {
 fn smoke_wallet_sign_rejects_multiline_message() {
     let store = tmp_dir("wallet-sign-message-guard");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -239,19 +263,7 @@ fn smoke_wallet_sign_rejects_multiline_message() {
 fn smoke_wallet_sign_rejects_bidi_control_message() {
     let store = tmp_dir("wallet-sign-bidi-guard");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -288,19 +300,7 @@ fn smoke_wallet_sign_rejects_bidi_control_message() {
 fn smoke_wallet_sign_accepts_wrapped_absolute_env_store() {
     let store = tmp_dir("wallet-sign-valid-wrapped-env-store");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -332,7 +332,12 @@ fn smoke_wallet_sign_accepts_wrapped_absolute_env_store() {
         stdout
     );
     assert!(
-        stdout.contains("message_sha256="),
+        stdout.contains("preimage_domain=trnm.cli.wallet-sign.v1"),
+        "unexpected stdout: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("preimage_sha256="),
         "unexpected stdout: {}",
         stdout
     );
@@ -347,19 +352,7 @@ fn smoke_wallet_sign_accepts_wrapped_absolute_env_store() {
 fn smoke_wallet_sign_rejects_invalid_env_store_fallback() {
     let store = tmp_dir("wallet-sign-invalid-env-store");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -454,19 +447,7 @@ fn smoke_wallet_sign_rejects_unsafe_message_before_store_resolution() {
 fn smoke_wallet_sign_rejects_explicit_store_with_trailing_separator() {
     let store = tmp_dir("wallet-sign-trailing-separator");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -513,19 +494,7 @@ fn smoke_wallet_sign_rejects_explicit_store_with_symlinked_ancestor() {
     symlink(&real_parent, &linked_parent).unwrap();
 
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            real_store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&real_store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -571,19 +540,7 @@ fn smoke_wallet_sign_rejects_explicit_store_with_symlinked_final_path() {
     symlink(&real_store, &linked_store).unwrap();
 
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            real_store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&real_store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -620,19 +577,7 @@ fn smoke_wallet_sign_rejects_explicit_store_with_symlinked_final_path() {
 fn smoke_wallet_address_rejects_invalid_env_store_fallback() {
     let store = tmp_dir("wallet-address-invalid-env-store");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -670,19 +615,7 @@ fn smoke_wallet_address_rejects_explicit_store_with_symlinked_final_path() {
     symlink(&real_store, &linked_store).unwrap();
 
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            real_store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&real_store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -717,19 +650,7 @@ fn smoke_wallet_address_rejects_explicit_store_with_symlinked_final_path() {
 fn smoke_wallet_sign_rejects_edge_whitespace_non_ascii_or_delimiter_payloads() {
     let store = tmp_dir("wallet-sign-whitespace-guard");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&store, "alice", pk);
     assert!(
         import.status.success(),
         "stderr: {}",
@@ -786,22 +707,10 @@ fn smoke_wallet_sign_rejects_edge_whitespace_non_ascii_or_delimiter_payloads() {
 }
 
 #[test]
-fn smoke_wallet_sign_emits_message_sha256_hint() {
+fn smoke_wallet_sign_emits_domain_separated_ed25519_signature() {
     let store = tmp_dir("wallet-sign");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let import = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let import = import_wallet(&store, "alice", pk);
     assert!(import.status.success());
 
     let message = "rotate signer to cold-key slot b";
@@ -826,32 +735,53 @@ fn smoke_wallet_sign_emits_message_sha256_hint() {
     let s = String::from_utf8_lossy(&out.stdout);
     assert!(s.contains("wallet_name=alice"));
     assert!(s.contains(&format!("message={message}")));
-    assert!(s.contains(
-        "message_sha256=0921750d68e4f12cb9b90b90e66f3406f4bcf49e1a4a312e693fa5d8236d1cab"
-    ));
-    assert!(s.contains("signature="));
+    assert!(s.contains("preimage_domain=trnm.cli.wallet-sign.v1"));
+    assert!(s.contains("signed_bytes=domain-framed-utf8-v1"));
+    assert!(s.contains("preimage_len="));
+    assert!(s.contains("preimage_sha256="));
+    assert!(!s.contains("message_sha256="));
+    assert!(s.contains("signature_scheme=ed25519"));
+    assert!(s.contains("signed_bytes=domain-framed-utf8-v1"));
+    assert!(s.contains("public_key="));
+    let signature = s
+        .lines()
+        .find_map(|line| line.strip_prefix("signature="))
+        .expect("wallet sign signature line");
+    assert_eq!(signature.len(), 128, "Ed25519 signature is 64 bytes");
+    assert!(signature.chars().all(|c| c.is_ascii_hexdigit()));
+
+    let public_key = s
+        .lines()
+        .find_map(|line| line.strip_prefix("public_key="))
+        .expect("wallet sign public key line");
+    let public_key_bytes: [u8; 32] = hex::decode(public_key).unwrap().try_into().unwrap();
+    let signature_bytes: [u8; 64] = hex::decode(signature).unwrap().try_into().unwrap();
+    let verifying_key = VerifyingKey::from_bytes(&public_key_bytes).unwrap();
+    let signature = Signature::from_bytes(&signature_bytes);
+    let domain = b"trnm.cli.wallet-sign.v1";
+    let mut preimage = Vec::new();
+    preimage.extend_from_slice(&(domain.len() as u32).to_be_bytes());
+    preimage.extend_from_slice(domain);
+    preimage.extend_from_slice(&(message.len() as u32).to_be_bytes());
+    preimage.extend_from_slice(message.as_bytes());
+    verifying_key.verify_strict(&preimage, &signature).unwrap();
+    assert!(
+        verifying_key
+            .verify_strict(message.as_bytes(), &signature)
+            .is_err(),
+        "CLI output must not be an unframed raw-text signature"
+    );
 }
 
 #[test]
-fn smoke_query_balance_fallback_json() {
+fn smoke_query_balance_without_backend_fails_closed() {
     let store = tmp_dir("query-balance");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    let out = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "alice",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let out = import_wallet(&store, "alice", pk);
     assert!(out.status.success());
 
     let out2 = Command::new(bin())
+        .env_remove("TRNM_QUERY_BALANCE_CMD")
         .args([
             "query",
             "balance",
@@ -862,14 +792,109 @@ fn smoke_query_balance_fallback_json() {
         ])
         .output()
         .unwrap();
-    assert!(out2.status.success());
-    let s = String::from_utf8_lossy(&out2.stdout);
-    assert!(s.contains("\"address\""));
-    assert!(s.contains("\"balance\""));
+    assert!(!out2.status.success(), "missing balance backend must fail");
+    assert!(out2.stdout.is_empty(), "must not emit a synthetic balance");
+    let stderr = String::from_utf8_lossy(&out2.stderr);
+    assert!(
+        stderr.contains("no real endpoint/backend is configured")
+            && stderr.contains("synthetic balances are disabled")
+            && stderr.contains("TRNM_QUERY_BALANCE_CMD"),
+        "unexpected stderr: {stderr}"
+    );
 }
 
 #[test]
-fn smoke_tx_submit_consumption_receipt_query_fallback_roundtrip() {
+fn smoke_query_balance_development_adapter_returns_only_adapter_value() {
+    let out = Command::new(bin())
+        .env(
+            "TRNM_QUERY_BALANCE_CMD",
+            r#"printf '%s' '{"address":"trnm1adapter","balance":"42","denom":"trnm"}'"#,
+        )
+        .args([
+            "query",
+            "balance",
+            "--address",
+            "trnm1adapter",
+            "--denom",
+            "trnm",
+        ])
+        .output()
+        .unwrap();
+
+    assert!(
+        out.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("\"balance\": \"42\""));
+    assert!(!stdout.contains("synthetic"));
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("command-template adapter") && stderr.contains("development-only"),
+        "adapter use must be explicitly labeled: {stderr}"
+    );
+}
+
+#[test]
+fn smoke_query_balance_rejects_exit_zero_malformed_adapter_output() {
+    for (label, command) in [
+        ("empty", "true"),
+        ("scalar-without-identity", "printf '%s' '42'"),
+        ("arbitrary", "printf '%s' 'request completed successfully'"),
+        (
+            "missing-address",
+            r#"printf '%s' '{"balance":"42","denom":"trnm"}'"#,
+        ),
+        (
+            "missing-denom",
+            r#"printf '%s' '{"address":"trnm1adapter","balance":"42"}'"#,
+        ),
+        (
+            "mismatched-address",
+            r#"printf '%s' '{"address":"trnm1other","balance":"42","denom":"trnm"}'"#,
+        ),
+        (
+            "mismatched-denom",
+            r#"printf '%s' '{"address":"trnm1adapter","balance":"42","denom":"utrnm"}'"#,
+        ),
+        (
+            "noncanonical-amount",
+            r#"printf '%s' '{"address":"trnm1adapter","balance":"01","denom":"trnm"}'"#,
+        ),
+    ] {
+        let out = Command::new(bin())
+            .env("TRNM_QUERY_BALANCE_CMD", command)
+            .args([
+                "query",
+                "balance",
+                "--address",
+                "trnm1adapter",
+                "--denom",
+                "trnm",
+            ])
+            .output()
+            .unwrap();
+
+        assert!(
+            !out.status.success(),
+            "malformed adapter case {label} must fail closed"
+        );
+        assert!(
+            out.stdout.is_empty(),
+            "malformed adapter case {label} must not emit a balance"
+        );
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        assert!(
+            stderr.contains("balance query response")
+                || stderr.contains("no explicit balance amount"),
+            "unexpected stderr for {label}: {stderr}"
+        );
+    }
+}
+
+#[test]
+fn smoke_tx_submit_consumption_receipt_without_backend_fails_closed() {
     let root = tmp_dir("tx-query-fallback");
     let tx_file = root.join("txs.json");
     let receipt_path = root.join("receipt.json");
@@ -887,6 +912,8 @@ fn smoke_tx_submit_consumption_receipt_query_fallback_roundtrip() {
 
     let submit = Command::new(bin())
         .env("TRNM_RPC_TX_FILE", tx_file.to_string_lossy().as_ref())
+        .env_remove("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD")
+        .env_remove("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD")
         .args([
             "tx",
             "submit-consumption-receipt",
@@ -895,32 +922,82 @@ fn smoke_tx_submit_consumption_receipt_query_fallback_roundtrip() {
         ])
         .output()
         .unwrap();
+    assert!(!submit.status.success(), "missing tx backend must fail");
     assert!(
-        submit.status.success(),
-        "stderr: {}",
-        String::from_utf8_lossy(&submit.stderr)
+        submit.stdout.is_empty(),
+        "must not emit a synthetic tx hash"
     );
-    let submit_stdout = String::from_utf8_lossy(&submit.stdout);
-    let tx_hash_line = submit_stdout
-        .lines()
-        .find(|line| line.starts_with("tx_hash="))
-        .expect("submit-consumption-receipt should print tx_hash");
-    let tx_hash = tx_hash_line.trim_start_matches("tx_hash=");
-    assert!(!tx_hash.is_empty());
+    let stderr = String::from_utf8_lossy(&submit.stderr);
+    assert!(
+        stderr.contains("no real endpoint/backend is configured")
+            && stderr.contains("synthetic pending transaction hashes are disabled"),
+        "unexpected stderr: {stderr}"
+    );
+    assert!(
+        !tx_file.exists(),
+        "a missing backend must not persist synthetic pending state"
+    );
+}
 
-    let query = Command::new(bin())
-        .env("TRNM_RPC_TX_FILE", tx_file.to_string_lossy().as_ref())
+#[test]
+fn smoke_tx_query_local_pending_state_requires_exact_non_authoritative_opt_in() {
+    let root = tmp_dir("tx-query-local-opt-in");
+    let tx_file = root.join("txs.json");
+    let tx_hash = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    std::fs::write(
+        &tx_file,
+        format!(
+            r#"{{"{tx_hash}":{{"tx_hash":"{tx_hash}","status":"pending","status_source":"development_only_local_pending_cache","authoritative":false,"production_ready":false}}}}"#
+        ),
+    )
+    .unwrap();
+
+    let disabled = Command::new(bin())
+        .env("TRNM_RPC_TX_FILE", &tx_file)
+        .env("TRNM_TX_QUERY_CMD", "false")
+        .env_remove("TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE")
         .args(["tx", "query", tx_hash])
         .output()
         .unwrap();
     assert!(
-        query.status.success(),
-        "stderr: {}",
-        String::from_utf8_lossy(&query.stderr)
+        !disabled.status.success(),
+        "local pending state must not replace a required backend without explicit opt-in"
     );
-    let query_stdout = String::from_utf8_lossy(&query.stdout);
-    assert!(query_stdout.contains(&format!("tx_hash={}", tx_hash)));
-    assert!(query_stdout.contains("status=pending"));
+    assert!(disabled.stdout.is_empty());
+
+    let malformed = Command::new(bin())
+        .env("TRNM_RPC_TX_FILE", &tx_file)
+        .env_remove("TRNM_TX_QUERY_CMD")
+        .env("TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE", " 1 ")
+        .args(["tx", "query", tx_hash])
+        .output()
+        .unwrap();
+    assert!(!malformed.status.success());
+    assert!(malformed.stdout.is_empty());
+    assert!(String::from_utf8_lossy(&malformed.stderr)
+        .contains("TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE must be exactly 1"));
+
+    let enabled = Command::new(bin())
+        .env("TRNM_RPC_TX_FILE", &tx_file)
+        .env_remove("TRNM_TX_QUERY_CMD")
+        .env("TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE", "1")
+        .args(["tx", "query", tx_hash])
+        .output()
+        .unwrap();
+    assert!(
+        enabled.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&enabled.stderr)
+    );
+    assert!(String::from_utf8_lossy(&enabled.stdout).contains("status=pending"));
+    let stderr = String::from_utf8_lossy(&enabled.stderr);
+    assert!(
+        stderr.contains("source=development_only_local_pending_cache")
+            && stderr.contains("authoritative=false")
+            && stderr.contains("production_ready=false")
+            && stderr.contains("not node inclusion or finality evidence"),
+        "local status warning must be explicit: {stderr}"
+    );
 }
 
 #[test]
@@ -928,19 +1005,7 @@ fn smoke_tx_transfer_template_path() {
     let store = tmp_dir("tx-transfer");
     let pk = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
 
-    let out = Command::new(bin())
-        .args([
-            "wallet",
-            "import",
-            "--name",
-            "sender",
-            "--private-key-hex",
-            pk,
-            "--out",
-            store.to_string_lossy().as_ref(),
-        ])
-        .output()
-        .unwrap();
+    let out = import_wallet(&store, "sender", pk);
     assert!(out.status.success());
 
     let out2 = Command::new(bin())
@@ -969,23 +1034,46 @@ fn smoke_tx_transfer_template_path() {
 }
 
 #[test]
-fn smoke_tx_transfer_rejects_invalid_env_store_fallback() {
-    let store = tmp_dir("tx-transfer-invalid-env-store");
+fn smoke_tx_transfer_without_backend_fails_closed() {
+    let store = tmp_dir("tx-transfer-no-backend");
     let pk = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+    let import = import_wallet(&store, "sender", pk);
+    assert!(import.status.success());
 
-    let import = Command::new(bin())
+    let out = Command::new(bin())
+        .env_remove("TRNM_TX_TRANSFER_CMD")
         .args([
-            "wallet",
-            "import",
-            "--name",
+            "tx",
+            "transfer",
+            "--from",
             "sender",
-            "--private-key-hex",
-            pk,
-            "--out",
+            "--to",
+            "trnm1deadbeef",
+            "--amount",
+            "42",
+            "--store",
             store.to_string_lossy().as_ref(),
         ])
         .output()
         .unwrap();
+
+    assert!(!out.status.success(), "missing transfer backend must fail");
+    assert!(out.stdout.is_empty(), "must not emit a synthetic tx hash");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("no real endpoint/backend is configured")
+            && stderr.contains("synthetic pending transaction hashes are disabled")
+            && stderr.contains("TRNM_TX_TRANSFER_CMD"),
+        "unexpected stderr: {stderr}"
+    );
+}
+
+#[test]
+fn smoke_tx_transfer_rejects_invalid_env_store_fallback() {
+    let store = tmp_dir("tx-transfer-invalid-env-store");
+    let pk = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+
+    let import = import_wallet(&store, "sender", pk);
     assert!(import.status.success());
 
     let out = Command::new(bin())

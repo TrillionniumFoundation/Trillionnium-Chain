@@ -1,0 +1,25 @@
+# Default ownership. Critical consensus/release paths below require an
+# independent maintainer in addition to the change author.
+* @Tomasrgbsf @ProfHepta
+
+/.github/ @ProfHepta
+/config/ @ProfHepta
+/PROJECT_BOUNDARY.json @ProfHepta
+/PROJECT_BOUNDARY.md @ProfHepta
+/SECURITY.md @ProfHepta
+/RELEASE_READINESS.md @ProfHepta
+/OPERATIONS.md @ProfHepta
+/rust-toolchain.toml @ProfHepta
+/trillionnium/Cargo.toml @ProfHepta
+/trillionnium/Cargo.lock @ProfHepta
+/trillionnium/crates/trnm-consensus-core/ @ProfHepta
+/trillionnium/crates/trnm-consensus-types/ @ProfHepta
+/trillionnium/crates/trnm-consensus-crypto/ @ProfHepta
+/trillionnium/crates/trnm-consensus-safety-rules/ @ProfHepta
+/trillionnium/crates/trnm-consensus-safety-store/ @ProfHepta
+/trillionnium/crates/trnm-consensus-signer-journal/ @ProfHepta
+/trillionnium/crates/trnm-poco-node/ @ProfHepta
+/docs/architecture/ @ProfHepta
+/docs/protocol/ @ProfHepta
+/docs/development/plan-manifest-v1.toml @ProfHepta
+/scripts/ci/ @ProfHepta

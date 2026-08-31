@@ -1,0 +1,101 @@
+schema_version = 1
+package_id = "G2A_DA_FULLREP_V1"
+status = "blocked-upstream"
+repository = "TrillionniumFoundation/Trillionnium-Chain"
+gate = "G2A"
+owner_agent = "A11"
+base_ref = "refs/heads/feature/chain-a10-g20-traceability-v2-20260829"
+base_commit = "044224a3a6c9100cd64961ea34a28031bb78a636"
+base_tree = "02fb16fd12d2c6387495087e3eff578c2c44100a"
+source_branch = "feature/chain-a11-g2a-da-fullrep-v2-20260829"
+planned_branch = "feature/chain-a11-g2a-da-fullrep-v2-20260829"
+plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+assessed_plan_commit = "8198fea0307eb368df34ff77ffc272a6b0e655ec"
+assessed_plan_tree = "a1be71bba1b54c428493d186fafb656d081b31a9"
+latest_live_plan_commit = "92449b8e101642f39d644d863db7bb60dea488f7"
+latest_live_plan_tree = "cf8f1ab4f5065cb0551a30ec0e036cd44cb31766"
+parent_package = "TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md"
+evidence_contract = "docs/evidence/g2a-da-fullrep/fullrep-model-contract-v1.json"
+production_candidate = false
+production_consensus_activation = false
+g2a_exit = false
+upstream_blockers = [
+  "A08_CEV1_REGISTRY_INPUT_NOT_ACCEPTED",
+  "A10_BATCHREF_AND_RETRIEVAL_BEFORE_VOTE_INTERFACE_NOT_ACCEPTED",
+  "A10_G20_TRACEABILITY_CANDIDATE_NOT_ACCEPTED",
+  "ARTIFACT_EVIDENCE_NAMESPACE_WIRE_NOT_OWNED_BY_A11",
+  "NODE_WHOLE_NODE_CAS_AND_FINALITY_PERMIT_UNAVAILABLE",
+  "PRODUCTION_REQUESTER_RESPONDER_SIGNER_JOURNALS_UNAVAILABLE",
+]
+
+[scope]
+scope = "independent-model-and-contract"
+authority = "candidate"
+classification = "candidate-non-normative"
+data_scope = "synthetic-local-full-replication"
+owned_surface = "da-protocol-contracts-vectors-focused-gate"
+production_capability_constructors = false
+truth_flags_changed = false
+
+[capabilities]
+durable_before_attest = true
+immutable_manifest_binding = true
+strict_namespace_binding = true
+strict_complete_range = true
+authenticated_request_response_model = true
+repair_requires_complete_matching_source = true
+withholding_requires_certified_provider = true
+retention_and_challenge_holds = true
+node_permit_required_for_gc = true
+sampling_profile_rejected = true
+production_p2p = false
+production_signer_journal = false
+whole_node_cas = false
+order_vote_authority = false
+
+[vectors]
+positive_count = 5
+negative_count = 6
+strict_negative_count = 10
+authenticated_negative_count = 2
+fault_count = 7
+retained_mutant_count = 10
+profile = "DA-FULLREP-V1"
+
+[files]
+model = "tools/da-fullrep-model/fullrep_model.py"
+focused_gate = "scripts/ci/check_da_fullrep_model_v1.sh"
+focused_checker = "scripts/ci/check_da_fullrep_model_v1.py"
+conformance_cases = "conformance/da/fullrep-v1/cases.json"
+protocol_contract = "docs/protocol/poco-ai-native-v1/da/DA_FULLREP_V1.md"
+evidence_contract = "docs/evidence/g2a-da-fullrep/fullrep-model-contract-v1.json"
+evidence_readme = "docs/evidence/g2a-da-fullrep/README.md"
+package_document = "docs/development/packages/TRNM_G2A_DA_FULLREP_V1.md"
+
+[interface_requests]
+request_id = "G2A-ICR-A11-BATCHREF-RETRIEVAL-BINDING-V1"
+requester_agent = "A11"
+owner_agent = "A10"
+current_interface = "W0-W7 trace row and BatchRef source are not accepted"
+current_interface_digest = "none"
+proposed_interface = "A10 supplies immutable BatchRef/object-root/certificate binding before retrieval-before-vote"
+status = "blocked-until-A10-accepted"
+reviewer = "A00 plus A10 and independent DA reviewer"
+accepted_interface_version = "none"
+accepted_interface_digest = "none"
+
+[truth]
+production_candidate = false
+production_consensus_activation = false
+g2a_exit = false
+authenticated_network = false
+artifact_evidence_authority = false
+order_vote_authority = false
+whole_node_gc_authority = false
+data_availability_sampling_active = false
+
+[handoff]
+head_commit = "BOUND_IN_AGENT_HANDOFF"
+head_tree = "BOUND_IN_AGENT_HANDOFF"
+terminal_status = "BLOCKED_UPSTREAM"
+next_action = "Await A08/A10 interface acceptance and independent review; then rerun clean-clone vectors before any G2A promotion."

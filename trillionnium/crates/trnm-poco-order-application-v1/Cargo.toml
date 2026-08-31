@@ -1,0 +1,35 @@
+[package]
+name = "trnm-poco-order-application-v1"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-ai-native-v1-order-application-candidate"
+protocol = "poco-ai-native-v1"
+classification = "candidate-non-normative"
+inert_multi_object_state_preview = true
+exact_parent_sparse_jmt = true
+eight_header_roots_derived = true
+noop_preview = true
+system_tag50_create_preview = true
+self_candidate_tag50_rejected = true
+shared_tag50_machine_vector = true
+cev0_payload_input = false
+historical_canonical_tx_input = false
+commit_authority = false
+durable_store = false
+node_process_integration = false
+g2_global_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[dependencies]
+sha2 = "0.10"
+trnm-poco-order-types-v1 = { path = "../trnm-poco-order-types-v1" }
+
+[dev-dependencies]
+serde_json = "1"

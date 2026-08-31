@@ -1,0 +1,63 @@
+[package]
+name = "trnm-native-application-sqlite"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+lane = "native-application-validation-store"
+protocol = "poco-bft-v0"
+native_only = true
+implementation_status = "bounded-core-d-safety-c-k-integration"
+native_application_v0_implementation = false
+validation_journal_schema = 5
+validation_journal_schema_auto_migration = false
+existing_store_read_only_preflight = true
+existing_store_immutable_preflight = true
+existing_store_sidecar_recovery = false
+durable_execution_artifact_p = true
+durable_execution_artifact_complete_bytes = true
+durable_execution_artifact_canonical_codec = true
+durable_execution_artifact_restart_takeover = false
+core_delivery_d_record = true
+core_delivery_validation_id_binding = true
+core_delivery_public_constructor = false
+core_delivery_authority_integration = true
+core_delivery_accepts_only_opaque_core_carrier = true
+request_bound_safety_c_shaped_readback_contract = true
+request_bound_safety_c_shaped_provenance_persisted_in_k = true
+request_bound_safety_revision_exact_core_revision = true
+terminal_k_checkpoint_facts_capability = true
+terminal_k_checkpoint_facts_fresh_reconfirm = true
+terminal_k_whole_node_cas_integration = false
+safety_confirmation_sealed_authority = true
+safety_confirmation_authority_integration = true
+committed_application_head_advance = false
+node_process_integration = false
+complete_crash_recovery = false
+durable_replay_sidecar_session = true
+durable_replay_sidecar_canonical_job_copy = false
+durable_replay_process2_activation = false
+durable_replay_process3_rehydrate = false
+openat_identity_binding = false
+wal_shm_identity_pinning = false
+anti_whole_machine_rollback_authority = false
+production_candidate = false
+
+[features]
+default = []
+test-support = []
+
+[dependencies]
+rusqlite = { version = "0.32", features = ["bundled"] }
+sha2 = "0.10"
+trnm-consensus-core = { path = "../trnm-consensus-core" }
+trnm-consensus-safety-store = { path = "../trnm-consensus-safety-store" }
+trnm-consensus-types = { path = "../trnm-consensus-types" }
+trnm-native-application = { path = "../trnm-native-application" }
+
+[dev-dependencies]
+ed25519-dalek = "2"
+trnm-consensus-crypto = { path = "../trnm-consensus-crypto" }

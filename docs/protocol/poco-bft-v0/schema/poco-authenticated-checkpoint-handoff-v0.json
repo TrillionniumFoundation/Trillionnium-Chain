@@ -1,0 +1,177 @@
+{
+  "schema": "trnm.poco-bft.authenticated-checkpoint-handoff.v0",
+  "schema_version": 0,
+  "status": "H3b2b3b-native-checkpoint-two-seal-joint-handoff-private-authority",
+  "scope": "one production-shaped epoch-2 cutoff-only H3a authority, one locally authorized empty state-preserving native checkpoint, raw checkpoint/two-seal finality, and raw same-version old/new handoff evidence joined into one crate-private capability",
+  "compact_profile": {
+    "epoch_length_blocks": 10,
+    "snapshot_lead_blocks": 3,
+    "old_epoch": 2,
+    "new_epoch": 3,
+    "cutoff_height": 25,
+    "checkpoint_parent_height": 27,
+    "checkpoint_height": 28,
+    "seal_1_height": 29,
+    "seal_2_height": 30,
+    "activation_height": 31,
+    "native_execution_profile": "empty_state_preserving_no_runtime_receipt_mapping_claim",
+    "comet_hash_mapping": null,
+    "aggregate_digest": null,
+    "epoch_anchor_qc_output": false
+  },
+  "source_corpora": {
+    "candidate_vector_path": "docs/protocol/poco-bft-v0/vectors/poco-authenticated-candidate-selection-v0.json",
+    "candidate_vector_sha256_hex": "22856449b1ae3092e42292861e6eda67370c3e8dae86fbbfb78df35419bbf39c",
+    "commitment_vector_path": "docs/protocol/poco-bft-v0/vectors/poco-authenticated-next-epoch-commitment-v0.json",
+    "commitment_vector_sha256_hex": "651225723195b8f4deb744ed6203bfb37358485387ce09ac653a1552005a1318",
+    "reuse": "candidate and H3a raw source evidence only; no epoch-0 B2-E/B2-F header, root, key, commitment, proof ID, distinct-set profile, or reason-8 fallback is spliced into checkpoint 28"
+  },
+  "authority_flow": [
+    "cutoff-only authenticated candidate reconstruction at height 25",
+    "raw H1/H2 fresh verification and cutoff-only pre-header next-epoch commitment authority",
+    "opaque locally authorized state-preserving empty native execution from authenticated height-27 state to height 28 state",
+    "deterministic checkpoint pre-header preparation with native empty payload, empty ordered receipts, state, empty evidence, and commitment roots",
+    "exact native BlockHeader and empty ApplicationPayloadV0 and ExecutionReceiptsV0 binding to canonical native BlockId",
+    "raw exact checkpoint/two-seal B2-E verification under StrictEd25519Verifier",
+    "raw exact terminal-old QC and old/new double-quorum B2-F verification under StrictEd25519Verifier",
+    "crate-private joint-handoff authorization seal; no aggregate protocol digest and no activation output"
+  ],
+  "vector_contract": {
+    "fixture_schema": "trnm.poco-bft.authenticated-checkpoint-handoff-fixture.v0",
+    "fixture_scope": "empty_state_preserving_native_checkpoint_raw_two_seal_and_same_version_joint_handoff_not_production_host_or_activation_authority",
+    "top_level_exact_keys": [
+      "schema",
+      "schema_version",
+      "fixture_scope",
+      "candidate_vector_path",
+      "candidate_vector_sha256_hex",
+      "commitment_vector_path",
+      "commitment_vector_sha256_hex",
+      "compact_profile",
+      "positive",
+      "authenticated_fallback"
+    ],
+    "scenario_exact_keys": [
+      "id",
+      "fallback_used",
+      "fallback_reason_code",
+      "cutoff",
+      "preheader",
+      "checkpoint",
+      "checkpoint_finality",
+      "handoff",
+      "bound_authority"
+    ],
+    "required_scenarios": [
+      "authenticated_positive_checkpoint_handoff",
+      "authenticated_fallback_checkpoint_handoff"
+    ],
+    "identity_nonclaims": {
+      "comet_hash_mapping": null,
+      "aggregate_digest": null,
+      "epoch_anchor_qc_output": false
+    },
+    "comet_rule": "the single compact-profile comet_hash_mapping null marker is an explicit nonclaim; every Comet hash value, request hash, part-set header, or Comet BlockID field is forbidden"
+  },
+  "scenario_contract": {
+    "cutoff": [
+      "height 25 state root, manifest entries root, and entry count",
+      "scheduled-cutoff and cutoff-only candidate private authorization IDs",
+      "raw exact cutoff-parent BlockHeader and H1 FinalityProofV0 CEV0 plus proof ID",
+      "complete raw H2 manifest, ICS23 membership list, and empty absence list"
+    ],
+    "preheader": [
+      "private pre-header commitment authorization ID",
+      "exact height-27 checkpoint-parent BlockHeader CEV0 and native BlockId",
+      "exact old/new ValidatorSetV0 and ConsensusParametersV0 CEV0",
+      "exact same-version NextEpochCommitmentV0 CEV0 and ID"
+    ],
+    "checkpoint": [
+      "private native-execution authorization ID",
+      "exact empty ApplicationPayloadV0 and ExecutionReceiptsV0 CEV0 with zero transaction and receipt counts",
+      "preparation ID, exact native checkpoint BlockHeader CEV0, native BlockId, and private header authorization ID",
+      "height, view, timestamp, native payload/state/receipts/evidence roots, and commitment hash"
+    ],
+    "checkpoint_finality": [
+      "exact raw checkpoint/two-seal FinalityProofV0 CEV0 and proof ID",
+      "checkpoint 28, seal 29, and seal 30 native BlockIds and exact seal header CEV0",
+      "exact terminal old-set ordinary QC CEV0 and ID"
+    ],
+    "handoff": [
+      "exact HandoffDescriptorV0 and HandoffCertificateV0 CEV0 and IDs",
+      "exact raw EpochAnchorAuthorizationKernelV0 CEV0",
+      "four old-role and four new-role signatures in the compact fixture"
+    ],
+    "bound_authority": [
+      "checkpoint preparation, header, and execution authorization IDs",
+      "pre-header commitment and scheduled-cutoff authorization IDs",
+      "checkpoint finality proof and handoff certificate IDs",
+      "crate-private joint authorization ID"
+    ]
+  },
+  "numeric_contract": {
+    "u16_u32_u64": "canonical unquoted unsigned JSON integers over the exact Rust range; Node preserves unsafe u64 values as BigInt and rejects quoted integers, signs, floats, exponents, leading zeros, and overflow",
+    "byte_strings": "lowercase even-length hexadecimal; fixed IDs and roots are exactly 32 bytes",
+    "runtime_receipt_limit": "this vector has zero transactions and receipts and therefore makes no shared-vector claim about u128 fee, gas, runtime event, or UTF-8 attribute mapping"
+  },
+  "source_api_contract": {
+    "raw_consumer_verifier": "StrictEd25519Verifier is hard-coded inside the crate-private raw consumer",
+    "raw_decoding": "checkpoint parent, checkpoint/two-seal proof, and terminal-old/handoff kernel are freshly exact-decoded",
+    "accepted_checkpoint_authority": "only DurablyBoundPocoCheckpointHeaderV0; the raw non-durable binder is module-private/test-only and cannot enter the production-visible joint-handoff constructor",
+    "execution_authority": "only AuthorizedNativeCheckpointExecutionV0 bound to authenticated parent and post-state roots",
+    "visibility": "prepared, durable-bound checkpoint, and joint handoff capabilities remain crate-private; the joint constructor consumes the durable-bound capability by value",
+    "joint_authorization_domain": "trnm.poco-bft.authorized-checkpoint-joint-handoff.v0",
+    "joint_authorization_role": "application-private authority seal only; it is not an aggregate EpochHandoffProof digest or wire object",
+    "checkpoint_preparation_sidecar": "landed as an application-private SQLite database independent of the application store, JMT, ABCI snapshots, and state-sync replacement; it uses WAL, synchronous=FULL, and BEGIN IMMEDIATE",
+    "checkpoint_preparation_slots": "one immutable transition binding plus slots keyed by (transition, checkpoint kind, height, view); exact reserve and bind replay is idempotent, while binding or occupied-slot conflict sets a process-sticky halt and records a durable halt when storage is available",
+    "durable_checkpoint_wrappers": "reserve_prepared_poco_checkpoint_header_v0(&PocoPreparationJournalV0, PreparedPocoCheckpointHeaderV0) -> Result<DurablyPreparedPocoCheckpointHeaderV0> and bind_durably_prepared_poco_checkpoint_header_v0(&PocoPreparationJournalV0, DurablyPreparedPocoCheckpointHeaderV0, &BlockHeader, &BlockBodyV0, &ExecutionReceiptsV0) -> Result<DurablyBoundPocoCheckpointHeaderV0> are the only durable wrapper path; journal.bind(&reservation, &bound_record)? must succeed before the sole production DurablyBoundPocoCheckpointHeaderV0 construction",
+    "checkpoint_replay_role": "stored canonical replay records and checksums are inert comparison material only and cannot be converted into or restore an opaque checkpoint, proposal, vote, handoff, activation, or signing authority",
+    "checkpoint_sidecar_test_evidence": "a focused Rust suite covers same-process reopen reserve/bind idempotence, same-slot conflict, higher-view retry, transition-binding splice, bound-header conflict, checksum-consistent semantic corruption, corrupt/future schema, failed halt persistence, schema drift, and path/file identity; this is not subprocess restart or external rollback-watermark evidence",
+    "runtime_outcome_policy": "active v0 receipts are success-only; an opaque exhaustive runtime taxonomy has 28 typed failures: 21 whole-block/no-receipt transaction rejects and 7 fail-stop invariant faults, while the crate-private outcome kernel keeps dependency failures Unavailable and remains unwired",
+    "forbidden_inputs": [
+      "generic signature verifier",
+      "caller timestamp",
+      "caller roots, commitment, validator set, or consensus parameters",
+      "old B2-E or B2-F inert capability token",
+      "CometBFT hash relabeled or converted to native BlockId",
+      "telemetry event relabeled as authority"
+    ],
+    "forbidden_outputs": [
+      "aggregate EpochHandoffProof object or digest",
+      "EpochAnchorQC",
+      "field-13 activation capability",
+      "Core epoch transition"
+    ]
+  },
+  "negative_families": [
+    "positive/fallback H3 source or cutoff tuple splice",
+    "lead-two parameter regression",
+    "native execution parent, target, state, payload, receipt, or authorization substitution",
+    "prepare-to-bind header, root, commitment, timestamp, proposer, or native BlockId TOCTOU substitution",
+    "Comet/native identity substitution",
+    "checkpoint parent or ordinary justify-QC splice",
+    "checkpoint/seal kind, ancestry, root, state, commitment, proposal, QC subset, or strict signature substitution",
+    "terminal header/QC, descriptor, activation context, role-root, one-sided quorum, duplicate signer, or handoff signature-domain substitution",
+    "old/new configuration, version, upgrade-plan, final private seal, or whole-chain scenario splice",
+    "generic verifier, inert-token conversion, caller authority input, telemetry promotion, or activation output API regression"
+  ],
+  "current_status": {
+    "dedicated_checkpoint_28_vector": "landed from one Rust shared-authority fixture builder invoking crate-private constructors, with non-ignored Rust reconstruction",
+    "schema_source_and_structural_node_gate": "landed; the separate checkpoint-only preparation sidecar, native-execution seal replay check, and crate-private durable reserve/bind wrappers are covered by a focused Rust suite",
+    "independent_node_crypto_recomputation": "landed; the default Node gate independently recomputes H3a and H2 ICS23, native authority seals, B2-E and B2-F, the descriptor and certificate, and both old/new role signatures and quorums",
+    "named_node_negative_campaign": "landed; fully valid positive/fallback whole-chain raw evidence splices, cross-scenario native execution authority, final private-seal substitution, recursive Comet-field injection, and exact constructor/API locks fail closed"
+  },
+  "does_not_establish": [
+    "nonempty native runtime receipt mapping for u128 fees, gas, event order, or UTF-8 attributes",
+    "CometBFT header hash or BlockID identity with native PoCO BlockId",
+    "production host reachability or pre-header proposal integration",
+    "ABCI/startup/production-host wiring of the landed checkpoint-only preparation sidecar",
+    "seal-1 or seal-2 preparation journaling, signer persist-before-sign state, or live proposal, vote, and signing authority",
+    "restoration of any opaque authority directly from inert sidecar replay records",
+    "native-host and ABCI wiring of deterministic whole-block Invalid versus retryable Unavailable admission; ABCI exposes no truthful Unavailable proposal status",
+    "field 13 EpochAnchorQC or activation of the first new-epoch block",
+    "field 14 new-set finality",
+    "field 12 upgrade authorization",
+    "Core atomic epoch switch, production cross-epoch pruning, light-client completion, or remote CI"
+  ]
+}

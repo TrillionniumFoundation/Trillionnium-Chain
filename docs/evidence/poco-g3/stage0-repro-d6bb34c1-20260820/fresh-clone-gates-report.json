@@ -1,0 +1,64 @@
+{
+  "classification": "unsigned-manual-ssh-operator-observation",
+  "evidence_profile": "poco-g3-stage0-x230-fresh-clone-gates-observation-v1",
+  "gates": {
+    "fresh_clone_check_observed": true,
+    "fresh_clone_fmt_observed": true,
+    "key_tests_observed": true,
+    "production_activation": false,
+    "production_candidate": false,
+    "validator_run_7_completed": false
+  },
+  "logs": {
+    "bundled": false,
+    "check": {
+      "bytes": 21060,
+      "sha256": "3e2723db262e8121826f34874d8ff2293753852ef814316b3592008b42b7759c"
+    },
+    "fmt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "key_tests": {
+      "bytes": 61006,
+      "sha256": "7532981e25fc4c41c64e60fa5465e2e32b3ab681317d16577345fc99a5c99516"
+    }
+  },
+  "observed_finished_at_utc": "2026-08-21T06:32:55Z",
+  "observed_started_at_utc": "2026-08-21T06:31:32Z",
+  "runner": {
+    "formal_rerun_offline": true,
+    "host_triple": "x86_64-unknown-linux-gnu",
+    "initial_offline_cache_ready": false,
+    "job_local_cargo_home": true,
+    "label": "x230-self-hosted",
+    "paid_ci_used": false,
+    "public_dependency_fetch_used": true,
+    "runner_identity_cryptographically_attested": false,
+    "rustc_vv": {
+      "bytes": 196,
+      "sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad"
+    },
+    "transport": "manual-ssh"
+  },
+  "schema_version": 1,
+  "source": {
+    "base_commit": "d6bb34c149edd07d6412b169c471dbb017eb301e",
+    "cargo_lock": {
+      "bytes": 50286,
+      "sha256": "3e2352127ef45a35f808a549cf459959b17054f615744382c0f00a3a6a29b6da"
+    },
+    "git_status_a_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "git_status_b_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "git_tree_oid": "d14ed7015b13f487738451e4243b8ec962db0f87",
+    "source_candidate": {
+      "bytes": 73400320,
+      "sha256": "bf1f77a229d6eae8e975481728e157e87c6bb9e923ec0e3c2f8f422918e4ae58"
+    },
+    "source_candidates_byte_identical": true,
+    "transport_bundle": {
+      "bytes": 25562069,
+      "sha256": "ed37258975a5107aef68d70080740ce5b5c94b74a217163989a752a5a0a0e65b"
+    }
+  }
+}

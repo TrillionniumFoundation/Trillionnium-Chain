@@ -6,6 +6,7 @@ fn market_create_task_blank_creator_returns_structured_code() {
     let _ = fs::remove_dir_all("run/market_test");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args([
             "run",
             "-p",
@@ -43,6 +44,7 @@ fn market_create_task_zero_bounty_returns_structured_code() {
     let _ = fs::remove_dir_all("run/market_test");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args([
             "run",
             "-p",
@@ -80,6 +82,7 @@ fn market_create_task_unicode_whitespace_creator_returns_structured_code() {
     let _ = fs::remove_dir_all("run/market_test");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args([
             "run",
             "-p",

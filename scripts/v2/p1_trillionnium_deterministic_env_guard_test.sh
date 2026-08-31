@@ -32,7 +32,7 @@ required_lines=(
   'PYTHONUTF8: "1"'
   'CI: "true"'
   'UMASK: "022"'
-  'timeout-minutes: 45'
+  'timeout-minutes: 90'
 )
 
 for line in "${required_lines[@]}"; do

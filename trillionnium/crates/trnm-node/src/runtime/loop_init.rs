@@ -1,7 +1,7 @@
 use super::*;
 
 pub(crate) fn log_runtime_start(args: &Args, cfg: &NodeConfig) {
-    println!("[node] start");
+    println!("[node] start development_only=true legacy_harness=true production_ready=false");
     println!(
         "[node] id={} rpc={} p2p={}",
         cfg.node_id, cfg.rpc_addr, cfg.p2p_addr

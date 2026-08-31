@@ -1,0 +1,66 @@
+manifest_version = 1
+package_id = "trnm-g1-r2b-real-core-adapter-v1"
+classification = "candidate-non-normative-planned"
+parent_plan_id = "trnm-ai-native-blockchain-development-plan-v1"
+parent_package_id = "trnm-g1-r2-replay-to-core-durable-ack-v1"
+canonical_ref = "refs/heads/docs/chain-poco-bft-mainline-20260825"
+implementation_ref = "refs/heads/feature/chain-g1-r2b-real-core-adapter-20260828"
+implementation_commit = "UNBOUND_UNTIL_NORMALIZED_SOURCE_COMMIT"
+source_commit = "UNBOUND_UNTIL_NORMALIZED_SOURCE_COMMIT"
+source_tree = "UNBOUND_UNTIL_NORMALIZED_SOURCE_TREE"
+status = "r2-b-contract-only"
+scope = "candidate-process-boundary-contract"
+authority = "sealed-test-or-private-review-only"
+data_scope = "synthetic-local-only"
+observed_worktree_probe = "CandidateCoreIngressV1-candidate-and-unbound"
+production_candidate = false
+production_consensus_activation = false
+g1_exit = false
+g1_r2_exit = false
+
+[capabilities]
+exact_replay_request_binding = true
+authenticated_body_resolution_required = true
+real_core_ingress_required = true
+safety_state_persistence_readback_required = true
+whole_node_predecessor_cas_required = true
+sealed_receipt_constructor_authorized = false
+candidate_probe_source_bound = false
+live_core_adapter = false
+core_ack_generated_by_core = false
+core_ack_atomic_with_core = false
+node_process_integration = false
+process_kill_matrix_complete = false
+whole_node_anti_rollback = false
+independent_review = false
+production_activation = false
+
+[fault_cuts]
+before_core_input = true
+core_accepted_before_persistence = true
+persistence_before_readback = true
+readback_before_replay_ack = true
+replay_ack_before_completion = true
+completion_before_response = true
+process_sigkill_evidence = false
+
+[verification]
+contract_gate = "required"
+contract_gate_result = "not-run"
+implementation_tests = "not-run"
+real_core_process = "not-run"
+process_fault_matrix = "not-run"
+authorized_clean_clone = "required"
+source_binding = "pending-normalized-commit"
+project_preflight = "known-baseline-workflow-policy-failure"
+
+[files]
+target = "docs/development/packages/TRNM_G1_R2B_NEXT_IMPLEMENTATION_TARGET_V1.md"
+package = "docs/development/packages/TRNM_G1_R2B_REAL_CORE_ADAPTER_EXECUTION_PACKAGE_V1.md"
+gate = "scripts/ci/check_replay_to_core_r2b_contract_v1.sh"
+parent_manifest = "docs/development/packages/trnm-g1-r2-manifest-v1.toml"
+workflow = ".github/workflows/trnm-replay-to-core-coordinator-v1.yml"
+
+[successor]
+package_id = "trnm-g1-r3-ordinary-proposal-execution-v1"
+objective = "Only after R2B evidence, connect authoritative ordinary Proposal execution and Vote"

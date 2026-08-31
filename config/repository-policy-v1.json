@@ -1,0 +1,70 @@
+{
+  "schema": "trnm-repository-policy-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "default_branch": "main",
+  "consensus_mainline": "native-poco-bft",
+  "protocol_target": "poco-bft-v0",
+  "baseline_workflow": ".github/workflows/trnm-required-baseline.yml",
+  "required_check_names": [
+    "repository-truth",
+    "protocol-contract",
+    "fuzz-smoke",
+    "rust-baseline",
+    "external-evidence-contract"
+  ],
+  "required_review_policy": {
+    "approvals": 2,
+    "code_owner_review": true,
+    "last_push_approval": true,
+    "dismiss_stale_reviews": true,
+    "author_cannot_supply_independent_acceptance": true
+  },
+  "required_merge_policy": {
+    "pull_request_only": true,
+    "force_push": false,
+    "branch_deletion": false,
+    "merge_commit": false,
+    "squash_merge": true,
+    "rebase_merge": true
+  },
+  "release_truth": {
+    "g0_exit": false,
+    "g1_exit": false,
+    "g1_5_exit": false,
+    "g2_0_exit": false,
+    "g2_exit": false,
+    "g3_exit": false,
+    "g4_exit": false,
+    "g5_exit": false,
+    "public_testnet_ready": false,
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "release_ready": false
+  },
+  "external_blockers": [
+    "EXT-REVIEW-001",
+    "EXT-G1-CAMPAIGN-001",
+    "EXT-ANCHOR-HSM-001",
+    "EXT-POWERLOSS-001",
+    "EXT-AUDIT-001",
+    "EXT-SOAK-ACTIVATION-001"
+  ],
+  "required_paths": [
+    ".github/CODEOWNERS",
+    ".github/pull_request_template.md",
+    ".github/workflows/trnm-required-baseline.yml",
+    "PROJECT_BOUNDARY.json",
+    "PROJECT_BOUNDARY.md",
+    "README.md",
+    "SECURITY.md",
+    "config/blocker-execution-v1.json",
+    "config/consensus-mainline.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/plan-manifest-v1.toml",
+    "rust-toolchain.toml",
+    "scripts/ci/check_blocker_execution_v1.py",
+    "scripts/ci/check_required_protocol_contract_v1.py",
+    "trillionnium/Cargo.lock",
+    "trillionnium/Cargo.toml"
+  ]
+}

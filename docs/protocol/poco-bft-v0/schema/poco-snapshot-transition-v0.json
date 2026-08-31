@@ -1,0 +1,564 @@
+{
+  "schema": "trnm.poco-bft.snapshot-transition.v0",
+  "schema_version": 0,
+  "status": "B2-H3a-atomic-transition-kernel+B2-H3b1-production-persistence-seal",
+  "authority_boundary": {
+    "establishes": [
+      "exact semantic decoding and logical-key binding for all 15 PoCO snapshot value kinds",
+      "canonical compare-and-set mutation commitments",
+      "one exact next-version atomic in-memory JMT update with conditional live-manifest preservation or target-version refresh",
+      "a reusable private-field PoCO state-head kernel derived from an authenticated cutoff",
+      "exact physical namespace-8 admission at in-memory codecs, SQLite precommit/startup/migration, and ABCI snapshot restore"
+    ],
+    "does_not_establish": [
+      "runtime or profile authorization",
+      "complete cross-entry business semantics",
+      "checkpoint body execution",
+      "authenticated B2-G candidate selection",
+      "handoff, activation, or Core epoch transition authority"
+    ]
+  },
+  "cev0": {
+    "integer_encoding": "unsigned-big-endian",
+    "bytes_encoding": ["length:u32", "data:length bytes"],
+    "optional_encoding": {
+      "tag_type": "u8",
+      "none": {"tag": 0, "following_bytes": 0},
+      "some": {"tag": 1, "following_value": "exact declared type"},
+      "other_tags": "reject"
+    },
+    "exact_decode": true,
+    "trailing_bytes": "reject"
+  },
+  "domain_hash": {
+    "algorithm": "SHA-256",
+    "hash_prefix_ascii": "trnm.cev0.hash.v0",
+    "input": [
+      "CEV0 Bytes(hash_prefix_ascii)",
+      "CEV0 Bytes(domain_ascii)",
+      "CEV0 Bytes(encoded_object)"
+    ]
+  },
+  "value_envelope": {
+    "encoding": "CEV0",
+    "fields": [
+      {"name": "schema_version", "type": "u16", "const": 0},
+      {"name": "kind", "type": "u8", "minimum": 1, "maximum": 15},
+      {"name": "revision", "type": "u64", "minimum": 1},
+      {"name": "identity", "type": "Bytes", "minimum_bytes": 1, "maximum_bytes": 452},
+      {"name": "payload", "type": "Bytes", "minimum_bytes": 1, "maximum_bytes": 65384}
+    ],
+    "encoded_size": {
+      "fixed_and_length_prefix_bytes": 19,
+      "formula": "19 + identity.length + payload.length",
+      "maximum_bytes": 65536,
+      "checked_independently_of_field_maxima": true
+    },
+    "exact_decode": true,
+    "trailing_bytes": "reject"
+  },
+  "logical_key": {
+    "type": "Hash32",
+    "domain_ascii": "trnm.poco-bft.snapshot-value-identity.v0",
+    "preimage_encoding": "CEV0",
+    "preimage_fields": [
+      {"name": "schema_version", "type": "u16", "const": 0},
+      {"name": "kind", "type": "u8", "minimum": 1, "maximum": 15},
+      {"name": "identity", "type": "Bytes", "minimum_bytes": 1, "maximum_bytes": 452}
+    ],
+    "constraint": "entry.logical_key equals the domain hash of the exact preimage"
+  },
+  "external_exact_objects": {
+    "ConsumptionCertificateV0": {
+      "decoder": "decode_consumption_certificate_v0_exact",
+      "exact_decode": true,
+      "trailing_bytes": "reject"
+    },
+    "ValidatorKeyProofOfPossessionV0": {
+      "decoder": "decode_validator_key_proof_of_possession_v0_exact",
+      "fields": [
+        {"name": "schema_version", "type": "u16", "const": 0},
+        {"name": "genesis_hash", "type": "Hash32", "nonzero": true},
+        {"name": "chain_id", "type": "ConsensusString", "minimum_bytes": 1, "maximum_bytes": 128, "grammar": "ChainId v0"},
+        {"name": "target_epoch", "type": "u64"},
+        {"name": "validator_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+        {"name": "public_key", "type": "PublicKey32", "nonzero": true},
+        {"name": "registration_nonce", "type": "u64"},
+        {"name": "signature", "type": "FixedBytes", "exact_bytes": 64}
+      ],
+      "exact_decode": true,
+      "trailing_bytes": "reject",
+      "cryptographic_signature_verification": false
+    },
+    "ValidatorSetV0": {
+      "decoder": "decode_validator_set_v0_exact",
+      "exact_decode": true,
+      "trailing_bytes": "reject",
+      "constraints": [
+        {"op": "all_nonzero", "path": "validators[*].public_key"}
+      ]
+    },
+    "ConsensusParametersV0": {
+      "decoder": "decode_consensus_parameters_v0_exact",
+      "exact_decode": true,
+      "trailing_bytes": "reject",
+      "semantic_constraints": [
+        "snapshot_lead_blocks >= finality_certified_chain_length",
+        "epoch_length_blocks > snapshot_lead_blocks + epoch_seal_blocks"
+      ]
+    }
+  },
+  "kinds": [
+    {
+      "id": 1,
+      "name": "consumption_certificate",
+      "identity": {"encoding": "raw", "field": {"name": "certificate_id", "type": "Hash32", "exact_bytes": 32}},
+      "payload": {"encoding": "ExactObject", "object": "ConsumptionCertificateV0"},
+      "constraints": [
+        {"op": "eq", "left": "payload.certificate_id", "right": "identity.certificate_id"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "consumer_key_authorization",
+      "identity": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "consumer_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "consumer_key_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128}
+        ]
+      },
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "consumer_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "consumer_key_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "public_key", "type": "PublicKey32", "nonzero": true},
+          {"name": "active_from", "type": "u64"},
+          {"name": "revoked_at", "type": "Optional<u64>", "allowed_tags": [0, 1]}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.consumer_id", "right": "identity.consumer_id"},
+        {"op": "eq", "left": "payload.consumer_key_id", "right": "identity.consumer_key_id"},
+        {"op": "none_or_gt", "left": "payload.revoked_at", "right": "payload.active_from"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "consumer_nonce",
+      "identity": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "consumer_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "consumer_key_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "provider_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128}
+        ]
+      },
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "consumer_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "consumer_key_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "provider_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "max_accepted_nonce", "type": "u64"}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.consumer_id", "right": "identity.consumer_id"},
+        {"op": "eq", "left": "payload.consumer_key_id", "right": "identity.consumer_key_id"},
+        {"op": "eq", "left": "payload.provider_id", "right": "identity.provider_id"},
+        {"op": "not_equal", "left": "identity.provider_id", "right": "identity.consumer_id"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "unique_consumption_tuple",
+      "identity": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "consumer_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "provider_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "task_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "output_commitment", "type": "Hash32", "exact_bytes": 32},
+          {"name": "billing_start_height", "type": "u64"},
+          {"name": "billing_end_height", "type": "u64"},
+          {"name": "consumer_nonce", "type": "u64"}
+        ]
+      },
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "consumer_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "provider_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "task_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "output_commitment", "type": "Hash32", "exact_bytes": 32},
+          {"name": "billing_start_height", "type": "u64"},
+          {"name": "billing_end_height", "type": "u64"},
+          {"name": "consumer_nonce", "type": "u64"},
+          {"name": "certificate_id", "type": "Hash32", "exact_bytes": 32},
+          {"name": "accepted_height", "type": "u64"}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.consumer_id", "right": "identity.consumer_id"},
+        {"op": "eq", "left": "payload.provider_id", "right": "identity.provider_id"},
+        {"op": "eq", "left": "payload.task_id", "right": "identity.task_id"},
+        {"op": "eq", "left": "payload.output_commitment", "right": "identity.output_commitment"},
+        {"op": "eq", "left": "payload.billing_start_height", "right": "identity.billing_start_height"},
+        {"op": "eq", "left": "payload.billing_end_height", "right": "identity.billing_end_height"},
+        {"op": "eq", "left": "payload.consumer_nonce", "right": "identity.consumer_nonce"},
+        {"op": "not_equal", "left": "identity.provider_id", "right": "identity.consumer_id"},
+        {"op": "lte", "left": "identity.billing_start_height", "right": "identity.billing_end_height"},
+        {"op": "lt", "left": "identity.billing_end_height", "right": "payload.accepted_height"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "meter_definition",
+      "identity": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "meter_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "meter_version", "type": "u32"}
+        ]
+      },
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "meter_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "meter_version", "type": "u32"},
+          {"name": "unit_scale", "type": "u128", "minimum": 1},
+          {"name": "active_from", "type": "u64"},
+          {"name": "retired_at", "type": "Optional<u64>", "allowed_tags": [0, 1]}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.meter_id", "right": "identity.meter_id"},
+        {"op": "eq", "left": "payload.meter_version", "right": "identity.meter_version"},
+        {"op": "none_or_gt", "left": "payload.retired_at", "right": "payload.active_from"}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "settlement",
+      "identity": {"encoding": "raw", "field": {"name": "certificate_id", "type": "Hash32", "exact_bytes": 32}},
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "certificate_id", "type": "Hash32", "exact_bytes": 32},
+          {"name": "settlement_commitment", "type": "Hash32", "exact_bytes": 32},
+          {"name": "state", "type": "u8", "allowed": [1, 2, 3]},
+          {"name": "finalized_height", "type": "u64"}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.certificate_id", "right": "identity.certificate_id"}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "measurement_evidence",
+      "identity": {"encoding": "raw", "field": {"name": "certificate_id", "type": "Hash32", "exact_bytes": 32}},
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "certificate_id", "type": "Hash32", "exact_bytes": 32},
+          {"name": "evidence_root", "type": "Optional<Hash32>", "allowed_tags": [0, 1]},
+          {"name": "state", "type": "u8", "allowed": [1, 2, 3]}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.certificate_id", "right": "identity.certificate_id"}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "relationship_classification",
+      "identity": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "provider_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "consumer_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "task_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128}
+        ]
+      },
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "provider_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "consumer_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "task_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "class", "type": "u8", "allowed": [1, 2, 3, 4]},
+          {"name": "expires_at", "type": "u64"}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.provider_id", "right": "identity.provider_id"},
+        {"op": "eq", "left": "payload.consumer_id", "right": "identity.consumer_id"},
+        {"op": "eq", "left": "payload.task_id", "right": "identity.task_id"}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "validator_registration",
+      "identity": {"encoding": "raw", "field": {"name": "validator_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128}},
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "validator_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "consensus_key", "type": "PublicKey32", "nonzero": true},
+          {"name": "registration_nonce", "type": "u64"},
+          {"name": "state", "type": "u8", "allowed": [1, 2]},
+          {"name": "proof_of_possession", "type": "ExactObjectBytes", "object": "ValidatorKeyProofOfPossessionV0", "minimum_bytes": 1, "maximum_bytes": 65384}
+        ]
+      },
+      "constraints": [
+        {"op": "exact_decode", "path": "payload.proof_of_possession", "object": "ValidatorKeyProofOfPossessionV0"},
+        {"op": "eq", "left": "payload.validator_id", "right": "identity.validator_id"},
+        {"op": "eq", "left": "payload.proof_of_possession.validator_id", "right": "payload.validator_id"},
+        {"op": "eq", "left": "payload.proof_of_possession.public_key", "right": "payload.consensus_key"},
+        {"op": "eq", "left": "payload.proof_of_possession.registration_nonce", "right": "payload.registration_nonce"}
+      ]
+    },
+    {
+      "id": 10,
+      "name": "active_bond",
+      "identity": {"encoding": "raw", "field": {"name": "validator_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128}},
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "validator_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "amount", "type": "u128", "minimum": 1},
+          {"name": "locked_until", "type": "u64"},
+          {"name": "state", "type": "u8", "allowed": [1, 2]}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.validator_id", "right": "identity.validator_id"}
+      ]
+    },
+    {
+      "id": 11,
+      "name": "jail_status",
+      "identity": {"encoding": "raw", "field": {"name": "validator_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128}},
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "validator_id", "type": "Bytes", "semantic": "id", "minimum_bytes": 1, "maximum_bytes": 128},
+          {"name": "jailed_until", "type": "u64"},
+          {"name": "reason", "type": "u8", "allowed": [1, 2, 3]}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.validator_id", "right": "identity.validator_id"}
+      ]
+    },
+    {
+      "id": 12,
+      "name": "revocation_or_challenge",
+      "identity": {"encoding": "raw", "field": {"name": "certificate_id", "type": "Hash32", "exact_bytes": 32}},
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "certificate_id", "type": "Hash32", "exact_bytes": 32},
+          {"name": "state", "type": "u8", "allowed": [1, 2, 3, 4, 5]},
+          {"name": "effective_height", "type": "u64"}
+        ]
+      },
+      "constraints": [
+        {"op": "eq", "left": "payload.certificate_id", "right": "identity.certificate_id"}
+      ]
+    },
+    {
+      "id": 13,
+      "name": "validator_configuration",
+      "identity": {
+        "encoding": "CEV0",
+        "exact_bytes": 9,
+        "fields": [
+          {"name": "role", "type": "u8", "allowed": [1, 2], "meanings": {"1": "old", "2": "candidate"}},
+          {"name": "epoch", "type": "u64"}
+        ]
+      },
+      "payload": {"encoding": "ExactObject", "object": "ValidatorSetV0"},
+      "constraints": [
+        {"op": "eq", "left": "payload.epoch", "right": "identity.epoch"}
+      ]
+    },
+    {
+      "id": 14,
+      "name": "consensus_parameters",
+      "identity": {
+        "encoding": "CEV0",
+        "exact_bytes": 9,
+        "fields": [
+          {"name": "role", "type": "u8", "allowed": [1, 2], "meanings": {"1": "active", "2": "next"}},
+          {"name": "epoch", "type": "u64"}
+        ]
+      },
+      "payload": {"encoding": "ExactObject", "object": "ConsensusParametersV0"},
+      "constraints": []
+    },
+    {
+      "id": 15,
+      "name": "rollout_or_governance",
+      "identity": {"encoding": "CEV0", "exact_bytes": 8, "fields": [{"name": "target_epoch", "type": "u64"}]},
+      "payload": {
+        "encoding": "CEV0",
+        "fields": [
+          {"name": "phase", "type": "u8", "allowed": [0, 1, 2, 3]},
+          {"name": "parameters_hash", "type": "Hash32", "exact_bytes": 32},
+          {"name": "activation_height", "type": "u64", "minimum": 1},
+          {"name": "approved", "type": "u8", "allowed": [0, 1]}
+        ]
+      },
+      "constraints": []
+    }
+  ],
+  "mutation": {
+    "canonical_cev0": {
+      "fields": [
+        {"name": "schema_version", "type": "u16", "const": 0},
+        {"name": "kind", "type": "u8", "minimum": 1, "maximum": 15},
+        {"name": "logical_key", "type": "Bytes", "exact_bytes": 32},
+        {"name": "expected_value", "type": "Optional<Bytes>", "allowed_tags": [0, 1], "some_type": "exact ValueEnvelopeV0"},
+        {"name": "next_value", "type": "Optional<Bytes>", "allowed_tags": [0, 1], "some_type": "exact ValueEnvelopeV0"}
+      ],
+      "exact_decode_of_present_values": true
+    },
+    "compare_and_set": {
+      "create": {"expected_value": "None", "next_value": "Some", "next_revision": 1},
+      "update": {"expected_value": "Some", "next_value": "Some", "next_revision": "checked expected_revision + 1"},
+      "delete": {"expected_value": "Some required", "next_value": "None"},
+      "empty": "reject",
+      "precondition": "expected_value exactly equals the authenticated source value or absence"
+    },
+    "ordering": {
+      "key": ["kind u8", "raw logical_key bytes"],
+      "direction": "strict-ascending",
+      "duplicates": "reject-before-root"
+    },
+    "ordered_root": {
+      "leaf": {
+        "domain_ascii": "trnm.poco-bft.snapshot-mutation.v0",
+        "preimage": "canonical mutation CEV0"
+      },
+      "node": {
+        "domain_ascii": "trnm.poco-bft.snapshot-mutation-node.v0",
+        "preimage_fields": [
+          {"name": "schema_version", "type": "u16", "const": 0},
+          {"name": "level", "type": "u32", "first_leaf_parent_level": 0},
+          {"name": "left", "type": "Hash32"},
+          {"name": "right", "type": "Hash32"}
+        ],
+        "odd_width": "duplicate-left-as-right-at-every-level"
+      },
+      "outer": {
+        "domain_ascii": "trnm.poco-bft.snapshot-mutation-root.v0",
+        "preimage_fields": [
+          {"name": "schema_version", "type": "u16", "const": 0},
+          {"name": "mutation_count", "type": "u32", "exact_list_length": true},
+          {"name": "tree_root", "type": "Optional<Hash32>", "none_tag": 0, "some_tag": 1}
+        ],
+        "empty": "count=0 and tree_root tag=0",
+        "nonempty": "count>0 and tree_root tag=1 followed by Hash32"
+      }
+    }
+  },
+  "production_persistence_seal": {
+    "scope": "B2-H3b1",
+    "inactive_namespace": "zero namespace-8 leaves is valid before PoCO activation",
+    "active_namespace": {
+      "manifest_count": 1,
+      "manifest_exact_bytes": 47,
+      "manifest_height": "at most committed state height",
+      "physical_completeness": "every physical namespace-8 entry is named by the manifest and every manifest member exists physically",
+      "semantic_values": "all physical entries pass their exact kind-specific decoder",
+      "hidden_or_unknown_physical_keys": "reject"
+    },
+    "admission_paths": [
+      "in_memory_state_codec_encode",
+      "in_memory_state_codec_decode",
+      "sqlite_precommit_before_domain_or_JMT_rows",
+      "sqlite_startup_or_schema_migration",
+      "abci_snapshot_restore_v3",
+      "abci_snapshot_restore_v4"
+    ],
+    "sqlite_atomicity": {
+      "transaction": "BEGIN IMMEDIATE",
+      "validation_order": "verify committed source head, materialize authenticated source namespace, overlay planned namespace writes, validate exact target projection, then write any domain/JMT row",
+      "failure": "rollback with committed head unchanged"
+    },
+    "authority_non_claims": [
+      "no production PoCO mutation input is authorized by this seal alone",
+      "no chain/profile/parent/checkpoint execution or receipt provenance is established",
+      "no cross-entry business semantics or authenticated B2-G authority is established"
+    ]
+  },
+  "atomic_transition": {
+    "namespace": {"discriminant": 8, "key_prefix_hex": "74726e6d2f61757468656e746963617465642d73746174652f76340008"},
+    "state_head": {
+      "constructor": "poco_state_head_from_authenticated_cutoff_v0",
+      "source_capability": "private-field AuthenticatedPocoSnapshotNamespaceV0",
+      "type": "PocoStateHeadKernelV0",
+      "fields": ["origin_proof_id", "origin_epoch", "origin_cutoff_height", "origin_cutoff_block_id", "height", "state_root", "manifest_height", "entries_root", "entry_count"],
+      "manifest_height_rule": "manifest_height is at most height; it records the state version at which the live projection last changed or was explicitly refreshed",
+      "reusable_next_head": "only AppliedInMemoryPocoSnapshotTransitionV0.state_head()"
+    },
+    "source_reverification_in_same_plan_call": [
+      "state head height/state_root equal the current JMT latest version/root",
+      "target version is the exact current JMT version + 1",
+      "complete source proof bundle is reverified against state head height/state_root",
+      "verified manifest height/entries_root/entry_count exactly equal the state head; live manifest height is at most source state version",
+      "every source value is exact semantic-decoded before mutation planning"
+    ],
+    "writes": {
+      "atomic_unit": "one PlannedAuthUpdate",
+      "contents": ["all CAS PoCO puts/deletes", "conditional PoCO manifest write", "allowed non-PoCO authenticated writes"],
+      "manifest_rewrite_rule": {
+        "rewrite_at_target": "mutation_count > 0 or refresh_manifest_at_target is true",
+        "preserve_exact_source_bytes": "mutation_count = 0 and refresh_manifest_at_target is false",
+        "cutoff_requirement": "an actual epoch-cutoff projection sets refresh_manifest_at_target=true so the public B2-H2 verifier can require manifest_height=target state version"
+      }
+    },
+    "generic_auth_write_defense": {
+      "production_constructor": "AuthWrite::put rejects namespace-8 key preimages",
+      "test_only_constructor": "cfg(test) AuthWrite::delete verifies the same namespace-8 rejection",
+      "planner": "recheck every generic AuthWrite and reject namespace-8 key preimages",
+      "sealed_poco_constructors": "crate-private put/delete require a private-field PocoWritePermitV0 and accept only namespace-8 key preimages",
+      "permit_issuance": "production permit construction is private to the PoCO planner module; cfg(test) alone exposes an explicit crate-private test-only constructor"
+    },
+    "aggregate_bounds": {
+      "maximum_bytes": 8388608,
+      "checked_arithmetic": true,
+      "entry_and_write_count_maximum": 10000,
+      "combined_transition_write_count": "mutations + generic authenticated writes + one conservative manifest slot <= 10000",
+      "source_proof_bundle": "independently bounded by the B2-H2 proof-bundle projection",
+      "transition_input_projection": {
+        "mutation_terms": ["logical_key", "expected_value if Some", "next_value if Some"],
+        "generic_write_terms": ["key", "value if Some"]
+      },
+      "target_poco_projection": {
+        "terms_per_entry": ["logical_key", "value"],
+        "bound": "sum over the complete post-mutation PoCO entry set before hashing"
+      },
+      "target_zero_absence_reproof_bundle": {
+        "manifest_terms": ["manifest CEV0", "manifest proof key", "manifest proof value", "manifest encoded ICS23 proof"],
+        "member_terms": ["logical_key", "value", "membership proof key", "membership proof value", "membership encoded ICS23 proof"],
+        "absences": 0,
+        "maximum_encoded_ics23_proof_bytes_each": 1048576,
+        "bound": "checked incrementally against maximum_bytes using proofs for the exact planned target root"
+      }
+    },
+    "apply": {
+      "stale_plan": "reject if latest version/source root changed or target is no longer exact next version",
+      "stores_exact_writes": "bounded exact Vec<AuthWrite>",
+      "stores_tree_update_batch": false,
+      "replan_on_apply": "required against the supplied tree history after the stale-source check",
+      "no_batch_transplant": "a history-specific TreeUpdateBatch is never carried from plan to apply, including across equal version/root histories",
+      "recomputed_root_check": "replanned target root must equal the committed target state_root before apply",
+      "applied_root_check": "applied JMT root must equal the committed target state_root"
+    }
+  }
+}

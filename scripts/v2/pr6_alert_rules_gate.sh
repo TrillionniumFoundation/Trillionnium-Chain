@@ -36,6 +36,23 @@ require_number_or_auto() {
   fi
 }
 
+# Optional: resolve versioned policy config (without overriding explicit env)
+POLICY_FILE="${ALERT_POLICY_FILE:-$ROOT/config/alert-policy/current.json}"
+if [[ -f "$POLICY_FILE" ]]; then
+  POLICY_ENV="$RUN_DIR/policy.env"
+  python3 "$ROOT/scripts/v2/alert_policy_resolve.py" \
+    --policy "$POLICY_FILE" \
+    --profile "${ALERT_POLICY_PROFILE:-default}" \
+    --out-env "$POLICY_ENV" \
+    --only-missing \
+    --audit
+  # shellcheck disable=SC1090
+  source "$POLICY_ENV"
+fi
+
+# Capture and validate thresholds only after policy resolution. Explicit
+# process environment values retain precedence because the resolver uses
+# --only-missing.
 WINDOW_HOURS_VAL="${WINDOW_HOURS:-48}"
 FAIL_UNRESOLVED_CHALLENGES_VAL="${FAIL_UNRESOLVED_CHALLENGES:-5}"
 WARN_UNRESOLVED_CHALLENGES_VAL="${WARN_UNRESOLVED_CHALLENGES:--1}"
@@ -51,20 +68,6 @@ require_non_negative_integer "FAIL_FORFEITS_DAILY_INCREASE" "$FAIL_FORFEITS_DAIL
 require_number_or_auto "WARN_FORFEITS_DAILY_INCREASE" "$WARN_FORFEITS_DAILY_INCREASE_VAL"
 require_number_or_auto "FAIL_ESCROW_NONZERO_HOURS" "$FAIL_ESCROW_NONZERO_HOURS_VAL"
 require_number_or_auto "WARN_ESCROW_NONZERO_HOURS" "$WARN_ESCROW_NONZERO_HOURS_VAL"
-
-# Optional: resolve versioned policy config (without overriding explicit env)
-POLICY_FILE="${ALERT_POLICY_FILE:-$ROOT/config/alert-policy/current.json}"
-if [[ -f "$POLICY_FILE" ]]; then
-  POLICY_ENV="$RUN_DIR/policy.env"
-  python3 "$ROOT/scripts/v2/alert_policy_resolve.py" \
-    --policy "$POLICY_FILE" \
-    --profile "${ALERT_POLICY_PROFILE:-default}" \
-    --out-env "$POLICY_ENV" \
-    --only-missing \
-    --audit
-  # shellcheck disable=SC1090
-  source "$POLICY_ENV"
-fi
 
 CI_WARN_ARG=""
 if [[ "${CI_HARD_FAIL_ON_WARN:-0}" == "1" ]]; then

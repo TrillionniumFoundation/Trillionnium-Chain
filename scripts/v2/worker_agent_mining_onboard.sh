@@ -44,6 +44,12 @@ SUBMIT_TMP_DIR="$OUT_DIR/submit-parts"
 SUBMIT_RUN_LOG_DIR="$OUT_DIR/submit-run-logs"
 mkdir -p "$SUBMIT_TMP_DIR" "$SUBMIT_RUN_LOG_DIR"
 
+# Every onboarding run owns its adapter receipt journal. Reusing the adapter's
+# date-based default makes a later hermetic smoke look like a replay of an
+# earlier run because the deterministic task ranges intentionally repeat.
+: "${TRNM_TX_ADAPTER_OUT_LOG:=$OUT_DIR/tx-adapter.jsonl}"
+export TRNM_TX_ADAPTER_OUT_LOG
+
 if [[ "$SKIP_GATES" != "1" ]]; then
   if [[ -n "$REAL_CLI" ]]; then
     echo "[stage] run real-cli worker receipt gates"
@@ -198,6 +204,12 @@ with open(ack_log, 'r', encoding='utf-8') as f:
         elif s=='rejected': rejected += 1
         elif s=='failed': failed += 1
 terminal = accepted + rejected
+task_ids = [row.get('task_id') for row in rows]
+unique_task_ids = len(set(task_ids))
+valid_task_ids = all(
+    isinstance(task_id, int) and not isinstance(task_id, bool) and task_id >= 0
+    for task_id in task_ids
+)
 submit_elapsed_ms = max(0, submit_end_ms - submit_start_ms)
 flush_elapsed_ms = max(0, flush_end_ms - flush_start_ms)
 total_elapsed_ms = max(0, flush_end_ms - submit_start_ms)
@@ -207,6 +219,7 @@ end2end_tps = (agents * 1000.0 / total_elapsed_ms) if total_elapsed_ms > 0 else 
 summary = {
     'agents': agents,
     'acks_total': len(rows),
+    'unique_task_ids': unique_task_ids,
     'accepted': accepted,
     'rejected': rejected,
     'failed': failed,
@@ -223,12 +236,19 @@ summary = {
         'flush_acks_per_sec': round(flush_tps, 3) if flush_tps is not None else None,
         'end2end_tasks_per_sec': round(end2end_tps, 3) if end2end_tps is not None else None,
     },
-    'ok': (failed == 0 and terminal >= agents)
+    'ok': (
+        len(rows) == agents
+        and accepted == agents
+        and rejected == 0
+        and failed == 0
+        and valid_task_ids
+        and unique_task_ids == agents
+    )
 }
 with open(out, 'w', encoding='utf-8') as w:
     json.dump(summary, w, indent=2, ensure_ascii=False)
 print(json.dumps(summary, ensure_ascii=False))
-if failed != 0 or terminal < agents:
+if not summary['ok']:
     raise SystemExit(23)
 PY
 

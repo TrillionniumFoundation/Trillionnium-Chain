@@ -1,0 +1,258 @@
+name: trnm-required-baseline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-required-baseline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  repository-truth:
+    name: repository-truth
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact source with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Validate repository, consensus and blocker truth
+        run: |
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+      - name: Validate deterministic release-status projection
+        run: |
+          python3 scripts/ci/generate_release_status_v1.py --check-deterministic \
+            --output "${RUNNER_TEMP}/trnm-release-status-v1.json"
+          python3 -m json.tool "${RUNNER_TEMP}/trnm-release-status-v1.json" >/dev/null
+      - name: Validate committed JSON and TOML
+        run: |
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import tomllib
+          root = pathlib.Path(".")
+          for path in sorted(root.rglob("*.json")):
+              if any(part in {".git", "node_modules", "target"} for part in path.parts):
+                  continue
+              with path.open("r", encoding="utf-8") as handle:
+                  json.load(handle)
+          for path in sorted(root.rglob("*.toml")):
+              if any(part in {".git", "node_modules", "target"} for part in path.parts):
+                  continue
+              with path.open("rb") as handle:
+                  tomllib.load(handle)
+          PY
+      - name: Compile Python CI tooling
+        run: |
+          PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/pycache" python3 -m py_compile \
+            scripts/ci/check_repository_truth_v1.py \
+            scripts/ci/check_blocker_execution_v1.py \
+            scripts/ci/check_required_protocol_contract_v1.py \
+            scripts/ci/generate_release_status_v1.py \
+            scripts/ci/check_external_evidence_v1.py
+      - name: Require generators to leave the checkout clean
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  protocol-contract:
+    name: protocol-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Install required host tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep
+      - name: Install pinned Rust and Node toolchains
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup override set 1.95.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "24.18.0"
+      - name: Validate canonical plan, mainline and active protocol contract
+        run: |
+          set -euo pipefail
+          bash ./scripts/ci/check_canonical_development_plan.sh
+          bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          python3 ./scripts/ci/check_required_protocol_contract_v1.py
+      - name: Validate independent frozen vectors
+        run: |
+          set -euo pipefail
+          python3 ./scripts/ci/check_poco_bft_v0_parameters.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
+          python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
+          python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
+          bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+          bash ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+          bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+      - name: Validate machine-readable schemas and exact parsers
+        run: |
+          set -euo pipefail
+          bash ./scripts/ci/check_poco_bft_v0_registry.sh
+          bash ./scripts/ci/check_poco_bft_v0_logical_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_block_body_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+      - name: Require protocol gates to leave the checkout clean
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  fuzz-smoke:
+    name: fuzz-smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Install pinned fuzz toolchain
+        run: |
+          rustup toolchain install nightly-2026-07-27 --profile minimal
+          bash ./scripts/ci/install_cargo_fuzz.sh
+      - name: Run bounded three-target canonical-input smoke
+        env:
+          TRNM_FUZZ_SMOKE_SECONDS: "5"
+        run: ./scripts/ci/check_canonical_fuzz_smoke.sh
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-required-fuzz-${{ github.run_id }}-${{ github.run_attempt }}
+          path: trillionnium/fuzz/artifacts/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+  external-evidence-contract:
+    name: external-evidence-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Validate supplied external evidence and report open blockers
+        run: |
+          python3 scripts/ci/check_external_evidence_v1.py \
+            --output "${RUNNER_TEMP}/external-evidence-status-v1.json"
+          python3 -m json.tool "${RUNNER_TEMP}/external-evidence-status-v1.json"
+      - name: Prove release mode is fail-closed while evidence is absent
+        run: |
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all \
+            --source-commit "$(git rev-parse HEAD)" \
+            --source-tree "$(git rev-parse 'HEAD^{tree}')" \
+            >/tmp/trnm-external-release-gate.out 2>/tmp/trnm-external-release-gate.err
+          rc=$?
+          set -e
+          test "$rc" -eq 2
+          grep -q "external evidence gate remains open" /tmp/trnm-external-release-gate.err
+
+  rust-baseline:
+    name: rust-baseline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+      - name: Rust format
+        working-directory: trillionnium
+        run: cargo fmt --all -- --check
+      - name: Compile every active workspace target
+        working-directory: trillionnium
+        run: cargo check --workspace --all-targets --locked
+      - name: Strict Clippy for executable safety kernel
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          for package in \
+            trnm-state \
+            trnm-consensus-types \
+            trnm-consensus-crypto \
+            trnm-consensus-core \
+            trnm-consensus-safety-rules \
+            trnm-consensus-safety-store \
+            trnm-consensus-signer-journal \
+            trnm-native-application \
+            trnm-poco-node
+          do
+            echo "clippy package=${package}"
+            cargo clippy -p "${package}" --locked -- -D warnings
+          done
+      - name: Run critical library regressions
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          cargo test -p trnm-state --lib --locked
+          cargo test -p trnm-consensus-types --lib --locked
+          cargo test -p trnm-consensus-core --lib --locked
+          cargo test -p trnm-poco-node --lib --locked

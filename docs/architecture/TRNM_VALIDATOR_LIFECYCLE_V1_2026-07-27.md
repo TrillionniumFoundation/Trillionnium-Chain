@@ -1,8 +1,12 @@
 # TRNM Validator Lifecycle v1 — 2026-07-27
 
-Status: implemented, unit/crash-recovery tested, and proven in a six-node local
-CometBFT process fixture. Cross-host operations and production governance remain
-required before public-testnet readiness.
+Status: **preserved CometBFT-oracle evidence; superseded as the production
+validator-lifecycle design by PoCO-BFT v0 epoch handoff rules**
+
+This implementation remains useful for runtime migration and differential tests.
+It is not the PoCO-BFT production validator-set transition. The binding target is
+`TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md` and
+`../protocol/poco-bft-v0/04-epochs-validator-sets-and-upgrades.md`.
 
 ## State and commitment
 

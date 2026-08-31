@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trillionnium.org/schemas/agent-handoff-v1.schema.json",
+  "title": "TRNM Agent Handoff v1",
+  "description": "Additive, fail-closed handoff contract. Publication commits are intentionally separate from implementation/source commits because an enclosing commit cannot self-hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "agent_id", "package_id", "status", "base_commit", "base_tree",
+    "head_commit", "changed_paths", "gaps_closed", "gaps_open", "commands",
+    "failed_tests", "retained_mutants", "evidence_scope", "authority",
+    "classification", "known_gaps", "interface_requests",
+    "downstream_invalidation", "next_action"
+  ],
+  "properties": {
+    "schema": { "const": "trnm-agent-handoff-v1" },
+    "agent_id": { "type": "string", "pattern": "^A(0[0-9]|1[0-7])$" },
+    "package_id": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$" },
+    "status": {
+      "enum": [
+        "WORKING", "MODULE_CLOSED_CANDIDATE", "BLOCKED_UPSTREAM",
+        "BASE_DRIFT", "STOP_CONDITION", "RESUME_REQUIRED"
+      ]
+    },
+    "base_commit": { "$ref": "#/$defs/sha40" },
+    "base_tree": { "$ref": "#/$defs/sha40" },
+    "head_commit": {
+      "description": "The semantic implementation/source commit bound by the handoff; the containing publication commit is recorded by the source manifest or PR evidence.",
+      "oneOf": [
+        { "$ref": "#/$defs/sha40" },
+        { "type": "null" }
+      ]
+    },
+    "implementation_commit": { "$ref": "#/$defs/sha40" },
+    "implementation_tree": { "$ref": "#/$defs/sha40" },
+    "implementation_parent": { "$ref": "#/$defs/sha40" },
+    "metadata_commit": { "$ref": "#/$defs/sha40" },
+    "base_sync_parent": { "$ref": "#/$defs/sha40" },
+    "control_replay_commit": { "$ref": "#/$defs/sha40" },
+    "frozen_workflow_tree": { "$ref": "#/$defs/sha40" },
+    "durable_rust_evidence_head": { "$ref": "#/$defs/sha40" },
+    "application_tree_candidate_evidence_head": { "$ref": "#/$defs/sha40" },
+    "publication_commit": { "$ref": "#/$defs/sha40" },
+    "publication_tree": { "$ref": "#/$defs/sha40" },
+    "changed_paths": { "$ref": "#/$defs/stringArray" },
+    "gaps_closed": { "$ref": "#/$defs/stringArray" },
+    "gaps_open": { "$ref": "#/$defs/stringArray" },
+    "commands": { "$ref": "#/$defs/stringArray" },
+    "failed_tests": { "$ref": "#/$defs/stringArray" },
+    "retained_mutants": { "$ref": "#/$defs/stringArray" },
+    "evidence_scope": {
+      "type": "string",
+      "pattern": "^(crate|model|fixture|simulation|contract|process-candidate|process|host|network|production)(\\|(crate|model|fixture|simulation|contract|process-candidate|process|host|network|production))*$"
+    },
+    "authority": { "enum": ["candidate", "simulation", "normative", "production"] },
+    "classification": {
+      "enum": [
+        "candidate-non-normative", "reproducible", "reviewed", "accepted",
+        "superseded", "invalidated", "reopened"
+      ]
+    },
+    "known_gaps": { "$ref": "#/$defs/stringArray" },
+    "interface_requests": { "$ref": "#/$defs/stringArray" },
+    "downstream_invalidation": { "$ref": "#/$defs/stringArray" },
+    "next_action": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "sha40": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

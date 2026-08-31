@@ -1,0 +1,344 @@
+{
+  "schema": "trnm_poco_bft_cev0_parser_certificate_kernel_vectors_v0",
+  "schema_version": 0,
+  "logical_schema": "../schema/cev0-logical-schema-v0.json",
+  "raw_source_vector": "qc-tc-threshold-v0.json",
+  "scope": "B2-A exact bounded decoding and semantic admission for the ordinary certificate kernel",
+  "valid_raw_objects": [
+    {
+      "id": "validator_set_exact_10",
+      "object_type": "ValidatorSetV0",
+      "json_pointer": "/validator_set",
+      "domain": "validator_set",
+      "digest_field": "validator_set_id_hex"
+    },
+    {
+      "id": "qc_low_exact_7",
+      "object_type": "QuorumCertificateV0",
+      "json_pointer": "/quorum_certificates/low_exact_7",
+      "domain": "qc",
+      "digest_field": "digest_hex"
+    },
+    {
+      "id": "qc_high_exact_7",
+      "object_type": "QuorumCertificateV0",
+      "json_pointer": "/quorum_certificates/high_exact_7",
+      "domain": "qc",
+      "digest_field": "digest_hex"
+    },
+    {
+      "id": "qc_high_alternate_exact_7",
+      "object_type": "QuorumCertificateV0",
+      "json_pointer": "/quorum_certificates/high_alternate_exact_7",
+      "domain": "qc",
+      "digest_field": "digest_hex"
+    },
+    {
+      "id": "qc_future_exact_7",
+      "object_type": "QuorumCertificateV0",
+      "json_pointer": "/quorum_certificates/future_exact_7",
+      "domain": "qc",
+      "digest_field": "digest_hex"
+    },
+    {
+      "id": "qc_same_block_variant_exact_7",
+      "object_type": "QuorumCertificateV0",
+      "json_pointer": "/quorum_certificates/same_block_variant_exact_7",
+      "domain": "qc",
+      "digest_field": "digest_hex"
+    },
+    {
+      "id": "tc_exact_7",
+      "object_type": "TimeoutCertificateV0",
+      "json_pointer": "/timeout_certificate_exact_7",
+      "domain": "tc",
+      "digest_field": "digest_hex"
+    },
+    {
+      "id": "tc_digest_tiebreak_exact_7",
+      "object_type": "TimeoutCertificateV0",
+      "json_pointer": "/timeout_certificate_digest_tiebreak_exact_7",
+      "domain": "tc",
+      "digest_field": "digest_hex"
+    }
+  ],
+  "raw_shape_cases": [
+    {
+      "id": "every_noncomplete_prefix",
+      "operation": "all_noncomplete_prefixes",
+      "sources": "all_valid_raw_objects",
+      "expected_error_code": "unexpected_eof"
+    },
+    {
+      "id": "every_root_trailing_byte",
+      "operation": "append_hex",
+      "hex": "00",
+      "sources": "all_valid_raw_objects",
+      "expected_error_code": "trailing_bytes"
+    },
+    {
+      "id": "signature64_truncated",
+      "operation": "truncate_last_byte",
+      "source": "qc_low_exact_7",
+      "expected_error_code": "unexpected_eof"
+    },
+    {
+      "id": "list_count_101",
+      "operation": "standalone_list_count",
+      "count": "101",
+      "max_count": "100",
+      "expected_error_code": "count_limit_exceeded"
+    },
+    {
+      "id": "list_count_u32_max",
+      "operation": "standalone_list_count",
+      "count": "4294967295",
+      "max_count": "100",
+      "expected_error_code": "count_limit_exceeded"
+    },
+    {
+      "id": "qc_view_zero_then_truncated",
+      "operation": "qc_view_zero_then_truncate",
+      "source": "qc_low_exact_7",
+      "expected_error_code": "unexpected_eof"
+    },
+    {
+      "id": "qc_empty_signatures_then_trailing",
+      "operation": "qc_empty_signatures_then_trailing",
+      "source": "qc_low_exact_7",
+      "expected_error_code": "trailing_bytes"
+    }
+  ],
+  "boundary_cases": [
+    {
+      "id": "chain_id_length_0",
+      "operation": "validator_set_chain_id_length",
+      "length": "0",
+      "expected_error_code": "invalid_consensus_string"
+    },
+    {
+      "id": "chain_id_length_128",
+      "operation": "validator_set_chain_id_length",
+      "length": "128",
+      "expected_result": "valid"
+    },
+    {
+      "id": "chain_id_length_129",
+      "operation": "validator_set_chain_id_length",
+      "length": "129",
+      "expected_error_code": "length_limit_exceeded"
+    },
+    {
+      "id": "chain_id_invalid_ascii",
+      "operation": "validator_set_chain_id_hex",
+      "hex": "41",
+      "expected_error_code": "invalid_consensus_string"
+    },
+    {
+      "id": "validator_id_length_0",
+      "operation": "signature_share_validator_id_length",
+      "length": "0",
+      "expected_error_code": "length_limit_exceeded"
+    },
+    {
+      "id": "validator_id_length_128",
+      "operation": "signature_share_validator_id_length",
+      "length": "128",
+      "expected_result": "valid"
+    },
+    {
+      "id": "validator_id_length_129",
+      "operation": "signature_share_validator_id_length",
+      "length": "129",
+      "expected_error_code": "length_limit_exceeded"
+    },
+    {
+      "id": "validator_count_100",
+      "operation": "synthetic_validator_set_count",
+      "count": "100",
+      "expected_result": "valid"
+    },
+    {
+      "id": "qc_signature_count_100",
+      "operation": "synthetic_qc_signature_count",
+      "count": "100",
+      "expected_result": "structurally_valid"
+    },
+    {
+      "id": "tc_entries_references_100",
+      "operation": "synthetic_tc_shape",
+      "entry_count": "100",
+      "reference_count": "100",
+      "signatures_per_reference": "100",
+      "expected_aggregate_qc_signatures": "10000",
+      "expected_result": "structurally_valid"
+    }
+  ],
+  "generated_semantic_cases": [
+    {
+      "id": "validator_set_schema_version_1",
+      "operation": "set_root_integer_field",
+      "source": "validator_set_exact_10",
+      "field": "schema_version",
+      "value": "1",
+      "expected_error_code": "invalid_schema_version"
+    },
+    {
+      "id": "qc_protocol_version_1",
+      "operation": "set_root_integer_field",
+      "source": "qc_low_exact_7",
+      "field": "protocol_version",
+      "value": "1",
+      "expected_error_code": "invalid_protocol_version"
+    },
+    {
+      "id": "validator_duplicate_id",
+      "operation": "duplicate_validator_id",
+      "source": "validator_set_exact_10",
+      "expected_error_code": "duplicate_validator_id"
+    },
+    {
+      "id": "validator_set_zero_genesis_hash",
+      "operation": "zero_validator_set_genesis_hash",
+      "source": "validator_set_exact_10",
+      "expected_error_code": "zero_genesis_hash"
+    },
+    {
+      "id": "validator_set_empty",
+      "operation": "clear_validator_set",
+      "source": "validator_set_exact_10",
+      "expected_error_code": "empty_validator_set"
+    },
+    {
+      "id": "validator_zero_public_key",
+      "operation": "zero_first_validator_public_key",
+      "source": "validator_set_exact_10",
+      "expected_error_code": "zero_public_key"
+    },
+    {
+      "id": "validator_noncanonical_order",
+      "operation": "swap_first_two_validators",
+      "source": "validator_set_exact_10",
+      "expected_error_code": "noncanonical_validator_order"
+    },
+    {
+      "id": "validator_duplicate_public_key",
+      "operation": "duplicate_validator_public_key",
+      "source": "validator_set_exact_10",
+      "expected_error_code": "duplicate_public_key"
+    },
+    {
+      "id": "ordinary_qc_empty_signatures",
+      "operation": "clear_qc_signatures",
+      "source": "qc_low_exact_7",
+      "expected_error_code": "unauthorized_synthetic_qc"
+    },
+    {
+      "id": "ordinary_signed_qc_view_zero",
+      "operation": "set_qc_view_zero",
+      "source": "qc_low_exact_7",
+      "expected_error_code": "unauthorized_synthetic_qc"
+    },
+    {
+      "id": "vote_message_kind_out_of_range",
+      "operation": "vote_sign_message_kind",
+      "target_object_type": "VoteSignV0",
+      "source_usage": "derive a standalone signing value from the QC coordinates",
+      "value": "5",
+      "source": "qc_low_exact_7",
+      "expected_error_code": "invalid_message_kind"
+    },
+    {
+      "id": "timeout_message_kind_vote",
+      "operation": "timeout_sign_message_kind",
+      "target_object_type": "TimeoutSignV0",
+      "source_usage": "derive a standalone signing value from the TC scope and first summary",
+      "value": "1",
+      "source": "tc_exact_7",
+      "expected_error_code": "invalid_message_kind"
+    },
+    {
+      "id": "vote_context_schema_version_1",
+      "operation": "vote_sign_context_integer_field",
+      "target_object_type": "VoteSignV0",
+      "source": "qc_low_exact_7",
+      "field": "schema_version",
+      "value": "1",
+      "expected_error_code": "invalid_schema_version"
+    },
+    {
+      "id": "timeout_context_protocol_version_1",
+      "operation": "timeout_sign_context_integer_field",
+      "target_object_type": "TimeoutSignV0",
+      "source": "tc_exact_7",
+      "field": "protocol_version",
+      "value": "1",
+      "expected_error_code": "invalid_protocol_version"
+    },
+    {
+      "id": "tc_duplicate_reference",
+      "operation": "duplicate_tc_reference",
+      "source": "tc_exact_7",
+      "expected_error_code": "duplicate_reference"
+    },
+    {
+      "id": "tc_unused_extra_reference",
+      "operation": "add_unused_valid_tc_reference",
+      "source": "tc_exact_7",
+      "extra_qc_source": "qc_high_alternate_exact_7",
+      "expected_error_code": "unreferenced_qc"
+    },
+    {
+      "id": "tc_same_view_different_block",
+      "operation": "generated_authenticated_same_view_conflict",
+      "source_class": "independent runtime-generated authenticated semantic witness; not a committed B1 raw object",
+      "expected_error_code": "conflicting_same_view_qc"
+    },
+    {
+      "id": "tc_nested_empty_ordinary_qc",
+      "operation": "clear_first_tc_reference_signatures",
+      "source": "tc_exact_7",
+      "expected_error_code": "invalid_referenced_qc"
+    },
+    {
+      "id": "tc_nested_bad_qc_signature",
+      "operation": "mutate_first_tc_reference_signature",
+      "source": "tc_exact_7",
+      "expected_error_code": "invalid_signature"
+    },
+    {
+      "id": "qc_identity_small_order_forgery",
+      "operation": "generated_identity_small_order_forgery",
+      "public_key_hex": "0100000000000000000000000000000000000000000000000000000000000000",
+      "signature_hex": "01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "block_id_hex": "6d4a33383870c370051c190d5b2fa8fbb395f14834b81ad8f056e245a62f68e7",
+      "expected_error_code": "invalid_signature"
+    }
+  ],
+  "imported_b1_semantic_cases": [
+    { "source_case_id": "qc_one_below_threshold", "expected_error_code": "insufficient_quorum" },
+    { "source_case_id": "qc_duplicate_signer", "expected_error_code": "duplicate_signer" },
+    { "source_case_id": "qc_noncanonical_signer_order", "expected_error_code": "noncanonical_signer_order" },
+    { "source_case_id": "qc_unknown_signer", "expected_error_code": "unknown_signer" },
+    { "source_case_id": "qc_wrong_block_root", "expected_error_code": "invalid_signature" },
+    { "source_case_id": "qc_wrong_context_root", "expected_error_code": "invalid_signature" },
+    { "source_case_id": "qc_wrong_domain_root", "expected_error_code": "invalid_signature" },
+    { "source_case_id": "qc_bad_signature", "expected_error_code": "invalid_signature" },
+    { "source_case_id": "tc_one_below_threshold", "expected_error_code": "insufficient_quorum" },
+    { "source_case_id": "tc_missing_full_reference", "expected_error_code": "reference_summary_mismatch" },
+    { "source_case_id": "tc_selected_not_maximum", "expected_error_code": "selected_not_maximum" },
+    { "source_case_id": "tc_summary_conflict", "expected_error_code": "reference_summary_mismatch" },
+    { "source_case_id": "tc_noncanonical_reference_order", "expected_error_code": "noncanonical_reference_order" },
+    { "source_case_id": "tc_duplicate_signer", "expected_error_code": "duplicate_signer" },
+    { "source_case_id": "tc_noncanonical_signer_order", "expected_error_code": "noncanonical_signer_order" },
+    { "source_case_id": "tc_unknown_signer", "expected_error_code": "unknown_signer" },
+    { "source_case_id": "tc_future_reference_view", "expected_error_code": "future_reference_view" },
+    { "source_case_id": "tc_same_block_different_coordinates", "expected_error_code": "same_block_different_coordinates" },
+    { "source_case_id": "tc_digest_tiebreak_selected_smaller", "expected_error_code": "selected_not_maximum" }
+  ],
+  "honest_boundary": [
+    "The corpus consumes B1 raw CEV0 certificate bytes but is not a protobuf envelope corpus.",
+    "Synthetic GenesisQC and EpochAnchorQC parsing remains authorization-context work.",
+    "Proposal, Block, epoch transition, evidence, receipt, Consumption Certificate, and light-client objects are excluded."
+  ]
+}

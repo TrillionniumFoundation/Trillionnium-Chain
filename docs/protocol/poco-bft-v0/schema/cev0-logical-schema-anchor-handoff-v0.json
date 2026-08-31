@@ -1,0 +1,1452 @@
+{
+  "schema": "trnm_poco_bft_cev0_logical_schema_anchor_handoff_v0",
+  "schema_version": 0,
+  "scope": "B2-B synthetic-anchor and handoff certificate kernel only",
+  "status": "closed_for_listed_objects_and_relations_only",
+  "imports": [
+    {
+      "path": "cev0-logical-schema-v0.json",
+      "schema": "trnm_poco_bft_cev0_logical_schema_v0",
+      "schema_version": 0,
+      "reuse": [
+        "hash_construction",
+        "primitives",
+        "Hash32",
+        "Signature64",
+        "MessageKindV0",
+        "SignatureShareV0",
+        "QuorumCertificateV0",
+        "qc domain"
+      ],
+      "note": "B2-B never redeclares imported CEV0 primitives, signature shares, or QCs. The imported QC decoder is used only for the non-empty terminal old QC nested inside an authorization."
+    }
+  ],
+  "hard_limits": {
+    "max_chain_id_bytes": "128",
+    "max_validator_id_bytes": "128",
+    "max_handoff_old_signature_count": "100",
+    "max_handoff_new_signature_count": "100",
+    "max_handoff_aggregate_signature_count": "200"
+  },
+  "enums": [
+    {
+      "name": "BlockKindV0",
+      "encoding": "u8",
+      "coverage": "closed",
+      "variants": [
+        {
+          "name": "regular",
+          "value": 0
+        },
+        {
+          "name": "epoch_checkpoint",
+          "value": 1
+        },
+        {
+          "name": "epoch_seal_1",
+          "value": 2
+        },
+        {
+          "name": "epoch_seal_2",
+          "value": 3
+        },
+        {
+          "name": "epoch_handoff",
+          "value": 4
+        }
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "name": "BlockHeaderV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16",
+          "equals": "0"
+        },
+        {
+          "name": "genesis_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "chain_id",
+          "type": "ConsensusString"
+        },
+        {
+          "name": "protocol_version",
+          "type": "u32"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "view",
+          "type": "u64",
+          "min": "1"
+        },
+        {
+          "name": "height",
+          "type": "u64",
+          "min": "1"
+        },
+        {
+          "name": "block_kind",
+          "type": "BlockKindV0"
+        },
+        {
+          "name": "parent_block_id",
+          "type": "Hash32"
+        },
+        {
+          "name": "proposer_id",
+          "type": "Bytes",
+          "min_bytes": "1",
+          "max_bytes": "128"
+        },
+        {
+          "name": "active_validator_set_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "consensus_parameters_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "payload_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "state_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "receipts_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "evidence_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "timestamp_ms",
+          "type": "u64"
+        },
+        {
+          "name": "next_epoch_commitment_hash",
+          "type": {
+            "kind": "optional",
+            "item": "Hash32"
+          }
+        }
+      ]
+    },
+    {
+      "name": "HandoffDescriptorV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16",
+          "equals": "0"
+        },
+        {
+          "name": "genesis_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "chain_id",
+          "type": "ConsensusString"
+        },
+        {
+          "name": "old_epoch",
+          "type": "u64"
+        },
+        {
+          "name": "new_epoch",
+          "type": "u64"
+        },
+        {
+          "name": "old_protocol_version",
+          "type": "u32"
+        },
+        {
+          "name": "new_protocol_version",
+          "type": "u32"
+        },
+        {
+          "name": "old_validator_set_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "new_validator_set_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "old_consensus_parameters_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "new_consensus_parameters_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "checkpoint_height",
+          "type": "u64"
+        },
+        {
+          "name": "checkpoint_block_id",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "checkpoint_state_root",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "next_epoch_commitment_digest",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "terminal_old_height",
+          "type": "u64"
+        },
+        {
+          "name": "terminal_old_block_id",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "terminal_old_qc_digest",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "terminal_old_view",
+          "type": "u64",
+          "min": "1"
+        },
+        {
+          "name": "activation_height",
+          "type": "u64"
+        },
+        {
+          "name": "initial_new_view",
+          "type": "u64",
+          "equals": "1"
+        }
+      ]
+    },
+    {
+      "name": "HandoffVoteSignV0",
+      "coverage": "closed",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16",
+          "equals": "0"
+        },
+        {
+          "name": "genesis_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "chain_id",
+          "type": "ConsensusString"
+        },
+        {
+          "name": "signing_protocol_version",
+          "type": "u32"
+        },
+        {
+          "name": "signing_epoch",
+          "type": "u64"
+        },
+        {
+          "name": "signing_validator_set_hash",
+          "type": "Hash32",
+          "nonzero": true
+        },
+        {
+          "name": "signing_view",
+          "type": "u64",
+          "min": "1"
+        },
+        {
+          "name": "message_kind",
+          "type": "MessageKindV0",
+          "allowed_variants": [
+            "old_set_handoff_vote",
+            "new_set_handoff_vote"
+          ]
+        },
+        {
+          "name": "handoff_descriptor_digest",
+          "type": "Hash32"
+        }
+      ]
+    },
+    {
+      "name": "HandoffCertificateV0",
+      "coverage": "closed_shape_and_role_binding_only",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16",
+          "equals": "0"
+        },
+        {
+          "name": "descriptor",
+          "type": "HandoffDescriptorV0"
+        },
+        {
+          "name": "old_signatures",
+          "type": {
+            "kind": "list",
+            "item": "SignatureShareV0",
+            "max_count": "100"
+          },
+          "min_count": "1",
+          "strict_order_by": "validator_id"
+        },
+        {
+          "name": "new_signatures",
+          "type": {
+            "kind": "list",
+            "item": "SignatureShareV0",
+            "max_count": "100"
+          },
+          "min_count": "1",
+          "strict_order_by": "validator_id"
+        }
+      ]
+    },
+    {
+      "name": "EpochAnchorAuthorizationV0",
+      "coverage": "closed_shape_and_terminal_relation_only",
+      "independent_digest_domain": null,
+      "fields": [
+        {
+          "name": "terminal_old_header",
+          "type": "BlockHeaderV0"
+        },
+        {
+          "name": "terminal_old_qc",
+          "type": "QuorumCertificateV0",
+          "authorization": "ordinary_nonempty_terminal_qc_only"
+        },
+        {
+          "name": "handoff_certificate",
+          "type": "HandoffCertificateV0"
+        }
+      ]
+    }
+  ],
+  "domains": [
+    {
+      "id": "block",
+      "ascii": "trnm.poco-bft.block.v0",
+      "logical_object": "BlockHeaderV0",
+      "coverage": "closed"
+    },
+    {
+      "id": "handoff_descriptor",
+      "ascii": "trnm.poco-bft.handoff-descriptor.v0",
+      "logical_object": "HandoffDescriptorV0",
+      "coverage": "closed"
+    },
+    {
+      "id": "handoff_vote",
+      "ascii": "trnm.poco-bft.handoff-vote.v0",
+      "logical_object": "HandoffVoteSignV0",
+      "coverage": "closed_shape_only"
+    },
+    {
+      "id": "handoff_certificate",
+      "ascii": "trnm.poco-bft.handoff-certificate.v0",
+      "logical_object": "HandoffCertificateV0",
+      "coverage": "closed_shape_only"
+    }
+  ],
+  "context_derived_outputs": [
+    {
+      "name": "GenesisQC",
+      "logical_object": "QuorumCertificateV0",
+      "authority": "trusted genesis document",
+      "raw_peer_decoder_exposed": false,
+      "ordinary_qc_admission": false,
+      "b2b_decoder_output": false,
+      "usable_after_b2b_kernel_only": false,
+      "rule": "exact trusted epoch-0/view-0/height-0/genesis_hash block_id preimage with an empty signature list"
+    },
+    {
+      "name": "EpochAnchorQC",
+      "logical_object": "QuorumCertificateV0",
+      "authority": "future complete external epoch-transition authorization",
+      "raw_peer_decoder_exposed": false,
+      "ordinary_qc_admission": false,
+      "b2b_decoder_output": false,
+      "usable_after_b2b_kernel_only": false,
+      "rule": "B2-B freezes only the expected new version/epoch/set, view-0, terminal-height/block, empty-signature CEV0 candidate binding. A usable EpochAnchorQc may be instantiated only after external complete checkpoint/two-seal ancestry, authenticated NextEpochCommitmentV0 preimage/state provenance, committed old/new set and parameter preimage validation, weighted-quorum, and strict cryptographic authorization succeeds."
+    }
+  ],
+  "node_decoder_entry_points": [
+    "decode_block_header_v0_exact",
+    "decode_handoff_descriptor_v0_exact",
+    "decode_handoff_vote_sign_v0_exact_with_descriptor_role",
+    "decode_handoff_certificate_v0_exact",
+    "decode_epoch_anchor_authorization_v0_exact"
+  ],
+  "rust_decoder_entry_points": [
+    "decode_block_header_v0_exact",
+    "decode_handoff_descriptor_v0_exact",
+    "decode_handoff_certificate_v0_exact",
+    "decode_epoch_anchor_authorization_kernel_v0_exact"
+  ],
+  "rust_decoder_return_contracts": [
+    {
+      "entry_point": "decode_epoch_anchor_authorization_kernel_v0_exact",
+      "return_type": "EpochAnchorAuthorizationKernelV0",
+      "inert": true,
+      "permitted_methods": [
+        "terminal_old_header",
+        "terminal_old_qc",
+        "handoff_certificate",
+        "try_cev0_bytes",
+        "verify_certificate_kernel"
+      ],
+      "forbidden_methods": [
+        "epoch_anchor_qc",
+        "into_authorization"
+      ],
+      "note": "The decoder result cannot instantiate or authorize a usable EpochAnchorQc."
+    }
+  ],
+  "rust_decoder_error_source": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+  "forbidden_decoder_entry_points": [
+    "decode_genesis_qc_from_peer_bytes",
+    "decode_epoch_anchor_qc_from_peer_bytes",
+    "decode_any_empty_signature_qc_as_authorized_anchor",
+    "EpochAnchorAuthorizationKernelV0::epoch_anchor_qc",
+    "EpochAnchorAuthorizationKernelV0::into_authorization",
+    "decode_epoch_anchor_authorization_kernel_v0_exact -> EpochAnchorAuthorizationV0"
+  ],
+  "transport_enums": [
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "proto_enum": "BlockKind",
+      "logical_enum": "BlockKindV0",
+      "variants": [
+        {
+          "proto_name": "BLOCK_KIND_REGULAR",
+          "logical_name": "regular",
+          "value": 0
+        },
+        {
+          "proto_name": "BLOCK_KIND_EPOCH_CHECKPOINT",
+          "logical_name": "epoch_checkpoint",
+          "value": 1
+        },
+        {
+          "proto_name": "BLOCK_KIND_EPOCH_SEAL_1",
+          "logical_name": "epoch_seal_1",
+          "value": 2
+        },
+        {
+          "proto_name": "BLOCK_KIND_EPOCH_SEAL_2",
+          "logical_name": "epoch_seal_2",
+          "value": 3
+        },
+        {
+          "proto_name": "BLOCK_KIND_EPOCH_HANDOFF",
+          "logical_name": "epoch_handoff",
+          "value": 4
+        }
+      ]
+    }
+  ],
+  "transport_projections": [
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "BlockHeader",
+      "logical_object": "BlockHeaderV0",
+      "fields": [
+        {
+          "number": 1,
+          "name": "schema_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "schema_version"
+        },
+        {
+          "number": 2,
+          "name": "genesis_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "genesis_hash"
+        },
+        {
+          "number": 3,
+          "name": "chain_id",
+          "proto_type": "string",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "chain_id"
+        },
+        {
+          "number": 4,
+          "name": "protocol_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "protocol_version"
+        },
+        {
+          "number": 5,
+          "name": "epoch",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "epoch"
+        },
+        {
+          "number": 6,
+          "name": "view",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "view"
+        },
+        {
+          "number": 7,
+          "name": "height",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "height"
+        },
+        {
+          "number": 8,
+          "name": "block_kind",
+          "proto_type": "BlockKind",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "block_kind"
+        },
+        {
+          "number": 9,
+          "name": "parent_block_id",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "parent_block_id"
+        },
+        {
+          "number": 10,
+          "name": "proposer_id",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "proposer_id"
+        },
+        {
+          "number": 11,
+          "name": "active_validator_set_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "active_validator_set_hash"
+        },
+        {
+          "number": 12,
+          "name": "consensus_parameters_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "consensus_parameters_hash"
+        },
+        {
+          "number": 13,
+          "name": "payload_root",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "payload_root"
+        },
+        {
+          "number": 14,
+          "name": "state_root",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "state_root"
+        },
+        {
+          "number": 15,
+          "name": "receipts_root",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "receipts_root"
+        },
+        {
+          "number": 16,
+          "name": "evidence_root",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "evidence_root"
+        },
+        {
+          "number": 17,
+          "name": "timestamp_ms",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "timestamp_ms"
+        },
+        {
+          "number": 18,
+          "name": "next_epoch_commitment_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "next_epoch_commitment_hash",
+          "transport_absence": "empty bytes",
+          "canonical_absence": "Optional tag 0"
+        }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/epoch.proto",
+      "proto_message": "HandoffDescriptor",
+      "logical_object": "HandoffDescriptorV0",
+      "fields": [
+        {
+          "number": 1,
+          "name": "schema_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "schema_version"
+        },
+        {
+          "number": 2,
+          "name": "genesis_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "genesis_hash"
+        },
+        {
+          "number": 3,
+          "name": "chain_id",
+          "proto_type": "string",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "chain_id"
+        },
+        {
+          "number": 4,
+          "name": "old_epoch",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "old_epoch"
+        },
+        {
+          "number": 5,
+          "name": "new_epoch",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "new_epoch"
+        },
+        {
+          "number": 6,
+          "name": "old_protocol_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "old_protocol_version"
+        },
+        {
+          "number": 7,
+          "name": "new_protocol_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "new_protocol_version"
+        },
+        {
+          "number": 8,
+          "name": "old_validator_set_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "old_validator_set_hash"
+        },
+        {
+          "number": 9,
+          "name": "new_validator_set_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "new_validator_set_hash"
+        },
+        {
+          "number": 10,
+          "name": "old_consensus_parameters_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "old_consensus_parameters_hash"
+        },
+        {
+          "number": 11,
+          "name": "new_consensus_parameters_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "new_consensus_parameters_hash"
+        },
+        {
+          "number": 12,
+          "name": "checkpoint_height",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "checkpoint_height"
+        },
+        {
+          "number": 13,
+          "name": "checkpoint_block_id",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "checkpoint_block_id"
+        },
+        {
+          "number": 14,
+          "name": "checkpoint_state_root",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "checkpoint_state_root"
+        },
+        {
+          "number": 15,
+          "name": "next_epoch_commitment_digest",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "next_epoch_commitment_digest"
+        },
+        {
+          "number": 16,
+          "name": "terminal_old_height",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "terminal_old_height"
+        },
+        {
+          "number": 17,
+          "name": "terminal_old_block_id",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "terminal_old_block_id"
+        },
+        {
+          "number": 18,
+          "name": "terminal_old_qc_digest",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "terminal_old_qc_digest"
+        },
+        {
+          "number": 19,
+          "name": "terminal_old_view",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "terminal_old_view"
+        },
+        {
+          "number": 20,
+          "name": "activation_height",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "activation_height"
+        },
+        {
+          "number": 21,
+          "name": "initial_new_view",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "initial_new_view"
+        },
+        {
+          "number": 22,
+          "name": "descriptor_digest",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "derived",
+          "derivation": "Digest(handoff_descriptor, HandoffDescriptorV0)"
+        }
+      ]
+    },
+    {
+      "projection_id": "standalone_handoff_vote_signing_projection",
+      "usage": "standalone old/new handoff vote authorization",
+      "proto_file": "proto/trnm/poco/bft/v0/epoch.proto",
+      "proto_message": "HandoffVote",
+      "logical_object": "HandoffVoteSignV0",
+      "fields": [
+        {
+          "number": 1,
+          "name": "schema_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "schema_version"
+        },
+        {
+          "number": 2,
+          "name": "genesis_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "genesis_hash"
+        },
+        {
+          "number": 3,
+          "name": "chain_id",
+          "proto_type": "string",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "chain_id"
+        },
+        {
+          "number": 4,
+          "name": "signing_protocol_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "signing_protocol_version"
+        },
+        {
+          "number": 5,
+          "name": "signing_epoch",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "signing_epoch"
+        },
+        {
+          "number": 6,
+          "name": "signing_validator_set_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "signing_validator_set_hash"
+        },
+        {
+          "number": 7,
+          "name": "signing_view",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "signing_view"
+        },
+        {
+          "number": 8,
+          "name": "message_kind",
+          "proto_type": "MessageKind",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "message_kind"
+        },
+        {
+          "number": 9,
+          "name": "handoff_descriptor_digest",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "handoff_descriptor_digest"
+        },
+        {
+          "number": 10,
+          "name": "author_validator_id",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "sidecar",
+          "binding": "signature authorization identity"
+        },
+        {
+          "number": 11,
+          "name": "signature",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "sidecar",
+          "binding": "signature over HandoffVoteSignV0 digest"
+        }
+      ]
+    },
+    {
+      "projection_id": "old_handoff_vote_as_certificate_signature",
+      "usage": "JointHandoffCertificate.old_set_votes item",
+      "proto_file": "proto/trnm/poco/bft/v0/epoch.proto",
+      "proto_message": "HandoffVote",
+      "logical_object": "SignatureShareV0",
+      "fields": [
+        {
+          "number": 1,
+          "name": "schema_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal 0 and the old-role HandoffVoteSignV0 scope reconstructed from the enclosing descriptor"
+        },
+        {
+          "number": 2,
+          "name": "genesis_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.genesis_hash"
+        },
+        {
+          "number": 3,
+          "name": "chain_id",
+          "proto_type": "string",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.chain_id"
+        },
+        {
+          "number": 4,
+          "name": "signing_protocol_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.old_protocol_version"
+        },
+        {
+          "number": 5,
+          "name": "signing_epoch",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.old_epoch"
+        },
+        {
+          "number": 6,
+          "name": "signing_validator_set_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.old_validator_set_hash"
+        },
+        {
+          "number": 7,
+          "name": "signing_view",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.terminal_old_view"
+        },
+        {
+          "number": 8,
+          "name": "message_kind",
+          "proto_type": "MessageKind",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal old_set_handoff_vote (3)"
+        },
+        {
+          "number": 9,
+          "name": "handoff_descriptor_digest",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal the recomputed descriptor digest"
+        },
+        {
+          "number": 10,
+          "name": "author_validator_id",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "validator_id"
+        },
+        {
+          "number": 11,
+          "name": "signature",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "signature"
+        }
+      ]
+    },
+    {
+      "projection_id": "new_handoff_vote_as_certificate_signature",
+      "usage": "JointHandoffCertificate.new_set_votes item",
+      "proto_file": "proto/trnm/poco/bft/v0/epoch.proto",
+      "proto_message": "HandoffVote",
+      "logical_object": "SignatureShareV0",
+      "fields": [
+        {
+          "number": 1,
+          "name": "schema_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal 0 and the new-role HandoffVoteSignV0 scope reconstructed from the enclosing descriptor"
+        },
+        {
+          "number": 2,
+          "name": "genesis_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.genesis_hash"
+        },
+        {
+          "number": 3,
+          "name": "chain_id",
+          "proto_type": "string",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.chain_id"
+        },
+        {
+          "number": 4,
+          "name": "signing_protocol_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.new_protocol_version"
+        },
+        {
+          "number": 5,
+          "name": "signing_epoch",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.new_epoch"
+        },
+        {
+          "number": 6,
+          "name": "signing_validator_set_hash",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.new_validator_set_hash"
+        },
+        {
+          "number": 7,
+          "name": "signing_view",
+          "proto_type": "uint64",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal descriptor.initial_new_view"
+        },
+        {
+          "number": 8,
+          "name": "message_kind",
+          "proto_type": "MessageKind",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal new_set_handoff_vote (4)"
+        },
+        {
+          "number": 9,
+          "name": "handoff_descriptor_digest",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "redundant",
+          "binding": "must equal the recomputed descriptor digest"
+        },
+        {
+          "number": 10,
+          "name": "author_validator_id",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "validator_id"
+        },
+        {
+          "number": 11,
+          "name": "signature",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "signature"
+        }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/epoch.proto",
+      "proto_message": "JointHandoffCertificate",
+      "logical_object": "HandoffCertificateV0",
+      "fields": [
+        {
+          "number": 1,
+          "name": "schema_version",
+          "proto_type": "uint32",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "schema_version"
+        },
+        {
+          "number": 2,
+          "name": "descriptor",
+          "proto_type": "HandoffDescriptor",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "descriptor"
+        },
+        {
+          "number": 3,
+          "name": "old_set_votes",
+          "proto_type": "HandoffVote",
+          "cardinality": "repeated",
+          "role": "canonical",
+          "logical_field": "old_signatures",
+          "item_projection_id": "old_handoff_vote_as_certificate_signature"
+        },
+        {
+          "number": 4,
+          "name": "new_set_votes",
+          "proto_type": "HandoffVote",
+          "cardinality": "repeated",
+          "role": "canonical",
+          "logical_field": "new_signatures",
+          "item_projection_id": "new_handoff_vote_as_certificate_signature"
+        },
+        {
+          "number": 5,
+          "name": "certificate_digest",
+          "proto_type": "bytes",
+          "cardinality": "singular",
+          "role": "derived",
+          "derivation": "Digest(handoff_certificate, HandoffCertificateV0)"
+        }
+      ]
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "EpochAnchorAuthorization",
+      "logical_object": "EpochAnchorAuthorizationV0",
+      "independent_digest_domain": null,
+      "fields": [
+        {
+          "number": 1,
+          "name": "terminal_old_header",
+          "proto_type": "BlockHeader",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "terminal_old_header"
+        },
+        {
+          "number": 2,
+          "name": "terminal_old_qc",
+          "proto_type": "QuorumCertificate",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "terminal_old_qc"
+        },
+        {
+          "number": 3,
+          "name": "handoff_certificate",
+          "proto_type": "JointHandoffCertificate",
+          "cardinality": "singular",
+          "role": "canonical",
+          "logical_field": "handoff_certificate"
+        }
+      ]
+    }
+  ],
+  "decoder_error_contract": "Exact ordered trnm-consensus-types DecodeErrorCode::as_str surface; imported B2-A codes remain present and B2-B adds the block/handoff/anchor classes.",
+  "decoder_error_codes": [
+    {
+      "code": "unexpected_eof",
+      "class": "structural"
+    },
+    {
+      "code": "trailing_bytes",
+      "class": "structural"
+    },
+    {
+      "code": "length_limit_exceeded",
+      "class": "structural"
+    },
+    {
+      "code": "count_limit_exceeded",
+      "class": "structural"
+    },
+    {
+      "code": "aggregate_limit_exceeded",
+      "class": "structural"
+    },
+    {
+      "code": "invalid_schema_version",
+      "class": "semantic"
+    },
+    {
+      "code": "invalid_protocol_version",
+      "class": "semantic"
+    },
+    {
+      "code": "invalid_consensus_string",
+      "class": "canonical"
+    },
+    {
+      "code": "invalid_block_kind",
+      "class": "canonical"
+    },
+    {
+      "code": "invalid_optional_tag",
+      "class": "canonical"
+    },
+    {
+      "code": "invalid_block_header",
+      "class": "semantic"
+    },
+    {
+      "code": "invalid_handoff_descriptor",
+      "class": "semantic"
+    },
+    {
+      "code": "invalid_handoff_certificate",
+      "class": "semantic"
+    },
+    {
+      "code": "invalid_epoch_anchor_relations",
+      "class": "semantic"
+    },
+    {
+      "code": "unauthorized_synthetic_qc",
+      "class": "authorization",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "zero_genesis_hash",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "zero_public_key",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "zero_voting_power",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "empty_validator_set",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "duplicate_validator_id",
+      "class": "canonical",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "duplicate_public_key",
+      "class": "canonical",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "noncanonical_validator_order",
+      "class": "canonical",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "context_mismatch",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "unknown_signer",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "duplicate_signer",
+      "class": "canonical",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "noncanonical_signer_order",
+      "class": "canonical",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "noncanonical_reference_order",
+      "class": "canonical",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "conflicting_same_view_qc",
+      "class": "safety",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "insufficient_quorum",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "invalid_referenced_qc",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "empty_tc",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "duplicate_reference",
+      "class": "canonical",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "future_reference_view",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "same_block_different_coordinates",
+      "class": "safety",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "reference_summary_mismatch",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "unreferenced_qc",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    },
+    {
+      "code": "selected_not_maximum",
+      "class": "semantic",
+      "origin": "imported B2-A"
+    }
+  ],
+  "rust_decoder_error_exclusions": [
+    { "code": "invalid_boolean", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_rollout_phase", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_fallback_reason", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_next_epoch_commitment", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_utf8", "scope": "B2-D ordinary block body endpoint only" },
+    { "code": "noncanonical_event_attribute_order", "scope": "B2-D ordinary block body endpoint only" },
+    { "code": "invalid_double_vote_evidence", "scope": "B2-D ordinary block body endpoint only" },
+    { "code": "invalid_leader_schedule", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_consensus_parameters", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_finality_proof", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_checkpoint_two_seal", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_sign_intent_tag", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_sign_intent", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_handoff_sign_intent_role", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_handoff_sign_intent", "scope": "node-local signer-intent endpoint only" }
+  ],
+  "node_admission_error_contract": "Independent checker-only fine-grained relation diagnostics; these codes are not claimed to be Rust DecodeErrorCode values.",
+  "node_admission_error_codes": [
+    {
+      "code": "descriptor_epoch_mismatch",
+      "class": "handoff_relation"
+    },
+    {
+      "code": "descriptor_height_mismatch",
+      "class": "handoff_relation"
+    },
+    {
+      "code": "descriptor_initial_view_mismatch",
+      "class": "handoff_relation"
+    },
+    {
+      "code": "handoff_role_scope_mismatch",
+      "class": "handoff_relation"
+    },
+    {
+      "code": "handoff_descriptor_digest_mismatch",
+      "class": "handoff_relation"
+    },
+    {
+      "code": "empty_handoff_role",
+      "class": "handoff_relation"
+    },
+    {
+      "code": "terminal_not_epoch_seal_2",
+      "class": "anchor_relation"
+    },
+    {
+      "code": "terminal_qc_unauthorized",
+      "class": "anchor_relation"
+    },
+    {
+      "code": "terminal_qc_mismatch",
+      "class": "anchor_relation"
+    },
+    {
+      "code": "descriptor_terminal_mismatch",
+      "class": "anchor_relation"
+    }
+  ],
+  "gate_error_codes": [
+    {
+      "code": "schema_manifest_invalid",
+      "class": "manifest"
+    },
+    {
+      "code": "proto_projection_drift",
+      "class": "manifest"
+    },
+    {
+      "code": "source_vector_drift",
+      "class": "fixture"
+    },
+    {
+      "code": "digest_mismatch",
+      "class": "fixture"
+    }
+  ],
+  "cryptographic_validity_claimed": false,
+  "honest_boundary": [
+    "The anchor-finality-v0 signatures are fixed-width shape fixtures and are not valid handoff/QC signatures for these messages.",
+    "This tranche does not verify Ed25519, validator membership, either weighted quorum, proof of possession, or persist-before-sign state.",
+    "The terminal QC is checked for non-empty canonical signer shape and exact header/descriptor linkage only.",
+    "B2-C separately closes exact parsing and inert same-version context binding for NextEpochCommitmentV0; B2-B still does not authenticate its snapshot/state provenance, reconstruct committed old/new set and parameter preimages, prove checkpoint/two-seal ancestry, or authorize activation and the full handoff.",
+    "GenesisQC is a future trusted-genesis output. EpochAnchorQC is only a frozen candidate byte binding until external complete epoch-transition authorization succeeds; neither is a B2-B decoder output or has a peer-controlled bare decoder.",
+    "B2 overall, complete epoch authorization, Proposal/Block bodies, protobuf envelope admission, evidence, receipts, light clients, and wire_conformance remain open."
+  ]
+}

@@ -13,6 +13,7 @@ libfuzzer-sys = "=0.4.13"
 serde_json = "=1.0.149"
 trnm-finality-types = { version = "0.1.0", path = "../crates/trnm-finality-types" }
 trnm-protocol = { version = "0.1.0", path = "../crates/trnm-protocol" }
+trnm-consensus-types = { version = "0.1.0", path = "../crates/trnm-consensus-types" }
 
 [[bin]]
 name = "canonical_tx_json"
@@ -24,6 +25,13 @@ bench = false
 [[bin]]
 name = "signed_envelope_json"
 path = "fuzz_targets/signed_envelope_json.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "poco_cev0_exact"
+path = "fuzz_targets/poco_cev0_exact.rs"
 test = false
 doc = false
 bench = false

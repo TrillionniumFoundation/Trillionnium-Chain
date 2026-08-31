@@ -9,6 +9,7 @@ use anyhow::{ensure, Context, Result};
 use clap::Parser;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use trnm_consensus_app::migration_rehearsal::decode_json_strict_v1;
 
 const SOURCE_SCHEMA_V3: &str = "trnm_cometbft_app_state_v3";
 const VALIDATOR_LIFECYCLE_SCHEMA_V1: &str = "trnm_validator_lifecycle_v1";
@@ -421,10 +422,14 @@ fn build_and_publish_bundle(
 
 fn validate_v3_state(bytes: &[u8]) -> Result<ValidatedV3State> {
     let persisted: LegacyV3State =
-        serde_json::from_slice(bytes).context("decode strict v3 application state JSON")?;
+        decode_json_strict_v1(bytes).context("decode strict v3 application state JSON")?;
     ensure!(
         persisted.schema == SOURCE_SCHEMA_V3,
         "unsupported source state schema"
+    );
+    ensure!(
+        persisted.height > 0,
+        "source v3 height must be positive"
     );
     let committed_app_hash = decode_hash32("source app_hash_hex", &persisted.app_hash_hex)?;
     validate_lifecycle(&persisted.validator_lifecycle)?;
@@ -960,6 +965,46 @@ mod tests {
 
     fn write_source(path: &Path, fixture: &LegacyV3State) {
         fs::write(path, pretty_json_bytes(fixture).unwrap()).unwrap();
+    }
+
+    #[test]
+    fn rejects_duplicate_trailing_and_unknown_source_json() {
+        let duplicate = br#"{"schema":"trnm_cometbft_app_state_v3","schema":"trnm_cometbft_app_state_v3"}"#;
+        let duplicate_error = validate_v3_state(duplicate).unwrap_err();
+        let duplicate_error_text = format!("{duplicate_error:#}");
+        assert!(
+            duplicate_error_text.contains("duplicate JSON object key"),
+            "unexpected duplicate-key error: {duplicate_error:#}"
+        );
+
+        let fixture = fixture();
+        let mut trailing = pretty_json_bytes(&fixture).unwrap();
+        trailing.extend_from_slice(b"\n{}");
+        let trailing_error = validate_v3_state(&trailing).unwrap_err();
+        let trailing_error_text = format!("{trailing_error:#}");
+        assert!(
+            trailing_error_text.contains("trailing")
+                || trailing_error_text.contains("trailing characters"),
+            "unexpected trailing-input error: {trailing_error_text}"
+        );
+
+        let mut unknown_value = serde_json::to_value(&fixture).unwrap();
+        unknown_value["unexpected_source_field"] = serde_json::json!(true);
+        let unknown = serde_json::to_vec(&unknown_value).unwrap();
+        let unknown_error = validate_v3_state(&unknown).unwrap_err();
+        let unknown_error_text = format!("{unknown_error:#}");
+        assert!(
+            unknown_error_text.contains("unknown field"),
+            "unexpected unknown-field error: {unknown_error_text}"
+        );
+    }
+
+    #[test]
+    fn rejects_zero_source_height() {
+        let mut state = fixture();
+        state.height = 0;
+        let error = validate_v3_state(&pretty_json_bytes(&state).unwrap()).unwrap_err();
+        assert!(error.to_string().contains("height must be positive"));
     }
 
     #[test]

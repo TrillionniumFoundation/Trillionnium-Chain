@@ -1,0 +1,5 @@
+{
+  "schema": "trnm-claim-activation-gate-cases-v2",
+  "positive": ["synthetic-complete-evidence-evaluates", "deterministic-decision-root", "workload-scoped-claim-only"],
+  "negative": ["missing-gate", "unaccepted-gate", "single-replay", "release-mismatch", "comparator-mismatch", "hardware-mismatch", "workload-mismatch", "topology-insufficient", "topology-overclaim", "soak-insufficient", "open-critical", "open-high", "audit-incomplete", "operations-drill-incomplete", "universal-claim"]
+}

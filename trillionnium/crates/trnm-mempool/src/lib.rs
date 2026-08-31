@@ -1,5 +1,14 @@
 use std::collections::{HashSet, VecDeque};
 
+mod typed_admission;
+
+pub use typed_admission::{
+    AdmissionReject, CanonicalSignerId, CanonicalTxDigest, PendingNonceAdmission,
+    PendingNonceAuthority, PendingNonceReservation, PendingNonceReservationState, ResourceLimits,
+    SignedAdmissionHooks, SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate,
+    TypedAdmitOutcome, DEFAULT_MAX_ADMISSION_BODY_BYTES,
+};
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AdmitOutcome {
     Accepted,
@@ -101,8 +110,8 @@ impl LaneAdmissionGate {
     }
 
     fn reset_idle_state(&mut self, preserve_zero_capacity_seen: bool) {
-        if !(preserve_zero_capacity_seen && self.total_capacity == 0)
-            && !(self.normal.seen.is_empty()
+        if !(preserve_zero_capacity_seen && self.total_capacity == 0
+            || self.normal.seen.is_empty()
                 && self.critical.seen.is_empty()
                 && self.seen_global.is_empty())
         {
@@ -1377,8 +1386,8 @@ mod tests {
         assert_eq!(g.queued_counts(), (2, 1, 3));
 
         // While the borrowed reserved slot is occupied, no class has fresh headroom.
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+        assert!(!g.qos_snapshot().fresh_normal_admissible);
+        assert!(!g.qos_snapshot().fresh_critical_admissible);
 
         // Once the borrowed critical-lane occupant drains and the critical lane goes
         // idle again, observability must immediately advertise that the final reserved
@@ -1759,15 +1768,15 @@ mod tests {
         assert_eq!(g.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (3, 1, 4));
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+        assert!(!g.qos_snapshot().fresh_critical_admissible);
 
         // Draining the dedicated critical occupant should immediately reopen fresh
         // critical admissibility even though an older critical copy still occupies
         // borrowed normal capacity.
         assert_eq!(g.pop_ready(), Some(50));
         assert_eq!(g.queued_counts(), (3, 0, 3));
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
+        assert!(g.qos_snapshot().fresh_critical_admissible);
+        assert!(g.qos_snapshot().fresh_normal_admissible);
     }
 
     #[test]
@@ -1816,15 +1825,15 @@ mod tests {
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (3, 1, 4));
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+        assert!(!g.qos_snapshot().fresh_normal_admissible);
+        assert!(g.qos_snapshot().fresh_critical_admissible);
 
         // Once the only active critical backlog clears, normal admissibility may
         // reopen immediately because the final reserved slot is no longer guarded.
         assert_eq!(g.pop_ready(), Some(10));
         assert_eq!(g.queued_counts(), (3, 0, 3));
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+        assert!(g.qos_snapshot().fresh_normal_admissible);
+        assert!(g.qos_snapshot().fresh_critical_admissible);
     }
 
     #[test]
@@ -1840,8 +1849,8 @@ mod tests {
         assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (4, 2, 6));
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+        assert!(!g.qos_snapshot().fresh_normal_admissible);
+        assert!(!g.qos_snapshot().fresh_critical_admissible);
 
         // Draining one critical entry reopens aggregate headroom, but normal must
         // stay fail-closed because critical backlog is still active and guards the
@@ -1866,8 +1875,8 @@ mod tests {
         // class borrow again from the now-idle reserved slot.
         assert_eq!(g.pop_ready(), Some(11));
         assert_eq!(g.queued_counts(), (4, 0, 4));
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+        assert!(g.qos_snapshot().fresh_normal_admissible);
+        assert!(g.qos_snapshot().fresh_critical_admissible);
     }
 
     #[test]
@@ -2014,8 +2023,8 @@ mod tests {
         assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (0, 3, 3));
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+        assert!(!g.qos_snapshot().fresh_normal_admissible);
+        assert!(!g.qos_snapshot().fresh_critical_admissible);
 
         assert_eq!(g.pop_ready(), Some(1));
         assert_eq!(g.queued_counts(), (0, 2, 2));
@@ -2044,8 +2053,8 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (0, 2, 2));
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+        assert!(!g.qos_snapshot().fresh_normal_admissible);
+        assert!(!g.qos_snapshot().fresh_critical_admissible);
 
         assert_eq!(g.pop_ready(), Some(1));
         assert_eq!(g.queued_counts(), (0, 1, 1));
@@ -2449,8 +2458,8 @@ mod tests {
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+        assert!(!g.qos_snapshot().fresh_normal_admissible);
+        assert!(g.qos_snapshot().fresh_critical_admissible);
 
         // A fresh normal id is reserve-guarded here and must stay fresh on retry.
         assert_eq!(
@@ -2604,8 +2613,8 @@ mod tests {
         assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.qos_snapshot().total_headroom, 0);
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+        assert!(!g.qos_snapshot().fresh_normal_admissible);
+        assert!(!g.qos_snapshot().fresh_critical_admissible);
 
         // Once one real occupant drains, reserve-only mode should immediately
         // reopen the shared slot for both ingress classes. Stale critical seen

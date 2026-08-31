@@ -1,0 +1,5 @@
+{
+  "schema": "trnm-g2c-outbox-recovery-cases-v2",
+  "positive": ["idempotent-enqueue", "dispatch", "response-loss-retry", "exact-ack", "idempotent-ack", "ordered-commitment", "challenge", "single-appeal", "appeal-decision", "unchallenged-maturity"],
+  "negative": ["unknown-event", "retry-too-early", "duplicate-appeal", "premature-finalize", "late-challenge", "event-id-conflict", "delivery-token-mismatch", "sequence-gap-or-reuse"]
+}

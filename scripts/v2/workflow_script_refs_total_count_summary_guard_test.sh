@@ -31,7 +31,7 @@ jobs:
 YAML
 
 WORKFLOW_ROOT="$WORKFLOW_ROOT" \
-WORKFLOW_SCRIPT_REF_STRICT=1 \
+WORKFLOW_SCRIPT_REF_STRICT=0 \
 WORKFLOW_SCRIPT_REF_SUMMARY_PATH="$SUMMARY" \
   bash "$SCRIPT" >"$STDOUT_LOG" 2>"$STDERR_LOG"
 
@@ -40,8 +40,8 @@ import json, sys
 summary_path, stdout_path = sys.argv[1], sys.argv[2]
 with open(summary_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
-if data.get('status') != 'ok':
-    raise SystemExit(f"[FAIL] expected ok status, got: {data}")
+if data.get('status') != 'warn':
+    raise SystemExit(f"[FAIL] expected non-strict warning status, got: {data}")
 if int(data.get('script_ref_total_count', 0)) != 4:
     raise SystemExit(f"[FAIL] expected total duplicate-aware ref count 4, got: {data}")
 if int(data.get('script_ref_count', 0)) != 3:

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "artifact_name": "remap-observation-30c.tar.gz",
+  "archive_sha256": "a0310582952ce41e7b492cf07814cc26ba3c88e04dfe6268f59f74823be91c40",
+  "archive_bytes": 28614852,
+  "retrieval_status": "local-operator-copy-only",
+  "remote_source": {
+    "path": "/home/qian/poco-stage0-current-30c145ff6/remap-observation-30c.tar.gz",
+    "present_at_receipt": false,
+    "ssh_host_key_fingerprint_recorded": false
+  },
+  "local_copy": {
+    "path": "/tmp/poco-stage0-current-aoqkGV/remap-observation-30c.tar.gz",
+    "present_at_receipt": true,
+    "mode_octal": "0600",
+    "uid": 1000,
+    "gid": 1000,
+    "device": 66306,
+    "inode": 43657579,
+    "mtime_utc": "2026-08-24T00:17:23Z",
+    "bytes": 28614852,
+    "sha256": "a0310582952ce41e7b492cf07814cc26ba3c88e04dfe6268f59f74823be91c40"
+  },
+  "tracked_replay_correction": {
+    "applied": true,
+    "source_report_path": "operator cross-time-control-report.json (not bundled)",
+    "field": "committed_v2_remap_control_observation.builder_tool_checkout_status_sha256",
+    "original_value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca4959911b7852b855",
+    "replayed_value": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reason": "The unbundled operator cross-time JSON contained a 65-character empty-status digest; the tracked replay report records the canonical 64-character SHA-256 of empty bytes. The build-report source_git_status_sha256 fields were not edited.",
+    "source_report_bundled": false,
+    "archive_left_byte_identical": true
+  },
+  "boundary": "The raw bundle is not committed or treated as durable deployment evidence until a retained copy and transport host-key receipt are captured."
+}

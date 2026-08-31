@@ -1,0 +1,36 @@
+[package]
+name = "trnm-consensus-remote-signer-protocol"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-stage1-remote-signer-protocol"
+protocol = "poco-bft-v0"
+data_only = true
+vote_command = true
+timeout_vote_command = true
+proposal_command = false
+handoff_command = false
+socket_transport = false
+credential_handling = false
+private_key_handling = false
+generic_sign_bytes = false
+lease_authority = false
+response_signature_verification = false
+nonce_freshness_authority = false
+core_safety_authority = false
+safety_rules_evaluation = false
+safe_vote_authority = false
+node_role_binding_adapter = false
+shared_authority_source = false
+remote_signer_runtime_activation = false
+production_signature_producer = false
+production_candidate = false
+production_consensus_activation = false
+
+[dependencies]
+sha2 = { version = "0.10", default-features = false }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

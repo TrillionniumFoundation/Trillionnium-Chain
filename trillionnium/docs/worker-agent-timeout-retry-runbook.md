@@ -106,3 +106,15 @@
   - `TRNM_LLM_ADAPTER_BACKOFF_MS`
 - `TRNM_LLM_ADAPTER_TIMEOUT_MS` 仍保留；同时支持 CLI `--llm-adapter-timeout-ms` 覆盖。
 - 非法值回退默认值，不会导致进程启动失败（向后兼容）。
+
+### 当前链路边界
+
+- `scripts/v2/run_worker_receipt_gates.sh` 是隔离的 legacy worker
+  adapter/state-machine 回归，只证明 retry、replay、nonce、ack 与恢复语义；它不证明交易已广播到真实链。
+- active PoCO `trnm-cli` 只暴露 `submit-consumption-receipt`、
+  `challenge-consumption`、`resolve-consumption`，并明确拒绝已退役的
+  `commit-result` / `reveal-result`。
+- worker 现有 submission 仍缺少完整 PoCO receipt 所需的 consumer、billing
+  window、actor 等权威字段，不能通过简单重命名接到 active CLI。
+- worker → canonical PoCO receipt → real broadcast/query 仍是 OPEN；完成 schema
+  迁移与真实节点闭环前，不得把本地 adapter gate 描述为 production chain readiness。
