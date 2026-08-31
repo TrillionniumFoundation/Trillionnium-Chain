@@ -38,6 +38,7 @@ jobs:
     outputs:
       candidate_commit: ${{ steps.identity.outputs.candidate_commit }}
       candidate_tree: ${{ steps.identity.outputs.candidate_tree }}
+      workflow_blob: ${{ steps.identity.outputs.workflow_blob }}
       artifact_id: ${{ steps.upload.outputs.artifact-id }}
 
     steps:
@@ -63,7 +64,7 @@ jobs:
               grep -Ev '^(\.github/workflows/trnm-g1-vertical-integration\.yml|scripts/ci/run_g1_lab_validator_shards_v1\.py)$' || true
           )"
           if [[ -n "${unexpected}" ]]; then
-            printf 'unexpected integration-executor source changes:\n%s\n' "${unexpected}" >&2
+            printf 'unexpected integration source changes:\n%s\n' "${unexpected}" >&2
             exit 2
           fi
 
@@ -116,11 +117,10 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
 
-      - name: Finalize immutable source-only candidate
+      - name: Finalize deterministic source candidate
         shell: bash
         run: |
           set -euo pipefail
-          git rm .github/workflows/trnm-g1-vertical-integration.yml
           git rm -f --ignore-unmatch -- tmp-probe.txt
 
           mkdir -p docs/development/packages
@@ -144,19 +144,26 @@ jobs:
           and tested in a `contents: read` job with no persisted credential. A
           second job receives only a content-addressed Git bundle and
           attestation, executes no candidate code, verifies the exact commit and
-          tree, and then performs the sole branch write.
+          tree, and performs the sole branch write. The branch-scoped workflow
+          blob is unchanged between the source and qualified commits, so the
+          publication step does not mutate workflow authority.
 
           The complete non-ignored `trnm-poco-lab-validator` inventory is
           discovered at run time and executed exactly once. Resource-owning
-          modules are serial; all process groups, per-test execution, aggregate
-          wall clock and captured output are bounded. Temporary-file capture
-          prevents detached descendants from retaining a pipe writer.
+          modules are serial; every child process group, per-test execution,
+          aggregate wall clock and captured output is bounded. Temporary-file
+          capture prevents detached descendants from retaining a pipe writer.
 
           Independent acceptance, a production HSM/anchor, physical power-loss,
           multi-host campaigns, the arbitrary-block corpus, independent audit
           and wall-clock soak remain mandatory external evidence.
           EOF
 
+          # The package heads were individually reviewed, but their merge can
+          # expose deterministic cross-package rustfmt drift. Normalize once in
+          # the read-only qualification workspace, then immediately prove the
+          # resulting source is stable under the same pinned formatter.
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
           git add -A
           git diff --cached --check
@@ -223,7 +230,6 @@ jobs:
           python3 scripts/ci/check_repository_truth_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
           bash scripts/project-preflight.sh --audit
-          test ! -e .github/workflows/trnm-g1-vertical-integration.yml
           test -z "$(git status --porcelain --untracked-files=all)"
 
       - name: Build content-addressed qualification bundle
@@ -233,9 +239,12 @@ jobs:
           set -euo pipefail
           candidate_commit="$(git rev-parse HEAD)"
           candidate_tree="$(git rev-parse 'HEAD^{tree}')"
+          source_workflow_blob="$(git rev-parse "${GITHUB_SHA}:.github/workflows/trnm-g1-vertical-integration.yml")"
+          candidate_workflow_blob="$(git rev-parse "${candidate_commit}:.github/workflows/trnm-g1-vertical-integration.yml")"
+          test "${candidate_workflow_blob}" = "${source_workflow_blob}"
+
           output="${RUNNER_TEMP}/g1-qualified"
           mkdir -p "${output}"
-
           git update-ref refs/heads/trnm-g1-qualified-candidate "${candidate_commit}"
           git bundle create "${output}/candidate.bundle" \
             refs/heads/trnm-g1-qualified-candidate
@@ -244,6 +253,9 @@ jobs:
           cp /tmp/trnm-g1-lab-validator-result-v3.json \
             "${output}/trnm-g1-lab-validator-result-v3.json"
 
+          CANDIDATE_COMMIT="${candidate_commit}" \
+          CANDIDATE_TREE="${candidate_tree}" \
+          WORKFLOW_BLOB="${candidate_workflow_blob}" \
           python3 -B - "${output}/attestation.json" <<'PY'
           import hashlib
           import json
@@ -258,7 +270,6 @@ jobs:
               return subprocess.check_output(["git", *args], text=True).strip()
 
           report = Path("/tmp/trnm-g1-lab-validator-result-v3.json")
-          report_digest = hashlib.sha256(report.read_bytes()).hexdigest()
           attestation = {
               "schema": "trnm-g1-qualified-integration-attestation-v1",
               "repository": os.environ["GITHUB_REPOSITORY"],
@@ -266,8 +277,9 @@ jobs:
               "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
               "source_commit": os.environ["GITHUB_SHA"],
               "source_tree": git("rev-parse", f"{os.environ['GITHUB_SHA']}^{{tree}}"),
-              "candidate_commit": git("rev-parse", "HEAD"),
-              "candidate_tree": git("rev-parse", "HEAD^{tree}"),
+              "candidate_commit": os.environ["CANDIDATE_COMMIT"],
+              "candidate_tree": os.environ["CANDIDATE_TREE"],
+              "workflow_blob": os.environ["WORKFLOW_BLOB"],
               "integration_branch": os.environ["INTEGRATION_BRANCH"],
               "source_floor": os.environ["SOURCE_FLOOR"],
               "package_heads": {
@@ -277,7 +289,7 @@ jobs:
                   "A06": os.environ["G1_A06_HEAD"],
                   "A21": os.environ["G1_A21_HEAD"],
               },
-              "lab_report_sha256": report_digest,
+              "lab_report_sha256": hashlib.sha256(report.read_bytes()).hexdigest(),
               "production_candidate": False,
               "production_consensus_activation": False,
               "release_ready": False,
@@ -290,6 +302,7 @@ jobs:
 
           echo "candidate_commit=${candidate_commit}" >> "${GITHUB_OUTPUT}"
           echo "candidate_tree=${candidate_tree}" >> "${GITHUB_OUTPUT}"
+          echo "workflow_blob=${candidate_workflow_blob}" >> "${GITHUB_OUTPUT}"
 
       - name: Upload qualified bundle
         id: upload
@@ -329,6 +342,7 @@ jobs:
         env:
           EXPECTED_CANDIDATE_COMMIT: ${{ needs.qualify-integration-tree.outputs.candidate_commit }}
           EXPECTED_CANDIDATE_TREE: ${{ needs.qualify-integration-tree.outputs.candidate_tree }}
+          EXPECTED_WORKFLOW_BLOB: ${{ needs.qualify-integration-tree.outputs.workflow_blob }}
         run: |
           set -euo pipefail
           artifact="${RUNNER_TEMP}/g1-qualified"
@@ -351,6 +365,7 @@ jobs:
               "source_commit": os.environ["GITHUB_SHA"],
               "candidate_commit": os.environ["EXPECTED_CANDIDATE_COMMIT"],
               "candidate_tree": os.environ["EXPECTED_CANDIDATE_TREE"],
+              "workflow_blob": os.environ["EXPECTED_WORKFLOW_BLOB"],
               "integration_branch": os.environ["INTEGRATION_BRANCH"],
               "source_floor": os.environ["SOURCE_FLOOR"],
               "production_candidate": False,
@@ -370,16 +385,11 @@ jobs:
             refs/heads/trnm-g1-qualified-candidate:refs/remotes/qualified/candidate
           candidate="$(git rev-parse refs/remotes/qualified/candidate)"
           tree="$(git rev-parse "${candidate}^{tree}")"
+          workflow_blob="$(git rev-parse "${candidate}:.github/workflows/trnm-g1-vertical-integration.yml")"
           test "${candidate}" = "${EXPECTED_CANDIDATE_COMMIT}"
           test "${tree}" = "${EXPECTED_CANDIDATE_TREE}"
+          test "${workflow_blob}" = "${EXPECTED_WORKFLOW_BLOB}"
           git merge-base --is-ancestor "${GITHUB_SHA}" "${candidate}"
-          if git cat-file -e \
-            "${candidate}:.github/workflows/trnm-g1-vertical-integration.yml" \
-            2>/dev/null
-          then
-            echo "qualified tree still contains write-capable integration workflow" >&2
-            exit 3
-          fi
 
       - name: Publish only the already-qualified commit
         shell: bash
