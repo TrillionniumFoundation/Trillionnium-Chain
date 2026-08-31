@@ -1,0 +1,117 @@
+name: trnm-a19-terminal-history-exact-qualification
+
+on:
+  push:
+    branches:
+      - qualification/a19-terminal-history-fa7aa82-20260831
+    paths:
+      - .github/workflows/trnm-a19-terminal-history-exact-qualification.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-a19-terminal-history-exact-qualification-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  TARGET_COMMIT: fa7aa82a5fa8fe1910b26845caae99784211746b
+  TARGET_TREE: 18fea587635d41675b8a654e6e49787bc2ac2629
+  TARGET_PARENT: 5383d7b47537c52d028d207f3763a65c7cfd86a7
+
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/qualification/a19-terminal-history-fa7aa82-20260831' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 180
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out exact candidate without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_COMMIT }}
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Bind exact commit tree parent and four-path boundary
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TARGET_COMMIT}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${TARGET_TREE}"
+          test "$(git rev-parse HEAD^)" = "${TARGET_PARENT}"
+          mapfile -t changed < <(git diff --name-only "${TARGET_PARENT}..${TARGET_COMMIT}" | sort)
+          expected=(
+            docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md
+            trillionnium/crates/trnm-native-application-sqlite/Cargo.toml
+            trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs
+            trillionnium/crates/trnm-native-application-sqlite/src/lib.rs
+          )
+          diff -u <(printf '%s\n' "${expected[@]}") <(printf '%s\n' "${changed[@]}")
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-native-application-sqlite/Cargo.toml)" = \
+            0edfb6eb38fa8f1c8c9526051d4948f75d847ff7
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs)" = \
+            c7e8c1f87c51c7ddbe94fd89bd68d1628d2a7043
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-native-application-sqlite/src/lib.rs)" = \
+            94f16147f236affab1a30707c403fb93e1d61046
+
+      - name: Verify preprovisioned Rust and offline Cargo cache
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Format compile and strict lint exact candidate
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets \
+            --locked --offline -- -D warnings
+
+      - name: Run terminal-history and application regressions
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --lib --locked --offline
+
+      - name: Revalidate repository truth and authority boundaries
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/project-preflight.sh --audit
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
