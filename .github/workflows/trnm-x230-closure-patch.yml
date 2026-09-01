@@ -21,7 +21,7 @@ jobs:
       (github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&
       github.triggering_actor == github.actor
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       CARGO_NET_OFFLINE: "true"
       CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
@@ -39,7 +39,7 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
 
-      - name: Generate exact offline lock and synchronize guard policy
+      - name: Generate exact lock and encode least-privilege guard classes
         run: |
           set -euo pipefail
           cargo +nightly-2026-07-27 generate-lockfile \
@@ -52,41 +52,109 @@ jobs:
 
           path = Path("scripts/check_ci_runner_policy.sh")
           text = path.read_text(encoding="utf-8")
-          old = '''STANDARD_GUARD = (
-              "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
-              "(github.event_name == 'schedule' || (github.actor == 'ProfAlexQI' && "
-              "github.triggering_actor == 'ProfAlexQI' && (github.event_name != "
-              "'pull_request' || github.event.pull_request.head.repo.full_name == "
-              "github.repository)))"
-          )'''
-          new = '''STANDARD_GUARD = (
+
+          standard_marker = """PAYLOAD_GUARD = (
+          """
+          maintainer_guard = """MAINTAINER_GUARD = (
               "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
               "(github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' || "
               "github.actor == 'Tomasrgbsf') && github.triggering_actor == github.actor && "
               "(github.event_name != 'pull_request' || "
               "github.event.pull_request.head.repo.full_name == github.repository)))"
-          )'''
-          if text.count(old) != 1:
-              raise SystemExit("expected exactly one legacy STANDARD_GUARD block")
-          path.write_text(text.replace(old, new), encoding="utf-8")
-          PY
-          git diff --check -- scripts/check_ci_runner_policy.sh trillionnium/fuzz/Cargo.lock
+          )
 
-      - name: Validate final repository policy and offline fuzz build
+          """
+          if text.count(standard_marker) != 1 or "MAINTAINER_GUARD = (" in text:
+              raise SystemExit("unexpected standard guard policy shape")
+          text = text.replace(standard_marker, maintainer_guard + standard_marker, 1)
+
+          poco_marker = """P1_GUARD = (
+          """
+          poco_maintainer_guard = """POCO_MAINTAINER_GUARD = (
+              "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+              "(github.event_name == 'schedule' && github.ref == 'refs/heads/main' || "
+              "((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') && "
+              "github.triggering_actor == github.actor && "
+              "(github.event_name != 'pull_request' || "
+              "github.event.pull_request.head.repo.full_name == github.repository)))"
+          )
+
+          """
+          if text.count(poco_marker) != 1 or "POCO_MAINTAINER_GUARD = (" in text:
+              raise SystemExit("unexpected PoCo guard policy shape")
+          text = text.replace(poco_marker, poco_maintainer_guard + poco_marker, 1)
+
+          old = '''def required_guard(name: str) -> str:
+              if name in {
+                  "trnm-payload-replay-recovery-v1.yml",
+                  "trnm-replay-to-core-coordinator-v1.yml",
+                  "trnm-p2-node-candidate-devnet-cli.yml",
+              }:
+                  return PAYLOAD_GUARD
+              if name == "trnm-poco-bft-v0.yml":
+                  return POCO_GUARD
+              if name == "p1-rust-sidecar.yml":
+                  return P1_GUARD
+              return STANDARD_GUARD
+          '''
+          new = '''def required_guard(name: str) -> str:
+              if name in {
+                  "trnm-payload-replay-recovery-v1.yml",
+                  "trnm-replay-to-core-coordinator-v1.yml",
+                  "trnm-p2-node-candidate-devnet-cli.yml",
+              }:
+                  return PAYLOAD_GUARD
+              if name == "trnm-poco-bft-v0.yml":
+                  return POCO_MAINTAINER_GUARD
+              if name == "p1-rust-sidecar.yml":
+                  return P1_GUARD
+              if name in {
+                  "trnm-canonical-input-fuzz-smoke.yml",
+                  "trnm-cometbft-spike.yml",
+                  "trnm-gate-quick-check.yml",
+                  "trnm-merge-gates.yml",
+              }:
+                  return MAINTAINER_GUARD
+              return STANDARD_GUARD
+          '''
+          if text.count(old) != 1:
+              raise SystemExit("expected exactly one legacy required_guard function")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+          git rm .github/workflows/trnm-x230-closure-patch.yml
+          git diff --check -- scripts/check_ci_runner_policy.sh trillionnium/fuzz/Cargo.lock \
+            .github/workflows/trnm-x230-closure-patch.yml
+
+      - name: Validate policy, offline readiness, and canonical fuzz smoke
         run: |
           set -euo pipefail
           bash scripts/check_ci_runner_policy.sh --worktree
           bash scripts/check_cargo_offline_policy.sh --worktree
           ./scripts/ci/check_preprovisioned_cargo_fuzz.sh
-          cargo +nightly-2026-07-27 fuzz build --offline
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain nightly-2026-07-27 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
+          TRNM_FUZZ_SMOKE_SECONDS=5 ./scripts/ci/check_canonical_fuzz_smoke.sh
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
 
-      - name: Commit deterministic closure patch
+      - name: Commit deterministic closure patch and self-delete
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add scripts/check_ci_runner_policy.sh trillionnium/fuzz/Cargo.lock
+          mapfile -t changed < <(git diff --cached --name-only | LC_ALL=C sort)
+          expected=(
+            .github/workflows/trnm-x230-closure-patch.yml
+            scripts/check_ci_runner_policy.sh
+            trillionnium/fuzz/Cargo.lock
+          )
+          test "${#changed[@]}" -eq "${#expected[@]}"
+          for i in "${!expected[@]}"; do
+            test "${changed[$i]}" = "${expected[$i]}"
+          done
           git diff --cached --check
-          test -n "$(git diff --cached --name-only)"
           git commit -m 'ci(x230): close canonical fuzz lock and runner-policy drift'
           git push origin HEAD:integration/native-poco-a04-a19-a23-qualified-v1-20260901
