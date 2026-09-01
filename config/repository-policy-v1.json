@@ -52,6 +52,7 @@
   "required_paths": [
     ".github/CODEOWNERS",
     ".github/pull_request_template.md",
+    ".github/workflows/trnm-documentation-truth.yml",
     ".github/workflows/trnm-required-baseline.yml",
     "PROJECT_BOUNDARY.json",
     "PROJECT_BOUNDARY.md",
@@ -59,10 +60,15 @@
     "SECURITY.md",
     "config/blocker-execution-v1.json",
     "config/consensus-mainline.json",
+    "config/documentation-truth-v1.json",
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/module-registry-v1.toml",
     "docs/development/plan-manifest-v1.toml",
+    "docs/development/release-train-v1.toml",
     "rust-toolchain.toml",
     "scripts/ci/check_blocker_execution_v1.py",
+    "scripts/ci/check_canonical_development_plan.sh",
+    "scripts/ci/check_documentation_reference_closure_v1.py",
     "scripts/ci/check_required_protocol_contract_v1.py",
     "trillionnium/Cargo.lock",
     "trillionnium/Cargo.toml"
