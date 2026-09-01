@@ -46,7 +46,7 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "60595ecba76afd19c34fc865772301f1734e0602"
+          test "$(git rev-parse HEAD^)" = "11b9d07dad6c08ba02de21eeb45058d537d7379a"
           test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/trnm-plan-v2-p0-carrier-execute.yml"
           python3 -B - "$RUNNER_TEMP/trnm-p0-apply.sh" <<'PY'
           from pathlib import Path
@@ -105,19 +105,32 @@ jobs:
           bash "$RUNNER_TEMP/trnm-p0-apply.sh"
           python3 -B - <<'PY'
           from pathlib import Path
-          import re
 
           path = Path('trillionnium/crates/trnm-native-application-sqlite/src/pinned_sqlite_namespace.rs')
-          text = path.read_text(encoding='utf-8')
-          fixed, count = re.subn(
-              r'(?m)^(\s*)\)\)\]\n\1\{',
-              lambda match: f"{match.group(1)})))]\n{match.group(1)}{{",
-              text,
-              count=1,
-          )
-          if count != 1:
-              raise SystemExit(f'expected one malformed cfg delimiter, found {count}')
-          path.write_text(fixed, encoding='utf-8')
+          lines = path.read_text(encoding='utf-8').splitlines()
+          expected = {
+              '#[cfg(any(': '))]',
+              '#[cfg(not(any(': ')))]',
+          }
+          seen = {key: 0 for key in expected}
+          active = None
+          for index, line in enumerate(lines):
+              stripped = line.strip()
+              if stripped in expected:
+                  if active is not None:
+                      raise SystemExit('nested cfg repair block')
+                  active = stripped
+                  seen[stripped] += 1
+                  continue
+              if active is not None and stripped in {'))]', ')))]'}:
+                  indent = line[: len(line) - len(line.lstrip())]
+                  lines[index] = indent + expected[active]
+                  active = None
+          if active is not None:
+              raise SystemExit('unterminated cfg repair block')
+          if seen['#[cfg(any('] != 1 or seen['#[cfg(not(any(']'] != 1:
+              raise SystemExit(f'unexpected cfg block counts: {seen}')
+          path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
           PY
           git diff --check
 
