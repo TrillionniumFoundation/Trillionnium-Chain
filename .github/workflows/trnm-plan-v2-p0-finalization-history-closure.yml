@@ -1,0 +1,1539 @@
+name: TRNM Plan v2 P0 Finalization History Closure
+
+on:
+  push:
+    branches:
+      - integration/native-poco-a04-a19-a23-qualified-v1-20260901
+    paths:
+      - .github/workflows/trnm-plan-v2-p0-finalization-history-closure.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-plan-v2-p0-finalization-history-closure
+  cancel-in-progress: false
+
+jobs:
+  close-p0:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      RUST_BACKTRACE: "1"
+    steps:
+      - name: Check out exact candidate branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: integration/native-poco-a04-a19-a23-qualified-v1-20260901
+          fetch-depth: 0
+          path: trillionnium-chain
+
+      - name: Verify exact carrier and repository boundary
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "3c46293e78a125dec9504e51c355a20216341338"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/trnm-plan-v2-p0-finalization-history-closure.yml"
+          bash scripts/project-preflight.sh --audit
+
+      - name: Apply descriptor-bound namespace and closed-world schema repair
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          root = Path.cwd()
+          crate = root / "trillionnium/crates/trnm-native-application-sqlite"
+          namespace_path = crate / "src/pinned_sqlite_namespace.rs"
+          namespace_path.write_text(r'''use std::{
+              fs::{self, File, Metadata, OpenOptions},
+              path::{Path, PathBuf},
+              sync::Arc,
+          };
+
+          #[cfg(unix)]
+          use std::os::unix::fs::MetadataExt;
+          #[cfg(any(
+              target_os = "linux",
+              target_os = "android",
+              target_os = "macos",
+              target_os = "ios",
+              target_os = "freebsd",
+              target_os = "dragonfly",
+              target_os = "openbsd",
+              target_os = "netbsd"
+          ))]
+          use std::os::unix::fs::OpenOptionsExt;
+
+          use rusqlite::Connection;
+
+          use crate::error::{error, ValidationStoreErrorCodeV0, ValidationStoreResultV0};
+
+          const SIDECAR_SUFFIXES_V0: [&str; 3] = ["-wal", "-shm", "-journal"];
+
+          #[cfg(any(target_os = "linux", target_os = "android"))]
+          const O_NOFOLLOW_V0: i32 = 0o00400000;
+          #[cfg(any(
+              target_os = "macos",
+              target_os = "ios",
+              target_os = "freebsd",
+              target_os = "dragonfly",
+              target_os = "openbsd",
+              target_os = "netbsd"
+          ))]
+          const O_NOFOLLOW_V0: i32 = 0x00000100;
+
+          #[cfg(unix)]
+          #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+          struct FileIdentityV0 {
+              device: u64,
+              inode: u64,
+          }
+
+          #[cfg(not(unix))]
+          #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+          struct FileIdentityV0;
+
+          #[derive(Debug)]
+          struct SidecarAnchorV0 {
+              path: PathBuf,
+              identity: FileIdentityV0,
+              file: File,
+          }
+
+          #[derive(Debug, Clone)]
+          pub(super) struct PinnedSqliteNamespaceV0 {
+              path: PathBuf,
+              parent_path: PathBuf,
+              parent_anchor: Arc<File>,
+              database_anchor: Arc<File>,
+              parent_identity: FileIdentityV0,
+              database_identity: FileIdentityV0,
+          }
+
+          #[derive(Debug)]
+          pub(super) struct PinnedSqliteOperationV0 {
+              namespace: PinnedSqliteNamespaceV0,
+              database_anchor: File,
+              sidecars: Vec<SidecarAnchorV0>,
+          }
+
+          pub(super) fn canonical_database_path_v0(
+              path: &Path,
+          ) -> ValidationStoreResultV0<PathBuf> {
+              if path.as_os_str().is_empty() || !path.is_absolute() {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::InvalidBinding,
+                      "sqlite_namespace.path",
+                  ));
+              }
+              let parent = path.parent().ok_or_else(|| {
+                  error(
+                      ValidationStoreErrorCodeV0::InvalidBinding,
+                      "sqlite_namespace.parent",
+                  )
+              })?;
+              let file_name = path.file_name().ok_or_else(|| {
+                  error(
+                      ValidationStoreErrorCodeV0::InvalidBinding,
+                      "sqlite_namespace.file_name",
+                  )
+              })?;
+              fs::create_dir_all(parent).map_err(|_| {
+                  error(
+                      ValidationStoreErrorCodeV0::Storage,
+                      "sqlite_namespace.create_parent",
+                  )
+              })?;
+              let canonical_parent = fs::canonicalize(parent).map_err(|_| {
+                  error(
+                      ValidationStoreErrorCodeV0::Storage,
+                      "sqlite_namespace.canonical_parent",
+                  )
+              })?;
+              let metadata = fs::metadata(&canonical_parent).map_err(|_| {
+                  error(
+                      ValidationStoreErrorCodeV0::Storage,
+                      "sqlite_namespace.parent_metadata",
+                  )
+              })?;
+              if !metadata.is_dir() {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::InvalidBinding,
+                      "sqlite_namespace.parent_type",
+                  ));
+              }
+              Ok(canonical_parent.join(file_name))
+          }
+
+          impl PinnedSqliteNamespaceV0 {
+              pub(super) fn pin_existing(path: &Path) -> ValidationStoreResultV0<Self> {
+                  let path = canonical_database_path_v0(path)?;
+                  let parent_path = path.parent().ok_or_else(|| {
+                      error(
+                          ValidationStoreErrorCodeV0::InvalidBinding,
+                          "sqlite_namespace.parent",
+                      )
+                  })?;
+                  let parent_anchor = File::open(parent_path).map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.parent_open",
+                      )
+                  })?;
+                  let parent_metadata = parent_anchor.metadata().map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.parent_fstat",
+                      )
+                  })?;
+                  if !parent_metadata.is_dir() {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::InvalidBinding,
+                          "sqlite_namespace.parent_type",
+                      ));
+                  }
+                  let parent_identity = identity_v0(&parent_metadata)?;
+                  let database_anchor = open_nofollow_regular_v0(&path)?;
+                  let database_metadata = database_anchor.metadata().map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.database_fstat",
+                      )
+                  })?;
+                  verify_regular_single_link_v0(&database_metadata, "sqlite_namespace.database")?;
+                  let database_identity = identity_v0(&database_metadata)?;
+                  let namespace = Self {
+                      path,
+                      parent_path: parent_path.to_path_buf(),
+                      parent_anchor: Arc::new(parent_anchor),
+                      database_anchor: Arc::new(database_anchor),
+                      parent_identity,
+                      database_identity,
+                  };
+                  namespace.verify_static_namespace()?;
+                  Ok(namespace)
+              }
+
+              pub(super) fn path(&self) -> &Path {
+                  &self.path
+              }
+
+              pub(super) fn begin_operation(
+                  &self,
+              ) -> ValidationStoreResultV0<PinnedSqliteOperationV0> {
+                  self.verify_static_namespace()?;
+                  let database_anchor = open_nofollow_regular_v0(&self.path)?;
+                  let metadata = database_anchor.metadata().map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.operation_database_fstat",
+                      )
+                  })?;
+                  verify_regular_single_link_v0(
+                      &metadata,
+                      "sqlite_namespace.operation_database",
+                  )?;
+                  if identity_v0(&metadata)? != self.database_identity {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.operation_database_identity",
+                      ));
+                  }
+                  Ok(PinnedSqliteOperationV0 {
+                      namespace: self.clone(),
+                      database_anchor,
+                      sidecars: capture_sidecars_v0(&self.path)?,
+                  })
+              }
+
+              fn verify_static_namespace(&self) -> ValidationStoreResultV0<()> {
+                  let canonical_parent = fs::canonicalize(&self.parent_path).map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.parent_missing",
+                      )
+                  })?;
+                  if canonical_parent != self.parent_path {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.parent_alias",
+                      ));
+                  }
+                  let path_parent_metadata = fs::metadata(&self.parent_path).map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.parent_metadata",
+                      )
+                  })?;
+                  let anchor_parent_metadata = self.parent_anchor.metadata().map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.parent_anchor",
+                      )
+                  })?;
+                  if !path_parent_metadata.is_dir()
+                      || identity_v0(&path_parent_metadata)? != self.parent_identity
+                      || identity_v0(&anchor_parent_metadata)? != self.parent_identity
+                  {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.parent_identity",
+                      ));
+                  }
+
+                  let path_database_metadata = fs::symlink_metadata(&self.path).map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.database_missing",
+                      )
+                  })?;
+                  verify_regular_single_link_v0(
+                      &path_database_metadata,
+                      "sqlite_namespace.database_path",
+                  )?;
+                  let anchor_database_metadata = self.database_anchor.metadata().map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.database_anchor",
+                      )
+                  })?;
+                  if identity_v0(&path_database_metadata)? != self.database_identity
+                      || identity_v0(&anchor_database_metadata)? != self.database_identity
+                  {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.database_identity",
+                      ));
+                  }
+                  Ok(())
+              }
+          }
+
+          impl PinnedSqliteOperationV0 {
+              pub(super) fn verify_connection(
+                  &mut self,
+                  connection: &Connection,
+              ) -> ValidationStoreResultV0<()> {
+                  self.namespace.verify_static_namespace()?;
+                  let operation_metadata = self.database_anchor.metadata().map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.operation_anchor",
+                      )
+                  })?;
+                  if identity_v0(&operation_metadata)? != self.namespace.database_identity {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.operation_anchor_identity",
+                      ));
+                  }
+                  verify_connection_path_v0(connection, self.namespace.path())?;
+                  let current = capture_sidecars_v0(self.namespace.path())?;
+                  for anchor in current {
+                      if let Some(existing) = self
+                          .sidecars
+                          .iter()
+                          .find(|existing| existing.path == anchor.path)
+                      {
+                          if existing.identity != anchor.identity {
+                              return Err(error(
+                                  ValidationStoreErrorCodeV0::ReplacedStore,
+                                  "sqlite_namespace.sidecar_replaced",
+                              ));
+                          }
+                      } else {
+                          self.sidecars.push(anchor);
+                      }
+                  }
+                  Ok(())
+              }
+
+              pub(super) fn finish(self) -> ValidationStoreResultV0<()> {
+                  self.namespace.verify_static_namespace()?;
+                  let current = capture_sidecars_v0(self.namespace.path())?;
+                  for anchor in &current {
+                      let Some(existing) = self
+                          .sidecars
+                          .iter()
+                          .find(|existing| existing.path == anchor.path)
+                      else {
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::ReplacedStore,
+                              "sqlite_namespace.late_sidecar",
+                          ));
+                      };
+                      if existing.identity != anchor.identity {
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::ReplacedStore,
+                              "sqlite_namespace.sidecar_identity",
+                          ));
+                      }
+                  }
+                  for anchor in &self.sidecars {
+                      if let Ok(metadata) = anchor.file.metadata() {
+                          if identity_v0(&metadata)? != anchor.identity {
+                              return Err(error(
+                                  ValidationStoreErrorCodeV0::ReplacedStore,
+                                  "sqlite_namespace.sidecar_anchor_identity",
+                              ));
+                          }
+                      }
+                  }
+                  Ok(())
+              }
+          }
+
+          fn verify_connection_path_v0(
+              connection: &Connection,
+              expected: &Path,
+          ) -> ValidationStoreResultV0<()> {
+              let mut statement = connection.prepare("PRAGMA database_list").map_err(|_| {
+                  error(
+                      ValidationStoreErrorCodeV0::Storage,
+                      "sqlite_namespace.database_list_prepare",
+                  )
+              })?;
+              let mut rows = statement.query([]).map_err(|_| {
+                  error(
+                      ValidationStoreErrorCodeV0::Storage,
+                      "sqlite_namespace.database_list_query",
+                  )
+              })?;
+              let mut main_path = None;
+              while let Some(row) = rows.next().map_err(|_| {
+                  error(
+                      ValidationStoreErrorCodeV0::Storage,
+                      "sqlite_namespace.database_list_row",
+                  )
+              })? {
+                  let name = row.get::<_, String>(1).map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.database_list_name",
+                      )
+                  })?;
+                  if name == "main" {
+                      main_path = Some(row.get::<_, String>(2).map_err(|_| {
+                          error(
+                              ValidationStoreErrorCodeV0::Storage,
+                              "sqlite_namespace.database_list_path",
+                          )
+                      })?);
+                  }
+              }
+              let main_path = main_path.ok_or_else(|| {
+                  error(
+                      ValidationStoreErrorCodeV0::ReplacedStore,
+                      "sqlite_namespace.main_database_missing",
+                  )
+              })?;
+              if main_path.is_empty() {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::ReplacedStore,
+                      "sqlite_namespace.main_database_memory",
+                  ));
+              }
+              let canonical = fs::canonicalize(main_path).map_err(|_| {
+                  error(
+                      ValidationStoreErrorCodeV0::ReplacedStore,
+                      "sqlite_namespace.main_database_path",
+                  )
+              })?;
+              if canonical != expected {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::ReplacedStore,
+                      "sqlite_namespace.connection_path",
+                  ));
+              }
+              Ok(())
+          }
+
+          fn capture_sidecars_v0(path: &Path) -> ValidationStoreResultV0<Vec<SidecarAnchorV0>> {
+              let mut anchors = Vec::new();
+              for sidecar in sidecar_paths_v0(path) {
+                  let metadata = match fs::symlink_metadata(&sidecar) {
+                      Ok(metadata) => metadata,
+                      Err(error_value) if error_value.kind() == std::io::ErrorKind::NotFound => {
+                          continue;
+                      }
+                      Err(_) => {
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::Storage,
+                              "sqlite_namespace.sidecar_metadata",
+                          ))
+                      }
+                  };
+                  verify_regular_single_link_v0(&metadata, "sqlite_namespace.sidecar_path")?;
+                  let file = open_nofollow_regular_v0(&sidecar)?;
+                  let file_metadata = file.metadata().map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "sqlite_namespace.sidecar_fstat",
+                      )
+                  })?;
+                  verify_regular_single_link_v0(
+                      &file_metadata,
+                      "sqlite_namespace.sidecar_file",
+                  )?;
+                  let identity = identity_v0(&metadata)?;
+                  if identity_v0(&file_metadata)? != identity {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::ReplacedStore,
+                          "sqlite_namespace.sidecar_open_race",
+                      ));
+                  }
+                  anchors.push(SidecarAnchorV0 {
+                      path: sidecar,
+                      identity,
+                      file,
+                  });
+              }
+              Ok(anchors)
+          }
+
+          fn sidecar_paths_v0(path: &Path) -> Vec<PathBuf> {
+              SIDECAR_SUFFIXES_V0
+                  .iter()
+                  .map(|suffix| {
+                      let mut value = path.as_os_str().to_os_string();
+                      value.push(suffix);
+                      PathBuf::from(value)
+                  })
+                  .collect()
+          }
+
+          fn open_nofollow_regular_v0(path: &Path) -> ValidationStoreResultV0<File> {
+              #[cfg(any(
+                  target_os = "linux",
+                  target_os = "android",
+                  target_os = "macos",
+                  target_os = "ios",
+                  target_os = "freebsd",
+                  target_os = "dragonfly",
+                  target_os = "openbsd",
+                  target_os = "netbsd"
+              ))]
+              {
+                  return OpenOptions::new()
+                      .read(true)
+                      .write(true)
+                      .custom_flags(O_NOFOLLOW_V0)
+                      .open(path)
+                      .map_err(|_| {
+                          error(
+                              ValidationStoreErrorCodeV0::ReplacedStore,
+                              "sqlite_namespace.nofollow_open",
+                          )
+                      });
+              }
+              #[cfg(not(any(
+                  target_os = "linux",
+                  target_os = "android",
+                  target_os = "macos",
+                  target_os = "ios",
+                  target_os = "freebsd",
+                  target_os = "dragonfly",
+                  target_os = "openbsd",
+                  target_os = "netbsd"
+              ))]
+              {
+                  let _ = path;
+                  Err(error(
+                      ValidationStoreErrorCodeV0::InvalidBinding,
+                      "sqlite_namespace.unsupported_platform",
+                  ))
+              }
+          }
+
+          fn verify_regular_single_link_v0(
+              metadata: &Metadata,
+              context: &'static str,
+          ) -> ValidationStoreResultV0<()> {
+              if metadata.file_type().is_symlink() || !metadata.file_type().is_file() {
+                  return Err(error(ValidationStoreErrorCodeV0::ReplacedStore, context));
+              }
+              #[cfg(unix)]
+              if metadata.nlink() != 1 {
+                  return Err(error(ValidationStoreErrorCodeV0::ReplacedStore, context));
+              }
+              #[cfg(not(unix))]
+              {
+                  let _ = metadata;
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::InvalidBinding,
+                      "sqlite_namespace.unsupported_platform",
+                  ));
+              }
+              Ok(())
+          }
+
+          #[cfg(unix)]
+          fn identity_v0(metadata: &Metadata) -> ValidationStoreResultV0<FileIdentityV0> {
+              Ok(FileIdentityV0 {
+                  device: metadata.dev(),
+                  inode: metadata.ino(),
+              })
+          }
+
+          #[cfg(not(unix))]
+          fn identity_v0(_metadata: &Metadata) -> ValidationStoreResultV0<FileIdentityV0> {
+              Err(error(
+                  ValidationStoreErrorCodeV0::InvalidBinding,
+                  "sqlite_namespace.unsupported_platform",
+              ))
+          }
+          ''', encoding="utf-8")
+
+          lib_path = crate / "src/lib.rs"
+          lib = lib_path.read_text(encoding="utf-8")
+          old = "mod finalization_history;\nmod store;"
+          new = "mod finalization_history;\nmod pinned_sqlite_namespace;\nmod store;"
+          if old not in lib:
+              raise SystemExit("lib module insertion anchor missing")
+          lib_path.write_text(lib.replace(old, new, 1), encoding="utf-8")
+
+          history_path = crate / "src/finalization_history.rs"
+          history = history_path.read_text(encoding="utf-8")
+          import_anchor = "use crate::error::{error, ValidationStoreErrorCodeV0, ValidationStoreResultV0};\n"
+          import_replacement = import_anchor + "use crate::pinned_sqlite_namespace::{\n    canonical_database_path_v0, PinnedSqliteNamespaceV0,\n};\n"
+          if import_anchor not in history:
+              raise SystemExit("history import anchor missing")
+          history = history.replace(import_anchor, import_replacement, 1)
+
+          impl_start = history.index("#[derive(Debug, Clone)]\npub struct SqliteNativeFinalizationHistoryV0")
+          impl_end = history.index("#[derive(Debug, Clone)]\nstruct StoredFinalizationRowV0")
+          new_impl = r'''#[derive(Debug, Clone)]
+          pub struct SqliteNativeFinalizationHistoryV0 {
+              namespace: PinnedSqliteNamespaceV0,
+              scope: FinalizationHistoryScopeV0,
+              initial_head: ApplicationHeadV0,
+          }
+
+          impl SqliteNativeFinalizationHistoryV0 {
+              pub fn open(
+                  path: impl AsRef<Path>,
+                  scope: FinalizationHistoryScopeV0,
+                  initial_head: ApplicationHeadV0,
+              ) -> ValidationStoreResultV0<Self> {
+                  let path = path.as_ref();
+                  if path.as_os_str().is_empty() || !path.is_absolute() {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::InvalidBinding,
+                          "finalization_history.path",
+                      ));
+                  }
+                  let canonical_path = canonical_database_path_v0(path)?;
+                  reject_unsafe_existing_path_v0(&canonical_path)?;
+                  let connection = open_connection_v0(&canonical_path, true)?;
+                  initialize_or_validate_schema_v0(&connection, scope, &initial_head)?;
+                  validate_connection_contract_v0(&connection)?;
+                  let _ = audit_connection_v0(&connection, scope, &initial_head)?;
+                  drop(connection);
+                  reject_unsafe_existing_path_v0(&canonical_path)?;
+                  let namespace = PinnedSqliteNamespaceV0::pin_existing(&canonical_path)?;
+                  let store = Self {
+                      namespace,
+                      scope,
+                      initial_head,
+                  };
+                  let _ = store.audit()?;
+                  Ok(store)
+              }
+
+              pub fn path(&self) -> &Path {
+                  self.namespace.path()
+              }
+
+              pub const fn scope(&self) -> FinalizationHistoryScopeV0 {
+                  self.scope
+              }
+
+              pub const fn initial_head(&self) -> &ApplicationHeadV0 {
+                  &self.initial_head
+              }
+
+              fn with_connection<T>(
+                  &self,
+                  action: impl FnOnce(&mut Connection) -> ValidationStoreResultV0<T>,
+              ) -> ValidationStoreResultV0<T> {
+                  let mut operation = self.namespace.begin_operation()?;
+                  let mut connection = open_connection_v0(self.namespace.path(), false)?;
+                  let opening_check = validate_connection_contract_v0(&connection)
+                      .and_then(|_| operation.verify_connection(&connection));
+                  if let Err(opening_error) = opening_check {
+                      drop(connection);
+                      let _ = operation.finish();
+                      return Err(opening_error);
+                  }
+
+                  let action_result = action(&mut connection);
+                  let before_close_result = validate_connection_contract_v0(&connection)
+                      .and_then(|_| operation.verify_connection(&connection));
+                  drop(connection);
+                  let after_close_result = operation.finish();
+                  before_close_result?;
+                  after_close_result?;
+                  action_result
+              }
+
+              pub fn audit(&self) -> ValidationStoreResultV0<ConfirmedFinalizationHistoryAuditV0> {
+                  self.with_connection(|connection| {
+                      audit_connection_v0(connection, self.scope, &self.initial_head)
+                  })
+              }
+
+              pub fn read_sequence(
+                  &self,
+                  sequence: u64,
+              ) -> ValidationStoreResultV0<Option<ConfirmedFinalizationHistoryRecordV0>> {
+                  if sequence == 0 {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::ZeroValue,
+                          "finalization_history.read_sequence",
+                      ));
+                  }
+                  self.with_connection(|connection| {
+                      let audit =
+                          audit_connection_v0(connection, self.scope, &self.initial_head)?;
+                      if sequence > audit.entry_count {
+                          return Ok(None);
+                      }
+                      let row = load_row_by_sequence_v0(connection, sequence)?.ok_or_else(|| {
+                          error(
+                              ValidationStoreErrorCodeV0::CorruptStore,
+                              "finalization_history.missing_sequence",
+                          )
+                      })?;
+                      Ok(Some(confirm_row_v0(self.scope, &row)?))
+                  })
+              }
+
+              pub fn append(
+                  &self,
+                  readback: NativeFinalizationApplyReadbackV0,
+              ) -> ValidationStoreResultV0<FinalizationHistoryAppendOutcomeV0> {
+                  enum AppendStageV0 {
+                      ExactReplay(ConfirmedFinalizationHistoryRecordV0),
+                      Committed {
+                          readback: NativeFinalizationApplyReadbackV0,
+                          sequence: u64,
+                          record: Vec<u8>,
+                          record_digest: [u8; 32],
+                          previous_chain_digest: [u8; 32],
+                          chain_digest: [u8; 32],
+                      },
+                  }
+
+                  let stage = self.with_connection(|connection| {
+                      let before =
+                          audit_connection_v0(connection, self.scope, &self.initial_head)?;
+                      let sequence = readback.durable_sequence();
+                      let record = encode_readback_v0(&readback);
+                      let record_digest = digest_v0(
+                          RECORD_DIGEST_DOMAIN_V0,
+                          &[self.scope.as_bytes().as_slice(), record.as_slice()],
+                      );
+
+                      if sequence <= before.entry_count {
+                          let existing = load_row_by_sequence_v0(connection, sequence)?.ok_or_else(
+                              || {
+                                  error(
+                                      ValidationStoreErrorCodeV0::CorruptStore,
+                                      "finalization_history.replay_missing",
+                                  )
+                              },
+                          )?;
+                          if existing.record == record && existing.record_digest == record_digest {
+                              return Ok(AppendStageV0::ExactReplay(confirm_row_v0(
+                                  self.scope,
+                                  &existing,
+                              )?));
+                          }
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::BindingMismatch,
+                              "finalization_history.replay_conflict",
+                          ));
+                      }
+
+                      let expected_sequence = before.entry_count.checked_add(1).ok_or_else(|| {
+                          error(
+                              ValidationStoreErrorCodeV0::Overflow,
+                              "finalization_history.sequence",
+                          )
+                      })?;
+                      if sequence != expected_sequence
+                          || sequence > MAX_FINALIZATION_HISTORY_ENTRIES_V0
+                      {
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::InvalidTransition,
+                              "finalization_history.sequence",
+                          ));
+                      }
+                      if readback.intent().parent() != before.committed_head() {
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::BindingMismatch,
+                              "finalization_history.parent",
+                          ));
+                      }
+
+                      let target_block_id_value = readback.intent().target().block_id();
+                      let target_block_id = target_block_id_value.as_bytes();
+                      let proof_id_value = readback.intent().proof_id();
+                      let proof_id = proof_id_value.as_bytes();
+                      let collision = connection
+                          .query_row(
+                              "SELECT record_digest FROM finalization_history_records_v0 WHERE target_block_id = ?1 OR proof_id = ?2 LIMIT 1",
+                              params![target_block_id.as_slice(), proof_id.as_slice()],
+                              |row| row.get::<_, Vec<u8>>(0),
+                          )
+                          .optional()
+                          .map_err(|_| {
+                              error(
+                                  ValidationStoreErrorCodeV0::Storage,
+                                  "finalization_history.collision_read",
+                              )
+                          })?;
+                      if collision.is_some() {
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::BindingMismatch,
+                              "finalization_history.identity_collision",
+                          ));
+                      }
+
+                      let previous_chain_digest = before.chain_digest().into_bytes();
+                      let sequence_bytes = sequence.to_be_bytes();
+                      let chain_digest = digest_v0(
+                          CHAIN_DIGEST_DOMAIN_V0,
+                          &[
+                              self.scope.as_bytes().as_slice(),
+                              previous_chain_digest.as_slice(),
+                              record_digest.as_slice(),
+                              sequence_bytes.as_slice(),
+                          ],
+                      );
+                      let expected_previous_sequence = before.entry_count.to_be_bytes();
+                      let transaction = connection
+                          .transaction_with_behavior(TransactionBehavior::Immediate)
+                          .map_err(|_| {
+                              error(
+                                  ValidationStoreErrorCodeV0::Storage,
+                                  "finalization_history.transaction",
+                              )
+                          })?;
+                      transaction
+                          .execute(
+                              "INSERT INTO finalization_history_records_v0 (sequence,target_block_id,proof_id,record,record_digest,previous_chain_digest,chain_digest) VALUES (?1,?2,?3,?4,?5,?6,?7)",
+                              params![
+                                  sequence_bytes.as_slice(),
+                                  target_block_id.as_slice(),
+                                  proof_id.as_slice(),
+                                  record.as_slice(),
+                                  record_digest.as_slice(),
+                                  previous_chain_digest.as_slice(),
+                                  chain_digest.as_slice(),
+                              ],
+                          )
+                          .map_err(|_| {
+                              error(
+                                  ValidationStoreErrorCodeV0::CommitUncertain,
+                                  "finalization_history.insert",
+                              )
+                          })?;
+                      let updated = transaction
+                          .execute(
+                              "UPDATE finalization_history_metadata_v0 SET sequence = ?1, chain_digest = ?2 WHERE singleton = 1 AND sequence = ?3 AND chain_digest = ?4",
+                              params![
+                                  sequence_bytes.as_slice(),
+                                  chain_digest.as_slice(),
+                                  expected_previous_sequence.as_slice(),
+                                  previous_chain_digest.as_slice(),
+                              ],
+                          )
+                          .map_err(|_| {
+                              error(
+                                  ValidationStoreErrorCodeV0::CommitUncertain,
+                                  "finalization_history.metadata_update",
+                              )
+                          })?;
+                      if updated != 1 {
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::CommitUncertain,
+                              "finalization_history.metadata_cas",
+                          ));
+                      }
+                      transaction.commit().map_err(|_| {
+                          error(
+                              ValidationStoreErrorCodeV0::CommitUncertain,
+                              "finalization_history.commit",
+                          )
+                      })?;
+                      Ok(AppendStageV0::Committed {
+                          readback,
+                          sequence,
+                          record,
+                          record_digest,
+                          previous_chain_digest,
+                          chain_digest,
+                      })
+                  })?;
+
+                  match stage {
+                      AppendStageV0::ExactReplay(confirmed) => {
+                          Ok(FinalizationHistoryAppendOutcomeV0::ExactReplay(confirmed))
+                      }
+                      AppendStageV0::Committed {
+                          readback,
+                          sequence,
+                          record,
+                          record_digest,
+                          previous_chain_digest,
+                          chain_digest,
+                      } => {
+                          let confirmed = self.with_connection(|fresh| {
+                              let after =
+                                  audit_connection_v0(fresh, self.scope, &self.initial_head)?;
+                              if after.entry_count() != sequence
+                                  || after.committed_head() != readback.committed_head()
+                              {
+                                  return Err(error(
+                                      ValidationStoreErrorCodeV0::CommitUncertain,
+                                      "finalization_history.fresh_readback",
+                                  ));
+                              }
+                              let stored = load_row_by_sequence_v0(fresh, sequence)?.ok_or_else(|| {
+                                  error(
+                                      ValidationStoreErrorCodeV0::CommitUncertain,
+                                      "finalization_history.fresh_record",
+                                  )
+                              })?;
+                              if stored.record != record
+                                  || stored.record_digest != record_digest
+                                  || stored.previous_chain_digest != previous_chain_digest
+                                  || stored.chain_digest != chain_digest
+                              {
+                                  return Err(error(
+                                      ValidationStoreErrorCodeV0::CommitUncertain,
+                                      "finalization_history.fresh_identity",
+                                  ));
+                              }
+                              confirm_row_v0(self.scope, &stored)
+                          })?;
+                          Ok(FinalizationHistoryAppendOutcomeV0::NewlyAppended(confirmed))
+                      }
+                  }
+              }
+          }
+
+          '''
+          history = history[:impl_start] + new_impl + history[impl_end:]
+
+          connection_start = history.index("fn open_connection_v0(")
+          connection_end = history.index("fn initialize_or_validate_schema_v0(")
+          new_connection = r'''fn open_connection_v0(
+              path: &Path,
+              create: bool,
+          ) -> ValidationStoreResultV0<Connection> {
+              let mut flags = OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX;
+              if create {
+                  flags |= OpenFlags::SQLITE_OPEN_CREATE;
+              }
+              let connection = Connection::open_with_flags(path, flags).map_err(|_| {
+                  error(
+                      ValidationStoreErrorCodeV0::Storage,
+                      "finalization_history.open",
+                  )
+              })?;
+              connection
+                  .busy_timeout(Duration::from_secs(5))
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.busy_timeout",
+                      )
+                  })?;
+              connection
+                  .execute_batch(
+                      "PRAGMA foreign_keys = ON; PRAGMA trusted_schema = OFF; PRAGMA synchronous = FULL; PRAGMA temp_store = MEMORY; PRAGMA wal_autocheckpoint = 0;",
+                  )
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.pragmas",
+                      )
+                  })?;
+              let journal_mode = connection
+                  .query_row("PRAGMA journal_mode = WAL", [], |row| row.get::<_, String>(0))
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.journal_mode",
+                      )
+                  })?;
+              if !journal_mode.eq_ignore_ascii_case("wal") {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::Storage,
+                      "finalization_history.journal_mode",
+                  ));
+              }
+              Ok(connection)
+          }
+
+          '''
+          history = history[:connection_start] + new_connection + history[connection_end:]
+
+          schema_start = history.index("fn initialize_or_validate_schema_v0(")
+          schema_end = history.index("fn audit_connection_v0(")
+          new_schema = r'''fn initialize_or_validate_schema_v0(
+              connection: &Connection,
+              scope: FinalizationHistoryScopeV0,
+              initial_head: &ApplicationHeadV0,
+          ) -> ValidationStoreResultV0<()> {
+              let metadata_sql = table_sql_v0(connection, "finalization_history_metadata_v0")?;
+              let records_sql = table_sql_v0(connection, "finalization_history_records_v0")?;
+              match (metadata_sql, records_sql) {
+                  (None, None) => {
+                      connection.execute_batch(METADATA_SCHEMA_V0).map_err(|_| {
+                          error(
+                              ValidationStoreErrorCodeV0::Storage,
+                              "finalization_history.create_metadata",
+                          )
+                      })?;
+                      connection.execute_batch(RECORD_SCHEMA_V0).map_err(|_| {
+                          error(
+                              ValidationStoreErrorCodeV0::Storage,
+                              "finalization_history.create_records",
+                          )
+                      })?;
+                      let initial_head_bytes = encode_head_v0(initial_head);
+                      let sequence = 0u64.to_be_bytes();
+                      let chain_digest = digest_v0(
+                          GENESIS_DIGEST_DOMAIN_V0,
+                          &[scope.as_bytes().as_slice(), initial_head_bytes.as_slice()],
+                      );
+                      connection
+                          .execute(
+                              "INSERT INTO finalization_history_metadata_v0 (singleton,schema_version,scope,initial_head,sequence,chain_digest) VALUES (1,?1,?2,?3,?4,?5)",
+                              params![
+                                  SCHEMA_VERSION_V0,
+                                  scope.as_bytes().as_slice(),
+                                  initial_head_bytes.as_slice(),
+                                  sequence.as_slice(),
+                                  chain_digest.as_slice(),
+                              ],
+                          )
+                          .map_err(|_| {
+                              error(
+                                  ValidationStoreErrorCodeV0::Storage,
+                                  "finalization_history.initialize",
+                              )
+                          })?;
+                  }
+                  (Some(metadata), Some(records)) => {
+                      if normalize_sql_v0(&metadata) != normalize_sql_v0(METADATA_SCHEMA_V0)
+                          || normalize_sql_v0(&records) != normalize_sql_v0(RECORD_SCHEMA_V0)
+                      {
+                          return Err(error(
+                              ValidationStoreErrorCodeV0::CorruptStore,
+                              "finalization_history.schema",
+                          ));
+                      }
+                  }
+                  _ => {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::CorruptStore,
+                          "finalization_history.partial_schema",
+                      ))
+                  }
+              }
+              validate_closed_world_schema_v0(connection)
+          }
+
+          fn table_sql_v0(
+              connection: &Connection,
+              name: &str,
+          ) -> ValidationStoreResultV0<Option<String>> {
+              connection
+                  .query_row(
+                      "SELECT sql FROM sqlite_schema WHERE type = 'table' AND name = ?1",
+                      params![name],
+                      |row| row.get::<_, String>(0),
+                  )
+                  .optional()
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.schema_read",
+                      )
+                  })
+          }
+
+          fn normalize_sql_v0(value: &str) -> String {
+              value.split_whitespace().collect::<Vec<_>>().join(" ")
+          }
+
+          fn validate_connection_contract_v0(
+              connection: &Connection,
+          ) -> ValidationStoreResultV0<()> {
+              validate_pragmas_v0(connection)?;
+              validate_closed_world_schema_v0(connection)
+          }
+
+          fn validate_pragmas_v0(connection: &Connection) -> ValidationStoreResultV0<()> {
+              let read_i64 = |sql: &str, context: &'static str| {
+                  connection
+                      .query_row(sql, [], |row| row.get::<_, i64>(0))
+                      .map_err(|_| error(ValidationStoreErrorCodeV0::Storage, context))
+              };
+              if read_i64("PRAGMA foreign_keys", "finalization_history.pragma_foreign_keys")? != 1
+                  || read_i64(
+                      "PRAGMA trusted_schema",
+                      "finalization_history.pragma_trusted_schema",
+                  )? != 0
+                  || read_i64("PRAGMA synchronous", "finalization_history.pragma_synchronous")?
+                      != 2
+                  || read_i64("PRAGMA temp_store", "finalization_history.pragma_temp_store")? != 2
+                  || read_i64(
+                      "PRAGMA wal_autocheckpoint",
+                      "finalization_history.pragma_wal_autocheckpoint",
+                  )? != 0
+              {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::CorruptStore,
+                      "finalization_history.pragma_profile",
+                  ));
+              }
+              let journal_mode = connection
+                  .query_row("PRAGMA journal_mode", [], |row| row.get::<_, String>(0))
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.pragma_journal_mode",
+                      )
+                  })?;
+              if !journal_mode.eq_ignore_ascii_case("wal") {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::CorruptStore,
+                      "finalization_history.pragma_journal_mode",
+                  ));
+              }
+              Ok(())
+          }
+
+          fn validate_closed_world_schema_v0(
+              connection: &Connection,
+          ) -> ValidationStoreResultV0<()> {
+              let mut statement = connection
+                  .prepare(
+                      "SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_autoindex_%' ORDER BY type,name",
+                  )
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.closed_schema_prepare",
+                      )
+                  })?;
+              let rows = statement
+                  .query_map([], |row| {
+                      Ok((
+                          row.get::<_, String>(0)?,
+                          row.get::<_, String>(1)?,
+                          row.get::<_, String>(2)?,
+                          row.get::<_, Option<String>>(3)?,
+                      ))
+                  })
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.closed_schema_query",
+                      )
+                  })?;
+              let mut objects = Vec::new();
+              for row in rows {
+                  objects.push(row.map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.closed_schema_row",
+                      )
+                  })?);
+              }
+              if objects.len() != 2 {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::CorruptStore,
+                      "finalization_history.closed_schema_count",
+                  ));
+              }
+              let expected = [
+                  (
+                      "table",
+                      "finalization_history_metadata_v0",
+                      "finalization_history_metadata_v0",
+                      METADATA_SCHEMA_V0,
+                  ),
+                  (
+                      "table",
+                      "finalization_history_records_v0",
+                      "finalization_history_records_v0",
+                      RECORD_SCHEMA_V0,
+                  ),
+              ];
+              for (object_type, name, table_name, sql) in expected {
+                  let Some(object) = objects.iter().find(|object| object.1 == name) else {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::CorruptStore,
+                          "finalization_history.closed_schema_missing",
+                      ));
+                  };
+                  if object.0 != object_type
+                      || object.2 != table_name
+                      || object
+                          .3
+                          .as_ref()
+                          .is_none_or(|actual| normalize_sql_v0(actual) != normalize_sql_v0(sql))
+                  {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::CorruptStore,
+                          "finalization_history.closed_schema_object",
+                      ));
+                  }
+              }
+              validate_index_shape_v0(connection)
+          }
+
+          fn validate_index_shape_v0(connection: &Connection) -> ValidationStoreResultV0<()> {
+              use std::collections::BTreeSet;
+
+              let mut metadata_indexes = connection
+                  .prepare("PRAGMA index_list('finalization_history_metadata_v0')")
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.metadata_indexes_prepare",
+                      )
+                  })?;
+              let metadata_index_count = metadata_indexes
+                  .query_map([], |_| Ok(()))
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.metadata_indexes_query",
+                      )
+                  })?
+                  .count();
+              if metadata_index_count != 0 {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::CorruptStore,
+                      "finalization_history.metadata_indexes",
+                  ));
+              }
+
+              let mut statement = connection
+                  .prepare("PRAGMA index_list('finalization_history_records_v0')")
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.record_indexes_prepare",
+                      )
+                  })?;
+              let rows = statement
+                  .query_map([], |row| {
+                      Ok((
+                          row.get::<_, String>(1)?,
+                          row.get::<_, i64>(2)?,
+                          row.get::<_, String>(3)?,
+                          row.get::<_, i64>(4)?,
+                      ))
+                  })
+                  .map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.record_indexes_query",
+                      )
+                  })?;
+              let mut indexes = Vec::new();
+              for row in rows {
+                  indexes.push(row.map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.record_indexes_row",
+                      )
+                  })?);
+              }
+              if indexes.len() != 5 {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::CorruptStore,
+                      "finalization_history.record_indexes_count",
+                  ));
+              }
+              let mut columns = BTreeSet::new();
+              let mut primary_count = 0usize;
+              let mut unique_count = 0usize;
+              for (name, unique, origin, partial) in indexes {
+                  if unique != 1 || partial != 0 || !matches!(origin.as_str(), "pk" | "u") {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::CorruptStore,
+                          "finalization_history.record_index_shape",
+                      ));
+                  }
+                  if origin == "pk" {
+                      primary_count += 1;
+                  } else {
+                      unique_count += 1;
+                  }
+                  let escaped_name = name.replace('"', "\"\"");
+                  let sql = format!("PRAGMA index_xinfo(\"{escaped_name}\")");
+                  let mut details = connection.prepare(&sql).map_err(|_| {
+                      error(
+                          ValidationStoreErrorCodeV0::Storage,
+                          "finalization_history.record_index_details_prepare",
+                      )
+                  })?;
+                  let detail_rows = details
+                      .query_map([], |row| {
+                          Ok((row.get::<_, Option<String>>(2)?, row.get::<_, i64>(5)?))
+                      })
+                      .map_err(|_| {
+                          error(
+                              ValidationStoreErrorCodeV0::Storage,
+                              "finalization_history.record_index_details_query",
+                          )
+                      })?;
+                  let mut key_columns = Vec::new();
+                  for row in detail_rows {
+                      let (column, is_key) = row.map_err(|_| {
+                          error(
+                              ValidationStoreErrorCodeV0::Storage,
+                              "finalization_history.record_index_details_row",
+                          )
+                      })?;
+                      if is_key == 1 {
+                          let column = column.ok_or_else(|| {
+                              error(
+                                  ValidationStoreErrorCodeV0::CorruptStore,
+                                  "finalization_history.record_index_expression",
+                              )
+                          })?;
+                          key_columns.push(column);
+                      }
+                  }
+                  if key_columns.len() != 1 || !columns.insert(key_columns.remove(0)) {
+                      return Err(error(
+                          ValidationStoreErrorCodeV0::CorruptStore,
+                          "finalization_history.record_index_columns",
+                      ));
+                  }
+              }
+              let expected = BTreeSet::from([
+                  "sequence".to_string(),
+                  "target_block_id".to_string(),
+                  "proof_id".to_string(),
+                  "record_digest".to_string(),
+                  "chain_digest".to_string(),
+              ]);
+              if primary_count != 1 || unique_count != 4 || columns != expected {
+                  return Err(error(
+                      ValidationStoreErrorCodeV0::CorruptStore,
+                      "finalization_history.record_index_contract",
+                  ));
+              }
+              Ok(())
+          }
+
+          '''
+          history = history[:schema_start] + new_schema + history[schema_end:]
+
+          if "post_open_database_replacement_is_rejected_for_every_trusted_path" in history:
+              raise SystemExit("history tests already inserted")
+          tests = r'''
+
+              #[test]
+              fn post_open_database_replacement_is_rejected_for_every_trusted_path() {
+                  let original = TestPathV0::new();
+                  let replacement = TestPathV0::new();
+                  let h0 = head(0, 41);
+                  let h1 = head(1, 51);
+                  let first = readback(intent(h0.clone(), h1, 61), 1, 71);
+                  let store = SqliteNativeFinalizationHistoryV0::open(
+                      &original.database,
+                      scope(8),
+                      h0.clone(),
+                  )
+                  .unwrap();
+                  store.append(first.clone()).unwrap();
+                  let replacement_store = SqliteNativeFinalizationHistoryV0::open(
+                      &replacement.database,
+                      scope(8),
+                      h0,
+                  )
+                  .unwrap();
+                  replacement_store.append(first.clone()).unwrap();
+                  drop(replacement_store);
+
+                  let displaced = original.root.join("displaced.sqlite");
+                  fs::rename(&original.database, displaced).unwrap();
+                  fs::rename(&replacement.database, &original.database).unwrap();
+
+                  assert_eq!(
+                      store.audit().unwrap_err().code(),
+                      ValidationStoreErrorCodeV0::ReplacedStore
+                  );
+                  assert_eq!(
+                      store.read_sequence(1).unwrap_err().code(),
+                      ValidationStoreErrorCodeV0::ReplacedStore
+                  );
+                  assert_eq!(
+                      store.append(first).unwrap_err().code(),
+                      ValidationStoreErrorCodeV0::ReplacedStore
+                  );
+              }
+
+              fn assert_closed_world_mutation_rejected(sql: &str, seed: u8) {
+                  let path = TestPathV0::new();
+                  let h0 = head(0, seed);
+                  let h1 = head(1, seed.wrapping_add(1));
+                  let first = readback(
+                      intent(h0.clone(), h1, seed.wrapping_add(2)),
+                      1,
+                      seed.wrapping_add(3),
+                  );
+                  let store = SqliteNativeFinalizationHistoryV0::open(
+                      &path.database,
+                      scope(seed.wrapping_add(4)),
+                      h0,
+                  )
+                  .unwrap();
+                  store.append(first.clone()).unwrap();
+                  let connection = Connection::open(&path.database).unwrap();
+                  connection.execute_batch(sql).unwrap();
+                  drop(connection);
+                  assert_eq!(
+                      store.audit().unwrap_err().code(),
+                      ValidationStoreErrorCodeV0::CorruptStore
+                  );
+                  assert_eq!(
+                      store.read_sequence(1).unwrap_err().code(),
+                      ValidationStoreErrorCodeV0::CorruptStore
+                  );
+                  assert_eq!(
+                      store.append(first).unwrap_err().code(),
+                      ValidationStoreErrorCodeV0::CorruptStore
+                  );
+              }
+
+              #[test]
+              fn closed_world_schema_rejects_extra_table_index_view_and_trigger() {
+                  assert_closed_world_mutation_rejected(
+                      "CREATE TABLE injected_table_v0 (id INTEGER)",
+                      81,
+                  );
+                  assert_closed_world_mutation_rejected(
+                      "CREATE INDEX injected_index_v0 ON finalization_history_records_v0(record)",
+                      91,
+                  );
+                  assert_closed_world_mutation_rejected(
+                      "CREATE VIEW injected_view_v0 AS SELECT sequence FROM finalization_history_records_v0",
+                      101,
+                  );
+                  assert_closed_world_mutation_rejected(
+                      "CREATE TRIGGER injected_trigger_v0 AFTER INSERT ON finalization_history_records_v0 BEGIN UPDATE finalization_history_metadata_v0 SET sequence = sequence WHERE singleton = 1; END",
+                      111,
+                  );
+              }
+
+              #[cfg(unix)]
+              #[test]
+              fn database_hardlink_and_wal_sidecar_aliases_fail_closed() {
+                  use std::os::unix::fs::symlink;
+
+                  let hardlink_path = TestPathV0::new();
+                  let h0 = head(0, 121);
+                  let store = SqliteNativeFinalizationHistoryV0::open(
+                      &hardlink_path.database,
+                      scope(12),
+                      h0.clone(),
+                  )
+                  .unwrap();
+                  fs::hard_link(
+                      &hardlink_path.database,
+                      hardlink_path.root.join("database-hardlink.sqlite"),
+                  )
+                  .unwrap();
+                  assert_eq!(
+                      store.audit().unwrap_err().code(),
+                      ValidationStoreErrorCodeV0::ReplacedStore
+                  );
+
+                  let sidecar_path = TestPathV0::new();
+                  let store = SqliteNativeFinalizationHistoryV0::open(
+                      &sidecar_path.database,
+                      scope(13),
+                      h0,
+                  )
+                  .unwrap();
+                  let mut wal = sidecar_path.database.as_os_str().to_os_string();
+                  wal.push("-wal");
+                  let wal = PathBuf::from(wal);
+                  let _ = fs::remove_file(&wal);
+                  let target = sidecar_path.root.join("sidecar-target");
+                  fs::write(&target, b"not-a-wal").unwrap();
+                  symlink(target, wal).unwrap();
+                  assert_eq!(
+                      store.audit().unwrap_err().code(),
+                      ValidationStoreErrorCodeV0::ReplacedStore
+                  );
+              }
+          '''
+          if not history.endswith("}\n"):
+              raise SystemExit("history test module close anchor missing")
+          history = history[:-2] + tests + "}\n"
+          history_path.write_text(history, encoding="utf-8")
+
+          cargo_path = crate / "Cargo.toml"
+          cargo = cargo_path.read_text(encoding="utf-8")
+          anchor = "openat_identity_binding = false\nwal_shm_identity_pinning = false\n"
+          replacement = (
+              "openat_identity_binding = false\n"
+              "descriptor_anchored_namespace_identity = true\n"
+              "closed_world_schema_validation = true\n"
+              "trusted_return_after_post_close_revalidation = true\n"
+              "fresh_connection_schema_revalidation = true\n"
+              "wal_shm_identity_pinning = true\n"
+          )
+          if anchor not in cargo:
+              raise SystemExit("cargo metadata anchor missing")
+          cargo_path.write_text(cargo.replace(anchor, replacement, 1), encoding="utf-8")
+          PY
+
+      - name: Set up Rust 1.95.0
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
+          components: rustfmt, clippy
+
+      - name: Format and test the repaired authority boundary
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo fmt --all
+          cargo test --locked -p trnm-native-application-sqlite --all-targets
+          cargo clippy --locked -p trnm-native-application-sqlite --all-targets -- -D warnings
+          cargo test --locked -p trnm-native-execution-v0 --all-targets
+          cargo check --locked -p trnm-poco-node --all-targets
+
+      - name: Amend the carrier without retaining the temporary workflow
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          rm .github/workflows/trnm-plan-v2-p0-finalization-history-closure.yml
+          git diff --check
+          git config user.name "trillionnium-closure-bot"
+          git config user.email "trillionnium-closure-bot@users.noreply.github.com"
+          git add -A
+          git commit --amend -m "fix(storage): close finalization-history namespace and schema gaps"
+          test "$(git rev-parse HEAD^)" = "3c46293e78a125dec9504e51c355a20216341338"
+          test ! -e .github/workflows/trnm-plan-v2-p0-finalization-history-closure.yml
+          git push --force-with-lease origin HEAD:integration/native-poco-a04-a19-a23-qualified-v1-20260901
