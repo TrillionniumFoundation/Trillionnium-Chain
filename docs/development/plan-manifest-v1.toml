@@ -19,6 +19,7 @@ audit_date = "2026-09-01"
 authority_status = "candidate-until-protected-main-merge-and-independent-acceptance"
 documentation_mode = "single-source"
 document_candidate_binding = "runtime-git-commit-and-tree"
+documentation_gate_revision = 2
 history_location = "git-history-only"
 clean_clone_required = true
 tracked_plan_required = true
