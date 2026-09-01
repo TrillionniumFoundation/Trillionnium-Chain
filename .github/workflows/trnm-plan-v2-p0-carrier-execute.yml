@@ -1,0 +1,133 @@
+name: TRNM Plan v2 P0 Carrier Execute
+
+on:
+  push:
+    branches:
+      - automation/plan-v2-p0-finalization-history-20260901
+    paths:
+      - .github/workflows/trnm-plan-v2-p0-carrier-execute.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-plan-v2-p0-carrier-execute
+  cancel-in-progress: false
+
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  TRNM_CARGO_OFFLINE_POLICY: "required"
+  PYTHONDONTWRITEBYTECODE: "1"
+  TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260901
+  TARGET_EXPECTED_SHA: 3c46293e78a125dec9504e51c355a20216341338
+
+jobs:
+  execute:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/automation/plan-v2-p0-finalization-history-20260901' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 220
+    steps:
+      - name: Check out exact carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          path: repo
+
+      - name: Verify carrier and extract reviewed patch program
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "fd6f96abd443e5eb7c82420fe7ee95ee42acd45f"
+          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/trnm-plan-v2-p0-carrier-execute.yml"
+          python3 -B - "$RUNNER_TEMP/trnm-p0-apply.sh" <<'PY'
+          from pathlib import Path
+          import sys
+
+          source = Path('.github/workflows/trnm-plan-v2-p0-finalization-history-closure.yml')
+          lines = source.read_text(encoding='utf-8').splitlines()
+          step = '      - name: Apply descriptor-bound namespace and closed-world schema repair'
+          try:
+              start = lines.index(step)
+          except ValueError as exc:
+              raise SystemExit('reviewed patch step missing') from exc
+          run_index = None
+          for index in range(start + 1, len(lines)):
+              if lines[index] == '        run: |':
+                  run_index = index + 1
+                  break
+              if lines[index].startswith('      - name:'):
+                  break
+          if run_index is None:
+              raise SystemExit('reviewed patch run block missing')
+          body = []
+          for line in lines[run_index:]:
+              if line.startswith('      - name:'):
+                  break
+              if line and not line.startswith('          '):
+                  raise SystemExit(f'unexpected patch indentation: {line!r}')
+              body.append(line[10:] if line else '')
+          if not body or body[0] != 'set -euo pipefail':
+              raise SystemExit('reviewed patch body is not fail-closed')
+          output = Path(sys.argv[1])
+          output.write_text('\n'.join(body) + '\n', encoding='utf-8')
+          output.chmod(0o700)
+          PY
+          sha256sum "$RUNNER_TEMP/trnm-p0-apply.sh"
+
+      - name: Verify preprovisioned Rust and offline Cargo closure
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Apply P0 repair to the exact successor head
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          remote_sha="$(git ls-remote origin "refs/heads/${TARGET_BRANCH}" | awk '{print $1}')"
+          test "$remote_sha" = "$TARGET_EXPECTED_SHA"
+          git checkout -B "$TARGET_BRANCH" "$TARGET_EXPECTED_SHA"
+          bash scripts/project-preflight.sh --audit
+          bash "$RUNNER_TEMP/trnm-p0-apply.sh"
+          git diff --check
+
+      - name: Format and validate storage, execution, and node consumers
+        working-directory: repo/trillionnium
+        run: |
+          set -euo pipefail
+          cargo fmt --all
+          cargo test --locked -p trnm-native-application-sqlite --all-targets
+          cargo clippy --locked -p trnm-native-application-sqlite --all-targets -- -D warnings
+          cargo test --locked -p trnm-native-execution-v0 --all-targets
+          cargo check --locked -p trnm-poco-node --all-targets
+
+      - name: Publish one source-only successor commit
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TARGET_EXPECTED_SHA"
+          test ! -e .github/workflows/trnm-plan-v2-p0-carrier-execute.yml
+          test ! -e .github/workflows/trnm-plan-v2-p0-finalization-history-closure.yml
+          git diff --check
+          git config user.name "trillionnium-closure-bot"
+          git config user.email "trillionnium-closure-bot@users.noreply.github.com"
+          git add trillionnium/crates/trnm-native-application-sqlite
+          git commit -m "fix(storage): close finalization-history namespace and schema gaps"
+          test "$(git rev-parse HEAD^)" = "$TARGET_EXPECTED_SHA"
+          git push \
+            --force-with-lease="refs/heads/${TARGET_BRANCH}:${TARGET_EXPECTED_SHA}" \
+            origin "HEAD:refs/heads/${TARGET_BRANCH}"
