@@ -46,7 +46,7 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "11b9d07dad6c08ba02de21eeb45058d537d7379a"
+          test "$(git rev-parse HEAD^)" = "e05b87a1208f09908a697964fa1012848f71c965"
           test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/trnm-plan-v2-p0-carrier-execute.yml"
           python3 -B - "$RUNNER_TEMP/trnm-p0-apply.sh" <<'PY'
           from pathlib import Path
@@ -112,7 +112,8 @@ jobs:
               '#[cfg(any(': '))]',
               '#[cfg(not(any(': ')))]',
           }
-          seen = {key: 0 for key in expected}
+          found_any = 0
+          found_not_any = 0
           active = None
           for index, line in enumerate(lines):
               stripped = line.strip()
@@ -120,7 +121,10 @@ jobs:
                   if active is not None:
                       raise SystemExit('nested cfg repair block')
                   active = stripped
-                  seen[stripped] += 1
+                  if stripped == '#[cfg(any(':
+                      found_any += 1
+                  else:
+                      found_not_any += 1
                   continue
               if active is not None and stripped in {'))]', ')))]'}:
                   indent = line[: len(line) - len(line.lstrip())]
@@ -128,8 +132,10 @@ jobs:
                   active = None
           if active is not None:
               raise SystemExit('unterminated cfg repair block')
-          if seen['#[cfg(any('] != 1 or seen['#[cfg(not(any(']'] != 1:
-              raise SystemExit(f'unexpected cfg block counts: {seen}')
+          if found_any != 1 or found_not_any != 1:
+              raise SystemExit(
+                  f'unexpected cfg block counts: any={found_any} not_any={found_not_any}'
+              )
           path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
           PY
           git diff --check
