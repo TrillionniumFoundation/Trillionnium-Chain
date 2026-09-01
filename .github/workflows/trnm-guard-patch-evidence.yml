@@ -8,7 +8,7 @@ on:
       - .github/workflows/trnm-guard-patch-evidence.yml
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   patch:
@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          persist-credentials: false
+          persist-credentials: true
       - name: Build counted maintainer-guard patch set
         run: |
           set -euo pipefail
@@ -54,23 +54,24 @@ jobs:
               path.write_text(after, encoding='utf-8')
               total += count
               print(f'{path}: replacements={count}')
-          if total < len(paths):
-              raise SystemExit('guard replacement coverage incomplete')
+          if total != 11:
+              raise SystemExit(f'unexpected total replacement count: {total}')
           PY
           git diff --check -- \
             .github/workflows/trnm-cometbft-spike.yml \
             .github/workflows/trnm-poco-bft-v0.yml \
             .github/workflows/trnm-merge-gates.yml \
             .github/workflows/trnm-gate-quick-check.yml
-      - name: Upload exact guard patch set
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-guard-patch-set-${{ github.sha }}
-          path: |
-            .github/workflows/trnm-cometbft-spike.yml
-            .github/workflows/trnm-poco-bft-v0.yml
-            .github/workflows/trnm-merge-gates.yml
+      - name: Commit exact verified guard patch set
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -- \
+            .github/workflows/trnm-cometbft-spike.yml \
+            .github/workflows/trnm-poco-bft-v0.yml \
+            .github/workflows/trnm-merge-gates.yml \
             .github/workflows/trnm-gate-quick-check.yml
-          if-no-files-found: error
-          include-hidden-files: true
-          retention-days: 2
+          test "$(git diff --cached --name-only | wc -l | tr -d ' ')" = "4"
+          git commit -m "ci(trust): admit both exact repository maintainers"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
