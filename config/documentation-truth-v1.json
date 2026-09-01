@@ -1,6 +1,8 @@
 {
   "schema": "trnm-documentation-truth-v1",
   "canonical_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "canonical_truth_workflow": ".github/workflows/trnm-documentation-truth.yml",
+  "gate_revision": 2,
   "canonical_development_entries": [
     "docs/development/CURRENT_SNAPSHOT_V1.json",
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
