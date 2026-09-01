@@ -24,7 +24,7 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
   TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260901
   TARGET_EXPECTED_SHA: 3c46293e78a125dec9504e51c355a20216341338
-  PATCH_SHA256: 9a43c592a7dc1dfbac9143042b53f1028d04d66bebd8d90c2a8fecb0fd512387
+  PATCH_SHA256: 49d0213ace0e04958fad8568c2039e6eaf98f2dda697d5e068feba93a0415688
 
 jobs:
   qualify-and-publish:
@@ -47,7 +47,7 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "4345c5e4401bf2522545743371d7d80ff30e95f0"
+          test "$(git rev-parse HEAD^)" = "09751d9f814c2b9d70d7b3af0a04bacaa3d376ba"
           test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/trnm-plan-v2-p0-local-patch-execute.yml"
           base64 --decode .github/patches/p0-finalization-history.patch.gz.b64 \
             | gzip --decompress --stdout > "$RUNNER_TEMP/p0-finalization-history.patch"
@@ -75,33 +75,6 @@ jobs:
           bash scripts/project-preflight.sh --audit
           git apply --check "$RUNNER_TEMP/p0-finalization-history.patch"
           git apply "$RUNNER_TEMP/p0-finalization-history.patch"
-          python3 -B - <<'PY'
-          from pathlib import Path
-
-          path = Path(
-              "trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs"
-          )
-          text = path.read_text(encoding="utf-8")
-          old = '''    validate_regular_file_metadata_v0(
-              &metadata,
-              "finalization_history.file_handle_type",
-          )?;
-          Ok(identity_from_metadata_v0(&metadata))
-          '''
-          new = '''    if !metadata.file_type().is_file() {
-              return Err(error(
-                  ValidationStoreErrorCodeV0::ReplacedStore,
-                  "finalization_history.file_handle_type",
-              ));
-          }
-          Ok(identity_from_metadata_v0(&metadata))
-          '''
-          if text.count(old) != 1:
-              raise SystemExit(
-                  f"expected exactly one handle validation block, found {text.count(old)}"
-              )
-          path.write_text(text.replace(old, new, 1), encoding="utf-8")
-          PY
           expected_paths="$({
             printf '%s\n' trillionnium/Cargo.lock
             printf '%s\n' trillionnium/crates/trnm-native-application-sqlite/Cargo.toml
