@@ -6,16 +6,13 @@ on:
     paths:
       - ".github/workflows/trnm-replay-to-core-coordinator-v1.yml"
       - ".github/workflows/trnm-payload-replay-recovery-v1.yml"
-      - "docs/development/packages/TRNM_G1_REPLAY_TO_CORE_DURABLE_ACK_EXECUTION_PACKAGE_V1.md"
-      - "docs/development/packages/TRNM_G1_R2B_REAL_CORE_ADAPTER_EXECUTION_PACKAGE_V1.md"
-      - "docs/development/packages/TRNM_G1_R2B_NEXT_IMPLEMENTATION_TARGET_V1.md"
-      - "docs/development/packages/TRNM_G1_REPLAY_RECOVERY_AND_CORE_ACK_EXECUTION_PACKAGE_V1.md"
-      - "docs/development/packages/trnm-g1-r2-manifest-v1.toml"
-      - "docs/development/packages/trnm-g1-r2b-manifest-v1.toml"
+      - "docs/development/**"
+      - "config/documentation-truth-v1.json"
       - "scripts/ci/check_replay_to_core_coordinator_v1.sh"
       - "scripts/ci/check_replay_to_core_r2b_contract_v1.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
+      - "scripts/ci/check_documentation_reference_closure_v1.py"
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
       - "scripts/ci/check_cargo_offline_*"
       - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
@@ -26,20 +23,17 @@ on:
   push:
     branches:
       - main
-      - "docs/chain-poco-bft-mainline-20260825"
+      - "docs/chain-development-plan-v2-20260901"
     paths:
       - ".github/workflows/trnm-replay-to-core-coordinator-v1.yml"
       - ".github/workflows/trnm-payload-replay-recovery-v1.yml"
-      - "docs/development/packages/TRNM_G1_REPLAY_TO_CORE_DURABLE_ACK_EXECUTION_PACKAGE_V1.md"
-      - "docs/development/packages/TRNM_G1_R2B_REAL_CORE_ADAPTER_EXECUTION_PACKAGE_V1.md"
-      - "docs/development/packages/TRNM_G1_R2B_NEXT_IMPLEMENTATION_TARGET_V1.md"
-      - "docs/development/packages/TRNM_G1_REPLAY_RECOVERY_AND_CORE_ACK_EXECUTION_PACKAGE_V1.md"
-      - "docs/development/packages/trnm-g1-r2-manifest-v1.toml"
-      - "docs/development/packages/trnm-g1-r2b-manifest-v1.toml"
+      - "docs/development/**"
+      - "config/documentation-truth-v1.json"
       - "scripts/ci/check_replay_to_core_coordinator_v1.sh"
       - "scripts/ci/check_replay_to_core_r2b_contract_v1.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
+      - "scripts/ci/check_documentation_reference_closure_v1.py"
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
       - "scripts/ci/check_cargo_offline_*"
       - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
@@ -68,79 +62,80 @@ env:
   CARGO_TERM_COLOR: never
   CARGO_NET_RETRY: "5"
   CARGO_HTTP_TIMEOUT: "120"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   coordinator-contract:
     name: Sealed replay-to-Core coordinator contract
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      ((github.actor == 'ProfAlexQI' &&
-        github.triggering_actor == 'ProfAlexQI') ||
-       (github.actor == 'Tomasrgbsf' &&
-        github.triggering_actor == 'Tomasrgbsf') ||
+      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
+       (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+       (github.actor == 'ProfHepta' && github.triggering_actor == 'ProfHepta') ||
        (github.actor == 'github-actions[bot]' &&
         github.triggering_actor == 'github-actions[bot]' &&
         github.event_name == 'pull_request' &&
         github.event.pull_request.head.repo.full_name == github.repository &&
-        github.event.pull_request.author_association == 'MEMBER' &&
-        startsWith(github.head_ref, 'feature/chain-'))) &&
+        github.event.pull_request.author_association == 'MEMBER')) &&
       (github.event_name != 'pull_request' ||
        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 75
+    timeout-minutes: 100
     env:
       TRNM_CARGO_OFFLINE_POLICY: "required"
       CARGO_NET_OFFLINE: "true"
       CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+      TRNM_DOC_BINDING_MODE: source
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           path: trillionnium-chain
           persist-credentials: false
           fetch-depth: 0
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+
+      - name: Verify exact source identity
+        working-directory: trillionnium-chain
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
 
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
         run: |
-          set -euo pipefail
           ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
-            --toolchain 1.95.0 \
-            --component clippy \
-            --component rustfmt
+            --toolchain 1.95.0 --component clippy --component rustfmt
 
       - name: Verify Cargo offline cache readiness
         working-directory: trillionnium-chain
         run: |
-          set -euo pipefail
           ./scripts/ci/check_cargo_offline_ready.sh \
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
+      - name: Verify canonical document source binding
+        working-directory: trillionnium-chain
+        env:
+          TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/document-source-binding.json
+        run: bash ./scripts/ci/check_canonical_development_plan.sh
+
       - name: Verify sealed replay-to-Core coordinator
         working-directory: trillionnium-chain
         run: bash ./scripts/ci/check_replay_to_core_coordinator_v1.sh
 
-      - name: Verify R2B contract truth (candidate implementation remains unpromoted)
+      - name: Verify R2B source and machine-truth contract
         working-directory: trillionnium-chain
         run: bash ./scripts/ci/check_replay_to_core_r2b_contract_v1.sh
 
-      - name: Verify canonical development plan
+      - name: Verify Native PoCO and project truth
         working-directory: trillionnium-chain
-        run: bash ./scripts/ci/check_canonical_development_plan.sh
-
-      - name: Verify native PoCO pre-cutover truth
-        working-directory: trillionnium-chain
-        run: bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
-
-      - name: Verify project boundary
-        working-directory: trillionnium-chain
-        run: bash ./scripts/project-preflight.sh --audit
+        run: |
+          bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash ./scripts/project-preflight.sh --audit
 
       - name: Verify Cargo offline inputs remained unchanged
         if: always()
         working-directory: trillionnium-chain
         run: |
-          set -euo pipefail
           ./scripts/ci/check_cargo_offline_unchanged.sh \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
