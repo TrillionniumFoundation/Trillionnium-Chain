@@ -153,6 +153,7 @@ jobs:
           PY
           git rm \
             .github/workflows/trnm-fuzz-lock-refresh.yml \
+            .github/workflows/trnm-guard-patch-evidence.yml \
             .github/workflows/trnm-x230-closure-patch.yml
 
       - name: Validate the final worktree before commit
@@ -171,6 +172,7 @@ jobs:
             .github/workflows/trnm-cometbft-spike.yml \
             .github/workflows/trnm-fuzz-lock-refresh.yml \
             .github/workflows/trnm-gate-quick-check.yml \
+            .github/workflows/trnm-guard-patch-evidence.yml \
             .github/workflows/trnm-merge-gates.yml \
             .github/workflows/trnm-poco-bft-v0.yml \
             .github/workflows/trnm-x230-closure-patch.yml \
@@ -181,6 +183,7 @@ jobs:
             .github/workflows/trnm-cometbft-spike.yml
             .github/workflows/trnm-fuzz-lock-refresh.yml
             .github/workflows/trnm-gate-quick-check.yml
+            .github/workflows/trnm-guard-patch-evidence.yml
             .github/workflows/trnm-merge-gates.yml
             .github/workflows/trnm-poco-bft-v0.yml
             .github/workflows/trnm-x230-closure-patch.yml
