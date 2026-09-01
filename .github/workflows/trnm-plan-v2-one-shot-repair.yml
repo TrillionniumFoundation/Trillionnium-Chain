@@ -1,0 +1,149 @@
+name: TRNM Plan v2 one-shot repair
+
+on:
+  push:
+    branches:
+      - docs/chain-development-plan-v2-20260901
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-plan-v2-one-shot-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the documentation branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: docs/chain-development-plan-v2-20260901
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Repair semantic Plan validation and install permanent truth gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("scripts/ci/check_canonical_development_plan.sh")
+          text = path.read_text(encoding="utf-8")
+          brittle = 'for marker in ("one active engineering plan","18 long-lived","node commit ledger","pinnedsqlitenamespace","global control plane","production_candidate = false","no machine flag is promoted","g5"): require(marker in lower,f"plan missing {marker}")'
+          semantic = '''for label, alternatives in (
+              ("single active engineering plan", ("one active engineering plan",)),
+              ("18-module ownership model", ("18 long-lived", "eighteen long-lived")),
+              ("node commit ledger", ("node commit ledger",)),
+              ("pinned SQLite namespace", ("pinnedsqlitenamespace",)),
+              ("global control plane", ("global control plane",)),
+              ("fail-closed production candidacy", ("production_candidate = false",)),
+              ("no implicit machine promotion", ("no machine flag is promoted",)),
+              ("G5 gate", ("g5",)),
+          ):
+              require(any(marker in lower for marker in alternatives),f"plan missing semantic marker: {label}")'''
+          if brittle in text:
+              text = text.replace(brittle, semantic, 1)
+          elif "18-module ownership model" not in text:
+              raise SystemExit("canonical plan gate no longer matches the reviewed repair surface")
+          path.write_text(text, encoding="utf-8")
+          PY
+
+          cat > .github/workflows/trnm-documentation-truth.yml <<'YAML'
+          name: TRNM documentation truth
+
+          on:
+            pull_request:
+              paths:
+                - 'docs/development/**'
+                - 'config/documentation-truth-v1.json'
+                - 'config/repository-policy-v1.json'
+                - 'scripts/ci/check_canonical_development_plan.sh'
+                - 'scripts/ci/check_agent_development_docs_v1.sh'
+                - 'scripts/ci/check_documentation_reference_closure_v1.py'
+                - '.github/workflows/trnm-documentation-truth.yml'
+            push:
+              branches:
+                - main
+              paths:
+                - 'docs/development/**'
+                - 'config/documentation-truth-v1.json'
+                - 'config/repository-policy-v1.json'
+                - 'scripts/ci/check_canonical_development_plan.sh'
+                - 'scripts/ci/check_agent_development_docs_v1.sh'
+                - 'scripts/ci/check_documentation_reference_closure_v1.py'
+                - '.github/workflows/trnm-documentation-truth.yml'
+            workflow_dispatch:
+
+          permissions:
+            contents: read
+
+          concurrency:
+            group: trnm-documentation-truth-${{ github.workflow }}-${{ github.ref }}
+            cancel-in-progress: true
+
+          env:
+            CI: 'true'
+            TZ: UTC
+            LANG: C.UTF-8
+            LC_ALL: C.UTF-8
+            PYTHONHASHSEED: '0'
+            PYTHONDONTWRITEBYTECODE: '1'
+            TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+          jobs:
+            documentation-truth:
+              name: documentation-truth
+              runs-on: ubuntu-24.04
+              timeout-minutes: 10
+              steps:
+                - name: Check out exact source
+                  uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+                  with:
+                    ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+                    fetch-depth: 0
+                    persist-credentials: false
+                - name: Verify exact source identity
+                  run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+                - name: Validate canonical development truth
+                  env:
+                    TRNM_DOC_BINDING_MODE: source
+                    TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/documentation-source-binding.json
+                  run: |
+                    set -euo pipefail
+                    bash scripts/ci/check_canonical_development_plan.sh
+                    bash scripts/ci/check_agent_development_docs_v1.sh
+                    python3 scripts/ci/check_repository_truth_v1.py
+                    python3 -m json.tool "${TRNM_DOC_BINDING_OUTPUT}" >/dev/null
+                - name: Require clean checkout
+                  run: |
+                    git diff --exit-code -- .
+                    test -z "$(git status --porcelain --untracked-files=all)"
+          YAML
+
+          rm -f .github/workflows/trnm-doc-cleanup-inventory.yml
+          rm -f .github/workflows/trnm-plan-v2-one-shot-repair.yml
+
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_agent_development_docs_v1.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          git diff --check
+
+      - name: Commit the reviewed repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/ci/check_canonical_development_plan.sh \
+            .github/workflows/trnm-documentation-truth.yml \
+            .github/workflows/trnm-doc-cleanup-inventory.yml \
+            .github/workflows/trnm-plan-v2-one-shot-repair.yml
+          git commit -m 'fix(docs): close canonical Plan v2 truth gate'
+          git pull --rebase origin docs/chain-development-plan-v2-20260901
+          git push origin HEAD:docs/chain-development-plan-v2-20260901
