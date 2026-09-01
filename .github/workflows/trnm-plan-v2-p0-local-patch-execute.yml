@@ -24,7 +24,7 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
   TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260901
   TARGET_EXPECTED_SHA: 3c46293e78a125dec9504e51c355a20216341338
-  PATCH_SHA256: 49d0213ace0e04958fad8568c2039e6eaf98f2dda697d5e068feba93a0415688
+  PATCH_SHA256: 7c4d3213a83ec1fb50aad0970177c8b3f4ab3199bbf62e721e425d1a4cac1ea8
 
 jobs:
   qualify-and-publish:
@@ -47,7 +47,7 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "09751d9f814c2b9d70d7b3af0a04bacaa3d376ba"
+          test "$(git rev-parse HEAD^)" = "09590fa6a9c897d31417acb96548949c52f7631d"
           test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/trnm-plan-v2-p0-local-patch-execute.yml"
           base64 --decode .github/patches/p0-finalization-history.patch.gz.b64 \
             | gzip --decompress --stdout > "$RUNNER_TEMP/p0-finalization-history.patch"
