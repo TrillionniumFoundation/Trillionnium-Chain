@@ -1,0 +1,95 @@
+name: TRNM documentation cleanup inventory
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-doc-cleanup-inventory.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-doc-cleanup-inventory-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inventory:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact PR head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build text-source and stale-reference inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p run/doc-cleanup-inventory
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
+          roots = {
+              ".github", "scripts", "config", "docs", "formal", "proto",
+              "conformance", "tools", "simulations", "trillionnium"
+          }
+          root_files = {
+              "AGENTS.md", "README.md", "RELEASE_READINESS.md", "OPERATIONS.md",
+              "PROJECT_BOUNDARY.json", "PROJECT_BOUNDARY.md", "Cargo.toml",
+              "rust-toolchain.toml"
+          }
+          suffixes = {
+              ".md", ".json", ".toml", ".yaml", ".yml", ".sh", ".py", ".mjs",
+              ".js", ".ts", ".rs", ".proto", ".qnt", ".txt", ".inc"
+          }
+          selected = []
+          for raw in tracked:
+              if not raw:
+                  continue
+              value = raw.decode("utf-8")
+              path = Path(value)
+              if value in root_files or (path.parts and path.parts[0] in roots and path.suffix in suffixes):
+                  selected.append(value)
+          Path("run/doc-cleanup-inventory/files.txt").write_text("\n".join(selected) + "\n")
+          Path("run/doc-cleanup-inventory/files.nul").write_bytes(
+              b"\0".join(value.encode("utf-8") for value in selected) + b"\0"
+          )
+          PY
+
+          tar --null --files-from run/doc-cleanup-inventory/files.nul \
+            --create --gzip --file run/doc-cleanup-inventory/tracked-text-source.tar.gz
+
+          patterns='docs/development/(agents|packages|README\.md)|TRNM_DEVELOPMENT_DOCUMENTATION_UPGRADE_V1\.md|AGENT_WORK_PACKAGE_TEMPLATE_V1\.md|TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1\.md|docs/chain-poco-bft-mainline-20260825'
+          set +e
+          git grep -nE "${patterns}" -- \
+            .github scripts config AGENTS.md README.md RELEASE_READINESS.md \
+            docs/protocol docs/architecture docs/runbooks OPERATIONS.md \
+            > run/doc-cleanup-inventory/stale-active-references.txt
+          rc=$?
+          set -e
+          test "${rc}" -eq 0 || test "${rc}" -eq 1
+
+          sha256sum run/doc-cleanup-inventory/tracked-text-source.tar.gz \
+            > run/doc-cleanup-inventory/SHA256SUMS
+          git rev-parse HEAD > run/doc-cleanup-inventory/HEAD
+
+      - name: Upload public source inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-doc-cleanup-inventory-${{ github.event.pull_request.head.sha }}
+          path: run/doc-cleanup-inventory
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
