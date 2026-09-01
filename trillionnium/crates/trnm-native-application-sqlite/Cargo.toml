@@ -50,7 +50,11 @@ durable_replay_sidecar_canonical_job_copy = false
 durable_replay_process2_activation = false
 durable_replay_process3_rehydrate = false
 openat_identity_binding = false
-wal_shm_identity_pinning = false
+descriptor_anchored_namespace_identity = true
+closed_world_schema_validation = true
+trusted_return_after_post_close_revalidation = true
+fresh_connection_schema_revalidation = true
+wal_shm_identity_pinning = true
 anti_whole_machine_rollback_authority = false
 production_candidate = false
 
@@ -59,6 +63,7 @@ default = []
 test-support = []
 
 [dependencies]
+libc = "0.2"
 rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
 trnm-consensus-core = { path = "../trnm-consensus-core" }
