@@ -8,6 +8,7 @@ on:
       - .github/workflows/trnm-x230-closure-patch.yml
 
 permissions:
+  actions: read
   contents: write
 
 concurrency:
@@ -39,7 +40,7 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
 
-      - name: Generate exact lock and encode least-privilege guard classes
+      - name: Apply exact X230 lock, workflow guards, and policy classes
         run: |
           set -euo pipefail
           cargo +nightly-2026-07-27 generate-lockfile \
@@ -49,6 +50,57 @@ jobs:
             "f856eaedb0fd390f2a7d47c98efbe7f69ba17669257653803068758dbb089a55"
           python3 - <<'PY'
           from pathlib import Path
+
+          def replace_exact(path: str, old: str, new: str, expected: int) -> None:
+              file = Path(path)
+              text = file.read_text(encoding="utf-8")
+              actual = text.count(old)
+              if actual != expected:
+                  raise SystemExit(
+                      f"{path}: expected {expected} legacy guard blocks, found {actual}"
+                  )
+              file.write_text(text.replace(old, new), encoding="utf-8")
+
+          standard_old = """      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+                (github.event_name == 'schedule' ||
+                  (github.actor == 'ProfAlexQI' &&
+                   github.triggering_actor == 'ProfAlexQI' &&
+                   (github.event_name != 'pull_request' ||
+                    github.event.pull_request.head.repo.full_name == github.repository)))
+          """
+          standard_new = """      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+                (github.event_name == 'schedule' ||
+                  ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&
+                   github.triggering_actor == github.actor &&
+                   (github.event_name != 'pull_request' ||
+                    github.event.pull_request.head.repo.full_name == github.repository)))
+          """
+          for path, expected in (
+              (".github/workflows/trnm-cometbft-spike.yml", 3),
+              (".github/workflows/trnm-gate-quick-check.yml", 1),
+              (".github/workflows/trnm-merge-gates.yml", 1),
+          ):
+              replace_exact(path, standard_old, standard_new, expected)
+
+          poco_old = """      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+                (github.event_name == 'schedule' &&
+                 github.ref == 'refs/heads/main' ||
+                  (github.actor == 'ProfAlexQI' &&
+                   github.triggering_actor == 'ProfAlexQI' &&
+                   (github.event_name != 'pull_request' ||
+                    github.event.pull_request.head.repo.full_name == github.repository)))
+          """
+          poco_new = """      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+                (github.event_name == 'schedule' &&
+                 github.ref == 'refs/heads/main' ||
+                  ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&
+                   github.triggering_actor == github.actor &&
+                   (github.event_name != 'pull_request' ||
+                    github.event.pull_request.head.repo.full_name == github.repository)))
+          """
+          replace_exact(
+              ".github/workflows/trnm-poco-bft-v0.yml", poco_old, poco_new, 6
+          )
 
           path = Path("scripts/check_ci_runner_policy.sh")
           text = path.read_text(encoding="utf-8")
@@ -122,8 +174,14 @@ jobs:
           path.write_text(text.replace(old, new, 1), encoding="utf-8")
           PY
           git rm .github/workflows/trnm-x230-closure-patch.yml
-          git diff --check -- scripts/check_ci_runner_policy.sh trillionnium/fuzz/Cargo.lock \
-            .github/workflows/trnm-x230-closure-patch.yml
+          git diff --check -- \
+            .github/workflows/trnm-cometbft-spike.yml \
+            .github/workflows/trnm-gate-quick-check.yml \
+            .github/workflows/trnm-merge-gates.yml \
+            .github/workflows/trnm-poco-bft-v0.yml \
+            .github/workflows/trnm-x230-closure-patch.yml \
+            scripts/check_ci_runner_policy.sh \
+            trillionnium/fuzz/Cargo.lock
 
       - name: Validate policy, offline readiness, and canonical fuzz smoke
         run: |
@@ -144,9 +202,20 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add scripts/check_ci_runner_policy.sh trillionnium/fuzz/Cargo.lock
+          git add -A -- \
+            .github/workflows/trnm-cometbft-spike.yml \
+            .github/workflows/trnm-gate-quick-check.yml \
+            .github/workflows/trnm-merge-gates.yml \
+            .github/workflows/trnm-poco-bft-v0.yml \
+            .github/workflows/trnm-x230-closure-patch.yml \
+            scripts/check_ci_runner_policy.sh \
+            trillionnium/fuzz/Cargo.lock
           mapfile -t changed < <(git diff --cached --name-only | LC_ALL=C sort)
           expected=(
+            .github/workflows/trnm-cometbft-spike.yml
+            .github/workflows/trnm-gate-quick-check.yml
+            .github/workflows/trnm-merge-gates.yml
+            .github/workflows/trnm-poco-bft-v0.yml
             .github/workflows/trnm-x230-closure-patch.yml
             scripts/check_ci_runner_policy.sh
             trillionnium/fuzz/Cargo.lock
@@ -156,5 +225,5 @@ jobs:
             test "${changed[$i]}" = "${expected[$i]}"
           done
           git diff --cached --check
-          git commit -m 'ci(x230): close canonical fuzz lock and runner-policy drift'
+          git commit -m 'ci(x230): close canonical fuzz lock and trusted guard drift'
           git push origin HEAD:integration/native-poco-a04-a19-a23-qualified-v1-20260901
