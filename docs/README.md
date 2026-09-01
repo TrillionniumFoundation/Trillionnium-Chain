@@ -1,29 +1,28 @@
-# Trillionnium Docs Index
+# Trillionnium Chain documentation
 
-## Core
+The repository has one active development direction:
 
-- Architecture entry: `architecture/README.md`
-- Protocol docs: `protocol/`
-- Runbooks: `runbooks/`
-- Strategy notes: `strategy/`
-- Alpha run records: `alpha-runs/`
+- **Development plan:** `development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
+- **Machine truth:** `../config/consensus-mainline.json`
+- **Release projection:** `../RELEASE_READINESS.md`
 
-## Rust L1 quick links
+`docs/development/` contains the plan and compact machine companions only. Git
+history is the development-document archive; `docs/archive/`, dated delivery
+boards, per-agent prompt packs, package roadmaps, sprint plans, and continuation
+notes are prohibited.
 
-- PoCO-BFT v0 architecture freeze: `architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
-- Canonical AI-native Chain development plan: `development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
-- Engineering evidence contract (gate records, vertical trace, wire, benchmark,
-  interop, and invalidation):
-  `development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md`
-- Historical PoCO-BFT v0 delivery audit: `audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md`
-- PoCO-BFT v0 normative protocol index: `protocol/poco-bft-v0/README.md`
-- PoCO-BFT v0 X230 deployment boundary: `runbooks/TRNM_POCO_BFT_X230_DEPLOYMENT_BOUNDARY.md`
-- Repo layout: `architecture/rust-l1-repo-layout.md`
-- Historical application-settlement input: `../trillionnium/docs/protocol/poco-proof-of-consumption-v1-draft.md`
-  - BL09 retirement-prep note: retained `trnm-pouw` naming on migration surfaces is a compatibility label and provenance / audit evidence only, not ongoing payout authority.
-- v1 interface freeze: `protocol/rust-l1-v1-interface-freeze.md`
-- PR-5 challenge treasury 对账 runbook: `runbooks/pr5-challenge-treasury-reconcile.md`
-- PR-6 alert rules runbook: `runbooks/pr6-alert-rules.md`
-- PR-6 nightly security summary runbook: `runbooks/pr6-nightly-security-summary.md`
-- PR-7 alert delivery runbook: `runbooks/pr7-alert-delivery.md`
-- PR-9 weekly alert governance runbook: `runbooks/pr9-weekly-alert-governance.md`
+Current domain authorities are organized as follows:
+
+- `architecture/` — active architecture decisions and boundaries;
+- `protocol/` — versioned protocol specifications, schemas, vectors, parameters,
+  manifests, and implementation-gap registers;
+- `evidence/` — immutable evidence schemas, submissions, and source-bound records;
+- `runbooks/` and `OPERATIONS.md` — operator procedures and candidate boundaries;
+- `schemas/` — machine-readable repository and evidence schemas;
+- `audits/` — source-bound audit records, never active roadmaps;
+- `bench/` and `performance/` — source-bound measurements and benchmark contracts,
+  never release authority.
+
+A document outside the canonical development plan may define its own domain
+contract, but it may not assign future work, alter gate order, promote machine
+truth, or become an alternate navigation entry for development.

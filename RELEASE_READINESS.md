@@ -1,13 +1,15 @@
 # Trillionnium Chain release readiness
 
-Updated: **2026-08-31**
+Updated: **2026-09-01**
 
 This file is the human-readable release projection. It is not an independent
 truth source. The machine-readable authority is
 `config/consensus-mainline.json`; repository merge policy is
-`config/repository-policy-v1.json`; the only execution and promotion contract is
-`docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`. Generate a
-commit/tree-bound status document with:
+`config/repository-policy-v1.json`; the only execution, modularization, and
+promotion contract is
+`docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
+
+Generate a commit/tree-bound status document with:
 
 ```bash
 python3 scripts/ci/generate_release_status_v1.py --check-deterministic
@@ -17,19 +19,8 @@ python3 scripts/ci/generate_release_status_v1.py --check-deterministic
 
 **NO-GO: not public-testnet-ready, not production-ready, and not release-ready.**
 
-The only future production consensus route is Native PoCO-BFT v0. CometBFT and
-the excluded `trnm-consensus-app` / `trnm-node` packages are migration residue
-and historical differential inputs; they cannot authorize deployment, fallback,
-release, or readiness.
-
-The default `trnm-poco-node` startup path remains fail-closed. Its bounded G2
-candidate process commands are useful repository evidence but are not a
-persistent production network, validator signer, pacemaker, arbitrary proposal
-and finality loop, state-sync service, or activation artifact.
-
-## Authoritative flags
-
-All release and activation flags remain false:
+Native PoCO-BFT v0 is the only future production consensus route. All release
+and activation flags remain false:
 
 | Claim | Value |
 |---|---:|
@@ -46,86 +37,80 @@ All release and activation flags remain false:
 | Production consensus activation | `false` |
 | Release ready | `false` |
 
-A passing crate test, simulation, candidate fixture, local process campaign, or
-repository CI check cannot independently change these values.
+A passing crate test, simulation, candidate fixture, local process campaign,
+carrier workflow, or repository CI check cannot independently change these
+values.
 
-## Repository-owned hardening in progress
+## Current source state
 
-The live GitHub `main` branch is protected and currently binds the five stable
-required checks named by `config/repository-policy-v1.json`. The A18 repository
-hardening candidate adds actor-independent hosted validation, critical-path
-CODEOWNERS, a machine-validated Native PoCO-BFT project/security boundary,
-deterministic source-bound status generation, and a fail-closed external-evidence
-contract. It also begins paying down strict Rust 1.95 Clippy debt while retaining
-all ABI, production, release, and activation non-claims.
+Protected `main` was observed at
+`b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9`. The latest assessed candidate is
+Draft PR #58 at `3c46293e78a125dec9504e51c355a20216341338`
+(tree `875a1e6366df7cd9da80de145e25584ae309cee8`). It combines ordered application
+finalization, durable terminal history, and native finalized replay-floor work.
+It remains unaccepted and has requested changes.
 
-The Native PoCO truth tree is now staged on a branch whose first parent is the
-current protected `main` head. It remains candidate work until the exact PR head
-passes all five checks, receives genuinely independent CODEOWNER acceptance, and
-is merged through the protected branch policy. The remaining settings work is a
-complete negative-enforcement evidence corpus, not initial protection enablement.
+Merge-blocking repair includes descriptor-bound SQLite namespace and sidecar
+identity, closed-world schema validation, fresh-connection revalidation, and
+removal of read/exact-replay returns before post-operation checks. PR #58 must
+become the sole A04/A19/A23 successor, with overlapping lineage superseded, and
+must receive non-skipped exact-head and prospective-merge validation plus
+independent acceptance.
 
-## Release-blocking repository work
+The default `trnm-poco-node` startup path remains fail-closed. Candidate process
+commands and local fixtures are not a persistent production network, validator
+signer, live pacemaker/finality loop, production state-sync service, HSM custody,
+physical power-loss proof, or activation artifact.
 
-The canonical machine register remains the complete inventory. Major open areas
-include:
+## Major repository-owned blockers
 
-- exact-head qualification and protected-main integration of the canonical
-  Native PoCO truth tree, plus completion of the GitHub denial corpus;
-- one generated wire/schema/error registry plus independent protocol review;
-- complete bounded QC/TC/CEV0 admission and long-running fuzz evidence;
-- authoritative SafetyRules/Core, live pacemaker, epoch and catch-up behavior;
-- full application body/parent/runtime validation, permanent terminal execution
-  log, ordered finalization, and crash/replay equivalence;
-- a default persistent node path with authenticated networking, live
-  Vote/Timeout, application receipts, state sync, recovery owner, and durable
-  apply;
-- production transaction ingress, signing, broadcast, ambiguous-handoff
-  resolution and tombstone lifecycle;
-- migration source verifier, genesis quorum cryptography, target root
-  recomputation, rehearsal, and cross-peer activation;
+- protected-main integration of one canonical Native PoCO source train;
+- one generated protocol/schema/error registry and independent conformance;
+- bounded QC/TC/admission work and long-running fuzz evidence;
+- authoritative persistent SafetyRules/Core, pacemaker, epoch and catch-up path;
+- Node Commit Ledger and exact whole-node crash/replay convergence;
+- full body/parent/runtime validation and deterministic MVCC-to-JMT-to-finality
+  integration;
+- production authenticated networking, transaction lifecycle, state sync,
+  recovery owner, checkpointing and durable apply;
+- production/devnet/v1/lab dependency-closure separation and node decomposition;
+- trusted migration source verification, target root recomputation, rehearsal,
+  cross-peer activation, and one-way cutover;
 - bounded resource, denial-of-service, observability, packaging and supply-chain
-  closure.
+  closure;
+- guarded out-of-band global optimization without consensus authority.
 
 ## External blockers
 
-The following facts cannot be honestly generated by a repository commit and are
-therefore fail-closed external gates:
+The following cannot be generated honestly by a repository commit:
 
 1. `EXT-REVIEW-001` — independent exact-source package/protocol review and mutant
    replay;
 2. `EXT-G1-CAMPAIGN-001` — real 4/7/31/100-process, multi-physical-host,
-   multi-operator/custody campaign with signed traces and fault scenarios;
-3. `EXT-ANCHOR-HSM-001` — device-backed non-exportable key, external monotonic
-   anchor, quorum custody, rotation/revocation and anti-rollback evidence;
+   multi-operator and multi-custody campaign with signed traces;
+3. `EXT-ANCHOR-HSM-001` — device-backed non-exportable keys, external monotonic
+   anchor, quorum custody, rotation, revocation and rollback evidence;
 4. `EXT-POWERLOSS-001` — physical power interruption, controller-cache loss,
-   host reboot, independent recovery and exact-root readback;
+   reboot, independent recovery and exact-root readback;
 5. `EXT-AUDIT-001` — independent consensus, cryptography and economic audits plus
    red team, with zero open Critical or High findings;
-6. `EXT-SOAK-ACTIVATION-001` — completed 72-hour chaos, 7-day public-testnet and
-   30-day production-candidate wall-clock runs, operational drills and an
-   authorized governance/activation record.
+6. `EXT-SOAK-ACTIVATION-001` — 72-hour chaos, 7-day public-testnet and 30-day
+   production-candidate wall-clock runs, operational drills, and an authorized
+   governance/activation record.
 
-The schema, template and validator are under `docs/evidence/external/`. Fixtures,
-single-host simulations, local watermarks, SIGKILL-only tests, self-review,
-unsigned summaries, mutable URLs, shortened runs, or simulated time do not close
-these gates.
+The schema, template and validator are under `docs/evidence/external/`.
+Fixtures, single-host simulations, local watermarks, SIGKILL-only tests,
+self-review, shortened runs, mutable URLs, or simulated time do not close these
+gates.
 
 ## Promotion rule
 
-A claim may become true only when all of the following refer to the same exact
-source commit/tree and artifact digest set:
-
-- protected canonical branch and required GitHub controls;
-- canonical plan and machine truth;
-- protocol/schema/formal/mutant evidence;
-- reproducible build, signed SBOM/provenance and release artifacts;
-- independent reviews and audits;
-- accepted real-world external evidence;
-- zero open release-blocking findings;
-- authorized governance and activation record.
+A claim may become true only when protected branch, plan, machine truth,
+protocol/schema/formal inputs, dependency locks, reproducible artifacts,
+independent reviews, external evidence, governance record, and activation bundle
+all bind the same exact source and artifact digest set.
 
 Any source, protocol, dependency, compiler, feature, configuration, validator
-set, key policy, state-root format or release-input change invalidates the
-downstream evidence identified by the canonical plan and requires replay before
-promotion.
+set, key policy, state-root format, migration input, or release-input change
+invalidates the downstream evidence declared by the canonical plan and requires
+replay before promotion.

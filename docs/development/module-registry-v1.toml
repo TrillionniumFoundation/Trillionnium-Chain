@@ -1,0 +1,214 @@
+schema_version = 1
+registry_id = "trnm-module-registry-v1"
+plan_id = "trnm-chain-development-plan-v2"
+as_of = "2026-09-01"
+assessed_source_commit = "3c46293e78a125dec9504e51c355a20216341338"
+assessed_source_tree = "875a1e6366df7cd9da80de145e25584ae309cee8"
+module_count = 18
+production_authority = false
+
+[policy]
+one_primary_module_per_engineer = true
+minimum_maintainers_per_critical_module = 2
+implementation_to_implementation_edges_allowed = false
+cyclic_dependencies_allowed = false
+control_plane_consensus_authority = false
+production_may_depend_on_candidate_or_lab = false
+
+[[modules]]
+id = "M00"
+name = "protocol-schema-canonical-codec"
+layer = "contract"
+runtime = "library"
+owner_group = "protocol-contracts"
+staff_target = 2
+status = "active-boundary-to-consolidate"
+allowed_module_dependencies = []
+forbidden_capabilities = ["filesystem", "network", "clock", "sign", "vote", "finalize"]
+
+[[modules]]
+id = "M01"
+name = "crypto-identity-capability"
+layer = "contract-core-adapter"
+runtime = "library-and-isolated-signer"
+owner_group = "crypto-identity"
+staff_target = 3
+status = "active-boundary-to-consolidate"
+allowed_module_dependencies = ["M00"]
+forbidden_capabilities = ["consensus-transition", "state-root", "finalize"]
+
+[[modules]]
+id = "M02"
+name = "order-consensus-kernel"
+layer = "pure-core"
+runtime = "in-process-hot-path"
+owner_group = "order-consensus"
+staff_target = 4
+status = "candidate-incomplete-host"
+allowed_module_dependencies = ["M00", "M01"]
+forbidden_capabilities = ["filesystem", "network", "wall-clock", "direct-signing"]
+
+[[modules]]
+id = "M03"
+name = "safety-signer-checkpoint-authority"
+layer = "authority-core-adapter"
+runtime = "in-process-plus-hsm-adapter"
+owner_group = "safety-authority"
+staff_target = 4
+status = "candidate-incomplete-integration"
+allowed_module_dependencies = ["M00", "M01", "M02"]
+forbidden_capabilities = ["fork-choice", "application-state-root", "control-plane-override"]
+
+[[modules]]
+id = "M04"
+name = "p2p-session-dissemination"
+layer = "adapter-runtime"
+runtime = "in-process-io"
+owner_group = "network"
+staff_target = 3
+status = "candidate-no-production-listener"
+allowed_module_dependencies = ["M00", "M01", "M02"]
+forbidden_capabilities = ["sign", "vote", "finalize", "state-commit"]
+
+[[modules]]
+id = "M05"
+name = "transaction-admission-mempool"
+layer = "core-adapter"
+runtime = "in-process"
+owner_group = "transaction-lifecycle"
+staff_target = 2
+status = "candidate-no-production-activation"
+allowed_module_dependencies = ["M00", "M01", "M07"]
+forbidden_capabilities = ["consensus-order", "sign", "finalize"]
+
+[[modules]]
+id = "M06"
+name = "deterministic-execution-mvcc-meter"
+layer = "pure-core"
+runtime = "in-process-hot-path"
+owner_group = "execution"
+staff_target = 4
+status = "candidate-needs-real-vertical-path"
+allowed_module_dependencies = ["M00", "M07", "M10", "M11", "M12"]
+forbidden_capabilities = ["network", "wall-clock", "consensus-finality"]
+
+[[modules]]
+id = "M07"
+name = "state-jmt-storage"
+layer = "core-adapter"
+runtime = "in-process-hot-path"
+owner_group = "state-storage"
+staff_target = 3
+status = "active-needs-pinned-namespace"
+allowed_module_dependencies = ["M00", "M01"]
+forbidden_capabilities = ["vote", "sign", "fork-choice"]
+
+[[modules]]
+id = "M08"
+name = "finality-commit-recovery"
+layer = "authority-coordinator"
+runtime = "in-process-hot-path"
+owner_group = "finality-recovery"
+staff_target = 3
+status = "candidate-needs-node-commit-ledger"
+allowed_module_dependencies = ["M00", "M02", "M03", "M06", "M07"]
+forbidden_capabilities = ["independent-fork-choice", "control-plane-override"]
+
+[[modules]]
+id = "M09"
+name = "data-availability"
+layer = "core-worker"
+runtime = "library-and-workers"
+owner_group = "data-availability"
+staff_target = 2
+status = "v1-candidate"
+allowed_module_dependencies = ["M00", "M01"]
+forbidden_capabilities = ["order-finality", "settlement-authority"]
+
+[[modules]]
+id = "M10"
+name = "agent-task-market"
+layer = "deterministic-application"
+runtime = "in-process"
+owner_group = "agent-market"
+staff_target = 2
+status = "v1-candidate"
+allowed_module_dependencies = ["M00", "M01", "M09"]
+forbidden_capabilities = ["order-finality", "direct-signing"]
+
+[[modules]]
+id = "M11"
+name = "verify-challenge"
+layer = "deterministic-core-worker"
+runtime = "in-process-and-proof-workers"
+owner_group = "verification"
+staff_target = 2
+status = "v1-candidate"
+allowed_module_dependencies = ["M00", "M01", "M09", "M10"]
+forbidden_capabilities = ["order-finality", "implicit-profile-fallback"]
+
+[[modules]]
+id = "M12"
+name = "settlement-economics"
+layer = "deterministic-application"
+runtime = "in-process"
+owner_group = "settlement"
+staff_target = 2
+status = "v1-candidate"
+allowed_module_dependencies = ["M00", "M10", "M11"]
+forbidden_capabilities = ["order-finality", "unprofiled-result-authority"]
+
+[[modules]]
+id = "M13"
+name = "state-sync-light-client-proofs"
+layer = "verifier-adapter"
+runtime = "in-process-verifier-and-downloader"
+owner_group = "sync-light-client"
+staff_target = 3
+status = "candidate-no-production-state-sync"
+allowed_module_dependencies = ["M00", "M01", "M02", "M07", "M08"]
+forbidden_capabilities = ["sign", "vote", "trusted-unverified-checkpoint"]
+
+[[modules]]
+id = "M14"
+name = "rpc-indexer-sdk-cli"
+layer = "service-client"
+runtime = "isolated-services"
+owner_group = "developer-platform"
+staff_target = 2
+status = "active-non-authoritative"
+allowed_module_dependencies = ["M00", "M05", "M08", "M13"]
+forbidden_capabilities = ["consensus-authority", "state-root-authority", "finality-authority"]
+
+[[modules]]
+id = "M15"
+name = "node-composition-packaging-release"
+layer = "composition"
+runtime = "node-and-release-tooling"
+owner_group = "node-release"
+staff_target = 2
+status = "active-composition-hotspot"
+allowed_module_dependencies = ["M00", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12", "M13", "M14", "M17"]
+forbidden_capabilities = ["domain-state-machine", "silent-gate-promotion"]
+
+[[modules]]
+id = "M16"
+name = "global-control-plane"
+layer = "out-of-band-control"
+runtime = "isolated-service"
+owner_group = "global-optimization"
+staff_target = 2
+status = "planned-observer-first"
+allowed_module_dependencies = ["M00", "M17"]
+forbidden_capabilities = ["sign", "vote", "finalize", "state-root", "safety-bypass", "activation"]
+
+[[modules]]
+id = "M17"
+name = "observability-benchmark-security-evidence"
+layer = "tooling-observer"
+runtime = "tooling-and-isolated-collectors"
+owner_group = "quality-security-evidence"
+staff_target = 3
+status = "active-to-consolidate"
+allowed_module_dependencies = ["M00", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12", "M13", "M14", "M15"]
+forbidden_capabilities = ["production-signing", "consensus-authority", "self-acceptance"]
