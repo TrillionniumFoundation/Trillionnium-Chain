@@ -46,7 +46,7 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "a6935c716dc69ec452daa1999f650ef562ed5830"
+          test "$(git rev-parse HEAD^)" = "60595ecba76afd19c34fc865772301f1734e0602"
           test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/trnm-plan-v2-p0-carrier-execute.yml"
           python3 -B - "$RUNNER_TEMP/trnm-p0-apply.sh" <<'PY'
           from pathlib import Path
@@ -103,6 +103,22 @@ jobs:
           git checkout -B "$TARGET_BRANCH" "$TARGET_EXPECTED_SHA"
           bash scripts/project-preflight.sh --audit
           bash "$RUNNER_TEMP/trnm-p0-apply.sh"
+          python3 -B - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('trillionnium/crates/trnm-native-application-sqlite/src/pinned_sqlite_namespace.rs')
+          text = path.read_text(encoding='utf-8')
+          fixed, count = re.subn(
+              r'(?m)^(\s*)\)\)\]\n\1\{',
+              lambda match: f"{match.group(1)})))]\n{match.group(1)}{{",
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit(f'expected one malformed cfg delimiter, found {count}')
+          path.write_text(fixed, encoding='utf-8')
+          PY
           git diff --check
 
       - name: Format and validate storage, execution, and node consumers
