@@ -168,14 +168,11 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A -- \
+          git add -- \
             .github/workflows/trnm-cometbft-spike.yml \
-            .github/workflows/trnm-fuzz-lock-refresh.yml \
             .github/workflows/trnm-gate-quick-check.yml \
-            .github/workflows/trnm-guard-patch-evidence.yml \
             .github/workflows/trnm-merge-gates.yml \
             .github/workflows/trnm-poco-bft-v0.yml \
-            .github/workflows/trnm-x230-closure-patch.yml \
             scripts/check_ci_runner_policy.sh \
             trillionnium/fuzz/Cargo.lock
           mapfile -t changed < <(git diff --cached --name-only | LC_ALL=C sort)
