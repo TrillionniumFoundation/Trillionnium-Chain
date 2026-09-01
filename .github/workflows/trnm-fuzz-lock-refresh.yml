@@ -1,0 +1,51 @@
+name: TRNM fuzz lock refresh evidence
+
+on:
+  push:
+    branches:
+      - integration/native-poco-a04-a19-a23-qualified-v1-20260901
+    paths:
+      - .github/workflows/trnm-fuzz-lock-refresh.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-fuzz-lock-refresh-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&
+      github.triggering_actor == github.actor
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 15
+    env:
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify runner-provisioned nightly toolchain
+        run: ./scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain nightly-2026-07-27
+      - name: Regenerate isolated fuzz lock strictly offline
+        run: |
+          set -euo pipefail
+          cargo +nightly-2026-07-27 generate-lockfile \
+            --manifest-path trillionnium/fuzz/Cargo.toml \
+            --offline
+          cargo +nightly-2026-07-27 metadata \
+            --manifest-path trillionnium/fuzz/Cargo.toml \
+            --locked --offline --no-deps \
+            >/dev/null
+          git diff --check -- trillionnium/fuzz/Cargo.lock
+      - name: Upload exact regenerated lock
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-fuzz-lock-${{ github.sha }}
+          path: trillionnium/fuzz/Cargo.lock
+          if-no-files-found: error
+          retention-days: 2
