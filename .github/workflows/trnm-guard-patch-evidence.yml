@@ -1,0 +1,76 @@
+name: TRNM maintainer guard patch evidence
+
+on:
+  push:
+    branches:
+      - integration/native-poco-a04-a19-a23-qualified-v1-20260901
+    paths:
+      - .github/workflows/trnm-guard-patch-evidence.yml
+
+permissions:
+  contents: read
+
+jobs:
+  patch:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&
+      github.triggering_actor == github.actor
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build counted maintainer-guard patch set
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          paths = [
+              Path('.github/workflows/trnm-cometbft-spike.yml'),
+              Path('.github/workflows/trnm-poco-bft-v0.yml'),
+              Path('.github/workflows/trnm-merge-gates.yml'),
+              Path('.github/workflows/trnm-gate-quick-check.yml'),
+          ]
+          pattern = re.compile(
+              r"github\.actor == 'ProfAlexQI' &&\n"
+              r"(?P<indent>\s*)github\.triggering_actor == 'ProfAlexQI' &&"
+          )
+          replacement = (
+              "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&\n"
+              r"\g<indent>github.triggering_actor == github.actor &&"
+          )
+          total = 0
+          for path in paths:
+              before = path.read_text(encoding='utf-8')
+              after, count = pattern.subn(replacement, before)
+              if count < 1:
+                  raise SystemExit(f'no trusted-actor guard found in {path}')
+              if "github.triggering_actor == 'ProfAlexQI'" in after:
+                  raise SystemExit(f'stale triggering-actor guard remains in {path}')
+              path.write_text(after, encoding='utf-8')
+              total += count
+              print(f'{path}: replacements={count}')
+          if total < len(paths):
+              raise SystemExit('guard replacement coverage incomplete')
+          PY
+          git diff --check -- \
+            .github/workflows/trnm-cometbft-spike.yml \
+            .github/workflows/trnm-poco-bft-v0.yml \
+            .github/workflows/trnm-merge-gates.yml \
+            .github/workflows/trnm-gate-quick-check.yml
+      - name: Upload exact guard patch set
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-guard-patch-set-${{ github.sha }}
+          path: |
+            .github/workflows/trnm-cometbft-spike.yml
+            .github/workflows/trnm-poco-bft-v0.yml
+            .github/workflows/trnm-merge-gates.yml
+            .github/workflows/trnm-gate-quick-check.yml
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 2
