@@ -46,7 +46,7 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "8074f48411fe36dcf9757b3b192fd10ca1c51e8e"
+          test "$(git rev-parse HEAD^)" = "aeb3b706e712f12417f696e1f4fb8be6264ce342"
           test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/trnm-plan-v2-p0-carrier-execute.yml"
           python3 -B - "$RUNNER_TEMP/trnm-p0-apply.sh" <<'PY'
           from pathlib import Path
@@ -136,7 +136,32 @@ jobs:
               raise SystemExit(
                   f'unexpected cfg block counts: any={found_any} not_any={found_not_any}'
               )
-          path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+          parent_start = None
+          for index, line in enumerate(lines):
+              if 'let parent_path = path.parent().ok_or_else' in line:
+                  if parent_start is not None:
+                      raise SystemExit('duplicate parent ownership anchor')
+                  parent_start = index
+          if parent_start is None:
+              raise SystemExit('parent ownership anchor missing')
+          insertion = None
+          for index in range(parent_start + 1, len(lines)):
+              if lines[index].strip() == '})?;':
+                  insertion = index + 1
+                  break
+          if insertion is None:
+              raise SystemExit('parent ownership terminator missing')
+          indent = lines[parent_start][: len(lines[parent_start]) - len(lines[parent_start].lstrip())]
+          lines.insert(insertion, indent + 'let parent_path = parent_path.to_path_buf();')
+          text = '\n'.join(lines) + '\n'
+          if text.count('File::open(parent_path)') != 1:
+              raise SystemExit('parent File::open anchor drift')
+          if text.count('parent_path: parent_path.to_path_buf(),') != 1:
+              raise SystemExit('parent struct anchor drift')
+          text = text.replace('File::open(parent_path)', 'File::open(&parent_path)', 1)
+          text = text.replace('parent_path: parent_path.to_path_buf(),', 'parent_path,', 1)
+          path.write_text(text, encoding='utf-8')
           PY
           git diff --check
 
