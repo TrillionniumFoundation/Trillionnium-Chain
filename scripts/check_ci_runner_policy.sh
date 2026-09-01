@@ -26,6 +26,14 @@ STANDARD_GUARD = (
     "'pull_request' || github.event.pull_request.head.repo.full_name == "
     "github.repository)))"
 )
+MAINTAINER_GUARD = (
+    "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+    "(github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' || "
+    "github.actor == 'Tomasrgbsf') && github.triggering_actor == github.actor && "
+    "(github.event_name != 'pull_request' || "
+    "github.event.pull_request.head.repo.full_name == github.repository)))"
+)
+
 PAYLOAD_GUARD = (
     "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
     "((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') "
@@ -45,6 +53,15 @@ POCO_GUARD = (
     "&& (github.event_name != 'pull_request' || "
     "github.event.pull_request.head.repo.full_name == github.repository)))"
 )
+POCO_MAINTAINER_GUARD = (
+    "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+    "(github.event_name == 'schedule' && github.ref == 'refs/heads/main' || "
+    "((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') && "
+    "github.triggering_actor == github.actor && "
+    "(github.event_name != 'pull_request' || "
+    "github.event.pull_request.head.repo.full_name == github.repository)))"
+)
+
 P1_GUARD = (
     "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
     "github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' "
@@ -190,9 +207,16 @@ def required_guard(name: str) -> str:
     }:
         return PAYLOAD_GUARD
     if name == "trnm-poco-bft-v0.yml":
-        return POCO_GUARD
+        return POCO_MAINTAINER_GUARD
     if name == "p1-rust-sidecar.yml":
         return P1_GUARD
+    if name in {
+        "trnm-canonical-input-fuzz-smoke.yml",
+        "trnm-cometbft-spike.yml",
+        "trnm-gate-quick-check.yml",
+        "trnm-merge-gates.yml",
+    }:
+        return MAINTAINER_GUARD
     return STANDARD_GUARD
 
 
