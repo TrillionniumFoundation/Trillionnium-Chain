@@ -1,0 +1,92 @@
+name: TRNM X230 one-shot closure patch
+
+on:
+  push:
+    branches:
+      - integration/native-poco-a04-a19-a23-qualified-v1-20260901
+    paths:
+      - .github/workflows/trnm-x230-closure-patch.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-x230-one-shot-closure-patch
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&
+      github.triggering_actor == github.actor
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    env:
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "1"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: integration/native-poco-a04-a19-a23-qualified-v1-20260901
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify exact source head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+
+      - name: Generate exact offline lock and synchronize guard policy
+        run: |
+          set -euo pipefail
+          cargo +nightly-2026-07-27 generate-lockfile \
+            --manifest-path trillionnium/fuzz/Cargo.toml \
+            --offline
+          test "$(sha256sum trillionnium/fuzz/Cargo.lock | awk '{print $1}')" = \
+            "f856eaedb0fd390f2a7d47c98efbe7f69ba17669257653803068758dbb089a55"
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("scripts/check_ci_runner_policy.sh")
+          text = path.read_text(encoding="utf-8")
+          old = '''STANDARD_GUARD = (
+              "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+              "(github.event_name == 'schedule' || (github.actor == 'ProfAlexQI' && "
+              "github.triggering_actor == 'ProfAlexQI' && (github.event_name != "
+              "'pull_request' || github.event.pull_request.head.repo.full_name == "
+              "github.repository)))"
+          )'''
+          new = '''STANDARD_GUARD = (
+              "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+              "(github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' || "
+              "github.actor == 'Tomasrgbsf') && github.triggering_actor == github.actor && "
+              "(github.event_name != 'pull_request' || "
+              "github.event.pull_request.head.repo.full_name == github.repository)))"
+          )'''
+          if text.count(old) != 1:
+              raise SystemExit("expected exactly one legacy STANDARD_GUARD block")
+          path.write_text(text.replace(old, new), encoding="utf-8")
+          PY
+          git diff --check -- scripts/check_ci_runner_policy.sh trillionnium/fuzz/Cargo.lock
+
+      - name: Validate final repository policy and offline fuzz build
+        run: |
+          set -euo pipefail
+          bash scripts/check_ci_runner_policy.sh --worktree
+          bash scripts/check_cargo_offline_policy.sh --worktree
+          ./scripts/ci/check_preprovisioned_cargo_fuzz.sh
+          cargo +nightly-2026-07-27 fuzz build --offline
+
+      - name: Commit deterministic closure patch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/check_ci_runner_policy.sh trillionnium/fuzz/Cargo.lock
+          git diff --cached --check
+          test -n "$(git diff --cached --name-only)"
+          git commit -m 'ci(x230): close canonical fuzz lock and runner-policy drift'
+          git push origin HEAD:integration/native-poco-a04-a19-a23-qualified-v1-20260901
