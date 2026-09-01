@@ -18,6 +18,7 @@ toolchain_lock_sha256 = "ee1e9a8382092a397f1b041107cf6b86e468d521af3aa7963e5f6e7
 audit_date = "2026-09-01"
 authority_status = "candidate-until-protected-main-merge-and-independent-acceptance"
 documentation_mode = "single-source"
+document_candidate_binding = "runtime-git-commit-and-tree"
 history_location = "git-history-only"
 clean_clone_required = true
 tracked_plan_required = true
