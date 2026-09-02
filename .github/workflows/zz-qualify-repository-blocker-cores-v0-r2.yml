@@ -1,0 +1,151 @@
+name: qualify-repository-blocker-cores-v0-r2
+
+on:
+  push:
+    branches: [work/plan-v2-repository-blockers-closure-20260902]
+    paths: [.github/workflows/zz-qualify-repository-blocker-cores-v0-r2.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qualify-repository-blocker-cores-v0-r2-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-repository-blockers-closure-20260902' &&
+      github.actor == 'Franksudoman'
+    runs-on: self-hosted
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Format normalize lock and qualify exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          exec > >(tee /tmp/qualification.log) 2>&1
+          source_commit="$(git rev-parse HEAD)"
+          source_tree="$(git rev-parse HEAD^{tree})"
+          test "${source_commit}" = "${GITHUB_SHA}"
+          cd trillionnium
+          export CARGO_NET_OFFLINE=true
+          cargo generate-lockfile --offline
+          cargo fmt --all
+          for package in \
+            trnm-node-boundary-v0 \
+            trnm-tx-lifecycle-v0 \
+            trnm-state-sync-v0 \
+            trnm-migration-v0 \
+            trnm-control-plane-v0 \
+            trnm-poco-node-production-v0 \
+            trnm-release-bundle-v0
+          do
+            cargo test -p "${package}" --locked --offline
+          done
+          cargo check -p trnm-poco-node-production-v0 --all-targets --locked --offline
+          cargo check --workspace --all-targets --locked --offline
+          cd ..
+          changed="$(git diff --name-only)"
+          if grep -Ev '^(trillionnium/Cargo.lock|trillionnium/crates/trnm-(node-boundary-v0|tx-lifecycle-v0|state-sync-v0|migration-v0|control-plane-v0|poco-node-production-v0|release-bundle-v0)/)' <<<"${changed}" | grep -q .; then
+            echo "unexpected generated diff:" >&2
+            echo "${changed}" >&2
+            exit 1
+          fi
+          mkdir -p /tmp/qualification
+          git diff --binary > /tmp/qualification/tested-normalization.patch
+          cp /tmp/qualification.log /tmp/qualification/qualification.log
+          log_digest="$(sha256sum /tmp/qualification/qualification.log | awk '{print $1}')"
+          lock_digest="$(sha256sum trillionnium/Cargo.lock | awk '{print $1}')"
+          patch_digest="$(sha256sum /tmp/qualification/tested-normalization.patch | awk '{print $1}')"
+          normalized_tree="$(git write-tree)"
+          cat > /tmp/qualification/evidence.json <<JSON
+          {
+            "schema": "trnm.repository-blocker-cores-qualification.v0",
+            "result": "pass",
+            "source_commit": "${source_commit}",
+            "source_tree": "${source_tree}",
+            "normalized_tree": "${normalized_tree}",
+            "branch": "${GITHUB_REF_NAME}",
+            "run_id": "${GITHUB_RUN_ID}",
+            "run_attempt": "${GITHUB_RUN_ATTEMPT}",
+            "runner_environment": "self-hosted",
+            "cargo_net_offline": true,
+            "cargo_lock_sha256": "${lock_digest}",
+            "qualification_log_sha256": "${log_digest}",
+            "tested_normalization_patch_sha256": "${patch_digest}",
+            "packages": [
+              "trnm-node-boundary-v0",
+              "trnm-tx-lifecycle-v0",
+              "trnm-state-sync-v0",
+              "trnm-migration-v0",
+              "trnm-control-plane-v0",
+              "trnm-poco-node-production-v0",
+              "trnm-release-bundle-v0"
+            ],
+            "commands": [
+              "cargo generate-lockfile --offline",
+              "cargo fmt --all",
+              "cargo test -p <each-new-package> --locked --offline",
+              "cargo check -p trnm-poco-node-production-v0 --all-targets --locked --offline",
+              "cargo check --workspace --all-targets --locked --offline"
+            ],
+            "non_claims": [
+              "This is repository-owned qualification, not independent review.",
+              "It does not close live multi-host consensus, production adapter wiring, HSM, physical power loss, external audit, wall-clock soak, governance, release, public-testnet, activation, or G5 gates."
+            ]
+          }
+          JSON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repository-blocker-cores-v0-r2-${{ github.sha }}
+          path: /tmp/qualification
+          if-no-files-found: error
+          retention-days: 90
+
+  record:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: repository-blocker-cores-v0-r2-${{ github.sha }}
+          path: /tmp/qualification
+      - name: Apply only the tested normalization and record evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git ls-remote origin "refs/heads/${GITHUB_REF_NAME}" | awk '{print $1}')" = "${GITHUB_SHA}"
+          test "$(sha256sum /tmp/qualification/tested-normalization.patch | awk '{print $1}')" = \
+            "$(jq -r '.tested_normalization_patch_sha256' /tmp/qualification/evidence.json)"
+          git apply --check /tmp/qualification/tested-normalization.patch
+          git apply /tmp/qualification/tested-normalization.patch
+          mkdir -p docs/evidence/repository
+          cp /tmp/qualification/evidence.json \
+            docs/evidence/repository/REPOSITORY_BLOCKER_CORES_V0_QUALIFICATION.json
+          rm -f .github/workflows/zz-qualify-repository-blocker-cores-v0.yml
+          rm -f .github/workflows/zz-qualify-repository-blocker-cores-v0-r2.yml
+          rm -f .github/workflows/zz-fix-v0-core-review.yml
+          rm -f .github/workflows/zz-fix-node-boundary-test.yml
+          rm -f .github/workflows/zz-normalize-new-v0-cores.yml
+          git config user.name 'trnm-closure-bot'
+          git config user.email 'trnm-closure-bot@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'test(core): qualify and normalize repository blocker cores'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
