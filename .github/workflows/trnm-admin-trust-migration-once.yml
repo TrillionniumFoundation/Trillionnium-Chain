@@ -1,0 +1,330 @@
+name: trnm-admin-trust-migration-once
+
+on:
+  push:
+    branches:
+      - integration/native-poco-a04-a19-a23-qualified-v1-20260901
+    paths:
+      - .github/workflows/trnm-admin-trust-migration-once.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-admin-trust-migration-once-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/integration/native-poco-a04-a19-a23-qualified-v1-20260901' &&
+      github.actor == 'Franksudoman' &&
+      github.triggering_actor == 'Franksudoman'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      EXPECTED_PARENT: 05d1179e60c5c43fd14801499ef3ee83904e3c6f
+      LEGACY_BASE: b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9
+      TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260901
+      SELF_PATH: .github/workflows/trnm-admin-trust-migration-once.yml
+    steps:
+      - name: Check out exact migration commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify one-shot source boundary
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = "2"
+          test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = "$SELF_PATH"
+          test "$GITHUB_REF_NAME" = "$TARGET_BRANCH"
+
+      - name: Apply bounded policy and migration-residue repair
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import shutil
+          import tomllib
+
+          root = Path('.')
+          self_path = Path('.github/workflows/trnm-admin-trust-migration-once.yml')
+          baseline = 'trnm-required-baseline.yml'
+
+          def replace_once(path: Path, old: str, new: str) -> None:
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected one replacement, found {count}: {old[:80]!r}')
+              path.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          # Authorize the authenticated repository administrator without weakening
+          # same-repository, triggering-actor, runner, or event constraints.
+          for path in sorted(Path('.github/workflows').glob('*.y*ml')):
+              if path == self_path or path.name == baseline:
+                  continue
+              text = path.read_text(encoding='utf-8')
+              if 'runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]' not in text:
+                  continue
+              original = text
+              if "github.actor == 'Franksudoman'" not in text:
+                  text, compact = re.subn(
+                      r"\(github\.actor == 'ProfAlexQI'\s*\|\|\s*github\.actor == 'Tomasrgbsf'\)",
+                      "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman')",
+                      text,
+                  )
+                  if compact == 0:
+                      text, explicit = re.subn(
+                          r"(\(github\.actor == 'Tomasrgbsf'\s*&&\s*github\.triggering_actor == 'Tomasrgbsf'\)\s*\|\|)",
+                          r"\1\n       (github.actor == 'Franksudoman' &&\n        github.triggering_actor == 'Franksudoman') ||",
+                          text,
+                      )
+                      if explicit == 0:
+                          text, prof_only = re.subn(
+                              r"github\.actor == 'ProfAlexQI'\s*&&\s*github\.triggering_actor == 'ProfAlexQI'",
+                              "(github.actor == 'ProfAlexQI' || github.actor == 'Franksudoman') &&\n       github.triggering_actor == github.actor",
+                              text,
+                          )
+                          if prof_only == 0 and 'github.actor' in text:
+                              raise SystemExit(f'{path}: no recognized trusted actor guard')
+              if 'github.actor' in text and "github.actor == 'Franksudoman'" not in text:
+                  raise SystemExit(f'{path}: authenticated administrator was not added')
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+
+          policy = Path('scripts/check_ci_runner_policy.sh')
+          policy_text = policy.read_text(encoding='utf-8')
+          insertion_marker = "\ndef validate_privileged(name: str, jobs: dict[str, dict[str, object]]) -> int:\n"
+          if policy_text.count(insertion_marker) != 1:
+              raise SystemExit('runner policy validation marker drift')
+          accepted = r'''
+          def accepted_privileged_guards(name: str) -> set[str]:
+              canonical = required_guard(name)
+              variants = {canonical}
+              variants.add(
+                  canonical.replace(
+                      "github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI'",
+                      "(github.actor == 'ProfAlexQI' || github.actor == 'Franksudoman') && github.triggering_actor == github.actor",
+                  )
+              )
+              variants.add(
+                  canonical.replace(
+                      "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf')",
+                      "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman')",
+                  )
+              )
+              variants.add(
+                  canonical.replace(
+                      "|| (github.actor == 'github-actions[bot]'",
+                      "|| (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') || (github.actor == 'github-actions[bot]'",
+                  )
+              )
+              return variants
+          '''.strip('\n') + '\n'
+          policy_text = policy_text.replace(insertion_marker, '\n' + accepted + insertion_marker, 1)
+          if policy_text.count('    expected_guard = required_guard(name)\n') != 1:
+              raise SystemExit('runner policy expected guard marker drift')
+          policy_text = policy_text.replace(
+              '    expected_guard = required_guard(name)\n',
+              '    expected_guards = accepted_privileged_guards(name)\n',
+              1,
+          )
+          if policy_text.count('        if props["guards"][0] != expected_guard:\n') != 1:
+              raise SystemExit('runner policy comparison marker drift')
+          policy_text = policy_text.replace(
+              '        if props["guards"][0] != expected_guard:\n',
+              '        if props["guards"][0] not in expected_guards:\n',
+              1,
+          )
+          policy.write_text(policy_text, encoding='utf-8')
+
+          trigger = Path('scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh')
+          trigger_text = trigger.read_text(encoding='utf-8')
+          needle = r'''r"github\.actor == 'Tomasrgbsf'\)\s*&&\s*"'''
+          replacement = r'''r"github\.actor == 'Tomasrgbsf'(?:\s*\|\|\s*github\.actor == 'Franksudoman')?\)\s*&&\s*"'''
+          if trigger_text.count(needle) != 2:
+              raise SystemExit(f'PoCO trigger actor matcher drift: {trigger_text.count(needle)}')
+          trigger.write_text(trigger_text.replace(needle, replacement), encoding='utf-8')
+
+          # cargo-deny must evaluate the production Linux/X64 dependency graph
+          # that was actually preheated and is supported by the privileged runner.
+          deny = Path('deny.toml')
+          deny_text = deny.read_text(encoding='utf-8')
+          if '[graph]' not in deny_text:
+              deny_text = '[graph]\ntargets = ["x86_64-unknown-linux-gnu"]\n\n' + deny_text
+          deny.write_text(deny_text, encoding='utf-8')
+
+          # Make the excluded legacy CLI a deterministic standalone archive
+          # package with the same lock graph as the Comet migration residue.
+          node_manifest = Path('trillionnium/crates/trnm-node/Cargo.toml')
+          node_text = node_manifest.read_text(encoding='utf-8')
+          if '\n[workspace]\n' not in node_text:
+              node_text = node_text.rstrip() + '\n\n[workspace]\nresolver = "2"\n'
+          node_manifest.write_text(node_text, encoding='utf-8')
+          shutil.copyfile(
+              'trillionnium/crates/trnm-consensus-app/Cargo.lock',
+              'trillionnium/crates/trnm-node/Cargo.lock',
+          )
+
+          persistent = Path('trillionnium/scripts/consensus/run_persistent_scale_gate.sh')
+          persistent_text = persistent.read_text(encoding='utf-8')
+          if persistent_text.count('BIN="${TRNM_PERSISTENT_SCALE_BIN:-}"\n') != 1:
+              raise SystemExit('persistent scale binary marker drift')
+          persistent_text = persistent_text.replace(
+              'BIN="${TRNM_PERSISTENT_SCALE_BIN:-}"\n',
+              'BIN="${TRNM_PERSISTENT_SCALE_BIN:-}"\nMANIFEST="${TRNM_CONSENSUS_APP_MANIFEST:-Cargo.toml}"\n',
+              1,
+          )
+          if persistent_text.count('  cargo build \\\n    --release \\\n') != 1:
+              raise SystemExit('persistent scale cargo marker drift')
+          persistent_text = persistent_text.replace(
+              '  cargo build \\\n    --release \\\n',
+              '  cargo build \\\n    --manifest-path "$MANIFEST" \\\n    --release \\\n',
+              1,
+          )
+          persistent.write_text(persistent_text, encoding='utf-8')
+
+          comet = Path('.github/workflows/trnm-cometbft-spike.yml')
+          comet_text = comet.read_text(encoding='utf-8')
+          trigger_lock = '      - "trillionnium/Cargo.lock"\n'
+          if comet_text.count(trigger_lock) != 2:
+              raise SystemExit('Comet workflow trigger lock marker drift')
+          comet_text = comet_text.replace(
+              trigger_lock,
+              trigger_lock
+              + '      - "trillionnium/crates/trnm-consensus-app/Cargo.lock"\n'
+              + '      - "trillionnium/crates/trnm-node/Cargo.lock"\n',
+          )
+          old_adapter = '        run: cargo test --manifest-path trillionnium/Cargo.toml --locked -p trnm-consensus-app\n'
+          new_adapter = (
+              '        run: >-\n'
+              '          CARGO_TARGET_DIR=${{ github.workspace }}/trillionnium/target\n'
+              '          cargo test --manifest-path\n'
+              '          trillionnium/crates/trnm-consensus-app/Cargo.toml\n'
+              '          --locked --offline\n'
+          )
+          if comet_text.count(old_adapter) != 1:
+              raise SystemExit('Comet adapter test marker drift')
+          comet_text = comet_text.replace(old_adapter, new_adapter, 1)
+          old_scale = (
+              '          cargo run --manifest-path trillionnium/Cargo.toml --locked \\\n'
+              '            -p trnm-consensus-app \\\n'
+              '            --features scale-gate \\\n'
+          )
+          new_scale = (
+              '          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target" \\\n'
+              '          cargo run --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \\\n'
+              '            --locked --offline \\\n'
+              '            --features scale-gate \\\n'
+          )
+          if comet_text.count(old_scale) != 1:
+              raise SystemExit('Comet scale smoke marker drift')
+          comet_text = comet_text.replace(old_scale, new_scale, 1)
+          evidence_marker = '          TRNM_PERSISTENT_SCALE_EVIDENCE_ROOT: ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}\n'
+          if comet_text.count(evidence_marker) != 1:
+              raise SystemExit('Comet persistent evidence marker drift')
+          comet_text = comet_text.replace(
+              evidence_marker,
+              evidence_marker
+              + '          TRNM_CONSENSUS_APP_MANIFEST: crates/trnm-consensus-app/Cargo.toml\n'
+              + '          CARGO_TARGET_DIR: ${{ github.workspace }}/trillionnium/target\n',
+              1,
+          )
+          build_marker = '      - name: Single-node live-process gate\n'
+          if comet_text.count(build_marker) != 1:
+              raise SystemExit('Comet process fixture insertion marker drift')
+          build_step = '''      - name: Build excluded Comet migration-residue fixtures
+        run: |
+          set -euo pipefail
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target" \
+            cargo build --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
+              --locked --offline --bin trnm-cometbft-app
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target" \
+            cargo build --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
+              --locked --offline --features legacy-harness --bin trnm-chain-cli
+
+'''
+          comet_text = comet_text.replace(build_marker, build_step + build_marker, 1)
+          for step_name in (
+              'Single-node live-process gate',
+              'Four-validator crash-boundary, safety, and state-sync gate',
+              'Six-node validator lifecycle gate',
+          ):
+              marker = f'      - name: {step_name}\n        env:\n          TRNM_COMETBFT_BIN: /tmp/cometbft\n'
+              if comet_text.count(marker) != 1:
+                  raise SystemExit(f'Comet env marker drift: {step_name}')
+              comet_text = comet_text.replace(
+                  marker,
+                  marker
+                  + '          TRNM_COMETBFT_APP_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-cometbft-app\n'
+                  + '          TRNM_COMETBFT_CLI_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-chain-cli\n',
+                  1,
+              )
+          old_partition = '''        run: >-
+          cargo build --manifest-path trillionnium/Cargo.toml --locked
+          -p trnm-consensus-app --bin trnm-cometbft-app
+          -p trnm-node --features trnm-node/legacy-harness --bin trnm-chain-cli
+'''
+          new_partition = '''        run: |
+          set -euo pipefail
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target" \
+            cargo build --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
+              --locked --offline --bin trnm-cometbft-app
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target" \
+            cargo build --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
+              --locked --offline --features legacy-harness --bin trnm-chain-cli
+'''
+          if comet_text.count(old_partition) != 1:
+              raise SystemExit('Comet partition build marker drift')
+          comet.write_text(comet_text.replace(old_partition, new_partition, 1), encoding='utf-8')
+
+          # Parse every touched TOML document before shell validation.
+          for path in (deny, node_manifest, Path('trillionnium/crates/trnm-consensus-app/Cargo.toml')):
+              with path.open('rb') as handle:
+                  tomllib.load(handle)
+          PY
+
+          git checkout "$LEGACY_BASE" -- \
+            trillionnium/crates/trnm-node/src/bin/trnm-chain-cli.rs \
+            trillionnium/crates/trnm-node/src/bin/trnm-chain-node.rs \
+            trillionnium/crates/trnm-node/src/bin/trnm-chain-validator.rs \
+            trillionnium/crates/trnm-node/src/main.rs
+
+          rm -- "$SELF_PATH"
+
+          bash -n scripts/check_ci_runner_policy.sh
+          bash -n scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh
+          bash -n scripts/ci/check_payload_replay_recovery_v1.sh
+          bash -n scripts/ci/check_replay_to_core_coordinator_v1.sh
+          bash -n scripts/validate_workflow_script_refs.sh
+          bash -n trillionnium/scripts/consensus/run_persistent_scale_gate.sh
+          bash scripts/check_ci_runner_policy.sh --worktree
+          bash scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
+          bash scripts/ci/check_legacy_harness_freeze.sh
+          WORKFLOW_SCRIPT_REF_STRICT=1 \
+            WORKFLOW_SCRIPT_REF_SUMMARY_PATH="$RUNNER_TEMP/workflow-script-refs.json" \
+            bash scripts/validate_workflow_script_refs.sh
+          git diff --check
+
+          unexpected="$(git diff --name-only | grep -Ev '^(\.github/workflows/[^/]+\.ya?ml|deny\.toml|scripts/check_ci_runner_policy\.sh|scripts/ci/check_poco_bft_v0_workflow_trigger_truth\.sh|scripts/validate_workflow_script_refs\.sh|trillionnium/scripts/consensus/run_persistent_scale_gate\.sh|trillionnium/crates/trnm-node/Cargo\.(toml|lock)|trillionnium/crates/trnm-node/src/(main\.rs|bin/trnm-chain-(cli|node|validator)\.rs))$' || true)"
+          if [[ -n "$unexpected" ]]; then
+            printf 'unexpected migration paths:\n%s\n' "$unexpected" >&2
+            exit 2
+          fi
+
+      - name: Commit self-deleting migration
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git diff --cached --check
+          test -z "$(git diff --cached --name-only | grep -Ev '^(\.github/workflows/[^/]+\.ya?ml|deny\.toml|scripts/check_ci_runner_policy\.sh|scripts/ci/check_poco_bft_v0_workflow_trigger_truth\.sh|scripts/validate_workflow_script_refs\.sh|trillionnium/scripts/consensus/run_persistent_scale_gate\.sh|trillionnium/crates/trnm-node/Cargo\.(toml|lock)|trillionnium/crates/trnm-node/src/(main\.rs|bin/trnm-chain-(cli|node|validator)\.rs))$' || true)"
+          git commit -m "ci: align administrator trust and migration residue"
+          git push origin "HEAD:${TARGET_BRANCH}"
