@@ -1,0 +1,793 @@
+#!/usr/bin/env python3
+"""One-shot source migration for authority and transaction hardening."""
+
+from pathlib import Path
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(message)
+
+
+node = Path("trillionnium/crates/trnm-node-boundary-v0/src/lib.rs")
+text = node.read_text()
+text = text.replace(
+    "use std::{error::Error, fmt};",
+    "use std::{collections::BTreeSet, error::Error, fmt};",
+    1,
+)
+text = text.replace(
+    "pub const MAX_INGRESS_ITEMS_PER_STEP_V0: u32 = 256;\n"
+    "pub const MAX_AUTHORITY_ADVANCES_PER_STEP_V0: u32 = 32;",
+    "pub const MAX_INGRESS_ITEMS_PER_STEP_V0: u32 = 256;\n"
+    "pub const MAX_OUTBOUND_ITEMS_PER_STEP_V0: u32 = 256;\n"
+    "pub const MAX_INGRESS_BYTES_PER_STEP_V0: u64 = MAX_INGRESS_FRAME_BYTES_V0 as u64 * 8;\n"
+    "pub const MAX_OUTBOUND_BYTES_PER_STEP_V0: u64 = MAX_OUTBOUND_FRAME_BYTES_V0 as u64 * 8;\n"
+    "pub const MAX_AUTHORITY_ADVANCES_PER_STEP_V0: u32 = 32;",
+    1,
+)
+text = text.replace(
+    """            || self.max_outbound_items == 0
+            || self.max_ingress_bytes == 0
+            || self.max_outbound_bytes == 0
+""",
+    """            || self.max_outbound_items == 0
+            || self.max_outbound_items > MAX_OUTBOUND_ITEMS_PER_STEP_V0
+            || self.max_ingress_bytes == 0
+            || self.max_ingress_bytes > MAX_INGRESS_BYTES_PER_STEP_V0
+            || self.max_outbound_bytes == 0
+            || self.max_outbound_bytes > MAX_OUTBOUND_BYTES_PER_STEP_V0
+""",
+    1,
+)
+identity_anchor = """impl NodeIdentityV0 {
+    #[must_use]
+    pub fn digest(self) -> Digest32V0 {
+"""
+identity_replacement = """impl NodeIdentityV0 {
+    pub fn validate(self) -> Result<Self, BoundaryErrorV0> {
+        if self.chain_id == Digest32V0([0; 32])
+            || self.validator_id == Digest32V0([0; 32])
+            || self.application_id == Digest32V0([0; 32])
+            || self.generation == 0
+        {
+            return Err(BoundaryErrorV0::InvalidIdentity);
+        }
+        Ok(self)
+    }
+
+    #[must_use]
+    pub fn digest(self) -> Digest32V0 {
+"""
+require(identity_anchor in text, "node identity anchor changed")
+text = text.replace(identity_anchor, identity_replacement, 1)
+
+binding_end = """        Self {
+            operation_id,
+            height,
+            view,
+            block_id,
+            parent_id,
+            proposal_digest,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct IngressFrameV0 {
+"""
+binding_replacement = """        Self {
+            operation_id,
+            height,
+            view,
+            block_id,
+            parent_id,
+            proposal_digest,
+        }
+    }
+
+    pub fn validate(self, identity: NodeIdentityV0) -> Result<Self, BoundaryErrorV0> {
+        identity.validate()?;
+        if self.height == 0
+            || self.block_id == Digest32V0([0; 32])
+            || self.parent_id == Digest32V0([0; 32])
+            || self.proposal_digest == Digest32V0([0; 32])
+            || self.operation_id
+                != Self::derive(
+                    identity,
+                    self.height,
+                    self.view,
+                    self.block_id,
+                    self.parent_id,
+                    self.proposal_digest,
+                )
+                .operation_id
+        {
+            return Err(BoundaryErrorV0::InvalidOperationBinding);
+        }
+        Ok(self)
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct IngressFrameV0 {
+"""
+require(binding_end in text, "operation binding anchor changed")
+text = text.replace(binding_end, binding_replacement, 1)
+
+ingress_start = text.index("impl IngressFrameV0 {")
+ingress_end = text.index(
+    "\n#[derive(Clone, Debug, Eq, PartialEq)]\npub struct OutboundFrameV0",
+    ingress_start,
+)
+ingress_impl = """impl IngressFrameV0 {
+    pub fn new(
+        peer_id: Digest32V0,
+        profile_digest: Digest32V0,
+        replay_nonce: u64,
+        payload: Vec<u8>,
+    ) -> Result<Self, BoundaryErrorV0> {
+        let frame = Self {
+            peer_id,
+            profile_digest,
+            replay_nonce,
+            payload,
+        };
+        frame.validate()?;
+        Ok(frame)
+    }
+
+    pub fn validate(&self) -> Result<(), BoundaryErrorV0> {
+        if self.peer_id == Digest32V0([0; 32])
+            || self.profile_digest == Digest32V0([0; 32])
+            || self.replay_nonce == 0
+            || self.payload.is_empty()
+            || self.payload.len() > MAX_INGRESS_FRAME_BYTES_V0
+        {
+            return Err(BoundaryErrorV0::IngressFrameOutOfBounds);
+        }
+        Ok(())
+    }
+
+    #[must_use]
+    pub fn digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.node.ingress-frame.v0",
+            &[
+                &self.peer_id.0,
+                &self.profile_digest.0,
+                &self.replay_nonce.to_be_bytes(),
+                &self.payload,
+            ],
+        )
+    }
+}
+"""
+text = text[:ingress_start] + ingress_impl + text[ingress_end:]
+
+outbound_start = text.index("impl OutboundFrameV0 {")
+outbound_end = text.index(
+    "\n#[derive(Clone, Copy, Debug, Eq, PartialEq)]\npub enum RecoveryDispositionV0",
+    outbound_start,
+)
+outbound_impl = """impl OutboundFrameV0 {
+    pub fn new(
+        operation_id: Digest32V0,
+        destination: Digest32V0,
+        payload: Vec<u8>,
+    ) -> Result<Self, BoundaryErrorV0> {
+        let frame = Self {
+            operation_id,
+            destination,
+            payload,
+        };
+        frame.validate()?;
+        Ok(frame)
+    }
+
+    pub fn validate(&self) -> Result<(), BoundaryErrorV0> {
+        if self.operation_id == Digest32V0([0; 32])
+            || self.destination == Digest32V0([0; 32])
+            || self.payload.is_empty()
+            || self.payload.len() > MAX_OUTBOUND_FRAME_BYTES_V0
+        {
+            return Err(BoundaryErrorV0::OutboundFrameOutOfBounds);
+        }
+        Ok(())
+    }
+}
+"""
+text = text[:outbound_start] + outbound_impl + text[outbound_end:]
+
+receipt_old = """pub struct AuthorityReceiptV0 {
+    pub binding: OperationBindingV0,
+    pub durable_stage: AuthorityStageV0,
+    pub durable_sequence: u64,
+    pub record_digest: Digest32V0,
+}
+"""
+receipt_new = """pub struct AuthorityReceiptV0 {
+    pub binding: OperationBindingV0,
+    pub durable_stage: AuthorityStageV0,
+    pub durable_sequence: u64,
+    pub facts_digest: Digest32V0,
+    pub record_digest: Digest32V0,
+}
+"""
+require(receipt_old in text, "authority receipt anchor changed")
+text = text.replace(receipt_old, receipt_new, 1)
+
+recover_old = """        self.readiness = match self
+            .coordinator
+            .recover()
+            .map_err(HostErrorV0::Coordinator)?
+        {
+            RecoveryDispositionV0::Clean | RecoveryDispositionV0::Resume { .. } => {
+                HostReadinessV0::Ready
+            }
+            RecoveryDispositionV0::Quarantine { reason_digest } => {
+                HostReadinessV0::Quarantined(reason_digest)
+            }
+        };
+"""
+recover_new = """        self.readiness = match self
+            .coordinator
+            .recover()
+            .map_err(HostErrorV0::Coordinator)?
+        {
+            RecoveryDispositionV0::Clean => HostReadinessV0::Ready,
+            RecoveryDispositionV0::Resume { binding, .. } => {
+                binding
+                    .validate(self.coordinator.identity())
+                    .map_err(HostErrorV0::Boundary)?;
+                HostReadinessV0::Ready
+            }
+            RecoveryDispositionV0::Quarantine { reason_digest } => {
+                HostReadinessV0::Quarantined(reason_digest)
+            }
+        };
+"""
+require(recover_old in text, "host recovery anchor changed")
+text = text.replace(recover_old, recover_new, 1)
+
+loop_old = """                let mut total_bytes = 0_u64;
+                let mut digests = Vec::with_capacity(frames.len());
+                for frame in frames {
+                    let frame_bytes = u64::try_from(frame.payload.len())
+"""
+loop_new = """                let mut total_bytes = 0_u64;
+                let mut digests = Vec::with_capacity(frames.len());
+                let mut seen = BTreeSet::new();
+                for frame in frames {
+                    frame.validate().map_err(HostErrorV0::Boundary)?;
+                    if !seen.insert((frame.peer_id, frame.replay_nonce)) {
+                        return Err(HostErrorV0::Boundary(
+                            BoundaryErrorV0::DuplicateIngress,
+                        ));
+                    }
+                    let frame_bytes = u64::try_from(frame.payload.len())
+"""
+require(loop_old in text, "host ingress loop anchor changed")
+text = text.replace(loop_old, loop_new, 1)
+
+enum_old = """pub enum BoundaryErrorV0 {
+    InvalidBudget,
+    BudgetExceeded,
+    IngressFrameOutOfBounds,
+    OutboundFrameOutOfBounds,
+    InvalidStageTransition,
+    OperationBindingMismatch,
+    SequenceOverflow,
+}
+"""
+enum_new = """pub enum BoundaryErrorV0 {
+    InvalidIdentity,
+    InvalidOperationBinding,
+    InvalidBudget,
+    BudgetExceeded,
+    IngressFrameOutOfBounds,
+    OutboundFrameOutOfBounds,
+    DuplicateIngress,
+    InvalidStageTransition,
+    OperationBindingMismatch,
+    ReceiptSubstitution,
+    SequenceOverflow,
+}
+"""
+require(enum_old in text, "boundary error enum anchor changed")
+text = text.replace(enum_old, enum_new, 1)
+text = text.replace(
+    """        f.write_str(match self {
+            Self::InvalidBudget => "invalid bounded host-step budget",
+""",
+    """        f.write_str(match self {
+            Self::InvalidIdentity => "invalid node identity",
+            Self::InvalidOperationBinding => "invalid or substituted operation binding",
+            Self::InvalidBudget => "invalid bounded host-step budget",
+""",
+    1,
+)
+text = text.replace(
+    """            Self::OutboundFrameOutOfBounds => "outbound frame length is outside the protocol bound",
+            Self::InvalidStageTransition => "authority stage transition is not the exact successor",
+            Self::OperationBindingMismatch => "operation binding does not match durable authority",
+            Self::SequenceOverflow => "durable authority sequence overflow",
+""",
+    """            Self::OutboundFrameOutOfBounds => "outbound frame length is outside the protocol bound",
+            Self::DuplicateIngress => "duplicate peer replay nonce in one ingress batch",
+            Self::InvalidStageTransition => "authority stage transition is not the exact successor",
+            Self::OperationBindingMismatch => "operation binding does not match durable authority",
+            Self::ReceiptSubstitution => "same authority stage was replayed with different facts",
+            Self::SequenceOverflow => "durable authority sequence overflow",
+""",
+    1,
+)
+
+start = text.index("impl AuthorityCoordinatorV0 for ReferenceAuthorityCoordinatorV0 {")
+end = text.index("\n#[cfg(test)]", start)
+implementation = """impl AuthorityCoordinatorV0 for ReferenceAuthorityCoordinatorV0 {
+    type Error = BoundaryErrorV0;
+
+    fn identity(&self) -> NodeIdentityV0 {
+        self.identity
+    }
+
+    fn recover(&mut self) -> Result<RecoveryDispositionV0, Self::Error> {
+        self.identity.validate()?;
+        Ok(match self.current {
+            None => RecoveryDispositionV0::Clean,
+            Some(receipt) => {
+                receipt.binding.validate(self.identity)?;
+                RecoveryDispositionV0::Resume {
+                    binding: receipt.binding,
+                    durable_stage: receipt.durable_stage,
+                    durable_sequence: receipt.durable_sequence,
+                }
+            }
+        })
+    }
+
+    fn apply(&mut self, command: AuthorityCommandV0) -> Result<AuthorityReceiptV0, Self::Error> {
+        self.identity.validate()?;
+        let (binding, stage, facts_digest) = match command {
+            AuthorityCommandV0::Begin {
+                binding,
+                ingress_digest,
+            } => {
+                binding.validate(self.identity)?;
+                if ingress_digest == Digest32V0([0; 32]) {
+                    return Err(BoundaryErrorV0::ReceiptSubstitution);
+                }
+                if let Some(current) = self.current {
+                    if current.binding == binding
+                        && current.durable_stage == AuthorityStageV0::Prepared
+                    {
+                        return if current.facts_digest == ingress_digest {
+                            Ok(current)
+                        } else {
+                            Err(BoundaryErrorV0::ReceiptSubstitution)
+                        };
+                    }
+                    let expected_height = current
+                        .binding
+                        .height
+                        .checked_add(1)
+                        .ok_or(BoundaryErrorV0::SequenceOverflow)?;
+                    if current.durable_stage != AuthorityStageV0::OutboundPublished
+                        || binding.height != expected_height
+                        || binding.parent_id != current.binding.block_id
+                        || binding.operation_id == current.binding.operation_id
+                    {
+                        return Err(BoundaryErrorV0::InvalidStageTransition);
+                    }
+                }
+                (binding, AuthorityStageV0::Prepared, ingress_digest)
+            }
+            AuthorityCommandV0::Advance {
+                binding,
+                expected_stage,
+                next_stage,
+                facts_digest,
+            } => {
+                binding.validate(self.identity)?;
+                if facts_digest == Digest32V0([0; 32]) {
+                    return Err(BoundaryErrorV0::ReceiptSubstitution);
+                }
+                let current = self
+                    .current
+                    .ok_or(BoundaryErrorV0::InvalidStageTransition)?;
+                if current.binding != binding {
+                    return Err(BoundaryErrorV0::OperationBindingMismatch);
+                }
+                if current.durable_stage == next_stage
+                    && expected_stage.successor() == Some(next_stage)
+                {
+                    return if current.facts_digest == facts_digest {
+                        Ok(current)
+                    } else {
+                        Err(BoundaryErrorV0::ReceiptSubstitution)
+                    };
+                }
+                if current.durable_stage != expected_stage
+                    || expected_stage.successor() != Some(next_stage)
+                {
+                    return Err(BoundaryErrorV0::InvalidStageTransition);
+                }
+                (binding, next_stage, facts_digest)
+            }
+        };
+        let sequence = self.current.map_or(Ok(0_u64), |receipt| {
+            receipt
+                .durable_sequence
+                .checked_add(1)
+                .ok_or(BoundaryErrorV0::SequenceOverflow)
+        })?;
+        let previous = self
+            .current
+            .map_or(Digest32V0([0; 32]), |receipt| receipt.record_digest);
+        let record_digest = Digest32V0::hash(
+            b"trnm.node.authority-record.v0",
+            &[
+                &self.identity.digest().0,
+                &binding.operation_id.0,
+                &[stage as u8],
+                &sequence.to_be_bytes(),
+                &facts_digest.0,
+                &previous.0,
+            ],
+        );
+        let receipt = AuthorityReceiptV0 {
+            binding,
+            durable_stage: stage,
+            durable_sequence: sequence,
+            facts_digest,
+            record_digest,
+        };
+        self.current = Some(receipt);
+        Ok(receipt)
+    }
+}
+"""
+text = text[:start] + implementation + text[end:]
+text = text.replace(
+    "next_stage: AuthorityStageV0::SafetyPersisted,\n                facts_digest: digest(22),",
+    "next_stage: AuthorityStageV0::SignIntentPersisted,\n                facts_digest: digest(22),",
+    1,
+)
+
+test_anchor = """    #[derive(Default)]
+    struct QueueIo {
+"""
+new_tests = """    #[test]
+    fn authority_replay_is_bound_to_retained_facts() {
+        let mut coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let binding = binding();
+        let first = coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding,
+                ingress_digest: digest(20),
+            })
+            .unwrap();
+        assert_eq!(
+            coordinator
+                .apply(AuthorityCommandV0::Begin {
+                    binding,
+                    ingress_digest: digest(20),
+                })
+                .unwrap(),
+            first
+        );
+        assert_eq!(
+            coordinator
+                .apply(AuthorityCommandV0::Begin {
+                    binding,
+                    ingress_digest: digest(21),
+                })
+                .unwrap_err(),
+            BoundaryErrorV0::ReceiptSubstitution
+        );
+    }
+
+    #[test]
+    fn authority_allows_only_parent_bound_next_height() {
+        let mut coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let first = binding();
+        coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding: first,
+                ingress_digest: digest(20),
+            })
+            .unwrap();
+        let mut stage = AuthorityStageV0::Prepared;
+        while let Some(next) = stage.successor() {
+            coordinator
+                .apply(AuthorityCommandV0::Advance {
+                    binding: first,
+                    expected_stage: stage,
+                    next_stage: next,
+                    facts_digest: Digest32V0::hash(b"test.stage", &[&[next as u8]]),
+                })
+                .unwrap();
+            stage = next;
+        }
+        let second = OperationBindingV0::derive(
+            identity(),
+            first.height + 1,
+            0,
+            digest(30),
+            first.block_id,
+            digest(31),
+        );
+        let receipt = coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding: second,
+                ingress_digest: digest(32),
+            })
+            .unwrap();
+        assert_eq!(receipt.binding, second);
+        assert_eq!(receipt.durable_sequence, 8);
+    }
+
+    #[test]
+    fn host_revalidates_public_ingress_fields_and_batch_replay() {
+        let coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let frame = IngressFrameV0::new(digest(1), digest(2), 1, vec![1]).unwrap();
+        let mut io = QueueIo::default();
+        io.polls
+            .push_back(IoPollV0::Frames(vec![frame.clone(), frame]));
+        let mut host =
+            PersistentValidatorHostV0::new(coordinator, io, StepBudgetV0::default()).unwrap();
+        host.recover().unwrap();
+        assert!(matches!(
+            host.step(),
+            Err(HostErrorV0::Boundary(BoundaryErrorV0::DuplicateIngress))
+        ));
+    }
+
+"""
+require(test_anchor in text, "node test anchor changed")
+text = text.replace(test_anchor, new_tests + test_anchor, 1)
+node.write_text(text)
+
+
+tx = Path("trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs")
+text = tx.read_text()
+text = text.replace(
+    """        if self.payload.is_empty() || self.payload.len() > MAX_TX_BYTES_V0 {
+""",
+    """        if self.chain_id == Digest32V0([0; 32])
+            || self.sender == Digest32V0([0; 32])
+            || self.payload.is_empty()
+            || self.payload.len() > MAX_TX_BYTES_V0
+        {
+""",
+    1,
+)
+text = text.replace(
+    """        if self.tx_id != expected_tx
+            || self.ordered.height == 0
+            || self.fee_charged == 0
+            || self.fee_charged > u128::MAX / 2
+""",
+    """        if self.tx_id != expected_tx
+            || self.ordered.block_id == Digest32V0([0; 32])
+            || self.ordered.height == 0
+            || self.pre_state_root == Digest32V0([0; 32])
+            || self.post_state_root == Digest32V0([0; 32])
+            || self.receipt_digest == Digest32V0([0; 32])
+            || self.event_root == Digest32V0([0; 32])
+            || self.fee_charged == 0
+""",
+    1,
+)
+admission_old = """        if current_height == 0 || current_height > intent.valid_until_height {
+            return Err(TxLifecycleHostErrorV0::Lifecycle(
+                TxLifecycleErrorV0::Expired,
+            ));
+        }
+        if self
+            .finalized_nonce
+"""
+admission_new = """        let tx_id = intent.tx_id();
+        if let Some(existing) = self.records.get(&tx_id) {
+            return if existing.intent == intent {
+                Ok(tx_id)
+            } else {
+                Err(TxLifecycleHostErrorV0::Lifecycle(
+                    TxLifecycleErrorV0::StateCorruption,
+                ))
+            };
+        }
+        if current_height == 0 || current_height > intent.valid_until_height {
+            return Err(TxLifecycleHostErrorV0::Lifecycle(
+                TxLifecycleErrorV0::Expired,
+            ));
+        }
+        if self
+            .finalized_nonce
+"""
+require(admission_old in text, "tx admission anchor changed")
+text = text.replace(admission_old, admission_new, 1)
+text = text.replace(
+    """
+        let tx_id = intent.tx_id();
+        if self.records.contains_key(&tx_id) {
+            return Ok(tx_id);
+        }
+
+        let nonce_key =""",
+    """
+        let nonce_key =""",
+    1,
+)
+text = text.replace(
+    "if handoff.proposal_index == u32::MAX {",
+    "if handoff.proposal_id == Digest32V0([0; 32]) || handoff.proposal_index == u32::MAX {",
+    1,
+)
+text = text.replace(
+    "if position.height == 0 || position.transaction_index == u32::MAX {",
+    "if position.block_id == Digest32V0([0; 32])\n"
+    "            || position.height == 0\n"
+    "            || position.transaction_index == u32::MAX\n"
+    "        {",
+    1,
+)
+broadcast_old = """    ) -> Result<BroadcastIntentV0, TxLifecycleErrorV0> {
+        if let Some(existing) = self.record(tx_id)?.broadcast_intent {
+"""
+broadcast_new = """    ) -> Result<BroadcastIntentV0, TxLifecycleErrorV0> {
+        let record = self.record(tx_id)?;
+        if envelope_digest == Digest32V0([0; 32])
+            || !matches!(
+                record.phase,
+                TxPhaseV0::WalPersisted
+                    | TxPhaseV0::Proposed
+                    | TxPhaseV0::Ordered
+                    | TxPhaseV0::Executed
+                    | TxPhaseV0::Finalized
+            )
+        {
+            return Err(TxLifecycleErrorV0::InvalidPhaseTransition);
+        }
+        if let Some(existing) = record.broadcast_intent {
+"""
+require(broadcast_old in text, "broadcast intent anchor changed")
+text = text.replace(broadcast_old, broadcast_new, 1)
+confirm_old = """    ) -> Result<(), TxLifecycleErrorV0> {
+        let record = self.record_mut(receipt.tx_id)?;
+"""
+confirm_new = """    ) -> Result<(), TxLifecycleErrorV0> {
+        if receipt.transport_receipt_digest == Digest32V0([0; 32]) {
+            return Err(TxLifecycleErrorV0::ReceiptSubstitution);
+        }
+        let record = self.record_mut(receipt.tx_id)?;
+"""
+confirm_pos = text.index("    pub fn confirm_broadcast(")
+tail = text[confirm_pos:]
+require(confirm_old in tail, "broadcast receipt anchor changed")
+tail = tail.replace(confirm_old, confirm_new, 1)
+text = text[:confirm_pos] + tail
+
+finalize_old = """        let (sender, nonce, ordered) = {
+            let record = self.record(tx_id)?;
+            (
+                record.intent.sender,
+                record.intent.nonce,
+                record
+                    .ordered
+                    .ok_or(TxLifecycleErrorV0::InvalidPhaseTransition)?,
+            )
+        };
+        if witness.block_id != ordered.block_id || witness.height != ordered.height {
+"""
+finalize_new = """        let (sender, nonce, ordered, execution) = {
+            let record = self.record(tx_id)?;
+            (
+                record.intent.sender,
+                record.intent.nonce,
+                record
+                    .ordered
+                    .ok_or(TxLifecycleErrorV0::InvalidPhaseTransition)?,
+                record
+                    .execution
+                    .ok_or(TxLifecycleErrorV0::InvalidPhaseTransition)?,
+            )
+        };
+        if witness.block_id != ordered.block_id
+            || witness.height != ordered.height
+            || witness.state_root != execution.post_state_root
+            || witness.finality_proof_digest == Digest32V0([0; 32])
+        {
+"""
+require(finalize_old in text, "tx finality anchor changed")
+text = text.replace(finalize_old, finalize_new, 1)
+text = text.replace(
+    """        if !matches!(record.phase, TxPhaseV0::Finalized | TxPhaseV0::Tombstoned) {
+            return Err(TxLifecycleErrorV0::NotFinalized);
+        }
+""",
+    """        if record.phase != TxPhaseV0::Finalized
+            && !(record.phase == TxPhaseV0::Tombstoned
+                && record.tombstone == Some(TombstoneReasonV0::Finalized))
+        {
+            return Err(TxLifecycleErrorV0::NotFinalized);
+        }
+""",
+    1,
+)
+
+tx_test_anchor = """    #[test]
+    fn replacement_requires_strictly_higher_fee_and_preorder_phase() {
+"""
+tx_tests = """    #[test]
+    fn exact_replay_remains_idempotent_after_finality_and_expiry() {
+        let mut lifecycle = TxLifecycleV0::new(d(1), AcceptAuthorization);
+        let original = intent(10);
+        let tx_id = lifecycle.admit(original.clone(), 1).unwrap();
+        lifecycle.persist_wal(tx_id, 1).unwrap();
+        lifecycle
+            .handoff_proposal(
+                tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(7),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        lifecycle.mark_ordered(tx_id, position()).unwrap();
+        lifecycle.mark_executed(execution(tx_id)).unwrap();
+        lifecycle
+            .finalize(
+                tx_id,
+                FinalityWitnessV0 {
+                    block_id: position().block_id,
+                    height: position().height,
+                    state_root: execution(tx_id).post_state_root,
+                    finality_proof_digest: d(16),
+                },
+            )
+            .unwrap();
+        assert_eq!(lifecycle.admit(original, 1_000).unwrap(), tx_id);
+    }
+
+    #[test]
+    fn broadcast_and_finality_require_durable_phase_and_execution_root() {
+        let mut lifecycle = TxLifecycleV0::new(d(1), AcceptAuthorization);
+        let tx_id = lifecycle.admit(intent(10), 1).unwrap();
+        assert_eq!(
+            lifecycle.create_broadcast_intent(tx_id, d(14)).unwrap_err(),
+            TxLifecycleErrorV0::InvalidPhaseTransition
+        );
+        lifecycle.persist_wal(tx_id, 1).unwrap();
+        lifecycle
+            .handoff_proposal(
+                tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(7),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        lifecycle.mark_ordered(tx_id, position()).unwrap();
+        lifecycle.mark_executed(execution(tx_id)).unwrap();
+        assert_eq!(
+            lifecycle
+                .finalize(
+                    tx_id,
+                    FinalityWitnessV0 {
+                        block_id: position().block_id,
+                        height: position().height,
+                        state_root: d(99),
+                        finality_proof_digest: d(16),
+                    },
+                )
+                .unwrap_err(),
+            TxLifecycleErrorV0::FinalityWitnessMismatch
+        );
+    }
+
+"""
+require(tx_test_anchor in text, "tx test anchor changed")
+text = text.replace(tx_test_anchor, tx_tests + tx_test_anchor, 1)
+tx.write_text(text)
