@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed authority and stale-reference gate for the sole Chain plan."""
+"""Fail-closed authority, stale-reference, and relative-link gate for Chain docs."""
 
 from __future__ import annotations
 
@@ -8,12 +8,20 @@ import hashlib
 import json
 import os
 import pathlib
+import re
 import subprocess
 import sys
-from typing import Any
+import urllib.parse
+from typing import Any, Iterable
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 POLICY_PATH = ROOT / "config/documentation-truth-v1.json"
+
+INLINE_LINK_RE = re.compile(
+    r"""!?\[[^\]]*\]\(\s*<?([^)\s>]+)>?(?:\s+["'(][^)]*)?\s*\)"""
+)
+REFERENCE_LINK_RE = re.compile(r"""^\s*\[[^\]]+\]:\s*<?([^\s>]+)>?""")
+FENCE_RE = re.compile(r"^\s*(```|~~~)")
 
 
 class DocumentationTruthError(RuntimeError):
@@ -95,6 +103,117 @@ def verify_duplicate_key_self_test() -> None:
         raise DocumentationTruthError("duplicate-key self-test accepted hostile JSON")
 
 
+def iter_markdown_targets(text: str) -> Iterable[tuple[int, str]]:
+    """Yield repository-link candidates outside fenced code blocks."""
+
+    in_fence = False
+    fence_token: str | None = None
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        match = FENCE_RE.match(line)
+        if match:
+            token = match.group(1)
+            if not in_fence:
+                in_fence = True
+                fence_token = token
+            elif token == fence_token:
+                in_fence = False
+                fence_token = None
+            continue
+        if in_fence:
+            continue
+        for inline in INLINE_LINK_RE.finditer(line):
+            yield line_number, inline.group(1)
+        reference = REFERENCE_LINK_RE.match(line)
+        if reference:
+            yield line_number, reference.group(1)
+
+
+def resolve_repository_link(document: pathlib.Path, raw_target: str) -> pathlib.Path | None:
+    """Resolve a local Markdown target; external and fragment-only links return None."""
+
+    target = raw_target.strip()
+    if not target or target.startswith("#"):
+        return None
+
+    parsed = urllib.parse.urlsplit(target)
+    if parsed.scheme or parsed.netloc:
+        require(
+            parsed.scheme in {"http", "https", "mailto", "tel"},
+            f"{display_path(document)}: unsafe or unsupported Markdown link scheme: {raw_target}",
+        )
+        return None
+
+    decoded_path = urllib.parse.unquote(parsed.path)
+    if not decoded_path:
+        return None
+
+    if decoded_path.startswith("/"):
+        candidate = ROOT / decoded_path.lstrip("/")
+    else:
+        candidate = document.parent / decoded_path
+
+    root_resolved = ROOT.resolve()
+    candidate_resolved = candidate.resolve(strict=False)
+    require(
+        candidate_resolved.is_relative_to(root_resolved),
+        f"{display_path(document)}: repository-relative link escapes root: {raw_target}",
+    )
+    return candidate_resolved
+
+
+def verify_relative_markdown_links(policy: dict[str, Any]) -> tuple[int, list[dict[str, Any]]]:
+    configured = policy.get("relative_link_check_paths")
+    require(
+        isinstance(configured, list)
+        and configured
+        and all(isinstance(item, str) and item for item in configured),
+        "relative_link_check_paths must be a non-empty string list",
+    )
+
+    documents: list[pathlib.Path] = []
+    for relative in configured:
+        path = ROOT / relative
+        require(path.exists(), f"relative link check path missing: {relative}")
+        if path.is_dir():
+            documents.extend(sorted(item for item in path.rglob("*.md") if item.is_file()))
+        else:
+            require(path.is_file(), f"relative link check path is not a file: {relative}")
+            documents.append(path)
+
+    seen: set[pathlib.Path] = set()
+    unique_documents: list[pathlib.Path] = []
+    for document in documents:
+        resolved = document.resolve()
+        if resolved not in seen:
+            seen.add(resolved)
+            unique_documents.append(document)
+
+    checked = 0
+    errors: list[dict[str, Any]] = []
+    for document in unique_documents:
+        try:
+            text = document.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as error:
+            raise DocumentationTruthError(
+                f"{display_path(document)}: cannot read Markdown for link validation: {error}"
+            ) from error
+        for line_number, raw_target in iter_markdown_targets(text):
+            candidate = resolve_repository_link(document, raw_target)
+            if candidate is None:
+                continue
+            checked += 1
+            if not candidate.exists():
+                errors.append(
+                    {
+                        "path": display_path(document),
+                        "line": line_number,
+                        "target": raw_target,
+                        "resolved": display_path(candidate),
+                    }
+                )
+    return checked, errors
+
+
 def runtime_binding(mode: str) -> dict[str, Any]:
     head = git("rev-parse", "HEAD")
     tree = git("rev-parse", "HEAD^{tree}")
@@ -149,13 +268,17 @@ def main() -> int:
 
     policy = load_json(POLICY_PATH)
     require(policy.get("schema") == "trnm-documentation-truth-v1", "policy schema drift")
+    require(policy.get("gate_revision") == 4, "documentation gate revision drift")
     verify_duplicate_key_self_test()
 
     tracked = tracked_paths()
     tracked_set = set(tracked)
     expected = set(policy["canonical_development_entries"])
     actual = {path for path in tracked if path.startswith("docs/development/")}
-    require(actual == expected, f"docs/development allowlist drift: extra={sorted(actual-expected)} missing={sorted(expected-actual)}")
+    require(
+        actual == expected,
+        f"docs/development allowlist drift: extra={sorted(actual-expected)} missing={sorted(expected-actual)}",
+    )
 
     canonical_plan = policy["canonical_plan"]
     require(canonical_plan in tracked_set, "canonical plan is not tracked")
@@ -164,7 +287,10 @@ def main() -> int:
         candidate = ROOT / path
         if candidate.suffix.lower() == ".md" and not candidate.is_symlink():
             regular_markdown.append(path)
-    require(regular_markdown == [canonical_plan], f"expected one regular Markdown plan, found {regular_markdown}")
+    require(
+        regular_markdown == [canonical_plan],
+        f"expected one regular Markdown plan, found {regular_markdown}",
+    )
 
     aliases = policy.get("compatibility_aliases", {})
     require(isinstance(aliases, dict), "compatibility_aliases must be an object")
@@ -175,7 +301,10 @@ def main() -> int:
 
     for tree in policy["forbidden_active_trees"]:
         require(not (ROOT / tree).exists(), f"forbidden historical tree exists: {tree}")
-        require(not any(path == tree or path.startswith(tree + "/") for path in tracked), f"forbidden historical tree is tracked: {tree}")
+        require(
+            not any(path == tree or path.startswith(tree + "/") for path in tracked),
+            f"forbidden historical tree is tracked: {tree}",
+        )
 
     for machine_path in (
         "docs/development/CURRENT_SNAPSHOT_V1.json",
@@ -211,13 +340,25 @@ def main() -> int:
                             "context_sha256": hashlib.sha256(line.encode("utf-8")).hexdigest(),
                         }
                     )
-    require(not hits, "active stale development references remain: " + json.dumps(hits, sort_keys=True))
+    require(
+        not hits,
+        "active stale development references remain: " + json.dumps(hits, sort_keys=True),
+    )
 
-    # Historical audit records are non-authoritative and are not navigation roots.
     for navigation in ("README.md", "docs/README.md", "AGENTS.md", "RELEASE_READINESS.md"):
         text = (ROOT / navigation).read_text(encoding="utf-8")
         for root in policy["historical_record_roots"]:
-            require(root + "/" not in text, f"active navigation links historical record root: {navigation} -> {root}")
+            require(
+                root + "/" not in text,
+                f"active navigation links historical record root: {navigation} -> {root}",
+            )
+
+    relative_link_count, relative_link_errors = verify_relative_markdown_links(policy)
+    require(
+        not relative_link_errors,
+        "broken repository-relative Markdown links remain: "
+        + json.dumps(relative_link_errors, sort_keys=True),
+    )
 
     binding = runtime_binding(args.binding_mode)
     report = {
@@ -227,6 +368,8 @@ def main() -> int:
         "regular_markdown_count": len(regular_markdown),
         "forbidden_tree_count": len(policy["forbidden_active_trees"]),
         "active_stale_reference_count": len(hits),
+        "relative_link_count": relative_link_count,
+        "broken_relative_link_count": len(relative_link_errors),
         "duplicate_key_rejection": True,
         "runtime_binding": binding,
         "production_candidate": False,

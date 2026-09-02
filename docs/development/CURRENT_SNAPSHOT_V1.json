@@ -25,15 +25,20 @@
     "module_coverage": {
       "status": "present-exact-head-and-prospective-merge-replay-required",
       "module_count": 18,
-      "workspace_crates_uniquely_mapped": 49,
+      "workspace_crates_uniquely_mapped": 53,
+      "auxiliary_unit_count": 9,
       "auxiliary_units_mapped": [
-        "contracts",
+        "contracts-audit-events",
+        "contracts-governance-guard",
+        "contracts-settlement-vault",
+        "contracts-bridge-relay",
         "web4-frontend",
-        "formal",
-        "fuzz",
-        "proto",
-        "scripts/ci"
-      ]
+        "formal-models",
+        "canonical-fuzz",
+        "protocol-transport",
+        "repository-ci"
+      ],
+      "snapshot_count_source": "validated-against-trillionnium-cargo-and-module-coverage-at-gate-time"
     },
     "descriptor_bound_sqlite_namespace": "present-acceptance-pending",
     "closed_world_sqlite_schema": "present-acceptance-pending",

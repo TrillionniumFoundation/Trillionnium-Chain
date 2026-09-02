@@ -4,7 +4,7 @@
   "canonical_truth_workflow": ".github/workflows/trnm-documentation-truth.yml",
   "module_coverage_manifest": "config/module-coverage-v1.toml",
   "module_technical_reference": "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md",
-  "gate_revision": 3,
+  "gate_revision": 4,
   "canonical_development_entries": [
     "docs/development/CURRENT_SNAPSHOT_V1.json",
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
@@ -45,6 +45,19 @@
     "SECURITY.md",
     "docs/README.md"
   ],
+  "relative_link_check_paths": [
+    "README.md",
+    "docs/README.md",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md",
+    "OPERATIONS.md",
+    "RELEASE_READINESS.md",
+    "SECURITY.md",
+    "PROJECT_BOUNDARY.md",
+    "contracts/README.md",
+    "web4-frontend/README.md",
+    "web4-frontend/docs/README.md"
+  ],
   "reference_scan_exclusions": [
     "config/documentation-truth-v1.json",
     "scripts/ci/check_canonical_development_plan.sh",
@@ -70,6 +83,7 @@
   "active_evidence_root": "docs/evidence",
   "active_evidence_rule": "versioned evidence contracts and exact-source submissions remain navigable; a submission does not promote truth until its validator and independent acceptance gates pass",
   "retired_tree_rule": "retired tree existence is rejected structurally; explanatory negative references are not treated as authority and are validated by path-specific gates",
+  "relative_link_rule": "selected active navigation and contract documents may not contain repository-relative links whose targets are absent or escape the repository root",
   "required_runtime_bindings": [
     "source_commit",
     "source_tree",

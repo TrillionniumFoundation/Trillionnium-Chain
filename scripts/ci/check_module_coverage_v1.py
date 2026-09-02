@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail-closed M00-M17 source, documentation, ownership, and SLO coverage gate."""
+"""Fail-closed M00-M17 source, documentation, ownership, SLO, and snapshot gate."""
 
 from __future__ import annotations
 
@@ -15,7 +15,26 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 COVERAGE = ROOT / "config/module-coverage-v1.toml"
 REGISTRY = ROOT / "docs/development/module-registry-v1.toml"
 REFERENCE = ROOT / "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
+SNAPSHOT = ROOT / "docs/development/CURRENT_SNAPSHOT_V1.json"
 CODEOWNERS = ROOT / ".github/CODEOWNERS"
+
+TECHNICAL_REQUIRED_MARKERS = (
+    "**Authority.**",
+    "**Primary code.**",
+    "**Verification.**",
+    "SLO profile:",
+)
+TECHNICAL_CONTRACT_MARKERS = (
+    "**Contract.**",
+    "**State machine.**",
+    "**Durability contract.**",
+    "**Execution contract.**",
+    "**Storage contract.**",
+    "**Ledger contract.**",
+    "**Plan contract.**",
+    "**Composition contract.**",
+    "**Evidence contract.**",
+)
 
 
 class CoverageError(RuntimeError):
@@ -25,6 +44,24 @@ class CoverageError(RuntimeError):
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise CoverageError(message)
+
+
+def strict_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise CoverageError(f"duplicate JSON member: {key}")
+        result[key] = value
+    return result
+
+
+def load_json(path: pathlib.Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=strict_object)
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise CoverageError(f"{path.relative_to(ROOT)}: invalid JSON: {error}") from error
+    require(isinstance(value, dict), f"{path.relative_to(ROOT)}: object required")
+    return value
 
 
 def load_toml(path: pathlib.Path) -> dict[str, Any]:
@@ -45,7 +82,10 @@ def rows(value: dict[str, Any], singular: str, plural: str) -> list[dict[str, An
 
 
 def ensure_path(relative: str, label: str) -> pathlib.Path:
-    require(isinstance(relative, str) and relative and not relative.startswith("/"), f"{label}: relative path required")
+    require(
+        isinstance(relative, str) and relative and not relative.startswith("/"),
+        f"{label}: relative path required",
+    )
     path = ROOT / relative
     require(path.exists(), f"{label}: missing path {relative}")
     return path
@@ -59,7 +99,10 @@ def workspace_crates(manifest_relative: str) -> dict[str, str]:
     for member in members:
         require(isinstance(member, str), "workspace member must be a path")
         member_path = (ROOT / "trillionnium" / member).resolve()
-        require(member_path.is_relative_to(ROOT / "trillionnium"), f"workspace member escapes root: {member}")
+        require(
+            member_path.is_relative_to(ROOT / "trillionnium"),
+            f"workspace member escapes root: {member}",
+        )
         cargo = member_path / "Cargo.toml"
         data = load_toml(cargo)
         name = data.get("package", {}).get("name")
@@ -81,6 +124,7 @@ def contract_crates(manifest_relative: str) -> dict[str, str]:
         data = load_toml(cargo)
         name = data.get("package", {}).get("name")
         require(isinstance(name, str) and name, f"{cargo.relative_to(ROOT)}: package name missing")
+        require(name not in packages, f"duplicate contract package name: {name}")
         packages[name] = str(cargo.parent.relative_to(ROOT))
     return packages
 
@@ -107,17 +151,52 @@ def assert_acyclic(graph: dict[str, list[str]]) -> None:
             visit(node)
 
 
+def technical_sections(reference_text: str) -> dict[str, str]:
+    heading_re = re.compile(r"(?m)^## (M\d{2})\s+—[^\n]*$")
+    matches = list(heading_re.finditer(reference_text))
+    sections: dict[str, str] = {}
+    for index, match in enumerate(matches):
+        start = match.start()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(reference_text)
+        sections[match.group(1)] = reference_text[start:end]
+    return sections
+
+
+def resolve_module_roots(
+    coverage: dict[str, Any],
+    row: dict[str, Any],
+    key: str,
+    default_key: str,
+    module_id: str,
+) -> list[str]:
+    value = row.get(key)
+    if value is None:
+        value = coverage.get(default_key)
+        if isinstance(value, str):
+            value = [value]
+    require(
+        isinstance(value, list) and value and all(isinstance(item, str) and item for item in value),
+        f"{module_id}: {key} missing and no valid {default_key}",
+    )
+    for relative in value:
+        ensure_path(relative, f"{module_id} {key}")
+    return value
+
+
 def main() -> int:
     coverage = load_toml(COVERAGE)
     registry = load_toml(REGISTRY)
+    snapshot = load_json(SNAPSHOT)
     require(coverage.get("schema_version") == 1, "coverage schema drift")
     require(coverage.get("coverage_id") == "trnm-module-coverage-v1", "coverage id drift")
     require(coverage.get("plan_id") == "trnm-chain-development-plan-v2", "coverage plan id drift")
     require(coverage.get("production_authority") is False, "coverage cannot promote production")
+    require(snapshot.get("schema") == "trnm-current-snapshot-v1", "snapshot schema drift")
 
     reference_path = ensure_path(coverage.get("technical_reference"), "technical reference")
     require(reference_path == REFERENCE, "technical reference path drift")
     reference_text = reference_path.read_text(encoding="utf-8")
+    sections = technical_sections(reference_text)
 
     registry_rows = rows(registry, "module", "modules")
     coverage_rows = rows(coverage, "module_coverage", "module_coverage")
@@ -126,6 +205,7 @@ def main() -> int:
     coverage_ids = [row.get("id") for row in coverage_rows]
     require(registry_ids == expected_ids, f"registry IDs drift: {registry_ids}")
     require(coverage_ids == expected_ids, f"coverage IDs drift: {coverage_ids}")
+    require(sorted(sections) == expected_ids, f"technical section IDs drift: {sorted(sections)}")
 
     registry_by_id = {row["id"]: row for row in registry_rows}
     coverage_by_id = {row["id"]: row for row in coverage_rows}
@@ -140,8 +220,15 @@ def main() -> int:
 
     maintainers = coverage.get("maintainers")
     minimum = coverage.get("minimum_maintainers")
-    require(isinstance(maintainers, list) and all(isinstance(item, str) and item for item in maintainers), "maintainers missing")
-    require(isinstance(minimum, int) and minimum >= 2 and len(set(maintainers)) >= minimum, "two distinct maintainers required")
+    require(
+        isinstance(maintainers, list)
+        and all(isinstance(item, str) and item for item in maintainers),
+        "maintainers missing",
+    )
+    require(
+        isinstance(minimum, int) and minimum >= 2 and len(set(maintainers)) >= minimum,
+        "two distinct maintainers required",
+    )
     codeowners = CODEOWNERS.read_text(encoding="utf-8")
     for maintainer in maintainers:
         require(f"@{maintainer}" in codeowners, f"maintainer absent from CODEOWNERS: {maintainer}")
@@ -154,46 +241,96 @@ def main() -> int:
     for module_id in expected_ids:
         registry_row = registry_by_id[module_id]
         row = coverage_by_id[module_id]
-        require(re.fullmatch(r"m\d{2}", str(row.get("anchor"))) is not None, f"{module_id}: invalid anchor")
+        section = sections[module_id]
+        require(
+            re.fullmatch(r"m\d{2}", str(row.get("anchor"))) is not None,
+            f"{module_id}: invalid anchor",
+        )
         require(row["anchor"] == module_id.lower(), f"{module_id}: anchor drift")
-        require(re.search(rf"^## {module_id}\s+—", reference_text, re.MULTILINE) is not None, f"{module_id}: technical section missing")
-        require(isinstance(row.get("slo_profile"), str) and row["slo_profile"] in allowed_slos, f"{module_id}: invalid SLO profile")
-        require(isinstance(row.get("testkit_profile"), str) and row["testkit_profile"].endswith("-v1"), f"{module_id}: testkit profile missing")
+        require(len(section.encode("utf-8")) >= 700, f"{module_id}: technical section is too shallow")
+        for marker in TECHNICAL_REQUIRED_MARKERS:
+            require(marker in section, f"{module_id}: technical section missing marker {marker}")
+        require(
+            any(marker in section for marker in TECHNICAL_CONTRACT_MARKERS),
+            f"{module_id}: technical section lacks an explicit contract/state-machine paragraph",
+        )
+
+        slo_profile = row.get("slo_profile")
+        require(
+            isinstance(slo_profile, str) and slo_profile in allowed_slos,
+            f"{module_id}: invalid SLO profile",
+        )
+        require(
+            f"`{slo_profile}`" in section,
+            f"{module_id}: technical section does not bind declared SLO profile {slo_profile}",
+        )
+        require(
+            isinstance(row.get("testkit_profile"), str)
+            and row["testkit_profile"].endswith("-v1"),
+            f"{module_id}: testkit profile missing",
+        )
+
         contracts = row.get("contract_paths")
         require(isinstance(contracts, list) and contracts, f"{module_id}: contract paths missing")
         for contract in contracts:
             ensure_path(contract, f"{module_id} contract")
+
+        test_roots = resolve_module_roots(
+            coverage, row, "test_roots", "default_test_gate_root", module_id
+        )
+        evidence_roots = resolve_module_roots(
+            coverage, row, "evidence_roots", "default_evidence_roots", module_id
+        )
+
         crates = row.get("primary_crates")
         require(isinstance(crates, list), f"{module_id}: primary_crates must be a list")
         for crate in crates:
-            require(isinstance(crate, str) and crate in workspace, f"{module_id}: unknown workspace crate {crate!r}")
+            require(
+                isinstance(crate, str) and crate in workspace,
+                f"{module_id}: unknown workspace crate {crate!r}",
+            )
             mapped.append(crate)
             crate_root = ensure_path(workspace[crate], f"{module_id} crate")
             require((crate_root / "Cargo.toml").is_file(), f"{module_id}: Cargo.toml missing for {crate}")
         if not crates:
             source_paths = row.get("source_paths")
-            require(isinstance(source_paths, list) and source_paths, f"{module_id}: crate-less module needs source_paths")
+            require(
+                isinstance(source_paths, list) and source_paths,
+                f"{module_id}: crate-less module needs source_paths",
+            )
             for source in source_paths:
                 ensure_path(source, f"{module_id} source")
+
         dependencies = registry_row.get("allowed_module_dependencies")
         require(isinstance(dependencies, list), f"{module_id}: allowed dependencies missing")
         graph[module_id] = dependencies
-        require(isinstance(registry_row.get("owner_group"), str) and registry_row["owner_group"], f"{module_id}: owner group missing")
+        require(
+            isinstance(registry_row.get("owner_group"), str) and registry_row["owner_group"],
+            f"{module_id}: owner group missing",
+        )
         forbidden = registry_row.get("forbidden_capabilities")
         require(isinstance(forbidden, list) and forbidden, f"{module_id}: forbidden capabilities missing")
+
         report_modules.append(
             {
                 "id": module_id,
                 "primary_crate_count": len(crates),
                 "contract_count": len(contracts),
-                "slo_profile": row["slo_profile"],
+                "test_root_count": len(test_roots),
+                "evidence_root_count": len(evidence_roots),
+                "technical_section_bytes": len(section.encode("utf-8")),
+                "slo_profile": slo_profile,
                 "testkit_profile": row["testkit_profile"],
             }
         )
 
     duplicates = sorted(name for name, count in Counter(mapped).items() if count != 1)
     require(not duplicates, f"workspace crates do not have exactly one primary module: {duplicates}")
-    require(set(mapped) == set(workspace), f"workspace mapping drift: missing={sorted(set(workspace)-set(mapped))} extra={sorted(set(mapped)-set(workspace))}")
+    require(
+        set(mapped) == set(workspace),
+        f"workspace mapping drift: missing={sorted(set(workspace)-set(mapped))} "
+        f"extra={sorted(set(mapped)-set(workspace))}",
+    )
     assert_acyclic(graph)
 
     auxiliary = rows(coverage, "auxiliary_unit", "auxiliary_units")
@@ -203,7 +340,10 @@ def main() -> int:
         unit_id = row.get("id")
         module_id = row.get("primary_module")
         path = row.get("path")
-        require(isinstance(unit_id, str) and unit_id not in auxiliary_ids, f"duplicate auxiliary unit: {unit_id!r}")
+        require(
+            isinstance(unit_id, str) and unit_id not in auxiliary_ids,
+            f"duplicate auxiliary unit: {unit_id!r}",
+        )
         auxiliary_ids.add(unit_id)
         require(module_id in expected_ids, f"{unit_id}: unknown primary module {module_id}")
         ensure_path(path, f"{unit_id} path")
@@ -214,7 +354,33 @@ def main() -> int:
     missing_contracts = sorted(set(contracts.values()) - set(auxiliary_paths))
     require(not missing_contracts, f"contract crates missing auxiliary mapping: {missing_contracts}")
     web_manifest = ensure_path(coverage.get("web_package_manifest"), "web package manifest")
-    require(str(web_manifest.parent.relative_to(ROOT)) in auxiliary_paths, "Web4 package missing auxiliary mapping")
+    require(
+        str(web_manifest.parent.relative_to(ROOT)) in auxiliary_paths,
+        "Web4 package missing auxiliary mapping",
+    )
+
+    implementation = snapshot.get("repository_implementation")
+    require(isinstance(implementation, dict), "snapshot repository_implementation missing")
+    snapshot_coverage = implementation.get("module_coverage")
+    require(isinstance(snapshot_coverage, dict), "snapshot module_coverage missing")
+    require(
+        snapshot_coverage.get("module_count") == len(expected_ids),
+        "snapshot module_count does not match registry",
+    )
+    require(
+        snapshot_coverage.get("workspace_crates_uniquely_mapped") == len(workspace),
+        "snapshot workspace crate count does not match Cargo workspace",
+    )
+    require(
+        snapshot_coverage.get("auxiliary_unit_count") == len(auxiliary),
+        "snapshot auxiliary unit count does not match coverage manifest",
+    )
+    snapshot_auxiliary = snapshot_coverage.get("auxiliary_units_mapped")
+    require(
+        isinstance(snapshot_auxiliary, list)
+        and sorted(snapshot_auxiliary) == sorted(auxiliary_ids),
+        "snapshot auxiliary unit inventory does not match coverage manifest",
+    )
 
     policy = coverage.get("policy")
     require(isinstance(policy, dict), "coverage policy missing")
@@ -229,8 +395,14 @@ def main() -> int:
         "module_dependency_graph_must_be_acyclic",
     ):
         require(policy.get(key) is True, f"coverage policy disabled: {key}")
-    require(policy.get("production_may_depend_on_candidate_or_lab") is False, "production contamination policy drift")
-    require(policy.get("control_plane_may_hold_consensus_authority") is False, "control-plane authority policy drift")
+    require(
+        policy.get("production_may_depend_on_candidate_or_lab") is False,
+        "production contamination policy drift",
+    )
+    require(
+        policy.get("control_plane_may_hold_consensus_authority") is False,
+        "control-plane authority policy drift",
+    )
 
     report = {
         "schema": "trnm-module-coverage-report-v1",
@@ -239,6 +411,8 @@ def main() -> int:
         "workspace_crate_count": len(workspace),
         "mapped_workspace_crate_count": len(mapped),
         "auxiliary_unit_count": len(auxiliary),
+        "snapshot_counts_match": True,
+        "technical_sections_semantically_checked": True,
         "maintainer_count": len(set(maintainers)),
         "module_dependency_graph_acyclic": True,
         "modules": report_modules,
