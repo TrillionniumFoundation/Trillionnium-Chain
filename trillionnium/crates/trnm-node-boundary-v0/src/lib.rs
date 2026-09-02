@@ -254,6 +254,57 @@ impl IngressFrameV0 {
     }
 }
 
+/// An ingress frame bound byte-for-byte to one validated authority operation.
+///
+/// Construction does not authenticate a peer or establish a durable replay
+/// floor.  The concrete M04 adapter must perform those checks before handing
+/// this value to the host.  This boundary only proves that the exact ingress
+/// digest is the proposal digest committed by `OperationBindingV0`.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BoundIngressV0 {
+    pub binding: OperationBindingV0,
+    pub frame: IngressFrameV0,
+}
+
+impl BoundIngressV0 {
+    pub fn derive(
+        identity: NodeIdentityV0,
+        height: u64,
+        view: u64,
+        block_id: Digest32V0,
+        parent_id: Digest32V0,
+        frame: IngressFrameV0,
+    ) -> Result<Self, BoundaryErrorV0> {
+        identity.validate()?;
+        frame.validate()?;
+        let binding = OperationBindingV0::derive(
+            identity,
+            height,
+            view,
+            block_id,
+            parent_id,
+            frame.digest(),
+        );
+        let ingress = Self { binding, frame };
+        ingress.validate(identity)?;
+        Ok(ingress)
+    }
+
+    pub fn validate(&self, identity: NodeIdentityV0) -> Result<(), BoundaryErrorV0> {
+        self.frame.validate()?;
+        self.binding.validate(identity)?;
+        if self.binding.proposal_digest != self.frame.digest() {
+            return Err(BoundaryErrorV0::OperationBindingMismatch);
+        }
+        Ok(())
+    }
+
+    #[must_use]
+    pub fn ingress_digest(&self) -> Digest32V0 {
+        self.frame.digest()
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct OutboundFrameV0 {
     pub operation_id: Digest32V0,
@@ -434,6 +485,53 @@ where
     #[must_use]
     pub fn readiness(&self) -> HostReadinessV0 {
         self.readiness
+    }
+
+    /// Persist the exact bound ingress as the first `Prepared` authority record.
+    ///
+    /// The host validates the operation/frame binding before invoking the
+    /// coordinator and then revalidates the returned durable receipt.  It does
+    /// not advance application, Safety, signing, finality, checkpoint, or
+    /// publication stages.
+    pub fn prepare_bound_ingress(
+        &mut self,
+        ingress: &BoundIngressV0,
+    ) -> Result<AuthorityReceiptV0, HostErrorV0<C::Error, I::Error>> {
+        if self.readiness != HostReadinessV0::Ready {
+            return Err(HostErrorV0::NotReady);
+        }
+
+        let identity = self.coordinator.identity();
+        ingress
+            .validate(identity)
+            .map_err(HostErrorV0::Boundary)?;
+        let ingress_digest = ingress.ingress_digest();
+        let receipt = self
+            .coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding: ingress.binding,
+                ingress_digest,
+            })
+            .map_err(HostErrorV0::Coordinator)?;
+
+        if receipt.binding != ingress.binding {
+            return Err(HostErrorV0::Boundary(
+                BoundaryErrorV0::OperationBindingMismatch,
+            ));
+        }
+        if receipt.durable_stage != AuthorityStageV0::Prepared {
+            return Err(HostErrorV0::Boundary(
+                BoundaryErrorV0::InvalidStageTransition,
+            ));
+        }
+        if receipt.facts_digest != ingress_digest
+            || receipt.record_digest == Digest32V0([0; 32])
+        {
+            return Err(HostErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        Ok(receipt)
     }
 
     pub fn step(&mut self) -> Result<HostStepV0, HostErrorV0<C::Error, I::Error>> {
@@ -888,6 +986,131 @@ mod tests {
         assert!(matches!(
             host.step(),
             Err(HostErrorV0::Boundary(BoundaryErrorV0::BudgetExceeded))
+        ));
+    }
+
+    #[test]
+    fn host_binds_ingress_to_durable_prepared_receipt() {
+        let coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let io = QueueIo::default();
+        let frame = IngressFrameV0::new(digest(40), digest(41), 1, vec![42]).unwrap();
+        let ingress = BoundIngressV0::derive(
+            identity(),
+            10,
+            11,
+            digest(12),
+            digest(13),
+            frame,
+        )
+        .unwrap();
+        let mut host =
+            PersistentValidatorHostV0::new(coordinator, io, StepBudgetV0::default()).unwrap();
+
+        assert!(matches!(
+            host.prepare_bound_ingress(&ingress),
+            Err(HostErrorV0::NotReady)
+        ));
+        assert_eq!(host.recover().unwrap(), HostReadinessV0::Ready);
+
+        let first = host.prepare_bound_ingress(&ingress).unwrap();
+        assert_eq!(first.binding, ingress.binding);
+        assert_eq!(first.durable_stage, AuthorityStageV0::Prepared);
+        assert_eq!(first.facts_digest, ingress.ingress_digest());
+        assert_ne!(first.record_digest, Digest32V0([0; 32]));
+
+        let replay = host.prepare_bound_ingress(&ingress).unwrap();
+        assert_eq!(replay, first);
+    }
+
+    #[test]
+    fn host_rejects_substituted_ingress_binding_before_authority_apply() {
+        let coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let io = QueueIo::default();
+        let frame = IngressFrameV0::new(digest(40), digest(41), 1, vec![42]).unwrap();
+        let other = IngressFrameV0::new(digest(40), digest(41), 2, vec![43]).unwrap();
+        let ingress = BoundIngressV0 {
+            binding: OperationBindingV0::derive(
+                identity(),
+                10,
+                11,
+                digest(12),
+                digest(13),
+                other.digest(),
+            ),
+            frame,
+        };
+        let mut host =
+            PersistentValidatorHostV0::new(coordinator, io, StepBudgetV0::default()).unwrap();
+        host.recover().unwrap();
+
+        assert!(matches!(
+            host.prepare_bound_ingress(&ingress),
+            Err(HostErrorV0::Boundary(
+                BoundaryErrorV0::OperationBindingMismatch
+            ))
+        ));
+        let (coordinator, _) = host.into_parts();
+        assert_eq!(coordinator.current(), None);
+    }
+
+    struct SubstitutingCoordinator {
+        identity: NodeIdentityV0,
+    }
+
+    impl AuthorityCoordinatorV0 for SubstitutingCoordinator {
+        type Error = BoundaryErrorV0;
+
+        fn identity(&self) -> NodeIdentityV0 {
+            self.identity
+        }
+
+        fn recover(&mut self) -> Result<RecoveryDispositionV0, Self::Error> {
+            Ok(RecoveryDispositionV0::Clean)
+        }
+
+        fn apply(
+            &mut self,
+            command: AuthorityCommandV0,
+        ) -> Result<AuthorityReceiptV0, Self::Error> {
+            let binding = match command {
+                AuthorityCommandV0::Begin { binding, .. }
+                | AuthorityCommandV0::Advance { binding, .. } => binding,
+            };
+            Ok(AuthorityReceiptV0 {
+                binding,
+                durable_stage: AuthorityStageV0::Prepared,
+                durable_sequence: 0,
+                facts_digest: digest(99),
+                record_digest: digest(98),
+            })
+        }
+    }
+
+    #[test]
+    fn host_rejects_substituted_prepared_receipt() {
+        let coordinator = SubstitutingCoordinator {
+            identity: identity(),
+        };
+        let io = QueueIo::default();
+        let frame = IngressFrameV0::new(digest(40), digest(41), 1, vec![42]).unwrap();
+        let ingress = BoundIngressV0::derive(
+            identity(),
+            10,
+            11,
+            digest(12),
+            digest(13),
+            frame,
+        )
+        .unwrap();
+        let mut host =
+            PersistentValidatorHostV0::new(coordinator, io, StepBudgetV0::default()).unwrap();
+        host.recover().unwrap();
+
+        assert!(matches!(
+            host.prepare_bound_ingress(&ingress),
+            Err(HostErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution
+            ))
         ));
     }
 
