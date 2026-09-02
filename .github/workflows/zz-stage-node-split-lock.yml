@@ -92,6 +92,7 @@ jobs:
               'trnm-poco-node-cli',
           }, additions
           PY
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
 
       - name: Validate decomposition, closure, formatting and behavior
         run: |
