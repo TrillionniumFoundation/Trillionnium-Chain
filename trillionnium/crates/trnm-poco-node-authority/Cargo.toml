@@ -1,0 +1,20 @@
+[package]
+name = "trnm-poco-node-authority"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-node-authority-boundary-v0"
+composition_only = true
+domain_state_machine = false
+signing_authority = false
+voting_authority = false
+finality_authority = false
+production_candidate = false
+production_consensus_activation = false
+
+[dependencies]
+trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", default-features = false }
