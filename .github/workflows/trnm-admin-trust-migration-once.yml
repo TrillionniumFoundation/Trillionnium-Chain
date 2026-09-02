@@ -8,7 +8,7 @@ on:
       - .github/workflows/trnm-admin-trust-migration-once.yml
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: trnm-admin-trust-migration-once-${{ github.ref }}
@@ -23,17 +23,17 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      EXPECTED_PARENT: 46c3d8359249cc78a963cd94548942f7100b4d33
-      TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260901
+      EXPECTED_PARENT: 180ecf98c02fb67de8a6b1907a860147be4913f8
       SELF_PATH: .github/workflows/trnm-admin-trust-migration-once.yml
       SCRIPT_PATH: scripts/ci/trnm_admin_trust_migration_once.py
+      ARTIFACT_ROOT: ${{ runner.temp }}/trnm-admin-trust-migration
     steps:
       - name: Check out exact migration commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Verify one-shot source boundary
         run: |
@@ -41,7 +41,6 @@ jobs:
           test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = "2"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = "$SELF_PATH"
-          test "$GITHUB_REF_NAME" = "$TARGET_BRANCH"
           python3 -m py_compile "$SCRIPT_PATH"
 
       - name: Prepare and validate bounded trust migration
@@ -61,12 +60,32 @@ jobs:
           test ! -e "$SELF_PATH"
           test ! -e "$SCRIPT_PATH"
 
-      - name: Commit self-deleting migration
+      - name: Export exact validated replacement tree
         run: |
           set -euo pipefail
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -A
-          git diff --cached --check
-          git commit -m "ci: authorize authenticated repository administrator"
-          git push origin "HEAD:${TARGET_BRANCH}"
+          rm -rf "$ARTIFACT_ROOT"
+          mkdir -p "$ARTIFACT_ROOT/files"
+          : > "$ARTIFACT_ROOT/deletes.txt"
+          while IFS= read -r -d '' path; do
+            if [[ -f "$path" ]]; then
+              mkdir -p "$ARTIFACT_ROOT/files/$(dirname "$path")"
+              cp -p -- "$path" "$ARTIFACT_ROOT/files/$path"
+            else
+              printf '%s\n' "$path" >> "$ARTIFACT_ROOT/deletes.txt"
+            fi
+          done < <(git diff --name-only -z)
+          git diff --binary --full-index > "$ARTIFACT_ROOT/migration.patch"
+          git rev-parse HEAD > "$ARTIFACT_ROOT/source-commit.txt"
+          git write-tree > "$ARTIFACT_ROOT/base-tree.txt"
+          find "$ARTIFACT_ROOT/files" -type f -print | LC_ALL=C sort > "$ARTIFACT_ROOT/files.txt"
+          test -s "$ARTIFACT_ROOT/migration.patch"
+          test -s "$ARTIFACT_ROOT/files.txt"
+          test -s "$ARTIFACT_ROOT/deletes.txt"
+
+      - name: Upload exact validated migration
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-admin-trust-migration-${{ github.sha }}
+          path: ${{ env.ARTIFACT_ROOT }}
+          if-no-files-found: error
+          retention-days: 7
