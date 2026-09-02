@@ -1,25 +1,29 @@
-# Default ownership. Critical consensus/release paths below require an
-# independent maintainer in addition to the change author.
+# Default ownership. Critical paths list two eligible maintainers; protected
+# branch rules and independent review policy remain the enforcement authority.
 * @Tomasrgbsf @ProfHepta
 
-/.github/ @ProfHepta
-/config/ @ProfHepta
-/PROJECT_BOUNDARY.json @ProfHepta
-/PROJECT_BOUNDARY.md @ProfHepta
-/SECURITY.md @ProfHepta
-/RELEASE_READINESS.md @ProfHepta
-/OPERATIONS.md @ProfHepta
-/rust-toolchain.toml @ProfHepta
-/trillionnium/Cargo.toml @ProfHepta
-/trillionnium/Cargo.lock @ProfHepta
-/trillionnium/crates/trnm-consensus-core/ @ProfHepta
-/trillionnium/crates/trnm-consensus-types/ @ProfHepta
-/trillionnium/crates/trnm-consensus-crypto/ @ProfHepta
-/trillionnium/crates/trnm-consensus-safety-rules/ @ProfHepta
-/trillionnium/crates/trnm-consensus-safety-store/ @ProfHepta
-/trillionnium/crates/trnm-consensus-signer-journal/ @ProfHepta
-/trillionnium/crates/trnm-poco-node/ @ProfHepta
-/docs/architecture/ @ProfHepta
-/docs/protocol/ @ProfHepta
-/docs/development/plan-manifest-v1.toml @ProfHepta
-/scripts/ci/ @ProfHepta
+/.github/ @Tomasrgbsf @ProfHepta
+/config/ @Tomasrgbsf @ProfHepta
+/PROJECT_BOUNDARY.json @Tomasrgbsf @ProfHepta
+/PROJECT_BOUNDARY.md @Tomasrgbsf @ProfHepta
+/SECURITY.md @Tomasrgbsf @ProfHepta
+/RELEASE_READINESS.md @Tomasrgbsf @ProfHepta
+/OPERATIONS.md @Tomasrgbsf @ProfHepta
+/rust-toolchain.toml @Tomasrgbsf @ProfHepta
+/trillionnium/Cargo.toml @Tomasrgbsf @ProfHepta
+/trillionnium/Cargo.lock @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-core/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-types/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-crypto/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-safety-rules/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-safety-store/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-signer-journal/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-authority/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-io/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-host/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-cli/ @Tomasrgbsf @ProfHepta
+/docs/architecture/ @Tomasrgbsf @ProfHepta
+/docs/protocol/ @Tomasrgbsf @ProfHepta
+/docs/development/plan-manifest-v1.toml @Tomasrgbsf @ProfHepta
+/scripts/ci/ @Tomasrgbsf @ProfHepta
