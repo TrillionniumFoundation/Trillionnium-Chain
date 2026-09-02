@@ -1,0 +1,133 @@
+name: stage-node-split-lock
+
+on:
+  push:
+    branches:
+      - work/node-split-v1-20260902
+    paths:
+      - .github/workflows/zz-stage-node-split-lock.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage-node-split-lock-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  TARGET_BRANCH: work/node-split-v1-20260902
+
+jobs:
+  materialize-and-validate:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/node-split-v1-20260902' &&
+      github.actor == 'Franksudoman' &&
+      github.triggering_actor == github.actor &&
+      !contains(github.event.head_commit.message, '[node-split-lock]')
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact staging head with branch credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify exact source and runner-provisioned Rust
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+          cp trillionnium/Cargo.lock "$RUNNER_TEMP/Cargo.lock.before"
+
+      - name: Materialize only the four local lock rows
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --offline
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          import tomllib
+
+          before = tomllib.loads(Path(os.environ['RUNNER_TEMP'], 'Cargo.lock.before').read_text())
+          after = tomllib.loads(Path('trillionnium/Cargo.lock').read_text())
+
+          def rows(value):
+              return {
+                  (row['name'], row['version'], row.get('source')): row
+                  for row in value['package']
+              }
+
+          old = rows(before)
+          new = rows(after)
+          assert not (set(old) - set(new)), sorted(set(old) - set(new))
+          for key, row in old.items():
+              assert new[key] == row, key
+          additions = {key[0] for key in set(new) - set(old)}
+          assert additions == {
+              'trnm-poco-node-authority',
+              'trnm-poco-node-io',
+              'trnm-poco-node-host',
+              'trnm-poco-node-cli',
+          }, additions
+          PY
+
+      - name: Validate decomposition, closure, formatting and behavior
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          for package in \
+            trnm-poco-node-authority \
+            trnm-poco-node-io \
+            trnm-poco-node-host \
+            trnm-poco-node-cli
+          do
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p "${package}" --all-targets --locked --offline
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p "${package}" --all-targets --locked --offline -- -D warnings
+          done
+          status=$(cargo run --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --bin trnm-poco-node-cli \
+            --locked --offline -- status)
+          printf '%s\n' "$status" | grep -q '"production_candidate":false'
+          printf '%s\n' "$status" | grep -q '"authority_gate_open":false'
+          printf '%s\n' "$status" | grep -q '"production_activation":false'
+          printf '%s\n' "$status" | grep -q '"start_permitted":false'
+          set +e
+          cargo run --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --bin trnm-poco-node-cli \
+            --locked --offline -- start \
+            >"$RUNNER_TEMP/start.out" 2>"$RUNNER_TEMP/start.err"
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          grep -q 'node host start blocked' "$RUNNER_TEMP/start.err"
+
+      - name: Commit exact lock update and retire this carrier
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git diff --exit-code -- . ':!trillionnium/Cargo.lock'
+          git rm .github/workflows/zz-stage-node-split-lock.yml
+          git config user.name 'Franksudoman'
+          git config user.email 'sunfocapital@gmail.com'
+          git add trillionnium/Cargo.lock
+          git commit -m '[node-split-lock] ci(node): materialize lock and retire staging carrier'
+          git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
