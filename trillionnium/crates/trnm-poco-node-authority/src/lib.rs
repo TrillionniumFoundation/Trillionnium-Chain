@@ -7,9 +7,8 @@
 //! activation gate.
 
 use trnm_poco_node::{
-    production_activation_gate_v0, ProductionActivationBlockedV0,
-    HOST_IMPLEMENTATION_COMPLETE_V0, PRODUCTION_CANDIDATE_V0,
-    UNWIRED_PRODUCTION_CONTRACTS_V0,
+    production_activation_gate_v0, ProductionActivationBlockedV0, HOST_IMPLEMENTATION_COMPLETE_V0,
+    PRODUCTION_CANDIDATE_V0, UNWIRED_PRODUCTION_CONTRACTS_V0,
 };
 
 /// Immutable readiness facts visible to the composition layer.
@@ -62,9 +61,7 @@ impl NodeAuthorityCoordinatorV0 {
         }
     }
 
-    pub const fn production_activation_gate(
-        &self,
-    ) -> Result<(), ProductionActivationBlockedV0> {
+    pub const fn production_activation_gate(&self) -> Result<(), ProductionActivationBlockedV0> {
         production_activation_gate_v0()
     }
 }
