@@ -1,0 +1,302 @@
+name: upgrade-authority-contract-v0
+
+on:
+  push:
+    branches: [work/plan-v2-durable-adapters-20260902]
+    paths: [.github/workflows/zz-upgrade-authority-contract-v0.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-durable-adapters-20260902' &&
+      github.actor == 'Franksudoman'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Add retained facts and multi-operation authority semantics
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('trillionnium/crates/trnm-node-boundary-v0/src/lib.rs')
+          text = path.read_text()
+          receipt_old = '''pub struct AuthorityReceiptV0 {
+    pub binding: OperationBindingV0,
+    pub durable_stage: AuthorityStageV0,
+    pub durable_sequence: u64,
+    pub record_digest: Digest32V0,
+}
+'''
+          receipt_new = '''pub struct AuthorityReceiptV0 {
+    pub binding: OperationBindingV0,
+    pub durable_stage: AuthorityStageV0,
+    pub durable_sequence: u64,
+    pub facts_digest: Digest32V0,
+    pub record_digest: Digest32V0,
+}
+'''
+          if receipt_old in text:
+              text = text.replace(receipt_old, receipt_new, 1)
+          if 'pub facts_digest: Digest32V0' not in text:
+              raise SystemExit('AuthorityReceiptV0 facts field not installed')
+
+          start = text.index('impl AuthorityCoordinatorV0 for ReferenceAuthorityCoordinatorV0 {')
+          end = text.index('\n#[cfg(test)]', start)
+          implementation = r'''impl AuthorityCoordinatorV0 for ReferenceAuthorityCoordinatorV0 {
+    type Error = BoundaryErrorV0;
+
+    fn identity(&self) -> NodeIdentityV0 {
+        self.identity
+    }
+
+    fn recover(&mut self) -> Result<RecoveryDispositionV0, Self::Error> {
+        Ok(match self.current {
+            None => RecoveryDispositionV0::Clean,
+            Some(receipt) => RecoveryDispositionV0::Resume {
+                binding: receipt.binding,
+                durable_stage: receipt.durable_stage,
+                durable_sequence: receipt.durable_sequence,
+            },
+        })
+    }
+
+    fn apply(
+        &mut self,
+        command: AuthorityCommandV0,
+    ) -> Result<AuthorityReceiptV0, Self::Error> {
+        let (binding, stage, facts_digest) = match command {
+            AuthorityCommandV0::Begin {
+                binding,
+                ingress_digest,
+            } => {
+                if let Some(current) = self.current {
+                    if current.binding == binding
+                        && current.durable_stage == AuthorityStageV0::Prepared
+                    {
+                        return if current.facts_digest == ingress_digest {
+                            Ok(current)
+                        } else {
+                            Err(BoundaryErrorV0::ReceiptSubstitution)
+                        };
+                    }
+                    let expected_height = current
+                        .binding
+                        .height
+                        .checked_add(1)
+                        .ok_or(BoundaryErrorV0::SequenceOverflow)?;
+                    if current.durable_stage != AuthorityStageV0::OutboundPublished
+                        || binding.height != expected_height
+                        || binding.operation_id == current.binding.operation_id
+                    {
+                        return Err(BoundaryErrorV0::InvalidStageTransition);
+                    }
+                }
+                (binding, AuthorityStageV0::Prepared, ingress_digest)
+            }
+            AuthorityCommandV0::Advance {
+                binding,
+                expected_stage,
+                next_stage,
+                facts_digest,
+            } => {
+                let current = self
+                    .current
+                    .ok_or(BoundaryErrorV0::InvalidStageTransition)?;
+                if current.binding != binding {
+                    return Err(BoundaryErrorV0::OperationBindingMismatch);
+                }
+                if current.durable_stage == next_stage
+                    && expected_stage.successor() == Some(next_stage)
+                {
+                    return if current.facts_digest == facts_digest {
+                        Ok(current)
+                    } else {
+                        Err(BoundaryErrorV0::ReceiptSubstitution)
+                    };
+                }
+                if current.durable_stage != expected_stage
+                    || expected_stage.successor() != Some(next_stage)
+                {
+                    return Err(BoundaryErrorV0::InvalidStageTransition);
+                }
+                (binding, next_stage, facts_digest)
+            }
+        };
+        let sequence = match self.current {
+            None => 0,
+            Some(receipt) => receipt
+                .durable_sequence
+                .checked_add(1)
+                .ok_or(BoundaryErrorV0::SequenceOverflow)?,
+        };
+        let previous = self
+            .current
+            .map_or(Digest32V0([0; 32]), |receipt| receipt.record_digest);
+        let record_digest = Digest32V0::hash(
+            b"trnm.node.authority-record.v0",
+            &[
+                &self.identity.digest().0,
+                &binding.operation_id.0,
+                &[stage as u8],
+                &sequence.to_be_bytes(),
+                &facts_digest.0,
+                &previous.0,
+            ],
+        );
+        let receipt = AuthorityReceiptV0 {
+            binding,
+            durable_stage: stage,
+            durable_sequence: sequence,
+            facts_digest,
+            record_digest,
+        };
+        self.current = Some(receipt);
+        Ok(receipt)
+    }
+}
+'''
+          text = text[:start] + implementation + text[end:]
+
+          enum_old = '''    OperationBindingMismatch,
+    SequenceOverflow,
+}
+'''
+          enum_new = '''    OperationBindingMismatch,
+    ReceiptSubstitution,
+    SequenceOverflow,
+}
+'''
+          if enum_old in text:
+              text = text.replace(enum_old, enum_new, 1)
+          display_old = '''            Self::OperationBindingMismatch => "operation binding does not match durable authority",
+            Self::SequenceOverflow => "durable authority sequence overflow",
+'''
+          display_new = '''            Self::OperationBindingMismatch => "operation binding does not match durable authority",
+            Self::ReceiptSubstitution => "same authority operation and stage were replayed with different facts",
+            Self::SequenceOverflow => "durable authority sequence overflow",
+'''
+          if display_old in text:
+              text = text.replace(display_old, display_new, 1)
+          required = [
+              'ReceiptSubstitution',
+              'current.facts_digest == ingress_digest',
+              'current.facts_digest == facts_digest',
+              'binding.height != expected_height',
+          ]
+          if not all(item in text for item in required):
+              raise SystemExit('authority contract upgrade incomplete')
+
+          test_anchor = '''    #[test]
+    fn host_refuses_work_before_recovery() {
+'''
+          new_test = r'''    #[test]
+    fn next_operation_requires_completed_previous_height() {
+        let mut coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let first = binding();
+        coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding: first,
+                ingress_digest: digest(30),
+            })
+            .unwrap();
+        let mut stage = AuthorityStageV0::Prepared;
+        while let Some(next) = stage.successor() {
+            coordinator
+                .apply(AuthorityCommandV0::Advance {
+                    binding: first,
+                    expected_stage: stage,
+                    next_stage: next,
+                    facts_digest: Digest32V0::hash(
+                        b"test.authority.stage",
+                        &[&[next as u8]],
+                    ),
+                })
+                .unwrap();
+            stage = next;
+        }
+        let second = OperationBindingV0::derive(
+            identity(),
+            first.height + 1,
+            0,
+            digest(40),
+            first.block_id,
+            digest(41),
+        );
+        let receipt = coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding: second,
+                ingress_digest: digest(42),
+            })
+            .unwrap();
+        assert_eq!(receipt.binding, second);
+        assert_eq!(receipt.durable_stage, AuthorityStageV0::Prepared);
+        assert_eq!(receipt.durable_sequence, 8);
+    }
+
+    #[test]
+    fn idempotent_replay_is_bound_to_retained_facts() {
+        let mut coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let binding = binding();
+        coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding,
+                ingress_digest: digest(50),
+            })
+            .unwrap();
+        assert_eq!(
+            coordinator
+                .apply(AuthorityCommandV0::Begin {
+                    binding,
+                    ingress_digest: digest(51),
+                })
+                .unwrap_err(),
+            BoundaryErrorV0::ReceiptSubstitution
+        );
+    }
+
+'''
+          if 'fn next_operation_requires_completed_previous_height()' not in text:
+              if test_anchor not in text:
+                  raise SystemExit('test insertion anchor missing')
+              text = text.replace(test_anchor, new_test + test_anchor, 1)
+          path.write_text(text)
+
+          adapter = Path('trillionnium/crates/trnm-production-adapter-conformance-v0/src/lib.rs')
+          if adapter.exists():
+              atext = adapter.read_text()
+              old = '''            let receipt = AuthorityReceiptV0 {
+                binding,
+                durable_stage: target_stage,
+                durable_sequence: sequence,
+                record_digest: self.record_digest(
+'''
+              new = '''            let receipt = AuthorityReceiptV0 {
+                binding,
+                durable_stage: target_stage,
+                durable_sequence: sequence,
+                facts_digest: facts,
+                record_digest: self.record_digest(
+'''
+              if old in atext:
+                  atext = atext.replace(old, new, 1)
+              if 'facts_digest: facts' not in atext:
+                  raise SystemExit('adapter conformance receipt was not upgraded')
+              adapter.write_text(atext)
+          PY
+          rm .github/workflows/zz-upgrade-authority-contract-v0.yml
+          git config user.name 'trnm-closure-bot'
+          git config user.email 'trnm-closure-bot@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'feat(node): bind authority receipts to facts and advance heights'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
