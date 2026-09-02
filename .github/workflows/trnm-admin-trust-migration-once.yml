@@ -8,7 +8,7 @@ on:
       - .github/workflows/trnm-admin-trust-migration-once.yml
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: trnm-admin-trust-migration-once-${{ github.ref }}
@@ -23,16 +23,18 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      EXPECTED_PARENT: cb1d88788309782ffb9244e411388af54cb1e11f
+      EXPECTED_PARENT: ecd024e7b7018266668b3e300b41b5a97cc7cdfa
+      TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260901
       SELF_PATH: .github/workflows/trnm-admin-trust-migration-once.yml
       SCRIPT_PATH: scripts/ci/trnm_admin_trust_migration_once.py
+      STAGING_ROOT: .trnm-admin-trust-migration-v1
     steps:
       - name: Check out exact migration commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true
 
       - name: Verify one-shot source boundary
         run: |
@@ -59,34 +61,40 @@ jobs:
           test ! -e "$SELF_PATH"
           test ! -e "$SCRIPT_PATH"
 
-      - name: Export exact validated replacement tree
+      - name: Materialize validated blobs under ordinary staging paths
         run: |
           set -euo pipefail
-          artifact_root="$RUNNER_TEMP/trnm-admin-trust-migration"
-          rm -rf "$artifact_root"
-          mkdir -p "$artifact_root/files"
-          : > "$artifact_root/deletes.txt"
+          rm -rf "$STAGING_ROOT"
+          mkdir -p "$STAGING_ROOT/files"
+          : > "$STAGING_ROOT/deletes.txt"
+          : > "$STAGING_ROOT/files.txt"
           while IFS= read -r -d '' path; do
             if [[ -f "$path" ]]; then
-              mkdir -p "$artifact_root/files/$(dirname "$path")"
-              cp -p -- "$path" "$artifact_root/files/$path"
+              mkdir -p "$STAGING_ROOT/files/$(dirname "$path")"
+              cp -p -- "$path" "$STAGING_ROOT/files/$path"
+              printf '%s\n' "$path" >> "$STAGING_ROOT/files.txt"
             else
-              printf '%s\n' "$path" >> "$artifact_root/deletes.txt"
+              printf '%s\n' "$path" >> "$STAGING_ROOT/deletes.txt"
             fi
           done < <(git diff --name-only -z)
-          git diff --binary --full-index > "$artifact_root/migration.patch"
-          git rev-parse HEAD > "$artifact_root/source-commit.txt"
-          git write-tree > "$artifact_root/base-tree.txt"
-          find "$artifact_root/files" -type f -print | LC_ALL=C sort > "$artifact_root/files.txt"
-          test -s "$artifact_root/migration.patch"
-          test -s "$artifact_root/files.txt"
-          test -s "$artifact_root/deletes.txt"
+          git diff --binary --full-index > "$STAGING_ROOT/migration.patch"
+          git rev-parse HEAD > "$STAGING_ROOT/source-commit.txt"
+          LC_ALL=C sort -o "$STAGING_ROOT/files.txt" "$STAGING_ROOT/files.txt"
+          LC_ALL=C sort -o "$STAGING_ROOT/deletes.txt" "$STAGING_ROOT/deletes.txt"
+          test -s "$STAGING_ROOT/migration.patch"
+          test -s "$STAGING_ROOT/files.txt"
+          test -s "$STAGING_ROOT/deletes.txt"
 
-      - name: Upload exact validated migration
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-admin-trust-migration-${{ github.sha }}
-          path: ${{ runner.temp }}/trnm-admin-trust-migration
-          if-no-files-found: error
-          include-hidden-files: true
-          retention-days: 7
+          git restore --worktree --staged -- .
+          git diff --exit-code -- .
+          git add "$STAGING_ROOT"
+          test -z "$(git diff --cached --name-only | grep -Ev '^\.trnm-admin-trust-migration-v1/' || true)"
+          git diff --cached --check
+
+      - name: Publish validated blobs without modifying workflow paths
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git commit -m "ci: stage validated administrator trust blobs"
+          git push origin "HEAD:${TARGET_BRANCH}"
