@@ -1,0 +1,163 @@
+name: fix-v0-core-review
+
+on:
+  push:
+    branches: [work/plan-v2-repository-blockers-closure-20260902]
+    paths: [.github/workflows/zz-fix-v0-core-review.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fix-v0-core-review-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-repository-blockers-closure-20260902' &&
+      github.actor == 'Franksudoman'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Apply compile and post-commit safety corrections
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          migration = Path('trillionnium/crates/trnm-migration-v0/src/lib.rs')
+          text = migration.read_text()
+          old = '''#[must_use]
+pub fn forbidden_authority_namespace(namespace: &[u8]) -> bool {
+    matches!(
+        namespace,
+        b"validator_signing_state"
+            | b"consensus_private_key"
+            | b"signer_journal"
+            | b"safety_store"
+            | b"remote_signer_watermark"
+            | b"node_commit_ledger"
+            | b"operator_recovery_key"
+    )
+}
+'''
+          new = '''#[must_use]
+pub fn forbidden_authority_namespace(namespace: &[u8]) -> bool {
+    const FORBIDDEN: &[&[u8]] = &[
+        b"validator_signing_state",
+        b"consensus_private_key",
+        b"signer_journal",
+        b"safety_store",
+        b"remote_signer_watermark",
+        b"node_commit_ledger",
+        b"operator_recovery_key",
+    ];
+    FORBIDDEN.contains(&namespace)
+}
+'''
+          if old not in text:
+              raise SystemExit('migration forbidden-namespace source shape changed')
+          migration.write_text(text.replace(old, new, 1))
+
+          tx = Path('trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs')
+          text = tx.read_text()
+          text = text.replace(
+              '''            || self.fee_charged == 0
+            || self.fee_charged > u128::MAX / 2
+''',
+              '''            || self.fee_charged == 0
+''',
+              1,
+          )
+          tx.write_text(text)
+
+          sync = Path('trillionnium/crates/trnm-state-sync-v0/src/lib.rs')
+          text = sync.read_text()
+          old = '''        let result = (|| {
+            for index in 0..self.manifest.chunk_count {
+                let chunk = self.chunks.get(&index).ok_or(
+                    StateSyncInstallErrorV0::Protocol(StateSyncErrorV0::IncompleteSnapshot),
+                )?;
+                target
+                    .write_chunk(staging, index, &chunk.bytes)
+                    .map_err(StateSyncInstallErrorV0::Target)?;
+            }
+            let receipt = target
+                .commit_staging_cas(staging, expected_current_root, &self.manifest)
+                .map_err(StateSyncInstallErrorV0::Target)?;
+            if receipt.previous_root != expected_current_root
+                || receipt.installed_root != self.manifest.state_root
+                || receipt.installed_height != self.manifest.height
+                || receipt.generation != staging.generation
+                || receipt.durable_receipt_digest == Digest32V0([0; 32])
+            {
+                return Err(StateSyncInstallErrorV0::Protocol(
+                    StateSyncErrorV0::InstallReceiptMismatch,
+                ));
+            }
+            Ok(receipt)
+        })();
+        if result.is_err() {
+            let _ = target.abort_staging(staging);
+        }
+        result
+'''
+          new = '''        for index in 0..self.manifest.chunk_count {
+            let Some(chunk) = self.chunks.get(&index) else {
+                let _ = target.abort_staging(staging);
+                return Err(StateSyncInstallErrorV0::Protocol(
+                    StateSyncErrorV0::IncompleteSnapshot,
+                ));
+            };
+            if let Err(error) = target.write_chunk(staging, index, &chunk.bytes) {
+                let _ = target.abort_staging(staging);
+                return Err(StateSyncInstallErrorV0::Target(error));
+            }
+        }
+        let receipt = match target.commit_staging_cas(
+            staging,
+            expected_current_root,
+            &self.manifest,
+        ) {
+            Ok(receipt) => receipt,
+            Err(error) => {
+                let _ = target.abort_staging(staging);
+                return Err(StateSyncInstallErrorV0::Target(error));
+            }
+        };
+        // Once commit succeeds the staging generation may be serving.  A
+        // malformed receipt is a quarantine condition; never issue a
+        // destructive abort against a possibly active generation.
+        if receipt.previous_root != expected_current_root
+            || receipt.installed_root != self.manifest.state_root
+            || receipt.installed_height != self.manifest.height
+            || receipt.generation != staging.generation
+            || receipt.durable_receipt_digest == Digest32V0([0; 32])
+        {
+            return Err(StateSyncInstallErrorV0::Protocol(
+                StateSyncErrorV0::InstallReceiptMismatch,
+            ));
+        }
+        Ok(receipt)
+'''
+          if old not in text:
+              raise SystemExit('state-sync install source shape changed')
+          sync.write_text(text.replace(old, new, 1))
+          PY
+          rm -f .github/workflows/zz-qualify-repository-blocker-cores-v0.yml
+          rm -f .github/workflows/zz-fix-node-boundary-test.yml
+          rm -f .github/workflows/zz-normalize-new-v0-cores.yml
+          rm .github/workflows/zz-fix-v0-core-review.yml
+          git config user.name 'trnm-closure-bot'
+          git config user.email 'trnm-closure-bot@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'fix(core): close namespace and post-commit safety review gaps'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
