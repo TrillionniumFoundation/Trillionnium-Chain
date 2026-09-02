@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      EXPECTED_PARENT: ecd024e7b7018266668b3e300b41b5a97cc7cdfa
+      EXPECTED_PARENT: f89311c91b5f8b978959f6739164e972ad368c14
       TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260901
       SELF_PATH: .github/workflows/trnm-admin-trust-migration-once.yml
       SCRIPT_PATH: scripts/ci/trnm_admin_trust_migration_once.py
@@ -77,11 +77,9 @@ jobs:
               printf '%s\n' "$path" >> "$STAGING_ROOT/deletes.txt"
             fi
           done < <(git diff --name-only -z)
-          git diff --binary --full-index > "$STAGING_ROOT/migration.patch"
           git rev-parse HEAD > "$STAGING_ROOT/source-commit.txt"
           LC_ALL=C sort -o "$STAGING_ROOT/files.txt" "$STAGING_ROOT/files.txt"
           LC_ALL=C sort -o "$STAGING_ROOT/deletes.txt" "$STAGING_ROOT/deletes.txt"
-          test -s "$STAGING_ROOT/migration.patch"
           test -s "$STAGING_ROOT/files.txt"
           test -s "$STAGING_ROOT/deletes.txt"
 
