@@ -1,0 +1,100 @@
+name: trnm-one-shot-build-closure-apply
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - '.github/workflows/trnm-one-shot-build-closure-apply.yml'
+      - '.trnm/one-shot-build-closure.patch.gz.b64.part*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-one-shot-build-closure-apply-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902' &&
+      github.actor == 'Franksudoman' &&
+      github.triggering_actor == github.actor
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    env:
+      EXPECTED_BRANCH: work/plan-v2-full-gap-closure-20260902
+      EXPECTED_B64_SHA256: 7ab1b9560e3bdde68b54c619455db9859d5ec1ce252c742b571ff9c223206a17
+      EXPECTED_PATCH_SHA256: ecea7cd5ac9b9bc6b3b064cbf3644c87e437d60fd56eb017bb65f79e899c21ad
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check out exact bootstrap source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify immutable bootstrap boundary
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REPOSITORY}" = 'TrillionniumFoundation/Trillionnium-Chain'
+          test "${GITHUB_REF}" = "refs/heads/${EXPECTED_BRANCH}"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          for part in 1 2 3 4; do
+            test -f ".trnm/one-shot-build-closure.patch.gz.b64.part${part}"
+          done
+          test "$(git status --porcelain --untracked-files=all)" = ''
+
+      - name: Decode and verify the exact patch
+        run: |
+          set -euo pipefail
+          cat .trnm/one-shot-build-closure.patch.gz.b64.part{1,2,3,4} > "${RUNNER_TEMP}/closure.patch.gz.b64"
+          test "$(sha256sum "${RUNNER_TEMP}/closure.patch.gz.b64" | awk '{print $1}')" = "${EXPECTED_B64_SHA256}"
+          base64 -d "${RUNNER_TEMP}/closure.patch.gz.b64" | gzip -d > "${RUNNER_TEMP}/closure.patch"
+          test "$(sha256sum "${RUNNER_TEMP}/closure.patch" | awk '{print $1}')" = "${EXPECTED_PATCH_SHA256}"
+          git apply --check "${RUNNER_TEMP}/closure.patch"
+
+      - name: Apply closure patch and remove bootstrap transport
+        run: |
+          set -euo pipefail
+          git apply --index "${RUNNER_TEMP}/closure.patch"
+          git rm -- \
+            .github/workflows/trnm-one-shot-build-closure-apply.yml \
+            .trnm/one-shot-build-closure.patch.gz.b64.part1 \
+            .trnm/one-shot-build-closure.patch.gz.b64.part2 \
+            .trnm/one-shot-build-closure.patch.gz.b64.part3 \
+            .trnm/one-shot-build-closure.patch.gz.b64.part4
+          git diff --cached --check
+
+      - name: Validate staged runner and offline authority policies
+        run: |
+          set -euo pipefail
+          bash scripts/check_ci_runner_policy.sh --staged
+          bash scripts/check_cargo_offline_policy.sh --staged
+
+      - name: Validate staged build and repository closure
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_build_closures_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_required_protocol_contract_v1.py
+          python3 -m py_compile scripts/ci/check_build_closures_v1.py
+
+      - name: Commit exact staged closure
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(build): enforce production dependency closures'
+
+      - name: Push only the fast-forward successor
+        run: |
+          set -euo pipefail
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin "HEAD:refs/heads/${EXPECTED_BRANCH}"
