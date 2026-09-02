@@ -1,0 +1,126 @@
+name: finalize-repository-closure-v5
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - tools/closure_v5_trigger
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalize-repository-closure-v5-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+
+jobs:
+  finalize:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902' &&
+      contains(github.event.head_commit.message, '[closure-v5-trigger]') &&
+      !contains(github.event.head_commit.message, '[repository-closure-v5]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Construct closure tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          python3 tools/finalize_repository_closure_v4.py
+
+      - name: Install pinned Rust and materialize lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          toolchain="$(python3 - <<'PY'
+          import tomllib
+          print(tomllib.load(open('rust-toolchain.toml','rb'))['toolchain']['channel'])
+          PY
+          )"
+          rustup toolchain install "${toolchain}" --profile minimal --component rustfmt --component clippy
+          rustup default "${toolchain}"
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Run truth and structural gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_module_documentation_v1.py
+          python3 scripts/ci/check_markdown_links_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+          python3 scripts/check_repository_blocker_registry_v0.py
+
+      - name: Test and lint closure packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          packages=(
+            trnm-poco-node trnm-poco-node-authority trnm-poco-node-io
+            trnm-poco-node-host trnm-poco-node-cli trnm-control-plane-v0
+            trnm-durable-file-adapters-v0 trnm-migration-v0 trnm-node-boundary-v0
+            trnm-poco-node-production-v0 trnm-production-adapter-conformance-v0
+            trnm-release-bundle-v0 trnm-state-sync-v0 trnm-tx-lifecycle-v0
+          )
+          for package in "${packages[@]}"; do
+            cargo test --manifest-path trillionnium/Cargo.toml -p "${package}" --all-targets --locked --offline
+            cargo clippy --manifest-path trillionnium/Cargo.toml -p "${package}" --all-targets --locked --offline -- -D warnings
+          done
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
+
+      - name: Verify activation remains fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          status="$(cargo run --manifest-path trillionnium/Cargo.toml -p trnm-poco-node-cli --bin trnm-poco-node-cli --locked --offline -- status)"
+          for fact in '"production_candidate":false' '"authority_gate_open":false' '"production_activation":false' '"start_permitted":false'; do
+            printf '%s\n' "${status}" | grep -q "${fact}"
+          done
+          set +e
+          cargo run --manifest-path trillionnium/Cargo.toml -p trnm-poco-node-cli --bin trnm-poco-node-cli --locked --offline -- start >"${RUNNER_TEMP}/start.out" 2>"${RUNNER_TEMP}/start.err"
+          rc=$?
+          set -e
+          test "${rc}" -ne 0
+          grep -q 'node host start blocked' "${RUNNER_TEMP}/start.err"
+
+      - name: Write qualification receipt
+        shell: bash
+        run: python3 tools/finalize_repository_closure_v4.py --write-receipt "${GITHUB_SHA}"
+
+      - name: Publish qualified tree and retire carriers
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in .github/workflows/zz-*.yml; do [[ -e "${path}" ]] && git rm "${path}"; done
+          git rm tools/finalize_repository_closure_v4.py tools/closure_v5_trigger
+          git config user.name 'Trillionnium Plan v2 Closure'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m '[repository-closure-v5] feat(plan): integrate and qualify repository-owned blockers'
+          git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
