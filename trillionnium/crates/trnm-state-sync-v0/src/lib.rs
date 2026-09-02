@@ -45,7 +45,13 @@ pub struct WeakSubjectivityAnchorV0 {
 
 impl WeakSubjectivityAnchorV0 {
     pub fn validate(self) -> Result<Self, StateSyncErrorV0> {
-        if self.epoch == 0 || self.height == 0 || self.checkpoint_digest == Digest32V0([0; 32]) {
+        if self.chain_id == Digest32V0([0; 32])
+            || self.protocol_digest == Digest32V0([0; 32])
+            || self.epoch == 0
+            || self.height == 0
+            || self.checkpoint_digest == Digest32V0([0; 32])
+            || self.validator_set_digest == Digest32V0([0; 32])
+        {
             return Err(StateSyncErrorV0::InvalidTrustAnchor);
         }
         Ok(self)
@@ -130,7 +136,13 @@ where
             || link.height <= previous_height
             || link.epoch < previous_epoch
             || link.epoch > previous_epoch.saturating_add(1)
+            || link.state_root == Digest32V0([0; 32])
             || link.validator_set_digest != expected_validator_set
+            || link.next_validator_set_digest == Digest32V0([0; 32])
+            || (link.epoch == previous_epoch
+                && link.next_validator_set_digest != expected_validator_set)
+            || link.finality_proof_digest == Digest32V0([0; 32])
+            || link.checkpoint_digest == Digest32V0([0; 32])
             || link.checkpoint_digest != link.canonical_digest()
         {
             return Err(StateSyncHostErrorV0::Protocol(
@@ -178,23 +190,32 @@ pub struct SnapshotManifestV0 {
 }
 
 impl SnapshotManifestV0 {
+    /// Stable digest bound into every chunk. It deliberately excludes both
+    /// `chunk_root` and `manifest_digest`, preventing a hash self-reference.
     #[must_use]
-    pub fn canonical_digest(&self) -> Digest32V0 {
+    pub fn chunk_binding_digest(&self) -> Digest32V0 {
         Digest32V0::hash(
-            b"trnm.state-sync.snapshot-manifest.v0",
+            b"trnm.state-sync.snapshot-header.v0",
             &[
                 &self.chain_id.0,
                 &self.protocol_digest.0,
                 &self.height.to_be_bytes(),
                 &self.epoch.to_be_bytes(),
                 &self.state_root.0,
-                &self.chunk_root.0,
                 &self.chunk_count.to_be_bytes(),
                 &self.maximum_chunk_bytes.to_be_bytes(),
                 &self.total_bytes.to_be_bytes(),
                 &self.schema_digest.0,
                 &self.checkpoint_digest.0,
             ],
+        )
+    }
+
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.state-sync.snapshot-manifest.v0",
+            &[&self.chunk_binding_digest().0, &self.chunk_root.0],
         )
     }
 
@@ -208,12 +229,21 @@ impl SnapshotManifestV0 {
         {
             return Err(StateSyncErrorV0::ManifestTrustMismatch);
         }
+        let declared_capacity = u64::from(self.chunk_count)
+            .checked_mul(u64::from(self.maximum_chunk_bytes))
+            .ok_or(StateSyncErrorV0::InvalidManifest)?;
         if self.chunk_count == 0
             || self.chunk_count > MAX_CHUNK_COUNT_V0
             || self.maximum_chunk_bytes == 0
             || self.maximum_chunk_bytes as usize > MAX_CHUNK_BYTES_V0
             || self.total_bytes == 0
             || self.total_bytes > MAX_SNAPSHOT_BYTES_V0
+            || self.total_bytes > declared_capacity
+            || self.state_root == Digest32V0([0; 32])
+            || self.chunk_root == Digest32V0([0; 32])
+            || self.schema_digest == Digest32V0([0; 32])
+            || self.checkpoint_digest == Digest32V0([0; 32])
+            || self.manifest_digest == Digest32V0([0; 32])
             || self.manifest_digest != self.canonical_digest()
         {
             return Err(StateSyncErrorV0::InvalidManifest);
@@ -240,7 +270,7 @@ impl SnapshotChunkV0 {
     }
 
     pub fn validate(&self, manifest: &SnapshotManifestV0) -> Result<(), StateSyncErrorV0> {
-        if self.manifest_digest != manifest.manifest_digest
+        if self.manifest_digest != manifest.chunk_binding_digest()
             || self.index >= manifest.chunk_count
             || self.bytes.is_empty()
             || self.bytes.len() > manifest.maximum_chunk_bytes as usize
@@ -353,18 +383,19 @@ impl StateSyncSessionV0 {
                 Err(StateSyncErrorV0::ChunkSubstitution)
             };
         }
-        self.received_bytes = self
+        let next_received_bytes = self
             .received_bytes
             .checked_add(
                 u64::try_from(chunk.bytes.len()).map_err(|_| StateSyncErrorV0::SnapshotTooLarge)?,
             )
             .ok_or(StateSyncErrorV0::SnapshotTooLarge)?;
-        if self.received_bytes > self.manifest.total_bytes
-            || self.received_bytes > MAX_SNAPSHOT_BYTES_V0
+        if next_received_bytes > self.manifest.total_bytes
+            || next_received_bytes > MAX_SNAPSHOT_BYTES_V0
         {
             return Err(StateSyncErrorV0::SnapshotTooLarge);
         }
         self.chunks.insert(chunk.index, chunk);
+        self.received_bytes = next_received_bytes;
         Ok(())
     }
 
@@ -437,40 +468,53 @@ impl StateSyncSessionV0 {
     {
         self.verify_complete(recomputer)
             .map_err(StateSyncInstallErrorV0::Verification)?;
+        if expected_current_root == Digest32V0([0; 32]) {
+            return Err(StateSyncInstallErrorV0::Protocol(
+                StateSyncErrorV0::InvalidExpectedCurrentRoot,
+            ));
+        }
         let staging = target
             .begin_staging(&self.manifest)
             .map_err(StateSyncInstallErrorV0::Target)?;
-        let result = (|| {
-            for index in 0..self.manifest.chunk_count {
-                let chunk = self
-                    .chunks
-                    .get(&index)
-                    .ok_or(StateSyncInstallErrorV0::Protocol(
+        for index in 0..self.manifest.chunk_count {
+            let chunk = match self.chunks.get(&index) {
+                Some(chunk) => chunk,
+                None => {
+                    if let Err(abort_error) = target.abort_staging(staging) {
+                        return Err(StateSyncInstallErrorV0::Abort(abort_error));
+                    }
+                    return Err(StateSyncInstallErrorV0::Protocol(
                         StateSyncErrorV0::IncompleteSnapshot,
-                    ))?;
-                target
-                    .write_chunk(staging, index, &chunk.bytes)
-                    .map_err(StateSyncInstallErrorV0::Target)?;
+                    ));
+                }
+            };
+            if let Err(write_error) = target.write_chunk(staging, index, &chunk.bytes) {
+                return match target.abort_staging(staging) {
+                    Ok(()) => Err(StateSyncInstallErrorV0::Write(write_error)),
+                    Err(abort_error) => Err(StateSyncInstallErrorV0::WriteAndAbort {
+                        write_error,
+                        abort_error,
+                    }),
+                };
             }
-            let receipt = target
-                .commit_staging_cas(staging, expected_current_root, &self.manifest)
-                .map_err(StateSyncInstallErrorV0::Target)?;
-            if receipt.previous_root != expected_current_root
-                || receipt.installed_root != self.manifest.state_root
-                || receipt.installed_height != self.manifest.height
-                || receipt.generation != staging.generation
-                || receipt.durable_receipt_digest == Digest32V0([0; 32])
-            {
-                return Err(StateSyncInstallErrorV0::Protocol(
-                    StateSyncErrorV0::InstallReceiptMismatch,
-                ));
-            }
-            Ok(receipt)
-        })();
-        if result.is_err() {
-            let _ = target.abort_staging(staging);
         }
-        result
+
+        // Once commit starts, the caller must treat any error or receipt
+        // mismatch as uncertain durable state. Never issue a destructive abort.
+        let receipt = target
+            .commit_staging_cas(staging, expected_current_root, &self.manifest)
+            .map_err(StateSyncInstallErrorV0::CommitUncertain)?;
+        if receipt.previous_root != expected_current_root
+            || receipt.installed_root != self.manifest.state_root
+            || receipt.installed_height != self.manifest.height
+            || receipt.generation != staging.generation
+            || receipt.durable_receipt_digest == Digest32V0([0; 32])
+        {
+            return Err(StateSyncInstallErrorV0::CommitReceiptMismatch(
+                StateSyncErrorV0::InstallReceiptMismatch,
+            ));
+        }
+        Ok(receipt)
     }
 }
 
@@ -497,6 +541,7 @@ pub enum StateSyncErrorV0 {
     IncompleteSnapshot,
     ChunkRootMismatch,
     StateRootMismatch,
+    InvalidExpectedCurrentRoot,
     InstallReceiptMismatch,
 }
 
@@ -516,6 +561,7 @@ impl fmt::Display for StateSyncErrorV0 {
             Self::IncompleteSnapshot => "snapshot is incomplete",
             Self::ChunkRootMismatch => "snapshot chunk Merkle root mismatch",
             Self::StateRootMismatch => "recomputed application state root mismatch",
+            Self::InvalidExpectedCurrentRoot => "expected current state root is invalid",
             Self::InstallReceiptMismatch => "non-destructive install receipt mismatch",
         })
     }
@@ -549,6 +595,14 @@ pub enum StateSyncInstallErrorV0<RootError, TargetError> {
     Protocol(StateSyncErrorV0),
     Verification(StateSyncHostErrorV0<RootError>),
     Target(TargetError),
+    Write(TargetError),
+    Abort(TargetError),
+    WriteAndAbort {
+        write_error: TargetError,
+        abort_error: TargetError,
+    },
+    CommitUncertain(TargetError),
+    CommitReceiptMismatch(StateSyncErrorV0),
 }
 
 impl<R: fmt::Display, T: fmt::Display> fmt::Display for StateSyncInstallErrorV0<R, T> {
@@ -556,7 +610,22 @@ impl<R: fmt::Display, T: fmt::Display> fmt::Display for StateSyncInstallErrorV0<
         match self {
             Self::Protocol(error) => write!(f, "state-sync installation rejected: {error}"),
             Self::Verification(error) => write!(f, "snapshot verification failed: {error}"),
-            Self::Target(error) => write!(f, "staging target failed: {error}"),
+            Self::Target(error) => write!(f, "staging target failed before writes: {error}"),
+            Self::Write(error) => write!(f, "staging write failed and was aborted: {error}"),
+            Self::Abort(error) => write!(f, "staging abort failed: {error}"),
+            Self::WriteAndAbort {
+                write_error,
+                abort_error,
+            } => write!(
+                f,
+                "staging write failed ({write_error}) and abort also failed ({abort_error})"
+            ),
+            Self::CommitUncertain(error) => {
+                write!(f, "state-sync commit outcome is uncertain: {error}")
+            }
+            Self::CommitReceiptMismatch(error) => {
+                write!(f, "state-sync commit receipt is untrusted: {error}")
+            }
         }
     }
 }
@@ -661,15 +730,15 @@ mod tests {
             checkpoint_digest: terminal.checkpoint_digest,
             manifest_digest: d(0),
         };
-        let preliminary = manifest.canonical_digest();
-        let mut chunks: Vec<SnapshotChunkV0> = chunk_bytes
+        let binding = manifest.chunk_binding_digest();
+        let chunks: Vec<SnapshotChunkV0> = chunk_bytes
             .iter()
             .enumerate()
             .map(|(index, bytes)| SnapshotChunkV0 {
-                manifest_digest: preliminary,
+                manifest_digest: binding,
                 index: index as u32,
                 bytes: bytes.to_vec(),
-                chunk_digest: SnapshotChunkV0::canonical_digest(preliminary, index as u32, bytes),
+                chunk_digest: SnapshotChunkV0::canonical_digest(binding, index as u32, bytes),
             })
             .collect();
         manifest.chunk_root = chunk_merkle_root_v0(
@@ -679,60 +748,6 @@ mod tests {
                 .collect::<Vec<_>>(),
         );
         manifest.manifest_digest = manifest.canonical_digest();
-        for chunk in &mut chunks {
-            chunk.manifest_digest = manifest.manifest_digest;
-            chunk.chunk_digest = SnapshotChunkV0::canonical_digest(
-                manifest.manifest_digest,
-                chunk.index,
-                &chunk.bytes,
-            );
-        }
-        manifest.chunk_root = chunk_merkle_root_v0(
-            &chunks
-                .iter()
-                .map(|chunk| chunk.chunk_digest)
-                .collect::<Vec<_>>(),
-        );
-        manifest.manifest_digest = manifest.canonical_digest();
-        for chunk in &mut chunks {
-            chunk.manifest_digest = manifest.manifest_digest;
-            chunk.chunk_digest = SnapshotChunkV0::canonical_digest(
-                manifest.manifest_digest,
-                chunk.index,
-                &chunk.bytes,
-            );
-        }
-        manifest.chunk_root = chunk_merkle_root_v0(
-            &chunks
-                .iter()
-                .map(|chunk| chunk.chunk_digest)
-                .collect::<Vec<_>>(),
-        );
-        manifest.manifest_digest = manifest.canonical_digest();
-        // Freeze the self-reference by requiring chunk digests to bind the
-        // final manifest digest while the manifest binds their root.  Iterate
-        // until the fixture reaches its deterministic fixed point.
-        for _ in 0..16 {
-            for chunk in &mut chunks {
-                chunk.manifest_digest = manifest.manifest_digest;
-                chunk.chunk_digest = SnapshotChunkV0::canonical_digest(
-                    manifest.manifest_digest,
-                    chunk.index,
-                    &chunk.bytes,
-                );
-            }
-            manifest.chunk_root = chunk_merkle_root_v0(
-                &chunks
-                    .iter()
-                    .map(|chunk| chunk.chunk_digest)
-                    .collect::<Vec<_>>(),
-            );
-            let next = manifest.canonical_digest();
-            if next == manifest.manifest_digest {
-                break;
-            }
-            manifest.manifest_digest = next;
-        }
         (trust, manifest, chunks)
     }
 
@@ -779,5 +794,135 @@ mod tests {
                 StateSyncErrorV0::IncompleteSnapshot
             ))
         ));
+    }
+
+    #[derive(Debug)]
+    struct TargetFailure;
+
+    impl fmt::Display for TargetFailure {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            f.write_str("injected target failure")
+        }
+    }
+
+    impl Error for TargetFailure {}
+
+    struct TrackingTarget {
+        aborts: u32,
+        commit_fails: bool,
+        bad_receipt: bool,
+    }
+
+    impl NonDestructiveInstallTargetV0 for TrackingTarget {
+        type Error = TargetFailure;
+
+        fn begin_staging(
+            &mut self,
+            _manifest: &SnapshotManifestV0,
+        ) -> Result<StagingIdentityV0, Self::Error> {
+            Ok(StagingIdentityV0 {
+                generation: 7,
+                staging_digest: d(40),
+            })
+        }
+
+        fn write_chunk(
+            &mut self,
+            _staging: StagingIdentityV0,
+            _index: u32,
+            _bytes: &[u8],
+        ) -> Result<(), Self::Error> {
+            Ok(())
+        }
+
+        fn commit_staging_cas(
+            &mut self,
+            staging: StagingIdentityV0,
+            expected_current_root: Digest32V0,
+            manifest: &SnapshotManifestV0,
+        ) -> Result<InstallReceiptV0, Self::Error> {
+            if self.commit_fails {
+                return Err(TargetFailure);
+            }
+            Ok(InstallReceiptV0 {
+                previous_root: expected_current_root,
+                installed_root: if self.bad_receipt {
+                    d(99)
+                } else {
+                    manifest.state_root
+                },
+                installed_height: manifest.height,
+                generation: staging.generation,
+                durable_receipt_digest: d(41),
+            })
+        }
+
+        fn abort_staging(&mut self, _staging: StagingIdentityV0) -> Result<(), Self::Error> {
+            self.aborts += 1;
+            Ok(())
+        }
+    }
+
+    fn complete_session() -> StateSyncSessionV0 {
+        let (trust, manifest, chunks) = fixture();
+        let mut session = StateSyncSessionV0::new(trust, manifest).unwrap();
+        for chunk in chunks {
+            session.accept_chunk(chunk).unwrap();
+        }
+        session
+    }
+
+    #[test]
+    fn oversized_chunk_attempt_does_not_mutate_session_accounting() {
+        let (trust, mut manifest, _) = fixture();
+        manifest.total_bytes = 1;
+        manifest.manifest_digest = manifest.canonical_digest();
+        let binding = manifest.chunk_binding_digest();
+        let bytes = b"alpha".to_vec();
+        let chunk = SnapshotChunkV0 {
+            manifest_digest: binding,
+            index: 0,
+            chunk_digest: SnapshotChunkV0::canonical_digest(binding, 0, &bytes),
+            bytes,
+        };
+        let mut session = StateSyncSessionV0::new(trust, manifest).unwrap();
+        assert_eq!(
+            session.accept_chunk(chunk).unwrap_err(),
+            StateSyncErrorV0::SnapshotTooLarge
+        );
+        assert_eq!(session.received_bytes, 0);
+        assert_eq!(session.missing_chunks(), vec![0, 1]);
+    }
+
+    #[test]
+    fn commit_error_never_triggers_destructive_abort() {
+        let session = complete_session();
+        let mut target = TrackingTarget {
+            aborts: 0,
+            commit_fails: true,
+            bad_receipt: false,
+        };
+        assert!(matches!(
+            session.install(&HashRoot, &mut target, d(50)),
+            Err(StateSyncInstallErrorV0::CommitUncertain(_))
+        ));
+        assert_eq!(target.aborts, 0);
+    }
+
+    #[test]
+    fn commit_receipt_mismatch_never_triggers_destructive_abort() {
+        let session = complete_session();
+        let mut target = TrackingTarget {
+            aborts: 0,
+            commit_fails: false,
+            bad_receipt: true,
+        };
+        assert!(matches!(
+            session.install(&HashRoot, &mut target, d(50)),
+            Err(StateSyncInstallErrorV0::CommitReceiptMismatch(
+                StateSyncErrorV0::InstallReceiptMismatch
+            ))
+        ));
+        assert_eq!(target.aborts, 0);
     }
 }

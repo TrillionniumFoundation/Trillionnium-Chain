@@ -67,16 +67,16 @@ impl ExportRowV0 {
 
 #[must_use]
 pub fn forbidden_authority_namespace(namespace: &[u8]) -> bool {
-    matches!(
-        namespace,
-        b"validator_signing_state"
-            | b"consensus_private_key"
-            | b"signer_journal"
-            | b"safety_store"
-            | b"remote_signer_watermark"
-            | b"node_commit_ledger"
-            | b"operator_recovery_key"
-    )
+    const RESERVED: &[&[u8]] = &[
+        b"validator_signing_state",
+        b"consensus_private_key",
+        b"signer_journal",
+        b"safety_store",
+        b"remote_signer_watermark",
+        b"node_commit_ledger",
+        b"operator_recovery_key",
+    ];
+    RESERVED.iter().any(|prefix| namespace.starts_with(prefix))
 }
 
 #[must_use]
@@ -86,7 +86,7 @@ pub fn merkle_root_v0(digests: &[Digest32V0]) -> Digest32V0 {
     }
     let mut level = digests.to_vec();
     while level.len() > 1 {
-        let mut next = Vec::with_capacity((level.len() + 1) / 2);
+        let mut next = Vec::with_capacity(level.len().div_ceil(2));
         for pair in level.chunks(2) {
             let left = pair[0];
             let right = pair.get(1).copied().unwrap_or(left);
@@ -144,6 +144,36 @@ pub struct VerifiedExportV0 {
     pub ordered_rows_digest: Digest32V0,
 }
 
+fn validate_verified_rows_v0(
+    export: &VerifiedExportV0,
+    rows: &[ExportRowV0],
+) -> Result<(), MigrationErrorV0> {
+    if export.header.row_count != rows.len() as u64 {
+        return Err(MigrationErrorV0::VerifiedExportMismatch);
+    }
+    let mut previous: Option<(&[u8], &[u8])> = None;
+    let mut row_digests = Vec::with_capacity(rows.len());
+    let mut ordered_hasher = Sha256::new();
+    ordered_hasher.update(b"trnm.migration.ordered-rows.v0");
+    for row in rows {
+        row.validate()?;
+        if previous.is_some_and(|(namespace, key)| {
+            (row.namespace.as_slice(), row.key.as_slice()) <= (namespace, key)
+        }) {
+            return Err(MigrationErrorV0::RowsNotStrictlyOrdered);
+        }
+        previous = Some((&row.namespace, &row.key));
+        row_digests.push(row.row_digest);
+        ordered_hasher.update(row.row_digest.0);
+    }
+    if merkle_root_v0(&row_digests) != export.header.export_root
+        || Digest32V0(ordered_hasher.finalize().into()) != export.ordered_rows_digest
+    {
+        return Err(MigrationErrorV0::VerifiedExportMismatch);
+    }
+    Ok(())
+}
+
 pub fn verify_export_v0<V>(
     verifier: &V,
     header: FinalizedExportHeaderV0,
@@ -152,10 +182,17 @@ pub fn verify_export_v0<V>(
 where
     V: SourceFinalityVerifierV0,
 {
-    if header.source_height == 0
+    if header.source_chain_id == Digest32V0([0; 32])
+        || header.source_protocol_digest == Digest32V0([0; 32])
+        || header.source_height == 0
+        || header.source_state_root == Digest32V0([0; 32])
+        || header.source_schema_digest == Digest32V0([0; 32])
+        || header.source_finality_proof_digest == Digest32V0([0; 32])
         || header.row_count == 0
         || header.row_count > MAX_EXPORT_ROWS_V0
         || header.row_count != rows.len() as u64
+        || header.export_root == Digest32V0([0; 32])
+        || header.header_digest == Digest32V0([0; 32])
         || header.header_digest != header.canonical_digest()
     {
         return Err(MigrationHostErrorV0::Protocol(
@@ -272,12 +309,18 @@ impl MigrationPlanV0 {
     pub fn validate(&self, export: &VerifiedExportV0) -> Result<(), MigrationErrorV0> {
         if !self.no_fallback
             || !self.downgrade_prohibited
+            || self.source_chain_id == Digest32V0([0; 32])
+            || self.source_protocol_digest == Digest32V0([0; 32])
             || self.source_chain_id != export.header.source_chain_id
             || self.source_protocol_digest != export.header.source_protocol_digest
             || self.source_height != export.header.source_height
             || self.source_export_header_digest != export.header.header_digest
+            || self.target_chain_id == Digest32V0([0; 32])
             || self.target_chain_id == self.source_chain_id
+            || self.target_protocol_digest == Digest32V0([0; 32])
+            || self.target_schema_digest == Digest32V0([0; 32])
             || self.target_genesis_id == Digest32V0([0; 32])
+            || self.plan_digest == Digest32V0([0; 32])
             || self.plan_digest != self.canonical_digest()
         {
             return Err(MigrationErrorV0::InvalidMigrationPlan);
@@ -311,11 +354,7 @@ where
 {
     plan.validate(export)
         .map_err(MigrationProjectionErrorV0::Protocol)?;
-    if export.header.row_count != source_rows.len() as u64 {
-        return Err(MigrationProjectionErrorV0::Protocol(
-            MigrationErrorV0::InvalidExportHeader,
-        ));
-    }
+    validate_verified_rows_v0(export, source_rows).map_err(MigrationProjectionErrorV0::Protocol)?;
     let mut rows = Vec::new();
     let mut unique = BTreeSet::new();
     for source in source_rows {
@@ -397,6 +436,9 @@ where
     V: CutoverSignatureVerifierV0,
 {
     if required_weight == 0
+        || projection.plan_digest == Digest32V0([0; 32])
+        || projection.target_state_root == Digest32V0([0; 32])
+        || projection.target_genesis_id == Digest32V0([0; 32])
         || attestations.is_empty()
         || attestations.len() > MAX_CUTOVER_SIGNERS_V0
     {
@@ -404,36 +446,50 @@ where
             MigrationErrorV0::InvalidCutoverAgreement,
         ));
     }
-    let mut seen = BTreeSet::new();
+
+    let mut canonical = attestations.to_vec();
+    canonical.sort_by_key(|attestation| attestation.signer_id);
+    let mut previous_signer = None;
+    let mut weighted = Vec::with_capacity(canonical.len());
     let mut signed_weight = 0_u64;
-    let mut signer_hasher = Sha256::new();
-    signer_hasher.update(b"trnm.migration.cutover-signers.v0");
-    for attestation in attestations {
-        if attestation.plan_digest != projection.plan_digest
+    for attestation in canonical {
+        if attestation.signer_id == Digest32V0([0; 32])
+            || attestation.plan_digest != projection.plan_digest
             || attestation.target_state_root != projection.target_state_root
             || attestation.target_genesis_id != projection.target_genesis_id
             || attestation.signature_digest == Digest32V0([0; 32])
-            || !seen.insert(attestation.signer_id)
+            || previous_signer == Some(attestation.signer_id)
         {
             return Err(MigrationHostErrorV0::Protocol(
                 MigrationErrorV0::InvalidCutoverAgreement,
             ));
         }
+        previous_signer = Some(attestation.signer_id);
         let weight = verifier
-            .verify_attestation(attestation)
+            .verify_attestation(&attestation)
             .map_err(MigrationHostErrorV0::CutoverSignature)?;
+        if weight == 0 {
+            return Err(MigrationHostErrorV0::Protocol(
+                MigrationErrorV0::InvalidCutoverAgreement,
+            ));
+        }
         signed_weight = signed_weight
             .checked_add(weight)
             .ok_or(MigrationHostErrorV0::Protocol(
                 MigrationErrorV0::WeightOverflow,
             ))?;
-        signer_hasher.update(attestation.signer_id.0);
-        signer_hasher.update(weight.to_be_bytes());
+        weighted.push((attestation.signer_id, weight));
     }
     if signed_weight < required_weight {
         return Err(MigrationHostErrorV0::Protocol(
             MigrationErrorV0::InsufficientCutoverWeight,
         ));
+    }
+    let mut signer_hasher = Sha256::new();
+    signer_hasher.update(b"trnm.migration.cutover-signers.v0");
+    for (signer_id, weight) in weighted {
+        signer_hasher.update(signer_id.0);
+        signer_hasher.update(weight.to_be_bytes());
     }
     let signer_set_digest = Digest32V0(signer_hasher.finalize().into());
     let agreement_digest = Digest32V0::hash(
@@ -465,6 +521,7 @@ pub enum MigrationErrorV0 {
     InvalidExportHeader,
     RowsNotStrictlyOrdered,
     ExportRootMismatch,
+    VerifiedExportMismatch,
     InvalidTargetRow,
     InvalidMigrationPlan,
     DuplicateTargetKey,
@@ -484,6 +541,9 @@ impl fmt::Display for MigrationErrorV0 {
                 "source export rows are not strictly ordered and unique"
             }
             Self::ExportRootMismatch => "source export root mismatch",
+            Self::VerifiedExportMismatch => {
+                "projection rows do not match the independently verified export"
+            }
             Self::InvalidTargetRow => "invalid projected target row",
             Self::InvalidMigrationPlan => "migration plan is misbound or permits fallback",
             Self::DuplicateTargetKey => "projection produced a duplicate target key",
@@ -608,10 +668,10 @@ mod tests {
         }
     }
 
-    fn row(key: u8) -> ExportRowV0 {
+    fn row(byte: u8) -> ExportRowV0 {
         let namespace = b"accounts".to_vec();
-        let key = vec![key];
-        let value = vec![key, key];
+        let key = vec![byte];
+        let value = vec![byte, byte];
         ExportRowV0 {
             row_digest: ExportRowV0::canonical_digest(&namespace, &key, &value),
             namespace,
@@ -690,5 +750,89 @@ mod tests {
             row.validate().unwrap_err(),
             MigrationErrorV0::ForbiddenAuthorityState
         );
+    }
+
+    fn verified_fixture() -> (Vec<ExportRowV0>, VerifiedExportV0, MigrationPlanV0) {
+        let rows = vec![row(1), row(2)];
+        let export_root =
+            merkle_root_v0(&rows.iter().map(|row| row.row_digest).collect::<Vec<_>>());
+        let mut header = FinalizedExportHeaderV0 {
+            source_chain_id: d(1),
+            source_protocol_digest: d(2),
+            source_height: 100,
+            source_state_root: d(3),
+            source_schema_digest: d(4),
+            source_finality_proof_digest: d(5),
+            row_count: rows.len() as u64,
+            export_root,
+            header_digest: d(0),
+        };
+        header.header_digest = header.canonical_digest();
+        let export = verify_export_v0(&AcceptFinality, header, &rows).unwrap();
+        let mut plan = MigrationPlanV0 {
+            source_chain_id: header.source_chain_id,
+            source_protocol_digest: header.source_protocol_digest,
+            source_height: header.source_height,
+            source_export_header_digest: header.header_digest,
+            target_chain_id: d(6),
+            target_protocol_digest: d(7),
+            target_schema_digest: d(8),
+            target_genesis_id: d(9),
+            no_fallback: true,
+            downgrade_prohibited: true,
+            plan_digest: d(0),
+        };
+        plan.plan_digest = plan.canonical_digest();
+        (rows, export, plan)
+    }
+
+    #[test]
+    fn projection_rejects_rows_substituted_after_export_verification() {
+        let (rows, export, plan) = verified_fixture();
+        let mut substituted = rows.clone();
+        substituted[1].value.push(99);
+        substituted[1].row_digest = ExportRowV0::canonical_digest(
+            &substituted[1].namespace,
+            &substituted[1].key,
+            &substituted[1].value,
+        );
+        assert!(matches!(
+            project_and_recompute_v0(&plan, &export, &substituted, &IdentityProjector, &HashRoot),
+            Err(MigrationProjectionErrorV0::Protocol(
+                MigrationErrorV0::VerifiedExportMismatch
+            ))
+        ));
+    }
+
+    #[test]
+    fn authority_namespace_prefixes_are_never_importable() {
+        assert!(forbidden_authority_namespace(b"signer_journal/v2"));
+        assert!(forbidden_authority_namespace(b"node_commit_ledger_archive"));
+        assert!(!forbidden_authority_namespace(b"accounts"));
+    }
+
+    #[test]
+    fn cutover_signer_commitment_is_permutation_invariant() {
+        let (rows, export, plan) = verified_fixture();
+        let projection =
+            project_and_recompute_v0(&plan, &export, &rows, &IdentityProjector, &HashRoot).unwrap();
+        let first = CutoverAttestationV0 {
+            signer_id: d(10),
+            plan_digest: plan.plan_digest,
+            target_state_root: projection.target_state_root,
+            target_genesis_id: plan.target_genesis_id,
+            signature_digest: d(11),
+        };
+        let second = CutoverAttestationV0 {
+            signer_id: d(12),
+            plan_digest: plan.plan_digest,
+            target_state_root: projection.target_state_root,
+            target_genesis_id: plan.target_genesis_id,
+            signature_digest: d(13),
+        };
+        let a = verify_cutover_agreement_v0(&WeightOne, &projection, 2, &[first, second]).unwrap();
+        let b = verify_cutover_agreement_v0(&WeightOne, &projection, 2, &[second, first]).unwrap();
+        assert_eq!(a.signer_set_digest, b.signer_set_digest);
+        assert_eq!(a.agreement_digest, b.agreement_digest);
     }
 }
