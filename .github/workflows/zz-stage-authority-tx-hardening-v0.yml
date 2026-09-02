@@ -54,6 +54,20 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/stage_authority_tx_hardening_v0.py
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs')
+          text = path.read_text()
+          old = '''    #[must_use]
+    pub fn record(&self, tx_id: TxIdV0) -> Result<&TxRecordV0, TxLifecycleErrorV0> {
+'''
+          new = '''    pub fn record(&self, tx_id: TxIdV0) -> Result<&TxRecordV0, TxLifecycleErrorV0> {
+'''
+          if old not in text:
+              raise SystemExit('tx record lint anchor changed')
+          path.write_text(text.replace(old, new, 1))
+          PY
           cargo fmt --manifest-path trillionnium/Cargo.toml --all
           for package in trnm-node-boundary-v0 trnm-tx-lifecycle-v0
           do
