@@ -1,0 +1,99 @@
+name: Trillionnium Chain six-machine availability
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Why this bounded runner probe is being requested
+        required: false
+        default: operator-check
+        type: string
+
+# This is a routing probe, not a Chain build or node campaign. It deliberately
+# does not check out source and has no repository token permissions.
+permissions: {}
+
+jobs:
+  desktop:
+    name: Chain desktop runner probe
+    runs-on: [self-hosted, linux, x64, chain-fleet, desktop]
+    timeout-minutes: 10
+    steps:
+      - name: Verify desktop slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$GITHUB_REF" = refs/heads/main
+          test "$RUNNER_NAME" = desktop
+          uname -a
+
+  rog:
+    name: Chain ROG runner probe
+    runs-on: [self-hosted, linux, x64, chain-fleet, rog]
+    timeout-minutes: 10
+    steps:
+      - name: Verify ROG slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$GITHUB_REF" = refs/heads/main
+          test "$RUNNER_NAME" = rog
+          uname -a
+
+  x230:
+    name: Chain X230 runner probe
+    runs-on: [self-hosted, linux, x64, chain-fleet, x230]
+    timeout-minutes: 10
+    steps:
+      - name: Verify organization X230 slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$GITHUB_REF" = refs/heads/main
+          test "$RUNNER_NAME" = x230
+          uname -a
+
+  claw:
+    name: Chain claw-j3160 runner probe
+    runs-on: [self-hosted, linux, x64, chain-fleet, claw-j3160]
+    timeout-minutes: 10
+    steps:
+      - name: Verify claw-j3160 slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$GITHUB_REF" = refs/heads/main
+          test "$RUNNER_NAME" = claw-j3160
+          uname -a
+
+  pocket4:
+    name: Chain Pocket4 runner probe
+    runs-on: [self-hosted, linux, x64, chain-fleet, pocket4]
+    timeout-minutes: 10
+    steps:
+      - name: Verify Pocket4 slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$GITHUB_REF" = refs/heads/main
+          test "$RUNNER_NAME" = pocket4
+          uname -a
+
+  macbook:
+    name: Chain MacBook Pro runner probe
+    runs-on: [self-hosted, macOS, ARM64, chain-fleet, macbook]
+    timeout-minutes: 10
+    steps:
+      - name: Verify MacBook Pro slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$GITHUB_REF" = refs/heads/main
+          test "$RUNNER_NAME" = macbook-pro
+          uname -a
