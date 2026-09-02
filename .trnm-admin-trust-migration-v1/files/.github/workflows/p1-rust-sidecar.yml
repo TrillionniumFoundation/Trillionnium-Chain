@@ -1,0 +1,157 @@
+name: p1-rust-sidecar
+
+on:
+  workflow_dispatch:
+  # Intentionally do not run on pull_request: this job executes repository code on
+  # the trusted X230 runner with local chain access, so only trusted
+  # main/workflow_dispatch contexts may invoke it.
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/v2/run_p1_integration_gate.sh'
+      - 'scripts/v2/run_p1_integration_gate_*_invocation_test.sh'
+      - 'scripts/v2/x2_settlement_contract_gate.sh'
+      - 'scripts/v2/i2_token_lifecycle_gate.sh'
+      - 'scripts/v2/product_layer_smoke.sh'
+      - 'scripts/ci/check_preprovisioned_rust_toolchain.sh'
+      - 'scripts/ci/check_cargo_offline_ready.sh'
+      - 'scripts/ci/check_cargo_offline_unchanged.sh'
+      - 'examples/sdk-js/**'
+      - 'trillionnium/crates/trnm-rpc/src/**'
+      - 'trillionnium/crates/trnm-rpc/tests/**'
+      - '.github/workflows/p1-rust-sidecar.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p1-rust-sidecar-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  p1-with-rust-sidecar:
+    # Requires the repository-owned X230 runner and local Trillionnium dev chain.
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman') &&
+      github.triggering_actor == github.actor &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 90
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      LC_NUMERIC: C
+      LC_COLLATE: C
+      LC_TIME: C
+      LC_CTYPE: C
+      LC_MESSAGES: C
+      LC_MONETARY: C
+      LC_MEASUREMENT: C
+      LC_NAME: C
+      LC_PAPER: C
+      LC_ADDRESS: C
+      LC_TELEPHONE: C
+      PYTHONHASHSEED: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONIOENCODING: "UTF-8"
+      PYTHONUTF8: "1"
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      CI: "true"
+      UMASK: "022"
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify runner-provisioned jq
+        run: |
+          command -v jq >/dev/null 2>&1
+          jq --version
+
+      - name: Preflight - chain RPC must be reachable
+        run: |
+          curl -sf http://127.0.0.1:26657/status >/dev/null
+
+      - name: Run P1 integration gate (blocking)
+        run: |
+          set -euo pipefail
+          RUN_DIR="run/p1-integration-gate/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" ./scripts/v2/run_p1_integration_gate.sh
+
+      - name: Summarize integration gate result
+        if: always()
+        id: p1-summary
+        run: |
+          set -euo pipefail
+          P1_SUMMARY_PATH="run/p1-integration-gate/summary-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}.json"
+          mkdir -p "$(dirname "$P1_SUMMARY_PATH")"
+          latest_dir=$(ls -1dt run/p1-integration-gate/* 2>/dev/null | head -n 1 || true)
+          if [[ -z "$latest_dir" ]]; then
+            echo "::warning::No run/p1-integration-gate artifacts found"
+            cat >"$P1_SUMMARY_PATH" <<EOF
+          {
+            "status": "warn-missing-artifacts",
+            "run_dir": "",
+            "github_run_id": "${GITHUB_RUN_ID:-local}",
+            "github_run_attempt": "${GITHUB_RUN_ATTEMPT:-1}"
+          }
+          EOF
+            echo "p1_summary_json=$P1_SUMMARY_PATH" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Using run dir: $latest_dir"
+          ls -1 "$latest_dir" || true
+          cat >"$P1_SUMMARY_PATH" <<EOF
+          {
+            "status": "ok",
+            "run_dir": "$latest_dir",
+            "github_run_id": "${GITHUB_RUN_ID:-local}",
+            "github_run_attempt": "${GITHUB_RUN_ATTEMPT:-1}"
+          }
+          EOF
+          echo "p1_summary_json=$P1_SUMMARY_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Upload P1 integration artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p1-rust-sidecar-artifacts-${{ github.run_id }}
+          path: |
+            run/p1-integration-gate/**
+          if-no-files-found: warn
+
+      - name: Upload P1 summary artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p1-rust-sidecar-summary-${{ github.run_id }}
+          path: |
+            ${{ steps.p1-summary.outputs.p1_summary_json }}
+          if-no-files-found: error
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

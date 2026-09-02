@@ -1,0 +1,2 @@
+.github/workflows/trnm-admin-trust-migration-once.yml
+scripts/ci/trnm_admin_trust_migration_once.py

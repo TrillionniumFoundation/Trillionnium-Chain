@@ -1,0 +1,809 @@
+name: TRNM PoCO-BFT v0 gates
+
+on:
+  # Weekly bounded protocol/authority regression.  This workflow is
+  # development-only: it never starts validators, deploys artifacts, or
+  # changes activation/readiness truth.
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-poco-bft-v0.yml"
+      - ".github/workflows/rust-l1-testnet-preflight.yml"
+      - "PROJECT_ID"
+      - "PROJECT_BOUNDARY.json"
+      - "README.md"
+      - "RELEASE_READINESS.md"
+      - "config/consensus-mainline.json"
+      - "docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md"
+      - "docs/development/README.md"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      - "docs/development/plan-manifest-v1.toml"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+      - "docs/audits/TRNM_CHAIN_ALL_VERSIONS_AUDIT_2026-08-26.md"
+      - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
+      - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"
+      - "docs/audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md"
+      - "docs/protocol/poco-bft-v0/**"
+      - "formal/quint/poco-bft-v0/**"
+      - "proto/trnm/poco/**"
+      - "scripts/ci/author_poco_bft_v0_application_sequences.mjs"
+      - "scripts/ci/check_poco_bft_v0_*"
+      - "scripts/ci/check_canonical_development_plan.sh"
+      - "scripts/ci/check_poco_bft_mainline_truth.sh"
+      - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
+      - "scripts/ci/check_poco_g3_lan_fleet.sh"
+      - "scripts/poco-fleet/**"
+      - "scripts/ci/check_canonical_fuzz_smoke.sh"
+      - "scripts/ci/check_cargo_offline_*"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/install_cargo_deny.sh"
+      - "scripts/ci/install_cargo_fuzz.sh"
+      - "scripts/check_ci_runner_policy.sh"
+      - "scripts/check_ci_runner_policy_test.sh"
+      - "scripts/project-preflight.sh"
+      - "deny.toml"
+      - "rust-toolchain.toml"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-consensus-core/**"
+      - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-native-application/**"
+      - "trillionnium/crates/trnm-native-application-sqlite/**"
+      - "trillionnium/crates/trnm-native-execution-v0/**"
+      - "trillionnium/crates/trnm-consensus-external-watermark/**"
+      - "trillionnium/crates/trnm-consensus-peer-lease/**"
+      - "trillionnium/crates/trnm-consensus-remote-signer-protocol/**"
+      - "trillionnium/crates/trnm-consensus-remote-signer-service/**"
+      - "trillionnium/crates/trnm-consensus-safety-rules/**"
+      - "trillionnium/crates/trnm-consensus-safety-store/**"
+      - "trillionnium/crates/trnm-consensus-signer-journal/**"
+      - "trillionnium/crates/trnm-consensus-sim/**"
+      - "trillionnium/crates/trnm-consensus-types/**"
+      - "trillionnium/crates/trnm-consensus-unix-fleet-signer/**"
+      - "trillionnium/crates/trnm-consensus-unix-remote-signer/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-mempool/**"
+      - "trillionnium/crates/trnm-poco-lab-validator/**"
+      - "trillionnium/crates/trnm-poco-node/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/crates/trnm-runtime/**"
+      - "trillionnium/fuzz/**"
+      - "trillionnium/scripts/testnet_preflight.sh"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trnm-poco-bft-v0.yml"
+      - ".github/workflows/rust-l1-testnet-preflight.yml"
+      - "PROJECT_ID"
+      - "PROJECT_BOUNDARY.json"
+      - "README.md"
+      - "RELEASE_READINESS.md"
+      - "config/consensus-mainline.json"
+      - "docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md"
+      - "docs/development/README.md"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      - "docs/development/plan-manifest-v1.toml"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+      - "docs/audits/TRNM_CHAIN_ALL_VERSIONS_AUDIT_2026-08-26.md"
+      - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
+      - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"
+      - "docs/audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md"
+      - "docs/protocol/poco-bft-v0/**"
+      - "formal/quint/poco-bft-v0/**"
+      - "proto/trnm/poco/**"
+      - "scripts/ci/author_poco_bft_v0_application_sequences.mjs"
+      - "scripts/ci/check_poco_bft_v0_*"
+      - "scripts/ci/check_canonical_development_plan.sh"
+      - "scripts/ci/check_poco_bft_mainline_truth.sh"
+      - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
+      - "scripts/ci/check_poco_g3_lan_fleet.sh"
+      - "scripts/poco-fleet/**"
+      - "scripts/ci/check_canonical_fuzz_smoke.sh"
+      - "scripts/ci/check_cargo_offline_*"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/install_cargo_deny.sh"
+      - "scripts/ci/install_cargo_fuzz.sh"
+      - "scripts/check_ci_runner_policy.sh"
+      - "scripts/check_ci_runner_policy_test.sh"
+      - "scripts/project-preflight.sh"
+      - "deny.toml"
+      - "rust-toolchain.toml"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-consensus-core/**"
+      - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-native-application/**"
+      - "trillionnium/crates/trnm-native-application-sqlite/**"
+      - "trillionnium/crates/trnm-native-execution-v0/**"
+      - "trillionnium/crates/trnm-consensus-external-watermark/**"
+      - "trillionnium/crates/trnm-consensus-peer-lease/**"
+      - "trillionnium/crates/trnm-consensus-remote-signer-protocol/**"
+      - "trillionnium/crates/trnm-consensus-remote-signer-service/**"
+      - "trillionnium/crates/trnm-consensus-safety-rules/**"
+      - "trillionnium/crates/trnm-consensus-safety-store/**"
+      - "trillionnium/crates/trnm-consensus-signer-journal/**"
+      - "trillionnium/crates/trnm-consensus-sim/**"
+      - "trillionnium/crates/trnm-consensus-types/**"
+      - "trillionnium/crates/trnm-consensus-unix-fleet-signer/**"
+      - "trillionnium/crates/trnm-consensus-unix-remote-signer/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-mempool/**"
+      - "trillionnium/crates/trnm-poco-lab-validator/**"
+      - "trillionnium/crates/trnm-poco-node/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/crates/trnm-runtime/**"
+      - "trillionnium/fuzz/**"
+      - "trillionnium/scripts/testnet_preflight.sh"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-poco-bft-v0-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  TZ: UTC
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONIOENCODING: UTF-8
+  PYTHONUTF8: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_RETRY: "5"
+  CARGO_HTTP_TIMEOUT: "120"
+
+jobs:
+  vectors-schema-proto:
+    name: Frozen vectors, schemas, and protobuf projection
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22.18.0"
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify workflow trigger and safety truth
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
+
+      - name: Verify canonical development plan and anti-pollution boundary
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_canonical_development_plan.sh
+
+      - name: Verify native PoCO mainline and migration truth
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+
+      - name: Verify CI coverage and readiness-truth boundaries
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_v0_ci_truth.sh
+
+      - name: Install checksum-pinned protoc 29.3
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          install_root="$RUNNER_TEMP/protoc-29.3"
+          protoc_path="$(./scripts/ci/install_pinned_protoc.sh "$install_root")"
+          printf '%s\n' "PROTOC=$protoc_path" >> "$GITHUB_ENV"
+          "$protoc_path" --version
+
+      - name: Independent vector gates
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 ./scripts/ci/check_poco_bft_v0_parameters.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
+          python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
+          python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
+          bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+          bash ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+          bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+
+      - name: Machine-readable schema and exact-parser gates
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          bash ./scripts/ci/check_poco_bft_v0_registry.sh
+          bash ./scripts/ci/check_poco_bft_v0_logical_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_block_body_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+
+      - name: Pinned protobuf descriptor gate
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_v0_proto.sh
+
+      - name: Project boundary preflight
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          command -v rg >/dev/null 2>&1
+          rg --version
+          bash ./scripts/project-preflight.sh --audit
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  rust:
+    name: Rust tests, Clippy, and formatting
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component clippy \
+            --component rustfmt
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Consensus crate tests
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo test --locked -p trnm-consensus-types
+          cargo test --locked -p trnm-consensus-crypto
+          cargo test --locked -p trnm-native-application --all-targets
+          cargo test --locked -p trnm-native-application-sqlite --all-targets
+          cargo test --locked -p trnm-native-execution-v0 --all-targets
+          cargo test --locked -p trnm-mempool --all-targets
+          cargo test --locked -p trnm-consensus-external-watermark --all-targets
+          cargo test --locked -p trnm-consensus-peer-lease --all-targets
+          cargo test --locked -p trnm-consensus-remote-signer-protocol --all-targets
+          cargo test --locked -p trnm-consensus-remote-signer-service --all-targets
+          cargo test --locked -p trnm-consensus-safety-rules --all-targets
+          cargo test --locked -p trnm-consensus-unix-remote-signer --all-targets --features test-fixture
+          cargo test --locked -p trnm-consensus-unix-fleet-signer --all-targets --features test-fixture
+          cargo test --locked -p trnm-consensus-core
+          cargo test --locked -p trnm-consensus-safety-store --lib --tests
+          cargo test --locked -p trnm-consensus-signer-journal --all-targets
+          cargo test --locked -p trnm-consensus-sim
+          cargo test --locked -p trnm-finality-types
+          cargo test --locked -p trnm-poco-lab-validator --all-targets
+          cargo test --locked -p trnm-poco-node --all-targets --features recovery-process-test-support
+          cargo test --locked -p trnm-protocol
+          cargo test --locked -p trnm-runtime
+
+      - name: Candidate G1 real-process boundary
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo test --locked -p trnm-poco-node --test g1_process_host_e2e \
+            --features g1-process-test-support
+
+      - name: Deterministic WireEnvelope mutation corpus
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_v0_wire_mutations.sh
+
+      - name: Focused node-event WAL feature tests
+        working-directory: trillionnium-chain/trillionnium
+        run: cargo test --locked -p trnm-poco-node --lib --features node-event-wal 'node_event_wal::tests::'
+
+      - name: Active native bounded-timeout SIGKILL recovery gate
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh
+
+      - name: Strict Clippy
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo clippy --locked -p trnm-consensus-types --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-crypto --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-native-application --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-native-application-sqlite --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-native-execution-v0 --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-mempool --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-external-watermark --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-peer-lease --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-remote-signer-service --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-safety-rules --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-unix-remote-signer --all-targets --features test-fixture --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-unix-fleet-signer --all-targets --features test-fixture --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-core --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-safety-store --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-signer-journal --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-sim --all-targets -- -D warnings
+          # These two packages retain Rust 1.95 baseline lint debt; their
+          # all-target tests above remain mandatory until the debt is isolated.
+          # These integration crates retain legacy workspace dependencies.
+          # --no-deps keeps strictness on the selected package without
+          # turning unrelated retained warnings into PoCO tranche failures.
+          cargo clippy --locked -p trnm-finality-types --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-process-test-support --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-protocol --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-runtime --all-targets --no-deps -- -D warnings
+
+      - name: Rustfmt
+        working-directory: trillionnium-chain/trillionnium
+        run: cargo fmt --all -- --check
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  formal:
+    name: Quint invariants, witnesses, and retained mutants
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22.18.0"
+
+      - name: Install lock-pinned Quint toolchain
+        working-directory: trillionnium-chain/formal/quint/poco-bft-v0
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Run bounded formal gate
+        working-directory: trillionnium-chain
+        env:
+          QUINT_HOME: ${{ runner.temp }}/quint-home
+        run: bash ./scripts/ci/check_poco_bft_v0_formal.sh
+
+  release-artifacts:
+    name: Development-only integration library artifact build
+    needs: [rust, vectors-schema-proto]
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Build development-only integration libraries
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo build --locked --release --no-default-features \
+            -p trnm-consensus-types \
+            -p trnm-consensus-crypto \
+            -p trnm-consensus-core \
+            -p trnm-consensus-safety-store \
+            -p trnm-consensus-signer-journal \
+            -p trnm-finality-types \
+            -p trnm-poco-node \
+            -p trnm-protocol \
+            -p trnm-runtime
+          artifact_stage="$(mktemp -d "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.XXXXXX")"
+          find target/release/deps -maxdepth 1 -type f \
+            \( -name 'libtrnm_consensus_*' \
+               -o -name 'libtrnm_finality_types*' \
+               -o -name 'libtrnm_protocol*' \
+               -o -name 'libtrnm_runtime*' \) \
+            -print0 | sort -z > "$RUNNER_TEMP/trnm-poco-artifacts.list"
+          test -s "$RUNNER_TEMP/trnm-poco-artifacts.list"
+          while IFS= read -r -d '' artifact; do
+            cp -- "$artifact" "$artifact_stage/"
+          done < "$RUNNER_TEMP/trnm-poco-artifacts.list"
+          find "$artifact_stage" -maxdepth 1 -type f \
+            -name 'libtrnm_consensus_safety_store*' -print -quit \
+            | grep -q .
+          find "$artifact_stage" -maxdepth 1 -type f \
+            -name 'libtrnm_consensus_signer_journal*' -print -quit \
+            | grep -q .
+          metadata="$artifact_stage/ARTIFACT-METADATA.txt"
+          {
+            printf '%s\n' 'artifact_schema=trnm-poco-bft-v0-development-libraries-v1'
+            printf '%s\n' 'artifact_class=development_only'
+            printf '%s\n' 'build_profile=release'
+            printf '%s\n' 'development_only=true'
+            printf '%s\n' 'production_consensus_activation=false'
+            printf '%s\n' 'deployable_node=false'
+            printf '%s\n' 'production_candidate=false'
+            printf '%s\n' 'incomplete=true'
+            printf '%s\n' 'effect_driver=false'
+            printf '%s\n' 'source_bounded_timeout_signing_effect_loop=true'
+            printf '%s\n' 'artifact_bounded_timeout_signing_effect_loop=false'
+            printf '%s\n' 'source_vote_signing_effect_loop=false'
+            printf '%s\n' 'production_signature_producer=false'
+            printf '%s\n' 'network_broadcast_transport=false'
+            printf '%s\n' 'poco_node_binary_included=false'
+            printf '%s\n' 'production_ready=false'
+            printf '%s\n' 'test_features_included=false'
+            printf '%s\n' 'recovery_test_support_included=false'
+            printf '%s\n' 'recovery_process_test_support_included=false'
+            printf '%s\n' 'recovery_only_core_step=false'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_matrix=EVALUATED'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_case_count=6'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_evidence=true'
+            printf '%s\n' 'artifact_bounded_timeout_process_sigkill_capability=false'
+            printf '%s\n' 'validation_recovery_scope=deterministic_invalid_existing_only_v0'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_matrix=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_scope=none'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_case_count=0'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_checkpoint_origin=none'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_evidence=false'
+            printf '%s\n' 'artifact_validation_recovery_process_sigkill_capability=false'
+            printf '%s\n' 'process_sigkill_helper_included=false'
+            printf '%s\n' 'power_loss_fsync_matrix=NOT_EVALUATED'
+            printf '%s\n' 'application_safety_binding_manifest=true'
+            printf '%s\n' 'application_safety_binding_initializer=fixture_only_not_in_artifact'
+            printf '%s\n' 'application_recovery_secure_namespace=true'
+            printf '%s\n' 'application_recovery_secure_namespace_scope=local_linux_non_same_euid_v0'
+            printf '%s\n' 'application_recovery_sqlite_main_fd_identity=false'
+            printf '%s\n' 'application_recovery_wal_shm_inode_pinning=false'
+            printf '%s\n' 'block_id_speculative_overlay=false'
+            printf '%s\n' 'ordered_finalization_queue=false'
+            printf '%s\n' 'whole_node_namespace_rollback_protection=false'
+            printf '%s\n' 'includes_trnm_consensus_safety_store=true'
+            printf '%s\n' 'includes_trnm_consensus_signer_journal=true'
+            printf '%s\n' 'external_monotonic_signer_watermark_bound=false'
+            printf '%s\n' 'truth_source=RELEASE_READINESS.md'
+            printf 'source_revision=%s\n' "$GITHUB_SHA"
+          } > "$metadata"
+          (
+            cd "$artifact_stage"
+            sha256sum lib* > LIBRARIES.sha256
+          )
+          cp -- "$metadata" \
+            "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.metadata.txt"
+          tar --sort=name --owner=0 --group=0 --numeric-owner \
+            --directory "$artifact_stage" --create --gzip \
+            --file "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.tar.gz" .
+          sha256sum "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.tar.gz" \
+            > "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.tar.gz.sha256"
+
+      - name: Verify development-only artifact boundary
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.tar.gz"
+          checksum="$archive.sha256"
+          sha256sum --check --strict "$checksum"
+          inspection="$(mktemp -d "$RUNNER_TEMP/trnm-poco-bft-v0-artifact-inspection.XXXXXX")"
+          tar --extract --gzip --file "$archive" --directory "$inspection"
+          metadata="$inspection/ARTIFACT-METADATA.txt"
+          test -f "$metadata"
+          grep -Fxq 'artifact_class=development_only' "$metadata"
+          grep -Fxq 'build_profile=release' "$metadata"
+          grep -Fxq 'development_only=true' "$metadata"
+          grep -Fxq 'production_consensus_activation=false' "$metadata"
+          grep -Fxq 'deployable_node=false' "$metadata"
+          grep -Fxq 'production_candidate=false' "$metadata"
+          grep -Fxq 'incomplete=true' "$metadata"
+          grep -Fxq 'effect_driver=false' "$metadata"
+          grep -Fxq 'source_bounded_timeout_signing_effect_loop=true' "$metadata"
+          grep -Fxq 'artifact_bounded_timeout_signing_effect_loop=false' "$metadata"
+          grep -Fxq 'source_vote_signing_effect_loop=false' "$metadata"
+          grep -Fxq 'production_signature_producer=false' "$metadata"
+          grep -Fxq 'network_broadcast_transport=false' "$metadata"
+          grep -Fxq 'poco_node_binary_included=false' "$metadata"
+          grep -Fxq 'production_ready=false' "$metadata"
+          grep -Fxq 'test_features_included=false' "$metadata"
+          grep -Fxq 'recovery_test_support_included=false' "$metadata"
+          grep -Fxq 'recovery_process_test_support_included=false' "$metadata"
+          grep -Fxq 'recovery_only_core_step=false' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_matrix=EVALUATED' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_case_count=6' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_evidence=true' "$metadata"
+          grep -Fxq 'artifact_bounded_timeout_process_sigkill_capability=false' "$metadata"
+          grep -Fxq 'validation_recovery_scope=deterministic_invalid_existing_only_v0' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_matrix=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_scope=none' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_case_count=0' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_checkpoint_origin=none' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_evidence=false' "$metadata"
+          grep -Fxq 'artifact_validation_recovery_process_sigkill_capability=false' "$metadata"
+          grep -Fxq 'process_sigkill_helper_included=false' "$metadata"
+          grep -Fxq 'power_loss_fsync_matrix=NOT_EVALUATED' "$metadata"
+          grep -Fxq 'application_safety_binding_manifest=true' "$metadata"
+          grep -Fxq 'application_safety_binding_initializer=fixture_only_not_in_artifact' "$metadata"
+          grep -Fxq 'application_recovery_secure_namespace=true' "$metadata"
+          grep -Fxq 'application_recovery_secure_namespace_scope=local_linux_non_same_euid_v0' "$metadata"
+          grep -Fxq 'application_recovery_sqlite_main_fd_identity=false' "$metadata"
+          grep -Fxq 'application_recovery_wal_shm_inode_pinning=false' "$metadata"
+          grep -Fxq 'block_id_speculative_overlay=false' "$metadata"
+          grep -Fxq 'ordered_finalization_queue=false' "$metadata"
+          grep -Fxq 'whole_node_namespace_rollback_protection=false' "$metadata"
+          grep -Fxq 'includes_trnm_consensus_safety_store=true' "$metadata"
+          grep -Fxq "source_revision=$GITHUB_SHA" "$metadata"
+          find "$inspection" -maxdepth 1 -type f \
+            -name 'libtrnm_consensus_safety_store*' -print -quit \
+            | grep -q .
+          if find "$inspection" -maxdepth 1 -type f -perm /111 -print -quit \
+            | grep -q .; then
+            printf '%s\n' \
+              'development-only library archive unexpectedly contains an executable' >&2
+            exit 1
+          fi
+          if find "$inspection" -maxdepth 1 -type f \
+            -name '*trnm-poco-recovery-kill-helper*' -print -quit \
+            | grep -q .; then
+            printf '%s\n' \
+              'development-only library archive unexpectedly contains the SIGKILL helper' >&2
+            exit 1
+          fi
+          if find "$inspection" -maxdepth 1 -type f \
+            -name '*trnm-poco-timeout-signing-kill-helper*' -print -quit \
+            | grep -q .; then
+            printf '%s\n' \
+              'development-only library archive unexpectedly contains the timeout SIGKILL helper' >&2
+            exit 1
+          fi
+
+      - name: Upload development-only libraries
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-poco-bft-v0-development-libs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/trnm-poco-bft-v0-development-libs.tar.gz
+            ${{ runner.temp }}/trnm-poco-bft-v0-development-libs.tar.gz.sha256
+            ${{ runner.temp }}/trnm-poco-bft-v0-development-libs.metadata.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  dependency-policy:
+    name: Cargo dependency policy
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "cargo-deny"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock \
+            trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
+
+      - name: Verify runner-provisioned cargo-deny
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_cargo_deny.sh
+
+      - name: Run frozen cargo-deny policy checks
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_deny_offline.sh \
+            trillionnium/Cargo.toml \
+            trillionnium/fuzz/Cargo.toml
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  fuzz-smoke:
+    name: Bounded canonical-input fuzz smoke
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "cargo-fuzz"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain nightly-2026-07-27
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain nightly-2026-07-27 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
+
+      - name: Verify runner-provisioned cargo-fuzz
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_cargo_fuzz.sh
+
+      - name: Run bounded three-target smoke
+        working-directory: trillionnium-chain
+        env:
+          TRNM_FUZZ_SMOKE_SECONDS: "15"
+        run: ./scripts/ci/check_canonical_fuzz_smoke.sh
+
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-poco-fuzz-${{ github.run_id }}-${{ github.run_attempt }}
+          path: trillionnium-chain/trillionnium/fuzz/artifacts/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

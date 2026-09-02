@@ -1,0 +1,419 @@
+name: trnm-merge-gates
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'config/legacy-harness-freeze.sha256'
+      - 'config/alert-policy/**'
+      - 'trillionnium/**'
+      - 'web4-frontend/**'
+      - 'scripts/**'
+      - '.github/workflows/agent-user-phasea-gate.yml'
+      - '.github/workflows/p1-rust-sidecar.yml'
+      - '.github/workflows/rust-l1-nightly-health.yml'
+      - '.github/workflows/rust-l1-testnet-preflight.yml'
+      - '.github/workflows/trnm-gate-quick-check.yml'
+      - '.github/workflows/trnm-merge-gates.yml'
+      - '.github/workflows/web4-frontend-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'config/legacy-harness-freeze.sha256'
+      - 'config/alert-policy/**'
+      - 'trillionnium/**'
+      - 'web4-frontend/**'
+      - 'scripts/**'
+      - '.github/workflows/agent-user-phasea-gate.yml'
+      - '.github/workflows/p1-rust-sidecar.yml'
+      - '.github/workflows/rust-l1-nightly-health.yml'
+      - '.github/workflows/rust-l1-testnet-preflight.yml'
+      - '.github/workflows/trnm-gate-quick-check.yml'
+      - '.github/workflows/trnm-merge-gates.yml'
+      - '.github/workflows/web4-frontend-ci.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-merge-gates-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust-l1-merge-gates:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      LC_NUMERIC: C
+      LC_COLLATE: C
+      LC_TIME: C
+      LC_CTYPE: C
+      LC_MESSAGES: C
+      LC_MONETARY: C
+      LC_MEASUREMENT: C
+      # Keep page-size/unit locale formatting deterministic for any helpers
+      # emitting paper/print-related evidence text.
+      LC_PAPER: C
+      # Keep locale-derived postal/address formatting deterministic for any
+      # helper serializing operator/site metadata into CI evidence.
+      LC_ADDRESS: C
+      # Keep locale-derived personal-name formatting deterministic for helpers
+      # that emit operator identity fields in CI evidence.
+      LC_NAME: C
+      # Keep locale-driven telephone formatting deterministic for helpers that
+      # serialize operator contact fields in CI evidence outputs.
+      LC_TELEPHONE: C
+      PYTHONHASHSEED: "0"
+      # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so
+      # merge-gate CI workspaces remain side-effect free across reruns.
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONIOENCODING: "UTF-8"
+      PYTHONUTF8: "1"
+      # Force unbuffered Python stdio so CI failure evidence ordering is stable
+      # under runner load and replayed logs.
+      PYTHONUNBUFFERED: "1"
+      # Ignore user-site Python packages so runner-local residue cannot alter
+      # module resolution during merge-gate probes.
+      PYTHONNOUSERSITE: "1"
+      # Disable pip's periodic version check network call to avoid nondeterministic
+      # stderr timing/noise and occasional flaky delays in shell-driven probes.
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      # Bound pip network waits so transient index stalls fail fast/retriable
+      # instead of hanging merge-gate jobs until global step timeout.
+      PIP_DEFAULT_TIMEOUT: "60"
+      # Suppress pip interpreter lifecycle warning chatter for deterministic logs.
+      PIP_NO_PYTHON_VERSION_WARNING: "1"
+      # Disable dynamic pip progress rendering to keep stderr/stdout stable.
+      PIP_PROGRESS_BAR: "off"
+      CARGO_TERM_COLOR: never
+      # Disable dynamic progress rendering to keep cargo logs deterministic
+      # across reruns and runner load variance.
+      CARGO_TERM_PROGRESS_WHEN: never
+      CARGO_INCREMENTAL: "0"
+      # Reduce transient crates.io/index fetch flakes during RC gate runs.
+      CARGO_NET_RETRY: "5"
+      CARGO_HTTP_TIMEOUT: "120"
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+      CI: "true"
+      # Stabilize created file permissions across runner/image defaults so
+      # replay artifacts and git diffs keep deterministic mode bits.
+      UMASK: "022"
+      SOURCE_DATE_EPOCH: "1704067200"
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Enforce frozen legacy binary surfaces
+        run: bash ./scripts/ci/check_legacy_harness_freeze.sh
+
+      - name: Deterministic env guard self-check (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
+
+      - name: Testnet preflight deterministic env guard drift check (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh
+
+      - name: PoUW proof-binding fail-closed gate (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo test -p trnm-pouw --lib --locked
+
+      - name: V1 proof backend CI gate (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/v1_proof_backend_ci_gate.sh
+
+      - name: Rust workspace tests
+        run: |
+          set -euo pipefail
+          # Keep test scheduling deterministic across runner class changes to
+          # reduce timing-sensitive flakes in RC merge-gate runs.
+          export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
+          cd trillionnium
+          cargo test --workspace --locked
+
+      - name: Run parallel mode sanity (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          mkdir -p run run/bench
+          cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim --locked -- \
+            --config configs/node1.toml \
+            --block-ms 5 \
+            --max-blocks 6 \
+            --demo-tasks 8 \
+            --demo-keys 3 \
+            --parallel-workers 4 | tee run/parallel-sanity.log
+
+          if grep -E '\[tx\] apply_error|rollback=true' run/parallel-sanity.log; then
+            echo "parallel sanity detected apply_error/rollback" >&2
+            exit 2
+          fi
+
+      - name: Validate v1 event field freeze (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
+
+      - name: Challenge escrow/forfeit reconcile (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pr5_reconcile_conservation_test.sh
+          ./scripts/v2/pr5_event_rpc_treasury_consistency_test.sh
+          ./scripts/v2/pr5_challenge_reconcile_gate.sh
+
+      - name: PR-7 retry budget storm control regression (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pr7_global_retry_budget_storm_test.sh
+
+      - name: Validate PoUW timeout migration gates (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pouw_commit_timeout_migration_test.sh
+          ./scripts/v2/pouw_challenge_timeout_migration_test.sh
+
+      - name: Validate challenge bond enforcement gate (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/challenge_bond_enforcement_test.sh
+
+      - name: Governance value schema reject gate (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/governance_value_schema_reject_test.sh
+
+      - name: Settlement governance query gate (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/settlement_governance_query_gate.sh
+
+      - name: Emergency pause drill (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/emergency_pause_drill.sh
+
+      - name: Tokenomics R1-R14 regression gate (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/run_tokenomics_r1_r14_regression_gate.sh
+
+      - name: Validate v1 event replay order (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          MVP_MODE=prod ALLOW_PARTIAL_EVENT_REPLAY=0 ./scripts/check_event_replay_smoke.sh
+
+      - name: BFT 4-node consensus smoke (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          ./scripts/check_bft_4node_smoke.sh
+
+      - name: BFT restart recovery (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          RUNS=${BFT_RECOVERY_RUNS:-5} ./scripts/check_bft_restart_recovery.sh
+
+      - name: BFT message auth anti-replay (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          ./scripts/check_bft_message_auth.sh
+
+      - name: BFT round-change + recovery liveness (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          ./scripts/check_bft_round_change.sh
+
+      - name: Consensus fault matrix (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          BASELINE_MAX_FINALITY_P95_MS=${BASELINE_MAX_FINALITY_P95_MS:-100} \
+          SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
+          RESTART_RECOVERY_MAX_FINALITY_P95_MS=${RESTART_RECOVERY_MAX_FINALITY_P95_MS:-200} \
+          BASELINE_MAX_ROUND_CHANGE_TOTAL=${BASELINE_MAX_ROUND_CHANGE_TOTAL:-8} \
+          SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL=${SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL:-8} \
+          RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL=${RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL:-8} \
+          ./scripts/run_consensus_fault_matrix.sh
+
+      - name: Request fault injection (MVP hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          ./scripts/run_request_fault_injection.sh
+
+      - name: Request tx-hash binding (hard gate)
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          ./scripts/check_request_tx_binding.sh
+
+      - name: Challenge reexec bundle smoke (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/challenge_reexec_template_smoke.sh
+
+      - name: Worker-agent hermetic receipt state-machine hard gate
+        run: |
+          set -euo pipefail
+          ./scripts/v2/run_worker_receipt_gates.sh
+
+      - name: Governance unchecked API usage guard (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/check_unchecked_gov_usage.sh
+
+      - name: Active PoCO CLI cutover hard gate
+        run: |
+          set -euo pipefail
+          ./scripts/v2/worker_poco_cli_cutover_gate.sh
+
+      - name: Worker-agent multi-agent onboarding smoke (hard gate)
+        run: |
+          set -euo pipefail
+          TRNM_TX_ADAPTER_MODE=mock SKIP_GATES=1 AGENTS=${WORKER_MULTI_AGENTS:-3} \
+            ./scripts/v2/worker_agent_mining_onboard.sh
+
+      - name: P1-4 integration gate (sdk examples + product smoke + rpc contract v1)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/run_p1_integration_gate.sh
+
+      - name: Web4 release aggregate gate (hard gate)
+        run: |
+          set -euo pipefail
+          ./scripts/v2/web4_release_aggregate_gate.sh
+
+      - name: Aggressive regression check (PR-visible warn)
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          cd trillionnium
+
+          TXS=${PR_REGRESSION_MATRIX_TXS:-5000} ./scripts/run_bench_regression_matrix.sh
+
+          REPORT="run/bench/aggressive-regression-pr-${GITHUB_RUN_ID:-local}.txt"
+          set +e
+          MODE=warn \
+          AGGRESSIVE_MAX_RATIO_CLASSIC=${AGGRESSIVE_MAX_RATIO_CLASSIC:-4.75} \
+          AGGRESSIVE_MAX_RATIO_MIXED=${AGGRESSIVE_MAX_RATIO_MIXED:-3.75} \
+          AGGRESSIVE_MAX_RATIO_HOT_STREAK=${AGGRESSIVE_MAX_RATIO_HOT_STREAK:-3.75} \
+          ./scripts/check_aggressive_regression.sh 2>&1 | tee "$REPORT"
+          rc=${PIPESTATUS[0]}
+          set -euo pipefail
+
+          python3 ./scripts/summarize_aggressive_profile.py
+          python3 ./scripts/analyze_aggressive_scan_correlation.py
+
+          shopt -s nullglob
+          profile_candidates=(run/bench/aggressive-profile-summary-*.md)
+          corr_candidates=(run/bench/aggressive-scan-correlation-*.md)
+          shopt -u nullglob
+
+          PROFILE_SUMMARY="${profile_candidates[0]:-}"
+          CORR_SUMMARY="${corr_candidates[0]:-}"
+
+          if grep -q "regression ratio above threshold" "$REPORT"; then
+            echo "::warning title=Aggressive regression warning::One or more aggressive/original ratios exceeded threshold. See workflow summary + artifact report."
+          fi
+
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "$REPORT" ]; then
+            {
+              echo "## Aggressive Regression (PR Warn Mode)"
+              echo
+              echo "- mode: warn"
+              echo "- txs: ${PR_REGRESSION_MATRIX_TXS:-5000}"
+              echo
+              echo '```text'
+              cat "$REPORT"
+              echo '```'
+              echo
+              echo "## Aggressive Profile Summary"
+              echo
+              if [ -n "$PROFILE_SUMMARY" ] && [ -f "$PROFILE_SUMMARY" ]; then
+                cat "$PROFILE_SUMMARY"
+              else
+                echo "(missing aggressive profile summary artifact)"
+              fi
+              echo
+              echo "## Aggressive Scan Correlation"
+              echo
+              if [ -n "$CORR_SUMMARY" ] && [ -f "$CORR_SUMMARY" ]; then
+                cat "$CORR_SUMMARY"
+              else
+                echo "(missing aggressive scan correlation artifact)"
+              fi
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          test "$rc" -eq 0
+
+      - name: Upload gate artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-gate-artifacts-${{ github.run_id }}
+          path: |
+            trillionnium/run/parallel-sanity.log
+            trillionnium/run/event-field-check.log
+            trillionnium/run/event-replay-smoke.log
+            trillionnium/run/bench/aggressive-regression-pr-*.txt
+            trillionnium/run/bench/bench-regression-matrix-*.csv
+            trillionnium/run/bench/aggressive-profile-summary-*.md
+            trillionnium/run/bench/aggressive-scan-correlation-*.md
+            trillionnium/run/health/**
+            trillionnium/run/bft4-*.txt
+            trillionnium/run/bft4-node*.log
+            trillionnium/run/bft-restart-recovery-*.txt
+            trillionnium/run/bft-restart-*.log
+            trillionnium/run/consensus-wal-restart-*/**
+            data/reexec-smoke/**
+            data/reexec-bundles/**
+            data/worker-onboard/**
+            run/p1-integration-gate/**
+          if-no-files-found: warn
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
