@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import subprocess
 import sys
 import tomllib
 from typing import Any
@@ -86,6 +87,11 @@ def validate_row(row: dict[str, Any], group: str) -> None:
 
 
 def main() -> int:
+    subprocess.run(
+        [sys.executable, str(ROOT / "scripts/ci/check_plan_manifest_pins_v1.py")],
+        cwd=ROOT,
+        check=True,
+    )
     ledger = load_json("config/blocker-execution-v1.json")
     truth = load_json("config/consensus-mainline.json")
     policy = load_json("config/repository-policy-v1.json")
@@ -358,6 +364,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except LedgerError as error:
+    except (LedgerError, subprocess.CalledProcessError) as error:
         print(f"blocker execution validation failed: {error}", file=sys.stderr)
         raise SystemExit(2)
