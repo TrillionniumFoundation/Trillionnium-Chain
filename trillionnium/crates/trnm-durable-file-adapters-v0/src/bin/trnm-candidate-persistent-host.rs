@@ -65,7 +65,10 @@ fn parse_digest(label: &str, value: &str) -> Result<Digest32V0, String> {
     if value.len() != 64 || !value.is_ascii() {
         return Err(format!("{label} must be exactly 64 lowercase hexadecimal characters"));
     }
-    if value.bytes().any(|byte| !byte.is_ascii_digit() && !(b'a'..=b'f').contains(&byte)) {
+    if value
+        .bytes()
+        .any(|byte| !byte.is_ascii_hexdigit() || byte.is_ascii_uppercase())
+    {
         return Err(format!("{label} must use lowercase hexadecimal characters only"));
     }
     let mut output = [0_u8; 32];
@@ -224,7 +227,10 @@ fn run() -> Result<(), Box<dyn Error>> {
     if arguments.first().map(String::as_str) != Some(ACK) {
         return Err(format!("explicit {ACK} is required\n{}", usage()).into());
     }
-    let command = arguments.get(1).map(String::as_str).ok_or_else(|| usage())?;
+    let command = match arguments.get(1) {
+        Some(command) => command.as_str(),
+        None => return Err(usage().into()),
+    };
     match command {
         "status" => run_status(&arguments[2..]),
         "prepare" => run_prepare(&arguments[2..]),
