@@ -61,10 +61,11 @@
     "SPLIT_ROADMAP_2026-03-19"
   ],
   "historical_record_roots": [
-    "docs/audits",
-    "docs/evidence"
+    "docs/audits"
   ],
-  "historical_record_rule": "historical records are immutable evidence only; they are outside active navigation, execution, configuration, build and release authority",
+  "historical_record_rule": "historical audit records are immutable evidence only; they are outside active navigation, execution, configuration, build and release authority",
+  "active_evidence_root": "docs/evidence",
+  "active_evidence_rule": "versioned evidence contracts and exact-source submissions remain navigable; a submission does not promote truth until its validator and independent acceptance gates pass",
   "retired_tree_rule": "retired tree existence is rejected structurally; explanatory negative references are not treated as authority and are validated by path-specific gates",
   "required_runtime_bindings": [
     "source_commit",
