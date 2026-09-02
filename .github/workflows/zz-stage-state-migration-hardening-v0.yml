@@ -72,3 +72,5 @@ jobs:
           git diff --cached --check
           git commit -m '[state-migration-hardening] fix(core): remove cyclic commitments and substitution paths'
           git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
+
+# Qualification rerun after pinned Clippy normalization.
