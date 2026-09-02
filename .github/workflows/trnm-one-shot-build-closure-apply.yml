@@ -23,7 +23,10 @@ jobs:
       github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902' &&
       github.actor == 'Franksudoman' &&
       github.triggering_actor == github.actor
-    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    # Bootstrap transport only. This hosted job is not acceptance evidence and
+    # runs no Cargo command. It applies an exact hash-bound patch, validates the
+    # final staged policies, deletes itself, and fast-forwards this work branch.
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       EXPECTED_BRANCH: work/plan-v2-full-gap-closure-20260902
