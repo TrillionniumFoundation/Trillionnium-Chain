@@ -1,0 +1,167 @@
+name: qualify-registry-closure-v0
+
+on:
+  push:
+    branches: [work/plan-v2-registry-closure-20260902]
+    paths: [.github/workflows/zz-qualify-registry-closure-v0.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qualify-registry-closure-v0-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-registry-closure-20260902' &&
+      github.actor == 'Franksudoman'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Integrate registry gate into canonical preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('scripts/project-preflight.sh')
+          text = path.read_text()
+          marker = '# Plan-v2 repository blocker registry gate v0'
+          block = '''\n# Plan-v2 repository blocker registry gate v0\npython3 scripts/check_repository_blocker_registry_v0.py\n'''
+          if marker not in text:
+              index = text.rfind('\nexit 0')
+              if index >= 0:
+                  text = text[:index] + block + text[index:]
+              else:
+                  text = text.rstrip() + block + '\n'
+          path.write_text(text)
+          PY
+      - name: Generate lock, format registered crates, and qualify registry
+        shell: bash
+        env:
+          CARGO_TERM_COLOR: always
+        run: |
+          set -euo pipefail
+          exec > >(tee /tmp/qualification.log) 2>&1
+          source_commit="$(git rev-parse HEAD)"
+          source_tree="$(git rev-parse HEAD^{tree})"
+          test "${source_commit}" = "${GITHUB_SHA}"
+          cd trillionnium
+          cargo generate-lockfile
+          for package in \
+            trnm-node-boundary-v0 \
+            trnm-tx-lifecycle-v0 \
+            trnm-state-sync-v0 \
+            trnm-migration-v0 \
+            trnm-control-plane-v0 \
+            trnm-poco-node-production-v0 \
+            trnm-release-bundle-v0 \
+            trnm-production-adapter-conformance-v0
+          do
+            cargo fmt -p "${package}"
+            cargo test -p "${package}" --locked
+          done
+          cargo check --workspace --all-targets --locked
+          cd ..
+          python3 scripts/check_repository_blocker_registry_v0.py \
+            --json-out /tmp/registry-check.json
+          bash scripts/project-preflight.sh
+          changed="$(git diff --name-only)"
+          if grep -Ev '^(scripts/project-preflight.sh|trillionnium/Cargo.lock|trillionnium/crates/trnm-(node-boundary-v0|tx-lifecycle-v0|state-sync-v0|migration-v0|control-plane-v0|poco-node-production-v0|release-bundle-v0|production-adapter-conformance-v0)/)' <<<"${changed}" | grep -q .; then
+            echo "unexpected generated diff:" >&2
+            echo "${changed}" >&2
+            exit 1
+          fi
+          mkdir -p /tmp/qualification
+          git diff --binary > /tmp/qualification/tested-normalization.patch
+          cp /tmp/qualification.log /tmp/qualification/qualification.log
+          cp /tmp/registry-check.json /tmp/qualification/registry-check.json
+          log_digest="$(sha256sum /tmp/qualification/qualification.log | awk '{print $1}')"
+          lock_digest="$(sha256sum trillionnium/Cargo.lock | awk '{print $1}')"
+          registry_digest="$(sha256sum config/repository-blocker-cores-v0.toml | awk '{print $1}')"
+          registry_check_digest="$(sha256sum /tmp/qualification/registry-check.json | awk '{print $1}')"
+          patch_digest="$(sha256sum /tmp/qualification/tested-normalization.patch | awk '{print $1}')"
+          cat > /tmp/qualification/evidence.json <<JSON
+          {
+            "schema": "trnm.repository-blocker-registry-qualification.v0",
+            "result": "pass",
+            "source_commit": "${source_commit}",
+            "source_tree": "${source_tree}",
+            "branch": "${GITHUB_REF_NAME}",
+            "run_id": "${GITHUB_RUN_ID}",
+            "run_attempt": "${GITHUB_RUN_ATTEMPT}",
+            "runner_environment": "github-hosted-ubuntu-latest",
+            "cargo_lock_sha256": "${lock_digest}",
+            "registry_sha256": "${registry_digest}",
+            "registry_check_sha256": "${registry_check_digest}",
+            "qualification_log_sha256": "${log_digest}",
+            "tested_normalization_patch_sha256": "${patch_digest}",
+            "checks": [
+              "registered crate manifest and technical-design parity",
+              "workspace membership",
+              "M05/M13/M15/M16/M17 coverage",
+              "production/lab classification",
+              "production-root transitive dependency purity",
+              "AI-v1 candidate exclusion",
+              "adapter-testkit exclusion",
+              "canonical project preflight"
+            ],
+            "non_claims": [
+              "This repository registry qualification is not production activation or independent review.",
+              "External HSM, physical power-loss, multi-host campaign, audit, soak, governance, release, public-testnet, activation, and G5 gates remain evidence-bound."
+            ]
+          }
+          JSON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: repository-blocker-registry-v0-${{ github.sha }}
+          path: /tmp/qualification
+          if-no-files-found: error
+          retention-days: 90
+
+  record:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: repository-blocker-registry-v0-${{ github.sha }}
+          path: /tmp/qualification
+      - name: Apply tested normalization and retain registry evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git ls-remote origin "refs/heads/${GITHUB_REF_NAME}" | awk '{print $1}')" = "${GITHUB_SHA}"
+          test "$(sha256sum /tmp/qualification/tested-normalization.patch | awk '{print $1}')" = \
+            "$(jq -r '.tested_normalization_patch_sha256' /tmp/qualification/evidence.json)"
+          git apply --check /tmp/qualification/tested-normalization.patch
+          git apply /tmp/qualification/tested-normalization.patch
+          mkdir -p docs/evidence/repository
+          cp /tmp/qualification/evidence.json \
+            docs/evidence/repository/REPOSITORY_BLOCKER_REGISTRY_V0_QUALIFICATION.json
+          cp /tmp/qualification/registry-check.json \
+            docs/evidence/repository/REPOSITORY_BLOCKER_REGISTRY_V0_CHECK.json
+          rm .github/workflows/zz-qualify-registry-closure-v0.yml
+          git config user.name 'trnm-closure-bot'
+          git config user.email 'trnm-closure-bot@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'ci(registry): qualify blocker ownership and production closure'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
