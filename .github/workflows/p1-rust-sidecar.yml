@@ -33,8 +33,9 @@ jobs:
     # Requires the repository-owned X230 runner and local Trillionnium dev chain.
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      github.actor == 'ProfAlexQI' &&
-      github.triggering_actor == 'ProfAlexQI' &&
+      (github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman') &&
+      github.triggering_actor == github.actor &&
       (github.event_name != 'pull_request' ||
        github.event.pull_request.head.repo.full_name == github.repository) &&
       (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')

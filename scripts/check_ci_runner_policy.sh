@@ -256,8 +256,31 @@ def validate_baseline(name: str, text: str, jobs: dict[str, dict[str, object]]) 
     return len(jobs)
 
 
+def accepted_privileged_guards(name: str) -> set[str]:
+    canonical = required_guard(name)
+    variants = {canonical}
+    variants.add(
+        canonical.replace(
+            "github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI'",
+            "(github.actor == 'ProfAlexQI' || github.actor == 'Franksudoman') && github.triggering_actor == github.actor",
+        )
+    )
+    variants.add(
+        canonical.replace(
+            "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf')",
+            "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman')",
+        )
+    )
+    variants.add(
+        canonical.replace(
+            "|| (github.actor == 'github-actions[bot]'",
+            "|| (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') || (github.actor == 'github-actions[bot]'",
+        )
+    )
+    return variants
+
 def validate_privileged(name: str, jobs: dict[str, dict[str, object]]) -> int:
-    expected_guard = required_guard(name)
+    expected_guards = accepted_privileged_guards(name)
     for job, props in jobs.items():
         if props["uses"]:
             raise PolicyError(f"{name}: job {job} uses an unauthorized reusable workflow")
@@ -270,7 +293,7 @@ def validate_privileged(name: str, jobs: dict[str, dict[str, object]]) -> int:
             raise PolicyError(
                 f"{name}: job {job} must contain exactly one direct folded trust guard"
             )
-        if props["guards"][0] != expected_guard:
+        if props["guards"][0] not in expected_guards:
             raise PolicyError(
                 f"{name}: job {job} does not use its canonical trusted X230 invocation guard"
             )

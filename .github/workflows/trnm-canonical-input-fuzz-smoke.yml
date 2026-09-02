@@ -43,7 +43,7 @@ jobs:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
          github.triggering_actor == github.actor &&
          (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)))

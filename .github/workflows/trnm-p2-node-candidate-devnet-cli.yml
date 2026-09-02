@@ -50,6 +50,8 @@ jobs:
         github.triggering_actor == 'ProfAlexQI') ||
        (github.actor == 'Tomasrgbsf' &&
         github.triggering_actor == 'Tomasrgbsf') ||
+       (github.actor == 'Franksudoman' &&
+        github.triggering_actor == 'Franksudoman') ||
        (github.actor == 'github-actions[bot]' &&
         github.triggering_actor == 'github-actions[bot]' &&
         github.event_name == 'pull_request' &&

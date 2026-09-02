@@ -118,7 +118,8 @@ if not job_blocks:
 
 actor_guard = re.compile(
     r"\(\(github\.actor == 'ProfAlexQI'\s*\|\|\s*"
-    r"github\.actor == 'Tomasrgbsf'\)\s*&&\s*"
+    r"github\.actor == 'Tomasrgbsf'\s*\|\|\s*"
+    r"github\.actor == 'Franksudoman'\)\s*&&\s*"
     r"github\.triggering_actor == github\.actor",
     re.S,
 )
@@ -207,7 +208,8 @@ elif mutation == "bad-cron":
 elif mutation == "weaken-actor":
     pattern = re.compile(
         r"\(\(github\.actor == 'ProfAlexQI'\s*\|\|\s*"
-        r"github\.actor == 'Tomasrgbsf'\)\s*&&\s*"
+        r"github\.actor == 'Tomasrgbsf'\s*\|\|\s*"
+        r"github\.actor == 'Franksudoman'\)\s*&&\s*"
         r"github\.triggering_actor == github\.actor"
     )
     text, count = pattern.subn("github.actor == 'untrusted'", text, count=1)
