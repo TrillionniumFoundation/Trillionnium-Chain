@@ -73,7 +73,11 @@ pub struct TxIntentV0 {
 impl TxIntentV0 {
     pub fn validate(&self) -> Result<(), TxLifecycleErrorV0> {
         self.resource_limits.validate()?;
-        if self.payload.is_empty() || self.payload.len() > MAX_TX_BYTES_V0 {
+        if self.chain_id == Digest32V0([0; 32])
+            || self.sender == Digest32V0([0; 32])
+            || self.payload.is_empty()
+            || self.payload.len() > MAX_TX_BYTES_V0
+        {
             return Err(TxLifecycleErrorV0::TransactionOutOfBounds);
         }
         if self.authorization.is_empty() || self.authorization.len() > MAX_AUTHORIZATION_BYTES_V0 {
@@ -172,9 +176,13 @@ pub struct ExecutionReceiptV0 {
 impl ExecutionReceiptV0 {
     pub fn validate(&self, expected_tx: TxIdV0) -> Result<(), TxLifecycleErrorV0> {
         if self.tx_id != expected_tx
+            || self.ordered.block_id == Digest32V0([0; 32])
             || self.ordered.height == 0
+            || self.pre_state_root == Digest32V0([0; 32])
+            || self.post_state_root == Digest32V0([0; 32])
+            || self.receipt_digest == Digest32V0([0; 32])
+            || self.event_root == Digest32V0([0; 32])
             || self.fee_charged == 0
-            || self.fee_charged > u128::MAX / 2
         {
             return Err(TxLifecycleErrorV0::ExecutionReceiptMismatch);
         }
@@ -303,6 +311,16 @@ where
                 TxLifecycleErrorV0::WrongChain,
             ));
         }
+        let tx_id = intent.tx_id();
+        if let Some(existing) = self.records.get(&tx_id) {
+            return if existing.intent == intent {
+                Ok(tx_id)
+            } else {
+                Err(TxLifecycleHostErrorV0::Lifecycle(
+                    TxLifecycleErrorV0::StateCorruption,
+                ))
+            };
+        }
         if current_height == 0 || current_height > intent.valid_until_height {
             return Err(TxLifecycleHostErrorV0::Lifecycle(
                 TxLifecycleErrorV0::Expired,
@@ -324,11 +342,6 @@ where
                 &intent.authorization,
             )
             .map_err(TxLifecycleHostErrorV0::Authorization)?;
-
-        let tx_id = intent.tx_id();
-        if self.records.contains_key(&tx_id) {
-            return Ok(tx_id);
-        }
 
         let nonce_key = (intent.sender, intent.nonce);
         if let Some(previous_id) = self.active_nonce.get(&nonce_key).copied() {
@@ -404,7 +417,7 @@ where
         handoff: ProposalHandoffV0,
     ) -> Result<(), TxLifecycleErrorV0> {
         let record = self.record_mut(tx_id)?;
-        if handoff.proposal_index == u32::MAX {
+        if handoff.proposal_id == Digest32V0([0; 32]) || handoff.proposal_index == u32::MAX {
             return Err(TxLifecycleErrorV0::InvalidProposalHandoff);
         }
         if let Some(existing) = record.proposal {
@@ -424,7 +437,10 @@ where
         tx_id: TxIdV0,
         position: OrderedPositionV0,
     ) -> Result<(), TxLifecycleErrorV0> {
-        if position.height == 0 || position.transaction_index == u32::MAX {
+        if position.block_id == Digest32V0([0; 32])
+            || position.height == 0
+            || position.transaction_index == u32::MAX
+        {
             return Err(TxLifecycleErrorV0::InvalidOrderedPosition);
         }
         let record = self.record_mut(tx_id)?;
@@ -466,7 +482,20 @@ where
         tx_id: TxIdV0,
         envelope_digest: Digest32V0,
     ) -> Result<BroadcastIntentV0, TxLifecycleErrorV0> {
-        if let Some(existing) = self.record(tx_id)?.broadcast_intent {
+        let record = self.record(tx_id)?;
+        if envelope_digest == Digest32V0([0; 32])
+            || !matches!(
+                record.phase,
+                TxPhaseV0::WalPersisted
+                    | TxPhaseV0::Proposed
+                    | TxPhaseV0::Ordered
+                    | TxPhaseV0::Executed
+                    | TxPhaseV0::Finalized
+            )
+        {
+            return Err(TxLifecycleErrorV0::InvalidPhaseTransition);
+        }
+        if let Some(existing) = record.broadcast_intent {
             return if existing.envelope_digest == envelope_digest {
                 Ok(existing)
             } else {
@@ -491,6 +520,9 @@ where
         &mut self,
         receipt: BroadcastReceiptV0,
     ) -> Result<(), TxLifecycleErrorV0> {
+        if receipt.transport_receipt_digest == Digest32V0([0; 32]) {
+            return Err(TxLifecycleErrorV0::ReceiptSubstitution);
+        }
         let record = self.record_mut(receipt.tx_id)?;
         let intent = record
             .broadcast_intent
@@ -517,7 +549,7 @@ where
         tx_id: TxIdV0,
         witness: FinalityWitnessV0,
     ) -> Result<(), TxLifecycleErrorV0> {
-        let (sender, nonce, ordered) = {
+        let (sender, nonce, ordered, execution) = {
             let record = self.record(tx_id)?;
             (
                 record.intent.sender,
@@ -525,9 +557,16 @@ where
                 record
                     .ordered
                     .ok_or(TxLifecycleErrorV0::InvalidPhaseTransition)?,
+                record
+                    .execution
+                    .ok_or(TxLifecycleErrorV0::InvalidPhaseTransition)?,
             )
         };
-        if witness.block_id != ordered.block_id || witness.height != ordered.height {
+        if witness.block_id != ordered.block_id
+            || witness.height != ordered.height
+            || witness.state_root != execution.post_state_root
+            || witness.finality_proof_digest == Digest32V0([0; 32])
+        {
             return Err(TxLifecycleErrorV0::FinalityWitnessMismatch);
         }
         let record = self.record_mut(tx_id)?;
@@ -553,7 +592,10 @@ where
         tx_id: TxIdV0,
     ) -> Result<FinalizedReadbackV0, TxLifecycleErrorV0> {
         let record = self.record(tx_id)?;
-        if !matches!(record.phase, TxPhaseV0::Finalized | TxPhaseV0::Tombstoned) {
+        if record.phase != TxPhaseV0::Finalized
+            && !(record.phase == TxPhaseV0::Tombstoned
+                && record.tombstone == Some(TombstoneReasonV0::Finalized))
+        {
             return Err(TxLifecycleErrorV0::NotFinalized);
         }
         Ok(FinalizedReadbackV0 {
@@ -603,7 +645,6 @@ where
             .ok_or(TxLifecycleErrorV0::UnknownTransaction)
     }
 
-    #[must_use]
     pub fn record(&self, tx_id: TxIdV0) -> Result<&TxRecordV0, TxLifecycleErrorV0> {
         self.records
             .get(&tx_id)
@@ -817,6 +858,73 @@ mod tests {
         assert_eq!(
             lifecycle.record(tx_id).unwrap_err(),
             TxLifecycleErrorV0::UnknownTransaction
+        );
+    }
+
+    #[test]
+    fn exact_replay_remains_idempotent_after_finality_and_expiry() {
+        let mut lifecycle = TxLifecycleV0::new(d(1), AcceptAuthorization);
+        let original = intent(10);
+        let tx_id = lifecycle.admit(original.clone(), 1).unwrap();
+        lifecycle.persist_wal(tx_id, 1).unwrap();
+        lifecycle
+            .handoff_proposal(
+                tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(7),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        lifecycle.mark_ordered(tx_id, position()).unwrap();
+        lifecycle.mark_executed(execution(tx_id)).unwrap();
+        lifecycle
+            .finalize(
+                tx_id,
+                FinalityWitnessV0 {
+                    block_id: position().block_id,
+                    height: position().height,
+                    state_root: execution(tx_id).post_state_root,
+                    finality_proof_digest: d(16),
+                },
+            )
+            .unwrap();
+        assert_eq!(lifecycle.admit(original, 1_000).unwrap(), tx_id);
+    }
+
+    #[test]
+    fn broadcast_and_finality_require_durable_phase_and_execution_root() {
+        let mut lifecycle = TxLifecycleV0::new(d(1), AcceptAuthorization);
+        let tx_id = lifecycle.admit(intent(10), 1).unwrap();
+        assert_eq!(
+            lifecycle.create_broadcast_intent(tx_id, d(14)).unwrap_err(),
+            TxLifecycleErrorV0::InvalidPhaseTransition
+        );
+        lifecycle.persist_wal(tx_id, 1).unwrap();
+        lifecycle
+            .handoff_proposal(
+                tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(7),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        lifecycle.mark_ordered(tx_id, position()).unwrap();
+        lifecycle.mark_executed(execution(tx_id)).unwrap();
+        assert_eq!(
+            lifecycle
+                .finalize(
+                    tx_id,
+                    FinalityWitnessV0 {
+                        block_id: position().block_id,
+                        height: position().height,
+                        state_root: d(99),
+                        finality_proof_digest: d(16),
+                    },
+                )
+                .unwrap_err(),
+            TxLifecycleErrorV0::FinalityWitnessMismatch
         );
     }
 

@@ -8,12 +8,15 @@
 //! layers.  Concrete adapters remain independently reviewable.
 
 use sha2::{Digest, Sha256};
-use std::{error::Error, fmt};
+use std::{collections::BTreeSet, error::Error, fmt};
 
 pub const NODE_BOUNDARY_VERSION_V0: u16 = 0;
 pub const MAX_INGRESS_FRAME_BYTES_V0: usize = 4 * 1024 * 1024;
 pub const MAX_OUTBOUND_FRAME_BYTES_V0: usize = 4 * 1024 * 1024;
 pub const MAX_INGRESS_ITEMS_PER_STEP_V0: u32 = 256;
+pub const MAX_OUTBOUND_ITEMS_PER_STEP_V0: u32 = 256;
+pub const MAX_INGRESS_BYTES_PER_STEP_V0: u64 = MAX_INGRESS_FRAME_BYTES_V0 as u64 * 8;
+pub const MAX_OUTBOUND_BYTES_PER_STEP_V0: u64 = MAX_OUTBOUND_FRAME_BYTES_V0 as u64 * 8;
 pub const MAX_AUTHORITY_ADVANCES_PER_STEP_V0: u32 = 32;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -42,6 +45,17 @@ pub struct NodeIdentityV0 {
 }
 
 impl NodeIdentityV0 {
+    pub fn validate(self) -> Result<Self, BoundaryErrorV0> {
+        if self.chain_id == Digest32V0([0; 32])
+            || self.validator_id == Digest32V0([0; 32])
+            || self.application_id == Digest32V0([0; 32])
+            || self.generation == 0
+        {
+            return Err(BoundaryErrorV0::InvalidIdentity);
+        }
+        Ok(self)
+    }
+
     #[must_use]
     pub fn digest(self) -> Digest32V0 {
         Digest32V0::hash(
@@ -72,8 +86,11 @@ impl StepBudgetV0 {
             || self.max_authority_advances == 0
             || self.max_authority_advances > MAX_AUTHORITY_ADVANCES_PER_STEP_V0
             || self.max_outbound_items == 0
+            || self.max_outbound_items > MAX_OUTBOUND_ITEMS_PER_STEP_V0
             || self.max_ingress_bytes == 0
+            || self.max_ingress_bytes > MAX_INGRESS_BYTES_PER_STEP_V0
             || self.max_outbound_bytes == 0
+            || self.max_outbound_bytes > MAX_OUTBOUND_BYTES_PER_STEP_V0
         {
             return Err(BoundaryErrorV0::InvalidBudget);
         }
@@ -162,6 +179,28 @@ impl OperationBindingV0 {
             proposal_digest,
         }
     }
+
+    pub fn validate(self, identity: NodeIdentityV0) -> Result<Self, BoundaryErrorV0> {
+        identity.validate()?;
+        if self.height == 0
+            || self.block_id == Digest32V0([0; 32])
+            || self.parent_id == Digest32V0([0; 32])
+            || self.proposal_digest == Digest32V0([0; 32])
+            || self.operation_id
+                != Self::derive(
+                    identity,
+                    self.height,
+                    self.view,
+                    self.block_id,
+                    self.parent_id,
+                    self.proposal_digest,
+                )
+                .operation_id
+        {
+            return Err(BoundaryErrorV0::InvalidOperationBinding);
+        }
+        Ok(self)
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -179,15 +218,26 @@ impl IngressFrameV0 {
         replay_nonce: u64,
         payload: Vec<u8>,
     ) -> Result<Self, BoundaryErrorV0> {
-        if payload.is_empty() || payload.len() > MAX_INGRESS_FRAME_BYTES_V0 {
-            return Err(BoundaryErrorV0::IngressFrameOutOfBounds);
-        }
-        Ok(Self {
+        let frame = Self {
             peer_id,
             profile_digest,
             replay_nonce,
             payload,
-        })
+        };
+        frame.validate()?;
+        Ok(frame)
+    }
+
+    pub fn validate(&self) -> Result<(), BoundaryErrorV0> {
+        if self.peer_id == Digest32V0([0; 32])
+            || self.profile_digest == Digest32V0([0; 32])
+            || self.replay_nonce == 0
+            || self.payload.is_empty()
+            || self.payload.len() > MAX_INGRESS_FRAME_BYTES_V0
+        {
+            return Err(BoundaryErrorV0::IngressFrameOutOfBounds);
+        }
+        Ok(())
     }
 
     #[must_use]
@@ -217,14 +267,24 @@ impl OutboundFrameV0 {
         destination: Digest32V0,
         payload: Vec<u8>,
     ) -> Result<Self, BoundaryErrorV0> {
-        if payload.is_empty() || payload.len() > MAX_OUTBOUND_FRAME_BYTES_V0 {
-            return Err(BoundaryErrorV0::OutboundFrameOutOfBounds);
-        }
-        Ok(Self {
+        let frame = Self {
             operation_id,
             destination,
             payload,
-        })
+        };
+        frame.validate()?;
+        Ok(frame)
+    }
+
+    pub fn validate(&self) -> Result<(), BoundaryErrorV0> {
+        if self.operation_id == Digest32V0([0; 32])
+            || self.destination == Digest32V0([0; 32])
+            || self.payload.is_empty()
+            || self.payload.len() > MAX_OUTBOUND_FRAME_BYTES_V0
+        {
+            return Err(BoundaryErrorV0::OutboundFrameOutOfBounds);
+        }
+        Ok(())
     }
 }
 
@@ -260,6 +320,7 @@ pub struct AuthorityReceiptV0 {
     pub binding: OperationBindingV0,
     pub durable_stage: AuthorityStageV0,
     pub durable_sequence: u64,
+    pub facts_digest: Digest32V0,
     pub record_digest: Digest32V0,
 }
 
@@ -356,7 +417,11 @@ where
             .recover()
             .map_err(HostErrorV0::Coordinator)?
         {
-            RecoveryDispositionV0::Clean | RecoveryDispositionV0::Resume { .. } => {
+            RecoveryDispositionV0::Clean => HostReadinessV0::Ready,
+            RecoveryDispositionV0::Resume { binding, .. } => {
+                binding
+                    .validate(self.coordinator.identity())
+                    .map_err(HostErrorV0::Boundary)?;
                 HostReadinessV0::Ready
             }
             RecoveryDispositionV0::Quarantine { reason_digest } => {
@@ -386,7 +451,12 @@ where
                 }
                 let mut total_bytes = 0_u64;
                 let mut digests = Vec::with_capacity(frames.len());
+                let mut seen = BTreeSet::new();
                 for frame in frames {
+                    frame.validate().map_err(HostErrorV0::Boundary)?;
+                    if !seen.insert((frame.peer_id, frame.replay_nonce)) {
+                        return Err(HostErrorV0::Boundary(BoundaryErrorV0::DuplicateIngress));
+                    }
                     let frame_bytes = u64::try_from(frame.payload.len())
                         .map_err(|_| HostErrorV0::Boundary(BoundaryErrorV0::BudgetExceeded))?;
                     total_bytes = total_bytes
@@ -442,24 +512,32 @@ impl NodeLayerRoleV0 {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BoundaryErrorV0 {
+    InvalidIdentity,
+    InvalidOperationBinding,
     InvalidBudget,
     BudgetExceeded,
     IngressFrameOutOfBounds,
     OutboundFrameOutOfBounds,
+    DuplicateIngress,
     InvalidStageTransition,
     OperationBindingMismatch,
+    ReceiptSubstitution,
     SequenceOverflow,
 }
 
 impl fmt::Display for BoundaryErrorV0 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(match self {
+            Self::InvalidIdentity => "invalid node identity",
+            Self::InvalidOperationBinding => "invalid or substituted operation binding",
             Self::InvalidBudget => "invalid bounded host-step budget",
             Self::BudgetExceeded => "bounded host-step budget exceeded",
             Self::IngressFrameOutOfBounds => "ingress frame length is outside the protocol bound",
             Self::OutboundFrameOutOfBounds => "outbound frame length is outside the protocol bound",
+            Self::DuplicateIngress => "duplicate peer replay nonce in one ingress batch",
             Self::InvalidStageTransition => "authority stage transition is not the exact successor",
             Self::OperationBindingMismatch => "operation binding does not match durable authority",
+            Self::ReceiptSubstitution => "same authority stage was replayed with different facts",
             Self::SequenceOverflow => "durable authority sequence overflow",
         })
     }
@@ -498,24 +576,53 @@ impl AuthorityCoordinatorV0 for ReferenceAuthorityCoordinatorV0 {
     }
 
     fn recover(&mut self) -> Result<RecoveryDispositionV0, Self::Error> {
+        self.identity.validate()?;
         Ok(match self.current {
             None => RecoveryDispositionV0::Clean,
-            Some(receipt) => RecoveryDispositionV0::Resume {
-                binding: receipt.binding,
-                durable_stage: receipt.durable_stage,
-                durable_sequence: receipt.durable_sequence,
-            },
+            Some(receipt) => {
+                receipt.binding.validate(self.identity)?;
+                RecoveryDispositionV0::Resume {
+                    binding: receipt.binding,
+                    durable_stage: receipt.durable_stage,
+                    durable_sequence: receipt.durable_sequence,
+                }
+            }
         })
     }
 
     fn apply(&mut self, command: AuthorityCommandV0) -> Result<AuthorityReceiptV0, Self::Error> {
+        self.identity.validate()?;
         let (binding, stage, facts_digest) = match command {
             AuthorityCommandV0::Begin {
                 binding,
                 ingress_digest,
             } => {
-                if self.current.is_some() {
-                    return Err(BoundaryErrorV0::InvalidStageTransition);
+                binding.validate(self.identity)?;
+                if ingress_digest == Digest32V0([0; 32]) {
+                    return Err(BoundaryErrorV0::ReceiptSubstitution);
+                }
+                if let Some(current) = self.current {
+                    if current.binding == binding
+                        && current.durable_stage == AuthorityStageV0::Prepared
+                    {
+                        return if current.facts_digest == ingress_digest {
+                            Ok(current)
+                        } else {
+                            Err(BoundaryErrorV0::ReceiptSubstitution)
+                        };
+                    }
+                    let expected_height = current
+                        .binding
+                        .height
+                        .checked_add(1)
+                        .ok_or(BoundaryErrorV0::SequenceOverflow)?;
+                    if current.durable_stage != AuthorityStageV0::OutboundPublished
+                        || binding.height != expected_height
+                        || binding.parent_id != current.binding.block_id
+                        || binding.operation_id == current.binding.operation_id
+                    {
+                        return Err(BoundaryErrorV0::InvalidStageTransition);
+                    }
                 }
                 (binding, AuthorityStageV0::Prepared, ingress_digest)
             }
@@ -525,11 +632,24 @@ impl AuthorityCoordinatorV0 for ReferenceAuthorityCoordinatorV0 {
                 next_stage,
                 facts_digest,
             } => {
+                binding.validate(self.identity)?;
+                if facts_digest == Digest32V0([0; 32]) {
+                    return Err(BoundaryErrorV0::ReceiptSubstitution);
+                }
                 let current = self
                     .current
                     .ok_or(BoundaryErrorV0::InvalidStageTransition)?;
                 if current.binding != binding {
                     return Err(BoundaryErrorV0::OperationBindingMismatch);
+                }
+                if current.durable_stage == next_stage
+                    && expected_stage.successor() == Some(next_stage)
+                {
+                    return if current.facts_digest == facts_digest {
+                        Ok(current)
+                    } else {
+                        Err(BoundaryErrorV0::ReceiptSubstitution)
+                    };
                 }
                 if current.durable_stage != expected_stage
                     || expected_stage.successor() != Some(next_stage)
@@ -563,6 +683,7 @@ impl AuthorityCoordinatorV0 for ReferenceAuthorityCoordinatorV0 {
             binding,
             durable_stage: stage,
             durable_sequence: sequence,
+            facts_digest,
             record_digest,
         };
         self.current = Some(receipt);
@@ -620,11 +741,97 @@ mod tests {
             .apply(AuthorityCommandV0::Advance {
                 binding,
                 expected_stage: AuthorityStageV0::ApplicationSealed,
-                next_stage: AuthorityStageV0::SafetyPersisted,
+                next_stage: AuthorityStageV0::SignIntentPersisted,
                 facts_digest: digest(22),
             })
             .unwrap_err();
         assert_eq!(error, BoundaryErrorV0::InvalidStageTransition);
+    }
+
+    #[test]
+    fn authority_replay_is_bound_to_retained_facts() {
+        let mut coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let binding = binding();
+        let first = coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding,
+                ingress_digest: digest(20),
+            })
+            .unwrap();
+        assert_eq!(
+            coordinator
+                .apply(AuthorityCommandV0::Begin {
+                    binding,
+                    ingress_digest: digest(20),
+                })
+                .unwrap(),
+            first
+        );
+        assert_eq!(
+            coordinator
+                .apply(AuthorityCommandV0::Begin {
+                    binding,
+                    ingress_digest: digest(21),
+                })
+                .unwrap_err(),
+            BoundaryErrorV0::ReceiptSubstitution
+        );
+    }
+
+    #[test]
+    fn authority_allows_only_parent_bound_next_height() {
+        let mut coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let first = binding();
+        coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding: first,
+                ingress_digest: digest(20),
+            })
+            .unwrap();
+        let mut stage = AuthorityStageV0::Prepared;
+        while let Some(next) = stage.successor() {
+            coordinator
+                .apply(AuthorityCommandV0::Advance {
+                    binding: first,
+                    expected_stage: stage,
+                    next_stage: next,
+                    facts_digest: Digest32V0::hash(b"test.stage", &[&[next as u8]]),
+                })
+                .unwrap();
+            stage = next;
+        }
+        let second = OperationBindingV0::derive(
+            identity(),
+            first.height + 1,
+            0,
+            digest(30),
+            first.block_id,
+            digest(31),
+        );
+        let receipt = coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding: second,
+                ingress_digest: digest(32),
+            })
+            .unwrap();
+        assert_eq!(receipt.binding, second);
+        assert_eq!(receipt.durable_sequence, 8);
+    }
+
+    #[test]
+    fn host_revalidates_public_ingress_fields_and_batch_replay() {
+        let coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let frame = IngressFrameV0::new(digest(1), digest(2), 1, vec![1]).unwrap();
+        let mut io = QueueIo::default();
+        io.polls
+            .push_back(IoPollV0::Frames(vec![frame.clone(), frame]));
+        let mut host =
+            PersistentValidatorHostV0::new(coordinator, io, StepBudgetV0::default()).unwrap();
+        host.recover().unwrap();
+        assert!(matches!(
+            host.step(),
+            Err(HostErrorV0::Boundary(BoundaryErrorV0::DuplicateIngress))
+        ));
     }
 
     #[derive(Default)]
