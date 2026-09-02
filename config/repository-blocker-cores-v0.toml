@@ -1,0 +1,117 @@
+schema_version = 1
+registry_id = "trnm.repository-blocker-cores.v0"
+plan_id = "trnm-chain-development-plan-v2"
+protocol = "poco-bft-v0"
+production_root = "trnm-poco-node-production-v0"
+
+[[crate]]
+name = "trnm-node-boundary-v0"
+path = "trillionnium/crates/trnm-node-boundary-v0"
+primary_module = "M15"
+secondary_modules = []
+authority = "versioned host/coordinator/io boundary; no concrete signer, network, storage, or clock"
+production_allowed = true
+lab_fixture = false
+owner = "TrillionniumFoundation"
+technical_design = "docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md"
+slo_class = "validator-host-boundary"
+testkit = "unit-and-production-adapter-conformance"
+failure_model = ["pre-recovery-use", "stage-skip", "binding-substitution", "sequence-overflow", "queue-and-byte-budget-overflow", "quarantine"]
+
+[[crate]]
+name = "trnm-tx-lifecycle-v0"
+path = "trillionnium/crates/trnm-tx-lifecycle-v0"
+primary_module = "M05"
+secondary_modules = []
+authority = "deterministic transaction state machine; external authorization, WAL, execution, finality, transport, and GC authority injected"
+production_allowed = true
+lab_fixture = false
+owner = "TrillionniumFoundation"
+technical_design = "docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md"
+slo_class = "transaction-lifecycle"
+testkit = "unit-and-production-adapter-conformance"
+failure_model = ["authorization-rejection", "nonce-replay", "replacement-conflict", "wal-substitution", "proposal-substitution", "execution-mismatch", "finality-mismatch", "transport-receipt-substitution", "unauthorized-gc"]
+
+[[crate]]
+name = "trnm-state-sync-v0"
+path = "trillionnium/crates/trnm-state-sync-v0"
+primary_module = "M13"
+secondary_modules = ["M15"]
+authority = "authenticated state-sync protocol; trust anchor, checkpoint proof, state-root recomputation, and atomic install target injected"
+production_allowed = true
+lab_fixture = false
+owner = "TrillionniumFoundation"
+technical_design = "docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md"
+slo_class = "state-sync-recovery"
+testkit = "unit-and-production-adapter-conformance"
+failure_model = ["anchor-substitution", "checkpoint-discontinuity", "validator-set-discontinuity", "manifest-mismatch", "chunk-substitution", "chunk-root-mismatch", "state-root-mismatch", "staging-failure", "cas-conflict", "post-commit-receipt-quarantine"]
+
+[[crate]]
+name = "trnm-migration-v0"
+path = "trillionnium/crates/trnm-migration-v0"
+primary_module = "M13"
+secondary_modules = ["M15"]
+authority = "finalized export verification and fresh-genesis projection; finality, root builder, and cutover signatures injected"
+production_allowed = true
+lab_fixture = false
+owner = "TrillionniumFoundation"
+technical_design = "docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md"
+slo_class = "one-way-migration"
+testkit = "unit-and-production-adapter-conformance"
+failure_model = ["source-finality-rejection", "row-order-or-duplicate-rejection", "export-root-mismatch", "authority-state-import-rejection", "projection-duplicate", "target-root-rejection", "fallback-plan-rejection", "cutover-weight-rejection"]
+
+[[crate]]
+name = "trnm-control-plane-v0"
+path = "trillionnium/crates/trnm-control-plane-v0"
+primary_module = "M16"
+secondary_modules = ["M15"]
+authority = "observer-first proposal plane; node-local signed plan guard is final authority and consensus authority is forbidden"
+production_allowed = true
+lab_fixture = false
+owner = "TrillionniumFoundation"
+technical_design = "docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md"
+slo_class = "guarded-optimization-control"
+testkit = "unit-and-production-adapter-conformance"
+failure_model = ["descriptor-substitution", "generation-rollback", "measurement-substitution", "signature-rejection", "source-graph-mismatch", "activation-window-rejection", "parameter-bound-rejection", "missing-determinism-proof", "missing-governance-proof", "forbidden-authority-action"]
+
+[[crate]]
+name = "trnm-poco-node-production-v0"
+path = "trillionnium/crates/trnm-poco-node-production-v0"
+primary_module = "M15"
+secondary_modules = ["M05", "M13", "M16"]
+authority = "wiring-only composition root; cannot own consensus, signing, state-root, persistence, network, execution, governance, or lab authority"
+production_allowed = true
+lab_fixture = false
+owner = "TrillionniumFoundation"
+technical_design = "docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md"
+slo_class = "production-composition"
+testkit = "unit-and-production-adapter-conformance"
+failure_model = ["invalid-layer-role", "pre-recovery-use", "invalid-host-budget", "invalid-control-guard"]
+
+[[crate]]
+name = "trnm-release-bundle-v0"
+path = "trillionnium/crates/trnm-release-bundle-v0"
+primary_module = "M17"
+secondary_modules = ["M13"]
+authority = "exact-source artifact/SBOM/provenance verification; release signature and independent builders injected"
+production_allowed = true
+lab_fixture = false
+owner = "TrillionniumFoundation"
+technical_design = "docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md"
+slo_class = "release-integrity"
+testkit = "unit"
+failure_model = ["dirty-source-rejection", "artifact-substitution", "sbom-incompleteness", "provenance-mismatch", "signature-rejection", "independent-build-mismatch"]
+
+[[crate]]
+name = "trnm-production-adapter-conformance-v0"
+path = "trillionnium/crates/trnm-production-adapter-conformance-v0"
+primary_module = "M17"
+secondary_modules = ["M05", "M13", "M15", "M16"]
+authority = "testkit only; no production authority and forbidden from every production dependency closure"
+production_allowed = false
+lab_fixture = true
+owner = "TrillionniumFoundation"
+technical_design = "docs/development/TRNM_PRODUCTION_ADAPTER_CONFORMANCE_V0.md"
+slo_class = "fault-conformance-testkit"
+testkit = "self"
+failure_model = ["crash-after-persist", "same-sequence-facts-substitution", "staging-begin-failure", "chunk-write-failure", "pre-swap-commit-failure", "transport-receipt-substitution", "forbidden-control-action", "authority-state-import"]
