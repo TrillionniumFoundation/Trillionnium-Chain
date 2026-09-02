@@ -1,0 +1,31 @@
+name: tmp-rustfmt-node-commit
+
+on:
+  pull_request:
+    paths:
+      - 'trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs'
+      - '.github/workflows/tmp-rustfmt-node-commit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  rustfmt-artifact:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Install pinned Rust formatter
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup override set 1.95.0
+      - name: Format workspace
+        run: cargo fmt --all
+      - name: Upload formatted source
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: formatted-node-commit-ledger
+          path: trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs
+          if-no-files-found: error
