@@ -1,0 +1,135 @@
+name: trnm-diagnostic-exact-head-774515
+
+on:
+  push:
+    branches:
+      - diagnostic/plan-v2-exact-774515-hosted-20260903
+    paths:
+      - .github/workflows/trnm-diagnostic-exact-head-774515.yml
+
+permissions:
+  contents: read
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  TRNM_EXACT_SOURCE_SHA: 7745155557cd2653e732370af4c3b11bf071fccd
+
+jobs:
+  repository-truth-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out immutable PR head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXACT_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXACT_SOURCE_SHA}"
+      - name: Run repository-owned truth gates
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_plan_manifest_pins_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_required_baseline_closure_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_build_closures_v1.py
+          python3 scripts/ci/generate_release_status_v1.py --check-deterministic --output "${RUNNER_TEMP}/release-status.json"
+      - name: Require clean checkout
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  rust-boundaries-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out immutable PR head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXACT_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXACT_SOURCE_SHA}"
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+      - name: Verify formatting and compile every active target
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          cargo fmt --all -- --check
+          cargo check --workspace --all-targets --locked
+      - name: Run newly affected and authority-critical tests
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          cargo test -p trnm-node-boundary-v0 --all-targets --locked
+          cargo test -p trnm-durable-file-adapters-v0 --all-targets --locked
+          cargo test -p trnm-poco-node --lib --locked
+          cargo test -p trnm-consensus-core --lib --locked
+          cargo test -p trnm-native-application --lib --locked
+          cargo test -p trnm-native-application-sqlite --lib --locked
+      - name: Strict Clippy on changed and authority-critical packages
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          for package in \
+            trnm-node-boundary-v0 \
+            trnm-durable-file-adapters-v0 \
+            trnm-poco-node \
+            trnm-consensus-core \
+            trnm-native-application \
+            trnm-native-application-sqlite
+          do
+            cargo clippy -p "${package}" --all-targets --locked -- -D warnings
+          done
+      - name: Require clean checkout
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  full-workspace-tests-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Check out immutable PR head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXACT_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXACT_SOURCE_SHA}"
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component clippy
+          rustup override set 1.95.0
+      - name: Test all active workspace targets
+        working-directory: trillionnium
+        run: cargo test --workspace --all-targets --locked
+      - name: Verify Cargo-resolved closure
+        run: python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+      - name: Compile, test, and lint contract workspace
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
+          cargo test --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
+          cargo clippy --manifest-path contracts/Cargo.toml --workspace --all-targets --locked -- -D warnings
+      - name: Require clean checkout
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
