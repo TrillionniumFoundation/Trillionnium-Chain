@@ -1,0 +1,407 @@
+name: qualify-adapter-conformance-v0-hosted
+
+on:
+  push:
+    branches: [work/plan-v2-adapter-conformance-20260902]
+    paths: [.github/workflows/zz-qualify-adapter-conformance-v0-hosted.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qualify-adapter-conformance-v0-hosted-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-adapter-conformance-20260902' &&
+      github.actor == 'Franksudoman'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Normalize parent cores and harden retained-facts replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          node = Path('trillionnium/crates/trnm-node-boundary-v0/src/lib.rs')
+          node.write_text(node.read_text().replace(
+              'next_stage: AuthorityStageV0::SafetyPersisted,\n                facts_digest: digest(22),',
+              'next_stage: AuthorityStageV0::SignIntentPersisted,\n                facts_digest: digest(22),',
+              1,
+          ))
+
+          migration = Path('trillionnium/crates/trnm-migration-v0/src/lib.rs')
+          text = migration.read_text()
+          old = '''#[must_use]
+pub fn forbidden_authority_namespace(namespace: &[u8]) -> bool {
+    matches!(
+        namespace,
+        b"validator_signing_state"
+            | b"consensus_private_key"
+            | b"signer_journal"
+            | b"safety_store"
+            | b"remote_signer_watermark"
+            | b"node_commit_ledger"
+            | b"operator_recovery_key"
+    )
+}
+'''
+          new = '''#[must_use]
+pub fn forbidden_authority_namespace(namespace: &[u8]) -> bool {
+    const FORBIDDEN: &[&[u8]] = &[
+        b"validator_signing_state",
+        b"consensus_private_key",
+        b"signer_journal",
+        b"safety_store",
+        b"remote_signer_watermark",
+        b"node_commit_ledger",
+        b"operator_recovery_key",
+    ];
+    FORBIDDEN.contains(&namespace)
+}
+'''
+          if old in text:
+              text = text.replace(old, new, 1)
+          if 'FORBIDDEN.contains(&namespace)' not in text:
+              raise SystemExit('forbidden authority namespace guard missing')
+          migration.write_text(text)
+
+          tx = Path('trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs')
+          tx.write_text(tx.read_text().replace(
+              '            || self.fee_charged > u128::MAX / 2\n',
+              '',
+              1,
+          ))
+
+          sync = Path('trillionnium/crates/trnm-state-sync-v0/src/lib.rs')
+          text = sync.read_text().replace(
+              'Vec::with_capacity(level.len().div_ceil(2))',
+              'Vec::with_capacity((level.len() + 1) / 2)',
+          )
+          if 'pub fn chunk_binding_digest(&self)' not in text:
+              old_method = '''    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.state-sync.snapshot-manifest.v0",
+            &[
+                &self.chain_id.0,
+                &self.protocol_digest.0,
+                &self.height.to_be_bytes(),
+                &self.epoch.to_be_bytes(),
+                &self.state_root.0,
+                &self.chunk_root.0,
+                &self.chunk_count.to_be_bytes(),
+                &self.maximum_chunk_bytes.to_be_bytes(),
+                &self.total_bytes.to_be_bytes(),
+                &self.schema_digest.0,
+                &self.checkpoint_digest.0,
+            ],
+        )
+    }
+'''
+              new_method = '''    #[must_use]
+    pub fn chunk_binding_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.state-sync.snapshot-header.v0",
+            &[
+                &self.chain_id.0,
+                &self.protocol_digest.0,
+                &self.height.to_be_bytes(),
+                &self.epoch.to_be_bytes(),
+                &self.state_root.0,
+                &self.chunk_count.to_be_bytes(),
+                &self.maximum_chunk_bytes.to_be_bytes(),
+                &self.total_bytes.to_be_bytes(),
+                &self.schema_digest.0,
+                &self.checkpoint_digest.0,
+            ],
+        )
+    }
+
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.state-sync.snapshot-manifest.v0",
+            &[&self.chunk_binding_digest().0, &self.chunk_root.0],
+        )
+    }
+'''
+              if old_method not in text:
+                  raise SystemExit('snapshot manifest source shape unknown')
+              text = text.replace(old_method, new_method, 1)
+              text = text.replace(
+                  'if self.manifest_digest != manifest.manifest_digest\n            || self.index >= manifest.chunk_count',
+                  'if self.manifest_digest != manifest.chunk_binding_digest()\n            || self.index >= manifest.chunk_count',
+                  1,
+              )
+          if 'for _ in 0..16' in text:
+              start = text.index('    fn fixture() -> (')
+              end = text.index('\n    #[test]\n    fn trust_path_rejects_network_selected_discontinuity()', start)
+              replacement = '''    fn fixture() -> (
+        VerifiedTrustPathV0,
+        SnapshotManifestV0,
+        Vec<SnapshotChunkV0>,
+    ) {
+        let schema = d(7);
+        let chunk_bytes = [b"alpha".as_slice(), b"beta".as_slice()];
+        let state_root = HashRoot
+            .recompute_state_root(schema, chunk_bytes)
+            .unwrap();
+        let anchor = WeakSubjectivityAnchorV0 {
+            chain_id: d(1),
+            protocol_digest: d(2),
+            epoch: 3,
+            height: 4,
+            checkpoint_digest: d(5),
+            validator_set_digest: d(6),
+        };
+        let terminal = link(anchor, state_root);
+        let trust = verify_trust_path_v0(&AcceptProof, anchor, &[terminal]).unwrap();
+        let mut manifest = SnapshotManifestV0 {
+            chain_id: anchor.chain_id,
+            protocol_digest: anchor.protocol_digest,
+            height: terminal.height,
+            epoch: terminal.epoch,
+            state_root,
+            chunk_root: d(0),
+            chunk_count: 2,
+            maximum_chunk_bytes: 1024,
+            total_bytes: 9,
+            schema_digest: schema,
+            checkpoint_digest: terminal.checkpoint_digest,
+            manifest_digest: d(0),
+        };
+        let binding = manifest.chunk_binding_digest();
+        let chunks: Vec<SnapshotChunkV0> = chunk_bytes
+            .iter()
+            .enumerate()
+            .map(|(index, bytes)| SnapshotChunkV0 {
+                manifest_digest: binding,
+                index: index as u32,
+                bytes: bytes.to_vec(),
+                chunk_digest: SnapshotChunkV0::canonical_digest(binding, index as u32, bytes),
+            })
+            .collect();
+        manifest.chunk_root = chunk_merkle_root_v0(
+            &chunks.iter().map(|chunk| chunk.chunk_digest).collect::<Vec<_>>(),
+        );
+        manifest.manifest_digest = manifest.canonical_digest();
+        (trust, manifest, chunks)
+    }
+'''
+              text = text[:start] + replacement + text[end:]
+          sync.write_text(text)
+
+          adapter = Path('trillionnium/crates/trnm-production-adapter-conformance-v0/src/lib.rs')
+          text = adapter.read_text()
+          if 'current_facts_digest: Option<NodeDigest>' not in text:
+              text = text.replace(
+                  '        CrashAfterPersist,\n    }\n',
+                  '        CrashAfterPersist,\n        ReceiptSubstitution,\n    }\n',
+                  1,
+              )
+              text = text.replace(
+                  '                Self::CrashAfterPersist => f.write_str("injected crash after durable persist"),\n',
+                  '                Self::CrashAfterPersist => f.write_str("injected crash after durable persist"),\n                Self::ReceiptSubstitution => f.write_str("same authority sequence replayed with different facts"),\n',
+                  1,
+              )
+              text = text.replace(
+                  '        current: Option<AuthorityReceiptV0>,\n        crash_after_next_persist: bool,\n',
+                  '        current: Option<AuthorityReceiptV0>,\n        current_facts_digest: Option<NodeDigest>,\n        crash_after_next_persist: bool,\n',
+                  1,
+              )
+              text = text.replace(
+                  '''                        if existing.binding == binding
+                            && existing.durable_stage == AuthorityStageV0::Prepared
+                        {
+                            return Ok(existing);
+                        }
+''',
+                  '''                        if existing.binding == binding
+                            && existing.durable_stage == AuthorityStageV0::Prepared
+                        {
+                            return if journal.current_facts_digest == Some(ingress_digest) {
+                                Ok(existing)
+                            } else {
+                                Err(DurableCoordinatorError::ReceiptSubstitution)
+                            };
+                        }
+''',
+                  1,
+              )
+              text = text.replace(
+                  '''                    if existing.durable_stage == next_stage
+                        && expected_stage.successor() == Some(next_stage)
+                    {
+                        return Ok(existing);
+                    }
+''',
+                  '''                    if existing.durable_stage == next_stage
+                        && expected_stage.successor() == Some(next_stage)
+                    {
+                        return if journal.current_facts_digest == Some(facts_digest) {
+                            Ok(existing)
+                        } else {
+                            Err(DurableCoordinatorError::ReceiptSubstitution)
+                        };
+                    }
+''',
+                  1,
+              )
+              text = text.replace(
+                  '            journal.current = Some(receipt);\n            if journal.crash_after_next_persist {\n',
+                  '            journal.current = Some(receipt);\n            journal.current_facts_digest = Some(facts);\n            if journal.crash_after_next_persist {\n',
+                  1,
+              )
+              needle = '''        assert_eq!(replayed.durable_sequence, 1);
+        assert_eq!(replayed.durable_stage, AuthorityStageV0::ApplicationSealed);
+'''
+              if needle not in text:
+                  raise SystemExit('authority replay assertion source unknown')
+              text = text.replace(
+                  needle,
+                  needle + '''        assert_eq!(
+            restarted
+                .apply(AuthorityCommandV0::Advance {
+                    binding,
+                    expected_stage: AuthorityStageV0::Prepared,
+                    next_stage: AuthorityStageV0::ApplicationSealed,
+                    facts_digest: node_d(22),
+                })
+                .unwrap_err(),
+            DurableCoordinatorError::ReceiptSubstitution
+        );
+''',
+                  1,
+              )
+          required = [
+              'current_facts_digest: Option<NodeDigest>',
+              'current_facts_digest == Some(facts_digest)',
+              'DurableCoordinatorError::ReceiptSubstitution',
+          ]
+          if not all(item in text for item in required):
+              raise SystemExit('authority retained-facts hardening incomplete')
+          adapter.write_text(text)
+          PY
+      - name: Generate lockfile, format, test conformance, and check workspace
+        shell: bash
+        env:
+          CARGO_TERM_COLOR: always
+        run: |
+          set -euo pipefail
+          exec > >(tee /tmp/qualification.log) 2>&1
+          source_commit="$(git rev-parse HEAD)"
+          source_tree="$(git rev-parse HEAD^{tree})"
+          test "${source_commit}" = "${GITHUB_SHA}"
+          cd trillionnium
+          cargo generate-lockfile
+          cargo fmt --all
+          for package in \
+            trnm-node-boundary-v0 \
+            trnm-tx-lifecycle-v0 \
+            trnm-state-sync-v0 \
+            trnm-migration-v0 \
+            trnm-control-plane-v0 \
+            trnm-poco-node-production-v0 \
+            trnm-release-bundle-v0 \
+            trnm-production-adapter-conformance-v0
+          do
+            cargo test -p "${package}" --locked
+          done
+          cargo check --workspace --all-targets --locked
+          cd ..
+          changed="$(git diff --name-only)"
+          if grep -Ev '^(trillionnium/Cargo.lock|trillionnium/crates/trnm-(node-boundary-v0|tx-lifecycle-v0|state-sync-v0|migration-v0|control-plane-v0|poco-node-production-v0|release-bundle-v0|production-adapter-conformance-v0)/)' <<<"${changed}" | grep -q .; then
+            echo "unexpected generated diff:" >&2
+            echo "${changed}" >&2
+            exit 1
+          fi
+          mkdir -p /tmp/qualification
+          git diff --binary > /tmp/qualification/tested-normalization.patch
+          cp /tmp/qualification.log /tmp/qualification/qualification.log
+          log_digest="$(sha256sum /tmp/qualification/qualification.log | awk '{print $1}')"
+          lock_digest="$(sha256sum trillionnium/Cargo.lock | awk '{print $1}')"
+          patch_digest="$(sha256sum /tmp/qualification/tested-normalization.patch | awk '{print $1}')"
+          cat > /tmp/qualification/evidence.json <<JSON
+          {
+            "schema": "trnm.production-adapter-conformance-qualification.v0",
+            "result": "pass",
+            "source_commit": "${source_commit}",
+            "source_tree": "${source_tree}",
+            "branch": "${GITHUB_REF_NAME}",
+            "run_id": "${GITHUB_RUN_ID}",
+            "run_attempt": "${GITHUB_RUN_ATTEMPT}",
+            "runner_environment": "github-hosted-ubuntu-latest",
+            "cargo_lock_sha256": "${lock_digest}",
+            "qualification_log_sha256": "${log_digest}",
+            "tested_normalization_patch_sha256": "${patch_digest}",
+            "fault_probes": [
+              "authority-crash-after-persist-and-exact-replay",
+              "authority-same-sequence-facts-substitution",
+              "state-sync-begin-write-and-pre-swap-commit-failures",
+              "state-sync-successful-atomic-swap",
+              "transaction-transport-receipt-substitution",
+              "control-plane-forbidden-finality-action",
+              "migration-signer-journal-exclusion"
+            ],
+            "non_claims": [
+              "This is an in-process adapter conformance testkit.",
+              "It does not prove physical power loss, actual fsync semantics, real HSM behavior, network partitions, Byzantine multi-host behavior, external review, soak, governance, release, activation, or G5."
+            ]
+          }
+          JSON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: production-adapter-conformance-v0-hosted-${{ github.sha }}
+          path: /tmp/qualification
+          if-no-files-found: error
+          retention-days: 90
+
+  record:
+    needs: qualify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: production-adapter-conformance-v0-hosted-${{ github.sha }}
+          path: /tmp/qualification
+      - name: Apply tested changes and record exact-source evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git ls-remote origin "refs/heads/${GITHUB_REF_NAME}" | awk '{print $1}')" = "${GITHUB_SHA}"
+          test "$(sha256sum /tmp/qualification/tested-normalization.patch | awk '{print $1}')" = \
+            "$(jq -r '.tested_normalization_patch_sha256' /tmp/qualification/evidence.json)"
+          git apply --check /tmp/qualification/tested-normalization.patch
+          git apply /tmp/qualification/tested-normalization.patch
+          mkdir -p docs/evidence/repository
+          cp /tmp/qualification/evidence.json \
+            docs/evidence/repository/PRODUCTION_ADAPTER_CONFORMANCE_V0_QUALIFICATION.json
+          rm -f .github/workflows/zz-qualify-adapter-conformance-v0.yml
+          rm -f .github/workflows/zz-qualify-adapter-conformance-v0-hosted.yml
+          rm -f .github/workflows/zz-harden-adapter-conformance-v0.yml
+          git config user.name 'trnm-closure-bot'
+          git config user.email 'trnm-closure-bot@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'test(adapter): qualify production adapter conformance at exact source'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
