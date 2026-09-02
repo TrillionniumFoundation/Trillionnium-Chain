@@ -1,0 +1,70 @@
+name: retire-superseded-one-shot-carriers
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/zz-clean-temporary-carriers.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: retire-superseded-one-shot-carriers-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  retire:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902' &&
+      github.actor == 'Franksudoman' &&
+      github.triggering_actor == github.actor &&
+      !contains(github.event.head_commit.message, '[carrier-clean]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact head with branch credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Validate and remove only known one-shot carriers
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          mapfile -t present < <(find .github/workflows -maxdepth 1 -type f -name 'zz-*.yml' -printf '%f\n' | sort)
+          allowed=(
+            zz-apply-plan-v2-closure-tree.yml
+            zz-integrate-node-split-v1.yml
+            zz-integrate-repository-cores-v0.yml
+            zz-clean-temporary-carriers.yml
+          )
+          for name in "${present[@]}"; do
+            found=false
+            for expected in "${allowed[@]}"; do
+              if [[ "${name}" == "${expected}" ]]; then found=true; break; fi
+            done
+            if [[ "${found}" != true ]]; then
+              echo "refusing to remove unknown zz carrier: ${name}" >&2
+              exit 2
+            fi
+          done
+          test -e .github/workflows/zz-clean-temporary-carriers.yml
+          for name in "${present[@]}"; do
+            git rm ".github/workflows/${name}"
+          done
+          git diff --cached --check
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'Franksudoman'
+          git config user.email 'sunfocapital@gmail.com'
+          git commit -m '[carrier-clean] ci(repo): retire superseded one-shot carriers'
+          git push origin 'HEAD:refs/heads/work/plan-v2-full-gap-closure-20260902'
