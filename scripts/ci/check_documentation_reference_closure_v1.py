@@ -34,12 +34,22 @@ def strict_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
+def display_path(path: pathlib.Path) -> str:
+    """Return a stable label for repository and GitHub event files."""
+
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def load_json(path: pathlib.Path) -> dict[str, Any]:
+    label = display_path(path)
     try:
         value = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=strict_object)
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
-        raise DocumentationTruthError(f"{path.relative_to(ROOT)}: invalid strict JSON: {error}") from error
-    require(isinstance(value, dict), f"{path.relative_to(ROOT)}: top level must be an object")
+        raise DocumentationTruthError(f"{label}: invalid strict JSON: {error}") from error
+    require(isinstance(value, dict), f"{label}: top level must be an object")
     return value
 
 
@@ -203,8 +213,7 @@ def main() -> int:
                     )
     require(not hits, "active stale development references remain: " + json.dumps(hits, sort_keys=True))
 
-    # Historical records are retained only as non-authoritative evidence. They
-    # may not be linked from the active documentation entry points.
+    # Historical audit records are non-authoritative and are not navigation roots.
     for navigation in ("README.md", "docs/README.md", "AGENTS.md", "RELEASE_READINESS.md"):
         text = (ROOT / navigation).read_text(encoding="utf-8")
         for root in policy["historical_record_roots"]:
