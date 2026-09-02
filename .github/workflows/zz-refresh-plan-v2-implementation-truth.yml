@@ -1,0 +1,215 @@
+name: refresh-plan-v2-implementation-truth
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/zz-refresh-plan-v2-implementation-truth.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-plan-v2-implementation-truth-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+
+jobs:
+  refresh:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902' &&
+      github.actor == 'Franksudoman' &&
+      github.triggering_actor == github.actor &&
+      !contains(github.event.head_commit.message, '[plan-truth-refreshed]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Require qualified repository implementation surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          required=(
+            config/node-decomposition-v1.toml
+            scripts/ci/check_node_decomposition_v1.py
+            trillionnium/crates/trnm-poco-node-authority/Cargo.toml
+            trillionnium/crates/trnm-poco-node-io/Cargo.toml
+            trillionnium/crates/trnm-poco-node-host/Cargo.toml
+            trillionnium/crates/trnm-poco-node-cli/Cargo.toml
+            trillionnium/crates/trnm-control-plane-v0/Cargo.toml
+            trillionnium/crates/trnm-durable-file-adapters-v0/Cargo.toml
+            trillionnium/crates/trnm-migration-v0/Cargo.toml
+            trillionnium/crates/trnm-node-boundary-v0/Cargo.toml
+            trillionnium/crates/trnm-poco-node-production-v0/Cargo.toml
+            trillionnium/crates/trnm-production-adapter-conformance-v0/Cargo.toml
+            trillionnium/crates/trnm-release-bundle-v0/Cargo.toml
+            trillionnium/crates/trnm-state-sync-v0/Cargo.toml
+            trillionnium/crates/trnm-tx-lifecycle-v0/Cargo.toml
+          )
+          for path in "${required[@]}"; do test -f "${path}"; done
+          report=''
+          for candidate in \
+            docs/evidence/repository/REPOSITORY_OWNED_CONSOLIDATION_V2.json \
+            docs/evidence/repository/REPOSITORY_OWNED_CONSOLIDATION_V1.json \
+            docs/evidence/repository/REPOSITORY_CORE_INTEGRATION_V0.json
+          do
+            if [[ -f "${candidate}" ]]; then report="${candidate}"; break; fi
+          done
+          test -n "${report}"
+          test "$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["result"])' "${report}")" = PASS
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_build_closures_v1.py
+          if [[ -f scripts/check_repository_blocker_registry_v0.py ]]; then
+            python3 scripts/check_repository_blocker_registry_v0.py
+          fi
+
+      - name: Refresh conservative implementation truth and bound hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, json, re, tomllib
+
+          plan = Path('docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md')
+          text = plan.read_text()
+
+          p1_old = ('**Production dependency-closure implementation present; acceptance pending.** '
+                    'The machine registry and recursive resolver now enforce separately named production, devnet, AI-v1-candidate, and lab/evidence closures; the default node has zero AI-v1 package edges. Remaining P1 work is exact-head and prospective-merge Cargo-tree/compiler acceptance, continued zero forbidden edges under future feature changes, real module-team ownership, and node decomposition. Exit: generated dependency/ownership views match Cargo\'s locked graph, composition contains wiring only, and `node-prod-v0` remains free of candidate/lab/legacy contamination.')
+          p1_new = ('**Production dependency closure and node decomposition implementations are present; acceptance remains pending.** '
+                    'The machine registry and recursive resolver enforce separately named production, devnet, AI-v1-candidate, and lab/evidence closures; the default node has zero AI-v1 package edges. Dedicated authority, I/O, host-composition, and CLI crates keep composition wiring-only and fail closed. Repository qualification does not replace prospective-merge checks, independent review, protected-main integration, real module-team ownership, or future feature-drift enforcement. Exit remains generated dependency/ownership parity with Cargo\'s locked graph and a contamination-free `node-prod-v0`.')
+          if p1_old in text:
+              text = text.replace(p1_old, p1_new, 1)
+          elif p1_new not in text:
+              raise SystemExit('P1 implementation paragraph drift')
+
+          states = {
+              'NODE-SPLIT-001': 'implementation present; repository qualification passed; integration acceptance pending',
+              'BUILD-CLOSURE-001': 'implementation and Cargo-tree qualification present; prospective-merge acceptance pending',
+              'TX-PROD-001': 'bounded lifecycle core present; live production wiring and campaign acceptance open',
+              'SYNC-PROD-001': 'authenticated core present; live downloader and multi-host acceptance open',
+              'MIG-001': 'migration core present; real finalized export/recompute acceptance open',
+              'CONTROL-001': 'observer-first core present; guarded live rollout/campaign acceptance open',
+          }
+          lines = text.splitlines()
+          seen = set()
+          for i, line in enumerate(lines):
+              if not line.startswith('|'):
+                  continue
+              cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
+              if len(cells) < 5:
+                  continue
+              blocker = cells[1]
+              if blocker in states:
+                  cells[3] = states[blocker]
+                  lines[i] = '| ' + ' | '.join(cells) + ' |'
+                  seen.add(blocker)
+          missing = sorted(set(states) - seen)
+          if missing:
+              raise SystemExit(f'blocker rows missing: {missing}')
+          text = '\n'.join(lines) + '\n'
+
+          forbidden_promotions = [
+              'production_candidate = true',
+              'production_consensus_activation = true',
+              'public_testnet_ready = true',
+              'release_ready = true',
+          ]
+          for marker in forbidden_promotions:
+              if marker in text:
+                  raise SystemExit(f'plan promoted forbidden truth: {marker}')
+          plan.write_text(text)
+          digest = hashlib.sha256(plan.read_bytes()).hexdigest()
+
+          toml_paths = [
+              Path('docs/development/plan-manifest-v1.toml'),
+              Path('docs/development/release-train-v1.toml'),
+          ]
+          key_pattern = re.compile(r'(?im)^(\s*[A-Za-z0-9_.-]*(?:plan|development)[A-Za-z0-9_.-]*sha256\s*=\s*")([0-9a-f]{64})("\s*)$')
+          for path in toml_paths:
+              if not path.exists():
+                  continue
+              raw = path.read_text()
+              raw, _ = key_pattern.subn(lambda m: m.group(1) + digest + m.group(3), raw)
+              path.write_text(raw)
+              tomllib.loads(raw)
+
+          snapshot = Path('docs/development/CURRENT_SNAPSHOT_V1.json')
+          if snapshot.exists():
+              obj = json.loads(snapshot.read_text())
+              def update(value):
+                  if isinstance(value, dict):
+                      for key in list(value):
+                          lowered = key.lower()
+                          if 'plan' in lowered and 'sha256' in lowered and isinstance(value[key], str) and re.fullmatch(r'[0-9a-f]{64}', value[key]):
+                              value[key] = digest
+                          else:
+                              update(value[key])
+                  elif isinstance(value, list):
+                      for item in value: update(item)
+              update(obj)
+              snapshot.write_text(json.dumps(obj, indent=2, sort_keys=True) + '\n')
+
+          evidence = Path('docs/evidence/repository/PLAN_V2_IMPLEMENTATION_TRUTH_REFRESH_V1.json')
+          evidence.parent.mkdir(parents=True, exist_ok=True)
+          evidence.write_text(json.dumps({
+              'schema': 'trnm-plan-v2-implementation-truth-refresh-v1',
+              'plan_sha256': digest,
+              'updated_blockers': sorted(states),
+              'closed_by_status_edit': [],
+              'external_blockers_closed': [],
+              'production_candidate': False,
+              'production_consensus_activation': False,
+              'public_testnet_ready': False,
+              'release_ready': False,
+              'result': 'PASS',
+          }, indent=2, sort_keys=True) + '\n')
+          PY
+          python3 -m json.tool docs/development/CURRENT_SNAPSHOT_V1.json >/dev/null
+          python3 - <<'PY'
+          import tomllib
+          for path in ('docs/development/plan-manifest-v1.toml','docs/development/release-train-v1.toml'):
+              with open(path,'rb') as handle: tomllib.load(handle)
+          PY
+          test "$(find docs/development -maxdepth 1 -type f -name '*.md' | wc -l)" -eq 1
+
+      - name: Validate updated source truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_build_closures_v1.py
+          if [[ -f scripts/check_repository_blocker_registry_v0.py ]]; then
+            python3 scripts/check_repository_blocker_registry_v0.py
+          fi
+          git diff --check
+
+      - name: Commit truth refresh and retire carriers
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in .github/workflows/zz-*.yml; do
+            [[ -e "${path}" ]] && git rm "${path}"
+          done
+          git config user.name 'Franksudoman'
+          git config user.email 'sunfocapital@gmail.com'
+          git add -A
+          git diff --cached --check
+          git commit -m '[plan-truth-refreshed] docs(plan): bind repository implementation truth'
+          git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
