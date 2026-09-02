@@ -6,8 +6,7 @@ use std::{env, ffi::OsString, process::ExitCode};
 use std::path::PathBuf;
 #[cfg(feature = "ai-v1-candidate")]
 use trnm_poco_node::{
-    prepare_g2_manifest_bound_candidate_process_v2,
-    run_g2_manifest_bound_candidate_process_v2,
+    prepare_g2_manifest_bound_candidate_process_v2, run_g2_manifest_bound_candidate_process_v2,
 };
 use trnm_poco_node::{
     production_activation_gate_v0, HOST_IMPLEMENTATION_COMPLETE_V0, PRODUCTION_CANDIDATE_V0,
@@ -29,25 +28,27 @@ fn candidate_command(arguments: &[OsString]) -> Option<ExitCode> {
             eprintln!("candidate prepare refused: manifest SHA-256 is not UTF-8");
             return Some(ExitCode::FAILURE);
         };
-        return Some(match prepare_g2_manifest_bound_candidate_process_v2(
-            &PathBuf::from(arguments[2].as_os_str()),
-            &PathBuf::from(arguments[3].as_os_str()),
-            manifest_sha256,
-        ) {
-            Ok(facts) => {
-                println!(
-                    "PREPARED candidate_only=true manifest_sha256={} process_pin_checksum={} t0d_anchor_checksum={} network=false signing=false voting=false core=false production=false",
-                    facts.manifest_sha256_hex_v2(),
-                    facts.process_pin_checksum_hex_v2(),
-                    facts.t0d_anchor_checksum_hex_v2(),
-                );
-                ExitCode::SUCCESS
-            }
-            Err(cause) => {
-                eprintln!("candidate prepare refused: {cause}");
-                ExitCode::FAILURE
-            }
-        });
+        return Some(
+            match prepare_g2_manifest_bound_candidate_process_v2(
+                &PathBuf::from(arguments[2].as_os_str()),
+                &PathBuf::from(arguments[3].as_os_str()),
+                manifest_sha256,
+            ) {
+                Ok(facts) => {
+                    println!(
+                        "PREPARED candidate_only=true manifest_sha256={} process_pin_checksum={} t0d_anchor_checksum={} network=false signing=false voting=false core=false production=false",
+                        facts.manifest_sha256_hex_v2(),
+                        facts.process_pin_checksum_hex_v2(),
+                        facts.t0d_anchor_checksum_hex_v2(),
+                    );
+                    ExitCode::SUCCESS
+                }
+                Err(cause) => {
+                    eprintln!("candidate prepare refused: {cause}");
+                    ExitCode::FAILURE
+                }
+            },
+        );
     }
     if arguments.get(1).and_then(|value| value.to_str()) == Some(RUN_G2_V2) {
         if arguments.len() != 6 {
@@ -62,18 +63,20 @@ fn candidate_command(arguments: &[OsString]) -> Option<ExitCode> {
             eprintln!("candidate run refused: SHA-256 arguments are not UTF-8");
             return Some(ExitCode::FAILURE);
         };
-        return Some(match run_g2_manifest_bound_candidate_process_v2(
-            &PathBuf::from(arguments[2].as_os_str()),
-            &PathBuf::from(arguments[3].as_os_str()),
-            manifest_sha256,
-            process_pin_checksum,
-        ) {
-            Ok(()) => ExitCode::SUCCESS,
-            Err(cause) => {
-                eprintln!("candidate run refused: {cause}");
-                ExitCode::FAILURE
-            }
-        });
+        return Some(
+            match run_g2_manifest_bound_candidate_process_v2(
+                &PathBuf::from(arguments[2].as_os_str()),
+                &PathBuf::from(arguments[3].as_os_str()),
+                manifest_sha256,
+                process_pin_checksum,
+            ) {
+                Ok(()) => ExitCode::SUCCESS,
+                Err(cause) => {
+                    eprintln!("candidate run refused: {cause}");
+                    ExitCode::FAILURE
+                }
+            },
+        );
     }
     None
 }
