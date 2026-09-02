@@ -15,9 +15,8 @@ use std::{
 };
 use trnm_durable_file_adapters_v0::FileAuthorityCoordinatorV0;
 use trnm_node_boundary_v0::{
-    BoundIngressV0, Digest32V0, HostReadinessV0, IngressFrameV0, IoPollV0,
-    IoRuntimeV0, NodeIdentityV0, OutboundFrameV0, PersistentValidatorHostV0,
-    StepBudgetV0,
+    BoundIngressV0, Digest32V0, HostReadinessV0, IngressFrameV0, IoPollV0, IoRuntimeV0,
+    NodeIdentityV0, OutboundFrameV0, PersistentValidatorHostV0, StepBudgetV0,
 };
 
 const ACK: &str = "--acknowledge-candidate-only";
@@ -63,13 +62,17 @@ trnm-candidate-persistent-host --acknowledge-candidate-only prepare <absolute-ro
 
 fn parse_digest(label: &str, value: &str) -> Result<Digest32V0, String> {
     if value.len() != 64 || !value.is_ascii() {
-        return Err(format!("{label} must be exactly 64 lowercase hexadecimal characters"));
+        return Err(format!(
+            "{label} must be exactly 64 lowercase hexadecimal characters"
+        ));
     }
     if value
         .bytes()
         .any(|byte| !byte.is_ascii_hexdigit() || byte.is_ascii_uppercase())
     {
-        return Err(format!("{label} must use lowercase hexadecimal characters only"));
+        return Err(format!(
+            "{label} must use lowercase hexadecimal characters only"
+        ));
     }
     let mut output = [0_u8; 32];
     for (index, chunk) in value.as_bytes().chunks_exact(2).enumerate() {
@@ -145,10 +148,8 @@ fn readiness_label(readiness: HostReadinessV0) -> &'static str {
 fn open_host(
     root: &Path,
     identity: NodeIdentityV0,
-) -> Result<
-    PersistentValidatorHostV0<FileAuthorityCoordinatorV0, CandidateInertIo>,
-    Box<dyn Error>,
-> {
+) -> Result<PersistentValidatorHostV0<FileAuthorityCoordinatorV0, CandidateInertIo>, Box<dyn Error>>
+{
     let coordinator = FileAuthorityCoordinatorV0::open(root, identity)?;
     Ok(PersistentValidatorHostV0::new(
         coordinator,
@@ -195,14 +196,7 @@ fn run_prepare(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     let replay_nonce = parse_nonzero_u64("replay-nonce", &arguments[11])?;
     let payload = arguments[12].as_bytes().to_vec();
     let frame = IngressFrameV0::new(peer_id, profile_digest, replay_nonce, payload)?;
-    let ingress = BoundIngressV0::derive(
-        identity,
-        height,
-        view,
-        block_id,
-        parent_id,
-        frame,
-    )?;
+    let ingress = BoundIngressV0::derive(identity, height, view, block_id, parent_id, frame)?;
 
     let mut host = open_host(&root, identity)?;
     let readiness = host.recover()?;
