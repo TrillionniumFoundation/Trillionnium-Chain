@@ -17,7 +17,9 @@
       57,
       58,
       59,
-      61
+      61,
+      69,
+      71
     ]
   },
   "repository_implementation": {
@@ -25,7 +27,7 @@
     "module_coverage": {
       "status": "present-exact-head-and-prospective-merge-replay-required",
       "module_count": 18,
-      "workspace_crates_uniquely_mapped": 53,
+      "workspace_crates_uniquely_mapped": 62,
       "auxiliary_unit_count": 9,
       "auxiliary_units_mapped": [
         "contracts-audit-events",
@@ -52,6 +54,23 @@
         4,
         8
       ]
+    },
+    "repository_core_overlay": {
+      "status": "implementation-present-exact-head-acceptance-pending",
+      "source_commit": "a44d67181dc74ad74e64819b913972d2a49abc54",
+      "absorbed_into_selected_successor": true,
+      "packages": [
+        "trnm-node-boundary-v0",
+        "trnm-tx-lifecycle-v0",
+        "trnm-state-sync-v0",
+        "trnm-migration-v0",
+        "trnm-control-plane-v0",
+        "trnm-poco-node-production-v0",
+        "trnm-production-adapter-conformance-v0",
+        "trnm-release-bundle-v0",
+        "trnm-durable-file-adapters-v0"
+      ],
+      "production_activation": false
     },
     "production_build_closures": {
       "status": "implementation-present-exact-head-and-prospective-merge-replay-required",
