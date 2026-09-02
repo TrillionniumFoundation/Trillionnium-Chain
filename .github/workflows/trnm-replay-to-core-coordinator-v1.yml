@@ -23,7 +23,7 @@ on:
   push:
     branches:
       - main
-      - "docs/chain-development-plan-v2-20260901"
+      - "work/plan-v2-full-gap-closure-20260902"
     paths:
       - ".github/workflows/trnm-replay-to-core-coordinator-v1.yml"
       - ".github/workflows/trnm-payload-replay-recovery-v1.yml"
@@ -71,7 +71,7 @@ jobs:
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
        (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
-       (github.actor == 'ProfHepta' && github.triggering_actor == 'ProfHepta') ||
+       (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
        (github.actor == 'github-actions[bot]' &&
         github.triggering_actor == 'github-actions[bot]' &&
         github.event_name == 'pull_request' &&

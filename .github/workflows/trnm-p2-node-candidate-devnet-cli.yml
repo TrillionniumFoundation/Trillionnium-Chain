@@ -16,7 +16,7 @@ on:
   push:
     branches:
       - main
-      - feature/chain-p2-node-candidate-devnet-cli-v1-20260831
+      - work/plan-v2-full-gap-closure-20260902
     paths:
       - '.github/workflows/trnm-p2-node-candidate-devnet-cli.yml'
       - 'docs/development/**'
@@ -72,14 +72,14 @@ jobs:
     name: candidate-devnet-cli
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      ((github.event_name == 'pull_request' &&
-        github.head_ref == 'feature/chain-p2-node-candidate-devnet-cli-v1-20260831') ||
-       (github.event_name == 'push' &&
-        github.ref == 'refs/heads/feature/chain-p2-node-candidate-devnet-cli-v1-20260831') ||
-       github.event_name == 'workflow_dispatch') &&
       ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
        (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
-       (github.actor == 'ProfHepta' && github.triggering_actor == 'ProfHepta')) &&
+       (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
+       (github.actor == 'github-actions[bot]' &&
+        github.triggering_actor == 'github-actions[bot]' &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.author_association == 'MEMBER')) &&
       (github.event_name != 'pull_request' ||
        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
