@@ -1,0 +1,23 @@
+[package]
+name = "trnm-poco-node-production-v0"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[dependencies]
+trnm-node-boundary-v0 = { path = "../trnm-node-boundary-v0" }
+trnm-tx-lifecycle-v0 = { path = "../trnm-tx-lifecycle-v0" }
+trnm-state-sync-v0 = { path = "../trnm-state-sync-v0" }
+trnm-migration-v0 = { path = "../trnm-migration-v0" }
+trnm-control-plane-v0 = { path = "../trnm-control-plane-v0" }
+
+[package.metadata.trnm]
+module = "M15"
+secondary_modules = ["M05", "M13", "M16"]
+role = "production-composition-wiring-only"
+protocol = "poco-bft-v0"
+production_allowed = true
+candidate_authority = false
+lab_fixture = false
