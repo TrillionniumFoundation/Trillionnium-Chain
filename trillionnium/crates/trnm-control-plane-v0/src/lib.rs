@@ -8,7 +8,11 @@
 //! history, bypass admission, or activate production.
 
 use sha2::{Digest, Sha256};
-use std::{collections::BTreeMap, error::Error, fmt};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    error::Error,
+    fmt,
+};
 
 pub const CONTROL_PLANE_VERSION_V0: u16 = 0;
 pub const MAX_MODULES_V0: usize = 64;
@@ -75,6 +79,7 @@ impl ModuleDescriptorV0 {
             || self.contract_digest == Digest32V0([0; 32])
             || self.implementation_digest == Digest32V0([0; 32])
             || self.dependency_graph_digest == Digest32V0([0; 32])
+            || self.configuration_digest == Digest32V0([0; 32])
             || self.invariant_digest == Digest32V0([0; 32])
             || self.descriptor_digest != self.canonical_digest()
         {
@@ -177,6 +182,7 @@ impl ObserverRegistryV0 {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
 pub enum ParameterClassV0 {
     OperationalLocal,
     DeterminismCritical,
@@ -184,6 +190,7 @@ pub enum ParameterClassV0 {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
 pub enum ForbiddenAuthorityActionV0 {
     Sign,
     Vote,
@@ -311,10 +318,37 @@ impl OptimizationPlanV1 {
         {
             return Err(ControlPlaneErrorV0::InvalidPlan);
         }
+        let mut action_digests = BTreeSet::new();
+        let mut parameter_targets = BTreeSet::new();
         for action in &self.actions {
-            if let PlanActionV0::SetBoundedInteger { parameter, .. } = action {
-                if parameter.is_empty() || parameter.len() > MAX_PARAMETER_NAME_BYTES_V0 {
-                    return Err(ControlPlaneErrorV0::InvalidParameter);
+            if !action_digests.insert(action.canonical_digest()) {
+                return Err(ControlPlaneErrorV0::DuplicatePlanAction);
+            }
+            match action {
+                PlanActionV0::SetBoundedInteger {
+                    module_id,
+                    parameter,
+                    class,
+                    ..
+                } => {
+                    if *module_id >= MAX_MODULES_V0 as u16
+                        || parameter.is_empty()
+                        || parameter.len() > MAX_PARAMETER_NAME_BYTES_V0
+                    {
+                        return Err(ControlPlaneErrorV0::InvalidParameter);
+                    }
+                    if *class != ParameterClassV0::OperationalLocal {
+                        return Err(ControlPlaneErrorV0::UnsupportedPlanAction);
+                    }
+                    if !parameter_targets.insert((*module_id, parameter.clone())) {
+                        return Err(ControlPlaneErrorV0::DuplicatePlanAction);
+                    }
+                }
+                PlanActionV0::PlaceIsolatedWorker { .. } => {
+                    return Err(ControlPlaneErrorV0::UnsupportedPlanAction);
+                }
+                PlanActionV0::Forbidden(_) => {
+                    return Err(ControlPlaneErrorV0::ForbiddenAuthorityAction);
                 }
             }
         }
@@ -360,6 +394,7 @@ impl ParameterBoundV0 {
             || self.parameter.is_empty()
             || self.parameter.len() > MAX_PARAMETER_NAME_BYTES_V0
             || self.minimum > self.maximum
+            || self.class != ParameterClassV0::OperationalLocal
         {
             return Err(ControlPlaneErrorV0::InvalidParameterBound);
         }
@@ -402,6 +437,7 @@ impl ActionReceiptV1 {
         h.update(self.resulting_configuration_digest.0);
         h.update(self.invariant_result_digest.0);
         h.update([u8::from(self.accepted)]);
+        h.update((self.action_results.len() as u64).to_be_bytes());
         for result in &self.action_results {
             h.update(result.action_digest.0);
             match result.decision {
@@ -462,8 +498,8 @@ where
         &self,
         plan: &OptimizationPlanV1,
         current_height: u64,
-        governance: Option<GovernanceAuthorizationV0>,
-        determinism: Option<DeterminismEvidenceV0>,
+        _governance: Option<GovernanceAuthorizationV0>,
+        _determinism: Option<DeterminismEvidenceV0>,
         resulting_configuration_digest: Digest32V0,
         invariant_result_digest: Digest32V0,
     ) -> Result<ActionReceiptV1, ControlPlaneHostErrorV0<V::Error>> {
@@ -479,7 +515,13 @@ where
                 ControlPlaneErrorV0::SourceGraphMismatch,
             ));
         }
-        if plan.issued_generation != self.current_generation.saturating_add(1) {
+        let expected_generation =
+            self.current_generation
+                .checked_add(1)
+                .ok_or(ControlPlaneHostErrorV0::Protocol(
+                    ControlPlaneErrorV0::GenerationOverflow,
+                ))?;
+        if plan.issued_generation != expected_generation {
             return Err(ControlPlaneHostErrorV0::Protocol(
                 ControlPlaneErrorV0::GenerationMismatch,
             ));
@@ -504,19 +546,8 @@ where
                 PlanActionV0::Forbidden(_) => {
                     ActionDecisionV0::Rejected(ControlPlaneErrorV0::ForbiddenAuthorityAction)
                 }
-                PlanActionV0::PlaceIsolatedWorker {
-                    module_id,
-                    worker_profile_digest,
-                    placement_digest,
-                } => {
-                    if *module_id >= MAX_MODULES_V0 as u16
-                        || *worker_profile_digest == Digest32V0([0; 32])
-                        || *placement_digest == Digest32V0([0; 32])
-                    {
-                        ActionDecisionV0::Rejected(ControlPlaneErrorV0::InvalidPlacement)
-                    } else {
-                        ActionDecisionV0::Accepted
-                    }
+                PlanActionV0::PlaceIsolatedWorker { .. } => {
+                    ActionDecisionV0::Rejected(ControlPlaneErrorV0::UnsupportedPlanAction)
                 }
                 PlanActionV0::SetBoundedInteger {
                     module_id,
@@ -536,42 +567,10 @@ where
                     };
                     if *class != bound.class || *value < bound.minimum || *value > bound.maximum {
                         ActionDecisionV0::Rejected(ControlPlaneErrorV0::ParameterOutOfBounds)
+                    } else if *class != ParameterClassV0::OperationalLocal {
+                        ActionDecisionV0::Rejected(ControlPlaneErrorV0::UnsupportedPlanAction)
                     } else {
-                        match class {
-                            ParameterClassV0::OperationalLocal => ActionDecisionV0::Accepted,
-                            ParameterClassV0::DeterminismCritical => match determinism {
-                                Some(evidence)
-                                    if evidence.plan_digest == plan.canonical_plan_digest
-                                        && evidence.shadow_replay_digest != Digest32V0([0; 32])
-                                        && evidence.worker_invariance_digest
-                                            != Digest32V0([0; 32])
-                                        && evidence.pre_root == evidence.post_root =>
-                                {
-                                    ActionDecisionV0::Accepted
-                                }
-                                _ => ActionDecisionV0::Rejected(
-                                    ControlPlaneErrorV0::MissingDeterminismEvidence,
-                                ),
-                            },
-                            ParameterClassV0::ConsensusCritical => match governance {
-                                Some(authorization)
-                                    if authorization.plan_digest == plan.canonical_plan_digest
-                                        && authorization.activation_height
-                                            >= plan.not_before_height
-                                        && authorization.activation_height
-                                            <= plan.expires_after_height
-                                        && authorization.validator_set_digest
-                                            != Digest32V0([0; 32])
-                                        && authorization.authorization_digest
-                                            != Digest32V0([0; 32]) =>
-                                {
-                                    ActionDecisionV0::Accepted
-                                }
-                                _ => ActionDecisionV0::Rejected(
-                                    ControlPlaneErrorV0::MissingGovernanceAuthorization,
-                                ),
-                            },
-                        }
+                        ActionDecisionV0::Accepted
                     }
                 }
             };
@@ -629,6 +628,9 @@ pub enum ControlPlaneErrorV0 {
     MissingDeterminismEvidence = 21,
     MissingGovernanceAuthorization = 22,
     ReceiptOutOfBounds = 23,
+    DuplicatePlanAction = 24,
+    UnsupportedPlanAction = 25,
+    GenerationOverflow = 26,
 }
 
 impl fmt::Display for ControlPlaneErrorV0 {
@@ -663,6 +665,11 @@ impl fmt::Display for ControlPlaneErrorV0 {
                 "consensus-critical action lacks governance authorization"
             }
             Self::ReceiptOutOfBounds => "action receipt exceeds its result bound",
+            Self::DuplicatePlanAction => "optimization plan repeats an action target or digest",
+            Self::UnsupportedPlanAction => {
+                "control-plane v0 permits only bounded operational-local parameters"
+            }
+            Self::GenerationOverflow => "control-plane generation cannot advance",
         })
     }
 }
@@ -756,18 +763,62 @@ mod tests {
     }
 
     #[test]
-    fn forbidden_authority_is_explicitly_rejected() {
+    fn forbidden_authority_is_rejected_before_evaluation() {
         let plan = plan(PlanActionV0::Forbidden(
             ForbiddenAuthorityActionV0::Finalize,
         ));
-        let receipt = guard()
-            .evaluate(&plan, 150, None, None, d(9), d(10))
-            .unwrap();
-        assert!(!receipt.accepted);
-        assert_eq!(
-            receipt.action_results[0].decision,
-            ActionDecisionV0::Rejected(ControlPlaneErrorV0::ForbiddenAuthorityAction)
-        );
+        assert!(matches!(
+            guard().evaluate(&plan, 150, None, None, d(9), d(10)),
+            Err(ControlPlaneHostErrorV0::Protocol(
+                ControlPlaneErrorV0::ForbiddenAuthorityAction
+            ))
+        ));
+    }
+
+    #[test]
+    fn placement_and_critical_parameters_remain_uncommissioned() {
+        let placement = plan(PlanActionV0::PlaceIsolatedWorker {
+            module_id: 4,
+            worker_profile_digest: d(20),
+            placement_digest: d(21),
+        });
+        assert!(matches!(
+            guard().evaluate(&placement, 150, None, None, d(9), d(10)),
+            Err(ControlPlaneHostErrorV0::Protocol(
+                ControlPlaneErrorV0::UnsupportedPlanAction
+            ))
+        ));
+        let critical = plan(PlanActionV0::SetBoundedInteger {
+            module_id: 4,
+            parameter: b"ingress_queue_items".to_vec(),
+            value: 1024,
+            class: ParameterClassV0::DeterminismCritical,
+        });
+        assert!(matches!(
+            guard().evaluate(&critical, 150, None, None, d(9), d(10)),
+            Err(ControlPlaneHostErrorV0::Protocol(
+                ControlPlaneErrorV0::UnsupportedPlanAction
+            ))
+        ));
+    }
+
+    #[test]
+    fn duplicate_parameter_targets_fail_closed() {
+        let action = PlanActionV0::SetBoundedInteger {
+            module_id: 4,
+            parameter: b"ingress_queue_items".to_vec(),
+            value: 1024,
+            class: ParameterClassV0::OperationalLocal,
+        };
+        let mut duplicate = plan(action.clone());
+        duplicate.actions.push(action);
+        duplicate.canonical_plan_digest = duplicate.canonical_digest();
+        assert!(matches!(
+            guard().evaluate(&duplicate, 150, None, None, d(9), d(10)),
+            Err(ControlPlaneHostErrorV0::Protocol(
+                ControlPlaneErrorV0::DuplicatePlanAction
+            ))
+        ));
     }
 
     #[test]
