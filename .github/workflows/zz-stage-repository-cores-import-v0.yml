@@ -15,11 +15,11 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SOURCE_COMMIT: 1a181ba453f86055082859e12e3d0be9fc7b18f5
+  SOURCE_COMMIT: "1a181ba453f86055082859e12e3d0be9fc7b18f5"
   TARGET_BRANCH: work/integrate-repository-cores-v0-20260902
 
 jobs:
-  import:
+  stage_import:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       github.ref == 'refs/heads/work/integrate-repository-cores-v0-20260902' &&
@@ -74,17 +74,19 @@ jobs:
           workspace = Path('trillionnium/Cargo.toml')
           text = workspace.read_text()
           anchor = '  "crates/trnm-runtime",\n]'
-          additions = '''  "crates/trnm-runtime",
-  "crates/trnm-node-boundary-v0",
-  "crates/trnm-tx-lifecycle-v0",
-  "crates/trnm-state-sync-v0",
-  "crates/trnm-migration-v0",
-  "crates/trnm-control-plane-v0",
-  "crates/trnm-poco-node-production-v0",
-  "crates/trnm-production-adapter-conformance-v0",
-  "crates/trnm-release-bundle-v0",
-  "crates/trnm-durable-file-adapters-v0",
-]'''
+          members = [
+              'crates/trnm-runtime',
+              'crates/trnm-node-boundary-v0',
+              'crates/trnm-tx-lifecycle-v0',
+              'crates/trnm-state-sync-v0',
+              'crates/trnm-migration-v0',
+              'crates/trnm-control-plane-v0',
+              'crates/trnm-poco-node-production-v0',
+              'crates/trnm-production-adapter-conformance-v0',
+              'crates/trnm-release-bundle-v0',
+              'crates/trnm-durable-file-adapters-v0',
+          ]
+          additions = ''.join(f'  "{member}",\n' for member in members) + ']'
           if anchor not in text:
               raise SystemExit('workspace member anchor changed')
           workspace.write_text(text.replace(anchor, additions, 1))
@@ -97,7 +99,11 @@ jobs:
           text = manifest.read_text().replace('module = "M15"', 'module = "M08"', 1)
           text = text.replace('production_allowed = true', 'production_allowed = false', 1)
           if 'adapter_candidate = true' not in text:
-              text = text.replace('production_allowed = false\n', 'production_allowed = false\nadapter_candidate = true\nproduction_activation = false\n', 1)
+              text = text.replace(
+                  'production_allowed = false\n',
+                  'production_allowed = false\nadapter_candidate = true\nproduction_activation = false\n',
+                  1,
+              )
           manifest.write_text(text)
 
           host_manifest = Path('trillionnium/crates/trnm-poco-node-host/Cargo.toml')
@@ -110,7 +116,16 @@ jobs:
           host = Path('trillionnium/crates/trnm-poco-node-host/src/lib.rs')
           text = host.read_text()
           marker = 'use trnm_poco_node_io::{NodeIoRuntimeV0, REQUIRED_NODE_IO_SURFACES_V0};\n'
-          addition = marker + '\n/// Compile-time binding to the reviewed pure repository-core composition.\n/// This does not open activation or instantiate domain state.\npub const REPOSITORY_CORE_COMPOSITION_VERSION_V0: u16 =\n    trnm_poco_node_production_v0::PRODUCTION_COMPOSITION_VERSION_V0;\n'
+          lines = [
+              marker.rstrip('\n'),
+              '',
+              '/// Compile-time binding to the reviewed pure repository-core composition.',
+              '/// This does not open activation or instantiate domain state.',
+              'pub const REPOSITORY_CORE_COMPOSITION_VERSION_V0: u16 =',
+              '    trnm_poco_node_production_v0::PRODUCTION_COMPOSITION_VERSION_V0;',
+              '',
+          ]
+          addition = '\n'.join(lines)
           if marker not in text:
               raise SystemExit('node host import anchor changed')
           host.write_text(text.replace(marker, addition, 1))
