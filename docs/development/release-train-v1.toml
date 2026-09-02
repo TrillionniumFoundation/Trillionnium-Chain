@@ -1,33 +1,36 @@
 schema_version = 1
-train_id = "trnm-native-poco-release-train-v1-20260901"
-as_of = "2026-09-01"
+train_id = "trnm-native-poco-release-train-v1-20260902"
+as_of = "2026-09-02"
 plan_id = "trnm-chain-development-plan-v2"
 canonical_destination = "refs/heads/main"
+storage_engine = "sqlite"
 production_candidate = false
 production_consensus_activation = false
 public_testnet_ready = false
 release_ready = false
 
 [source]
-selected_successor_pull_request = 58
-head_ref = "refs/heads/integration/native-poco-a04-a19-a23-qualified-v1-20260901"
-head_commit = "3c46293e78a125dec9504e51c355a20216341338"
-head_tree = "875a1e6366df7cd9da80de145e25584ae309cee8"
-base_ref = "refs/heads/feature/chain-p2-node-candidate-devnet-cli-v1-20260831"
-base_commit = "fddc8e919a77f3be42b72ad4b8a7f8ff91d7abdc"
-status = "draft-unaccepted-changes-requested"
-qualification_scope = "carrier-qualified; exact PR-head and prospective-merge acceptance still required"
+selected_successor_pull_request = 62
+head_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
+integration_merge_commit = "287e25756a3aa3270fcba27add83654792a6149b"
+integration_merge_tree = "4a61226903195e4493655ba7b2dcff28829753f4"
+implementation_parent = "c4c9e8b245e5d719f3b30e4839e10d2966dcf4cf"
+documentation_parent = "e405159cf73b8210b1dd19ea48900d2265d591e3"
+base_ref = "refs/heads/main"
+base_commit = "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9"
+status = "draft-execution-candidate"
+qualification_scope = "exact PR-head and prospective-merge acceptance required; repository implementation evidence is distinct from external evidence"
+runtime_head_binding = "derived-at-verification-time-from-pr-head-and-tree"
 
 [succession]
 one_successor_per_integration_surface = true
-selected_surface = "A04-A19-A23"
-overlapping_pull_requests_to_supersede = [57]
+selected_surface = "canonical-plan-v2-native-poco-mainline"
+overlapping_pull_requests_to_supersede = [54, 58, 59, 61]
 self_merge_allowed = false
 independent_acceptance_required = true
 
 [documentation]
-candidate_ref = "refs/heads/docs/chain-development-plan-v2-20260901"
-base_commit = "3c46293e78a125dec9504e51c355a20216341338"
+candidate_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
 sole_plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 git_history_is_archive = true
 active_archive_directory_allowed = false
@@ -35,44 +38,68 @@ active_archive_directory_allowed = false
 [[blockers]]
 id = "A19-NS-001"
 priority = "P0"
-status = "open"
+status = "implementation-present-acceptance-pending"
 owner_modules = ["M07", "M08"]
-exit = "descriptor-bound database and sidecar identity is verified before and after every trusted operation"
+exit = "descriptor-bound SQLite database and WAL/SHM/journal sidecar identity is verified before and after every trusted operation"
 
 [[blockers]]
 id = "A19-SCHEMA-001"
 priority = "P0"
-status = "open"
+status = "implementation-present-acceptance-pending"
 owner_modules = ["M07"]
-exit = "closed-world schema digest rejects extra, missing or changed tables, indexes, views, triggers and required pragmas"
+exit = "closed-world SQLite schema digest rejects extra, missing or changed tables, indexes, views, triggers and required pragmas"
 
 [[blockers]]
 id = "A19-RETURN-001"
 priority = "P0"
-status = "open"
+status = "implementation-present-acceptance-pending"
 owner_modules = ["M07", "M08"]
-exit = "no read or exact-replay path returns before connection close and post-operation identity verification"
+exit = "no SQLite read or exact-replay path returns before connection close and post-operation identity verification"
 
 [[blockers]]
 id = "INT-STACK-001"
 priority = "P0"
 status = "open"
 owner_modules = ["M15", "M17"]
-exit = "PR58 is sole successor, overlap is superseded, and non-skipped exact-head plus prospective-merge checks pass"
+exit = "PR62 is the sole successor, overlapping PRs are superseded, and non-skipped exact-head plus prospective-merge checks pass with independent acceptance"
 
 [[blockers]]
 id = "NODE-COMMIT-001"
 priority = "P1"
-status = "open"
+status = "implementation-present-acceptance-pending"
 owner_modules = ["M03", "M07", "M08"]
-exit = "one monotonic Node Commit Ledger proves exact source-or-target crash convergence"
+exit = "one monotonic Node Commit Ledger proves exact source-or-target crash convergence and passes exact-head plus prospective-merge qualification"
 
 [[blockers]]
 id = "EXEC-VERTICAL-001"
 priority = "P1"
-status = "open"
+status = "implementation-present-acceptance-pending"
 owner_modules = ["M02", "M06", "M07", "M08"]
-exit = "real persistent validator path preserves canonical roots across 1, 2, 4 and 8 workers"
+exit = "the real persistent execution store preserves canonical roots, receipts, events and fees across 1, 2, 4 and 8 workers and passes exact-head plus prospective-merge qualification"
+
+[[external_blockers]]
+id = "EXT-REVIEW-001"
+status = "open-external-evidence-required"
+
+[[external_blockers]]
+id = "EXT-G1-CAMPAIGN-001"
+status = "open-external-evidence-required"
+
+[[external_blockers]]
+id = "EXT-ANCHOR-HSM-001"
+status = "open-external-evidence-required"
+
+[[external_blockers]]
+id = "EXT-POWERLOSS-001"
+status = "open-external-evidence-required"
+
+[[external_blockers]]
+id = "EXT-AUDIT-001"
+status = "open-external-evidence-required"
+
+[[external_blockers]]
+id = "EXT-SOAK-ACTIVATION-001"
+status = "open-external-evidence-required"
 
 [merge_policy]
 exact_source_head_required = true
@@ -81,3 +108,4 @@ skipped_job_is_success = false
 stale_evidence_is_success = false
 carrier_qualification_is_merge_acceptance = false
 producer_may_self_accept = false
+administrator_bypass_is_acceptance = false
