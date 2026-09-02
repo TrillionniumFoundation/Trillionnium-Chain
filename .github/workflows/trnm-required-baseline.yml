@@ -29,7 +29,7 @@ jobs:
   repository-truth:
     name: repository-truth
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Check out exact source with full history
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -39,9 +39,14 @@ jobs:
           persist-credentials: false
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
-      - name: Validate repository, consensus and blocker truth
+      - name: Validate repository, development, module, node, and blocker truth
         run: |
+          set -euo pipefail
           python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_required_baseline_closure_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
           python3 scripts/ci/check_build_closures_v1.py
       - name: Validate deterministic release-status projection
@@ -73,6 +78,10 @@ jobs:
             scripts/ci/check_repository_truth_v1.py \
             scripts/ci/check_blocker_execution_v1.py \
             scripts/ci/check_build_closures_v1.py \
+            scripts/ci/check_documentation_reference_closure_v1.py \
+            scripts/ci/check_module_coverage_v1.py \
+            scripts/ci/check_node_decomposition_v1.py \
+            scripts/ci/check_required_baseline_closure_v1.py \
             scripts/ci/check_required_protocol_contract_v1.py \
             scripts/ci/generate_release_status_v1.py \
             scripts/ci/check_external_evidence_v1.py
@@ -212,7 +221,7 @@ jobs:
   rust-baseline:
     name: rust-baseline
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 180
     steps:
       - name: Check out exact source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -232,10 +241,14 @@ jobs:
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
+      - name: Test every active workspace target
+        working-directory: trillionnium
+        run: cargo test --workspace --all-targets --locked
       - name: Verify production and candidate dependency closures with Cargo
         run: |
           set -euo pipefail
           python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+          python3 scripts/ci/check_node_decomposition_v1.py
           cargo check --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node --no-default-features --locked
           cargo test --manifest-path trillionnium/Cargo.toml \
@@ -243,7 +256,13 @@ jobs:
           cargo check --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node --no-default-features \
             --features ai-v1-candidate --locked
-      - name: Strict Clippy for executable safety kernel
+      - name: Compile, test, and lint external contract workspace
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
+          cargo test --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
+          cargo clippy --manifest-path contracts/Cargo.toml --workspace --all-targets --locked -- -D warnings
+      - name: Strict Clippy for executable safety and node boundaries
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -256,11 +275,37 @@ jobs:
             trnm-consensus-safety-store \
             trnm-consensus-signer-journal \
             trnm-native-application \
-            trnm-poco-node
+            trnm-native-application-sqlite \
+            trnm-native-execution-v0 \
+            trnm-poco-node \
+            trnm-poco-node-authority \
+            trnm-poco-node-io \
+            trnm-poco-node-host \
+            trnm-poco-node-cli
           do
             echo "clippy package=${package}"
-            cargo clippy -p "${package}" --locked -- -D warnings
+            cargo clippy -p "${package}" --all-targets --locked -- -D warnings
           done
+      - name: Prove dedicated production-shaped CLI remains fail-closed
+        run: |
+          set -euo pipefail
+          status=$(cargo run --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --bin trnm-poco-node-cli \
+            --locked -- status)
+          printf '%s\n' "$status" | grep -q '"production_candidate":false'
+          printf '%s\n' "$status" | grep -q '"authority_gate_open":false'
+          printf '%s\n' "$status" | grep -q '"production_activation":false'
+          printf '%s\n' "$status" | grep -q '"start_permitted":false'
+          set +e
+          cargo run --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --bin trnm-poco-node-cli \
+            --locked -- start \
+            >"${RUNNER_TEMP}/trnm-node-start.out" \
+            2>"${RUNNER_TEMP}/trnm-node-start.err"
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          grep -q 'node host start blocked' "${RUNNER_TEMP}/trnm-node-start.err"
       - name: Run critical library regressions
         working-directory: trillionnium
         run: |
@@ -269,3 +314,7 @@ jobs:
           cargo test -p trnm-consensus-types --lib --locked
           cargo test -p trnm-consensus-core --lib --locked
           cargo test -p trnm-poco-node --lib --locked
+      - name: Require Rust and contract validation to leave checkout clean
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"

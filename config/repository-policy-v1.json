@@ -59,9 +59,12 @@
     "README.md",
     "SECURITY.md",
     "config/blocker-execution-v1.json",
+    "config/build-closures-v1.toml",
     "config/consensus-mainline.json",
     "config/documentation-truth-v1.json",
     "config/module-coverage-v1.toml",
+    "config/node-decomposition-v1.toml",
+    "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md",
     "docs/development/CURRENT_SNAPSHOT_V1.json",
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
     "docs/development/module-registry-v1.toml",
@@ -70,11 +73,18 @@
     "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md",
     "rust-toolchain.toml",
     "scripts/ci/check_blocker_execution_v1.py",
+    "scripts/ci/check_build_closures_v1.py",
     "scripts/ci/check_canonical_development_plan.sh",
     "scripts/ci/check_documentation_reference_closure_v1.py",
     "scripts/ci/check_module_coverage_v1.py",
+    "scripts/ci/check_node_decomposition_v1.py",
+    "scripts/ci/check_required_baseline_closure_v1.py",
     "scripts/ci/check_required_protocol_contract_v1.py",
     "trillionnium/Cargo.lock",
-    "trillionnium/Cargo.toml"
+    "trillionnium/Cargo.toml",
+    "trillionnium/crates/trnm-poco-node-authority/Cargo.toml",
+    "trillionnium/crates/trnm-poco-node-io/Cargo.toml",
+    "trillionnium/crates/trnm-poco-node-host/Cargo.toml",
+    "trillionnium/crates/trnm-poco-node-cli/Cargo.toml"
   ]
 }
