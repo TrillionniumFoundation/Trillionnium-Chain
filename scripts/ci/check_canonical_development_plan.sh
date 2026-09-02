@@ -67,7 +67,8 @@ staff=0
 for row in rows:
     count=next((row.get(k) for k in ("staff","staff_target","target_staff","recommended_staff") if isinstance(row.get(k),int)),None); require(isinstance(count,int) and count>0,f"staff missing for {row.get('id')}"); staff+=count
 require(staff==48,f"staff target drift: {staff}")
-for marker in ("one active engineering plan","18 long-lived","node commit ledger","pinnedsqlitenamespace","global control plane","production_candidate = false","no machine flag is promoted","g5"): require(marker in lower,f"plan missing {marker}")
+for marker in ("one active engineering plan","node commit ledger","pinnedsqlitenamespace","global control plane","production_candidate = false","no machine flag is promoted","g5"): require(marker in lower,f"plan missing {marker}")
+require(re.search(r"\b(?:18|eighteen)\s+long-lived\s+modules\b", lower) is not None,"plan missing 18 long-lived modules")
 for forbidden in ("production_candidate = true","production_consensus_activation = true","release_ready = true","public_testnet_ready = true"): require(forbidden not in lower,f"plan contains {forbidden}")
 for doc in (snapshot,truth,repo,boundary,train):
     for key in ("production_candidate","production_consensus_activation","release_ready","public_testnet_ready"): require(all(v is False for v in vals(doc,key) if isinstance(v,bool)),f"{key} promoted")
