@@ -145,8 +145,11 @@ application roots, or control-plane overrides.
 `trnm-consensus-signer-journal`, `trnm-consensus-unix-remote-signer`,
 `trnm-consensus-unix-fleet-signer`, `trnm-consensus-external-watermark`,
 `trnm-consensus-external-node-checkpoint`,
-`trnm-consensus-remote-signer-service`, and
-`trnm-whole-node-checkpoint-types`.
+`trnm-consensus-remote-signer-service`, `trnm-whole-node-checkpoint-types`, and
+`trnm-durable-file-adapters-v0`. The durable-file package supplies bounded,
+hash-chained, sync-before-return repository adapters; it does not substitute for
+device-backed custody, an independent monotonic anchor, or physical durability
+evidence.
 
 **Durability contract.** Safety state is durably advanced before a signature can
 escape. Sign intent, signer result, watermark, checkpoint predecessor, node
@@ -200,7 +203,11 @@ fee/resource admission, per-principal and global budgets, mempool WAL, canonical
 handoff to ordering, expiration, replacement, and finalized tombstone/GC policy.
 It does not choose canonical order or mutate finalized application state.
 
-**Primary code.** `trnm-mempool` and `trnm-application-tx-builder-v0`.
+**Primary code.** `trnm-mempool`, `trnm-application-tx-builder-v0`, and
+`trnm-tx-lifecycle-v0`. The lifecycle crate freezes deterministic phase,
+receipt, authorization, replacement, broadcast-intent, finality-readback,
+tombstone, and replay-floor contracts without opening a socket or holding a
+signer.
 
 **Contract.** Admission verifies exact canonical bytes, authentication,
 chain/profile, nonce lane, access declaration, gas/resource caps, size, expiry,
@@ -425,12 +432,16 @@ and independent economic/security review are required. SLO profile:
 
 **Authority.** M13 owns finality receipt verification, checkpoint and weak-
 subjectivity anchors, trust-path iteration, state-sync verification, proof
-transport, snapshot download validation, and client upgrade rules. It cannot
-sign, vote, or trust an unverified checkpoint.
+transport, snapshot download validation, client upgrade rules, and fresh-genesis
+migration verification. It cannot sign, vote, trust an unverified checkpoint, or
+rewrite an in-place validator database.
 
 **Primary code.** `trnm-poco-cross-plane-readback-v1`,
-`trnm-poco-order-finality-verifier-v1`, `trnm-finality-types`, and
-`trnm-finality-verifier`.
+`trnm-poco-order-finality-verifier-v1`, `trnm-finality-types`,
+`trnm-finality-verifier`, `trnm-migration-v0`, and `trnm-state-sync-v0`.
+The migration crate verifies finalized source exports and deterministic target
+projection; the state-sync crate verifies bounded arbitrary trust paths and
+non-destructive staged installation.
 
 **Contract.** A verified path binds chain/profile, validator and parameter sets,
 epoch transitions, certified ancestry, finality rule, application/state/schema
@@ -443,6 +454,8 @@ from network majority alone.
 subjectivity windows, downgrade, alternate schema, unreachable nodes, and
 partial install fail closed. Download and verification are isolated; the
 existing store is not destroyed until the replacement is fully verified.
+Migration targets a fresh namespace and fresh genesis; legacy WAL or signer state
+is never imported as production authority.
 
 **Verification.** Arbitrary-length trust paths, skipped views, epoch transitions,
 hostile peers/chunks, checkpoint renewal, snapshot restart, independent parser,
@@ -485,15 +498,23 @@ configuration loading, binaries, packaging, reproducible builds, SBOM and
 provenance assembly, release manifests, and operator handoff. Composition owns
 no domain state machine and cannot silently promote machine truth.
 
-**Primary code.** `trnm-poco-node` and `trnm-bridge-poc`; legacy
-`trnm-consensus-app` and `trnm-node` are excluded migration residue.
+**Primary code.** `trnm-poco-node`, `trnm-poco-node-authority`,
+`trnm-poco-node-io`, `trnm-poco-node-host`, `trnm-poco-node-cli`,
+`trnm-bridge-poc`, `trnm-node-boundary-v0`,
+`trnm-poco-node-production-v0`, and `trnm-release-bundle-v0`. The boundary crate
+contains versioned ports only; the production crate performs wiring only; the
+release crate validates exact-source artifact, SBOM, provenance, signature, and
+handoff bindings. Legacy `trnm-consensus-app` and `trnm-node` remain excluded
+migration residue.
 
 **Composition contract.** Separate closures are maintained for `node-prod-v0`,
 `node-devnet-v0`, `ai-v1-candidate`, and `lab-and-evidence`. Production closure
 contains no fixture, mock authority, benchmark, research, PoC, v1 candidate, or
 legacy consensus runtime. Feature combinations cannot activate authority.
 Configuration is closed-world, versioned, source-bound, and validated before
-side effects.
+side effects. A composition object may route typed requests and lifecycle
+signals but may not decide validity, mint a state root, weaken SafetyRules, or
+set an activation flag.
 
 **Operations and recovery.** Startup reconstructs exact durable authority before
 network participation. Shutdown drains or durably records intents. Packaging
@@ -516,9 +537,12 @@ offline planning, signed plan/receipt formats, staged rollout, and rollback. It
 cannot sign, vote, finalize, create roots, alter SafetyRules, bypass admission,
 erase evidence, rewrite history, or activate production.
 
-**Primary code.** No production crate is commissioned. Current authority is the
-machine module registry, telemetry/evidence contracts, and node-local guard
-interface. This absence is explicit and cannot be hidden by a service mock.
+**Primary code.** `trnm-control-plane-v0` is the commissioned
+non-authoritative contract/core library. It validates module descriptors,
+measurements, bounded OperationalLocal plans, node-local guard decisions, and
+action receipts. No networked control-plane service, production rollout daemon,
+or production activation authority is commissioned; absence of those adapters
+cannot be hidden by a mock.
 
 **Plan contract.** `OptimizationPlanV1` binds source graph and digests, workload
 assumption and validity region, finite resource bounds, workers/queues/batches,
@@ -531,7 +555,8 @@ A node-local independent guard is final authority for acceptance.
 determinism, durability, and compatibility violations must remain zero before
 latency, cost, or goodput objectives are considered. Loss of M16 freezes tuning
 at the last accepted safe plan; consensus continues. Initial operation is
-read-only observation.
+read-only observation, and only bounded OperationalLocal proposals may advance
+to a separately guarded apply request.
 
 **Verification.** Schema/mutant tests, forged/stale/over-broad plans, guard
 independence, shadow/canary/rollback, telemetry poisoning, planner infeasibility,
@@ -549,8 +574,10 @@ cannot become production signing, consensus, state, or self-acceptance
 authority.
 
 **Primary code.** `trnm-bench`, `trnm-consensus-sim`,
-`trnm-research-protocol`, and `trnm-poco-lab-validator`, plus `scripts/ci`,
-`formal`, fuzz targets, evidence schemas, and read-only campaign tooling.
+`trnm-research-protocol`, `trnm-poco-lab-validator`, and
+`trnm-production-adapter-conformance-v0`, plus `scripts/ci`, `formal`, fuzz
+targets, evidence schemas, and read-only campaign tooling. The conformance crate
+is a testkit and is forbidden from the production dependency closure.
 
 **Evidence contract.** Every result binds source and prospective-merge identity,
 plan/protocol/module/toolchain/dependency/configuration digests, topology,
