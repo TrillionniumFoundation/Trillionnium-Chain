@@ -140,3 +140,5 @@ jobs:
           git add trillionnium/Cargo.lock
           git commit -m '[node-split-lock] ci(node): materialize lock and retire staging carrier'
           git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
+
+# Exact rerun after applying rustfmt 1.95.0 output to all new boundary sources.
