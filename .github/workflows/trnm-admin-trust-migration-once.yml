@@ -23,10 +23,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      EXPECTED_PARENT: 180ecf98c02fb67de8a6b1907a860147be4913f8
+      EXPECTED_PARENT: 8ee37a2358852138c07488799f46502ce1230d9f
       SELF_PATH: .github/workflows/trnm-admin-trust-migration-once.yml
       SCRIPT_PATH: scripts/ci/trnm_admin_trust_migration_once.py
-      ARTIFACT_ROOT: ${{ runner.temp }}/trnm-admin-trust-migration
     steps:
       - name: Check out exact migration commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -63,29 +62,30 @@ jobs:
       - name: Export exact validated replacement tree
         run: |
           set -euo pipefail
-          rm -rf "$ARTIFACT_ROOT"
-          mkdir -p "$ARTIFACT_ROOT/files"
-          : > "$ARTIFACT_ROOT/deletes.txt"
+          artifact_root="$RUNNER_TEMP/trnm-admin-trust-migration"
+          rm -rf "$artifact_root"
+          mkdir -p "$artifact_root/files"
+          : > "$artifact_root/deletes.txt"
           while IFS= read -r -d '' path; do
             if [[ -f "$path" ]]; then
-              mkdir -p "$ARTIFACT_ROOT/files/$(dirname "$path")"
-              cp -p -- "$path" "$ARTIFACT_ROOT/files/$path"
+              mkdir -p "$artifact_root/files/$(dirname "$path")"
+              cp -p -- "$path" "$artifact_root/files/$path"
             else
-              printf '%s\n' "$path" >> "$ARTIFACT_ROOT/deletes.txt"
+              printf '%s\n' "$path" >> "$artifact_root/deletes.txt"
             fi
           done < <(git diff --name-only -z)
-          git diff --binary --full-index > "$ARTIFACT_ROOT/migration.patch"
-          git rev-parse HEAD > "$ARTIFACT_ROOT/source-commit.txt"
-          git write-tree > "$ARTIFACT_ROOT/base-tree.txt"
-          find "$ARTIFACT_ROOT/files" -type f -print | LC_ALL=C sort > "$ARTIFACT_ROOT/files.txt"
-          test -s "$ARTIFACT_ROOT/migration.patch"
-          test -s "$ARTIFACT_ROOT/files.txt"
-          test -s "$ARTIFACT_ROOT/deletes.txt"
+          git diff --binary --full-index > "$artifact_root/migration.patch"
+          git rev-parse HEAD > "$artifact_root/source-commit.txt"
+          git write-tree > "$artifact_root/base-tree.txt"
+          find "$artifact_root/files" -type f -print | LC_ALL=C sort > "$artifact_root/files.txt"
+          test -s "$artifact_root/migration.patch"
+          test -s "$artifact_root/files.txt"
+          test -s "$artifact_root/deletes.txt"
 
       - name: Upload exact validated migration
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-admin-trust-migration-${{ github.sha }}
-          path: ${{ env.ARTIFACT_ROOT }}
+          path: ${{ runner.temp }}/trnm-admin-trust-migration
           if-no-files-found: error
           retention-days: 7
