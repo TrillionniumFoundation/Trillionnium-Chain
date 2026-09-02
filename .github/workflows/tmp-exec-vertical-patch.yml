@@ -1,0 +1,302 @@
+name: tmp-exec-vertical-patch
+
+on:
+  push:
+    branches:
+      - integration/native-poco-node-commit-exec-v1-20260902
+    paths:
+      - '.github/workflows/tmp-exec-vertical-patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-clean:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Apply exact-marker persistent parallel execution patch
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          root = Path('trillionnium/crates/trnm-poco-mvcc-fee-v1/src')
+          engine = root / 'engine.rs'
+          store = root / 'store.rs'
+          tests = root / 'tests.rs'
+
+          def replace_once(path: Path, old: str, new: str):
+              text = path.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected exactly one marker, found {count}')
+              path.write_text(text.replace(old, new, 1))
+
+          replace_once(engine,
+              'use std::collections::{BTreeMap, BTreeSet};\n',
+              'use std::{\n    collections::{BTreeMap, BTreeSet},\n    thread,\n};\n')
+
+          replace_once(engine,
+              'const MAX_TRANSACTIONS_V1: usize = 256;\nconst MAX_ACCESS_WIDTH_V1: usize = 64;\n',
+              'const MAX_TRANSACTIONS_V1: usize = 256;\nconst MAX_ACCESS_WIDTH_V1: usize = 64;\npub(crate) const MAX_EXECUTION_WORKERS_V1: usize = 64;\n\npub(crate) fn validate_worker_count_v1(worker_count: usize) -> MvccFeeResultV1<()> {\n    if worker_count == 0 || worker_count > MAX_EXECUTION_WORKERS_V1 {\n        return Err(error(\n            MvccFeeErrorCodeV1::InvalidBounds,\n            "execution worker count is outside frozen candidate bounds",\n        ));\n    }\n    Ok(())\n}\n')
+
+          old_exec = '''pub(crate) fn execute_block(
+    genesis: &MvccFeeGenesisV1,
+    parent: &ObjectMapV1,
+    block: &MvccBlockV1,
+) -> MvccFeeResultV1<(ObjectMapV1, MvccBlockReceiptV1)> {
+    validate_block(genesis, parent, block)?;
+    let parent_root = state_root(parent)?;
+    let speculative_reads: Vec<Vec<ReadSetEntryV1>> = block
+        .transactions
+        .iter()
+        .map(|transaction| read_set(parent, transaction))
+        .collect::<MvccFeeResultV1<_>>()?;
+'''
+          new_exec = '''pub(crate) fn execute_block(
+    genesis: &MvccFeeGenesisV1,
+    parent: &ObjectMapV1,
+    block: &MvccBlockV1,
+) -> MvccFeeResultV1<(ObjectMapV1, MvccBlockReceiptV1)> {
+    execute_block_with_workers(genesis, parent, block, 1)
+}
+
+pub(crate) fn execute_block_with_workers(
+    genesis: &MvccFeeGenesisV1,
+    parent: &ObjectMapV1,
+    block: &MvccBlockV1,
+    worker_count: usize,
+) -> MvccFeeResultV1<(ObjectMapV1, MvccBlockReceiptV1)> {
+    validate_worker_count_v1(worker_count)?;
+    validate_block(genesis, parent, block)?;
+    let parent_root = state_root(parent)?;
+    let speculative_reads = parallel_speculative_reads_v1(parent, &block.transactions, worker_count)?;
+'''
+          replace_once(engine, old_exec, new_exec)
+
+          marker = '''fn validate_block(
+    genesis: &MvccFeeGenesisV1,
+'''
+          helper = '''fn parallel_speculative_reads_v1(
+    parent: &ObjectMapV1,
+    transactions: &[MvccTransactionV1],
+    worker_count: usize,
+) -> MvccFeeResultV1<Vec<Vec<ReadSetEntryV1>>> {
+    validate_worker_count_v1(worker_count)?;
+    let active_workers = worker_count.min(transactions.len().max(1));
+    thread::scope(|scope| {
+        let mut handles = Vec::with_capacity(active_workers);
+        for worker_index in 0..active_workers {
+            handles.push(scope.spawn(move || {
+                let mut rows = Vec::new();
+                let mut position = worker_index;
+                while position < transactions.len() {
+                    rows.push((position, read_set(parent, &transactions[position])));
+                    position += active_workers;
+                }
+                rows
+            }));
+        }
+        let mut ordered: Vec<Option<Vec<ReadSetEntryV1>>> =
+            (0..transactions.len()).map(|_| None).collect();
+        for handle in handles {
+            let rows = handle.join().map_err(|_| {
+                error(
+                    MvccFeeErrorCodeV1::InvalidState,
+                    "parallel speculation worker panicked",
+                )
+            })?;
+            for (position, row) in rows {
+                ordered[position] = Some(row?);
+            }
+        }
+        ordered
+            .into_iter()
+            .map(|row| {
+                row.ok_or_else(|| {
+                    error(
+                        MvccFeeErrorCodeV1::InvalidState,
+                        "parallel speculation omitted a canonical transaction",
+                    )
+                })
+            })
+            .collect()
+    })
+}
+
+'''
+          replace_once(engine, marker, helper + marker)
+
+          replace_once(store,
+              'engine::{execute_block, state_root, validate_genesis, ObjectMapV1},',
+              'engine::{\n        execute_block_with_workers, state_root, validate_genesis, validate_worker_count_v1,\n        ObjectMapV1,\n    },')
+          replace_once(store,
+              '''pub struct MvccFeeStoreV1 {
+    path: PathBuf,
+    genesis: MvccFeeGenesisV1,
+}
+''',
+              '''pub struct MvccFeeStoreV1 {
+    path: PathBuf,
+    genesis: MvccFeeGenesisV1,
+    worker_count: usize,
+}
+''')
+
+          old_open = '''    pub fn open(path: impl Into<PathBuf>, genesis: MvccFeeGenesisV1) -> MvccFeeResultV1<Self> {
+        validate_genesis(&genesis)?;
+        let path = path.into();
+'''
+          new_open = '''    pub fn open(path: impl Into<PathBuf>, genesis: MvccFeeGenesisV1) -> MvccFeeResultV1<Self> {
+        Self::open_with_worker_count(path, genesis, 1)
+    }
+
+    pub fn open_with_worker_count(
+        path: impl Into<PathBuf>,
+        genesis: MvccFeeGenesisV1,
+        worker_count: usize,
+    ) -> MvccFeeResultV1<Self> {
+        validate_genesis(&genesis)?;
+        validate_worker_count_v1(worker_count)?;
+        let path = path.into();
+'''
+          replace_once(store, old_open, new_open)
+          replace_once(store, '        Ok(Self { path, genesis })\n    }\n\n    /// Open and fully audit an already-created store', '        Ok(Self {\n            path,\n            genesis,\n            worker_count,\n        })\n    }\n\n    /// Open and fully audit an already-created store')
+
+          old_existing = '''    pub fn open_existing(
+        path: impl Into<PathBuf>,
+        genesis: MvccFeeGenesisV1,
+    ) -> MvccFeeResultV1<Self> {
+        validate_genesis(&genesis)?;
+        let path = path.into();
+'''
+          new_existing = '''    pub fn open_existing(
+        path: impl Into<PathBuf>,
+        genesis: MvccFeeGenesisV1,
+    ) -> MvccFeeResultV1<Self> {
+        Self::open_existing_with_worker_count(path, genesis, 1)
+    }
+
+    pub fn open_existing_with_worker_count(
+        path: impl Into<PathBuf>,
+        genesis: MvccFeeGenesisV1,
+        worker_count: usize,
+    ) -> MvccFeeResultV1<Self> {
+        validate_genesis(&genesis)?;
+        validate_worker_count_v1(worker_count)?;
+        let path = path.into();
+'''
+          replace_once(store, old_existing, new_existing)
+          replace_once(store, '        Ok(Self { path, genesis })\n    }\n\n    pub fn execute_block(&self, block: &MvccBlockV1)', '        Ok(Self {\n            path,\n            genesis,\n            worker_count,\n        })\n    }\n\n    pub const fn worker_count(&self) -> usize {\n        self.worker_count\n    }\n\n    pub fn execute_block(&self, block: &MvccBlockV1)')
+
+          text = store.read_text()
+          expected = 'execute_block(&self.genesis, &parent, block)?'
+          count = text.count(expected)
+          if count != 2:
+              raise SystemExit(f'{store}: expected two execution call sites, found {count}')
+          store.write_text(text.replace(expected, 'execute_block_with_workers(&self.genesis, &parent, block, self.worker_count)?'))
+
+          test = r'''
+
+#[test]
+fn persistent_parallel_worker_counts_reopen_to_identical_canonical_results() {
+    let g = genesis(222);
+    let parent_root = derive_state_root_v1(&g.initial_objects).unwrap();
+    let transactions = vec![
+        add_tx(0, oid(45, 1), oid(45, 3), 5, 100),
+        add_tx(1, oid(45, 2), oid(45, 3), 7, 100),
+        revert_tx(2, oid(45, 1)),
+        add_tx(3, oid(45, 2), oid(45, 4), 99, 1),
+    ];
+    let candidate = block(&g, transactions, 11, g.initial_block_id, parent_root);
+    let mut canonical_receipt = None;
+    let mut canonical_objects = None;
+
+    for workers in [1usize, 2, 4, 8] {
+        let temp = TempDir::new().unwrap();
+        let store = MvccFeeStoreV1::open_with_worker_count(path(&temp), g.clone(), workers).unwrap();
+        assert_eq!(store.worker_count(), workers);
+        let parent = store.fresh_readback().unwrap();
+        let preview = store.preview_before_vote_v1(&parent, &candidate).unwrap();
+        let outcome = store.execute_block(&candidate).unwrap();
+        let receipt = outcome.confirmed.receipt().clone();
+        let objects = store.objects().unwrap();
+        assert_eq!(preview.candidate_receipt(), &receipt);
+        assert_eq!(parent.height() + 1, receipt.height);
+        drop(store);
+
+        let reopened = MvccFeeStoreV1::open_existing_with_worker_count(
+            path(&temp),
+            g.clone(),
+            workers,
+        )
+        .unwrap();
+        assert_eq!(reopened.worker_count(), workers);
+        let fresh = reopened.fresh_readback().unwrap();
+        assert_eq!(fresh.height(), receipt.height);
+        assert_eq!(fresh.block_id(), receipt.block_id);
+        assert_eq!(fresh.durable_state_root(), receipt.final_state_root);
+        assert_eq!(reopened.objects().unwrap(), objects);
+        let replay = reopened.execute_block(&candidate).unwrap();
+        assert!(replay.replay);
+        assert_eq!(replay.confirmed.receipt(), &receipt);
+
+        if let Some(expected) = &canonical_receipt {
+            assert_eq!(&receipt, expected);
+            assert_eq!(&objects, canonical_objects.as_ref().unwrap());
+        } else {
+            canonical_receipt = Some(receipt);
+            canonical_objects = Some(objects);
+        }
+    }
+}
+
+#[test]
+fn persistent_parallel_worker_count_bounds_fail_closed() {
+    let g = genesis(223);
+    let temp = TempDir::new().unwrap();
+    assert_eq!(
+        MvccFeeStoreV1::open_with_worker_count(path(&temp), g.clone(), 0)
+            .unwrap_err()
+            .code(),
+        MvccFeeErrorCodeV1::InvalidBounds
+    );
+    assert_eq!(
+        MvccFeeStoreV1::open_with_worker_count(path(&temp), g, 65)
+            .unwrap_err()
+            .code(),
+        MvccFeeErrorCodeV1::InvalidBounds
+    );
+}
+'''
+          text = tests.read_text()
+          if 'persistent_parallel_worker_counts_reopen_to_identical_canonical_results' in text:
+              raise SystemExit('tests already patched')
+          tests.write_text(text + test)
+          PY
+          git rm .github/workflows/tmp-exec-vertical-patch.yml
+          git diff --check
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+      - name: Format and test actual persistent G2D path
+        run: |
+          cd trillionnium
+          cargo fmt --all
+          cargo test -p trnm-poco-mvcc-fee-v1 --all-targets
+          cargo clippy -p trnm-poco-mvcc-fee-v1 --all-targets -- -D warnings
+      - name: Publish tested product commit and remove runner
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add trillionnium/crates/trnm-poco-mvcc-fee-v1/src/engine.rs
+          git add trillionnium/crates/trnm-poco-mvcc-fee-v1/src/store.rs
+          git add trillionnium/crates/trnm-poco-mvcc-fee-v1/src/tests.rs
+          git commit -am 'execution: persist real worker-count invariant MVCC path'
+          git push origin HEAD:integration/native-poco-node-commit-exec-v1-20260902
