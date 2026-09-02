@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: trnm-one-shot-build-closure-apply-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   apply:
