@@ -24,7 +24,9 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt
           rustup override set 1.95.0
       - name: Format workspace
-        run: cargo fmt --all
+        run: |
+          cd trillionnium
+          cargo fmt --all
       - name: Upload formatted source
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
