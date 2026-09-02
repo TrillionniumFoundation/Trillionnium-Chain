@@ -53,7 +53,7 @@ id = "M03"
 anchor = "m03"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "safety-signer-crash-matrix-v1"
-primary_crates = ["trnm-consensus-safety-rules", "trnm-consensus-safety-store", "trnm-consensus-signer-journal", "trnm-consensus-unix-remote-signer", "trnm-consensus-unix-fleet-signer", "trnm-consensus-external-watermark", "trnm-consensus-external-node-checkpoint", "trnm-consensus-remote-signer-service", "trnm-whole-node-checkpoint-types"]
+primary_crates = ["trnm-consensus-safety-rules", "trnm-consensus-safety-store", "trnm-consensus-signer-journal", "trnm-consensus-unix-remote-signer", "trnm-consensus-unix-fleet-signer", "trnm-consensus-external-watermark", "trnm-consensus-external-node-checkpoint", "trnm-consensus-remote-signer-service", "trnm-whole-node-checkpoint-types", "trnm-durable-file-adapters-v0"]
 contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/runbooks/TRNM_INCIDENT_DR_KEY_ROTATION_V1.md"]
 
 [[module_coverage]]
@@ -69,7 +69,7 @@ id = "M05"
 anchor = "m05"
 slo_profile = "bounded-io-runtime-v1"
 testkit_profile = "tx-admission-replay-v1"
-primary_crates = ["trnm-mempool", "trnm-application-tx-builder-v0"]
+primary_crates = ["trnm-mempool", "trnm-application-tx-builder-v0", "trnm-tx-lifecycle-v0"]
 contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/protocol/poco-ai-native-v1"]
 
 [[module_coverage]]
@@ -133,7 +133,7 @@ id = "M13"
 anchor = "m13"
 slo_profile = "bounded-io-runtime-v1"
 testkit_profile = "light-client-state-sync-v1"
-primary_crates = ["trnm-poco-cross-plane-readback-v1", "trnm-poco-order-finality-verifier-v1", "trnm-finality-types", "trnm-finality-verifier"]
+primary_crates = ["trnm-poco-cross-plane-readback-v1", "trnm-poco-order-finality-verifier-v1", "trnm-finality-types", "trnm-finality-verifier", "trnm-migration-v0", "trnm-state-sync-v0"]
 contract_paths = ["docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md", "docs/runbooks/TRNM_V3_TO_V4_EXPORT_NEW_GENESIS.md"]
 
 [[module_coverage]]
@@ -149,7 +149,7 @@ id = "M15"
 anchor = "m15"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "node-build-release-closure-v1"
-primary_crates = ["trnm-poco-node", "trnm-poco-node-authority", "trnm-poco-node-io", "trnm-poco-node-host", "trnm-poco-node-cli", "trnm-bridge-poc"]
+primary_crates = ["trnm-poco-node", "trnm-poco-node-authority", "trnm-poco-node-io", "trnm-poco-node-host", "trnm-poco-node-cli", "trnm-bridge-poc", "trnm-node-boundary-v0", "trnm-poco-node-production-v0", "trnm-release-bundle-v0"]
 contract_paths = ["PROJECT_BOUNDARY.md", "OPERATIONS.md", "RELEASE_READINESS.md", "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md"]
 
 [[module_coverage]]
@@ -157,7 +157,7 @@ id = "M16"
 anchor = "m16"
 slo_profile = "non-authoritative-service-v1"
 testkit_profile = "guarded-control-plane-v1"
-primary_crates = []
+primary_crates = ["trnm-control-plane-v0"]
 source_paths = ["docs/development/module-registry-v1.toml", "config/consensus-mainline.json", "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"]
 contract_paths = ["docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"]
 
@@ -166,7 +166,7 @@ id = "M17"
 anchor = "m17"
 slo_profile = "evidence-tooling-v1"
 testkit_profile = "evidence-false-pass-resistance-v1"
-primary_crates = ["trnm-bench", "trnm-consensus-sim", "trnm-research-protocol", "trnm-poco-lab-validator"]
+primary_crates = ["trnm-bench", "trnm-consensus-sim", "trnm-research-protocol", "trnm-poco-lab-validator", "trnm-production-adapter-conformance-v0"]
 contract_paths = ["docs/evidence", "docs/runbooks", "formal", "scripts/ci"]
 
 [[auxiliary_units]]

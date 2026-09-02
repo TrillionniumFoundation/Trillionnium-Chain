@@ -1607,6 +1607,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-control-plane-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
+
+[[package]]
 name = "trnm-core-restart-v0"
 version = "0.1.0"
 dependencies = [
@@ -1616,6 +1623,16 @@ dependencies = [
  "tempfile",
  "trnm-consensus-types",
  "trnm-native-application",
+]
+
+[[package]]
+name = "trnm-durable-file-adapters-v0"
+version = "0.1.0"
+dependencies = [
+ "fs2",
+ "sha2",
+ "trnm-node-boundary-v0",
+ "trnm-state-sync-v0",
 ]
 
 [[package]]
@@ -1650,6 +1667,13 @@ dependencies = [
 [[package]]
 name = "trnm-mempool"
 version = "0.1.0"
+
+[[package]]
+name = "trnm-migration-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
 
 [[package]]
 name = "trnm-native-application"
@@ -1693,6 +1717,13 @@ dependencies = [
  "trnm-native-application",
  "trnm-protocol",
  "trnm-runtime",
+]
+
+[[package]]
+name = "trnm-node-boundary-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
 ]
 
 [[package]]
@@ -1890,11 +1921,23 @@ version = "0.1.0"
 dependencies = [
  "trnm-poco-node-authority",
  "trnm-poco-node-io",
+ "trnm-poco-node-production-v0",
 ]
 
 [[package]]
 name = "trnm-poco-node-io"
 version = "0.1.0"
+
+[[package]]
+name = "trnm-poco-node-production-v0"
+version = "0.1.0"
+dependencies = [
+ "trnm-control-plane-v0",
+ "trnm-migration-v0",
+ "trnm-node-boundary-v0",
+ "trnm-state-sync-v0",
+ "trnm-tx-lifecycle-v0",
+]
 
 [[package]]
 name = "trnm-poco-order-application-v1"
@@ -1969,6 +2012,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-production-adapter-conformance-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-control-plane-v0",
+ "trnm-migration-v0",
+ "trnm-node-boundary-v0",
+ "trnm-state-sync-v0",
+ "trnm-tx-lifecycle-v0",
+]
+
+[[package]]
 name = "trnm-protocol"
 version = "0.1.0"
 dependencies = [
@@ -1977,6 +2032,13 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror",
+]
+
+[[package]]
+name = "trnm-release-bundle-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
 ]
 
 [[package]]
@@ -2032,6 +2094,20 @@ dependencies = [
  "serde",
  "sha2",
  "trnm-types",
+]
+
+[[package]]
+name = "trnm-state-sync-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
+
+[[package]]
+name = "trnm-tx-lifecycle-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
 ]
 
 [[package]]
