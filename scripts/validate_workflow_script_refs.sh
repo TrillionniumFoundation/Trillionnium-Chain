@@ -7,8 +7,6 @@ export TZ="${TZ:-UTC}"
 export LANG="${LANG:-C.UTF-8}"
 export LC_ALL="${LC_ALL:-C.UTF-8}"
 export LC_NUMERIC="${LC_NUMERIC:-C}"
-# Mirror the workflow locale envelope so local reference scans and workflow
-# runners sort/log consistently even when tools honor per-category locales.
 export LC_COLLATE="${LC_COLLATE:-C}"
 export LC_TIME="${LC_TIME:-C}"
 export LC_CTYPE="${LC_CTYPE:-C}"
@@ -20,8 +18,6 @@ export LC_ADDRESS="${LC_ADDRESS:-C}"
 export LC_NAME="${LC_NAME:-C}"
 export LC_TELEPHONE="${LC_TELEPHONE:-C}"
 
-# Mirror CI's deterministic file-mode contract so local summaries/artifacts do
-# not drift from workflow runs when scripts create files/directories.
 UMASK_VALUE="${UMASK:-022}"
 if [[ ! "$UMASK_VALUE" =~ ^[0-7]{3,4}$ ]]; then
   echo "[workflow-ref][FAIL] UMASK must be a 3- or 4-digit octal value (got: $UMASK_VALUE)" >&2
@@ -92,9 +88,8 @@ for wf in "${WORKFLOW_FILES[@]}"; do
     while IFS= read -r ref; do
       [[ -n "$ref" ]] || continue
       printf '%s\n' "$ref" >>"$refs_file"
-      # Only require ./-prefixed refs for executable workflow invocations.
-      # GitHub trigger path globs are repo-relative patterns, where retaining
-      # plain scripts/... or trillionnium/scripts/... is expected.
+      # Trigger path globs are repository-relative by definition. Executable
+      # references without ./ remain valid but are retained as style warnings.
       if [[ "$ref" != ./* ]] \
         && ! printf '%s\n' "$line" | LC_ALL=C grep -Eq "^[[:space:]]*-[[:space:]]*['\"]?(scripts|trillionnium/scripts)/"; then
         printf '%s\n' "$ref" >>"$non_dot_refs_file"
@@ -116,7 +111,6 @@ echo "[workflow-ref] non_dot_script_ref_total_count=${non_dot_script_ref_count}"
 echo "[workflow-ref] non_dot_script_ref_count=${#NON_DOT_SCRIPT_REFS[@]}"
 
 audit_ts="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-
 git_head=""
 if command -v git >/dev/null 2>&1; then
   git_head="$(git rev-parse --short=12 HEAD 2>/dev/null || true)"
@@ -173,12 +167,25 @@ fi
 
 end_epoch="$(date -u +%s)"
 status="ok"
-if [[ "$missing_count" != "0" || "$non_exec_count" != "0" || "$non_dot_script_ref_count" != "0" || "$empty_ref_count" != "0" ]]; then
+hard_problem=0
+style_problem=0
+if [[ "$missing_count" != "0" || "$non_exec_count" != "0" || "$empty_ref_count" != "0" ]]; then
+  hard_problem=1
+fi
+if [[ "$non_dot_script_ref_count" != "0" ]]; then
+  style_problem=1
+fi
+if [[ "$hard_problem" == "1" ]]; then
   if [[ "$STRICT_MODE" == "1" ]]; then
     status="fail"
   else
     status="warn"
   fi
+elif [[ "$style_problem" == "1" ]]; then
+  # A repository-relative executable reference resolves deterministically from
+  # the workflow's declared working directory. Preserve the signal, but do not
+  # conflate this style preference with a missing or non-executable program.
+  status="warn"
 fi
 
 if [[ -n "$SUMMARY_PATH" ]]; then

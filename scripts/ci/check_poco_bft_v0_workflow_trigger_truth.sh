@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Static contract for the PoCO-BFT workflow trigger. The workflow has had
-# schedule branches in every job for some time; this check makes the trigger
-# explicit and keeps scheduled runs inside the development-only fail-closed
-# boundary used by manual and PR runs.
-
 SCRIPT_DIR="$(cd -- "$(dirname -- "$BASH_SOURCE")" && pwd)"
 ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
 DEFAULT_WORKFLOW="$ROOT/.github/workflows/trnm-poco-bft-v0.yml"
@@ -30,26 +25,20 @@ workspace_manifest = pathlib.Path(sys.argv[3])
 text = path.read_text(encoding="utf-8")
 lines = text.splitlines()
 
-# The PoCO workflow must not wake up for packages which are explicitly
-# excluded from the active Chain workspace.  Those packages remain available
-# to the migration-residue workflow, but treating their edits as a PoCO
-# protocol change creates a false active-lane signal.  Keep this invariant in
-# the executable gate so a stale trigger cannot quietly return.
 if not workspace_manifest.is_file():
     raise SystemExit(f"{path}: missing workspace manifest: {workspace_manifest}")
 workspace_text = workspace_manifest.read_text(encoding="utf-8")
-excluded_legacy_package = '"crates/trnm-consensus-app"'
-if excluded_legacy_package not in workspace_text:
-    raise SystemExit(
-        f"{path}: expected excluded migration package marker {excluded_legacy_package!r}"
-    )
+legacy_marker = '"crates/trnm-consensus-app"'
+if legacy_marker not in workspace_text:
+    raise SystemExit(f"{path}: expected excluded migration package marker {legacy_marker!r}")
 
 def fail(message: str) -> None:
     raise SystemExit(f"{path}: {message}")
 
 def top_level_index(name: str) -> int:
     matches = [
-        index for index, line in enumerate(lines)
+        index
+        for index, line in enumerate(lines)
         if re.fullmatch(rf"{re.escape(name)}:\s*", line)
     ]
     if len(matches) != 1:
@@ -61,9 +50,6 @@ jobs_index = top_level_index("jobs")
 if on_index > jobs_index:
     fail("top-level on: must precede jobs:")
 
-# Read only direct children of the top-level on mapping. This avoids a
-# PyYAML dependency (whose YAML 1.1 parser treats on as a boolean) while
-# rejecting an indented/dead schedule hidden in a job body.
 on_children = []
 for index in range(on_index + 1, len(lines)):
     line = lines[index]
@@ -79,7 +65,6 @@ for required in ("schedule", "workflow_dispatch", "pull_request", "push"):
         fail(f"top-level on: must contain exactly one {required}: trigger")
 
 def direct_child_block(name: str) -> str:
-    """Return one direct top-level `on:` child without parsing YAML 1.1."""
     child_indexes = [index for child, index in on_children if child == name]
     if len(child_indexes) != 1:
         fail(f"top-level on: missing unique {name}: trigger")
@@ -115,9 +100,6 @@ for index in range(schedule_index + 1, dispatch_index):
 if cron_values != [expected_cron]:
     fail(f"expected one weekly cron {expected_cron!r}, found {cron_values!r}")
 
-# Every job must retain the repository and actor gates. A schedule event is
-# trusted only because GitHub creates it on the canonical repository/default
-# branch; it must not weaken the self-hosted runner boundary for other events.
 job_blocks = []
 job_start = None
 job_name = None
@@ -134,12 +116,16 @@ if job_start is not None:
 if not job_blocks:
     fail("jobs: contains no jobs")
 
+actor_guard = re.compile(
+    r"\(\(github\.actor == 'ProfAlexQI'\s*\|\|\s*"
+    r"github\.actor == 'Tomasrgbsf'\)\s*&&\s*"
+    r"github\.triggering_actor == github\.actor",
+    re.S,
+)
 required_fragments = (
     "github.repository == 'TrillionniumFoundation/Trillionnium-Chain'",
     "github.event_name == 'schedule'",
     "github.ref == 'refs/heads/main'",
-    "github.actor == 'ProfAlexQI'",
-    "github.triggering_actor == 'ProfAlexQI'",
     "github.event.pull_request.head.repo.full_name == github.repository",
 )
 for name, block_lines in job_blocks:
@@ -149,6 +135,11 @@ for name, block_lines in job_blocks:
     for fragment in required_fragments:
         if fragment not in block:
             fail(f"job {name} is missing trigger guard: {fragment}")
+    if actor_guard.search(block) is None:
+        fail(
+            f"job {name} must restrict non-scheduled execution to the approved "
+            "maintainer set and require triggering_actor == actor"
+        )
     if not re.search(
         r"github\.event_name == 'schedule'\s*&&\s*"
         r"github\.ref == 'refs/heads/main'\s*\|\|",
@@ -157,12 +148,11 @@ for name, block_lines in job_blocks:
         fail(f"job {name} does not make the main-only schedule branch explicit")
     runs_on = re.search(r"(?m)^    runs-on:\s*(.+)$", block)
     if runs_on is None or not all(
-        label in runs_on.group(1) for label in ("self-hosted", "x230", "trillionnium-chain")
+        label in runs_on.group(1)
+        for label in ("self-hosted", "x230", "trillionnium-chain")
     ):
         fail(f"job {name} lost the pinned self-hosted X230 runner labels")
 
-# This workflow may build/test and upload development-only evidence, but it
-# must never gain deployment or activation capability through a trigger edit.
 for pattern, description in (
     (r"(?mi)^\s*environment\s*:", "deployment environment"),
     (r"(?mi)^\s*(?:deployment|ssh|scp|rsync)\s*:", "deployment/remote step"),
@@ -186,94 +176,105 @@ for marker in (
     if marker not in text:
         fail(f"development-only artifact boundary lost marker: {marker}")
 
-print(f"poco_bft_workflow_trigger_truth=passed cron={expected_cron} jobs={len(job_blocks)}")
+print(
+    f"poco_bft_workflow_trigger_truth=passed cron={expected_cron} "
+    f"jobs={len(job_blocks)} actor_policy=approved-maintainers"
+)
 PY
 }
 
-run_self_test() {
-  local temp_root fixture
-  local tmp_base
-  tmp_base="$(printenv TMPDIR 2>/dev/null || printf '/tmp')"
-  temp_root="$(mktemp -d "$tmp_base/trnm-poco-trigger-truth.XXXXXX")"
-  trap 'rm -rf "$temp_root"' RETURN
-  fixture="$temp_root/workflow.yml"
-  cp -- "$DEFAULT_WORKFLOW" "$fixture"
-
-  check_workflow "$fixture" >/dev/null
-
-  # Removing the trigger must fail even though every job still contains a
-  # dead github.event_name == schedule branch.
-  python3 - "$fixture" <<'PY'
-import pathlib
-import sys
-path = pathlib.Path(sys.argv[1])
-text = path.read_text(encoding="utf-8")
-needle = '  schedule:\n    - cron: "17 3 * * 1"\n'
-if text.count(needle) != 1:
-    raise SystemExit("schedule fixture not found")
-path.write_text(text.replace(needle, "", 1), encoding="utf-8")
-PY
-  if check_workflow "$fixture" >/dev/null 2>&1; then
-    fail "self-test accepted a workflow with no schedule trigger"
-  fi
-
-  cp -- "$DEFAULT_WORKFLOW" "$fixture"
-  sed -i 's/cron: "17 3 \* \* 1"/cron: "0 0 0 0 0"/' "$fixture"
-  if check_workflow "$fixture" >/dev/null 2>&1; then
-    fail "self-test accepted an invalid cron expression"
-  fi
-
-  cp -- "$DEFAULT_WORKFLOW" "$fixture"
-  sed -i "0,/github.actor == 'ProfAlexQI'/s//github.actor == 'untrusted'/" "$fixture"
-  if check_workflow "$fixture" >/dev/null 2>&1; then
-    fail "self-test accepted a weakened actor gate"
-  fi
-
-  cp -- "$DEFAULT_WORKFLOW" "$fixture"
-  sed -i "0,/github.ref == 'refs\/heads\/main'/s//github.ref == 'refs\/heads\/untrusted'/" "$fixture"
-  if check_workflow "$fixture" >/dev/null 2>&1; then
-    fail "self-test accepted a weakened schedule branch ref gate"
-  fi
-
-  cp -- "$DEFAULT_WORKFLOW" "$fixture"
-  python3 - "$fixture" <<'PY'
+mutate_fixture() {
+  local fixture="$1" mutation="$2"
+  python3 - "$fixture" "$mutation" <<'PY'
 import pathlib
 import re
 import sys
 
 path = pathlib.Path(sys.argv[1])
+mutation = sys.argv[2]
 text = path.read_text(encoding="utf-8")
-for trigger in ("pull_request", "push"):
-    marker = f"  {trigger}:\n"
-    start = text.find(marker)
-    if start < 0:
-        raise SystemExit(f"missing trigger fixture: {trigger}")
-    end_match = re.search(r"\n  [A-Za-z0-9_-]+:\s*\n", text[start + len(marker) :])
-    end = start + len(marker) + (end_match.start() if end_match else len(text))
-    block = text[start:end]
-    needle = '      - "trillionnium/Cargo.lock"\n'
-    if block.count(needle) != 1:
-        raise SystemExit(f"path fixture not found under {trigger}")
-    block = block.replace(
-        needle,
-        '      - "trillionnium/crates/trnm-consensus-app/**"\n' + needle,
-        1,
+
+if mutation == "remove-schedule":
+    needle = '  schedule:\n    - cron: "17 3 * * 1"\n'
+    if text.count(needle) != 1:
+        raise SystemExit("schedule fixture not found")
+    text = text.replace(needle, "", 1)
+elif mutation == "bad-cron":
+    needle = 'cron: "17 3 * * 1"'
+    if needle not in text:
+        raise SystemExit("cron fixture not found")
+    text = text.replace(needle, 'cron: "0 0 0 0 0"', 1)
+elif mutation == "weaken-actor":
+    pattern = re.compile(
+        r"\(\(github\.actor == 'ProfAlexQI'\s*\|\|\s*"
+        r"github\.actor == 'Tomasrgbsf'\)\s*&&\s*"
+        r"github\.triggering_actor == github\.actor"
     )
-    text = text[:start] + block + text[end:]
+    text, count = pattern.subn("github.actor == 'untrusted'", text, count=1)
+    if count != 1:
+        raise SystemExit("actor fixture not found")
+elif mutation == "bad-main-ref":
+    needle = "github.ref == 'refs/heads/main'"
+    if needle not in text:
+        raise SystemExit("main-ref fixture not found")
+    text = text.replace(needle, "github.ref == 'refs/heads/untrusted'", 1)
+elif mutation == "legacy-trigger":
+    for trigger in ("pull_request", "push"):
+        marker = f"  {trigger}:\n"
+        start = text.find(marker)
+        if start < 0:
+            raise SystemExit(f"missing trigger fixture: {trigger}")
+        end_match = re.search(r"\n  [A-Za-z0-9_-]+:\s*\n", text[start + len(marker):])
+        end = start + len(marker) + (
+            end_match.start() if end_match else len(text) - start - len(marker)
+        )
+        block = text[start:end]
+        needle = '      - "trillionnium/Cargo.lock"\n'
+        if block.count(needle) != 1:
+            raise SystemExit(f"path fixture not found under {trigger}")
+        block = block.replace(
+            needle,
+            '      - "trillionnium/crates/trnm-consensus-app/**"\n' + needle,
+            1,
+        )
+        text = text[:start] + block + text[end:]
+elif mutation == "write-permission":
+    needle = "  contents: read"
+    if needle not in text:
+        raise SystemExit("permission fixture not found")
+    text = text.replace(needle, "  contents: write", 1)
+else:
+    raise SystemExit(f"unknown mutation: {mutation}")
+
 path.write_text(text, encoding="utf-8")
 PY
-  if check_workflow "$fixture" >/dev/null 2>&1; then
-    fail "self-test accepted a PoCO trigger for an excluded migration package"
-  fi
+}
 
-  cp -- "$DEFAULT_WORKFLOW" "$fixture"
-  sed -i '0,/contents: read/s//contents: write/' "$fixture"
-  if check_workflow "$fixture" >/dev/null 2>&1; then
-    fail "self-test accepted elevated workflow permissions"
-  fi
+run_self_test() {
+  local temp_root fixture mutation
+  local tmp_base
+  tmp_base="$(printenv TMPDIR 2>/dev/null || printf '/tmp')"
+  temp_root="$(mktemp -d "$tmp_base/trnm-poco-trigger-truth.XXXXXX")"
+  trap 'rm -rf "$temp_root"' RETURN
+  fixture="$temp_root/workflow.yml"
+
+  check_workflow "$DEFAULT_WORKFLOW" >/dev/null
+  for mutation in \
+    remove-schedule \
+    bad-cron \
+    weaken-actor \
+    bad-main-ref \
+    legacy-trigger \
+    write-permission; do
+    cp -- "$DEFAULT_WORKFLOW" "$fixture"
+    mutate_fixture "$fixture" "$mutation"
+    if check_workflow "$fixture" >/dev/null 2>&1; then
+      fail "self-test accepted mutation: $mutation"
+    fi
+  done
 
   printf '%s\n' \
-    'poco_bft_workflow_trigger_truth_self_test=passed schedule=required,weekly dispatch=required actor_gate=preserved deployment=forbidden'
+    'poco_bft_workflow_trigger_truth_self_test=passed schedule=required,weekly actor_policy=approved-maintainers same_repo_pr=required deployment=forbidden'
 }
 
 if [[ $# -gt 0 && "$1" == "--self-test" ]]; then
