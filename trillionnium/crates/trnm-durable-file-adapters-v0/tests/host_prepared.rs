@@ -9,9 +9,9 @@ use std::{
 };
 use trnm_durable_file_adapters_v0::FileAuthorityCoordinatorV0;
 use trnm_node_boundary_v0::{
-    AuthorityStageV0, BoundIngressV0, BoundaryErrorV0, Digest32V0, HostErrorV0,
-    HostReadinessV0, IngressFrameV0, IoPollV0, IoRuntimeV0, NodeIdentityV0,
-    OutboundFrameV0, PersistentValidatorHostV0, StepBudgetV0,
+    AuthorityStageV0, BoundIngressV0, BoundaryErrorV0, Digest32V0, HostErrorV0, HostReadinessV0,
+    IngressFrameV0, IoPollV0, IoRuntimeV0, NodeIdentityV0, OutboundFrameV0,
+    PersistentValidatorHostV0, StepBudgetV0,
 };
 
 static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -74,15 +74,8 @@ fn identity() -> NodeIdentityV0 {
 fn bound_ingress() -> BoundIngressV0 {
     let frame = IngressFrameV0::new(digest(40), digest(41), 1, b"proposal-v0".to_vec())
         .expect("valid bounded ingress frame");
-    BoundIngressV0::derive(
-        identity(),
-        10,
-        2,
-        digest(10),
-        digest(9),
-        frame,
-    )
-    .expect("valid frame-to-operation binding")
+    BoundIngressV0::derive(identity(), 10, 2, digest(10), digest(9), frame)
+        .expect("valid frame-to-operation binding")
 }
 
 #[test]
@@ -93,9 +86,8 @@ fn prepared_receipt_survives_reopen_and_exact_replay() {
     let first = {
         let coordinator =
             FileAuthorityCoordinatorV0::open(&directory.0, identity()).expect("open authority");
-        let mut host =
-            PersistentValidatorHostV0::new(coordinator, NoopIo, StepBudgetV0::default())
-                .expect("construct host");
+        let mut host = PersistentValidatorHostV0::new(coordinator, NoopIo, StepBudgetV0::default())
+            .expect("construct host");
         assert_eq!(
             host.recover().expect("recover clean authority"),
             HostReadinessV0::Ready
