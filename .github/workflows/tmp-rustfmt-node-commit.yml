@@ -1,7 +1,9 @@
 name: tmp-rustfmt-node-commit
 
 on:
-  pull_request:
+  push:
+    branches:
+      - integration/native-poco-node-commit-exec-v1-20260902
     paths:
       - 'trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs'
       - '.github/workflows/tmp-rustfmt-node-commit.yml'
@@ -15,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Install pinned Rust formatter
         run: |
