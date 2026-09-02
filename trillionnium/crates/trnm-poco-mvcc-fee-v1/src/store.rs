@@ -9,7 +9,10 @@ use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBeha
 
 use crate::{
     codec::{canonical_bytes, checksum, digest_value, strict_decode},
-    engine::{execute_block, state_root, validate_genesis, ObjectMapV1},
+    engine::{
+        execute_block, execute_block_with_workers, state_root, validate_genesis,
+        validate_worker_count_v1, ObjectMapV1,
+    },
     error::{error, MvccFeeErrorCodeV1, MvccFeeResultV1},
     Hash32V1, MvccBlockReceiptV1, MvccBlockV1, MvccCommitFaultV1, MvccFeeGenesisV1, ObjectStateV1,
     ProtocolContextV1,
@@ -120,11 +123,21 @@ pub struct MvccBlockOutcomeV1 {
 pub struct MvccFeeStoreV1 {
     path: PathBuf,
     genesis: MvccFeeGenesisV1,
+    worker_count: usize,
 }
 
 impl MvccFeeStoreV1 {
     pub fn open(path: impl Into<PathBuf>, genesis: MvccFeeGenesisV1) -> MvccFeeResultV1<Self> {
+        Self::open_with_worker_count(path, genesis, 1)
+    }
+
+    pub fn open_with_worker_count(
+        path: impl Into<PathBuf>,
+        genesis: MvccFeeGenesisV1,
+        worker_count: usize,
+    ) -> MvccFeeResultV1<Self> {
         validate_genesis(&genesis)?;
+        validate_worker_count_v1(worker_count)?;
         let path = path.into();
         reject_sidecars(&path)?;
         if path.exists() {
@@ -168,7 +181,11 @@ impl MvccFeeStoreV1 {
             verify_schema(&connection)?;
             audit(&connection, &genesis)?;
         }
-        Ok(Self { path, genesis })
+        Ok(Self {
+            path,
+            genesis,
+            worker_count,
+        })
     }
 
     /// Open and fully audit an already-created store without creating a
@@ -182,7 +199,16 @@ impl MvccFeeStoreV1 {
         path: impl Into<PathBuf>,
         genesis: MvccFeeGenesisV1,
     ) -> MvccFeeResultV1<Self> {
+        Self::open_existing_with_worker_count(path, genesis, 1)
+    }
+
+    pub fn open_existing_with_worker_count(
+        path: impl Into<PathBuf>,
+        genesis: MvccFeeGenesisV1,
+        worker_count: usize,
+    ) -> MvccFeeResultV1<Self> {
         validate_genesis(&genesis)?;
+        validate_worker_count_v1(worker_count)?;
         let path = path.into();
         require_existing_regular_store(&path)?;
         reject_sidecars(&path)?;
@@ -198,7 +224,15 @@ impl MvccFeeStoreV1 {
         drop(connection);
         require_existing_regular_store(&path)?;
         reject_sidecars(&path)?;
-        Ok(Self { path, genesis })
+        Ok(Self {
+            path,
+            genesis,
+            worker_count,
+        })
+    }
+
+    pub const fn worker_count(&self) -> usize {
+        self.worker_count
     }
 
     pub fn execute_block(&self, block: &MvccBlockV1) -> MvccFeeResultV1<MvccBlockOutcomeV1> {
@@ -235,7 +269,8 @@ impl MvccFeeStoreV1 {
             .into_iter()
             .map(|object| (object.object_id, object))
             .collect();
-        let (_, receipt) = execute_block(&self.genesis, &parent, block)?;
+        let (_, receipt) =
+            execute_block_with_workers(&self.genesis, &parent, block, self.worker_count)?;
         let after = self.fresh_readback()?;
         if after != before {
             return Err(error(
@@ -319,7 +354,8 @@ impl MvccFeeStoreV1 {
             ));
         }
         let parent = load_objects(&connection)?;
-        let (post, receipt) = execute_block(&self.genesis, &parent, block)?;
+        let (post, receipt) =
+            execute_block_with_workers(&self.genesis, &parent, block, self.worker_count)?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         let (tx_height, tx_block_id, tx_root, _, tx_fenced) =
             load_metadata(&transaction, &self.genesis)?;

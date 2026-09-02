@@ -1,4 +1,7 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    thread,
+};
 
 use crate::{
     codec::{canonical_bytes, digest_value},
@@ -16,6 +19,17 @@ type ResourceAggregationKeyV1 = (u16, Vec<u8>, Vec<u8>, u32, u16);
 
 const MAX_TRANSACTIONS_V1: usize = 256;
 const MAX_ACCESS_WIDTH_V1: usize = 64;
+pub(crate) const MAX_EXECUTION_WORKERS_V1: usize = 64;
+
+pub(crate) fn validate_worker_count_v1(worker_count: usize) -> MvccFeeResultV1<()> {
+    if worker_count == 0 || worker_count > MAX_EXECUTION_WORKERS_V1 {
+        return Err(error(
+            MvccFeeErrorCodeV1::InvalidBounds,
+            "execution worker count is outside frozen candidate bounds",
+        ));
+    }
+    Ok(())
+}
 
 pub fn derive_transaction_id_v1(transaction: &MvccTransactionV1) -> MvccFeeResultV1<Hash32V1> {
     digest_value(
@@ -203,13 +217,20 @@ pub(crate) fn execute_block(
     parent: &ObjectMapV1,
     block: &MvccBlockV1,
 ) -> MvccFeeResultV1<(ObjectMapV1, MvccBlockReceiptV1)> {
+    execute_block_with_workers(genesis, parent, block, 1)
+}
+
+pub(crate) fn execute_block_with_workers(
+    genesis: &MvccFeeGenesisV1,
+    parent: &ObjectMapV1,
+    block: &MvccBlockV1,
+    worker_count: usize,
+) -> MvccFeeResultV1<(ObjectMapV1, MvccBlockReceiptV1)> {
+    validate_worker_count_v1(worker_count)?;
     validate_block(genesis, parent, block)?;
     let parent_root = state_root(parent)?;
-    let speculative_reads: Vec<Vec<ReadSetEntryV1>> = block
-        .transactions
-        .iter()
-        .map(|transaction| read_set(parent, transaction))
-        .collect::<MvccFeeResultV1<_>>()?;
+    let speculative_reads =
+        parallel_speculative_reads_v1(parent, &block.transactions, worker_count)?;
     let mut current = parent.clone();
     let mut pending_fees: BTreeMap<(TypedObjectIdV1, TypedObjectIdV1), u128> = BTreeMap::new();
     let mut receipts = Vec::with_capacity(block.transactions.len());
@@ -287,6 +308,55 @@ pub(crate) fn execute_block(
         destination_credits,
     };
     Ok((current, receipt))
+}
+
+fn parallel_speculative_reads_v1(
+    parent: &ObjectMapV1,
+    transactions: &[MvccTransactionV1],
+    worker_count: usize,
+) -> MvccFeeResultV1<Vec<Vec<ReadSetEntryV1>>> {
+    validate_worker_count_v1(worker_count)?;
+    let active_workers = worker_count.min(transactions.len().max(1));
+    thread::scope(|scope| {
+        let mut handles = Vec::with_capacity(active_workers);
+        for worker_index in 0..active_workers {
+            handles.push(scope.spawn(move || {
+                let mut rows = Vec::new();
+                let mut position = worker_index;
+                while position < transactions.len() {
+                    rows.push((position, read_set(parent, &transactions[position])));
+                    position += active_workers;
+                }
+                rows
+            }));
+        }
+
+        let mut ordered: Vec<Option<Vec<ReadSetEntryV1>>> =
+            (0..transactions.len()).map(|_| None).collect();
+        for handle in handles {
+            let rows = handle.join().map_err(|_| {
+                error(
+                    MvccFeeErrorCodeV1::InvalidState,
+                    "parallel speculation worker panicked",
+                )
+            })?;
+            for (position, row) in rows {
+                ordered[position] = Some(row?);
+            }
+        }
+
+        ordered
+            .into_iter()
+            .map(|row| {
+                row.ok_or_else(|| {
+                    error(
+                        MvccFeeErrorCodeV1::InvalidState,
+                        "parallel speculation omitted a canonical transaction",
+                    )
+                })
+            })
+            .collect()
+    })
 }
 
 fn validate_block(

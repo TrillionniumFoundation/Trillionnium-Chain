@@ -580,3 +580,72 @@ fn open_existing_requires_precreated_regular_nonsymlink_store() {
         );
     }
 }
+
+#[test]
+fn persistent_parallel_worker_counts_reopen_to_identical_canonical_results() {
+    let g = genesis(222);
+    let parent_root = derive_state_root_v1(&g.initial_objects).unwrap();
+    let transactions = vec![
+        add_tx(0, oid(45, 1), oid(45, 3), 5, 100),
+        add_tx(1, oid(45, 2), oid(45, 3), 7, 100),
+        revert_tx(2, oid(45, 1)),
+        add_tx(3, oid(45, 2), oid(45, 4), 99, 1),
+    ];
+    let candidate = block(&g, transactions, 11, g.initial_block_id, parent_root);
+    let mut canonical_receipt = None;
+    let mut canonical_objects = None;
+
+    for workers in [1usize, 2, 4, 8] {
+        let temp = TempDir::new().unwrap();
+        let store =
+            MvccFeeStoreV1::open_with_worker_count(path(&temp), g.clone(), workers).unwrap();
+        assert_eq!(store.worker_count(), workers);
+        let parent = store.fresh_readback().unwrap();
+        let preview = store.preview_before_vote_v1(&parent, &candidate).unwrap();
+        let outcome = store.execute_block(&candidate).unwrap();
+        let receipt = outcome.confirmed.receipt().clone();
+        let objects = store.objects().unwrap();
+        assert_eq!(preview.candidate_receipt(), &receipt);
+        assert_eq!(parent.height() + 1, receipt.height);
+        drop(store);
+
+        let reopened =
+            MvccFeeStoreV1::open_existing_with_worker_count(path(&temp), g.clone(), workers)
+                .unwrap();
+        assert_eq!(reopened.worker_count(), workers);
+        let fresh = reopened.fresh_readback().unwrap();
+        assert_eq!(fresh.height(), receipt.height);
+        assert_eq!(fresh.block_id(), receipt.block_id);
+        assert_eq!(fresh.durable_state_root(), receipt.final_state_root);
+        assert_eq!(reopened.objects().unwrap(), objects);
+        let replay = reopened.execute_block(&candidate).unwrap();
+        assert!(replay.replay);
+        assert_eq!(replay.confirmed.receipt(), &receipt);
+
+        if let Some(expected) = &canonical_receipt {
+            assert_eq!(&receipt, expected);
+            assert_eq!(&objects, canonical_objects.as_ref().unwrap());
+        } else {
+            canonical_receipt = Some(receipt);
+            canonical_objects = Some(objects);
+        }
+    }
+}
+
+#[test]
+fn persistent_parallel_worker_count_bounds_fail_closed() {
+    let g = genesis(223);
+    let temp = TempDir::new().unwrap();
+    assert_eq!(
+        MvccFeeStoreV1::open_with_worker_count(path(&temp), g.clone(), 0)
+            .unwrap_err()
+            .code(),
+        MvccFeeErrorCodeV1::InvalidBounds
+    );
+    assert_eq!(
+        MvccFeeStoreV1::open_with_worker_count(path(&temp), g, 65)
+            .unwrap_err()
+            .code(),
+        MvccFeeErrorCodeV1::InvalidBounds
+    );
+}
