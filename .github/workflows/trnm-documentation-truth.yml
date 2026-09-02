@@ -2,9 +2,32 @@ name: trnm-documentation-truth
 
 on:
   pull_request:
+    paths:
+      - 'docs/development/**'
+      - 'docs/modules/**'
+      - 'config/documentation-truth-v1.json'
+      - 'config/module-coverage-v1.toml'
+      - 'config/repository-policy-v1.json'
+      - 'scripts/ci/check_canonical_development_plan.sh'
+      - 'scripts/ci/check_agent_development_docs_v1.sh'
+      - 'scripts/ci/check_documentation_reference_closure_v1.py'
+      - 'scripts/ci/check_module_coverage_v1.py'
+      - '.github/workflows/trnm-documentation-truth.yml'
   push:
     branches:
       - main
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - 'docs/development/**'
+      - 'docs/modules/**'
+      - 'config/documentation-truth-v1.json'
+      - 'config/module-coverage-v1.toml'
+      - 'config/repository-policy-v1.json'
+      - 'scripts/ci/check_canonical_development_plan.sh'
+      - 'scripts/ci/check_agent_development_docs_v1.sh'
+      - 'scripts/ci/check_documentation_reference_closure_v1.py'
+      - 'scripts/ci/check_module_coverage_v1.py'
+      - '.github/workflows/trnm-documentation-truth.yml'
   workflow_dispatch:
 
 permissions:
@@ -39,7 +62,7 @@ jobs:
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
 
-      - name: Validate canonical plan and reference closure
+      - name: Validate canonical plan, module coverage and reference closure
         env:
           TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}
           TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-source-binding-v1.json
@@ -66,6 +89,7 @@ jobs:
               "PROJECT_BOUNDARY.json",
           ]
           toml_paths = [
+              "config/module-coverage-v1.toml",
               "docs/development/module-registry-v1.toml",
               "docs/development/plan-manifest-v1.toml",
               "docs/development/release-train-v1.toml",
@@ -82,7 +106,8 @@ jobs:
                   raise SystemExit(f"{relative}: table required")
           PY
           PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/pycache" python3 -m py_compile \
-            scripts/ci/check_documentation_reference_closure_v1.py
+            scripts/ci/check_documentation_reference_closure_v1.py \
+            scripts/ci/check_module_coverage_v1.py
 
       - name: Require source validation to be side-effect free
         run: |
@@ -113,7 +138,7 @@ jobs:
       - name: Verify prospective merge identity
         run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
 
-      - name: Validate prospective-merge plan and reference closure
+      - name: Validate prospective-merge plan, module coverage and reference closure
         env:
           TRNM_DOC_BINDING_MODE: merge
           TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-merge-binding-v1.json

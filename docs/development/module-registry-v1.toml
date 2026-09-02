@@ -1,11 +1,12 @@
 schema_version = 1
 registry_id = "trnm-module-registry-v1"
 plan_id = "trnm-chain-development-plan-v2"
-as_of = "2026-09-01"
-assessed_source_commit = "3c46293e78a125dec9504e51c355a20216341338"
-assessed_source_tree = "875a1e6366df7cd9da80de145e25584ae309cee8"
+as_of = "2026-09-02"
+assessed_source_mode = "runtime-pr-head-and-tree"
 module_count = 18
 production_authority = false
+coverage_manifest = "config/module-coverage-v1.toml"
+technical_reference = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
 
 [policy]
 one_primary_module_per_engineer = true
@@ -22,7 +23,7 @@ layer = "contract"
 runtime = "library"
 owner_group = "protocol-contracts"
 staff_target = 2
-status = "active-boundary-to-consolidate"
+status = "active-boundary-consolidated-v1"
 allowed_module_dependencies = []
 forbidden_capabilities = ["filesystem", "network", "clock", "sign", "vote", "finalize"]
 
@@ -33,7 +34,7 @@ layer = "contract-core-adapter"
 runtime = "library-and-isolated-signer"
 owner_group = "crypto-identity"
 staff_target = 3
-status = "active-boundary-to-consolidate"
+status = "active-boundary-consolidated-v1"
 allowed_module_dependencies = ["M00"]
 forbidden_capabilities = ["consensus-transition", "state-root", "finalize"]
 
@@ -88,7 +89,7 @@ layer = "pure-core"
 runtime = "in-process-hot-path"
 owner_group = "execution"
 staff_target = 4
-status = "candidate-needs-real-vertical-path"
+status = "candidate-persistent-root-invariance-present"
 allowed_module_dependencies = ["M00", "M07", "M10", "M11", "M12"]
 forbidden_capabilities = ["network", "wall-clock", "consensus-finality"]
 
@@ -99,7 +100,7 @@ layer = "core-adapter"
 runtime = "in-process-hot-path"
 owner_group = "state-storage"
 staff_target = 3
-status = "active-needs-pinned-namespace"
+status = "active-pinned-namespace-acceptance-pending"
 allowed_module_dependencies = ["M00", "M01"]
 forbidden_capabilities = ["vote", "sign", "fork-choice"]
 
@@ -110,7 +111,7 @@ layer = "authority-coordinator"
 runtime = "in-process-hot-path"
 owner_group = "finality-recovery"
 staff_target = 3
-status = "candidate-needs-node-commit-ledger"
+status = "candidate-node-commit-ledger-present"
 allowed_module_dependencies = ["M00", "M02", "M03", "M06", "M07"]
 forbidden_capabilities = ["independent-fork-choice", "control-plane-override"]
 
@@ -188,7 +189,7 @@ runtime = "node-and-release-tooling"
 owner_group = "node-release"
 staff_target = 2
 status = "active-composition-hotspot"
-allowed_module_dependencies = ["M00", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12", "M13", "M14", "M17"]
+allowed_module_dependencies = ["M00", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12", "M13", "M14"]
 forbidden_capabilities = ["domain-state-machine", "silent-gate-promotion"]
 
 [[modules]]
@@ -209,6 +210,6 @@ layer = "tooling-observer"
 runtime = "tooling-and-isolated-collectors"
 owner_group = "quality-security-evidence"
 staff_target = 3
-status = "active-to-consolidate"
+status = "active-boundary-consolidated-v1"
 allowed_module_dependencies = ["M00", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12", "M13", "M14", "M15"]
 forbidden_capabilities = ["production-signing", "consensus-authority", "self-acceptance"]

@@ -5,19 +5,26 @@ cd "$ROOT"
 PLAN_REL="docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 MANIFEST_REL="docs/development/plan-manifest-v1.toml"
 MODULES_REL="docs/development/module-registry-v1.toml"
+COVERAGE_REL="config/module-coverage-v1.toml"
+TECHREF_REL="docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
 TRAIN_REL="docs/development/release-train-v1.toml"
 SNAPSHOT_REL="docs/development/CURRENT_SNAPSHOT_V1.json"
 POLICY_REL="config/documentation-truth-v1.json"
 REFERENCE_GATE="scripts/ci/check_documentation_reference_closure_v1.py"
+MODULE_GATE="scripts/ci/check_module_coverage_v1.py"
 fail() { printf 'canonical development plan gate failed: %s\n' "$*" >&2; exit 2; }
-for path in "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE"; do [[ -s "$path" ]] || fail "missing canonical input: $path"; done
+canonical_inputs=(
+  "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$COVERAGE_REL" "$TECHREF_REL"
+  "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE" "$MODULE_GATE"
+)
+for path in "${canonical_inputs[@]}"; do [[ -s "$path" ]] || fail "missing canonical input: $path"; done
 if [[ "${TRNM_PLAN_EDITING:-0}" != "1" ]]; then
-  for path in "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE"; do
+  for path in "${canonical_inputs[@]}"; do
     git ls-files --error-unmatch -- "$path" >/dev/null || fail "canonical input is untracked: $path"
     git cat-file -e "HEAD:$path" >/dev/null 2>&1 || fail "canonical input is absent from HEAD: $path"
   done
-  git diff --quiet -- "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE" || fail "canonical development inputs are dirty"
-  git diff --cached --quiet -- "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE" || fail "canonical development inputs are staged against another source"
+  git diff --quiet -- "${canonical_inputs[@]}" || fail "canonical development inputs are dirty"
+  git diff --cached --quiet -- "${canonical_inputs[@]}" || fail "canonical development inputs are staged against another source"
 fi
 python3 - "$ROOT" "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" <<'PY'
 from pathlib import Path
@@ -53,6 +60,8 @@ plan=(root/plan_rel).read_text(encoding="utf-8"); lower=plan.lower(); manifest=t
 snapshot=j(snapshot_rel); policy=j(policy_rel); truth=j("config/consensus-mainline.json"); repo=j("config/repository-policy-v1.json"); boundary=j("PROJECT_BOUNDARY.json")
 require(policy.get("schema")=="trnm-documentation-truth-v1","documentation policy schema drift")
 require(policy.get("canonical_plan")==plan_rel and manifest.get("plan_path")==plan_rel,"canonical plan path drift")
+require(modules.get("coverage_manifest")=="config/module-coverage-v1.toml","module coverage manifest binding missing")
+require(modules.get("technical_reference")=="docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md","module technical reference binding missing")
 plan_id=manifest.get("plan_id"); require(plan_id=="trnm-chain-development-plan-v2",f"plan id drift: {plan_id!r}")
 require("plan id: `trnm-chain-development-plan-v2`" in lower,"plan body id drift")
 actual=hashlib.sha256((root/plan_rel).read_bytes()).hexdigest(); declared=manifest.get("plan_sha256")
@@ -81,4 +90,5 @@ PY
 args=(--self-test --binding-mode "${TRNM_DOC_BINDING_MODE:-local}")
 if [[ -n "${TRNM_DOC_BINDING_OUTPUT:-}" ]]; then args+=(--binding-output "$TRNM_DOC_BINDING_OUTPUT"); fi
 python3 "$REFERENCE_GATE" "${args[@]}"
+python3 "$MODULE_GATE"
 git diff --check
