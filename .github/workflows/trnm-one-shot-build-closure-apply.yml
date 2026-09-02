@@ -24,9 +24,9 @@ jobs:
       github.actor == 'Franksudoman' &&
       github.triggering_actor == github.actor
     # Bootstrap transport only. This hosted job is not acceptance evidence and
-    # runs no Cargo command. It validates the complete hash-bound patch, then
-    # pushes only the non-workflow slice. The authorized GitHub connector lands
-    # the already-validated workflow slice atomically in the successor commit.
+    # runs no Cargo command. It validates the complete hash-bound final tree,
+    # then pushes only the non-workflow slice. The authorized GitHub connector
+    # lands the already-validated workflow slice atomically afterwards.
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -62,11 +62,12 @@ jobs:
           test "$(sha256sum "${RUNNER_TEMP}/closure.patch" | awk '{print $1}')" = "${EXPECTED_PATCH_SHA256}"
           git apply --check "${RUNNER_TEMP}/closure.patch"
 
-      - name: Apply complete closure patch for validation
+      - name: Assemble complete final-tree candidate for validation
         run: |
           set -euo pipefail
           git apply --index "${RUNNER_TEMP}/closure.patch"
           git rm -- \
+            .github/workflows/trnm-one-shot-build-closure-apply.yml \
             .trnm/one-shot-build-closure.patch.gz.b64.part1 \
             .trnm/one-shot-build-closure.patch.gz.b64.part2 \
             .trnm/one-shot-build-closure.patch.gz.b64.part3 \
