@@ -277,14 +277,8 @@ impl BoundIngressV0 {
     ) -> Result<Self, BoundaryErrorV0> {
         identity.validate()?;
         frame.validate()?;
-        let binding = OperationBindingV0::derive(
-            identity,
-            height,
-            view,
-            block_id,
-            parent_id,
-            frame.digest(),
-        );
+        let binding =
+            OperationBindingV0::derive(identity, height, view, block_id, parent_id, frame.digest());
         let ingress = Self { binding, frame };
         ingress.validate(identity)?;
         Ok(ingress)
@@ -502,9 +496,7 @@ where
         }
 
         let identity = self.coordinator.identity();
-        ingress
-            .validate(identity)
-            .map_err(HostErrorV0::Boundary)?;
+        ingress.validate(identity).map_err(HostErrorV0::Boundary)?;
         let ingress_digest = ingress.ingress_digest();
         let receipt = self
             .coordinator
@@ -524,12 +516,8 @@ where
                 BoundaryErrorV0::InvalidStageTransition,
             ));
         }
-        if receipt.facts_digest != ingress_digest
-            || receipt.record_digest == Digest32V0([0; 32])
-        {
-            return Err(HostErrorV0::Boundary(
-                BoundaryErrorV0::ReceiptSubstitution,
-            ));
+        if receipt.facts_digest != ingress_digest || receipt.record_digest == Digest32V0([0; 32]) {
+            return Err(HostErrorV0::Boundary(BoundaryErrorV0::ReceiptSubstitution));
         }
         Ok(receipt)
     }
@@ -994,15 +982,8 @@ mod tests {
         let coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
         let io = QueueIo::default();
         let frame = IngressFrameV0::new(digest(40), digest(41), 1, vec![42]).unwrap();
-        let ingress = BoundIngressV0::derive(
-            identity(),
-            10,
-            11,
-            digest(12),
-            digest(13),
-            frame,
-        )
-        .unwrap();
+        let ingress =
+            BoundIngressV0::derive(identity(), 10, 11, digest(12), digest(13), frame).unwrap();
         let mut host =
             PersistentValidatorHostV0::new(coordinator, io, StepBudgetV0::default()).unwrap();
 
@@ -1093,24 +1074,15 @@ mod tests {
         };
         let io = QueueIo::default();
         let frame = IngressFrameV0::new(digest(40), digest(41), 1, vec![42]).unwrap();
-        let ingress = BoundIngressV0::derive(
-            identity(),
-            10,
-            11,
-            digest(12),
-            digest(13),
-            frame,
-        )
-        .unwrap();
+        let ingress =
+            BoundIngressV0::derive(identity(), 10, 11, digest(12), digest(13), frame).unwrap();
         let mut host =
             PersistentValidatorHostV0::new(coordinator, io, StepBudgetV0::default()).unwrap();
         host.recover().unwrap();
 
         assert!(matches!(
             host.prepare_bound_ingress(&ingress),
-            Err(HostErrorV0::Boundary(
-                BoundaryErrorV0::ReceiptSubstitution
-            ))
+            Err(HostErrorV0::Boundary(BoundaryErrorV0::ReceiptSubstitution))
         ));
     }
 
