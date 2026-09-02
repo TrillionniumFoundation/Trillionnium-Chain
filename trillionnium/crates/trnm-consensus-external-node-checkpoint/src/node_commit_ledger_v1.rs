@@ -2,7 +2,6 @@
 
 use std::{
     error::Error,
-    ffi::OsStr,
     fmt,
     fs::{self, File, OpenOptions},
     io::{Read, Write},
