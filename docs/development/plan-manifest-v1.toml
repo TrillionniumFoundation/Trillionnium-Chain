@@ -11,32 +11,43 @@ assessed_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
 assessed_commit = "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea"
 assessed_tree = "af09e389b1a462b3839508b7ef305596c76384c6"
 assessed_scope = "integration baseline ancestor; current PR head and prospective merge are derived at verification time"
+repository_core_overlay_source_commit = "a44d67181dc74ad74e64819b913972d2a49abc54"
+repository_core_overlay_source_tree = "a4480623afae1bedee9f03fcf83ce31ec00a2bb7"
+repository_core_overlay_absorbed = true
+workspace_crate_count = 62
 machine_truth_path = "config/consensus-mainline.json"
 repository_policy_path = "config/repository-policy-v1.json"
 blocker_execution_path = "config/blocker-execution-v1.json"
 build_closure_registry_path = "config/build-closures-v1.toml"
+build_closure_git_blob = "ab2a5a6bad824cf7dd0d39436f6974c01bddfb25"
 build_closure_validator_path = "scripts/ci/check_build_closures_v1.py"
+workspace_manifest_path = "trillionnium/Cargo.toml"
+workspace_manifest_git_blob = "3f4a6597341c134fc6e1e811b63712e26918bf23"
+workspace_lock_path = "trillionnium/Cargo.lock"
+workspace_lock_git_blob = "8ac48a82c2dae4caf7c085d29567537fc6edae13"
+codeowners_path = ".github/CODEOWNERS"
+codeowners_git_blob = "056c435b39bc9875bbd757d7e4ef8f0c8061cf87"
 module_registry_path = "docs/development/module-registry-v1.toml"
 module_registry_git_blob = "f02504cd15b81fc6e1455df6407908ffd2a00a08"
 module_coverage_path = "config/module-coverage-v1.toml"
-module_coverage_git_blob = "fde96354f6792bc9a3866195247535ff81738b99"
+module_coverage_git_blob = "8f5c5034066b94a748839e3408388644028d8c18"
 module_technical_reference_path = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
-module_technical_reference_git_blob = "8d174f08abb46d0bb7507ce356b7605f3e10b2b0"
+module_technical_reference_git_blob = "485be250e1dc792a4700f7b3ef891c0f3128bbe9"
 current_snapshot_path = "docs/development/CURRENT_SNAPSHOT_V1.json"
-current_snapshot_git_blob = "7f709ed7380bc7e21a9076c8bfffa56ea056c214"
+current_snapshot_git_blob = "d1011db0552eb03d29081ee69f3f797883dbba11"
 documentation_truth_path = "config/documentation-truth-v1.json"
 documentation_truth_git_blob = "9077556792f9fe5193deaf585379d8a08f31a454"
-repository_policy_git_blob = "8bb223e5bf538ef4712e0bc8cce4d5f66426360d"
+repository_policy_git_blob = "890c1729763f8b6c61590843cd28352b7df6a139"
 documentation_reference_gate_path = "scripts/ci/check_documentation_reference_closure_v1.py"
 documentation_reference_gate_git_blob = "b5cbd29acf8be978e87243ac8f95198a9f6f4f77"
 module_coverage_gate_path = "scripts/ci/check_module_coverage_v1.py"
-module_coverage_gate_git_blob = "f94efbaf4338af1378391e792e1fe24cb9ccb213"
+module_coverage_gate_git_blob = "28b6b3d316d59f0fef04c4de275a9e821c39d5e3"
 canonical_plan_gate_path = "scripts/ci/check_canonical_development_plan.sh"
 canonical_plan_gate_git_blob = "a602363cadb04bd30114854264799b77950cf74f"
 required_baseline_workflow_path = ".github/workflows/trnm-required-baseline.yml"
-required_baseline_workflow_git_blob = "32417e304a95f676c0a7b676252309888efd9d85"
+required_baseline_workflow_git_blob = "6c8846bef6c992ac5f94a19f7a80e076407c84f6"
 required_baseline_gate_path = "scripts/ci/check_required_baseline_closure_v1.py"
-required_baseline_gate_git_blob = "2318156708d0886862197ba849a329e76b58089e"
+required_baseline_gate_git_blob = "13f8dbb21cb2d26fffeaf4ab9803fcb77dc23b87"
 protocol_manifest_path = "docs/protocol/poco-ai-native-v1/spec-manifest.toml"
 toolchain_lock = "trillionnium/Cargo.lock"
 audit_date = "2026-09-02"
@@ -52,6 +63,24 @@ production_candidate = false
 production_consensus_activation = false
 public_testnet_ready = false
 release_ready = false
+
+[repository_core_overlay]
+source_pull_request = 71
+source_commit = "a44d67181dc74ad74e64819b913972d2a49abc54"
+source_tree = "a4480623afae1bedee9f03fcf83ce31ec00a2bb7"
+absorbed_into_selected_successor = true
+production_activation = false
+packages = [
+  "trnm-node-boundary-v0",
+  "trnm-tx-lifecycle-v0",
+  "trnm-state-sync-v0",
+  "trnm-migration-v0",
+  "trnm-control-plane-v0",
+  "trnm-poco-node-production-v0",
+  "trnm-production-adapter-conformance-v0",
+  "trnm-release-bundle-v0",
+  "trnm-durable-file-adapters-v0",
+]
 
 [replay]
 canonical_plan_command = "bash scripts/ci/check_canonical_development_plan.sh"
