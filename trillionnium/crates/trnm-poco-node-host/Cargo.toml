@@ -21,3 +21,4 @@ production_consensus_activation = false
 [dependencies]
 trnm-poco-node-authority = { version = "0.1.0", path = "../trnm-poco-node-authority" }
 trnm-poco-node-io = { version = "0.1.0", path = "../trnm-poco-node-io" }
+trnm-poco-node-production-v0 = { version = "0.1.0", path = "../trnm-poco-node-production-v0" }
