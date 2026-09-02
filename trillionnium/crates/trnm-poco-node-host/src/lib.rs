@@ -7,9 +7,7 @@
 
 use std::{error::Error, fmt};
 
-use trnm_poco_node_authority::{
-    NodeAuthorityCoordinatorV0, NodeAuthorityReadinessV0,
-};
+use trnm_poco_node_authority::{NodeAuthorityCoordinatorV0, NodeAuthorityReadinessV0};
 use trnm_poco_node_io::{NodeIoRuntimeV0, REQUIRED_NODE_IO_SURFACES_V0};
 
 /// Sanitized composition status. It contains no key, block, vote, transaction,
