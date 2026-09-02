@@ -508,8 +508,8 @@ sources = {
     "Consumption/Settlement": settlement_path.read_text(),
 }
 
-assert "mod g2_manifest_bound_process_v2;" in lib
-assert "pub use g2_manifest_bound_process_v2::{" in lib
+assert '#[cfg(feature = "ai-v1-candidate")]\nmod g2_manifest_bound_process_v2;' in lib
+assert '#[cfg(feature = "ai-v1-candidate")]\npub use g2_manifest_bound_process_v2::{' in lib
 for token in [
     "prepare_g2_manifest_bound_candidate_process_v2",
     "run_g2_manifest_bound_candidate_process_v2",
@@ -598,9 +598,10 @@ process_targets = [target for target in cargo["test"] if target["name"] == "g2_m
 assert process_targets == [{
     "name": "g2_manifest_bound_process_v2",
     "path": "tests/g2_manifest_bound_process_v2.rs",
+    "required-features": ["ai-v1-candidate"],
 }]
 assert cargo["features"]["g2-process-test-support"] == [
-    "fixture-raw-key", "dep:tempfile",
+    "ai-v1-candidate", "fixture-raw-key", "dep:tempfile",
 ]
 assert cargo["dependencies"]["tempfile"] == {
     "version": "3", "optional": True,

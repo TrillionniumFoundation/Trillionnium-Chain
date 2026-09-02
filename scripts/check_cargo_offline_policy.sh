@@ -79,4 +79,4 @@ esac
 
 trap - EXIT HUP INT TERM
 restore_worktree
-printf 'mixed_trust_cargo_policy=passed hosted_required_jobs=5 privileged_offline_jobs=22 source=%s\n' "${source_mode#--}"
+printf 'mixed_trust_cargo_policy=passed hosted_required_jobs=5 privileged_offline_jobs=26 source=%s\n' "${source_mode#--}"

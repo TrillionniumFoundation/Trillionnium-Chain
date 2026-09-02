@@ -100,6 +100,13 @@ owner_modules = ["M15"]
 exit = "node composition is wiring only and production, devnet, v1-candidate and lab closures are independently checked"
 
 [[blockers]]
+id = "BUILD-CLOSURE-001"
+priority = "P1"
+status = "implementation-present-exact-head-replay-required"
+owner_modules = ["M15", "M17"]
+exit = "static and Cargo-resolved node-prod-v0 excludes candidate, lab, fixture, research, PoC and legacy code while default and explicit-candidate compilation pass on the accepted exact source"
+
+[[blockers]]
 id = "CORE-LIVE-001"
 priority = "P1"
 status = "open"

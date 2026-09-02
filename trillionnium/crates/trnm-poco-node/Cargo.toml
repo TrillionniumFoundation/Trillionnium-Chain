@@ -10,6 +10,21 @@ publish = false
 
 [features]
 default = []
+# Explicit AI-native v1 candidate closure. The default/production node must not
+# resolve any v1 candidate crate or compile any G2 candidate command/module.
+ai-v1-candidate = [
+  "dep:trnm-poco-agent-market-v1",
+  "dep:trnm-poco-consumption-settlement-v1",
+  "dep:trnm-poco-cross-plane-readback-v1",
+  "dep:trnm-poco-da-v1",
+  "dep:trnm-poco-global-execution-v1",
+  "dep:trnm-poco-mvcc-fee-v1",
+  "dep:trnm-poco-order-application-v1",
+  "dep:trnm-poco-order-finality-verifier-v1",
+  "dep:trnm-poco-order-state-v1",
+  "dep:trnm-poco-order-types-v1",
+  "dep:trnm-poco-verify-challenge-v1",
+]
 node-event-wal = ["dep:libc"]
 # Candidate-only node-owned transaction admission WAL.  This feature composes
 # the durable nonce boundary but does not activate CheckTx, execution, or
@@ -56,6 +71,7 @@ external-proposal-signer = [
 # administered semantic watermark in focused tests.
 safety-rules-sidecar = ["dep:libc", "dep:trnm-consensus-safety-rules"]
 g2-process-test-support = [
+  "ai-v1-candidate",
   "fixture-raw-key",
   "dep:tempfile",
 ]
@@ -105,6 +121,8 @@ unexpected_cfgs = { level = "allow", check-cfg = [
 lane = "poco-bft-g1-host-scaffold"
 protocol = "poco-bft-v0"
 poco_ai_v1_supported = false
+poco_ai_v1_default_dependency_closure = false
+poco_ai_v1_candidate_dependency_feature = "ai-v1-candidate"
 poco_ai_v1_activation = false
 consensus_mainline = "native-poco-bft"
 native_poco_mainline_decision = "adopted"
@@ -309,6 +327,11 @@ required-features = ["lab-validator-runtime-test-support"]
 [[test]]
 name = "g2_manifest_bound_process_v2"
 path = "tests/g2_manifest_bound_process_v2.rs"
+required-features = ["ai-v1-candidate"]
+
+[[test]]
+name = "default_build_closure"
+path = "tests/default_build_closure.rs"
 
 [[test]]
 name = "raw_key_boundary"
@@ -357,17 +380,17 @@ trnm-mempool = { version = "0.1.0", path = "../trnm-mempool", optional = true }
 trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
 trnm-native-application-sqlite = { version = "0.1.0", path = "../trnm-native-application-sqlite" }
 trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0" }
-trnm-poco-cross-plane-readback-v1 = { version = "0.1.0", path = "../trnm-poco-cross-plane-readback-v1" }
-trnm-poco-agent-market-v1 = { version = "0.1.0", path = "../trnm-poco-agent-market-v1" }
-trnm-poco-consumption-settlement-v1 = { version = "0.1.0", path = "../trnm-poco-consumption-settlement-v1" }
-trnm-poco-da-v1 = { version = "0.1.0", path = "../trnm-poco-da-v1" }
-trnm-poco-global-execution-v1 = { version = "0.1.0", path = "../trnm-poco-global-execution-v1" }
-trnm-poco-mvcc-fee-v1 = { version = "0.1.0", path = "../trnm-poco-mvcc-fee-v1" }
-trnm-poco-order-application-v1 = { version = "0.1.0", path = "../trnm-poco-order-application-v1" }
-trnm-poco-order-finality-verifier-v1 = { version = "0.1.0", path = "../trnm-poco-order-finality-verifier-v1" }
-trnm-poco-order-state-v1 = { version = "0.1.0", path = "../trnm-poco-order-state-v1" }
-trnm-poco-order-types-v1 = { version = "0.1.0", path = "../trnm-poco-order-types-v1" }
-trnm-poco-verify-challenge-v1 = { version = "0.1.0", path = "../trnm-poco-verify-challenge-v1" }
+trnm-poco-cross-plane-readback-v1 = { version = "0.1.0", path = "../trnm-poco-cross-plane-readback-v1", optional = true }
+trnm-poco-agent-market-v1 = { version = "0.1.0", path = "../trnm-poco-agent-market-v1", optional = true }
+trnm-poco-consumption-settlement-v1 = { version = "0.1.0", path = "../trnm-poco-consumption-settlement-v1", optional = true }
+trnm-poco-da-v1 = { version = "0.1.0", path = "../trnm-poco-da-v1", optional = true }
+trnm-poco-global-execution-v1 = { version = "0.1.0", path = "../trnm-poco-global-execution-v1", optional = true }
+trnm-poco-mvcc-fee-v1 = { version = "0.1.0", path = "../trnm-poco-mvcc-fee-v1", optional = true }
+trnm-poco-order-application-v1 = { version = "0.1.0", path = "../trnm-poco-order-application-v1", optional = true }
+trnm-poco-order-finality-verifier-v1 = { version = "0.1.0", path = "../trnm-poco-order-finality-verifier-v1", optional = true }
+trnm-poco-order-state-v1 = { version = "0.1.0", path = "../trnm-poco-order-state-v1", optional = true }
+trnm-poco-order-types-v1 = { version = "0.1.0", path = "../trnm-poco-order-types-v1", optional = true }
+trnm-poco-verify-challenge-v1 = { version = "0.1.0", path = "../trnm-poco-verify-challenge-v1", optional = true }
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol", optional = true }
 
 [dev-dependencies]

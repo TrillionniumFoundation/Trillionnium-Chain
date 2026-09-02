@@ -367,6 +367,8 @@ lab-and-evidence
 
 `node-prod-v0` contains no v1 candidate, lab, fixture, benchmark, mock authority, research, PoC, or legacy Comet runtime dependency. No Cargo feature combination may silently activate candidate authority.
 
+**Repository implementation present; exact-head acceptance pending.** `config/build-closures-v1.toml` freezes all four closure roots and forbidden groups. `scripts/ci/check_build_closures_v1.py` recursively resolves local normal/build features, rejects production contamination, and can compare the result with Cargo's locked offline `cargo tree`. The default `trnm-poco-node` closure now resolves zero AI-v1 candidate packages; all eleven AI-v1 package edges and G2 commands/modules require the explicit `ai-v1-candidate` feature. Hosted and X230 gates must still compile both default and explicit-candidate forms on the unchanged source before this blocker is accepted.
+
 Reproducible packaging binds source/tree, plan, protocol, module registry, coverage, configuration, compiler, dependency lock, feature closure, binaries, containers, SBOM, provenance, signatures, and operator handoff.
 
 Migration uses a trusted finalized source verifier, exact export, target projection, root recomputation, and a fresh PoCO genesis. In-place DB/WAL rewriting and importing legacy validator signing state are prohibited. Removal of migration residue requires signed cutover evidence, cross-peer genesis/QC agreement, downgrade prohibition, and completed differential replay preservation.
@@ -452,7 +454,7 @@ PR #62 is the sole selected successor. Preserve the descriptor-bound SQLite name
 
 **Module coverage implementation present.** All active workspace crates and auxiliary packages map to M00-M17 with stable technical contracts, SLO/testkit profiles, owner policy, and an acyclic declared module graph.
 
-Remaining P1 work is executable production dependency closure, zero forbidden edges, real module-team ownership, and node decomposition. Exit: generated dependency/ownership views match Cargo metadata, composition contains wiring only, and `node-prod-v0` is free of candidate/lab/legacy contamination.
+**Production dependency-closure implementation present; acceptance pending.** The machine registry and recursive resolver now enforce separately named production, devnet, AI-v1-candidate, and lab/evidence closures; the default node has zero AI-v1 package edges. Remaining P1 work is exact-head and prospective-merge Cargo-tree/compiler acceptance, continued zero forbidden edges under future feature changes, real module-team ownership, and node decomposition. Exit: generated dependency/ownership views match Cargo's locked graph, composition contains wiring only, and `node-prod-v0` remains free of candidate/lab/legacy contamination.
 
 ### P2 — whole-node durability
 
@@ -489,7 +491,7 @@ Complete trusted source verification, exact export and root recomputation, multi
 | P1 | NODE-COMMIT-001 | M03/M07/M08 | implementation present, acceptance pending | monotonic ledger proves every exact crash-cut source/target convergence |
 | P1 | EXEC-VERTICAL-001 | M02/M06/M07/M08 | persistent worker equivalence present | real MVCC/JMT/finality/recovery path preserves roots at 1/2/4/8 workers under faults |
 | P1 | NODE-SPLIT-001 | M15 | open | composition performs wiring only; host/coordinator/I/O/CLI/lab boundaries are explicit |
-| P1 | BUILD-CLOSURE-001 | M15/M17 | open | production graph excludes candidate, lab, fixture, research, PoC, and legacy code |
+| P1 | BUILD-CLOSURE-001 | M15/M17 | implementation present, exact-head acceptance pending | static and Cargo-resolved production graphs exclude candidate, lab, fixture, research, PoC, and legacy code; default/candidate compilation passes |
 | P1 | CORE-LIVE-001 | M02/M03/M04 | open | persistent pacemaker, Vote/Timeout, epoch, network and catch-up path passes fault campaigns |
 | P2 | TX-PROD-001 | M05/M15 | open | production admission, sign/broadcast, finalized readback, tombstone and GC lifecycle closes |
 | P2 | SYNC-PROD-001 | M07/M13 | open | authenticated non-destructive production state sync and arbitrary trust path close |
@@ -550,7 +552,7 @@ Any source, protocol, dependency, compiler, feature, configuration, validator se
 3. mark PRs #54, #57, #58, #59, and #61 superseded only after their evidence and unique commits are preserved or proven absorbed;
 4. obtain independent module-owner, consumer, security/evidence, and release acceptance on the unchanged head;
 5. merge only through protected `main`, then run post-merge verification and regenerate source-bound release status;
-6. generate and enforce actual Cargo dependency/feature closures for `node-prod-v0`, `node-devnet-v0`, `ai-v1-candidate`, and `lab-and-evidence`;
+6. retain and qualify the implemented Cargo dependency/feature closures for `node-prod-v0`, `node-devnet-v0`, `ai-v1-candidate`, and `lab-and-evidence` on the exact head and prospective merge;
 7. decompose the node composition hotspot and finish the persistent network/pacemaker/Vote/Timeout/finality/recovery path;
 8. complete transaction lifecycle, state sync, migration, packaging, SBOM/provenance, observability, denial/resource, and incident/DR closure;
 9. ingest authentic independent multi-host, HSM/anchor, physical power-loss, audit/red-team, and wall-clock soak evidence;
@@ -564,6 +566,7 @@ bash scripts/ci/check_agent_development_docs_v1.sh
 python3 scripts/ci/check_module_coverage_v1.py
 python3 scripts/ci/check_repository_truth_v1.py
 python3 scripts/ci/check_blocker_execution_v1.py
+python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
 python3 scripts/ci/check_required_protocol_contract_v1.py
 python3 scripts/ci/generate_release_status_v1.py --check-deterministic
 python3 scripts/ci/check_external_evidence_v1.py

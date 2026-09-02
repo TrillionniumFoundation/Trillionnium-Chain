@@ -47,6 +47,19 @@
         4,
         8
       ]
+    },
+    "production_build_closures": {
+      "status": "implementation-present-exact-head-and-prospective-merge-replay-required",
+      "registry": "config/build-closures-v1.toml",
+      "validator": "scripts/ci/check_build_closures_v1.py",
+      "closure_ids": [
+        "node-prod-v0",
+        "node-devnet-v0",
+        "ai-v1-candidate",
+        "lab-and-evidence"
+      ],
+      "default_node_ai_v1_dependency_count": 0,
+      "cargo_tree_and_compile_acceptance": "pending-current-head-ci"
     }
   },
   "machine_truth": {
@@ -64,7 +77,7 @@
   "current_promotion_critical_stack": [
     "all required checks on one unchanged PR62 head and prospective merge",
     "independent module-owner, consumer, security and release acceptance",
-    "production dependency closures and node decomposition",
+    "exact-head and prospective-merge Cargo-tree/compiler acceptance of production build closures, plus node decomposition",
     "persistent authenticated network, pacemaker, Vote/Timeout, finality and recovery",
     "production transaction lifecycle and authenticated state sync",
     "trusted migration and target-root recomputation",

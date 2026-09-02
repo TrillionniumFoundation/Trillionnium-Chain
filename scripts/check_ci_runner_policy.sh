@@ -256,7 +256,7 @@ def validate_baseline(name: str, text: str, jobs: dict[str, dict[str, object]]) 
     return len(jobs)
 
 
-def accepted_privileged_guards(name: str) -> set[str]:
+def accepted_privileged_guards(name: str, job: str) -> set[str]:
     canonical = required_guard(name)
     variants = {canonical}
     variants.add(
@@ -277,11 +277,17 @@ def accepted_privileged_guards(name: str) -> set[str]:
             "|| (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') || (github.actor == 'github-actions[bot]'",
         )
     )
+    # The prospective-merge documentation job is meaningful only for a PR.
+    # Keep the exact trusted-runner guard intact, but bind it at the job level
+    # so push/dispatch runs are visibly skipped rather than succeeding after
+    # every step was skipped.
+    if name == "trnm-documentation-truth.yml" and job == "prospective-merge":
+        variants = {f"github.event_name == 'pull_request' && ({guard})" for guard in variants}
     return variants
 
 def validate_privileged(name: str, jobs: dict[str, dict[str, object]]) -> int:
-    expected_guards = accepted_privileged_guards(name)
     for job, props in jobs.items():
+        expected_guards = accepted_privileged_guards(name, job)
         if props["uses"]:
             raise PolicyError(f"{name}: job {job} uses an unauthorized reusable workflow")
         if props["runs_on"] != [SELF_HOSTED]:

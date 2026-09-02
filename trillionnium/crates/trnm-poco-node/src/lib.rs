@@ -167,6 +167,7 @@ pub const PRODUCTION_RAW_KEY_DEPENDENCY_V0: bool = false;
 mod authenticated_genesis_commissioning;
 #[cfg(feature = "legacy-consensus-app")]
 mod authenticated_genesis_h1_takeover;
+#[cfg(feature = "ai-v1-candidate")]
 #[allow(dead_code)]
 mod cross_plane_checkpoint_v1;
 mod cross_store_lock;
@@ -189,9 +190,12 @@ mod external_signer_runtime;
 mod finalization_intent_wal;
 #[cfg(feature = "g1-process-test-support")]
 pub mod g1_process_host;
+#[cfg(feature = "ai-v1-candidate")]
 mod g2_manifest_bound_process_v2;
+#[cfg(feature = "ai-v1-candidate")]
 #[allow(dead_code)]
 mod g2_manifest_bound_v2;
+#[cfg(feature = "ai-v1-candidate")]
 #[allow(dead_code)]
 mod g2_order_commit_v1;
 // Candidate-only G2F descriptor/openat and external-anchor contract.  The
@@ -321,12 +325,13 @@ pub use external_signer_runtime::{
     UNIX_EXTERNAL_TIMEOUT_PRODUCTION_ACTIVATION_V0, UNIX_EXTERNAL_TIMEOUT_PROPOSAL_SIGNING_V0,
     UNIX_EXTERNAL_TIMEOUT_RUNTIME_COMPOSITION_V0,
 };
+#[cfg(feature = "ai-v1-candidate")]
 pub use g2_manifest_bound_process_v2::{
     prepare_g2_manifest_bound_candidate_process_v2, run_g2_manifest_bound_candidate_process_v2,
     PocoNodeG2CandidatePreparedFactsV2, PocoNodeG2CandidateProcessErrorV2,
     PocoNodeG2CandidateProcessManifestV2,
 };
-#[cfg(feature = "g2-process-test-support")]
+#[cfg(all(feature = "ai-v1-candidate", feature = "g2-process-test-support"))]
 #[doc(hidden)]
 pub use g2_order_commit_v1::real_e2e_tests::PocoNodeG2ProcessFixtureV2;
 #[cfg(all(feature = "g2f-namespace-test-support", unix))]
