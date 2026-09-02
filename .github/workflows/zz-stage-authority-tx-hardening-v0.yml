@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Install repository-pinned Rust and dependency cache
+      - name: Install repository-pinned Rust and materialize dependency cache
         shell: bash
         run: |
           set -euo pipefail
@@ -47,7 +47,7 @@ jobs:
           )"
           rustup toolchain install "$channel" --profile minimal --component rustfmt --component clippy
           rustup default "$channel"
-          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          cargo fetch --manifest-path trillionnium/Cargo.toml
 
       - name: Harden and qualify authority and transaction cores
         shell: bash
