@@ -45,9 +45,9 @@ register trnm-canonical-input-fuzz-smoke.yml:bounded-smoke cargo-fuzz nightly-20
 register trnm-cometbft-spike.yml:dependency-policy cargo-deny 1.95.0 \
   'trillionnium/Cargo.toml:trillionnium/Cargo.lock contracts/Cargo.toml:contracts/Cargo.lock trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock'
 register trnm-cometbft-spike.yml:cometbft-four-validator required 1.95.0 \
-  trillionnium/Cargo.toml:trillionnium/Cargo.lock
+  'trillionnium/Cargo.toml:trillionnium/Cargo.lock trillionnium/crates/trnm-consensus-app/Cargo.toml:trillionnium/crates/trnm-consensus-app/Cargo.lock trillionnium/crates/trnm-node/Cargo.toml:trillionnium/crates/trnm-node/Cargo.lock'
 register trnm-cometbft-spike.yml:cometbft-partition-matrix required 1.95.0 \
-  trillionnium/Cargo.toml:trillionnium/Cargo.lock
+  'trillionnium/Cargo.toml:trillionnium/Cargo.lock trillionnium/crates/trnm-consensus-app/Cargo.toml:trillionnium/crates/trnm-consensus-app/Cargo.lock trillionnium/crates/trnm-node/Cargo.toml:trillionnium/crates/trnm-node/Cargo.lock'
 register trnm-gate-quick-check.yml:shell-static-checks required 1.95.0 \
   'trillionnium/Cargo.toml:trillionnium/Cargo.lock contracts/Cargo.toml:contracts/Cargo.lock'
 register trnm-live-devnet-package.yml:legacy-harness-reproducibility required 1.95.0 \
@@ -299,7 +299,13 @@ for helper in "${!helper_hash[@]}"; do
   fi
 done
 
-mapfile -t workflows < <(list_workflows)
+# This checker freezes privileged/self-hosted and product-adjacent workflow
+# Cargo authority. Actor-independent GitHub-hosted truth workflows are
+# validated by their own exact-source gates and do not share the offline
+# runner cache authority.
+mapfile -t workflows < <(
+  list_workflows | grep -Ev '^trnm-(required-baseline|documentation-truth)\.ya?ml$'
+)
 expected_workflows="$tmp/expected-workflows"
 printf '%s\n' "${!class[@]}" | cut -d: -f1 | LC_ALL=C sort -u >"$expected_workflows"
 actual_workflows="$tmp/actual-workflows"

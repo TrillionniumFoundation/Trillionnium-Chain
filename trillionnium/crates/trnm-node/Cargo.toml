@@ -59,3 +59,9 @@ trnm-finality-verifier = { version = "0.1.0", path = "../trnm-finality-verifier"
 
 [dev-dependencies]
 trnm-state = { version = "0.1.0", path = "../trnm-state", features = ["test-utils"] }
+
+# This legacy package is excluded from the active native workspace. The
+# standalone archive workspace exists only for migration-residue
+# differential verification and does not re-enter the mainline graph.
+[workspace]
+resolver = "2"
