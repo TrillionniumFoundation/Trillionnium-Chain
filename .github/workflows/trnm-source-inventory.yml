@@ -72,3 +72,5 @@ jobs:
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
+
+# Exact-source audit refresh requested on 2026-09-02; no promotion authority.
