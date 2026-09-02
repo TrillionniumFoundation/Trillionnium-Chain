@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - main
+      - work/plan-v2-full-gap-closure-20260902
     paths:
       - 'trillionnium/crates/trnm-consensus-external-node-checkpoint/**'
       - 'trillionnium/crates/trnm-poco-mvcc-fee-v1/**'
@@ -17,6 +18,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: trnm-node-commit-exec-focused-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CI: "true"
@@ -29,35 +34,79 @@ env:
 
 jobs:
   focused-semantics:
-    runs-on: ubuntu-24.04
+    name: node-commit-exec-focused-x230
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman') && github.triggering_actor == github.actor &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 45
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     steps:
-      - name: Check out exact source
+      - name: Check out exact source without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          path: trillionnium-chain
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Verify exact source identity
-        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
-      - name: Install pinned Rust toolchain
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
         run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-          rustup override set 1.95.0
-      - name: Require clean formatting
-        working-directory: trillionnium
-        run: cargo fmt --all -- --check
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Bind exact source and formatting
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
       - name: Prove crash-convergent Node Commit Ledger
-        working-directory: trillionnium
+        working-directory: trillionnium-chain
         run: |
-          cargo test -p trnm-consensus-external-node-checkpoint --all-targets --locked
-          cargo clippy -p trnm-consensus-external-node-checkpoint --all-targets --locked -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-external-node-checkpoint --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-external-node-checkpoint --all-targets --locked --offline -- -D warnings
+
       - name: Prove persistent 1/2/4/8-worker canonical equivalence
-        working-directory: trillionnium
+        working-directory: trillionnium-chain
         run: |
-          cargo test -p trnm-poco-mvcc-fee-v1 --all-targets --locked
-          cargo clippy -p trnm-poco-mvcc-fee-v1 --all-targets --locked -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-mvcc-fee-v1 --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-mvcc-fee-v1 --all-targets --locked --offline -- -D warnings
+
       - name: Require validation to leave checkout clean
+        working-directory: trillionnium-chain
         run: |
           git diff --exit-code -- .
           test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

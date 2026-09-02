@@ -18,25 +18,33 @@ env:
   LC_ALL: C.UTF-8
   PYTHONHASHSEED: "0"
   PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
 
 jobs:
   exact-source-inventory:
     name: exact-source-inventory
-    runs-on: ubuntu-24.04
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman') && github.triggering_actor == github.actor &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 15
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
     steps:
       - name: Check out exact source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
 
       - name: Verify and package tracked source
-        shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
           root="$RUNNER_TEMP/trnm-source-inventory"
           mkdir -p "$root"
           git rev-parse HEAD > "$root/HEAD"
@@ -59,7 +67,7 @@ jobs:
       - name: Upload exact-source inventory
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: trnm-source-inventory-${{ github.sha }}
+          name: trnm-source-inventory-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: ${{ runner.temp }}/trnm-source-inventory
           if-no-files-found: error
           retention-days: 1

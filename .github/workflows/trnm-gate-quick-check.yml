@@ -7,6 +7,7 @@ on:
       - 'contracts/**'
       - 'contracts-rust/**'
       - 'config/alert-policy/**'
+      - 'config/build-closures-v1.toml'
       - 'docs/runbooks/enterprise_onboarding_runbook_v1.md'
       - 'docs/runbooks/TRNM_POCO_BFT_X230_DEPLOYMENT_BOUNDARY.md'
       - 'scripts/**'
@@ -19,6 +20,7 @@ on:
       - 'contracts/**'
       - 'contracts-rust/**'
       - 'config/alert-policy/**'
+      - 'config/build-closures-v1.toml'
       - 'docs/runbooks/enterprise_onboarding_runbook_v1.md'
       - 'docs/runbooks/TRNM_POCO_BFT_X230_DEPLOYMENT_BOUNDARY.md'
       - 'scripts/**'
@@ -136,6 +138,9 @@ jobs:
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock \
             contracts/Cargo.toml:contracts/Cargo.lock
+
+      - name: Enforce Cargo-resolved production build closures
+        run: python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
 
       - name: Verify runner-provisioned shellcheck
         run: |

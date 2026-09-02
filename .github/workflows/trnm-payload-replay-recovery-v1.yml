@@ -72,15 +72,15 @@ jobs:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
-       (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
-       (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
-       (github.actor == 'github-actions[bot]' &&
-        github.triggering_actor == 'github-actions[bot]' &&
-        github.event_name == 'pull_request' &&
-        github.event.pull_request.head.repo.full_name == github.repository &&
-        github.event.pull_request.author_association == 'MEMBER')) &&
+      (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+      (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
+      (github.actor == 'github-actions[bot]' &&
+      github.triggering_actor == 'github-actions[bot]' && github.event_name ==
+      'pull_request' && github.event.pull_request.head.repo.full_name ==
+      github.repository && github.event.pull_request.author_association ==
+      'MEMBER' && startsWith(github.head_ref, 'feature/chain-'))) &&
       (github.event_name != 'pull_request' ||
-       github.event.pull_request.head.repo.full_name == github.repository)
+      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 130
     env:
@@ -97,16 +97,14 @@ jobs:
           fetch-depth: 0
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
 
-      - name: Verify exact checked-out source
-        working-directory: trillionnium-chain
-        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
-
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
           ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
-            --toolchain 1.95.0 --component clippy --component rustfmt
+            --toolchain 1.95.0 \
+            --component clippy \
+            --component rustfmt
 
       - name: Verify Cargo offline cache readiness
         working-directory: trillionnium-chain
@@ -116,6 +114,10 @@ jobs:
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify exact checked-out source
+        working-directory: trillionnium-chain
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
 
       - name: Verify canonical documentation authority
         working-directory: trillionnium-chain
@@ -141,5 +143,6 @@ jobs:
         if: always()
         working-directory: trillionnium-chain
         run: |
+          set -euo pipefail
           ./scripts/ci/check_cargo_offline_unchanged.sh \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

@@ -49,8 +49,22 @@ env:
 jobs:
   documentation-authority:
     name: canonical-documentation-authority
-    runs-on: ubuntu-24.04
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
+      (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+      (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
+      (github.actor == 'github-actions[bot]' &&
+      github.triggering_actor == 'github-actions[bot]' && github.event_name ==
+      'pull_request' && github.event.pull_request.head.repo.full_name ==
+      github.repository && github.event.pull_request.author_association ==
+      'MEMBER' && startsWith(github.head_ref, 'feature/chain-'))) &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 10
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
     steps:
       - name: Check out exact source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -73,15 +87,15 @@ jobs:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
-       (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
-       (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
-       (github.actor == 'github-actions[bot]' &&
-        github.triggering_actor == 'github-actions[bot]' &&
-        github.event_name == 'pull_request' &&
-        github.event.pull_request.head.repo.full_name == github.repository &&
-        github.event.pull_request.author_association == 'MEMBER')) &&
+      (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+      (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
+      (github.actor == 'github-actions[bot]' &&
+      github.triggering_actor == 'github-actions[bot]' && github.event_name ==
+      'pull_request' && github.event.pull_request.head.repo.full_name ==
+      github.repository && github.event.pull_request.author_association ==
+      'MEMBER' && startsWith(github.head_ref, 'feature/chain-'))) &&
       (github.event_name != 'pull_request' ||
-       github.event.pull_request.head.repo.full_name == github.repository)
+      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 120
     env:
@@ -96,17 +110,24 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify exact source identity
-        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
-
-      - name: Verify runner-provisioned Rust toolchain and cache
+      - name: Verify runner-provisioned Rust toolchain
         run: |
+          set -euo pipefail
           ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
-            --toolchain 1.95.0 --component rustfmt --component clippy
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
           ./scripts/ci/check_cargo_offline_ready.sh \
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
 
       - name: Format compile and strict lint
         run: |
@@ -141,5 +162,6 @@ jobs:
       - name: Verify Cargo offline inputs remained unchanged
         if: always()
         run: |
+          set -euo pipefail
           ./scripts/ci/check_cargo_offline_unchanged.sh \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

@@ -7,6 +7,7 @@ on:
       - 'docs/**'
       - 'config/legacy-harness-freeze.sha256'
       - 'config/alert-policy/**'
+      - 'config/build-closures-v1.toml'
       - 'trillionnium/**'
       - 'web4-frontend/**'
       - 'scripts/**'
@@ -23,6 +24,7 @@ on:
       - 'docs/**'
       - 'config/legacy-harness-freeze.sha256'
       - 'config/alert-policy/**'
+      - 'config/build-closures-v1.toml'
       - 'trillionnium/**'
       - 'web4-frontend/**'
       - 'scripts/**'
@@ -131,6 +133,9 @@ jobs:
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Enforce Cargo-resolved production build closures
+        run: python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
 
       - name: Enforce frozen legacy binary surfaces
         run: bash ./scripts/ci/check_legacy_harness_freeze.sh

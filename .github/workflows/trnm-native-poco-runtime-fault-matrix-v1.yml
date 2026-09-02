@@ -50,8 +50,6 @@ env:
   LC_ALL: C.UTF-8
   CARGO_INCREMENTAL: '0'
   CARGO_TERM_COLOR: never
-  CARGO_NET_OFFLINE: 'true'
-  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: never
   PYTHONHASHSEED: '0'
   PYTHONDONTWRITEBYTECODE: '1'
   TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
@@ -61,20 +59,16 @@ jobs:
     name: runtime-fault-matrix-x230
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
-       (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
-       (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
-       (github.actor == 'github-actions[bot]' &&
-        github.triggering_actor == 'github-actions[bot]' &&
-        github.event_name == 'pull_request' &&
-        github.event.pull_request.head.repo.full_name == github.repository &&
-        github.event.pull_request.author_association == 'MEMBER')) &&
+      (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman') && github.triggering_actor == github.actor &&
       (github.event_name != 'pull_request' ||
-       github.event.pull_request.head.repo.full_name == github.repository)
+      github.event.pull_request.head.repo.full_name == github.repository)))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 240
     env:
-      TRNM_CARGO_OFFLINE_POLICY: required
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
       TRNM_DOC_BINDING_MODE: source
     steps:
       - name: Check out exact source without persisted credentials
@@ -85,19 +79,30 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Bind source tree, toolchain and offline cache
+      - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
-        shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
-          git rev-parse 'HEAD^{tree}' > "$RUNNER_TEMP/runtime-fault-source-tree"
           ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
-            --toolchain 1.95.0 --component rustfmt --component clippy
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
           ./scripts/ci/check_cargo_offline_ready.sh \
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Bind exact source tree and formatting
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+          git rev-parse 'HEAD^{tree}' > "$RUNNER_TEMP/runtime-fault-source-tree"
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
 
       - name: Validate canonical authority before execution
@@ -110,6 +115,7 @@ jobs:
           python3 scripts/ci/check_module_coverage_v1.py
           python3 scripts/ci/check_repository_truth_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
           bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
 
       - name: Run deployed-lab and process recovery library matrix
@@ -173,7 +179,7 @@ jobs:
         run: |
           cargo test --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node --test g2_manifest_bound_process_v2 \
-            --locked --offline
+            --features ai-v1-candidate --locked --offline
 
       - name: Revalidate source cleanliness and authority
         working-directory: trillionnium-chain
@@ -182,6 +188,7 @@ jobs:
           python3 -B scripts/ci/a22_capability_authority_audit_v1.py
           python3 scripts/ci/check_repository_truth_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
           bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
           bash scripts/ci/check_canonical_development_plan.sh
           bash scripts/project-preflight.sh --audit
@@ -191,7 +198,6 @@ jobs:
 
       - name: Build exact-source runtime evidence record
         working-directory: trillionnium-chain
-        shell: bash
         run: |
           set -euo pipefail
           out="$RUNNER_TEMP/runtime-fault-matrix"
@@ -251,5 +257,6 @@ jobs:
         if: always()
         working-directory: trillionnium-chain
         run: |
+          set -euo pipefail
           ./scripts/ci/check_cargo_offline_unchanged.sh \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
