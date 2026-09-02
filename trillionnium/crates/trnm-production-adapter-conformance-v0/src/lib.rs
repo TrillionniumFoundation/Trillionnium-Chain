@@ -165,7 +165,13 @@ mod tests {
                         if existing.binding == binding
                             && existing.durable_stage == AuthorityStageV0::Prepared
                         {
-                            return Ok(existing);
+                            return if existing.facts_digest == ingress_digest {
+                                Ok(existing)
+                            } else {
+                                Err(DurableCoordinatorError::Boundary(
+                                    BoundaryErrorV0::ReceiptSubstitution,
+                                ))
+                            };
                         }
                         return Err(DurableCoordinatorError::Boundary(
                             BoundaryErrorV0::InvalidStageTransition,
@@ -190,7 +196,13 @@ mod tests {
                     if existing.durable_stage == next_stage
                         && expected_stage.successor() == Some(next_stage)
                     {
-                        return Ok(existing);
+                        return if existing.facts_digest == facts_digest {
+                            Ok(existing)
+                        } else {
+                            Err(DurableCoordinatorError::Boundary(
+                                BoundaryErrorV0::ReceiptSubstitution,
+                            ))
+                        };
                     }
                     if existing.durable_stage != expected_stage
                         || expected_stage.successor() != Some(next_stage)
@@ -216,6 +228,7 @@ mod tests {
                 binding,
                 durable_stage: target_stage,
                 durable_sequence: sequence,
+                facts_digest: facts,
                 record_digest: self.record_digest(binding, target_stage, sequence, facts, previous),
             };
             journal.current = Some(receipt);
@@ -284,6 +297,18 @@ mod tests {
             .unwrap();
         assert_eq!(replayed.durable_sequence, 1);
         assert_eq!(replayed.durable_stage, AuthorityStageV0::ApplicationSealed);
+        assert_eq!(replayed.facts_digest, node_d(21));
+        assert_eq!(
+            restarted
+                .apply(AuthorityCommandV0::Advance {
+                    binding,
+                    expected_stage: AuthorityStageV0::Prepared,
+                    next_stage: AuthorityStageV0::ApplicationSealed,
+                    facts_digest: node_d(22),
+                })
+                .unwrap_err(),
+            DurableCoordinatorError::Boundary(BoundaryErrorV0::ReceiptSubstitution)
+        );
     }
 
     struct AcceptCheckpoint;
