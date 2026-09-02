@@ -1,0 +1,158 @@
+name: integrate-qualified-repository-cores-v0
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/zz-integrate-repository-cores-v0.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: integrate-qualified-repository-cores-v0-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+  SOURCE_BRANCH: work/plan-v2-repository-core-integration-20260902
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+
+jobs:
+  integrate:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902' &&
+      github.actor == 'Franksudoman' &&
+      github.triggering_actor == github.actor &&
+      !contains(github.event.head_commit.message, '[repository-cores-integrated]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact successor head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Bind qualified source branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git fetch --no-tags origin \
+            "+refs/heads/${SOURCE_BRANCH}:refs/remotes/origin/${SOURCE_BRANCH}"
+          source_sha="$(git rev-parse "refs/remotes/origin/${SOURCE_BRANCH}")"
+          test -n "${source_sha}"
+          git show -s --format=%s "${source_sha}" \
+            | grep -q '^\[repository-cores-staged\] feat(core): qualify remaining fail-closed repository cores$'
+          test "$(git show "${source_sha}:docs/evidence/repository/REPOSITORY_CORE_INTEGRATION_V0.json" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["result"])')" = PASS
+          test "$(git ls-tree -r --name-only "${source_sha}" -- .github/workflows/zz-stage-repository-core-integration-v0.yml | wc -l)" -eq 0
+          printf 'source_sha=%s\n' "${source_sha}" >> "${GITHUB_ENV}"
+
+      - name: Merge qualified source without committing
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge --no-ff --no-commit "${source_sha}"
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          changed = subprocess.check_output(
+              ['git','diff','--cached','--name-only','--diff-filter=ACDMRTUXB'], text=True
+          ).splitlines()
+          exact = {
+              'config/module-coverage-v1.toml',
+              'config/repository-blocker-cores-v0.toml',
+              'docs/modules/TRNM_DURABLE_FILE_ADAPTERS_V0.md',
+              'docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md',
+              'docs/modules/TRNM_PRODUCTION_ADAPTER_CONFORMANCE_V0.md',
+              'docs/modules/TRNM_REPOSITORY_BLOCKER_CORES_V0.md',
+              'docs/evidence/repository/REPOSITORY_CORE_INTEGRATION_V0.json',
+              'scripts/check_repository_blocker_registry_v0.py',
+              'trillionnium/Cargo.toml',
+              'trillionnium/Cargo.lock',
+          }
+          prefixes = (
+              'trillionnium/crates/trnm-control-plane-v0/',
+              'trillionnium/crates/trnm-durable-file-adapters-v0/',
+              'trillionnium/crates/trnm-migration-v0/',
+              'trillionnium/crates/trnm-node-boundary-v0/',
+              'trillionnium/crates/trnm-poco-node-production-v0/',
+              'trillionnium/crates/trnm-production-adapter-conformance-v0/',
+              'trillionnium/crates/trnm-release-bundle-v0/',
+              'trillionnium/crates/trnm-state-sync-v0/',
+              'trillionnium/crates/trnm-tx-lifecycle-v0/',
+          )
+          unexpected = [p for p in changed if p not in exact and not p.startswith(prefixes)]
+          if unexpected:
+              raise SystemExit(f'unexpected repository-core merge paths: {unexpected}')
+          if any(p.startswith('.github/workflows/zz-') for p in changed):
+              raise SystemExit('temporary workflow carrier entered merge')
+          regular = [p for p in Path('docs/development').glob('*.md') if p.is_file() and not p.is_symlink()]
+          if len(regular) != 1:
+              raise SystemExit(f'active plan pollution: {regular}')
+          PY
+
+      - name: Install pinned Rust and fetch exact lock graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(python3 - <<'PY'
+          import tomllib
+          with open('rust-toolchain.toml','rb') as handle:
+              print(tomllib.load(handle)['toolchain']['channel'])
+          PY
+          )"
+          rustup toolchain install "${expected}" --profile minimal --component rustfmt --component clippy
+          rustup default "${expected}"
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+
+      - name: Requalify the merged exact tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/check_repository_blocker_registry_v0.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          packages=(
+            trnm-control-plane-v0
+            trnm-durable-file-adapters-v0
+            trnm-migration-v0
+            trnm-node-boundary-v0
+            trnm-poco-node-production-v0
+            trnm-production-adapter-conformance-v0
+            trnm-release-bundle-v0
+            trnm-state-sync-v0
+            trnm-tx-lifecycle-v0
+          )
+          for package in "${packages[@]}"; do
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p "${package}" --all-targets --locked --offline
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p "${package}" --all-targets --locked --offline -- -D warnings
+          done
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline
+          test "$(find docs/development -maxdepth 1 -type f -name '*.md' | wc -l)" -eq 1
+
+      - name: Commit merged tree and retire carrier
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git rm .github/workflows/zz-integrate-repository-cores-v0.yml
+          git config user.name 'Franksudoman'
+          git config user.email 'sunfocapital@gmail.com'
+          git commit -m '[repository-cores-integrated] feat(core): integrate qualified blocker cores'
+          git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
