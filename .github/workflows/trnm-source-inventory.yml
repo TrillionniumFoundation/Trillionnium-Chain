@@ -1,6 +1,7 @@
 name: trnm-source-inventory
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - work/plan-v2-full-gap-closure-20260902
