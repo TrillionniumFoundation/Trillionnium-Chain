@@ -235,6 +235,7 @@ def main() -> int:
 
     workspace = workspace_crates(coverage.get("workspace_manifest"))
     mapped: list[str] = []
+    documented_primary_crates: list[str] = []
     graph: dict[str, list[str]] = {}
     report_modules: list[dict[str, Any]] = []
 
@@ -289,6 +290,11 @@ def main() -> int:
                 isinstance(crate, str) and crate in workspace,
                 f"{module_id}: unknown workspace crate {crate!r}",
             )
+            require(
+                f"`{crate}`" in section,
+                f"{module_id}: primary crate is absent from its technical section: {crate}",
+            )
+            documented_primary_crates.append(crate)
             mapped.append(crate)
             crate_root = ensure_path(workspace[crate], f"{module_id} crate")
             require((crate_root / "Cargo.toml").is_file(), f"{module_id}: Cargo.toml missing for {crate}")
@@ -330,6 +336,10 @@ def main() -> int:
         set(mapped) == set(workspace),
         f"workspace mapping drift: missing={sorted(set(workspace)-set(mapped))} "
         f"extra={sorted(set(mapped)-set(workspace))}",
+    )
+    require(
+        set(documented_primary_crates) == set(workspace),
+        "technical-reference primary crate inventory does not match workspace",
     )
     assert_acyclic(graph)
 
@@ -410,9 +420,11 @@ def main() -> int:
         "module_count": len(expected_ids),
         "workspace_crate_count": len(workspace),
         "mapped_workspace_crate_count": len(mapped),
+        "documented_primary_crate_count": len(documented_primary_crates),
         "auxiliary_unit_count": len(auxiliary),
         "snapshot_counts_match": True,
         "technical_sections_semantically_checked": True,
+        "primary_crate_names_bound_to_technical_sections": True,
         "maintainer_count": len(set(maintainers)),
         "module_dependency_graph_acyclic": True,
         "modules": report_modules,
