@@ -1,0 +1,368 @@
+name: TRNM CometBFT Spike
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-cometbft-spike.yml"
+      - "config/legacy-harness-freeze.sha256"
+      - "deny.toml"
+      - "LICENSE"
+      - "rust-toolchain.toml"
+      - "contracts/Cargo.lock"
+      - "contracts/Cargo.toml"
+      - "contracts/**/Cargo.toml"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/crates/trnm-consensus-app/Cargo.lock"
+      - "trillionnium/crates/trnm-node/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/**/Cargo.toml"
+      - "trillionnium/fuzz/**"
+      - "trillionnium/crates/trnm-consensus-app/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/crates/trnm-runtime/**"
+      - "trillionnium/crates/trnm-node/**"
+      - "trillionnium/scripts/consensus/**"
+      - "scripts/ci/check_legacy_harness_freeze.sh"
+      - "scripts/ci/install_cargo_deny.sh"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/check_cargo_offline_ready.sh"
+      - "scripts/ci/check_cargo_offline_unchanged.sh"
+      - "web4-frontend/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trnm-cometbft-spike.yml"
+      - "config/legacy-harness-freeze.sha256"
+      - "deny.toml"
+      - "LICENSE"
+      - "rust-toolchain.toml"
+      - "contracts/Cargo.lock"
+      - "contracts/Cargo.toml"
+      - "contracts/**/Cargo.toml"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/crates/trnm-consensus-app/Cargo.lock"
+      - "trillionnium/crates/trnm-node/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/**/Cargo.toml"
+      - "trillionnium/fuzz/**"
+      - "trillionnium/crates/trnm-consensus-app/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/crates/trnm-runtime/**"
+      - "trillionnium/crates/trnm-node/**"
+      - "trillionnium/scripts/consensus/**"
+      - "scripts/ci/check_legacy_harness_freeze.sh"
+      - "scripts/ci/install_cargo_deny.sh"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/check_cargo_offline_ready.sh"
+      - "scripts/ci/check_cargo_offline_unchanged.sh"
+      - "web4-frontend/**"
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-policy:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "cargo-deny"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock \
+            contracts/Cargo.toml:contracts/Cargo.lock \
+            trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
+
+      - name: Verify runner-provisioned cargo-deny
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_cargo_deny.sh
+
+      - name: Run frozen cargo-deny policy checks
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_deny_offline.sh \
+            trillionnium/Cargo.toml \
+            contracts/Cargo.toml \
+            trillionnium/fuzz/Cargo.toml
+      - name: Check frontend dependency advisories
+        working-directory: web4-frontend
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
+        run: npm audit --package-lock-only --audit-level=high
+      - name: Enforce frozen legacy binary surfaces
+        run: bash ./scripts/ci/check_legacy_harness_freeze.sh
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  cometbft-four-validator:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
+    env:
+      COMETBFT_VERSION: "0.38.17"
+      COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock \
+            trillionnium/crates/trnm-consensus-app/Cargo.toml:trillionnium/crates/trnm-consensus-app/Cargo.lock \
+            trillionnium/crates/trnm-node/Cargo.toml:trillionnium/crates/trnm-node/Cargo.lock
+
+      - name: Install checksum-pinned CometBFT
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            "https://github.com/cometbft/cometbft/releases/download/v${COMETBFT_VERSION}/cometbft_${COMETBFT_VERSION}_linux_amd64.tar.gz" \
+            --output /tmp/cometbft.tar.gz
+          tar -xzf /tmp/cometbft.tar.gz -C /tmp cometbft
+          printf '%s  %s\n' "$COMETBFT_SHA256" /tmp/cometbft | sha256sum --check --strict
+
+      - name: Adapter unit gate (excluded Comet migration residue)
+        run: >-
+          CARGO_TARGET_DIR=${{ github.workspace }}/trillionnium/target
+          cargo test --manifest-path
+          trillionnium/crates/trnm-consensus-app/Cargo.toml
+          --locked --offline
+
+      - name: AppHash v4 scale smoke (10k objects + 10k updates; not the million gate)
+        run: |
+          set -euo pipefail
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target" \
+          cargo run --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
+            --locked --offline \
+            --features scale-gate \
+            --bin trnm-auth-tree-scale -- \
+            --objects 10000 \
+            --updates 10000 \
+            --batch-size 1000 \
+            --live-set 1000 \
+            --window-batches 3 \
+            --max-late-p95-ratio 8 \
+            --latency-slack-us 10000 \
+            --prune-retain-versions 8 \
+            | tee "${RUNNER_TEMP}/trnm-apphash-v4-scale-smoke.json"
+
+      - name: Persistent SQLite AppHash v4 smoke (10k objects + 10k updates)
+        env:
+          TRNM_PERSISTENT_SCALE_PROFILE: smoke
+          TRNM_PERSISTENT_SCALE_EVIDENCE_ROOT: ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}
+          TRNM_CONSENSUS_APP_MANIFEST: crates/trnm-consensus-app/Cargo.toml
+          CARGO_TARGET_DIR: ${{ github.workspace }}/trillionnium/target
+        run: ./trillionnium/scripts/consensus/run_persistent_scale_gate.sh
+
+      - name: Build excluded Comet migration-residue fixtures
+        run: |
+          set -euo pipefail
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target"             cargo build --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml               --locked --offline --bin trnm-cometbft-app
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target"             cargo build --manifest-path trillionnium/crates/trnm-node/Cargo.toml               --locked --offline --features legacy-harness --bin trnm-chain-cli
+
+      - name: Single-node live-process gate
+        env:
+          TRNM_COMETBFT_BIN: /tmp/cometbft
+          TRNM_COMETBFT_APP_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-cometbft-app
+          TRNM_COMETBFT_CLI_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-chain-cli
+        run: ./trillionnium/scripts/consensus/spike_cometbft_single_node.sh
+
+      - name: Four-validator crash-boundary, safety, and state-sync gate
+        env:
+          TRNM_COMETBFT_BIN: /tmp/cometbft
+          TRNM_COMETBFT_APP_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-cometbft-app
+          TRNM_COMETBFT_CLI_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-chain-cli
+          TRNM_COMETBFT_SPIKE_CLEAN_ON_SUCCESS: "1"
+          TRNM_COMETBFT_SPIKE_ROOT: ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}
+        run: ./trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
+
+      - name: Six-node validator lifecycle gate
+        env:
+          TRNM_COMETBFT_BIN: /tmp/cometbft
+          TRNM_COMETBFT_APP_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-cometbft-app
+          TRNM_COMETBFT_CLI_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-chain-cli
+          TRNM_COMETBFT_LIFECYCLE_CLEAN_ON_SUCCESS: "1"
+          TRNM_COMETBFT_LIFECYCLE_ROOT: ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
+        run: ./trillionnium/scripts/consensus/spike_cometbft_validator_lifecycle.sh
+
+      - name: Upload failed CometBFT safety evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-cometbft-safety-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/evidence/**
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/genesis.json
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/app.log
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/comet.log
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json.sqlite3
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/config.toml
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/genesis.json
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/evidence/**
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/*.response.json
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/genesis.json
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/node*/app.log
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/node*/comet.log
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json.sqlite3
+            ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}/evidence.json
+            ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}/report.json
+            ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}/time.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  cometbft-partition-matrix:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        case: ["3-1", "2-2"]
+    env:
+      COMETBFT_VERSION: "0.38.17"
+      COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      TRNM_COMETBFT_APP_VERSION: "4"
+      TRNM_COMETBFT_APP_CONFIG_SCHEMA: trnm_cometbft_app_config_v1
+      TRNM_COMETBFT_GENESIS_SCHEMA: trnm_cometbft_genesis_v2
+      TRNM_COMETBFT_VALIDATOR_GOVERNANCE_SCHEMA: trnm_validator_governance_v1
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock \
+            trillionnium/crates/trnm-consensus-app/Cargo.toml:trillionnium/crates/trnm-consensus-app/Cargo.lock \
+            trillionnium/crates/trnm-node/Cargo.toml:trillionnium/crates/trnm-node/Cargo.lock
+
+      - name: Install checksum-pinned CometBFT
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            "https://github.com/cometbft/cometbft/releases/download/v${COMETBFT_VERSION}/cometbft_${COMETBFT_VERSION}_linux_amd64.tar.gz" \
+            --output /tmp/cometbft.tar.gz
+          tar -xzf /tmp/cometbft.tar.gz -C /tmp cometbft
+          printf '%s  %s\n' "$COMETBFT_SHA256" /tmp/cometbft | sha256sum --check --strict
+
+      - name: Build excluded partition gate binaries
+        run: |
+          set -euo pipefail
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target" \
+            cargo build --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
+              --locked --offline --bin trnm-cometbft-app
+          CARGO_TARGET_DIR="${GITHUB_WORKSPACE}/trillionnium/target" \
+            cargo build --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
+              --locked --offline --features legacy-harness --bin trnm-chain-cli
+
+      - name: Rootless ${{ matrix.case }} partition safety gate
+        env:
+          TRNM_COMETBFT_BIN: /tmp/cometbft
+          TRNM_COMETBFT_APP_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-cometbft-app
+          TRNM_COMETBFT_CLI_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-chain-cli
+          TRNM_COMETBFT_PARTITION_CASE: ${{ matrix.case }}
+          TRNM_COMETBFT_PARTITION_CLEAN_ON_SUCCESS: "1"
+          TRNM_COMETBFT_PARTITION_ROOT: ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
+        run: ./trillionnium/scripts/consensus/spike_cometbft_partition_matrix.sh
+
+      - name: Upload failed partition safety evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-cometbft-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/evidence/**
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/genesis.json
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/proxy-config.json
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/proxy.log
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/proxy-control.log
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/app.log
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/comet.log
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json.sqlite3
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/config.toml
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/genesis.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

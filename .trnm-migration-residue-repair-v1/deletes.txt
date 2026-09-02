@@ -1,0 +1,3 @@
+.github/workflows/trnm-migration-residue-repair-once.yml
+scripts/ci/trnm_migration_residue_repair_once.py
+scripts/ci/trnm_privileged_cargo_policy_scope_repair_once.py
