@@ -1,0 +1,40 @@
+schema_version = 1
+decomposition_id = "trnm-poco-node-decomposition-v1"
+workspace_manifest = "trillionnium/Cargo.toml"
+build_closure_registry = "config/build-closures-v1.toml"
+production_candidate = false
+production_consensus_activation = false
+release_ready = false
+
+[packages]
+component_library = "trnm-poco-node"
+authority_boundary = "trnm-poco-node-authority"
+io_boundary = "trnm-poco-node-io"
+host_composition = "trnm-poco-node-host"
+cli_entrypoint = "trnm-poco-node-cli"
+lab_runtime = "trnm-poco-lab-validator"
+
+[[runtime_edges]]
+from = "trnm-poco-node-authority"
+to = "trnm-poco-node"
+
+[[runtime_edges]]
+from = "trnm-poco-node-host"
+to = "trnm-poco-node-authority"
+
+[[runtime_edges]]
+from = "trnm-poco-node-host"
+to = "trnm-poco-node-io"
+
+[[runtime_edges]]
+from = "trnm-poco-node-cli"
+to = "trnm-poco-node-host"
+
+[policy]
+composition_performs_wiring_only = true
+authority_boundary_has_no_sign_vote_finalize_api = true
+io_boundary_has_no_live_backend = true
+cli_has_no_direct_kernel_dependency = true
+lab_is_outside_production_closure = true
+candidate_features_are_outside_production_closure = true
+no_boundary_promotes_machine_truth = true
