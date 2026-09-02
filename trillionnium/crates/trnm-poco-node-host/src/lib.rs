@@ -10,6 +10,11 @@ use std::{error::Error, fmt};
 use trnm_poco_node_authority::{NodeAuthorityCoordinatorV0, NodeAuthorityReadinessV0};
 use trnm_poco_node_io::{NodeIoRuntimeV0, REQUIRED_NODE_IO_SURFACES_V0};
 
+/// Compile-time binding to the reviewed pure repository-core composition.
+/// This does not open activation or instantiate domain state.
+pub const REPOSITORY_CORE_COMPOSITION_VERSION_V0: u16 =
+    trnm_poco_node_production_v0::PRODUCTION_COMPOSITION_VERSION_V0;
+
 /// Sanitized composition status. It contains no key, block, vote, transaction,
 /// peer, path, or credential material.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

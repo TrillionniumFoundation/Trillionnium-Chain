@@ -58,6 +58,15 @@ members = [
   "crates/trnm-finality-verifier",
   "crates/trnm-protocol",
   "crates/trnm-runtime",
+  "crates/trnm-node-boundary-v0",
+  "crates/trnm-tx-lifecycle-v0",
+  "crates/trnm-state-sync-v0",
+  "crates/trnm-migration-v0",
+  "crates/trnm-control-plane-v0",
+  "crates/trnm-poco-node-production-v0",
+  "crates/trnm-production-adapter-conformance-v0",
+  "crates/trnm-release-bundle-v0",
+  "crates/trnm-durable-file-adapters-v0",
 ]
 resolver = "2"
 
