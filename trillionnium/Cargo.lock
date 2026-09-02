@@ -1871,6 +1871,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-poco-node-authority"
+version = "0.1.0"
+dependencies = [
+ "trnm-poco-node",
+]
+
+[[package]]
+name = "trnm-poco-node-cli"
+version = "0.1.0"
+dependencies = [
+ "trnm-poco-node-host",
+]
+
+[[package]]
+name = "trnm-poco-node-host"
+version = "0.1.0"
+dependencies = [
+ "trnm-poco-node-authority",
+ "trnm-poco-node-io",
+]
+
+[[package]]
+name = "trnm-poco-node-io"
+version = "0.1.0"
+
+[[package]]
 name = "trnm-poco-order-application-v1"
 version = "0.1.0"
 dependencies = [
