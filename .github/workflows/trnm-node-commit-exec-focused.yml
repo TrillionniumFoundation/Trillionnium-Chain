@@ -1,0 +1,63 @@
+name: trnm-node-commit-exec-focused
+
+on:
+  pull_request:
+    paths:
+      - 'trillionnium/crates/trnm-consensus-external-node-checkpoint/**'
+      - 'trillionnium/crates/trnm-poco-mvcc-fee-v1/**'
+      - '.github/workflows/trnm-node-commit-exec-focused.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'trillionnium/crates/trnm-consensus-external-node-checkpoint/**'
+      - 'trillionnium/crates/trnm-poco-mvcc-fee-v1/**'
+      - '.github/workflows/trnm-node-commit-exec-focused.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  focused-semantics:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+      - name: Require clean formatting
+        working-directory: trillionnium
+        run: cargo fmt --all -- --check
+      - name: Prove crash-convergent Node Commit Ledger
+        working-directory: trillionnium
+        run: |
+          cargo test -p trnm-consensus-external-node-checkpoint --all-targets --locked
+          cargo clippy -p trnm-consensus-external-node-checkpoint --all-targets --locked -- -D warnings
+      - name: Prove persistent 1/2/4/8-worker canonical equivalence
+        working-directory: trillionnium
+        run: |
+          cargo test -p trnm-poco-mvcc-fee-v1 --all-targets --locked
+          cargo clippy -p trnm-poco-mvcc-fee-v1 --all-targets --locked -- -D warnings
+      - name: Require validation to leave checkout clean
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
