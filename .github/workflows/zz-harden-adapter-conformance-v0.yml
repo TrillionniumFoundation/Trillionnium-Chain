@@ -1,0 +1,141 @@
+name: harden-adapter-conformance-v0
+
+on:
+  push:
+    branches: [work/plan-v2-adapter-conformance-20260902]
+    paths: [.github/workflows/zz-harden-adapter-conformance-v0.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-adapter-conformance-20260902' &&
+      github.actor == 'Franksudoman'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Bind idempotent authority replay to retained facts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('trillionnium/crates/trnm-production-adapter-conformance-v0/src/lib.rs')
+          text = path.read_text()
+          text = text.replace(
+              '''        CrashAfterPersist,
+    }
+''',
+              '''        CrashAfterPersist,
+        ReceiptSubstitution,
+    }
+''',
+              1,
+          )
+          text = text.replace(
+              '''                Self::CrashAfterPersist => f.write_str("injected crash after durable persist"),
+''',
+              '''                Self::CrashAfterPersist => f.write_str("injected crash after durable persist"),
+                Self::ReceiptSubstitution => f.write_str("same authority sequence replayed with different facts"),
+''',
+              1,
+          )
+          text = text.replace(
+              '''        current: Option<AuthorityReceiptV0>,
+        crash_after_next_persist: bool,
+''',
+              '''        current: Option<AuthorityReceiptV0>,
+        current_facts_digest: Option<NodeDigest>,
+        crash_after_next_persist: bool,
+''',
+              1,
+          )
+          text = text.replace(
+              '''                        if existing.binding == binding
+                            && existing.durable_stage == AuthorityStageV0::Prepared
+                        {
+                            return Ok(existing);
+                        }
+''',
+              '''                        if existing.binding == binding
+                            && existing.durable_stage == AuthorityStageV0::Prepared
+                        {
+                            return if journal.current_facts_digest == Some(ingress_digest) {
+                                Ok(existing)
+                            } else {
+                                Err(DurableCoordinatorError::ReceiptSubstitution)
+                            };
+                        }
+''',
+              1,
+          )
+          text = text.replace(
+              '''                    if existing.durable_stage == next_stage
+                        && expected_stage.successor() == Some(next_stage)
+                    {
+                        return Ok(existing);
+                    }
+''',
+              '''                    if existing.durable_stage == next_stage
+                        && expected_stage.successor() == Some(next_stage)
+                    {
+                        return if journal.current_facts_digest == Some(facts_digest) {
+                            Ok(existing)
+                        } else {
+                            Err(DurableCoordinatorError::ReceiptSubstitution)
+                        };
+                    }
+''',
+              1,
+          )
+          text = text.replace(
+              '''            journal.current = Some(receipt);
+            if journal.crash_after_next_persist {
+''',
+              '''            journal.current = Some(receipt);
+            journal.current_facts_digest = Some(facts);
+            if journal.crash_after_next_persist {
+''',
+              1,
+          )
+          needle = '''        assert_eq!(replayed.durable_sequence, 1);
+        assert_eq!(replayed.durable_stage, AuthorityStageV0::ApplicationSealed);
+'''
+          replacement = needle + '''        assert_eq!(
+            restarted
+                .apply(AuthorityCommandV0::Advance {
+                    binding,
+                    expected_stage: AuthorityStageV0::Prepared,
+                    next_stage: AuthorityStageV0::ApplicationSealed,
+                    facts_digest: node_d(22),
+                })
+                .unwrap_err(),
+            DurableCoordinatorError::ReceiptSubstitution
+        );
+'''
+          if needle not in text:
+              raise SystemExit('authority replay assertion source changed')
+          text = text.replace(needle, replacement, 1)
+          required = [
+              'current_facts_digest: Option<NodeDigest>',
+              'DurableCoordinatorError::ReceiptSubstitution',
+              'current_facts_digest == Some(facts_digest)',
+          ]
+          if not all(item in text for item in required):
+              raise SystemExit('authority replay hardening incomplete')
+          path.write_text(text)
+          PY
+          rm .github/workflows/zz-harden-adapter-conformance-v0.yml
+          git config user.name 'trnm-closure-bot'
+          git config user.email 'trnm-closure-bot@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'test(adapter): bind crash replay to retained authority facts'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
