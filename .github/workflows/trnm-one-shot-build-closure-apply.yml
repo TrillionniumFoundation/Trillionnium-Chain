@@ -24,8 +24,9 @@ jobs:
       github.actor == 'Franksudoman' &&
       github.triggering_actor == github.actor
     # Bootstrap transport only. This hosted job is not acceptance evidence and
-    # runs no Cargo command. It applies an exact hash-bound patch, validates the
-    # final staged policies, deletes itself, and fast-forwards this work branch.
+    # runs no Cargo command. It validates the complete hash-bound patch, then
+    # pushes only the non-workflow slice. The authorized GitHub connector lands
+    # the already-validated workflow slice atomically in the successor commit.
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -61,12 +62,11 @@ jobs:
           test "$(sha256sum "${RUNNER_TEMP}/closure.patch" | awk '{print $1}')" = "${EXPECTED_PATCH_SHA256}"
           git apply --check "${RUNNER_TEMP}/closure.patch"
 
-      - name: Apply closure patch and remove bootstrap transport
+      - name: Apply complete closure patch for validation
         run: |
           set -euo pipefail
           git apply --index "${RUNNER_TEMP}/closure.patch"
           git rm -- \
-            .github/workflows/trnm-one-shot-build-closure-apply.yml \
             .trnm/one-shot-build-closure.patch.gz.b64.part1 \
             .trnm/one-shot-build-closure.patch.gz.b64.part2 \
             .trnm/one-shot-build-closure.patch.gz.b64.part3 \
@@ -89,7 +89,17 @@ jobs:
           python3 scripts/ci/check_required_protocol_contract_v1.py
           python3 -m py_compile scripts/ci/check_build_closures_v1.py
 
-      - name: Commit exact staged closure
+      - name: Narrow transport commit to non-workflow files
+        run: |
+          set -euo pipefail
+          git restore --source="${GITHUB_SHA}" --staged --worktree -- .github/workflows
+          if git diff --cached --name-only | grep -q '^.github/workflows/'; then
+            echo 'bootstrap transport must not push workflow changes' >&2
+            exit 1
+          fi
+          git diff --cached --check
+
+      - name: Commit exact non-workflow closure slice
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
