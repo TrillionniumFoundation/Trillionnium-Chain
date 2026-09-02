@@ -7,9 +7,9 @@ The repository has one active development direction:
 - **Release projection:** `../RELEASE_READINESS.md`
 
 `docs/development/` contains the plan and compact machine companions only. Git
-history is the development-document archive; `docs/archive/`, dated delivery
-boards, per-agent prompt packs, package roadmaps, sprint plans, and continuation
-notes are prohibited.
+history is the development-document archive; retired history directories,
+dated delivery boards, per-agent prompt packs, package roadmaps, sprint plans,
+and continuation notes are prohibited from active documentation.
 
 Current domain authorities are organized as follows:
 

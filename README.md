@@ -18,14 +18,14 @@ repository remains an engineering candidate:
 - release readiness is false;
 - the default `trnm-poco-node` path remains fail-closed.
 
-Protected `main` was observed at
-`b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9` when the current development plan
-was authored. The latest assessed source candidate is Draft PR #58 at
-`3c46293e78a125dec9504e51c355a20216341338` (tree
-`875a1e6366df7cd9da80de145e25584ae309cee8`). It has useful ordered-finality,
-terminal-history, and replay-floor work, but requested changes remain open for
-descriptor-bound SQLite identity, closed-world schema validation, and
-post-operation verification. It is not merge, production, or activation
+Protected `main` is still the canonical destination. The sole active integration
+candidate is Draft PR #62 on
+`work/plan-v2-full-gap-closure-20260902`; its exact head, tree, prospective-merge
+identity, and check results are derived at verification time rather than copied
+into this overview. The branch combines the descriptor-bound A04/A19/A23 source
+train, the Node Commit Ledger, and persistent deterministic 1/2/4/8-worker
+execution equivalence. Those implementations remain acceptance-pending and do
+not by themselves establish public-testnet, production, release, or activation
 authority.
 
 The machine-readable authority is `config/consensus-mainline.json`. The sole
@@ -33,9 +33,9 @@ active execution, modularization, team, and promotion plan is
 `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
 `RELEASE_READINESS.md` is a human-readable projection, not a second authority.
 
-Development-document history is kept in Git history, not in active archive,
-agent-prompt, package-plan, sprint-board, or continuation files. CI rejects a
-second development plan or a recreated `docs/archive/` directory.
+Development-document history is kept in Git history, not in an active archive,
+agent-prompt, package-plan, sprint-board, or continuation tree. CI rejects a
+second development plan or any recreated retired-history directory.
 
 ## Target architecture
 

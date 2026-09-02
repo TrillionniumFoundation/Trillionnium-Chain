@@ -25,10 +25,12 @@
   "active_reference_roots": [
     ".github",
     "config",
+    "contracts",
     "formal",
     "proto",
     "scripts",
-    "trillionnium"
+    "trillionnium",
+    "web4-frontend"
   ],
   "active_reference_files": [
     "AGENTS.md",
@@ -47,15 +49,9 @@
     ".github/workflows/trnm-documentation-truth.yml"
   ],
   "forbidden_active_references": [
-    "docs/archive/",
-    "docs/development/agents/",
-    "docs/development/packages/",
-    "docs/development/README.md",
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md",
     "docs/development/TRNM_DEVELOPMENT_DOCUMENTATION_UPGRADE_V1.md",
     "docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md",
-    "trillionnium/docs/release/",
-    "trillionnium/docs/reports/",
     "TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13",
     "TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04",
     "TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25",
@@ -69,6 +65,7 @@
     "docs/evidence"
   ],
   "historical_record_rule": "historical records are immutable evidence only; they are outside active navigation, execution, configuration, build and release authority",
+  "retired_tree_rule": "retired tree existence is rejected structurally; explanatory negative references are not treated as authority and are validated by path-specific gates",
   "required_runtime_bindings": [
     "source_commit",
     "source_tree",

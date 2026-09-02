@@ -38,7 +38,7 @@ A pull request has one primary module and one integration successor. Cross-modul
 ## Documentation truth
 
 - [ ] Development direction is changed only in `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
-- [ ] No second roadmap, sprint board, continuation note, package narrative, prompt fleet, or `docs/archive/` tree is introduced.
+- [ ] No second roadmap, sprint board, continuation note, package narrative, prompt fleet, or retired historical-document tree is introduced.
 - [ ] Current facts belong in the snapshot, module registry, release train, or an immutable evidence record rather than duplicate prose.
 - [ ] `bash scripts/ci/check_canonical_development_plan.sh` passes on the exact source head.
 - [ ] Active workflows, configuration, scripts, and source contain no retired development-document references.

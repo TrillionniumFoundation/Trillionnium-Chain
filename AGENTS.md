@@ -17,7 +17,7 @@ The only active development direction is
 is `config/consensus-mainline.json`; compact module and release-train data live
 beside the plan. Git history is the archive. Do not create another roadmap,
 delivery board, sprint plan, agent prompt pack, package narrative, continuation
-note, or `docs/archive/` directory.
+note, or active historical-document directory.
 
 Every implementation change declares one primary module from M00-M17. Cross-
 module work changes the versioned contract first and requires producer and
