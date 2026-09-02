@@ -123,6 +123,8 @@ def main() -> int:
             "cargo check --manifest-path contracts/Cargo.toml --workspace --all-targets --locked",
             "cargo test --manifest-path contracts/Cargo.toml --workspace --all-targets --locked",
             "cargo clippy --manifest-path contracts/Cargo.toml --workspace --all-targets --locked -- -D warnings",
+            "cargo test -p trnm-production-adapter-conformance-v0 --all-targets --locked",
+            "cargo test -p trnm-durable-file-adapters-v0 --all-targets --locked",
             "-p trnm-poco-node-cli --bin trnm-poco-node-cli",
             "--locked -- status",
             "--locked -- start",
@@ -142,6 +144,15 @@ def main() -> int:
         "trnm-native-application",
         "trnm-native-application-sqlite",
         "trnm-native-execution-v0",
+        "trnm-durable-file-adapters-v0",
+        "trnm-tx-lifecycle-v0",
+        "trnm-state-sync-v0",
+        "trnm-migration-v0",
+        "trnm-control-plane-v0",
+        "trnm-release-bundle-v0",
+        "trnm-node-boundary-v0",
+        "trnm-poco-node-production-v0",
+        "trnm-production-adapter-conformance-v0",
         "trnm-poco-node",
         "trnm-poco-node-authority",
         "trnm-poco-node-io",
@@ -161,7 +172,7 @@ def main() -> int:
 
     required_paths = policy.get("required_paths")
     require(isinstance(required_paths, list), "repository policy required_paths missing")
-    for path in (
+    closure_paths = (
         ".github/workflows/trnm-required-baseline.yml",
         "config/build-closures-v1.toml",
         "config/node-decomposition-v1.toml",
@@ -169,7 +180,17 @@ def main() -> int:
         "scripts/ci/check_build_closures_v1.py",
         "scripts/ci/check_node_decomposition_v1.py",
         "scripts/ci/check_required_baseline_closure_v1.py",
-    ):
+        "trillionnium/crates/trnm-control-plane-v0/Cargo.toml",
+        "trillionnium/crates/trnm-durable-file-adapters-v0/Cargo.toml",
+        "trillionnium/crates/trnm-migration-v0/Cargo.toml",
+        "trillionnium/crates/trnm-node-boundary-v0/Cargo.toml",
+        "trillionnium/crates/trnm-poco-node-production-v0/Cargo.toml",
+        "trillionnium/crates/trnm-production-adapter-conformance-v0/Cargo.toml",
+        "trillionnium/crates/trnm-release-bundle-v0/Cargo.toml",
+        "trillionnium/crates/trnm-state-sync-v0/Cargo.toml",
+        "trillionnium/crates/trnm-tx-lifecycle-v0/Cargo.toml",
+    )
+    for path in closure_paths:
         require(path in required_paths, f"repository policy does not require {path}")
         require((ROOT / path).exists(), f"required closure input missing: {path}")
 
@@ -181,7 +202,8 @@ def main() -> int:
         "full_workspace_all_targets_test": True,
         "contract_workspace_checked": True,
         "node_decomposition_required": True,
-        "node_boundary_clippy_package_count": len(clippy_packages),
+        "repository_core_overlay_required": True,
+        "strict_clippy_package_count": len(clippy_packages),
         "production_candidate": False,
         "production_consensus_activation": False,
         "release_ready": False,
