@@ -1,183 +1,84 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
-
 PLAN_REL="docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
-PLAN="$ROOT/$PLAN_REL"
 MANIFEST_REL="docs/development/plan-manifest-v1.toml"
-MANIFEST="$ROOT/$MANIFEST_REL"
-fail() { printf 'canonical development plan gate failed: %s\n' "$*" >&2; exit 1; }
-
-[[ -s "$PLAN" ]] || fail "missing canonical plan: $PLAN"
-[[ -s "$MANIFEST" ]] || fail "missing canonical plan manifest: $MANIFEST"
-
-# Iterative editing may opt into a provisional check explicitly. CI and release
-# checks must use the default strict mode: the sole plan and its manifest are
-# tracked, committed inputs, not working-tree-only prose.
+MODULES_REL="docs/development/module-registry-v1.toml"
+TRAIN_REL="docs/development/release-train-v1.toml"
+SNAPSHOT_REL="docs/development/CURRENT_SNAPSHOT_V1.json"
+POLICY_REL="config/documentation-truth-v1.json"
+REFERENCE_GATE="scripts/ci/check_documentation_reference_closure_v1.py"
+fail() { printf 'canonical development plan gate failed: %s\n' "$*" >&2; exit 2; }
+for path in "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE"; do [[ -s "$path" ]] || fail "missing canonical input: $path"; done
 if [[ "${TRNM_PLAN_EDITING:-0}" != "1" ]]; then
-  git ls-files --error-unmatch -- "$PLAN_REL" >/dev/null \
-    || fail "canonical plan is untracked; commit the plan before promotion"
-  git ls-files --error-unmatch -- "$MANIFEST_REL" >/dev/null \
-    || fail "canonical plan manifest is untracked; commit the manifest before promotion"
-  git cat-file -e "HEAD:$PLAN_REL" >/dev/null 2>&1 \
-    || fail "canonical plan is absent from HEAD; clean-clone authority is not established"
-  git cat-file -e "HEAD:$MANIFEST_REL" >/dev/null 2>&1 \
-    || fail "canonical plan manifest is absent from HEAD; clean-clone authority is not established"
-  git diff --quiet -- "$PLAN_REL" "$MANIFEST_REL" "docs/protocol/poco-ai-native-v1/status.toml" \
-    || fail "plan, manifest, or v1 status is dirty after the assessed commit"
-  git diff --cached --quiet -- "$PLAN_REL" "$MANIFEST_REL" "docs/protocol/poco-ai-native-v1/status.toml" \
-    || fail "plan, manifest, or v1 status is staged against a different assessed commit"
+  for path in "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE"; do
+    git ls-files --error-unmatch -- "$path" >/dev/null || fail "canonical input is untracked: $path"
+    git cat-file -e "HEAD:$path" >/dev/null 2>&1 || fail "canonical input is absent from HEAD: $path"
+  done
+  git diff --quiet -- "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE" || fail "canonical development inputs are dirty"
+  git diff --cached --quiet -- "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" "$REFERENCE_GATE" || fail "canonical development inputs are staged against another source"
 fi
-
-mapfile -t live_plans < <(find docs/development -maxdepth 1 -type f -iname '*plan*.md' -printf '%f\n' | sort)
-[[ "${#live_plans[@]}" -eq 1 && "${live_plans[0]}" == "TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md" ]] \
-  || fail "docs/development must contain exactly one *plan*.md: ${live_plans[*]-none}"
-mapfile -t nested_plans < <(find trillionnium/docs/development -maxdepth 1 -type f -iname '*plan*.md' -printf '%p\n' | sort)
-[[ "${#nested_plans[@]}" -eq 0 ]] \
-  || fail "trillionnium/docs/development must not contain a competing Chain plan: ${nested_plans[*]}"
-
-# Historical audit/archive text may name retired paths for provenance. Active
-# navigation, configuration, CI, and source paths may not revive them.
-if rg -n -i --hidden \
-  -g '!**/.git/**' -g '!**/target/**' -g '!docs/audits/**' -g '!docs/archive/**' \
-  -g '!scripts/ci/check_canonical_development_plan.sh' \
-  '(TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13|TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04|TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25|TRNM_POCO_P2_STORE_WRITER_MATRIX_2026-08-26|TRNM_4_WEEK_SPRINT_PLAN_2026-03-19|TRNM_90_DAY_EXECUTION_PLAN_2026-03-19|SPLIT_ROADMAP_2026-03-19)' .; then
-  fail "retired plan basename is referenced outside audit/archive"
-fi
-
-# Legacy workflow files are still present until the signed C0/C1 cutover. The
-# plan must describe that residue accurately instead of claiming every trigger
-# is inert or Comet-free. This guard prevents a future plan edit from silently
-# reopening that contradiction.
-if rg -l -i --hidden -g '*.yml' -g '*.yaml' \
-  '(cometbft|tendermint|abci|26657|trnm-consensus-app|trnm-node|legacy[-_ ]harness)' \
-  .github/workflows >/dev/null; then
-  if rg -q -i 'every automatically triggered workflow is free|six historical workflows are manual inert' "$PLAN"; then
-    fail "plan overclaims workflow cleanup while legacy workflow residue remains"
-  fi
-  rg -q -i 'legacy (workflows|migration/development workflows).*cleanup remains open|cleanup remains open until.*C0/C1' "$PLAN" \
-    || fail "plan must state that legacy workflow cleanup remains open until C0/C1"
-fi
-
-python3 - "$ROOT" "$PLAN" "$PLAN_REL" "$MANIFEST" "$MANIFEST_REL" <<'PY'
+python3 - "$ROOT" "$PLAN_REL" "$MANIFEST_REL" "$MODULES_REL" "$TRAIN_REL" "$SNAPSHOT_REL" "$POLICY_REL" <<'PY'
 from pathlib import Path
-import hashlib
-import json
-import re
-import subprocess
-import sys
-import tomllib
-
-root = Path(sys.argv[1])
-plan = Path(sys.argv[2])
-plan_rel = sys.argv[3]
-manifest_path = Path(sys.argv[4])
-manifest_rel = sys.argv[5]
-config = json.loads((root / "config/consensus-mainline.json").read_text())
-docs = config.get("authoritative_docs", {})
-if docs.get("development_plan") != plan_rel:
-    raise SystemExit("config authoritative_docs.development_plan is not canonical")
-if docs.get("execution_board") != plan_rel:
-    raise SystemExit("config authoritative_docs.execution_board is not canonical")
-if docs.get("development_plan_manifest") != "docs/development/plan-manifest-v1.toml":
-    raise SystemExit("config authoritative_docs.development_plan_manifest is not canonical")
-if docs.get("development_evidence_contract") != "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md":
-    raise SystemExit("config authoritative_docs.development_evidence_contract is not canonical")
-protocol_manifest = tomllib.loads((root / "docs/protocol/poco-ai-native-v1/spec-manifest.toml").read_text())
-if protocol_manifest.get("delivery_plan_path") != plan_rel:
-    raise SystemExit("v1 manifest delivery_plan_path is not canonical")
-if plan_rel not in protocol_manifest.get("required_files", []):
-    raise SystemExit("canonical plan is absent from v1 required_files")
-status = tomllib.loads((root / "docs/protocol/poco-ai-native-v1/status.toml").read_text())
-if not status.get("design_only") or status.get("implementation_status") != "not-implemented":
-    raise SystemExit("v1 status changed unexpectedly; review the canonical-plan gate")
-manifest = tomllib.loads(manifest_path.read_text())
-if manifest.get("plan_path") != plan_rel:
-    raise SystemExit("plan manifest plan_path is not canonical")
-if manifest.get("manifest_version") != 1:
-    raise SystemExit("unsupported plan manifest version")
-if manifest.get("plan_id") != "trnm-ai-native-blockchain-development-plan-v1":
-    raise SystemExit("plan manifest plan_id is not canonical")
-if manifest.get("canonical_ref") != "refs/heads/docs/chain-poco-bft-mainline-20260825":
-    raise SystemExit("plan manifest canonical_ref is not canonical")
-
-assessed_commit = manifest.get("assessed_commit")
-assessed_tree = manifest.get("assessed_tree")
-if not isinstance(assessed_commit, str) or re.fullmatch(r"[0-9a-f]{40}", assessed_commit) is None:
-    raise SystemExit("plan manifest assessed_commit is not a full lowercase Git object ID")
-if not isinstance(assessed_tree, str) or re.fullmatch(r"[0-9a-f]{40}", assessed_tree) is None:
-    raise SystemExit("plan manifest assessed_tree is not a full lowercase Git object ID")
-try:
-    actual_tree = subprocess.run(
-        ["git", "rev-parse", f"{assessed_commit}^{{tree}}"],
-        cwd=root,
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.strip()
-except subprocess.CalledProcessError as error:
-    raise SystemExit("plan manifest assessed_commit is unavailable in this clone") from error
-if actual_tree != assessed_tree:
-    raise SystemExit(
-        f"plan manifest assessed_tree mismatch: declared={assessed_tree} actual={actual_tree}"
-    )
-ancestor = subprocess.run(
-    ["git", "merge-base", "--is-ancestor", assessed_commit, "HEAD"],
-    cwd=root,
-    check=False,
-    capture_output=True,
-)
-if ancestor.returncode != 0:
-    raise SystemExit("plan manifest assessed_commit is not an ancestor of HEAD")
-
-for path_key, digest_key in (
-    ("machine_truth_path", "machine_truth_sha256"),
-    ("protocol_manifest_path", "protocol_manifest_sha256"),
-    ("evidence_contract_path", "evidence_contract_sha256"),
-    ("toolchain_lock", "toolchain_lock_sha256"),
-):
-    relative = manifest.get(path_key)
-    declared = manifest.get(digest_key)
-    if not isinstance(relative, str) or not relative:
-        raise SystemExit(f"plan manifest {path_key} is missing")
-    bound = (root / relative).resolve()
-    if root.resolve() not in bound.parents or not bound.is_file():
-        raise SystemExit(f"plan manifest {path_key} is outside the repository or missing")
-    actual = hashlib.sha256(bound.read_bytes()).hexdigest()
-    if declared != actual:
-        raise SystemExit(
-            f"plan manifest {digest_key} mismatch: declared={declared} actual={actual}"
-        )
-
-plan_sha = hashlib.sha256(plan.read_bytes()).hexdigest()
-declared_sha = manifest.get("plan_sha256")
-if declared_sha != plan_sha:
-    if not (declared_sha == "PENDING_FINAL_PLAN_HASH" and __import__("os").environ.get("TRNM_PLAN_EDITING") == "1"):
-        raise SystemExit(f"plan manifest SHA mismatch: declared={declared_sha} actual={plan_sha}")
-text = " ".join(plan.read_text().split())
-for marker in (
-    "one active engineering plan",
-    "production_candidate = false",
-    "MIG-001",
-    "MIG-014/016",
-    "candidate-non-normative",
-    "no machine flag is promoted",
-    "G5",
-):
-    if marker not in text:
-        raise SystemExit(f"canonical plan missing truth marker: {marker}")
-for forbidden in (
-    "every automatically triggered workflow is free",
-    "six historical workflows are manual inert",
-    "dependency closure is complete",
-):
-    if forbidden in text:
-        raise SystemExit(f"canonical plan contains an unsafe completion phrase: {forbidden}")
-print(
-    "canonical_development_plan=passed "
-    f"live_plan_count=1 stale_active_paths=0 plan_sha256={plan_sha} "
-    f"assessed_commit={assessed_commit} assessed_tree={assessed_tree} bound_inputs=4"
-)
+import hashlib,json,os,re,subprocess,sys,tomllib
+from typing import Any
+root=Path(sys.argv[1]); plan_rel,manifest_rel,modules_rel,train_rel,snapshot_rel,policy_rel=sys.argv[2:]
+class GateError(RuntimeError): pass
+def require(c,m):
+    if not c: raise GateError(m)
+def strict(pairs):
+    out={}
+    for k,v in pairs:
+        if k in out: raise GateError(f"duplicate JSON member: {k}")
+        out[k]=v
+    return out
+def j(p):
+    value=json.loads((root/p).read_text(encoding="utf-8"),object_pairs_hook=strict); require(isinstance(value,dict),f"{p}: object required"); return value
+def t(p):
+    with (root/p).open("rb") as h: value=tomllib.load(h)
+    require(isinstance(value,dict),f"{p}: table required"); return value
+def vals(value,key):
+    found=[]
+    if isinstance(value,dict):
+        for k,v in value.items():
+            if k==key: found.append(v)
+            found.extend(vals(v,key))
+    elif isinstance(value,list):
+        for v in value: found.extend(vals(v,key))
+    return found
+def one_sha(value,key):
+    found=sorted({v for v in vals(value,key) if isinstance(v,str) and re.fullmatch(r"[0-9a-f]{40}",v)}); require(len(found)==1,f"{key} must be unique: {found}"); return found[0]
+plan=(root/plan_rel).read_text(encoding="utf-8"); lower=plan.lower(); manifest=t(manifest_rel); modules=t(modules_rel); train=t(train_rel)
+snapshot=j(snapshot_rel); policy=j(policy_rel); truth=j("config/consensus-mainline.json"); repo=j("config/repository-policy-v1.json"); boundary=j("PROJECT_BOUNDARY.json")
+require(policy.get("schema")=="trnm-documentation-truth-v1","documentation policy schema drift")
+require(policy.get("canonical_plan")==plan_rel and manifest.get("plan_path")==plan_rel,"canonical plan path drift")
+plan_id=manifest.get("plan_id"); require(plan_id=="trnm-chain-development-plan-v2",f"plan id drift: {plan_id!r}")
+require("plan id: `trnm-chain-development-plan-v2`" in lower,"plan body id drift")
+actual=hashlib.sha256((root/plan_rel).read_bytes()).hexdigest(); declared=manifest.get("plan_sha256")
+require(declared==actual or (os.environ.get("TRNM_PLAN_EDITING")=="1" and declared=="PENDING_FINAL_PLAN_HASH"),f"plan SHA mismatch: {declared} != {actual}")
+commit=one_sha(manifest,"assessed_commit"); tree=one_sha(manifest,"assessed_tree")
+actual_tree=subprocess.run(["git","rev-parse",f"{commit}^{{tree}}"],cwd=root,check=True,capture_output=True,text=True).stdout.strip(); require(actual_tree==tree,"assessed tree mismatch")
+require(subprocess.run(["git","merge-base","--is-ancestor",commit,"HEAD"],cwd=root).returncode==0,"assessed source is not ancestor of HEAD")
+mt=repr(manifest).lower(); require("runtime-git-commit-and-tree" in mt or "derived-at-verification-time" in mt or manifest.get("document_candidate_binding") in {"runtime","runtime-git-commit-and-tree"},"runtime document binding missing")
+rows=modules.get("module",modules.get("modules")); require(isinstance(rows,list),"module rows missing")
+ids=[r.get("id") for r in rows if isinstance(r,dict)]; require(ids==[f"M{i:02d}" for i in range(18)],f"module IDs drift: {ids}")
+staff=0
+for row in rows:
+    count=next((row.get(k) for k in ("staff","staff_target","target_staff","recommended_staff") if isinstance(row.get(k),int)),None); require(isinstance(count,int) and count>0,f"staff missing for {row.get('id')}"); staff+=count
+require(staff==48,f"staff target drift: {staff}")
+for marker in ("one active engineering plan","node commit ledger","pinnedsqlitenamespace","global control plane","production_candidate = false","no machine flag is promoted","g5"): require(marker in lower,f"plan missing {marker}")
+require(re.search(r"\b(?:18|eighteen)\s+long-lived\s+modules\b", lower) is not None,"plan missing 18 long-lived modules")
+for forbidden in ("production_candidate = true","production_consensus_activation = true","release_ready = true","public_testnet_ready = true"): require(forbidden not in lower,f"plan contains {forbidden}")
+for doc in (snapshot,truth,repo,boundary,train):
+    for key in ("production_candidate","production_consensus_activation","release_ready","public_testnet_ready"): require(all(v is False for v in vals(doc,key) if isinstance(v,bool)),f"{key} promoted")
+require(snapshot.get("machine_truth",{}).get("stage")=="G1-native-host-incomplete","snapshot stage drift")
+require(truth.get("stage")=="G1-native-host-incomplete" and truth.get("consensus_mainline")=="native-poco-bft" and truth.get("protocol_target")=="poco-bft-v0","machine truth drift")
+train_lower=repr(train).lower()
+for marker in ("selected","successor","sqlite","schema","review","production_candidate"): require(marker in train_lower,f"release train missing {marker}")
+print(f"canonical_development_plan=passed plan_id={plan_id} plan_sha256={actual} regular_markdown=1 modules={len(rows)} staff_target={staff} archive=absent assessed_commit={commit} assessed_tree={tree} document_binding=runtime-git-commit-and-tree duplicate_json_keys=rejected")
 PY
+args=(--self-test --binding-mode "${TRNM_DOC_BINDING_MODE:-local}")
+if [[ -n "${TRNM_DOC_BINDING_OUTPUT:-}" ]]; then args+=(--binding-output "$TRNM_DOC_BINDING_OUTPUT"); fi
+python3 "$REFERENCE_GATE" "${args[@]}"
+git diff --check

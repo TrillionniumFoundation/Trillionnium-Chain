@@ -1,0 +1,136 @@
+name: trnm-documentation-truth
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-documentation-truth-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  source:
+    name: documentation-truth
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact source with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+
+      - name: Validate canonical plan and reference closure
+        env:
+          TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}
+          TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-source-binding-v1.json
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 -m json.tool "${TRNM_DOC_BINDING_OUTPUT}" >/dev/null
+
+      - name: Validate documentation policy and machine companions
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import tomllib
+
+          root = pathlib.Path(".")
+          json_paths = [
+              "config/documentation-truth-v1.json",
+              "docs/development/CURRENT_SNAPSHOT_V1.json",
+              "config/consensus-mainline.json",
+              "config/repository-policy-v1.json",
+              "config/blocker-execution-v1.json",
+              "PROJECT_BOUNDARY.json",
+          ]
+          toml_paths = [
+              "docs/development/module-registry-v1.toml",
+              "docs/development/plan-manifest-v1.toml",
+              "docs/development/release-train-v1.toml",
+          ]
+          for relative in json_paths:
+              with (root / relative).open("r", encoding="utf-8") as handle:
+                  value = json.load(handle)
+              if not isinstance(value, dict):
+                  raise SystemExit(f"{relative}: object required")
+          for relative in toml_paths:
+              with (root / relative).open("rb") as handle:
+                  value = tomllib.load(handle)
+              if not isinstance(value, dict):
+                  raise SystemExit(f"{relative}: table required")
+          PY
+          PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/pycache" python3 -m py_compile \
+            scripts/ci/check_documentation_reference_closure_v1.py
+
+      - name: Require source validation to be side-effect free
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Upload exact-source documentation binding
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-documentation-source-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-documentation-source-binding-v1.json
+          if-no-files-found: error
+          retention-days: 14
+
+  prospective-merge:
+    name: documentation-truth-merge
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out GitHub prospective merge with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify prospective merge identity
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+
+      - name: Validate prospective-merge plan and reference closure
+        env:
+          TRNM_DOC_BINDING_MODE: merge
+          TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-merge-binding-v1.json
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 -m json.tool "${TRNM_DOC_BINDING_OUTPUT}" >/dev/null
+
+      - name: Require merge validation to be side-effect free
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Upload prospective-merge documentation binding
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-documentation-merge-${{ github.sha }}
+          path: ${{ runner.temp }}/trnm-documentation-merge-binding-v1.json
+          if-no-files-found: error
+          retention-days: 14

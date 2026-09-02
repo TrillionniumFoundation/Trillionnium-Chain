@@ -9,51 +9,48 @@ package=trnm-poco-node
 binary=trnm-poco-replay-to-core-coordinator-v1
 feature=replay-to-core-coordinator-test-support
 source=trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-replay-to-core-coordinator-v1.rs
-package_doc=docs/development/packages/TRNM_G1_REPLAY_TO_CORE_DURABLE_ACK_EXECUTION_PACKAGE_V1.md
-package_manifest=docs/development/packages/trnm-g1-r2-manifest-v1.toml
+plan=docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+modules=docs/development/module-registry-v1.toml
+train=docs/development/release-train-v1.toml
 workflow=.github/workflows/trnm-replay-to-core-coordinator-v1.yml
 
+for required in "$manifest" "$source" "$plan" "$modules" "$train" "$workflow"; do
+  [[ -f "$required" && ! -L "$required" ]] || {
+    printf 'replay-to-Core coordinator gate failed: missing regular input: %s\n' "$required" >&2
+    exit 2
+  }
+done
+
+bash scripts/ci/check_canonical_development_plan.sh
 rustfmt --edition 2021 --check "$source"
 cargo test --manifest-path "$manifest" --locked \
   -p "$package" --features "$feature" --bin "$binary" -- --test-threads=1
 cargo clippy --manifest-path "$manifest" --locked \
   -p "$package" --features "$feature" --bin "$binary" -- -D warnings
-
-# G1-R2A is stacked on G1-R1.  Its gate must never replace or suppress the
-# parent recovery/ack gate.
 bash scripts/ci/check_payload_replay_recovery_v1.sh
 
 python3 - <<'PY'
 from pathlib import Path
+import tomllib
 
-source = Path(
-    "trillionnium/crates/trnm-poco-node/src/bin/"
-    "trnm-poco-replay-to-core-coordinator-v1.rs"
-).read_text()
-package_doc = Path(
-    "docs/development/packages/"
-    "TRNM_G1_REPLAY_TO_CORE_DURABLE_ACK_EXECUTION_PACKAGE_V1.md"
-).read_text()
-manifest = Path(
-    "docs/development/packages/trnm-g1-r2-manifest-v1.toml"
-).read_text()
-workflow = Path(
-    ".github/workflows/trnm-replay-to-core-coordinator-v1.yml"
-).read_text()
-cargo_manifest = Path("trillionnium/crates/trnm-poco-node/Cargo.toml").read_text()
+source = Path("trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-replay-to-core-coordinator-v1.rs").read_text(encoding="utf-8")
+cargo_manifest = Path("trillionnium/crates/trnm-poco-node/Cargo.toml").read_text(encoding="utf-8")
+plan = Path("docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md").read_text(encoding="utf-8")
+modules = tomllib.loads(Path("docs/development/module-registry-v1.toml").read_text(encoding="utf-8"))
+train = tomllib.loads(Path("docs/development/release-train-v1.toml").read_text(encoding="utf-8"))
+workflow = Path(".github/workflows/trnm-replay-to-core-coordinator-v1.yml").read_text(encoding="utf-8")
 
-required_cargo = {
+for value in {
     "replay-to-core-coordinator-test-support = [",
     '"dep:rustix"',
     '"dep:trnm-consensus-peer-lease"',
     'name = "trnm-poco-replay-to-core-coordinator-v1"',
     'required-features = ["replay-to-core-coordinator-test-support"]',
-}
-for value in sorted(required_cargo):
+}:
     if value not in cargo_manifest:
-        raise SystemExit(f"missing R2A Cargo target boundary: {value}")
+        raise SystemExit(f"missing replay-to-Core Cargo boundary: {value}")
 
-required_source = {
+for value in {
     "REPLAY_TO_CORE_PENDING_BEFORE_CORE_V1: bool = true",
     "REPLAY_TO_CORE_SEALED_AUTHORITY_V1: bool = true",
     "REPLAY_TO_CORE_LIVE_CORE_ADAPTER_V1: bool = false",
@@ -69,13 +66,10 @@ required_source = {
     "self.publish_completed(request, completed)?;",
     "EarlierDeliveryPending",
     "AmbiguousPublication",
-}
-for value in sorted(required_source):
+}:
     if value not in source:
-        raise SystemExit(f"missing G1-R2A source boundary: {value}")
+        raise SystemExit(f"missing replay-to-Core source boundary: {value}")
 
-# The durable receipt constructor must not be public, and the only production
-# authority remains sealed without a concrete live implementation.
 for forbidden in (
     "pub fn new_after_durable_core",
     "pub(crate) fn new_after_durable_core",
@@ -86,47 +80,29 @@ for forbidden in (
     "REPLAY_TO_CORE_PRODUCTION_ACTIVATION_V1: bool = true",
 ):
     if forbidden in source:
-        raise SystemExit(f"forbidden G1-R2A authority claim: {forbidden}")
+        raise SystemExit(f"forbidden replay-to-Core authority claim: {forbidden}")
 
-required_manifest = {
-    'parent_package_status = "candidate-implemented-unverified"',
-    "pending_before_core = true",
-    "sealed_core_authority_trait = true",
-    "public_core_receipt_constructor = false",
-    "live_core_adapter = false",
-    "core_ack_generated_by_core = false",
-    "core_ack_atomic_with_core = false",
-    "node_process_integration = false",
-    "production_activation = false",
-    "g1_r2_exit = false",
-}
-for value in sorted(required_manifest):
-    if value not in manifest:
-        raise SystemExit(f"missing G1-R2 manifest truth: {value}")
+plan_lower = plan.lower()
+for marker in ("node commit ledger", "crash convergence", "exact source", "production_candidate = false"):
+    if marker not in plan_lower:
+        raise SystemExit(f"canonical plan missing coordinator marker: {marker}")
 
-required_doc = {
-    "R2-A — Node-owned recoverable delivery coordinator",
-    "R2-B — real Core adapter and process integration",
-    "core_adapter_present=false",
-    "core_ack_generated_by_core=false",
-    "core_ack_atomic_with_core=false",
-    "node_process_integration=false",
-    "production_activation=false",
-}
-for value in sorted(required_doc):
-    if value not in package_doc:
-        raise SystemExit(f"missing G1-R2 package boundary: {value}")
+module_rows = modules.get("module", modules.get("modules", []))
+ids = {row.get("id") for row in module_rows if isinstance(row, dict)} if isinstance(module_rows, list) else set()
+if not {"M02", "M03", "M08", "M15"} <= ids:
+    raise SystemExit("module registry does not cover Core/Safety/recovery/composition ownership")
 
-required_workflow = {
-    "github.actor == 'ProfAlexQI'",
-    "github.triggering_actor == 'ProfAlexQI'",
-    "runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]",
-    "bash ./scripts/ci/check_replay_to_core_coordinator_v1.sh",
-    "CARGO_NET_OFFLINE: \"true\"",
-}
-for value in sorted(required_workflow):
+if "selected_successor" not in repr(train).lower() and "successor" not in repr(train).lower():
+    raise SystemExit("release train does not identify the selected successor")
+for value in (
+    "check_canonical_development_plan.sh",
+    "check_replay_to_core_coordinator_v1.sh",
+    "TRNM_EXPECTED_SOURCE_SHA",
+):
     if value not in workflow:
-        raise SystemExit(f"missing G1-R2 workflow boundary: {value}")
+        raise SystemExit(f"workflow missing current authority hook: {value}")
 
-print("G1-R2A replay-to-Core coordinator truth gate: PASS")
+print("replay-to-Core coordinator truth gate: PASS; retired package prose is not an authority input")
 PY
+
+git diff --check
