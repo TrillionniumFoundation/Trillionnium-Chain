@@ -24,10 +24,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
-      EXPECTED_PARENT: 30b8c98028204e0bc64d1baecd55f985a51e3207
+      EXPECTED_PARENT: fad1c7fb3813517b1b4ed43968171eb00227ac49
       TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260901
       SELF_PATH: .github/workflows/trnm-migration-residue-repair-once.yml
       SCRIPT_PATH: scripts/ci/trnm_migration_residue_repair_once.py
+      POLICY_SCRIPT_PATH: scripts/ci/trnm_privileged_cargo_policy_scope_repair_once.py
       STAGING_ROOT: .trnm-migration-residue-repair-v1
     steps:
       - name: Check out exact repair commit
@@ -43,7 +44,7 @@ jobs:
           test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
           test "$(git rev-list --parents -n 1 HEAD | wc -w | tr -d ' ')" = "2"
           test "$(git diff-tree --no-commit-id --name-only -r HEAD)" = "$SELF_PATH"
-          python3 -m py_compile "$SCRIPT_PATH"
+          python3 -m py_compile "$SCRIPT_PATH" "$POLICY_SCRIPT_PATH"
 
       - name: Install exact Rust toolchain
         run: |
@@ -54,10 +55,12 @@ jobs:
         run: |
           set -euo pipefail
           python3 "$SCRIPT_PATH"
+          python3 "$POLICY_SCRIPT_PATH"
           cargo +1.95.0 generate-lockfile \
             --manifest-path trillionnium/crates/trnm-node/Cargo.toml
           git diff --check
           bash -n trillionnium/scripts/consensus/run_persistent_scale_gate.sh
+          bash -n scripts/check_privileged_cargo_offline_policy.sh
           bash scripts/ci/check_legacy_harness_freeze.sh
 
       - name: Validate standalone archive manifests and locks
