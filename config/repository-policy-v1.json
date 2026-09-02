@@ -78,6 +78,7 @@
     "scripts/ci/check_documentation_reference_closure_v1.py",
     "scripts/ci/check_module_coverage_v1.py",
     "scripts/ci/check_node_decomposition_v1.py",
+    "scripts/ci/check_plan_manifest_pins_v1.py",
     "scripts/ci/check_required_baseline_closure_v1.py",
     "scripts/ci/check_required_protocol_contract_v1.py",
     "trillionnium/Cargo.lock",
