@@ -262,7 +262,7 @@ jobs:
           cargo check --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
           cargo test --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
           cargo clippy --manifest-path contracts/Cargo.toml --workspace --all-targets --locked -- -D warnings
-      - name: Strict Clippy for executable safety and node boundaries
+      - name: Strict Clippy for executable safety and production boundaries
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -277,6 +277,15 @@ jobs:
             trnm-native-application \
             trnm-native-application-sqlite \
             trnm-native-execution-v0 \
+            trnm-durable-file-adapters-v0 \
+            trnm-tx-lifecycle-v0 \
+            trnm-state-sync-v0 \
+            trnm-migration-v0 \
+            trnm-control-plane-v0 \
+            trnm-release-bundle-v0 \
+            trnm-node-boundary-v0 \
+            trnm-poco-node-production-v0 \
+            trnm-production-adapter-conformance-v0 \
             trnm-poco-node \
             trnm-poco-node-authority \
             trnm-poco-node-io \
@@ -314,6 +323,8 @@ jobs:
           cargo test -p trnm-consensus-types --lib --locked
           cargo test -p trnm-consensus-core --lib --locked
           cargo test -p trnm-poco-node --lib --locked
+          cargo test -p trnm-production-adapter-conformance-v0 --all-targets --locked
+          cargo test -p trnm-durable-file-adapters-v0 --all-targets --locked
       - name: Require Rust and contract validation to leave checkout clean
         run: |
           git diff --exit-code -- .
