@@ -1,0 +1,170 @@
+name: normalize-new-v0-cores
+
+on:
+  push:
+    branches: [work/plan-v2-repository-blockers-closure-20260902]
+    paths: [.github/workflows/zz-normalize-new-v0-cores.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: normalize-new-v0-cores-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  normalize:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-repository-blockers-closure-20260902' &&
+      github.actor == 'Franksudoman'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Apply exact source normalizations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          node = Path('trillionnium/crates/trnm-node-boundary-v0/src/lib.rs')
+          text = node.read_text()
+          text = text.replace(
+              'expected_stage: AuthorityStageV0::ApplicationSealed,\n                next_stage: AuthorityStageV0::SafetyPersisted,\n                facts_digest: digest(22),\n            })\n            .unwrap_err();',
+              'expected_stage: AuthorityStageV0::ApplicationSealed,\n                next_stage: AuthorityStageV0::SignIntentPersisted,\n                facts_digest: digest(22),\n            })\n            .unwrap_err();',
+          )
+          if 'next_stage: AuthorityStageV0::SignIntentPersisted' not in text:
+              raise SystemExit('node-boundary invalid-stage mutant was not normalized')
+          node.write_text(text)
+
+          sync = Path('trillionnium/crates/trnm-state-sync-v0/src/lib.rs')
+          text = sync.read_text()
+          old_method = '''    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.state-sync.snapshot-manifest.v0",
+            &[
+                &self.chain_id.0,
+                &self.protocol_digest.0,
+                &self.height.to_be_bytes(),
+                &self.epoch.to_be_bytes(),
+                &self.state_root.0,
+                &self.chunk_root.0,
+                &self.chunk_count.to_be_bytes(),
+                &self.maximum_chunk_bytes.to_be_bytes(),
+                &self.total_bytes.to_be_bytes(),
+                &self.schema_digest.0,
+                &self.checkpoint_digest.0,
+            ],
+        )
+    }
+'''
+          new_method = '''    /// Stable digest bound into every chunk.  It deliberately excludes both
+    /// `chunk_root` and `manifest_digest`, preventing a hash self-reference.
+    #[must_use]
+    pub fn chunk_binding_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.state-sync.snapshot-header.v0",
+            &[
+                &self.chain_id.0,
+                &self.protocol_digest.0,
+                &self.height.to_be_bytes(),
+                &self.epoch.to_be_bytes(),
+                &self.state_root.0,
+                &self.chunk_count.to_be_bytes(),
+                &self.maximum_chunk_bytes.to_be_bytes(),
+                &self.total_bytes.to_be_bytes(),
+                &self.schema_digest.0,
+                &self.checkpoint_digest.0,
+            ],
+        )
+    }
+
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.state-sync.snapshot-manifest.v0",
+            &[&self.chunk_binding_digest().0, &self.chunk_root.0],
+        )
+    }
+'''
+          if old_method not in text:
+              raise SystemExit('snapshot manifest digest source shape changed')
+          text = text.replace(old_method, new_method, 1)
+          text = text.replace(
+              'if self.manifest_digest != manifest.manifest_digest\n            || self.index >= manifest.chunk_count',
+              'if self.manifest_digest != manifest.chunk_binding_digest()\n            || self.index >= manifest.chunk_count',
+              1,
+          )
+          start = text.index('    fn fixture() -> (')
+          end = text.index('\n    #[test]\n    fn trust_path_rejects_network_selected_discontinuity()', start)
+          replacement = '''    fn fixture() -> (
+        VerifiedTrustPathV0,
+        SnapshotManifestV0,
+        Vec<SnapshotChunkV0>,
+    ) {
+        let schema = d(7);
+        let chunk_bytes = [b"alpha".as_slice(), b"beta".as_slice()];
+        let state_root = HashRoot
+            .recompute_state_root(schema, chunk_bytes)
+            .unwrap();
+        let anchor = WeakSubjectivityAnchorV0 {
+            chain_id: d(1),
+            protocol_digest: d(2),
+            epoch: 3,
+            height: 4,
+            checkpoint_digest: d(5),
+            validator_set_digest: d(6),
+        };
+        let terminal = link(anchor, state_root);
+        let trust = verify_trust_path_v0(&AcceptProof, anchor, &[terminal]).unwrap();
+        let mut manifest = SnapshotManifestV0 {
+            chain_id: anchor.chain_id,
+            protocol_digest: anchor.protocol_digest,
+            height: terminal.height,
+            epoch: terminal.epoch,
+            state_root,
+            chunk_root: d(0),
+            chunk_count: 2,
+            maximum_chunk_bytes: 1024,
+            total_bytes: 9,
+            schema_digest: schema,
+            checkpoint_digest: terminal.checkpoint_digest,
+            manifest_digest: d(0),
+        };
+        let binding = manifest.chunk_binding_digest();
+        let chunks: Vec<SnapshotChunkV0> = chunk_bytes
+            .iter()
+            .enumerate()
+            .map(|(index, bytes)| SnapshotChunkV0 {
+                manifest_digest: binding,
+                index: index as u32,
+                bytes: bytes.to_vec(),
+                chunk_digest: SnapshotChunkV0::canonical_digest(binding, index as u32, bytes),
+            })
+            .collect();
+        manifest.chunk_root = chunk_merkle_root_v0(
+            &chunks.iter().map(|chunk| chunk.chunk_digest).collect::<Vec<_>>(),
+        );
+        manifest.manifest_digest = manifest.canonical_digest();
+        (trust, manifest, chunks)
+    }
+'''
+          text = text[:start] + replacement + text[end:]
+          if 'for _ in 0..16' in text:
+              raise SystemExit('hash fixed-point loop survived normalization')
+          sync.write_text(text)
+          PY
+          rm -f .github/workflows/zz-fix-node-boundary-test.yml
+          rm .github/workflows/zz-normalize-new-v0-cores.yml
+          git config user.name 'trnm-closure-bot'
+          git config user.email 'trnm-closure-bot@users.noreply.github.com'
+          git add -A
+          git diff --cached --check
+          git commit -m 'fix(core): normalize stage mutant and one-way snapshot commitments'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
