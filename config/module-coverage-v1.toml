@@ -149,8 +149,8 @@ id = "M15"
 anchor = "m15"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "node-build-release-closure-v1"
-primary_crates = ["trnm-poco-node", "trnm-bridge-poc"]
-contract_paths = ["PROJECT_BOUNDARY.md", "OPERATIONS.md", "RELEASE_READINESS.md"]
+primary_crates = ["trnm-poco-node", "trnm-poco-node-authority", "trnm-poco-node-io", "trnm-poco-node-host", "trnm-poco-node-cli", "trnm-bridge-poc"]
+contract_paths = ["PROJECT_BOUNDARY.md", "OPERATIONS.md", "RELEASE_READINESS.md", "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md"]
 
 [[module_coverage]]
 id = "M16"
