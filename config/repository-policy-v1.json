@@ -82,9 +82,18 @@
     "scripts/ci/check_required_protocol_contract_v1.py",
     "trillionnium/Cargo.lock",
     "trillionnium/Cargo.toml",
+    "trillionnium/crates/trnm-control-plane-v0/Cargo.toml",
+    "trillionnium/crates/trnm-durable-file-adapters-v0/Cargo.toml",
+    "trillionnium/crates/trnm-migration-v0/Cargo.toml",
+    "trillionnium/crates/trnm-node-boundary-v0/Cargo.toml",
     "trillionnium/crates/trnm-poco-node-authority/Cargo.toml",
-    "trillionnium/crates/trnm-poco-node-io/Cargo.toml",
+    "trillionnium/crates/trnm-poco-node-cli/Cargo.toml",
     "trillionnium/crates/trnm-poco-node-host/Cargo.toml",
-    "trillionnium/crates/trnm-poco-node-cli/Cargo.toml"
+    "trillionnium/crates/trnm-poco-node-io/Cargo.toml",
+    "trillionnium/crates/trnm-poco-node-production-v0/Cargo.toml",
+    "trillionnium/crates/trnm-production-adapter-conformance-v0/Cargo.toml",
+    "trillionnium/crates/trnm-release-bundle-v0/Cargo.toml",
+    "trillionnium/crates/trnm-state-sync-v0/Cargo.toml",
+    "trillionnium/crates/trnm-tx-lifecycle-v0/Cargo.toml"
   ]
 }
