@@ -1,0 +1,305 @@
+name: finalize-repository-closure-v3
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/zz-finalize-repository-closure-v3.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalize-repository-closure-v3-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+  NODE_SPLIT_BRANCH: work/node-split-v1-20260902
+  CORE_SOURCE_SHA: 1a181ba453f86055082859e12e3d0be9fc7b18f5
+  CORE_SOURCE_TREE: cae204e1638ba4bba92a9a852f0552adb41ca494
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+
+jobs:
+  finalize:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902' &&
+      github.actor == 'Franksudoman' &&
+      github.triggering_actor == github.actor &&
+      !contains(github.event.head_commit.message, '[repository-closure-v3]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Bind immutable implementation sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git fetch --no-tags origin \
+            "+refs/heads/${NODE_SPLIT_BRANCH}:refs/remotes/origin/${NODE_SPLIT_BRANCH}" \
+            "${CORE_SOURCE_SHA}"
+          node_sha="$(git rev-parse "refs/remotes/origin/${NODE_SPLIT_BRANCH}")"
+          test "$(git show -s --format=%T "${CORE_SOURCE_SHA}")" = "${CORE_SOURCE_TREE}"
+          test "$(git ls-tree -r --name-only "${node_sha}" -- .github/workflows/zz-stage-node-split-lock.yml | wc -l)" -eq 0
+          printf 'NODE_SOURCE_SHA=%s\n' "${node_sha}" >> "${GITHUB_ENV}"
+
+      - name: Reconstruct node decomposition and repository cores
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in \
+            .github/CODEOWNERS \
+            .github/workflows/trnm-required-baseline.yml \
+            config/build-closures-v1.toml \
+            config/module-coverage-v1.toml \
+            config/node-decomposition-v1.toml \
+            docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md \
+            scripts/ci/check_build_closures_v1.py \
+            scripts/ci/check_node_decomposition_v1.py \
+            trillionnium/Cargo.toml \
+            trillionnium/Cargo.lock \
+            trillionnium/crates/trnm-poco-node-authority \
+            trillionnium/crates/trnm-poco-node-io \
+            trillionnium/crates/trnm-poco-node-host \
+            trillionnium/crates/trnm-poco-node-cli
+          do
+            git checkout "${NODE_SOURCE_SHA}" -- "${path}"
+          done
+          core_paths=(
+            config/repository-blocker-cores-v0.toml
+            scripts/check_repository_blocker_registry_v0.py
+            trillionnium/crates/trnm-control-plane-v0
+            trillionnium/crates/trnm-durable-file-adapters-v0
+            trillionnium/crates/trnm-migration-v0
+            trillionnium/crates/trnm-node-boundary-v0
+            trillionnium/crates/trnm-poco-node-production-v0
+            trillionnium/crates/trnm-production-adapter-conformance-v0
+            trillionnium/crates/trnm-release-bundle-v0
+            trillionnium/crates/trnm-state-sync-v0
+            trillionnium/crates/trnm-tx-lifecycle-v0
+          )
+          git checkout "${CORE_SOURCE_SHA}" -- "${core_paths[@]}"
+          git show "${CORE_SOURCE_SHA}:docs/development/TRNM_DURABLE_FILE_ADAPTERS_V0.md" > docs/modules/TRNM_DURABLE_FILE_ADAPTERS_V0.md
+          git show "${CORE_SOURCE_SHA}:docs/development/TRNM_PRODUCTION_ADAPTER_CONFORMANCE_V0.md" > docs/modules/TRNM_PRODUCTION_ADAPTER_CONFORMANCE_V0.md
+          git show "${CORE_SOURCE_SHA}:docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md" > docs/modules/TRNM_REPOSITORY_BLOCKER_CORES_V0.md
+          sed -i 's#docs/development/TRNM_DURABLE_FILE_ADAPTERS_V0.md#docs/modules/TRNM_DURABLE_FILE_ADAPTERS_V0.md#g; s#docs/development/TRNM_PRODUCTION_ADAPTER_CONFORMANCE_V0.md#docs/modules/TRNM_PRODUCTION_ADAPTER_CONFORMANCE_V0.md#g; s#docs/development/TRNM_REPOSITORY_BLOCKER_CORES_V0.md#docs/modules/TRNM_REPOSITORY_BLOCKER_CORES_V0.md#g' \
+            config/repository-blocker-cores-v0.toml scripts/check_repository_blocker_registry_v0.py
+
+      - name: Register workspace, ownership and technical map
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          workspace=Path('trillionnium/Cargo.toml')
+          text=workspace.read_text()
+          marker=']\nresolver = "2"'
+          members=[
+            'crates/trnm-control-plane-v0','crates/trnm-durable-file-adapters-v0',
+            'crates/trnm-migration-v0','crates/trnm-node-boundary-v0',
+            'crates/trnm-poco-node-production-v0','crates/trnm-production-adapter-conformance-v0',
+            'crates/trnm-release-bundle-v0','crates/trnm-state-sync-v0','crates/trnm-tx-lifecycle-v0',
+          ]
+          if marker not in text: raise SystemExit('workspace marker drift')
+          for member in members:
+            row=f'  "{member}",\n'
+            if row not in text: text=text.replace(marker,row+marker,1)
+          workspace.write_text(text)
+
+          coverage=Path('config/module-coverage-v1.toml')
+          text=coverage.read_text()
+          mapping={
+            'M03':['trnm-durable-file-adapters-v0'],
+            'M05':['trnm-tx-lifecycle-v0'],
+            'M13':['trnm-migration-v0','trnm-state-sync-v0'],
+            'M15':['trnm-node-boundary-v0','trnm-poco-node-production-v0','trnm-release-bundle-v0'],
+            'M16':['trnm-control-plane-v0'],
+            'M17':['trnm-production-adapter-conformance-v0'],
+          }
+          for mid,names in mapping.items():
+            pat=rf'(\[\[module_coverage\]\]\nid = "{mid}"\n.*?primary_crates = \[)(.*?)(\]\n)'
+            m=re.search(pat,text,re.S)
+            if not m: raise SystemExit(f'module section missing: {mid}')
+            items=re.findall(r'"([^"]+)"',m.group(2))
+            for name in names:
+              if name not in items: items.append(name)
+            rep=m.group(1)+', '.join(f'"{x}"' for x in items)+m.group(3)
+            text=text[:m.start()]+rep+text[m.end():]
+          coverage.write_text(text)
+
+          ref=Path('docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md')
+          current=ref.read_text()
+          appendix='''\n\n---\n\n## Repository blocker core implementation map v0\n\nThese repository-owned cores are fail-closed and confer no production, public-testnet, release, or activation authority.\n\n| Crate | Module | Boundary |\n|---|---|---|\n| `trnm-durable-file-adapters-v0` | M03 | locked authority and snapshot CAS |\n| `trnm-tx-lifecycle-v0` | M05 | bounded transaction lifecycle |\n| `trnm-migration-v0` | M13 | source-bound migration verification |\n| `trnm-state-sync-v0` | M13 | authenticated state sync |\n| `trnm-node-boundary-v0` | M15 | node boundary |\n| `trnm-poco-node-production-v0` | M15 | production-shaped fail-closed node |\n| `trnm-release-bundle-v0` | M15 | reproducible release bundle |\n| `trnm-control-plane-v0` | M16 | observer-first control plane |\n| `trnm-production-adapter-conformance-v0` | M17 | conformance authority only |\n'''
+          if '## Repository blocker core implementation map v0' not in current:
+            ref.write_text(current.rstrip()+appendix+'\n')
+          PY
+
+      - name: Refresh conservative Plan v2 implementation truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,re,tomllib
+          plan=Path('docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md')
+          text=plan.read_text()
+          states={
+            'NODE-SPLIT-001':'implementation present; repository qualification passed; integration acceptance pending',
+            'BUILD-CLOSURE-001':'implementation and Cargo-tree qualification present; prospective-merge acceptance pending',
+            'TX-PROD-001':'bounded lifecycle core present; live production wiring and campaign acceptance open',
+            'SYNC-PROD-001':'authenticated core present; live downloader and multi-host acceptance open',
+            'MIG-001':'migration core present; real finalized export/recompute acceptance open',
+            'CONTROL-001':'observer-first core present; guarded live rollout/campaign acceptance open',
+          }
+          lines=text.splitlines(); seen=set()
+          for i,line in enumerate(lines):
+            if not line.startswith('|'): continue
+            cells=[c.strip() for c in line.strip().strip('|').split('|')]
+            if len(cells)>=5 and cells[1] in states:
+              cells[3]=states[cells[1]]; lines[i]='| '+' | '.join(cells)+' |'; seen.add(cells[1])
+          if seen != set(states): raise SystemExit(f'blocker rows missing: {sorted(set(states)-seen)}')
+          text='\n'.join(lines)+'\n'
+          for marker in ('production_candidate = true','production_consensus_activation = true','public_testnet_ready = true','release_ready = true'):
+            if marker in text: raise SystemExit(f'forbidden promotion: {marker}')
+          plan.write_text(text)
+          digest=hashlib.sha256(plan.read_bytes()).hexdigest()
+          pattern=re.compile(r'(?im)^(\s*[A-Za-z0-9_.-]*(?:plan|development)[A-Za-z0-9_.-]*sha256\s*=\s*")([0-9a-f]{64})("\s*)$')
+          for p in (Path('docs/development/plan-manifest-v1.toml'),Path('docs/development/release-train-v1.toml')):
+            if p.exists():
+              raw=p.read_text(); raw=pattern.sub(lambda m:m.group(1)+digest+m.group(3),raw); p.write_text(raw); tomllib.loads(raw)
+          snapshot=Path('docs/development/CURRENT_SNAPSHOT_V1.json')
+          if snapshot.exists():
+            obj=json.loads(snapshot.read_text())
+            def walk(v):
+              if isinstance(v,dict):
+                for k in list(v):
+                  if 'plan' in k.lower() and 'sha256' in k.lower() and isinstance(v[k],str) and re.fullmatch(r'[0-9a-f]{64}',v[k]): v[k]=digest
+                  else: walk(v[k])
+              elif isinstance(v,list):
+                for x in v: walk(x)
+            walk(obj); snapshot.write_text(json.dumps(obj,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Install pinned Rust and materialize locked graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          toolchain="$(python3 - <<'PY'
+          import tomllib
+          print(tomllib.load(open('rust-toolchain.toml','rb'))['toolchain']['channel'])
+          PY
+          )"
+          rustup toolchain install "${toolchain}" --profile minimal --component rustfmt --component clippy
+          rustup default "${toolchain}"
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Run repository, closure and authority qualification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+          python3 scripts/check_repository_blocker_registry_v0.py
+          packages=(
+            trnm-consensus-core trnm-consensus-safety-rules trnm-consensus-safety-store
+            trnm-consensus-signer-journal trnm-consensus-external-node-checkpoint
+            trnm-native-application trnm-native-application-sqlite trnm-native-execution-v0
+            trnm-poco-mvcc-fee-v1 trnm-poco-node
+            trnm-poco-node-authority trnm-poco-node-io trnm-poco-node-host trnm-poco-node-cli
+            trnm-control-plane-v0 trnm-durable-file-adapters-v0 trnm-migration-v0
+            trnm-node-boundary-v0 trnm-poco-node-production-v0
+            trnm-production-adapter-conformance-v0 trnm-release-bundle-v0
+            trnm-state-sync-v0 trnm-tx-lifecycle-v0
+          )
+          for package in "${packages[@]}"; do
+            cargo test --manifest-path trillionnium/Cargo.toml -p "${package}" --all-targets --locked --offline
+            cargo clippy --manifest-path trillionnium/Cargo.toml -p "${package}" --all-targets --locked --offline -- -D warnings
+          done
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
+          status="$(cargo run --manifest-path trillionnium/Cargo.toml -p trnm-poco-node-cli --bin trnm-poco-node-cli --locked --offline -- status)"
+          for fact in '"production_candidate":false' '"authority_gate_open":false' '"production_activation":false' '"start_permitted":false'; do
+            printf '%s\n' "${status}" | grep -q "${fact}"
+          done
+          set +e
+          cargo run --manifest-path trillionnium/Cargo.toml -p trnm-poco-node-cli --bin trnm-poco-node-cli --locked --offline -- start >"${RUNNER_TEMP}/start.out" 2>"${RUNNER_TEMP}/start.err"
+          rc=$?
+          set -e
+          test "${rc}" -ne 0
+          grep -q 'node host start blocked' "${RUNNER_TEMP}/start.err"
+          test "$(find docs/development -maxdepth 1 -type f -name '*.md' | wc -l)" -eq 1
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,tomllib
+          for p in Path('docs/development').glob('*.json'): json.loads(p.read_text())
+          for p in Path('docs/development').glob('*.toml'):
+            with p.open('rb') as f: tomllib.load(f)
+          PY
+
+      - name: Write final repository qualification receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/evidence/repository
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os,subprocess
+          plan=Path('docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md')
+          report={
+            'schema':'trnm-plan-v2-final-repository-qualification-v3',
+            'qualified_parent_commit':os.environ['GITHUB_SHA'],
+            'node_source_commit':os.environ['NODE_SOURCE_SHA'],
+            'repository_core_source_commit':os.environ['CORE_SOURCE_SHA'],
+            'repository_core_source_tree':os.environ['CORE_SOURCE_TREE'],
+            'plan_sha256':hashlib.sha256(plan.read_bytes()).hexdigest(),
+            'workspace_all_targets_check':'PASS',
+            'authority_tests_and_clippy':'PASS',
+            'cargo_tree_closures':'PASS',
+            'module_coverage':'PASS',
+            'node_decomposition':'PASS',
+            'repository_core_registry':'PASS',
+            'default_start_fail_closed':'PASS',
+            'independent_review':False,
+            'external_multi_host_evidence':False,
+            'external_hsm_anchor_evidence':False,
+            'external_power_loss_evidence':False,
+            'external_audit_evidence':False,
+            'soak_activation_evidence':False,
+            'production_candidate':False,
+            'production_consensus_activation':False,
+            'public_testnet_ready':False,
+            'release_ready':False,
+            'result':'PASS',
+          }
+          Path('docs/evidence/repository/PLAN_V2_FINAL_REPOSITORY_QUALIFICATION_V3.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Remove all temporary carriers and publish final repository tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in .github/workflows/zz-*.yml; do [[ -e "${path}" ]] && git rm "${path}"; done
+          if find .github/workflows -maxdepth 1 -type f -name 'zz-*' -print -quit | grep -q .; then exit 2; fi
+          git config user.name 'Franksudoman'
+          git config user.email 'sunfocapital@gmail.com'
+          git add -A
+          git diff --cached --check
+          git commit -m '[repository-closure-v3] feat(plan): finalize repository-owned closure'
+          git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
