@@ -18,24 +18,33 @@ repository remains an engineering candidate:
 - release readiness is false;
 - the default `trnm-poco-node` path remains fail-closed.
 
-Protected `main` is still the canonical destination. The sole active integration
-candidate is Draft PR #62 on
-`work/plan-v2-full-gap-closure-20260902`; its exact head, tree, prospective-merge
-identity, and check results are derived at verification time rather than copied
-into this overview. The branch combines the descriptor-bound A04/A19/A23 source
-train, the Node Commit Ledger, and persistent deterministic 1/2/4/8-worker
-execution equivalence. Those implementations remain acceptance-pending and do
-not by themselves establish public-testnet, production, release, or activation
-authority.
+Protected `main` remains the canonical destination. Draft PR #62 on
+`work/plan-v2-full-gap-closure-20260902` is the sole selected integration
+successor. The plan assesses ancestor baseline
+`af691ea5005e1f0262e90c4fc878ba0a70dbe7ea`
+(tree `af09e389b1a462b3839508b7ef305596c76384c6`); current source and
+prospective-merge identities are derived at verification time.
+
+The selected line combines the descriptor-bound A04/A19/A23 source train, the
+Node Commit Ledger, persistent deterministic 1/2/4/8-worker execution
+equivalence, one active development plan, and machine-checked M00-M17 source and
+technical-document coverage. These are implementation-present,
+acceptance-pending facts. They do not establish public-testnet, production,
+release, protocol-freeze, or activation authority.
 
 The machine-readable authority is `config/consensus-mainline.json`. The sole
 active execution, modularization, team, and promotion plan is
 `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
+The stable module contract reference is
+`docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`, and exact primary source
+ownership is in `config/module-coverage-v1.toml`.
 `RELEASE_READINESS.md` is a human-readable projection, not a second authority.
 
 Development-document history is kept in Git history, not in an active archive,
 agent-prompt, package-plan, sprint-board, or continuation tree. CI rejects a
-second development plan or any recreated retired-history directory.
+second plan, recreated retired trees, stale active references, orphan or
+multiply owned crates, module dependency cycles, and missing module
+contract/SLO/testkit entries.
 
 ## Target architecture
 
@@ -53,16 +62,16 @@ Consensus, SafetyRules, deterministic execution scheduling, canonical state
 commit, finality, checkpointing, and whole-node recovery stay in the low-latency
 in-process hot path. Remote signer/HSM, DA workers, state-sync download, RPC and
 indexing, proof generation, telemetry, and global planning may be isolated.
-The global control plane may allocate bounded resources and stage reversible
-plans, but it cannot sign, vote, finalize, generate an authoritative state root,
-bypass SafetyRules, or activate production.
 
-The active workspace is `trillionnium/Cargo.toml`. Important packages include
-`trnm-consensus-types`, `trnm-consensus-crypto`, `trnm-consensus-core`,
-`trnm-consensus-safety-rules`, `trnm-consensus-safety-store`,
-`trnm-consensus-signer-journal`, `trnm-native-application`, `trnm-state`, and
-`trnm-poco-node`. Use Cargo metadata and the module registry rather than this
-overview when exact membership or ownership is required.
+The global control plane may observe, allocate bounded operational resources,
+and stage reversible signed plans, but it cannot sign, vote, finalize, create an
+authoritative state root, bypass SafetyRules, erase evidence, or activate
+production.
+
+The active workspace is `trillionnium/Cargo.toml`. Use Cargo metadata,
+`docs/development/module-registry-v1.toml`, and
+`config/module-coverage-v1.toml` rather than this overview when exact membership
+or ownership is required.
 
 CometBFT, `trnm-consensus-app`, and `trnm-node` are excluded migration residue.
 They may support historical differential replay and one-way migration only;
@@ -83,7 +92,9 @@ cd Trillionnium-Chain
 rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
 rustup override set 1.95.0
 bash scripts/ci/check_canonical_development_plan.sh
+python3 scripts/ci/check_module_coverage_v1.py
 python3 scripts/ci/check_repository_truth_v1.py
+python3 scripts/ci/check_blocker_execution_v1.py
 python3 scripts/ci/check_external_evidence_v1.py
 cd trillionnium
 cargo fmt --all -- --check
@@ -100,19 +111,21 @@ that independent real-world evidence already exists.
 ## Development and evidence
 
 Start all engineering work from the canonical plan. The compact machine files in
-`docs/development/` identify the assessed source, 18-module boundary, and current
-release train. Protocol specifications live under `docs/protocol/`; immutable
+`docs/development/` identify the assessed baseline, 18-module boundary, and
+current release train. Module-level technical contracts live under
+`docs/modules/`; protocol specifications live under `docs/protocol/`; immutable
 external-evidence submissions live under `docs/evidence/external/`; operator
 procedures live in `OPERATIONS.md` and `docs/runbooks/`.
 
 Required external facts include independent protocol/package review, real
 4/7/31/100-process multi-host campaigns, device-backed HSM and monotonic-anchor
-evidence, physical power-loss recovery, independent consensus/cryptography/
-economic audits and red team, and completed 72-hour, 7-day, and 30-day
-wall-clock campaigns plus governance authorization.
+evidence, physical power-loss recovery, independent
+consensus/cryptography/economic audits and red team, and completed 72-hour,
+7-day, and 30-day wall-clock campaigns plus governance authorization.
 
 Do not convert simulations, shortened runs, local SIGKILL tests, local file
-watermarks, fixtures, self-review, or unsigned summaries into production claims.
+watermarks, fixtures, self-review, or unsigned summaries into production
+claims.
 
 ## Security and contribution policy
 

@@ -1,44 +1,75 @@
 {
   "schema": "trnm-current-snapshot-v1",
-  "as_of": "2026-09-01",
+  "as_of": "2026-09-02",
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
   "default_branch": "main",
   "default_branch_head_observed": "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9",
-  "latest_candidate": {
-    "ref": "refs/heads/integration/native-poco-a04-a19-a23-qualified-v1-20260901",
-    "commit": "3c46293e78a125dec9504e51c355a20216341338",
-    "tree": "875a1e6366df7cd9da80de145e25584ae309cee8",
-    "pull_request": 58,
-    "status": "draft-candidate-unaccepted",
-    "checks": "carrier qualification exists; two requested-change reviews and non-skipped exact PR-head/prospective-merge replay remain open"
+  "selected_successor": {
+    "pull_request": 62,
+    "ref": "refs/heads/work/plan-v2-full-gap-closure-20260902",
+    "assessed_baseline_commit": "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea",
+    "assessed_baseline_tree": "af09e389b1a462b3839508b7ef305596c76384c6",
+    "current_head_binding": "derived-at-verification-time",
+    "prospective_merge_binding": "derived-at-verification-time",
+    "status": "draft-integration-candidate-independent-acceptance-pending",
+    "supersedes_intent_of": [
+      54,
+      57,
+      58,
+      59,
+      61
+    ]
   },
-  "assessed_plan_source": {
-    "ref": "refs/heads/integration/native-poco-a04-a19-a23-qualified-v1-20260901",
-    "commit": "3c46293e78a125dec9504e51c355a20216341338",
-    "tree": "875a1e6366df7cd9da80de145e25584ae309cee8",
-    "authority_status": "exact-head candidate source; not protected-main, release, production, or activation authority"
-  },
-  "documentation_upgrade": {
-    "branch": "docs/chain-development-plan-v2-20260901",
-    "base_commit": "3c46293e78a125dec9504e51c355a20216341338",
-    "classification": "subordinate-documentation-candidate"
+  "repository_implementation": {
+    "single_development_truth": "present-exact-head-and-prospective-merge-replay-required",
+    "module_coverage": {
+      "status": "present-exact-head-and-prospective-merge-replay-required",
+      "module_count": 18,
+      "workspace_crates_uniquely_mapped": 49,
+      "auxiliary_units_mapped": [
+        "contracts",
+        "web4-frontend",
+        "formal",
+        "fuzz",
+        "proto",
+        "scripts/ci"
+      ]
+    },
+    "descriptor_bound_sqlite_namespace": "present-acceptance-pending",
+    "closed_world_sqlite_schema": "present-acceptance-pending",
+    "post_close_trusted_return_checks": "present-acceptance-pending",
+    "node_commit_ledger": "present-acceptance-pending",
+    "persistent_worker_root_invariance": {
+      "status": "present-acceptance-pending",
+      "worker_counts": [
+        1,
+        2,
+        4,
+        8
+      ]
+    }
   },
   "machine_truth": {
     "stage": "G1-native-host-incomplete",
     "consensus_mainline": "native-poco-bft",
+    "protocol_target": "poco-bft-v0",
     "production_candidate": false,
     "production_consensus_activation": false,
+    "public_testnet_ready": false,
+    "release_ready": false,
     "v1_normative_freeze": false,
     "v1_node_support": false,
     "v1_release_ready": false
   },
   "current_promotion_critical_stack": [
-    "D0 single development truth and legacy development-document removal",
-    "P0 PR58 descriptor-bound SQLite namespace and closed-world schema repair",
-    "P1 module boundaries, production dependency closure and Node decomposition",
-    "P2 Node Commit Ledger and exact whole-node crash convergence",
-    "P3 persistent validator, deterministic execution, finality and state-sync vertical path",
-    "G3-G5 independent multi-host, HSM, power-loss, audit, soak and activation evidence"
+    "all required checks on one unchanged PR62 head and prospective merge",
+    "independent module-owner, consumer, security and release acceptance",
+    "production dependency closures and node decomposition",
+    "persistent authenticated network, pacemaker, Vote/Timeout, finality and recovery",
+    "production transaction lifecycle and authenticated state sync",
+    "trusted migration and target-root recomputation",
+    "independent multi-host, HSM/anchor, physical power-loss, audit/red-team and wall-clock soak evidence",
+    "signed governance and activation record"
   ],
-  "truth_rule": "protected-main, assessed source, PR head, prospective merge, artifact, evidence and activated release identities are distinct and must never be silently substituted"
+  "truth_rule": "protected main, assessed baseline, current PR head, prospective merge, artifact, evidence, accepted release and activated network identities are distinct and must never be silently substituted"
 }

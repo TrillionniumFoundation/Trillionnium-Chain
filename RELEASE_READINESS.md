@@ -1,6 +1,6 @@
 # Trillionnium Chain release readiness
 
-Updated: **2026-09-01**
+Updated: **2026-09-02**
 
 This file is the human-readable release projection. It is not an independent
 truth source. The machine-readable authority is
@@ -37,47 +37,61 @@ and activation flags remain false:
 | Production consensus activation | `false` |
 | Release ready | `false` |
 
-A passing crate test, simulation, candidate fixture, local process campaign,
-carrier workflow, or repository CI check cannot independently change these
-values.
+A passing crate test, hosted workflow, self-hosted workflow, simulation,
+candidate fixture, local process campaign, carrier qualification, or generated
+report cannot independently change these values.
 
 ## Current source state
 
 Protected `main` was observed at
-`b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9`. The latest assessed candidate is
-Draft PR #58 at `3c46293e78a125dec9504e51c355a20216341338`
-(tree `875a1e6366df7cd9da80de145e25584ae309cee8`). It combines ordered application
-finalization, durable terminal history, and native finalized replay-floor work.
-It remains unaccepted and has requested changes.
+`b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9`. Draft PR #62 on
+`work/plan-v2-full-gap-closure-20260902` is the sole selected integration
+successor. The plan assesses ancestor baseline
+`af691ea5005e1f0262e90c4fc878ba0a70dbe7ea`
+(tree `af09e389b1a462b3839508b7ef305596c76384c6`); the current PR head and
+prospective-merge identities are derived by CI at verification time.
 
-Merge-blocking repair includes descriptor-bound SQLite namespace and sidecar
-identity, closed-world schema validation, fresh-connection revalidation, and
-removal of read/exact-replay returns before post-operation checks. PR #58 must
-become the sole A04/A19/A23 successor, with overlapping lineage superseded, and
-must receive non-skipped exact-head and prospective-merge validation plus
-independent acceptance.
+The selected line contains repository implementations for:
+
+- descriptor-bound SQLite namespace and sidecar identity;
+- closed-world SQLite schema/pragma validation;
+- post-close/post-operation validation before trusted return;
+- a monotonic Node Commit Ledger and recovery coordinator;
+- persistent deterministic 1/2/4/8-worker execution equivalence;
+- one active development plan with exact source/merge validation;
+- M00-M17 technical references and unique primary ownership for all active
+  workspace crates, contracts, Web4, formal, fuzz, transport and CI tooling.
+
+These are **implementation-present, acceptance-pending** facts. They are not
+protected-main, production, release, protocol-activation, or independent-review
+authority. Every new commit invalidates prior exact-head conclusions and must
+rerun applicable checks.
 
 The default `trnm-poco-node` startup path remains fail-closed. Candidate process
 commands and local fixtures are not a persistent production network, validator
-signer, live pacemaker/finality loop, production state-sync service, HSM custody,
-physical power-loss proof, or activation artifact.
+signer, live pacemaker/finality loop, production state-sync service, HSM
+custody, physical power-loss proof, or activation artifact.
 
 ## Major repository-owned blockers
 
-- protected-main integration of one canonical Native PoCO source train;
-- one generated protocol/schema/error registry and independent conformance;
-- bounded QC/TC/admission work and long-running fuzz evidence;
-- authoritative persistent SafetyRules/Core, pacemaker, epoch and catch-up path;
-- Node Commit Ledger and exact whole-node crash/replay convergence;
-- full body/parent/runtime validation and deterministic MVCC-to-JMT-to-finality
-  integration;
-- production authenticated networking, transaction lifecycle, state sync,
-  recovery owner, checkpointing and durable apply;
-- production/devnet/v1/lab dependency-closure separation and node decomposition;
-- trusted migration source verification, target root recomputation, rehearsal,
-  cross-peer activation, and one-way cutover;
-- bounded resource, denial-of-service, observability, packaging and supply-chain
-  closure;
+- all required checks on one unchanged PR #62 head and its prospective merge;
+- independent module-owner, consumer, security/evidence, and release acceptance;
+- protected-main merge and post-merge replay;
+- actual Cargo dependency and feature closures for production, devnet,
+  v1-candidate, and lab/evidence binaries;
+- decomposition of node composition into host, authority coordinator, I/O,
+  composition, CLI, and lab boundaries;
+- authoritative persistent SafetyRules/Core, pacemaker, Vote/Timeout, epoch,
+  catch-up, finality and restart path;
+- production authenticated networking and complete transaction lifecycle;
+- authenticated non-destructive state sync and arbitrary trust-path
+  verification;
+- complete generated protocol/schema/error registries, independent parser, and
+  long-running fuzz/formal/conformance evidence;
+- trusted migration source verification, target projection/root recomputation,
+  rehearsal, cross-peer activation and one-way cutover;
+- bounded resource/denial, observability, packaging, reproducible build, SBOM,
+  provenance, incident and disaster-recovery closure;
 - guarded out-of-band global optimization without consensus authority.
 
 ## External blockers
@@ -98,19 +112,19 @@ The following cannot be generated honestly by a repository commit:
    production-candidate wall-clock runs, operational drills, and an authorized
    governance/activation record.
 
-The schema, template and validator are under `docs/evidence/external/`.
-Fixtures, single-host simulations, local watermarks, SIGKILL-only tests,
-self-review, shortened runs, mutable URLs, or simulated time do not close these
-gates.
+The schemas, templates, submissions, and validators are under
+`docs/evidence/external/`. Fixtures, single-host simulations, local watermarks,
+SIGKILL-only tests, self-review, shortened runs, mutable URLs, or simulated time
+do not close these gates.
 
 ## Promotion rule
 
 A claim may become true only when protected branch, plan, machine truth,
-protocol/schema/formal inputs, dependency locks, reproducible artifacts,
-independent reviews, external evidence, governance record, and activation bundle
-all bind the same exact source and artifact digest set.
+protocol/schema/formal inputs, module and dependency closures, reproducible
+artifacts, independent reviews, external evidence, governance record, and
+activation bundle all bind the same exact source and artifact digest set.
 
 Any source, protocol, dependency, compiler, feature, configuration, validator
-set, key policy, state-root format, migration input, or release-input change
-invalidates the downstream evidence declared by the canonical plan and requires
-replay before promotion.
+set, key policy, state-root format, migration input, failed invariant, or
+release-input change invalidates the downstream evidence declared by the
+canonical plan and requires replay before promotion.

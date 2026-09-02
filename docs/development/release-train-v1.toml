@@ -12,70 +12,141 @@ release_ready = false
 [source]
 selected_successor_pull_request = 62
 head_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
-integration_merge_commit = "287e25756a3aa3270fcba27add83654792a6149b"
-integration_merge_tree = "4a61226903195e4493655ba7b2dcff28829753f4"
-implementation_parent = "c4c9e8b245e5d719f3b30e4839e10d2966dcf4cf"
-documentation_parent = "e405159cf73b8210b1dd19ea48900d2265d591e3"
+assessed_baseline_commit = "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea"
+assessed_baseline_tree = "af09e389b1a462b3839508b7ef305596c76384c6"
 base_ref = "refs/heads/main"
-base_commit = "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9"
-status = "draft-execution-candidate"
-qualification_scope = "exact PR-head and prospective-merge acceptance required; repository implementation evidence is distinct from external evidence"
+base_commit_observed = "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9"
+status = "draft-integration-candidate"
+qualification_scope = "current PR head and prospective merge are derived at verification time; all required checks and independent acceptance remain mandatory"
 runtime_head_binding = "derived-at-verification-time-from-pr-head-and-tree"
 
 [succession]
 one_successor_per_integration_surface = true
 selected_surface = "canonical-plan-v2-native-poco-mainline"
-overlapping_pull_requests_to_supersede = [54, 58, 59, 61]
+overlapping_pull_requests_to_supersede = [54, 57, 58, 59, 61]
 self_merge_allowed = false
 independent_acceptance_required = true
+administrator_bypass_is_acceptance = false
 
 [documentation]
 candidate_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
 sole_plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+module_reference_path = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
+module_coverage_path = "config/module-coverage-v1.toml"
 git_history_is_archive = true
 active_archive_directory_allowed = false
+
+[[blockers]]
+id = "DOC-TRUTH-001"
+priority = "P0"
+status = "implementation-present-exact-head-replay-required"
+owner_modules = ["M15", "M17"]
+exit = "single-plan, reference, exact-source and prospective-merge documentation gates pass on the unchanged accepted head and protected-main merge"
+
+[[blockers]]
+id = "MODULE-COVERAGE-001"
+priority = "P0"
+status = "implementation-present-exact-head-replay-required"
+owner_modules = ["M00", "M15", "M17"]
+exit = "all M00-M17 sources, contracts, SLOs, testkits, owners, dependencies and auxiliary packages remain uniquely mapped and acyclic"
 
 [[blockers]]
 id = "A19-NS-001"
 priority = "P0"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M07", "M08"]
-exit = "descriptor-bound SQLite database and WAL/SHM/journal sidecar identity is verified before and after every trusted operation"
+exit = "descriptor-bound SQLite database and WAL/SHM/journal/lock/anchor identity is verified before and after every trusted operation and passes replacement/rollback mutants"
 
 [[blockers]]
 id = "A19-SCHEMA-001"
 priority = "P0"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M07"]
-exit = "closed-world SQLite schema digest rejects extra, missing or changed tables, indexes, views, triggers and required pragmas"
+exit = "closed-world SQLite schema and pragma digest rejects every extra, missing or changed table, index, view, trigger and required pragma"
 
 [[blockers]]
 id = "A19-RETURN-001"
 priority = "P0"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M07", "M08"]
-exit = "no SQLite read or exact-replay path returns before connection close and post-operation identity verification"
+exit = "no SQLite read or exact-replay path returns trusted state before connection close and post-operation identity verification"
 
 [[blockers]]
 id = "INT-STACK-001"
 priority = "P0"
 status = "open"
 owner_modules = ["M15", "M17"]
-exit = "PR62 is the sole successor, overlapping PRs are superseded, and non-skipped exact-head plus prospective-merge checks pass with independent acceptance"
+exit = "PR62 is the sole successor, overlaps are superseded, and non-skipped exact-head plus prospective-merge checks pass with independent acceptance"
 
 [[blockers]]
 id = "NODE-COMMIT-001"
 priority = "P1"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M03", "M07", "M08"]
-exit = "one monotonic Node Commit Ledger proves exact source-or-target crash convergence and passes exact-head plus prospective-merge qualification"
+exit = "one monotonic Node Commit Ledger proves exact source-or-target convergence at every crash boundary and passes independent qualification"
 
 [[blockers]]
 id = "EXEC-VERTICAL-001"
 priority = "P1"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M02", "M06", "M07", "M08"]
-exit = "the real persistent execution store preserves canonical roots, receipts, events and fees across 1, 2, 4 and 8 workers and passes exact-head plus prospective-merge qualification"
+exit = "the real persistent execution and finality path preserves canonical roots, receipts, events and fees across 1, 2, 4 and 8 workers under faults"
+
+[[blockers]]
+id = "NODE-SPLIT-001"
+priority = "P1"
+status = "open"
+owner_modules = ["M15"]
+exit = "node composition is wiring only and production, devnet, v1-candidate and lab closures are independently checked"
+
+[[blockers]]
+id = "CORE-LIVE-001"
+priority = "P1"
+status = "open"
+owner_modules = ["M02", "M03", "M04"]
+exit = "persistent authenticated network, pacemaker, Vote/Timeout, epoch, catch-up and finality survive fault campaigns"
+
+[[blockers]]
+id = "TX-PROD-001"
+priority = "P2"
+status = "open"
+owner_modules = ["M05", "M15"]
+exit = "production admission, authorization, WAL, sign/broadcast, finalized readback, tombstone and GC lifecycle closes"
+
+[[blockers]]
+id = "SYNC-PROD-001"
+priority = "P2"
+status = "open"
+owner_modules = ["M07", "M13"]
+exit = "authenticated non-destructive state sync and arbitrary trust-path verification close"
+
+[[blockers]]
+id = "MIG-001"
+priority = "P2"
+status = "open"
+owner_modules = ["M00", "M07", "M13", "M15"]
+exit = "trusted finalized export, exact target projection and independent root recomputation are accepted"
+
+[[blockers]]
+id = "MIG-014/016"
+priority = "P2"
+status = "open"
+owner_modules = ["M02", "M13", "M15", "M17"]
+exit = "multi-party cutover, cross-peer agreement, downgrade prohibition and safe migration-residue cleanup are signed"
+
+[[blockers]]
+id = "OWNERSHIP-001"
+priority = "P2"
+status = "open"
+owner_modules = ["M15", "M17"]
+exit = "real module teams, two-maintainer minimum and independent consumer/security review are enforced"
+
+[[blockers]]
+id = "CONTROL-001"
+priority = "P2"
+status = "open"
+owner_modules = ["M16", "M17"]
+exit = "observer-first guarded reversible control plane is demonstrated without consensus authority"
 
 [[external_blockers]]
 id = "EXT-REVIEW-001"
