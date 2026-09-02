@@ -106,6 +106,14 @@ jobs:
               )
           manifest.write_text(text)
 
+          control = Path('trillionnium/crates/trnm-control-plane-v0/src/lib.rs')
+          text = control.read_text()
+          bad = 'fn forbidden_authority_is_explicitly rejected()'
+          good = 'fn forbidden_authority_is_explicitly_rejected()'
+          if bad not in text:
+              raise SystemExit('control-plane typo anchor changed')
+          control.write_text(text.replace(bad, good, 1))
+
           host_manifest = Path('trillionnium/crates/trnm-poco-node-host/Cargo.toml')
           text = host_manifest.read_text()
           dep = 'trnm-poco-node-production-v0 = { version = "0.1.0", path = "../trnm-poco-node-production-v0" }\n'
