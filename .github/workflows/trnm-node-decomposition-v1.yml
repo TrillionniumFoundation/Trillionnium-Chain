@@ -1,0 +1,162 @@
+name: trnm-node-decomposition-v1
+
+on:
+  pull_request:
+    paths:
+      - 'trillionnium/Cargo.toml'
+      - 'trillionnium/Cargo.lock'
+      - 'trillionnium/crates/trnm-poco-node/**'
+      - 'trillionnium/crates/trnm-poco-node-authority/**'
+      - 'trillionnium/crates/trnm-poco-node-io/**'
+      - 'trillionnium/crates/trnm-poco-node-host/**'
+      - 'trillionnium/crates/trnm-poco-node-cli/**'
+      - 'config/build-closures-v1.toml'
+      - 'config/module-coverage-v1.toml'
+      - 'config/node-decomposition-v1.toml'
+      - 'scripts/ci/check_build_closures_v1.py'
+      - 'scripts/ci/check_node_decomposition_v1.py'
+      - '.github/workflows/trnm-node-decomposition-v1.yml'
+  push:
+    branches:
+      - main
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - 'trillionnium/Cargo.toml'
+      - 'trillionnium/Cargo.lock'
+      - 'trillionnium/crates/trnm-poco-node/**'
+      - 'trillionnium/crates/trnm-poco-node-authority/**'
+      - 'trillionnium/crates/trnm-poco-node-io/**'
+      - 'trillionnium/crates/trnm-poco-node-host/**'
+      - 'trillionnium/crates/trnm-poco-node-cli/**'
+      - 'config/build-closures-v1.toml'
+      - 'config/module-coverage-v1.toml'
+      - 'config/node-decomposition-v1.toml'
+      - 'scripts/ci/check_build_closures_v1.py'
+      - 'scripts/ci/check_node_decomposition_v1.py'
+      - '.github/workflows/trnm-node-decomposition-v1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-node-decomposition-v1-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  decomposition-contract:
+    name: node-decomposition-x230
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman') && github.triggering_actor == github.actor &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Bind exact source and static decomposition contract
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+
+      - name: Require clean formatting
+        working-directory: trillionnium-chain
+        run: cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Compile and test the explicit node boundaries
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          for package in \
+            trnm-poco-node-authority \
+            trnm-poco-node-io \
+            trnm-poco-node-host \
+            trnm-poco-node-cli
+          do
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p "${package}" --all-targets --locked --offline
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p "${package}" --all-targets --locked --offline -- -D warnings
+          done
+
+      - name: Prove the dedicated CLI is status-only and fail-closed
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          status=$(cargo run --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --bin trnm-poco-node-cli \
+            --locked --offline -- status)
+          printf '%s\n' "$status" | grep -q '"production_candidate":false'
+          printf '%s\n' "$status" | grep -q '"authority_gate_open":false'
+          printf '%s\n' "$status" | grep -q '"production_activation":false'
+          printf '%s\n' "$status" | grep -q '"start_permitted":false'
+          set +e
+          cargo run --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --bin trnm-poco-node-cli \
+            --locked --offline -- start \
+            >"$RUNNER_TEMP/trnm-node-start.out" \
+            2>"$RUNNER_TEMP/trnm-node-start.err"
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          grep -q 'node host start blocked' "$RUNNER_TEMP/trnm-node-start.err"
+
+      - name: Require validation to leave checkout clean
+        working-directory: trillionnium-chain
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
