@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      EXPECTED_PARENT: 8ee37a2358852138c07488799f46502ce1230d9f
+      EXPECTED_PARENT: cb1d88788309782ffb9244e411388af54cb1e11f
       SELF_PATH: .github/workflows/trnm-admin-trust-migration-once.yml
       SCRIPT_PATH: scripts/ci/trnm_admin_trust_migration_once.py
     steps:
@@ -88,4 +88,5 @@ jobs:
           name: trnm-admin-trust-migration-${{ github.sha }}
           path: ${{ runner.temp }}/trnm-admin-trust-migration
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 7
