@@ -2,6 +2,7 @@ schema_version = 1
 closure_registry_id = "trnm-build-closures-v1"
 workspace_manifest = "trillionnium/Cargo.toml"
 node_manifest = "trillionnium/crates/trnm-poco-node/Cargo.toml"
+production_entrypoint_manifest = "trillionnium/crates/trnm-poco-node-cli/Cargo.toml"
 production_candidate = false
 production_consensus_activation = false
 release_ready = false
@@ -29,16 +30,22 @@ default_node_has_no_ai_v1_dependencies = true
 candidate_commands_require_explicit_feature = true
 candidate_modules_require_explicit_feature = true
 production_has_no_lab_fixture_research_poc_or_legacy = true
+production_entrypoint_is_dedicated_cli = true
+production_composition_edges_are_explicit = true
 feature_resolution_is_recursive = true
 dev_dependencies_are_not_runtime_authority = true
 no_feature_silently_promotes_machine_truth = true
 
 [[closures]]
 id = "node-prod-v0"
-root_packages = ["trnm-poco-node"]
+root_packages = ["trnm-poco-node-cli"]
 default_features = true
 features = []
 required_packages = [
+  "trnm-poco-node-cli",
+  "trnm-poco-node-host",
+  "trnm-poco-node-authority",
+  "trnm-poco-node-io",
   "trnm-poco-node",
   "trnm-consensus-core",
   "trnm-consensus-crypto",
