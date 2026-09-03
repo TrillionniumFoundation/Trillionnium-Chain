@@ -6,27 +6,38 @@ on:
     paths:
       - '.github/workflows/trnm-p2-node-candidate-devnet-cli.yml'
       - 'docs/development/**'
+      - 'docs/architecture/TRNM_CANDIDATE_RUNTIME_CLOSURE_V1.md'
+      - 'config/candidate-runtime-closure-v1.toml'
       - 'config/documentation-truth-v1.json'
+      - 'scripts/ci/check_candidate_runtime_closure_v1.py'
       - 'scripts/ci/check_canonical_development_plan.sh'
       - 'scripts/ci/check_documentation_reference_closure_v1.py'
       - 'scripts/ci/check_candidate_devnet_clippy_v1.sh'
       - 'scripts/check_ci_runner_policy.sh'
       - 'scripts/check_ci_runner_policy_test.sh'
       - 'trillionnium/crates/trnm-poco-lab-validator/**'
+      - 'trillionnium/crates/trnm-poco-node/src/lab_authority.rs'
+      - 'trillionnium/crates/trnm-poco-node/src/native_proposal_p_host.rs'
   push:
     branches:
       - main
       - work/plan-v2-full-gap-closure-20260902
+      - work/plan-v2-native-application-owner-20260903
     paths:
       - '.github/workflows/trnm-p2-node-candidate-devnet-cli.yml'
       - 'docs/development/**'
+      - 'docs/architecture/TRNM_CANDIDATE_RUNTIME_CLOSURE_V1.md'
+      - 'config/candidate-runtime-closure-v1.toml'
       - 'config/documentation-truth-v1.json'
+      - 'scripts/ci/check_candidate_runtime_closure_v1.py'
       - 'scripts/ci/check_canonical_development_plan.sh'
       - 'scripts/ci/check_documentation_reference_closure_v1.py'
       - 'scripts/ci/check_candidate_devnet_clippy_v1.sh'
       - 'scripts/check_ci_runner_policy.sh'
       - 'scripts/check_ci_runner_policy_test.sh'
       - 'trillionnium/crates/trnm-poco-lab-validator/**'
+      - 'trillionnium/crates/trnm-poco-node/src/lab_authority.rs'
+      - 'trillionnium/crates/trnm-poco-node/src/native_proposal_p_host.rs'
 
 permissions:
   contents: read
@@ -81,6 +92,7 @@ jobs:
         run: |
           bash scripts/ci/check_canonical_development_plan.sh
           python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_candidate_runtime_closure_v1.py
 
   candidate-devnet-cli:
     name: candidate-devnet-cli
@@ -129,6 +141,9 @@ jobs:
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
 
+      - name: Validate bounded candidate runtime closure
+        run: python3 scripts/ci/check_candidate_runtime_closure_v1.py
+
       - name: Format compile and strict lint
         run: |
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
@@ -153,6 +168,7 @@ jobs:
             trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
           grep -q '^candidate_devnet_production_activation = false$' \
             trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          python3 scripts/ci/check_candidate_runtime_closure_v1.py
           python3 scripts/ci/check_repository_truth_v1.py
           bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
           bash scripts/ci/check_canonical_development_plan.sh
