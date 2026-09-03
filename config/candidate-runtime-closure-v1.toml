@@ -111,7 +111,7 @@ required_tokens = [
   "seal_valid_and_deliver_core_d_v0",
   "retry_core_d_v0",
   "persist_safety_c_and_ack_k_v0",
-  "confirm_application_k_checkpoint_facts_v0",
+  "checkpoint_k_whole_node_v0",
 ]
 forbidden_tokens = []
 
