@@ -1,0 +1,134 @@
+schema_version = 1
+closure_id = "trnm-candidate-runtime-closure-v1"
+package_manifest = "trillionnium/crates/trnm-poco-lab-validator/Cargo.toml"
+build_closure_registry = "config/build-closures-v1.toml"
+node_component_manifest = "trillionnium/crates/trnm-poco-node/Cargo.toml"
+validation_script = "scripts/ci/check_candidate_runtime_closure_v1.py"
+architecture_document = "docs/architecture/TRNM_CANDIDATE_RUNTIME_CLOSURE_V1.md"
+production_candidate = false
+production_consensus_activation = false
+public_testnet_ready = false
+release_ready = false
+
+required_metadata_true = [
+  "real_core_config",
+  "real_core_runtime",
+  "strict_ed25519",
+  "safety_store_runtime",
+  "signer_journal_runtime",
+  "native_execution_runtime",
+  "authenticated_fresh_session_runtime",
+  "p2p_admission_external_fencing_hard_gate",
+  "persisted_authenticated_peer_mesh_runtime_wired",
+  "generation_aware_pacemaker_runtime_wired",
+  "private_runtime_control_runtime_wired",
+  "signed_runtime_evidence_runtime_wired",
+  "strict_consensus_ingress",
+  "weighted_vote_qc_collector",
+  "timeout_tc_collector",
+  "consensus_run_report_runtime_wired",
+  "candidate_devnet_validator_cli",
+  "candidate_devnet_external_fence_required",
+  "continuous_consensus_runtime",
+]
+
+required_metadata_false = [
+  "authenticated_fresh_session_multihost_observed",
+  "p2p_admission_external_fencing_authority",
+  "p2p_admission_host_attestation",
+  "p2p_admission_multihost_observed",
+  "authenticated_frame_restart_replay_authority",
+  "remote_consensus_signer_runtime_wired",
+  "external_monotonic_watermark_runtime_injected",
+  "proposal_signer_runtime_wired",
+  "candidate_devnet_hsm_authority",
+  "candidate_devnet_host_attestation",
+  "candidate_devnet_public_testnet_ready",
+  "candidate_devnet_production_activation",
+  "production_candidate",
+  "production_consensus_activation",
+  "geo_wan_evidence",
+  "g3_evidence_complete",
+  "validator_runtime_started",
+]
+
+[[source_contracts]]
+path = "trillionnium/crates/trnm-poco-lab-validator/src/candidate_devnet.rs"
+required_tokens = [
+  "--acknowledge-candidate-only",
+  "UnixExternalPeerLeaseAuthorityV1::connect",
+  "run_bounded_consensus_with_external_fence_v1",
+  "commission_deployed_ordinary_runtime_v1",
+  "CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1: bool = false",
+  "CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1: bool = false",
+]
+forbidden_tokens = [
+  "CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1: bool = true",
+  "CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1: bool = true",
+]
+
+[[source_contracts]]
+path = "trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs"
+required_tokens = [
+  "PersistentAuthenticatedPeerMeshV0",
+  "GenerationAwarePacemakerV0",
+  "ContinuousValidatorAuthorityV0",
+  "PocoNodeLabOrdinaryProposalRuntimeV0",
+  "run_bounded_consensus_with_external_fence_v1",
+  "StrictEd25519Verifier",
+]
+forbidden_tokens = []
+
+[[source_contracts]]
+path = "trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs"
+required_tokens = [
+  "PersistentAuthenticatedPeerMeshV0",
+  "PayloadReplayStoreV1",
+  "ExternalPeerLeaseAuthorityV1",
+  "HostAttestationAuthorityV1",
+  "MAX_OUTBOUND_QUEUE_BYTES_GLOBAL",
+  "MAX_INBOUND_QUEUE_BYTES_GLOBAL",
+]
+forbidden_tokens = []
+
+[[source_contracts]]
+path = "trillionnium/crates/trnm-poco-node/src/lab_authority.rs"
+required_tokens = [
+  "PocoNodeLabOrdinaryProposalRuntimeV0",
+  "drive_one_to_inert_request_v0",
+  "PocoNodeNativeProposalPHostV0::open_for_lab_v0",
+  "seal_valid_and_deliver_core_d_v0",
+  "persist_safety_c_and_ack_k_v0",
+  "apply_and_ack_finalization_v0",
+  "PocoNodeLabSignedVoteOutboundV0",
+]
+forbidden_tokens = []
+
+[[source_contracts]]
+path = "trillionnium/crates/trnm-poco-node/src/native_proposal_p_host.rs"
+required_tokens = [
+  "execute_and_persist_p_v0",
+  "seal_valid_and_deliver_core_d_v0",
+  "retry_core_d_v0",
+  "persist_safety_c_and_ack_k_v0",
+  "confirm_application_k_checkpoint_facts_v0",
+]
+forbidden_tokens = []
+
+[[source_contracts]]
+path = ".github/workflows/trnm-p2-node-candidate-devnet-cli.yml"
+required_tokens = [
+  "ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}",
+  "check_candidate_devnet_clippy_v1.sh",
+  "--test candidate_devnet_cli",
+  "candidate_devnet_hsm_authority = false",
+  "candidate_devnet_production_activation = false",
+]
+forbidden_tokens = []
+
+[build_closure]
+lab_group = "lab"
+lab_package = "trnm-poco-lab-validator"
+devnet_closure = "node-devnet-v0"
+production_closure = "node-prod-v0"
+production_forbidden_groups = ["ai-v1-candidate", "lab", "evidence", "poc", "legacy"]
