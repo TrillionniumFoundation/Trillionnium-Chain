@@ -1905,6 +1905,9 @@ dependencies = [
 name = "trnm-poco-node-authority"
 version = "0.1.0"
 dependencies = [
+ "tempfile",
+ "trnm-durable-file-adapters-v0",
+ "trnm-node-boundary-v0",
  "trnm-poco-node",
 ]
 
@@ -1919,6 +1922,8 @@ dependencies = [
 name = "trnm-poco-node-host"
 version = "0.1.0"
 dependencies = [
+ "tempfile",
+ "trnm-node-boundary-v0",
  "trnm-poco-node-authority",
  "trnm-poco-node-io",
  "trnm-poco-node-production-v0",
