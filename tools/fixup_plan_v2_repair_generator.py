@@ -100,6 +100,67 @@ if count != 1:
     raise SystemExit(f"repository blocker registry drift: expected one Cargo metadata edge, found {count}")
 registry_path.write_text(registry.replace(old_metadata, new_metadata, 1), encoding="utf-8")
 
+canonical_path = root / "scripts/ci/check_canonical_development_plan.sh"
+canonical = canonical_path.read_text(encoding="utf-8")
+old_blob_function = '''def head_blob(relative: str) -> str:
+    completed = subprocess.run(
+        ["git", "rev-parse", f"HEAD:{relative}"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    value = completed.stdout.strip()
+    require(re.fullmatch(r"[0-9a-f]{40}", value) is not None, f"{relative}: invalid HEAD blob")
+    return value
+'''
+new_blob_function = '''def source_blob(relative: str) -> str:
+    if os.environ.get("TRNM_PLAN_EDITING") == "1":
+        command = ["git", "hash-object", "--", relative]
+        label = "worktree"
+    else:
+        command = ["git", "rev-parse", f"HEAD:{relative}"]
+        label = "HEAD"
+    completed = subprocess.run(
+        command,
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    value = completed.stdout.strip()
+    require(
+        re.fullmatch(r"[0-9a-f]{40}", value) is not None,
+        f"{relative}: invalid {label} blob",
+    )
+    return value
+'''
+count = canonical.count(old_blob_function)
+if count != 1:
+    raise SystemExit(f"canonical plan gate drift: expected one HEAD blob function, found {count}")
+canonical = canonical.replace(old_blob_function, new_blob_function, 1)
+old_blob_call = '''    actual = head_blob(relative)
+'''
+new_blob_call = '''    actual = source_blob(relative)
+'''
+count = canonical.count(old_blob_call)
+if count != 1:
+    raise SystemExit(f"canonical plan gate drift: expected one HEAD blob call, found {count}")
+canonical_path.write_text(canonical.replace(old_blob_call, new_blob_call, 1), encoding="utf-8")
+
+for relative in (
+    "scripts/ci/check_payload_replay_recovery_v1.sh",
+    "scripts/ci/check_replay_to_core_coordinator_v1.sh",
+):
+    path = root / relative
+    text = path.read_text(encoding="utf-8")
+    old_gate = "bash scripts/ci/check_canonical_development_plan.sh\n"
+    new_gate = "TRNM_PLAN_EDITING=1 bash scripts/ci/check_canonical_development_plan.sh\n"
+    count = text.count(old_gate)
+    if count != 1:
+        raise SystemExit(f"{relative}: expected one canonical plan gate edge, found {count}")
+    path.write_text(text.replace(old_gate, new_gate, 1), encoding="utf-8")
+
 technical_path = root / "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
 technical = technical_path.read_text(encoding="utf-8")
 
