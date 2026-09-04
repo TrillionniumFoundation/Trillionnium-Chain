@@ -1,4 +1,5 @@
 # Temporary workflow used to apply and verify the current blocker repair set.
+# PR is temporarily closed so this branch-only run avoids unrelated fan-out.
 name: one-shot blocker repair
 
 on:
