@@ -13,6 +13,7 @@ on:
       - "scripts/ci/one_shot_blocker_repair.py"
       - "scripts/ci/one_shot_blocker_repair_tests.py"
       - "scripts/ci/one_shot_blocker_repair_restart.py"
+      - "scripts/ci/one_shot_blocker_repair_retry_compat.py"
 
 permissions:
   contents: write
@@ -46,6 +47,7 @@ jobs:
       - name: Apply assertion-backed repair transaction
         run: |
           python3 scripts/ci/one_shot_blocker_repair.py
+          python3 scripts/ci/one_shot_blocker_repair_retry_compat.py
           python3 scripts/ci/one_shot_blocker_repair_tests.py
           python3 scripts/ci/one_shot_blocker_repair_restart.py
 
@@ -103,6 +105,7 @@ jobs:
         run: |
           set -euo pipefail
           rm -f scripts/ci/one_shot_blocker_repair.py
+          rm -f scripts/ci/one_shot_blocker_repair_retry_compat.py
           rm -f scripts/ci/one_shot_blocker_repair_tests.py
           rm -f scripts/ci/one_shot_blocker_repair_restart.py
           git add -A scripts/ci
