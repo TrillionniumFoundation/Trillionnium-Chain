@@ -1,3 +1,4 @@
+# Registered in the parent commit; this update triggers the one-shot repair.
 name: one-shot blocker repair
 
 on:
