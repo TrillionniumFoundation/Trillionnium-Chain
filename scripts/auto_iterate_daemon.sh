@@ -49,7 +49,9 @@ comment_latest_commit_to_pr() {
   latest_commit="$(git rev-parse --short HEAD)"
   title="$(git log -1 --pretty=%s)"
 
-  body="Round update (local auto-iterate daemon)\n\n- Commit: \\`${latest_commit}\\`\n- Branch: \\`${branch}\\`\n- Change: ${title}\n- Validation: task-local verification passed before commit\n- Risk: low (automation/script/gate scope)\n"
+  printf -v body \
+    'Round update (local auto-iterate daemon)\n\n- Commit: `%s`\n- Branch: `%s`\n- Change: %s\n- Validation: task-local verification passed before commit\n- Risk: low (automation/script/gate scope)\n' \
+    "$latest_commit" "$branch" "$title"
 
   if gh pr comment "$PR_NUMBER" --repo "$repo" --body "$body" >/dev/null 2>&1; then
     log "pr-comment-ok: pr=#$PR_NUMBER commit=$latest_commit"
