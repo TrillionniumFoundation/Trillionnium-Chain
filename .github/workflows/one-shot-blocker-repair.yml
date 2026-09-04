@@ -1,4 +1,4 @@
-# Registered in the parent commits; this PR synchronization triggers the repair.
+# Registered in the parent commits; PR synchronization triggers the repair.
 name: one-shot blocker repair
 
 on:
@@ -11,6 +11,7 @@ on:
     paths:
       - ".github/workflows/one-shot-blocker-repair.yml"
       - "scripts/ci/one_shot_blocker_repair.py"
+      - "scripts/ci/one_shot_blocker_repair_tests.py"
 
 permissions:
   contents: write
@@ -42,7 +43,9 @@ jobs:
           toolchain: 1.95.0
 
       - name: Apply assertion-backed repair transaction
-        run: python3 scripts/ci/one_shot_blocker_repair.py
+        run: |
+          python3 scripts/ci/one_shot_blocker_repair.py
+          python3 scripts/ci/one_shot_blocker_repair_tests.py
 
       - name: Validate retry-budget concurrency contract
         run: |
@@ -64,6 +67,9 @@ jobs:
           cargo test --manifest-path trillionnium/Cargo.toml --locked \
             -p trnm-node --features legacy-harness --bin trnm-sim \
             critical_guard
+          cargo test --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-node --features legacy-harness --bin trnm-sim \
+            critical_txs_wait_for_same_task_prerequisites
 
       - name: Validate event replay and legacy freeze
         run: |
@@ -75,6 +81,7 @@ jobs:
         run: |
           set -euo pipefail
           rm -f scripts/ci/one_shot_blocker_repair.py
+          rm -f scripts/ci/one_shot_blocker_repair_tests.py
           rm -f .github/workflows/one-shot-blocker-repair.yml
           git add -A
           if git diff --cached --quiet; then
