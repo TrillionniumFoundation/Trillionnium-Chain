@@ -222,3 +222,33 @@ truth.
 )
 
 technical_path.write_text(technical, encoding="utf-8")
+
+workflow_root = root / ".github/workflows"
+audited_one_shots = {
+    "zz-apply-plan-v2-closure-tree.yml",
+    "zz-clean-temporary-carriers.yml",
+    "zz-consolidate-repository-owned-v1.yml",
+    "zz-consolidate-repository-owned-v2.yml",
+    "zz-finalize-repository-closure-v3.yml",
+    "zz-finalize-repository-closure-v4.yml",
+    "zz-finalize-repository-closure-v5.yml",
+    "zz-integrate-node-split-v1.yml",
+    "zz-integrate-repository-cores-v0.yml",
+    "zz-plan-v2-durable-adapter-repair.yml",
+    "zz-qualify-plan-v2-exact-head.yml",
+    "zz-refresh-plan-v2-implementation-truth.yml",
+}
+retained_until_shell_cleanup = {
+    "zz-apply-plan-v2-closure-tree.yml",
+    "zz-plan-v2-durable-adapter-repair.yml",
+}
+present_one_shots = {path.name for path in workflow_root.glob("zz-*.yml")}
+if present_one_shots != audited_one_shots:
+    missing = sorted(audited_one_shots - present_one_shots)
+    unexpected = sorted(present_one_shots - audited_one_shots)
+    raise SystemExit(
+        f"one-shot workflow inventory drift: missing={missing} unexpected={unexpected}"
+    )
+for path in sorted(workflow_root.glob("zz-*.yml")):
+    if path.name not in retained_until_shell_cleanup:
+        path.unlink()
