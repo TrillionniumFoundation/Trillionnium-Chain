@@ -35,14 +35,39 @@ control_path.write_text(control.replace(old_identifier, new_identifier, 1), enco
 
 technical_path = root / "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
 technical = technical_path.read_text(encoding="utf-8")
-old_primary = '''**Primary code.** `trnm-consensus-safety-rules`, `trnm-consensus-safety-store`,
+
+
+def replace_module_primary(
+    module: str,
+    next_module: str,
+    marker: str,
+    old_primary: str,
+    new_primary: str,
+) -> None:
+    global technical
+    section = technical.split(f"## {next_module}", 1)[0].split(f"## {module}", 1)[-1]
+    if marker in section:
+        return
+    count = technical.count(old_primary)
+    if count != 1:
+        raise SystemExit(
+            f"{module} technical reference drift: expected one primary-code edge, found {count}"
+        )
+    technical = technical.replace(old_primary, new_primary, 1)
+
+
+replace_module_primary(
+    "M03",
+    "M04",
+    "`trnm-durable-file-adapters-v0`",
+    '''**Primary code.** `trnm-consensus-safety-rules`, `trnm-consensus-safety-store`,
 `trnm-consensus-signer-journal`, `trnm-consensus-unix-remote-signer`,
 `trnm-consensus-unix-fleet-signer`, `trnm-consensus-external-watermark`,
 `trnm-consensus-external-node-checkpoint`,
 `trnm-consensus-remote-signer-service`, and
 `trnm-whole-node-checkpoint-types`.
-'''
-new_primary = '''**Primary code.** `trnm-consensus-safety-rules`, `trnm-consensus-safety-store`,
+''',
+    '''**Primary code.** `trnm-consensus-safety-rules`, `trnm-consensus-safety-store`,
 `trnm-consensus-signer-journal`, `trnm-consensus-unix-remote-signer`,
 `trnm-consensus-unix-fleet-signer`, `trnm-consensus-external-watermark`,
 `trnm-consensus-external-node-checkpoint`,
@@ -51,10 +76,82 @@ new_primary = '''**Primary code.** `trnm-consensus-safety-rules`, `trnm-consensu
 hash-chained, sync-before-return repository adapters; it does not substitute for
 device-backed custody, an independent monotonic anchor, or physical durability
 evidence.
-'''
-if "`trnm-durable-file-adapters-v0`" not in technical.split("## M04", 1)[0].split("## M03", 1)[-1]:
-    count = technical.count(old_primary)
-    if count != 1:
-        raise SystemExit(f"M03 technical reference drift: expected one primary-code edge, found {count}")
-    technical = technical.replace(old_primary, new_primary, 1)
+''',
+)
+replace_module_primary(
+    "M05",
+    "M06",
+    "`trnm-tx-lifecycle-v0`",
+    '''**Primary code.** `trnm-mempool` and `trnm-application-tx-builder-v0`.
+''',
+    '''**Primary code.** `trnm-mempool`, `trnm-application-tx-builder-v0`, and
+`trnm-tx-lifecycle-v0`. The lifecycle crate freezes deterministic phase,
+receipt, authorization, replacement, broadcast-intent, finality-readback,
+tombstone, and replay-floor contracts without opening a socket or holding a
+signer.
+''',
+)
+replace_module_primary(
+    "M13",
+    "M14",
+    "`trnm-state-sync-v0`",
+    '''**Primary code.** `trnm-poco-cross-plane-readback-v1`,
+`trnm-poco-order-finality-verifier-v1`, `trnm-finality-types`, and
+`trnm-finality-verifier`.
+''',
+    '''**Primary code.** `trnm-poco-cross-plane-readback-v1`,
+`trnm-poco-order-finality-verifier-v1`, `trnm-finality-types`,
+`trnm-finality-verifier`, `trnm-migration-v0`, and `trnm-state-sync-v0`.
+Migration and state-sync packages remain proof-bound and cannot manufacture a
+trust anchor, finality receipt, schema root, or activation authority.
+''',
+)
+replace_module_primary(
+    "M15",
+    "M16",
+    "`trnm-release-bundle-v0`",
+    '''**Primary code.** `trnm-poco-node` and `trnm-bridge-poc`; legacy
+`trnm-consensus-app` and `trnm-node` are excluded migration residue.
+''',
+    '''**Primary code.** `trnm-poco-node`, `trnm-poco-node-authority`,
+`trnm-poco-node-io`, `trnm-poco-node-host`, `trnm-poco-node-cli`,
+`trnm-bridge-poc`, `trnm-node-boundary-v0`, `trnm-poco-node-production-v0`, and
+`trnm-release-bundle-v0`; legacy `trnm-consensus-app` and `trnm-node` are
+excluded migration residue. Production-shaped composition remains inert until
+its independent authority, evidence, review, release, and activation gates all
+bind the same exact source.
+''',
+)
+replace_module_primary(
+    "M16",
+    "M17",
+    "`trnm-control-plane-v0`",
+    '''**Primary code.** No production crate is commissioned. Current authority is the
+machine module registry, telemetry/evidence contracts, and node-local guard
+interface. This absence is explicit and cannot be hidden by a service mock.
+''',
+    '''**Primary code.** `trnm-control-plane-v0` implements the bounded,
+non-authoritative plan and receipt contracts plus the node-local independent
+guard interface. It is not commissioned as production authority and cannot
+silently promote machine truth, consensus parameters, placement, release, or
+activation.
+''',
+)
+replace_module_primary(
+    "M17",
+    "Module completion rule",
+    "`trnm-production-adapter-conformance-v0`",
+    '''**Primary code.** `trnm-bench`, `trnm-consensus-sim`,
+`trnm-research-protocol`, and `trnm-poco-lab-validator`, plus `scripts/ci`,
+`formal`, fuzz targets, evidence schemas, and read-only campaign tooling.
+''',
+    '''**Primary code.** `trnm-bench`, `trnm-consensus-sim`,
+`trnm-research-protocol`, `trnm-poco-lab-validator`, and
+`trnm-production-adapter-conformance-v0`, plus `scripts/ci`, `formal`, fuzz
+targets, evidence schemas, and read-only campaign tooling. Conformance outputs
+are evidence inputs only and cannot self-accept an adapter or open production
+truth.
+''',
+)
+
 technical_path.write_text(technical, encoding="utf-8")
