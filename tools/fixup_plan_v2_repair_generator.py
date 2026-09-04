@@ -8,6 +8,20 @@ root = pathlib.Path(__file__).resolve().parents[1]
 
 repair_path = root / "tools/repair_plan_v2_remaining_blockers.py"
 source = repair_path.read_text(encoding="utf-8")
+old_imports = '''import hashlib
+import json
+import pathlib
+'''
+new_imports = '''import hashlib
+import json
+import os
+import pathlib
+'''
+count = source.count(old_imports)
+if count != 1:
+    raise SystemExit(f"repair generator source drift: expected one import edge, found {count}")
+source = source.replace(old_imports, new_imports, 1)
+
 old = '''            body = inline.group("body").strip()
             if body and not body.endswith(","):
                 body += ","
@@ -40,6 +54,13 @@ new_lock_edge = '''    pin_all_path_dependencies()
                 str(manifest.relative_to(ROOT)),
                 "--offline",
             )
+    github_env = os.environ.get("GITHUB_ENV")
+    runner_temp = os.environ.get("RUNNER_TEMP")
+    if github_env and runner_temp:
+        cargo_home = pathlib.Path(runner_temp) / "plan-v2-cargo-home"
+        cargo_home.mkdir(mode=0o700, parents=True, exist_ok=True)
+        with pathlib.Path(github_env).open("a", encoding="utf-8") as handle:
+            handle.write(f"CARGO_HOME={cargo_home}\\n")
     patch_runner_policy_fixture()
 '''
 count = source.count(old_lock_edge)
