@@ -1,0 +1,113 @@
+name: plan-v2 final repository blocker closure
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/zz-final-plan-v2-blocker-closure.yml
+      - tools/close_final_plan_v2_blockers.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: plan-v2-final-repository-blocker-closure
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  BRANCH: work/plan-v2-full-gap-closure-20260902
+
+jobs:
+  close-and-publish:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact triggering branch head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify source identity
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+
+      - name: Apply exact fail-closed repairs and refresh all plan pins
+        run: |
+          set -euo pipefail
+          python3 tools/close_final_plan_v2_blockers.py
+          python3 -m py_compile tools/close_final_plan_v2_blockers.py
+
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+
+      - name: Format and validate the durable adapter
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --check
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 --all-targets --locked
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 --all-targets --locked -- -D warnings
+
+      - name: Validate repository-owned closure before commit
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_required_baseline_closure_v1.py
+          python3 scripts/ci/check_build_closures_v1.py
+
+      - name: Create the self-cleaning exact-source commit
+        run: |
+          set -euo pipefail
+          git rm \
+            .github/workflows/zz-final-plan-v2-blocker-closure.yml \
+            tools/close_final_plan_v2_blockers.py
+          git add -A
+          git diff --cached --check
+          test -n "$(git diff --cached --name-only)"
+          git config user.name 'plan-v2-closure-bot'
+          git config user.email 'plan-v2-closure-bot@users.noreply.github.com'
+          git commit -m 'fix(durable): close final repository-owned blockers'
+
+      - name: Bind exact committed source and machine truth
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_plan_manifest_pins_v1.py
+          python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_required_baseline_closure_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/generate_release_status_v1.py --check-deterministic \
+            --output "${RUNNER_TEMP}/trnm-release-status-v1.json"
+          python3 scripts/ci/check_external_evidence_v1.py \
+            --output "${RUNNER_TEMP}/external-evidence-status-v1.json"
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Publish exact qualified source
+        run: |
+          set -euo pipefail
+          git push origin HEAD:${BRANCH}
+          echo "published_head=$(git rev-parse HEAD)"
+          echo "published_tree=$(git rev-parse 'HEAD^{tree}')"
