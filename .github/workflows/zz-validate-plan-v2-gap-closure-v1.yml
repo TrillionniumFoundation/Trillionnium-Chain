@@ -1,0 +1,78 @@
+name: validate-plan-v2-gap-closure-v1
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/zz-validate-plan-v2-gap-closure-v1.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-plan-v2-gap-closure-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  RUST_BACKTRACE: "1"
+
+jobs:
+  focused:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/plan-v2-full-gap-closure-20260902' &&
+      github.actor == 'ProfHepta'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+      - name: Select pinned Rust toolchain
+        run: rustup override set 1.95.0
+      - name: Rust format
+        working-directory: trillionnium
+        run: cargo fmt --all -- --check
+      - name: Check changed packages
+        working-directory: trillionnium
+        run: |
+          cargo check --locked --all-targets \
+            -p trnm-poco-agent-market-v1 \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host
+      - name: Test changed packages
+        working-directory: trillionnium
+        run: |
+          cargo test --locked --all-targets \
+            -p trnm-poco-agent-market-v1 \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host
+      - name: Strict Clippy changed packages
+        working-directory: trillionnium
+        run: |
+          cargo clippy --locked --all-targets \
+            -p trnm-poco-agent-market-v1 \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host -- -D warnings
+      - name: Compile changed Python CI tooling
+        run: python3 -m py_compile scripts/ci/run_bounded_workspace_tests_v1.py
+      - name: Run repository truth projection
+        run: |
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_required_baseline_closure_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+      - name: Require clean checkout
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
