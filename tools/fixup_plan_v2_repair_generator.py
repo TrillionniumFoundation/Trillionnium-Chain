@@ -22,7 +22,31 @@ new = '''            body = inline.group("body").strip()
 count = source.count(old)
 if count != 1:
     raise SystemExit(f"repair generator source drift: expected one inline-table edge, found {count}")
-repair_path.write_text(source.replace(old, new, 1), encoding="utf-8")
+source = source.replace(old, new, 1)
+
+old_lock_edge = '''    pin_all_path_dependencies()
+    patch_runner_policy_fixture()
+'''
+new_lock_edge = '''    pin_all_path_dependencies()
+    for lockfile in sorted(ROOT.rglob("Cargo.lock")):
+        if any(part in {".git", "node_modules", "target"} for part in lockfile.parts):
+            continue
+        manifest = lockfile.parent / "Cargo.toml"
+        if manifest.is_file():
+            run(
+                "cargo",
+                "generate-lockfile",
+                "--manifest-path",
+                str(manifest.relative_to(ROOT)),
+                "--offline",
+            )
+    patch_runner_policy_fixture()
+'''
+count = source.count(old_lock_edge)
+if count != 1:
+    raise SystemExit(f"repair generator source drift: expected one lock-generation edge, found {count}")
+source = source.replace(old_lock_edge, new_lock_edge, 1)
+repair_path.write_text(source, encoding="utf-8")
 
 control_path = root / "trillionnium/crates/trnm-control-plane-v0/src/lib.rs"
 control = control_path.read_text(encoding="utf-8")
