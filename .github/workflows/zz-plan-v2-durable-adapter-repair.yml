@@ -27,6 +27,8 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
   CARGO_INCREMENTAL: "0"
   CARGO_TERM_COLOR: never
+  CARGO_NET_RETRY: "5"
+  CARGO_HTTP_TIMEOUT: "120"
   RUSTUP_TOOLCHAIN: "1.95.0"
   BRANCH: work/plan-v2-full-gap-closure-20260902
 
@@ -60,6 +62,38 @@ jobs:
           git rm \
             .github/workflows/zz-plan-v2-durable-adapter-repair.yml \
             tools/fixup_plan_v2_repair_generator.py
+
+      - name: Prime isolated Cargo registry and prove offline resolution
+        run: |
+          set -euo pipefail
+          test -n "${CARGO_HOME:-}"
+          case "$CARGO_HOME" in
+            "$RUNNER_TEMP"/*) ;;
+            *) echo "CARGO_HOME is not isolated under RUNNER_TEMP: $CARGO_HOME" >&2; exit 2 ;;
+          esac
+          mkdir -p "$CARGO_HOME"
+          mapfile -t lockfiles < <(
+            find . -type f -name Cargo.lock \
+              -not -path './.git/*' \
+              -not -path '*/target/*' \
+              -print | LC_ALL=C sort
+          )
+          test "${#lockfiles[@]}" -gt 0
+          for lockfile in "${lockfiles[@]}"; do
+            manifest="${lockfile%/Cargo.lock}/Cargo.toml"
+            test -f "$manifest"
+            echo "priming locked dependencies for $manifest"
+            cargo fetch --manifest-path "$manifest" --locked
+          done
+          for lockfile in "${lockfiles[@]}"; do
+            manifest="${lockfile%/Cargo.lock}/Cargo.toml"
+            CARGO_NET_OFFLINE=true cargo metadata \
+              --manifest-path "$manifest" \
+              --locked \
+              --format-version 1 \
+              --no-deps >/dev/null
+          done
+          echo 'CARGO_NET_OFFLINE=true' >> "$GITHUB_ENV"
 
       - name: Verify preinstalled pinned Rust toolchain
         run: |
@@ -198,8 +232,8 @@ jobs:
         run: |
           set -euo pipefail
           git push origin HEAD:${BRANCH}
-          echo "head=$(git rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
-          echo "tree=$(git rev-parse 'HEAD^{tree}')" >> "${GITHUB_OUTPUT}"
+          echo "head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "tree=$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch exact-head required baseline
         env:
