@@ -15,10 +15,17 @@ network_owner = false
 signing_authority = false
 voting_authority = false
 finality_authority = false
+persistent_authority_composition_candidate = true
+recovery_barrier_delegation = true
+exact_stage_advance_delegation = true
 production_candidate = false
 production_consensus_activation = false
 
 [dependencies]
+trnm-node-boundary-v0 = { version = "0.1.0", path = "../trnm-node-boundary-v0" }
 trnm-poco-node-authority = { version = "0.1.0", path = "../trnm-poco-node-authority" }
 trnm-poco-node-io = { version = "0.1.0", path = "../trnm-poco-node-io" }
 trnm-poco-node-production-v0 = { version = "0.1.0", path = "../trnm-poco-node-production-v0" }
+
+[dev-dependencies]
+tempfile = "3"
