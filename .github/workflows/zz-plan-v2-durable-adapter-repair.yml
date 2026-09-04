@@ -1,0 +1,250 @@
+name: plan-v2 one-shot durable adapter repair
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/zz-plan-v2-durable-adapter-repair.yml
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: plan-v2-one-shot-durable-adapter-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out the exact triggering branch head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: work/plan-v2-full-gap-closure-20260902
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify source identity
+        run: test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+
+      - name: Apply exact fail-closed staging repair
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs')
+          source = path.read_text(encoding='utf-8')
+
+          old_helper_edge = '''    fn staging_matches(
+              active: &ActiveStagingV0,
+              identity: StagingIdentityV0,
+          ) -> Result<(), DurableFileErrorV0> {
+              if active.identity != identity {
+                  return Err(DurableFileErrorV0::StagingIdentityMismatch);
+              }
+              Ok(())
+          }
+
+          fn write_manifest_record(
+          '''
+          new_helper_edge = '''    fn staging_matches(
+              active: &ActiveStagingV0,
+              identity: StagingIdentityV0,
+          ) -> Result<(), DurableFileErrorV0> {
+              if active.identity != identity {
+                  return Err(DurableFileErrorV0::StagingIdentityMismatch);
+              }
+              Ok(())
+          }
+
+          fn validate_staging_inventory(
+              active: &ActiveStagingV0,
+          ) -> Result<(), DurableFileErrorV0> {
+              let mut manifest_seen = false;
+              for entry in fs::read_dir(&active.path)? {
+                  let entry = entry?;
+                  let path = entry.path();
+                  if !entry.file_type()?.is_file() {
+                      return Err(DurableFileErrorV0::RecoveryRequired(path));
+                  }
+                  let file_name = entry.file_name();
+                  let Some(name) = file_name.to_str() else {
+                      return Err(DurableFileErrorV0::RecoveryRequired(path));
+                  };
+                  if name == "MANIFEST.v0" {
+                      manifest_seen = true;
+                      continue;
+                  }
+                  let Some(raw_index) = name
+                      .strip_prefix("chunk-")
+                      .and_then(|value| value.strip_suffix(".bin"))
+                  else {
+                      return Err(DurableFileErrorV0::RecoveryRequired(path));
+                  };
+                  let index = raw_index
+                      .parse::<u32>()
+                      .map_err(|_| DurableFileErrorV0::RecoveryRequired(path.clone()))?;
+                  if raw_index.len() != 8
+                      || index >= active.chunk_count
+                      || name != format!("chunk-{index:08}.bin")
+                  {
+                      return Err(DurableFileErrorV0::RecoveryRequired(path));
+                  }
+              }
+              if !manifest_seen {
+                  return Err(DurableFileErrorV0::RecoveryRequired(
+                      active.path.join("MANIFEST.v0"),
+                  ));
+              }
+              Ok(())
+          }
+
+          fn write_manifest_record(
+          '''
+
+          old_commit_edge = '''        if active.manifest_digest != manifest.manifest_digest
+              || active.state_root != manifest.state_root
+              || active.height != manifest.height
+              || active.chunk_count != manifest.chunk_count
+              || active.total_bytes != manifest.total_bytes
+          {
+              return Err(DurableFileErrorV0::InvalidSnapshotManifest);
+          }
+          let mut total_bytes = 0_u64;
+          '''
+          new_commit_edge = '''        if active.manifest_digest != manifest.manifest_digest
+              || active.state_root != manifest.state_root
+              || active.height != manifest.height
+              || active.chunk_count != manifest.chunk_count
+              || active.total_bytes != manifest.total_bytes
+          {
+              return Err(DurableFileErrorV0::InvalidSnapshotManifest);
+          }
+          Self::validate_staging_inventory(&active)?;
+          let mut total_bytes = 0_u64;
+          '''
+
+          old_abort = '''    fn abort_staging(&mut self, staging: StagingIdentityV0) -> Result<(), Self::Error> {
+              let active = self
+                  .active
+                  .take()
+                  .ok_or(DurableFileErrorV0::UnknownStaging)?;
+              Self::staging_matches(&active, staging)?;
+              if active.identity.generation == self.current.generation {
+                  self.active = Some(active);
+                  return Err(DurableFileErrorV0::StagingIdentityMismatch);
+              }
+              if active.path.exists() {
+                  fs::remove_dir_all(&active.path)?;
+              }
+              let generation_path = self.generation_path(active.identity.generation);
+              if generation_path.exists() {
+                  fs::remove_dir_all(generation_path)?;
+              }
+              sync_directory(&self.root.join("staging"))?;
+              sync_directory(&self.root.join("generations"))?;
+              Ok(())
+          }
+          '''
+          new_abort = '''    fn abort_staging(&mut self, staging: StagingIdentityV0) -> Result<(), Self::Error> {
+              let active = self
+                  .active
+                  .as_ref()
+                  .ok_or(DurableFileErrorV0::UnknownStaging)?
+                  .clone();
+              Self::staging_matches(&active, staging)?;
+              if active.identity.generation == self.current.generation {
+                  return Err(DurableFileErrorV0::StagingIdentityMismatch);
+              }
+              if active.path.exists() {
+                  fs::remove_dir_all(&active.path)?;
+              }
+              let generation_path = self.generation_path(active.identity.generation);
+              if generation_path.exists() {
+                  fs::remove_dir_all(generation_path)?;
+              }
+              sync_directory(&self.root.join("staging"))?;
+              sync_directory(&self.root.join("generations"))?;
+              self.active = None;
+              Ok(())
+          }
+          '''
+
+          replacements = [
+              (old_helper_edge, new_helper_edge, 'staging helper edge'),
+              (old_commit_edge, new_commit_edge, 'commit inventory edge'),
+              (old_abort, new_abort, 'abort ownership edge'),
+          ]
+          for old, new, label in replacements:
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected one exact source edge, found {count}')
+              source = source.replace(old, new, 1)
+
+          path.write_text(source, encoding='utf-8')
+          PY
+
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+
+      - name: Format and verify the focused adapter
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --check
+          test "$(git diff --name-only)" = "trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs"
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 --all-targets --locked
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 --all-targets --locked -- -D warnings
+
+      - name: Publish the repaired exact source and retire this one-shot workflow
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/zz-plan-v2-durable-adapter-repair.yml
+          git add trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs
+          git diff --cached --check
+          git config user.name 'plan-v2-closure-bot'
+          git config user.email 'plan-v2-closure-bot@users.noreply.github.com'
+          git commit -m 'fix(durable): preserve staging ownership and close inventory'
+          git push origin HEAD:work/plan-v2-full-gap-closure-20260902
+          echo "published_head=$(git rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
+
+      - name: Dispatch exact-source required and specialized gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          REF: work/plan-v2-full-gap-closure-20260902
+        run: |
+          set -euo pipefail
+          for workflow_id in \
+            345677268 \
+            327120359 \
+            344348899 \
+            348267527 \
+            344285694 \
+            327120374 \
+            327120369 \
+            348065274 \
+            348112937 \
+            346387226 \
+            348090683 \
+            329835686 \
+            327120368 \
+            327120367 \
+            327120377
+          do
+            curl --fail-with-body --silent --show-error \
+              --request POST \
+              --header "Accept: application/vnd.github+json" \
+              --header "Authorization: Bearer ${GH_TOKEN}" \
+              --header "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${REPOSITORY}/actions/workflows/${workflow_id}/dispatches" \
+              --data "{\"ref\":\"${REF}\"}"
+          done
