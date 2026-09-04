@@ -33,7 +33,7 @@
 - Web4 当前阶段评分卡：[`../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)（若当前 checkout 含有该文件，优先引用它描述平台成熟度；它是基于特定仓库快照的阶段评分卡，不等于当前 release-ready，也不自动等于实时状态）
 - Web4 平台主文档（仅当文件实际存在时才可引用）：`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`
   - 当前 checkout 中该文件**缺失**；优先回到 `../../RELEASE_READINESS.md`、当前存在的 scorecard、仓库根 `../../README.md` 的 Documentation Entry Points，以及本目录文档，不要把一个不存在的 master 链接当作实时 truth source
-- Web4 阶段快照（历史状态，不等于当前 release-ready）：[`../../docs/archive/web4-history/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md`](../../docs/archive/web4-history/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md)
+- Web4 历史 GO-ready 证据（仅代表当时的 scoped run，不等于当前 release-ready）：[`../../docs/archive/web4-history/GO_READY_EVIDENCE_WEB4_2026-03-03.md`](../../docs/archive/web4-history/GO_READY_EVIDENCE_WEB4_2026-03-03.md)
 - Web4 前端接口基线（历史基线，当前 contract 以 `api-contract.md` 为准）：[`../../docs/archive/web4-history/WEB4_FRONTEND_API_INTERFACE_V0.md`](../../docs/archive/web4-history/WEB4_FRONTEND_API_INTERFACE_V0.md)
 - Web4 修复证据（历史 run evidence，不等于当前 release-ready）：[`../../docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md`](../../docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md)
 
