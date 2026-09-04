@@ -1,4 +1,4 @@
-# Registered in the parent commit; this update triggers the one-shot repair.
+# Registered in the parent commits; this PR synchronization triggers the repair.
 name: one-shot blocker repair
 
 on:
@@ -7,6 +7,10 @@ on:
       - "audit/docs-closure-20260904"
     paths:
       - ".github/workflows/one-shot-blocker-repair.yml"
+  pull_request:
+    paths:
+      - ".github/workflows/one-shot-blocker-repair.yml"
+      - "scripts/ci/one_shot_blocker_repair.py"
 
 permissions:
   contents: write
@@ -80,4 +84,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "fix(blockers): close governance retry and replay failures"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
