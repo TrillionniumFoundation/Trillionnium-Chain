@@ -117,6 +117,7 @@ impl From<io::Error> for DurableFileErrorV0 {
 fn acquire_exclusive_lock(path: &Path) -> Result<File, DurableFileErrorV0> {
     let file = OpenOptions::new()
         .create(true)
+        .truncate(false)
         .read(true)
         .write(true)
         .open(path)?;
@@ -345,7 +346,7 @@ fn validate_authority_chain(
     identity: NodeIdentityV0,
     bytes: &[u8],
 ) -> Result<Option<AuthorityRecordV0>, DurableFileErrorV0> {
-    if bytes.len() % AUTHORITY_RECORD_BYTES_V0 != 0 {
+    if !bytes.len().is_multiple_of(AUTHORITY_RECORD_BYTES_V0) {
         return Err(DurableFileErrorV0::CorruptAuthorityJournal(
             "truncated authority record",
         ));
@@ -1014,6 +1015,48 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
         {
             return Err(DurableFileErrorV0::InvalidSnapshotManifest);
         }
+
+        // Fail closed on every staging namespace entry before the pointer
+        // linearization point. Only the exact manifest plus the canonical,
+        // contiguous chunk names declared by this staging owner are admissible.
+        let mut manifest_seen = false;
+        let mut chunk_entries = 0_u32;
+        for entry in fs::read_dir(&active.path)? {
+            let entry = entry?;
+            let path = entry.path();
+            if !entry.file_type()?.is_file() {
+                return Err(DurableFileErrorV0::RecoveryRequired(path));
+            }
+            let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+                return Err(DurableFileErrorV0::RecoveryRequired(path));
+            };
+            if name == "MANIFEST.v0" {
+                manifest_seen = true;
+                continue;
+            }
+            let Some(raw_index) = name
+                .strip_prefix("chunk-")
+                .and_then(|name| name.strip_suffix(".bin"))
+            else {
+                return Err(DurableFileErrorV0::RecoveryRequired(path));
+            };
+            if raw_index.len() != 8 {
+                return Err(DurableFileErrorV0::RecoveryRequired(path));
+            }
+            let index = raw_index
+                .parse::<u32>()
+                .map_err(|_| DurableFileErrorV0::RecoveryRequired(path.clone()))?;
+            if index >= active.chunk_count || format!("{index:08}") != raw_index {
+                return Err(DurableFileErrorV0::RecoveryRequired(path));
+            }
+            chunk_entries = chunk_entries
+                .checked_add(1)
+                .ok_or(DurableFileErrorV0::SequenceOverflow)?;
+        }
+        if !manifest_seen || chunk_entries != active.chunk_count {
+            return Err(DurableFileErrorV0::RecoveryRequired(active.path.clone()));
+        }
+
         let mut total_bytes = 0_u64;
         for index in 0..active.chunk_count {
             let path = active.path.join(format!("chunk-{index:08}.bin"));
@@ -1088,13 +1131,15 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
     }
 
     fn abort_staging(&mut self, staging: StagingIdentityV0) -> Result<(), Self::Error> {
+        // Authenticate the caller against a retained owner snapshot before
+        // mutating or consuming the live staging handle.
         let active = self
             .active
-            .take()
-            .ok_or(DurableFileErrorV0::UnknownStaging)?;
+            .as_ref()
+            .ok_or(DurableFileErrorV0::UnknownStaging)?
+            .clone();
         Self::staging_matches(&active, staging)?;
         if active.identity.generation == self.current.generation {
-            self.active = Some(active);
             return Err(DurableFileErrorV0::StagingIdentityMismatch);
         }
         if active.path.exists() {
@@ -1106,6 +1151,7 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
         }
         sync_directory(&self.root.join("staging"))?;
         sync_directory(&self.root.join("generations"))?;
+        self.active = None;
         Ok(())
     }
 }
