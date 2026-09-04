@@ -1,0 +1,60 @@
+name: documentation-integrity
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "README.md"
+      - "RELEASE_READINESS.md"
+      - "SECURITY.md"
+      - "PROJECT_BOUNDARY.md"
+      - "docs/**"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/README.md"
+      - "trillionnium/crates/**/README.md"
+      - "contracts/**/README.md"
+      - "web4-frontend/README.md"
+      - "web4-frontend/docs/**"
+      - "scripts/ci/check_documentation_integrity.py"
+      - ".github/workflows/documentation-integrity.yml"
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "RELEASE_READINESS.md"
+      - "SECURITY.md"
+      - "PROJECT_BOUNDARY.md"
+      - "docs/**"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/README.md"
+      - "trillionnium/crates/**/README.md"
+      - "contracts/**/README.md"
+      - "web4-frontend/README.md"
+      - "web4-frontend/docs/**"
+      - "scripts/ci/check_documentation_integrity.py"
+      - ".github/workflows/documentation-integrity.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: documentation-integrity-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  documentation-integrity:
+    name: documentation-integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONHASHSEED: "0"
+      PYTHONUTF8: "1"
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Compile integrity checker
+        run: python3 -m py_compile scripts/ci/check_documentation_integrity.py
+      - name: Enforce documentation contract
+        run: python3 scripts/ci/check_documentation_integrity.py
