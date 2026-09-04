@@ -19,7 +19,7 @@ permissions:
 
 concurrency:
   group: one-shot-blocker-repair-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   repair-and-verify:
