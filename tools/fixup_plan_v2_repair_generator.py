@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""One-shot source fix for the deterministic Plan v2 repair generator."""
+"""One-shot source fixes applied after the immutable Plan v2 overlays."""
 from __future__ import annotations
 
 import pathlib
 
 root = pathlib.Path(__file__).resolve().parents[1]
-path = root / "tools/repair_plan_v2_remaining_blockers.py"
-source = path.read_text(encoding="utf-8")
+
+repair_path = root / "tools/repair_plan_v2_remaining_blockers.py"
+source = repair_path.read_text(encoding="utf-8")
 old = '''            body = inline.group("body").strip()
             if body and not body.endswith(","):
                 body += ","
@@ -21,4 +22,13 @@ new = '''            body = inline.group("body").strip()
 count = source.count(old)
 if count != 1:
     raise SystemExit(f"repair generator source drift: expected one inline-table edge, found {count}")
-path.write_text(source.replace(old, new, 1), encoding="utf-8")
+repair_path.write_text(source.replace(old, new, 1), encoding="utf-8")
+
+control_path = root / "trillionnium/crates/trnm-control-plane-v0/src/lib.rs"
+control = control_path.read_text(encoding="utf-8")
+old_identifier = "fn forbidden_authority_is_explicitly rejected()"
+new_identifier = "fn forbidden_authority_is_explicitly_rejected()"
+count = control.count(old_identifier)
+if count != 1:
+    raise SystemExit(f"control-plane overlay drift: expected one malformed test identifier, found {count}")
+control_path.write_text(control.replace(old_identifier, new_identifier, 1), encoding="utf-8")
