@@ -1,107 +1,102 @@
-# TRNM Research Protocol v1
+---
+status: internal-research
+owner: Trillionnium Chain maintainers
+last_verified: 2026-09-04
+applies_to: main@b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9
+---
 
-`trnm-research-protocol` is the consensus-facing contract between Trillionnium
-Chain, Hepta Research League, and Nakama. It is an internal Chain crate, not a
-fourth top-level product module.
+# `trnm-research-protocol`
 
-## Responsibility boundary
+> **Maturity:** `internal-research`  
+> **Repository release status:** follow [`RELEASE_READINESS.md`](../../../RELEASE_READINESS.md). A green crate test is not repository or mainnet readiness.
 
-- Nakama may sign only `MatchEvidenceCommitmentV1`. It commits the completed
-  match facts, roots, ruleset, dataset, and off-chain archive hash.
-- Hepta may sign evaluation, workload, claim, license, challenge, and
-  resolution commands.
-- The state machine checks the signer DID, role, and Ed25519 public key against
-  a genesis-derived `AuthoritySetV1`. Node ingress should independently enforce
-  its capability policy as a first gate.
-- Raw event streams, submissions, evaluations, reproductions, datasets, and
-  research artifacts are never protocol fields. Only 32-byte commitments and
-  bounded accounting/licensing metadata are on-chain.
+Consensus-facing contract for bounded research commitments exchanged with Hepta Research League and Nakama.
 
-Nakama establishes match facts. It cannot mint accepted research workload or a
-research claim. Workload is valid only after an accepted Hepta evaluation.
+## Responsibilities
 
-## Consensus encoding
+- Define signed match, evaluation, workload, claim, license, challenge, and resolution commands.
+- Enforce authority roles, deterministic CBOR, external-key derivation, replay protection, object leaves, and snapshots.
+- Keep raw datasets and event streams off-chain while committing bounded hashes and accounting/licensing metadata.
 
-All consensus values use `rfc8949-deterministic-cbor-array-v1`:
+## Non-responsibilities and production boundary
 
-- definite-length arrays only;
-- shortest-form unsigned integers and lengths;
-- no maps, floating-point values, or indefinite items;
-- the first array item is always protocol version `1`;
-- enum values are fixed unsigned integer discriminants;
-- hashes and external keys are 32-byte CBOR byte strings.
+- Is not a fourth top-level product and is not part of the frozen Day-1 scope unless explicitly routed through the canonical runtime.
+- Nakama match evidence cannot mint workload or claims; accepted Hepta evaluation remains required.
+- Off-chain artifact availability is not guaranteed by an on-chain hash alone.
 
-`ResearchCommandV1::from_canonical_bytes` and
-`SignedResearchCommandV1::from_canonical_bytes` reject unknown versions,
-unknown discriminants, non-minimal forms, wrong lengths, trailing bytes, and
-values that do not re-encode byte-for-byte identically.
+The binding production-candidate architecture is documented in
+[`TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`](../../../docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md).
+Where this README and an older report disagree, the runtime freeze and current
+release-readiness document take precedence.
 
-The command wrapper is:
+## Source layout
 
-```text
-[1, command_tag, typed_payload]
+- `src/`: protocol types, canonical CBOR, signatures, state machine, object/snapshot export.
+- `fixtures/protocol-v1-golden.json`: deterministic vectors for command variants.
+- `README.md`: this module contract.
+
+## Required invariants
+
+- Only authorized roles may sign each command class.
+- Canonical bytes reject unknown versions/discriminants, non-minimal forms, wrong lengths, trailing bytes, and non-identical re-encoding.
+- Command IDs are idempotent only for byte-identical envelopes; altered replay is rejected.
+- Signed claim payloads remain immutable while current allocation is updated separately.
+
+A change that can affect consensus, signing bytes, object identity, balances,
+authorization, replay handling, persistence, or finality must add a regression
+test that fails before the change and passes after it. Tests from a legacy or
+research path may not be cited as evidence for the canonical path.
+
+## Build and test
+
+Run from `trillionnium/`:
+
+```bash
+cargo check -p trnm-research-protocol --locked
+cargo test -p trnm-research-protocol --locked
 ```
 
-The signed envelope is:
+Additional evidence:
 
-```text
-[
-  1,
-  "rfc8949-deterministic-cbor-array-v1",
-  chain_id,
-  command_id,
-  signer_did,
-  authority_role,
-  nonce,
-  ed25519_public_key,
-  typed_command,
-  ed25519_signature
-]
-```
+- `cargo test -p trnm-research-protocol --locked`
+- Canonical activation additionally requires application routing and multi-validator AppHash evidence.
 
-The signing message is the same array without the signature and with array
-length 9.
+## Failure, recovery, and observability
 
-Golden CBOR, hashes, fingerprints, test keys, and deterministic signatures for
-all seven command variants are in
-`fixtures/protocol-v1-golden.json`.
+- Reject malformed, unknown, ambiguous, stale, replayed, unauthorized, or
+  resource-exhausting inputs before changing durable or consensus-visible state.
+- Errors consumed by another process must expose a stable machine-readable code;
+  display text remains diagnostic.
+- Recovery must be idempotent and preserve chain, height, version, hash, signer,
+  and domain bindings.
+- Logs and evidence must not contain private keys, seed material, bearer tokens,
+  or unredacted confidential payloads.
+- Operational claims must identify the exact commit, configuration, platform,
+  command, result, and artifact digest.
 
-## External keys
+## Change rules
 
-`ExternalKey` is a domain-separated 32-byte SHA-256 key. Canonical UUIDs are
-hashed from their 16 raw bytes; other external IDs use strict visible ASCII.
-The namespace and identifier kind are length-framed into the hash. Hepta and
-Nakama therefore do not need a private UUID-to-integer mapping table.
+1. Keep responsibilities and non-responsibilities current in the same pull request.
+2. Version every externally consumed schema or signing representation.
+3. Add positive, negative, boundary, replay, and failure-immutability tests.
+4. Update [`MODULE_CATALOG.md`](../../../docs/MODULE_CATALOG.md) when maturity or
+   ownership changes.
+5. Do not mark an item implemented until it passes through the owning canonical
+   path and produces reproducible evidence.
 
-## Object and state semantics
+## Known gaps / activation conditions
 
-The protocol exposes immutable v1 match, evaluation, workload, license, and
-resolution objects plus versioned claim/challenge objects. Claim resolution
-keeps the originally signed claim payload immutable and updates a separate
-current claimant allocation.
+- Define availability/retention guarantees for off-chain artifacts and recovery from unavailable commitments.
+- Add governance, upgrade, threat-model, and external interoperability conformance suites.
 
-State transitions are:
+These gaps are intentionally visible. They may be closed only by implementation
+and reproducible evidence; wording changes alone cannot close them.
 
-```text
-claim: Active/Amended/LicenseAmendmentRequired -> Challenged
-challenge: Open -> Resolved
-resolution:
-  Uphold                  -> claim Active
-  Reject                  -> claim Rejected
-  AmendContributorShares  -> claim Amended
-  RequireLicenseAmendment -> claim LicenseAmendmentRequired
-```
+## References
 
-`ResearchProtocolState::apply` is command-id idempotent. Repeating identical
-signed bytes returns `Idempotent`; reusing a command ID with altered signed
-bytes returns `AlteredReplay`.
-
-For Chain storage and Merkle integration:
-
-- `ApplyOutcome::changed_object_refs` lists every leaf changed by a command;
-- `object_canonical_bytes` exports the current exact-version object leaf;
-- `object_leaf_hash` applies the protocol leaf hash domain;
-- `current_object_refs` provides stable `(kind, key)` enumeration;
-- `canonical_snapshot_bytes/hash` cover the sorted full state;
-- `export_snapshot/from_snapshot` provide serde persistence with graph
-  validation on restore.
+- [Workspace guide](../../README.md)
+- [Crate catalog](../README.md)
+- [Documentation standard](../../../docs/DOCUMENTATION_STANDARD.md)
+- [Architecture index](../../../docs/architecture/README.md)
+- [Protocol index](../../../docs/protocol/README.md)
+- [Release truth source](../../../RELEASE_READINESS.md)
