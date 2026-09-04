@@ -25,6 +25,7 @@ env:
   PYTHONDONTWRITEBYTECODE: "1"
   CARGO_INCREMENTAL: "0"
   CARGO_TERM_COLOR: never
+  RUSTUP_TOOLCHAIN: "1.95.0"
   BRANCH: work/plan-v2-full-gap-closure-20260902
 
 jobs:
@@ -58,10 +59,14 @@ jobs:
             .github/workflows/zz-plan-v2-durable-adapter-repair.yml \
             tools/fixup_plan_v2_repair_generator.py
 
-      - name: Install pinned Rust toolchain
+      - name: Verify preinstalled pinned Rust toolchain
         run: |
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-          rustup override set 1.95.0
+          set -euo pipefail
+          rustup toolchain list | grep -Eq '^1\.95\.0(-|$)'
+          rustc --version | grep -q '^rustc 1\.95\.0 '
+          cargo --version
+          rustfmt --version
+          cargo clippy --version
 
       - name: Normalize and validate generated source
         run: |
