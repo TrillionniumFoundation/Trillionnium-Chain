@@ -5,6 +5,10 @@ on:
     paths:
       - 'trillionnium/crates/trnm-consensus-external-node-checkpoint/**'
       - 'trillionnium/crates/trnm-poco-mvcc-fee-v1/**'
+      - 'trillionnium/crates/trnm-poco-agent-market-v1/**'
+      - 'trillionnium/crates/trnm-poco-node-authority/**'
+      - 'trillionnium/crates/trnm-poco-node-host/**'
+      - 'scripts/ci/run_bounded_workspace_tests_v1.py'
       - '.github/workflows/trnm-node-commit-exec-focused.yml'
   push:
     branches:
@@ -13,6 +17,10 @@ on:
     paths:
       - 'trillionnium/crates/trnm-consensus-external-node-checkpoint/**'
       - 'trillionnium/crates/trnm-poco-mvcc-fee-v1/**'
+      - 'trillionnium/crates/trnm-poco-agent-market-v1/**'
+      - 'trillionnium/crates/trnm-poco-node-authority/**'
+      - 'trillionnium/crates/trnm-poco-node-host/**'
+      - 'scripts/ci/run_bounded_workspace_tests_v1.py'
       - '.github/workflows/trnm-node-commit-exec-focused.yml'
   workflow_dispatch:
 
@@ -38,11 +46,12 @@ jobs:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
-      github.actor == 'Franksudoman') && github.triggering_actor == github.actor &&
+      github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
+      github.triggering_actor == github.actor &&
       (github.event_name != 'pull_request' ||
       github.event.pull_request.head.repo.full_name == github.repository)))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       TRNM_CARGO_OFFLINE_POLICY: "required"
       CARGO_NET_OFFLINE: "true"
@@ -96,6 +105,32 @@ jobs:
             -p trnm-poco-mvcc-fee-v1 --all-targets --locked --offline
           cargo clippy --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-mvcc-fee-v1 --all-targets --locked --offline -- -D warnings
+
+      - name: Prove bounded TaskV1 archive and durable authority-host boundaries
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-agent-market-v1 \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host \
+            --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-agent-market-v1 \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host \
+            --all-targets --locked --offline -- -D warnings
+          python3 -m py_compile scripts/ci/run_bounded_workspace_tests_v1.py
+
+      - name: Validate repository and node-decomposition truth
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_required_baseline_closure_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
 
       - name: Require validation to leave checkout clean
         working-directory: trillionnium-chain
