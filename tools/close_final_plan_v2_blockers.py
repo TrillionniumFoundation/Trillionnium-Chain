@@ -22,6 +22,31 @@ def replace_exact(source: str, old: str, new: str, label: str) -> str:
 source = LIB.read_text(encoding="utf-8")
 source = replace_exact(
     source,
+    '''    let file = OpenOptions::new()
+        .create(true)
+        .read(true)
+        .write(true)
+        .open(path)?;
+''',
+    '''    let file = OpenOptions::new()
+        .create(true)
+        .truncate(false)
+        .read(true)
+        .write(true)
+        .open(path)?;
+''',
+    "lock file explicit non-truncation",
+)
+source = replace_exact(
+    source,
+    '''    if bytes.len() % AUTHORITY_RECORD_BYTES_V0 != 0 {
+''',
+    '''    if !bytes.len().is_multiple_of(AUTHORITY_RECORD_BYTES_V0) {
+''',
+    "authority journal exact-record divisibility",
+)
+source = replace_exact(
+    source,
     '''        if active.manifest_digest != manifest.manifest_digest
             || active.state_root != manifest.state_root
             || active.height != manifest.height
