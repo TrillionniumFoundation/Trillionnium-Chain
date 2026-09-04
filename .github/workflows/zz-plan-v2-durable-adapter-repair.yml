@@ -6,6 +6,8 @@ on:
       - work/plan-v2-full-gap-closure-20260902
     paths:
       - .github/workflows/zz-plan-v2-durable-adapter-repair.yml
+      - tools/fixup_plan_v2_repair_generator.py
+      - tools/repair_plan_v2_remaining_blockers.py
   workflow_dispatch:
 
 permissions:
