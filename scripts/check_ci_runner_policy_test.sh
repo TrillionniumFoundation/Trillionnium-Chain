@@ -115,8 +115,8 @@ write_poco_workflow() {
     '    if: >-' \
     "      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&" \
     "      (github.event_name == 'schedule' && github.ref == 'refs/heads/main' ||" \
-    "       (github.actor == 'ProfAlexQI' &&" \
-    "        github.triggering_actor == 'ProfAlexQI' &&" \
+    "       ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf') &&" \
+    "        github.triggering_actor == github.actor &&" \
     "        (github.event_name != 'pull_request' ||" \
     '         github.event.pull_request.head.repo.full_name == github.repository)))' \
     "    $expected" \
@@ -152,7 +152,7 @@ expect_pass() {
     printf 'FAIL: %s unexpectedly failed\n%s\n' "$name" "$output" >&2
     exit 1
   fi
-  if [[ "$output" != *"jobs=${expected_jobs} "* ]]; then
+  if [[ "$output" != *"hosted_jobs=5 privileged_jobs=${expected_jobs} "* ]]; then
     printf 'FAIL: %s returned an unexpected job count\n%s\n' "$name" "$output" >&2
     exit 1
   fi
@@ -283,6 +283,10 @@ write_policy_workflow \
   '    steps:' \
   '      - run: true'
 expect_fail trust-guard-must-be-folded --worktree
+
+# A negative test of another workflow must not pass because policy.yml is still
+# invalid from the preceding mutant. Restore that independent positive control.
+git -C "$repo" restore --source=HEAD --worktree -- .github/workflows/policy.yml
 
 printf '%s\n' \
   'name: p1-rust-sidecar' \

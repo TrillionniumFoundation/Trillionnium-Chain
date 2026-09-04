@@ -53,7 +53,8 @@ jobs:
           git rev-parse 'HEAD^{tree}' > "$root/TREE"
           git archive --format=tar.gz --prefix=trillionnium-chain/ \
             --output="$root/tracked-source.tar.gz" HEAD
-          (cd "$root" && sha256sum tracked-source.tar.gz > SHA256SUMS)
+          git bundle create "$root/tracked-history.bundle" --all
+          (cd "$root" && sha256sum tracked-source.tar.gz tracked-history.bundle > SHA256SUMS)
           printf '%s\n' 'scope=exact-source-diagnostic-not-acceptance' > "$root/SCOPE"
       - name: Upload exact-source diagnostic input
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -69,7 +70,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends ripgrep
       - name: Run retained module-documentation false-pass mutants
-        run: python3 scripts/ci/test_module_coverage_guard_v1.py
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_module_coverage_guard_v1.py
+          bash scripts/check_ci_runner_policy_test.sh
+          timeout --signal=TERM --kill-after=30s 900s bash scripts/check_cargo_offline_policy_test.sh
       - name: Verify canonical project boundary without exemptions
         run: bash scripts/project-preflight.sh --audit
       - name: Validate repository, development, module, node, and blocker truth
@@ -329,6 +334,9 @@ jobs:
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
+      - name: Test the unified workspace feature graph with a hard deadline
+        working-directory: trillionnium
+        run: timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast
       - name: Test every active workspace package with bounded execution
         env:
           TRNM_PACKAGE_TEST_TIMEOUT_SECONDS: "600"
