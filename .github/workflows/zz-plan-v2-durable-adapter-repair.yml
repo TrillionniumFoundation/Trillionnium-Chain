@@ -58,6 +58,28 @@ jobs:
           set -euo pipefail
           python3 tools/finalize_repository_closure_v4.py
           python3 tools/fixup_plan_v2_repair_generator.py
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("tools/repair_plan_v2_remaining_blockers.py")
+          source = path.read_text(encoding="utf-8")
+          old = (
+              "- **Recovery pipeline:** `payload replay` and `replay-to-Core` bind the same "
+              "signed cut hash and catch-up boundary. After SIGKILL, crash, or reopen, only "
+              "authenticated, durable, monotonic replay may resume."
+          )
+          new = (
+              "- **Recovery pipeline:** `payload replay` and `replay-to-Core` bind the same "
+              "signed cut hash and catch-up boundary and prove crash convergence. After "
+              "SIGKILL, crash, or reopen, only authenticated, durable, monotonic replay may resume."
+          )
+          count = source.count(old)
+          if count != 1:
+              raise SystemExit(
+                  f"recovery contract source drift: expected one pipeline sentence, found {count}"
+              )
+          path.write_text(source.replace(old, new, 1), encoding="utf-8")
+          PY
           python3 tools/repair_plan_v2_remaining_blockers.py
           git rm \
             .github/workflows/zz-apply-plan-v2-closure-tree.yml \
