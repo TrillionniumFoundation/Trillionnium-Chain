@@ -35,7 +35,7 @@ jobs:
       github.actor == 'ProfHepta' &&
       github.triggering_actor == github.actor
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Check out exact writable branch head
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -50,27 +50,34 @@ jobs:
           test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
           ./scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0
 
-      - name: Resolve only the workspace lock in strict offline mode
+      - name: Resolve lock and compile changed packages in strict offline mode
         run: |
           set -euo pipefail
           before_tree=$(git write-tree)
-          cargo +1.95.0 metadata \
+          set +e
+          cargo +1.95.0 check \
             --manifest-path trillionnium/Cargo.toml \
-            --format-version 1 \
-            --no-deps \
-            --offline >/dev/null
+            -p trnm-poco-agent-market-v1 \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host \
+            --all-targets \
+            --offline 2>&1 | tee "$RUNNER_TEMP/trnm-lock-refresh-cargo-check.log"
+          cargo_rc=${PIPESTATUS[0]}
+          set -e
+
           git diff --exit-code -- . ':!trillionnium/Cargo.lock'
           test -z "$(git status --porcelain --untracked-files=all | grep -v '^ M trillionnium/Cargo.lock$' || true)"
-          if git diff --quiet -- trillionnium/Cargo.lock; then
+          if ! git diff --quiet -- trillionnium/Cargo.lock; then
+            git diff --check -- trillionnium/Cargo.lock
+            git config user.name 'trnm-lock-refresh[bot]'
+            git config user.email 'trnm-lock-refresh[bot]@users.noreply.github.com'
+            git add trillionnium/Cargo.lock
+            git commit -m 'chore(lock): synchronize authority and host path dependencies'
+            git push origin HEAD:refs/heads/work/plan-v2-full-gap-closure-20260902
+            echo "workspace_lock_refresh=committed"
+            echo "workspace_lock_head=$(git rev-parse HEAD)"
+            test "$before_tree" != "$(git write-tree)"
+          else
             echo "workspace_lock_refresh=no-change"
-            exit 0
           fi
-          git diff --check -- trillionnium/Cargo.lock
-          git config user.name 'trnm-lock-refresh[bot]'
-          git config user.email 'trnm-lock-refresh[bot]@users.noreply.github.com'
-          git add trillionnium/Cargo.lock
-          git commit -m 'chore(lock): synchronize authority and host path dependencies'
-          git push origin HEAD:refs/heads/work/plan-v2-full-gap-closure-20260902
-          echo "workspace_lock_refresh=committed"
-          echo "workspace_lock_head=$(git rev-parse HEAD)"
-          test "$before_tree" != "$(git write-tree)"
+          exit "$cargo_rc"
