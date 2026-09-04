@@ -32,3 +32,29 @@ count = control.count(old_identifier)
 if count != 1:
     raise SystemExit(f"control-plane overlay drift: expected one malformed test identifier, found {count}")
 control_path.write_text(control.replace(old_identifier, new_identifier, 1), encoding="utf-8")
+
+technical_path = root / "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
+technical = technical_path.read_text(encoding="utf-8")
+old_primary = '''**Primary code.** `trnm-consensus-safety-rules`, `trnm-consensus-safety-store`,
+`trnm-consensus-signer-journal`, `trnm-consensus-unix-remote-signer`,
+`trnm-consensus-unix-fleet-signer`, `trnm-consensus-external-watermark`,
+`trnm-consensus-external-node-checkpoint`,
+`trnm-consensus-remote-signer-service`, and
+`trnm-whole-node-checkpoint-types`.
+'''
+new_primary = '''**Primary code.** `trnm-consensus-safety-rules`, `trnm-consensus-safety-store`,
+`trnm-consensus-signer-journal`, `trnm-consensus-unix-remote-signer`,
+`trnm-consensus-unix-fleet-signer`, `trnm-consensus-external-watermark`,
+`trnm-consensus-external-node-checkpoint`,
+`trnm-consensus-remote-signer-service`, `trnm-whole-node-checkpoint-types`, and
+`trnm-durable-file-adapters-v0`. The durable-file package supplies bounded,
+hash-chained, sync-before-return repository adapters; it does not substitute for
+device-backed custody, an independent monotonic anchor, or physical durability
+evidence.
+'''
+if "`trnm-durable-file-adapters-v0`" not in technical.split("## M04", 1)[0].split("## M03", 1)[-1]:
+    count = technical.count(old_primary)
+    if count != 1:
+        raise SystemExit(f"M03 technical reference drift: expected one primary-code edge, found {count}")
+    technical = technical.replace(old_primary, new_primary, 1)
+technical_path.write_text(technical, encoding="utf-8")
