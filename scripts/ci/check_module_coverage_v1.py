@@ -11,6 +11,10 @@ import tomllib
 from collections import Counter
 from typing import Any
 
+from module_coverage_guard_v1 import (
+    ContractError, active_codeowners, dependency_graph, module_sections, repository_path,
+)
+
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 COVERAGE = ROOT / "config/module-coverage-v1.toml"
 REGISTRY = ROOT / "docs/development/module-registry-v1.toml"
@@ -82,28 +86,29 @@ def rows(value: dict[str, Any], singular: str, plural: str) -> list[dict[str, An
 
 
 def ensure_path(relative: str, label: str) -> pathlib.Path:
-    require(
-        isinstance(relative, str) and relative and not relative.startswith("/"),
-        f"{label}: relative path required",
-    )
-    path = ROOT / relative
-    require(path.exists(), f"{label}: missing path {relative}")
-    return path
+    try:
+        return repository_path(ROOT, relative, label)
+    except ContractError as error:
+        raise CoverageError(str(error)) from error
 
 
 def workspace_crates(manifest_relative: str) -> dict[str, str]:
-    manifest = load_toml(ensure_path(manifest_relative, "workspace manifest"))
+    manifest_path = ensure_path(manifest_relative, "workspace manifest")
+    manifest = load_toml(manifest_path)
     members = manifest.get("workspace", {}).get("members")
     require(isinstance(members, list) and members, "workspace members missing")
     packages: dict[str, str] = {}
     for member in members:
         require(isinstance(member, str), "workspace member must be a path")
-        member_path = (ROOT / "trillionnium" / member).resolve()
+        try:
+            member_path = repository_path(manifest_path.parent, member, "workspace member")
+        except ContractError as error:
+            raise CoverageError(str(error)) from error
         require(
-            member_path.is_relative_to(ROOT / "trillionnium"),
+            member_path.is_relative_to(manifest_path.parent),
             f"workspace member escapes root: {member}",
         )
-        cargo = member_path / "Cargo.toml"
+        cargo = ensure_path(str((member_path / "Cargo.toml").relative_to(ROOT)), "workspace Cargo.toml")
         data = load_toml(cargo)
         name = data.get("package", {}).get("name")
         require(isinstance(name, str) and name, f"{cargo.relative_to(ROOT)}: package name missing")
@@ -120,7 +125,11 @@ def contract_crates(manifest_relative: str) -> dict[str, str]:
     packages: dict[str, str] = {}
     for member in members:
         require(isinstance(member, str), "contract member must be a path")
-        cargo = manifest_path.parent / member / "Cargo.toml"
+        try:
+            member_path = repository_path(manifest_path.parent, member, "contract member")
+        except ContractError as error:
+            raise CoverageError(str(error)) from error
+        cargo = ensure_path(str((member_path / "Cargo.toml").relative_to(ROOT)), "contract Cargo.toml")
         data = load_toml(cargo)
         name = data.get("package", {}).get("name")
         require(isinstance(name, str) and name, f"{cargo.relative_to(ROOT)}: package name missing")
@@ -130,36 +139,17 @@ def contract_crates(manifest_relative: str) -> dict[str, str]:
 
 
 def assert_acyclic(graph: dict[str, list[str]]) -> None:
-    state: dict[str, int] = {}
-    stack: list[str] = []
-
-    def visit(node: str) -> None:
-        state[node] = 1
-        stack.append(node)
-        for target in graph[node]:
-            require(target in graph, f"{node}: unknown allowed dependency {target}")
-            if state.get(target) == 1:
-                start = stack.index(target)
-                raise CoverageError("module dependency cycle: " + " -> ".join(stack[start:] + [target]))
-            if state.get(target, 0) == 0:
-                visit(target)
-        stack.pop()
-        state[node] = 2
-
-    for node in graph:
-        if state.get(node, 0) == 0:
-            visit(node)
+    try:
+        dependency_graph(graph)
+    except ContractError as error:
+        raise CoverageError(str(error)) from error
 
 
 def technical_sections(reference_text: str) -> dict[str, str]:
-    heading_re = re.compile(r"(?m)^## (M\d{2})\s+—[^\n]*$")
-    matches = list(heading_re.finditer(reference_text))
-    sections: dict[str, str] = {}
-    for index, match in enumerate(matches):
-        start = match.start()
-        end = matches[index + 1].start() if index + 1 < len(matches) else len(reference_text)
-        sections[match.group(1)] = reference_text[start:end]
-    return sections
+    try:
+        return module_sections(reference_text)
+    except ContractError as error:
+        raise CoverageError(str(error)) from error
 
 
 def resolve_module_roots(
@@ -178,8 +168,8 @@ def resolve_module_roots(
         isinstance(value, list) and value and all(isinstance(item, str) and item for item in value),
         f"{module_id}: {key} missing and no valid {default_key}",
     )
-    for relative in value:
-        ensure_path(relative, f"{module_id} {key}")
+    resolved = [ensure_path(relative, f"{module_id} {key}") for relative in value]
+    require(len(set(resolved)) == len(resolved), f"{module_id}: duplicate or aliased {key}")
     return value
 
 
@@ -229,9 +219,9 @@ def main() -> int:
         isinstance(minimum, int) and minimum >= 2 and len(set(maintainers)) >= minimum,
         "two distinct maintainers required",
     )
-    codeowners = CODEOWNERS.read_text(encoding="utf-8")
+    codeowners = active_codeowners(CODEOWNERS.read_text(encoding="utf-8"))
     for maintainer in maintainers:
-        require(f"@{maintainer}" in codeowners, f"maintainer absent from CODEOWNERS: {maintainer}")
+        require(maintainer in codeowners, f"maintainer absent from CODEOWNERS: {maintainer}")
 
     workspace = workspace_crates(coverage.get("workspace_manifest"))
     mapped: list[str] = []
@@ -327,6 +317,8 @@ def main() -> int:
                 "technical_section_bytes": len(section.encode("utf-8")),
                 "slo_profile": slo_profile,
                 "testkit_profile": row["testkit_profile"],
+                "test_roots_explicit": "test_roots" in row,
+                "evidence_roots_explicit": "evidence_roots" in row,
             }
         )
 
@@ -423,7 +415,13 @@ def main() -> int:
         "documented_primary_crate_count": len(documented_primary_crates),
         "auxiliary_unit_count": len(auxiliary),
         "snapshot_counts_match": True,
-        "technical_sections_semantically_checked": True,
+        "technical_sections_semantically_checked": False,
+        "technical_sections_structurally_checked": True,
+        "coverage_scope": "structural-source-ownership-only",
+        "detailed_design_acceptance": "not-assessed",
+        "implementation_acceptance": "not-assessed",
+        "maintainer_scope": "repository-fallback-not-independent-review",
+        "dependency_scope": "declared-graph-not-cargo-resolved",
         "primary_crate_names_bound_to_technical_sections": True,
         "maintainer_count": len(set(maintainers)),
         "module_dependency_graph_acyclic": True,
