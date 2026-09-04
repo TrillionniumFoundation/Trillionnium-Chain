@@ -2,13 +2,14 @@
 """Align the durable authority adapter with the current node-boundary v0 API.
 
 The durable journal continues to bind the private facts digest into each record
-digest.  The public receipt intentionally exposes only the operation binding,
-stage, sequence, and record digest.  Conflicting idempotent replays remain a
+digest. The public receipt intentionally exposes only the operation binding,
+stage, sequence, and record digest. Conflicting idempotent replays remain a
 specific adapter-level fail-closed error.
 """
 from __future__ import annotations
 
 import pathlib
+import re
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PATH = ROOT / "trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs"
@@ -66,15 +67,19 @@ source = replace_exact(
     1,
     "public authority receipt",
 )
-source = replace_exact(
-    source,
-    '''Err(DurableFileErrorV0::InvalidAuthorityCommand(
-                                BoundaryErrorV0::ReceiptSubstitution,
-                            ))''',
-    '''Err(DurableFileErrorV0::AuthorityFactsMismatch)''',
-    2,
-    "conflicting idempotent authority replay",
+conflicting_replay = re.compile(
+    r"Err\(DurableFileErrorV0::InvalidAuthorityCommand\(\s*"
+    r"BoundaryErrorV0::ReceiptSubstitution,\s*"
+    r"\)\)"
 )
+source, replay_count = conflicting_replay.subn(
+    "Err(DurableFileErrorV0::AuthorityFactsMismatch)", source
+)
+if replay_count != 2:
+    raise SystemExit(
+        "conflicting idempotent authority replay: "
+        f"expected 2 structural edges, found {replay_count}"
+    )
 source = replace_exact(
     source,
     '''            assert_eq!(prepared.durable_sequence, 0);
