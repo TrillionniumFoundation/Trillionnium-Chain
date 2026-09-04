@@ -1,4 +1,4 @@
-# Registered in the parent commits; PR synchronization triggers the repair.
+# Temporary workflow used to apply and verify the current blocker repair set.
 name: one-shot blocker repair
 
 on:
@@ -12,6 +12,7 @@ on:
       - ".github/workflows/one-shot-blocker-repair.yml"
       - "scripts/ci/one_shot_blocker_repair.py"
       - "scripts/ci/one_shot_blocker_repair_tests.py"
+      - "scripts/ci/one_shot_blocker_repair_restart.py"
 
 permissions:
   contents: write
@@ -23,7 +24,7 @@ concurrency:
 jobs:
   repair-and-verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     env:
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: never
@@ -46,6 +47,7 @@ jobs:
         run: |
           python3 scripts/ci/one_shot_blocker_repair.py
           python3 scripts/ci/one_shot_blocker_repair_tests.py
+          python3 scripts/ci/one_shot_blocker_repair_restart.py
 
       - name: Validate retry-budget concurrency contract
         run: |
@@ -77,18 +79,32 @@ jobs:
           cd trillionnium
           MVP_MODE=prod ALLOW_PARTIAL_EVENT_REPLAY=0 ./scripts/check_event_replay_smoke.sh
 
-      - name: Commit verified repairs and remove one-shot machinery
+      - name: Commit verified source repair locally
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            contracts/governance-guard/src/lib.rs \
+            scripts/v2/pr7_alert_delivery.py \
+            trillionnium/crates/trnm-node/src/main.rs \
+            config/legacy-harness-freeze.sha256 \
+            trillionnium/scripts/check_bft_restart_recovery.sh
+          if git diff --cached --quiet; then
+            echo "[repair][FAIL] no verified source changes to commit" >&2
+            exit 1
+          fi
+          git commit -m "fix(blockers): close governance retry replay and restart failures"
+
+      - name: Validate restart recovery from a clean committed tree
+        run: RUNS=1 bash trillionnium/scripts/check_bft_restart_recovery.sh
+
+      - name: Remove patch helpers and publish verified commits
         run: |
           set -euo pipefail
           rm -f scripts/ci/one_shot_blocker_repair.py
           rm -f scripts/ci/one_shot_blocker_repair_tests.py
-          rm -f .github/workflows/one-shot-blocker-repair.yml
-          git add -A
-          if git diff --cached --quiet; then
-            echo "[repair][FAIL] no verified changes to commit" >&2
-            exit 1
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "fix(blockers): close governance retry and replay failures"
+          rm -f scripts/ci/one_shot_blocker_repair_restart.py
+          git add -A scripts/ci
+          git commit -m "chore(ci): remove one-shot repair helpers"
           git push origin "HEAD:${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
