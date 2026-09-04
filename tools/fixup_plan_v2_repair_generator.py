@@ -78,6 +78,28 @@ if count != 1:
     raise SystemExit(f"control-plane overlay drift: expected one malformed test identifier, found {count}")
 control_path.write_text(control.replace(old_identifier, new_identifier, 1), encoding="utf-8")
 
+registry_path = root / "scripts/check_repository_blocker_registry_v0.py"
+registry = registry_path.read_text(encoding="utf-8")
+old_metadata = '''            package = packages_by_name.get(name)
+            if package is not None:
+                metadata_trnm = package.get("metadata", {}).get("trnm", {})
+                require(metadata_trnm.get("candidate_authority") is not True, f"candidate authority entered production root: {name}")
+'''
+new_metadata = '''            package = packages_by_name.get(name)
+            if package is not None:
+                package_metadata = package.get("metadata")
+                if not isinstance(package_metadata, dict):
+                    package_metadata = {}
+                metadata_trnm = package_metadata.get("trnm", {})
+                if not isinstance(metadata_trnm, dict):
+                    metadata_trnm = {}
+                require(metadata_trnm.get("candidate_authority") is not True, f"candidate authority entered production root: {name}")
+'''
+count = registry.count(old_metadata)
+if count != 1:
+    raise SystemExit(f"repository blocker registry drift: expected one Cargo metadata edge, found {count}")
+registry_path.write_text(registry.replace(old_metadata, new_metadata, 1), encoding="utf-8")
+
 technical_path = root / "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
 technical = technical_path.read_text(encoding="utf-8")
 
