@@ -29,16 +29,49 @@ jobs:
   repository-truth:
     name: repository-truth
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: trillionnium-chain
+        shell: bash
     steps:
       - name: Check out exact source with full history
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
+          path: trillionnium-chain
           persist-credentials: false
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Retain exact tracked source as diagnostic input
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-boundary-source"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          git archive --format=tar.gz --prefix=trillionnium-chain/ \
+            --output="$root/tracked-source.tar.gz" HEAD
+          (cd "$root" && sha256sum tracked-source.tar.gz > SHA256SUMS)
+          printf '%s\n' 'scope=exact-source-diagnostic-not-acceptance' > "$root/SCOPE"
+      - name: Upload exact-source diagnostic input
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-boundary-source-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-boundary-source
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+      - name: Install project preflight prerequisite
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep
+      - name: Run retained module-documentation false-pass mutants
+        run: python3 scripts/ci/test_module_coverage_guard_v1.py
+      - name: Verify canonical project boundary without exemptions
+        run: bash scripts/project-preflight.sh --audit
       - name: Validate repository, development, module, node, and blocker truth
         run: |
           set -euo pipefail
@@ -89,6 +122,60 @@ jobs:
       - name: Require generators to leave the checkout clean
         run: |
           git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+      - name: Install repository-pinned Node for consumer replay
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: trillionnium-chain/.node-version
+          cache: npm
+          cache-dependency-path: trillionnium-chain/web4-frontend/package-lock.json
+      - name: Run exact-head frontend consumer regressions
+        working-directory: trillionnium-chain/web4-frontend
+        run: |
+          set -euo pipefail
+          npm install --global npm@11.16.0
+          npm ci
+          npm run typecheck
+          npm run test:unit
+          npm run test:contract
+      - name: Run separately bound prospective-merge regressions
+        env:
+          TRNM_EXPECTED_MERGE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" != "pull_request" ]]; then
+            echo 'prospective_merge=not-applicable; exact event source checked above'
+            exit 0
+          fi
+          merge_sha="${TRNM_EXPECTED_MERGE_SHA}"
+          [[ "$merge_sha" =~ ^[0-9a-f]{40}$ ]]
+          git fetch --no-tags origin "$merge_sha"
+          parent="$(mktemp -d "${RUNNER_TEMP}/trnm-merge-boundary.XXXXXX")"
+          checkout="$parent/trillionnium-chain"
+          cleanup() {
+            git worktree remove --force "$checkout" >/dev/null 2>&1 || true
+            rmdir "$parent" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          git worktree add --detach "$checkout" "$merge_sha"
+          (
+            cd "$checkout"
+            test "$(git rev-parse HEAD)" = "$merge_sha"
+            git rev-parse HEAD 'HEAD^{tree}'
+            bash scripts/project-preflight.sh --audit
+            python3 scripts/ci/test_module_coverage_guard_v1.py
+            python3 scripts/ci/check_module_coverage_v1.py
+            cd web4-frontend
+            npm ci
+            npm run typecheck
+            npm run test:unit
+            npm run test:contract
+            git diff --exit-code
+            test -z "$(git status --porcelain --untracked-files=all)"
+          )
+      - name: Require consumer replay to leave exact-head source unchanged
+        run: |
+          git diff --exit-code
           test -z "$(git status --porcelain --untracked-files=all)"
 
   protocol-contract:
@@ -330,71 +417,4 @@ jobs:
       - name: Require Rust and contract validation to leave checkout clean
         run: |
           git diff --exit-code -- .
-          test -z "$(git status --porcelain --untracked-files=all)"
-
-  boundary-regressions:
-    name: boundary-regressions-${{ matrix.source }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        source: [head, prospective-merge]
-    env:
-      TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
-      TRNM_EXPECTED_SOURCE_SHA: ${{ matrix.source == 'head' && (github.event.pull_request.head.sha || github.sha) || github.sha }}
-    defaults:
-      run:
-        working-directory: trillionnium-chain
-        shell: bash
-    steps:
-      - name: Checkout the explicitly named source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
-          path: trillionnium-chain
-          persist-credentials: false
-      - name: Verify exact source identity
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
-          git rev-parse HEAD HEAD^{tree}
-      - name: Install project preflight prerequisite
-        run: |
-          set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends ripgrep
-      - name: Verify project boundary
-        run: |
-          set -euo pipefail
-          bash scripts/project-preflight.sh --audit
-      - name: Run documentation false-pass mutants and actual coverage gate
-        run: |
-          set -euo pipefail
-          python3 scripts/ci/test_module_coverage_guard_v1.py
-          python3 scripts/ci/check_module_coverage_v1.py
-      - name: Install repository-pinned Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version-file: trillionnium-chain/.node-version
-          cache: npm
-          cache-dependency-path: trillionnium-chain/web4-frontend/package-lock.json
-      - name: Install pinned npm and locked frontend dependencies
-        working-directory: trillionnium-chain/web4-frontend
-        run: |
-          set -euo pipefail
-          npm install --global npm@11.16.0
-          npm ci
-      - name: Validate frontend contracts and consumer regression
-        working-directory: trillionnium-chain/web4-frontend
-        run: |
-          set -euo pipefail
-          npm run typecheck
-          npm run test:unit
-          npm run test:contract
-      - name: Require source and lockfiles unchanged
-        run: |
-          set -euo pipefail
-          git diff --exit-code
           test -z "$(git status --porcelain --untracked-files=all)"
