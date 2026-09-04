@@ -84,7 +84,8 @@ jobs:
             scripts/ci/check_required_baseline_closure_v1.py \
             scripts/ci/check_required_protocol_contract_v1.py \
             scripts/ci/generate_release_status_v1.py \
-            scripts/ci/check_external_evidence_v1.py
+            scripts/ci/check_external_evidence_v1.py \
+            scripts/ci/run_bounded_workspace_tests_v1.py
       - name: Require generators to leave the checkout clean
         run: |
           git diff --exit-code -- .
@@ -241,9 +242,10 @@ jobs:
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
-      - name: Test every active workspace target
-        working-directory: trillionnium
-        run: cargo test --workspace --all-targets --locked
+      - name: Test every active workspace package with bounded execution
+        env:
+          TRNM_PACKAGE_TEST_TIMEOUT_SECONDS: "600"
+        run: python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium
       - name: Verify production and candidate dependency closures with Cargo
         run: |
           set -euo pipefail
