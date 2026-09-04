@@ -42,9 +42,7 @@ pub use archive::{
     MAX_TASK_ARCHIVE_BATCH_RECORDS_V1, MAX_TASK_ARCHIVE_PROOF_DEPTH_V1,
     TASK_ARCHIVE_SCHEMA_VERSION_V1,
 };
-pub use archive_verifier::{
-    verify_task_archive_batch_v1, verify_task_archive_inclusion_v1,
-};
+pub use archive_verifier::{verify_task_archive_batch_v1, verify_task_archive_inclusion_v1};
 pub use error::{AgentMarketErrorCodeV1, AgentMarketErrorV1, AgentMarketResultV1};
 pub use store::{
     AgentMarketFreshReadbackV1, AgentMarketPreVotePreviewV1, AgentMarketStoreConfigV1,

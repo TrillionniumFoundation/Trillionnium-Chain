@@ -99,7 +99,9 @@ impl NodeAuthorityCoordinatorV0 {
         root: impl AsRef<Path>,
         identity: NodeIdentityV0,
     ) -> Result<Self, NodeAuthorityErrorV0> {
-        identity.validate().map_err(NodeAuthorityErrorV0::Boundary)?;
+        identity
+            .validate()
+            .map_err(NodeAuthorityErrorV0::Boundary)?;
         let root = root.as_ref();
         if !root.is_absolute() {
             return Err(NodeAuthorityErrorV0::RelativeRoot(root.to_path_buf()));
@@ -245,14 +247,7 @@ impl NodeAuthorityCoordinatorV0 {
                 facts_digest,
             })
             .map_err(NodeAuthorityErrorV0::Durable)?;
-        validate_receipt_v0(
-            identity,
-            receipt,
-            binding,
-            next_stage,
-            facts_digest,
-            true,
-        )?;
+        validate_receipt_v0(identity, receipt, binding, next_stage, facts_digest, true)?;
         Ok(receipt)
     }
 
@@ -433,11 +428,9 @@ mod tests {
     fn exact_stage_chain_is_durable_and_reopens() {
         let directory = tempfile::tempdir().expect("tempdir");
         let terminal = {
-            let mut coordinator = NodeAuthorityCoordinatorV0::open_candidate(
-                directory.path(),
-                identity(),
-            )
-            .expect("open");
+            let mut coordinator =
+                NodeAuthorityCoordinatorV0::open_candidate(directory.path(), identity())
+                    .expect("open");
             assert_eq!(
                 coordinator.recover().expect("recover"),
                 RecoveryDispositionV0::Clean
@@ -470,8 +463,8 @@ mod tests {
             last
         };
 
-        let mut reopened =
-            NodeAuthorityCoordinatorV0::open_candidate(directory.path(), identity()).expect("reopen");
+        let mut reopened = NodeAuthorityCoordinatorV0::open_candidate(directory.path(), identity())
+            .expect("reopen");
         assert_eq!(
             reopened.recover().expect("recover reopened"),
             RecoveryDispositionV0::Resume {
@@ -525,9 +518,7 @@ mod tests {
         assert!(matches!(
             substituted,
             Err(NodeAuthorityErrorV0::Durable(
-                DurableFileErrorV0::InvalidAuthorityCommand(
-                    BoundaryErrorV0::ReceiptSubstitution
-                )
+                DurableFileErrorV0::InvalidAuthorityCommand(BoundaryErrorV0::ReceiptSubstitution)
             ))
         ));
     }

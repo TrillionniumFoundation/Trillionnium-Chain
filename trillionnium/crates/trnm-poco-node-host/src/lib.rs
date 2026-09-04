@@ -8,11 +8,7 @@
 //! authority, or release promotion. The I/O side remains deliberately inert,
 //! so this candidate composition can never satisfy the production start gate.
 
-use std::{
-    error::Error,
-    fmt,
-    path::Path,
-};
+use std::{error::Error, fmt, path::Path};
 
 use trnm_node_boundary_v0::{
     AuthorityReceiptV0, AuthorityStageV0, BoundIngressV0, Digest32V0, NodeIdentityV0,
@@ -119,9 +115,7 @@ impl PocoNodeHostV0 {
         }
     }
 
-    pub fn recover_authority(
-        &mut self,
-    ) -> Result<RecoveryDispositionV0, NodeAuthorityErrorV0> {
+    pub fn recover_authority(&mut self) -> Result<RecoveryDispositionV0, NodeAuthorityErrorV0> {
         self.authority.recover()
     }
 
@@ -248,11 +242,9 @@ mod tests {
     #[test]
     fn persistent_candidate_delegates_authority_but_cannot_start() {
         let directory = tempfile::tempdir().expect("tempdir");
-        let mut host = PocoNodeHostV0::open_candidate_persistent_authority(
-            directory.path(),
-            identity(),
-        )
-        .expect("open host");
+        let mut host =
+            PocoNodeHostV0::open_candidate_persistent_authority(directory.path(), identity())
+                .expect("open host");
         assert!(host.status().persistent_authority_bound());
         assert!(!host.status().recovery_barrier_satisfied());
         assert_eq!(
@@ -263,7 +255,10 @@ mod tests {
             .prepare_bound_ingress(&ingress())
             .expect("prepare ingress");
         assert_eq!(host.current_authority_receipt(), Some(prepared));
-        assert_eq!(host.status().durable_stage(), Some(AuthorityStageV0::Prepared));
+        assert_eq!(
+            host.status().durable_stage(),
+            Some(AuthorityStageV0::Prepared)
+        );
 
         let application_facts = Digest32V0::hash(
             b"trnm.host-test-application-seal.v0",

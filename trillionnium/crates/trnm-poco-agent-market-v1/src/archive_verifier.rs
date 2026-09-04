@@ -175,7 +175,6 @@ mod tests {
         let proof = batch
             .inclusion_proof(&policy, record.task_id)
             .expect("proof");
-        verify_task_archive_inclusion_v1(&batch.seal, record, &proof)
-            .expect("inclusion verifies");
+        verify_task_archive_inclusion_v1(&batch.seal, record, &proof).expect("inclusion verifies");
     }
 }

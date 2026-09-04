@@ -273,12 +273,14 @@ impl TaskArchiveBatchV1 {
                 ));
             }
             previous_key = Some(key);
-            total_bytes = total_bytes.checked_add(record.encoded_bytes).ok_or_else(|| {
-                error(
-                    AgentMarketErrorCodeV1::ArithmeticOverflow,
-                    "TaskV1 archive byte total overflow",
-                )
-            })?;
+            total_bytes = total_bytes
+                .checked_add(record.encoded_bytes)
+                .ok_or_else(|| {
+                    error(
+                        AgentMarketErrorCodeV1::ArithmeticOverflow,
+                        "TaskV1 archive byte total overflow",
+                    )
+                })?;
             total_charge = total_charge
                 .checked_add(record.retention_charge_paid)
                 .ok_or_else(|| {
@@ -335,7 +337,12 @@ impl TaskArchiveBatchV1 {
             .records
             .iter()
             .position(|record| record.task_id == task_id)
-            .ok_or_else(|| error(AgentMarketErrorCodeV1::NotFound, "TaskV1 not in archive batch"))?;
+            .ok_or_else(|| {
+                error(
+                    AgentMarketErrorCodeV1::NotFound,
+                    "TaskV1 not in archive batch",
+                )
+            })?;
         let hashes = self
             .records
             .iter()
@@ -402,12 +409,14 @@ pub fn plan_task_archive_pruning_v1(
                 "duplicate TaskV1 terminal record",
             ));
         }
-        live_bytes = live_bytes.checked_add(record.encoded_bytes).ok_or_else(|| {
-            error(
-                AgentMarketErrorCodeV1::ArithmeticOverflow,
-                "TaskV1 live terminal byte total overflow",
-            )
-        })?;
+        live_bytes = live_bytes
+            .checked_add(record.encoded_bytes)
+            .ok_or_else(|| {
+                error(
+                    AgentMarketErrorCodeV1::ArithmeticOverflow,
+                    "TaskV1 live terminal byte total overflow",
+                )
+            })?;
     }
     if !legal_holds.is_subset(&seen) {
         return Err(error(
@@ -416,12 +425,13 @@ pub fn plan_task_archive_pruning_v1(
         ));
     }
 
-    let maximum_live_count = usize::try_from(policy.maximum_live_terminal_records).map_err(|_| {
-        error(
-            AgentMarketErrorCodeV1::ArithmeticOverflow,
-            "TaskV1 live record limit conversion overflow",
-        )
-    })?;
+    let maximum_live_count =
+        usize::try_from(policy.maximum_live_terminal_records).map_err(|_| {
+            error(
+                AgentMarketErrorCodeV1::ArithmeticOverflow,
+                "TaskV1 live record limit conversion overflow",
+            )
+        })?;
     if canonical.len() <= maximum_live_count && live_bytes <= policy.maximum_live_terminal_bytes {
         return Ok(TaskArchivePlanV1 {
             retained_records: canonical,
@@ -492,8 +502,7 @@ pub fn plan_task_archive_pruning_v1(
         selected.push(record.clone());
     }
 
-    if remaining_count > maximum_live_count
-        || remaining_bytes > policy.maximum_live_terminal_bytes
+    if remaining_count > maximum_live_count || remaining_bytes > policy.maximum_live_terminal_bytes
     {
         return Err(error(
             AgentMarketErrorCodeV1::Conflict,
@@ -506,12 +515,14 @@ pub fn plan_task_archive_pruning_v1(
         .map(TerminalTaskArchiveRecordV1::record_hash)
         .collect::<AgentMarketResultV1<Vec<_>>>()?;
     let total_charge = selected.iter().try_fold(0_u128, |total, record| {
-        total.checked_add(record.retention_charge_paid).ok_or_else(|| {
-            error(
-                AgentMarketErrorCodeV1::ArithmeticOverflow,
-                "TaskV1 selected archive charge total overflow",
-            )
-        })
+        total
+            .checked_add(record.retention_charge_paid)
+            .ok_or_else(|| {
+                error(
+                    AgentMarketErrorCodeV1::ArithmeticOverflow,
+                    "TaskV1 selected archive charge total overflow",
+                )
+            })
     })?;
     let first = selected.first().ok_or_else(|| {
         error(
@@ -772,15 +783,9 @@ mod tests {
         records[2].retention_paid_through_height = 30;
         records[2].retention_charge_paid = 5_600;
         let holds = BTreeSet::from([TaskIdV1([1; 32])]);
-        let failure = plan_task_archive_pruning_v1(
-            &policy,
-            &records,
-            &holds,
-            20,
-            1,
-            Hash32V1([0; 32]),
-        )
-        .expect_err("capacity cannot be restored");
+        let failure =
+            plan_task_archive_pruning_v1(&policy, &records, &holds, 20, 1, Hash32V1([0; 32]))
+                .expect_err("capacity cannot be restored");
         assert_eq!(failure.code(), AgentMarketErrorCodeV1::Conflict);
     }
 
