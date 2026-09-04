@@ -119,6 +119,9 @@ python3 scripts/ci/check_module_coverage_v1.py
 The first command runs retained synthetic mutants, including the real coverage
 entry point against a fixture. The second inspects the actual checkout. These
 are different evidence scopes and must be recorded separately. The
-`trnm-boundary-regressions` workflow runs head and prospective-merge jobs with
-explicit source identity; it supplements, never replaces, the protected required
-baseline, independent reviews, production build closures or external gates.
+`boundary-regressions` job in the existing `trnm-required-baseline` workflow
+runs explicit head and prospective-merge checks for pull requests. For push or
+dispatch both entries inspect the event commit and do not claim PR merge evidence.
+It uses the already approved read-only hosted trust class and keeps every
+existing protected required job, independent review, production build closure
+and external gate unchanged. No new runner-policy exemption is introduced.
