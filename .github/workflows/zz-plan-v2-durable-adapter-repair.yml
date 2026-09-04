@@ -60,6 +60,7 @@ jobs:
           python3 tools/fixup_plan_v2_repair_generator.py
           python3 tools/repair_plan_v2_remaining_blockers.py
           git rm \
+            .github/workflows/zz-apply-plan-v2-closure-tree.yml \
             .github/workflows/zz-plan-v2-durable-adapter-repair.yml \
             tools/fixup_plan_v2_repair_generator.py
 
