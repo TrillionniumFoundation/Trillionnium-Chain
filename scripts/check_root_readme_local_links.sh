@@ -8,6 +8,37 @@ if [[ ! -f "$README_PATH" ]]; then
   exit 2
 fi
 
+if ! grep -q '[^[:space:]]' "$README_PATH"; then
+  echo "[readme-link-check][FAIL] README is empty or whitespace-only: $README_PATH" >&2
+  exit 2
+fi
+
+# The repository entrypoint must remain a useful entrypoint, not a token stub.
+if [[ "$README_PATH" == "README.md" ]]; then
+  line_count="$(wc -l < "$README_PATH" | tr -d '[:space:]')"
+  if [[ ! "$line_count" =~ ^[0-9]+$ ]] || (( line_count < 80 )); then
+    echo "[readme-link-check][FAIL] root README is unexpectedly short: ${line_count:-unknown} lines" >&2
+    exit 2
+  fi
+
+  required_headings=(
+    '# Trillionnium Chain (TRNM)'
+    '## Repository map'
+    '## Maturity and scope'
+    '## Build and test'
+    '## Module documentation'
+    '## Documentation entry points'
+    '## Contribution and evidence rules'
+    '## Security'
+  )
+  for heading in "${required_headings[@]}"; do
+    if ! grep -Fqx "$heading" "$README_PATH"; then
+      echo "[readme-link-check][FAIL] root README missing required heading: $heading" >&2
+      exit 2
+    fi
+  done
+fi
+
 missing=0
 checked=0
 
@@ -36,6 +67,11 @@ while IFS= read -r link; do
 done < <(grep -Eo '\[[^][]+\]\([^)]+\)' "$README_PATH" || true)
 
 echo "[readme-link-check] checked=$checked missing=$missing"
+
+if [[ "$checked" -eq 0 ]]; then
+  echo "[readme-link-check][FAIL] no relative links were checked" >&2
+  exit 1
+fi
 
 if [[ "$missing" -ne 0 ]]; then
   exit 1
