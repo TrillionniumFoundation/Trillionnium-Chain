@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/zz-plan-v2-durable-adapter-repair.yml
       - tools/fixup_plan_v2_repair_generator.py
+      - tools/fixup_durable_boundary_api_v0.py
       - tools/repair_plan_v2_remaining_blockers.py
   workflow_dispatch:
 
@@ -81,9 +82,11 @@ jobs:
           path.write_text(source.replace(old, new, 1), encoding="utf-8")
           PY
           python3 tools/repair_plan_v2_remaining_blockers.py
+          python3 tools/fixup_durable_boundary_api_v0.py
           git rm \
             .github/workflows/zz-apply-plan-v2-closure-tree.yml \
             .github/workflows/zz-plan-v2-durable-adapter-repair.yml \
+            tools/fixup_durable_boundary_api_v0.py \
             tools/fixup_plan_v2_repair_generator.py
 
       - name: Prime isolated Cargo registry and prove offline resolution
