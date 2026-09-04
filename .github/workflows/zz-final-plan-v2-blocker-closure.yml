@@ -71,7 +71,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/check_repository_truth_v1.py
-          bash scripts/ci/check_canonical_development_plan.sh
+          TRNM_PLAN_EDITING=1 bash scripts/ci/check_canonical_development_plan.sh
           python3 scripts/ci/check_module_coverage_v1.py
           python3 scripts/ci/check_node_decomposition_v1.py
           python3 scripts/ci/check_required_baseline_closure_v1.py
