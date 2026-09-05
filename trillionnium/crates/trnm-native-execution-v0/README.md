@@ -129,3 +129,40 @@ CARGO_TARGET_DIR="$legacy_target" cargo test \
 That command intentionally compiles archived Tendermint/ABCI dependencies. It
 is manual historical audit only; automatic workflows and the main truth gate
 must never invoke it.
+
+## Test-only sync fault ownership
+
+Primary module: M06. Consumer: M17 exact-source qualification.
+The `cfg(test)` fault registry is scoped by the exact store path. Different
+store paths may be armed concurrently; two outstanding faults for one path
+are rejected before changing the registry. Matching path and boundary consume
+one fault exactly once. A wrong path or boundary consumes nothing.
+
+Each guard owns an independent allocation identity. Its destructor removes only
+that registration, even after consumption and rearming the same path/boundary.
+Panic unwinding must release only the unwinding test's fault. Registration
+rejection releases the mutex before panicking, so it cannot poison unrelated
+store tests. This is fixture isolation, not a production filesystem identity,
+canonical-path, crash-durability or consensus guarantee. Test callers use the
+same application path at arm and consume; aliases are not normalized here.
+
+The retained direct registry regressions supplement, not replace, the existing
+SQLite initialization, H1 import and finalized-commit sync-failure regressions.
+Parallel tests remain enabled and their failure assertions remain unchanged.
+
+```bash
+cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-execution-v0 --lib --locked
+```
+
+The registry and new tests compile only under `cfg(test)`. Production sync calls,
+commit/recovery logic, public APIs, hashes and database schema are unchanged.
+
+The unwind test first proves that registration succeeded and then checks the
+exact injected panic payload. A panic in registration itself must not satisfy
+an unwind-cleanup test. The same-path race uses two workers, bounded start and
+release channels, and overlapping guard lifetimes to require exactly one
+successful registration. The winning fault is consumed from another thread,
+then the same path is rearmed before the old worker guard is dropped; the new
+registration must survive that drop. All five direct registry tests retain
+parallel execution. These tests supplement the existing SQLite initialization,
+H1 import and finalized-commit uncertainty tests; they do not replace them.
