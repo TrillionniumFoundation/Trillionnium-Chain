@@ -357,7 +357,7 @@ jobs:
           git diff --exit-code HEAD -- .
           git ls-files -s -- crates/trnm-native-execution-v0 crates/trnm-durable-file-adapters-v0 crates/trnm-poco-node-authority crates/trnm-poco-node-host
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-poco-node-cli --all-targets --locked
-          cargo test -p trnm-poco-node-authority -p trnm-poco-node-host --no-default-features --doc --locked
+          cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-state-sync-v0 --no-default-features --doc --locked
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-durable-file-adapters-v0 --lib --locked -- --nocapture
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features persistent-authority-candidate --all-targets --locked -- --nocapture
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
