@@ -4,7 +4,9 @@
 //! This crate is a testkit and is forbidden from the production dependency
 //! closure.  It models durable crash points and verifies the contracts exposed
 //! by the v0 protocol cores without claiming physical power-loss, real HSM, or
-//! multi-host evidence.
+//! multi-host evidence. Forbidden control-plane actions must fail shape admission
+//! before signature verification or action receipts; an accepting signature
+//! fixture cannot turn those actions into admissible plans.
 
 pub const PRODUCTION_ADAPTER_CONFORMANCE_VERSION_V0: u16 = 0;
 
@@ -19,9 +21,9 @@ mod tests {
         sync::{Arc, Mutex},
     };
     use trnm_control_plane_v0::{
-        ActionDecisionV0, ControlPlaneErrorV0, Digest32V0 as ControlDigest,
-        ForbiddenAuthorityActionV0, LocalPlanGuardV0, OptimizationPlanV1, PlanActionV0,
-        PlanSignatureVerifierV0,
+        ControlPlaneErrorV0, ControlPlaneHostErrorV0, Digest32V0 as ControlDigest,
+        ForbiddenAuthorityActionV0, LocalPlanGuardV0, OptimizationPlanV1, ParameterBoundV0,
+        ParameterClassV0, PlanActionV0, PlanSignatureVerifierV0,
     };
     use trnm_migration_v0::{ExportRowV0, MigrationErrorV0};
     use trnm_node_boundary_v0::{
@@ -633,19 +635,36 @@ mod tests {
         };
     }
 
-    struct AcceptPlanSignature;
+    struct AcceptPlanSignature {
+        calls: Arc<Mutex<u64>>,
+    }
     impl PlanSignatureVerifierV0 for AcceptPlanSignature {
         type Error = Infallible;
         fn verify_plan_signature(&self, _plan: &OptimizationPlanV1) -> Result<(), Self::Error> {
+            *self.calls.lock().expect("signature fixture calls") += 1;
             Ok(())
         }
     }
 
     #[test]
     fn control_plane_cannot_finalize_even_with_a_valid_signature() {
-        let guard =
-            LocalPlanGuardV0::new(AcceptPlanSignature, control_d(2), control_d(3), 7, vec![])
-                .unwrap();
+        let signature_calls = Arc::new(Mutex::new(0));
+        let guard = LocalPlanGuardV0::new(
+            AcceptPlanSignature {
+                calls: Arc::clone(&signature_calls),
+            },
+            control_d(2),
+            control_d(3),
+            7,
+            vec![ParameterBoundV0 {
+                module_id: 4,
+                parameter: b"ingress_queue_items".to_vec(),
+                minimum: 32,
+                maximum: 4096,
+                class: ParameterClassV0::OperationalLocal,
+            }],
+        )
+        .expect("valid guard");
         let mut plan = OptimizationPlanV1 {
             plan_id: control_d(1),
             source_graph_digest: control_d(2),
@@ -656,22 +675,58 @@ mod tests {
             issued_generation: 8,
             not_before_height: 100,
             expires_after_height: 200,
-            actions: vec![PlanActionV0::Forbidden(
-                ForbiddenAuthorityActionV0::Finalize,
-            )],
+            actions: vec![PlanActionV0::SetBoundedInteger {
+                module_id: 4,
+                parameter: b"ingress_queue_items".to_vec(),
+                value: 1024,
+                class: ParameterClassV0::OperationalLocal,
+            }],
             signer_id: control_d(7),
             signature_digest: control_d(8),
             canonical_plan_digest: control_d(0),
         };
         plan.canonical_plan_digest = plan.canonical_digest();
-        let receipt = guard
+        let accepted = guard
             .evaluate(&plan, 150, None, None, control_d(9), control_d(10))
-            .unwrap();
-        assert!(!receipt.accepted);
-        assert_eq!(
-            receipt.action_results[0].decision,
-            ActionDecisionV0::Rejected(ControlPlaneErrorV0::ForbiddenAuthorityAction)
-        );
+            .expect("positive operational control");
+        assert!(accepted.accepted);
+        assert_eq!(accepted.receipt_digest, accepted.canonical_digest());
+        assert_eq!(*signature_calls.lock().unwrap(), 1);
+
+        for forbidden in [
+            ForbiddenAuthorityActionV0::Sign,
+            ForbiddenAuthorityActionV0::Vote,
+            ForbiddenAuthorityActionV0::Finalize,
+            ForbiddenAuthorityActionV0::ModifySafetyRules,
+            ForbiddenAuthorityActionV0::CreateStateRoot,
+            ForbiddenAuthorityActionV0::BypassAdmission,
+            ForbiddenAuthorityActionV0::EraseEvidence,
+            ForbiddenAuthorityActionV0::RewriteHistory,
+            ForbiddenAuthorityActionV0::ForceIncompatibleStartup,
+            ForbiddenAuthorityActionV0::ActivateProduction,
+        ] {
+            let mut rejected = plan.clone();
+            rejected.actions = vec![PlanActionV0::Forbidden(forbidden)];
+            rejected.canonical_plan_digest = rejected.canonical_digest();
+            assert!(matches!(
+                guard.evaluate(&rejected, 150, None, None, control_d(9), control_d(10)),
+                Err(ControlPlaneHostErrorV0::Protocol(
+                    ControlPlaneErrorV0::ForbiddenAuthorityAction
+                ))
+            ));
+            assert_eq!(
+                *signature_calls.lock().unwrap(),
+                1,
+                "forbidden actions must be rejected before the signature callback"
+            );
+        }
+
+        let replayed = guard
+            .evaluate(&plan, 150, None, None, control_d(9), control_d(10))
+            .expect("rejections leave the valid guard unchanged");
+        assert!(replayed.accepted);
+        assert_eq!(replayed.receipt_digest, accepted.receipt_digest);
+        assert_eq!(*signature_calls.lock().unwrap(), 2);
     }
 
     #[test]
