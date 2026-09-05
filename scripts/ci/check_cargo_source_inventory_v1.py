@@ -38,7 +38,10 @@ def reject_constant(value: str) -> None:
 
 
 def git(root: pathlib.Path, *args: str) -> str:
-    return subprocess.check_output(['git', '-C', str(root), *args], text=True, timeout=20).strip()
+    # Resolve the original commit graph, never a local replacement-object view.
+    return subprocess.check_output(
+        ['git', '--no-replace-objects', '-C', str(root), *args], text=True, timeout=20,
+    ).strip()
 
 
 def bound_file(

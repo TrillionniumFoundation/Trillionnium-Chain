@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import os
 import json
 import pathlib
 import subprocess
@@ -180,6 +182,116 @@ class InventoryTests(unittest.TestCase):
             return result
         with mock.patch.object(inventory, 'bound_file', side_effect=dirty_after_binding):
             with self.assertRaises(inventory.InventoryError): self.check()
+
+    def raw_git(self, *args: str) -> str:
+        # Deliberately enable replacements for the negative control. The
+        # production inventory helper must independently disable this overlay.
+        environment = dict(os.environ)
+        environment.pop('GIT_NO_REPLACE_OBJECTS', None)
+        return subprocess.check_output(
+            ['git', '-C', str(self.root), *args], text=True,
+            env=environment, timeout=10,
+        ).strip()
+
+    def replacement_fixture(self, replace_tree: bool = False) -> dict[str, str]:
+        source = self.package / 'src/lib.rs'
+        original_bytes = source.read_text()
+        original = self.head
+        original_tree = self.raw_git('rev-parse', 'HEAD^{tree}')
+        source.write_text('pub fn identity(x: u64) -> u64 { x + 1 }\n')
+        self.commit_fixture()
+        replacement = self.head
+        replacement_tree = self.raw_git('rev-parse', 'HEAD^{tree}')
+        self.raw_git('update-ref', 'HEAD', original)
+        self.raw_git('replace', original_tree if replace_tree else original,
+                     replacement_tree if replace_tree else replacement)
+        self.head = original
+        self.assertEqual(self.raw_git('rev-parse', 'HEAD'), original)
+        self.assertEqual(self.raw_git('status', '--porcelain'), '')
+        self.assertNotEqual(original_tree, replacement_tree)
+        return {
+            'original': original, 'original_tree': original_tree,
+            'replacement': replacement, 'replacement_tree': replacement_tree,
+            'original_bytes': original_bytes,
+        }
+
+    def test_commit_replacement_cannot_misbind_the_source_tree(self) -> None:
+        facts = self.replacement_fixture()
+        self.assertEqual(self.raw_git('rev-parse', 'HEAD^{tree}'), facts['replacement_tree'])
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_tree_replacement_cannot_misbind_the_source_tree(self) -> None:
+        self.replacement_fixture(replace_tree=True)
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_external_contract_commit_replacement_is_rejected(self) -> None:
+        self.move_fixture_to_contracts()
+        self.replacement_fixture()
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_custom_replacement_namespace_cannot_change_source_identity(self) -> None:
+        with mock.patch.dict(os.environ, {'GIT_REPLACE_REF_BASE': 'refs/fixture-replacements/'}):
+            self.replacement_fixture()
+            with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_original_checkout_ignores_overlay_without_deleting_replace_refs(self) -> None:
+        facts = self.replacement_fixture()
+        before_refs = self.raw_git('for-each-ref', '--format=%(refname) %(objectname)', 'refs/replace')
+        (self.package / 'src/lib.rs').write_text(facts['original_bytes'])
+        self.raw_git('--no-replace-objects', 'read-tree', facts['original'])
+        report = self.check()
+        self.assertEqual(report['source_commit'], facts['original'])
+        self.assertEqual(report['source_tree'], facts['original_tree'])
+        self.assertEqual(report['test_acceptance'], 'not-assessed')
+        self.assertIs(report['production_authority'], False)
+        self.assertEqual(
+            self.raw_git('for-each-ref', '--format=%(refname) %(objectname)', 'refs/replace'),
+            before_refs,
+        )
+
+    def test_git_helper_reads_original_commit_not_replacement_bytes(self) -> None:
+        facts = self.replacement_fixture()
+        content = (inventory.git(self.root, 'cat-file', 'commit', facts['original']) + '\n').encode()
+        actual = hashlib.sha1(f'commit {len(content)}\0'.encode() + content).hexdigest()
+        self.assertEqual(actual, facts['original'])
+
+    def test_package_runner_rejects_replacement_before_any_test_launch(self) -> None:
+        from test_bounded_workspace_tests_v1 import PackageSelectionTests
+        fixture = PackageSelectionTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        original = fixture.head
+        (fixture.workspace / 'crates/a/src/lib.rs').write_text('pub fn replaced() {}\n')
+        fixture.git('add', '.')
+        fixture.git('-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid',
+                    'commit', '-qm', 'replacement runner fixture')
+        replacement = fixture.git('rev-parse', 'HEAD')
+        fixture.git('update-ref', 'HEAD', original)
+        fixture.git('replace', original, replacement)
+        with self.assertRaises(inventory.InventoryError): fixture.run_main()
+        self.assertFalse(fixture.test_marker.exists())
+
+    def test_late_replacement_does_not_evade_final_clean_source_check(self) -> None:
+        facts = self.replacement_fixture()
+        self.raw_git('replace', '-d', facts['original'])
+        source = self.package / 'src/lib.rs'
+        source.write_text(facts['original_bytes'])
+        self.raw_git('read-tree', facts['original'])
+        bound_file = inventory.bound_file
+        changed = False
+        def substitute_after_binding(*args, **kwargs):
+            nonlocal changed
+            result = bound_file(*args, **kwargs)
+            if result[0] == source and not changed:
+                changed = True
+                self.raw_git('replace', facts['original'], facts['replacement'])
+                source.write_text('pub fn identity(x: u64) -> u64 { x + 1 }\n')
+                self.raw_git('read-tree', facts['replacement'])
+                self.assertEqual(self.raw_git('status', '--porcelain'), '')
+            return result
+        with mock.patch.object(inventory, 'bound_file', side_effect=substitute_after_binding):
+            with self.assertRaises(inventory.InventoryError): self.check()
+        self.assertTrue(changed)
 
     def test_wrong_source_sha(self) -> None:
         self.head = '0' * 40

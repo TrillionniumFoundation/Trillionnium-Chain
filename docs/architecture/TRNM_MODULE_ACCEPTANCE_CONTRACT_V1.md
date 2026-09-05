@@ -235,3 +235,29 @@ checks. It is not hermetic execution, a malicious-compiler defense, protection
 against all transient file edits, proof that no tests are ignored, or independent
 module acceptance. Synthetic Cargo responses and real child-process regression
 fixtures establish this runner behavior only; they are not Rust package tests.
+
+
+### Original Git objects, not replacement views
+
+Primary module: M17. Native and contract inventories and the bounded package
+runner resolve commit/tree/blob identity with Git replacement objects disabled.
+A local `refs/replace` mapping can otherwise retain the expected HEAD identifier
+while making a different tree and changed source appear clean. Capturing HEAD
+alone does not bind the original content in that view. The helper explicitly
+uses `git --no-replace-objects`; custom replacement namespaces cannot override
+that command-line choice. It does not delete or rewrite the caller's refs.
+
+A checkout matching only a replacement tree must fail admission, including
+replacement introduced after a target was hashed. A checkout that matches the
+original commit may pass while inert replacement refs remain present. All prior
+path, manifest, target, clean-source and final-source checks remain required.
+The real-Git regression controls retain an ordinary replacement-aware view to
+prove that it appears clean while the source-bound view rejects the substitution.
+The runner consumer must reject before invoking any package test.
+
+This binds the inventory's original-object observations. It does not validate a
+malicious Git executable, sandbox a compiler/build script, inspect all transient
+mutations or authenticate a remote repository owner. Source qualification still
+requires a trusted toolchain and isolated checkout. Rust execution and independent
+acceptance remain distinct. Git replacement semantics are specified by
+`git help replace` and `git help git`.
