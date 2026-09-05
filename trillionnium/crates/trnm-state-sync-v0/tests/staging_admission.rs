@@ -233,7 +233,7 @@ fn valid_staging_identity_still_installs_the_verified_snapshot() {
         assert_eq!(receipt.generation, generation);
         assert_eq!(
             receipt.installed_root,
-            session.verify_complete(&HashRoot).unwrap().state_root
+            session.verify_complete(&HashRoot).unwrap().state_root()
         );
         assert_eq!(target.calls, ["begin", "write", "write", "commit"]);
         assert_eq!(target.serving_root, receipt.installed_root);

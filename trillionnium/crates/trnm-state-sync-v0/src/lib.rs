@@ -98,12 +98,59 @@ pub trait CheckpointProofVerifierV0 {
     fn verify_link(&self, link: &CheckpointLinkV0) -> Result<(), Self::Error>;
 }
 
+/// An immutable result issued only after the complete checkpoint path verifies.
+///
+/// The verifier remains a trusted adapter supplied by the composition. This type
+/// prevents bypassing that adapter or changing a result after it returns; it is
+/// not a replacement for cryptographic verification or trust-anchor selection.
+///
+/// External callers cannot manufacture a verified path:
+///
+/// ```compile_fail,E0451
+/// use trnm_state_sync_v0::{
+///     CheckpointLinkV0, Digest32V0, VerifiedTrustPathV0, WeakSubjectivityAnchorV0,
+/// };
+/// fn forge(anchor: WeakSubjectivityAnchorV0, terminal: CheckpointLinkV0) -> VerifiedTrustPathV0 {
+///     VerifiedTrustPathV0 { anchor, terminal, link_count: 1, path_digest: Digest32V0([1; 32]) }
+/// }
+/// ```
+///
+/// Nor may they retarget a genuine result to an unverified checkpoint:
+///
+/// ```compile_fail,E0616
+/// use trnm_state_sync_v0::{CheckpointLinkV0, VerifiedTrustPathV0};
+/// fn retarget(path: &mut VerifiedTrustPathV0, unverified: CheckpointLinkV0) {
+///     path.terminal = unverified;
+/// }
+/// ```
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct VerifiedTrustPathV0 {
-    pub anchor: WeakSubjectivityAnchorV0,
-    pub terminal: CheckpointLinkV0,
-    pub link_count: u32,
-    pub path_digest: Digest32V0,
+    anchor: WeakSubjectivityAnchorV0,
+    terminal: CheckpointLinkV0,
+    link_count: u32,
+    path_digest: Digest32V0,
+}
+
+impl VerifiedTrustPathV0 {
+    #[must_use]
+    pub const fn anchor(&self) -> WeakSubjectivityAnchorV0 {
+        self.anchor
+    }
+
+    #[must_use]
+    pub const fn terminal(&self) -> CheckpointLinkV0 {
+        self.terminal
+    }
+
+    #[must_use]
+    pub const fn link_count(&self) -> u32 {
+        self.link_count
+    }
+
+    #[must_use]
+    pub const fn path_digest(&self) -> Digest32V0 {
+        self.path_digest
+    }
 }
 
 pub fn verify_trust_path_v0<V>(
@@ -525,14 +572,67 @@ impl StateSyncSessionV0 {
     }
 }
 
+/// An immutable result issued only after all chunks and the state root verify.
+///
+/// Cloning or copying this value preserves its verified facts. Accessors return
+/// values, not mutable access to the receipt. It does not grant storage deletion,
+/// make an untrusted root recomputer authoritative, or prove physical durability.
+///
+/// ```compile_fail,E0451
+/// use trnm_state_sync_v0::{Digest32V0, VerifiedSnapshotV0};
+/// let digest = Digest32V0([1; 32]);
+/// let forged = VerifiedSnapshotV0 {
+///     manifest_digest: digest, trust_path_digest: digest, state_root: digest,
+///     chunk_root: digest, height: 1, epoch: 1,
+/// };
+/// ```
+///
+/// ```compile_fail,E0616
+/// use trnm_state_sync_v0::{Digest32V0, VerifiedSnapshotV0};
+/// fn retarget(snapshot: &mut VerifiedSnapshotV0) {
+///     snapshot.state_root = Digest32V0([9; 32]);
+/// }
+/// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct VerifiedSnapshotV0 {
-    pub manifest_digest: Digest32V0,
-    pub trust_path_digest: Digest32V0,
-    pub state_root: Digest32V0,
-    pub chunk_root: Digest32V0,
-    pub height: u64,
-    pub epoch: u64,
+    manifest_digest: Digest32V0,
+    trust_path_digest: Digest32V0,
+    state_root: Digest32V0,
+    chunk_root: Digest32V0,
+    height: u64,
+    epoch: u64,
+}
+
+impl VerifiedSnapshotV0 {
+    #[must_use]
+    pub const fn manifest_digest(&self) -> Digest32V0 {
+        self.manifest_digest
+    }
+
+    #[must_use]
+    pub const fn trust_path_digest(&self) -> Digest32V0 {
+        self.trust_path_digest
+    }
+
+    #[must_use]
+    pub const fn state_root(&self) -> Digest32V0 {
+        self.state_root
+    }
+
+    #[must_use]
+    pub const fn chunk_root(&self) -> Digest32V0 {
+        self.chunk_root
+    }
+
+    #[must_use]
+    pub const fn height(&self) -> u64 {
+        self.height
+    }
+
+    #[must_use]
+    pub const fn epoch(&self) -> u64 {
+        self.epoch
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

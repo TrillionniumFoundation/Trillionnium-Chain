@@ -49,3 +49,37 @@ cargo test --manifest-path trillionnium/Cargo.toml -p trnm-production-adapter-co
 
 No schema/hash, lockfile, runtime authority or production flag changes. Independent
 M13 producer and durable-adapter consumer review remains required before acceptance.
+
+## Immutable verification results
+
+`VerifiedTrustPathV0` can be created only inside the module's full trust-path
+verification routine. Its anchor, terminal checkpoint, link count and path digest
+are private and exposed through read-only, by-value accessors. A caller cannot
+skip checkpoint verification with a struct literal, nor mutate a genuine result
+to point to an unverified checkpoint before manifest admission.
+
+`VerifiedSnapshotV0` likewise has private fields and read-only accessors. Only
+complete chunk commitment and application-root verification produce it. Copying
+or cloning a result preserves its verified facts; modifying an accessor's returned
+copy cannot change the result. Neither type provides a public unchecked/default
+constructor or deserializer.
+
+This is a source-level API tightening. Consumers must replace field reads with
+accessor calls; consumers that constructed or mutated these results directly
+must instead call the verification routines. The tracked staging consumer has
+been updated. Frozen wire/hash encodings, protocol digests, lockfiles and
+production flags are unchanged. Verification adapters and the configured trust
+anchor remain trusted inputs: a caller-supplied accept-all verifier is still a
+fixture, not cryptographic evidence. Immutability does not establish freshness,
+revocation or independent release acceptance.
+
+The public verification-seal tests use counting/rejecting adapters and valid
+controls to check successful issuance, pre-verifier structural rejection,
+adapter errors, accessor-copy isolation and state-root mismatch rejection.
+Four compile-fail doctests must reject external construction and mutation of
+both result types. They are explicitly included in the existing required Rust
+baseline's documentation-test command, not assumed to run under `--all-targets`:
+
+```bash
+cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state-sync-v0 --doc --locked
+```
