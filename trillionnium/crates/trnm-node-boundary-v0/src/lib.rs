@@ -436,6 +436,7 @@ where
 }
 
 pub struct PersistentValidatorHostV0<C, I> {
+    identity: NodeIdentityV0,
     coordinator: C,
     io: I,
     budget: StepBudgetV0,
@@ -448,7 +449,9 @@ where
     I: IoRuntimeV0,
 {
     pub fn new(coordinator: C, io: I, budget: StepBudgetV0) -> Result<Self, BoundaryErrorV0> {
+        let identity = coordinator.identity().validate()?;
         Ok(Self {
+            identity,
             coordinator,
             io,
             budget: budget.validate()?,
@@ -456,16 +459,20 @@ where
         })
     }
 
+    /// Revoke prior readiness before a fallible recovery or a resumed-binding check.
     pub fn recover(&mut self) -> Result<HostReadinessV0, HostErrorV0<C::Error, I::Error>> {
-        self.readiness = match self
+        self.readiness = HostReadinessV0::Recovering;
+        self.check_identity()?;
+        let disposition = self
             .coordinator
             .recover()
-            .map_err(HostErrorV0::Coordinator)?
-        {
+            .map_err(HostErrorV0::Coordinator)?;
+        self.check_identity()?;
+        self.readiness = match disposition {
             RecoveryDispositionV0::Clean => HostReadinessV0::Ready,
             RecoveryDispositionV0::Resume { binding, .. } => {
                 binding
-                    .validate(self.coordinator.identity())
+                    .validate(self.identity)
                     .map_err(HostErrorV0::Boundary)?;
                 HostReadinessV0::Ready
             }
@@ -474,6 +481,14 @@ where
             }
         };
         Ok(self.readiness)
+    }
+
+    fn check_identity(&mut self) -> Result<(), HostErrorV0<C::Error, I::Error>> {
+        if self.coordinator.identity() != self.identity {
+            self.readiness = HostReadinessV0::Recovering;
+            return Err(HostErrorV0::Boundary(BoundaryErrorV0::InvalidIdentity));
+        }
+        Ok(())
     }
 
     #[must_use]
@@ -495,9 +510,12 @@ where
             return Err(HostErrorV0::NotReady);
         }
 
-        let identity = self.coordinator.identity();
-        ingress.validate(identity).map_err(HostErrorV0::Boundary)?;
+        self.check_identity()?;
+        ingress.validate(self.identity).map_err(HostErrorV0::Boundary)?;
         let ingress_digest = ingress.ingress_digest();
+        // After invoking the adapter, an error may mean the write applied but
+        // acknowledgement was lost. Only fresh recovery can resolve it.
+        self.readiness = HostReadinessV0::Recovering;
         let receipt = self
             .coordinator
             .apply(AuthorityCommandV0::Begin {
@@ -505,6 +523,7 @@ where
                 ingress_digest,
             })
             .map_err(HostErrorV0::Coordinator)?;
+        self.check_identity()?;
 
         if receipt.binding != ingress.binding {
             return Err(HostErrorV0::Boundary(
@@ -519,6 +538,7 @@ where
         if receipt.facts_digest != ingress_digest || receipt.record_digest == Digest32V0([0; 32]) {
             return Err(HostErrorV0::Boundary(BoundaryErrorV0::ReceiptSubstitution));
         }
+        self.readiness = HostReadinessV0::Ready;
         Ok(receipt)
     }
 
@@ -526,7 +546,10 @@ where
         if self.readiness != HostReadinessV0::Ready {
             return Err(HostErrorV0::NotReady);
         }
-        match self.io.poll_ingress(self.budget).map_err(HostErrorV0::Io)? {
+        self.check_identity()?;
+        let polled = self.io.poll_ingress(self.budget);
+        self.check_identity()?;
+        match polled.map_err(HostErrorV0::Io)? {
             IoPollV0::Idle => Ok(HostStepV0::Idle),
             IoPollV0::Backpressured => Ok(HostStepV0::Backpressured),
             IoPollV0::Frames(frames) => {
@@ -1093,3 +1116,6 @@ mod tests {
         assert!(!NodeLayerRoleV0::LabEvidence.production_allowed());
     }
 }
+
+#[cfg(test)]
+mod host_recovery_tests;
