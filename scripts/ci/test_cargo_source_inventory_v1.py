@@ -8,6 +8,7 @@ import pathlib
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 
 import check_cargo_source_inventory_v1 as inventory
 
@@ -86,6 +87,99 @@ class InventoryTests(unittest.TestCase):
         for rejected in ('..', '../contracts', '/tmp', 'contracts/../trillionnium', 'unknown'):
             with self.subTest(name=rejected), self.assertRaises(inventory.InventoryError):
                 inventory.select_workspace(self.root, rejected)
+
+    def commit_fixture(self) -> None:
+        self.git('add', '-A')
+        self.git('-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid',
+                 'commit', '-qm', 'source mutation fixture')
+        self.head = self.git('rev-parse', 'HEAD')
+
+    def set_declared_members(self, members: list[str]) -> None:
+        (self.workspace / 'Cargo.toml').write_text(
+            '[workspace]\nmembers=' + json.dumps(members) + '\n')
+        self.commit_fixture()
+
+    def test_duplicate_declared_member_cannot_be_collapsed_into_a_pass(self) -> None:
+        self.set_declared_members(['crates/example', 'crates/example'])
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_declared_members_must_use_canonical_relative_paths(self) -> None:
+        for member in ('./crates/example', 'crates//example',
+                       'crates/../crates/example', str(self.package)):
+            with self.subTest(member=member):
+                self.set_declared_members([member])
+                with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_member_cannot_escape_its_workspace_inside_the_git_root(self) -> None:
+        destination = self.root / 'foreign-package'
+        self.package.rename(destination)
+        self.package = destination
+        self.metadata['packages'][0]['manifest_path'] = str(destination / 'Cargo.toml')
+        self.metadata['packages'][0]['targets'][0]['src_path'] = str(destination / 'src/lib.rs')
+        self.set_declared_members(['../foreign-package'])
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_member_symlink_cannot_select_another_workspace(self) -> None:
+        destination = self.root / 'foreign-package'
+        self.package.rename(destination)
+        self.package.symlink_to(destination, target_is_directory=True)
+        self.metadata['packages'][0]['manifest_path'] = str(destination / 'Cargo.toml')
+        self.metadata['packages'][0]['targets'][0]['src_path'] = str(destination / 'src/lib.rs')
+        self.commit_fixture()
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_manifest_symlink_cannot_select_another_workspace(self) -> None:
+        path = self.package / 'Cargo.toml'
+        foreign = self.root / 'foreign-Cargo.toml'
+        path.rename(foreign)
+        path.symlink_to(foreign)
+        self.metadata['packages'][0]['manifest_path'] = str(foreign)
+        self.commit_fixture()
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_ignored_source_alias_is_not_a_tracked_cargo_entrypoint(self) -> None:
+        (self.root / '.gitignore').write_text('ignored-entry.rs\n')
+        self.commit_fixture()
+        alias = self.root / 'ignored-entry.rs'
+        alias.symlink_to(self.package / 'src/lib.rs')
+        self.metadata['packages'][0]['targets'][0]['src_path'] = str(alias)
+        self.assertEqual(self.git('status', '--porcelain', '--untracked-files=all'), '')
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_workspace_alias_cannot_change_the_selected_workspace(self) -> None:
+        destination = self.root / 'contracts'
+        self.workspace.rename(destination)
+        self.workspace.symlink_to(destination, target_is_directory=True)
+        self.metadata['workspace_root'] = str(destination)
+        self.metadata['packages'][0]['manifest_path'] = str(destination / 'crates/example/Cargo.toml')
+        self.metadata['packages'][0]['targets'][0]['src_path'] = str(destination / 'crates/example/src/lib.rs')
+        self.commit_fixture()
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_head_movement_during_inventory_is_not_a_source_bound_pass(self) -> None:
+        original = inventory.bound_file
+        changed = False
+        def move_after_binding(*args, **kwargs):
+            nonlocal changed
+            result = original(*args, **kwargs)
+            if result[0].name == 'lib.rs' and not changed:
+                changed = True
+                (self.root / 'later-source.txt').write_text('new source tree\n')
+                self.commit_fixture()
+            return result
+        with mock.patch.object(inventory, 'bound_file', side_effect=move_after_binding):
+            with self.assertRaises(inventory.InventoryError): self.check()
+        self.assertTrue(changed)
+
+    def test_late_tracked_mutation_during_inventory_is_not_a_pass(self) -> None:
+        original = inventory.bound_file
+        def dirty_after_binding(*args, **kwargs):
+            result = original(*args, **kwargs)
+            if result[0].name == 'lib.rs':
+                result[0].write_text('changed after its source was hashed\n')
+            return result
+        with mock.patch.object(inventory, 'bound_file', side_effect=dirty_after_binding):
+            with self.assertRaises(inventory.InventoryError): self.check()
 
     def test_wrong_source_sha(self) -> None:
         self.head = '0' * 40

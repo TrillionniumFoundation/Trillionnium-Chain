@@ -169,3 +169,44 @@ boundary Clippy output are retained even on failure, with exact source commit
 and tree. An error naming a package absent from that inventory is unresolved
 source provenance, not grounds to invent or patch that package. These diagnostic
 artifacts do not provide independent review or override a failed command.
+
+### Inventory checkout and path identity
+
+Primary module: M17. Consumers: both explicit Cargo workspaces.
+The selected workspace must be its canonical path, not an alias of another
+workspace. Declared members are unique canonical repository-relative POSIX paths
+contained in that selected workspace. Duplicate declarations, absolute paths,
+dot/parent traversal, repeated separators, and member or manifest symlink aliases
+are rejected. This is stricter than documentation-navigation compatibility links:
+Cargo manifests and target entry points must identify their exact tracked paths.
+An ignored alias of a tracked source is not itself a tracked source.
+
+All blob and tree lookups use the captured commit, not a moving HEAD. The final
+checkpoint requires both the same HEAD and a clean working tree. These checks
+reject observed checkout movement and late source mutation; they do not lock the
+filesystem or defend against a concurrent actor that changes and restores state
+between observations. Qualification still requires an isolated, immutable
+checkout. The inventory does not prove target completeness or test acceptance.
+
+The retained inventory regression suite includes real Git fixtures for duplicate
+members, noncanonical member spellings, workspace escapes, member/manifest and
+ignored-entry symlink aliases, workspace substitution, a commit created during
+inventory, and a tracked source changed after its blob was checked. Positive
+controls for both supported workspaces remain. Run:
+
+```bash
+python3 scripts/ci/test_cargo_source_inventory_v1.py
+```
+
+The native execution sync-fault and lazy corpus-mutation fixtures are test-only
+consumers of source-bound qualification. Distinct database paths must not compete
+for a single injected-fault slot. A duplicate arm for the same path must reject
+without clearing the first owner, and dropping an older guard must not disarm a
+newer owner after consumption. Unwinding must clear only its own pending fault;
+worker rendezvous must be bounded even if a worker panics.
+
+A signature-tamper fixture must alter a byte, verify that altered byte was written,
+and require rejection before restoring the original bytes and requiring the
+original valid read result. Writing a fixed byte into random signature data does
+not guarantee a mutation. These fixture contracts neither change production
+signing/storage behavior nor substitute for executable Rust and consumer replay.
