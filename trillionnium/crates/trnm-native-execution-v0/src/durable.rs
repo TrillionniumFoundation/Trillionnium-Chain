@@ -4166,34 +4166,32 @@ enum SyncStoreCommitBoundaryFaultPointV0 {
 }
 
 #[cfg(test)]
-static SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0: Mutex<
-    Option<(PathBuf, SyncStoreCommitBoundaryFaultPointV0)>,
-> = Mutex::new(None);
+type SyncFaultEntryV0 = (PathBuf, SyncStoreCommitBoundaryFaultPointV0, Arc<()>);
+
+#[cfg(test)]
+static SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0: Mutex<Vec<SyncFaultEntryV0>> = Mutex::new(Vec::new());
 
 #[cfg(test)]
 fn sync_store_commit_boundary_fault_lock_v0(
-) -> std::sync::MutexGuard<'static, Option<(PathBuf, SyncStoreCommitBoundaryFaultPointV0)>> {
+) -> std::sync::MutexGuard<'static, Vec<SyncFaultEntryV0>> {
     SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner())
 }
 
 #[cfg(test)]
-#[must_use = "the fault guard clears an armed sync fault on scope exit"]
+#[must_use = "the fault guard clears only its own armed sync fault on scope exit"]
 struct SyncStoreCommitBoundaryFaultGuardV0 {
-    path: PathBuf,
-    point: SyncStoreCommitBoundaryFaultPointV0,
+    identity: Arc<()>,
 }
 
 #[cfg(test)]
 impl Drop for SyncStoreCommitBoundaryFaultGuardV0 {
     fn drop(&mut self) {
-        let mut fault = sync_store_commit_boundary_fault_lock_v0();
-        if fault.as_ref().is_some_and(|(path, point)| {
-            path.as_path() == self.path.as_path() && *point == self.point
-        }) {
-            *fault = None;
-        }
+        let mut faults = sync_store_commit_boundary_fault_lock_v0();
+        // A consumed fault may have been rearmed for the same path. An older
+        // guard must not clear that newer reservation, even at the same point.
+        faults.retain(|(_, _, identity)| !Arc::ptr_eq(identity, &self.identity));
     }
 }
 
@@ -4202,16 +4200,18 @@ fn arm_sync_store_commit_boundary_fault_v0(
     path: &Path,
     point: SyncStoreCommitBoundaryFaultPointV0,
 ) -> SyncStoreCommitBoundaryFaultGuardV0 {
-    let mut fault = sync_store_commit_boundary_fault_lock_v0();
-    assert!(
-        fault.is_none(),
-        "another sync boundary fault is already armed"
-    );
-    *fault = Some((path.to_path_buf(), point));
-    SyncStoreCommitBoundaryFaultGuardV0 {
-        path: path.to_path_buf(),
-        point,
+    let mut faults = sync_store_commit_boundary_fault_lock_v0();
+    if faults
+        .iter()
+        .any(|(armed_path, _, _)| armed_path.as_path() == path)
+    {
+        // Reject overlapping arms for one store without poisoning other tests.
+        drop(faults);
+        panic!("another sync boundary fault is already armed for this store");
     }
+    let identity = Arc::new(());
+    faults.push((path.to_path_buf(), point, Arc::clone(&identity)));
+    SyncStoreCommitBoundaryFaultGuardV0 { identity }
 }
 
 #[cfg(test)]
@@ -4219,14 +4219,15 @@ fn consume_sync_store_commit_boundary_fault_v0(
     path: &Path,
     point: SyncStoreCommitBoundaryFaultPointV0,
 ) -> bool {
-    let mut fault = sync_store_commit_boundary_fault_lock_v0();
-    let matches = fault.as_ref().is_some_and(|(armed_path, armed_point)| {
+    let mut faults = sync_store_commit_boundary_fault_lock_v0();
+    if let Some(index) = faults.iter().position(|(armed_path, armed_point, _)| {
         armed_path.as_path() == path && *armed_point == point
-    });
-    if matches {
-        *fault = None;
+    }) {
+        faults.remove(index);
+        true
+    } else {
+        false
     }
-    matches
 }
 
 /// Flushes the commit image and its directory entry before the caller does a
@@ -5967,6 +5968,232 @@ mod tests {
             .expect("valid finalized commit retry must be exact");
         assert_eq!(replayed, committed);
         assert_eq!(committed.head().height(), HeightV0::new(1));
+    }
+
+    #[test]
+    fn sync_faults_are_isolated_between_parallel_store_paths_v0() {
+        let first = TempDir::new().unwrap();
+        let second = TempDir::new().unwrap();
+        let a = first.path().join("a.sqlite3");
+        let b = second.path().join("b.sqlite3");
+        let _first = arm_sync_store_commit_boundary_fault_v0(
+            &a,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        );
+        let (armed_tx, armed_rx) = std::sync::mpsc::sync_channel(1);
+        let (release_tx, release_rx) = std::sync::mpsc::sync_channel(1);
+        std::thread::scope(|scope| {
+            let worker = scope.spawn(move || {
+                let _second = arm_sync_store_commit_boundary_fault_v0(
+                    &b,
+                    SyncStoreCommitBoundaryFaultPointV0::Directory,
+                );
+                armed_tx.send(()).unwrap();
+                release_rx
+                    .recv_timeout(Duration::from_secs(5))
+                    .expect("first store must finish within the test deadline");
+                assert!(consume_sync_store_commit_boundary_fault_v0(
+                    &b,
+                    SyncStoreCommitBoundaryFaultPointV0::Directory,
+                ));
+                assert!(!consume_sync_store_commit_boundary_fault_v0(
+                    &b,
+                    SyncStoreCommitBoundaryFaultPointV0::Directory,
+                ));
+            });
+            armed_rx
+                .recv_timeout(Duration::from_secs(5))
+                .expect("independent store must arm while the first fault remains pending");
+            assert!(consume_sync_store_commit_boundary_fault_v0(
+                &a,
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+            ));
+            assert!(!consume_sync_store_commit_boundary_fault_v0(
+                &a,
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+            ));
+            release_tx.send(()).unwrap();
+            worker.join().expect("independent store fault lifecycle");
+        });
+    }
+
+    #[test]
+    fn wrong_sync_fault_path_or_boundary_leaves_the_matching_fault_armed_v0() {
+        let temporary = TempDir::new().unwrap();
+        let path = temporary.path().join("application.sqlite3");
+        let other = temporary.path().join("other.sqlite3");
+        let _guard = arm_sync_store_commit_boundary_fault_v0(
+            &path,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        );
+        assert!(!consume_sync_store_commit_boundary_fault_v0(
+            &other,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        ));
+        assert!(!consume_sync_store_commit_boundary_fault_v0(
+            &path,
+            SyncStoreCommitBoundaryFaultPointV0::Directory,
+        ));
+        assert!(consume_sync_store_commit_boundary_fault_v0(
+            &path,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        ));
+    }
+
+    #[test]
+    fn sync_fault_unwind_clears_only_its_own_reservation_v0() {
+        let temporary = TempDir::new().unwrap();
+        let a = temporary.path().join("a.sqlite3");
+        let b = temporary.path().join("b.sqlite3");
+        let _other = arm_sync_store_commit_boundary_fault_v0(
+            &b,
+            SyncStoreCommitBoundaryFaultPointV0::Directory,
+        );
+        let registered = std::sync::atomic::AtomicBool::new(false);
+        let failure: Result<(), _> = std::panic::catch_unwind(|| {
+            let _guard = arm_sync_store_commit_boundary_fault_v0(
+                &a,
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+            );
+            registered.store(true, std::sync::atomic::Ordering::SeqCst);
+            panic!("retained unwind control");
+        });
+        assert!(registered.load(std::sync::atomic::Ordering::SeqCst));
+        assert_eq!(
+            failure
+                .expect_err("must unwind only after successful registration")
+                .downcast_ref::<&str>()
+                .copied(),
+            Some("retained unwind control")
+        );
+        assert!(!consume_sync_store_commit_boundary_fault_v0(
+            &a,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        ));
+        assert!(consume_sync_store_commit_boundary_fault_v0(
+            &b,
+            SyncStoreCommitBoundaryFaultPointV0::Directory,
+        ));
+    }
+
+    #[test]
+    fn duplicate_sync_fault_and_stale_guard_cannot_clear_new_arm_v0() {
+        let temporary = TempDir::new().unwrap();
+        let path = temporary.path().join("application.sqlite3");
+        let old = arm_sync_store_commit_boundary_fault_v0(
+            &path,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        );
+        assert!(std::panic::catch_unwind(|| {
+            arm_sync_store_commit_boundary_fault_v0(
+                &path,
+                SyncStoreCommitBoundaryFaultPointV0::Directory,
+            )
+        })
+        .is_err());
+        assert!(!SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0.is_poisoned());
+        assert!(consume_sync_store_commit_boundary_fault_v0(
+            &path,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        ));
+        let _new = arm_sync_store_commit_boundary_fault_v0(
+            &path,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        );
+        drop(old);
+        assert!(consume_sync_store_commit_boundary_fault_v0(
+            &path,
+            SyncStoreCommitBoundaryFaultPointV0::Database,
+        ));
+    }
+
+    #[test]
+    fn concurrent_same_store_sync_fault_arms_have_one_owner_v0() {
+        let temporary = TempDir::new().unwrap();
+        let path = temporary.path().join("application.sqlite3");
+        let (ready_tx, ready_rx) = std::sync::mpsc::sync_channel(2);
+        let (attempt_tx, attempt_rx) = std::sync::mpsc::sync_channel(2);
+        std::thread::scope(|scope| {
+            let mut starts = Vec::new();
+            let mut releases = Vec::new();
+            let mut workers = Vec::new();
+            for _ in 0..2 {
+                let path = path.clone();
+                let ready_tx = ready_tx.clone();
+                let attempt_tx = attempt_tx.clone();
+                let (start_tx, start_rx) = std::sync::mpsc::sync_channel(1);
+                let (release_tx, release_rx) = std::sync::mpsc::sync_channel(1);
+                starts.push(start_tx);
+                releases.push(release_tx);
+                workers.push(scope.spawn(move || {
+                    ready_tx.send(()).unwrap();
+                    start_rx
+                        .recv_timeout(Duration::from_secs(5))
+                        .expect("registration start must be bounded");
+                    let outcome = std::panic::catch_unwind(|| {
+                        arm_sync_store_commit_boundary_fault_v0(
+                            &path,
+                            SyncStoreCommitBoundaryFaultPointV0::Database,
+                        )
+                    });
+                    if let Err(rejection) = &outcome {
+                        assert_eq!(
+                            rejection.downcast_ref::<&str>().copied(),
+                            Some("another sync boundary fault is already armed for this store")
+                        );
+                    }
+                    attempt_tx.send(outcome.is_ok()).unwrap();
+                    // Retain the winning guard until both attempts have been
+                    // observed; sequential, non-overlapping success must fail.
+                    release_rx
+                        .recv_timeout(Duration::from_secs(5))
+                        .expect("registration release must be bounded");
+                    drop(outcome);
+                }));
+            }
+            drop(ready_tx);
+            drop(attempt_tx);
+            for _ in 0..2 {
+                ready_rx
+                    .recv_timeout(Duration::from_secs(5))
+                    .expect("both workers must be ready");
+            }
+            for start in starts {
+                start.send(()).unwrap();
+            }
+            let first = attempt_rx
+                .recv_timeout(Duration::from_secs(5))
+                .expect("first registration result");
+            let second = attempt_rx
+                .recv_timeout(Duration::from_secs(5))
+                .expect("second registration result");
+            assert_ne!(first, second, "exactly one concurrent arm may succeed");
+            assert!(!SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0.is_poisoned());
+            assert!(consume_sync_store_commit_boundary_fault_v0(
+                &path,
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+            ));
+            assert!(!consume_sync_store_commit_boundary_fault_v0(
+                &path,
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+            ));
+            let _replacement = arm_sync_store_commit_boundary_fault_v0(
+                &path,
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+            );
+            for release in releases {
+                release.send(()).unwrap();
+            }
+            for worker in workers {
+                worker.join().expect("concurrent registration worker");
+            }
+            // Dropping the consumed winner on its worker thread must not
+            // delete a later registration for the identical store and point.
+            assert!(consume_sync_store_commit_boundary_fault_v0(
+                &path,
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+            ));
+        });
     }
 
     #[test]
