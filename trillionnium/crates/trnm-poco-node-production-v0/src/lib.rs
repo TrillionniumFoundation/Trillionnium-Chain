@@ -8,8 +8,10 @@
 
 use std::{error::Error, fmt};
 use trnm_node_boundary_v0::{
-    AuthorityCoordinatorV0, BoundaryErrorV0, HostErrorV0, HostReadinessV0, HostStepV0, IoRuntimeV0,
-    NodeLayerRoleV0, PersistentValidatorHostV0, StepBudgetV0,
+    AuthorityCommandV0, AuthorityCoordinatorV0, AuthorityReceiptV0, AuthorityStageV0,
+    BoundaryErrorV0, Digest32V0, HostErrorV0, HostReadinessV0, HostStepV0, IoRuntimeV0,
+    NodeIdentityV0, NodeLayerRoleV0, OperationBindingV0, PersistentValidatorHostV0,
+    RecoveryDispositionV0, StepBudgetV0,
 };
 
 pub const PRODUCTION_COMPOSITION_VERSION_V0: u16 = 0;
@@ -63,6 +65,351 @@ where
         self.host
     }
 }
+
+/// Readiness of the complete-receipt recovery session.
+///
+/// This is a node-local orchestration projection, not protocol or application
+/// state. `Recovering` is deliberately sticky after every uncertain adapter
+/// response until a fresh complete recovery succeeds.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum AuthoritySessionReadinessV0 {
+    Recovering,
+    Ready,
+    Quarantined(Digest32V0),
+}
+
+/// A bounded production-composition session which retains the exact durable
+/// authority receipt across stage transitions.
+///
+/// Existing `RecoveryDispositionV0::Resume` carries only binding, stage and
+/// sequence. The supplied readback function must call the durable adapter's
+/// authenticated current-receipt API. A summary without that complete receipt
+/// never restores write authority. This session owns no stage facts: callers
+/// obtain them from the authoritative application, Safety, signer, finality,
+/// checkpoint and publication owners before requesting a transition.
+pub struct ProductionAuthoritySessionV0<C, R> {
+    identity: NodeIdentityV0,
+    coordinator: C,
+    readback: R,
+    readiness: AuthoritySessionReadinessV0,
+    current: Option<AuthorityReceiptV0>,
+}
+
+impl<C, R> ProductionAuthoritySessionV0<C, R>
+where
+    C: AuthorityCoordinatorV0,
+    R: Fn(&C) -> Option<AuthorityReceiptV0>,
+{
+    pub fn new(coordinator: C, readback: R) -> Result<Self, BoundaryErrorV0> {
+        let identity = coordinator.identity();
+        identity.validate()?;
+        Ok(Self {
+            identity,
+            coordinator,
+            readback,
+            readiness: AuthoritySessionReadinessV0::Recovering,
+            current: None,
+        })
+    }
+
+    #[must_use]
+    pub const fn identity(&self) -> NodeIdentityV0 {
+        self.identity
+    }
+
+    #[must_use]
+    pub const fn readiness(&self) -> AuthoritySessionReadinessV0 {
+        self.readiness
+    }
+
+    #[must_use]
+    pub const fn current_receipt(&self) -> Option<AuthorityReceiptV0> {
+        self.current
+    }
+
+    #[must_use]
+    pub const fn coordinator(&self) -> &C {
+        &self.coordinator
+    }
+
+    pub fn into_coordinator(self) -> C {
+        self.coordinator
+    }
+
+    fn check_identity(&self) -> Result<(), AuthoritySessionErrorV0<C::Error>> {
+        let observed = self.coordinator.identity();
+        observed
+            .validate()
+            .map_err(AuthoritySessionErrorV0::Boundary)?;
+        if observed != self.identity {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::NodeIdentityMismatch,
+            ));
+        }
+        Ok(())
+    }
+
+    fn read_complete_receipt(
+        &self,
+        binding: OperationBindingV0,
+        stage: AuthorityStageV0,
+        sequence: u64,
+    ) -> Result<AuthorityReceiptV0, AuthoritySessionErrorV0<C::Error>> {
+        let receipt = (self.readback)(&self.coordinator).ok_or(
+            AuthoritySessionErrorV0::Boundary(BoundaryErrorV0::ReceiptSubstitution),
+        )?;
+        receipt
+            .binding
+            .validate(self.identity)
+            .map_err(AuthoritySessionErrorV0::Boundary)?;
+        if receipt.binding != binding
+            || receipt.durable_stage != stage
+            || receipt.durable_sequence != sequence
+            || receipt.facts_digest == Digest32V0([0; 32])
+            || receipt.record_digest == Digest32V0([0; 32])
+        {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        Ok(receipt)
+    }
+
+    /// Recover exact authority state. A legacy summary alone remains fenced.
+    pub fn recover(
+        &mut self,
+    ) -> Result<AuthoritySessionReadinessV0, AuthoritySessionErrorV0<C::Error>> {
+        self.readiness = AuthoritySessionReadinessV0::Recovering;
+        self.current = None;
+        self.check_identity()?;
+        let disposition = self
+            .coordinator
+            .recover()
+            .map_err(AuthoritySessionErrorV0::Coordinator)?;
+        self.check_identity()?;
+        self.readiness = match disposition {
+            RecoveryDispositionV0::Clean => {
+                if (self.readback)(&self.coordinator).is_some() {
+                    return Err(AuthoritySessionErrorV0::Boundary(
+                        BoundaryErrorV0::ReceiptSubstitution,
+                    ));
+                }
+                AuthoritySessionReadinessV0::Ready
+            }
+            RecoveryDispositionV0::Resume {
+                binding,
+                durable_stage,
+                durable_sequence,
+            } => {
+                binding
+                    .validate(self.identity)
+                    .map_err(AuthoritySessionErrorV0::Boundary)?;
+                let receipt =
+                    self.read_complete_receipt(binding, durable_stage, durable_sequence)?;
+                self.current = Some(receipt);
+                AuthoritySessionReadinessV0::Ready
+            }
+            RecoveryDispositionV0::Quarantine { reason_digest } => {
+                AuthoritySessionReadinessV0::Quarantined(reason_digest)
+            }
+        };
+        Ok(self.readiness)
+    }
+
+    /// Persist the initial `Prepared` record, or replay its exact receipt.
+    pub fn begin_prepared(
+        &mut self,
+        binding: OperationBindingV0,
+        ingress_digest: Digest32V0,
+    ) -> Result<AuthorityReceiptV0, AuthoritySessionErrorV0<C::Error>> {
+        if self.readiness != AuthoritySessionReadinessV0::Ready {
+            return Err(AuthoritySessionErrorV0::NotReady);
+        }
+        self.check_identity()?;
+        binding
+            .validate(self.identity)
+            .map_err(AuthoritySessionErrorV0::Boundary)?;
+        if ingress_digest == Digest32V0([0; 32]) {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        let prior = self.current;
+        if let Some(receipt) = prior {
+            if receipt.binding != binding {
+                return Err(AuthoritySessionErrorV0::Boundary(
+                    BoundaryErrorV0::OperationBindingMismatch,
+                ));
+            }
+            if receipt.durable_stage != AuthorityStageV0::Prepared
+                || receipt.facts_digest != ingress_digest
+            {
+                return Err(AuthoritySessionErrorV0::Boundary(
+                    BoundaryErrorV0::InvalidStageTransition,
+                ));
+            }
+        }
+
+        self.readiness = AuthoritySessionReadinessV0::Recovering;
+        self.current = None;
+        let returned = self
+            .coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding,
+                ingress_digest,
+            })
+            .map_err(AuthoritySessionErrorV0::Coordinator)?;
+        self.check_identity()?;
+        if returned.binding != binding
+            || returned.durable_stage != AuthorityStageV0::Prepared
+            || returned.facts_digest != ingress_digest
+            || returned.record_digest == Digest32V0([0; 32])
+        {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        match prior {
+            None if returned.durable_sequence != 0 => {
+                return Err(AuthoritySessionErrorV0::Boundary(
+                    BoundaryErrorV0::ReceiptSubstitution,
+                ));
+            }
+            Some(previous) if returned != previous => {
+                return Err(AuthoritySessionErrorV0::Boundary(
+                    BoundaryErrorV0::ReceiptSubstitution,
+                ));
+            }
+            _ => {}
+        }
+        self.current = Some(returned);
+        self.readiness = AuthoritySessionReadinessV0::Ready;
+        Ok(returned)
+    }
+
+    /// Persist one exact successor stage, or replay the exact current receipt.
+    pub fn advance(
+        &mut self,
+        binding: OperationBindingV0,
+        expected_stage: AuthorityStageV0,
+        next_stage: AuthorityStageV0,
+        facts_digest: Digest32V0,
+    ) -> Result<AuthorityReceiptV0, AuthoritySessionErrorV0<C::Error>> {
+        if self.readiness != AuthoritySessionReadinessV0::Ready {
+            return Err(AuthoritySessionErrorV0::NotReady);
+        }
+        self.check_identity()?;
+        binding
+            .validate(self.identity)
+            .map_err(AuthoritySessionErrorV0::Boundary)?;
+        if authority_successor(expected_stage) != Some(next_stage)
+            || facts_digest == Digest32V0([0; 32])
+        {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::InvalidStageTransition,
+            ));
+        }
+        let prior = self.current.ok_or(AuthoritySessionErrorV0::Boundary(
+            BoundaryErrorV0::ReceiptSubstitution,
+        ))?;
+        if prior.binding != binding {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::OperationBindingMismatch,
+            ));
+        }
+        let replay = prior.durable_stage == next_stage;
+        if replay {
+            if prior.facts_digest != facts_digest {
+                return Err(AuthoritySessionErrorV0::Boundary(
+                    BoundaryErrorV0::ReceiptSubstitution,
+                ));
+            }
+        } else if prior.durable_stage != expected_stage {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::InvalidStageTransition,
+            ));
+        }
+
+        self.readiness = AuthoritySessionReadinessV0::Recovering;
+        self.current = None;
+        let returned = self
+            .coordinator
+            .apply(AuthorityCommandV0::Advance {
+                binding,
+                expected_stage,
+                next_stage,
+                facts_digest,
+            })
+            .map_err(AuthoritySessionErrorV0::Coordinator)?;
+        self.check_identity()?;
+        if returned.binding != binding
+            || returned.durable_stage != next_stage
+            || returned.facts_digest != facts_digest
+            || returned.record_digest == Digest32V0([0; 32])
+        {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        if replay {
+            if returned != prior {
+                return Err(AuthoritySessionErrorV0::Boundary(
+                    BoundaryErrorV0::ReceiptSubstitution,
+                ));
+            }
+        } else {
+            let sequence = prior
+                .durable_sequence
+                .checked_add(1)
+                .ok_or(AuthoritySessionErrorV0::Boundary(
+                    BoundaryErrorV0::SequenceOverflow,
+                ))?;
+            if returned.durable_sequence != sequence
+                || returned.record_digest == prior.record_digest
+            {
+                return Err(AuthoritySessionErrorV0::Boundary(
+                    BoundaryErrorV0::ReceiptSubstitution,
+                ));
+            }
+        }
+        self.current = Some(returned);
+        self.readiness = AuthoritySessionReadinessV0::Ready;
+        Ok(returned)
+    }
+}
+
+#[must_use]
+pub const fn authority_successor(stage: AuthorityStageV0) -> Option<AuthorityStageV0> {
+    match stage {
+        AuthorityStageV0::Prepared => Some(AuthorityStageV0::ApplicationSealed),
+        AuthorityStageV0::ApplicationSealed => Some(AuthorityStageV0::SafetyPersisted),
+        AuthorityStageV0::SafetyPersisted => Some(AuthorityStageV0::SignIntentPersisted),
+        AuthorityStageV0::SignIntentPersisted => Some(AuthorityStageV0::SignatureConfirmed),
+        AuthorityStageV0::SignatureConfirmed => Some(AuthorityStageV0::FinalityApplied),
+        AuthorityStageV0::FinalityApplied => Some(AuthorityStageV0::CheckpointConfirmed),
+        AuthorityStageV0::CheckpointConfirmed => Some(AuthorityStageV0::OutboundPublished),
+        AuthorityStageV0::OutboundPublished => None,
+    }
+}
+
+#[derive(Debug)]
+pub enum AuthoritySessionErrorV0<E> {
+    Boundary(BoundaryErrorV0),
+    Coordinator(E),
+    NotReady,
+}
+
+impl<E: fmt::Display> fmt::Display for AuthoritySessionErrorV0<E> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Boundary(error) => write!(f, "authority session boundary failed: {error}"),
+            Self::Coordinator(error) => write!(f, "authority coordinator failed: {error}"),
+            Self::NotReady => f.write_str("authority session is not recovered and ready"),
+        }
+    }
+}
+
+impl<E: Error + 'static> Error for AuthoritySessionErrorV0<E> {}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CompositionErrorV0 {
@@ -164,5 +511,38 @@ mod tests {
     fn reference_coordinator_recovery_disposition_remains_explicit() {
         let mut coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
         assert_eq!(coordinator.recover().unwrap(), RecoveryDispositionV0::Clean);
+    }
+
+    #[test]
+    fn authority_stage_successor_is_complete_and_terminal() {
+        let stages = [
+            AuthorityStageV0::Prepared,
+            AuthorityStageV0::ApplicationSealed,
+            AuthorityStageV0::SafetyPersisted,
+            AuthorityStageV0::SignIntentPersisted,
+            AuthorityStageV0::SignatureConfirmed,
+            AuthorityStageV0::FinalityApplied,
+            AuthorityStageV0::CheckpointConfirmed,
+            AuthorityStageV0::OutboundPublished,
+        ];
+        for pair in stages.windows(2) {
+            assert_eq!(authority_successor(pair[0]), Some(pair[1]));
+        }
+        assert_eq!(authority_successor(AuthorityStageV0::OutboundPublished), None);
+    }
+
+    #[test]
+    fn clean_complete_receipt_session_recovers_ready() {
+        let coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
+        let mut session = ProductionAuthoritySessionV0::new(
+            coordinator,
+            ReferenceAuthorityCoordinatorV0::current,
+        )
+        .unwrap();
+        assert_eq!(
+            session.recover().unwrap(),
+            AuthoritySessionReadinessV0::Ready
+        );
+        assert_eq!(session.current_receipt(), None);
     }
 }
