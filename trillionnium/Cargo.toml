@@ -86,3 +86,18 @@ zero_comet_production_dependency_achieved = true
 legacy_comet_migration_residue_present = true
 cometbft_role = "migration-residue-only"
 cometbft_cleanup_eligible = false
+
+[profile.test.package.curve25519-dalek]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.ed25519-dalek]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.sha2]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true

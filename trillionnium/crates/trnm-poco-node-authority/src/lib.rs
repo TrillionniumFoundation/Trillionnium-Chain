@@ -9,9 +9,9 @@
 use std::path::Path;
 
 #[cfg(feature = "persistent-authority-candidate")]
-use trnm_durable_file_adapters_v0::CandidateAuthorityJournalV0;
-#[cfg(feature = "persistent-authority-candidate")]
 pub use trnm_durable_file_adapters_v0::CandidateAuthorityErrorV0 as NodeAuthorityErrorV0;
+#[cfg(feature = "persistent-authority-candidate")]
+use trnm_durable_file_adapters_v0::CandidateAuthorityJournalV0;
 pub use trnm_node_boundary_v0::{
     AuthorityReceiptV0, AuthorityStageV0, BoundIngressV0, Digest32V0, IngressFrameV0,
     NodeIdentityV0, OperationBindingV0, RecoveryDispositionV0,
@@ -90,7 +90,9 @@ impl NodeAuthorityCoordinatorV0 {
         let (bound, recovered, stage) = (
             self.candidate.persistent_authority_bound(),
             self.candidate.recovery_barrier_satisfied(),
-            self.candidate.current_receipt().map(|receipt| receipt.durable_stage),
+            self.candidate
+                .current_receipt()
+                .map(|receipt| receipt.durable_stage),
         );
         #[cfg(not(feature = "persistent-authority-candidate"))]
         let (bound, recovered, stage) = (false, false, None);

@@ -193,11 +193,10 @@ impl CandidateAuthorityJournalV0 {
                 self.recovered = false;
                 CandidateAuthorityErrorV0::Durable(error)
             })?;
-        validate_receipt_v0(identity, receipt, binding, next_stage, facts_digest, true).inspect_err(
-            |_| {
+        validate_receipt_v0(identity, receipt, binding, next_stage, facts_digest, true)
+            .inspect_err(|_| {
                 self.recovered = false;
-            },
-        )?;
+            })?;
         Ok(receipt)
     }
 
@@ -361,7 +360,8 @@ mod tests {
     fn recovery_is_required_before_the_first_mutation() {
         let directory = crate::tests::TestDirectory::new("candidate-authority");
         let mut coordinator =
-            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity()).expect("open");
+            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity())
+                .expect("open");
         let error = coordinator
             .prepare_bound_ingress(&ingress())
             .expect_err("must recover first");
@@ -407,8 +407,9 @@ mod tests {
             last
         };
 
-        let mut reopened = CandidateAuthorityJournalV0::open_candidate(directory.path(), identity())
-            .expect("reopen");
+        let mut reopened =
+            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity())
+                .expect("reopen");
         assert_eq!(
             reopened.recover().expect("recover reopened"),
             RecoveryDispositionV0::Resume {
@@ -419,7 +420,9 @@ mod tests {
         );
         assert_eq!(reopened.current_receipt(), Some(terminal));
         assert_eq!(
-            reopened.current_receipt().map(|receipt| receipt.durable_stage),
+            reopened
+                .current_receipt()
+                .map(|receipt| receipt.durable_stage),
             Some(AuthorityStageV0::OutboundPublished)
         );
         assert!(reopened.recovery_barrier_satisfied());
@@ -429,7 +432,8 @@ mod tests {
     fn exact_retry_is_idempotent_and_substitution_is_rejected() {
         let directory = crate::tests::TestDirectory::new("candidate-authority");
         let mut coordinator =
-            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity()).expect("open");
+            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity())
+                .expect("open");
         coordinator.recover().expect("recover");
         let prepared = coordinator
             .prepare_bound_ingress(&ingress())
@@ -471,7 +475,8 @@ mod tests {
     fn skipped_stage_and_zero_fact_are_rejected_before_persistence() {
         let directory = crate::tests::TestDirectory::new("candidate-authority");
         let mut coordinator =
-            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity()).expect("open");
+            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity())
+                .expect("open");
         coordinator.recover().expect("recover");
         let prepared = coordinator
             .prepare_bound_ingress(&ingress())
@@ -503,8 +508,8 @@ mod tests {
     #[test]
     fn failed_recovery_clears_a_previously_open_barrier() {
         let directory = crate::tests::TestDirectory::new("candidate-authority");
-        let mut owner =
-            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity()).expect("open");
+        let mut owner = CandidateAuthorityJournalV0::open_candidate(directory.path(), identity())
+            .expect("open");
         owner.recover().expect("initial recovery");
         assert!(owner.recovery_barrier_satisfied());
         owner.inner.as_mut().expect("bound owner").poisoned = true;
@@ -519,8 +524,8 @@ mod tests {
     #[test]
     fn failed_append_closes_barrier_and_cannot_reuse_old_readiness() {
         let directory = crate::tests::TestDirectory::new("candidate-authority");
-        let mut owner =
-            CandidateAuthorityJournalV0::open_candidate(directory.path(), identity()).expect("open");
+        let mut owner = CandidateAuthorityJournalV0::open_candidate(directory.path(), identity())
+            .expect("open");
         owner.recover().expect("recover");
         owner.inner.as_mut().expect("bound owner").poisoned = true;
         assert!(owner.prepare_bound_ingress(&ingress()).is_err());

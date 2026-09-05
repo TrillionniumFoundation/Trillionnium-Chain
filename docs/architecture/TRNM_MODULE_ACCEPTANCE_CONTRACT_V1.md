@@ -126,3 +126,33 @@ not applicable. Diagnostic source archives contain only exact tracked source and
 are not test acceptance. The job uses the already approved read-only hosted trust
 class and retains the five stable required check names and existing gates. No
 runner-policy exemption, actor allowlist expansion or write permission is added.
+
+## Source-bound test execution
+
+Primary module: M17. Consumers: every required-baseline package.
+A Cargo target inventory binds each observed package, manifest, lockfile and
+entry-point source to the clean exact Git head before execution. It is a
+source-accounting control, not proof of target completeness, test success or
+independent acceptance. A missing or foreign target is an error, not authority
+to invent a test with a name copied from an unrelated log.
+
+Every package process has a deadline. Parent exit zero is not success while a
+child process group or output pipe remains alive, or when output collection
+fails. Cleanup addresses the launched process group after leader exit as well.
+This is not containment of descendants which deliberately create a new session.
+Logs retain failed results and summaries must not turn timeout, skipped steps,
+ignored tests or a missing toolchain into success.
+
+The test profile optimizes only the pinned curve25519-dalek, ed25519-dalek and
+sha2 dependencies. Debug assertions and integer overflow checks remain enabled
+for each; workspace code keeps the default unoptimized test profile. This
+addresses repeated cryptographic verification cost without changing any vector,
+quorum, safety assertion, test selection, deadline or long-horizon campaign.
+Performance improvement is a hypothesis until measured on the actual run; this
+configuration is not benchmark evidence or production build qualification.
+
+The external-watermark socket-replacement regression accepts connection refusal
+only at the original listener, because a prior request's post-check may already
+have terminated the daemon. It still requires rejection at the replacement
+socket, a bounded non-success exit of the exact original process and unchanged
+authority journal bytes. Other connection errors remain failures.

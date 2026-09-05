@@ -315,6 +315,7 @@ fn replacing_bound_socket_path_poison_daemon_on_next_original_connection() {
     let root = tempdir().expect("private socket replacement directory");
     fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
     let mut authority = AuthorityProcess::start_semantic(root.path());
+    let journal_before = fs::read(&authority.log).expect("read original authority journal");
     let original_socket = root.path().join("authority.original.sock");
     fs::rename(&authority.socket, &original_socket).expect("rename bound socket path");
 
@@ -336,10 +337,20 @@ fn replacing_bound_socket_path_poison_daemon_on_next_original_connection() {
         "replacement socket must not answer semantic authority requests"
     );
 
-    // Connect to the held original listener so its accept loop observes the
-    // pathname/inode mismatch and exits fail-closed.
-    let _ = UnixStream::connect(&original_socket).expect("connect original listener");
+    // The prior readiness request can discover replacement in its post-request
+    // check before this connection. Both an already-closed listener and one
+    // woken here must lead to the same bounded, non-success daemon exit.
+    match UnixStream::connect(&original_socket) {
+        Ok(_) => {}
+        Err(error) if error.kind() == std::io::ErrorKind::ConnectionRefused => {}
+        Err(error) => panic!("unexpected original-listener error: {error}"),
+    }
     assert_authority_exited(&mut authority);
+    assert_eq!(
+        fs::read(&authority.log).expect("read journal after rejection"),
+        journal_before,
+        "socket substitution must not mutate the authority journal"
+    );
     fake_thread.join().expect("replacement socket thread");
 }
 

@@ -8,20 +8,20 @@
 //! authority, or release promotion. The I/O side remains deliberately inert,
 //! so this candidate composition can never satisfy the production start gate.
 
-use std::{error::Error, fmt};
 #[cfg(feature = "persistent-authority-candidate")]
 use std::path::Path;
+use std::{error::Error, fmt};
 
 #[cfg(feature = "persistent-authority-candidate")]
+use trnm_poco_node_authority::NodeAuthorityErrorV0;
+#[cfg(feature = "persistent-authority-candidate")]
 use trnm_poco_node_authority::{
-    AuthorityReceiptV0, BoundIngressV0, Digest32V0, NodeIdentityV0,
-    OperationBindingV0, RecoveryDispositionV0,
+    AuthorityReceiptV0, BoundIngressV0, Digest32V0, NodeIdentityV0, OperationBindingV0,
+    RecoveryDispositionV0,
 };
 use trnm_poco_node_authority::{
     AuthorityStageV0, NodeAuthorityCoordinatorV0, NodeAuthorityReadinessV0,
 };
-#[cfg(feature = "persistent-authority-candidate")]
-use trnm_poco_node_authority::NodeAuthorityErrorV0;
 use trnm_poco_node_io::{NodeIoRuntimeV0, REQUIRED_NODE_IO_SURFACES_V0};
 
 /// Compile-time binding to the reviewed pure repository-core composition.

@@ -56,6 +56,7 @@ def workspace_packages(workspace_root: pathlib.Path, cargo: str) -> list[str]:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
+        timeout=60,
     )
     metadata = json.loads(completed.stdout)
     members = set(metadata["workspace_members"])
@@ -71,38 +72,61 @@ def workspace_packages(workspace_root: pathlib.Path, cargo: str) -> list[str]:
     return sorted(names)
 
 
-def pump_output(stream: TextIO) -> None:
-    for line in iter(stream.readline, ""):
-        sys.stdout.write(line)
-        sys.stdout.flush()
-    stream.close()
+# A successful Cargo parent is insufficient when descendants still own pipes or
+# remain alive. These bounds govern cleanup, not the test's acceptance threshold.
+OUTPUT_DRAIN_SECONDS = 2
+PROCESS_TERMINATE_SECONDS = 10
+
+
+def pump_output(stream: TextIO, errors: list[Exception]) -> None:
+    try:
+        for line in iter(stream.readline, ""):
+            sys.stdout.write(line)
+            sys.stdout.flush()
+    except Exception as error:
+        errors.append(error)
+    finally:
+        try:
+            stream.close()
+        except Exception as error:
+            errors.append(error)
+
+
+def process_group_exists(process: subprocess.Popen[str]) -> bool:
+    if os.name != "posix":
+        return process.poll() is None
+    try:
+        os.killpg(process.pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
 
 
 def terminate_process_tree(process: subprocess.Popen[str]) -> None:
-    if process.poll() is not None:
-        return
     if os.name == "posix":
+        # The group is created by start_new_session below. Its leader can have
+        # exited while tests/children still hold stdout or ignore termination.
         try:
             os.killpg(process.pid, signal.SIGTERM)
         except ProcessLookupError:
-            return
-    else:
+            pass
+    elif process.poll() is None:
         process.terminate()
 
     try:
-        process.wait(timeout=10)
-        return
+        process.wait(timeout=PROCESS_TERMINATE_SECONDS)
     except subprocess.TimeoutExpired:
         pass
 
     if os.name == "posix":
+        # Do not return just because the Cargo parent exited on SIGTERM.
         try:
             os.killpg(process.pid, signal.SIGKILL)
         except ProcessLookupError:
-            return
-    else:
+            pass
+    elif process.poll() is None:
         process.kill()
-    process.wait(timeout=10)
+    process.wait(timeout=PROCESS_TERMINATE_SECONDS)
 
 
 def run_package(
@@ -133,19 +157,22 @@ def run_package(
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        errors="backslashreplace",
         bufsize=1,
         start_new_session=(os.name == "posix"),
     )
     assert process.stdout is not None
+    output_errors: list[Exception] = []
     output_thread = threading.Thread(
         target=pump_output,
-        args=(process.stdout,),
+        args=(process.stdout, output_errors),
         name=f"output-{package}",
         daemon=True,
     )
     output_thread.start()
 
     timed_out = False
+    leaked_process = False
     try:
         returncode = process.wait(timeout=timeout_seconds)
     except subprocess.TimeoutExpired:
@@ -157,13 +184,31 @@ def run_package(
         )
         terminate_process_tree(process)
         returncode = process.returncode
+    except BaseException:
+        terminate_process_tree(process)
+        raise
     finally:
-        output_thread.join(timeout=15)
+        output_thread.join(timeout=OUTPUT_DRAIN_SECONDS)
+        if output_thread.is_alive() or process_group_exists(process):
+            leaked_process = True
+            print(
+                f"::error title=Rust package process leak::{package} left descendants "
+                "or an open output pipe after its Cargo parent ended",
+                flush=True,
+            )
+            terminate_process_tree(process)
+            output_thread.join(timeout=PROCESS_TERMINATE_SECONDS)
+        if output_thread.is_alive():
+            output_errors.append(RuntimeError("output pipe did not close after group cleanup"))
+        if output_errors:
+            print(f"::error title=Rust package output failure::{package}: {output_errors!r}", flush=True)
         print("::endgroup::", flush=True)
 
     elapsed = time.monotonic() - started
     if timed_out:
         status = "timeout"
+    elif leaked_process or output_errors:
+        status = "failed"
     elif returncode == 0:
         status = "success"
     else:
@@ -224,6 +269,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (FileNotFoundError, RuntimeError, ValueError, subprocess.CalledProcessError) as error:
+    except (FileNotFoundError, RuntimeError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         print(f"::error title=Bounded workspace test runner setup failure::{error}", file=sys.stderr)
         raise SystemExit(2) from error
