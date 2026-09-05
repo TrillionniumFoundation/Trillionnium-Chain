@@ -39,7 +39,11 @@ impl StateRootRecomputerV0 for HashRoot {
     }
 }
 
-fn fixture() -> (VerifiedTrustPathV0, SnapshotManifestV0, Vec<SnapshotChunkV0>) {
+fn fixture() -> (
+    VerifiedTrustPathV0,
+    SnapshotManifestV0,
+    Vec<SnapshotChunkV0>,
+) {
     let anchor = WeakSubjectivityAnchorV0 {
         chain_id: d(1),
         protocol_digest: d(2),

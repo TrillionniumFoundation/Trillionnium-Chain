@@ -85,7 +85,11 @@ fn checkpoint() -> (WeakSubjectivityAnchorV0, CheckpointLinkV0) {
     (anchor, link)
 }
 
-fn snapshot_fixture() -> (VerifiedTrustPathV0, SnapshotManifestV0, Vec<SnapshotChunkV0>) {
+fn snapshot_fixture() -> (
+    VerifiedTrustPathV0,
+    SnapshotManifestV0,
+    Vec<SnapshotChunkV0>,
+) {
     let (anchor, link) = checkpoint();
     let proof = CountingProof {
         calls: Cell::new(0),

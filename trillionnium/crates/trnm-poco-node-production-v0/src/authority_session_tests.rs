@@ -139,10 +139,9 @@ fn lost_acknowledgement_requires_recovery_then_exact_replay() {
         inner: ReferenceAuthorityCoordinatorV0::new(identity()),
         lose_next: true,
     };
-    let mut session = ProductionAuthoritySessionV0::new(coordinator, |coordinator| {
-        coordinator.inner.current()
-    })
-    .unwrap();
+    let mut session =
+        ProductionAuthoritySessionV0::new(coordinator, |coordinator| coordinator.inner.current())
+            .unwrap();
     session.recover().unwrap();
     let first = binding(1, 10, 9);
     assert!(matches!(
@@ -308,10 +307,9 @@ fn clean_summary_with_retained_receipt_is_inconsistent() {
         })
         .unwrap();
     let coordinator = FalseCleanCoordinator { inner };
-    let mut session = ProductionAuthoritySessionV0::new(coordinator, |coordinator| {
-        coordinator.inner.current()
-    })
-    .unwrap();
+    let mut session =
+        ProductionAuthoritySessionV0::new(coordinator, |coordinator| coordinator.inner.current())
+            .unwrap();
     let error = session.recover().unwrap_err();
     assert!(matches!(
         error,

@@ -511,7 +511,9 @@ where
         }
 
         self.check_identity()?;
-        ingress.validate(self.identity).map_err(HostErrorV0::Boundary)?;
+        ingress
+            .validate(self.identity)
+            .map_err(HostErrorV0::Boundary)?;
         let ingress_digest = ingress.ingress_digest();
         // After invoking the adapter, an error may mean the write applied but
         // acknowledgement was lost. Only fresh recovery can resolve it.

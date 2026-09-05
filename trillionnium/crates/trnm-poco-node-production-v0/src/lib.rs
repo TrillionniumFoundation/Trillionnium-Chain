@@ -334,9 +334,7 @@ where
         binding
             .validate(self.identity)
             .map_err(AuthoritySessionErrorV0::Boundary)?;
-        if expected_stage.successor() != Some(next_stage)
-            || facts_digest == Digest32V0([0; 32])
-        {
+        if expected_stage.successor() != Some(next_stage) || facts_digest == Digest32V0([0; 32]) {
             return Err(AuthoritySessionErrorV0::Boundary(
                 BoundaryErrorV0::InvalidStageTransition,
             ));
@@ -390,12 +388,13 @@ where
                 ));
             }
         } else {
-            let sequence = prior
-                .durable_sequence
-                .checked_add(1)
-                .ok_or(AuthoritySessionErrorV0::Boundary(
-                    BoundaryErrorV0::SequenceOverflow,
-                ))?;
+            let sequence =
+                prior
+                    .durable_sequence
+                    .checked_add(1)
+                    .ok_or(AuthoritySessionErrorV0::Boundary(
+                        BoundaryErrorV0::SequenceOverflow,
+                    ))?;
             if returned.durable_sequence != sequence
                 || returned.record_digest == prior.record_digest
             {

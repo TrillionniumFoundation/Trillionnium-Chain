@@ -16,9 +16,7 @@ use trnm_node_boundary_v0::{
     RecoveryDispositionV0,
 };
 use trnm_poco_node_authority::{NodeAuthorityCoordinatorV0, NodeAuthorityErrorV0};
-use trnm_poco_node_production_v0::{
-    AuthoritySessionReadinessV0, ProductionAuthoritySessionV0,
-};
+use trnm_poco_node_production_v0::{AuthoritySessionReadinessV0, ProductionAuthoritySessionV0};
 
 const CHILD_ENV: &str = "TRNM_AUTHORITY_SESSION_PROCESS_HELPER";
 const ROOT_ENV: &str = "TRNM_AUTHORITY_SESSION_ROOT";
@@ -38,13 +36,7 @@ fn identity() -> NodeIdentityV0 {
     }
 }
 
-fn ingress(
-    height: u64,
-    block: u8,
-    parent: u8,
-    replay_nonce: u64,
-    payload: u8,
-) -> BoundIngressV0 {
+fn ingress(height: u64, block: u8, parent: u8, replay_nonce: u64, payload: u8) -> BoundIngressV0 {
     let frame = IngressFrameV0::new(
         digest(payload.wrapping_add(1)),
         digest(payload.wrapping_add(2)),
@@ -117,8 +109,7 @@ impl AuthorityCoordinatorV0 for NodeAuthorityAdapter {
                     .ingresses
                     .iter()
                     .find(|candidate| {
-                        candidate.binding == binding
-                            && candidate.ingress_digest() == ingress_digest
+                        candidate.binding == binding && candidate.ingress_digest() == ingress_digest
                     })
                     .cloned()
                     .ok_or(NodeAuthorityErrorV0::Boundary(
@@ -239,7 +230,9 @@ fn node_authority_and_complete_receipt_session_reopen_every_stage() {
 
     for step in 1..=7 {
         let (expected, next, facts) = successor(step);
-        receipt = active.advance(first.binding, expected, next, facts).unwrap();
+        receipt = active
+            .advance(first.binding, expected, next, facts)
+            .unwrap();
         drop(active.into_coordinator());
         active = reopen(&root);
         assert_eq!(active.current_receipt(), Some(receipt));
@@ -319,7 +312,10 @@ fn kill_after_durable_marker(root: &Path, marker: &Path, step: u8) {
 
     child.kill().unwrap();
     let status = child.wait().unwrap();
-    assert!(!status.success(), "terminated helper unexpectedly succeeded");
+    assert!(
+        !status.success(),
+        "terminated helper unexpectedly succeeded"
+    );
 }
 
 #[test]

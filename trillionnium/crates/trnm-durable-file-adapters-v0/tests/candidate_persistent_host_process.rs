@@ -204,11 +204,7 @@ fn each_process_reopens_and_advances_one_exact_authority_stage() {
         assert!(report.contains("\"exact_replay\":false"));
 
         let status_output = status(&directory.0);
-        assert!(
-            status_output.status.success(),
-            "{}",
-            stderr(&status_output)
-        );
+        assert!(status_output.status.success(), "{}", stderr(&status_output));
         assert_stage(
             &stdout(&status_output),
             stage,

@@ -198,7 +198,9 @@ fn apply_error_requires_recovery_even_before_a_write() {
     assert_fenced(&mut host, &controls);
     host.recover().unwrap();
     assert_eq!(
-        host.prepare_bound_ingress(&ingress()).unwrap().durable_sequence,
+        host.prepare_bound_ingress(&ingress())
+            .unwrap()
+            .durable_sequence,
         0
     );
 }
@@ -224,7 +226,8 @@ fn apply_panic_leaves_host_fenced() {
     controls.apply.set(Fault::Panic);
     assert!(std::panic::catch_unwind(AssertUnwindSafe(|| {
         host.prepare_bound_ingress(&ingress())
-    })).is_err());
+    }))
+    .is_err());
     assert_fenced(&mut host, &controls);
 }
 

@@ -206,20 +206,10 @@ fn existing_type_and_unknown_new_type_still_reject() {
     let prior = prior_overlay(2);
     let mut changed_type = account_mutation("did:delta:0", Some(7), 12);
     changed_type.object_type = "unrecognized".to_string();
-    assert_rejected_without_overlay_change(
-        &view,
-        &prior,
-        &[changed_type],
-        "changes object type",
-    );
+    assert_rejected_without_overlay_change(&view, &prior, &[changed_type], "changes object type");
     let mut unknown = account_mutation("did:new:1", None, 12);
     unknown.object_type = "unrecognized".to_string();
-    assert_rejected_without_overlay_change(
-        &view,
-        &prior,
-        &[unknown],
-        "unsupported object type",
-    );
+    assert_rejected_without_overlay_change(&view, &prior, &[unknown], "unsupported object type");
 }
 
 #[test]
@@ -237,12 +227,7 @@ fn exhausted_and_skipped_versions_still_reject() {
     prior.get_mut(&mutation.object_key_hex).unwrap().version = u64::MAX;
     mutation.expected_version = Some(u64::MAX);
     mutation.next_version = 0;
-    assert_rejected_without_overlay_change(
-        &view,
-        &prior,
-        &[mutation],
-        "object version exhausted",
-    );
+    assert_rejected_without_overlay_change(&view, &prior, &[mutation], "object version exhausted");
 }
 
 /// Preserve the previous overlay-assembly algorithm as a differential oracle.
@@ -256,7 +241,10 @@ fn clone_overlay_oracle(
     let mut staged = prior.clone();
     let mut seen = BTreeSet::new();
     for mutation in mutations {
-        ensure!(seen.insert(mutation.object_key_hex.clone()), "duplicate key");
+        ensure!(
+            seen.insert(mutation.object_key_hex.clone()),
+            "duplicate key"
+        );
         let current = match staged.get(&mutation.object_key_hex) {
             Some(object) => Some(object.clone()),
             None => view

@@ -219,7 +219,9 @@ fn validate_recovery(
             },
             Some(receipt),
         ) => {
-            binding.validate(identity).map_err(|error| error.to_string())?;
+            binding
+                .validate(identity)
+                .map_err(|error| error.to_string())?;
             if receipt.binding != binding
                 || receipt.durable_stage != durable_stage
                 || receipt.durable_sequence != durable_sequence
