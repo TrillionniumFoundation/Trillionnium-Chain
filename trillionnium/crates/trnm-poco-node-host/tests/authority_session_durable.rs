@@ -13,7 +13,7 @@ use tempfile::tempdir;
 use trnm_node_boundary_v0::{
     AuthorityCommandV0, AuthorityCoordinatorV0, AuthorityReceiptV0, AuthorityStageV0,
     BoundIngressV0, BoundaryErrorV0, Digest32V0, IngressFrameV0, NodeIdentityV0,
-    OperationBindingV0, RecoveryDispositionV0,
+    RecoveryDispositionV0,
 };
 use trnm_poco_node_authority::{NodeAuthorityCoordinatorV0, NodeAuthorityErrorV0};
 use trnm_poco_node_production_v0::{
@@ -63,8 +63,16 @@ fn ingress(
     .unwrap()
 }
 
+fn first_ingress() -> BoundIngressV0 {
+    ingress(1, 10, 9, 1, 20)
+}
+
+fn second_ingress() -> BoundIngressV0 {
+    ingress(2, 11, 10, 2, 21)
+}
+
 fn all_ingresses() -> Vec<BoundIngressV0> {
-    vec![ingress(1, 10, 9, 1, 20), ingress(2, 11, 10, 2, 21)]
+    vec![first_ingress(), second_ingress()]
 }
 
 struct NodeAuthorityAdapter {
@@ -188,9 +196,8 @@ fn successor(step: u8) -> (AuthorityStageV0, AuthorityStageV0, Digest32V0) {
 }
 
 fn apply_step(session: &mut Session, step: u8) -> AuthorityReceiptV0 {
-    let ingresses = all_ingresses();
-    let first = &ingresses[0];
-    let second = &ingresses[1];
+    let first = first_ingress();
+    let second = second_ingress();
     match step {
         0 => session
             .begin_prepared(first.binding, first.ingress_digest())
@@ -222,7 +229,7 @@ fn node_authority_and_complete_receipt_session_reopen_every_stage() {
     let root = directory.path().join("authority");
     let mut active = reopen(&root);
 
-    let first = all_ingresses().remove(0);
+    let first = first_ingress();
     let mut receipt = active
         .begin_prepared(first.binding, first.ingress_digest())
         .unwrap();
@@ -238,7 +245,7 @@ fn node_authority_and_complete_receipt_session_reopen_every_stage() {
         assert_eq!(active.current_receipt(), Some(receipt));
     }
 
-    let second = all_ingresses().remove(1);
+    let second = second_ingress();
     let next = active
         .begin_prepared(second.binding, second.ingress_digest())
         .unwrap();
@@ -335,8 +342,7 @@ fn every_stage_survives_process_termination_and_exact_replay() {
 
     let final_reopen = reopen(&root);
     let final_receipt = final_reopen.current_receipt().unwrap();
-    let second = all_ingresses().remove(1);
-    assert_eq!(final_receipt.binding, second.binding);
+    assert_eq!(final_receipt.binding, second_ingress().binding);
     assert_eq!(final_receipt.durable_stage, AuthorityStageV0::Prepared);
     assert_eq!(final_receipt.durable_sequence, 8);
 }
