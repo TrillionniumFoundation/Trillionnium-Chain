@@ -28,6 +28,8 @@ submission field or release-policy boolean can override their absence.
 and `independent_acceptance=not-assessed` are explicit report facts. A successful
 ordinary exit means intake validation succeeded, not release qualification.
 
+The optional offline authentication component is specified in [`AUTHENTICATION_PROFILE_V1.md`](AUTHENTICATION_PROFILE_V1.md). It verifies pinned-role Ed25519 signatures and content-addressed local artifact bytes, while remaining non-authoritative for independent acceptance or release.
+
 The present format checks the shape of signature strings, matching declared
 digests, producer/reviewer names and artifact references. It does not recompute
 the signed envelope, authenticate keys against a trusted role registry, fetch
