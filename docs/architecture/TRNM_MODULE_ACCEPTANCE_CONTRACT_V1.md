@@ -162,3 +162,10 @@ diagnostic artifacts even when the command fails. Each execution binds commit,
 tree and command before starting. Shell pipefail preserves both test and log
 writer failures. A downloaded log is evidence of its own command/source only;
 artifact upload success cannot turn the failed gate into acceptance.
+
+The external contract workspace has a separately selected source inventory,
+manifest and lockfile binding. Its compile/test/Clippy output and the later strict
+boundary Clippy output are retained even on failure, with exact source commit
+and tree. An error naming a package absent from that inventory is unresolved
+source provenance, not grounds to invent or patch that package. These diagnostic
+artifacts do not provide independent review or override a failed command.

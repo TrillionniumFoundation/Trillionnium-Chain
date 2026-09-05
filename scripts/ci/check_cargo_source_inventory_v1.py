@@ -129,6 +129,8 @@ def validate_metadata(
     return {
         'schema': 'trnm-cargo-source-inventory-v1',
         'source_commit': head, 'source_tree': git(root, 'rev-parse', 'HEAD^{tree}'),
+        'workspace_manifest': (workspace / 'Cargo.toml').relative_to(root).as_posix(),
+        'workspace_lock': (workspace / 'Cargo.lock').relative_to(root).as_posix(),
         'workspace_manifest_git_blob': workspace_blob, 'lock_git_blob': lock_blob,
         'package_count': len(reports), 'packages': reports,
         'scope': 'cargo-target-to-tracked-source-binding',
@@ -136,20 +138,27 @@ def validate_metadata(
     }
 
 
+def select_workspace(root: pathlib.Path, name: str) -> pathlib.Path:
+    require(name in {'trillionnium', 'contracts'}, 'unsupported workspace selection')
+    return root / name
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--expected-commit', default=os.environ.get('TRNM_EXPECTED_SOURCE_SHA'))
     parser.add_argument('--output', type=pathlib.Path)
+    parser.add_argument('--workspace-root', choices=['trillionnium', 'contracts'], default='trillionnium')
     args = parser.parse_args()
+    workspace = select_workspace(ROOT, args.workspace_root)
     expected = args.expected_commit or git(ROOT, 'rev-parse', 'HEAD')
     if args.output:
         require(not args.output.resolve().is_relative_to(ROOT), 'inventory output must be outside Git root')
     completed = subprocess.run(
         ['cargo', 'metadata', '--format-version', '1', '--no-deps', '--locked'],
-        cwd=ROOT / 'trillionnium', capture_output=True, text=True, check=True, timeout=60,
+        cwd=workspace, capture_output=True, text=True, check=True, timeout=60,
     )
     metadata = json.loads(completed.stdout, object_pairs_hook=strict_object, parse_constant=reject_constant)
-    report = validate_metadata(ROOT, ROOT / 'trillionnium', metadata, expected)
+    report = validate_metadata(ROOT, workspace, metadata, expected)
     text = json.dumps(report, indent=2, sort_keys=True) + '\n'
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

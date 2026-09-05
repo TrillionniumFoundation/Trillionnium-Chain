@@ -49,6 +49,44 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(report['test_acceptance'], 'not-assessed')
         self.assertIs(report['production_authority'], False)
 
+    def move_fixture_to_contracts(self) -> None:
+        previous = self.workspace
+        self.workspace = self.root / 'contracts'
+        previous.rename(self.workspace)
+        self.package = self.workspace / 'crates/example'
+        self.git('add', '-A')
+        self.git('-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', 'contract fixture')
+        self.head = self.git('rev-parse', 'HEAD')
+        self.metadata['workspace_root'] = str(self.workspace)
+        self.metadata['packages'][0]['manifest_path'] = str(self.package / 'Cargo.toml')
+        self.metadata['packages'][0]['targets'][0]['src_path'] = str(self.package / 'src/lib.rs')
+
+    def test_external_contract_workspace_has_distinct_source_binding(self) -> None:
+        self.move_fixture_to_contracts()
+        report = self.check()
+        self.assertEqual(report['workspace_manifest'], 'contracts/Cargo.toml')
+        self.assertEqual(report['workspace_lock'], 'contracts/Cargo.lock')
+        self.assertEqual(report['package_count'], 1)
+        self.assertEqual(report['test_acceptance'], 'not-assessed')
+        self.assertIs(report['production_authority'], False)
+
+    def test_external_contract_metadata_cannot_substitute_native_workspace(self) -> None:
+        self.move_fixture_to_contracts()
+        self.metadata['workspace_root'] = str(self.root / 'trillionnium')
+        with self.assertRaises(inventory.InventoryError): self.check()
+
+    def test_absent_contract_log_target_is_not_an_admitted_package(self) -> None:
+        self.move_fixture_to_contracts()
+        self.metadata['packages'][0]['manifest_path'] = str(self.workspace / 'trnm-commit-reveal/Cargo.toml')
+        with self.assertRaises((inventory.InventoryError, OSError)): self.check()
+
+    def test_workspace_selection_cannot_escape_or_choose_an_arbitrary_path(self) -> None:
+        for allowed in ('trillionnium', 'contracts'):
+            self.assertEqual(inventory.select_workspace(self.root, allowed), self.root / allowed)
+        for rejected in ('..', '../contracts', '/tmp', 'contracts/../trillionnium', 'unknown'):
+            with self.subTest(name=rejected), self.assertRaises(inventory.InventoryError):
+                inventory.select_workspace(self.root, rejected)
+
     def test_wrong_source_sha(self) -> None:
         self.head = '0' * 40
         with self.assertRaises(inventory.InventoryError): self.check()
