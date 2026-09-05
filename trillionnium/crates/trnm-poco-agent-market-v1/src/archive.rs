@@ -225,6 +225,7 @@ pub struct TaskArchiveBatchV1 {
 }
 
 impl TaskArchiveBatchV1 {
+    /// Validate bounded, unique, retention-eligible records before proof production.
     pub fn validate(&self, policy: &TaskArchivePolicyV1) -> AgentMarketResultV1<()> {
         policy.validate()?;
         if self.records.is_empty()
@@ -260,11 +261,24 @@ impl TaskArchiveBatchV1 {
         }
 
         let mut previous_key: Option<(u64, TaskIdV1)> = None;
+        let mut task_ids = BTreeSet::new();
         let mut total_bytes = 0_u64;
         let mut total_charge = 0_u128;
         let mut hashes = Vec::with_capacity(self.records.len());
         for record in &self.records {
             record.validate_against(policy, self.seal.archive_height)?;
+            if self.seal.archive_height < record.first_prunable_height()? {
+                return Err(error(
+                    AgentMarketErrorCodeV1::InvalidState,
+                    "TaskV1 archive artifact violates prepaid retention",
+                ));
+            }
+            if !task_ids.insert(record.task_id) {
+                return Err(error(
+                    AgentMarketErrorCodeV1::NonCanonical,
+                    "duplicate TaskV1 terminal record in archive batch",
+                ));
+            }
             let key = (record.terminal_height, record.task_id);
             if previous_key.is_some_and(|previous| previous >= key) {
                 return Err(error(
@@ -850,5 +864,108 @@ mod tests {
         .expect("no pressure");
         assert!(plan.archive_batch().is_none());
         assert_eq!(plan.retained_records()[0].task_id, TaskIdV1([1; 32]));
+    }
+
+    fn two_record_batch(policy: &TaskArchivePolicyV1) -> TaskArchiveBatchV1 {
+        plan_task_archive_pruning_v1(
+            policy,
+            &[record(1, 1), record(2, 2), record(3, 3)],
+            &BTreeSet::new(),
+            20,
+            1,
+            Hash32V1([0; 32]),
+        )
+        .expect("valid archive plan")
+        .archive_batch()
+        .expect("two archived records")
+        .clone()
+    }
+
+    #[test]
+    fn direct_batch_and_proof_admission_enforce_inclusive_retention() {
+        let policy = policy(1);
+        let mut batch = two_record_batch(&policy);
+        batch.validate(&policy).expect("positive control");
+        let records_root = batch.seal.records_root;
+        for archive_height in 2..=6 {
+            batch.seal.archive_height = archive_height;
+            let failure = batch
+                .validate(&policy)
+                .expect_err("direct admission may not bypass prepaid retention");
+            assert_eq!(failure.code(), AgentMarketErrorCodeV1::InvalidState);
+            assert!(batch
+                .inclusion_proof(&policy, batch.records[0].task_id)
+                .is_err());
+            assert_eq!(batch.seal.records_root, records_root);
+        }
+        batch.seal.archive_height = 7;
+        batch.validate(&policy).expect("first eligible height");
+        let proof = batch
+            .inclusion_proof(&policy, batch.records[0].task_id)
+            .expect("proof after retention expires");
+        crate::verify_task_archive_inclusion_v1(&batch.seal, &batch.records[0], &proof)
+            .expect("public inclusion after retention expires");
+    }
+
+    #[test]
+    fn duplicate_task_id_at_distinct_heights_is_rejected_with_a_matching_root() {
+        let policy = policy(1);
+        let mut batch = two_record_batch(&policy);
+        batch.validate(&policy).expect("positive control");
+        batch.records[1].task_id = batch.records[0].task_id;
+        batch.seal.last_task_id = batch.records[1].task_id;
+        let hashes = batch
+            .records
+            .iter()
+            .map(TerminalTaskArchiveRecordV1::record_hash)
+            .collect::<AgentMarketResultV1<Vec<_>>>()
+            .expect("mutant hashes");
+        batch.seal.records_root = merkle_root_v1(&hashes).expect("matching mutant root");
+        assert!(batch.records[0].terminal_height < batch.records[1].terminal_height);
+        let failure = batch
+            .validate(&policy)
+            .expect_err("height ordering does not establish task identity uniqueness");
+        assert_eq!(failure.code(), AgentMarketErrorCodeV1::NonCanonical);
+        assert!(batch
+            .inclusion_proof(&policy, batch.records[0].task_id)
+            .is_err());
+        assert!(crate::verify_task_archive_batch_v1(&policy, &batch).is_err());
+    }
+
+    #[test]
+    fn maximum_prepaid_height_never_wraps_into_archive_eligibility() {
+        let mut policy = policy(1);
+        policy.minimum_terminal_retention_blocks = 1;
+        let mut batch = two_record_batch(&policy);
+        batch.records.truncate(1);
+        let terminal = &mut batch.records[0];
+        terminal.terminal_height = u64::MAX - 1;
+        terminal.retention_paid_through_height = u64::MAX - 1;
+        terminal.retention_charge_paid = 200;
+        batch.seal.policy_hash = policy.policy_hash().expect("policy hash");
+        batch.seal.archive_height = u64::MAX;
+        batch.seal.record_count = 1;
+        batch.seal.first_terminal_height = terminal.terminal_height;
+        batch.seal.last_terminal_height = terminal.terminal_height;
+        batch.seal.first_task_id = terminal.task_id;
+        batch.seal.last_task_id = terminal.task_id;
+        batch.seal.total_encoded_bytes = terminal.encoded_bytes;
+        batch.seal.total_retention_charge = terminal.retention_charge_paid;
+        batch.seal.records_root = terminal.record_hash().expect("single-leaf root");
+        batch
+            .validate(&policy)
+            .expect("maximum representable first-prunable height");
+
+        batch.records[0].retention_paid_through_height = u64::MAX;
+        batch.records[0].retention_charge_paid = 400;
+        batch.seal.total_retention_charge = 400;
+        batch.seal.records_root = batch.records[0].record_hash().expect("mutant leaf root");
+        let failure = batch
+            .validate(&policy)
+            .expect_err("expiry cannot wrap to zero");
+        assert_eq!(failure.code(), AgentMarketErrorCodeV1::ArithmeticOverflow);
+        assert!(batch
+            .inclusion_proof(&policy, batch.records[0].task_id)
+            .is_err());
     }
 }

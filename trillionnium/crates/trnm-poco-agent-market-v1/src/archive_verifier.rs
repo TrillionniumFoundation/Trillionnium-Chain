@@ -1,9 +1,9 @@
 //! Independent fail-closed verification for TaskV1 archive artifacts.
 //!
 //! The planner already refuses to select records before prepaid retention has
-//! elapsed. These wrappers repeat that check at the public verification
-//! boundary so a hand-constructed batch cannot use a valid Merkle root to
-//! bypass retention or legal storage obligations.
+//! elapsed. Direct batch admission now enforces the same invariant; these
+//! wrappers retain an additional public verification check. Neither path grants
+//! storage-deletion authority or resolves externally supplied hold obligations.
 
 use crate::{
     archive::{
@@ -120,11 +120,17 @@ mod tests {
         )
         .expect("valid plan");
         let mut batch = plan.archive_batch().expect("archive batch").clone();
+        batch.validate(&policy).expect("positive direct admission");
+        verify_task_archive_batch_v1(&policy, &batch).expect("positive public admission");
         batch.seal.archive_height = 3;
 
-        batch
+        let direct = batch
             .validate(&policy)
-            .expect("structural verifier alone sees a valid root and charge");
+            .expect_err("direct admission must enforce prepaid retention too");
+        assert_eq!(direct.code(), AgentMarketErrorCodeV1::InvalidState);
+        assert!(batch
+            .inclusion_proof(&policy, batch.records[0].task_id)
+            .is_err());
         let failure = verify_task_archive_batch_v1(&policy, &batch)
             .expect_err("public verifier must enforce prepaid retention");
         assert_eq!(failure.code(), AgentMarketErrorCodeV1::InvalidState);
