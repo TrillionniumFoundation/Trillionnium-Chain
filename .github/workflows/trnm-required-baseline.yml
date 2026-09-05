@@ -297,6 +297,8 @@ jobs:
           persist-credentials: false
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Reject false external acceptance with isolated CLI regressions
+        run: python3 scripts/ci/test_external_evidence_v1.py
       - name: Validate supplied external evidence and report open blockers
         run: |
           python3 scripts/ci/check_external_evidence_v1.py \

@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Validate external blocker evidence without converting absence into a claim."""
+"""Check external-evidence declarations, never infer authenticated acceptance.
+
+The v1 intake format has no commissioned trusted-key/digest/artifact verifier.
+Signature-shaped strings and producer/reviewer names remain declarations. This
+checker cannot close external blockers, including in --require-all mode.
+"""
 
 from __future__ import annotations
 
@@ -15,6 +20,11 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 SUBMISSIONS = ROOT / "docs/evidence/external/submissions"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
+SCOPES = {
+    "EXT-REVIEW-001": "review", "EXT-G1-CAMPAIGN-001": "network",
+    "EXT-ANCHOR-HSM-001": "custody", "EXT-POWERLOSS-001": "host",
+    "EXT-AUDIT-001": "audit", "EXT-SOAK-ACTIVATION-001": "production",
+}
 
 
 class EvidenceError(RuntimeError):
@@ -26,10 +36,24 @@ def require(condition: bool, message: str) -> None:
         raise EvidenceError(message)
 
 
+def strict_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, item in pairs:
+        require(key not in value, f"duplicate JSON member: {key}")
+        value[key] = item
+    return value
+
+
+def reject_constant(value: str) -> Any:
+    raise EvidenceError(f"non-finite JSON number: {value}")
+
+
 def read_json(path: pathlib.Path) -> dict[str, Any]:
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+        value = json.loads(path.read_text(encoding="utf-8"),
+                           object_pairs_hook=strict_object,
+                           parse_constant=reject_constant)
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise EvidenceError(f"{path.relative_to(ROOT)}: invalid JSON: {exc}") from exc
     require(isinstance(value, dict), f"{path.relative_to(ROOT)}: top level must be object")
     return value
@@ -48,7 +72,10 @@ def parse_time(value: Any, label: str) -> dt.datetime:
 def validate_common(path: pathlib.Path, row: dict[str, Any], allowed: set[str]) -> None:
     prefix = str(path.relative_to(ROOT))
     require(row.get("schema") == "trnm-external-evidence-v1", f"{prefix}: schema drift")
-    require(row.get("blocker_id") in allowed, f"{prefix}: unknown blocker_id")
+    require(isinstance(row.get("blocker_id"), str) and row["blocker_id"] in allowed,
+            f"{prefix}: unknown blocker_id")
+    require(row.get("scope") == SCOPES[row["blocker_id"]],
+            f"{prefix}: evidence scope mismatch")
     require(isinstance(row.get("evidence_id"), str) and len(row["evidence_id"]) >= 8,
             f"{prefix}: invalid evidence_id")
     require(isinstance(row.get("source_commit"), str) and HEX40.fullmatch(row["source_commit"]),
@@ -67,7 +94,7 @@ def validate_common(path: pathlib.Path, row: dict[str, Any], allowed: set[str]) 
     ended = parse_time(row.get("ended_at"), f"{prefix}: ended_at")
     require(ended >= started, f"{prefix}: ended_at precedes started_at")
     wall = row.get("wall_clock_seconds")
-    require(isinstance(wall, int) and wall >= 0, f"{prefix}: invalid wall_clock_seconds")
+    require(type(wall) is int and wall >= 0, f"{prefix}: invalid wall_clock_seconds")
     actual = int((ended - started).total_seconds())
     require(abs(actual - wall) <= 1, f"{prefix}: wall clock does not match timestamps")
 
@@ -208,50 +235,70 @@ def main() -> int:
     parser.add_argument("--output", type=pathlib.Path)
     args = parser.parse_args()
 
+    # Check the requested release identity even when there are no submissions.
+    if args.require_all:
+        require(args.source_commit and HEX40.fullmatch(args.source_commit),
+                "--require-all needs a 40-hex --source-commit")
+        require(args.source_tree and HEX40.fullmatch(args.source_tree),
+                "--require-all needs a 40-hex --source-tree")
+
     policy = read_json(ROOT / "config/repository-policy-v1.json")
-    allowed = set(policy["external_blockers"])
-    require(allowed, "external blocker policy is empty")
+    declared_blockers = policy.get("external_blockers")
+    require(isinstance(declared_blockers, list) and declared_blockers and
+            all(isinstance(item, str) and item in SCOPES for item in declared_blockers),
+            "external blocker policy is empty or invalid")
+    allowed = set(declared_blockers)
+    require(len(allowed) == len(declared_blockers) and allowed == set(SCOPES),
+            "external blocker policy must name each required blocker once")
 
     files = sorted(SUBMISSIONS.glob("*.json")) if SUBMISSIONS.exists() else []
-    accepted: dict[str, str] = {}
+    declared_accepted: dict[str, str] = {}
     rejected: dict[str, str] = {}
     seen_ids: set[str] = set()
 
     for path in files:
         row = read_json(path)
         validate_common(path, row, allowed)
-        validate_specific(path, row)
+        # Failed campaigns/audits are retained, not required to claim success.
+        # Successful-looking claims still undergo the existing threshold checks.
+        if row["result"] == "accepted":
+            validate_specific(path, row)
         evidence_id = row["evidence_id"]
         require(evidence_id not in seen_ids, f"duplicate evidence_id {evidence_id}")
         seen_ids.add(evidence_id)
         blocker = row["blocker_id"]
         if args.require_all:
-            require(args.source_commit and HEX40.fullmatch(args.source_commit),
-                    "--require-all needs a 40-hex --source-commit")
-            require(args.source_tree and HEX40.fullmatch(args.source_tree),
-                    "--require-all needs a 40-hex --source-tree")
             require(row["source_commit"] == args.source_commit,
                     f"{path.relative_to(ROOT)}: stale source commit")
             require(row["source_tree"] == args.source_tree,
                     f"{path.relative_to(ROOT)}: stale source tree")
         if row["result"] == "accepted":
-            require(blocker not in accepted, f"multiple accepted evidence files for {blocker}")
-            accepted[blocker] = evidence_id
+            require(blocker not in declared_accepted,
+                    f"multiple declared accepted evidence files for {blocker}")
+            declared_accepted[blocker] = evidence_id
         else:
             rejected[blocker] = evidence_id
 
-    open_blockers = sorted(allowed - set(accepted))
+    # Intake declarations have no authenticated acceptance authority. In
+    # particular, neither matching opaque signed_digest strings nor a policy
+    # boolean verifies the signed body, trusted keys, artifacts or independence.
+    # An independently reviewed authentication/acceptance path is still required;
+    # there is intentionally no CLI or submission-field override for that gap.
+    open_blockers = sorted(allowed)
     report = {
         "schema": "trnm-external-evidence-validation-v1",
         "submission_count": len(files),
-        "accepted": dict(sorted(accepted.items())),
+        "verification_scope": "structural-declarations-only",
+        "authenticity_verified": False,
+        "independent_acceptance": "not-assessed",
+        "authentication_blocker": "trusted-evidence-verifier-not-implemented",
+        "declared_accepted": dict(sorted(declared_accepted.items())),
+        "accepted": {},
         "rejected_latest": dict(sorted(rejected.items())),
         "open_blockers": open_blockers,
-        "all_external_blockers_closed": not open_blockers,
-        "production_candidate": False if open_blockers else
-            policy["release_truth"]["production_candidate"],
-        "production_consensus_activation": False if open_blockers else
-            policy["release_truth"]["production_consensus_activation"],
+        "all_external_blockers_closed": False,
+        "production_candidate": False,
+        "production_consensus_activation": False,
     }
     encoded = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.output:
