@@ -156,3 +156,9 @@ only at the original listener, because a prior request's post-check may already
 have terminated the daemon. It still requires rejection at the replacement
 socket, a bounded non-success exit of the exact original process and unchanged
 authority journal bytes. Other connection errors remain failures.
+
+Full unified-workspace and per-package logs are retained as exact-source
+diagnostic artifacts even when the command fails. Each execution binds commit,
+tree and command before starting. Shell pipefail preserves both test and log
+writer failures. A downloaded log is evidence of its own command/source only;
+artifact upload success cannot turn the failed gate into acceptance.
