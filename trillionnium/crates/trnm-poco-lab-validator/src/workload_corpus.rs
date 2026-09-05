@@ -1473,14 +1473,41 @@ mod tests {
             &[[0x51; 32]],
         )
         .unwrap();
-        let index = loaded.entries[0];
-        let mut writable = OpenOptions::new().write(true).open(&corpus).unwrap();
-        writable
-            .seek(SeekFrom::Start(index.signature_offsets[0]))
-            .unwrap();
-        writable.write_all(b"X").unwrap();
-        writable.sync_all().unwrap();
-        assert!(loaded.block_at_height(ORDINARY_START_HEIGHT).is_err());
+        let original = fs::read(&corpus).unwrap();
+        let entries = loaded.entries.clone();
+        let mut writable_options = OpenOptions::new();
+        writable_options.read(true).write(true);
+        let mut writable = writable_options.open(&corpus).unwrap();
+        for index in entries {
+            let admitted = loaded.block_at_height(index.height).unwrap();
+            for signature_offset in index.signature_offsets {
+                for byte_index in [0_u64, 31, 63] {
+                    let offset = signature_offset.checked_add(byte_index).unwrap();
+                    let original_byte = original[usize::try_from(offset).unwrap()];
+                    // A fixed replacement such as b'X' may already be the
+                    // randomly generated signature byte. XOR cannot be a no-op.
+                    let changed_byte = original_byte ^ 1;
+                    assert_ne!(changed_byte, original_byte);
+                    writable.seek(SeekFrom::Start(offset)).unwrap();
+                    writable.write_all(&[changed_byte]).unwrap();
+                    writable.sync_all().unwrap();
+                    writable.seek(SeekFrom::Start(offset)).unwrap();
+                    let mut persisted = [0_u8; 1];
+                    writable.read_exact(&mut persisted).unwrap();
+                    assert_eq!(persisted, [changed_byte]);
+                    assert!(
+                        loaded.block_at_height(index.height).is_err(),
+                        "post-admission signature mutation at {offset} must fail"
+                    );
+
+                    writable.seek(SeekFrom::Start(offset)).unwrap();
+                    writable.write_all(&[original_byte]).unwrap();
+                    writable.sync_all().unwrap();
+                    assert_eq!(loaded.block_at_height(index.height).unwrap(), admitted);
+                }
+            }
+        }
+        assert_eq!(fs::read(&corpus).unwrap(), original);
     }
 
     #[test]
