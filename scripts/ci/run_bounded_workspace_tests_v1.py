@@ -21,6 +21,8 @@ import time
 from dataclasses import dataclass
 from typing import TextIO
 
+import check_cargo_source_inventory_v1 as source_inventory
+
 
 @dataclass(frozen=True)
 class PackageResult:
@@ -47,7 +49,26 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def workspace_packages(workspace_root: pathlib.Path, cargo: str) -> list[str]:
+def workspace_packages(
+    workspace_root: pathlib.Path, cargo: str, expected_commit: str | None = None,
+) -> list[str]:
+    """Select every declared package from validated, source-bound Cargo metadata.
+
+    Do not use a set/filter projection on unvalidated member IDs: a missing
+    package row or ID could otherwise shrink the suite while reporting success.
+    """
+    root = pathlib.Path(source_inventory.git(workspace_root, "rev-parse", "--show-toplevel"))
+    expected = expected_commit or os.environ.get("TRNM_EXPECTED_SOURCE_SHA")
+    if expected is None:
+        expected = source_inventory.git(root, "rev-parse", "HEAD")
+    source_inventory.require(
+        source_inventory.git(root, "rev-parse", "HEAD") == expected,
+        "Git source does not match package test source",
+    )
+    source_inventory.require(
+        not source_inventory.git(root, "status", "--porcelain", "--untracked-files=all"),
+        "package test source is not clean",
+    )
     command = [cargo, "metadata", "--format-version", "1", "--no-deps", "--locked"]
     completed = subprocess.run(
         command,
@@ -58,18 +79,14 @@ def workspace_packages(workspace_root: pathlib.Path, cargo: str) -> list[str]:
         text=True,
         timeout=60,
     )
-    metadata = json.loads(completed.stdout)
-    members = set(metadata["workspace_members"])
-    names = [
-        package["name"]
-        for package in metadata["packages"]
-        if package["id"] in members
-    ]
-    if not names:
-        raise RuntimeError("cargo metadata returned no active workspace packages")
-    if len(names) != len(set(names)):
-        raise RuntimeError("workspace contains duplicate package names")
-    return sorted(names)
+    metadata = json.loads(
+        completed.stdout,
+        object_pairs_hook=source_inventory.strict_object,
+        parse_constant=source_inventory.reject_constant,
+    )
+    report = source_inventory.validate_metadata(root, workspace_root, metadata, expected)
+    return sorted(package["package"] for package in report["packages"])
+
 
 
 # A successful Cargo parent is insufficient when descendants still own pipes or
@@ -225,7 +242,15 @@ def main() -> int:
         raise FileNotFoundError(f"workspace Cargo.toml not found under {workspace_root}")
 
     cargo = os.environ.get("CARGO", "cargo")
-    packages = workspace_packages(workspace_root, cargo)
+    expected_source = os.environ.get("TRNM_EXPECTED_SOURCE_SHA")
+    if expected_source is None:
+        expected_source = source_inventory.git(workspace_root, "rev-parse", "HEAD")
+    packages = workspace_packages(workspace_root, cargo, expected_source)
+    print(
+        f"bounded_workspace_test_source commit={expected_source} "
+        f"tree={source_inventory.git(workspace_root, 'rev-parse', expected_source + '^{tree}')}",
+        flush=True,
+    )
     print(
         f"bounded_workspace_tests package_count={len(packages)} "
         f"package_timeout_seconds={args.package_timeout_seconds}",
@@ -262,6 +287,13 @@ def main() -> int:
         )
         return 1
 
+    # A successful child must not rebind later evidence to a new/dirty source.
+    # Re-run locked metadata admission with the original source identity before
+    # the aggregate success line; never derive a replacement HEAD here.
+    replayed_packages = workspace_packages(workspace_root, cargo, expected_source)
+    source_inventory.require(
+        replayed_packages == packages, "package selection changed during test execution"
+    )
     print(f"bounded_workspace_tests_ok package_count={len(results)}", flush=True)
     return 0
 
@@ -269,6 +301,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (FileNotFoundError, RuntimeError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
-        print(f"::error title=Bounded workspace test runner setup failure::{error}", file=sys.stderr)
+    except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as error:
+        print(f"::error title=Bounded workspace test runner validation failure::{error}", file=sys.stderr)
         raise SystemExit(2) from error
