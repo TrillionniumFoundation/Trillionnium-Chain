@@ -581,12 +581,13 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
                             None => anyhow!("authenticated runtime state unavailable: {failure}"),
                         }
                     })?;
-                changes = stage_runtime_mutations_v0(
+                let staged = stage_runtime_mutations_v0(
                     &view,
                     request.height_v0().get(),
                     &changes,
                     &receipt.mutations,
                 )?;
+                changes.extend(staged);
                 receipt_facts.push(ReceiptFactsV0::Runtime(receipt));
             }
             POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0 => {

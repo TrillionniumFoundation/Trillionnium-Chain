@@ -457,7 +457,7 @@ pub fn execute_authenticated_block_candidate_v0<S: NativeExecutionStoreV0>(
             &changes,
             &runtime_receipt.mutations,
         )?;
-        changes = staged;
+        changes.extend(staged);
 
         let consensus_events = runtime_receipt
             .events
@@ -523,6 +523,12 @@ pub fn execute_authenticated_block_candidate_v0<S: NativeExecutionStoreV0>(
     })
 }
 
+/// Validate one transaction's writes without copying the accumulated block overlay.
+///
+/// The returned map contains only this transaction's writes. Callers merge it
+/// into the block overlay only after the entire transaction has validated.
+/// Neither the borrowed prior overlay nor the authenticated parent is mutated
+/// on an error, including an error after an earlier mutation has been staged.
 pub(crate) fn stage_runtime_mutations_v0<View: TryStateViewV0>(
     view: &View,
     target_height: u64,
@@ -532,14 +538,14 @@ pub(crate) fn stage_runtime_mutations_v0<View: TryStateViewV0>(
 where
     View::Error: std::fmt::Display,
 {
-    let mut staged = prior.clone();
+    let mut staged = BTreeMap::new();
     let mut seen = BTreeSet::new();
     for mutation in mutations {
         ensure!(
             seen.insert(mutation.object_key_hex.clone()),
             "duplicate runtime mutation key"
         );
-        let current = match staged.get(&mutation.object_key_hex) {
+        let current = match prior.get(&mutation.object_key_hex) {
             Some(object) => Some(object.clone()),
             None => view
                 .try_get(&mutation.object_key_hex)
@@ -674,6 +680,9 @@ where
     }
     current[0]
 }
+
+#[cfg(test)]
+mod overlay_delta_tests;
 
 #[cfg(test)]
 mod tests;
