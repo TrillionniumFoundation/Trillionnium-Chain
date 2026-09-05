@@ -16,7 +16,7 @@ on:
       - 'trillionnium/crates/trnm-consensus-*/**'
       - 'trillionnium/crates/trnm-native-*/**'
       - 'trillionnium/crates/trnm-core-restart-v0/**'
-      - 'trillionnium/crates/trnm-poco-node/**'
+      - 'trillionnium/crates/trnm-poco-node*/**'
   push:
     branches:
       - main
@@ -34,7 +34,7 @@ on:
       - 'trillionnium/crates/trnm-consensus-*/**'
       - 'trillionnium/crates/trnm-native-*/**'
       - 'trillionnium/crates/trnm-core-restart-v0/**'
-      - 'trillionnium/crates/trnm-poco-node/**'
+      - 'trillionnium/crates/trnm-poco-node*/**'
 
 permissions:
   contents: read

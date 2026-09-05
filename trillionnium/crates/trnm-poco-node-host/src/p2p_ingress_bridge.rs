@@ -44,7 +44,7 @@ impl fmt::Display for CandidateP2pIngressBridgeErrorV0 {
                 formatter.write_str("authority ingress differs from the authenticated mapping")
             }
             Self::PreparedReceiptMismatch => {
-                formatter.write_str("Prepared receipt differs from authenticated ingress mapping")
+                formatter.write_str("prior authority receipt differs from authenticated ingress mapping")
             }
         }
     }
@@ -171,11 +171,30 @@ impl AuthorityIngressSourceV0 for CandidateP2pIngressBridgeV0 {
             return Err(CandidateP2pIngressBridgeErrorV0::IngressMismatch);
         }
         if let Some(receipt) = prior {
-            if receipt.binding != ingress.binding
-                || receipt.durable_stage != AuthorityStageV0::Prepared
-                || receipt.facts_digest != self.ingress_digest
+            receipt
+                .binding
+                .validate(identity)
+                .map_err(CandidateP2pIngressBridgeErrorV0::Boundary)?;
+            if receipt.facts_digest == Digest32V0([0; 32])
+                || receipt.record_digest == Digest32V0([0; 32])
             {
                 return Err(CandidateP2pIngressBridgeErrorV0::PreparedReceiptMismatch);
+            }
+
+            let exact_prepared_replay = receipt.binding == ingress.binding
+                && receipt.durable_stage == AuthorityStageV0::Prepared
+                && receipt.facts_digest == self.ingress_digest;
+            if !exact_prepared_replay {
+                let expected_height = receipt.binding.height.checked_add(1).ok_or(
+                    CandidateP2pIngressBridgeErrorV0::PreparedReceiptMismatch,
+                )?;
+                if receipt.durable_stage != AuthorityStageV0::OutboundPublished
+                    || ingress.binding.height != expected_height
+                    || ingress.binding.parent_id != receipt.binding.block_id
+                    || ingress.binding.operation_id == receipt.binding.operation_id
+                {
+                    return Err(CandidateP2pIngressBridgeErrorV0::PreparedReceiptMismatch);
+                }
             }
         }
         Ok(())
