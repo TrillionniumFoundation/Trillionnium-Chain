@@ -267,6 +267,12 @@ def accepted_privileged_guards(name: str, job: str) -> set[str]:
     )
     variants.add(
         canonical.replace(
+            "github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI'",
+            "(github.actor == 'ProfAlexQI' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') && github.triggering_actor == github.actor",
+        )
+    )
+    variants.add(
+        canonical.replace(
             "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf')",
             "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman')",
         )
