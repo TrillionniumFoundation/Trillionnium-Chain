@@ -149,11 +149,7 @@ fn invalid_operation_and_stage_are_rejected_before_source_authority_is_called() 
     let prepared = session.begin_prepared(first, d(20)).unwrap();
     let mut source = CountingSource::default();
 
-    let wrong_operation = claim(
-        binding(2, 11, 10),
-        AuthorityStageV0::ApplicationSealed,
-        21,
-    );
+    let wrong_operation = claim(binding(2, 11, 10), AuthorityStageV0::ApplicationSealed, 21);
     assert!(matches!(
         session.verify_fact(wrong_operation, &mut source),
         Err(AuthorityFactVerificationErrorV0::Boundary(

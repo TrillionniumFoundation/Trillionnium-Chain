@@ -165,16 +165,9 @@ fn terminal_predecessor_allows_only_the_parent_bound_next_height() {
     ));
 
     let wrong_parent = AuthorityReceiptV0 {
-        binding: BoundIngressV0::derive(
-            identity(),
-            1,
-            1,
-            d(12),
-            d(9),
-            node_frame(1, 12),
-        )
-        .unwrap()
-        .binding,
+        binding: BoundIngressV0::derive(identity(), 1, 1, d(12), d(9), node_frame(1, 12))
+            .unwrap()
+            .binding,
         ..terminal
     };
     assert!(matches!(
@@ -208,5 +201,8 @@ fn peer_nonce_clears_only_for_the_exact_prepared_receipt() {
         Err(CandidateP2pIngressBridgeErrorV0::PreparedReceiptMismatch)
     ));
     assert_eq!(other.peer_recovery_state().highest_acknowledged_nonce(), 0);
-    assert_eq!(other.peer_recovery_state().pending(), Some(peer_frame(1, 10)));
+    assert_eq!(
+        other.peer_recovery_state().pending(),
+        Some(peer_frame(1, 10))
+    );
 }

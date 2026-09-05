@@ -173,7 +173,9 @@ impl fmt::Display for PacemakerErrorV0 {
             Self::PendingFire => "a fired timer must be acknowledged before rearming",
             Self::StaleArm => "pacemaker arm is stale or reordered",
             Self::ConflictingArm => "pacemaker identity was replayed with a different deadline",
-            Self::UnexpectedAcknowledgement => "pacemaker acknowledgement does not match pending fire",
+            Self::UnexpectedAcknowledgement => {
+                "pacemaker acknowledgement does not match pending fire"
+            }
         };
         formatter.write_str(message)
     }
@@ -297,9 +299,7 @@ where
         }
         match self.armed {
             None => Ok(PacemakerPollV0::Idle),
-            Some(armed) if now < armed.deadline_millis => {
-                Ok(PacemakerPollV0::Armed(armed))
-            }
+            Some(armed) if now < armed.deadline_millis => Ok(PacemakerPollV0::Armed(armed)),
             Some(armed) => {
                 self.armed = None;
                 self.pending_fire = Some(armed);
@@ -383,10 +383,7 @@ mod pacemaker_tests {
             pacemaker.arm(arm(1, 121)),
             Err(PacemakerErrorV0::ConflictingArm)
         );
-        assert_eq!(
-            pacemaker.arm(arm(0, 119)),
-            Err(PacemakerErrorV0::StaleArm)
-        );
+        assert_eq!(pacemaker.arm(arm(0, 119)), Err(PacemakerErrorV0::StaleArm));
         assert_eq!(pacemaker.poll().unwrap(), PacemakerPollV0::Armed(first));
     }
 
@@ -408,10 +405,7 @@ mod pacemaker_tests {
         );
         pacemaker.acknowledge_fired(identity(1)).unwrap();
         assert_eq!(pacemaker.poll().unwrap(), PacemakerPollV0::Idle);
-        assert_eq!(
-            pacemaker.arm(arm(1, 130)),
-            Err(PacemakerErrorV0::StaleArm)
-        );
+        assert_eq!(pacemaker.arm(arm(1, 130)), Err(PacemakerErrorV0::StaleArm));
         assert_eq!(pacemaker.arm(arm(2, 140)).unwrap(), arm(2, 140));
     }
 
@@ -425,10 +419,7 @@ mod pacemaker_tests {
             Err(PacemakerErrorV0::InvalidDeadline)
         );
         assert_eq!(
-            pacemaker.arm(arm(
-                2,
-                101 + MAX_CANDIDATE_PACEMAKER_DELAY_MILLIS_V0,
-            )),
+            pacemaker.arm(arm(2, 101 + MAX_CANDIDATE_PACEMAKER_DELAY_MILLIS_V0,)),
             Err(PacemakerErrorV0::InvalidDeadline)
         );
         assert_eq!(pacemaker.poll().unwrap(), PacemakerPollV0::Armed(first));

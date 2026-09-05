@@ -359,7 +359,10 @@ mod tests {
         let safety = coordinator
             .advance_confirmed_safety_v0(prepared.binding, continuation)
             .expect("Safety");
-        assert_eq!(application.durable_stage, AuthorityStageV0::ApplicationSealed);
+        assert_eq!(
+            application.durable_stage,
+            AuthorityStageV0::ApplicationSealed
+        );
         assert_eq!(safety.durable_stage, AuthorityStageV0::SafetyPersisted);
         assert_ne!(application.facts_digest, safety.facts_digest);
         assert_eq!(coordinator.current_receipt(), Some(safety));
