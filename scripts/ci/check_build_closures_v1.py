@@ -194,6 +194,21 @@ def resolve_closure(packages: dict[str, Package], roots: list[str], root_feature
     return reached, active_features
 
 
+def validate_persistent_authority_boundary(
+    packages: dict[str, Package], production_reached: set[str]
+) -> set[str]:
+    candidate_adapter = "trnm-durable-file-adapters-v0"
+    require(candidate_adapter not in production_reached,
+            "production closure contains the candidate durable file adapter")
+    candidate_reached, _ = resolve_closure(
+        packages, ["trnm-poco-node-host"], {"persistent-authority-candidate"}, False
+    )
+    require(candidate_adapter in candidate_reached,
+            "explicit persistent candidate feature lost its real domain owner")
+
+    return candidate_reached
+
+
 def group_sets(config: dict[str, Any]) -> dict[str, set[str]]:
     mapping = {
         "ai-v1-candidate": "ai_v1_candidate_packages",
@@ -385,8 +400,16 @@ def main() -> int:
     production = next(row for row in report_rows if row["id"] == "node-prod-v0")
     require(not (set(production["resolved_packages"]) & groups["ai-v1-candidate"]), "production closure contains AI-v1 candidate")
 
+    candidate_reached = validate_persistent_authority_boundary(packages, reached_by_id["node-prod-v0"])
+
     if args.verify_cargo_tree:
         workspace_names = set(packages)
+        candidate_cargo = cargo_tree_workspace_packages(
+            workspace_manifest, ["trnm-poco-node-host"],
+            ["persistent-authority-candidate"], False, workspace_names,
+        )
+        require(candidate_cargo == candidate_reached,
+                "persistent authority candidate Cargo/static closure mismatch")
         for row in closures:
             closure_id = row["id"]
             cargo_reached = cargo_tree_workspace_packages(
@@ -424,6 +447,8 @@ def main() -> int:
         "closure_count": len(report_rows),
         "closures": report_rows,
         "node_default_ai_v1_dependency_count": 0,
+        "node_default_candidate_adapter_count": 0,
+        "persistent_candidate_owner_reachable": True,
         "cargo_tree_verified": args.verify_cargo_tree,
         "production_candidate": False,
         "production_consensus_activation": False,

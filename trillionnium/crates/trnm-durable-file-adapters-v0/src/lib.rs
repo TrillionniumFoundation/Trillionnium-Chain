@@ -7,6 +7,9 @@
 //! code, but physical power-loss behavior, filesystem guarantees, deployment
 //! topology, and device-backed signing remain external evidence requirements.
 
+mod candidate_authority;
+pub use candidate_authority::{CandidateAuthorityErrorV0, CandidateAuthorityJournalV0};
+
 use fs2::FileExt;
 use std::{
     error::Error,
@@ -360,6 +363,9 @@ fn validate_authority_chain(
                 "node identity changed within journal",
             ));
         }
+        record.binding.validate(identity).map_err(|_| {
+            DurableFileErrorV0::CorruptAuthorityJournal("invalid authority operation binding")
+        })?;
         let rebound = OperationBindingV0::derive(
             identity,
             record.binding.height,
@@ -453,6 +459,9 @@ impl FileAuthorityCoordinatorV0 {
         directory: impl AsRef<Path>,
         identity: NodeIdentityV0,
     ) -> Result<Self, DurableFileErrorV0> {
+        identity
+            .validate()
+            .map_err(DurableFileErrorV0::InvalidAuthorityCommand)?;
         let directory = directory.as_ref();
         fs::create_dir_all(directory)?;
         let lock_path = directory.join("authority.lock.v0");
@@ -541,6 +550,15 @@ impl AuthorityCoordinatorV0 for FileAuthorityCoordinatorV0 {
         if self.poisoned {
             return Err(DurableFileErrorV0::Poisoned);
         }
+        // The adapter is a public authority boundary too: never trust a facade
+        // to validate a caller-supplied binding before durable append.
+        let command_binding = match &command {
+            AuthorityCommandV0::Begin { binding, .. }
+            | AuthorityCommandV0::Advance { binding, .. } => *binding,
+        };
+        command_binding
+            .validate(self.identity)
+            .map_err(DurableFileErrorV0::InvalidAuthorityCommand)?;
         let (binding, stage, facts_digest) = match command {
             AuthorityCommandV0::Begin {
                 binding,
@@ -1172,10 +1190,14 @@ mod tests {
 
     static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
 
-    struct TestDirectory(PathBuf);
+    pub(super) struct TestDirectory(PathBuf);
 
     impl TestDirectory {
-        fn new(label: &str) -> Self {
+        pub(super) fn path(&self) -> &Path {
+            &self.0
+        }
+
+        pub(super) fn new(label: &str) -> Self {
             let timestamp = SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .unwrap()
@@ -1218,6 +1240,57 @@ mod tests {
             parent_id,
             node_digest(height as u8),
         )
+    }
+
+    #[test]
+    fn invalid_identity_cannot_create_an_authority_namespace() {
+        let directory = TestDirectory::new("invalid-identity");
+        let target = directory.0.join("must-not-exist");
+        let mut identity = node_identity();
+        identity.generation = 0;
+        assert!(FileAuthorityCoordinatorV0::open(&target, identity).is_err());
+        assert!(!target.exists());
+    }
+
+    #[test]
+    fn invalid_direct_binding_cannot_change_the_journal() {
+        let directory = TestDirectory::new("invalid-direct-binding");
+        let mut coordinator =
+            FileAuthorityCoordinatorV0::open(&directory.0, node_identity()).unwrap();
+        let valid = binding(1, node_digest(4), node_digest(3));
+        let mut substituted = valid;
+        substituted.operation_id = node_digest(99);
+        let zero_height = binding(0, node_digest(4), node_digest(3));
+        for invalid in [substituted, zero_height] {
+            assert!(coordinator
+                .apply(AuthorityCommandV0::Begin {
+                    binding: invalid,
+                    ingress_digest: node_digest(5),
+                })
+                .is_err());
+            assert_eq!(coordinator.current_receipt(), None);
+            assert_eq!(coordinator.journal.metadata().unwrap().len(), 0);
+        }
+        coordinator
+            .apply(AuthorityCommandV0::Begin {
+                binding: valid,
+                ingress_digest: node_digest(5),
+            })
+            .unwrap();
+    }
+
+    #[test]
+    fn a_hash_valid_but_invalid_binding_is_rejected_on_recovery() {
+        let invalid = binding(0, node_digest(4), node_digest(3));
+        let record = AuthorityRecordV0::new(
+            node_identity(),
+            invalid,
+            AuthorityStageV0::Prepared,
+            0,
+            node_digest(5),
+            node_digest(0),
+        );
+        assert!(validate_authority_chain(node_identity(), &record.encode()).is_err());
     }
 
     #[test]

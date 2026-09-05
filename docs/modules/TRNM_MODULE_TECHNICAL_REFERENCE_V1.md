@@ -168,6 +168,13 @@ exercised. SLO profile: `authority-hot-path-v1`.
 
 ---
 
+The candidate `CandidateAuthorityJournalV0` in `trnm-durable-file-adapters-v0`
+owns the recovered flag, root checks, strict successor validation and durable
+receipt validation. Recovery and uncertain append failure close its readiness
+barrier. M15 may delegate to it only through `persistent-authority-candidate`;
+the default CLI runtime closure excludes the adapter. This seam records inert
+caller facts, not domain acceptance or signing/finality authority.
+
 ## M04 — P2P / Session / Dissemination
 
 **Authority.** M04 owns authenticated peer sessions, leases, bounded ingress,
@@ -528,6 +535,15 @@ release rehearsal are required. SLO profile: `evidence-tooling-v1` for builds
 and `authority-hot-path-v1` for node lifecycle.
 
 ---
+
+`trnm-poco-node-authority` is a wiring facade with no local journal or recovery
+state machine. Its optional `persistent-authority-candidate` feature selects the
+M03 owner; `trnm-poco-node-host` forwards that explicit feature. The default host
+exposes no persistent constructor or stage mutation. Existing candidate tests
+are retained behind the opt-in seam, with a separate default CLI/build closure.
+See the candidate ownership contract in
+`docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md`; independent acceptance
+and full persistent-validator implementation remain open.
 
 ## M16 — Global Control Plane
 

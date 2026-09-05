@@ -73,6 +73,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/test_module_coverage_guard_v1.py
+          python3 scripts/ci/test_node_candidate_boundary_v1.py
           bash scripts/check_ci_runner_policy_test.sh
           timeout --signal=TERM --kill-after=30s 900s bash scripts/check_cargo_offline_policy_test.sh
       - name: Verify canonical project boundary without exemptions
@@ -334,6 +335,19 @@ jobs:
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
+      - name: Verify default and explicit candidate ownership boundaries
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git diff --exit-code HEAD -- .
+          git ls-files -s -- crates/trnm-native-execution-v0 crates/trnm-durable-file-adapters-v0 crates/trnm-poco-node-authority crates/trnm-poco-node-host
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-poco-node-cli --all-targets --locked
+          cargo test -p trnm-poco-node-authority -p trnm-poco-node-host --no-default-features --doc --locked
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-durable-file-adapters-v0 --lib --locked -- --nocapture
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features persistent-authority-candidate --all-targets --locked -- --nocapture
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
+          cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
+          git diff --exit-code HEAD -- .
       - name: Test the unified workspace feature graph with a hard deadline
         working-directory: trillionnium
         run: timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast

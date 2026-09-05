@@ -1,22 +1,27 @@
 #![forbid(unsafe_code)]
 //! Wiring-only host composition for the production-shaped PoCO node.
 //!
-//! The host can now bind the reviewed persistent authority-journal owner and
+//! The host can now bind the explicit candidate authority-journal owner and
 //! delegate recovery, exact ingress preparation, and strict stage advances.
 //! It still contains no consensus transition, application fact production,
 //! signature operation, network binding, timer, retry policy, finality
 //! authority, or release promotion. The I/O side remains deliberately inert,
 //! so this candidate composition can never satisfy the production start gate.
 
-use std::{error::Error, fmt, path::Path};
+use std::{error::Error, fmt};
+#[cfg(feature = "persistent-authority-candidate")]
+use std::path::Path;
 
-use trnm_node_boundary_v0::{
-    AuthorityReceiptV0, AuthorityStageV0, BoundIngressV0, Digest32V0, NodeIdentityV0,
+#[cfg(feature = "persistent-authority-candidate")]
+use trnm_poco_node_authority::{
+    AuthorityReceiptV0, BoundIngressV0, Digest32V0, NodeIdentityV0,
     OperationBindingV0, RecoveryDispositionV0,
 };
 use trnm_poco_node_authority::{
-    NodeAuthorityCoordinatorV0, NodeAuthorityErrorV0, NodeAuthorityReadinessV0,
+    AuthorityStageV0, NodeAuthorityCoordinatorV0, NodeAuthorityReadinessV0,
 };
+#[cfg(feature = "persistent-authority-candidate")]
+use trnm_poco_node_authority::NodeAuthorityErrorV0;
 use trnm_poco_node_io::{NodeIoRuntimeV0, REQUIRED_NODE_IO_SURFACES_V0};
 
 /// Compile-time binding to the reviewed pure repository-core composition.
@@ -80,6 +85,10 @@ impl NodeHostStatusV0 {
 /// authority-bearing callback or I/O implementation cannot be smuggled into
 /// the wiring layer.
 #[derive(Debug, Default)]
+#[cfg_attr(
+    not(feature = "persistent-authority-candidate"),
+    doc = "```compile_fail\nuse trnm_poco_node_host::PocoNodeHostV0;\nlet _ = PocoNodeHostV0::recover_authority;\n```"
+)]
 pub struct PocoNodeHostV0 {
     authority: NodeAuthorityCoordinatorV0,
     io: NodeIoRuntimeV0,
@@ -95,6 +104,7 @@ impl PocoNodeHostV0 {
 
     /// Bind an existing absolute non-symlink authority root while retaining an
     /// inert I/O runtime and a closed production gate.
+    #[cfg(feature = "persistent-authority-candidate")]
     pub fn open_candidate_persistent_authority(
         root: impl AsRef<Path>,
         identity: NodeIdentityV0,
@@ -115,14 +125,17 @@ impl PocoNodeHostV0 {
         }
     }
 
+    #[cfg(feature = "persistent-authority-candidate")]
     pub fn recover_authority(&mut self) -> Result<RecoveryDispositionV0, NodeAuthorityErrorV0> {
         self.authority.recover()
     }
 
+    #[cfg(feature = "persistent-authority-candidate")]
     pub fn current_authority_receipt(&self) -> Option<AuthorityReceiptV0> {
         self.authority.current_receipt()
     }
 
+    #[cfg(feature = "persistent-authority-candidate")]
     pub fn prepare_bound_ingress(
         &mut self,
         ingress: &BoundIngressV0,
@@ -133,6 +146,7 @@ impl PocoNodeHostV0 {
     /// Delegate one exact successor append after a domain owner has returned a
     /// trusted non-zero fact digest. This host does not create or interpret the
     /// represented fact.
+    #[cfg(feature = "persistent-authority-candidate")]
     pub fn advance_authority_exact(
         &mut self,
         binding: OperationBindingV0,
@@ -190,8 +204,10 @@ impl Error for NodeHostStartBlockedV0 {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use trnm_node_boundary_v0::IngressFrameV0;
+    #[cfg(feature = "persistent-authority-candidate")]
+    use trnm_poco_node_authority::IngressFrameV0;
 
+    #[cfg(feature = "persistent-authority-candidate")]
     fn identity() -> NodeIdentityV0 {
         NodeIdentityV0 {
             chain_id: Digest32V0([1; 32]),
@@ -201,6 +217,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "persistent-authority-candidate")]
     fn ingress() -> BoundIngressV0 {
         let frame = IngressFrameV0::new(
             Digest32V0([4; 32]),
@@ -240,6 +257,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "persistent-authority-candidate")]
     fn persistent_candidate_delegates_authority_but_cannot_start() {
         let directory = tempfile::tempdir().expect("tempdir");
         let mut host =

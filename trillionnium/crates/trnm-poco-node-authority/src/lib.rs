@@ -1,28 +1,20 @@
 #![forbid(unsafe_code)]
-//! Durable authority-journal boundary for the production-shaped PoCO node.
+//! Wiring-only readiness facade. Durable domain state belongs to the optional
+//! candidate file-adapter owner, never to this composition package.
 //!
-//! The crate now owns one explicit candidate binding to the reviewed file
-//! authority adapter. It can recover, persist exact `BoundIngressV0 ->
-//! Prepared`, and append only the strict successor stages defined by
-//! `trnm-node-boundary-v0`. It never creates application, SafetyRules, signing,
-//! finality, checkpoint, or publication facts; callers must supply a non-zero
-//! digest produced by the independently owned domain adapter.
-//!
-//! Production activation remains delegated to the repository-wide fail-closed
-//! gate. Binding a durable journal therefore does not make the node a
-//! production candidate and does not permit the composition to start.
+//! The default build contains no storage constructor or stage-mutation API.
+//! `persistent-authority-candidate` is an explicit non-activating consumer seam.
 
-use std::{
-    error::Error,
-    fmt, fs, io,
-    path::{Path, PathBuf},
-};
+#[cfg(feature = "persistent-authority-candidate")]
+use std::path::Path;
 
-use trnm_durable_file_adapters_v0::{DurableFileErrorV0, FileAuthorityCoordinatorV0};
-use trnm_node_boundary_v0::{
-    AuthorityCommandV0, AuthorityCoordinatorV0, AuthorityReceiptV0, AuthorityStageV0,
-    BoundIngressV0, BoundaryErrorV0, Digest32V0, NodeIdentityV0, OperationBindingV0,
-    RecoveryDispositionV0,
+#[cfg(feature = "persistent-authority-candidate")]
+use trnm_durable_file_adapters_v0::CandidateAuthorityJournalV0;
+#[cfg(feature = "persistent-authority-candidate")]
+pub use trnm_durable_file_adapters_v0::CandidateAuthorityErrorV0 as NodeAuthorityErrorV0;
+pub use trnm_node_boundary_v0::{
+    AuthorityReceiptV0, AuthorityStageV0, BoundIngressV0, Digest32V0, IngressFrameV0,
+    NodeIdentityV0, OperationBindingV0, RecoveryDispositionV0,
 };
 use trnm_poco_node::{
     production_activation_gate_v0, ProductionActivationBlockedV0, HOST_IMPLEMENTATION_COMPLETE_V0,
@@ -74,148 +66,84 @@ impl NodeAuthorityReadinessV0 {
     }
 }
 
-/// Authority-journal owner used by the host composition.
-///
-/// `new()` is deliberately inert. `open_candidate()` binds an already-existing
-/// absolute non-symlink directory to the reviewed durable file adapter. The
-/// object exposes no private-key, vote-construction, application-execution,
-/// finality, networking, or activation API.
+/// Immutable readiness projection plus optional delegation to a candidate owner.
+#[derive(Debug, Default)]
+#[cfg_attr(
+    not(feature = "persistent-authority-candidate"),
+    doc = "```compile_fail\nuse trnm_poco_node_authority::NodeAuthorityCoordinatorV0;\nlet _ = NodeAuthorityCoordinatorV0::recover;\n```"
+)]
 pub struct NodeAuthorityCoordinatorV0 {
-    inner: Option<FileAuthorityCoordinatorV0>,
-    canonical_root: Option<PathBuf>,
-    recovered: bool,
+    #[cfg(feature = "persistent-authority-candidate")]
+    candidate: CandidateAuthorityJournalV0,
 }
 
 impl NodeAuthorityCoordinatorV0 {
     pub const fn new() -> Self {
         Self {
-            inner: None,
-            canonical_root: None,
-            recovered: false,
+            #[cfg(feature = "persistent-authority-candidate")]
+            candidate: CandidateAuthorityJournalV0::new(),
         }
-    }
-
-    pub fn open_candidate(
-        root: impl AsRef<Path>,
-        identity: NodeIdentityV0,
-    ) -> Result<Self, NodeAuthorityErrorV0> {
-        identity
-            .validate()
-            .map_err(NodeAuthorityErrorV0::Boundary)?;
-        let root = root.as_ref();
-        if !root.is_absolute() {
-            return Err(NodeAuthorityErrorV0::RelativeRoot(root.to_path_buf()));
-        }
-        let metadata = fs::symlink_metadata(root).map_err(NodeAuthorityErrorV0::RootIo)?;
-        if !metadata.is_dir() || metadata.file_type().is_symlink() {
-            return Err(NodeAuthorityErrorV0::InvalidRoot(root.to_path_buf()));
-        }
-        let canonical_root = fs::canonicalize(root).map_err(NodeAuthorityErrorV0::RootIo)?;
-        if !canonical_root.is_dir() {
-            return Err(NodeAuthorityErrorV0::InvalidRoot(canonical_root));
-        }
-        let inner = FileAuthorityCoordinatorV0::open(&canonical_root, identity)
-            .map_err(NodeAuthorityErrorV0::Durable)?;
-        Ok(Self {
-            inner: Some(inner),
-            canonical_root: Some(canonical_root),
-            recovered: false,
-        })
     }
 
     pub fn readiness(&self) -> NodeAuthorityReadinessV0 {
+        #[cfg(feature = "persistent-authority-candidate")]
+        let (bound, recovered, stage) = (
+            self.candidate.persistent_authority_bound(),
+            self.candidate.recovery_barrier_satisfied(),
+            self.candidate.current_receipt().map(|receipt| receipt.durable_stage),
+        );
+        #[cfg(not(feature = "persistent-authority-candidate"))]
+        let (bound, recovered, stage) = (false, false, None);
         NodeAuthorityReadinessV0 {
             production_candidate: PRODUCTION_CANDIDATE_V0,
             host_implementation_complete: HOST_IMPLEMENTATION_COMPLETE_V0,
             unwired_contract_count: UNWIRED_PRODUCTION_CONTRACTS_V0.len(),
-            persistent_authority_bound: self.inner.is_some(),
-            recovery_barrier_satisfied: self.recovered,
-            durable_stage: self.current_receipt().map(|receipt| receipt.durable_stage),
+            persistent_authority_bound: bound,
+            recovery_barrier_satisfied: recovered,
+            durable_stage: stage,
         }
     }
 
     pub const fn production_activation_gate(&self) -> Result<(), ProductionActivationBlockedV0> {
         production_activation_gate_v0()
     }
+}
+
+#[cfg(feature = "persistent-authority-candidate")]
+impl NodeAuthorityCoordinatorV0 {
+    pub fn open_candidate(
+        root: impl AsRef<Path>,
+        identity: NodeIdentityV0,
+    ) -> Result<Self, NodeAuthorityErrorV0> {
+        Ok(Self {
+            candidate: CandidateAuthorityJournalV0::open_candidate(root, identity)?,
+        })
+    }
 
     pub fn canonical_root(&self) -> Option<&Path> {
-        self.canonical_root.as_deref()
+        self.candidate.canonical_root()
     }
 
     pub fn identity(&self) -> Option<NodeIdentityV0> {
-        self.inner.as_ref().map(AuthorityCoordinatorV0::identity)
+        self.candidate.identity()
     }
 
     pub fn current_receipt(&self) -> Option<AuthorityReceiptV0> {
-        self.inner
-            .as_ref()
-            .and_then(FileAuthorityCoordinatorV0::current_receipt)
+        self.candidate.current_receipt()
     }
 
-    /// Reconcile and authenticate the complete journal before any mutation.
     pub fn recover(&mut self) -> Result<RecoveryDispositionV0, NodeAuthorityErrorV0> {
-        let identity = self.identity().ok_or(NodeAuthorityErrorV0::Inert)?;
-        let disposition = self
-            .inner
-            .as_mut()
-            .ok_or(NodeAuthorityErrorV0::Inert)?
-            .recover()
-            .map_err(NodeAuthorityErrorV0::Durable)?;
-        match disposition {
-            RecoveryDispositionV0::Clean => {
-                self.recovered = true;
-            }
-            RecoveryDispositionV0::Resume { binding, .. } => {
-                binding
-                    .validate(identity)
-                    .map_err(NodeAuthorityErrorV0::Boundary)?;
-                self.recovered = true;
-            }
-            RecoveryDispositionV0::Quarantine { .. } => {
-                self.recovered = false;
-            }
-        }
-        Ok(disposition)
+        self.candidate.recover()
     }
 
-    /// Persist the exact ingress digest as the first `Prepared` record.
     pub fn prepare_bound_ingress(
         &mut self,
         ingress: &BoundIngressV0,
     ) -> Result<AuthorityReceiptV0, NodeAuthorityErrorV0> {
-        self.require_recovered()?;
-        let identity = self.identity().ok_or(NodeAuthorityErrorV0::Inert)?;
-        ingress
-            .validate(identity)
-            .map_err(NodeAuthorityErrorV0::Boundary)?;
-        let facts_digest = ingress.ingress_digest();
-        let receipt = self
-            .inner
-            .as_mut()
-            .ok_or(NodeAuthorityErrorV0::Inert)?
-            .apply(AuthorityCommandV0::Begin {
-                binding: ingress.binding,
-                ingress_digest: facts_digest,
-            })
-            .map_err(NodeAuthorityErrorV0::Durable)?;
-        validate_receipt_v0(
-            identity,
-            receipt,
-            ingress.binding,
-            AuthorityStageV0::Prepared,
-            facts_digest,
-            false,
-        )?;
-        Ok(receipt)
+        self.candidate.prepare_bound_ingress(ingress)
     }
 
-    /// Append exactly one authority successor stage.
-    ///
-    /// This method persists only a digest. It does not validate or manufacture
-    /// the domain fact represented by that digest. A production composition
-    /// must keep the corresponding typed receipt non-forgeable in its domain
-    /// crate and call this boundary only after that domain operation returns a
-    /// trusted result.
+    /// Candidate-only inert fact recording; not a proof of domain authority.
     pub fn advance_exact(
         &mut self,
         binding: OperationBindingV0,
@@ -223,145 +151,32 @@ impl NodeAuthorityCoordinatorV0 {
         next_stage: AuthorityStageV0,
         facts_digest: Digest32V0,
     ) -> Result<AuthorityReceiptV0, NodeAuthorityErrorV0> {
-        self.require_recovered()?;
-        let identity = self.identity().ok_or(NodeAuthorityErrorV0::Inert)?;
-        binding
-            .validate(identity)
-            .map_err(NodeAuthorityErrorV0::Boundary)?;
-        if expected_stage.successor() != Some(next_stage) {
-            return Err(NodeAuthorityErrorV0::Boundary(
-                BoundaryErrorV0::InvalidStageTransition,
-            ));
-        }
-        if facts_digest == Digest32V0([0; 32]) {
-            return Err(NodeAuthorityErrorV0::ZeroFactsDigest);
-        }
-        let receipt = self
-            .inner
-            .as_mut()
-            .ok_or(NodeAuthorityErrorV0::Inert)?
-            .apply(AuthorityCommandV0::Advance {
-                binding,
-                expected_stage,
-                next_stage,
-                facts_digest,
-            })
-            .map_err(NodeAuthorityErrorV0::Durable)?;
-        validate_receipt_v0(identity, receipt, binding, next_stage, facts_digest, true)?;
-        Ok(receipt)
-    }
-
-    fn require_recovered(&self) -> Result<(), NodeAuthorityErrorV0> {
-        if self.inner.is_none() {
-            return Err(NodeAuthorityErrorV0::Inert);
-        }
-        if !self.recovered {
-            return Err(NodeAuthorityErrorV0::RecoveryRequired);
-        }
-        Ok(())
-    }
-}
-
-impl Default for NodeAuthorityCoordinatorV0 {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl fmt::Debug for NodeAuthorityCoordinatorV0 {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter
-            .debug_struct("NodeAuthorityCoordinatorV0")
-            .field("persistent_authority_bound", &self.inner.is_some())
-            .field("canonical_root", &self.canonical_root)
-            .field("recovered", &self.recovered)
-            .field(
-                "durable_stage",
-                &self.current_receipt().map(|receipt| receipt.durable_stage),
-            )
-            .finish()
-    }
-}
-
-fn validate_receipt_v0(
-    identity: NodeIdentityV0,
-    receipt: AuthorityReceiptV0,
-    expected_binding: OperationBindingV0,
-    expected_stage: AuthorityStageV0,
-    expected_facts_digest: Digest32V0,
-    require_nonzero_sequence: bool,
-) -> Result<(), NodeAuthorityErrorV0> {
-    receipt
-        .binding
-        .validate(identity)
-        .map_err(NodeAuthorityErrorV0::Boundary)?;
-    if receipt.binding != expected_binding
-        || receipt.durable_stage != expected_stage
-        || receipt.facts_digest != expected_facts_digest
-        || receipt.record_digest == Digest32V0([0; 32])
-        || (require_nonzero_sequence && receipt.durable_sequence == 0)
-    {
-        return Err(NodeAuthorityErrorV0::Boundary(
-            BoundaryErrorV0::ReceiptSubstitution,
-        ));
-    }
-    Ok(())
-}
-
-#[derive(Debug)]
-pub enum NodeAuthorityErrorV0 {
-    Inert,
-    RecoveryRequired,
-    RelativeRoot(PathBuf),
-    InvalidRoot(PathBuf),
-    RootIo(io::Error),
-    ZeroFactsDigest,
-    Boundary(BoundaryErrorV0),
-    Durable(DurableFileErrorV0),
-}
-
-impl fmt::Display for NodeAuthorityErrorV0 {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Inert => formatter.write_str("node authority coordinator is inert"),
-            Self::RecoveryRequired => {
-                formatter.write_str("node authority recovery barrier is not satisfied")
-            }
-            Self::RelativeRoot(path) => write!(
-                formatter,
-                "node authority root must be absolute: {}",
-                path.display()
-            ),
-            Self::InvalidRoot(path) => write!(
-                formatter,
-                "node authority root must be an existing non-symlink directory: {}",
-                path.display()
-            ),
-            Self::RootIo(error) => write!(formatter, "node authority root I/O failed: {error}"),
-            Self::ZeroFactsDigest => {
-                formatter.write_str("node authority facts digest may not be zero")
-            }
-            Self::Boundary(error) => write!(formatter, "node authority boundary rejected: {error}"),
-            Self::Durable(error) => write!(formatter, "node authority persistence failed: {error}"),
-        }
-    }
-}
-
-impl Error for NodeAuthorityErrorV0 {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        match self {
-            Self::RootIo(error) => Some(error),
-            Self::Boundary(error) => Some(error),
-            Self::Durable(error) => Some(error),
-            _ => None,
-        }
+        self.candidate
+            .advance_exact(binding, expected_stage, next_stage, facts_digest)
     }
 }
 
 #[cfg(test)]
-mod tests {
+mod default_tests {
     use super::*;
-    use trnm_node_boundary_v0::IngressFrameV0;
+
+    #[test]
+    fn unbound_facade_never_grants_activation() {
+        let coordinator = NodeAuthorityCoordinatorV0::new();
+        let readiness = coordinator.readiness();
+        assert!(!readiness.persistent_authority_bound());
+        assert!(!readiness.recovery_barrier_satisfied());
+        assert!(!readiness.activation_permitted());
+        assert_eq!(readiness.durable_stage(), None);
+        assert!(coordinator.production_activation_gate().is_err());
+    }
+}
+
+#[cfg(all(test, feature = "persistent-authority-candidate"))]
+mod candidate_tests {
+    use super::*;
+    use trnm_durable_file_adapters_v0::DurableFileErrorV0;
+    use trnm_node_boundary_v0::BoundaryErrorV0;
 
     fn identity() -> NodeIdentityV0 {
         NodeIdentityV0 {

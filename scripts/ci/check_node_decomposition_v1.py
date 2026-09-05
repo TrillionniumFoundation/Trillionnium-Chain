@@ -106,7 +106,7 @@ def assert_acyclic(edges: set[tuple[str, str]], nodes: set[str]) -> None:
 def require_source_contract(package_root: pathlib.Path, required: list[str], forbidden: list[str]) -> None:
     source_root = package_root / "src"
     require(source_root.is_dir(), f"{package_root.relative_to(ROOT)}: src directory missing")
-    sources = sorted(source_root.glob("*.rs"))
+    sources = sorted(source_root.rglob("*.rs"))
     require(sources, f"{package_root.relative_to(ROOT)}: Rust source missing")
     text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
     for token in required:
@@ -210,11 +210,27 @@ def main() -> int:
         for key in ("production_candidate", "production_consensus_activation"):
             require(metadata.get(key) is False, f"{package}: promoted {key}")
 
+    authority_manifest = load_toml(packages[declared["authority_boundary"]])
+    host_manifest = load_toml(packages[declared["host_composition"]])
+    candidate_dependency = authority_manifest.get("dependencies", {}).get("trnm-durable-file-adapters-v0")
+    require(isinstance(candidate_dependency, dict) and candidate_dependency.get("optional") is True,
+            "authority file adapter must remain optional")
+    for label, manifest in (("authority", authority_manifest), ("host", host_manifest)):
+        require(manifest.get("features", {}).get("default") == [], f"{label}: default feature drift")
+    require(authority_manifest["features"].get("persistent-authority-candidate") ==
+            ["dep:trnm-durable-file-adapters-v0"], "authority candidate feature drift")
+    require(host_manifest["features"].get("persistent-authority-candidate") ==
+            ["trnm-poco-node-authority/persistent-authority-candidate"], "host candidate feature drift")
+    require(package_metadata(packages[declared["authority_boundary"]]).get(
+        "durable_authority_journal_owner") is False, "composition may not own the journal")
+
     roots = {name: manifest.parent for name, manifest in packages.items()}
     require_source_contract(
         roots[declared["authority_boundary"]],
         ["NodeAuthorityCoordinatorV0", "production_activation_gate_v0"],
-        ["SigningKey", "fn sign", "fn vote", "fn finalize"],
+        ["SigningKey", "fn sign", "fn vote", "fn finalize", "FileAuthorityCoordinatorV0",
+         "AuthorityCommandV0", "fs::", "recovered: bool", "fn validate_receipt_v0",
+         "fn require_recovered"],
     )
     require_source_contract(
         roots[declared["io_boundary"]],
@@ -272,6 +288,8 @@ def main() -> int:
         "lab_runtime": declared["lab_runtime"],
         "runtime_edges": sorted(f"{source}->{target}" for source, target in actual_edges),
         "composition_only": True,
+        "candidate_owner_outside_composition": True,
+        "candidate_requires_explicit_feature": True,
         "production_candidate": False,
         "production_consensus_activation": False,
         "release_ready": False,

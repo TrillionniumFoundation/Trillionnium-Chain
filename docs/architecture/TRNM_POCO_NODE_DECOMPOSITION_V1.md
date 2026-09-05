@@ -1,6 +1,6 @@
 # Trillionnium Native PoCO node decomposition v1
 
-Status: target decomposition contract; current candidate has unaccepted authority-boundary drift; production activation remains false.
+Status: candidate ownership repair; independent acceptance pending; production activation remains false.
 
 ## Purpose
 
@@ -23,23 +23,51 @@ the `node-prod-v0` closure. AI-v1 candidate crates remain optional dependencies
 of `trnm-poco-node` and are reachable only through the explicitly named
 `ai-v1-candidate` feature.
 
-## Current implementation versus target contract
+## Versioned candidate ownership seam
 
-The present `trnm-poco-node-authority` candidate additionally owns a
-`DurableFileAuthorityJournalV0` handle and exposes `open_candidate`, `recover`,
-`prepare_ingress`, `advance_to`, and durable readback. Its manifest declares
-`composition_only = false` and adds direct boundary/durable-adapter dependencies.
-Those facts do not satisfy the wiring-only target below or the frozen runtime
-edge set. `check_node_decomposition_v1.py` must continue to reject this candidate
-until the implementation is placed behind approved domain-owner contracts and
-exact-source consumer/security acceptance establishes the new boundary.
+Primary module: M15. Producer: M03 file-adapter owner. Consumers: M15 authority,
+host and CLI. This is a contract change requiring producer/consumer review, not
+an independent acceptance record or a replacement development plan.
 
-Do not change `composition_only` to true, expand the allowed edge list, or mark
-`NODE-SPLIT-001` closed merely to silence this failure. Journal sequencing and a
-caller-provided facts digest do not independently prove consensus, execution,
-signing, checkpoint, or finality authority. The host remains non-activating and
-its I/O surfaces remain inert. This document records the mismatch; it does not
-repair or independently accept that implementation.
+The default authority package owns no journal, root path, recovery flag, receipt
+validation, or transition logic. It reads immutable component readiness facts
+and delegates the static activation gate. The default host has no persistent
+constructor or ingress/stage-mutation API. The CLI has no candidate feature.
+
+An explicit `persistent-authority-candidate` feature on the host forwards to the
+same feature on the authority facade. Only that facade feature selects the
+optional `trnm-durable-file-adapters-v0` dependency. Domain state, root checks,
+recovery barriers, successor checks and receipt validation belong to
+`CandidateAuthorityJournalV0` in that adapter crate. The facade only holds and
+delegates to this owner; it neither caches recovery state nor validates facts.
+Read-only stage/binding DTOs continue to come from `trnm-node-boundary-v0`.
+The underlying `FileAuthorityCoordinatorV0` also validates identity before any
+namespace creation and validates bindings before append and during recovery.
+A self-consistent record hash cannot authorize a zero-height or otherwise
+invalid operation binding. Rejected direct calls must leave journal bytes and
+the last receipt unchanged.
+
+`open_candidate(root, identity)` requires a valid identity and an existing
+absolute non-symlink directory. No mutation is allowed before successful local
+journal recovery. Recovery first closes the barrier, including when an error
+prevents completion. Any failed durable append or substituted post-append
+receipt also closes the barrier; deterministic preflight rejections append
+nothing. Exact retries preserve their original receipt. Conflicting bindings,
+zero fact digests, skipped stages and receipt substitution are refused.
+
+The candidate digest API records caller-supplied inert facts. It does **not**
+prove application, SafetyRules, signature, finality or checkpoint authority and
+cannot activate production. Existing candidate tests are retained at the owner
+and consumer seams. Their results must be recorded separately from default
+CLI/build-closure checks; Cargo feature unification in a workspace test is not
+proof of the default production closure.
+
+The static and Cargo-resolved `node-prod-v0` closure must exclude the candidate
+file-adapter package. A separate feature-enabled consumer build must retain it.
+These are complementary positive/negative controls, not a new release closure.
+Do not mark `NODE-SPLIT-001` accepted until unchanged-source tests and independent
+producer, consumer and security review accept this repair. No dependency allowlist
+is widened and no production or external-evidence flag is promoted.
 
 ## Boundary contracts
 
@@ -53,9 +81,10 @@ not the production entry point after this decomposition.
 ### Authority coordinator — `trnm-poco-node-authority`
 
 May read the immutable readiness facts exported by the component library and
-may delegate its static production activation gate. It exposes no sign, vote,
-finalize, apply, state-root, key, storage, network, or adapter-registration API.
-It owns no domain state machine.
+may delegate its static production activation gate. Its default build exposes
+no sign, vote, finalize, apply, state-root, key, storage, network or
+adapter-registration API. The explicit candidate seam delegates journal calls
+to the domain owner described above. Neither build owns a domain state machine.
 
 ### I/O runtime boundary — `trnm-poco-node-io`
 
@@ -104,8 +133,8 @@ validators, and development networking do not enter `node-prod-v0`.
 ## Non-claims and remaining work
 
 This decomposition defines the package-boundary and production-entrypoint
-requirements for `NODE-SPLIT-001`; the current authority-boundary drift means
-that blocker is not closed. It does not claim that the persistent validator is complete.
+requirements for `NODE-SPLIT-001`; independent acceptance is still required
+before that blocker closes. It does not claim that the persistent validator is complete.
 In particular, it does not supply a production network listener, pacemaker,
 Vote/Timeout loop, signer/HSM, application finalization driver, state-sync
 downloader, RPC/indexer runtime, multi-host evidence, power-loss evidence,
