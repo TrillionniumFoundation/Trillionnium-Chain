@@ -1,3 +1,5 @@
+#![cfg(feature = "persistent-authority-candidate")]
+
 use std::{
     fs::{self, OpenOptions},
     io::Write,
@@ -8,25 +10,20 @@ use std::{
 };
 
 use tempfile::tempdir;
-use trnm_durable_file_adapters_v0::FileAuthorityCoordinatorV0;
 use trnm_node_boundary_v0::{
-    AuthorityReceiptV0, AuthorityStageV0, Digest32V0, NodeIdentityV0, OperationBindingV0,
+    AuthorityCommandV0, AuthorityCoordinatorV0, AuthorityReceiptV0, AuthorityStageV0,
+    BoundIngressV0, BoundaryErrorV0, Digest32V0, IngressFrameV0, NodeIdentityV0,
+    OperationBindingV0, RecoveryDispositionV0,
 };
+use trnm_poco_node_authority::{NodeAuthorityCoordinatorV0, NodeAuthorityErrorV0};
 use trnm_poco_node_production_v0::{
     AuthoritySessionReadinessV0, ProductionAuthoritySessionV0,
 };
 
-const MAX_PAYLOAD_BYTES: usize = 16 * 1024;
-const MAX_RECORDS: u64 = 64;
 const CHILD_ENV: &str = "TRNM_AUTHORITY_SESSION_PROCESS_HELPER";
 const ROOT_ENV: &str = "TRNM_AUTHORITY_SESSION_ROOT";
 const MARKER_ENV: &str = "TRNM_AUTHORITY_SESSION_MARKER";
 const STEP_ENV: &str = "TRNM_AUTHORITY_SESSION_STEP";
-
-type DurableSession = ProductionAuthoritySessionV0<
-    FileAuthorityCoordinatorV0,
-    fn(&FileAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,
->;
 
 fn digest(byte: u8) -> Digest32V0 {
     Digest32V0([byte; 32])
@@ -41,32 +38,107 @@ fn identity() -> NodeIdentityV0 {
     }
 }
 
-fn binding(height: u64, block: u8, parent: u8) -> OperationBindingV0 {
-    OperationBindingV0::derive(
+fn ingress(
+    height: u64,
+    block: u8,
+    parent: u8,
+    replay_nonce: u64,
+    payload: u8,
+) -> BoundIngressV0 {
+    let frame = IngressFrameV0::new(
+        digest(payload.wrapping_add(1)),
+        digest(payload.wrapping_add(2)),
+        replay_nonce,
+        vec![payload],
+    )
+    .unwrap();
+    BoundIngressV0::derive(
         identity(),
         height,
         height,
         digest(block),
         digest(parent),
-        digest(block.wrapping_add(40)),
-        digest(block.wrapping_add(80)),
-        digest(block.wrapping_add(120)),
+        frame,
     )
     .unwrap()
 }
 
-fn session(coordinator: FileAuthorityCoordinatorV0) -> DurableSession {
-    ProductionAuthoritySessionV0::new(
-        coordinator,
-        FileAuthorityCoordinatorV0::current_receipt,
-    )
-    .unwrap()
+fn all_ingresses() -> Vec<BoundIngressV0> {
+    vec![ingress(1, 10, 9, 1, 20), ingress(2, 11, 10, 2, 21)]
 }
 
-fn reopen(root: &Path) -> DurableSession {
-    let coordinator =
-        FileAuthorityCoordinatorV0::open(root, identity(), MAX_PAYLOAD_BYTES, MAX_RECORDS).unwrap();
-    let mut session = session(coordinator);
+struct NodeAuthorityAdapter {
+    inner: NodeAuthorityCoordinatorV0,
+    ingresses: Vec<BoundIngressV0>,
+}
+
+impl NodeAuthorityAdapter {
+    fn open(root: &Path) -> Result<Self, NodeAuthorityErrorV0> {
+        fs::create_dir_all(root).map_err(NodeAuthorityErrorV0::RootIo)?;
+        Ok(Self {
+            inner: NodeAuthorityCoordinatorV0::open_candidate(root, identity())?,
+            ingresses: all_ingresses(),
+        })
+    }
+
+    fn current_receipt(&self) -> Option<AuthorityReceiptV0> {
+        self.inner.current_receipt()
+    }
+}
+
+impl AuthorityCoordinatorV0 for NodeAuthorityAdapter {
+    type Error = NodeAuthorityErrorV0;
+
+    fn identity(&self) -> NodeIdentityV0 {
+        self.inner
+            .identity()
+            .expect("persistent node authority must retain its identity")
+    }
+
+    fn recover(&mut self) -> Result<RecoveryDispositionV0, Self::Error> {
+        self.inner.recover()
+    }
+
+    fn apply(&mut self, command: AuthorityCommandV0) -> Result<AuthorityReceiptV0, Self::Error> {
+        match command {
+            AuthorityCommandV0::Begin {
+                binding,
+                ingress_digest,
+            } => {
+                let exact = self
+                    .ingresses
+                    .iter()
+                    .find(|candidate| {
+                        candidate.binding == binding
+                            && candidate.ingress_digest() == ingress_digest
+                    })
+                    .cloned()
+                    .ok_or(NodeAuthorityErrorV0::Boundary(
+                        BoundaryErrorV0::OperationBindingMismatch,
+                    ))?;
+                self.inner.prepare_bound_ingress(&exact)
+            }
+            AuthorityCommandV0::Advance {
+                binding,
+                expected_stage,
+                next_stage,
+                facts_digest,
+            } => self
+                .inner
+                .advance_exact(binding, expected_stage, next_stage, facts_digest),
+        }
+    }
+}
+
+type Session = ProductionAuthoritySessionV0<
+    NodeAuthorityAdapter,
+    fn(&NodeAuthorityAdapter) -> Option<AuthorityReceiptV0>,
+>;
+
+fn reopen(root: &Path) -> Session {
+    let adapter = NodeAuthorityAdapter::open(root).unwrap();
+    let mut session =
+        ProductionAuthoritySessionV0::new(adapter, NodeAuthorityAdapter::current_receipt).unwrap();
     assert_eq!(
         session.recover().unwrap(),
         AuthoritySessionReadinessV0::Ready
@@ -115,16 +187,23 @@ fn successor(step: u8) -> (AuthorityStageV0, AuthorityStageV0, Digest32V0) {
     }
 }
 
-fn apply_step(session: &mut DurableSession, step: u8) -> AuthorityReceiptV0 {
+fn apply_step(session: &mut Session, step: u8) -> AuthorityReceiptV0 {
+    let ingresses = all_ingresses();
+    let first = &ingresses[0];
+    let second = &ingresses[1];
     match step {
-        0 => session.begin_prepared(binding(1, 10, 9), digest(20)).unwrap(),
+        0 => session
+            .begin_prepared(first.binding, first.ingress_digest())
+            .unwrap(),
         1..=7 => {
             let (expected, next, facts) = successor(step);
             session
-                .advance(binding(1, 10, 9), expected, next, facts)
+                .advance(first.binding, expected, next, facts)
                 .unwrap()
         }
-        8 => session.begin_prepared(binding(2, 11, 10), digest(60)).unwrap(),
+        8 => session
+            .begin_prepared(second.binding, second.ingress_digest())
+            .unwrap(),
         _ => panic!("invalid authority process step"),
     }
 }
@@ -137,6 +216,38 @@ fn expected_stage(step: u8) -> AuthorityStageV0 {
     }
 }
 
+#[test]
+fn node_authority_and_complete_receipt_session_reopen_every_stage() {
+    let directory = tempdir().unwrap();
+    let root = directory.path().join("authority");
+    let mut active = reopen(&root);
+
+    let first = all_ingresses().remove(0);
+    let mut receipt = active
+        .begin_prepared(first.binding, first.ingress_digest())
+        .unwrap();
+    drop(active.into_coordinator());
+    active = reopen(&root);
+    assert_eq!(active.current_receipt(), Some(receipt));
+
+    for step in 1..=7 {
+        let (expected, next, facts) = successor(step);
+        receipt = active.advance(first.binding, expected, next, facts).unwrap();
+        drop(active.into_coordinator());
+        active = reopen(&root);
+        assert_eq!(active.current_receipt(), Some(receipt));
+    }
+
+    let second = all_ingresses().remove(1);
+    let next = active
+        .begin_prepared(second.binding, second.ingress_digest())
+        .unwrap();
+    drop(active.into_coordinator());
+    let reopened = reopen(&root);
+    assert_eq!(reopened.current_receipt(), Some(next));
+    assert_eq!(next.durable_sequence, 8);
+}
+
 fn write_ready_marker(path: &Path, receipt: AuthorityReceiptV0) {
     let mut file = OpenOptions::new()
         .write(true)
@@ -145,14 +256,15 @@ fn write_ready_marker(path: &Path, receipt: AuthorityReceiptV0) {
         .unwrap();
     writeln!(
         file,
-        "{} {} {:?}",
-        receipt.durable_sequence,
-        hex::encode(receipt.record_digest.0),
-        receipt.durable_stage
+        "{} {:?}",
+        receipt.durable_sequence, receipt.durable_stage
     )
     .unwrap();
     file.sync_all().unwrap();
-    let parent = OpenOptions::new().read(true).open(path.parent().unwrap()).unwrap();
+    let parent = OpenOptions::new()
+        .read(true)
+        .open(path.parent().unwrap())
+        .unwrap();
     parent.sync_all().unwrap();
 }
 
@@ -207,10 +319,7 @@ fn kill_after_durable_marker(root: &Path, marker: &Path, step: u8) {
 fn every_stage_survives_process_termination_and_exact_replay() {
     let directory = tempdir().unwrap();
     let root = directory.path().join("authority");
-    let coordinator =
-        FileAuthorityCoordinatorV0::create(&root, identity(), MAX_PAYLOAD_BYTES, MAX_RECORDS)
-            .unwrap();
-    drop(coordinator);
+    fs::create_dir(&root).unwrap();
 
     for step in 0..=8 {
         let marker = directory.path().join(format!("step-{step}.ready"));
@@ -226,7 +335,8 @@ fn every_stage_survives_process_termination_and_exact_replay() {
 
     let final_reopen = reopen(&root);
     let final_receipt = final_reopen.current_receipt().unwrap();
-    assert_eq!(final_receipt.binding, binding(2, 11, 10));
+    let second = all_ingresses().remove(1);
+    assert_eq!(final_receipt.binding, second.binding);
     assert_eq!(final_receipt.durable_stage, AuthorityStageV0::Prepared);
     assert_eq!(final_receipt.durable_sequence, 8);
 }

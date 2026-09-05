@@ -22,10 +22,7 @@ fn binding(height: u64, block: u8, parent: u8) -> OperationBindingV0 {
         digest(block),
         digest(parent),
         digest(block.wrapping_add(40)),
-        digest(block.wrapping_add(80)),
-        digest(block.wrapping_add(120)),
     )
-    .unwrap()
 }
 
 fn new_session(
