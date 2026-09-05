@@ -7,3 +7,8 @@ pub use facade::*;
 
 #[cfg(feature = "persistent-authority-candidate")]
 mod confirmed_application_safety;
+
+#[cfg(feature = "candidate-networked-authority")]
+mod p2p_ingress_bridge;
+#[cfg(feature = "candidate-networked-authority")]
+pub use p2p_ingress_bridge::*;

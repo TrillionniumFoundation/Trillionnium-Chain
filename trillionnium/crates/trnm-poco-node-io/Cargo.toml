@@ -19,4 +19,5 @@ production_consensus_activation = false
 
 [features]
 default = []
+candidate-authenticated-p2p = []
 candidate-pacemaker = []

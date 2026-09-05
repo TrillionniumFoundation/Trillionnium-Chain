@@ -5,6 +5,11 @@
 //! is constructed by the default build. Explicit candidate adapters remain
 //! bounded, non-activating, and independently qualified before composition use.
 
+#[cfg(feature = "candidate-authenticated-p2p")]
+mod authenticated_p2p;
+#[cfg(feature = "candidate-authenticated-p2p")]
+pub use authenticated_p2p::*;
+
 #[cfg(feature = "candidate-pacemaker")]
 use std::{error::Error, fmt};
 
