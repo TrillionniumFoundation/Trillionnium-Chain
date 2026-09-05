@@ -16,3 +16,7 @@ rpc_listener = false
 indexer_writer = false
 production_candidate = false
 production_consensus_activation = false
+
+[features]
+default = []
+candidate-pacemaker = []
