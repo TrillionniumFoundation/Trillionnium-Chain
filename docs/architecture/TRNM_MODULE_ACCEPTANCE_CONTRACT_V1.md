@@ -210,3 +210,28 @@ and require rejection before restoring the original bytes and requiring the
 original valid read result. Writing a fixed byte into random signature data does
 not guarantee a mutation. These fixture contracts neither change production
 signing/storage behavior nor substitute for executable Rust and consumer replay.
+
+
+## Complete per-package selection
+
+Primary module: M17. The bounded package runner reuses the strict source inventory
+validator for its own Cargo metadata, rather than assuming an earlier CI step
+qualified a later, independently fetched response. Duplicate JSON members,
+duplicate or missing package IDs, an omitted manifest member, forged package
+names, and foreign/untracked target paths must reject before any test starts.
+Valid membership is a bijection to the tracked workspace manifests, not the
+intersection of two untrusted lists. The expected commit is captured once.
+
+Before aggregate success, the runner repeats locked metadata admission against
+that original commit and requires the same package selection and clean source.
+A test that edits tracked source or moves HEAD, even to a clean commit with the
+same tree, cannot obtain the aggregate success marker. The complete all-target,
+locked, no-fail-fast test commands, per-package deadlines, process cleanup and
+existing CI required checks are unchanged. Invalid selection/source returns 2;
+an executed failed or timed-out package continues to return aggregate failure 1.
+
+This validates declared package/target entry points and observed source at the
+checks. It is not hermetic execution, a malicious-compiler defense, protection
+against all transient file edits, proof that no tests are ignored, or independent
+module acceptance. Synthetic Cargo responses and real child-process regression
+fixtures establish this runner behavior only; they are not Rust package tests.

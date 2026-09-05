@@ -3,6 +3,7 @@ set -euo pipefail
 
 root=$(git rev-parse --show-toplevel)
 checker="$root/scripts/check_cargo_offline_policy.sh"
+python3 "$root/scripts/ci/test_cargo_policy_readonly_v1.py"
 fixture=$(mktemp -d)
 trap 'rm -rf -- "$fixture"' EXIT
 repo="$fixture/repo"
