@@ -236,7 +236,7 @@ impl SnapshotManifestV0 {
             || self.chunk_count > MAX_CHUNK_COUNT_V0
             || self.maximum_chunk_bytes == 0
             || self.maximum_chunk_bytes as usize > MAX_CHUNK_BYTES_V0
-            || self.total_bytes == 0
+            || self.total_bytes < u64::from(self.chunk_count)
             || self.total_bytes > MAX_SNAPSHOT_BYTES_V0
             || self.total_bytes > declared_capacity
             || self.state_root == Digest32V0([0; 32])
@@ -476,6 +476,13 @@ impl StateSyncSessionV0 {
         let staging = target
             .begin_staging(&self.manifest)
             .map_err(StateSyncInstallErrorV0::Target)?;
+        // Never pass an untrusted staging identity to writes, commit, or abort.
+        // The target must reconcile any allocation made before this rejection.
+        if staging.generation == 0 || staging.staging_digest == Digest32V0([0; 32]) {
+            return Err(StateSyncInstallErrorV0::Protocol(
+                StateSyncErrorV0::InvalidStagingIdentity,
+            ));
+        }
         for index in 0..self.manifest.chunk_count {
             let chunk = match self.chunks.get(&index) {
                 Some(chunk) => chunk,
@@ -542,6 +549,7 @@ pub enum StateSyncErrorV0 {
     ChunkRootMismatch,
     StateRootMismatch,
     InvalidExpectedCurrentRoot,
+    InvalidStagingIdentity,
     InstallReceiptMismatch,
 }
 
@@ -562,6 +570,7 @@ impl fmt::Display for StateSyncErrorV0 {
             Self::ChunkRootMismatch => "snapshot chunk Merkle root mismatch",
             Self::StateRootMismatch => "recomputed application state root mismatch",
             Self::InvalidExpectedCurrentRoot => "expected current state root is invalid",
+            Self::InvalidStagingIdentity => "snapshot staging identity is invalid",
             Self::InstallReceiptMismatch => "non-destructive install receipt mismatch",
         })
     }
@@ -761,7 +770,7 @@ mod tests {
             checkpoint_digest: d(5),
             validator_set_digest: d(6),
         };
-        let mut invalid = link(anchor, d(7));
+        let mut invalid = link(anchor, d(99));
         invalid.parent_checkpoint_digest = d(99);
         invalid.checkpoint_digest = invalid.canonical_digest();
         assert!(matches!(
@@ -875,7 +884,7 @@ mod tests {
     #[test]
     fn oversized_chunk_attempt_does_not_mutate_session_accounting() {
         let (trust, mut manifest, _) = fixture();
-        manifest.total_bytes = 1;
+        manifest.total_bytes = u64::from(manifest.chunk_count);
         manifest.manifest_digest = manifest.canonical_digest();
         let binding = manifest.chunk_binding_digest();
         let bytes = b"alpha".to_vec();
