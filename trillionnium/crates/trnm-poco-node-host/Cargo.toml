@@ -17,7 +17,8 @@ voting_authority = false
 finality_authority = false
 persistent_authority_composition_candidate = true
 recovery_barrier_delegation = true
-exact_stage_advance_delegation = true
+raw_stage_advance_exported = false
+verified_stage_session_required = true
 production_candidate = false
 production_consensus_activation = false
 
