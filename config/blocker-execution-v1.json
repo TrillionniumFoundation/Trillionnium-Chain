@@ -1,0 +1,383 @@
+{
+  "schema": "trnm-blocker-execution-v1",
+  "as_of": "2026-09-02",
+  "source_binding": "runtime-git-commit-and-tree",
+  "canonical_register": "config/consensus-mainline.json",
+  "repository_policy": "config/repository-policy-v1.json",
+  "plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "release_train": "docs/development/release-train-v1.toml",
+  "current_snapshot": "docs/development/CURRENT_SNAPSHOT_V1.json",
+  "implementation": {
+    "selected_successor": 62,
+    "workspace_crates": 62,
+    "overlay_commit": "a44d67181dc74ad74e64819b913972d2a49abc54",
+    "overlay_tree": "a4480623afae1bedee9f03fcf83ce31ec00a2bb7",
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "public_testnet_ready": false,
+    "release_ready": false
+  },
+  "settings_gates": [
+    {
+      "id": "RPO-GITHUB-SETTINGS-001",
+      "status": "partial-live-protection-observed-administration-read-and-negative-corpus-pending",
+      "owner_class": "repository-administrator",
+      "dependencies": [],
+      "implementation": {
+        "main_protected_observed": true,
+        "five_required_contexts_observed": true,
+        "complete_ruleset_and_negative_enforcement_verified": false,
+        "installation_administration_read_available": false
+      },
+      "acceptance_predicates": [
+        "Two approvals, CODEOWNER/last-push/stale-review controls, up-to-date linear integration, conversation resolution, and admin/force-push/deletion denial are live and negatively tested."
+      ],
+      "evidence_outputs": [
+        "Contemporaneous ruleset/protection JSON and normal-actor rejection traces."
+      ],
+      "invalidation_triggers": [
+        "Ruleset, required-check, default-branch, or review-policy changes."
+      ],
+      "next_actions": [
+        "A repository administrator must capture the complete live ruleset and execute the issue 40 negative enforcement corpus; the current GitHub App cannot read administration endpoints."
+      ]
+    }
+  ],
+  "repository_blockers": [
+    {
+      "id": "P0-TRUTH-001",
+      "severity": "P0",
+      "status": "implementation-present-acceptance-pending",
+      "owner_class": "repository-and-independent-reviewer",
+      "dependencies": ["RPO-GITHUB-SETTINGS-001", "EXT-REVIEW-001"],
+      "implementation": {
+        "single_plan": true,
+        "modules": 18,
+        "workspace_crates": 62,
+        "successor_pr": 62,
+        "absorbed_child_prs": [73, 74, 75, 76, 77, 78]
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Pass exact-head/prospective-merge gates on PR 62, obtain independent reviews, merge through protected main and replay post-merge."]
+    },
+    {
+      "id": "P0-SCHEMA-001",
+      "severity": "P0",
+      "status": "implementation-present-independent-acceptance-pending",
+      "owner_class": "repository-and-independent-reviewer",
+      "dependencies": ["P0-TRUTH-001", "EXT-REVIEW-001"],
+      "implementation": {
+        "generated_registries": true,
+        "independent_parsers": true,
+        "mutants": true
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Replay registry/schema/vector gates on the current PR 62 head and obtain independent protocol acceptance."]
+    },
+    {
+      "id": "P0-PROTOCOL-001",
+      "severity": "P0",
+      "status": "implementation-present-audit-pending",
+      "owner_class": "repository-and-independent-reviewer",
+      "dependencies": ["P0-SCHEMA-001", "P0-TC-001", "EXT-REVIEW-001", "EXT-AUDIT-001"],
+      "implementation": {
+        "specifications": true,
+        "formal_models": true,
+        "vectors": true
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Pass exact-head protocol/formal gates, freeze the audit source and complete the independent consensus/cryptography/economic audit."]
+    },
+    {
+      "id": "P0-TC-001",
+      "severity": "P0",
+      "status": "bounded-implementation-present-long-fuzz-pending",
+      "owner_class": "repository-and-independent-fuzz",
+      "dependencies": ["P0-SCHEMA-001", "EXT-REVIEW-001"],
+      "implementation": {
+        "context_budgets": true,
+        "required_fuzz_smoke": true,
+        "independent_long_fuzz": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Replay bounded fuzz smoke on the current head and execute an independent long-duration fuzz and coverage campaign."]
+    },
+    {
+      "id": "P1-CORE-001",
+      "severity": "P1",
+      "status": "complete-receipt-stage-mechanism-present-live-fact-producers-host-and-campaign-pending",
+      "owner_class": "repository-and-independent-fault-campaign",
+      "dependencies": ["P0-PROTOCOL-001", "P0-TC-001", "P1-EXEC-001", "P2-STORE-001", "EXT-G1-CAMPAIGN-001"],
+      "implementation": {
+        "core": true,
+        "safety_owner": true,
+        "node_boundary": true,
+        "durable_adapter": true,
+        "bound_ingress_to_prepared": true,
+        "candidate_persistent_prepared_host": true,
+        "candidate_complete_receipt_session": true,
+        "candidate_full_stage_journal": true,
+        "candidate_process_stage_replay": true,
+        "candidate_process_reopen_replay": true,
+        "domain_fact_producers_bound": false,
+        "live_host": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Replace opaque stage digests with authenticated application, Safety, Vote/Timeout, signer, finality and checkpoint facts; wire the live host and authenticated network; run the independent campaign."]
+    },
+    {
+      "id": "P1-EXEC-001",
+      "severity": "P1",
+      "status": "implementation-and-complete-receipt-replay-present-live-binding-pending",
+      "owner_class": "repository",
+      "dependencies": ["P0-PROTOCOL-001", "P2-STORE-001"],
+      "implementation": {
+        "ordered_finalization": true,
+        "terminal_history": true,
+        "worker_invariance": [1, 2, 4, 8],
+        "transaction_local_staging": true,
+        "per_store_fault_fixture_isolation": true,
+        "all_stage_complete_receipt_replay": true,
+        "state_sync_verification_seals": true,
+        "live_binding": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Run same-source execution, JMT, finality and M07/M08 consumer gates; bind Node Commit Ledger to real application/finality facts and complete the crash matrix."]
+    },
+    {
+      "id": "P2-NODE-001",
+      "severity": "P2",
+      "status": "decomposition-and-full-stage-candidate-process-present-live-validator-pending",
+      "owner_class": "repository-and-network-campaign",
+      "dependencies": ["P1-CORE-001", "P1-EXEC-001", "P2-NET-001", "P2-STORE-001", "EXT-G1-CAMPAIGN-001"],
+      "implementation": {
+        "decomposition": true,
+        "production_composition": true,
+        "default_fail_closed": true,
+        "candidate_persistent_prepared_process": true,
+        "candidate_process_maximum_stage": "OutboundPublished",
+        "candidate_complete_receipt_readback": true,
+        "candidate_process_response_loss_cuts": 9,
+        "candidate_domain_facts_opaque": true,
+        "candidate_process_authenticated_network": false,
+        "candidate_process_application_fact": false,
+        "candidate_process_signing": false,
+        "candidate_process_finality": false,
+        "live_validator": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Connect authenticated bounded I/O and a persistent pacemaker, then replace opaque stage digests with real domain-produced facts through Vote/Timeout, finality and state-sync while keeping activation fail-closed."]
+    },
+    {
+      "id": "P2-TX-001",
+      "severity": "P2",
+      "status": "lifecycle-and-replay-floor-present-live-path-pending",
+      "owner_class": "repository",
+      "dependencies": ["P1-EXEC-001", "P2-NODE-001", "P2-STORE-001"],
+      "implementation": {
+        "tx_lifecycle": true,
+        "node_wal": true,
+        "tombstone_gc": true,
+        "sealed_replay_floor": true,
+        "live_sign_broadcast": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Connect CheckTx, signing, broadcast and finality readback after node authority closes, and prove response-loss recovery end to end."]
+    },
+    {
+      "id": "P2-NET-001",
+      "severity": "P2",
+      "status": "candidate-ingress-present-production-network-pending",
+      "owner_class": "repository-and-network-campaign",
+      "dependencies": ["P0-TC-001", "P1-CORE-001", "P2-STORE-001", "EXT-G1-CAMPAIGN-001"],
+      "implementation": {
+        "authenticated_candidate_ingress": true,
+        "peer_lease": true,
+        "candidate_persistent_process_network": false,
+        "production_cross_platform_io": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Implement persistent authenticated I/O, persistent replay identity and atomic Core acknowledgement, then execute LAN/WAN fault campaigns."]
+    },
+    {
+      "id": "P2-OPS-001",
+      "severity": "P2",
+      "status": "blocked-external-campaign",
+      "owner_class": "independent-operators",
+      "dependencies": ["P2-NODE-001", "P2-NET-001", "EXT-G1-CAMPAIGN-001", "EXT-SOAK-ACTIVATION-001"],
+      "implementation": {
+        "campaign_contract": true,
+        "authentic_campaign_evidence": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Provision independent hosts, operators and custody and execute the 4/7/31/100-process and wall-clock soak campaigns."]
+    },
+    {
+      "id": "P2-STORE-001",
+      "severity": "P2",
+      "status": "storage-full-stage-process-mechanism-present-external-durability-pending",
+      "owner_class": "repository-and-hardware-campaign",
+      "dependencies": ["EXT-ANCHOR-HSM-001", "EXT-POWERLOSS-001"],
+      "implementation": {
+        "descriptor_namespace": true,
+        "closed_schema": true,
+        "post_close_check": true,
+        "node_commit_ledger": true,
+        "durable_file_adapters": true,
+        "candidate_file_authority_process": true,
+        "exact_prepared_reopen_replay": true,
+        "full_stage_complete_receipt_reopen_replay": true,
+        "process_response_loss_stage_count": 9,
+        "substitution_non_mutation": true,
+        "external_anchor": false,
+        "power_loss": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Bind real application/Safety/signer/finality/checkpoint writers to the complete-receipt session and execute independent HSM/anchor, clone, controller-cache and physical-power tests."]
+    },
+    {
+      "id": "MIG-ROOT-001",
+      "severity": "P1",
+      "status": "migration-and-sealed-state-sync-core-present-ceremony-pending",
+      "owner_class": "repository-and-independent-ceremony",
+      "dependencies": ["P0-PROTOCOL-001", "P1-EXEC-001", "P2-STORE-001", "EXT-REVIEW-001", "EXT-G1-CAMPAIGN-001"],
+      "implementation": {
+        "fresh_genesis_only": true,
+        "migration_core": true,
+        "state_sync_target": true,
+        "state_sync_verification_sealed": true,
+        "staging_admission_hardened": true,
+        "trusted_source_evidence": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Connect a trusted finalized-source verifier, independently recompute the target root and execute a signed multi-peer migration and state-sync rehearsal."]
+    },
+    {
+      "id": "P3-HISTORY-001",
+      "severity": "P3",
+      "status": "task-archive-policy-present-pruning-and-scale-acceptance-pending",
+      "owner_class": "repository-and-scale-campaign",
+      "dependencies": ["P1-EXEC-001", "P2-STORE-001"],
+      "implementation": {
+        "terminal_history": true,
+        "task_archive_policy": true,
+        "task_identity_admission": true,
+        "proof_preserving_pruning": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Implement bounded proof-preserving pruning and charging around the retained TaskV1 archive policy, then execute the scale campaign."]
+    },
+    {
+      "id": "MIG-CLEAN-001",
+      "severity": "P3",
+      "status": "blocked-by-signed-cutover",
+      "owner_class": "repository-and-governance",
+      "dependencies": ["MIG-ROOT-001", "EXT-SOAK-ACTIVATION-001"],
+      "implementation": {
+        "legacy_role": "migration-residue-only",
+        "cleanup_authorized": false
+      },
+      "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
+      "evidence_outputs": ["Accepted source-bound evidence packet."],
+      "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
+      "next_actions": ["Prepare the deletion manifest but retain legacy residue until signed cutover and rollback-window completion."]
+    }
+  ],
+  "external_blockers": [
+    {
+      "id": "EXT-REVIEW-001",
+      "status": "open-no-accepted-evidence",
+      "owner_class": "independent-reviewer",
+      "dependencies": [],
+      "acceptance_predicates": ["Authentic independently controlled evidence is accepted for the exact source and artifact set."],
+      "evidence_outputs": ["Accepted trnm-external-evidence-v1 submission."],
+      "invalidation_triggers": ["Covered source, artifact, topology, custody, hardware, policy, or governance changes."],
+      "next_actions": ["Non-author exact-source reviewers must replay applicable mutants and record signed acceptance."]
+    },
+    {
+      "id": "EXT-G1-CAMPAIGN-001",
+      "status": "open-no-accepted-evidence",
+      "owner_class": "independent-operators",
+      "dependencies": ["P2-NODE-001", "P2-NET-001"],
+      "acceptance_predicates": ["Authentic independently controlled evidence is accepted for the exact source and artifact set."],
+      "evidence_outputs": ["Accepted trnm-external-evidence-v1 submission."],
+      "invalidation_triggers": ["Covered source, artifact, topology, custody, hardware, policy, or governance changes."],
+      "next_actions": ["Provision independent 4/7/31/100-process multi-host campaigns after the live node and network close."]
+    },
+    {
+      "id": "EXT-ANCHOR-HSM-001",
+      "status": "open-no-accepted-evidence",
+      "owner_class": "independent-custody",
+      "dependencies": ["P2-STORE-001"],
+      "acceptance_predicates": ["Authentic independently controlled evidence is accepted for the exact source and artifact set."],
+      "evidence_outputs": ["Accepted trnm-external-evidence-v1 submission."],
+      "invalidation_triggers": ["Covered source, artifact, topology, custody, hardware, policy, or governance changes."],
+      "next_actions": ["Select a device-backed non-exportable signer and independent monotonic anchor and execute the custody rehearsal."]
+    },
+    {
+      "id": "EXT-POWERLOSS-001",
+      "status": "open-no-accepted-evidence",
+      "owner_class": "independent-hardware-operator",
+      "dependencies": ["P2-STORE-001"],
+      "acceptance_predicates": ["Authentic independently controlled evidence is accepted for the exact source and artifact set."],
+      "evidence_outputs": ["Accepted trnm-external-evidence-v1 submission."],
+      "invalidation_triggers": ["Covered source, artifact, topology, custody, hardware, policy, or governance changes."],
+      "next_actions": ["Execute destructive physical-power and controller-cache-loss recovery on independently operated hardware."]
+    },
+    {
+      "id": "EXT-AUDIT-001",
+      "status": "open-no-accepted-evidence",
+      "owner_class": "independent-auditors-and-red-team",
+      "dependencies": ["P0-PROTOCOL-001", "P1-CORE-001", "P1-EXEC-001", "P2-STORE-001"],
+      "acceptance_predicates": ["Authentic independently controlled evidence is accepted for the exact source and artifact set."],
+      "evidence_outputs": ["Accepted trnm-external-evidence-v1 submission."],
+      "invalidation_triggers": ["Covered source, artifact, topology, custody, hardware, policy, or governance changes."],
+      "next_actions": ["Freeze the candidate and commission independent consensus, cryptography and economic audits plus red-team testing."]
+    },
+    {
+      "id": "EXT-SOAK-ACTIVATION-001",
+      "status": "open-no-accepted-evidence",
+      "owner_class": "independent-operators-and-governance",
+      "dependencies": ["EXT-G1-CAMPAIGN-001", "EXT-ANCHOR-HSM-001", "EXT-POWERLOSS-001", "EXT-AUDIT-001"],
+      "acceptance_predicates": ["Authentic independently controlled evidence is accepted for the exact source and artifact set."],
+      "evidence_outputs": ["Accepted trnm-external-evidence-v1 submission."],
+      "invalidation_triggers": ["Covered source, artifact, topology, custody, hardware, policy, or governance changes."],
+      "next_actions": ["After every prerequisite is accepted, complete the real 72-hour, 7-day and 30-day campaigns and signed governance activation."]
+    }
+  ],
+  "release_summary": {
+    "all_repository_blockers_closed": false,
+    "all_settings_gates_closed": false,
+    "all_external_blockers_closed": false,
+    "public_testnet_ready": false,
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "release_ready": false
+  }
+}

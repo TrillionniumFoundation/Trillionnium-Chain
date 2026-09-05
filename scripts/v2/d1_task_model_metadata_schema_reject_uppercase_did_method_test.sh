@@ -18,6 +18,7 @@ cat >"$tmp_file" <<'JSON'
     "version": "2026.03"
   },
   "provenance": {
+    "provenance_index": "prov:did-uppercase-test",
     "producer_did": "did:KEY:z6Mkexample123",
     "produced_at": "2026-03-01T03:10:00Z",
     "privacy_tier": "internal"

@@ -1,0 +1,224 @@
+schema_version = 1
+coverage_id = "trnm-module-coverage-v1"
+plan_id = "trnm-chain-development-plan-v2"
+module_registry = "docs/development/module-registry-v1.toml"
+technical_reference = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
+workspace_manifest = "trillionnium/Cargo.toml"
+contracts_manifest = "contracts/Cargo.toml"
+web_package_manifest = "web4-frontend/package.json"
+maintainers = ["Tomasrgbsf", "ProfHepta"]
+minimum_maintainers = 2
+default_evidence_roots = ["docs/evidence", "scripts/ci"]
+default_test_gate_root = "scripts/ci"
+production_authority = false
+
+[policy]
+one_primary_module_per_workspace_crate = true
+one_primary_module_per_auxiliary_unit = true
+all_modules_require_technical_reference = true
+all_modules_require_slo_profile = true
+all_modules_require_testkit_profile = true
+all_modules_require_contract_paths = true
+all_modules_require_evidence_roots = true
+module_dependency_graph_must_be_acyclic = true
+production_may_depend_on_candidate_or_lab = false
+control_plane_may_hold_consensus_authority = false
+
+[[module_coverage]]
+id = "M00"
+anchor = "m00"
+slo_profile = "contract-library-v1"
+testkit_profile = "canonical-codec-conformance-v1"
+primary_crates = ["trnm-consensus-types", "trnm-types", "trnm-protocol", "trnm-poco-order-types-v1"]
+contract_paths = ["docs/protocol/poco-bft-v0", "docs/protocol/poco-ai-native-v1", "proto"]
+
+[[module_coverage]]
+id = "M01"
+anchor = "m01"
+slo_profile = "contract-library-v1"
+testkit_profile = "crypto-capability-conformance-v1"
+primary_crates = ["trnm-consensus-crypto", "trnm-consensus-remote-signer-protocol"]
+contract_paths = ["docs/protocol/poco-ai-native-v1", "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"]
+
+[[module_coverage]]
+id = "M02"
+anchor = "m02"
+slo_profile = "authority-hot-path-v1"
+testkit_profile = "consensus-state-machine-v1"
+primary_crates = ["trnm-consensus-core"]
+contract_paths = ["docs/protocol/poco-bft-v0", "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"]
+
+[[module_coverage]]
+id = "M03"
+anchor = "m03"
+slo_profile = "authority-hot-path-v1"
+testkit_profile = "safety-signer-crash-matrix-v1"
+primary_crates = ["trnm-consensus-safety-rules", "trnm-consensus-safety-store", "trnm-consensus-signer-journal", "trnm-consensus-unix-remote-signer", "trnm-consensus-unix-fleet-signer", "trnm-consensus-external-watermark", "trnm-consensus-external-node-checkpoint", "trnm-consensus-remote-signer-service", "trnm-whole-node-checkpoint-types", "trnm-durable-file-adapters-v0"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/runbooks/TRNM_INCIDENT_DR_KEY_ROTATION_V1.md"]
+
+[[module_coverage]]
+id = "M04"
+anchor = "m04"
+slo_profile = "bounded-io-runtime-v1"
+testkit_profile = "authenticated-network-fault-v1"
+primary_crates = ["trnm-consensus-peer-lease"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/runbooks/TRNM_POCO_G3_LAN_FLEET.md"]
+
+[[module_coverage]]
+id = "M05"
+anchor = "m05"
+slo_profile = "bounded-io-runtime-v1"
+testkit_profile = "tx-admission-replay-v1"
+primary_crates = ["trnm-mempool", "trnm-application-tx-builder-v0", "trnm-tx-lifecycle-v0"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/protocol/poco-ai-native-v1"]
+
+[[module_coverage]]
+id = "M06"
+anchor = "m06"
+slo_profile = "authority-hot-path-v1"
+testkit_profile = "deterministic-mvcc-root-invariance-v1"
+primary_crates = ["trnm-native-application", "trnm-native-execution-v0", "trnm-executor", "trnm-poco-mvcc-fee-v1", "trnm-poco-global-execution-v1", "trnm-runtime"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md", "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md"]
+
+[[module_coverage]]
+id = "M07"
+anchor = "m07"
+slo_profile = "authority-hot-path-v1"
+testkit_profile = "pinned-sqlite-jmt-v1"
+primary_crates = ["trnm-state", "trnm-native-application-sqlite", "trnm-poco-order-state-v1"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md"]
+
+[[module_coverage]]
+id = "M08"
+anchor = "m08"
+slo_profile = "authority-hot-path-v1"
+testkit_profile = "node-commit-recovery-v1"
+primary_crates = ["trnm-core-restart-v0", "trnm-poco-order-application-v1"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"]
+
+[[module_coverage]]
+id = "M09"
+anchor = "m09"
+slo_profile = "candidate-application-v1"
+testkit_profile = "durable-da-retrieval-repair-v1"
+primary_crates = ["trnm-poco-da-v1"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/06-certified-data-availability.md"]
+
+[[module_coverage]]
+id = "M10"
+anchor = "m10"
+slo_profile = "candidate-application-v1"
+testkit_profile = "agent-market-lifecycle-v1"
+primary_crates = ["trnm-poco-agent-market-v1", "trnm-worker-agent"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md", "docs/protocol/poco-ai-native-v1/04-market-task-lease-escrow-and-lifecycle.md"]
+
+[[module_coverage]]
+id = "M11"
+anchor = "m11"
+slo_profile = "candidate-application-v1"
+testkit_profile = "verify-challenge-profile-v1"
+primary_crates = ["trnm-poco-verify-challenge-v1", "trnm-oracle"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/05-compute-receipts-verification-and-challenges.md"]
+
+[[module_coverage]]
+id = "M12"
+anchor = "m12"
+slo_profile = "candidate-application-v1"
+testkit_profile = "settlement-conservation-v1"
+primary_crates = ["trnm-poco-consumption-settlement-v1", "trnm-pouw"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md", "contracts/README.md"]
+
+[[module_coverage]]
+id = "M13"
+anchor = "m13"
+slo_profile = "bounded-io-runtime-v1"
+testkit_profile = "light-client-state-sync-v1"
+primary_crates = ["trnm-poco-cross-plane-readback-v1", "trnm-poco-order-finality-verifier-v1", "trnm-finality-types", "trnm-finality-verifier", "trnm-migration-v0", "trnm-state-sync-v0"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md", "docs/runbooks/TRNM_V3_TO_V4_EXPORT_NEW_GENESIS.md"]
+
+[[module_coverage]]
+id = "M14"
+anchor = "m14"
+slo_profile = "non-authoritative-service-v1"
+testkit_profile = "rpc-sdk-cli-contract-v1"
+primary_crates = ["trnm-rpc", "trnm-cli"]
+contract_paths = ["web4-frontend/docs/README.md", "web4-frontend/docs/api-contract.md"]
+
+[[module_coverage]]
+id = "M15"
+anchor = "m15"
+slo_profile = "authority-hot-path-v1"
+testkit_profile = "node-build-release-closure-v1"
+primary_crates = ["trnm-poco-node", "trnm-poco-node-authority", "trnm-poco-node-io", "trnm-poco-node-host", "trnm-poco-node-cli", "trnm-bridge-poc", "trnm-node-boundary-v0", "trnm-poco-node-production-v0", "trnm-release-bundle-v0"]
+contract_paths = ["PROJECT_BOUNDARY.md", "OPERATIONS.md", "RELEASE_READINESS.md", "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md"]
+
+[[module_coverage]]
+id = "M16"
+anchor = "m16"
+slo_profile = "non-authoritative-service-v1"
+testkit_profile = "guarded-control-plane-v1"
+primary_crates = ["trnm-control-plane-v0"]
+source_paths = ["docs/development/module-registry-v1.toml", "config/consensus-mainline.json", "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"]
+contract_paths = ["docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"]
+
+[[module_coverage]]
+id = "M17"
+anchor = "m17"
+slo_profile = "evidence-tooling-v1"
+testkit_profile = "evidence-false-pass-resistance-v1"
+primary_crates = ["trnm-bench", "trnm-consensus-sim", "trnm-research-protocol", "trnm-poco-lab-validator", "trnm-production-adapter-conformance-v0"]
+contract_paths = ["docs/evidence", "docs/runbooks", "formal", "scripts/ci"]
+
+[[auxiliary_units]]
+id = "contracts-audit-events"
+primary_module = "M00"
+path = "contracts/audit-events"
+kind = "rust-contract-crate"
+
+[[auxiliary_units]]
+id = "contracts-governance-guard"
+primary_module = "M01"
+path = "contracts/governance-guard"
+kind = "rust-contract-crate"
+
+[[auxiliary_units]]
+id = "contracts-settlement-vault"
+primary_module = "M12"
+path = "contracts/settlement-vault"
+kind = "rust-contract-crate"
+
+[[auxiliary_units]]
+id = "contracts-bridge-relay"
+primary_module = "M15"
+path = "contracts/bridge-relay"
+kind = "rust-contract-crate"
+
+[[auxiliary_units]]
+id = "web4-frontend"
+primary_module = "M14"
+path = "web4-frontend"
+kind = "node-package"
+
+[[auxiliary_units]]
+id = "formal-models"
+primary_module = "M17"
+path = "formal"
+kind = "formal-evidence-tree"
+
+[[auxiliary_units]]
+id = "canonical-fuzz"
+primary_module = "M17"
+path = "trillionnium/fuzz"
+kind = "fuzz-workspace"
+
+[[auxiliary_units]]
+id = "protocol-transport"
+primary_module = "M00"
+path = "proto"
+kind = "transport-schema-tree"
+
+[[auxiliary_units]]
+id = "repository-ci"
+primary_module = "M17"
+path = "scripts/ci"
+kind = "evidence-tooling-tree"

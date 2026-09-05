@@ -1,0 +1,103 @@
+schema_version = 1
+closure_registry_id = "trnm-build-closures-v1"
+workspace_manifest = "trillionnium/Cargo.toml"
+node_manifest = "trillionnium/crates/trnm-poco-node/Cargo.toml"
+production_entrypoint_manifest = "trillionnium/crates/trnm-poco-node-cli/Cargo.toml"
+production_candidate = false
+production_consensus_activation = false
+release_ready = false
+
+ai_v1_candidate_packages = [
+  "trnm-poco-agent-market-v1",
+  "trnm-poco-consumption-settlement-v1",
+  "trnm-poco-cross-plane-readback-v1",
+  "trnm-poco-da-v1",
+  "trnm-poco-global-execution-v1",
+  "trnm-poco-mvcc-fee-v1",
+  "trnm-poco-order-application-v1",
+  "trnm-poco-order-finality-verifier-v1",
+  "trnm-poco-order-state-v1",
+  "trnm-poco-order-types-v1",
+  "trnm-poco-verify-challenge-v1",
+]
+lab_packages = ["trnm-poco-lab-validator"]
+evidence_packages = [
+  "trnm-bench",
+  "trnm-consensus-sim",
+  "trnm-research-protocol",
+  "trnm-production-adapter-conformance-v0",
+]
+poc_packages = ["trnm-bridge-poc"]
+legacy_excluded_packages = ["trnm-consensus-app", "trnm-node"]
+
+[policy]
+default_node_has_no_ai_v1_dependencies = true
+candidate_commands_require_explicit_feature = true
+candidate_modules_require_explicit_feature = true
+production_has_no_lab_fixture_research_poc_or_legacy = true
+production_entrypoint_is_dedicated_cli = true
+production_composition_edges_are_explicit = true
+feature_resolution_is_recursive = true
+dev_dependencies_are_not_runtime_authority = true
+no_feature_silently_promotes_machine_truth = true
+
+[[closures]]
+id = "node-prod-v0"
+root_packages = ["trnm-poco-node-cli"]
+default_features = true
+features = []
+required_packages = [
+  "trnm-poco-node-cli",
+  "trnm-poco-node-host",
+  "trnm-poco-node-authority",
+  "trnm-poco-node-io",
+  "trnm-poco-node",
+  "trnm-poco-node-production-v0",
+  "trnm-node-boundary-v0",
+  "trnm-tx-lifecycle-v0",
+  "trnm-state-sync-v0",
+  "trnm-migration-v0",
+  "trnm-control-plane-v0",
+  "trnm-consensus-core",
+  "trnm-consensus-crypto",
+  "trnm-consensus-safety-store",
+  "trnm-consensus-signer-journal",
+  "trnm-native-application",
+  "trnm-native-application-sqlite",
+  "trnm-native-execution-v0",
+]
+forbidden_groups = ["ai-v1-candidate", "lab", "evidence", "poc", "legacy"]
+authority = "fail-closed-engineering-candidate"
+
+[[closures]]
+id = "node-devnet-v0"
+root_packages = ["trnm-poco-lab-validator"]
+default_features = true
+features = []
+required_packages = ["trnm-poco-lab-validator", "trnm-poco-node"]
+forbidden_groups = ["ai-v1-candidate", "legacy"]
+authority = "candidate-devnet-only"
+
+[[closures]]
+id = "ai-v1-candidate"
+root_packages = ["trnm-poco-node"]
+default_features = true
+features = ["ai-v1-candidate"]
+required_groups = ["ai-v1-candidate"]
+forbidden_groups = ["lab", "evidence", "poc", "legacy"]
+authority = "candidate-only-no-activation"
+
+[[closures]]
+id = "lab-and-evidence"
+root_packages = [
+  "trnm-poco-lab-validator",
+  "trnm-bench",
+  "trnm-consensus-sim",
+  "trnm-research-protocol",
+  "trnm-production-adapter-conformance-v0",
+]
+default_features = true
+features = []
+required_groups = ["lab", "evidence"]
+forbidden_groups = ["legacy"]
+authority = "simulation-and-evidence-only"

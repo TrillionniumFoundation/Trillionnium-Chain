@@ -1,7 +1,46 @@
 [workspace]
-exclude = ["fuzz"]
-members = [
+exclude = [
+  "fuzz",
+  "crates/trnm-consensus-app",
   "crates/trnm-node",
+]
+members = [
+  "crates/trnm-consensus-core",
+  "crates/trnm-consensus-safety-rules",
+  "crates/trnm-consensus-safety-store",
+  "crates/trnm-consensus-signer-journal",
+  "crates/trnm-consensus-remote-signer-protocol",
+  "crates/trnm-consensus-unix-remote-signer",
+  "crates/trnm-consensus-unix-fleet-signer",
+  "crates/trnm-consensus-external-watermark",
+  "crates/trnm-consensus-peer-lease",
+  "crates/trnm-consensus-external-node-checkpoint",
+  "crates/trnm-consensus-remote-signer-service",
+  "crates/trnm-whole-node-checkpoint-types",
+  "crates/trnm-native-application",
+  "crates/trnm-native-application-sqlite",
+  "crates/trnm-native-execution-v0",
+  "crates/trnm-core-restart-v0",
+  "crates/trnm-poco-da-v1",
+  "crates/trnm-poco-agent-market-v1",
+  "crates/trnm-poco-verify-challenge-v1",
+  "crates/trnm-poco-mvcc-fee-v1",
+  "crates/trnm-poco-consumption-settlement-v1",
+  "crates/trnm-poco-cross-plane-readback-v1",
+  "crates/trnm-poco-global-execution-v1",
+  "crates/trnm-poco-order-application-v1",
+  "crates/trnm-poco-order-finality-verifier-v1",
+  "crates/trnm-poco-order-state-v1",
+  "crates/trnm-poco-order-types-v1",
+  "crates/trnm-poco-lab-validator",
+  "crates/trnm-poco-node",
+  "crates/trnm-poco-node-authority",
+  "crates/trnm-poco-node-io",
+  "crates/trnm-poco-node-host",
+  "crates/trnm-poco-node-cli",
+  "crates/trnm-consensus-crypto",
+  "crates/trnm-consensus-sim",
+  "crates/trnm-consensus-types",
   "crates/trnm-types",
   "crates/trnm-state",
   "crates/trnm-pouw",
@@ -15,10 +54,19 @@ members = [
   "crates/trnm-oracle",
   "crates/trnm-research-protocol",
   "crates/trnm-finality-types",
+  "crates/trnm-application-tx-builder-v0",
   "crates/trnm-finality-verifier",
   "crates/trnm-protocol",
   "crates/trnm-runtime",
-  "crates/trnm-consensus-app",
+  "crates/trnm-node-boundary-v0",
+  "crates/trnm-tx-lifecycle-v0",
+  "crates/trnm-state-sync-v0",
+  "crates/trnm-migration-v0",
+  "crates/trnm-control-plane-v0",
+  "crates/trnm-poco-node-production-v0",
+  "crates/trnm-production-adapter-conformance-v0",
+  "crates/trnm-release-bundle-v0",
+  "crates/trnm-durable-file-adapters-v0",
 ]
 resolver = "2"
 
@@ -26,3 +74,30 @@ resolver = "2"
 edition = "2021"
 license = "MIT"
 authors = ["Trillionnium Contributors"]
+
+[workspace.metadata.trnm]
+lane = "chain-protocol"
+consensus_target = "poco-bft-v0"
+production_consensus_activation = false
+consensus_mainline = "native-poco-bft"
+native_poco_mainline_decision = "adopted"
+zero_comet_production_dependency_target = true
+zero_comet_production_dependency_achieved = true
+legacy_comet_migration_residue_present = true
+cometbft_role = "migration-residue-only"
+cometbft_cleanup_eligible = false
+
+[profile.test.package.curve25519-dalek]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.ed25519-dalek]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true
+
+[profile.test.package.sha2]
+opt-level = 3
+debug-assertions = true
+overflow-checks = true

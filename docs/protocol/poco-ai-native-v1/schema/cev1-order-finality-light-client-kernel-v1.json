@@ -1,0 +1,274 @@
+{
+  "schema": "trnm.poco-ai.order-finality-light-client-kernel.v1",
+  "schema_version": 1,
+  "status": "candidate-non-normative",
+  "classification": "bounded-fresh-genesis-ordinary-checkpoint-and-one-handoff-light-client-kernel",
+  "purpose": "Independently decode and verify raw-CEV1 OrderFinalityProofV1 paths for FreshGenesis, Ordinary, and EpochCheckpoint targets, then verify one role-isolated dual-quorum epoch handoff, finalize V1HandoffFirst, and consume the resulting trusted state with one Ordinary finality advance without importing validator-node code.",
+  "canonical_encoding": "CEV1 fixed-width little-endian integers; u32-le length-prefixed Bytes, ConsensusString, and List; u8 Option and enum tags; exact end-of-input",
+  "digest_construction": "SHA256(u32_le(len(UTF8(domain))) || UTF8(domain) || CEV1(value))",
+  "imports": {
+    "artifact": "trnm.poco-ai.cev1-foundation-order-kernel.v1",
+    "types": [
+      "BlockHeaderV1",
+      "BlockIdV1",
+      "BlockKindV1",
+      "ConsensusContextV1",
+      "ConsensusParametersV1",
+      "EpochDescriptorIdV1",
+      "EpochHandoffIdV1",
+      "EpochHandoffBodyV1",
+      "EpochHandoffSignStatementV1",
+      "EpochHandoffSignatureEntryV1",
+      "EpochHandoffV1",
+      "EpochCheckpointIdV1",
+      "EpochCheckpointFinalizedAnchorBodyV1",
+      "EpochStartJustificationRefBodyV1",
+      "FinalizedAnchorRefV1",
+      "FreshGenesisFinalizedAnchorBodyV1",
+      "GenesisParentBodyV1",
+      "ParentBlockRefV1",
+      "ProtocolContextV1",
+      "QcJustificationRefBodyV1",
+      "QuorumCertificateBodyV1",
+      "QuorumCertificateIdV1",
+      "QuorumCertificateV1",
+      "TimeoutCertificateIdV1",
+      "HighJustificationObjectV1",
+      "HighJustificationRefV1",
+      "TimeoutCertificateBodyV1",
+      "TimeoutSignatureEntryV1",
+      "TimeoutStatementBodyV1",
+      "UpgradePlanIdV1",
+      "V0TerminalBlockParentBodyV1",
+      "V0ToV1ActivationStatementIdV1",
+      "V0ActivationFinalizedAnchorBodyV1",
+      "V1BlockParentBodyV1",
+      "ValidatorMemberV1",
+      "ValidatorSetDefinitionV1",
+      "ValidatorSetDescriptorV1",
+      "VoteSignatureEntryV1",
+      "VoteStatementBodyV1"
+    ],
+    "rule": "The independent checker structurally hashes every transitively imported type definition plus the complete foundation domains, registries (including full enum tags), and constraints against hard-coded reviewed snapshots; this bounded schema adds no alternate encoding.",
+    "structural_snapshot_sha256": {
+      "types": {
+        "BlockHeaderV1": "c5bc9828cb0f716b204f3c8927f3b034f3debd083019f2d68499c8d8cf35cac3",
+        "BlockIdV1": "cd0d93470883c4124552fbfbe1e4c31577e02bca63f9ceacffccf1d6bc2e0b29",
+        "BlockKindV1": "273446a1a37542080178c159c4456960d8c9d82ac2903640374c2d18e8e29a01",
+        "ConsensusContextV1": "836c0f613d91d57a6b3cfc37600f8ed551ad63d06f343c8cc243b45339e3da43",
+        "ConsensusParametersV1": "a50bc645ebcc1f4f1db664dd289dc73c1c8bae1ad4e91a9edceb33d8a6144d93",
+        "EpochDescriptorIdV1": "cd0d93470883c4124552fbfbe1e4c31577e02bca63f9ceacffccf1d6bc2e0b29",
+        "EpochHandoffIdV1": "cd0d93470883c4124552fbfbe1e4c31577e02bca63f9ceacffccf1d6bc2e0b29",
+        "EpochHandoffBodyV1": "ea07e9afedc2ea2b5f6784685f887725a51e601d256135fa75e447867d193996",
+        "EpochHandoffSignStatementV1": "a66507c26992a91084368f37e03f67c1ce7f4f1bea9919e9c591765adb074aec",
+        "EpochHandoffSignatureEntryV1": "a3c5c1f8df6451172282e049f6644ed9d3847eb09d69037fe1cf5e1d7016d8c2",
+        "EpochHandoffV1": "12b91912bfb40524a7aaa31a6dc3b0c4f78e5d52ac0e376b6fe4a630adafa674",
+        "EpochCheckpointIdV1": "cd0d93470883c4124552fbfbe1e4c31577e02bca63f9ceacffccf1d6bc2e0b29",
+        "EpochCheckpointFinalizedAnchorBodyV1": "2a9c193b064825e3c1223da725936fc1e3dcac440f02407a0e071f0b7718be75",
+        "EpochStartJustificationRefBodyV1": "70a1a47645b1d5515d88db5ca9d2be2d43dfb546be1a5a030405f4f0fd005ddf",
+        "FinalizedAnchorRefV1": "de36ce8fee22a395e7a2ed2d5653f23fc050b2a347b87e596930e6fdac42059c",
+        "FreshGenesisFinalizedAnchorBodyV1": "68a80b21450e049c8217537a68315e3f6e02fd4e8ceb64aac6f4a4f658562c0f",
+        "GenesisParentBodyV1": "fc0835475a09fd04ad4c6fed7e6610d73c1fc83cc33430eae24e6b6a70925af0",
+        "ParentBlockRefV1": "a6004e6d8b2bf0712f2343349a387d0e169278904cc7cfb64ceddd581b2151eb",
+        "ProtocolContextV1": "8e2376f3bb007825ef541e47c387384fe43561c70db010c0973887d389c1ef85",
+        "QcJustificationRefBodyV1": "494aefbd6f5b6fa7ee73e7fab11e89a2446ef164ce1fb9879319af2c46c32853",
+        "QuorumCertificateBodyV1": "949db40562522d2688bc8b1f42d256546d9e452cdd1e2091fb1c9859255e8409",
+        "QuorumCertificateIdV1": "cd0d93470883c4124552fbfbe1e4c31577e02bca63f9ceacffccf1d6bc2e0b29",
+        "QuorumCertificateV1": "0d7f3516dcd240c415206933159d033015700efacbccd9ce9fea3dfef659f896",
+        "TimeoutCertificateIdV1": "cd0d93470883c4124552fbfbe1e4c31577e02bca63f9ceacffccf1d6bc2e0b29",
+        "HighJustificationObjectV1": "6a8c43ca071a71f83020f77ed61792e60fb06989cf43be4e960f6c20792b76f5",
+        "HighJustificationRefV1": "fe93716c7b28a418447416a04b2417ff7201748ca878fd6fec2bae945072cfcc",
+        "TimeoutCertificateBodyV1": "3fde9a3df3ac0396dfda66eea07fbd217ec24da3dc834fcf6daa4116d999c345",
+        "TimeoutSignatureEntryV1": "d2ff070ad2bfbc39499b6657a34998884d388f673e6d66423d969a400b6de09c",
+        "TimeoutStatementBodyV1": "3454ee0b2788755b9bfe5c4ff0140e70cb14b659f273d5b41c0dff68bbd54fd9",
+        "UpgradePlanIdV1": "cd0d93470883c4124552fbfbe1e4c31577e02bca63f9ceacffccf1d6bc2e0b29",
+        "V0TerminalBlockParentBodyV1": "fd818e93788a39af789f4cfa2f4d42b857a2eecbeb2976605413c7d2f813fb0e",
+        "V0ToV1ActivationStatementIdV1": "cd0d93470883c4124552fbfbe1e4c31577e02bca63f9ceacffccf1d6bc2e0b29",
+        "V0ActivationFinalizedAnchorBodyV1": "3b74b9ff144c41827b8643c482e7882902924fcf613073047aae380e890fe7c6",
+        "V1BlockParentBodyV1": "36a6af33b771a5f03083f613f5bb9314a6f1b41dba73c85a9e1ba66c0055e3a1",
+        "ValidatorMemberV1": "4341be3dd55331b5bf8c3905181b7dcd5ed17cc4d4b0ea696e16bb7893f761f0",
+        "ValidatorSetDefinitionV1": "47746442ae057b60a02e5cb61f99dbfad348c7df3a4b784b9eba28a1d7f1e530",
+        "ValidatorSetDescriptorV1": "ac1bfd193c53c1926678c4fa652656dcc7c7e74746fe2c20444cc679601a7935",
+        "VoteSignatureEntryV1": "316ed36127a19478629450785592d7af17c564ff0245f5dd5d03cd5788f1285f",
+        "VoteStatementBodyV1": "cf860ddcbb750e175376ea9ad0d098d70bfbbd51269ff5860fd664b1ee567e49"
+      },
+      "domains": "3546963c0db790eabd51041ee41a4af79bca928ebd0007b0f18059c89ece4847",
+      "registries": "d638890c70302188e76fffc502c602b0bf06b0369330b6b79adae70433446a28",
+      "constraints": "462568a3b8b8af936beb5af94da3bf6a8ad7cd474cca4b3994fb5dfeed486efa"
+    }
+  },
+  "domains": {
+    "validator_set_definition": "trnm.poco-ai.validator-set-definition.v1",
+    "validator_set": "trnm.poco-ai.validator-set.v1",
+    "consensus_parameters": "trnm.poco-ai.consensus-parameters.v1",
+    "epoch_descriptor": "trnm.poco-ai.epoch-descriptor.v1",
+    "block_id": "trnm.poco-ai.order-block.v1",
+    "vote_signature": "trnm.poco-ai.order-vote-signature.v1",
+    "quorum_certificate": "trnm.poco-ai.order-qc.v1",
+    "timeout_signature": "trnm.poco-ai.order-timeout-signature.v1",
+    "timeout_certificate": "trnm.poco-ai.order-tc.v1",
+    "epoch_checkpoint": "trnm.poco-ai.epoch-checkpoint.v1",
+    "epoch_handoff": "trnm.poco-ai.epoch-handoff.v1",
+    "epoch_handoff_old_signature": "trnm.poco-ai.epoch-handoff-old-signature.v1",
+    "epoch_handoff_new_signature": "trnm.poco-ai.epoch-handoff-new-signature.v1",
+    "order_finality_proof": "trnm.poco-ai.order-finality-proof.v1"
+  },
+  "bounded_accepted_enums": {
+    "trusted_order_anchor": {
+      "FreshGenesis": 0
+    },
+    "signature_scheme": {
+      "StrictEd25519": 0
+    },
+    "block_kind": {
+      "FreshGenesis": 0,
+      "Ordinary": 1,
+      "EpochCheckpoint": 2,
+      "EpochSeal1": 3,
+      "EpochSeal2": 4,
+      "V1HandoffFirst": 6
+    },
+    "parent_ref": {
+      "GenesisAnchor": 0,
+      "V1Block": 1
+    }
+  },
+  "added_cev1_types": {
+    "EpochDescriptorBodyV1": [
+      ["schema_version", "u16"],
+      ["context", "ProtocolContextV1"],
+      ["epoch", "u64"],
+      ["validator_set_hash", "Hash32"],
+      ["consensus_parameters_hash", "Hash32"],
+      ["runtime_profile_hash", "Hash32"],
+      ["snapshot_policy_hash", "Hash32"],
+      ["da_policy_hash", "Hash32"],
+      ["da_committee_set_root", "Hash32"],
+      ["verification_registry_hash", "Hash32"],
+      ["fee_schedule_hash", "Hash32"],
+      ["state_schema_hash", "Hash32"],
+      ["leader_schedule_id", "Hash32"],
+      ["upgrade_authority_root", "Hash32"]
+    ],
+    "EpochDescriptorV1": [
+      ["body", "EpochDescriptorBodyV1"],
+      ["epoch_descriptor_id", "EpochDescriptorIdV1"]
+    ],
+    "FreshGenesisTrustedOrderAnchorBodyV1": [
+      ["genesis_derived_state_hash", "Hash32"],
+      ["trusted_genesis_header", "BlockHeaderV1"]
+    ],
+    "TrustedOrderAnchorV1": [
+      ["variant", "u8=0 FreshGenesis"],
+      ["value", "FreshGenesisTrustedOrderAnchorBodyV1"]
+    ],
+    "CertifiedHeaderV1": [
+      ["header", "BlockHeaderV1"],
+      ["block_id", "BlockIdV1"],
+      ["certifying_qc", "QuorumCertificateV1"],
+      ["timeout_certificate", "Option<TimeoutCertificateV1>; present iff this header skipped one view"]
+    ],
+    "TimeoutCertificateV1": [
+      ["body", "TimeoutCertificateBodyV1"],
+      ["timeout_certificate_id", "TimeoutCertificateIdV1"]
+    ],
+    "OrderFinalityProofV1": [
+      ["schema_version", "u16"],
+      ["context", "ProtocolContextV1"],
+      ["trusted_anchor", "TrustedOrderAnchorV1"],
+      ["target_block_id", "BlockIdV1"],
+      ["target_height", "u64"],
+      ["target_header", "BlockHeaderV1"],
+      ["certified_chain", "List<CertifiedHeaderV1>; exactly 3 for FreshGenesis, 4 for first Ordinary, or FreshGenesis+EpochCheckpoint+EpochSeal1+EpochSeal2 in this tranche"],
+      ["epoch_handoffs", "List<EpochHandoffProofV1>; exactly empty in this tranche"]
+    ],
+    "EpochCheckpointBodyV1": [
+      ["schema_version", "u16=1"],
+      ["context", "ProtocolContextV1"],
+      ["epoch", "u64"],
+      ["checkpoint_height", "u64"],
+      ["checkpoint_block_id", "BlockIdV1"],
+      ["checkpoint_header", "BlockHeaderV1"],
+      ["epoch_descriptor_id", "EpochDescriptorIdV1"],
+      ["validator_set_hash", "Hash32"],
+      ["consensus_parameters_hash", "Hash32"],
+      ["application_state_root", "Hash32"],
+      ["da_committee_set_root", "Hash32"],
+      ["verification_registry_hash", "Hash32"],
+      ["stack_profile_hash", "Hash32"],
+      ["fee_schedule_hash", "Hash32"],
+      ["state_schema_hash", "Hash32"],
+      ["snapshot_policy_hash", "Hash32"],
+      ["next_epoch_descriptor_id", "Option<EpochDescriptorIdV1>"],
+      ["upgrade_plan_id", "Option<UpgradePlanIdV1>; None in v1"]
+    ],
+    "EpochCheckpointV1": [
+      ["body", "EpochCheckpointBodyV1"],
+      ["checkpoint_id", "EpochCheckpointIdV1"]
+    ],
+    "EpochCheckpointVerificationAttachmentV1": [
+      ["checkpoint_id", "EpochCheckpointIdV1"],
+      ["order_finality_proof", "OrderFinalityProofV1"]
+    ],
+    "BoundedEpochTransitionEvidenceV1": [
+      ["schema_version", "u16=1"],
+      ["old_trust_bundle", "FreshGenesisTrustBundleV1"],
+      ["checkpoint_finality_proof", "OrderFinalityProofV1"],
+      ["checkpoint", "EpochCheckpointV1"],
+      ["checkpoint_attachment", "EpochCheckpointVerificationAttachmentV1"],
+      ["new_epoch_descriptor", "EpochDescriptorV1"],
+      ["new_validator_set", "ValidatorSetDescriptorV1"],
+      ["new_consensus_parameters", "ConsensusParametersV1"],
+      ["handoff", "EpochHandoffV1"],
+      ["new_epoch_certified_chain", "List<CertifiedHeaderV1>; exactly V1HandoffFirst+3 Ordinary"]
+    ]
+  },
+  "verifier_trust_input": {
+    "name": "FreshGenesisTrustBundleV1",
+    "consensus_object": false,
+    "authority": "externally authenticated bootstrap input; its CEV1 encoding is verifier input, not a chain object or signing preimage",
+    "fields": [
+      ["schema_version", "u16"],
+      ["context", "ProtocolContextV1"],
+      ["genesis_derived_state_hash", "Hash32"],
+      ["genesis_validator_set_definition_hash", "Hash32"],
+      ["trusted_genesis_header", "BlockHeaderV1"],
+      ["epoch_descriptor", "EpochDescriptorV1"],
+      ["validator_set", "ValidatorSetDescriptorV1"],
+      ["consensus_parameters", "ConsensusParametersV1"]
+    ]
+  },
+  "verified_relations": [
+    "raw trust-bundle, proof, checkpoint, attachment, handoff, successor-authority, and bounded transition bytes strict-decode, exact-reencode byte-for-byte, and have no trailing input",
+    "all 26 committed positive ConsensusParametersV1 fields, exact quorum/finality/execute-before-vote constants, parser-support ceilings, signer capacity, nesting, epoch schedule, timeout ordering, raw-value bounds, validator/header/count bounds, and retained-view bounds are checked with fail-closed arithmetic",
+    "the trust bundle independently recomputes the exact ValidatorSetDefinitionV1 hash, validator-set hash, consensus-parameter hash, epoch-descriptor ID, and trusted-genesis BlockId and all redundant commitments agree",
+    "the trusted FreshGenesis header is epoch 0/view 1, carries GenesisAnchor, binds the exact derived state, has post_state_root equal to GenesisAnchor.application_state_root, has no justify/TC/next-epoch/upgrade/handoff sidecar, and carries the canonical empty MerkleListRootV1 for each of the seven ordered root kinds 0 through 6",
+    "the proof anchor is byte-identical to the externally trusted fresh-genesis derived-state hash and header",
+    "a direct certified chain is either FreshGenesis plus two or three Ordinary successors or FreshGenesis plus the exactly scheduled EpochCheckpoint, EpochSeal1, and EpochSeal2; every seal is empty, preserves checkpoint state, and binds the same next descriptor",
+    "each BlockId and QuorumCertificateId recomputes from exact CEV1 bytes",
+    "each QC Vote statement binds the exact block ID, context, runtime profile, epoch, view, height, descriptor, post-state root, batch-ref root, and execution-receipts root",
+    "each QC signer list is strictly validator-ID ordered, duplicate-free, strict-Ed25519 valid under the exact committed key, and reaches checked weighted quorum",
+    "every child extends the preceding block and justifies its QC; heights increase exactly by one and views strictly increase",
+    "a consecutive-view child carries no TC; the bounded skipped-view child skips exactly one view and carries the complete TimeoutCertificateV1 for that immediately preceding timed-out view",
+    "the TC body/ID, exact previous QC justification object, context/runtime/epoch/set/parameters, target view, per-entry complete Timeout statement, locked/high QC, FreshGenesis finalized anchor, pacemaker generation, ordered unique strict-Ed25519 signatures, and checked weighted quorum all verify; TC authorizes view entry only and is not counted as a finality vote",
+    "the final three QCs certify strictly increasing views and finalize chain[len-3], yielding the trusted FreshGenesis target, its first Ordinary successor, or the exact EpochCheckpoint target",
+    "the target header, block ID, and height equal that derived target and the OrderFinalityProofId recomputes over the complete proof envelope",
+    "EpochCheckpointBodyV1 recomputes from the exact finalized checkpoint header/state, old descriptor/set/parameters/profile and next descriptor; its ID recomputes, upgrade remains absent, and the attachment carries the byte-identical finality proof",
+    "the successor descriptor, validator set, and consensus parameters independently recompute; new_epoch=old_epoch+1 and source/target contexts preserve genesis hash, chain ID, and protocol version while role-specific stack profiles remain isolated",
+    "EpochHandoffBodyV1 binds the exact checkpoint, old/new descriptors, old/new set and parameter hashes, terminal Seal2 block/height/QC view, activation_height=terminal_height+1, and initial_new_view=1 before its ID recomputes",
+    "OldSet and NewSet handoff lists are verified separately with exact role-specific consensus context, domain, keys, weights, ordered uniqueness, strict Ed25519, checked arithmetic, and independent weighted quorum; no weight or signature is borrowed across roles",
+    "the successor chain is exactly V1HandoffFirst plus three Ordinary headers under the new descriptor/set/parameters; the first block names the certified terminal Seal2 parent and handoff, has no justify QC, commits exactly one complete EpochHandoffV1 ProtocolObjectSidecarV1 wrapper (including both role signature lists) through its single-item root-kind-1 protocol_objects_root, has every other ordered root empty, and preserves state, while each Ordinary child uses the exact preceding block and QC",
+    "the first three successor QCs finalize V1HandoffFirst as new-epoch trusted state and the last three consume that state to finalize one Ordinary successor, proving a bounded one-handoff trust progression rather than arbitrary path iteration"
+  ],
+  "full_node_vs_light_client_signature_boundary": "A full validator verifies OrderProposalV1 and its proposer signature during proposal admission. This bounded light client authenticates the complete header through the weighted QC over its BlockId and therefore does not carry or verify OrderProposalV1 or a proposer signature; it still requires every header proposer_id to be a member of the committed validator set.",
+  "explicit_exclusions": [
+    "V0Activation trusted anchors and v0-to-v1 migration authority",
+    "more than one epoch handoff, arbitrary-length trust-path iteration, weak-subjectivity renewal or checkpoint-selection policy",
+    "more than one skipped view between certified parents, multiple TCs in one proof, EpochStart TC safe parents, non-FreshGenesis finalized anchors, or general pacemaker-history verification",
+    "OrderProposalV1 transport, proposer signature verification, full-node proposal admission, payload retrieval, deterministic execution, or availability",
+    "Ordinary-block payload-dependent enforcement for max_block_ordered_bytes, batch/protocol-object/transaction/evidence counts or bytes, and execution units because this proof carries only committed roots, not the referenced payloads",
+    "chain-descriptor/bootstrap-file authentication and proof that the externally supplied trust bundle was materialized by an operator from the canonical genesis package",
+    "application-state, artifact-availability, result/settlement-finality, state-sync, migration, or v0 authority verification",
+    "complete wire/schema or crypto interoperability, second implementation, durability, implementation, activation, production, release readiness, or normative freeze"
+  ]
+}

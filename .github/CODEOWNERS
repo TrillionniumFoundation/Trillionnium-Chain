@@ -1,0 +1,40 @@
+# Default ownership. Critical paths list two eligible maintainers; protected
+# branch rules and independent review policy remain the enforcement authority.
+* @Tomasrgbsf @ProfHepta
+
+/.github/ @Tomasrgbsf @ProfHepta
+/config/ @Tomasrgbsf @ProfHepta
+/PROJECT_BOUNDARY.json @Tomasrgbsf @ProfHepta
+/PROJECT_BOUNDARY.md @Tomasrgbsf @ProfHepta
+/SECURITY.md @Tomasrgbsf @ProfHepta
+/RELEASE_READINESS.md @Tomasrgbsf @ProfHepta
+/OPERATIONS.md @Tomasrgbsf @ProfHepta
+/rust-toolchain.toml @Tomasrgbsf @ProfHepta
+/trillionnium/Cargo.toml @Tomasrgbsf @ProfHepta
+/trillionnium/Cargo.lock @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-core/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-types/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-crypto/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-safety-rules/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-safety-store/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-consensus-signer-journal/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-authority/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-io/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-host/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-cli/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-node-boundary-v0/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-poco-node-production-v0/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-release-bundle-v0/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-durable-file-adapters-v0/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-tx-lifecycle-v0/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-state-sync-v0/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-migration-v0/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-control-plane-v0/ @Tomasrgbsf @ProfHepta
+/trillionnium/crates/trnm-production-adapter-conformance-v0/ @Tomasrgbsf @ProfHepta
+/docs/architecture/ @Tomasrgbsf @ProfHepta
+/docs/protocol/ @Tomasrgbsf @ProfHepta
+/docs/modules/ @Tomasrgbsf @ProfHepta
+/docs/development/plan-manifest-v1.toml @Tomasrgbsf @ProfHepta
+/scripts/ci/ @Tomasrgbsf @ProfHepta
+/scripts/check_repository_blocker_registry_v0.py @Tomasrgbsf @ProfHepta

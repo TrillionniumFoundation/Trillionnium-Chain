@@ -3,16 +3,26 @@ name: trnm-gate-quick-check
 on:
   pull_request:
     paths:
+      - '.github/workflows/**'
       - 'contracts/**'
       - 'contracts-rust/**'
+      - 'config/alert-policy/**'
+      - 'config/build-closures-v1.toml'
+      - 'docs/runbooks/enterprise_onboarding_runbook_v1.md'
+      - 'docs/runbooks/TRNM_POCO_BFT_X230_DEPLOYMENT_BOUNDARY.md'
       - 'scripts/**'
       - 'trillionnium/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
   push:
     branches: [main]
     paths:
+      - '.github/workflows/**'
       - 'contracts/**'
       - 'contracts-rust/**'
+      - 'config/alert-policy/**'
+      - 'config/build-closures-v1.toml'
+      - 'docs/runbooks/enterprise_onboarding_runbook_v1.md'
+      - 'docs/runbooks/TRNM_POCO_BFT_X230_DEPLOYMENT_BOUNDARY.md'
       - 'scripts/**'
       - 'trillionnium/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
@@ -27,7 +37,14 @@ permissions:
 
 jobs:
   shell-static-checks:
-    runs-on: ubuntu-latest
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     env:
       TZ: UTC
       LANG: C.UTF-8
@@ -94,43 +111,42 @@ jobs:
       # Strip gzip header filename/timestamp for deterministic compressed
       # fixtures produced during shell/python regression probes.
       GZIP: "-n"
-      # Avoid sporadic apt interactive prompts on runner image/package drift.
-      DEBIAN_FRONTEND: noninteractive
-      # Prevent apt-listchanges from opening pager/prompts when package metadata
-      # changes on runner refreshes, which can otherwise hang shellcheck install.
-      APT_LISTCHANGES_FRONTEND: none
-      # Disable apt-listbugs interactive prompts on Debian-family runners when
-      # package transitions introduce RC bug notices during shellcheck install.
-      APT_LISTBUGS_FRONTEND: none
       # Stabilize created file permissions across runner/image defaults so
       # replay artifacts and git diffs keep deterministic mode bits.
       UMASK: "022"
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Install shellcheck
+      - name: Verify runner-provisioned Rust toolchain
         run: |
           set -euo pipefail
-          retry() {
-            local attempts="$1"; shift
-            local n=1
-            until "$@"; do
-              if [ "$n" -ge "$attempts" ]; then
-                echo "Command failed after ${attempts} attempts: $*" >&2
-                return 1
-              fi
-              n=$((n+1))
-              sleep 2
-            done
-          }
-          # Keep network-level retries slightly higher than outer retry loop to
-          # absorb transient mirror hiccups without changing gate semantics.
-          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 update
-          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 install -y --no-install-recommends shellcheck
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock \
+            contracts/Cargo.toml:contracts/Cargo.lock
+
+      - name: Enforce Cargo-resolved production build closures
+        run: python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+
+      - name: Verify runner-provisioned shellcheck
+        run: |
+          set -euo pipefail
+          command -v shellcheck >/dev/null 2>&1
+          shellcheck --version
 
       - name: Quick shell gate (bash -n + shellcheck)
         run: |
@@ -182,6 +198,17 @@ jobs:
           WORKFLOW_SCRIPT_REF_STRICT=1 \
           WORKFLOW_SCRIPT_REF_SUMMARY_PATH=run/quick-gate/workflow-script-refs-summary.json \
           ./scripts/validate_workflow_script_refs.sh
+
+      - name: Enforce X230 runner and trusted-provenance policy
+        run: |
+          ./scripts/check_ci_runner_policy.sh --worktree
+          ./scripts/check_ci_runner_policy_test.sh
+
+      - name: Enforce Cargo offline policy
+        run: |
+          set -euo pipefail
+          ./scripts/check_cargo_offline_policy.sh --worktree
+          ./scripts/check_cargo_offline_policy_test.sh
 
       - name: Workflow script refs summary path guard regression
         run: |
@@ -251,7 +278,7 @@ jobs:
         run: |
           ./scripts/v2/quick_gate_non_directory_target_guard_test.sh
 
-      - name: Quick gate shellcheck install deterministic apt guard regression
+      - name: Quick gate immutable shellcheck prerequisite guard regression
         run: |
           ./scripts/v2/trnm_gate_quick_check_shellcheck_install_deterministic_apt_guard_test.sh
 
@@ -303,6 +330,22 @@ jobs:
         run: |
           ./scripts/v2/nightly_softfail_signal_guard_test.sh
 
+      - name: Nightly health trigger path coverage regression
+        run: |
+          ./scripts/v2/rust_l1_nightly_health_paths_coverage_guard_test.sh
+
+      - name: Quick-check policy and runbook path coverage regression
+        run: |
+          ./scripts/v2/trnm_gate_quick_check_policy_runbook_paths_coverage_guard_test.sh
+
+      - name: Nightly artifact binding regression
+        run: |
+          ./scripts/v2/nightly_artifact_binding_guard_test.sh
+
+      - name: Consensus fault matrix canonical metrics prefix regression
+        run: |
+          ./scripts/v2/consensus_fault_matrix_canonical_metrics_prefix_test.sh
+
       - name: Testnet preflight deterministic env guard regression
         run: |
           ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh
@@ -335,6 +378,10 @@ jobs:
         run: |
           ./scripts/v2/pr6_alert_rules_gate_missing_event_log_test.sh
 
+      - name: PR6 canonical policy threshold binding regression
+        run: |
+          ./scripts/v2/pr6_alert_rules_gate_policy_threshold_binding_test.sh
+
       - name: PR7 TOP_N input guard regression
         run: |
           ./scripts/v2/pr7_topn_summary_gate_invalid_topn_test.sh
@@ -362,10 +409,6 @@ jobs:
       - name: Check-parallel flaky replay invalid RUN_TIMEOUT_SEC guard regression
         run: |
           ./scripts/v2/check_parallel_flaky_replay_invalid_timeout_guard_test.sh
-
-      - name: Governance value schema reject regression
-        run: |
-          ./scripts/v2/governance_value_schema_reject_test.sh
 
       - name: D1 schema missing provenance producer_did regression
         run: |
@@ -435,414 +478,157 @@ jobs:
         run: |
           ./scripts/v2/web4_release_aggregate_gate_regression_test.sh
 
-      - name: "Auto regression: pr5-challenge-reconcile-gate"
+      - name: PR7 alert delivery gate bounded regression suite
         run: |
-          ./scripts/v2/pr5_challenge_reconcile_gate.sh
+          ./scripts/v2/pr7_alert_delivery_gate_regression_suite.sh
 
-      - name: "Auto regression: pr5-event-rpc-treasury-consistency-gate"
-        run: |
-          ./scripts/v2/pr5_event_rpc_treasury_consistency_gate.sh
-
-      - name: "Auto regression: pr5-event-rpc-treasury-consistency-test"
-        run: |
-          ./scripts/v2/pr5_event_rpc_treasury_consistency_test.sh
-
-      - name: "Auto regression: pr5-reconcile-conservation-test"
-        run: |
-          ./scripts/v2/pr5_reconcile_conservation_test.sh
-
-      - name: "Auto regression: pr5-treasury-reconcile-report"
-        run: |
-          ./scripts/v2/pr5_treasury_reconcile_report.sh
-
-      - name: "Auto regression: pr6-alert-rules-gate"
-        run: |
-          ./scripts/v2/pr6_alert_rules_gate.sh
-
-      - name: "Auto regression: pr7-alert-delivery-gate"
-        run: |
-          ./scripts/v2/pr7_alert_delivery_gate.sh
-
-      - name: "Auto regression: pr7-alert-delivery-gate-concurrency-guard-test"
-        run: |
-          ./scripts/v2/pr7_alert_delivery_gate_concurrency_guard_test.sh
-
-      - name: "Auto regression: pr7-alert-delivery-gate-rc-observability-test"
-        run: |
-          ./scripts/v2/pr7_alert_delivery_gate_rc_observability_test.sh
-
-      - name: "Auto regression: pr7-dead-letter-replay-idempotency-test"
+      - name: PR7 dead-letter replay idempotency regression
         run: |
           ./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh
 
-      - name: "Auto regression: pr7-global-retry-budget-storm-test"
+      - name: PR7 global retry budget storm regression
         run: |
           ./scripts/v2/pr7_global_retry_budget_storm_test.sh
 
-      - name: "Auto regression: pr7-partial-success-route-test"
+      - name: PR7 partial-success routing regression
         run: |
           ./scripts/v2/pr7_partial_success_route_test.sh
 
-      - name: "Auto regression: pr7-quiet-hours-status-alert-level-mismatch-test"
+      - name: PR7 status/alert-level consistency regression
         run: |
           ./scripts/v2/pr7_quiet_hours_status_alert_level_mismatch_test.sh
 
-      - name: "Auto regression: pr7-quiet-hours-warn-escalation-bypass-test"
+      - name: PR7 quiet-hours escalation ordering regression
         run: |
           ./scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh
 
-      - name: "Auto regression: pr7-topn-summary-gate"
+      - name: PR7 invalid quiet-hours configuration regression
         run: |
-          ./scripts/v2/pr7_topn_summary_gate.sh
+          ./scripts/v2/pr7_invalid_quiet_hours_config_test.sh
 
-      - name: "Auto regression: rpc-query-hardcap-enforcement-test"
-        run: |
-          ./scripts/v2/rpc_query_hardcap_enforcement_test.sh
-
-      - name: "Challenge regression: pr4-challenge-fundflow-audit-gate"
-        run: |
-          ./scripts/v2/pr4_challenge_fundflow_audit_gate.sh
-
-      - name: "Challenge regression: pr7-delivery-e2e-gate"
+      - name: PR7 delivery dead-letter replay E2E regression
         run: |
           ./scripts/v2/pr7_delivery_e2e_gate.sh
 
-      - name: "Backlog regression: pouw-commit-timeout-migration-test"
-        run: |
-          ./scripts/v2/pouw_commit_timeout_migration_test.sh
-
-      - name: "Backlog regression: pouw-challenge-timeout-migration-test"
-        run: |
-          ./scripts/v2/pouw_challenge_timeout_migration_test.sh
-
-      - name: "Backlog regression: v1-proof-registry-contract-gate"
-        run: |
-          ./scripts/v2/v1_proof_registry_contract_gate.sh
-
-      - name: "Backlog regression: worker-replay-guard-test"
-        run: |
-          ./scripts/v2/worker_replay_guard_test.sh
-
-      - name: "Backlog regression: worker-resume-no-duplicate-test"
-        run: |
-          ./scripts/v2/worker_resume_no_duplicate_test.sh
-
-      - name: "Auto regression: auto-iterate-task-add-json-escape-regression-gate"
-        run: |
-          ./scripts/v2/auto_iterate_task_add_json_escape_regression_gate.sh
-
-      - name: "Auto regression: auto-iterate-task-add-pr5-skip-regression-gate"
-        run: |
-          ./scripts/v2/auto_iterate_task_add_pr5_skip_regression_gate.sh
-
-      - name: "Auto regression: auto-iterate-task-add-pr6-missing-event-log-gate"
-        run: |
-          ./scripts/v2/auto_iterate_task_add_pr6_missing_event_log_gate.sh
-
-      - name: "Auto regression: auto-iterate-task-add-quickcheck-step"
-        run: |
-          ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh
-
-      - name: "Auto regression: challenge-bond-enforcement-test"
-        run: |
-          ./scripts/v2/challenge_bond_enforcement_test.sh
-
-      - name: "Auto regression: dev-stack-down"
-        run: |
-          ./scripts/v2/dev_stack_down.sh
-
-      - name: "Auto regression: dev-stack-up"
-        run: |
-          ./scripts/v2/dev_stack_up.sh
-
-      - name: "Auto regression: ecosystem-alpha-check"
-        run: |
-          ./scripts/v2/ecosystem_alpha_check.sh
-
-      - name: "Auto regression: ecosystem-examples-smoke"
-        run: |
-          ./scripts/v2/ecosystem_examples_smoke.sh
-
-      - name: "Auto regression: ecosystem-feedback-add"
-        run: |
-          ./scripts/v2/ecosystem_feedback_add.sh
-
-      - name: "Auto regression: emergency-pause-drill"
-        run: |
-          ./scripts/v2/emergency_pause_drill.sh
-
-      - name: "Auto regression: explorer-service-down"
-        run: |
-          ./scripts/v2/explorer_service_down.sh
-
-      - name: "Auto regression: explorer-service-up"
-        run: |
-          ./scripts/v2/explorer_service_up.sh
-
-      - name: "Auto regression: faucet-service-down"
-        run: |
-          ./scripts/v2/faucet_service_down.sh
-
-      - name: "Auto regression: faucet-service-up"
-        run: |
-          ./scripts/v2/faucet_service_up.sh
-
-      - name: "Auto regression: generate-monthly-benchmark-report"
-        run: |
-          ./scripts/v2/generate_monthly_benchmark_report.sh
-
-      - name: "Auto regression: gov-mvp-simulation"
-        run: |
-          ./scripts/v2/gov_mvp_simulation.sh
-
-      - name: "Auto regression: p11-partial-success-metric-consistency-test"
+      - name: P11 partial-success metric consistency regression
         run: |
           ./scripts/v2/p11_partial_success_metric_consistency_test.sh
 
-      - name: "Auto regression: p11-policy-promote"
-        run: |
-          ./scripts/v2/p11_policy_promote.sh
-
-      - name: "Auto regression: p11-policy-promote-approval-bypass-test"
+      - name: P11 promotion approval-bypass regression
         run: |
           ./scripts/v2/p11_policy_promote_approval_bypass_test.sh
 
-      - name: "Auto regression: p11-policy-promote-gate"
-        run: |
-          ./scripts/v2/p11_policy_promote_gate.sh
-
-      - name: "Auto regression: p11-policy-rollback-guard"
-        run: |
-          ./scripts/v2/p11_policy_rollback_guard.sh
-
-      - name: "Auto regression: p11-policy-rollback-guard-rejected-attempts0-test"
+      - name: P11 rollback rejected-attempt accounting regression
         run: |
           ./scripts/v2/p11_policy_rollback_guard_rejected_attempts0_test.sh
 
-      - name: "Auto regression: p11-policy-rollback-guard-window-rate-test"
+      - name: P11 rollback window-rate regression
         run: |
           ./scripts/v2/p11_policy_rollback_guard_window_rate_test.sh
 
-      - name: "Auto regression: post-vote-verification"
-        run: |
-          ./scripts/v2/post_vote_verification.sh
-
-      - name: "Auto regression: v1-proof-backend-ci-gate"
-        run: |
-          ./scripts/v2/v1_proof_backend_ci_gate_regression_test.sh
-
-      - name: "Auto regression: pr9-apply-thresholds-dry-run"
-        run: |
-          ./scripts/v2/pr9_apply_thresholds_dry_run.sh
-
-      - name: "Auto regression: pr9-rollback-thresholds"
-        run: |
-          ./scripts/v2/pr9_rollback_thresholds.sh
-
-      - name: "Auto regression: product-layer-smoke"
-        run: |
-          ./scripts/v2/product_layer_smoke.sh
-
-      - name: "Auto regression: rpc-service-down"
-        run: |
-          ./scripts/v2/rpc_service_down.sh
-
-      - name: "Auto regression: rpc-service-up"
-        run: |
-          ./scripts/v2/rpc_service_up.sh
-
-      - name: "Auto regression: run-p1-integration-gate"
-        run: |
-          ./scripts/v2/run_p1_integration_gate.sh
-
-      - name: "Regression: run-p1-integration-gate invokes lane XI gates (x2/i2/m2)"
+      - name: P1 integration lane-XI invocation regression
         run: |
           ./scripts/v2/run_p1_integration_gate_lane_xi_invocation_test.sh
 
-      - name: "Auto regression: run-reliability-soak"
+      - name: V1 proof backend gate fail-closed regression
         run: |
-          ./scripts/v2/run_reliability_soak.sh
+          ./scripts/v2/v1_proof_backend_ci_gate_regression_test.sh
 
-      - name: "Auto regression: run-worker-receipt-gates"
+      - name: Worker / active PoCO CLI workflow-boundary regression
         run: |
-          ./scripts/v2/run_worker_receipt_gates.sh
+          ./scripts/v2/worker_poco_cli_cutover_workflow_guard_test.sh
 
-      - name: "Auto regression: run-worker-receipt-gates-real-cli"
+      - name: Legacy external CLI readiness parser fail-closed regression
         run: |
-          ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+          ./scripts/v2/legacy_external_cli_readiness_parser_fail_closed_test.sh
 
-      - name: "Auto regression: soak-chunk"
+      - name: Legacy quick-check injector fail-closed regression
         run: |
-          ./scripts/v2/soak_chunk.sh
+          ./scripts/v2/auto_iterate_task_add_quickcheck_step_fail_closed_test.sh
 
-      - name: "Auto regression: trnm-tx-cli-real-adapter"
+      - name: Governance unchecked-access scope regression
         run: |
-          ./scripts/v2/trnm_tx_cli_real_adapter.sh
+          ./scripts/v2/check_unchecked_gov_usage_scope_test.sh
 
-      - name: "Auto regression: trnm-tx-cli-real-adapter.template"
-        run: |
-          ./scripts/v2/trnm_tx_cli_real_adapter.template.sh
-
-      - name: "Auto regression: trnm-tx-cli-wrapper"
-        run: |
-          ./scripts/v2/trnm_tx_cli_wrapper.sh
-
-      - name: "Auto regression: worker-agent-e2e-demo"
-        run: |
-          ./scripts/v2/worker_agent_e2e_demo.sh
-
-      - name: "Auto regression: worker-agent-full-loop"
-        run: |
-          ./scripts/v2/worker_agent_full_loop.sh
-
-      - name: "Auto regression: worker-agent-mining-onboard"
-        run: |
-          ./scripts/v2/worker_agent_mining_onboard.sh
-
-      - name: "Auto regression: worker-agent-multi-onboard"
-        run: |
-          ./scripts/v2/worker_agent_multi_onboard.sh
-
-      - name: "Auto regression: worker-agent-onboard-mvp"
-        run: |
-          ./scripts/v2/worker_agent_onboard_mvp.sh
-
-      - name: "Auto regression: worker-agent-verify-with-rpc"
-        run: |
-          ./scripts/v2/worker_agent_verify_with_rpc.sh
-
-      - name: "Auto regression: worker-failed-receipt-test"
-        run: |
-          ./scripts/v2/worker_failed_receipt_test.sh
-
-      - name: "Auto regression: worker-real-cli-fake-wrapper-block-test"
-        run: |
-          ./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh
-
-      - name: "Auto regression: worker-real-cli-readiness"
-        run: |
-          ./scripts/v2/worker_real_cli_readiness.sh
-
-      - name: "Auto regression: worker-retry-nonce-boundary-test"
-        run: |
-          ./scripts/v2/worker_retry_nonce_boundary_test.sh
-
-      - name: "Auto regression: run-tokenomics-r1-r14-regression-gate"
-        run: |
-          ./scripts/v2/run_tokenomics_r1_r14_regression_gate.sh
-
-      - name: "Auto regression: check-unchecked-gov-usage"
-        run: |
-          ./scripts/v2/check_unchecked_gov_usage.sh
-
-      - name: "Auto regression: x1-relay-heartbeat-smoke"
-        run: |
-          ./scripts/v2/x1_relay_heartbeat_smoke.sh
-
-      - name: "Auto regression: x2-settlement-contract-gate"
-        run: |
-          ./scripts/v2/x2_settlement_contract_gate.sh
-
-      - name: "Auto regression: i2-token-lifecycle-gate"
-        run: |
-          ./scripts/v2/i2_token_lifecycle_gate.sh
-
-      - name: "Auto regression: mv2-receipt-contract-freeze-doc-gate"
-        run: |
-          ./scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh
-
-      - name: "Auto regression: mv2-receipt-contract-freeze-doc-gate-regression-test"
-        run: |
-          ./scripts/v2/mv2_receipt_contract_freeze_doc_gate_regression_test.sh
-
-      - name: "Auto regression: e2-audit-report-generator-reject-schema-suffix-punct-test"
+      - name: E2 audit schema suffix punctuation regression
         run: |
           ./scripts/v2/e2_audit_report_generator_reject_schema_suffix_punct_test.sh
 
-      - name: "Auto regression: e3-enterprise-runbook-required-sections-test"
+      - name: E3 enterprise runbook required-sections regression
         run: |
           ./scripts/v2/e3_enterprise_runbook_required_sections_test.sh
 
-      - name: "Auto regression: e3-enterprise-runbook-operator-id-template-test"
+      - name: E3 enterprise runbook operator-id template regression
         run: |
           ./scripts/v2/e3_enterprise_runbook_operator_id_template_test.sh
 
-      - name: "Auto regression: e3-enterprise-runbook-root-cause-tag-format-test"
+      - name: E3 enterprise runbook root-cause tag regression
         run: |
           ./scripts/v2/e3_enterprise_runbook_root_cause_tag_format_test.sh
 
-      - name: "Auto regression: e3-enterprise-runbook-audit-timestamp-determinism-test"
+      - name: E3 enterprise runbook audit timestamp regression
         run: |
           ./scripts/v2/e3_enterprise_runbook_audit_timestamp_determinism_test.sh
 
-      - name: "Auto regression: e3-enterprise-runbook-rollback-request-id-anchor-test"
+      - name: E3 enterprise runbook rollback request-id regression
         run: |
           ./scripts/v2/e3_enterprise_runbook_rollback_request_id_anchor_test.sh
 
-      - name: "Auto regression: e3-enterprise-runbook-replay-deterministic-env-prefix-test"
+      - name: E3 enterprise runbook replay environment regression
         run: |
           ./scripts/v2/e3_enterprise_runbook_replay_deterministic_env_prefix_test.sh
 
-      - name: "Auto regression: e3-enterprise-runbook-deterministic-env-prefix-test"
+      - name: E3 enterprise runbook environment regression
         run: |
           ./scripts/v2/e3_enterprise_runbook_deterministic_env_prefix_test.sh
 
-      - name: "Auto regression: e3-enterprise-onboarding-runbook-rollback-contract-test"
+      - name: E3 enterprise onboarding rollback contract regression
         run: |
           ./scripts/v2/e3_enterprise_onboarding_runbook_rollback_contract_test.sh
 
-      - name: "Auto regression: trnm-gate-quick-check-deterministic-env-guard-test"
+      - name: Quick-check deterministic environment self-guard
         run: |
           ./scripts/v2/trnm_gate_quick_check_deterministic_env_guard_test.sh
 
-      - name: "Auto regression: workflow-script-refs-python-coverage-guard-test"
+      - name: Workflow script refs Python coverage regression
         run: |
           ./scripts/v2/workflow_script_refs_python_coverage_guard_test.sh
 
-      - name: "Auto regression: workflow-script-refs-trillionnium-coverage-guard-test"
+      - name: Workflow script refs trillionnium coverage regression
         run: |
           ./scripts/v2/workflow_script_refs_trillionnium_coverage_guard_test.sh
 
-      - name: "Auto regression: workflow-script-refs-relative-scripts-coverage-guard-test"
+      - name: Workflow script refs relative scripts coverage regression
         run: |
           ./scripts/v2/workflow_script_refs_relative_scripts_coverage_guard_test.sh
 
-      - name: "Auto regression: workflow-script-refs-yaml-coverage-guard-test"
+      - name: Workflow script refs YAML coverage regression
         run: |
           ./scripts/v2/workflow_script_refs_yaml_coverage_guard_test.sh
 
-      - name: "Auto regression: workflow-script-refs-summary-path-guard-test"
-        run: |
-          ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
-
-      - name: "Auto regression: workflow-script-refs-missing-workflow-root-guard-test"
+      - name: Workflow script refs missing-root regression
         run: |
           ./scripts/v2/workflow_script_refs_missing_workflow_root_guard_test.sh
 
-      - name: "Auto regression: workflow-script-refs-invalid-strict-mode-guard-test"
+      - name: Workflow script refs invalid strict-mode regression
         run: |
           ./scripts/v2/workflow_script_refs_invalid_strict_mode_guard_test.sh
 
-      - name: "Auto regression: workflow-script-refs-non-exec-strict-mode-guard-test"
+      - name: Workflow script refs non-executable strict-mode regression
         run: |
           ./scripts/v2/workflow_script_refs_non_exec_strict_mode_guard_test.sh
 
-      - name: "Auto regression: trnm-merge-gates-deterministic-env-guard-test"
+      - name: Merge gates deterministic environment regression
         run: |
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
 
-      - name: "Auto regression: trnm-merge-gates-paths-coverage-guard-test"
+      - name: Merge gates path coverage regression
         run: |
           ./scripts/v2/trnm_merge_gates_paths_coverage_guard_test.sh
 
-      - name: "Auto regression: run-local-release-evidence-deterministic-entry-test"
+      - name: Local release evidence deterministic entry regression
         run: |
           ./scripts/v2/run_local_release_evidence_deterministic_entry_test.sh
-
-      - name: "Auto regression: web4-frontend-ci-deterministic-env-guard-test"
-        run: |
-          ./scripts/v2/web4_frontend_ci_deterministic_env_guard_test.sh
-
       - name: Upload quick gate summary
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -850,3 +636,10 @@ jobs:
           name: quick-gate-summary
           path: run/quick-gate/*.json
           if-no-files-found: warn
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

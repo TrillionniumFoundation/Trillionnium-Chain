@@ -27,7 +27,7 @@ use trnm_research_protocol::{AuthorityRole, CanonicalCbor, SignedResearchCommand
 #[command(
     name = "trnm-chain-cli",
     version,
-    about = "TRNM live devnet operator, transaction and receipt verification CLI"
+    about = "TRNM development-only loopback devnet operator, transaction and receipt verification CLI (not a production network client)"
 )]
 struct Args {
     #[command(subcommand)]

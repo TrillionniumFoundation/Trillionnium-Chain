@@ -1,0 +1,25 @@
+[package]
+name = "trnm-native-application"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+lane = "native-application-boundary"
+protocol = "poco-bft-v0"
+native_only = true
+implementation_status = "boundary-scaffold"
+default_node_boundary_owner = true
+node_application_engine_integration = false
+node_process_integration = false
+zero_comet_normal_dependency_closure = true
+legacy_adapter = false
+production_candidate = false
+
+[features]
+default = []
+test-support = []
+
+[dependencies]

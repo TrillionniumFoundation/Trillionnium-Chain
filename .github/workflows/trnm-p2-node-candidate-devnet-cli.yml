@@ -1,0 +1,167 @@
+name: trnm-p2-node-candidate-devnet-cli
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/trnm-p2-node-candidate-devnet-cli.yml'
+      - 'docs/development/**'
+      - 'config/documentation-truth-v1.json'
+      - 'scripts/ci/check_canonical_development_plan.sh'
+      - 'scripts/ci/check_documentation_reference_closure_v1.py'
+      - 'scripts/ci/check_candidate_devnet_clippy_v1.sh'
+      - 'scripts/check_ci_runner_policy.sh'
+      - 'scripts/check_ci_runner_policy_test.sh'
+      - 'trillionnium/crates/trnm-poco-lab-validator/**'
+  push:
+    branches:
+      - main
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - '.github/workflows/trnm-p2-node-candidate-devnet-cli.yml'
+      - 'docs/development/**'
+      - 'config/documentation-truth-v1.json'
+      - 'scripts/ci/check_canonical_development_plan.sh'
+      - 'scripts/ci/check_documentation_reference_closure_v1.py'
+      - 'scripts/ci/check_candidate_devnet_clippy_v1.sh'
+      - 'scripts/check_ci_runner_policy.sh'
+      - 'scripts/check_ci_runner_policy_test.sh'
+      - 'trillionnium/crates/trnm-poco-lab-validator/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-p2-node-candidate-devnet-cli-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  documentation-authority:
+    name: canonical-documentation-authority
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
+      (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+      (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
+      (github.actor == 'github-actions[bot]' &&
+      github.triggering_actor == 'github-actions[bot]' && github.event_name ==
+      'pull_request' && github.event.pull_request.head.repo.full_name ==
+      github.repository && github.event.pull_request.author_association ==
+      'MEMBER' && startsWith(github.head_ref, 'feature/chain-'))) &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 10
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Validate sole Plan and zero stale consumers
+        env:
+          TRNM_DOC_BINDING_MODE: source
+          TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/document-source-binding.json
+        run: |
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+
+  candidate-devnet-cli:
+    name: candidate-devnet-cli
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
+      (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+      (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') ||
+      (github.actor == 'github-actions[bot]' &&
+      github.triggering_actor == 'github-actions[bot]' && github.event_name ==
+      'pull_request' && github.event.pull_request.head.repo.full_name ==
+      github.repository && github.event.pull_request.author_association ==
+      'MEMBER' && startsWith(github.head_ref, 'feature/chain-'))) &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 120
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+
+      - name: Format compile and strict lint
+        run: |
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --all-targets --locked --offline
+          bash scripts/ci/check_candidate_devnet_clippy_v1.sh
+
+      - name: Run candidate devnet regressions
+        run: |
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --lib --locked --offline candidate_devnet
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --test candidate_devnet_cli --locked --offline
+          bash scripts/check_ci_runner_policy_test.sh
+          bash scripts/check_ci_runner_policy.sh --head
+
+      - name: Validate non-promotion and canonical truth
+        run: |
+          grep -q '^candidate_devnet_validator_cli = true$' \
+            trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          grep -q '^candidate_devnet_hsm_authority = false$' \
+            trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          grep -q '^candidate_devnet_production_activation = false$' \
+            trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

@@ -2,8 +2,8 @@ use anyhow::Result;
 
 use crate::query::{render_events_query_summary, render_request_full_query_summary};
 use crate::{
-    cmd::{BalanceQueryResponse, QueryCommand},
-    events_query, hash, request_full_query, resolve_address_for_query, task_query, tpl,
+    cmd::QueryCommand, events_query, missing_backend, parse_balance_query_response,
+    request_full_query, resolve_address_for_query, task_query, tpl, warn_development_only_adapter,
 };
 
 pub(crate) fn handle_query_command(query: QueryCommand) -> Result<()> {
@@ -16,31 +16,19 @@ pub(crate) fn handle_query_command(query: QueryCommand) -> Result<()> {
         } => {
             let addr = resolve_address_for_query(address, name, store)?;
 
-            if let Ok(template) = std::env::var("TRNM_QUERY_BALANCE_CMD") {
-                let mut cmd = template;
-                cmd = tpl(cmd, "address", &addr);
-                cmd = tpl(cmd, "denom", &denom);
-                let raw = crate::run_template_raw(&cmd)?;
-                if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(&raw) {
-                    println!("{}", serde_json::to_string_pretty(&resp)?);
-                } else {
-                    let out = BalanceQueryResponse {
-                        address: addr,
-                        balance: raw.trim().to_string(),
-                        denom,
-                    };
-                    println!("{}", serde_json::to_string_pretty(&out)?);
-                }
-            } else {
-                let seeded = hash(&["balance", &addr, &denom]);
-                let pseudo = u128::from_str_radix(&seeded[..16], 16).unwrap_or(0) % 1_000_000;
-                let out = BalanceQueryResponse {
-                    address: addr,
-                    balance: pseudo.to_string(),
-                    denom,
-                };
-                println!("{}", serde_json::to_string_pretty(&out)?);
-            }
+            let mut cmd = std::env::var("TRNM_QUERY_BALANCE_CMD").map_err(|_| {
+                missing_backend(
+                    "balance query",
+                    "TRNM_QUERY_BALANCE_CMD",
+                    "synthetic balances",
+                )
+            })?;
+            warn_development_only_adapter("balance query");
+            cmd = tpl(cmd, "address", &addr);
+            cmd = tpl(cmd, "denom", &denom);
+            let raw = crate::run_template_raw(&cmd)?;
+            let out = parse_balance_query_response(&raw, &addr, &denom)?;
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
         QueryCommand::Task { task_id } => {
             let out = task_query(task_id)?;

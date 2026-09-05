@@ -12,6 +12,7 @@ fn submit_message_concurrent_same_idempotency_key_deduplicates() {
         let ingress_env = ingress.clone();
         joins.push(thread::spawn(move || {
             Command::new("cargo")
+                .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
                 .args(["run", "-p", "trnm-rpc", "--"])
                 .args([
                     "submit-message",

@@ -8,7 +8,7 @@ use trnm_node::live::validator::{load_validator_config, ValidatorService};
 #[command(
     name = "trnm-chain-validator",
     version,
-    about = "TRNM devnet validator with durable Ed25519 anti-equivocation state"
+    about = "TRNM development-only loopback devnet validator with durable Ed25519 anti-equivocation state"
 )]
 struct Args {
     #[arg(long)]
@@ -21,7 +21,7 @@ fn main() -> Result<()> {
     let address = config.listen_addr;
     let service = Arc::new(ValidatorService::open(config)?);
     println!(
-        "[validator] listening={} public_key_hex={}",
+        "[validator] listening={} public_key_hex={} development_only=true production_ready=false",
         address,
         service.public_key_hex()
     );

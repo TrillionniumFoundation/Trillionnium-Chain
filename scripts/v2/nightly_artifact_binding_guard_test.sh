@@ -30,6 +30,15 @@ for s in required_wf_snippets:
     if s not in wf:
         raise SystemExit(f"[FAIL] missing workflow binding snippet: {s}")
 
+hard_block = wf.split('id: consensus_fault_hard', 1)[1].split('id: consensus_fault_soft', 1)[0]
+soft_block = wf.split('id: consensus_fault_soft', 1)[1].split('name: Append consensus fault matrix', 1)[0]
+for block, output_line, label in [
+    (hard_block, 'echo "hard_report=${hard_report}" >> "$GITHUB_OUTPUT"', 'hard'),
+    (soft_block, 'echo "soft_report=${soft_report}" >> "$GITHUB_OUTPUT"', 'soft'),
+]:
+    if block.index(output_line) >= block.index('./scripts/run_consensus_fault_matrix.sh'):
+        raise SystemExit(f"[FAIL] {label} report output must be published before the matrix can fail")
+
 for forbidden in [
     'ls -1t run/health/consensus-fault-matrix-',
     'ls -1t run/health/nightly-attribution-',

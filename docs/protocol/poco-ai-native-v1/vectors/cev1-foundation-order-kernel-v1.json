@@ -1,0 +1,2552 @@
+{
+  "artifact": "trnm.poco-ai.cev1-foundation-order-kernel.v1.vectors",
+  "artifact_version": 1,
+  "schema_artifact": "trnm.poco-ai.cev1-foundation-order-kernel.v1",
+  "status": {
+    "classification": "candidate_non_normative",
+    "closed_for_listed_types_only": true,
+    "normative_freeze": false,
+    "global_wire_schema_complete": false,
+    "semantic_consistency_proven": false,
+    "implementation_or_activation_evidence": false,
+    "cryptographic_interoperability_evidence": false
+  },
+  "fixtures": {
+    "limits": {
+      "max_consensus_string_bytes": 64,
+      "max_bytes_bytes": 1048576,
+      "max_list_items": 100,
+      "max_nesting": 64,
+      "max_signature_bytes": 64,
+      "max_certificate_signers": 100
+    },
+    "limits_authority": "Order-relevant limits are derived from the vectorized ConsensusParametersV1; max_bytes_bytes uses max_cev1_value_bytes as this closed candidate's outer allocation ceiling.",
+    "expected_context": {
+      "schema_version": 1,
+      "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "chain_id": "trnm-ai-test-1",
+      "protocol_version": 1,
+      "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+    },
+    "source_runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+    "target_runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+    "source_validator_set_descriptor": {
+      "schema_version": 1,
+      "context": {
+        "schema_version": 1,
+        "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "chain_id": "trnm-ai-test-1",
+        "protocol_version": 1,
+        "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "epoch": 7,
+      "definition": {
+        "schema_version": 1,
+        "members": [
+          {
+            "validator_id": "76616c696461746f722d61",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1010101010101010101010101010101010101010101010101010101010101010",
+            "voting_weight": 1,
+            "network_identity_commitment": "2020202020202020202020202020202020202020202020202020202020202020",
+            "safety_signer_policy_hash": "3030303030303030303030303030303030303030303030303030303030303030",
+            "poco_economic_record_hash": "4040404040404040404040404040404040404040404040404040404040404040"
+          },
+          {
+            "validator_id": "76616c696461746f722d62",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1111111111111111111111111111111111111111111111111111111111111111",
+            "voting_weight": 1,
+            "network_identity_commitment": "2121212121212121212121212121212121212121212121212121212121212121",
+            "safety_signer_policy_hash": "3131313131313131313131313131313131313131313131313131313131313131",
+            "poco_economic_record_hash": "4141414141414141414141414141414141414141414141414141414141414141"
+          },
+          {
+            "validator_id": "76616c696461746f722d63",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1212121212121212121212121212121212121212121212121212121212121212",
+            "voting_weight": 1,
+            "network_identity_commitment": "2222222222222222222222222222222222222222222222222222222222222222",
+            "safety_signer_policy_hash": "3232323232323232323232323232323232323232323232323232323232323232",
+            "poco_economic_record_hash": "4242424242424242424242424242424242424242424242424242424242424242"
+          },
+          {
+            "validator_id": "76616c696461746f722d64",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1313131313131313131313131313131313131313131313131313131313131313",
+            "voting_weight": 1,
+            "network_identity_commitment": "2323232323232323232323232323232323232323232323232323232323232323",
+            "safety_signer_policy_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "poco_economic_record_hash": "4343434343434343434343434343434343434343434343434343434343434343"
+          }
+        ],
+        "total_weight": 4,
+        "quorum_threshold": 3
+      }
+    },
+    "source_validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+    "target_validator_set_descriptor": {
+      "schema_version": 1,
+      "context": {
+        "schema_version": 1,
+        "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "chain_id": "trnm-ai-test-1",
+        "protocol_version": 1,
+        "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+      },
+      "epoch": 8,
+      "definition": {
+        "schema_version": 1,
+        "members": [
+          {
+            "validator_id": "76616c696461746f722d61",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1010101010101010101010101010101010101010101010101010101010101010",
+            "voting_weight": 1,
+            "network_identity_commitment": "2020202020202020202020202020202020202020202020202020202020202020",
+            "safety_signer_policy_hash": "3030303030303030303030303030303030303030303030303030303030303030",
+            "poco_economic_record_hash": "4040404040404040404040404040404040404040404040404040404040404040"
+          },
+          {
+            "validator_id": "76616c696461746f722d62",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1111111111111111111111111111111111111111111111111111111111111111",
+            "voting_weight": 1,
+            "network_identity_commitment": "2121212121212121212121212121212121212121212121212121212121212121",
+            "safety_signer_policy_hash": "3131313131313131313131313131313131313131313131313131313131313131",
+            "poco_economic_record_hash": "4141414141414141414141414141414141414141414141414141414141414141"
+          },
+          {
+            "validator_id": "76616c696461746f722d63",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1212121212121212121212121212121212121212121212121212121212121212",
+            "voting_weight": 1,
+            "network_identity_commitment": "2222222222222222222222222222222222222222222222222222222222222222",
+            "safety_signer_policy_hash": "3232323232323232323232323232323232323232323232323232323232323232",
+            "poco_economic_record_hash": "4242424242424242424242424242424242424242424242424242424242424242"
+          },
+          {
+            "validator_id": "76616c696461746f722d64",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1313131313131313131313131313131313131313131313131313131313131313",
+            "voting_weight": 1,
+            "network_identity_commitment": "2323232323232323232323232323232323232323232323232323232323232323",
+            "safety_signer_policy_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "poco_economic_record_hash": "4343434343434343434343434343434343434343434343434343434343434343"
+          }
+        ],
+        "total_weight": 4,
+        "quorum_threshold": 3
+      }
+    },
+    "target_validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+    "validator_set_definition": {
+      "schema_version": 1,
+      "members": [
+        {
+          "validator_id": "76616c696461746f722d61",
+          "consensus_key_scheme": 0,
+          "consensus_public_key": "1010101010101010101010101010101010101010101010101010101010101010",
+          "voting_weight": 1,
+          "network_identity_commitment": "2020202020202020202020202020202020202020202020202020202020202020",
+          "safety_signer_policy_hash": "3030303030303030303030303030303030303030303030303030303030303030",
+          "poco_economic_record_hash": "4040404040404040404040404040404040404040404040404040404040404040"
+        },
+        {
+          "validator_id": "76616c696461746f722d62",
+          "consensus_key_scheme": 0,
+          "consensus_public_key": "1111111111111111111111111111111111111111111111111111111111111111",
+          "voting_weight": 1,
+          "network_identity_commitment": "2121212121212121212121212121212121212121212121212121212121212121",
+          "safety_signer_policy_hash": "3131313131313131313131313131313131313131313131313131313131313131",
+          "poco_economic_record_hash": "4141414141414141414141414141414141414141414141414141414141414141"
+        },
+        {
+          "validator_id": "76616c696461746f722d63",
+          "consensus_key_scheme": 0,
+          "consensus_public_key": "1212121212121212121212121212121212121212121212121212121212121212",
+          "voting_weight": 1,
+          "network_identity_commitment": "2222222222222222222222222222222222222222222222222222222222222222",
+          "safety_signer_policy_hash": "3232323232323232323232323232323232323232323232323232323232323232",
+          "poco_economic_record_hash": "4242424242424242424242424242424242424242424242424242424242424242"
+        },
+        {
+          "validator_id": "76616c696461746f722d64",
+          "consensus_key_scheme": 0,
+          "consensus_public_key": "1313131313131313131313131313131313131313131313131313131313131313",
+          "voting_weight": 1,
+          "network_identity_commitment": "2323232323232323232323232323232323232323232323232323232323232323",
+          "safety_signer_policy_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+          "poco_economic_record_hash": "4343434343434343434343434343434343434343434343434343434343434343"
+        }
+      ],
+      "total_weight": 4,
+      "quorum_threshold": 3
+    },
+    "consensus_parameters": {
+      "schema_version": 1,
+      "quorum_numerator": 2,
+      "quorum_denominator": 3,
+      "finality_chain_length": 3,
+      "execute_coordination_before_vote": true,
+      "max_validators": 100,
+      "max_consensus_string_bytes": 64,
+      "max_cev1_nesting": 64,
+      "max_cev1_value_bytes": 1048576,
+      "max_signature_bytes": 64,
+      "max_certificate_signers": 100,
+      "max_epoch": 18446744073709551615,
+      "max_view": 18446744073709551614,
+      "max_height": 18446744073709551614,
+      "max_retained_views": 1024,
+      "epoch_length_blocks": 4,
+      "checkpoint_offset_blocks": 1,
+      "seal_1_offset_blocks": 2,
+      "seal_2_offset_blocks": 3,
+      "max_block_ordered_bytes": 1048576,
+      "max_batch_refs_per_block": 128,
+      "max_protocol_objects_per_block": 128,
+      "max_transactions_per_batch": 4096,
+      "max_transaction_bytes": 65536,
+      "max_block_execution_units": 1000000,
+      "base_view_timeout_ms": 500,
+      "maximum_view_timeout_ms": 30000,
+      "timeout_multiplier_numerator": 3,
+      "timeout_multiplier_denominator": 2,
+      "max_evidence_items_per_block": 64,
+      "max_evidence_bytes_per_block": 262144
+    },
+    "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+    "signature_note": "64-byte deterministic placeholders exercise canonical carriers and signing roots only; no Ed25519 verification is claimed."
+  },
+  "positive_cases": [
+    {
+      "case_id": "u16_little_endian_0102",
+      "type": "u16",
+      "value": 258,
+      "cev1_hex": "0201"
+    },
+    {
+      "case_id": "u128_max",
+      "type": "u128",
+      "value": 340282366920938463463374607431768211455,
+      "cev1_hex": "ffffffffffffffffffffffffffffffff"
+    },
+    {
+      "case_id": "bytes_000102",
+      "type": "Bytes",
+      "value": "000102",
+      "cev1_hex": "03000000000102"
+    },
+    {
+      "case_id": "consensus_string",
+      "type": "ConsensusString",
+      "value": "trnm-ai-test-1",
+      "cev1_hex": "0e00000074726e6d2d61692d746573742d31"
+    },
+    {
+      "case_id": "protocol_context",
+      "type": "ProtocolContextV1",
+      "value": {
+        "schema_version": 1,
+        "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "chain_id": "trnm-ai-test-1",
+        "protocol_version": 1,
+        "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "cev1_hex": "010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "case_id": "validator_set_definition",
+      "type": "ValidatorSetDefinitionV1",
+      "value": {
+        "schema_version": 1,
+        "members": [
+          {
+            "validator_id": "76616c696461746f722d61",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1010101010101010101010101010101010101010101010101010101010101010",
+            "voting_weight": 1,
+            "network_identity_commitment": "2020202020202020202020202020202020202020202020202020202020202020",
+            "safety_signer_policy_hash": "3030303030303030303030303030303030303030303030303030303030303030",
+            "poco_economic_record_hash": "4040404040404040404040404040404040404040404040404040404040404040"
+          },
+          {
+            "validator_id": "76616c696461746f722d62",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1111111111111111111111111111111111111111111111111111111111111111",
+            "voting_weight": 1,
+            "network_identity_commitment": "2121212121212121212121212121212121212121212121212121212121212121",
+            "safety_signer_policy_hash": "3131313131313131313131313131313131313131313131313131313131313131",
+            "poco_economic_record_hash": "4141414141414141414141414141414141414141414141414141414141414141"
+          },
+          {
+            "validator_id": "76616c696461746f722d63",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1212121212121212121212121212121212121212121212121212121212121212",
+            "voting_weight": 1,
+            "network_identity_commitment": "2222222222222222222222222222222222222222222222222222222222222222",
+            "safety_signer_policy_hash": "3232323232323232323232323232323232323232323232323232323232323232",
+            "poco_economic_record_hash": "4242424242424242424242424242424242424242424242424242424242424242"
+          },
+          {
+            "validator_id": "76616c696461746f722d64",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1313131313131313131313131313131313131313131313131313131313131313",
+            "voting_weight": 1,
+            "network_identity_commitment": "2323232323232323232323232323232323232323232323232323232323232323",
+            "safety_signer_policy_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "poco_economic_record_hash": "4343434343434343434343434343434343434343434343434343434343434343"
+          }
+        ],
+        "total_weight": 4,
+        "quorum_threshold": 3
+      },
+      "cev1_hex": "0100040000000b00000076616c696461746f722d610000200000001010101010101010101010101010101010101010101010101010101010101010010000000000000000000000000000002020202020202020202020202020202020202020202020202020202020202020303030303030303030303030303030303030303030303030303030303030303040404040404040404040404040404040404040404040404040404040404040400b00000076616c696461746f722d620000200000001111111111111111111111111111111111111111111111111111111111111111010000000000000000000000000000002121212121212121212121212121212121212121212121212121212121212121313131313131313131313131313131313131313131313131313131313131313141414141414141414141414141414141414141414141414141414141414141410b00000076616c696461746f722d630000200000001212121212121212121212121212121212121212121212121212121212121212010000000000000000000000000000002222222222222222222222222222222222222222222222222222222222222222323232323232323232323232323232323232323232323232323232323232323242424242424242424242424242424242424242424242424242424242424242420b00000076616c696461746f722d640000200000001313131313131313131313131313131313131313131313131313131313131313010000000000000000000000000000002323232323232323232323232323232323232323232323232323232323232323333333333333333333333333333333333333333333333333333333333333333343434343434343434343434343434343434343434343434343434343434343430400000000000000000000000000000003000000000000000000000000000000",
+      "digests": [
+        {
+          "label": "validator_set_definition_hash",
+          "domain": "trnm.poco-ai.validator-set-definition.v1",
+          "digest_hex": "dd4c184c0e8b4b8f0a94ae9c656d4525e6e4b21d049ad9a3539683ed08aa4631"
+        }
+      ]
+    },
+    {
+      "case_id": "validator_set_descriptor",
+      "type": "ValidatorSetDescriptorV1",
+      "value": {
+        "schema_version": 1,
+        "context": {
+          "schema_version": 1,
+          "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "chain_id": "trnm-ai-test-1",
+          "protocol_version": 1,
+          "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "epoch": 7,
+        "definition": {
+          "schema_version": 1,
+          "members": [
+            {
+              "validator_id": "76616c696461746f722d61",
+              "consensus_key_scheme": 0,
+              "consensus_public_key": "1010101010101010101010101010101010101010101010101010101010101010",
+              "voting_weight": 1,
+              "network_identity_commitment": "2020202020202020202020202020202020202020202020202020202020202020",
+              "safety_signer_policy_hash": "3030303030303030303030303030303030303030303030303030303030303030",
+              "poco_economic_record_hash": "4040404040404040404040404040404040404040404040404040404040404040"
+            },
+            {
+              "validator_id": "76616c696461746f722d62",
+              "consensus_key_scheme": 0,
+              "consensus_public_key": "1111111111111111111111111111111111111111111111111111111111111111",
+              "voting_weight": 1,
+              "network_identity_commitment": "2121212121212121212121212121212121212121212121212121212121212121",
+              "safety_signer_policy_hash": "3131313131313131313131313131313131313131313131313131313131313131",
+              "poco_economic_record_hash": "4141414141414141414141414141414141414141414141414141414141414141"
+            },
+            {
+              "validator_id": "76616c696461746f722d63",
+              "consensus_key_scheme": 0,
+              "consensus_public_key": "1212121212121212121212121212121212121212121212121212121212121212",
+              "voting_weight": 1,
+              "network_identity_commitment": "2222222222222222222222222222222222222222222222222222222222222222",
+              "safety_signer_policy_hash": "3232323232323232323232323232323232323232323232323232323232323232",
+              "poco_economic_record_hash": "4242424242424242424242424242424242424242424242424242424242424242"
+            },
+            {
+              "validator_id": "76616c696461746f722d64",
+              "consensus_key_scheme": 0,
+              "consensus_public_key": "1313131313131313131313131313131313131313131313131313131313131313",
+              "voting_weight": 1,
+              "network_identity_commitment": "2323232323232323232323232323232323232323232323232323232323232323",
+              "safety_signer_policy_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+              "poco_economic_record_hash": "4343434343434343434343434343434343434343434343434343434343434343"
+            }
+          ],
+          "total_weight": 4,
+          "quorum_threshold": 3
+        }
+      },
+      "cev1_hex": "0100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222207000000000000000100040000000b00000076616c696461746f722d610000200000001010101010101010101010101010101010101010101010101010101010101010010000000000000000000000000000002020202020202020202020202020202020202020202020202020202020202020303030303030303030303030303030303030303030303030303030303030303040404040404040404040404040404040404040404040404040404040404040400b00000076616c696461746f722d620000200000001111111111111111111111111111111111111111111111111111111111111111010000000000000000000000000000002121212121212121212121212121212121212121212121212121212121212121313131313131313131313131313131313131313131313131313131313131313141414141414141414141414141414141414141414141414141414141414141410b00000076616c696461746f722d630000200000001212121212121212121212121212121212121212121212121212121212121212010000000000000000000000000000002222222222222222222222222222222222222222222222222222222222222222323232323232323232323232323232323232323232323232323232323232323242424242424242424242424242424242424242424242424242424242424242420b00000076616c696461746f722d640000200000001313131313131313131313131313131313131313131313131313131313131313010000000000000000000000000000002323232323232323232323232323232323232323232323232323232323232323333333333333333333333333333333333333333333333333333333333333333343434343434343434343434343434343434343434343434343434343434343430400000000000000000000000000000003000000000000000000000000000000",
+      "digests": [
+        {
+          "label": "validator_set_hash",
+          "domain": "trnm.poco-ai.validator-set.v1",
+          "digest_hex": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e"
+        }
+      ]
+    },
+    {
+      "case_id": "consensus_parameters",
+      "type": "ConsensusParametersV1",
+      "value": {
+        "schema_version": 1,
+        "quorum_numerator": 2,
+        "quorum_denominator": 3,
+        "finality_chain_length": 3,
+        "execute_coordination_before_vote": true,
+        "max_validators": 100,
+        "max_consensus_string_bytes": 64,
+        "max_cev1_nesting": 64,
+        "max_cev1_value_bytes": 1048576,
+        "max_signature_bytes": 64,
+        "max_certificate_signers": 100,
+        "max_epoch": 18446744073709551615,
+        "max_view": 18446744073709551614,
+        "max_height": 18446744073709551614,
+        "max_retained_views": 1024,
+        "epoch_length_blocks": 4,
+        "checkpoint_offset_blocks": 1,
+        "seal_1_offset_blocks": 2,
+        "seal_2_offset_blocks": 3,
+        "max_block_ordered_bytes": 1048576,
+        "max_batch_refs_per_block": 128,
+        "max_protocol_objects_per_block": 128,
+        "max_transactions_per_batch": 4096,
+        "max_transaction_bytes": 65536,
+        "max_block_execution_units": 1000000,
+        "base_view_timeout_ms": 500,
+        "maximum_view_timeout_ms": 30000,
+        "timeout_multiplier_numerator": 3,
+        "timeout_multiplier_denominator": 2,
+        "max_evidence_items_per_block": 64,
+        "max_evidence_bytes_per_block": 262144
+      },
+      "cev1_hex": "01000200030003016400000040000000400000001000000000004000000064000000fffffffffffffffffefffffffffffffffeffffffffffffff0004000004000000000000000100000000000000020000000000000003000000000000000000100000000000800000008000000000100000000001000000000040420f00000000000000000000000000f40100000000000030750000000000000300000002000000400000000000040000000000",
+      "digests": [
+        {
+          "label": "consensus_parameters_hash",
+          "domain": "trnm.poco-ai.consensus-parameters.v1",
+          "digest_hex": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7"
+        }
+      ]
+    },
+    {
+      "case_id": "merkle_leaf_0",
+      "type": "MerkleLeafBodyV1",
+      "value": {
+        "root_kind": 0,
+        "index": 0,
+        "item_kind": 15,
+        "item_id": "6161616161616161616161616161616161616161616161616161616161616161",
+        "item_commitment": "7171717171717171717171717171717171717171717171717171717171717171"
+      },
+      "cev1_hex": "0000000000000f0061616161616161616161616161616161616161616161616161616161616161617171717171717171717171717171717171717171717171717171717171717171",
+      "digests": [
+        {
+          "label": "leaf_hash",
+          "domain": "trnm.poco-ai.merkle-leaf.v1",
+          "digest_hex": "dbacc6a62832f662bc3fa7ca9d67872694da9a8b3d6819fce56bac85d61e69d8"
+        }
+      ]
+    },
+    {
+      "case_id": "merkle_leaf_1",
+      "type": "MerkleLeafBodyV1",
+      "value": {
+        "root_kind": 0,
+        "index": 1,
+        "item_kind": 15,
+        "item_id": "6262626262626262626262626262626262626262626262626262626262626262",
+        "item_commitment": "7272727272727272727272727272727272727272727272727272727272727272"
+      },
+      "cev1_hex": "0000010000000f0062626262626262626262626262626262626262626262626262626262626262627272727272727272727272727272727272727272727272727272727272727272",
+      "digests": [
+        {
+          "label": "leaf_hash",
+          "domain": "trnm.poco-ai.merkle-leaf.v1",
+          "digest_hex": "a88db37f12278e8871ad599ad5f2355d15448026f1dfa0343cb9fc29a667fef6"
+        }
+      ]
+    },
+    {
+      "case_id": "merkle_node_level_0",
+      "type": "MerkleNodeBodyV1",
+      "value": {
+        "root_kind": 0,
+        "level": 0,
+        "left": "dbacc6a62832f662bc3fa7ca9d67872694da9a8b3d6819fce56bac85d61e69d8",
+        "right": "a88db37f12278e8871ad599ad5f2355d15448026f1dfa0343cb9fc29a667fef6"
+      },
+      "cev1_hex": "000000000000dbacc6a62832f662bc3fa7ca9d67872694da9a8b3d6819fce56bac85d61e69d8a88db37f12278e8871ad599ad5f2355d15448026f1dfa0343cb9fc29a667fef6",
+      "digests": [
+        {
+          "label": "node_hash",
+          "domain": "trnm.poco-ai.merkle-node.v1",
+          "digest_hex": "f8da0a4727b98697fe522ab5cd350491ce2bfd0cf9561039f9913aafa6f78807"
+        }
+      ]
+    },
+    {
+      "case_id": "merkle_root_two_items",
+      "type": "MerkleListRootBodyV1",
+      "value": {
+        "root_kind": 0,
+        "item_count": 2,
+        "tree_root": "f8da0a4727b98697fe522ab5cd350491ce2bfd0cf9561039f9913aafa6f78807"
+      },
+      "cev1_hex": "00000200000001f8da0a4727b98697fe522ab5cd350491ce2bfd0cf9561039f9913aafa6f78807",
+      "digests": [
+        {
+          "label": "list_root",
+          "domain": "trnm.poco-ai.merkle-list-root.v1",
+          "digest_hex": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2"
+        }
+      ]
+    },
+    {
+      "case_id": "merkle_root_empty",
+      "type": "MerkleListRootBodyV1",
+      "value": {
+        "root_kind": 0,
+        "item_count": 0,
+        "tree_root": null
+      },
+      "cev1_hex": "00000000000000",
+      "digests": [
+        {
+          "label": "list_root",
+          "domain": "trnm.poco-ai.merkle-list-root.v1",
+          "digest_hex": "ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753"
+        }
+      ]
+    },
+    {
+      "case_id": "ordinary_parent",
+      "type": "ParentBlockRefV1",
+      "value": {
+        "variant": "V1Block",
+        "value": {
+          "block_id": "8181818181818181818181818181818181818181818181818181818181818181"
+        }
+      },
+      "cev1_hex": "018181818181818181818181818181818181818181818181818181818181818181"
+    },
+    {
+      "case_id": "ordinary_block_header",
+      "type": "BlockHeaderV1",
+      "value": {
+        "schema_version": 1,
+        "context": {
+          "schema_version": 1,
+          "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "chain_id": "trnm-ai-test-1",
+          "protocol_version": 1,
+          "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "epoch": 7,
+        "view": 8,
+        "height": 42,
+        "block_kind": {
+          "variant": "Ordinary"
+        },
+        "parent": {
+          "variant": "V1Block",
+          "value": {
+            "block_id": "8181818181818181818181818181818181818181818181818181818181818181"
+          }
+        },
+        "proposer_id": "76616c696461746f722d61",
+        "epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+        "justify_qc_id": "8383838383838383838383838383838383838383838383838383838383838383",
+        "timeout_certificate_id": null,
+        "batch_refs_root": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2",
+        "protocol_objects_root": "8484848484848484848484848484848484848484848484848484848484848484",
+        "post_state_root": "8585858585858585858585858585858585858585858585858585858585858585",
+        "transaction_execution_receipts_root": "8686868686868686868686868686868686868686868686868686868686868686",
+        "evidence_root": "8787878787878787878787878787878787878787878787878787878787878787",
+        "consumption_rollups_root": "8888888888888888888888888888888888888888888888888888888888888888",
+        "settlement_root": "8989898989898989898989898989898989898989898989898989898989898989",
+        "resource_usage_root": "8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a",
+        "next_epoch_descriptor_id": null,
+        "upgrade_plan_id": null,
+        "epoch_handoff_id": null
+      },
+      "cev1_hex": "0100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222070000000000000008000000000000002a00000000000000010181818181818181818181818181818181818181818181818181818181818181810b00000076616c696461746f722d61828282828282828282828282828282828282828282828282828282828282828201838383838383838383838383838383838383838383838383838383838383838300bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a28484848484848484848484848484848484848484848484848484848484848484858585858585858585858585858585858585858585858585858585858585858586868686868686868686868686868686868686868686868686868686868686868787878787878787878787878787878787878787878787878787878787878787888888888888888888888888888888888888888888888888888888888888888889898989898989898989898989898989898989898989898989898989898989898a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a000000",
+      "digests": [
+        {
+          "label": "block_id",
+          "domain": "trnm.poco-ai.order-block.v1",
+          "digest_hex": "7af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b"
+        }
+      ]
+    },
+    {
+      "case_id": "vote_statement",
+      "type": "VoteStatementBodyV1",
+      "value": {
+        "schema_version": 1,
+        "consensus_context": {
+          "schema_version": 1,
+          "context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+          "epoch": 7,
+          "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+          "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "view": 8,
+          "message_kind": 1
+        },
+        "block_id": "7af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b",
+        "height": 42,
+        "epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+        "post_state_root": "8585858585858585858585858585858585858585858585858585858585858585",
+        "batch_refs_root": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2",
+        "transaction_execution_receipts_root": "8686868686868686868686868686868686868686868686868686868686868686"
+      },
+      "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70800000000000000017af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b2a0000000000000082828282828282828282828282828282828282828282828282828282828282828585858585858585858585858585858585858585858585858585858585858585bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a28686868686868686868686868686868686868686868686868686868686868686",
+      "digests": [
+        {
+          "label": "vote_signature_root",
+          "domain": "trnm.poco-ai.order-vote-signature.v1",
+          "digest_hex": "3e53c9a6814efbaf587b4833c1444bb9fe7e597efee2493a3ff832e345dea5cd"
+        }
+      ]
+    },
+    {
+      "case_id": "vote_identity_validator_a",
+      "type": "VoteIdentityBodyV1",
+      "value": {
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 8,
+            "message_kind": 1
+          },
+          "block_id": "7af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b",
+          "height": 42,
+          "epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+          "post_state_root": "8585858585858585858585858585858585858585858585858585858585858585",
+          "batch_refs_root": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2",
+          "transaction_execution_receipts_root": "8686868686868686868686868686868686868686868686868686868686868686"
+        },
+        "voter_id": "76616c696461746f722d61"
+      },
+      "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70800000000000000017af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b2a0000000000000082828282828282828282828282828282828282828282828282828282828282828585858585858585858585858585858585858585858585858585858585858585bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a286868686868686868686868686868686868686868686868686868686868686860b00000076616c696461746f722d61",
+      "digests": [
+        {
+          "label": "vote_id",
+          "domain": "trnm.poco-ai.order-vote.v1",
+          "digest_hex": "58ae85a04b386fca3feafc1b551cf4beebf6d53578b4d8ee6e4b031060c3d0f8"
+        }
+      ]
+    },
+    {
+      "case_id": "quorum_certificate",
+      "type": "QuorumCertificateBodyV1",
+      "value": {
+        "schema_version": 1,
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 8,
+            "message_kind": 1
+          },
+          "block_id": "7af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b",
+          "height": 42,
+          "epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+          "post_state_root": "8585858585858585858585858585858585858585858585858585858585858585",
+          "batch_refs_root": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2",
+          "transaction_execution_receipts_root": "8686868686868686868686868686868686868686868686868686868686868686"
+        },
+        "signatures": [
+          {
+            "voter_id": "76616c696461746f722d61",
+            "signature_scheme": 0,
+            "signature": "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0"
+          },
+          {
+            "voter_id": "76616c696461746f722d62",
+            "signature_scheme": 0,
+            "signature": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+          },
+          {
+            "voter_id": "76616c696461746f722d63",
+            "signature_scheme": 0,
+            "signature": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2"
+          }
+        ]
+      },
+      "cev1_hex": "010001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70800000000000000017af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b2a0000000000000082828282828282828282828282828282828282828282828282828282828282828585858585858585858585858585858585858585858585858585858585858585bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a28686868686868686868686868686868686868686868686868686868686868686030000000b00000076616c696461746f722d61000040000000a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a00b00000076616c696461746f722d62000040000000a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a10b00000076616c696461746f722d63000040000000a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+      "digests": [
+        {
+          "label": "qc_id",
+          "domain": "trnm.poco-ai.order-qc.v1",
+          "digest_hex": "70d556c7d8a78babb920011defe24d494413d191612ca5bb5fac306e5fe98ab0"
+        }
+      ]
+    },
+    {
+      "case_id": "quorum_certificate_object",
+      "type": "QuorumCertificateV1",
+      "value": {
+        "body": {
+          "schema_version": 1,
+          "statement": {
+            "schema_version": 1,
+            "consensus_context": {
+              "schema_version": 1,
+              "context": {
+                "schema_version": 1,
+                "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                "chain_id": "trnm-ai-test-1",
+                "protocol_version": 1,
+                "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+              },
+              "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+              "epoch": 7,
+              "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+              "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+              "view": 8,
+              "message_kind": 1
+            },
+            "block_id": "7af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b",
+            "height": 42,
+            "epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+            "post_state_root": "8585858585858585858585858585858585858585858585858585858585858585",
+            "batch_refs_root": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2",
+            "transaction_execution_receipts_root": "8686868686868686868686868686868686868686868686868686868686868686"
+          },
+          "signatures": [
+            {
+              "voter_id": "76616c696461746f722d61",
+              "signature_scheme": 0,
+              "signature": "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0"
+            },
+            {
+              "voter_id": "76616c696461746f722d62",
+              "signature_scheme": 0,
+              "signature": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+            },
+            {
+              "voter_id": "76616c696461746f722d63",
+              "signature_scheme": 0,
+              "signature": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2"
+            }
+          ]
+        },
+        "quorum_certificate_id": "70d556c7d8a78babb920011defe24d494413d191612ca5bb5fac306e5fe98ab0"
+      },
+      "cev1_hex": "010001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70800000000000000017af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b2a0000000000000082828282828282828282828282828282828282828282828282828282828282828585858585858585858585858585858585858585858585858585858585858585bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a28686868686868686868686868686868686868686868686868686868686868686030000000b00000076616c696461746f722d61000040000000a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a00b00000076616c696461746f722d62000040000000a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a10b00000076616c696461746f722d63000040000000a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a270d556c7d8a78babb920011defe24d494413d191612ca5bb5fac306e5fe98ab0"
+    },
+    {
+      "case_id": "genesis_anchor",
+      "type": "GenesisAnchorBodyV1",
+      "value": {
+        "schema_version": 1,
+        "target_context": {
+          "schema_version": 1,
+          "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "chain_id": "trnm-ai-test-1",
+          "protocol_version": 1,
+          "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191",
+        "application_state_root": "9292929292929292929292929292929292929292929292929292929292929292",
+        "target_epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+        "initial_height": 1,
+        "initial_view": 1
+      },
+      "cev1_hex": "0100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222291919191919191919191919191919191919191919191919191919191919191919292929292929292929292929292929292929292929292929292929292929292828282828282828282828282828282828282828282828282828282828282828201000000000000000100000000000000",
+      "digests": [
+        {
+          "label": "genesis_anchor_id",
+          "domain": "trnm.poco-ai.genesis-anchor.v1",
+          "digest_hex": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a"
+        }
+      ]
+    },
+    {
+      "case_id": "timeout_statement_validator_a",
+      "type": "TimeoutStatementBodyV1",
+      "value": {
+        "schema_version": 1,
+        "consensus_context": {
+          "schema_version": 1,
+          "context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+          "epoch": 7,
+          "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+          "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "view": 9,
+          "message_kind": 2
+        },
+        "high_justification": {
+          "variant": "EpochStart",
+          "value": {
+            "anchor_kind": 0,
+            "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+            "anchor_view": 0
+          }
+        },
+        "locked_qc_id": null,
+        "locked_qc_view": 0,
+        "last_finalized_anchor": {
+          "variant": "FreshGenesis",
+          "value": {
+            "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+          }
+        },
+        "pacemaker_generation": 3
+      },
+      "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a00000000000000000000000000000000000091919191919191919191919191919191919191919191919191919191919191910300000000000000",
+      "digests": [
+        {
+          "label": "timeout_signature_root",
+          "domain": "trnm.poco-ai.order-timeout-signature.v1",
+          "digest_hex": "61f91b914383b9680eb2fb7b298d138749779989e60e537a35b84108c8501aef"
+        }
+      ]
+    },
+    {
+      "case_id": "timeout_identity_validator_a",
+      "type": "TimeoutIdentityBodyV1",
+      "value": {
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 9,
+            "message_kind": 2
+          },
+          "high_justification": {
+            "variant": "EpochStart",
+            "value": {
+              "anchor_kind": 0,
+              "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+              "anchor_view": 0
+            }
+          },
+          "locked_qc_id": null,
+          "locked_qc_view": 0,
+          "last_finalized_anchor": {
+            "variant": "FreshGenesis",
+            "value": {
+              "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+            }
+          },
+          "pacemaker_generation": 3
+        },
+        "validator_id": "76616c696461746f722d61"
+      },
+      "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a000000000000000000000000000000000000919191919191919191919191919191919191919191919191919191919191919103000000000000000b00000076616c696461746f722d61",
+      "digests": [
+        {
+          "label": "timeout_id",
+          "domain": "trnm.poco-ai.order-timeout.v1",
+          "digest_hex": "c602a910b27d40f17a1056becffeb4dc3c1f627b9ed0ff93166dd438c380c53d"
+        }
+      ]
+    },
+    {
+      "case_id": "timeout_certificate",
+      "type": "TimeoutCertificateBodyV1",
+      "value": {
+        "schema_version": 1,
+        "context": {
+          "schema_version": 1,
+          "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "chain_id": "trnm-ai-test-1",
+          "protocol_version": 1,
+          "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+        "epoch": 7,
+        "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+        "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+        "timed_out_view": 9,
+        "target_view": 10,
+        "justifications": [
+          {
+            "variant": "EpochStart",
+            "value": {
+              "variant": "GenesisAnchor",
+              "value": {
+                "body": {
+                  "schema_version": 1,
+                  "target_context": {
+                    "schema_version": 1,
+                    "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "chain_id": "trnm-ai-test-1",
+                    "protocol_version": 1,
+                    "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                  },
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191",
+                  "application_state_root": "9292929292929292929292929292929292929292929292929292929292929292",
+                  "target_epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+                  "initial_height": 1,
+                  "initial_view": 1
+                },
+                "genesis_anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a"
+              }
+            }
+          }
+        ],
+        "entries": [
+          {
+            "validator_id": "76616c696461746f722d61",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 0,
+                  "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0"
+          },
+          {
+            "validator_id": "76616c696461746f722d62",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 0,
+                  "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1"
+          },
+          {
+            "validator_id": "76616c696461746f722d63",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 0,
+                  "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+          }
+        ]
+      },
+      "cev1_hex": "0100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d709000000000000000a000000000000000100000001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222291919191919191919191919191919191919191919191919191919191919191919292929292929292929292929292929292929292929292929292929292929292828282828282828282828282828282828282828282828282828282828282828201000000000000000100000000000000a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a030000000b00000076616c696461746f722d6101000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a00000000000000000000000000000000000091919191919191919191919191919191919191919191919191919191919191910300000000000000000040000000b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b00b00000076616c696461746f722d6201000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a00000000000000000000000000000000000091919191919191919191919191919191919191919191919191919191919191910300000000000000000040000000b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b10b00000076616c696461746f722d6301000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a00000000000000000000000000000000000091919191919191919191919191919191919191919191919191919191919191910300000000000000000040000000b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
+      "digests": [
+        {
+          "label": "tc_id",
+          "domain": "trnm.poco-ai.order-tc.v1",
+          "digest_hex": "dbb8c5af14b39cdc9f274c1ae1b6ca454c7f67d6517301f8688bdb19e402ce56"
+        }
+      ]
+    },
+    {
+      "case_id": "epoch_handoff_body",
+      "type": "EpochHandoffBodyV1",
+      "value": {
+        "schema_version": 1,
+        "source_context": {
+          "schema_version": 1,
+          "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "chain_id": "trnm-ai-test-1",
+          "protocol_version": 1,
+          "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "target_context": {
+          "schema_version": 1,
+          "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "chain_id": "trnm-ai-test-1",
+          "protocol_version": 1,
+          "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+        },
+        "old_epoch": 7,
+        "new_epoch": 8,
+        "old_epoch_checkpoint_id": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+        "old_epoch_descriptor_id": "c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2",
+        "new_epoch_descriptor_id": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3",
+        "old_validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+        "new_validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+        "old_consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+        "new_consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+        "terminal_block_id": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+        "terminal_height": 99,
+        "terminal_view": 12,
+        "activation_height": 100,
+        "initial_new_view": 1
+      },
+      "cev1_hex": "0100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000232323232323232323232323232323232323232323232323232323232323232307000000000000000800000000000000c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c33a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8ef674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b426066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d76066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c463000000000000000c0000000000000064000000000000000100000000000000",
+      "digests": [
+        {
+          "label": "handoff_id",
+          "domain": "trnm.poco-ai.epoch-handoff.v1",
+          "digest_hex": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+        }
+      ]
+    },
+    {
+      "case_id": "epoch_handoff_old_statement",
+      "type": "EpochHandoffSignStatementV1",
+      "value": {
+        "schema_version": 1,
+        "consensus_context": {
+          "schema_version": 1,
+          "context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+          "epoch": 7,
+          "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+          "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "view": 12,
+          "message_kind": 3
+        },
+        "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+      },
+      "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70c000000000000000375215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057",
+      "digests": [
+        {
+          "label": "old_set_signature_root",
+          "domain": "trnm.poco-ai.epoch-handoff-old-signature.v1",
+          "digest_hex": "8a94312e310e50ac46b12861bfcf20a55fed459e544d5449ed853dca1506a7e1"
+        }
+      ]
+    },
+    {
+      "case_id": "epoch_handoff_new_statement",
+      "type": "EpochHandoffSignStatementV1",
+      "value": {
+        "schema_version": 1,
+        "consensus_context": {
+          "schema_version": 1,
+          "context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+          },
+          "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+          "epoch": 8,
+          "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+          "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "view": 1,
+          "message_kind": 4
+        },
+        "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+      },
+      "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000232323232323232323232323232323232323232323232323232323232323232334343434343434343434343434343434343434343434343434343434343434340800000000000000f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b426066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d701000000000000000475215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057",
+      "digests": [
+        {
+          "label": "new_set_signature_root",
+          "domain": "trnm.poco-ai.epoch-handoff-new-signature.v1",
+          "digest_hex": "f72245d89d7041bc13c4e6eb2c4836369330f1f9db21cba9a7ed7538540b8e26"
+        }
+      ]
+    },
+    {
+      "case_id": "epoch_handoff_object",
+      "type": "EpochHandoffV1",
+      "value": {
+        "body": {
+          "schema_version": 1,
+          "source_context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "target_context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+          },
+          "old_epoch": 7,
+          "new_epoch": 8,
+          "old_epoch_checkpoint_id": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+          "old_epoch_descriptor_id": "c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2",
+          "new_epoch_descriptor_id": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3",
+          "old_validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+          "new_validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+          "old_consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "new_consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "terminal_block_id": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+          "terminal_height": 99,
+          "terminal_view": 12,
+          "activation_height": 100,
+          "initial_new_view": 1
+        },
+        "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057",
+        "old_set_signatures": [
+          {
+            "signer_id": "76616c696461746f722d61",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0"
+          },
+          {
+            "signer_id": "76616c696461746f722d62",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1"
+          },
+          {
+            "signer_id": "76616c696461746f722d63",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2"
+          }
+        ],
+        "new_set_signatures": [
+          {
+            "signer_id": "76616c696461746f722d61",
+            "role": 1,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+                },
+                "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+                "epoch": 8,
+                "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 1,
+                "message_kind": 4
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0"
+          },
+          {
+            "signer_id": "76616c696461746f722d62",
+            "role": 1,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+                },
+                "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+                "epoch": 8,
+                "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 1,
+                "message_kind": 4
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1"
+          },
+          {
+            "signer_id": "76616c696461746f722d63",
+            "role": 1,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+                },
+                "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+                "epoch": 8,
+                "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 1,
+                "message_kind": 4
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2"
+          }
+        ]
+      },
+      "cev1_hex": "0100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000232323232323232323232323232323232323232323232323232323232323232307000000000000000800000000000000c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c33a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8ef674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b426066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d76066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c463000000000000000c000000000000006400000000000000010000000000000075215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057030000000b00000076616c696461746f722d610001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70c000000000000000375215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057000040000000c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c00b00000076616c696461746f722d620001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70c000000000000000375215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057000040000000c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c10b00000076616c696461746f722d630001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222333333333333333333333333333333333333333333333333333333333333333307000000000000003a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70c000000000000000375215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057000040000000c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2030000000b00000076616c696461746f722d610101000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000232323232323232323232323232323232323232323232323232323232323232334343434343434343434343434343434343434343434343434343434343434340800000000000000f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b426066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d701000000000000000475215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057000040000000d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d00b00000076616c696461746f722d620101000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000232323232323232323232323232323232323232323232323232323232323232334343434343434343434343434343434343434343434343434343434343434340800000000000000f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b426066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d701000000000000000475215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057000040000000d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d10b00000076616c696461746f722d630101000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000232323232323232323232323232323232323232323232323232323232323232334343434343434343434343434343434343434343434343434343434343434340800000000000000f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b426066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d701000000000000000475215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057000040000000d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2"
+    }
+  ],
+  "derived_cases": [
+    {
+      "root_kind": 0,
+      "items": [
+        {
+          "item_kind": 15,
+          "item_id": "6161616161616161616161616161616161616161616161616161616161616161",
+          "item_commitment": "7171717171717171717171717171717171717171717171717171717171717171"
+        },
+        {
+          "item_kind": 15,
+          "item_id": "6262626262626262626262626262626262626262626262626262626262626262",
+          "item_commitment": "7272727272727272727272727272727272727272727272727272727272727272"
+        },
+        {
+          "item_kind": 15,
+          "item_id": "6363636363636363636363636363636363636363636363636363636363636363",
+          "item_commitment": "7373737373737373737373737373737373737373737373737373737373737373"
+        }
+      ],
+      "leaves": [
+        {
+          "body": {
+            "root_kind": 0,
+            "index": 0,
+            "item_kind": 15,
+            "item_id": "6161616161616161616161616161616161616161616161616161616161616161",
+            "item_commitment": "7171717171717171717171717171717171717171717171717171717171717171"
+          },
+          "digest_hex": "dbacc6a62832f662bc3fa7ca9d67872694da9a8b3d6819fce56bac85d61e69d8"
+        },
+        {
+          "body": {
+            "root_kind": 0,
+            "index": 1,
+            "item_kind": 15,
+            "item_id": "6262626262626262626262626262626262626262626262626262626262626262",
+            "item_commitment": "7272727272727272727272727272727272727272727272727272727272727272"
+          },
+          "digest_hex": "a88db37f12278e8871ad599ad5f2355d15448026f1dfa0343cb9fc29a667fef6"
+        },
+        {
+          "body": {
+            "root_kind": 0,
+            "index": 2,
+            "item_kind": 15,
+            "item_id": "6363636363636363636363636363636363636363636363636363636363636363",
+            "item_commitment": "7373737373737373737373737373737373737373737373737373737373737373"
+          },
+          "digest_hex": "b998cfe294757ef520af663f7e20dbba095ccaac646a2aa6ff0fed7d48a0e21a"
+        }
+      ],
+      "levels": [
+        {
+          "level": 0,
+          "nodes": [
+            {
+              "body": {
+                "root_kind": 0,
+                "level": 0,
+                "left": "dbacc6a62832f662bc3fa7ca9d67872694da9a8b3d6819fce56bac85d61e69d8",
+                "right": "a88db37f12278e8871ad599ad5f2355d15448026f1dfa0343cb9fc29a667fef6"
+              },
+              "digest_hex": "f8da0a4727b98697fe522ab5cd350491ce2bfd0cf9561039f9913aafa6f78807"
+            },
+            {
+              "body": {
+                "root_kind": 0,
+                "level": 0,
+                "left": "b998cfe294757ef520af663f7e20dbba095ccaac646a2aa6ff0fed7d48a0e21a",
+                "right": "b998cfe294757ef520af663f7e20dbba095ccaac646a2aa6ff0fed7d48a0e21a"
+              },
+              "digest_hex": "8679ea2e33fd23bc274ca7ebd7e536c4b7a89b57b61cc2f6aa79ae72c4b05f13"
+            }
+          ]
+        },
+        {
+          "level": 1,
+          "nodes": [
+            {
+              "body": {
+                "root_kind": 0,
+                "level": 1,
+                "left": "f8da0a4727b98697fe522ab5cd350491ce2bfd0cf9561039f9913aafa6f78807",
+                "right": "8679ea2e33fd23bc274ca7ebd7e536c4b7a89b57b61cc2f6aa79ae72c4b05f13"
+              },
+              "digest_hex": "5c2565573b75d372f2e63f7b5af30036d92e86216ad0b82f2862790626248a0c"
+            }
+          ]
+        }
+      ],
+      "root_body": {
+        "root_kind": 0,
+        "item_count": 3,
+        "tree_root": "5c2565573b75d372f2e63f7b5af30036d92e86216ad0b82f2862790626248a0c"
+      },
+      "root_digest_hex": "475e5b2e40fb754b919a71d000fb97a68836885c42f06a0d2d272f0d6f766232",
+      "case_id": "ordered_root_three_items_odd_duplication"
+    }
+  ],
+  "negative_cases": [
+    {
+      "case_id": "reject_big_endian_u16",
+      "mode": "decode_equals",
+      "type": "u16",
+      "encoded_hex": "0102",
+      "expected_value": 258,
+      "expected_error": "decoded_value_mismatch"
+    },
+    {
+      "case_id": "reject_trailing_bytes",
+      "mode": "decode",
+      "type": "ProtocolContextV1",
+      "encoded_hex": "010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222200",
+      "expected_error": "trailing_bytes"
+    },
+    {
+      "case_id": "reject_truncation",
+      "mode": "decode",
+      "type": "ProtocolContextV1",
+      "encoded_hex": "010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d310100000022222222222222222222222222222222222222222222222222222222222222",
+      "expected_error": "truncated"
+    },
+    {
+      "case_id": "reject_unknown_enum",
+      "mode": "decode",
+      "type": "ParentBlockRefV1",
+      "encoded_hex": "ff",
+      "expected_error": "unknown_enum_discriminant"
+    },
+    {
+      "case_id": "reject_invalid_option_tag",
+      "mode": "decode",
+      "type": "MerkleListRootBodyV1",
+      "encoded_hex": "00000000000002",
+      "expected_error": "invalid_option_tag"
+    },
+    {
+      "case_id": "reject_invalid_bool",
+      "mode": "decode",
+      "type": "ConsensusParametersV1",
+      "encoded_hex": "01000200030003026400000040000000400000001000000000004000000064000000fffffffffffffffffefffffffffffffffeffffffffffffff0004000004000000000000000100000000000000020000000000000003000000000000000000100000000000800000008000000000100000000001000000000040420f00000000000000000000000000f40100000000000030750000000000000300000002000000400000000000040000000000",
+      "expected_error": "invalid_bool"
+    },
+    {
+      "case_id": "reject_bytes_length_mismatch",
+      "mode": "decode",
+      "type": "Bytes",
+      "encoded_hex": "04000000000102",
+      "expected_error": "truncated"
+    },
+    {
+      "case_id": "reject_consensus_string_max_plus_one",
+      "mode": "value",
+      "type": "ConsensusString",
+      "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "expected_error": "bound_consensus_string"
+    },
+    {
+      "case_id": "reject_checked_weight_overflow",
+      "mode": "value",
+      "type": "ValidatorSetDefinitionV1",
+      "value": {
+        "schema_version": 1,
+        "members": [
+          {
+            "validator_id": "76616c696461746f722d61",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1010101010101010101010101010101010101010101010101010101010101010",
+            "voting_weight": 340282366920938463463374607431768211455,
+            "network_identity_commitment": "2020202020202020202020202020202020202020202020202020202020202020",
+            "safety_signer_policy_hash": "3030303030303030303030303030303030303030303030303030303030303030",
+            "poco_economic_record_hash": "4040404040404040404040404040404040404040404040404040404040404040"
+          },
+          {
+            "validator_id": "76616c696461746f722d62",
+            "consensus_key_scheme": 0,
+            "consensus_public_key": "1111111111111111111111111111111111111111111111111111111111111111",
+            "voting_weight": 1,
+            "network_identity_commitment": "2121212121212121212121212121212121212121212121212121212121212121",
+            "safety_signer_policy_hash": "3131313131313131313131313131313131313131313131313131313131313131",
+            "poco_economic_record_hash": "4141414141414141414141414141414141414141414141414141414141414141"
+          }
+        ],
+        "total_weight": 340282366920938463463374607431768211455,
+        "quorum_threshold": 340282366920938463463374607431768211455
+      },
+      "expected_error": "checked_overflow"
+    },
+    {
+      "case_id": "reject_duplicate_qc_signer",
+      "mode": "value",
+      "type": "QuorumCertificateBodyV1",
+      "value": {
+        "schema_version": 1,
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 8,
+            "message_kind": 1
+          },
+          "block_id": "7af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b",
+          "height": 42,
+          "epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+          "post_state_root": "8585858585858585858585858585858585858585858585858585858585858585",
+          "batch_refs_root": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2",
+          "transaction_execution_receipts_root": "8686868686868686868686868686868686868686868686868686868686868686"
+        },
+        "signatures": [
+          {
+            "voter_id": "76616c696461746f722d61",
+            "signature_scheme": 0,
+            "signature": "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0"
+          },
+          {
+            "voter_id": "76616c696461746f722d61",
+            "signature_scheme": 0,
+            "signature": "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0"
+          },
+          {
+            "voter_id": "76616c696461746f722d63",
+            "signature_scheme": 0,
+            "signature": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2"
+          }
+        ]
+      },
+      "expected_error": "duplicate_signer"
+    },
+    {
+      "case_id": "reject_reordered_qc_signer",
+      "mode": "value",
+      "type": "QuorumCertificateBodyV1",
+      "value": {
+        "schema_version": 1,
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 8,
+            "message_kind": 1
+          },
+          "block_id": "7af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b",
+          "height": 42,
+          "epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+          "post_state_root": "8585858585858585858585858585858585858585858585858585858585858585",
+          "batch_refs_root": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2",
+          "transaction_execution_receipts_root": "8686868686868686868686868686868686868686868686868686868686868686"
+        },
+        "signatures": [
+          {
+            "voter_id": "76616c696461746f722d62",
+            "signature_scheme": 0,
+            "signature": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1"
+          },
+          {
+            "voter_id": "76616c696461746f722d61",
+            "signature_scheme": 0,
+            "signature": "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0"
+          },
+          {
+            "voter_id": "76616c696461746f722d63",
+            "signature_scheme": 0,
+            "signature": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2"
+          }
+        ]
+      },
+      "expected_error": "signer_order"
+    },
+    {
+      "case_id": "reject_single_quorum_handoff",
+      "mode": "value",
+      "type": "EpochHandoffV1",
+      "value": {
+        "body": {
+          "schema_version": 1,
+          "source_context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "target_context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+          },
+          "old_epoch": 7,
+          "new_epoch": 8,
+          "old_epoch_checkpoint_id": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+          "old_epoch_descriptor_id": "c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2",
+          "new_epoch_descriptor_id": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3",
+          "old_validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+          "new_validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+          "old_consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "new_consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "terminal_block_id": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+          "terminal_height": 99,
+          "terminal_view": 12,
+          "activation_height": 100,
+          "initial_new_view": 1
+        },
+        "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057",
+        "old_set_signatures": [
+          {
+            "signer_id": "76616c696461746f722d61",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0"
+          },
+          {
+            "signer_id": "76616c696461746f722d62",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1"
+          },
+          {
+            "signer_id": "76616c696461746f722d63",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2"
+          }
+        ],
+        "new_set_signatures": [
+          {
+            "signer_id": "76616c696461746f722d61",
+            "role": 1,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+                },
+                "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+                "epoch": 8,
+                "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 1,
+                "message_kind": 4
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0"
+          },
+          {
+            "signer_id": "76616c696461746f722d62",
+            "role": 1,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+                },
+                "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+                "epoch": 8,
+                "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 1,
+                "message_kind": 4
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1"
+          }
+        ]
+      },
+      "expected_error": "insufficient_quorum"
+    },
+    {
+      "case_id": "reject_wrong_handoff_role",
+      "mode": "value",
+      "type": "EpochHandoffV1",
+      "value": {
+        "body": {
+          "schema_version": 1,
+          "source_context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "target_context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+          },
+          "old_epoch": 7,
+          "new_epoch": 8,
+          "old_epoch_checkpoint_id": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+          "old_epoch_descriptor_id": "c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2",
+          "new_epoch_descriptor_id": "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3",
+          "old_validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+          "new_validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+          "old_consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "new_consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "terminal_block_id": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+          "terminal_height": 99,
+          "terminal_view": 12,
+          "activation_height": 100,
+          "initial_new_view": 1
+        },
+        "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057",
+        "old_set_signatures": [
+          {
+            "signer_id": "76616c696461746f722d61",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0"
+          },
+          {
+            "signer_id": "76616c696461746f722d62",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1"
+          },
+          {
+            "signer_id": "76616c696461746f722d63",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 12,
+                "message_kind": 3
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c2"
+          }
+        ],
+        "new_set_signatures": [
+          {
+            "signer_id": "76616c696461746f722d61",
+            "role": 0,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+                },
+                "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+                "epoch": 8,
+                "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 1,
+                "message_kind": 4
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0d0"
+          },
+          {
+            "signer_id": "76616c696461746f722d62",
+            "role": 1,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+                },
+                "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+                "epoch": 8,
+                "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 1,
+                "message_kind": 4
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1"
+          },
+          {
+            "signer_id": "76616c696461746f722d63",
+            "role": 1,
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2323232323232323232323232323232323232323232323232323232323232323"
+                },
+                "runtime_profile_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+                "epoch": 8,
+                "validator_set_hash": "f674d8b2ee2854b2164b67b926ececa2faae22cd2e71c33201f7d22d99c25b42",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 1,
+                "message_kind": 4
+              },
+              "handoff_id": "75215a5dead2b6bf1a69fbcb8639d1d2175f7f0162c1278390ba2f998a2d9057"
+            },
+            "signature_scheme": 0,
+            "signature": "d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2"
+          }
+        ]
+      },
+      "expected_error": "wrong_handoff_role"
+    },
+    {
+      "case_id": "reject_tc_cross_chain_epoch_start_anchor",
+      "mode": "value",
+      "type": "TimeoutCertificateBodyV1",
+      "value": {
+        "schema_version": 1,
+        "context": {
+          "schema_version": 1,
+          "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "chain_id": "trnm-ai-test-1",
+          "protocol_version": 1,
+          "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+        "epoch": 7,
+        "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+        "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+        "timed_out_view": 9,
+        "target_view": 10,
+        "justifications": [
+          {
+            "variant": "EpochStart",
+            "value": {
+              "variant": "GenesisAnchor",
+              "value": {
+                "body": {
+                  "schema_version": 1,
+                  "target_context": {
+                    "schema_version": 1,
+                    "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "chain_id": "other-chain",
+                    "protocol_version": 1,
+                    "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                  },
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191",
+                  "application_state_root": "9292929292929292929292929292929292929292929292929292929292929292",
+                  "target_epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+                  "initial_height": 1,
+                  "initial_view": 1
+                },
+                "genesis_anchor_id": "31ad9c12967fb2dee553b0f92ebe8f25c7c9e713d35c443c4affb512caca5ce9"
+              }
+            }
+          }
+        ],
+        "entries": [
+          {
+            "validator_id": "76616c696461746f722d61",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 0,
+                  "anchor_id": "31ad9c12967fb2dee553b0f92ebe8f25c7c9e713d35c443c4affb512caca5ce9",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0"
+          },
+          {
+            "validator_id": "76616c696461746f722d62",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 0,
+                  "anchor_id": "31ad9c12967fb2dee553b0f92ebe8f25c7c9e713d35c443c4affb512caca5ce9",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1"
+          },
+          {
+            "validator_id": "76616c696461746f722d63",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 0,
+                  "anchor_id": "31ad9c12967fb2dee553b0f92ebe8f25c7c9e713d35c443c4affb512caca5ce9",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+          }
+        ]
+      },
+      "expected_error": "epoch_start_context_mismatch"
+    },
+    {
+      "case_id": "reject_tc_anchor_kind_mismatch",
+      "mode": "value",
+      "type": "TimeoutCertificateBodyV1",
+      "value": {
+        "schema_version": 1,
+        "context": {
+          "schema_version": 1,
+          "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "chain_id": "trnm-ai-test-1",
+          "protocol_version": 1,
+          "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+        },
+        "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+        "epoch": 7,
+        "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+        "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+        "timed_out_view": 9,
+        "target_view": 10,
+        "justifications": [
+          {
+            "variant": "EpochStart",
+            "value": {
+              "variant": "GenesisAnchor",
+              "value": {
+                "body": {
+                  "schema_version": 1,
+                  "target_context": {
+                    "schema_version": 1,
+                    "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "chain_id": "trnm-ai-test-1",
+                    "protocol_version": 1,
+                    "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                  },
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191",
+                  "application_state_root": "9292929292929292929292929292929292929292929292929292929292929292",
+                  "target_epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+                  "initial_height": 1,
+                  "initial_view": 1
+                },
+                "genesis_anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a"
+              }
+            }
+          }
+        ],
+        "entries": [
+          {
+            "validator_id": "76616c696461746f722d61",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 1,
+                  "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0"
+          },
+          {
+            "validator_id": "76616c696461746f722d62",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 1,
+                  "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1"
+          },
+          {
+            "validator_id": "76616c696461746f722d63",
+            "statement": {
+              "schema_version": 1,
+              "consensus_context": {
+                "schema_version": 1,
+                "context": {
+                  "schema_version": 1,
+                  "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "chain_id": "trnm-ai-test-1",
+                  "protocol_version": 1,
+                  "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+                },
+                "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+                "epoch": 7,
+                "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+                "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+                "view": 9,
+                "message_kind": 2
+              },
+              "high_justification": {
+                "variant": "EpochStart",
+                "value": {
+                  "anchor_kind": 1,
+                  "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+                  "anchor_view": 0
+                }
+              },
+              "locked_qc_id": null,
+              "locked_qc_view": 0,
+              "last_finalized_anchor": {
+                "variant": "FreshGenesis",
+                "value": {
+                  "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+                }
+              },
+              "pacemaker_generation": 3
+            },
+            "signature_scheme": 0,
+            "signature": "b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2"
+          }
+        ]
+      },
+      "expected_error": "unresolved_justification"
+    },
+    {
+      "case_id": "reject_wrong_chain_binding",
+      "mode": "context_binding",
+      "type": "ProtocolContextV1",
+      "value": {
+        "schema_version": 1,
+        "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "chain_id": "other-chain",
+        "protocol_version": 1,
+        "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "expected_context": {
+        "schema_version": 1,
+        "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "chain_id": "trnm-ai-test-1",
+        "protocol_version": 1,
+        "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "expected_error": "context_binding_mismatch"
+    },
+    {
+      "case_id": "reject_wrong_profile_binding",
+      "mode": "context_binding",
+      "type": "ProtocolContextV1",
+      "value": {
+        "schema_version": 1,
+        "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "chain_id": "trnm-ai-test-1",
+        "protocol_version": 1,
+        "stack_profile_hash": "9999999999999999999999999999999999999999999999999999999999999999"
+      },
+      "expected_context": {
+        "schema_version": 1,
+        "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "chain_id": "trnm-ai-test-1",
+        "protocol_version": 1,
+        "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "expected_error": "context_binding_mismatch"
+    },
+    {
+      "case_id": "reject_wrong_digest_domain",
+      "mode": "digest",
+      "type": "VoteStatementBodyV1",
+      "value": {
+        "schema_version": 1,
+        "consensus_context": {
+          "schema_version": 1,
+          "context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-ai-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+          "epoch": 7,
+          "validator_set_hash": "3a31612f47e3050a6f4ebd2da7839ab2f611c471a808d93c97fc1f5d5db93a8e",
+          "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+          "view": 8,
+          "message_kind": 1
+        },
+        "block_id": "7af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b",
+        "height": 42,
+        "epoch_descriptor_id": "8282828282828282828282828282828282828282828282828282828282828282",
+        "post_state_root": "8585858585858585858585858585858585858585858585858585858585858585",
+        "batch_refs_root": "bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a2",
+        "transaction_execution_receipts_root": "8686868686868686868686868686868686868686868686868686868686868686"
+      },
+      "domain": "trnm.poco-ai.order-timeout-signature.v1",
+      "declared_digest_hex": "3e53c9a6814efbaf587b4833c1444bb9fe7e597efee2493a3ff832e345dea5cd",
+      "expected_error": "digest_mismatch"
+    },
+    {
+      "case_id": "reject_wrong_destination_root_kind",
+      "mode": "root_binding",
+      "type": "MerkleListRootBodyV1",
+      "value": {
+        "root_kind": 1,
+        "item_count": 2,
+        "tree_root": "f8da0a4727b98697fe522ab5cd350491ce2bfd0cf9561039f9913aafa6f78807"
+      },
+      "expected_root_kind": 0,
+      "expected_error": "root_kind_mismatch"
+    },
+    {
+      "case_id": "reject_unknown_typed_object_kind",
+      "mode": "value",
+      "type": "TypedObjectIdV1",
+      "value": {
+        "object_kind": 51,
+        "object_id": "6161616161616161616161616161616161616161616161616161616161616161"
+      },
+      "expected_error": "unknown_object_kind"
+    },
+    {
+      "case_id": "reject_unknown_leaf_root_kind",
+      "mode": "value",
+      "type": "MerkleLeafBodyV1",
+      "value": {
+        "root_kind": 21,
+        "index": 0,
+        "item_kind": 15,
+        "item_id": "6161616161616161616161616161616161616161616161616161616161616161",
+        "item_commitment": "7171717171717171717171717171717171717171717171717171717171717171"
+      },
+      "expected_error": "unknown_root_kind"
+    },
+    {
+      "case_id": "reject_unknown_leaf_item_kind",
+      "mode": "value",
+      "type": "MerkleLeafBodyV1",
+      "value": {
+        "root_kind": 0,
+        "index": 0,
+        "item_kind": 51,
+        "item_id": "6161616161616161616161616161616161616161616161616161616161616161",
+        "item_commitment": "7171717171717171717171717171717171717171717171717171717171717171"
+      },
+      "expected_error": "unknown_object_kind"
+    },
+    {
+      "case_id": "reject_unknown_node_root_kind",
+      "mode": "value",
+      "type": "MerkleNodeBodyV1",
+      "value": {
+        "root_kind": 21,
+        "level": 0,
+        "left": "dbacc6a62832f662bc3fa7ca9d67872694da9a8b3d6819fce56bac85d61e69d8",
+        "right": "a88db37f12278e8871ad599ad5f2355d15448026f1dfa0343cb9fc29a667fef6"
+      },
+      "expected_error": "unknown_root_kind"
+    },
+    {
+      "case_id": "reject_v0_bytes_as_v1",
+      "mode": "decode",
+      "type": "ProtocolContextV1",
+      "encoded_hex": "0000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f000b74726e6d2d746573742d30000000000000000000000007202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f000000000000002a01",
+      "source": "exact CEV0 common_vote_context from poco-bft-v0 wire-foundation vectors",
+      "expected_error": "bound_consensus_string"
+    }
+  ],
+  "coverage": {
+    "positive": [
+      "fixed-width little-endian primitives and length framing",
+      "ProtocolContext and validator-set/parameter commitments",
+      "typed ordered leaf/node/empty/nonempty roots",
+      "three-item ordered-root odd-width duplication at level zero",
+      "ordinary BlockHeader and BlockId",
+      "Vote statement, VoteId preimage, signature root, weighted QC",
+      "Timeout statement, TimeoutId preimage, signature root, weighted TC with complete epoch-start anchor",
+      "epoch handoff body and role-specific signature roots"
+    ],
+    "negative": [
+      "big-endian substitution",
+      "trailing and truncated bytes",
+      "unknown enum and invalid bool/option tags",
+      "length and fixture-bound violations",
+      "checked arithmetic overflow",
+      "duplicate/reordered certificate signers",
+      "single-quorum or role-confused epoch handoff",
+      "wrong chain/profile/domain/root-kind binding",
+      "cross-chain or anchor-kind-confused TC epoch-start justification",
+      "unknown typed-object, leaf-item, leaf-root, and node-root registry tags",
+      "v0 CEV0 bytes presented as v1 CEV1"
+    ]
+  }
+}

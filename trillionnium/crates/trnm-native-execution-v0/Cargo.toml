@@ -1,0 +1,64 @@
+[package]
+name = "trnm-native-execution-v0"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-v0-native-execution"
+protocol = "poco-bft-v0"
+production_authority = false
+durable_artifact_p = true
+durable_artifact_p_restart_readback = true
+deterministic_preview_read_only = true
+multi_overlay_durable_p = true
+fork_coexistence = true
+finalized_prefix_pruning = true
+stable_precommit_application_commit_id = true
+multi_overlay_restart_readback = true
+commit_uncertain_third_state_fenced = true
+commit_directory_fsync_attempted = true
+sigkill_commit_boundary_matrix = true
+short_write_reopen_fail_closed = true
+automatic_hot_rollback_journal_recovery = true
+automatic_wal_recovery = false
+h1_state_sync_trusted_base_import = true
+h1_state_sync_import_has_no_local_p = true
+h1_state_sync_import_restart_readback = true
+qc_as_application_commit = false
+native_application_v0_implementation = true
+full_ordinary_post_state_root = true
+system_writes_included = true
+core_application_seal_eligible = false
+pinned_parent_trust_bundle_proven = true
+core_valid_callback = false
+safety_authority_integration = false
+request_signature_emission = false
+signing_or_broadcast = false
+whole_node_checkpoint_cas = false
+production_candidate = false
+
+[dependencies]
+anyhow = "1"
+borsh = { version = "1", features = ["derive"] }
+hex = "0.4"
+ics23 = "=0.12.0"
+jmt = "=0.12.0"
+prost = "0.13"
+fs2 = "0.4"
+rusqlite = { version = "0.32", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["arbitrary_precision"] }
+sha2 = "0.10"
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
+trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
+trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
+trnm-runtime = { version = "0.1.0", path = "../trnm-runtime" }
+
+[dev-dependencies]
+ed25519-dalek = "2"
+tempfile = "3"

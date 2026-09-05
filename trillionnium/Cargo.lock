@@ -374,9 +374,6 @@ name = "bytes"
 version = "1.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
-dependencies = [
- "serde",
-]
 
 [[package]]
 name = "cc"
@@ -524,12 +521,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "deranged"
-version = "0.5.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7cd812cc2bc1d69d4764bd80df88b4317eaef9e773c75226407d9bc0876b211c"
-
-[[package]]
 name = "derivative"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -660,15 +651,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582"
 
 [[package]]
-name = "flex-error"
-version = "0.4.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c606d892c9de11507fa0dcffc116434f94e105d0bbdc4e405b61519464c49d7b"
-dependencies = [
- "paste",
-]
-
-[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -679,6 +661,16 @@ name = "foldhash"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2"
+
+[[package]]
+name = "fs2"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9564fc758e15025b46aa6643b1b77d047d1a56a1aea6e01002ac0c7026876213"
+dependencies = [
+ "libc",
+ "winapi",
+]
 
 [[package]]
 name = "generic-array"
@@ -947,12 +939,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "num-conv"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "521739c6d2bac4aa25192232afe6841231376b2b26d4d9fae5ecf8ca5772e441"
-
-[[package]]
 name = "num-derive"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1022,12 +1008,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c"
 
 [[package]]
-name = "powerfmt"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391"
-
-[[package]]
 name = "ppv-lite86"
 version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1052,7 +1032,7 @@ version = "3.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e67ba7e9b2b56446f1d419b1d807906278ffa1a658a8a5d8a39dcb1f5a78614f"
 dependencies = [
- "toml_edit 0.25.13+spec-1.1.0",
+ "toml_edit",
 ]
 
 [[package]]
@@ -1194,16 +1174,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_bytes"
-version = "0.11.19"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5d440709e79d88e51ac01c4b72fc6cb7314017bb7da9eeff678aa94c10e3ea8"
-dependencies = [
- "serde",
- "serde_core",
-]
-
-[[package]]
 name = "serde_core"
 version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1234,15 +1204,6 @@ dependencies = [
  "serde",
  "serde_core",
  "zmij",
-]
-
-[[package]]
-name = "serde_spanned"
-version = "0.6.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf41e0cfaf7226dca15e8197172c295a782857fcb97fad1808a166870dee75a3"
-dependencies = [
- "serde",
 ]
 
 [[package]]
@@ -1322,15 +1283,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
-name = "subtle-encoding"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7dcb1ed7b8330c5eed5441052651dd7a12c75e2ed88f2ec024ae1fa3a5e59945"
-dependencies = [
- "zeroize",
-]
-
-[[package]]
 name = "syn"
 version = "1.0.109"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1366,34 +1318,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tendermint-abci"
-version = "0.40.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87265abf4063fc70605f33fd0117c0bea375d2b05a269aaf317e3ba9e6b5e6b5"
-dependencies = [
- "bytes",
- "flex-error",
- "prost",
- "tendermint-proto",
- "tracing",
-]
-
-[[package]]
-name = "tendermint-proto"
-version = "0.40.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2c40e13d39ca19082d8a7ed22de7595979350319833698f8b1080f29620a094"
-dependencies = [
- "bytes",
- "flex-error",
- "prost",
- "serde",
- "serde_bytes",
- "subtle-encoding",
- "time",
-]
-
-[[package]]
 name = "thiserror"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1414,56 +1338,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "time"
-version = "0.3.54"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3e1d5e639ff6bab73cb6885cc7e7b1de96c3f32c68ec55f3952614bec1092244"
-dependencies = [
- "deranged",
- "num-conv",
- "powerfmt",
- "time-core",
- "time-macros",
-]
-
-[[package]]
-name = "time-core"
-version = "0.1.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e1c906769ad99c88eaa54e728060edef082f8e358ff32030cb7c7d315e81109"
-
-[[package]]
-name = "time-macros"
-version = "0.2.32"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e689342a48d2ea927c87ea50cabf8594854bf940e9310208848d680d668ed85"
-dependencies = [
- "num-conv",
- "time-core",
-]
-
-[[package]]
-name = "toml"
-version = "0.8.23"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc1beb996b9d83529a9e75c17a1686767d148d70663143c7854d8b4a09ced362"
-dependencies = [
- "serde",
- "serde_spanned",
- "toml_datetime 0.6.11",
- "toml_edit 0.22.27",
-]
-
-[[package]]
-name = "toml_datetime"
-version = "0.6.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22cddaf88f4fbc13c51aebbf5f8eceb5c7c5a9da2ac40a13519eb5b0a0e8f11c"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "toml_datetime"
 version = "1.1.1+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1474,28 +1348,14 @@ dependencies = [
 
 [[package]]
 name = "toml_edit"
-version = "0.22.27"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "41fe8c660ae4257887cf66394862d21dbca4a6ddd26f04a3560410406a2f819a"
-dependencies = [
- "indexmap",
- "serde",
- "serde_spanned",
- "toml_datetime 0.6.11",
- "toml_write",
- "winnow 0.7.15",
-]
-
-[[package]]
-name = "toml_edit"
 version = "0.25.13+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6975367e4d2ef766d86af01ffad14b622fecc8d4357a998fbc4deb6e9bacaf9b"
 dependencies = [
  "indexmap",
- "toml_datetime 1.1.1+spec-1.1.0",
+ "toml_datetime",
  "toml_parser",
- "winnow 1.0.4",
+ "winnow",
 ]
 
 [[package]]
@@ -1504,14 +1364,8 @@ version = "1.1.3+spec-1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1d38ac1cf9b95face32296c0a3ede1fdc270627c9d9c02a7274dd6d960dc4d56"
 dependencies = [
- "winnow 1.0.4",
+ "winnow",
 ]
-
-[[package]]
-name = "toml_write"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5d99f8c9a7727884afe522e9bd5edbfc91a3312b36a77b5fb8926e4c31a41801"
 
 [[package]]
 name = "tracing"
@@ -1542,6 +1396,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
 dependencies = [
  "once_cell",
+]
+
+[[package]]
+name = "trnm-application-tx-builder-v0"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ed25519-dalek",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "trnm-finality-types",
+ "trnm-mempool",
+ "trnm-protocol",
 ]
 
 [[package]]
@@ -1576,28 +1445,194 @@ dependencies = [
 ]
 
 [[package]]
-name = "trnm-consensus-app"
+name = "trnm-consensus-core"
 version = "0.1.0"
 dependencies = [
- "anyhow",
- "borsh",
- "bytes",
- "clap",
+ "sha2",
+ "trnm-consensus-safety-rules",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-crypto"
+version = "0.1.0"
+dependencies = [
+ "curve25519-dalek",
  "ed25519-dalek",
- "hex",
- "ics23",
- "jmt",
- "prost",
- "rusqlite",
- "serde",
  "serde_json",
  "sha2",
- "tendermint-abci",
- "tendermint-proto",
- "trnm-finality-types",
- "trnm-node",
- "trnm-protocol",
- "trnm-runtime",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-external-node-checkpoint"
+version = "0.1.0"
+dependencies = [
+ "fs2",
+ "libc",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+ "trnm-poco-node",
+]
+
+[[package]]
+name = "trnm-consensus-external-watermark"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "fs2",
+ "libc",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-peer-lease"
+version = "0.1.0"
+dependencies = [
+ "fs2",
+ "libc",
+ "rustix",
+ "sha2",
+ "tempfile",
+]
+
+[[package]]
+name = "trnm-consensus-remote-signer-protocol"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-remote-signer-service"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "libc",
+ "rusqlite",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-external-watermark",
+ "trnm-consensus-remote-signer-protocol",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-safety-rules"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-safety-store"
+version = "0.1.0"
+dependencies = [
+ "fs2",
+ "getrandom 0.2.17",
+ "libc",
+ "rusqlite",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-core",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-signer-journal"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "fs2",
+ "getrandom 0.2.17",
+ "libc",
+ "rusqlite",
+ "serde_json",
+ "sha2",
+ "subtle",
+ "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-sim"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-consensus-core",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-types"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "subtle",
+]
+
+[[package]]
+name = "trnm-consensus-unix-fleet-signer"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "fs2",
+ "libc",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-unix-remote-signer"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-remote-signer-protocol",
+ "trnm-consensus-remote-signer-service",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-control-plane-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
+
+[[package]]
+name = "trnm-core-restart-v0"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "fs2",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-types",
+ "trnm-native-application",
+]
+
+[[package]]
+name = "trnm-durable-file-adapters-v0"
+version = "0.1.0"
+dependencies = [
+ "fs2",
+ "sha2",
+ "trnm-node-boundary-v0",
+ "trnm-state-sync-v0",
 ]
 
 [[package]]
@@ -1634,27 +1669,61 @@ name = "trnm-mempool"
 version = "0.1.0"
 
 [[package]]
-name = "trnm-node"
+name = "trnm-migration-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
+
+[[package]]
+name = "trnm-native-application"
+version = "0.1.0"
+
+[[package]]
+name = "trnm-native-application-sqlite"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "libc",
+ "rusqlite",
+ "sha2",
+ "trnm-consensus-core",
+ "trnm-consensus-crypto",
+ "trnm-consensus-safety-store",
+ "trnm-consensus-types",
+ "trnm-native-application",
+]
+
+[[package]]
+name = "trnm-native-execution-v0"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "clap",
+ "borsh",
  "ed25519-dalek",
+ "fs2",
  "hex",
- "rand_core",
+ "ics23",
+ "jmt",
+ "prost",
  "rusqlite",
  "serde",
  "serde_json",
  "sha2",
- "toml",
- "trnm-executor",
+ "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
  "trnm-finality-types",
- "trnm-finality-verifier",
- "trnm-mempool",
- "trnm-pouw",
- "trnm-research-protocol",
- "trnm-state",
- "trnm-types",
+ "trnm-native-application",
+ "trnm-protocol",
+ "trnm-runtime",
+]
+
+[[package]]
+name = "trnm-node-boundary-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
 ]
 
 [[package]]
@@ -1666,6 +1735,265 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror",
+]
+
+[[package]]
+name = "trnm-poco-agent-market-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "ed25519-dalek",
+ "hex",
+ "rusqlite",
+ "serde_json",
+ "sha2",
+ "tempfile",
+]
+
+[[package]]
+name = "trnm-poco-consumption-settlement-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "ed25519-dalek",
+ "rusqlite",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "trnm-poco-agent-market-v1",
+]
+
+[[package]]
+name = "trnm-poco-cross-plane-readback-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "sha2",
+ "tempfile",
+ "trnm-poco-agent-market-v1",
+ "trnm-poco-consumption-settlement-v1",
+ "trnm-poco-da-v1",
+ "trnm-poco-mvcc-fee-v1",
+ "trnm-poco-verify-challenge-v1",
+]
+
+[[package]]
+name = "trnm-poco-da-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "ed25519-dalek",
+ "hex",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+]
+
+[[package]]
+name = "trnm-poco-global-execution-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "ed25519-dalek",
+ "rusqlite",
+ "sha2",
+ "tempfile",
+ "trnm-poco-agent-market-v1",
+ "trnm-poco-consumption-settlement-v1",
+ "trnm-poco-da-v1",
+ "trnm-poco-mvcc-fee-v1",
+ "trnm-poco-order-application-v1",
+ "trnm-poco-order-finality-verifier-v1",
+ "trnm-poco-order-types-v1",
+ "trnm-poco-verify-challenge-v1",
+]
+
+[[package]]
+name = "trnm-poco-lab-validator"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ed25519-dalek",
+ "fs2",
+ "getrandom 0.2.17",
+ "hex",
+ "libc",
+ "rustix",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-core",
+ "trnm-consensus-crypto",
+ "trnm-consensus-external-watermark",
+ "trnm-consensus-peer-lease",
+ "trnm-consensus-remote-signer-protocol",
+ "trnm-consensus-remote-signer-service",
+ "trnm-consensus-safety-store",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+ "trnm-consensus-unix-fleet-signer",
+ "trnm-consensus-unix-remote-signer",
+ "trnm-finality-types",
+ "trnm-native-application",
+ "trnm-native-execution-v0",
+ "trnm-poco-node",
+ "trnm-protocol",
+]
+
+[[package]]
+name = "trnm-poco-mvcc-fee-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "rusqlite",
+ "serde_json",
+ "sha2",
+ "tempfile",
+]
+
+[[package]]
+name = "trnm-poco-node"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "borsh",
+ "ed25519-dalek",
+ "fs2",
+ "hex",
+ "libc",
+ "rusqlite",
+ "rustix",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "trnm-application-tx-builder-v0",
+ "trnm-consensus-core",
+ "trnm-consensus-crypto",
+ "trnm-consensus-external-watermark",
+ "trnm-consensus-peer-lease",
+ "trnm-consensus-remote-signer-protocol",
+ "trnm-consensus-remote-signer-service",
+ "trnm-consensus-safety-rules",
+ "trnm-consensus-safety-store",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+ "trnm-consensus-unix-remote-signer",
+ "trnm-finality-types",
+ "trnm-mempool",
+ "trnm-native-application",
+ "trnm-native-application-sqlite",
+ "trnm-native-execution-v0",
+ "trnm-poco-agent-market-v1",
+ "trnm-poco-consumption-settlement-v1",
+ "trnm-poco-cross-plane-readback-v1",
+ "trnm-poco-da-v1",
+ "trnm-poco-global-execution-v1",
+ "trnm-poco-mvcc-fee-v1",
+ "trnm-poco-order-application-v1",
+ "trnm-poco-order-finality-verifier-v1",
+ "trnm-poco-order-state-v1",
+ "trnm-poco-order-types-v1",
+ "trnm-poco-verify-challenge-v1",
+ "trnm-protocol",
+]
+
+[[package]]
+name = "trnm-poco-node-authority"
+version = "0.1.0"
+dependencies = [
+ "tempfile",
+ "trnm-durable-file-adapters-v0",
+ "trnm-node-boundary-v0",
+ "trnm-poco-node",
+]
+
+[[package]]
+name = "trnm-poco-node-cli"
+version = "0.1.0"
+dependencies = [
+ "trnm-poco-node-host",
+]
+
+[[package]]
+name = "trnm-poco-node-host"
+version = "0.1.0"
+dependencies = [
+ "tempfile",
+ "trnm-node-boundary-v0",
+ "trnm-poco-node-authority",
+ "trnm-poco-node-io",
+ "trnm-poco-node-production-v0",
+]
+
+[[package]]
+name = "trnm-poco-node-io"
+version = "0.1.0"
+
+[[package]]
+name = "trnm-poco-node-production-v0"
+version = "0.1.0"
+dependencies = [
+ "trnm-control-plane-v0",
+ "trnm-migration-v0",
+ "trnm-node-boundary-v0",
+ "trnm-state-sync-v0",
+ "trnm-tx-lifecycle-v0",
+]
+
+[[package]]
+name = "trnm-poco-order-application-v1"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "sha2",
+ "trnm-poco-order-types-v1",
+]
+
+[[package]]
+name = "trnm-poco-order-finality-verifier-v1"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "serde_json",
+ "sha2",
+ "trnm-poco-order-types-v1",
+]
+
+[[package]]
+name = "trnm-poco-order-state-v1"
+version = "0.1.0"
+dependencies = [
+ "rusqlite",
+ "sha2",
+ "tempfile",
+ "trnm-poco-global-execution-v1",
+ "trnm-poco-order-application-v1",
+ "trnm-poco-order-finality-verifier-v1",
+ "trnm-poco-order-types-v1",
+]
+
+[[package]]
+name = "trnm-poco-order-types-v1"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
+
+[[package]]
+name = "trnm-poco-verify-challenge-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "ed25519-dalek",
+ "rusqlite",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "trnm-poco-agent-market-v1",
 ]
 
 [[package]]
@@ -1689,6 +2017,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-production-adapter-conformance-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-control-plane-v0",
+ "trnm-migration-v0",
+ "trnm-node-boundary-v0",
+ "trnm-state-sync-v0",
+ "trnm-tx-lifecycle-v0",
+]
+
+[[package]]
 name = "trnm-protocol"
 version = "0.1.0"
 dependencies = [
@@ -1697,6 +2037,13 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror",
+]
+
+[[package]]
+name = "trnm-release-bundle-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
 ]
 
 [[package]]
@@ -1755,6 +2102,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-state-sync-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
+
+[[package]]
+name = "trnm-tx-lifecycle-v0"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
+
+[[package]]
 name = "trnm-types"
 version = "0.1.0"
 dependencies = [
@@ -1763,6 +2124,14 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
+]
+
+[[package]]
+name = "trnm-whole-node-checkpoint-types"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-consensus-types",
 ]
 
 [[package]]
@@ -1885,6 +2254,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "winapi"
+version = "0.3.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419"
+dependencies = [
+ "winapi-i686-pc-windows-gnu",
+ "winapi-x86_64-pc-windows-gnu",
+]
+
+[[package]]
+name = "winapi-i686-pc-windows-gnu"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6"
+
+[[package]]
+name = "winapi-x86_64-pc-windows-gnu"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
+
+[[package]]
 name = "windows-link"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1897,15 +2288,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
 dependencies = [
  "windows-link",
-]
-
-[[package]]
-name = "winnow"
-version = "0.7.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "df79d97927682d2fd8adb29682d1140b343be4ac0f08fd68b7765d9c059d3945"
-dependencies = [
- "memchr",
 ]
 
 [[package]]

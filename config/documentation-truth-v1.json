@@ -1,0 +1,99 @@
+{
+  "schema": "trnm-documentation-truth-v1",
+  "canonical_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "canonical_truth_workflow": ".github/workflows/trnm-documentation-truth.yml",
+  "module_coverage_manifest": "config/module-coverage-v1.toml",
+  "module_technical_reference": "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md",
+  "gate_revision": 4,
+  "canonical_development_entries": [
+    "docs/development/CURRENT_SNAPSHOT_V1.json",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md",
+    "docs/development/module-registry-v1.toml",
+    "docs/development/plan-manifest-v1.toml",
+    "docs/development/release-train-v1.toml"
+  ],
+  "single_regular_markdown": true,
+  "compatibility_aliases": {
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md": "TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  },
+  "forbidden_active_trees": [
+    "docs/archive",
+    "docs/development/agents",
+    "docs/development/packages",
+    "trillionnium/docs/release",
+    "trillionnium/docs/reports"
+  ],
+  "active_reference_roots": [
+    ".github",
+    "config",
+    "contracts",
+    "docs/modules",
+    "formal",
+    "proto",
+    "scripts",
+    "trillionnium",
+    "web4-frontend"
+  ],
+  "active_reference_files": [
+    "AGENTS.md",
+    "OPERATIONS.md",
+    "PROJECT_BOUNDARY.json",
+    "PROJECT_BOUNDARY.md",
+    "README.md",
+    "RELEASE_READINESS.md",
+    "SECURITY.md",
+    "docs/README.md"
+  ],
+  "relative_link_check_paths": [
+    "README.md",
+    "docs/README.md",
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md",
+    "OPERATIONS.md",
+    "RELEASE_READINESS.md",
+    "SECURITY.md",
+    "PROJECT_BOUNDARY.md",
+    "contracts/README.md",
+    "web4-frontend/README.md",
+    "web4-frontend/docs/README.md"
+  ],
+  "reference_scan_exclusions": [
+    "config/documentation-truth-v1.json",
+    "scripts/ci/check_canonical_development_plan.sh",
+    "scripts/ci/check_documentation_reference_closure_v1.py",
+    ".github/workflows/trnm-documentation-truth.yml"
+  ],
+  "forbidden_active_references": [
+    "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md",
+    "docs/development/TRNM_DEVELOPMENT_DOCUMENTATION_UPGRADE_V1.md",
+    "docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md",
+    "TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13",
+    "TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04",
+    "TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25",
+    "TRNM_POCO_P2_STORE_WRITER_MATRIX_2026-08-26",
+    "TRNM_4_WEEK_SPRINT_PLAN_2026-03-19",
+    "TRNM_90_DAY_EXECUTION_PLAN_2026-03-19",
+    "SPLIT_ROADMAP_2026-03-19"
+  ],
+  "historical_record_roots": [
+    "docs/audits"
+  ],
+  "historical_record_rule": "historical audit records are immutable evidence only; they are outside active navigation, execution, configuration, build and release authority",
+  "active_evidence_root": "docs/evidence",
+  "active_evidence_rule": "versioned evidence contracts and exact-source submissions remain navigable; a submission does not promote truth until its validator and independent acceptance gates pass",
+  "retired_tree_rule": "retired tree existence is rejected structurally; explanatory negative references are not treated as authority and are validated by path-specific gates",
+  "relative_link_rule": "selected active navigation and contract documents may not contain repository-relative links whose targets are absent or escape the repository root",
+  "required_runtime_bindings": [
+    "source_commit",
+    "source_tree",
+    "pull_request_number",
+    "pull_request_head",
+    "pull_request_base",
+    "prospective_merge_commit",
+    "prospective_merge_tree"
+  ],
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "release_ready": false
+}

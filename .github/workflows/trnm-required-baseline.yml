@@ -1,0 +1,525 @@
+name: trnm-required-baseline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-required-baseline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  repository-truth:
+    name: repository-truth
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: trillionnium-chain
+        shell: bash
+    steps:
+      - name: Check out exact source with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          path: trillionnium-chain
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Retain exact tracked source as diagnostic input
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-boundary-source"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          git archive --format=tar.gz --prefix=trillionnium-chain/ \
+            --output="$root/tracked-source.tar.gz" HEAD
+          git bundle create "$root/tracked-history.bundle" --all
+          (cd "$root" && sha256sum tracked-source.tar.gz tracked-history.bundle > SHA256SUMS)
+          printf '%s\n' 'scope=exact-source-diagnostic-not-acceptance' > "$root/SCOPE"
+      - name: Upload exact-source diagnostic input
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-boundary-source-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-boundary-source
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+      - name: Install project preflight prerequisite
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep
+      - name: Run retained module-documentation false-pass mutants
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_module_coverage_guard_v1.py
+          python3 scripts/ci/test_node_candidate_boundary_v1.py
+          python3 scripts/ci/test_cargo_source_inventory_v1.py
+          python3 scripts/ci/test_bounded_workspace_tests_v1.py
+          bash scripts/check_ci_runner_policy_test.sh
+          timeout --signal=TERM --kill-after=30s 900s bash scripts/check_cargo_offline_policy_test.sh
+      - name: Verify canonical project boundary without exemptions
+        run: bash scripts/project-preflight.sh --audit
+      - name: Validate repository, development, module, node, and blocker truth
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_required_baseline_closure_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_build_closures_v1.py
+      - name: Validate deterministic release-status projection
+        run: |
+          python3 scripts/ci/generate_release_status_v1.py --check-deterministic \
+            --output "${RUNNER_TEMP}/trnm-release-status-v1.json"
+          python3 -m json.tool "${RUNNER_TEMP}/trnm-release-status-v1.json" >/dev/null
+      - name: Validate committed JSON and TOML
+        run: |
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import tomllib
+          root = pathlib.Path(".")
+          for path in sorted(root.rglob("*.json")):
+              if any(part in {".git", "node_modules", "target"} for part in path.parts):
+                  continue
+              with path.open("r", encoding="utf-8") as handle:
+                  json.load(handle)
+          for path in sorted(root.rglob("*.toml")):
+              if any(part in {".git", "node_modules", "target"} for part in path.parts):
+                  continue
+              with path.open("rb") as handle:
+                  tomllib.load(handle)
+          PY
+      - name: Compile Python CI tooling
+        run: |
+          PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/pycache" python3 -m py_compile \
+            scripts/ci/check_repository_truth_v1.py \
+            scripts/ci/check_blocker_execution_v1.py \
+            scripts/ci/check_build_closures_v1.py \
+            scripts/ci/check_documentation_reference_closure_v1.py \
+            scripts/ci/check_module_coverage_v1.py \
+            scripts/ci/check_node_decomposition_v1.py \
+            scripts/ci/check_required_baseline_closure_v1.py \
+            scripts/ci/check_required_protocol_contract_v1.py \
+            scripts/ci/generate_release_status_v1.py \
+            scripts/ci/check_external_evidence_v1.py \
+            scripts/ci/run_bounded_workspace_tests_v1.py
+      - name: Require generators to leave the checkout clean
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+      - name: Install repository-pinned Node for consumer replay
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: trillionnium-chain/.node-version
+          cache: npm
+          cache-dependency-path: trillionnium-chain/web4-frontend/package-lock.json
+      - name: Run exact-head frontend consumer regressions
+        working-directory: trillionnium-chain/web4-frontend
+        run: |
+          set -euo pipefail
+          npm install --global npm@11.16.0
+          npm ci
+          npm run typecheck
+          npm run test:unit
+          npm run test:contract
+      - name: Run separately bound prospective-merge regressions
+        env:
+          TRNM_EXPECTED_MERGE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" != "pull_request" ]]; then
+            echo 'prospective_merge=not-applicable; exact event source checked above'
+            exit 0
+          fi
+          merge_sha="${TRNM_EXPECTED_MERGE_SHA}"
+          [[ "$merge_sha" =~ ^[0-9a-f]{40}$ ]]
+          git fetch --no-tags origin "$merge_sha"
+          parent="$(mktemp -d "${RUNNER_TEMP}/trnm-merge-boundary.XXXXXX")"
+          checkout="$parent/trillionnium-chain"
+          cleanup() {
+            git worktree remove --force "$checkout" >/dev/null 2>&1 || true
+            rmdir "$parent" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          git worktree add --detach "$checkout" "$merge_sha"
+          (
+            cd "$checkout"
+            test "$(git rev-parse HEAD)" = "$merge_sha"
+            git rev-parse HEAD 'HEAD^{tree}'
+            bash scripts/project-preflight.sh --audit
+            python3 scripts/ci/test_module_coverage_guard_v1.py
+            python3 scripts/ci/check_module_coverage_v1.py
+            cd web4-frontend
+            npm ci
+            npm run typecheck
+            npm run test:unit
+            npm run test:contract
+            git diff --exit-code
+            test -z "$(git status --porcelain --untracked-files=all)"
+          )
+      - name: Require consumer replay to leave exact-head source unchanged
+        run: |
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  protocol-contract:
+    name: protocol-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Install required host tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep
+      - name: Install pinned Rust and Node toolchains
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup override set 1.95.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "24.18.0"
+      - name: Validate canonical plan, mainline and active protocol contract
+        run: |
+          set -euo pipefail
+          bash ./scripts/ci/check_canonical_development_plan.sh
+          bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          python3 ./scripts/ci/check_required_protocol_contract_v1.py
+      - name: Validate independent frozen vectors
+        run: |
+          set -euo pipefail
+          python3 ./scripts/ci/check_poco_bft_v0_parameters.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
+          python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
+          python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
+          bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+          bash ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+          bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+      - name: Validate machine-readable schemas and exact parsers
+        run: |
+          set -euo pipefail
+          bash ./scripts/ci/check_poco_bft_v0_registry.sh
+          bash ./scripts/ci/check_poco_bft_v0_logical_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_block_body_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
+          bash ./scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+          bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+      - name: Require protocol gates to leave the checkout clean
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  fuzz-smoke:
+    name: fuzz-smoke
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Install pinned fuzz toolchain
+        run: |
+          rustup toolchain install nightly-2026-07-27 --profile minimal
+          bash ./scripts/ci/install_cargo_fuzz.sh
+      - name: Run bounded three-target canonical-input smoke
+        env:
+          TRNM_FUZZ_SMOKE_SECONDS: "5"
+        run: ./scripts/ci/check_canonical_fuzz_smoke.sh
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-required-fuzz-${{ github.run_id }}-${{ github.run_attempt }}
+          path: trillionnium/fuzz/artifacts/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+  external-evidence-contract:
+    name: external-evidence-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Reject false external acceptance with isolated CLI regressions
+        run: python3 scripts/ci/test_external_evidence_v1.py
+      - name: Validate supplied external evidence and report open blockers
+        run: |
+          python3 scripts/ci/check_external_evidence_v1.py \
+            --output "${RUNNER_TEMP}/external-evidence-status-v1.json"
+          python3 -m json.tool "${RUNNER_TEMP}/external-evidence-status-v1.json"
+      - name: Prove release mode is fail-closed while evidence is absent
+        run: |
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all \
+            --source-commit "$(git rev-parse HEAD)" \
+            --source-tree "$(git rev-parse 'HEAD^{tree}')" \
+            >/tmp/trnm-external-release-gate.out 2>/tmp/trnm-external-release-gate.err
+          rc=$?
+          set -e
+          test "$rc" -eq 2
+          grep -q "external evidence gate remains open" /tmp/trnm-external-release-gate.err
+
+  rust-baseline:
+    name: rust-baseline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+      - name: Bind Cargo target inventory to the exact clean source
+        run: |
+          python3 scripts/ci/check_cargo_source_inventory_v1.py \
+            --output "${RUNNER_TEMP}/trnm-cargo-source-inventory-v1.json"
+      - name: Retain source-bound Cargo inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-cargo-source-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-cargo-source-inventory-v1.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Rust format
+        working-directory: trillionnium
+        run: cargo fmt --all -- --check
+      - name: Compile every active workspace target
+        working-directory: trillionnium
+        run: cargo check --workspace --all-targets --locked
+      - name: Verify default and explicit candidate ownership boundaries
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          git diff --exit-code HEAD -- .
+          git ls-files -s -- crates/trnm-native-execution-v0 crates/trnm-durable-file-adapters-v0 crates/trnm-poco-node-authority crates/trnm-poco-node-host
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-poco-node-cli --all-targets --locked
+          cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-state-sync-v0 --no-default-features --doc --locked
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-durable-file-adapters-v0 --lib --locked -- --nocapture
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features persistent-authority-candidate --all-targets --locked -- --nocapture
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
+          cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
+          git diff --exit-code HEAD -- .
+      - name: Replay original-listener socket replacement without masking failure
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 120s cargo test \
+            -p trnm-consensus-external-watermark --test authority_blackbox \
+            --locked replacing_bound_socket_path_poison_daemon_on_next_original_connection -- --exact
+      - name: Test the unified workspace feature graph with a hard deadline
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-rust-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          printf '%s\n' 'timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast' > "$root/workspace.command"
+          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast 2>&1 | tee "$root/workspace.log"
+      - name: Retain exact-source workspace execution log including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-workspace-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-rust-execution
+          if-no-files-found: error
+          retention-days: 7
+      - name: Test every active workspace package with bounded execution
+        env:
+          TRNM_PACKAGE_TEST_TIMEOUT_SECONDS: "600"
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-package-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          printf '%s\n' 'python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium' > "$root/packages.command"
+          python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium 2>&1 | tee "$root/packages.log"
+      - name: Retain exact-source package execution log including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-package-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-package-execution
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Verify production and candidate dependency closures with Cargo
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+          python3 scripts/ci/check_node_decomposition_v1.py
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --no-default-features --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --test default_build_closure --locked
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --no-default-features \
+            --features ai-v1-candidate --locked
+      - name: Compile, test, and lint external contract workspace
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-contract-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          {
+            python3 scripts/ci/check_cargo_source_inventory_v1.py \
+              --workspace-root contracts --output "$root/source-inventory.json"
+            git ls-files -s -- contracts
+            cargo check --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
+            cargo test --manifest-path contracts/Cargo.toml --workspace --all-targets --locked
+            cargo clippy --manifest-path contracts/Cargo.toml --workspace --all-targets --locked -- -D warnings
+          } 2>&1 | tee "$root/contracts.log"
+      - name: Retain exact-source contract log including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-contract-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-contract-execution
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Strict Clippy for executable safety and production boundaries
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-boundary-clippy"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          {
+            for package in \
+              trnm-state \
+              trnm-consensus-types \
+              trnm-consensus-crypto \
+              trnm-consensus-core \
+              trnm-consensus-safety-rules \
+              trnm-consensus-safety-store \
+              trnm-consensus-signer-journal \
+              trnm-native-application \
+              trnm-native-application-sqlite \
+              trnm-native-execution-v0 \
+              trnm-durable-file-adapters-v0 \
+              trnm-tx-lifecycle-v0 \
+              trnm-state-sync-v0 \
+              trnm-migration-v0 \
+              trnm-control-plane-v0 \
+              trnm-release-bundle-v0 \
+              trnm-node-boundary-v0 \
+              trnm-poco-node-production-v0 \
+              trnm-production-adapter-conformance-v0 \
+              trnm-poco-node \
+              trnm-poco-node-authority \
+              trnm-poco-node-io \
+              trnm-poco-node-host \
+              trnm-poco-node-cli
+            do
+              echo "clippy package=${package}"
+              cargo clippy -p "${package}" --all-targets --locked -- -D warnings
+            done
+          } 2>&1 | tee "$root/clippy.log"
+      - name: Retain exact-source boundary Clippy log including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-boundary-clippy-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-boundary-clippy
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Prove dedicated production-shaped CLI remains fail-closed
+        run: |
+          set -euo pipefail
+          status=$(cargo run --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --bin trnm-poco-node-cli \
+            --locked -- status)
+          printf '%s\n' "$status" | grep -q '"production_candidate":false'
+          printf '%s\n' "$status" | grep -q '"authority_gate_open":false'
+          printf '%s\n' "$status" | grep -q '"production_activation":false'
+          printf '%s\n' "$status" | grep -q '"start_permitted":false'
+          set +e
+          cargo run --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-cli --bin trnm-poco-node-cli \
+            --locked -- start \
+            >"${RUNNER_TEMP}/trnm-node-start.out" \
+            2>"${RUNNER_TEMP}/trnm-node-start.err"
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          grep -q 'node host start blocked' "${RUNNER_TEMP}/trnm-node-start.err"
+      - name: Run critical library regressions
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          cargo test -p trnm-state --lib --locked
+          cargo test -p trnm-consensus-types --lib --locked
+          cargo test -p trnm-consensus-core --lib --locked
+          cargo test -p trnm-poco-node --lib --locked
+          cargo test -p trnm-production-adapter-conformance-v0 --all-targets --locked
+          cargo test -p trnm-durable-file-adapters-v0 --all-targets --locked
+      - name: Require Rust and contract validation to leave checkout clean
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"

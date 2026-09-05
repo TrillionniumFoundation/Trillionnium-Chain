@@ -1,35 +1,74 @@
 {
-  "schema": 1,
+  "schema": "trnm-project-boundary-v2",
   "project_id": "trillionnium-chain",
-  "canonical_dir": "trillionnium-chain",
+  "canonical_repository": "TrillionniumFoundation/Trillionnium-Chain",
   "lane": "chain-consensus",
   "lifecycle": "active",
+  "repository": {
+    "current_visibility": "public",
+    "visibility_change_requires_owner_decision": true,
+    "default_branch": "main",
+    "required_protected_branches": [
+      "main"
+    ],
+    "required_pull_request_reviews": 2,
+    "require_code_owner_review": true,
+    "require_last_push_approval": true,
+    "block_force_push": true,
+    "block_branch_deletion": true
+  },
+  "consensus": {
+    "mainline": "native-poco-bft",
+    "protocol_target": "poco-bft-v0",
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "legacy_comet_role": "migration-residue-only",
+    "legacy_comet_may_authorize_release": false
+  },
+  "cargo": {
+    "workspace_manifest": "trillionnium/Cargo.toml",
+    "required_active_members": [
+      "crates/trnm-consensus-core",
+      "crates/trnm-consensus-types",
+      "crates/trnm-consensus-crypto",
+      "crates/trnm-consensus-safety-rules",
+      "crates/trnm-consensus-safety-store",
+      "crates/trnm-native-application",
+      "crates/trnm-poco-node"
+    ],
+    "required_excluded_members": [
+      "crates/trnm-consensus-app",
+      "crates/trnm-node"
+    ],
+    "forbidden_external_path_dependencies": true
+  },
+  "owned_surfaces": [
+    "consensus protocol and safety rules",
+    "native application/runtime/state",
+    "mempool, RPC, node and validator interfaces",
+    "genesis, migration, state-sync and light-client proofs",
+    "operator, release, SBOM and evidence tooling"
+  ],
+  "excluded_surfaces": [
+    "World gameplay, campaign and economy logic",
+    "Hepta services",
+    "Nakama authoritative match state",
+    "cross-repository end-to-end orchestration"
+  ],
+  "authoritative_status": "config/consensus-mainline.json",
+  "authoritative_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "canonical_dir": "trillionnium-chain",
   "development": true,
   "remote": {
     "policy": "required",
     "canonical_slug": "TrillionniumFoundation/Trillionnium-Chain",
-    "visibility": "private",
     "upstream_required": true
   },
   "branch": {
     "protected": [
-      "main",
-      "master"
+      "main"
     ],
     "development_regex": "^(feature|fix|chore|docs|test)/chain-[a-z0-9][a-z0-9._-]*$"
-  },
-  "cargo": {
-    "workspace_manifest": "trillionnium/Cargo.toml",
-    "required_packages": [
-      "trnm-consensus-app",
-      "trnm-runtime",
-      "trnm-state"
-    ],
-    "forbidden_packages": [
-      "trnm-first-contact",
-      "trnm-game-server"
-    ],
-    "external_path_dependencies": "forbid"
   },
   "deny_changed_paths_regex": "^trillionnium/crates/(trnm-first-contact|trnm-game-server|trnm-campaign-core|trnm-rts-|trnm-online-|trnm-economy-)"
 }

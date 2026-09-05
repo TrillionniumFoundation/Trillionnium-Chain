@@ -1,0 +1,17 @@
+{
+  "schema": "trnm-exact-head-rerun-request-v2",
+  "requested_workflows": [
+    "trnm-required-baseline.yml",
+    "trnm-node-commit-exec-focused.yml",
+    "trnm-native-poco-runtime-fault-matrix-v1.yml",
+    "trnm-documentation-truth.yml",
+    "trnm-merge-gates.yml"
+  ],
+  "source_identity": "derive-at-runtime",
+  "accept_stale_or_different_head": false,
+  "external_evidence": false,
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "public_testnet_ready": false,
+  "release_ready": false
+}

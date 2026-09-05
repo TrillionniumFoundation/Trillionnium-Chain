@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trnm-poco-ai-native-v1",
+  "status": "candidate-non-normative",
+  "scope": "five-local-store-fresh-readback-consistency-only",
+  "planes": ["transaction-batch-da", "agent-market", "verify-challenge", "mvcc-fee", "consumption-settlement"],
+  "join": {
+    "fresh_reopen_each_store": true,
+    "double_sample_no_intervening_change": true,
+    "same_da_head_and_certificate_sqlite_snapshot": true,
+    "same_protocol_context": true,
+    "same_exact_order_head_for_ordered_stores": true,
+    "typed_lifecycle_ids": ["task", "lease", "escrow", "result", "settlement", "da-batch", "availability-certificate", "da-obligation"],
+    "exact_store_identity_sequence_state_and_journal_roots": true,
+    "terminal_receipts_match_sampled_store_heads": true,
+    "terminal_settlement_required": true,
+    "active_da_obligation_required": true,
+    "order_proof_is_trust_input": true
+  },
+  "authority": {
+    "cross_plane_readback_consistent_candidate": true,
+    "order_proof_authority_complete": false,
+    "cross_plane_atomic_commit": false,
+    "cross_plane_authority_integration": false,
+    "whole_node_checkpoint_integration": false,
+    "anti_whole_store_rollback_authority": false,
+    "node_private_owner": false,
+    "node_process_integration": false
+  },
+  "global_truth": {
+    "g2_global_complete": false,
+    "global_wire_schema_complete": false,
+    "global_conformance_vectors_complete": false,
+    "normative_freeze": false,
+    "production_candidate": false,
+    "activation": false
+  }
+}

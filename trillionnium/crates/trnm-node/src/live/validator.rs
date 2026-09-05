@@ -479,12 +479,12 @@ pub fn load_signing_key_file(path: &Path) -> Result<SigningKey> {
 }
 
 fn now_unix_ms() -> Result<u64> {
-    Ok(SystemTime::now()
+    SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|_| anyhow!("system clock is before UNIX epoch"))?
         .as_millis()
         .try_into()
-        .map_err(|_| anyhow!("system clock does not fit u64 milliseconds"))?)
+        .map_err(|_| anyhow!("system clock does not fit u64 milliseconds"))
 }
 
 #[cfg(test)]

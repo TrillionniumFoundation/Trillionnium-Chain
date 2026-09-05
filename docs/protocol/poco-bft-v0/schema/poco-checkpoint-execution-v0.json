@@ -1,0 +1,89 @@
+{
+  "schema": "trnm.poco-bft.checkpoint-execution.v0",
+  "schema_version": 0,
+  "status": "B2-H3b2a-production-checkpoint-authority",
+  "authority": {
+    "config_schema": "trnm_poco_authority_config_v0",
+    "genesis_authenticated_object": true,
+    "mutation_policy": "genesis-only immutable reserved object key; all transaction mutations reject",
+    "fields": ["genesis_hash", "protocol_profile_hash"],
+    "profile_constraint": "protocol_profile_hash == authenticated active ConsensusParametersV0 hash",
+    "chain_constraint": "application chain_id == authenticated old ValidatorSetV0 chain_id",
+    "protocol_constraint": "old set and active parameters both use protocol v0"
+  },
+  "execution_binding": {
+    "canonical_length_bytes": {
+      "formula": "404 + chain_id.length",
+      "chain_id_minimum_bytes": 1,
+      "chain_id_maximum_bytes": 128,
+      "minimum": 405,
+      "maximum": 532,
+      "fixed_vector_chain_id_bytes": 21,
+      "fixed_vector_total": 425
+    },
+    "canonical_fields": [
+      "schema_version:u16=0",
+      "genesis_hash:Hash32",
+      "chain_id:Bytes<u16>",
+      "protocol_profile_hash:Hash32",
+      "protocol_version:u32=0",
+      "epoch:u64",
+      "checkpoint_height:u64",
+      "checkpoint_block_hash:Hash32",
+      "checkpoint_timestamp_ms:u64",
+      "parent_height:u64",
+      "parent_state_root:Hash32",
+      "cutoff_height:u64",
+      "cutoff_state_root:Hash32",
+      "cutoff_manifest_entries_root:Hash32",
+      "cutoff_manifest_entry_count:u32",
+      "payload_root:Hash32",
+      "receipts_root:Hash32",
+      "next_state_root:Hash32",
+      "validator_set_id:Hash32",
+      "consensus_parameters_hash:Hash32"
+    ],
+    "execution_id_domain": "trnm.poco-bft.checkpoint-execution-id.v0",
+    "payload_root_domain": "trnm.poco-bft.checkpoint-payload.v0",
+    "receipts_root_domain": "trnm.poco-bft.checkpoint-receipts.v0",
+    "receipt_encoding": "exact prost ExecTxResult bytes",
+    "cardinality": "txs.length == tx_results.length",
+    "aggregate_bounds": {
+      "transaction_count_maximum": 4294967295,
+      "transaction_bytes_maximum": 8388608,
+      "encoded_receipt_bytes_maximum": 8388608,
+      "arithmetic": "checked",
+      "admission_order": "count, transaction-byte total, and encoded-receipt-byte total reject before receipt collection, ordered-root encoding, or hashing"
+    },
+    "parent_constraint": "parent_height + 1 == checkpoint_height",
+    "cutoff_constraint": "cutoff height is checkpoint_height - active snapshot_lead_blocks; JMT version/root/projection are returned as one sealed application-internal value",
+    "manifest_constraint": "canonical execution bytes bind the exact cutoff manifest entries_root and entry_count next to the state root",
+    "projection_constraint": "authenticated cutoff projection equals the parent projection; post-cutoff PoCO mutation is rejected"
+  },
+  "event_output": {
+    "type": "trnm.poco.checkpoint-execution.v0",
+    "role": "telemetry_only",
+    "authority": "event attributes and execution_id are never accepted as capability input and cannot reconstruct, mint, or authorize the private checkpoint capability",
+    "consensus_dependency": "none; admission and later joins consume only the private capability returned by same-call verification"
+  },
+  "projection_cache": {
+    "role": "performance_only",
+    "maximum_entries": 4,
+    "key": ["JMT version", "state_root"],
+    "hit_validation": "reread the real root for the requested version before returning the cached authenticated projection",
+    "miss_validation": "load the projection, then reread and require exact root equality before insertion or return",
+    "semantic_invariance": "cache hit, miss, eviction, or disabled cache produces the same accept/reject result and capability bytes",
+    "remaining_optimization": "first-version loading and authenticated key indexing remain H3b2b1 performance work, never authority"
+  },
+  "production_paths": [
+    "InitChain authenticates the authority object into AppHash",
+    "startup requires local config equality with the authenticated authority object",
+    "ABCI snapshot v3/v4 restore requires the same equality before installation",
+    "ProcessProposal and FinalizeBlock recompute the capability from actual block inputs and execution results"
+  ],
+  "does_not_establish": [
+    "complete certificate/key/nonce/tuple/meter/settlement/evidence/governance cross-entry semantics",
+    "authenticated candidate selection",
+    "handoff, activation, or Core epoch transition"
+  ]
+}

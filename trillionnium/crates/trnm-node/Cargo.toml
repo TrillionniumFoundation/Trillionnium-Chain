@@ -1,9 +1,9 @@
 [package]
 name = "trnm-node"
 version = "0.1.0"
-edition.workspace = true
-license.workspace = true
-authors.workspace = true
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
 autobins = false
 publish = false
 
@@ -13,6 +13,7 @@ legacy-harness = []
 
 [package.metadata.trnm]
 lane = "legacy-harness"
+development_only = true
 protocol_features_frozen = true
 production_candidate = false
 
@@ -58,3 +59,9 @@ trnm-finality-verifier = { version = "0.1.0", path = "../trnm-finality-verifier"
 
 [dev-dependencies]
 trnm-state = { version = "0.1.0", path = "../trnm-state", features = ["test-utils"] }
+
+# This legacy package is excluded from the active native workspace. The
+# standalone archive workspace exists only for migration-residue
+# differential verification and does not re-enter the mainline graph.
+[workspace]
+resolver = "2"

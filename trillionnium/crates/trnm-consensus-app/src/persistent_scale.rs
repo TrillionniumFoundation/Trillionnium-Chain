@@ -33,6 +33,7 @@ use tendermint_proto::{
         types::{ConsensusParams, VersionParams},
     },
 };
+use trnm_consensus_types::{Height, StateRoot};
 use trnm_node::live::{
     node::AuthorizedSignerV1,
     store::{ObjectMutation, StoredObject},
@@ -41,6 +42,10 @@ use trnm_node::live::{
 use crate::{
     auth_tree::stored_object_key,
     authenticated_writes_for_delta, build_store_snapshot, install_snapshot_record,
+    native_execution::{
+        authorize_native_checkpoint_execution_v0, AuthorizedNativeCheckpointExecutionV0,
+        NativeBlockExecutionV0,
+    },
     store::ApplicationStore,
     validator_lifecycle::{
         validators_to_abci, ConsensusValidatorV1, ValidatorGovernanceV1,
@@ -972,13 +977,22 @@ fn persist_empty_collision_version(store: &ApplicationStore, state: &mut AppStat
     let auth_update = store
         .plan_auth_update(next_height, writes)
         .with_context(|| format!("plan empty authenticated version {next_height}"))?;
+    let app_hash = auth_update.root_hash.into();
+    let native_execution = authorize_empty_native_scale_execution(
+        state.height,
+        state.app_hash,
+        next_height,
+        app_hash,
+    )?;
     let pending = PendingBlock {
         height: next_height,
-        app_hash: auth_update.root_hash.into(),
+        app_hash,
         tx_results: Vec::new(),
+        native_execution,
         validator_updates: Vec::new(),
         delta,
         auth_update,
+        poco_checkpoint_execution: None,
     };
     store
         .persist_transition(state, &pending, 0)
@@ -1280,6 +1294,7 @@ fn scale_application_config(state_path: PathBuf) -> ConsensusAppConfig {
             signer_role: "operator".to_string(),
             public_key_hex: hex::encode([1_u8; 32]),
         }],
+        poco_authority: None,
         state_path: Some(state_path),
     }
 }
@@ -1297,6 +1312,7 @@ fn initialize_application(config: ConsensusAppConfig) -> Result<CometBftApplicat
         chain_id: config.chain_id.clone(),
         app_version: APP_VERSION,
         authorized_signers: config.authorized_signers,
+        poco_authority: config.poco_authority,
         validator_governance: ValidatorGovernanceV1 {
             schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
             signer_id: SCALE_SIGNER_ID.to_string(),
@@ -1304,6 +1320,7 @@ fn initialize_application(config: ConsensusAppConfig) -> Result<CometBftApplicat
             unsafe_allow_single_validator_genesis: false,
         },
         initial_validators: initial_validators.clone(),
+        poco_genesis_entries: Vec::new(),
     };
     let validators = validators_to_abci(&initial_validators)?;
     let response = application.init_chain(RequestInitChain {
@@ -1353,13 +1370,21 @@ fn persist_batch(
         .with_context(|| format!("plan persistent {phase:?} batch {batch_index}"))?;
     let plan_us = elapsed_us(plan_started);
     let app_hash = auth_update.root_hash.into();
+    let native_execution = authorize_empty_native_scale_execution(
+        state.height,
+        state.app_hash,
+        next_height,
+        app_hash,
+    )?;
     let pending = PendingBlock {
         height: next_height,
         app_hash,
         tx_results: Vec::new(),
+        native_execution,
         validator_updates: Vec::new(),
         delta,
         auth_update,
+        poco_checkpoint_execution: None,
     };
     let persist_started = Instant::now();
     store
@@ -1384,6 +1409,21 @@ fn persist_batch(
         database_logical_bytes: database.logical_bytes,
         wal_logical_bytes: wal.logical_bytes,
     })
+}
+
+fn authorize_empty_native_scale_execution(
+    parent_height: u64,
+    parent_state_root: [u8; 32],
+    target_height: u64,
+    post_state_root: [u8; 32],
+) -> Result<AuthorizedNativeCheckpointExecutionV0> {
+    authorize_native_checkpoint_execution_v0(
+        NativeBlockExecutionV0::try_new(&[], Vec::new())?,
+        Height::new(parent_height),
+        StateRoot::new(parent_state_root),
+        Height::new(target_height),
+        StateRoot::new(post_state_root),
+    )
 }
 
 fn scale_object(object_index: u64, update_sequence: u64, version: u64) -> StoredObject {

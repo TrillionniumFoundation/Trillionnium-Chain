@@ -1,0 +1,27 @@
+{
+  "algorithm": "RFC8032 Ed25519",
+  "expected": {
+    "mutated_signature": false,
+    "small_order_public_key": false,
+    "undecodable_public_key": false,
+    "valid": true,
+    "wrong_signing_root": false
+  },
+  "fixture_source": "RFC 8032 section 7.1 TEST 1 key; the fixed seed exists only in Rust test code",
+  "invalid": {
+    "mutated_signature_hex": "334a7b305ab428de6f7bdde956b7c9f6f5cf0a92bdd21b0b2b5b0b166fa61411403ed1a3b5d4f2dc234ac78b11a5ca5f8d8fae548c22b5386818f328e503bd0d",
+    "small_order_public_key_hex": "0100000000000000000000000000000000000000000000000000000000000000",
+    "undecodable_public_key_hex": "0200000000000000000000000000000000000000000000000000000000000000",
+    "wrong_signing_root_hex": "91ed745f8bc38310e52eabae5355013914d787087fa5c6ab6e42fd7ae698ded1"
+  },
+  "message": "the exact raw 32-byte PoCO-BFT SigningRoot; no extra hashing or framing at the verifier boundary",
+  "schema": "trnm_poco_bft_ed25519_vectors_v0",
+  "scope": "Verification-only boundary vector; no private key, signing API, key custody, or remote-signer claim",
+  "valid": {
+    "public_key_hex": "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a",
+    "signature_hex": "324a7b305ab428de6f7bdde956b7c9f6f5cf0a92bdd21b0b2b5b0b166fa61411403ed1a3b5d4f2dc234ac78b11a5ca5f8d8fae548c22b5386818f328e503bd0d",
+    "signing_root_hex": "90ed745f8bc38310e52eabae5355013914d787087fa5c6ab6e42fd7ae698ded1",
+    "signing_root_source": "wire-foundation-v0.json sample.vote_sign_v0"
+  },
+  "verification_profile": "ed25519-dalek 2.x VerifyingKey::from_bytes followed by verify_strict"
+}

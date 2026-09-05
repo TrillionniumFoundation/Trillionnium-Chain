@@ -1,0 +1,285 @@
+{
+  "artifact": "poco-ai-native-v1-order-signature-crypto-corpus",
+  "artifact_version": 1,
+  "status": "candidate-non-normative",
+  "signature_scheme": "strict-ed25519-v1-draft",
+  "fixture": {
+    "validator_definition_case_id": "validator_set_definition",
+    "validator_descriptor_case_id": "validator_set_descriptor",
+    "vote_statement_case_id": "vote_statement",
+    "timeout_statement_case_id": "timeout_statement_validator_a",
+    "timeout_certificate_case_id": "timeout_certificate",
+    "validators": [
+      {
+        "validator_id": "76616c696461746f722d61",
+        "signature_scheme": 0,
+        "public_key": "03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8",
+        "weight": 1
+      },
+      {
+        "validator_id": "76616c696461746f722d62",
+        "signature_scheme": 0,
+        "public_key": "29acbae141bccaf0b22e1a94d34d0bc7361e526d0bfe12c89794bc9322966dd7",
+        "weight": 1
+      },
+      {
+        "validator_id": "76616c696461746f722d63",
+        "signature_scheme": 0,
+        "public_key": "2543b92ff1095511476adc8369db6ddc933665a11978dda1404ee1066ca9559d",
+        "weight": 1
+      },
+      {
+        "validator_id": "76616c696461746f722d64",
+        "signature_scheme": 0,
+        "public_key": "174553b456dddfc6908ecab1c101fe6ab21e2baa0617795b7d43a63482993fd5",
+        "weight": 1
+      }
+    ]
+  },
+  "expected": {
+    "validator_set_definition_hash": "d7d6e31fedeb001a50da13a1727639c4b32862d28cde981aa91ca7a22daac709",
+    "validator_set_hash": "fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d",
+    "vote_statement_cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222233333333333333333333333333333333333333333333333333333333333333330700000000000000fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70800000000000000017af3ef27a3b65ceb899f1e5e7776c08285ff1b8ca66af3adb7ace50157b71a4b2a0000000000000082828282828282828282828282828282828282828282828282828282828282828585858585858585858585858585858585858585858585858585858585858585bc57851d08286a6810710d5e9765b3b37ed497a9c4687d769d5fff4d8c3523a28686868686868686868686868686868686868686868686868686868686868686",
+    "vote_signature_root": "6b4c6cc09eb4d52c403c702ce13bfd0b5e8fc99ad3190055d0b47ab827111d94",
+    "timeout_statement_claims": [
+      {
+        "validator_id": "76616c696461746f722d61",
+        "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222233333333333333333333333333333333333333333333333333333333333333330700000000000000fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a00000000000000000000000000000000000091919191919191919191919191919191919191919191919191919191919191910300000000000000",
+        "signature_root": "f5e5314df242f2100ae1c8e775e7f020ac1deb58dc429bfd2cb15dd3dc5ab889"
+      },
+      {
+        "validator_id": "76616c696461746f722d62",
+        "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222233333333333333333333333333333333333333333333333333333333333333330700000000000000fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a00000000000000000000000000000000000091919191919191919191919191919191919191919191919191919191919191910400000000000000",
+        "signature_root": "19daeb5b23936c37ce78377010d19647972e3375064d63921643c9c6e7fc2a54"
+      },
+      {
+        "validator_id": "76616c696461746f722d63",
+        "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222233333333333333333333333333333333333333333333333333333333333333330700000000000000fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a00000000000000000000000000000000000091919191919191919191919191919191919191919191919191919191919191910300000000000000",
+        "signature_root": "f5e5314df242f2100ae1c8e775e7f020ac1deb58dc429bfd2cb15dd3dc5ab889"
+      },
+      {
+        "validator_id": "76616c696461746f722d64",
+        "cev1_hex": "01000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d61692d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222233333333333333333333333333333333333333333333333333333333333333330700000000000000fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d70900000000000000020100a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a00000000000000000000000000000000000091919191919191919191919191919191919191919191919191919191919191910400000000000000",
+        "signature_root": "19daeb5b23936c37ce78377010d19647972e3375064d63921643c9c6e7fc2a54"
+      }
+    ]
+  },
+  "claims": {
+    "quorum_certificate_signatures": [
+      {
+        "voter_id": "76616c696461746f722d61",
+        "signature_scheme": 0,
+        "signature": "a175db32de5d2cdb69dc20b8459125fa4b98b616611707d25d638afd8581c018a5a397a0e5d0c3bf88844bf7593f4d1578d04ecca5c380dcb13ecdca7add7409"
+      },
+      {
+        "voter_id": "76616c696461746f722d62",
+        "signature_scheme": 0,
+        "signature": "bc33211bac5ab3fa2cadfe710caaff04640ede742455e027a9a2f663d4f668007775511bd9e81f5c3f69464b59d601373e8c26aa6060c21207da4c2302944e03"
+      },
+      {
+        "voter_id": "76616c696461746f722d63",
+        "signature_scheme": 0,
+        "signature": "d26761a19fb8d4687e01f4b587eb6c35aab8e6ed434bd63544464864e806ee3875ff9966d671e493e9fa9a8d5b86ad86c1ae3e7dd507954b4f49094b572c8606"
+      },
+      {
+        "voter_id": "76616c696461746f722d64",
+        "signature_scheme": 0,
+        "signature": "deac14b3bc8414543598b9debb1c0347e524582f5f4647d9aed368721b12290882d2086bb6c6e6ee63243e5322bd9fdcf93f787cb4818fdb922d8b1f4442df08"
+      }
+    ],
+    "timeout_certificate_signatures": [
+      {
+        "validator_id": "76616c696461746f722d61",
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 9,
+            "message_kind": 2
+          },
+          "high_justification": {
+            "variant": "EpochStart",
+            "value": {
+              "anchor_kind": 0,
+              "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+              "anchor_view": 0
+            }
+          },
+          "locked_qc_id": null,
+          "locked_qc_view": 0,
+          "last_finalized_anchor": {
+            "variant": "FreshGenesis",
+            "value": {
+              "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+            }
+          },
+          "pacemaker_generation": 3
+        },
+        "signature_scheme": 0,
+        "signature": "8c5d66dc110007805993051bdd846c0b312ee952ea0f59f8595777f2c7636c1c19b6b2f4b85f562909056ca74736b4dbb98ced28020e7c241cff75c5e26ec50f"
+      },
+      {
+        "validator_id": "76616c696461746f722d62",
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 9,
+            "message_kind": 2
+          },
+          "high_justification": {
+            "variant": "EpochStart",
+            "value": {
+              "anchor_kind": 0,
+              "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+              "anchor_view": 0
+            }
+          },
+          "locked_qc_id": null,
+          "locked_qc_view": 0,
+          "last_finalized_anchor": {
+            "variant": "FreshGenesis",
+            "value": {
+              "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+            }
+          },
+          "pacemaker_generation": 4
+        },
+        "signature_scheme": 0,
+        "signature": "9b456c0a1f7eed4340bc44485a2729d4138f83fa4df1b6ef9b37e76f6008f7f0d581cd190495a47f2925a461dd9f4bbb8454ac32d85c969fdc0b42d8f19a3f0f"
+      },
+      {
+        "validator_id": "76616c696461746f722d63",
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 9,
+            "message_kind": 2
+          },
+          "high_justification": {
+            "variant": "EpochStart",
+            "value": {
+              "anchor_kind": 0,
+              "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+              "anchor_view": 0
+            }
+          },
+          "locked_qc_id": null,
+          "locked_qc_view": 0,
+          "last_finalized_anchor": {
+            "variant": "FreshGenesis",
+            "value": {
+              "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+            }
+          },
+          "pacemaker_generation": 3
+        },
+        "signature_scheme": 0,
+        "signature": "3e26016ebfbba84247c3f13c85e0a051dbbb01c1a61f211edad3dba0ceb430cfe03133a47f47d2925c12a303ebf351401112eb9904a5821c20a97339e910f30b"
+      },
+      {
+        "validator_id": "76616c696461746f722d64",
+        "statement": {
+          "schema_version": 1,
+          "consensus_context": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-ai-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "runtime_profile_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "epoch": 7,
+            "validator_set_hash": "fade1cc22097a06a204aaf044ef15bd6b9da8221c2f0985358ee1985315bf29d",
+            "consensus_parameters_hash": "6066bdb3c7faea54e5ceb43bd9a661657a1bd4640347bd8fba5c9fd6220fb2d7",
+            "view": 9,
+            "message_kind": 2
+          },
+          "high_justification": {
+            "variant": "EpochStart",
+            "value": {
+              "anchor_kind": 0,
+              "anchor_id": "a6d52da8e30513cf07a36f63dfa093899b8990cce34f117e19c05cd8fd19769a",
+              "anchor_view": 0
+            }
+          },
+          "locked_qc_id": null,
+          "locked_qc_view": 0,
+          "last_finalized_anchor": {
+            "variant": "FreshGenesis",
+            "value": {
+              "genesis_derived_state_hash": "9191919191919191919191919191919191919191919191919191919191919191"
+            }
+          },
+          "pacemaker_generation": 4
+        },
+        "signature_scheme": 0,
+        "signature": "00422311988936bc50685dd31967633c1fa066c85b8c73d802b4afa15df7ab6ec95d60fc16ae7644c38c219a1995f0d7558b78f27dbc972bcc543548bf1f1408"
+      }
+    ]
+  },
+  "negative_cases": [
+    { "case_id": "vote_wrong_domain" },
+    { "case_id": "timeout_wrong_domain" },
+    { "case_id": "vote_wrong_key" },
+    { "case_id": "timeout_wrong_key" },
+    { "case_id": "vote_signature_bitflip" },
+    { "case_id": "timeout_signature_truncated" },
+    { "case_id": "vote_noncanonical_s" },
+    { "case_id": "vote_small_order_key" },
+    { "case_id": "qc_duplicate_signer" },
+    { "case_id": "tc_duplicate_signer" },
+    { "case_id": "qc_unsorted_signers" },
+    { "case_id": "tc_insufficient_weight" },
+    { "case_id": "qc_unknown_signature_scheme" },
+    { "case_id": "tc_statement_mutation" },
+    { "case_id": "tc_statement_swap" },
+    { "case_id": "tc_statement_substitution" },
+    { "case_id": "tc_entry_missing_statement" },
+    { "case_id": "tc_statement_missing_pacemaker_generation" }
+  ],
+  "explicit_exclusions": [
+    "full CEV1 wire/schema completeness",
+    "complete QC/TC state-transition semantics beyond the bounded foundation TC context and justification projection",
+    "DA, Agent, Market, Compute, settlement, state-sync, and light-client conformance",
+    "upgrade verifier and v0-to-v1 activation",
+    "repository-wide independent implementation interoperability",
+    "normative freeze, implementation, activation, production, or release readiness"
+  ]
+}

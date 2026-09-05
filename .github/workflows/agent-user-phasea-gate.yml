@@ -11,6 +11,9 @@ on:
       - 'trillionnium/scripts/run_phasea_soak_gate.sh'
       - 'scripts/v2/reliability_soak_harness.py'
       - 'scripts/v2/run_reliability_soak.sh'
+      - 'scripts/ci/check_preprovisioned_rust_toolchain.sh'
+      - 'scripts/ci/check_cargo_offline_ready.sh'
+      - 'scripts/ci/check_cargo_offline_unchanged.sh'
       - 'docs/protocol/agent-user-p2p-communication-min-spec-v0.1.md'
       - 'docs/protocol/agent-user-p2p-phaseA-ops.md'
       - 'docs/OPERATIONS.md'
@@ -26,6 +29,9 @@ on:
       - 'trillionnium/scripts/run_phasea_soak_gate.sh'
       - 'scripts/v2/reliability_soak_harness.py'
       - 'scripts/v2/run_reliability_soak.sh'
+      - 'scripts/ci/check_preprovisioned_rust_toolchain.sh'
+      - 'scripts/ci/check_cargo_offline_ready.sh'
+      - 'scripts/ci/check_cargo_offline_unchanged.sh'
       - 'docs/protocol/agent-user-p2p-communication-min-spec-v0.1.md'
       - 'docs/protocol/agent-user-p2p-phaseA-ops.md'
       - 'docs/OPERATIONS.md'
@@ -41,8 +47,16 @@ concurrency:
 
 jobs:
   phasea-gate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        ((github.actor == 'ProfAlexQI' ||
+         github.actor == 'Franksudoman') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
     env:
       # Keep locale/time behavior deterministic across re-runs for soak evidence,
       # grep/sed assertions, and artifact diffability.
@@ -54,14 +68,26 @@ jobs:
       LC_TIME: C
       PYTHONHASHSEED: '0'
       CI: 'true'
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: 1.95.0
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Run Agent↔User Phase A gate
         run: |
@@ -101,3 +127,10 @@ jobs:
             run/health/reliability-soak-*.txt
             run/health/reliability-soak-*.audit.jsonl
           if-no-files-found: warn
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

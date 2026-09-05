@@ -1,0 +1,33 @@
+{
+  "schema": "trnm.exact-head-evidence-request.v1",
+  "request_id": "BUILD-CLOSURE-001-EXACT-HEAD-REQUEST-V1",
+  "plan_id": "trnm-chain-development-plan-v2",
+  "pull_request": 62,
+  "branch": "work/plan-v2-full-gap-closure-20260902",
+  "requested_checks": [
+    "repository-preflight",
+    "runner-policy",
+    "canonical-development-truth",
+    "module-coverage",
+    "repository-truth",
+    "required-protocol-contract",
+    "cargo-fmt",
+    "cargo-metadata-locked",
+    "node-prod-v0-default-dependency-closure",
+    "ai-v1-candidate-explicit-dependency-closure",
+    "trnm-poco-node-default-check",
+    "trnm-poco-node-ai-v1-candidate-check",
+    "workspace-all-targets-locked-check"
+  ],
+  "acceptance": {
+    "default_node_ai_v1_candidate_dependency_count": 0,
+    "candidate_dependencies_require_explicit_feature": "ai-v1-candidate",
+    "queued_or_skipped_runs_are_not_acceptance": true,
+    "exact_head_required": true,
+    "prospective_merge_required": true
+  },
+  "non_claims": [
+    "This request is not test evidence or independent review.",
+    "It does not close device-backed HSM, physical power-loss, real multi-host, audit/red-team, soak, governance, release, production, public-testnet, activation, or G5 gates."
+  ]
+}

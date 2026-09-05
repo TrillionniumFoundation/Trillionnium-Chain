@@ -114,6 +114,8 @@ pub struct FinalizedCommand {
 }
 
 #[derive(Debug, Clone)]
+// Keep the legacy development harness API stable; this is not a production hot path.
+#[allow(clippy::large_enum_variant)]
 pub enum InsertCommandOutcome {
     Inserted,
     ExistingPending,
@@ -122,6 +124,8 @@ pub enum InsertCommandOutcome {
     AlteredReplay,
     NonceConflict,
 }
+
+type ExistingCommandRow = (String, String, Option<String>, Option<Vec<u8>>);
 
 pub struct DurableStore {
     connection: Mutex<Connection>,
@@ -281,7 +285,7 @@ impl DurableStore {
         let envelope_json = serde_json::to_vec(envelope)?;
         let mut connection = self.connection()?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
-        let existing: Option<(String, String, Option<String>, Option<Vec<u8>>)> = transaction
+        let existing: Option<ExistingCommandRow> = transaction
             .query_row(
                 "SELECT fingerprint_hex, status, status_reason, receipt_json
                    FROM commands WHERE command_id = ?1",

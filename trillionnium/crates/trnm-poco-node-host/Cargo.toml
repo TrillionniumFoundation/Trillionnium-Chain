@@ -1,0 +1,36 @@
+[package]
+name = "trnm-poco-node-host"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-node-host-composition-v0"
+composition_only = true
+domain_state_machine = false
+storage_owner = false
+network_owner = false
+signing_authority = false
+voting_authority = false
+finality_authority = false
+persistent_authority_composition_candidate = true
+recovery_barrier_delegation = true
+raw_stage_advance_exported = false
+verified_stage_session_required = true
+production_candidate = false
+production_consensus_activation = false
+
+[features]
+default = []
+persistent-authority-candidate = ["trnm-poco-node-authority/persistent-authority-candidate"]
+
+[dependencies]
+trnm-node-boundary-v0 = { version = "0.1.0", path = "../trnm-node-boundary-v0" }
+trnm-poco-node-authority = { version = "0.1.0", path = "../trnm-poco-node-authority" }
+trnm-poco-node-io = { version = "0.1.0", path = "../trnm-poco-node-io" }
+trnm-poco-node-production-v0 = { version = "0.1.0", path = "../trnm-poco-node-production-v0" }
+
+[dev-dependencies]
+tempfile = "3"

@@ -1,0 +1,6 @@
+repository=TrillionniumFoundation/Trillionnium-Chain
+workflow=finalize-repository-closure-v5
+requested_at=2026-09-02T00:00:00+08:00
+production_candidate=false
+production_consensus_activation=false
+release_ready=false

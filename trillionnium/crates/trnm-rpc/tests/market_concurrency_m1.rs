@@ -27,6 +27,7 @@ fn market_create_task_concurrent_writes_do_not_drop_records() {
         let bids_env = bids.clone();
         joins.push(thread::spawn(move || {
             Command::new("cargo")
+                .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
                 .args(["run", "-p", "trnm-rpc", "--"])
                 .args([
                     "market.create_task",

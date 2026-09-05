@@ -3,8 +3,8 @@ name: p1-rust-sidecar
 on:
   workflow_dispatch:
   # Intentionally do not run on pull_request: this job executes repository code on
-  # a self-hosted runner with local chain access, so only trusted main/workflow_dispatch
-  # contexts may invoke it.
+  # the trusted X230 runner with local chain access, so only trusted
+  # main/workflow_dispatch contexts may invoke it.
   push:
     branches: [main]
     paths:
@@ -13,6 +13,9 @@ on:
       - 'scripts/v2/x2_settlement_contract_gate.sh'
       - 'scripts/v2/i2_token_lifecycle_gate.sh'
       - 'scripts/v2/product_layer_smoke.sh'
+      - 'scripts/ci/check_preprovisioned_rust_toolchain.sh'
+      - 'scripts/ci/check_cargo_offline_ready.sh'
+      - 'scripts/ci/check_cargo_offline_unchanged.sh'
       - 'examples/sdk-js/**'
       - 'trillionnium/crates/trnm-rpc/src/**'
       - 'trillionnium/crates/trnm-rpc/tests/**'
@@ -27,10 +30,17 @@ concurrency:
 
 jobs:
   p1-with-rust-sidecar:
-    # Requires a self-hosted runner with local Trillionnium dev chain environment.
-    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main'
-    runs-on: [self-hosted, macOS]
-    timeout-minutes: 45
+    # Requires the repository-owned X230 runner and local Trillionnium dev chain.
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman') &&
+      github.triggering_actor == github.actor &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 90
     env:
       TZ: UTC
       LANG: C.UTF-8
@@ -53,13 +63,30 @@ jobs:
       HOMEBREW_NO_AUTO_UPDATE: "1"
       CI: "true"
       UMASK: "022"
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Ensure jq
+      - name: Verify runner-provisioned Rust toolchain
         run: |
-          command -v jq >/dev/null 2>&1 || brew install jq
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify runner-provisioned jq
+        run: |
+          command -v jq >/dev/null 2>&1
           jq --version
 
       - name: Preflight - chain RPC must be reachable
@@ -69,7 +96,6 @@ jobs:
       - name: Run P1 integration gate (blocking)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           RUN_DIR="run/p1-integration-gate/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" ./scripts/v2/run_p1_integration_gate.sh
 
       - name: Summarize integration gate result
@@ -122,3 +148,10 @@ jobs:
           path: |
             ${{ steps.p1-summary.outputs.p1_summary_json }}
           if-no-files-found: error
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

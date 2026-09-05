@@ -1,0 +1,428 @@
+{
+  "schema": "trnm_poco_bft_cev0_parser_anchor_handoff_kernel_vectors_v0",
+  "schema_version": 0,
+  "logical_schema": "../schema/cev0-logical-schema-anchor-handoff-v0.json",
+  "imported_logical_schema": "../schema/cev0-logical-schema-v0.json",
+  "raw_source_vector": "anchor-finality-v0.json",
+  "scope": "B2-B exact bounded decoding and relational admission for the synthetic-anchor and handoff certificate kernel",
+  "cryptographic_validity_claimed": false,
+  "valid_raw_objects": [
+    {
+      "id": "handoff_descriptor_shape",
+      "object_type": "HandoffDescriptorV0",
+      "json_pointer": "/vectors/handoff_descriptor",
+      "domain": "handoff_descriptor",
+      "digest_field": "digest_hex"
+    },
+    {
+      "id": "handoff_certificate_shape",
+      "object_type": "HandoffCertificateV0",
+      "json_pointer": "/vectors/handoff_certificate",
+      "domain": "handoff_certificate",
+      "digest_field": "digest_hex"
+    },
+    {
+      "id": "epoch_anchor_authorization_shape",
+      "object_type": "EpochAnchorAuthorizationV0",
+      "json_pointer": "/vectors/epoch_anchor_authorization",
+      "domain": null,
+      "digest_field": null
+    },
+    {
+      "id": "terminal_old_header_derived",
+      "object_type": "BlockHeaderV0",
+      "derive_from": "epoch_anchor_authorization_shape.terminal_old_header",
+      "domain": "block",
+      "expected_digest_source": "epoch_anchor_authorization_shape.handoff_certificate.descriptor.terminal_old_block_id"
+    },
+    {
+      "id": "old_handoff_vote_sign_derived",
+      "object_type": "HandoffVoteSignV0",
+      "derive_from": "handoff_descriptor_shape.old_role",
+      "domain": "handoff_vote",
+      "role": "old"
+    },
+    {
+      "id": "new_handoff_vote_sign_derived",
+      "object_type": "HandoffVoteSignV0",
+      "derive_from": "handoff_descriptor_shape.new_role",
+      "domain": "handoff_vote",
+      "role": "new"
+    }
+  ],
+  "derived_exact_expectations": {
+    "terminal_old_header_derived": {
+      "object_type": "BlockHeaderV0",
+      "cev0_hex": "0000e4726d9aa1d4adb3161c8e61e2a7c9da213431dcef8d2b11d9b6102eeec0e8d5000d74726e6d2d616e63686f722d30000000000000000000000000000000000000000c000000000000000a039157afc2d167b4d2e43d107a8641c84b0fb22648649a14db2d4a7c38408a530f000000056f6c642d64de2c54df56f142a77c0647f387bde9be9148c07ad358ac4ae9f9033b4f451ae6a7e3564320ecc989c50b451e41c636c2950daf374fa93d6fdd0aaf9fcb0b555334c20429552f79629810db7c019ca2506ba48f87ffc9f11141af7bb45e5042c2efc254f719a4af4b95dda1e2620ea5b4bc708c4280ccb25c6fc04bb5e017a598b856bf06e01b26657389413d5f32130495f5973c6e4f89062440e24d8f9bc0cdb8a30d2f1eea3d34b7ddf723905f7c084de194ff49f8a8790d210a7f812754a6000001a3185c77100153c0a3ca0f7a0fb3786270cdb0da2a70b3f2b689202c22b96d91019c12d4f079",
+      "length": 352,
+      "digest_domain": "trnm.poco-bft.block.v0",
+      "digest_hex": "88ed5417e57b0c66fc74bede170b08c554741fa2220e99ec4c8a38d4bad603b4"
+    },
+    "old_handoff_vote_sign_derived": {
+      "object_type": "HandoffVoteSignV0",
+      "cev0_hex": "0000e4726d9aa1d4adb3161c8e61e2a7c9da213431dcef8d2b11d9b6102eeec0e8d5000d74726e6d2d616e63686f722d30000000000000000000000000de2c54df56f142a77c0647f387bde9be9148c07ad358ac4ae9f9033b4f451ae6000000000000000c0334d900ae851caff5311bb0cdb61562457aa0579ab9cffa5d2edd005f1c89f5aa",
+      "length": 134,
+      "digest_domain": "trnm.poco-bft.handoff-vote.v0",
+      "digest_hex": "1d7173d7cbe81b65c4bfd24d33cc7d2c09c1b52877463476b2ec79237c4442a2"
+    },
+    "new_handoff_vote_sign_derived": {
+      "object_type": "HandoffVoteSignV0",
+      "cev0_hex": "0000e4726d9aa1d4adb3161c8e61e2a7c9da213431dcef8d2b11d9b6102eeec0e8d5000d74726e6d2d616e63686f722d300000000000000000000000019f595f7bf49f132d20aac3fcf5e467a8ed94d63b1f0104c0aee45a375686322300000000000000010434d900ae851caff5311bb0cdb61562457aa0579ab9cffa5d2edd005f1c89f5aa",
+      "length": 134,
+      "digest_domain": "trnm.poco-bft.handoff-vote.v0",
+      "digest_hex": "3c6789b698d1ae7a23e0b70148ac93135cb6e931b1e69b79b544764fb5b905b6"
+    }
+  },
+  "trusted_output_and_candidate_bindings": [
+    {
+      "id": "trusted_genesis_qc_output",
+      "json_pointer": "/vectors/genesis_qc",
+      "authority": "trusted_genesis_document_fixture",
+      "decoder_exposed": false,
+      "ordinary_qc_admission": false,
+      "b2b_decoder_output": false,
+      "comparison": "raw digest fixture only; bytes are never passed to a B2-B QC decoder"
+    },
+    {
+      "id": "epoch_anchor_qc_candidate_byte_binding",
+      "json_pointer": "/vectors/epoch_anchor_qc",
+      "authority": "future complete external epoch-transition authorization",
+      "decoder_exposed": false,
+      "ordinary_qc_admission": false,
+      "b2b_decoder_output": false,
+      "usable_after_b2b_kernel_only": false,
+      "comparison": "derive only the expected candidate fields from the inert kernel relation, then require exact byte and QC-domain digest equality with the shape-only fixture; this does not authorize or instantiate a usable anchor"
+    }
+  ],
+  "raw_shape_cases": [
+    {
+      "id": "every_noncomplete_prefix",
+      "operation": "all_noncomplete_prefixes",
+      "sources": "all_valid_raw_objects",
+      "expected_error_code": "unexpected_eof",
+      "expected_offset_policy": "exact_decoder_cursor_offset"
+    },
+    {
+      "id": "every_root_trailing_byte",
+      "operation": "append_hex",
+      "hex": "00",
+      "sources": "all_valid_raw_objects",
+      "expected_error_code": "trailing_bytes",
+      "expected_offset_policy": "exact_original_length"
+    },
+    {
+      "id": "terminal_header_invalid_optional_tag",
+      "operation": "set_optional_tag",
+      "source": "terminal_old_header_derived",
+      "field": "next_epoch_commitment_hash",
+      "value": 2,
+      "expected_error_code": "invalid_optional_tag",
+      "expected_offset_policy": "field_start"
+    },
+    {
+      "id": "handoff_certificate_signature_truncated",
+      "operation": "truncate_last_byte",
+      "source": "handoff_certificate_shape",
+      "expected_error_code": "unexpected_eof",
+      "expected_offset_policy": "last_signature_start"
+    },
+    {
+      "id": "handoff_signature_count_101",
+      "operation": "set_root_list_count",
+      "source": "handoff_certificate_shape",
+      "field": "old_signatures",
+      "count": "101",
+      "max_count": "100",
+      "expected_error_code": "count_limit_exceeded",
+      "expected_offset_policy": "list_count_start"
+    },
+    {
+      "id": "handoff_signature_count_u32_max",
+      "operation": "set_root_list_count",
+      "source": "handoff_certificate_shape",
+      "field": "old_signatures",
+      "count": "4294967295",
+      "max_count": "100",
+      "expected_error_code": "count_limit_exceeded",
+      "expected_offset_policy": "list_count_start"
+    }
+  ],
+  "boundary_cases": [
+    {
+      "id": "descriptor_chain_id_length_0",
+      "operation": "descriptor_chain_id_length",
+      "length": "0",
+      "expected_error_code": "invalid_consensus_string"
+    },
+    {
+      "id": "descriptor_chain_id_length_128",
+      "operation": "descriptor_chain_id_length",
+      "length": "128",
+      "expected_result": "valid"
+    },
+    {
+      "id": "descriptor_chain_id_length_129",
+      "operation": "descriptor_chain_id_length",
+      "length": "129",
+      "expected_error_code": "length_limit_exceeded"
+    },
+    {
+      "id": "descriptor_chain_id_invalid_ascii",
+      "operation": "descriptor_chain_id_hex",
+      "hex": "41",
+      "expected_error_code": "invalid_consensus_string"
+    },
+    {
+      "id": "header_proposer_id_length_0",
+      "operation": "header_proposer_id_length",
+      "length": "0",
+      "expected_error_code": "length_limit_exceeded"
+    },
+    {
+      "id": "header_proposer_id_length_128",
+      "operation": "header_proposer_id_length",
+      "length": "128",
+      "expected_result": "valid"
+    },
+    {
+      "id": "header_proposer_id_length_129",
+      "operation": "header_proposer_id_length",
+      "length": "129",
+      "expected_error_code": "length_limit_exceeded"
+    },
+    {
+      "id": "handoff_signer_id_length_0",
+      "operation": "handoff_signer_id_length",
+      "length": "0",
+      "expected_error_code": "length_limit_exceeded"
+    },
+    {
+      "id": "handoff_signer_id_length_128",
+      "operation": "handoff_signer_id_length",
+      "length": "128",
+      "expected_result": "valid"
+    },
+    {
+      "id": "handoff_signer_id_length_129",
+      "operation": "handoff_signer_id_length",
+      "length": "129",
+      "expected_error_code": "length_limit_exceeded"
+    },
+    {
+      "id": "handoff_old_signature_count_100",
+      "operation": "synthetic_handoff_certificate_count",
+      "role": "old",
+      "count": "100",
+      "expected_result": "structurally_valid"
+    },
+    {
+      "id": "handoff_new_signature_count_100",
+      "operation": "synthetic_handoff_certificate_count",
+      "role": "new",
+      "count": "100",
+      "expected_result": "structurally_valid"
+    },
+    {
+      "id": "handoff_aggregate_signature_count_200",
+      "operation": "synthetic_handoff_certificate_aggregate_count",
+      "old_count": "100",
+      "new_count": "100",
+      "expected_aggregate_count": "200",
+      "expected_result": "structurally_valid"
+    }
+  ],
+  "generated_semantic_cases": [
+    {
+      "id": "block_header_schema_version_1",
+      "operation": "set_field",
+      "source": "terminal_old_header_derived",
+      "field": "schema_version",
+      "value": "1",
+      "expected_error_code": "invalid_schema_version"
+    },
+    {
+      "id": "block_header_unknown_kind",
+      "operation": "set_raw_enum",
+      "source": "terminal_old_header_derived",
+      "field": "block_kind",
+      "value": 5,
+      "expected_error_code": "invalid_block_kind"
+    },
+    {
+      "id": "block_header_view_zero",
+      "operation": "set_field",
+      "source": "terminal_old_header_derived",
+      "field": "view",
+      "value": "0",
+      "expected_error_code": "invalid_block_header"
+    },
+    {
+      "id": "block_header_seal_without_commitment",
+      "operation": "set_field",
+      "source": "terminal_old_header_derived",
+      "field": "next_epoch_commitment_hash",
+      "value": null,
+      "expected_error_code": "invalid_block_header"
+    },
+    {
+      "id": "descriptor_schema_version_1",
+      "operation": "set_field",
+      "source": "handoff_descriptor_shape",
+      "field": "schema_version",
+      "value": "1",
+      "expected_error_code": "invalid_schema_version"
+    },
+    {
+      "id": "descriptor_zero_checkpoint_block_id",
+      "operation": "zero_fixed_bytes",
+      "source": "handoff_descriptor_shape",
+      "field": "checkpoint_block_id",
+      "expected_error_code": "invalid_handoff_descriptor"
+    },
+    {
+      "id": "descriptor_nonadjacent_epoch",
+      "operation": "set_field",
+      "source": "handoff_descriptor_shape",
+      "field": "new_epoch",
+      "value": "2",
+      "expected_error_code": "descriptor_epoch_mismatch"
+    },
+    {
+      "id": "descriptor_checkpoint_exceeds_terminal",
+      "operation": "set_field",
+      "source": "handoff_descriptor_shape",
+      "field": "checkpoint_height",
+      "value": "11",
+      "expected_error_code": "descriptor_height_mismatch"
+    },
+    {
+      "id": "descriptor_activation_not_after_terminal",
+      "operation": "set_field",
+      "source": "handoff_descriptor_shape",
+      "field": "activation_height",
+      "value": "12",
+      "expected_error_code": "descriptor_height_mismatch"
+    },
+    {
+      "id": "descriptor_initial_new_view_2",
+      "operation": "set_field",
+      "source": "handoff_descriptor_shape",
+      "field": "initial_new_view",
+      "value": "2",
+      "expected_error_code": "descriptor_initial_view_mismatch"
+    },
+    {
+      "id": "old_vote_uses_new_scope",
+      "operation": "copy_new_role_scope_into_old_vote",
+      "source": "old_handoff_vote_sign_derived",
+      "expected_error_code": "handoff_role_scope_mismatch"
+    },
+    {
+      "id": "new_vote_uses_old_message_kind",
+      "operation": "set_field",
+      "source": "new_handoff_vote_sign_derived",
+      "field": "message_kind",
+      "value": 3,
+      "expected_error_code": "handoff_role_scope_mismatch"
+    },
+    {
+      "id": "old_vote_wrong_descriptor_digest",
+      "operation": "flip_first_byte",
+      "source": "old_handoff_vote_sign_derived",
+      "field": "handoff_descriptor_digest",
+      "expected_error_code": "handoff_descriptor_digest_mismatch"
+    },
+    {
+      "id": "certificate_duplicate_old_signer",
+      "operation": "duplicate_signer",
+      "source": "handoff_certificate_shape",
+      "field": "old_signatures",
+      "expected_error_code": "duplicate_signer"
+    },
+    {
+      "id": "certificate_noncanonical_new_signer_order",
+      "operation": "swap_first_two",
+      "source": "handoff_certificate_shape",
+      "field": "new_signatures",
+      "expected_error_code": "noncanonical_signer_order"
+    },
+    {
+      "id": "certificate_empty_old_role",
+      "operation": "empty_list",
+      "source": "handoff_certificate_shape",
+      "field": "old_signatures",
+      "expected_error_code": "empty_handoff_role"
+    },
+    {
+      "id": "certificate_empty_new_role",
+      "operation": "empty_list",
+      "source": "handoff_certificate_shape",
+      "field": "new_signatures",
+      "expected_error_code": "empty_handoff_role"
+    },
+    {
+      "id": "authorization_terminal_kind_regular",
+      "operation": "set_nested_field",
+      "source": "epoch_anchor_authorization_shape",
+      "path": "terminal_old_header.block_kind",
+      "value": 0,
+      "expected_error_code": "terminal_not_epoch_seal_2"
+    },
+    {
+      "id": "authorization_terminal_qc_empty_signatures",
+      "operation": "empty_nested_list",
+      "source": "epoch_anchor_authorization_shape",
+      "path": "terminal_old_qc.signatures",
+      "expected_error_code": "terminal_qc_unauthorized"
+    },
+    {
+      "id": "authorization_terminal_qc_wrong_block",
+      "operation": "flip_nested_first_byte",
+      "source": "epoch_anchor_authorization_shape",
+      "path": "terminal_old_qc.block_id",
+      "expected_error_code": "terminal_qc_mismatch"
+    },
+    {
+      "id": "authorization_descriptor_wrong_terminal_qc_digest",
+      "operation": "flip_nested_first_byte",
+      "source": "epoch_anchor_authorization_shape",
+      "path": "handoff_certificate.descriptor.terminal_old_qc_digest",
+      "expected_error_code": "descriptor_terminal_mismatch"
+    },
+    {
+      "id": "authorization_descriptor_wrong_terminal_block",
+      "operation": "flip_nested_first_byte",
+      "source": "epoch_anchor_authorization_shape",
+      "path": "handoff_certificate.descriptor.terminal_old_block_id",
+      "expected_error_code": "descriptor_terminal_mismatch"
+    },
+    {
+      "id": "authorization_descriptor_wrong_terminal_view",
+      "operation": "set_nested_field",
+      "source": "epoch_anchor_authorization_shape",
+      "path": "handoff_certificate.descriptor.terminal_old_view",
+      "value": "13",
+      "expected_error_code": "descriptor_terminal_mismatch"
+    },
+    {
+      "id": "authorization_descriptor_wrong_state_root",
+      "operation": "flip_nested_first_byte",
+      "source": "epoch_anchor_authorization_shape",
+      "path": "handoff_certificate.descriptor.checkpoint_state_root",
+      "expected_error_code": "descriptor_terminal_mismatch"
+    },
+    {
+      "id": "authorization_descriptor_wrong_commitment",
+      "operation": "flip_nested_first_byte",
+      "source": "epoch_anchor_authorization_shape",
+      "path": "handoff_certificate.descriptor.next_epoch_commitment_digest",
+      "expected_error_code": "descriptor_terminal_mismatch"
+    }
+  ],
+  "honest_boundary": [
+    "The source corpus is shape-only: cryptographic_validity_claimed is false and none of its opaque Signature64 fixtures may be used as a crypto positive.",
+    "GenesisQC remains a future trusted output. EpochAnchorQC is only a candidate byte binding until external complete epoch-transition authorization succeeds; neither is a B2-B decoder output or admitted through a peer-controlled bare synthetic-QC decoder.",
+    "The checker closes only exact CEV0 parse/re-encode, frozen digests, transport projections, role scope, and terminal header/QC/descriptor relations for the listed B2-B kernel.",
+    "Validator membership, old/new weighted quorum, strict Ed25519 verification, PoP, checkpoint/seal ancestry, authenticated NextEpochCommitmentV0 preimage/state provenance, full epoch authorization, Proposal/Block bodies, and B2 overall remain open; B2-C separately closes only the exact inert commitment kernel."
+  ]
+}

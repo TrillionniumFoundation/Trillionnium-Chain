@@ -1,0 +1,46 @@
+schema_version = 1
+parameter_set_id = "trnm-poco-ai-native-v1-draft-parameters-v1"
+protocol_id = "trnm-poco-ai-native-v1"
+protocol_major = 1
+status = "draft-design-only"
+normative_values_frozen = false
+implemented = false
+activation = false
+current_implementation_baseline = "poco-bft-v0"
+
+[order]
+safety_kernel = "weighted-chained-hotstuff-derived"
+new_bft_safety_theorem = false
+quorum_rule = "floor(2*total_weight/3)+1"
+finality_rule = "three-chain"
+proposal_unit = "certified-batch-references-and-protocol-objects"
+deterministic_coordination_execution_before_vote = true
+ai_inference_in_consensus = false
+
+[data_availability]
+availability_certificate_required = true
+durable_store_before_availability_sign = true
+bounded_worker_queues_required = true
+retrieval_and_repair_required = true
+withholding_challenge_required = true
+erasure_coding_required = false
+data_availability_sampling_required = false
+
+[execution]
+object_aware_mvcc_target = true
+canonical_commit_order_required = true
+session_nonce_lanes_target = true
+fee_delta_aggregation_target = true
+agent_batch_target = true
+consumption_rollup_target = true
+
+[finality]
+order_finality_and_ai_settlement_finality_separated = true
+challenge_may_revert_ordered_blocks = false
+forward_compensation_and_slashing_only = true
+
+[versioning]
+wire_version_frozen = false
+storage_version_frozen = false
+light_client_contract_frozen = false
+upgrade_contract_frozen = false

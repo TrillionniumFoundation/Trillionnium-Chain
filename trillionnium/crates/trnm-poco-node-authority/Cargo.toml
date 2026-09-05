@@ -1,0 +1,35 @@
+[package]
+name = "trnm-poco-node-authority"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-node-authority-boundary-v0"
+composition_only = true
+domain_state_machine = false
+storage_owner = false
+durable_authority_journal_owner = false
+candidate_owner_delegation = true
+recovery_barrier_delegation = true
+exact_successor_transition_enforcement_delegation = true
+receipt_substitution_detection_delegation = true
+signing_authority = false
+voting_authority = false
+finality_authority = false
+production_candidate = false
+production_consensus_activation = false
+
+[features]
+default = []
+persistent-authority-candidate = ["dep:trnm-durable-file-adapters-v0"]
+
+[dependencies]
+trnm-durable-file-adapters-v0 = { version = "0.1.0", path = "../trnm-durable-file-adapters-v0", optional = true }
+trnm-node-boundary-v0 = { version = "0.1.0", path = "../trnm-node-boundary-v0" }
+trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", default-features = false }
+
+[dev-dependencies]
+tempfile = "3"

@@ -1,0 +1,94 @@
+{
+  "failures": [],
+  "fleet_id": "trnm-poco-lan-six-host-2026-08-13",
+  "geo_wan_evidence": false,
+  "network_scope": "single-lan",
+  "observations": [
+    {
+      "facts": {
+        "arch": "x86_64",
+        "cpu_threads": "24",
+        "epoch_ns": "1787449515670592068",
+        "hostname": "alex-G1628-04",
+        "kernel": "Linux-7.0.0-30-generic-x86_64-with-glibc2.39",
+        "memory_bytes": "24781164544"
+      },
+      "id": "local",
+      "lan_ip": "192.168.0.9",
+      "management": "local",
+      "round_trip_ns": 1862098
+    },
+    {
+      "facts": {
+        "arch": "x86_64",
+        "cpu_threads": "4",
+        "epoch_ns": "1787449517419874837",
+        "hostname": "qian-ThinkPad-X230",
+        "kernel": "Linux 6.8.0-138-generic x86_64",
+        "memory_bytes": "8012705792"
+      },
+      "id": "x230",
+      "lan_ip": "192.168.0.3",
+      "management": "p4-x230",
+      "round_trip_ns": 1650917666
+    },
+    {
+      "facts": {
+        "arch": "x86_64",
+        "cpu_threads": "48",
+        "epoch_ns": "1787449519741920922",
+        "hostname": "qian-qi",
+        "kernel": "Linux 7.0.0-28-generic x86_64",
+        "memory_bytes": "134923100160"
+      },
+      "id": "desktop",
+      "lan_ip": "192.168.0.4",
+      "management": "p4-desktop",
+      "round_trip_ns": 2334628791
+    },
+    {
+      "facts": {
+        "arch": "x86_64",
+        "cpu_threads": "32",
+        "epoch_ns": "1787449520743576726",
+        "hostname": "qian-qi-ROG-Flow-Z13-GZ302EA-GZ302EA",
+        "kernel": "Linux 7.0.0-30-generic x86_64",
+        "memory_bytes": "130456444928"
+      },
+      "id": "rog",
+      "lan_ip": "192.168.0.6",
+      "management": "p4-rog",
+      "round_trip_ns": 959022339
+    },
+    {
+      "facts": {
+        "arch": "x86_64",
+        "cpu_threads": "4",
+        "epoch_ns": "1787449521250267209",
+        "hostname": "claw-j3160",
+        "kernel": "Linux 6.8.0-137-generic x86_64",
+        "memory_bytes": "4008587264"
+      },
+      "id": "j3160",
+      "lan_ip": "192.168.0.8",
+      "management": "p4-j3160",
+      "round_trip_ns": 570884948
+    },
+    {
+      "facts": {
+        "arch": "arm64",
+        "cpu_threads": "10",
+        "epoch_ns": "1787449521759519000",
+        "hostname": "MacBook-Pro.local",
+        "kernel": "Darwin 25.6.0 arm64",
+        "memory_bytes": "34359738368"
+      },
+      "id": "mac",
+      "lan_ip": "192.168.0.5",
+      "management": "p4-mac",
+      "round_trip_ns": 618536164
+    }
+  ],
+  "observed_at_epoch_ns": 1787449521804613673,
+  "schema_version": 1
+}

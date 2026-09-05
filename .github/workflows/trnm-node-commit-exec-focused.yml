@@ -1,0 +1,102 @@
+name: trnm-node-commit-exec-focused
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - '.github/workflows/trnm-node-commit-exec-focused.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-node-commit-exec-focused-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  focused-semantics:
+    name: focused-node-commit-exec-x230
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' || (github.actor == 'ProfAlexQI' &&
+      github.triggering_actor == 'ProfAlexQI' && (github.event_name !=
+      'pull_request' || github.event.pull_request.head.repo.full_name ==
+      github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - name: Check out exact read-only source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify exact source identity
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+          bash scripts/project-preflight.sh --audit
+
+      - name: Check immutable lock and focused node boundaries
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-agent-market-v1 \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host \
+            --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-core-restart-v0 \
+            -p trnm-native-execution-v0 \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host \
+            --all-targets --locked --offline
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

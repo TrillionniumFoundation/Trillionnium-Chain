@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "schema_id": "trnm-poco-ai-native-v1-verify-challenge-kernel-candidate-v1",
+  "protocol_id": "trnm-poco-ai-native-v1",
+  "status": "candidate-non-normative",
+  "normative": false,
+  "implemented_scope": "bounded-local-stake-quorum-sqlite-kernel",
+  "trust_input": {
+    "type": "VerifyChallengeFreshGenesisTrustBundleV1",
+    "consensus_object": false,
+    "pre_registered": [
+      "one-active-task-lease-attempt",
+      "provider-and-challenger-keys",
+      "four-member-weighted-verifier-set",
+      "stake-quorum-profile",
+      "challenge-bond",
+      "fresh-order-finality-anchor"
+    ],
+    "duplicate_key_ids_or_public_keys_rejected": true,
+    "verifier_set_hash_recomputed": true,
+    "profile_hash_recomputed": true,
+    "profile_hash_domain": "trnm.poco-ai.stake-quorum-profile.candidate.v1"
+  },
+  "order_finalized_execution_context": {
+    "type": "VerifyOrderFinalizedExecutionContextV1",
+    "consensus_object": false,
+    "durable_expected_tip_cas": true,
+    "height_and_block_monotonic": true,
+    "node_order_proof_authority_complete": false
+  },
+  "enabled_operations": [
+    "10-execution-receipt-admission",
+    "22-atomic-begin-evaluation-plus-decision",
+    "11-open-challenge-and-hold-bond",
+    "23-add-evidence",
+    "23-provider-response",
+    "23-quorum-adjudication"
+  ],
+  "verification": {
+    "class": "StakeQuorum",
+    "all_seven_classes_complete": false,
+    "strict_ed25519": true,
+    "required_registered_verifier_count": 4,
+    "complete_inline_claims": true,
+    "verifier_identities_strictly_sorted_unique": true,
+    "claim_ids_are_uniqueness_authority": false,
+    "exact_shared_statement_evidence_sequence": true,
+    "required_da_policy_hash_bound": true,
+    "checked_weighted_threshold": true,
+    "claimed_weight_is_authority": false,
+    "fallback_between_classes": false,
+    "artifact_evidence_da_verified": false
+  },
+  "result_lifecycle": {
+    "covered": [
+      "Submitted-to-virtual-Evaluating-to-ProvisionalValid",
+      "ProvisionalValid-to-ChallengeOpen",
+      "ChallengeOpen-to-FinalInvalid-on-Upheld",
+      "ChallengeOpen-to-ProvisionalValid-on-Rejected"
+    ],
+    "atomic_evaluation_pair": true,
+    "virtual_intermediate_persisted": false,
+    "transition_history_gap_free": true,
+    "challenge_open_binds_persisted_evaluation_statement": true,
+    "window_close_complete": false,
+    "settlement_maturity_complete": false
+  },
+  "challenge_lifecycle": {
+    "covered": [
+      "Open",
+      "EvidenceWindow",
+      "Adjudicating",
+      "Upheld",
+      "Rejected"
+    ],
+    "withdraw_expire_appeal_complete": false,
+    "multiple_concurrent_challenges": false,
+    "bond_transition_atomic": true,
+    "bond_conservation_checked": true,
+    "maximum_evidence_entries": 64
+  },
+  "storage": {
+    "engine": "sqlite",
+    "journal_schema_version": 3,
+    "tables": 3,
+    "triggers": 0,
+    "automatic_migration": false,
+    "sidecars_fail_closed": true,
+    "immutable_read_only_existing_file_preflight": true,
+    "atomic_state_and_operation_commit": true,
+    "exact_replay": true,
+    "gap_free_sequence_and_high_watermark": true,
+    "durable_state_root_checked_every_open_read_write": true,
+    "durable_journal_root_checked_every_open_read_write": true,
+    "durable_finalized_order_block_journal": true,
+    "direct_successor_finalized_block_markers": true,
+    "empty_finalized_blocks_advance": true,
+    "same_block_multiple_operations": true,
+    "finalized_block_root_checked_every_open_read_write": true,
+    "finalized_block_journal_binds_order_tip": true,
+    "operation_tail_binds_state": true,
+    "applied_ack_lost_recovered_by_exact_replay": true,
+    "not_applied_ack_lost_changes_state": false,
+    "third_state_permanent_fence": true,
+    "whole_store_rollback_authority": false
+  },
+  "global_truth": {
+    "order_proof_authority_complete": false,
+    "agent_transaction_wire_complete": false,
+    "all_verification_classes_complete": false,
+    "artifact_da_integration_complete": false,
+    "agent_market_integration_complete": false,
+    "settlement_integration_complete": false,
+    "g2_global_complete": false,
+    "protocol_implementation_complete": false,
+    "normative_freeze": false,
+    "production_candidate": false,
+    "activation": false
+  }
+}

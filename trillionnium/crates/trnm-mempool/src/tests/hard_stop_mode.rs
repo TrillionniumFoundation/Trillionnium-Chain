@@ -207,8 +207,8 @@ fn hard_stop_lane_wide_duplicates_survive_idle_polls_without_poisoning_fresh_ret
         assert_eq!(g.admit(404, IngressClass::Critical), AdmitOutcome::Backpressured);
         assert_eq!(g.queued_counts(), (0, 0, 0));
         assert_eq!(g.qos_snapshot().total_headroom, 0);
-        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+        assert!(!g.qos_snapshot().fresh_normal_admissible);
+        assert!(!g.qos_snapshot().fresh_critical_admissible);
     }
 }
 

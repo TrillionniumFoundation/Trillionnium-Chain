@@ -1,0 +1,71 @@
+schema_version = 1
+profile_id = "verification-registry-reference"
+protocol_id = "trnm-poco-ai-native-v1"
+protocol_major = 1
+status = "reference-design-only"
+normative = false
+implemented = false
+activation = false
+production_candidate = false
+
+[[verification_profiles]]
+id = "deterministic-reexecute"
+class = "deterministic"
+status = "design-only"
+implemented = false
+activation = false
+order_finality_authority = false
+settlement_finality_authority = false
+[[verification_profiles]]
+id = "reproducible-ml"
+class = "reproducible-compute"
+status = "design-only"
+implemented = false
+activation = false
+order_finality_authority = false
+settlement_finality_authority = false
+
+[[verification_profiles]]
+id = "zk-validity"
+class = "cryptographic-proof"
+status = "design-only"
+implemented = false
+activation = false
+order_finality_authority = false
+settlement_finality_authority = false
+
+[[verification_profiles]]
+id = "tee-attested"
+class = "hardware-attestation"
+status = "design-only"
+implemented = false
+activation = false
+order_finality_authority = false
+settlement_finality_authority = false
+
+[[verification_profiles]]
+id = "stake-quorum"
+class = "stake-attestation"
+status = "design-only"
+implemented = false
+activation = false
+order_finality_authority = false
+settlement_finality_authority = false
+
+[[verification_profiles]]
+id = "optimistic-challenge"
+class = "challenge-window"
+status = "design-only"
+implemented = false
+activation = false
+order_finality_authority = false
+settlement_finality_authority = false
+
+[[verification_profiles]]
+id = "subjective-evaluation"
+class = "governed-evaluator"
+status = "design-only"
+implemented = false
+activation = false
+order_finality_authority = false
+settlement_finality_authority = false

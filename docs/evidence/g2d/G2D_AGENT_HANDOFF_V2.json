@@ -1,0 +1,79 @@
+{
+  "schema": "trnm-agent-handoff-v1",
+  "agent_id": "A13",
+  "package_id": "G2D_EXECUTION_MVCC_FEE_V1",
+  "status": "MODULE_CLOSED_CANDIDATE",
+  "base_commit": "1be1a4db2c6431232676c8904856e9eb1d49c9a4",
+  "base_tree": "89e2f06c56637d23607a4133f3ffbebdc23de356",
+  "head_commit": "71f68181f8afa52168bd49d2de7514deb2ddba5a",
+  "changed_paths": [
+    "conformance/execution/mvcc-fee-cases-v1.json",
+    "docs/development/packages/TRNM_G2D_EXECUTION_MVCC_FEE_V1.md",
+    "docs/development/packages/TRNM_G2D_INTERFACE_REQUESTS_V1.md",
+    "docs/evidence/g2d/A13_EXACT_HEAD_TRIGGER_V1.md",
+    "docs/evidence/g2d/G2D_SOURCE_MANIFEST_V2.json",
+    "docs/protocol/poco-ai-native-v1/execution/MVCC_FEE_V1.md",
+    "scripts/ci/check_g2d_source_binding_v2.sh",
+    "scripts/ci/check_mvcc_serial_equivalence_model_v1.sh",
+    "tools/mvcc-serial-model/model.py",
+    "trillionnium/crates/trnm-poco-mvcc-fee-v1/Cargo.toml",
+    "trillionnium/crates/trnm-poco-mvcc-fee-v1/src/deterministic_parallel_v1.rs",
+    "trillionnium/crates/trnm-poco-mvcc-fee-v1/src/lib.rs"
+  ],
+  "gaps_closed": [
+    "A13-REPLAY-EXACT-A12",
+    "A13-AGENT-TRANSACTION-WIRE-CANDIDATE-INPUT",
+    "A13-HANDOFF-SCHEMA-VALIDATION",
+    "A13-REAL-BOUNDED-WORKER-POOL",
+    "A13-WORKER-COUNT-ROOT-INVARIANCE",
+    "A13-DETERMINISTIC-CONFLICT-REEXECUTION",
+    "A13-RESOURCE-FEE-CONSERVATION",
+    "A13-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
+  ],
+  "gaps_open": [
+    "A13-ACCEPTED-AGENT-TRANSACTION-AUTHORITY",
+    "A13-PRODUCTION-RUNTIME",
+    "A13-CANONICAL-JMT-ORDER-PROOF",
+    "A13-SETTLEMENT-AUTHORITY",
+    "A13-WHOLE-NODE-RECOVERY"
+  ],
+  "commands": [
+    "python3 scripts/ci/check_agent_handoff_v1.py --path docs/evidence/g2d/G2D_AGENT_HANDOFF_V2.json: exact-head required",
+    "bash scripts/ci/check_g2d_source_binding_v2.sh: exact-head required",
+    "bash scripts/ci/check_mvcc_serial_equivalence_model_v1.sh: exact-head required"
+  ],
+  "failed_tests": [],
+  "retained_mutants": [
+    "bad-worker-count","bad-schedule","arithmetic-overflow","undeclared-missing-object",
+    "worker-count-root-drift","reverted-write","out-of-resource-write","fee-conservation-drift"
+  ],
+  "evidence_scope": "crate|model|fixture",
+  "authority": "candidate",
+  "classification": "candidate-non-normative",
+  "known_gaps": [
+    "A12 AgentTransaction wire exists as a tested candidate but is not an independently accepted protocol interface",
+    "production runtime and normal node-process integration are absent",
+    "canonical application JMT and finalized Order proof are absent",
+    "settlement movement remains A15-owned",
+    "whole-node process and rollback evidence are absent"
+  ],
+  "interface_requests": [
+    "G2D-ICR-A10-A12-AGENT-TRANSACTION-V1",
+    "G2D-ICR-A16-APPLICATION-JMT-V1",
+    "G2D-ICR-G1-A16-ORDER-FINALITY-V1",
+    "G2D-ICR-A15-FEE-APPLICATION-V1"
+  ],
+  "downstream_invalidation": [
+    "A14 verification/challenge replay",
+    "A15 settlement replay",
+    "A16 whole-node/light-client replay",
+    "A17 benchmark/security/activation evidence"
+  ],
+  "next_action": "Run exact-head replay with the A01 handoff contract, then cascade the publication head through A14-A17. Independent interface acceptance remains separate.",
+  "implementation_commit": "71f68181f8afa52168bd49d2de7514deb2ddba5a",
+  "implementation_tree": "de6b98988b2ca08e70046281c82a94e7acbf4e12",
+  "metadata_commit": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
+  "base_sync_parent": "1be1a4db2c6431232676c8904856e9eb1d49c9a4",
+  "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
+  "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
+}

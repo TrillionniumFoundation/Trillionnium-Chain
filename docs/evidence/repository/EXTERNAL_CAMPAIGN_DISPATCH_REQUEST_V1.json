@@ -1,0 +1,20 @@
+{
+  "schema": "trnm-external-campaign-dispatch-request-v1",
+  "source_identity": "derive-at-runtime",
+  "campaigns": [
+    "EXT-G1-CAMPAIGN-001",
+    "EXT-ANCHOR-HSM-001",
+    "EXT-POWERLOSS-001",
+    "EXT-AUDIT-001",
+    "EXT-SOAK-ACTIVATION-001"
+  ],
+  "accept_simulation_as_external_evidence": false,
+  "accept_single_host_as_multi_host": false,
+  "accept_sigkill_as_power_loss": false,
+  "accept_mock_hsm": false,
+  "allow_wall_clock_compression": false,
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "public_testnet_ready": false,
+  "release_ready": false
+}

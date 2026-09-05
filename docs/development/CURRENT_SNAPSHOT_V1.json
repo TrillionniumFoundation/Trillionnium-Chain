@@ -1,0 +1,112 @@
+{
+  "schema": "trnm-current-snapshot-v1",
+  "as_of": "2026-09-02",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "default_branch": "main",
+  "default_branch_head_observed": "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9",
+  "selected_successor": {
+    "pull_request": 62,
+    "ref": "refs/heads/work/plan-v2-full-gap-closure-20260902",
+    "assessed_baseline_commit": "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea",
+    "assessed_baseline_tree": "af09e389b1a462b3839508b7ef305596c76384c6",
+    "current_head_binding": "derived-at-verification-time",
+    "prospective_merge_binding": "derived-at-verification-time",
+    "status": "draft-integration-candidate-independent-acceptance-pending",
+    "supersedes_intent_of": [
+      54,
+      57,
+      58,
+      59,
+      61,
+      69,
+      71
+    ]
+  },
+  "repository_implementation": {
+    "single_development_truth": "present-exact-head-and-prospective-merge-replay-required",
+    "module_coverage": {
+      "status": "present-exact-head-and-prospective-merge-replay-required",
+      "module_count": 18,
+      "workspace_crates_uniquely_mapped": 62,
+      "auxiliary_unit_count": 9,
+      "auxiliary_units_mapped": [
+        "contracts-audit-events",
+        "contracts-governance-guard",
+        "contracts-settlement-vault",
+        "contracts-bridge-relay",
+        "web4-frontend",
+        "formal-models",
+        "canonical-fuzz",
+        "protocol-transport",
+        "repository-ci"
+      ],
+      "snapshot_count_source": "validated-against-trillionnium-cargo-and-module-coverage-at-gate-time"
+    },
+    "descriptor_bound_sqlite_namespace": "present-acceptance-pending",
+    "closed_world_sqlite_schema": "present-acceptance-pending",
+    "post_close_trusted_return_checks": "present-acceptance-pending",
+    "node_commit_ledger": "present-acceptance-pending",
+    "persistent_worker_root_invariance": {
+      "status": "present-acceptance-pending",
+      "worker_counts": [
+        1,
+        2,
+        4,
+        8
+      ]
+    },
+    "repository_core_overlay": {
+      "status": "implementation-present-exact-head-acceptance-pending",
+      "source_commit": "a44d67181dc74ad74e64819b913972d2a49abc54",
+      "absorbed_into_selected_successor": true,
+      "packages": [
+        "trnm-node-boundary-v0",
+        "trnm-tx-lifecycle-v0",
+        "trnm-state-sync-v0",
+        "trnm-migration-v0",
+        "trnm-control-plane-v0",
+        "trnm-poco-node-production-v0",
+        "trnm-production-adapter-conformance-v0",
+        "trnm-release-bundle-v0",
+        "trnm-durable-file-adapters-v0"
+      ],
+      "production_activation": false
+    },
+    "production_build_closures": {
+      "status": "implementation-present-exact-head-and-prospective-merge-replay-required",
+      "registry": "config/build-closures-v1.toml",
+      "validator": "scripts/ci/check_build_closures_v1.py",
+      "closure_ids": [
+        "node-prod-v0",
+        "node-devnet-v0",
+        "ai-v1-candidate",
+        "lab-and-evidence"
+      ],
+      "default_node_ai_v1_dependency_count": 0,
+      "cargo_tree_and_compile_acceptance": "pending-current-head-ci"
+    }
+  },
+  "machine_truth": {
+    "stage": "G1-native-host-incomplete",
+    "consensus_mainline": "native-poco-bft",
+    "protocol_target": "poco-bft-v0",
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "public_testnet_ready": false,
+    "release_ready": false,
+    "v1_normative_freeze": false,
+    "v1_node_support": false,
+    "v1_release_ready": false
+  },
+  "current_promotion_critical_stack": [
+    "all required checks on one unchanged PR62 head and prospective merge",
+    "independent module-owner, consumer, security and release acceptance",
+    "exact-head and prospective-merge Cargo-tree/compiler acceptance of production build closures, plus node decomposition",
+    "persistent authenticated network, pacemaker, Vote/Timeout, finality and recovery",
+    "production transaction lifecycle and authenticated state sync",
+    "trusted migration and target-root recomputation",
+    "independent multi-host, HSM/anchor, physical power-loss, audit/red-team and wall-clock soak evidence",
+    "signed governance and activation record"
+  ],
+  "truth_rule": "protected main, assessed baseline, current PR head, prospective merge, artifact, evidence, accepted release and activated network identities are distinct and must never be silently substituted"
+}

@@ -1,3 +1,4 @@
-node_id = "node3"
-rpc_addr = "127.0.0.1:28657"
-p2p_addr = "127.0.0.1:28656"
+schema = "trnm-retired-legacy-node-config-v1"
+retired = true
+slot = 3
+reason = "legacy node configuration authority removed from the native workspace"

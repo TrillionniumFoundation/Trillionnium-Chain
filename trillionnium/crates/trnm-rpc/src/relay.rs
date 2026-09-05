@@ -1024,7 +1024,7 @@ impl RelayService {
             .iter()
             .cloned()
             .zip(leaf_hashes.iter())
-            .zip(proof_paths.into_iter())
+            .zip(proof_paths)
             .enumerate()
             .map(|(i, ((env, leaf_hash), proof))| RelayEnvelopeProof {
                 leaf_sequence: env.sequence,

@@ -1,0 +1,49 @@
+name: External gate evidence
+description: Track a real-world, independently signed gate-evidence campaign.
+title: "[EVIDENCE] "
+labels:
+  - evidence
+body:
+  - type: dropdown
+    id: blocker
+    attributes:
+      label: Blocker
+      options:
+        - EXT-REVIEW-001
+        - EXT-G1-CAMPAIGN-001
+        - EXT-ANCHOR-HSM-001
+        - EXT-POWERLOSS-001
+        - EXT-AUDIT-001
+        - EXT-SOAK-ACTIVATION-001
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Exact source commit and tree
+      placeholder: "<40-hex commit> / <40-hex tree>"
+    validations:
+      required: true
+  - type: textarea
+    id: executor
+    attributes:
+      label: Independent executor and reviewer
+      description: Identify distinct producer, reviewer, operators and custody domains.
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Immutable artifacts
+      description: List immutable URIs and SHA-256 digests. Do not paste secrets.
+    validations:
+      required: true
+  - type: checkboxes
+    id: nonclaims
+    attributes:
+      label: Fail-closed declarations
+      options:
+        - label: No fixture, simulation, local watermark, shortened soak, self-review, or skipped CI is being substituted for required real evidence.
+          required: true
+        - label: Production, release and activation flags remain false until the evidence file is independently accepted.
+          required: true

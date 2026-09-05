@@ -157,7 +157,29 @@ fi
 parse_metric() {
   local line="$1"
   local key="$2"
-  sed -n "s/.*${key}=\([0-9][0-9]*\).*/\1/p" <<<"$line"
+  awk -v line="$line" -v key="$key" '
+    BEGIN {
+      field_count = split(line, fields, /[[:space:]]+/)
+      prefix = key "="
+      seen = 0
+      invalid = 0
+      value = ""
+      for (i = 1; i <= field_count; i++) {
+        if (substr(fields[i], 1, length(prefix)) == prefix) {
+          seen++
+          candidate = substr(fields[i], length(prefix) + 1)
+          if (candidate !~ /^[0-9]+$/) {
+            invalid = 1
+          } else {
+            value = candidate
+          }
+        }
+      }
+      if (seen == 1 && invalid == 0) {
+        print value
+      }
+    }
+  '
 }
 
 state_root_consistency() {
@@ -203,7 +225,10 @@ run_case() {
     fi
 
     local consensus_lines
-    consensus_lines="$(grep '^\[consensus\] finality_p50_ms=' "$log" || true)"
+    # The canonical summary gained `finality_avg_ms` ahead of p50. Bind the
+    # parser to that exact ordered prefix so stale or malformed summaries fail
+    # closed instead of being accepted through a loose token match.
+    consensus_lines="$(grep -E '^\[consensus\] finality_avg_ms=[0-9]+ finality_p50_ms=[0-9]+ ' "$log" || true)"
     if [[ -z "$consensus_lines" ]]; then
       echo "result=FAIL reason=missing_consensus_metrics log=$log" | tee -a "$OUT"
       fail=$((fail+1))

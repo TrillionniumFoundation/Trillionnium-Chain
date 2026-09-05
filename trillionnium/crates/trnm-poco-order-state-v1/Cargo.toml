@@ -1,0 +1,49 @@
+[package]
+name = "trnm-poco-order-state-v1"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-ai-native-v1-order-state-writer-candidate"
+protocol = "poco-ai-native-v1"
+classification = "candidate-non-normative"
+tag50_authoritative_store_local_writer = true
+exact_parent_sparse_root_required = true
+parent_nonmembership_proved = true
+create_once_object_version_zero = true
+atomic_successor_height_root_history = true
+fresh_reopen_membership_proof = true
+exact_retry = true
+logical_rollback_detection_with_trusted_pin = true
+normal_build_raw_bytes_issuer = false
+normal_build_write_permit_issuer = true
+upstream_terminal_owner_permit_api = true
+canonical_receipt_claim_projection = true
+normal_execution_binding_issuer = true
+canonical_node_order_state_commissioning = false
+canonical_recovered_parent_manifest_bound_g2_seal = true
+coherent_whole_file_rollback_authority = false
+order_state_membership_binding = true
+g2_global_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[features]
+default = []
+test-support = []
+
+[dependencies]
+rusqlite = { version = "0.32", features = ["bundled"] }
+sha2 = "0.10"
+trnm-poco-global-execution-v1 = { path = "../trnm-poco-global-execution-v1" }
+trnm-poco-order-application-v1 = { path = "../trnm-poco-order-application-v1" }
+trnm-poco-order-finality-verifier-v1 = { path = "../trnm-poco-order-finality-verifier-v1" }
+trnm-poco-order-types-v1 = { path = "../trnm-poco-order-types-v1" }
+
+[dev-dependencies]
+tempfile = "3"
+trnm-poco-order-finality-verifier-v1 = { path = "../trnm-poco-order-finality-verifier-v1", features = ["test-support"] }

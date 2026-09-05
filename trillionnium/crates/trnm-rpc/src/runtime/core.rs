@@ -130,7 +130,8 @@ pub(crate) const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
 #[command(
     name = "trnm-rpc",
     version,
-    about = "Trillionnium RPC (state-backed query schema)"
+    about = "Trillionnium development-only local-file RPC harness (not a production node RPC)",
+    after_long_help = "Safety boundary: this binary has no production node backend. Every execution is disabled unless TRNM_RPC_DEVELOPMENT_ONLY=1 is set explicitly for a local test or development rehearsal."
 )]
 pub(crate) struct Args {
     #[command(subcommand)]
@@ -532,4 +533,3 @@ pub(crate) struct FaucetRateEntry {
     pub(crate) window_start_unix_ms: u128,
     pub(crate) count_in_window: u32,
 }
-

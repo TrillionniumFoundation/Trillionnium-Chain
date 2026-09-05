@@ -1,160 +1,81 @@
-# contracts
+# Rust-native external contracts
 
-Rust-native external contracts 子树。
+The `contracts/` subtree contains four independently testable Rust crates:
 
-## 当前状态（truthful snapshot）
+- [`audit-events`](./audit-events/) — normalized audit-event schemas;
+- [`settlement-vault`](./settlement-vault/) — authorization, lock, release, refund, and slash semantics;
+- [`bridge-relay`](./bridge-relay/) — proof, nonce, and finality-bound relay semantics;
+- [`governance-guard`](./governance-guard/) — timelock, pause/resume, and version-drift guards.
 
-当前目录已经有 4 个独立 contract crates：
+## Current authority boundary
 
-- `settlement-vault/`
-- `bridge-relay/`
-- `governance-guard/`
-- `audit-events/`
+These crates are **MVP contract semantics and shared-schema packages**. They are not
+currently a production smart-contract runtime, are not part of the Native PoCO-BFT
+production authority path, and do not by themselves establish public-testnet,
+mainnet, or release readiness.
 
-它们当前主要是 **Rust MVP / in-memory state machine / shared schema** 形态，用于先验证接口、审计事件和 fail-closed 语义；**还不是** 已接入 TRNM host runtime 的生产 external-contract workspace。
+Use the active repository authorities in this order:
 
-## 与架构目标的关系
+1. [`RELEASE_READINESS.md`](../RELEASE_READINESS.md) for the current NO-GO/GO projection;
+2. the [canonical development plan](../docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md) for execution order and blockers;
+3. the [M00-M17 technical reference](../docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md) for module contracts;
+4. the [Rust-native external-contract architecture](../trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md) for the target WASM/Host-ABI design.
 
-`trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md` 定义的是目标布局：
+The architecture document is a target contract. Directory existence is not
+evidence that the target runtime has been integrated.
+
+## Implemented today
+
+The checked-in workspace provides:
+
+- deterministic Rust state-machine logic for the four current crates;
+- explicit authorization and fail-closed error handling;
+- normalized audit-event types;
+- crate-local unit tests;
+- one workspace build/test entry point in [`Cargo.toml`](./Cargo.toml).
+
+Run the current bounded workspace gates from the repository root:
+
+```bash
+cargo check --manifest-path contracts/Cargo.toml --locked
+cargo test --manifest-path contracts/Cargo.toml --locked
+```
+
+## Open implementation boundary
+
+The following remain open and must not be described as completed:
+
+- a versioned `HostAbiV1` and runtime capability model;
+- `sdk/`, `runtime-spec/`, and cross-contract `integration-tests/` packages;
+- deterministic WASM compilation and artifact reproducibility;
+- node-side WASM sandboxing, gas metering, memory limits, and host-call quotas;
+- storage-delta application into the canonical state root;
+- stable RPC transaction/query/event ABI and generated SDKs;
+- package upgrade, migration, rollback, and artifact revocation procedures;
+- production dependency closure and end-to-end node evidence.
+
+A future host integration must bind, at minimum:
 
 ```text
-contracts/
-  sdk/
-  runtime-spec/
-  settlement-vault/
-  bridge-relay/
-  governance-guard/
-  integration-tests/
+ContractManifestV1
+HostAbiV1
+GasScheduleV1
+StorageDeltaV1
+EventSchemaV1
+ErrorRegistryV1
+ArtifactProvenanceV1
+UpgradeMigrationV1
+GoldenHostReplayV1
 ```
 
-截至当前仓库快照：
+## Day-1 scope rule
 
-- **已存在**：`settlement-vault/`、`bridge-relay/`、`governance-guard/`
-- **部分相关**：`audit-events/` 提供共享审计事件 schema，但它是配套 shared-schema crate，**不等价于** 目标布局里的 `sdk/` 或 `runtime-spec/`
-- **尚未落地为目录**：`sdk/`、`runtime-spec/`、`integration-tests/`
+No contract enters the Day-1 launch promise merely because its crate exists.
+Inclusion requires an explicit scope decision in the canonical plan, exact-source
+node integration, state-root inclusion, complete tests and evidence, independent
+review, and unchanged release truth.
 
-换句话说：当前目录树已经出现了“3 个 contract crates + 1 个 shared schema crate”的 Rust MVP 形态，但**还没有** 达到架构文档里描述的 host ABI/runtime-spec/package-layout 闭环。
+Until those conditions close, the correct description is:
 
-因此，这个子树目前应被理解为：
-
-> external-contract Rust 化方向已经起步，但 Host ABI/runtime boundary 仍处在“架构已冻结、工程接线未闭环”的阶段。
-
-### Truth-source path note
-
-为避免把旧目录名误写成当前事实，CR06 相关真值路径应按当前仓库快照引用为：
-
-- `trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md`
-- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-- `contracts/Cargo.toml`
-
-不要把历史/漂移写法 `trillionnium-rust/...` 或 `contracts-rust/...` 误当成当前 in-tree 路径。
-
-## Runtime boundary（当前不要过度表述）
-
-当前仓内不应把这些 crate 表述成：
-
-- 已经编译为 canonical `wasm32-unknown-unknown` production artifacts
-- 已经接入 `trnm-node` 的 deterministic WASM executor
-- 已经具备 `sdk/` + `runtime-spec/` + golden integration replay 全套闭环
-- 已经构成 public-mainnet readiness 证明
-
-更准确的说法是：
-
-- external contracts 保持在 `contracts/` 独立子树，而不是物理并入 `trillionnium/`
-- 当前 crate 更接近 contract semantics / audit normalization / fail-closed behavior 的 Rust MVP
-- 当前仓内 **还没有** 已落地的 `sdk/`、`runtime-spec/`、`integration-tests/` 目录，因此不要把架构目标布局误读成“工程已接线完成”
-- 是否进入 Day-1 mainnet scope，应继续以 `RELEASE_READINESS.md` 与 `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 的口径为准
-
-## 目录说明
-
-### `settlement-vault/`
-
-最小可测试的结算金库合约骨架；当前重点是授权、锁定/释放/惩罚和审计事件。
-
-### `bridge-relay/`
-
-最小 BridgeRelay 合约骨架；当前重点是 proof/nonce/finality 相关 fail-closed 行为。
-
-### `governance-guard/`
-
-最小治理门控合约骨架；当前重点是 timelock、版本漂移保护和暂停/恢复语义。
-
-### `audit-events/`
-
-共享审计事件 schema crate；用于 contract 模块输出统一 normalized audit event。
-
-## Host / runtime boundary（按当前仓库状态理解）
-
-当前更可信的边界应理解为：
-
-- `contracts/*`：独立 contract crates / shared schema，主要承载合约语义、共享事件 schema 与 fail-closed 规则
-- `trnm-node`：未来的 deterministic WASM executor / gas / quota / rollback runtime 宿主；**当前仓内不应宣称已与本子树完成 canonical runtime 接线**
-- `trnm-state`：未来承接 contract storage delta 与 state-root inclusion；**当前也不应表述成这些 crates 已纳入 canonical state root pipeline**
-- `trnm-rpc`：未来承接 versioned contract call/query/event mapping；**当前不应把现有 crate 直接描述成对外稳定 ABI 已上线**
-
-换句话说：这里现在更像 external-contract runtime perimeter 的 Rust 侧骨架，而不是已经闭合的 host ABI/runtime integration plane。
-
-### 当前可安全假设的 ABI / runtime boundary
-
-为避免把“目标架构”误写成“当前事实”，当前仓库下对 external contracts 最安全的表述应收敛为：
-
-- **可以说**：这些 crate 已经把部分合约语义、审计事件 schema、fail-closed 约束先用 Rust 形式固定下来
-- **可以说**：`audit-events/` 提供 shared schema 邻接层，有助于后续统一事件口径
-- **不要说**：当前已经存在可复用的 canonical `HostAbiV1` 实现或稳定宿主 trait 接线
-- **不要说**：当前已经有 node-side deterministic WASM sandbox、gas metering、storage delta apply、RPC ABI versioning 的闭环集成
-- **不要说**：当前 `contracts/*` crates 已默认编译并交付为链上 canonical `wasm32-unknown-unknown` artifacts
-- **不要说**：当前 external contracts 已自动进入 public-mainnet Day-1 minimum scope；是否纳入 launch promise，仍取决于 `RELEASE_READINESS.md` 与 `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-
-这组边界的核心含义是：**架构方向已锁定，但 runtime 接线、ABI 冻结落地、以及 Day-1 scope 判定都还不能被提前宣称为完成。**
-
-## 构建边界
-
-当前目录下**已经有**统一 workspace `Cargo.toml`，但它目前只覆盖 4 个已落地 crate：
-
-- `audit-events`
-- `bridge-relay`
-- `governance-guard`
-- `settlement-vault`
-
-因此，可以在 `contracts/` 根目录直接运行当前 MVP 子树的统一 workspace gate，例如：
-
-```bash
-cargo check --manifest-path contracts/Cargo.toml -q
-cargo test --manifest-path contracts/Cargo.toml
-```
-
-但这里仍然**不要**把这个最小 workspace 误读成架构文档里的完整 target layout 已经落地。当前 workspace 只代表现有 4 个 crate 的统一验证入口，**不等价于** `sdk/`、`runtime-spec/`、`integration-tests/` 已实现并接入 canonical host runtime。
-
-如需逐 crate 验证，也仍可单独执行，例如：
-
-```bash
-cd contracts/settlement-vault && cargo test
-cd ../bridge-relay && cargo test
-cd ../governance-guard && cargo test
-cd ../audit-events && cargo test
-```
-
-## Release / mainnet 边界
-
-按当前 truth sources：
-
-- `RELEASE_READINESS.md`：仓库整体 **Not release-ready**
-- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`：external contracts 更接近 launch-adjacent / scope-dependent 面，不自动属于 Day-1 core minimum
-- `trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md`：定义的是目标 package layout / Host ABI / runtime boundary，不能把目标布局误读为当前工程已闭环
-
-### Day-1 scope 判读（保持与 gap matrix 一致）
-
-当前 `contracts/` 子树更适合作为 **Day-1 scope-dependent / trailing-capable** 的外围面来描述，而不是默认 P0：
-
-- `settlement-vault/`：只有在公开 launch promise 明确包含 oracle-backed settlement / vault semantics 时，才应上升为 Day-1 blocker；否则更接近可后置模块。
-- `bridge-relay/`：只有在公开 day-1 叙事包含 cross-chain / bridge positioning 时，才应被视为 P0；否则按 gap matrix 应维持 trailing-capable 口径。
-- `governance-guard/`：可以帮助冻结 upgrade / pause discipline，但当前 crate 仍是 Rust MVP 语义骨架，不等价于已完成链上治理接线或 public-mainnet governance closure。
-- `audit-events/`：只是 shared schema 邻接层；它有助于统一事件口径，但不单独决定 external contracts 已进入 Day-1 minimum scope。
-
-因此，在 README、对外材料或内部 handoff 中，更安全的写法应是：
-
-> `contracts/` 代表 TRNM external-contract perimeter 的 Rust MVP 子树；哪些模块会进入 Day-1 launch promise，仍取决于当轮 mainnet scope freeze，而不是由目录存在本身自动决定。
-
-因此，`contracts/` 当前最准确的定位是：
-
-> 一个应被持续推进、但必须保持边界诚实的 Rust-native external-contracts 子树。
+> `contracts/` is the Rust-native external-contract perimeter and semantic MVP,
+> not an activated on-chain contract runtime.

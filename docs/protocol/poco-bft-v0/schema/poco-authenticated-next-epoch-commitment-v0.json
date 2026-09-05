@@ -1,0 +1,101 @@
+{
+  "schema": "trnm.poco-bft.authenticated-next-epoch-commitment.v0",
+  "schema_version": 0,
+  "scope": "H3b2b3a raw exact finalized-cutoff proof plus raw parent and namespace plus authenticated post-execution candidate to a private same-version commitment capability",
+  "authority_flow": [
+    "independently reconstructed H3b2b2 candidate facts",
+    "raw exact cutoff parent BlockHeader CEV0",
+    "raw FinalityProofV0 with hard-coded StrictEd25519Verifier semantics",
+    "raw complete H2 JMT ICS23 namespace bundle",
+    "unique same-version NextEpochCommitmentV0 derivation",
+    "private authenticated commitment capability"
+  ],
+  "timing_contract": [
+    "snapshot_lead_blocks must be at least finality_certified_chain_length, which is 3 in v0",
+    "the unified production-shaped compact witness uses epoch_length_blocks 10, active epoch 2, snapshot lead 3, cutoff 25, and checkpoint 28",
+    "H1 consumes regular parent 24, finalized cutoff 25, child 26, and grandchild 27; every H1 next-epoch commitment field is absent",
+    "the current authenticated candidate already contains the height-28 checkpoint execution capability, so this test-level H3b2b3a call runs after checkpoint execution and does not establish pre-header derivation",
+    "a lead-2 cutoff at 26 is finalized only by the height-28 checkpoint carrier and is hard-rejected before H1/H2 as an impossible pre-header commitment source",
+    "the former lead-2 candidate corpus is replaced rather than retained as a second active source"
+  ],
+  "parent_header_contract": [
+    "raw parent CEV0 is exact-decoded internally and no caller timestamp is accepted",
+    "parent.id == finalized_cutoff.parent_id == finalized ordinary justify-QC block_id",
+    "parent height, view, regular kind, old set, old parameters, chain, genesis, and protocol match the certified cutoff context",
+    "timestamp is read only from the exact decoded parent header and is authorization-sealed with all other parent fields"
+  ],
+  "h1_contract": [
+    "raw FinalityProofV0 CEV0 is exact-decoded internally against the exact old set, parameters, and authenticated parent timestamp, then freshly checked with strict crypto",
+    "strict canonical Ed25519 public key, R, and S checks precede every proposer and QC verification",
+    "the finalized ordinary header is the exact scheduled cutoff and its state root is the H2 root",
+    "child and grandchild are regular finality carriers, not checkpoint-header authority, and all four H1 headers have absent next-epoch commitment fields"
+  ],
+  "h2_contract": [
+    "manifest CEV0, ordered entries root, count, version, and physical keys equal the reconstructed candidate cutoff",
+    "every manifest and member ICS23 existence proof is independently decoded under the jmt 0.12.0 SHA-256 proof spec",
+    "complete physical namespace is inherited only from the independently rerun H3b2b2 source gate; an ICS23 member list alone is not completeness authority",
+    "H3b2b3a hard-requires an empty absence list because its commitment seal binds only the verified count; non-empty query/proof identities are not authorized by this bridge"
+  ],
+  "candidate_contract": [
+    "the checker reruns the independent physical-JMT H3b2b2 consumer and does not consume a Rust-normalized transcript or B2-G result",
+    "candidate authorization ID, candidate-parameter hash, checkpoint execution ID, cutoff tuple, fallback, and exact old/new configuration preimages are joined",
+    "generic verifier, old B2-G token, status, and event inputs have no caller-input path"
+  ],
+  "commitment_contract": [
+    "all NextEpochCommitmentV0 fields are uniquely derived from H1/H2/candidate facts",
+    "same-version v0 fixes protocol version zero and absent upgrade-plan hash",
+    "activation height is outgoing epoch end plus one",
+    "the current test-level capability derives the commitment only after consuming the post-execution height-28 candidate capability; it does not establish derivation or placement before checkpoint proposal",
+    "no H1 parent, finalized, child, or grandchild header carries the commitment; H3b2b3b requires a new pre-header host seam to place it in the native checkpoint header before that header is identified or signed"
+  ],
+  "authorization_seal": {
+    "domain": "trnm.poco-bft.authorized-next-epoch-commitment.v0",
+    "hash": "SHA-256 trnm.domain.hash.v1 length-framed parts",
+    "preimage_order": [
+      "candidate_authorization_id",
+      "candidate_parameters_hash",
+      "exact_cutoff_parent_header_cev0",
+      "h1_proof_id",
+      "cutoff_block_id",
+      "cutoff_state_root",
+      "h2_entries_root",
+      "h2_entry_count",
+      "h2_absence_count",
+      "old_validator_set_cev0",
+      "old_parameters_cev0",
+      "new_validator_set_cev0",
+      "new_parameters_cev0",
+      "next_epoch_commitment_cev0"
+    ]
+  },
+  "fixture_evidence": {
+    "fixture_schema": "trnm.poco-bft.authenticated-next-epoch-commitment-fixture.v0",
+    "required_scenarios": [
+      "authenticated positive commitment",
+      "authenticated fallback commitment"
+    ],
+    "rust_consumer": "normal non-ignored reconstruction must compare the committed vector to exact-decoded raw parent and H1 evidence, freshly strict-verified H1, empty-absence raw H2 evidence, the authenticated post-execution candidate, and the derived commitment capability",
+    "node_consumer": "independently reruns H3b2b2, strict H1, every raw ICS23 membership, commitment derivation, and the private seal",
+    "current_status": "the unified lead-three candidate source and raw exact H1 plus raw H2 commitment evidence are the only active compact corpus; lead-two is retained only as a hard-reject regression"
+  },
+  "negative_families": [
+    "bad H1 signature",
+    "noncanonical Ed25519 R or S and small-order key",
+    "H2 root substitution",
+    "cutoff splice",
+    "commitment-field substitution",
+    "parent ID substitution",
+    "parent timestamp substitution",
+    "private authorization seal substitution"
+  ],
+  "does_not_establish": [
+    "pre-header commitment derivation or placement in checkpoint 28",
+    "identity or proof-digest sealing for non-empty absence evidence",
+    "CometBFT block hash to native PoCO BlockId checkpoint-header authority",
+    "native checkpoint body and ordered receipt roots",
+    "checkpoint plus two-seal B2-E and joint B2-F handoff",
+    "field 13 activation, field 14 new-set finality, and atomic Core epoch transition",
+    "field 12 UpgradePlanV0 authorization",
+    "transport admission, light-client completion, or remote workflow execution"
+  ]
+}

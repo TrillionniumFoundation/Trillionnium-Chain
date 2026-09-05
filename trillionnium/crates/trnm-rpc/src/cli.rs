@@ -8,7 +8,8 @@ use crate::{OpsWindowArg, QUERY_EVENTS_LIMIT_DEFAULT, QUERY_FULL_LIMIT_DEFAULT};
 #[command(
     name = "trnm-rpc",
     version,
-    about = "Trillionnium RPC (state-backed query schema)"
+    about = "Trillionnium development-only local-file RPC harness (not a production node RPC)",
+    after_long_help = "Safety boundary: this binary has no production node backend. Every execution is disabled unless TRNM_RPC_DEVELOPMENT_ONLY=1 is set explicitly for a local test or development rehearsal."
 )]
 pub(crate) struct Args {
     #[command(subcommand)]

@@ -1,0 +1,710 @@
+schema_version = 1
+truth_id = "trnm-poco-ai-native-v1-design-truth-v1"
+protocol_id = "trnm-poco-ai-native-v1"
+protocol_major = 1
+
+# The architecture direction is adopted. The versioned protocol specification
+# is still a draft and has no implementation or activation authority.
+architecture_status = "adopted"
+specification_status = "draft"
+normative_freeze = false
+design_only = true
+
+current_implementation_baseline = "poco-bft-v0"
+implementation_status = "not-implemented"
+node_support = false
+protocol_activation = false
+production_candidate = false
+release_ready = false
+
+# V1 composes a new AI-native protocol stack around the retained weighted
+# chained-HotStuff safety basis. It does not claim a new BFT safety theorem.
+order_safety_kernel = "weighted-chained-hotstuff-derived"
+new_bft_safety_theorem = false
+
+[planes]
+agent = "design-only"
+market_task = "design-only"
+compute_verify = "design-only"
+data_availability = "design-only"
+order_coordination_settlement = "design-only"
+
+[evidence]
+wire_schemas_complete = false
+conformance_vectors_complete = false
+formal_model_complete = false
+light_client_spec_complete = false
+upgrade_contract_complete = false
+independent_review_complete = false
+interoperability_complete = false
+wan_fault_evidence = false
+performance_evidence = false
+
+# Granular G1.5 candidate evidence does not promote any global completion bit.
+# The foundation corpus remains opaque at its signature carriers. A separate,
+# bounded order-signature tranche verifies strict Ed25519 roots and quorum
+# weights without promoting any global completion bit.
+[evidence_tranches.foundation_order_kernel]
+classification = "candidate-non-normative"
+schema_closed_for_listed_types = true
+positive_vectors_checked = 27
+derived_vectors_checked = 1
+negative_vectors_checked = 24
+independent_standard_library_parser = true
+independent_parser_self_tests = true
+strict_cev1_canonical_decode = true
+sha256_digest_reproduction = true
+cryptographic_signature_verification = false
+light_client_verifier = false
+upgrade_verifier = false
+
+[evidence_tranches.order_signature_crypto]
+classification = "candidate-non-normative"
+signature_scheme = "strict-ed25519-v1-draft"
+validator_count = 4
+vote_signature_claims_checked = 1
+timeout_signature_claims_checked = 2
+qc_signatures_checked = 4
+tc_signatures_checked = 4
+tc_entry_statements_checked = 4
+negative_cases_checked = 18
+independent_standard_library_verifier = true
+validator_set_digest_reproduction = true
+vote_timeout_domain_separation = true
+checked_weighted_quorum = true
+per_entry_timeout_statement_binding = true
+foundation_timeout_certificate_context_projection = true
+foundation_timeout_certificate_justification_projection = true
+full_crypto_interoperability = false
+light_client_verifier = false
+upgrade_verifier = false
+
+[evidence_tranches.order_finality_light_client]
+classification = "candidate-non-normative"
+scope = "fresh-genesis-ordinary-checkpoint-and-one-epoch-handoff-bounded-trust-progression"
+positive_cases_checked = 9
+negative_cases_checked = 212
+independent_standard_library_verifier = true
+raw_cev1_strict_decode = true
+exact_byte_reencoding = true
+expected_error_codes_checked = true
+foundation_schema_structural_exact_compare = true
+strict_ed25519_qc_verification = true
+strict_ed25519_tc_verification = true
+qc_signatures_checked = 60
+tc_signatures_checked = 4
+handoff_signatures_checked = 8
+direct_three_chain_finality = true
+checked_weighted_quorum = true
+fresh_genesis_trust_bundle = true
+validator_set_definition_hash_checked = true
+committed_parameter_constraints_checked = true
+fresh_genesis_empty_payload_checked = true
+finalized_target_fresh_genesis_only = false
+ordinary_target_finality = true
+ordinary_payload_bound_enforcement = false
+single_epoch_only = false
+consecutive_views_only = false
+single_skipped_view_tc = true
+checkpoint_finality_verification = true
+checkpoint_attachment_verification = true
+epoch_handoff_verification = true
+dual_role_context_isolation = true
+independent_old_new_weighted_quorum = true
+v1_handoff_first_finality = true
+post_handoff_ordinary_finality = true
+v0_activation_verification = false
+bounded_one_handoff_trust_progression = true
+arbitrary_length_multi_hop_light_client = false
+global_light_client_spec_complete = false
+
+[evidence_tranches.order_trust_path_iterator]
+classification = "candidate-non-normative"
+scope = "bounded-zero-to-three-hop-fresh-genesis-then-checkpoint-anchored-order-trust-progression"
+positive_hop_counts_checked = [0, 1, 2, 3]
+replay_and_append_controls_checked = 2
+negative_cases_checked = 63
+max_hops = 3
+independent_standard_library_verifier = true
+raw_cev1_strict_decode = true
+exact_byte_reencoding = true
+digest_v1_construction_bound = true
+embedded_steps_independently_decoded = true
+existing_fresh_genesis_transition_position_zero_only = true
+versioned_checkpoint_anchored_later_steps = true
+intermediate_state_id_binding = true
+certified_head_qc_consumed = true
+strict_epoch_and_height_monotonicity = true
+handoff_protocol_sidecar_root_recomputed = true
+handoff_complete_wrapper_signatures_committed = true
+handoff_sidecar_root_negative_cases_checked = 3
+epoch_start_single_skipped_view_tc = true
+epoch_start_tc_safe_parent = "exact-epoch-handoff"
+epoch_start_tc_locked_qc_absent = true
+epoch_start_tc_finalized_anchor = "exact-latest-epoch-checkpoint"
+epoch_start_tc_negative_cases_checked = 11
+qc_signatures_checked = 88
+tc_signatures_checked = 4
+handoff_signatures_checked = 24
+openssl_signatures_cross_checked = 116
+v0_activation_verification = false
+weak_subjectivity_selection = false
+arbitrary_length_multi_hop_light_client = false
+complete_wire_crypto_corpus = false
+second_implementation_interoperability = false
+global_light_client_spec_complete = false
+normative_freeze = false
+implementation = false
+activation = false
+
+[evidence_tranches.object_mvcc_fee_kernel]
+classification = "candidate-non-normative"
+scope = "local-single-block-object-mvcc-and-four-resource-fee-delta-only"
+positive_cases_checked = 12
+negative_cases_checked = 39
+crash_and_reopen_cases_checked = 6
+canonical_serial_oracle = true
+deterministic_conflict_retry = true
+explicit_versioned_read_write_sets = true
+complete_success_reverted_out_of_resource_receipts = true
+resource_class_count = 4
+all_resource_classes_complete = false
+checked_fee_arithmetic = true
+per_transaction_fee_deltas = true
+block_end_sorted_fee_reduction = true
+global_fee_collector_per_transaction_write = false
+sqlite_schema_version = 1
+automatic_migration = false
+immutable_read_only_existing_file_preflight = true
+third_state_permanent_fence = true
+durable_state_and_block_journal_roots = true
+deterministic_journal_replay_audit = true
+whole_store_rollback_authority = false
+real_parallel_worker_pool = false
+authenticated_global_state_tree = false
+agent_transaction_wire_complete = false
+order_proof_authority_complete = false
+node_integration = false
+g2_global_complete = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[evidence_tranches.consumption_settlement_kernel]
+classification = "candidate-non-normative"
+scope = "local-single-asset-single-result-single-rollup-only"
+positive_cases_checked = 10
+negative_cases_checked = 56
+crash_and_reopen_cases_checked = 6
+bilateral_ed25519_receipt_and_rollup_signatures = true
+monotonic_gap_free_receipt_chain = true
+checked_cumulative_usage_and_charge = true
+atomic_complete_rollup_assignment = true
+chain_assigned_rollup_challenge_window = true
+settlement_amounts_caller_selected = false
+checked_single_asset_conservation = true
+one_shot_atomic_settlement = true
+deterministic_journal_replay_audit = true
+sqlite_schema_version = 2
+automatic_migration = false
+immutable_read_only_existing_file_preflight = true
+third_state_permanent_fence = true
+durable_state_and_journal_roots = true
+durable_finalized_order_block_journal = true
+agent_market_authority_integration = false
+artifact_da_authority_integration = false
+result_challenge_authority_integration = false
+order_proof_authority_complete = false
+mvcc_final_apply_integration = false
+whole_store_rollback_authority = false
+node_integration = false
+g2_global_complete = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+# G2A--G2F each have a bounded candidate kernel and a dedicated fail-closed
+# boundary. G2F is read-only consistency, not cross-plane authority.
+# Node integration, an end-to-end transaction path, implementation, or
+# activation.
+[evidence_tranches.g2_candidate_aggregate]
+classification = "candidate-non-normative"
+bounded_local_candidate_tranches_present = ["G2A", "G2B", "G2C", "G2D", "G2E", "G2F"]
+bounded_local_candidate_tranche_count = 6
+all_listed_boundary_gates_present = true
+cross_plane_readback_consistent_candidate = true
+global_pre_vote_candidate_runtime_implemented = true
+order_finalized_cross_plane_authority = false
+cross_plane_authority_integration = false
+end_to_end_transaction_execution = false
+whole_node_checkpoint_integration = false
+node_integration = false
+g2_global_complete = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+# A bounded non-Node runtime now joins certified complete DA retrieval to the
+# four real local kernel preview paths and advances an independent validation
+# sequence by successor-only CAS. Verified Order finality can now drive the
+# exact recoverable apply into all five source planes and issue the private
+# terminal owner only after fresh terminal readback. The owner can then seal
+# those facts in one local SQLite successor transaction. Neither root is the
+# normative application JMT root or an Order post-state root.
+[evidence_tranches.global_pre_vote_execution_candidate]
+classification = "candidate-non-normative"
+scope = "single-certified-global-item-preview-validation-source-apply-and-local-terminal-facts-cas"
+candidate_runtime_implemented = true
+positive_controls_checked = 7
+negative_controls_checked = 21
+compile_fail_cases_checked = 4
+certified_da_complete_retrieval_before_preview = true
+strict_single_item_codec = true
+agent_market_pre_vote_preview = true
+verify_challenge_pre_vote_preview = true
+mvcc_fee_pre_vote_preview = true
+consumption_settlement_pre_vote_preview = true
+candidate_composite_root = true
+whole_node_validation_sequence_cas = true
+mandatory_fresh_source_readback = true
+mandatory_fresh_target_readback = true
+prepared_target_reopen_checked = true
+whole_node_finalization_cas = true
+terminal_facts_single_transaction = true
+terminal_checkpoint_history_audit = true
+order_binding_owner_seam = true
+inert_order_binding_create_material = true
+order_binding_positive_carrier_issuer = false
+normal_build_finalization_owner_issuer = true
+source_plane_finalization_apply = true
+anti_whole_store_rollback_authority = false
+normative_application_jmt_root = false
+normative_agent_transaction_wire = false
+multi_level_speculative_overlay = false
+order_state_membership_binding = true
+order_proof_authority_complete = false
+node_process_integration = false
+g2_global_complete = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+# T0-C/T0-D retain one exact manifest-bound finalize join in a private,
+# non-Clone Node owner and commit its complete canonical data projection to a
+# separate two-record anchor/successor SQLite journal. Reopen is data-only: a
+# fresh exact typed join must reproduce the target bytes before the owner can
+# be recovered. The T0-E foundation now keeps the live journal inside that
+# owner and exposes only a crate-private double-fresh exact revalidation; it
+# now also drives the complete issuer through a candidate-only normal Node
+# process, process-persists the independent external pin, and authenticates
+# process-2 recovery against the operator-retained predecessor checksum.
+# Path hashing around separately opened rusqlite connections
+# narrows replacement exposure but does not descriptor-bind SQLite to the
+# checked inode or close a same-UID rename race. The namespace identity/owner
+# and external pin still lack descriptor/openat, same-UID namespace, and
+# production anti-rollback authority. Candidate-local process reachability is
+# observed, while coherent pin-plus-database rollback authority and whole-Node
+# reachability remain false.
+[evidence_tranches.manifest_bound_candidate_local_node_persistence]
+classification = "candidate-non-normative"
+scope = "exact-manifest-bound-finalize-join-data-journal-normal-node-process-and-fresh-typed-recovery"
+exact_finalize_join_only_owner_ingress = true
+candidate_local_owner_non_clone = true
+complete_canonical_join_snapshot = true
+snapshot_or_record_owner_issuer = false
+sqlite_anchor_successor_history = true
+successor_only_compare_and_swap = true
+mandatory_fresh_source_readback = true
+mandatory_fresh_target_readback = true
+immutable_read_only_preflight = true
+read_write_file_identity_recheck = true
+path_hash_separate_connection_toctou_narrowed = true
+descriptor_bound_openat_identity = false
+same_uid_rename_race_closed = false
+namespace_identity_and_owner_pinned = false
+external_trusted_pin_required = true
+external_trusted_prefix_response_loss_resolution = true
+external_pin_reopen_executed = true
+fresh_exact_typed_join_recovery_required = true
+fresh_exact_typed_join_recovery_executed = true
+candidate_local_owner_retains_live_journal = true
+candidate_local_owner_fresh_exact_revalidation = true
+external_pin_process_persisted = true
+external_pin_authenticated_process_owner = true
+normal_binary_process_integration_tests_checked = 7
+real_five_source_process_fixture_complete = true
+two_process_response_loss_recovery_executed = true
+dynamic_negative_classes_checked = 5
+journal_only_authority = false
+whole_node_checkpoint_integration = false
+source_plane_apply = false
+vote_eligibility = false
+signing_authority = false
+node_process_integration = true
+anti_whole_store_rollback_authority = false
+g2_global_complete = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+# G2F is a double-sampled read-only join over five independently durable
+# local kernels. It is not a multi-database transaction or whole-node CAS.
+[evidence_tranches.cross_plane_fresh_readback]
+classification = "candidate-non-normative"
+scope = "five-local-store-double-sampled-fresh-readback-only"
+positive_cases_checked = 3
+negative_cases_checked = 13
+compile_fail_cases_checked = 2
+fresh_reopen_each_store = true
+double_sample_no_intervening_change = true
+same_da_head_and_certificate_sqlite_snapshot = true
+explicit_typed_identifier_adapters = true
+same_protocol_context_and_order_head = true
+terminal_receipts_match_sampled_store_heads = true
+cross_plane_readback_consistent_candidate = true
+real_five_store_fixture_complete = false
+order_proof_authority_complete = false
+order_finalized_cross_plane_authority = false
+cross_plane_atomic_commit = false
+cross_plane_authority_integration = false
+whole_node_checkpoint_integration = false
+anti_whole_store_rollback_authority = false
+node_private_owner = false
+node_process_integration = false
+g2_global_complete = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+# A follow-on Node-private candidate consumes one G2F carrier, independently
+# verifies the exact pinned FreshGenesis Order proof in Rust, reopens/rejoins
+# all five stores, and records those two parallel local observations in a
+# distinct successor-only checkpoint. A strict candidate claim can now verify
+# exact sparse-tree membership beneath the finalized post-state root and bind
+# all Order/G2 identity fields. Tag 50 now has an exact immutable value grammar,
+# deterministic create material, and a bounded direct Ordinary ancestry
+# verifier. The authoritative local tag-50 Order-state writer now consumes the
+# exact linear terminal owner, proves parent-key absence, commits/freshly reads
+# the successor receipt, and joins that receipt to later verified finality. The
+# positive carrier is consumed only after exact owner-root equality. T0-E also
+# adds an inert normal-build G2 seal from that store's recovered canonical
+# parent with complete fresh audits before and after; the inner application
+# parent remains private. This is still not Node commissioning, cross-store
+# atomicity, process integration, G2 completion, or rollback authority.
+[evidence_tranches.cross_plane_checkpoint_admission]
+classification = "candidate-non-normative"
+scope = "bounded-direct-order-verifier-authoritative-tag50-writer-and-local-membership-binding"
+bounded_rust_order_verifier = true
+rust_order_verifier_unit_tests_checked = 15
+rust_order_verifier_compile_fail_cases_checked = 4
+rust_order_verifier_negative_classes_checked = 6
+raw_cev1_strict_decode = true
+exact_byte_reencoding = true
+verifier_local_absolute_input_bounds_before_hash_decode = true
+committed_max_retained_views_consumed = true
+strict_ed25519_qc_verification = true
+checked_weighted_quorum = true
+application_state_sparse_membership = true
+application_state_membership_unit_tests_checked = 2
+application_state_membership_negative_controls_checked = 3
+execution_binding_claim_strict_cev1 = true
+execution_binding_claim_absolute_input_bound = true
+execution_binding_claim_distinct_ordered_witnesses = true
+execution_binding_claim_unit_tests_checked = 7
+execution_binding_claim_negative_controls_checked = 23
+execution_binding_positive_carrier_defined = true
+registered_execution_binding_state_object = true
+deterministic_execution_binding_create_material = true
+execution_binding_create_material_unit_tests_checked = 1
+authoritative_order_state_writer_unit_tests_checked = 11
+authoritative_order_state_writer_compile_fail_cases_checked = 5
+canonical_recovered_parent_manifest_bound_g2_seal = true
+canonical_receipt_claim_projection = true
+execution_binding_machine_schema_assigned = true
+execution_binding_machine_schema_closed_listed_types_only = true
+execution_binding_vector_positive_controls_checked = 6
+execution_binding_vector_negative_controls_checked = 51
+execution_binding_independent_stdlib_checker = true
+execution_binding_vector_terminal_positive_carrier = true
+authoritative_execution_binding_state_writer = true
+normal_execution_binding_issuer = true
+order_state_membership_binding = true
+independently_pinned_trust_digest = true
+fresh_genesis_rooted_direct_bounded_chain = true
+tc_supported = false
+ordinary_target_supported = true
+direct_ordinary_target_unit_tests_checked = 1
+certified_chain_ordinary_ancestry = true
+epoch_handoff_supported = false
+checkpoint_unit_tests_checked = 7
+checkpoint_positive_controls_checked = 3
+checkpoint_negative_controls_checked = 12
+fresh_five_store_rejoin_before_cas = true
+exact_initial_reconfirmation = true
+successor_only_checkpoint_cas = true
+mandatory_fresh_source_readback = true
+mandatory_fresh_target_readback = true
+applied_ack_lost_exact_target_recovery = true
+trust_pin_lineage_stable = true
+node_private_checkpoint_admission = true
+distinct_checkpoint_namespace = true
+immutable_read_only_existing_file_preflight = true
+rw_file_identity_revalidated_before_pragma_or_transaction = true
+rollback_journal_header_preflight = true
+sqlite_sidecars_rejected_before_open = true
+schema_rejection_byte_stable = true
+path_replacement_rejected = true
+order_finalized_cross_plane_authority = false
+cross_plane_source_atomicity = false
+whole_node_checkpoint_integration = false
+anti_whole_store_rollback_authority = false
+node_process_integration = false
+global_light_client_spec_complete = false
+g2_global_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[evidence_tranches.order_ordinary_finality_advance]
+classification = "candidate-non-normative"
+scope = "fresh-genesis-ordinary-target-then-two-bounded-same-epoch-ordinary-finality-advances"
+positive_controls_checked = 4
+sequential_advances_checked = 2
+negative_cases_checked = 52
+independent_standard_library_verifier = true
+raw_cev1_strict_decode = true
+exact_byte_reencoding = true
+expected_error_codes_checked = true
+source_ordinary_target_proof_verified = true
+source_single_skipped_view_tc = true
+input_output_state_id_composition = true
+same_epoch_only = true
+exact_three_certified_headers_per_advance = true
+first_edge_consecutive = true
+later_single_skipped_view_tc = true
+max_skipped_views_per_advance = 1
+strict_ed25519_qc_verification = true
+strict_ed25519_tc_verification = true
+checked_weighted_quorum = true
+qc_signatures_checked = 40
+tc_signatures_checked = 8
+openssl_signatures_cross_checked = 48
+ordinary_three_chain_finality = true
+payload_execution_verified = false
+arbitrary_length_history = false
+complete_wire_crypto_corpus = false
+second_implementation_interoperability = false
+global_light_client_spec_complete = false
+normative_freeze = false
+implementation = false
+activation = false
+
+[evidence_tranches.weak_subjectivity_checkpoint_renewal]
+classification = "candidate-non-normative"
+scope = "exact-three-hop-first-to-latest-checkpoint-anchor-renewal"
+positive_controls_checked = 2
+negative_cases_checked = 45
+max_trust_path_hops = 3
+independent_standard_library_verifier = true
+raw_cev1_strict_decode = true
+exact_byte_reencoding = true
+first_and_latest_checkpoint_exact_binding = true
+chain_genesis_protocol_context_lineage = true
+checkpoint_epoch_binding = true
+checkpoint_validator_set_hash_binding = true
+checkpoint_consensus_parameters_hash_binding = true
+checkpoint_application_and_schema_root_binding = true
+prior_checkpoint_epoch_age_checked = true
+prior_checkpoint_block_age_checked = true
+strict_epoch_and_height_monotonicity = true
+same_height_conflict_rejection = true
+wall_clock_oracle = false
+operator_or_governance_authentication = false
+arbitrary_checkpoint_selection = false
+arbitrary_length_history = false
+complete_wire_crypto_corpus = false
+second_implementation_interoperability = false
+global_light_client_spec_complete = false
+normative_freeze = false
+implementation = false
+activation = false
+
+[evidence_tranches.v0_to_v1_activation_kernel]
+classification = "candidate-non-normative"
+positive_cases_checked = 1
+negative_cases_checked = 31
+independent_standard_library_verifier = true
+frozen_v0_validator_set_hash_reproduction = true
+v1_validator_set_descriptor_hash_reproduction = true
+duplicate_validator_and_public_key_rejection = true
+independent_old_new_weighted_quorum = true
+strict_ed25519_role_domain_verification = true
+exact_epoch_boundary_and_no_fallback = true
+first_v1_empty_activation_block_projection = true
+complete_v0_authority_verification = false
+complete_migration_verification = false
+light_client_verifier = false
+upgrade_contract_complete = false
+
+[evidence_tranches.cross_version_activation_proof]
+classification = "candidate-non-normative"
+positive_cases_checked = 1
+negative_cases_checked = 44
+raw_cev0_upgrade_plan_field12_exact = true
+frozen_v0_fields13_14_forbidden = true
+separate_cev1_activation_proof_carrier = true
+proposal_carrier_signatures_checked = 1
+qc_signatures_checked = 12
+three_chain_finality = true
+no_fallback_and_unique_boundary = true
+independent_old_new_weighted_quorum = true
+openssl_signature_cross_check = true
+governance_state_membership_verified = false
+complete_v0_authority_verification = false
+complete_migration_verification = false
+full_order_proposal_v1 = false
+upgrade_contract_complete = false
+
+[evidence_tranches.transaction_batch_da_kernel]
+classification = "candidate-non-normative"
+scope = "local-transaction-batch-namespace-only"
+positive_cases_checked = 12
+negative_cases_checked = 20
+crash_and_reopen_cases_checked = 7
+typed_namespace_and_object_ids = true
+durable_before_attest = true
+attestation_high_watermark = true
+anti_whole_store_rollback_authority = false
+immutable_durable_manifest_checksum = true
+fresh_connection_exact_readback = true
+author_sequence_and_quota = true
+bounded_queue = true
+strict_ed25519_attestations = true
+checked_weighted_quorum = true
+canonical_unique_attestors = true
+retrieval_and_exact_repair = true
+signed_full_range_retrieval_proof_candidate = true
+proof_driven_exact_repair_candidate = true
+signed_retrieval_positive_cases_checked = 1
+signed_retrieval_negative_controls_checked = 14
+signed_retrieval_compile_fail_cases_checked = 4
+canonical_certified_chunk_inclusion_paths = true
+canonical_multilevel_chunk_paths_checked = true
+certificate_author_policy_key_binding = true
+repair_window_enforced = true
+authoritative_repair_height_source = false
+target_scope_store_config_certificate_binding = true
+generic_chunk_range_retrieval = false
+requester_registry_integration = false
+durable_responder_signer_journal = false
+withholding_adjudication = false
+retention_obligation_and_gc_tombstone = true
+gc_permit_nonconstructible = true
+production_gc_authority = false
+external_byte_deletion_reachable = false
+objective_signed_equivocation_evidence = true
+artifact_evidence_namespace = false
+network_service = false
+whole_node_checkpoint_integration = false
+node_integration = false
+data_availability_plane_implemented = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[evidence_tranches.agent_market_kernel]
+classification = "candidate-non-normative"
+scope = "local-capability-session-nonce-task-funded-escrow-bid-lease-and-order-finalized-context-only"
+positive_cases_checked = 13
+negative_cases_checked = 58
+crash_and_reopen_cases_checked = 6
+strict_ed25519_authorization = true
+controller_lane_zero_namespace = true
+session_lane_zero_forbidden = true
+shared_capability_budget_across_lanes = true
+task_and_funded_escrow_atomic_create = true
+bid_active_to_consumed_one_shot = true
+lease_five_object_atomic_transition = true
+provider_offered_to_active = true
+account_escrow_bond_conservation = true
+exact_replay_and_fresh_reopen = true
+exact_operation_and_resource_scope_enforcement = true
+committed_resource_scope_verifier = false
+provider_accept_lease_to_task_resolution = true
+order_finalized_execution_context_cas = true
+order_proof_authority_complete = false
+sqlite_schema_version = 3
+automatic_migration = false
+sidecars_fail_closed = true
+durable_state_and_journal_roots_checked = true
+durable_finalized_order_block_journal = true
+third_state_permanent_fence = true
+whole_store_rollback_authority = false
+fresh_genesis_trust_bundle_consensus_object = false
+bootstrap_identity_key_derivation_authority_complete = false
+agent_transaction_wire_complete = false
+identity_and_key_lifecycle_complete = false
+verify_challenge_complete = false
+node_integration = false
+g2_global_complete = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[evidence_tranches.verify_challenge_kernel]
+classification = "candidate-non-normative"
+scope = "local-stake-quorum-receipt-evaluation-and-single-challenge-only"
+positive_cases_checked = 16
+negative_cases_checked = 30
+crash_and_reopen_cases_checked = 6
+verification_class = "StakeQuorum"
+all_seven_verification_classes_complete = false
+strict_ed25519_receipt_and_claims = true
+checked_weighted_quorum = true
+verifier_identity_unique_weight = true
+exact_claim_statement_evidence_sequence_binding = true
+required_da_policy_hash_bound = true
+bootstrap_duplicate_key_ids_and_public_keys_rejected = true
+committed_verifier_set_and_profile_hashes_recomputed = true
+atomic_begin_evaluation_and_decision = true
+challenge_bond_conservation = true
+evidence_response_adjudication = true
+artifact_evidence_da_verified = false
+withdraw_expire_appeal_complete = false
+multiple_concurrent_challenges = false
+settlement_integration_complete = false
+agent_market_integration_complete = false
+sqlite_schema_version = 3
+automatic_migration = false
+sidecars_fail_closed = true
+third_state_permanent_fence = true
+order_finalized_execution_context_cas = true
+order_proof_authority_complete = false
+durable_state_and_journal_tail_roots = true
+durable_finalized_order_block_journal = true
+whole_store_rollback_authority = false
+fresh_genesis_trust_bundle_consensus_object = false
+agent_transaction_wire_complete = false
+node_integration = false
+g2_global_complete = false
+global_wire_schema_complete = false
+global_conformance_vectors_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
