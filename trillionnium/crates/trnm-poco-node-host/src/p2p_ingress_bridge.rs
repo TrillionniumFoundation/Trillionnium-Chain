@@ -43,9 +43,8 @@ impl fmt::Display for CandidateP2pIngressBridgeErrorV0 {
             Self::IngressMismatch => {
                 formatter.write_str("authority ingress differs from the authenticated mapping")
             }
-            Self::PreparedReceiptMismatch => {
-                formatter.write_str("prior authority receipt differs from authenticated ingress mapping")
-            }
+            Self::PreparedReceiptMismatch => formatter
+                .write_str("prior authority receipt differs from authenticated ingress mapping"),
         }
     }
 }
@@ -107,7 +106,8 @@ impl CandidateP2pIngressBridgeV0 {
             frame.clone(),
         )
         .map_err(CandidateP2pIngressBridgeErrorV0::Boundary)?;
-        if rebound.binding != ingress.binding || rebound.ingress_digest() != ingress.ingress_digest()
+        if rebound.binding != ingress.binding
+            || rebound.ingress_digest() != ingress.ingress_digest()
         {
             return Err(CandidateP2pIngressBridgeErrorV0::IngressMismatch);
         }
@@ -185,9 +185,11 @@ impl AuthorityIngressSourceV0 for CandidateP2pIngressBridgeV0 {
                 && receipt.durable_stage == AuthorityStageV0::Prepared
                 && receipt.facts_digest == self.ingress_digest;
             if !exact_prepared_replay {
-                let expected_height = receipt.binding.height.checked_add(1).ok_or(
-                    CandidateP2pIngressBridgeErrorV0::PreparedReceiptMismatch,
-                )?;
+                let expected_height = receipt
+                    .binding
+                    .height
+                    .checked_add(1)
+                    .ok_or(CandidateP2pIngressBridgeErrorV0::PreparedReceiptMismatch)?;
                 if receipt.durable_stage != AuthorityStageV0::OutboundPublished
                     || ingress.binding.height != expected_height
                     || ingress.binding.parent_id != receipt.binding.block_id
@@ -206,15 +208,10 @@ mod tests {
     use super::*;
     use std::convert::Infallible;
     use trnm_node_boundary_v0::{
-        AuthorityReceiptV0, IngressFrameV0, OperationBindingV0,
-        ReferenceAuthorityCoordinatorV0,
+        AuthorityReceiptV0, IngressFrameV0, OperationBindingV0, ReferenceAuthorityCoordinatorV0,
     };
-    use trnm_poco_node_io::{
-        PeerFrameSourceV0, PeerReplayRecoverySourceV0, PeerSessionIdentityV0,
-    };
-    use trnm_poco_node_production_v0::{
-        AuthoritySessionReadinessV0, ProductionAuthoritySessionV0,
-    };
+    use trnm_poco_node_io::{PeerFrameSourceV0, PeerReplayRecoverySourceV0, PeerSessionIdentityV0};
+    use trnm_poco_node_production_v0::{AuthoritySessionReadinessV0, ProductionAuthoritySessionV0};
 
     fn d(byte: u8) -> Digest32V0 {
         Digest32V0([byte; 32])
@@ -242,15 +239,7 @@ mod tests {
     }
 
     fn peer_session() -> PeerSessionIdentityV0 {
-        PeerSessionIdentityV0::new(
-            io_d(1),
-            io_d(8),
-            io_d(4),
-            io_d(9),
-            io_d(5),
-            1,
-        )
-        .unwrap()
+        PeerSessionIdentityV0::new(io_d(1), io_d(8), io_d(4), io_d(9), io_d(5), 1).unwrap()
     }
 
     fn peer_frame() -> AuthenticatedPeerFrameV0 {

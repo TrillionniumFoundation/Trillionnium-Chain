@@ -340,13 +340,9 @@ impl CandidateP2pAdmissionV0 {
                 ));
             }
             None => {
-                let expected = self
-                    .state
-                    .highest_acknowledged_nonce
-                    .checked_add(1)
-                    .ok_or(PeerFrameVerificationErrorV0::Boundary(
-                        PeerAdmissionErrorV0::ReplayOverflow,
-                    ))?;
+                let expected = self.state.highest_acknowledged_nonce.checked_add(1).ok_or(
+                    PeerFrameVerificationErrorV0::Boundary(PeerAdmissionErrorV0::ReplayOverflow),
+                )?;
                 if frame.replay_nonce < expected {
                     return Err(PeerFrameVerificationErrorV0::Boundary(
                         PeerAdmissionErrorV0::StaleNonce,
