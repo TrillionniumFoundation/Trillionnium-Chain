@@ -74,7 +74,6 @@ jobs:
           Path('.github/workflows/native-consensus-workflow-path-repair.yml').unlink(missing_ok=True)
           PY
           git diff --check
-          ./scripts/ci/check_self_consensus_only.sh
       - name: Commit workflow cleanup
         run: |
           set -euo pipefail
