@@ -1,0 +1,51 @@
+name: Trillionnium Plan v2 Repository Closure 20260906a
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - scripts/ci/trnm_plan_v2_repository_closure_once_20260906a.py
+      - .github/workflows/trnm-plan-v2-repository-closure-20260906a.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-plan-v2-repository-closure-20260906a
+  cancel-in-progress: false
+
+jobs:
+  qualify-and-publish:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+      ((github.actor == 'ProfAlexQI' || github.actor == 'Franksudoman' ||
+      github.actor == 'ProfHepta') && github.triggering_actor == github.actor &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 180
+    env:
+      TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+    steps:
+      - name: Check out exact source with publish lease credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify exact source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Apply, validate and lease-publish deterministic closure
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/trnm_plan_v2_repository_closure_once_20260906a.py
