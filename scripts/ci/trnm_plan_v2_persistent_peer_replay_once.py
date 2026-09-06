@@ -80,6 +80,116 @@ pub use candidate_peer_replay::*;
 use fs2::FileExt;""",
     )
     replace_once(
+        "trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs",
+        """const POINTER_MAGIC_V0: &[u8; 8] = b"TRNMSP00";
+const POINTER_BYTES_V0: usize = 120;
+
+#[derive(Debug)]""",
+        """const POINTER_MAGIC_V0: &[u8; 8] = b"TRNMSP00";
+const POINTER_BYTES_V0: usize = 120;
+
+#[must_use]
+pub fn file_authority_record_digest_v0(
+    identity_digest: NodeDigestV0,
+    binding: OperationBindingV0,
+    stage: AuthorityStageV0,
+    sequence: u64,
+    facts_digest: NodeDigestV0,
+    previous_record_digest: NodeDigestV0,
+) -> NodeDigestV0 {
+    NodeDigestV0::hash(
+        b"trnm.file-authority-record.v0",
+        &[
+            &identity_digest.0,
+            &binding.operation_id.0,
+            &binding.height.to_be_bytes(),
+            &binding.view.to_be_bytes(),
+            &binding.block_id.0,
+            &binding.parent_id.0,
+            &binding.proposal_digest.0,
+            &[stage as u8],
+            &sequence.to_be_bytes(),
+            &facts_digest.0,
+            &previous_record_digest.0,
+        ],
+    )
+}
+
+#[derive(Debug)]""",
+    )
+    replace_once(
+        "trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs",
+        """    fn canonical_digest(
+        identity_digest: NodeDigestV0,
+        binding: OperationBindingV0,
+        stage: AuthorityStageV0,
+        sequence: u64,
+        facts_digest: NodeDigestV0,
+        previous_record_digest: NodeDigestV0,
+    ) -> NodeDigestV0 {
+        NodeDigestV0::hash(
+            b"trnm.file-authority-record.v0",
+            &[
+                &identity_digest.0,
+                &binding.operation_id.0,
+                &binding.height.to_be_bytes(),
+                &binding.view.to_be_bytes(),
+                &binding.block_id.0,
+                &binding.parent_id.0,
+                &binding.proposal_digest.0,
+                &[stage as u8],
+                &sequence.to_be_bytes(),
+                &facts_digest.0,
+                &previous_record_digest.0,
+            ],
+        )
+    }""",
+        """    fn canonical_digest(
+        identity_digest: NodeDigestV0,
+        binding: OperationBindingV0,
+        stage: AuthorityStageV0,
+        sequence: u64,
+        facts_digest: NodeDigestV0,
+        previous_record_digest: NodeDigestV0,
+    ) -> NodeDigestV0 {
+        file_authority_record_digest_v0(
+            identity_digest,
+            binding,
+            stage,
+            sequence,
+            facts_digest,
+            previous_record_digest,
+        )
+    }""",
+    )
+    replace_once(
+        "trillionnium/crates/trnm-durable-file-adapters-v0/src/bin/trnm-candidate-persistent-host.rs",
+        "use trnm_durable_file_adapters_v0::FileAuthorityCoordinatorV0;\n",
+        "use trnm_durable_file_adapters_v0::{\n    file_authority_record_digest_v0, FileAuthorityCoordinatorV0,\n};\n",
+    )
+    replace_once(
+        "trillionnium/crates/trnm-durable-file-adapters-v0/src/bin/trnm-candidate-persistent-host.rs",
+        """        Some(Digest32V0::hash(
+            b"trnm.node.authority-record.v0",
+            &[
+                &identity.digest().0,
+                &current.binding.operation_id.0,
+                &[next_stage as u8],
+                &expected_sequence.to_be_bytes(),
+                &facts_digest.0,
+                &current.record_digest.0,
+            ],
+        ))""",
+        """        Some(file_authority_record_digest_v0(
+            identity.digest(),
+            current.binding,
+            next_stage,
+            expected_sequence,
+            facts_digest,
+            current.record_digest,
+        ))""",
+    )
+    replace_once(
         ".github/workflows/trnm-native-poco-runtime-fault-matrix-v1.yml",
         "      - name: Run candidate pacemaker and authenticated P2P authority bridge\n",
         "      - name: Run candidate pacemaker, authenticated P2P and persistent replay authority bridge\n",
@@ -190,6 +300,7 @@ def commit_final_source() -> None:
             "docs/development/plan-manifest-v1.toml",
             str(SELF),
             "trillionnium/Cargo.lock",
+            "trillionnium/crates/trnm-durable-file-adapters-v0/src/bin/trnm-candidate-persistent-host.rs",
             "trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs",
             "trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs",
             "trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs",
