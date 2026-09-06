@@ -14,9 +14,9 @@ echo ok
 EOF
 chmod +x "$TARGET_DIR/sample.sh"
 
-# Provide every utility used by quick_gate_shell.sh except shellcheck. Keeping
-# /usr/bin or /bin in PATH would make this regression invalid after CI installs
-# shellcheck, because the supposedly missing tool would still be discovered.
+# Provide every utility used by quick_gate_shell.sh except the lint binary.
+# Keeping /usr/bin or /bin in PATH would invalidate this regression after CI
+# installs shellcheck, because the supposedly missing tool would be discovered.
 FAKE_BIN="$TMP_DIR/no-shellcheck-bin"
 mkdir -p "$FAKE_BIN"
 for cmd in date awk sort find sha256sum shasum bash mkdir dirname cat; do
