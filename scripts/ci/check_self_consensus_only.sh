@@ -53,8 +53,10 @@ if "self-consensus" not in features.get("default", []):
 metadata = node.get("package", {}).get("metadata", {}).get("trnm", {})
 if metadata.get("lane") != "self-developed-consensus":
     raise SystemExit("trnm-node lane must be self-developed-consensus")
-if metadata.get("production_candidate") is not True:
-    raise SystemExit("trnm-node must be the production candidate")
+if metadata.get("production_candidate") is not False:
+    raise SystemExit("trnm-node must remain non-production until native distributed-consensus gates close")
+if metadata.get("development_only") is not True:
+    raise SystemExit("trnm-node must remain explicitly development-only")
 if metadata.get("consensus_authority") != "native-only":
     raise SystemExit("consensus authority must be native-only")
 
@@ -118,5 +120,6 @@ if violations:
     raise SystemExit(2)
 
 print("native_consensus_manifest=ok")
+print("native_consensus_release_state=development-only")
 print("external_consensus_residue=none")
 PY
