@@ -74,9 +74,9 @@ jobs:
             'trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs' \
             'trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs' \
             | sort > "$expected"
-          git diff --name-only | sort > "$actual"
+          git diff HEAD --name-only | sort > "$actual"
           diff -u "$expected" "$actual"
-          git diff --check
+          git diff HEAD --check
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
 
       - name: Commit and fast-forward the canonical integration branch
