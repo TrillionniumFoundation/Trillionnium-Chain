@@ -1,0 +1,143 @@
+name: Trillionnium Plan v2 Cargo Lock Canonicalization Diagnostic Once
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/trnm-plan-v2-cargo-lock-canonicalize-once.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-plan-v2-cargo-lock-canonicalize-once
+  cancel-in-progress: false
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: never
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
+
+jobs:
+  canonicalize:
+    name: canonicalize-cargo-lock-x230
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
+      github.triggering_actor == github.actor &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+
+      - name: Generate source-bound canonical lock diagnostic
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-cargo-lock-canonicalization"
+          mkdir -p "$out"
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          git rev-parse HEAD > "$out/source-commit"
+          git rev-parse 'HEAD^{tree}' > "$out/source-tree"
+          sha256sum trillionnium/Cargo.lock > "$out/input-lock.sha256"
+
+          set +e
+          cargo generate-lockfile \
+            --manifest-path trillionnium/Cargo.toml \
+            --offline \
+            >"$out/generate.stdout" \
+            2>"$out/generate.stderr"
+          rc=$?
+          set -e
+          printf '%s\n' "$rc" > "$out/generate.rc"
+          git status --short --untracked-files=all > "$out/status.txt"
+          git diff --no-ext-diff --unified=40 -- trillionnium/Cargo.lock > "$out/Cargo.lock.diff"
+          cp trillionnium/Cargo.lock "$out/Cargo.lock"
+          sha256sum trillionnium/Cargo.lock > "$out/output-lock.sha256"
+
+          python3 -B - "$out" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          out = Path(sys.argv[1])
+          rc = int((out / "generate.rc").read_text().strip())
+          status_lines = [line for line in (out / "status.txt").read_text().splitlines() if line]
+          diff_lines = (out / "Cargo.lock.diff").read_text().splitlines()
+          removals = [line[1:] for line in diff_lines if line.startswith("-") and not line.startswith("---")]
+          additions = [line[1:] for line in diff_lines if line.startswith("+") and not line.startswith("+++")]
+          expected_status = [" M trillionnium/Cargo.lock"]
+          result = "PASS" if (
+              rc == 0
+              and status_lines == expected_status
+              and len(removals) == 1
+              and not additions
+          ) else "FAIL"
+          report = {
+              "schema": "trnm-cargo-lock-canonicalization-diagnostic-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "source_commit": (out / "source-commit").read_text().strip(),
+              "source_tree": (out / "source-tree").read_text().strip(),
+              "generator_exit_code": rc,
+              "changed_paths": [line[3:] for line in status_lines],
+              "removed_lines": removals,
+              "added_lines": additions,
+              "result": result,
+              "scope": "diagnostic-only-no-push-no-truth-promotion",
+          }
+          (out / "report.json").write_text(
+              json.dumps(report, sort_keys=True, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Upload canonical lock diagnostic
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cargo-lock-canonicalization-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-cargo-lock-canonicalization/
+          if-no-files-found: error
+          retention-days: 2
+          compression-level: 0
+
+      - name: Require one-path one-deletion canonicalization
+        run: |
+          python3 -B - "$RUNNER_TEMP/trnm-cargo-lock-canonicalization/report.json" <<'PY'
+          import json
+          from pathlib import Path
+          import sys
+
+          report = json.loads(Path(sys.argv[1]).read_text())
+          if report.get("result") != "PASS":
+              raise SystemExit(json.dumps(report, sort_keys=True))
+          print(json.dumps(report, sort_keys=True))
+          PY
