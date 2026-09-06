@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import pathlib
 import shutil
 import tempfile
@@ -47,8 +48,42 @@ class TechnicalConvergenceTests(unittest.TestCase):
         self.assertEqual(text.count(old), 1, f"fixture replacement count for {old!r}")
         path.write_text(text.replace(old, new), encoding="utf-8")
 
+    def update_truth(self, mutate: object) -> None:
+        path = self.root / "config/consensus-mainline.json"
+        value = json.loads(path.read_text(encoding="utf-8"))
+        self.assertIsInstance(value, dict)
+        mutate(value)
+        path.write_text(
+            json.dumps(value, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
     def test_current_contract_passes(self) -> None:
         self.assertEqual(checker.validate(self.root)["result"], "PASS")
+
+    def test_optional_machine_claims_may_be_absent(self) -> None:
+        def mutate(value: dict[str, object]) -> None:
+            for key in checker.OPTIONAL_MACHINE_FALSE:
+                value.pop(key, None)
+
+        self.update_truth(mutate)
+        self.assertEqual(checker.validate(self.root)["result"], "PASS")
+
+    def test_rejects_optional_machine_promotion(self) -> None:
+        def mutate(value: dict[str, object]) -> None:
+            value["public_testnet_ready"] = True
+
+        self.update_truth(mutate)
+        with self.assertRaises(checker.ConvergenceError):
+            checker.validate(self.root)
+
+    def test_rejects_missing_required_machine_claim(self) -> None:
+        def mutate(value: dict[str, object]) -> None:
+            value.pop("production_candidate", None)
+
+        self.update_truth(mutate)
+        with self.assertRaises(checker.ConvergenceError):
+            checker.validate(self.root)
 
     def test_rejects_poco_leaving_shadow(self) -> None:
         self.replace(
@@ -79,8 +114,10 @@ class TechnicalConvergenceTests(unittest.TestCase):
 
     def test_rejects_shallow_or_incomplete_spec(self) -> None:
         path = self.root / "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md"
-        path.write_text("# M04 P2P / Session / Dissemination technical specification v1\n",
-                        encoding="utf-8")
+        path.write_text(
+            "# M04 P2P / Session / Dissemination technical specification v1\n",
+            encoding="utf-8",
+        )
         with self.assertRaises(checker.ConvergenceError):
             checker.validate(self.root)
 

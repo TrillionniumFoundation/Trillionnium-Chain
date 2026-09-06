@@ -43,6 +43,15 @@ FALSE_CLAIMS = (
     "release_ready",
     "all_gaps_closed",
 )
+REQUIRED_MACHINE_FALSE = (
+    "production_candidate",
+    "production_consensus_activation",
+)
+OPTIONAL_MACHINE_FALSE = (
+    "public_testnet_ready",
+    "release_ready",
+    "all_gaps_closed",
+)
 
 
 class ConvergenceError(RuntimeError):
@@ -149,14 +158,12 @@ def validate(root: pathlib.Path = ROOT) -> dict[str, Any]:
         "protocol parameter phase is not shadow",
     )
 
-    for claim in (
-        "production_candidate",
-        "production_consensus_activation",
-        "public_testnet_ready",
-        "release_ready",
-        "all_gaps_closed",
-    ):
-        require(truth.get(claim) is False, f"machine truth promoted {claim}")
+    for claim in REQUIRED_MACHINE_FALSE:
+        require(claim in truth, f"machine truth missing required claim {claim}")
+        require(truth[claim] is False, f"machine truth promoted {claim}")
+    for claim in OPTIONAL_MACHINE_FALSE:
+        if claim in truth:
+            require(truth[claim] is False, f"machine truth promoted {claim}")
     require(truth.get("stage") == "G1-native-host-incomplete", "machine stage drift")
 
     ci = contract.get("ci")
@@ -182,8 +189,10 @@ def validate(root: pathlib.Path = ROOT) -> dict[str, Any]:
 
     specs = contract.get("detailed_spec")
     require(isinstance(specs, list), "detailed specs missing")
-    require({row.get("id") for row in specs if isinstance(row, dict)} == DETAILED_MODULES,
-            "detailed module set drift")
+    require(
+        {row.get("id") for row in specs if isinstance(row, dict)} == DETAILED_MODULES,
+        "detailed module set drift",
+    )
     for row in specs:
         require(isinstance(row, dict), "detailed spec row must be a table")
         module_id = row.get("id")
@@ -199,21 +208,32 @@ def validate(root: pathlib.Path = ROOT) -> dict[str, Any]:
 
     runtime = contract.get("runtime_gaps")
     require(isinstance(runtime, dict), "runtime gap register missing")
-    require(runtime.get("status") == "open-until-exact-source-evidence",
-            "runtime gaps improperly closed")
+    require(
+        runtime.get("status") == "open-until-exact-source-evidence",
+        "runtime gaps improperly closed",
+    )
     runtime_ids = runtime.get("ids")
-    require(isinstance(runtime_ids, list) and len(runtime_ids) >= 10,
-            "runtime gap register is incomplete")
+    require(
+        isinstance(runtime_ids, list) and len(runtime_ids) >= 10,
+        "runtime gap register is incomplete",
+    )
     require(len(runtime_ids) == len(set(runtime_ids)), "duplicate runtime gap id")
 
     gates = contract.get("external_gate")
     require(isinstance(gates, list), "external gates missing")
-    require({row.get("id") for row in gates if isinstance(row, dict)} == EXTERNAL_GATES,
-            "external gate set drift")
+    require(
+        {row.get("id") for row in gates if isinstance(row, dict)} == EXTERNAL_GATES,
+        "external gate set drift",
+    )
     for row in gates:
-        require(row.get("status") == "open-external", f"{row.get('id')}: external gate fabricated")
-        require(row.get("self_attestation_allowed") is False,
-                f"{row.get('id')}: self-attestation enabled")
+        require(
+            row.get("status") == "open-external",
+            f"{row.get('id')}: external gate fabricated",
+        )
+        require(
+            row.get("self_attestation_allowed") is False,
+            f"{row.get('id')}: self-attestation enabled",
+        )
 
     return {
         "schema": "trnm-technical-convergence-check-v1",
