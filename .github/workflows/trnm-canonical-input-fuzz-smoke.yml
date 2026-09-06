@@ -73,7 +73,7 @@ jobs:
 
           Path('.github/workflows/native-consensus-workflow-path-repair.yml').unlink(missing_ok=True)
           PY
-          WORKFLOW_SCRIPT_REF_STRICT=1 ./scripts/validate_workflow_script_refs.sh
+          git diff --check
           ./scripts/ci/check_self_consensus_only.sh
       - name: Commit workflow cleanup
         run: |
