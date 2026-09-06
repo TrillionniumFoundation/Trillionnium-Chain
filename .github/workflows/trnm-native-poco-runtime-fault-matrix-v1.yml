@@ -159,7 +159,7 @@ jobs:
             --test effect_driver_process_e2e \
             --locked --offline
 
-      - name: Run candidate pacemaker and authenticated P2P authority bridge
+      - name: Run candidate pacemaker, authenticated P2P and persistent replay authority bridge
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -168,12 +168,20 @@ jobs:
             --features candidate-pacemaker,candidate-authenticated-p2p \
             --all-targets --locked --offline
           cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 \
+            --features candidate-peer-replay \
+            --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node-host \
             --features candidate-networked-authority \
             --all-targets --locked --offline
           cargo clippy --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node-io \
             --features candidate-pacemaker,candidate-authenticated-p2p \
+            --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 \
+            --features candidate-peer-replay \
             --all-targets --locked --offline -- -D warnings
           cargo clippy --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node-host \
@@ -246,6 +254,8 @@ jobs:
               "effect_driver_process_e2e": True,
               "candidate_pacemaker": True,
               "candidate_authenticated_p2p": True,
+              "candidate_persistent_peer_replay": True,
+              "candidate_atomic_core_prepared_ack": True,
               "candidate_p2p_authority_bridge": True,
               "external_signer_boundary": True,
               "raw_key_boundary": True,
