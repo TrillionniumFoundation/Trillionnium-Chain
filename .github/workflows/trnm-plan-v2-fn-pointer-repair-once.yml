@@ -1,4 +1,4 @@
-name: Trillionnium Plan v2 Function Pointer Repair Once
+name: Trillionnium Plan v2 Authority Surface Repair Once
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
-      EXPECTED_PARENT_SHA: fa4ff13ee444da58db252775e2687f2d5a9cd1cd
+      EXPECTED_PARENT_SHA: 3bd614db309f40700ca0e15e919733067cf8dd11
       TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
     steps:
       - name: Check out repair trigger
@@ -41,7 +41,7 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
 
-      - name: Apply exact function pointer coercions
+      - name: Apply exact authority repairs
         shell: bash
         run: |
           set -euo pipefail
@@ -76,6 +76,44 @@ jobs:
           if text.count(old) != 1:
               raise SystemExit(f"unexpected authority_session_tests replacement count: {text.count(old)}")
           tests.write_text(text.replace(old, new, 1))
+
+          surface = Path("trillionnium/crates/trnm-poco-node-production-v0/tests/public_authority_surface.rs")
+          text = surface.read_text()
+          marker = "#[test]\nfn verification_tokens_are_not_cloneable_or_publicly_constructible() {"
+          if text.count(marker) != 1:
+              raise SystemExit(f"unexpected public surface marker count: {text.count(marker)}")
+          start = text.index(marker)
+          replacement = '''#[test]
+          fn verification_tokens_are_not_cloneable_or_publicly_constructible() {
+              let source = include_str!("../src/lib.rs");
+
+              for declaration in [
+                  "pub struct VerifiedAuthorityIngressV0 {",
+                  "pub struct VerifiedAuthorityFactV0 {",
+              ] {
+                  let start = source.find(declaration).expect("token declaration");
+                  let attributes = source[..start]
+                      .lines()
+                      .rev()
+                      .take_while(|line| line.trim_start().starts_with("#["))
+                      .collect::<Vec<_>>();
+                  assert!(
+                      attributes
+                          .iter()
+                          .any(|line| line.trim_start().starts_with("#[derive(")),
+                      "authority verification token lost its derive declaration: {declaration}"
+                  );
+                  assert!(
+                      attributes.iter().all(|line| !line.contains("Clone")),
+                      "authority verification token became Clone: {declaration}"
+                  );
+              }
+
+              assert!(!source.contains("pub const fn new_verified_authority"));
+              assert!(!source.contains("pub fn new_verified_authority"));
+          }
+          '''
+          surface.write_text(text[:start] + replacement)
           PY
           cd trillionnium
           cargo fmt --all
@@ -85,15 +123,15 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          mkdir -p "${RUNNER_TEMP}/trnm-fn-pointer-repair"
+          mkdir -p "${RUNNER_TEMP}/trnm-authority-surface-repair"
           cd trillionnium
-          cargo check --workspace --all-targets --locked 2>&1 | tee "${RUNNER_TEMP}/trnm-fn-pointer-repair/cargo-check.log"
+          cargo check --workspace --all-targets --locked 2>&1 | tee "${RUNNER_TEMP}/trnm-authority-surface-repair/cargo-check.log"
           status=${PIPESTATUS[0]}
           {
             echo '## Full workspace cargo check'
             echo
             echo '```text'
-            tail -n 180 "${RUNNER_TEMP}/trnm-fn-pointer-repair/cargo-check.log"
+            tail -n 180 "${RUNNER_TEMP}/trnm-authority-surface-repair/cargo-check.log"
             echo '```'
           } >> "${GITHUB_STEP_SUMMARY}"
           exit "${status}"
@@ -106,15 +144,17 @@ jobs:
           cargo test -p trnm-poco-node-production-v0 --all-targets --locked
           cargo clippy -p trnm-poco-node-production-v0 --all-targets --locked -- -D warnings
 
-      - name: Commit only the validated repair and self-delete
+      - name: Commit validated repair and self-delete
         shell: bash
         run: |
           set -euo pipefail
           git rm .github/workflows/trnm-plan-v2-fn-pointer-repair-once.yml
           mapfile -t changed < <(git status --short | awk '{print $2}' | sort)
           expected=(
+            ".github/workflows/trnm-plan-v2-fn-pointer-repair-once.yml"
             "trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs"
             "trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs"
+            "trillionnium/crates/trnm-poco-node-production-v0/tests/public_authority_surface.rs"
           )
           test "${#changed[@]}" -eq "${#expected[@]}"
           for index in "${!expected[@]}"; do
@@ -123,6 +163,7 @@ jobs:
           git config user.name "trillionnium-plan-v2-bot"
           git config user.email "trillionnium-plan-v2-bot@users.noreply.github.com"
           git add trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs \
-                  trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs
-          git commit -m "test(plan-v2): coerce authority readback function pointers"
+                  trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs \
+                  trillionnium/crates/trnm-poco-node-production-v0/tests/public_authority_surface.rs
+          git commit -m "test(plan-v2): repair authority token surface guard"
           git push origin "HEAD:${TARGET_BRANCH}"
