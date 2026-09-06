@@ -1,0 +1,128 @@
+name: Trillionnium Plan v2 Function Pointer Repair Once
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/trnm-plan-v2-fn-pointer-repair-once.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-plan-v2-fn-pointer-repair-once
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      EXPECTED_PARENT_SHA: fa4ff13ee444da58db252775e2687f2d5a9cd1cd
+      TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+    steps:
+      - name: Check out repair trigger
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact parent and branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "${EXPECTED_PARENT_SHA}"
+          test "${GITHUB_REF_NAME}" = "${TARGET_BRANCH}"
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+
+      - name: Apply exact function pointer coercions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          driver = Path("trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs")
+          text = driver.read_text()
+          old = "            ReferenceAuthorityCoordinatorV0::current,\n"
+          new = (
+              "            ReferenceAuthorityCoordinatorV0::current\n"
+              "                as fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,\n"
+          )
+          if text.count(old) != 1:
+              raise SystemExit(f"unexpected authority_driver replacement count: {text.count(old)}")
+          driver.write_text(text.replace(old, new, 1))
+
+          tests = Path("trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs")
+          text = tests.read_text()
+          old = (
+              "    ProductionAuthoritySessionV0::new(coordinator, ReferenceAuthorityCoordinatorV0::current)\n"
+              "        .unwrap()\n"
+          )
+          new = (
+              "    ProductionAuthoritySessionV0::new(\n"
+              "        coordinator,\n"
+              "        ReferenceAuthorityCoordinatorV0::current\n"
+              "            as fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,\n"
+              "    )\n"
+              "    .unwrap()\n"
+          )
+          if text.count(old) != 1:
+              raise SystemExit(f"unexpected authority_session_tests replacement count: {text.count(old)}")
+          tests.write_text(text.replace(old, new, 1))
+          PY
+          cd trillionnium
+          cargo fmt --all
+          cargo fmt --all -- --check
+
+      - name: Compile every active workspace target
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p "${RUNNER_TEMP}/trnm-fn-pointer-repair"
+          cd trillionnium
+          cargo check --workspace --all-targets --locked 2>&1 | tee "${RUNNER_TEMP}/trnm-fn-pointer-repair/cargo-check.log"
+          status=${PIPESTATUS[0]}
+          {
+            echo '## Full workspace cargo check'
+            echo
+            echo '```text'
+            tail -n 180 "${RUNNER_TEMP}/trnm-fn-pointer-repair/cargo-check.log"
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY}"
+          exit "${status}"
+
+      - name: Test and lint repaired authority package
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo test -p trnm-poco-node-production-v0 --all-targets --locked
+          cargo clippy -p trnm-poco-node-production-v0 --all-targets --locked -- -D warnings
+
+      - name: Commit only the validated repair and self-delete
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/trnm-plan-v2-fn-pointer-repair-once.yml
+          mapfile -t changed < <(git status --short | awk '{print $2}' | sort)
+          expected=(
+            "trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs"
+            "trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs"
+          )
+          test "${#changed[@]}" -eq "${#expected[@]}"
+          for index in "${!expected[@]}"; do
+            test "${changed[$index]}" = "${expected[$index]}"
+          done
+          git config user.name "trillionnium-plan-v2-bot"
+          git config user.email "trillionnium-plan-v2-bot@users.noreply.github.com"
+          git add trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs \
+                  trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs
+          git commit -m "test(plan-v2): coerce authority readback function pointers"
+          git push origin "HEAD:${TARGET_BRANCH}"
