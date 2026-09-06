@@ -1,0 +1,75 @@
+name: trnm-rustfmt-export-v1
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/trnm-rustfmt-export-v1.yml'
+      - 'trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs'
+      - 'trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs'
+      - 'trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-rustfmt-export-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  export-fixed-toolchain-format:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 20
+    env:
+      CARGO_INCREMENTAL: '0'
+      CARGO_TERM_COLOR: never
+      CARGO_NET_OFFLINE: 'true'
+    steps:
+      - name: Check out exact candidate without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify fixed formatter and exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(rustfmt --version)" = 'rustfmt 1.95.0 (59807616e 2026-02-02)'
+
+      - name: Produce formatting-only diagnostic payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          before_tree="$(git rev-parse 'HEAD^{tree}')"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          mkdir -p "$RUNNER_TEMP/trnm-rustfmt-export"
+          cp trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+             "$RUNNER_TEMP/trnm-rustfmt-export/production-lib.rs"
+          cp trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs \
+             "$RUNNER_TEMP/trnm-rustfmt-export/authority-driver.rs"
+          cp trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs \
+             "$RUNNER_TEMP/trnm-rustfmt-export/authority-session-durable.rs"
+          git diff --no-ext-diff --binary > "$RUNNER_TEMP/trnm-rustfmt-export/rustfmt.patch"
+          printf '%s\n' "source_commit=$(git rev-parse HEAD)" \
+            "source_tree=$before_tree" \
+            "formatted_worktree_tree=$(git write-tree)" \
+            "formatter=$(rustfmt --version)" \
+            "qualification_authority=false" \
+            > "$RUNNER_TEMP/trnm-rustfmt-export/METADATA.txt"
+          test -s "$RUNNER_TEMP/trnm-rustfmt-export/rustfmt.patch"
+
+      - name: Upload formatting-only diagnostic payload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-rustfmt-export-${{ github.event.pull_request.head.sha || github.sha }}
+          retention-days: 7
+          if-no-files-found: error
+          path: ${{ runner.temp }}/trnm-rustfmt-export
