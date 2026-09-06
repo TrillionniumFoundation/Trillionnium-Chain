@@ -30,57 +30,6 @@ permissions:
   contents: read
 
 jobs:
-  export-native-workflow-cleanup:
-    if: github.event_name == 'pull_request' && github.actor != 'github-actions[bot]'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-      - name: Generate normalized workflow files
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-
-          replacements = {
-              Path('.github/workflows/trnm-live-devnet-package.yml'): [
-                  ('name: TRNM Legacy Harness Reproducibility', 'name: TRNM Native Consensus Reproducibility'),
-                  ('  legacy-harness-reproducibility:', '  native-consensus-reproducibility:'),
-                  ('      - name: Unit and legacy-harness gates', '      - name: Unit and native-consensus gates'),
-                  ('          python3 trillionnium/scripts/release/test_trnm_chain_devnet_v1.py', '          python3 ./trillionnium/scripts/release/test_trnm_chain_devnet_v1.py'),
-                  ('            trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh', '            ./trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh'),
-                  ('          trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh', '          ./trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh'),
-              ],
-              Path('.github/workflows/trnm-merge-gates.yml'): [
-                  ("      - 'config/legacy-harness-freeze.sha256'\n", ''),
-                  ('      - name: Enforce frozen legacy binary surfaces', '      - name: Enforce native consensus as the sole authority'),
-                  ('        run: bash scripts/ci/check_legacy_harness_freeze.sh', '        run: ./scripts/ci/check_self_consensus_only.sh'),
-                  ('cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim', 'cargo run -q -p trnm-node --features self-consensus --bin trnm-sim'),
-              ],
-          }
-
-          for path, pairs in replacements.items():
-              text = path.read_text(encoding='utf-8')
-              for old, new in pairs:
-                  if old not in text:
-                      raise SystemExit(f'expected text missing in {path}: {old!r}')
-                  text = text.replace(old, new)
-              path.write_text(text, encoding='utf-8')
-          PY
-          git diff --check
-      - name: Export normalized workflow files
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: native-workflow-cleanup-${{ github.run_id }}
-          path: |
-            .github/workflows/trnm-live-devnet-package.yml
-            .github/workflows/trnm-merge-gates.yml
-          if-no-files-found: error
-          retention-days: 1
-
   bounded-smoke:
     name: Bounded public-input fuzz smoke (not a campaign)
     runs-on: ubuntu-latest
