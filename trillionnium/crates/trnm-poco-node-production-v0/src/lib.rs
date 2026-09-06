@@ -13,8 +13,8 @@ use std::{error::Error, fmt};
 use trnm_node_boundary_v0::{
     AuthorityCommandV0, AuthorityCoordinatorV0, AuthorityReceiptV0, AuthorityStageV0,
     BoundIngressV0, BoundaryErrorV0, Digest32V0, HostErrorV0, HostReadinessV0, HostStepV0,
-    IoRuntimeV0, NodeIdentityV0, NodeLayerRoleV0, OperationBindingV0,
-    PersistentValidatorHostV0, RecoveryDispositionV0, StepBudgetV0,
+    IoRuntimeV0, NodeIdentityV0, NodeLayerRoleV0, OperationBindingV0, PersistentValidatorHostV0,
+    RecoveryDispositionV0, StepBudgetV0,
 };
 
 pub const PRODUCTION_COMPOSITION_VERSION_V0: u16 = 0;
@@ -117,7 +117,9 @@ pub enum AuthorityIngressVerificationErrorV0<E> {
 impl<E: fmt::Display> fmt::Display for AuthorityIngressVerificationErrorV0<E> {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Boundary(error) => write!(formatter, "authority ingress boundary failed: {error}"),
+            Self::Boundary(error) => {
+                write!(formatter, "authority ingress boundary failed: {error}")
+            }
             Self::Source(error) => write!(formatter, "authority ingress source rejected: {error}"),
             Self::NotReady => formatter.write_str("authority session is not recovered and ready"),
         }
@@ -558,9 +560,11 @@ where
                 BoundaryErrorV0::ReceiptSubstitution,
             ));
         }
-        let prior = self.current.ok_or(AuthorityFactVerificationErrorV0::Boundary(
-            BoundaryErrorV0::ReceiptSubstitution,
-        ))?;
+        let prior = self
+            .current
+            .ok_or(AuthorityFactVerificationErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ))?;
         if prior.binding != claim.binding {
             return Err(AuthorityFactVerificationErrorV0::Boundary(
                 BoundaryErrorV0::OperationBindingMismatch,
@@ -573,9 +577,7 @@ where
                 ));
             }
             authority_predecessor_v0(claim.stage).ok_or(
-                AuthorityFactVerificationErrorV0::Boundary(
-                    BoundaryErrorV0::InvalidStageTransition,
-                ),
+                AuthorityFactVerificationErrorV0::Boundary(BoundaryErrorV0::InvalidStageTransition),
             )?
         } else {
             if prior.durable_stage.successor() != Some(claim.stage) {
@@ -736,9 +738,7 @@ where
         binding
             .validate(self.identity)
             .map_err(AuthoritySessionErrorV0::Boundary)?;
-        if expected_stage.successor() != Some(next_stage)
-            || facts_digest == Digest32V0([0; 32])
-        {
+        if expected_stage.successor() != Some(next_stage) || facts_digest == Digest32V0([0; 32]) {
             return Err(AuthoritySessionErrorV0::Boundary(
                 BoundaryErrorV0::InvalidStageTransition,
             ));
@@ -792,9 +792,13 @@ where
                 ));
             }
         } else {
-            let sequence = prior.durable_sequence.checked_add(1).ok_or(
-                AuthoritySessionErrorV0::Boundary(BoundaryErrorV0::SequenceOverflow),
-            )?;
+            let sequence =
+                prior
+                    .durable_sequence
+                    .checked_add(1)
+                    .ok_or(AuthoritySessionErrorV0::Boundary(
+                        BoundaryErrorV0::SequenceOverflow,
+                    ))?;
             if returned.durable_sequence != sequence
                 || returned.record_digest == prior.record_digest
             {

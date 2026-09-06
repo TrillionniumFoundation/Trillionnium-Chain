@@ -241,9 +241,7 @@ fn fact_claim(
 }
 
 fn admit(session: &mut Session, ingress: BoundIngressV0) -> AuthorityReceiptV0 {
-    let verified = session
-        .verify_ingress(ingress, &mut IngressSource)
-        .unwrap();
+    let verified = session.verify_ingress(ingress, &mut IngressSource).unwrap();
     session.begin_verified(verified).unwrap()
 }
 
