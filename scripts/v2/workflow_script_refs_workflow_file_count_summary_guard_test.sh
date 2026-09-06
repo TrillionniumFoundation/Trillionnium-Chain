@@ -32,7 +32,7 @@ jobs:
   guard:
     runs-on: ubuntu-latest
     steps:
-      - run: python3 scripts/summarize_aggressive_profile.py
+      - run: python3 ./scripts/summarize_aggressive_profile.py
 YAML
 
 WORKFLOW_ROOT="$WORKFLOW_ROOT" \
@@ -51,6 +51,8 @@ if int(data.get('workflow_count', 0)) != 2:
     raise SystemExit(f"[FAIL] expected workflow_count=2, got: {data}")
 if int(data.get('workflow_file_count', 0)) != 2:
     raise SystemExit(f"[FAIL] expected workflow_file_count=2, got: {data}")
+if int(data.get('non_dot_script_ref_count', -1)) != 0:
+    raise SystemExit(f"[FAIL] strict fixture must use only dot-prefixed executable refs, got: {data}")
 stdout = open(stdout_path, 'r', encoding='utf-8').read()
 if '[workflow-ref] workflow_count=2' not in stdout:
     raise SystemExit('[FAIL] missing workflow_count log line in stdout')
