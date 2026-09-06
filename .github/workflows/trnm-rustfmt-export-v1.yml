@@ -1,4 +1,4 @@
-name: trnm-rustfmt-export-v1
+name: trnm-rustfmt-apply-once-v1
 
 on:
   pull_request:
@@ -8,21 +8,23 @@ on:
       - 'trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs'
       - 'trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs'
       - 'trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs'
-  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: trnm-rustfmt-export-${{ github.event.pull_request.number || github.ref }}
+  group: trnm-rustfmt-apply-once-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  export-fixed-toolchain-format:
+  apply-fixed-toolchain-format:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name != 'pull_request' ||
-       github.event.pull_request.head.repo.full_name == github.repository)
+      github.event_name == 'pull_request' &&
+      github.actor == 'ProfHepta' &&
+      github.triggering_actor == github.actor &&
+      github.head_ref == 'work/plan-v2-full-gap-closure-20260902' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 20
     env:
@@ -33,51 +35,86 @@ jobs:
       - name: Check out exact candidate without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify fixed formatter and exact source
+      - name: Verify immutable preimage and fixed formatter
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs)" = \
+            '223283cb56f61c9158fc2ee407fc608881c3e735'
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs)" = \
+            'f1a046a62c5a9fad6566d7ea9d7a998d6e57561e'
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs)" = \
+            '2c7fa86936d109f2bf70dd4d41c0e44434cc82da'
           ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
             --toolchain 1.95.0 \
             --component rustfmt
 
-      - name: Produce formatting and exact-source diagnostic payload
+      - name: Apply only the independently exported formatting bytes
         shell: bash
         run: |
           set -euo pipefail
-          before_tree="$(git rev-parse 'HEAD^{tree}')"
-          mkdir -p "$RUNNER_TEMP/trnm-rustfmt-export"
-          git archive --format=tar.gz \
-            --output="$RUNNER_TEMP/trnm-rustfmt-export/exact-source.tar.gz" \
-            HEAD
           cargo fmt --manifest-path trillionnium/Cargo.toml --all
-          cp trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
-             "$RUNNER_TEMP/trnm-rustfmt-export/production-lib.rs"
-          cp trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs \
-             "$RUNNER_TEMP/trnm-rustfmt-export/authority-driver.rs"
-          cp trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs \
-             "$RUNNER_TEMP/trnm-rustfmt-export/authority-session-durable.rs"
-          git diff --no-ext-diff --binary > "$RUNNER_TEMP/trnm-rustfmt-export/rustfmt.patch"
-          printf '%s\n' "source_commit=$(git rev-parse HEAD)" \
-            "source_tree=$before_tree" \
-            "formatted_worktree_tree=$(git write-tree)" \
-            "formatter=$(rustfmt --version)" \
-            "qualification_authority=false" \
-            > "$RUNNER_TEMP/trnm-rustfmt-export/METADATA.txt"
-          sha256sum "$RUNNER_TEMP/trnm-rustfmt-export/"* \
-            > "$RUNNER_TEMP/trnm-rustfmt-export/SHA256SUMS"
-          test -s "$RUNNER_TEMP/trnm-rustfmt-export/rustfmt.patch"
-          test -s "$RUNNER_TEMP/trnm-rustfmt-export/exact-source.tar.gz"
+          test "$(sha256sum trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs | cut -d' ' -f1)" = \
+            '10f0bf2faaccaf54b0d62927055cad9f747d605f79cf52d90c56130865af4882'
+          test "$(sha256sum trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs | cut -d' ' -f1)" = \
+            '508dc2bc8ff8b97308edf58c6e16f032624cc77f55076b9e59e8262a6f7f7016'
+          test "$(sha256sum trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs | cut -d' ' -f1)" = \
+            '819cc11f108338f2d2d07f284df5a0accba3d1c4af7204aee52dbd71d74983b4'
+          git rm .github/workflows/trnm-rustfmt-export-v1.yml
+          expected="$RUNNER_TEMP/expected-rustfmt-paths"
+          actual="$RUNNER_TEMP/actual-rustfmt-paths"
+          printf '%s\n' \
+            '.github/workflows/trnm-rustfmt-export-v1.yml' \
+            'trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs' \
+            'trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs' \
+            'trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs' \
+            | sort > "$expected"
+          git diff --name-only | sort > "$actual"
+          diff -u "$expected" "$actual"
+          git diff --check
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
 
-      - name: Upload diagnostic payload
+      - name: Commit and fast-forward the canonical integration branch
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          askpass="$RUNNER_TEMP/trnm-git-askpass"
+          cat > "$askpass" <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' 'x-access-token' ;;
+            *) printf '%s\n' "$GITHUB_TOKEN" ;;
+          esac
+          EOF
+          chmod 0700 "$askpass"
+          export GIT_ASKPASS="$askpass" GIT_TERMINAL_PROMPT=0
+          remote_head="$(git ls-remote origin "refs/heads/${GITHUB_HEAD_REF}" | cut -f1)"
+          test "$remote_head" = "$GITHUB_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs \
+            trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs
+          git commit -m 'style(plan-v2): apply exact Rust 1.95 authority formatting' \
+            -m 'Primary modules: M04/M15/M17. Apply byte-verified rustfmt output for the verified-only authority session, named driver, and durable process-recovery test. Remove the one-shot formatter workflow in the same commit. No behavior, protocol, dependency, lockfile, timeout, blocker status, release flag, or activation change.'
+          published_commit="$(git rev-parse HEAD)"
+          published_tree="$(git rev-parse 'HEAD^{tree}')"
+          git push origin "HEAD:refs/heads/${GITHUB_HEAD_REF}"
+          printf 'published_commit=%s\npublished_tree=%s\nqualification_authority=false\n' \
+            "$published_commit" "$published_tree" | tee "$RUNNER_TEMP/trnm-rustfmt-published.txt"
+
+      - name: Retain publication identity
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: trnm-rustfmt-export-${{ github.event.pull_request.head.sha || github.sha }}
+          name: trnm-rustfmt-published-${{ github.event.pull_request.head.sha }}
           retention-days: 7
           if-no-files-found: error
-          path: ${{ runner.temp }}/trnm-rustfmt-export
+          path: ${{ runner.temp }}/trnm-rustfmt-published.txt
