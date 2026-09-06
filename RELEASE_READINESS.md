@@ -6,6 +6,8 @@ Updated: 2026-09-07
 
 **Not release-ready. Do not claim public-testnet or public-mainnet readiness.**
 
+**There is currently no production candidate in this repository.** The native node and validator binaries are the sole architectural direction, but they remain development-only until the distributed protocol, multi-host, recovery, lifecycle, signer, governance, performance, and independent-review gates below are closed.
+
 ## Binding architecture
 
 The sole consensus route is the native self-developed Rust stack:
