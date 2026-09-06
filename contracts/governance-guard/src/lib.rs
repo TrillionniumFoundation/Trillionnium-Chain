@@ -1925,14 +1925,17 @@ mod tests {
             .iter()
             .find(|event| {
                 event.event_type == "governance.pause_restore_scheduled"
-                    && event.object_id.as_deref() == Some(pid_s.as_str())
+                    && event.object_id.as_deref() == Some("emergency_pause")
+                    && event.related_id.as_deref() == Some(pid_s.as_str())
             })
             .unwrap();
 
         assert_eq!(event.actor.as_deref(), Some("guardian"));
-        assert_eq!(event.related_id.as_deref(), Some("emergency_pause"));
-        assert_eq!(event.reason.as_deref(), Some("recover-schedule-note"));
-        assert_eq!(event.note.as_deref(), Some("eta=7140"));
+        assert_eq!(event.reason.as_deref(), Some("pause_restore_schedule"));
+        assert_eq!(
+            event.note.as_deref(),
+            Some("eta=7140, reason_hash=recover-schedule-note")
+        );
     }
 
     #[test]
