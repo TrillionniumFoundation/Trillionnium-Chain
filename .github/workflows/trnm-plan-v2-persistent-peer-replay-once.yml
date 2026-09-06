@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
-      EXPECTED_PARENT_SHA: 52156ac5a2d7d6870b44f5504ffa144f1fe8c322
+      EXPECTED_PARENT_SHA: 63e2b82f6c36f9d6a4ed26b25963b7e4f39526c9
       TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
     steps:
       - name: Check out exact qualification trigger
@@ -34,8 +34,8 @@ jobs:
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
 
-      - name: Qualify and publish the exact persistent replay slice
+      - name: Qualify and publish source-only persistent replay slice
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/ci/trnm_plan_v2_persistent_peer_replay_once.py
+          python3 scripts/ci/trnm_plan_v2_persistent_peer_replay_once_v2.py
