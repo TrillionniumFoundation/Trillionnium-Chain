@@ -1,21 +1,26 @@
-# Trillionnium Docs Index
+# Trillionnium Chain Documentation
 
-## Core
+## Current truth sources
 
-- Architecture entry: `architecture/README.md`
-- Protocol docs: `protocol/`
-- Runbooks: `runbooks/`
-- Strategy notes: `strategy/`
-- Alpha run records: `alpha-runs/`
+1. `../RELEASE_READINESS.md` — release posture.
+2. `architecture/TRNM_SELF_DEVELOPED_CONSENSUS_CANONICAL_2026-09-07.md` — binding consensus architecture.
+3. `../OPERATIONS.md` — build, test, operation, recovery, and evidence rules.
+4. `../SECURITY.md` — security scope and reporting policy.
 
-## Rust L1 quick links
+## Documentation areas
 
-- Repo layout: `architecture/rust-l1-repo-layout.md`
-- PoCO sequence draft: `../trillionnium/docs/protocol/poco-proof-of-consumption-v1-draft.md`
-  - BL09 retirement-prep note: retained `trnm-pouw` naming on migration surfaces is a compatibility label and provenance / audit evidence only, not ongoing payout authority.
-- v1 interface freeze: `protocol/rust-l1-v1-interface-freeze.md`
-- PR-5 challenge treasury 对账 runbook: `runbooks/pr5-challenge-treasury-reconcile.md`
-- PR-6 alert rules runbook: `runbooks/pr6-alert-rules.md`
-- PR-6 nightly security summary runbook: `runbooks/pr6-nightly-security-summary.md`
-- PR-7 alert delivery runbook: `runbooks/pr7-alert-delivery.md`
-- PR-9 weekly alert governance runbook: `runbooks/pr9-weekly-alert-governance.md`
+- `architecture/` — binding architecture decisions and component boundaries.
+- `protocol/` — wire formats, state machines, proof payloads, and compatibility rules.
+- `runbooks/` — operational procedures and incident response.
+- `performance/`, `perf/`, and `reports/` — benchmark methodology and commit-bound evidence.
+- `release/` — launch criteria and handoff records.
+- `schemas/` — machine-readable contracts.
+- `archive/` — historical material only; never use it as current release truth.
+
+## Consensus policy
+
+The native Rust consensus implementation is the only supported route. Documentation must not describe an external consensus engine or adapter as current, fallback, reference, migration, test, or release authority.
+
+## Evidence discipline
+
+Every date-stamped result is valid only for its recorded commit, configuration, workload, host profile, and topology. A local or simulated PASS must not be generalized into public-network readiness.

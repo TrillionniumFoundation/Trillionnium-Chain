@@ -1,35 +1,41 @@
 # Security Policy
 
-Status: **unverified reporting-policy draft**. Repository owners must enable and
-test a private reporting route before treating this file as an operational
-security contact.
+Status: **reporting route not yet operationally verified**.
 
-## Supported Scope
+## Supported scope
 
-Security reports are accepted for the production-candidate path:
+Security reports are accepted for the native Trillionnium Chain path, including:
 
-`CometBFT -> trnm-consensus-app -> trnm-runtime -> committed state/AppHash`
+- `trnm-chain-node`, `trnm-chain-validator`, `trnm-chain-cli`, and `trnm-sim`;
+- native proposal, vote, quorum, round-change, commit, replay, and recovery logic;
+- validator keys, anti-equivocation state, peer authentication, and validator lifecycle;
+- `trnm-runtime`, `trnm-state`, `trnm-executor`, `trnm-mempool`, `trnm-rpc`, proof/finality crates, and canonical protocol types;
+- bridge, oracle, worker-agent, contract, frontend, release, and supply-chain boundaries where they can affect chain safety or assets.
 
-The bespoke `trnm-chain-node`, `trnm-chain-validator`, `trnm-chain-cli`, and
-`trnm-sim` binaries are legacy harnesses. Reports affecting those paths are still
-useful, but they do not establish impact on the production candidate unless the
-same behavior is reachable through the canonical path.
+External consensus engines are not supported project components and must not be introduced as dependencies or runtime authorities.
 
 ## Reporting
 
 Do not open a public issue containing details of an unpatched vulnerability.
-GitHub private vulnerability reporting is the intended route, but its enablement
-has not been verified by this repository state. Before release, repository owners
-must enable it, submit a private test report, and record the triage owner.
+GitHub private vulnerability reporting is the intended route, but repository owners must enable it, submit a private test report, and record the triage owner before treating it as operational.
 
-Until that verification exists, this document does not claim a public security
-contact or invent an unmonitored email address. Reporters who already have an
-established private channel with the maintainers may use it without placing
-vulnerability details in a public issue.
+A report should include:
 
-A report should include the affected commit, a minimal reproduction, expected
-impact, and whether exploitation requires validator, operator, authorized signer,
-or unauthenticated network access.
+- affected commit and component;
+- minimal reproduction;
+- safety, liveness, confidentiality, integrity, availability, or economic impact;
+- required attacker access;
+- whether the issue can cause double signing, conflicting finality, state-root divergence, unauthorized state transition, key compromise, replay, denial of service, or fund loss.
 
-No bounty, disclosure deadline, or mainnet deployment should be inferred from this
-policy. Coordinated disclosure timing is agreed per report after triage.
+## Release blockers
+
+Public release remains blocked until the project has:
+
+- a verified private reporting route and triage rotation;
+- independent review of consensus, cryptography, state persistence, networking, and economic logic;
+- long-running fuzz and adversarial network campaigns;
+- reproducible SBOM and build provenance;
+- HSM/KMS or remote-signer operations;
+- incident, key-compromise, chain-halt, rollback, and state-recovery drills.
+
+No bounty, disclosure deadline, or deployment status should be inferred from this draft.

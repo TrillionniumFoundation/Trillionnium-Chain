@@ -1,13 +1,10 @@
-# TRNM Live Path Baseline — 2026-07-27
+# TRNM Native Live-Path Baseline — 2026-07-27
 
-Scope: `loopback-local-devnet`; this is a regression baseline, not a public
-testnet or mainnet performance claim.
+Scope: single-host native development fixture. This is a regression baseline, not a public-testnet or mainnet performance claim.
 
 ## Reproduction
 
-Run four legacy `trnm-chain-validator` processes and one legacy
-`trnm-chain-node`, then execute. This requires the explicit
-`legacy-harness` feature and is historical-only evidence:
+Run four `trnm-chain-validator` processes and one `trnm-chain-node`, then execute:
 
 ```bash
 TRNM_BENCH_TRANSACTIONS=100 \
@@ -15,11 +12,9 @@ TRNM_BENCH_PAYLOAD_BYTES=256 \
 trillionnium/scripts/bench_trnm_chain_live.sh
 ```
 
-The benchmark uses signed HTTP submissions, durable SQLite state, complete
-block proposals, independent validator execution, `2/3+1` quorum, and receipt
-lookup for the final transaction.
+The benchmark uses signed HTTP submissions, durable SQLite state, complete block proposals, independent validator execution, `2/3+1` quorum, and receipt lookup for the final transaction.
 
-## Measured reference run
+## Historical reference run
 
 - Build profile: `release`
 - Transactions: `100`
@@ -31,16 +26,16 @@ lookup for the final transaction.
 - Chain SQLite + WAL + SHM after abrupt process stop: approximately `3.07 MiB`
 - Each validator SQLite + WAL + SHM: approximately `185 KiB`
 
-## Frozen local regression thresholds
+These numbers are historical single-host development data. Submission throughput is not finalized TPS.
 
-For the same 100-transaction/256-byte loopback fixture on this reference host:
+## Local regression thresholds
 
-- submission throughput must remain at least `300 tx/s`;
-- submission p95 must remain at most `10 ms`;
-- finalization must remain at most `1,000 ms`;
-- chain SQLite family must remain below `5 MiB`;
-- each validator SQLite family must remain below `512 KiB`.
+For the same fixture on a comparable host:
 
-These thresholds intentionally allow host noise. They must be replaced by
-multi-host SLOs only after authenticated networking, state sync, and the chosen
-mature consensus engine are integrated.
+- submission throughput at least `300 tx/s`;
+- submission p95 at most `10 ms`;
+- finalization at most `1,000 ms`;
+- chain SQLite family below `5 MiB`;
+- each validator SQLite family below `512 KiB`.
+
+Replace these thresholds with multi-host SLOs only after secure networking, authenticated state sync, validator lifecycle, and sustained adversarial testing are complete.

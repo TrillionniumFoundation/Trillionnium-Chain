@@ -4,8 +4,8 @@
   "enforced": false,
   "measurement": {
     "commit_latency": {
-      "start": "local_monotonic_time_when_a_complete_valid_proposal_block_is_received",
-      "end": "local_monotonic_time_after_application_commit_and_cometbft_state_persistence_complete",
+      "start": "local_monotonic_time_when_a_complete_valid_native_proposal_is_received",
+      "end": "local_monotonic_time_after_native_consensus_commit_and_state_persistence_complete",
       "eligible_samples": "non_catchup_commits_from_healthy_validators_only",
       "window_seconds": 900,
       "minimum_samples": 1000,
@@ -19,9 +19,9 @@
     "storage": {
       "window_seconds": 86400,
       "included_paths": [
-        "cometbft_blockstore_and_state",
+        "native_consensus_blockstore_and_state",
         "application_sqlite_wal_and_shm",
-        "application_snapshots",
+        "native_consensus_snapshots",
         "indexer_state"
       ],
       "calculation": "end_allocated_bytes_minus_start_allocated_bytes_on_identical_volumes"

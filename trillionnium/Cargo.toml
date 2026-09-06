@@ -18,7 +18,6 @@ members = [
   "crates/trnm-finality-verifier",
   "crates/trnm-protocol",
   "crates/trnm-runtime",
-  "crates/trnm-consensus-app",
 ]
 resolver = "2"
 

@@ -21,7 +21,7 @@
   "cargo": {
     "workspace_manifest": "trillionnium/Cargo.toml",
     "required_packages": [
-      "trnm-consensus-app",
+      "trnm-node",
       "trnm-runtime",
       "trnm-state"
     ],
@@ -30,6 +30,16 @@
       "trnm-game-server"
     ],
     "external_path_dependencies": "forbid"
+  },
+  "consensus": {
+    "policy": "self-developed-only",
+    "canonical_package": "trnm-node",
+    "canonical_binaries": [
+      "trnm-chain-node",
+      "trnm-chain-validator",
+      "trnm-chain-cli"
+    ],
+    "external_engines": "forbid"
   },
   "deny_changed_paths_regex": "^trillionnium/crates/(trnm-first-contact|trnm-game-server|trnm-campaign-core|trnm-rts-|trnm-online-|trnm-economy-)"
 }

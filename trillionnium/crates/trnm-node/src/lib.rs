@@ -1,8 +1,8 @@
-//! Frozen legacy TRNM harness surfaces.
+//! Native Trillionnium Chain consensus implementation.
 //!
-//! The binaries in this package require the explicit `legacy-harness` feature
-//! and are not production candidates. Canonical state transition lives in
-//! `trnm-consensus-app -> trnm-runtime`; this library remains temporarily
-//! available only for shared types and historical regression fixtures.
+//! `trnm-chain-node` and `trnm-chain-validator` are the canonical consensus
+//! binaries. This crate owns proposal, voting, quorum, round-change,
+//! anti-equivocation, recovery, and finality surfaces for the self-developed
+//! chain. No external consensus implementation is supported.
 
 pub mod live;

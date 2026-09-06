@@ -8,33 +8,37 @@ autobins = false
 publish = false
 
 [features]
-default = []
-legacy-harness = []
+default = ["self-consensus"]
+self-consensus = []
+# Deprecated compatibility alias for existing local scripts. It does not select
+# another implementation; it enables the same native consensus code.
+legacy-harness = ["self-consensus"]
 
 [package.metadata.trnm]
-lane = "legacy-harness"
-protocol_features_frozen = true
-production_candidate = false
+lane = "self-developed-consensus"
+protocol_features_frozen = false
+production_candidate = true
+consensus_authority = "native-only"
 
 [[bin]]
 name = "trnm-sim"
 path = "src/main.rs"
-required-features = ["legacy-harness"]
+required-features = ["self-consensus"]
 
 [[bin]]
 name = "trnm-chain-node"
 path = "src/bin/trnm-chain-node.rs"
-required-features = ["legacy-harness"]
+required-features = ["self-consensus"]
 
 [[bin]]
 name = "trnm-chain-validator"
 path = "src/bin/trnm-chain-validator.rs"
-required-features = ["legacy-harness"]
+required-features = ["self-consensus"]
 
 [[bin]]
 name = "trnm-chain-cli"
 path = "src/bin/trnm-chain-cli.rs"
-required-features = ["legacy-harness"]
+required-features = ["self-consensus"]
 
 [dependencies]
 anyhow = "1"
