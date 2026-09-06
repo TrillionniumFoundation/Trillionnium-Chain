@@ -174,8 +174,12 @@ type Session = ProductionAuthoritySessionV0<
 
 fn reopen(root: &Path) -> Session {
     let adapter = NodeAuthorityAdapter::open(root).unwrap();
-    let mut session =
-        ProductionAuthoritySessionV0::new(adapter, NodeAuthorityAdapter::current_receipt).unwrap();
+    let mut session = ProductionAuthoritySessionV0::new(
+        adapter,
+        NodeAuthorityAdapter::current_receipt
+            as fn(&NodeAuthorityAdapter) -> Option<AuthorityReceiptV0>,
+    )
+    .unwrap();
     assert_eq!(
         session.recover().unwrap(),
         AuthoritySessionReadinessV0::Ready

@@ -12,8 +12,7 @@ use trnm_node_boundary_v0::{
     IngressFrameV0, NodeIdentityV0,
 };
 use trnm_poco_node_io::{
-    AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0, PeerAdmissionErrorV0,
-    PeerReplayStateV0,
+    AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, PeerAdmissionErrorV0, PeerReplayStateV0,
 };
 use trnm_poco_node_production_v0::AuthorityIngressSourceV0;
 
@@ -210,7 +209,9 @@ mod tests {
     use trnm_node_boundary_v0::{
         AuthorityReceiptV0, IngressFrameV0, OperationBindingV0, ReferenceAuthorityCoordinatorV0,
     };
-    use trnm_poco_node_io::{PeerFrameSourceV0, PeerReplayRecoverySourceV0, PeerSessionIdentityV0};
+    use trnm_poco_node_io::{
+        IoDigest32V0, PeerFrameSourceV0, PeerReplayRecoverySourceV0, PeerSessionIdentityV0,
+    };
     use trnm_poco_node_production_v0::{AuthoritySessionReadinessV0, ProductionAuthoritySessionV0};
 
     fn d(byte: u8) -> Digest32V0 {
@@ -298,7 +299,8 @@ mod tests {
     fn session() -> Session {
         let mut session = ProductionAuthoritySessionV0::new(
             ReferenceAuthorityCoordinatorV0::new(identity()),
-            ReferenceAuthorityCoordinatorV0::current,
+            ReferenceAuthorityCoordinatorV0::current
+                as fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,
         )
         .unwrap();
         assert_eq!(
@@ -347,7 +349,8 @@ mod tests {
 
         let mut recovered = ProductionAuthoritySessionV0::new(
             coordinator,
-            ReferenceAuthorityCoordinatorV0::current,
+            ReferenceAuthorityCoordinatorV0::current
+                as fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,
         )
         .unwrap();
         recovered.recover().unwrap();

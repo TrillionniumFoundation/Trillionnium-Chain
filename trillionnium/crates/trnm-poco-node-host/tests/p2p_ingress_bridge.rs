@@ -98,7 +98,7 @@ fn pending_admission(highest: u64, nonce: u64, payload: u8) -> CandidateP2pAdmis
     admission
 }
 
-fn bridge(
+fn make_bridge(
     highest: u64,
     height: u64,
     block: u8,
@@ -116,7 +116,7 @@ fn bridge(
 
 #[test]
 fn initial_and_prepared_replay_sources_accept_only_the_exact_mapping() {
-    let mut bridge = bridge(0, 1, 10, 9, 1);
+    let mut bridge = make_bridge(0, 1, 10, 9, 1);
     let ingress = bridge.ingress().clone();
     bridge.verify_ingress(identity(), None, &ingress).unwrap();
 
@@ -149,7 +149,7 @@ fn terminal_predecessor_allows_only_the_parent_bound_next_height() {
         facts_digest: d(30),
         record_digest: d(31),
     };
-    let mut second = bridge(1, 2, 11, 10, 2);
+    let mut second = make_bridge(1, 2, 11, 10, 2);
     let ingress = second.ingress().clone();
     second
         .verify_ingress(identity(), Some(terminal), &ingress)
@@ -178,7 +178,7 @@ fn terminal_predecessor_allows_only_the_parent_bound_next_height() {
 
 #[test]
 fn peer_nonce_clears_only_for_the_exact_prepared_receipt() {
-    let mut bridge = bridge(0, 1, 10, 9, 1);
+    let mut bridge = make_bridge(0, 1, 10, 9, 1);
     let ingress = bridge.ingress().clone();
     let prepared = AuthorityReceiptV0 {
         binding: ingress.binding,
@@ -191,7 +191,7 @@ fn peer_nonce_clears_only_for_the_exact_prepared_receipt() {
     assert_eq!(state.highest_acknowledged_nonce(), 1);
     assert_eq!(state.pending(), None);
 
-    let mut other = bridge(0, 1, 10, 9, 1);
+    let mut other = make_bridge(0, 1, 10, 9, 1);
     let wrong = AuthorityReceiptV0 {
         facts_digest: d(41),
         ..prepared
