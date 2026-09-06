@@ -1,0 +1,161 @@
+name: trnm-host-compile-repair-once
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/trnm-host-compile-repair-once.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-host-compile-repair-once-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor == 'ProfHepta' && github.triggering_actor == github.actor
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+      CARGO_NET_OFFLINE: true
+      CARGO_INCREMENTAL: 0
+      CARGO_TERM_COLOR: never
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source and fixed toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+
+      - name: Apply the four deterministic compile repairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_exact(path: Path, old: str, new: str, count: int = 1) -> None:
+              text = path.read_text(encoding="utf-8")
+              observed = text.count(old)
+              if observed != count:
+                  raise SystemExit(f"{path}: expected {count} occurrences, observed {observed}: {old!r}")
+              path.write_text(text.replace(old, new), encoding="utf-8")
+
+          source = Path("trillionnium/crates/trnm-poco-node-host/src/p2p_ingress_bridge.rs")
+          replace_exact(
+              source,
+              "    AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0, PeerAdmissionErrorV0,\n",
+              "    AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, PeerAdmissionErrorV0,\n",
+          )
+          replace_exact(
+              source,
+              "    use trnm_poco_node_io::{PeerFrameSourceV0, PeerReplayRecoverySourceV0, PeerSessionIdentityV0};\n",
+              "    use trnm_poco_node_io::{\n        IoDigest32V0, PeerFrameSourceV0, PeerReplayRecoverySourceV0, PeerSessionIdentityV0,\n    };\n",
+          )
+          replace_exact(
+              source,
+              "            ReferenceAuthorityCoordinatorV0::current,\n",
+              "            ReferenceAuthorityCoordinatorV0::current\n                as fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,\n",
+              1,
+          )
+
+          durable = Path("trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs")
+          replace_exact(
+              durable,
+              "    let mut session =\n        ProductionAuthoritySessionV0::new(adapter, NodeAuthorityAdapter::current_receipt).unwrap();\n",
+              "    let mut session = ProductionAuthoritySessionV0::new(\n        adapter,\n        NodeAuthorityAdapter::current_receipt\n            as fn(&NodeAuthorityAdapter) -> Option<AuthorityReceiptV0>,\n    )\n    .unwrap();\n",
+          )
+
+          public_test = Path("trillionnium/crates/trnm-poco-node-host/tests/p2p_ingress_bridge.rs")
+          text = public_test.read_text(encoding="utf-8")
+          observed = len(re.findall(r"\bbridge\(", text))
+          if observed < 5:
+              raise SystemExit(f"{public_test}: expected at least 5 bridge helper/call sites, observed {observed}")
+          text = re.sub(r"\bbridge\(", "make_bridge(", text)
+          if "fn bridge(" in text or "fn make_bridge(" not in text:
+              raise SystemExit(f"{public_test}: helper rename did not close shadowing")
+          public_test.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Format and execute the candidate authority path
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-io \
+            --features candidate-pacemaker,candidate-authenticated-p2p \
+            --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-host \
+            --features candidate-networked-authority \
+            --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-io \
+            --features candidate-pacemaker,candidate-authenticated-p2p \
+            --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-host \
+            --features candidate-networked-authority \
+            --all-targets --locked --offline -- -D warnings
+
+      - name: Self-remove and verify the exact patch set
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/trnm-host-compile-repair-once.yml
+          actual="$(git diff --name-only | LC_ALL=C sort)"
+          expected="$(printf '%s\n' \
+            .github/workflows/trnm-host-compile-repair-once.yml \
+            trillionnium/crates/trnm-poco-node-host/src/p2p_ingress_bridge.rs \
+            trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs \
+            trillionnium/crates/trnm-poco-node-host/tests/p2p_ingress_bridge.rs | LC_ALL=C sort)"
+          test "$actual" = "$expected"
+          git diff --check
+
+      - name: Commit only the verified repair and fast-forward the exact branch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin \
+            "refs/heads/${HEAD_REF}:refs/remotes/origin/${HEAD_REF}"
+          test "$(git rev-parse "refs/remotes/origin/${HEAD_REF}")" = "$SOURCE_SHA"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all -- \
+            .github/workflows/trnm-host-compile-repair-once.yml \
+            trillionnium/crates/trnm-poco-node-host/src/p2p_ingress_bridge.rs \
+            trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs \
+            trillionnium/crates/trnm-poco-node-host/tests/p2p_ingress_bridge.rs
+          actual="$(git diff --cached --name-only | LC_ALL=C sort)"
+          expected="$(printf '%s\n' \
+            .github/workflows/trnm-host-compile-repair-once.yml \
+            trillionnium/crates/trnm-poco-node-host/src/p2p_ingress_bridge.rs \
+            trillionnium/crates/trnm-poco-node-host/tests/authority_session_durable.rs \
+            trillionnium/crates/trnm-poco-node-host/tests/p2p_ingress_bridge.rs | LC_ALL=C sort)"
+          test "$actual" = "$expected"
+          git commit -m 'fix(plan-v2): compile authenticated P2P authority candidate' \
+            -m 'Primary modules: M04/M15/M17. Move the test-only I/O digest import into the test module, coerce readback method items to the declared function-pointer boundary, and remove public-test helper shadowing. Exact candidate tests and strict Clippy pass before this guarded fast-forward. No protocol, lockfile, production flag, release state, or activation change.'
+          auth="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: basic ${auth}" \
+            push origin "HEAD:refs/heads/${HEAD_REF}"
