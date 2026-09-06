@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
-      EXPECTED_PARENT_SHA: 0c2f3fb4006d95d8819a08a7f814e5c3c40af034
+      EXPECTED_PARENT_SHA: 52156ac5a2d7d6870b44f5504ffa144f1fe8c322
       TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
     steps:
       - name: Check out exact qualification trigger
