@@ -26,9 +26,8 @@ mod enabled {
         NodeIdentityV0, RecoveryDispositionV0,
     };
     use trnm_poco_node_io::{
-        AuthenticatedPeerFrameV0, IoDigest32V0, PeerFrameSourceV0,
-        PeerFrameVerificationErrorV0, PeerReplayStateV0, PeerSessionIdentityV0,
-        VerifiedPeerFrameV0,
+        AuthenticatedPeerFrameV0, IoDigest32V0, PeerFrameSourceV0, PeerFrameVerificationErrorV0,
+        PeerReplayStateV0, PeerSessionIdentityV0, VerifiedPeerFrameV0,
     };
 
     const ACK: &str = "--acknowledge-candidate-only";
@@ -49,7 +48,9 @@ mod enabled {
     impl fmt::Display for TransactionErrorV0 {
         fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
             match self {
-                Self::Authority(error) => write!(formatter, "authority transaction failed: {error}"),
+                Self::Authority(error) => {
+                    write!(formatter, "authority transaction failed: {error}")
+                }
                 Self::Peer(error) => write!(formatter, "peer transaction failed: {error}"),
                 Self::AuthorityQuarantined => formatter.write_str("authority is quarantined"),
                 Self::AuthorityIdentityUnavailable => {
@@ -237,7 +238,9 @@ mod enabled {
                 .bytes()
                 .any(|byte| !byte.is_ascii_hexdigit() || byte.is_ascii_uppercase())
         {
-            return Err(format!("{label} must be 64 lowercase hexadecimal characters"));
+            return Err(format!(
+                "{label} must be 64 lowercase hexadecimal characters"
+            ));
         }
         let mut bytes = [0_u8; 32];
         for (index, chunk) in value.as_bytes().chunks_exact(2).enumerate() {
@@ -351,8 +354,7 @@ mod enabled {
             replay_nonce,
             arguments[16].as_bytes().to_vec(),
         )?;
-        let ingress =
-            BoundIngressV0::derive(identity, height, view, block_id, parent_id, frame)?;
+        let ingress = BoundIngressV0::derive(identity, height, view, block_id, parent_id, frame)?;
         let peer_frame = candidate_frame_for_bound_ingress_v0(identity, session, &ingress)?;
         let mut coordinator = CandidatePeerAuthorityCoordinatorV0::open(
             &arguments[0],
@@ -447,8 +449,7 @@ mod enabled {
         }
 
         fn session() -> PeerSessionIdentityV0 {
-            PeerSessionIdentityV0::new(io(1), io(6), io(4), io(7), io(5), 1)
-                .expect("session")
+            PeerSessionIdentityV0::new(io(1), io(6), io(4), io(7), io(5), 1).expect("session")
         }
 
         fn ingress(payload: &[u8]) -> BoundIngressV0 {
@@ -500,12 +501,9 @@ mod enabled {
             let frame = candidate_frame_for_bound_ingress_v0(identity(), session(), &ingress)
                 .expect("peer frame");
             {
-                let mut pending = CandidatePersistentPeerAdmissionV0::open(
-                    peer.path(),
-                    identity(),
-                    session(),
-                )
-                .expect("open peer");
+                let mut pending =
+                    CandidatePersistentPeerAdmissionV0::open(peer.path(), identity(), session())
+                        .expect("open peer");
                 let verified = pending
                     .verify_frame(frame, &mut ExactFrameSourceV0 { expected: frame })
                     .expect("verify");
@@ -539,12 +537,9 @@ mod enabled {
             let frame = candidate_frame_for_bound_ingress_v0(identity(), session(), &ingress)
                 .expect("peer frame");
             {
-                let mut pending = CandidatePersistentPeerAdmissionV0::open(
-                    peer.path(),
-                    identity(),
-                    session(),
-                )
-                .expect("open peer");
+                let mut pending =
+                    CandidatePersistentPeerAdmissionV0::open(peer.path(), identity(), session())
+                        .expect("open peer");
                 let verified = pending
                     .verify_frame(frame, &mut ExactFrameSourceV0 { expected: frame })
                     .expect("verify");
