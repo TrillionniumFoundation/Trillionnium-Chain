@@ -17,7 +17,8 @@ legacy-harness = ["self-consensus"]
 [package.metadata.trnm]
 lane = "self-developed-consensus"
 protocol_features_frozen = false
-production_candidate = true
+production_candidate = false
+development_only = true
 consensus_authority = "native-only"
 
 [[bin]]
