@@ -14,12 +14,17 @@ echo ok
 EOF
 chmod +x "$TARGET_DIR/sample.sh"
 
-FAKE_BIN="$TMP_DIR/fake-bin"
+# Build an isolated PATH that intentionally contains the one external command
+# quick_gate_shell.sh reaches before its shellcheck availability check. Do not
+# inherit /usr/bin after the workflow has installed shellcheck, otherwise this
+# regression cannot actually exercise the missing-tool branch.
+FAKE_BIN="$TMP_DIR/no-shellcheck-bin"
 mkdir -p "$FAKE_BIN"
+ln -s "$(command -v date)" "$FAKE_BIN/date"
 BASH_BIN="$(command -v bash)"
 
 set +e
-PATH="$FAKE_BIN:/usr/bin:/bin:/usr/sbin:/sbin" CI=true "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
+PATH="$FAKE_BIN" CI=true "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
 rc=$?
 set -e
 
