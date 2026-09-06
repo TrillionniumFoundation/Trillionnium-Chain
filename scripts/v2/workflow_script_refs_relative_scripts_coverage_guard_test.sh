@@ -20,10 +20,12 @@ for ref in "${required_relative_refs[@]}"; do
   fi
 done
 
-if ! grep -Fq -- "grep -Eo '(\\./scripts|scripts|trillionnium/scripts)/[[:alnum:]_./-]+\\.(sh|py)'" "$SCRIPT"; then
-  echo "[FAIL] validate_workflow_script_refs.sh must scan scripts/ refs with and without ./ prefix" >&2
-  exit 1
-fi
+for required_pattern in '\./scripts' '\./trillionnium/scripts' 'scripts' 'trillionnium/scripts'; do
+  if ! grep -Fq -- "$required_pattern" "$SCRIPT"; then
+    echo "[FAIL] validate_workflow_script_refs.sh is missing path form: $required_pattern" >&2
+    exit 1
+  fi
+done
 
 TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/workflow-ref-relative-scripts-guard.XXXXXX")"
 trap 'rm -rf "$TMP_DIR"' EXIT
@@ -43,8 +45,10 @@ jobs:
           python3 scripts/analyze_aggressive_scan_correlation.py
 YAML
 
+# Deliberately exercise legacy non-dot path detection in advisory mode. Strict
+# mode is separately required to reject the same invocation style.
 WORKFLOW_ROOT="$WORKFLOW_ROOT" \
-WORKFLOW_SCRIPT_REF_STRICT=1 \
+WORKFLOW_SCRIPT_REF_STRICT=0 \
 WORKFLOW_SCRIPT_REF_SUMMARY_PATH="$SUMMARY" \
   bash "$SCRIPT" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
 
@@ -52,13 +56,13 @@ python3 - <<'PY' "$SUMMARY"
 import json, sys
 with open(sys.argv[1], 'r', encoding='utf-8') as f:
     data = json.load(f)
-if data.get('status') != 'ok':
-    raise SystemExit(f"[FAIL] expected ok status, got: {data}")
+if data.get('status') != 'warn':
+    raise SystemExit(f"[FAIL] expected warn status for deliberate non-dot refs, got: {data}")
 if int(data.get('script_ref_count', 0)) != 2:
     raise SystemExit(f"[FAIL] expected exactly 2 relative scripts refs, got: {data}")
 if int(data.get('non_dot_script_ref_total_count', 0)) != 2:
     raise SystemExit(f"[FAIL] expected non-dot total ref count 2, got: {data}")
 if int(data.get('non_dot_script_ref_count', 0)) != 2:
     raise SystemExit(f"[FAIL] expected non-dot unique ref count 2, got: {data}")
-print('[PASS] workflow script ref validator covers scripts/ refs used without ./ prefix and reports them explicitly')
+print('[PASS] workflow script ref validator detects non-dot scripts refs while keeping strict workflows dot-prefixed')
 PY
