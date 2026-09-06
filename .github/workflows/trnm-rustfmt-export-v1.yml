@@ -44,13 +44,16 @@ jobs:
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
           test "$(rustfmt --version)" = 'rustfmt 1.95.0 (59807616e 2026-02-02)'
 
-      - name: Produce formatting-only diagnostic payload
+      - name: Produce formatting and exact-source diagnostic payload
         shell: bash
         run: |
           set -euo pipefail
           before_tree="$(git rev-parse 'HEAD^{tree}')"
-          cargo fmt --manifest-path trillionnium/Cargo.toml --all
           mkdir -p "$RUNNER_TEMP/trnm-rustfmt-export"
+          git archive --format=tar.gz \
+            --output="$RUNNER_TEMP/trnm-rustfmt-export/exact-source.tar.gz" \
+            HEAD
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
           cp trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
              "$RUNNER_TEMP/trnm-rustfmt-export/production-lib.rs"
           cp trillionnium/crates/trnm-poco-node-production-v0/src/authority_driver.rs \
@@ -64,9 +67,12 @@ jobs:
             "formatter=$(rustfmt --version)" \
             "qualification_authority=false" \
             > "$RUNNER_TEMP/trnm-rustfmt-export/METADATA.txt"
+          sha256sum "$RUNNER_TEMP/trnm-rustfmt-export/"* \
+            > "$RUNNER_TEMP/trnm-rustfmt-export/SHA256SUMS"
           test -s "$RUNNER_TEMP/trnm-rustfmt-export/rustfmt.patch"
+          test -s "$RUNNER_TEMP/trnm-rustfmt-export/exact-source.tar.gz"
 
-      - name: Upload formatting-only diagnostic payload
+      - name: Upload diagnostic payload
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-rustfmt-export-${{ github.event.pull_request.head.sha || github.sha }}
