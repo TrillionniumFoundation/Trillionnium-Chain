@@ -168,7 +168,15 @@ jobs:
           python3 scripts/ci/check_blocker_execution_v1.py
           python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
           bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
-          bash scripts/project-preflight.sh --audit
+
+          preflight_root="${RUNNER_TEMP}/trillionnium-chain"
+          rm -rf "$preflight_root"
+          git worktree add --detach "$preflight_root" "$candidate"
+          (
+            cd "$preflight_root"
+            bash scripts/project-preflight.sh --audit
+          )
+          git worktree remove --force "$preflight_root"
 
           cargo +1.95.0 fmt --manifest-path contracts/Cargo.toml --all -- --check
           cargo +1.95.0 check --manifest-path contracts/Cargo.toml \
