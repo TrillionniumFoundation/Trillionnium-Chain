@@ -28,7 +28,9 @@ done
 
 SUMMARY="$TMP_DIR/summary.json"
 BASH_BIN="$(command -v bash)"
-PATH="$FAKE_BIN" QUICK_GATE_SUMMARY_PATH="$SUMMARY" "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
+# This regression deliberately exercises non-CI local fallback even when the
+# parent workflow exports CI=true globally.
+PATH="$FAKE_BIN" CI=false QUICK_GATE_SUMMARY_PATH="$SUMMARY" "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
 
 python3 - <<'PY' "$SUMMARY"
 import json, sys
