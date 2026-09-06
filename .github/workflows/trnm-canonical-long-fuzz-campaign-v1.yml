@@ -1,0 +1,137 @@
+name: trnm-canonical-long-fuzz-campaign-v1
+
+on:
+  workflow_dispatch:
+    inputs:
+      seconds_per_target:
+        description: Bounded seconds per canonical fuzz target (60-1800)
+        required: false
+        default: '900'
+  schedule:
+    - cron: '17 3 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-canonical-long-fuzz-v1-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI: 'true'
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: '0'
+  CARGO_TERM_COLOR: never
+  PYTHONHASHSEED: '0'
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  canonical-long-fuzz:
+    name: canonical-long-fuzz
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact event source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Bind exact source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git rev-parse HEAD > "${RUNNER_TEMP}/source-commit"
+          git rev-parse 'HEAD^{tree}' > "${RUNNER_TEMP}/source-tree"
+
+      - name: Install pinned fuzz toolchain
+        run: |
+          set -euo pipefail
+          rustup toolchain install nightly-2026-07-27 --profile minimal
+          bash ./scripts/ci/install_cargo_fuzz.sh
+
+      - name: Run bounded canonical-input campaign
+        env:
+          REQUESTED_SECONDS: ${{ github.event.inputs.seconds_per_target || '900' }}
+        run: |
+          set -euo pipefail
+          case "${REQUESTED_SECONDS}" in
+            ''|*[!0-9]*)
+              echo 'seconds_per_target must be an integer' >&2
+              exit 2
+              ;;
+          esac
+          if (( REQUESTED_SECONDS < 60 || REQUESTED_SECONDS > 1800 )); then
+            echo 'seconds_per_target must be within 60..1800' >&2
+            exit 2
+          fi
+          export TRNM_FUZZ_SMOKE_SECONDS="${REQUESTED_SECONDS}"
+          bash ./scripts/ci/check_canonical_fuzz_smoke.sh
+          printf '%s\n' "${REQUESTED_SECONDS}" > "${RUNNER_TEMP}/seconds-per-target"
+
+      - name: Build exact-source campaign evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/trnm-canonical-long-fuzz-v1"
+          mkdir -p "$out"
+          cp "${RUNNER_TEMP}/source-commit" "$out/source-commit"
+          cp "${RUNNER_TEMP}/source-tree" "$out/source-tree"
+          if [[ -f "${RUNNER_TEMP}/seconds-per-target" ]]; then
+            cp "${RUNNER_TEMP}/seconds-per-target" "$out/seconds-per-target"
+          else
+            printf '%s\n' '${{ github.event.inputs.seconds_per_target || '900' }}' > "$out/seconds-per-target"
+          fi
+          SOURCE_COMMIT="$(cat "$out/source-commit")" \
+          SOURCE_TREE="$(cat "$out/source-tree")" \
+          SECONDS_PER_TARGET="$(cat "$out/seconds-per-target")" \
+          python3 - "$out/evidence.json" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          record = {
+              "schema": "trnm-canonical-long-fuzz-campaign-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "source_commit": os.environ["SOURCE_COMMIT"],
+              "source_tree": os.environ["SOURCE_TREE"],
+              "seconds_per_target": int(os.environ["SECONDS_PER_TARGET"]),
+              "hosted_runner": "ubuntu-24.04",
+              "write_credentials_available": False,
+              "independent_external_campaign": False,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "release_ready": False,
+          }
+          Path(sys.argv[1]).write_text(
+              json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n",
+              encoding="utf-8",
+          )
+          PY
+          sha256sum "$out/evidence.json" > "$out/evidence.json.sha256"
+
+      - name: Upload exact-source fuzz evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-canonical-long-fuzz-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/trnm-canonical-long-fuzz-v1/
+            trillionnium/fuzz/artifacts/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
+      - name: Require exact source to remain unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
