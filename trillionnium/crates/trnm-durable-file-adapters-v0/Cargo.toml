@@ -6,10 +6,15 @@ license.workspace = true
 authors.workspace = true
 publish = false
 
+[features]
+default = []
+candidate-peer-replay = ["dep:trnm-poco-node-io"]
+
 [dependencies]
 fs2 = "0.4"
 sha2 = "0.10"
 trnm-node-boundary-v0 = { path = "../trnm-node-boundary-v0" }
+trnm-poco-node-io = { path = "../trnm-poco-node-io", optional = true, features = ["candidate-authenticated-p2p"] }
 trnm-state-sync-v0 = { path = "../trnm-state-sync-v0" }
 
 [package.metadata.trnm]
