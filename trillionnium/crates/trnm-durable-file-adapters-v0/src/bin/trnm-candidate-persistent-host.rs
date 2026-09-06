@@ -14,7 +14,7 @@ use std::{
     path::{Path, PathBuf},
     process,
 };
-use trnm_durable_file_adapters_v0::FileAuthorityCoordinatorV0;
+use trnm_durable_file_adapters_v0::{file_authority_record_digest_v0, FileAuthorityCoordinatorV0};
 use trnm_node_boundary_v0::{
     AuthorityCommandV0, AuthorityCoordinatorV0, AuthorityReceiptV0, AuthorityStageV0,
     BoundIngressV0, Digest32V0, HostReadinessV0, IngressFrameV0, IoPollV0, IoRuntimeV0,
@@ -376,16 +376,13 @@ fn run_advance(arguments: &[String]) -> Result<(), Box<dyn Error>> {
     let expected_record_digest = if replay {
         None
     } else {
-        Some(Digest32V0::hash(
-            b"trnm.node.authority-record.v0",
-            &[
-                &identity.digest().0,
-                &current.binding.operation_id.0,
-                &[next_stage as u8],
-                &expected_sequence.to_be_bytes(),
-                &facts_digest.0,
-                &current.record_digest.0,
-            ],
+        Some(file_authority_record_digest_v0(
+            identity.digest(),
+            current.binding,
+            next_stage,
+            expected_sequence,
+            facts_digest,
+            current.record_digest,
         ))
     };
 

@@ -1632,6 +1632,7 @@ dependencies = [
  "fs2",
  "sha2",
  "trnm-node-boundary-v0",
+ "trnm-poco-node-io",
  "trnm-state-sync-v0",
 ]
 

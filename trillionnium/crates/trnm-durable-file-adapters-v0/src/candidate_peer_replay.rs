@@ -12,10 +12,10 @@ use trnm_node_boundary_v0::{
     Digest32V0 as NodeDigestV0, NodeIdentityV0, OperationBindingV0,
 };
 use trnm_poco_node_io::{
-    AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0,
-    PeerAdmissionErrorV0, PeerFrameSourceV0, PeerFrameVerificationErrorV0,
-    PeerRecoveryErrorV0, PeerReplayRecoverySourceV0, PeerReplayStateV0,
-    PeerSessionIdentityV0, VerifiedPeerFrameV0, MAX_CANDIDATE_PEER_FRAME_BYTES_V0,
+    AuthenticatedPeerFrameV0, CandidateP2pAdmissionV0, IoDigest32V0, PeerAdmissionErrorV0,
+    PeerFrameSourceV0, PeerFrameVerificationErrorV0, PeerRecoveryErrorV0,
+    PeerReplayRecoverySourceV0, PeerReplayStateV0, PeerSessionIdentityV0, VerifiedPeerFrameV0,
+    MAX_CANDIDATE_PEER_FRAME_BYTES_V0,
 };
 
 pub const CANDIDATE_PEER_REPLAY_VERSION_V0: u16 = 0;
@@ -44,19 +44,33 @@ impl fmt::Display for CandidatePeerReplayErrorV0 {
         match self {
             Self::Io(error) => write!(formatter, "candidate peer replay I/O failed: {error}"),
             Self::LockBusy(path) => {
-                write!(formatter, "candidate peer replay lock is busy: {}", path.display())
+                write!(
+                    formatter,
+                    "candidate peer replay lock is busy: {}",
+                    path.display()
+                )
             }
             Self::Boundary(error) => {
                 write!(formatter, "candidate peer replay boundary failed: {error}")
             }
             Self::NodeBoundary(error) => {
-                write!(formatter, "candidate peer replay node binding failed: {error}")
+                write!(
+                    formatter,
+                    "candidate peer replay node binding failed: {error}"
+                )
             }
             Self::Corrupt(reason) => {
-                write!(formatter, "candidate peer replay snapshot is corrupt: {reason}")
+                write!(
+                    formatter,
+                    "candidate peer replay snapshot is corrupt: {reason}"
+                )
             }
-            Self::WrongNodeIdentity => formatter.write_str("candidate peer replay node identity changed"),
-            Self::WrongPeerSession => formatter.write_str("candidate peer replay session identity changed"),
+            Self::WrongNodeIdentity => {
+                formatter.write_str("candidate peer replay node identity changed")
+            }
+            Self::WrongPeerSession => {
+                formatter.write_str("candidate peer replay session identity changed")
+            }
             Self::PendingBindingConflict => {
                 formatter.write_str("pending peer frame changed its bound ingress")
             }
@@ -64,15 +78,19 @@ impl fmt::Display for CandidatePeerReplayErrorV0 {
                 formatter.write_str("no matching pending peer frame exists")
             }
             Self::InvalidPreparedReceipt(reason) => {
-                write!(formatter, "Core Prepared acknowledgement rejected: {reason}")
+                write!(
+                    formatter,
+                    "Core Prepared acknowledgement rejected: {reason}"
+                )
             }
-            Self::ConflictingRecovery => {
-                formatter.write_str("candidate peer replay temporary snapshot conflicts with current")
-            }
+            Self::ConflictingRecovery => formatter
+                .write_str("candidate peer replay temporary snapshot conflicts with current"),
             Self::Poisoned => {
                 formatter.write_str("candidate peer replay is poisoned after an uncertain write")
             }
-            Self::RevisionOverflow => formatter.write_str("candidate peer replay revision overflowed"),
+            Self::RevisionOverflow => {
+                formatter.write_str("candidate peer replay revision overflowed")
+            }
             Self::InMemoryStateMismatch => {
                 formatter.write_str("durable and in-memory peer replay states diverged")
             }
@@ -173,7 +191,9 @@ impl SnapshotV0 {
             return Err(CandidatePeerReplayErrorV0::WrongPeerSession);
         }
         if self.replay.session() != self.session {
-            return Err(CandidatePeerReplayErrorV0::Corrupt("replay session mismatch"));
+            return Err(CandidatePeerReplayErrorV0::Corrupt(
+                "replay session mismatch",
+            ));
         }
         match self.pending {
             Some(pending) => {
@@ -223,8 +243,7 @@ impl SnapshotV0 {
                     || acknowledgement.receipt.durable_stage != AuthorityStageV0::Prepared
                     || acknowledgement.receipt.binding.proposal_digest
                         != acknowledgement.ingress_digest
-                    || acknowledgement.receipt.facts_digest
-                        != acknowledgement.ingress_digest
+                    || acknowledgement.receipt.facts_digest != acknowledgement.ingress_digest
                     || acknowledgement.receipt.record_digest == NodeDigestV0([0; 32])
                 {
                     return Err(CandidatePeerReplayErrorV0::Corrupt(
@@ -290,9 +309,7 @@ impl SnapshotV0 {
         if value(0, "magic=")? != MAGIC_V0 {
             return Err(CandidatePeerReplayErrorV0::Corrupt("magic mismatch"));
         }
-        if parse_u16(value(1, "version=")?, "version")?
-            != CANDIDATE_PEER_REPLAY_VERSION_V0
-        {
+        if parse_u16(value(1, "version=")?, "version")? != CANDIDATE_PEER_REPLAY_VERSION_V0 {
             return Err(CandidatePeerReplayErrorV0::Corrupt(
                 "unsupported snapshot version",
             ));
@@ -302,16 +319,11 @@ impl SnapshotV0 {
         let session = decode_session(value(4, "session=")?)?;
         let floor = parse_u64(value(5, "floor=")?, "replay floor")?;
         let pending = decode_pending(value(6, "pending=")?, session)?;
-        let last_acknowledgement =
-            decode_acknowledgement(value(7, "ack=")?, session)?;
+        let last_acknowledgement = decode_acknowledgement(value(7, "ack=")?, session)?;
         let previous_checksum = decode_hex32(value(8, "previous=")?)?;
         let checksum = decode_hex32(value(9, "checksum=")?)?;
-        let replay = PeerReplayStateV0::new(
-            session,
-            floor,
-            pending.map(|entry| entry.frame),
-        )
-        .map_err(CandidatePeerReplayErrorV0::Boundary)?;
+        let replay = PeerReplayStateV0::new(session, floor, pending.map(|entry| entry.frame))
+            .map_err(CandidatePeerReplayErrorV0::Boundary)?;
         let snapshot = Self {
             node_identity,
             session,
@@ -356,7 +368,9 @@ fn encode_hex(bytes: &[u8; 32]) -> String {
 
 fn decode_hex32(value: &str) -> Result<[u8; 32], CandidatePeerReplayErrorV0> {
     if value.len() != 64 {
-        return Err(CandidatePeerReplayErrorV0::Corrupt("digest length mismatch"));
+        return Err(CandidatePeerReplayErrorV0::Corrupt(
+            "digest length mismatch",
+        ));
     }
     let mut bytes = [0_u8; 32];
     for (index, target) in bytes.iter_mut().enumerate() {
@@ -390,8 +404,7 @@ fn split_exact<'a>(
 }
 
 fn io_digest(value: &str) -> Result<IoDigest32V0, CandidatePeerReplayErrorV0> {
-    IoDigest32V0::new(decode_hex32(value)?)
-        .map_err(CandidatePeerReplayErrorV0::Boundary)
+    IoDigest32V0::new(decode_hex32(value)?).map_err(CandidatePeerReplayErrorV0::Boundary)
 }
 
 fn encode_node_identity(identity: NodeIdentityV0) -> String {
@@ -634,8 +647,7 @@ fn payload_digest(payload: &[u8]) -> Result<IoDigest32V0, CandidatePeerReplayErr
     hasher.update(domain);
     hasher.update((payload.len() as u64).to_be_bytes());
     hasher.update(payload);
-    IoDigest32V0::new(hasher.finalize().into())
-        .map_err(CandidatePeerReplayErrorV0::Boundary)
+    IoDigest32V0::new(hasher.finalize().into()).map_err(CandidatePeerReplayErrorV0::Boundary)
 }
 
 pub fn candidate_frame_for_bound_ingress_v0(
@@ -775,9 +787,7 @@ impl CandidatePeerReplayJournalV0 {
     }
 
     #[must_use]
-    pub const fn last_prepared_acknowledgement(
-        &self,
-    ) -> Option<PreparedPeerAcknowledgementV0> {
+    pub const fn last_prepared_acknowledgement(&self) -> Option<PreparedPeerAcknowledgementV0> {
         self.snapshot.last_acknowledgement
     }
 
@@ -812,12 +822,7 @@ impl CandidatePeerReplayJournalV0 {
         next.checksum = [0; 32];
         next.validate()?;
         next.checksum = next.compute_checksum()?;
-        match write_atomic(
-            &self.root,
-            &self.current_path,
-            &self.temporary_path,
-            next,
-        ) {
+        match write_atomic(&self.root, &self.current_path, &self.temporary_path, next) {
             Ok(checksum) => {
                 next.checksum = checksum;
                 self.snapshot = next;
@@ -923,12 +928,8 @@ impl CandidatePeerReplayJournalV0 {
             ));
         }
 
-        let replay = PeerReplayStateV0::new(
-            self.snapshot.session,
-            frame.replay_nonce(),
-            None,
-        )
-        .map_err(CandidatePeerReplayErrorV0::Boundary)?;
+        let replay = PeerReplayStateV0::new(self.snapshot.session, frame.replay_nonce(), None)
+            .map_err(CandidatePeerReplayErrorV0::Boundary)?;
         self.persist(SnapshotV0 {
             replay,
             pending: None,
@@ -964,15 +965,16 @@ impl CandidatePersistentPeerAdmissionV0 {
         node_identity: NodeIdentityV0,
         session: PeerSessionIdentityV0,
     ) -> Result<Self, CandidatePeerReplayErrorV0> {
-        let mut journal =
-            CandidatePeerReplayJournalV0::open(root, node_identity, session)?;
+        let mut journal = CandidatePeerReplayJournalV0::open(root, node_identity, session)?;
         let state = journal.recovery_state();
-        let admission = CandidateP2pAdmissionV0::recover_verified(state, &mut journal)
-            .map_err(|error| match error {
-                PeerRecoveryErrorV0::Boundary(error) => {
-                    CandidatePeerReplayErrorV0::Boundary(error)
+        let admission =
+            CandidateP2pAdmissionV0::recover_verified(state, &mut journal).map_err(|error| {
+                match error {
+                    PeerRecoveryErrorV0::Boundary(error) => {
+                        CandidatePeerReplayErrorV0::Boundary(error)
+                    }
+                    PeerRecoveryErrorV0::Source(error) => error,
                 }
-                PeerRecoveryErrorV0::Source(error) => error,
             })?;
         Ok(Self { admission, journal })
     }
@@ -983,9 +985,7 @@ impl CandidatePersistentPeerAdmissionV0 {
     }
 
     #[must_use]
-    pub const fn last_prepared_acknowledgement(
-        &self,
-    ) -> Option<PreparedPeerAcknowledgementV0> {
+    pub const fn last_prepared_acknowledgement(&self) -> Option<PreparedPeerAcknowledgementV0> {
         self.journal.last_prepared_acknowledgement()
     }
 
@@ -1097,13 +1097,8 @@ mod tests {
     }
 
     fn ingress(nonce: u64, payload: &[u8]) -> BoundIngressV0 {
-        let frame = IngressFrameV0::new(
-            node_digest(4),
-            node_digest(5),
-            nonce,
-            payload.to_vec(),
-        )
-        .unwrap();
+        let frame =
+            IngressFrameV0::new(node_digest(4), node_digest(5), nonce, payload.to_vec()).unwrap();
         BoundIngressV0::derive(
             node_identity(),
             nonce,
@@ -1147,24 +1142,18 @@ mod tests {
             candidate_frame_for_bound_ingress_v0(node_identity(), session(7), &ingress).unwrap();
 
         {
-            let mut persistent = CandidatePersistentPeerAdmissionV0::open(
-                &directory.0,
-                node_identity(),
-                session(7),
-            )
-            .unwrap();
+            let mut persistent =
+                CandidatePersistentPeerAdmissionV0::open(&directory.0, node_identity(), session(7))
+                    .unwrap();
             let verified = persistent.verify_frame(frame, &mut AcceptFrame).unwrap();
             persistent.admit_verified(verified, &ingress).unwrap();
             assert_eq!(persistent.recovery_state().pending(), Some(frame));
         }
 
         {
-            let mut recovered = CandidatePersistentPeerAdmissionV0::open(
-                &directory.0,
-                node_identity(),
-                session(7),
-            )
-            .unwrap();
+            let mut recovered =
+                CandidatePersistentPeerAdmissionV0::open(&directory.0, node_identity(), session(7))
+                    .unwrap();
             let replay = recovered.verify_frame(frame, &mut AcceptFrame).unwrap();
             recovered.admit_verified(replay, &ingress).unwrap();
             let prepared = receipt(&ingress);
@@ -1172,20 +1161,14 @@ mod tests {
             assert_eq!(state.highest_acknowledged_nonce(), 1);
             assert_eq!(state.pending(), None);
             assert_eq!(
-                recovered
-                    .last_prepared_acknowledgement()
-                    .unwrap()
-                    .receipt(),
+                recovered.last_prepared_acknowledgement().unwrap().receipt(),
                 prepared
             );
         }
 
-        let reopened = CandidatePersistentPeerAdmissionV0::open(
-            &directory.0,
-            node_identity(),
-            session(7),
-        )
-        .unwrap();
+        let reopened =
+            CandidatePersistentPeerAdmissionV0::open(&directory.0, node_identity(), session(7))
+                .unwrap();
         assert_eq!(reopened.recovery_state().highest_acknowledged_nonce(), 1);
         assert_eq!(reopened.recovery_state().pending(), None);
     }
@@ -1197,12 +1180,9 @@ mod tests {
         let first =
             candidate_frame_for_bound_ingress_v0(node_identity(), session(7), &first_ingress)
                 .unwrap();
-        let mut persistent = CandidatePersistentPeerAdmissionV0::open(
-            &directory.0,
-            node_identity(),
-            session(7),
-        )
-        .unwrap();
+        let mut persistent =
+            CandidatePersistentPeerAdmissionV0::open(&directory.0, node_identity(), session(7))
+                .unwrap();
         let verified = persistent.verify_frame(first, &mut AcceptFrame).unwrap();
         persistent.admit_verified(verified, &first_ingress).unwrap();
 
@@ -1237,17 +1217,12 @@ mod tests {
             candidate_frame_for_bound_ingress_v0(node_identity(), session(7), &ingress).unwrap();
         let current_path;
         {
-            let mut journal = CandidatePeerReplayJournalV0::open(
-                &directory.0,
-                node_identity(),
-                session(7),
-            )
-            .unwrap();
-            let mut admission = CandidateP2pAdmissionV0::recover_verified(
-                journal.recovery_state(),
-                &mut journal,
-            )
-            .unwrap();
+            let mut journal =
+                CandidatePeerReplayJournalV0::open(&directory.0, node_identity(), session(7))
+                    .unwrap();
+            let mut admission =
+                CandidateP2pAdmissionV0::recover_verified(journal.recovery_state(), &mut journal)
+                    .unwrap();
             let verified = admission.verify_frame(frame, &mut AcceptFrame).unwrap();
             journal.stage_verified(&verified, &ingress).unwrap();
             admission.admit_verified(verified).unwrap();
@@ -1273,12 +1248,8 @@ mod tests {
         temporary.write_all(&next.encode().unwrap()).unwrap();
         temporary.sync_all().unwrap();
 
-        let recovered = CandidatePeerReplayJournalV0::open(
-            &directory.0,
-            node_identity(),
-            session(7),
-        )
-        .unwrap();
+        let recovered =
+            CandidatePeerReplayJournalV0::open(&directory.0, node_identity(), session(7)).unwrap();
         assert!(recovered.recovered_temporary());
         assert_eq!(recovered.recovery_state().highest_acknowledged_nonce(), 1);
         assert!(!temporary_path.exists());
@@ -1287,29 +1258,17 @@ mod tests {
     #[test]
     fn tamper_session_substitution_and_concurrent_open_fail_closed() {
         let directory = TestDirectory::new("fail-closed");
-        let journal = CandidatePeerReplayJournalV0::open(
-            &directory.0,
-            node_identity(),
-            session(7),
-        )
-        .unwrap();
+        let journal =
+            CandidatePeerReplayJournalV0::open(&directory.0, node_identity(), session(7)).unwrap();
         assert!(matches!(
-            CandidatePeerReplayJournalV0::open(
-                &directory.0,
-                node_identity(),
-                session(7)
-            ),
+            CandidatePeerReplayJournalV0::open(&directory.0, node_identity(), session(7)),
             Err(CandidatePeerReplayErrorV0::LockBusy(_))
         ));
         let current_path = journal.current_path().to_path_buf();
         drop(journal);
 
         assert!(matches!(
-            CandidatePeerReplayJournalV0::open(
-                &directory.0,
-                node_identity(),
-                session(8)
-            ),
+            CandidatePeerReplayJournalV0::open(&directory.0, node_identity(), session(8)),
             Err(CandidatePeerReplayErrorV0::WrongPeerSession)
         ));
 
@@ -1317,11 +1276,7 @@ mod tests {
         bytes[32] ^= 0x01;
         fs::write(&current_path, bytes).unwrap();
         assert!(matches!(
-            CandidatePeerReplayJournalV0::open(
-                &directory.0,
-                node_identity(),
-                session(7)
-            ),
+            CandidatePeerReplayJournalV0::open(&directory.0, node_identity(), session(7)),
             Err(CandidatePeerReplayErrorV0::Corrupt(_))
         ));
     }

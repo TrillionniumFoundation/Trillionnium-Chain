@@ -280,6 +280,18 @@ pub struct VerifiedPeerFrameV0 {
     frame: AuthenticatedPeerFrameV0,
 }
 
+impl VerifiedPeerFrameV0 {
+    #[must_use]
+    pub const fn prior(&self) -> PeerReplayStateV0 {
+        self.prior
+    }
+
+    #[must_use]
+    pub const fn frame(&self) -> AuthenticatedPeerFrameV0 {
+        self.frame
+    }
+}
+
 pub struct CandidateP2pAdmissionV0 {
     state: PeerReplayStateV0,
 }

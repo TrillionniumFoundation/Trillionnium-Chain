@@ -10,6 +10,11 @@
 mod candidate_authority;
 pub use candidate_authority::{CandidateAuthorityErrorV0, CandidateAuthorityJournalV0};
 
+#[cfg(feature = "candidate-peer-replay")]
+mod candidate_peer_replay;
+#[cfg(feature = "candidate-peer-replay")]
+pub use candidate_peer_replay::*;
+
 use fs2::FileExt;
 use std::{
     error::Error,
@@ -33,6 +38,33 @@ const AUTHORITY_MAGIC_V0: &[u8; 8] = b"TRNMAU00";
 const AUTHORITY_RECORD_BYTES_V0: usize = 289;
 const POINTER_MAGIC_V0: &[u8; 8] = b"TRNMSP00";
 const POINTER_BYTES_V0: usize = 120;
+
+#[must_use]
+pub fn file_authority_record_digest_v0(
+    identity_digest: NodeDigestV0,
+    binding: OperationBindingV0,
+    stage: AuthorityStageV0,
+    sequence: u64,
+    facts_digest: NodeDigestV0,
+    previous_record_digest: NodeDigestV0,
+) -> NodeDigestV0 {
+    NodeDigestV0::hash(
+        b"trnm.file-authority-record.v0",
+        &[
+            &identity_digest.0,
+            &binding.operation_id.0,
+            &binding.height.to_be_bytes(),
+            &binding.view.to_be_bytes(),
+            &binding.block_id.0,
+            &binding.parent_id.0,
+            &binding.proposal_digest.0,
+            &[stage as u8],
+            &sequence.to_be_bytes(),
+            &facts_digest.0,
+            &previous_record_digest.0,
+        ],
+    )
+}
 
 #[derive(Debug)]
 pub enum DurableFileErrorV0 {
@@ -190,21 +222,13 @@ impl AuthorityRecordV0 {
         facts_digest: NodeDigestV0,
         previous_record_digest: NodeDigestV0,
     ) -> NodeDigestV0 {
-        NodeDigestV0::hash(
-            b"trnm.file-authority-record.v0",
-            &[
-                &identity_digest.0,
-                &binding.operation_id.0,
-                &binding.height.to_be_bytes(),
-                &binding.view.to_be_bytes(),
-                &binding.block_id.0,
-                &binding.parent_id.0,
-                &binding.proposal_digest.0,
-                &[stage as u8],
-                &sequence.to_be_bytes(),
-                &facts_digest.0,
-                &previous_record_digest.0,
-            ],
+        file_authority_record_digest_v0(
+            identity_digest,
+            binding,
+            stage,
+            sequence,
+            facts_digest,
+            previous_record_digest,
         )
     }
 
