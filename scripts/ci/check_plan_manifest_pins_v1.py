@@ -151,6 +151,10 @@ def main() -> int:
         "module_registry_git_blob": "module_registry_path",
         "module_coverage_git_blob": "module_coverage_path",
         "module_technical_reference_git_blob": "module_technical_reference_path",
+        "technical_convergence_git_blob": "technical_convergence_path",
+        "technical_convergence_gate_git_blob": "technical_convergence_gate_path",
+        "technical_convergence_test_git_blob": "technical_convergence_test_path",
+        "detailed_module_spec_index_git_blob": "detailed_module_spec_index_path",
         "current_snapshot_git_blob": "current_snapshot_path",
         "documentation_truth_git_blob": "documentation_truth_path",
         "repository_policy_git_blob": "repository_policy_path",
@@ -185,6 +189,19 @@ def main() -> int:
             {"blob_field": blob_field, "path": path, "blob": actual}
         )
 
+    replay = manifest.get("replay")
+    require(isinstance(replay, dict), "replay table missing")
+    require(
+        replay.get("technical_convergence_command")
+        == "python3 scripts/ci/check_technical_convergence_v1.py",
+        "technical convergence replay command drift",
+    )
+    require(
+        replay.get("technical_convergence_test_command")
+        == "python3 scripts/ci/test_technical_convergence_v1.py",
+        "technical convergence mutant command drift",
+    )
+
     cargo = load_toml(ROOT / manifest["workspace_manifest_path"])
     members = cargo.get("workspace", {}).get("members")
     require(
@@ -214,6 +231,7 @@ def main() -> int:
         "workspace_crates": len(members),
         "pinned_inputs": len(checked),
         "overlay_source_commit": overlay_commit,
+        "technical_convergence_pinned": True,
         "production_candidate": False,
         "production_consensus_activation": False,
         "release_ready": False,
