@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """Publish the validated persistent peer replay slice without mutating workflows.
 
-The first qualification proved the source vertical slice but GitHub rejected the
-push solely because the generated commit also modified an existing workflow and
-the Actions token intentionally lacks the workflows permission.  This wrapper
-reuses the exact qualification logic, reverts that workflow-only edit, and
-commits only the source, lockfile and manifest changes before replaying the same
-workspace/tests/clippy gates.
+The qualification job runs on the repository-owned trusted x230 runner.  This
+wrapper reuses the exact source patch and validation logic, reverts the runtime
+workflow edit because the Actions token has no workflow-write authority, and
+commits only the Rust source, lockfile and manifest changes.  A connector-owned
+follow-up commit permanently wires the runtime matrix and retires this one-shot.
 """
 
 from __future__ import annotations
@@ -15,7 +14,6 @@ import pathlib
 
 import trnm_plan_v2_persistent_peer_replay_once as base
 
-SELF = pathlib.Path("scripts/ci/trnm_plan_v2_persistent_peer_replay_once_v2.py")
 RUNTIME_WORKFLOW = pathlib.Path(
     ".github/workflows/trnm-native-poco-runtime-fault-matrix-v1.yml"
 )
@@ -42,7 +40,7 @@ def commit_source_only() -> None:
         [
             "docs/development/plan-manifest-v1.toml",
             "trillionnium/Cargo.lock",
-            "trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs",
+            "trillionnium/crates/trnm-durable-file-adapters-v0/src/bin/trnm-candidate-persistent-host.rs",
             "trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs",
             "trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs",
         ]

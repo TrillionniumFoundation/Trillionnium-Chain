@@ -6,6 +6,7 @@ on:
       - work/plan-v2-full-gap-closure-20260902
     paths:
       - .github/workflows/trnm-plan-v2-persistent-peer-replay-once.yml
+      - scripts/ci/trnm_plan_v2_persistent_peer_replay_once_v2.py
 
 permissions:
   contents: write
@@ -16,26 +17,36 @@ concurrency:
 
 jobs:
   qualify:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
+      github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
+      github.triggering_actor == github.actor &&
+      (github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 240
     env:
-      EXPECTED_PARENT_SHA: 63e2b82f6c36f9d6a4ed26b25963b7e4f39526c9
+      EXPECTED_PARENT_SHA: bad0b85d4182637d177a939a4a6660b6af4d7bfd
       TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     steps:
-      - name: Check out exact qualification trigger
+      - name: Check out exact qualification trigger with push credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
-      - name: Install pinned Rust toolchain
-        shell: bash
+      - name: Verify runner-provisioned Rust toolchain
         run: |
           set -euo pipefail
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
-          rustup override set 1.95.0
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
 
       - name: Qualify and publish source-only persistent replay slice
-        shell: bash
         run: |
           set -euo pipefail
           python3 scripts/ci/trnm_plan_v2_persistent_peer_replay_once_v2.py
