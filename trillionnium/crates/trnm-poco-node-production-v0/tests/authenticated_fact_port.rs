@@ -1,12 +1,13 @@
 use std::convert::Infallible;
 
 use trnm_node_boundary_v0::{
-    AuthorityReceiptV0, AuthorityStageV0, BoundaryErrorV0, Digest32V0, NodeIdentityV0,
-    OperationBindingV0, ReferenceAuthorityCoordinatorV0,
+    AuthorityReceiptV0, AuthorityStageV0, BoundIngressV0, BoundaryErrorV0, Digest32V0,
+    IngressFrameV0, NodeIdentityV0, OperationBindingV0, ReferenceAuthorityCoordinatorV0,
 };
 use trnm_poco_node_production_v0::{
     AuthorityFactClaimV0, AuthorityFactSourceV0, AuthorityFactVerificationErrorV0,
-    AuthoritySessionErrorV0, AuthoritySessionReadinessV0, ProductionAuthoritySessionV0,
+    AuthorityIngressSourceV0, AuthoritySessionErrorV0, AuthoritySessionReadinessV0,
+    ProductionAuthoritySessionV0,
 };
 
 fn d(byte: u8) -> Digest32V0 {
@@ -33,6 +34,19 @@ fn binding(height: u64, block: u8, parent: u8) -> OperationBindingV0 {
     )
 }
 
+fn ingress(height: u64, block: u8, parent: u8, payload: u8) -> BoundIngressV0 {
+    let frame = IngressFrameV0::new(d(4), d(5), height, vec![payload]).unwrap();
+    BoundIngressV0::derive(
+        identity(),
+        height,
+        height,
+        d(block),
+        d(parent),
+        frame,
+    )
+    .unwrap()
+}
+
 type Session = ProductionAuthoritySessionV0<
     ReferenceAuthorityCoordinatorV0,
     fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,
@@ -40,14 +54,50 @@ type Session = ProductionAuthoritySessionV0<
 
 fn session() -> Session {
     let coordinator = ReferenceAuthorityCoordinatorV0::new(identity());
-    let mut session =
-        ProductionAuthoritySessionV0::new(coordinator, ReferenceAuthorityCoordinatorV0::current)
-            .unwrap();
+    let mut session = ProductionAuthoritySessionV0::new(
+        coordinator,
+        ReferenceAuthorityCoordinatorV0::current
+            as fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,
+    )
+    .unwrap();
     assert_eq!(
         session.recover().unwrap(),
         AuthoritySessionReadinessV0::Ready
     );
     session
+}
+
+struct AcceptingIngressSource;
+
+impl AuthorityIngressSourceV0 for AcceptingIngressSource {
+    type Error = Infallible;
+
+    fn verify_ingress(
+        &mut self,
+        observed_identity: NodeIdentityV0,
+        prior: Option<AuthorityReceiptV0>,
+        observed_ingress: &BoundIngressV0,
+    ) -> Result<(), Self::Error> {
+        assert_eq!(observed_identity, identity());
+        assert_eq!(prior, None);
+        observed_ingress.validate(observed_identity).unwrap();
+        Ok(())
+    }
+}
+
+fn begin_verified_ingress(
+    session: &mut Session,
+    height: u64,
+    block: u8,
+    parent: u8,
+    payload: u8,
+) -> (OperationBindingV0, AuthorityReceiptV0) {
+    let ingress = ingress(height, block, parent, payload);
+    let binding = ingress.binding;
+    let mut source = AcceptingIngressSource;
+    let verified = session.verify_ingress(ingress, &mut source).unwrap();
+    let prepared = session.begin_verified(verified).unwrap();
+    (binding, prepared)
 }
 
 fn claim(
@@ -145,8 +195,7 @@ fn claim_constructor_rejects_unbound_or_zero_authority_facts() {
 #[test]
 fn invalid_operation_and_stage_are_rejected_before_source_authority_is_called() {
     let mut session = session();
-    let first = binding(1, 10, 9);
-    let prepared = session.begin_prepared(first, d(20)).unwrap();
+    let (first, prepared) = begin_verified_ingress(&mut session, 1, 10, 9, 20);
     let mut source = CountingSource::default();
 
     let wrong_operation = claim(binding(2, 11, 10), AuthorityStageV0::ApplicationSealed, 21);
@@ -172,8 +221,7 @@ fn invalid_operation_and_stage_are_rejected_before_source_authority_is_called() 
 #[test]
 fn token_is_bound_to_one_predecessor_and_exact_replay_claim() {
     let mut session = session();
-    let first = binding(1, 10, 9);
-    session.begin_prepared(first, d(20)).unwrap();
+    let (first, _) = begin_verified_ingress(&mut session, 1, 10, 9, 20);
     let exact = claim(first, AuthorityStageV0::ApplicationSealed, 21);
     let mut source = CountingSource::default();
     let accepted = session.verify_fact(exact.clone(), &mut source).unwrap();
@@ -224,8 +272,7 @@ impl AuthorityFactSourceV0 for RejectingSource {
 #[test]
 fn source_rejection_never_mutates_or_revokes_the_recovered_predecessor() {
     let mut session = session();
-    let first = binding(1, 10, 9);
-    let prepared = session.begin_prepared(first, d(20)).unwrap();
+    let (first, prepared) = begin_verified_ingress(&mut session, 1, 10, 9, 20);
     let error = session
         .verify_fact(
             claim(first, AuthorityStageV0::ApplicationSealed, 21),
