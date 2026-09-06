@@ -43,6 +43,19 @@ A response lost after admission is recovered through `PeerReplayRecoverySourceV0
 
 The candidate does not provide a filesystem, database, remote peer or cryptographic handshake implementation.
 
+## Exact-source compile qualification
+
+The feature graph is no longer source-only. Fixed-toolchain run `34005399117`, bound to Rust 1.95.0 and the exact candidate predecessor, executed formatting, all-target tests and strict Clippy for both:
+
+```text
+trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p
+trnm-poco-node-host --features candidate-networked-authority
+```
+
+The guarded run then created commit `ee72c648603198e3540f11f3e27aa699dc404155` with source tree `56ece5f05f1d326c41f963847dfef7ab64f7eaa1`. The change only moved a test-only digest import, made three readback function-pointer boundaries explicit and removed a test helper shadow. The temporary write-enabled workflow removed itself in the same commit.
+
+This establishes that the pure admission state machine and P2P-to-authority bridge compile, execute and lint together on that exact tree. It does not establish durable replay storage, a listener, a live peer, production activation or full-workspace/prospective-merge acceptance. Every later source movement requires fresh qualification.
+
 ## Required live integration
 
 A production candidate still requires:
