@@ -1,0 +1,166 @@
+name: trnm-persistent-ingress-bridge-v1
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/trnm-persistent-ingress-bridge-v1.yml'
+      - 'trillionnium/Cargo.toml'
+      - 'trillionnium/Cargo.lock'
+      - 'trillionnium/crates/trnm-node-boundary-v0/**'
+      - 'trillionnium/crates/trnm-durable-file-adapters-v0/**'
+      - 'trillionnium/crates/trnm-poco-node-io/**'
+      - 'trillionnium/crates/trnm-poco-node-host/**'
+      - 'trillionnium/crates/trnm-poco-node-production-v0/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-persistent-ingress-bridge-v1-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: 'true'
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: '0'
+  CARGO_TERM_COLOR: never
+  PYTHONHASHSEED: '0'
+  PYTHONDONTWRITEBYTECODE: '1'
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  persistent-ingress-bridge:
+    name: persistent-ingress-bridge
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+          git rev-parse 'HEAD^{tree}' > "${RUNNER_TEMP}/source-tree"
+
+      - name: Install pinned Rust toolchain
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+
+      - name: Validate candidate-only source boundary
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import tomllib
+
+          root = Path('.')
+          cargo_path = root / 'trillionnium/crates/trnm-poco-node-host/Cargo.toml'
+          cargo = tomllib.loads(cargo_path.read_text(encoding='utf-8'))
+          metadata = cargo['package']['metadata']['trnm']
+          assert metadata['production_candidate'] is False
+          assert metadata['production_consensus_activation'] is False
+          feature = cargo['features']['candidate-networked-authority']
+          assert 'dep:trnm-durable-file-adapters-v0' in feature
+          source = (root / 'trillionnium/crates/trnm-poco-node-host/src/persistent_p2p_ingress_bridge.rs').read_text(encoding='utf-8')
+          for marker in (
+              'CandidatePersistentPeerAdmissionV0',
+              'acknowledge_prepared',
+              'AuthorityIngressSourceV0',
+              'does not claim a cross-store atomic transaction',
+              'production activation',
+          ):
+              assert marker in source, marker
+          assert 'production_activation = true' not in source
+          PY
+
+      - name: Check formatting
+        run: cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Run durable replay owner tests
+        run: |
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 \
+            --features candidate-peer-replay \
+            --all-targets --locked
+
+      - name: Run persistent ingress bridge tests
+        run: |
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-host \
+            --features candidate-networked-authority \
+            --all-targets --locked
+
+      - name: Run strict Clippy for the bridge closure
+        run: |
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 \
+            --features candidate-peer-replay \
+            --all-targets --locked -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-host \
+            --features candidate-networked-authority \
+            --all-targets --locked -- -D warnings
+
+      - name: Build exact-source evidence
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/trnm-persistent-ingress-bridge-v1"
+          mkdir -p "$out"
+          cp "${RUNNER_TEMP}/source-tree" "$out/source-tree"
+          printf '%s\n' "${TRNM_EXPECTED_SOURCE_SHA}" > "$out/source-commit"
+          SOURCE_TREE="$(cat "$out/source-tree")" python3 - "$out/evidence.json" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          record = {
+              'schema': 'trnm-persistent-ingress-bridge-evidence-v1',
+              'repository': os.environ['GITHUB_REPOSITORY'],
+              'workflow_run_id': os.environ['GITHUB_RUN_ID'],
+              'workflow_run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'source_commit': os.environ['TRNM_EXPECTED_SOURCE_SHA'],
+              'source_tree': os.environ['SOURCE_TREE'],
+              'durable_peer_pending_before_authority': True,
+              'lost_ack_reopen_replay': True,
+              'exact_prepared_ack_required': True,
+              'wrong_receipt_non_mutating': True,
+              'cross_store_atomic_transaction': False,
+              'production_candidate': False,
+              'production_consensus_activation': False,
+              'release_ready': False,
+          }
+          Path(sys.argv[1]).write_text(
+              json.dumps(record, sort_keys=True, separators=(',', ':')) + '\n',
+              encoding='utf-8',
+          )
+          PY
+          sha256sum "$out/evidence.json" > "$out/evidence.json.sha256"
+
+      - name: Upload exact-source evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-persistent-ingress-bridge-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-persistent-ingress-bridge-v1/
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+
+      - name: Require source cleanliness
+        if: always()
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
