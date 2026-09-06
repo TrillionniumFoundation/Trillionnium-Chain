@@ -1,0 +1,274 @@
+name: Trillionnium Plan v2 Persistent Peer Replay Once
+
+on:
+  push:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+    paths:
+      - .github/workflows/trnm-plan-v2-persistent-peer-replay-once.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-plan-v2-persistent-peer-replay-once
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      EXPECTED_PARENT_SHA: 18a1c8f91db385d45594173d1e69651608d29bb2
+      TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+    steps:
+      - name: Check out exact repair trigger
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact parent and branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "${EXPECTED_PARENT_SHA}"
+          test "${GITHUB_REF_NAME}" = "${TARGET_BRANCH}"
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+
+      - name: Wire persistent replay authority surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p2p = Path("trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs")
+          text = p2p.read_text()
+          old = '''pub struct VerifiedPeerFrameV0 {
+              prior: PeerReplayStateV0,
+              frame: AuthenticatedPeerFrameV0,
+          }
+
+          pub struct CandidateP2pAdmissionV0 {'''
+          new = '''pub struct VerifiedPeerFrameV0 {
+              prior: PeerReplayStateV0,
+              frame: AuthenticatedPeerFrameV0,
+          }
+
+          impl VerifiedPeerFrameV0 {
+              #[must_use]
+              pub const fn prior(&self) -> PeerReplayStateV0 {
+                  self.prior
+              }
+
+              #[must_use]
+              pub const fn frame(&self) -> AuthenticatedPeerFrameV0 {
+                  self.frame
+              }
+          }
+
+          pub struct CandidateP2pAdmissionV0 {'''
+          if text.count(old) != 1:
+              raise SystemExit(f"unexpected VerifiedPeerFrameV0 marker count: {text.count(old)}")
+          p2p.write_text(text.replace(old, new, 1))
+
+          durable = Path("trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs")
+          text = durable.read_text()
+          old = '''mod candidate_authority;
+          pub use candidate_authority::{CandidateAuthorityErrorV0, CandidateAuthorityJournalV0};
+
+          use fs2::FileExt;'''
+          new = '''mod candidate_authority;
+          pub use candidate_authority::{CandidateAuthorityErrorV0, CandidateAuthorityJournalV0};
+
+          #[cfg(feature = "candidate-peer-replay")]
+          mod candidate_peer_replay;
+          #[cfg(feature = "candidate-peer-replay")]
+          pub use candidate_peer_replay::*;
+
+          use fs2::FileExt;'''
+          if text.count(old) != 1:
+              raise SystemExit(f"unexpected durable lib marker count: {text.count(old)}")
+          durable.write_text(text.replace(old, new, 1))
+
+          workflow = Path(".github/workflows/trnm-native-poco-runtime-fault-matrix-v1.yml")
+          text = workflow.read_text()
+          text = text.replace(
+              "      - name: Run candidate pacemaker and authenticated P2P authority bridge\n",
+              "      - name: Run candidate pacemaker, authenticated P2P and persistent replay authority bridge\n",
+              1,
+          )
+          test_marker = '''          cargo test --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-poco-node-io \\
+            --features candidate-pacemaker,candidate-authenticated-p2p \\
+            --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-poco-node-host \\
+'''
+          test_replacement = '''          cargo test --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-poco-node-io \\
+            --features candidate-pacemaker,candidate-authenticated-p2p \\
+            --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-durable-file-adapters-v0 \\
+            --features candidate-peer-replay \\
+            --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-poco-node-host \\
+'''
+          if text.count(test_marker) != 1:
+              raise SystemExit(f"unexpected runtime test marker count: {text.count(test_marker)}")
+          text = text.replace(test_marker, test_replacement, 1)
+          clippy_marker = '''          cargo clippy --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-poco-node-io \\
+            --features candidate-pacemaker,candidate-authenticated-p2p \\
+            --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-poco-node-host \\
+'''
+          clippy_replacement = '''          cargo clippy --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-poco-node-io \\
+            --features candidate-pacemaker,candidate-authenticated-p2p \\
+            --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-durable-file-adapters-v0 \\
+            --features candidate-peer-replay \\
+            --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \\
+            -p trnm-poco-node-host \\
+'''
+          if text.count(clippy_marker) != 1:
+              raise SystemExit(f"unexpected runtime clippy marker count: {text.count(clippy_marker)}")
+          text = text.replace(clippy_marker, clippy_replacement, 1)
+          evidence_marker = '''              "candidate_authenticated_p2p": True,
+              "candidate_p2p_authority_bridge": True,
+'''
+          evidence_replacement = '''              "candidate_authenticated_p2p": True,
+              "candidate_persistent_peer_replay": True,
+              "candidate_atomic_core_prepared_ack": True,
+              "candidate_p2p_authority_bridge": True,
+'''
+          if text.count(evidence_marker) != 1:
+              raise SystemExit(f"unexpected runtime evidence marker count: {text.count(evidence_marker)}")
+          workflow.write_text(text.replace(evidence_marker, evidence_replacement, 1))
+          PY
+
+      - name: Resolve the path dependency and update the exact lock pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 \
+            --features candidate-peer-replay
+          lock_blob="$(git hash-object trillionnium/Cargo.lock)"
+          LOCK_BLOB="${lock_blob}" python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          manifest = Path("docs/development/plan-manifest-v1.toml")
+          text = manifest.read_text()
+          prefix = 'workspace_lock_git_blob = "'
+          matches = [line for line in text.splitlines() if line.startswith(prefix)]
+          if len(matches) != 1:
+              raise SystemExit(f"unexpected workspace lock pin count: {len(matches)}")
+          replacement = f'workspace_lock_git_blob = "{os.environ["LOCK_BLOB"]}"'
+          manifest.write_text(text.replace(matches[0], replacement, 1))
+          PY
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          git diff --check
+
+      - name: Commit final exact-source candidate and remove the one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/trnm-plan-v2-persistent-peer-replay-once.yml
+          mapfile -t changed < <(git status --short | awk '{print $2}' | sort)
+          expected=(
+            ".github/workflows/trnm-native-poco-runtime-fault-matrix-v1.yml"
+            ".github/workflows/trnm-plan-v2-persistent-peer-replay-once.yml"
+            "docs/development/plan-manifest-v1.toml"
+            "trillionnium/Cargo.lock"
+            "trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs"
+            "trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs"
+            "trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs"
+          )
+          test "${#changed[@]}" -eq "${#expected[@]}"
+          for index in "${!expected[@]}"; do
+            test "${changed[$index]}" = "${expected[$index]}"
+          done
+          git config user.name "trillionnium-plan-v2-bot"
+          git config user.email "trillionnium-plan-v2-bot@users.noreply.github.com"
+          git add .github/workflows/trnm-native-poco-runtime-fault-matrix-v1.yml \
+                  docs/development/plan-manifest-v1.toml \
+                  trillionnium/Cargo.lock \
+                  trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs \
+                  trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs \
+                  trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs
+          git commit -m "feat(plan-v2): qualify persistent peer replay Core acknowledgement"
+
+      - name: Validate exact committed Plan and repository truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          python3 scripts/ci/check_plan_manifest_pins_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Compile every active workspace target
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked
+
+      - name: Test persistent replay, P2P, pacemaker and host integration
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-io \
+            --features candidate-pacemaker,candidate-authenticated-p2p \
+            --all-targets --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 \
+            --features candidate-peer-replay \
+            --all-targets --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-host \
+            --features candidate-networked-authority \
+            --all-targets --locked
+
+      - name: Enforce strict Clippy on the changed vertical slice
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-io \
+            --features candidate-pacemaker,candidate-authenticated-p2p \
+            --all-targets --locked -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-durable-file-adapters-v0 \
+            --features candidate-peer-replay \
+            --all-targets --locked -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-host \
+            --features candidate-networked-authority \
+            --all-targets --locked -- -D warnings
+
+      - name: Push only the validated exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git push origin "HEAD:${TARGET_BRANCH}"
