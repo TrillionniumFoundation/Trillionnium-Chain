@@ -42,7 +42,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
-          test "$(rustfmt --version)" = 'rustfmt 1.95.0 (59807616e 2026-02-02)'
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt
 
       - name: Produce formatting and exact-source diagnostic payload
         shell: bash
