@@ -5,7 +5,10 @@ The repository has one active development direction:
 - **Development plan:** `development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
 - **Machine truth:** `../config/consensus-mainline.json`
 - **Release projection:** `../RELEASE_READINESS.md`
+- **Technical convergence contract:** `architecture/TRNM_TECHNICAL_CONVERGENCE_V1.md`
+- **Machine convergence policy:** `../config/technical-convergence-v1.toml`
 - **Module technical reference:** `modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`
+- **Detailed module specifications:** `modules/README.md`
 - **Machine module coverage:** `../config/module-coverage-v1.toml`
 
 `docs/development/` contains the plan and compact machine companions only. Git
@@ -15,9 +18,9 @@ and continuation notes are prohibited from active documentation.
 
 Current domain authorities are organized as follows:
 
-- `modules/` — stable M00–M17 technical contracts, boundaries, failure/recovery,
-  security, verification and SLO profiles; never a second roadmap;
-- `architecture/` — active architecture decisions and boundaries;
+- `modules/` — stable M00–M17 technical contracts plus implementation-level
+  supplements for operationally complex boundaries; never a second roadmap;
+- `architecture/` — active architecture decisions and convergence boundaries;
 - `protocol/` — versioned protocol specifications, schemas, vectors, parameters,
   manifests, and implementation-gap registers;
 - `evidence/` — immutable evidence schemas, submissions, and source-bound records;
@@ -28,8 +31,8 @@ Current domain authorities are organized as follows:
   never release authority.
 
 A document outside the canonical development plan may define its own domain
-contract, but it may not assign future work, alter gate order, promote machine
-truth, or become an alternate navigation entry for development. A module is not
+contract, but it may not assign a competing work sequence, alter gate order,
+promote machine truth, or become an alternate development plan. A module is not
 implemented merely because its technical reference exists; implementation and
 promotion require exact-source tests, accepted evidence, protected review and,
 where applicable, independent external evidence and signed governance.
