@@ -27,7 +27,7 @@ jobs:
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 240
     env:
-      EXPECTED_PARENT_SHA: bad0b85d4182637d177a939a4a6660b6af4d7bfd
+      EXPECTED_PARENT_SHA: 9f74b52c4ec2b5e83750d1ee88f6982fd1056b8b
       TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
       CARGO_NET_OFFLINE: "true"
       CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"

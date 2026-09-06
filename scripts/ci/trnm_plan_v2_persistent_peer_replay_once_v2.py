@@ -41,6 +41,7 @@ def commit_source_only() -> None:
             "docs/development/plan-manifest-v1.toml",
             "trillionnium/Cargo.lock",
             "trillionnium/crates/trnm-durable-file-adapters-v0/src/bin/trnm-candidate-persistent-host.rs",
+            "trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs",
             "trillionnium/crates/trnm-durable-file-adapters-v0/src/lib.rs",
             "trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs",
         ]
