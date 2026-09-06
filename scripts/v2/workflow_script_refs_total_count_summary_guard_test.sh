@@ -30,8 +30,11 @@ jobs:
           ./scripts/check_bft_4node_smoke.sh
 YAML
 
+# This fixture deliberately includes one non-dot executable reference so it can
+# verify both duplicate-aware totals and non-dot accounting. Run in advisory
+# mode: strict mode is covered separately and must reject the same non-dot ref.
 WORKFLOW_ROOT="$WORKFLOW_ROOT" \
-WORKFLOW_SCRIPT_REF_STRICT=1 \
+WORKFLOW_SCRIPT_REF_STRICT=0 \
 WORKFLOW_SCRIPT_REF_SUMMARY_PATH="$SUMMARY" \
   bash "$SCRIPT" >"$STDOUT_LOG" 2>"$STDERR_LOG"
 
@@ -40,8 +43,8 @@ import json, sys
 summary_path, stdout_path = sys.argv[1], sys.argv[2]
 with open(summary_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
-if data.get('status') != 'ok':
-    raise SystemExit(f"[FAIL] expected ok status, got: {data}")
+if data.get('status') != 'warn':
+    raise SystemExit(f"[FAIL] expected warn status for deliberate non-dot ref, got: {data}")
 if int(data.get('script_ref_total_count', 0)) != 4:
     raise SystemExit(f"[FAIL] expected total duplicate-aware ref count 4, got: {data}")
 if int(data.get('script_ref_count', 0)) != 3:
@@ -55,5 +58,7 @@ if '[workflow-ref] script_ref_total_count=4' not in stdout:
     raise SystemExit('[FAIL] missing total ref count log line in stdout')
 if '[workflow-ref] non_dot_script_ref_total_count=1' not in stdout:
     raise SystemExit('[FAIL] missing non-dot total ref count log line in stdout')
-print('[PASS] workflow script ref validator reports total/unique refs and non-dot workflow script refs')
+if '[workflow-ref] status=warn strict_mode=0' not in stdout:
+    raise SystemExit('[FAIL] advisory-mode warning status missing from stdout')
+print('[PASS] workflow script ref validator reports total/unique refs and advisory non-dot refs')
 PY
