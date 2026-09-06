@@ -36,15 +36,7 @@ fn binding(height: u64, block: u8, parent: u8) -> OperationBindingV0 {
 
 fn ingress(height: u64, block: u8, parent: u8, payload: u8) -> BoundIngressV0 {
     let frame = IngressFrameV0::new(d(4), d(5), height, vec![payload]).unwrap();
-    BoundIngressV0::derive(
-        identity(),
-        height,
-        height,
-        d(block),
-        d(parent),
-        frame,
-    )
-    .unwrap()
+    BoundIngressV0::derive(identity(), height, height, d(block), d(parent), frame).unwrap()
 }
 
 type Session = ProductionAuthoritySessionV0<
