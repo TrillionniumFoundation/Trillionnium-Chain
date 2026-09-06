@@ -1,0 +1,75 @@
+name: native-consensus-workflow-path-repair
+
+on:
+  push:
+    branches:
+      - chore/chain-native-consensus-only
+    paths:
+      - '.github/workflows/native-consensus-workflow-path-repair.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair-workflow-paths:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Normalize workflow script paths and native naming
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              Path('.github/workflows/trnm-canonical-input-fuzz-smoke.yml'): [
+                  ('          scripts/ci/install_cargo_fuzz.sh', '          ./scripts/ci/install_cargo_fuzz.sh'),
+                  ('        run: scripts/ci/check_canonical_fuzz_smoke.sh', '        run: ./scripts/ci/check_canonical_fuzz_smoke.sh'),
+              ],
+              Path('.github/workflows/trnm-live-devnet-package.yml'): [
+                  ('name: TRNM Legacy Harness Reproducibility', 'name: TRNM Native Consensus Reproducibility'),
+                  ('  legacy-harness-reproducibility:', '  native-consensus-reproducibility:'),
+                  ('      - name: Unit and legacy-harness gates', '      - name: Unit and native-consensus gates'),
+                  ('          python3 trillionnium/scripts/release/test_trnm_chain_devnet_v1.py', '          python3 ./trillionnium/scripts/release/test_trnm_chain_devnet_v1.py'),
+                  ('            trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh', '            ./trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh'),
+                  ('          trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh', '          ./trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh'),
+              ],
+              Path('.github/workflows/trnm-merge-gates.yml'): [
+                  ("      - 'config/legacy-harness-freeze.sha256'\n", ''),
+                  ('      - name: Enforce frozen legacy binary surfaces', '      - name: Enforce native consensus as the sole authority'),
+                  ('        run: bash scripts/ci/check_legacy_harness_freeze.sh', '        run: ./scripts/ci/check_self_consensus_only.sh'),
+                  ('cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim', 'cargo run -q -p trnm-node --features self-consensus --bin trnm-sim'),
+              ],
+          }
+
+          for path, pairs in replacements.items():
+              text = path.read_text(encoding='utf-8')
+              for old, new in pairs:
+                  if old not in text:
+                      raise SystemExit(f'expected text missing in {path}: {old!r}')
+                  text = text.replace(old, new)
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Validate normalized workflow references
+        run: |
+          set -euo pipefail
+          WORKFLOW_SCRIPT_REF_STRICT=1 ./scripts/validate_workflow_script_refs.sh
+          ./scripts/ci/check_self_consensus_only.sh
+
+      - name: Commit workflow cleanup
+        run: |
+          set -euo pipefail
+          git add .github/workflows/trnm-canonical-input-fuzz-smoke.yml \
+                  .github/workflows/trnm-live-devnet-package.yml \
+                  .github/workflows/trnm-merge-gates.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'ci(chain): normalize native consensus workflow references'
+          git push origin HEAD:chore/chain-native-consensus-only
