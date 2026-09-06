@@ -14,16 +14,21 @@ echo ok
 EOF
 chmod +x "$TARGET_DIR/sample.sh"
 
-FAKE_BIN="$TMP_DIR/fake-bin"
+# Provide every utility used by quick_gate_shell.sh except shellcheck. Keeping
+# /usr/bin or /bin in PATH would make this regression invalid after CI installs
+# shellcheck, because the supposedly missing tool would still be discovered.
+FAKE_BIN="$TMP_DIR/no-shellcheck-bin"
 mkdir -p "$FAKE_BIN"
-python3_path="$(command -v python3 2>/dev/null || true)"
-if [[ -n "$python3_path" ]]; then
-  ln -s "$python3_path" "$FAKE_BIN/python3"
-fi
+for cmd in date awk sort find sha256sum shasum bash mkdir dirname cat; do
+  cmd_path="$(command -v "$cmd" 2>/dev/null || true)"
+  if [[ -n "$cmd_path" ]]; then
+    ln -s "$cmd_path" "$FAKE_BIN/$cmd"
+  fi
+done
 
 SUMMARY="$TMP_DIR/summary.json"
 BASH_BIN="$(command -v bash)"
-PATH="$FAKE_BIN:/usr/bin:/bin:/usr/sbin:/sbin" QUICK_GATE_SUMMARY_PATH="$SUMMARY" "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
+PATH="$FAKE_BIN" QUICK_GATE_SUMMARY_PATH="$SUMMARY" "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
 
 python3 - <<'PY' "$SUMMARY"
 import json, sys
