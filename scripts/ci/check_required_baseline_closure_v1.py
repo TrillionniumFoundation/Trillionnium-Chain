@@ -12,6 +12,34 @@ from typing import Any
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 POLICY = ROOT / "config/repository-policy-v1.json"
 
+CONVERGENCE_COMMANDS = (
+    "bash scripts/ci/check_canonical_development_plan.sh",
+    "python3 scripts/ci/check_plan_manifest_pins_v1.py",
+    "python3 scripts/ci/check_technical_convergence_v1.py",
+    "python3 scripts/ci/test_technical_convergence_v1.py",
+    "python3 scripts/ci/check_module_coverage_v1.py",
+    "python3 scripts/ci/check_required_baseline_closure_v1.py",
+)
+CONVERGENCE_REQUIRED_PATHS = (
+    "config/technical-convergence-v1.toml",
+    "docs/architecture/TRNM_TECHNICAL_CONVERGENCE_V1.md",
+    "docs/modules/README.md",
+    "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md",
+    "scripts/ci/check_plan_manifest_pins_v1.py",
+    "scripts/ci/check_technical_convergence_v1.py",
+    "scripts/ci/technical_convergence_contract_v1.py",
+    "scripts/ci/technical_convergence_workflows_v1.py",
+    "scripts/ci/technical_convergence_coverage_v1.py",
+    "scripts/ci/test_technical_convergence_v1.py",
+    "scripts/ci/check_module_coverage_core_v1.py",
+)
+
 
 class BaselineClosureError(RuntimeError):
     pass
@@ -50,6 +78,26 @@ def require_tokens(text: str, tokens: tuple[str, ...], label: str) -> None:
     require(not missing, f"{label}: missing required tokens: {missing}")
 
 
+def named_step(text: str, name: str) -> str:
+    marker = f"      - name: {name}\n"
+    start = text.find(marker)
+    require(start >= 0, f"required workflow step missing: {name}")
+    tail = text[start + len(marker) :]
+    candidates = [
+        index
+        for token in (
+            "\n      - name:",
+            "\n  protocol-contract:",
+            "\n  fuzz-smoke:",
+            "\n  external-evidence-contract:",
+            "\n  rust-baseline:",
+        )
+        if (index := tail.find(token)) >= 0
+    ]
+    end = min(candidates) if candidates else len(tail)
+    return tail[:end]
+
+
 def main() -> int:
     policy = load_json(POLICY)
     workflow_relative = policy.get("baseline_workflow")
@@ -58,7 +106,10 @@ def main() -> int:
         "baseline_workflow path missing",
     )
     workflow_path = ROOT / workflow_relative
-    require(workflow_path.is_file(), f"baseline workflow missing: {workflow_relative}")
+    require(
+        workflow_path.is_file(),
+        f"baseline workflow missing: {workflow_relative}",
+    )
     workflow = workflow_path.read_text(encoding="utf-8")
 
     required_checks = policy.get("required_check_names")
@@ -68,10 +119,19 @@ def main() -> int:
         and all(isinstance(item, str) and item for item in required_checks),
         "required_check_names missing",
     )
-    require(len(set(required_checks)) == len(required_checks), "required check names duplicate")
+    require(
+        len(set(required_checks)) == len(required_checks),
+        "required check names duplicate",
+    )
     for check in required_checks:
         require(
-            len(re.findall(rf"(?m)^\s+name:\s*{re.escape(check)}\s*$", workflow)) == 1,
+            len(
+                re.findall(
+                    rf"(?m)^\s+name:\s*{re.escape(check)}\s*$",
+                    workflow,
+                )
+            )
+            == 1,
             f"required job name missing or duplicated: {check}",
         )
 
@@ -80,17 +140,27 @@ def main() -> int:
         re.search(r"(?m)^\s*pull_request:\s*$", header) is not None,
         "baseline workflow must run on every pull request",
     )
-    require("paths:" not in header, "baseline pull_request trigger may not use path filters")
-    require("self-hosted" not in workflow, "required baseline may not depend on self-hosted runners")
     require(
-        "github.actor" not in workflow and "github.triggering_actor" not in workflow,
+        "paths:" not in header,
+        "baseline pull_request trigger may not use path filters",
+    )
+    require(
+        "self-hosted" not in workflow,
+        "required baseline may not depend on self-hosted runners",
+    )
+    require(
+        "github.actor" not in workflow
+        and "github.triggering_actor" not in workflow,
         "required baseline may not contain actor allowlists",
     )
     require(
         workflow.count("runs-on: ubuntu-24.04") == len(required_checks),
         "every required job must use the pinned hosted runner",
     )
-    require("runs-on: ubuntu-latest" not in workflow, "moving ubuntu-latest is forbidden")
+    require(
+        "runs-on: ubuntu-latest" not in workflow,
+        "moving ubuntu-latest is forbidden",
+    )
 
     exact_source = (
         "TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && "
@@ -98,7 +168,8 @@ def main() -> int:
     )
     require(exact_source in workflow, "exact pull-request head binding missing")
     require(
-        workflow.count("ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}") == len(required_checks),
+        workflow.count("ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}")
+        == len(required_checks),
         "every required job must check out the exact source",
     )
     require(
@@ -106,7 +177,9 @@ def main() -> int:
         "every required job must disable persisted checkout credentials",
     )
     require(
-        workflow.count('run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"')
+        workflow.count(
+            'run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"'
+        )
         == len(required_checks),
         "every required job must assert exact source identity",
     )
@@ -114,10 +187,8 @@ def main() -> int:
     require_tokens(
         workflow,
         (
-            "bash scripts/ci/check_canonical_development_plan.sh",
-            "python3 scripts/ci/check_module_coverage_v1.py",
+            *CONVERGENCE_COMMANDS,
             "python3 scripts/ci/check_node_decomposition_v1.py",
-            "python3 scripts/ci/check_required_baseline_closure_v1.py",
             "python3 scripts/ci/check_build_closures_v1.py",
             "cargo test --workspace --all-targets --locked",
             "cargo check --manifest-path contracts/Cargo.toml --workspace --all-targets --locked",
@@ -128,10 +199,41 @@ def main() -> int:
             "-p trnm-poco-node-cli --bin trnm-poco-node-cli",
             "--locked -- status",
             "--locked -- start",
-            "\"start_permitted\":false",
+            '"start_permitted":false',
         ),
         "required baseline closure",
     )
+
+    exact_step = named_step(
+        workflow,
+        "Validate repository, development, module, node, and blocker truth",
+    )
+    prospective_step = named_step(
+        workflow,
+        "Run separately bound prospective-merge regressions",
+    )
+    mutant_step = named_step(
+        workflow,
+        "Run retained module-documentation false-pass mutants",
+    )
+    compile_step = named_step(workflow, "Compile Python CI tooling")
+    require_tokens(exact_step, CONVERGENCE_COMMANDS, "exact-source convergence closure")
+    require_tokens(
+        prospective_step,
+        CONVERGENCE_COMMANDS,
+        "prospective-merge convergence closure",
+    )
+    require(
+        "python3 scripts/ci/test_technical_convergence_v1.py" in mutant_step,
+        "convergence false-pass mutants are not retained",
+    )
+    for path in (
+        "scripts/ci/check_plan_manifest_pins_v1.py",
+        "scripts/ci/check_technical_convergence_v1.py",
+        "scripts/ci/test_technical_convergence_v1.py",
+        "scripts/ci/check_required_baseline_closure_v1.py",
+    ):
+        require(path in compile_step, f"Python compile closure missing {path}")
 
     clippy_packages = (
         "trnm-state",
@@ -160,18 +262,30 @@ def main() -> int:
         "trnm-poco-node-cli",
     )
     for package in clippy_packages:
-        require(package in workflow, f"strict Clippy package missing: {package}")
+        require(
+            package in workflow,
+            f"strict Clippy package missing: {package}",
+        )
 
     rust_job = re.search(
         r"(?ms)^  rust-baseline:\n(?P<body>.*)\Z",
         workflow,
     )
     require(rust_job is not None, "rust-baseline job missing")
-    timeout = re.search(r"(?m)^\s{4}timeout-minutes:\s*(\d+)\s*$", rust_job.group("body"))
-    require(timeout is not None and int(timeout.group(1)) >= 120, "rust-baseline timeout too small")
+    timeout = re.search(
+        r"(?m)^\s{4}timeout-minutes:\s*(\d+)\s*$",
+        rust_job.group("body"),
+    )
+    require(
+        timeout is not None and int(timeout.group(1)) >= 120,
+        "rust-baseline timeout too small",
+    )
 
     required_paths = policy.get("required_paths")
-    require(isinstance(required_paths, list), "repository policy required_paths missing")
+    require(
+        isinstance(required_paths, list),
+        "repository policy required_paths missing",
+    )
     closure_paths = (
         ".github/workflows/trnm-required-baseline.yml",
         "config/build-closures-v1.toml",
@@ -180,6 +294,7 @@ def main() -> int:
         "scripts/ci/check_build_closures_v1.py",
         "scripts/ci/check_node_decomposition_v1.py",
         "scripts/ci/check_required_baseline_closure_v1.py",
+        *CONVERGENCE_REQUIRED_PATHS,
         "trillionnium/crates/trnm-control-plane-v0/Cargo.toml",
         "trillionnium/crates/trnm-durable-file-adapters-v0/Cargo.toml",
         "trillionnium/crates/trnm-migration-v0/Cargo.toml",
@@ -191,8 +306,14 @@ def main() -> int:
         "trillionnium/crates/trnm-tx-lifecycle-v0/Cargo.toml",
     )
     for path in closure_paths:
-        require(path in required_paths, f"repository policy does not require {path}")
-        require((ROOT / path).exists(), f"required closure input missing: {path}")
+        require(
+            path in required_paths,
+            f"repository policy does not require {path}",
+        )
+        require(
+            (ROOT / path).exists(),
+            f"required closure input missing: {path}",
+        )
 
     report = {
         "schema": "trnm-required-baseline-closure-v1",
@@ -202,6 +323,10 @@ def main() -> int:
         "full_workspace_all_targets_test": True,
         "contract_workspace_checked": True,
         "node_decomposition_required": True,
+        "technical_convergence_required": True,
+        "technical_convergence_exact_source": True,
+        "technical_convergence_prospective_merge": True,
+        "technical_convergence_mutants_retained": True,
         "repository_core_overlay_required": True,
         "strict_clippy_package_count": len(clippy_packages),
         "production_candidate": False,

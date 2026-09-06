@@ -47,10 +47,12 @@ candidate_code_with_repository_write_token_forbidden = true
 persistent_runner_with_candidate_write_token_forbidden = true
 independent_final_push_review_required = true
 commands = [
+  "bash scripts/ci/check_canonical_development_plan.sh",
+  "python3 scripts/ci/check_plan_manifest_pins_v1.py",
   "python3 scripts/ci/check_technical_convergence_v1.py",
   "python3 scripts/ci/test_technical_convergence_v1.py",
   "python3 scripts/ci/check_module_coverage_v1.py",
-  "bash scripts/ci/check_canonical_development_plan.sh",
+  "python3 scripts/ci/check_required_baseline_closure_v1.py",
 ]
 
 [supply_chain]
@@ -115,8 +117,9 @@ ids = [
   "P2-NET-001",
   "P2-OPS-001",
   "P2-STORE-001",
-  "P2-MIG-ROOT-001",
-  "P2-MIG-HISTORY-001",
+  "MIG-ROOT-001",
+  "P3-HISTORY-001",
+  "MIG-CLEAN-001",
 ]
 
 [[external_gate]]
