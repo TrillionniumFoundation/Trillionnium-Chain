@@ -1,6 +1,7 @@
 #![cfg(feature = "persistent-authority-candidate")]
 
 use std::{
+    convert::Infallible,
     fs::{self, OpenOptions},
     io::Write,
     path::{Path, PathBuf},
@@ -16,7 +17,10 @@ use trnm_node_boundary_v0::{
     RecoveryDispositionV0,
 };
 use trnm_poco_node_authority::{NodeAuthorityCoordinatorV0, NodeAuthorityErrorV0};
-use trnm_poco_node_production_v0::{AuthoritySessionReadinessV0, ProductionAuthoritySessionV0};
+use trnm_poco_node_production_v0::{
+    AuthorityFactClaimV0, AuthorityFactSourceV0, AuthorityIngressSourceV0,
+    AuthoritySessionReadinessV0, ProductionAuthoritySessionV0,
+};
 
 const CHILD_ENV: &str = "TRNM_AUTHORITY_SESSION_PROCESS_HELPER";
 const ROOT_ENV: &str = "TRNM_AUTHORITY_SESSION_ROOT";
@@ -129,6 +133,40 @@ impl AuthorityCoordinatorV0 for NodeAuthorityAdapter {
     }
 }
 
+struct IngressSource;
+
+impl AuthorityIngressSourceV0 for IngressSource {
+    type Error = Infallible;
+
+    fn verify_ingress(
+        &mut self,
+        observed_identity: NodeIdentityV0,
+        _prior: Option<AuthorityReceiptV0>,
+        observed: &BoundIngressV0,
+    ) -> Result<(), Self::Error> {
+        assert_eq!(observed_identity, identity());
+        observed.validate(identity()).unwrap();
+        Ok(())
+    }
+}
+
+struct FactSource;
+
+impl AuthorityFactSourceV0 for FactSource {
+    type Error = Infallible;
+
+    fn verify_fact(
+        &mut self,
+        observed_identity: NodeIdentityV0,
+        prior: AuthorityReceiptV0,
+        observed: &AuthorityFactClaimV0,
+    ) -> Result<(), Self::Error> {
+        assert_eq!(observed_identity, identity());
+        assert_eq!(prior.binding, observed.binding());
+        Ok(())
+    }
+}
+
 type Session = ProductionAuthoritySessionV0<
     NodeAuthorityAdapter,
     fn(&NodeAuthorityAdapter) -> Option<AuthorityReceiptV0>,
@@ -186,22 +224,45 @@ fn successor(step: u8) -> (AuthorityStageV0, AuthorityStageV0, Digest32V0) {
     }
 }
 
+fn fact_claim(
+    binding: trnm_node_boundary_v0::OperationBindingV0,
+    step: u8,
+) -> AuthorityFactClaimV0 {
+    let (_, stage, payload_digest) = successor(step);
+    AuthorityFactClaimV0::new(
+        identity(),
+        binding,
+        stage,
+        digest(100u8.wrapping_add(step)),
+        u64::from(step),
+        payload_digest,
+    )
+    .unwrap()
+}
+
+fn admit(session: &mut Session, ingress: BoundIngressV0) -> AuthorityReceiptV0 {
+    let verified = session
+        .verify_ingress(ingress, &mut IngressSource)
+        .unwrap();
+    session.begin_verified(verified).unwrap()
+}
+
+fn advance(
+    session: &mut Session,
+    binding: trnm_node_boundary_v0::OperationBindingV0,
+    step: u8,
+) -> AuthorityReceiptV0 {
+    let verified = session
+        .verify_fact(fact_claim(binding, step), &mut FactSource)
+        .unwrap();
+    session.advance_verified(verified).unwrap()
+}
+
 fn apply_step(session: &mut Session, step: u8) -> AuthorityReceiptV0 {
-    let first = first_ingress();
-    let second = second_ingress();
     match step {
-        0 => session
-            .begin_prepared(first.binding, first.ingress_digest())
-            .unwrap(),
-        1..=7 => {
-            let (expected, next, facts) = successor(step);
-            session
-                .advance(first.binding, expected, next, facts)
-                .unwrap()
-        }
-        8 => session
-            .begin_prepared(second.binding, second.ingress_digest())
-            .unwrap(),
+        0 => admit(session, first_ingress()),
+        1..=7 => advance(session, first_ingress().binding, step),
+        8 => admit(session, second_ingress()),
         _ => panic!("invalid authority process step"),
     }
 }
@@ -221,27 +282,19 @@ fn node_authority_and_complete_receipt_session_reopen_every_stage() {
     let mut active = reopen(&root);
 
     let first = first_ingress();
-    let mut receipt = active
-        .begin_prepared(first.binding, first.ingress_digest())
-        .unwrap();
+    let mut receipt = admit(&mut active, first.clone());
     drop(active.into_coordinator());
     active = reopen(&root);
     assert_eq!(active.current_receipt(), Some(receipt));
 
     for step in 1..=7 {
-        let (expected, next, facts) = successor(step);
-        receipt = active
-            .advance(first.binding, expected, next, facts)
-            .unwrap();
+        receipt = advance(&mut active, first.binding, step);
         drop(active.into_coordinator());
         active = reopen(&root);
         assert_eq!(active.current_receipt(), Some(receipt));
     }
 
-    let second = second_ingress();
-    let next = active
-        .begin_prepared(second.binding, second.ingress_digest())
-        .unwrap();
+    let next = admit(&mut active, second_ingress());
     drop(active.into_coordinator());
     let reopened = reopen(&root);
     assert_eq!(reopened.current_receipt(), Some(next));

@@ -6,12 +6,15 @@
 //! migration projection, governance, or laboratory fixture. Domain owners are
 //! constructed outside this root and cross only versioned ports.
 
+mod authority_driver;
+pub use authority_driver::*;
+
 use std::{error::Error, fmt};
 use trnm_node_boundary_v0::{
     AuthorityCommandV0, AuthorityCoordinatorV0, AuthorityReceiptV0, AuthorityStageV0,
-    BoundaryErrorV0, Digest32V0, HostErrorV0, HostReadinessV0, HostStepV0, IoRuntimeV0,
-    NodeIdentityV0, NodeLayerRoleV0, OperationBindingV0, PersistentValidatorHostV0,
-    RecoveryDispositionV0, StepBudgetV0,
+    BoundIngressV0, BoundaryErrorV0, Digest32V0, HostErrorV0, HostReadinessV0, HostStepV0,
+    IoRuntimeV0, NodeIdentityV0, NodeLayerRoleV0, OperationBindingV0,
+    PersistentValidatorHostV0, RecoveryDispositionV0, StepBudgetV0,
 };
 
 pub const PRODUCTION_COMPOSITION_VERSION_V0: u16 = 0;
@@ -78,15 +81,222 @@ pub enum AuthoritySessionReadinessV0 {
     Quarantined(Digest32V0),
 }
 
+/// Authenticates one exact ingress against the current complete authority
+/// predecessor. Implementations belong to the transport/replay owner, not this
+/// wiring-only crate.
+pub trait AuthorityIngressSourceV0 {
+    type Error;
+
+    fn verify_ingress(
+        &mut self,
+        identity: NodeIdentityV0,
+        prior: Option<AuthorityReceiptV0>,
+        ingress: &BoundIngressV0,
+    ) -> Result<(), Self::Error>;
+}
+
+/// One-use proof that an ingress source accepted the exact session predecessor
+/// and ingress bytes. Fields and constructors remain private, and the token is
+/// deliberately not Clone.
+#[must_use = "verified ingress must be consumed by begin_verified"]
+#[derive(Debug)]
+pub struct VerifiedAuthorityIngressV0 {
+    identity: NodeIdentityV0,
+    prior: Option<AuthorityReceiptV0>,
+    ingress: BoundIngressV0,
+    ingress_digest: Digest32V0,
+}
+
+#[derive(Debug)]
+pub enum AuthorityIngressVerificationErrorV0<E> {
+    Boundary(BoundaryErrorV0),
+    Source(E),
+    NotReady,
+}
+
+impl<E: fmt::Display> fmt::Display for AuthorityIngressVerificationErrorV0<E> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Boundary(error) => write!(formatter, "authority ingress boundary failed: {error}"),
+            Self::Source(error) => write!(formatter, "authority ingress source rejected: {error}"),
+            Self::NotReady => formatter.write_str("authority session is not recovered and ready"),
+        }
+    }
+}
+
+impl<E: Error + 'static> Error for AuthorityIngressVerificationErrorV0<E> {}
+
+/// Exact claim emitted by one stage-specific domain owner.
+///
+/// The digest binds the node identity, full operation binding, target stage,
+/// source identity, source sequence and payload digest. The claim is only an
+/// input to a trusted source port; it is not itself verified authority.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct AuthorityFactClaimV0 {
+    identity: NodeIdentityV0,
+    binding: OperationBindingV0,
+    stage: AuthorityStageV0,
+    source_id: Digest32V0,
+    source_sequence: u64,
+    payload_digest: Digest32V0,
+    facts_digest: Digest32V0,
+}
+
+impl AuthorityFactClaimV0 {
+    pub fn new(
+        identity: NodeIdentityV0,
+        binding: OperationBindingV0,
+        stage: AuthorityStageV0,
+        source_id: Digest32V0,
+        source_sequence: u64,
+        payload_digest: Digest32V0,
+    ) -> Result<Self, BoundaryErrorV0> {
+        let identity = identity.validate()?;
+        binding.validate(identity)?;
+        if stage == AuthorityStageV0::Prepared
+            || source_id == Digest32V0([0; 32])
+            || source_sequence == 0
+            || payload_digest == Digest32V0([0; 32])
+        {
+            return Err(BoundaryErrorV0::ReceiptSubstitution);
+        }
+        let facts_digest = authority_fact_digest_v0(
+            identity,
+            binding,
+            stage,
+            source_id,
+            source_sequence,
+            payload_digest,
+        );
+        if facts_digest == Digest32V0([0; 32]) {
+            return Err(BoundaryErrorV0::ReceiptSubstitution);
+        }
+        Ok(Self {
+            identity,
+            binding,
+            stage,
+            source_id,
+            source_sequence,
+            payload_digest,
+            facts_digest,
+        })
+    }
+
+    #[must_use]
+    pub const fn identity(&self) -> NodeIdentityV0 {
+        self.identity
+    }
+
+    #[must_use]
+    pub const fn binding(&self) -> OperationBindingV0 {
+        self.binding
+    }
+
+    #[must_use]
+    pub const fn stage(&self) -> AuthorityStageV0 {
+        self.stage
+    }
+
+    #[must_use]
+    pub const fn source_id(&self) -> Digest32V0 {
+        self.source_id
+    }
+
+    #[must_use]
+    pub const fn source_sequence(&self) -> u64 {
+        self.source_sequence
+    }
+
+    #[must_use]
+    pub const fn payload_digest(&self) -> Digest32V0 {
+        self.payload_digest
+    }
+
+    #[must_use]
+    pub const fn facts_digest(&self) -> Digest32V0 {
+        self.facts_digest
+    }
+}
+
+fn authority_fact_digest_v0(
+    identity: NodeIdentityV0,
+    binding: OperationBindingV0,
+    stage: AuthorityStageV0,
+    source_id: Digest32V0,
+    source_sequence: u64,
+    payload_digest: Digest32V0,
+) -> Digest32V0 {
+    let stage = [stage as u8];
+    Digest32V0::hash(
+        b"trnm.authority.fact-claim.v0",
+        &[
+            &identity.digest().0,
+            &binding.operation_id.0,
+            &binding.height.to_be_bytes(),
+            &binding.view.to_be_bytes(),
+            &binding.block_id.0,
+            &binding.parent_id.0,
+            &binding.proposal_digest.0,
+            &stage,
+            &source_id.0,
+            &source_sequence.to_be_bytes(),
+            &payload_digest.0,
+        ],
+    )
+}
+
+/// Authenticates a claim using fresh, stage-specific domain-owner state.
+pub trait AuthorityFactSourceV0 {
+    type Error;
+
+    fn verify_fact(
+        &mut self,
+        identity: NodeIdentityV0,
+        prior: AuthorityReceiptV0,
+        claim: &AuthorityFactClaimV0,
+    ) -> Result<(), Self::Error>;
+}
+
+/// One-use proof that a source accepted an exact fact claim against one exact
+/// durable predecessor. It is deliberately not Clone and has no public
+/// constructor.
+#[must_use = "verified fact must be consumed by advance_verified"]
+#[derive(Debug)]
+pub struct VerifiedAuthorityFactV0 {
+    identity: NodeIdentityV0,
+    prior: AuthorityReceiptV0,
+    expected_stage: AuthorityStageV0,
+    claim: AuthorityFactClaimV0,
+}
+
+#[derive(Debug)]
+pub enum AuthorityFactVerificationErrorV0<E> {
+    Boundary(BoundaryErrorV0),
+    Source(E),
+    NotReady,
+}
+
+impl<E: fmt::Display> fmt::Display for AuthorityFactVerificationErrorV0<E> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Boundary(error) => write!(formatter, "authority fact boundary failed: {error}"),
+            Self::Source(error) => write!(formatter, "authority fact source rejected: {error}"),
+            Self::NotReady => formatter.write_str("authority session is not recovered and ready"),
+        }
+    }
+}
+
+impl<E: Error + 'static> Error for AuthorityFactVerificationErrorV0<E> {}
+
 /// A bounded production-composition session which retains the exact durable
 /// authority receipt across stage transitions.
 ///
 /// Existing `RecoveryDispositionV0::Resume` carries only binding, stage and
 /// sequence. The supplied readback function must call the durable adapter's
 /// authenticated current-receipt API. A summary without that complete receipt
-/// never restores write authority. This session owns no stage facts: callers
-/// obtain them from the authoritative application, Safety, signer, finality,
-/// checkpoint and publication owners before requesting a transition.
+/// never restores write authority. Public mutation requires a non-cloneable
+/// verified ingress or fact token; naked caller-supplied digests are crate-local
+/// implementation details only.
 pub struct ProductionAuthoritySessionV0<C, R> {
     identity: NodeIdentityV0,
     coordinator: C,
@@ -235,9 +445,200 @@ where
         Ok(self.readiness)
     }
 
-    /// Persist the initial `Prepared` record, replay it, or begin the exact
-    /// parent-bound successor after an `OutboundPublished` terminal record.
-    pub fn begin_prepared(
+    /// Authenticate an ingress against the exact recovered predecessor without
+    /// mutating local or durable state.
+    pub fn verify_ingress<S>(
+        &self,
+        ingress: BoundIngressV0,
+        source: &mut S,
+    ) -> Result<VerifiedAuthorityIngressV0, AuthorityIngressVerificationErrorV0<S::Error>>
+    where
+        S: AuthorityIngressSourceV0,
+    {
+        if self.readiness != AuthoritySessionReadinessV0::Ready {
+            return Err(AuthorityIngressVerificationErrorV0::NotReady);
+        }
+        let observed = self
+            .coordinator
+            .identity()
+            .validate()
+            .map_err(AuthorityIngressVerificationErrorV0::Boundary)?;
+        if observed != self.identity {
+            return Err(AuthorityIngressVerificationErrorV0::Boundary(
+                BoundaryErrorV0::InvalidIdentity,
+            ));
+        }
+        ingress
+            .validate(self.identity)
+            .map_err(AuthorityIngressVerificationErrorV0::Boundary)?;
+        let ingress_digest = ingress.ingress_digest();
+        if ingress_digest == Digest32V0([0; 32]) {
+            return Err(AuthorityIngressVerificationErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        validate_ingress_predecessor_v0(self.current, &ingress, ingress_digest)
+            .map_err(AuthorityIngressVerificationErrorV0::Boundary)?;
+        source
+            .verify_ingress(self.identity, self.current, &ingress)
+            .map_err(AuthorityIngressVerificationErrorV0::Source)?;
+        Ok(VerifiedAuthorityIngressV0 {
+            identity: self.identity,
+            prior: self.current,
+            ingress,
+            ingress_digest,
+        })
+    }
+
+    /// Consume one exact verified ingress and durably create or replay Prepared.
+    pub fn begin_verified(
+        &mut self,
+        verified: VerifiedAuthorityIngressV0,
+    ) -> Result<AuthorityReceiptV0, AuthoritySessionErrorV0<C::Error>> {
+        if self.readiness != AuthoritySessionReadinessV0::Ready {
+            return Err(AuthoritySessionErrorV0::NotReady);
+        }
+        self.check_identity()?;
+        if verified.identity != self.identity || verified.prior != self.current {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        verified
+            .ingress
+            .validate(self.identity)
+            .map_err(AuthoritySessionErrorV0::Boundary)?;
+        if verified.ingress.ingress_digest() != verified.ingress_digest {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        validate_ingress_predecessor_v0(self.current, &verified.ingress, verified.ingress_digest)
+            .map_err(AuthoritySessionErrorV0::Boundary)?;
+        self.begin_prepared(verified.ingress.binding, verified.ingress_digest)
+    }
+
+    /// Authenticate one exact stage claim against the current complete receipt
+    /// without mutating local or durable state.
+    pub fn verify_fact<S>(
+        &self,
+        claim: AuthorityFactClaimV0,
+        source: &mut S,
+    ) -> Result<VerifiedAuthorityFactV0, AuthorityFactVerificationErrorV0<S::Error>>
+    where
+        S: AuthorityFactSourceV0,
+    {
+        if self.readiness != AuthoritySessionReadinessV0::Ready {
+            return Err(AuthorityFactVerificationErrorV0::NotReady);
+        }
+        let observed = self
+            .coordinator
+            .identity()
+            .validate()
+            .map_err(AuthorityFactVerificationErrorV0::Boundary)?;
+        if observed != self.identity || claim.identity != self.identity {
+            return Err(AuthorityFactVerificationErrorV0::Boundary(
+                BoundaryErrorV0::InvalidIdentity,
+            ));
+        }
+        claim
+            .binding
+            .validate(self.identity)
+            .map_err(AuthorityFactVerificationErrorV0::Boundary)?;
+        let recomputed = authority_fact_digest_v0(
+            claim.identity,
+            claim.binding,
+            claim.stage,
+            claim.source_id,
+            claim.source_sequence,
+            claim.payload_digest,
+        );
+        if recomputed != claim.facts_digest || recomputed == Digest32V0([0; 32]) {
+            return Err(AuthorityFactVerificationErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        let prior = self.current.ok_or(AuthorityFactVerificationErrorV0::Boundary(
+            BoundaryErrorV0::ReceiptSubstitution,
+        ))?;
+        if prior.binding != claim.binding {
+            return Err(AuthorityFactVerificationErrorV0::Boundary(
+                BoundaryErrorV0::OperationBindingMismatch,
+            ));
+        }
+        let expected_stage = if prior.durable_stage == claim.stage {
+            if prior.facts_digest != claim.facts_digest {
+                return Err(AuthorityFactVerificationErrorV0::Boundary(
+                    BoundaryErrorV0::ReceiptSubstitution,
+                ));
+            }
+            authority_predecessor_v0(claim.stage).ok_or(
+                AuthorityFactVerificationErrorV0::Boundary(
+                    BoundaryErrorV0::InvalidStageTransition,
+                ),
+            )?
+        } else {
+            if prior.durable_stage.successor() != Some(claim.stage) {
+                return Err(AuthorityFactVerificationErrorV0::Boundary(
+                    BoundaryErrorV0::InvalidStageTransition,
+                ));
+            }
+            prior.durable_stage
+        };
+        source
+            .verify_fact(self.identity, prior, &claim)
+            .map_err(AuthorityFactVerificationErrorV0::Source)?;
+        Ok(VerifiedAuthorityFactV0 {
+            identity: self.identity,
+            prior,
+            expected_stage,
+            claim,
+        })
+    }
+
+    /// Consume a one-use stage token and persist exactly its verified successor
+    /// or exact same-stage replay.
+    pub fn advance_verified(
+        &mut self,
+        verified: VerifiedAuthorityFactV0,
+    ) -> Result<AuthorityReceiptV0, AuthoritySessionErrorV0<C::Error>> {
+        if self.readiness != AuthoritySessionReadinessV0::Ready {
+            return Err(AuthoritySessionErrorV0::NotReady);
+        }
+        self.check_identity()?;
+        if verified.identity != self.identity
+            || self.current != Some(verified.prior)
+            || verified.claim.identity != self.identity
+            || verified.claim.binding != verified.prior.binding
+        {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        let recomputed = authority_fact_digest_v0(
+            verified.claim.identity,
+            verified.claim.binding,
+            verified.claim.stage,
+            verified.claim.source_id,
+            verified.claim.source_sequence,
+            verified.claim.payload_digest,
+        );
+        if recomputed != verified.claim.facts_digest {
+            return Err(AuthoritySessionErrorV0::Boundary(
+                BoundaryErrorV0::ReceiptSubstitution,
+            ));
+        }
+        self.advance(
+            verified.claim.binding,
+            verified.expected_stage,
+            verified.claim.stage,
+            verified.claim.facts_digest,
+        )
+    }
+
+    /// Crate-local persistence primitive. External callers must use a verified
+    /// ingress token through `begin_verified`.
+    pub(crate) fn begin_prepared(
         &mut self,
         binding: OperationBindingV0,
         ingress_digest: Digest32V0,
@@ -319,8 +720,9 @@ where
         self.commit_verified_receipt(returned)
     }
 
-    /// Persist one exact successor stage, or replay the exact current receipt.
-    pub fn advance(
+    /// Crate-local persistence primitive. External callers must use a verified
+    /// stage token through `advance_verified`.
+    pub(crate) fn advance(
         &mut self,
         binding: OperationBindingV0,
         expected_stage: AuthorityStageV0,
@@ -334,7 +736,9 @@ where
         binding
             .validate(self.identity)
             .map_err(AuthoritySessionErrorV0::Boundary)?;
-        if expected_stage.successor() != Some(next_stage) || facts_digest == Digest32V0([0; 32]) {
+        if expected_stage.successor() != Some(next_stage)
+            || facts_digest == Digest32V0([0; 32])
+        {
             return Err(AuthoritySessionErrorV0::Boundary(
                 BoundaryErrorV0::InvalidStageTransition,
             ));
@@ -388,13 +792,9 @@ where
                 ));
             }
         } else {
-            let sequence =
-                prior
-                    .durable_sequence
-                    .checked_add(1)
-                    .ok_or(AuthoritySessionErrorV0::Boundary(
-                        BoundaryErrorV0::SequenceOverflow,
-                    ))?;
+            let sequence = prior.durable_sequence.checked_add(1).ok_or(
+                AuthoritySessionErrorV0::Boundary(BoundaryErrorV0::SequenceOverflow),
+            )?;
             if returned.durable_sequence != sequence
                 || returned.record_digest == prior.record_digest
             {
@@ -404,6 +804,48 @@ where
             }
         }
         self.commit_verified_receipt(returned)
+    }
+}
+
+fn validate_ingress_predecessor_v0(
+    prior: Option<AuthorityReceiptV0>,
+    ingress: &BoundIngressV0,
+    ingress_digest: Digest32V0,
+) -> Result<(), BoundaryErrorV0> {
+    let Some(receipt) = prior else {
+        return Ok(());
+    };
+    let exact_replay = receipt.binding == ingress.binding
+        && receipt.durable_stage == AuthorityStageV0::Prepared
+        && receipt.facts_digest == ingress_digest;
+    if exact_replay {
+        return Ok(());
+    }
+    let expected_height = receipt
+        .binding
+        .height
+        .checked_add(1)
+        .ok_or(BoundaryErrorV0::SequenceOverflow)?;
+    if receipt.durable_stage != AuthorityStageV0::OutboundPublished
+        || ingress.binding.height != expected_height
+        || ingress.binding.parent_id != receipt.binding.block_id
+        || ingress.binding.operation_id == receipt.binding.operation_id
+    {
+        return Err(BoundaryErrorV0::InvalidStageTransition);
+    }
+    Ok(())
+}
+
+const fn authority_predecessor_v0(stage: AuthorityStageV0) -> Option<AuthorityStageV0> {
+    match stage {
+        AuthorityStageV0::Prepared => None,
+        AuthorityStageV0::ApplicationSealed => Some(AuthorityStageV0::Prepared),
+        AuthorityStageV0::SafetyPersisted => Some(AuthorityStageV0::ApplicationSealed),
+        AuthorityStageV0::SignIntentPersisted => Some(AuthorityStageV0::SafetyPersisted),
+        AuthorityStageV0::SignatureConfirmed => Some(AuthorityStageV0::SignIntentPersisted),
+        AuthorityStageV0::FinalityApplied => Some(AuthorityStageV0::SignatureConfirmed),
+        AuthorityStageV0::CheckpointConfirmed => Some(AuthorityStageV0::FinalityApplied),
+        AuthorityStageV0::OutboundPublished => Some(AuthorityStageV0::CheckpointConfirmed),
     }
 }
 
