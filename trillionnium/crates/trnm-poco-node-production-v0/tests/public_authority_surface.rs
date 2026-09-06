@@ -46,9 +46,19 @@ fn verification_tokens_are_not_cloneable_or_publicly_constructible() {
         "pub struct VerifiedAuthorityFactV0 {",
     ] {
         let start = source.find(declaration).expect("token declaration");
-        let prefix = &source[start.saturating_sub(160)..start];
+        let attributes = source[..start]
+            .lines()
+            .rev()
+            .take_while(|line| line.trim_start().starts_with("#["))
+            .collect::<Vec<_>>();
         assert!(
-            !prefix.contains("Clone"),
+            attributes
+                .iter()
+                .any(|line| line.trim_start().starts_with("#[derive(")),
+            "authority verification token lost its derive declaration: {declaration}"
+        );
+        assert!(
+            attributes.iter().all(|line| !line.contains("Clone")),
             "authority verification token became Clone: {declaration}"
         );
     }

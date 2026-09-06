@@ -31,8 +31,12 @@ fn new_session(
     ReferenceAuthorityCoordinatorV0,
     fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,
 > {
-    ProductionAuthoritySessionV0::new(coordinator, ReferenceAuthorityCoordinatorV0::current)
-        .unwrap()
+    ProductionAuthoritySessionV0::new(
+        coordinator,
+        ReferenceAuthorityCoordinatorV0::current
+            as fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,
+    )
+    .unwrap()
 }
 
 #[test]

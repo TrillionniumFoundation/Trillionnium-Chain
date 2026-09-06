@@ -290,7 +290,8 @@ mod tests {
     > {
         let session = ProductionAuthoritySessionV0::new(
             ReferenceAuthorityCoordinatorV0::new(identity()),
-            ReferenceAuthorityCoordinatorV0::current,
+            ReferenceAuthorityCoordinatorV0::current
+                as fn(&ReferenceAuthorityCoordinatorV0) -> Option<AuthorityReceiptV0>,
         )
         .unwrap();
         ProductionAuthorityDriverV0::new(session)
