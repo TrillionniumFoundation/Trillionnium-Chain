@@ -9,6 +9,34 @@ on:
       - 'trillionnium/**'
       - '.github/workflows/rust-l1-nightly-health.yml'
 
+env:
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  LC_NUMERIC: C
+  LC_COLLATE: C
+  LC_TIME: C
+  LC_CTYPE: C
+  LC_MESSAGES: C
+  LC_MONETARY: C
+  LC_MEASUREMENT: C
+  LC_PAPER: C
+  LC_ADDRESS: C
+  LC_NAME: C
+  LC_TELEPHONE: C
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONIOENCODING: "UTF-8"
+  PYTHONUTF8: "1"
+  PYTHONUNBUFFERED: "1"
+  PYTHONNOUSERSITE: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  CI: "true"
+  GITHUB_ACTIONS: "true"
+  SOURCE_DATE_EPOCH: "1704067200"
+  GZIP: "-n"
+  UMASK: "022"
+
 permissions:
   contents: read
 
@@ -32,9 +60,14 @@ jobs:
       - name: Install GNU timeout
         run: brew install coreutils
 
+      - name: Enforce native consensus as the sole authority
+        run: ./scripts/ci/check_self_consensus_only.sh
+
       - name: Rust workspace tests
         run: |
+          set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium
           cargo test --workspace --locked
 
@@ -53,7 +86,7 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
-          cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+          cargo run --locked -q -p trnm-node --features self-consensus --bin trnm-sim -- \
             --config configs/node1.toml \
             --block-ms 5 \
             --max-blocks 6 \
@@ -349,6 +382,7 @@ jobs:
           fi
 
       - name: PR-5 treasury reconcile report (non-gate)
+        id: pr5_reconcile_report
         if: always()
         continue-on-error: true
         run: |
@@ -362,6 +396,7 @@ jobs:
           ./scripts/v2/pr7_topn_summary_gate.sh
 
       - name: Build PR-6 daily security summary (non-gate)
+        id: pr6_daily_security_summary
         if: always()
         continue-on-error: true
         run: |
@@ -369,11 +404,28 @@ jobs:
           python3 ./scripts/v2/pr6_daily_security_summary.py
 
       - name: Build PR-9 weekly alert governance (non-gate)
+        id: pr9_weekly_alert_governance
         if: always()
         continue-on-error: true
         run: |
           set -euo pipefail
           python3 ./scripts/v2/pr9_weekly_alert_governance.py
+
+      - name: Evaluate P11 policy rollback guard
+        id: p11_policy_rollback_guard
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          ./scripts/v2/p11_policy_rollback_guard.sh
+
+      - name: Evaluate PR-7 alert delivery gate
+        id: pr7_alert_delivery_gate
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pr7_alert_delivery_gate.sh
 
       - name: Append PR-6 daily security summary to GitHub Step Summary
         if: always()
@@ -402,6 +454,35 @@ jobs:
               cat "${summary_file}"
             } >> "${GITHUB_STEP_SUMMARY}"
           fi
+
+      - name: Aggregate nightly critical soft-fail signals
+        if: always()
+        run: |
+          set -euo pipefail
+          pr6_outcome="${{ steps.pr6_daily_security_summary.outcome }}"
+          p11_outcome="${{ steps.p11_policy_rollback_guard.outcome }}"
+          pr7_outcome="${{ steps.pr7_alert_delivery_gate.outcome }}"
+          mkdir -p run/nightly-softfail
+          report="run/nightly-softfail/critical-signals.md"
+          {
+            echo '| category | step | severity | outcome |'
+            echo '|---|---|---|---|'
+            echo "| security | pr6_daily_security_summary | critical | ${pr6_outcome} |"
+            echo "| delivery_guard | p11_policy_rollback_guard | critical | ${p11_outcome} |"
+            echo "| delivery | pr7_alert_delivery_gate | critical | ${pr7_outcome} |"
+          } | tee "$report"
+
+          nightly_critical_soft_fail=0
+          for outcome in "$pr6_outcome" "$p11_outcome" "$pr7_outcome"; do
+            if [[ "$outcome" != "success" && "$outcome" != "skipped" ]]; then
+              nightly_critical_soft_fail=1
+            fi
+          done
+          echo "nightly_critical_soft_fail=${nightly_critical_soft_fail}"
+          if [[ "$nightly_critical_soft_fail" -ne 0 ]]; then
+            exit 1
+          fi
+
       - name: Upload nightly health artifacts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -424,7 +505,10 @@ jobs:
             run/pr5-reconcile/**
             run/pr6-ops/**
             run/pr7-topn/**
+            run/pr7-alert-delivery/**
             run/pr9/**
+            run/pr11/**
+            run/nightly-softfail/**
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**
