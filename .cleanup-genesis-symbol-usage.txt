@@ -71,6 +71,12 @@
       6:trillionnium/crates/trnm-consensus-app/src/migration_rehearsal.rs
       3:trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs
       1:trillionnium/crates/trnm-consensus-types/src/lib.rs
+   10 GenesisQcApplicationBindingV0
+      1:.github/workflows/trnm-temporary-residue-inventory.yml
+      3:trillionnium/crates/trnm-consensus-core/src/core.rs
+      2:trillionnium/crates/trnm-consensus-core/src/tests.rs
+      3:trillionnium/crates/trnm-consensus-types/src/anchor.rs
+      1:trillionnium/crates/trnm-consensus-types/src/lib.rs
    10 PocoTargetProjectionManifestVerifierV1
       1:.github/workflows/trnm-a22-capability-authority-audit.yml
       1:docs/audits/TRNM_POCO_BFT_EXECUTION_BOARD_AUDIT_2026-08-26.md
@@ -78,12 +84,8 @@
       1:scripts/ci/a22_capability_authority_policy_v1.json
       2:trillionnium/crates/trnm-consensus-app/src/migration_rehearsal.rs
       1:trillionnium/crates/trnm-consensus-types/src/lib.rs
-    9 GenesisQcApplicationBindingV0
-      3:trillionnium/crates/trnm-consensus-core/src/core.rs
-      2:trillionnium/crates/trnm-consensus-core/src/tests.rs
-      3:trillionnium/crates/trnm-consensus-types/src/anchor.rs
-      1:trillionnium/crates/trnm-consensus-types/src/lib.rs
-    7 GenesisApplicationCommitmentV0
+    8 GenesisApplicationCommitmentV0
+      1:.github/workflows/trnm-temporary-residue-inventory.yml
       4:trillionnium/crates/trnm-consensus-core/src/model.rs
       2:trillionnium/crates/trnm-consensus-types/src/anchor.rs
       1:trillionnium/crates/trnm-consensus-types/src/lib.rs
