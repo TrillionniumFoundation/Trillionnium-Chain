@@ -326,8 +326,7 @@ fn prepare(directory: &TempDir) -> Prepared {
     }
     let c3 = children.pop().unwrap();
     let c2 = children.pop().unwrap();
-    let proof =
-        FinalityProofV0::new(c1, c2, c3, &set, None, &parameters, PARENT_TIMESTAMP).unwrap();
+    let proof = FinalityProofV0::new(c1, c2, c3, &set, None, &parameters, PARENT_TIMESTAMP).unwrap();
     let bytes = proof.try_cev0_bytes().unwrap();
     Prepared {
         application,
@@ -382,6 +381,18 @@ fn signed_task_execution_commits_through_strict_bytes_and_reopens_exactly() {
         .unwrap();
     assert_eq!(replay.head(), committed.head());
     assert_eq!(replay.durable_sequence(), committed.durable_sequence());
+    let read = reopened
+        .read_poco_finalized_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            HeightV0::new(1),
+            PARENT_TIMESTAMP,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(read.application().confirmed_head_v0(), committed.head());
+    assert_eq!(read.finality().proof().id(), proof.id());
+    assert_eq!(read.application().receipt_commitments_v0().len(), 2);
 }
 
 #[test]
@@ -471,4 +482,104 @@ fn second_cryptographic_pass_is_charged_before_any_commit() {
         )
         .unwrap();
     assert_eq!(enough.signature_work(), measured.signature_work() * 2);
+}
+
+#[test]
+fn readback_never_promotes_prepared_state_even_with_a_valid_proof() {
+    let directory = TempDir::new().unwrap();
+    let Prepared {
+        application, bytes, ..
+    } = prepare(&directory);
+    let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+    assert!(matches!(
+        application.read_poco_finalized_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            HeightV0::new(1),
+            PARENT_TIMESTAMP,
+            &mut budget,
+        ),
+        Err(PocoFinalityCommitErrorV0::Application(_))
+    ));
+    assert_eq!(budget.signature_work(), 0);
+    assert!(application
+        .read_finalized_by_height_v0(HeightV0::new(1))
+        .is_err());
+    drop(application);
+    let reopened =
+        DurableNativeApplicationV0::open(directory.path().join("app.sqlite"), config()).unwrap();
+    assert!(reopened
+        .read_finalized_by_height_v0(HeightV0::new(1))
+        .is_err());
+}
+
+#[test]
+fn readback_rejects_wrong_class_corruption_and_budget_without_losing_committed_state() {
+    let directory = TempDir::new().unwrap();
+    let Prepared {
+        application,
+        executed,
+        proof,
+        bytes,
+    } = prepare(&directory);
+    let committed = application
+        .commit_poco_finality_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            executed,
+            PARENT_TIMESTAMP,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    for class in ["legacy-live-qc", "qc", "tc", "poco-three-chain-v1"] {
+        assert!(matches!(
+            application.read_poco_finalized_bytes_v0(
+                class,
+                &bytes,
+                HeightV0::new(1),
+                PARENT_TIMESTAMP,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            ),
+            Err(PocoFinalityCommitErrorV0::Admission(
+                StrictFinalityErrorV0::UnsupportedProofClass
+            ))
+        ));
+    }
+    let mut corrupt = bytes.clone();
+    let last = corrupt.len() - 1;
+    corrupt[last] ^= 1;
+    assert!(application
+        .read_poco_finalized_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &corrupt,
+            HeightV0::new(1),
+            PARENT_TIMESTAMP,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .is_err());
+    let mut zero_work = Cev0AdmissionBudgetV0::new(bytes.len(), 0);
+    assert!(application
+        .read_poco_finalized_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            HeightV0::new(1),
+            PARENT_TIMESTAMP,
+            &mut zero_work,
+        )
+        .is_err());
+    let mut sufficient = Cev0AdmissionBudgetV0::protocol_v0();
+    let read = application
+        .read_poco_finalized_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            HeightV0::new(1),
+            PARENT_TIMESTAMP,
+            &mut sufficient,
+        )
+        .unwrap();
+    assert_eq!(read.application().confirmed_head_v0(), committed.head());
+    assert_eq!(read.finality().proof().id(), proof.id());
+    let mut measured = Cev0AdmissionBudgetV0::protocol_v0();
+    measured.charge_finality_proof(&proof).unwrap();
+    assert_eq!(sufficient.signature_work(), measured.signature_work());
 }
