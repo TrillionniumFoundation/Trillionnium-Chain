@@ -56,9 +56,8 @@ if [[ -z "$resolve_line" ]]; then
     echo "[OK] event common field check passed (resolve skipped): $OUT"
     exit 0
   fi
-  cargo test -q -p trnm-node --features legacy-harness --bin trnm-sim legacy_resolve_event_line_keeps_frozen_fields
-  echo "[OK] event field check passed with deterministic resolve contract: $OUT"
-  exit 0
+  echo "no runtime resolve event line found in $OUT; set ALLOW_MISSING_RESOLVE_EVENT=1 only for explicit contract-only checks" >&2
+  exit 4
 fi
 
 for token in "slash_worker=" "resolution_code="; do

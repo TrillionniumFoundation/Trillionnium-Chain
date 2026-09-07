@@ -2851,7 +2851,12 @@ fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
         q.push_back(MockTx::Resolve {
             task_id,
             slash_worker: false,
-            resolver: "governance.resolve_authority".into(),
+            resolver: "demo-resolver-a".into(),
+        });
+        q.push_back(MockTx::Resolve {
+            task_id,
+            slash_worker: false,
+            resolver: "demo-resolver-b".into(),
         });
     }
 
@@ -2925,6 +2930,15 @@ fn is_critical_tx(tx: &MockTx) -> bool {
     )
 }
 
+fn task_frontier_indices(mempool: &VecDeque<MockTx>) -> Vec<usize> {
+    let mut seen_task_ids = HashSet::new();
+    mempool
+        .iter()
+        .enumerate()
+        .filter_map(|(idx, tx)| seen_task_ids.insert(task_id_of(tx)).then_some(idx))
+        .collect()
+}
+
 fn pick_txs_with_critical_guard(
     mempool: &mut VecDeque<MockTx>,
     txs_per_block: usize,
@@ -2933,63 +2947,61 @@ fn pick_txs_with_critical_guard(
         return Vec::new();
     }
 
-    if txs_per_block >= mempool.len() {
-        // Free-ingress fast path: when block capacity can absorb the whole queue,
-        // keep FIFO dequeue semantics while avoiding lane-gate bookkeeping.
-        return mempool.drain(..).collect();
+    // A task lifecycle is state-dependent. Only the first queued operation for each
+    // task may enter a block; otherwise challenge/resolve can leapfrog create/reveal,
+    // fail pre-execution against the prior state snapshot, and be dropped permanently.
+    let frontier_indices = task_frontier_indices(mempool);
+    let pick_limit = txs_per_block.min(frontier_indices.len());
+    if pick_limit == 0 {
+        return Vec::new();
     }
 
-    if !mempool.iter().any(is_critical_tx) || mempool.iter().all(is_critical_tx) {
-        // Homogeneous backlog has no cross-class anti-starvation requirement.
-        // Keep FIFO prefix drain and skip lane gate bookkeeping to reduce
-        // free-ingress selection overhead on the hot path.
-        let mut picked = Vec::with_capacity(txs_per_block);
-        for _ in 0..txs_per_block {
-            let Some(tx) = mempool.pop_front() else {
+    let any_critical = frontier_indices
+        .iter()
+        .any(|&idx| is_critical_tx(&mempool[idx]));
+    let all_critical = frontier_indices
+        .iter()
+        .all(|&idx| is_critical_tx(&mempool[idx]));
+
+    let selected_indices: Vec<usize> = if !any_critical || all_critical {
+        frontier_indices.into_iter().take(pick_limit).collect()
+    } else {
+        // Preserve critical-lane anti-starvation, but only among dependency-safe task
+        // frontiers. Admission ids address frontier positions rather than raw queue ids.
+        let mut lane = LaneAdmissionGate::new(frontier_indices.len(), 1);
+        for (frontier_pos, &mempool_idx) in frontier_indices.iter().enumerate() {
+            let class = if is_critical_tx(&mempool[mempool_idx]) {
+                IngressClass::Critical
+            } else {
+                IngressClass::Normal
+            };
+            let _ = lane.admit(frontier_pos as u64, class);
+        }
+
+        let mut selected = Vec::with_capacity(pick_limit);
+        while selected.len() < pick_limit {
+            let Some(frontier_id) = lane.pop_ready() else {
                 break;
             };
-            picked.push(tx);
+            if let Some(&mempool_idx) = frontier_indices.get(frontier_id as usize) {
+                selected.push(mempool_idx);
+            }
         }
-        return picked;
-    }
+        selected
+    };
 
-    // Selection fairness should consider the full queued backlog, not only the
-    // first block-sized prefix. Otherwise a critical tx that arrives behind a
-    // long normal queue can never enter the fairness gate and is effectively
-    // starved until the prefix drains.
-    let mut lane = LaneAdmissionGate::new(mempool.len(), 1);
-    let mempool_len = mempool.len();
-    for (idx, tx) in mempool.iter().enumerate() {
-        let class = if is_critical_tx(tx) {
-            IngressClass::Critical
-        } else {
-            IngressClass::Normal
-        };
-        let _ = lane.admit(idx as u64, class);
-    }
+    let mut indexed: Vec<(usize, usize)> = selected_indices
+        .into_iter()
+        .enumerate()
+        .map(|(position, index)| (index, position))
+        .collect();
+    let mut picked_slots: Vec<Option<MockTx>> = (0..indexed.len()).map(|_| None).collect();
+    indexed.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
 
-    let mut selected = Vec::with_capacity(txs_per_block);
-    while selected.len() < txs_per_block {
-        let Some(id) = lane.pop_ready() else {
-            break;
-        };
-        let idx = id as usize;
-        if idx < mempool_len {
-            selected.push((idx, selected.len()));
+    for (index, position) in indexed {
+        if let Some(tx) = mempool.remove(index) {
+            picked_slots[position] = Some(tx);
         }
-    }
-
-    let mut picked_slots: Vec<Option<MockTx>> = (0..selected.len()).map(|_| None).collect();
-    selected.sort_unstable_by(|(lhs, _), (rhs, _)| rhs.cmp(lhs));
-
-    for (idx, pos) in selected {
-        let Some(tx) = mempool.remove(idx) else {
-            // Fail closed on any stale/duplicated admission output instead of
-            // panicking the node hot path. Deterministic callers still produce
-            // the same picked set on the happy path.
-            continue;
-        };
-        picked_slots[pos] = Some(tx);
     }
 
     picked_slots.into_iter().flatten().collect()
@@ -4476,9 +4488,22 @@ impl PreExecPool {
                                         .cloned()
                                         .ok_or_else(|| invalid_preexec_tx_id(id))?;
                                     let mut local_state = snapshot_cloned.as_ref().clone();
-                                    apply_one(&mut local_state, tx, candidate_height)
-                                        .map(|_| ())
-                                        .map_err(|e| e.to_string())
+                                    match apply_one(&mut local_state, tx.clone(), candidate_height)
+                                    {
+                                        Ok(()) => Ok(()),
+                                        Err(err)
+                                            if uses_legacy_resolve_approval_stage(
+                                                &tx,
+                                                Some(classify_apply_error(&err)),
+                                            ) =>
+                                        {
+                                            // The first legacy resolve signature intentionally returns
+                                            // ResolveApprovalStaged after mutating only this isolated
+                                            // snapshot. Admit it so commit can persist the approval.
+                                            Ok(())
+                                        }
+                                        Err(err) => Err(err.to_string()),
+                                    }
                                 }));
                             match result {
                                 Ok(Ok(())) => {
@@ -4810,6 +4835,29 @@ mod tests {
     #[test]
     fn build_demo_mempool_respects_zero_demo_tasks() {
         let mempool = build_demo_mempool(0, 2);
+        assert!(mempool.is_empty());
+    }
+
+    #[test]
+    fn build_demo_mempool_advances_one_lifecycle_frontier_per_task() {
+        let mut mempool = build_demo_mempool(2, 2);
+        for expected_event_type in [
+            "create",
+            "accept",
+            "commit",
+            "reveal",
+            "challenge",
+            "resolve",
+            "resolve",
+        ] {
+            let picked = pick_txs_with_critical_guard(&mut mempool, 4);
+            assert_eq!(picked.len(), 2);
+            assert!(picked
+                .iter()
+                .all(|tx| event_type_of(tx) == expected_event_type));
+            let task_ids = picked.iter().map(task_id_of).collect::<HashSet<_>>();
+            assert_eq!(task_ids.len(), 2);
+        }
         assert!(mempool.is_empty());
     }
 
@@ -9935,6 +9983,54 @@ mod tests {
     }
 
     #[test]
+    fn preexec_admits_staged_and_final_multisig_resolve() {
+        let mut state = StateStore::new();
+        state
+            .set_gov_param_bootstrap_unchecked(
+                9_513,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .unwrap();
+        let (challenged_ref, _, _) = challenged_task_fixture(&mut state, 4_113);
+
+        let first = MockTx::Resolve {
+            task_id: challenged_ref.id,
+            slash_worker: true,
+            resolver: "authority-a".into(),
+        };
+        let first_decision =
+            decide_order_for_commit(&state, std::slice::from_ref(&first), 1, false, 130);
+        assert_eq!(first_decision.ordered_ids, vec![1]);
+        assert_eq!(first_decision.rejected, 0);
+
+        let first_err = apply_one(&mut state, first, 130)
+            .expect_err("first resolve signature must stage approval");
+        assert_eq!(classify_apply_error(&first_err), "resolve_approval_staged");
+        assert_eq!(
+            state.pending_resolve_approval(challenged_ref.id),
+            Some((true, 1))
+        );
+
+        let second = MockTx::Resolve {
+            task_id: challenged_ref.id,
+            slash_worker: true,
+            resolver: "authority-b".into(),
+        };
+        let second_decision =
+            decide_order_for_commit(&state, std::slice::from_ref(&second), 1, false, 131);
+        assert_eq!(second_decision.ordered_ids, vec![1]);
+        assert_eq!(second_decision.rejected, 0);
+
+        apply_one(&mut state, second, 131)
+            .expect("second resolve signature must finalize settlement");
+        assert_eq!(
+            state.get_task(challenged_ref.id).unwrap().status,
+            TaskStatus::Slashed
+        );
+    }
+
+    #[test]
     fn preexec_pool_reuses_workers_across_multiple_groups() {
         let state = Arc::new(StateStore::new());
         let picked = Arc::new(vec![
@@ -10025,7 +10121,7 @@ mod tests {
     }
 
     #[test]
-    fn critical_txs_are_selected_even_when_normal_queue_is_long() {
+    fn critical_guard_does_not_jump_same_task_prerequisites() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
                 task_id: 1,
@@ -10060,41 +10156,47 @@ mod tests {
 
         let picked = pick_txs_with_critical_guard(&mut mempool, 2);
         assert_eq!(picked.len(), 2);
-        assert!(matches!(picked[0], MockTx::Challenge { .. }));
-        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 1, .. }));
-        assert_eq!(mempool.len(), 4);
+        assert!(matches!(picked[0], MockTx::CreateTask { task_id: 1, .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 2, .. }));
         assert!(mempool
             .iter()
-            .any(|tx| matches!(tx, MockTx::Resolve { .. })));
+            .any(|tx| matches!(tx, MockTx::Challenge { task_id: 1, .. })));
+        assert!(mempool
+            .iter()
+            .any(|tx| matches!(tx, MockTx::Resolve { task_id: 1, .. })));
     }
-
     #[test]
-    fn critical_guard_fast_path_drains_fifo_when_capacity_covers_queue() {
+    fn critical_guard_capacity_does_not_bypass_same_task_frontier() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
                 task_id: 1,
                 creator: "alice".into(),
                 bounty: 10,
             },
+            MockTx::AcceptTask {
+                task_id: 1,
+                worker: "w1".into(),
+            },
             MockTx::Challenge {
                 task_id: 1,
                 challenger: "c1".into(),
                 bond: 10,
             },
-            MockTx::AcceptTask {
-                task_id: 1,
-                worker: "w1".into(),
-            },
         ]);
 
-        let picked = pick_txs_with_critical_guard(&mut mempool, 3);
-        assert_eq!(picked.len(), 3);
-        assert!(mempool.is_empty());
-        assert!(matches!(picked[0], MockTx::CreateTask { .. }));
-        assert!(matches!(picked[1], MockTx::Challenge { .. }));
-        assert!(matches!(picked[2], MockTx::AcceptTask { .. }));
-    }
+        let first = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(first.len(), 1);
+        assert!(matches!(first[0], MockTx::CreateTask { .. }));
 
+        let second = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(second.len(), 1);
+        assert!(matches!(second[0], MockTx::AcceptTask { .. }));
+
+        let third = pick_txs_with_critical_guard(&mut mempool, 3);
+        assert_eq!(third.len(), 1);
+        assert!(matches!(third[0], MockTx::Challenge { .. }));
+        assert!(mempool.is_empty());
+    }
     #[test]
     fn critical_guard_zero_block_budget_is_noop_and_preserves_queue_order() {
         let mut mempool = VecDeque::from(vec![
@@ -10125,7 +10227,7 @@ mod tests {
     }
 
     #[test]
-    fn critical_guard_normal_only_backlog_drains_fifo_prefix_without_reordering() {
+    fn critical_guard_normal_backlog_advances_each_task_frontier() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
                 task_id: 31,
@@ -10151,13 +10253,11 @@ mod tests {
         let picked = pick_txs_with_critical_guard(&mut mempool, 2);
         assert_eq!(picked.len(), 2);
         assert!(matches!(picked[0], MockTx::CreateTask { task_id: 31, .. }));
-        assert!(matches!(picked[1], MockTx::AcceptTask { task_id: 31, .. }));
-
+        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 32, .. }));
         assert_eq!(mempool.len(), 2);
-        assert!(matches!(mempool[0], MockTx::Commit { task_id: 31, .. }));
-        assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 32, .. }));
+        assert!(matches!(mempool[0], MockTx::AcceptTask { task_id: 31, .. }));
+        assert!(matches!(mempool[1], MockTx::Commit { task_id: 31, .. }));
     }
-
     #[test]
     fn rollback_block_rate_counts_only_blocks_with_any_rollback() {
         let rollback_samples = vec![0, 2, 0, 1];
@@ -12612,7 +12712,7 @@ mod tests {
     }
 
     #[test]
-    fn critical_guard_selection_respects_lane_fairness_pop_order() {
+    fn critical_guard_lane_fairness_applies_between_task_frontiers() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
                 task_id: 11,
@@ -12620,12 +12720,12 @@ mod tests {
                 bounty: 10,
             },
             MockTx::Challenge {
-                task_id: 11,
-                challenger: "c1".into(),
+                task_id: 12,
+                challenger: "c2".into(),
                 bond: 10,
             },
             MockTx::Resolve {
-                task_id: 11,
+                task_id: 12,
                 slash_worker: false,
                 resolver: "gov".into(),
             },
@@ -12635,13 +12735,13 @@ mod tests {
             },
         ]);
 
-        let picked = pick_txs_with_critical_guard(&mut mempool, 3);
-        assert_eq!(picked.len(), 3);
-        assert!(matches!(picked[0], MockTx::Challenge { .. }));
-        assert!(matches!(picked[1], MockTx::CreateTask { .. }));
-        assert!(matches!(picked[2], MockTx::Resolve { .. }));
+        let picked = pick_txs_with_critical_guard(&mut mempool, 2);
+        assert_eq!(picked.len(), 2);
+        assert!(matches!(picked[0], MockTx::Challenge { task_id: 12, .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 11, .. }));
+        assert!(matches!(mempool[0], MockTx::Resolve { task_id: 12, .. }));
+        assert!(matches!(mempool[1], MockTx::AcceptTask { task_id: 11, .. }));
     }
-
     #[test]
     fn critical_guard_single_slot_critical_only_backlog_keeps_fifo_prefix() {
         let mut mempool = VecDeque::from(vec![
@@ -12672,7 +12772,7 @@ mod tests {
     }
 
     #[test]
-    fn critical_guard_only_reorders_scanned_prefix_and_leaves_suffix_fifo() {
+    fn critical_guard_selects_frontiers_only_and_leaves_dependent_suffix_fifo() {
         let mut mempool = VecDeque::from(vec![
             MockTx::CreateTask {
                 task_id: 21,
@@ -12701,16 +12801,14 @@ mod tests {
         ]);
 
         let picked = pick_txs_with_critical_guard(&mut mempool, 3);
-        assert_eq!(picked.len(), 3);
-        assert!(matches!(picked[0], MockTx::Challenge { .. }));
-        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 21, .. }));
-        assert!(matches!(picked[2], MockTx::AcceptTask { .. }));
-
-        assert_eq!(mempool.len(), 2);
-        assert!(matches!(mempool[0], MockTx::Resolve { .. }));
-        assert!(matches!(mempool[1], MockTx::CreateTask { task_id: 22, .. }));
+        assert_eq!(picked.len(), 2);
+        assert!(matches!(picked[0], MockTx::CreateTask { task_id: 21, .. }));
+        assert!(matches!(picked[1], MockTx::CreateTask { task_id: 22, .. }));
+        assert_eq!(mempool.len(), 3);
+        assert!(matches!(mempool[0], MockTx::AcceptTask { task_id: 21, .. }));
+        assert!(matches!(mempool[1], MockTx::Challenge { task_id: 21, .. }));
+        assert!(matches!(mempool[2], MockTx::Resolve { task_id: 21, .. }));
     }
-
     #[test]
     fn backoff_is_capped() {
         assert_eq!(round_change_backoff_ms(0, 5, 40), 0);
@@ -23786,6 +23884,22 @@ fn main() -> Result<()> {
     ensure_recoverable_wal_state(&wal_dir, &recovered)?;
 
     let mut state = StateStore::new();
+    state
+        .set_gov_param(
+            0,
+            7_310,
+            "resolve_authority".into(),
+            "demo-resolver-a,demo-resolver-b".into(),
+        )
+        .map_err(|err| anyhow::anyhow!("schedule demo resolve authority failed: {}", err))?;
+    state
+        .set_gov_param(
+            u64::MAX,
+            7_310,
+            "resolve_authority".into(),
+            "demo-resolver-a,demo-resolver-b".into(),
+        )
+        .map_err(|err| anyhow::anyhow!("activate demo resolve authority failed: {}", err))?;
     state.set_balance("challenger", 1_000_000);
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
     for i in 0..args.demo_tasks {
