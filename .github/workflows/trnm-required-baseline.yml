@@ -199,6 +199,11 @@ jobs:
           persist-credentials: false
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Validate PCC1 model and single-input workflow coverage
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_pcc1_workflow_coverage_v1.py
+          python3 formal/poco-convergence-v1/check.py
       - name: Install required host tools
         run: |
           sudo apt-get update
@@ -347,6 +352,15 @@ jobs:
       - name: Rust format
         working-directory: trillionnium
         run: cargo fmt --all -- --check
+      - name: Test PCC1 strict proof and durable read boundary
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-crypto -p trnm-native-execution-v0 --doc --locked
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked -- -D warnings
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked

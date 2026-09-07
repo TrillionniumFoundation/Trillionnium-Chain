@@ -10,6 +10,7 @@ on:
       - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
       - "scripts/ci/check_cargo_offline_ready.sh"
       - "scripts/ci/check_cargo_offline_unchanged.sh"
+      - "scripts/ci/test_pcc1_workflow_coverage_v1.py"
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-finality-types/**"
@@ -19,6 +20,7 @@ on:
       - "trillionnium/crates/trnm-protocol/**"
       - "formal/poco-convergence-v1/**"
       - "config/poco-convergence-v1.json"
+      - "docs/protocol/poco-convergence-v1/**"
       - "trillionnium/fuzz/**"
   push:
     branches: [main]
@@ -30,6 +32,7 @@ on:
       - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
       - "scripts/ci/check_cargo_offline_ready.sh"
       - "scripts/ci/check_cargo_offline_unchanged.sh"
+      - "scripts/ci/test_pcc1_workflow_coverage_v1.py"
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-finality-types/**"
@@ -39,6 +42,7 @@ on:
       - "trillionnium/crates/trnm-protocol/**"
       - "formal/poco-convergence-v1/**"
       - "config/poco-convergence-v1.json"
+      - "docs/protocol/poco-convergence-v1/**"
       - "trillionnium/fuzz/**"
   workflow_dispatch:
 
@@ -80,32 +84,11 @@ jobs:
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
 
-      - name: Replay PCC1 abstract contract and retained mutants
-        run: python3 formal/poco-convergence-v1/check.py
-      - name: Verify PCC1 Rust toolchain and offline inputs
+      - name: Replay PCC1 contract and single-input trigger regressions
         run: |
           set -euo pipefail
-          ./scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0
-          ./scripts/ci/check_cargo_offline_ready.sh \
-            --toolchain 1.95.0 \
-            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}-pcc1" \
-            trillionnium/Cargo.toml:trillionnium/Cargo.lock
-      - name: Test strict cryptographic finality admission and durable application consumer
-        run: |
-          set -euo pipefail
-          git rev-parse HEAD
-          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml \
-            -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked
-          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml \
-            -p trnm-consensus-crypto -p trnm-native-execution-v0 --doc --locked
-      - name: Check PCC1 boundary formatting and Clippy
-        run: |
-          set -euo pipefail
-          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml \
-            -p trnm-consensus-crypto -p trnm-native-execution-v0 -- --check
-          cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml \
-            -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked -- -D warnings
-
+          python3 scripts/ci/test_pcc1_workflow_coverage_v1.py
+          python3 formal/poco-convergence-v1/check.py
       - name: Verify runner-provisioned cargo-fuzz
         run: |
           set -euo pipefail
@@ -130,5 +113,3 @@ jobs:
           set -euo pipefail
           ./scripts/ci/check_cargo_offline_unchanged.sh \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
-          ./scripts/ci/check_cargo_offline_unchanged.sh \
-            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}-pcc1"
