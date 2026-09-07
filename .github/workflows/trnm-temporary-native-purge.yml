@@ -90,6 +90,10 @@ jobs:
           branch=work/remove-cometbft-residue-20260907
           git config user.name "trnm-cleanup-bot"
           git config user.email "trnm-cleanup-bot@users.noreply.github.com"
+          # The built-in Actions token may not create/delete workflow files.
+          # Preserve them here; they are rewritten directly through GitHub after
+          # the code/config/document purge lands.
+          git restore --source=HEAD --staged --worktree .github/workflows
           git add -A
           if git diff --cached --quiet; then
             exit 0
