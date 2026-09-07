@@ -169,7 +169,7 @@ Before voting, the validator MUST also confirm that it has not already signed a 
 (genesis_hash, chain_id, protocol_version, epoch, view)
 ```
 
-The validator signs at most one normal vote for that tuple. PoCO-BFT v0 has no Tendermint-style prevote/precommit phases; a phase value MUST NOT be invented to permit additional votes in the same view.
+The validator signs at most one normal vote for that tuple. PoCO-BFT v0 has no external BFT engine-style prevote/precommit phases; a phase value MUST NOT be invented to permit additional votes in the same view.
 
 The proposal view MUST also be strictly greater than the validator's durable
 `last_voted_view` for the active epoch. A byte-identical retry of the already

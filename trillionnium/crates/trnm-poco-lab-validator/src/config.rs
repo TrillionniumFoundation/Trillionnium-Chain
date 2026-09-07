@@ -30,8 +30,8 @@ use trnm_poco_node::{
 
 use crate::{
     bootstrap_material::{
-        verify_public_zero_comet_bootstrap_v1, VerifiedPublicBootstrapInitialCutV1,
-        VerifiedPublicZeroCometBootstrapV1,
+        verify_public_native_bootstrap_v1, VerifiedPublicBootstrapInitialCutV1,
+        VerifiedPublicNativeBootstrapV1,
     },
     crypto::LabFileWatermark,
     key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1},
@@ -379,7 +379,7 @@ pub struct LoadedValidatorConfig {
     workload_corpus_sha256: [u8; 32],
     workload_policy_sha256: [u8; 32],
     workload_corpus: VerifiedWorkloadCorpusV1,
-    verified_public_bootstrap: Option<VerifiedPublicZeroCometBootstrapV1>,
+    verified_public_bootstrap: Option<VerifiedPublicNativeBootstrapV1>,
 }
 
 /// Secret-free verifier context for independently checking one validator's
@@ -555,7 +555,7 @@ impl LoadedValidatorConfig {
             config.ordinary_start_height,
             &consensus_public_keys,
         )?;
-        let verified_public_bootstrap = verify_public_zero_comet_bootstrap_v1(
+        let verified_public_bootstrap = verify_public_native_bootstrap_v1(
             &run_root,
             &validator_set,
             &consensus_parameters,
@@ -828,7 +828,7 @@ impl LoadedValidatorConfig {
     ) -> Result<VerifiedPublicBootstrapInitialCutV1> {
         self.verified_public_bootstrap
             .as_ref()
-            .map(VerifiedPublicZeroCometBootstrapV1::initial_ordinary_cut_v1)
+            .map(VerifiedPublicNativeBootstrapV1::initial_ordinary_cut_v1)
             .ok_or_else(|| anyhow!("verified public bootstrap was already consumed"))
     }
 
@@ -1506,7 +1506,7 @@ impl PublicReportVerifierContext {
             config.ordinary_start_height,
             &consensus_public_keys,
         )?;
-        let verified_public_bootstrap = verify_public_zero_comet_bootstrap_v1(
+        let verified_public_bootstrap = verify_public_native_bootstrap_v1(
             &observer_root,
             &validator_set,
             &parameters,

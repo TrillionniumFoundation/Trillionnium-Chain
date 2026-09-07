@@ -27,13 +27,13 @@ poco_ai_native_v1_status=DESIGN_ONLY
 poco_ai_native_v1_spec_frozen=false
 poco_ai_native_v1_implemented=false
 poco_ai_native_v1_production_activation=false
-zero_comet_production_dependency_achieved=true
-legacy_comet_migration_residue_present=true
-comet_replacement_complete=false
+native_production_dependency_achieved=true
+legacy_foreign_migration_residue_present=true
+foreign_replacement_complete=false
 production_consensus_activation=false
 ```
 
-`zero_comet_production_dependency_achieved=true` describes only the active
+`native_production_dependency_achieved=true` describes only the active
 PoCO Cargo/build closure. It does not mean the repository has been cleaned or
 that PoCO replacement/cutover is complete; the excluded migration residue is
 tracked by `config/consensus-mainline.json` and the C0/C1 gates.
@@ -56,7 +56,7 @@ an achieved claim. In particular, this document does not authorize:
 
 Every v1 production node, application host, signer, DA worker, sync tool, light
 client, release artifact, and operator path must use TRNM-owned types and must
-have no CometBFT, Tendermint, ABCI, or ABCI++ dependency or compatibility mode.
+have no external BFT engine, external BFT engine, external application adapter, or external application adapter++ dependency or compatibility mode.
 Legacy JSON command envelopes and application schemas may be read only by an
 explicit, one-way migration tool; they are not v1 consensus wire types.
 

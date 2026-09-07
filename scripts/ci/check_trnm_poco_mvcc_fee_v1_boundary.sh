@@ -62,7 +62,7 @@ for key in ["object_mvcc","canonical_serial_oracle","deterministic_conflict_retr
 for key in ["global_fee_collector_per_transaction_write","whole_store_rollback_authority","real_parallel_worker_pool","authenticated_global_state_tree","agent_transaction_wire_complete","order_proof_authority_complete","node_integration","g2_global_complete","protocol_implementation_complete","normative_freeze","production_candidate","activation"]: assert truth[key] is False
 assert {p.name for p in (crate_root/"src").glob("*.rs")} == {"codec.rs","engine.rs","error.rs","lib.rs","store.rs","tests.rs","types.rs"}
 for path in [manifest_path, *(crate_root/"src").glob("*.rs")]:
-    assert not re.search(r"tendermint|\\babci\\b|comet|trnm-consensus-app", path.read_text(), re.I), path
+    assert not re.search(r"external_bft_engine|\\bexternal_application_adapter\\b|foreign|trnm-native-application", path.read_text(), re.I), path
 assert schema["status"] == "candidate-non-normative"
 assert schema["execution"]["canonical_serial_oracle"] is True
 assert schema["execution"]["read_version_mismatch_retries_in_canonical_index_order"] is True

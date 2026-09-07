@@ -511,7 +511,7 @@ no domain state machine and cannot silently promote machine truth.
 `trnm-poco-node-production-v0`, and `trnm-release-bundle-v0`. The boundary crate
 contains versioned ports only; the production crate performs wiring only; the
 release crate validates exact-source artifact, SBOM, provenance, signature, and
-handoff bindings. Legacy `trnm-consensus-app` and `trnm-node` remain excluded
+handoff bindings. Legacy `trnm-native-application` and `trnm-node` remain excluded
 migration residue.
 
 **Composition contract.** Separate closures are maintained for `node-prod-v0`,

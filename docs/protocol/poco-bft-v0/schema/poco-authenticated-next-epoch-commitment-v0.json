@@ -91,7 +91,7 @@
   "does_not_establish": [
     "pre-header commitment derivation or placement in checkpoint 28",
     "identity or proof-digest sealing for non-empty absence evidence",
-    "CometBFT block hash to native PoCO BlockId checkpoint-header authority",
+    "external BFT engine block hash to native PoCO BlockId checkpoint-header authority",
     "native checkpoint body and ordered receipt roots",
     "checkpoint plus two-seal B2-E and joint B2-F handoff",
     "field 13 activation, field 14 new-set finality, and atomic Core epoch transition",

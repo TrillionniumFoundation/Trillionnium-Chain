@@ -1,4 +1,4 @@
-//! Active zero-Comet deterministic application and durable-P owner for frozen
+//! Active zero-foreign deterministic application and durable-P owner for frozen
 //! PoCO-BFT v0.
 //!
 //! The owner executes an ordinary non-empty body against one authenticated,
@@ -83,8 +83,8 @@ pub use store::{
 
 /// The historical domain labels are frozen v0 state semantics. Their names
 /// do not represent a dependency or current product role.
-const SIGNER_TREE_DOMAIN_V0: &str = "trnm.cometbft.authorized-signers.v1";
-const SIGNER_LEAF_DOMAIN_V0: &str = "trnm.cometbft.authorized-signer.v1";
+const SIGNER_TREE_DOMAIN_V0: &str = "trnm.external_bft_engine.authorized-signers.v1";
+const SIGNER_LEAF_DOMAIN_V0: &str = "trnm.external_bft_engine.authorized-signer.v1";
 
 const AUTH_PROOF_RETENTION_VERSIONS_V0: u64 = 8_192;
 

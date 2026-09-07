@@ -78,7 +78,7 @@ Run:
 
 ```bash
 git status --short
-ps -ef | grep -E 'trnm-node|cometbft' | grep -v grep
+ps -ef | grep -E 'trnm-node|external_bft_engine' | grep -v grep
 lsof -iTCP -sTCP:LISTEN | grep -E '26656|26657|26658|26660'
 ```
 
@@ -372,7 +372,7 @@ Before starting, the operator should already know which of these applies:
 Typical rollback command shape:
 
 ```bash
-pkill -f 'trnm-node|cometbft'
+pkill -f 'trnm-node|external_bft_engine'
 ```
 
 Use a more precise process selector if multiple rehearsals may exist on the same host.

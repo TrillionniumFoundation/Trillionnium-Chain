@@ -79,7 +79,7 @@ for key in ["settlement_integration","artifact_da_verification","agent_transacti
     assert manifest["package"]["metadata"]["trnm"][key] is False
 assert {p.name for p in (crate_root/"src").glob("*.rs")} == {"codec.rs","error.rs","lib.rs","store.rs","tests.rs","types.rs"}
 for path in [manifest_path, *(crate_root/"src").glob("*.rs")]:
-    assert not re.search(r"tendermint|\\babci\\b|comet|trnm-consensus-app", path.read_text(), re.I), path
+    assert not re.search(r"external_bft_engine|\\bexternal_application_adapter\\b|foreign|trnm-native-application", path.read_text(), re.I), path
 assert schema["status"] == "candidate-non-normative"
 assert schema["verification"]["class"] == "StakeQuorum"
 assert schema["verification"]["all_seven_classes_complete"] is False

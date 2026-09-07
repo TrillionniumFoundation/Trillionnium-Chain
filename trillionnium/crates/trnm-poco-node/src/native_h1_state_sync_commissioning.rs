@@ -1,4 +1,4 @@
-//! One-way fresh-genesis h1 promotion into the zero-Comet native stores.
+//! One-way fresh-genesis h1 promotion into the zero-foreign native stores.
 //!
 //! The join consumes Core's proof-carrying retirement product together with
 //! the still-live source SafetyStore and virgin signer journal.  It installs

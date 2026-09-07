@@ -460,7 +460,7 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
             bootstrap_result = subprocess.run(
                 [
                     f"/proc/self/fd/{material_builder_descriptor}",
-                    "zero-comet-bootstrap",
+                    "native-only-bootstrap",
                     str(pathlib.Path(template_file.name).resolve()),
                     str(workload_corpus_path.resolve()),
                     workload_corpus_hash,
@@ -511,7 +511,7 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
         not isinstance(bootstrap_summary, dict)
         or set(bootstrap_summary) != expected_bootstrap_summary_keys
         or bootstrap_summary["schema_version"] != 1
-        or bootstrap_summary["status"] != "public-zero-comet-bootstrap-created"
+        or bootstrap_summary["status"] != "public-native-only-bootstrap-created"
         or bootstrap_summary["ordinary_start_height"] != 4
         or bootstrap_summary["validator_count"] != args.validator_count
         or bootstrap_summary["qc_signer_count"] != args.validator_count

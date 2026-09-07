@@ -1,4 +1,4 @@
-//! Frozen-v0 native validator lifecycle without any ABCI transport surface.
+//! Frozen-v0 native validator lifecycle without any external application adapter transport surface.
 
 #![allow(dead_code)]
 
@@ -14,7 +14,7 @@ pub const VALIDATOR_TRANSITION_SCHEMA_V1: &str = "trnm_validator_set_transition_
 pub const VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1: &str = VALIDATOR_TRANSITION_SCHEMA_V1;
 pub const VALIDATOR_LIFECYCLE_SCHEMA_V1: &str = "trnm_validator_lifecycle_v1";
 
-// Mirrors CometBFT v0.38's types.MaxTotalVotingPower.
+// Mirrors external BFT engine v0.38's types.MaxTotalVotingPower.
 const MAX_TOTAL_VOTING_POWER: u64 = (i64::MAX as u64) / 8;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -256,7 +256,7 @@ impl ValidatorLifecycleStateV1 {
     pub fn commitment(&self) -> Result<[u8; 32]> {
         self.validate()?;
         Ok(hash_domain(
-            "trnm.cometbft.validator-lifecycle.v1",
+            "trnm.external_bft_engine.validator-lifecycle.v1",
             &[&serde_json::to_vec(self)?],
         ))
     }
@@ -373,7 +373,7 @@ impl ValidatorLifecycleStateV1 {
 pub fn validator_set_hash_hex(validators: &[ConsensusValidatorV1]) -> Result<String> {
     let validators = canonicalize_validators(validators.to_vec())?;
     Ok(hex::encode(hash_domain(
-        "trnm.cometbft.validator-set.v1",
+        "trnm.external_bft_engine.validator-set.v1",
         &[&serde_json::to_vec(&validators)?],
     )))
 }
@@ -470,8 +470,8 @@ fn canonicalize_validators(
             "duplicate validator public key"
         );
         ensure!(
-            addresses.insert(comet_address(&key)),
-            "duplicate CometBFT validator address"
+            addresses.insert(foreign_address(&key)),
+            "duplicate external BFT engine validator address"
         );
         ensure!(
             validator.voting_power > 0,
@@ -479,14 +479,14 @@ fn canonicalize_validators(
         );
         ensure!(
             validator.voting_power <= MAX_TOTAL_VOTING_POWER,
-            "validator voting power exceeds CometBFT maximum"
+            "validator voting power exceeds external BFT engine maximum"
         );
         total = total
             .checked_add(validator.voting_power)
             .context("validator total voting power overflow")?;
         ensure!(
             total <= MAX_TOTAL_VOTING_POWER,
-            "validator total voting power exceeds CometBFT maximum"
+            "validator total voting power exceeds external BFT engine maximum"
         );
     }
     Ok(validators)
@@ -567,7 +567,7 @@ fn validate_overlap(
     Ok(())
 }
 
-fn comet_address(public_key: &[u8; 32]) -> [u8; 20] {
+fn foreign_address(public_key: &[u8; 32]) -> [u8; 20] {
     let digest = Sha256::digest(public_key);
     let mut address = [0u8; 20];
     address.copy_from_slice(&digest[..20]);

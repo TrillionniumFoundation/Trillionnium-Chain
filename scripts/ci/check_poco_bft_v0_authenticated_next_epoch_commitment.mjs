@@ -683,7 +683,7 @@ function validateScenario(raw, candidateVector, label) {
 }
 
 function validateSourceSurface() {
-  const source = fs.readFileSync(path.join(ROOT, "trillionnium/crates/trnm-consensus-app/src/poco_epoch_commitment.rs"), "utf8");
+  const source = fs.readFileSync(path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_epoch_commitment.rs"), "utf8");
   const constructor = source.match(/pub\(crate\) fn authorize_poco_next_epoch_commitment_v0\s*\(([\s\S]*?)\)\s*->[^{]+\{/);
   invariant(constructor !== null, "production commitment constructor missing");
   for (const required of [
@@ -767,7 +767,7 @@ function validateSchema(schema) {
     "commitment-field substitution", "parent ID substitution", "parent timestamp substitution",
   ]) invariant(schema.negative_families.includes(family), `schema missing negative ${family}`);
   for (const open of [
-    "CometBFT block hash to native PoCO BlockId checkpoint-header authority",
+    "external BFT engine block hash to native PoCO BlockId checkpoint-header authority",
     "native checkpoint body and ordered receipt roots",
     "checkpoint plus two-seal B2-E and joint B2-F handoff",
     "field 13 activation, field 14 new-set finality, and atomic Core epoch transition",

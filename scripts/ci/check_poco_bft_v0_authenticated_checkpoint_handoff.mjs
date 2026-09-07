@@ -39,10 +39,10 @@ const VECTOR_PATH = process.env.TRNM_POCO_AUTHENTICATED_CHECKPOINT_HANDOFF_VECTO
 );
 const CANDIDATE_VECTOR_PATH = path.join(ROOT, "docs/protocol/poco-bft-v0/vectors/poco-authenticated-candidate-selection-v0.json");
 const H3A_VECTOR_PATH = path.join(ROOT, "docs/protocol/poco-bft-v0/vectors/poco-authenticated-next-epoch-commitment-v0.json");
-const CHECKPOINT_HEADER_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-consensus-app/src/poco_checkpoint_header.rs");
-const JOINT_HANDOFF_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-consensus-app/src/poco_joint_handoff.rs");
-const NATIVE_EXECUTION_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-consensus-app/src/native_execution.rs");
-const APP_LIB_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-consensus-app/src/lib.rs");
+const CHECKPOINT_HEADER_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_checkpoint_header.rs");
+const JOINT_HANDOFF_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_joint_handoff.rs");
+const NATIVE_EXECUTION_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-application/src/native_execution.rs");
+const APP_LIB_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-application/src/lib.rs");
 
 const SCHEMA_ID = "trnm.poco-bft.authenticated-checkpoint-handoff.v0";
 const FIXTURE_SCHEMA = "trnm.poco-bft.authenticated-checkpoint-handoff-fixture.v0";
@@ -69,7 +69,7 @@ const PROFILE_KEYS = [
   "seal_2_height",
   "activation_height",
   "native_execution_profile",
-  "comet_hash_mapping",
+  "foreign_hash_mapping",
   "aggregate_digest",
   "epoch_anchor_qc_output",
 ];
@@ -90,7 +90,7 @@ const NEGATIVE_FAMILIES = Object.freeze([
   "lead-two parameter regression",
   "native execution parent, target, state, payload, receipt, or authorization substitution",
   "prepare-to-bind header, root, commitment, timestamp, proposer, or native BlockId TOCTOU substitution",
-  "Comet/native identity substitution",
+  "foreign/native identity substitution",
   "checkpoint parent or ordinary justify-QC splice",
   "checkpoint/seal kind, ancestry, root, state, commitment, proposal, QC subset, or strict signature substitution",
   "terminal header/QC, descriptor, activation context, role-root, one-sided quorum, duplicate signer, or handoff signature-domain substitution",
@@ -103,7 +103,7 @@ const NEGATIVE_CASE_IDS = Object.freeze([
   "native_execution_authorization_cross_scenario",
   "joint_private_seal_bitflip",
   "joint_private_seal_cross_scenario",
-  "recursive_comet_field_injection",
+  "recursive_foreign_field_injection",
 ]);
 const EMPTY_PAYLOAD_CEV0_HEX = "00000000";
 const EMPTY_RECEIPTS_CEV0_HEX = "00000000";
@@ -249,7 +249,7 @@ function validateProfile(profile, label) {
     invariant(rustU64(profile[key], `${label}.${key}`) === expected, `${label}.${key}: compact geometry drift`);
   }
   invariant(profile.native_execution_profile === "empty_state_preserving_no_runtime_receipt_mapping_claim", `${label}: native execution profile drift`);
-  invariant(profile.comet_hash_mapping === null, `${label}: Comet hash mapping must remain explicitly absent`);
+  invariant(profile.foreign_hash_mapping === null, `${label}: foreign hash mapping must remain explicitly absent`);
   invariant(profile.aggregate_digest === null, `${label}: aggregate digest must remain absent`);
   invariant(profile.epoch_anchor_qc_output === false, `${label}: EpochAnchorQC output must remain absent`);
 }
@@ -271,7 +271,7 @@ function validateSchema(schema, candidateRaw, h3aRaw) {
   invariant(schema.source_corpora.commitment_vector_path === H3A_VECTOR_RELATIVE, "schema commitment path drift");
   invariant(schema.source_corpora.commitment_vector_sha256_hex === sha256(h3aRaw), "schema commitment SHA drift");
   invariant(schema.vector_contract.fixture_schema === FIXTURE_SCHEMA && schema.vector_contract.fixture_scope === FIXTURE_SCOPE, "schema vector identity drift");
-  invariant(schema.vector_contract.identity_nonclaims.comet_hash_mapping === null, "schema maps a Comet hash");
+  invariant(schema.vector_contract.identity_nonclaims.foreign_hash_mapping === null, "schema maps a foreign hash");
   invariant(schema.vector_contract.identity_nonclaims.aggregate_digest === null, "schema invents aggregate digest");
   invariant(schema.vector_contract.identity_nonclaims.epoch_anchor_qc_output === false, "schema invents EpochAnchorQC output");
   invariant(
@@ -387,8 +387,8 @@ function lockConstructorParameters(signature, expected, label) {
     `${label}: constructor parameter surface drift`,
   );
   invariant(
-    !/(?:comet|cometbft|request[_a-z]*hash|block[_a-z]*hash|part[_a-z]*set)/i.test(signature),
-    `${label}: host/Comet identity entered private authority constructor`,
+    !/(?:foreign|external_bft_engine|request[_a-z]*hash|block[_a-z]*hash|part[_a-z]*set)/i.test(signature),
+    `${label}: host/foreign identity entered private authority constructor`,
   );
 }
 
@@ -599,16 +599,16 @@ function validatePrivateSourceSurface() {
   }
 }
 
-function rejectCometValues(value, label = "vector") {
+function rejectforeignValues(value, label = "vector") {
   if (Array.isArray(value)) {
-    value.forEach((entry, index) => rejectCometValues(entry, `${label}[${index}]`));
+    value.forEach((entry, index) => rejectforeignValues(entry, `${label}[${index}]`));
     return;
   }
   if (value === null || typeof value !== "object") return;
   for (const [key, nested] of Object.entries(value)) {
-    const allowedNullMarker = label === "vector.compact_profile" && key === "comet_hash_mapping" && nested === null;
-    invariant(allowedNullMarker || !/(?:comet|cometbft|request_hash|part_set)/i.test(key), `${label}.${key}: forbidden Comet hash/BlockID value field`);
-    rejectCometValues(nested, `${label}.${key}`);
+    const allowedNullMarker = label === "vector.compact_profile" && key === "foreign_hash_mapping" && nested === null;
+    invariant(allowedNullMarker || !/(?:foreign|external_bft_engine|request_hash|part_set)/i.test(key), `${label}.${key}: forbidden foreign hash/BlockID value field`);
+    rejectforeignValues(nested, `${label}.${key}`);
   }
 }
 
@@ -766,7 +766,7 @@ function validateVectorStructure(vector, candidateRaw, h3aRaw) {
   invariant(vector.candidate_vector_path === CANDIDATE_VECTOR_RELATIVE && vector.candidate_vector_sha256_hex === sha256(candidateRaw), "vector candidate source path/SHA drift");
   invariant(vector.commitment_vector_path === H3A_VECTOR_RELATIVE && vector.commitment_vector_sha256_hex === sha256(h3aRaw), "vector H3a source path/SHA drift");
   validateProfile(vector.compact_profile, "vector.compact_profile");
-  rejectCometValues(vector);
+  rejectforeignValues(vector);
   validateScenarioStructure(vector.positive, "authenticated_positive_checkpoint_handoff", false, 0, "vector.positive");
   validateScenarioStructure(vector.authenticated_fallback, "authenticated_fallback_checkpoint_handoff", true, 3, "vector.authenticated_fallback");
   invariant(vector.positive.bound_authority.joint_authorization_id_hex !== vector.authenticated_fallback.bound_authority.joint_authorization_id_hex, "positive/fallback joint authority splice");
@@ -1219,15 +1219,15 @@ function runNegativeSelfChecks(vector, positive, fallback) {
   );
 
   expectNamedNegative(
-    "recursive_comet_field_injection",
-    () => rejectCometValues({
+    "recursive_foreign_field_injection",
+    () => rejectforeignValues({
       checkpoint: {
         host_transport: {
-          comet_block_id_hex: "00".repeat(32),
+          foreign_block_id_hex: "00".repeat(32),
         },
       },
-    }, "negative.recursive_comet_field_injection"),
-    /forbidden Comet hash\/BlockID value field/,
+    }, "negative.recursive_foreign_field_injection"),
+    /forbidden foreign hash\/BlockID value field/,
   );
 
   invariant(

@@ -9,8 +9,8 @@ It does not authorize validator deployment. The machine-readable status source i
 
 ## 1. Hard operating boundary
 
-The only future production consensus route is Native PoCO-BFT. CometBFT,
-`trnm-consensus-app`, `trnm-node`, legacy CLI/simulator binaries, and historical
+The only future production consensus route is Native PoCO-BFT. external BFT engine,
+`trnm-native-application`, `trnm-node`, legacy CLI/simulator binaries, and historical
 devnet packages are migration residue or differential fixtures. Operators must
 not start them as a public-testnet or production finality authority.
 
@@ -158,3 +158,7 @@ No operator may set or represent `production_candidate`,
 true based on this manual. Promotion requires every canonical gate, required
 GitHub setting, independent review, and exact-source external evidence record to
 be accepted under the current development plan.
+
+## Native-only operation
+
+Operators run only the native PoCO-BFT node path. No external consensus process, adapter process, fallback binary, or compatibility data directory is supported.

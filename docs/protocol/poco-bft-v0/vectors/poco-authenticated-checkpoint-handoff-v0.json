@@ -18,7 +18,7 @@
     "seal_2_height": 30,
     "activation_height": 31,
     "native_execution_profile": "empty_state_preserving_no_runtime_receipt_mapping_claim",
-    "comet_hash_mapping": null,
+    "foreign_hash_mapping": null,
     "aggregate_digest": null,
     "epoch_anchor_qc_output": false
   },

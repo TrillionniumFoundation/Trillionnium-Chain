@@ -14,7 +14,7 @@ use std::{
 
 use ed25519_dalek::{Signer, SigningKey};
 use recovery_process_watermark::RecoveryProcessFileWatermarkV0;
-use trnm_consensus_app::{
+use trnm_native_application::{
     initialize_native_validation_recovery_test_fixture_v0,
     NativeValidationRecoveredInvalidReasonV0, NativeValidationRecoveryTestFixtureConfigV0,
     NativeValidationRecoveryTestFixtureStateV0,

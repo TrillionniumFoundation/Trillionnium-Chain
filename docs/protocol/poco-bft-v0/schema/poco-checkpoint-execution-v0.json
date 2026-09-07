@@ -78,7 +78,7 @@
   "production_paths": [
     "InitChain authenticates the authority object into AppHash",
     "startup requires local config equality with the authenticated authority object",
-    "ABCI snapshot v3/v4 restore requires the same equality before installation",
+    "external application adapter snapshot v3/v4 restore requires the same equality before installation",
     "ProcessProposal and FinalizeBlock recompute the capability from actual block inputs and execution results"
   ],
   "does_not_establish": [

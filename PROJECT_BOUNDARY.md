@@ -1,7 +1,7 @@
 # Trillionnium Chain project boundary
 
 The canonical repository is `TrillionniumFoundation/Trillionnium-Chain`. Its
-active consensus lane is **native PoCO-BFT v0**. CometBFT code is retained only
+active consensus lane is **native PoCO-BFT v0**. external BFT engine code is retained only
 for one-way migration and historical differential replay; it cannot authorize a
 release, validator deployment, or production-readiness claim.
 

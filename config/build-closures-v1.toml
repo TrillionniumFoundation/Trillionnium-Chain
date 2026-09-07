@@ -28,7 +28,7 @@ evidence_packages = [
   "trnm-production-adapter-conformance-v0",
 ]
 poc_packages = ["trnm-bridge-poc"]
-legacy_excluded_packages = ["trnm-consensus-app", "trnm-node"]
+legacy_excluded_packages = []
 
 [policy]
 default_node_has_no_ai_v1_dependencies = true

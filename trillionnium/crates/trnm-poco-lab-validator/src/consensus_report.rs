@@ -196,7 +196,7 @@ pub struct SignedConsensusRunReportV1 {
     pub maximum_proposal_archive_entries: u64,
     pub maximum_quorum_certificate_archive_entries: u64,
     pub maximum_signed_replay_archive_entries: u64,
-    /// First non-bootstrap height. The authenticated zero-Comet bundle fixes
+    /// First non-bootstrap height. The authenticated zero-foreign bundle fixes
     /// empty h1-h3, so the current laboratory profile requires h4.
     pub ordinary_start_height: u64,
     /// Always zero: the origin of this process-local `Instant` interval.

@@ -1,4 +1,4 @@
-//! Public zero-Comet h1-h3 bootstrap material for the G3 laboratory chain.
+//! Public zero-foreign h1-h3 bootstrap material for the G3 laboratory chain.
 //!
 //! The author is a coordinator-only offline boundary. It admits one exact
 //! canonical validator inventory, its strict PKCS#8 keys, the frozen reference
@@ -41,7 +41,7 @@ use crate::{
 };
 
 const TEMPLATE_MAX_BYTES_V1: u64 = 2 * 1024 * 1024;
-const BOOTSTRAP_SCHEMA_V1: &str = "trnm.poco.zero-comet-public-bootstrap.v1";
+const BOOTSTRAP_SCHEMA_V1: &str = "trnm.poco.native-only-public-bootstrap.v1";
 const VALIDATOR_SET_SCHEMA_VERSION_V1: u32 = 2;
 const ORDINARY_START_HEIGHT_V1: u64 = 4;
 const CONSENSUS_PARAMETERS_PROFILE_V1: &str = "reference-shadow-v0";
@@ -185,7 +185,7 @@ struct AuthoredPublicBootstrapV1 {
 /// validator can consume h1-h3 and the proof into Node commissioning exactly
 /// once, while observer verification may explicitly discard the owner.
 #[derive(Debug)]
-pub struct VerifiedPublicZeroCometBootstrapV1 {
+pub struct VerifiedPublicNativeBootstrapV1 {
     proposals: [SignedProposalV0; 3],
     finality_proof: FinalityProofV0,
 }
@@ -209,7 +209,7 @@ pub struct VerifiedPublicBootstrapInitialCutV1 {
     pub application_state_root: [u8; 32],
 }
 
-impl VerifiedPublicZeroCometBootstrapV1 {
+impl VerifiedPublicNativeBootstrapV1 {
     pub(crate) fn into_node_parts_v1(self) -> ([SignedProposalV0; 3], FinalityProofV0) {
         (self.proposals, self.finality_proof)
     }
@@ -241,12 +241,12 @@ impl VerifiedPublicZeroCometBootstrapV1 {
 /// Independently re-admits one deployed public bundle using the existing
 /// proposal wire, trusted-genesis CEV0 finality decoder, frozen parameters,
 /// and canonical native execution prefix.
-pub fn verify_public_zero_comet_bootstrap_v1(
+pub fn verify_public_native_bootstrap_v1(
     run_root: impl AsRef<Path>,
     validator_set: &ValidatorSet,
     parameters: &ConsensusParametersV0,
     workload: &VerifiedWorkloadCorpusV1,
-) -> Result<VerifiedPublicZeroCometBootstrapV1> {
+) -> Result<VerifiedPublicNativeBootstrapV1> {
     let run_root = run_root
         .as_ref()
         .canonicalize()
@@ -436,7 +436,7 @@ pub fn verify_public_zero_comet_bootstrap_v1(
     let proposals: [SignedProposalV0; 3] = proposals
         .try_into()
         .map_err(|_| anyhow!("verified bootstrap proposal cardinality changed"))?;
-    Ok(VerifiedPublicZeroCometBootstrapV1 {
+    Ok(VerifiedPublicNativeBootstrapV1 {
         proposals,
         finality_proof: proof,
     })
@@ -453,11 +453,11 @@ fn verify_file_ref(reference: &BootstrapFileRefV1, path: &str, bytes: &[u8]) -> 
     Ok(())
 }
 
-/// Authors and writes one create-new, public, zero-Comet h1-h3 bootstrap
+/// Authors and writes one create-new, public, zero-foreign h1-h3 bootstrap
 /// bundle. All input and output paths must be absolute. The bootstrap output
 /// directory must not exist.
 #[allow(clippy::too_many_arguments)]
-pub fn build_public_zero_comet_bootstrap_v1(
+pub fn build_public_native_bootstrap_v1(
     validator_set_template_path: impl AsRef<Path>,
     workload_corpus_path: impl AsRef<Path>,
     workload_corpus_sha256: [u8; 32],
@@ -586,7 +586,7 @@ pub fn build_public_zero_comet_bootstrap_v1(
 
     Ok(BuiltPublicBootstrapSummaryV1 {
         schema_version: 1,
-        status: "public-zero-comet-bootstrap-created",
+        status: "public-native-only-bootstrap-created",
         validator_set_sha256: hex::encode(sha256(&authored.validator_set_bytes)),
         genesis_hash: hex::encode(authored.validator_set.genesis_hash().as_bytes()),
         validator_set_id: hex::encode(authored.validator_set.id().as_bytes()),
@@ -1511,7 +1511,7 @@ mod tests {
         ] {
             let public = temporary.path().join(label);
             fs::DirBuilder::new().mode(0o700).create(&public).unwrap();
-            let summary = build_public_zero_comet_bootstrap_v1(
+            let summary = build_public_native_bootstrap_v1(
                 template_path,
                 &corpus,
                 corpus_hash,
@@ -1576,7 +1576,7 @@ mod tests {
                 verifier_root.join("public/bootstrap"),
             )
             .unwrap();
-            verify_public_zero_comet_bootstrap_v1(
+            verify_public_native_bootstrap_v1(
                 &verifier_root,
                 &set,
                 &ConsensusParametersV0::reference_shadow_v0(),

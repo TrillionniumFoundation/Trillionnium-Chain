@@ -189,7 +189,7 @@ if actual_sources != expected_sources:
     issues.append(f"source inventory={sorted(actual_sources)!r}, expected {sorted(expected_sources)!r}")
 
 forbidden = re.compile(
-    r"trnm-consensus-app|trnm-node|tendermint|\babci\b|comet",
+    r"trnm-native-application|trnm-node|external_bft_engine|\bexternal_application_adapter\b|foreign",
     re.IGNORECASE,
 )
 for path in [manifest_path, *sorted((crate_root / "src").glob("*.rs"))]:

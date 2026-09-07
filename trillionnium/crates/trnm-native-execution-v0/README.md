@@ -1,6 +1,6 @@
 # `trnm-native-execution-v0`
 
-Active zero-Comet deterministic application and durable execution-artifact-P
+Active zero-foreign deterministic application and durable execution-artifact-P
 owner for the frozen PoCO-BFT v0 profile.
 
 For ordinary, non-empty successor blocks, the application:
@@ -103,9 +103,9 @@ only; `qc_as_application_commit`, `core_application_seal_eligible`, and
 ## Fixed differential corpus and historical audit
 
 The automatic boundary gate never builds or executes the excluded historical
-`trnm-consensus-app` archive. It binds the archived authoring source, the
+`trnm-native-application` archive. It binds the archived authoring source, the
 archive-local lockfile, and the raw SHA-256 of the committed runtime/JMT vector,
-then runs only the zero-Comet active consumer. The complete durable target is
+then runs only the zero-foreign active consumer. The complete durable target is
 also recomputed from its authenticated snapshot during fresh readback; the
 caller-provided expected roots are never treated as execution authority.
 `native-complete-durable-p-v0.json` additionally pins the full four-root
@@ -121,12 +121,12 @@ runtime/JMT vector:
 legacy_target="$(mktemp -d "${TMPDIR:-/tmp}/trnm-poco-legacy-vector-target.XXXXXX")"
 trap 'rm -rf -- "$legacy_target"' EXIT
 CARGO_TARGET_DIR="$legacy_target" cargo test \
-  --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
+  --manifest-path trillionnium/crates/trnm-native-application/Cargo.toml \
   --locked --offline \
   checked_native_execution_differential_vector_is_legacy_reproducible_v0
 ```
 
-That command intentionally compiles archived Tendermint/ABCI dependencies. It
+That command intentionally compiles archived external BFT engine/external application adapter dependencies. It
 is manual historical audit only; automatic workflows and the main truth gate
 must never invoke it.
 

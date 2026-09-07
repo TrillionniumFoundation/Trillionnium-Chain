@@ -15,7 +15,7 @@ This record binds the isolated `trillionnium/fuzz/Cargo.lock` refresh and the as
 | Path | SHA-256 |
 | --- | --- |
 | `trillionnium/fuzz/Cargo.lock` | `f856eaedb0fd390f2a7d47c98efbe7f69ba17669257653803068758dbb089a55` |
-| `.github/workflows/trnm-cometbft-spike.yml` | `c4a9221922641336265e324f974f79f267c6dbf425afad5c36cd9a2ce874d0b4` |
+| `.github/workflows/trnm-external_bft_engine-spike.yml` | `c4a9221922641336265e324f974f79f267c6dbf425afad5c36cd9a2ce874d0b4` |
 | `.github/workflows/trnm-gate-quick-check.yml` | `c0c8939df55e3d286d52afd82dba7f44491d1b421165d95d3886566ee29aeef9` |
 | `.github/workflows/trnm-merge-gates.yml` | `083ed744e1b1ffa3fb60fbf9bc32a384ed52bfcb2e1e38ad776fb0bc20aac5bd` |
 | `.github/workflows/trnm-poco-bft-v0.yml` | `7a3b99140c6ac9934ca7659e53483ac822ed68976af1725bbe1a27a0923f53cc` |

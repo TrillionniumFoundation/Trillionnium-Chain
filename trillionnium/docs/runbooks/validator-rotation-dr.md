@@ -193,7 +193,7 @@ Minimum commands:
 
 ```bash
 git status --short
-ps -ef | grep -E 'trnm-node|cometbft' | grep -v grep
+ps -ef | grep -E 'trnm-node|external_bft_engine' | grep -v grep
 lsof -iTCP -sTCP:LISTEN | grep -E '26656|26657|26658|26660'
 python3 scripts/v2/check_validator_config_bundle.py \
   <incoming-validator-config.toml> \

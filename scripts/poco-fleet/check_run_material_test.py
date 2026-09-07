@@ -42,7 +42,7 @@ def fake_material_builder(parent: pathlib.Path) -> tuple[pathlib.Path, str]:
             sys.path.insert(0, __POCO_FLEET_HELPER_DIRECTORY__)
             from poco_consensus_contract import canonical_lab_genesis_hash
 
-            if len(sys.argv) == 10 and sys.argv[1] == "zero-comet-bootstrap":
+            if len(sys.argv) == 10 and sys.argv[1] == "native-only-bootstrap":
                 template = json.loads(pathlib.Path(sys.argv[2]).read_text(encoding="utf-8"))
                 corpus_path = pathlib.Path(sys.argv[3])
                 policy_path = pathlib.Path(sys.argv[5])
@@ -127,7 +127,7 @@ def fake_material_builder(parent: pathlib.Path) -> tuple[pathlib.Path, str]:
                     return hashlib.sha256(label + bytes.fromhex(genesis_hash)).hexdigest()
                 bootstrap = {
                     "schema_version": 1,
-                    "schema": "trnm.poco.zero-comet-public-bootstrap.v1",
+                    "schema": "trnm.poco.native-only-public-bootstrap.v1",
                     "chain_id": template["chain_id"],
                     "genesis_hash": genesis_hash,
                     "protocol_version": 0,
@@ -162,7 +162,7 @@ def fake_material_builder(parent: pathlib.Path) -> tuple[pathlib.Path, str]:
                 (bootstrap_dir / "bootstrap.json").write_bytes(bootstrap_bytes)
                 print(json.dumps({
                     "schema_version": 1,
-                    "status": "public-zero-comet-bootstrap-created",
+                    "status": "public-native-only-bootstrap-created",
                     "validator_set_sha256": hashlib.sha256(validator_set_bytes).hexdigest(),
                     "genesis_hash": genesis_hash,
                     "validator_set_id": validator_set_id,

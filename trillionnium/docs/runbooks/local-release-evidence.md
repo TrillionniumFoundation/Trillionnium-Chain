@@ -83,7 +83,7 @@ EXPECTED_HEAD=""
 
 > “本次证据包/RC manifest 仅说明该分支在该时间点、该环境下的本地演练结果；当前是否可发布，仍以 `truth_source=` 指向的 `RELEASE_READINESS.md` 为准。”
 
-这条口径的目的，是把 Cosmos/CometBFT 式的 validator/operator handoff 做到 **可审计、可复放、可回滚**，避免“终端看起来绿过一次”就被误转述成 release 结论。
+这条口径的目的，是把 Cosmos/external BFT engine 式的 validator/operator handoff 做到 **可审计、可复放、可回滚**，避免“终端看起来绿过一次”就被误转述成 release 结论。
 
 ## RC 复现与回滚留痕（M3）
 

@@ -4,12 +4,12 @@ use std::{env, path::PathBuf};
 
 use anyhow::{bail, Context, Result};
 use trnm_poco_lab_validator::{
-    bootstrap_material::build_public_zero_comet_bootstrap_v1,
+    bootstrap_material::build_public_native_bootstrap_v1,
     workload_corpus::{build_public_workload_corpus_range_v1, MAX_WORKLOAD_HEIGHT_V1},
 };
 
 fn usage() -> &'static str {
-    "usage:\n  trnm-poco-lab-material-builder workload-corpus <chain-id> <ordinary-start-height> <max-height> <absolute-corpus-output> <absolute-policy-output>\n  trnm-poco-lab-material-builder zero-comet-bootstrap <absolute-validator-set-template> <absolute-workload-corpus> <workload-corpus-sha256> <absolute-workload-policy> <workload-policy-sha256> <absolute-consensus-secret-directory> <absolute-validator-set-output> <absolute-bootstrap-output-directory>"
+    "usage:\n  trnm-poco-lab-material-builder workload-corpus <chain-id> <ordinary-start-height> <max-height> <absolute-corpus-output> <absolute-policy-output>\n  trnm-poco-lab-material-builder native-only-bootstrap <absolute-validator-set-template> <absolute-workload-corpus> <workload-corpus-sha256> <absolute-workload-policy> <workload-policy-sha256> <absolute-consensus-secret-directory> <absolute-validator-set-output> <absolute-bootstrap-output-directory>"
 }
 
 fn parse_height(value: Option<std::ffi::OsString>, field: &str) -> Result<u64> {
@@ -39,7 +39,7 @@ fn main() -> Result<()> {
         .ok_or_else(|| anyhow::anyhow!(usage()))?;
     match command.as_str() {
         "workload-corpus" => build_workload(arguments),
-        "zero-comet-bootstrap" => build_bootstrap(arguments),
+        "native-only-bootstrap" => build_bootstrap(arguments),
         _ => bail!(usage()),
     }
 }
@@ -86,7 +86,7 @@ fn build_bootstrap(mut arguments: impl Iterator<Item = std::ffi::OsString>) -> R
     if arguments.next().is_some() {
         bail!(usage());
     }
-    let summary = build_public_zero_comet_bootstrap_v1(
+    let summary = build_public_native_bootstrap_v1(
         validator_set_template,
         workload_corpus,
         workload_corpus_sha256,

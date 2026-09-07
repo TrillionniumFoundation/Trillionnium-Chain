@@ -521,7 +521,7 @@ same zero-absence H2 proof-bundle limit without cloning the full JMT history.
 Application replans the bounded exact writes against the supplied tree history
 and requires the same target root, so a `TreeUpdateBatch` from another history
 with an equal live root cannot be transplanted.
-It does not yet make the existing CometBFT runtime authoritative, close every
+It does not yet make the existing external BFT engine runtime authoritative, close every
 cross-entry business relation, prove a checkpoint body/receipt, or rerun B2-G
 on an authenticated normalized projection. No checkpoint-binding or epoch-
 transition authority is produced by H3a.
@@ -529,7 +529,7 @@ transition authority is produced by H3a.
 ## 17. Production persistence and restore seal
 
 B2-H3b1 applies one physical namespace-8 projection validator to in-memory
-state encode/decode, SQLite startup and schema migration, and ABCI snapshot
+state encode/decode, SQLite startup and schema migration, and external application adapter snapshot
 restore v3/v4. An inactive state may contain zero PoCO leaves. An active state
 MUST contain exactly one exact manifest and only the physical entry leaves
 named by that manifest; every physical key and semantic value MUST exact-
@@ -786,7 +786,7 @@ call, as bounded below. No H3b2b1 receipt, diagnostic status, prune-kernel
 witness or earlier inert B2-G token may mint candidate, handoff, activation or
 Core-transition authority.
 
-## 20. Application-authenticated B2-G reconstruction (implementation and ABCI/restart evidence landed; remaining evidence in progress)
+## 20. Application-authenticated B2-G reconstruction (implementation and external application adapter/restart evidence landed; remaining evidence in progress)
 
 H3b2b2 appends a bounded `future_candidate_registrations` family to kind 16.
 An empty family is omitted so every frozen H3b2b1 authority byte remains

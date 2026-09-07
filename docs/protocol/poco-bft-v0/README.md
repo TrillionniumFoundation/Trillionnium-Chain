@@ -233,7 +233,7 @@ B2-H2. B2-H3a now freezes the fifteen exact semantic-value layouts and an
 atomic compare-and-set entry/manifest JMT transition kernel. Empty ordinary
 versions carry the previous manifest; a scheduled cutoff explicitly refreshes
 its height even when empty. B2-H3b1 now seals that exact physical projection
-across in-memory codecs, SQLite startup/migration and precommit, and ABCI
+across in-memory codecs, SQLite startup/migration and precommit, and external application adapter
 snapshot restore v3/v4, rejecting hidden or malformed namespace leaves before
 any SQLite row is written. It still authorizes no production PoCO mutation
 source. B2-H3b2a now genesis-authenticates the chain/genesis/profile authority
@@ -357,8 +357,8 @@ or a second value for an occupied slot. The crate-private durable reserve/bind
 wrappers and a focused same-process reopen/conflict/corruption Rust suite have
 landed. Replay rows are inert
 comparison material and cannot restore an opaque authority. The path is still
-not production-reachable: the sidecar is not wired to ABCI startup or a
-complete Comet/native carrier/host, covers checkpoints only rather than the two
+not production-reachable: the sidecar is not wired to external application adapter startup or a
+complete foreign/native carrier/host, covers checkpoints only rather than the two
 seal blocks, and is not a signer persist-before-sign journal. There is no live
 seal proposal/vote/signing plumbing, and `request.hash` is never reinterpreted
 as a native ID. Fields 13/14, epoch-anchor
@@ -390,9 +390,9 @@ payload-validation request. The production parent constructor consumes that
 capability and opens only an exact committed-head height/root; synthetic
 genesis is explicitly headerless and a speculative/non-head parent is typed
 retryable source mismatch until a canonical overlay store exists. The general
-host/ABCI runtime view remains unwired, while the bounded production validation
+host/external application adapter runtime view remains unwired, while the bounded production validation
 cursor owns a private `prior delta -> exact authenticated snapshot` fallible
-view. Legacy `load_object` remains its prior direct read, and the ABCI outcome
+view. Legacy `load_object` remains its prior direct read, and the external application adapter outcome
 policy is unchanged. Snapshot begin relies on the startup full scan for
 future orphan value/node/stale-index rows; its pin spans only one cloned store
 family, not independent handles or processes, and no external watermark or OS
@@ -914,7 +914,7 @@ and valid commitments from that outcome and can form only the corresponding
 cannot form an input. This legacy runtime-only carrier is type-level callback
 material only: it does not itself call `Core::step`, persist or deliver an
 outbox, or provide
-`AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. The
+`AuthorizedNativeCheckpointExecutionV0`, checkpoint, or external application adapter authority. The
 pre-terminal failure carriers share that private,
 non-cloneable, non-serializable, no-parts/no-standalone-cause boundary.
 Successive PoCO/validator items now use that same owning cursor: exact prior
@@ -941,7 +941,7 @@ private owner rather than a Core callback, but schema v9 can now consume only
 that real owner into the inert `Valid` artifact and attempt-zero
 `callback_pending` outbox described above. Plan application/persistence and
 head update, callback delivery, speculative-parent overlays, cross-epoch/
-handoff, production host/Core wiring, ABCI wiring, and cross-process rollback
+handoff, production host/Core wiring, external application adapter wiring, and cross-process rollback
 protection remain hard open prerequisites before the general terminal/Core
 callback path. The
 deterministic-invalid state/receipts-root slice alone now has a process-local
@@ -1386,7 +1386,7 @@ does not itself promote a Core `Valid` callback. Schema v9 can consume only its
 real matching owner into an inert, deeply revalidatable Valid-P artifact plus
 attempt-zero outbox, but does not deliver that callback or apply any state.
 Plan application/persistence/head update, speculative-parent and cross-epoch/
-handoff support, production callback durability/recovery, and Core/ABCI host
+handoff support, production callback durability/recovery, and Core/external application adapter host
 integration remain open. Until the overlay/finalization owner can consume and
 GC Valid-P, its exact parent history is pinned and the legacy committed-head
 writer fails closed.
@@ -1395,10 +1395,10 @@ estimate-failure token, preserving deterministic versus typed state-read
 failure without creating a receipt or mutation; operator recovery estimation
 also remains independent of the on-chain fee-policy read. The legacy
 infallible estimator is still the only application caller, so the new API is
-not simulation, ABCI, or terminal authority. Typed historical cutoff/projection
+not simulation, external application adapter, or terminal authority. Typed historical cutoff/projection
 reads, the exact estimate-input carrier, host wiring/terminal promotion,
-speculative-parent storage, and ABCI integration
-remain open. The existing ABCI path still erases errors
+speculative-parent storage, and external application adapter integration
+remain open. The existing external application adapter path still erases errors
 into its development-oracle behavior,
-and ABCI `ProcessProposal` has no truthful `Unavailable` status. Neither
+and external application adapter `ProcessProposal` has no truthful `Unavailable` status. Neither
 `REJECT` nor `UNKNOWN` may stand in for retry.

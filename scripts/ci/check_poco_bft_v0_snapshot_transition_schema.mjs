@@ -1219,8 +1219,8 @@ sameJson(
       "in_memory_state_codec_decode",
       "sqlite_precommit_before_domain_or_JMT_rows",
       "sqlite_startup_or_schema_migration",
-      "abci_snapshot_restore_v3",
-      "abci_snapshot_restore_v4",
+      "external_application_adapter_snapshot_restore_v3",
+      "external_application_adapter_snapshot_restore_v4",
     ],
     sqlite_atomicity: {
       transaction: "BEGIN IMMEDIATE",
@@ -1660,8 +1660,8 @@ sameJson(
     "in_memory_state_codec_decode",
     "sqlite_precommit",
     "sqlite_startup_or_migration",
-    "abci_snapshot_restore_v3",
-    "abci_snapshot_restore_v4",
+    "external_application_adapter_snapshot_restore_v3",
+    "external_application_adapter_snapshot_restore_v4",
   ],
   "production persistence admission paths drift",
 );

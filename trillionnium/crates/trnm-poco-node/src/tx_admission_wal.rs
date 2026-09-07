@@ -372,7 +372,7 @@ impl AdmissionRecordV0 {
 }
 
 /// Candidate-only application/finality evidence for one admitted transaction.
-/// The distinct consensus types prevent a legacy Comet AppHash or an
+/// The distinct consensus types prevent a legacy foreign AppHash or an
 /// untyped height from being silently used as native commit evidence.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct NativeCommitReceiptEvidenceV0 {
@@ -581,7 +581,7 @@ pub trait NativeCommitReceiptVerifierV0: native_commit_receipt_verifier_seal_v1:
 /// PoCO finality proof.
 ///
 /// The application API intentionally exposes the native state root rather than
-/// a legacy Comet `AppHash`.  The verifier therefore checks the exact native
+/// a legacy foreign `AppHash`.  The verifier therefore checks the exact native
 /// committed head (`block_id`, height, and state root), the durable execution
 /// artifact's exact outer transaction bytes, and the receipt commitment at the
 /// matching transaction index.  `FinalityProofV0::id()` is bound separately so

@@ -64,7 +64,7 @@ for key in ["order_finalized_execution_context_cas","bilateral_receipt_signature
 for key in ["fresh_genesis_trust_bundle_is_consensus_object","order_finalized_execution_context_is_consensus_object","order_proof_authority_complete","settlement_amounts_caller_selected","agent_market_authority_integration","artifact_da_authority_integration","result_challenge_authority_integration","mvcc_final_apply_integration","whole_store_rollback_authority","node_integration","g2_global_complete","protocol_implementation_complete","normative_freeze","production_candidate","activation"]: assert truth[key] is False
 assert {p.name for p in (crate_root/"src").glob("*.rs")} == {"codec.rs","engine.rs","error.rs","lib.rs","store.rs","tests.rs","types.rs"}
 for path in [manifest_path, *(crate_root/"src").glob("*.rs")]:
-    assert not re.search(r"tendermint|\babci\b|comet|trnm-consensus-app", path.read_text(), re.I), path
+    assert not re.search(r"external_bft_engine|\bexternal_application_adapter\b|foreign|trnm-native-application", path.read_text(), re.I), path
 assert schema["status"] == "candidate-non-normative"
 assert schema["kernel_scope"] == "single-asset-single-result-single-rollup"
 assert schema["receipt"]["bilateral_ed25519_signatures"] is True

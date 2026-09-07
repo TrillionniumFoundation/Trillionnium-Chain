@@ -12,9 +12,9 @@ VECTOR="$CRATE_ROOT/vectors/legacy-runtime-jmt-v0.json"
 VECTOR_HASH="$VECTOR.sha256"
 COMPLETE_VECTOR="$CRATE_ROOT/vectors/native-complete-durable-p-v0.json"
 COMPLETE_VECTOR_HASH="$COMPLETE_VECTOR.sha256"
-ARCHIVE_MANIFEST="$ROOT/trillionnium/crates/trnm-consensus-app/Cargo.toml"
-ARCHIVE_LOCK="$ROOT/trillionnium/crates/trnm-consensus-app/Cargo.lock"
-ARCHIVE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-app/src/native_payload_validation.rs"
+ARCHIVE_MANIFEST="$ROOT/trillionnium/crates/trnm-native-application/Cargo.toml"
+ARCHIVE_LOCK="$ROOT/trillionnium/crates/trnm-native-application/Cargo.lock"
+ARCHIVE_SOURCE="$ROOT/trillionnium/crates/trnm-native-application/src/native_payload_validation.rs"
 
 fail() {
   printf 'TRNM native execution v0 boundary gate failed: %s\n' "$*" >&2
@@ -71,7 +71,7 @@ workspace_lock = load_toml(workspace_lock_path)
 members = workspace.get("workspace", {}).get("members", [])
 if members.count("crates/trnm-native-execution-v0") != 1:
     issues.append("active workspace must contain the native execution candidate exactly once")
-for archived in ("crates/trnm-consensus-app", "crates/trnm-node"):
+for archived in ("crates/trnm-native-application", "crates/trnm-node"):
     if archived not in workspace.get("workspace", {}).get("exclude", []):
         issues.append(f"active workspace no longer excludes archive {archived}")
 
@@ -143,8 +143,8 @@ if set(manifest.get("dev-dependencies", {})) != {"ed25519-dalek", "tempfile"}:
 
 for package_entry in workspace_lock.get("package", []):
     name = package_entry.get("name", "").lower()
-    if name in {"trnm-consensus-app", "trnm-node"} or any(
-        token in name for token in ("comet", "tendermint", "abci")
+    if name in {"trnm-native-application", "trnm-node"} or any(
+        token in name for token in ("foreign", "external_bft_engine", "external_application_adapter")
     ):
         issues.append(f"active Cargo.lock regained archive dependency {name}")
 
@@ -160,8 +160,8 @@ if actual_sources != expected_sources:
 for path in [manifest_path, *sorted((crate_root / "src").glob("*.rs"))]:
     text = path.read_text(encoding="utf-8")
     match = re.search(
-        r"(?:extern\s+crate|use)\s+(?:trnm_consensus_app|trnm_node|tendermint(?:_abci|_proto)?)\b|"
-        r"(?:trnm_consensus_app|trnm_node|tendermint_abci|tendermint_proto)::",
+        r"(?:extern\s+crate|use)\s+(?:trnm_native_application|trnm_node|external_bft_engine(?:_external_application_adapter|_proto)?)\b|"
+        r"(?:trnm_native_application|trnm_node|external_bft_engine_external_application_adapter|external_bft_engine_proto)::",
         text,
     )
     if match:
@@ -260,7 +260,7 @@ for literal in (
     "whole-machine anti-rollback authority",
     "not wired into the default Node",
     "The automatic boundary gate never builds or executes the excluded historical",
-    "That command intentionally compiles archived Tendermint/ABCI dependencies.",
+    "That command intentionally compiles archived external BFT engine/external application adapter dependencies.",
     "automatic workflows and the main truth gate",
 ):
     if literal not in readme:
@@ -275,7 +275,7 @@ if hashlib.sha256(raw_vector).hexdigest() != expected_hash:
 vector = json.loads(raw_vector)
 if vector.get("schema") != "trnm.native-execution-v0.legacy-differential.v1":
     issues.append("checked vector schema changed")
-if vector.get("authority") != "excluded-trnm-consensus-app-test":
+if vector.get("authority") != "excluded-trnm-native-application-test":
     issues.append("checked vector authority changed")
 expected = vector.get("expected", {})
 for field in (
@@ -340,7 +340,7 @@ PY
 
 graph="$(cargo tree --manifest-path "$WORKSPACE_MANIFEST" --locked --offline \
   -p trnm-native-execution-v0 -e normal,build)"
-if grep -Eiq 'comet|tendermint|abci|trnm-consensus-app|trnm-node' <<<"$graph"; then
+if grep -Eiq 'foreign|external_bft_engine|external_application_adapter|trnm-native-application|trnm-node' <<<"$graph"; then
   fail "active native execution dependency graph regained an archive dependency"
 fi
 

@@ -12,7 +12,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use trnm_consensus_app::{
+use trnm_native_application::{
     ConfirmedNativeAuthenticatedGenesisApplicationCommissioningV0,
     ConfirmedNativeAuthenticatedGenesisH1StableApplicationV0, ConsensusAppConfig,
     NativeAuthenticatedGenesisApplicationCommissioningConfigV0,
@@ -2547,7 +2547,7 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use sha2::{Digest, Sha256};
     use tempfile::TempDir;
-    use trnm_consensus_app::{
+    use trnm_native_application::{
         initialize_legacy_genesis_application_test_fixture_v0,
         NativeValidationRecoveryTestConfigBundleV0, CONFIG_SCHEMA_V1,
     };
@@ -2935,7 +2935,7 @@ mod tests {
             .iter()
             .map(|(id, role, key)| {
                 hash_domain_v0(
-                    "trnm.cometbft.authorized-signer.v1",
+                    "trnm.external_bft_engine.authorized-signer.v1",
                     &[id.as_bytes(), role.as_bytes(), key.as_bytes()],
                 )
             })
@@ -2943,7 +2943,7 @@ mod tests {
         if leaves.is_empty() {
             return hash_domain_v0(
                 "trnm.merkle.empty.v1",
-                &[b"trnm.cometbft.authorized-signers.v1"],
+                &[b"trnm.external_bft_engine.authorized-signers.v1"],
             );
         }
         while leaves.len() > 1 {
@@ -2955,7 +2955,7 @@ mod tests {
                     hash_domain_v0(
                         "trnm.merkle.parent.v1",
                         &[
-                            b"trnm.cometbft.authorized-signers.v1",
+                            b"trnm.external_bft_engine.authorized-signers.v1",
                             left.as_slice(),
                             right.as_slice(),
                         ],

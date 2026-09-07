@@ -429,7 +429,7 @@ def validate_bootstrap(
         fail("bootstrap carries a non-canonical public commitment")
     if (
         bootstrap["schema_version"] != 1
-        or bootstrap["schema"] != "trnm.poco.zero-comet-public-bootstrap.v1"
+        or bootstrap["schema"] != "trnm.poco.native-only-public-bootstrap.v1"
         or bootstrap["chain_id"] != validator_set["chain_id"]
         or bootstrap["genesis_hash"] != validator_set["genesis_hash"]
         or bootstrap["protocol_version"] != 0

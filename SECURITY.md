@@ -16,7 +16,7 @@ verification, pacemaker behavior, persistence, rollback protection, remote
 signing, HSM/KMS policy, migration/export tooling, build provenance, CI, SBOMs,
 operator configuration, RPC admission, or denial of service are in scope.
 
-CometBFT, `trnm-consensus-app`, and `trnm-node` are migration residue and
+external BFT engine, `trnm-native-application`, and `trnm-node` are migration residue and
 historical differential inputs. A vulnerability in those surfaces remains
 reportable, but it is not evidence that the native path is affected unless the
 behavior is reachable through an active migration, build, or runtime boundary.
@@ -44,3 +44,7 @@ remediation is independently replayed and accepted.
 
 No bounty, response deadline, supported mainnet version, or deployment should be
 inferred from this policy.
+
+## Native consensus boundary
+
+The native-only consensus dependency policy is security-critical. Any external consensus engine, adapter, fallback path, compatibility feature, or hidden source archive is rejected by required CI.

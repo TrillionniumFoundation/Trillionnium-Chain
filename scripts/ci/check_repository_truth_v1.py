@@ -54,6 +54,8 @@ def require_absent(text: str, forbidden: tuple[str, ...], label: str) -> None:
 
 
 def main() -> int:
+    import subprocess
+    subprocess.run([sys.executable, str(ROOT / "scripts/ci/check_native_consensus_only.py")], cwd=ROOT, check=True)
     policy = load_json("config/repository-policy-v1.json")
     boundary = load_json("PROJECT_BOUNDARY.json")
     truth = load_json("config/consensus-mainline.json")
@@ -116,8 +118,9 @@ def main() -> int:
         == "poco-bft-v0",
         "protocol target drift",
     )
-    require(consensus.get("legacy_comet_role") == "migration-residue-only", "legacy Comet role drift")
-    require(consensus.get("legacy_comet_may_authorize_release") is False, "legacy Comet must not authorize release")
+    require(consensus.get("dependency_policy") == "native-only", "native-only dependency policy drift")
+    require(consensus.get("external_consensus_engines_allowed") is False, "external consensus engines must remain forbidden")
+    require(consensus.get("fallback_consensus_engines_allowed") is False, "fallback consensus engines must remain forbidden")
     for label, value in {
         "boundary production candidacy": consensus.get("production_candidate"),
         "boundary consensus activation": consensus.get("production_consensus_activation"),
@@ -125,7 +128,7 @@ def main() -> int:
         "machine truth consensus activation": truth.get("production_consensus_activation"),
     }.items():
         require(value is False, f"{label} must remain false")
-    require(truth.get("as_of") == "2026-08-30", "machine truth as_of date is stale")
+    require(truth.get("as_of") == "2026-09-07", "machine truth as_of date is stale")
     require(
         truth.get("active_candidate_source") == "derived-at-verification-time-from-git-head-and-tree",
         "machine truth must not embed a self-invalidating candidate SHA",
@@ -147,15 +150,13 @@ def main() -> int:
     excluded = set(workspace.get("exclude", []))
     cargo_policy = boundary.get("cargo", {})
     require(set(cargo_policy.get("required_active_members", [])) <= members, "required native workspace members are missing")
-    require(set(cargo_policy.get("required_excluded_members", [])) <= excluded, "legacy node/application crates must remain excluded")
-    require(
-        not ({"crates/trnm-consensus-app", "crates/trnm-node"} & members),
-        "legacy Comet production crates re-entered active workspace",
-    )
+    require(not cargo_policy.get("required_excluded_members", []), "removed packages may not remain as exclusions")
+    require(excluded == {"fuzz"}, "workspace exclusions must contain only the fuzz workspace")
     metadata = workspace.get("metadata", {}).get("trnm", {})
     require(metadata.get("consensus_mainline") == "native-poco-bft", "Cargo consensus_mainline drift")
     require(metadata.get("production_consensus_activation") is False, "Cargo metadata may not activate production consensus")
-    require(metadata.get("cometbft_role") == "migration-residue-only", "Cargo Comet role drift")
+    require(metadata.get("consensus_dependency_policy") == "native-only", "Cargo native-only policy drift")
+    require(metadata.get("external_consensus_dependency_count") == 0, "Cargo external consensus dependency count drift")
 
     require(toolchain.get("toolchain", {}).get("channel") == "1.95.0", "Rust toolchain must remain exactly 1.95.0")
     engines = web_package.get("engines", {})
@@ -172,7 +173,7 @@ def main() -> int:
     require("machine-readable authority is `config/consensus-mainline.json`" in readme, "README must defer to machine truth")
     require_absent(
         readme,
-        ("https://github.com/ProfAlexQI/TrillionniumChain.git", "Node.js 20+", "CometBFT is the sole"),
+        ("https://github.com/ProfAlexQI/TrillionniumChain.git", "Node.js 20+"),
         "README",
     )
 
@@ -181,10 +182,10 @@ def main() -> int:
 
     security = read("SECURITY.md")
     require("trnm-poco-node" in security and "trnm-consensus-core" in security, "security policy does not cover native consensus")
-    require("migration residue" in security, "security policy must classify legacy Comet as migration residue")
+    require("native-only consensus dependency policy" in security, "security policy must cover the native-only boundary")
     require_absent(
         security,
-        ("CometBFT -> trnm-consensus-app -> trnm-runtime", "/home/", "/Users/"),
+        ("/home/", "/Users/"),
         "security policy",
     )
 
@@ -196,8 +197,6 @@ def main() -> int:
         operations,
         (
             "Canonical Public-Testnet Candidate",
-            "Run the application with `trnm-cometbft-app`",
-            "CometBFT -> trnm-consensus-app -> trnm-runtime",
             "BankKeeper",
             "/home/",
             "/Users/",
@@ -298,7 +297,7 @@ def main() -> int:
         "repository": policy["repository"],
         "consensus_mainline": "native-poco-bft",
         "workspace_members": len(members),
-        "legacy_active_members": [],
+        "external_active_members": [],
         "required_checks": required_check_names,
         "exact_source_binding": True,
         "external_blockers": sorted(expected_external),

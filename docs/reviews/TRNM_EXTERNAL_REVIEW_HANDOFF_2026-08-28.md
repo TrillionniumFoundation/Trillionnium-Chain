@@ -54,9 +54,9 @@ protocol_target=poco-bft-v0
 stage=G1-native-host-incomplete
 production_candidate=false
 production_consensus_activation=false
-cometbft.role=migration-residue-only
-cometbft.production_dependency=false
-cometbft.cleanup_eligible=false
+external_bft_engine.role=migration-residue-only
+external_bft_engine.production_dependency=false
+external_bft_engine.cleanup_eligible=false
 ```
 
 These flags are authoritative. The branch is a candidate engineering source,
@@ -165,7 +165,7 @@ particular, independently assess Core/Safety authority, signer custody and
 watermark recovery, authenticated networking, ordered finalization, state
 sync, migration/export ceremony, crash and power-loss assumptions, dependency
 closure, and the negative/fail-closed paths. Do not infer production readiness
-from legacy CometBFT fixtures, local unit tests, queued CI runs, historical audit
+from legacy external BFT engine fixtures, local unit tests, queued CI runs, historical audit
 documents, or this handoff itself.
 
 No change was made to `main`, no pull request was opened automatically, and no

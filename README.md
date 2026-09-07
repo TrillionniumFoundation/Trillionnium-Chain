@@ -73,7 +73,7 @@ The active workspace is `trillionnium/Cargo.toml`. Use Cargo metadata,
 `config/module-coverage-v1.toml` rather than this overview when exact membership
 or ownership is required.
 
-CometBFT, `trnm-consensus-app`, and `trnm-node` are excluded migration residue.
+external BFT engine, `trnm-native-application`, and `trnm-node` are excluded migration residue.
 They may support historical differential replay and one-way migration only;
 they cannot authorize a release, deployment, fallback, or readiness claim.
 
@@ -137,3 +137,7 @@ downstream evidence invalidation, and explicit non-claims using the pull-request
 template.
 
 The repository is MIT licensed; see `LICENSE`.
+
+## Consensus dependency policy
+
+Native PoCO-BFT is the repository's only consensus engine. The tracked source tree contains no external consensus engine, adapter, fallback, compatibility layer, or runtime dependency.

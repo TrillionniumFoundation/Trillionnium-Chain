@@ -18,7 +18,7 @@ This document uses **PoCO** (`Proof of Consumption`) instead of `PoA` to avoid c
 
 PoCO is **not** a replacement for the chain's block consensus.
 
-- Block production / finality can remain Tendermint-like BFT
+- Block production / finality can remain external BFT engine-like BFT
 - PoCO replaces or downweights PoUW in the **task settlement** and **reward distribution** path
 
 In other words:

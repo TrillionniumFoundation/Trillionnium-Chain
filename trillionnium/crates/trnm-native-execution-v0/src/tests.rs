@@ -413,7 +413,7 @@ fn excluded_legacy_authored_vector_matches_native_runtime_and_jmt_bytes() {
         vector.schema,
         "trnm.native-execution-v0.legacy-differential.v1"
     );
-    assert_eq!(vector.authority, "excluded-trnm-consensus-app-test");
+    assert_eq!(vector.authority, "excluded-trnm-native-application-test");
 
     let parameters = ConsensusParametersV0::reference_shadow_v0();
     assert_eq!(

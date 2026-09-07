@@ -77,6 +77,8 @@ def require_tracked_clean(path: str) -> None:
 
 
 def main() -> int:
+    import subprocess
+    subprocess.run([sys.executable, str(ROOT / "scripts/ci/check_native_consensus_only.py")], cwd=ROOT, check=True)
     truth = load_json("config/consensus-mainline.json")
     policy = load_json("config/repository-policy-v1.json")
     boundary = load_json("PROJECT_BOUNDARY.json")
@@ -100,14 +102,8 @@ def main() -> int:
         truth.get("production_consensus_activation") is False,
         "protocol contract cannot activate consensus",
     )
-    require(
-        truth.get("cometbft", {}).get("role") == "migration-residue-only",
-        "CometBFT role must remain migration-only",
-    )
-    require(
-        boundary.get("consensus", {}).get("legacy_comet_may_authorize_release") is False,
-        "legacy Comet path must not authorize release",
-    )
+    require(boundary.get("consensus", {}).get("dependency_policy") == "native-only", "native-only boundary drift")
+    require(boundary.get("consensus", {}).get("external_consensus_engines_allowed") is False, "external engines must remain forbidden")
 
     workspace = cargo.get("workspace", {})
     members = set(workspace.get("members", []))
@@ -126,13 +122,10 @@ def main() -> int:
         required_members <= members,
         f"active protocol workspace members missing: {sorted(required_members - members)}",
     )
+    require(excluded == {"fuzz"}, "workspace exclusions must contain only fuzz")
     require(
-        {"crates/trnm-consensus-app", "crates/trnm-node"} <= excluded,
-        "legacy Comet packages must remain excluded",
-    )
-    require(
-        not ({"crates/trnm-consensus-app", "crates/trnm-node"} & members),
-        "legacy Comet packages re-entered the active workspace",
+        not ({"crates/trnm-native-application", "crates/trnm-node"} & members),
+        "legacy foreign packages re-entered the active workspace",
     )
 
     required_checks = policy.get("required_check_names", [])
