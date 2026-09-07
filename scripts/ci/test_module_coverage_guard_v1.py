@@ -81,6 +81,103 @@ class WrapperContractTests(unittest.TestCase):
                         wrapper.load(relative, expected)
 
 
+class ProspectiveMergeBindingTests(unittest.TestCase):
+    """Execute the real workflow binding fragment against isolated Git objects."""
+
+    def setUp(self) -> None:
+        import os
+        import subprocess
+        import textwrap
+        self.subprocess = subprocess
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.repo = pathlib.Path(self.tmp.name)
+        self.env = {
+            "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+            "HOME": str(self.repo), "LANG": "C.UTF-8",
+            "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
+            "GIT_AUTHOR_NAME": "Binding fixture", "GIT_AUTHOR_EMAIL": "fixture@example.invalid",
+            "GIT_COMMITTER_NAME": "Binding fixture", "GIT_COMMITTER_EMAIL": "fixture@example.invalid",
+        }
+        self.git("init", "--quiet", ".")
+        tree = self.git("mktree", data="")
+        self.base = self.git("commit-tree", tree, data="base\n")
+        self.head = self.git("commit-tree", tree, "-p", self.base, data="head\n")
+        self.merge = self.git("commit-tree", tree, "-p", self.base, "-p", self.head, data="merge\n")
+        self.git("checkout", "--quiet", "--detach", self.merge)
+        workflow = (pathlib.Path(__file__).resolve().parents[2] /
+                    ".github/workflows/trnm-required-baseline.yml").read_text(encoding="utf-8")
+        begin = "            # TRNM-MERGE-BINDING-BEGIN\n"
+        end = "            # TRNM-MERGE-BINDING-END\n"
+        self.assertEqual(workflow.count(begin), 1)
+        self.assertEqual(workflow.count(end), 1)
+        self.fragment = textwrap.dedent(workflow.split(begin, 1)[1].split(end, 1)[0])
+        self.env.update({"TRNM_EXPECTED_BASE_SHA": self.base,
+                         "TRNM_EXPECTED_SOURCE_SHA": self.head,
+                         "merge_sha": self.merge})
+
+    def git(self, *args: str, data: str | None = None) -> str:
+        result = self.subprocess.run(
+            ["git", "-c", "core.hooksPath=/dev/null", *args], cwd=self.repo,
+            env=self.env, input=data, text=True, capture_output=True,
+            check=True, timeout=15,
+        )
+        return result.stdout.strip()
+
+    def run_binding(self, **changes: str):
+        env = dict(self.env, **changes)
+        before = self.git("rev-parse", "HEAD")
+        result = self.subprocess.run(
+            ["bash", "-c", "set -euo pipefail\n" + self.fragment +
+             '\nprintf "BOUND=%s\\n" "$TRNM_EXPECTED_SOURCE_SHA"\n'],
+            cwd=self.repo, env=env, text=True, capture_output=True, timeout=15,
+        )
+        self.assertEqual(self.git("rev-parse", "HEAD"), before)
+        self.assertEqual(self.git("status", "--porcelain"), "")
+        return result
+
+    def test_exact_merge_rebinds_only_child_process(self) -> None:
+        result = self.run_binding()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), "BOUND=" + self.merge)
+        self.assertEqual(self.env["TRNM_EXPECTED_SOURCE_SHA"], self.head)
+
+    def test_wrong_base_is_rejected_before_rebinding(self) -> None:
+        result = self.run_binding(TRNM_EXPECTED_BASE_SHA=self.head)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("BOUND=", result.stdout)
+
+    def test_wrong_head_is_rejected_before_rebinding(self) -> None:
+        result = self.run_binding(TRNM_EXPECTED_SOURCE_SHA=self.base)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("BOUND=", result.stdout)
+
+    def test_wrong_merge_sha_is_rejected(self) -> None:
+        result = self.run_binding(merge_sha=self.head)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("BOUND=", result.stdout)
+
+    def test_reversed_parents_are_rejected(self) -> None:
+        tree = self.git("rev-parse", "HEAD^{tree}")
+        reversed_merge = self.git("commit-tree", tree, "-p", self.head,
+                                  "-p", self.base, data="reversed\n")
+        self.git("checkout", "--quiet", "--detach", reversed_merge)
+        result = self.run_binding(merge_sha=reversed_merge)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("BOUND=", result.stdout)
+
+    def test_single_parent_is_not_a_prospective_merge(self) -> None:
+        self.git("checkout", "--quiet", "--detach", self.head)
+        result = self.run_binding(merge_sha=self.head)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("BOUND=", result.stdout)
+
+    def test_malformed_source_id_is_rejected(self) -> None:
+        result = self.run_binding(TRNM_EXPECTED_SOURCE_SHA="not-a-commit")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("BOUND=", result.stdout)
+
+
 class PathContractTests(unittest.TestCase):
     def setUp(self) -> None:
         self.tmp = tempfile.TemporaryDirectory()

@@ -161,6 +161,7 @@ jobs:
       - name: Run separately bound prospective-merge regressions
         env:
           TRNM_EXPECTED_MERGE_SHA: ${{ github.sha }}
+          TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           set -euo pipefail
           if [[ "${GITHUB_EVENT_NAME}" != "pull_request" ]]; then
@@ -180,7 +181,14 @@ jobs:
           git worktree add --detach "$checkout" "$merge_sha"
           (
             cd "$checkout"
+            # TRNM-MERGE-BINDING-BEGIN
+            [[ "$merge_sha" =~ ^[0-9a-f]{40}$ ]]
+            [[ "$TRNM_EXPECTED_BASE_SHA" =~ ^[0-9a-f]{40}$ ]]
+            [[ "$TRNM_EXPECTED_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
             test "$(git rev-parse HEAD)" = "$merge_sha"
+            test "$(git show -s --format=%P HEAD)" = "${TRNM_EXPECTED_BASE_SHA} ${TRNM_EXPECTED_SOURCE_SHA}"
+            export TRNM_EXPECTED_SOURCE_SHA="$merge_sha"
+            # TRNM-MERGE-BINDING-END
             git rev-parse HEAD 'HEAD^{tree}'
             bash scripts/project-preflight.sh --audit
             bash scripts/ci/check_canonical_development_plan.sh
