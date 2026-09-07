@@ -415,6 +415,29 @@ pub struct ConfirmedSignerNodeCheckpointFactsV0 {
     owner_affinity: Arc<()>,
 }
 
+/// Fresh, read-only evidence of one signature which already exists in a
+/// pinned journal. It grants no intent submission or signature authority.
+/// The node must independently join Safety, application and checkpoint facts
+/// before publishing the contained historical message.
+#[must_use = "signed readback is evidence, not permission to issue another signature"]
+pub struct ConfirmedSignedIntentReadbackV1 {
+    intent: CanonicalSignIntentV0,
+    signature: SignatureBytes,
+    checkpoint: ConfirmedSignerNodeCheckpointFactsV0,
+}
+
+impl ConfirmedSignedIntentReadbackV1 {
+    pub const fn intent_v1(&self) -> &CanonicalSignIntentV0 {
+        &self.intent
+    }
+    pub const fn signature_v1(&self) -> SignatureBytes {
+        self.signature
+    }
+    pub const fn checkpoint_facts_v1(&self) -> &ConfirmedSignerNodeCheckpointFactsV0 {
+        &self.checkpoint
+    }
+}
+
 impl ConfirmedSignerNodeCheckpointFactsV0 {
     pub const fn journal_id(&self) -> [u8; 32] {
         self.journal_id
@@ -1459,6 +1482,39 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
 }
 
 impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
+    /// Reads an already persisted, strictly verified signature after fresh
+    /// exact local/external head checks on both sides of the read. Missing or
+    /// unsigned intents return None. This method never activates the journal,
+    /// repairs an external watermark, writes an event, or invokes a producer.
+    pub fn read_signed_intent_exact_v1(
+        &mut self,
+        intent: &CanonicalSignIntentV0,
+    ) -> Result<Option<ConfirmedSignedIntentReadbackV1>, SignerJournalErrorV0> {
+        let before = self.confirm_node_checkpoint_head_exact_v0()?;
+        let prepared = prepare_intent(&self.profile, self.journal_id, intent)?;
+        let signature = match read_intent(&self.connection, prepared.fingerprint)? {
+            Some(stored) => {
+                require_exact_intent(&stored, &prepared)?;
+                read_persisted_signature(&self.connection, prepared.fingerprint, &self.profile)?
+            }
+            None => None,
+        };
+        let after = self.confirm_node_checkpoint_head_exact_v0()?;
+        if before.exact_watermark() != after.exact_watermark()
+            || before.capacity() != after.capacity()
+            || before.lifetime_inventory() != after.lifetime_inventory()
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        Ok(signature.map(|signature| ConfirmedSignedIntentReadbackV1 {
+            intent: intent.clone(),
+            signature,
+            checkpoint: after,
+        }))
+    }
+
     pub fn open_existing_v0(
         database_path: impl AsRef<Path>,
         profile: SignerJournalProfileV0,

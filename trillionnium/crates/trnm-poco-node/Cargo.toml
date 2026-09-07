@@ -409,3 +409,8 @@ trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 [[test]]
 name = "ordinary_timeout_certificate_recovery"
 path = "tests/ordinary_timeout_certificate_recovery.rs"
+
+[[test]]
+name = "native_signed_vote_replay"
+path = "tests/native_signed_vote_replay.rs"
+required-features = ["lab-validator-runtime-test-support"]

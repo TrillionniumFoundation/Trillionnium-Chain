@@ -217,6 +217,8 @@ mod native_h1_ordinary_test_support;
 mod native_h1_state_sync_commissioning;
 #[allow(dead_code)]
 mod native_proposal_p_host;
+#[cfg(feature = "lab-validator-runtime")]
+mod native_vote_recovery;
 #[cfg(feature = "node-event-wal")]
 mod node_event_wal;
 mod ordinary_timeout;
@@ -376,6 +378,11 @@ pub use native_h1_state_sync_commissioning::{
     PocoNodeNativeH1StateSyncCommissionedFactsV0, PocoNodeNativeH1StateSyncCommissionedHostV0,
     PocoNodeNativeH1StateSyncCommissioningConfigV0, PocoNodeNativeH1StateSyncCommissioningErrorV0,
     PocoNodeNativeH1StateSyncPromotionSourceV0,
+};
+#[cfg(feature = "lab-validator-runtime")]
+pub use native_vote_recovery::{
+    open_existing_native_signed_vote_replay_v1, PocoNodeNativeSignedVoteReplayErrorV1,
+    PocoNodeNativeSignedVoteReplayOwnerV1, PocoNodeReplayedNativeVoteV1,
 };
 #[cfg(feature = "node-event-wal")]
 pub use node_event_wal::{

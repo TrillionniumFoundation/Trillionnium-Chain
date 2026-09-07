@@ -2620,6 +2620,21 @@ impl SafetyState {
         self == &expected
     }
 
+    /// Comparison-only recognition of the durable release barrier: exactly
+    /// one pending signature is cleared and the revision advances by one.
+    /// This does not recover Core or grant persistence/signing authority.
+    pub fn matches_durable_signature_released_successor_of_v1(&self, persisted: &Self) -> bool {
+        let mut expected = persisted.clone();
+        if expected.pending_sign.take().is_none() {
+            return false;
+        }
+        let Some(revision) = expected.revision.checked_add(1) else {
+            return false;
+        };
+        expected.revision = revision;
+        self == &expected
+    }
+
     pub const fn last_finalization(&self) -> Option<&DurableFinalizationV0> {
         self.last_finalization.as_ref()
     }

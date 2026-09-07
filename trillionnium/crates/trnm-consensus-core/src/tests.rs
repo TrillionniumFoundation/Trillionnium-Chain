@@ -9801,6 +9801,48 @@ fn persisted_sign_intent_is_re_requested_after_recovery() {
 }
 
 #[test]
+fn durable_signature_release_comparison_accepts_only_the_exact_persisted_successor_v1() {
+    let (_, mut core) = configured_core();
+    let effects = core
+        .step(
+            Input::LocalTimeout {
+                epoch: Epoch::new(0),
+                view: View::new(1),
+            },
+            &RootSignatures,
+        )
+        .unwrap();
+    let (barrier, before) = persistence_effect(&effects);
+    let request = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .unwrap();
+    let (id, root) = signature_request(&request);
+    core.step(
+        Input::SignatureReady {
+            id,
+            signature: signature(root),
+        },
+        &RootSignatures,
+    )
+    .unwrap();
+    let volatile = core.safety_state().clone();
+    assert!(!volatile.matches_durable_signature_released_successor_of_v1(&before));
+    let released = core
+        .persist_signature_release_v0(&before, &RootSignatures)
+        .unwrap();
+    let (_, durable) = persistence_effect(&released);
+    assert!(durable.matches_durable_signature_released_successor_of_v1(&before));
+    assert!(!before.matches_durable_signature_released_successor_of_v1(&durable));
+    assert!(!durable.matches_durable_signature_released_successor_of_v1(&volatile));
+    let mut changed = durable.clone();
+    changed.set_current_view(View::new(99));
+    assert!(!changed.matches_durable_signature_released_successor_of_v1(&before));
+    let mut gap = durable.clone();
+    gap.next_revision().unwrap();
+    assert!(!gap.matches_durable_signature_released_successor_of_v1(&before));
+}
+
+#[test]
 fn callback_persistence_preserves_exact_sign_intent_across_crash_resume() {
     let (config, mut core) = configured_core();
     let set = config.validator_set().clone();

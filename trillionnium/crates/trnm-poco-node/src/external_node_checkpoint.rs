@@ -1363,21 +1363,88 @@ fn validate_native_k_checkpoint_join_v0<W: ExternalMonotonicWatermarkV0>(
     Ok(())
 }
 
-fn native_k_checkpoint_successor_v0(
-    predecessor: ExternalNodeCheckpointV0,
-    safety: &ConfirmedSafetyNodeCheckpointFactsV0,
+/// Inert inputs to the native-K application checkpoint projection.
+///
+/// These scalars do not authenticate a Safety record or grant a checkpoint,
+/// recovery, or signing capability. A caller must independently authenticate
+/// the authorizing record and join its revision and checksum to terminal K.
+/// After a durable signature release, these remain the NativeValid
+/// predecessor's facts rather than the current Ordinary Safety head's facts.
+pub(crate) struct NativeKAuthorizingSafetyFactsV1 {
+    pub(crate) journal_id: [u8; 32],
+    pub(crate) verifier_profile_ref: [u8; 32],
+    pub(crate) core_config_ref: [u8; 32],
+    pub(crate) revision: u64,
+    pub(crate) state_record_checksum: [u8; 32],
+    pub(crate) chain_checksum: [u8; 32],
+}
+
+impl NativeKAuthorizingSafetyFactsV1 {
+    fn from_confirmed_head_v1(safety: &ConfirmedSafetyNodeCheckpointFactsV0) -> Self {
+        Self {
+            journal_id: safety.journal_id_v0(),
+            verifier_profile_ref: safety.verifier_profile_ref_v0(),
+            core_config_ref: safety.core_config_ref_v0(),
+            revision: safety.revision_v0(),
+            state_record_checksum: safety.state_record_checksum_v0(),
+            chain_checksum: safety.chain_checksum_v0(),
+        }
+    }
+}
+
+/// All ten application fields of the unchanged V0 native-K checkpoint.
+///
+/// Computing or comparing this projection is authority-free. In particular,
+/// it cannot create a confirmed node-checkpoint candidate or advance a store.
+pub(crate) struct NativeKApplicationProjectionV1 {
+    application_host_config_ref: [u8; 32],
+    application_projection_profile_ref: [u8; 32],
+    application_safety_binding_manifest_checksum: [u8; 32],
+    application_committed_head_row_checksum: [u8; 32],
+    application_recovery_closure_checksum: [u8; 32],
+    application_block_id: BlockId,
+    application_height: u64,
+    application_state_root: StateRoot,
+    application_view: u64,
+    application_timestamp_ms: u64,
+}
+
+impl NativeKApplicationProjectionV1 {
+    #[cfg(any(test, feature = "lab-validator-runtime"))]
+    pub(crate) fn matches_checkpoint_application_v1(
+        &self,
+        checkpoint: &ExternalNodeCheckpointV0,
+    ) -> bool {
+        let fields = checkpoint.fields();
+        self.application_host_config_ref == fields.application_host_config_ref
+            && self.application_projection_profile_ref == fields.application_projection_profile_ref
+            && self.application_safety_binding_manifest_checksum
+                == fields.application_safety_binding_manifest_checksum
+            && self.application_committed_head_row_checksum
+                == fields.application_committed_head_row_checksum
+            && self.application_recovery_closure_checksum
+                == fields.application_recovery_closure_checksum
+            && self.application_block_id == fields.application_block_id
+            && self.application_height == fields.application_height
+            && self.application_state_root == fields.application_state_root
+            && self.application_view == fields.application_view
+            && self.application_timestamp_ms == fields.application_timestamp_ms
+    }
+}
+
+/// Shared pure projection for the live native-K writer and read-only replay.
+/// Hash domains, part ordering, lengths, and application field encodings are
+/// the existing V0 checkpoint bytes. The authorizing Safety revision must
+/// already have been joined to `application.safety_closure_v0()` by the caller.
+pub(crate) fn native_k_application_projection_v1(
+    safety: &NativeKAuthorizingSafetyFactsV1,
     application: &ConfirmedProposalValidationCheckpointFactsV0,
-    signer: &ConfirmedSignerNodeCheckpointFactsV0,
-) -> Result<ExternalNodeCheckpointV0, NativeKNodeCheckpointAdvanceErrorV0> {
+) -> NativeKApplicationProjectionV1 {
     let binding = application.binding_v0();
     let closure = application.safety_closure_v0();
-    let generation = predecessor
-        .generation()
-        .checked_add(1)
-        .ok_or(NativeKNodeCheckpointAdvanceErrorV0::CandidateEncodingUnavailable)?;
     let store_sequence = application.store_sequence_v0().to_be_bytes();
     let row_revision = application.row_revision_v0().to_be_bytes();
-    let safety_revision = closure.safety_revision().to_be_bytes();
+    let safety_revision = safety.revision.to_be_bytes();
     let application_host_config_ref = native_checkpoint_hash_v0(
         b"trnm.native-k-checkpoint.application-owner.v0",
         &[
@@ -1394,12 +1461,12 @@ fn native_k_checkpoint_successor_v0(
     let application_safety_binding_manifest_checksum = native_checkpoint_hash_v0(
         b"trnm.native-k-checkpoint.safety-binding.v0",
         &[
-            &safety.journal_id_v0(),
-            &safety.verifier_profile_ref_v0(),
-            &safety.core_config_ref_v0(),
+            &safety.journal_id,
+            &safety.verifier_profile_ref,
+            &safety.core_config_ref,
             &safety_revision,
-            &safety.state_record_checksum_v0(),
-            &safety.chain_checksum_v0(),
+            &safety.state_record_checksum,
+            &safety.chain_checksum,
             closure.core_delivery_digest().as_bytes(),
             closure.safety_record_digest().as_bytes(),
             closure.vote_intent_digest().as_bytes(),
@@ -1420,15 +1487,7 @@ fn native_k_checkpoint_successor_v0(
             closure.vote_intent_digest().as_bytes(),
         ],
     );
-    ExternalNodeCheckpointV0::new(ExternalNodeCheckpointFieldsV0 {
-        scope: signer.exact_watermark().scope(),
-        generation,
-        predecessor_checksum: predecessor.checkpoint_checksum(),
-        safety_journal_id: safety.journal_id_v0(),
-        safety_verifier_profile_ref: safety.verifier_profile_ref_v0(),
-        safety_revision: safety.revision_v0(),
-        safety_state_record_checksum: safety.state_record_checksum_v0(),
-        safety_record_chain_checksum: safety.chain_checksum_v0(),
+    NativeKApplicationProjectionV1 {
         application_host_config_ref,
         application_projection_profile_ref,
         application_safety_binding_manifest_checksum,
@@ -1439,6 +1498,43 @@ fn native_k_checkpoint_successor_v0(
         application_state_root: StateRoot::new(*binding.commitments().post_state_root().as_bytes()),
         application_view: binding.view(),
         application_timestamp_ms: binding.timestamp_ms(),
+    }
+}
+
+fn native_k_checkpoint_successor_v0(
+    predecessor: ExternalNodeCheckpointV0,
+    safety: &ConfirmedSafetyNodeCheckpointFactsV0,
+    application: &ConfirmedProposalValidationCheckpointFactsV0,
+    signer: &ConfirmedSignerNodeCheckpointFactsV0,
+) -> Result<ExternalNodeCheckpointV0, NativeKNodeCheckpointAdvanceErrorV0> {
+    let generation = predecessor
+        .generation()
+        .checked_add(1)
+        .ok_or(NativeKNodeCheckpointAdvanceErrorV0::CandidateEncodingUnavailable)?;
+    let projection = native_k_application_projection_v1(
+        &NativeKAuthorizingSafetyFactsV1::from_confirmed_head_v1(safety),
+        application,
+    );
+    ExternalNodeCheckpointV0::new(ExternalNodeCheckpointFieldsV0 {
+        scope: signer.exact_watermark().scope(),
+        generation,
+        predecessor_checksum: predecessor.checkpoint_checksum(),
+        safety_journal_id: safety.journal_id_v0(),
+        safety_verifier_profile_ref: safety.verifier_profile_ref_v0(),
+        safety_revision: safety.revision_v0(),
+        safety_state_record_checksum: safety.state_record_checksum_v0(),
+        safety_record_chain_checksum: safety.chain_checksum_v0(),
+        application_host_config_ref: projection.application_host_config_ref,
+        application_projection_profile_ref: projection.application_projection_profile_ref,
+        application_safety_binding_manifest_checksum: projection
+            .application_safety_binding_manifest_checksum,
+        application_committed_head_row_checksum: projection.application_committed_head_row_checksum,
+        application_recovery_closure_checksum: projection.application_recovery_closure_checksum,
+        application_block_id: projection.application_block_id,
+        application_height: projection.application_height,
+        application_state_root: projection.application_state_root,
+        application_view: projection.application_view,
+        application_timestamp_ms: projection.application_timestamp_ms,
         signer_journal_id: signer.journal_id(),
         signer_profile_checksum: signer.profile_checksum(),
         signer_exact_watermark: signer.exact_watermark(),
@@ -4050,12 +4146,61 @@ mod tests {
         let mut sqlite_reopened =
             SqliteExternalNodeCheckpointStoreV0::open_existing(&sqlite_checkpoint_path)
                 .expect("reopen SQLite checkpoint namespace");
-        assert_eq!(
-            sqlite_reopened
-                .load(source.scope())
-                .expect("load reopened SQLite checkpoint"),
-            Some(target)
+        let fresh_checkpoint = sqlite_reopened
+            .load(source.scope())
+            .expect("load reopened SQLite checkpoint")
+            .expect("persisted native K checkpoint");
+        assert_eq!(fresh_checkpoint, target);
+
+        // A recovery reader uses fresh owner readbacks and the same complete
+        // application projection as the live writer. Pin the existing V0
+        // profile bytes and reject a substitution of every projected field.
+        let fresh_safety = safety
+            .confirm_node_checkpoint_head_exact_v0(core.safety_state())
+            .expect("fresh authorizing Safety head for comparison");
+        let fresh_application = application
+            .confirm_proposal_validation_checkpoint_facts_exact_v0(&binding)
+            .expect("fresh terminal K facts for comparison");
+        let replay_projection = native_k_application_projection_v1(
+            &NativeKAuthorizingSafetyFactsV1::from_confirmed_head_v1(&fresh_safety),
+            &fresh_application,
         );
+        assert!(replay_projection.matches_checkpoint_application_v1(&fresh_checkpoint));
+        assert_eq!(
+            hex::encode(fresh_checkpoint.fields().application_projection_profile_ref),
+            "783d49243e4512c44310b52ed1236a19ea89ef926f33d35716c937fc732513c3",
+            "the V0 native K projection profile and domain remain unchanged",
+        );
+        let substitutions: [fn(&mut ExternalNodeCheckpointFieldsV0); 10] = [
+            |fields| fields.application_host_config_ref[0] ^= 1,
+            |fields| fields.application_projection_profile_ref[0] ^= 1,
+            |fields| fields.application_safety_binding_manifest_checksum[0] ^= 1,
+            |fields| fields.application_committed_head_row_checksum[0] ^= 1,
+            |fields| fields.application_recovery_closure_checksum[0] ^= 1,
+            |fields| {
+                let mut bytes = *fields.application_block_id.as_bytes();
+                bytes[0] ^= 1;
+                fields.application_block_id = BlockId::new(bytes);
+            },
+            |fields| fields.application_height += 1,
+            |fields| {
+                let mut bytes = *fields.application_state_root.as_bytes();
+                bytes[0] ^= 1;
+                fields.application_state_root = StateRoot::new(bytes);
+            },
+            |fields| fields.application_view += 1,
+            |fields| fields.application_timestamp_ms += 1,
+        ];
+        for (index, substitute) in substitutions.into_iter().enumerate() {
+            let mut fields = *fresh_checkpoint.fields();
+            substitute(&mut fields);
+            let substituted = ExternalNodeCheckpointV0::new(fields)
+                .expect("shape-valid single-field checkpoint substitution");
+            assert!(
+                !replay_projection.matches_checkpoint_application_v1(&substituted),
+                "application projection field {index} must remain exact",
+            );
+        }
     }
 
     #[test]

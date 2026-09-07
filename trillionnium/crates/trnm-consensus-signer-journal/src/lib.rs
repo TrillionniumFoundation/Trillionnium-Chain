@@ -87,9 +87,9 @@ pub use model::{
     SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0, SignerWatermarkV0,
 };
 pub use sqlite::{
-    ConfirmedSignerNodeCheckpointFactsV0, JournalCapacityV0, PinnedSqliteSignerJournalV0,
-    SignerExternalWatermarkRelationV0, SignerJournalActivationFailureV0,
-    SignerJournalLifetimeInventoryV1, SignerJournalReconciliationFactsV0, SignerJournalTailFactsV0,
-    SignerJournalTailStateV0, SignerNodeCheckpointIdentityV0, SignerPreparedIntentFactsV0,
-    SqliteSignerJournalV0,
+    ConfirmedSignedIntentReadbackV1, ConfirmedSignerNodeCheckpointFactsV0, JournalCapacityV0,
+    PinnedSqliteSignerJournalV0, SignerExternalWatermarkRelationV0,
+    SignerJournalActivationFailureV0, SignerJournalLifetimeInventoryV1,
+    SignerJournalReconciliationFactsV0, SignerJournalTailFactsV0, SignerJournalTailStateV0,
+    SignerNodeCheckpointIdentityV0, SignerPreparedIntentFactsV0, SqliteSignerJournalV0,
 };
