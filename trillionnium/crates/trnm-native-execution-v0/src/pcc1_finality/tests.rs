@@ -117,7 +117,7 @@ fn transactions(chain: &str) -> Vec<Vec<u8>> {
             };
             let envelope = SignedCommandEnvelopeV1::sign(
                 chain,
-                &format!("pcc1-command-{index}"),
+                format!("pcc1-command-{index}"),
                 id,
                 role,
                 1,
