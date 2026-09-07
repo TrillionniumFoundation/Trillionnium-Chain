@@ -168,6 +168,24 @@ def main() -> None:
             "assembly spec keys must be exactly",
         )
 
+        obsolete_summary = json.loads(
+            pathlib.Path(spec["completed_run_summary"]["source"]).read_text()
+        )
+        obsolete_summary["schema_version"] = 3
+        obsolete_summary["performance"]["committed_goodput_tps"] = obsolete_summary[
+            "performance"
+        ].pop("committed_blocks_per_second")
+        obsolete_summary_source = root / "obsolete-schema3-summary.json"
+        save(obsolete_summary_source, obsolete_summary)
+        obsolete_summary_spec = copy.deepcopy(spec)
+        obsolete_summary_spec["completed_run_summary"]["source"] = str(
+            obsolete_summary_source.absolute()
+        )
+        expect_failure(
+            lambda: normalized(spec_path, obsolete_summary_spec),
+            "schema_version must be 4",
+        )
+
         legacy_summary_source = root / "legacy-schema2-summary.json"
         legacy_summary = json.loads(
             pathlib.Path(spec["completed_run_summary"]["source"]).read_text()
@@ -182,7 +200,7 @@ def main() -> None:
         )
         expect_failure(
             lambda: normalized(spec_path, legacy_summary_spec),
-            "schema_version must be 3",
+            "schema_version must be 4",
         )
         legacy_plan_summary = copy.deepcopy(legacy_summary)
         legacy_plan_summary["evidence_profile"] = (
@@ -203,7 +221,7 @@ def main() -> None:
                 legacy_plan_spec,
                 profile=profiles.NO_FAULT_SIGNED_RUNTIME_OBSERVER_V1,
             ),
-            "schema_version must be 3",
+            "schema_version must be 4",
         )
 
         build_item = next(
@@ -335,7 +353,7 @@ def main() -> None:
             assert not profile_output.exists()
 
     print(
-        "poco_g3_run_bundle_assembler_v1_test=passed positives=13 negatives=14 "
+        "poco_g3_run_bundle_assembler_v1_test=passed summary_schema=4 schema3_summary=blocked "
         "no_fault_active_assembly=true mixed_plan_only=true "
         "mixed_active_assembly=fail-closed no_partial_output=true "
         "creates_runtime_evidence=false g3_complete=false geo_wan=false "

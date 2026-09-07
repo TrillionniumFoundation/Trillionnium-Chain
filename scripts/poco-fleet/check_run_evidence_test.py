@@ -107,7 +107,7 @@ def valid_document(count: int) -> dict:
                 }
             )
     document = {
-        "schema_version": 3,
+        "schema_version": 4,
         "evidence_profile": profiles.NO_FAULT_V1,
         "run_id": f"poco-g3-{count}-20260813T120000Z-deadbeef",
         "fleet_id": "trnm-poco-lan-six-host-2026-08-13",
@@ -149,7 +149,7 @@ def valid_document(count: int) -> dict:
         "faults": [],
         "performance": {
             "measurement_seconds": 600,
-            "committed_goodput_tps": 99 / 600,
+            "committed_blocks_per_second": 99 / 600,
             "finality_ms_p50": 100.0,
             "finality_ms_p95": 200.0,
             "finality_ms_p99": 300.0,
@@ -200,7 +200,8 @@ def main() -> None:
 
     base = valid_document(7)
     controls = (
-        (lambda d: d.update(schema_version=2), "schema_version must be 3"),
+        (lambda d: d.update(schema_version=2), "schema_version must be 4"),
+        (lambda d: d.update(schema_version=3), "schema_version must be 4"),
         (
             lambda d: d["candidate"].update(
                 source_candidate_profile="exact-git-visible-worktree-v1"
@@ -330,8 +331,43 @@ def main() -> None:
             "differs from the explicit CLI profile",
         ),
         (
-            lambda d: d["performance"].update(committed_goodput_tps=0),
-            "committed_goodput_tps must be positive",
+            lambda d: d["performance"].update(committed_blocks_per_second=0),
+            "committed_blocks_per_second must be positive",
+        ),
+        (
+            lambda d: d["performance"].update(
+                committed_goodput_tps=d["performance"]["committed_blocks_per_second"]
+            ),
+            "performance keys must be exactly",
+        ),
+        (
+            lambda d: d["performance"].update(
+                committed_goodput_tps=d["performance"].pop("committed_blocks_per_second")
+            ),
+            "performance keys must be exactly",
+        ),
+        (
+            lambda d: d["performance"].update(
+                finalized_transactions_per_second=2 * d["performance"]["committed_blocks_per_second"]
+            ),
+            "performance keys must be exactly",
+        ),
+        (
+            lambda d: d["performance"].update(
+                committed_blocks_per_second=2 * d["performance"]["committed_blocks_per_second"]
+            ),
+            "not derived from ordinary committed blocks",
+        ),
+        (
+            lambda d: d["performance"].update(
+                committed_blocks_per_second=d["consensus"]["submitted_nonempty_blocks"]
+                / d["performance"]["measurement_seconds"]
+            ),
+            "not derived from ordinary committed blocks",
+        ),
+        (
+            lambda d: d["consensus"].update(finalized_height=101),
+            "finalized height does not map exactly",
         ),
         (
             lambda d: d["performance"].update(finality_ms_p99=50),

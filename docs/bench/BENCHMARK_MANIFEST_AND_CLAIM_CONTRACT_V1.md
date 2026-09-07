@@ -22,6 +22,28 @@ Every run binds:
 
 Submitted or ingress TPS is never substituted.
 
+## Fleet completed-run summary schema 4
+
+The bounded LAN collector and its consumers use completed-run summary
+`schema_version = 4`. Its `performance.committed_blocks_per_second` is the
+authenticated ordinary committed-block count divided by the measured interval
+in seconds. It is a block rate, not transaction goodput. The existing no-fault
+profile still requires that committed ordinary blocks map exactly to the
+finalized height; submitted or unfinalized tail blocks cannot enter that count.
+
+Schema 3 named this block rate `committed_goodput_tps`, which had the wrong unit.
+Current consumers reject schema 3, the old field and mixed old/new fields.
+Historical evidence remains immutable; a new summary must be derived again
+from its exact authenticated raw inputs and receive a new digest. Build-report
+schema 3, signed runtime artifact schemas, the no-fault profile, root checks
+and independent acceptance requirements retain their existing contracts.
+
+No transaction-rate field is produced by this projection. Even when a workload
+contains two envelopes per block, multiplying the block rate by two is not
+proof of finalized, successful, replay-verified transactions. Such a metric
+requires a separate versioned contract binding actual authenticated bodies,
+execution outcomes, finality, replay results and the measurement window.
+
 ## Topology naming
 
 A result must separately report process, host, operator, region and custody cardinalities. Seven processes on one host remain one host failure domain. One organization running many keys remains one operator/custody domain.

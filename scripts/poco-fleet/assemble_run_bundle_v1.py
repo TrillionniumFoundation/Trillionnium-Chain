@@ -222,8 +222,8 @@ def normalize_spec(path: pathlib.Path, *, profile: str) -> dict[str, Any]:
         fail("completed-run summary differs from the assembly run_id")
     if summary_document.get("evidence_profile") != selected_profile:
         fail("completed-run summary evidence_profile differs from the assembly spec")
-    if summary_document.get("schema_version") != 3:
-        fail("completed-run summary schema_version must be 3")
+    if summary_document.get("schema_version") != 4:
+        fail("completed-run summary schema_version must be 4")
     summary_candidate = exact(
         summary_document.get("candidate"),
         SUMMARY_CANDIDATE_KEYS,

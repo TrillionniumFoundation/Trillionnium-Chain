@@ -1270,7 +1270,7 @@ def validate(
         "faults": derived_faults,
         "performance": {
             "measurement_seconds": measurement_seconds,
-            "committed_goodput_tps": authoritative_committed_count
+            "committed_blocks_per_second": authoritative_committed_count
             / measurement_seconds,
             "finality_ms_p50": nearest_rank(finality_samples, 0.50),
             "finality_ms_p95": nearest_rank(finality_samples, 0.95),

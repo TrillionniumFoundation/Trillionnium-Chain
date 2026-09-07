@@ -902,7 +902,7 @@ def build(root: pathlib.Path, count: int = 7) -> None:
     summary["faults"] = derived_faults
     summary["performance"] = {
         "measurement_seconds": 600,
-        "committed_goodput_tps": 1 / 600,
+        "committed_blocks_per_second": 1 / 600,
         "finality_ms_p50": 200.0,
         "finality_ms_p95": 300.0,
         "finality_ms_p99": 300.0,

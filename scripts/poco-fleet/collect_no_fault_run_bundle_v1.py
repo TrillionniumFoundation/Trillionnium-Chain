@@ -1588,7 +1588,7 @@ def derive_documents(
         for field in safety_fields
     }
     summary = {
-        "schema_version": 3,
+        "schema_version": 4,
         "evidence_profile": PROFILE,
         "run_id": run_id,
         "fleet_id": coordinator["fleet_id"],
@@ -1632,7 +1632,7 @@ def derive_documents(
         "faults": [],
         "performance": {
             "measurement_seconds": measurement_seconds,
-            "committed_goodput_tps": committed_count / measurement_seconds,
+            "committed_blocks_per_second": committed_count / measurement_seconds,
             "finality_ms_p50": nearest_rank(finality_samples, 0.50),
             "finality_ms_p95": nearest_rank(finality_samples, 0.95),
             "finality_ms_p99": nearest_rank(finality_samples, 0.99),

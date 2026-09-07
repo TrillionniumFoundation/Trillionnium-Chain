@@ -45,9 +45,17 @@ the canonical candidate **tar bytes** (the same value as
 `source_candidate_sha256`). It is not a Git tree identifier. The actual Git
 tree is `source_git_tree_oid`; `source_git_object_format` defines its object-ID
 width. Schema-3 builder reports, the schema-3 aggregate build report, and the
-schema-3 no-fault summary must preserve these fields together with the empty
+schema-4 no-fault summary must preserve these fields together with the empty
 status and `Cargo.lock` bindings. Legacy candidate/build/summary schemas fail
 closed on the current formal path.
+
+The schema-4 summary reports `committed_blocks_per_second`, not the mislabeled
+schema-3 `committed_goodput_tps`. It retains the authenticated block-count and
+finalized-height constraints and does not assert transaction throughput.
+Historical schema-3 summaries remain immutable; new summaries require fresh
+derivation from the exact authenticated raw inputs, not an in-place field
+rename. The metric contract is
+`docs/bench/BENCHMARK_MANIFEST_AND_CLAIM_CONTRACT_V1.md`.
 
 The Python builder and assembler tests still exercise schema and failure
 boundaries rather than proving external execution. Separately, the

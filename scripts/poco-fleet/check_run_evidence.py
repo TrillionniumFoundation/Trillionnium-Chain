@@ -232,8 +232,8 @@ def validate(
         fail(str(error))
     if document["evidence_profile"] != selected_profile:
         fail("completed-run evidence_profile differs from the explicit CLI profile")
-    if document["schema_version"] != 3:
-        fail("schema_version must be 3")
+    if document["schema_version"] != 4:
+        fail("completed-run summary schema_version must be 4")
     if not isinstance(document["run_id"], str) or not RUN_ID.fullmatch(document["run_id"]):
         fail("run_id must be a canonical topology/time/nonce identifier")
     if document["fleet_id"] != inventory["fleet_id"]:
@@ -489,7 +489,7 @@ def validate(
         document["performance"],
         {
             "measurement_seconds",
-            "committed_goodput_tps",
+            "committed_blocks_per_second",
             "finality_ms_p50",
             "finality_ms_p95",
             "finality_ms_p99",
@@ -504,16 +504,16 @@ def validate(
     )
     for field, value in performance.items():
         positive_number(value, f"performance.{field}")
-    expected_goodput = (
+    expected_block_rate = (
         consensus["committed_nonempty_blocks"] / performance["measurement_seconds"]
     )
     if not math.isclose(
-        performance["committed_goodput_tps"],
-        expected_goodput,
+        performance["committed_blocks_per_second"],
+        expected_block_rate,
         rel_tol=1e-12,
         abs_tol=0.0,
     ):
-        fail("committed_goodput_tps is not derived from ordinary committed blocks")
+        fail("committed_blocks_per_second is not derived from ordinary committed blocks")
     if performance["measurement_seconds"] > (ended - started).total_seconds():
         fail("measurement_seconds exceeds the recorded run interval")
     if not (
@@ -528,7 +528,7 @@ def validate(
             f"poco_g3_run_evidence=passed validators={expected_count} "
             "profile=no-fault-v1 validator_hosts=5 mac_observer=true hosts=6 "
             "nonempty=true faults=0 "
-            "committed_goodput=true geo_wan=false"
+            "committed_block_rate=true transaction_goodput=false geo_wan=false"
         )
 
 

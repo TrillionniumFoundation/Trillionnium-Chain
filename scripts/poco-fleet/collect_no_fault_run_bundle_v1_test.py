@@ -976,11 +976,19 @@ def main() -> None:
         if not (collector_root / "assembly-spec.json").is_file():
             raise AssertionError("collector omitted the existing assembly-spec schema")
         if not (collector_root / "completed-run-summary.json").is_file():
-            raise AssertionError("collector omitted the schema-3 completed-run summary")
+            raise AssertionError("collector omitted the schema-4 completed-run summary")
         completed_summary = read(collector_root / "completed-run-summary.json")
         build_report = read(positive / "supplies/build-report.json")
-        if completed_summary["schema_version"] != 3:
+        if completed_summary["schema_version"] != 4:
             raise AssertionError("collector emitted a legacy completed-run summary")
+        expected_block_rate = (
+            completed_summary["consensus"]["committed_nonempty_blocks"]
+            / completed_summary["performance"]["measurement_seconds"]
+        )
+        if completed_summary["performance"].get("committed_blocks_per_second") != expected_block_rate:
+            raise AssertionError("collector did not derive the committed block rate")
+        if "committed_goodput_tps" in completed_summary["performance"]:
+            raise AssertionError("collector emitted the obsolete transaction-rate claim")
         for field in check_run_evidence.SOURCE_PROVENANCE_KEYS:
             if completed_summary["candidate"][field] != build_report[field]:
                 raise AssertionError(

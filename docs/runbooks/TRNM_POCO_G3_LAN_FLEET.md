@@ -139,8 +139,13 @@ python3 "$TOOL_ROOT/scripts/poco-fleet/assemble_reproducible_build_report.py" \
 The assembler rechecks the strict candidate, exact schema-3 reports, and all
 four binary files, then emits an exact schema-3 aggregate. Downstream no-fault
 assembly must propagate that schema-3 aggregate and an independently derived
-schema-3 completed-run summary. Schema-2 build reports or summaries are not
-current evidence and fail closed.
+schema-4 completed-run summary. Its `committed_blocks_per_second` measures
+ordinary committed blocks per second; it makes no transaction-goodput claim.
+Schema-2 build reports and schema-2/3 summaries are not current evidence and
+fail closed. Old summaries containing `committed_goodput_tps` must be derived
+again from authenticated raw inputs under the schema-4 metric contract in
+`docs/bench/BENCHMARK_MANIFEST_AND_CLAIM_CONTRACT_V1.md`; do not rewrite archived
+evidence or convert its field name in place.
 
 ## 4. Produce fresh readiness evidence
 
