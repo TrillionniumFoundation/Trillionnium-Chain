@@ -10,6 +10,8 @@ Each arm is bound to an exact `(epoch, view, generation)` identity and an absolu
 
 Any observed clock regression poisons the object, clears pending local authority and requires replacement/recovery. The candidate does not persist the clock generation or timer state; production restart recovery must bind those facts to an authenticated durable owner.
 
+The identity admits epoch `0`, the initial PoCO-BFT epoch. Ordinary views and local generations MUST be greater than `0`; the synthetic view-zero genesis anchor cannot arm a timer. An epoch in a timer identity does not authenticate an epoch transition. That remains the consensus owner's responsibility. `initial_protocol_epoch_can_fire_and_advance_but_genesis_view_cannot_arm` covers the epoch-zero fire/ack/next-view sequence and rejects view-zero or generation-zero identities; it is a source regression, not durable timer recovery evidence.
+
 ## Non-claims
 
 This mechanism does not establish:

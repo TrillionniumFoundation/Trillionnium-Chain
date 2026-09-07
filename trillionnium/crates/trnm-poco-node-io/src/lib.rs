@@ -66,6 +66,8 @@ impl NodeIoRuntimeV0 {
 pub const MAX_CANDIDATE_PACEMAKER_DELAY_MILLIS_V0: u64 = 60_000;
 
 /// Exact epoch/view/generation identity for one timer effect.
+/// Epoch zero is the initial protocol epoch; ordinary views and local timer
+/// generations start at one. A view-zero genesis anchor is never a timer arm.
 #[cfg(feature = "candidate-pacemaker")]
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub struct PacemakerIdentityV0 {
@@ -77,7 +79,7 @@ pub struct PacemakerIdentityV0 {
 #[cfg(feature = "candidate-pacemaker")]
 impl PacemakerIdentityV0 {
     pub fn new(epoch: u64, view: u64, generation: u64) -> Result<Self, PacemakerErrorV0> {
-        if epoch == 0 || generation == 0 {
+        if view == 0 || generation == 0 {
             return Err(PacemakerErrorV0::InvalidIdentity);
         }
         Ok(Self {
@@ -381,15 +383,43 @@ mod pacemaker_tests {
     #[test]
     fn exact_arm_replay_is_idempotent_and_conflicts_fail_closed() {
         let mut pacemaker = CandidatePacemakerV0::new(TestClock::new(100));
-        let first = arm(1, 120);
+        let first = arm(2, 120);
         assert_eq!(pacemaker.arm(first).unwrap(), first);
         assert_eq!(pacemaker.arm(first).unwrap(), first);
         assert_eq!(
-            pacemaker.arm(arm(1, 121)),
+            pacemaker.arm(arm(2, 121)),
             Err(PacemakerErrorV0::ConflictingArm)
         );
-        assert_eq!(pacemaker.arm(arm(0, 119)), Err(PacemakerErrorV0::StaleArm));
+        assert_eq!(pacemaker.arm(arm(1, 119)), Err(PacemakerErrorV0::StaleArm));
         assert_eq!(pacemaker.poll().unwrap(), PacemakerPollV0::Armed(first));
+    }
+
+    #[test]
+    fn initial_protocol_epoch_can_fire_and_advance_but_genesis_view_cannot_arm() {
+        for epoch in [0, 1, u64::MAX] {
+            assert_eq!(
+                PacemakerIdentityV0::new(epoch, 0, 1),
+                Err(PacemakerErrorV0::InvalidIdentity)
+            );
+            assert_eq!(
+                PacemakerIdentityV0::new(epoch, 1, 0),
+                Err(PacemakerErrorV0::InvalidIdentity)
+            );
+        }
+        let mut pacemaker = CandidatePacemakerV0::new(TestClock::new(100));
+        let initial = PacemakerIdentityV0::new(0, 1, 1).unwrap();
+        let first = PacemakerArmV0::new(initial, 120).unwrap();
+        assert_eq!(pacemaker.arm(first).unwrap(), first);
+        pacemaker.clock().set(120);
+        assert_eq!(pacemaker.poll().unwrap(), PacemakerPollV0::Fired(first));
+        pacemaker.acknowledge_fired(initial).unwrap();
+        let next = PacemakerArmV0::new(PacemakerIdentityV0::new(0, 2, 1).unwrap(), 140).unwrap();
+        assert_eq!(pacemaker.arm(next).unwrap(), next);
+        assert_eq!(pacemaker.poll().unwrap(), PacemakerPollV0::Armed(next));
+        assert_eq!(
+            pacemaker.arm(PacemakerArmV0::new(initial, 130).unwrap()),
+            Err(PacemakerErrorV0::StaleArm)
+        );
     }
 
     #[test]
