@@ -1,0 +1,72 @@
+name: Temporary native-only purge
+
+on:
+  push:
+    branches:
+      - work/remove-cometbft-residue-20260907
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  purge:
+    if: ${{ github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[purge-bot]') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out cleanup branch
+        uses: actions/checkout@v4
+        with:
+          ref: work/remove-cometbft-residue-20260907
+          fetch-depth: 1
+      - name: Apply native-only purge
+        run: python3 tools/temporary_native_purge.py
+      - name: Format Rust and validate structured files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import tomllib
+          for path in pathlib.Path('.').rglob('*.json'):
+              if '.git' not in path.parts and not path.name.startswith('.cleanup-'):
+                  json.loads(path.read_text(encoding='utf-8'))
+          for path in pathlib.Path('.').rglob('*.toml'):
+              if '.git' not in path.parts:
+                  with path.open('rb') as handle:
+                      tomllib.load(handle)
+          PY
+      - name: Run focused native checks
+        shell: bash
+        run: |
+          set +e
+          report=.cleanup-validation.txt
+          : > "$report"
+          run_check() {
+            printf '\n## %s\n' "$1" >> "$report"
+            shift
+            "$@" >> "$report" 2>&1
+            status=$?
+            printf 'exit=%s\n' "$status" >> "$report"
+            return 0
+          }
+          run_check native-only python3 scripts/ci/check_native_consensus_only.py
+          run_check mainline bash scripts/ci/check_poco_bft_mainline_truth.sh
+          run_check cargo-check cargo +1.95.0 check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
+          run_check consensus-types cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-types --locked --offline
+          run_check consensus-core cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-core --locked --offline
+      - name: Commit purge result
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "trnm-cleanup-bot"
+          git config user.email "trnm-cleanup-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "refactor: purge external consensus residue [purge-bot]"
+          git push origin HEAD:work/remove-cometbft-residue-20260907
