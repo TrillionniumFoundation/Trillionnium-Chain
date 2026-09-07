@@ -1,0 +1,26 @@
+{
+  "schema": "trnm-local-abstract-test-observation-v1",
+  "contract": "PCC1",
+  "classification": "local-diagnostic-not-promotion-evidence",
+  "source_scope": "exact listed Git blobs only; not the entire repository or prospective merge",
+  "source_blobs": {
+    "config/poco-convergence-v1.json": "98c16b6ee67cd3c5690c0eafa4c72b6ec2259339",
+    "formal/poco-convergence-v1/model.py": "6938c04fd08053896e83d4ec222e385b2ef561e9",
+    "formal/poco-convergence-v1/test_model.py": "4e7c83e9f9b0743ce6b69b83e1e180c23572d357",
+    "formal/poco-convergence-v1/check.py": "6f0b171159ec658a52508748aa33b62fd8214108"
+  },
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 formal/poco-convergence-v1/check.py",
+  "python_version": "3.13.5",
+  "baseline_tests_run": 32,
+  "baseline_failures": 0,
+  "baseline_errors": 0,
+  "baseline_skips": 0,
+  "mutants_detected": ["simple-majority", "proof-class-laundering", "cross-context-proof", "publish-before-signature-record", "aggregate-overcommit", "early-storage-release", "new-work-overtakes-old"],
+  "full_repository_checks_run": false,
+  "rust_tests_run": false,
+  "cryptographic_verifier_tests_run": false,
+  "physical_or_multi_host_tests_run": false,
+  "independent_review": false,
+  "production_acceptance": false,
+  "limitation": "Container Git clone failed DNS resolution and cargo was unavailable; connector-read sources and exact locally generated test blobs were used. GitHub CI results must be read independently."
+}

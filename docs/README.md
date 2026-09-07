@@ -8,6 +8,13 @@ The repository has one active development direction:
 - **Module technical reference:** `modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`
 - **Machine module coverage:** `../config/module-coverage-v1.toml`
 
+The [PCC1 authority convergence contract](protocol/poco-convergence-v1/README.md)
+is a candidate domain specification under that plan. It retains the deterministic
+PoCO-BFT kernel and specifies authority lifecycles, AI resource/task state and
+proof-semantic migration. It does not change frozen v0 wire semantics, rewire the
+production runtime, supersede a branch, create a second roadmap or activate a network.
+Its [abstract testkit](../formal/poco-convergence-v1/README.md) is not production evidence.
+
 `docs/development/` contains the plan and compact machine companions only. Git
 history is the development-document archive; retired history directories,
 dated delivery boards, per-agent prompt packs, package roadmaps, sprint plans,
