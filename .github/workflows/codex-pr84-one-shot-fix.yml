@@ -1,0 +1,62 @@
+name: Codex PR84 one-shot blocker fixer
+
+on:
+  push:
+    branches:
+      - chore/chain-native-consensus-only
+
+permissions:
+  contents: write
+
+concurrency:
+  group: codex-pr84-one-shot-fix
+  cancel-in-progress: false
+
+jobs:
+  patch-test-and-commit:
+    if: github.event.head_commit.message == 'chore(ci): install one-shot PR84 blocker fixer'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out PR head
+        uses: actions/checkout@v4
+        with:
+          ref: chore/chain-native-consensus-only
+          fetch-depth: 0
+
+      - name: Apply one-shot patch
+        run: python3 scripts/ci/codex_pr84_fix.py
+
+      - name: Format trnm-node
+        run: cargo fmt --manifest-path trillionnium/Cargo.toml --package trnm-node
+
+      - name: Run selector and demo regressions
+        env:
+          RUST_BACKTRACE: '1'
+        run: |
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node --features legacy-harness --bin trnm-sim critical_guard
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node --features legacy-harness --bin trnm-sim build_demo_mempool
+
+      - name: Run complete trnm-sim regression suite
+        env:
+          RUST_BACKTRACE: '1'
+        run: cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node --features legacy-harness --bin trnm-sim
+
+      - name: Run frozen event and challenge fund-flow gates
+        env:
+          RUST_BACKTRACE: '1'
+        run: |
+          bash trillionnium/scripts/check_event_fields.sh
+          bash scripts/v2/pr4_challenge_fundflow_audit_gate.sh
+
+      - name: Commit verified fixes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add trillionnium/crates/trnm-node/src/main.rs trillionnium/scripts/check_event_fields.sh
+          if git diff --cached --quiet; then
+            echo 'No patch diff produced' >&2
+            exit 1
+          fi
+          git commit -m 'fix(node): preserve task lifecycle ordering through settlement'
+          git push origin HEAD:chore/chain-native-consensus-only
