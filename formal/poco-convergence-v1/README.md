@@ -9,7 +9,7 @@ From the repository root, with Python 3.10 or newer and no third-party packages:
 python3 formal/poco-convergence-v1/check.py
 ```
 
-This runs 32 baseline unit tests and seven retained unsafe/regression mutations.
+This runs 40 baseline unit tests and ten retained unsafe/regression mutations.
 An empty/incomplete test collection, skipped test, surviving mutant or missing
 mutation anchor fails the command. Mutants are compiled and run only in temporary
 directories. The source files are not changed. The command accesses no network,
@@ -28,12 +28,20 @@ aggregate resource and escrow conservation, nonce lanes, pinned result profile,
 late results, repeated settlement, retained storage and bounded empty-block service.
 A new ready event cannot overtake an older ready event merely by choosing a lower ID.
 
+The retained liveness cases additionally recycle maximum-u128 principal through
+refunds, admit more tasks than the lifetime slot count, enforce retention before
+slot reuse, preserve archived-task replay protection and recover saturated diagnostics.
+A cumulative refund diagnostic is an explicitly marked saturated lower bound,
+not an asset or a replacement for exact settlement records. Active slots count
+unsettled or retention-encumbered tasks, not already retired historical records.
+
 The model assumes authentication/authorization where needed. It does not verify
 signatures, proof computation, provider identity, real task dependencies, data
 availability or a complete canonical codec. `check_finality_shape` is not a finality
 verifier and `resolve(..., accepted)` is not a production result API. `reopen()`
 copies abstract state; it is not a disk/HSM crash experiment. The simplified ledger
-retains a bounded set of task records and does not implement production pruning.
+bounds active task responsibility but retains history in memory for replay checks;
+it does not implement bounded production storage or authenticated archive pruning.
 
 No model test executes `trnm-consensus-core`, its full safe-vote/TC/epoch transitions,
 a live validator, network protocol or state synchronization. Physical durability,

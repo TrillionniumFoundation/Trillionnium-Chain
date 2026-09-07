@@ -155,6 +155,8 @@ class ResourceLedger:
 
     admit/resolve inputs represent successful deterministic authorization/profile
     checks outside this model. Omitted checks cannot be inferred from a passing test.
+    Historical task records are retained for replay examples; they are NOT active
+    task slots. This dictionary is not a production pruning or bounded-storage design.
     """
     def __init__(self, funds=100, caps=(100, 100, 100), max_tasks=16, service_cap=2):
         uint(funds)
@@ -164,7 +166,8 @@ class ResourceLedger:
         self.available = funds
         self.escrow = 0
         self.paid = 0
-        self.refunded = 0  # Cumulative diagnostic, NOT an extra asset.
+        self.refunded = 0  # Saturating diagnostic lower bound, NOT an asset.
+        self.refund_counter_saturated = False
         self.caps = tuple(caps)
         self.max_tasks = max_tasks
         self.service_cap = service_cap
@@ -173,10 +176,15 @@ class ResourceLedger:
         self.tasks = {}
         self.next_nonce = {}
 
+    def active_task_count(self):
+        return sum(1 for task in self.tasks.values()
+                   if task.phase != "Settled" or not task.retention_released)
+
     def snapshot(self):
         return json.dumps({
             "height": self.height, "available": self.available, "escrow": self.escrow,
             "paid": self.paid, "refunded": self.refunded, "reserved": self.reserved,
+            "refund_counter_saturated": self.refund_counter_saturated,
             "tasks": {k: asdict(v) for k, v in sorted(self.tasks.items())},
             "nonces": sorted((owner, lane, n) for (owner, lane), n in self.next_nonce.items()),
         }, sort_keys=True)
@@ -184,6 +192,7 @@ class ResourceLedger:
     def invariants(self):
         require(self.initial == self.available + self.escrow + self.paid, "asset conservation")
         require(self.escrow == sum(t.funds for t in self.tasks.values() if t.phase != "Settled"), "escrow mismatch")
+        require(self.active_task_count() <= self.max_tasks, "active task slot overcommit")
         expected = [0, 0, 0]
         for task in self.tasks.values():
             for i in (0, 2):
@@ -192,6 +201,8 @@ class ResourceLedger:
         require(expected == self.reserved, "resource accounting mismatch")
         require(all(0 <= n <= c for n, c in zip(expected, self.caps)), "resource overcommit")
         require(all(uint(n) == n for n in (self.available, self.escrow, self.paid, self.refunded)), "amount range")
+        require(type(self.refund_counter_saturated) is bool, "invalid diagnostic flag")
+        require(not self.refund_counter_saturated or self.refunded == MAX_U128, "diagnostic flag mismatch")
 
     @atomic
     def admit(self, task_id, owner, lane, nonce, funds, work, deadline, retain_until, profile):
@@ -204,7 +215,7 @@ class ResourceLedger:
         require(len(work) == 3 and all(uint(x) > 0 for x in work), "zero or malformed reservation")
         require(uint(deadline) > self.height, "deadline is not in future")
         require(uint(retain_until) > deadline, "invalid retention horizon")
-        require(len(self.tasks) < self.max_tasks, "task cap")
+        require(self.active_task_count() < self.max_tasks, "task cap")
         require(all(a + b <= c for a, b, c in zip(self.reserved, work, self.caps)), "aggregate resource cap")
         self.tasks[task_id] = Task(owner, lane, nonce, funds, tuple(work), deadline, retain_until, profile)
         self.next_nonce[(owner, lane)] = uint(nonce + 1)
@@ -234,7 +245,10 @@ class ResourceLedger:
             self.paid += task.funds
         else:
             self.available += task.funds
-            self.refunded += task.funds
+            # Recycled principal can produce unbounded lifetime refund volume.
+            # A diagnostic overflow must never roll back required block service.
+            self.refund_counter_saturated |= task.funds > MAX_U128 - self.refunded
+            self.refunded = min(MAX_U128, self.refunded + task.funds)
         for i in (0, 2):
             self.reserved[i] -= task.work[i]
         task.phase = "Settled"

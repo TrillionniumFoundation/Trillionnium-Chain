@@ -8,7 +8,7 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-EXPECTED_TESTS = 32
+EXPECTED_TESTS = 40
 MUTANTS = {
     "simple-majority": [("return (2 * total) // 3 + 1", "return total // 2 + 1")],
     "proof-class-laundering": [("kind == \"poco-three-chain-v0\"", "True")],
@@ -23,6 +23,16 @@ MUTANTS = {
          "for i in (0, 1, 2):\n            self.reserved[i] -= task.work[i]"),
     ],
     "new-work-overtakes-old": [("sorted((t.ready_at, key)", "sorted((0, key)")],
+    "refund-diagnostic-blocks-service": [
+        ("self.refunded = min(MAX_U128, self.refunded + task.funds)",
+         "self.refunded = uint(self.refunded + task.funds)"),
+    ],
+    "lifetime-task-cap": [
+        ("self.active_task_count() < self.max_tasks", "len(self.tasks) < self.max_tasks"),
+    ],
+    "premature-task-slot-reuse": [
+        ('task.phase != "Settled" or not task.retention_released', 'task.phase != "Settled"'),
+    ],
 }
 
 
@@ -35,6 +45,8 @@ def run_suite(root):
         raise RuntimeError("incomplete/empty test collection:\n" + result.stdout)
     if "skipped=" in result.stdout or "expected failures=" in result.stdout:
         raise RuntimeError("skipped or expected-failure tests are not acceptance")
+    if "unittest.loader._FailedTest" in result.stdout or "SyntaxError:" in result.stdout:
+        raise RuntimeError("test import/parse failure is not a semantic mutant:\n" + result.stdout)
     return result
 
 
@@ -51,14 +63,15 @@ def main():
             if mutated.count(old) != 1:
                 raise RuntimeError(f"mutation anchor changed: {name}: {old}")
             mutated = mutated.replace(old, new, 1)
-        compile(mutated, name, "exec")  # Syntax/import failures are not killed mutants.
+        compile(mutated, name, "exec")
         with tempfile.TemporaryDirectory(prefix="trnm-pcc1-") as tmp:
             root = Path(tmp)
             work = root / "formal/poco-convergence-v1"
             work.mkdir(parents=True)
             (root / "config").mkdir()
             (work / "model.py").write_text(mutated, encoding="utf-8")
-            shutil.copyfile(HERE / "test_model.py", work / "test_model.py")
+            for test in sorted(HERE.glob("test_*.py")):
+                shutil.copyfile(test, work / test.name)
             shutil.copyfile(ROOT / "config/poco-convergence-v1.json",
                             root / "config/poco-convergence-v1.json")
             result = run_suite(root)

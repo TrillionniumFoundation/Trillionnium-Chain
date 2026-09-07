@@ -57,6 +57,16 @@ A refund credited back to a spendable account is not counted a second time as
 newly minted value. No application transition may spend the same escrow revision
 or resource ticket twice. A task settling once may retain storage liability later.
 
+Lifetime transfer volume is not bounded by the current monetary supply: the same
+principal can be refunded and reserved repeatedly. A fixed-width diagnostic
+counter MUST NOT be an extra validity condition on mandatory settlement. Exact
+account balances and each settlement remain checked and exact. Non-authoritative
+cumulative diagnostics may saturate with an explicit saturation flag, after which
+they are only lower bounds; they cannot authorize payment, prove conservation or
+replace the exact settlement history. The abstract model uses this convention for
+`refunded` and includes the flag in replay comparisons. Wrapping a balance, dropping
+a refund or rolling back block service because a diagnostic is exhausted is forbidden.
+
 For every resource class r:
 
 ```text
@@ -69,6 +79,15 @@ Enforce aggregate sums, not only pairwise conflict tests. Three jobs reserving
 fits. Separate caps exist for task/obligation counts, bytes, proof work, challenge
 work, event count, retention and pending system-service work. Zero-cost tasks
 cannot bypass count/byte caps.
+
+The task-slot cap counts outstanding responsibility, not lifetime admissions. A
+slot remains occupied through settlement AND required retention; it is released
+only after both are terminal. A completed, retention-released historical record
+must not consume an active slot indefinitely. Releasing that slot does not erase
+the task identity, permit nonce replay or make an old settlement executable again.
+Production storage must separately bound hot history and preserve authenticated
+archive/replay-floor commitments. The Python dictionary retains historical records
+for replay tests; it is not a bounded production archive implementation.
 
 ## 3. Authoritative time and deterministic execution
 
@@ -250,7 +269,9 @@ sponsor funds, capability revocation races, rejected-operation no-write behavior
 receipt/profile substitution, late responses at the exact boundary, duplicate
 payments, physical restart, service-prefix omission, cancellation/result ordering,
 storage retained after settlement, profile upgrade with outstanding tasks, malicious
-verification floods, and operation with all AI optimizers disabled.
+verification floods, and operation with all AI optimizers disabled. Also retain
+maximum-principal refund recycling, admission after more than one lifetime of task
+slots, retention-boundary slot reuse and archived-task replay counterexamples.
 
 The included Python ledger checks only accounting, a simplified direct-result
 profile, finite expiry/settlement examples and replay behavior. It does not implement
