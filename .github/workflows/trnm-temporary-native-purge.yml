@@ -21,23 +21,48 @@ jobs:
           fetch-depth: 1
       - name: Apply native-only purge
         run: python3 tools/temporary_native_purge.py
-      - name: Format Rust and validate structured files
+      - name: Capture formatting and structured-file diagnostics
         shell: bash
         run: |
-          set -euo pipefail
-          rustup toolchain install 1.95.0 --profile minimal
-          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
-          python3 - <<'PY'
+          set +e
+          report=.cleanup-structure-validation.txt
+          : > "$report"
+          run_check() {
+            printf '\n## %s\n' "$1" >> "$report"
+            shift
+            "$@" >> "$report" 2>&1
+            status=$?
+            printf 'exit=%s\n' "$status" >> "$report"
+            return 0
+          }
+          run_check rust-toolchain rustup toolchain install 1.95.0 --profile minimal
+          run_check cargo-fmt cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          python3 - <<'PY' >> "$report" 2>&1
           import json
           import pathlib
           import tomllib
+          failures = []
           for path in pathlib.Path('.').rglob('*.json'):
-              if '.git' not in path.parts and not path.name.startswith('.cleanup-'):
+              if '.git' in path.parts or path.name.startswith('.cleanup-'):
+                  continue
+              try:
                   json.loads(path.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  failures.append(f'{path}: {exc}')
           for path in pathlib.Path('.').rglob('*.toml'):
-              if '.git' not in path.parts:
+              if '.git' in path.parts:
+                  continue
+              try:
                   with path.open('rb') as handle:
                       tomllib.load(handle)
+              except Exception as exc:
+                  failures.append(f'{path}: {exc}')
+          if failures:
+              print('\n'.join(failures))
+              print('exit=1')
+          else:
+              print('structured-files=PASS')
+              print('exit=0')
           PY
       - name: Run focused native checks
         shell: bash
@@ -58,7 +83,7 @@ jobs:
           run_check cargo-check cargo +1.95.0 check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
           run_check consensus-types cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-types --locked --offline
           run_check consensus-core cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-core --locked --offline
-      - name: Commit purge result
+      - name: Commit purge result and diagnostics
         shell: bash
         run: |
           set -euo pipefail
