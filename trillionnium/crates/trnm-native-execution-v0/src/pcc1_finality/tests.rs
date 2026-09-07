@@ -17,10 +17,15 @@ use trnm_native_application::{
     NativeApplicationV0, NativeBlockExecutionRequestV0, NativeBlockExecutionResultV0,
     NativeExpectedBlockCommitmentsV0, StateRootV0, ValidatorSetIdV0,
 };
-use trnm_protocol::{CanonicalCommandV1, CanonicalTxV1, CANONICAL_TX_PAYLOAD_TYPE_V1, CANONICAL_TX_SCHEMA_V1};
+use trnm_protocol::{
+    CanonicalCommandV1, CanonicalTxV1, CANONICAL_TX_PAYLOAD_TYPE_V1, CANONICAL_TX_SCHEMA_V1,
+};
 
 use super::*;
-use crate::{AuthorizedSignerV0, CanonicalLabNativeApplicationConfigInputsV0, NativeApplicationConfigV0, NativeBlockPreviewRequestV0};
+use crate::{
+    AuthorizedSignerV0, CanonicalLabNativeApplicationConfigInputsV0, NativeApplicationConfigV0,
+    NativeBlockPreviewRequestV0,
+};
 
 const PARENT_TIMESTAMP: u64 = 1_700_000_000_000;
 const BLOCK_TIMESTAMP: u64 = PARENT_TIMESTAMP + 1_000;
@@ -90,49 +95,76 @@ fn transactions(chain: &str) -> Vec<Vec<u8>> {
             challenge_window_blocks: 10,
         },
     ];
-    commands.into_iter().enumerate().map(|(index, command)| {
-        let (seed, id, role) = if index == 0 {
-            (81, "did:operator:1", "operator")
-        } else {
-            (82, "did:client:1", "hepta")
-        };
-        let tx = CanonicalTxV1 {
-            schema: CANONICAL_TX_SCHEMA_V1.to_string(),
-            sender: id.to_string(),
-            nonce: 1,
-            max_gas: 100_000,
-            fee_limit: 100_000,
-            command,
-        };
-        let envelope = SignedCommandEnvelopeV1::sign(
-            chain,
-            &format!("pcc1-command-{index}"),
-            id,
-            role,
-            1,
-            PARENT_TIMESTAMP,
-            PARENT_TIMESTAMP + 100_000,
-            CANONICAL_TX_PAYLOAD_TYPE_V1,
-            &serde_json::to_vec(&tx).unwrap(),
-            &key(seed),
-        ).unwrap();
-        serde_json::to_vec(&envelope).unwrap()
-    }).collect()
+    commands
+        .into_iter()
+        .enumerate()
+        .map(|(index, command)| {
+            let (seed, id, role) = if index == 0 {
+                (81, "did:operator:1", "operator")
+            } else {
+                (82, "did:client:1", "hepta")
+            };
+            let tx = CanonicalTxV1 {
+                schema: CANONICAL_TX_SCHEMA_V1.to_string(),
+                sender: id.to_string(),
+                nonce: 1,
+                max_gas: 100_000,
+                fee_limit: 100_000,
+                command,
+            };
+            let envelope = SignedCommandEnvelopeV1::sign(
+                chain,
+                &format!("pcc1-command-{index}"),
+                id,
+                role,
+                1,
+                PARENT_TIMESTAMP,
+                PARENT_TIMESTAMP + 100_000,
+                CANONICAL_TX_PAYLOAD_TYPE_V1,
+                &serde_json::to_vec(&tx).unwrap(),
+                &key(seed),
+            )
+            .unwrap();
+            serde_json::to_vec(&envelope).unwrap()
+        })
+        .collect()
 }
 
 fn qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
     let root = Vote::signing_root_for_set(set, header.view(), header.height(), header.id()).unwrap();
-    let votes = set.validators().iter().take(3).enumerate().map(|(index, validator)| {
-        Vote::new(
-            set.chain_id(), set.protocol_version(), set.epoch(), header.view(),
-            header.height(), header.id(), set.id(), validator.id(),
-            SignatureBytes::from_array(key(20 + index as u8).sign(root.as_bytes()).to_bytes()), set,
-        ).unwrap()
-    }).collect();
+    let votes = set
+        .validators()
+        .iter()
+        .take(3)
+        .enumerate()
+        .map(|(index, validator)| {
+            Vote::new(
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                header.view(),
+                header.height(),
+                header.id(),
+                set.id(),
+                validator.id(),
+                SignatureBytes::from_array(key(20 + index as u8).sign(root.as_bytes()).to_bytes()),
+                set,
+            )
+            .unwrap()
+        })
+        .collect();
     QuorumCertificate::new(
-        set.chain_id(), set.protocol_version(), set.epoch(), header.view(), header.height(),
-        header.id(), set.id(), votes, set,
-    ).unwrap()
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        header.view(),
+        header.height(),
+        header.id(),
+        set.id(),
+        votes,
+        set,
+    )
+    .unwrap()
 }
 
 fn certified(
@@ -143,11 +175,26 @@ fn certified(
     certificate: QuorumCertificate,
     parent_timestamp: u64,
 ) -> CertifiedHeaderV0 {
-    let index = set.validators().iter().position(|v| v.id() == header.proposer_id()).unwrap();
+    let index = set
+        .validators()
+        .iter()
+        .position(|v| v.id() == header.proposer_id())
+        .unwrap();
     let root = ProposalWitnessV0::signing_root_for(&header, &justify, None, None).unwrap();
     let signature = Signature64::from_array(key(20 + index as u8).sign(root.as_bytes()).to_bytes());
-    CertifiedHeaderV0::new(header, justify, None, None, signature, certificate,
-        set, None, parameters, parent_timestamp).unwrap()
+    CertifiedHeaderV0::new(
+        header,
+        justify,
+        None,
+        None,
+        signature,
+        certificate,
+        set,
+        None,
+        parameters,
+        parent_timestamp,
+    )
+    .unwrap()
 }
 
 struct Prepared {
@@ -168,89 +215,171 @@ fn prepare(directory: &TempDir) -> Prepared {
         Hash32V0::new(cfg.signer_policy_commitment_v0()),
         StateRootV0::new(cfg.initial_state_root()).unwrap(),
         cfg.initial_validator_set().clone(),
-    ).unwrap();
+    )
+    .unwrap();
     let transactions = transactions(cfg.chain_id_v0());
-    let application = DurableNativeApplicationV0::open(directory.path().join("app.sqlite"), cfg).unwrap();
+    let application =
+        DurableNativeApplicationV0::open(directory.path().join("app.sqlite"), cfg).unwrap();
     let parent = application.initialize(genesis).unwrap().head().clone();
-    let preview = application.preview_block_v0(&NativeBlockPreviewRequestV0::new(
-        ChainIdV0::new(set.chain_id().as_str()).unwrap(),
-        GenesisHashV0::new(*set.genesis_hash().as_bytes()).unwrap(),
-        parent.clone(), HeightV0::new(1), BLOCK_TIMESTAMP,
-        ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(), transactions.clone(),
-    ).unwrap()).unwrap();
+    let preview = application
+        .preview_block_v0(
+            &NativeBlockPreviewRequestV0::new(
+                ChainIdV0::new(set.chain_id().as_str()).unwrap(),
+                GenesisHashV0::new(*set.genesis_hash().as_bytes()).unwrap(),
+                parent.clone(),
+                HeightV0::new(1),
+                BLOCK_TIMESTAMP,
+                ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(),
+                transactions.clone(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
     let h1 = BlockHeader::new(
-        set.genesis_hash(), set.chain_id(), set.protocol_version(), set.epoch(),
-        View::new(1), Height::new(1), BlockKind::Regular,
-        BlockId::new(*parent.block_id().as_bytes()), set.validators()[0].id(),
-        set.id(), set.consensus_parameters_hash(),
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        View::new(1),
+        Height::new(1),
+        BlockKind::Regular,
+        BlockId::new(*parent.block_id().as_bytes()),
+        set.validators()[0].id(),
+        set.id(),
+        set.consensus_parameters_hash(),
         PayloadDigest::new(*preview.payload_root().as_bytes()),
         StateRoot::new(*preview.post_state_root().as_bytes()),
         ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
-        EvidenceRoot::new(*preview.evidence_root().as_bytes()), BLOCK_TIMESTAMP, None,
-    ).unwrap();
+        EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+        BLOCK_TIMESTAMP,
+        None,
+    )
+    .unwrap();
     let request = NativeBlockExecutionRequestV0::new(
         ChainIdV0::new(set.chain_id().as_str()).unwrap(),
-        GenesisHashV0::new(*set.genesis_hash().as_bytes()).unwrap(), parent,
-        BlockIdV0::new(*h1.id().as_bytes()).unwrap(), HeightV0::new(1), BLOCK_TIMESTAMP,
-        ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(), transactions,
-        NativeExpectedBlockCommitmentsV0::new(preview.payload_root(), preview.post_state_root(),
-            preview.receipts_root(), preview.evidence_root()).unwrap(),
-    ).unwrap();
+        GenesisHashV0::new(*set.genesis_hash().as_bytes()).unwrap(),
+        parent,
+        BlockIdV0::new(*h1.id().as_bytes()).unwrap(),
+        HeightV0::new(1),
+        BLOCK_TIMESTAMP,
+        ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(),
+        transactions,
+        NativeExpectedBlockCommitmentsV0::new(
+            preview.payload_root(),
+            preview.post_state_root(),
+            preview.receipts_root(),
+            preview.evidence_root(),
+        )
+        .unwrap(),
+    )
+    .unwrap();
     let executed = match application.execute_block(request).unwrap() {
         NativeBlockExecutionResultV0::Valid(executed) => *executed,
         other => panic!("expected real deterministic execution: {other:?}"),
     };
     let q1 = qc(&set, &h1);
-    let c1 = certified(&set, &parameters, h1.clone(),
-        QcReferenceV0::genesis_anchor(GenesisQcV0::new(set.genesis_hash(), set.chain_id(), &set).unwrap()),
-        q1.clone(), PARENT_TIMESTAMP);
+    let c1 = certified(
+        &set,
+        &parameters,
+        h1.clone(),
+        QcReferenceV0::genesis_anchor(
+            GenesisQcV0::new(set.genesis_hash(), set.chain_id(), &set).unwrap(),
+        ),
+        q1.clone(),
+        PARENT_TIMESTAMP,
+    );
     let mut parent_id = h1.id();
     let mut previous_qc = q1;
     let mut children = Vec::new();
     for view in 2..=3 {
         let header = BlockHeader::new(
-            set.genesis_hash(), set.chain_id(), set.protocol_version(), set.epoch(),
-            View::new(view), Height::new(view), BlockKind::Regular, parent_id,
-            set.validators()[view as usize - 1].id(), set.id(), set.consensus_parameters_hash(),
-            PayloadDigest::new([view as u8 + 10; 32]), StateRoot::new([view as u8 + 20; 32]),
-            ReceiptsRoot::new([view as u8 + 30; 32]), EvidenceRoot::new([view as u8 + 40; 32]),
-            BLOCK_TIMESTAMP + view - 1, None,
-        ).unwrap();
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(view),
+            Height::new(view),
+            BlockKind::Regular,
+            parent_id,
+            set.validators()[view as usize - 1].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([view as u8 + 10; 32]),
+            StateRoot::new([view as u8 + 20; 32]),
+            ReceiptsRoot::new([view as u8 + 30; 32]),
+            EvidenceRoot::new([view as u8 + 40; 32]),
+            BLOCK_TIMESTAMP + view - 1,
+            None,
+        )
+        .unwrap();
         let certificate = qc(&set, &header);
         parent_id = header.id();
-        children.push(certified(&set, &parameters, header,
-            QcReferenceV0::ordinary(previous_qc), certificate.clone(), BLOCK_TIMESTAMP + view - 2));
+        children.push(certified(
+            &set,
+            &parameters,
+            header,
+            QcReferenceV0::ordinary(previous_qc),
+            certificate.clone(),
+            BLOCK_TIMESTAMP + view - 2,
+        ));
         previous_qc = certificate;
     }
     let c3 = children.pop().unwrap();
     let c2 = children.pop().unwrap();
-    let proof = FinalityProofV0::new(c1, c2, c3, &set, None, &parameters, PARENT_TIMESTAMP).unwrap();
+    let proof =
+        FinalityProofV0::new(c1, c2, c3, &set, None, &parameters, PARENT_TIMESTAMP).unwrap();
     let bytes = proof.try_cev0_bytes().unwrap();
-    Prepared { application, executed, proof, bytes }
+    Prepared {
+        application,
+        executed,
+        proof,
+        bytes,
+    }
 }
 
 #[test]
 fn signed_task_execution_commits_through_strict_bytes_and_reopens_exactly() {
     let directory = TempDir::new().unwrap();
-    let Prepared { application, executed, proof, bytes } = prepare(&directory);
+    let Prepared {
+        application,
+        executed,
+        proof,
+        bytes,
+    } = prepare(&directory);
     assert_eq!(executed.receipts().len(), 2);
-    assert!(application.read_finalized_by_height_v0(HeightV0::new(1)).is_err());
-    let committed = application.commit_poco_finality_bytes_v0(
-        POCO_THREE_CHAIN_PROOF_CLASS_V0, &bytes, executed.clone(), PARENT_TIMESTAMP,
-        &mut Cev0AdmissionBudgetV0::protocol_v0(),
-    ).unwrap();
+    assert!(application
+        .read_finalized_by_height_v0(HeightV0::new(1))
+        .is_err());
+    let committed = application
+        .commit_poco_finality_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            executed.clone(),
+            PARENT_TIMESTAMP,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
     assert_eq!(committed.head().height(), HeightV0::new(1));
-    assert_eq!(committed.head().state_root(), executed.request().expected().post_state_root());
-    let read = application.read_finalized_by_height_with_proof_v0(
-        HeightV0::new(1), &proof, PARENT_TIMESTAMP,
-    ).unwrap();
+    assert_eq!(
+        committed.head().state_root(),
+        executed.request().expected().post_state_root()
+    );
+    let read = application
+        .read_finalized_by_height_with_proof_v0(HeightV0::new(1), &proof, PARENT_TIMESTAMP)
+        .unwrap();
     assert_eq!(read.confirmed_head_v0(), committed.head());
     drop(application);
-    let reopened = DurableNativeApplicationV0::open(directory.path().join("app.sqlite"), config()).unwrap();
-    let replay = reopened.commit_poco_finality_bytes_v0(
-        POCO_THREE_CHAIN_PROOF_CLASS_V0, &bytes, executed, PARENT_TIMESTAMP,
-        &mut Cev0AdmissionBudgetV0::protocol_v0(),
-    ).unwrap();
+    let reopened =
+        DurableNativeApplicationV0::open(directory.path().join("app.sqlite"), config()).unwrap();
+    let replay = reopened
+        .commit_poco_finality_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            executed,
+            PARENT_TIMESTAMP,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
     assert_eq!(replay.head(), committed.head());
     assert_eq!(replay.durable_sequence(), committed.durable_sequence());
 }
@@ -258,43 +387,88 @@ fn signed_task_execution_commits_through_strict_bytes_and_reopens_exactly() {
 #[test]
 fn invalid_proofs_cannot_commit_prepared_task_or_modify_database() {
     let directory = TempDir::new().unwrap();
-    let Prepared { application, executed, bytes, .. } = prepare(&directory);
+    let Prepared {
+        application,
+        executed,
+        bytes,
+        ..
+    } = prepare(&directory);
     let before = std::fs::read(directory.path().join("app.sqlite")).unwrap();
     for class in ["legacy-live-qc", "qc", "tc", "poco-three-chain-v1"] {
-        assert!(application.commit_poco_finality_bytes_v0(
-            class, &bytes, executed.clone(), PARENT_TIMESTAMP,
-            &mut Cev0AdmissionBudgetV0::protocol_v0(),
-        ).is_err());
+        assert!(application
+            .commit_poco_finality_bytes_v0(
+                class,
+                &bytes,
+                executed.clone(),
+                PARENT_TIMESTAMP,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .is_err());
     }
     let mut corrupt = bytes.clone();
     let last = corrupt.len() - 1;
     corrupt[last] ^= 1;
-    assert!(application.commit_poco_finality_bytes_v0(
-        POCO_THREE_CHAIN_PROOF_CLASS_V0, &corrupt, executed.clone(), PARENT_TIMESTAMP,
-        &mut Cev0AdmissionBudgetV0::protocol_v0(),
-    ).is_err());
-    assert_eq!(std::fs::read(directory.path().join("app.sqlite")).unwrap(), before);
-    assert!(application.read_finalized_by_height_v0(HeightV0::new(1)).is_err());
-    application.commit_poco_finality_bytes_v0(
-        POCO_THREE_CHAIN_PROOF_CLASS_V0, &bytes, executed, PARENT_TIMESTAMP,
-        &mut Cev0AdmissionBudgetV0::protocol_v0(),
-    ).unwrap();
+    assert!(application
+        .commit_poco_finality_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &corrupt,
+            executed.clone(),
+            PARENT_TIMESTAMP,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .is_err());
+    assert_eq!(
+        std::fs::read(directory.path().join("app.sqlite")).unwrap(),
+        before
+    );
+    assert!(application
+        .read_finalized_by_height_v0(HeightV0::new(1))
+        .is_err());
+    application
+        .commit_poco_finality_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            executed,
+            PARENT_TIMESTAMP,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
 }
 
 #[test]
 fn second_cryptographic_pass_is_charged_before_any_commit() {
     let directory = TempDir::new().unwrap();
-    let Prepared { application, executed, proof, bytes } = prepare(&directory);
+    let Prepared {
+        application,
+        executed,
+        proof,
+        bytes,
+    } = prepare(&directory);
     let mut measured = Cev0AdmissionBudgetV0::protocol_v0();
     measured.charge_finality_proof(&proof).unwrap();
     let mut insufficient = Cev0AdmissionBudgetV0::new(bytes.len(), measured.signature_work());
-    assert!(matches!(application.commit_poco_finality_bytes_v0(
-        POCO_THREE_CHAIN_PROOF_CLASS_V0, &bytes, executed.clone(), PARENT_TIMESTAMP, &mut insufficient,
-    ), Err(PocoFinalityCommitErrorV0::ReverificationBudget(_))));
-    assert!(application.read_finalized_by_height_v0(HeightV0::new(1)).is_err());
+    assert!(matches!(
+        application.commit_poco_finality_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            executed.clone(),
+            PARENT_TIMESTAMP,
+            &mut insufficient,
+        ),
+        Err(PocoFinalityCommitErrorV0::ReverificationBudget(_))
+    ));
+    assert!(application
+        .read_finalized_by_height_v0(HeightV0::new(1))
+        .is_err());
     let mut enough = Cev0AdmissionBudgetV0::protocol_v0();
-    application.commit_poco_finality_bytes_v0(
-        POCO_THREE_CHAIN_PROOF_CLASS_V0, &bytes, executed, PARENT_TIMESTAMP, &mut enough,
-    ).unwrap();
+    application
+        .commit_poco_finality_bytes_v0(
+            POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            &bytes,
+            executed,
+            PARENT_TIMESTAMP,
+            &mut enough,
+        )
+        .unwrap();
     assert_eq!(enough.signature_work(), measured.signature_work() * 2);
 }
