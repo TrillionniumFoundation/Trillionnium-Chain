@@ -386,14 +386,14 @@ pub use node_event_wal::{
 };
 #[cfg(feature = "node-event-wal")]
 pub use ordinary_timeout::PocoNodeHostEventWalOwnerV1;
+pub use ordinary_timeout::{
+    PocoNodeHostActionV0, PocoNodeHostV0, PocoNodeSignedOutboundV0,
+    PocoNodeTimeoutCertificateErrorV0, PocoNodeTimeoutCertificateUnavailableV0,
+};
 #[cfg(feature = "recovery-process-test-support")]
 pub use ordinary_timeout::{
     PocoNodeTimeoutCertificateProcessCheckpointPhaseV0,
     PocoNodeTimeoutSigningProcessCheckpointPhaseV0,
-};
-pub use ordinary_timeout::{
-    PocoNodeHostActionV0, PocoNodeHostV0, PocoNodeSignedOutboundV0,
-    PocoNodeTimeoutCertificateErrorV0, PocoNodeTimeoutCertificateUnavailableV0,
 };
 pub use p2p_session_ingress::{
     P2pSessionIngressErrorCodeV0, PocoNodeP2pAcceptedFrameV0, PocoNodeP2pReplayAnchorErrorV0,
