@@ -76,7 +76,7 @@ pub use durable::{
     NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
     NativeH1StateSyncTrustedBaseRequestV0, VerifiedNativeSignerReplayFloorV1,
 };
-pub use pcc1_finality::PocoFinalityCommitErrorV0;
+pub use pcc1_finality::{PocoFinalityCommitErrorV0, PocoFinalizedApplicationReadV0};
 pub use store::{
     authenticated_key_hash_v0, stored_object_key_v0, AuthenticatedObjectRecordV0,
     InMemoryNativeExecutionStoreV0, NativeExecutionStoreV0, NativeStateWriteV0,
