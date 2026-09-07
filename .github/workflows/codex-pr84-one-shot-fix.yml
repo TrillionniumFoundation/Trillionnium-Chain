@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   patch-test-and-commit:
-    if: "${{ github.event.head_commit.message == 'chore(ci): rerun PR84 fixer with corrected governance anchor' }}"
+    if: "${{ github.event.head_commit.message == 'chore(ci): rerun PR84 fixer with staged-resolve preexec admission' }}"
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -24,32 +24,34 @@ jobs:
           ref: chore/chain-native-consensus-only
           fetch-depth: 0
 
-      - name: Apply one-shot patch
+      - name: Apply lifecycle and strict-gate patch
         run: python3 scripts/ci/codex_pr84_fix.py
 
-      - name: Use the production governance timelock API for the demo authority
+      - name: Close production governance and staged-resolve preexec gaps
         run: |
           python3 <<'PY'
           from pathlib import Path
+          import re
 
           path = Path('trillionnium/crates/trnm-node/src/main.rs')
           source = path.read_text()
+
           test_only = '''    state
-                  .set_gov_param_bootstrap_unchecked(
-                      9_500,
-                      "resolve_authority".into(),
-                      "demo-resolver-a,demo-resolver-b".into(),
-                  )
-                  .map_err(|err| anyhow::anyhow!("seed demo resolve authority failed: {}", err))?;
+              .set_gov_param_bootstrap_unchecked(
+                  9_500,
+                  "resolve_authority".into(),
+                  "demo-resolver-a,demo-resolver-b".into(),
+              )
+              .map_err(|err| anyhow::anyhow!("seed demo resolve authority failed: {}", err))?;
           '''
           production = '''    state
-                  .set_gov_param(
-                      0,
-                      7_310,
-                      "resolve_authority".into(),
-                      "demo-resolver-a,demo-resolver-b".into(),
-                  )
-                  .map_err(|err| anyhow::anyhow!("schedule demo resolve authority failed: {}", err))?;
+              .set_gov_param(
+                  0,
+                  7_310,
+                  "resolve_authority".into(),
+                  "demo-resolver-a,demo-resolver-b".into(),
+              )
+              .map_err(|err| anyhow::anyhow!("schedule demo resolve authority failed: {}", err))?;
               state
                   .set_gov_param(
                       u64::MAX,
@@ -61,7 +63,98 @@ jobs:
           '''
           if test_only not in source:
               raise SystemExit('test-only demo governance bootstrap marker not found')
-          path.write_text(source.replace(test_only, production, 1))
+          source = source.replace(test_only, production, 1)
+
+          preexec_pattern = re.compile(
+              r'(?P<indent>[ ]+)let mut local_state = snapshot_cloned\.as_ref\(\)\.clone\(\);\n'
+              r'(?P=indent)apply_one\(&mut local_state, tx, candidate_height\)\n'
+              r'(?P=indent)    \.map\(\|_\| \(\)\)\n'
+              r'(?P=indent)    \.map_err\(\|e\| e\.to_string\(\)\)'
+          )
+
+          def preexec_replacement(match: re.Match[str]) -> str:
+              i = match.group('indent')
+              return (
+                  f'{i}let mut local_state = snapshot_cloned.as_ref().clone();\n'
+                  f'{i}match apply_one(&mut local_state, tx.clone(), candidate_height) {{\n'
+                  f'{i}    Ok(()) => Ok(()),\n'
+                  f'{i}    Err(err)\n'
+                  f'{i}        if uses_legacy_resolve_approval_stage(\n'
+                  f'{i}            &tx,\n'
+                  f'{i}            Some(classify_apply_error(&err)),\n'
+                  f'{i}        ) =>\n'
+                  f'{i}    {{\n'
+                  f'{i}        // A first legacy resolve signature intentionally returns\n'
+                  f'{i}        // ResolveApprovalStaged after mutating only the isolated\n'
+                  f'{i}        // pre-exec snapshot. Admit it so commit can persist the stage.\n'
+                  f'{i}        Ok(())\n'
+                  f'{i}    }}\n'
+                  f'{i}    Err(err) => Err(err.to_string()),\n'
+                  f'{i}}}'
+              )
+
+          source, replacements = preexec_pattern.subn(preexec_replacement, source, count=1)
+          if replacements != 1:
+              raise SystemExit(f'expected one preexec apply block, replaced {replacements}')
+
+          test_marker = '''    #[test]
+              fn preexec_pool_reuses_workers_across_multiple_groups() {
+          '''
+          regression = r'''    #[test]
+              fn preexec_admits_staged_and_final_multisig_resolve() {
+                  let mut state = StateStore::new();
+                  state
+                      .set_gov_param_bootstrap_unchecked(
+                          9_513,
+                          "resolve_authority".into(),
+                          "authority-a,authority-b".into(),
+                      )
+                      .unwrap();
+                  let (challenged_ref, _, _) = challenged_task_fixture(&mut state, 4_113);
+
+                  let first = MockTx::Resolve {
+                      task_id: challenged_ref.id,
+                      slash_worker: true,
+                      resolver: "authority-a".into(),
+                  };
+                  let first_decision =
+                      decide_order_for_commit(&state, std::slice::from_ref(&first), 1, false, 130);
+                  assert_eq!(first_decision.ordered_ids, vec![1]);
+                  assert_eq!(first_decision.rejected, 0);
+
+                  let first_err = apply_one(&mut state, first, 130)
+                      .expect_err("first resolve signature must stage approval");
+                  assert_eq!(classify_apply_error(&first_err), "resolve_approval_staged");
+                  assert_eq!(
+                      state.pending_resolve_approval(challenged_ref.id),
+                      Some((true, 1))
+                  );
+
+                  let second = MockTx::Resolve {
+                      task_id: challenged_ref.id,
+                      slash_worker: true,
+                      resolver: "authority-b".into(),
+                  };
+                  let second_decision =
+                      decide_order_for_commit(&state, std::slice::from_ref(&second), 1, false, 131);
+                  assert_eq!(second_decision.ordered_ids, vec![1]);
+                  assert_eq!(second_decision.rejected, 0);
+
+                  apply_one(&mut state, second, 131)
+                      .expect("second resolve signature must finalize settlement");
+                  assert_eq!(
+                      state.get_task(challenged_ref.id).unwrap().status,
+                      TaskStatus::Slashed
+                  );
+              }
+
+          '''
+          if 'fn preexec_admits_staged_and_final_multisig_resolve()' not in source:
+              if test_marker not in source:
+                  raise SystemExit('preexec regression insertion marker not found')
+              source = source.replace(test_marker, regression + test_marker, 1)
+
+          path.write_text(source)
           PY
 
       - name: Format trnm-node
@@ -70,12 +163,13 @@ jobs:
       - name: Compile the non-test trnm-sim binary
         run: cargo check --manifest-path trillionnium/Cargo.toml -p trnm-node --features legacy-harness --bin trnm-sim
 
-      - name: Run selector and demo regressions
+      - name: Run selector, demo, and staged-resolve regressions
         env:
           RUST_BACKTRACE: '1'
         run: |
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node --features legacy-harness --bin trnm-sim critical_guard
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node --features legacy-harness --bin trnm-sim build_demo_mempool
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node --features legacy-harness --bin trnm-sim preexec_admits_staged_and_final_multisig_resolve
 
       - name: Run complete trnm-sim regression suite
         env:
@@ -86,7 +180,15 @@ jobs:
         env:
           RUST_BACKTRACE: '1'
         run: |
+          set +e
           bash trillionnium/scripts/check_event_fields.sh
+          event_rc=$?
+          if [ "$event_rc" -ne 0 ]; then
+            echo '--- event-field runtime log ---'
+            cat trillionnium/run/event-field-check.log 2>/dev/null || true
+            exit "$event_rc"
+          fi
+          set -e
           bash scripts/v2/pr4_challenge_fundflow_audit_gate.sh
 
       - name: Commit verified fixes
