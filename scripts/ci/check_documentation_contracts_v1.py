@@ -23,6 +23,14 @@ MANIFEST = 'docs/development/plan-manifest-v1.toml'
 COVERAGE = 'config/module-coverage-v1.toml'
 SELF = 'scripts/ci/check_documentation_contracts_v1.py'
 TEST = 'scripts/ci/test_documentation_contracts_v1.py'
+OPERATIONS = 'config/documentation-operations-v1.json'
+OPERATION_GUIDE = 'docs/modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md'
+REQUIRED_FOUNDATION_OPERATIONS = {
+    'M02-OP-VOTE-BARRIER', 'M02-OP-TIMEOUT-BARRIER', 'M03-OP-SIGN-EXACT',
+    'M04-OP-PERSIST-INGRESS', 'M04-OP-ACK-PREPARED', 'M08-OP-COMMIT-STRICT',
+    'M08-OP-READ-STRICT', 'M15-OP-RECOVER-SESSION', 'M15-OP-ADVANCE-VERIFIED-FACT',
+    'M02-OP-TC-ADVANCE', 'M08-OP-RECOVER-EXPECTED-LEDGER', 'M08-OP-APPEND-EXACT-LEDGER',
+}
 MODULES = [f'M{i:02d}' for i in range(18)]
 PROFILES = {
     'bft-v0': 'frozen-implementation-target-not-activation',
@@ -263,6 +271,218 @@ def validate_trace_symbols(root: Path, trace: dict[str, str]) -> None:
             'DOC-SYMBOL', trace['error_path']+' error definition/literal')
 
 
+def operation_object(value: Any, fields: set[str], where: str) -> dict[str, Any]:
+    require(isinstance(value, dict) and set(value) == fields, 'DOC-OP-SCHEMA', where)
+    return value
+
+
+def operation_text(value: Any, where: str) -> str:
+    require(isinstance(value, str) and bool(value.strip()), 'DOC-OP-TEXT', where)
+    return value
+
+
+def operation_reference(root: Path, value: Any, refs: set[str]) -> None:
+    reference = operation_object(value, {'path', 'selector'}, 'source reference')
+    path, relative = file_ref(root, reference['path'])
+    selector = operation_text(reference['selector'], relative)
+    require(selector in path.read_text(encoding='utf-8'), 'DOC-OP-SELECTOR', relative+': '+selector)
+    refs.add(relative)
+
+
+def operation_features(root: Path, package: str, features: Any, refs: set[str]) -> None:
+    require(isinstance(features, list) and all(isinstance(x, str) for x in features),
+            'DOC-OP-FEATURE', package)
+    require(len(features) == len(set(features)), 'DOC-OP-FEATURE', package+' duplicate')
+    path, relative = file_ref(root, f'trillionnium/crates/{package}/Cargo.toml')
+    manifest = tomllib.loads(path.read_text(encoding='utf-8'))
+    require(manifest.get('package', {}).get('name') == package, 'DOC-OP-PACKAGE', package)
+    require(set(features) <= set(manifest.get('features', {})), 'DOC-OP-FEATURE', package)
+    refs.add(relative)
+
+
+def operation_case_command(case: dict[str, Any]) -> list[str]:
+    """Describe a bounded replay; never execute registry-controlled commands."""
+    command = ['cargo', 'test', '--locked', '--offline', '-p', case['package']]
+    if case['features']:
+        command += ['--features', ','.join(case['features'])]
+    if case['target'] == 'lib':
+        command += ['--lib']
+    elif case['target'].startswith('bin:'):
+        command += ['--bin', case['target'].removeprefix('bin:')]
+    else:
+        command += ['--test', case['target']]
+    return command + [case['test_filter'], '--', '--exact']
+
+
+def operation_test_region(text: str, symbol: str, features: list[str] | None = None) -> str:
+    """Lexical Rust test region, including inline tests; not an AST or execution."""
+    match = re.search(r'(?m)^(?P<indent>[ \t]*)fn '+re.escape(symbol)+r'\s*\(', text)
+    require(match is not None, 'DOC-OP-TEST', symbol)
+    attributes = []
+    for line in reversed(text[:match.start()].rstrip().splitlines()):
+        if not line.strip().startswith('#['):
+            break
+        attributes.append(line.strip())
+    require('#[test]' in attributes, 'DOC-OP-TEST', symbol+' is not an attributed test')
+    require(not any(re.match(r'#\[ignore(?:\s|\])', item) for item in attributes),
+            'DOC-OP-TEST', symbol+' is ignored by the generated replay command')
+    if features is not None:
+        for attribute in attributes:
+            if attribute.startswith('#[cfg(') and attribute != '#[cfg(test)]':
+                gate = re.fullmatch(r'#\[cfg\(feature\s*=\s*"([^"]+)"\)\]', attribute)
+                require(gate is not None and gate[1] in features,
+                        'DOC-OP-FEATURE', symbol+' unselected or unsupported direct test cfg')
+    remaining = text[match.end():]
+    following = re.search(r'(?m)^'+re.escape(match['indent'])+r'fn [A-Za-z_][A-Za-z0-9_]*\s*\(', remaining)
+    return text[match.start():match.end()+(following.start() if following else len(remaining))]
+
+
+def validate_operations(root: Path, data: Any, registry: dict[str, Any],
+                        coverage: dict[str, Any]) -> tuple[dict[str, Any], set[str]]:
+    """Validate explicit operation records without upgrading any acceptance axis."""
+    operation_object(data, {'schema', 'plan_id', 'primary_module', 'source_observation', 'scope',
+                           'module_ids', 'operation_catalog_complete', 'production_authority',
+                           'semantic_acceptance', 'implementation_acceptance', 'operations'}, 'catalog')
+    require(data['schema'] == 'trnm-documentation-operations-v1', 'DOC-OP-SCHEMA', 'catalog schema')
+    require(data['plan_id'] == registry['plan_id'] and data['primary_module'] == 'M17',
+            'DOC-OP-SCHEMA', 'plan/owner')
+    require(data['scope'] == 'bounded-foundation-operations-not-all-enabled-operations',
+            'DOC-OP-SCOPE', 'scope')
+    require(data['operation_catalog_complete'] is False and data['production_authority'] is False,
+            'DOC-OP-PROMOTION', 'catalog cannot establish completeness or activation')
+    for field in ['semantic_acceptance', 'implementation_acceptance']:
+        require(data[field] == 'not-assessed', 'DOC-OP-PROMOTION', field)
+    require(isinstance(data['source_observation'], str)
+            and re.fullmatch(r'[0-9a-f]{40}', data['source_observation']) is not None,
+            'DOC-OP-SOURCE', 'historical source observation')
+    modules = strings(data['module_ids'], 'operation modules')
+    require(set(modules) == {'M02', 'M03', 'M04', 'M08', 'M15'}, 'DOC-OP-SCOPE', 'foundation modules')
+    rows = data['operations']
+    require(isinstance(rows, list) and bool(rows), 'DOC-OP-SCHEMA', 'operations')
+    module_rows = {row['id']: row for row in registry['modules']}
+    package_owners = {package: row['id'] for row in coverage['module_coverage']
+                      for package in row['primary_crates']}
+    refs = {OPERATIONS, OPERATION_GUIDE}
+    identities: set[str] = set()
+    case_ids: set[str] = set()
+    seen_modules: set[str] = set()
+    commands: list[dict[str, Any]] = []
+    state_fields = {'authenticated_inputs', 'preconditions', 'accepted_effects', 'rejected_effects',
+                    'uncertain_recovery', 'publication'}
+    for row in rows:
+        operation_object(row, {'id', 'module_id', 'requirement_ids', 'profile', 'implementation',
+                               'normative_clauses', 'schema_refs', 'domain_refs', 'limit_refs',
+                               'state', 'errors', 'producer_modules', 'consumer_modules', 'cases',
+                               'independent_vectors', 'open_requirements'}, 'operation')
+        mid, oid = row['module_id'], row['id']
+        require(isinstance(mid, str) and mid in modules, 'DOC-OP-MODULE', str(mid))
+        require(isinstance(oid, str) and re.fullmatch(mid+r'-OP-[A-Z][A-Z0-9-]*', oid) is not None,
+                'DOC-OP-ID', str(oid))
+        require(oid not in identities, 'DOC-OP-DUPLICATE', oid)
+        identities.add(oid)
+        seen_modules.add(mid)
+        requirements = strings(row['requirement_ids'], oid+' requirements')
+        require(set(requirements) <= set(module_rows[mid]['requirement_ids']), 'DOC-OP-REQUIREMENT', oid)
+        require(row['profile'] in module_rows[mid]['profiles'], 'DOC-OP-PROFILE', oid)
+        impl = operation_object(row['implementation'], {'package', 'path', 'symbol', 'features'}, oid+' implementation')
+        require(impl['package'] in package_owners, 'DOC-OP-PACKAGE', oid)
+        require(isinstance(impl['path'], str)
+                and impl['path'].startswith(f"trillionnium/crates/{impl['package']}/src/"),
+                'DOC-OP-PACKAGE', oid+' implementation path')
+        path, relative = file_ref(root, impl['path'])
+        symbol = operation_text(impl['symbol'], oid+' symbol')
+        require(has_function_definition(path.read_text(encoding='utf-8'), symbol), 'DOC-OP-SYMBOL', oid)
+        refs.add(relative)
+        operation_features(root, impl['package'], impl['features'], refs)
+        clauses = row['normative_clauses']
+        require(isinstance(clauses, list) and bool(clauses), 'DOC-OP-CLAUSE', oid)
+        for clause in clauses:
+            operation_object(clause, {'path', 'heading', 'rule'}, oid+' clause')
+            path, relative = file_ref(root, clause['path'])
+            require(operation_text(clause['heading'], oid) in path.read_text(encoding='utf-8').splitlines(),
+                    'DOC-OP-CLAUSE', oid+' exact heading')
+            operation_text(clause['rule'], oid+' rule')
+            refs.add(relative)
+        for field in ['schema_refs', 'domain_refs', 'limit_refs']:
+            require(isinstance(row[field], list) and bool(row[field]), 'DOC-OP-SCHEMA', oid+' '+field)
+            for reference in row[field]:
+                operation_reference(root, reference, refs)
+        state = operation_object(row['state'], state_fields, oid+' state')
+        for field in state_fields:
+            strings(state[field], oid+' '+field)
+        errors = row['errors']
+        require(isinstance(errors, list) and bool(errors), 'DOC-OP-ERROR', oid)
+        for error in errors:
+            operation_object(error, {'class', 'reference', 'meaning'}, oid+' error')
+            require(error['class'] in {'reject', 'unavailable', 'uncertain', 'halt'}, 'DOC-OP-ERROR', oid)
+            operation_reference(root, error['reference'], refs)
+            operation_text(error['meaning'], oid+' error meaning')
+        for field in ['producer_modules', 'consumer_modules']:
+            require(set(strings(row[field], oid+' '+field)) <= set(MODULES), 'DOC-OP-MODULE', oid)
+        vectors = operation_object(row['independent_vectors'], {'status', 'reason'}, oid+' independent vectors')
+        require(vectors['status'] == 'open', 'DOC-OP-VECTOR-CLAIM', oid)
+        operation_text(vectors['reason'], oid+' vector gap')
+        strings(row['open_requirements'], oid+' open requirements')
+        require(isinstance(row['cases'], list) and bool(row['cases']), 'DOC-OP-TEST', oid)
+        kinds: set[str] = set()
+        for case in row['cases']:
+            operation_object(case, {'id', 'kind', 'provenance', 'package', 'source_path', 'symbol',
+                                    'target', 'test_filter', 'features', 'expected_outcome',
+                                    'assertion_fragments', 'replay_status'}, oid+' case')
+            cid = operation_text(case['id'], oid+' case id')
+            require(cid.startswith(oid+'-') and cid not in case_ids, 'DOC-OP-DUPLICATE', cid)
+            case_ids.add(cid)
+            require(case['kind'] in {'positive', 'negative', 'recovery'}, 'DOC-OP-TEST', cid)
+            kinds.add(case['kind'])
+            require(case['provenance'] == 'source-regression-not-independent-golden', 'DOC-OP-VECTOR-CLAIM', cid)
+            require(case['replay_status'] == 'not-run-by-documentation-checker', 'DOC-OP-REPLAY-CLAIM', cid)
+            operation_text(case['expected_outcome'], cid+' outcome')
+            require(case['package'] in package_owners, 'DOC-OP-PACKAGE', cid)
+            operation_features(root, case['package'], case['features'], refs)
+            path, relative = file_ref(root, case['source_path'])
+            base = f"trillionnium/crates/{case['package']}/"
+            symbol = operation_text(case['symbol'], cid+' symbol')
+            target = operation_text(case['target'], cid+' target')
+            source_text = path.read_text(encoding='utf-8')
+            if target == 'lib' or target.startswith('bin:'):
+                require(relative.startswith(base+'src/') and relative.endswith('.rs'), 'DOC-OP-TEST', cid)
+                if target.startswith('bin:'):
+                    manifest = tomllib.loads((root/base/'Cargo.toml').read_text(encoding='utf-8'))
+                    binaries = {entry['name']: entry for entry in manifest.get('bin', [])}
+                    name = target.removeprefix('bin:')
+                    require(name in binaries, 'DOC-OP-TEST', cid+' binary target')
+                    binary_path, binary_relative = file_ref(root, base+binaries[name].get('path', 'src/main.rs'))
+                    require(binary_path.suffix == '.rs', 'DOC-OP-TEST', cid+' binary source')
+                    refs.add(binary_relative)
+                module = relative.removeprefix(base+'src/').removesuffix('.rs').replace('/', '::')
+                expected_filter = (module+'::' if module not in {'lib', 'main'} else '')
+                inline = re.search(r'(?m)^    fn '+re.escape(symbol)+r'\s*\(', source_text)
+                if inline:
+                    require(re.search(r'(?m)^mod tests\s*\{', source_text[:inline.start()]) is not None,
+                            'DOC-OP-FILTER', cid+' unsupported inline test module')
+                    expected_filter += 'tests::'
+                expected_filter += symbol
+            else:
+                require(relative == base+'tests/'+case['target']+'.rs', 'DOC-OP-TEST', cid)
+                expected_filter = symbol
+            require(case['test_filter'] == expected_filter, 'DOC-OP-FILTER', cid)
+            region = operation_test_region(source_text, symbol, case['features'])
+            for fragment in strings(case['assertion_fragments'], cid+' assertions'):
+                require(fragment in region, 'DOC-OP-ASSERTION', cid+': '+fragment)
+            refs.add(relative)
+            commands.append({'operation_id': oid, 'case_id': cid, 'cwd': 'trillionnium',
+                             'argv': operation_case_command(case), 'result': case['replay_status']})
+        require('positive' in kinds and 'negative' in kinds, 'DOC-OP-TEST', oid+' positive/negative coverage')
+    require(seen_modules == set(modules), 'DOC-OP-SCOPE', 'each declared foundation module needs operations')
+    require(REQUIRED_FOUNDATION_OPERATIONS <= identities, 'DOC-OP-SCOPE', 'retained foundation operation removed')
+    return {'operation_count': len(rows), 'source_regression_case_count': len(case_ids),
+            'operations_with_open_requirements': len(rows), 'independent_golden_vector_count': 0,
+            'operation_catalog_complete': False, 'semantic_acceptance': 'not-assessed',
+            'implementation_acceptance': 'not-assessed', 'production_authority': False,
+            'reference_check_scope': 'lexical-source-and-case-binding-not-behavioral-equivalence',
+            'replay_commands': commands}, refs
+
+
 def git(root: Path, *args: str) -> str:
     return subprocess.run(['git', *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
 
@@ -277,8 +497,10 @@ def source_identity(root: Path, expected: str | None = None) -> tuple[str, str]:
     return head, tree
 
 
-def validate_files(root: Path, data: dict[str, Any], manifest: dict[str, Any]) -> dict[str, dict[str, str]]:
+def validate_files(root: Path, data: dict[str, Any], manifest: dict[str, Any],
+                   operation_refs: set[str] | None = None) -> dict[str, dict[str, str]]:
     refs = {REGISTRY, GUIDE, AUTHORITY, REVIEW, PLAN, REFERENCE, MANIFEST, COVERAGE, SELF, TEST}
+    refs.update(operation_refs or set())
     refs.update(data['pcc1_v0_imports'])
     for row in data['modules']:
         refs.add(row['guide_ref'])
@@ -327,11 +549,16 @@ def main() -> int:
     coverage = tomllib.loads((ROOT/COVERAGE).read_text(encoding='utf-8'))
     manifest = tomllib.loads((ROOT/MANIFEST).read_text(encoding='utf-8'))
     validate_structure(data, coverage)
+    operations = json.loads((ROOT/OPERATIONS).read_text(encoding='utf-8'), object_pairs_hook=strict_object)
+    operation_report, operation_refs = validate_operations(ROOT, operations, data, coverage)
     require(manifest.get('selected_successor_pull_request') == data['integration_observation']['selected_successor_pr'],
             'DOC-LINEAGE', 'plan manifest successor mismatch')
     require(subprocess.run(['git', 'merge-base', '--is-ancestor', data['integration_observation']['observed_source'], 'HEAD'],
                            cwd=ROOT, capture_output=True).returncode == 0, 'DOC-LINEAGE', 'observed source is not an ancestor')
-    bindings = validate_files(ROOT, data, manifest)
+    require(subprocess.run(['git', 'merge-base', '--is-ancestor', operations['source_observation'], 'HEAD'],
+                           cwd=ROOT, capture_output=True).returncode == 0,
+            'DOC-OP-SOURCE', 'operation source observation is not an ancestor')
+    bindings = validate_files(ROOT, data, manifest, operation_refs)
     canonical = json.dumps(bindings, sort_keys=True, separators=(',', ':')).encode()
     report = {
         'schema': 'trnm-documentation-integrity-report-v1', 'source_commit': head, 'source_tree': tree,
@@ -344,10 +571,12 @@ def main() -> int:
         'semantic_design_acceptance': 'not-assessed', 'implementation_acceptance': 'not-assessed',
         'independent_acceptance': 'absent-from-local-index-requires-authenticated-external-evidence',
         'vacant_review_domains': sorted(DOMAIN_IDS), 'production_authority': False,
+        'operation_catalog': {key: value for key, value in operation_report.items() if key != 'replay_commands'},
     }
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(json.dumps({**report, 'inputs': bindings}, indent=2, sort_keys=True)+'\n', encoding='utf-8')
+        args.output.write_text(json.dumps({**report, 'inputs': bindings, 'operation_catalog': operation_report},
+                                        indent=2, sort_keys=True)+'\n', encoding='utf-8')
     print(json.dumps(report, sort_keys=True))
     return 0
 

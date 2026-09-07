@@ -1,9 +1,9 @@
 manifest_version = 2
 plan_id = "trnm-chain-development-plan-v2"
 plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
-plan_sha256 = "fdc709da15f299b2263408a678fe40e8548e25dde8bf26b6b6909d4057409fd6"
+plan_sha256 = "3190c7d9b485f687a421d84764911cb1d5f18483731b707fb8775a5247768504"
 evidence_contract_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
-evidence_contract_sha256 = "fdc709da15f299b2263408a678fe40e8548e25dde8bf26b6b6909d4057409fd6"
+evidence_contract_sha256 = "3190c7d9b485f687a421d84764911cb1d5f18483731b707fb8775a5247768504"
 canonical_ref = "refs/heads/main"
 candidate_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
 selected_successor_pull_request = 62
@@ -45,7 +45,7 @@ technical_convergence_gate_git_blob = "f863e0955c3e4dce21b14b9ef0674a0ee6b1487c"
 technical_convergence_test_path = "scripts/ci/test_technical_convergence_v1.py"
 technical_convergence_test_git_blob = "0251b72c12be63403209157e1a639486977af1cc"
 detailed_module_spec_index_path = "docs/modules/README.md"
-detailed_module_spec_index_git_blob = "db720f1da71170f7e30e6acb7d5220b0b82d72d7"
+detailed_module_spec_index_git_blob = "962d5816f971e4540050c76a251c0c045f9baf90"
 current_snapshot_path = "docs/development/CURRENT_SNAPSHOT_V1.json"
 current_snapshot_git_blob = "d1011db0552eb03d29081ee69f3f797883dbba11"
 documentation_truth_path = "config/documentation-truth-v1.json"
@@ -92,9 +92,9 @@ independent_review_policy_git_blob = "128a2038b44bbb7a10cff7f6cdb324097c608e1b"
 documentation_contract_registry_path = "config/documentation-contracts-v1.json"
 documentation_contract_registry_git_blob = "c6c3abc24d4c3cc5a9e0a88f22f988d8a6b2b39b"
 documentation_contract_gate_path = "scripts/ci/check_documentation_contracts_v1.py"
-documentation_contract_gate_git_blob = "f7f4c3ed2e8ee97f6c64b88da281e265aef961eb"
+documentation_contract_gate_git_blob = "c77a67e8240e0960b2e56c6d30ea658e185bb1ca"
 documentation_contract_test_path = "scripts/ci/test_documentation_contracts_v1.py"
-documentation_contract_test_git_blob = "6a60522541b2e92dc849f770b015d343c9f594e0"
+documentation_contract_test_git_blob = "d77c48c9652c1c991457a9257b3351cd4428f787"
 
 [repository_core_overlay]
 source_pull_request = 71

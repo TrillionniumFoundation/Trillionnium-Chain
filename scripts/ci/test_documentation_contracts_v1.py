@@ -340,5 +340,185 @@ class OperationTraceMutants(unittest.TestCase):
                 gate.validate_trace_symbols(root, trace)
 
 
+class FoundationOperationMutants(unittest.TestCase):
+    def setUp(self) -> None:
+        self.registry, self.coverage = load_fixture()
+        self.operations = json.loads((gate.ROOT/gate.OPERATIONS).read_text(encoding='utf-8'))
+
+    def validate(self) -> tuple[dict, set[str]]:
+        return gate.validate_operations(gate.ROOT, self.operations, self.registry, self.coverage)
+
+    def rejects(self, code: str) -> None:
+        with self.assertRaises(gate.DocumentationError) as caught:
+            self.validate()
+        self.assertEqual(caught.exception.code, code)
+
+    def test_operation_records_bind_real_sources_without_claiming_replay(self) -> None:
+        report, refs = self.validate()
+        self.assertGreaterEqual(report['operation_count'], 12)
+        self.assertGreaterEqual(report['source_regression_case_count'], 34)
+        self.assertEqual(report['operations_with_open_requirements'], report['operation_count'])
+        self.assertEqual(report['independent_golden_vector_count'], 0)
+        self.assertFalse(report['operation_catalog_complete'])
+        self.assertEqual(report['implementation_acceptance'], 'not-assessed')
+        self.assertIn(gate.OPERATIONS, refs)
+        self.assertIn(gate.OPERATION_GUIDE, refs)
+        for command in report['replay_commands']:
+            self.assertEqual(command['result'], 'not-run-by-documentation-checker')
+            self.assertEqual(command['argv'][:4], ['cargo', 'test', '--locked', '--offline'])
+            self.assertEqual(command['argv'][-2:], ['--', '--exact'])
+
+    def test_unknown_operation_field_is_not_an_acceptance_channel(self) -> None:
+        self.operations['operations'][0]['accepted'] = True
+        self.rejects('DOC-OP-SCHEMA')
+
+    def test_catalog_cannot_claim_all_enabled_operations(self) -> None:
+        self.operations['operation_catalog_complete'] = True
+        self.rejects('DOC-OP-PROMOTION')
+
+    def test_catalog_cannot_self_accept(self) -> None:
+        self.operations['semantic_acceptance'] = 'accepted'
+        self.rejects('DOC-OP-PROMOTION')
+
+    def test_catalog_cannot_activate(self) -> None:
+        self.operations['production_authority'] = True
+        self.rejects('DOC-OP-PROMOTION')
+
+    def test_missing_retained_operation_is_rejected_even_if_module_remains(self) -> None:
+        self.operations['operations'].pop(0)
+        self.rejects('DOC-OP-SCOPE')
+
+    def test_duplicate_operation_is_rejected(self) -> None:
+        self.operations['operations'].append(deepcopy(self.operations['operations'][0]))
+        self.rejects('DOC-OP-DUPLICATE')
+
+    def test_foreign_requirement_does_not_satisfy_operation(self) -> None:
+        self.operations['operations'][0]['requirement_ids'] = ['M03-PERSIST']
+        self.rejects('DOC-OP-REQUIREMENT')
+
+    def test_profile_cannot_silently_fall_back(self) -> None:
+        self.operations['operations'][0]['profile'] = 'automatic'
+        self.rejects('DOC-OP-PROFILE')
+
+    def test_missing_state_transition_is_rejected(self) -> None:
+        self.operations['operations'][0]['state'].pop('uncertain_recovery')
+        self.rejects('DOC-OP-SCHEMA')
+
+    def test_empty_authenticated_prestate_is_rejected(self) -> None:
+        self.operations['operations'][0]['state']['authenticated_inputs'] = []
+        self.rejects('DOC-LIST')
+
+    def test_unknown_error_class_cannot_hide_uncertainty(self) -> None:
+        self.operations['operations'][0]['errors'][0]['class'] = 'ignore-and-continue'
+        self.rejects('DOC-OP-ERROR')
+
+    def test_missing_exact_normative_heading_is_rejected(self) -> None:
+        self.operations['operations'][0]['normative_clauses'][0]['heading'] = '## invented contract'
+        self.rejects('DOC-OP-CLAUSE')
+
+    def test_missing_limit_selector_is_rejected(self) -> None:
+        self.operations['operations'][0]['limit_refs'][0]['selector'] = 'UNBOUNDED_GUESSED_LIMIT'
+        self.rejects('DOC-OP-SELECTOR')
+
+    def test_parent_path_escape_is_rejected(self) -> None:
+        self.operations['operations'][0]['schema_refs'][0]['path'] = '../outside.rs'
+        self.rejects('DOC-PATH')
+
+    def test_wrong_package_binding_is_rejected(self) -> None:
+        self.operations['operations'][0]['implementation']['package'] = 'trnm-state'
+        self.rejects('DOC-OP-PACKAGE')
+
+    def test_invented_implementation_feature_is_rejected(self) -> None:
+        self.operations['operations'][0]['implementation']['features'] = ['silently-enable-production']
+        self.rejects('DOC-OP-FEATURE')
+
+    def test_invented_test_feature_is_rejected(self) -> None:
+        self.operations['operations'][0]['cases'][0]['features'] = ['missing-feature']
+        self.rejects('DOC-OP-FEATURE')
+
+    def test_feature_gated_test_cannot_generate_an_empty_default_replay(self) -> None:
+        row = next(row for row in self.operations['operations']
+                   if row['id'] == 'M02-OP-TC-ADVANCE')
+        case = next(case for case in row['cases']
+                    if case['symbol'] == 'each_tc_persistence_cut_reopens_the_exact_source_or_target_and_replays')
+        case['features'] = []
+        self.rejects('DOC-OP-FEATURE')
+
+    def test_ignored_test_cannot_generate_an_unexecuted_replay(self) -> None:
+        for attribute in ['#[ignore]', '#[ignore = "external fixture"]']:
+            with self.assertRaises(gate.DocumentationError) as caught:
+                gate.operation_test_region(attribute+'\n#[test]\nfn ignored() {}\n', 'ignored', [])
+            self.assertEqual(caught.exception.code, 'DOC-OP-TEST')
+
+    def test_unsupported_direct_cfg_is_not_assumed_enabled(self) -> None:
+        with self.assertRaises(gate.DocumentationError) as caught:
+            gate.operation_test_region('#[cfg(not(feature = "enabled"))]\n#[test]\nfn selected() {}\n',
+                                       'selected', ['enabled'])
+        self.assertEqual(caught.exception.code, 'DOC-OP-FEATURE')
+
+    def test_missing_test_module_in_exact_filter_is_rejected(self) -> None:
+        case = self.operations['operations'][0]['cases'][0]
+        case['test_filter'] = case['symbol']
+        self.rejects('DOC-OP-FILTER')
+
+    def test_wrong_test_target_is_rejected(self) -> None:
+        self.operations['operations'][0]['cases'][0]['target'] = 'unrelated'
+        self.rejects('DOC-OP-TEST')
+
+    def test_binary_inline_test_uses_the_actual_cargo_target(self) -> None:
+        report, _ = self.validate()
+        command = next(item for item in report['replay_commands']
+                       if item['operation_id'] == 'M08-OP-RECOVER-EXPECTED-LEDGER')
+        self.assertIn('--bin', command['argv'])
+        self.assertIn('trnm-external-node-checkpoint-v0', command['argv'])
+        self.assertTrue(command['argv'][-3].startswith('node_commit_ledger_v1::tests::'))
+
+    def test_unknown_binary_target_is_rejected(self) -> None:
+        row = next(row for row in self.operations['operations']
+                   if row['id'] == 'M08-OP-RECOVER-EXPECTED-LEDGER')
+        row['cases'][0]['target'] = 'bin:nonexistent-checkpoint-target'
+        self.rejects('DOC-OP-TEST')
+
+    def test_inline_test_filter_cannot_omit_tests_module(self) -> None:
+        row = next(row for row in self.operations['operations']
+                   if row['id'] == 'M08-OP-RECOVER-EXPECTED-LEDGER')
+        case = row['cases'][0]
+        case['test_filter'] = 'node_commit_ledger_v1::'+case['symbol']
+        self.rejects('DOC-OP-FILTER')
+
+    def test_a_helper_function_is_not_a_rust_test(self) -> None:
+        with self.assertRaises(gate.DocumentationError) as caught:
+            gate.operation_test_region('fn helper() { assert!(true); }\n', 'helper')
+        self.assertEqual(caught.exception.code, 'DOC-OP-TEST')
+
+    def test_assertion_in_another_function_cannot_satisfy_case(self) -> None:
+        text = '#[test]\nfn first() { assert_eq!(a, 1); }\n#[test]\nfn second() { assert_eq!(b, 2); }\n'
+        self.assertNotIn('assert_eq!(b, 2);', gate.operation_test_region(text, 'first'))
+        case = self.operations['operations'][0]['cases'][0]
+        case['assertion_fragments'] = ['assert_eq!(invented, independently_accepted);']
+        self.rejects('DOC-OP-ASSERTION')
+
+    def test_source_regression_cannot_be_relabelled_independent(self) -> None:
+        self.operations['operations'][0]['cases'][0]['provenance'] = 'independent-golden'
+        self.rejects('DOC-OP-VECTOR-CLAIM')
+
+    def test_case_cannot_claim_execution_from_a_documentation_check(self) -> None:
+        self.operations['operations'][0]['cases'][0]['replay_status'] = 'passed'
+        self.rejects('DOC-OP-REPLAY-CLAIM')
+
+    def test_local_vector_status_cannot_issue_independent_acceptance(self) -> None:
+        self.operations['operations'][0]['independent_vectors']['status'] = 'accepted'
+        self.rejects('DOC-OP-VECTOR-CLAIM')
+
+    def test_unknown_obligations_cannot_be_erased(self) -> None:
+        self.operations['operations'][0]['open_requirements'] = []
+        self.rejects('DOC-LIST')
+
+    def test_negative_cases_cannot_all_be_removed(self) -> None:
+        row = self.operations['operations'][0]
+        row['cases'] = [case for case in row['cases'] if case['kind'] != 'negative']
+        self.rejects('DOC-OP-TEST')
+
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

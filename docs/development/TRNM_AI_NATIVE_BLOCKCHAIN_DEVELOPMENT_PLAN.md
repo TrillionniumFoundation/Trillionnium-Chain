@@ -21,7 +21,9 @@ Manifest: [`plan-manifest-v1.toml`](plan-manifest-v1.toml)\
 Applicability: [`docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md`](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md)\
 Implementation guide: [`docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md`](../modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md)\
 Independent review: [`docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md`](../modules/TRNM_INDEPENDENT_REVIEW_V1.md)\
-Trace registry: [`config/documentation-contracts-v1.json`](../../config/documentation-contracts-v1.json)
+Trace registry: [`config/documentation-contracts-v1.json`](../../config/documentation-contracts-v1.json)\
+Foundation operations: [`docs/modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md`](../modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md)\
+Operation catalog: [`config/documentation-operations-v1.json`](../../config/documentation-operations-v1.json)
 
 ---
 
@@ -330,6 +332,12 @@ M02 remains deterministic and I/O-free. M03 owns persist-before-sign state, sign
 ### 6.2 Networking
 
 M04 must deliver authenticated peer identity, chain/profile negotiation, bounded ingress, replay protection, backpressure, peer/global quotas, and Byzantine packet handling. Connection or queue failure may delay progress or return retryable local unavailability; it cannot fabricate deterministic invalidity.
+
+Payload replay recovery is an M04 producer / M08 recovery-owner contract consumed by M15. Before Core consumption, the host must durably bind authenticated admission to recoverable payload bytes. Restart/rejoin verifies the namespace, peer/direction, session/generation/sequence, record index/hash, frame fingerprint and retained body against the exact admitted target. The recovery owner verifies the WAL chain and repairs only an exact one-record head lag; it quarantines residual publication temporaries as evidence. Missing bodies, divergent heads, corrupt records, namespace/path replacement or an unprovable target stop the affected ingress path without resetting replay protection.
+
+Recovery distinguishes `recoverable_head_lag`, `recoverable_residual_temporaries`, `admitted_unacknowledged` and `core_acknowledged`. An admission receipt, repaired head or caller-supplied acknowledgement digest does not prove Core consumed the input. The host may record a target-bound acknowledgement only after verifying the real durable Core safety revision and acknowledgement fact; replay is idempotent for the same fact and rejects conflicting facts. A lost Core response or missing acknowledgement remains unresolved until that durable fact is recovered. The candidate acknowledgement ledger is not atomic with Core: the Node Commit Ledger coordinator must prove exact source-or-target convergence and bind replay, Core and acknowledgement stores to the required anti-rollback authority before node acceptance.
+
+Qualification binds the exact source, contract and payload vectors to cross-process restart tests at WAL append/head publication, body persistence, Core persistence and acknowledgement publication cuts, including duplicate delivery, lost responses and conflicting acknowledgements. These repository tests do not replace independently anchored rollback, physical power-loss or multi-host evidence. The existing recovery adapter remains candidate-only with `production_candidate = false`; this contract does not activate production or certify whole-node recovery.
 
 ### 6.3 Transaction lifecycle
 

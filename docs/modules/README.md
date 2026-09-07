@@ -14,6 +14,12 @@ entry was not sufficient to build and audit the complete operational boundary.
 | M16 | `M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md` |
 | M17 | `M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md` |
 
+The shared [foundation operation contracts](TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md)
+bind selected M02/M03/M04/M08/M15 operations to concrete source functions,
+error and recovery obligations, and executable source regressions. The
+[operation catalog](../../config/documentation-operations-v1.json) explicitly
+remains incomplete; its integrity checks do not grant independent acceptance.
+
 These documents are contracts, not completion claims. Implementation,
 production and activation require exact-source tests, accepted evidence,
 protected review and every applicable external gate.
