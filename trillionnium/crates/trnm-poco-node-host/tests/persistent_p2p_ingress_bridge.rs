@@ -13,8 +13,8 @@ use trnm_poco_node_host::{
     CandidatePersistentP2pIngressBridgeErrorV0, CandidatePersistentP2pIngressBridgeV0,
 };
 use trnm_poco_node_io::{
-    AuthenticatedPeerFrameV0, IoDigest32V0, PeerFrameSourceV0, PeerReplayStateV0,
-    PeerSessionIdentityV0,
+    AuthenticatedPeerFrameV0, IoDigest32V0, PeerAdmissionErrorV0, PeerFrameSourceV0,
+    PeerFrameVerificationErrorV0, PeerReplayStateV0, PeerSessionIdentityV0,
 };
 use trnm_poco_node_production_v0::AuthorityIngressSourceV0;
 
@@ -188,6 +188,17 @@ fn terminal_predecessor_accepts_only_parent_bound_next_height() {
         record_digest: d(71),
     };
     let directory = tempfile::tempdir().expect("temporary directory");
+    // Establish the real durable predecessor before admitting its successor.
+    // A fresh session must never skip directly to nonce 2.
+    {
+        let admission = open_and_stage(directory.path(), &first);
+        let mut bridge =
+            CandidatePersistentP2pIngressBridgeV0::new(identity(), admission, first.clone())
+                .expect("predecessor bridge");
+        bridge
+            .acknowledge_prepared(prepared(&first))
+            .expect("persist predecessor acknowledgement");
+    }
     let second = ingress(2, 11, 10, 2);
     let admission = open_and_stage(directory.path(), &second);
     let mut bridge =
@@ -201,8 +212,57 @@ fn terminal_predecessor_accepts_only_parent_bound_next_height() {
         durable_stage: AuthorityStageV0::CheckpointConfirmed,
         ..terminal
     };
+    let before = bridge.peer_recovery_state();
     assert!(matches!(
         bridge.verify_ingress(identity(), Some(nonterminal), &second),
         Err(CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch)
     ));
+    let wrong_parent = AuthorityReceiptV0 {
+        binding: OperationBindingV0::derive(identity(), 1, 1, d(99), d(9), d(12)),
+        ..terminal
+    };
+    assert!(matches!(
+        bridge.verify_ingress(identity(), Some(wrong_parent), &second),
+        Err(CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch)
+    ));
+    assert!(matches!(
+        bridge.acknowledge_prepared(prepared(&first)),
+        Err(CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch)
+    ));
+    assert_eq!(bridge.peer_recovery_state(), before);
+    drop(bridge);
+    let reopened =
+        CandidatePersistentPeerAdmissionV0::open(directory.path(), identity(), session())
+            .expect("reopen successor after rejected predecessor");
+    assert_eq!(reopened.recovery_state(), before);
+    assert_eq!(before.highest_acknowledged_nonce(), 1);
+    assert!(before.pending().is_some());
+}
+
+#[test]
+fn fresh_session_rejects_skipped_nonce_without_durable_mutation() {
+    let directory = tempfile::tempdir().expect("temporary directory");
+    let second = ingress(2, 11, 10, 2);
+    let frame = candidate_frame_for_bound_ingress_v0(identity(), session(), &second)
+        .expect("canonical successor frame");
+    {
+        let admission =
+            CandidatePersistentPeerAdmissionV0::open(directory.path(), identity(), session())
+                .expect("open fresh replay");
+        assert!(matches!(
+            admission.verify_frame(frame, &mut AcceptFrame),
+            Err(PeerFrameVerificationErrorV0::Boundary(
+                PeerAdmissionErrorV0::NonContiguousNonce
+            ))
+        ));
+        assert_eq!(admission.recovery_state().highest_acknowledged_nonce(), 0);
+        assert_eq!(admission.recovery_state().pending(), None);
+        assert_eq!(admission.last_prepared_acknowledgement(), None);
+    }
+    let reopened =
+        CandidatePersistentPeerAdmissionV0::open(directory.path(), identity(), session())
+            .expect("reopen after skipped nonce rejection");
+    assert_eq!(reopened.recovery_state().highest_acknowledged_nonce(), 0);
+    assert_eq!(reopened.recovery_state().pending(), None);
+    assert_eq!(reopened.last_prepared_acknowledgement(), None);
 }
