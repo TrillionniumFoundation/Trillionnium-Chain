@@ -351,4 +351,6 @@ fi
 
 python3 "$REFERENCE_GATE" "${args[@]}"
 python3 "$MODULE_GATE"
+python3 scripts/ci/test_documentation_contracts_v1.py
+python3 scripts/ci/check_documentation_contracts_v1.py
 git diff --check

@@ -4,10 +4,12 @@ Plan ID: `trnm-chain-development-plan-v2`
 Effective: **2026-09-02 (Asia/Singapore)**  
 Status: **sole active engineering plan; candidate-non-normative until independently accepted and merged through protected `main`**  
 Canonical destination: `refs/heads/main`  
-Active integration candidate: Draft PR **#62**, `refs/heads/work/plan-v2-full-gap-closure-20260902`  
+Selected integration entry: Draft PR **#62**, `refs/heads/work/plan-v2-full-gap-closure-20260902`\
 Assessed integration baseline: `work/plan-v2-full-gap-closure-20260902@af691ea5005e1f0262e90c4fc878ba0a70dbe7ea`  
 Assessed tree: `af09e389b1a462b3839508b7ef305596c76384c6`  
-Current PR head, source tree, prospective-merge commit, and prospective-merge tree are derived at verification time and may not be copied from this prose.
+Current PR head, source tree, prospective-merge commit, and prospective-merge tree are derived at verification time and may not be copied from this prose. The assessed baseline is historical provenance, not the current tip.
+
+Observed bounded child stack: **#62 <- #85 (PCC1 contract) <- #86 (implementation continuation)**. Children are not additional integration successors and their presence does not prove absorption into a parent. Verify current refs, ancestry and file content before integrating or transferring evidence.
 
 Machine truth: [`../../config/consensus-mainline.json`](../../config/consensus-mainline.json)  
 Snapshot: [`CURRENT_SNAPSHOT_V1.json`](CURRENT_SNAPSHOT_V1.json)  
@@ -15,7 +17,11 @@ Module registry: [`module-registry-v1.toml`](module-registry-v1.toml)
 Module coverage: [`../../config/module-coverage-v1.toml`](../../config/module-coverage-v1.toml)  
 Module technical reference: [`../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`](../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md)  
 Release train: [`release-train-v1.toml`](release-train-v1.toml)  
-Manifest: [`plan-manifest-v1.toml`](plan-manifest-v1.toml)
+Manifest: [`plan-manifest-v1.toml`](plan-manifest-v1.toml)\
+Applicability: [`docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md`](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md)\
+Implementation guide: [`docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md`](../modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md)\
+Independent review: [`docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md`](../modules/TRNM_INDEPENDENT_REVIEW_V1.md)\
+Trace registry: [`config/documentation-contracts-v1.json`](../../config/documentation-contracts-v1.json)
 
 ---
 
@@ -47,6 +53,12 @@ Truth precedence is:
 
 Protected `main`, assessed baseline, current PR head, prospective merge, built artifact, evidence submission, accepted release, and activated network identities are distinct and may not be substituted.
 
+### Applicable technical version
+
+Select source commit/tree, protocol version, contract profile, authenticated parameter commitment and feature closure before implementing a rule. `bft-v0` is the frozen normative implementation target, not an activated network. `pcc1` is a candidate integration contract importing the exact v0 kernel, not wire version 1. `ai-v1` is a separate draft protocol/profile and cannot be enabled by an old v0 commitment or a crate name. `legacy-ledger-observation` describes older local journal stages only; it grants no signing or publication authority.
+
+A newer child PR, later file date, passing simulation or executable implementation cannot override frozen signing bytes, validity, locks, finality or activation. Unresolved conflicts block the affected operation and require producer, consumer and qualified specialist review. The applicability contract resolves technical scope without changing this plan's gate order. Its machine index records lineage observations; runtime reports bind the actual checked-out source, not a cached branch tip.
+
 ### Documentation anti-pollution rule
 
 Development history lives in Git history, closed pull requests, immutable evidence, and source-bound audits. Active content must satisfy:
@@ -65,7 +77,7 @@ Development history lives in Git history, closed pull requests, immutable eviden
 
 Protected `main` was observed at `b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9`. It is the canonical destination but not the assessed implementation baseline for this plan.
 
-Draft PR #62 is the sole selected integration successor. Its assessed baseline combines:
+Draft PR #62 is the sole selected integration successor into protected main. PCC1/#85 and its implementation continuation #86 are bounded children on that line, not independent release authorities. Their latest source must be assessed separately from this historical integration baseline, which combines:
 
 - the descriptor-bound A04/A19/A23 application/finality/replay source train;
 - the Plan v2 single-development-truth structure;
@@ -193,7 +205,11 @@ machine dependency/capability descriptor
 
 The coverage gate fails on an orphan or duplicate crate, missing path, invalid module ID, dependency cycle, missing technical section, missing SLO/testkit/contract entry, insufficient maintainers, production contamination policy drift, or control-plane authority drift.
 
-A module is complete only when its source, contracts, tests, testkit, SLO, owners, capabilities, runbooks, and evidence are all source-bound and accepted. Documentation completeness is not implementation completeness.
+The coverage gate proves structural navigation and source ownership, not that an engineer can independently implement every operation. The implementation guide adds profile applicability, ordered admission/state steps, failure and recovery semantics, conformance requirements and producer/consumer tracing for every module. Its registry must match all primary crates and auxiliary units in the existing coverage inventory.
+
+Each enabled operation additionally needs an exact normative clause, schema/domain/limits, authenticated pre-state and input, post-state/effects, error enum and offset, positive/negative vector IDs and expected bytes, implementation symbol/feature, producer/consumer and source-bound replay result. Missing values are open acceptance requirements, never guessed defaults. Existing regression paths are review inputs and are not automatically independent golden vectors.
+
+Maintain three separate judgments: reference/requirement/source integrity; independent semantic design acceptance; implementation and production acceptance. The new read-only gate checks only the first. A module is complete only when its source, contracts, tests, testkit, SLO, owners, capabilities, runbooks, and evidence are all source-bound and independently accepted. Documentation completeness is not implementation completeness.
 
 ---
 
@@ -250,7 +266,17 @@ No authoritative operation may return trusted state before connection close and 
 
 ### 5.2 Node Commit Ledger
 
-Use one append-only, hash-chained, monotonic node authority rather than cross-database hope or an unproved two-phase commit:
+Use one append-only, hash-chained, monotonic node authority rather than cross-database hope or an unproved two-phase commit. For candidate PCC1 orchestration, distinguish the two domain lifecycles:
+
+```text
+signing:  Validated -> IntentDurable -> SignatureRecorded -> VotePublished
+finality: FinalityVerified -> CommitIntentDurable -> ApplicationApplied
+          -> CommitRecorded -> CheckpointConfirmed -> ReceiptPublished
+```
+
+Vote publication requires the authorized durable Safety/signing decision and required anchor, but **does not wait for finality of the block being voted on**. Receipt publication requires verified finality, durable application/commit records and a confirmed checkpoint. A vote, local journal stage or caller-supplied digest is not a finalized receipt.
+
+The retained older candidate vocabulary is classified as `legacy-ledger-observation`:
 
 ```text
 Prepared -> ApplicationSealed -> SafetyPersisted -> SignIntentPersisted
@@ -258,7 +284,9 @@ Prepared -> ApplicationSealed -> SafetyPersisted -> SignIntentPersisted
  -> OutboundPublished
 ```
 
-Each record binds node generation, chain/validator/application identity, height/view/block/parent, proposal and proof digests, pre/post roots, receipt/event roots, Safety revision, signer watermark, finality proof, checkpoint predecessor, previous record digest, and durable sequence.
+That sequence is an observation of the existing local journal contract, not the orchestration rule for both publication classes. It cannot make votes depend on their own finality. Documentation changes do not rename stored enum tags, rewrite journals or prove domain operations occurred. Adapter adoption requires explicit per-stage owner, predecessor, real domain fact, publication class and recovery mapping; unmapped records remain inert.
+
+The retained record format binds node generation, chain/validator/application identity, height/view/block/parent, proposal and proof digests, pre/post roots, receipt/event roots, Safety revision, signer watermark, finality proof, checkpoint predecessor, previous record digest, and durable sequence. PCC1 consumers verify the applicable domain facts rather than treating this field list or a stage name as acceptance.
 
 Subordinate stores are idempotent projections or explicitly named independent authorities. Recovery reaches the exact durable source or exact durable target. Ambiguity fails closed with a machine-readable stop, rebuild, or independent-review action.
 
@@ -403,7 +431,11 @@ M16 cannot sign, vote, finalize, create an authoritative root, modify SafetyRule
 
 ## 10. Team, ownership, and merge train
 
-Each critical module has at least two maintainers. CODEOWNERS migrates from personal fallback ownership to real module teams when those teams are provisioned. The author cannot provide independent acceptance.
+Each critical module requires at least two implementation maintainers. Existing CODEOWNERS and repository-maintainer fallback are routing and maintenance responsibility, not evidence of specialist competence or independence. CODEOWNERS migrates to real module teams only when those teams are provisioned; this document does not invent team membership.
+
+Separate implementation owner, affected consumer reviewer, qualified independent domain specialist and release/custody authority. A change author, contributor to the assessed implementation or agent under the same controlling principal cannot provide its independent acceptance. A second account, administrator permission or a review-request list does not establish independence. The policy in `docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md` requires specialist qualifications, appointment/identity evidence, conflict disclosures, exact source/contract/vector bindings, actual replay and authenticated signed findings.
+
+The trace registry lists the required domains for every module, including consensus, cryptography, storage/recovery and economics. Specialist slots without authenticated appointments remain vacant; semantic acceptance stays not assessed. Real reviewer intake uses the existing external-evidence authentication process, not a local JSON flag. Producer and consumer review cannot replace the required specialist, and specialist review cannot replace affected consumer replay.
 
 Cross-module work normally uses:
 
@@ -547,7 +579,7 @@ Any source, protocol, dependency, compiler, feature, configuration, validator se
 
 ## 14. Immediate executable order
 
-1. rerun canonical document/module coverage, repository truth, protocol contract, Rust baseline, fuzz smoke, Node Commit, 1/2/4/8-worker, recovery, replay-to-Core, candidate-node, Web4, and prospective-merge gates on the same current PR #62 head;
+1. rerun canonical document/module coverage, repository truth, protocol contract, Rust baseline, fuzz smoke, Node Commit, 1/2/4/8-worker, recovery, replay-to-Core, candidate-node, Web4, and prospective-merge gates on the exact current integration or bounded-child head being changed; separately requalify the current PR #62 head when child work is integrated;
 2. repair every exact log failure without weakening source identity, offline dependency, mutation, recovery, or non-promotion requirements;
 3. mark PRs #54, #57, #58, #59, and #61 superseded only after their evidence and unique commits are preserved or proven absorbed;
 4. obtain independent module-owner, consumer, security/evidence, and release acceptance on the unchanged head;
@@ -563,6 +595,8 @@ Minimum local replay:
 ```bash
 bash scripts/ci/check_canonical_development_plan.sh
 bash scripts/ci/check_agent_development_docs_v1.sh
+python3 scripts/ci/test_documentation_contracts_v1.py
+python3 scripts/ci/check_documentation_contracts_v1.py
 python3 scripts/ci/check_module_coverage_v1.py
 python3 scripts/ci/check_repository_truth_v1.py
 python3 scripts/ci/check_blocker_execution_v1.py

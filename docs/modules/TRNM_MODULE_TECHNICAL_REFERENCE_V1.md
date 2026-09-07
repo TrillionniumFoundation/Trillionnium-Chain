@@ -10,6 +10,14 @@ change gate order, assign a new delivery sequence, or promote any production,
 public-testnet, release, or activation flag. Exact source ownership is carried
 by the module registry; exact implementation claims require accepted evidence.
 
+## Applicability, implementation detail and review
+
+Resolve `docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md` before selecting a rule. Frozen v0, candidate PCC1, draft AI-v1 and `legacy-ledger-observation` are distinct profiles, not interchangeable versions. The ordered algorithms, failure/recovery semantics and requirement IDs for all M00-M17 modules are in `docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md`; the machine trace index is `config/documentation-contracts-v1.json`.
+
+These references complement, rather than replace, the exact normative layouts and existing error registries. Structural coverage does not assess semantic implementability. Every enabled operation requires exact clause/schema/limit, state transition, errors, positive/negative vectors, implementation symbol and source-bound consumer replay. Missing or undecided operation-level details remain explicit acceptance blockers.
+
+Implementation maintainers, consumer reviewers and qualified independent specialists are separate roles under `docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md`. Repository fallback accounts confer no specialist qualification or independent acceptance. No unverified person or team is appointed by this reference.
+
 ## Common module contract
 
 Every module exposes versioned contracts, deterministic or explicitly
@@ -304,13 +312,29 @@ M02/M03 authority.
 `trnm-poco-order-application-v1`; it coordinates M03, M06, M07, and M13
 contracts.
 
-**Ledger contract.** The monotonic hash-chained sequence is:
-`Prepared → ApplicationSealed → SafetyPersisted → SignIntentPersisted →
-SignatureConfirmed → FinalityApplied → CheckpointConfirmed →
-OutboundPublished`. Every record binds generation, chain/validator/application
-identity, height/view/block/parent, proposal and proof digests, pre/post roots,
-receipt/event roots, Safety revision, signer watermark, finality proof,
-checkpoint predecessor, prior digest, and durable sequence.
+**Ledger contract.** Candidate PCC1 uses separate domain lifecycles:
+
+```text
+signing:  Validated -> IntentDurable -> SignatureRecorded -> VotePublished
+finality: FinalityVerified -> CommitIntentDurable -> ApplicationApplied
+          -> CommitRecorded -> CheckpointConfirmed -> ReceiptPublished
+```
+
+Vote publication does not wait for finality of its own block; it requires the
+exact durable Safety/signing authority and required anchor. Receipt publication
+requires finality, application/commit durability and checkpoint confirmation.
+The old `Prepared → ApplicationSealed → SafetyPersisted → SignIntentPersisted →
+SignatureConfirmed → FinalityApplied → CheckpointConfirmed → OutboundPublished`
+chain is `legacy-ledger-observation`: retained local stage vocabulary, not a
+shared publication rule or proof that domain operations occurred. Stored tags
+are not renamed by this documentation change. Unmapped historical records stay
+inert until explicit owner/fact/predecessor/recovery mapping is qualified.
+
+The legacy record format binds generation, chain/validator/application identity,
+height/view/block/parent, proposal and proof digests, pre/post roots, receipt/event
+roots, Safety revision, signer watermark, finality proof, checkpoint predecessor,
+prior digest and durable sequence. PCC1 consumers must verify the corresponding
+domain facts; a field list or a caller stage is not authority.
 
 **Recovery.** Each subordinate store is an idempotent projection or a separately
 named authority. Recovery reaches the exact durable source or exact durable
@@ -617,10 +641,15 @@ power-loss campaigns, red-team/audit, and wall-clock soaks. SLO profile:
 
 ## Module completion rule
 
-A module is technically documented only when its registry row maps every primary
-source unit, contract and technical reference, test roots, SLO profile,
-maintainers, dependencies, capabilities, and evidence roots. Documentation does
-not establish implementation completion. Implementation completion additionally
-requires exact-source tests and accepted evidence; production and activation
-remain governed solely by machine truth, protected review, external evidence,
-and signed governance records.
+A registry row mapping primary source units, references, test roots, SLOs,
+maintainers, dependencies, capabilities and evidence proves navigation and
+ownership coverage only. Detailed-design acceptance additionally requires the
+implementation guide's operation-level version/state/error/vector/symbol traces
+and qualified independent semantic review. A file-path or requirement-count pass
+does not grant that acceptance.
+
+Implementation completion additionally requires exact-source execution and
+authenticated accepted evidence. Maintainer routing is not independent review;
+vacant specialist roles and unaccepted vectors remain visible blockers.
+Production and activation remain governed solely by machine truth, protected
+review, external evidence and signed governance records.

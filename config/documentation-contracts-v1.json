@@ -1,0 +1,1063 @@
+{
+  "schema": "trnm-documentation-contracts-v1",
+  "plan_id": "trnm-chain-development-plan-v2",
+  "authority_contract": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+  "implementation_guide": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md",
+  "review_policy": "docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md",
+  "coverage_manifest": "config/module-coverage-v1.toml",
+  "production_authority": false,
+  "semantic_design_accepted": false,
+  "implementation_accepted": false,
+  "profile_status": {
+    "bft-v0": "frozen-implementation-target-not-activation",
+    "pcc1": "candidate-contract-not-wire-version",
+    "ai-v1": "draft-protocol-v1-not-activated",
+    "legacy-ledger-observation": "historical-local-stage-vocabulary-not-publication-authority"
+  },
+  "pcc1_v0_imports": {
+    "docs/protocol/poco-bft-v0/01-system-model-and-threat-model.md": "9b7791addf496d0b88f84bb37592d099ad525eec",
+    "docs/protocol/poco-bft-v0/02-chained-qc-consensus.md": "6f5d6a88e15b3682ffe7d28137032d69f86edb9b",
+    "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md": "d0f79ed79f044eeb09f04224000754ae24d3b23b",
+    "docs/protocol/poco-bft-v0/04-epochs-validator-sets-and-upgrades.md": "c08f835d295d1ca7c747ccf3c3bd1af7ae7f767c",
+    "docs/protocol/poco-bft-v0/05-poco-weights-bond-and-slashing.md": "d8005598471dff3bae229eda6d129b5a1a14b066",
+    "docs/protocol/poco-bft-v0/06-light-client.md": "42609bc8e36e990f4bad64b86d687f333ac3b58b",
+    "docs/protocol/poco-bft-v0/07-invariants-and-conformance.md": "4b9c425acc9588ba36d188fc0ea5616ac4f61f5d"
+  },
+  "independent_review_assignments": [],
+  "integration_observation": {
+    "observed_source": "1f5ebbb8dab62cfd4d56447480ad60992f61f0ba",
+    "selected_successor_pr": 62,
+    "stack": [
+      {
+        "pr": 62,
+        "base_ref": "main",
+        "head_ref": "work/plan-v2-full-gap-closure-20260902"
+      },
+      {
+        "pr": 85,
+        "base_ref": "work/plan-v2-full-gap-closure-20260902",
+        "head_ref": "work/poco-authority-ai-convergence-20260907"
+      },
+      {
+        "pr": 86,
+        "base_ref": "work/poco-authority-ai-convergence-20260907",
+        "head_ref": "fix/chain-pcc1-runtime-integration"
+      }
+    ],
+    "current_identity": "derive-head-tree-base-and-prospective-merge-at-verification-time"
+  },
+  "modules": [
+    {
+      "id": "M00",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m00",
+      "profiles": [
+        "bft-v0",
+        "ai-v1"
+      ],
+      "primary_crates": [
+        "trnm-consensus-types",
+        "trnm-types",
+        "trnm-protocol",
+        "trnm-poco-order-types-v1"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md",
+        "docs/protocol/poco-ai-native-v1/README.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-consensus-types/src/lib.rs",
+        "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-consensus-crypto/tests/qc_tc_threshold_vectors.rs",
+        "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M00-CANON",
+        "M00-PREFIX",
+        "M00-BOUND",
+        "M00-DOMAIN",
+        "M00-REGISTRY"
+      ],
+      "review_domains": [
+        "consensus",
+        "cryptography"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M00-CANON",
+        "profile": "bft-v0",
+        "implementation_path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+        "implementation_symbol": "decode_consensus_parameters_v0_exact",
+        "error_path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+        "error_symbol_or_literal": "DecodeErrorCode",
+        "regression_path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+        "regression_symbol": "consensus_parameters_decoder_round_trips_and_exhausts_the_exact_root",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Exact parameter decoder only; independent coverage of every reachable CEV0/CEV1 object is not established."
+      }
+    },
+    {
+      "id": "M01",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m01",
+      "profiles": [
+        "bft-v0",
+        "pcc1",
+        "ai-v1"
+      ],
+      "primary_crates": [
+        "trnm-consensus-crypto",
+        "trnm-consensus-remote-signer-protocol"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md",
+        "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-consensus-crypto/tests/pcc1_strict_finality.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M01-KEY",
+        "M01-SIG",
+        "M01-TARGET",
+        "M01-CAP",
+        "M01-REVOKE"
+      ],
+      "review_domains": [
+        "cryptography",
+        "application-security"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M01-TARGET",
+        "profile": "pcc1",
+        "implementation_path": "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs",
+        "implementation_symbol": "decode_verify_finality_proof_strict_v0",
+        "error_path": "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs",
+        "error_symbol_or_literal": "StrictFinalityErrorV0",
+        "regression_path": "trillionnium/crates/trnm-consensus-crypto/tests/pcc1_strict_finality.rs",
+        "regression_symbol": "rejects_retargeting_to_newest_qc_or_different_root",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Strict proof admission only; full runtime, epoch and migration consumer adoption remains separate."
+      }
+    },
+    {
+      "id": "M02",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m02",
+      "profiles": [
+        "bft-v0",
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-consensus-core"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-bft-v0/02-chained-qc-consensus.md",
+        "docs/protocol/poco-bft-v0/04-epochs-validator-sets-and-upgrades.md",
+        "docs/protocol/poco-convergence-v1/README.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-consensus-core/src/lib.rs",
+        "trillionnium/crates/trnm-consensus-core/src/core.rs",
+        "trillionnium/crates/trnm-consensus-core/src/error.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-consensus-sim/tests/scenarios.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M02-QUORUM",
+        "M02-THREECHAIN",
+        "M02-TC",
+        "M02-LIVE",
+        "M02-EPOCH"
+      ],
+      "review_domains": [
+        "consensus"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M02-LIVE",
+        "profile": "bft-v0",
+        "implementation_path": "trillionnium/crates/trnm-consensus-core/src/core.rs",
+        "implementation_symbol": "step",
+        "error_path": "trillionnium/crates/trnm-consensus-core/src/error.rs",
+        "error_symbol_or_literal": "CoreError",
+        "regression_path": "trillionnium/crates/trnm-consensus-sim/tests/scenarios.rs",
+        "regression_symbol": "two_plus_two_partition_cannot_finalize_and_heal_restores_progress",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Simulator regression of the kernel, not a real multi-host or complete liveness proof."
+      }
+    },
+    {
+      "id": "M03",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m03",
+      "profiles": [
+        "bft-v0",
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-consensus-safety-rules",
+        "trnm-consensus-safety-store",
+        "trnm-consensus-signer-journal",
+        "trnm-consensus-unix-remote-signer",
+        "trnm-consensus-unix-fleet-signer",
+        "trnm-consensus-external-watermark",
+        "trnm-consensus-external-node-checkpoint",
+        "trnm-consensus-remote-signer-service",
+        "trnm-whole-node-checkpoint-types",
+        "trnm-durable-file-adapters-v0"
+      ],
+      "normative_refs": [
+        "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
+        "docs/protocol/poco-convergence-v1/README.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-consensus-signer-journal/src/lib.rs",
+        "trillionnium/crates/trnm-consensus-signer-journal/src/sqlite.rs",
+        "trillionnium/crates/trnm-consensus-signer-journal/src/error.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-consensus-signer-journal/tests/sqlite_journal.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M03-PERSIST",
+        "M03-LOSTACK",
+        "M03-ROLLBACK",
+        "M03-CAS",
+        "M03-CUSTODY"
+      ],
+      "review_domains": [
+        "storage-recovery",
+        "cryptography"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M03-PERSIST",
+        "profile": "bft-v0",
+        "implementation_path": "trillionnium/crates/trnm-consensus-signer-journal/src/sqlite.rs",
+        "implementation_symbol": "sign_exact_v0",
+        "error_path": "trillionnium/crates/trnm-consensus-signer-journal/src/error.rs",
+        "error_symbol_or_literal": "SignerJournalErrorV0",
+        "regression_path": "trillionnium/crates/trnm-consensus-signer-journal/tests/sqlite_journal.rs",
+        "regression_symbol": "signature_is_persisted_before_return_and_exact_replay_skips_producer",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "The journal is not SafetyRules; exact HSM replay and Core/Safety/external-anchor reconciliation require separate acceptance."
+      }
+    },
+    {
+      "id": "M04",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m04",
+      "profiles": [
+        "bft-v0",
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-consensus-peer-lease"
+      ],
+      "normative_refs": [
+        "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
+        "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-consensus-peer-lease/src/lib.rs",
+        "trillionnium/crates/trnm-consensus-peer-lease/src/store.rs",
+        "trillionnium/crates/trnm-consensus-peer-lease/src/protocol.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-consensus-peer-lease/tests/payload_replay_recovery_process_matrix.rs",
+        "trillionnium/crates/trnm-consensus-peer-lease/src/store.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M04-FRAME",
+        "M04-LEASE",
+        "M04-REPLAY",
+        "M04-DOS",
+        "M04-HANDOFF"
+      ],
+      "review_domains": [
+        "network-security",
+        "storage-recovery"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M04-LEASE",
+        "profile": "pcc1",
+        "implementation_path": "trillionnium/crates/trnm-consensus-peer-lease/src/store.rs",
+        "implementation_symbol": "apply",
+        "error_path": "trillionnium/crates/trnm-consensus-peer-lease/src/protocol.rs",
+        "error_symbol_or_literal": "PeerLeaseErrorV1",
+        "regression_path": "trillionnium/crates/trnm-consensus-peer-lease/src/store.rs",
+        "regression_symbol": "journal_restarts_and_fences_stale_generation",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Lease authority only; this does not certify a persistent consensus payload transport or full node."
+      }
+    },
+    {
+      "id": "M05",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m05",
+      "profiles": [
+        "bft-v0",
+        "ai-v1"
+      ],
+      "primary_crates": [
+        "trnm-mempool",
+        "trnm-application-tx-builder-v0",
+        "trnm-tx-lifecycle-v0"
+      ],
+      "normative_refs": [
+        "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
+        "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-mempool/tests/typed_admission_contract.rs",
+        "trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M05-NONCE",
+        "M05-REPLACE",
+        "M05-RESTART",
+        "M05-GC",
+        "M05-PARENT"
+      ],
+      "review_domains": [
+        "application-security",
+        "storage-recovery"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M05-GC",
+        "profile": "bft-v0",
+        "implementation_path": "trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs",
+        "implementation_symbol": "collect",
+        "error_path": "trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs",
+        "error_symbol_or_literal": "TxLifecycleErrorV0",
+        "regression_path": "trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs",
+        "regression_symbol": "full_lifecycle_is_idempotent_and_gc_is_proof_gated",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Contract/core fixture, not a production authorization verifier, durable mempool or network lifecycle."
+      }
+    },
+    {
+      "id": "M06",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m06",
+      "profiles": [
+        "bft-v0",
+        "pcc1",
+        "ai-v1"
+      ],
+      "primary_crates": [
+        "trnm-native-application",
+        "trnm-native-execution-v0",
+        "trnm-executor",
+        "trnm-poco-mvcc-fee-v1",
+        "trnm-poco-global-execution-v1",
+        "trnm-runtime"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md",
+        "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-native-execution-v0/src/lib.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-native-execution-v0/src/lib.rs",
+        "trillionnium/crates/trnm-native-execution-v0/src/overlay_delta_tests.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M06-WORKERS",
+        "M06-HOT",
+        "M06-ATOMIC",
+        "M06-REEXEC",
+        "M06-METER"
+      ],
+      "review_domains": [
+        "execution",
+        "storage-recovery"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M06-ATOMIC",
+        "profile": "pcc1",
+        "implementation_path": "trillionnium/crates/trnm-native-execution-v0/src/lib.rs",
+        "implementation_symbol": "stage_runtime_mutations_v0",
+        "error_path": "trillionnium/crates/trnm-native-execution-v0/src/lib.rs",
+        "error_symbol_or_literal": "duplicate runtime mutation key",
+        "regression_path": "trillionnium/crates/trnm-native-execution-v0/src/overlay_delta_tests.rs",
+        "regression_symbol": "later_duplicate_rejects_the_entire_transaction",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "The current anyhow diagnostic is a local error literal, not a newly frozen external wire code; this case does not prove every worker-count path."
+      }
+    },
+    {
+      "id": "M07",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m07",
+      "profiles": [
+        "bft-v0",
+        "ai-v1"
+      ],
+      "primary_crates": [
+        "trnm-state",
+        "trnm-native-application-sqlite",
+        "trnm-poco-order-state-v1"
+      ],
+      "normative_refs": [
+        "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
+        "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-state/src/lib.rs",
+        "trillionnium/crates/trnm-native-application-sqlite/src/store.rs",
+        "trillionnium/crates/trnm-native-application-sqlite/src/error.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-state/tests/state_root_regression.rs",
+        "trillionnium/crates/trnm-native-application-sqlite/src/tests.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M07-NAMESPACE",
+        "M07-SCHEMA",
+        "M07-ROOT",
+        "M07-PRUNE",
+        "M07-DURABLE"
+      ],
+      "review_domains": [
+        "storage-recovery",
+        "execution",
+        "client-proofs"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M07-SCHEMA",
+        "profile": "bft-v0",
+        "implementation_path": "trillionnium/crates/trnm-native-application-sqlite/src/store.rs",
+        "implementation_symbol": "open",
+        "error_path": "trillionnium/crates/trnm-native-application-sqlite/src/error.rs",
+        "error_symbol_or_literal": "ValidationStoreErrorCodeV0",
+        "regression_path": "trillionnium/crates/trnm-native-application-sqlite/src/tests.rs",
+        "regression_symbol": "schema_or_trigger_drift_is_rejected_on_reopen",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Local proposal-validation store/schema regression, not whole-node power-loss or coherent-rollback acceptance."
+      }
+    },
+    {
+      "id": "M08",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m08",
+      "profiles": [
+        "bft-v0",
+        "pcc1",
+        "legacy-ledger-observation"
+      ],
+      "primary_crates": [
+        "trnm-core-restart-v0",
+        "trnm-poco-order-application-v1"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-convergence-v1/README.md",
+        "docs/protocol/poco-convergence-v1/PROOF_MIGRATION.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality/tests.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M08-SEPARATE",
+        "M08-OLDEST",
+        "M08-PREPARED",
+        "M08-CUT",
+        "M08-BUDGET"
+      ],
+      "review_domains": [
+        "consensus",
+        "storage-recovery"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M08-PREPARED",
+        "profile": "pcc1",
+        "implementation_path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs",
+        "implementation_symbol": "read_poco_finalized_bytes_v0",
+        "error_path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs",
+        "error_symbol_or_literal": "PocoFinalityCommitErrorV0",
+        "regression_path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality/tests.rs",
+        "regression_symbol": "readback_never_promotes_prepared_state_even_with_a_valid_proof",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Readback boundary only; it does not drive checkpoint or receipt publication."
+      }
+    },
+    {
+      "id": "M09",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m09",
+      "profiles": [
+        "ai-v1"
+      ],
+      "primary_crates": [
+        "trnm-poco-da-v1"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-ai-native-v1/06-certified-data-availability.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-poco-da-v1/src/lib.rs",
+        "trillionnium/crates/trnm-poco-da-v1/src/store.rs",
+        "trillionnium/crates/trnm-poco-da-v1/src/error.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-poco-da-v1/src/lib.rs",
+        "trillionnium/crates/trnm-poco-da-v1/src/tests.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M09-NAMESPACE",
+        "M09-THRESHOLD",
+        "M09-RETENTION",
+        "M09-STORE",
+        "M09-REPAIR"
+      ],
+      "review_domains": [
+        "network-security",
+        "storage-recovery"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M09-STORE",
+        "profile": "ai-v1",
+        "implementation_path": "trillionnium/crates/trnm-poco-da-v1/src/store.rs",
+        "implementation_symbol": "prepare_attestation",
+        "error_path": "trillionnium/crates/trnm-poco-da-v1/src/error.rs",
+        "error_symbol_or_literal": "DaErrorCodeV1",
+        "regression_path": "trillionnium/crates/trnm-poco-da-v1/src/tests.rs",
+        "regression_symbol": "durable_before_attest_survives_reopen_and_rejects_bad_signature",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Candidate local DA kernel, not production attestation authority or full independent DA interoperability."
+      }
+    },
+    {
+      "id": "M10",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m10",
+      "profiles": [
+        "ai-v1",
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-poco-agent-market-v1",
+        "trnm-worker-agent"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md",
+        "docs/protocol/poco-ai-native-v1/04-market-task-lease-escrow-and-lifecycle.md",
+        "docs/protocol/poco-convergence-v1/AI_RESOURCE_STATE_MACHINE.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-poco-agent-market-v1/src/lib.rs",
+        "trillionnium/crates/trnm-poco-agent-market-v1/src/store.rs",
+        "trillionnium/crates/trnm-poco-agent-market-v1/src/error.rs"
+      ],
+      "regression_refs": [
+        "formal/poco-convergence-v1/check.py",
+        "trillionnium/crates/trnm-poco-agent-market-v1/src/tests.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M10-AGGREGATE",
+        "M10-REVOKE",
+        "M10-TERMINAL",
+        "M10-SERVICE",
+        "M10-HISTORY"
+      ],
+      "review_domains": [
+        "application-security",
+        "execution",
+        "economics"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M10-TERMINAL",
+        "profile": "ai-v1",
+        "implementation_path": "trillionnium/crates/trnm-poco-agent-market-v1/src/store.rs",
+        "implementation_symbol": "execute_order_finalized",
+        "error_path": "trillionnium/crates/trnm-poco-agent-market-v1/src/error.rs",
+        "error_symbol_or_literal": "AgentMarketErrorCodeV1",
+        "regression_path": "trillionnium/crates/trnm-poco-agent-market-v1/src/tests.rs",
+        "regression_symbol": "task_funded_escrow_bid_lease_and_provider_accept_are_atomic",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "This is the funded task/lease prefix, not all terminal paths or the complete PCC1 multidimensional resource state machine."
+      }
+    },
+    {
+      "id": "M11",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m11",
+      "profiles": [
+        "ai-v1",
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-poco-verify-challenge-v1",
+        "trnm-oracle"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-ai-native-v1/05-compute-receipts-verification-and-challenges.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-poco-verify-challenge-v1/src/lib.rs",
+        "trillionnium/crates/trnm-poco-verify-challenge-v1/src/profile_registry_v1.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-poco-verify-challenge-v1/tests/profile_registry_v1.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M11-PIN",
+        "M11-CLASS",
+        "M11-STATUS",
+        "M11-CHALLENGE",
+        "M11-MATURE"
+      ],
+      "review_domains": [
+        "cryptography",
+        "application-security"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M11-PIN",
+        "profile": "ai-v1",
+        "implementation_path": "trillionnium/crates/trnm-poco-verify-challenge-v1/src/profile_registry_v1.rs",
+        "implementation_symbol": "resolve_exact",
+        "error_path": "trillionnium/crates/trnm-poco-verify-challenge-v1/src/profile_registry_v1.rs",
+        "error_symbol_or_literal": "VerificationProfileErrorV1",
+        "regression_path": "trillionnium/crates/trnm-poco-verify-challenge-v1/tests/profile_registry_v1.rs",
+        "regression_symbol": "disabled_expired_revoked_and_unknown_profiles_do_not_fallback",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Candidate registry rejection path, not acceptance of every verifier class or economic/order authority."
+      }
+    },
+    {
+      "id": "M12",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m12",
+      "profiles": [
+        "bft-v0",
+        "ai-v1",
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-poco-consumption-settlement-v1",
+        "trnm-pouw"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md",
+        "docs/protocol/poco-bft-v0/05-poco-weights-bond-and-slashing.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/lib.rs",
+        "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/engine.rs",
+        "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/error.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/lib.rs",
+        "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/tests.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M12-CONSERVE",
+        "M12-DOUBLE",
+        "M12-PARTIAL",
+        "M12-POLICY",
+        "M12-ECONOMIC"
+      ],
+      "review_domains": [
+        "economics",
+        "application-security",
+        "storage-recovery"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M12-CONSERVE",
+        "profile": "ai-v1",
+        "implementation_path": "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/engine.rs",
+        "implementation_symbol": "apply_transition",
+        "error_path": "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/error.rs",
+        "error_symbol_or_literal": "ConsumptionSettlementErrorCodeV1",
+        "regression_path": "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/tests.rs",
+        "regression_symbol": "receipt_rollup_and_settlement_are_bilateral_gap_free_and_conserved",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Candidate one-asset/one-rollup kernel; multi-asset production settlement and anti-collusion economics remain separate."
+      }
+    },
+    {
+      "id": "M13",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m13",
+      "profiles": [
+        "bft-v0",
+        "ai-v1",
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-poco-cross-plane-readback-v1",
+        "trnm-poco-order-finality-verifier-v1",
+        "trnm-finality-types",
+        "trnm-finality-verifier",
+        "trnm-migration-v0",
+        "trnm-state-sync-v0"
+      ],
+      "normative_refs": [
+        "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md",
+        "docs/protocol/poco-bft-v0/06-light-client.md",
+        "docs/protocol/poco-convergence-v1/PROOF_MIGRATION.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-state-sync-v0/src/lib.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-state-sync-v0/tests/verification_seals.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M13-ANCHOR",
+        "M13-CLASS",
+        "M13-PATH",
+        "M13-STAGE",
+        "M13-MIGRATE"
+      ],
+      "review_domains": [
+        "client-proofs",
+        "consensus",
+        "cryptography",
+        "storage-recovery"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M13-STAGE",
+        "profile": "bft-v0",
+        "implementation_path": "trillionnium/crates/trnm-state-sync-v0/src/lib.rs",
+        "implementation_symbol": "verify_complete",
+        "error_path": "trillionnium/crates/trnm-state-sync-v0/src/lib.rs",
+        "error_symbol_or_literal": "StateSyncErrorV0",
+        "regression_path": "trillionnium/crates/trnm-state-sync-v0/tests/verification_seals.rs",
+        "regression_symbol": "recomputed_root_mismatch_cannot_issue_a_verified_snapshot",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Verified snapshot capability only; real transport, independent light client and migration qualification remain separate."
+      }
+    },
+    {
+      "id": "M14",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m14",
+      "profiles": [
+        "bft-v0",
+        "ai-v1",
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-rpc",
+        "trnm-cli"
+      ],
+      "normative_refs": [
+        "web4-frontend/docs/api-contract.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-rpc/src/lib.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-rpc/tests/rpc_contract_v1.rs",
+        "trillionnium/crates/trnm-rpc/src/lib.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M14-READONLY",
+        "M14-FRESH",
+        "M14-PROOF",
+        "M14-BOUND",
+        "M14-E2E"
+      ],
+      "review_domains": [
+        "client-proofs",
+        "application-security"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M14-BOUND",
+        "profile": "bft-v0",
+        "implementation_path": "trillionnium/crates/trnm-rpc/src/lib.rs",
+        "implementation_symbol": "validate_trnm_address",
+        "error_path": "trillionnium/crates/trnm-rpc/src/lib.rs",
+        "error_symbol_or_literal": "AccountQueryError",
+        "regression_path": "trillionnium/crates/trnm-rpc/src/lib.rs",
+        "regression_symbol": "query_account_state_invalid_input",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Current RPC address/error contract only; it does not establish full write SDK, transaction finality or UI proof verification."
+      }
+    },
+    {
+      "id": "M15",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m15",
+      "profiles": [
+        "bft-v0",
+        "pcc1",
+        "ai-v1",
+        "legacy-ledger-observation"
+      ],
+      "primary_crates": [
+        "trnm-poco-node",
+        "trnm-poco-node-authority",
+        "trnm-poco-node-io",
+        "trnm-poco-node-host",
+        "trnm-poco-node-cli",
+        "trnm-bridge-poc",
+        "trnm-node-boundary-v0",
+        "trnm-poco-node-production-v0",
+        "trnm-release-bundle-v0"
+      ],
+      "normative_refs": [
+        "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md",
+        "OPERATIONS.md",
+        "RELEASE_READINESS.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-poco-node-production-v0/tests/public_authority_surface.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M15-CLOSURE",
+        "M15-WIRING",
+        "M15-START",
+        "M15-ARTIFACT",
+        "M15-NONPROMOTE"
+      ],
+      "review_domains": [
+        "release-supply-chain",
+        "storage-recovery"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M15-WIRING",
+        "profile": "pcc1",
+        "implementation_path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+        "implementation_symbol": "advance_verified",
+        "error_path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+        "error_symbol_or_literal": "AuthoritySessionErrorV0",
+        "regression_path": "trillionnium/crates/trnm-poco-node-production-v0/tests/public_authority_surface.rs",
+        "regression_symbol": "production_session_exports_verified_tokens_not_naked_digest_mutators",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Public authority-surface regression; not evidence that default-node producers are fully commissioned."
+      }
+    },
+    {
+      "id": "M16",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m16",
+      "profiles": [
+        "pcc1"
+      ],
+      "primary_crates": [
+        "trnm-control-plane-v0"
+      ],
+      "normative_refs": [
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
+      ],
+      "implementation_refs": [
+        "trillionnium/crates/trnm-control-plane-v0/src/lib.rs"
+      ],
+      "regression_refs": [
+        "trillionnium/crates/trnm-control-plane-v0/src/lib.rs"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M16-CLASS",
+        "M16-GUARD",
+        "M16-STALE",
+        "M16-LOSS",
+        "M16-ROLLBACK"
+      ],
+      "review_domains": [
+        "application-security",
+        "execution",
+        "release-supply-chain"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M16-GUARD",
+        "profile": "pcc1",
+        "implementation_path": "trillionnium/crates/trnm-control-plane-v0/src/lib.rs",
+        "implementation_symbol": "evaluate",
+        "error_path": "trillionnium/crates/trnm-control-plane-v0/src/lib.rs",
+        "error_symbol_or_literal": "ControlPlaneErrorV0",
+        "regression_path": "trillionnium/crates/trnm-control-plane-v0/src/lib.rs",
+        "regression_symbol": "forbidden_authority_is_rejected_before_evaluation",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Non-authoritative local guard fixture, not a deployed planner or automatic production tuning authority."
+      }
+    },
+    {
+      "id": "M17",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m17",
+      "profiles": [
+        "bft-v0",
+        "pcc1",
+        "ai-v1"
+      ],
+      "primary_crates": [
+        "trnm-bench",
+        "trnm-consensus-sim",
+        "trnm-research-protocol",
+        "trnm-poco-lab-validator",
+        "trnm-production-adapter-conformance-v0"
+      ],
+      "normative_refs": [
+        "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+        "docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md",
+        "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md"
+      ],
+      "implementation_refs": [
+        "scripts/ci/check_external_evidence_v1.py",
+        "scripts/ci/check_documentation_contracts_v1.py"
+      ],
+      "regression_refs": [
+        "scripts/ci/test_documentation_contracts_v1.py"
+      ],
+      "regression_scope": "existing-review-input-not-independent-golden-acceptance",
+      "requirement_ids": [
+        "M17-SOURCE",
+        "M17-MUTANT",
+        "M17-STATUS",
+        "M17-INDEPENDENCE",
+        "M17-REPRO"
+      ],
+      "review_domains": [
+        "release-supply-chain"
+      ],
+      "implementation_owner_scope": "repository-maintainer-routing-only",
+      "independent_review_status": "vacant",
+      "semantic_acceptance": "not-assessed",
+      "implementation_acceptance": "not-assessed",
+      "operation_trace": {
+        "requirement_id": "M17-INDEPENDENCE",
+        "profile": "pcc1",
+        "implementation_path": "scripts/ci/check_documentation_contracts_v1.py",
+        "implementation_symbol": "validate_structure",
+        "error_path": "scripts/ci/check_documentation_contracts_v1.py",
+        "error_symbol_or_literal": "DOC-SELF-ACCEPTANCE",
+        "regression_path": "scripts/ci/test_documentation_contracts_v1.py",
+        "regression_symbol": "test_local_accepted_state",
+        "scope": "representative-source-regression-not-complete-module-acceptance",
+        "limitation": "Local navigation-registry anti-self-acceptance test only; authenticated specialist findings still use the external evidence process."
+      }
+    }
+  ],
+  "auxiliary_trace": [
+    {
+      "id": "contracts-audit-events",
+      "primary_module": "M00",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m00"
+    },
+    {
+      "id": "contracts-governance-guard",
+      "primary_module": "M01",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m01"
+    },
+    {
+      "id": "contracts-settlement-vault",
+      "primary_module": "M12",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m12"
+    },
+    {
+      "id": "contracts-bridge-relay",
+      "primary_module": "M15",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m15"
+    },
+    {
+      "id": "web4-frontend",
+      "primary_module": "M14",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m14"
+    },
+    {
+      "id": "formal-models",
+      "primary_module": "M17",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m17"
+    },
+    {
+      "id": "canonical-fuzz",
+      "primary_module": "M17",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m17"
+    },
+    {
+      "id": "protocol-transport",
+      "primary_module": "M00",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m00"
+    },
+    {
+      "id": "repository-ci",
+      "primary_module": "M17",
+      "guide_ref": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md#m17"
+    }
+  ]
+}
