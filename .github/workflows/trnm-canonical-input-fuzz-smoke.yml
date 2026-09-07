@@ -55,6 +55,9 @@ jobs:
       CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - name: Verify runner-provisioned Rust toolchain
         run: |
           set -euo pipefail
@@ -68,6 +71,21 @@ jobs:
             --toolchain nightly-2026-07-27 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
+
+      - name: Replay PCC1 abstract contract and retained mutants
+        run: python3 formal/poco-convergence-v1/check.py
+      - name: Package temporary exact-source offline development inputs
+        if: github.head_ref == 'fix/chain-pcc1-runtime-integration'
+        run: python3 scripts/ci/package_pcc1_build_inputs_v1.py
+      - name: Retain temporary offline development inputs
+        if: github.head_ref == 'fix/chain-pcc1-runtime-integration'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pcc1-offline-build-inputs-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/pcc1-offline-build-inputs
+          retention-days: 1
+          if-no-files-found: error
+          compression-level: 0
 
       - name: Verify runner-provisioned cargo-fuzz
         run: |
