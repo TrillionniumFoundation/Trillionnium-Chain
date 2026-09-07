@@ -78,7 +78,7 @@
 .github/workflows/trnm-cometbft-spike.yml:359:            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/genesis.json
 .github/workflows/trnm-temporary-native-purge.yml:6:      - work/remove-cometbft-residue-20260907
 .github/workflows/trnm-temporary-native-purge.yml:20:          ref: work/remove-cometbft-residue-20260907
-.github/workflows/trnm-temporary-native-purge.yml:72:          git push origin HEAD:work/remove-cometbft-residue-20260907
+.github/workflows/trnm-temporary-native-purge.yml:97:          git push origin HEAD:work/remove-cometbft-residue-20260907
 .gitignore:9:/trillionnium/crates/trnm-consensus-app/target/
 OPERATIONS.md:12:The only future production consensus route is Native PoCO-BFT. CometBFT,
 OPERATIONS.md:13:`trnm-consensus-app`, `trnm-node`, legacy CLI/simulator binaries, and historical
