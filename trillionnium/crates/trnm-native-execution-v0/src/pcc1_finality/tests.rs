@@ -55,13 +55,16 @@ fn config() -> NativeApplicationConfigV0 {
         validators,
     )
     .unwrap();
-    let signers = [(81, "did:operator:1", "operator"), (82, "did:client:1", "hepta")]
-        .into_iter()
-        .map(|(seed, id, role)| {
-            AuthorizedSignerV0::new(id, role, hex::encode(key(seed).verifying_key().to_bytes()))
-                .unwrap()
-        })
-        .collect();
+    let signers = [
+        (81, "did:operator:1", "operator"),
+        (82, "did:client:1", "hepta"),
+    ]
+    .into_iter()
+    .map(|(seed, id, role)| {
+        AuthorizedSignerV0::new(id, role, hex::encode(key(seed).verifying_key().to_bytes()))
+            .unwrap()
+    })
+    .collect();
     let local = set.validators()[0].id();
     NativeApplicationConfigV0::from_canonical_lab_inputs_v0(
         CanonicalLabNativeApplicationConfigInputsV0::new(
@@ -131,7 +134,8 @@ fn transactions(chain: &str) -> Vec<Vec<u8>> {
 }
 
 fn qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
-    let root = Vote::signing_root_for_set(set, header.view(), header.height(), header.id()).unwrap();
+    let root =
+        Vote::signing_root_for_set(set, header.view(), header.height(), header.id()).unwrap();
     let votes = set
         .validators()
         .iter()
@@ -326,7 +330,8 @@ fn prepare(directory: &TempDir) -> Prepared {
     }
     let c3 = children.pop().unwrap();
     let c2 = children.pop().unwrap();
-    let proof = FinalityProofV0::new(c1, c2, c3, &set, None, &parameters, PARENT_TIMESTAMP).unwrap();
+    let proof =
+        FinalityProofV0::new(c1, c2, c3, &set, None, &parameters, PARENT_TIMESTAMP).unwrap();
     let bytes = proof.try_cev0_bytes().unwrap();
     Prepared {
         application,
