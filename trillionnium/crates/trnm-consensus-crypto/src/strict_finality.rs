@@ -9,9 +9,9 @@
 use core::fmt;
 use trnm_consensus_types::{
     decode_finality_proof_v0_exact_with_budget,
-    decode_finality_proof_v0_exact_with_trusted_genesis_and_budget, BlockId,
-    Cev0AdmissionBudgetV0, ConsensusParametersV0, DecodeError, EvidenceRoot, FinalityProofV0,
-    Height, ReceiptsRoot, StateRoot, ValidationError, ValidatorSet,
+    decode_finality_proof_v0_exact_with_trusted_genesis_and_budget, BlockId, Cev0AdmissionBudgetV0,
+    ConsensusParametersV0, DecodeError, EvidenceRoot, FinalityProofV0, Height, ReceiptsRoot,
+    StateRoot, ValidationError, ValidatorSet,
 };
 
 use crate::{validate_validator_set_strict_ed25519_v0, StrictEd25519Verifier};
@@ -81,7 +81,9 @@ impl fmt::Display for StrictFinalityErrorV0 {
         match self {
             Self::UnsupportedProofClass => f.write_str("unsupported PoCO finality proof class"),
             Self::TargetMismatch => f.write_str("finality proof does not bind the expected target"),
-            Self::ParentMismatch => f.write_str("finality proof does not extend the expected parent"),
+            Self::ParentMismatch => {
+                f.write_str("finality proof does not extend the expected parent")
+            }
             Self::Decode(error) => write!(f, "finality proof decode failed: {error}"),
             Self::Consensus(error) => write!(f, "strict finality verification failed: {error}"),
         }

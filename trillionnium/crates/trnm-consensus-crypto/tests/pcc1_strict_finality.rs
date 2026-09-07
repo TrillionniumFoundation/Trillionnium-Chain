@@ -6,8 +6,8 @@ use trnm_consensus_crypto::{
 use trnm_consensus_types::{
     decode_checkpoint_finality_proof_v0_exact, decode_consensus_parameters_v0_exact,
     decode_next_epoch_commitment_v0_exact, decode_validator_set_v0_exact, BlockId,
-    Cev0AdmissionBudgetV0, ConsensusParametersV0, FinalityProofV0, GenesisHash, Height,
-    StateRoot, ValidationError, ValidatorSet,
+    Cev0AdmissionBudgetV0, ConsensusParametersV0, FinalityProofV0, GenesisHash, Height, StateRoot,
+    ValidationError, ValidatorSet,
 };
 
 const VECTOR: &str = include_str!(
@@ -40,8 +40,8 @@ fn fixture() -> Fixture {
     let root: Value = serde_json::from_str(VECTOR).unwrap();
     assert_eq!(root["cryptographic_validity_claimed"], true);
     let valid = &root["valid_objects"];
-    let parameters = decode_consensus_parameters_v0_exact(&raw(&valid["consensus_parameters"]))
-        .unwrap();
+    let parameters =
+        decode_consensus_parameters_v0_exact(&raw(&valid["consensus_parameters"])).unwrap();
     let set = decode_validator_set_v0_exact(&raw(&valid["old_validator_set"])).unwrap();
     let commitment =
         decode_next_epoch_commitment_v0_exact(&raw(&valid["next_epoch_commitment"])).unwrap();
@@ -177,7 +177,11 @@ fn exact_decode_rejects_trailing_bytes_truncation_and_single_qc() {
 #[test]
 fn cryptographic_corruption_of_each_proposal_is_rejected_and_charged() {
     let f = fixture();
-    for header in [f.proof.finalized_block(), f.proof.child(), f.proof.grandchild()] {
+    for header in [
+        f.proof.finalized_block(),
+        f.proof.child(),
+        f.proof.grandchild(),
+    ] {
         let signature = header.proposer_signature().as_bytes();
         let positions: Vec<_> = f
             .bytes
