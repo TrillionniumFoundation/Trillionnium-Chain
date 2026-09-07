@@ -94,7 +94,7 @@ jobs:
         run: |
           python3 scripts/ci/generate_release_status_v1.py --check-deterministic \
             --output "${RUNNER_TEMP}/trnm-release-status-v1.json"
-          python3 -m json.tool "${RUNNER_TEMP}/trnm-release-status-v1.json" >/dev/null
+          python3 -m json.tool "${RUNNER_TEMP}/trnm-release-status-v1.json"
       - name: Validate committed JSON and TOML
         run: |
           python3 - <<'PY'
@@ -340,8 +340,10 @@ jobs:
           rustup override set 1.95.0
       - name: Bind Cargo target inventory to the exact clean source
         run: |
+          set -euo pipefail
           python3 scripts/ci/check_cargo_source_inventory_v1.py \
-            --output "${RUNNER_TEMP}/trnm-cargo-source-inventory-v1.json"
+            --output "${RUNNER_TEMP}/trnm-cargo-source-inventory-v1.json" >/dev/null
+          git rev-parse HEAD 'HEAD^{tree}'
       - name: Retain source-bound Cargo inventory
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -355,12 +357,29 @@ jobs:
       - name: Test PCC1 strict proof and durable read boundary
         run: |
           set -euo pipefail
-          cargo test --manifest-path trillionnium/Cargo.toml \
-            -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked
-          cargo test --manifest-path trillionnium/Cargo.toml \
-            -p trnm-consensus-crypto -p trnm-native-execution-v0 --doc --locked
-          cargo clippy --manifest-path trillionnium/Cargo.toml \
-            -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked -- -D warnings
+          root="${RUNNER_TEMP}/trnm-rust-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          set +e
+          (
+            set -euo pipefail
+            echo 'PCC1_PHASE=all-target-tests'
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked
+            echo 'PCC1_PHASE=doc-tests'
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-consensus-crypto -p trnm-native-execution-v0 --doc --locked
+            echo 'PCC1_PHASE=strict-clippy'
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-consensus-crypto -p trnm-native-execution-v0 --all-targets --locked -- -D warnings
+          ) >"$root/pcc1-boundary.log" 2>&1
+          rc=$?
+          set -e
+          printf '%s\n' "$rc" > "$root/pcc1-boundary.exit-code"
+          tail -n 120 "$root/pcc1-boundary.log"
+          printf 'PCC1_BOUNDARY_EXIT_CODE=%s\n' "$rc"
+          exit "$rc"
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
