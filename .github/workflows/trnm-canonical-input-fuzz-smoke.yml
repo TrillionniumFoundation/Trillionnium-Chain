@@ -14,7 +14,10 @@ on:
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-finality-types/**"
       - "trillionnium/crates/trnm-consensus-types/**"
+      - "trillionnium/crates/trnm-consensus-crypto/**"
       - "trillionnium/crates/trnm-protocol/**"
+      - "formal/poco-convergence-v1/**"
+      - "config/poco-convergence-v1.json"
       - "trillionnium/fuzz/**"
   push:
     branches: [main]
@@ -30,7 +33,10 @@ on:
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-finality-types/**"
       - "trillionnium/crates/trnm-consensus-types/**"
+      - "trillionnium/crates/trnm-consensus-crypto/**"
       - "trillionnium/crates/trnm-protocol/**"
+      - "formal/poco-convergence-v1/**"
+      - "config/poco-convergence-v1.json"
       - "trillionnium/fuzz/**"
   workflow_dispatch:
 
@@ -74,18 +80,29 @@ jobs:
 
       - name: Replay PCC1 abstract contract and retained mutants
         run: python3 formal/poco-convergence-v1/check.py
-      - name: Package temporary exact-source offline development inputs
-        if: github.head_ref == 'fix/chain-pcc1-runtime-integration'
-        run: python3 scripts/ci/package_pcc1_build_inputs_v1.py
-      - name: Retain temporary offline development inputs
-        if: github.head_ref == 'fix/chain-pcc1-runtime-integration'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: pcc1-offline-build-inputs-${{ github.event.pull_request.head.sha }}
-          path: ${{ runner.temp }}/pcc1-offline-build-inputs
-          retention-days: 1
-          if-no-files-found: error
-          compression-level: 0
+      - name: Verify PCC1 Rust toolchain and offline inputs
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}-pcc1" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+      - name: Test strict cryptographic finality admission in Rust
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD
+          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-crypto --all-targets --locked
+          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-crypto --doc --locked
+      - name: Check PCC1 cryptographic boundary formatting and Clippy
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-crypto -- --check
+          cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-crypto --all-targets --locked -- -D warnings
 
       - name: Verify runner-provisioned cargo-fuzz
         run: |
@@ -111,3 +128,5 @@ jobs:
           set -euo pipefail
           ./scripts/ci/check_cargo_offline_unchanged.sh \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}-pcc1"

@@ -16,11 +16,16 @@ use trnm_consensus_types::{
 };
 
 mod epoch_transition;
+mod strict_finality;
 
 pub use epoch_transition::{
     verify_same_version_epoch_activation_authority_strict_v0,
     verify_same_version_epoch_transition_strict_v0, StrictEpochActivationBindingRefV0,
     StrictSameVersionEpochActivationAuthorityV0, StrictSameVersionEpochTransitionV0,
+};
+pub use strict_finality::{
+    decode_verify_finality_proof_strict_v0, FinalityExpectationV0, StrictFinalityErrorV0,
+    StrictFinalityProofV0, POCO_THREE_CHAIN_PROOF_CLASS_V0,
 };
 
 /// Stateless strict Ed25519 verifier for PoCO-BFT v0 consensus roots.
