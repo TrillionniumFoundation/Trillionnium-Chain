@@ -20,6 +20,10 @@ error and recovery obligations, and executable source regressions. The
 [operation catalog](../../config/documentation-operations-v1.json) explicitly
 remains incomplete; its integrity checks do not grant independent acceptance.
 
+The [native signed Vote replay contract](TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md)
+specifies M15's laboratory readback of an already signed historical Vote. Its
+cross-store checks grant no new signing or recovered-runtime authority.
+
 These documents are contracts, not completion claims. Implementation,
 production and activation require exact-source tests, accepted evidence,
 protected review and every applicable external gate.

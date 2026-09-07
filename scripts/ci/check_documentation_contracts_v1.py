@@ -30,6 +30,7 @@ REQUIRED_FOUNDATION_OPERATIONS = {
     'M04-OP-PERSIST-INGRESS', 'M04-OP-ACK-PREPARED', 'M08-OP-COMMIT-STRICT',
     'M08-OP-READ-STRICT', 'M15-OP-RECOVER-SESSION', 'M15-OP-ADVANCE-VERIFIED-FACT',
     'M02-OP-TC-ADVANCE', 'M08-OP-RECOVER-EXPECTED-LEDGER', 'M08-OP-APPEND-EXACT-LEDGER',
+    'M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1',
 }
 MODULES = [f'M{i:02d}' for i in range(18)]
 PROFILES = {
@@ -314,6 +315,27 @@ def operation_case_command(case: dict[str, Any]) -> list[str]:
     return command + [case['test_filter'], '--', '--exact']
 
 
+def operation_target_features(manifest: dict[str, Any], target: dict[str, Any],
+                              selected: list[str], where: str) -> None:
+    """Resolve named local features and default edges, not dependency cfgs."""
+    graph = manifest.get('features', {})
+    required = target.get('required-features', [])
+    require(isinstance(required, list) and all(isinstance(x, str) for x in required),
+            'DOC-OP-FEATURE', where+' required-features')
+    require(set(required) <= set(graph), 'DOC-OP-FEATURE', where+' unsupported target feature')
+    enabled = set(selected)
+    if 'default' in graph:
+        enabled.add('default')
+    pending = list(enabled)
+    while pending:
+        feature = pending.pop()
+        for edge in graph.get(feature, []):
+            if edge in graph and edge not in enabled:
+                enabled.add(edge)
+                pending.append(edge)
+    require(set(required) <= enabled, 'DOC-OP-FEATURE', where+' missing required target feature')
+
+
 def operation_test_region(text: str, symbol: str, features: list[str] | None = None) -> str:
     """Lexical Rust test region, including inline tests; not an AST or execution."""
     match = re.search(r'(?m)^(?P<indent>[ \t]*)fn '+re.escape(symbol)+r'\s*\(', text)
@@ -451,6 +473,7 @@ def validate_operations(root: Path, data: Any, registry: dict[str, Any],
                     binaries = {entry['name']: entry for entry in manifest.get('bin', [])}
                     name = target.removeprefix('bin:')
                     require(name in binaries, 'DOC-OP-TEST', cid+' binary target')
+                    operation_target_features(manifest, binaries[name], case['features'], cid)
                     binary_path, binary_relative = file_ref(root, base+binaries[name].get('path', 'src/main.rs'))
                     require(binary_path.suffix == '.rs', 'DOC-OP-TEST', cid+' binary source')
                     refs.add(binary_relative)
@@ -464,6 +487,12 @@ def validate_operations(root: Path, data: Any, registry: dict[str, Any],
                 expected_filter += symbol
             else:
                 require(relative == base+'tests/'+case['target']+'.rs', 'DOC-OP-TEST', cid)
+                manifest = tomllib.loads((root/base/'Cargo.toml').read_text(encoding='utf-8'))
+                tests = {entry['name']: entry for entry in manifest.get('test', [])}
+                if target in tests:
+                    require(base+tests[target].get('path', 'tests/'+target+'.rs') == relative,
+                            'DOC-OP-TEST', cid+' declared integration source')
+                    operation_target_features(manifest, tests[target], case['features'], cid)
                 expected_filter = symbol
             require(case['test_filter'] == expected_filter, 'DOC-OP-FILTER', cid)
             region = operation_test_region(source_text, symbol, case['features'])

@@ -13,14 +13,17 @@ catalog of every enabled operation. Its historical source observation is
 `d120c992a144c566a105277bdcbff420a33ccccd`; the checker derives the actual reviewed
 HEAD, tree and input hashes at runtime. A source observation is not a current
 test result or an accepted release.
-The TC-advance and expected-ledger records were added after that historical
+The TC-advance, expected-ledger and native signed-Vote replay records were added after that historical
 baseline; their actual implementation identity comes from the checked current
 source and input hashes, not from the baseline commit.
 
 Resolve `docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md` first. Frozen
 `bft-v0`, candidate `pcc1` and `legacy-ledger-observation` remain distinct.
-The two M15 records document inert legacy session stages, not the complete
-PCC1 signing/finality lifecycles. M04's Prepared acknowledgement advances a
+M15's RECOVER-SESSION and ADVANCE-VERIFIED-FACT records document inert legacy
+session stages, not the complete PCC1 signing/finality lifecycles. Its separate
+`bft-v0` native signed-Vote replay record is laboratory historical-message
+readback and grants no fresh signing or runtime-continuation authority.
+M04's Prepared acknowledgement advances a
 peer replay boundary; it grants neither vote nor finality authority.
 
 ## Operation record
@@ -62,6 +65,7 @@ readback before retry. No unspecified error, codec or platform gets a default.
 | M02-OP-TC-ADVANCE | Strict TC admission, both verification budgets and durable Safety readback before returning the next-view timer |
 | M08-OP-RECOVER-EXPECTED-LEDGER | Complete history and caller-supplied exact source/target validation before repair or cleanup |
 | M08-OP-APPEND-EXACT-LEDGER | Fenced durable append with exact-target retry and fresh convergence readback |
+| M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1 | Fresh joined readback of an already signed native Vote through a laboratory owner; no new signature or logical transition |
 
 Real producer commissioning, device custody, independent rollback anchors,
 transport interoperability, nonzero epochs and complete checkpoint/receipt
@@ -82,6 +86,17 @@ coherently rewritten prefix. The positive extension case retains that prefix.
 Full-history ledger scans and its existing capacity
 bound are retained, not qualified as scalable by these changes.
 
+The [native signed Vote replay contract](TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md)
+binds current Safety and signer checkpoint fields while recomputing native-K
+application fields from the authorizing Safety record. Source regressions cover
+the normal durable release successor, exact historical replay, unsigned refusal,
+store corruption, foreign context/checkpoints and sticky owner fencing. The
+signed-before-release shape is recognized but is not an exercised crash-cut
+acceptance result. Fixtures already made one live producer call; recovery adds
+zero calls. No-logical-write assertions exclude SQLite open/recovery bookkeeping,
+and the pre-open existence check is not atomic under unsupported same-UID
+namespace replacement races. Independent whole-node rollback custody remains open.
+
 ## Checking and replay
 
 The existing `scripts/ci/check_documentation_contracts_v1.py` loads both
@@ -91,8 +106,11 @@ functions, exact Cargo filters and selected assertion fragments. Every reference
 file joins the existing HEAD/tree and input-digest binding. It never executes
 commands stored or generated from the catalog.
 
-Direct test feature gates must be explicitly selected in the case; ignored tests
-and unsupported direct cfg expressions reject. This bounded lexical check does
+Declared Cargo test/binary `required-features` must be enabled through selected
+or default named local feature edges. Dependency-feature edges do not stand in
+for local features; unsupported required feature forms reject. Direct test
+feature gates must be explicitly selected in the case; ignored tests and
+unsupported direct cfg expressions reject. This bounded lexical check does
 not evaluate inherited module gates or the complete Cargo configuration. An
 actual replay must execute at least one test; a zero-test filtered success is
 not passing evidence.

@@ -355,8 +355,8 @@ class FoundationOperationMutants(unittest.TestCase):
 
     def test_operation_records_bind_real_sources_without_claiming_replay(self) -> None:
         report, refs = self.validate()
-        self.assertGreaterEqual(report['operation_count'], 12)
-        self.assertGreaterEqual(report['source_regression_case_count'], 34)
+        self.assertGreaterEqual(report['operation_count'], 13)
+        self.assertGreaterEqual(report['source_regression_case_count'], 51)
         self.assertEqual(report['operations_with_open_requirements'], report['operation_count'])
         self.assertEqual(report['independent_golden_vector_count'], 0)
         self.assertFalse(report['operation_catalog_complete'])
@@ -435,6 +435,36 @@ class FoundationOperationMutants(unittest.TestCase):
     def test_invented_test_feature_is_rejected(self) -> None:
         self.operations['operations'][0]['cases'][0]['features'] = ['missing-feature']
         self.rejects('DOC-OP-FEATURE')
+
+    def test_native_replay_target_requires_its_fixture_feature(self) -> None:
+        row = next(row for row in self.operations['operations']
+                   if row['id'] == 'M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1')
+        row['cases'][0]['features'] = ['lab-validator-runtime']
+        self.rejects('DOC-OP-FEATURE')
+
+    def test_required_target_feature_can_be_enabled_transitively_or_by_default(self) -> None:
+        manifest = {'features': {'default': ['wrapper'], 'wrapper': ['required'],
+                                 'required': [], 'explicit': ['required'], 'unrelated': []}}
+        target = {'required-features': ['required']}
+        gate.operation_target_features(manifest, target, [], 'default fixture')
+        del manifest['features']['default']
+        gate.operation_target_features(manifest, target, ['explicit'], 'transitive fixture')
+        with self.assertRaises(gate.DocumentationError) as caught:
+            gate.operation_target_features(manifest, target, ['unrelated'], 'missing fixture')
+        self.assertEqual(caught.exception.code, 'DOC-OP-FEATURE')
+
+    def test_dependency_feature_edge_cannot_satisfy_a_local_target_requirement(self) -> None:
+        manifest = {'features': {'wrapper': ['dependency/required'], 'required': []}}
+        with self.assertRaises(gate.DocumentationError) as caught:
+            gate.operation_target_features(manifest, {'required-features': ['required']},
+                                           ['wrapper'], 'foreign dependency fixture')
+        self.assertEqual(caught.exception.code, 'DOC-OP-FEATURE')
+
+    def test_unknown_target_required_feature_is_not_assumed_enabled(self) -> None:
+        with self.assertRaises(gate.DocumentationError) as caught:
+            gate.operation_target_features({'features': {}}, {'required-features': ['unknown']},
+                                           [], 'unknown fixture')
+        self.assertEqual(caught.exception.code, 'DOC-OP-FEATURE')
 
     def test_feature_gated_test_cannot_generate_an_empty_default_replay(self) -> None:
         row = next(row for row in self.operations['operations']
