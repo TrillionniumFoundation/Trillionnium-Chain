@@ -1,0 +1,35 @@
+name: Temporary residue inventory
+
+on:
+  push:
+    branches:
+      - work/remove-cometbft-residue-20260907
+
+permissions:
+  contents: write
+
+jobs:
+  inventory:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Generate tracked-source inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          report=.cleanup-residue-report.txt
+          : > "$report"
+          git grep -n -I -E '(CometBFT|cometbft|Comet|comet|Tendermint|tendermint|ABCI|abci|trnm-consensus-app|trnm_comet)' -- . \
+            ':(exclude).github/workflows/trnm-temporary-residue-inventory.yml' \
+            ':(exclude).cleanup-residue-report.txt' > "$report" || true
+          git config user.name "trnm-cleanup-bot"
+          git config user.email "trnm-cleanup-bot@users.noreply.github.com"
+          git add "$report"
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "chore: record residue inventory [inventory-bot]"
+          git push origin HEAD:work/remove-cometbft-residue-20260907
