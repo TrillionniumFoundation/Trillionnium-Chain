@@ -12,3 +12,8 @@ mod confirmed_application_safety;
 mod p2p_ingress_bridge;
 #[cfg(feature = "candidate-networked-authority")]
 pub use p2p_ingress_bridge::*;
+
+#[cfg(feature = "candidate-networked-authority")]
+mod persistent_p2p_ingress_bridge;
+#[cfg(feature = "candidate-networked-authority")]
+pub use persistent_p2p_ingress_bridge::*;

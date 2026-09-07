@@ -1,0 +1,163 @@
+schema_version = 1
+contract_id = "trnm-technical-convergence-v1"
+plan_id = "trnm-chain-development-plan-v2"
+as_of = "2026-09-06"
+parent_integration_head = "1d46ba8423c33a35b7923516959ce7734b442f86"
+integration_branch = "work/plan-v2-full-gap-closure-20260902"
+delivery_branch = "work/plan-v2-technical-convergence-20260906"
+production_authority = false
+production_candidate = false
+production_consensus_activation = false
+public_testnet_ready = false
+release_ready = false
+all_gaps_closed = false
+
+[scope]
+objective = "converge the smallest auditable native PoCO-BFT node before activating AI-market extensions"
+single_integration_successor = true
+large_models_and_nondeterministic_inference_off_chain = true
+repository_documentation_gap_closed_by_this_contract = false
+repository_runtime_gap_closed = false
+external_evidence_gap_closed = false
+
+[module_partition]
+mvp = ["M00", "M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M13", "M15", "M17"]
+candidate_application = ["M09", "M10", "M11", "M12"]
+non_authoritative_service = ["M14", "M16"]
+
+[consensus]
+engine = "native-poco-bft"
+engine_status = "candidate-only"
+poco_weight_phase = "shadow"
+poco_weight_affects_membership = false
+poco_weight_affects_quorum = false
+poco_weight_affects_leader_selection = false
+reference_engine_role = "differential-oracle-only"
+reference_engine_production_dependency = false
+aggregate_signature_decision = "deferred-until-benchmark-and-security-review"
+leader_policy_decision = "round-robin-v0-requires-sybil-and-liveness-review"
+
+# These are non-wire composition requirements under the documentation resolver.
+# Historical stage enum tags remain unchanged and supply no new authority.
+[authority_lifecycles]
+authority_resolver = "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md"
+signing_stages = ["Validated", "IntentDurable", "SignatureRecorded", "VotePublished"]
+finalized_application_stages = ["FinalityVerified", "CommitIntentDurable", "ApplicationApplied", "CommitRecorded", "CheckpointConfirmed", "ReceiptPublished"]
+vote_requires_block_finality = false
+receipt_requires_verified_finality = true
+legacy_stage_labels_supply_authority = false
+
+[ci]
+exact_head_required = true
+prospective_merge_required = true
+non_empty_execution_required = true
+terminal_success_required = true
+skipped_or_action_required_is_success = false
+candidate_code_with_repository_write_token_forbidden = true
+persistent_runner_with_candidate_write_token_forbidden = true
+independent_final_push_review_required = true
+commands = [
+  "bash scripts/ci/check_canonical_development_plan.sh",
+  "python3 scripts/ci/check_plan_manifest_pins_v1.py",
+  "python3 scripts/ci/check_technical_convergence_v1.py",
+  "python3 scripts/ci/test_technical_convergence_v1.py",
+  "python3 scripts/ci/check_module_coverage_v1.py",
+  "python3 scripts/ci/check_required_baseline_closure_v1.py",
+]
+
+[supply_chain]
+prohibited_candidate_workflows = [
+  ".github/workflows/trnm-plan-v2-repository-autofix-20260906b.yml",
+  ".github/workflows/trnm-rustfmt-export-v1.yml",
+  ".github/workflows/trnm-host-compile-repair-once.yml",
+  ".github/workflows/trnm-plan-v2-contract-clippy-repair-once-20260906c.yml",
+  ".github/workflows/trnm-plan-v2-contract-lint-finalizer-once.yml",
+]
+publisher_executes_candidate_code = false
+publisher_requires_expected_head_compare_and_swap = true
+release_requires_signed_artifact_manifest = true
+release_requires_sbom_and_provenance = true
+
+[[detailed_spec]]
+id = "M04"
+path = "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M05"
+path = "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M08"
+path = "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M14"
+path = "docs/modules/M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M15"
+path = "docs/modules/M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M16"
+path = "docs/modules/M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[[detailed_spec]]
+id = "M17"
+path = "docs/modules/M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md"
+status = "implementation-contract"
+
+[runtime_gaps]
+status = "open-until-exact-source-evidence"
+ids = [
+  "P0-TRUTH-001",
+  "P0-SCHEMA-001",
+  "P0-PROTOCOL-001",
+  "P0-TC-001",
+  "P1-CORE-001",
+  "P1-EXEC-001",
+  "P2-NODE-001",
+  "P2-TX-001",
+  "P2-NET-001",
+  "P2-OPS-001",
+  "P2-STORE-001",
+  "MIG-ROOT-001",
+  "P3-HISTORY-001",
+  "MIG-CLEAN-001",
+]
+
+[[external_gate]]
+id = "EXT-REVIEW-001"
+status = "open-external"
+self_attestation_allowed = false
+
+[[external_gate]]
+id = "EXT-G1-CAMPAIGN-001"
+status = "open-external"
+self_attestation_allowed = false
+
+[[external_gate]]
+id = "EXT-ANCHOR-HSM-001"
+status = "open-external"
+self_attestation_allowed = false
+
+[[external_gate]]
+id = "EXT-POWERLOSS-001"
+status = "open-external"
+self_attestation_allowed = false
+
+[[external_gate]]
+id = "EXT-AUDIT-001"
+status = "open-external"
+self_attestation_allowed = false
+
+[[external_gate]]
+id = "EXT-SOAK-ACTIVATION-001"
+status = "open-external"
+self_attestation_allowed = false

@@ -14,6 +14,11 @@ POLICY_REL="config/documentation-truth-v1.json"
 REPOSITORY_POLICY_REL="config/repository-policy-v1.json"
 REFERENCE_GATE="scripts/ci/check_documentation_reference_closure_v1.py"
 MODULE_GATE="scripts/ci/check_module_coverage_v1.py"
+PIN_GATE="scripts/ci/check_plan_manifest_pins_v1.py"
+CONVERGENCE_GATE="scripts/ci/check_technical_convergence_v1.py"
+CONVERGENCE_TEST="scripts/ci/test_technical_convergence_v1.py"
+CONVERGENCE_CONTRACT="config/technical-convergence-v1.toml"
+DETAILED_MODULE_INDEX="docs/modules/README.md"
 
 fail() {
   printf 'canonical development plan gate failed: %s\n' "$*" >&2
@@ -32,6 +37,11 @@ canonical_inputs=(
   "$REPOSITORY_POLICY_REL"
   "$REFERENCE_GATE"
   "$MODULE_GATE"
+  "$PIN_GATE"
+  "$CONVERGENCE_GATE"
+  "$CONVERGENCE_TEST"
+  "$CONVERGENCE_CONTRACT"
+  "$DETAILED_MODULE_INDEX"
   "scripts/ci/check_canonical_development_plan.sh"
 )
 
@@ -353,4 +363,7 @@ python3 "$REFERENCE_GATE" "${args[@]}"
 python3 "$MODULE_GATE"
 python3 scripts/ci/test_documentation_contracts_v1.py
 python3 scripts/ci/check_documentation_contracts_v1.py
+python3 "$PIN_GATE"
+python3 "$CONVERGENCE_GATE"
+python3 "$CONVERGENCE_TEST"
 git diff --check

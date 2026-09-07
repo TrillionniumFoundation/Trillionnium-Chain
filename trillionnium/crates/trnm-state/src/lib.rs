@@ -11616,9 +11616,8 @@ mod tests {
             "restore must fail closed instead of leaving a resolvable ref for a non-allowlisted governance key"
         );
         assert!(
-            st.gov_param_key_index
-                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
-                .is_none(),
+            !st.gov_param_key_index
+                .contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "restore must not register non-allowlisted governance keys in the shared registry"
         );
     }
@@ -11648,7 +11647,7 @@ mod tests {
             "reserved-id restore must fail closed instead of materializing a non-allowlisted object behind the canonical accessor"
         );
         assert!(
-            st.gov_param_key_index.get("emergency_pause").is_none(),
+            !st.gov_param_key_index.contains_key("emergency_pause"),
             "reserved-id restore must not backfill the canonical registry index from a foreign key snapshot"
         );
         assert_eq!(
@@ -12023,13 +12022,12 @@ mod tests {
             "restore rejection must scrub stale key-id aliases instead of preserving ambiguous pending state"
         );
         assert!(
-            st.pending_gov_updates.get("emergency_pause").is_none(),
+            !st.pending_gov_updates.contains_key("emergency_pause"),
             "rejected restore must not retain the requested canonical pending entry"
         );
         assert!(
-            st.pending_gov_updates
-                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
-                .is_none(),
+            !st.pending_gov_updates
+                .contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "rejected restore must remove the conflicting raw alias entry"
         );
     }
@@ -12053,9 +12051,8 @@ mod tests {
             "pending restore must fail closed for a non-allowlisted governance key"
         );
         assert!(
-            st.pending_gov_updates
-                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
-                .is_none(),
+            !st.pending_gov_updates
+                .contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "pending restore must not retain a raw queued entry for a non-allowlisted governance key"
         );
     }
@@ -12098,9 +12095,8 @@ mod tests {
             "public accessors must not resolve a non-allowlisted applied governance key after rejected restore"
         );
         assert!(
-            st.gov_param_key_index
-                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
-                .is_none(),
+            !st.gov_param_key_index
+                .contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "applied restore must not retain a raw key-index entry for a non-allowlisted governance key"
         );
     }
@@ -12661,11 +12657,11 @@ mod tests {
             "accessors must not expose a governance param restored under a pinned id reserved for a different key"
         );
         assert!(
-            st.objects.get(&EMERGENCY_PAUSE_KEY_ID).is_none(),
+            !st.objects.contains_key(&EMERGENCY_PAUSE_KEY_ID),
             "rejected restore must not leave a stray gov param object at the reserved emergency_pause id"
         );
         assert!(
-            st.gov_param_key_index.get("resolve_authority").is_none(),
+            !st.gov_param_key_index.contains_key("resolve_authority"),
             "rejected restore must not register another key against the reserved emergency_pause id"
         );
     }
@@ -13111,7 +13107,7 @@ mod tests {
             "restore must materialize the canonical emergency_pause object at the reserved slot"
         );
         assert!(
-            st.objects.get(&8_000).is_some(),
+            st.objects.contains_key(&8_000),
             "repairing registry drift must not scrub unrelated foreign objects that happened to occupy the stale mutable slot"
         );
         assert!(st.is_emergency_paused());

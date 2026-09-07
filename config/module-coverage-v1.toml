@@ -3,6 +3,8 @@ coverage_id = "trnm-module-coverage-v1"
 plan_id = "trnm-chain-development-plan-v2"
 module_registry = "docs/development/module-registry-v1.toml"
 technical_reference = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
+technical_convergence = "config/technical-convergence-v1.toml"
+detailed_spec_index = "docs/modules/README.md"
 workspace_manifest = "trillionnium/Cargo.toml"
 contracts_manifest = "contracts/Cargo.toml"
 web_package_manifest = "web4-frontend/package.json"
@@ -23,6 +25,7 @@ all_modules_require_evidence_roots = true
 module_dependency_graph_must_be_acyclic = true
 production_may_depend_on_candidate_or_lab = false
 control_plane_may_hold_consensus_authority = false
+technical_convergence_must_remain_fail_closed = true
 
 [[module_coverage]]
 id = "M00"
@@ -62,7 +65,7 @@ anchor = "m04"
 slo_profile = "bounded-io-runtime-v1"
 testkit_profile = "authenticated-network-fault-v1"
 primary_crates = ["trnm-consensus-peer-lease"]
-contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/runbooks/TRNM_POCO_G3_LAN_FLEET.md"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/runbooks/TRNM_POCO_G3_LAN_FLEET.md", "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M05"
@@ -70,7 +73,7 @@ anchor = "m05"
 slo_profile = "bounded-io-runtime-v1"
 testkit_profile = "tx-admission-replay-v1"
 primary_crates = ["trnm-mempool", "trnm-application-tx-builder-v0", "trnm-tx-lifecycle-v0"]
-contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/protocol/poco-ai-native-v1"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/protocol/poco-ai-native-v1", "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M06"
@@ -94,7 +97,7 @@ anchor = "m08"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "node-commit-recovery-v1"
 primary_crates = ["trnm-core-restart-v0", "trnm-poco-order-application-v1"]
-contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md", "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M09"
@@ -142,7 +145,7 @@ anchor = "m14"
 slo_profile = "non-authoritative-service-v1"
 testkit_profile = "rpc-sdk-cli-contract-v1"
 primary_crates = ["trnm-rpc", "trnm-cli"]
-contract_paths = ["web4-frontend/docs/README.md", "web4-frontend/docs/api-contract.md"]
+contract_paths = ["web4-frontend/docs/README.md", "web4-frontend/docs/api-contract.md", "docs/modules/M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M15"
@@ -150,7 +153,7 @@ anchor = "m15"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "node-build-release-closure-v1"
 primary_crates = ["trnm-poco-node", "trnm-poco-node-authority", "trnm-poco-node-io", "trnm-poco-node-host", "trnm-poco-node-cli", "trnm-bridge-poc", "trnm-node-boundary-v0", "trnm-poco-node-production-v0", "trnm-release-bundle-v0"]
-contract_paths = ["PROJECT_BOUNDARY.md", "OPERATIONS.md", "RELEASE_READINESS.md", "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md"]
+contract_paths = ["PROJECT_BOUNDARY.md", "OPERATIONS.md", "RELEASE_READINESS.md", "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md", "docs/modules/M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M16"
@@ -159,7 +162,7 @@ slo_profile = "non-authoritative-service-v1"
 testkit_profile = "guarded-control-plane-v1"
 primary_crates = ["trnm-control-plane-v0"]
 source_paths = ["docs/development/module-registry-v1.toml", "config/consensus-mainline.json", "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"]
-contract_paths = ["docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"]
+contract_paths = ["docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md", "docs/modules/M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M17"
@@ -167,7 +170,7 @@ anchor = "m17"
 slo_profile = "evidence-tooling-v1"
 testkit_profile = "evidence-false-pass-resistance-v1"
 primary_crates = ["trnm-bench", "trnm-consensus-sim", "trnm-research-protocol", "trnm-poco-lab-validator", "trnm-production-adapter-conformance-v0"]
-contract_paths = ["docs/evidence", "docs/runbooks", "formal", "scripts/ci"]
+contract_paths = ["docs/evidence", "docs/runbooks", "formal", "scripts/ci", "docs/modules/M17_EVIDENCE_SECURITY_TECHNICAL_SPEC_V1.md"]
 
 [[auxiliary_units]]
 id = "contracts-audit-events"

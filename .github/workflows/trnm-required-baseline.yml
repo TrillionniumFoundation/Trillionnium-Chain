@@ -29,7 +29,7 @@ jobs:
   repository-truth:
     name: repository-truth
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: trillionnium-chain
@@ -76,6 +76,7 @@ jobs:
           python3 scripts/ci/test_node_candidate_boundary_v1.py
           python3 scripts/ci/test_cargo_source_inventory_v1.py
           python3 scripts/ci/test_bounded_workspace_tests_v1.py
+          python3 scripts/ci/test_technical_convergence_v1.py
           bash scripts/check_ci_runner_policy_test.sh
           timeout --signal=TERM --kill-after=30s 900s bash scripts/check_cargo_offline_policy_test.sh
       - name: Verify canonical project boundary without exemptions
@@ -85,9 +86,12 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/check_repository_truth_v1.py
           bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_plan_manifest_pins_v1.py
+          python3 scripts/ci/check_technical_convergence_v1.py
+          python3 scripts/ci/test_technical_convergence_v1.py
           python3 scripts/ci/check_module_coverage_v1.py
-          python3 scripts/ci/check_node_decomposition_v1.py
           python3 scripts/ci/check_required_baseline_closure_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
           python3 scripts/ci/check_build_closures_v1.py
       - name: Validate deterministic release-status projection
@@ -101,6 +105,7 @@ jobs:
           import json
           import pathlib
           import tomllib
+
           root = pathlib.Path(".")
           for path in sorted(root.rglob("*.json")):
               if any(part in {".git", "node_modules", "target"} for part in path.parts):
@@ -121,9 +126,16 @@ jobs:
             scripts/ci/check_build_closures_v1.py \
             scripts/ci/check_documentation_reference_closure_v1.py \
             scripts/ci/check_module_coverage_v1.py \
+            scripts/ci/check_module_coverage_core_v1.py \
             scripts/ci/check_node_decomposition_v1.py \
+            scripts/ci/check_plan_manifest_pins_v1.py \
             scripts/ci/check_required_baseline_closure_v1.py \
             scripts/ci/check_required_protocol_contract_v1.py \
+            scripts/ci/check_technical_convergence_v1.py \
+            scripts/ci/technical_convergence_contract_v1.py \
+            scripts/ci/technical_convergence_workflows_v1.py \
+            scripts/ci/technical_convergence_coverage_v1.py \
+            scripts/ci/test_technical_convergence_v1.py \
             scripts/ci/generate_release_status_v1.py \
             scripts/ci/check_external_evidence_v1.py \
             scripts/ci/run_bounded_workspace_tests_v1.py
@@ -171,8 +183,13 @@ jobs:
             test "$(git rev-parse HEAD)" = "$merge_sha"
             git rev-parse HEAD 'HEAD^{tree}'
             bash scripts/project-preflight.sh --audit
-            python3 scripts/ci/test_module_coverage_guard_v1.py
+            bash scripts/ci/check_canonical_development_plan.sh
+            python3 scripts/ci/check_plan_manifest_pins_v1.py
+            python3 scripts/ci/check_technical_convergence_v1.py
+            python3 scripts/ci/test_technical_convergence_v1.py
             python3 scripts/ci/check_module_coverage_v1.py
+            python3 scripts/ci/check_required_baseline_closure_v1.py
+            python3 scripts/ci/test_module_coverage_guard_v1.py
             cd web4-frontend
             npm ci
             npm run typecheck
@@ -396,6 +413,28 @@ jobs:
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
           cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
           git diff --exit-code HEAD -- .
+      - name: Test persistent peer-to-authority bridge without production activation
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-rust-execution"
+          mkdir -p "$root"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          set +e
+          (
+            set -euo pipefail
+            timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-durable-file-adapters-v0 --features candidate-peer-replay --all-targets --locked
+            timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-poco-node-host --features candidate-networked-authority --all-targets --locked
+            timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-peer-replay --all-targets --locked -- -D warnings
+            timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-poco-node-host --features candidate-networked-authority --all-targets --locked -- -D warnings
+            git diff --exit-code HEAD -- .
+          ) >"$root/persistent-ingress.log" 2>&1
+          rc=$?
+          set -e
+          printf '%s\n' "$rc" > "$root/persistent-ingress.exit-code"
+          tail -n 120 "$root/persistent-ingress.log"
+          exit "$rc"
       - name: Replay original-listener socket replacement without masking failure
         working-directory: trillionnium
         run: |
