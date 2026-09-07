@@ -649,3 +649,53 @@ fn persistent_parallel_worker_count_bounds_fail_closed() {
         MvccFeeErrorCodeV1::InvalidBounds
     );
 }
+
+#[test]
+fn committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1() {
+    for extra_objects in [0_u8, 64] {
+        let mut g = genesis(224);
+        for marker in 1..=extra_objects {
+            g.initial_objects
+                .push(object(oid(47, marker), u128::from(marker)));
+        }
+        g.initial_objects.sort_by_key(|value| value.object_id);
+        let parent_root = derive_state_root_v1(&g.initial_objects).unwrap();
+        let candidate = block(
+            &g,
+            vec![add_tx(0, oid(45, 1), oid(45, 3), 5, 100)],
+            11,
+            g.initial_block_id,
+            parent_root,
+        );
+        let mut canonical_receipt = None;
+        for workers in [1, 2, 4, 8] {
+            let temp = TempDir::new().unwrap();
+            let store =
+                MvccFeeStoreV1::open_with_worker_count(path(&temp), g.clone(), workers).unwrap();
+            let parent = store.objects().unwrap();
+            let outcome = store.execute_block(&candidate).unwrap();
+            let post = store.objects().unwrap();
+            let changed = parent
+                .iter()
+                .zip(&post)
+                .filter(|(before, after)| before != after)
+                .count();
+            assert_eq!(changed, 4, "payer, program object and two fee destinations");
+            assert_eq!(outcome.object_sql_changes, 4, "SQLite total_changes in the actual committed object-write window is independent of untouched state size");
+            if let Some(expected) = &canonical_receipt {
+                assert_eq!(outcome.confirmed.receipt(), expected);
+            } else {
+                canonical_receipt = Some(outcome.confirmed.receipt().clone());
+            }
+            drop(store);
+            let reopened =
+                MvccFeeStoreV1::open_existing_with_worker_count(path(&temp), g.clone(), workers)
+                    .unwrap();
+            assert_eq!(reopened.objects().unwrap(), post);
+            let replay = reopened.execute_block(&candidate).unwrap();
+            assert!(replay.replay);
+            assert_eq!(replay.object_sql_changes, 0);
+            assert_eq!(replay.confirmed.receipt(), outcome.confirmed.receipt());
+        }
+    }
+}

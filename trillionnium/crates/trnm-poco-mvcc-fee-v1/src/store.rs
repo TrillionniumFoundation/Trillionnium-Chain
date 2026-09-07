@@ -5,7 +5,9 @@ use std::{
     time::Duration,
 };
 
-use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
+use rusqlite::{
+    params, Connection, OpenFlags, OptionalExtension, Transaction, TransactionBehavior,
+};
 
 use crate::{
     codec::{canonical_bytes, checksum, digest_value, strict_decode},
@@ -117,6 +119,9 @@ impl MvccFeeFreshReadbackV1 {
 pub struct MvccBlockOutcomeV1 {
     pub confirmed: ConfirmedMvccBlockV1,
     pub replay: bool,
+    /// SQLite row changes in the object-table write window, observed in tests.
+    #[cfg(test)]
+    pub(crate) object_sql_changes: u64,
 }
 
 #[derive(Debug)]
@@ -165,7 +170,7 @@ impl MvccFeeStoreV1 {
             for object in &genesis.initial_objects {
                 objects.insert(object.object_id, object.clone());
             }
-            write_objects(&transaction, &objects)?;
+            write_objects_delta(&transaction, &ObjectMapV1::new(), &objects)?;
             write_metadata(
                 &transaction,
                 &genesis,
@@ -319,6 +324,8 @@ impl MvccFeeStoreV1 {
             return Ok(MvccBlockOutcomeV1 {
                 confirmed: self.fresh_confirm(&receipt)?,
                 replay: true,
+                #[cfg(test)]
+                object_sql_changes: 0,
             });
         }
         let (height, block_id, durable_root, _, fenced) =
@@ -381,7 +388,11 @@ impl MvccFeeStoreV1 {
                 "commit resolved to neither source nor target",
             ));
         }
-        write_objects(&transaction, &post)?;
+        #[cfg(test)]
+        let changes_before_objects = transaction.total_changes();
+        write_objects_delta(&transaction, &parent, &post)?;
+        #[cfg(test)]
+        let object_sql_changes = transaction.total_changes() - changes_before_objects;
         insert_block(&transaction, block, &receipt)?;
         write_metadata(
             &transaction,
@@ -403,6 +414,8 @@ impl MvccFeeStoreV1 {
         Ok(MvccBlockOutcomeV1 {
             confirmed: self.fresh_confirm(&receipt)?,
             replay: false,
+            #[cfg(test)]
+            object_sql_changes,
         })
     }
 
@@ -565,16 +578,62 @@ fn verify_schema(connection: &Connection) -> MvccFeeResultV1<()> {
     Ok(())
 }
 
-fn write_objects(connection: &Connection, objects: &ObjectMapV1) -> MvccFeeResultV1<()> {
-    connection.execute("DELETE FROM objects", [])?;
+/// M06 candidate persistence: preserve the full audits and authenticate the
+/// complete expected object set again under the write transaction. Only the
+/// exact changed rows are written; this does not reduce history replay work.
+fn write_objects_delta(
+    transaction: &Transaction<'_>,
+    expected_parent: &ObjectMapV1,
+    objects: &ObjectMapV1,
+) -> MvccFeeResultV1<()> {
+    if load_objects(transaction)? != *expected_parent {
+        return Err(error(
+            MvccFeeErrorCodeV1::TamperDetected,
+            "object set changed before the write transaction",
+        ));
+    }
     for (id, object) in objects {
+        if object.object_id != *id || object.schema_version != 1 {
+            return Err(error(
+                MvccFeeErrorCodeV1::InvalidState,
+                "target object key/schema mismatch",
+            ));
+        }
+    }
+    for id in expected_parent
+        .keys()
+        .filter(|id| !objects.contains_key(id))
+    {
+        let changed = transaction.execute(
+            "DELETE FROM objects WHERE object_key=?1",
+            params![canonical_bytes(id)?],
+        )?;
+        if changed != 1 {
+            return Err(error(
+                MvccFeeErrorCodeV1::TamperDetected,
+                "object deletion source changed",
+            ));
+        }
+    }
+    for (id, object) in objects {
+        if expected_parent.get(id) == Some(object) {
+            continue;
+        }
         let key = canonical_bytes(id)?;
         let body = canonical_bytes(object)?;
         let sum = checksum(&[&key, &body]);
-        connection.execute(
-            "INSERT INTO objects(object_key,body,checksum) VALUES(?1,?2,?3)",
-            params![key, body, sum.0.to_vec()],
-        )?;
+        let statement = if expected_parent.contains_key(id) {
+            "UPDATE objects SET body=?2,checksum=?3 WHERE object_key=?1"
+        } else {
+            "INSERT INTO objects(object_key,body,checksum) VALUES(?1,?2,?3)"
+        };
+        let changed = transaction.execute(statement, params![key, body, sum.0.to_vec()])?;
+        if changed != 1 {
+            return Err(error(
+                MvccFeeErrorCodeV1::TamperDetected,
+                "object update source changed",
+            ));
+        }
     }
     Ok(())
 }
@@ -902,4 +961,262 @@ fn audit(connection: &Connection, genesis: &MvccFeeGenesisV1) -> MvccFeeResultV1
         ));
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod object_delta_tests {
+    use super::*;
+    use crate::TypedObjectIdV1;
+
+    fn object(marker: u8, value: u128) -> ObjectStateV1 {
+        ObjectStateV1 {
+            schema_version: 1,
+            object_id: TypedObjectIdV1 {
+                object_kind: 45,
+                object_id: [marker; 32],
+            },
+            version: 0,
+            value,
+            closed: false,
+        }
+    }
+
+    fn seed_objects(connection: &Connection, objects: &ObjectMapV1) {
+        for (id, object) in objects {
+            let key = canonical_bytes(id).unwrap();
+            let body = canonical_bytes(object).unwrap();
+            let sum = checksum(&[&key, &body]);
+            connection
+                .execute(
+                    "INSERT INTO objects(object_key,body,checksum) VALUES(?1,?2,?3)",
+                    params![key, body, sum.0.to_vec()],
+                )
+                .unwrap();
+        }
+    }
+
+    fn source() -> ObjectMapV1 {
+        [object(1, 10), object(2, 20), object(3, 30)]
+            .into_iter()
+            .map(|value| (value.object_id, value))
+            .collect()
+    }
+
+    fn object_row(connection: &Connection, id: TypedObjectIdV1) -> (i64, Vec<u8>, Vec<u8>) {
+        connection
+            .query_row(
+                "SELECT rowid,body,checksum FROM objects WHERE object_key=?1",
+                params![canonical_bytes(&id).unwrap()],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+            )
+            .unwrap()
+    }
+
+    #[test]
+    fn object_delta_insert_update_delete_matches_complete_target_v1() {
+        let mut connection = Connection::open_in_memory().unwrap();
+        connection.execute_batch(OBJECT_SQL).unwrap();
+        let parent = source();
+        seed_objects(&connection, &parent);
+        let unchanged_before = object_row(&connection, object(3, 0).object_id);
+        let mut target = parent.clone();
+        let updated = target.get_mut(&object(1, 0).object_id).unwrap();
+        updated.value = 100;
+        updated.version = 1;
+        updated.closed = true;
+        target.remove(&object(2, 0).object_id);
+        let inserted = object(4, 40);
+        target.insert(inserted.object_id, inserted);
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .unwrap();
+        let before = transaction.total_changes();
+        write_objects_delta(&transaction, &parent, &target).unwrap();
+        assert_eq!(
+            transaction.total_changes() - before,
+            3,
+            "one insert, one update, one delete; untouched row is not written"
+        );
+        assert_eq!(load_objects(&transaction).unwrap(), target);
+        transaction.commit().unwrap();
+        assert_eq!(load_objects(&connection).unwrap(), target);
+        assert_eq!(
+            object_row(&connection, object(3, 0).object_id),
+            unchanged_before,
+            "untouched rowid and canonical bytes are preserved"
+        );
+    }
+
+    #[test]
+    fn object_delta_empty_initialization_and_noop_have_exact_write_counts_v1() {
+        let mut connection = Connection::open_in_memory().unwrap();
+        connection.execute_batch(OBJECT_SQL).unwrap();
+        let target = source();
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .unwrap();
+        let before = transaction.total_changes();
+        write_objects_delta(&transaction, &ObjectMapV1::new(), &target).unwrap();
+        assert_eq!(transaction.total_changes() - before, target.len() as u64);
+        let before_noop = transaction.total_changes();
+        write_objects_delta(&transaction, &target, &target).unwrap();
+        assert_eq!(
+            transaction.total_changes(),
+            before_noop,
+            "an identical object set performs no writes"
+        );
+        transaction.commit().unwrap();
+        assert_eq!(load_objects(&connection).unwrap(), target);
+    }
+
+    #[test]
+    fn object_delta_parent_drift_under_write_lock_rejects_and_rolls_back_v1() {
+        let mut connection = Connection::open_in_memory().unwrap();
+        connection.execute_batch(OBJECT_SQL).unwrap();
+        let parent = source();
+        seed_objects(&connection, &parent);
+        let mut target = parent.clone();
+        target.get_mut(&object(1, 0).object_id).unwrap().value = 100;
+        {
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .unwrap();
+            // A different, otherwise untouched row changes after the expected
+            // execution snapshot. Its checksum remains valid, so checking only
+            // updated keys would silently miss this drift.
+            let changed = object(3, 999);
+            let key = canonical_bytes(&changed.object_id).unwrap();
+            let body = canonical_bytes(&changed).unwrap();
+            let sum = checksum(&[&key, &body]);
+            transaction
+                .execute(
+                    "UPDATE objects SET body=?2,checksum=?3 WHERE object_key=?1",
+                    params![key, body, sum.0.to_vec()],
+                )
+                .unwrap();
+            let before = transaction.total_changes();
+            let failure = write_objects_delta(&transaction, &parent, &target).unwrap_err();
+            assert_eq!(failure.code(), MvccFeeErrorCodeV1::TamperDetected);
+            assert_eq!(
+                transaction.total_changes(),
+                before,
+                "rejected delta writes no row"
+            );
+        }
+        assert_eq!(
+            load_objects(&connection).unwrap(),
+            parent,
+            "the aborted transaction rolls back all writes"
+        );
+    }
+
+    #[test]
+    fn object_delta_detects_committed_parent_drift_before_first_write_v1() {
+        let temp = tempfile::TempDir::new().unwrap();
+        let path = temp.path().join("objects.sqlite");
+        let mut connection = Connection::open(&path).unwrap();
+        connection.execute_batch(OBJECT_SQL).unwrap();
+        let parent = source();
+        seed_objects(&connection, &parent);
+        let mut target = parent.clone();
+        target.get_mut(&object(1, 0).object_id).unwrap().value = 100;
+        let other = Connection::open(&path).unwrap();
+        let changed = object(3, 999);
+        let key = canonical_bytes(&changed.object_id).unwrap();
+        let body = canonical_bytes(&changed).unwrap();
+        let sum = checksum(&[&key, &body]);
+        other
+            .execute(
+                "UPDATE objects SET body=?2,checksum=?3 WHERE object_key=?1",
+                params![key, body, sum.0.to_vec()],
+            )
+            .unwrap();
+        let drifted = load_objects(&other).unwrap();
+        drop(other);
+        {
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .unwrap();
+            let before = transaction.total_changes();
+            assert_eq!(
+                write_objects_delta(&transaction, &parent, &target)
+                    .unwrap_err()
+                    .code(),
+                MvccFeeErrorCodeV1::TamperDetected
+            );
+            assert_eq!(transaction.total_changes(), before);
+        }
+        assert_eq!(
+            load_objects(&connection).unwrap(),
+            drifted,
+            "no attempted transition repairs or overwrites the foreign change"
+        );
+    }
+
+    #[test]
+    fn object_delta_unexpected_parent_row_is_not_erased_v1() {
+        let mut connection = Connection::open_in_memory().unwrap();
+        connection.execute_batch(OBJECT_SQL).unwrap();
+        let parent = source();
+        seed_objects(&connection, &parent);
+        let extra = object(9, 999);
+        seed_objects(
+            &connection,
+            &[(extra.object_id, extra)].into_iter().collect(),
+        );
+        let observed = load_objects(&connection).unwrap();
+        {
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .unwrap();
+            let before = transaction.total_changes();
+            assert_eq!(
+                write_objects_delta(&transaction, &parent, &parent)
+                    .unwrap_err()
+                    .code(),
+                MvccFeeErrorCodeV1::TamperDetected
+            );
+            assert_eq!(transaction.total_changes(), before);
+        }
+        assert_eq!(load_objects(&connection).unwrap(), observed);
+    }
+
+    #[test]
+    fn object_delta_sqlite_full_after_partial_writes_rolls_back_exactly_v1() {
+        let mut connection = Connection::open_in_memory().unwrap();
+        connection.pragma_update(None, "page_size", 512).unwrap();
+        connection.execute_batch(OBJECT_SQL).unwrap();
+        let parent = source();
+        seed_objects(&connection, &parent);
+        let pages: u32 = connection
+            .pragma_query_value(None, "page_count", |row| row.get(0))
+            .unwrap();
+        connection
+            .pragma_update(None, "max_page_count", pages)
+            .unwrap();
+        let mut target = parent.clone();
+        target.remove(&object(2, 0).object_id);
+        target.get_mut(&object(1, 0).object_id).unwrap().value = 100;
+        for marker in 4..=64 {
+            let value = object(marker, u128::from(marker));
+            target.insert(value.object_id, value);
+        }
+        {
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .unwrap();
+            let before = transaction.total_changes();
+            let failure = write_objects_delta(&transaction, &parent, &target).unwrap_err();
+            assert_eq!(failure.code(), MvccFeeErrorCodeV1::StoreFailure);
+            assert!(
+                transaction.total_changes() > before,
+                "fault occurs after the delta has begun writing"
+            );
+        }
+        assert_eq!(
+            load_objects(&connection).unwrap(),
+            parent,
+            "SQLite full must not leave a partially applied delta"
+        );
+    }
 }
