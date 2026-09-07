@@ -1,6 +1,7 @@
     218 trillionnium/crates/trnm-consensus-app/src/lib.rs
     122 trillionnium/crates/trnm-consensus-types/src/genesis_application.rs
      75 .github/workflows/trnm-cometbft-spike.yml
+     43 tools/temporary_native_purge.py
      41 trillionnium/crates/trnm-consensus-app/src/migration_rehearsal.rs
      40 trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
      35 scripts/ci/check_poco_bft_mainline_truth.sh
@@ -66,6 +67,7 @@
       4 trillionnium/crates/trnm-poco-lab-validator/src/bin/trnm-poco-lab-material-builder.rs
       4 trillionnium/scripts/consensus/run_cometbft_soak.sh
       3 .github/workflows/trnm-a22-capability-authority-audit.yml
+      3 .github/workflows/trnm-temporary-native-purge.yml
       3 PROJECT_BOUNDARY.json
       3 docs/protocol/poco-bft-v0/05-poco-weights-bond-and-slashing.md
       3 docs/protocol/poco-bft-v0/schema/poco-snapshot-transition-v0.json

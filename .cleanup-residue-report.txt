@@ -76,6 +76,9 @@
 .github/workflows/trnm-cometbft-spike.yml:357:            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json.sqlite3
 .github/workflows/trnm-cometbft-spike.yml:358:            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/config.toml
 .github/workflows/trnm-cometbft-spike.yml:359:            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/genesis.json
+.github/workflows/trnm-temporary-native-purge.yml:6:      - work/remove-cometbft-residue-20260907
+.github/workflows/trnm-temporary-native-purge.yml:20:          ref: work/remove-cometbft-residue-20260907
+.github/workflows/trnm-temporary-native-purge.yml:72:          git push origin HEAD:work/remove-cometbft-residue-20260907
 .gitignore:9:/trillionnium/crates/trnm-consensus-app/target/
 OPERATIONS.md:12:The only future production consensus route is Native PoCO-BFT. CometBFT,
 OPERATIONS.md:13:`trnm-consensus-app`, `trnm-node`, legacy CLI/simulator binaries, and historical
@@ -555,6 +558,49 @@ scripts/v2/collect_release_operator_preflight_relative_paths_canonical_test.sh:2
 scripts/v2/collect_release_operator_preflight_relative_paths_canonical_test.sh:24:printf '%s\n' "$output" | grep -Fqx "binary_path=$WORKSPACE_ROOT/target/debug/trnm-cometbft-app"
 tools/fixup_plan_v2_repair_generator.py:242:`trnm-consensus-app` and `trnm-node` are excluded migration residue.
 tools/fixup_plan_v2_repair_generator.py:247:`trnm-release-bundle-v0`; legacy `trnm-consensus-app` and `trnm-node` are
+tools/temporary_native_purge.py:476:        "trillionnium/crates/trnm-consensus-app",
+tools/temporary_native_purge.py:500:    path_tokens = ("comet", "tendermint", "abci")
+tools/temporary_native_purge.py:522:        "CometFinalizedBlockIdentityV1", "CometStateExportV1", "GenesisQcCeremonyEvidenceV1",
+tools/temporary_native_purge.py:523:        "GenesisQcSignatureShareV1", "LegacyCometAppHashV1", "LegacyCometGenesisHashV1",
+tools/temporary_native_purge.py:526:        "PocoTargetProjectionV1", "VerifiedCometStateExportV1",
+tools/temporary_native_purge.py:562:        "decode_comet_state_export_v1_exact", "decode_genesis_qc_ceremony_evidence_v1_exact",
+tools/temporary_native_purge.py:577:    text = re.sub(r'(?m)^\s*"crates/trnm-consensus-app",\n', "", text)
+tools/temporary_native_purge.py:579:    text = re.sub(r'(?m)^\s*(?:zero_comet[^=]*|legacy_comet[^=]*|cometbft_[^=]*)\s*=.*\n', "", text)
+tools/temporary_native_purge.py:597:    text = re.sub(r'(?m)^\s*(?:zero_comet[^=]*|legacy_comet[^=]*|cometbft_[^=]*)\s*=.*\n', "", text)
+tools/temporary_native_purge.py:620:        if "comet" in key.casefold():
+tools/temporary_native_purge.py:632:        if "comet" in key.casefold():
+tools/temporary_native_purge.py:666:        '    require(consensus.get("legacy_comet_role") == "migration-residue-only", "legacy Comet role drift")\n'
+tools/temporary_native_purge.py:667:        '    require(consensus.get("legacy_comet_may_authorize_release") is False, "legacy Comet must not authorize release")\n',
+tools/temporary_native_purge.py:676:        r'    require\(\n        not \(\{"crates/trnm-consensus-app", "crates/trnm-node"\} & members\),.*?\n    \)\n',
+tools/temporary_native_purge.py:684:        '    require(metadata.get("cometbft_role") == "migration-residue-only", "Cargo Comet role drift")\n',
+tools/temporary_native_purge.py:688:    text = re.sub(r'\("https://github\.com/ProfAlexQI/TrillionniumChain\.git", "Node\.js 20\+", "CometBFT is the sole"\)',
+tools/temporary_native_purge.py:691:        '    require("migration residue" in security, "security policy must classify legacy Comet as migration residue")\n',
+tools/temporary_native_purge.py:694:    text = text.replace('("CometBFT -> trnm-consensus-app -> trnm-runtime", "/home/", "/Users/")', '("/home/", "/Users/")')
+tools/temporary_native_purge.py:696:        '            "Run the application with `trnm-cometbft-app`",\n'
+tools/temporary_native_purge.py:697:        '            "CometBFT -> trnm-consensus-app -> trnm-runtime",\n',
+tools/temporary_native_purge.py:708:        r'    require\(\n        truth\.get\("cometbft", \{\}\)\.get\("role"\) == "migration-residue-only",.*?\n    \)\n',
+tools/temporary_native_purge.py:712:        r'    require\(\n        boundary\.get\("consensus", \{\}\)\.get\("legacy_comet_may_authorize_release"\) is False,.*?\n    \)\n',
+tools/temporary_native_purge.py:718:        r'    require\(\n        \{"crates/trnm-consensus-app", "crates/trnm-node"\} <= excluded,.*?\n    \)\n',
+tools/temporary_native_purge.py:736:        '    rg -q \'"crates/trnm-consensus-app"\' "$root/trillionnium/Cargo.toml" || error "canonical consensus app missing"\n'
+tools/temporary_native_purge.py:747:    text = re.sub(r'(?m)^register trnm-cometbft-spike\.yml:[^\n]*\\\n  [^\n]*\n', '', text)
+tools/temporary_native_purge.py:756:        if 'workflow="$repo/.github/workflows/trnm-cometbft-spike.yml"' in line:
+tools/temporary_native_purge.py:768:    text = re.sub(r'(?m)^\s*"trnm-cometbft-spike\.yml",\n', '', text)
+tools/temporary_native_purge.py:799:        ("ZeroComet", "Native"),
+tools/temporary_native_purge.py:801:        ("zero_comet", "native"),
+tools/temporary_native_purge.py:802:        ("zero-comet", "native-only"),
+tools/temporary_native_purge.py:803:        ("comet_hash_mapping", "foreign_hash_mapping"),
+tools/temporary_native_purge.py:804:        ("recursive_comet_field_injection", "recursive_foreign_field_injection"),
+tools/temporary_native_purge.py:805:        ("Comet/native", "foreign/native"),
+tools/temporary_native_purge.py:806:        ("comet/native", "foreign/native"),
+tools/temporary_native_purge.py:808:        ("CometBFT", "external BFT engine"),
+tools/temporary_native_purge.py:809:        ("cometbft", "external_bft_engine"),
+tools/temporary_native_purge.py:811:        ("Tendermint", "external BFT engine"),
+tools/temporary_native_purge.py:812:        ("tendermint", "external_bft_engine"),
+tools/temporary_native_purge.py:813:        ("ABCI", "external application adapter"),
+tools/temporary_native_purge.py:815:        ("abci", "external_application_adapter"),
+tools/temporary_native_purge.py:816:        ("trnm-consensus-app", "trnm-native-application"),
+tools/temporary_native_purge.py:820:        ("Comet", "foreign"),
+tools/temporary_native_purge.py:821:        ("comet", "foreign"),
 trillionnium/Cargo.toml:4:  "crates/trnm-consensus-app",
 trillionnium/Cargo.toml:84:zero_comet_production_dependency_target = true
 trillionnium/Cargo.toml:85:zero_comet_production_dependency_achieved = true
