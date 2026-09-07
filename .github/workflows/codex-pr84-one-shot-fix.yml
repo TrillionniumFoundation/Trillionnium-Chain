@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   patch-test-and-commit:
-    if: "${{ github.event.head_commit.message == 'chore(ci): retry one-shot PR84 blocker fixer with production governance API' }}"
+    if: "${{ github.event.head_commit.message == 'chore(ci): rerun PR84 fixer with corrected governance anchor' }}"
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -35,21 +35,21 @@ jobs:
           path = Path('trillionnium/crates/trnm-node/src/main.rs')
           source = path.read_text()
           test_only = '''    state
-              .set_gov_param_bootstrap_unchecked(
-                  9_500,
-                  "resolve_authority".into(),
-                  "demo-resolver-a,demo-resolver-b".into(),
-              )
-              .map_err(|err| anyhow::anyhow!("seed demo resolve authority failed: {}", err))?;
+                  .set_gov_param_bootstrap_unchecked(
+                      9_500,
+                      "resolve_authority".into(),
+                      "demo-resolver-a,demo-resolver-b".into(),
+                  )
+                  .map_err(|err| anyhow::anyhow!("seed demo resolve authority failed: {}", err))?;
           '''
           production = '''    state
-              .set_gov_param(
-                  0,
-                  7_310,
-                  "resolve_authority".into(),
-                  "demo-resolver-a,demo-resolver-b".into(),
-              )
-              .map_err(|err| anyhow::anyhow!("schedule demo resolve authority failed: {}", err))?;
+                  .set_gov_param(
+                      0,
+                      7_310,
+                      "resolve_authority".into(),
+                      "demo-resolver-a,demo-resolver-b".into(),
+                  )
+                  .map_err(|err| anyhow::anyhow!("schedule demo resolve authority failed: {}", err))?;
               state
                   .set_gov_param(
                       u64::MAX,
