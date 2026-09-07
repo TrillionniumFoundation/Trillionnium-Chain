@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   patch-test-and-commit:
-    if: "${{ github.event.head_commit.message == 'chore(ci): rerun PR84 fixer with staged-resolve preexec admission' }}"
+    if: "${{ github.event.head_commit.message == 'chore(ci): rerun PR84 fixer with robust governance anchor' }}"
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -36,34 +36,42 @@ jobs:
           path = Path('trillionnium/crates/trnm-node/src/main.rs')
           source = path.read_text()
 
-          test_only = '''    state
-              .set_gov_param_bootstrap_unchecked(
-                  9_500,
-                  "resolve_authority".into(),
-                  "demo-resolver-a,demo-resolver-b".into(),
-              )
-              .map_err(|err| anyhow::anyhow!("seed demo resolve authority failed: {}", err))?;
-          '''
-          production = '''    state
-              .set_gov_param(
-                  0,
-                  7_310,
-                  "resolve_authority".into(),
-                  "demo-resolver-a,demo-resolver-b".into(),
-              )
-              .map_err(|err| anyhow::anyhow!("schedule demo resolve authority failed: {}", err))?;
-              state
-                  .set_gov_param(
-                      u64::MAX,
-                      7_310,
-                      "resolve_authority".into(),
-                      "demo-resolver-a,demo-resolver-b".into(),
-                  )
-                  .map_err(|err| anyhow::anyhow!("activate demo resolve authority failed: {}", err))?;
-          '''
-          if test_only not in source:
-              raise SystemExit('test-only demo governance bootstrap marker not found')
-          source = source.replace(test_only, production, 1)
+          gov_start = "\n".join([
+              "    state",
+              "        .set_gov_param_bootstrap_unchecked(",
+              "            9_500,",
+              "            \"resolve_authority\".into(),",
+              "            \"demo-resolver-a,demo-resolver-b\".into(),",
+              "        )",
+          ])
+          gov_end = "        .map_err(|err| anyhow::anyhow!(\"seed demo resolve authority failed: {}\", err))?;\n"
+          gov_pos = source.find(gov_start)
+          if gov_pos < 0:
+              raise SystemExit('test-only demo governance bootstrap start not found')
+          gov_end_pos = source.find(gov_end, gov_pos)
+          if gov_end_pos < 0:
+              raise SystemExit('test-only demo governance bootstrap end not found')
+          gov_end_pos += len(gov_end)
+          production = "\n".join([
+              "    state",
+              "        .set_gov_param(",
+              "            0,",
+              "            7_310,",
+              "            \"resolve_authority\".into(),",
+              "            \"demo-resolver-a,demo-resolver-b\".into(),",
+              "        )",
+              "        .map_err(|err| anyhow::anyhow!(\"schedule demo resolve authority failed: {}\", err))?;",
+              "    state",
+              "        .set_gov_param(",
+              "            u64::MAX,",
+              "            7_310,",
+              "            \"resolve_authority\".into(),",
+              "            \"demo-resolver-a,demo-resolver-b\".into(),",
+              "        )",
+              "        .map_err(|err| anyhow::anyhow!(\"activate demo resolve authority failed: {}\", err))?;",
+              "",
+          ])
+          source = source[:gov_pos] + production + source[gov_end_pos:]
 
           preexec_pattern = re.compile(
               r'(?P<indent>[ ]+)let mut local_state = snapshot_cloned\.as_ref\(\)\.clone\(\);\n'
@@ -84,9 +92,9 @@ jobs:
                   f'{i}            Some(classify_apply_error(&err)),\n'
                   f'{i}        ) =>\n'
                   f'{i}    {{\n'
-                  f'{i}        // A first legacy resolve signature intentionally returns\n'
-                  f'{i}        // ResolveApprovalStaged after mutating only the isolated\n'
-                  f'{i}        // pre-exec snapshot. Admit it so commit can persist the stage.\n'
+                  f'{i}        // The first legacy resolve signature intentionally returns\n'
+                  f'{i}        // ResolveApprovalStaged after mutating only this isolated\n'
+                  f'{i}        // snapshot. Admit it so commit can persist the approval.\n'
                   f'{i}        Ok(())\n'
                   f'{i}    }}\n'
                   f'{i}    Err(err) => Err(err.to_string()),\n'
@@ -97,9 +105,10 @@ jobs:
           if replacements != 1:
               raise SystemExit(f'expected one preexec apply block, replaced {replacements}')
 
-          test_marker = '''    #[test]
-              fn preexec_pool_reuses_workers_across_multiple_groups() {
-          '''
+          test_marker = "\n".join([
+              "    #[test]",
+              "    fn preexec_pool_reuses_workers_across_multiple_groups() {",
+          ])
           regression = r'''    #[test]
               fn preexec_admits_staged_and_final_multisig_resolve() {
                   let mut state = StateStore::new();
