@@ -5,7 +5,7 @@ use std::{
     fmt,
     fs::{self, File, OpenOptions},
     io::{Read, Write},
-    os::unix::fs::{OpenOptionsExt, PermissionsExt},
+    os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt},
     path::{Component, Path, PathBuf},
     process,
 };
@@ -104,8 +104,14 @@ fn io_v1(stage: &'static str, source: std::io::Error) -> NodeCommitLedgerErrorV1
 pub(crate) struct NodeCommitLedgerV1 {
     root: PathBuf,
     records: PathBuf,
+    root_endpoint: BoundEndpointV1,
+    records_endpoint: BoundEndpointV1,
+    anchor_endpoint: BoundEndpointV1,
+    anchor: ExternalNodeCheckpointV0,
     lock: File,
+    lock_identity: EndpointIdentityV1,
     head: NodeCommitLedgerHeadV1,
+    poisoned: bool,
 }
 
 impl NodeCommitLedgerV1 {
@@ -132,6 +138,11 @@ impl NodeCommitLedgerV1 {
         sync_directory_v1(&records)?;
         sync_directory_v1(&root)?;
         let mut ledger = Self {
+            root_endpoint: BoundEndpointV1::open(&root, true)?,
+            records_endpoint: BoundEndpointV1::open(&records, true)?,
+            anchor_endpoint: BoundEndpointV1::open(&root.join("anchor.v1"), false)?,
+            anchor,
+            lock_identity: EndpointIdentityV1::from_file(&lock)?,
             root,
             records,
             lock,
@@ -140,13 +151,35 @@ impl NodeCommitLedgerV1 {
                 checkpoint: anchor,
                 record_digest: anchor_digest,
             },
+            poisoned: false,
         };
         ledger.recover_v1()?;
         Ok(ledger)
     }
 
+    #[cfg(test)]
     pub(crate) fn open_existing(root: impl AsRef<Path>) -> ResultV1<Self> {
-        let root = validate_existing_root_v1(root.as_ref())?;
+        Self::open_existing_inner(root.as_ref(), None)
+    }
+
+    /// Bind recovery to the caller's exact operation, before repair or cleanup.
+    /// Caller-supplied checkpoints are not an independent anti-rollback anchor.
+    pub(crate) fn open_existing_expected(
+        root: impl AsRef<Path>,
+        source: ExternalNodeCheckpointV0,
+        target: ExternalNodeCheckpointV0,
+    ) -> ResultV1<Self> {
+        target
+            .validate_successor_of(&source)
+            .map_err(|_| NodeCommitLedgerErrorV1::TargetNotSuccessor)?;
+        Self::open_existing_inner(root.as_ref(), Some((source, target)))
+    }
+
+    fn open_existing_inner(
+        root: &Path,
+        expected: Option<(ExternalNodeCheckpointV0, ExternalNodeCheckpointV0)>,
+    ) -> ResultV1<Self> {
+        let root = validate_existing_root_v1(root)?;
         let records = validate_existing_directory_v1(&root.join("records"), "records directory")?;
         let lock_path = root.join("ledger.lock");
         let lock = open_private_file_v1(&lock_path)?;
@@ -158,6 +191,11 @@ impl NodeCommitLedgerV1 {
         )?)?;
         let anchor_digest = anchor_digest_v1(&anchor.encode_canonical());
         let mut ledger = Self {
+            root_endpoint: BoundEndpointV1::open(&root, true)?,
+            records_endpoint: BoundEndpointV1::open(&records, true)?,
+            anchor_endpoint: BoundEndpointV1::open(&root.join("anchor.v1"), false)?,
+            anchor,
+            lock_identity: EndpointIdentityV1::from_file(&lock)?,
             root,
             records,
             lock,
@@ -166,8 +204,9 @@ impl NodeCommitLedgerV1 {
                 checkpoint: anchor,
                 record_digest: anchor_digest,
             },
+            poisoned: false,
         };
-        ledger.recover_v1()?;
+        ledger.recover_expected_v1(expected)?;
         Ok(ledger)
     }
 
@@ -180,13 +219,16 @@ impl NodeCommitLedgerV1 {
         source: ExternalNodeCheckpointV0,
         target: ExternalNodeCheckpointV0,
     ) -> ResultV1<NodeCommitLedgerHeadV1> {
-        self.recover_v1()?;
-        if self.head.checkpoint != source {
-            return Err(NodeCommitLedgerErrorV1::SourceMismatch);
-        }
         target
             .validate_successor_of(&source)
             .map_err(|_| NodeCommitLedgerErrorV1::TargetNotSuccessor)?;
+        self.recover_expected_v1(Some((source, target)))?;
+        if self.head.checkpoint == target {
+            return Ok(self.head);
+        }
+        if self.head.checkpoint != source {
+            return Err(NodeCommitLedgerErrorV1::SourceMismatch);
+        }
         let sequence = self
             .head
             .sequence
@@ -207,6 +249,9 @@ impl NodeCommitLedgerV1 {
         let temporary = self
             .records
             .join(format!(".record-{sequence:020}.tmp-{}", process::id()));
+        // A failed write/sync/readback fences this owner until it is reopened.
+        self.poisoned = true;
+        self.validate_bound_namespace_v1()?;
         write_new_synced_file_v1(&temporary, &encoded)?;
         fs::rename(&temporary, &final_path).map_err(|source| io_v1("publish record", source))?;
         sync_directory_v1(&self.records)?;
@@ -215,13 +260,14 @@ impl NodeCommitLedgerV1 {
         publish_head_v1(&self.root, sequence, digest)?;
         sync_directory_v1(&self.root)?;
 
-        self.recover_v1()?;
+        self.recover_inner_v1(Some((source, target)))?;
         if self.head.sequence != sequence
             || self.head.checkpoint != target
             || self.head.record_digest != digest
         {
             return Err(NodeCommitLedgerErrorV1::ThirdState);
         }
+        self.poisoned = false;
         Ok(self.head)
     }
 
@@ -233,7 +279,7 @@ impl NodeCommitLedgerV1 {
         target
             .validate_successor_of(&source)
             .map_err(|_| NodeCommitLedgerErrorV1::TargetNotSuccessor)?;
-        self.recover_v1()?;
+        self.recover_expected_v1(Some((source, target)))?;
         if self.head.checkpoint == source {
             Ok(NodeCommitConvergenceV1::Source)
         } else if self.head.checkpoint == target {
@@ -244,16 +290,52 @@ impl NodeCommitLedgerV1 {
     }
 
     fn recover_v1(&mut self) -> ResultV1<()> {
-        validate_existing_directory_v1(&self.root, "ledger root")?;
-        validate_existing_directory_v1(&self.records, "records directory")?;
-        validate_private_file_path_v1(&self.root.join("ledger.lock"), "ledger lock")?;
-        cleanup_abandoned_temps_v1(&self.records)?;
-        cleanup_abandoned_head_temp_v1(&self.root)?;
+        self.recover_expected_v1(None)
+    }
+
+    fn recover_expected_v1(
+        &mut self,
+        expected: Option<(ExternalNodeCheckpointV0, ExternalNodeCheckpointV0)>,
+    ) -> ResultV1<()> {
+        if self.poisoned {
+            return Err(NodeCommitLedgerErrorV1::InvalidState(
+                "ledger owner is fenced",
+            ));
+        }
+        self.poisoned = true;
+        self.recover_inner_v1(expected)?;
+        self.poisoned = false;
+        Ok(())
+    }
+
+    fn validate_bound_namespace_v1(&self) -> ResultV1<()> {
+        self.root_endpoint.validate(&self.root)?;
+        self.records_endpoint.validate(&self.records)?;
+        self.anchor_endpoint
+            .validate(&self.root.join("anchor.v1"))?;
+        validate_bound_endpoint_v1(
+            &self.root.join("ledger.lock"),
+            &self.lock,
+            self.lock_identity,
+        )
+    }
+
+    fn recover_inner_v1(
+        &mut self,
+        expected: Option<(ExternalNodeCheckpointV0, ExternalNodeCheckpointV0)>,
+    ) -> ResultV1<()> {
+        self.validate_bound_namespace_v1()?;
+        validate_root_entries_v1(&self.root)?;
 
         let anchor = decode_anchor_v1(&read_exact_file_v1(
             &self.root.join("anchor.v1"),
             ANCHOR_BYTES_V1,
         )?)?;
+        if anchor != self.anchor {
+            return Err(NodeCommitLedgerErrorV1::InvalidState(
+                "bound anchor changed",
+            ));
+        }
         let anchor_digest = anchor_digest_v1(&anchor.encode_canonical());
         let (published_sequence, published_digest) = decode_head_v1(&read_exact_file_v1(
             &self.root.join("head.v1"),
@@ -298,6 +380,13 @@ impl NodeCommitLedgerV1 {
             sequence = next;
             checkpoint = record.target;
             digest = record.record_digest;
+            if sequence == self.head.sequence
+                && (checkpoint != self.head.checkpoint || digest != self.head.record_digest)
+            {
+                return Err(NodeCommitLedgerErrorV1::InvalidState(
+                    "observed ledger prefix changed",
+                ));
+            }
         }
         reject_unexpected_record_entries_v1(&self.records, sequence)?;
 
@@ -318,6 +407,21 @@ impl NodeCommitLedgerV1 {
                 "published head digest differs",
             ));
         }
+        if sequence < self.head.sequence
+            || (sequence == self.head.sequence
+                && (checkpoint != self.head.checkpoint || digest != self.head.record_digest))
+        {
+            return Err(NodeCommitLedgerErrorV1::InvalidState(
+                "observed ledger head regressed or changed",
+            ));
+        }
+        if expected.is_some_and(|(source, target)| checkpoint != source && checkpoint != target) {
+            return Err(NodeCommitLedgerErrorV1::ThirdState);
+        }
+        // No mutation precedes full history and operation-context validation.
+        self.validate_bound_namespace_v1()?;
+        cleanup_abandoned_temps_v1(&self.records)?;
+        cleanup_abandoned_head_temp_v1(&self.root)?;
         if published_sequence < sequence {
             // The only repairable crash cut is a complete, fsynced record that
             // became visible before the atomic HEAD publication.  Publishing
@@ -325,6 +429,7 @@ impl NodeCommitLedgerV1 {
             publish_head_v1(&self.root, sequence, digest)?;
             sync_directory_v1(&self.root)?;
         }
+        self.validate_bound_namespace_v1()?;
         self.head = NodeCommitLedgerHeadV1 {
             sequence,
             checkpoint,
@@ -351,6 +456,93 @@ struct DecodedRecordV1 {
     source: ExternalNodeCheckpointV0,
     target: ExternalNodeCheckpointV0,
     record_digest: [u8; 32],
+}
+
+/// Live identity fences complement, and never replace, the full byte audit.
+#[derive(Clone, Copy, PartialEq, Eq)]
+struct EndpointIdentityV1 {
+    device: u64,
+    inode: u64,
+    owner: u32,
+    mode: u32,
+    directory: bool,
+}
+
+impl EndpointIdentityV1 {
+    fn from_metadata(metadata: &fs::Metadata) -> ResultV1<Self> {
+        let directory = metadata.is_dir();
+        if !(directory || metadata.is_file())
+            || metadata.permissions().mode() & 0o7777 != if directory { 0o700 } else { 0o600 }
+            || (!directory && metadata.nlink() != 1)
+        {
+            return Err(NodeCommitLedgerErrorV1::InvalidPath(
+                "bound endpoint kind/mode/links",
+            ));
+        }
+        Ok(Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+            owner: metadata.uid(),
+            mode: metadata.permissions().mode() & 0o7777,
+            directory,
+        })
+    }
+
+    fn from_file(file: &File) -> ResultV1<Self> {
+        Self::from_metadata(
+            &file
+                .metadata()
+                .map_err(|source| io_v1("stat bound endpoint", source))?,
+        )
+    }
+}
+
+struct BoundEndpointV1 {
+    file: File,
+    identity: EndpointIdentityV1,
+}
+
+impl BoundEndpointV1 {
+    fn open(path: &Path, directory: bool) -> ResultV1<Self> {
+        let flags =
+            libc::O_CLOEXEC | libc::O_NOFOLLOW | if directory { libc::O_DIRECTORY } else { 0 };
+        let file = OpenOptions::new()
+            .read(true)
+            .custom_flags(flags)
+            .open(path)
+            .map_err(|source| io_v1("open bound endpoint", source))?;
+        let identity = EndpointIdentityV1::from_file(&file)?;
+        if identity.directory != directory {
+            return Err(NodeCommitLedgerErrorV1::InvalidPath(
+                "bound endpoint kind changed",
+            ));
+        }
+        let bound = Self { file, identity };
+        bound.validate(path)?;
+        Ok(bound)
+    }
+
+    fn validate(&self, path: &Path) -> ResultV1<()> {
+        validate_bound_endpoint_v1(path, &self.file, self.identity)
+    }
+}
+
+fn validate_bound_endpoint_v1(
+    path: &Path,
+    file: &File,
+    expected: EndpointIdentityV1,
+) -> ResultV1<()> {
+    let named = fs::symlink_metadata(path).map_err(|source| io_v1("inspect bound path", source))?;
+    if EndpointIdentityV1::from_file(file)? != expected
+        || EndpointIdentityV1::from_metadata(&named)? != expected
+        || fs::canonicalize(path).map_err(|source| io_v1("canonicalize bound path", source))?
+            != path
+    {
+        return Err(NodeCommitLedgerErrorV1::InvalidPath(
+            "bound endpoint identity changed",
+        ));
+    }
+    Ok(())
 }
 
 fn validate_new_root_v1(path: &Path) -> ResultV1<PathBuf> {
@@ -429,6 +621,7 @@ fn validate_private_file_path_v1(path: &Path, label: &'static str) -> ResultV1<(
     if !metadata.is_file()
         || metadata.file_type().is_symlink()
         || metadata.permissions().mode() & 0o7777 != 0o600
+        || metadata.nlink() != 1
     {
         return Err(NodeCommitLedgerErrorV1::InvalidPath(label));
     }
@@ -452,6 +645,8 @@ fn read_exact_file_v1(path: &Path, exact: usize) -> ResultV1<Vec<u8>> {
     let metadata = file
         .metadata()
         .map_err(|source| io_v1("stat ledger file", source))?;
+    let identity = EndpointIdentityV1::from_metadata(&metadata)?;
+    validate_bound_endpoint_v1(path, &file, identity)?;
     if metadata.len() != exact as u64 {
         return Err(NodeCommitLedgerErrorV1::InvalidState(
             "ledger file length differs",
@@ -460,6 +655,17 @@ fn read_exact_file_v1(path: &Path, exact: usize) -> ResultV1<Vec<u8>> {
     let mut bytes = vec![0_u8; exact];
     file.read_exact(&mut bytes)
         .map_err(|source| io_v1("read ledger file", source))?;
+    if file
+        .metadata()
+        .map_err(|source| io_v1("restat ledger file", source))?
+        .len()
+        != exact as u64
+    {
+        return Err(NodeCommitLedgerErrorV1::InvalidState(
+            "ledger file length changed",
+        ));
+    }
+    validate_bound_endpoint_v1(path, &file, identity)?;
     Ok(bytes)
 }
 
@@ -485,16 +691,13 @@ fn cleanup_abandoned_temps_v1(records: &Path) -> ResultV1<()> {
         let entry = entry.map_err(|source| io_v1("read records entry", source))?;
         let name = entry.file_name();
         let text = name.to_string_lossy();
-        if text.starts_with(".record-") && text.contains(".tmp-") {
-            let metadata = entry
-                .metadata()
-                .map_err(|source| io_v1("stat record temp", source))?;
-            if !metadata.is_file() {
-                return Err(NodeCommitLedgerErrorV1::InvalidState(
-                    "record temp is not a file",
-                ));
-            }
+        if record_temp_name_v1(&text) {
+            validate_private_file_path_v1(&entry.path(), "record temp")?;
             fs::remove_file(entry.path()).map_err(|source| io_v1("remove record temp", source))?;
+        } else if record_sequence_v1(&text).is_none() {
+            return Err(NodeCommitLedgerErrorV1::InvalidState(
+                "unexpected record cleanup entry",
+            ));
         }
     }
     sync_directory_v1(records)
@@ -504,16 +707,16 @@ fn cleanup_abandoned_head_temp_v1(root: &Path) -> ResultV1<()> {
     for entry in fs::read_dir(root).map_err(|source| io_v1("scan ledger root", source))? {
         let entry = entry.map_err(|source| io_v1("read ledger root entry", source))?;
         let text = entry.file_name().to_string_lossy().into_owned();
-        if text.starts_with(".head.v1.tmp-") {
-            let metadata = entry
-                .metadata()
-                .map_err(|source| io_v1("stat head temp", source))?;
-            if !metadata.is_file() {
-                return Err(NodeCommitLedgerErrorV1::InvalidState(
-                    "head temp is not a file",
-                ));
-            }
+        if head_temp_name_v1(&text) {
+            validate_private_file_path_v1(&entry.path(), "head temp")?;
             fs::remove_file(entry.path()).map_err(|source| io_v1("remove head temp", source))?;
+        } else if !matches!(
+            text.as_str(),
+            "anchor.v1" | "head.v1" | "ledger.lock" | "records"
+        ) {
+            return Err(NodeCommitLedgerErrorV1::InvalidState(
+                "unexpected root cleanup entry",
+            ));
         }
     }
     sync_directory_v1(root)
@@ -527,13 +730,11 @@ fn reject_unexpected_record_entries_v1(records: &Path, maximum_sequence: u64) ->
         let entry = entry.map_err(|source| io_v1("read final record entry", source))?;
         let name = entry.file_name();
         let text = name.to_string_lossy();
-        if !text.starts_with("record-")
-            || !text.ends_with(".v1")
-            || entry
-                .file_type()
-                .map_err(|source| io_v1("stat final record", source))?
-                .is_dir()
-        {
+        validate_private_file_path_v1(&entry.path(), "record inventory entry")?;
+        if record_temp_name_v1(&text) {
+            continue;
+        }
+        if record_sequence_v1(&text).is_none_or(|sequence| sequence > maximum_sequence) {
             return Err(NodeCommitLedgerErrorV1::InvalidState(
                 "unexpected records directory entry",
             ));
@@ -548,6 +749,63 @@ fn reject_unexpected_record_entries_v1(records: &Path, maximum_sequence: u64) ->
         return Err(NodeCommitLedgerErrorV1::InvalidState(
             "record sequence has a gap or extra entry",
         ));
+    }
+    Ok(())
+}
+
+fn record_sequence_v1(name: &str) -> Option<u64> {
+    let digits = name.strip_prefix("record-")?.strip_suffix(".v1")?;
+    if digits.len() != 20 || !digits.bytes().all(|byte| byte.is_ascii_digit()) {
+        return None;
+    }
+    let sequence = digits.parse::<u64>().ok()?;
+    (sequence > 0 && sequence <= MAX_RECORDS_V1).then_some(sequence)
+}
+
+fn canonical_pid_v1(text: &str) -> bool {
+    text.parse::<u32>()
+        .is_ok_and(|pid| pid > 0 && pid.to_string() == text)
+}
+
+fn record_temp_name_v1(name: &str) -> bool {
+    let Some((sequence, pid)) = name
+        .strip_prefix(".record-")
+        .and_then(|value| value.split_once(".tmp-"))
+    else {
+        return false;
+    };
+    record_sequence_v1(&format!("record-{sequence}.v1")).is_some() && canonical_pid_v1(pid)
+}
+
+fn head_temp_name_v1(name: &str) -> bool {
+    let Some((pid, sequence)) = name
+        .strip_prefix(".head.v1.tmp-")
+        .and_then(|value| value.split_once('-'))
+    else {
+        return false;
+    };
+    canonical_pid_v1(pid)
+        && sequence.parse::<u64>().is_ok_and(|value| {
+            value > 0 && value <= MAX_RECORDS_V1 && value.to_string() == sequence
+        })
+}
+
+fn validate_root_entries_v1(root: &Path) -> ResultV1<()> {
+    for entry in fs::read_dir(root).map_err(|source| io_v1("scan root inventory", source))? {
+        let entry = entry.map_err(|source| io_v1("read root inventory", source))?;
+        let name = entry.file_name();
+        let text = name.to_string_lossy();
+        if text == "records" {
+            validate_existing_directory_v1(&entry.path(), "records inventory")?;
+        } else if matches!(text.as_ref(), "anchor.v1" | "head.v1" | "ledger.lock")
+            || head_temp_name_v1(&text)
+        {
+            validate_private_file_path_v1(&entry.path(), "root inventory file")?;
+        } else {
+            return Err(NodeCommitLedgerErrorV1::InvalidState(
+                "unexpected ledger root entry",
+            ));
+        }
     }
     Ok(())
 }
@@ -879,5 +1137,392 @@ mod tests {
             ledger.resolve_exact_source_or_target(source, target),
             Err(NodeCommitLedgerErrorV1::ThirdState)
         ));
+    }
+
+    fn fixture_v1() -> (
+        TempDir,
+        PathBuf,
+        ExternalNodeCheckpointV0,
+        ExternalNodeCheckpointV0,
+        NodeCommitLedgerV1,
+    ) {
+        let temp = TempDir::new().expect("temporary ledger parent");
+        let root = fs::canonicalize(temp.path())
+            .expect("canonical parent")
+            .join("ledger");
+        let source = checkpoint_v1(0, [0; 32], 21);
+        let target = successor_v1(source, 31);
+        let ledger = NodeCommitLedgerV1::initialize_new(&root, source).expect("initialize ledger");
+        (temp, root, source, target, ledger)
+    }
+
+    fn retained_temp_v1(root: &Path) -> PathBuf {
+        let path = root.join("records/.record-00000000000000000003.tmp-999");
+        write_new_synced_file_v1(&path, b"partial retained evidence").expect("write temp fixture");
+        path
+    }
+
+    #[test]
+    fn exact_target_retry_is_read_only_and_does_not_append_v1() {
+        let (_temp, root, source, target, mut ledger) = fixture_v1();
+        let first = ledger
+            .append_exact_successor(source, target)
+            .expect("first append");
+        let head_bytes = fs::read(root.join("head.v1")).expect("head bytes");
+        assert_eq!(
+            ledger
+                .append_exact_successor(source, target)
+                .expect("exact retry"),
+            first
+        );
+        assert_eq!(
+            fs::read(root.join("head.v1")).expect("head bytes"),
+            head_bytes
+        );
+        assert_eq!(
+            fs::read_dir(root.join("records")).expect("records").count(),
+            1
+        );
+        drop(ledger);
+        let mut reopened = NodeCommitLedgerV1::open_existing_expected(&root, source, target)
+            .expect("exact-context reopen");
+        assert_eq!(
+            reopened
+                .append_exact_successor(source, target)
+                .expect("reopened retry"),
+            first
+        );
+    }
+
+    #[test]
+    fn corrupted_older_record_fences_owner_without_cleanup_v1() {
+        let (_temp, root, source, target, mut ledger) = fixture_v1();
+        let third = successor_v1(target, 41);
+        ledger
+            .append_exact_successor(source, target)
+            .expect("first append");
+        ledger
+            .append_exact_successor(target, third)
+            .expect("second append");
+        let old_path = ledger.record_path_v1(1);
+        let original = fs::read(&old_path).expect("old record");
+        let mut corrupted = original.clone();
+        corrupted[56] ^= 1;
+        fs::write(&old_path, &corrupted).expect("corrupt old record in place");
+        let retained = retained_temp_v1(&root);
+        let head = fs::read(root.join("head.v1")).expect("head");
+        assert!(ledger
+            .resolve_exact_source_or_target(target, third)
+            .is_err());
+        assert!(
+            retained.exists(),
+            "failed validation must not clean evidence"
+        );
+        assert_eq!(fs::read(root.join("head.v1")).expect("head"), head);
+        fs::write(&old_path, original).expect("restore record");
+        assert!(matches!(
+            ledger.resolve_exact_source_or_target(target, third),
+            Err(NodeCommitLedgerErrorV1::InvalidState(
+                "ledger owner is fenced"
+            ))
+        ));
+    }
+
+    #[test]
+    fn missing_record_and_head_ahead_fail_before_repair_v1() {
+        for missing in [1_u64, 2] {
+            let (_temp, root, source, target, mut ledger) = fixture_v1();
+            let third = successor_v1(target, 41);
+            ledger
+                .append_exact_successor(source, target)
+                .expect("first append");
+            ledger
+                .append_exact_successor(target, third)
+                .expect("second append");
+            fs::remove_file(ledger.record_path_v1(missing)).expect("remove retained record");
+            let retained = retained_temp_v1(&root);
+            let head = fs::read(root.join("head.v1")).expect("head");
+            drop(ledger);
+            assert!(NodeCommitLedgerV1::open_existing_expected(&root, target, third).is_err());
+            assert!(retained.exists());
+            assert_eq!(fs::read(root.join("head.v1")).expect("head"), head);
+        }
+        let (_temp, root, source, target, ledger) = fixture_v1();
+        publish_head_v1(&root, 1, [77; 32]).expect("head ahead fixture");
+        let head = fs::read(root.join("head.v1")).expect("head");
+        drop(ledger);
+        assert!(NodeCommitLedgerV1::open_existing_expected(&root, source, target).is_err());
+        assert_eq!(fs::read(root.join("head.v1")).expect("head"), head);
+    }
+
+    #[test]
+    fn live_root_records_lock_and_anchor_replacements_fail_closed_v1() {
+        for endpoint in ["root", "records", "ledger.lock", "anchor.v1"] {
+            let (temp, root, source, target, mut ledger) = fixture_v1();
+            ledger
+                .append_exact_successor(source, target)
+                .expect("append");
+            let saved = temp.path().join("saved-endpoint");
+            let path = if endpoint == "root" {
+                root.clone()
+            } else {
+                root.join(endpoint)
+            };
+            fs::rename(&path, &saved).expect("move bound endpoint");
+            if endpoint == "root" {
+                fs::create_dir(&root).expect("replacement root");
+                fs::set_permissions(&root, fs::Permissions::from_mode(0o700))
+                    .expect("private root");
+                let records = root.join("records");
+                fs::create_dir(&records).expect("replacement records");
+                fs::set_permissions(&records, fs::Permissions::from_mode(0o700))
+                    .expect("private records");
+                for name in ["anchor.v1", "head.v1", "ledger.lock"] {
+                    fs::copy(saved.join(name), root.join(name)).expect("copy root file");
+                }
+                fs::copy(
+                    saved.join("records/record-00000000000000000001.v1"),
+                    records.join("record-00000000000000000001.v1"),
+                )
+                .expect("copy record");
+            } else if endpoint == "records" {
+                fs::create_dir(&path).expect("replacement records");
+                fs::set_permissions(&path, fs::Permissions::from_mode(0o700))
+                    .expect("private records");
+                fs::copy(
+                    saved.join("record-00000000000000000001.v1"),
+                    path.join("record-00000000000000000001.v1"),
+                )
+                .expect("copy record");
+            } else {
+                fs::copy(&saved, &path).expect("replace file with identical bytes");
+            }
+            let head = fs::read(root.join("head.v1")).expect("replacement head");
+            let retained = retained_temp_v1(&root);
+            assert!(
+                ledger
+                    .resolve_exact_source_or_target(source, target)
+                    .is_err(),
+                "replacement {endpoint} must reject"
+            );
+            assert!(
+                retained.exists(),
+                "replacement {endpoint} must not be cleaned"
+            );
+            assert_eq!(fs::read(root.join("head.v1")).expect("head"), head);
+            assert!(ledger.poisoned);
+            if endpoint == "ledger.lock" {
+                let contender = open_private_file_v1(&saved).expect("original lock path");
+                assert!(
+                    contender.try_lock_exclusive().is_err(),
+                    "owner must retain the original lock"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn live_coherent_anchor_rewrite_and_head_rollback_are_rejected_v1() {
+        let (_temp, root, source, target, mut ledger) = fixture_v1();
+        let replacement = checkpoint_v1(0, [0; 32], 61);
+        fs::write(root.join("anchor.v1"), encode_anchor_v1(replacement))
+            .expect("rewrite bound anchor inode");
+        fs::write(
+            root.join("head.v1"),
+            encode_head_v1(0, anchor_digest_v1(&replacement.encode_canonical())),
+        )
+        .expect("rewrite matching head");
+        assert!(matches!(
+            ledger.resolve_exact_source_or_target(source, target),
+            Err(NodeCommitLedgerErrorV1::InvalidState(
+                "bound anchor changed"
+            ))
+        ));
+
+        let (_temp, root, source, target, mut ledger) = fixture_v1();
+        ledger
+            .append_exact_successor(source, target)
+            .expect("append");
+        fs::remove_file(ledger.record_path_v1(1)).expect("roll back record inventory");
+        fs::write(
+            root.join("head.v1"),
+            encode_head_v1(0, anchor_digest_v1(&source.encode_canonical())),
+        )
+        .expect("restore older coherent head");
+        assert!(matches!(
+            ledger.resolve_exact_source_or_target(source, target),
+            Err(NodeCommitLedgerErrorV1::InvalidState(
+                "observed ledger head regressed or changed"
+            ))
+        ));
+    }
+
+    #[test]
+    fn expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1() {
+        let (_temp, root, source, target, ledger) = fixture_v1();
+        let encoded = encode_record_v1(1, ledger.head().record_digest, source, target);
+        write_new_synced_file_v1(&ledger.record_path_v1(1), &encoded)
+            .expect("journal ahead fixture");
+        let retained = retained_temp_v1(&root);
+        let head = fs::read(root.join("head.v1")).expect("old head");
+        drop(ledger);
+        let foreign_source = checkpoint_v1(0, [0; 32], 71);
+        let foreign_target = successor_v1(foreign_source, 81);
+        assert!(matches!(
+            NodeCommitLedgerV1::open_existing_expected(&root, foreign_source, foreign_target),
+            Err(NodeCommitLedgerErrorV1::ThirdState)
+        ));
+        assert_eq!(
+            fs::read(root.join("head.v1")).expect("unchanged old head"),
+            head
+        );
+        assert!(retained.exists());
+        let reopened = NodeCommitLedgerV1::open_existing_expected(&root, source, target)
+            .expect("matching context may recover target");
+        assert_eq!(reopened.head().checkpoint, target);
+        assert!(!retained.exists());
+    }
+
+    #[test]
+    fn cold_rollback_below_supplied_expected_source_is_rejected_v1() {
+        let (_temp, root, source, target, ledger) = fixture_v1();
+        let third = successor_v1(target, 41);
+        drop(ledger);
+        // A cold owner cannot invent a trusted watermark: the caller must retain
+        // the expected operation outside this rollback image.
+        assert!(matches!(
+            NodeCommitLedgerV1::open_existing_expected(&root, target, third),
+            Err(NodeCommitLedgerErrorV1::ThirdState)
+        ));
+        assert!(
+            NodeCommitLedgerV1::open_existing_expected(&root, source, target).is_ok(),
+            "a caller that also rolls back its expectation is outside the local guarantee"
+        );
+    }
+
+    #[test]
+    fn coherent_rewritten_prefix_with_higher_head_is_rejected_v1() {
+        let (_temp, root, source, target, mut ledger) = fixture_v1();
+        ledger
+            .append_exact_successor(source, target)
+            .expect("observe original prefix");
+        let substituted = successor_v1(source, 61);
+        let extended = successor_v1(substituted, 71);
+        let first = encode_record_v1(
+            1,
+            anchor_digest_v1(&source.encode_canonical()),
+            source,
+            substituted,
+        );
+        fs::write(ledger.record_path_v1(1), first).expect("coherently rewrite same record inode");
+        let second = encode_record_v1(
+            2,
+            record_digest_from_encoded_v1(&first).expect("first digest"),
+            substituted,
+            extended,
+        );
+        write_new_synced_file_v1(&ledger.record_path_v1(2), &second).expect("forged extension");
+        publish_head_v1(
+            &root,
+            2,
+            record_digest_from_encoded_v1(&second).expect("second digest"),
+        )
+        .expect("matching newer head");
+        let head = fs::read(root.join("head.v1")).expect("head");
+        let retained = retained_temp_v1(&root);
+        assert!(matches!(
+            ledger.resolve_exact_source_or_target(substituted, extended),
+            Err(NodeCommitLedgerErrorV1::InvalidState(
+                "observed ledger prefix changed"
+            ))
+        ));
+        assert!(ledger.poisoned);
+        assert!(retained.exists());
+        assert_eq!(fs::read(root.join("head.v1")).expect("head"), head);
+    }
+
+    #[test]
+    fn valid_extension_preserves_the_observed_live_prefix_v1() {
+        let (_temp, root, source, target, mut ledger) = fixture_v1();
+        let observed = ledger
+            .append_exact_successor(source, target)
+            .expect("observe prefix");
+        let extended = successor_v1(target, 41);
+        let encoded = encode_record_v1(2, observed.record_digest, target, extended);
+        write_new_synced_file_v1(&ledger.record_path_v1(2), &encoded)
+            .expect("durable valid extension");
+        sync_directory_v1(&root.join("records")).expect("sync extension");
+        assert_eq!(
+            ledger
+                .resolve_exact_source_or_target(target, extended)
+                .expect("recover extension"),
+            NodeCommitConvergenceV1::Target
+        );
+        assert_eq!(ledger.head().sequence, 2);
+    }
+
+    #[test]
+    fn record_and_temp_links_are_rejected_without_deleting_targets_v1() {
+        use std::os::unix::fs::symlink;
+        for temporary in [false, true] {
+            for hard_link in [false, true] {
+                let (temp, root, source, target, mut ledger) = fixture_v1();
+                ledger
+                    .append_exact_successor(source, target)
+                    .expect("append");
+                let path = if temporary {
+                    root.join("records/.record-00000000000000000002.tmp-999")
+                } else {
+                    ledger.record_path_v1(1)
+                };
+                let saved = temp.path().join("outside-target");
+                let bytes = if temporary {
+                    b"must remain untouched".to_vec()
+                } else {
+                    fs::read(&path).expect("record bytes")
+                };
+                if !temporary {
+                    fs::remove_file(&path).expect("remove record");
+                }
+                write_new_synced_file_v1(&saved, &bytes).expect("outside target");
+                if hard_link {
+                    fs::hard_link(&saved, &path).expect("hard link");
+                } else {
+                    symlink(&saved, &path).expect("symlink");
+                }
+                assert!(ledger
+                    .resolve_exact_source_or_target(source, target)
+                    .is_err());
+                assert!(
+                    fs::symlink_metadata(&path).is_ok(),
+                    "rejected link must not be cleaned"
+                );
+                assert_eq!(fs::read(&saved).expect("outside target intact"), bytes);
+            }
+        }
+    }
+
+    #[test]
+    fn unknown_root_and_noncanonical_temp_names_are_retained_and_rejected_v1() {
+        for relative in [
+            "unregistered.v1",
+            ".head.v1.tmp-999-not-a-sequence",
+            "records/.record-not-a-sequence.tmp-999",
+            "records/record-1.v1",
+        ] {
+            let (_temp, root, source, target, mut ledger) = fixture_v1();
+            let path = root.join(relative);
+            write_new_synced_file_v1(&path, b"untrusted inventory").expect("extra inventory");
+            assert!(
+                ledger
+                    .resolve_exact_source_or_target(source, target)
+                    .is_err(),
+                "reject {relative}"
+            );
+            assert_eq!(
+                fs::read(path).expect("unknown entry retained"),
+                b"untrusted inventory"
+            );
+        }
     }
 }

@@ -76,7 +76,8 @@ fn main() -> ExitCode {
                 Ok(value) => value,
                 Err(error) => return fail(error),
             };
-            let mut ledger = match NodeCommitLedgerV1::open_existing(root) {
+            let mut ledger = match NodeCommitLedgerV1::open_existing_expected(root, source, target)
+            {
                 Ok(value) => value,
                 Err(error) => return fail(error),
             };
@@ -108,7 +109,8 @@ fn main() -> ExitCode {
                 Ok(value) => value,
                 Err(error) => return fail(error),
             };
-            let mut ledger = match NodeCommitLedgerV1::open_existing(root) {
+            let mut ledger = match NodeCommitLedgerV1::open_existing_expected(root, source, target)
+            {
                 Ok(value) => value,
                 Err(error) => return fail(error),
             };
