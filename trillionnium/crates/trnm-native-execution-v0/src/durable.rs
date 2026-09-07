@@ -1132,6 +1132,18 @@ impl std::fmt::Debug for DurableNativeApplicationV0 {
     }
 }
 
+impl Drop for DurableNativeApplicationV0 {
+    fn drop(&mut self) {
+        // flock belongs to the open file description: closing only this FD
+        // can leave the lock held by a transient fork-to-exec FD copy. End
+        // this non-cloneable owner's lock lifetime explicitly. No operation
+        // can still borrow this owner, and detached readbacks cannot operate
+        // a reopened owner with a different affinity. Continuing to use a
+        // copied Rust owner after fork is not a supported runtime model.
+        let _ = FileExt::unlock(&self._lock_file);
+    }
+}
+
 impl DurableNativeApplicationV0 {
     pub fn open(path: impl AsRef<Path>, config: NativeApplicationConfigV0) -> DurableResult<Self> {
         let (path, created) = prepare_store_file_v0(path.as_ref())?;
@@ -6321,6 +6333,30 @@ mod tests {
     /// second logical write.  This remains a software fault injection test;
     /// it is not physical power-loss evidence.
     #[cfg(unix)]
+    #[test]
+    fn dropping_owner_releases_only_its_own_duplicated_lock_description_v0() {
+        let temporary = TempDir::new().unwrap();
+        let path = temporary.path().join("application.sqlite");
+        let owner = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+        // A duplicate deterministically retains the same open file description
+        // as a fork-to-exec child, without timing, sleeps or unsafe fork calls.
+        let inherited = owner._lock_file.try_clone().unwrap();
+        let busy = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap_err();
+        assert_eq!(busy.code(), NativeApplicationExecutionErrorCodeV0::Busy);
+        assert_eq!(busy.field(), "lock.exclusive");
+
+        drop(owner);
+        let successor = DurableNativeApplicationV0::open(&path, config(STORE_A))
+            .expect("owner drop releases its lock even while an inherited FD remains");
+        drop(inherited);
+        let busy = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap_err();
+        assert_eq!(busy.code(), NativeApplicationExecutionErrorCodeV0::Busy);
+        assert_eq!(busy.field(), "lock.exclusive");
+        drop(successor);
+        DurableNativeApplicationV0::open(&path, config(STORE_A))
+            .expect("successor drop releases only the successor's lock");
+    }
+
     #[test]
     fn initialization_and_h1_sync_uncertainty_reopens_exactly_v0() {
         const FAULTS: [(SyncStoreCommitBoundaryFaultPointV0, &str, &str); 2] = [
