@@ -8,13 +8,77 @@ import io
 import json
 from unittest import mock
 
-import check_module_coverage_v1 as gate
+import check_module_coverage_v1 as wrapper
 import tempfile
 import unittest
 
 from module_coverage_guard_v1 import (
     ContractError, active_codeowners, dependency_graph, module_sections, repository_path,
 )
+
+
+# The entry point now composes two pinned gates. Exercise the real core loaded
+# through the production pin check, rather than patching stale wrapper globals.
+gate = wrapper.load(wrapper.CORE, wrapper.CORE_BLOB)
+
+
+class WrapperContractTests(unittest.TestCase):
+    def test_both_pinned_gates_execute_in_order(self) -> None:
+        calls = []
+        core = mock.Mock()
+        binding = mock.Mock()
+        core.main.side_effect = lambda: calls.append("core") or 0
+        binding.validate.side_effect = lambda *args: calls.append("binding") or {
+            "technical_convergence_bound": True,
+        }
+        output = io.StringIO()
+        with mock.patch.object(wrapper, "load", side_effect=[core, binding]) as load:
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(wrapper.main(), 0)
+        self.assertEqual(calls, ["core", "binding"])
+        self.assertEqual(load.call_args_list, [
+            mock.call(wrapper.CORE, wrapper.CORE_BLOB),
+            mock.call(wrapper.BINDING, wrapper.BINDING_BLOB),
+        ])
+        binding.validate.assert_called_once_with(wrapper.ROOT, wrapper.SPECS, wrapper.require)
+        report = json.loads(output.getvalue())
+        self.assertTrue(report["technical_convergence_bound"])
+        self.assertFalse(report["production_authority"])
+
+    def test_core_failure_cannot_be_masked_by_supplement(self) -> None:
+        core = mock.Mock()
+        binding = mock.Mock()
+        for outcome in (1, 2, None):
+            with self.subTest(outcome=outcome):
+                core.main.return_value = outcome
+                with mock.patch.object(wrapper, "load", side_effect=[core, binding]):
+                    with self.assertRaises(wrapper.CoverageWrapperError):
+                        wrapper.main()
+                binding.validate.assert_not_called()
+
+    def test_supplement_failure_propagates(self) -> None:
+        core = mock.Mock()
+        core.main.return_value = 0
+        binding = mock.Mock()
+        binding.validate.side_effect = wrapper.CoverageWrapperError("binding rejected")
+        with mock.patch.object(wrapper, "load", side_effect=[core, binding]):
+            with self.assertRaisesRegex(wrapper.CoverageWrapperError, "binding rejected"):
+                wrapper.main()
+
+    def test_missing_or_tampered_pins_fail_before_code_execution(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            for relative, expected in ((wrapper.CORE, wrapper.CORE_BLOB),
+                                       (wrapper.BINDING, wrapper.BINDING_BLOB)):
+                with self.subTest(relative=relative), mock.patch.object(wrapper, "ROOT", root):
+                    with self.assertRaisesRegex(wrapper.CoverageWrapperError, "missing"):
+                        wrapper.load(relative, expected)
+                    target = root / relative
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    # An executed mutant would raise this different exception.
+                    target.write_text('raise AssertionError("unpinned code executed")\n', encoding="utf-8")
+                    with self.assertRaisesRegex(wrapper.CoverageWrapperError, "drift"):
+                        wrapper.load(relative, expected)
 
 
 class PathContractTests(unittest.TestCase):

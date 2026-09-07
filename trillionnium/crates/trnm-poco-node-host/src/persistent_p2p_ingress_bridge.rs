@@ -42,8 +42,9 @@ impl fmt::Display for CandidatePersistentP2pIngressBridgeErrorV0 {
             }
             Self::FrameMismatch => formatter
                 .write_str("durable pending peer frame differs from the bound ingress mapping"),
-            Self::IngressMismatch => formatter
-                .write_str("authority ingress differs from the persistent peer mapping"),
+            Self::IngressMismatch => {
+                formatter.write_str("authority ingress differs from the persistent peer mapping")
+            }
             Self::PreparedReceiptMismatch => formatter
                 .write_str("authority receipt is not the exact durable Prepared acknowledgement"),
         }
@@ -120,9 +121,7 @@ impl CandidatePersistentP2pIngressBridgeV0 {
     }
 
     #[must_use]
-    pub const fn last_prepared_acknowledgement(
-        &self,
-    ) -> Option<PreparedPeerAcknowledgementV0> {
+    pub const fn last_prepared_acknowledgement(&self) -> Option<PreparedPeerAcknowledgementV0> {
         self.admission.last_prepared_acknowledgement()
     }
 
@@ -145,9 +144,7 @@ impl CandidatePersistentP2pIngressBridgeV0 {
             || receipt.facts_digest != self.ingress_digest
             || receipt.record_digest == Digest32V0([0; 32])
         {
-            return Err(
-                CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch,
-            );
+            return Err(CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch);
         }
         self.admission
             .acknowledge_prepared(self.pending, receipt)
@@ -180,18 +177,17 @@ impl AuthorityIngressSourceV0 for CandidatePersistentP2pIngressBridgeV0 {
             if receipt.facts_digest == Digest32V0([0; 32])
                 || receipt.record_digest == Digest32V0([0; 32])
             {
-                return Err(
-                    CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch,
-                );
+                return Err(CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch);
             }
 
             let exact_prepared_replay = receipt.binding == ingress.binding
                 && receipt.durable_stage == AuthorityStageV0::Prepared
                 && receipt.facts_digest == self.ingress_digest;
             if !exact_prepared_replay {
-                let expected_height = receipt.binding.height.checked_add(1).ok_or(
-                    CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch,
-                )?;
+                let expected_height =
+                    receipt.binding.height.checked_add(1).ok_or(
+                        CandidatePersistentP2pIngressBridgeErrorV0::PreparedReceiptMismatch,
+                    )?;
                 if receipt.durable_stage != AuthorityStageV0::OutboundPublished
                     || ingress.binding.height != expected_height
                     || ingress.binding.parent_id != receipt.binding.block_id

@@ -3398,14 +3398,8 @@ fn paused_restore_pending_resolve_keeps_exact_finalized_snapshot_at_same_task_ve
     };
 
     st.restore_task(99_211, Some(task));
-    st.stage_or_confirm_resolve_approval(
-        99_211,
-        1,
-        true,
-        "authority-a",
-        "authority-a,authority-b",
-    )
-    .expect("first paused approval stage should succeed");
+    st.stage_or_confirm_resolve_approval(99_211, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first paused approval stage should succeed");
     let finalized = st
         .stage_or_confirm_resolve_approval(
             99_211,
@@ -4916,14 +4910,8 @@ fn paused_restore_pending_resolve_keeps_semantically_equivalent_finalized_snapsh
     };
 
     st.restore_task(99_212, Some(task));
-    st.stage_or_confirm_resolve_approval(
-        99_212,
-        1,
-        true,
-        "authority-a",
-        "authority-a,authority-b",
-    )
-    .expect("first paused approval stage should succeed");
+    st.stage_or_confirm_resolve_approval(99_212, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first paused approval stage should succeed");
     let finalized = st
         .stage_or_confirm_resolve_approval(
             99_212,

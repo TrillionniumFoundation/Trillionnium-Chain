@@ -93,12 +93,9 @@ fn crash_before_ack_reopens_pending_and_exact_ack_is_idempotent() {
 
     {
         let admission = open_and_stage(directory.path(), &ingress);
-        let mut bridge = CandidatePersistentP2pIngressBridgeV0::new(
-            identity(),
-            admission,
-            ingress.clone(),
-        )
-        .expect("bridge");
+        let mut bridge =
+            CandidatePersistentP2pIngressBridgeV0::new(identity(), admission, ingress.clone())
+                .expect("bridge");
         bridge
             .verify_ingress(identity(), None, &ingress)
             .expect("initial authority ingress");
@@ -106,18 +103,12 @@ fn crash_before_ack_reopens_pending_and_exact_ack_is_idempotent() {
     }
 
     {
-        let admission = CandidatePersistentPeerAdmissionV0::open(
-            directory.path(),
-            identity(),
-            session(),
-        )
-        .expect("reopen pending replay");
-        let mut bridge = CandidatePersistentP2pIngressBridgeV0::new(
-            identity(),
-            admission,
-            ingress.clone(),
-        )
-        .expect("reopened bridge");
+        let admission =
+            CandidatePersistentPeerAdmissionV0::open(directory.path(), identity(), session())
+                .expect("reopen pending replay");
+        let mut bridge =
+            CandidatePersistentP2pIngressBridgeV0::new(identity(), admission, ingress.clone())
+                .expect("reopened bridge");
         bridge
             .verify_ingress(identity(), None, &ingress)
             .expect("replayed authority ingress");
@@ -135,12 +126,9 @@ fn crash_before_ack_reopens_pending_and_exact_ack_is_idempotent() {
         );
     }
 
-    let reopened = CandidatePersistentPeerAdmissionV0::open(
-        directory.path(),
-        identity(),
-        session(),
-    )
-    .expect("reopen acknowledged replay");
+    let reopened =
+        CandidatePersistentPeerAdmissionV0::open(directory.path(), identity(), session())
+            .expect("reopen acknowledged replay");
     assert_eq!(reopened.recovery_state().highest_acknowledged_nonce(), 1);
     assert_eq!(reopened.recovery_state().pending(), None);
     assert_eq!(
@@ -158,12 +146,9 @@ fn wrong_receipt_never_advances_the_durable_peer_floor() {
     let ingress = ingress(1, 10, 9, 1);
     {
         let admission = open_and_stage(directory.path(), &ingress);
-        let mut bridge = CandidatePersistentP2pIngressBridgeV0::new(
-            identity(),
-            admission,
-            ingress.clone(),
-        )
-        .expect("bridge");
+        let mut bridge =
+            CandidatePersistentP2pIngressBridgeV0::new(identity(), admission, ingress.clone())
+                .expect("bridge");
         let wrong_stage = AuthorityReceiptV0 {
             durable_stage: AuthorityStageV0::ApplicationSealed,
             ..prepared(&ingress)
@@ -184,12 +169,9 @@ fn wrong_receipt_never_advances_the_durable_peer_floor() {
         assert!(bridge.peer_recovery_state().pending().is_some());
     }
 
-    let reopened = CandidatePersistentPeerAdmissionV0::open(
-        directory.path(),
-        identity(),
-        session(),
-    )
-    .expect("reopen after rejected receipt");
+    let reopened =
+        CandidatePersistentPeerAdmissionV0::open(directory.path(), identity(), session())
+            .expect("reopen after rejected receipt");
     assert_eq!(reopened.recovery_state().highest_acknowledged_nonce(), 0);
     assert!(reopened.recovery_state().pending().is_some());
     assert_eq!(reopened.last_prepared_acknowledgement(), None);
@@ -208,12 +190,9 @@ fn terminal_predecessor_accepts_only_parent_bound_next_height() {
     let directory = tempfile::tempdir().expect("temporary directory");
     let second = ingress(2, 11, 10, 2);
     let admission = open_and_stage(directory.path(), &second);
-    let mut bridge = CandidatePersistentP2pIngressBridgeV0::new(
-        identity(),
-        admission,
-        second.clone(),
-    )
-    .expect("bridge");
+    let mut bridge =
+        CandidatePersistentP2pIngressBridgeV0::new(identity(), admission, second.clone())
+            .expect("bridge");
     bridge
         .verify_ingress(identity(), Some(terminal), &second)
         .expect("parent-bound successor");

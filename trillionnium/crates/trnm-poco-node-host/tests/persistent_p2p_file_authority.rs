@@ -14,9 +14,7 @@ use trnm_poco_node_io::{
     AuthenticatedPeerFrameV0, IoDigest32V0, PeerFrameSourceV0, PeerReplayStateV0,
     PeerSessionIdentityV0,
 };
-use trnm_poco_node_production_v0::{
-    AuthoritySessionReadinessV0, ProductionAuthoritySessionV0,
-};
+use trnm_poco_node_production_v0::{AuthoritySessionReadinessV0, ProductionAuthoritySessionV0};
 
 fn d(byte: u8) -> Digest32V0 {
     Digest32V0([byte; 32])
@@ -60,9 +58,8 @@ impl PeerFrameSourceV0 for AcceptFrame {
 }
 
 fn stage_peer(root: &Path, ingress: &BoundIngressV0) -> CandidatePersistentPeerAdmissionV0 {
-    let mut admission =
-        CandidatePersistentPeerAdmissionV0::open(root, identity(), peer_session())
-            .expect("open peer replay");
+    let mut admission = CandidatePersistentPeerAdmissionV0::open(root, identity(), peer_session())
+        .expect("open peer replay");
     let frame = candidate_frame_for_bound_ingress_v0(identity(), peer_session(), ingress)
         .expect("canonical frame");
     let verified = admission
@@ -96,12 +93,9 @@ fn lost_peer_ack_reopens_both_journals_and_replays_one_exact_prepared_receipt() 
 
     {
         let admission = stage_peer(&peer_root, &ingress);
-        let mut bridge = CandidatePersistentP2pIngressBridgeV0::new(
-            identity(),
-            admission,
-            ingress.clone(),
-        )
-        .expect("bridge");
+        let mut bridge =
+            CandidatePersistentP2pIngressBridgeV0::new(identity(), admission, ingress.clone())
+                .expect("bridge");
         let mut authority = authority_session(&authority_root);
         assert_eq!(
             authority.recover().expect("recover authority"),
@@ -110,23 +104,19 @@ fn lost_peer_ack_reopens_both_journals_and_replays_one_exact_prepared_receipt() 
         let verified = authority
             .verify_ingress(ingress.clone(), &mut bridge)
             .expect("verify ingress");
-        prepared = authority.begin_verified(verified).expect("persist Prepared");
+        prepared = authority
+            .begin_verified(verified)
+            .expect("persist Prepared");
         assert!(bridge.peer_recovery_state().pending().is_some());
     }
 
     {
-        let admission = CandidatePersistentPeerAdmissionV0::open(
-            &peer_root,
-            identity(),
-            peer_session(),
-        )
-        .expect("reopen peer replay");
-        let mut bridge = CandidatePersistentP2pIngressBridgeV0::new(
-            identity(),
-            admission,
-            ingress.clone(),
-        )
-        .expect("reopened bridge");
+        let admission =
+            CandidatePersistentPeerAdmissionV0::open(&peer_root, identity(), peer_session())
+                .expect("reopen peer replay");
+        let mut bridge =
+            CandidatePersistentP2pIngressBridgeV0::new(identity(), admission, ingress.clone())
+                .expect("reopened bridge");
         let mut authority = authority_session(&authority_root);
         assert_eq!(
             authority.recover().expect("recover Prepared"),
@@ -147,9 +137,8 @@ fn lost_peer_ack_reopens_both_journals_and_replays_one_exact_prepared_receipt() 
         assert_eq!(state.pending(), None);
     }
 
-    let peer =
-        CandidatePersistentPeerAdmissionV0::open(&peer_root, identity(), peer_session())
-            .expect("final peer reopen");
+    let peer = CandidatePersistentPeerAdmissionV0::open(&peer_root, identity(), peer_session())
+        .expect("final peer reopen");
     assert_eq!(peer.recovery_state().highest_acknowledged_nonce(), 1);
     assert_eq!(peer.recovery_state().pending(), None);
     assert_eq!(
