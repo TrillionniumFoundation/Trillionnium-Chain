@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   patch-test-and-commit:
-    if: "${{ github.event.head_commit.message == 'chore(ci): run corrected one-shot PR84 blocker fixer' }}"
+    if: "${{ github.event.head_commit.message == 'chore(ci): retry one-shot PR84 blocker fixer with production governance API' }}"
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -27,8 +27,48 @@ jobs:
       - name: Apply one-shot patch
         run: python3 scripts/ci/codex_pr84_fix.py
 
+      - name: Use the production governance timelock API for the demo authority
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path('trillionnium/crates/trnm-node/src/main.rs')
+          source = path.read_text()
+          test_only = '''    state
+              .set_gov_param_bootstrap_unchecked(
+                  9_500,
+                  "resolve_authority".into(),
+                  "demo-resolver-a,demo-resolver-b".into(),
+              )
+              .map_err(|err| anyhow::anyhow!("seed demo resolve authority failed: {}", err))?;
+          '''
+          production = '''    state
+              .set_gov_param(
+                  0,
+                  7_310,
+                  "resolve_authority".into(),
+                  "demo-resolver-a,demo-resolver-b".into(),
+              )
+              .map_err(|err| anyhow::anyhow!("schedule demo resolve authority failed: {}", err))?;
+              state
+                  .set_gov_param(
+                      u64::MAX,
+                      7_310,
+                      "resolve_authority".into(),
+                      "demo-resolver-a,demo-resolver-b".into(),
+                  )
+                  .map_err(|err| anyhow::anyhow!("activate demo resolve authority failed: {}", err))?;
+          '''
+          if test_only not in source:
+              raise SystemExit('test-only demo governance bootstrap marker not found')
+          path.write_text(source.replace(test_only, production, 1))
+          PY
+
       - name: Format trnm-node
         run: cargo fmt --manifest-path trillionnium/Cargo.toml --package trnm-node
+
+      - name: Compile the non-test trnm-sim binary
+        run: cargo check --manifest-path trillionnium/Cargo.toml -p trnm-node --features legacy-harness --bin trnm-sim
 
       - name: Run selector and demo regressions
         env:
