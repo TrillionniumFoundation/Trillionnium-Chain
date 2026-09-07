@@ -33,8 +33,8 @@ def main() -> None:
     metadata = json.loads(output("cargo", "metadata", "--manifest-path", "trillionnium/Cargo.toml", "--format-version", "1", "--locked", "--offline", "--filter-platform", target))
     lock = tomllib.loads((root / "trillionnium/Cargo.lock").read_text())
     checksums = {(p["name"], p["version"]): p["checksum"] for p in lock["package"] if "checksum" in p}
-    destination = Path(os.environ["RUNNER_TEMP"]) / "pcc1-offline-build-inputs"
-    destination.mkdir(exist_ok=False)
+    destination = Path(os.environ["RUNNER_TEMP"]) / ("pcc1-offline-build-inputs/" + head)
+    destination.mkdir(parents=True, exist_ok=False)
     packages = []
     with tarfile.open(destination / "vendor.tar.gz", "w:gz") as archive:
         for package in metadata["packages"]:
@@ -48,13 +48,14 @@ def main() -> None:
             if directory.name != name or directory.parent.parent.name != "src" or directory.parent.parent.parent.name != "registry":
                 raise RuntimeError("package is not a canonical registry source directory")
             checksum = checksums[(package["name"], package["version"])]
-            record = json.loads((directory / ".cargo-checksum.json").read_text())
-            if record.get("package") != checksum:
-                raise RuntimeError("package checksum differs from exact Cargo.lock")
-            for item in directory.rglob("*"):
-                if item.is_symlink():
-                    raise RuntimeError("registry export refuses symlinks")
-            archive.add(directory, arcname=f"vendor/{name}", recursive=True)
+            cached = directory.parent.parent.parent / "cache" / directory.parent.name / (name + ".crate")
+            if cached.is_symlink() or not cached.is_file():
+                raise RuntimeError("exact public crate archive is unavailable")
+            with cached.open("rb") as handle:
+                actual = hashlib.file_digest(handle, "sha256").hexdigest()
+            if actual != checksum:
+                raise RuntimeError("public crate archive checksum differs from Cargo.lock")
+            archive.add(cached, arcname=f"crates/{name}.crate", recursive=False)
             packages.append({"name": package["name"], "version": package["version"], "checksum": checksum})
     with tarfile.open(destination / "toolchain.tar.gz", "w:gz") as archive:
         for part in ("bin", "lib", "libexec"):
