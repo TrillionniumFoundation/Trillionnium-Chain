@@ -51,6 +51,7 @@ mod auth_tree;
 mod canonical_lab_bootstrap;
 mod complete;
 mod durable;
+mod pcc1_finality;
 mod poco_application;
 mod poco_nullifier;
 mod poco_semantics;
@@ -75,6 +76,7 @@ pub use durable::{
     NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
     NativeH1StateSyncTrustedBaseRequestV0, VerifiedNativeSignerReplayFloorV1,
 };
+pub use pcc1_finality::PocoFinalityCommitErrorV0;
 pub use store::{
     authenticated_key_hash_v0, stored_object_key_v0, AuthenticatedObjectRecordV0,
     InMemoryNativeExecutionStoreV0, NativeExecutionStoreV0, NativeStateWriteV0,
