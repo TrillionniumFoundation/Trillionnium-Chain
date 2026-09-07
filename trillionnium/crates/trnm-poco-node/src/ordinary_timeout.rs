@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, path::Path};
+use std::{collections::VecDeque, error::Error, fmt, path::Path};
 
 #[cfg(feature = "node-event-wal")]
 use sha2::{Digest, Sha256};
@@ -18,8 +18,9 @@ use trnm_consensus_signer_journal::{
     SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{
-    CanonicalSignPreimageV0, CanonicalSignable, Epoch, GenesisQcV0, SignIntentFingerprintV0,
-    SignatureBytes, SigningRoot, View,
+    decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget, CanonicalSignPreimageV0,
+    CanonicalSignable, Cev0AdmissionBudgetV0, DecodeError, Epoch, GenesisQcV0,
+    SignIntentFingerprintV0, SignatureBytes, SigningRoot, ValidationError, View,
 };
 
 #[cfg(feature = "safety-rules-sidecar")]
@@ -40,6 +41,52 @@ use crate::node_event_wal::{
 };
 
 const MAXIMUM_BOUNDED_HOST_EFFECTS_PER_CALL_V0: usize = 16;
+
+/// Local prerequisites which this bounded TC host cannot supply. Neither case
+/// proves that an authenticated certificate or its referenced block is invalid.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PocoNodeTimeoutCertificateUnavailableV0 {
+    /// Resume the exact retained signature before advancing its signing view.
+    PendingSignature,
+    /// This host has no application/ancestry recovery owner for ordinary QCs.
+    AuthenticatedAncestryRequired,
+}
+
+/// Admission failures do not modify the live owner. A Host error means that a
+/// local authority operation failed; the owner is fenced until fresh recovery.
+/// Admission limits describe local availability, never canonical peer guilt.
+#[derive(Debug)]
+pub enum PocoNodeTimeoutCertificateErrorV0 {
+    Admission(DecodeError),
+    InvalidCertificate(ValidationError),
+    Unavailable(PocoNodeTimeoutCertificateUnavailableV0),
+    Host(PocoNodeHostErrorV0),
+}
+
+impl fmt::Display for PocoNodeTimeoutCertificateErrorV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Admission(error) => write!(formatter, "TC admission failed: {error}"),
+            Self::InvalidCertificate(error) => write!(formatter, "TC verification failed: {error}"),
+            Self::Unavailable(reason) => write!(formatter, "TC host unavailable: {reason:?}"),
+            Self::Host(error) => write!(formatter, "TC authority operation failed: {error}"),
+        }
+    }
+}
+
+impl Error for PocoNodeTimeoutCertificateErrorV0 {}
+
+/// Userspace persistence boundaries. This inert enum and its observer entry
+/// point are exported only with `recovery-process-test-support`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PocoNodeTimeoutCertificateProcessCheckpointPhaseV0 {
+    SignatureReleaseBeforePersistence,
+    SignatureReleasePersistedBeforeReadback,
+    SignatureReleaseReadbackBeforeStorageAck,
+    ViewAdvanceBeforePersistence,
+    ViewAdvancePersistedBeforeReadback,
+    ViewAdvanceReadbackBeforeStorageAck,
+}
 
 /// A single-owner composition of the bounded timeout host and its
 /// authenticated node-event WAL.
@@ -291,8 +338,8 @@ enum BoundedTimeoutRuntimeStatusV0 {
 ///
 /// There is intentionally no mutable Core accessor, caller-selected `step`,
 /// detached signer, application adapter, or escape hatch returning owned
-/// parts. Only `Resume` and a timeout derived from the authenticated Core state
-/// are exposed in this slice.
+/// parts. Resume, a timeout derived from the authenticated Core state, and
+/// strict trusted-genesis TC view advancement are exposed in this slice.
 pub struct PocoNodeHostV0<W, P> {
     core: Core,
     safety_store: SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
@@ -1088,6 +1135,253 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             self.drive_bounded_effects_v0(effects)
         })();
         self.finish_runtime_call_v0(result)
+    }
+
+    /// Admit an exact epoch-zero TC and durably advance the same timeout host.
+    ///
+    /// The trusted validator set and parameters come only from this owner.
+    /// Both the initial strict verification and Core's independent verification
+    /// consume the caller's work budget; failed verification does not refund it.
+    /// This slice accepts only the exact trusted-genesis reference. An ordinary
+    /// QC requires an application/ancestry owner and returns local Unavailable
+    /// without changing Core or either journal. No validity rule is weakened.
+    ///
+    /// A previously released timeout is acknowledged durably before its intent
+    /// can be replaced. The TC then crosses SafetyStore and exact fresh readback
+    /// before Core's StorageAck releases a timer. This operation never invokes
+    /// the signer, publishes a vote, or waits for application finality. An exact
+    /// stale TC returns no actions. On lost response, reopen and Resume recover
+    /// the persisted view; a repeated TC remains idempotent.
+    pub fn on_timeout_certificate_bytes_v0(
+        &mut self,
+        bytes: &[u8],
+        budget: &mut Cev0AdmissionBudgetV0,
+    ) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeTimeoutCertificateErrorV0> {
+        self.on_timeout_certificate_bytes_with_checkpoint_v0(bytes, budget, &mut |_| {})
+    }
+
+    /// Observe the exact userspace boundaries without replacing an input,
+    /// persistence request, acknowledgement, or output. Used only by required
+    /// feature recovery tests; this is not a production fault-control API.
+    #[cfg(feature = "recovery-process-test-support")]
+    #[doc(hidden)]
+    pub fn on_timeout_certificate_bytes_with_process_checkpoint_observer_v0<F>(
+        &mut self,
+        bytes: &[u8],
+        budget: &mut Cev0AdmissionBudgetV0,
+        observer: &mut F,
+    ) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeTimeoutCertificateErrorV0>
+    where
+        F: FnMut(PocoNodeTimeoutCertificateProcessCheckpointPhaseV0),
+    {
+        self.on_timeout_certificate_bytes_with_checkpoint_v0(bytes, budget, observer)
+    }
+
+    fn on_timeout_certificate_bytes_with_checkpoint_v0<F>(
+        &mut self,
+        bytes: &[u8],
+        budget: &mut Cev0AdmissionBudgetV0,
+        checkpoint: &mut F,
+    ) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeTimeoutCertificateErrorV0>
+    where
+        F: FnMut(PocoNodeTimeoutCertificateProcessCheckpointPhaseV0),
+    {
+        use PocoNodeTimeoutCertificateErrorV0 as TcError;
+        self.require_active_runtime_v0().map_err(TcError::Host)?;
+        budget
+            .admit_root_bytes(bytes.len())
+            .map_err(TcError::Admission)?;
+        let config = self.core.config();
+        let context_limits = Cev0AdmissionBudgetV0::for_validator_set(
+            config.consensus_parameters(),
+            config.validator_set(),
+        );
+        // Apply the narrower local aggregate ceiling during structural parsing,
+        // before any nested signature vector can be allocated.
+        let mut context_budget = Cev0AdmissionBudgetV0::with_limits(
+            context_limits
+                .maximum_root_bytes()
+                .min(budget.maximum_root_bytes()),
+            context_limits.maximum_signature_work(),
+            context_limits
+                .maximum_tc_aggregate_signature_shares()
+                .min(budget.maximum_tc_aggregate_signature_shares()),
+        );
+        let certificate = decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget(
+            bytes,
+            config.validator_set(),
+            &mut context_budget,
+        )
+        .map_err(TcError::Admission)?;
+        budget
+            .charge_timeout_certificate(&certificate)
+            .map_err(TcError::Admission)?;
+        certificate
+            .verify(config.validator_set(), None, &StrictEd25519Verifier)
+            .map_err(TcError::InvalidCertificate)?;
+        let genesis = GenesisQcV0::new(
+            config.validator_set().genesis_hash(),
+            config.validator_set().chain_id(),
+            config.validator_set(),
+        )
+        .map_err(TcError::InvalidCertificate)?;
+        if certificate
+            .referenced_qcs()
+            .iter()
+            .any(|reference| reference.as_ordinary().is_some() || reference.id() != genesis.id())
+        {
+            return Err(TcError::Unavailable(
+                PocoNodeTimeoutCertificateUnavailableV0::AuthenticatedAncestryRequired,
+            ));
+        }
+        let next_view = certificate
+            .timed_out_view()
+            .checked_next()
+            .map_err(TcError::InvalidCertificate)?;
+        if next_view <= self.core.safety_state().current_view() {
+            return Ok(Vec::new());
+        }
+        if self.core.safety_state().pending_sign().is_some() {
+            return Err(TcError::Unavailable(
+                PocoNodeTimeoutCertificateUnavailableV0::PendingSignature,
+            ));
+        }
+        // Reserve the second verification before any durable write. Exhausting
+        // a local work budget must not leave a half-applied view transition.
+        budget
+            .charge_timeout_certificate(&certificate)
+            .map_err(TcError::Admission)?;
+        let result = (|| {
+            self.signer_journal
+                .external_head()
+                .map_err(PocoNodeHostErrorV0::signer_journal)?;
+            let head = self
+                .safety_store
+                .head()
+                .map_err(PocoNodeHostErrorV0::safety_store)?;
+            validate_bounded_timeout_bootstrap_v0(&head)?;
+            validate_signer_safety_revision_v0(&self.signer_journal, &head)?;
+            if self.core.safety_state() != head.state() {
+                // The only admitted divergence is SignatureReady's documented
+                // volatile release. Core checks the entire predecessor, not a
+                // caller-supplied revision or digest, before issuing its write.
+                let release = self
+                    .core
+                    .persist_signature_release_v0(head.state(), &StrictEd25519Verifier)
+                    .map_err(PocoNodeHostErrorV0::core)?;
+                let actions = self.persist_quiescent_timeout_state_v0(release, true, checkpoint)?;
+                if !actions.is_empty() {
+                    return Err(PocoNodeHostErrorV0::UnsupportedBoundedHostEffect {
+                        effect: "signature release emitted an unexpected timer",
+                    });
+                }
+            }
+            let effects = self
+                .core
+                .step(
+                    Input::TimeoutCertificate(certificate),
+                    &StrictEd25519Verifier,
+                )
+                .map_err(PocoNodeHostErrorV0::core)?;
+            self.persist_quiescent_timeout_state_v0(effects, false, checkpoint)
+        })();
+        // This path has no retryable custody call. Every authority error may
+        // follow a durable write and therefore requires reconstruction.
+        if result.is_err() {
+            self.runtime_status = BoundedTimeoutRuntimeStatusV0::FailStopped;
+        }
+        result.map_err(TcError::Host)
+    }
+
+    /// Persist only a Core-issued, non-signing transition. Kept separate from
+    /// the timeout signer driver so a TC can never authorize RequestSignature.
+    fn persist_quiescent_timeout_state_v0<F>(
+        &mut self,
+        effects: Vec<Effect>,
+        signature_release: bool,
+        checkpoint: &mut F,
+    ) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeHostErrorV0>
+    where
+        F: FnMut(PocoNodeTimeoutCertificateProcessCheckpointPhaseV0),
+    {
+        use PocoNodeTimeoutCertificateProcessCheckpointPhaseV0 as Phase;
+        let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
+            return Err(PocoNodeHostErrorV0::UnsupportedBoundedHostEffect {
+                effect: "TC requires exactly one quiescent Safety persistence",
+            });
+        };
+        let state = request.state();
+        if state.pending_sign().is_some()
+            || state.pending_finalize().is_some()
+            || state.pending_tc_high_qc_sync().is_some()
+            || state.pending_standalone_qc_sync().is_some()
+            || !state.payload_validation_obligations().is_empty()
+            || state.safety_halt().is_some()
+        {
+            return Err(PocoNodeHostErrorV0::UnsupportedBoundedHostEffect {
+                effect: "TC transition requires an unsupported authority",
+            });
+        }
+        checkpoint(if signature_release {
+            Phase::SignatureReleaseBeforePersistence
+        } else {
+            Phase::ViewAdvanceBeforePersistence
+        });
+        self.safety_store
+            .persist_exact_v0(request, &SafetyTransitionContextV0::ordinary())
+            .map_err(PocoNodeHostErrorV0::safety_store)?;
+        checkpoint(if signature_release {
+            Phase::SignatureReleasePersistedBeforeReadback
+        } else {
+            Phase::ViewAdvancePersistedBeforeReadback
+        });
+        let confirmed = self
+            .safety_store
+            .head()
+            .map_err(PocoNodeHostErrorV0::safety_store)?;
+        if confirmed.state() != state
+            || confirmed.revision() != request.barrier().get()
+            || !matches!(
+                confirmed.transition_context(),
+                SafetyTransitionContextV0::Ordinary
+            )
+        {
+            return Err(PocoNodeHostErrorV0::OrdinaryPersistenceReadbackMismatch {
+                expected_revision: request.barrier().get(),
+                actual_revision: confirmed.revision(),
+            });
+        }
+        validate_signer_safety_revision_v0(&self.signer_journal, &confirmed)?;
+        checkpoint(if signature_release {
+            Phase::SignatureReleaseReadbackBeforeStorageAck
+        } else {
+            Phase::ViewAdvanceReadbackBeforeStorageAck
+        });
+        let released = self
+            .core
+            .step(
+                Input::StorageAck {
+                    barrier: request.barrier(),
+                },
+                &StrictEd25519Verifier,
+            )
+            .map_err(PocoNodeHostErrorV0::core)?;
+        let mut actions = Vec::new();
+        for effect in released {
+            match effect {
+                Effect::ArmViewTimer { epoch, view }
+                    if epoch == state.epoch() && view == state.current_view() =>
+                {
+                    actions.push(PocoNodeHostActionV0::ArmViewTimer { epoch, view });
+                }
+                _ => {
+                    return Err(PocoNodeHostErrorV0::UnsupportedBoundedHostEffect {
+                        effect: "quiescent TC acknowledgement emitted a non-timer effect",
+                    })
+                }
+            }
+        }
+        Ok(actions)
     }
 
     /// Drives one local timeout while binding Core's exact comparison-only

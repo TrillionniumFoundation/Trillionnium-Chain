@@ -405,3 +405,7 @@ trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-con
 trnm-consensus-unix-remote-signer = { version = "0.1.0", path = "../trnm-consensus-unix-remote-signer" }
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
+
+[[test]]
+name = "ordinary_timeout_certificate_recovery"
+path = "tests/ordinary_timeout_certificate_recovery.rs"
