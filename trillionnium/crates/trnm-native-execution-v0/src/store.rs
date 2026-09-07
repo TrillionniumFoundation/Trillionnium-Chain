@@ -436,6 +436,20 @@ struct PersistentAuthTreeSnapshotV0 {
     roots: BTreeMap<Version, RootHash>,
 }
 
+/// Encoding-only view of `PersistentAuthTreeSnapshotV0`, in the same field order.
+/// Borsh serializes references by delegating to the referenced value, preserving
+/// the existing codec bytes without cloning the five historical collections.
+/// This still encodes the full snapshot; it does not change persistence costs.
+#[derive(BorshSerialize)]
+struct PersistentAuthTreeSnapshotRefV0<'a> {
+    codec_version: u16,
+    nodes: &'a BTreeMap<NodeKey, Node>,
+    values: &'a BTreeMap<(KeyHash, Version), Option<Vec<u8>>>,
+    preimages: &'a BTreeMap<KeyHash, Vec<u8>>,
+    stale_nodes: &'a BTreeSet<StaleNodeIndex>,
+    roots: &'a BTreeMap<Version, RootHash>,
+}
+
 impl InMemoryNativeExecutionStoreV0 {
     pub fn new(
         chain_id: impl Into<String>,
@@ -648,13 +662,13 @@ impl InMemoryNativeExecutionStoreV0 {
     }
 
     pub(crate) fn encode_authenticated_snapshot_v0(&self) -> Result<Vec<u8>> {
-        borsh::to_vec(&PersistentAuthTreeSnapshotV0 {
+        borsh::to_vec(&PersistentAuthTreeSnapshotRefV0 {
             codec_version: NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0,
-            nodes: self.nodes.clone(),
-            values: self.values.clone(),
-            preimages: self.preimages.clone(),
-            stale_nodes: self.stale_nodes.clone(),
-            roots: self.roots.clone(),
+            nodes: &self.nodes,
+            values: &self.values,
+            preimages: &self.preimages,
+            stale_nodes: &self.stale_nodes,
+            roots: &self.roots,
         })
         .context("encode native authenticated snapshot")
     }
@@ -918,5 +932,126 @@ impl NativeExecutionStoreV0 for InMemoryNativeExecutionStoreV0 {
         Ok(self
             .committed_signer_nonces
             .contains(&(signer_id.to_string(), nonce)))
+    }
+}
+
+#[cfg(test)]
+mod snapshot_encoding_tests {
+    use super::*;
+
+    fn empty_store() -> InMemoryNativeExecutionStoreV0 {
+        let signing_key = ed25519_dalek::SigningKey::from_bytes(&[7u8; 32]);
+        InMemoryNativeExecutionStoreV0::new(
+            "trnm-snapshot-encoding-test",
+            vec![AuthorizedSignerV0::new(
+                "snapshot-signer",
+                "operator",
+                hex::encode(signing_key.verifying_key().to_bytes()),
+            )
+            .unwrap()],
+            ConsensusParametersV0::reference_shadow_v0(),
+        )
+        .unwrap()
+    }
+
+    // Preserve the old owned encoding as an independent compatibility oracle.
+    fn owned_snapshot_bytes(store: &InMemoryNativeExecutionStoreV0) -> Vec<u8> {
+        borsh::to_vec(&PersistentAuthTreeSnapshotV0 {
+            codec_version: NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0,
+            nodes: store.nodes.clone(),
+            values: store.values.clone(),
+            preimages: store.preimages.clone(),
+            stale_nodes: store.stale_nodes.clone(),
+            roots: store.roots.clone(),
+        })
+        .unwrap()
+    }
+
+    fn assert_encoding_and_restore(store: &InMemoryNativeExecutionStoreV0) {
+        let bytes = store.encode_authenticated_snapshot_v0().unwrap();
+        assert_eq!(bytes, owned_snapshot_bytes(store));
+        let restored = InMemoryNativeExecutionStoreV0::decode_authenticated_snapshot_v0(
+            store.chain_id.clone(),
+            store.signers.clone(),
+            store.consensus_parameters,
+            store.committed_command_ids.clone(),
+            store.committed_signer_nonces.clone(),
+            &bytes,
+        )
+        .unwrap();
+        assert_eq!(restored.encode_authenticated_snapshot_v0().unwrap(), bytes);
+        assert_eq!(restored.roots, store.roots);
+        for version in store.roots.keys().copied() {
+            assert_eq!(
+                restored.verified_live_values_v0(version).unwrap(),
+                store.verified_live_values_v0(version).unwrap(),
+            );
+        }
+    }
+
+    #[test]
+    fn borrowed_snapshot_matches_owned_for_empty_collections_and_empty_roots() {
+        let mut store = empty_store();
+        let bytes = store.encode_authenticated_snapshot_v0().unwrap();
+        assert_eq!(bytes, owned_snapshot_bytes(&store));
+        // A u16 codec followed by five empty Borsh collection lengths (u32).
+        assert_eq!(bytes, [vec![1, 0], vec![0; 20]].concat());
+        let decoded: PersistentAuthTreeSnapshotV0 = borsh::from_slice(&bytes).unwrap();
+        assert_eq!(borsh::to_vec(&decoded).unwrap(), bytes);
+
+        for version in 0..=1 {
+            store.apply_seed_v0(version, Vec::new()).unwrap();
+            assert_encoding_and_restore(&store);
+        }
+    }
+
+    #[test]
+    fn borrowed_snapshot_matches_owned_across_updates_deletes_and_stale_history() {
+        let mut store = empty_store();
+        store
+            .apply_seed_v0(
+                0,
+                vec![
+                    NativeStateWriteV0::raw(b"c".to_vec(), vec![3; 513]).unwrap(),
+                    NativeStateWriteV0::raw(b"a".to_vec(), vec![1; 257]).unwrap(),
+                    NativeStateWriteV0::raw(b"b".to_vec(), vec![2; 129]).unwrap(),
+                ],
+            )
+            .unwrap();
+        assert_encoding_and_restore(&store);
+
+        let updates = [
+            vec![
+                (b"a".to_vec(), Some(Vec::new())),
+                (b"b".to_vec(), Some(vec![4; 65])),
+            ],
+            vec![(b"b".to_vec(), None), (b"d".to_vec(), Some(vec![5; 1025]))],
+            vec![
+                (b"a".to_vec(), None),
+                (b"c".to_vec(), None),
+                (b"d".to_vec(), None),
+            ],
+            vec![(b"b".to_vec(), Some(vec![6; 33]))],
+        ];
+        for (parent_version, writes) in updates.into_iter().enumerate() {
+            let parent_version = parent_version as Version;
+            let plan = plan_complete_state_update_v0(
+                &store,
+                parent_version,
+                parent_version + 1,
+                writes
+                    .into_iter()
+                    .map(|(key, value)| CompleteStateWriteV0::new(key, value).unwrap())
+                    .collect(),
+            )
+            .unwrap();
+            store.apply_complete_state_plan_v0(plan).unwrap();
+            assert_encoding_and_restore(&store);
+        }
+        assert_eq!(store.roots.len(), 5);
+        assert!(!store.stale_nodes.is_empty());
+        assert!(store.values.values().any(Option::is_none));
+        assert!(store.verified_live_values_v0(3).unwrap().is_empty());
+        assert_eq!(store.verified_live_values_v0(4).unwrap().len(), 1);
     }
 }
