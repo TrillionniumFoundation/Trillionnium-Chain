@@ -98,6 +98,14 @@ def main() -> int:
     snapshot = load_json("docs/development/CURRENT_SNAPSHOT_V1.json")
     release_train = load_toml("docs/development/release-train-v1.toml")
     cargo = load_toml("trillionnium/Cargo.toml")
+    candidate_runtime = load_toml("config/candidate-runtime-closure-v1.toml")
+    task_archive = load_toml("config/task-archive-closure-v1.toml")
+
+    for validator in (
+        "scripts/ci/check_candidate_runtime_closure_v1.py",
+        "scripts/ci/check_task_archive_closure_v1.py",
+    ):
+        subprocess.run([sys.executable, str(ROOT / validator)], cwd=ROOT, check=True)
 
     require(
         ledger.get("schema") == "trnm-blocker-execution-v1",
@@ -303,6 +311,90 @@ def main() -> int:
         "trusted migration source evidence cannot be synthesized",
     )
 
+    require(
+        candidate_runtime.get("closure_id") == "trnm-candidate-runtime-closure-v1",
+        "candidate runtime closure binding drift",
+    )
+    for claim in (
+        "production_candidate",
+        "production_consensus_activation",
+        "public_testnet_ready",
+        "release_ready",
+    ):
+        require(
+            candidate_runtime.get(claim) is False,
+            f"candidate runtime closure promoted {claim}",
+        )
+    core_implementation = ledger_by_id["P1-CORE-001"]["implementation"]
+    require(
+        core_implementation.get("candidate_continuous_runtime") is True
+        and core_implementation.get("candidate_persistent_authenticated_mesh") is True
+        and core_implementation.get("candidate_generation_aware_pacemaker") is True
+        and core_implementation.get("domain_fact_producers_bound") is True
+        and core_implementation.get("candidate_signed_vote_finality_readback") is True,
+        "P1-CORE-001 candidate runtime facts do not match the exact-source closure",
+    )
+    execution_implementation = ledger_by_id["P1-EXEC-001"]["implementation"]
+    require(
+        execution_implementation.get("candidate_native_execution_binding") is True
+        and execution_implementation.get("candidate_application_finality_readback") is True
+        and execution_implementation.get("candidate_full_stage_crash_replay_owner") is True
+        and execution_implementation.get("live_binding") is False,
+        "P1-EXEC-001 candidate execution facts drifted",
+    )
+    node_implementation = ledger_by_id["P2-NODE-001"]["implementation"]
+    require(
+        node_implementation.get("candidate_domain_facts_opaque") is False
+        and node_implementation.get("candidate_process_authenticated_network") is True
+        and node_implementation.get("candidate_process_application_fact") is True
+        and node_implementation.get("candidate_process_signing") is True
+        and node_implementation.get("candidate_process_finality") is True
+        and node_implementation.get("candidate_generation_aware_pacemaker") is True
+        and node_implementation.get("candidate_continuous_runtime") is True
+        and node_implementation.get("candidate_remote_signer_authority") is False
+        and node_implementation.get("candidate_host_attestation") is False
+        and node_implementation.get("candidate_multihost_observed") is False,
+        "P2-NODE-001 candidate process facts drifted",
+    )
+    network_implementation = ledger_by_id["P2-NET-001"]["implementation"]
+    require(
+        network_implementation.get("candidate_persistent_process_network") is True
+        and network_implementation.get("candidate_authenticated_fresh_sessions") is True
+        and network_implementation.get("candidate_generation_fencing") is True
+        and network_implementation.get("candidate_payload_replay_store") is True
+        and network_implementation.get("production_cross_platform_io") is False
+        and network_implementation.get("independent_multihost_observed") is False,
+        "P2-NET-001 candidate network facts drifted",
+    )
+
+    require(
+        task_archive.get("closure_id") == "trnm-task-archive-closure-v1",
+        "task archive closure binding drift",
+    )
+    for claim in (
+        "production_candidate",
+        "production_consensus_activation",
+        "public_testnet_ready",
+        "release_ready",
+        "storage_deletion_authority",
+        "scale_campaign_complete",
+    ):
+        require(task_archive.get(claim) is False, f"task archive promoted {claim}")
+    history_implementation = ledger_by_id["P3-HISTORY-001"]["implementation"]
+    require(
+        history_implementation.get("terminal_history") is True
+        and history_implementation.get("task_archive_policy") is True
+        and history_implementation.get("task_identity_admission") is True
+        and history_implementation.get("proof_preserving_pruning") is True
+        and history_implementation.get("bounded_archive_batches") is True
+        and history_implementation.get("prepaid_retention_charging") is True
+        and history_implementation.get("independent_batch_and_inclusion_verifiers") is True
+        and history_implementation.get("legal_hold_filtering_candidate") is True
+        and history_implementation.get("storage_deletion_authority") is False
+        and history_implementation.get("scale_campaign_complete") is False,
+        "P3-HISTORY-001 archive facts do not match the exact-source closure",
+    )
+
     summary = ledger.get("release_summary")
     require(isinstance(summary, dict), "release_summary must be object")
     canonical_open = [
@@ -348,6 +440,8 @@ def main() -> int:
         "settings_open": len(settings_open),
         "external_open": len(external_open),
         "implementation_evidence_separated": True,
+        "candidate_runtime_closure_bound": True,
+        "task_archive_proof_preserving_pruning_bound": True,
         "stale_next_actions": 0,
         "all_gaps_closed": not (
             canonical_open or settings_open or external_open

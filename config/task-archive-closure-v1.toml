@@ -1,0 +1,90 @@
+schema_version = 1
+closure_id = "trnm-task-archive-closure-v1"
+package_manifest = "trillionnium/crates/trnm-poco-agent-market-v1/Cargo.toml"
+archive_implementation = "trillionnium/crates/trnm-poco-agent-market-v1/src/archive.rs"
+archive_verifier = "trillionnium/crates/trnm-poco-agent-market-v1/src/archive_verifier.rs"
+public_surface = "trillionnium/crates/trnm-poco-agent-market-v1/src/lib.rs"
+validation_script = "scripts/ci/check_task_archive_closure_v1.py"
+architecture_document = "docs/architecture/TRNM_TASK_ARCHIVE_ADMISSION_CONTRACT_V1.md"
+production_candidate = false
+production_consensus_activation = false
+public_testnet_ready = false
+release_ready = false
+storage_deletion_authority = false
+scale_campaign_complete = false
+
+required_metadata_true = [
+  "task_archive_policy_candidate",
+  "bounded_task_archive_pruning_candidate",
+  "proof_preserving_task_archive_seals_candidate",
+]
+
+required_metadata_false = [
+  "task_archive_storage_deletion_authority",
+  "task_archive_scale_campaign_complete",
+  "node_integration",
+  "g2_global_complete",
+  "protocol_implementation_complete",
+  "normative_freeze",
+  "production_candidate",
+  "activation",
+]
+
+[[source_contracts]]
+path = "trillionnium/crates/trnm-poco-agent-market-v1/src/archive.rs"
+required_tokens = [
+  "pub const MAX_TASK_ARCHIVE_BATCH_RECORDS_V1: u32 = 4_096;",
+  "pub struct TaskArchivePolicyV1",
+  "pub struct TaskArchiveSealV1",
+  "pub struct TaskArchiveBatchV1",
+  "pub struct TaskArchiveInclusionProofV1",
+  "pub struct TaskArchivePlanV1",
+  "pub fn plan_task_archive_pruning_v1(",
+  "pub fn verify_task_archive_inclusion_v1(",
+  "retention_charge_units_per_byte_block",
+  "underfunded_retention_charge_is_rejected",
+  "inclusion_proof_survives_pruning_and_rejects_mutation",
+  "duplicate_task_id_at_distinct_heights_is_rejected_with_a_matching_root",
+  "maximum_prepaid_height_never_wraps_into_archive_eligibility",
+]
+forbidden_tokens = []
+
+[[source_contracts]]
+path = "trillionnium/crates/trnm-poco-agent-market-v1/src/archive_verifier.rs"
+required_tokens = [
+  "pub fn verify_task_archive_batch_v1(",
+  "pub fn verify_task_archive_inclusion_v1(",
+  "public_batch_verifier_rejects_a_valid_root_before_retention_expires",
+  "public_inclusion_verifier_rejects_early_archive_height",
+]
+forbidden_tokens = []
+
+[[source_contracts]]
+path = "trillionnium/crates/trnm-poco-agent-market-v1/src/lib.rs"
+required_tokens = [
+  "plan_task_archive_pruning_v1",
+  "TaskArchiveBatchV1",
+  "TaskArchiveInclusionProofV1",
+  "TaskArchivePolicyV1",
+  "TaskArchiveSealV1",
+  "verify_task_archive_batch_v1",
+  "verify_task_archive_inclusion_v1",
+  "It does not provide",
+  "storage-deletion authority",
+]
+forbidden_tokens = []
+
+[[source_contracts]]
+path = "docs/architecture/TRNM_TASK_ARCHIVE_ADMISSION_CONTRACT_V1.md"
+required_tokens = [
+  "candidate technical contract; no storage-deletion or activation authority",
+  "hard 4,096-record bound",
+  "prepaid retention height is inclusive",
+  "real scale/retention campaigns",
+  "storage-deletion qualification remain separate acceptance",
+]
+forbidden_tokens = [
+  "production_candidate = true",
+  "production_consensus_activation = true",
+  "release_ready = true",
+]

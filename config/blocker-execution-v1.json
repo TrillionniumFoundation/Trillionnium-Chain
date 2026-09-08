@@ -113,7 +113,7 @@
     {
       "id": "P1-CORE-001",
       "severity": "P1",
-      "status": "complete-receipt-stage-mechanism-present-live-fact-producers-host-and-campaign-pending",
+      "status": "candidate-continuous-runtime-and-domain-facts-present-live-host-and-independent-campaign-pending",
       "owner_class": "repository-and-independent-fault-campaign",
       "dependencies": ["P0-PROTOCOL-001", "P0-TC-001", "P1-EXEC-001", "P2-STORE-001", "EXT-G1-CAMPAIGN-001"],
       "implementation": {
@@ -127,18 +127,22 @@
         "candidate_full_stage_journal": true,
         "candidate_process_stage_replay": true,
         "candidate_process_reopen_replay": true,
-        "domain_fact_producers_bound": false,
-        "live_host": false
+        "domain_fact_producers_bound": true,
+        "live_host": false,
+        "candidate_continuous_runtime": true,
+        "candidate_persistent_authenticated_mesh": true,
+        "candidate_generation_aware_pacemaker": true,
+        "candidate_signed_vote_finality_readback": true
       },
       "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
       "evidence_outputs": ["Accepted source-bound evidence packet."],
       "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
-      "next_actions": ["Replace opaque stage digests with authenticated application, Safety, Vote/Timeout, signer, finality and checkpoint facts; wire the live host and authenticated network; run the independent campaign."]
+      "next_actions": ["Requalify the exact current head and prospective merge, then add independently administered remote signer/monotonic-anchor and host-attestation authority and run the multi-host fault campaign before production host activation."]
     },
     {
       "id": "P1-EXEC-001",
       "severity": "P1",
-      "status": "implementation-and-complete-receipt-replay-present-live-binding-pending",
+      "status": "candidate-native-execution-application-finality-binding-present-production-live-binding-and-fault-campaign-pending",
       "owner_class": "repository",
       "dependencies": ["P0-PROTOCOL-001", "P2-STORE-001"],
       "implementation": {
@@ -149,17 +153,20 @@
         "per_store_fault_fixture_isolation": true,
         "all_stage_complete_receipt_replay": true,
         "state_sync_verification_seals": true,
-        "live_binding": false
+        "live_binding": false,
+        "candidate_native_execution_binding": true,
+        "candidate_application_finality_readback": true,
+        "candidate_full_stage_crash_replay_owner": true
       },
       "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
       "evidence_outputs": ["Accepted source-bound evidence packet."],
       "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
-      "next_actions": ["Run same-source execution, JMT, finality and M07/M08 consumer gates; bind Node Commit Ledger to real application/finality facts and complete the crash matrix."]
+      "next_actions": ["Requalify the exact current head and prospective merge, then complete production arbitrary-proposal execution ownership and the independent disk/controller/power-loss crash matrix."]
     },
     {
       "id": "P2-NODE-001",
       "severity": "P2",
-      "status": "decomposition-and-full-stage-candidate-process-present-live-validator-pending",
+      "status": "continuous-candidate-validator-process-present-production-activation-and-independent-campaign-pending",
       "owner_class": "repository-and-network-campaign",
       "dependencies": ["P1-CORE-001", "P1-EXEC-001", "P2-NET-001", "P2-STORE-001", "EXT-G1-CAMPAIGN-001"],
       "implementation": {
@@ -170,17 +177,22 @@
         "candidate_process_maximum_stage": "OutboundPublished",
         "candidate_complete_receipt_readback": true,
         "candidate_process_response_loss_cuts": 9,
-        "candidate_domain_facts_opaque": true,
-        "candidate_process_authenticated_network": false,
-        "candidate_process_application_fact": false,
-        "candidate_process_signing": false,
-        "candidate_process_finality": false,
+        "candidate_domain_facts_opaque": false,
+        "candidate_process_authenticated_network": true,
+        "candidate_process_application_fact": true,
+        "candidate_process_signing": true,
+        "candidate_process_finality": true,
+        "candidate_generation_aware_pacemaker": true,
+        "candidate_continuous_runtime": true,
+        "candidate_remote_signer_authority": false,
+        "candidate_host_attestation": false,
+        "candidate_multihost_observed": false,
         "live_validator": false
       },
       "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
       "evidence_outputs": ["Accepted source-bound evidence packet."],
       "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
-      "next_actions": ["Connect authenticated bounded I/O and a persistent pacemaker, then replace opaque stage digests with real domain-produced facts through Vote/Timeout, finality and state-sync while keeping activation fail-closed."]
+      "next_actions": ["Requalify the exact current head and prospective merge, then supply external remote-signer/HSM, host-attestation, multi-host network and long-running campaign evidence before any public-testnet or production activation."]
     },
     {
       "id": "P2-TX-001",
@@ -203,19 +215,23 @@
     {
       "id": "P2-NET-001",
       "severity": "P2",
-      "status": "candidate-ingress-present-production-network-pending",
+      "status": "persistent-authenticated-candidate-mesh-present-production-cross-platform-and-independent-lan-wan-campaign-pending",
       "owner_class": "repository-and-network-campaign",
       "dependencies": ["P0-TC-001", "P1-CORE-001", "P2-STORE-001", "EXT-G1-CAMPAIGN-001"],
       "implementation": {
         "authenticated_candidate_ingress": true,
         "peer_lease": true,
-        "candidate_persistent_process_network": false,
-        "production_cross_platform_io": false
+        "candidate_persistent_process_network": true,
+        "candidate_authenticated_fresh_sessions": true,
+        "candidate_generation_fencing": true,
+        "candidate_payload_replay_store": true,
+        "production_cross_platform_io": false,
+        "independent_multihost_observed": false
       },
       "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
       "evidence_outputs": ["Accepted source-bound evidence packet."],
       "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
-      "next_actions": ["Implement persistent authenticated I/O, persistent replay identity and atomic Core acknowledgement, then execute LAN/WAN fault campaigns."]
+      "next_actions": ["Requalify the exact current head and prospective merge, then complete independently operated LAN/WAN replay, partition, restart and resource campaigns plus production cross-platform transport authority."]
     },
     {
       "id": "P2-OPS-001",
@@ -279,19 +295,25 @@
     {
       "id": "P3-HISTORY-001",
       "severity": "P3",
-      "status": "task-archive-policy-present-pruning-and-scale-acceptance-pending",
+      "status": "bounded-proof-preserving-archive-implementation-present-storage-deletion-and-scale-acceptance-pending",
       "owner_class": "repository-and-scale-campaign",
       "dependencies": ["P1-EXEC-001", "P2-STORE-001"],
       "implementation": {
         "terminal_history": true,
         "task_archive_policy": true,
         "task_identity_admission": true,
-        "proof_preserving_pruning": false
+        "proof_preserving_pruning": true,
+        "bounded_archive_batches": true,
+        "prepaid_retention_charging": true,
+        "independent_batch_and_inclusion_verifiers": true,
+        "legal_hold_filtering_candidate": true,
+        "storage_deletion_authority": false,
+        "scale_campaign_complete": false
       },
       "acceptance_predicates": ["Exact-source acceptance predicates and required evidence pass."],
       "evidence_outputs": ["Accepted source-bound evidence packet."],
       "invalidation_triggers": ["Covered source, policy, dependency, or interface changes."],
-      "next_actions": ["Implement bounded proof-preserving pruning and charging around the retained TaskV1 archive policy, then execute the scale campaign."]
+      "next_actions": ["Requalify the exact current head and prospective merge, then execute authoritative legal-hold ingestion, real long-history scale/retention campaigns and separately reviewed storage-deletion qualification."]
     },
     {
       "id": "MIG-CLEAN-001",
