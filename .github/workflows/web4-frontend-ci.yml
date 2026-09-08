@@ -68,15 +68,19 @@ jobs:
           NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
         run: npm ci
 
+      - name: Verify Playwright installer contract
+        run: node ./scripts/test-playwright-installer.mjs
+
       - name: Install pinned Playwright Chromium
+        timeout-minutes: 20
         env:
           NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
-          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/ms-playwright
-        run: npx playwright install chromium
+          TRNM_PLAYWRIGHT_CACHE_ROOT: ${{ runner.tool_cache }}/trnm-playwright
+          TRNM_PLAYWRIGHT_INSTALL_TIMEOUT_SECONDS: '900'
+        run: node ./scripts/install-playwright-chromium.mjs
 
       - name: Run CI checks (enforce e2e)
         env:
           CI_RUN_E2E: '1'
           NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
-          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/ms-playwright
         run: npm run ci:check

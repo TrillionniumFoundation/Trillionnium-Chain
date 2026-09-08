@@ -175,7 +175,7 @@ jobs:
           set -euo pipefail
           cd trillionnium
           mkdir -p run run/bench
-          cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim --locked -- \
+          ./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- \
             --config configs/node1.toml \
             --block-ms 5 \
             --max-blocks 6 \

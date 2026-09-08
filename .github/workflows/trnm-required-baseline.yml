@@ -77,8 +77,20 @@ jobs:
           python3 scripts/ci/test_cargo_source_inventory_v1.py
           python3 scripts/ci/test_bounded_workspace_tests_v1.py
           python3 scripts/ci/test_technical_convergence_v1.py
+          python3 scripts/ci/test_legacy_node_cargo_boundary.py
+          python3 scripts/ci/test_main_protection_v1.py
           bash scripts/check_ci_runner_policy_test.sh
           timeout --signal=TERM --kill-after=30s 900s bash scripts/check_cargo_offline_policy_test.sh
+      - name: Run repository security-boundary regressions
+        run: |
+          set -euo pipefail
+          python3 scripts/min_faucet_server_test.py
+          PYTHONDONTWRITEBYTECODE=1 python3 -B scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
+          python3 scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            --check-ordinary-advance --self-test-ordinary-advance-mutants
+          python3 scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            --check-trust-path --self-test-trust-path-mutants
+
       - name: Verify canonical project boundary without exemptions
         run: bash scripts/project-preflight.sh --audit
       - name: Validate repository, development, module, node, and blocker truth
@@ -138,7 +150,14 @@ jobs:
             scripts/ci/test_technical_convergence_v1.py \
             scripts/ci/generate_release_status_v1.py \
             scripts/ci/check_external_evidence_v1.py \
-            scripts/ci/run_bounded_workspace_tests_v1.py
+            scripts/ci/run_bounded_workspace_tests_v1.py \
+            scripts/admin/apply_main_protection_v1.py \
+            scripts/ci/test_legacy_node_cargo_boundary.py \
+            scripts/ci/test_main_protection_v1.py \
+            scripts/min_faucet_server.py \
+            scripts/min_faucet_server_test.py \
+            scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py \
+            scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py
       - name: Require generators to leave the checkout clean
         run: |
           git diff --exit-code -- .
@@ -155,6 +174,7 @@ jobs:
           set -euo pipefail
           npm install --global npm@11.16.0
           npm ci
+          node scripts/test-playwright-installer.mjs
           npm run typecheck
           npm run test:unit
           npm run test:contract
@@ -200,6 +220,7 @@ jobs:
             python3 scripts/ci/test_module_coverage_guard_v1.py
             cd web4-frontend
             npm ci
+            node scripts/test-playwright-installer.mjs
             npm run typecheck
             npm run test:unit
             npm run test:contract
