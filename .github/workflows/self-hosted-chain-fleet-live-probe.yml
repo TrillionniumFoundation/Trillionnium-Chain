@@ -1,0 +1,109 @@
+name: Trillionnium Chain six-machine live availability
+
+on:
+  push:
+    branches:
+      - ops/chain-fleet-live-probe-20260909
+
+permissions: {}
+
+concurrency:
+  group: trnm-chain-fleet-live-probe-20260909
+  cancel-in-progress: false
+
+jobs:
+  desktop:
+    name: desktop availability
+    runs-on: [self-hosted, linux, x64, chain-fleet, desktop]
+    timeout-minutes: 10
+    steps:
+      - name: Verify desktop runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = push
+          test "$GITHUB_REF" = refs/heads/ops/chain-fleet-live-probe-20260909
+          test "$RUNNER_NAME" = desktop
+          printf 'runner=%s os=%s arch=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH"
+          date -u +'%Y-%m-%dT%H:%M:%SZ'
+          uname -a
+
+  rog:
+    name: rog availability
+    runs-on: [self-hosted, linux, x64, chain-fleet, rog]
+    timeout-minutes: 10
+    steps:
+      - name: Verify ROG runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = push
+          test "$GITHUB_REF" = refs/heads/ops/chain-fleet-live-probe-20260909
+          test "$RUNNER_NAME" = rog
+          printf 'runner=%s os=%s arch=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH"
+          date -u +'%Y-%m-%dT%H:%M:%SZ'
+          uname -a
+
+  x230:
+    name: x230 availability
+    runs-on: [self-hosted, linux, x64, chain-fleet, x230]
+    timeout-minutes: 10
+    steps:
+      - name: Verify organization X230 runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = push
+          test "$GITHUB_REF" = refs/heads/ops/chain-fleet-live-probe-20260909
+          test "$RUNNER_NAME" = x230
+          printf 'runner=%s os=%s arch=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH"
+          date -u +'%Y-%m-%dT%H:%M:%SZ'
+          uname -a
+
+  claw:
+    name: claw-j3160 availability
+    runs-on: [self-hosted, linux, x64, chain-fleet, claw-j3160]
+    timeout-minutes: 10
+    steps:
+      - name: Verify claw-j3160 runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = push
+          test "$GITHUB_REF" = refs/heads/ops/chain-fleet-live-probe-20260909
+          test "$RUNNER_NAME" = claw-j3160
+          printf 'runner=%s os=%s arch=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH"
+          date -u +'%Y-%m-%dT%H:%M:%SZ'
+          uname -a
+
+  pocket4:
+    name: pocket4 availability
+    runs-on: [self-hosted, linux, x64, chain-fleet, pocket4]
+    timeout-minutes: 10
+    steps:
+      - name: Verify Pocket4 runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = push
+          test "$GITHUB_REF" = refs/heads/ops/chain-fleet-live-probe-20260909
+          test "$RUNNER_NAME" = pocket4
+          printf 'runner=%s os=%s arch=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH"
+          date -u +'%Y-%m-%dT%H:%M:%SZ'
+          uname -a
+
+  macbook:
+    name: macbook-pro availability
+    runs-on: [self-hosted, macOS, ARM64, chain-fleet, macbook]
+    timeout-minutes: 10
+    steps:
+      - name: Verify MacBook Pro runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = push
+          test "$GITHUB_REF" = refs/heads/ops/chain-fleet-live-probe-20260909
+          test "$RUNNER_NAME" = macbook-pro
+          printf 'runner=%s os=%s arch=%s\n' "$RUNNER_NAME" "$RUNNER_OS" "$RUNNER_ARCH"
+          date -u +'%Y-%m-%dT%H:%M:%SZ'
+          uname -a
