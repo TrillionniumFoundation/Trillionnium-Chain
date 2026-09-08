@@ -58,7 +58,7 @@ RUN_DIR="run/parallel-sanity-flaky-${RUN_TAG}"
 mkdir -p "$RUN_DIR"
 
 CMD=(
-  cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim --
+  ./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim --
   --config configs/node1.toml
   --block-ms 1
   --max-blocks 3
@@ -106,7 +106,7 @@ if [[ "$#" -gt 0 ]]; then
   "$@"
 else
   if [[ -n "$TIMEOUT_BIN" ]]; then
-    "$TIMEOUT_BIN" "$RUN_TIMEOUT_SEC" cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+    "$TIMEOUT_BIN" "$RUN_TIMEOUT_SEC" ./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- \
       --config configs/node1.toml \
       --block-ms 1 \
       --max-blocks 3 \
@@ -114,7 +114,7 @@ else
       --demo-keys 2 \
       --parallel-workers 4
   else
-    cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+    ./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- \
       --config configs/node1.toml \
       --block-ms 1 \
       --max-blocks 3 \

@@ -175,7 +175,7 @@ log "workspace tests"
 cargo test --workspace --locked | tee -a "$LOG"
 
 log "legacy single-node parallel sanity"
-cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
   --max-blocks 6 \

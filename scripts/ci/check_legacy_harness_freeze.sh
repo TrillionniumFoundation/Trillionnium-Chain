@@ -78,5 +78,6 @@ print("legacy_harness_manifest_freeze=ok")
 PY
 
 sha256sum --check --strict config/legacy-harness-freeze.sha256
+python3 scripts/ci/test_legacy_node_cargo_boundary.py
 
 printf '%s\n' 'legacy_harness_entrypoint_manifest_freeze=ok'

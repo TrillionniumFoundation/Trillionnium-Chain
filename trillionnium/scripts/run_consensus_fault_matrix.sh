@@ -313,7 +313,7 @@ run_case() {
 if case_enabled "baseline"; then
 run_case \
   "baseline" \
-  "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4" \
+  "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4" \
   "$BASELINE_MAX_FINALITY_P95_MS" \
   "$BASELINE_MAX_ROUND_CHANGE_TOTAL" \
   "$BASELINE_MIN_COMMITTED_HEIGHTS" \
@@ -326,7 +326,7 @@ fi
 if case_enabled "slow_block"; then
 run_case \
   "slow_block" \
-  "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 50 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4" \
+  "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 50 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4" \
   "$SLOW_BLOCK_MAX_FINALITY_P95_MS" \
   "$SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL" \
   "$SLOW_BLOCK_MIN_COMMITTED_HEIGHTS" \
@@ -339,7 +339,7 @@ fi
 if case_enabled "restart_recovery"; then
 run_case \
   "restart_recovery" \
-  "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 3 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 && cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4" \
+  "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 3 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 && ./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4" \
   "$RESTART_RECOVERY_MAX_FINALITY_P95_MS" \
   "$RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL" \
   "$RESTART_RECOVERY_MIN_COMMITTED_HEIGHTS" \
@@ -352,7 +352,7 @@ fi
 if case_enabled "byzantine_rounds"; then
 run_case \
   "byzantine_rounds" \
-  "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 4 --bft-fault-rounds 2" \
+  "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 4 --bft-fault-rounds 2" \
   "$BYZANTINE_ROUNDS_MAX_FINALITY_P95_MS" \
   "$BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL" \
   "$BYZANTINE_ROUNDS_MIN_COMMITTED_HEIGHTS" \
@@ -365,7 +365,7 @@ fi
 if case_enabled "faulty_round_backoff"; then
 run_case \
   "faulty_round_backoff" \
-  "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 4 --bft-fault-rounds 2 --bft-round-change-backoff-ms 5 --bft-round-change-backoff-max-ms 20" \
+  "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 4 --bft-fault-rounds 2 --bft-round-change-backoff-ms 5 --bft-round-change-backoff-max-ms 20" \
   "$FAULTY_ROUND_BACKOFF_MAX_FINALITY_P95_MS" \
   "$FAULTY_ROUND_BACKOFF_MAX_ROUND_CHANGE_TOTAL" \
   "$FAULTY_ROUND_BACKOFF_MIN_COMMITTED_HEIGHTS" \
@@ -378,7 +378,7 @@ fi
 if case_enabled "leader_jitter"; then
 run_case \
   "leader_jitter" \
-  "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 10 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 4 --bft-fault-rounds 2 --bft-missed-proposal-threshold 1 --bft-leader-penalty-rounds 2" \
+  "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 10 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 4 --bft-fault-rounds 2 --bft-missed-proposal-threshold 1 --bft-leader-penalty-rounds 2" \
   "$LEADER_JITTER_MAX_FINALITY_P95_MS" \
   "$LEADER_JITTER_MAX_ROUND_CHANGE_TOTAL" \
   "$LEADER_JITTER_MIN_COMMITTED_HEIGHTS" \
@@ -391,7 +391,7 @@ fi
 if case_enabled "message_reorder"; then
 run_case \
   "message_reorder" \
-  "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 8 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 3 --bft-fault-rounds 2 --bft-round-change-backoff-ms 3 --bft-round-change-backoff-max-ms 12" \
+  "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 8 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 3 --bft-fault-rounds 2 --bft-round-change-backoff-ms 3 --bft-round-change-backoff-max-ms 12" \
   "$MESSAGE_REORDER_MAX_FINALITY_P95_MS" \
   "$MESSAGE_REORDER_MAX_ROUND_CHANGE_TOTAL" \
   "$MESSAGE_REORDER_MIN_COMMITTED_HEIGHTS" \
@@ -404,7 +404,7 @@ fi
 if case_enabled "slow_validator"; then
 run_case \
   "slow_validator" \
-  "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 20 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 4 --bft-fault-rounds 1" \
+  "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 20 --max-blocks 6 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 --validators 4 --byzantine 1 --bft-max-rounds 4 --bft-fault-rounds 1" \
   "$SLOW_VALIDATOR_MAX_FINALITY_P95_MS" \
   "$SLOW_VALIDATOR_MAX_ROUND_CHANGE_TOTAL" \
   "$SLOW_VALIDATOR_MIN_COMMITTED_HEIGHTS" \

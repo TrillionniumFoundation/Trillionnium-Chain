@@ -19,7 +19,7 @@ TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/target}"
 if [[ "$TARGET_DIR" != /* ]]; then
   TARGET_DIR="$ROOT/$TARGET_DIR"
 fi
-cargo build -p trnm-node --features legacy-harness --bin trnm-sim
+./scripts/legacy_node_cargo.sh build --features legacy-harness --bin trnm-sim
 if [[ -n "${CARGO_BUILD_TARGET:-}" ]]; then
   SIM_BIN="$TARGET_DIR/$CARGO_BUILD_TARGET/debug/trnm-sim"
 else

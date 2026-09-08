@@ -12,7 +12,7 @@ LEGACY_OUT="run/event-replay-smoke-legacy.log"
 run_legacy_replay() {
   local output="$1"
   rm -rf run/consensus-wal
-  cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+  ./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- \
     --config configs/node1.toml \
     --block-ms 1 \
     --max-blocks 8 \
@@ -83,7 +83,7 @@ else
   # authority approvals. The exact test drives real state transitions and the
   # same event formatter while avoiding test-only authority injection into the
   # production-candidate=false legacy simulator.
-  cargo test --locked -q -p trnm-node --features legacy-harness --bin trnm-sim \
+  ./scripts/legacy_node_cargo.sh test -q --features legacy-harness --bin trnm-sim \
     events::tests::canonical_event_replay_uses_two_party_resolve_approval \
     -- --exact --nocapture > "$OUT"
   check_event_sequence "$OUT" "$CANONICAL_EVENTS" 0

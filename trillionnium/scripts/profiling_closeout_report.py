@@ -88,7 +88,7 @@ def format_bytes(num_bytes: int) -> str:
 def recommended_producer(label: str) -> str:
     if label == "node_log":
         return (
-            "cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 "
+            "./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 5 "
             "--max-blocks 3 --demo-tasks 8 --demo-keys 3 --parallel-workers 4 > run/parallel-sanity.log"
         )
     if label == "bench_dir":

@@ -202,7 +202,7 @@ if [[ -z "$APP_BIN" ]]; then
   APP_BIN="$PWD/target/debug/trnm-cometbft-app"
 fi
 if [[ -z "$CLI_BIN" ]]; then
-  cargo build -q -p trnm-node --features legacy-harness --bin trnm-chain-cli --locked
+  ./scripts/legacy_node_cargo.sh build -q --features legacy-harness --bin trnm-chain-cli
   CLI_BIN="$PWD/target/debug/trnm-chain-cli"
 fi
 test -x "$APP_BIN"
