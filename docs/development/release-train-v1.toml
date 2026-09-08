@@ -83,6 +83,7 @@ id = "NODE-COMMIT-001"
 priority = "P1"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M03", "M07", "M08"]
+blocker_classes = ["cross-store", "node", "recovery"]
 exit = "one monotonic Node Commit Ledger proves exact source-or-target convergence at every crash boundary and passes independent qualification"
 
 [[blockers]]

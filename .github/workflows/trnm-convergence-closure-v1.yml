@@ -44,10 +44,11 @@ jobs:
     name: exact-source-convergence-closure-x230
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      github.actor == 'ProfHepta' &&
-      github.triggering_actor == github.actor &&
-      (github.event_name != 'pull_request' ||
-       github.event.pull_request.head.repo.full_name == github.repository)
+      (github.event_name == 'schedule' ||
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 240
     steps:
@@ -128,7 +129,7 @@ jobs:
             exit 1
           fi
 
-      - name: Verify checkout cleanliness and offline inputs
+      - name: Verify checkout cleanainess and offline inputs
         if: always()
         working-directory: trillionnium-chain
         run: |

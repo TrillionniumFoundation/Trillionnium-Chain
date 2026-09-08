@@ -108,10 +108,27 @@ ids = {row.get("id") for row in module_rows if isinstance(row, dict)} if isinsta
 if not {"M02", "M03", "M08", "M15"} <= ids:
     fail("module registry is missing R2B producer/consumer ownership")
 
-train_text = repr(train).lower()
-for marker in ("cross-store", "node", "recovery"):
-    if marker not in train_text:
-        fail(f"release train is missing R2B blocker class: {marker}")
+blocker_rows = train.get("blockers", [])
+if not isinstance(blocker_rows, list):
+    fail("release train blockers must be a list")
+node_commit = next(
+    (row for row in blocker_rows if isinstance(row, dict) and row.get("id") == "NODE-COMMIT-001"),
+    None,
+)
+if not isinstance(node_commit, dict):
+    fail("release train is missing NODE-COMMIT-001")
+expected_classes = {"cross-store", "node", "recovery"}
+actual_classes = node_commit.get("blocker_classes")
+if (
+    not isinstance(actual_classes, list)
+    or any(not isinstance(item, str) for item in actual_classes)
+    or set(actual_classes) != expected_classes
+    or len(actual_classes) != len(expected_classes)
+):
+    fail(
+        "NODE-COMMIT-001 must declare exactly the R2B blocker classes "
+        f"{sorted(expected_classes)}; found {actual_classes!r}"
+    )
 
 print("G1-R2B contract truth gate: PASS; source and machine truth replace retired package narratives")
 PY
