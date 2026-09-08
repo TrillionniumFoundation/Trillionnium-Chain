@@ -223,13 +223,18 @@ require(
 
 commit = unique_sha(manifest, "assessed_commit")
 tree = unique_sha(manifest, "assessed_tree")
-actual_tree = subprocess.run(
+assessed_tree_lookup = subprocess.run(
     ["git", "rev-parse", f"{commit}^{{tree}}"],
     cwd=root,
-    check=True,
+    check=False,
     capture_output=True,
     text=True,
-).stdout.strip()
+)
+require(
+    assessed_tree_lookup.returncode == 0,
+    f"baseline_object_unavailable: assessed commit {commit}",
+)
+actual_tree = assessed_tree_lookup.stdout.strip()
 require(actual_tree == tree, "assessed tree mismatch")
 require(
     subprocess.run(

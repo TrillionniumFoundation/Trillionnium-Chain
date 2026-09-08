@@ -279,8 +279,20 @@ def accepted_privileged_guards(name: str, job: str) -> set[str]:
     )
     variants.add(
         canonical.replace(
+            "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf')",
+            "(github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta')",
+        )
+    )
+    variants.add(
+        canonical.replace(
             "|| (github.actor == 'github-actions[bot]'",
             "|| (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') || (github.actor == 'github-actions[bot]'",
+        )
+    )
+    variants.add(
+        canonical.replace(
+            "|| (github.actor == 'github-actions[bot]'",
+            "|| (github.actor == 'Franksudoman' && github.triggering_actor == 'Franksudoman') || (github.actor == 'ProfHepta' && github.triggering_actor == 'ProfHepta') || (github.actor == 'github-actions[bot]'",
         )
     )
     # The prospective-merge documentation job is meaningful only for a PR.

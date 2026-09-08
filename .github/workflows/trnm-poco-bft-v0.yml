@@ -165,7 +165,7 @@ jobs:
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' &&
        github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
          github.triggering_actor == github.actor &&
          (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)))
@@ -179,6 +179,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           path: trillionnium-chain
+          fetch-depth: 0
           persist-credentials: false
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
@@ -289,7 +290,7 @@ jobs:
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' &&
        github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
          github.triggering_actor == github.actor &&
          (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)))
@@ -417,7 +418,7 @@ jobs:
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' &&
        github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
          github.triggering_actor == github.actor &&
          (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)))
@@ -454,7 +455,7 @@ jobs:
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' &&
        github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
          github.triggering_actor == github.actor &&
          (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)))
@@ -686,7 +687,7 @@ jobs:
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' &&
        github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
          github.triggering_actor == github.actor &&
          (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)))
@@ -747,7 +748,7 @@ jobs:
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' &&
        github.ref == 'refs/heads/main' ||
-        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman') &&
+        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
          github.triggering_actor == github.actor &&
          (github.event_name != 'pull_request' ||
           github.event.pull_request.head.repo.full_name == github.repository)))
