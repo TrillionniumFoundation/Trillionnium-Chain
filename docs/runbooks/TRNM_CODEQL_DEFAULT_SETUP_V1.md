@@ -2,13 +2,18 @@
 
 Status: repository-administration runbook. A settings write is not security acceptance, audit acceptance, production readiness, release authority, or activation authority.
 
-## Purpose
+## Purpose and trust boundary
 
 `config/codeql-default-setup-v1.json` is the closed-world contract for GitHub CodeQL default setup. It requires GitHub Actions, JavaScript/TypeScript, Python, and Rust analysis, the extended query suite, local and remote threat sources, and standard GitHub-hosted execution. Rust is explicit and cannot be silently dropped.
 
-`scripts/admin/apply_codeql_default_setup_v1.py` is dry-run only unless an administrator supplies all mutation acknowledgements. It reads the current `main` SHA before changing settings, applies the exact configuration, and verifies the live settings after GitHub accepts the update.
+The same contract pins two distinct GitHub-owned producers:
 
-The aggregate `CodeQL` check and every required `Analyze (...)` check must later complete with `success` on one exact source SHA. `neutral`, skipped, absent, queued, cancelled, timed out, stale, or failed checks are not acceptance. An empty alert query is not proof of zero findings when a language configuration is missing.
+- aggregate `CodeQL`: GitHub Advanced Security app `id=57789`, slug `github-advanced-security`, owner `github`;
+- per-language `Analyze (...)`: GitHub Actions app `id=15368`, slug `github-actions`, owner `github`, workflow path `dynamic/github-code-scanning/codeql`.
+
+A check name alone has no authority. Exact-source evidence additionally requires the exact non-null head SHA, repository and head-repository identity, one shared Analyze check suite, one explicit validation workflow run, terminal success, and timestamps after the live configuration `updated_at`. The newest trusted aggregate result controls; an older success cannot hide a newer failure. Missing fields, duplicate paginated run IDs, cross-suite composition, cross-run composition, untrusted apps, stale checks and ambiguous duplicate Analyze checks fail closed.
+
+`scripts/admin/apply_codeql_default_setup_v1.py` is dry-run only unless an administrator supplies all mutation acknowledgements. Evidence verification cannot be combined with mutation. A successful PATCH/readback report remains `VALIDATION_PENDING` until the returned validation run and exact-source checks are independently verified.
 
 ## Dry run and regression corpus
 
@@ -17,7 +22,7 @@ python3 scripts/admin/apply_codeql_default_setup_v1.py
 python3 scripts/ci/test_codeql_default_setup_v1.py
 ```
 
-Dry-run validates and prints the exact payload without reading credentials or calling GitHub.
+Dry-run validates and prints the exact payload without reading credentials or calling GitHub. The regression corpus includes hostile producer spoofing, null/mismatched source identity, cross-suite and cross-run splicing, stale pre-configuration checks, missing live fields, branch movement before and after PATCH, pagination supersession and duplicate run IDs.
 
 ## Verify live configuration
 
@@ -30,9 +35,11 @@ python3 scripts/admin/apply_codeql_default_setup_v1.py \
   --output /tmp/trnm-codeql-default-setup-live.json
 ```
 
-## Apply
+The live response must explicitly contain `state`, `runner_type`, `runner_label`, `query_suite`, `threat_model`, `languages` and `updated_at`. The verifier does not synthesize `runner_type=standard` or any other missing setting.
 
-The token needs repository Administration(write). Record the current protected `main` SHA and a change-control ticket immediately before execution:
+## Apply under a protected change freeze
+
+The token needs repository Administration(write). Establish a repository change freeze, record the current protected `main` SHA and a change-control ticket immediately before execution:
 
 ```bash
 export GH_TOKEN="${ADMIN_WRITE_TOKEN}"
@@ -41,15 +48,20 @@ export TRNM_CODEQL_ADMIN_CHANGE_TICKET="issue-88/change-window-id"
 python3 scripts/admin/apply_codeql_default_setup_v1.py \
   --apply \
   --acknowledge-admin-mutation \
+  --acknowledge-change-freeze \
   --expected-current-main-sha "${OBSERVED_MAIN_SHA}" \
   --output /tmp/trnm-codeql-default-setup-applied.json
 ```
 
-If GitHub rejects the explicit Rust language identifier, do not remove Rust from the contract. Repair the setting through the repository **Settings → Advanced Security → CodeQL analysis** administration surface or an API version that supports Rust, then rerun `--verify-live`. GitHub default setup supports Rust, and this repository already treats `/language:rust` as a required base configuration.
+The command checks and records `main` at four barriers: before the live read, immediately before PATCH, immediately after PATCH and after live readback. Any movement invalidates the operation. GitHub does not expose a conditional default-setup PATCH, so the operational freeze is mandatory; the post-PATCH checks detect a race but cannot undo an already accepted settings mutation.
+
+The PATCH response must provide a positive `run_id` and the exact in-repository Actions API `run_url`. Preserve both. The command returns `APPLIED_AND_LIVE_SHAPE_VERIFIED_VALIDATION_PENDING`; it deliberately does not claim CodeQL or security acceptance.
+
+If GitHub rejects the explicit Rust language identifier, do not remove Rust from the contract. Repair the setting through the repository **Settings → Advanced Security → CodeQL analysis** administration surface or an API version that supports Rust, then rerun `--verify-live`.
 
 ## Exact-source acceptance
 
-After GitHub completes its validation run, retrigger or synchronize the target pull request and verify the unchanged exact source:
+After the PATCH validation run completes, verify the unchanged source with the run ID captured above:
 
 ```bash
 GH_TOKEN="${SECURITY_EVENTS_READ_TOKEN}" \
@@ -57,7 +69,10 @@ python3 scripts/admin/apply_codeql_default_setup_v1.py \
   --verify-live \
   --verify-evidence \
   --evidence-sha "${EXACT_SOURCE_SHA}" \
+  --validation-run-id "${PATCH_VALIDATION_RUN_ID}" \
   --output /tmp/trnm-codeql-exact-source-evidence.json
 ```
 
-Retain the live configuration response, validation run, exact source/tree, complete check-run inventory, SARIF/alert inventory, change-control record, and independent specialist disposition. Do not dismiss alerts, lower query coverage, remove Rust, or treat a settings update as release authority.
+`--verify-evidence` requires `--verify-live` in the same invocation and cannot be combined with `--apply`. The four Analyze checks must belong to the supplied GitHub-generated dynamic CodeQL validation run and one check suite. The aggregate check must be produced by GitHub Advanced Security and begin only after every selected Analyze check has completed. Every check and suite must bind the exact repository and source SHA.
+
+Retain the live configuration response, PATCH response, validation run, exact source/tree, complete paginated check-run inventory, suite identities, SARIF/alert inventory, change-control record and independent specialist disposition. Do not dismiss alerts, lower query coverage, remove Rust, self-approve, or treat a settings update as release authority.
