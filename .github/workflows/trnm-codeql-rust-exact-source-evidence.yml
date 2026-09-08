@@ -10,7 +10,7 @@ permissions:
   security-events: write
 
 concurrency:
-  group: trnm-codeql-rust-4a00fa0e-20260909
+  group: trnm-codeql-rust-7ab9ce97-20260909
   cancel-in-progress: false
 
 jobs:
@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
-      EXACT_SOURCE_SHA: 4a00fa0ea561d46d6b57c68f553c471c39e94f06
-      EXACT_SOURCE_TREE: e4c59973db76489aa6f6651238167516bd93e766
+      EXACT_SOURCE_SHA: 7ab9ce97a5bbc5cb4c7edca7d9d39dc016638d3b
+      EXACT_SOURCE_TREE: edcbbc66073ee0e0dd44dcbfdd5dd0d2b7f40ed7
       CODEQL_ACTION_SHA: d1ba80a13dd99fba24a470575428917156a28b43
     steps:
       - name: Check out exact candidate source
