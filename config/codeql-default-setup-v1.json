@@ -1,0 +1,28 @@
+{
+  "schema": "trnm-codeql-default-setup-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "branch": "main",
+  "api_version": "2026-03-10",
+  "state": "configured",
+  "runner_type": "standard",
+  "runner_label": null,
+  "query_suite": "extended",
+  "threat_model": "remote_and_local",
+  "required_languages": [
+    "actions",
+    "javascript-typescript",
+    "python",
+    "rust"
+  ],
+  "required_check_names": [
+    "CodeQL",
+    "Analyze (actions)",
+    "Analyze (javascript-typescript)",
+    "Analyze (python)",
+    "Analyze (rust)"
+  ],
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "public_testnet_ready": false,
+  "release_ready": false
+}

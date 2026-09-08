@@ -188,6 +188,10 @@ def main() -> int:
         workflow.count("node scripts/test-playwright-installer.mjs") == 2,
         "Playwright installer contract must run on exact source and prospective merge",
     )
+    require(
+        workflow.count("python3 scripts/ci/test_codeql_default_setup_v1.py") == 2,
+        "CodeQL default-setup contract must run on exact source and prospective merge",
+    )
 
     require_tokens(
         workflow,
@@ -238,6 +242,7 @@ def main() -> int:
             "python3 scripts/ci/test_technical_convergence_v1.py",
             "python3 scripts/ci/test_legacy_node_cargo_boundary.py",
             "python3 scripts/ci/test_main_protection_v1.py",
+            "python3 scripts/ci/test_codeql_default_setup_v1.py",
         ),
         "required baseline retained mutants",
     )
@@ -257,8 +262,10 @@ def main() -> int:
         "scripts/ci/test_technical_convergence_v1.py",
         "scripts/ci/check_required_baseline_closure_v1.py",
         "scripts/admin/apply_main_protection_v1.py",
+        "scripts/admin/apply_codeql_default_setup_v1.py",
         "scripts/ci/test_legacy_node_cargo_boundary.py",
         "scripts/ci/test_main_protection_v1.py",
+        "scripts/ci/test_codeql_default_setup_v1.py",
         "scripts/min_faucet_server.py",
         "scripts/min_faucet_server_test.py",
         "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py",
@@ -325,6 +332,10 @@ def main() -> int:
         "scripts/ci/check_build_closures_v1.py",
         "scripts/ci/check_node_decomposition_v1.py",
         "scripts/ci/check_required_baseline_closure_v1.py",
+        "config/codeql-default-setup-v1.json",
+        "docs/runbooks/TRNM_CODEQL_DEFAULT_SETUP_V1.md",
+        "scripts/admin/apply_codeql_default_setup_v1.py",
+        "scripts/ci/test_codeql_default_setup_v1.py",
         *CONVERGENCE_REQUIRED_PATHS,
         "trillionnium/crates/trnm-control-plane-v0/Cargo.toml",
         "trillionnium/crates/trnm-durable-file-adapters-v0/Cargo.toml",
