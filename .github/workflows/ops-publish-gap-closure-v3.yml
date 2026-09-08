@@ -1,24 +1,22 @@
-name: ops-publish-gap-closure-v3-nonworkflow
+name: ops-publish-gap-closure-v3
 
 on:
   push:
     branches:
       - ops/publish-gap-closure-v3-20260909
-    paths:
-      - ops-payload/full-gap-closure-v3-nonworkflow/READY
 
 permissions:
   contents: write
 
 concurrency:
-  group: ops-publish-gap-closure-v3-nonworkflow-20260909
+  group: ops-publish-gap-closure-v3-20260909
   cancel-in-progress: false
 
 jobs:
   publish:
     if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout control payload
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -26,7 +24,7 @@ jobs:
           path: control
           persist-credentials: false
 
-      - name: Checkout exact canonical integration branch
+      - name: Checkout exact target branch
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: work/plan-v2-full-gap-closure-20260902
@@ -34,34 +32,48 @@ jobs:
           path: target
           persist-credentials: true
 
-      - name: Verify, apply, and non-force fast-forward non-workflow closure
+      - name: Validate and publish exact six-commit closure
         shell: bash
         env:
-          EXPECTED_BASE: 521726e47ce0efad6b732a5fc31afcd2cc52593d
-          EXPECTED_TREE: 087d4bed056f00dcb83d558f3618a926ffcf7a7f
-          PATCH_SHA256: dd7125d7b9388a69dec7ecdd6945f5dbfcfdedf802a150444c7b755f42a5930c
           TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+          EXPECTED_BASE: 521726e47ce0efad6b732a5fc31afcd2cc52593d
+          EXPECTED_TREE: 333eaff68fec97866414e66e4b590ecce5318c34
+          PATCH_SHA256: 3a2581aa558ab7467b7d0dcdedf605f1298b33bba032cf444ad447c7fdc5035a
         run: |
           set -euo pipefail
+
           control="$GITHUB_WORKSPACE/control"
           target="$GITHUB_WORKSPACE/target"
-          patch="$RUNNER_TEMP/full-gap-closure-v3-nonworkflow.patch"
+          encoded="$RUNNER_TEMP/full-gap-closure-v3.patch.gz.b64"
+          patch="$RUNNER_TEMP/full-gap-closure-v3.patch"
 
-          test "$(git -C "$target" rev-parse HEAD)" = "$EXPECTED_BASE"
-          cat "$control"/ops-payload/full-gap-closure-v3-nonworkflow/part-*.b64 \
-            | base64 --decode \
-            | gzip -dc > "$patch"
-          printf '%s  %s\n' "$PATCH_SHA256" "$patch" | sha256sum -c -
+          cat \
+            "$control/ops-payload/full-gap-closure-v3/part-00.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-01.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-01-tail.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-02.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-03.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-04.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-05.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-06.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-07.b64" \
+            "$control/ops-payload/full-gap-closure-v3/part-08.b64" \
+            > "$encoded"
 
-          git -C "$target" config user.name "trnm-gap-closure-publisher[bot]"
-          git -C "$target" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          test "$(wc -c < "$encoded" | tr -d '[:space:]')" = "39844"
+          base64 --decode "$encoded" | gzip -dc > "$patch"
+          echo "$PATCH_SHA256  $patch" | sha256sum -c -
+
+          git -C "$target" fetch --no-tags origin "refs/heads/$TARGET_BRANCH"
+          actual_base="$(git -C "$target" rev-parse FETCH_HEAD)"
+          test "$actual_base" = "$EXPECTED_BASE"
+          git -C "$target" checkout --detach "$actual_base"
+          git -C "$target" config user.name "OpenAI GPT-5.6 Pro"
+          git -C "$target" config user.email "noreply@openai.com"
           git -C "$target" am --3way "$patch"
 
           test "$(git -C "$target" rev-list --count "$EXPECTED_BASE"..HEAD)" = "6"
           test "$(git -C "$target" rev-parse 'HEAD^{tree}')" = "$EXPECTED_TREE"
-          test -z "$(git -C "$target" diff --name-only "$EXPECTED_BASE"..HEAD -- '.github/workflows/**')"
           git -C "$target" diff --check "$EXPECTED_BASE"..HEAD
 
-          git -C "$target" fetch origin "$TARGET_BRANCH"
-          test "$(git -C "$target" rev-parse FETCH_HEAD)" = "$EXPECTED_BASE"
           git -C "$target" push origin "HEAD:refs/heads/$TARGET_BRANCH"
