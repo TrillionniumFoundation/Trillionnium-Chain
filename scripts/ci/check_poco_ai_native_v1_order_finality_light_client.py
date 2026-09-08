@@ -7209,11 +7209,8 @@ def main() -> None:
         print(
             "PASS: bounded PoCO AI-native v1 Ordinary finality advance "
             f"(positive_controls=4 sequential_advances=2 exact_error_negatives="
-            f"{len(ORDINARY_ADVANCE_NEGATIVE_IDS)} source_finalized_height="
-            f"{results[0]['old_finalized_height']} terminal_finalized_height="
-            f"{results[-1]['new_finalized_height']} QC_signatures=40 "
-            f"TC_signatures=8 OpenSSL_signatures=48 terminal_state_id="
-            f"{results[-1]['output_state_id'].hex()}); candidate-only, same-epoch, "
+            f"{len(ORDINARY_ADVANCE_NEGATIVE_IDS)} QC_signatures=40 "
+            "TC_signatures=8 OpenSSL_signatures=48); candidate-only, same-epoch, "
             "one-skipped-view-per-advance; payload-execution/arbitrary-history/"
             "global-light-client/freeze/implementation/activation remain false"
         )
@@ -7273,13 +7270,9 @@ def main() -> None:
         print(
             "PASS: bounded PoCO AI-native v1 Order trust-path iterator "
             f"(positive_hops=0/1/2/3 replay_controls=2 negatives={len(TRUST_PATH_NEGATIVE_IDS)} "
-            f"QC_signatures={trust_path_result['qc_signatures_checked']} "
-            f"TC_signatures={trust_path_result['tc_signatures_checked']} "
-            f"handoff_signatures={trust_path_result['handoff_signatures_checked']} "
-            f"OpenSSL_signatures=116 terminal_epoch={trust_path_result['terminal_epoch']} "
-            f"terminal_height={trust_path_result['terminal_finalized_height']} "
-            f"path_id={trust_path_result['path_id'].hex()}); candidate-only, max_hops=3; "
-            "v0 activation/weak-subjectivity/global-light-client/complete-wire/freeze/implementation/activation remain false"
+            "OpenSSL_signatures=116); candidate-only, max_hops=3; "
+            "v0 activation/weak-subjectivity/global-light-client/complete-wire/"
+            "freeze/implementation/activation remain false"
         )
         return
     validate_schema_contract()

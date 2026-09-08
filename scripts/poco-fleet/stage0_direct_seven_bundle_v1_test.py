@@ -68,13 +68,37 @@ def write_rust_json(
     path.write_bytes(checker.compact_ordered_json(value, keys) + b"\n")
 
 
+def _sealed_memfd(label: str, payload: bytes) -> int:
+    if not hasattr(os, "memfd_create"):
+        raise AssertionError("anonymous Linux memfd signing is required")
+    flags = getattr(os, "MFD_CLOEXEC", 0) | getattr(os, "MFD_ALLOW_SEALING", 0)
+    descriptor = os.memfd_create(label, flags)
+    try:
+        remaining = memoryview(payload)
+        while remaining:
+            written = os.write(descriptor, remaining)
+            if written <= 0:
+                raise AssertionError("anonymous fixture write made no progress")
+            remaining = remaining[written:]
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        if hasattr(fcntl, "F_ADD_SEALS"):
+            seals = (
+                fcntl.F_SEAL_SEAL
+                | fcntl.F_SEAL_SHRINK
+                | fcntl.F_SEAL_GROW
+                | fcntl.F_SEAL_WRITE
+            )
+            fcntl.fcntl(descriptor, fcntl.F_ADD_SEALS, seals)
+        return descriptor
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
 def sign_fixture(secret_bytes: bytes, message: bytes) -> str:
-    with tempfile.TemporaryDirectory(prefix="poco-stage0-replay-sign-") as raw:
-        root = pathlib.Path(raw)
-        secret = root / "secret.pk8"
-        payload = root / "payload.bin"
-        secret.write_bytes(secret_bytes)
-        payload.write_bytes(message)
+    secret_descriptor = _sealed_memfd("trnm-fixture-key", secret_bytes)
+    message_descriptor = _sealed_memfd("trnm-fixture-message", message)
+    try:
         signature = subprocess.run(
             [
                 "openssl",
@@ -84,16 +108,46 @@ def sign_fixture(secret_bytes: bytes, message: bytes) -> str:
                 "-keyform",
                 "DER",
                 "-inkey",
-                str(secret),
+                f"/proc/self/fd/{secret_descriptor}",
                 "-in",
-                str(payload),
+                f"/proc/self/fd/{message_descriptor}",
             ],
             check=True,
             capture_output=True,
+            pass_fds=(secret_descriptor, message_descriptor),
         ).stdout
+    finally:
+        os.close(message_descriptor)
+        os.close(secret_descriptor)
     if len(signature) != 64:
         raise AssertionError("fixture terminal-seal signature is not Ed25519")
     return signature.hex()
+
+
+def anonymous_sign_fixture_control() -> None:
+    # RFC 8410 OneAsymmetricKey wrapping of a fixed public test seed.  The
+    # control forbids sign_fixture from reintroducing a named temporary file.
+    secret_bytes = bytes.fromhex(
+        "302e020100300506032b657004220420"
+        + "42" * 32
+    )
+    message = b"TRNM/PoCO/G3/anonymous-fixture-signing-control/v1"
+    before = len(os.listdir("/proc/self/fd"))
+    original_temporary_directory = tempfile.TemporaryDirectory
+
+    def reject_named_temporary_directory(*_args, **_kwargs):
+        raise AssertionError("fixture signing attempted named temporary storage")
+
+    tempfile.TemporaryDirectory = reject_named_temporary_directory
+    try:
+        first = sign_fixture(secret_bytes, message)
+        second = sign_fixture(secret_bytes, message)
+    finally:
+        tempfile.TemporaryDirectory = original_temporary_directory
+    if first != second or len(bytes.fromhex(first)) != 64:
+        raise AssertionError("anonymous Ed25519 fixture signing is not deterministic")
+    if len(os.listdir("/proc/self/fd")) != before:
+        raise AssertionError("anonymous Ed25519 fixture signing leaked descriptors")
 
 
 def install_authenticated_replay_fixtures(base: pathlib.Path) -> None:
@@ -1757,6 +1811,7 @@ def ancestor_swap_controls(root: pathlib.Path) -> None:
 
 
 def main() -> None:
+    anonymous_sign_fixture_control()
     with tempfile.TemporaryDirectory(prefix="poco-g3-stage0-direct-seven-") as raw:
         root = pathlib.Path(raw)
         source = prepare(root)
