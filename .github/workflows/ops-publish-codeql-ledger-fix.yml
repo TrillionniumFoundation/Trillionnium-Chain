@@ -1,0 +1,73 @@
+name: ops-publish-codeql-ledger-fix
+
+on:
+  push:
+    branches:
+      - ops/publish-codeql-ledger-fix-20260909
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ops-publish-codeql-ledger-fix-v1
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: publish-source-bound-ledger-fix
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out immutable control payload
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: control
+          persist-credentials: false
+
+      - name: Check out exact canonical target
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Trillionnium-Chain
+          ref: work/plan-v2-full-gap-closure-20260902
+          fetch-depth: 0
+          path: target
+          persist-credentials: true
+
+      - name: Verify, test, commit, and fast-forward only
+        shell: bash
+        env:
+          EXPECTED_BASE: d2c461c84c76647d74841c9335a452a1010312aa
+          EXPECTED_TREE: 3cc11bf34d2dc0d6709de4751ee9b5bacc719169
+          PATCH_SHA256: a42ee8c0955d450fc962e373eaa81448165a2fdf276ddaf9d877ed9d6b199b8e
+          TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+        run: |
+          set -euo pipefail
+          test "$(git -C target rev-parse HEAD)" = "$EXPECTED_BASE"
+          patch_file="$RUNNER_TEMP/faucet-ledger-fix.diff"
+          base64 --decode control/ops-payload/codeql-ledger-fix/faucet-ledger-fix.diff.gz.b64 \
+            | gzip --decompress > "$patch_file"
+          echo "$PATCH_SHA256  $patch_file" | sha256sum --check --strict
+          git -C target apply --check "$patch_file"
+          git -C target apply --index "$patch_file"
+          git -C target diff --cached --check
+          test "$(git -C target write-tree)" = "$EXPECTED_TREE"
+          python3 -m py_compile \
+            target/scripts/min_faucet_server.py \
+            target/scripts/min_faucet_server_test.py
+          python3 target/scripts/min_faucet_server_test.py
+          (
+            cd target
+            python3 scripts/ci/check_repository_truth_v1.py
+            python3 scripts/ci/check_required_baseline_closure_v1.py
+            python3 scripts/ci/check_plan_manifest_pins_v1.py
+          )
+          git -C target config user.name "OpenAI GPT-5.6 Pro"
+          git -C target config user.email "noreply@openai.com"
+          git -C target commit -m "security(m14): replace request-derived ledger paths with chained journal" \
+            -m "Use one fixed-name, descriptor-pinned append-only journal with an exclusive lock, fsync, contiguous sequence, and SHA-256 hash chain. Retain fail-closed corruption, truncation, permission, hard-link, replay, and path noninterference regressions." \
+            -m "Primary-Module: M14" \
+            -m "Production-Authority: false"
+          test "$(git -C target rev-parse HEAD^{tree})" = "$EXPECTED_TREE"
+          git -C target fetch origin "$TARGET_BRANCH"
+          test "$(git -C target rev-parse FETCH_HEAD)" = "$EXPECTED_BASE"
+          git -C target push origin "HEAD:refs/heads/$TARGET_BRANCH"
