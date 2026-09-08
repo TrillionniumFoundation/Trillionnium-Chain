@@ -68,10 +68,38 @@ def write_rust_json(
     path.write_bytes(checker.compact_ordered_json(value, keys) + b"\n")
 
 
+def _required_fixture_sealing() -> tuple[int, int, int, int]:
+    required = {
+        "os.MFD_CLOEXEC": getattr(os, "MFD_CLOEXEC", None),
+        "os.MFD_ALLOW_SEALING": getattr(os, "MFD_ALLOW_SEALING", None),
+        "fcntl.F_ADD_SEALS": getattr(fcntl, "F_ADD_SEALS", None),
+        "fcntl.F_GET_SEALS": getattr(fcntl, "F_GET_SEALS", None),
+        "fcntl.F_SEAL_SEAL": getattr(fcntl, "F_SEAL_SEAL", None),
+        "fcntl.F_SEAL_SHRINK": getattr(fcntl, "F_SEAL_SHRINK", None),
+        "fcntl.F_SEAL_GROW": getattr(fcntl, "F_SEAL_GROW", None),
+        "fcntl.F_SEAL_WRITE": getattr(fcntl, "F_SEAL_WRITE", None),
+    }
+    missing = [name for name, value in required.items() if not isinstance(value, int)]
+    if not hasattr(os, "memfd_create") or missing:
+        detail = ", ".join(missing) if missing else "os.memfd_create"
+        raise AssertionError(f"sealed Linux memfd support is required: {detail}")
+    flags = int(required["os.MFD_CLOEXEC"]) | int(required["os.MFD_ALLOW_SEALING"])
+    mask = (
+        int(required["fcntl.F_SEAL_SEAL"])
+        | int(required["fcntl.F_SEAL_SHRINK"])
+        | int(required["fcntl.F_SEAL_GROW"])
+        | int(required["fcntl.F_SEAL_WRITE"])
+    )
+    return (
+        flags,
+        int(required["fcntl.F_ADD_SEALS"]),
+        int(required["fcntl.F_GET_SEALS"]),
+        mask,
+    )
+
+
 def _sealed_memfd(label: str, payload: bytes) -> int:
-    if not hasattr(os, "memfd_create"):
-        raise AssertionError("anonymous Linux memfd signing is required")
-    flags = getattr(os, "MFD_CLOEXEC", 0) | getattr(os, "MFD_ALLOW_SEALING", 0)
+    flags, add_seals, get_seals, expected_seals = _required_fixture_sealing()
     descriptor = os.memfd_create(label, flags)
     try:
         remaining = memoryview(payload)
@@ -81,14 +109,10 @@ def _sealed_memfd(label: str, payload: bytes) -> int:
                 raise AssertionError("anonymous fixture write made no progress")
             remaining = remaining[written:]
         os.lseek(descriptor, 0, os.SEEK_SET)
-        if hasattr(fcntl, "F_ADD_SEALS"):
-            seals = (
-                fcntl.F_SEAL_SEAL
-                | fcntl.F_SEAL_SHRINK
-                | fcntl.F_SEAL_GROW
-                | fcntl.F_SEAL_WRITE
-            )
-            fcntl.fcntl(descriptor, fcntl.F_ADD_SEALS, seals)
+        fcntl.fcntl(descriptor, add_seals, expected_seals)
+        observed_seals = fcntl.fcntl(descriptor, get_seals)
+        if observed_seals != expected_seals:
+            raise AssertionError("anonymous fixture memfd is not exactly sealed")
         return descriptor
     except BaseException:
         os.close(descriptor)
@@ -146,6 +170,31 @@ def anonymous_sign_fixture_control() -> None:
         tempfile.TemporaryDirectory = original_temporary_directory
     if first != second or len(bytes.fromhex(first)) != 64:
         raise AssertionError("anonymous Ed25519 fixture signing is not deterministic")
+    descriptor = _sealed_memfd("trnm-fixture-seal-control", b"immutable")
+    try:
+        _flags, _add_seals, get_seals, expected_seals = _required_fixture_sealing()
+        if fcntl.fcntl(descriptor, get_seals) != expected_seals:
+            raise AssertionError("fixture seal readback differs")
+        try:
+            os.pwrite(descriptor, b"X", 0)
+        except OSError:
+            pass
+        else:
+            raise AssertionError("sealed fixture descriptor remained writable")
+    finally:
+        os.close(descriptor)
+    original_get_seals = fcntl.F_GET_SEALS
+    try:
+        fcntl.F_GET_SEALS = None
+        try:
+            _required_fixture_sealing()
+        except AssertionError as error:
+            if "sealed Linux memfd support is required" not in str(error):
+                raise
+        else:
+            raise AssertionError("missing memfd sealing capability did not fail closed")
+    finally:
+        fcntl.F_GET_SEALS = original_get_seals
     if len(os.listdir("/proc/self/fd")) != before:
         raise AssertionError("anonymous Ed25519 fixture signing leaked descriptors")
 
@@ -2039,6 +2088,7 @@ def main() -> None:
         "observer_set=7 replay_sets=7 raw_replay_substitution=blocked "
         "raw_replay_hash_chain=blocked terminal_seal_signature=verified "
         "terminal_seal_signature_mutation=blocked terminal_agreement=exact "
+        "sealed_memfd_exact=true missing_sealing_capability=blocked "
         "proposal_qc_finality_semantics_independently_decoded=false "
         "runner_validator_run_completed=false stage0_direct_seven_observed=scoped "
         "validator_run_7_completed_observed=true "
