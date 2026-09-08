@@ -1,0 +1,127 @@
+name: TRNM live GitHub settings readback
+
+on:
+  push:
+    branches:
+      - evidence/live-github-settings-readback-20260909
+
+permissions:
+  contents: read
+  security-events: read
+
+jobs:
+  readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      EXPECTED_CANONICAL_SHA: bbee7c0194e420a36c7747167000450083d5d951
+      EXPECTED_MAIN_SHA: b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9
+    steps:
+      - name: Collect administration-sensitive readbacks without mutation
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/trnm-live-settings"
+          mkdir -p "${out}"
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          headers=(
+            -H "Accept: application/vnd.github+json"
+            -H "Authorization: Bearer ${GH_TOKEN}"
+            -H "X-GitHub-Api-Version: 2022-11-28"
+            -H "User-Agent: trnm-live-settings-readback-v1"
+          )
+          get() {
+            local name=$1 url=$2
+            local code
+            code="$(curl --silent --show-error --location \
+              "${headers[@]}" --output "${out}/${name}.json" \
+              --write-out '%{http_code}' "${url}")"
+            printf '%s\n' "${code}" > "${out}/${name}.status"
+          }
+          get repository "${api}"
+          get canonical_branch "${api}/branches/work%2Fplan-v2-full-gap-closure-20260902"
+          get main_branch "${api}/branches/main"
+          get codeql_default_setup "${api}/code-scanning/default-setup"
+          get main_protection "${api}/branches/main/protection"
+          get repository_rulesets "${api}/rulesets?includes_parents=true&per_page=100"
+          get main_rules "${api}/rules/branches/main"
+
+          export out
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import pathlib
+
+          out = pathlib.Path(os.environ["out"])
+          endpoints = {}
+          for status_path in sorted(out.glob("*.status")):
+              name = status_path.stem
+              code = int(status_path.read_text().strip())
+              body_path = out / f"{name}.json"
+              raw = body_path.read_bytes()
+              try:
+                  body = json.loads(raw)
+              except json.JSONDecodeError:
+                  body = {"non_json_bytes": len(raw)}
+              summary = {"http_status": code, "sha256": hashlib.sha256(raw).hexdigest()}
+              if name in {"canonical_branch", "main_branch"} and isinstance(body, dict):
+                  summary["commit_sha"] = (body.get("commit") or {}).get("sha")
+                  summary["protected"] = body.get("protected")
+              elif name == "codeql_default_setup" and isinstance(body, dict):
+                  for key in ("state", "languages", "query_suite", "threat_model", "runner_type", "runner_label", "updated_at"):
+                      summary[key] = body.get(key)
+                  if code != 200:
+                      summary["message"] = body.get("message")
+              elif name == "main_protection" and isinstance(body, dict):
+                  summary["required_status_checks"] = body.get("required_status_checks")
+                  summary["enforce_admins"] = body.get("enforce_admins")
+                  summary["required_pull_request_reviews"] = body.get("required_pull_request_reviews")
+                  for key in ("required_linear_history", "allow_force_pushes", "allow_deletions", "required_conversation_resolution"):
+                      summary[key] = body.get(key)
+                  if code != 200:
+                      summary["message"] = body.get("message")
+              elif name in {"repository_rulesets", "main_rules"}:
+                  summary["item_count"] = len(body) if isinstance(body, list) else None
+                  if isinstance(body, dict):
+                      summary["message"] = body.get("message")
+              elif code != 200 and isinstance(body, dict):
+                  summary["message"] = body.get("message")
+              endpoints[name] = summary
+
+          canonical = endpoints.get("canonical_branch", {}).get("commit_sha")
+          main = endpoints.get("main_branch", {}).get("commit_sha")
+          report = {
+              "schema": "trnm-live-github-settings-readback-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_source_sha": os.environ["GITHUB_SHA"],
+              "expected_canonical_sha": os.environ["EXPECTED_CANONICAL_SHA"],
+              "observed_canonical_sha": canonical,
+              "expected_main_sha": os.environ["EXPECTED_MAIN_SHA"],
+              "observed_main_sha": main,
+              "canonical_sha_matches": canonical == os.environ["EXPECTED_CANONICAL_SHA"],
+              "main_sha_matches": main == os.environ["EXPECTED_MAIN_SHA"],
+              "endpoints": endpoints,
+              "mutation_attempted": False,
+              "production_candidate": False,
+              "release_ready": False,
+          }
+          (out / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+          if not report["canonical_sha_matches"] or not report["main_sha_matches"]:
+              raise SystemExit("branch identity moved during readback")
+          PY
+          (
+            cd "${out}"
+            sha256sum *.json *.status > SHA256SUMS
+          )
+
+      - name: Upload immutable readback evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-live-github-settings-readback-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-live-settings/**
+          if-no-files-found: error
+          retention-days: 30
