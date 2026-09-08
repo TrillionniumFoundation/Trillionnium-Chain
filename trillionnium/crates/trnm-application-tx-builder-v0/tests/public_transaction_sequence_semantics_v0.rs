@@ -1,10 +1,11 @@
 use trnm_application_tx_builder_v0::derive_command_id_v0;
 
-/// The canonical transaction nonce is a public, positive replay/sequence
-/// counter. It is domain-bound into the retry-stable command identifier; it is
-/// not cryptographic randomness, an AEAD IV, or signing entropy.
+/// The canonical transaction sequence is public, positive replay-order data.
+/// It is domain-bound into the retry-stable command identifier and serialized
+/// under the frozen protocol field name `nonce`; it is not cryptographic
+/// randomness, an AEAD IV, or signing entropy.
 #[test]
-fn public_nonce_is_retry_stable_and_domain_bound() {
+fn public_transaction_sequence_is_retry_stable_and_domain_bound() {
     let exact_body = br#"{"schema":"trnm.canonical-tx.v1","sender":"did:trnm:alice"}"#;
 
     let first = derive_command_id_v0("trnm-devnet", "did:trnm:alice", 1, exact_body);

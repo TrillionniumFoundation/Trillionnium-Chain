@@ -62,14 +62,14 @@ impl ApplicationSignerV0 for FixtureSignerV0 {
     }
 }
 
-fn signed_transaction_hex_v0(nonce: u64) -> String {
+fn signed_transaction_hex_v0(transaction_sequence: u64) -> String {
     let signer = FixtureSignerV0::new();
     let transaction = build_signed_canonical_tx_v0(
         CanonicalTxBuildContextV0 {
             chain_id: CHAIN_ID_V0.to_owned(),
             sender: SIGNER_ID_V0.to_owned(),
-            command_id: Some(format!("g1-process-credit-{nonce}")),
-            nonce,
+            command_id: Some(format!("g1-process-credit-{transaction_sequence}")),
+            transaction_sequence,
             issued_at_unix_ms: NOW_V0,
             expires_at_unix_ms: NOW_V0 + 100_000,
             max_gas: 100_000,

@@ -284,13 +284,15 @@ impl Default for TxBuilderLimitsV0 {
 ///
 /// No field is inferred from wall-clock time or a local wallet.  In
 /// particular, `command_id` is optional only so a deterministic retry-stable
-/// id can be derived from the exact canonical transaction bytes.
+/// id can be derived from the exact canonical transaction bytes. The
+/// `transaction_sequence` is public replay-order data that is serialized into
+/// the protocol field named `nonce`; it is not cryptographic randomness.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CanonicalTxBuildContextV0 {
     pub chain_id: String,
     pub sender: String,
     pub command_id: Option<String>,
-    pub nonce: u64,
+    pub transaction_sequence: u64,
     pub issued_at_unix_ms: u64,
     pub expires_at_unix_ms: u64,
     pub max_gas: u64,
@@ -535,16 +537,16 @@ impl BuiltCanonicalTxV0 {
 pub fn derive_command_id_v0(
     chain_id: &str,
     sender: &str,
-    nonce: u64,
+    transaction_sequence: u64,
     exact_inner_bytes: &[u8],
 ) -> String {
-    let nonce_bytes = nonce.to_be_bytes();
+    let transaction_sequence_bytes = transaction_sequence.to_be_bytes();
     hex::encode(hash_domain(
         "trnm.command-id.v1",
         &[
             chain_id.as_bytes(),
             sender.as_bytes(),
-            &nonce_bytes,
+            &transaction_sequence_bytes,
             exact_inner_bytes,
         ],
     ))
@@ -557,7 +559,10 @@ pub fn build_signed_canonical_tx_v0(
     signer: &dyn ApplicationSignerV0,
 ) -> Result<BuiltCanonicalTxV0> {
     context.limits.validate()?;
-    ensure!(context.nonce > 0, "nonce must be positive");
+    ensure!(
+        context.transaction_sequence > 0,
+        "transaction sequence must be positive"
+    );
     ensure!(
         context.expires_at_unix_ms > context.issued_at_unix_ms,
         "expires_at_unix_ms must be after issued_at_unix_ms"
@@ -590,7 +595,7 @@ pub fn build_signed_canonical_tx_v0(
     let transaction = CanonicalTxV1 {
         schema: trnm_protocol::CANONICAL_TX_SCHEMA_V1.to_string(),
         sender: context.sender.clone(),
-        nonce: context.nonce,
+        nonce: context.transaction_sequence,
         max_gas: context.max_gas,
         fee_limit: context.fee_limit,
         command,
@@ -616,7 +621,7 @@ pub fn build_signed_canonical_tx_v0(
         derive_command_id_v0(
             &context.chain_id,
             &context.sender,
-            context.nonce,
+            context.transaction_sequence,
             &exact_inner_bytes,
         )
     });
@@ -627,7 +632,7 @@ pub fn build_signed_canonical_tx_v0(
         signer_id: signer.signer_id().to_string(),
         signer_role: signer.signer_role().to_string(),
         public_key_hex: signer.public_key_hex().to_string(),
-        nonce: context.nonce,
+        nonce: context.transaction_sequence,
         issued_at_unix_ms: context.issued_at_unix_ms,
         expires_at_unix_ms: context.expires_at_unix_ms,
         payload_type: trnm_protocol::CANONICAL_TX_PAYLOAD_TYPE_V1.to_string(),
@@ -719,7 +724,7 @@ mod tests {
             chain_id: "trnm-devnet".to_string(),
             sender: sender.to_string(),
             command_id: None,
-            nonce: 1,
+            transaction_sequence: 1,
             issued_at_unix_ms: 1_000,
             expires_at_unix_ms: 2_000,
             max_gas: 10_000,
@@ -838,12 +843,12 @@ mod tests {
     }
 
     #[test]
-    fn derived_command_id_is_retry_stable_and_nonce_bound() {
+    fn derived_command_id_is_retry_stable_and_transaction_sequence_bound() {
         let signer = signer();
         let tx = build_signed_canonical_tx_v0(context(&signer.id), command(), &signer).unwrap();
         let changed = {
             let mut c = context(&signer.id);
-            c.nonce = 2;
+            c.transaction_sequence = 2;
             build_signed_canonical_tx_v0(c, command(), &signer).unwrap()
         };
         assert_eq!(
