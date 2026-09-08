@@ -14,7 +14,13 @@ fn public_nonce_is_retry_stable_and_domain_bound() {
     let other_sender = derive_command_id_v0("trnm-devnet", "did:trnm:bob", 1, exact_body);
 
     assert_eq!(first, retry, "an exact retry must retain its command id");
-    assert_ne!(first, next_sequence, "sequence advancement must rebind the id");
+    assert_ne!(
+        first, next_sequence,
+        "sequence advancement must rebind the id"
+    );
     assert_ne!(first, other_chain, "chain identity must domain-bind the id");
-    assert_ne!(first, other_sender, "sender identity must domain-bind the id");
+    assert_ne!(
+        first, other_sender,
+        "sender identity must domain-bind the id"
+    );
 }
