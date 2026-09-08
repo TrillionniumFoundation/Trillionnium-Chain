@@ -1,0 +1,5 @@
+schema=trnm-gap-closure-v3-nonworkflow-ready-v1
+expected_base=521726e47ce0efad6b732a5fc31afcd2cc52593d
+patch_sha256=dd7125d7b9388a69dec7ecdd6945f5dbfcfdedf802a150444c7b755f42a5930c
+expected_tree=087d4bed056f00dcb83d558f3618a926ffcf7a7f
+part_count=8
