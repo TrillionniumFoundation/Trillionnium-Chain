@@ -21,6 +21,19 @@
     "Analyze (python)",
     "Analyze (rust)"
   ],
+  "trusted_check_producers": {
+    "aggregate": {
+      "app_id": 57789,
+      "slug": "github-advanced-security",
+      "owner": "github"
+    },
+    "analysis": {
+      "app_id": 15368,
+      "slug": "github-actions",
+      "owner": "github"
+    }
+  },
+  "analysis_workflow_path": "dynamic/github-code-scanning/codeql",
   "production_candidate": false,
   "production_consensus_activation": false,
   "public_testnet_ready": false,
