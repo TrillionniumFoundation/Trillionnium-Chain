@@ -1,0 +1,164 @@
+name: TRNM exact-source long fuzz evidence
+
+on:
+  push:
+    branches:
+      - evidence/codeql-head-long-fuzz-20260909
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-long-fuzz-4a00fa0e-20260909
+  cancel-in-progress: false
+
+jobs:
+  long-fuzz:
+    name: long-fuzz-${{ matrix.target }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - canonical_tx_json
+          - signed_envelope_json
+          - poco_cev0_exact
+    env:
+      EXACT_SOURCE_SHA: 4a00fa0ea561d46d6b57c68f553c471c39e94f06
+      EXACT_SOURCE_TREE: e4c59973db76489aa6f6651238167516bd93e766
+      FUZZ_TOOLCHAIN: nightly-2026-07-27
+      FUZZ_SECONDS: "3600"
+      FUZZ_MAX_LEN: "2162688"
+      FUZZ_TIMEOUT_SECONDS: "10"
+      FUZZ_RSS_MB: "2048"
+    steps:
+      - name: Check out exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install pinned nightly and verified cargo-fuzz
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${FUZZ_TOOLCHAIN}" --profile minimal
+          scripts/ci/install_cargo_fuzz.sh "${RUNNER_TEMP}/cargo-fuzz"
+          echo "${RUNNER_TEMP}/cargo-fuzz/bin" >> "${GITHUB_PATH}"
+
+      - name: Execute one-hour exact-source campaign
+        id: campaign
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          work="${RUNNER_TEMP}/trnm-long-fuzz/${TARGET}"
+          mkdir -p "${work}/corpus" "${work}/artifacts" "${work}/evidence"
+          cp -a "trillionnium/fuzz/corpus/${TARGET}/." "${work}/corpus/"
+          started="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          set +e
+          (
+            cd trillionnium/fuzz
+            cargo +"${FUZZ_TOOLCHAIN}" fuzz run "${TARGET}" "${work}/corpus" -- \
+              "-max_total_time=${FUZZ_SECONDS}" \
+              "-timeout=${FUZZ_TIMEOUT_SECONDS}" \
+              "-rss_limit_mb=${FUZZ_RSS_MB}" \
+              "-max_len=${FUZZ_MAX_LEN}" \
+              "-artifact_prefix=${work}/artifacts/" \
+              -print_final_stats=1
+          ) 2>&1 | tee "${work}/evidence/fuzzer.log"
+          rc=${PIPESTATUS[0]}
+          set -e
+          completed="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          export work started completed rc TARGET
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import subprocess
+
+          work = pathlib.Path(os.environ["work"])
+          target = os.environ["TARGET"]
+          corpus = sorted(p for p in (work / "corpus").rglob("*") if p.is_file())
+          artifacts = sorted(p for p in (work / "artifacts").rglob("*") if p.is_file())
+          def sha(path: pathlib.Path) -> str:
+              h = hashlib.sha256()
+              with path.open("rb") as stream:
+                  for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                      h.update(chunk)
+              return h.hexdigest()
+          inventory = [
+              {"path": str(p.relative_to(work)), "sha256": sha(p), "bytes": p.stat().st_size}
+              for p in corpus + artifacts
+          ]
+          report = {
+              "schema": "trnm-long-fuzz-evidence-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_source_sha": os.environ["GITHUB_SHA"],
+              "exact_source_sha": os.environ["EXACT_SOURCE_SHA"],
+              "exact_source_tree": os.environ["EXACT_SOURCE_TREE"],
+              "target": target,
+              "started_utc": os.environ["started"],
+              "completed_utc": os.environ["completed"],
+              "budget_seconds": int(os.environ["FUZZ_SECONDS"]),
+              "max_len": int(os.environ["FUZZ_MAX_LEN"]),
+              "timeout_seconds": int(os.environ["FUZZ_TIMEOUT_SECONDS"]),
+              "rss_limit_mb": int(os.environ["FUZZ_RSS_MB"]),
+              "exit_code": int(os.environ["rc"]),
+              "cargo_fuzz": subprocess.check_output(["cargo-fuzz", "--version"], text=True).strip(),
+              "rustc": subprocess.check_output(["rustc", "+" + os.environ["FUZZ_TOOLCHAIN"], "-vV"], text=True),
+              "corpus_files": len(corpus),
+              "crash_artifacts": len(artifacts),
+              "inventory": inventory,
+              "github_hosted_runner": True,
+              "independent_human_acceptance": False,
+              "production_candidate": False,
+              "release_ready": False,
+          }
+          (work / "evidence" / "report.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          PY
+          (
+            cd "${work}"
+            find . -type f -print0 | sort -z | xargs -0 sha256sum > evidence/SHA256SUMS
+            tar -czf "${RUNNER_TEMP}/trnm-long-fuzz-${TARGET}.tar.gz" corpus artifacts evidence
+          )
+          echo "archive=${RUNNER_TEMP}/trnm-long-fuzz-${TARGET}.tar.gz" >> "${GITHUB_OUTPUT}"
+          test "${rc}" -eq 0
+          test "$(find "${work}/artifacts" -type f | wc -l)" -eq 0
+
+      - name: Upload exact-source campaign evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-long-fuzz-${{ matrix.target }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/trnm-long-fuzz-${{ matrix.target }}.tar.gz
+            ${{ runner.temp }}/trnm-long-fuzz/${{ matrix.target }}/evidence/**
+            ${{ runner.temp }}/trnm-long-fuzz/${{ matrix.target }}/artifacts/**
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Verify exact source remained unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
