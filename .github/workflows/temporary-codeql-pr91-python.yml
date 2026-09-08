@@ -1,0 +1,103 @@
+name: temporary-codeql-pr91-python
+
+on:
+  push:
+    branches:
+      - audit/codeql-pr91-python-20260908
+
+permissions:
+  contents: read
+
+concurrency:
+  group: temporary-codeql-pr91-python
+  cancel-in-progress: true
+
+jobs:
+  analyze-python:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.actor == 'ProfHepta' &&
+      github.triggering_actor == github.actor
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact PR 91 source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 82a5bdf00169b49489d4af6069b3c7558df4f9eb
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source identity
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = 82a5bdf00169b49489d4af6069b3c7558df4f9eb
+
+      - name: Initialize pinned CodeQL Python analysis
+        uses: github/codeql-action/init@6f5948dfacef28e207b48d0905cf90c03365536d
+        with:
+          languages: python
+          build-mode: none
+
+      - name: Analyze without uploading alerts
+        id: analyze
+        uses: github/codeql-action/analyze@6f5948dfacef28e207b48d0905cf90c03365536d
+        with:
+          upload: never
+          output: ${{ runner.temp }}/codeql-pr91-python
+          upload-database: false
+
+      - name: Summarize SARIF result counts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - "$RUNNER_TEMP/codeql-pr91-python" <<'PY'
+          import collections
+          import json
+          import pathlib
+          import sys
+
+          root = pathlib.Path(sys.argv[1])
+          files = sorted(root.glob('*.sarif')) + sorted(root.glob('*.sarif.json'))
+          if not files:
+              raise SystemExit('no SARIF file produced')
+          rows = []
+          rules = collections.Counter()
+          for path in files:
+              document = json.loads(path.read_text(encoding='utf-8'))
+              for run in document.get('runs') or []:
+                  for result in run.get('results') or []:
+                      rule = str(result.get('ruleId') or 'unknown')
+                      rules[rule] += 1
+                      location = ((result.get('locations') or [{}])[0].get('physicalLocation') or {})
+                      artifact = location.get('artifactLocation') or {}
+                      region = location.get('region') or {}
+                      rows.append({
+                          'rule_id': rule,
+                          'path': artifact.get('uri'),
+                          'line': region.get('startLine'),
+                          'message': (result.get('message') or {}).get('text'),
+                      })
+          summary = {
+              'schema': 'trnm-codeql-pr91-python-v1',
+              'source_sha': '82a5bdf00169b49489d4af6069b3c7558df4f9eb',
+              'result_count': len(rows),
+              'rules': dict(rules),
+              'upload': False,
+          }
+          (root / 'trnm-summary.json').write_text(
+              json.dumps(summary, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          (root / 'trnm-results.json').write_text(
+              json.dumps(rows, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          print(json.dumps(summary, sort_keys=True, separators=(',', ':')))
+          PY
+          sha256sum "$RUNNER_TEMP"/codeql-pr91-python/* > "$RUNNER_TEMP/codeql-pr91-python/SHA256SUMS"
+
+      - name: Upload exact-head Python SARIF
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-codeql-pr91-python-82a5bdf
+          path: ${{ runner.temp }}/codeql-pr91-python
+          if-no-files-found: error
+          retention-days: 3
