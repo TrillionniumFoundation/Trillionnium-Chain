@@ -184,6 +184,11 @@ def main() -> int:
         "every required job must assert exact source identity",
     )
 
+    require(
+        workflow.count("node scripts/test-playwright-installer.mjs") == 2,
+        "Playwright installer contract must run on exact source and prospective merge",
+    )
+
     require_tokens(
         workflow,
         (
@@ -216,6 +221,10 @@ def main() -> int:
         workflow,
         "Run retained module-documentation false-pass mutants",
     )
+    security_step = named_step(
+        workflow,
+        "Run repository security-boundary regressions",
+    )
     compile_step = named_step(workflow, "Compile Python CI tooling")
     require_tokens(exact_step, CONVERGENCE_COMMANDS, "exact-source convergence closure")
     require_tokens(
@@ -223,15 +232,37 @@ def main() -> int:
         CONVERGENCE_COMMANDS,
         "prospective-merge convergence closure",
     )
-    require(
-        "python3 scripts/ci/test_technical_convergence_v1.py" in mutant_step,
-        "convergence false-pass mutants are not retained",
+    require_tokens(
+        mutant_step,
+        (
+            "python3 scripts/ci/test_technical_convergence_v1.py",
+            "python3 scripts/ci/test_legacy_node_cargo_boundary.py",
+            "python3 scripts/ci/test_main_protection_v1.py",
+        ),
+        "required baseline retained mutants",
+    )
+    require_tokens(
+        security_step,
+        (
+            "python3 scripts/min_faucet_server_test.py",
+            "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py",
+            "--check-ordinary-advance --self-test-ordinary-advance-mutants",
+            "--check-trust-path --self-test-trust-path-mutants",
+        ),
+        "required baseline security regressions",
     )
     for path in (
         "scripts/ci/check_plan_manifest_pins_v1.py",
         "scripts/ci/check_technical_convergence_v1.py",
         "scripts/ci/test_technical_convergence_v1.py",
         "scripts/ci/check_required_baseline_closure_v1.py",
+        "scripts/admin/apply_main_protection_v1.py",
+        "scripts/ci/test_legacy_node_cargo_boundary.py",
+        "scripts/ci/test_main_protection_v1.py",
+        "scripts/min_faucet_server.py",
+        "scripts/min_faucet_server_test.py",
+        "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py",
+        "scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py",
     ):
         require(path in compile_step, f"Python compile closure missing {path}")
 
