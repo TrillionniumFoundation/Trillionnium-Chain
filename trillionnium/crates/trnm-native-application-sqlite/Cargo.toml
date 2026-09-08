@@ -66,11 +66,11 @@ test-support = []
 libc = "0.2"
 rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
-trnm-consensus-core = { path = "../trnm-consensus-core" }
-trnm-consensus-safety-store = { path = "../trnm-consensus-safety-store" }
-trnm-consensus-types = { path = "../trnm-consensus-types" }
-trnm-native-application = { path = "../trnm-native-application" }
+trnm-consensus-core = { path = "../trnm-consensus-core", version = "=0.1.0" }
+trnm-consensus-safety-store = { path = "../trnm-consensus-safety-store", version = "=0.1.0" }
+trnm-consensus-types = { path = "../trnm-consensus-types", version = "=0.1.0" }
+trnm-native-application = { path = "../trnm-native-application", version = "=0.1.0" }
 
 [dev-dependencies]
 ed25519-dalek = "2"
-trnm-consensus-crypto = { path = "../trnm-consensus-crypto" }
+trnm-consensus-crypto = { path = "../trnm-consensus-crypto", version = "=0.1.0" }

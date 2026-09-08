@@ -39,11 +39,11 @@ test-support = []
 [dependencies]
 rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
-trnm-poco-global-execution-v1 = { path = "../trnm-poco-global-execution-v1" }
-trnm-poco-order-application-v1 = { path = "../trnm-poco-order-application-v1" }
-trnm-poco-order-finality-verifier-v1 = { path = "../trnm-poco-order-finality-verifier-v1" }
-trnm-poco-order-types-v1 = { path = "../trnm-poco-order-types-v1" }
+trnm-poco-global-execution-v1 = { path = "../trnm-poco-global-execution-v1", version = "=0.1.0" }
+trnm-poco-order-application-v1 = { path = "../trnm-poco-order-application-v1", version = "=0.1.0" }
+trnm-poco-order-finality-verifier-v1 = { path = "../trnm-poco-order-finality-verifier-v1", version = "=0.1.0" }
+trnm-poco-order-types-v1 = { path = "../trnm-poco-order-types-v1", version = "=0.1.0" }
 
 [dev-dependencies]
 tempfile = "3"
-trnm-poco-order-finality-verifier-v1 = { path = "../trnm-poco-order-finality-verifier-v1", features = ["test-support"] }
+trnm-poco-order-finality-verifier-v1 = { path = "../trnm-poco-order-finality-verifier-v1", version = "=0.1.0", features = ["test-support"] }

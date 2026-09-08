@@ -22,7 +22,21 @@ for line in "${required_lines[@]}"; do
   fi
 done
 
-if grep -Eq 'sudo|apt-get|--with-deps' "$WF"; then
+# Match standalone executable privilege/package-mutation tokens, not substrings
+# in trusted actor names such as "Franksudoman".
+privileged_pattern='(^|[^[:alnum:]_])(sudo|apt-get)([^[:alnum:]_]|$)|(^|[[:space:]])--with-deps([[:space:]]|$)'
+
+if printf '%s\n' "github.actor == 'Franksudoman'" | grep -Eq "$privileged_pattern"; then
+  echo "[FAIL] privilege guard matched a trusted actor-name substring" >&2
+  exit 1
+fi
+
+if ! printf '%s\n' 'run: sudo apt-get install shellcheck' | grep -Eq "$privileged_pattern"; then
+  echo "[FAIL] privilege guard no longer detects executable host mutation" >&2
+  exit 1
+fi
+
+if grep -Eq "$privileged_pattern" "$WF"; then
   echo "[FAIL] quick-check must not acquire host privileges or mutate runner packages" >&2
   exit 1
 fi

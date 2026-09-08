@@ -35,11 +35,11 @@ default = []
 [dependencies]
 borsh = { version = "1", features = ["derive"] }
 sha2 = "0.10"
-trnm-poco-agent-market-v1 = { path = "../trnm-poco-agent-market-v1" }
-trnm-poco-consumption-settlement-v1 = { path = "../trnm-poco-consumption-settlement-v1" }
-trnm-poco-da-v1 = { path = "../trnm-poco-da-v1" }
-trnm-poco-mvcc-fee-v1 = { path = "../trnm-poco-mvcc-fee-v1" }
-trnm-poco-verify-challenge-v1 = { path = "../trnm-poco-verify-challenge-v1" }
+trnm-poco-agent-market-v1 = { path = "../trnm-poco-agent-market-v1", version = "=0.1.0" }
+trnm-poco-consumption-settlement-v1 = { path = "../trnm-poco-consumption-settlement-v1", version = "=0.1.0" }
+trnm-poco-da-v1 = { path = "../trnm-poco-da-v1", version = "=0.1.0" }
+trnm-poco-mvcc-fee-v1 = { path = "../trnm-poco-mvcc-fee-v1", version = "=0.1.0" }
+trnm-poco-verify-challenge-v1 = { path = "../trnm-poco-verify-challenge-v1", version = "=0.1.0" }
 
 [dev-dependencies]
 tempfile = "3"

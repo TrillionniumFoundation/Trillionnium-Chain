@@ -10,9 +10,10 @@ prefix="trillionnium/crates/trnm-poco-node/src/finalization_intent_process_prefi
 helper="trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-finalization-intent-kill-helper.rs"
 test_file="trillionnium/crates/trnm-poco-node/tests/finalization_intent_process_kill_matrix.rs"
 workflow=".github/workflows/trnm-payload-replay-recovery-v1.yml"
-plan="docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+operations="config/documentation-operations-v1.json"
 modules="docs/development/module-registry-v1.toml"
 train="docs/development/release-train-v1.toml"
+convergence="config/technical-convergence-v1.toml"
 support=(
   trillionnium/crates/trnm-poco-node/src/finalization_intent_process_support_v1_1.inc
   trillionnium/crates/trnm-poco-node/src/finalization_intent_process_support_v1_2.inc
@@ -21,7 +22,7 @@ support=(
 )
 
 for path in "$production_wal" "$deriver" "$prefix" "$helper" "$test_file" \
-  "$workflow" "$plan" "$modules" "$train" "${support[@]}"; do
+  "$workflow" "$operations" "$modules" "$train" "$convergence" "${support[@]}"; do
   test -f "$path" || {
     echo "missing G1 finalization source or canonical authority: $path" >&2
     exit 2
@@ -45,8 +46,10 @@ test "$(git hash-object "$production_wal")" = \
 }
 test "$(wc -c < "$production_wal")" -eq 28263
 
-python3 - "$deriver" "$prefix" "$helper" "$test_file" "$plan" "$modules" "$train" "${support[@]}" <<'PY'
+python3 - "$deriver" "$prefix" "$helper" "$test_file" "$operations" "$modules" \
+  "$train" "$convergence" "${support[@]}" <<'PY'
 from pathlib import Path
+import json
 import sys
 import tomllib
 
@@ -54,10 +57,11 @@ deriver = Path(sys.argv[1]).read_text(encoding="utf-8")
 prefix = Path(sys.argv[2]).read_text(encoding="utf-8")
 helper = Path(sys.argv[3]).read_text(encoding="utf-8")
 test = Path(sys.argv[4]).read_text(encoding="utf-8")
-plan = Path(sys.argv[5]).read_text(encoding="utf-8")
+operations = json.loads(Path(sys.argv[5]).read_text(encoding="utf-8"))
 modules = tomllib.loads(Path(sys.argv[6]).read_text(encoding="utf-8"))
 train = tomllib.loads(Path(sys.argv[7]).read_text(encoding="utf-8"))
-support = "".join(Path(value).read_text(encoding="utf-8") for value in sys.argv[8:])
+convergence = tomllib.loads(Path(sys.argv[8]).read_text(encoding="utf-8"))
+support = "".join(Path(value).read_text(encoding="utf-8") for value in sys.argv[9:])
 combined = deriver + prefix + support
 
 for token in (
@@ -88,23 +92,66 @@ for token in (
 if test.count('"write_') < 3 or test.count('"clear_') < 2:
     raise SystemExit("process test lost required durability cuts")
 
-plan_lower = plan.lower()
-for marker in (
-    "ordered finalization",
-    "crash",
-    "physical power",
-    "node commit ledger",
-    "production_candidate = false",
-):
-    if marker not in plan_lower:
-        raise SystemExit(f"canonical plan missing finalization marker: {marker}")
+if operations.get("schema") != "trnm-documentation-operations-v1":
+    raise SystemExit("documentation operation registry schema drift")
+if operations.get("plan_id") != "trnm-chain-development-plan-v2":
+    raise SystemExit("documentation operation registry plan binding drift")
+if operations.get("production_authority") is not False:
+    raise SystemExit("documentation operation registry must remain non-authoritative")
+operation_rows = operations.get("operations", [])
+operation_ids = {
+    row.get("id") for row in operation_rows if isinstance(row, dict)
+}
+required_operations = {
+    "M08-OP-RECOVER-EXPECTED-LEDGER",
+    "M08-OP-APPEND-EXACT-LEDGER",
+}
+if not required_operations <= operation_ids:
+    raise SystemExit("operation registry is missing finalization/recovery contracts")
+
 module_rows = modules.get("module", modules.get("modules", []))
-ids = {row.get("id") for row in module_rows if isinstance(row, dict)} if isinstance(module_rows, list) else set()
+ids = {
+    row.get("id") for row in module_rows if isinstance(row, dict)
+} if isinstance(module_rows, list) else set()
 if not {"M03", "M08", "M15"} <= ids:
     raise SystemExit("module registry is missing finalization/recovery ownership")
-train_lower = repr(train).lower()
-if "final" not in train_lower or "recovery" not in train_lower:
-    raise SystemExit("release train does not retain finalization/recovery blockers")
+
+blocker_rows = train.get("blockers", [])
+blocker_ids = {
+    row.get("id") for row in blocker_rows if isinstance(row, dict)
+}
+if "NODE-COMMIT-001" not in blocker_ids:
+    raise SystemExit("release train does not retain the node-commit blocker")
+external_blocker_rows = train.get("external_blockers", [])
+external_blocker_ids = {
+    row.get("id") for row in external_blocker_rows if isinstance(row, dict)
+}
+if "EXT-POWERLOSS-001" not in external_blocker_ids:
+    raise SystemExit("release train does not retain physical power-loss qualification")
+
+if convergence.get("plan_id") != "trnm-chain-development-plan-v2":
+    raise SystemExit("technical convergence plan binding drift")
+for flag in (
+    "production_authority",
+    "production_candidate",
+    "production_consensus_activation",
+    "public_testnet_ready",
+    "release_ready",
+    "all_gaps_closed",
+):
+    if convergence.get(flag) is not False:
+        raise SystemExit(f"unexpected convergence promotion: {flag}")
+runtime_gaps = set(convergence.get("runtime_gaps", {}).get("ids", []))
+if not {"P1-CORE-001", "P2-NODE-001"} <= runtime_gaps:
+    raise SystemExit("technical convergence no longer records finalization host gaps")
+external_gates = {
+    row.get("id"): row
+    for row in convergence.get("external_gate", [])
+    if isinstance(row, dict)
+}
+power_gate = external_gates.get("EXT-POWERLOSS-001")
+if not isinstance(power_gate, dict) or power_gate.get("self_attestation_allowed") is not False:
+    raise SystemExit("physical power-loss gate must remain independently attested")
 PY
 
 python3 - <<'PY'

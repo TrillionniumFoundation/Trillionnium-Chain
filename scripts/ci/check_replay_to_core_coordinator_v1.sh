@@ -9,12 +9,13 @@ package=trnm-poco-node
 binary=trnm-poco-replay-to-core-coordinator-v1
 feature=replay-to-core-coordinator-test-support
 source=trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-replay-to-core-coordinator-v1.rs
-plan=docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
+operations=config/documentation-operations-v1.json
 modules=docs/development/module-registry-v1.toml
 train=docs/development/release-train-v1.toml
+convergence=config/technical-convergence-v1.toml
 workflow=.github/workflows/trnm-replay-to-core-coordinator-v1.yml
 
-for required in "$manifest" "$source" "$plan" "$modules" "$train" "$workflow"; do
+for required in "$manifest" "$source" "$operations" "$modules" "$train" "$convergence" "$workflow"; do
   [[ -f "$required" && ! -L "$required" ]] || {
     printf 'replay-to-Core coordinator gate failed: missing regular input: %s\n' "$required" >&2
     exit 2
@@ -31,13 +32,15 @@ bash scripts/ci/check_payload_replay_recovery_v1.sh
 
 python3 - <<'PY'
 from pathlib import Path
+import json
 import tomllib
 
 source = Path("trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-replay-to-core-coordinator-v1.rs").read_text(encoding="utf-8")
 cargo_manifest = Path("trillionnium/crates/trnm-poco-node/Cargo.toml").read_text(encoding="utf-8")
-plan = Path("docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md").read_text(encoding="utf-8")
+operations = json.loads(Path("config/documentation-operations-v1.json").read_text(encoding="utf-8"))
 modules = tomllib.loads(Path("docs/development/module-registry-v1.toml").read_text(encoding="utf-8"))
 train = tomllib.loads(Path("docs/development/release-train-v1.toml").read_text(encoding="utf-8"))
+convergence = tomllib.loads(Path("config/technical-convergence-v1.toml").read_text(encoding="utf-8"))
 workflow = Path(".github/workflows/trnm-replay-to-core-coordinator-v1.yml").read_text(encoding="utf-8")
 
 for value in {
@@ -82,18 +85,57 @@ for forbidden in (
     if forbidden in source:
         raise SystemExit(f"forbidden replay-to-Core authority claim: {forbidden}")
 
-plan_lower = plan.lower()
-for marker in ("node commit ledger", "crash convergence", "exact source", "production_candidate = false"):
-    if marker not in plan_lower:
-        raise SystemExit(f"canonical plan missing coordinator marker: {marker}")
+if operations.get("schema") != "trnm-documentation-operations-v1":
+    raise SystemExit("documentation operation registry schema drift")
+if operations.get("plan_id") != "trnm-chain-development-plan-v2":
+    raise SystemExit("documentation operation registry plan binding drift")
+if operations.get("production_authority") is not False:
+    raise SystemExit("documentation operation registry must remain non-authoritative")
+operation_rows = operations.get("operations", [])
+operation_ids = {
+    row.get("id") for row in operation_rows if isinstance(row, dict)
+}
+required_operations = {
+    "M02-OP-VOTE-BARRIER",
+    "M04-OP-PERSIST-INGRESS",
+    "M04-OP-ACK-PREPARED",
+    "M08-OP-RECOVER-EXPECTED-LEDGER",
+}
+if not required_operations <= operation_ids:
+    raise SystemExit("operation registry is missing replay-to-Core authority contracts")
 
 module_rows = modules.get("module", modules.get("modules", []))
-ids = {row.get("id") for row in module_rows if isinstance(row, dict)} if isinstance(module_rows, list) else set()
-if not {"M02", "M03", "M08", "M15"} <= ids:
-    raise SystemExit("module registry does not cover Core/Safety/recovery/composition ownership")
+ids = {
+    row.get("id") for row in module_rows if isinstance(row, dict)
+} if isinstance(module_rows, list) else set()
+if not {"M02", "M03", "M04", "M08", "M15"} <= ids:
+    raise SystemExit("module registry does not cover ingress/Core/Safety/recovery/composition ownership")
 
+blocker_rows = train.get("blockers", [])
+blocker_ids = {
+    row.get("id") for row in blocker_rows if isinstance(row, dict)
+}
+if not {"NODE-COMMIT-001", "BUILD-CLOSURE-001", "CORE-LIVE-001"} <= blocker_ids:
+    raise SystemExit("release train does not retain replay-to-Core blockers")
 if "selected_successor" not in repr(train).lower() and "successor" not in repr(train).lower():
     raise SystemExit("release train does not identify the selected successor")
+
+if convergence.get("plan_id") != "trnm-chain-development-plan-v2":
+    raise SystemExit("technical convergence plan binding drift")
+for flag in (
+    "production_authority",
+    "production_candidate",
+    "production_consensus_activation",
+    "public_testnet_ready",
+    "release_ready",
+    "all_gaps_closed",
+):
+    if convergence.get(flag) is not False:
+        raise SystemExit(f"unexpected convergence promotion: {flag}")
+runtime_gaps = set(convergence.get("runtime_gaps", {}).get("ids", []))
+if not {"P1-CORE-001", "P2-NODE-001"} <= runtime_gaps:
+    raise SystemExit("technical convergence no longer records Core/node integration gaps")
+
 for value in (
     "check_canonical_development_plan.sh",
     "check_replay_to_core_coordinator_v1.sh",
