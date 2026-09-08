@@ -1,0 +1,93 @@
+name: ops-integrate-pr91-security-v2
+
+on:
+  push:
+    branches:
+      - ops/publish-gap-closure-v3-20260909
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ops-integrate-pr91-security-v2
+  cancel-in-progress: false
+
+jobs:
+  integrate:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact accepted source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: e4791e31850c7042ceefce78d84f98cdd67352af
+          fetch-depth: 1
+          path: source
+          persist-credentials: false
+
+      - name: Checkout target branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: work/plan-v2-full-gap-closure-20260902
+          fetch-depth: 0
+          path: target
+          persist-credentials: true
+
+      - name: Copy, qualify, and fast-forward security closure
+        shell: bash
+        env:
+          SOURCE_SHA: e4791e31850c7042ceefce78d84f98cdd67352af
+          TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+          EXPECTED_TARGET_SHA: a244bfb21435e085c920096898e44f55976e61b1
+        run: |
+          set -euo pipefail
+          source_dir="$GITHUB_WORKSPACE/source"
+          target_dir="$GITHUB_WORKSPACE/target"
+
+          test "$(git -C "$source_dir" rev-parse HEAD)" = "$SOURCE_SHA"
+          git -C "$target_dir" fetch --no-tags origin "refs/heads/$TARGET_BRANCH"
+          actual_target="$(git -C "$target_dir" rev-parse FETCH_HEAD)"
+          test "$actual_target" = "$EXPECTED_TARGET_SHA"
+          git -C "$target_dir" checkout --detach "$actual_target"
+
+          install -m 0755 "$source_dir/scripts/min_faucet_server.py" \
+            "$target_dir/scripts/min_faucet_server.py"
+          install -m 0755 "$source_dir/scripts/min_faucet_server_test.py" \
+            "$target_dir/scripts/min_faucet_server_test.py"
+          install -m 0755 \
+            "$source_dir/scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py" \
+            "$target_dir/scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py"
+          install -m 0644 \
+            "$source_dir/scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py" \
+            "$target_dir/scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py"
+
+          cd "$target_dir"
+          python3 -m py_compile \
+            scripts/min_faucet_server.py \
+            scripts/min_faucet_server_test.py \
+            scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
+          python3 scripts/min_faucet_server_test.py
+          python3 scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
+          python3 scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            --check-ordinary-advance --self-test-ordinary-advance-mutants
+          python3 scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            --check-trust-path --self-test-trust-path-mutants
+          git diff --check
+
+          git add \
+            scripts/min_faucet_server.py \
+            scripts/min_faucet_server_test.py \
+            scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
+          git diff --cached --quiet && {
+            echo 'source files already integrated; refusing empty publisher commit' >&2
+            exit 3
+          }
+
+          git config user.name "OpenAI GPT-5.6 Pro"
+          git config user.email "noreply@openai.com"
+          git commit -m "security(m14,m17): integrate exactly-once faucet and sealed evidence hardening"
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_TARGET_SHA"
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
