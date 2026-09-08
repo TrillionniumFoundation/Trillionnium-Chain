@@ -1,0 +1,124 @@
+name: temporary-codeql-fixture-security-publisher
+
+on:
+  push:
+    branches:
+      - fix/chain-codeql-fixture-security-20260908
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temporary-codeql-fixture-security-publisher
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.actor == 'ProfHepta' &&
+      github.triggering_actor == github.actor
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      BASE_SHA: 521726e47ce0efad6b732a5fc31afcd2cc52593d
+      TARGET_BRANCH: fix/chain-codeql-fixture-security-20260908
+      PATCH_SHA256: 45d1417cc3db0fdb96927c3492c8b48e82059da4c09f1d397e3d5c6001ee0c29
+      WORKFLOW_PATH: .github/workflows/temporary-codeql-fixture-security-publisher.yml
+    steps:
+      - name: Check out publisher commit without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify immutable bootstrap boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "$BASE_SHA"
+          test "$(git diff --name-only HEAD^ HEAD)" = "$WORKFLOW_PATH"
+          test "$(git status --porcelain --untracked-files=all)" = ""
+
+      - name: Apply exact reviewed patch and validate staged boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          patch="$RUNNER_TEMP/codeql-fixture-security.patch"
+          printf '%s' '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' | base64 --decode | gzip --decompress > "$patch"
+          test "$(sha256sum "$patch" | awk '{print $1}')" = "$PATCH_SHA256"
+          git apply --index --whitespace=error "$patch"
+          git rm "$WORKFLOW_PATH"
+          cat > "$(git rev-parse --git-path PROJECT_TOPIC)" <<EOF
+          project_id=trillionnium-chain
+          topic=codeql-fixture-security
+          base_head=$(git rev-parse HEAD)
+          allowed_file=scripts/min_faucet_server.py
+          allowed_file=scripts/min_faucet_server_test.py
+          allowed_file=scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
+          allowed_file=scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py
+          allowed_file=$WORKFLOW_PATH
+          EOF
+          test "$(git diff --cached --name-only | sort)" = "$(printf '%s\n' \
+            "$WORKFLOW_PATH" \
+            scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            scripts/min_faucet_server.py \
+            scripts/min_faucet_server_test.py \
+            scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py | sort)"
+          bash scripts/project-preflight.sh --staged
+          git diff --cached --check
+
+      - name: Run focused security and semantic regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            scripts/min_faucet_server.py \
+            scripts/min_faucet_server_test.py \
+            scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py \
+            scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py
+          python3 scripts/min_faucet_server_test.py
+          python3 scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
+          python3 scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            --check-ordinary-advance --self-test-ordinary-advance-mutants
+          python3 scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            --check-trust-path --self-test-trust-path-mutants
+
+      - name: Commit reviewed source without temporary publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'Qian QI'
+          git config user.email '102159240+ProfHepta@users.noreply.github.com'
+          git commit -m 'fix(security): harden faucet and anonymous fixture signing'
+          test "$(git diff --name-only "$BASE_SHA"...HEAD | sort)" = "$(printf '%s\n' \
+            scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
+            scripts/min_faucet_server.py \
+            scripts/min_faucet_server_test.py \
+            scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py | sort)"
+          test ! -e "$WORKFLOW_PATH"
+
+      - name: Revalidate canonical repository truth on clean commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_technical_convergence_v1.py
+          python3 scripts/ci/test_technical_convergence_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_required_protocol_contract_v1.py
+          git diff --check
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Push validated commit
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          authorization="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c http.extraheader="AUTHORIZATION: basic $authorization" \
+            push origin "HEAD:refs/heads/$TARGET_BRANCH"
