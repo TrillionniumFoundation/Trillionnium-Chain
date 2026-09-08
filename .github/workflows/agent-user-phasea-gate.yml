@@ -72,6 +72,10 @@ jobs:
       TRNM_CARGO_OFFLINE_POLICY: "required"
       CARGO_NET_OFFLINE: "true"
       CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+      # This job exercises the explicitly non-production local-file/model RPC
+      # harness. Keep the opt-in visible at the workflow boundary so the RPC
+      # binary remains fail-closed everywhere else.
+      TRNM_RPC_DEVELOPMENT_ONLY: "1"
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262

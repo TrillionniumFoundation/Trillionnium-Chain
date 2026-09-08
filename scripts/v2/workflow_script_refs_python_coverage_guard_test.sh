@@ -41,9 +41,15 @@ python3 - <<'PY' "$SUMMARY"
 import json, sys
 with open(sys.argv[1], 'r', encoding='utf-8') as f:
     data = json.load(f)
-if data.get('status') != 'ok':
-    raise SystemExit(f"[FAIL] expected ok status, got: {data}")
+status = data.get('status')
+if status not in {'ok', 'warn'}:
+    raise SystemExit(f"[FAIL] expected non-failing validator status, got: {data}")
+for field in ('missing_count', 'non_exec_count', 'empty_ref_count'):
+    if int(data.get(field, -1)) != 0:
+        raise SystemExit(f"[FAIL] workflow script reference hard problem in {field}: {data}")
+if status == 'warn' and int(data.get('non_dot_script_ref_count', 0)) <= 0:
+    raise SystemExit(f"[FAIL] validator warning is not explained by style-only non-dot refs: {data}")
 if int(data.get('script_ref_count', 0)) < 6:
     raise SystemExit(f"[FAIL] expected python-aware script_ref_count, got: {data}")
-print('[PASS] workflow script ref validator covers python references used by workflows')
+print('[PASS] workflow script ref validator covers python references without hard failures')
 PY
