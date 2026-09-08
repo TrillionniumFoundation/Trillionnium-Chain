@@ -1,0 +1,64 @@
+name: ops-publish-gap-closure-v3
+
+on:
+  push:
+    branches:
+      - ops/publish-gap-closure-v3-20260909
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ops-publish-gap-closure-v3-20260909
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout control payload
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: control
+          persist-credentials: false
+
+      - name: Checkout exact canonical integration branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: work/plan-v2-full-gap-closure-20260902
+          fetch-depth: 0
+          path: target
+          persist-credentials: true
+
+      - name: Verify, apply, and non-force fast-forward the six-commit closure
+        shell: bash
+        env:
+          EXPECTED_BASE: 521726e47ce0efad6b732a5fc31afcd2cc52593d
+          EXPECTED_TREE: 333eaff68fec97866414e66e4b590ecce5318c34
+          PATCH_SHA256: 3a2581aa558ab7467b7d0dcdedf605f1298b33bba032cf444ad447c7fdc5035a
+          TARGET_BRANCH: work/plan-v2-full-gap-closure-20260902
+        run: |
+          set -euo pipefail
+          control="$GITHUB_WORKSPACE/control"
+          target="$GITHUB_WORKSPACE/target"
+          patch="$RUNNER_TEMP/full-gap-closure-v3.patch"
+
+          test "$(git -C "$target" rev-parse HEAD)" = "$EXPECTED_BASE"
+          cat "$control"/ops-payload/full-gap-closure-v3/part-*.b64 \
+            | base64 --decode \
+            | gzip -dc > "$patch"
+          printf '%s  %s\n' "$PATCH_SHA256" "$patch" | sha256sum -c -
+
+          git -C "$target" config user.name "trnm-gap-closure-publisher[bot]"
+          git -C "$target" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$target" am --3way "$patch"
+
+          test "$(git -C "$target" rev-list --count "$EXPECTED_BASE"..HEAD)" = "6"
+          test "$(git -C "$target" rev-parse 'HEAD^{tree}')" = "$EXPECTED_TREE"
+          git -C "$target" diff --check "$EXPECTED_BASE"..HEAD
+
+          git -C "$target" fetch origin "$TARGET_BRANCH"
+          test "$(git -C "$target" rev-parse FETCH_HEAD)" = "$EXPECTED_BASE"
+          git -C "$target" push origin "HEAD:refs/heads/$TARGET_BRANCH"
