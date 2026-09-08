@@ -1,0 +1,48 @@
+name: trnm-codeql-contract-bootstrap
+
+on:
+  push:
+    branches:
+      - security/codeql-default-setup-contract-v1-20260909
+
+permissions:
+  contents: write
+
+jobs:
+  materialize-exact-tree:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact bootstrap commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Materialize and publish byte-exact target tree
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_PARENT_SHA: bbee7c0194e420a36c7747167000450083d5d951
+          EXPECTED_TARGET_TREE: e4c59973db76489aa6f6651238167516bd93e766
+          PAYLOAD_PATH: .trnm-bootstrap/codeql-contract-payload.tar.gz
+          PAYLOAD_SHA256: 25bd24221eeff3af69b3daa92ceabb69b8c04650a2766d693f6429bc87e3b1fb
+          BOOTSTRAP_WORKFLOW: .github/workflows/trnm-codeql-contract-bootstrap.yml
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "${EXPECTED_PARENT_SHA}"
+          printf '%s  %s\n' "${PAYLOAD_SHA256}" "${PAYLOAD_PATH}" | sha256sum -c -
+          tar -xzf "${PAYLOAD_PATH}"
+          rm -f "${PAYLOAD_PATH}" "${BOOTSTRAP_WORKFLOW}"
+          rmdir .trnm-bootstrap
+          git add --all
+          test "$(git write-tree)" = "${EXPECTED_TARGET_TREE}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "security(m17): bind complete CodeQL default setup" \
+            -m "Primary-Module: M17" \
+            -m "Production-Authority: false"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXPECTED_TARGET_TREE}"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "HEAD:refs/heads/${GITHUB_REF_NAME}"
