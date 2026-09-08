@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Apply fixed reviewed patch and validate final tree
+      - name: Apply fixed reviewed patch and validate committed tree
         shell: bash
         run: |
           set -euo pipefail
@@ -55,19 +55,31 @@ jobs:
             '67d4661727fc68653d0d2e0750f5d42412fc7e3f0f9f7c4fa1873b711a511e12' \
             "$patch_file" | sha256sum --check --strict
           git apply --check "$patch_file"
-          git apply --index "$patch_file"
+          git apply "$patch_file"
           rm -f .github/c0-policy.patch.b64.*
           rm -f .github/workflows/trnm-c0-exact-source-export.yml
           git add -A
           git diff --cached --check
+
+          # Pre-commit policy checks intentionally use the worktree view.
           bash scripts/check_ci_runner_policy.sh --worktree
           bash scripts/check_ci_runner_policy_test.sh
           bash scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
-          bash scripts/ci/check_canonical_development_plan.sh
 
           git config user.name 'trnm-c0-reviewed-uploader'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'fix(ci): authorize current code owner and restore exact history'
+
+          # Canonical source checks are deliberately evaluated only after the
+          # exact tree is committed; staged canonical inputs are fail-closed.
+          test "$(git rev-parse 'HEAD^{tree}')" = \
+            '4e2acd60570feb3a187c73fd0e55344d4fbe5e79'
+          bash scripts/check_ci_runner_policy.sh --head
+          bash scripts/check_ci_runner_policy_test.sh
+          bash scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
+          bash scripts/ci/check_canonical_development_plan.sh
+          test -z "$(git status --porcelain)"
+
           git push origin HEAD:refs/heads/tmp/c0-policy-upload-20260908
           {
             echo '## Reviewed C0 tree uploaded'
