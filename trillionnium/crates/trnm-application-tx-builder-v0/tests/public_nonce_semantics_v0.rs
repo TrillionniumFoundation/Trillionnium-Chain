@@ -12,18 +12,10 @@ fn public_nonce_is_retry_stable_and_domain_bound() {
     let next_sequence = derive_command_id_v0("trnm-devnet", "did:trnm:alice", 2, exact_body);
     let other_chain = derive_command_id_v0("trnm-testnet", "did:trnm:alice", 1, exact_body);
     let other_sender = derive_command_id_v0("trnm-devnet", "did:trnm:bob", 1, exact_body);
-    let penultimate_sequence = derive_command_id_v0(
-        "trnm-devnet",
-        "did:trnm:alice",
-        u64::MAX - 1,
-        exact_body,
-    );
-    let largest_sequence = derive_command_id_v0(
-        "trnm-devnet",
-        "did:trnm:alice",
-        u64::MAX,
-        exact_body,
-    );
+    let penultimate_sequence =
+        derive_command_id_v0("trnm-devnet", "did:trnm:alice", u64::MAX - 1, exact_body);
+    let largest_sequence =
+        derive_command_id_v0("trnm-devnet", "did:trnm:alice", u64::MAX, exact_body);
     let other_body =
         br#"{"schema":"trnm.canonical-tx.v1","sender":"did:trnm:alice","memo":"bounded"}"#;
     let rebound_body = derive_command_id_v0("trnm-devnet", "did:trnm:alice", 1, other_body);
