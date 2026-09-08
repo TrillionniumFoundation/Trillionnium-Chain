@@ -77,7 +77,7 @@ jobs:
           cargo +1.95.0 fmt --all -- --check
           cargo +1.95.0 test --locked -p trnm-application-tx-builder-v0
           cargo +1.95.0 clippy --locked -p trnm-application-tx-builder-v0 --all-targets -- -D warnings
-          cargo +1.95.0 test --locked -p trnm-poco-node --test g1_process_host_e2e
+          cargo +1.95.0 test --locked -p trnm-poco-node --features g1-process-test-support --test g1_process_host_e2e
 
       - name: Commit and fast-forward child only
         shell: bash
