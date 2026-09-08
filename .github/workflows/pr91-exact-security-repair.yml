@@ -2,20 +2,18 @@ name: PR91 exact security repair publisher
 
 on:
   push:
-    branches:
-      - fix/chain-codeql-fixture-security-v2-20260908
+    branches: [fix/chain-codeql-fixture-security-v2-20260908]
     paths:
       - '.github/pr91-repair-parts/**'
       - '.github/workflows/pr91-exact-security-repair.yml'
 
 permissions: {}
-
 concurrency:
   group: pr91-exact-security-repair
   cancel-in-progress: false
 
 env:
-  EXPECTED_PARENT_SHA: 82a5bdf00169b49489d4af6069b3c7558df4f9eb
+  EXPECTED_PARENT_SHA: c00aa43e89e5e5de26929eabd2309143b89cf366
   EXPECTED_BRANCH: fix/chain-codeql-fixture-security-v2-20260908
   PATCH_SCRIPT_SHA256: b99a3947140ac7a6321be65e10878a9cefd8e39f26f2180db149cd697896f242
 
@@ -23,140 +21,110 @@ jobs:
   validate:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    permissions:
-      contents: read
+    permissions: {contents: read}
     steps:
-      - name: Check out the exact one-shot source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
-          fetch-depth: 2
+          fetch-depth: 3
           persist-credentials: false
-      - name: Bind one-shot source and parent
+      - name: Bind, reconstruct, and test without write authority
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
-          test "$(git rev-parse HEAD^)" = "${EXPECTED_PARENT_SHA}"
-          test "${GITHUB_REF_NAME}" = "${EXPECTED_BRANCH}"
-          python3 - <<'PY'
-          import subprocess
-          expected = {
-              '.github/pr91-repair-parts/part-00.b64',
-              '.github/pr91-repair-parts/part-01.b64',
-              '.github/pr91-repair-parts/part-02.b64',
-              '.github/pr91-repair-parts/part-03.b64',
-              '.github/pr91-repair-parts/part-04.b64',
-              '.github/pr91-repair-parts/part-05.b64',
-              '.github/pr91-repair-parts/part-06.b64',
-              '.github/pr91-repair-parts/part-07.b64',
-              '.github/workflows/pr91-exact-security-repair.yml',
-          }
-          observed = set(subprocess.check_output(
-              ["git", "diff", "--name-only", "HEAD^", "HEAD"], text=True
-          ).splitlines())
-          if observed != expected:
-              raise SystemExit(f"one-shot source closure differs: {sorted(observed)}")
-          PY
-      - name: Materialize exact reviewed repair
-        shell: bash
-        run: |
-          set -euo pipefail
-          cat .github/pr91-repair-parts/part-*.b64 | base64 --decode | gzip --decompress --stdout > "${RUNNER_TEMP}/apply-pr91-repair.py"
-          echo "${PATCH_SCRIPT_SHA256}  ${RUNNER_TEMP}/apply-pr91-repair.py" | sha256sum --check --strict
-          python3 -I "${RUNNER_TEMP}/apply-pr91-repair.py"
-      - name: Run fail-closed security regressions without write authority
-        shell: bash
-        run: |
-          set -euo pipefail
-          PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/pycache" python3 -m py_compile scripts/min_faucet_server.py scripts/min_faucet_server_test.py scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT_SHA"
+          test "$GITHUB_REF_NAME" = "$EXPECTED_BRANCH"
+          printf '%s\n' \
+            .github/pr91-repair-parts/part-05-00.b64 \
+            .github/pr91-repair-parts/part-05-01.b64 \
+            .github/pr91-repair-parts/part-05-02.b64 \
+            .github/pr91-repair-parts/part-05-03.b64 \
+            .github/pr91-repair-parts/part-05-04.b64 \
+            .github/pr91-repair-parts/part-05-05.b64 \
+            .github/workflows/pr91-exact-security-repair.yml > "$RUNNER_TEMP/expected-head-paths"
+          git diff --name-only HEAD^ HEAD | sort > "$RUNNER_TEMP/observed-head-paths"
+          cmp "$RUNNER_TEMP/expected-head-paths" "$RUNNER_TEMP/observed-head-paths"
+          cat \
+            .github/pr91-repair-parts/part-00.b64 \
+            .github/pr91-repair-parts/part-01.b64 \
+            .github/pr91-repair-parts/part-02.b64 \
+            .github/pr91-repair-parts/part-03.b64 \
+            .github/pr91-repair-parts/part-04.b64 \
+            .github/pr91-repair-parts/part-05-00.b64 \
+            .github/pr91-repair-parts/part-05-01.b64 \
+            .github/pr91-repair-parts/part-05-02.b64 \
+            .github/pr91-repair-parts/part-05-03.b64 \
+            .github/pr91-repair-parts/part-05-04.b64 \
+            .github/pr91-repair-parts/part-05-05.b64 \
+            .github/pr91-repair-parts/part-06.b64 \
+            .github/pr91-repair-parts/part-07.b64 \
+            | base64 --decode | gzip -dc > "$RUNNER_TEMP/apply.py"
+          echo "$PATCH_SCRIPT_SHA256  $RUNNER_TEMP/apply.py" | sha256sum --check --strict
+          python3 -I "$RUNNER_TEMP/apply.py"
+          PYTHONPYCACHEPREFIX="$RUNNER_TEMP/pycache" python3 -m py_compile \
+            scripts/min_faucet_server.py scripts/min_faucet_server_test.py \
+            scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
           python3 scripts/min_faucet_server_test.py
           PYTHONPATH=scripts/poco-fleet python3 - <<'PY'
           import stage0_direct_seven_bundle_v1_test as stage0
           stage0.anonymous_sign_fixture_control()
-          print("stage0_sealed_memfd_control=passed")
+          print('stage0_sealed_memfd_control=passed')
           PY
           git diff --check
-          python3 - <<'PY'
-          import subprocess
-          expected = {
-              '.github/pr91-repair-parts/part-00.b64',
-              '.github/pr91-repair-parts/part-01.b64',
-              '.github/pr91-repair-parts/part-02.b64',
-              '.github/pr91-repair-parts/part-03.b64',
-              '.github/pr91-repair-parts/part-04.b64',
-              '.github/pr91-repair-parts/part-05.b64',
-              '.github/pr91-repair-parts/part-06.b64',
-              '.github/pr91-repair-parts/part-07.b64',
-              '.github/workflows/pr91-exact-security-repair.yml',
-              'scripts/min_faucet_server.py',
-              'scripts/min_faucet_server_test.py',
-              'scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py',
-          }
-          observed = set(subprocess.check_output(
-              ["git", "diff", "--name-only"], text=True
-          ).splitlines())
-          if observed != expected:
-              raise SystemExit(f"changed path closure differs: {sorted(observed)}")
-          PY
+          { git ls-tree -r --name-only HEAD .github/pr91-repair-parts; printf '%s\n' \
+              .github/workflows/pr91-exact-security-repair.yml \
+              scripts/min_faucet_server.py \
+              scripts/min_faucet_server_test.py \
+              scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py; } | sort -u > "$RUNNER_TEMP/expected-diff"
+          git diff --name-only | sort -u > "$RUNNER_TEMP/observed-diff"
+          cmp "$RUNNER_TEMP/expected-diff" "$RUNNER_TEMP/observed-diff"
 
   publish:
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    permissions:
-      contents: write
+    permissions: {contents: write}
     steps:
-      - name: Check out the exact one-shot source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.sha }}
-          fetch-depth: 2
+          fetch-depth: 3
           persist-credentials: false
-      - name: Reconstruct exact repair without executing repository code
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
-          test "$(git rev-parse HEAD^)" = "${EXPECTED_PARENT_SHA}"
-          test "${GITHUB_REF_NAME}" = "${EXPECTED_BRANCH}"
-          cat .github/pr91-repair-parts/part-*.b64 | base64 --decode | gzip --decompress --stdout > "${RUNNER_TEMP}/apply-pr91-repair.py"
-          echo "${PATCH_SCRIPT_SHA256}  ${RUNNER_TEMP}/apply-pr91-repair.py" | sha256sum --check --strict
-          python3 -I "${RUNNER_TEMP}/apply-pr91-repair.py"
-          git diff --check
-          python3 - <<'PY'
-          import subprocess
-          expected = {
-              '.github/pr91-repair-parts/part-00.b64',
-              '.github/pr91-repair-parts/part-01.b64',
-              '.github/pr91-repair-parts/part-02.b64',
-              '.github/pr91-repair-parts/part-03.b64',
-              '.github/pr91-repair-parts/part-04.b64',
-              '.github/pr91-repair-parts/part-05.b64',
-              '.github/pr91-repair-parts/part-06.b64',
-              '.github/pr91-repair-parts/part-07.b64',
-              '.github/workflows/pr91-exact-security-repair.yml',
-              'scripts/min_faucet_server.py',
-              'scripts/min_faucet_server_test.py',
-              'scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py',
-          }
-          observed = set(subprocess.check_output(
-              ["git", "diff", "--name-only"], text=True
-          ).splitlines())
-          if observed != expected:
-              raise SystemExit(f"changed path closure differs: {sorted(observed)}")
-          PY
-      - name: Commit only after remote-head compare-and-swap
+      - name: Publish exact tested transformation
         shell: bash
         env:
           GH_PUSH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          remote_head="$(git ls-remote origin "refs/heads/${EXPECTED_BRANCH}" | awk '{print $1}')"
-          test "$remote_head" = "${GITHUB_SHA}"
-          git config user.name 'trnm-security-repair-bot'
-          git config user.email 'trnm-security-repair-bot@users.noreply.github.com'
-          git add -- .github/pr91-repair-parts .github/workflows/pr91-exact-security-repair.yml scripts/min_faucet_server.py scripts/min_faucet_server_test.py scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT_SHA"
+          test "$GITHUB_REF_NAME" = "$EXPECTED_BRANCH"
+          cat \
+            .github/pr91-repair-parts/part-00.b64 \
+            .github/pr91-repair-parts/part-01.b64 \
+            .github/pr91-repair-parts/part-02.b64 \
+            .github/pr91-repair-parts/part-03.b64 \
+            .github/pr91-repair-parts/part-04.b64 \
+            .github/pr91-repair-parts/part-05-00.b64 \
+            .github/pr91-repair-parts/part-05-01.b64 \
+            .github/pr91-repair-parts/part-05-02.b64 \
+            .github/pr91-repair-parts/part-05-03.b64 \
+            .github/pr91-repair-parts/part-05-04.b64 \
+            .github/pr91-repair-parts/part-05-05.b64 \
+            .github/pr91-repair-parts/part-06.b64 \
+            .github/pr91-repair-parts/part-07.b64 \
+            | base64 --decode | gzip -dc > "$RUNNER_TEMP/apply.py"
+          echo "$PATCH_SCRIPT_SHA256  $RUNNER_TEMP/apply.py" | sha256sum --check --strict
+          python3 -I "$RUNNER_TEMP/apply.py"
+          git diff --check
+          remote_head="$(git ls-remote origin "refs/heads/$EXPECTED_BRANCH" | awk '{print $1}')"
+          test "$remote_head" = "$GITHUB_SHA"
+          git config user.name trnm-security-repair-bot
+          git config user.email trnm-security-repair-bot@users.noreply.github.com
+          git add -- .github/pr91-repair-parts .github/workflows/pr91-exact-security-repair.yml \
+            scripts/min_faucet_server.py scripts/min_faucet_server_test.py \
+            scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py
           git commit -m 'security: fail closed on faucet timeout and memfd sealing'
           git remote set-url origin "https://x-access-token:${GH_PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git push origin "HEAD:${EXPECTED_BRANCH}"
+          git push origin "HEAD:$EXPECTED_BRANCH"
