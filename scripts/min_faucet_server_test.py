@@ -202,6 +202,74 @@ class LedgerTests(unittest.TestCase):
                 with self.assertRaises(faucet.IdempotencyConflict):
                     ledger.admit(request_id, other)
 
+
+    def test_request_identity_never_becomes_a_path_component(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="trnm-faucet-ledger-parent-") as raw:
+            ledger_path = pathlib.Path(raw) / "ledger"
+            ledger_path.mkdir(mode=0o700)
+            request_id = "ef" * 32
+            fingerprint = faucet.request_fingerprint(
+                request_id, "trnm1" + "12" * 20, "3"
+            )
+            with faucet.FaucetLedger(ledger_path) as ledger:
+                ledger.admit(request_id, fingerprint)
+                ledger.finish(request_id, fingerprint, "uncertain", None)
+            self.assertEqual(
+                [path.name for path in ledger_path.iterdir()],
+                [faucet.LEDGER_FILE_NAME],
+            )
+
+    def test_journal_reopen_replays_success_and_hash_chain(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="trnm-faucet-ledger-parent-") as raw:
+            ledger_path = pathlib.Path(raw) / "ledger"
+            ledger_path.mkdir(mode=0o700)
+            request_id = "34" * 32
+            fingerprint = faucet.request_fingerprint(
+                request_id, "trnm1" + "56" * 20, "11"
+            )
+            with faucet.FaucetLedger(ledger_path) as ledger:
+                ledger.admit(request_id, fingerprint)
+                ledger.finish(request_id, fingerprint, "succeeded", {"ok": True})
+            with faucet.FaucetLedger(ledger_path) as reopened:
+                replay = reopened.admit(request_id, fingerprint)
+                self.assertFalse(replay.is_new)
+                self.assertEqual(replay.state, "succeeded")
+                self.assertEqual(replay.response, {"ok": True})
+
+    def test_truncated_or_tampered_journal_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="trnm-faucet-ledger-parent-") as raw:
+            ledger_path = pathlib.Path(raw) / "ledger"
+            ledger_path.mkdir(mode=0o700)
+            request_id = "78" * 32
+            fingerprint = faucet.request_fingerprint(
+                request_id, "trnm1" + "9a" * 20, "13"
+            )
+            with faucet.FaucetLedger(ledger_path) as ledger:
+                ledger.admit(request_id, fingerprint)
+            journal = ledger_path / faucet.LEDGER_FILE_NAME
+            with journal.open("ab") as output:
+                output.write(b"{\"schema\":2")
+                output.flush()
+                os.fsync(output.fileno())
+            with faucet.FaucetLedger(ledger_path) as reopened:
+                with self.assertRaisesRegex(RuntimeError, "truncated tail"):
+                    reopened.admit("bc" * 32, "de" * 32)
+
+    def test_journal_metadata_rejects_aliases_and_loose_mode(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="trnm-faucet-ledger-parent-") as raw:
+            ledger_path = pathlib.Path(raw) / "ledger"
+            ledger_path.mkdir(mode=0o700)
+            journal = ledger_path / faucet.LEDGER_FILE_NAME
+            journal.write_bytes(b"")
+            journal.chmod(0o640)
+            with self.assertRaisesRegex(RuntimeError, "journal metadata"):
+                faucet.FaucetLedger(ledger_path)
+            journal.chmod(0o600)
+            alias = pathlib.Path(raw) / "journal-alias"
+            os.link(journal, alias)
+            with self.assertRaisesRegex(RuntimeError, "journal metadata"):
+                faucet.FaucetLedger(ledger_path)
+
     def test_ledger_requires_exact_private_directory(self) -> None:
         with tempfile.TemporaryDirectory(prefix="trnm-faucet-ledger-parent-") as raw:
             path = pathlib.Path(raw) / "ledger"

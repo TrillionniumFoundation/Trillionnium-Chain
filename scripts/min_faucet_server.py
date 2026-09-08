@@ -9,7 +9,6 @@ import json
 import os
 import pathlib
 import re
-import secrets
 import signal
 import stat
 import subprocess
@@ -29,6 +28,9 @@ MAXIMUM_COMMAND_SECONDS = 60
 MAXIMUM_COMMAND_OUTPUT_BYTES = 1_048_576
 MAXIMUM_EXECUTABLE_BYTES = 536_870_912
 MAXIMUM_LEDGER_RECORD_BYTES = 131_072
+MAXIMUM_LEDGER_BYTES = 67_108_864
+LEDGER_FILE_NAME = "requests-v2.log"
+ZERO_DIGEST = "0" * 64
 MAXIMUM_U128 = (1 << 128) - 1
 TRNM_ADDRESS = re.compile(r"trnm1[0-9a-f]{40}\Z")
 DECIMAL_AMOUNT = re.compile(r"[0-9]{1,39}\Z")
@@ -377,17 +379,63 @@ class FaucetLedger:
         directory = getattr(os, "O_DIRECTORY", None)
         if not isinstance(nofollow, int) or not isinstance(directory, int):
             raise RuntimeError("secure directory descriptor support is required")
-        self._descriptor = os.open(
+        self._directory_descriptor = os.open(
             path,
             os.O_RDONLY | os.O_CLOEXEC | nofollow | directory,
         )
-        metadata = os.fstat(self._descriptor)
-        if not stat.S_ISDIR(metadata.st_mode):
+        self._journal_descriptor = -1
+        try:
+            metadata = os.fstat(self._directory_descriptor)
+            if not stat.S_ISDIR(metadata.st_mode):
+                raise RuntimeError("faucet ledger is not a directory")
+            if metadata.st_uid != os.geteuid() or stat.S_IMODE(metadata.st_mode) != 0o700:
+                raise RuntimeError("faucet ledger must be owned by the service uid with mode 0700")
+            self._journal_descriptor = self._open_journal(nofollow)
+        except BaseException:
             self.close()
-            raise RuntimeError("faucet ledger is not a directory")
-        if metadata.st_uid != os.geteuid() or stat.S_IMODE(metadata.st_mode) != 0o700:
-            self.close()
-            raise RuntimeError("faucet ledger must be owned by the service uid with mode 0700")
+            raise
+
+    def _open_journal(self, nofollow: int) -> int:
+        common = os.O_RDWR | os.O_APPEND | os.O_CLOEXEC | nofollow
+        created = False
+        try:
+            descriptor = os.open(
+                LEDGER_FILE_NAME,
+                common | os.O_CREAT | os.O_EXCL,
+                0o600,
+                dir_fd=self._directory_descriptor,
+            )
+            created = True
+        except FileExistsError:
+            descriptor = os.open(
+                LEDGER_FILE_NAME,
+                common,
+                dir_fd=self._directory_descriptor,
+            )
+        try:
+            if created:
+                os.fchmod(descriptor, 0o600)
+                os.fsync(descriptor)
+                os.fsync(self._directory_descriptor)
+            self._validate_journal_metadata(descriptor)
+        except BaseException:
+            os.close(descriptor)
+            raise
+        return descriptor
+
+    @staticmethod
+    def _validate_journal_metadata(descriptor: int) -> os.stat_result:
+        metadata = os.fstat(descriptor)
+        if (
+            not stat.S_ISREG(metadata.st_mode)
+            or metadata.st_uid != os.geteuid()
+            or stat.S_IMODE(metadata.st_mode) != 0o600
+            or metadata.st_nlink != 1
+            or metadata.st_size < 0
+            or metadata.st_size > MAXIMUM_LEDGER_BYTES
+        ):
+            raise RuntimeError("faucet ledger journal metadata is invalid")
+        return metadata
 
     @classmethod
     def from_environment(cls) -> FaucetLedger:
@@ -403,69 +451,103 @@ class FaucetLedger:
         self.close()
 
     def close(self) -> None:
-        descriptor = getattr(self, "_descriptor", -1)
-        if descriptor >= 0:
-            os.close(descriptor)
-            self._descriptor = -1
+        journal = getattr(self, "_journal_descriptor", -1)
+        if journal >= 0:
+            os.close(journal)
+            self._journal_descriptor = -1
+        directory = getattr(self, "_directory_descriptor", -1)
+        if directory >= 0:
+            os.close(directory)
+            self._directory_descriptor = -1
+
+    @contextlib.contextmanager
+    def _exclusive(self) -> Iterator[None]:
+        if self._journal_descriptor < 0:
+            raise RuntimeError("faucet ledger is closed")
+        fcntl.flock(self._journal_descriptor, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(self._journal_descriptor, fcntl.LOCK_UN)
 
     @staticmethod
-    def _name(request_id: str) -> str:
-        return f"{request_id}.json"
-
-    @staticmethod
-    def _encode(record: dict[str, Any]) -> bytes:
-        return json.dumps(record, sort_keys=True, separators=(",", ":")).encode("utf-8") + b"\n"
-
-    def _write_new(self, name: str, payload: bytes) -> None:
-        descriptor = os.open(
-            name,
-            os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW,
-            0o600,
-            dir_fd=self._descriptor,
-        )
-        try:
-            _write_all(descriptor, payload)
-            os.fsync(descriptor)
-        finally:
-            os.close(descriptor)
-        os.fsync(self._descriptor)
-
-    def _read(self, name: str) -> dict[str, Any]:
-        descriptor = os.open(
-            name,
-            os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW,
-            dir_fd=self._descriptor,
-        )
-        try:
-            metadata = os.fstat(descriptor)
-            if (
-                not stat.S_ISREG(metadata.st_mode)
-                or metadata.st_uid != os.geteuid()
-                or stat.S_IMODE(metadata.st_mode) != 0o600
-                or metadata.st_size <= 0
-                or metadata.st_size > MAXIMUM_LEDGER_RECORD_BYTES
-            ):
-                raise RuntimeError("faucet ledger record metadata is invalid")
-            payload = _read_exact_fd(descriptor, metadata.st_size)
-        finally:
-            os.close(descriptor)
-        try:
-            value = json.loads(payload)
-        except (UnicodeDecodeError, json.JSONDecodeError) as error:
-            raise RuntimeError("faucet ledger record is invalid JSON") from error
-        if not isinstance(value, dict):
-            raise RuntimeError("faucet ledger record must be an object")
+    def _strict_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        value: dict[str, Any] = {}
+        for key, item in pairs:
+            if key in value:
+                raise RuntimeError(f"duplicate faucet ledger member: {key}")
+            value[key] = item
         return value
 
     @staticmethod
-    def _validate_record(record: dict[str, Any], request_id: str, fingerprint: str) -> None:
-        expected_keys = {"schema", "request_id", "fingerprint", "state", "response"}
-        if set(record) != expected_keys or record.get("schema") != 1:
+    def _canonical_json(value: dict[str, Any]) -> bytes:
+        return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+    @classmethod
+    def _record_digest(cls, record_without_digest: dict[str, Any]) -> str:
+        return hashlib.sha256(
+            b"TRNM/FAUCET/LEDGER/V2\0" + cls._canonical_json(record_without_digest)
+        ).hexdigest()
+
+    @classmethod
+    def _seal_record(
+        cls,
+        *,
+        sequence: int,
+        previous_digest: str,
+        request_id: str,
+        fingerprint: str,
+        state: str,
+        response: dict[str, Any] | None,
+    ) -> dict[str, Any]:
+        record: dict[str, Any] = {
+            "schema": 2,
+            "sequence": sequence,
+            "previous_digest": previous_digest,
+            "request_id": request_id,
+            "fingerprint": fingerprint,
+            "state": state,
+            "response": response,
+        }
+        record["record_digest"] = cls._record_digest(record)
+        return record
+
+    @classmethod
+    def _encode(cls, record: dict[str, Any]) -> bytes:
+        payload = cls._canonical_json(record) + b"\n"
+        if len(payload) > MAXIMUM_LEDGER_RECORD_BYTES:
+            raise RuntimeError("faucet ledger record exceeds its bound")
+        return payload
+
+    @classmethod
+    def _validate_record(cls, record: dict[str, Any]) -> None:
+        expected_keys = {
+            "schema",
+            "sequence",
+            "previous_digest",
+            "record_digest",
+            "request_id",
+            "fingerprint",
+            "state",
+            "response",
+        }
+        if set(record) != expected_keys or record.get("schema") != 2:
             raise RuntimeError("faucet ledger record schema drift")
-        if record.get("request_id") != request_id:
-            raise RuntimeError("faucet ledger request identity drift")
-        if record.get("fingerprint") != fingerprint:
-            raise IdempotencyConflict("request_id is already bound to a different request")
+        sequence = record.get("sequence")
+        if not isinstance(sequence, int) or isinstance(sequence, bool) or sequence <= 0:
+            raise RuntimeError("faucet ledger sequence is invalid")
+        request_id = record.get("request_id")
+        fingerprint = record.get("fingerprint")
+        previous_digest = record.get("previous_digest")
+        record_digest = record.get("record_digest")
+        if not isinstance(request_id, str) or REQUEST_ID.fullmatch(request_id) is None:
+            raise RuntimeError("faucet ledger request identity is invalid")
+        if not isinstance(fingerprint, str) or SHA256.fullmatch(fingerprint) is None:
+            raise RuntimeError("faucet ledger fingerprint is invalid")
+        if not isinstance(previous_digest, str) or SHA256.fullmatch(previous_digest) is None:
+            raise RuntimeError("faucet ledger previous digest is invalid")
+        if not isinstance(record_digest, str) or SHA256.fullmatch(record_digest) is None:
+            raise RuntimeError("faucet ledger record digest is invalid")
         if record.get("state") not in {"started", "succeeded", "uncertain"}:
             raise RuntimeError("faucet ledger state is invalid")
         response = record.get("response")
@@ -473,23 +555,109 @@ class FaucetLedger:
             raise RuntimeError("successful faucet ledger record lacks a response")
         if record["state"] != "succeeded" and response is not None:
             raise RuntimeError("non-success faucet ledger record carries a response")
+        unsigned = dict(record)
+        del unsigned["record_digest"]
+        if cls._record_digest(unsigned) != record_digest:
+            raise RuntimeError("faucet ledger record digest mismatch")
+
+    def _read_payload_locked(self) -> bytes:
+        metadata = self._validate_journal_metadata(self._journal_descriptor)
+        if metadata.st_size == 0:
+            return b""
+        chunks: list[bytes] = []
+        offset = 0
+        while offset < metadata.st_size:
+            chunk = os.pread(
+                self._journal_descriptor,
+                min(1_048_576, metadata.st_size - offset),
+                offset,
+            )
+            if not chunk:
+                raise RuntimeError("faucet ledger journal changed during readback")
+            chunks.append(chunk)
+            offset += len(chunk)
+        after = self._validate_journal_metadata(self._journal_descriptor)
+        if after.st_size != metadata.st_size:
+            raise RuntimeError("faucet ledger journal changed during readback")
+        return b"".join(chunks)
+
+    def _load_locked(self) -> tuple[dict[str, dict[str, Any]], int, str]:
+        payload = self._read_payload_locked()
+        if not payload:
+            return {}, 1, ZERO_DIGEST
+        if not payload.endswith(b"\n"):
+            raise RuntimeError("faucet ledger journal has a truncated tail")
+        states: dict[str, dict[str, Any]] = {}
+        previous_digest = ZERO_DIGEST
+        expected_sequence = 1
+        for raw_line in payload.splitlines():
+            if not raw_line or len(raw_line) + 1 > MAXIMUM_LEDGER_RECORD_BYTES:
+                raise RuntimeError("faucet ledger journal contains an invalid frame")
+            try:
+                record = json.loads(raw_line, object_pairs_hook=self._strict_object)
+            except (UnicodeDecodeError, json.JSONDecodeError, RuntimeError) as error:
+                raise RuntimeError("faucet ledger journal contains invalid JSON") from error
+            if not isinstance(record, dict):
+                raise RuntimeError("faucet ledger record must be an object")
+            self._validate_record(record)
+            if self._encode(record) != raw_line + b"\n":
+                raise RuntimeError("faucet ledger record is not canonical")
+            if record["sequence"] != expected_sequence:
+                raise RuntimeError("faucet ledger sequence is not contiguous")
+            if record["previous_digest"] != previous_digest:
+                raise RuntimeError("faucet ledger hash chain is discontinuous")
+            request_id = record["request_id"]
+            current = states.get(request_id)
+            if record["state"] == "started":
+                if current is not None:
+                    raise RuntimeError("faucet ledger repeats a started request")
+            else:
+                if current is None or current["state"] != "started":
+                    raise RuntimeError("faucet ledger terminal transition lacks a start")
+                if current["fingerprint"] != record["fingerprint"]:
+                    raise RuntimeError("faucet ledger fingerprint changed across transition")
+            states[request_id] = record
+            previous_digest = record["record_digest"]
+            expected_sequence += 1
+        return states, expected_sequence, previous_digest
+
+    def _append_locked(self, record: dict[str, Any]) -> None:
+        payload = self._encode(record)
+        metadata = self._validate_journal_metadata(self._journal_descriptor)
+        if metadata.st_size + len(payload) > MAXIMUM_LEDGER_BYTES:
+            raise RuntimeError("faucet ledger journal exceeds its bound")
+        _write_all(self._journal_descriptor, payload)
+        os.fsync(self._journal_descriptor)
+        observed = self._validate_journal_metadata(self._journal_descriptor)
+        if observed.st_size != metadata.st_size + len(payload):
+            raise RuntimeError("faucet ledger append size mismatch")
+
+    @staticmethod
+    def _validate_identity(request_id: str, fingerprint: str) -> None:
+        if REQUEST_ID.fullmatch(request_id) is None:
+            raise RuntimeError("faucet ledger request identity is invalid")
+        if SHA256.fullmatch(fingerprint) is None:
+            raise RuntimeError("faucet ledger fingerprint is invalid")
 
     def admit(self, request_id: str, fingerprint: str) -> LedgerAdmission:
-        name = self._name(request_id)
-        record = {
-            "schema": 1,
-            "request_id": request_id,
-            "fingerprint": fingerprint,
-            "state": "started",
-            "response": None,
-        }
-        try:
-            self._write_new(name, self._encode(record))
+        self._validate_identity(request_id, fingerprint)
+        with self._exclusive():
+            states, sequence, previous_digest = self._load_locked()
+            existing = states.get(request_id)
+            if existing is not None:
+                if existing["fingerprint"] != fingerprint:
+                    raise IdempotencyConflict("request_id is already bound to a different request")
+                return LedgerAdmission(False, existing["state"], existing["response"])
+            record = self._seal_record(
+                sequence=sequence,
+                previous_digest=previous_digest,
+                request_id=request_id,
+                fingerprint=fingerprint,
+                state="started",
+                response=None,
+            )
+            self._append_locked(record)
             return LedgerAdmission(True, "started", None)
-        except FileExistsError:
-            existing = self._read(name)
-            self._validate_record(existing, request_id, fingerprint)
-            return LedgerAdmission(False, existing["state"], existing["response"])
 
     def finish(
         self,
@@ -498,37 +666,29 @@ class FaucetLedger:
         state: str,
         response: dict[str, Any] | None,
     ) -> None:
+        self._validate_identity(request_id, fingerprint)
         if state not in {"succeeded", "uncertain"}:
             raise ValueError("invalid terminal faucet ledger state")
-        current = self._read(self._name(request_id))
-        self._validate_record(current, request_id, fingerprint)
-        if current["state"] != "started":
-            raise RuntimeError("faucet ledger transition is not started-to-terminal")
-        record = {
-            "schema": 1,
-            "request_id": request_id,
-            "fingerprint": fingerprint,
-            "state": state,
-            "response": response if state == "succeeded" else None,
-        }
-        temporary = f".{request_id}.{os.getpid()}.{secrets.token_hex(8)}.tmp"
-        payload = self._encode(record)
-        self._write_new(temporary, payload)
-        try:
-            os.replace(
-                temporary,
-                self._name(request_id),
-                src_dir_fd=self._descriptor,
-                dst_dir_fd=self._descriptor,
+        if state == "succeeded" and not isinstance(response, dict):
+            raise ValueError("successful terminal state requires an object response")
+        if state == "uncertain" and response is not None:
+            raise ValueError("uncertain terminal state cannot carry a response")
+        with self._exclusive():
+            states, sequence, previous_digest = self._load_locked()
+            current = states.get(request_id)
+            if current is None or current["state"] != "started":
+                raise RuntimeError("faucet ledger transition is not started-to-terminal")
+            if current["fingerprint"] != fingerprint:
+                raise IdempotencyConflict("request_id is already bound to a different request")
+            record = self._seal_record(
+                sequence=sequence,
+                previous_digest=previous_digest,
+                request_id=request_id,
+                fingerprint=fingerprint,
+                state=state,
+                response=response if state == "succeeded" else None,
             )
-            os.fsync(self._descriptor)
-        except BaseException:
-            try:
-                os.unlink(temporary, dir_fd=self._descriptor)
-            except FileNotFoundError:
-                pass
-            raise
-
+            self._append_locked(record)
 
 class Handler(BaseHTTPRequestHandler):
     server_version = "trnm-faucet/2"
