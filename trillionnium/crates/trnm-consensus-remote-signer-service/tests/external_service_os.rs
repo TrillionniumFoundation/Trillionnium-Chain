@@ -17,6 +17,9 @@ use std::{
 };
 
 use tempfile::TempDir;
+use trnm_consensus_external_watermark::{
+    run_per_reservation_daemon, ExternalWatermarkSemanticBindingV1,
+};
 use trnm_consensus_remote_signer_service::{
     fixture_request, Fixture, UnixExternalTimeoutAuthorityV1,
 };
@@ -24,6 +27,60 @@ use trnm_consensus_remote_signer_service::{
 const CAPABILITY: [u8; 32] = [0x33; 32];
 const FRAME_OK: u8 = 0;
 const FRAME_REJECT: u8 = 1;
+const AUTHORITY_CHILD_ENV: &str = "TRNM_EXTERNAL_SERVICE_OS_AUTHORITY_CHILD";
+const AUTHORITY_SOCKET_ENV: &str = "TRNM_EXTERNAL_SERVICE_OS_AUTHORITY_SOCKET";
+const AUTHORITY_LOG_ENV: &str = "TRNM_EXTERNAL_SERVICE_OS_AUTHORITY_LOG";
+const AUTHORITY_SCOPE_ENV: &str = "TRNM_EXTERNAL_SERVICE_OS_AUTHORITY_SCOPE";
+const AUTHORITY_JOURNAL_ENV: &str = "TRNM_EXTERNAL_SERVICE_OS_AUTHORITY_JOURNAL";
+const AUTHORITY_CAPABILITY_ENV: &str = "TRNM_EXTERNAL_SERVICE_OS_AUTHORITY_CAPABILITY";
+
+fn authority_command(
+    socket: &Path,
+    log: &Path,
+    binding: trnm_consensus_remote_signer_protocol::RemoteSignerRequestBindingV1,
+) -> Command {
+    let scope = UnixExternalTimeoutAuthorityV1::scope_for_binding(binding);
+    let journal = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding);
+    let mut command = Command::new(
+        env::current_exe().expect("resolve external service OS test executable"),
+    );
+    command
+        .args([
+            "--exact",
+            "external_service_os_authority_child",
+            "--nocapture",
+        ])
+        .env(AUTHORITY_CHILD_ENV, "1")
+        .env(AUTHORITY_SOCKET_ENV, socket)
+        .env(AUTHORITY_LOG_ENV, log)
+        .env(AUTHORITY_SCOPE_ENV, hex32(scope))
+        .env(AUTHORITY_JOURNAL_ENV, hex32(journal))
+        .env(AUTHORITY_CAPABILITY_ENV, hex32(CAPABILITY));
+    command
+}
+
+fn signer_command(
+    socket: &Path,
+    watermark: &Path,
+    authority_socket: &Path,
+    response_log: &Path,
+    capability: [u8; 32],
+) -> Command {
+    let mut command = Command::new(env!("CARGO_BIN_EXE_trnm-remote-signer-p0"));
+    command
+        .arg("serve-external-timeout")
+        .arg("--socket")
+        .arg(socket)
+        .arg("--watermark")
+        .arg(watermark)
+        .arg("--authority-socket")
+        .arg(authority_socket)
+        .arg("--response-log")
+        .arg(response_log)
+        .arg("--capability")
+        .arg(hex32(capability));
+    command
+}
 
 struct Daemons {
     root: TempDir,
@@ -52,44 +109,21 @@ impl Daemons {
         let fixture = Fixture::new();
         let authority_socket = root.join("authority.sock");
         let authority_log = root.join("authority.log");
-        let scope = UnixExternalTimeoutAuthorityV1::scope_for_binding(fixture.binding);
-        let journal = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(fixture.binding);
-        let authority = Command::new(binary("trnm-external-watermark-v0"))
-            .args([
-                "semantic",
-                "--per-reservation",
-                "--socket",
-                authority_socket.to_str().unwrap(),
-                "--log",
-                authority_log.to_str().unwrap(),
-                "--scope",
-                &hex32(scope),
-                "--journal-id",
-                &hex32(journal),
-                "--capability",
-                &hex32(CAPABILITY),
-            ])
+        let authority = authority_command(&authority_socket, &authority_log, fixture.binding)
             .spawn()
-            .expect("spawn semantic authority");
+            .expect("spawn semantic authority child process");
         wait_socket(&authority_socket);
 
         let signer_socket = root.join("signer.sock");
-        let signer = Command::new(binary("trnm-remote-signer-p0"))
-            .args([
-                "serve-external-timeout",
-                "--socket",
-                signer_socket.to_str().unwrap(),
-                "--watermark",
-                root.join("signer.sqlite3").to_str().unwrap(),
-                "--authority-socket",
-                authority_socket.to_str().unwrap(),
-                "--response-log",
-                root.join("responses.log").to_str().unwrap(),
-                "--capability",
-                &hex32(CAPABILITY),
-            ])
-            .spawn()
-            .expect("spawn external timeout signer");
+        let signer = signer_command(
+            &signer_socket,
+            &root.join("signer.sqlite3"),
+            &authority_socket,
+            &root.join("responses.log"),
+            CAPABILITY,
+        )
+        .spawn()
+        .expect("spawn external timeout signer");
         wait_socket(&signer_socket);
         (authority, signer, authority_socket, signer_socket)
     }
@@ -105,19 +139,6 @@ impl Daemons {
         self.authority_socket = authority_socket;
         self.signer_socket = signer_socket;
     }
-}
-
-fn binary(name: &str) -> PathBuf {
-    let variable = if name == "trnm-external-watermark-v0" {
-        "CARGO_BIN_EXE_trnm-external-watermark-v0"
-    } else {
-        "CARGO_BIN_EXE_trnm-remote-signer-p0"
-    };
-    env::var(variable).map(PathBuf::from).unwrap_or_else(|_| {
-        Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../target/debug")
-            .join(name)
-    })
 }
 
 fn wait_socket(path: &Path) {
@@ -159,6 +180,44 @@ fn request(socket: &Path, bytes: &[u8]) -> Vec<u8> {
 
 fn hex32(bytes: [u8; 32]) -> String {
     bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+fn authority_env_path(name: &str) -> PathBuf {
+    env::var_os(name)
+        .map(PathBuf::from)
+        .unwrap_or_else(|| panic!("missing authority child environment variable {name}"))
+}
+
+fn authority_env_hex32(name: &str) -> [u8; 32] {
+    let value = env::var(name)
+        .unwrap_or_else(|_| panic!("missing authority child environment variable {name}"));
+    assert_eq!(value.len(), 64, "{name} must contain exactly 32 bytes");
+    let mut output = [0_u8; 32];
+    for (index, byte) in output.iter_mut().enumerate() {
+        *byte = u8::from_str_radix(&value[index * 2..index * 2 + 2], 16)
+            .unwrap_or_else(|_| panic!("{name} must contain canonical hexadecimal"));
+    }
+    assert_ne!(output, [0_u8; 32], "{name} must not be the zero identifier");
+    output
+}
+
+#[test]
+fn external_service_os_authority_child() {
+    if env::var_os(AUTHORITY_CHILD_ENV).is_none() {
+        return;
+    }
+    let binding = ExternalWatermarkSemanticBindingV1::new(
+        authority_env_hex32(AUTHORITY_SCOPE_ENV),
+        authority_env_hex32(AUTHORITY_JOURNAL_ENV),
+        authority_env_hex32(AUTHORITY_CAPABILITY_ENV),
+    )
+    .expect("authority child semantic binding");
+    run_per_reservation_daemon(
+        authority_env_path(AUTHORITY_SOCKET_ENV),
+        authority_env_path(AUTHORITY_LOG_ENV),
+        binding,
+    )
+    .expect("authority child must fail closed on invalid durable state");
 }
 
 #[test]
@@ -221,47 +280,23 @@ fn external_timeout_service_rejects_unbound_authority_before_socket_ready() {
     let fixture = Fixture::new();
     let authority_socket = root.path().join("authority.sock");
     let authority_log = root.path().join("authority.log");
-    let scope = UnixExternalTimeoutAuthorityV1::scope_for_binding(fixture.binding);
-    let journal = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(fixture.binding);
-    let authority = Command::new(binary("trnm-external-watermark-v0"))
-        .args([
-            "semantic",
-            "--per-reservation",
-            "--socket",
-            authority_socket.to_str().unwrap(),
-            "--log",
-            authority_log.to_str().unwrap(),
-            "--scope",
-            &hex32(scope),
-            "--journal-id",
-            &hex32(journal),
-            "--capability",
-            &hex32(CAPABILITY),
-        ])
+    let authority = authority_command(&authority_socket, &authority_log, fixture.binding)
         .spawn()
-        .expect("spawn startup authority");
+        .expect("spawn startup authority child process");
     let mut authority = authority;
     wait_socket(&authority_socket);
 
     let wrong_capability = [0x44_u8; 32];
-    let wrong_capability_hex = hex32(wrong_capability);
     let wrong_socket = root.path().join("wrong-signer.sock");
-    let mut wrong_signer = Command::new(binary("trnm-remote-signer-p0"))
-        .args([
-            "serve-external-timeout",
-            "--socket",
-            wrong_socket.to_str().unwrap(),
-            "--watermark",
-            root.path().join("wrong.sqlite3").to_str().unwrap(),
-            "--authority-socket",
-            authority_socket.to_str().unwrap(),
-            "--response-log",
-            root.path().join("wrong-responses.log").to_str().unwrap(),
-            "--capability",
-            &wrong_capability_hex,
-        ])
-        .spawn()
-        .expect("spawn wrong-capability signer");
+    let mut wrong_signer = signer_command(
+        &wrong_socket,
+        &root.path().join("wrong.sqlite3"),
+        &authority_socket,
+        &root.path().join("wrong-responses.log"),
+        wrong_capability,
+    )
+    .spawn()
+    .expect("spawn wrong-capability signer");
     let wrong_status = wait_exit(&mut wrong_signer);
     assert!(
         !wrong_status.success(),
@@ -278,25 +313,15 @@ fn external_timeout_service_rejects_unbound_authority_before_socket_ready() {
 
     let unavailable_socket = root.path().join("unavailable-signer.sock");
     let missing_authority = root.path().join("missing-authority.sock");
-    let mut unavailable_signer = Command::new(binary("trnm-remote-signer-p0"))
-        .args([
-            "serve-external-timeout",
-            "--socket",
-            unavailable_socket.to_str().unwrap(),
-            "--watermark",
-            root.path().join("unavailable.sqlite3").to_str().unwrap(),
-            "--authority-socket",
-            missing_authority.to_str().unwrap(),
-            "--response-log",
-            root.path()
-                .join("unavailable-responses.log")
-                .to_str()
-                .unwrap(),
-            "--capability",
-            &hex32(CAPABILITY),
-        ])
-        .spawn()
-        .expect("spawn unavailable-authority signer");
+    let mut unavailable_signer = signer_command(
+        &unavailable_socket,
+        &root.path().join("unavailable.sqlite3"),
+        &missing_authority,
+        &root.path().join("unavailable-responses.log"),
+        CAPABILITY,
+    )
+    .spawn()
+    .expect("spawn unavailable-authority signer");
     let unavailable_status = wait_exit(&mut unavailable_signer);
     assert!(!unavailable_status.success());
     assert!(!unavailable_socket.exists());

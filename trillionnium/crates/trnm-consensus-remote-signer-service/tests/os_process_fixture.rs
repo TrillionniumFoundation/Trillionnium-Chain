@@ -10,10 +10,10 @@
 //! external watermark, HSM, or production consensus-signer evidence.
 
 use std::{
-    env, fs,
+    fs,
     io::{Read, Write},
     os::unix::{fs::FileTypeExt, net::UnixStream},
-    path::{Path, PathBuf},
+    path::Path,
     process::{Child, Command, ExitStatus, Stdio},
     thread,
     time::{Duration, Instant},
@@ -34,24 +34,10 @@ fn service_command(
     generation: u64,
     lease_material: &str,
 ) -> Command {
-    let binary = env::var_os("CARGO_BIN_EXE_trnm_remote_signer_p0")
-        .map(PathBuf::from)
-        .or_else(|| {
-            let test_binary = env::current_exe().ok()?;
-            Some(
-                test_binary
-                    .parent()?
-                    .parent()?
-                    .join("trnm-remote-signer-p0"),
-            )
-        })
-        .expect("resolve trnm-remote-signer-p0 fixture binary");
-    assert!(
-        binary.is_file(),
-        "fixture binary is not built: {} (run cargo build -p trnm-consensus-remote-signer-service --bin trnm-remote-signer-p0)",
-        binary.display()
-    );
-    let mut command = Command::new(binary);
+    // Cargo guarantees this compile-time path for binaries in the package
+    // under test.  Do not fall back to `target/debug`: a developer cache must
+    // never decide whether this process-boundary gate is green.
+    let mut command = Command::new(env!("CARGO_BIN_EXE_trnm-remote-signer-p0"));
     command
         .arg("serve-fixture")
         .arg("--socket")
