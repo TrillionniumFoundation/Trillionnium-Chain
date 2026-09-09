@@ -1,0 +1,215 @@
+name: ops-admit-combined-m17-v2
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-admit-combined-m17-v2.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: write
+  issues: write
+  pull-requests: write
+  security-events: read
+
+concurrency:
+  group: ops-admit-combined-m17-v2-20260909
+  cancel-in-progress: false
+
+jobs:
+  wait-and-admit:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 65
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      PR_NUMBER: '101'
+      REQUIRED_BASE: work/plan-v2-full-gap-closure-20260902
+      MAX_ATTEMPTS: '120'
+      POLL_SECONDS: '30'
+    steps:
+      - name: Freeze exact final M17 tuple
+        id: freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          pr="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
+          test "$(jq -r .state <<<"$pr")" = open
+          test "$(jq -r .draft <<<"$pr")" = true
+          test "$(jq -r .base.ref <<<"$pr")" = "$REQUIRED_BASE"
+          head_sha="$(jq -r .head.sha <<<"$pr")"
+          base_sha="$(jq -r .base.sha <<<"$pr")"
+          test "${#head_sha}" -eq 40
+          test "${#base_sha}" -eq 40
+          {
+            echo "head_sha=$head_sha"
+            echo "base_sha=$base_sha"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Poll immutable tuple for authentic terminal admission
+        id: wait
+        shell: bash
+        env:
+          HEAD_SHA: ${{ steps.freeze.outputs.head_sha }}
+          BASE_SHA: ${{ steps.freeze.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/m17-wait-admission"
+          mkdir -p "$out/snapshots"
+          admitted=false
+          for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
+            pr="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
+            live_head="$(jq -r .head.sha <<<"$pr")"
+            live_base="$(jq -r .base.sha <<<"$pr")"
+            live_base_ref="$(jq -r .base.ref <<<"$pr")"
+            live_state="$(jq -r .state <<<"$pr")"
+            if [ "$live_head" != "$HEAD_SHA" ] || [ "$live_base" != "$BASE_SHA" ] \
+              || [ "$live_base_ref" != "$REQUIRED_BASE" ] || [ "$live_state" != open ]; then
+              printf '{"attempt":%s,"result":"tuple_changed","head":"%s","base":"%s","baseRef":"%s","state":"%s"}\n' \
+                "$attempt" "$live_head" "$live_base" "$live_base_ref" "$live_state" \
+                > "$out/snapshots/$attempt.json"
+              break
+            fi
+
+            python3 - "$out/snapshots/$attempt.json" <<'PY'
+          from __future__ import annotations
+          import json, os, subprocess, sys, urllib.request
+          from collections import defaultdict
+          from datetime import datetime, timezone
+
+          repo=os.environ['REPOSITORY']; n=int(os.environ['PR_NUMBER']); sha=os.environ['HEAD_SHA']
+          token=os.environ['GH_TOKEN']; path=sys.argv[1]
+          headers={'Accept':'application/vnd.github+json','Authorization':f'Bearer {token}',
+                   'X-GitHub-Api-Version':'2022-11-28','User-Agent':'trnm-m17-wait-v2'}
+          def get(url):
+              with urllib.request.urlopen(urllib.request.Request(url,headers=headers),timeout=30) as r:
+                  return json.load(r)
+          base=f'https://api.github.com/repos/{repo}'
+          pr=get(f'{base}/pulls/{n}')
+          checks=get(f'{base}/commits/{sha}/check-runs?filter=latest&per_page=100')['check_runs']
+          reviews=get(f'{base}/pulls/{n}/reviews?per_page=100')
+          commit=get(f'{base}/commits/{sha}')
+          author=pr['user']['login']; pusher=(commit.get('committer') or commit.get('author') or {}).get('login')
+          commit_time=datetime.fromisoformat(commit['commit']['committer']['date'].replace('Z','+00:00'))
+          latest={}
+          for row in sorted(reviews,key=lambda r:(r.get('submitted_at') or '',r['id'])):
+              latest[row['user']['login']]=row
+          approvals=[]; changes=[]
+          for login,row in latest.items():
+              if row.get('state')=='CHANGES_REQUESTED': changes.append(login)
+              stamp=row.get('submitted_at')
+              when=datetime.fromisoformat(stamp.replace('Z','+00:00')) if stamp else datetime.min.replace(tzinfo=timezone.utc)
+              if (row.get('state')=='APPROVED' and login not in {author,pusher}
+                  and row['user'].get('type')!='Bot' and when>=commit_time): approvals.append(login)
+          required={'repository-truth','protocol-contract','rust-baseline','fuzz-smoke',
+                    'external-evidence-contract','Analyze (actions)','Analyze (javascript-typescript)',
+                    'Analyze (python)','Analyze (rust)','CodeQL'}
+          by=defaultdict(list)
+          for row in checks: by[row['name']].append(row)
+          missing=[]
+          for name in sorted(required):
+              rows=sorted(by.get(name,[]),key=lambda r:r['id']); row=rows[-1] if rows else None
+              if row is None or row['status']!='completed' or row.get('conclusion')!='success': missing.append(name)
+          nonterminal=sorted({r['name'] for r in checks if r['status']!='completed'})
+          bad=sorted({r['name'] for r in checks if r['status']=='completed'
+                      and r.get('conclusion') not in {'success','neutral','skipped'}})
+          report={'headSha':sha,'eligibleApprovals':sorted(set(approvals)),'changesRequested':sorted(changes),
+                  'requiredNotSuccessful':missing,'nonterminal':nonterminal,'terminalBad':bad}
+          report['candidate']=len(set(approvals))>=2 and not changes and not missing and not nonterminal and not bad
+          open(path,'w').write(json.dumps(report,sort_keys=True)+'\n')
+          PY
+            candidate="$(jq -r .candidate "$out/snapshots/$attempt.json")"
+            if [ "$candidate" = true ]; then
+              admitted=true
+              printf '%s\n' "$attempt" > "$out/admitted-attempt.txt"
+              break
+            fi
+            sleep "$POLL_SECONDS"
+          done
+          echo "admitted=$admitted" >> "$GITHUB_OUTPUT"
+          printf 'head_sha=%s\nbase_sha=%s\nadmitted=%s\n' "$HEAD_SHA" "$BASE_SHA" "$admitted" \
+            > "$out/binding.env"
+          latest="$(find "$out/snapshots" -type f -name '*.json' | sort -V | tail -1)"
+          [ -n "$latest" ] && cp "$latest" "$out/final-snapshot.json"
+
+      - name: Verify all review threads resolved
+        id: threads
+        if: steps.wait.outputs.admitted == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          query='query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){pullRequest(number:$number){reviewThreads(first:100){nodes{isResolved} pageInfo{hasNextPage}}}}}'
+          payload="$(gh api graphql -f query="$query" -F owner=TrillionniumFoundation \
+            -F name=Trillionnium-Chain -F number="$PR_NUMBER")"
+          next="$(jq -r '.data.repository.pullRequest.reviewThreads.pageInfo.hasNextPage' <<<"$payload")"
+          unresolved="$(jq '[.data.repository.pullRequest.reviewThreads.nodes[]|select(.isResolved==false)]|length' <<<"$payload")"
+          test "$next" = false
+          test "$unresolved" -eq 0
+          echo "resolved=true" >> "$GITHUB_OUTPUT"
+
+      - name: Re-read immutable tuple and merge admitted M17 child
+        id: merge
+        if: steps.wait.outputs.admitted == 'true' && steps.threads.outputs.resolved == 'true'
+        shell: bash
+        env:
+          HEAD_SHA: ${{ steps.freeze.outputs.head_sha }}
+          BASE_SHA: ${{ steps.freeze.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          pr="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
+          test "$(jq -r .state <<<"$pr")" = open
+          test "$(jq -r .head.sha <<<"$pr")" = "$HEAD_SHA"
+          test "$(jq -r .base.sha <<<"$pr")" = "$BASE_SHA"
+          test "$(jq -r .base.ref <<<"$pr")" = "$REQUIRED_BASE"
+          gh pr ready "$PR_NUMBER" --repo "$REPOSITORY"
+          gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash \
+            --match-head-commit "$HEAD_SHA" \
+            --subject 'security(m17): integrate Rust-inclusive CodeQL contract and log redaction' \
+            --body 'Current exact-head checks, current last-push non-author approvals and resolved conversations passed without administrator bypass. External production/readiness gates remain unchanged.'
+          merged="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
+          test "$(jq -r .state <<<"$merged")" = closed
+          test "$(jq -r '.merged_at != null' <<<"$merged")" = true
+          merge_sha="$(jq -r .merge_commit_sha <<<"$merged")"
+          echo "merge_sha=$merge_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Publish terminal outcome and refresh #62 review requests
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/m17-wait-admission"
+          admitted="${{ steps.wait.outputs.admitted }}"
+          merge_sha="${{ steps.merge.outputs.merge_sha }}"
+          summary="$(jq -c . "$out/final-snapshot.json" 2>/dev/null || echo '{}')"
+          gh api "repos/$REPOSITORY/issues/$PR_NUMBER/comments" \
+            -f body="M17 wait/admit terminal outcome: admitted=\`${admitted:-false}\`, merge_sha=\`${merge_sha:-none}\`, frozen head=\`${{ steps.freeze.outputs.head_sha }}\`, final snapshot=\`$summary\`. No active job was restarted and no review/protection/security predicate was bypassed." >/dev/null
+          if [ -n "$merge_sha" ]; then
+            gh api --method POST "repos/$REPOSITORY/pulls/62/requested_reviewers" \
+              --input - >/dev/null <<'JSON'
+          {"reviewers":["Franksudoman","Tomasrgbsf"]}
+          JSON
+            gh api "repos/$REPOSITORY/issues/62/comments" \
+              -f body="Combined M17 child #101 merged at \`$merge_sha\`. The #62 head and prospective merge have changed; all exact-head checks and current non-author approvals must be regenerated. No production/testnet/release or external-evidence flag is promoted." >/dev/null
+          fi
+          (
+            cd "$out"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload complete wait/admission packet
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: m17-wait-admission-${{ github.sha }}
+          path: ${{ runner.temp }}/m17-wait-admission
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Fail closed on timeout or incomplete admission
+        if: steps.merge.outputs.merge_sha == ''
+        shell: bash
+        run: exit 1
