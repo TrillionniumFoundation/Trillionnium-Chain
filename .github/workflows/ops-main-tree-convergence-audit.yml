@@ -1,0 +1,256 @@
+name: ops-main-tree-convergence-audit
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ops-main-tree-convergence-audit-20260909
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CANONICAL_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXPECTED_PARENT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      CARRIER_BRANCH: ops/main-tree-convergence-audit-20260909
+    steps:
+      - name: Check out exact audit carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Bind carrier and immutable canonical source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git show -s --format=%P HEAD)" = "$EXPECTED_PARENT_SHA"
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT_SHA"
+          test "$(git diff --name-only "$EXPECTED_PARENT_SHA" HEAD)" = ".github/workflows/ops-main-tree-convergence-audit.yml"
+          git cat-file -e "$CANONICAL_SHA^{commit}"
+          test "$(git rev-parse "$CANONICAL_SHA^{tree}")" = "c0791ffb57e05fde43f87bfed1a3b4656c09efc0"
+
+      - name: Fetch every live branch without tags or credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --force --no-tags origin '+refs/heads/*:refs/remotes/origin/*'
+          git ls-remote --heads origin | LC_ALL=C sort > "$RUNNER_TEMP/branch-heads.txt"
+          test -s "$RUNNER_TEMP/branch-heads.txt"
+
+      - name: Build deterministic ancestry and unique-content inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          export OUT="$RUNNER_TEMP/main-tree-convergence-audit"
+          mkdir -p "$OUT"
+          cp "$RUNNER_TEMP/branch-heads.txt" "$OUT/branch-heads.txt"
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import csv
+          import hashlib
+          import json
+          import os
+          import subprocess
+          from collections import Counter, defaultdict
+          from pathlib import Path
+
+          canonical = os.environ["CANONICAL_SHA"]
+          carrier_branch = os.environ["CARRIER_BRANCH"]
+          carrier_sha = os.environ["GITHUB_SHA"]
+          out = Path(os.environ["OUT"])
+
+          def git(*args: str, allow_failure: bool = False) -> str:
+              result = subprocess.run(
+                  ["git", *args],
+                  text=True,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.PIPE,
+                  check=False,
+              )
+              if result.returncode and not allow_failure:
+                  raise SystemExit(
+                      f"git {' '.join(args)} failed ({result.returncode}): {result.stderr.strip()}"
+                  )
+              return result.stdout.strip()
+
+          def is_ancestor(left: str, right: str) -> bool:
+              return subprocess.run(
+                  ["git", "merge-base", "--is-ancestor", left, right],
+                  stdout=subprocess.DEVNULL,
+                  stderr=subprocess.DEVNULL,
+                  check=False,
+              ).returncode == 0
+
+          canonical_tree = git("rev-parse", f"{canonical}^{{tree}}")
+          refs_raw = git(
+              "for-each-ref",
+              "--format=%(refname)\t%(objectname)",
+              "refs/remotes/origin/",
+          )
+          refs: list[tuple[str, str]] = []
+          prefix = "refs/remotes/origin/"
+          for line in refs_raw.splitlines():
+              ref, tip = line.split("\t", 1)
+              if not ref.startswith(prefix):
+                  continue
+              name = ref[len(prefix):]
+              if name == "HEAD":
+                  continue
+              refs.append((name, tip))
+          refs.sort()
+
+          records: list[dict[str, object]] = []
+          tip_groups: dict[str, list[str]] = defaultdict(list)
+          tree_groups: dict[str, list[str]] = defaultdict(list)
+
+          for name, tip in refs:
+              tree = git("rev-parse", f"{tip}^{{tree}}")
+              tip_groups[tip].append(name)
+              tree_groups[tree].append(name)
+              tip_is_ancestor = is_ancestor(tip, canonical)
+              canonical_is_ancestor = is_ancestor(canonical, tip)
+              merge_base = git("merge-base", canonical, tip, allow_failure=True)
+
+              if name == "main":
+                  classification = "main"
+              elif name == carrier_branch:
+                  classification = "audit_carrier"
+              elif tip == canonical:
+                  classification = "exact_canonical_commit"
+              elif tree == canonical_tree:
+                  classification = "exact_canonical_tree"
+              elif tip_is_ancestor:
+                  classification = "fully_reachable_from_canonical"
+              elif canonical_is_ancestor:
+                  classification = "descendant_of_canonical"
+              elif merge_base:
+                  classification = "divergent_with_common_history"
+              else:
+                  classification = "unrelated_history"
+
+              ahead = int(git("rev-list", "--count", f"{canonical}..{tip}"))
+              behind = int(git("rev-list", "--count", f"{tip}..{canonical}"))
+              unique_commits = git(
+                  "rev-list",
+                  "--reverse",
+                  "--topo-order",
+                  f"{canonical}..{tip}",
+              ).splitlines()
+              nonmerge_unique = git(
+                  "rev-list",
+                  "--reverse",
+                  "--topo-order",
+                  "--no-merges",
+                  f"{canonical}..{tip}",
+              ).splitlines()
+
+              if merge_base:
+                  changed_raw = git("diff", "--name-only", "--no-renames", f"{canonical}...{tip}")
+              else:
+                  changed_raw = git("ls-tree", "-r", "--name-only", tip)
+              changed_paths = sorted(filter(None, changed_raw.splitlines()))
+
+              records.append(
+                  {
+                      "branch": name,
+                      "tip": tip,
+                      "tree": tree,
+                      "classification": classification,
+                      "mergeBase": merge_base or None,
+                      "tipIsAncestorOfCanonical": tip_is_ancestor,
+                      "canonicalIsAncestorOfTip": canonical_is_ancestor,
+                      "aheadCommits": ahead,
+                      "behindCommits": behind,
+                      "uniqueCommitCount": len(unique_commits),
+                      "uniqueNonMergeCommitCount": len(nonmerge_unique),
+                      "uniqueCommitSampleFirst": unique_commits[:20],
+                      "uniqueCommitSampleLast": unique_commits[-20:] if len(unique_commits) > 20 else [],
+                      "changedPathCount": len(changed_paths),
+                      "changedPathSample": changed_paths[:250],
+                      "changedPathSampleTruncated": len(changed_paths) > 250,
+                  }
+              )
+
+          for record in records:
+              record["branchesSharingTip"] = sorted(tip_groups[str(record["tip"])])
+              record["branchesSharingTree"] = sorted(tree_groups[str(record["tree"])])
+
+          counts = Counter(str(record["classification"]) for record in records)
+          summary = {
+              "schema": "trnm-main-tree-convergence-audit-v1",
+              "repository": "TrillionniumFoundation/Trillionnium-Chain",
+              "canonicalSha": canonical,
+              "canonicalTree": canonical_tree,
+              "carrierSha": carrier_sha,
+              "carrierBranch": carrier_branch,
+              "branchCount": len(records),
+              "classificationCounts": dict(sorted(counts.items())),
+              "distinctTipCount": len(tip_groups),
+              "distinctTreeCount": len(tree_groups),
+              "fullyReachableBranchCount": sum(
+                  1 for r in records if bool(r["tipIsAncestorOfCanonical"])
+              ),
+              "branchesWithUniqueCommits": sum(
+                  1 for r in records if int(r["uniqueCommitCount"]) > 0
+              ),
+              "safeForDeletion": False,
+              "reason": (
+                  "Inventory only. A branch may be deleted only after its unique commits and "
+                  "content receive explicit source-bound disposition and final main is immutable."
+              ),
+          }
+          payload = {"summary": summary, "branches": records}
+          (out / "branch-audit.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+
+          fields = [
+              "branch",
+              "tip",
+              "tree",
+              "classification",
+              "mergeBase",
+              "aheadCommits",
+              "behindCommits",
+              "uniqueCommitCount",
+              "uniqueNonMergeCommitCount",
+              "changedPathCount",
+              "tipIsAncestorOfCanonical",
+              "canonicalIsAncestorOfTip",
+          ]
+          with (out / "branch-audit.tsv").open("w", encoding="utf-8", newline="") as handle:
+              writer = csv.DictWriter(handle, fieldnames=fields, delimiter="\t", extrasaction="ignore")
+              writer.writeheader()
+              writer.writerows(records)
+
+          (out / "summary.json").write_text(
+              json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          print(json.dumps(summary, sort_keys=True))
+          PY
+          (
+            cd "$OUT"
+            sha256sum branch-heads.txt branch-audit.json branch-audit.tsv summary.json \
+              | LC_ALL=C sort > SHA256SUMS
+          )
+          cat "$OUT/summary.json"
+          cat "$OUT/SHA256SUMS"
+
+      - name: Upload immutable audit inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: main-tree-convergence-audit-${{ github.sha }}
+          path: ${{ runner.temp }}/main-tree-convergence-audit
+          if-no-files-found: error
+          retention-days: 7
