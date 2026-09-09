@@ -1,0 +1,45 @@
+name: TRNM one-shot close accidental temporary issue
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+    paths:
+      - .github/workflows/trnm-one-shot-close-accidental-temp-issue.yml
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: evidence/codeql-rust-exact-source-ded43a-20260909
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.BRANCH }}
+          fetch-depth: 0
+      - name: Close only the exact accidental issue
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t issues < <(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search 'in:title "[TEMP DO NOT CREATE]"' --json number,title --jq '.[] | select(.title == "[TEMP DO NOT CREATE]") | .number')
+          if (( ${#issues[@]} != 1 )); then
+            printf 'expected exactly one accidental issue, found %s\n' "${#issues[@]}" >&2
+            exit 2
+          fi
+          gh issue close "${issues[0]}" --repo "$GITHUB_REPOSITORY" --comment 'Closed immediately: this issue was created by an invalid connector capability probe and carries no project status or evidence authority.'
+      - name: Remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/trnm-one-shot-close-accidental-temp-issue.yml
+          git config user.name "Trillionnium Evidence Automation"
+          git config user.email "noreply@trillionnium.invalid"
+          git add -A
+          git commit -m "ops: remove temporary issue cleanup workflow"
+          git push origin "HEAD:$BRANCH"
