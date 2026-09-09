@@ -1,0 +1,251 @@
+name: ops-repository-blocker-qualification
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-repository-blocker-qualification.yml
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: ops-repository-blocker-qualification-20260909
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      PRIMARY_PR: '101'
+      FALLBACK_PR: '62'
+      CARGO_TERM_COLOR: never
+      RUST_BACKTRACE: '1'
+    steps:
+      - name: Resolve exact current candidate
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          primary="$(gh api "repos/$REPOSITORY/pulls/$PRIMARY_PR")"
+          if [ "$(jq -r .state <<<"$primary")" = open ]; then
+            pr="$PRIMARY_PR"
+            sha="$(jq -r .head.sha <<<"$primary")"
+          else
+            fallback="$(gh api "repos/$REPOSITORY/pulls/$FALLBACK_PR")"
+            test "$(jq -r .state <<<"$fallback")" = open
+            pr="$FALLBACK_PR"
+            sha="$(jq -r .head.sha <<<"$fallback")"
+          fi
+          test "${#sha}" -eq 40
+          {
+            echo "pr=$pr"
+            echo "sha=$sha"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.source.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install pinned toolchain and bind source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ steps.source.outputs.sha }}"
+          rustup show active-toolchain
+          rustc --version --verbose
+          cargo --version --verbose
+          python3 --version
+
+      - name: Run repository and architecture contracts independently
+        id: contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/repository-blocker-qualification"
+          mkdir -p "$out/logs"
+          printf 'source_sha=%s\nstarted_utc=%s\n' \
+            "${{ steps.source.outputs.sha }}" "$(date -u +%FT%TZ)" > "$out/binding.env"
+          cat > "$out/commands.txt" <<'CMDS'
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_build_closures_v1.py
+          python3 scripts/ci/check_candidate_runtime_closure_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_task_archive_closure_v1.py
+          python3 scripts/ci/check_technical_convergence_v1.py
+          python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_required_protocol_contract_v1.py
+          bash scripts/project-preflight.sh --audit
+          CMDS
+          status=0
+          index=0
+          while IFS= read -r command; do
+            [ -n "$command" ] || continue
+            index=$((index + 1))
+            name="$(printf '%03d_%s' "$index" "$command" | tr -c 'A-Za-z0-9_.-' '_')"
+            start="$(date -u +%FT%TZ)"
+            set +e
+            bash -lc "$command" >"$out/logs/$name.log" 2>&1
+            rc=$?
+            set -e
+            end="$(date -u +%FT%TZ)"
+            printf '%s\t%s\t%s\t%s\n' "$command" "$rc" "$start" "$end" \
+              >> "$out/contract-results.tsv"
+            if [ "$rc" -ne 0 ]; then status=1; fi
+          done < "$out/commands.txt"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
+
+      - name: Compile, test and lint production-boundary packages
+        id: rust
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/repository-blocker-qualification"
+          mkdir -p "$out/logs"
+          packages=(
+            trnm-poco-node-authority
+            trnm-poco-node-host
+            trnm-poco-node-io
+            trnm-poco-node-production-v0
+            trnm-node-boundary-v0
+            trnm-durable-file-adapters-v0
+            trnm-tx-lifecycle-v0
+            trnm-state-sync-v0
+            trnm-migration-v0
+            trnm-control-plane-v0
+            trnm-production-adapter-conformance-v0
+            trnm-release-bundle-v0
+          )
+          status=0
+          for package in "${packages[@]}"; do
+            manifest="trillionnium/Cargo.toml"
+            if ! cargo metadata --manifest-path "$manifest" --no-deps --format-version 1 \
+              | jq -e --arg package "$package" '.packages[] | select(.name == $package)' >/dev/null; then
+              printf '%s\tmissing\n' "$package" >> "$out/package-results.tsv"
+              status=1
+              continue
+            fi
+            for phase in check test clippy; do
+              log="$out/logs/${package}_${phase}.log"
+              start="$(date -u +%FT%TZ)"
+              set +e
+              case "$phase" in
+                check)
+                  timeout --signal=TERM --kill-after=30s 1200 \
+                    cargo check --manifest-path "$manifest" --locked -p "$package" --all-targets \
+                    >"$log" 2>&1
+                  ;;
+                test)
+                  timeout --signal=TERM --kill-after=30s 1800 \
+                    cargo test --manifest-path "$manifest" --locked -p "$package" --all-targets \
+                    >"$log" 2>&1
+                  ;;
+                clippy)
+                  timeout --signal=TERM --kill-after=30s 1800 \
+                    cargo clippy --manifest-path "$manifest" --locked -p "$package" --all-targets \
+                    -- -D warnings >"$log" 2>&1
+                  ;;
+              esac
+              rc=$?
+              set -e
+              end="$(date -u +%FT%TZ)"
+              printf '%s\t%s\t%s\t%s\t%s\n' "$package" "$phase" "$rc" "$start" "$end" \
+                >> "$out/package-results.tsv"
+              if [ "$rc" -ne 0 ]; then status=1; fi
+            done
+          done
+          set +e
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check \
+            > "$out/logs/workspace_fmt.log" 2>&1
+          fmt_rc=$?
+          set -e
+          printf 'workspace\tfmt\t%s\t%s\t%s\n' "$fmt_rc" "$(date -u +%FT%TZ)" "$(date -u +%FT%TZ)" \
+            >> "$out/package-results.tsv"
+          if [ "$fmt_rc" -ne 0 ]; then status=1; fi
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
+
+      - name: Seal exact qualification result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/repository-blocker-qualification"
+          printf 'finished_utc=%s\ncontracts_outcome=%s\nrust_outcome=%s\n' \
+            "$(date -u +%FT%TZ)" "${{ steps.contracts.outcome }}" "${{ steps.rust.outcome }}" \
+            >> "$out/binding.env"
+          python3 - "$out" <<'PY'
+          import csv, json, sys
+          from pathlib import Path
+          out = Path(sys.argv[1])
+          def rows(name, fields):
+              path = out / name
+              if not path.exists(): return []
+              result=[]
+              with path.open() as handle:
+                  for row in csv.reader(handle, delimiter='\t'):
+                      result.append(dict(zip(fields, row)))
+              return result
+          contracts=rows('contract-results.tsv',['command','returnCode','startedUtc','finishedUtc'])
+          packages=rows('package-results.tsv',['package','phase','returnCode','startedUtc','finishedUtc'])
+          failed_contracts=[r for r in contracts if r.get('returnCode') != '0']
+          failed_packages=[r for r in packages if r.get('returnCode') not in {'0',None}]
+          summary={
+              'schema':'trnm-repository-blocker-qualification-v1',
+              'sourceSha':'${{ steps.source.outputs.sha }}',
+              'contractCommandCount':len(contracts),
+              'contractFailureCount':len(failed_contracts),
+              'failedContracts':failed_contracts,
+              'packagePhaseCount':len(packages),
+              'packageFailureCount':len(failed_packages),
+              'failedPackagePhases':failed_packages,
+              'repositoryQualificationPassed':not failed_contracts and not failed_packages,
+              'externalAcceptanceClaimed':False,
+          }
+          (out/'summary.json').write_text(json.dumps(summary,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(summary,sort_keys=True))
+          PY
+          (
+            cd "$out"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Publish exact repository qualification result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/repository-blocker-qualification"
+          summary="$(jq -c . "$out/summary.json" 2>/dev/null || echo '{}')"
+          manifest="$(sha256sum "$out/SHA256SUMS" 2>/dev/null | awk '{print $1}' || true)"
+          gh api "repos/$REPOSITORY/issues/${{ steps.source.outputs.pr }}/comments" \
+            -f body="Repository-owned blocker qualification on exact source \`${{ steps.source.outputs.sha }}\`: \`$summary\`; evidence-manifest digest=\`${manifest:-unavailable}\`. Passing proves only repository contracts/package behavior on this runner. It does not supply independent review, live protection, HSM/anchor, multi-host, physical-power, audit/red-team, soak or governance authority." >/dev/null
+
+      - name: Upload complete qualification packet
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: repository-blocker-qualification-${{ github.sha }}
+          path: ${{ runner.temp }}/repository-blocker-qualification
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Fail closed on any repository defect
+        if: always()
+        shell: bash
+        run: |
+          test "${{ steps.contracts.outcome }}" = success
+          test "${{ steps.rust.outcome }}" = success
