@@ -97,8 +97,8 @@ jobs:
             = "$(jq -r '.inputs.generator_source_sha256' "${manifest}")"
           test "$(sha256sum docs/evidence/security/codeql/ded43a/manual-semantic-review-v1.json | cut -d' ' -f1)" \
             = "$(jq -r '.inputs.manual_semantic_review_sha256' "${manifest}")"
-          test "$(sha256sum .github/workflows/trnm-codeql-disposition-ded43a-v1.yml | cut -d' ' -f1)" \
-            = "$(jq -r '.inputs.workflow_source_sha256' "${manifest}")"
+          test "$(git hash-object .github/workflows/trnm-codeql-disposition-ded43a-v1.yml)" \
+            = "$(jq -r '.inputs.workflow_git_blob' "${manifest}")"
 
       - name: Generate all dispositions and run false-pass mutants
         shell: bash
