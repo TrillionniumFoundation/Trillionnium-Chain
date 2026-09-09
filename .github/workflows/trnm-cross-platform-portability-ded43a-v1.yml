@@ -1,0 +1,203 @@
+name: TRNM exact-source cross-platform portability ded43a v1
+
+on:
+  push:
+    branches:
+      - evidence/cross-platform-portability-ded43a-v1-20260909
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-cross-platform-portability-ded43a-v1
+  cancel-in-progress: false
+
+jobs:
+  portability:
+    name: ${{ matrix.os }} protocol/core/node-boundary qualification
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14, windows-2022]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    env:
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      CARGO_TERM_COLOR: never
+      CARGO_INCREMENTAL: "0"
+      RUST_BACKTRACE: "1"
+    steps:
+      - name: Check out exact immutable subject
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          rustc +1.95.0 -Vv
+          cargo +1.95.0 -V
+
+      - name: Resolve exact Cargo graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/trnm-portability"
+          cargo +1.95.0 metadata \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            --format-version 1 \
+            > "${RUNNER_TEMP}/trnm-portability/cargo-metadata.json"
+
+      - name: Check portable protocol, consensus and state foundations
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 check \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            --all-targets \
+            -p trnm-consensus-types \
+            -p trnm-consensus-crypto \
+            -p trnm-consensus-core \
+            -p trnm-consensus-safety-rules \
+            -p trnm-consensus-safety-store \
+            -p trnm-consensus-signer-journal \
+            -p trnm-mempool \
+            -p trnm-native-application \
+            -p trnm-native-application-sqlite \
+            -p trnm-native-execution-v0 \
+            -p trnm-state-sync-v0 \
+            -p trnm-node-boundary-v0 \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/foundation-check.log"
+
+      - name: Check candidate I/O, authority, host and production composition boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 check \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            --all-targets \
+            -p trnm-poco-node-io \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host \
+            -p trnm-poco-node-production-v0 \
+            -p trnm-tx-lifecycle-v0 \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/node-boundary-check.log"
+
+      - name: Run platform-neutral library regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          export RUST_TEST_THREADS=1
+          cargo +1.95.0 test \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            -p trnm-consensus-types --lib \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/consensus-types-test.log"
+          cargo +1.95.0 test \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            -p trnm-consensus-crypto --lib \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/consensus-crypto-test.log"
+          cargo +1.95.0 test \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            -p trnm-consensus-core --lib \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/consensus-core-test.log"
+          cargo +1.95.0 test \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            -p trnm-mempool --lib \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/mempool-test.log"
+          cargo +1.95.0 test \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            -p trnm-native-application --lib \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/native-application-test.log"
+          cargo +1.95.0 test \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            -p trnm-state-sync-v0 --lib \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/state-sync-test.log"
+
+      - name: Strict Clippy on portable authority boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 clippy \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            --all-targets \
+            -p trnm-consensus-types \
+            -p trnm-consensus-crypto \
+            -p trnm-consensus-core \
+            -p trnm-mempool \
+            -p trnm-native-application \
+            -p trnm-state-sync-v0 \
+            -p trnm-node-boundary-v0 \
+            -- -D warnings \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-portability/clippy.log"
+
+      - name: Write exact-source evidence manifest
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-portability"
+          mkdir -p "${root}"
+          cat > "${root}/manifest.json" <<EOF
+          {
+            "schema": "trnm-cross-platform-portability-evidence-v1",
+            "repository": "${GITHUB_REPOSITORY}",
+            "workflow_source_sha": "${GITHUB_SHA}",
+            "subject_sha": "${SUBJECT_SHA}",
+            "subject_tree": "${SUBJECT_TREE}",
+            "runner_os": "${RUNNER_OS}",
+            "runner_arch": "${RUNNER_ARCH}",
+            "workflow_run_id": "${GITHUB_RUN_ID}",
+            "production_cross_platform_io_accepted": false,
+            "independent_lan_wan_campaign_accepted": false,
+            "production_candidate": false,
+            "release_ready": false
+          }
+          EOF
+          (
+            cd "${root}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload platform evidence including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-cross-platform-${{ matrix.os }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-portability/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Verify no source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
