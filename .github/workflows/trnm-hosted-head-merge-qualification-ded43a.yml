@@ -1,0 +1,217 @@
+name: TRNM hosted exact head and merge qualification ded43a
+
+on:
+  push:
+    branches:
+      - evidence/hosted-qualification-ded43a-20260909
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: trnm-hosted-head-merge-qualification-ded43a
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    name: hosted qualification (${{ matrix.label }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: exact-head
+            sha: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+            tree: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+          - label: prospective-merge
+            sha: 6a46d99fcdf916a3f36a7261665e9ce05badbc34
+            tree: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+    env:
+      RUST_TOOLCHAIN: 1.95.0
+      RUST_MIN_STACK: "67108864"
+      RUST_TEST_THREADS: "1"
+      TOKIO_WORKER_THREADS: "1"
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      CARGO_NET_RETRY: "5"
+      CARGO_HTTP_TIMEOUT: "120"
+      PYTHONHASHSEED: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Retain carrier identity
+        shell: bash
+        run: printf '%s\n' "${GITHUB_SHA}" > "${RUNNER_TEMP}/carrier-sha"
+
+      - name: Check out exact object
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ matrix.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source tuple
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ matrix.sha }}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${{ matrix.tree }}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install pinned host prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends jq protobuf-compiler shellcheck sqlite3
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
+          rustc +"${RUST_TOOLCHAIN}" -Vv
+          cargo +"${RUST_TOOLCHAIN}" -V
+          node --version
+          npm --version
+          protoc --version
+
+      - name: Validate repository and canonical plan truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_plan_manifest_pins_v1.py
+          python3 scripts/ci/check_documentation_contracts_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/check_technical_convergence_v1.py
+          python3 scripts/ci/check_candidate_runtime_closure_v1.py
+          python3 scripts/ci/check_task_archive_closure_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_poco_bft_mainline_truth.sh
+
+      - name: Validate protocol schemas vectors and formal obligations
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_poco_bft_v0_ci_truth.sh
+          bash scripts/ci/check_poco_bft_v0_proto.sh
+          bash scripts/ci/check_poco_bft_v0_registry.sh
+          bash scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+          bash scripts/ci/check_poco_bft_v0_wire_vectors.py 2>/dev/null || python3 scripts/ci/check_poco_bft_v0_wire_vectors.py
+          bash scripts/ci/check_poco_bft_v0_formal.sh
+
+      - name: Validate replay recovery and runtime boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_payload_replay_recovery_v1.sh
+          bash scripts/ci/check_replay_to_core_coordinator_v1.sh
+          bash scripts/ci/check_trnm_native_application_boundary.sh
+          bash scripts/ci/check_trnm_native_application_sqlite_boundary.sh
+          bash scripts/ci/check_trnm_native_execution_v0_boundary.sh
+          bash scripts/ci/check_finalization_intent_process_matrix_v1.sh
+
+      - name: Rust format
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +"${RUST_TOOLCHAIN}" fmt --all -- --check
+
+      - name: Compile all active workspace targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +"${RUST_TOOLCHAIN}" test --workspace --all-targets --locked --no-run
+
+      - name: Test complete workspace serially with enlarged stack
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +"${RUST_TOOLCHAIN}" test --workspace --locked -- --test-threads=1
+
+      - name: Strict workspace Clippy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +"${RUST_TOOLCHAIN}" clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: Re-run affected security boundary packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +"${RUST_TOOLCHAIN}" test \
+            -p trnm-consensus-app \
+            -p trnm-node \
+            -p trnm-poco-node \
+            -p trnm-rpc \
+            --locked -- --test-threads=1
+
+      - name: Retain exact-object evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/qualification-${{ matrix.label }}"
+          mkdir -p "${out}"
+          cp "${RUNNER_TEMP}/carrier-sha" "${out}/carrier-sha.txt"
+          printf '%s\n' "${{ matrix.sha }}" > "${out}/source-sha.txt"
+          printf '%s\n' "${{ matrix.tree }}" > "${out}/source-tree.txt"
+          printf '%s\n' "${GITHUB_RUN_ID}" > "${out}/workflow-run-id.txt"
+          printf '%s\n' "${GITHUB_RUN_ATTEMPT}" > "${out}/workflow-run-attempt.txt"
+          rustc +"${RUST_TOOLCHAIN}" -Vv > "${out}/rustc-version.txt" 2>&1 || true
+          cargo +"${RUST_TOOLCHAIN}" -V > "${out}/cargo-version.txt" 2>&1 || true
+          git status --porcelain=v1 > "${out}/git-status.txt"
+          (
+            cd "${out}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload hosted qualification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-hosted-qualification-${{ matrix.label }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/qualification-${{ matrix.label }}/**
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish successful qualification summary
+        if: ${{ success() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "${RUNNER_TEMP}/summary.md" <<EOF
+          <!-- trnm-hosted-qualification-${{ matrix.label }}-ded43a -->
+          ## Hosted exact-object qualification: ${{ matrix.label }}
+
+          - source: \`${{ matrix.sha }}\`
+          - tree: \`${{ matrix.tree }}\`
+          - workflow run: \`${GITHUB_RUN_ID}\`
+          - Rust: \`${RUST_TOOLCHAIN}\`
+          - workspace tests: serial, enlarged stack
+          - workspace Clippy: \`-D warnings\`
+          - protocol/schema/formal/replay/recovery gates: passed in this job
+
+          This closes only repository-controlled hosted qualification for this exact object. It does not substitute for x230 hardware evidence, independent review, multi-host/HSM/power-loss/audit/soak evidence, or release activation.
+          EOF
+          jq -n --rawfile body "${RUNNER_TEMP}/summary.md" '{body:$body}' \
+            | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/101/comments" --input -
+
+      - name: Require exact object to remain unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ matrix.sha }}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${{ matrix.tree }}"
+          git diff --quiet
+          git diff --cached --quiet
