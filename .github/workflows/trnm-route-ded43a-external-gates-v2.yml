@@ -1,0 +1,62 @@
+name: TRNM route DED43A external gate packet v2
+
+on:
+  push:
+    branches:
+      - evidence/external-gates-ded43a-v2-20260909
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  route:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      SUBJECT_MERGE: 6a46d99fcdf916a3f36a7261665e9ce05badbc34
+    steps:
+      - name: Route exact-source handoff to unique titled gate issues
+        shell: bash
+        run: |
+          set -euo pipefail
+          gates=(
+            EXT-REVIEW-001
+            EXT-G1-CAMPAIGN-001
+            EXT-ANCHOR-HSM-001
+            EXT-POWERLOSS-001
+            EXT-AUDIT-001
+            EXT-SOAK-ACTIVATION-001
+          )
+          for gate in "${gates[@]}"; do
+            response="$(gh api search/issues -f q="repo:${GITHUB_REPOSITORY} is:issue is:open in:title ${gate}" -f per_page=100)"
+            mapfile -t numbers < <(
+              jq -r --arg gate "${gate}" \
+                '.items[] | select(.title | startswith("[" + $gate + "]")) | .number' \
+                <<<"${response}"
+            )
+            if [[ "${#numbers[@]}" -ne 1 ]]; then
+              echo "expected one open issue whose title starts with [${gate}]; found ${#numbers[@]}" >&2
+              jq -r '.items[] | [.number,.title] | @tsv' <<<"${response}" >&2
+              exit 1
+            fi
+            issue="${numbers[0]}"
+            cat > "${RUNNER_TEMP}/${gate}.md" <<EOF
+          <!-- trnm-external-gate-packet-ded43a-v2-${gate} -->
+          ## ${gate} exact-source execution handoff
+
+          - source: \`${SUBJECT_SHA}\`
+          - tree: \`${SUBJECT_TREE}\`
+          - prospective merge: \`${SUBJECT_MERGE}\`
+          - candidate PR: #101
+          - execution contract: \`docs/evidence/external/EXTERNAL_EVIDENCE_CONTRACT_V1.schema.json\`
+          - submission destination: \`docs/evidence/external/submissions/\`
+
+          Execute only against this unchanged tuple and submit authentic \`trnm-external-evidence-v1\` with complete raw-artifact hashes, real UTC wall-clock interval, producer/reviewer independence domains, and both signatures over one canonical digest. This routing record is not evidence acceptance and leaves the gate open. Production/testnet/release/activation remain false.
+          EOF
+            jq -n --rawfile body "${RUNNER_TEMP}/${gate}.md" '{body:$body}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+          done
