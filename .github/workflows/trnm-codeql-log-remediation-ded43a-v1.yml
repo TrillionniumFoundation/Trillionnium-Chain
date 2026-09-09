@@ -1,0 +1,442 @@
+name: TRNM tested CodeQL production-log remediation ded43a v1
+
+on:
+  push:
+    branches:
+      - automation/codeql-log-remediation-ded43a-v1-20260909
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: trnm-codeql-log-remediation-ded43a-v1
+  cancel-in-progress: false
+
+jobs:
+  remediate:
+    name: Derive, test and publish bounded diagnostic remediation
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.actor == github.triggering_actor &&
+      (github.actor == 'ProfHepta' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfAlexQI')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      DISPOSITION_BRANCH: evidence/codeql-triage-ded43a-v4-20260909
+      DISPOSITION_WORKFLOW: TRNM exact-source Rust CodeQL fingerprint disposition ded43a v4
+      OUTPUT_BRANCH: security/codeql-production-log-redaction-ded43a-v2-20260909
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      RUST_TEST_THREADS: "1"
+      RUST_MIN_STACK: "33554432"
+    steps:
+      - name: Check out exact immutable subject without persisted credential
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Locate terminal disposition producer and verify classification step
+        id: producer
+        shell: bash
+        run: |
+          set -euo pipefail
+          encoded_branch="$(python3 - <<'PY'
+          import os, urllib.parse
+          print(urllib.parse.quote(os.environ['DISPOSITION_BRANCH'], safe=''))
+          PY
+          )"
+          runs="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs?branch=${encoded_branch}&event=push&per_page=100")"
+          run_id="$(jq -r --arg name "${DISPOSITION_WORKFLOW}" '[.workflow_runs[] | select(.name == $name)] | sort_by(.created_at, .id) | reverse | .[0].id // empty' <<<"${runs}")"
+          test -n "${run_id}"
+          run="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}")"
+          test "$(jq -r '.status' <<<"${run}")" = completed
+          jobs="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/jobs?per_page=100")"
+          classify="$(jq -r '[.jobs[].steps[]? | select(.name == "Produce complete per-fingerprint disposition candidate")] | length' <<<"${jobs}")"
+          upload="$(jq -r '[.jobs[].steps[]? | select(.name == "Upload immutable complete disposition evidence" and .conclusion == "success")] | length' <<<"${jobs}")"
+          classify_success="$(jq -r '[.jobs[].steps[]? | select(.name == "Produce complete per-fingerprint disposition candidate" and .conclusion == "success")] | length' <<<"${jobs}")"
+          test "${classify}" = 1
+          test "${classify_success}" = 1
+          test "${upload}" = 1
+          artifact="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/artifacts?per_page=100")"
+          artifact_name="$(jq -r '[.artifacts[] | select(.expired == false and (.name | startswith("trnm-codeql-fingerprint-disposition-ded43a-v4-")))] | if length == 1 then .[0].name else empty end' <<<"${artifact}")"
+          artifact_digest="$(jq -r --arg name "${artifact_name}" '.artifacts[] | select(.name == $name) | .digest' <<<"${artifact}")"
+          test -n "${artifact_name}"
+          test -n "${artifact_digest}"
+          echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
+          echo "artifact_name=${artifact_name}" >> "${GITHUB_OUTPUT}"
+          echo "artifact_digest=${artifact_digest}" >> "${GITHUB_OUTPUT}"
+
+      - name: Download and verify complete disposition artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/disposition"
+          mkdir -p "${root}"
+          gh run download "${{ steps.producer.outputs.run_id }}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --name "${{ steps.producer.outputs.artifact_name }}" \
+            --dir "${root}"
+          disposition="$(find "${root}" -type f -name dispositions.json -print -quit)"
+          actionable="$(find "${root}" -type f -name actionable-review.json -print -quit)"
+          sums="$(find "${root}" -type f -name SHA256SUMS -print -quit)"
+          test -s "${disposition}"
+          test -s "${actionable}"
+          test -s "${sums}"
+          test "$(jq -r '.source_sha' "${disposition}")" = "${SUBJECT_SHA}"
+          test "$(jq -r '.source_tree' "${disposition}")" = "${SUBJECT_TREE}"
+          test "$(jq -r '.complete_result_count' "${disposition}")" = 703
+          test "$(jq -r '.unique_fingerprint_count' "${disposition}")" = 703
+          printf '%s\n' "${disposition}" > "${RUNNER_TEMP}/dispositions-path"
+          printf '%s\n' "${actionable}" > "${RUNNER_TEMP}/actionable-path"
+
+      - name: Derive minimal direct-sink redactions only
+        id: derive
+        shell: bash
+        run: |
+          set -euo pipefail
+          actionable="$(cat "${RUNNER_TEMP}/actionable-path")"
+          export ACTIONABLE_PATH="${actionable}"
+          export CHANGE_REPORT="${RUNNER_TEMP}/change-report.json"
+          python3 - <<'PY'
+          from __future__ import annotations
+          import json
+          import os
+          import pathlib
+          import re
+          import subprocess
+
+          repo = pathlib.Path.cwd().resolve()
+          records = json.loads(pathlib.Path(os.environ["ACTIONABLE_PATH"]).read_text(encoding="utf-8"))
+          allowed_root = (repo / "trillionnium" / "crates").resolve()
+          macro_re = re.compile(
+              r"(?P<macro>(?:(?:tracing|log)::)?(?:eprintln|println|eprint|print|panic|trace|debug|info|warn|error))!\s*(?P<open>[({[])",
+          )
+          string_re = re.compile(
+              r'(?:r(?P<h>#{0,8})"(?P<raw>.*?)"(?P=h)|"(?P<normal>(?:\\.|[^"\\])*)")',
+              re.DOTALL,
+          )
+          pairs = {"(": ")", "{": "}", "[": "]"}
+
+          def source(path: str) -> pathlib.Path:
+              candidate = (repo / path).resolve()
+              if allowed_root not in candidate.parents:
+                  raise SystemExit(f"refuse non-crate or escaped path: {path}")
+              if not candidate.is_file() or candidate.suffix != ".rs":
+                  raise SystemExit(f"refuse missing/non-Rust path: {path}")
+              parts = pathlib.PurePosixPath(path).parts
+              if any(part in {"tests", "test", "fuzz", "benches", "bench", "examples", "fixtures", "fixture", "vectors", "vector", "formal", "conformance"} for part in parts):
+                  raise SystemExit(f"actionable artifact incorrectly contains test path: {path}")
+              return candidate
+
+          def line_offset(text: str, line: int) -> int:
+              if line <= 1:
+                  return 0
+              pos = 0
+              for _ in range(line - 1):
+                  nxt = text.find("\n", pos)
+                  if nxt < 0:
+                      return len(text)
+                  pos = nxt + 1
+              return pos
+
+          def invocation_at(text: str, line: int):
+              pos = line_offset(text, line)
+              window_start = max(0, pos - 1400)
+              window_end = min(len(text), pos + 2600)
+              candidates = list(macro_re.finditer(text, window_start, window_end))
+              candidates.sort(key=lambda match: abs(match.start() - pos))
+              for match in candidates:
+                  open_char = match.group("open")
+                  close_char = pairs[open_char]
+                  cursor = match.end() - 1
+                  depth = 0
+                  in_string = False
+                  escaped = False
+                  raw_hashes = None
+                  while cursor < len(text):
+                      char = text[cursor]
+                      if raw_hashes is not None:
+                          token = '"' + ('#' * raw_hashes)
+                          if text.startswith(token, cursor):
+                              cursor += len(token)
+                              raw_hashes = None
+                              continue
+                          cursor += 1
+                          continue
+                      if in_string:
+                          if escaped:
+                              escaped = False
+                          elif char == "\\":
+                              escaped = True
+                          elif char == '"':
+                              in_string = False
+                          cursor += 1
+                          continue
+                      raw = re.match(r'r(#{0,8})"', text[cursor:])
+                      if raw:
+                          raw_hashes = len(raw.group(1))
+                          cursor += len(raw.group(0))
+                          continue
+                      if char == '"':
+                          in_string = True
+                          cursor += 1
+                          continue
+                      if char == open_char:
+                          depth += 1
+                      elif char == close_char:
+                          depth -= 1
+                          if depth == 0:
+                              end = cursor + 1
+                              while end < len(text) and text[end] in " \t":
+                                  end += 1
+                              if end < len(text) and text[end] == ";":
+                                  end += 1
+                              if match.start() <= pos <= end or abs(match.start() - pos) <= 600:
+                                  return match.start(), end, match.group("macro"), text[match.start():end]
+                              break
+                      cursor += 1
+              return None
+
+          def static_message(invocation: str, macro: str) -> str:
+              match = string_re.search(invocation)
+              message = "operation failed"
+              if match:
+                  message = match.group("raw") if match.group("raw") is not None else match.group("normal")
+                  message = message.replace("\\n", " ").replace("\\t", " ").replace('\\"', '"')
+                  message = re.sub(r"\{[^{}]*\}", "", message)
+                  message = re.sub(r"\s*[:=,;|-]\s*$", "", message.strip())
+                  message = re.sub(r"\s{2,}", " ", message).strip() or "operation failed"
+              if macro.endswith("panic") and not message.lower().startswith(("fail-stop", "fatal", "internal")):
+                  message = "fail-stop: " + message
+              return message[:180]
+
+          candidates = []
+          for record in records:
+              if record.get("rule_id") != "rust/cleartext-logging":
+                  continue
+              if record.get("disposition_candidate") != "actionable-production-log-review":
+                  continue
+              locations = list(record.get("flow_tail") or [])
+              locations.append({"path": record.get("primary_path"), "line": record.get("primary_line")})
+              selected = None
+              for location in reversed(locations):
+                  path = location.get("path")
+                  line = location.get("line")
+                  if not path or not line or not str(path).endswith(".rs"):
+                      continue
+                  try:
+                      file_path = source(str(path))
+                  except SystemExit:
+                      continue
+                  text = file_path.read_text(encoding="utf-8")
+                  found = invocation_at(text, int(line))
+                  if found:
+                      selected = (str(path), int(line), found)
+                      break
+              if selected is None:
+                  raise SystemExit(
+                      f"actionable cleartext result has no provable direct Rust output sink: {record.get('fingerprint')}"
+                  )
+              candidates.append((record, selected))
+
+          by_path = {}
+          for record, (path, line, found) in candidates:
+              by_path.setdefault(path, []).append((record, line, found))
+
+          changes = []
+          for path, entries in sorted(by_path.items()):
+              file_path = source(path)
+              text = file_path.read_text(encoding="utf-8")
+              spans = []
+              for record, line, (start, end, macro, invocation) in entries:
+                  if any(not (end <= old_start or start >= old_end) for old_start, old_end, *_ in spans):
+                      continue
+                  literals = list(string_re.finditer(invocation))
+                  dynamic = bool(re.search(r"\{[^{}]*\}", invocation))
+                  if literals:
+                      suffix = invocation[literals[0].end():]
+                      dynamic = dynamic or bool(re.search(r",\s*[^)\]}\s]", suffix))
+                  else:
+                      dynamic = True
+                  if not dynamic:
+                      continue
+                  message = static_message(invocation, macro)
+                  replacement = f"{macro}!({json.dumps(message, ensure_ascii=False)});"
+                  spans.append((start, end, replacement, invocation, line, record.get("fingerprint")))
+              for start, end, replacement, invocation, line, fingerprint in sorted(spans, reverse=True):
+                  text = text[:start] + replacement + text[end:]
+                  changes.append({
+                      "path": path,
+                      "line": line,
+                      "fingerprint": fingerprint,
+                      "old_invocation": invocation,
+                      "replacement": replacement,
+                  })
+              if spans:
+                  file_path.write_text(text, encoding="utf-8")
+
+          subprocess.run(["git", "diff", "--check"], check=True)
+          pathlib.Path(os.environ["CHANGE_REPORT"]).write_text(
+              json.dumps(changes, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          print(len(changes))
+          PY
+          change_count="$(jq 'length' "${RUNNER_TEMP}/change-report.json")"
+          echo "change_count=${change_count}" >> "${GITHUB_OUTPUT}"
+          git diff --name-only > "${RUNNER_TEMP}/changed-files.txt"
+          if [[ "${change_count}" = 0 ]]; then
+            test ! -s "${RUNNER_TEMP}/changed-files.txt"
+          else
+            test -s "${RUNNER_TEMP}/changed-files.txt"
+            while IFS= read -r path; do
+              [[ "${path}" == trillionnium/crates/*.rs || "${path}" == trillionnium/crates/*/*.rs || "${path}" == trillionnium/crates/*/*/*.rs || "${path}" == trillionnium/crates/*/*/*/*.rs || "${path}" == trillionnium/crates/*/*/*/*/*.rs ]]
+            done < "${RUNNER_TEMP}/changed-files.txt"
+          fi
+
+      - name: Install pinned Rust toolchain
+        if: steps.derive.outputs.change_count != '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          rustc +1.95.0 -Vv
+          cargo +1.95.0 -V
+
+      - name: Format and validate exact changed packages
+        if: steps.derive.outputs.change_count != '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --check
+          mapfile -t packages < <(sed -n 's#^trillionnium/crates/\([^/]*\)/.*#\1#p' "${RUNNER_TEMP}/changed-files.txt" | sort -u)
+          test "${#packages[@]}" -gt 0
+          args=()
+          for package in "${packages[@]}"; do
+            args+=( -p "${package}" )
+          done
+          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked --all-targets "${args[@]}"
+          cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --all-targets "${args[@]}" -- -D warnings
+          cargo +1.95.0 check --manifest-path trillionnium/Cargo.toml --locked --workspace --all-targets
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          git diff --check
+
+      - name: Verify only direct diagnostic source changed
+        if: steps.derive.outputs.change_count != '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --name-only > "${RUNNER_TEMP}/final-changed-files.txt"
+          test -s "${RUNNER_TEMP}/final-changed-files.txt"
+          while IFS= read -r path; do
+            grep -Fxq "${path}" "${RUNNER_TEMP}/changed-files.txt"
+          done < "${RUNNER_TEMP}/final-changed-files.txt"
+          git diff --binary > "${RUNNER_TEMP}/tested-remediation.patch"
+          test -s "${RUNNER_TEMP}/tested-remediation.patch"
+
+      - name: Publish tested candidate branch without carrier files
+        id: publish
+        if: steps.derive.outputs.change_count != '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "trnm-evidence-bot"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git add -- $(cat "${RUNNER_TEMP}/final-changed-files.txt")
+          git commit -m "fix(m17): redact remaining proven production diagnostic sinks" \
+            -m "Derived only from the complete exact-source CodeQL disposition artifact for ${SUBJECT_SHA}. Tests, strict Clippy, workspace check, formatting and source-surface guards passed before publication. This changes no protocol constants, alert disposition, administration setting or release/activation authority."
+          new_sha="$(git rev-parse HEAD)"
+          new_tree="$(git rev-parse 'HEAD^{tree}')"
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          old="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/git/ref/heads/$(python3 - <<'PY'
+          import os, urllib.parse
+          print(urllib.parse.quote(os.environ['OUTPUT_BRANCH'], safe=''))
+          PY
+          )" --jq '.object.sha' 2>/dev/null || true)"
+          if [[ -n "${old}" ]]; then
+            git push "${remote}" "HEAD:refs/heads/${OUTPUT_BRANCH}" \
+              --force-with-lease="refs/heads/${OUTPUT_BRANCH}:${old}"
+          else
+            git push "${remote}" "HEAD:refs/heads/${OUTPUT_BRANCH}"
+          fi
+          echo "new_sha=${new_sha}" >> "${GITHUB_OUTPUT}"
+          echo "new_tree=${new_tree}" >> "${GITHUB_OUTPUT}"
+
+      - name: Create or refresh bounded draft remediation PR
+        if: steps.derive.outputs.change_count != '0'
+        shell: bash
+        run: |
+          set -euo pipefail
+          existing="$(gh pr list --repo "${GITHUB_REPOSITORY}" --state open --head "${OUTPUT_BRANCH}" --json number --jq '.[0].number // empty')"
+          cat > "${RUNNER_TEMP}/pr-body.md" <<EOF
+          ## Exact-source bounded remediation
+
+          - parent: \`${SUBJECT_SHA}\`
+          - parent tree: \`${SUBJECT_TREE}\`
+          - disposition run: \`${{ steps.producer.outputs.run_id }}\`
+          - disposition artifact: \`${{ steps.producer.outputs.artifact_name }}\`
+          - disposition artifact digest: \`${{ steps.producer.outputs.artifact_digest }}\`
+          - tested commit: \`${{ steps.publish.outputs.new_sha }}\`
+          - tested tree: \`${{ steps.publish.outputs.new_tree }}\`
+          - direct sink replacements: \`${{ steps.derive.outputs.change_count }}\`
+
+          The patch changes only direct Rust process-output macros proven by the complete
+          per-fingerprint CodeQL flow artifact. It does not alter hard-coded public protocol
+          values, query configuration, alert state, tests, limits, consensus semantics or
+          any readiness/activation flag.
+
+          Before publication the exact patch passed changed-package all-target tests,
+          strict Clippy, full-workspace all-target check, rustfmt and diff/source guards.
+          Keep Draft pending exact-head CodeQL replay and independent security review.
+          EOF
+          if [[ -z "${existing}" ]]; then
+            gh pr create --repo "${GITHUB_REPOSITORY}" \
+              --base work/plan-v2-full-gap-closure-20260902 \
+              --head "${OUTPUT_BRANCH}" \
+              --title "M17: redact remaining exact-source proven production diagnostic sinks" \
+              --body-file "${RUNNER_TEMP}/pr-body.md" \
+              --draft
+          else
+            gh pr edit "${existing}" --repo "${GITHUB_REPOSITORY}" --body-file "${RUNNER_TEMP}/pr-body.md"
+          fi
+
+      - name: Upload complete derivation and tested patch evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-codeql-log-remediation-ded43a-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/change-report.json
+            ${{ runner.temp }}/changed-files.txt
+            ${{ runner.temp }}/final-changed-files.txt
+            ${{ runner.temp }}/tested-remediation.patch
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 6
+
+      - name: Verify no uncommitted or carrier source remains
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --quiet
+          git diff --cached --quiet
