@@ -1,0 +1,302 @@
+name: PoCO-only convergence R6 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-only-convergence-r6-once-20260910.yml
+
+permissions:
+  contents: write
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "1"
+  RUST_BACKTRACE: "1"
+  RUST_MIN_STACK: "33554432"
+  PRODUCTION_PORTS_COMMIT: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
+  REMOTE_SIGNER_FIX_COMMIT: 2f01213918e8da288ce5f598447318c9113edaa2
+
+jobs:
+  converge:
+    name: Qualify immutable native PoCO commit in a fresh worktree
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Check out exact convergence branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify source and exact candidate objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -f tools/temporary_poco_convergence_r5.py
+          test -x tools/temporary_native_purge.py
+          git fetch --no-tags origin "$PRODUCTION_PORTS_COMMIT" "$REMOTE_SIGNER_FIX_COMMIT"
+          git cat-file -e "$PRODUCTION_PORTS_COMMIT^{commit}"
+          git cat-file -e "$REMOTE_SIGNER_FIX_COMMIT^{commit}"
+
+      - name: Install pinned build tools and resolve locked graphs
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+          rustc --version
+          cargo --version
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          cargo fetch --manifest-path contracts/Cargo.toml --locked
+
+      - name: Build immutable final source commit and fresh worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout "$PRODUCTION_PORTS_COMMIT" -- \
+            trillionnium/crates/trnm-node-boundary-v0/src/lib.rs \
+            trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+          git checkout "$REMOTE_SIGNER_FIX_COMMIT" -- \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_service_os.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/os_process_fixture.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/pending_reservation_os.rs
+
+          python3 tools/temporary_poco_convergence_r5.py prepare
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          python3 tools/temporary_poco_convergence_r5.py refresh-pins
+
+          rm -f \
+            tools/temporary_native_purge.py \
+            tools/temporary_poco_convergence_r5.py \
+            .github/workflows/apply-poco-only-purge-temporary.yml \
+            .github/workflows/poco-only-full-tree-audit.yml \
+            .github/workflows/poco-purge-source-snapshot.yml \
+            .github/workflows/poco-only-convergence-r2-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r3-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r4-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r5-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r6-once-20260910.yml \
+            .github/workflows/poco-cli-materialization-diagnostic-once-20260909.yml \
+            .github/workflows/poco-cli-compile-diagnostic-once-20260909.yml \
+            .github/workflows/poco-workspace-serial-diagnostic-once-20260909.yml \
+            .github/workflows/nonexistent \
+            DO_NOT_CREATE \
+            DO_NOT_CREATE_2
+
+          git add -A
+          git diff --cached --check
+          test -n "$(git diff --cached --name-only)"
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "chore(poco): converge native-only repository blockers"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+          final_commit=$(git rev-parse HEAD)
+          final_tree=$(git rev-parse 'HEAD^{tree}')
+          final_worktree="${RUNNER_TEMP}/trnm-r6-final"
+          final_target="${RUNNER_TEMP}/trnm-r6-target"
+          rm -rf "$final_worktree" "$final_target"
+          git worktree add --detach "$final_worktree" "$final_commit"
+          test "$(git -C "$final_worktree" rev-parse HEAD)" = "$final_commit"
+          test "$(git -C "$final_worktree" rev-parse 'HEAD^{tree}')" = "$final_tree"
+          test -z "$(git -C "$final_worktree" status --porcelain --untracked-files=all)"
+
+          {
+            echo "FINAL_COMMIT=$final_commit"
+            echo "FINAL_TREE=$final_tree"
+            echo "FINAL_WORKTREE=$final_worktree"
+            echo "CARGO_TARGET_DIR=$final_target"
+          } >> "$GITHUB_ENV"
+          git show --stat --oneline --no-renames HEAD
+          printf 'final_commit=%s\nfinal_tree=%s\nfinal_worktree=%s\n' \
+            "$final_commit" "$final_tree" "$final_worktree"
+
+      - name: Verify exact-source plan, documentation, native truth and fail-closed evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$FINAL_WORKTREE"
+          test "$(git rev-parse HEAD)" = "$FINAL_COMMIT"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$FINAL_TREE"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          rustup override set 1.95.0
+          python3 -m compileall -q scripts tools formal conformance
+          python3 scripts/ci/check_native_consensus_only.py
+          cargo metadata --manifest-path trillionnium/Cargo.toml --locked --offline --no-deps --format-version 1 \
+            >"${RUNNER_TEMP}/trnm-r6-cargo-metadata.json"
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_poco_bft_mainline_truth.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_required_protocol_contract_v1.py
+          python3 scripts/ci/test_external_evidence_v1.py
+
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all \
+            --source-commit "$FINAL_COMMIT" \
+            --source-tree "$FINAL_TREE" \
+            --output "${RUNNER_TEMP}/trnm-r6-external-evidence.json" \
+            >"${RUNNER_TEMP}/trnm-r6-external-evidence.stdout" \
+            2>"${RUNNER_TEMP}/trnm-r6-external-evidence.stderr"
+          rc=$?
+          set -e
+          test "$rc" -eq 2
+          grep -q "external evidence gate remains open" \
+            "${RUNNER_TEMP}/trnm-r6-external-evidence.stderr"
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads(
+              (Path(os.environ["RUNNER_TEMP"]) / "trnm-r6-external-evidence.json").read_text()
+          )
+          required = {
+              "EXT-REVIEW-001", "EXT-G1-CAMPAIGN-001", "EXT-ANCHOR-HSM-001",
+              "EXT-POWERLOSS-001", "EXT-AUDIT-001", "EXT-SOAK-ACTIVATION-001",
+          }
+          assert report["authenticity_verified"] is False
+          assert report["accepted"] == {}
+          assert set(report["open_blockers"]) == required
+          assert report["all_external_blockers_closed"] is False
+          assert report["production_candidate"] is False
+          assert report["production_consensus_activation"] is False
+          PY
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Compile every native target from the fresh worktree
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd "$FINAL_WORKTREE"
+          cli=trillionnium/crates/trnm-cli/src/main.rs
+          audit_wrapper="${RUNNER_TEMP}/trnm-r6-rustc-audit.sh"
+          audit_log="${RUNNER_TEMP}/trnm-r6-rustc-audit.log"
+          cat >"$audit_wrapper" <<'SH'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          real_rustc=$1
+          shift
+          if printf '%s\n' "$@" | grep -qx 'trnm_cli'; then
+            {
+              echo "cwd=$PWD"
+              echo "source_realpath=$(realpath trillionnium/crates/trnm-cli/src/main.rs)"
+              echo "source_sha256=$(sha256sum trillionnium/crates/trnm-cli/src/main.rs | awk '{print $1}')"
+              printf 'rustc=%q' "$real_rustc"
+              printf ' %q' "$@"
+              printf '\n'
+            } >>"${TRNM_RUSTC_AUDIT_LOG:?}"
+          fi
+          exec "$real_rustc" "$@"
+          SH
+          chmod +x "$audit_wrapper"
+          export RUSTC_WRAPPER="$audit_wrapper"
+          export TRNM_RUSTC_AUDIT_LOG="$audit_log"
+
+          diagnose() {
+            rc=$?
+            echo "compile_diagnostic_rc=$rc"
+            echo "head=$(git rev-parse HEAD)"
+            echo "tree=$(git rev-parse 'HEAD^{tree}')"
+            echo "worktree=$PWD"
+            echo "cli_realpath=$(realpath "$cli")"
+            echo "cli_sha256=$(sha256sum "$cli" | awk '{print $1}')"
+            echo "cli_lines=$(wc -l <"$cli")"
+            echo '--- rustc audit ---'
+            cat "$audit_log" 2>/dev/null || true
+            echo '--- suspicious source references ---'
+            rg -n --hidden --glob '!target/**' --glob '!*.zip' \
+              'simple_majority_root_hex|contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|canonical\(contract' \
+              . || true
+            echo '--- suspicious target references ---'
+            if test -d "$CARGO_TARGET_DIR"; then
+              rg -n -a \
+                'simple_majority_root_hex|contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|canonical\(contract' \
+                "$CARGO_TARGET_DIR" || true
+            fi
+            echo '--- CLI compiler-line window ---'
+            nl -ba "$cli" | sed -n '1580,1680p'
+            echo '--- trnm-cli rustc invocations ---'
+            grep -F 'trnm_cli' "${RUNNER_TEMP}/trnm-r6-workspace-check.log" || true
+            exit "$rc"
+          }
+          trap diagnose ERR
+          rm -rf "$CARGO_TARGET_DIR"
+          test "$(git rev-parse HEAD)" = "$FINAL_COMMIT"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$FINAL_TREE"
+          expected_cli_sha=$(git show "HEAD:$cli" | sha256sum | awk '{print $1}')
+          test "$(sha256sum "$cli" | awk '{print $1}')" = "$expected_cli_sha"
+          cargo tree --manifest-path trillionnium/Cargo.toml -p trnm-cli -e features --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline -j 1 -vv \
+            2>&1 | tee "${RUNNER_TEMP}/trnm-r6-workspace-check.log"
+          test "$(sha256sum "$cli" | awk '{print $1}')" = "$expected_cli_sha"
+          cargo check --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline -j 1
+          test -z "$(git status --porcelain --untracked-files=all)"
+          trap - ERR
+
+      - name: Execute complete native regression corpus from the fresh worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$FINAL_WORKTREE"
+          test "$(git rev-parse HEAD)" = "$FINAL_COMMIT"
+          timeout --signal=TERM --kill-after=30s 1800s \
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              --workspace --all-targets --locked --offline --no-fail-fast -- \
+              --test-threads=1
+          cargo test --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Execute strict production-boundary Clippy from the fresh worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$FINAL_WORKTREE"
+          cargo clippy --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline -- -D warnings
+          cd trillionnium
+          for package in \
+            trnm-state trnm-consensus-types trnm-consensus-crypto \
+            trnm-consensus-core trnm-consensus-safety-rules \
+            trnm-consensus-safety-store trnm-consensus-signer-journal \
+            trnm-native-application trnm-native-application-sqlite \
+            trnm-native-execution-v0 trnm-durable-file-adapters-v0 \
+            trnm-tx-lifecycle-v0 trnm-state-sync-v0 trnm-migration-v0 \
+            trnm-control-plane-v0 trnm-release-bundle-v0 trnm-node-boundary-v0 \
+            trnm-poco-node-production-v0 trnm-production-adapter-conformance-v0 \
+            trnm-poco-node trnm-poco-node-authority trnm-poco-node-io \
+            trnm-poco-node-host trnm-poco-node-cli
+          do
+            echo "strict-clippy package=$package"
+            cargo clippy -p "$package" --all-targets --locked --offline -- -D warnings
+          done
+          cd "$FINAL_WORKTREE"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Publish only the fully qualified immutable commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$FINAL_WORKTREE"
+          test "$(git rev-parse HEAD)" = "$FINAL_COMMIT"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$FINAL_TREE"
+          python3 scripts/ci/check_native_consensus_only.py \
+            >"${RUNNER_TEMP}/trnm-r6-native-only-final.json"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          cd "$GITHUB_WORKSPACE"
+          test "$(git rev-parse HEAD)" = "$FINAL_COMMIT"
+          git push origin "$FINAL_COMMIT:refs/heads/$TARGET_BRANCH"
