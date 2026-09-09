@@ -1,0 +1,260 @@
+name: ops-current-branch-disposition
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-current-branch-disposition.yml
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+concurrency:
+  group: ops-current-branch-disposition-20260909
+  cancel-in-progress: false
+
+jobs:
+  classify:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      PRIMARY_PR: '101'
+      INTEGRATION_PR: '62'
+      AUDIT_BRANCH: ops/main-tree-convergence-audit-20260909
+    steps:
+      - name: Resolve exact current candidate
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          primary="$(gh api "repos/$REPOSITORY/pulls/$PRIMARY_PR")"
+          if [ "$(jq -r .state <<<"$primary")" = open ]; then
+            pr="$PRIMARY_PR"
+            sha="$(jq -r .head.sha <<<"$primary")"
+            branch="$(jq -r .head.ref <<<"$primary")"
+          else
+            integration="$(gh api "repos/$REPOSITORY/pulls/$INTEGRATION_PR")"
+            test "$(jq -r .state <<<"$integration")" = open
+            pr="$INTEGRATION_PR"
+            sha="$(jq -r .head.sha <<<"$integration")"
+            branch="$(jq -r .head.ref <<<"$integration")"
+          fi
+          {
+            echo "pr=$pr"
+            echo "sha=$sha"
+            echo "branch=$branch"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check out candidate with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.source.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Freeze refs, PR lineage and classify every branch
+        id: disposition
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+          SOURCE_BRANCH: ${{ steps.source.outputs.branch }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/current-branch-disposition"
+          mkdir -p "$out"
+          git fetch --force --no-tags origin '+refs/heads/*:refs/remotes/origin/*'
+          git ls-remote --heads origin | LC_ALL=C sort > "$out/branch-heads.tsv"
+          gh api --paginate "repos/$REPOSITORY/pulls?state=all&per_page=100" \
+            > "$out/pulls-pages.jsonl"
+
+          python3 - "$out" <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import subprocess
+          import sys
+          from collections import Counter, defaultdict
+          from pathlib import Path
+
+          out = Path(sys.argv[1])
+          source = os.environ['SOURCE_SHA']
+          source_branch = os.environ['SOURCE_BRANCH']
+          audit_branch = os.environ['AUDIT_BRANCH']
+
+          def git(*args: str, check: bool = True) -> str:
+              result = subprocess.run(
+                  ['git', *args], text=True, stdout=subprocess.PIPE,
+                  stderr=subprocess.PIPE, check=False,
+              )
+              if check and result.returncode:
+                  raise RuntimeError(
+                      f"git {' '.join(args)} failed: {result.stderr.strip()}"
+                  )
+              return result.stdout.strip()
+
+          def ancestor(left: str, right: str) -> bool:
+              return subprocess.run(
+                  ['git', 'merge-base', '--is-ancestor', left, right],
+                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                  check=False,
+              ).returncode == 0
+
+          pulls = []
+          raw = (out / 'pulls-pages.jsonl').read_text()
+          decoder = json.JSONDecoder()
+          position = 0
+          while position < len(raw):
+              while position < len(raw) and raw[position].isspace():
+                  position += 1
+              if position >= len(raw):
+                  break
+              value, position = decoder.raw_decode(raw, position)
+              if isinstance(value, list):
+                  pulls.extend(value)
+          prs_by_head = defaultdict(list)
+          for pr in pulls:
+              prs_by_head[pr['head']['ref']].append({
+                  'number': pr['number'],
+                  'state': pr['state'],
+                  'merged': pr.get('merged_at') is not None,
+                  'draft': bool(pr.get('draft')),
+                  'title': pr['title'],
+                  'headSha': pr['head']['sha'],
+                  'baseRef': pr['base']['ref'],
+              })
+
+          source_tree = git('rev-parse', f'{source}^{{tree}}')
+          refs = []
+          for line in (out / 'branch-heads.tsv').read_text().splitlines():
+              sha, ref = line.split('\t', 1)
+              refs.append((ref.removeprefix('refs/heads/'), sha))
+          refs.sort()
+
+          ephemeral_prefixes = {
+              'tmp', 'ops', 'automation', 'diagnostic', 'qualification',
+              'scratch', 'freeze', 'audit', 'repair', 'test', 'truth',
+          }
+          records = []
+          for branch, tip in refs:
+              tree = git('rev-parse', f'{tip}^{{tree}}')
+              related_prs = sorted(prs_by_head.get(branch, []), key=lambda row: row['number'])
+              current_pr = next(
+                  (row for row in related_prs if row['state'] == 'open' and row['headSha'] == tip),
+                  None,
+              )
+              prefix = branch.split('/', 1)[0]
+              if branch == 'main':
+                  disposition = 'main_destination'
+              elif branch == source_branch and tip == source:
+                  disposition = 'current_candidate'
+              elif branch == audit_branch:
+                  disposition = 'active_audit_carrier'
+              elif ancestor(tip, source):
+                  disposition = 'absorbed_by_history'
+              elif tree == source_tree:
+                  disposition = 'absorbed_by_exact_tree'
+              elif current_pr is not None:
+                  disposition = 'open_pr_requires_admission'
+              elif related_prs and all(row['state'] == 'closed' for row in related_prs):
+                  disposition = 'closed_pr_archive_only_pending_ref_retirement'
+              elif prefix in ephemeral_prefixes:
+                  disposition = 'ephemeral_archive_only_pending_ref_retirement'
+              else:
+                  disposition = 'unresolved_content_or_evidence_review_required'
+
+              merge_base = git('merge-base', source, tip, check=False)
+              if merge_base:
+                  changed = [
+                      row for row in git('diff', '--name-only', '--no-renames', merge_base, tip).splitlines()
+                      if row
+                  ]
+              else:
+                  changed = [
+                      row for row in git('ls-tree', '-r', '--name-only', tip).splitlines()
+                      if row
+                  ]
+              patch_rows = git(
+                  'rev-list', '--left-right', '--cherry-pick', '--no-merges',
+                  f'{source}...{tip}', check=False,
+              ).splitlines()
+              records.append({
+                  'branch': branch,
+                  'tip': tip,
+                  'tree': tree,
+                  'disposition': disposition,
+                  'mergeBase': merge_base or None,
+                  'uniquePatchCommitsOnBranch': sum(row.startswith('>') for row in patch_rows),
+                  'uniquePatchCommitsOnCandidate': sum(row.startswith('<') for row in patch_rows),
+                  'changedPathCountFromMergeBase': len(changed),
+                  'changedPathSample': changed[:100],
+                  'changedPathSampleTruncated': len(changed) > 100,
+                  'pullRequests': related_prs,
+              })
+
+          counts = Counter(row['disposition'] for row in records)
+          unresolved = [
+              row for row in records
+              if row['disposition'] in {
+                  'open_pr_requires_admission',
+                  'unresolved_content_or_evidence_review_required',
+              }
+          ]
+          summary = {
+              'schema': 'trnm-current-branch-disposition-v1',
+              'sourceSha': source,
+              'sourceTree': source_tree,
+              'branchCount': len(records),
+              'dispositionCounts': dict(sorted(counts.items())),
+              'unresolvedBranchCount': len(unresolved),
+              'unresolvedBranches': [
+                  {'branch': row['branch'], 'tip': row['tip'], 'disposition': row['disposition']}
+                  for row in unresolved
+              ],
+              'safeForFinalRefRetirement': len(unresolved) == 0,
+              'archiveIsCodeAcceptance': False,
+          }
+          (out / 'disposition.json').write_text(
+              json.dumps({'summary': summary, 'branches': records}, indent=2, sort_keys=True) + '\n'
+          )
+          (out / 'summary.json').write_text(json.dumps(summary, indent=2, sort_keys=True) + '\n')
+          print(json.dumps(summary, sort_keys=True))
+          PY
+          (
+            cd "$out"
+            sha256sum branch-heads.tsv pulls-pages.jsonl disposition.json summary.json \
+              > SHA256SUMS
+          )
+          unresolved="$(jq -r .unresolvedBranchCount "$out/summary.json")"
+          echo "unresolved=$unresolved" >> "$GITHUB_OUTPUT"
+
+      - name: Publish current all-branch disposition
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/current-branch-disposition"
+          summary="$(jq -c . "$out/summary.json" 2>/dev/null || echo '{}')"
+          digest="$(sha256sum "$out/SHA256SUMS" 2>/dev/null | awk '{print $1}' || true)"
+          gh api "repos/$REPOSITORY/issues/$INTEGRATION_PR/comments" \
+            -f body="Current all-branch disposition against exact candidate \`${{ steps.source.outputs.sha }}\`: \`$summary\`; evidence-manifest digest=\`${digest:-unavailable}\`. Only history/exact-tree absorption is integration. Closed-PR and ephemeral branches remain archive-only pending final exact-SHA retirement; unresolved implementation/evidence branches are not mechanically merged." >/dev/null
+
+      - name: Upload complete current disposition packet
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: current-branch-disposition-${{ github.sha }}
+          path: ${{ runner.temp }}/current-branch-disposition
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Keep convergence gate red while any branch is unresolved
+        if: steps.disposition.outputs.unresolved != '0'
+        shell: bash
+        run: exit 1
