@@ -1,0 +1,301 @@
+name: TRNM ded43a hosted deep diagnostic replicas
+
+on:
+  push:
+    branches:
+      - evidence/ded43a-hosted-deep-gates-20260909
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-ded43a-hosted-deep-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  hosted-deep:
+    name: hosted-diagnostic-${{ matrix.lane }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        lane:
+          - protocol-schema-formal
+          - replay-recovery
+          - runtime-fault-process
+          - candidate-devnet
+    env:
+      EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      RUST_TOOLCHAIN: "1.95.0"
+      RUST_MIN_STACK: "134217728"
+      RUST_TEST_THREADS: "1"
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      CARGO_NET_RETRY: "5"
+      CARGO_HTTP_TIMEOUT: "120"
+      CI: "true"
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      TZ: UTC
+      PYTHONHASHSEED: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONIOENCODING: UTF-8
+      PYTHONUTF8: "1"
+      TRNM_DOC_BINDING_MODE: source
+      TRNM_CARGO_OFFLINE_POLICY: not-applicable
+    steps:
+      - name: Check out exact Chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install deterministic host prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            jq ripgrep shellcheck pkg-config libsqlite3-dev protobuf-compiler
+          rustup toolchain install "${RUST_TOOLCHAIN}" \
+            --profile minimal --component rustfmt --component clippy
+          rustup default "${RUST_TOOLCHAIN}"
+          rustc -vV
+          cargo -vV
+          node --version
+          npm --version
+
+      - name: Execute exact-source diagnostic lane
+        id: diagnostic
+        shell: bash
+        env:
+          LANE: ${{ matrix.lane }}
+        run: |
+          set -uo pipefail
+          out="${RUNNER_TEMP}/trnm-hosted-deep/${LANE}"
+          mkdir -p "${out}"
+          started="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          started_epoch="$(date -u +%s)"
+          set +e
+          case "${LANE}" in
+            protocol-schema-formal)
+              bash -eo pipefail <<'LANE_SCRIPT'
+              bash scripts/ci/check_canonical_development_plan.sh
+              python3 scripts/ci/check_module_coverage_v1.py
+              python3 scripts/ci/check_repository_truth_v1.py
+              python3 scripts/ci/check_blocker_execution_v1.py
+              python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+              bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+              bash scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
+              bash scripts/ci/check_poco_bft_v0_ci_truth.sh
+              protoc_path="$(scripts/ci/install_pinned_protoc.sh "${RUNNER_TEMP}/protoc-29.3")"
+              export PROTOC="${protoc_path}"
+              python3 scripts/ci/check_poco_bft_v0_parameters.py
+              python3 scripts/ci/check_poco_bft_v0_wire_vectors.py
+              python3 scripts/ci/check_poco_bft_v0_wire_reference.py
+              python3 scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
+              python3 scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
+              python3 scripts/ci/check_poco_bft_v0_ordered_roots.py
+              bash scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+              bash scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+              bash scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+              bash scripts/ci/check_poco_bft_v0_registry.sh
+              bash scripts/ci/check_poco_bft_v0_logical_schema.sh
+              bash scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
+              bash scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
+              bash scripts/ci/check_poco_bft_v0_block_body_schema.sh
+              bash scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
+              bash scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
+              bash scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
+              bash scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
+              bash scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
+              bash scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
+              bash scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
+              bash scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
+              bash scripts/ci/check_poco_bft_v0_application_authority_schema.sh
+              bash scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
+              bash scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+              bash scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+              bash scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+              bash scripts/ci/check_poco_bft_v0_proto.sh
+              bash scripts/ci/check_poco_bft_v0_formal.sh
+              bash scripts/project-preflight.sh --audit
+              LANE_SCRIPT
+              ;;
+            replay-recovery)
+              bash -eo pipefail <<'LANE_SCRIPT'
+              bash scripts/ci/check_agent_development_docs_v1.sh
+              bash scripts/ci/check_payload_replay_recovery_v1.sh
+              bash scripts/ci/check_finalization_intent_process_matrix_v1.sh
+              bash scripts/ci/check_replay_to_core_coordinator_v1.sh
+              bash scripts/ci/check_replay_to_core_r2b_contract_v1.sh
+              bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+              bash scripts/project-preflight.sh --audit
+              LANE_SCRIPT
+              ;;
+            runtime-fault-process)
+              bash -eo pipefail <<'LANE_SCRIPT'
+              cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+              bash scripts/ci/check_canonical_development_plan.sh
+              python3 scripts/ci/check_module_coverage_v1.py
+              python3 scripts/ci/check_repository_truth_v1.py
+              python3 scripts/ci/check_blocker_execution_v1.py
+              python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+              bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --features lab-validator-runtime-test-support \
+                --lib --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --features lab-validator-runtime-test-support \
+                --test finalization_intent_process_kill_matrix --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --features recovery-process-test-support \
+                --test timeout_signing_process_kill_matrix --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --features g1-process-test-support \
+                --test g1_process_host_e2e --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --features g1-process-test-support \
+                --test effect_driver_process_e2e --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node-io \
+                --features candidate-pacemaker,candidate-authenticated-p2p \
+                --all-targets --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-durable-file-adapters-v0 \
+                --features candidate-peer-replay --all-targets --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node-host \
+                --features candidate-networked-authority --all-targets --locked
+              cargo clippy --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node-io \
+                --features candidate-pacemaker,candidate-authenticated-p2p \
+                --all-targets --locked -- -D warnings
+              cargo clippy --manifest-path trillionnium/Cargo.toml \
+                -p trnm-durable-file-adapters-v0 \
+                --features candidate-peer-replay --all-targets --locked -- -D warnings
+              cargo clippy --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node-host \
+                --features candidate-networked-authority --all-targets --locked -- -D warnings
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --features external-signer-runtime \
+                --test external_signer_runtime --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --test raw_key_boundary --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --features replay-to-core-coordinator-test-support \
+                --lib --locked
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-node --test g2_manifest_bound_process_v2 \
+                --features ai-v1-candidate --locked
+              python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+              bash scripts/project-preflight.sh --audit
+              LANE_SCRIPT
+              ;;
+            candidate-devnet)
+              bash -eo pipefail <<'LANE_SCRIPT'
+              python3 scripts/ci/check_candidate_runtime_closure_v1.py
+              cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+              cargo check --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-lab-validator --all-targets --locked
+              bash scripts/ci/check_candidate_devnet_clippy_v1.sh
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-lab-validator --lib --locked candidate_devnet
+              cargo test --manifest-path trillionnium/Cargo.toml \
+                -p trnm-poco-lab-validator --test candidate_devnet_cli --locked
+              bash scripts/check_ci_runner_policy_test.sh
+              python3 scripts/ci/check_candidate_runtime_closure_v1.py
+              python3 scripts/ci/check_repository_truth_v1.py
+              bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+              bash scripts/ci/check_canonical_development_plan.sh
+              bash scripts/project-preflight.sh --audit
+              LANE_SCRIPT
+              ;;
+            *)
+              echo "unknown lane: ${LANE}" >&2
+              false
+              ;;
+          esac > >(tee "${out}/execution.log") 2> >(tee -a "${out}/execution.log" >&2)
+          rc=$?
+          set -e
+          completed_epoch="$(date -u +%s)"
+          completed="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          elapsed="$((completed_epoch - started_epoch))"
+          export out started completed elapsed rc LANE
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import pathlib
+
+          out = pathlib.Path(os.environ["out"])
+          log = out / "execution.log"
+          raw = log.read_bytes() if log.exists() else b""
+          report = {
+              "schema": "trnm-hosted-deep-diagnostic-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_carrier_sha": os.environ["GITHUB_SHA"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "exact_source_sha": os.environ["EXACT_SOURCE_SHA"],
+              "exact_source_tree": os.environ["EXACT_SOURCE_TREE"],
+              "lane": os.environ["LANE"],
+              "started_utc": os.environ["started"],
+              "completed_utc": os.environ["completed"],
+              "elapsed_seconds": int(os.environ["elapsed"]),
+              "exit_code": int(os.environ["rc"]),
+              "execution_log_sha256": hashlib.sha256(raw).hexdigest(),
+              "github_hosted_diagnostic": True,
+              "x230_hardware_acceptance": False,
+              "offline_cache_acceptance": False,
+              "physical_power_loss": False,
+              "independent_multi_host": False,
+              "device_backed_hsm": False,
+              "production_candidate": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+          }
+          (out / "report.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          PY
+          (
+            cd "${out}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z \
+              | xargs -0 sha256sum > SHA256SUMS
+          )
+          exit "${rc}"
+
+      - name: Verify exact source remained unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Upload hosted diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-hosted-deep-${{ matrix.lane }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-hosted-deep/${{ matrix.lane }}/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
