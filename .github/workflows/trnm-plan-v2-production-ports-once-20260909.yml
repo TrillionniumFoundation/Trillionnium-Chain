@@ -1,0 +1,123 @@
+name: TRNM Plan v2 production port contracts one-shot
+
+on:
+  push:
+    branches:
+      - work/plan-v2-production-ports-20260909
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-plan-v2-production-ports-once-20260909
+  cancel-in-progress: false
+
+jobs:
+  apply-and-qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      BASE_SHA: bbee7c0194e420a36c7747167000450083d5d951
+      BRANCH: work/plan-v2-production-ports-20260909
+      WORKFLOW_PATH: .github/workflows/trnm-plan-v2-production-ports-once-20260909.yml
+      RUSTUP_TOOLCHAIN: 1.95.0
+    steps:
+      - name: Check out carrier branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 2
+
+      - name: Verify one-shot carrier
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "${BASE_SHA}"
+          test "$(git diff --name-only "${BASE_SHA}" HEAD)" = "${WORKFLOW_PATH}"
+          test -z "$(git status --short)"
+
+      - name: Materialize reviewed source payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          payload="${RUNNER_TEMP}/production-ports.tar.gz.b64"
+          cat > "${payload}" <<'PAYLOAD'
+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
+PAYLOAD
+          python3 - "${payload}" <<'PY'
+          import base64
+          import io
+          import pathlib
+          import sys
+          import tarfile
+
+          payload = pathlib.Path(sys.argv[1]).read_bytes()
+          raw = base64.b64decode(payload, validate=True)
+          allowed = {
+              "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+              "trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs",
+              "trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs",
+          }
+          with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
+              members = archive.getmembers()
+              names = {member.name for member in members}
+              if names != allowed:
+                  raise SystemExit(f"unexpected payload members: {sorted(names ^ allowed)}")
+              for member in members:
+                  if not member.isfile() or member.name.startswith("/") or ".." in pathlib.PurePosixPath(member.name).parts:
+                      raise SystemExit(f"unsafe payload member: {member.name}")
+              archive.extractall(path=".", members=members, filter="data")
+          PY
+          test "$(git diff --name-only | sort)" = "$(printf '%s\n' \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs | sort)"
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          rustc --version
+          cargo --version
+
+      - name: Format and qualify production port contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustfmt --edition 2021 \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs
+          rustfmt --edition 2021 --check \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-production-v0 --all-targets
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-production-v0 --all-targets -- -D warnings
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_build_closures_v1.py
+          python3 scripts/ci/check_repository_truth_v1.py
+          git diff --check
+
+      - name: Publish clean source commit and remove carrier
+        shell: bash
+        run: |
+          set -euo pipefail
+          carrier_sha="$(git rev-parse HEAD)"
+          rm -f "${WORKFLOW_PATH}"
+          git reset --soft "${BASE_SHA}"
+          git add \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs
+          test "$(git diff --cached --name-only | sort)" = "$(printf '%s\n' \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs | sort)"
+          git diff --cached --check
+          git config user.name "OpenAI GPT-5.6 Pro"
+          git config user.email "noreply@openai.com"
+          git commit -s -m "feat(plan-v2): add fail-closed production authority ports"
+          git push --force-with-lease="refs/heads/${BRANCH}:${carrier_sha}" origin "HEAD:refs/heads/${BRANCH}"
