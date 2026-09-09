@@ -1,0 +1,150 @@
+name: ops-current-head-long-fuzz
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-current-head-long-fuzz.yml
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: ops-current-head-long-fuzz-20260909
+  cancel-in-progress: false
+
+jobs:
+  fuzz:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      PRIMARY_PR: '101'
+      FALLBACK_PR: '62'
+      PER_TARGET_SECONDS: '600'
+    steps:
+      - name: Resolve exact current candidate
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          primary="$(gh api "repos/$REPOSITORY/pulls/$PRIMARY_PR")"
+          if [ "$(jq -r .state <<<"$primary")" = open ]; then
+            pr="$PRIMARY_PR"
+            sha="$(jq -r .head.sha <<<"$primary")"
+          else
+            fallback="$(gh api "repos/$REPOSITORY/pulls/$FALLBACK_PR")"
+            test "$(jq -r .state <<<"$fallback")" = open
+            pr="$FALLBACK_PR"
+            sha="$(jq -r .head.sha <<<"$fallback")"
+          fi
+          test "${#sha}" -eq 40
+          {
+            echo "pr=$pr"
+            echo "sha=$sha"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.source.outputs.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Install source-pinned Rust toolchain and cargo-fuzz
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ steps.source.outputs.sha }}"
+          rustup show active-toolchain
+          cargo --version
+          if ! cargo fuzz --help >/dev/null 2>&1; then
+            cargo install cargo-fuzz --locked
+          fi
+          cargo fuzz --version
+
+      - name: Execute every discovered target for real wall-clock time
+        id: campaign
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/current-head-long-fuzz"
+          mkdir -p "$out/logs" "$out/artifacts"
+          test "$(git rev-parse HEAD)" = "${{ steps.source.outputs.sha }}"
+          mapfile -t targets < <(cd trillionnium && cargo fuzz list | sed '/^[[:space:]]*$/d')
+          test "${#targets[@]}" -ge 1
+          printf '%s\n' "${targets[@]}" > "$out/targets.txt"
+          printf 'source_sha=%s\nper_target_seconds=%s\nstarted_utc=%s\n' \
+            "${{ steps.source.outputs.sha }}" "$PER_TARGET_SECONDS" "$(date -u +%FT%TZ)" \
+            > "$out/binding.env"
+          status=0
+          for target in "${targets[@]}"; do
+            safe="$(printf '%s' "$target" | tr -c 'A-Za-z0-9_.-' '_')"
+            start="$(date -u +%FT%TZ)"
+            set +e
+            (
+              cd trillionnium
+              timeout --signal=TERM --kill-after=30s "$((PER_TARGET_SECONDS + 90))" \
+                cargo fuzz run "$target" -- \
+                  -max_total_time="$PER_TARGET_SECONDS" \
+                  -timeout=30 \
+                  -rss_limit_mb=4096 \
+                  -print_final_stats=1
+            ) >"$out/logs/$safe.log" 2>&1
+            rc=$?
+            set -e
+            end="$(date -u +%FT%TZ)"
+            printf '%s\t%s\t%s\t%s\n' "$target" "$rc" "$start" "$end" \
+              >> "$out/results.tsv"
+            case "$rc" in
+              0) ;;
+              124|137)
+                echo "target $target exceeded the bounded wrapper rather than exiting cleanly" >&2
+                status=1
+                ;;
+              *)
+                echo "target $target failed with rc=$rc" >&2
+                status=1
+                ;;
+            esac
+          done
+          printf 'finished_utc=%s\n' "$(date -u +%FT%TZ)" >> "$out/binding.env"
+          if [ -d trillionnium/fuzz/artifacts ]; then
+            cp -a trillionnium/fuzz/artifacts/. "$out/artifacts/"
+          fi
+          if find "$out/artifacts" -type f -print -quit | grep -q .; then
+            echo "fuzz crash artifacts exist" >&2
+            status=1
+          fi
+          (
+            cd "$out"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
+
+      - name: Publish exact campaign result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/current-head-long-fuzz"
+          results="$(base64 -w0 "$out/results.tsv" 2>/dev/null || true)"
+          manifest="$(sha256sum "$out/SHA256SUMS" 2>/dev/null | awk '{print $1}' || true)"
+          outcome="${{ steps.campaign.outcome }}"
+          gh api "repos/$REPOSITORY/issues/${{ steps.source.outputs.pr }}/comments" \
+            -f body="Current-head long fuzz campaign for \`${{ steps.source.outputs.sha }}\`: **$outcome**; per-target real wall clock \`$PER_TARGET_SECONDS\` seconds; results.tsv(base64)=\`$results\`; evidence-manifest digest=\`${manifest:-unavailable}\`. This is repository-operated evidence only and does not satisfy the independent long-fuzz reviewer predicate by itself." >/dev/null
+
+      - name: Upload logs, corpus result and crash artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: current-head-long-fuzz-${{ github.sha }}
+          path: ${{ runner.temp }}/current-head-long-fuzz
+          if-no-files-found: warn
+          retention-days: 30
