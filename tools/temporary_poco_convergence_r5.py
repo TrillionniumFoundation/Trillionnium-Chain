@@ -25,6 +25,40 @@ V0_IMPORT_PATHS = (
     "docs/protocol/poco-bft-v0/07-invariants-and-conformance.md",
 )
 
+EXPLICIT_PLAN_BLOB_PINS = {
+    "build_closure_git_blob": "build_closure_registry_path",
+    "build_closure_validator_git_blob": "build_closure_validator_path",
+    "workspace_manifest_git_blob": "workspace_manifest_path",
+    "workspace_lock_git_blob": "workspace_lock_path",
+    "codeowners_git_blob": "codeowners_path",
+    "module_registry_git_blob": "module_registry_path",
+    "module_coverage_git_blob": "module_coverage_path",
+    "module_technical_reference_git_blob": "module_technical_reference_path",
+    "technical_convergence_git_blob": "technical_convergence_path",
+    "technical_convergence_gate_git_blob": "technical_convergence_gate_path",
+    "technical_convergence_test_git_blob": "technical_convergence_test_path",
+    "detailed_module_spec_index_git_blob": "detailed_module_spec_index_path",
+    "current_snapshot_git_blob": "current_snapshot_path",
+    "documentation_truth_git_blob": "documentation_truth_path",
+    "repository_policy_git_blob": "repository_policy_path",
+    "blocker_execution_git_blob": "blocker_execution_path",
+    "blocker_execution_validator_git_blob": "blocker_execution_validator_path",
+    "candidate_runtime_closure_git_blob": "candidate_runtime_closure_path",
+    "candidate_runtime_closure_validator_git_blob": "candidate_runtime_closure_validator_path",
+    "candidate_runtime_closure_architecture_git_blob": "candidate_runtime_closure_architecture_path",
+    "task_archive_closure_git_blob": "task_archive_closure_path",
+    "task_archive_closure_validator_git_blob": "task_archive_closure_validator_path",
+    "task_archive_closure_architecture_git_blob": "task_archive_closure_architecture_path",
+    "documentation_reference_gate_git_blob": "documentation_reference_gate_path",
+    "module_coverage_gate_git_blob": "module_coverage_gate_path",
+    "canonical_plan_gate_git_blob": "canonical_plan_gate_path",
+    "node_decomposition_git_blob": "node_decomposition_path",
+    "node_decomposition_gate_git_blob": "node_decomposition_gate_path",
+    "required_baseline_workflow_git_blob": "required_baseline_workflow_path",
+    "required_baseline_gate_git_blob": "required_baseline_gate_path",
+    "plan_manifest_pin_gate_git_blob": "plan_manifest_pin_gate_path",
+}
+
 
 def run(*args: str) -> str:
     return subprocess.run(
@@ -221,24 +255,43 @@ def refresh_frozen_v0_imports() -> dict[str, str]:
 
 
 def refresh_manifest_blob_pins() -> int:
-    """Refresh every top-level *_path / *_git_blob pair in the plan manifest."""
+    """Refresh every explicit and regular path/blob binding in the manifest."""
     text = MANIFEST.read_text(encoding="utf-8")
     parsed = tomllib.loads(text)
-    count = 0
+    updated_fields: set[str] = set()
+
+    # The canonical pin checker owns several deliberately non-isomorphic names
+    # (for example build_closure_registry_path -> build_closure_git_blob).
+    # These must be refreshed explicitly rather than inferred by suffix.
+    for blob_field, path_field in EXPLICIT_PLAN_BLOB_PINS.items():
+        relative = parsed.get(path_field)
+        if not isinstance(relative, str) or not relative:
+            raise RuntimeError(f"plan manifest missing {path_field}")
+        if blob_field not in parsed:
+            raise RuntimeError(f"plan manifest missing {blob_field}")
+        target = ROOT / relative
+        if not target.is_file():
+            raise RuntimeError(f"plan manifest pinned path missing: {relative}")
+        text = replace_scalar(text, blob_field, run("git", "hash-object", relative))
+        updated_fields.add(blob_field)
+
+    # Refresh additive regular pairs not yet part of the canonical checker.
+    parsed = tomllib.loads(text)
     for path_field, relative in parsed.items():
         if not path_field.endswith("_path") or not isinstance(relative, str):
             continue
         blob_field = path_field[:-5] + "_git_blob"
-        if blob_field not in parsed:
+        if blob_field not in parsed or blob_field in updated_fields:
             continue
         target = ROOT / relative
         if not target.is_file():
             raise RuntimeError(f"plan manifest pinned path missing: {relative}")
         text = replace_scalar(text, blob_field, run("git", "hash-object", relative))
-        count += 1
+        updated_fields.add(blob_field)
+
     MANIFEST.write_text(text, encoding="utf-8")
     tomllib.loads(text)
-    return count
+    return len(updated_fields)
 
 
 def refresh_pins() -> None:
