@@ -1,10 +1,9 @@
-# Second push intentionally triggers this branch-scoped one-shot after registration.
 name: TRNM one-shot CodeQL evidence stability repair
 
 on:
   push:
     branches:
-      - security/codeql-default-setup-v1-20260909
+      - automation/apply-codeql-evidence-stability-20260909
 
 permissions:
   contents: write
@@ -21,6 +20,7 @@ jobs:
       EXPECTED_BASE_SHA: 7ab9ce97a5bbc5cb4c7edca7d9d39dc016638d3b
       PATCH_PATH: .trnm/one-shot/codeql-evidence-stability.patch
       WORKFLOW_PATH: .github/workflows/trnm-one-shot-codeql-evidence-stability.yml
+      TARGET_BRANCH: security/codeql-default-setup-v1-20260909
     steps:
       - name: Check out bounded staging branch
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -32,7 +32,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "${GITHUB_REF}" = "refs/heads/security/codeql-default-setup-v1-20260909"
+          test "${GITHUB_REF}" = "refs/heads/automation/apply-codeql-evidence-stability-20260909"
+          test "$(git rev-parse origin/${TARGET_BRANCH})" = "d12a5ab584d86429c2963c75c6a5ac28f7165792"
           git merge-base --is-ancestor "${EXPECTED_BASE_SHA}" HEAD
           actual="$(git diff --name-only "${EXPECTED_BASE_SHA}"..HEAD | LC_ALL=C sort)"
           expected="$(printf '%s\n%s\n' "${WORKFLOW_PATH}" "${PATCH_PATH}" | LC_ALL=C sort)"
@@ -70,7 +71,7 @@ jobs:
           assert report['release_ready'] is False
           PY
 
-      - name: Publish bounded repair commit
+      - name: Publish bounded repair commit to PR branch
         shell: bash
         run: |
           set -euo pipefail
@@ -86,4 +87,4 @@ jobs:
             -m 'Require an explicit settings-verification freeze and ticket, verify unchanged live setup generation, and compare complete required-check inventory snapshots before accepting evidence. The one-shot carriers delete themselves.' \
             -m 'Primary-Module: M17' \
             -m 'Production-Authority: false'
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push origin "HEAD:${TARGET_BRANCH}"
