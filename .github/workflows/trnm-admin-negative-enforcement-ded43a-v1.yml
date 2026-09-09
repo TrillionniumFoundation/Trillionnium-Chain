@@ -1,0 +1,374 @@
+name: TRNM branch-protection negative enforcement ded43a v1
+
+on:
+  push:
+    branches:
+      - ops/admin-negative-enforcement-ded43a-v1-20260909
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: trnm-admin-negative-enforcement-ded43a-v1
+  cancel-in-progress: false
+
+jobs:
+  negative-corpus:
+    name: Prove normal GitHub token cannot bypass cloned protection
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.actor == github.triggering_actor &&
+      (github.actor == 'ProfHepta' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfAlexQI')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      EXPECTED_MAIN_SHA: b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9
+      ADMIN_TOKEN: ${{ secrets.TRNM_GITHUB_ADMIN_TOKEN || secrets.GH_ADMIN_TOKEN || secrets.ADMIN_GITHUB_TOKEN || secrets.REPOSITORY_ADMIN_TOKEN }}
+      NORMAL_TOKEN: ${{ github.token }}
+      PROBE_BRANCH: trnm-protection-probe-${{ github.run_id }}
+      SOURCE_BRANCH: trnm-protection-probe-source-${{ github.run_id }}
+    steps:
+      - name: Check out exact immutable subject
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify source and require independent administrator credential
+        id: identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          test -n "${ADMIN_TOKEN:-}"
+          admin="$(curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            https://api.github.com/user | jq -r '.login')"
+          normal_app="$(curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${NORMAL_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}" | jq -r '.full_name')"
+          test -n "${admin}"
+          test "${normal_app}" = "${GITHUB_REPOSITORY}"
+          echo "admin=${admin}" >> "${GITHUB_OUTPUT}"
+
+      - name: Re-read stable main security configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-negative-corpus"
+          mkdir -p "${root}"
+          admin_api() {
+            curl --fail-with-body --silent --show-error \
+              --connect-timeout 20 --max-time 90 --retry 2 --retry-all-errors \
+              -H 'Accept: application/vnd.github+json' \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              "$@"
+          }
+          admin_api "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/ref/heads/main" > "${root}/main-ref.json"
+          test "$(jq -r '.object.sha' "${root}/main-ref.json")" = "${EXPECTED_MAIN_SHA}"
+          admin_api "https://api.github.com/repos/${GITHUB_REPOSITORY}/branches/main/protection" > "${root}/main-protection.json"
+          admin_api "https://api.github.com/repos/${GITHUB_REPOSITORY}/code-scanning/default-setup" > "${root}/codeql-default-setup.json"
+          test "$(jq -r '.required_pull_request_reviews.required_approving_review_count' "${root}/main-protection.json")" = 2
+          test "$(jq -r '.required_pull_request_reviews.require_code_owner_reviews' "${root}/main-protection.json")" = true
+          test "$(jq -r '.required_pull_request_reviews.require_last_push_approval' "${root}/main-protection.json")" = true
+          test "$(jq -r '.required_linear_history.enabled' "${root}/main-protection.json")" = true
+          test "$(jq -r '.required_conversation_resolution.enabled' "${root}/main-protection.json")" = true
+          test "$(jq -r '.allow_force_pushes.enabled' "${root}/main-protection.json")" = false
+          test "$(jq -r '.allow_deletions.enabled' "${root}/main-protection.json")" = false
+          test "$(jq -r '.state' "${root}/codeql-default-setup.json")" = configured
+          test "$(jq -r '.languages | index("rust") != null' "${root}/codeql-default-setup.json")" = true
+
+      - name: Create isolated probe refs and clone main protection
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-negative-corpus"
+          admin_api() {
+            curl --fail-with-body --silent --show-error \
+              --connect-timeout 20 --max-time 90 --retry 2 --retry-all-errors \
+              -H 'Accept: application/vnd.github+json' \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              "$@"
+          }
+          main_tree="$(admin_api "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/commits/${EXPECTED_MAIN_SHA}" | jq -r '.tree.sha')"
+          jq -n --arg ref "refs/heads/${PROBE_BRANCH}" --arg sha "${EXPECTED_MAIN_SHA}" '{ref:$ref,sha:$sha}' \
+            > "${root}/create-probe-ref.json"
+          admin_api --request POST -H 'Content-Type: application/json' \
+            --data-binary @"${root}/create-probe-ref.json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs" > "${root}/create-probe-ref.response.json"
+
+          # Use exactly the same API payload as the stable main protection contract.
+          cat > "${root}/probe-protection-payload.json" <<'JSON'
+          {
+            "required_status_checks": {
+              "strict": true,
+              "contexts": [
+                "repository-truth",
+                "protocol-contract",
+                "fuzz-smoke",
+                "external-evidence-contract",
+                "rust-baseline"
+              ]
+            },
+            "enforce_admins": true,
+            "required_pull_request_reviews": {
+              "dismissal_restrictions": {},
+              "dismiss_stale_reviews": true,
+              "require_code_owner_reviews": true,
+              "required_approving_review_count": 2,
+              "require_last_push_approval": true,
+              "bypass_pull_request_allowances": {}
+            },
+            "restrictions": null,
+            "required_linear_history": true,
+            "allow_force_pushes": false,
+            "allow_deletions": false,
+            "block_creations": false,
+            "required_conversation_resolution": true,
+            "lock_branch": false,
+            "allow_fork_syncing": false
+          }
+          JSON
+          admin_api --request PUT -H 'Content-Type: application/json' \
+            --data-binary @"${root}/probe-protection-payload.json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/branches/${PROBE_BRANCH}/protection" \
+            > "${root}/probe-protection-response.json"
+
+          jq -n --arg message "TRNM protection probe ${GITHUB_RUN_ID}" --arg tree "${main_tree}" --arg parent "${EXPECTED_MAIN_SHA}" \
+            '{message:$message,tree:$tree,parents:[$parent]}' > "${root}/noop-commit-request.json"
+          admin_api --request POST -H 'Content-Type: application/json' \
+            --data-binary @"${root}/noop-commit-request.json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/commits" > "${root}/noop-commit-response.json"
+          noop_sha="$(jq -r '.sha' "${root}/noop-commit-response.json")"
+          test -n "${noop_sha}"
+          printf '%s\n' "${noop_sha}" > "${root}/noop-sha"
+
+          jq -n --arg ref "refs/heads/${SOURCE_BRANCH}" --arg sha "${noop_sha}" '{ref:$ref,sha:$sha}' \
+            > "${root}/create-source-ref.json"
+          admin_api --request POST -H 'Content-Type: application/json' \
+            --data-binary @"${root}/create-source-ref.json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs" > "${root}/create-source-ref.response.json"
+
+      - name: Execute normal-token direct, force and delete rejection corpus
+        id: refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-negative-corpus"
+          noop_sha="$(cat "${root}/noop-sha")"
+          normal_request() {
+            local name="$1" method="$2" path="$3" data="${4:-}"
+            local args=(--silent --show-error --connect-timeout 20 --max-time 90
+              -H 'Accept: application/vnd.github+json'
+              -H "Authorization: Bearer ${NORMAL_TOKEN}"
+              -H 'X-GitHub-Api-Version: 2022-11-28'
+              --request "${method}"
+              -o "${root}/${name}.response.json"
+              -w '%{http_code}')
+            if [[ -n "${data}" ]]; then
+              args+=( -H 'Content-Type: application/json' --data-binary "@${data}" )
+            fi
+            curl "${args[@]}" "https://api.github.com${path}" > "${root}/${name}.status" 2>"${root}/${name}.stderr" || true
+          }
+          jq -n --arg sha "${noop_sha}" '{sha:$sha,force:false}' > "${root}/direct-update.json"
+          normal_request direct-update PATCH "/repos/${GITHUB_REPOSITORY}/git/refs/heads/${PROBE_BRANCH}" "${root}/direct-update.json"
+          jq -n --arg sha "${noop_sha}" '{sha:$sha,force:true}' > "${root}/force-update.json"
+          normal_request force-update PATCH "/repos/${GITHUB_REPOSITORY}/git/refs/heads/${PROBE_BRANCH}" "${root}/force-update.json"
+          normal_request delete-ref DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/heads/${PROBE_BRANCH}"
+
+          direct="$(cat "${root}/direct-update.status")"
+          force="$(cat "${root}/force-update.status")"
+          deletion="$(cat "${root}/delete-ref.status")"
+          case "${direct}" in 200|201|204) echo "direct update unexpectedly bypassed protection" >&2; exit 1;; esac
+          case "${force}" in 200|201|204) echo "force update unexpectedly bypassed protection" >&2; exit 1;; esac
+          case "${deletion}" in 200|201|204) echo "delete unexpectedly bypassed protection" >&2; exit 1;; esac
+          echo "direct_http=${direct}" >> "${GITHUB_OUTPUT}"
+          echo "force_http=${force}" >> "${GITHUB_OUTPUT}"
+          echo "delete_http=${deletion}" >> "${GITHUB_OUTPUT}"
+
+      - name: Create zero-approval PR and prove merge rejection
+        id: merge
+        shell: bash
+        env:
+          GH_TOKEN: ${{ env.NORMAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-negative-corpus"
+          pr_url="$(gh pr create --repo "${GITHUB_REPOSITORY}" \
+            --base "${PROBE_BRANCH}" \
+            --head "${SOURCE_BRANCH}" \
+            --title "TRNM temporary protection probe ${GITHUB_RUN_ID}" \
+            --body "Temporary zero-approval branch-protection negative test; cleanup is mandatory." )"
+          pr_number="${pr_url##*/}"
+          test -n "${pr_number}"
+          printf '%s\n' "${pr_number}" > "${root}/probe-pr-number"
+          status="$(curl --silent --show-error --connect-timeout 20 --max-time 90 \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${NORMAL_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            --request PUT \
+            -H 'Content-Type: application/json' \
+            --data-binary '{"merge_method":"merge"}' \
+            -o "${root}/merge-attempt.response.json" \
+            -w '%{http_code}' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${pr_number}/merge" || true)"
+          printf '%s\n' "${status}" > "${root}/merge-attempt.status"
+          case "${status}" in 200|201|204) echo "zero-approval merge unexpectedly succeeded" >&2; exit 1;; esac
+          echo "merge_http=${status}" >> "${GITHUB_OUTPUT}"
+
+      - name: Verify protected probe branch never moved
+        shell: bash
+        run: |
+          set -euo pipefail
+          current="$(curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/ref/heads/${PROBE_BRANCH}" | jq -r '.object.sha')"
+          test "${current}" = "${EXPECTED_MAIN_SHA}"
+
+      - name: Write exact negative corpus evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-negative-corpus"
+          mkdir -p "${root}"
+          direct="$(cat "${root}/direct-update.status" 2>/dev/null || printf unresolved)"
+          force="$(cat "${root}/force-update.status" 2>/dev/null || printf unresolved)"
+          deletion="$(cat "${root}/delete-ref.status" 2>/dev/null || printf unresolved)"
+          merge="$(cat "${root}/merge-attempt.status" 2>/dev/null || printf unresolved)"
+          admin="${{ steps.identities.outputs.admin }}"
+          jq -n \
+            --arg schema trnm-branch-protection-negative-enforcement-v1 \
+            --arg subject_sha "${SUBJECT_SHA}" \
+            --arg subject_tree "${SUBJECT_TREE}" \
+            --arg main_sha "${EXPECTED_MAIN_SHA}" \
+            --arg probe_branch "${PROBE_BRANCH}" \
+            --arg normal_actor github-actions \
+            --arg administrator "${admin}" \
+            --arg direct_update_http "${direct}" \
+            --arg force_update_http "${force}" \
+            --arg delete_http "${deletion}" \
+            --arg zero_approval_merge_http "${merge}" \
+            --argjson main_content_mutated false \
+            --argjson exact_policy_cloned_to_probe true \
+            --argjson main_specific_destructive_attempts_performed false \
+            --argjson settings_gate_complete false \
+            --argjson all_gaps_closed false \
+            '{schema:$schema,subject_sha:$subject_sha,subject_tree:$subject_tree,main_sha:$main_sha,probe_branch:$probe_branch,normal_actor:$normal_actor,administrator:$administrator,http:{direct_update:$direct_update_http,force_update:$force_update_http,delete:$delete_http,zero_approval_merge:$zero_approval_merge_http},main_content_mutated:$main_content_mutated,exact_policy_cloned_to_probe:$exact_policy_cloned_to_probe,main_specific_destructive_attempts_performed:$main_specific_destructive_attempts_performed,settings_gate_complete:$settings_gate_complete,all_gaps_closed:$all_gaps_closed}' \
+            > "${root}/evidence.json"
+          (
+            cd "${root}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Cleanup temporary PR, protection and refs with administrator token
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          root="${RUNNER_TEMP}/trnm-negative-corpus"
+          admin_request() {
+            curl --silent --show-error \
+              -H 'Accept: application/vnd.github+json' \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              "$@"
+          }
+          pr_number="$(cat "${root}/probe-pr-number" 2>/dev/null)"
+          if [[ -n "${pr_number}" ]]; then
+            admin_request --request PATCH -H 'Content-Type: application/json' \
+              --data-binary '{"state":"closed"}' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${pr_number}" \
+              > "${root}/cleanup-close-pr.response.json" 2>"${root}/cleanup-close-pr.stderr"
+          fi
+          admin_request --request DELETE \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/branches/${PROBE_BRANCH}/protection" \
+            > "${root}/cleanup-protection.response" 2>"${root}/cleanup-protection.stderr"
+          admin_request --request DELETE \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/heads/${SOURCE_BRANCH}" \
+            > "${root}/cleanup-source.response" 2>"${root}/cleanup-source.stderr"
+          admin_request --request DELETE \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs/heads/${PROBE_BRANCH}" \
+            > "${root}/cleanup-probe.response" 2>"${root}/cleanup-probe.stderr"
+          set -e
+
+      - name: Verify cleanup and unchanged main
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-negative-corpus"
+          main="$(curl --fail --silent --show-error \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/ref/heads/main" | jq -r '.object.sha')"
+          test "${main}" = "${EXPECTED_MAIN_SHA}"
+          for branch in "${PROBE_BRANCH}" "${SOURCE_BRANCH}"; do
+            status="$(curl --silent --show-error \
+              -H 'Accept: application/vnd.github+json' \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              -o "${root}/cleanup-${branch}.json" -w '%{http_code}' \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" || true)"
+            test "${status}" = 404
+          done
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Upload immutable negative-enforcement evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-negative-enforcement-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-negative-corpus/**
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 6
+
+      - name: Publish bounded result to administration blocker
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ env.NORMAL_TOKEN }}
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-negative-corpus"
+          direct="$(cat "${root}/direct-update.status" 2>/dev/null || printf unresolved)"
+          force="$(cat "${root}/force-update.status" 2>/dev/null || printf unresolved)"
+          deletion="$(cat "${root}/delete-ref.status" 2>/dev/null || printf unresolved)"
+          merge="$(cat "${root}/merge-attempt.status" 2>/dev/null || printf unresolved)"
+          cat > "${RUNNER_TEMP}/negative-comment.md" <<EOF
+          <!-- trnm-admin-negative-enforcement-ded43a-v1 -->
+          ## Normal-actor cloned-policy negative enforcement result
+
+          - exact subject: \`${SUBJECT_SHA}\` / \`${SUBJECT_TREE}\`
+          - frozen main: \`${EXPECTED_MAIN_SHA}\`
+          - direct update HTTP: \`${direct}\`
+          - force update HTTP: \`${force}\`
+          - delete HTTP: \`${deletion}\`
+          - zero-approval merge HTTP: \`${merge}\`
+          - main content mutated: \`false\`
+          - temporary refs cleaned: see run artifact
+
+          The exact main policy was copied to an isolated temporary branch and probed with
+          the ordinary GitHub Actions token. This safely demonstrates policy mechanics but
+          does not substitute for any explicitly required human normal-collaborator or
+          main-specific destructive trace. Full Gate closure remains fail-closed.
+          EOF
+          jq -n --rawfile body "${RUNNER_TEMP}/negative-comment.md" '{body:$body}' \
+            | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/40/comments" --input -
