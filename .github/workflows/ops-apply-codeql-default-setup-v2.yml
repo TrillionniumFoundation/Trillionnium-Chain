@@ -1,0 +1,202 @@
+name: ops-apply-codeql-default-setup-v2
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-apply-codeql-default-setup-v2.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  pull-requests: write
+  issues: write
+  security-events: write
+
+concurrency:
+  group: ops-apply-codeql-default-setup-v2-20260909
+  cancel-in-progress: false
+
+jobs:
+  apply-and-report:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      API_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      SOURCE_PR: '101'
+      SOURCE_BRANCH: security/codeql-rust-log-redaction-v1-20260909
+      DEFAULT_BRANCH: main
+      CHANGE_TICKET: user-authorized-main-convergence-20260909
+    steps:
+      - name: Freeze exact source and protected destination identities
+        id: freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_json="$(gh api "repos/$REPOSITORY/pulls/$SOURCE_PR")"
+          test "$(jq -r .state <<<"$source_json")" = open
+          test "$(jq -r .head.ref <<<"$source_json")" = "$SOURCE_BRANCH"
+          source_sha="$(jq -r .head.sha <<<"$source_json")"
+          main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/$DEFAULT_BRANCH" --jq .object.sha)"
+          test "${#source_sha}" -eq 40
+          test "${#main_sha}" -eq 40
+          {
+            echo "source_sha=$source_sha"
+            echo "main_sha=$main_sha"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.freeze.outputs.source_sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Derive and validate source-controlled API payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ steps.freeze.outputs.source_sha }}"
+          python3 - <<'PY'
+          from __future__ import annotations
+          import json
+          from pathlib import Path
+
+          document = json.loads(Path('config/codeql-default-setup-v1.json').read_text())
+          matches = []
+          def visit(value):
+              if isinstance(value, dict):
+                  languages = value.get('languages')
+                  if (
+                      value.get('state') == 'configured'
+                      and value.get('query_suite') == 'extended'
+                      and isinstance(languages, list)
+                      and set(languages) == {'actions', 'javascript-typescript', 'python', 'rust'}
+                  ):
+                      matches.append(value)
+                  for child in value.values():
+                      visit(child)
+              elif isinstance(value, list):
+                  for child in value:
+                      visit(child)
+          visit(document)
+          if len(matches) != 1:
+              raise SystemExit(f'expected one configured extended API payload; found {len(matches)}')
+          source = matches[0]
+          payload = {
+              key: source[key]
+              for key in ('state', 'languages', 'query_suite', 'threat_model', 'runner_type', 'runner_label')
+              if key in source
+          }
+          if set(payload['languages']) != {'actions', 'javascript-typescript', 'python', 'rust'}:
+              raise SystemExit('required language set is incomplete')
+          if payload['query_suite'] != 'extended':
+              raise SystemExit('query suite must be extended')
+          threat = payload.get('threat_model')
+          if threat not in {'remote_and_local', 'remote-local'}:
+              raise SystemExit(f'unsupported threat model: {threat!r}')
+          Path('/tmp/request.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n'
+          )
+          PY
+          python3 -m py_compile \
+            scripts/admin/apply_codeql_default_setup_v1.py \
+            scripts/ci/test_codeql_default_setup_v1.py
+          python3 scripts/ci/test_codeql_default_setup_v1.py
+
+      - name: Apply live setting with explicit HTTP capture
+        id: apply
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/codeql-admin"
+          mkdir -p "$out"
+          cp /tmp/request.json "$out/request.json"
+          printf 'source_sha=%s\nmain_sha=%s\nchange_ticket=%s\n' \
+            "${{ steps.freeze.outputs.source_sha }}" \
+            "${{ steps.freeze.outputs.main_sha }}" \
+            "$CHANGE_TICKET" > "$out/binding.env"
+
+          test "$(gh api "repos/$REPOSITORY/git/ref/heads/$DEFAULT_BRANCH" --jq .object.sha)" \
+            = "${{ steps.freeze.outputs.main_sha }}"
+
+          http_code="$({ curl --silent --show-error \
+            --request PATCH \
+            --header 'Accept: application/vnd.github+json' \
+            --header 'X-GitHub-Api-Version: 2022-11-28' \
+            --header "Authorization: Bearer $API_TOKEN" \
+            --data-binary @/tmp/request.json \
+            --output "$out/patch-response.json" \
+            --write-out '%{http_code}' \
+            "https://api.github.com/repos/$REPOSITORY/code-scanning/default-setup"; } 2>"$out/patch.stderr")"
+          printf '%s\n' "$http_code" > "$out/patch-http-code.txt"
+          echo "http_code=$http_code" >> "$GITHUB_OUTPUT"
+
+          test "$(gh api "repos/$REPOSITORY/git/ref/heads/$DEFAULT_BRANCH" --jq .object.sha)" \
+            = "${{ steps.freeze.outputs.main_sha }}"
+
+          case "$http_code" in
+            200|201|202)
+              curl --fail --silent --show-error \
+                --header 'Accept: application/vnd.github+json' \
+                --header 'X-GitHub-Api-Version: 2022-11-28' \
+                --header "Authorization: Bearer $API_TOKEN" \
+                --output "$out/readback.json" \
+                "https://api.github.com/repos/$REPOSITORY/code-scanning/default-setup"
+              python3 - "$out" <<'PY'
+          import json, sys
+          from pathlib import Path
+          out = Path(sys.argv[1])
+          requested = json.loads((out / 'request.json').read_text())
+          live = json.loads((out / 'readback.json').read_text())
+          for key in ('state', 'query_suite', 'languages'):
+              if live.get(key) != requested.get(key):
+                  raise SystemExit(f'live readback mismatch: {key}')
+          if set(live.get('languages', [])) != {'actions', 'javascript-typescript', 'python', 'rust'}:
+              raise SystemExit('live configuration lacks required languages')
+          PY
+              result=applied_and_read_back
+              ;;
+            *)
+              result=administration_write_denied_or_invalid
+              ;;
+          esac
+          printf '%s\n' "$result" > "$out/result.txt"
+          echo "result=$result" >> "$GITHUB_OUTPUT"
+          (
+            cd "$out"
+            find . -maxdepth 1 -type f -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Publish exact administration outcome to combined M17 PR
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/codeql-admin"
+          result="$(cat "$out/result.txt" 2>/dev/null || echo preflight_or_execution_failure)"
+          http_code="$(cat "$out/patch-http-code.txt" 2>/dev/null || echo none)"
+          digest="$(sha256sum "$out/SHA256SUMS" 2>/dev/null | awk '{print $1}' || true)"
+          gh api "repos/$REPOSITORY/issues/$SOURCE_PR/comments" \
+            -f body="Live CodeQL administration transaction: **$result**. HTTP status: \`$http_code\`. Exact source: \`${{ steps.freeze.outputs.source_sha }}\`; frozen main: \`${{ steps.freeze.outputs.main_sha }}\`; evidence-manifest digest: \`${digest:-unavailable}\`. A successful settings readback closes only the configuration-mutation predicate; exact-source CodeQL/SARIF triage and independent specialist acceptance remain required. A denied/invalid result keeps the administration blocker open; no source-controlled JSON is treated as live enforcement." >/dev/null
+
+      - name: Upload immutable administration packet
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: codeql-default-setup-admin-v2-${{ github.sha }}
+          path: ${{ runner.temp }}/codeql-admin
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Keep gate failed when live mutation/readback did not complete
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(cat "$RUNNER_TEMP/codeql-admin/result.txt" 2>/dev/null || true)" = applied_and_read_back
