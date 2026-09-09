@@ -1,0 +1,38 @@
+name: Export native purge tool (temporary)
+
+on:
+  push:
+    branches:
+      - work/remove-cometbft-residue-20260907
+    paths:
+      - .github/workflows/export-native-purge-tool-temporary.yml
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_REF: refs/heads/work/remove-cometbft-residue-20260907
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify source and package tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "$EXPECTED_REF"
+          test -f tools/temporary_native_purge.py
+          sha256sum tools/temporary_native_purge.py > temporary_native_purge.py.sha256
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-purge-tool-${{ github.run_id }}
+          path: |
+            tools/temporary_native_purge.py
+            temporary_native_purge.py.sha256
+          if-no-files-found: error
+          retention-days: 1
