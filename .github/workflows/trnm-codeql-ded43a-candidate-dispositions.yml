@@ -1,0 +1,176 @@
+name: TRNM ded43a CodeQL candidate dispositions
+
+on:
+  push:
+    branches:
+      - security/codeql-ded43a-candidate-dispositions-20260909
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: trnm-codeql-ded43a-candidate-dispositions
+  cancel-in-progress: false
+
+jobs:
+  build-candidate-dispositions:
+    name: build-703-candidate-dispositions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      CODEQL_ARTIFACT_ID: "10084352708"
+      CODEQL_ARTIFACT_SHA256: f07a9cf0ccc003102a704190c2d16102eebe688874b43f8644a95fa440647d3d
+    steps:
+      - name: Check out evidence carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: carrier
+          persist-credentials: false
+
+      - name: Check out exact Chain source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          path: source
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and closed carrier scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C source rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git -C source rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git -C source diff --quiet
+          git -C source diff --cached --quiet
+          changed="$(git -C carrier diff --name-only "${EXACT_SOURCE_SHA}..HEAD" | sort)"
+          expected="$(printf '%s\n' \
+            .github/workflows/trnm-codeql-ded43a-candidate-dispositions.yml \
+            scripts/security/build_codeql_candidate_dispositions.py \
+            scripts/security/verify_codeql_candidate_dispositions.py | sort)"
+          test "${changed}" = "${expected}"
+
+      - name: Download and authenticate exact CodeQL artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-codeql-disposition"
+          mkdir -p "${root}/artifact"
+          curl --fail --silent --show-error --location \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${CODEQL_ARTIFACT_ID}" \
+            > "${root}/artifact-metadata.json"
+          python3 - "${root}/artifact-metadata.json" <<'PY'
+          import json, os, pathlib, sys
+          value = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          expected = "sha256:" + os.environ["CODEQL_ARTIFACT_SHA256"]
+          if value.get("id") != int(os.environ["CODEQL_ARTIFACT_ID"]):
+              raise SystemExit("artifact ID drift")
+          if value.get("digest") != expected:
+              raise SystemExit(f"artifact metadata digest drift: {value.get('digest')} != {expected}")
+          if value.get("expired") is not False:
+              raise SystemExit("artifact expired")
+          PY
+          curl --fail --silent --show-error --location \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${CODEQL_ARTIFACT_ID}/zip" \
+            > "${root}/artifact.zip"
+          echo "${CODEQL_ARTIFACT_SHA256}  ${root}/artifact.zip" | sha256sum --check --strict
+          unzip -q "${root}/artifact.zip" -d "${root}/artifact"
+          test -s "${root}/artifact/post-processed/upload.sarif"
+
+      - name: Generate all candidate dispositions
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-codeql-disposition"
+          python3 -B carrier/scripts/security/build_codeql_candidate_dispositions.py \
+            --sarif "${root}/artifact/post-processed/upload.sarif" \
+            --source-root source \
+            --output "${root}/candidate-dispositions"
+          python3 -B "${root}/candidate-dispositions/verify.py"
+          python3 - "${root}/candidate-dispositions/manifest.json" <<'PY'
+          import json, pathlib, sys
+          value = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          expected_rules = {
+              "rust/cleartext-logging": 90,
+              "rust/hard-coded-cryptographic-value": 613,
+          }
+          expected_classes = {
+              "public-deterministic-protocol-test-value": 611,
+              "query-dataflow-false-positive": 13,
+              "test-fixture-issue": 79,
+          }
+          if value["result_count"] != 703:
+              raise SystemExit("result count drift")
+          if value["counts_by_rule"] != expected_rules:
+              raise SystemExit(f"rule count drift: {value['counts_by_rule']}")
+          if value["counts_by_candidate_class"] != expected_classes:
+              raise SystemExit(f"candidate class drift: {value['counts_by_candidate_class']}")
+          if value["accepted"] is not False:
+              raise SystemExit("candidate package falsely accepted")
+          if value["official_codeql_gate_success"] is not False:
+              raise SystemExit("candidate package falsely claims official gate success")
+          PY
+          (
+            cd "${root}"
+            tar -czf trnm-codeql-ded43a-candidate-dispositions.tar.gz candidate-dispositions
+          )
+
+      - name: Publish audit summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-codeql-disposition"
+          {
+            echo '## Rust CodeQL candidate dispositions'
+            echo
+            echo '- exact source: `ded43a0704b455cd4bef724cb3ca40fb6db9465d`'
+            echo '- exact tree: `c0791ffb57e05fde43f87bfed1a3b4656c09efc0`'
+            echo '- original artifact: `10084352708`'
+            echo '- candidate records: `703`'
+            echo '- accepted: `false`'
+            echo '- independent security review required: `true`'
+            if [[ -s "${root}/candidate-dispositions/manifest.json" ]]; then
+              echo
+              echo '```json'
+              cat "${root}/candidate-dispositions/manifest.json"
+              echo '```'
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload immutable candidate disposition packet
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-codeql-ded43a-candidate-dispositions-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/trnm-codeql-disposition/candidate-dispositions/**
+            ${{ runner.temp }}/trnm-codeql-disposition/trnm-codeql-ded43a-candidate-dispositions.tar.gz
+            ${{ runner.temp }}/trnm-codeql-disposition/artifact-metadata.json
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Verify source and carrier remain unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C source rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git -C source rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git -C source diff --quiet
+          git -C source diff --cached --quiet
+          git -C carrier diff --quiet
+          git -C carrier diff --cached --quiet
