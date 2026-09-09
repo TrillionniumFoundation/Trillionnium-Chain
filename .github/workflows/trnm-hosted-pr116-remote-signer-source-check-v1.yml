@@ -1,0 +1,144 @@
+name: TRNM hosted PR116 remote signer source check v1
+
+on:
+  push:
+    branches:
+      - evidence/hosted-pr116-remote-signer-source-check-20260909
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-hosted-pr116-remote-signer-source-check-v1
+  cancel-in-progress: false
+
+jobs:
+  source-check:
+    name: Clean-runner diagnostic for PR116
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      SUBJECT_SHA: 7353bb071481be57f8aced380a125055740dc62c
+      SUBJECT_TREE: ad798ca7e78a0ecb0b0b659ca758cd827ea30330
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      RUST_BACKTRACE: "1"
+      TZ: UTC
+      LC_ALL: C.UTF-8
+    steps:
+      - name: Check out exact PR116 source commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          test "$(git hash-object trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs)" = "4314b1ee6836fa880199175e2b5e9812e8a37c9a"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          rustc +1.95.0 -Vv
+          cargo +1.95.0 -V
+
+      - name: Prove no sibling daemon binary cache exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f trillionnium/target/debug/trnm-external-watermark-v0
+          test ! -e trillionnium/target/debug/trnm-external-watermark-v0
+
+      - name: Check formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Run the repaired process-boundary integration test
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-pr116-source-check"
+          mkdir -p "${root}"
+          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-consensus-remote-signer-service \
+            --test external_authority_adapter -- --test-threads=1 \
+            2>&1 | tee "${root}/external-authority-adapter-test.log"
+          test ! -e trillionnium/target/debug/trnm-external-watermark-v0
+
+      - name: Run the complete remote-signer package tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-pr116-source-check"
+          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-consensus-remote-signer-service --all-targets -- --test-threads=1 \
+            2>&1 | tee "${root}/remote-signer-all-targets-test.log"
+          test ! -e trillionnium/target/debug/trnm-external-watermark-v0
+
+      - name: Strict Clippy for the repaired target
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-pr116-source-check"
+          cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-consensus-remote-signer-service \
+            --test external_authority_adapter -- -D warnings \
+            2>&1 | tee "${root}/strict-clippy.log"
+
+      - name: Write diagnostic evidence manifest
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-pr116-source-check"
+          mkdir -p "${root}"
+          cat > "${root}/manifest.json" <<EOF
+          {
+            "schema": "trnm-hosted-pr116-remote-signer-source-check-v1",
+            "repository": "${GITHUB_REPOSITORY}",
+            "workflow_source_sha": "${GITHUB_SHA}",
+            "subject_sha": "${SUBJECT_SHA}",
+            "subject_tree": "${SUBJECT_TREE}",
+            "workflow_run_id": "${GITHUB_RUN_ID}",
+            "hosted_diagnostic_only": true,
+            "clean_runner_sibling_binary_absent": true,
+            "self_hosted_acceptance_evidence": false,
+            "production_candidate": false,
+            "release_ready": false
+          }
+          EOF
+          (
+            cd "${root}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-hosted-pr116-source-check-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-pr116-source-check/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Verify exact source after execution
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
