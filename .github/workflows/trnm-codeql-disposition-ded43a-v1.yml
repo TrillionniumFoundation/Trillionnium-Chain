@@ -78,6 +78,30 @@ jobs:
             --name "${TRIAGE_ARTIFACT_NAME}" \
             --dir "${RUNNER_TEMP}/triage"
           test -s "${RUNNER_TEMP}/triage/triage.json"
+          (cd "${RUNNER_TEMP}/codeql" && sha256sum --check evidence/SHA256SUMS)
+          (cd "${RUNNER_TEMP}/triage" && sha256sum --check SHA256SUMS)
+
+      - name: Verify committed disposition contract inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest=docs/evidence/security/codeql/ded43a/MANIFEST.json
+          jq -e '
+            .schema == "trnm-rust-codeql-disposition-contract-v1" and
+            .subject.commit == env.SUBJECT_SHA and
+            .subject.tree == env.SUBJECT_TREE and
+            .analyzer.workflow_run_id == env.SOURCE_RUN_ID and
+            .analyzer.triage_workflow_run_id == env.TRIAGE_RUN_ID and
+            .authority.independent_specialist_acceptance == false and
+            .authority.alert_dismissal_authorized == false and
+            .authority.all_gaps_closed == false
+          ' "${manifest}"
+          test "$(sha256sum scripts/ci/generate_codeql_dispositions_ded43a_v1.py | cut -d' ' -f1)" \
+            = "$(jq -r '.inputs.generator_source_sha256' "${manifest}")"
+          test "$(sha256sum docs/evidence/security/codeql/ded43a/manual-semantic-review-v1.json | cut -d' ' -f1)" \
+            = "$(jq -r '.inputs.manual_semantic_review_sha256' "${manifest}")"
+          test "$(sha256sum .github/workflows/trnm-codeql-disposition-ded43a-v1.yml | cut -d' ' -f1)" \
+            = "$(jq -r '.inputs.workflow_source_sha256' "${manifest}")"
 
       - name: Generate complete per-fingerprint disposition and run false-pass mutants
         shell: bash
