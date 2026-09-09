@@ -1,0 +1,20 @@
+{
+  "schema": "trnm.poco.repository-metadata-cleanup.v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": "34411368722",
+  "run_attempt": "1",
+  "operations_branch": "ops-poco-metadata-cleanup-20260910-r3",
+  "product_branch": "chore/poco-only-purge-20260909",
+  "product_commit": "70a877a6f4c57a3f361563d87dc2e8736a9a1e7d",
+  "product_tree": "a676e99527201ba0bf152288e82319d4fb5b7220",
+  "noop_branch_present_before": false,
+  "noop_branch_absent_after": true,
+  "topics_write_return_code": 1,
+  "topics_read_return_code": 0,
+  "topics_exact_poco_only": false,
+  "topics_write_response": "{\"message\":\"Resource not accessible by integration\",\"documentation_url\":\"https://docs.github.com/rest/repos/repos#replace-all-repository-topics\",\"status\":\"403\"}",
+  "topics_write_error": "gh: Resource not accessible by integration (HTTP 403)\n",
+  "topics_readback": "{\"names\":[\"blockchain\",\"cometbft\",\"rust\",\"trillionnium\"]}",
+  "topics_read_error": "",
+  "success": false
+}
