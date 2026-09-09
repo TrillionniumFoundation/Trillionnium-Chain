@@ -10,6 +10,9 @@
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeSet, error::Error, fmt};
 
+mod production_ports;
+pub use production_ports::*;
+
 pub const NODE_BOUNDARY_VERSION_V0: u16 = 0;
 pub const MAX_INGRESS_FRAME_BYTES_V0: usize = 4 * 1024 * 1024;
 pub const MAX_OUTBOUND_FRAME_BYTES_V0: usize = 4 * 1024 * 1024;

@@ -9,6 +9,9 @@
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, error::Error, fmt};
 
+mod production;
+pub use production::*;
+
 pub const TX_LIFECYCLE_VERSION_V0: u16 = 0;
 pub const MAX_TX_BYTES_V0: usize = 1024 * 1024;
 pub const MAX_AUTHORIZATION_BYTES_V0: usize = 16 * 1024;
