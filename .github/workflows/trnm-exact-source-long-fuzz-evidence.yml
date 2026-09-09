@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: trnm-long-fuzz-4a00fa0e-20260909
+  group: trnm-long-fuzz-32274f64-20260909
   cancel-in-progress: false
 
 jobs:
@@ -25,8 +25,8 @@ jobs:
           - signed_envelope_json
           - poco_cev0_exact
     env:
-      EXACT_SOURCE_SHA: 4a00fa0ea561d46d6b57c68f553c471c39e94f06
-      EXACT_SOURCE_TREE: e4c59973db76489aa6f6651238167516bd93e766
+      EXACT_SOURCE_SHA: 32274f6421ff41369cca13fbf35931d3684abc37
+      EXACT_SOURCE_TREE: a98a8fb6ae3b57e8805672056663a28a009d07e8
       FUZZ_TOOLCHAIN: nightly-2026-07-27
       FUZZ_SECONDS: "3600"
       FUZZ_MAX_LEN: "2162688"
