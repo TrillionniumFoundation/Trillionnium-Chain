@@ -1,0 +1,351 @@
+name: TRNM final exact-source evidence orchestrator ded43a v3
+
+on:
+  push:
+    branches:
+      - evidence/final-orchestrator-ded43a-v3-20260909
+
+permissions:
+  actions: write
+  checks: read
+  contents: read
+  issues: write
+  pull-requests: read
+  security-events: read
+
+concurrency:
+  group: trnm-final-evidence-orchestrator-ded43a-v3
+  cancel-in-progress: false
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 100
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      SUBJECT_MERGE: 6a46d99fcdf916a3f36a7261665e9ce05badbc34
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact candidate source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Poll and retain exact-source authority state
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import datetime
+          import json
+          import os
+          import pathlib
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GH_TOKEN"]
+          source = os.environ["SUBJECT_SHA"]
+          tree = os.environ["SUBJECT_TREE"]
+          merge = os.environ["SUBJECT_MERGE"]
+          out = pathlib.Path(os.environ["RUNNER_TEMP"]) / "trnm-final-v3"
+          out.mkdir(parents=True, exist_ok=True)
+
+          lanes = {
+              "rust_codeql": {
+                  "branch": "evidence/codeql-rust-exact-source-ded43a-v3-20260909",
+                  "workflow": "TRNM exact-source Rust CodeQL evidence ded43a v3",
+                  "retry": True,
+              },
+              "codeql_triage": {
+                  "branch": "evidence/codeql-triage-ded43a-v2-20260909",
+                  "workflow": "TRNM exact-source Rust CodeQL triage ded43a v2",
+                  "retry": False,
+              },
+              "long_fuzz": {
+                  "branch": "evidence/long-fuzz-ded43a-20260909",
+                  "workflow": "TRNM three-target one-hour exact-source fuzz ded43a",
+                  "retry": True,
+              },
+              "hosted_head_merge": {
+                  "branch": "evidence/hosted-qualification-ded43a-20260909",
+                  "workflow": "TRNM hosted exact head and merge qualification ded43a",
+                  "retry": True,
+              },
+              "external_route": {
+                  "branch": "evidence/external-gates-ded43a-v3-20260909",
+                  "workflow": "TRNM route DED43A external gate packet v3",
+                  "retry": True,
+              },
+          }
+
+          def request(method, path, body=None):
+              url = path if path.startswith("https://") else "https://api.github.com" + path
+              headers = {
+                  "Accept": "application/vnd.github+json",
+                  "Authorization": f"Bearer {token}",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "User-Agent": "trnm-final-exact-source-v3",
+              }
+              payload = None
+              if body is not None:
+                  payload = json.dumps(body).encode("utf-8")
+                  headers["Content-Type"] = "application/json"
+              req = urllib.request.Request(url, data=payload, headers=headers, method=method)
+              try:
+                  with urllib.request.urlopen(req, timeout=45) as response:
+                      raw = response.read()
+                      return response.status, json.loads(raw) if raw else None
+              except urllib.error.HTTPError as exc:
+                  raw = exc.read()
+                  try:
+                      value = json.loads(raw) if raw else None
+                  except Exception:
+                      value = {"raw": raw.decode("utf-8", "replace")}
+                  return exc.code, value
+
+          def latest(branch, workflow):
+              query = urllib.parse.urlencode({"branch": branch, "per_page": 100})
+              code, payload = request("GET", f"/repos/{repo}/actions/runs?{query}")
+              if code != 200:
+                  return {"lookup_http_status": code, "lookup_error": payload}
+              values = [run for run in payload.get("workflow_runs", []) if run.get("name") == workflow]
+              values.sort(key=lambda run: (run.get("created_at") or "", run.get("id") or 0), reverse=True)
+              return values[0] if values else None
+
+          started = time.time()
+          deadline = started + 85 * 60
+          retries = set()
+          observations = []
+          final_runs = {}
+          while True:
+              terminal = True
+              snapshot = {
+                  "observed_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                  "runs": {},
+              }
+              for lane, config in lanes.items():
+                  run = latest(config["branch"], config["workflow"])
+                  snapshot["runs"][lane] = run
+                  if not isinstance(run, dict) or run.get("status") != "completed":
+                      terminal = False
+                      continue
+                  if (
+                      run.get("conclusion") not in ("success", "neutral", "skipped")
+                      and config["retry"]
+                      and run.get("id") not in retries
+                  ):
+                      retries.add(run["id"])
+                      code, response = request(
+                          "POST",
+                          f"/repos/{repo}/actions/runs/{run['id']}/rerun-failed-jobs",
+                          {},
+                      )
+                      snapshot["runs"][lane]["bounded_retry"] = {
+                          "http_status": code,
+                          "response": response,
+                      }
+                      if code in (201, 202):
+                          terminal = False
+              observations.append(snapshot)
+              final_runs = snapshot["runs"]
+              if terminal or time.time() >= deadline:
+                  break
+              time.sleep(60)
+
+          lane_detail = {}
+          for lane, config in lanes.items():
+              run = final_runs.get(lane)
+              detail = {"config": config, "run": run}
+              if isinstance(run, dict) and run.get("id"):
+                  run_id = run["id"]
+                  code, jobs = request("GET", f"/repos/{repo}/actions/runs/{run_id}/jobs?per_page=100")
+                  detail["jobs_http_status"] = code
+                  detail["jobs"] = jobs
+                  code, artifacts = request("GET", f"/repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100")
+                  detail["artifacts_http_status"] = code
+                  detail["artifacts"] = artifacts
+              lane_detail[lane] = detail
+
+          pulls = {}
+          reviews = {}
+          current_head = None
+          for number in (62, 100, 101):
+              code, pr = request("GET", f"/repos/{repo}/pulls/{number}")
+              pulls[str(number)] = {"http_status": code, "value": pr}
+              if number == 101 and code == 200:
+                  current_head = ((pr or {}).get("head") or {}).get("sha")
+              code, review = request("GET", f"/repos/{repo}/pulls/{number}/reviews?per_page=100")
+              reviews[str(number)] = {"http_status": code, "value": review}
+
+          exact_head_stable = current_head == source
+
+          latest_review_by_user = {}
+          for review in reviews.get("101", {}).get("value") or []:
+              user = ((review.get("user") or {}).get("login"))
+              if not user:
+                  continue
+              if review.get("commit_id") != source:
+                  continue
+              previous = latest_review_by_user.get(user)
+              if not previous or (review.get("submitted_at") or "") >= (previous.get("submitted_at") or ""):
+                  latest_review_by_user[user] = review
+          author = (((pulls.get("101", {}).get("value") or {}).get("user") or {}).get("login"))
+          approvals = sorted(
+              user for user, review in latest_review_by_user.items()
+              if user != author and review.get("state") == "APPROVED"
+          )
+          changes_requested = sorted(
+              user for user, review in latest_review_by_user.items()
+              if user != author and review.get("state") == "CHANGES_REQUESTED"
+          )
+
+          settings = {}
+          for key, endpoint in {
+              "main_protection": f"/repos/{repo}/branches/main/protection",
+              "codeql_default_setup": f"/repos/{repo}/code-scanning/default-setup",
+              "rulesets": f"/repos/{repo}/rulesets?per_page=100",
+          }.items():
+              code, value = request("GET", endpoint)
+              settings[key] = {"http_status": code, "value": value}
+
+          external_ids = (
+              "EXT-REVIEW-001",
+              "EXT-G1-CAMPAIGN-001",
+              "EXT-ANCHOR-HSM-001",
+              "EXT-POWERLOSS-001",
+              "EXT-AUDIT-001",
+              "EXT-SOAK-ACTIVATION-001",
+          )
+          external = {}
+          for gate in external_ids:
+              query = urllib.parse.urlencode({"q": f'repo:{repo} is:issue is:open in:title "{gate}"'})
+              code, value = request("GET", f"/search/issues?{query}")
+              external[gate] = {"http_status": code, "value": value}
+
+          submissions_code, submissions = request(
+              "GET", f"/repos/{repo}/contents/docs/evidence/external/submissions?ref={urllib.parse.quote(source)}"
+          )
+          external_acceptance_present = submissions_code == 200 and isinstance(submissions, list) and bool(submissions)
+
+          repository_green = all(
+              isinstance(lane_detail[name].get("run"), dict)
+              and lane_detail[name]["run"].get("status") == "completed"
+              and lane_detail[name]["run"].get("conclusion") == "success"
+              for name in ("rust_codeql", "long_fuzz", "hosted_head_merge", "external_route")
+          )
+          triage_clear = (
+              isinstance(lane_detail["codeql_triage"].get("run"), dict)
+              and lane_detail["codeql_triage"]["run"].get("status") == "completed"
+              and lane_detail["codeql_triage"]["run"].get("conclusion") == "success"
+          )
+          settings_readable = all(settings[key]["http_status"] == 200 for key in ("main_protection", "codeql_default_setup"))
+          independent_review_closed = len(approvals) >= 2 and not changes_requested
+
+          report = {
+              "schema": "trnm-final-exact-source-authority-v3",
+              "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "subject": {"source_sha": source, "source_tree": tree, "prospective_merge": merge},
+              "poll_duration_seconds": int(time.time() - started),
+              "bounded_retries": sorted(retries),
+              "exact_head_stable": exact_head_stable,
+              "lanes": lane_detail,
+              "pull_requests": pulls,
+              "reviews": reviews,
+              "exact_head_approvals": approvals,
+              "exact_head_changes_requested": changes_requested,
+              "settings": settings,
+              "settings_readable": settings_readable,
+              "external_gate_issues": external,
+              "external_submissions_http_status": submissions_code,
+              "external_submissions": submissions,
+              "repository_controlled_evidence_green": repository_green,
+              "codeql_triage_clear": triage_clear,
+              "independent_review_closed": independent_review_closed,
+              "external_acceptance_present": external_acceptance_present,
+              "all_gaps_closed": False,
+              "public_testnet_ready": False,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "release_ready": False,
+          }
+          (out / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+          (out / "observations.json").write_text(json.dumps(observations, indent=2, sort_keys=True) + "\n")
+
+          lines = [
+              "<!-- trnm-final-exact-source-ded43a-v3 -->",
+              "## Final exact-source authority checkpoint v3",
+              "",
+              f"- source: `{source}`",
+              f"- tree: `{tree}`",
+              f"- prospective merge: `{merge}`",
+              f"- exact PR #101 head unchanged: **{exact_head_stable}**",
+              f"- repository-controlled evidence green: **{repository_green}**",
+              f"- complete CodeQL triage clear: **{triage_clear}**",
+              f"- exact-head independent approvals: **{len(approvals)}** (`{', '.join(approvals) or 'none'}`)",
+              f"- exact-head changes requested: **{len(changes_requested)}** (`{', '.join(changes_requested) or 'none'}`)",
+              f"- administration settings readable: **{settings_readable}**",
+              f"- authenticated external submissions present: **{external_acceptance_present}**",
+              "",
+              "| Lane | Run | Status | Conclusion | Attempt |",
+              "|---|---:|---|---|---:|",
+          ]
+          for lane, value in lane_detail.items():
+              run = value.get("run") or {}
+              lines.append(
+                  f"| `{lane}` | `{run.get('id', '')}` | `{run.get('status', 'missing')}` | "
+                  f"`{run.get('conclusion', '')}` | `{run.get('run_attempt', '')}` |"
+              )
+          lines += [
+              "",
+              "This checkpoint retains full job/step/artifact, review, settings and external-submission data in its artifact.",
+              "It does not create or accept independent review, multi-host, HSM, physical power-loss, audit, soak or governance evidence.",
+              "",
+              "```text",
+              "all_gaps_closed=false",
+              "public_testnet_ready=false",
+              "production_candidate=false",
+              "production_consensus_activation=false",
+              "release_ready=false",
+              "```",
+          ]
+          summary = "\n".join(lines) + "\n"
+          (out / "summary.md").write_text(summary)
+          for issue in (81, 88, 101):
+              code, response = request("POST", f"/repos/{repo}/issues/{issue}/comments", {"body": summary})
+              if code != 201:
+                  raise SystemExit(f"failed to publish issue {issue}: HTTP {code}: {response}")
+          PY
+
+      - name: Upload complete authority snapshot
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-final-exact-source-authority-v3-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-final-v3/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Verify no candidate-source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
