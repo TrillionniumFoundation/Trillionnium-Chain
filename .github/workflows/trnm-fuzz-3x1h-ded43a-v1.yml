@@ -1,0 +1,195 @@
+name: TRNM exact-source three-target one-hour fuzz ded43a v1
+
+on:
+  push:
+    branches:
+      - evidence/fuzz-3x1h-ded43a-v1-20260909
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-fuzz-3x1h-ded43a-v1
+  cancel-in-progress: false
+
+jobs:
+  fuzz:
+    name: one-hour ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - canonical_tx_json
+          - signed_envelope_json
+          - poco_cev0_exact
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      FUZZ_SECONDS: "3600"
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+    steps:
+      - name: Check out exact immutable subject
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and target declaration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          test -f "trillionnium/fuzz/fuzz_targets/${{ matrix.target }}.rs"
+          grep -Fq 'name = "${{ matrix.target }}"' trillionnium/fuzz/Cargo.toml
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install isolated pinned nightly and repository-recorded cargo-fuzz
+        shell: bash
+        run: |
+          set -euo pipefail
+          nightly="nightly-2026-08-01"
+          rustup toolchain install "${nightly}" --profile minimal
+          version="$(python3 - <<'PY'
+          import pathlib, re
+          paths = [
+              pathlib.Path('trillionnium/fuzz/X230_LOCK_PROVENANCE_V1.md'),
+              pathlib.Path('trillionnium/fuzz/README.md'),
+              pathlib.Path('.github/workflows/trnm-canonical-input-fuzz-smoke.yml'),
+          ]
+          patterns = [
+              re.compile(r'cargo[- ]fuzz[^0-9\n]{0,40}v?([0-9]+\.[0-9]+\.[0-9]+)', re.I),
+              re.compile(r'cargo_fuzz_version\s*[:=]\s*["`]?v?([0-9]+\.[0-9]+\.[0-9]+)', re.I),
+          ]
+          for path in paths:
+              if not path.is_file():
+                  continue
+              text = path.read_text(encoding='utf-8', errors='replace')
+              for pattern in patterns:
+                  match = pattern.search(text)
+                  if match:
+                      print(match.group(1))
+                      raise SystemExit(0)
+          raise SystemExit('no exact cargo-fuzz version recorded in the immutable source')
+          PY
+          )"
+          test -n "${version}"
+          echo "${version}" > "${RUNNER_TEMP}/cargo-fuzz-version"
+          cargo +"${nightly}" install cargo-fuzz --locked --version "${version}" --root "${RUNNER_TEMP}/cargo-fuzz"
+          echo "${RUNNER_TEMP}/cargo-fuzz/bin" >> "${GITHUB_PATH}"
+          rustc +"${nightly}" -Vv | tee "${RUNNER_TEMP}/rustc-version.txt"
+          "${RUNNER_TEMP}/cargo-fuzz/bin/cargo-fuzz" --version | tee "${RUNNER_TEMP}/cargo-fuzz-version.txt"
+
+      - name: Prepare immutable-seed working corpus outside checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-fuzz/${{ matrix.target }}"
+          mkdir -p "${root}/corpus" "${root}/artifacts" "${root}/target"
+          seed="trillionnium/fuzz/corpus/${{ matrix.target }}"
+          if [[ -d "${seed}" ]]; then
+            cp -a "${seed}/." "${root}/corpus/"
+          fi
+          if ! find "${root}/corpus" -type f -print -quit | grep -q .; then
+            printf '\x00' > "${root}/corpus/empty-seed.bin"
+          fi
+          (
+            cd "${root}/corpus"
+            find . -type f -print0 | sort -z | xargs -0 sha256sum > "${root}/initial-corpus.SHA256SUMS"
+          )
+
+      - name: Run one wall-clock hour with final statistics
+        shell: bash
+        env:
+          CARGO_TARGET_DIR: ${{ runner.temp }}/trnm-fuzz/${{ matrix.target }}/target
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-fuzz/${{ matrix.target }}"
+          nightly="nightly-2026-08-01"
+          set +e
+          cargo +"${nightly}" fuzz run \
+            --fuzz-dir trillionnium/fuzz \
+            "${{ matrix.target }}" \
+            "${root}/corpus" \
+            -- \
+            -max_total_time="${FUZZ_SECONDS}" \
+            -timeout=30 \
+            -rss_limit_mb=6144 \
+            -print_final_stats=1 \
+            -artifact_prefix="${root}/artifacts/" \
+            2>&1 | tee "${root}/fuzzer.log"
+          rc="${PIPESTATUS[0]}"
+          set -e
+          printf '%s\n' "${rc}" > "${root}/exit-code"
+          if [[ "${rc}" -ne 0 ]]; then
+            echo "fuzzer returned ${rc}" >&2
+            exit "${rc}"
+          fi
+          grep -Eq 'stat::number_of_executed_units:|DONE' "${root}/fuzzer.log"
+
+      - name: Finalize source-bound evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-fuzz/${{ matrix.target }}"
+          mkdir -p "${root}/evidence"
+          cp "${RUNNER_TEMP}/rustc-version.txt" "${root}/evidence/" 2>/dev/null || true
+          cp "${RUNNER_TEMP}/cargo-fuzz-version.txt" "${root}/evidence/" 2>/dev/null || true
+          cp "${RUNNER_TEMP}/cargo-fuzz-version" "${root}/evidence/recorded-cargo-fuzz-version" 2>/dev/null || true
+          (
+            cd "${root}/corpus"
+            find . -type f -print0 | sort -z | xargs -0 sha256sum > "${root}/final-corpus.SHA256SUMS"
+          )
+          crash_count="$(find "${root}/artifacts" -type f | wc -l | tr -d ' ')"
+          cat > "${root}/evidence/manifest.json" <<EOF
+          {
+            "schema": "trnm-exact-source-fuzz-one-hour-v1",
+            "repository": "${GITHUB_REPOSITORY}",
+            "workflow_source_sha": "${GITHUB_SHA}",
+            "subject_sha": "${SUBJECT_SHA}",
+            "subject_tree": "${SUBJECT_TREE}",
+            "target": "${{ matrix.target }}",
+            "budget_seconds": ${FUZZ_SECONDS},
+            "workflow_run_id": "${GITHUB_RUN_ID}",
+            "workflow_run_attempt": "${GITHUB_RUN_ATTEMPT}",
+            "crash_artifact_count": ${crash_count},
+            "independent_fuzz_acceptance": false,
+            "all_gaps_closed": false,
+            "production_candidate": false,
+            "release_ready": false
+          }
+          EOF
+          (
+            cd "${root}"
+            find . -type f ! -path './evidence/SHA256SUMS' -print0 | sort -z | xargs -0 sha256sum > evidence/SHA256SUMS
+          )
+
+      - name: Upload complete corpus, logs and crash evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-fuzz-1h-${{ matrix.target }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-fuzz/${{ matrix.target }}/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Enforce no crash and no source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-fuzz/${{ matrix.target }}"
+          test -f "${root}/exit-code"
+          test "$(cat "${root}/exit-code")" = 0
+          test "$(find "${root}/artifacts" -type f | wc -l | tr -d ' ')" = 0
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
