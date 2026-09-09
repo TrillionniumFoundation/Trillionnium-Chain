@@ -1,0 +1,484 @@
+name: TRNM final exact-source convergence ded43a v5
+
+on:
+  push:
+    branches:
+      - evidence/final-convergence-ded43a-v5-20260909
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  issues: write
+  pull-requests: read
+  security-events: read
+
+concurrency:
+  group: trnm-final-convergence-ded43a-v5
+  cancel-in-progress: false
+
+jobs:
+  converge:
+    name: Wait, re-read and bind every remaining gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      INTEGRATION_BRANCH: work/plan-v2-full-gap-closure-20260902
+      INTEGRATION_PR: "62"
+      BASE_SHA: b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9
+      CODEQL_PRODUCER_RUN: "34311122905"
+      CODEQL_PRODUCER_ARTIFACT: trnm-rust-codeql-exact-source-ded43a-v3-34311122905
+      CODEQL_PRODUCER_DIGEST: sha256:8eba327ccae6cfa4a9c0c618fe665de408b35c6129ccf27a5d168c8d8611f433
+    steps:
+      - name: Check out exact immutable subject
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Execute external evidence verifier in require-all mode
+        id: external
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p "${RUNNER_TEMP}/trnm-convergence"
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all \
+            > "${RUNNER_TEMP}/trnm-convergence/external-evidence.stdout" \
+            2> "${RUNNER_TEMP}/trnm-convergence/external-evidence.stderr"
+          rc=$?
+          set -e
+          printf '%s\n' "${rc}" > "${RUNNER_TEMP}/trnm-convergence/external-evidence.exit-code"
+          echo "rc=${rc}" >> "${GITHUB_OUTPUT}"
+
+      - name: Wait for evidence lanes and build one live snapshot
+        id: snapshot
+        shell: bash
+        env:
+          EXTERNAL_RC: ${{ steps.external.outputs.rc }}
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-convergence"
+          mkdir -p "${root}"
+          export CONVERGENCE_ROOT="${root}"
+          python3 - <<'PY'
+          import datetime
+          import json
+          import os
+          import pathlib
+          import subprocess
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GH_TOKEN"]
+          root = pathlib.Path(os.environ["CONVERGENCE_ROOT"])
+          api_root = "https://api.github.com"
+
+          def api(path, accept="application/vnd.github+json"):
+              request = urllib.request.Request(
+                  api_root + path,
+                  headers={
+                      "Accept": accept,
+                      "Authorization": f"Bearer {token}",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                      "User-Agent": "trnm-final-convergence-v5",
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=60) as response:
+                      body = response.read().decode("utf-8")
+                      return {
+                          "status": response.status,
+                          "headers": dict(response.headers.items()),
+                          "json": json.loads(body) if body else None,
+                          "error": None,
+                      }
+              except urllib.error.HTTPError as error:
+                  body = error.read().decode("utf-8", errors="replace")
+                  try:
+                      parsed = json.loads(body) if body else None
+                  except json.JSONDecodeError:
+                      parsed = {"raw": body}
+                  return {
+                      "status": error.code,
+                      "headers": dict(error.headers.items()),
+                      "json": parsed,
+                      "error": str(error),
+                  }
+
+          lane_specs = [
+              {
+                  "id": "codeql_fingerprint_disposition",
+                  "branch": "evidence/codeql-triage-ded43a-v4-20260909",
+                  "workflow": "TRNM exact-source Rust CodeQL fingerprint disposition ded43a v4",
+              },
+              {
+                  "id": "cross_platform_portability",
+                  "branch": "evidence/cross-platform-portability-ded43a-v1-20260909",
+                  "workflow": "TRNM exact-source cross-platform portability ded43a v1",
+              },
+              {
+                  "id": "three_target_one_hour_fuzz",
+                  "branch": "evidence/fuzz-3x1h-ded43a-v1-20260909",
+                  "workflow": "TRNM exact-source three-target one-hour fuzz ded43a v1",
+              },
+          ]
+
+          def newest_lane_run(spec):
+              query = urllib.parse.urlencode({"branch": spec["branch"], "event": "push", "per_page": 100})
+              result = api(f"/repos/{repo}/actions/runs?{query}")
+              runs = (result.get("json") or {}).get("workflow_runs", []) if result["status"] == 200 else []
+              matching = [run for run in runs if run.get("name") == spec["workflow"]]
+              matching.sort(key=lambda run: (run.get("created_at") or "", int(run.get("id") or 0)), reverse=True)
+              return matching[0] if matching else None
+
+          deadline = time.monotonic() + 77 * 60
+          lanes = {}
+          while True:
+              all_terminal = True
+              lanes = {}
+              for spec in lane_specs:
+                  run = newest_lane_run(spec)
+                  lanes[spec["id"]] = {
+                      "branch": spec["branch"],
+                      "workflow": spec["workflow"],
+                      "run_id": run.get("id") if run else None,
+                      "head_sha": run.get("head_sha") if run else None,
+                      "status": run.get("status") if run else "absent",
+                      "conclusion": run.get("conclusion") if run else None,
+                      "created_at": run.get("created_at") if run else None,
+                      "updated_at": run.get("updated_at") if run else None,
+                  }
+                  if not run or run.get("status") != "completed":
+                      all_terminal = False
+              if all_terminal or time.monotonic() >= deadline:
+                  break
+              time.sleep(60)
+
+          # Enrich terminal lane records with every job and step so empty/skipped
+          # matrix legs cannot be hidden by a workflow-level conclusion.
+          for lane in lanes.values():
+              run_id = lane.get("run_id")
+              if not run_id:
+                  lane["jobs"] = []
+                  lane["job_surface_nonempty"] = False
+                  lane["all_jobs_success"] = False
+                  continue
+              jobs_result = api(f"/repos/{repo}/actions/runs/{run_id}/jobs?per_page=100")
+              jobs = (jobs_result.get("json") or {}).get("jobs", []) if jobs_result["status"] == 200 else []
+              lane["jobs"] = [
+                  {
+                      "id": job.get("id"),
+                      "name": job.get("name"),
+                      "status": job.get("status"),
+                      "conclusion": job.get("conclusion"),
+                      "started_at": job.get("started_at"),
+                      "completed_at": job.get("completed_at"),
+                      "steps": [
+                          {
+                              "name": step.get("name"),
+                              "status": step.get("status"),
+                              "conclusion": step.get("conclusion"),
+                              "number": step.get("number"),
+                          }
+                          for step in job.get("steps", [])
+                      ],
+                  }
+                  for job in jobs
+              ]
+              lane["job_surface_nonempty"] = bool(jobs)
+              lane["all_jobs_success"] = bool(jobs) and all(
+                  job.get("status") == "completed" and job.get("conclusion") == "success"
+                  for job in jobs
+              )
+              artifact_result = api(f"/repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100")
+              artifacts = (artifact_result.get("json") or {}).get("artifacts", []) if artifact_result["status"] == 200 else []
+              lane["artifacts"] = [
+                  {
+                      "id": artifact.get("id"),
+                      "name": artifact.get("name"),
+                      "size_in_bytes": artifact.get("size_in_bytes"),
+                      "digest": artifact.get("digest"),
+                      "expired": artifact.get("expired"),
+                  }
+                  for artifact in artifacts
+              ]
+              lane["artifact_surface_nonempty"] = bool(artifacts) and all(not a.get("expired") for a in artifacts)
+              lane["accepted_repository_execution"] = bool(
+                  lane.get("status") == "completed"
+                  and lane.get("conclusion") == "success"
+                  and lane.get("all_jobs_success")
+                  and lane.get("artifact_surface_nonempty")
+              )
+
+          encoded_branch = urllib.parse.quote(os.environ["INTEGRATION_BRANCH"], safe="")
+          integration_ref = api(f"/repos/{repo}/git/ref/heads/{encoded_branch}")
+          live_integration_sha = None
+          if integration_ref["status"] == 200:
+              live_integration_sha = ((integration_ref.get("json") or {}).get("object") or {}).get("sha")
+
+          commit = api(f"/repos/{repo}/git/commits/{os.environ['SUBJECT_SHA']}")
+          live_subject_tree = None
+          if commit["status"] == 200:
+              live_subject_tree = ((commit.get("json") or {}).get("tree") or {}).get("sha")
+
+          pr = api(f"/repos/{repo}/pulls/{os.environ['INTEGRATION_PR']}")
+          pr_json = pr.get("json") or {}
+          merge_sha = pr_json.get("merge_commit_sha")
+
+          reviews_result = api(f"/repos/{repo}/pulls/{os.environ['INTEGRATION_PR']}/reviews?per_page=100")
+          reviews = reviews_result.get("json") if reviews_result["status"] == 200 else []
+          reviews = reviews if isinstance(reviews, list) else []
+          latest_by_actor = {}
+          for review in sorted(reviews, key=lambda item: (item.get("submitted_at") or "", int(item.get("id") or 0))):
+              actor = ((review.get("user") or {}).get("login") or "").lower()
+              if actor:
+                  latest_by_actor[actor] = review
+          excluded_reviewers = {
+              "profhepta",
+              str(((pr_json.get("user") or {}).get("login") or "")).lower(),
+          }
+          eligible_latest = {
+              actor: review
+              for actor, review in latest_by_actor.items()
+              if actor not in excluded_reviewers
+          }
+          approvals = sorted(
+              actor for actor, review in eligible_latest.items() if review.get("state") == "APPROVED"
+          )
+          changes_requested = sorted(
+              actor for actor, review in eligible_latest.items() if review.get("state") == "CHANGES_REQUESTED"
+          )
+
+          required_workflows = [
+              "TRNM Canonical Input Fuzz Smoke",
+              "TRNM CometBFT Spike",
+              "TRNM PoCO-BFT v0 gates",
+              "TRNM payload replay recovery v1 gate",
+              "TRNM replay-to-Core coordinator v1 gate",
+              "agent-user-phasea-gate",
+              "trnm-documentation-truth",
+              "trnm-gate-quick-check",
+              "trnm-merge-gates",
+              "trnm-native-poco-runtime-fault-matrix-v1",
+              "trnm-p2-node-candidate-devnet-cli",
+              "trnm-required-baseline",
+              "web4-frontend-ci",
+          ]
+          runs_query = urllib.parse.urlencode({"head_sha": os.environ["SUBJECT_SHA"], "per_page": 100})
+          runs_result = api(f"/repos/{repo}/actions/runs?{runs_query}")
+          exact_runs = (runs_result.get("json") or {}).get("workflow_runs", []) if runs_result["status"] == 200 else []
+          workflow_state = {}
+          for name in required_workflows:
+              candidates = [run for run in exact_runs if run.get("name") == name]
+              candidates.sort(key=lambda run: (run.get("created_at") or "", int(run.get("id") or 0)), reverse=True)
+              latest = candidates[0] if candidates else None
+              workflow_state[name] = {
+                  "run_id": latest.get("id") if latest else None,
+                  "status": latest.get("status") if latest else "absent",
+                  "conclusion": latest.get("conclusion") if latest else None,
+                  "head_sha": latest.get("head_sha") if latest else None,
+              }
+          native_required_complete = all(
+              item["status"] == "completed" and item["conclusion"] == "success" and item["head_sha"] == os.environ["SUBJECT_SHA"]
+              for item in workflow_state.values()
+          )
+
+          codeql_run = api(f"/repos/{repo}/actions/runs/{os.environ['CODEQL_PRODUCER_RUN']}")
+          codeql_artifacts = api(f"/repos/{repo}/actions/runs/{os.environ['CODEQL_PRODUCER_RUN']}/artifacts?per_page=100")
+          matching_codeql_artifacts = []
+          if codeql_artifacts["status"] == 200:
+              matching_codeql_artifacts = [
+                  artifact
+                  for artifact in (codeql_artifacts.get("json") or {}).get("artifacts", [])
+                  if artifact.get("name") == os.environ["CODEQL_PRODUCER_ARTIFACT"]
+                  and artifact.get("digest") == os.environ["CODEQL_PRODUCER_DIGEST"]
+                  and artifact.get("expired") is False
+              ]
+          codeql_producer_bound = bool(
+              codeql_run["status"] == 200
+              and (codeql_run.get("json") or {}).get("status") == "completed"
+              and (codeql_run.get("json") or {}).get("conclusion") == "success"
+              and len(matching_codeql_artifacts) == 1
+          )
+
+          protection = api(f"/repos/{repo}/branches/main/protection")
+          rulesets = api(f"/repos/{repo}/rulesets?per_page=100")
+          codeql_setup = api(f"/repos/{repo}/code-scanning/default-setup")
+
+          external_rc = int(os.environ.get("EXTERNAL_RC") or "255")
+          source_stable = bool(
+              live_integration_sha == os.environ["SUBJECT_SHA"]
+              and live_subject_tree == os.environ["SUBJECT_TREE"]
+              and ((pr_json.get("head") or {}).get("sha") == os.environ["SUBJECT_SHA"])
+              and ((pr_json.get("base") or {}).get("sha") == os.environ["BASE_SHA"])
+              and pr_json.get("state") == "open"
+              and pr_json.get("draft") is True
+          )
+          evidence_lanes_complete = all(lane.get("accepted_repository_execution") for lane in lanes.values())
+          independent_review_complete = len(approvals) >= 2 and not changes_requested
+          settings_gate_complete = protection["status"] == 200 and codeql_setup["status"] == 200
+          external_gate_complete = external_rc == 0
+
+          gate_state = {
+              "exact_integration_source_stable": source_stable,
+              "native_required_workflows_complete": native_required_complete,
+              "codeql_producer_exact_artifact_bound": codeql_producer_bound,
+              "repository_evidence_lanes_complete": evidence_lanes_complete,
+              "independent_review_complete": independent_review_complete,
+              "administration_settings_readback_complete": settings_gate_complete,
+              "external_require_all_evidence_complete": external_gate_complete,
+          }
+          all_gaps_closed = all(gate_state.values())
+
+          snapshot = {
+              "schema": "trnm-final-exact-source-convergence-v5",
+              "generated_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "repository": repo,
+              "subject_sha": os.environ["SUBJECT_SHA"],
+              "subject_tree": os.environ["SUBJECT_TREE"],
+              "base_sha": os.environ["BASE_SHA"],
+              "live_integration_sha": live_integration_sha,
+              "live_subject_tree": live_subject_tree,
+              "prospective_merge_sha": merge_sha,
+              "source_stable": source_stable,
+              "integration_pr": {
+                  "number": int(os.environ["INTEGRATION_PR"]),
+                  "state": pr_json.get("state"),
+                  "draft": pr_json.get("draft"),
+                  "mergeable": pr_json.get("mergeable"),
+                  "mergeable_state": pr_json.get("mergeable_state"),
+                  "head_sha": ((pr_json.get("head") or {}).get("sha")),
+                  "base_sha": ((pr_json.get("base") or {}).get("sha")),
+              },
+              "reviews": {
+                  "excluded_reviewers": sorted(excluded_reviewers),
+                  "eligible_latest_states": {
+                      actor: review.get("state") for actor, review in sorted(eligible_latest.items())
+                  },
+                  "approvals": approvals,
+                  "changes_requested": changes_requested,
+                  "complete": independent_review_complete,
+              },
+              "required_workflows": workflow_state,
+              "native_required_complete": native_required_complete,
+              "evidence_lanes": lanes,
+              "codeql_producer": {
+                  "run_id": int(os.environ["CODEQL_PRODUCER_RUN"]),
+                  "run_status": (codeql_run.get("json") or {}).get("status") if codeql_run["status"] == 200 else None,
+                  "run_conclusion": (codeql_run.get("json") or {}).get("conclusion") if codeql_run["status"] == 200 else None,
+                  "matching_artifact_count": len(matching_codeql_artifacts),
+                  "exact_artifact_bound": codeql_producer_bound,
+              },
+              "administration": {
+                  "branch_protection_http_status": protection["status"],
+                  "rulesets_http_status": rulesets["status"],
+                  "ruleset_count": len(rulesets.get("json") or []) if rulesets["status"] == 200 and isinstance(rulesets.get("json"), list) else None,
+                  "codeql_default_setup_http_status": codeql_setup["status"],
+                  "settings_gate_complete": settings_gate_complete,
+              },
+              "external_evidence_require_all_exit_code": external_rc,
+              "gate_state": gate_state,
+              "all_gaps_closed": all_gaps_closed,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+          }
+          (root / "snapshot.json").write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+          lines = [
+              "<!-- trnm-final-exact-source-convergence-ded43a-v5 -->",
+              "## Final exact-source convergence snapshot v5",
+              "",
+              f"- subject: `{snapshot['subject_sha']}` / `{snapshot['subject_tree']}`",
+              f"- live integration head: `{snapshot['live_integration_sha']}`",
+              f"- prospective merge: `{snapshot['prospective_merge_sha']}`",
+              f"- all gaps closed: **{str(all_gaps_closed).lower()}**",
+              "",
+              "| Gate | Closed |",
+              "|---|---:|",
+          ]
+          for name, value in gate_state.items():
+              lines.append(f"| `{name}` | `{str(value).lower()}` |")
+          lines += ["", "Evidence lanes:"]
+          for name, lane in sorted(lanes.items()):
+              lines.append(
+                  f"- `{name}`: run `{lane.get('run_id')}`, status `{lane.get('status')}`, conclusion `{lane.get('conclusion')}`, jobs-success `{lane.get('all_jobs_success')}`, artifacts `{len(lane.get('artifacts') or [])}`"
+              )
+          lines += ["", "Independent review:"]
+          lines.append(f"- approvals: `{', '.join(approvals) or 'none'}`")
+          lines.append(f"- current changes requested: `{', '.join(changes_requested) or 'none'}`")
+          lines += ["", "Administration/external:"]
+          lines.append(f"- branch protection HTTP: `{protection['status']}`")
+          lines.append(f"- CodeQL default setup HTTP: `{codeql_setup['status']}`")
+          lines.append(f"- external `--require-all` exit: `{external_rc}`")
+          lines += [
+              "",
+              "This snapshot never promotes production, public-testnet, release or activation flags. A false gate remains a real blocker; no queued/empty/stale/self-authored result is converted into acceptance.",
+          ]
+          (root / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+          with (root / "gate.env").open("w", encoding="utf-8") as handle:
+              handle.write(f"ALL_GAPS_CLOSED={'true' if all_gaps_closed else 'false'}\n")
+          PY
+          source "${root}/gate.env"
+          echo "all_gaps_closed=${ALL_GAPS_CLOSED}" >> "${GITHUB_OUTPUT}"
+          (
+            cd "${root}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Publish immutable convergence artifact
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-final-convergence-ded43a-v5-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-convergence/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Publish bounded live summary to integration and authority board
+        if: always() && steps.snapshot.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          body="${RUNNER_TEMP}/trnm-convergence/summary.md"
+          for issue in 62 80; do
+            jq -n --rawfile body "${body}" '{body:$body}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+          done
+
+      - name: Fail closed until every gate is genuinely complete
+        if: always() && steps.snapshot.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.snapshot.outputs.all_gaps_closed }}" = true
+
+      - name: Verify subject source was never mutated
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
