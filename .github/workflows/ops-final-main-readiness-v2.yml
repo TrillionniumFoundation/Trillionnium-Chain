@@ -1,0 +1,361 @@
+name: ops-final-main-readiness-v2
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-final-main-readiness-v2.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  issues: write
+  pull-requests: write
+  security-events: read
+
+concurrency:
+  group: ops-final-main-readiness-v2-20260909
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      INTEGRATION_PR: '62'
+      MAIN_BRANCH: main
+      AUDIT_BRANCH: ops/main-tree-convergence-audit-20260909
+    steps:
+      - name: Freeze current integration PR, main and every branch
+        id: freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/final-main-readiness"
+          mkdir -p "$out"
+          pr_json="$(gh api "repos/$REPOSITORY/pulls/$INTEGRATION_PR")"
+          test "$(jq -r .state <<<"$pr_json")" = open
+          head_sha="$(jq -r .head.sha <<<"$pr_json")"
+          main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/$MAIN_BRANCH" --jq .object.sha)"
+          test "$(jq -r .base.ref <<<"$pr_json")" = "$MAIN_BRANCH"
+          test "${#head_sha}" -eq 40
+          test "${#main_sha}" -eq 40
+          gh api --paginate "repos/$REPOSITORY/branches?per_page=100" \
+            --jq '.[] | [.name,.commit.sha] | @tsv' | LC_ALL=C sort > "$out/branches.tsv"
+          gh api --paginate "repos/$REPOSITORY/pulls?state=open&per_page=100" \
+            --jq '.[] | [.number,.draft,.head.ref,.head.sha,.base.ref] | @tsv' \
+            | LC_ALL=C sort -n > "$out/open-prs.tsv"
+          {
+            echo "HEAD_SHA=$head_sha"
+            echo "MAIN_SHA=$main_sha"
+          } | tee "$out/binding.env" >> "$GITHUB_OUTPUT"
+
+      - name: Check out exact integration head with complete history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.freeze.outputs.HEAD_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Evaluate every final convergence predicate
+        id: gate
+        shell: bash
+        env:
+          HEAD_SHA: ${{ steps.freeze.outputs.HEAD_SHA }}
+          MAIN_SHA: ${{ steps.freeze.outputs.MAIN_SHA }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/final-main-readiness"
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          git fetch --force --no-tags origin '+refs/heads/*:refs/remotes/origin/*'
+          python3 - "$out" <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import subprocess
+          import sys
+          import urllib.error
+          import urllib.request
+          from collections import defaultdict
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          out = Path(sys.argv[1])
+          repo = os.environ['REPOSITORY']
+          number = int(os.environ['INTEGRATION_PR'])
+          head_sha = os.environ['HEAD_SHA']
+          main_sha = os.environ['MAIN_SHA']
+          audit_branch = os.environ['AUDIT_BRANCH']
+          token = os.environ['GH_TOKEN']
+          api = 'https://api.github.com'
+
+          def call(path: str):
+              req = urllib.request.Request(
+                  api + path,
+                  headers={
+                      'Accept': 'application/vnd.github+json',
+                      'Authorization': f'Bearer {token}',
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      'User-Agent': 'trnm-final-main-readiness-v2',
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      return response.status, json.load(response)
+              except urllib.error.HTTPError as error:
+                  raw = error.read().decode(errors='replace')
+                  try:
+                      body = json.loads(raw or '{}')
+                  except json.JSONDecodeError:
+                      body = {'raw': raw}
+                  return error.code, body
+
+          def pages(path: str, key: str | None = None):
+              result = []
+              page = 1
+              while True:
+                  sep = '&' if '?' in path else '?'
+                  code, body = call(f'{path}{sep}per_page=100&page={page}')
+                  if code != 200:
+                      raise RuntimeError(f'GET {path} returned {code}: {body}')
+                  batch = body[key] if key else body
+                  result.extend(batch)
+                  if len(batch) < 100:
+                      return result
+                  page += 1
+                  if page > 100:
+                      raise RuntimeError('pagination limit exceeded')
+
+          pr_code, pr = call(f'/repos/{repo}/pulls/{number}')
+          if pr_code != 200:
+              raise RuntimeError(f'cannot read integration PR: {pr_code}')
+          checks = pages(f'/repos/{repo}/commits/{head_sha}/check-runs?filter=latest', 'check_runs')
+          reviews = pages(f'/repos/{repo}/pulls/{number}/reviews')
+          commit_code, commit = call(f'/repos/{repo}/commits/{head_sha}')
+          if commit_code != 200:
+              raise RuntimeError(f'cannot read integration commit: {commit_code}')
+          pusher = (commit.get('committer') or commit.get('author') or {}).get('login')
+          author = pr['user']['login']
+          commit_time = datetime.fromisoformat(
+              commit['commit']['committer']['date'].replace('Z', '+00:00')
+          )
+
+          latest = {}
+          for review in sorted(reviews, key=lambda row: (row.get('submitted_at') or '', row['id'])):
+              latest[review['user']['login']] = review
+          approvals = []
+          changes_requested = []
+          for login, review in latest.items():
+              state = review.get('state')
+              if state == 'CHANGES_REQUESTED':
+                  changes_requested.append(login)
+              submitted = review.get('submitted_at')
+              submitted_at = (
+                  datetime.fromisoformat(submitted.replace('Z', '+00:00'))
+                  if submitted else datetime.min.replace(tzinfo=timezone.utc)
+              )
+              if (
+                  state == 'APPROVED'
+                  and login not in {author, pusher}
+                  and review['user'].get('type') != 'Bot'
+                  and submitted_at >= commit_time
+              ):
+                  approvals.append(login)
+
+          required = {
+              'repository-truth', 'protocol-contract', 'rust-baseline',
+              'fuzz-smoke', 'external-evidence-contract',
+              'Analyze (actions)', 'Analyze (javascript-typescript)',
+              'Analyze (python)', 'Analyze (rust)', 'CodeQL',
+          }
+          by_name = defaultdict(list)
+          for row in checks:
+              by_name[row['name']].append(row)
+          required_bad = []
+          required_result = {}
+          for name in sorted(required):
+              rows = sorted(by_name.get(name, []), key=lambda row: row['id'])
+              row = rows[-1] if rows else None
+              required_result[name] = None if row is None else {
+                  'status': row['status'],
+                  'conclusion': row.get('conclusion'),
+                  'app': (row.get('app') or {}).get('slug'),
+                  'id': row['id'],
+              }
+              if row is None or row['status'] != 'completed' or row.get('conclusion') != 'success':
+                  required_bad.append(name)
+          nonterminal = sorted({row['name'] for row in checks if row['status'] != 'completed'})
+          terminal_bad = sorted({
+              row['name'] for row in checks
+              if row['status'] == 'completed'
+              and row.get('conclusion') not in {'success', 'neutral', 'skipped'}
+          })
+
+          protection_code, protection = call(f'/repos/{repo}/branches/main/protection')
+          expected_contexts = {
+              'repository-truth', 'protocol-contract', 'rust-baseline',
+              'fuzz-smoke', 'external-evidence-contract',
+          }
+          live_contexts = set(
+              (protection.get('required_status_checks') or {}).get('contexts') or []
+          ) if protection_code == 200 else set()
+          review_policy = protection.get('required_pull_request_reviews') or {}
+          protection_ok = (
+              protection_code == 200
+              and (protection.get('required_status_checks') or {}).get('strict') is True
+              and expected_contexts <= live_contexts
+              and review_policy.get('required_approving_review_count', 0) >= 2
+              and review_policy.get('dismiss_stale_reviews') is True
+              and review_policy.get('require_code_owner_reviews') is True
+              and review_policy.get('require_last_push_approval') is True
+              and (protection.get('required_conversation_resolution') or {}).get('enabled') is True
+              and (protection.get('allow_force_pushes') or {}).get('enabled') is False
+              and (protection.get('allow_deletions') or {}).get('enabled') is False
+          )
+
+          setup_code, setup = call(f'/repos/{repo}/code-scanning/default-setup')
+          setup_ok = (
+              setup_code == 200
+              and setup.get('state') == 'configured'
+              and setup.get('query_suite') == 'extended'
+              and set(setup.get('languages') or [])
+                  == {'actions', 'javascript-typescript', 'python', 'rust'}
+          )
+          alerts_status = 200
+          try:
+              alerts = pages(f'/repos/{repo}/code-scanning/alerts?state=open')
+          except Exception as error:
+              alerts_status = str(error)
+              alerts = []
+          blocking_alerts = [
+              row for row in alerts
+              if ((row.get('rule') or {}).get('security_severity_level') or '').lower()
+                 in {'critical', 'high'}
+          ]
+
+          external = subprocess.run(
+              ['python3', 'scripts/ci/check_external_evidence_v1.py', '--require-all'],
+              text=True,
+              stdout=subprocess.PIPE,
+              stderr=subprocess.STDOUT,
+              check=False,
+          )
+          (out / 'external-evidence-validator.log').write_text(external.stdout)
+
+          open_pr_rows = [
+              line.split('\t') for line in (out / 'open-prs.tsv').read_text().splitlines() if line
+          ]
+          open_pr_numbers = [int(row[0]) for row in open_pr_rows]
+          single_open_pr = open_pr_numbers == [number]
+
+          nonancestor = []
+          for line in (out / 'branches.tsv').read_text().splitlines():
+              branch, tip = line.split('\t', 1)
+              if branch in {'main', audit_branch}:
+                  continue
+              result = subprocess.run(
+                  ['git', 'merge-base', '--is-ancestor', tip, head_sha],
+                  stdout=subprocess.DEVNULL,
+                  stderr=subprocess.DEVNULL,
+                  check=False,
+              )
+              if result.returncode != 0:
+                  nonancestor.append({'branch': branch, 'tip': tip})
+
+          main_live_code, main_live = call(f'/repos/{repo}/git/ref/heads/main')
+          main_unchanged = main_live_code == 200 and main_live['object']['sha'] == main_sha
+          child_100_code, child_100 = call(f'/repos/{repo}/pulls/100')
+          child_101_code, child_101 = call(f'/repos/{repo}/pulls/101')
+          children_retired = (
+              child_100_code == 200 and child_100.get('state') == 'closed'
+              and child_101_code == 200 and child_101.get('state') == 'closed'
+              and child_101.get('merged_at') is not None
+          )
+
+          conditions = {
+              'mainUnchanged': main_unchanged,
+              'onlyIntegrationPrOpen': single_open_pr,
+              'securityChildrenRetiredAfterMerge': children_retired,
+              'twoCurrentNonAuthorApprovals': len(set(approvals)) >= 2,
+              'noChangesRequested': not changes_requested,
+              'requiredExactHeadChecksSuccess': not required_bad,
+              'allObservedChecksTerminal': not nonterminal,
+              'noTerminalCheckFailures': not terminal_bad,
+              'liveMainProtectionVerified': protection_ok,
+              'rustInclusiveExtendedCodeqlConfigured': setup_ok,
+              'codeScanningInventoryReadable': alerts_status == 200,
+              'zeroOpenCriticalHighCodeqlAlerts': alerts_status == 200 and not blocking_alerts,
+              'externalEvidenceRequireAllPassed': external.returncode == 0,
+              'allNonEphemeralBranchTipsReachableFromIntegrationHead': not nonancestor,
+          }
+          ready = all(conditions.values())
+          report = {
+              'schema': 'trnm-final-main-readiness-v2',
+              'repository': repo,
+              'integrationPr': number,
+              'integrationHead': head_sha,
+              'mainSha': main_sha,
+              'openPullRequests': open_pr_numbers,
+              'eligibleApprovals': sorted(set(approvals)),
+              'changesRequestedBy': sorted(changes_requested),
+              'requiredChecks': required_result,
+              'requiredChecksNotSuccessful': required_bad,
+              'nonterminalChecks': nonterminal,
+              'terminalBadChecks': terminal_bad,
+              'protectionHttpStatus': protection_code,
+              'liveRequiredContexts': sorted(live_contexts),
+              'codeqlSetupHttpStatus': setup_code,
+              'codeqlSetup': setup,
+              'codeScanningAlertsReadStatus': alerts_status,
+              'openCriticalHighAlertCount': len(blocking_alerts),
+              'externalEvidenceValidatorReturnCode': external.returncode,
+              'nonancestorBranchCount': len(nonancestor),
+              'nonancestorBranches': nonancestor,
+              'conditions': conditions,
+              'readyForMainMergeAndBranchRetirement': ready,
+          }
+          (out / 'readiness.json').write_text(
+              json.dumps(report, indent=2, sort_keys=True) + '\n'
+          )
+          (out / 'result.env').write_text(
+              f'READY={str(ready).lower()}\nHEAD_SHA={head_sha}\nMAIN_SHA={main_sha}\n'
+          )
+          print(json.dumps(report, sort_keys=True))
+          PY
+          (
+            cd "$out"
+            sha256sum branches.tsv open-prs.tsv binding.env result.env readiness.json \
+              external-evidence-validator.log > SHA256SUMS
+          )
+          cat "$out/result.env" >> "$GITHUB_OUTPUT"
+
+      - name: Publish exact final-readiness decision
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/final-main-readiness"
+          ready="$(sed -n 's/^READY=//p' "$out/result.env" 2>/dev/null || echo false)"
+          summary="$(jq -c '{readyForMainMergeAndBranchRetirement, conditions, requiredChecksNotSuccessful, nonterminalChecks, terminalBadChecks, protectionHttpStatus, codeqlSetupHttpStatus, openCriticalHighAlertCount, externalEvidenceValidatorReturnCode, nonancestorBranchCount, openPullRequests, eligibleApprovals}' "$out/readiness.json" 2>/dev/null || echo '{}')"
+          gh api "repos/$REPOSITORY/issues/$INTEGRATION_PR/comments" \
+            -f body="Final single-main readiness v2: **${ready^^}** for exact integration head \`${{ steps.freeze.outputs.HEAD_SHA }}\` and frozen main \`${{ steps.freeze.outputs.MAIN_SHA }}\`. Summary: \`$summary\`. False means no main merge and no branch deletion. Archive, administrator permission, local tests, issue closure and source flags do not substitute for failed predicates." >/dev/null
+
+      - name: Upload immutable final-readiness packet
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: final-main-readiness-v2-${{ github.sha }}
+          path: ${{ runner.temp }}/final-main-readiness
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Keep gate red until every predicate is authentic
+        if: steps.gate.outputs.READY != 'true'
+        shell: bash
+        run: exit 1
