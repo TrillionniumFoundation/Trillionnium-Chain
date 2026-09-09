@@ -1,4 +1,4 @@
-name: TRNM one-shot CodeQL evidence stability repair
+name: TRNM one-shot CodeQL log-redaction restack
 
 on:
   push:
@@ -9,516 +9,95 @@ permissions:
   contents: write
 
 concurrency:
-  group: trnm-one-shot-codeql-evidence-stability-v4
+  group: trnm-one-shot-codeql-log-redaction-restack-v1
   cancel-in-progress: false
 
 jobs:
-  repair-target:
+  restack-child:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 45
     env:
-      EXPECTED_TARGET_SHA: d12a5ab584d86429c2963c75c6a5ac28f7165792
-      TARGET_BRANCH: security/codeql-default-setup-v1-20260909
-      TARGET_WORKFLOW_PATH: .github/workflows/trnm-one-shot-codeql-evidence-stability.yml
-      TARGET_PATCH_PATH: .trnm/one-shot/codeql-evidence-stability.patch
+      CHILD_BRANCH: security/codeql-rust-log-redaction-v1-20260909
+      PARENT_BRANCH: security/codeql-default-setup-v1-20260909
+      EXPECTED_CHILD_SHA: 32274f6421ff41369cca13fbf35931d3684abc37
+      EXPECTED_PARENT_SHA: 06675852009100e402223cb5868b3910c062e924
+      EXPECTED_MERGE_BASE: 7ab9ce97a5bbc5cb4c7edca7d9d39dc016638d3b
     steps:
-      - name: Check out exact target branch
+      - name: Check out exact child
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: security/codeql-default-setup-v1-20260909
+          ref: security/codeql-rust-log-redaction-v1-20260909
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Verify exact target and carrier identities
+      - name: Verify immutable input tuple
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${EXPECTED_TARGET_SHA}"
-          test "$(git rev-parse origin/${TARGET_BRANCH})" = "${EXPECTED_TARGET_SHA}"
-          test "$(git hash-object "${TARGET_WORKFLOW_PATH}")" = "e6a164a76d81038b67b77ff570003283c933bd11"
-          test "$(git hash-object "${TARGET_PATCH_PATH}")" = "06963dcc2f75e338d6c990f71f2cd22883104353"
+          test "$(git rev-parse HEAD)" = "${EXPECTED_CHILD_SHA}"
+          test "$(git rev-parse origin/${CHILD_BRANCH})" = "${EXPECTED_CHILD_SHA}"
+          test "$(git rev-parse origin/${PARENT_BRANCH})" = "${EXPECTED_PARENT_SHA}"
+          test "$(git merge-base HEAD origin/${PARENT_BRANCH})" = "${EXPECTED_MERGE_BASE}"
           git diff --quiet
           git diff --cached --quiet
 
-      - name: Apply fail-closed evidence-window repair
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-
-          def replace_once(path: Path, old: str, new: str, label: str) -> None:
-              text = path.read_text(encoding="utf-8")
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f"{label}: expected one match, found {count}")
-              path.write_text(text.replace(old, new, 1), encoding="utf-8")
-
-          admin = Path("scripts/admin/apply_codeql_default_setup_v1.py")
-          tests = Path("scripts/ci/test_codeql_default_setup_v1.py")
-          runbook = Path("docs/runbooks/TRNM_CODEQL_DEFAULT_SETUP_V1.md")
-
-          replace_once(
-              admin,
-              '    parser.add_argument("--acknowledge-change-freeze", action="store_true")\n',
-              '    parser.add_argument("--acknowledge-change-freeze", action="store_true")\n'
-              '    parser.add_argument(\n'
-              '        "--acknowledge-settings-verification-freeze", action="store_true"\n'
-              '    )\n',
-              "parse-argument",
-          )
-
-          inventory_function = '''
-          def required_check_inventory_snapshot(
-              api: GitHubApi,
-              repository: str,
-              evidence_sha: str,
-              required_names: list[str],
-          ) -> dict[str, Any]:
-              # Capture every authority-bearing required check in one complete generation.
-              require(set(required_names) == REQUIRED_CHECK_NAMES, "required check set drift")
-              all_runs, total_count = _list_check_runs(api, repository, evidence_sha)
-              snapshot: list[dict[str, Any]] = []
-              for run in all_runs:
-                  name = run.get("name")
-                  if name not in REQUIRED_CHECK_NAMES:
-                      continue
-                  run_id = run.get("id")
-                  require(
-                      isinstance(run_id, int) and run_id > 0,
-                      f"check {name} id missing",
-                  )
-                  require(
-                      run.get("head_sha") == evidence_sha,
-                      f"check {name} head SHA mismatch",
-                  )
-                  app = run.get("app")
-                  require(isinstance(app, dict), f"check {name} app identity missing")
-                  owner = app.get("owner")
-                  require(isinstance(owner, dict), f"check {name} app owner missing")
-                  snapshot.append(
-                      {
-                          "id": run_id,
-                          "name": name,
-                          "head_sha": run.get("head_sha"),
-                          "status": run.get("status"),
-                          "conclusion": run.get("conclusion"),
-                          "started_at": run.get("started_at"),
-                          "completed_at": run.get("completed_at"),
-                          "details_url": run.get("details_url"),
-                          "external_id": run.get("external_id"),
-                          "check_suite_id": _suite_id(run, str(name)),
-                          "app": {
-                              "id": app.get("id"),
-                              "slug": app.get("slug"),
-                              "owner": owner.get("login"),
-                          },
-                      }
-                  )
-              snapshot.sort(key=lambda item: (str(item["name"]), int(item["id"])))
-              return {
-                  "evidence_sha": evidence_sha,
-                  "total_check_runs": total_count,
-                  "required_run_count": len(snapshot),
-                  "required_runs": snapshot,
-              }
-
-
-          '''.lstrip()
-          replace_once(
-              admin,
-              "def latest_check_runs(\n",
-              inventory_function + "def latest_check_runs(\n",
-              "inventory-function",
-          )
-
-          old_validation = '''        require(args.validation_run_id is not None, "--validation-run-id required")
-
-              report: dict[str, Any] = {'''
-          new_validation = '''        require(args.validation_run_id is not None, "--validation-run-id required")
-                  require(
-                      args.acknowledge_settings_verification_freeze,
-                      "--acknowledge-settings-verification-freeze is required with "
-                      "--verify-evidence",
-                  )
-                  verification_ticket = os.environ.get(
-                      "TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET", ""
-                  )
-                  require(
-                      verification_ticket.strip() != "",
-                      "TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET is required",
-                  )
-              else:
-                  verification_ticket = ""
-
-              report: dict[str, Any] = {'''
-          replace_once(admin, old_validation, new_validation, "verification-contract")
-
-          replace_once(
-              admin,
-              '        "evidence": None,\n        "changed": False,\n',
-              '        "evidence": None,\n'
-              '        "evidence_inventory_before": None,\n'
-              '        "evidence_inventory_after": None,\n'
-              '        "changed": False,\n',
-              "evidence-report-fields",
-          )
-          replace_once(
-              admin,
-              '        "branch_observations": [],\n        "production_candidate": False,\n',
-              '        "branch_observations": [],\n'
-              '        "settings_verification_ticket": None,\n'
-              '        "settings_verification_freeze_acknowledged": False,\n'
-              '        "production_candidate": False,\n',
-              "verification-report-fields",
-          )
-
-          old_evidence = '''    if args.verify_evidence:
-                  assert report["live_after"] is not None
-                  report["evidence"] = verify_exact_source_checks(
-                      api,
-                      repository,
-                      args.evidence_sha,
-                      config["required_check_names"],
-                      live_updated_at=report["live_after"]["updated_at"],
-                      validation_run_id=args.validation_run_id,
-                      trusted_producers=config["trusted_check_producers"],
-                      analysis_workflow_path=config["analysis_workflow_path"],
-                  )
-          '''
-          new_evidence = '''    if args.verify_evidence:
-                  assert report["live_after"] is not None
-                  initial_live = report["live_after"]
-                  report["live_before"] = initial_live
-                  report["settings_verification_ticket"] = verification_ticket
-                  report["settings_verification_freeze_acknowledged"] = True
-                  report["evidence_inventory_before"] = required_check_inventory_snapshot(
-                      api,
-                      repository,
-                      args.evidence_sha,
-                      config["required_check_names"],
-                  )
-                  first_evidence = verify_exact_source_checks(
-                      api,
-                      repository,
-                      args.evidence_sha,
-                      config["required_check_names"],
-                      live_updated_at=initial_live["updated_at"],
-                      validation_run_id=args.validation_run_id,
-                      trusted_producers=config["trusted_check_producers"],
-                      analysis_workflow_path=config["analysis_workflow_path"],
-                  )
-                  final_live = verify_live_setup(api, repository, config)
-                  require(
-                      final_live == initial_live,
-                      "live default setup changed during evidence verification",
-                  )
-                  final_evidence = verify_exact_source_checks(
-                      api,
-                      repository,
-                      args.evidence_sha,
-                      config["required_check_names"],
-                      live_updated_at=final_live["updated_at"],
-                      validation_run_id=args.validation_run_id,
-                      trusted_producers=config["trusted_check_producers"],
-                      analysis_workflow_path=config["analysis_workflow_path"],
-                  )
-                  report["evidence_inventory_after"] = required_check_inventory_snapshot(
-                      api,
-                      repository,
-                      args.evidence_sha,
-                      config["required_check_names"],
-                  )
-                  require(
-                      report["evidence_inventory_after"]
-                      == report["evidence_inventory_before"],
-                      "required CodeQL check inventory changed during evidence verification",
-                  )
-                  require(
-                      final_evidence == first_evidence,
-                      "required CodeQL evidence changed during verification",
-                  )
-                  report["evidence"] = final_evidence
-                  report["live_after"] = final_live
-          '''
-          replace_once(admin, old_evidence, new_evidence, "evidence-window")
-
-          test_block = '''    def evidence_argv(self) -> list[str]:
-                  return [
-                      "--verify-live",
-                      "--verify-evidence",
-                      "--acknowledge-settings-verification-freeze",
-                      "--evidence-sha",
-                      self.evidence_sha,
-                      "--validation-run-id",
-                      str(self.validation_run_id),
-                  ]
-
-              def evidence_env(self) -> dict[str, str]:
-                  return {
-                      "GH_TOKEN": "token",
-                      "TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET": "issue-88/read-window",
-                  }
-
-              def test_cli_evidence_requires_settings_freeze_and_ticket(self) -> None:
-                  argv = [
-                      "--verify-live",
-                      "--verify-evidence",
-                      "--evidence-sha",
-                      self.evidence_sha,
-                      "--validation-run-id",
-                      str(self.validation_run_id),
-                  ]
-                  with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.dict(
-                      os.environ, {"GH_TOKEN": "token"}, clear=True
-                  ), self.assertRaisesRegex(
-                      MODULE.CodeqlSetupError,
-                      "acknowledge-settings-verification-freeze",
-                  ):
-                      MODULE.main(argv)
-                  argv.insert(2, "--acknowledge-settings-verification-freeze")
-                  with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.dict(
-                      os.environ, {"GH_TOKEN": "token"}, clear=True
-                  ), self.assertRaisesRegex(
-                      MODULE.CodeqlSetupError,
-                      "TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET",
-                  ):
-                      MODULE.main(argv)
-
-              def test_cli_evidence_accepts_stable_verification_window(self) -> None:
-                  live = {
-                      "normalized": {"stable": True},
-                      "updated_at": self.live_updated_at,
-                  }
-                  evidence = {
-                      "evidence_sha": self.evidence_sha,
-                      "required": {"stable": True},
-                  }
-                  inventory = {
-                      "evidence_sha": self.evidence_sha,
-                      "required_runs": [{"id": 1}],
-                  }
-                  stdout = io.StringIO()
-                  with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.object(
-                      MODULE, "verify_live_setup", side_effect=[live, live]
-                  ), mock.patch.object(
-                      MODULE,
-                      "required_check_inventory_snapshot",
-                      side_effect=[inventory, inventory],
-                  ), mock.patch.object(
-                      MODULE,
-                      "verify_exact_source_checks",
-                      side_effect=[evidence, evidence],
-                  ), mock.patch.dict(
-                      os.environ, self.evidence_env(), clear=True
-                  ), contextlib.redirect_stdout(stdout):
-                      self.assertEqual(MODULE.main(self.evidence_argv()), 0)
-                  report = json.loads(stdout.getvalue())
-                  self.assertEqual(report["result"], "VERIFIED")
-                  self.assertEqual(report["live_before"], report["live_after"])
-                  self.assertEqual(
-                      report["evidence_inventory_before"],
-                      report["evidence_inventory_after"],
-                  )
-                  self.assertEqual(report["evidence"], evidence)
-                  self.assertTrue(
-                      report["settings_verification_freeze_acknowledged"]
-                  )
-
-              def test_cli_evidence_rejects_live_generation_drift(self) -> None:
-                  initial = {
-                      "normalized": {"stable": True},
-                      "updated_at": self.live_updated_at,
-                  }
-                  changed = {
-                      "normalized": {"stable": True},
-                      "updated_at": "2026-09-09T00:10:00Z",
-                  }
-                  evidence = {
-                      "evidence_sha": self.evidence_sha,
-                      "required": {"stable": True},
-                  }
-                  with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.object(
-                      MODULE, "verify_live_setup", side_effect=[initial, changed]
-                  ), mock.patch.object(
-                      MODULE,
-                      "required_check_inventory_snapshot",
-                      return_value={"required_runs": [{"id": 1}]},
-                  ), mock.patch.object(
-                      MODULE, "verify_exact_source_checks", return_value=evidence
-                  ), mock.patch.dict(
-                      os.environ, self.evidence_env(), clear=True
-                  ), self.assertRaisesRegex(
-                      MODULE.CodeqlSetupError,
-                      "changed during evidence verification",
-                  ):
-                      MODULE.main(self.evidence_argv())
-
-              def test_cli_evidence_rejects_check_inventory_drift(self) -> None:
-                  live = {
-                      "normalized": {"stable": True},
-                      "updated_at": self.live_updated_at,
-                  }
-                  evidence = {
-                      "evidence_sha": self.evidence_sha,
-                      "required": {"stable": True},
-                  }
-                  before = {"required_runs": [{"id": 1}]}
-                  after = {"required_runs": [{"id": 1}, {"id": 2}]}
-                  with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.object(
-                      MODULE, "verify_live_setup", side_effect=[live, live]
-                  ), mock.patch.object(
-                      MODULE,
-                      "required_check_inventory_snapshot",
-                      side_effect=[before, after],
-                  ), mock.patch.object(
-                      MODULE,
-                      "verify_exact_source_checks",
-                      side_effect=[evidence, evidence],
-                  ), mock.patch.dict(
-                      os.environ, self.evidence_env(), clear=True
-                  ), self.assertRaisesRegex(
-                      MODULE.CodeqlSetupError,
-                      "check inventory changed",
-                  ):
-                      MODULE.main(self.evidence_argv())
-
-              def test_cli_evidence_rejects_semantic_evidence_drift(self) -> None:
-                  live = {
-                      "normalized": {"stable": True},
-                      "updated_at": self.live_updated_at,
-                  }
-                  first = {
-                      "evidence_sha": self.evidence_sha,
-                      "required": {"stable": True},
-                  }
-                  changed = {
-                      "evidence_sha": self.evidence_sha,
-                      "required": {"stable": False},
-                  }
-                  inventory = {"required_runs": [{"id": 1}]}
-                  with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.object(
-                      MODULE, "verify_live_setup", side_effect=[live, live]
-                  ), mock.patch.object(
-                      MODULE,
-                      "required_check_inventory_snapshot",
-                      side_effect=[inventory, inventory],
-                  ), mock.patch.object(
-                      MODULE,
-                      "verify_exact_source_checks",
-                      side_effect=[first, changed],
-                  ), mock.patch.dict(
-                      os.environ, self.evidence_env(), clear=True
-                  ), self.assertRaisesRegex(
-                      MODULE.CodeqlSetupError,
-                      "evidence changed during verification",
-                  ):
-                      MODULE.main(self.evidence_argv())
-
-          '''
-          replace_once(
-              tests,
-              "    def test_apply_requires_mutation_freeze_and_ticket(self) -> None:\n",
-              test_block
-              + "    def test_apply_requires_mutation_freeze_and_ticket(self) -> None:\n",
-              "test-insertion",
-          )
-
-          replace_once(
-              runbook,
-              '```bash\nGH_TOKEN="${SECURITY_EVENTS_READ_TOKEN}" \\\n',
-              '```bash\n'
-              'export TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET='
-              '"issue-88/read-window-id"\n'
-              'GH_TOKEN="${SECURITY_EVENTS_READ_TOKEN}" \\\n',
-              "runbook-ticket",
-          )
-          replace_once(
-              runbook,
-              '  --verify-evidence \\\n  --evidence-sha "${EXACT_SOURCE_SHA}" \\\n',
-              '  --verify-evidence \\\n'
-              '  --acknowledge-settings-verification-freeze \\\n'
-              '  --evidence-sha "${EXACT_SOURCE_SHA}" \\\n',
-              "runbook-acknowledgement",
-          )
-          replace_once(
-              runbook,
-              "Retain the live configuration response, PATCH response",
-              "Evidence acceptance requires an independently enforced settings-change "
-              "freeze and a non-empty verification ticket. The verifier snapshots the "
-              "complete authority-bearing required-check inventory, performs the full "
-              "configuration and exact-source check/suite/workflow verification twice, "
-              "and rejects any configuration generation, inventory, or semantic result "
-              "drift across the read window.\n\n"
-              "Retain the live configuration response, PATCH response",
-              "runbook-read-window",
-          )
-          PY
-
-          rm -f .github/workflows/trnm-one-shot-codeql-evidence-stability.yml
-          rm -f .trnm/one-shot/codeql-evidence-stability.patch
-          rmdir .trnm/one-shot 2>/dev/null || true
-          rmdir .trnm 2>/dev/null || true
-          git diff --check
-
-      - name: Run adversarial corpus and dry-run
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m py_compile \
-            scripts/admin/apply_codeql_default_setup_v1.py \
-            scripts/ci/test_codeql_default_setup_v1.py
-          test_count="$(
-            python3 scripts/ci/test_codeql_default_setup_v1.py 2>&1 \
-              | tee /tmp/codeql-tests.log \
-              | sed -n 's/^Ran \([0-9][0-9]*\) tests.*/\1/p'
-          )"
-          test "${test_count}" = "24"
-          python3 scripts/admin/apply_codeql_default_setup_v1.py \
-            > /tmp/codeql-dry-run.json
-          python3 - <<'PY'
-          import json
-          report = json.load(open("/tmp/codeql-dry-run.json", encoding="utf-8"))
-          assert report["result"] == "DRY_RUN_VALID"
-          assert report["production_candidate"] is False
-          assert report["production_consensus_activation"] is False
-          assert report["public_testnet_ready"] is False
-          assert report["release_ready"] is False
-          assert report["evidence_inventory_before"] is None
-          assert report["evidence_inventory_after"] is None
-          PY
-          grep -Fq "required_check_inventory_snapshot" \
-            scripts/admin/apply_codeql_default_setup_v1.py
-          grep -Fq "acknowledge-settings-verification-freeze" \
-            scripts/admin/apply_codeql_default_setup_v1.py
-          grep -Fq "live default setup changed during evidence verification" \
-            scripts/admin/apply_codeql_default_setup_v1.py
-          grep -Fq "check inventory changed" \
-            scripts/ci/test_codeql_default_setup_v1.py
-
-      - name: Publish bounded repair commit
+      - name: Merge corrected parent without changing child scope
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email \
             '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          git diff --cached --check
-          actual="$(git diff --cached --name-only | LC_ALL=C sort)"
+          git merge --no-ff --no-edit "${EXPECTED_PARENT_SHA}"
+          test "$(git rev-parse HEAD^1)" = "${EXPECTED_CHILD_SHA}"
+          test "$(git rev-parse HEAD^2)" = "${EXPECTED_PARENT_SHA}"
+          actual="$(git diff --name-only "${EXPECTED_PARENT_SHA}"..HEAD | LC_ALL=C sort)"
           expected="$(
             printf '%s\n' \
-              '.github/workflows/trnm-one-shot-codeql-evidence-stability.yml' \
-              '.trnm/one-shot/codeql-evidence-stability.patch' \
-              'docs/runbooks/TRNM_CODEQL_DEFAULT_SETUP_V1.md' \
-              'scripts/admin/apply_codeql_default_setup_v1.py' \
-              'scripts/ci/test_codeql_default_setup_v1.py' \
+              'trillionnium/crates/trnm-consensus-app/src/lib.rs' \
+              'trillionnium/crates/trnm-node/src/live/node.rs' \
+              'trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-g1-process-host.rs' \
+              'trillionnium/crates/trnm-rpc/src/reliability.rs' \
+              'trillionnium/crates/trnm-rpc/src/reliability/recovery.rs' \
               | LC_ALL=C sort
           )"
           test "${actual}" = "${expected}"
-          git commit \
-            -m 'security(m17): stabilize CodeQL evidence read window' \
-            -m 'Require an independently acknowledged settings freeze and ticket, compare the live setup generation before and after evidence reads, and compare complete authority-bearing required-check inventory plus semantic verification snapshots. Temporary carriers are removed.' \
-            -m 'Primary-Module: M17' \
-            -m 'Production-Authority: false'
-          git push origin "HEAD:${TARGET_BRANCH}"
+          git diff --check "${EXPECTED_PARENT_SHA}"..HEAD
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 \
+            --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+
+      - name: Qualify the unchanged five-file redaction delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          timeout --signal=TERM --kill-after=30s 1800s \
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-consensus-app \
+              -p trnm-node \
+              -p trnm-poco-node \
+              -p trnm-rpc \
+              --all-targets --locked --no-fail-fast
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-app \
+            -p trnm-node \
+            -p trnm-poco-node \
+            -p trnm-rpc \
+            --all-targets --locked -- -D warnings
+          git diff --quiet
+          git diff --cached --quiet
+          actual="$(git diff --name-only "${EXPECTED_PARENT_SHA}"..HEAD | LC_ALL=C sort)"
+          test "$(printf '%s\n' "${actual}" | wc -l)" -eq 5
+
+      - name: Publish exact restacked child
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse origin/${CHILD_BRANCH})" = "${EXPECTED_CHILD_SHA}"
+          git push origin "HEAD:${CHILD_BRANCH}"
