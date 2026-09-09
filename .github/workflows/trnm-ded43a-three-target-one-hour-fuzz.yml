@@ -1,0 +1,137 @@
+name: TRNM ded43a three-target one-hour fuzz
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-ded43a-three-target-one-hour-fuzz
+  cancel-in-progress: false
+
+env:
+  EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+  EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_BACKTRACE: "1"
+  CI: "true"
+
+jobs:
+  one-hour-fuzz:
+    name: One-hour fuzz ${{ matrix.target }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 100
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - canonical_tx_json
+          - signed_envelope_json
+          - poco_cev0_exact
+    steps:
+      - name: Check out exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install pinned Rust and repository-declared cargo-fuzz
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup default 1.95.0
+          version="$({
+            grep -RhoE 'cargo-fuzz[^0-9]{0,32}[0-9]+\.[0-9]+\.[0-9]+' \
+              trillionnium/fuzz/X230_LOCK_PROVENANCE_V1.md \
+              scripts/ci/check_preprovisioned_cargo_fuzz.sh \
+              2>/dev/null || true
+          } | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)"
+          test -n "$version" || {
+            echo "repository-declared cargo-fuzz version not found" >&2
+            exit 2
+          }
+          cargo +1.95.0 install cargo-fuzz --version "$version" --locked
+          cargo +1.95.0 fuzz --version | tee "$RUNNER_TEMP/cargo-fuzz-version.txt"
+
+      - name: Prepare immutable campaign metadata
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/fuzz-$TARGET"
+          mkdir -p "$out/corpus-before" "$out/artifacts" "$out/meta"
+          test -f "trillionnium/fuzz/fuzz_targets/$TARGET.rs"
+          if test -d "trillionnium/fuzz/corpus/$TARGET"; then
+            cp -a "trillionnium/fuzz/corpus/$TARGET/." "$out/corpus-before/"
+          fi
+          printf '%s\n' "$EXACT_SOURCE_SHA" > "$out/meta/exact-source-sha.txt"
+          printf '%s\n' "$EXACT_SOURCE_TREE" > "$out/meta/exact-source-tree.txt"
+          printf '%s\n' "$TARGET" > "$out/meta/target.txt"
+          rustc +1.95.0 --version --verbose > "$out/meta/rustc-version.txt"
+          cargo +1.95.0 --version --verbose > "$out/meta/cargo-version.txt"
+          cargo +1.95.0 fuzz --version > "$out/meta/cargo-fuzz-version.txt"
+          find "$out/corpus-before" -type f -print0 | sort -z | xargs -0 sha256sum > "$out/meta/corpus-before.sha256" || true
+
+      - name: Run exact one-hour campaign
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/fuzz-$TARGET"
+          mkdir -p "trillionnium/fuzz/artifacts/$TARGET"
+          set +e
+          (
+            cd trillionnium
+            timeout --signal=INT --kill-after=30s 3700s \
+              cargo +1.95.0 fuzz run "$TARGET" -- \
+                -max_total_time=3600 \
+                -print_final_stats=1 \
+                -artifact_prefix="fuzz/artifacts/$TARGET/"
+          ) 2>&1 | tee "$out/fuzzer.log"
+          rc=${PIPESTATUS[0]}
+          set -e
+          printf '%s\n' "$rc" > "$out/meta/fuzzer-exit-code.txt"
+          cp -a "trillionnium/fuzz/artifacts/$TARGET/." "$out/artifacts/" 2>/dev/null || true
+          cp -a "trillionnium/fuzz/corpus/$TARGET" "$out/corpus-after" 2>/dev/null || true
+          find "$out" -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > "$out/SHA256SUMS"
+          test "$rc" -eq 0
+          if find "$out/artifacts" -type f -print -quit | grep -q .; then
+            echo "fuzzer produced crash/timeout artifacts" >&2
+            exit 3
+          fi
+          grep -Eq 'DONE|stat::number_of_executed_units|cov:' "$out/fuzzer.log"
+
+      - name: Upload immutable fuzz evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-one-hour-fuzz-${{ matrix.target }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/fuzz-${{ matrix.target }}/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Verify exact source remains clean
+        if: always()
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+          git diff --quiet
+          git diff --cached --quiet
