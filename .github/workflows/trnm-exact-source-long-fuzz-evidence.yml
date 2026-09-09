@@ -4,19 +4,20 @@ on:
   push:
     branches:
       - evidence/codeql-head-long-fuzz-20260909
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: trnm-long-fuzz-32274f64-20260909
+  group: trnm-long-fuzz-ded43a-20260909
   cancel-in-progress: false
 
 jobs:
   long-fuzz:
     name: long-fuzz-${{ matrix.target }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 95
     strategy:
       fail-fast: false
       matrix:
@@ -25,10 +26,11 @@ jobs:
           - signed_envelope_json
           - poco_cev0_exact
     env:
-      EXACT_SOURCE_SHA: 32274f6421ff41369cca13fbf35931d3684abc37
-      EXACT_SOURCE_TREE: a98a8fb6ae3b57e8805672056663a28a009d07e8
+      EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
       FUZZ_TOOLCHAIN: nightly-2026-07-27
       FUZZ_SECONDS: "3600"
+      FUZZ_MIN_ELAPSED_SECONDS: "3590"
       FUZZ_MAX_LEN: "2162688"
       FUZZ_TIMEOUT_SECONDS: "10"
       FUZZ_RSS_MB: "2048"
@@ -67,6 +69,7 @@ jobs:
           work="${RUNNER_TEMP}/trnm-long-fuzz/${TARGET}"
           mkdir -p "${work}/corpus" "${work}/artifacts" "${work}/evidence"
           cp -a "trillionnium/fuzz/corpus/${TARGET}/." "${work}/corpus/"
+          started_epoch="$(date -u +%s)"
           started="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           set +e
           (
@@ -81,8 +84,10 @@ jobs:
           ) 2>&1 | tee "${work}/evidence/fuzzer.log"
           rc=${PIPESTATUS[0]}
           set -e
+          completed_epoch="$(date -u +%s)"
           completed="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          export work started completed rc TARGET
+          elapsed_seconds="$((completed_epoch - started_epoch))"
+          export work started completed elapsed_seconds rc TARGET
           python3 - <<'PY'
           import hashlib
           import json
@@ -94,18 +99,22 @@ jobs:
           target = os.environ["TARGET"]
           corpus = sorted(p for p in (work / "corpus").rglob("*") if p.is_file())
           artifacts = sorted(p for p in (work / "artifacts").rglob("*") if p.is_file())
+
           def sha(path: pathlib.Path) -> str:
               h = hashlib.sha256()
               with path.open("rb") as stream:
                   for chunk in iter(lambda: stream.read(1024 * 1024), b""):
                       h.update(chunk)
               return h.hexdigest()
+
           inventory = [
               {"path": str(p.relative_to(work)), "sha256": sha(p), "bytes": p.stat().st_size}
               for p in corpus + artifacts
           ]
+          elapsed = int(os.environ["elapsed_seconds"])
+          exit_code = int(os.environ["rc"])
           report = {
-              "schema": "trnm-long-fuzz-evidence-v1",
+              "schema": "trnm-long-fuzz-evidence-v2",
               "repository": os.environ["GITHUB_REPOSITORY"],
               "workflow_source_sha": os.environ["GITHUB_SHA"],
               "exact_source_sha": os.environ["EXACT_SOURCE_SHA"],
@@ -113,13 +122,17 @@ jobs:
               "target": target,
               "started_utc": os.environ["started"],
               "completed_utc": os.environ["completed"],
+              "elapsed_seconds": elapsed,
               "budget_seconds": int(os.environ["FUZZ_SECONDS"]),
+              "minimum_elapsed_seconds": int(os.environ["FUZZ_MIN_ELAPSED_SECONDS"]),
               "max_len": int(os.environ["FUZZ_MAX_LEN"]),
               "timeout_seconds": int(os.environ["FUZZ_TIMEOUT_SECONDS"]),
               "rss_limit_mb": int(os.environ["FUZZ_RSS_MB"]),
-              "exit_code": int(os.environ["rc"]),
+              "exit_code": exit_code,
               "cargo_fuzz": subprocess.check_output(["cargo-fuzz", "--version"], text=True).strip(),
-              "rustc": subprocess.check_output(["rustc", "+" + os.environ["FUZZ_TOOLCHAIN"], "-vV"], text=True),
+              "rustc": subprocess.check_output(
+                  ["rustc", "+" + os.environ["FUZZ_TOOLCHAIN"], "-vV"], text=True
+              ),
               "corpus_files": len(corpus),
               "crash_artifacts": len(artifacts),
               "inventory": inventory,
@@ -131,14 +144,21 @@ jobs:
           (work / "evidence" / "report.json").write_text(
               json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
           )
+          if exit_code == 0 and elapsed < int(os.environ["FUZZ_MIN_ELAPSED_SECONDS"]):
+              raise SystemExit(
+                  f"fuzzer exited too early: elapsed={elapsed}, minimum={os.environ['FUZZ_MIN_ELAPSED_SECONDS']}"
+              )
           PY
           (
             cd "${work}"
-            find . -type f -print0 | sort -z | xargs -0 sha256sum > evidence/SHA256SUMS
+            find . -type f ! -path './evidence/SHA256SUMS' -print0 \
+              | sort -z \
+              | xargs -0 sha256sum > evidence/SHA256SUMS
             tar -czf "${RUNNER_TEMP}/trnm-long-fuzz-${TARGET}.tar.gz" corpus artifacts evidence
           )
           echo "archive=${RUNNER_TEMP}/trnm-long-fuzz-${TARGET}.tar.gz" >> "${GITHUB_OUTPUT}"
           test "${rc}" -eq 0
+          test "${elapsed_seconds}" -ge "${FUZZ_MIN_ELAPSED_SECONDS}"
           test "$(find "${work}/artifacts" -type f | wc -l)" -eq 0
 
       - name: Upload exact-source campaign evidence
