@@ -1,0 +1,73 @@
+name: PoCO CLI compile diagnostic (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-cli-compile-diagnostic-once-20260909.yml
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  PRODUCTION_PORTS_COMMIT: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
+  REMOTE_SIGNER_FIX_COMMIT: 2f01213918e8da288ce5f598447318c9113edaa2
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: chore/poco-only-purge-20260909
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install and materialize exact tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup override set 1.95.0
+          git fetch --no-tags origin "$PRODUCTION_PORTS_COMMIT" "$REMOTE_SIGNER_FIX_COMMIT"
+          git checkout "$PRODUCTION_PORTS_COMMIT" -- \
+            trillionnium/crates/trnm-node-boundary-v0/src/lib.rs \
+            trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+          git checkout "$REMOTE_SIGNER_FIX_COMMIT" -- \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_service_os.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/os_process_fixture.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/pending_reservation_os.rs
+          python3 tools/temporary_poco_convergence_r5.py prepare
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+      - name: Compile CLI with source identity before and after
+        shell: bash
+        run: |
+          set -uo pipefail
+          file=trillionnium/crates/trnm-cli/src/main.rs
+          echo "repo_head=$(git rev-parse HEAD)"
+          echo "file_realpath=$(realpath "$file")"
+          echo "sha_before=$(sha256sum "$file" | awk '{print $1}')"
+          echo "lines_before=$(wc -l <"$file")"
+          echo '--- cargo package identity ---'
+          cargo metadata --manifest-path trillionnium/Cargo.toml --locked --offline --format-version 1 \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin); [print(p["name"], p["manifest_path"], p["targets"]) for p in d["packages"] if p["name"]=="trnm-cli"]'
+          echo '--- suspicious source before compile ---'
+          grep -n -C 24 -E 'contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|contract\.simple_majority_root_hex|canonical\(contract' "$file" || true
+          cargo check --manifest-path trillionnium/Cargo.toml -p trnm-cli --all-targets --locked --offline -vv
+          rc=$?
+          echo "cargo_rc=$rc"
+          echo "sha_after=$(sha256sum "$file" | awk '{print $1}')"
+          echo "lines_after=$(wc -l <"$file")"
+          echo '--- suspicious source after compile ---'
+          grep -n -C 24 -E 'contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|contract\.simple_majority_root_hex|canonical\(contract' "$file" || true
+          echo '--- compiler-line window 1600-1670 ---'
+          sed -n '1600,1670p' "$file"
+          exit "$rc"
