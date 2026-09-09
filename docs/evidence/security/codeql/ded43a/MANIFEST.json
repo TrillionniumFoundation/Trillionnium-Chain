@@ -8,6 +8,9 @@
     "language": "rust",
     "query_suite": "security-extended",
     "raw_sarif_sha256": "7992543e61de978c5399d225377e4e7d9e656d6023bcc3734e1526998cc3b892",
+    "triage_artifact_id": 10088892435,
+    "triage_artifact_zip_sha256": "68042b2c487489cd3d5887768ab80158bdcf977eda5a6dc3c28c0cb1a3ab1843",
+    "triage_workflow_run_id": "34312572616",
     "workflow_run_id": "34311122905"
   },
   "authority": {
@@ -21,41 +24,44 @@
     "public_testnet_ready": false,
     "release_ready": false
   },
-  "counts": {
-    "actionable_production_findings": 0,
-    "by_disposition": {
-      "public_deterministic_policy_limit": 1,
-      "public_deterministic_protocol_value": 3,
-      "query_dataflow_false_positive": 32,
-      "test_fixture_bounded_nonproduction": 667
+  "expected_output": {
+    "counts": {
+      "actionable_production_findings": 0,
+      "by_disposition": {
+        "public_deterministic_policy_limit": 1,
+        "public_deterministic_protocol_value": 3,
+        "query_dataflow_false_positive": 32,
+        "test_fixture_bounded_nonproduction": 667
+      },
+      "by_rule": {
+        "rust/cleartext-logging": 90,
+        "rust/hard-coded-cryptographic-value": 613
+      },
+      "recommended_github_resolution": {
+        "false positive": 35,
+        "used in tests": 668
+      },
+      "total": 703,
+      "unreviewed": 0
     },
-    "by_rule": {
-      "rust/cleartext-logging": 90,
-      "rust/hard-coded-cryptographic-value": 613
-    },
-    "recommended_github_resolution": {
-      "false positive": 35,
-      "used in tests": 668
-    },
-    "total": 703,
-    "unreviewed": 0
+    "files": [
+      "dispositions-v1.json",
+      "dispositions-v1.csv",
+      "report.json",
+      "summary.md",
+      "SHA256SUMS"
+    ]
   },
-  "files": {
-    "dispositions-v1.csv": {
-      "bytes": 474462,
-      "sha256": "505c2244b2ad81d91a2ec4605aec4d8312ef6e0bcba559dcbd9a4df31a0c8245"
-    },
-    "dispositions-v1.json.gz.b64": {
-      "bytes": 256283,
-      "sha256": "eba76f1a24150317fa57a7cb486b5ede396c88643d5861a0f9deac45f82be48d"
-    },
-    "manual-semantic-review-v1.json": {
-      "bytes": 14850,
-      "sha256": "4c468618f45b460f9374ac1ea18ea1e22d8875e4f993ad83c909312aca4d45d9"
-    }
+  "inputs": {
+    "generator_path": "scripts/ci/generate_codeql_dispositions_ded43a_v1.py",
+    "generator_source_sha256": "c60918d5362d02339ee1e667b3c910c6830fec0319c2a7a89ce47b00574fa731",
+    "manual_semantic_review_path": "docs/evidence/security/codeql/ded43a/manual-semantic-review-v1.json",
+    "manual_semantic_review_sha256": "4c468618f45b460f9374ac1ea18ea1e22d8875e4f993ad83c909312aca4d45d9",
+    "workflow_path": ".github/workflows/trnm-codeql-disposition-ded43a-v1.yml",
+    "workflow_source_sha256": "6593364de70b8d0eaa52ee6b8c535694d5e2d6fe870c0b6dd82a67928c7b16f6"
   },
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
-  "schema": "trnm-rust-codeql-disposition-manifest-v1",
+  "schema": "trnm-rust-codeql-disposition-contract-v1",
   "subject": {
     "commit": "ded43a0704b455cd4bef724cb3ca40fb6db9465d",
     "tree": "c0791ffb57e05fde43f87bfed1a3b4656c09efc0"
