@@ -62,10 +62,10 @@ index 302de1dab..bcce97224 100644
          }
      }
 diff --git a/trillionnium/crates/trnm-rpc/src/reliability.rs b/trillionnium/crates/trnm-rpc/src/reliability.rs
-index b9e4aa3f0..fd8a06733 100644
+index b9e4aa3f0..e10c8f666 100644
 --- a/trillionnium/crates/trnm-rpc/src/reliability.rs
 +++ b/trillionnium/crates/trnm-rpc/src/reliability.rs
-@@ -905,13 +905,10 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
+@@ -905,13 +905,11 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
  
              if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
                  self.store.remove_session(sid);
@@ -76,7 +76,8 @@ index b9e4aa3f0..fd8a06733 100644
 -                    "[reliability] drop session after failed retry-state persist sid={} err={}",
 -                    sid, e
 -                );
-+            } else if let Err(_error) = self.store.try_upsert_session_with_ts(session, now_unix_ms) {
++            } else if let Err(_error) = self.store.try_upsert_session_with_ts(session, now_unix_ms)
++            {
 +                // Fail closed on persistence errors without disclosing session identity
 +                // or storage internals to process logs.
 +                eprintln!("[reliability] retry-state persistence failed; session dropped");
@@ -84,10 +85,10 @@ index b9e4aa3f0..fd8a06733 100644
              }
          }
 diff --git a/trillionnium/crates/trnm-rpc/src/reliability/recovery.rs b/trillionnium/crates/trnm-rpc/src/reliability/recovery.rs
-index 424f97f44..eae784fbd 100644
+index 424f97f44..c872acde1 100644
 --- a/trillionnium/crates/trnm-rpc/src/reliability/recovery.rs
 +++ b/trillionnium/crates/trnm-rpc/src/reliability/recovery.rs
-@@ -260,13 +260,10 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
+@@ -260,13 +260,11 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
  
              if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
                  self.store.remove_session(sid);
@@ -98,7 +99,8 @@ index 424f97f44..eae784fbd 100644
 -                    "[reliability] drop session after failed retry-state persist sid={} err={}",
 -                    sid, e
 -                );
-+            } else if let Err(_error) = self.store.try_upsert_session_with_ts(session, now_unix_ms) {
++            } else if let Err(_error) = self.store.try_upsert_session_with_ts(session, now_unix_ms)
++            {
 +                // Fail closed on persistence errors without disclosing session identity
 +                // or storage internals to process logs.
 +                eprintln!("[reliability] retry-state persistence failed; session dropped");
