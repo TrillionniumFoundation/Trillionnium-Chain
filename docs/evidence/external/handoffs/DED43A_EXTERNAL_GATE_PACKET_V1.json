@@ -1,0 +1,108 @@
+{
+  "schema": "trnm-external-gate-execution-packet-v1",
+  "status": "handoff-only-not-accepted-evidence",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "candidate_pull_request": 101,
+  "source": {
+    "commit": "ded43a0704b455cd4bef724cb3ca40fb6db9465d",
+    "tree": "c0791ffb57e05fde43f87bfed1a3b4656c09efc0",
+    "prospective_merge_commit": "6a46d99fcdf916a3f36a7261665e9ce05badbc34",
+    "prospective_merge_tree": "c0791ffb57e05fde43f87bfed1a3b4656c09efc0",
+    "parent_policy_commit": "b3a628744e23fb93ef510ab38a748a2ff7416651"
+  },
+  "plan": {
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "sha256": "3190c7d9b485f687a421d84764911cb1d5f18483731b707fb8775a5247768504",
+    "manifest": "docs/development/plan-manifest-v1.toml"
+  },
+  "toolchain": {
+    "rust": "1.95.0",
+    "lockfile": "trillionnium/Cargo.lock",
+    "lockfile_sha256": null
+  },
+  "lanes": {
+    "EXT-REVIEW-001": {
+      "status": "open",
+      "owner_class": "independent-reviewer",
+      "required": [
+        "exact-source-clone-and-digest-recomputation",
+        "canonical-valid-vector-replay",
+        "all-retained-p0-mutant-replay",
+        "codeql-verifier-review",
+        "five-rust-redaction-review",
+        "signed-independent-disposition"
+      ]
+    },
+    "EXT-G1-CAMPAIGN-001": {
+      "status": "open",
+      "owner_class": "independent-operators",
+      "required": [
+        "4-7-31-100-process-real-multihost",
+        "authenticated-p2p",
+        "partition-restart-rejoin-state-sync",
+        "signed-raw-traces",
+        "root-and-finality-readback"
+      ]
+    },
+    "EXT-ANCHOR-HSM-001": {
+      "status": "open",
+      "owner_class": "independent-custody",
+      "required": [
+        "device-backed-non-exportable-key",
+        "independent-monotonic-anchor",
+        "rollback-and-clone-rejection",
+        "rotation-revocation-and-recovery",
+        "device-attestation"
+      ]
+    },
+    "EXT-POWERLOSS-001": {
+      "status": "open",
+      "owner_class": "independent-hardware-operator",
+      "required": [
+        "physical-power-interruption",
+        "controller-cache-loss",
+        "reboot-and-journal-recovery",
+        "exact-root-readback",
+        "independent-witness-signature"
+      ]
+    },
+    "EXT-AUDIT-001": {
+      "status": "open",
+      "owner_class": "independent-auditors-and-red-team",
+      "required": [
+        "consensus-audit",
+        "cryptography-audit",
+        "economic-security-audit",
+        "red-team",
+        "zero-open-critical-or-high"
+      ]
+    },
+    "EXT-SOAK-ACTIVATION-001": {
+      "status": "open",
+      "owner_class": "independent-operators-and-governance",
+      "required": [
+        "72-hour-chaos",
+        "7-day-public-testnet",
+        "30-day-production-candidate",
+        "operations-drills",
+        "signed-governance-activation"
+      ]
+    }
+  },
+  "submission": {
+    "schema": "trnm-external-evidence-v1",
+    "destination": "docs/evidence/external/submissions/",
+    "require_producer_reviewer_independence": true,
+    "require_complete_artifact_sha256_inventory": true,
+    "require_real_wall_clock": true,
+    "require_signatures": true,
+    "accepted": false
+  },
+  "claims": {
+    "all_gaps_closed": false,
+    "public_testnet_ready": false,
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "release_ready": false
+  }
+}
