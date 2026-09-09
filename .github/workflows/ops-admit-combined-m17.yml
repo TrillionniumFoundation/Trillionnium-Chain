@@ -1,0 +1,286 @@
+name: ops-admit-combined-m17
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-admit-combined-m17.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: write
+  pull-requests: write
+  issues: write
+  security-events: read
+
+concurrency:
+  group: ops-admit-combined-m17-20260909
+  cancel-in-progress: false
+
+jobs:
+  admit:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      PR_NUMBER: '101'
+      REQUIRED_BASE: work/plan-v2-full-gap-closure-20260902
+    steps:
+      - name: Evaluate exact-head, review, CodeQL and conversation gates
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/m17-admission"
+          mkdir -p "$out"
+          python3 - "$out" <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import subprocess
+          import sys
+          import urllib.parse
+          import urllib.request
+          from collections import defaultdict
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          out = Path(sys.argv[1])
+          repo = os.environ['REPOSITORY']
+          number = int(os.environ['PR_NUMBER'])
+          required_base = os.environ['REQUIRED_BASE']
+          token = os.environ['GH_TOKEN']
+          api = 'https://api.github.com'
+
+          def request(path: str, *, method: str = 'GET', body=None):
+              payload = None if body is None else json.dumps(body).encode()
+              req = urllib.request.Request(
+                  api + path,
+                  data=payload,
+                  method=method,
+                  headers={
+                      'Accept': 'application/vnd.github+json',
+                      'Authorization': f'Bearer {token}',
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      'User-Agent': 'trnm-m17-admission-v1',
+                      'Content-Type': 'application/json',
+                  },
+              )
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          def paginate(path: str):
+              rows = []
+              page = 1
+              while True:
+                  sep = '&' if '?' in path else '?'
+                  batch = request(f'{path}{sep}per_page=100&page={page}')
+                  if isinstance(batch, dict):
+                      batch = batch.get('check_runs', batch.get('workflow_runs', []))
+                  rows.extend(batch)
+                  if len(batch) < 100:
+                      return rows
+                  page += 1
+                  if page > 100:
+                      raise RuntimeError('pagination limit exceeded')
+
+          pr = request(f'/repos/{repo}/pulls/{number}')
+          head_sha = pr['head']['sha']
+          base_sha = pr['base']['sha']
+          author = pr['user']['login']
+          checks = paginate(f'/repos/{repo}/commits/{head_sha}/check-runs?filter=latest')
+          reviews = paginate(f'/repos/{repo}/pulls/{number}/reviews')
+          commit = request(f'/repos/{repo}/commits/{head_sha}')
+          pusher = (commit.get('committer') or commit.get('author') or {}).get('login')
+          commit_time_raw = commit['commit']['committer']['date']
+          commit_time = datetime.fromisoformat(commit_time_raw.replace('Z', '+00:00'))
+
+          latest_review = {}
+          for review in sorted(reviews, key=lambda r: (r.get('submitted_at') or '', r['id'])):
+              login = review['user']['login']
+              latest_review[login] = review
+
+          eligible_approvals = []
+          for login, review in latest_review.items():
+              submitted = review.get('submitted_at')
+              submitted_time = (
+                  datetime.fromisoformat(submitted.replace('Z', '+00:00'))
+                  if submitted else datetime.min.replace(tzinfo=timezone.utc)
+              )
+              user_type = review['user'].get('type')
+              if (
+                  review.get('state') == 'APPROVED'
+                  and login != author
+                  and login != pusher
+                  and user_type != 'Bot'
+                  and submitted_time >= commit_time
+              ):
+                  eligible_approvals.append(login)
+
+          blocking_reviewers = sorted(
+              login for login, review in latest_review.items()
+              if review.get('state') == 'CHANGES_REQUESTED'
+          )
+
+          by_name = defaultdict(list)
+          for check in checks:
+              by_name[check['name']].append(check)
+          required_names = {
+              'repository-truth',
+              'protocol-contract',
+              'rust-baseline',
+              'fuzz-smoke',
+              'external-evidence-contract',
+              'Analyze (actions)',
+              'Analyze (javascript-typescript)',
+              'Analyze (python)',
+              'Analyze (rust)',
+              'CodeQL',
+          }
+          required_results = {}
+          for name in sorted(required_names):
+              rows = sorted(by_name.get(name, []), key=lambda row: row['id'])
+              row = rows[-1] if rows else None
+              required_results[name] = None if row is None else {
+                  'id': row['id'],
+                  'status': row['status'],
+                  'conclusion': row.get('conclusion'),
+                  'app': (row.get('app') or {}).get('slug'),
+              }
+
+          ignored_names = {'ops-admit-combined-m17'}
+          nonterminal = sorted({
+              check['name'] for check in checks
+              if check['name'] not in ignored_names and check['status'] != 'completed'
+          })
+          terminal_bad = sorted({
+              check['name'] for check in checks
+              if check['name'] not in ignored_names
+              and check['status'] == 'completed'
+              and check.get('conclusion') not in {'success', 'neutral', 'skipped'}
+          })
+          required_bad = sorted(
+              name for name, row in required_results.items()
+              if row is None or row['status'] != 'completed' or row['conclusion'] != 'success'
+          )
+
+          query = '''
+          query($owner:String!, $name:String!, $number:Int!) {
+            repository(owner:$owner, name:$name) {
+              pullRequest(number:$number) {
+                reviewThreads(first:100) {
+                  nodes { isResolved }
+                  pageInfo { hasNextPage }
+                }
+              }
+            }
+          }
+          '''
+          owner, name = repo.split('/', 1)
+          graphql = subprocess.run(
+              ['gh', 'api', 'graphql', '-f', f'query={query}', '-F', f'owner={owner}',
+               '-F', f'name={name}', '-F', f'number={number}'],
+              text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+          )
+          unresolved_threads = None
+          thread_error = None
+          if graphql.returncode == 0:
+              payload = json.loads(graphql.stdout)
+              connection = payload['data']['repository']['pullRequest']['reviewThreads']
+              if connection['pageInfo']['hasNextPage']:
+                  thread_error = 'more_than_100_review_threads_requires_full_pagination'
+              else:
+                  unresolved_threads = sum(not node['isResolved'] for node in connection['nodes'])
+          else:
+              thread_error = graphql.stderr.strip() or 'graphql_failed'
+
+          conditions = {
+              'pr_open': pr['state'] == 'open',
+              'pr_draft': bool(pr.get('draft')),
+              'base_exact': pr['base']['ref'] == required_base,
+              'two_current_non_author_approvals': len(set(eligible_approvals)) >= 2,
+              'no_changes_requested': not blocking_reviewers,
+              'all_required_checks_success': not required_bad,
+              'all_observed_checks_terminal': not nonterminal,
+              'no_terminal_failures': not terminal_bad,
+              'all_review_threads_resolved': unresolved_threads == 0 and thread_error is None,
+          }
+          admissible = all(conditions.values())
+          report = {
+              'schema': 'trnm-m17-admission-v1',
+              'repository': repo,
+              'pullRequest': number,
+              'headSha': head_sha,
+              'baseRef': pr['base']['ref'],
+              'baseSha': base_sha,
+              'author': author,
+              'lastPusher': pusher,
+              'headCommitTime': commit_time_raw,
+              'eligibleApprovals': sorted(set(eligible_approvals)),
+              'blockingReviewers': blocking_reviewers,
+              'requiredChecks': required_results,
+              'requiredChecksNotSuccessful': required_bad,
+              'nonterminalChecks': nonterminal,
+              'terminalBadChecks': terminal_bad,
+              'unresolvedReviewThreads': unresolved_threads,
+              'reviewThreadError': thread_error,
+              'conditions': conditions,
+              'admissible': admissible,
+          }
+          (out / 'gate.json').write_text(json.dumps(report, indent=2, sort_keys=True) + '\n')
+          (out / 'binding.env').write_text(
+              f'HEAD_SHA={head_sha}\nBASE_SHA={base_sha}\nADMISSIBLE={str(admissible).lower()}\n'
+          )
+          print(json.dumps(report, sort_keys=True))
+          PY
+          (
+            cd "$out"
+            sha256sum binding.env gate.json > SHA256SUMS
+          )
+          cat "$out/binding.env" >> "$GITHUB_OUTPUT"
+
+      - name: Publish source-bound gate decision
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/m17-admission"
+          head_sha="$(sed -n 's/^HEAD_SHA=//p' "$out/binding.env" 2>/dev/null || true)"
+          admissible="$(sed -n 's/^ADMISSIBLE=//p' "$out/binding.env" 2>/dev/null || echo false)"
+          summary="$(jq -c '{admissible, eligibleApprovals, requiredChecksNotSuccessful, nonterminalChecks, terminalBadChecks, unresolvedReviewThreads, blockingReviewers}' "$out/gate.json" 2>/dev/null || echo '{}')"
+          gh api "repos/$REPOSITORY/issues/$PR_NUMBER/comments" \
+            -f body="M17 exact-head admission transaction for \`${head_sha:-unknown}\`: **${admissible^^}**. Gate summary: \`$summary\`. This result does not use administrator bypass or prior-head evidence. If false, the PR remains Draft and unmerged." >/dev/null
+
+      - name: Upload immutable gate packet
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: m17-admission-${{ github.sha }}
+          path: ${{ runner.temp }}/m17-admission
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Merge only the unchanged admitted tuple
+        if: steps.gate.outputs.ADMISSIBLE == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          head_sha="${{ steps.gate.outputs.HEAD_SHA }}"
+          test "$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq .state)" = open
+          test "$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)" = "$head_sha"
+          test "$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq .base.ref)" = "$REQUIRED_BASE"
+          gh pr ready "$PR_NUMBER" --repo "$REPOSITORY"
+          gh pr merge "$PR_NUMBER" --repo "$REPOSITORY" --squash \
+            --match-head-commit "$head_sha" \
+            --subject 'security(m17): integrate Rust-inclusive CodeQL contract and log redaction' \
+            --body 'Source-bound combined M17 admission; no production, release or external-evidence promotion.'
+
+      - name: Keep workflow red while admission is incomplete
+        if: steps.gate.outputs.ADMISSIBLE != 'true'
+        shell: bash
+        run: exit 1
