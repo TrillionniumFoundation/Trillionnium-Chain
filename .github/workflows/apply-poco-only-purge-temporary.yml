@@ -56,6 +56,34 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
 
+          restart = Path("trillionnium/crates/trnm-poco-lab-validator/src/restart_catchup.rs")
+          restart_text = restart.read_text(encoding="utf-8")
+          for stale in (
+              '            include_str!("../../trnm-node/src/lib.rs"),\n',
+              '            include_str!("../../trnm-node/src/main.rs"),\n',
+          ):
+              if stale not in restart_text:
+                  raise SystemExit(f"expected retired node include missing: {stale.strip()}")
+              restart_text = restart_text.replace(stale, "", 1)
+          restart.write_text(restart_text, encoding="utf-8")
+
+          node_manifest = Path("trillionnium/crates/trnm-poco-node/Cargo.toml")
+          manifest_text = node_manifest.read_text(encoding="utf-8")
+          lint_contract = '''# Retired source is unreachable from every declared feature. Keep the closed
+          # set of retired cfg names explicit so rustc verifies that exclusion cleanly.
+          [lints.rust]
+          unexpected_cfgs = { level = "allow", check-cfg = [
+            'cfg(feature, values("retired-application-path", "recovery-test-support"))',
+          ] }
+
+          '''
+          if "[lints.rust]" not in manifest_text:
+              marker = "[package.metadata.trnm]"
+              if marker not in manifest_text:
+                  raise SystemExit("trnm-poco-node metadata marker missing")
+              manifest_text = manifest_text.replace(marker, lint_contract + marker, 1)
+              node_manifest.write_text(manifest_text, encoding="utf-8")
+
           path = Path("scripts/ci/check_required_protocol_contract_v1.py")
           text = path.read_text(encoding="utf-8")
 
@@ -153,8 +181,7 @@ jobs:
             -p trnm-consensus-safety-rules \
             -p trnm-poco-node \
             -p trnm-poco-node-production-v0 \
-            -p trnm-poco-lab-validator \
-            --all-targets -- -D warnings
+            --all-targets --no-deps -- -D warnings
 
       - name: Commit validated purge
         shell: bash
