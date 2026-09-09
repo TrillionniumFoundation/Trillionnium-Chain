@@ -23,6 +23,7 @@ jobs:
       PATCH_B64_BYTES: '18376'
       PATCH_B64_SHA256: f3337ce5268027a8d2801a82181e8bfa3e44912e043f438a7daf62e175d5dbfe
       PATCH_SHA256: 00934b2c870ed6f05b096a016dbf8d8f9669de5623e635478f52e69177dbd5c9
+      OBSERVED_CHUNK00_BLOB: 7e38755b73a42f04dfb52e2c3b1d2b36a58ffaa3
     steps:
       - name: Check out exact non-executable carrier
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -46,9 +47,19 @@ jobs:
           set -euo pipefail
           test "$(git -C carrier rev-parse HEAD)" = "$GITHUB_SHA"
 
+          source_dir="carrier/tools/publish-final-repository-closure/part1"
+          chunk00="$source_dir/chunk-00.b64"
           carrier="$RUNNER_TEMP/closure-part1.patch.gz.b64"
           patch="$RUNNER_TEMP/closure-part1.patch"
-          cat carrier/tools/publish-final-repository-closure/part1/chunk-*.b64 > "$carrier"
+
+          test "$(git -C carrier hash-object tools/publish-final-repository-closure/part1/chunk-00.b64)" = "$OBSERVED_CHUNK00_BLOB"
+          test "$(grep -oF 'J/truqHj' "$chunk00" | wc -l)" = '1'
+          test "$(grep -oF 'J/truHj' "$chunk00" | wc -l)" = '0'
+          sed 's#J/truqHj#J/truHj#' "$chunk00" > "$carrier"
+          for suffix in 01 02 03 04; do
+            cat "$source_dir/chunk-$suffix.b64" >> "$carrier"
+          done
+
           test "$(wc -c < "$carrier")" = "$PATCH_B64_BYTES"
           printf '%s  %s\n' "$PATCH_B64_SHA256" "$carrier" | sha256sum -c -
           base64 --decode "$carrier" | gzip --decompress --stdout > "$patch"
