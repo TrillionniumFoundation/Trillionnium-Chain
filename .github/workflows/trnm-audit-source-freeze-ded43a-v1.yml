@@ -1,0 +1,233 @@
+name: TRNM exact-source audit handoff ded43a v1
+
+on:
+  push:
+    branches:
+      - evidence/audit-source-freeze-ded43a-v1-20260909
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+concurrency:
+  group: trnm-audit-source-freeze-ded43a-v1
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    name: Build immutable protocol and implementation audit packet
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      BASE_SHA: b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9
+      CODEQL_RUN: "34311122905"
+      CODEQL_ARTIFACT: trnm-rust-codeql-exact-source-ded43a-v3-34311122905
+      CODEQL_DIGEST: sha256:8eba327ccae6cfa4a9c0c618fe665de408b35c6129ccf27a5d168c8d8611f433
+    steps:
+      - name: Check out complete exact source without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source, tree and clean state
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Verify referenced CodeQL producer artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          run="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${CODEQL_RUN}")"
+          test "$(jq -r '.status' <<<"${run}")" = completed
+          test "$(jq -r '.conclusion' <<<"${run}")" = success
+          artifacts="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${CODEQL_RUN}/artifacts?per_page=100")"
+          matches="$(jq --arg name "${CODEQL_ARTIFACT}" --arg digest "${CODEQL_DIGEST}" '[.artifacts[] | select(.name == $name and .digest == $digest and .expired == false)] | length' <<<"${artifacts}")"
+          test "${matches}" = 1
+
+      - name: Assemble exact audit packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-audit-handoff"
+          mkdir -p "${root}/inputs" "${root}/manifests"
+
+          git archive --format=tar --prefix=Trillionnium-Chain-${SUBJECT_SHA}/ "${SUBJECT_SHA}" \
+            | gzip -n -9 > "${root}/inputs/source.tar.gz"
+
+          cp trillionnium/Cargo.lock "${root}/inputs/Cargo.lock"
+          cp trillionnium/Cargo.toml "${root}/inputs/Cargo.toml"
+          cp docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md "${root}/inputs/DEVELOPMENT_PLAN.md"
+          cp config/consensus-mainline.json "${root}/inputs/consensus-mainline.json"
+          cp config/blocker-execution-v1.json "${root}/inputs/blocker-execution-v1.json"
+          cp config/module-coverage-v1.toml "${root}/inputs/module-coverage-v1.toml"
+          cp config/documentation-contracts-v1.json "${root}/inputs/documentation-contracts-v1.json"
+          cp RELEASE_READINESS.md "${root}/inputs/RELEASE_READINESS.md"
+
+          tar --sort=name --mtime='UTC 2024-01-01' --owner=0 --group=0 --numeric-owner \
+            -czf "${root}/inputs/protocol-schema-vectors-formal.tar.gz" \
+            docs/protocol/poco-bft-v0 \
+            docs/protocol/poco-ai-native-v1 \
+            docs/modules \
+            proto/trnm/poco \
+            formal/quint/poco-bft-v0 \
+            formal/quint/poco-ai-native-v1 \
+            conformance
+
+          git ls-files -s > "${root}/manifests/git-index.txt"
+          git log -1 --format=fuller "${SUBJECT_SHA}" > "${root}/manifests/commit.txt"
+          git show --no-renames --format=fuller --stat "${SUBJECT_SHA}" > "${root}/manifests/commit-stat.txt"
+          git diff --no-renames --stat "${BASE_SHA}..${SUBJECT_SHA}" > "${root}/manifests/base-to-subject-stat.txt"
+          git diff --no-renames --name-status "${BASE_SHA}..${SUBJECT_SHA}" > "${root}/manifests/base-to-subject-files.txt"
+
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import subprocess
+
+          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "trnm-audit-handoff"
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).split(b"\0")
+          entries = []
+          for raw in tracked:
+              if not raw:
+                  continue
+              path = pathlib.Path(raw.decode("utf-8"))
+              content = path.read_bytes()
+              entries.append({
+                  "path": path.as_posix(),
+                  "bytes": len(content),
+                  "sha256": hashlib.sha256(content).hexdigest(),
+              })
+          (root / "manifests" / "tracked-files.json").write_text(
+              json.dumps(entries, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          handoff = {
+              "schema": "trnm-independent-audit-handoff-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "subject_sha": os.environ["SUBJECT_SHA"],
+              "subject_tree": os.environ["SUBJECT_TREE"],
+              "base_sha": os.environ["BASE_SHA"],
+              "codeql": {
+                  "producer_run_id": int(os.environ["CODEQL_RUN"]),
+                  "artifact_name": os.environ["CODEQL_ARTIFACT"],
+                  "artifact_digest": os.environ["CODEQL_DIGEST"],
+                  "independent_disposition_accepted": False,
+              },
+              "required_review_scopes": [
+                  "weighted chained-QC safety and liveness",
+                  "SafetyRules and persist-before-sign",
+                  "canonical wire/domain separation and parser limits",
+                  "epoch and joint handoff",
+                  "application execution, state root and finality atomicity",
+                  "recovery, state sync and weak subjectivity",
+                  "PoCO weight, bond, slashing and related-party economics",
+                  "authenticated P2P and denial/resource bounds",
+                  "migration and one-way cutover",
+              ],
+              "required_outputs": [
+                  "finding register with exact fingerprint/path/line",
+                  "mutant and canonical-vector replay record",
+                  "package/public-interface digests",
+                  "critical/high zero-open disposition",
+                  "producer and independent reviewer signatures",
+                  "downstream invalidation set",
+              ],
+              "external_review_accepted": False,
+              "external_audit_accepted": False,
+              "production_candidate": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+              "production_consensus_activation": False,
+          }
+          (root / "handoff.json").write_text(
+              json.dumps(handoff, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          cat > "${root}/README.md" <<EOF
+          # Trillionnium-Chain exact-source independent audit handoff
+
+          Subject commit: \`${SUBJECT_SHA}\`  
+          Subject tree: \`${SUBJECT_TREE}\`  
+          Base main: \`${BASE_SHA}\`
+
+          This packet freezes source, protocol/schema/vector/formal inputs, lock files,
+          module boundaries, machine blocker truth and the referenced exact-source Rust
+          CodeQL producer artifact. It is an audit input, not an audit conclusion.
+
+          Auditors must use the source archive and hashes in this packet, independently
+          replay canonical vectors and retained mutants, and report findings by stable
+          fingerprint and exact location. Any covered-input change invalidates acceptance.
+
+          No production, public-testnet, release or activation flag is authorized here.
+          EOF
+
+          (
+            cd "${root}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+          tar --sort=name --mtime='UTC 2024-01-01' --owner=0 --group=0 --numeric-owner \
+            -czf "${RUNNER_TEMP}/trnm-audit-handoff-${SUBJECT_SHA}.tar.gz" \
+            -C "${RUNNER_TEMP}" trnm-audit-handoff
+          sha256sum "${RUNNER_TEMP}/trnm-audit-handoff-${SUBJECT_SHA}.tar.gz" \
+            > "${RUNNER_TEMP}/trnm-audit-handoff-${SUBJECT_SHA}.tar.gz.sha256"
+
+      - name: Upload immutable audit handoff
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-audit-handoff-ded43a-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/trnm-audit-handoff/**
+            ${{ runner.temp }}/trnm-audit-handoff-${{ env.SUBJECT_SHA }}.tar.gz
+            ${{ runner.temp }}/trnm-audit-handoff-${{ env.SUBJECT_SHA }}.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0
+
+      - name: Publish bounded handoff notice
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "${RUNNER_TEMP}/handoff-comment.md" <<EOF
+          <!-- trnm-audit-source-freeze-ded43a-v1 -->
+          ## Exact-source audit handoff packet generated
+
+          - source: \`${SUBJECT_SHA}\`
+          - tree: \`${SUBJECT_TREE}\`
+          - CodeQL producer run: \`${CODEQL_RUN}\`
+          - workflow run: \`${GITHUB_RUN_ID}\`
+
+          The retained artifact contains the exact source archive, tracked-file SHA-256
+          manifest, lock files, protocol/schema/vector/formal inputs, module/blocker truth
+          and an explicit independent audit checklist. It is input only: no review/audit,
+          Critical/High disposition, production, testnet, release or activation acceptance
+          is created by this repository-produced packet.
+          EOF
+          for issue in 41 80; do
+            jq -n --rawfile body "${RUNNER_TEMP}/handoff-comment.md" '{body:$body}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+          done
+
+      - name: Verify subject source was never mutated
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
