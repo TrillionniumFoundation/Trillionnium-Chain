@@ -1,0 +1,244 @@
+name: TRNM exact-source Rust CodeQL disposition inventory ded43a
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: trnm-codeql-rust-disposition-ded43a-20260909
+  cancel-in-progress: false
+
+jobs:
+  rust-codeql-disposition:
+    name: Rust CodeQL exact-source disposition inventory ded43a
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      CODEQL_ACTION_SHA: d1ba80a13dd99fba24a470575428917156a28b43
+    steps:
+      - name: Check out exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Initialize pinned Rust CodeQL without build
+        uses: github/codeql-action/init@d1ba80a13dd99fba24a470575428917156a28b43
+        with:
+          languages: rust
+          build-mode: none
+          queries: security-extended
+
+      - name: Analyze locally without uploading alert state
+        uses: github/codeql-action/analyze@d1ba80a13dd99fba24a470575428917156a28b43
+        with:
+          category: /language:rust-exact-source-disposition-ded43a
+          output: ${{ runner.temp }}/trnm-codeql-rust/raw
+          post-processed-sarif-path: ${{ runner.temp }}/trnm-codeql-rust/post-processed
+          upload: never
+          upload-database: false
+          wait-for-processing: false
+
+      - name: Build complete fail-closed disposition inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-codeql-rust"
+          evidence="${root}/evidence"
+          mkdir -p "${evidence}"
+          export root evidence
+          python3 - <<'PY'
+          import collections
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import re
+
+          root = pathlib.Path(os.environ["root"])
+          evidence = pathlib.Path(os.environ["evidence"])
+          sarifs = sorted(root.rglob("*.sarif"))
+          if not sarifs:
+              raise SystemExit("CodeQL produced no SARIF")
+
+          preferred = root / "post-processed" / "upload.sarif"
+          canonical = preferred if preferred in sarifs else sarifs[0]
+          document = json.loads(canonical.read_bytes())
+
+          non_production_components = {
+              "tests", "test", "fuzz", "vectors", "examples", "example",
+              "benches", "bench", "fixtures", "fixture", "conformance",
+              "formal", "scripts", "docs", "testkit", "mocks", "mock",
+          }
+
+          def normalized_uri(result):
+              locations = result.get("locations") or []
+              if not locations:
+                  return ""
+              physical = locations[0].get("physicalLocation") or {}
+              artifact = physical.get("artifactLocation") or {}
+              return str(artifact.get("uri") or "").replace("\\", "/").lstrip("./")
+
+          def is_non_production(uri):
+              path = pathlib.PurePosixPath(uri)
+              components = {part.lower() for part in path.parts}
+              name = path.name.lower()
+              return (
+                  bool(components & non_production_components)
+                  or name == "tests.rs"
+                  or name.startswith("test_")
+                  or name.endswith("_test.rs")
+              )
+
+          findings = []
+          production_security = []
+          rule_counts = collections.Counter()
+          disposition_counts = collections.Counter()
+          ordinal = 0
+          for run in document.get("runs", []):
+              for result in run.get("results", []):
+                  ordinal += 1
+                  rule = str(result.get("ruleId") or "<missing>")
+                  level = str(result.get("level") or "<missing>")
+                  uri = normalized_uri(result)
+                  locations = result.get("locations") or []
+                  physical = (locations[0].get("physicalLocation") or {}) if locations else {}
+                  region = physical.get("region") or {}
+                  security_result = not (
+                      rule.startswith("rust/diagnostics/")
+                      or rule.startswith("rust/summary/")
+                      or rule.startswith("rust/telemetry/")
+                  )
+                  non_production = is_non_production(uri)
+                  if rule == "rust/hard-coded-cryptographic-value" and non_production:
+                      rationale = "deterministic test, fixture, vector, example, formal, fuzz, or conformance surface; not a production secret/key source"
+                      source_disposition = "test-vector-or-fixture-review-required"
+                  elif rule == "rust/cleartext-logging" and non_production:
+                      rationale = "test, fixture, example, formal, fuzz, conformance, script, or documentation diagnostic surface; not a production-authority logging path"
+                      source_disposition = "test-diagnostic-review-required"
+                  elif not security_result:
+                      rationale = "CodeQL diagnostic/summary/telemetry result retained for completeness"
+                      source_disposition = "diagnostic-retained"
+                  else:
+                      rationale = "production-authority or unclassified security result; release-blocking until repaired or independently accepted"
+                      source_disposition = "production-or-unclassified-open"
+
+                  record = {
+                      "ordinal": ordinal,
+                      "rule_id": rule,
+                      "level": level,
+                      "message": (result.get("message") or {}).get("text") or "",
+                      "uri": uri,
+                      "start_line": region.get("startLine"),
+                      "start_column": region.get("startColumn"),
+                      "end_line": region.get("endLine"),
+                      "end_column": region.get("endColumn"),
+                      "partial_fingerprints": result.get("partialFingerprints") or {},
+                      "security_result": security_result,
+                      "non_production_surface": non_production,
+                      "source_author_disposition": source_disposition,
+                      "rationale": rationale,
+                      "independent_specialist_acceptance": False,
+                      "alert_dismissed": False,
+                  }
+                  findings.append(record)
+                  rule_counts[rule] += 1
+                  disposition_counts[source_disposition] += 1
+                  if security_result and not non_production:
+                      production_security.append(record)
+
+          report = {
+              "schema": "trnm-rust-codeql-exact-source-disposition-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_source_sha": os.environ["GITHUB_SHA"],
+              "exact_source_sha": os.environ["EXACT_SOURCE_SHA"],
+              "exact_source_tree": os.environ["EXACT_SOURCE_TREE"],
+              "codeql_action_sha": os.environ["CODEQL_ACTION_SHA"],
+              "query_suite": "security-extended",
+              "build_mode": "none",
+              "sarif_upload": "never",
+              "canonical_sarif": str(canonical.relative_to(root)),
+              "result_count": len(findings),
+              "security_result_count": sum(1 for item in findings if item["security_result"]),
+              "production_or_unclassified_security_result_count": len(production_security),
+              "rule_counts": dict(sorted(rule_counts.items())),
+              "disposition_counts": dict(sorted(disposition_counts.items())),
+              "source_classification_complete": len(production_security) == 0,
+              "independent_specialist_acceptance": False,
+              "default_setup_repaired": False,
+              "alerts_dismissed": False,
+              "production_candidate": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+          }
+          (evidence / "disposition-inventory.json").write_text(
+              json.dumps(findings, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          (evidence / "report.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+
+          if production_security:
+              (evidence / "production-or-unclassified-open.json").write_text(
+                  json.dumps(production_security, indent=2, sort_keys=True) + "\n",
+                  encoding="utf-8",
+              )
+              raise SystemExit(
+                  f"{len(production_security)} production-authority or unclassified Rust security results remain"
+              )
+
+          if report["rule_counts"].get("rust/hard-coded-cryptographic-value") != 625:
+              raise SystemExit("hard-coded cryptographic value inventory drift")
+          if report["rule_counts"].get("rust/cleartext-logging") != 89:
+              raise SystemExit("cleartext logging inventory drift")
+          if report["security_result_count"] != 714:
+              raise SystemExit("security result inventory drift")
+          if report["result_count"] != 718:
+              raise SystemExit("total result inventory drift")
+          PY
+          (
+            cd "${root}"
+            find . -type f ! -path './evidence/SHA256SUMS' -print0 \
+              | sort -z \
+              | xargs -0 sha256sum > evidence/SHA256SUMS
+          )
+          test -s "${evidence}/report.json"
+          test -s "${evidence}/disposition-inventory.json"
+          test -s "${evidence}/SHA256SUMS"
+
+      - name: Upload immutable disposition evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-rust-codeql-disposition-ded43a-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-codeql-rust/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Verify no source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
