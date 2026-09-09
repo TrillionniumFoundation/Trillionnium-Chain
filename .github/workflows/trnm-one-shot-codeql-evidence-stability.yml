@@ -9,18 +9,18 @@ permissions:
   contents: write
 
 concurrency:
-  group: trnm-one-shot-codeql-log-redaction-restack-v1
+  group: trnm-one-shot-codeql-log-redaction-restack-v2
   cancel-in-progress: false
 
 jobs:
   restack-child:
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 90
     env:
       CHILD_BRANCH: security/codeql-rust-log-redaction-v1-20260909
       PARENT_BRANCH: security/codeql-default-setup-v1-20260909
       EXPECTED_CHILD_SHA: 32274f6421ff41369cca13fbf35931d3684abc37
-      EXPECTED_PARENT_SHA: 06675852009100e402223cb5868b3910c062e924
+      EXPECTED_PARENT_SHA: b3a628744e23fb93ef510ab38a748a2ff7416651
       EXPECTED_MERGE_BASE: 7ab9ce97a5bbc5cb4c7edca7d9d39dc016638d3b
     steps:
       - name: Check out exact child
@@ -41,7 +41,7 @@ jobs:
           git diff --quiet
           git diff --cached --quiet
 
-      - name: Merge corrected parent without changing child scope
+      - name: Merge stabilized parent without changing child scope
         shell: bash
         run: |
           set -euo pipefail
@@ -72,28 +72,69 @@ jobs:
             --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
 
-      - name: Qualify the unchanged five-file redaction delta
+      - name: Check formatting across workspace and excluded crates
         shell: bash
         run: |
           set -euo pipefail
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo fmt \
+            --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
+            --all -- --check
+          cargo fmt \
+            --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
+            --all -- --check
+
+      - name: Test and lint active workspace redaction targets
+        shell: bash
+        run: |
+          set -euo pipefail
           timeout --signal=TERM --kill-after=30s 1800s \
             cargo test --manifest-path trillionnium/Cargo.toml \
-              -p trnm-consensus-app \
-              -p trnm-node \
               -p trnm-poco-node \
               -p trnm-rpc \
               --all-targets --locked --no-fail-fast
           cargo clippy --manifest-path trillionnium/Cargo.toml \
-            -p trnm-consensus-app \
-            -p trnm-node \
             -p trnm-poco-node \
             -p trnm-rpc \
             --all-targets --locked -- -D warnings
+
+      - name: Test and lint excluded migration and legacy targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=30s 1800s \
+            cargo test \
+              --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
+              --all-targets --locked --no-fail-fast
+          cargo clippy \
+            --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
+            --all-targets --locked -- -D warnings
+          timeout --signal=TERM --kill-after=30s 1800s \
+            cargo test \
+              --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
+              --all-targets --locked --no-fail-fast
+          cargo clippy \
+            --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
+            --all-targets --locked -- -D warnings
+
+      - name: Reconfirm clean five-file delta
+        shell: bash
+        run: |
+          set -euo pipefail
           git diff --quiet
           git diff --cached --quiet
           actual="$(git diff --name-only "${EXPECTED_PARENT_SHA}"..HEAD | LC_ALL=C sort)"
-          test "$(printf '%s\n' "${actual}" | wc -l)" -eq 5
+          expected="$(
+            printf '%s\n' \
+              'trillionnium/crates/trnm-consensus-app/src/lib.rs' \
+              'trillionnium/crates/trnm-node/src/live/node.rs' \
+              'trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-g1-process-host.rs' \
+              'trillionnium/crates/trnm-rpc/src/reliability.rs' \
+              'trillionnium/crates/trnm-rpc/src/reliability/recovery.rs' \
+              | LC_ALL=C sort
+          )"
+          test "${actual}" = "${expected}"
+          git diff --check "${EXPECTED_PARENT_SHA}"..HEAD
 
       - name: Publish exact restacked child
         shell: bash
