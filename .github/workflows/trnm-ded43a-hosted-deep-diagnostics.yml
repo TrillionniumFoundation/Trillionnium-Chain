@@ -78,6 +78,27 @@ jobs:
           node --version
           npm --version
 
+      - name: Prefetch exact locked dependency closures
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifests=(
+            trillionnium/Cargo.toml
+            contracts/Cargo.toml
+            trillionnium/fuzz/Cargo.toml
+            trillionnium/crates/trnm-consensus-app/Cargo.toml
+            trillionnium/crates/trnm-node/Cargo.toml
+          )
+          for manifest in "${manifests[@]}"; do
+            if [[ -f "${manifest}" ]]; then
+              echo "prefetching ${manifest}"
+              cargo +"${RUST_TOOLCHAIN}" fetch --manifest-path "${manifest}" --locked
+            fi
+          done
+          git diff --quiet
+          git diff --cached --quiet
+          test -z "$(git status --porcelain --untracked-files=all)"
+
       - name: Execute exact-source diagnostic lane
         id: diagnostic
         shell: bash
@@ -246,7 +267,7 @@ jobs:
           log = out / "execution.log"
           raw = log.read_bytes() if log.exists() else b""
           report = {
-              "schema": "trnm-hosted-deep-diagnostic-v2",
+              "schema": "trnm-hosted-deep-diagnostic-v3",
               "repository": os.environ["GITHUB_REPOSITORY"],
               "workflow_carrier_sha": os.environ["GITHUB_SHA"],
               "workflow_run_id": os.environ["GITHUB_RUN_ID"],
@@ -259,6 +280,8 @@ jobs:
               "elapsed_seconds": int(os.environ["elapsed"]),
               "exit_code": int(os.environ["rc"]),
               "execution_log_sha256": hashlib.sha256(raw).hexdigest(),
+              "dependency_prefetch_only": True,
+              "project_gates_remain_offline": True,
               "github_hosted_diagnostic": True,
               "x230_hardware_acceptance": False,
               "offline_cache_acceptance": False,
