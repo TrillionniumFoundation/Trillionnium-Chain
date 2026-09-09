@@ -1,0 +1,74 @@
+name: PoCO repository metadata cleanup R3 (temporary)
+
+on:
+  push:
+    branches:
+      - ops-poco-metadata-cleanup-20260910-r3
+    paths:
+      - .github/workflows/poco-repository-metadata-cleanup-r3-once-20260910.yml
+
+permissions:
+  contents: write
+
+env:
+  OPS_BRANCH: ops-poco-metadata-cleanup-20260910-r3
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.OPS_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Remove accidental noop branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$OPS_BRANCH"
+          if git ls-remote --exit-code --heads origin refs/heads/noop >/dev/null 2>&1; then
+            git push origin --delete noop
+          fi
+          if git ls-remote --exit-code --heads origin refs/heads/noop >/dev/null 2>&1; then
+            echo "noop branch remains" >&2
+            exit 1
+          fi
+
+      - name: Replace repository topics
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s\n' '{"names":["blockchain","poco","rust","trillionnium"]}' \
+          | gh api --method PUT \
+              -H 'Accept: application/vnd.github+json' \
+              "repos/${GITHUB_REPOSITORY}/topics" \
+              --input - \
+          | tee /tmp/topics-write.json
+          gh api -H 'Accept: application/vnd.github+json' \
+            "repos/${GITHUB_REPOSITORY}/topics" \
+          | tee /tmp/topics-readback.json
+          jq -e '.names | sort == ["blockchain","poco","rust","trillionnium"]' \
+            /tmp/topics-readback.json >/dev/null
+
+      - name: Delete temporary operations branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin --delete "$OPS_BRANCH"
+
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-metadata-r3-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            /tmp/topics-write.json
+            /tmp/topics-readback.json
