@@ -1,0 +1,196 @@
+name: TRNM administrator capability probe ded43a v1
+
+on:
+  push:
+    branches:
+      - ops/admin-capability-probe-ded43a-v1-20260909
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: trnm-admin-capability-probe-ded43a-v1
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: Read-only administration and CodeQL capability probe
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      ADMIN_TOKEN: ${{ secrets.TRNM_GITHUB_ADMIN_TOKEN || secrets.GH_ADMIN_TOKEN || secrets.ADMIN_GITHUB_TOKEN || secrets.REPOSITORY_ADMIN_TOKEN }}
+      COMMENT_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check out exact immutable subject
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Probe credential and read-only administration surfaces
+        id: probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-admin-probe"
+          mkdir -p "${root}"
+          if [[ -z "${ADMIN_TOKEN:-}" ]]; then
+            cat > "${root}/report.json" <<EOF
+          {
+            "schema": "trnm-admin-capability-probe-v1",
+            "subject_sha": "${SUBJECT_SHA}",
+            "subject_tree": "${SUBJECT_TREE}",
+            "credential_present": false,
+            "mutation_attempted": false,
+            "administration_read_capable": false,
+            "codeql_setup_read_capable": false,
+            "all_gaps_closed": false
+          }
+          EOF
+            echo "credential_present=false" >> "${GITHUB_OUTPUT}"
+            echo "administration_read_capable=false" >> "${GITHUB_OUTPUT}"
+            echo "codeql_setup_read_capable=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+
+          request() {
+            local name="$1"
+            local path="$2"
+            local status
+            status="$(curl --fail-with-body --silent --show-error \
+              --connect-timeout 20 --max-time 60 \
+              --retry 2 --retry-all-errors \
+              -H 'Accept: application/vnd.github+json' \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -H 'X-GitHub-Api-Version: 2022-11-28' \
+              -o "${root}/${name}.json" \
+              -w '%{http_code}' \
+              "https://api.github.com${path}" 2>"${root}/${name}.stderr" || true)"
+            printf '%s\n' "${status:-000}" > "${root}/${name}.status"
+          }
+
+          request identity /user
+          request repository "/repos/${GITHUB_REPOSITORY}"
+          request protection "/repos/${GITHUB_REPOSITORY}/branches/main/protection"
+          request rulesets "/repos/${GITHUB_REPOSITORY}/rulesets?per_page=100"
+          request codeql_setup "/repos/${GITHUB_REPOSITORY}/code-scanning/default-setup"
+
+          identity_status="$(cat "${root}/identity.status")"
+          repo_status="$(cat "${root}/repository.status")"
+          protection_status="$(cat "${root}/protection.status")"
+          rulesets_status="$(cat "${root}/rulesets.status")"
+          codeql_status="$(cat "${root}/codeql_setup.status")"
+          actor="$(jq -r '.login // "unresolved"' "${root}/identity.json" 2>/dev/null || printf unresolved)"
+          admin_read=false
+          codeql_read=false
+          if [[ "${identity_status}" = 200 && "${repo_status}" = 200 && "${protection_status}" = 200 && "${rulesets_status}" = 200 ]]; then
+            admin_read=true
+          fi
+          if [[ "${codeql_status}" = 200 ]]; then
+            codeql_read=true
+          fi
+
+          jq -n \
+            --arg schema trnm-admin-capability-probe-v1 \
+            --arg subject_sha "${SUBJECT_SHA}" \
+            --arg subject_tree "${SUBJECT_TREE}" \
+            --arg actor "${actor}" \
+            --arg identity_http "${identity_status}" \
+            --arg repository_http "${repo_status}" \
+            --arg protection_http "${protection_status}" \
+            --arg rulesets_http "${rulesets_status}" \
+            --arg codeql_setup_http "${codeql_status}" \
+            --argjson credential_present true \
+            --argjson mutation_attempted false \
+            --argjson administration_read_capable "${admin_read}" \
+            --argjson codeql_setup_read_capable "${codeql_read}" \
+            --argjson all_gaps_closed false \
+            '{schema:$schema,subject_sha:$subject_sha,subject_tree:$subject_tree,actor:$actor,credential_present:$credential_present,mutation_attempted:$mutation_attempted,http:{identity:$identity_http,repository:$repository_http,branch_protection:$protection_http,rulesets:$rulesets_http,codeql_default_setup:$codeql_setup_http},administration_read_capable:$administration_read_capable,codeql_setup_read_capable:$codeql_setup_read_capable,all_gaps_closed:$all_gaps_closed}' \
+            > "${root}/report.json"
+
+          echo "credential_present=true" >> "${GITHUB_OUTPUT}"
+          echo "administration_read_capable=${admin_read}" >> "${GITHUB_OUTPUT}"
+          echo "codeql_setup_read_capable=${codeql_read}" >> "${GITHUB_OUTPUT}"
+
+      - name: Write checksums and bounded summary
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-admin-probe"
+          test -s "${root}/report.json"
+          credential="$(jq -r '.credential_present' "${root}/report.json")"
+          actor="$(jq -r '.actor // "unresolved"' "${root}/report.json")"
+          protection="$(jq -r '.http.branch_protection // "not-probed"' "${root}/report.json")"
+          rulesets="$(jq -r '.http.rulesets // "not-probed"' "${root}/report.json")"
+          codeql="$(jq -r '.http.codeql_default_setup // "not-probed"' "${root}/report.json")"
+          cat > "${root}/summary.md" <<EOF
+          <!-- trnm-admin-capability-probe-ded43a-v1 -->
+          ## Read-only administrator capability probe
+
+          - exact subject: \`${SUBJECT_SHA}\` / \`${SUBJECT_TREE}\`
+          - configured administrator credential present: \`${credential}\`
+          - authenticated actor: \`${actor}\`
+          - branch-protection read HTTP: \`${protection}\`
+          - rulesets read HTTP: \`${rulesets}\`
+          - CodeQL default-setup read HTTP: \`${codeql}\`
+          - mutation attempted: \`false\`
+
+          This probe reveals neither token material nor secret names. It grants no settings acceptance; a later separately reviewed mutation/readback/negative-enforcement session is still required.
+          EOF
+          (
+            cd "${root}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload immutable capability evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-admin-capability-probe-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-admin-probe/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Publish bounded result to administration blocker
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ env.COMMENT_TOKEN }}
+        run: |
+          set -euo pipefail
+          jq -n --rawfile body "${RUNNER_TEMP}/trnm-admin-probe/summary.md" '{body:$body}' \
+            | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/40/comments" --input -
+
+      - name: Require a real readable administrator credential
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.probe.outputs.credential_present }}" = true
+          test "${{ steps.probe.outputs.administration_read_capable }}" = true
+          test "${{ steps.probe.outputs.codeql_setup_read_capable }}" = true
+
+      - name: Verify no source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
