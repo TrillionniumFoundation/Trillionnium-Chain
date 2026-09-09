@@ -1,0 +1,333 @@
+name: TRNM exact-source Rust CodeQL triage ded43a v2
+
+on:
+  push:
+    branches:
+      - evidence/codeql-triage-ded43a-v2-20260909
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: trnm-codeql-triage-ded43a-v2
+  cancel-in-progress: false
+
+jobs:
+  triage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      SOURCE_BRANCH: evidence/codeql-rust-exact-source-ded43a-v3-20260909
+      SOURCE_WORKFLOW: TRNM exact-source Rust CodeQL evidence ded43a v3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact candidate source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Wait for immutable CodeQL evidence artifact
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          deadline="$((SECONDS + 3600))"
+          run_id=""
+          while (( SECONDS < deadline )); do
+            run_json="$(
+              gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs" \
+                -f branch="${SOURCE_BRANCH}" \
+                -f per_page=100 \
+                --jq '.workflow_runs | map(select(.name == env.SOURCE_WORKFLOW)) | sort_by(.created_at,.id) | reverse | .[0] // {}'
+            )"
+            status="$(jq -r '.status // "missing"' <<<"${run_json}")"
+            conclusion="$(jq -r '.conclusion // ""' <<<"${run_json}")"
+            run_id="$(jq -r '.id // ""' <<<"${run_json}")"
+            if [[ "${status}" == "completed" ]]; then
+              if [[ "${conclusion}" != "success" ]]; then
+                echo "source CodeQL workflow ${run_id} ended ${conclusion}" >&2
+                exit 20
+              fi
+              break
+            fi
+            sleep 60
+          done
+          test -n "${run_id}"
+          status="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}" --jq '.status')"
+          conclusion="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}" --jq '.conclusion')"
+          test "${status}" = completed
+          test "${conclusion}" = success
+          echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
+
+      - name: Download exact-source CodeQL artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/codeql-source"
+          gh run download "${{ steps.source.outputs.run_id }}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --dir "${RUNNER_TEMP}/codeql-source"
+          find "${RUNNER_TEMP}/codeql-source" -type f -print
+
+      - name: Verify and classify every finding
+        id: classify
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/codeql-triage"
+          mkdir -p "${out}"
+          export TRIAGE_OUT="${out}"
+          export CODEQL_SOURCE_ROOT="${RUNNER_TEMP}/codeql-source"
+          export SOURCE_RUN_ID="${{ steps.source.outputs.run_id }}"
+          python3 - <<'PY'
+          import collections
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import re
+
+          repository_root = pathlib.Path.cwd().resolve()
+          artifact_root = pathlib.Path(os.environ["CODEQL_SOURCE_ROOT"])
+          out = pathlib.Path(os.environ["TRIAGE_OUT"])
+          reports = list(artifact_root.rglob("report.json"))
+          findings_files = list(artifact_root.rglob("findings.json"))
+          sums_files = list(artifact_root.rglob("SHA256SUMS"))
+          if len(reports) != 1 or len(findings_files) != 1 or len(sums_files) != 1:
+              raise SystemExit(
+                  f"expected one report/findings/SHA256SUMS; got {len(reports)}/{len(findings_files)}/{len(sums_files)}"
+              )
+          report = json.loads(reports[0].read_text(encoding="utf-8"))
+          findings = json.loads(findings_files[0].read_text(encoding="utf-8"))
+          if report.get("exact_source_sha") != os.environ["SUBJECT_SHA"]:
+              raise SystemExit("CodeQL report source SHA mismatch")
+          if report.get("exact_source_tree") != os.environ["SUBJECT_TREE"]:
+              raise SystemExit("CodeQL report source tree mismatch")
+          if str(report.get("workflow_run_id")) != os.environ["SOURCE_RUN_ID"]:
+              raise SystemExit("CodeQL report workflow-run mismatch")
+          if report.get("result_count") != len(findings):
+              raise SystemExit("CodeQL report/findings count mismatch")
+
+          checksum_root = sums_files[0].parent.parent
+          for raw_line in sums_files[0].read_text(encoding="utf-8").splitlines():
+              if not raw_line.strip():
+                  continue
+              digest, rel = raw_line.split(None, 1)
+              rel = rel.strip().lstrip("*")
+              path = checksum_root / rel
+              if not path.is_file():
+                  raise SystemExit(f"inventoried artifact missing: {rel}")
+              if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                  raise SystemExit(f"artifact digest mismatch: {rel}")
+
+          test_parts = {"tests", "test", "testing", "fuzz", "benches", "bench", "examples", "fixtures", "fixture", "vectors"}
+          test_file_patterns = (
+              re.compile(r"(^|_)tests?\.rs$"),
+              re.compile(r"(^|_)fixture(s)?\.rs$"),
+              re.compile(r"(^|_)vectors?\.rs$"),
+          )
+
+          def normalize_uri(uri):
+              if not uri:
+                  return None
+              value = uri.replace("\\", "/")
+              if value.startswith("file://"):
+                  value = value[7:]
+              for marker in ("/Trillionnium-Chain/", "/trillionnium-chain/"):
+                  if marker in value:
+                      value = value.split(marker, 1)[1]
+              value = value.lstrip("/")
+              prefixes = ("trillionnium/", "contracts/", "scripts/", "formal/", "tools/", "web4-frontend/", "proto/", "docs/", "config/")
+              for prefix in prefixes:
+                  pos = value.find(prefix)
+                  if pos >= 0:
+                      return value[pos:]
+              return value
+
+          def path_is_test(path):
+              if not path:
+                  return False
+              pure = pathlib.PurePosixPath(path)
+              return bool(set(pure.parts) & test_parts) or any(pattern.search(pure.name) for pattern in test_file_patterns)
+
+          def line_is_cfg_test(path, line_number):
+              if not path or not line_number:
+                  return False
+              source = repository_root / path
+              if not source.is_file() or source.suffix != ".rs":
+                  return False
+              lines = source.read_text(encoding="utf-8", errors="replace").splitlines()
+              target = min(max(int(line_number), 1), len(lines)) - 1
+              depth = 0
+              stack = []
+              pending_test = False
+              pending_attribute = False
+              for raw in lines[: target + 1]:
+                  stripped = raw.strip()
+                  if stripped.startswith("#[cfg(test") or stripped.startswith("#[cfg(any(test"):
+                      pending_test = True
+                      pending_attribute = True
+                  code = raw.split("//", 1)[0]
+                  for ch in code:
+                      if ch == "{":
+                          depth += 1
+                          stack.append((depth, pending_test))
+                          pending_test = False
+                          pending_attribute = False
+                      elif ch == "}":
+                          while stack and stack[-1][0] >= depth:
+                              stack.pop()
+                          depth = max(0, depth - 1)
+                  if stripped and not stripped.startswith("#") and "{" not in code and not pending_attribute:
+                      pending_test = False
+              return any(is_test for _, is_test in stack)
+
+          normalized = []
+          categories = collections.Counter()
+          rules = collections.Counter()
+          production = []
+          unresolved = []
+          for index, finding in enumerate(findings):
+              locations = finding.get("locations") or []
+              classified_locations = []
+              flags = []
+              for loc in locations:
+                  path = normalize_uri(loc.get("uri"))
+                  line = loc.get("start_line")
+                  test_scope = path_is_test(path) or line_is_cfg_test(path, line)
+                  classified_locations.append({**loc, "normalized_path": path, "test_scope": test_scope})
+                  flags.append(test_scope)
+              if not locations:
+                  category = "unresolved-location"
+              elif flags and all(flags):
+                  category = "test-only"
+              elif any(not value for value in flags):
+                  category = "production-review-required"
+              else:
+                  category = "unresolved-location"
+              record = {**finding, "index": index, "triage_category": category, "locations": classified_locations}
+              normalized.append(record)
+              categories[category] += 1
+              rules[finding.get("rule_id") or "<missing>"] += 1
+              if category == "production-review-required":
+                  production.append(record)
+              elif category == "unresolved-location":
+                  unresolved.append(record)
+
+          triage = {
+              "schema": "trnm-rust-codeql-triage-v2",
+              "source_sha": os.environ["SUBJECT_SHA"],
+              "source_tree": os.environ["SUBJECT_TREE"],
+              "source_workflow_run": os.environ["SOURCE_RUN_ID"],
+              "complete_result_count": len(normalized),
+              "category_counts": dict(sorted(categories.items())),
+              "rule_counts": dict(sorted(rules.items())),
+              "production_review_required_count": len(production),
+              "unresolved_location_count": len(unresolved),
+              "findings": normalized,
+              "automatic_dismissal_performed": False,
+              "independent_specialist_acceptance": False,
+              "all_gaps_closed": False,
+              "production_candidate": False,
+              "release_ready": False,
+          }
+          (out / "triage.json").write_text(json.dumps(triage, indent=2, sort_keys=True) + "\n")
+          (out / "production-review-required.json").write_text(json.dumps(production, indent=2, sort_keys=True) + "\n")
+          (out / "unresolved-location.json").write_text(json.dumps(unresolved, indent=2, sort_keys=True) + "\n")
+
+          lines = [
+              "<!-- trnm-codeql-triage-ded43a-v2 -->",
+              "## Complete exact-source Rust CodeQL triage v2",
+              "",
+              f"- source: `{os.environ['SUBJECT_SHA']}`",
+              f"- tree: `{os.environ['SUBJECT_TREE']}`",
+              f"- producer workflow run: `{os.environ['SOURCE_RUN_ID']}`",
+              f"- complete findings: **{len(normalized)}**",
+              f"- test-only: **{categories.get('test-only', 0)}**",
+              f"- production review required: **{len(production)}**",
+              f"- unresolved location: **{len(unresolved)}**",
+              "",
+              "Top rules:",
+          ]
+          lines.extend(f"- `{rule}`: {count}" for rule, count in rules.most_common(15))
+          if production:
+              lines += ["", "Production-path findings requiring disposition:"]
+              for item in production[:100]:
+                  location = (item.get("locations") or [{}])[0]
+                  lines.append(
+                      f"- `{item.get('rule_id')}` — `{location.get('normalized_path') or '<missing>'}:{location.get('start_line') or '?'}`"
+                  )
+              if len(production) > 100:
+                  lines.append(f"- … {len(production) - 100} additional findings retained in the artifact")
+          if unresolved:
+              lines += ["", f"Unresolved-location findings: **{len(unresolved)}**; retained and blocking."]
+          lines += [
+              "",
+              "No finding was dismissed or suppressed. Test-only classification is source-scope evidence, not independent security acceptance.",
+          ]
+          (out / "summary.md").write_text("\n".join(lines) + "\n")
+          (out / "gate.env").write_text(
+              f"PRODUCTION_REQUIRED={len(production)}\nUNRESOLVED_LOCATION={len(unresolved)}\n"
+          )
+          PY
+          (
+            cd "${out}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+          source "${out}/gate.env"
+          echo "production_required=${PRODUCTION_REQUIRED}" >> "${GITHUB_OUTPUT}"
+          echo "unresolved_location=${UNRESOLVED_LOCATION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload complete triage evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-codeql-triage-ded43a-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/codeql-triage/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Publish triage summary
+        if: always() && steps.classify.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          body="${RUNNER_TEMP}/codeql-triage/summary.md"
+          for issue in 88 101; do
+            jq -n --rawfile body "${body}" '{body:$body}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+          done
+
+      - name: Fail closed on production or unresolved findings
+        if: always() && steps.classify.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.classify.outputs.production_required }}" = "0"
+          test "${{ steps.classify.outputs.unresolved_location }}" = "0"
+
+      - name: Verify no candidate-source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
