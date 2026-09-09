@@ -1,0 +1,91 @@
+name: TRNM one-shot route external blockers ded43a
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+    paths:
+      - .github/workflows/trnm-one-shot-route-external-blockers-ded43a.yml
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: read
+  actions: read
+
+jobs:
+  route:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: evidence/codeql-rust-exact-source-ded43a-20260909
+      SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      PROSPECTIVE_MERGE_SHA: 6a46d99fcdf916a3f36a7261665e9ce05badbc34
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.BRANCH }}
+          fetch-depth: 0
+      - name: Bind source tuple
+        run: |
+          set -euo pipefail
+          git cat-file -e "$SOURCE_SHA^{commit}"
+          test "$(git show -s --format=%T "$SOURCE_SHA")" = "$SOURCE_TREE"
+      - name: Route exact-source handoff to every external blocker issue
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="$GITHUB_REPOSITORY"
+          ids=(
+            EXT-REVIEW-001
+            EXT-G1-CAMPAIGN-001
+            EXT-ANCHOR-HSM-001
+            EXT-POWERLOSS-001
+            EXT-AUDIT-001
+            EXT-SOAK-ACTIVATION-001
+          )
+          for blocker in "${ids[@]}"; do
+            mapfile -t matches < <(gh issue list --repo "$repo" --state open --search "in:title $blocker" --limit 20 --json number,title --jq ".[] | select(.title | contains(\"$blocker\")) | .number")
+            if (( ${#matches[@]} != 1 )); then
+              echo "expected one open issue for $blocker, got ${#matches[@]}" >&2
+              exit 2
+            fi
+            issue="${matches[0]}"
+            marker="<!-- trnm-exact-source-handoff-ded43a-$blocker -->"
+            existing="$(gh api "repos/$repo/issues/$issue/comments?per_page=100" --paginate --jq ".[] | select(.body | contains(\"$marker\")) | .id" | head -n1)"
+            body_file="$RUNNER_TEMP/$blocker.md"
+            cat > "$body_file" <<EOF
+          $marker
+          ## Exact-source external acceptance handoff
+
+          - blocker: \`$blocker\`
+          - candidate source: \`$SOURCE_SHA\`
+          - source tree: \`$SOURCE_TREE\`
+          - stacked prospective merge: \`$PROSPECTIVE_MERGE_SHA\`
+          - source PR: #101; parent policy PR: #100; evidence PR: #102
+          - required baseline: run \`34297613020\`, completed/success on the exact source
+          - exact-source Rust CodeQL: run \`34298452515\`, completed/success with retained raw/post-processed SARIF
+          - SARIF disposition workflow: complete per-result source classification; independent specialist acceptance remains false
+          - repository evidence includes hosted deep replay and three independent one-hour fuzz targets; consult the current #102 checks/artifacts and reject stale run IDs
+
+          This routing record is not acceptance. Producer identity, reviewer identity, environment/hardware/custody identity, raw artifact digests, UTC interval, signatures and downstream invalidation must satisfy \`trnm-external-evidence-v1\` for this exact tuple. Any source, tree, artifact, configuration, topology, key-policy or governance change invalidates the handoff.
+
+          Do not substitute a fixture, self-review, local simulation, shortened soak, mutable URL, repository comment or this automation for independently controlled evidence. Production, public testnet, release and consensus activation remain false.
+          EOF
+            if test -n "$existing"; then
+              gh api --method PATCH "repos/$repo/issues/comments/$existing" -f body="$(cat "$body_file")" >/dev/null
+            else
+              gh issue comment "$issue" --repo "$repo" --body-file "$body_file" >/dev/null
+            fi
+          done
+      - name: Remove one-shot router
+        run: |
+          set -euo pipefail
+          rm .github/workflows/trnm-one-shot-route-external-blockers-ded43a.yml
+          git config user.name "Trillionnium Evidence Automation"
+          git config user.email "noreply@trillionnium.invalid"
+          git add -A
+          git commit -m "ops: remove exact-source external blocker router"
+          git push origin "HEAD:$BRANCH"
