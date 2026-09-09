@@ -1,0 +1,234 @@
+name: ops-intake-external-evidence
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-intake-external-evidence.yml
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: write
+
+concurrency:
+  group: ops-intake-external-evidence-20260909
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      PRIMARY_PR: '101'
+      FALLBACK_PR: '62'
+    steps:
+      - name: Resolve current exact candidate
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          primary="$(gh api "repos/$REPOSITORY/pulls/$PRIMARY_PR")"
+          if [ "$(jq -r .state <<<"$primary")" = open ]; then
+            pr="$PRIMARY_PR"
+            sha="$(jq -r .head.sha <<<"$primary")"
+          else
+            fallback="$(gh api "repos/$REPOSITORY/pulls/$FALLBACK_PR")"
+            test "$(jq -r .state <<<"$fallback")" = open
+            pr="$FALLBACK_PR"
+            sha="$(jq -r .head.sha <<<"$fallback")"
+          fi
+          test "${#sha}" -eq 40
+          {
+            echo "pr=$pr"
+            echo "sha=$sha"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check out exact candidate with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.source.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Freeze evidence refs and validate isolated submissions
+        id: intake
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/external-evidence-intake"
+          mkdir -p "$out/cases"
+          git fetch --force --no-tags origin '+refs/heads/*:refs/remotes/origin/*'
+          git for-each-ref --format='%(refname:strip=3)\t%(objectname)' \
+            'refs/remotes/origin/evidence/*' 'refs/remotes/origin/ops/chain-fleet-live-probe-*' \
+            | LC_ALL=C sort > "$out/evidence-refs.tsv"
+
+          python3 - "$out" <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import os
+          import shutil
+          import stat
+          import subprocess
+          import sys
+          import tempfile
+          from pathlib import Path
+
+          out = Path(sys.argv[1])
+          source = os.environ['SOURCE_SHA']
+          repo_root = Path.cwd()
+          refs = []
+          for line in (out / 'evidence-refs.tsv').read_text().splitlines():
+              if line:
+                  branch, tip = line.split('\t', 1)
+                  refs.append((branch, tip))
+
+          def git(*args: str, cwd: Path = repo_root, check: bool = True):
+              return subprocess.run(
+                  ['git', *args], cwd=cwd, text=True,
+                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=check,
+              )
+
+          def file_bytes(commit: str, path: str) -> bytes:
+              result = subprocess.run(
+                  ['git', 'show', f'{commit}:{path}'],
+                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
+              )
+              return result.stdout
+
+          allowed_prefix = 'docs/evidence/external/submissions/'
+          records = []
+          accepted_sources = []
+          for branch, tip in refs:
+              record = {
+                  'branch': branch,
+                  'tip': tip,
+                  'sourceSha': source,
+                  'allowedFiles': [],
+                  'disallowedChangedFiles': [],
+                  'result': None,
+                  'validatorReturnCode': None,
+                  'validatorOutputSha256': None,
+              }
+              merge_base = git('merge-base', source, tip, check=False).stdout.strip()
+              if not merge_base:
+                  record['result'] = 'unrelated-history-rejected'
+                  records.append(record)
+                  continue
+              changed = [
+                  p for p in git('diff', '--name-only', '--no-renames', f'{merge_base}..{tip}').stdout.splitlines()
+                  if p
+              ]
+              allowed = sorted(p for p in changed if p.startswith(allowed_prefix))
+              disallowed = sorted(p for p in changed if not p.startswith(allowed_prefix))
+              record['allowedFiles'] = allowed
+              record['disallowedChangedFiles'] = disallowed
+              if not allowed:
+                  record['result'] = 'no-external-submission-files'
+                  records.append(record)
+                  continue
+              if disallowed:
+                  record['result'] = 'mixed-source-branch-rejected'
+                  records.append(record)
+                  continue
+
+              with tempfile.TemporaryDirectory(prefix='trnm-evidence-intake-') as temp:
+                  work = Path(temp) / 'work'
+                  subprocess.run(
+                      ['git', 'worktree', 'add', '--detach', str(work), source],
+                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True,
+                  )
+                  try:
+                      total = 0
+                      invalid = None
+                      for path in allowed:
+                          payload = file_bytes(tip, path)
+                          total += len(payload)
+                          if len(payload) > 16 * 1024 * 1024:
+                              invalid = f'file-too-large:{path}'
+                              break
+                          if total > 64 * 1024 * 1024:
+                              invalid = 'submission-set-too-large'
+                              break
+                          target = work / path
+                          target.parent.mkdir(parents=True, exist_ok=True)
+                          target.write_bytes(payload)
+                          target.chmod(0o600)
+                      if invalid:
+                          record['result'] = invalid
+                          records.append(record)
+                          continue
+                      validator = subprocess.run(
+                          ['python3', 'scripts/ci/check_external_evidence_v1.py', '--require-all'],
+                          cwd=work, text=True, stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT, check=False,
+                      )
+                      output = validator.stdout
+                      record['validatorReturnCode'] = validator.returncode
+                      record['validatorOutputSha256'] = hashlib.sha256(output.encode()).hexdigest()
+                      case = out / 'cases' / (branch.replace('/', '__') + '.log')
+                      case.write_text(output)
+                      if validator.returncode == 0:
+                          record['result'] = 'accepted-require-all'
+                          accepted_sources.append({'branch': branch, 'tip': tip, 'files': allowed})
+                      else:
+                          record['result'] = 'rejected-by-current-require-all'
+                  finally:
+                      subprocess.run(
+                          ['git', 'worktree', 'remove', '--force', str(work)],
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+                      )
+              records.append(record)
+
+          summary = {
+              'schema': 'trnm-external-evidence-intake-v1',
+              'sourceSha': source,
+              'candidateBranchCount': len(refs),
+              'acceptedBranchCount': len(accepted_sources),
+              'acceptedSources': accepted_sources,
+              'allRequiredEvidencePresentInOneEligibleBranch': len(accepted_sources) == 1,
+          }
+          (out / 'report.json').write_text(
+              json.dumps({'summary': summary, 'branches': records}, indent=2, sort_keys=True) + '\n'
+          )
+          (out / 'summary.json').write_text(json.dumps(summary, indent=2, sort_keys=True) + '\n')
+          print(json.dumps(summary, sort_keys=True))
+          PY
+          (
+            cd "$out"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+          accepted="$(jq -r .acceptedBranchCount "$out/summary.json")"
+          echo "accepted=$accepted" >> "$GITHUB_OUTPUT"
+
+      - name: Publish evidence intake result
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/external-evidence-intake"
+          summary="$(jq -c . "$out/summary.json" 2>/dev/null || echo '{}')"
+          gh api "repos/$REPOSITORY/issues/${{ steps.source.outputs.pr }}/comments" \
+            -f body="External evidence branch intake against exact source \`${{ steps.source.outputs.sha }}\`: \`$summary\`. Only files under \`docs/evidence/external/submissions/\` were considered; mixed code/config/workflow branches were rejected. Passing one branch would still require independent signature/actor validation and protected integration; archive names alone are not evidence." >/dev/null
+
+      - name: Upload immutable intake packet
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: external-evidence-intake-${{ github.sha }}
+          path: ${{ runner.temp }}/external-evidence-intake
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Keep gate red unless a complete eligible source exists
+        if: steps.intake.outputs.accepted != '1'
+        shell: bash
+        run: exit 1
