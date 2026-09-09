@@ -26,13 +26,13 @@ jobs:
       - name: Check out recovery carrier
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          fetch-depth: 3
+          fetch-depth: 4
 
       - name: Verify carrier ancestry and surface
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^^)" = "${BASE_SHA}"
+          test "$(git merge-base HEAD "${BASE_SHA}")" = "${BASE_SHA}"
           actual="$(git diff --name-only "${BASE_SHA}" HEAD | sort)"
           expected="$(printf '%s\n' "${INVALID_WORKFLOW}" "${RECOVERY_WORKFLOW}" | sort)"
           test "${actual}" = "${expected}"
@@ -52,7 +52,7 @@ jobs:
           import sys
           import tarfile
 
-          payload = pathlib.Path(sys.argv[1]).read_bytes()
+          payload = pathlib.Path(sys.argv[1]).read_text(encoding="ascii").strip().encode("ascii")
           raw = base64.b64decode(payload, validate=True)
           allowed = {
               "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
