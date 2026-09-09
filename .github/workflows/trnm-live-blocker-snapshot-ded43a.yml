@@ -1,0 +1,151 @@
+name: TRNM live blocker snapshot ded43a
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  pull-requests: read
+  security-events: read
+
+concurrency:
+  group: trnm-live-blocker-snapshot-ded43a
+  cancel-in-progress: false
+
+jobs:
+  live-snapshot:
+    name: Live exact-source blocker snapshot ded43a
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+    steps:
+      - name: Check out evidence workflow source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Capture live APIs without inventing authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-live-blocker-snapshot"
+          mkdir -p "$out/raw"
+          export out
+          python3 - <<'PY'
+          import datetime
+          import json
+          import os
+          import pathlib
+          import subprocess
+
+          out = pathlib.Path(os.environ["out"])
+          repo = os.environ["REPOSITORY"]
+
+          def api(path, name):
+              target = out / "raw" / f"{name}.json"
+              proc = subprocess.run(
+                  ["gh", "api", "-i", path], text=True, capture_output=True
+              )
+              combined = proc.stdout + proc.stderr
+              target.write_text(combined, encoding="utf-8")
+              first = combined.splitlines()[0] if combined.splitlines() else ""
+              status = None
+              parts = first.split()
+              if len(parts) >= 2 and parts[1].isdigit():
+                  status = int(parts[1])
+              body = None
+              marker = "\r\n\r\n" if "\r\n\r\n" in combined else "\n\n"
+              if marker in combined:
+                  raw_body = combined.split(marker, 1)[1]
+                  try:
+                      body = json.loads(raw_body)
+                  except Exception:
+                      body = None
+              return {"path": path, "status": status, "exit_code": proc.returncode, "body": body}
+
+          entries = {}
+          for pr in (62, 100, 101, 102):
+              entries[f"pr_{pr}"] = api(f"repos/{repo}/pulls/{pr}", f"pr-{pr}")
+              entries[f"pr_{pr}_reviews"] = api(
+                  f"repos/{repo}/pulls/{pr}/reviews?per_page=100", f"pr-{pr}-reviews"
+              )
+          entries["source_checks"] = api(
+              f"repos/{repo}/commits/{os.environ['EXACT_SOURCE_SHA']}/check-runs?per_page=100&filter=all",
+              "source-check-runs",
+          )
+          entries["main"] = api(f"repos/{repo}/branches/main", "main-branch")
+          entries["main_protection"] = api(
+              f"repos/{repo}/branches/main/protection", "main-protection"
+          )
+          entries["rulesets"] = api(f"repos/{repo}/rulesets?per_page=100", "rulesets")
+          entries["codeql_default_setup"] = api(
+              f"repos/{repo}/code-scanning/default-setup", "codeql-default-setup"
+          )
+          entries["open_code_scanning_alerts"] = api(
+              f"repos/{repo}/code-scanning/alerts?state=open&per_page=100",
+              "open-code-scanning-alerts",
+          )
+          entries["runners"] = api(f"repos/{repo}/actions/runners?per_page=100", "runners")
+
+          def pr_summary(entry):
+              body = entry.get("body") if isinstance(entry, dict) else None
+              if not isinstance(body, dict):
+                  return None
+              return {
+                  "number": body.get("number"),
+                  "state": body.get("state"),
+                  "draft": body.get("draft"),
+                  "mergeable": body.get("mergeable"),
+                  "mergeable_state": body.get("mergeable_state"),
+                  "head_sha": (body.get("head") or {}).get("sha"),
+                  "head_ref": (body.get("head") or {}).get("ref"),
+                  "base_sha": (body.get("base") or {}).get("sha"),
+                  "base_ref": (body.get("base") or {}).get("ref"),
+                  "requested_reviewers": [x.get("login") for x in body.get("requested_reviewers") or []],
+              }
+
+          summary = {
+              "schema": "trnm-live-blocker-snapshot-v1",
+              "captured_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "repository": repo,
+              "exact_source_sha": os.environ["EXACT_SOURCE_SHA"],
+              "exact_source_tree": os.environ["EXACT_SOURCE_TREE"],
+              "prs": {str(pr): pr_summary(entries[f"pr_{pr}"]) for pr in (62, 100, 101, 102)},
+              "authority_http_status": {
+                  key: entries[key].get("status")
+                  for key in (
+                      "main", "main_protection", "rulesets", "codeql_default_setup",
+                      "open_code_scanning_alerts", "runners"
+                  )
+              },
+              "all_gaps_closed": False,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+              "raw_entries": entries,
+          }
+          (out / "snapshot.json").write_text(
+              json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          PY
+          (
+            cd "$out"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+      - name: Upload immutable live snapshot
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-live-blocker-snapshot-ded43a-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-live-blocker-snapshot/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
