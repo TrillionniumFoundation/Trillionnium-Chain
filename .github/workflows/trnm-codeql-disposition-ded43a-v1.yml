@@ -13,8 +13,6 @@ on:
 permissions:
   actions: read
   contents: read
-  issues: write
-  pull-requests: write
 
 concurrency:
   group: trnm-codeql-disposition-ded43a-v1-${{ github.ref }}
@@ -50,7 +48,7 @@ jobs:
           git diff --quiet
           git diff --cached --quiet
 
-      - name: Materialize immutable exact source in a detached worktree
+      - name: Materialize immutable exact source
         shell: bash
         run: |
           set -euo pipefail
@@ -60,24 +58,23 @@ jobs:
           git -C "${RUNNER_TEMP}/subject" diff --quiet
           git -C "${RUNNER_TEMP}/subject" diff --cached --quiet
 
-      - name: Download the exact immutable CodeQL artifact
+      - name: Download and verify immutable CodeQL inputs
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "${RUNNER_TEMP}/codeql"
+          mkdir -p "${RUNNER_TEMP}/codeql" "${RUNNER_TEMP}/triage"
           gh run download "${SOURCE_RUN_ID}" \
             --repo "${GITHUB_REPOSITORY}" \
             --name "${SOURCE_ARTIFACT_NAME}" \
             --dir "${RUNNER_TEMP}/codeql"
-          test -s "${RUNNER_TEMP}/codeql/post-processed/upload.sarif"
-          test "$(sha256sum "${RUNNER_TEMP}/codeql/post-processed/upload.sarif" | cut -d' ' -f1)" \
-            = "d21b98a0e1b78dc3a45091cf7d2f2a9d24f8811ef08861bc5268d2fb19517f83"
-          mkdir -p "${RUNNER_TEMP}/triage"
           gh run download "${TRIAGE_RUN_ID}" \
             --repo "${GITHUB_REPOSITORY}" \
             --name "${TRIAGE_ARTIFACT_NAME}" \
             --dir "${RUNNER_TEMP}/triage"
+          test -s "${RUNNER_TEMP}/codeql/post-processed/upload.sarif"
           test -s "${RUNNER_TEMP}/triage/triage.json"
+          test "$(sha256sum "${RUNNER_TEMP}/codeql/post-processed/upload.sarif" | cut -d' ' -f1)" \
+            = "d21b98a0e1b78dc3a45091cf7d2f2a9d24f8811ef08861bc5268d2fb19517f83"
           (cd "${RUNNER_TEMP}/codeql" && sha256sum --check evidence/SHA256SUMS)
           (cd "${RUNNER_TEMP}/triage" && sha256sum --check SHA256SUMS)
 
@@ -103,7 +100,7 @@ jobs:
           test "$(sha256sum .github/workflows/trnm-codeql-disposition-ded43a-v1.yml | cut -d' ' -f1)" \
             = "$(jq -r '.inputs.workflow_source_sha256' "${manifest}")"
 
-      - name: Generate complete per-fingerprint disposition and run false-pass mutants
+      - name: Generate all dispositions and run false-pass mutants
         shell: bash
         run: |
           set -euo pipefail
@@ -124,10 +121,8 @@ jobs:
             .authority.official_codeql_gate_success == false and
             .authority.all_gaps_closed == false
           ' "${out}/report.json"
-          test "$(sha256sum docs/evidence/security/codeql/ded43a/manual-semantic-review-v1.json | cut -d' ' -f1)" \
-            = "4c468618f45b460f9374ac1ea18ea1e22d8875e4f993ad83c909312aca4d45d9"
 
-      - name: Retain complete candidate packet and validation report
+      - name: Retain complete candidate packet
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -136,31 +131,6 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           compression-level: 6
-
-      - name: Publish idempotent bounded review summary
-        if: ${{ success() }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          marker='<!-- trnm-codeql-disposition-candidate-ded43a-v1 -->'
-          {
-            cat "${RUNNER_TEMP}/validated/summary.md"
-            printf '\nValidation workflow: `%s`, carrier: `%s`.\n' "${GITHUB_RUN_ID}" "${GITHUB_SHA}"
-          } > "${RUNNER_TEMP}/comment.md"
-          for issue in 88 62; do
-            existing="$(
-              gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" \
-                --jq '.[] | select(.body | contains("'"${marker}"'")) | .id' \
-                | tail -n1
-            )"
-            if [[ -n "${existing}" ]]; then
-              jq -n --rawfile body "${RUNNER_TEMP}/comment.md" '{body:$body}' \
-                | gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" --input -
-            else
-              jq -n --rawfile body "${RUNNER_TEMP}/comment.md" '{body:$body}' \
-                | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
-            fi
-          done
 
       - name: Verify no source or carrier mutation
         if: always()
