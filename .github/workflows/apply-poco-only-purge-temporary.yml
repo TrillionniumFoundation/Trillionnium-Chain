@@ -1,0 +1,117 @@
+name: Apply PoCO-only purge (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - tools/temporary_native_purge.py
+      - .github/workflows/apply-poco-only-purge-temporary.yml
+
+permissions:
+  contents: write
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+  RUST_MIN_STACK: "16777216"
+
+jobs:
+  apply-and-validate:
+    name: Apply purge and validate native PoCO tree
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact cleanup branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -x tools/temporary_native_purge.py
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+          rustc --version
+          cargo --version
+
+      - name: Apply one-shot purge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/temporary_native_purge.py
+          rm -f \
+            tools/temporary_native_purge.py \
+            .github/workflows/apply-poco-only-purge-temporary.yml \
+            .github/workflows/poco-only-full-tree-audit.yml \
+            .github/workflows/poco-purge-source-snapshot.yml
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git add -A
+          git diff --cached --check
+          python3 scripts/ci/check_native_consensus_only.py | tee /tmp/native-only.json
+
+      - name: Validate repository contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m compileall -q scripts tools
+          cargo metadata --manifest-path trillionnium/Cargo.toml --locked --offline --no-deps --format-version 1 >/tmp/cargo-metadata.json
+          bash scripts/ci/check_poco_bft_mainline_truth.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_required_protocol_contract_v1.py
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Compile complete native workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
+
+      - name: Run critical PoCO regression set
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml --locked --offline \
+            -p trnm-consensus-types \
+            -p trnm-consensus-core \
+            -p trnm-consensus-safety-rules \
+            -p trnm-poco-node \
+            -p trnm-poco-node-production-v0 \
+            -p trnm-poco-lab-validator \
+            --all-targets -- --test-threads=1
+
+      - name: Run strict critical-package Clippy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline \
+            -p trnm-consensus-types \
+            -p trnm-consensus-core \
+            -p trnm-consensus-safety-rules \
+            -p trnm-poco-node \
+            -p trnm-poco-node-production-v0 \
+            -p trnm-poco-lab-validator \
+            --all-targets -- -D warnings
+
+      - name: Commit validated purge
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_native_consensus_only.py >/tmp/native-only-final.json
+          git diff --cached --quiet && { echo 'purge produced no changes' >&2; exit 1; }
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "chore(poco): remove retired consensus route from maintained tree"
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
