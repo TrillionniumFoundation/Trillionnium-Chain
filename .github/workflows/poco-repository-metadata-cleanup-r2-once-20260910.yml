@@ -1,0 +1,86 @@
+name: PoCO repository metadata cleanup R2 (temporary)
+
+on:
+  push:
+    branches:
+      - ops/poco-metadata-cleanup-20260910
+    paths:
+      - .github/workflows/poco-repository-metadata-cleanup-r2-once-20260910.yml
+
+permissions:
+  contents: write
+
+env:
+  OPS_BRANCH: ops/poco-metadata-cleanup-20260910
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.OPS_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Bind product source and remove accidental branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$OPS_BRANCH"
+          git fetch --no-tags origin "$PRODUCT_BRANCH"
+          PRODUCT_SHA="$(git rev-parse FETCH_HEAD)"
+          git cat-file -e "$PRODUCT_SHA^{commit}"
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/noop" >/dev/null 2>&1; then
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/noop"
+          fi
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/noop" >/dev/null 2>&1; then
+            echo "accidental noop branch still exists" >&2
+            exit 1
+          fi
+          printf '%s\n' "$PRODUCT_SHA" >/tmp/poco-product-sha.txt
+
+      - name: Replace repository topics with PoCO-only metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s\n' '{"names":["blockchain","poco","rust","trillionnium"]}' \
+          | gh api --method PUT \
+              -H 'Accept: application/vnd.github+json' \
+              "repos/${GITHUB_REPOSITORY}/topics" \
+              --input - \
+          | tee /tmp/poco-topics-write.json
+          gh api \
+            -H 'Accept: application/vnd.github+json' \
+            "repos/${GITHUB_REPOSITORY}/topics" \
+          | tee /tmp/poco-topics-readback.json
+          jq -e '.names | sort == ["blockchain","poco","rust","trillionnium"]' \
+            /tmp/poco-topics-readback.json >/dev/null
+
+      - name: Delete temporary operations branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --method DELETE \
+            "repos/${GITHUB_REPOSITORY}/git/refs/heads/${OPS_BRANCH}"
+
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-metadata-cleanup-r2-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            /tmp/poco-product-sha.txt
+            /tmp/poco-topics-write.json
+            /tmp/poco-topics-readback.json
