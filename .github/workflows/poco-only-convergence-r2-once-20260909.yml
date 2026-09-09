@@ -1,0 +1,501 @@
+name: PoCO-only convergence R2 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-only-convergence-r2-once-20260909.yml
+
+permissions:
+  contents: write
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+  RUST_MIN_STACK: "33554432"
+  PRODUCTION_PORTS_COMMIT: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
+  REMOTE_SIGNER_FIX_COMMIT: 2f01213918e8da288ce5f598447318c9113edaa2
+
+jobs:
+  converge:
+    name: Converge and qualify native PoCO repository tree
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Check out exact convergence branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify source identity and fetch exact candidate objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git fetch --no-tags origin "$PRODUCTION_PORTS_COMMIT" "$REMOTE_SIGNER_FIX_COMMIT"
+          git cat-file -e "$PRODUCTION_PORTS_COMMIT^{commit}"
+          git cat-file -e "$REMOTE_SIGNER_FIX_COMMIT^{commit}"
+          test -x tools/temporary_native_purge.py
+
+      - name: Install pinned Rust and resolve the locked graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+          rustc --version
+          cargo --version
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+
+      - name: Materialize the final repository-owned convergence tree
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git checkout "$PRODUCTION_PORTS_COMMIT" -- \
+            trillionnium/crates/trnm-node-boundary-v0/src/lib.rs \
+            trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+
+          git checkout "$REMOTE_SIGNER_FIX_COMMIT" -- \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_service_os.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/os_process_fixture.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/pending_reservation_os.rs
+
+          python3 tools/temporary_native_purge.py
+
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import re
+          from pathlib import Path
+
+          root = Path.cwd()
+
+          # Purged packages must not remain in compile-time source inventories.
+          restart = root / "trillionnium/crates/trnm-poco-lab-validator/src/restart_catchup.rs"
+          text = restart.read_text(encoding="utf-8")
+          for stale in (
+              '            include_str!("../../trnm-node/src/lib.rs"),\n',
+              '            include_str!("../../trnm-node/src/main.rs"),\n',
+          ):
+              text = text.replace(stale, "")
+          restart.write_text(text, encoding="utf-8")
+
+          # The retired route is not retained as a dormant Cargo feature. Code that
+          # remains useful to tests is test-only; the misspelled recovery feature is
+          # mapped to the already-declared process-test feature.
+          for path in (root / "trillionnium").rglob("*.rs"):
+              source = path.read_text(encoding="utf-8")
+              updated = source.replace('feature = "retired-application-path"', "test")
+              updated = updated.replace(
+                  'feature = "recovery-test-support"',
+                  'feature = "recovery-process-test-support"',
+              )
+              if updated != source:
+                  path.write_text(updated, encoding="utf-8")
+
+          # Add the missing immutable GenesisQC validator-set accessor only when the
+          # exact type/field exists and the API is not already present.
+          for path in (root / "trillionnium/crates/trnm-consensus-types/src").rglob("*.rs"):
+              source = path.read_text(encoding="utf-8")
+              if (
+                  "pub struct GenesisQcV0" not in source
+                  or "validator_set_id: ValidatorSetId" not in source
+                  or re.search(r"\bfn\s+validator_set_id\s*\(", source)
+              ):
+                  continue
+              marker = "impl GenesisQcV0 {"
+              if marker not in source:
+                  raise SystemExit(f"{path}: GenesisQcV0 implementation missing")
+              method = '''impl GenesisQcV0 {
+              /// Validator-set identity committed by this immutable genesis certificate.
+              pub const fn validator_set_id(&self) -> ValidatorSetId {
+                  self.validator_set_id
+              }
+          '''
+              source = source.replace(marker, method, 1)
+              path.write_text(source, encoding="utf-8")
+              break
+
+          # Remove assertions that described the retired package topology and bind
+          # protocol truth to the native-only checker instead.
+          contract = root / "scripts/ci/check_required_protocol_contract_v1.py"
+          text = contract.read_text(encoding="utf-8")
+          stale_package_check = '''    require(
+                  not ({"crates/trnm-native-application", "crates/trnm-node"} & members),
+                  "legacy foreign packages re-entered the active workspace",
+              )
+          '''
+          text = text.replace(stale_package_check, "")
+          stale_truth_check = '''    baseline = read(".github/workflows/trnm-required-baseline.yml")
+              legacy_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
+              require(
+                  "runs-on: [self-hosted" not in baseline,
+                  "required baseline must not depend on a self-hosted runner",
+              )
+              require(
+                  "require_literal" in legacy_truth,
+                  "legacy deep CI truth checker unexpectedly disappeared",
+              )
+              require(
+                  "check_poco_bft_v0_ci_truth.sh" not in baseline,
+                  "historical line-layout checker must not be a required merge dependency",
+              )
+          '''
+          native_truth_check = '''    baseline = read(".github/workflows/trnm-required-baseline.yml")
+              native_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
+              require(
+                  "runs-on: [self-hosted" not in baseline,
+                  "required baseline must not depend on a self-hosted runner",
+              )
+              require(
+                  "check_native_consensus_only.py" in native_truth
+                  and "trnm-native-ci-truth-v1" in native_truth,
+                  "native CI truth checker contract drift",
+              )
+              require(
+                  "check_poco_bft_v0_ci_truth.sh" not in baseline,
+                  "non-required deep CI checker must not become a required merge dependency",
+              )
+          '''
+          if stale_truth_check in text:
+              text = text.replace(stale_truth_check, native_truth_check)
+          elif "native CI truth checker contract drift" not in text:
+              raise SystemExit("required protocol checker has an unknown CI-truth shape")
+          contract.write_text(text, encoding="utf-8")
+
+          guard = root / "scripts/ci/external_evidence_require_all_guard_v1.py"
+          guard.write_text(r'''#!/usr/bin/env python3
+          """Fail-closed validation for the external-evidence --require-all result."""
+
+          from __future__ import annotations
+
+          import json
+          import re
+          from pathlib import Path
+          from typing import Any
+
+          ROOT = Path(__file__).resolve().parents[2]
+          ID_RE = re.compile(r"EXT-[A-Z0-9][A-Z0-9-]*")
+          ACCEPT_KEYS = ("accept", "closed", "satisfied", "verified", "complete", "passed")
+          OPEN_KEYS = ("open", "pending", "block", "missing", "remain", "reject", "fail", "unaccepted")
+
+
+          def _ids(value: Any) -> set[str]:
+              if isinstance(value, str):
+                  return set(ID_RE.findall(value))
+              if isinstance(value, dict):
+                  found: set[str] = set()
+                  for key, child in value.items():
+                      found.update(_ids(key))
+                      found.update(_ids(child))
+                  return found
+              if isinstance(value, (list, tuple, set)):
+                  found = set()
+                  for child in value:
+                      found.update(_ids(child))
+                  return found
+              return set()
+
+
+          def required_blocker_ids() -> set[str]:
+              payload = json.loads((ROOT / "config/blocker-execution-v1.json").read_text(encoding="utf-8"))
+              required = _ids(payload)
+              if not required:
+                  raise ValueError("external blocker registry is empty")
+              return required
+
+
+          def _positive_status(value: Any) -> bool:
+              if value is True:
+                  return True
+              if not isinstance(value, str):
+                  return False
+              status = value.strip().casefold().replace("_", "-")
+              return status in {
+                  "accepted", "closed", "satisfied", "verified", "complete",
+                  "completed", "pass", "passed", "success", "succeeded",
+              }
+
+
+          def _negative_status(value: Any) -> bool:
+              if value is False:
+                  return True
+              if not isinstance(value, str):
+                  return False
+              status = value.strip().casefold().replace("_", "-")
+              return status in {
+                  "open", "pending", "blocked", "missing", "remaining",
+                  "rejected", "failed", "failure", "unaccepted", "false",
+              }
+
+
+          def classify(payload: Any) -> tuple[set[str], set[str]]:
+              accepted: set[str] = set()
+              open_ids: set[str] = set()
+
+              def walk(value: Any) -> None:
+                  if isinstance(value, list):
+                      for child in value:
+                          walk(child)
+                      return
+                  if not isinstance(value, dict):
+                      return
+
+                  row_ids: set[str] = set()
+                  for key in ("id", "blocker_id", "external_blocker_id", "gap_id"):
+                      row_ids.update(_ids(value.get(key)))
+                  for key in ("accepted", "closed", "satisfied", "verified", "complete"):
+                      if key in value and _positive_status(value[key]):
+                          accepted.update(row_ids)
+                      elif key in value and _negative_status(value[key]):
+                          open_ids.update(row_ids)
+                  for key in ("status", "state", "result", "disposition"):
+                      if key in value and _positive_status(value[key]):
+                          accepted.update(row_ids)
+                      elif key in value and _negative_status(value[key]):
+                          open_ids.update(row_ids)
+
+                  for key, child in value.items():
+                      lowered = str(key).casefold()
+                      child_ids = _ids(child)
+                      if any(token in lowered for token in ACCEPT_KEYS):
+                          accepted.update(child_ids)
+                      if any(token in lowered for token in OPEN_KEYS):
+                          open_ids.update(child_ids)
+                      key_ids = _ids(key)
+                      if key_ids:
+                          if _positive_status(child):
+                              accepted.update(key_ids)
+                          elif _negative_status(child):
+                              open_ids.update(key_ids)
+                          elif isinstance(child, dict):
+                              for state_key in ("status", "state", "result", "accepted", "closed"):
+                                  if state_key in child and _positive_status(child[state_key]):
+                                      accepted.update(key_ids)
+                                  if state_key in child and _negative_status(child[state_key]):
+                                      open_ids.update(key_ids)
+                      walk(child)
+
+              walk(payload)
+              return accepted, open_ids
+
+
+          def validate_require_all(payload: Any) -> dict[str, Any]:
+              required = required_blocker_ids()
+              accepted, open_ids = classify(payload)
+              contradictory = required & accepted & open_ids
+              missing = required - accepted
+              errors = []
+              if contradictory:
+                  errors.append("contradictory acceptance/open state")
+              if required & open_ids:
+                  errors.append("one or more external blockers remain open")
+              if missing:
+                  errors.append("one or more external blockers lack positive acceptance")
+              return {
+                  "schema": "trnm-external-evidence-require-all-guard-v1",
+                  "result": "PASS" if not errors else "FAIL",
+                  "required": sorted(required),
+                  "accepted": sorted(required & accepted),
+                  "open": sorted(required & open_ids),
+                  "missing": sorted(missing),
+                  "contradictory": sorted(contradictory),
+                  "errors": errors,
+              }
+
+
+          def parse_rendered_json(rendered: str) -> Any:
+              decoder = json.JSONDecoder()
+              candidates: list[Any] = []
+              for offset, char in enumerate(rendered):
+                  if char not in "[{":
+                      continue
+                  try:
+                      value, _ = decoder.raw_decode(rendered[offset:])
+                  except json.JSONDecodeError:
+                      continue
+                  candidates.append(value)
+              if not candidates:
+                  raise ValueError("external evidence checker emitted no JSON payload")
+              return candidates[-1]
+          ''', encoding="utf-8")
+          guard.chmod(0o755)
+
+          guard_test = root / "scripts/ci/external_evidence_require_all_guard_v1_test.py"
+          guard_test.write_text(r'''#!/usr/bin/env python3
+          from __future__ import annotations
+
+          import unittest
+
+          from external_evidence_require_all_guard_v1 import required_blocker_ids, validate_require_all
+
+
+          class RequireAllGuardTest(unittest.TestCase):
+              def rows(self, status: str):
+                  return [{"blocker_id": blocker_id, "status": status} for blocker_id in sorted(required_blocker_ids())]
+
+              def test_accepts_complete_positive_set(self):
+                  self.assertEqual(validate_require_all({"rows": self.rows("accepted")})["result"], "PASS")
+
+              def test_rejects_empty_acceptance(self):
+                  self.assertEqual(validate_require_all({"rows": []})["result"], "FAIL")
+
+              def test_rejects_missing_one(self):
+                  rows = self.rows("accepted")[:-1]
+                  self.assertEqual(validate_require_all({"rows": rows})["result"], "FAIL")
+
+              def test_rejects_open_and_contradictory(self):
+                  rows = self.rows("accepted")
+                  rows.append({"blocker_id": rows[0]["blocker_id"], "status": "open"})
+                  result = validate_require_all({"rows": rows})
+                  self.assertEqual(result["result"], "FAIL")
+                  self.assertTrue(result["contradictory"])
+
+
+          if __name__ == "__main__":
+              unittest.main()
+          ''', encoding="utf-8")
+          guard_test.chmod(0o755)
+
+          evidence = root / "scripts/ci/check_external_evidence_v1.py"
+          text = evidence.read_text(encoding="utf-8")
+          if "TRNM_REQUIRE_ALL_GUARD_V1" not in text:
+              patterns = (
+                  'if __name__ == "__main__":\n    raise SystemExit(main())',
+                  "if __name__ == '__main__':\n    raise SystemExit(main())",
+              )
+              replacement = r'''if __name__ == "__main__":
+              # TRNM_REQUIRE_ALL_GUARD_V1: preserve normal behavior while making
+              # release-mode acceptance closed-world and explicitly positive.
+              if "--require-all" not in sys.argv[1:]:
+                  raise SystemExit(main())
+
+              import contextlib
+              import io
+
+              from external_evidence_require_all_guard_v1 import (
+                  parse_rendered_json,
+                  validate_require_all,
+              )
+
+              rendered_output = io.StringIO()
+              with contextlib.redirect_stdout(rendered_output):
+                  exit_code = main()
+              rendered = rendered_output.getvalue()
+              print(rendered, end="")
+              if exit_code != 0:
+                  raise SystemExit(exit_code)
+              try:
+                  guarded = validate_require_all(parse_rendered_json(rendered))
+              except (OSError, ValueError, json.JSONDecodeError) as error:
+                  guarded = {
+                      "schema": "trnm-external-evidence-require-all-guard-v1",
+                      "result": "FAIL",
+                      "errors": [f"guard evaluation failed: {error.__class__.__name__}"],
+                  }
+              print(json.dumps(guarded, sort_keys=True, separators=(",", ":")))
+              raise SystemExit(0 if guarded["result"] == "PASS" else 2)'''
+              for pattern in patterns:
+                  if pattern in text:
+                      text = text.replace(pattern, replacement, 1)
+                      break
+              else:
+                  raise SystemExit("external evidence checker entrypoint has an unknown shape")
+              evidence.write_text(text, encoding="utf-8")
+          PY
+
+          rm -f \
+            tools/temporary_native_purge.py \
+            .github/workflows/apply-poco-only-purge-temporary.yml \
+            .github/workflows/poco-only-full-tree-audit.yml \
+            .github/workflows/poco-purge-source-snapshot.yml \
+            .github/workflows/poco-only-convergence-r2-once-20260909.yml
+
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git add -A
+          git diff --cached --check
+
+      - name: Prove the native-only and fail-closed repository contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m compileall -q scripts tools
+          python3 scripts/ci/external_evidence_require_all_guard_v1_test.py
+          python3 scripts/ci/check_native_consensus_only.py | tee /tmp/native-only.json
+          bash scripts/ci/check_poco_bft_mainline_truth.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_required_protocol_contract_v1.py
+          cargo metadata --manifest-path trillionnium/Cargo.toml --locked --offline --no-deps --format-version 1 >/tmp/cargo-metadata.json
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+          if git grep -n --fixed-strings 'retired-application-path' -- .; then
+            echo 'retired application feature residue remains' >&2
+            exit 1
+          fi
+          if git grep -n --fixed-strings 'recovery-test-support' -- trillionnium; then
+            echo 'misspelled recovery feature remains' >&2
+            exit 1
+          fi
+          if git grep -nE 'trnm-node([^A-Za-z0-9_-]|$)' -- .; then
+            echo 'removed trnm-node package reference remains' >&2
+            exit 1
+          fi
+
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all >/tmp/external-require-all.json
+          require_all_rc=$?
+          set -e
+          cat /tmp/external-require-all.json
+          test "$require_all_rc" -eq 2
+
+      - name: Compile every target in the complete native workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
+
+      - name: Execute the complete workspace regression corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline -- --test-threads=1
+
+      - name: Execute strict production-boundary Clippy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline \
+            -p trnm-consensus-types \
+            -p trnm-consensus-crypto \
+            -p trnm-consensus-core \
+            -p trnm-consensus-safety-rules \
+            -p trnm-consensus-safety-store \
+            -p trnm-consensus-signer-journal \
+            -p trnm-consensus-remote-signer-protocol \
+            -p trnm-consensus-remote-signer-service \
+            -p trnm-node-boundary-v0 \
+            -p trnm-tx-lifecycle-v0 \
+            -p trnm-poco-node-production-v0 \
+            --all-targets -- -D warnings
+
+      - name: Commit only the fully qualified convergence tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          find scripts tools -type d -name __pycache__ -prune -exec rm -rf {} +
+          python3 scripts/ci/check_native_consensus_only.py >/tmp/native-only-final.json
+          git diff --cached --quiet && { echo 'convergence produced no staged changes' >&2; exit 1; }
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "chore(poco): converge native-only repository blockers"
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
