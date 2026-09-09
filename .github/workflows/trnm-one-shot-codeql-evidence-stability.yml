@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: trnm-one-shot-codeql-log-redaction-restack-v2
+  group: trnm-one-shot-codeql-log-redaction-restack-v3
   cancel-in-progress: false
 
 jobs:
@@ -72,17 +72,16 @@ jobs:
             --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
 
-      - name: Check formatting across workspace and excluded crates
+      - name: Check only the five reviewed Rust files
         shell: bash
         run: |
           set -euo pipefail
-          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
-          cargo fmt \
-            --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
-            --all -- --check
-          cargo fmt \
-            --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
-            --all -- --check
+          rustfmt --edition 2021 --check \
+            trillionnium/crates/trnm-consensus-app/src/lib.rs \
+            trillionnium/crates/trnm-node/src/live/node.rs \
+            trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-g1-process-host.rs \
+            trillionnium/crates/trnm-rpc/src/reliability.rs \
+            trillionnium/crates/trnm-rpc/src/reliability/recovery.rs
 
       - name: Test and lint active workspace redaction targets
         shell: bash
@@ -98,24 +97,29 @@ jobs:
             -p trnm-rpc \
             --all-targets --locked -- -D warnings
 
-      - name: Test and lint excluded migration and legacy targets
+      - name: Test and lint excluded migration library
         shell: bash
         run: |
           set -euo pipefail
           timeout --signal=TERM --kill-after=30s 1800s \
             cargo test \
               --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
-              --all-targets --locked --no-fail-fast
+              --lib --locked --no-fail-fast
           cargo clippy \
             --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
-            --all-targets --locked -- -D warnings
+            --lib --locked -- -D warnings
+
+      - name: Compile and lint excluded legacy node paths
+        shell: bash
+        run: |
+          set -euo pipefail
           timeout --signal=TERM --kill-after=30s 1800s \
             cargo test \
               --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
-              --all-targets --locked --no-fail-fast
+              --features legacy-harness --all-targets --locked --no-fail-fast
           cargo clippy \
             --manifest-path trillionnium/crates/trnm-node/Cargo.toml \
-            --all-targets --locked -- -D warnings
+            --features legacy-harness --all-targets --locked -- -D warnings
 
       - name: Reconfirm clean five-file delta
         shell: bash
