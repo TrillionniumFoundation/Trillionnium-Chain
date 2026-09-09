@@ -22,7 +22,7 @@ python3 scripts/admin/apply_codeql_default_setup_v1.py
 python3 scripts/ci/test_codeql_default_setup_v1.py
 ```
 
-Dry-run validates and prints the exact payload without reading credentials or calling GitHub. The regression corpus includes hostile producer spoofing, null/mismatched source identity, cross-suite and cross-run splicing, stale pre-configuration checks, missing live fields, branch movement before and after PATCH, pagination supersession and duplicate run IDs.
+Dry-run validates and prints the exact payload without reading credentials or calling GitHub. The 24-test regression corpus includes hostile producer spoofing, null/mismatched source identity, cross-suite and cross-run splicing, stale pre-configuration checks, missing live fields, branch movement before and after PATCH, pagination supersession, duplicate run IDs, live settings-generation drift, complete required-check inventory drift, and semantic evidence drift across the verification window.
 
 ## Verify live configuration
 
@@ -77,6 +77,6 @@ python3 scripts/admin/apply_codeql_default_setup_v1.py \
 
 `--verify-evidence` requires `--verify-live` in the same invocation and cannot be combined with `--apply`. The four Analyze checks must belong to the supplied GitHub-generated dynamic CodeQL validation run and one check suite. The aggregate check must be produced by GitHub Advanced Security and begin only after every selected Analyze check has completed. Every check and suite must bind the exact repository and source SHA.
 
-Evidence acceptance requires an independently enforced settings-change freeze and a non-empty verification ticket. The verifier snapshots the complete authority-bearing required-check inventory, performs the full configuration and exact-source check/suite/workflow verification twice, and rejects any configuration generation, inventory, or semantic result drift across the read window.
+Evidence acceptance requires an independently enforced settings-change freeze and a non-empty verification ticket. The settings-verification ticket is separate from `TRNM_CODEQL_ADMIN_CHANGE_TICKET`: it records the protected read window and never authorizes a settings mutation. The verifier snapshots the complete authority-bearing required-check inventory, performs the full configuration and exact-source check/suite/workflow verification twice, and rejects any configuration generation, inventory, or semantic result drift across the read window.
 
 Retain the live configuration response, PATCH response, validation run, exact source/tree, complete paginated check-run inventory, suite identities, SARIF/alert inventory, change-control record and independent specialist disposition. Do not dismiss alerts, lower query coverage, remove Rust, self-approve, or treat a settings update as release authority.
