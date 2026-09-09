@@ -1,0 +1,220 @@
+{
+  "records": [
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 1823,
+      "path": "trillionnium/crates/trnm-consensus-sim/src/simulator.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "0e686985f9886b82cef44fee8a07a20c5e6dd9bd1f0e8d25fc49d65acdbae349",
+      "source_context_sha256": "59b146c04d1c2326dee9f97511e522b96c5a47e5421bd01a47e6a79200d01b1b",
+      "stable_id": "6e50c1a7b1b01b35558d6a66246e7242eb15af12f004199262033c2d85193327"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 2042,
+      "path": "trillionnium/crates/trnm-consensus-sim/src/simulator.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "dbf166b8d024af3ff32796ee5d55a7acae70189708e738c946d239766501e89c",
+      "source_context_sha256": "6b33e614702bb23189709584faab6b363bf4aca53baf52517b011604de6a7942",
+      "stable_id": "7c98b2f56521c33ab9f4279b5b18b28c50ab5ba1222ef8b7afacfeb67e270cb8"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 66,
+      "path": "trillionnium/crates/trnm-mempool/src/lib.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "8c7188d6a29a52ba0dee56a1ea5b21d06fa0ecaa65b7e5a13388a58e5dd652f3",
+      "source_context_sha256": "4f86b129b28844547a5501d94cf32b0a310ed543d7e0f0bc745f4611f588dbc5",
+      "stable_id": "365178261d63b177a5733f3331024bd69fb21f0d7e99685fa8243d197e535479"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 6426,
+      "path": "trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "a1b662fca91c9adb16465535f5bcc79187f3dad77dd0eabe5eb2417cbf36f8be",
+      "source_context_sha256": "eda1b1c676bfdb1d346a359ff291ca178bfe666cf4e7d247998eb6141b30e8ed",
+      "stable_id": "dada5026fec31664c1df0795eac2e250305f3f355783d1b44c2765aa5b336fe8"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 2032,
+      "path": "trillionnium/crates/trnm-consensus-sim/src/simulator.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "1d1424025f8fc0816a0698cff9e7789f600286d75d7c4db1354fb56befcc21ab",
+      "source_context_sha256": "b4acb24fd658ca713468f48d8f8afe8486926147771212048904affab93497f7",
+      "stable_id": "24f3fb4deac77bf67419b31af731241c04adef4e3b6ed4f21624837ae5189d07"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 6443,
+      "path": "trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "d984a3ebe17e0a01563f41d47690c2f469bc909e1fb947676922702f106411d6",
+      "source_context_sha256": "1c7f3cb0aafc3e5e419a3471d496fe9a1b281dc4e65ef72e1bccdfc6347bb41f",
+      "stable_id": "2251e11807f97aeec857e733d4065a0f4df9bf0357cb389c19ffaa129de6efd2"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 9678,
+      "path": "trillionnium/crates/trnm-consensus-core/src/core.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "bbd3c7640d0ad4f96c041f535683bc975150e6fa538e626d6d6cf96129cf978f",
+      "source_context_sha256": "40be9eeb7fc36ce7956e33c1bed4a723b7a4e552ec8d01a5a72c9dd9574a586c",
+      "stable_id": "f046ec6a639756518ffe673cae49aa67bb71c4fd4825ef84e602cabd5e210e85"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 7406,
+      "path": "trillionnium/crates/trnm-consensus-app/src/poco_application.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "808c9c333b06cb8ee2f90787f24d57c17fc053f5d8279eb5a0cd7bf97488cbfd",
+      "source_context_sha256": "05c5c9f18b5e1dec9ae1836e7f21ee257499c27cb74ba4c8248627f694daba5f",
+      "stable_id": "3ba7584d524ef958ea5545a28f34167e1c84a39a8a8d2df7889275dccc02be61"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 7398,
+      "path": "trillionnium/crates/trnm-native-execution-v0/src/poco_application.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "bd09d2af4afb1da29aab699afc51f2b5795a5ff99778c1f004407d2c2dc9380c",
+      "source_context_sha256": "684b6b3c73f89c5a730cf46c7479a703557107ea4cce4fce9e87fc76621cc0be",
+      "stable_id": "0cf98ce52cfcc47933fb1c806d846454ad9d9da140d57175839f491db84ac19a"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 7407,
+      "path": "trillionnium/crates/trnm-consensus-app/src/poco_application.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "3f9fcc3c118692b8960e551db44ff875e01ffd94ef2554639bd2fe91b476384a",
+      "source_context_sha256": "7dabb3f0b643f5e97afea212c4ef661b5fdd5f75b32594f550eba11d0349f107",
+      "stable_id": "526373481d7161698a08c229d989c676aa4d7dc74ec62f4fc5ea455a87a5daa2"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 7399,
+      "path": "trillionnium/crates/trnm-native-execution-v0/src/poco_application.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "098fef5e68b9c5e6348b9c130f73134be8ea2033514d684823afac220eac0a2d",
+      "source_context_sha256": "aec395b7846583a000c3a8708009a8905aeb67d18a1b209f65e5945cde5dfbbc",
+      "stable_id": "7f99297baed3af3ddc16b2b56641e76747bdf4bb768c58eb879a584851fa490a"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 9619,
+      "path": "trillionnium/crates/trnm-consensus-app/src/poco_application.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "9181626864b874414c4349207b304aeb1903f2e6dd9da5b3729179e74ff7596c",
+      "source_context_sha256": "8c75b58bdd6a464364a71b765dbe9b605a3585a96773fa143cb44037e4831a0e",
+      "stable_id": "0ed34658fbefa82b0304615a1a03151994fa45951d2207ebcc1fb81639ed7b76"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 9611,
+      "path": "trillionnium/crates/trnm-native-execution-v0/src/poco_application.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "2e711642905405b32304be67fedfe85b4b0141ed33d2f508e8d7ff249bb0d782",
+      "source_context_sha256": "32b2be5de16f2e61473dcca2f250315ad85e0facc500af63f072b5575bb8963d",
+      "stable_id": "3177cfd54609d19b70fab4fa3368d4f862cd48c3b12abd8c584766d7ec958178"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 9622,
+      "path": "trillionnium/crates/trnm-consensus-app/src/poco_application.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "7f6d7cd2433576a7ab2ecc96fdf52af60a4e2c7293e3817f69ac1392b0915255",
+      "source_context_sha256": "be11966e20c91a0120d3609de93b7affd98ca7f10567a67c5849953d526b0801",
+      "stable_id": "926436b68c33dce5beef331808f91d2a3d6c38d5d17cd93c9df77f2ae9b05feb"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 9614,
+      "path": "trillionnium/crates/trnm-native-execution-v0/src/poco_application.rs",
+      "rationale": "The primary sink is a Vec/VecDeque/BTreeMap-style collection mutation, not stdout/stderr, a logging facade, tracing subscriber, file write, or process-visible diagnostic.",
+      "rule_id": "rust/cleartext-logging",
+      "sarif_result_sha256": "45aaa084b02e9ecee9f1d8055fa17c98eb37604d0d9dbec6dd018007439d15d0",
+      "source_context_sha256": "e67b7f90b3d278abd7db102fe7807480f9c99ea339c2f8eda12e5b96701c86ca",
+      "stable_id": "a0bcc1b5aa01c99196a06db72e4a925f1f52d32d3c5bf7cf5666d48003c7977e"
+    },
+    {
+      "disposition_class": "public_deterministic_protocol_value",
+      "line": 3882,
+      "path": "trillionnium/crates/trnm-state/src/lib.rs",
+      "rationale": "The literal 0 is the canonical default/reset value for a business consumer-consumption sequence number. It is not key material, an IV, signing randomness, or an AEAD nonce.",
+      "rule_id": "rust/hard-coded-cryptographic-value",
+      "sarif_result_sha256": "493e26009c1d36d176a0f2ceab533a314c919e0b14ed59e0ec5f7d5976862014",
+      "source_context_sha256": "7a2fa55c325e4d5aafdbb9e8913520d770aeb9add1c949c2b2ca0f7ed7d34a8d",
+      "stable_id": "8978d80bd4373e5829247a4cfbc9cd254462f8f50eb0da515a777488f9c4f344"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 2834,
+      "path": "trillionnium/crates/trnm-consensus-core/src/core.rs",
+      "rationale": "The primary location is an enum/documentation boundary whose generated boolean predicate is over-tainted through simulator state into a field named nonce. No hard-coded cryptographic value is present at the primary location.",
+      "rule_id": "rust/hard-coded-cryptographic-value",
+      "sarif_result_sha256": "7092c444570b6a30f5a80551e10e256a8ea2964802336bde0bed9bedfa6ea270",
+      "source_context_sha256": "a88b56860804bd73fd933dd3652c6035b78c6c4484dff54074241ccf0dcdf581",
+      "stable_id": "dc46b69bedb5e834b362fc609ef7853f7925ed0a4ff5bcd666eeb44098834842"
+    },
+    {
+      "disposition_class": "query_dataflow_false_positive",
+      "line": 14559,
+      "path": "trillionnium/crates/trnm-consensus-core/src/core.rs",
+      "rationale": "The source is the boolean value false returned by a state-revision predicate. CodeQL propagates that boolean through simulator control flow to a variable named nonce; it is not cryptographic material.",
+      "rule_id": "rust/hard-coded-cryptographic-value",
+      "sarif_result_sha256": "85de02e346f432d34cf1b3956e84d461935efc227e39d93ab40e007c8bd891b6",
+      "source_context_sha256": "84a26496a57e53525219f96d16fb2e4b52c2fcac78aac25a62e2271464341104",
+      "stable_id": "a4d2880c5474bdffedc63d0cecc95503573b786191609f1b4a44f8dfd56e2a53"
+    },
+    {
+      "disposition_class": "public_deterministic_protocol_value",
+      "line": 625,
+      "path": "trillionnium/crates/trnm-consensus-sim/src/simulator.rs",
+      "rationale": "The zero value initializes a deterministic simulator block counter. The crate is a simulator and the value is neither secret nor required to be unpredictable.",
+      "rule_id": "rust/hard-coded-cryptographic-value",
+      "sarif_result_sha256": "90fed544488fbe00abb64fa229b1524b7a4ff00f483d5dde4a3a8a8b7b9bf6f5",
+      "source_context_sha256": "c2ac4df0e78d1e806d429ae2e06f3400244b84ed4568866a70417712fa69a8b8",
+      "stable_id": "593c7ab48eed19dd1716ab2aa5a3085e9390ebc855d5a4bc3b6addab36014fca"
+    },
+    {
+      "disposition_class": "public_deterministic_policy_limit",
+      "line": 1337,
+      "path": "trillionnium/crates/trnm-node/src/main.rs",
+      "rationale": "1,000,000 is a public anti-replay forward-jump policy bound used to reject implausible BFT sequence advances. It is not a cryptographic nonce value or source of randomness.",
+      "rule_id": "rust/hard-coded-cryptographic-value",
+      "sarif_result_sha256": "fe8f77a170fe698256b0b7a1a5a87c9d7cfcc8d140e8c5b40eae985ee3fd67b0",
+      "source_context_sha256": "4da77c9218ea0c60d7bc45215c632655fb2ae40bc9edc45a4159ab2c23ee735b",
+      "stable_id": "795ec595cf807827f2ce9275aecf85c88cecbb98aecc344a1e0dfedde258de8f"
+    },
+    {
+      "disposition_class": "public_deterministic_protocol_value",
+      "line": 3841,
+      "path": "trillionnium/crates/trnm-node/src/main.rs",
+      "rationale": "The literal 0 is the public default for a restored business consumer-consumption sequence when no prior snapshot value exists. It is not cryptographic nonce material.",
+      "rule_id": "rust/hard-coded-cryptographic-value",
+      "sarif_result_sha256": "6b5d1ca898b9f2c7e807c3dedb9edb462a073d39bd5ca0d4452f661d267adc78",
+      "source_context_sha256": "1d8bd4e615956de9bdaadaf2fd07cc306c1c7f6314a7de0c75814328738ac450",
+      "stable_id": "11efa800ab1e3f8a995863c508f6225a4bb19a584ca6a6bcc46323e5c56d0a66"
+    }
+  ],
+  "review_status": "candidate_pending_independent_specialist",
+  "schema": "trnm-rust-codeql-manual-semantic-review-v1",
+  "subject": {
+    "commit": "ded43a0704b455cd4bef724cb3ca40fb6db9465d",
+    "tree": "c0791ffb57e05fde43f87bfed1a3b4656c09efc0"
+  }
+}
