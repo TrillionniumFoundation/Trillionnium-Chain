@@ -89,146 +89,147 @@ jobs:
           mkdir -p "${out}"
           started="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           started_epoch="$(date -u +%s)"
+
+          protocol_schema_formal() {
+            bash scripts/ci/check_canonical_development_plan.sh
+            python3 scripts/ci/check_module_coverage_v1.py
+            python3 scripts/ci/check_repository_truth_v1.py
+            python3 scripts/ci/check_blocker_execution_v1.py
+            python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+            bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+            bash scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
+            bash scripts/ci/check_poco_bft_v0_ci_truth.sh
+            protoc_path="$(scripts/ci/install_pinned_protoc.sh "${RUNNER_TEMP}/protoc-29.3")"
+            export PROTOC="${protoc_path}"
+            python3 scripts/ci/check_poco_bft_v0_parameters.py
+            python3 scripts/ci/check_poco_bft_v0_wire_vectors.py
+            python3 scripts/ci/check_poco_bft_v0_wire_reference.py
+            python3 scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
+            python3 scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
+            python3 scripts/ci/check_poco_bft_v0_ordered_roots.py
+            bash scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+            bash scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+            bash scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+            bash scripts/ci/check_poco_bft_v0_registry.sh
+            bash scripts/ci/check_poco_bft_v0_logical_schema.sh
+            bash scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
+            bash scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
+            bash scripts/ci/check_poco_bft_v0_block_body_schema.sh
+            bash scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
+            bash scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
+            bash scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
+            bash scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
+            bash scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
+            bash scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
+            bash scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
+            bash scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
+            bash scripts/ci/check_poco_bft_v0_application_authority_schema.sh
+            bash scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
+            bash scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+            bash scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+            bash scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+            bash scripts/ci/check_poco_bft_v0_proto.sh
+            bash scripts/ci/check_poco_bft_v0_formal.sh
+            bash scripts/project-preflight.sh --audit
+          }
+
+          replay_recovery() {
+            bash scripts/ci/check_agent_development_docs_v1.sh
+            bash scripts/ci/check_payload_replay_recovery_v1.sh
+            bash scripts/ci/check_finalization_intent_process_matrix_v1.sh
+            bash scripts/ci/check_replay_to_core_coordinator_v1.sh
+            bash scripts/ci/check_replay_to_core_r2b_contract_v1.sh
+            bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+            bash scripts/project-preflight.sh --audit
+          }
+
+          runtime_fault_process() {
+            cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+            bash scripts/ci/check_canonical_development_plan.sh
+            python3 scripts/ci/check_module_coverage_v1.py
+            python3 scripts/ci/check_repository_truth_v1.py
+            python3 scripts/ci/check_blocker_execution_v1.py
+            python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
+            bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --features lab-validator-runtime-test-support \
+              --lib --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --features lab-validator-runtime-test-support \
+              --test finalization_intent_process_kill_matrix --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --features recovery-process-test-support \
+              --test timeout_signing_process_kill_matrix --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --features g1-process-test-support \
+              --test g1_process_host_e2e --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --features g1-process-test-support \
+              --test effect_driver_process_e2e --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node-io \
+              --features candidate-pacemaker,candidate-authenticated-p2p \
+              --all-targets --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-durable-file-adapters-v0 \
+              --features candidate-peer-replay --all-targets --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node-host \
+              --features candidate-networked-authority --all-targets --locked
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node-io \
+              --features candidate-pacemaker,candidate-authenticated-p2p \
+              --all-targets --locked -- -D warnings
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-durable-file-adapters-v0 \
+              --features candidate-peer-replay --all-targets --locked -- -D warnings
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node-host \
+              --features candidate-networked-authority --all-targets --locked -- -D warnings
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --features external-signer-runtime \
+              --test external_signer_runtime --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --test raw_key_boundary --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --features replay-to-core-coordinator-test-support \
+              --lib --locked
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-node --test g2_manifest_bound_process_v2 \
+              --features ai-v1-candidate --locked
+            python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+            bash scripts/project-preflight.sh --audit
+          }
+
+          candidate_devnet() {
+            python3 scripts/ci/check_candidate_runtime_closure_v1.py
+            cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+            cargo check --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-lab-validator --all-targets --locked
+            bash scripts/ci/check_candidate_devnet_clippy_v1.sh
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-lab-validator --lib --locked candidate_devnet
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-lab-validator --test candidate_devnet_cli --locked
+            bash scripts/check_ci_runner_policy_test.sh
+            python3 scripts/ci/check_candidate_runtime_closure_v1.py
+            python3 scripts/ci/check_repository_truth_v1.py
+            bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+            bash scripts/ci/check_canonical_development_plan.sh
+            bash scripts/project-preflight.sh --audit
+          }
+
           set +e
-          case "${LANE}" in
-            protocol-schema-formal)
-              bash -eo pipefail <<'LANE_SCRIPT'
-              bash scripts/ci/check_canonical_development_plan.sh
-              python3 scripts/ci/check_module_coverage_v1.py
-              python3 scripts/ci/check_repository_truth_v1.py
-              python3 scripts/ci/check_blocker_execution_v1.py
-              python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
-              bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
-              bash scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
-              bash scripts/ci/check_poco_bft_v0_ci_truth.sh
-              protoc_path="$(scripts/ci/install_pinned_protoc.sh "${RUNNER_TEMP}/protoc-29.3")"
-              export PROTOC="${protoc_path}"
-              python3 scripts/ci/check_poco_bft_v0_parameters.py
-              python3 scripts/ci/check_poco_bft_v0_wire_vectors.py
-              python3 scripts/ci/check_poco_bft_v0_wire_reference.py
-              python3 scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
-              python3 scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
-              python3 scripts/ci/check_poco_bft_v0_ordered_roots.py
-              bash scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
-              bash scripts/ci/check_poco_bft_v0_handoff_vectors.sh
-              bash scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
-              bash scripts/ci/check_poco_bft_v0_registry.sh
-              bash scripts/ci/check_poco_bft_v0_logical_schema.sh
-              bash scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
-              bash scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
-              bash scripts/ci/check_poco_bft_v0_block_body_schema.sh
-              bash scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
-              bash scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
-              bash scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
-              bash scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
-              bash scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
-              bash scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
-              bash scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
-              bash scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
-              bash scripts/ci/check_poco_bft_v0_application_authority_schema.sh
-              bash scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
-              bash scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
-              bash scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
-              bash scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
-              bash scripts/ci/check_poco_bft_v0_proto.sh
-              bash scripts/ci/check_poco_bft_v0_formal.sh
-              bash scripts/project-preflight.sh --audit
-              LANE_SCRIPT
-              ;;
-            replay-recovery)
-              bash -eo pipefail <<'LANE_SCRIPT'
-              bash scripts/ci/check_agent_development_docs_v1.sh
-              bash scripts/ci/check_payload_replay_recovery_v1.sh
-              bash scripts/ci/check_finalization_intent_process_matrix_v1.sh
-              bash scripts/ci/check_replay_to_core_coordinator_v1.sh
-              bash scripts/ci/check_replay_to_core_r2b_contract_v1.sh
-              bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
-              bash scripts/project-preflight.sh --audit
-              LANE_SCRIPT
-              ;;
-            runtime-fault-process)
-              bash -eo pipefail <<'LANE_SCRIPT'
-              cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
-              bash scripts/ci/check_canonical_development_plan.sh
-              python3 scripts/ci/check_module_coverage_v1.py
-              python3 scripts/ci/check_repository_truth_v1.py
-              python3 scripts/ci/check_blocker_execution_v1.py
-              python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
-              bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --features lab-validator-runtime-test-support \
-                --lib --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --features lab-validator-runtime-test-support \
-                --test finalization_intent_process_kill_matrix --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --features recovery-process-test-support \
-                --test timeout_signing_process_kill_matrix --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --features g1-process-test-support \
-                --test g1_process_host_e2e --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --features g1-process-test-support \
-                --test effect_driver_process_e2e --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node-io \
-                --features candidate-pacemaker,candidate-authenticated-p2p \
-                --all-targets --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-durable-file-adapters-v0 \
-                --features candidate-peer-replay --all-targets --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node-host \
-                --features candidate-networked-authority --all-targets --locked
-              cargo clippy --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node-io \
-                --features candidate-pacemaker,candidate-authenticated-p2p \
-                --all-targets --locked -- -D warnings
-              cargo clippy --manifest-path trillionnium/Cargo.toml \
-                -p trnm-durable-file-adapters-v0 \
-                --features candidate-peer-replay --all-targets --locked -- -D warnings
-              cargo clippy --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node-host \
-                --features candidate-networked-authority --all-targets --locked -- -D warnings
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --features external-signer-runtime \
-                --test external_signer_runtime --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --test raw_key_boundary --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --features replay-to-core-coordinator-test-support \
-                --lib --locked
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-node --test g2_manifest_bound_process_v2 \
-                --features ai-v1-candidate --locked
-              python3 -B scripts/ci/a22_capability_authority_audit_v1.py
-              bash scripts/project-preflight.sh --audit
-              LANE_SCRIPT
-              ;;
-            candidate-devnet)
-              bash -eo pipefail <<'LANE_SCRIPT'
-              python3 scripts/ci/check_candidate_runtime_closure_v1.py
-              cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
-              cargo check --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-lab-validator --all-targets --locked
-              bash scripts/ci/check_candidate_devnet_clippy_v1.sh
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-lab-validator --lib --locked candidate_devnet
-              cargo test --manifest-path trillionnium/Cargo.toml \
-                -p trnm-poco-lab-validator --test candidate_devnet_cli --locked
-              bash scripts/check_ci_runner_policy_test.sh
-              python3 scripts/ci/check_candidate_runtime_closure_v1.py
-              python3 scripts/ci/check_repository_truth_v1.py
-              bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
-              bash scripts/ci/check_canonical_development_plan.sh
-              bash scripts/project-preflight.sh --audit
-              LANE_SCRIPT
-              ;;
-            *)
-              echo "unknown lane: ${LANE}" >&2
-              false
-              ;;
-          esac > >(tee "${out}/execution.log") 2> >(tee -a "${out}/execution.log" >&2)
+          (
+            set -euo pipefail
+            case "${LANE}" in
+              protocol-schema-formal) protocol_schema_formal ;;
+              replay-recovery) replay_recovery ;;
+              runtime-fault-process) runtime_fault_process ;;
+              candidate-devnet) candidate_devnet ;;
+              *) echo "unknown lane: ${LANE}" >&2; exit 64 ;;
+            esac
+          ) > >(tee "${out}/execution.log") 2> >(tee -a "${out}/execution.log" >&2)
           rc=$?
           set -e
           completed_epoch="$(date -u +%s)"
@@ -245,7 +246,7 @@ jobs:
           log = out / "execution.log"
           raw = log.read_bytes() if log.exists() else b""
           report = {
-              "schema": "trnm-hosted-deep-diagnostic-v1",
+              "schema": "trnm-hosted-deep-diagnostic-v2",
               "repository": os.environ["GITHUB_REPOSITORY"],
               "workflow_carrier_sha": os.environ["GITHUB_SHA"],
               "workflow_run_id": os.environ["GITHUB_RUN_ID"],
