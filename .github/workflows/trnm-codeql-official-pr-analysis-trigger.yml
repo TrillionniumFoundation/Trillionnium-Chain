@@ -1,0 +1,168 @@
+name: TRNM official CodeQL PR analysis trigger
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+    paths:
+      - .github/workflows/trnm-codeql-official-pr-analysis-trigger.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  pull-requests: write
+  security-events: read
+
+jobs:
+  trigger-and-verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      PR100_SHA: b3a628744e23fb93ef510ab38a748a2ff7416651
+      PR101_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+    steps:
+      - name: Verify canonical live CodeQL default setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-official-codeql"
+          mkdir -p "$out/raw"
+          gh api -i "repos/$REPOSITORY/code-scanning/default-setup" > "$out/raw/default-setup.txt"
+          gh api "repos/$REPOSITORY/code-scanning/default-setup" > "$out/default-setup.json"
+          export out
+          python3 - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['out'])/'default-setup.json'
+          d=json.loads(p.read_text())
+          required={
+            'state':'configured',
+            'query_suite':'extended',
+            'threat_model':'remote_and_local',
+            'runner_type':'standard',
+          }
+          for k,v in required.items():
+            if d.get(k)!=v: raise SystemExit(f'default setup {k}={d.get(k)!r}, expected {v!r}')
+          if sorted(d.get('languages') or []) != sorted(['actions','javascript-typescript','python','rust']):
+            raise SystemExit(f"unexpected languages: {d.get('languages')!r}")
+          PY
+
+      - name: Bind exact PR heads and capture trigger time
+        id: bind
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-official-codeql"
+          trigger="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          printf '%s\n' "$trigger" > "$out/triggered-at.txt"
+          for spec in "100:$PR100_SHA" "101:$PR101_SHA"; do
+            pr="${spec%%:*}"; expected="${spec#*:}"
+            gh api "repos/$REPOSITORY/pulls/$pr" > "$out/pr-$pr-before.json"
+            actual="$(jq -r '.head.sha' "$out/pr-$pr-before.json")"
+            test "$actual" = "$expected"
+            test "$(jq -r '.state' "$out/pr-$pr-before.json")" = open
+          done
+
+      - name: Emit Draft then Ready without changing source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-official-codeql"
+          for pr in 100 101; do
+            node="$(jq -r '.node_id' "$out/pr-$pr-before.json")"
+            is_draft="$(jq -r '.draft' "$out/pr-$pr-before.json")"
+            if test "$is_draft" != true; then
+              gh api graphql -f query='mutation($id:ID!){convertPullRequestToDraft(input:{pullRequestId:$id}){pullRequest{id isDraft}}}' -F id="$node" > "$out/pr-$pr-to-draft.json"
+            fi
+            gh api graphql -f query='mutation($id:ID!){markPullRequestReadyForReview(input:{pullRequestId:$id}){pullRequest{id isDraft}}}' -F id="$node" > "$out/pr-$pr-to-ready.json"
+          done
+
+      - name: Verify official exact-head analyses generated after trigger
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-official-codeql"
+          trigger="$(cat "$out/triggered-at.txt")"
+          export out trigger
+          python3 - <<'PY'
+          import datetime, json, os, pathlib, subprocess, time
+          out=pathlib.Path(os.environ['out'])
+          repo=os.environ['REPOSITORY']
+          expected={100:os.environ['PR100_SHA'],101:os.environ['PR101_SHA']}
+          trigger=datetime.datetime.fromisoformat(os.environ['trigger'].replace('Z','+00:00'))
+          trusted_language=(15368,'github-actions')
+          trusted_aggregate=(57789,'github-advanced-security')
+          required={'Analyze (actions)','Analyze (javascript-typescript)','Analyze (python)','Analyze (rust)','CodeQL'}
+          deadline=time.time()+6600
+          final={}
+          while time.time()<deadline:
+            all_ok=True
+            final={}
+            for pr,sha in expected.items():
+              raw=subprocess.check_output(['gh','api','--paginate',f'repos/{repo}/commits/{sha}/check-runs?per_page=100&filter=all'],text=True)
+              pages=[]
+              # gh --paginate concatenates objects; use jq slurp for robust parsing.
+              proc=subprocess.run(['gh','api','--paginate',f'repos/{repo}/commits/{sha}/check-runs?per_page=100&filter=all','--jq','.check_runs[]'],text=True,capture_output=True)
+              # Refetch once as JSON without pagination; expected inventory is below 100.
+              document=json.loads(subprocess.check_output(['gh','api',f'repos/{repo}/commits/{sha}/check-runs?per_page=100&filter=all'],text=True))
+              candidates={}
+              for run in document.get('check_runs',[]):
+                name=run.get('name')
+                if name not in required: continue
+                candidates.setdefault(name,[]).append(run)
+              chosen={}
+              for name in required:
+                items=candidates.get(name,[])
+                good=[]
+                for run in items:
+                  app=run.get('app') or {}
+                  trusted=trusted_aggregate if name=='CodeQL' else trusted_language
+                  started=run.get('started_at') or run.get('completed_at')
+                  try: ts=datetime.datetime.fromisoformat(started.replace('Z','+00:00')) if started else None
+                  except Exception: ts=None
+                  if (
+                    run.get('head_sha')==sha and
+                    app.get('id')==trusted[0] and app.get('slug')==trusted[1] and
+                    ts is not None and ts>=trigger
+                  ):
+                    good.append(run)
+                good.sort(key=lambda x:(x.get('started_at') or '',x.get('id') or 0),reverse=True)
+                if good: chosen[name]=good[0]
+              final[str(pr)]={name:{k:run.get(k) for k in ('id','name','status','conclusion','head_sha','started_at','completed_at','details_url')} for name,run in chosen.items()}
+              if set(chosen)!=required or any(run.get('status')!='completed' or run.get('conclusion')!='success' for run in chosen.values()):
+                all_ok=False
+            (out/'official-checks-live.json').write_text(json.dumps(final,indent=2,sort_keys=True)+'\n')
+            if all_ok: break
+            time.sleep(30)
+          else:
+            raise SystemExit('official exact-head CodeQL checks did not reach complete success before deadline')
+          PY
+
+      - name: Rebind source and PR readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-official-codeql"
+          for spec in "100:$PR100_SHA" "101:$PR101_SHA"; do
+            pr="${spec%%:*}"; expected="${spec#*:}"
+            gh api "repos/$REPOSITORY/pulls/$pr" > "$out/pr-$pr-after.json"
+            test "$(jq -r '.head.sha' "$out/pr-$pr-after.json")" = "$expected"
+            test "$(jq -r '.draft' "$out/pr-$pr-after.json")" = false
+          done
+          (
+            cd "$out"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload official analysis evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-official-codeql-pr-analysis-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-official-codeql/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
