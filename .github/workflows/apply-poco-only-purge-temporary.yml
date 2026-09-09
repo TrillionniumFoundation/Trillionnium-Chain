@@ -52,6 +52,56 @@ jobs:
         run: |
           set -euo pipefail
           python3 tools/temporary_native_purge.py
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("scripts/ci/check_required_protocol_contract_v1.py")
+          text = path.read_text(encoding="utf-8")
+
+          stale_package_check = '''    require(
+                  not ({"crates/trnm-native-application", "crates/trnm-node"} & members),
+                  "legacy foreign packages re-entered the active workspace",
+              )
+          '''
+          if stale_package_check not in text:
+              raise SystemExit("expected stale package assertion missing")
+          text = text.replace(stale_package_check, "")
+
+          stale_truth_check = '''    baseline = read(".github/workflows/trnm-required-baseline.yml")
+              legacy_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
+              require(
+                  "runs-on: [self-hosted" not in baseline,
+                  "required baseline must not depend on a self-hosted runner",
+              )
+              require(
+                  "require_literal" in legacy_truth,
+                  "legacy deep CI truth checker unexpectedly disappeared",
+              )
+              require(
+                  "check_poco_bft_v0_ci_truth.sh" not in baseline,
+                  "historical line-layout checker must not be a required merge dependency",
+              )
+          '''
+          native_truth_check = '''    baseline = read(".github/workflows/trnm-required-baseline.yml")
+              native_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
+              require(
+                  "runs-on: [self-hosted" not in baseline,
+                  "required baseline must not depend on a self-hosted runner",
+              )
+              require(
+                  "check_native_consensus_only.py" in native_truth
+                  and "trnm-native-ci-truth-v1" in native_truth,
+                  "native CI truth checker contract drift",
+              )
+              require(
+                  "check_poco_bft_v0_ci_truth.sh" not in baseline,
+                  "non-required deep CI checker must not become a required merge dependency",
+              )
+          '''
+          if stale_truth_check not in text:
+              raise SystemExit("expected stale CI-truth assertion missing")
+          path.write_text(text.replace(stale_truth_check, native_truth_check), encoding="utf-8")
+          PY
           rm -f \
             tools/temporary_native_purge.py \
             .github/workflows/apply-poco-only-purge-temporary.yml \
