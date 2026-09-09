@@ -1,0 +1,199 @@
+name: TRNM hosted native deep continuation ded43a v1
+
+on:
+  push:
+    branches:
+      - evidence/hosted-native-deep-gates-ded43a-v1-20260909
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-hosted-native-deep-continuation-ded43a-v1
+  cancel-in-progress: false
+
+jobs:
+  continuation:
+    name: Diagnostic continuation after remote-signer contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      RUST_TEST_THREADS: "1"
+      RUST_MIN_STACK: "67108864"
+      RUST_BACKTRACE: "1"
+      TZ: UTC
+      LC_ALL: C.UTF-8
+    steps:
+      - name: Check out exact immutable subject with its pinned ancestry
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source, tree and assessed baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          assessed=af691ea5005e1f0262e90c4fc878ba0a70dbe7ea
+          assessed_tree=af09e389b1a462b3839508b7ef305596c76384c6
+          test "$(git rev-parse "${assessed}^{tree}")" = "${assessed_tree}"
+          git merge-base --is-ancestor "${assessed}" HEAD
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install pinned toolchain and host prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends protobuf-compiler sqlite3 jq
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          rustc +1.95.0 -Vv
+          cargo +1.95.0 -V
+
+      - name: Run payload replay and core-coordinator recovery contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-native-continuation"
+          mkdir -p "${root}"
+          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-consensus-peer-lease --all-targets \
+            2>&1 | tee "${root}/peer-lease-test.log"
+          bash scripts/ci/check_payload_replay_recovery_v1.sh \
+            2>&1 | tee "${root}/payload-replay-recovery.log"
+          bash scripts/ci/check_replay_to_core_coordinator_v1.sh \
+            2>&1 | tee "${root}/replay-to-core.log"
+
+      - name: Run native application, execution, state sync and transaction lifecycle
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-native-continuation"
+          for package in \
+            trnm-native-application \
+            trnm-native-application-sqlite \
+            trnm-native-execution-v0 \
+            trnm-state-sync-v0 \
+            trnm-tx-lifecycle-v0; do
+            cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked -p "${package}" --all-targets \
+              2>&1 | tee "${root}/${package}-test.log"
+          done
+
+      - name: Run host, authority, I/O and production composition contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-native-continuation"
+          for package in \
+            trnm-poco-node-io \
+            trnm-poco-node-authority \
+            trnm-poco-node-host \
+            trnm-poco-node-production-v0 \
+            trnm-poco-node-cli; do
+            cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked -p "${package}" --all-targets \
+              2>&1 | tee "${root}/${package}-test.log"
+          done
+
+      - name: Run complete candidate node process and fault recovery tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-native-continuation"
+          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-poco-node --all-targets \
+            2>&1 | tee "${root}/poco-node-all-targets-test.log"
+
+      - name: Run candidate devnet and authenticated fleet tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-native-continuation"
+          cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-poco-lab-validator --all-targets \
+            2>&1 | tee "${root}/lab-validator-all-targets-test.log"
+          bash scripts/ci/check_poco_g3_lan_fleet.sh \
+            2>&1 | tee "${root}/g3-lan-fleet-contract.log"
+
+      - name: Strict Clippy across native authority surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-native-continuation"
+          cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --all-targets \
+            -p trnm-consensus-core \
+            -p trnm-consensus-safety-rules \
+            -p trnm-consensus-signer-journal \
+            -p trnm-consensus-peer-lease \
+            -p trnm-consensus-remote-signer-service \
+            -p trnm-consensus-external-watermark \
+            -p trnm-consensus-external-node-checkpoint \
+            -p trnm-poco-node-io \
+            -p trnm-poco-node-authority \
+            -p trnm-poco-node-host \
+            -p trnm-poco-node-production-v0 \
+            -p trnm-poco-node \
+            -p trnm-poco-node-cli \
+            -p trnm-poco-lab-validator \
+            -p trnm-native-application-sqlite \
+            -p trnm-native-execution-v0 \
+            -p trnm-state-sync-v0 \
+            -p trnm-tx-lifecycle-v0 \
+            -- -D warnings \
+            2>&1 | tee "${root}/strict-clippy.log"
+
+      - name: Write diagnostic evidence manifest
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-native-continuation"
+          mkdir -p "${root}"
+          cat > "${root}/manifest.json" <<EOF
+          {
+            "schema": "trnm-hosted-native-deep-continuation-v1",
+            "repository": "${GITHUB_REPOSITORY}",
+            "workflow_source_sha": "${GITHUB_SHA}",
+            "subject_sha": "${SUBJECT_SHA}",
+            "subject_tree": "${SUBJECT_TREE}",
+            "workflow_run_id": "${GITHUB_RUN_ID}",
+            "hosted_diagnostic_only": true,
+            "self_hosted_hardware_evidence": false,
+            "independent_multihost_evidence": false,
+            "hsm_anchor_evidence": false,
+            "power_loss_evidence": false,
+            "production_candidate": false,
+            "release_ready": false
+          }
+          EOF
+          (
+            cd "${root}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload diagnostic continuation evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-hosted-native-continuation-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-native-continuation/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Verify exact immutable source after execution
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
