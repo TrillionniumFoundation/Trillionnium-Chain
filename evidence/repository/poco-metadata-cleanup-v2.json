@@ -1,0 +1,22 @@
+{
+  "schema": "trnm.poco.repository-metadata-cleanup.v2",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "run_id": "34411770545",
+  "run_attempt": "1",
+  "operations_branch": "ops-poco-metadata-cleanup-20260910-r3",
+  "product_branch": "chore/poco-only-purge-20260909",
+  "product_commit": "70a877a6f4c57a3f361563d87dc2e8736a9a1e7d",
+  "product_tree": "a676e99527201ba0bf152288e82319d4fb5b7220",
+  "credential_source": "github_token",
+  "credential_value_recorded": false,
+  "noop_branch_present_before": false,
+  "noop_branch_absent_after": true,
+  "topics_write_http": "403",
+  "topics_read_http": "200",
+  "topics_exact_poco_only": false,
+  "topics_write_response": "{\n  \"message\": \"Resource not accessible by integration\",\n  \"documentation_url\": \"https://docs.github.com/rest/repos/repos#replace-all-repository-topics\",\n  \"status\": \"403\"\n}\n",
+  "topics_write_error": "",
+  "topics_readback": "{\n  \"names\": [\n    \"blockchain\",\n    \"cometbft\",\n    \"rust\",\n    \"trillionnium\"\n  ]\n}\n",
+  "topics_read_error": "",
+  "success": false
+}
