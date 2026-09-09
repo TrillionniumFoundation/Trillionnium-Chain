@@ -1,0 +1,88 @@
+name: PoCO workspace serial diagnostic (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-workspace-serial-diagnostic-once-20260909.yml
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "1"
+  CARGO_TARGET_DIR: /tmp/trnm-workspace-serial-target
+  RUST_BACKTRACE: "1"
+  RUST_MIN_STACK: "33554432"
+  PRODUCTION_PORTS_COMMIT: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
+  REMOTE_SIGNER_FIX_COMMIT: 2f01213918e8da288ce5f598447318c9113edaa2
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: chore/poco-only-purge-20260909
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install and materialize exact tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup override set 1.95.0
+          git fetch --no-tags origin "$PRODUCTION_PORTS_COMMIT" "$REMOTE_SIGNER_FIX_COMMIT"
+          git checkout "$PRODUCTION_PORTS_COMMIT" -- \
+            trillionnium/crates/trnm-node-boundary-v0/src/lib.rs \
+            trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+          git checkout "$REMOTE_SIGNER_FIX_COMMIT" -- \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_service_os.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/os_process_fixture.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/pending_reservation_os.rs
+          python3 tools/temporary_poco_convergence_r5.py prepare
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+      - name: Run serialized full-workspace check with exact diagnostics
+        shell: bash
+        run: |
+          set -Euo pipefail
+          cli=trillionnium/crates/trnm-cli/src/main.rs
+          diagnose() {
+            rc=$?
+            echo "diagnostic_rc=$rc"
+            echo "head=$(git rev-parse HEAD)"
+            echo "cli_sha256=$(sha256sum "$cli" | awk '{print $1}')"
+            echo "cli_lines=$(wc -l <"$cli")"
+            echo '--- suspicious repository references ---'
+            grep -RInE --exclude-dir=.git --exclude-dir=target \
+              'simple_majority_root_hex|contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|canonical\(contract' . || true
+            echo '--- CLI 1580-1680 ---'
+            nl -ba "$cli" | sed -n '1580,1680p'
+            echo '--- trnm-cli rustc commands ---'
+            grep -F 'trnm_cli' /tmp/trnm-full-workspace.log || true
+            echo '--- target occurrences ---'
+            grep -RInaE \
+              'simple_majority_root_hex|contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|canonical\(contract' \
+              "$CARGO_TARGET_DIR" || true
+            exit "$rc"
+          }
+          trap diagnose ERR
+          rm -rf "$CARGO_TARGET_DIR"
+          before=$(sha256sum "$cli" | awk '{print $1}')
+          cargo tree --manifest-path trillionnium/Cargo.toml -p trnm-cli -e features --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline -j 1 -vv \
+            2>&1 | tee /tmp/trnm-full-workspace.log
+          after=$(sha256sum "$cli" | awk '{print $1}')
+          test "$after" = "$before"
+          echo "serialized_workspace_check=PASS cli_sha256=$after"
+          trap - ERR
