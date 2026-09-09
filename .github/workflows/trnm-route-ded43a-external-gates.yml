@@ -1,0 +1,78 @@
+name: TRNM route DED43A external gate packet
+
+on:
+  push:
+    branches:
+      - evidence/external-gates-ded43a-20260909
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  route:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      SUBJECT_MERGE: 6a46d99fcdf916a3f36a7261665e9ce05badbc34
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+
+      - name: Validate packet and source tuple
+        shell: bash
+        run: |
+          set -euo pipefail
+          packet="docs/evidence/external/handoffs/DED43A_EXTERNAL_GATE_PACKET_V1.json"
+          jq -e \
+            --arg sha "${SUBJECT_SHA}" \
+            --arg tree "${SUBJECT_TREE}" \
+            --arg merge "${SUBJECT_MERGE}" \
+            '.source.commit == $sha and .source.tree == $tree and .source.prospective_merge_commit == $merge and .submission.accepted == false and (.claims | to_entries | all(.value == false))' \
+            "${packet}" >/dev/null
+
+      - name: Route exact-source handoff to all gate issues
+        shell: bash
+        run: |
+          set -euo pipefail
+          gates=(
+            EXT-REVIEW-001
+            EXT-G1-CAMPAIGN-001
+            EXT-ANCHOR-HSM-001
+            EXT-POWERLOSS-001
+            EXT-AUDIT-001
+            EXT-SOAK-ACTIVATION-001
+          )
+          for gate in "${gates[@]}"; do
+            mapfile -t numbers < <(
+              gh api search/issues \
+                -f q="repo:${GITHUB_REPOSITORY} is:issue is:open \"${gate}\"" \
+                --jq '.items[].number'
+            )
+            if [[ "${#numbers[@]}" -ne 1 ]]; then
+              echo "expected one open issue for ${gate}; found ${#numbers[@]}" >&2
+              exit 1
+            fi
+            issue="${numbers[0]}"
+            cat > "${RUNNER_TEMP}/${gate}.md" <<EOF
+          <!-- trnm-external-gate-packet-ded43a-${gate} -->
+          ## ${gate} exact-source execution handoff
+
+          The active subject is now:
+
+          - source: \`${SUBJECT_SHA}\`
+          - tree: \`${SUBJECT_TREE}\`
+          - prospective merge: \`${SUBJECT_MERGE}\`
+          - candidate PR: #101
+          - human packet: \`docs/evidence/external/handoffs/DED43A_EXTERNAL_GATE_PACKET_V1.md\`
+          - machine packet: \`docs/evidence/external/handoffs/DED43A_EXTERNAL_GATE_PACKET_V1.json\`
+
+          Execute only against this unchanged tuple and submit authentic \`trnm-external-evidence-v1\` with complete artifact hashes and independent signatures. This routing comment is not evidence acceptance and leaves the gate open. Production/testnet/release/activation remain false.
+          EOF
+            jq -n --rawfile body "${RUNNER_TEMP}/${gate}.md" '{body:$body}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+          done
