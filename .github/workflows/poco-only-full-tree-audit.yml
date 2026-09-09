@@ -1,0 +1,78 @@
+name: PoCO-only full-tree residue audit
+
+on:
+  pull_request:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Full-tree foreign consensus residue inventory
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Scan every tracked text file
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          import sys
+
+          terms = {
+              "engine_name": "".join(("co", "met")),
+              "upstream_protocol": "".join(("tender", "mint")),
+              "adapter_protocol": "".join(("ab", "ci")),
+              "retired_crate": "".join(("trnm-consensus", "-app")),
+          }
+          tracked = subprocess.check_output(
+              ["git", "ls-files", "-z"],
+          ).split(b"\0")
+          matches: list[tuple[str, int, str, str]] = []
+          for raw_path in tracked:
+              if not raw_path:
+                  continue
+              path = Path(raw_path.decode("utf-8", "strict"))
+              folded_path = path.as_posix().casefold()
+              for label, term in terms.items():
+                  if term in folded_path:
+                      matches.append((path.as_posix(), 0, label, "<path>"))
+              data = path.read_bytes()
+              if b"\0" in data:
+                  continue
+              text = data.decode("utf-8", "replace")
+              for line_no, line in enumerate(text.splitlines(), 1):
+                  folded = line.casefold()
+                  for label, term in terms.items():
+                      if term in folded:
+                          matches.append((path.as_posix(), line_no, label, line[:400]))
+          matches.sort()
+          report = Path("foreign-consensus-residue.tsv")
+          with report.open("w", encoding="utf-8") as stream:
+              for path, line_no, label, line in matches:
+                  stream.write(f"{path}\t{line_no}\t{label}\t{line}\n")
+          if matches:
+              print(f"foreign_consensus_residue_count={len(matches)}")
+              print(report.read_text(encoding="utf-8"))
+              sys.exit(1)
+          print("foreign_consensus_residue_count=0")
+          PY
+
+      - name: Upload complete inventory
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-only-full-tree-audit-${{ github.run_id }}
+          path: foreign-consensus-residue.tsv
+          if-no-files-found: error
+          retention-days: 7
