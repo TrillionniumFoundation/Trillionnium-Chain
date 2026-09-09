@@ -1,3 +1,4 @@
+# Second push intentionally triggers this branch-scoped one-shot after registration.
 name: TRNM one-shot CodeQL evidence stability repair
 
 on:
