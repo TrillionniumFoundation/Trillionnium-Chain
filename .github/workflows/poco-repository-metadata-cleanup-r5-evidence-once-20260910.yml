@@ -1,0 +1,160 @@
+name: PoCO repository metadata cleanup R5 evidence (temporary)
+
+on:
+  push:
+    branches:
+      - ops-poco-metadata-cleanup-20260910-r3
+    paths:
+      - .github/workflows/poco-repository-metadata-cleanup-r5-evidence-once-20260910.yml
+
+concurrency:
+  group: poco-repository-metadata-cleanup-final
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  OPS_BRANCH: ops-poco-metadata-cleanup-20260910-r3
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence-poco-metadata-cleanup-20260910
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.OPS_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Apply metadata cleanup and write exact evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$OPS_BRANCH"
+
+          git fetch --no-tags origin \
+            "$PRODUCT_BRANCH:refs/remotes/origin/$PRODUCT_BRANCH" \
+            "$EVIDENCE_BRANCH:refs/remotes/origin/$EVIDENCE_BRANCH"
+          PRODUCT_SHA="$(git rev-parse "origin/$PRODUCT_BRANCH")"
+          PRODUCT_TREE="$(git rev-parse "${PRODUCT_SHA}^{tree}")"
+
+          NOOP_BEFORE=false
+          if git ls-remote --exit-code --heads origin refs/heads/noop >/dev/null 2>&1; then
+            NOOP_BEFORE=true
+            git push origin --delete noop
+          fi
+          NOOP_ABSENT=true
+          if git ls-remote --exit-code --heads origin refs/heads/noop >/dev/null 2>&1; then
+            NOOP_ABSENT=false
+          fi
+
+          set +e
+          printf '%s\n' '{"names":["blockchain","poco","rust","trillionnium"]}' \
+          | gh api --method PUT \
+              -H 'Accept: application/vnd.github+json' \
+              "repos/${GITHUB_REPOSITORY}/topics" \
+              --input - \
+              >/tmp/topics-write.json 2>/tmp/topics-write.stderr
+          TOPICS_WRITE_RC=$?
+          gh api \
+            -H 'Accept: application/vnd.github+json' \
+            "repos/${GITHUB_REPOSITORY}/topics" \
+              >/tmp/topics-readback.json 2>/tmp/topics-readback.stderr
+          TOPICS_READ_RC=$?
+          set -e
+
+          TOPICS_OK=false
+          if test "$TOPICS_WRITE_RC" -eq 0 && test "$TOPICS_READ_RC" -eq 0; then
+            if jq -e '.names | sort == ["blockchain","poco","rust","trillionnium"]' \
+              /tmp/topics-readback.json >/dev/null; then
+              TOPICS_OK=true
+            fi
+          fi
+
+          export PRODUCT_SHA PRODUCT_TREE NOOP_BEFORE NOOP_ABSENT
+          export TOPICS_WRITE_RC TOPICS_READ_RC TOPICS_OK
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          def text(path: str) -> str:
+              value = Path(path)
+              return value.read_text(errors='replace') if value.exists() else ''
+
+          result = {
+              'schema': 'trnm.poco.repository-metadata-cleanup.v1',
+              'repository': os.environ['GITHUB_REPOSITORY'],
+              'run_id': os.environ['GITHUB_RUN_ID'],
+              'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'operations_branch': os.environ['OPS_BRANCH'],
+              'product_branch': os.environ['PRODUCT_BRANCH'],
+              'product_commit': os.environ['PRODUCT_SHA'],
+              'product_tree': os.environ['PRODUCT_TREE'],
+              'noop_branch_present_before': os.environ['NOOP_BEFORE'] == 'true',
+              'noop_branch_absent_after': os.environ['NOOP_ABSENT'] == 'true',
+              'topics_write_return_code': int(os.environ['TOPICS_WRITE_RC']),
+              'topics_read_return_code': int(os.environ['TOPICS_READ_RC']),
+              'topics_exact_poco_only': os.environ['TOPICS_OK'] == 'true',
+              'topics_write_response': text('/tmp/topics-write.json'),
+              'topics_write_error': text('/tmp/topics-write.stderr'),
+              'topics_readback': text('/tmp/topics-readback.json'),
+              'topics_read_error': text('/tmp/topics-readback.stderr'),
+          }
+          result['success'] = (
+              result['noop_branch_absent_after']
+              and result['topics_exact_poco_only']
+          )
+          Path('/tmp/poco-metadata-cleanup-result.json').write_text(
+              json.dumps(result, ensure_ascii=False, indent=2) + '\n'
+          )
+          PY
+
+      - name: Publish metadata result to evidence branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/poco-metadata-evidence
+          git worktree add -B "$EVIDENCE_BRANCH" \
+            /tmp/poco-metadata-evidence "origin/$EVIDENCE_BRANCH"
+          mkdir -p /tmp/poco-metadata-evidence/evidence/repository
+          cp /tmp/poco-metadata-cleanup-result.json \
+            /tmp/poco-metadata-evidence/evidence/repository/poco-metadata-cleanup-v1.json
+          git -C /tmp/poco-metadata-evidence add \
+            evidence/repository/poco-metadata-cleanup-v1.json
+          git -C /tmp/poco-metadata-evidence config user.name "Qian QI"
+          git -C /tmp/poco-metadata-evidence config user.email \
+            "102159240+ProfHepta@users.noreply.github.com"
+          if ! git -C /tmp/poco-metadata-evidence diff --cached --quiet; then
+            git -C /tmp/poco-metadata-evidence commit \
+              -m "evidence: record PoCO repository metadata cleanup"
+            git -C /tmp/poco-metadata-evidence push origin "$EVIDENCE_BRANCH"
+          fi
+
+      - name: Require successful cleanup and remove operations branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq -e '.success == true' /tmp/poco-metadata-cleanup-result.json >/dev/null
+          git push origin --delete "$OPS_BRANCH"
+
+      - name: Upload exact failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-metadata-r5-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            /tmp/poco-metadata-cleanup-result.json
+            /tmp/topics-write.json
+            /tmp/topics-write.stderr
+            /tmp/topics-readback.json
+            /tmp/topics-readback.stderr
