@@ -607,6 +607,178 @@ class CodeqlDefaultSetupTests(unittest.TestCase):
                 ]
             )
 
+    def evidence_argv(self) -> list[str]:
+        return [
+            "--verify-live",
+            "--verify-evidence",
+            "--acknowledge-settings-verification-freeze",
+            "--evidence-sha",
+            self.evidence_sha,
+            "--validation-run-id",
+            str(self.validation_run_id),
+        ]
+
+    def evidence_env(self) -> dict[str, str]:
+        return {
+            "GH_TOKEN": "token",
+            "TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET": "issue-88/read-window",
+        }
+
+    def test_cli_evidence_requires_settings_freeze_and_ticket(self) -> None:
+        argv = [
+            "--verify-live",
+            "--verify-evidence",
+            "--evidence-sha",
+            self.evidence_sha,
+            "--validation-run-id",
+            str(self.validation_run_id),
+        ]
+        with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.dict(
+            os.environ, {"GH_TOKEN": "token"}, clear=True
+        ), self.assertRaisesRegex(
+            MODULE.CodeqlSetupError,
+            "acknowledge-settings-verification-freeze",
+        ):
+            MODULE.main(argv)
+        argv.insert(2, "--acknowledge-settings-verification-freeze")
+        with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.dict(
+            os.environ, {"GH_TOKEN": "token"}, clear=True
+        ), self.assertRaisesRegex(
+            MODULE.CodeqlSetupError,
+            "TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET",
+        ):
+            MODULE.main(argv)
+
+    def test_cli_evidence_accepts_stable_verification_window(self) -> None:
+        live = {
+            "normalized": {"stable": True},
+            "updated_at": self.live_updated_at,
+        }
+        evidence = {
+            "evidence_sha": self.evidence_sha,
+            "required": {"stable": True},
+        }
+        inventory = {
+            "evidence_sha": self.evidence_sha,
+            "required_runs": [{"id": 1}],
+        }
+        stdout = io.StringIO()
+        with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.object(
+            MODULE, "verify_live_setup", side_effect=[live, live]
+        ), mock.patch.object(
+            MODULE,
+            "required_check_inventory_snapshot",
+            side_effect=[inventory, inventory],
+        ), mock.patch.object(
+            MODULE,
+            "verify_exact_source_checks",
+            side_effect=[evidence, evidence],
+        ), mock.patch.dict(
+            os.environ, self.evidence_env(), clear=True
+        ), contextlib.redirect_stdout(stdout):
+            self.assertEqual(MODULE.main(self.evidence_argv()), 0)
+        report = json.loads(stdout.getvalue())
+        self.assertEqual(report["result"], "VERIFIED")
+        self.assertEqual(report["live_before"], report["live_after"])
+        self.assertEqual(
+            report["evidence_inventory_before"],
+            report["evidence_inventory_after"],
+        )
+        self.assertEqual(report["evidence"], evidence)
+        self.assertTrue(
+            report["settings_verification_freeze_acknowledged"]
+        )
+
+    def test_cli_evidence_rejects_live_generation_drift(self) -> None:
+        initial = {
+            "normalized": {"stable": True},
+            "updated_at": self.live_updated_at,
+        }
+        changed = {
+            "normalized": {"stable": True},
+            "updated_at": "2026-09-09T00:10:00Z",
+        }
+        evidence = {
+            "evidence_sha": self.evidence_sha,
+            "required": {"stable": True},
+        }
+        with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.object(
+            MODULE, "verify_live_setup", side_effect=[initial, changed]
+        ), mock.patch.object(
+            MODULE,
+            "required_check_inventory_snapshot",
+            return_value={"required_runs": [{"id": 1}]},
+        ), mock.patch.object(
+            MODULE, "verify_exact_source_checks", return_value=evidence
+        ), mock.patch.dict(
+            os.environ, self.evidence_env(), clear=True
+        ), self.assertRaisesRegex(
+            MODULE.CodeqlSetupError,
+            "changed during evidence verification",
+        ):
+            MODULE.main(self.evidence_argv())
+
+    def test_cli_evidence_rejects_check_inventory_drift(self) -> None:
+        live = {
+            "normalized": {"stable": True},
+            "updated_at": self.live_updated_at,
+        }
+        evidence = {
+            "evidence_sha": self.evidence_sha,
+            "required": {"stable": True},
+        }
+        before = {"required_runs": [{"id": 1}]}
+        after = {"required_runs": [{"id": 1}, {"id": 2}]}
+        with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.object(
+            MODULE, "verify_live_setup", side_effect=[live, live]
+        ), mock.patch.object(
+            MODULE,
+            "required_check_inventory_snapshot",
+            side_effect=[before, after],
+        ), mock.patch.object(
+            MODULE,
+            "verify_exact_source_checks",
+            side_effect=[evidence, evidence],
+        ), mock.patch.dict(
+            os.environ, self.evidence_env(), clear=True
+        ), self.assertRaisesRegex(
+            MODULE.CodeqlSetupError,
+            "check inventory changed",
+        ):
+            MODULE.main(self.evidence_argv())
+
+    def test_cli_evidence_rejects_semantic_evidence_drift(self) -> None:
+        live = {
+            "normalized": {"stable": True},
+            "updated_at": self.live_updated_at,
+        }
+        first = {
+            "evidence_sha": self.evidence_sha,
+            "required": {"stable": True},
+        }
+        changed = {
+            "evidence_sha": self.evidence_sha,
+            "required": {"stable": False},
+        }
+        inventory = {"required_runs": [{"id": 1}]}
+        with mock.patch.object(MODULE, "GitHubApi", FakeApi), mock.patch.object(
+            MODULE, "verify_live_setup", side_effect=[live, live]
+        ), mock.patch.object(
+            MODULE,
+            "required_check_inventory_snapshot",
+            side_effect=[inventory, inventory],
+        ), mock.patch.object(
+            MODULE,
+            "verify_exact_source_checks",
+            side_effect=[first, changed],
+        ), mock.patch.dict(
+            os.environ, self.evidence_env(), clear=True
+        ), self.assertRaisesRegex(
+            MODULE.CodeqlSetupError,
+            "evidence changed during verification",
+        ):
+            MODULE.main(self.evidence_argv())
+
     def test_apply_requires_mutation_freeze_and_ticket(self) -> None:
         argv = [
             "--apply",
