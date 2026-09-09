@@ -1,0 +1,38 @@
+name: PoCO purge source snapshot
+
+on:
+  pull_request:
+    branches:
+      - work/plan-v2-full-gap-closure-20260902
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    name: Export exact tracked source tree
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Create deterministic source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          git archive --format=tar HEAD > poco-purge-source.tar
+          sha256sum poco-purge-source.tar > poco-purge-source.tar.sha256
+
+      - name: Upload source archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-purge-source-${{ github.run_id }}
+          path: |
+            poco-purge-source.tar
+            poco-purge-source.tar.sha256
+          if-no-files-found: error
+          retention-days: 1
