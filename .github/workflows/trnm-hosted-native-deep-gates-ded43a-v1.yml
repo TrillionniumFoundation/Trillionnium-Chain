@@ -105,6 +105,16 @@ jobs:
         run: |
           set -euo pipefail
           root="${RUNNER_TEMP}/trnm-native-deep"
+          # The remote-signer integration suite executes the real sibling
+          # watermark daemon. `cargo test -p remote-signer-service` does not
+          # build sibling package binaries, so construct the exact locked
+          # daemon explicitly before the test. This prevents a developer's
+          # pre-existing target cache from turning the gate falsely green.
+          cargo +1.95.0 build --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-consensus-external-watermark \
+            --bin trnm-external-watermark-v0 \
+            2>&1 | tee "${root}/trnm-external-watermark-v0-build.log"
+          test -x trillionnium/target/debug/trnm-external-watermark-v0
           for package in \
             trnm-consensus-safety-rules \
             trnm-consensus-safety-store \
