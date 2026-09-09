@@ -1,0 +1,302 @@
+name: TRNM ded43a hosted deep qualification
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-ded43a-hosted-deep-qualification
+  cancel-in-progress: false
+
+env:
+  EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+  EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+  PROSPECTIVE_MERGE_SHA: 6a46d99fcdf916a3f36a7261665e9ce05badbc34
+  PROSPECTIVE_MERGE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_TEST_THREADS: "1"
+  RUST_MIN_STACK: "67108864"
+  CI: "true"
+
+jobs:
+  documentation-and-machine-truth:
+    name: Exact-source documentation and machine truth
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+          git diff --quiet && git diff --cached --quiet
+      - name: Run source-bound documentation and release gates
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          python3 scripts/ci/check_documentation_contracts_v1.py
+          python3 scripts/ci/test_documentation_contracts_v1.py
+          python3 scripts/ci/check_documentation_reference_closure_v1.py
+          python3 scripts/ci/check_module_coverage_v1.py
+          python3 scripts/ci/test_module_coverage_guard_v1.py
+          python3 scripts/ci/check_technical_convergence_v1.py
+          python3 scripts/ci/test_technical_convergence_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_candidate_runtime_closure_v1.py
+          python3 scripts/ci/check_task_archive_closure_v1.py
+          python3 scripts/ci/generate_release_status_v1.py --check-deterministic
+          python3 scripts/ci/check_external_evidence_v1.py
+      - name: Require clean checkout
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
+
+  protocol-formal-and-wire:
+    name: Exact-source PoCO-BFT protocol formal and wire gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+      - name: Install pinned Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: formal/quint/poco-bft-v0/package-lock.json
+      - name: Install pinned Rust
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup component add rustfmt clippy --toolchain 1.95.0
+      - name: Install pinned protoc
+        run: |
+          set -euo pipefail
+          bash scripts/ci/install_pinned_protoc.sh
+      - name: Run complete frozen protocol gate family
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_poco_bft_mainline_truth.sh
+          bash scripts/ci/check_poco_bft_v0_ci_truth.sh
+          bash scripts/ci/check_poco_bft_v0_formal.sh
+          bash scripts/ci/check_poco_bft_v0_proto.sh
+          bash scripts/ci/check_poco_bft_v0_registry.sh
+          bash scripts/ci/check_poco_bft_v0_registry_reference.sh
+          bash scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+          bash scripts/ci/check_poco_bft_v0_wire_reference.sh
+          bash scripts/ci/check_poco_bft_v0_wire_semantic_reference.sh
+          bash scripts/ci/check_poco_bft_v0_wire_mutations.sh
+          bash scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+          bash scripts/ci/check_poco_bft_v0_migration_boundary_v1.sh
+          python3 scripts/ci/check_poco_bft_v0_ordered_roots.py
+          python3 scripts/ci/check_poco_bft_v0_parameters.py
+      - name: Test consensus kernels
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +1.95.0 test -p trnm-consensus-types -p trnm-consensus-crypto -p trnm-consensus-core -p trnm-consensus-safety-rules --locked -- --test-threads=1
+      - name: Require clean checkout
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
+
+  replay-recovery-and-storage:
+    name: Exact-source replay recovery and storage gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+      - name: Install pinned Rust
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup component add rustfmt clippy --toolchain 1.95.0
+      - name: Run replay and authority boundary scripts
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_payload_replay_recovery_v1.sh
+          bash scripts/ci/check_replay_to_core_coordinator_v1.sh
+          bash scripts/ci/check_replay_to_core_r2b_contract_v1.sh
+          bash scripts/ci/check_finalization_intent_process_matrix_v1.sh
+          python3 scripts/ci/check_authenticated_authority_ports_v0.py
+          bash scripts/ci/check_trnm_native_application_boundary.sh
+          bash scripts/ci/check_trnm_native_application_sqlite_boundary.sh
+          bash scripts/ci/check_trnm_native_execution_v0_boundary.sh
+      - name: Test storage execution and state-sync crates
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +1.95.0 test \
+            -p trnm-consensus-peer-lease \
+            -p trnm-consensus-safety-store \
+            -p trnm-consensus-signer-journal \
+            -p trnm-native-application \
+            -p trnm-native-application-sqlite \
+            -p trnm-native-execution-v0 \
+            -p trnm-state-sync-v0 \
+            -p trnm-core-restart-v0 \
+            --locked -- --test-threads=1
+      - name: Require clean checkout
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
+
+  node-runtime-and-rpc:
+    name: Exact-source node runtime RPC and candidate gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+      - name: Install pinned Rust
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup component add rustfmt clippy --toolchain 1.95.0
+      - name: Run candidate boundary gate
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_candidate_devnet_clippy_v1.sh
+      - name: Test node and RPC surfaces serially with enlarged stacks
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +1.95.0 test \
+            -p trnm-consensus-app \
+            -p trnm-poco-node \
+            -p trnm-poco-node-production-v0 \
+            -p trnm-poco-lab-validator \
+            -p trnm-node \
+            -p trnm-rpc \
+            --locked -- --test-threads=1
+      - name: Strict Clippy on affected executable boundaries
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +1.95.0 clippy \
+            -p trnm-consensus-app \
+            -p trnm-poco-node \
+            -p trnm-node \
+            -p trnm-rpc \
+            --all-targets --locked -- -D warnings
+      - name: Formatting
+        run: cd trillionnium && cargo +1.95.0 fmt --all -- --check
+      - name: Require clean checkout
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
+
+  shell-and-frontend-consumers:
+    name: Exact-source shell and frontend consumer gates
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Run shell and deterministic environment guards
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          bash scripts/validate_workflow_script_refs.sh
+          bash scripts/v2/trnm_gate_quick_check_deterministic_env_guard_test.sh
+          bash scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
+          bash scripts/v2/quick_gate_ci_shellcheck_required_guard_test.sh
+      - name: Install pinned Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: web4-frontend/package-lock.json
+      - name: Run frontend consumers
+        working-directory: web4-frontend
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm test -- --runInBand
+      - name: Require clean checkout
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
+
+  prospective-merge-critical-replay:
+    name: Prospective-merge critical replay
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out exact prospective merge
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.PROSPECTIVE_MERGE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify merge identity and tree
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$PROSPECTIVE_MERGE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$PROSPECTIVE_MERGE_TREE"
+      - name: Install pinned Rust
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup component add rustfmt clippy --toolchain 1.95.0
+      - name: Replay critical merge object gates
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh
+          bash scripts/ci/check_payload_replay_recovery_v1.sh
+          bash scripts/ci/check_replay_to_core_coordinator_v1.sh
+          cd trillionnium
+          cargo +1.95.0 test -p trnm-consensus-app -p trnm-poco-node -p trnm-rpc --locked -- --test-threads=1
+          cargo +1.95.0 clippy -p trnm-consensus-app -p trnm-poco-node -p trnm-rpc --all-targets --locked -- -D warnings
+          cargo +1.95.0 fmt --all -- --check
+      - name: Require clean checkout
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
