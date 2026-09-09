@@ -1,0 +1,278 @@
+name: TRNM final exact-source evidence orchestrator ded43a v2
+
+on:
+  push:
+    branches:
+      - evidence/final-orchestrator-ded43a-v2-20260909
+
+permissions:
+  actions: write
+  checks: read
+  contents: read
+  issues: write
+  pull-requests: read
+  security-events: read
+
+concurrency:
+  group: trnm-final-evidence-orchestrator-ded43a-v2
+  cancel-in-progress: false
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      SUBJECT_MERGE: 6a46d99fcdf916a3f36a7261665e9ce05badbc34
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact subject
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Observe, bounded-retry, and report all evidence lanes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import datetime
+          import json
+          import os
+          import pathlib
+          import time
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GH_TOKEN"]
+          source = os.environ["SUBJECT_SHA"]
+          tree = os.environ["SUBJECT_TREE"]
+          merge = os.environ["SUBJECT_MERGE"]
+          root = pathlib.Path(os.environ["RUNNER_TEMP"]) / "trnm-final-evidence-v2"
+          root.mkdir(parents=True, exist_ok=True)
+
+          lanes = [
+              ("rust-codeql", "evidence/codeql-rust-exact-source-ded43a-v3-20260909", "TRNM exact-source Rust CodeQL evidence ded43a v3", True),
+              ("three-target-one-hour-fuzz", "evidence/long-fuzz-ded43a-20260909", "TRNM three-target one-hour exact-source fuzz ded43a", True),
+              ("hosted-head-merge", "evidence/hosted-qualification-ded43a-20260909", "TRNM hosted exact head and merge qualification ded43a", True),
+              ("administration", "ops/admin-settings-exact-ded43a-20260909", "TRNM Plan V2 administration gate ded43a", False),
+              ("external-routing", "evidence/external-gates-ded43a-v2-20260909", "TRNM route DED43A external gate packet v2", True),
+          ]
+
+          def call(method, path, body=None):
+              url = path if path.startswith("https://") else "https://api.github.com" + path
+              headers = {
+                  "Accept": "application/vnd.github+json",
+                  "Authorization": f"Bearer {token}",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "User-Agent": "trnm-final-orchestrator-v2",
+              }
+              data = None
+              if body is not None:
+                  data = json.dumps(body).encode()
+                  headers["Content-Type"] = "application/json"
+              request = urllib.request.Request(url, headers=headers, data=data, method=method)
+              try:
+                  with urllib.request.urlopen(request, timeout=45) as response:
+                      raw = response.read()
+                      return response.status, json.loads(raw) if raw else None
+              except urllib.error.HTTPError as error:
+                  raw = error.read()
+                  try:
+                      value = json.loads(raw) if raw else None
+                  except Exception:
+                      value = {"raw": raw.decode("utf-8", "replace")}
+                  return error.code, value
+
+          def latest(branch, workflow_name):
+              query = urllib.parse.urlencode({"branch": branch, "per_page": 100})
+              code, payload = call("GET", f"/repos/{repo}/actions/runs?{query}")
+              if code != 200:
+                  return {"lookup_http_status": code, "lookup_error": payload}
+              matching = [run for run in payload.get("workflow_runs", []) if run.get("name") == workflow_name]
+              matching.sort(key=lambda run: (run.get("created_at") or "", run.get("id") or 0), reverse=True)
+              return matching[0] if matching else None
+
+          started = time.time()
+          deadline = started + 75 * 60
+          retried = set()
+          snapshots = []
+          final = {}
+
+          while True:
+              all_terminal = True
+              observation = {
+                  "observed_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                  "lanes": {},
+              }
+              for lane_id, branch, name, retry in lanes:
+                  run = latest(branch, name)
+                  observation["lanes"][lane_id] = run
+                  if not isinstance(run, dict) or run.get("status") != "completed":
+                      all_terminal = False
+                      continue
+                  if run.get("conclusion") != "success" and retry and run.get("id") not in retried:
+                      retried.add(run["id"])
+                      code, response = call("POST", f"/repos/{repo}/actions/runs/{run['id']}/rerun-failed-jobs", {})
+                      observation["lanes"][lane_id]["bounded_retry"] = {"http_status": code, "response": response}
+                      if code in (201, 202):
+                          all_terminal = False
+              snapshots.append(observation)
+              final = observation["lanes"]
+              if all_terminal or time.time() >= deadline:
+                  break
+              time.sleep(60)
+
+          detail = {}
+          for lane_id, branch, name, _ in lanes:
+              run = final.get(lane_id)
+              item = {"branch": branch, "workflow_name": name, "run": run}
+              if isinstance(run, dict) and run.get("id"):
+                  run_id = run["id"]
+                  code, jobs = call("GET", f"/repos/{repo}/actions/runs/{run_id}/jobs?per_page=100")
+                  item["jobs_http_status"] = code
+                  item["jobs"] = jobs
+                  code, artifacts = call("GET", f"/repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100")
+                  item["artifacts_http_status"] = code
+                  item["artifacts"] = artifacts
+              detail[lane_id] = item
+
+          pr_state = {}
+          review_state = {}
+          for number in (62, 100, 101):
+              code, value = call("GET", f"/repos/{repo}/pulls/{number}")
+              pr_state[str(number)] = {"http_status": code, "value": value}
+              code, value = call("GET", f"/repos/{repo}/pulls/{number}/reviews?per_page=100")
+              review_state[str(number)] = {"http_status": code, "value": value}
+
+          settings = {}
+          for key, endpoint in {
+              "main_protection": f"/repos/{repo}/branches/main/protection",
+              "codeql_default_setup": f"/repos/{repo}/code-scanning/default-setup",
+              "rulesets": f"/repos/{repo}/rulesets?per_page=100",
+          }.items():
+              code, value = call("GET", endpoint)
+              settings[key] = {"http_status": code, "value": value}
+
+          external_ids = (
+              "EXT-REVIEW-001",
+              "EXT-G1-CAMPAIGN-001",
+              "EXT-ANCHOR-HSM-001",
+              "EXT-POWERLOSS-001",
+              "EXT-AUDIT-001",
+              "EXT-SOAK-ACTIVATION-001",
+          )
+          external = {}
+          for gate in external_ids:
+              query = urllib.parse.urlencode({"q": f'repo:{repo} is:issue is:open in:title "{gate}"'})
+              code, value = call("GET", f"/search/issues?{query}")
+              external[gate] = {"http_status": code, "value": value}
+
+          repo_lane_ids = ("rust-codeql", "three-target-one-hour-fuzz", "hosted-head-merge", "external-routing")
+          repository_success = all(
+              isinstance(detail[lane]["run"], dict)
+              and detail[lane]["run"].get("status") == "completed"
+              and detail[lane]["run"].get("conclusion") == "success"
+              for lane in repo_lane_ids
+          )
+          administration_success = (
+              isinstance(detail["administration"]["run"], dict)
+              and detail["administration"]["run"].get("status") == "completed"
+              and detail["administration"]["run"].get("conclusion") == "success"
+          )
+
+          report = {
+              "schema": "trnm-final-exact-source-orchestrator-v2",
+              "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "subject": {"source_sha": source, "source_tree": tree, "prospective_merge": merge},
+              "poll_duration_seconds": int(time.time() - started),
+              "bounded_retries": sorted(retried),
+              "lanes": detail,
+              "pull_requests": pr_state,
+              "reviews": review_state,
+              "settings": settings,
+              "external_gate_issues": external,
+              "repository_controlled_evidence_success": repository_success,
+              "administration_apply_readback_success": administration_success,
+              "external_evidence_accepted": False,
+              "all_gaps_closed": False,
+              "public_testnet_ready": False,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "release_ready": False,
+          }
+          (root / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+          (root / "observations.json").write_text(json.dumps(snapshots, indent=2, sort_keys=True) + "\n")
+
+          lines = [
+              "<!-- trnm-final-orchestrator-ded43a-v2 -->",
+              "## Final exact-source evidence checkpoint v2",
+              "",
+              f"- source: `{source}`",
+              f"- tree: `{tree}`",
+              f"- prospective merge: `{merge}`",
+              f"- repository-controlled evidence set successful: **{repository_success}**",
+              f"- administration apply/readback successful: **{administration_success}**",
+              "- independent external evidence accepted: **False**",
+              "",
+              "| Lane | Run | Status | Conclusion | Attempt |",
+              "|---|---:|---|---|---:|",
+          ]
+          for lane_id in detail:
+              run = detail[lane_id].get("run") or {}
+              lines.append(
+                  f"| `{lane_id}` | `{run.get('id', '')}` | `{run.get('status', 'missing')}` | "
+                  f"`{run.get('conclusion', '')}` | `{run.get('run_attempt', '')}` |"
+              )
+          lines += [
+              "",
+              "Every job/step and artifact listing, review snapshot, settings API response and external issue lookup is retained in the workflow artifact.",
+              "This checkpoint cannot synthesize independent review, multi-host, HSM, physical power-loss, audit, soak or governance acceptance.",
+              "",
+              "```text",
+              "all_gaps_closed=false",
+              "public_testnet_ready=false",
+              "production_candidate=false",
+              "production_consensus_activation=false",
+              "release_ready=false",
+              "```",
+          ]
+          summary = "\n".join(lines) + "\n"
+          (root / "summary.md").write_text(summary)
+          for issue in (81, 101):
+              code, response = call("POST", f"/repos/{repo}/issues/{issue}/comments", {"body": summary})
+              if code != 201:
+                  raise SystemExit(f"failed to publish issue {issue}: HTTP {code}: {response}")
+          PY
+
+      - name: Upload final evidence snapshot
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-final-evidence-orchestrator-ded43a-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-final-evidence-v2/**
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Verify no source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
