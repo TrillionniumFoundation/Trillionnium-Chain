@@ -1,0 +1,101 @@
+name: TRNM one-shot evidence trigger stabilizer
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+    paths:
+      - .github/workflows/trnm-one-shot-evidence-trigger-stabilizer.yml
+
+permissions:
+  actions: write
+  contents: write
+
+jobs:
+  stabilize:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: evidence/codeql-rust-exact-source-ded43a-20260909
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.BRANCH }}
+          fetch-depth: 0
+      - name: Bind branch head
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse --abbrev-ref HEAD)" = "$BRANCH"
+          git diff --quiet && git diff --cached --quiet
+      - name: Restrict evidence workflows to explicit self changes or dispatch
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          files = [
+              ".github/workflows/trnm-codeql-rust-exact-source-ded43a-evidence.yml",
+              ".github/workflows/trnm-codeql-rust-exact-source-ded43a-disposition.yml",
+              ".github/workflows/trnm-ded43a-hosted-deep-qualification.yml",
+              ".github/workflows/trnm-ded43a-three-target-one-hour-fuzz.yml",
+              ".github/workflows/trnm-live-blocker-snapshot-ded43a.yml",
+          ]
+          branch_line = "      - evidence/codeql-rust-exact-source-ded43a-20260909\n"
+          for raw in files:
+              path = Path(raw)
+              text = path.read_text(encoding="utf-8")
+              if "  workflow_dispatch:\n" not in text:
+                  text = text.replace("on:\n  push:\n", "on:\n  workflow_dispatch:\n  push:\n", 1)
+              marker = branch_line
+              if marker not in text:
+                  raise SystemExit(f"branch trigger not found in {raw}")
+              suffix = f"    paths:\n      - '{raw}'\n"
+              after = text.split(marker, 1)[1]
+              trigger_prefix = after.split("\n\n", 1)[0]
+              if "    paths:" not in trigger_prefix:
+                  text = text.replace(marker, marker + suffix, 1)
+              path.write_text(text, encoding="utf-8")
+          PY
+          rm .github/workflows/trnm-one-shot-evidence-trigger-stabilizer.yml
+          git diff --check
+      - name: Cancel duplicate active evidence runs
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          names = {
+              "TRNM exact-source Rust CodeQL evidence ded43a",
+              "TRNM exact-source Rust CodeQL disposition inventory ded43a",
+              "TRNM ded43a hosted deep qualification",
+              "TRNM ded43a three-target one-hour fuzz",
+              "TRNM live blocker snapshot ded43a",
+          }
+          raw = subprocess.check_output([
+              "gh", "run", "list", "--branch", os.environ["BRANCH"],
+              "--limit", "100", "--json", "databaseId,workflowName,status,createdAt"
+          ], text=True)
+          runs = json.loads(raw)
+          by_name = {}
+          for run in runs:
+              if run["workflowName"] in names and run["status"] in {
+                  "queued", "in_progress", "pending", "waiting", "requested"
+              }:
+                  by_name.setdefault(run["workflowName"], []).append(run)
+          for name, items in by_name.items():
+              items.sort(key=lambda item: (item["createdAt"], item["databaseId"]), reverse=True)
+              for stale in items[1:]:
+                  subprocess.run(["gh", "run", "cancel", str(stale["databaseId"])], check=True)
+                  print(f"cancelled duplicate {name} run {stale['databaseId']}")
+          PY
+      - name: Publish stabilized evidence branch
+        run: |
+          set -euo pipefail
+          git config user.name "Trillionnium Evidence Automation"
+          git config user.email "noreply@trillionnium.invalid"
+          git add -A
+          git commit -m "ci: stabilize exact-source evidence triggers"
+          git push origin "HEAD:$BRANCH"
