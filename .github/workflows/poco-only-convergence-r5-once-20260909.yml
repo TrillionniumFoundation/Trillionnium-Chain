@@ -1,4 +1,5 @@
 name: PoCO-only convergence R5 (temporary)
+# integrity-repin revision: 2
 
 on:
   push:
@@ -6,6 +7,7 @@ on:
       - chore/poco-only-purge-20260909
     paths:
       - .github/workflows/poco-only-convergence-r5-once-20260909.yml
+      - tools/temporary_poco_convergence_r5.py
 
 permissions:
   contents: write
