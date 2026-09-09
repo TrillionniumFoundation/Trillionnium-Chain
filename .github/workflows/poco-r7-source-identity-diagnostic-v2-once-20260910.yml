@@ -1,0 +1,185 @@
+name: PoCO R7 source identity diagnostic v2 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-r7-source-identity-diagnostic-v2-once-20260910.yml
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "1"
+  RUST_BACKTRACE: "1"
+  RUST_MIN_STACK: "33554432"
+  PRODUCTION_PORTS_COMMIT: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
+  REMOTE_SIGNER_FIX_COMMIT: 2f01213918e8da288ce5f598447318c9113edaa2
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: chore/poco-only-purge-20260909
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install toolchain and materialize immutable candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup override set 1.95.0
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          git fetch --no-tags origin "$PRODUCTION_PORTS_COMMIT" "$REMOTE_SIGNER_FIX_COMMIT"
+          git checkout "$PRODUCTION_PORTS_COMMIT" -- \
+            trillionnium/crates/trnm-node-boundary-v0/src/lib.rs \
+            trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+          git checkout "$REMOTE_SIGNER_FIX_COMMIT" -- \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_service_os.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/os_process_fixture.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/pending_reservation_os.rs
+          python3 tools/temporary_poco_convergence_r5.py prepare
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          python3 tools/temporary_poco_convergence_r5.py refresh-pins
+          rm -f \
+            tools/temporary_native_purge.py \
+            tools/temporary_poco_convergence_r5.py \
+            .github/workflows/apply-poco-only-purge-temporary.yml \
+            .github/workflows/poco-only-full-tree-audit.yml \
+            .github/workflows/poco-purge-source-snapshot.yml \
+            .github/workflows/poco-only-convergence-r2-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r3-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r4-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r5-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r6-once-20260910.yml \
+            .github/workflows/poco-only-convergence-r7-once-20260910.yml \
+            .github/workflows/poco-r7-source-identity-diagnostic-once-20260910.yml \
+            .github/workflows/poco-r7-source-identity-diagnostic-v2-once-20260910.yml \
+            .github/workflows/poco-cli-materialization-diagnostic-once-20260909.yml \
+            .github/workflows/poco-cli-compile-diagnostic-once-20260909.yml \
+            .github/workflows/poco-workspace-serial-diagnostic-once-20260909.yml \
+            .github/workflows/nonexistent \
+            DO_NOT_CREATE \
+            DO_NOT_CREATE_2
+          git add -A
+          git diff --cached --check
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "chore(poco): converge native-only repository blockers"
+          final_commit=$(git rev-parse HEAD)
+          final_tree=$(git rev-parse 'HEAD^{tree}')
+          final_worktree="${RUNNER_TEMP}/trnm-r7-source-diagnostic-v2"
+          rm -rf "$final_worktree" "${RUNNER_TEMP}/trnm-r7-source-diagnostic-v2-target"
+          git worktree add --detach "$final_worktree" "$final_commit"
+          {
+            echo "FINAL_COMMIT=$final_commit"
+            echo "FINAL_TREE=$final_tree"
+            echo "FINAL_WORKTREE=$final_worktree"
+            echo "CARGO_TARGET_DIR=${RUNNER_TEMP}/trnm-r7-source-diagnostic-v2-target"
+          } >> "$GITHUB_ENV"
+
+      - name: Capture exact rustc source and preserve failed build evidence
+        id: capture
+        shell: bash
+        run: |
+          set -uo pipefail
+          capture="${RUNNER_TEMP}/trnm-r7-source-capture-v2"
+          rm -rf "$capture" "$CARGO_TARGET_DIR"
+          mkdir -p "$capture"
+          wrapper="${RUNNER_TEMP}/trnm-rustc-source-capture-v2.sh"
+          cat > "$wrapper" <<'SH'
+          #!/usr/bin/env bash
+          set -u
+          real_rustc="$1"
+          shift
+          crate_name=""
+          previous=""
+          source_arg=""
+          for argument in "$@"; do
+            if [[ "$previous" == "--crate-name" ]]; then crate_name="$argument"; fi
+            if [[ "$argument" == *.rs && -f "$argument" && -z "$source_arg" ]]; then
+              source_arg="$argument"
+            fi
+            previous="$argument"
+          done
+          if [[ "$crate_name" == "trnm_cli" ]]; then
+            capture_dir="${TRNM_RUSTC_CAPTURE_DIR:?}"
+            invocation="$(date +%s%N)-$$"
+            {
+              printf 'working_directory=%s\n' "$PWD"
+              printf 'real_rustc=%s\n' "$real_rustc"
+              printf 'crate_name=%s\n' "$crate_name"
+              printf 'source_arg=%s\n' "$source_arg"
+              printf 'argv:'
+              printf ' %q' "$real_rustc" "$@"
+              printf '\n'
+            } > "$capture_dir/$invocation.meta"
+            if [[ -n "$source_arg" && -f "$source_arg" ]]; then
+              realpath "$source_arg" > "$capture_dir/$invocation.realpath"
+              sha256sum "$source_arg" > "$capture_dir/$invocation.sha256"
+              cp "$source_arg" "$capture_dir/$invocation.source.rs"
+              nl -ba "$source_arg" | sed -n '1550,1710p' > "$capture_dir/$invocation.lines.txt"
+              grep -n -C 40 -E \
+                'AuthorityContinuityContractV0|simple_majority_root_hex|contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|canonical\(contract' \
+                "$source_arg" > "$capture_dir/$invocation.suspicious.txt" || true
+            fi
+          fi
+          exec "$real_rustc" "$@"
+          SH
+          chmod 700 "$wrapper"
+          export RUSTC_WRAPPER="$wrapper"
+          export TRNM_RUSTC_CAPTURE_DIR="$capture"
+          cd "$FINAL_WORKTREE"
+          cli=trillionnium/crates/trnm-cli/src/main.rs
+          {
+            echo "head=$(git rev-parse HEAD)"
+            echo "tree=$(git rev-parse 'HEAD^{tree}')"
+            echo "worktree=$PWD"
+            echo "cli_realpath=$(realpath "$cli")"
+            echo "cli_sha256=$(sha256sum "$cli" | awk '{print $1}')"
+            echo "cli_lines=$(wc -l <"$cli")"
+            echo "stale_before=$(grep -Ec 'AuthorityContinuityContractV0|simple_majority_root_hex|contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|canonical\(contract' "$cli" || true)"
+          } > "$capture/worktree-before.txt"
+          cargo metadata --manifest-path trillionnium/Cargo.toml --locked --offline --format-version 1 \
+            > "$capture/cargo-metadata.json"
+          set +e
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline -j 1 -vv \
+            > "$capture/workspace-check.log" 2>&1
+          rc=$?
+          set -e
+          {
+            echo "cargo_rc=$rc"
+            echo "cli_sha256=$(sha256sum "$cli" | awk '{print $1}')"
+            echo "cli_lines=$(wc -l <"$cli")"
+            echo "stale_after=$(grep -Ec 'AuthorityContinuityContractV0|simple_majority_root_hex|contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|canonical\(contract' "$cli" || true)"
+            git status --porcelain --untracked-files=all
+          } > "$capture/worktree-after.txt"
+          cp "$cli" "$capture/worktree-after.source.rs"
+          grep -n -C 40 -E \
+            'AuthorityContinuityContractV0|simple_majority_root_hex|contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|canonical\(contract' \
+            "$cli" > "$capture/worktree-after.suspicious.txt" || true
+          grep -nE '(^| )error(\[E[0-9]+\])?:|could not compile|panicked at' \
+            "$capture/workspace-check.log" > "$capture/compiler-errors.txt" || true
+          printf '%s\n' "$rc" > "$capture/cargo-rc.txt"
+          printf 'cargo_rc=%s captures=%s\n' "$rc" "$(find "$capture" -type f | wc -l)"
+          exit 0
+
+      - name: Upload compiler source identity bundle
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-r7-source-identity-v2-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-r7-source-capture-v2
+          if-no-files-found: error
+          retention-days: 7
