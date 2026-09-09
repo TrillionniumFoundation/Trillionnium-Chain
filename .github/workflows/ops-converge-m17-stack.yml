@@ -1,0 +1,175 @@
+name: ops-converge-m17-stack
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-converge-m17-stack.yml
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: ops-converge-m17-stack-20260909
+  cancel-in-progress: false
+
+jobs:
+  converge:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      PARENT_PR: '100'
+      CHILD_PR: '101'
+      PARENT_BRANCH: security/codeql-default-setup-v1-20260909
+      CHILD_BRANCH: security/codeql-rust-log-redaction-v1-20260909
+      FINAL_BASE: work/plan-v2-full-gap-closure-20260902
+    steps:
+      - name: Check out exact child branch with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: security/codeql-rust-log-redaction-v1-20260909
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Freeze live PR and branch identities
+        id: freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --force --no-tags origin \
+            "refs/heads/$PARENT_BRANCH:refs/remotes/origin/$PARENT_BRANCH" \
+            "refs/heads/$CHILD_BRANCH:refs/remotes/origin/$CHILD_BRANCH" \
+            "refs/heads/$FINAL_BASE:refs/remotes/origin/$FINAL_BASE"
+
+          parent_json="$(gh api "repos/$REPOSITORY/pulls/$PARENT_PR")"
+          child_json="$(gh api "repos/$REPOSITORY/pulls/$CHILD_PR")"
+
+          test "$(jq -r .state <<<"$parent_json")" = open
+          test "$(jq -r .state <<<"$child_json")" = open
+          test "$(jq -r .head.ref <<<"$parent_json")" = "$PARENT_BRANCH"
+          test "$(jq -r .head.ref <<<"$child_json")" = "$CHILD_BRANCH"
+          test "$(jq -r .draft <<<"$child_json")" = true
+
+          parent_sha="$(git rev-parse "refs/remotes/origin/$PARENT_BRANCH")"
+          child_sha="$(git rev-parse "refs/remotes/origin/$CHILD_BRANCH")"
+          base_sha="$(git rev-parse "refs/remotes/origin/$FINAL_BASE")"
+          test "$(jq -r .head.sha <<<"$parent_json")" = "$parent_sha"
+          test "$(jq -r .head.sha <<<"$child_json")" = "$child_sha"
+
+          printf 'parent_sha=%s\nchild_sha=%s\nbase_sha=%s\n' \
+            "$parent_sha" "$child_sha" "$base_sha" | tee "$RUNNER_TEMP/frozen.env"
+          {
+            echo "parent_sha=$parent_sha"
+            echo "child_sha=$child_sha"
+            echo "base_sha=$base_sha"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Integrate any live parent advance without conflict masking
+        id: integrate
+        shell: bash
+        env:
+          PARENT_SHA: ${{ steps.freeze.outputs.parent_sha }}
+          CHILD_SHA: ${{ steps.freeze.outputs.child_sha }}
+        run: |
+          set -euo pipefail
+          git checkout --detach "$CHILD_SHA"
+          if git merge-base --is-ancestor "$PARENT_SHA" "$CHILD_SHA"; then
+            final_sha="$CHILD_SHA"
+            changed=false
+          else
+            git config user.name "OpenAI GPT-5.6 Pro"
+            git config user.email "noreply@openai.com"
+            git merge --no-ff --no-edit "$PARENT_SHA"
+            test "$(git show -s --format=%P HEAD | wc -w)" -eq 2
+            git merge-base --is-ancestor "$PARENT_SHA" HEAD
+            git merge-base --is-ancestor "$CHILD_SHA" HEAD
+            git diff --check "$CHILD_SHA" HEAD
+            python3 -m py_compile \
+              scripts/admin/apply_codeql_default_setup_v1.py \
+              scripts/ci/test_codeql_default_setup_v1.py
+            python3 scripts/ci/test_codeql_default_setup_v1.py
+            final_sha="$(git rev-parse HEAD)"
+            git push --force-with-lease="refs/heads/$CHILD_BRANCH:$CHILD_SHA" \
+              origin "HEAD:refs/heads/$CHILD_BRANCH"
+            changed=true
+          fi
+          git merge-base --is-ancestor "$PARENT_SHA" "$final_sha"
+          {
+            echo "final_sha=$final_sha"
+            echo "changed=$changed"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Re-read exact remote state before PR mutation
+        shell: bash
+        env:
+          PARENT_SHA: ${{ steps.freeze.outputs.parent_sha }}
+          FINAL_SHA: ${{ steps.integrate.outputs.final_sha }}
+        run: |
+          set -euo pipefail
+          git fetch --force --no-tags origin \
+            "refs/heads/$PARENT_BRANCH:refs/remotes/origin/$PARENT_BRANCH" \
+            "refs/heads/$CHILD_BRANCH:refs/remotes/origin/$CHILD_BRANCH" \
+            "refs/heads/$FINAL_BASE:refs/remotes/origin/$FINAL_BASE"
+          test "$(git rev-parse "refs/remotes/origin/$PARENT_BRANCH")" = "$PARENT_SHA"
+          test "$(git rev-parse "refs/remotes/origin/$CHILD_BRANCH")" = "$FINAL_SHA"
+          git merge-base --is-ancestor "$PARENT_SHA" "$FINAL_SHA"
+          test "$(gh api "repos/$REPOSITORY/pulls/$PARENT_PR" --jq .state)" = open
+          test "$(gh api "repos/$REPOSITORY/pulls/$CHILD_PR" --jq .state)" = open
+
+      - name: Retarget combined child directly to the sole successor
+        shell: bash
+        env:
+          PARENT_SHA: ${{ steps.freeze.outputs.parent_sha }}
+          FINAL_SHA: ${{ steps.integrate.outputs.final_sha }}
+          BASE_SHA: ${{ steps.freeze.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          body_file="$RUNNER_TEMP/child-body.md"
+          cat > "$body_file" <<EOF
+          ## Combined M17 security candidate
+
+          This Draft now combines the complete live #100 CodeQL default-setup/evidence contract and the #101 Rust process-diagnostic redactions directly over the sole Plan V2 integration successor #62.
+
+          ```text
+          base_branch=$FINAL_BASE
+          base_sha_at_convergence=$BASE_SHA
+          absorbed_parent_pr=#$PARENT_PR
+          absorbed_parent_sha=$PARENT_SHA
+          combined_head=$FINAL_SHA
+          ```
+
+          Runtime convergence proved that the exact live #100 head is an ancestor of the combined head. No parent commit or child redaction was dropped; any parent advance was merged without `ours`/`theirs`, and the CodeQL contract regression corpus was replayed before publication.
+
+          This restructuring is not acceptance. Retargeting invalidates stale review/check evidence. Keep Draft until every applicable exact-head and prospective-merge check on the new tuple is terminal success, live administration readback and genuine Rust-inclusive CodeQL/SARIF evidence are complete, and two eligible non-author reviewers approve after the last push.
+
+          No repository-protection bypass, alert dismissal, production/testnet/release promotion, HSM/multi-host/power-loss/audit/soak substitution, or branch deletion is authorized here.
+          EOF
+
+          gh api --method PATCH "repos/$REPOSITORY/pulls/$CHILD_PR" \
+            -f base="$FINAL_BASE" \
+            -f title='M17: combined Rust-inclusive CodeQL contract and diagnostic redaction' \
+            -F body=@"$body_file" \
+            -F draft=true >/dev/null
+
+          gh api "repos/$REPOSITORY/issues/$PARENT_PR/comments" \
+            -f body="Superseded by combined Draft #$CHILD_PR at exact head \`$FINAL_SHA\`. Runtime convergence verified this PR's live head \`$PARENT_SHA\` is an ancestor of that combined candidate before retargeting it directly to #62. Closing this review surface does not merge, accept, dismiss findings, promote readiness, or delete the branch." >/dev/null
+          gh api --method PATCH "repos/$REPOSITORY/pulls/$PARENT_PR" \
+            -f state=closed >/dev/null
+
+      - name: Verify resulting single child chain
+        shell: bash
+        env:
+          FINAL_SHA: ${{ steps.integrate.outputs.final_sha }}
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$REPOSITORY/pulls/$PARENT_PR" --jq .state)" = closed
+          test "$(gh api "repos/$REPOSITORY/pulls/$CHILD_PR" --jq .state)" = open
+          test "$(gh api "repos/$REPOSITORY/pulls/$CHILD_PR" --jq .draft)" = true
+          test "$(gh api "repos/$REPOSITORY/pulls/$CHILD_PR" --jq .base.ref)" = "$FINAL_BASE"
+          test "$(gh api "repos/$REPOSITORY/pulls/$CHILD_PR" --jq .head.sha)" = "$FINAL_SHA"
