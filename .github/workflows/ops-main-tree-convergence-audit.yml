@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 45
     env:
       CANONICAL_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
-      EXPECTED_PARENT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXPECTED_PARENT_SHA: 540b09a279cd11f564e95826f15771b73e1f7529
       CARRIER_BRANCH: ops/main-tree-convergence-audit-20260909
     steps:
       - name: Check out exact audit carrier
@@ -58,7 +58,6 @@ jobs:
           from __future__ import annotations
 
           import csv
-          import hashlib
           import json
           import os
           import subprocess
