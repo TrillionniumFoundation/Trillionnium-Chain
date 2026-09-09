@@ -58,7 +58,7 @@
     "manual_semantic_review_path": "docs/evidence/security/codeql/ded43a/manual-semantic-review-v1.json",
     "manual_semantic_review_sha256": "4c468618f45b460f9374ac1ea18ea1e22d8875e4f993ad83c909312aca4d45d9",
     "workflow_path": ".github/workflows/trnm-codeql-disposition-ded43a-v1.yml",
-    "workflow_source_sha256": "6593364de70b8d0eaa52ee6b8c535694d5e2d6fe870c0b6dd82a67928c7b16f6"
+    "workflow_source_sha256": "5d70d37d9f1eb8999991ee2bdee74ed9c6277a031f37e9b94627b63c78061a8d"
   },
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
   "schema": "trnm-rust-codeql-disposition-contract-v1",
