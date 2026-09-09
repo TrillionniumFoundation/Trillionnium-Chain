@@ -1,0 +1,241 @@
+name: TRNM exact-source Rust CodeQL evidence ded43a v3
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-v3-20260909
+
+permissions:
+  contents: read
+  security-events: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: trnm-codeql-rust-ded43a-v3
+  cancel-in-progress: false
+
+jobs:
+  rust-codeql-evidence:
+    name: Rust CodeQL exact-source evidence ded43a v3
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      CODEQL_ACTION_SHA: d1ba80a13dd99fba24a470575428917156a28b43
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Retain carrier identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s\n' "${GITHUB_SHA}" > "${RUNNER_TEMP}/carrier-sha"
+
+      - name: Check out exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Initialize pinned Rust CodeQL without build
+        uses: github/codeql-action/init@d1ba80a13dd99fba24a470575428917156a28b43
+        with:
+          languages: rust
+          build-mode: none
+          queries: security-extended
+
+      - name: Analyze locally without uploading CodeQL SARIF
+        uses: github/codeql-action/analyze@d1ba80a13dd99fba24a470575428917156a28b43
+        with:
+          category: /language:rust-exact-source-evidence-ded43a-v3
+          output: ${{ runner.temp }}/trnm-codeql-rust/raw
+          post-processed-sarif-path: ${{ runner.temp }}/trnm-codeql-rust/post-processed
+          upload: never
+          upload-database: false
+          wait-for-processing: false
+
+      - name: Build immutable report and bounded review summary
+        id: report
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-codeql-rust"
+          evidence="${root}/evidence"
+          mkdir -p "${evidence}"
+          export root evidence
+          python3 - <<'PY'
+          import collections
+          import hashlib
+          import json
+          import os
+          import pathlib
+
+          root = pathlib.Path(os.environ["root"])
+          evidence = pathlib.Path(os.environ["evidence"])
+          sarifs = sorted(root.rglob("*.sarif"))
+          if not sarifs:
+              raise SystemExit("CodeQL produced no SARIF")
+
+          preferred = root / "post-processed" / "upload.sarif"
+          canonical = preferred if preferred.exists() else sarifs[0]
+          document = json.loads(canonical.read_text(encoding="utf-8"))
+
+          findings = []
+          rules = collections.Counter()
+          levels = collections.Counter()
+          for run in document.get("runs", []):
+              for result in run.get("results", []):
+                  rule = result.get("ruleId") or "<missing>"
+                  level = result.get("level") or "<missing>"
+                  locations = []
+                  for location in result.get("locations", []):
+                      physical = location.get("physicalLocation") or {}
+                      artifact = physical.get("artifactLocation") or {}
+                      region = physical.get("region") or {}
+                      locations.append({
+                          "uri": artifact.get("uri"),
+                          "start_line": region.get("startLine"),
+                          "start_column": region.get("startColumn"),
+                          "end_line": region.get("endLine"),
+                          "end_column": region.get("endColumn"),
+                      })
+                  findings.append({
+                      "rule_id": rule,
+                      "level": level,
+                      "message": (result.get("message") or {}).get("text") or "",
+                      "locations": locations,
+                      "partial_fingerprints": result.get("partialFingerprints") or {},
+                  })
+                  rules[rule] += 1
+                  levels[level] += 1
+
+          cli_info = os.environ.get("CODEQL_ACTION_CLI_VERSION_INFO", "")
+          try:
+              cli_document = json.loads(cli_info) if cli_info else {"available": False}
+          except json.JSONDecodeError:
+              cli_document = {"available": False, "raw": cli_info}
+          (evidence / "codeql-cli-version.json").write_text(
+              json.dumps(cli_document, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          (evidence / "findings.json").write_text(
+              json.dumps(findings, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+
+          files = []
+          for path in sarifs:
+              raw = path.read_bytes()
+              files.append({
+                  "path": str(path.relative_to(root)),
+                  "bytes": len(raw),
+                  "sha256": hashlib.sha256(raw).hexdigest(),
+              })
+
+          report = {
+              "schema": "trnm-rust-codeql-exact-source-evidence-v3",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "carrier_sha": pathlib.Path(os.environ["RUNNER_TEMP"], "carrier-sha").read_text().strip(),
+              "exact_source_sha": os.environ["EXACT_SOURCE_SHA"],
+              "exact_source_tree": os.environ["EXACT_SOURCE_TREE"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "codeql_action_sha": os.environ["CODEQL_ACTION_SHA"],
+              "language": "rust",
+              "build_mode": "none",
+              "query_suite": "security-extended",
+              "sarif_upload": "never",
+              "canonical_sarif": str(canonical.relative_to(root)),
+              "result_count": len(findings),
+              "levels": dict(sorted(levels.items())),
+              "rules": dict(sorted(rules.items())),
+              "files": files,
+              "independent_specialist_acceptance": False,
+              "all_gaps_closed": False,
+              "production_candidate": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+          }
+          (evidence / "report.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+
+          top = rules.most_common(12)
+          lines = [
+              "<!-- trnm-codeql-ded43a-v3 -->",
+              "## Exact-source Rust CodeQL evidence",
+              "",
+              f"- source: `{report['exact_source_sha']}`",
+              f"- tree: `{report['exact_source_tree']}`",
+              f"- workflow run: `{report['workflow_run_id']}` attempt `{report['workflow_run_attempt']}`",
+              f"- CodeQL action: `{report['codeql_action_sha']}`",
+              "- language/build/query: `rust` / `none` / `security-extended`",
+              f"- complete SARIF result count: **{report['result_count']}**",
+              f"- SARIF files: **{len(files)}**",
+              "",
+              "Top rules:",
+          ]
+          if top:
+              lines.extend(f"- `{rule}`: {count}" for rule, count in top)
+          else:
+              lines.append("- none")
+          lines += [
+              "",
+              "Full SARIF, normalized findings, CLI metadata and SHA-256 inventory are retained as the workflow artifact.",
+              "This evidence does not dismiss findings or establish independent security acceptance. Production/testnet/release/activation remain false.",
+          ]
+          (evidence / "review-summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+          (
+            cd "${root}"
+            find . -type f ! -path './evidence/SHA256SUMS' -print0 \
+              | sort -z \
+              | xargs -0 sha256sum > evidence/SHA256SUMS
+          )
+          test -s "${evidence}/report.json"
+          test -s "${evidence}/findings.json"
+          test -s "${evidence}/review-summary.md"
+          test -s "${evidence}/SHA256SUMS"
+
+      - name: Upload immutable Rust CodeQL evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-rust-codeql-exact-source-ded43a-v3-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-codeql-rust/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Publish bounded summary to security issue and PR
+        if: ${{ success() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          body="${RUNNER_TEMP}/trnm-codeql-rust/evidence/review-summary.md"
+          for issue in 88 101; do
+            jq -n --rawfile body "${body}" '{body:$body}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+          done
+
+      - name: Verify no source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
