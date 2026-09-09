@@ -1,0 +1,151 @@
+name: TRNM exact-source Rust CodeQL disposition candidate ded43a v1
+
+on:
+  push:
+    branches:
+      - security/codeql-complete-disposition-ded43a-v1-20260909
+  pull_request:
+    paths:
+      - 'docs/evidence/security/codeql/ded43a/**'
+      - 'scripts/ci/generate_codeql_dispositions_ded43a_v1.py'
+      - '.github/workflows/trnm-codeql-disposition-ded43a-v1.yml'
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: trnm-codeql-disposition-ded43a-v1-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-complete-disposition:
+    name: Generate and validate all 703 exact-source Rust dispositions
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      SOURCE_RUN_ID: '34311122905'
+      SOURCE_ARTIFACT_NAME: trnm-rust-codeql-exact-source-ded43a-v3-34311122905
+      TRIAGE_RUN_ID: '34312572616'
+      TRIAGE_ARTIFACT_NAME: trnm-codeql-triage-ded43a-v2-34312572616
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check out disposition carrier with full ancestry
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify carrier descends from the exact analyzed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e "${SUBJECT_SHA}^{commit}"
+          test "$(git rev-parse "${SUBJECT_SHA}^{tree}")" = "${SUBJECT_TREE}"
+          git merge-base --is-ancestor "${SUBJECT_SHA}" HEAD
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Materialize immutable exact source in a detached worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git worktree add --detach "${RUNNER_TEMP}/subject" "${SUBJECT_SHA}"
+          test "$(git -C "${RUNNER_TEMP}/subject" rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git -C "${RUNNER_TEMP}/subject" rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git -C "${RUNNER_TEMP}/subject" diff --quiet
+          git -C "${RUNNER_TEMP}/subject" diff --cached --quiet
+
+      - name: Download the exact immutable CodeQL artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/codeql"
+          gh run download "${SOURCE_RUN_ID}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --name "${SOURCE_ARTIFACT_NAME}" \
+            --dir "${RUNNER_TEMP}/codeql"
+          test -s "${RUNNER_TEMP}/codeql/post-processed/upload.sarif"
+          test "$(sha256sum "${RUNNER_TEMP}/codeql/post-processed/upload.sarif" | cut -d' ' -f1)" \
+            = "d21b98a0e1b78dc3a45091cf7d2f2a9d24f8811ef08861bc5268d2fb19517f83"
+          mkdir -p "${RUNNER_TEMP}/triage"
+          gh run download "${TRIAGE_RUN_ID}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --name "${TRIAGE_ARTIFACT_NAME}" \
+            --dir "${RUNNER_TEMP}/triage"
+          test -s "${RUNNER_TEMP}/triage/triage.json"
+
+      - name: Generate complete per-fingerprint disposition and run false-pass mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/validated"
+          python3 scripts/ci/generate_codeql_dispositions_ded43a_v1.py \
+            --source-root "${RUNNER_TEMP}/subject" \
+            --sarif "${RUNNER_TEMP}/codeql/post-processed/upload.sarif" \
+            --triage "${RUNNER_TEMP}/triage/triage.json" \
+            --manual docs/evidence/security/codeql/ded43a/manual-semantic-review-v1.json \
+            --output "${out}" \
+            --self-test
+          jq -e '
+            .counts.total == 703 and
+            .counts.unreviewed == 0 and
+            .counts.actionable_production_findings == 0 and
+            .authority.independent_specialist_acceptance == false and
+            .authority.alert_dismissal_authorized == false and
+            .authority.official_codeql_gate_success == false and
+            .authority.all_gaps_closed == false
+          ' "${out}/report.json"
+          test "$(sha256sum docs/evidence/security/codeql/ded43a/manual-semantic-review-v1.json | cut -d' ' -f1)" \
+            = "4c468618f45b460f9374ac1ea18ea1e22d8875e4f993ad83c909312aca4d45d9"
+
+      - name: Retain complete candidate packet and validation report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-codeql-disposition-candidate-ded43a-v1-${{ github.run_id }}
+          path: ${{ runner.temp }}/validated/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Publish idempotent bounded review summary
+        if: ${{ success() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          marker='<!-- trnm-codeql-disposition-candidate-ded43a-v1 -->'
+          {
+            cat "${RUNNER_TEMP}/validated/summary.md"
+            printf '\nValidation workflow: `%s`, carrier: `%s`.\n' "${GITHUB_RUN_ID}" "${GITHUB_SHA}"
+          } > "${RUNNER_TEMP}/comment.md"
+          for issue in 88 62; do
+            existing="$(
+              gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" \
+                --jq '.[] | select(.body | contains("'"${marker}"'")) | .id' \
+                | tail -n1
+            )"
+            if [[ -n "${existing}" ]]; then
+              jq -n --rawfile body "${RUNNER_TEMP}/comment.md" '{body:$body}' \
+                | gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" --input -
+            else
+              jq -n --rawfile body "${RUNNER_TEMP}/comment.md" '{body:$body}' \
+                | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+            fi
+          done
+
+      - name: Verify no source or carrier mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C "${RUNNER_TEMP}/subject" rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git -C "${RUNNER_TEMP}/subject" rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git -C "${RUNNER_TEMP}/subject" diff --quiet
+          git -C "${RUNNER_TEMP}/subject" diff --cached --quiet
+          git diff --quiet
+          git diff --cached --quiet
