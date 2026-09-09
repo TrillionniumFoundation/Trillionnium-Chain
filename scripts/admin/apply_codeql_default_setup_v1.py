@@ -425,6 +425,61 @@ def _list_check_runs(
     return all_runs, len(all_runs)
 
 
+def required_check_inventory_snapshot(
+    api: GitHubApi,
+    repository: str,
+    evidence_sha: str,
+    required_names: list[str],
+) -> dict[str, Any]:
+    # Capture every authority-bearing required check in one complete generation.
+    require(set(required_names) == REQUIRED_CHECK_NAMES, "required check set drift")
+    all_runs, total_count = _list_check_runs(api, repository, evidence_sha)
+    snapshot: list[dict[str, Any]] = []
+    for run in all_runs:
+        name = run.get("name")
+        if name not in REQUIRED_CHECK_NAMES:
+            continue
+        run_id = run.get("id")
+        require(
+            isinstance(run_id, int) and run_id > 0,
+            f"check {name} id missing",
+        )
+        require(
+            run.get("head_sha") == evidence_sha,
+            f"check {name} head SHA mismatch",
+        )
+        app = run.get("app")
+        require(isinstance(app, dict), f"check {name} app identity missing")
+        owner = app.get("owner")
+        require(isinstance(owner, dict), f"check {name} app owner missing")
+        snapshot.append(
+            {
+                "id": run_id,
+                "name": name,
+                "head_sha": run.get("head_sha"),
+                "status": run.get("status"),
+                "conclusion": run.get("conclusion"),
+                "started_at": run.get("started_at"),
+                "completed_at": run.get("completed_at"),
+                "details_url": run.get("details_url"),
+                "external_id": run.get("external_id"),
+                "check_suite_id": _suite_id(run, str(name)),
+                "app": {
+                    "id": app.get("id"),
+                    "slug": app.get("slug"),
+                    "owner": owner.get("login"),
+                },
+            }
+        )
+    snapshot.sort(key=lambda item: (str(item["name"]), int(item["id"])))
+    return {
+        "evidence_sha": evidence_sha,
+        "total_check_runs": total_count,
+        "required_run_count": len(snapshot),
+        "required_runs": snapshot,
+    }
+
+
 def latest_check_runs(
     api: GitHubApi, repository: str, evidence_sha: str
 ) -> tuple[dict[str, dict[str, Any]], int]:
@@ -791,6 +846,9 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--acknowledge-admin-mutation", action="store_true")
     parser.add_argument("--acknowledge-change-freeze", action="store_true")
+    parser.add_argument(
+        "--acknowledge-settings-verification-freeze", action="store_true"
+    )
     parser.add_argument("--expected-current-main-sha")
     parser.add_argument("--timeout-seconds", type=int, default=600)
     parser.add_argument("--poll-seconds", type=float, default=5.0)
@@ -830,6 +888,20 @@ def main(argv: list[str] | None = None) -> int:
         )
         require(args.evidence_sha is not None, "--evidence-sha required")
         require(args.validation_run_id is not None, "--validation-run-id required")
+        require(
+            args.acknowledge_settings_verification_freeze,
+            "--acknowledge-settings-verification-freeze is required with "
+            "--verify-evidence",
+        )
+        verification_ticket = os.environ.get(
+            "TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET", ""
+        )
+        require(
+            verification_ticket.strip() != "",
+            "TRNM_CODEQL_SETTINGS_VERIFICATION_TICKET is required",
+        )
+    else:
+        verification_ticket = ""
 
     report: dict[str, Any] = {
         "schema": "trnm-codeql-default-setup-report-v2",
@@ -846,9 +918,13 @@ def main(argv: list[str] | None = None) -> int:
         "live_before": None,
         "live_after": None,
         "evidence": None,
+        "evidence_inventory_before": None,
+        "evidence_inventory_after": None,
         "changed": False,
         "validation_run": None,
         "branch_observations": [],
+        "settings_verification_ticket": None,
+        "settings_verification_freeze_acknowledged": False,
         "production_candidate": False,
         "production_consensus_activation": False,
         "public_testnet_ready": False,
@@ -866,16 +942,58 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.verify_evidence:
         assert report["live_after"] is not None
-        report["evidence"] = verify_exact_source_checks(
+        initial_live = report["live_after"]
+        report["live_before"] = initial_live
+        report["settings_verification_ticket"] = verification_ticket
+        report["settings_verification_freeze_acknowledged"] = True
+        report["evidence_inventory_before"] = required_check_inventory_snapshot(
             api,
             repository,
             args.evidence_sha,
             config["required_check_names"],
-            live_updated_at=report["live_after"]["updated_at"],
+        )
+        first_evidence = verify_exact_source_checks(
+            api,
+            repository,
+            args.evidence_sha,
+            config["required_check_names"],
+            live_updated_at=initial_live["updated_at"],
             validation_run_id=args.validation_run_id,
             trusted_producers=config["trusted_check_producers"],
             analysis_workflow_path=config["analysis_workflow_path"],
         )
+        final_live = verify_live_setup(api, repository, config)
+        require(
+            final_live == initial_live,
+            "live default setup changed during evidence verification",
+        )
+        final_evidence = verify_exact_source_checks(
+            api,
+            repository,
+            args.evidence_sha,
+            config["required_check_names"],
+            live_updated_at=final_live["updated_at"],
+            validation_run_id=args.validation_run_id,
+            trusted_producers=config["trusted_check_producers"],
+            analysis_workflow_path=config["analysis_workflow_path"],
+        )
+        report["evidence_inventory_after"] = required_check_inventory_snapshot(
+            api,
+            repository,
+            args.evidence_sha,
+            config["required_check_names"],
+        )
+        require(
+            report["evidence_inventory_after"]
+            == report["evidence_inventory_before"],
+            "required CodeQL check inventory changed during evidence verification",
+        )
+        require(
+            final_evidence == first_evidence,
+            "required CodeQL evidence changed during verification",
+        )
+        report["evidence"] = final_evidence
+        report["live_after"] = final_live
 
     if args.apply:
         require(
