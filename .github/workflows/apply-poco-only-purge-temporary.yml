@@ -38,7 +38,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           test -x tools/temporary_native_purge.py
 
-      - name: Install pinned Rust toolchain
+      - name: Install pinned Rust toolchain and locked dependencies
         shell: bash
         run: |
           set -euo pipefail
@@ -46,6 +46,7 @@ jobs:
           rustup override set 1.95.0
           rustc --version
           cargo --version
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
 
       - name: Apply one-shot purge
         shell: bash
