@@ -1,0 +1,507 @@
+name: PoCO external evidence orchestration (temporary)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-evidence-orchestration-20260910
+    paths:
+      - .github/workflows/poco-external-evidence-orchestration-once-20260910.yml
+
+concurrency:
+  group: poco-external-evidence-orchestration-final
+  cancel-in-progress: true
+
+permissions:
+  actions: write
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PRODUCT_BRANCH: chore/poco-only-purge-20260909
+      EVIDENCE_BRANCH: evidence/poco-external-orchestration-20260910
+      OPS_BRANCH: ops/poco-external-evidence-orchestration-20260910
+      PR_NUMBER: "117"
+    steps:
+      - name: Check out exact operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.OPS_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Bind immutable product source and verify native-only tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$OPS_BRANCH"
+          git fetch --no-tags origin \
+            "$PRODUCT_BRANCH:refs/remotes/origin/$PRODUCT_BRANCH" \
+            "$EVIDENCE_BRANCH:refs/remotes/origin/$EVIDENCE_BRANCH"
+          PRODUCT_COMMIT="$(git rev-parse "origin/$PRODUCT_BRANCH")"
+          PRODUCT_TREE="$(git rev-parse "${PRODUCT_COMMIT}^{tree}")"
+          rm -rf /tmp/trnm-product-final
+          git worktree add --detach /tmp/trnm-product-final "$PRODUCT_COMMIT"
+          test "$(git -C /tmp/trnm-product-final rev-parse HEAD)" = "$PRODUCT_COMMIT"
+          test "$(git -C /tmp/trnm-product-final rev-parse 'HEAD^{tree}')" = "$PRODUCT_TREE"
+          test -z "$(git -C /tmp/trnm-product-final status --porcelain --untracked-files=all)"
+          python3 /tmp/trnm-product-final/scripts/ci/check_native_consensus_only.py \
+            >/tmp/native-only-readback.json
+          jq -e '.result == "PASS" and (.findings | length == 0)' \
+            /tmp/native-only-readback.json >/dev/null
+          printf '%s\n' "$PRODUCT_COMMIT" >/tmp/product-commit.txt
+          printf '%s\n' "$PRODUCT_TREE" >/tmp/product-tree.txt
+
+      - name: Create or reuse one execution issue for every external blocker
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRODUCT_COMMIT="$(cat /tmp/product-commit.txt)"
+          PRODUCT_TREE="$(cat /tmp/product-tree.txt)"
+          SHORT="${PRODUCT_COMMIT:0:12}"
+          mkdir -p /tmp/external-issues
+
+          gh label create external-evidence \
+            --repo "$GITHUB_REPOSITORY" \
+            --description "Evidence produced outside repository-only CI" \
+            --color B60205 --force
+          gh label create release-blocker \
+            --repo "$GITHUB_REPOSITORY" \
+            --description "Blocks release or production activation" \
+            --color D93F0B --force
+          gh label create poco \
+            --repo "$GITHUB_REPOSITORY" \
+            --description "Native PoCO consensus route" \
+            --color 0E8A16 --force
+
+          python3 - "$PRODUCT_COMMIT" "$PRODUCT_TREE" "$SHORT" <<'PY'
+          from __future__ import annotations
+          import json
+          import pathlib
+          import sys
+
+          commit, tree, short = sys.argv[1:]
+          criteria = {
+              "EXT-REVIEW-001": [
+                  "Reviewer is independent of the implementation author and automation actor.",
+                  "Review explicitly names the exact source commit and tree below.",
+                  "Consensus, safety-store, signer, recovery, state-sync, production-port and release-boundary changes are reviewed.",
+                  "All blocking review findings are resolved and the eligible reviewer submits an approval on PR #117.",
+              ],
+              "EXT-G1-CAMPAIGN-001": [
+                  "Run real 4, 7, 31 and 100-process PoCO campaigns on multiple physical or independently administered hosts.",
+                  "Use multiple operators and key-custody domains; a single-host process simulation is not accepted.",
+                  "Retain signed raw traces, validator identities, network topology, fault schedule, AppHash/finality convergence and liveness results.",
+                  "Bind every artifact digest to the exact source commit and tree below.",
+              ],
+              "EXT-ANCHOR-HSM-001": [
+                  "Use non-exportable HSM/KMS validator keys through the production remote-signer boundary.",
+                  "Demonstrate independently administered monotonic anti-rollback state and rejection of stale watermark restoration.",
+                  "Exercise key rotation, signer restart, failover and compromise-response procedures.",
+                  "Retain device/provider attestations and signed logs bound to the exact source tuple.",
+              ],
+              "EXT-POWERLOSS-001": [
+                  "Perform physical power interruption or equivalent controller-cache-loss testing on production-shaped storage.",
+                  "Interrupt signing, journal reservation, application commit, state head update and snapshot/state-sync boundaries.",
+                  "After reboot, prove no double-sign, no committed-state regression, no split head and deterministic recovery.",
+                  "Retain storage/controller settings, event timestamps, raw logs and post-recovery hashes.",
+              ],
+              "EXT-AUDIT-001": [
+                  "Independent specialists audit consensus safety/liveness, cryptography/domain separation, economics/slashing and operational security.",
+                  "A red-team campaign covers signer compromise, rollback, malformed network input, resource exhaustion and governance misuse.",
+                  "No unresolved Critical or High finding remains; Medium findings have explicit disposition and owner.",
+                  "Final audit and remediation verification identify the exact source tuple below.",
+              ],
+              "EXT-SOAK-ACTIVATION-001": [
+                  "Complete actual wall-clock 72-hour, 7-day and 30-day production-shaped soak phases.",
+                  "Exercise partitions, latency/loss, validator restart, signer failover, storage pressure, catch-up and state-sync drills.",
+                  "Meet documented safety, liveness, finality-latency, resource and recovery SLOs with signed raw evidence.",
+                  "Complete accountable governance review and activation ceremony against the unchanged source tuple.",
+              ],
+          }
+          out = pathlib.Path('/tmp/external-issues')
+          for blocker, rows in criteria.items():
+              title = f"[External Evidence] {blocker} — PoCO source {short}"
+              body = [
+                  f"# {blocker}", "",
+                  "This issue is the execution and acceptance record for a non-substitutable external release predicate.", "",
+                  "## Immutable source tuple", "",
+                  f"- repository: `TrillionniumFoundation/Trillionnium-Chain`",
+                  f"- product branch: `chore/poco-only-purge-20260909`",
+                  f"- source commit: `{commit}`",
+                  f"- source tree: `{tree}`",
+                  f"- pull request: #117", "",
+                  "Changing the product commit or tree invalidates evidence collected for this issue.", "",
+                  "## Acceptance criteria", "",
+              ]
+              body += [f"- [ ] {row}" for row in rows]
+              body += [
+                  "", "## Non-substitution rule", "",
+                  "Hosted CI, a single-host simulation, self-authored approval, synthetic hardware evidence, a shortened soak, or changing a status field does not close this issue.", "",
+                  "## Current state", "",
+                  "Open. Acceptance must be performed by the eligible independent actor named in the resulting evidence, and then consumed by the repository external-evidence verifier.",
+              ]
+              payload = {"blocker": blocker, "title": title, "body": "\n".join(body) + "\n"}
+              (out / f"{blocker}.json").write_text(json.dumps(payload, indent=2) + "\n")
+          PY
+
+          : >/tmp/external-issue-index.jsonl
+          for payload in /tmp/external-issues/EXT-*.json; do
+            blocker="$(jq -r '.blocker' "$payload")"
+            title="$(jq -r '.title' "$payload")"
+            body_file="/tmp/${blocker}-body.md"
+            jq -r '.body' "$payload" >"$body_file"
+            existing="$(
+              gh issue list --repo "$GITHUB_REPOSITORY" --state all \
+                --search "\"${blocker}\" in:title" \
+                --json number,title,state,url \
+              | jq -c --arg title "$title" '[.[] | select(.title == $title)][0] // empty'
+            )"
+            if test -n "$existing"; then
+              number="$(jq -r '.number' <<<"$existing")"
+              state="$(jq -r '.state' <<<"$existing")"
+              if test "$state" = OPEN; then
+                gh issue edit "$number" --repo "$GITHUB_REPOSITORY" \
+                  --body-file "$body_file" \
+                  --add-label external-evidence \
+                  --add-label release-blocker \
+                  --add-label poco >/dev/null
+              fi
+              jq -cn \
+                --arg blocker "$blocker" \
+                --argjson number "$number" \
+                --arg url "$(jq -r '.url' <<<"$existing")" \
+                --arg state "$state" \
+                '{blocker:$blocker,number:$number,url:$url,state:$state,reused:true}' \
+                >>/tmp/external-issue-index.jsonl
+            else
+              url="$(
+                gh issue create --repo "$GITHUB_REPOSITORY" \
+                  --title "$title" --body-file "$body_file" \
+                  --label external-evidence --label release-blocker --label poco
+              )"
+              number="${url##*/}"
+              jq -cn \
+                --arg blocker "$blocker" \
+                --argjson number "$number" \
+                --arg url "$url" \
+                '{blocker:$blocker,number:$number,url:$url,state:"OPEN",reused:false}' \
+                >>/tmp/external-issue-index.jsonl
+            fi
+          done
+          jq -s 'sort_by(.blocker)' /tmp/external-issue-index.jsonl \
+            >/tmp/external-issue-index.json
+          test "$(jq 'length' /tmp/external-issue-index.json)" -eq 6
+
+      - name: Request eligible CODEOWNERS review when available
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from __future__ import annotations
+          import json
+          import pathlib
+          import re
+
+          product = pathlib.Path('/tmp/trnm-product-final')
+          paths = [product / '.github/CODEOWNERS', product / 'CODEOWNERS', product / 'docs/CODEOWNERS']
+          owners: list[str] = []
+          for path in paths:
+              if not path.is_file():
+                  continue
+              for line in path.read_text(errors='replace').splitlines():
+                  line = line.split('#', 1)[0]
+                  owners.extend(re.findall(r'@([A-Za-z0-9][A-Za-z0-9-]*(?:/[A-Za-z0-9_.-]+)?)', line))
+          users = sorted({x for x in owners if '/' not in x and x.casefold() not in {'profhepta', 'trillionniumfoundation'}})
+          teams = sorted({x.split('/',1)[1] for x in owners if x.lower().startswith('trillionniumfoundation/')})
+          pathlib.Path('/tmp/reviewer-candidates.json').write_text(json.dumps({'users': users, 'teams': teams}, indent=2) + '\n')
+          PY
+
+          python3 - <<'PY' >/tmp/reviewer-request.json
+          import json
+          from pathlib import Path
+          candidates = json.loads(Path('/tmp/reviewer-candidates.json').read_text())
+          print(json.dumps({'reviewers': candidates['users'], 'team_reviewers': candidates['teams']}))
+          PY
+          if test "$(jq '(.reviewers|length)+(.team_reviewers|length)' /tmp/reviewer-request.json)" -gt 0; then
+            set +e
+            gh api --method POST \
+              "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/requested_reviewers" \
+              --input /tmp/reviewer-request.json \
+              >/tmp/reviewer-request-response.json \
+              2>/tmp/reviewer-request-error.txt
+            rc=$?
+            set -e
+          else
+            rc=3
+            printf '%s\n' 'No eligible non-author CODEOWNERS candidate was present.' \
+              >/tmp/reviewer-request-error.txt
+          fi
+          jq -n \
+            --argjson return_code "$rc" \
+            --slurpfile candidates /tmp/reviewer-candidates.json \
+            --rawfile error /tmp/reviewer-request-error.txt \
+            '{return_code:$return_code,candidates:$candidates[0],error:$error}' \
+            >/tmp/reviewer-request-result.json
+
+      - name: Dispatch every source-bound external-evidence workflow that is already available
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRODUCT_COMMIT="$(cat /tmp/product-commit.txt)"
+          python3 - "$PRODUCT_COMMIT" <<'PY'
+          from __future__ import annotations
+          import json
+          import pathlib
+          import re
+          import sys
+
+          product = pathlib.Path('/tmp/trnm-product-final')
+          commit = sys.argv[1]
+          blockers = {
+              'EXT-REVIEW-001', 'EXT-G1-CAMPAIGN-001', 'EXT-ANCHOR-HSM-001',
+              'EXT-POWERLOSS-001', 'EXT-AUDIT-001', 'EXT-SOAK-ACTIVATION-001',
+          }
+          candidates = []
+          root = product / '.github/workflows'
+          if root.is_dir():
+              for path in sorted(root.iterdir()):
+                  if path.suffix not in {'.yml', '.yaml'}:
+                      continue
+                  text = path.read_text(errors='replace')
+                  mentioned = sorted(x for x in blockers if x in text)
+                  if mentioned and re.search(r'(?m)^\s*workflow_dispatch\s*:', text):
+                      candidates.append({
+                          'path': str(path.relative_to(product)),
+                          'blockers': mentioned,
+                          'source_commit': commit,
+                      })
+          pathlib.Path('/tmp/workflow-dispatch-candidates.json').write_text(json.dumps(candidates, indent=2) + '\n')
+          PY
+
+          : >/tmp/workflow-dispatch-results.jsonl
+          while IFS= read -r encoded; do
+            test -n "$encoded" || continue
+            row="$(printf '%s' "$encoded" | base64 --decode)"
+            path="$(jq -r '.path' <<<"$row")"
+            set +e
+            workflow_id="$(
+              gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/workflows?per_page=100" \
+                --jq ".workflows[] | select(.path == \"${path}\") | .id" \
+              | head -n1
+            )"
+            lookup_rc=$?
+            dispatch_rc=4
+            dispatch_error=""
+            if test "$lookup_rc" -eq 0 && test -n "$workflow_id"; then
+              gh api --method POST \
+                "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow_id}/dispatches" \
+                -f ref="$PRODUCT_BRANCH" \
+                >/tmp/dispatch.stdout 2>/tmp/dispatch.stderr
+              dispatch_rc=$?
+              dispatch_error="$(cat /tmp/dispatch.stderr 2>/dev/null || true)"
+            fi
+            set -e
+            jq -cn \
+              --argjson candidate "$row" \
+              --arg workflow_id "$workflow_id" \
+              --argjson lookup_return_code "$lookup_rc" \
+              --argjson dispatch_return_code "$dispatch_rc" \
+              --arg error "$dispatch_error" \
+              '{candidate:$candidate,workflow_id:$workflow_id,lookup_return_code:$lookup_return_code,dispatch_return_code:$dispatch_return_code,error:$error}' \
+              >>/tmp/workflow-dispatch-results.jsonl
+          done < <(jq -r '.[] | @base64' /tmp/workflow-dispatch-candidates.json)
+          if test -s /tmp/workflow-dispatch-results.jsonl; then
+            jq -s '.' /tmp/workflow-dispatch-results.jsonl >/tmp/workflow-dispatch-results.json
+          else
+            printf '%s\n' '[]' >/tmp/workflow-dispatch-results.json
+          fi
+
+      - name: Attempt final repository metadata cleanup using available administration credentials
+        env:
+          FALLBACK_TOKEN: ${{ github.token }}
+          TOKEN_GH_ADMIN: ${{ secrets.GH_ADMIN_TOKEN }}
+          TOKEN_GITHUB_ADMIN: ${{ secrets.GITHUB_ADMIN_TOKEN }}
+          TOKEN_REPO_ADMIN: ${{ secrets.REPO_ADMIN_TOKEN }}
+          TOKEN_REPOSITORY_ADMIN: ${{ secrets.REPOSITORY_ADMIN_TOKEN }}
+          TOKEN_TRNM_GITHUB_ADMIN: ${{ secrets.TRNM_GITHUB_ADMIN_TOKEN }}
+          TOKEN_TRNM_REPO_ADMIN: ${{ secrets.TRNM_REPO_ADMIN_TOKEN }}
+          TOKEN_ADMIN_PAT: ${{ secrets.ADMIN_PAT }}
+          TOKEN_GH_PAT: ${{ secrets.GH_PAT }}
+          TOKEN_GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          TOKEN_REPO_PAT: ${{ secrets.REPO_PAT }}
+          TOKEN_ORG_ADMIN: ${{ secrets.ORG_ADMIN_TOKEN }}
+          TOKEN_TRILLIONNIUM_ADMIN: ${{ secrets.TRILLIONNIUM_ADMIN_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ADMIN_TOKEN=""
+          CREDENTIAL_SOURCE="github_token"
+          for variable in \
+            TOKEN_GH_ADMIN TOKEN_GITHUB_ADMIN TOKEN_REPO_ADMIN \
+            TOKEN_REPOSITORY_ADMIN TOKEN_TRNM_GITHUB_ADMIN TOKEN_TRNM_REPO_ADMIN \
+            TOKEN_ADMIN_PAT TOKEN_GH_PAT TOKEN_GITHUB_PAT TOKEN_REPO_PAT \
+            TOKEN_ORG_ADMIN TOKEN_TRILLIONNIUM_ADMIN
+          do
+            candidate="${!variable:-}"
+            if test -n "$candidate"; then
+              ADMIN_TOKEN="$candidate"
+              CREDENTIAL_SOURCE="$variable"
+              break
+            fi
+          done
+          if test -z "$ADMIN_TOKEN"; then
+            ADMIN_TOKEN="$FALLBACK_TOKEN"
+          fi
+
+          NOOP_PRESENT_BEFORE=false
+          if git ls-remote --exit-code --heads origin refs/heads/noop >/dev/null 2>&1; then
+            NOOP_PRESENT_BEFORE=true
+            git push origin --delete noop || true
+          fi
+          NOOP_ABSENT_AFTER=true
+          if git ls-remote --exit-code --heads origin refs/heads/noop >/dev/null 2>&1; then
+            NOOP_ABSENT_AFTER=false
+          fi
+
+          request='{"names":["blockchain","poco","rust","trillionnium"]}'
+          TOPICS_WRITE_HTTP="$(
+            curl --silent --show-error --output /tmp/topics-write.json \
+              --write-out '%{http_code}' --request PUT \
+              --header 'Accept: application/vnd.github+json' \
+              --header 'X-GitHub-Api-Version: 2022-11-28' \
+              --header "Authorization: Bearer ${ADMIN_TOKEN}" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/topics" \
+              --data "$request" 2>/tmp/topics-write-error.txt || true
+          )"
+          TOPICS_READ_HTTP="$(
+            curl --silent --show-error --output /tmp/topics-readback.json \
+              --write-out '%{http_code}' \
+              --header 'Accept: application/vnd.github+json' \
+              --header 'X-GitHub-Api-Version: 2022-11-28' \
+              --header "Authorization: Bearer ${ADMIN_TOKEN}" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/topics" \
+              2>/tmp/topics-read-error.txt || true
+          )"
+          TOPICS_EXACT=false
+          if test "$TOPICS_WRITE_HTTP" = 200 && test "$TOPICS_READ_HTTP" = 200; then
+            if jq -e '.names | sort == ["blockchain","poco","rust","trillionnium"]' \
+              /tmp/topics-readback.json >/dev/null; then
+              TOPICS_EXACT=true
+            fi
+          fi
+          jq -n \
+            --arg credential_source "$CREDENTIAL_SOURCE" \
+            --argjson credential_value_recorded false \
+            --argjson noop_present_before "$NOOP_PRESENT_BEFORE" \
+            --argjson noop_absent_after "$NOOP_ABSENT_AFTER" \
+            --arg topics_write_http "$TOPICS_WRITE_HTTP" \
+            --arg topics_read_http "$TOPICS_READ_HTTP" \
+            --argjson topics_exact "$TOPICS_EXACT" \
+            --rawfile topics_write_error /tmp/topics-write-error.txt \
+            --rawfile topics_read_error /tmp/topics-read-error.txt \
+            '{credential_source:$credential_source,credential_value_recorded:$credential_value_recorded,noop_present_before:$noop_present_before,noop_absent_after:$noop_absent_after,topics_write_http:$topics_write_http,topics_read_http:$topics_read_http,topics_exact_poco_only:$topics_exact,topics_write_error:$topics_write_error,topics_read_error:$topics_read_error}' \
+            >/tmp/repository-metadata-result.json
+
+      - name: Publish immutable external execution ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          PRODUCT_COMMIT="$(cat /tmp/product-commit.txt)"
+          PRODUCT_TREE="$(cat /tmp/product-tree.txt)"
+          python3 - "$PRODUCT_COMMIT" "$PRODUCT_TREE" <<'PY'
+          from __future__ import annotations
+          import datetime as dt
+          import json
+          import pathlib
+          import sys
+
+          commit, tree = sys.argv[1:]
+          def load(path: str, default):
+              p = pathlib.Path(path)
+              return json.loads(p.read_text()) if p.exists() else default
+
+          report = {
+              'schema': 'trnm.poco.external-evidence-orchestration.v1',
+              'generated_at_utc': dt.datetime.now(dt.timezone.utc).isoformat(),
+              'repository': 'TrillionniumFoundation/Trillionnium-Chain',
+              'product_branch': 'chore/poco-only-purge-20260909',
+              'source_commit': commit,
+              'source_tree': tree,
+              'pull_request': 117,
+              'native_only_readback': load('/tmp/native-only-readback.json', {}),
+              'blocker_issues': load('/tmp/external-issue-index.json', []),
+              'review_request': load('/tmp/reviewer-request-result.json', {}),
+              'workflow_dispatch_candidates': load('/tmp/workflow-dispatch-candidates.json', []),
+              'workflow_dispatch_results': load('/tmp/workflow-dispatch-results.json', []),
+              'repository_metadata': load('/tmp/repository-metadata-result.json', {}),
+              'external_blockers': [
+                  'EXT-REVIEW-001', 'EXT-G1-CAMPAIGN-001', 'EXT-ANCHOR-HSM-001',
+                  'EXT-POWERLOSS-001', 'EXT-AUDIT-001', 'EXT-SOAK-ACTIVATION-001',
+              ],
+              'external_blockers_closed_by_this_workflow': False,
+              'all_external_blockers_closed': False,
+              'production_candidate': False,
+              'production_consensus_activation': False,
+              'public_testnet_ready': False,
+              'release_ready': False,
+              'non_substitution_rule': 'Issue creation and workflow dispatch are orchestration only; they are not external acceptance evidence.',
+          }
+          pathlib.Path('/tmp/external-orchestration-v1.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
+          PY
+
+          rm -rf /tmp/external-orchestration-evidence
+          git worktree add -B "$EVIDENCE_BRANCH" \
+            /tmp/external-orchestration-evidence "origin/$EVIDENCE_BRANCH"
+          mkdir -p /tmp/external-orchestration-evidence/evidence/external
+          cp /tmp/external-orchestration-v1.json \
+            /tmp/external-orchestration-evidence/evidence/external/orchestration-v1.json
+          git -C /tmp/external-orchestration-evidence add \
+            evidence/external/orchestration-v1.json
+          git -C /tmp/external-orchestration-evidence config user.name "Qian QI"
+          git -C /tmp/external-orchestration-evidence config user.email \
+            "102159240+ProfHepta@users.noreply.github.com"
+          if ! git -C /tmp/external-orchestration-evidence diff --cached --quiet; then
+            git -C /tmp/external-orchestration-evidence commit \
+              -m "evidence: bind remaining external blockers to final PoCO source"
+            git -C /tmp/external-orchestration-evidence push origin "$EVIDENCE_BRANCH"
+          fi
+
+      - name: Remove temporary operations branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin --delete "$OPS_BRANCH"
+
+      - name: Upload exact diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-external-orchestration-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 30
+          path: |
+            /tmp/product-commit.txt
+            /tmp/product-tree.txt
+            /tmp/native-only-readback.json
+            /tmp/external-issue-index.json
+            /tmp/reviewer-candidates.json
+            /tmp/reviewer-request-result.json
+            /tmp/workflow-dispatch-candidates.json
+            /tmp/workflow-dispatch-results.json
+            /tmp/repository-metadata-result.json
+            /tmp/external-orchestration-v1.json
+            /tmp/topics-write.json
+            /tmp/topics-readback.json
+            /tmp/topics-write-error.txt
+            /tmp/topics-read-error.txt
