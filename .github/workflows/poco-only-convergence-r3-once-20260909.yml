@@ -1,0 +1,311 @@
+name: PoCO-only convergence R3 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-only-convergence-r3-once-20260909.yml
+
+permissions:
+  contents: write
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  RUST_BACKTRACE: "1"
+  RUST_MIN_STACK: "33554432"
+  PRODUCTION_PORTS_COMMIT: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
+  REMOTE_SIGNER_FIX_COMMIT: 2f01213918e8da288ce5f598447318c9113edaa2
+
+jobs:
+  converge:
+    name: Materialize and qualify the final native PoCO tree
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Check out exact convergence branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify source and fetch exact candidate objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git fetch --no-tags origin "$PRODUCTION_PORTS_COMMIT" "$REMOTE_SIGNER_FIX_COMMIT"
+          git cat-file -e "$PRODUCTION_PORTS_COMMIT^{commit}"
+          git cat-file -e "$REMOTE_SIGNER_FIX_COMMIT^{commit}"
+          test -x tools/temporary_native_purge.py
+
+      - name: Install pinned tools and resolve the locked graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+          rustc --version
+          cargo --version
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          cargo fetch --manifest-path contracts/Cargo.toml --locked
+
+      - name: Materialize the repository-owned convergence tree
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git checkout "$PRODUCTION_PORTS_COMMIT" -- \
+            trillionnium/crates/trnm-node-boundary-v0/src/lib.rs \
+            trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+
+          git checkout "$REMOTE_SIGNER_FIX_COMMIT" -- \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_service_os.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/os_process_fixture.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/pending_reservation_os.rs
+
+          python3 tools/temporary_native_purge.py
+
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import re
+          from pathlib import Path
+
+          root = Path.cwd()
+
+          # Removed packages cannot remain as compile-time source inventory.
+          restart = root / "trillionnium/crates/trnm-poco-lab-validator/src/restart_catchup.rs"
+          text = restart.read_text(encoding="utf-8")
+          stale_inventory = (
+              '            include_str!("../../trnm-node/src/lib.rs"),\n',
+              '            include_str!("../../trnm-node/src/main.rs"),\n',
+          )
+          for stale in stale_inventory:
+              text = text.replace(stale, "")
+          restart.write_text(text, encoding="utf-8")
+
+          # Do not preserve the retired route as a dormant feature. Test-only
+          # helpers remain test-only, and the recovery feature spelling is bound
+          # to the already declared process-test feature.
+          for path in (root / "trillionnium").rglob("*.rs"):
+              source = path.read_text(encoding="utf-8")
+              updated = source.replace('feature = "retired-application-path"', "test")
+              updated = updated.replace(
+                  'feature = "recovery-test-support"',
+                  'feature = "recovery-process-test-support"',
+              )
+              if updated != source:
+                  path.write_text(updated, encoding="utf-8")
+
+          # Preserve a single semantic accessor name for native genesis binding.
+          anchor = root / "trillionnium/crates/trnm-consensus-types/src/anchor.rs"
+          source = anchor.read_text(encoding="utf-8")
+          if (
+              "pub struct GenesisQcV0" in source
+              and not re.search(r"\bfn\s+validator_set_id\s*\(", source)
+          ):
+              existing = '''    pub const fn validator_set_hash(&self) -> ValidatorSetId {
+                  self.validator_set_hash
+              }
+          '''
+              if existing not in source:
+                  raise SystemExit("GenesisQcV0 validator-set field/accessor shape drift")
+              alias = existing + '''
+              /// Validator-set identity committed by this immutable genesis certificate.
+              pub const fn validator_set_id(&self) -> ValidatorSetId {
+                  self.validator_set_hash
+              }
+          '''
+              anchor.write_text(source.replace(existing, alias, 1), encoding="utf-8")
+
+          # Replace assertions tied to the deleted package topology with the
+          # native-only policy checker that is generated by the purge.
+          contract = root / "scripts/ci/check_required_protocol_contract_v1.py"
+          text = contract.read_text(encoding="utf-8")
+          stale_package_check = '''    require(
+                  not ({"crates/trnm-native-application", "crates/trnm-node"} & members),
+                  "legacy foreign packages re-entered the active workspace",
+              )
+          '''
+          text = text.replace(stale_package_check, "")
+          stale_truth_check = '''    baseline = read(".github/workflows/trnm-required-baseline.yml")
+              legacy_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
+              require(
+                  "runs-on: [self-hosted" not in baseline,
+                  "required baseline must not depend on a self-hosted runner",
+              )
+              require(
+                  "require_literal" in legacy_truth,
+                  "legacy deep CI truth checker unexpectedly disappeared",
+              )
+              require(
+                  "check_poco_bft_v0_ci_truth.sh" not in baseline,
+                  "historical line-layout checker must not be a required merge dependency",
+              )
+          '''
+          native_truth_check = '''    baseline = read(".github/workflows/trnm-required-baseline.yml")
+              native_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
+              require(
+                  "runs-on: [self-hosted" not in baseline,
+                  "required baseline must not depend on a self-hosted runner",
+              )
+              require(
+                  "check_native_consensus_only.py" in native_truth
+                  and "trnm-native-ci-truth-v1" in native_truth,
+                  "native CI truth checker contract drift",
+              )
+              require(
+                  "check_poco_bft_v0_ci_truth.sh" not in baseline,
+                  "non-required deep CI checker must not become a required merge dependency",
+              )
+          '''
+          if stale_truth_check in text:
+              text = text.replace(stale_truth_check, native_truth_check)
+          elif "native CI truth checker contract drift" not in text:
+              raise SystemExit("required protocol checker has an unknown CI-truth shape")
+          contract.write_text(text, encoding="utf-8")
+          PY
+
+          rm -f \
+            tools/temporary_native_purge.py \
+            .github/workflows/apply-poco-only-purge-temporary.yml \
+            .github/workflows/poco-only-full-tree-audit.yml \
+            .github/workflows/poco-purge-source-snapshot.yml \
+            .github/workflows/poco-only-convergence-r2-once-20260909.yml \
+            .github/workflows/poco-only-convergence-r3-once-20260909.yml \
+            .github/workflows/nonexistent \
+            DO_NOT_CREATE \
+            DO_NOT_CREATE_2
+
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git add -A
+          git diff --cached --check
+          test -n "$(git diff --cached --name-only)"
+
+      - name: Prove native-only repository truth and external fail-closed behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m compileall -q scripts tools formal conformance
+          python3 scripts/ci/check_native_consensus_only.py
+          cargo metadata --manifest-path trillionnium/Cargo.toml --locked --offline --no-deps --format-version 1 >/tmp/trnm-cargo-metadata.json
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_poco_bft_mainline_truth.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_required_protocol_contract_v1.py
+          python3 scripts/ci/test_external_evidence_v1.py
+
+          staged_tree=$(git write-tree)
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all \
+            --source-commit "$(git rev-parse HEAD)" \
+            --source-tree "$staged_tree" \
+            --output /tmp/trnm-external-evidence.json \
+            >/tmp/trnm-external-evidence.stdout \
+            2>/tmp/trnm-external-evidence.stderr
+          rc=$?
+          set -e
+          test "$rc" -eq 2
+          grep -q "external evidence gate remains open" /tmp/trnm-external-evidence.stderr
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("/tmp/trnm-external-evidence.json").read_text())
+          required = {
+              "EXT-REVIEW-001",
+              "EXT-G1-CAMPAIGN-001",
+              "EXT-ANCHOR-HSM-001",
+              "EXT-POWERLOSS-001",
+              "EXT-AUDIT-001",
+              "EXT-SOAK-ACTIVATION-001",
+          }
+          assert report["authenticity_verified"] is False
+          assert report["accepted"] == {}
+          assert set(report["open_blockers"]) == required
+          assert report["all_external_blockers_closed"] is False
+          assert report["production_candidate"] is False
+          assert report["production_consensus_activation"] is False
+          PY
+
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          git diff --cached --check
+
+      - name: Compile every target in the native workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline
+          cargo check --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline
+
+      - name: Execute the complete native regression corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=30s 1800s \
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              --workspace --all-targets --locked --offline --no-fail-fast -- \
+              --test-threads=1
+          cargo test --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline
+
+      - name: Execute strict production-boundary Clippy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline -- -D warnings
+          cd trillionnium
+          for package in \
+            trnm-state \
+            trnm-consensus-types \
+            trnm-consensus-crypto \
+            trnm-consensus-core \
+            trnm-consensus-safety-rules \
+            trnm-consensus-safety-store \
+            trnm-consensus-signer-journal \
+            trnm-native-application \
+            trnm-native-application-sqlite \
+            trnm-native-execution-v0 \
+            trnm-durable-file-adapters-v0 \
+            trnm-tx-lifecycle-v0 \
+            trnm-state-sync-v0 \
+            trnm-migration-v0 \
+            trnm-control-plane-v0 \
+            trnm-release-bundle-v0 \
+            trnm-node-boundary-v0 \
+            trnm-poco-node-production-v0 \
+            trnm-production-adapter-conformance-v0 \
+            trnm-poco-node \
+            trnm-poco-node-authority \
+            trnm-poco-node-io \
+            trnm-poco-node-host \
+            trnm-poco-node-cli
+          do
+            echo "strict-clippy package=${package}"
+            cargo clippy -p "$package" --all-targets --locked --offline -- -D warnings
+          done
+
+      - name: Commit only the fully qualified final tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_native_consensus_only.py >/tmp/native-only-final.json
+          git diff --cached --check
+          test -z "$(git status --porcelain --untracked-files=all | grep '^??' || true)"
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "chore(poco): converge native-only repository blockers"
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
