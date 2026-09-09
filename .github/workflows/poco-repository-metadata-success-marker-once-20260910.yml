@@ -1,0 +1,58 @@
+name: PoCO repository metadata success marker (temporary)
+
+on:
+  push:
+    branches:
+      - ops-poco-metadata-cleanup-20260910-r3
+    paths:
+      - .github/workflows/poco-repository-metadata-success-marker-once-20260910.yml
+
+permissions:
+  contents: write
+
+env:
+  OPS_BRANCH: ops-poco-metadata-cleanup-20260910-r3
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence-poco-metadata-cleanup-20260910
+  SUCCESS_BRANCH: evidence-poco-metadata-success-20260910
+
+jobs:
+  marker:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out operations source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.OPS_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Require successful evidence and publish success ref
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin \
+            "$PRODUCT_BRANCH:refs/remotes/origin/$PRODUCT_BRANCH" \
+            "$EVIDENCE_BRANCH:refs/remotes/origin/$EVIDENCE_BRANCH"
+          git show "origin/$EVIDENCE_BRANCH:evidence/repository/poco-metadata-cleanup-v1.json" \
+            >/tmp/poco-metadata-cleanup-v1.json
+          jq -e '.success == true' /tmp/poco-metadata-cleanup-v1.json >/dev/null
+          PRODUCT_SHA="$(git rev-parse "origin/$PRODUCT_BRANCH")"
+          git push origin "$PRODUCT_SHA:refs/heads/$SUCCESS_BRANCH"
+          git ls-remote --exit-code --heads origin "refs/heads/$SUCCESS_BRANCH"
+
+      - name: Remove operations branch after success marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin --delete "$OPS_BRANCH"
+
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-metadata-success-marker-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: /tmp/poco-metadata-cleanup-v1.json
