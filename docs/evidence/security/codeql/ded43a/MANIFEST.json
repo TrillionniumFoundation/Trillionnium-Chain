@@ -1,0 +1,63 @@
+{
+  "analyzer": {
+    "artifact_id": 10088713526,
+    "artifact_zip_sha256": "8eba327ccae6cfa4a9c0c618fe665de408b35c6129ccf27a5d168c8d8611f433",
+    "build_mode": "none",
+    "canonical_sarif_sha256": "d21b98a0e1b78dc3a45091cf7d2f2a9d24f8811ef08861bc5268d2fb19517f83",
+    "codeql_action_sha": "d1ba80a13dd99fba24a470575428917156a28b43",
+    "language": "rust",
+    "query_suite": "security-extended",
+    "raw_sarif_sha256": "7992543e61de978c5399d225377e4e7d9e656d6023bcc3734e1526998cc3b892",
+    "workflow_run_id": "34311122905"
+  },
+  "authority": {
+    "administration_readback_complete": false,
+    "alert_dismissal_authorized": false,
+    "all_gaps_closed": false,
+    "automatic_dismissal_performed": false,
+    "independent_specialist_acceptance": false,
+    "official_codeql_gate_success": false,
+    "production_candidate": false,
+    "public_testnet_ready": false,
+    "release_ready": false
+  },
+  "counts": {
+    "actionable_production_findings": 0,
+    "by_disposition": {
+      "public_deterministic_policy_limit": 1,
+      "public_deterministic_protocol_value": 3,
+      "query_dataflow_false_positive": 32,
+      "test_fixture_bounded_nonproduction": 667
+    },
+    "by_rule": {
+      "rust/cleartext-logging": 90,
+      "rust/hard-coded-cryptographic-value": 613
+    },
+    "recommended_github_resolution": {
+      "false positive": 35,
+      "used in tests": 668
+    },
+    "total": 703,
+    "unreviewed": 0
+  },
+  "files": {
+    "dispositions-v1.csv": {
+      "bytes": 474462,
+      "sha256": "505c2244b2ad81d91a2ec4605aec4d8312ef6e0bcba559dcbd9a4df31a0c8245"
+    },
+    "dispositions-v1.json.gz.b64": {
+      "bytes": 256283,
+      "sha256": "eba76f1a24150317fa57a7cb486b5ede396c88643d5861a0f9deac45f82be48d"
+    },
+    "manual-semantic-review-v1.json": {
+      "bytes": 14850,
+      "sha256": "4c468618f45b460f9374ac1ea18ea1e22d8875e4f993ad83c909312aca4d45d9"
+    }
+  },
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "schema": "trnm-rust-codeql-disposition-manifest-v1",
+  "subject": {
+    "commit": "ded43a0704b455cd4bef724cb3ca40fb6db9465d",
+    "tree": "c0791ffb57e05fde43f87bfed1a3b4656c09efc0"
+  }
+}
