@@ -1,0 +1,208 @@
+name: TRNM CodeQL default setup apply attempt ded43a
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+    paths:
+      - .github/workflows/trnm-codeql-default-setup-apply-attempt-ded43a.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  security-events: write
+
+jobs:
+  apply-and-read-back:
+    name: Apply and read back canonical CodeQL default setup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      EXPECTED_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      CHANGE_TICKET: TRNM-CODEQL-DEFAULT-SETUP-20260909
+      SETTINGS_FREEZE_TICKET: TRNM-CODEQL-SETTINGS-FREEZE-20260909
+    steps:
+      - name: Create evidence directory
+        run: mkdir -p "$RUNNER_TEMP/trnm-codeql-default-setup/raw"
+
+      - name: Apply under exact protected-main observation and verify readback
+        id: apply
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-codeql-default-setup"
+          export out
+          python3 - <<'PY'
+          import datetime
+          import json
+          import os
+          import pathlib
+          import subprocess
+          import time
+
+          out = pathlib.Path(os.environ["out"])
+          raw = out / "raw"
+          raw.mkdir(parents=True, exist_ok=True)
+          repo = os.environ["REPOSITORY"]
+
+          def gh_api(args, name, require=False):
+              proc = subprocess.run(["gh", "api", "-i", *args], text=True, capture_output=True)
+              combined = proc.stdout + proc.stderr
+              (raw / f"{name}.txt").write_text(combined, encoding="utf-8")
+              first = combined.splitlines()[0] if combined.splitlines() else ""
+              status = None
+              parts = first.split()
+              if len(parts) >= 2 and parts[1].isdigit():
+                  status = int(parts[1])
+              body = None
+              split = "\r\n\r\n" if "\r\n\r\n" in combined else "\n\n"
+              if split in combined:
+                  payload = combined.split(split, 1)[1]
+                  try:
+                      body = json.loads(payload)
+                  except Exception:
+                      body = None
+              result = {"status": status, "exit_code": proc.returncode, "body": body}
+              if require and (proc.returncode != 0 or status is None or not 200 <= status < 300):
+                  raise RuntimeError(f"{name} failed: status={status} rc={proc.returncode}")
+              return result
+
+          main_before = gh_api([f"repos/{repo}/branches/main"], "main-before", require=True)
+          main_body = main_before["body"] or {}
+          main_sha = ((main_body.get("commit") or {}).get("sha"))
+          protected = main_body.get("protected")
+          if not main_sha or protected is not True:
+              raise RuntimeError(f"main observation invalid: sha={main_sha!r} protected={protected!r}")
+
+          setup_before = gh_api([f"repos/{repo}/code-scanning/default-setup"], "setup-before")
+          requested = {
+              "state": "configured",
+              "query_suite": "extended",
+              "languages": ["actions", "javascript-typescript", "python", "rust"],
+              "threat_model": "remote_and_local",
+              "runner_type": "standard",
+          }
+          (out / "requested.json").write_text(
+              json.dumps(requested, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+
+          main_prepatch = gh_api([f"repos/{repo}/branches/main"], "main-prepatch", require=True)
+          if (((main_prepatch["body"] or {}).get("commit") or {}).get("sha")) != main_sha:
+              raise RuntimeError("main moved before settings mutation")
+
+          already = False
+          if setup_before.get("status") == 200 and isinstance(setup_before.get("body"), dict):
+              body = setup_before["body"]
+              already = (
+                  body.get("state") == "configured"
+                  and sorted(body.get("languages") or []) == sorted(requested["languages"])
+                  and body.get("query_suite") == "extended"
+                  and body.get("threat_model") == "remote_and_local"
+                  and body.get("runner_type") == "standard"
+              )
+
+          if already:
+              patch = {"status": 200, "exit_code": 0, "body": setup_before["body"], "skipped": True}
+          else:
+              patch = gh_api([
+                  "--method", "PATCH",
+                  "-H", "Accept: application/vnd.github+json",
+                  "-H", "X-GitHub-Api-Version: 2022-11-28",
+                  f"repos/{repo}/code-scanning/default-setup",
+                  "--input", str(out / "requested.json"),
+              ], "setup-patch")
+
+          main_postpatch = gh_api([f"repos/{repo}/branches/main"], "main-postpatch", require=True)
+          if (((main_postpatch["body"] or {}).get("commit") or {}).get("sha")) != main_sha:
+              raise RuntimeError("main moved during settings mutation")
+
+          setup_after = gh_api([f"repos/{repo}/code-scanning/default-setup"], "setup-after")
+          main_final = gh_api([f"repos/{repo}/branches/main"], "main-final", require=True)
+          if (((main_final["body"] or {}).get("commit") or {}).get("sha")) != main_sha:
+              raise RuntimeError("main moved before settings readback completed")
+
+          canonical = False
+          if setup_after.get("status") == 200 and isinstance(setup_after.get("body"), dict):
+              body = setup_after["body"]
+              canonical = (
+                  body.get("state") == "configured"
+                  and sorted(body.get("languages") or []) == sorted(requested["languages"])
+                  and body.get("query_suite") == "extended"
+                  and body.get("threat_model") == "remote_and_local"
+                  and body.get("runner_type") == "standard"
+              )
+
+          validation_run_id = None
+          if isinstance(patch.get("body"), dict):
+              validation_run_id = patch["body"].get("run_id") or patch["body"].get("runId")
+          validation = None
+          if validation_run_id:
+              for attempt in range(60):
+                  validation = gh_api(
+                      [f"repos/{repo}/actions/runs/{validation_run_id}"],
+                      f"validation-run-{attempt:02d}",
+                  )
+                  body = validation.get("body") if isinstance(validation, dict) else None
+                  if isinstance(body, dict) and body.get("status") == "completed":
+                      break
+                  time.sleep(20)
+
+          report = {
+              "schema": "trnm-codeql-default-setup-apply-attempt-v1",
+              "captured_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "repository": repo,
+              "expected_candidate_source_sha": os.environ["EXPECTED_SOURCE_SHA"],
+              "change_ticket": os.environ["CHANGE_TICKET"],
+              "settings_freeze_ticket": os.environ["SETTINGS_FREEZE_TICKET"],
+              "main_sha": main_sha,
+              "main_protected": protected,
+              "setup_before_status": setup_before.get("status"),
+              "patch_status": patch.get("status"),
+              "patch_exit_code": patch.get("exit_code"),
+              "patch_skipped_already_canonical": patch.get("skipped", False),
+              "setup_after_status": setup_after.get("status"),
+              "canonical_readback": canonical,
+              "validation_run_id": validation_run_id,
+              "validation": validation,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+          }
+          (out / "report.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          if patch.get("status") not in (200, 201, 202):
+              raise RuntimeError(
+                  f"CodeQL default setup mutation unavailable: status={patch.get('status')} rc={patch.get('exit_code')}"
+              )
+          if not canonical:
+              raise RuntimeError("canonical CodeQL default setup readback failed")
+          if validation_run_id and isinstance(validation, dict):
+              body = validation.get("body")
+              if not isinstance(body, dict) or body.get("status") != "completed" or body.get("conclusion") != "success":
+                  raise RuntimeError("CodeQL setup validation run did not complete successfully")
+          PY
+
+      - name: Hash retained administration evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-codeql-default-setup"
+          (
+            cd "$out"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload immutable administration evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-codeql-default-setup-apply-attempt-${{ github.run_id }}
+          path: ${{ runner.temp }}/trnm-codeql-default-setup/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
