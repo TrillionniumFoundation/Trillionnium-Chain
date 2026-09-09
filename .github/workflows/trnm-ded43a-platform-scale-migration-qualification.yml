@@ -1,0 +1,266 @@
+name: TRNM ded43a platform scale migration qualification
+
+on:
+  push:
+    branches:
+      - evidence/codeql-rust-exact-source-ded43a-20260909
+    paths:
+      - .github/workflows/trnm-ded43a-platform-scale-migration-qualification.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-ded43a-platform-scale-migration-qualification
+  cancel-in-progress: false
+
+env:
+  EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+  EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_TEST_THREADS: "1"
+  RUST_MIN_STACK: "67108864"
+  CI: "true"
+
+jobs:
+  cross-platform-core:
+    name: Cross-platform core ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022, macos-14]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify exact source and tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+          git diff --quiet && git diff --cached --quiet
+      - name: Install pinned Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup component add rustfmt clippy --toolchain 1.95.0
+      - name: Compile and test portable protocol and state boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +1.95.0 test \
+            -p trnm-consensus-types \
+            -p trnm-consensus-crypto \
+            -p trnm-consensus-core \
+            -p trnm-consensus-safety-rules \
+            -p trnm-consensus-remote-signer-protocol \
+            -p trnm-native-application \
+            -p trnm-native-execution-v0 \
+            -p trnm-state-sync-v0 \
+            -p trnm-tx-lifecycle-v0 \
+            --locked -- --test-threads=1
+      - name: Strict portable Clippy
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +1.95.0 clippy \
+            -p trnm-consensus-types \
+            -p trnm-consensus-crypto \
+            -p trnm-consensus-core \
+            -p trnm-consensus-safety-rules \
+            -p trnm-consensus-remote-signer-protocol \
+            -p trnm-native-application \
+            -p trnm-native-execution-v0 \
+            -p trnm-state-sync-v0 \
+            -p trnm-tx-lifecycle-v0 \
+            --all-targets --locked -- -D warnings
+      - name: Verify checkout remains clean
+        if: always()
+        shell: bash
+        run: git diff --exit-code && git diff --cached --exit-code
+
+  bounded-fleet-cardinality:
+    name: Bounded fleet cardinality ${{ matrix.validators }}
+    strategy:
+      fail-fast: false
+      matrix:
+        validators: [4, 7, 31, 100]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify exact source and tree
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Replay deterministic consensus simulator
+        env:
+          TRNM_VALIDATOR_COUNT: ${{ matrix.validators }}
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +1.95.0 test -p trnm-consensus-sim --locked -- --test-threads=1
+          cargo +1.95.0 test -p trnm-poco-lab-validator --test external_fenced_mesh --locked -- --test-threads=1
+      - name: Execute fleet tooling test corpus
+        env:
+          TRNM_VALIDATOR_COUNT: ${{ matrix.validators }}
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/poco-fleet -p '*_test.py' -v
+      - name: Bind cardinality evidence
+        env:
+          TRNM_VALIDATOR_COUNT: ${{ matrix.validators }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/fleet-$TRNM_VALIDATOR_COUNT"
+          mkdir -p "$out"
+          python3 - <<'PY' > "$out/report.json"
+          import json, os
+          print(json.dumps({
+            "schema":"trnm-bounded-fleet-cardinality-v1",
+            "exact_source_sha":os.environ["EXACT_SOURCE_SHA"],
+            "exact_source_tree":os.environ["EXACT_SOURCE_TREE"],
+            "validator_count":int(os.environ["TRNM_VALIDATOR_COUNT"]),
+            "scope":"deterministic-simulator-and-fleet-tooling",
+            "independent_physical_hosts":False,
+            "independent_operators":False,
+            "external_campaign_gate_closed":False,
+            "production_candidate":False,
+            "release_ready":False
+          },indent=2,sort_keys=True))
+          PY
+          sha256sum "$out/report.json" > "$out/SHA256SUMS"
+      - name: Upload bounded fleet evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-bounded-fleet-${{ matrix.validators }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/fleet-${{ matrix.validators }}/**
+          if-no-files-found: error
+          retention-days: 30
+      - name: Verify checkout remains clean
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
+
+  archive-scale-and-deletion-boundary:
+    name: Archive scale and deletion boundary
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify exact source and tree
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Validate archive closure and proof-preserving retention
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_task_archive_closure_v1.py
+          cd trillionnium
+          cargo +1.95.0 test -p trnm-poco-agent-market-v1 archive --locked -- --test-threads=1
+          cargo +1.95.0 test -p trnm-consensus-app persistent_scale --locked -- --test-threads=1
+          cargo +1.95.0 test -p trnm-native-application-sqlite finalization_history --locked -- --test-threads=1
+      - name: Retain exact non-authority statement
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/archive-scale"
+          mkdir -p "$out"
+          cat > "$out/report.json" <<EOF
+          {
+            "schema": "trnm-archive-scale-boundary-v1",
+            "exact_source_sha": "$EXACT_SOURCE_SHA",
+            "exact_source_tree": "$EXACT_SOURCE_TREE",
+            "bounded_archive_and_history_tests": true,
+            "legal_hold_authority": false,
+            "production_storage_deletion_authority": false,
+            "independent_long_history_campaign": false,
+            "production_candidate": false,
+            "release_ready": false
+          }
+          EOF
+          sha256sum "$out/report.json" > "$out/SHA256SUMS"
+      - name: Upload archive evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-archive-scale-boundary-${{ github.run_id }}
+          path: ${{ runner.temp }}/archive-scale/**
+          if-no-files-found: error
+          retention-days: 30
+      - name: Verify checkout remains clean
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
+
+  migration-signer-recovery:
+    name: Migration signer and recovery boundary
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify exact source and tree
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_SOURCE_SHA"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$EXACT_SOURCE_TREE"
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.95.0 --profile minimal
+      - name: Replay migration state-sync and remote signer contracts
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_poco_bft_v0_migration_boundary_v1.sh
+          cd trillionnium
+          cargo +1.95.0 test \
+            -p trnm-migration-v0 \
+            -p trnm-state-sync-v0 \
+            -p trnm-consensus-remote-signer-service \
+            -p trnm-consensus-unix-remote-signer \
+            -p trnm-consensus-unix-fleet-signer \
+            -p trnm-consensus-external-watermark \
+            -p trnm-consensus-external-node-checkpoint \
+            --locked -- --test-threads=1
+      - name: Strict signer and migration Clippy
+        run: |
+          set -euo pipefail
+          cd trillionnium
+          cargo +1.95.0 clippy \
+            -p trnm-migration-v0 \
+            -p trnm-state-sync-v0 \
+            -p trnm-consensus-remote-signer-service \
+            -p trnm-consensus-unix-remote-signer \
+            -p trnm-consensus-unix-fleet-signer \
+            -p trnm-consensus-external-watermark \
+            -p trnm-consensus-external-node-checkpoint \
+            --all-targets --locked -- -D warnings
+      - name: Verify checkout remains clean
+        if: always()
+        run: git diff --exit-code && git diff --cached --exit-code
