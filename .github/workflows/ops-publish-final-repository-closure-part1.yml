@@ -1,0 +1,85 @@
+name: ops-publish-final-repository-closure-part1
+
+on:
+  push:
+    branches:
+      - ops/publish-final-repository-closure-20260909
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ops-publish-final-repository-closure-part1
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      TARGET_BRANCH: work/plan-v2-final-repository-closure-20260909
+      EXPECTED_TARGET_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      PATCH_B64_BYTES: '18376'
+      PATCH_B64_SHA256: f3337ce5268027a8d2801a82181e8bfa3e44912e043f438a7daf62e175d5dbfe
+      PATCH_SHA256: 00934b2c870ed6f05b096a016dbf8d8f9669de5623e635478f52e69177dbd5c9
+    steps:
+      - name: Check out exact non-executable carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          path: carrier
+
+      - name: Check out exact publication target
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: work/plan-v2-final-repository-closure-20260909
+          fetch-depth: 0
+          persist-credentials: true
+          path: target
+
+      - name: Verify, apply, and publish without executing candidate code
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C carrier rev-parse HEAD)" = "$GITHUB_SHA"
+
+          carrier="$RUNNER_TEMP/closure-part1.patch.gz.b64"
+          patch="$RUNNER_TEMP/closure-part1.patch"
+          cat carrier/tools/publish-final-repository-closure/part1/chunk-*.b64 > "$carrier"
+          test "$(wc -c < "$carrier")" = "$PATCH_B64_BYTES"
+          printf '%s  %s\n' "$PATCH_B64_SHA256" "$carrier" | sha256sum -c -
+          base64 --decode "$carrier" | gzip --decompress --stdout > "$patch"
+          printf '%s  %s\n' "$PATCH_SHA256" "$patch" | sha256sum -c -
+
+          git -C target fetch --no-tags origin "refs/heads/$TARGET_BRANCH"
+          actual_target="$(git -C target rev-parse FETCH_HEAD)"
+          test "$actual_target" = "$EXPECTED_TARGET_SHA"
+          git -C target checkout --detach "$actual_target"
+
+          git -C target apply --check "$patch"
+          git -C target apply --index "$patch"
+          git -C target diff --cached --check
+          test -n "$(git -C target diff --cached --name-only)"
+
+          cat > "$RUNNER_TEMP/expected-paths" <<'EOF'
+          trillionnium/crates/trnm-node-boundary-v0/src/lib.rs
+          trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs
+          trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs
+          trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+          EOF
+          git -C target diff --cached --name-only | LC_ALL=C sort > "$RUNNER_TEMP/actual-paths"
+          LC_ALL=C sort -o "$RUNNER_TEMP/expected-paths" "$RUNNER_TEMP/expected-paths"
+          diff -u "$RUNNER_TEMP/expected-paths" "$RUNNER_TEMP/actual-paths"
+
+          git -C target config user.name 'OpenAI GPT-5.6 Sol Pro'
+          git -C target config user.email 'noreply@openai.com'
+          git -C target commit \
+            -m 'feat(plan-v2): add production security ports and durable tx coordinator' \
+            -m "Exact base: $EXPECTED_TARGET_SHA" \
+            -m "Patch SHA-256: $PATCH_SHA256" \
+            -m 'No candidate code executed in the credential-bearing publisher.'
+          test "$(git -C target rev-parse HEAD^)" = "$EXPECTED_TARGET_SHA"
+          git -C target push origin "HEAD:refs/heads/$TARGET_BRANCH"
