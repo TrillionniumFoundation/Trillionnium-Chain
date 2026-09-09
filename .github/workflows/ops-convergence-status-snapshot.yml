@@ -1,0 +1,208 @@
+name: ops-convergence-status-snapshot
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-convergence-status-snapshot.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  issues: write
+  pull-requests: read
+  security-events: read
+
+concurrency:
+  group: ops-convergence-status-snapshot-20260909
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      INTEGRATION_PR: '62'
+    steps:
+      - name: Capture live PR, main, workflow, protection and CodeQL state
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/convergence-status"
+          mkdir -p "$out"
+          python3 - "$out" <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          out = Path(__import__('sys').argv[1])
+          repo = os.environ['REPOSITORY']
+          token = os.environ['GH_TOKEN']
+          api = 'https://api.github.com'
+
+          def get(path):
+              request = urllib.request.Request(
+                  api + path,
+                  headers={
+                      'Accept': 'application/vnd.github+json',
+                      'Authorization': f'Bearer {token}',
+                      'X-GitHub-Api-Version': '2022-11-28',
+                      'User-Agent': 'trnm-convergence-status-v1',
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      return {'http': response.status, 'body': json.load(response)}
+              except urllib.error.HTTPError as error:
+                  raw = error.read().decode(errors='replace')
+                  try:
+                      body = json.loads(raw or '{}')
+                  except json.JSONDecodeError:
+                      body = {'raw': raw}
+                  return {'http': error.code, 'body': body}
+
+          workflows = [
+              'ops-converge-m17-stack-v2.yml',
+              'ops-apply-codeql-default-setup-v2.yml',
+              'ops-admit-combined-m17.yml',
+              'ops-final-main-readiness-v2.yml',
+              'ops-intake-external-evidence.yml',
+              'ops-current-head-long-fuzz.yml',
+              'ops-repository-blocker-qualification.yml',
+              'ops-apply-main-protection-v2.yml',
+              'ops-current-branch-disposition.yml',
+          ]
+          workflow_rows = []
+          for workflow in workflows:
+              result = get(f'/repos/{repo}/actions/workflows/{workflow}/runs?per_page=1')
+              runs = result['body'].get('workflow_runs', []) if result['http'] == 200 else []
+              run = runs[0] if runs else None
+              workflow_rows.append({
+                  'workflow': workflow,
+                  'queryHttp': result['http'],
+                  'runId': run.get('id') if run else None,
+                  'headSha': run.get('head_sha') if run else None,
+                  'status': run.get('status') if run else None,
+                  'conclusion': run.get('conclusion') if run else None,
+                  'createdAt': run.get('created_at') if run else None,
+                  'updatedAt': run.get('updated_at') if run else None,
+              })
+
+          prs = {}
+          for number in (62, 100, 101):
+              result = get(f'/repos/{repo}/pulls/{number}')
+              body = result['body']
+              prs[str(number)] = {
+                  'http': result['http'],
+                  'state': body.get('state'),
+                  'draft': body.get('draft'),
+                  'mergedAt': body.get('merged_at'),
+                  'headRef': (body.get('head') or {}).get('ref'),
+                  'headSha': (body.get('head') or {}).get('sha'),
+                  'baseRef': (body.get('base') or {}).get('ref'),
+                  'baseSha': (body.get('base') or {}).get('sha'),
+                  'mergeable': body.get('mergeable'),
+                  'mergeableState': body.get('mergeable_state'),
+              }
+
+          open_prs_result = get(f'/repos/{repo}/pulls?state=open&per_page=100')
+          open_prs = [
+              {'number': row['number'], 'head': row['head']['ref'], 'base': row['base']['ref'], 'draft': row['draft']}
+              for row in open_prs_result['body']
+          ] if open_prs_result['http'] == 200 else []
+
+          main = get(f'/repos/{repo}/git/ref/heads/main')
+          protection = get(f'/repos/{repo}/branches/main/protection')
+          codeql = get(f'/repos/{repo}/code-scanning/default-setup')
+          alert_result = get(f'/repos/{repo}/code-scanning/alerts?state=open&per_page=100')
+          alerts = alert_result['body'] if alert_result['http'] == 200 else []
+          blocking = [
+              row for row in alerts
+              if ((row.get('rule') or {}).get('security_severity_level') or '').lower()
+                 in {'critical', 'high'}
+          ]
+
+          external_issues = {}
+          for number in (41, 42, 43, 44, 45, 46, 68, 80, 81):
+              result = get(f'/repos/{repo}/issues/{number}')
+              external_issues[str(number)] = {
+                  'http': result['http'],
+                  'state': result['body'].get('state'),
+                  'title': result['body'].get('title'),
+              }
+
+          snapshot = {
+              'schema': 'trnm-convergence-status-snapshot-v1',
+              'observedUtc': datetime.now(timezone.utc).isoformat(),
+              'repository': repo,
+              'main': {
+                  'http': main['http'],
+                  'sha': (main['body'].get('object') or {}).get('sha'),
+              },
+              'pullRequests': prs,
+              'openPullRequestsHttp': open_prs_result['http'],
+              'openPullRequests': open_prs,
+              'workflows': workflow_rows,
+              'mainProtectionHttp': protection['http'],
+              'mainProtectionBody': protection['body'],
+              'codeqlDefaultSetupHttp': codeql['http'],
+              'codeqlDefaultSetup': codeql['body'],
+              'codeScanningAlertsHttp': alert_result['http'],
+              'openAlertPageCount': len(alerts),
+              'openCriticalHighAlertPageCount': len(blocking),
+              'externalTrackingIssues': external_issues,
+              'allGapsClosed': False,
+              'mainOnlyCompleted': False,
+          }
+          (out / 'snapshot.json').write_text(
+              json.dumps(snapshot, indent=2, sort_keys=True) + '\n'
+          )
+          compact = {
+              'main': snapshot['main'],
+              'openPullRequests': open_prs,
+              'pullRequests': prs,
+              'workflows': workflow_rows,
+              'mainProtectionHttp': protection['http'],
+              'codeqlDefaultSetupHttp': codeql['http'],
+              'codeScanningAlertsHttp': alert_result['http'],
+              'openCriticalHighAlertPageCount': len(blocking),
+              'externalOpenIssues': [n for n, row in external_issues.items() if row['state'] == 'open'],
+              'allGapsClosed': False,
+              'mainOnlyCompleted': False,
+          }
+          (out / 'compact.json').write_text(json.dumps(compact, indent=2, sort_keys=True) + '\n')
+          print(json.dumps(compact, sort_keys=True))
+          PY
+          (
+            cd "$out"
+            sha256sum compact.json snapshot.json > SHA256SUMS
+          )
+
+      - name: Publish machine-derived live status to sole successor
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/convergence-status"
+          compact="$(jq -c . "$out/compact.json")"
+          digest="$(sha256sum "$out/SHA256SUMS" | awk '{print $1}')"
+          gh api "repos/$REPOSITORY/issues/$INTEGRATION_PR/comments" \
+            -f body="Live convergence status snapshot: \`$compact\`; evidence-manifest digest=\`$digest\`. Values are direct API observations. `allGapsClosed` and `mainOnlyCompleted` remain false unless a later protected transaction proves every predicate and updates machine truth." >/dev/null
+
+      - name: Upload complete live snapshot
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: convergence-status-${{ github.sha }}
+          path: ${{ runner.temp }}/convergence-status
+          if-no-files-found: error
+          retention-days: 30
