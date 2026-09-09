@@ -1,0 +1,68 @@
+name: PoCO CLI materialization diagnostic (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-cli-materialization-diagnostic-once-20260909.yml
+
+permissions:
+  contents: read
+
+env:
+  PRODUCTION_PORTS_COMMIT: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
+  REMOTE_SIGNER_FIX_COMMIT: 2f01213918e8da288ce5f598447318c9113edaa2
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: chore/poco-only-purge-20260909
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Materialize exact pre-format tree and print CLI delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git fetch --no-tags origin "$PRODUCTION_PORTS_COMMIT" "$REMOTE_SIGNER_FIX_COMMIT"
+          git checkout "$PRODUCTION_PORTS_COMMIT" -- \
+            trillionnium/crates/trnm-node-boundary-v0/src/lib.rs \
+            trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+          git checkout "$REMOTE_SIGNER_FIX_COMMIT" -- \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_service_os.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/os_process_fixture.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/pending_reservation_os.rs
+          cp trillionnium/crates/trnm-cli/src/main.rs /tmp/trnm-cli.before.rs
+          python3 tools/temporary_poco_convergence_r5.py prepare
+          cp trillionnium/crates/trnm-cli/src/main.rs /tmp/trnm-cli.after-prepare.rs
+          echo "before_sha256=$(sha256sum /tmp/trnm-cli.before.rs | awk '{print $1}')"
+          echo "after_prepare_sha256=$(sha256sum /tmp/trnm-cli.after-prepare.rs | awk '{print $1}')"
+          echo "before_lines=$(wc -l </tmp/trnm-cli.before.rs)"
+          echo "after_prepare_lines=$(wc -l </tmp/trnm-cli.after-prepare.rs)"
+          echo '--- post-prepare suspicious references ---'
+          rg -n -C 24 'contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|contract\.simple_majority_root_hex|canonical\(contract' \
+            trillionnium/crates/trnm-cli/src/main.rs || true
+          echo '--- complete CLI diff ---'
+          diff -u /tmp/trnm-cli.before.rs /tmp/trnm-cli.after-prepare.rs || true
+      - name: Format exact tree and print CLI delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup override set 1.95.0
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          echo "after_fmt_sha256=$(sha256sum trillionnium/crates/trnm-cli/src/main.rs | awk '{print $1}')"
+          echo "after_fmt_lines=$(wc -l <trillionnium/crates/trnm-cli/src/main.rs)"
+          echo '--- post-format suspicious references ---'
+          rg -n -C 24 'contract\.member_id|contract\.new_stake_weight|contract\.new_poco_weight|contract\.simple_majority_root_hex|canonical\(contract' \
+            trillionnium/crates/trnm-cli/src/main.rs || true
+          echo '--- prepare-to-format CLI diff ---'
+          diff -u /tmp/trnm-cli.after-prepare.rs trillionnium/crates/trnm-cli/src/main.rs || true
