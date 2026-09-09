@@ -485,10 +485,8 @@ impl RuntimeStateView for OverlayObjects<'_> {
             .cloned()
             .or_else(|| {
                 self.store.and_then(|store| {
-                    store.load_object(object_key_hex).unwrap_or_else(|error| {
-                        panic!(
-                            "fail-stop: read authenticated runtime object {object_key_hex}: {error:#}"
-                        )
+                    store.load_object(object_key_hex).unwrap_or_else(|_error| {
+                        panic!("fail-stop: authenticated runtime object read failed")
                     })
                 })
             })

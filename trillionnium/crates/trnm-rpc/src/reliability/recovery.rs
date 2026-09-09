@@ -260,13 +260,11 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
             if session.pending.is_empty() && self.store.should_remove_empty_session_immediately() {
                 self.store.remove_session(sid);
-            } else if let Err(e) = self.store.try_upsert_session_with_ts(session, now_unix_ms) {
-                // Fail closed on persistence errors: keeping a stale in-memory retry
-                // view can repeatedly re-dispatch the same due item and amplify load.
-                eprintln!(
-                    "[reliability] drop session after failed retry-state persist sid={} err={}",
-                    sid, e
-                );
+            } else if let Err(_error) = self.store.try_upsert_session_with_ts(session, now_unix_ms)
+            {
+                // Fail closed on persistence errors without disclosing session identity
+                // or storage internals to process logs.
+                eprintln!("[reliability] retry-state persistence failed; session dropped");
                 self.store.remove_session(sid);
             }
         }

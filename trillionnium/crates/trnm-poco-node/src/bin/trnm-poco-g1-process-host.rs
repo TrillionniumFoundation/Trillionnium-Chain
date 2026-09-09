@@ -29,14 +29,14 @@ fn main() -> ExitCode {
         BufReader::new(io::stdin()),
         BufWriter::new(io::stdout()),
     ) {
-        Ok(summary) => {
-            // stdout is a machine-readable newline protocol.  Keep the
-            // process summary on stderr so callers can safely parse stdout.
-            eprintln!("G1_PROCESS_SUMMARY {:?}", summary);
+        Ok(_summary) => {
+            // stdout is a machine-readable newline protocol.  Keep only a
+            // non-sensitive completion marker on stderr.
+            eprintln!("G1_PROCESS_SUMMARY complete");
             ExitCode::SUCCESS
         }
-        Err(error) => {
-            eprintln!("G1_PROCESS_ERROR {error}");
+        Err(_error) => {
+            eprintln!("G1_PROCESS_ERROR");
             ExitCode::FAILURE
         }
     }

@@ -794,14 +794,10 @@ impl LiveChain {
             thread::sleep(Duration::from_millis(producer.config.block_interval_ms));
             match producer.finalize_pending() {
                 Ok(receipts) if !receipts.is_empty() => {
-                    println!(
-                        "[chain] finalized height={} transactions={}",
-                        receipts[0].block_height,
-                        receipts.len()
-                    );
+                    println!("[chain] finalized block");
                 }
                 Ok(_) => {}
-                Err(error) => eprintln!("[chain] finalization deferred: {error:#}"),
+                Err(_error) => eprintln!("[chain] finalization deferred"),
             }
         });
 
