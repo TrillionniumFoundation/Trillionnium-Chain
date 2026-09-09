@@ -1,0 +1,200 @@
+name: ops-apply-codeql-default-setup
+
+on:
+  push:
+    branches:
+      - ops/main-tree-convergence-audit-20260909
+    paths:
+      - .github/workflows/ops-apply-codeql-default-setup.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  pull-requests: read
+  security-events: write
+
+concurrency:
+  group: ops-apply-codeql-default-setup-20260909
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: TrillionniumFoundation/Trillionnium-Chain
+      SOURCE_PR: '101'
+      SOURCE_BRANCH: security/codeql-rust-log-redaction-v1-20260909
+      DEFAULT_BRANCH: main
+      CHANGE_TICKET: user-authorized-main-convergence-20260909
+    steps:
+      - name: Resolve and freeze exact source and main identities
+        id: freeze
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_json="$(gh api "repos/$REPOSITORY/pulls/$SOURCE_PR")"
+          test "$(jq -r .state <<<"$source_json")" = open
+          test "$(jq -r .head.ref <<<"$source_json")" = "$SOURCE_BRANCH"
+          source_sha="$(jq -r .head.sha <<<"$source_json")"
+          main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/$DEFAULT_BRANCH" --jq .object.sha)"
+          test "${#source_sha}" -eq 40
+          test "${#main_sha}" -eq 40
+          {
+            echo "source_sha=$source_sha"
+            echo "main_sha=$main_sha"
+          } >> "$GITHUB_OUTPUT"
+          printf 'source_sha=%s\nmain_sha=%s\nchange_ticket=%s\n' \
+            "$source_sha" "$main_sha" "$CHANGE_TICKET" | tee "$RUNNER_TEMP/frozen.env"
+
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ steps.freeze.outputs.source_sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Extract and validate the unique default-setup API payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ steps.freeze.outputs.source_sha }}"
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import json
+          from pathlib import Path
+
+          path = Path('config/codeql-default-setup-v1.json')
+          document = json.loads(path.read_text(encoding='utf-8'))
+          candidates = []
+
+          def walk(value):
+              if isinstance(value, dict):
+                  languages = value.get('languages')
+                  if (
+                      value.get('state') == 'configured'
+                      and value.get('query_suite') == 'extended'
+                      and isinstance(languages, list)
+                      and set(languages) == {
+                          'actions', 'javascript-typescript', 'python', 'rust'
+                      }
+                  ):
+                      candidates.append(value)
+                  for child in value.values():
+                      walk(child)
+              elif isinstance(value, list):
+                  for child in value:
+                      walk(child)
+
+          walk(document)
+          if len(candidates) != 1:
+              raise SystemExit(f'expected exactly one API payload, found {len(candidates)}')
+          payload = candidates[0]
+          allowed = {'state', 'languages', 'query_suite', 'threat_model', 'runner_type', 'runner_label'}
+          extra = set(payload) - allowed
+          if extra:
+              raise SystemExit(f'unexpected default-setup payload keys: {sorted(extra)}')
+          if payload.get('threat_model') not in {'remote_and_local', 'remote-local'}:
+              raise SystemExit('default setup must include remote and local threat sources')
+          if payload.get('runner_type', 'standard') not in {'standard', 'labeled'}:
+              raise SystemExit('unsupported runner type')
+          Path('/tmp/codeql-default-setup-request.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          PY
+          python3 -m py_compile \
+            scripts/admin/apply_codeql_default_setup_v1.py \
+            scripts/ci/test_codeql_default_setup_v1.py
+          python3 scripts/ci/test_codeql_default_setup_v1.py
+          cat /tmp/codeql-default-setup-request.json
+
+      - name: Recheck main immediately before live mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$REPOSITORY/git/ref/heads/$DEFAULT_BRANCH" --jq .object.sha)" \
+            = "${{ steps.freeze.outputs.main_sha }}"
+          test -n "$CHANGE_TICKET"
+
+      - name: Apply live default setup and retain authoritative response
+        id: patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          gh api --method PATCH \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "repos/$REPOSITORY/code-scanning/default-setup" \
+            --input /tmp/codeql-default-setup-request.json \
+            > "$RUNNER_TEMP/codeql-default-setup-patch.json" \
+            2> "$RUNNER_TEMP/codeql-default-setup-patch.stderr"
+          rc=$?
+          set -e
+          printf '%s\n' "$rc" > "$RUNNER_TEMP/codeql-default-setup-patch.rc"
+          cat "$RUNNER_TEMP/codeql-default-setup-patch.stderr" >&2 || true
+          if [ "$rc" -ne 0 ]; then
+            echo "live CodeQL default-setup mutation denied; retained as unresolved administration evidence" >&2
+            exit "$rc"
+          fi
+          validation_run_id="$(jq -r '.run_id // .run_id.id // empty' "$RUNNER_TEMP/codeql-default-setup-patch.json")"
+          echo "validation_run_id=$validation_run_id" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/codeql-default-setup-patch.json"
+
+      - name: Re-read live configuration without accepting security evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$REPOSITORY/git/ref/heads/$DEFAULT_BRANCH" --jq .object.sha)" \
+            = "${{ steps.freeze.outputs.main_sha }}"
+          gh api \
+            -H 'Accept: application/vnd.github+json' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "repos/$REPOSITORY/code-scanning/default-setup" \
+            > "$RUNNER_TEMP/codeql-default-setup-readback.json"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          requested = json.loads(Path('/tmp/codeql-default-setup-request.json').read_text())
+          live = json.loads(Path('/tmp/codeql-default-setup-readback.json').read_text())
+          for key in ('state', 'query_suite', 'languages'):
+              if live.get(key) != requested.get(key):
+                  raise SystemExit(f'live readback mismatch for {key}')
+          if set(live.get('languages', [])) != {'actions', 'javascript-typescript', 'python', 'rust'}:
+              raise SystemExit('live readback lacks the complete language set')
+          PY
+          test "$(gh api "repos/$REPOSITORY/git/ref/heads/$DEFAULT_BRANCH" --jq .object.sha)" \
+            = "${{ steps.freeze.outputs.main_sha }}"
+          cat "$RUNNER_TEMP/codeql-default-setup-readback.json"
+
+      - name: Seal administrative mutation evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/codeql-default-setup-evidence"
+          mkdir -p "$out"
+          cp "$RUNNER_TEMP/frozen.env" "$out/" 2>/dev/null || true
+          cp /tmp/codeql-default-setup-request.json "$out/" 2>/dev/null || true
+          cp "$RUNNER_TEMP"/codeql-default-setup-* "$out/" 2>/dev/null || true
+          printf 'workflow_sha=%s\nsource_sha=%s\nmain_sha=%s\n' \
+            "$GITHUB_SHA" "${{ steps.freeze.outputs.source_sha }}" \
+            "${{ steps.freeze.outputs.main_sha }}" > "$out/binding.env"
+          (
+            cd "$out"
+            find . -maxdepth 1 -type f -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload immutable administration evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: codeql-default-setup-admin-${{ github.sha }}
+          path: ${{ runner.temp }}/codeql-default-setup-evidence
+          if-no-files-found: error
+          retention-days: 30
