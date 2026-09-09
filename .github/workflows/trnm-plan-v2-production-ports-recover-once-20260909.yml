@@ -1,0 +1,130 @@
+name: TRNM Plan v2 production port carrier recovery
+
+on:
+  push:
+    branches:
+      - work/plan-v2-production-ports-20260909
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-plan-v2-production-ports-recover-20260909
+  cancel-in-progress: false
+
+jobs:
+  recover-apply-and-qualify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      BASE_SHA: bbee7c0194e420a36c7747167000450083d5d951
+      BRANCH: work/plan-v2-production-ports-20260909
+      INVALID_WORKFLOW: .github/workflows/trnm-plan-v2-production-ports-once-20260909.yml
+      RECOVERY_WORKFLOW: .github/workflows/trnm-plan-v2-production-ports-recover-once-20260909.yml
+      RUSTUP_TOOLCHAIN: 1.95.0
+    steps:
+      - name: Check out recovery carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 3
+
+      - name: Verify carrier ancestry and surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^^)" = "${BASE_SHA}"
+          actual="$(git diff --name-only "${BASE_SHA}" HEAD | sort)"
+          expected="$(printf '%s\n' "${INVALID_WORKFLOW}" "${RECOVERY_WORKFLOW}" | sort)"
+          test "${actual}" = "${expected}"
+          test -z "$(git status --short)"
+
+      - name: Recover and materialize reviewed payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          payload="${RUNNER_TEMP}/production-ports.tar.gz.b64"
+          grep -m1 '^H4sI' "${INVALID_WORKFLOW}" > "${payload}"
+          test -s "${payload}"
+          python3 - "${payload}" <<'PY'
+          import base64
+          import io
+          import pathlib
+          import sys
+          import tarfile
+
+          payload = pathlib.Path(sys.argv[1]).read_bytes()
+          raw = base64.b64decode(payload, validate=True)
+          allowed = {
+              "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+              "trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs",
+              "trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs",
+          }
+          with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
+              members = archive.getmembers()
+              names = {member.name for member in members}
+              if names != allowed:
+                  raise SystemExit(f"unexpected payload members: {sorted(names ^ allowed)}")
+              for member in members:
+                  path = pathlib.PurePosixPath(member.name)
+                  if not member.isfile() or member.name.startswith("/") or ".." in path.parts:
+                      raise SystemExit(f"unsafe payload member: {member.name}")
+              archive.extractall(path=".", members=members, filter="data")
+          PY
+          actual="$(git diff --name-only | sort)"
+          expected="$(printf '%s\n' \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs | sort)"
+          test "${actual}" = "${expected}"
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt,clippy
+          rustc --version
+          cargo --version
+
+      - name: Format and qualify production port contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustfmt --edition 2021 \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs
+          rustfmt --edition 2021 --check \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-production-v0 --all-targets
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-production-v0 --all-targets -- -D warnings
+          python3 scripts/ci/check_node_decomposition_v1.py
+          python3 scripts/ci/check_build_closures_v1.py
+          python3 scripts/ci/check_repository_truth_v1.py
+          git diff --check
+
+      - name: Publish clean source commit and remove both carriers
+        shell: bash
+        run: |
+          set -euo pipefail
+          carrier_sha="$(git rev-parse HEAD)"
+          rm -f "${INVALID_WORKFLOW}" "${RECOVERY_WORKFLOW}"
+          git reset --soft "${BASE_SHA}"
+          git add \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs
+          actual="$(git diff --cached --name-only | sort)"
+          expected="$(printf '%s\n' \
+            trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-poco-node-production-v0/tests/production_port_surface.rs | sort)"
+          test "${actual}" = "${expected}"
+          git diff --cached --check
+          git config user.name "OpenAI GPT-5.6 Pro"
+          git config user.email "noreply@openai.com"
+          git commit -s -m "feat(plan-v2): add fail-closed production authority ports"
+          git push --force-with-lease="refs/heads/${BRANCH}:${carrier_sha}" origin "HEAD:refs/heads/${BRANCH}"
