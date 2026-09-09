@@ -1,0 +1,529 @@
+name: TRNM exact-source Rust CodeQL fingerprint disposition ded43a v4
+
+on:
+  push:
+    branches:
+      - evidence/codeql-triage-ded43a-v4-20260909
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: trnm-codeql-triage-ded43a-v4
+  cancel-in-progress: false
+
+jobs:
+  disposition:
+    name: Bind all 703 findings to source scope and sink semantics
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SUBJECT_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      SUBJECT_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      SOURCE_RUN_ID: "34311122905"
+      SOURCE_ARTIFACT_NAME: trnm-rust-codeql-exact-source-ded43a-v3-34311122905
+      SOURCE_ARTIFACT_DIGEST: sha256:8eba327ccae6cfa4a9c0c618fe665de408b35c6129ccf27a5d168c8d8611f433
+    steps:
+      - name: Check out exact immutable candidate as data
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SUBJECT_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source identity and clean checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Verify producer run and download immutable SARIF artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          run="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}")"
+          test "$(jq -r '.status' <<<"${run}")" = completed
+          test "$(jq -r '.conclusion' <<<"${run}")" = success
+          artifacts="$(gh api --method GET "repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}/artifacts?per_page=100")"
+          count="$(jq --arg name "${SOURCE_ARTIFACT_NAME}" '[.artifacts[] | select(.name == $name and .expired == false)] | length' <<<"${artifacts}")"
+          test "${count}" = 1
+          digest="$(jq -r --arg name "${SOURCE_ARTIFACT_NAME}" '.artifacts[] | select(.name == $name) | .digest' <<<"${artifacts}")"
+          test "${digest}" = "${SOURCE_ARTIFACT_DIGEST}"
+          mkdir -p "${RUNNER_TEMP}/codeql-source"
+          gh run download "${SOURCE_RUN_ID}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --name "${SOURCE_ARTIFACT_NAME}" \
+            --dir "${RUNNER_TEMP}/codeql-source"
+
+      - name: Produce complete per-fingerprint disposition candidate
+        id: classify
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/codeql-disposition"
+          mkdir -p "${out}"
+          export DISPOSITION_OUT="${out}"
+          export CODEQL_SOURCE_ROOT="${RUNNER_TEMP}/codeql-source"
+          python3 - <<'PY'
+          import collections
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import re
+
+          repo = pathlib.Path.cwd().resolve()
+          artifact = pathlib.Path(os.environ["CODEQL_SOURCE_ROOT"])
+          out = pathlib.Path(os.environ["DISPOSITION_OUT"])
+
+          reports = list(artifact.rglob("report.json"))
+          findings_paths = list(artifact.rglob("findings.json"))
+          sums_paths = list(artifact.rglob("SHA256SUMS"))
+          sarif_paths = sorted(artifact.rglob("*.sarif"))
+          if len(reports) != 1 or len(findings_paths) != 1 or len(sums_paths) != 1:
+              raise SystemExit(
+                  f"expected one report/findings/SHA256SUMS; got {len(reports)}/{len(findings_paths)}/{len(sums_paths)}"
+              )
+          if not sarif_paths:
+              raise SystemExit("no SARIF in immutable producer artifact")
+
+          report = json.loads(reports[0].read_text(encoding="utf-8"))
+          findings = json.loads(findings_paths[0].read_text(encoding="utf-8"))
+          if report.get("exact_source_sha") != os.environ["SUBJECT_SHA"]:
+              raise SystemExit("producer source SHA mismatch")
+          if report.get("exact_source_tree") != os.environ["SUBJECT_TREE"]:
+              raise SystemExit("producer source tree mismatch")
+          if str(report.get("workflow_run_id")) != os.environ["SOURCE_RUN_ID"]:
+              raise SystemExit("producer workflow run mismatch")
+          if report.get("result_count") != len(findings) or len(findings) != 703:
+              raise SystemExit(f"unexpected complete result count: report={report.get('result_count')} findings={len(findings)}")
+
+          checksum_root = sums_paths[0].parent.parent
+          for raw in sums_paths[0].read_text(encoding="utf-8").splitlines():
+              if not raw.strip():
+                  continue
+              digest, rel = raw.split(None, 1)
+              path = checksum_root / rel.strip().lstrip("*")
+              if not path.is_file():
+                  raise SystemExit(f"producer artifact member absent: {rel}")
+              if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                  raise SystemExit(f"producer artifact digest mismatch: {rel}")
+
+          canonical = next((p for p in sarif_paths if p.name == "upload.sarif" and "post-processed" in p.parts), sarif_paths[0])
+          sarif = json.loads(canonical.read_text(encoding="utf-8"))
+          sarif_results = [r for run in sarif.get("runs", []) for r in run.get("results", [])]
+          if len(sarif_results) != len(findings):
+              raise SystemExit(f"SARIF/normalized result count mismatch: {len(sarif_results)} != {len(findings)}")
+
+          PATH_TEST_PARTS = {
+              "tests", "test", "testing", "fuzz", "benches", "bench", "examples",
+              "fixtures", "fixture", "vectors", "vector", "conformance", "formal",
+          }
+          NON_PRODUCTION_CRATES = {
+              "trnm-consensus-sim": "simulation-only crate",
+              "trnm-poco-lab-validator": "lab-validator/evidence crate",
+          }
+          OUTPUT_RE = re.compile(
+              r"(?:\b(?:e?println|e?print|panic|format|dbg|trace|debug|info|warn|error)!\s*\(|\b(?:tracing|log)::(?:trace|debug|info|warn|error)!?\s*\()"
+          )
+          CONTAINER_RE = re.compile(
+              r"\.(?:insert|remove|push|push_front|push_back|pop|pop_front|pop_back|extend|entry|retain)\s*\("
+          )
+          PUBLIC_DOMAIN_RE = re.compile(
+              r"\b(?:nonce|sequence|seq|height|view|epoch|round|generation|frame|window|offset|index|count|timestamp|timeout|retry|attempt|slot|block|request_id|session_id)\b",
+              re.IGNORECASE,
+          )
+          SECRET_RE = re.compile(
+              r"\b(?:private[_ -]?key|secret|password|seed|mnemonic|aead|iv\b|signing[_ -]?random|encryption[_ -]?key|decryption[_ -]?key)\b",
+              re.IGNORECASE,
+          )
+
+          def normalize_uri(value):
+              if not value:
+                  return None
+              value = str(value).replace("\\", "/")
+              if value.startswith("file://"):
+                  value = value[7:]
+              for marker in ("/Trillionnium-Chain/", "/trillionnium-chain/"):
+                  if marker in value:
+                      value = value.split(marker, 1)[1]
+              value = value.lstrip("/")
+              prefixes = (
+                  "trillionnium/", "contracts/", "scripts/", "formal/", "tools/",
+                  "web4-frontend/", "proto/", "docs/", "config/",
+              )
+              for prefix in prefixes:
+                  pos = value.find(prefix)
+                  if pos >= 0:
+                      return value[pos:]
+              return value
+
+          def read_lines(path):
+              source = repo / path
+              if not source.is_file():
+                  return []
+              return source.read_text(encoding="utf-8", errors="replace").splitlines()
+
+          def context(path, line, radius=5):
+              lines = read_lines(path)
+              if not lines or not line:
+                  return ""
+              pos = min(max(int(line), 1), len(lines)) - 1
+              lo = max(0, pos - radius)
+              hi = min(len(lines), pos + radius + 1)
+              return "\n".join(f"{i + 1}: {lines[i]}" for i in range(lo, hi))
+
+          def crate_name(path):
+              parts = pathlib.PurePosixPath(path).parts if path else ()
+              try:
+                  idx = parts.index("crates")
+                  return parts[idx + 1]
+              except (ValueError, IndexError):
+                  return None
+
+          def path_test_reason(path):
+              if not path:
+                  return None
+              pure = pathlib.PurePosixPath(path)
+              if set(pure.parts) & PATH_TEST_PARTS:
+                  return "dedicated test/vector/fuzz/formal/conformance path"
+              name = pure.name
+              if re.search(r"(^|_)(tests?|fixtures?|vectors?)\.rs$", name):
+                  return "dedicated test/fixture/vector source file"
+              if "fixture_authoring" in name:
+                  return "fixture-authoring source surface"
+              return None
+
+          def strip_line_for_braces(raw):
+              # Conservative single-line lexical cleanup. It may under-classify but never
+              # promotes an uncertain result to accepted production safety.
+              line = raw.split("//", 1)[0]
+              line = re.sub(r'"(?:\\.|[^"\\])*"', '""', line)
+              line = re.sub(r"'(?:\\.|[^'\\])'", "''", line)
+              return line
+
+          def rust_scope(path, target_line):
+              lines = read_lines(path)
+              if not lines or not target_line:
+                  return {"test": False, "reasons": [], "scope_names": []}
+              target = min(max(int(target_line), 1), len(lines))
+              prefix = "\n".join(lines[: min(target, 80)])
+              reasons = []
+              if re.search(r"(?m)^\s*#!\s*\[\s*cfg\s*\(\s*test\s*\)\s*\]", prefix):
+                  reasons.append("file-level #![cfg(test)]")
+
+              depth = 0
+              stack = []
+              pending_attrs = []
+              scope_names = []
+              for lineno, raw in enumerate(lines[:target], start=1):
+                  stripped = raw.strip()
+                  if stripped.startswith("#["):
+                      pending_attrs.append(stripped)
+                  cleaned = strip_line_for_braces(raw)
+                  opens = cleaned.count("{")
+                  closes = cleaned.count("}")
+                  if opens:
+                      attrs = " ".join(pending_attrs)
+                      test_attr = bool(
+                          re.search(r"cfg\s*\([^\]]*\btest\b", attrs)
+                          or re.search(r"#\s*\[\s*test(?:_case)?\b", attrs)
+                      )
+                      item_match = re.search(
+                          r"\b(?:fn|mod|impl|trait|struct|enum)\s+([A-Za-z_][A-Za-z0-9_]*)",
+                          cleaned,
+                      )
+                      item = item_match.group(1) if item_match else None
+                      inherited = any(frame[1] for frame in stack)
+                      for _ in range(opens):
+                          depth += 1
+                          stack.append((depth, test_attr or inherited, item))
+                      pending_attrs = []
+                  elif stripped and not stripped.startswith("#"):
+                      pending_attrs = []
+                  for _ in range(closes):
+                      if stack:
+                          stack.pop()
+                      depth = max(0, depth - 1)
+              active_test = any(frame[1] for frame in stack)
+              if active_test:
+                  reasons.append("enclosing #[cfg(test)]/#[test] Rust scope")
+              scope_names = [frame[2] for frame in stack if frame[2]]
+              return {"test": bool(reasons), "reasons": reasons, "scope_names": scope_names}
+
+          def test_only_module_reference(path):
+              if not path or not path.endswith(".rs"):
+                  return None
+              pure = pathlib.PurePosixPath(path)
+              stem = pure.stem
+              parent = repo / pure.parent
+              candidates = [parent / "mod.rs", parent / "lib.rs", parent.parent / f"{pure.parent.name}.rs"]
+              pat = re.compile(
+                  rf"#\s*\[\s*cfg\s*\([^\]]*\btest\b[^\]]*\)\s*\]\s*(?:pub\s+)?mod\s+{re.escape(stem)}\s*;",
+                  re.DOTALL,
+              )
+              for candidate in candidates:
+                  if candidate.is_file() and pat.search(candidate.read_text(encoding="utf-8", errors="replace")):
+                      return f"module imported only under #[cfg(test)] from {candidate.relative_to(repo)}"
+              return None
+
+          def flow_summary(result):
+              entries = []
+              for code_flow in result.get("codeFlows", []) or []:
+                  for thread_flow in code_flow.get("threadFlows", []) or []:
+                      for point in thread_flow.get("locations", []) or []:
+                          loc = point.get("location") or {}
+                          physical = loc.get("physicalLocation") or {}
+                          artifact_loc = physical.get("artifactLocation") or {}
+                          region = physical.get("region") or {}
+                          message = (loc.get("message") or {}).get("text") or ""
+                          entries.append({
+                              "path": normalize_uri(artifact_loc.get("uri")),
+                              "line": region.get("startLine"),
+                              "message": message,
+                          })
+              return entries
+
+          def stable_fingerprint(finding, index):
+              partial = finding.get("partialFingerprints") or {}
+              if partial:
+                  return "|".join(f"{k}={partial[k]}" for k in sorted(partial))
+              raw = json.dumps(
+                  {
+                      "index": index,
+                      "rule": finding.get("rule_id"),
+                      "locations": finding.get("locations"),
+                      "message": finding.get("message"),
+                  },
+                  sort_keys=True,
+                  separators=(",", ":"),
+              ).encode()
+              return "fallback-sha256=" + hashlib.sha256(raw).hexdigest()
+
+          records = []
+          classes = collections.Counter()
+          rules = collections.Counter()
+          actionable = []
+          unresolved = []
+
+          for index, (finding, sarif_result) in enumerate(zip(findings, sarif_results)):
+              rule = finding.get("rule_id") or sarif_result.get("ruleId") or "<missing>"
+              locations = finding.get("locations") or []
+              primary = locations[0] if locations else {}
+              path = normalize_uri(primary.get("uri"))
+              line = primary.get("start_line")
+              snippet = context(path, line)
+              scope = rust_scope(path, line)
+              path_reason = path_test_reason(path)
+              module_reason = test_only_module_reference(path)
+              crate = crate_name(path)
+              nonprod_reason = NON_PRODUCTION_CRATES.get(crate)
+              flow = flow_summary(sarif_result)
+              combined_flow_text = "\n".join(
+                  f"{x.get('path')}:{x.get('line')} {x.get('message')}" for x in flow[-12:]
+              )
+              combined = snippet + "\n" + combined_flow_text
+
+              reasons = []
+              if path_reason:
+                  reasons.append(path_reason)
+              reasons.extend(scope["reasons"])
+              if module_reason:
+                  reasons.append(module_reason)
+              test_scoped = bool(path_reason or scope["test"] or module_reason)
+
+              disposition = "unresolved-manual-review"
+              rationale = "source scope or sink semantics are not sufficiently proved"
+
+              if rule == "rust/cleartext-logging":
+                  has_output = bool(OUTPUT_RE.search(combined))
+                  has_container = bool(CONTAINER_RE.search(snippet))
+                  if test_scoped:
+                      disposition = "test-only-diagnostic"
+                      rationale = "; ".join(reasons) + "; no production authority credit"
+                  elif nonprod_reason:
+                      disposition = "non-production-simulation-diagnostic"
+                      rationale = nonprod_reason + "; retained as candidate/lab evidence only"
+                  elif has_container and not has_output:
+                      disposition = "query-dataflow-false-positive-candidate"
+                      rationale = "primary operation is a collection mutation and the retained local/flow context contains no process-output macro"
+                  elif not has_output:
+                      disposition = "query-non-log-sink-candidate"
+                      rationale = "retained local/flow context contains no Rust process-output/logging macro; specialist trace review remains required"
+                  else:
+                      disposition = "actionable-production-log-review"
+                      rationale = "a process-output/logging macro is reachable outside proved test/lab scope"
+              elif rule == "rust/hard-coded-cryptographic-value":
+                  if test_scoped:
+                      disposition = "public-deterministic-test-value"
+                      rationale = "; ".join(reasons) + "; deterministic bytes are retained for replay/vector stability"
+                  elif nonprod_reason:
+                      disposition = "non-production-deterministic-simulation-value"
+                      rationale = nonprod_reason + "; no production cryptographic authority"
+                  elif PUBLIC_DOMAIN_RE.search(combined) and not SECRET_RE.search(combined):
+                      disposition = "public-protocol-domain-value-candidate"
+                      rationale = "literal is bound to public sequence/height/view/epoch/session domain context and no secret/private-key/AEAD-IV context is present"
+                  else:
+                      disposition = "actionable-production-cryptographic-value-review"
+                      rationale = "production scope contains a hard-coded value without a proved public-domain classification"
+              else:
+                  disposition = "unresolved-unexpected-rule"
+                  rationale = f"unexpected rule {rule} in the frozen Rust inventory"
+
+              record = {
+                  "index": index,
+                  "fingerprint": stable_fingerprint(finding, index),
+                  "rule_id": rule,
+                  "level": finding.get("level"),
+                  "message": finding.get("message"),
+                  "primary_path": path,
+                  "primary_line": line,
+                  "source_context": snippet,
+                  "scope_names": scope["scope_names"],
+                  "scope_evidence": reasons,
+                  "non_production_crate_evidence": nonprod_reason,
+                  "flow_tail": flow[-12:],
+                  "disposition_candidate": disposition,
+                  "rationale": rationale,
+                  "independent_specialist_acceptance": False,
+                  "alert_dismissed": False,
+              }
+              records.append(record)
+              classes[disposition] += 1
+              rules[rule] += 1
+              if disposition.startswith("actionable-"):
+                  actionable.append(record)
+              if disposition.startswith("unresolved-"):
+                  unresolved.append(record)
+
+          fingerprints = [r["fingerprint"] for r in records]
+          if len(fingerprints) != len(set(fingerprints)):
+              duplicates = [f for f, c in collections.Counter(fingerprints).items() if c > 1]
+              raise SystemExit(f"non-unique result fingerprints: {duplicates[:10]}")
+
+          disposition_doc = {
+              "schema": "trnm-rust-codeql-fingerprint-disposition-candidate-v4",
+              "source_sha": os.environ["SUBJECT_SHA"],
+              "source_tree": os.environ["SUBJECT_TREE"],
+              "producer_run_id": os.environ["SOURCE_RUN_ID"],
+              "producer_artifact_name": os.environ["SOURCE_ARTIFACT_NAME"],
+              "producer_artifact_digest": os.environ["SOURCE_ARTIFACT_DIGEST"],
+              "complete_result_count": len(records),
+              "unique_fingerprint_count": len(set(fingerprints)),
+              "rule_counts": dict(sorted(rules.items())),
+              "disposition_counts": dict(sorted(classes.items())),
+              "actionable_review_count": len(actionable),
+              "unresolved_count": len(unresolved),
+              "records": records,
+              "automatic_alert_dismissal_performed": False,
+              "independent_specialist_acceptance": False,
+              "official_codeql_gate_success": False,
+              "all_gaps_closed": False,
+              "production_candidate": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+          }
+          (out / "dispositions.json").write_text(
+              json.dumps(disposition_doc, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          (out / "actionable-review.json").write_text(
+              json.dumps(actionable, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          (out / "unresolved.json").write_text(
+              json.dumps(unresolved, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+
+          lines = [
+              "<!-- trnm-codeql-fingerprint-disposition-ded43a-v4 -->",
+              "## Complete exact-source Rust CodeQL fingerprint disposition candidate v4",
+              "",
+              f"- source: `{os.environ['SUBJECT_SHA']}`",
+              f"- tree: `{os.environ['SUBJECT_TREE']}`",
+              f"- immutable producer run: `{os.environ['SOURCE_RUN_ID']}`",
+              f"- complete/unique fingerprints: **{len(records)} / {len(set(fingerprints))}**",
+              f"- actionable production review: **{len(actionable)}**",
+              f"- unresolved: **{len(unresolved)}**",
+              "",
+              "Disposition classes:",
+          ]
+          lines.extend(f"- `{name}`: {count}" for name, count in sorted(classes.items()))
+          if actionable:
+              lines += ["", "Actionable/manual production review remains:"]
+              for item in actionable[:100]:
+                  lines.append(
+                      f"- `{item['rule_id']}` `{item['primary_path']}:{item['primary_line']}` — {item['rationale']}"
+                  )
+          if unresolved:
+              lines += ["", "Unresolved records remain:"]
+              for item in unresolved[:100]:
+                  lines.append(
+                      f"- `{item['rule_id']}` `{item['primary_path']}:{item['primary_line']}` — {item['rationale']}"
+                  )
+          lines += [
+              "",
+              "Every fingerprint, source context, scope proof and retained flow tail is in the artifact.",
+              "This is a repository-produced disposition candidate, not independent specialist acceptance and not an alert dismissal.",
+              "The official CodeQL aggregate, Administration readback, production/testnet/release and activation remain fail-closed.",
+          ]
+          (out / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+          (out / "gate.env").write_text(
+              f"ACTIONABLE={len(actionable)}\nUNRESOLVED={len(unresolved)}\n",
+              encoding="utf-8",
+          )
+          PY
+          (
+            cd "${out}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+          source "${out}/gate.env"
+          echo "actionable=${ACTIONABLE}" >> "${GITHUB_OUTPUT}"
+          echo "unresolved=${UNRESOLVED}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload immutable complete disposition evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-codeql-fingerprint-disposition-ded43a-v4-${{ github.run_id }}
+          path: ${{ runner.temp }}/codeql-disposition/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Publish bounded disposition summary
+        if: always() && steps.classify.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          body="${RUNNER_TEMP}/codeql-disposition/summary.md"
+          for issue in 88 62; do
+            jq -n --rawfile body "${body}" '{body:$body}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+          done
+
+      - name: Fail closed while actionable or unresolved records remain
+        if: always() && steps.classify.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.classify.outputs.actionable }}" = "0"
+          test "${{ steps.classify.outputs.unresolved }}" = "0"
+
+      - name: Verify candidate source was never mutated
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SUBJECT_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SUBJECT_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
