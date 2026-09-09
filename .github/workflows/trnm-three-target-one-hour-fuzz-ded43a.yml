@@ -1,0 +1,175 @@
+name: TRNM three-target one-hour exact-source fuzz ded43a
+
+on:
+  push:
+    branches:
+      - evidence/long-fuzz-ded43a-20260909
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: trnm-three-target-one-hour-fuzz-ded43a
+  cancel-in-progress: false
+
+jobs:
+  fuzz:
+    name: one-hour fuzz (${{ matrix.target }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - canonical_tx_json
+          - signed_envelope_json
+          - poco_cev0_exact
+    env:
+      EXACT_SOURCE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
+      EXACT_SOURCE_TREE: c0791ffb57e05fde43f87bfed1a3b4656c09efc0
+      FUZZ_TOOLCHAIN: nightly-2026-09-01
+      CARGO_FUZZ_VERSION: 0.13.1
+      GH_TOKEN: ${{ github.token }}
+      RUST_BACKTRACE: "1"
+    steps:
+      - name: Retain carrier identity
+        shell: bash
+        run: printf '%s\n' "${GITHUB_SHA}" > "${RUNNER_TEMP}/carrier-sha"
+
+      - name: Check out exact candidate source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXACT_SOURCE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact source and target
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          test -f "trillionnium/fuzz/fuzz_targets/${TARGET}.rs"
+          git diff --quiet
+          git diff --cached --quiet
+
+      - name: Install pinned fuzz toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${FUZZ_TOOLCHAIN}" --profile minimal
+          cargo +"${FUZZ_TOOLCHAIN}" install cargo-fuzz --version "${CARGO_FUZZ_VERSION}" --locked
+          rustc +"${FUZZ_TOOLCHAIN}" -Vv | tee "${RUNNER_TEMP}/rustc-version.txt"
+          cargo +"${FUZZ_TOOLCHAIN}" fuzz --version | tee "${RUNNER_TEMP}/cargo-fuzz-version.txt"
+
+      - name: Run exact one-hour campaign
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          evidence="${RUNNER_TEMP}/fuzz-${TARGET}"
+          mkdir -p "${evidence}"
+          cp "${RUNNER_TEMP}/carrier-sha" "${evidence}/carrier-sha.txt"
+          cp "${RUNNER_TEMP}/rustc-version.txt" "${evidence}/rustc-version.txt"
+          cp "${RUNNER_TEMP}/cargo-fuzz-version.txt" "${evidence}/cargo-fuzz-version.txt"
+          printf '%s\n' "${EXACT_SOURCE_SHA}" > "${evidence}/source-sha.txt"
+          printf '%s\n' "${EXACT_SOURCE_TREE}" > "${evidence}/source-tree.txt"
+          printf '%s\n' "${GITHUB_RUN_ID}" > "${evidence}/workflow-run-id.txt"
+          start_epoch="$(date -u +%s)"
+          printf '%s\n' "$(date -u --iso-8601=seconds)" > "${evidence}/started-at.txt"
+          cd trillionnium
+          set +e
+          timeout --signal=INT --kill-after=30s 3720s \
+            cargo +"${FUZZ_TOOLCHAIN}" fuzz run "${TARGET}" -- \
+              -max_total_time=3600 \
+              -timeout=15 \
+              -rss_limit_mb=6144 \
+              -print_final_stats=1 \
+              -artifact_prefix="fuzz/artifacts/${TARGET}/" \
+            2>&1 | tee "${evidence}/fuzz.log"
+          rc="${PIPESTATUS[0]}"
+          set -e
+          end_epoch="$(date -u +%s)"
+          duration="$((end_epoch-start_epoch))"
+          printf '%s\n' "${rc}" > "${evidence}/exit-code.txt"
+          printf '%s\n' "${duration}" > "${evidence}/duration-seconds.txt"
+          printf '%s\n' "$(date -u --iso-8601=seconds)" > "${evidence}/finished-at.txt"
+          if [[ -d "fuzz/corpus/${TARGET}" ]]; then
+            cp -a "fuzz/corpus/${TARGET}" "${evidence}/corpus"
+          fi
+          if [[ -d "fuzz/artifacts/${TARGET}" ]]; then
+            cp -a "fuzz/artifacts/${TARGET}" "${evidence}/artifacts"
+          fi
+          crash_count="$(find "${evidence}/artifacts" -type f 2>/dev/null | wc -l | tr -d ' ')"
+          printf '%s\n' "${crash_count:-0}" > "${evidence}/crash-count.txt"
+          if [[ "${rc}" -ne 0 ]]; then
+            echo "fuzz target ${TARGET} failed with exit ${rc}" >&2
+            exit "${rc}"
+          fi
+          if [[ "${duration}" -lt 3500 ]]; then
+            echo "fuzz target ${TARGET} did not consume the required wall-clock budget: ${duration}s" >&2
+            exit 90
+          fi
+          if [[ "${crash_count:-0}" -ne 0 ]]; then
+            echo "fuzz target ${TARGET} produced crash artifacts" >&2
+            exit 91
+          fi
+          (
+            cd "${evidence}"
+            find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+          )
+
+      - name: Upload immutable fuzz evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-one-hour-fuzz-${{ matrix.target }}-ded43a-${{ github.run_id }}
+          path: ${{ runner.temp }}/fuzz-${{ matrix.target }}/**
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 6
+
+      - name: Publish successful target summary
+        if: ${{ success() }}
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          set -euo pipefail
+          evidence="${RUNNER_TEMP}/fuzz-${TARGET}"
+          duration="$(cat "${evidence}/duration-seconds.txt")"
+          crash_count="$(cat "${evidence}/crash-count.txt")"
+          cat > "${RUNNER_TEMP}/summary.md" <<EOF
+          <!-- trnm-fuzz-ded43a-${TARGET} -->
+          ## Exact-source one-hour fuzz evidence: ${TARGET}
+
+          - source: \`${EXACT_SOURCE_SHA}\`
+          - tree: \`${EXACT_SOURCE_TREE}\`
+          - workflow run: \`${GITHUB_RUN_ID}\`
+          - target: \`${TARGET}\`
+          - measured duration: \`${duration}s\`
+          - crash artifacts: \`${crash_count}\`
+          - toolchain: \`${FUZZ_TOOLCHAIN}\`
+          - cargo-fuzz: \`${CARGO_FUZZ_VERSION}\`
+
+          The full log, final corpus, crash directory, version records and SHA-256 inventory are retained in the workflow artifact. This is repository-controlled fuzz evidence; independent reviewer acceptance remains separate. Production/testnet/release/activation remain false.
+          EOF
+          for issue in 88 101; do
+            jq -n --rawfile body "${RUNNER_TEMP}/summary.md" '{body:$body}' \
+              | gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" --input -
+          done
+
+      - name: Verify no source mutation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${EXACT_SOURCE_SHA}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${EXACT_SOURCE_TREE}"
+          git diff --quiet
+          git diff --cached --quiet
