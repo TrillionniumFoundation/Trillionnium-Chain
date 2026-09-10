@@ -8,6 +8,7 @@ on:
       - .github/workflows/poco-only-convergence-r13-once-20260910.yml
       - tools/temporary_poco_convergence_r13.sh
       - tools/temporary_poco_native_convergence_r13.py
+      - tools/temporary_poco_r13_postfix.py
 
 concurrency:
   group: poco-only-final-convergence
@@ -54,17 +55,19 @@ jobs:
           cargo fetch --manifest-path trillionnium/Cargo.toml --locked
           cargo fetch --manifest-path contracts/Cargo.toml --locked
           bash -n tools/temporary_poco_convergence_r13.sh
-          python3 -m py_compile tools/temporary_poco_native_convergence_r13.py
+          python3 -m py_compile \
+            tools/temporary_poco_native_convergence_r13.py \
+            tools/temporary_poco_r13_postfix.py
 
-      - name: Harden trailing test-attribute cleanup in the one-shot helper
+      - name: Harden one-shot transformation and invoke post-transform corrections
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
 
-          path = Path("tools/temporary_poco_native_convergence_r13.py")
-          text = path.read_text(encoding="utf-8")
+          helper = Path("tools/temporary_poco_native_convergence_r13.py")
+          text = helper.read_text(encoding="utf-8")
           needle = '    tests_path.write_text(text, encoding="utf-8")\n'
           insertion = (
               '    stripped = text.rstrip()\n'
@@ -74,9 +77,20 @@ jobs:
           )
           if text.count(needle) != 1:
               raise SystemExit("R13 test-write insertion point drift")
-          path.write_text(text.replace(needle, insertion + needle, 1), encoding="utf-8")
+          helper.write_text(text.replace(needle, insertion + needle, 1), encoding="utf-8")
+
+          shell = Path("tools/temporary_poco_convergence_r13.sh")
+          script = shell.read_text(encoding="utf-8")
+          call = "python3 tools/temporary_poco_native_convergence_r13.py\n"
+          replacement = call + "python3 tools/temporary_poco_r13_postfix.py\n"
+          if script.count(call) != 1:
+              raise SystemExit("R13 native-transform call drift")
+          shell.write_text(script.replace(call, replacement, 1), encoding="utf-8")
           PY
-          python3 -m py_compile tools/temporary_poco_native_convergence_r13.py
+          python3 -m py_compile \
+            tools/temporary_poco_native_convergence_r13.py \
+            tools/temporary_poco_r13_postfix.py
+          bash -n tools/temporary_poco_convergence_r13.sh
 
       - name: Materialize, calibrate, qualify and publish exact tree
         shell: bash
