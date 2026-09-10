@@ -56,6 +56,38 @@ jobs:
           bash -n tools/temporary_poco_convergence_r13.sh
           python3 -m py_compile tools/temporary_poco_native_convergence_r13.py
 
+      - name: Repair adjacent test-attribute cleanup in the one-shot helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("tools/temporary_poco_native_convergence_r13.py")
+          text = path.read_text(encoding="utf-8")
+          old = '''    text = remove_braced_function(
+              text,
+              "excluded_legacy_authored_vector_matches_native_runtime_and_jmt_bytes",
+          )
+          tests_path.write_text(text, encoding="utf-8")
+          '''
+          new = '''    text = remove_braced_function(
+              text,
+              "excluded_legacy_authored_vector_matches_native_runtime_and_jmt_bytes",
+          )
+          stripped = text.rstrip()
+          orphan = "#[test]"
+          if not stripped.endswith(orphan):
+              raise RuntimeError("obsolete differential test attribute cleanup drift")
+          text = stripped[: -len(orphan)].rstrip() + "\\n"
+          tests_path.write_text(text, encoding="utf-8")
+          '''
+          if text.count(old) != 1:
+              raise SystemExit("R13 obsolete-test cleanup block drift")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+          python3 -m py_compile tools/temporary_poco_native_convergence_r13.py
+
       - name: Materialize, calibrate, qualify and publish exact tree
         shell: bash
         run: bash tools/temporary_poco_convergence_r13.sh
