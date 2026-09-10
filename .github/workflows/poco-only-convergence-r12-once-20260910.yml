@@ -54,6 +54,45 @@ jobs:
           cargo fetch --manifest-path trillionnium/Cargo.toml --locked
           cargo fetch --manifest-path contracts/Cargo.toml --locked
 
+      - name: Repair expected fail-closed exit handling
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("tools/temporary_poco_convergence_r12.sh")
+          text = path.read_text(encoding="utf-8")
+          old = '''set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all \\
+            --source-commit "$FINAL_COMMIT" \\
+            --source-tree "$FINAL_TREE" \\
+            --output /tmp/trnm-r12-external-evidence.json \\
+            >/tmp/trnm-r12-external-evidence.stdout \\
+            2>/tmp/trnm-r12-external-evidence.stderr
+          external_rc=$?
+          set -e
+          test "$external_rc" -eq 2
+          '''
+          new = '''trap - ERR
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all \\
+            --source-commit "$FINAL_COMMIT" \\
+            --source-tree "$FINAL_TREE" \\
+            --output /tmp/trnm-r12-external-evidence.json \\
+            >/tmp/trnm-r12-external-evidence.stdout \\
+            2>/tmp/trnm-r12-external-evidence.stderr
+          external_rc=$?
+          set -e
+          trap fail_report ERR
+          test "$external_rc" -eq 2
+          '''
+          if text.count(old) != 1:
+              raise SystemExit("R12 expected-exit block drift")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+          bash -n tools/temporary_poco_convergence_r12.sh
+
       - name: Materialize, qualify and publish exact native-only tree
         shell: bash
         run: bash tools/temporary_poco_convergence_r12.sh
