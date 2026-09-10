@@ -93,8 +93,10 @@ def prepare() -> None:
 
     for path in (ROOT / "trillionnium").rglob("*.rs"):
         source = path.read_text(encoding="utf-8")
-        updated = source.replace('feature = "retired-application-path"', "test")
-        updated = updated.replace(
+        # Retired application-path blocks must stay disabled. Converting them
+        # to cfg(test) reactivates archived host/recovery modules during
+        # --all-targets builds and violates the native-only cutover.
+        updated = source.replace(
             'feature = "recovery-test-support"',
             'feature = "recovery-process-test-support"',
         )
