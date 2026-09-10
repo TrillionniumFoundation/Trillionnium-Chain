@@ -1,0 +1,84 @@
+name: PoCO external collector R23 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-external-collector-r23-once-20260910.yml
+
+concurrency:
+  group: poco-external-evidence-collector
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+
+jobs:
+  collect:
+    name: Collect and authenticate exact-source external evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Check out full convergence history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Compile exact-source collector
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 -m py_compile tools/temporary_poco_external_collector_r23.py
+          cp tools/temporary_poco_external_collector_r23.py /tmp/trnm-r23-collector.py
+          python3 -m py_compile /tmp/trnm-r23-collector.py
+
+      - name: Collect workflow, artifact, review and checker evidence
+        id: collect
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 /tmp/trnm-r23-collector.py
+
+      - name: Upload exact R23 evidence diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-r23-external-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 30
+          include-hidden-files: true
+          path: |
+            /tmp/trnm-r23-r22-run.json
+            /tmp/trnm-r23-r22-jobs.json
+            /tmp/trnm-r23-r22.log
+            /tmp/trnm-r23-r22
+            /tmp/trnm-r23-product-commit.txt
+            /tmp/trnm-r23-product-tree.txt
+            /tmp/trnm-r23-review-status.json
+            /tmp/trnm-r23-external-runs.json
+            /tmp/trnm-r23-external-artifacts
+            /tmp/trnm-r23-artifact-inspection.json
+            /tmp/trnm-r23-checker-help.txt
+            /tmp/trnm-r23-gate-attempts.json
+            /tmp/trnm-r23-gate-status.txt
+            /tmp/trnm-r23-external-evidence.json
+            /tmp/trnm-r23-pr-comment.md
+
+      - name: Preserve authentic require-all conclusion
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.collect.outcome }}" != "success" ]]; then
+            exit 1
+          fi
