@@ -60,9 +60,9 @@ def patch_shell() -> None:
         script = script.replace(anchor, rendered + anchor, 1)
 
     cleanup_anchor = "  DO_NOT_CREATE_2\n\ncargo fmt --manifest-path trillionnium/Cargo.toml --all\n"
-    cleanup = '''  DO_NOT_CREATE_2
+    cleanup = r'''  DO_NOT_CREATE_2
 
-# Every R-series carrier is orchestration-only.  Remove the complete family,
+# Every R-series carrier is orchestration-only. Remove the complete family,
 # including later diagnostic/qualifier files that may exist on the source
 # branch, before compiling or committing the immutable product tree.
 find tools -type f -name 'temporary_*' -print -delete
@@ -142,9 +142,9 @@ def normalize_snapshot_codec_version() -> None:
     gated_count = text.count(gated_definition)
     bare_count = text.count(definition)
     if gated_count == 1:
-        # Remove the attribute with the test-only compatibility constant. If
-        # the attribute were left behind it would silently gate the following
-        # runtime key encoder and make non-test builds fail.
+        # Remove the attribute together with the now-dead compatibility
+        # constant. Leaving the attribute behind would gate the following
+        # public runtime key encoder.
         text = text.replace(gated_definition, "", 1)
     elif bare_count == 1:
         text = text.replace(definition, "", 1)
@@ -154,15 +154,14 @@ def normalize_snapshot_codec_version() -> None:
             f"gated={gated_count} bare={bare_count}"
         )
 
-    # Replace only the complete compatibility identifier. A plain substring
-    # replacement corrupts NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0 into
-    # NATIVE_1u16 and is therefore forbidden.
+    # The obsolete import function has already been removed by the native
+    # transformer. Zero remaining references is the expected state. Should a
+    # full-token reference survive, replace only that token; never mutate the
+    # native constant whose identifier merely contains this suffix.
     token = re.compile(
         rf"(?<![A-Za-z0-9_]){re.escape(identifier)}(?![A-Za-z0-9_])"
     )
-    text, replacement_count = token.subn("1u16", text)
-    if replacement_count < 1:
-        raise RuntimeError("authenticated-tree snapshot codec had no call-site references")
+    text, _replacement_count = token.subn("1u16", text)
     if token.search(text):
         raise RuntimeError("authenticated-tree snapshot codec identifier remains")
     if "NATIVE_1u16" in text:
@@ -170,8 +169,6 @@ def normalize_snapshot_codec_version() -> None:
     if "NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0" not in text:
         raise RuntimeError("native snapshot codec version constant disappeared")
 
-    # Defensive cleanup for whitespace/comments that may have separated an
-    # orphaned test attribute from the public runtime key function.
     text, orphan_count = re.subn(
         r"(?m)^#\[cfg\(test\)\]\s*\n(?:\s*\n)*"
         r"(?=pub fn stored_object_key_v0\s*\()",
