@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import pathlib
+import re
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SHELL = ROOT / "tools/temporary_poco_convergence_r13.sh"
@@ -98,12 +99,44 @@ def normalize_snapshot_codec_version() -> None:
     text = path.read_text(encoding="utf-8")
     identifier = "AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0"
     definition = f"const {identifier}: u16 = 1;"
-    if text.count(definition) > 1:
-        raise RuntimeError("duplicate authenticated-tree snapshot codec definitions")
-    text = text.replace(definition, "", 1)
+    gated_definition = f"#[cfg(test)]\n{definition}"
+
+    gated_count = text.count(gated_definition)
+    bare_count = text.count(definition)
+    if gated_count == 1:
+        # Remove the attribute with the test-only compatibility constant.  If
+        # the attribute were left behind it would silently gate the following
+        # runtime key encoder and make non-test builds fail.
+        text = text.replace(gated_definition, "", 1)
+    elif bare_count == 1:
+        text = text.replace(definition, "", 1)
+    else:
+        raise RuntimeError(
+            "authenticated-tree snapshot codec definition drift: "
+            f"gated={gated_count} bare={bare_count}"
+        )
+
     text = text.replace(identifier, "1u16")
     if identifier in text:
         raise RuntimeError("authenticated-tree snapshot codec identifier remains")
+
+    # Defensive cleanup for whitespace/comments that may have separated an
+    # orphaned test attribute from the public runtime key function.
+    text, orphan_count = re.subn(
+        r"(?m)^#\[cfg\(test\)\]\s*\n(?:\s*\n)*"
+        r"(?=pub fn stored_object_key_v0\s*\()",
+        "",
+        text,
+    )
+    if orphan_count > 1:
+        raise RuntimeError("multiple orphan test gates before stored object key encoder")
+    if re.search(
+        r"#\[cfg\(test\)\][\s\S]{0,80}pub fn stored_object_key_v0\s*\(",
+        text,
+    ):
+        raise RuntimeError("stored_object_key_v0 remains test-gated")
+    if text.count("pub fn stored_object_key_v0(") != 1:
+        raise RuntimeError("stored_object_key_v0 runtime definition drift")
     path.write_text(text, encoding="utf-8")
 
 
