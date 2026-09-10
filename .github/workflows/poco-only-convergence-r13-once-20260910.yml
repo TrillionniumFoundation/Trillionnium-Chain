@@ -56,7 +56,7 @@ jobs:
           bash -n tools/temporary_poco_convergence_r13.sh
           python3 -m py_compile tools/temporary_poco_native_convergence_r13.py
 
-      - name: Repair adjacent test-attribute cleanup in the one-shot helper
+      - name: Harden trailing test-attribute cleanup in the one-shot helper
         shell: bash
         run: |
           set -euo pipefail
@@ -65,26 +65,16 @@ jobs:
 
           path = Path("tools/temporary_poco_native_convergence_r13.py")
           text = path.read_text(encoding="utf-8")
-          old = '''    text = remove_braced_function(
-              text,
-              "excluded_legacy_authored_vector_matches_native_runtime_and_jmt_bytes",
+          needle = '    tests_path.write_text(text, encoding="utf-8")\n'
+          insertion = (
+              '    stripped = text.rstrip()\n'
+              '    orphan = "#[test]"\n'
+              '    if stripped.endswith(orphan):\n'
+              '        text = stripped[: -len(orphan)].rstrip() + "\\n"\n'
           )
-          tests_path.write_text(text, encoding="utf-8")
-          '''
-          new = '''    text = remove_braced_function(
-              text,
-              "excluded_legacy_authored_vector_matches_native_runtime_and_jmt_bytes",
-          )
-          stripped = text.rstrip()
-          orphan = "#[test]"
-          if not stripped.endswith(orphan):
-              raise RuntimeError("obsolete differential test attribute cleanup drift")
-          text = stripped[: -len(orphan)].rstrip() + "\\n"
-          tests_path.write_text(text, encoding="utf-8")
-          '''
-          if text.count(old) != 1:
-              raise SystemExit("R13 obsolete-test cleanup block drift")
-          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          if text.count(needle) != 1:
+              raise SystemExit("R13 test-write insertion point drift")
+          path.write_text(text.replace(needle, insertion + needle, 1), encoding="utf-8")
           PY
           python3 -m py_compile tools/temporary_poco_native_convergence_r13.py
 
