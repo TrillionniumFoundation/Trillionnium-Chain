@@ -1,0 +1,260 @@
+name: PoCO takeover R22 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-takeover-r22-once-20260910.yml
+
+concurrency:
+  group: poco-only-final-convergence
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: write
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "1"
+  CARGO_TARGET_DIR: /tmp/trnm-r22-target
+  RUST_BACKTRACE: "1"
+  RUST_MIN_STACK: "33554432"
+
+jobs:
+  converge:
+    name: Take over repository closure and external evidence orchestration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Check out exact convergence branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Install pinned tools and capture R21 terminal evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep jq
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          cargo fetch --manifest-path contracts/Cargo.toml --locked
+
+          mkdir -p /tmp/trnm-r22-prior-artifacts
+          prior_run="$(gh api \
+            "repos/$GITHUB_REPOSITORY/actions/workflows/poco-qualified-gap-overlay-r21-once-20260910.yml/runs?branch=$TARGET_BRANCH&per_page=1" \
+            --jq '.workflow_runs[0].id // empty' 2>/dev/null || true)"
+          if [[ -n "$prior_run" ]]; then
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$prior_run" \
+              >/tmp/trnm-r22-prior-run.json || true
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$prior_run/jobs?per_page=100" \
+              >/tmp/trnm-r22-prior-jobs.json || true
+            gh run view "$prior_run" --repo "$GITHUB_REPOSITORY" --log \
+              >/tmp/trnm-r22-prior-run.log 2>&1 || true
+            gh run download "$prior_run" --repo "$GITHUB_REPOSITORY" \
+              --dir /tmp/trnm-r22-prior-artifacts \
+              >/tmp/trnm-r22-prior-download.log 2>&1 || true
+          fi
+
+      - name: Restore and bind syntax-safe one-shot controllers
+        shell: bash
+        run: |
+          set -euo pipefail
+          restore_from_history() {
+            local path="$1"
+            if [[ -f "$path" ]]; then
+              return 0
+            fi
+            local commit
+            commit="$(git log --all -1 --format=%H -- "$path")"
+            test -n "$commit"
+            mkdir -p "$(dirname "$path")"
+            git show "$commit:$path" >"$path"
+          }
+
+          restore_from_history tools/temporary_poco_productize_r20.py
+          restore_from_history tools/temporary_poco_qualify_r20.py
+          test -f tools/temporary_poco_gap_overlay_r22.py
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          workflows = (
+              ".github/workflows/poco-qualified-gap-overlay-r21-once-20260910.yml",
+              ".github/workflows/poco-takeover-r22-once-20260910.yml",
+          )
+          helpers = (
+              "tools/temporary_poco_gap_overlay_r22.py",
+          )
+
+          productizer = Path("tools/temporary_poco_productize_r20.py")
+          text = productizer.read_text(encoding="utf-8")
+          anchor = '        ".github/workflows/poco-qualified-gap-overlay-r20-once-20260910.yml",\n'
+          if anchor not in text:
+              raise SystemExit("R22 productizer cleanup anchor drift")
+          for relative in workflows + helpers:
+              line = f'        "{relative}",\n'
+              if line not in text:
+                  text = text.replace(anchor, anchor + line, 1)
+          productizer.write_text(text, encoding="utf-8")
+
+          qualifier = Path("tools/temporary_poco_qualify_r20.py")
+          text = qualifier.read_text(encoding="utf-8")
+          old_root = 'ROOT = pathlib.Path(__file__).resolve().parents[1]\n'
+          new_root = 'ROOT = pathlib.Path(os.environ.get("GITHUB_WORKSPACE", pathlib.Path.cwd())).resolve()\n'
+          if old_root in text:
+              text = text.replace(old_root, new_root, 1)
+          elif new_root not in text:
+              raise SystemExit("R22 qualifier root binding drift")
+          anchor = '    ".github/workflows/poco-qualified-gap-overlay-r20-once-20260910.yml",\n'
+          if anchor not in text:
+              raise SystemExit("R22 qualifier cleanup anchor drift")
+          for relative in workflows + helpers:
+              line = f'    "{relative}",\n'
+              if line not in text:
+                  text = text.replace(anchor, anchor + line, 1)
+          qualifier.write_text(text, encoding="utf-8")
+          PY
+
+          python3 -m py_compile \
+            tools/temporary_poco_gap_overlay_r22.py \
+            tools/temporary_poco_productize_r20.py \
+            tools/temporary_poco_qualify_r20.py
+          cp tools/temporary_poco_gap_overlay_r22.py /tmp/trnm-r20-overlay.py
+          cp tools/temporary_poco_qualify_r20.py /tmp/trnm-r22-qualify.py
+          python3 -m py_compile \
+            /tmp/trnm-r20-overlay.py \
+            /tmp/trnm-r22-qualify.py
+
+      - name: Complete native-only materialization and re-check out published head
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/temporary_poco_productize_r20.py
+          if [[ -f tools/temporary_poco_convergence_r13.sh ]]; then
+            python3 -m py_compile \
+              tools/temporary_poco_native_convergence_r13.py \
+              tools/temporary_poco_r13_postfix.py
+            bash -n tools/temporary_poco_convergence_r13.sh
+            CARGO_TARGET_DIR=/tmp/trnm-r22-target \
+              bash tools/temporary_poco_convergence_r13.sh
+          fi
+          git fetch origin "$TARGET_BRANCH"
+          git reset --hard "origin/$TARGET_BRANCH"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Execute exact-tree takeover
+        id: qualify
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CARGO_TARGET_DIR: /tmp/trnm-r22-target
+        run: python3 /tmp/trnm-r22-qualify.py
+
+      - name: Publish concise convergence readback to PR 117
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          {
+            echo '### PoCO R22 exact convergence readback'
+            echo
+            echo "- workflow run: $GITHUB_RUN_ID"
+            echo "- event head: $GITHUB_SHA"
+            echo "- qualifier outcome: ${{ steps.qualify.outcome }}"
+            if [[ -f /tmp/trnm-r20-final-commit.txt ]]; then
+              echo "- qualified product commit: $(cat /tmp/trnm-r20-final-commit.txt)"
+            fi
+            if [[ -f /tmp/trnm-r20-final-tree.txt ]]; then
+              echo "- qualified product tree: $(cat /tmp/trnm-r20-final-tree.txt)"
+            fi
+            echo
+            if [[ -f /tmp/trnm-r20-gap-summary.txt ]]; then
+              echo '#### Gap classification'
+              echo '```text'
+              sed -n '1,120p' /tmp/trnm-r20-gap-summary.txt
+              echo '```'
+            fi
+            if [[ -f /tmp/trnm-r20-external-evidence-status.txt ]]; then
+              echo '#### External evidence gate'
+              echo '```text'
+              cat /tmp/trnm-r20-external-evidence-status.txt
+              echo '```'
+            fi
+            if [[ -f /tmp/trnm-r20-external-dispatch.json ]]; then
+              echo '#### External workflow dispatch summary'
+              echo '```json'
+              jq '{source_commit,source_tree,dispatched_count:(.dispatched|length),skipped_count:(.skipped|length)}' \
+                /tmp/trnm-r20-external-dispatch.json
+              echo '```'
+            fi
+          } >/tmp/trnm-r22-pr-comment.md
+          gh pr comment 117 --repo "$GITHUB_REPOSITORY" \
+            --body-file /tmp/trnm-r22-pr-comment.md
+
+      - name: Upload exact R22 diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-r22-takeover-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            /tmp/trnm-r22-prior-run.json
+            /tmp/trnm-r22-prior-jobs.json
+            /tmp/trnm-r22-prior-run.log
+            /tmp/trnm-r22-prior-download.log
+            /tmp/trnm-r22-prior-artifacts
+            /tmp/trnm-r22-pr-comment.md
+            /tmp/trnm-r20-initial-commit.txt
+            /tmp/trnm-r20-initial-tree.txt
+            /tmp/trnm-r20-overlay-rounds.log
+            /tmp/trnm-r22-overlay-search.json
+            /tmp/trnm-r22-overlay-summary.txt
+            /tmp/trnm-r20-overlay-applied-count.txt
+            /tmp/trnm-r20-gap-classification.json
+            /tmp/trnm-r20-gap-summary.txt
+            /tmp/trnm-r20-repository-gap-count.txt
+            /tmp/trnm-r20-native-only.json
+            /tmp/trnm-r20-canonical-plan.log
+            /tmp/trnm-r20-mainline.log
+            /tmp/trnm-r20-repository-truth.json
+            /tmp/trnm-r20-protocol-contract.json
+            /tmp/trnm-r20-workspace-check.log
+            /tmp/trnm-r20-contract-check.log
+            /tmp/trnm-r20-workspace-test.log
+            /tmp/trnm-r20-contract-test.log
+            /tmp/trnm-r20-contract-clippy.log
+            /tmp/trnm-r20-boundary-clippy.log
+            /tmp/trnm-r20-final-commit.txt
+            /tmp/trnm-r20-final-tree.txt
+            /tmp/trnm-r20-external-dispatch.json
+            /tmp/trnm-r20-external-runs.json
+            /tmp/trnm-r20-external-artifacts
+            /tmp/trnm-r20-external-evidence.json
+            /tmp/trnm-r20-external-evidence.log
+            /tmp/trnm-r20-external-evidence-status.txt
+
+      - name: Preserve exact qualifier conclusion
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.qualify.outcome }}" != "success" ]]; then
+            exit 1
+          fi
