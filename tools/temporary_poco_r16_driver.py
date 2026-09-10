@@ -58,6 +58,44 @@ def patch_shell() -> None:
         if anchor not in script:
             raise RuntimeError("R16 product-cleanup anchor drift")
         script = script.replace(anchor, rendered + anchor, 1)
+
+    cleanup_anchor = "  DO_NOT_CREATE_2\n\ncargo fmt --manifest-path trillionnium/Cargo.toml --all\n"
+    cleanup = '''  DO_NOT_CREATE_2
+
+# Every R-series carrier is orchestration-only.  Remove the complete family,
+# including later diagnostic/qualifier files that may exist on the source
+# branch, before compiling or committing the immutable product tree.
+find tools -type f -name 'temporary_*' -print -delete
+find .github/workflows -maxdepth 1 -type f \
+  \( -name 'poco-*-once-*.yml' \
+     -o -name '*poco*diagnostic*.yml' \
+     -o -name '*temporary*.yml' \
+     -o -name 'poco-only-full-tree-audit.yml' \
+     -o -name 'poco-purge-source-snapshot.yml' \) \
+  -print -delete
+rm -f .github/workflows/nonexistent DO_NOT_CREATE DO_NOT_CREATE_2
+
+if find tools -type f -name 'temporary_*' -print -quit | grep -q .; then
+  echo 'temporary tool survived product cleanup' >&2
+  exit 1
+fi
+if find .github/workflows -maxdepth 1 -type f \
+     \( -name 'poco-*-once-*.yml' \
+        -o -name '*poco*diagnostic*.yml' \
+        -o -name '*temporary*.yml' \
+        -o -name 'poco-only-full-tree-audit.yml' \
+        -o -name 'poco-purge-source-snapshot.yml' \) \
+     -print -quit | grep -q .; then
+  echo 'temporary workflow survived product cleanup' >&2
+  exit 1
+fi
+
+cargo fmt --manifest-path trillionnium/Cargo.toml --all
+'''
+    if "temporary tool survived product cleanup" not in script:
+        if script.count(cleanup_anchor) != 1:
+            raise RuntimeError("R16 global product-cleanup insertion point drift")
+        script = script.replace(cleanup_anchor, cleanup, 1)
     SHELL.write_text(script, encoding="utf-8")
 
 
@@ -104,7 +142,7 @@ def normalize_snapshot_codec_version() -> None:
     gated_count = text.count(gated_definition)
     bare_count = text.count(definition)
     if gated_count == 1:
-        # Remove the attribute with the test-only compatibility constant.  If
+        # Remove the attribute with the test-only compatibility constant. If
         # the attribute were left behind it would silently gate the following
         # runtime key encoder and make non-test builds fail.
         text = text.replace(gated_definition, "", 1)
@@ -116,9 +154,21 @@ def normalize_snapshot_codec_version() -> None:
             f"gated={gated_count} bare={bare_count}"
         )
 
-    text = text.replace(identifier, "1u16")
-    if identifier in text:
+    # Replace only the complete compatibility identifier. A plain substring
+    # replacement corrupts NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0 into
+    # NATIVE_1u16 and is therefore forbidden.
+    token = re.compile(
+        rf"(?<![A-Za-z0-9_]){re.escape(identifier)}(?![A-Za-z0-9_])"
+    )
+    text, replacement_count = token.subn("1u16", text)
+    if replacement_count < 1:
+        raise RuntimeError("authenticated-tree snapshot codec had no call-site references")
+    if token.search(text):
         raise RuntimeError("authenticated-tree snapshot codec identifier remains")
+    if "NATIVE_1u16" in text:
+        raise RuntimeError("native snapshot codec identifier was corrupted")
+    if "NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0" not in text:
+        raise RuntimeError("native snapshot codec version constant disappeared")
 
     # Defensive cleanup for whitespace/comments that may have separated an
     # orphaned test attribute from the public runtime key function.
