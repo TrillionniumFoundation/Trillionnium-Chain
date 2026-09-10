@@ -1,4 +1,5 @@
 name: PoCO-only convergence R10 (temporary)
+# convergence revision: keep retired application blocks disabled
 
 on:
   push:
@@ -6,6 +7,7 @@ on:
       - chore/poco-only-purge-20260909
     paths:
       - .github/workflows/poco-only-convergence-r10-once-20260910.yml
+      - tools/temporary_poco_convergence_r5.py
 
 concurrency:
   group: poco-only-final-convergence
