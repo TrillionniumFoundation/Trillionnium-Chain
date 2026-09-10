@@ -32,9 +32,10 @@ def harden_raw_key_gate() -> None:
     path.write_text(text, encoding="utf-8")
 
 
-def remove_obsolete_codec_constant() -> None:
+def repair_native_store_after_obsolete_import_removal() -> None:
     path = ROOT / "trillionnium/crates/trnm-native-execution-v0/src/store.rs"
     text = path.read_text(encoding="utf-8")
+
     obsolete = (
         "#[cfg(test)]\n"
         "const AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;\n"
@@ -44,6 +45,15 @@ def remove_obsolete_codec_constant() -> None:
     text = text.replace(obsolete, "", 1)
     if re.search(r"\bAUTH_TREE_SNAPSHOT_CODEC_VERSION_V0\b", text):
         raise RuntimeError("obsolete authenticated-tree codec identifier still referenced")
+
+    orphaned_comment = (
+        "    /// Reconstructs the fixed excluded-legacy vector parent for differential\n"
+        "\n"
+        "    pub fn apply_seed_v0("
+    )
+    if text.count(orphaned_comment) != 1:
+        raise RuntimeError("obsolete differential doc-comment boundary drift")
+    text = text.replace(orphaned_comment, "    pub fn apply_seed_v0(", 1)
 
     native = "NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0"
     definitions = re.findall(
@@ -67,7 +77,7 @@ def remove_obsolete_codec_constant() -> None:
 
 def main() -> int:
     harden_raw_key_gate()
-    remove_obsolete_codec_constant()
+    repair_native_store_after_obsolete_import_removal()
     pathlib.Path(__file__).unlink()
     return 0
 
