@@ -1,0 +1,274 @@
+name: PoCO all-branch external evidence candidate audit (one-shot)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-all-branch-evidence-candidate-audit-once-20260910.yml
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  metadata: read
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence/poco-external-blocker-convergence-20260910-r2
+  PR_NUMBER: "117"
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out all history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Scan every remote branch for exact-source evidence candidates
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --prune --no-tags origin '+refs/heads/*:refs/remotes/origin/*'
+          product_commit=$(git rev-parse "origin/$PRODUCT_BRANCH")
+          product_tree=$(git rev-parse "$product_commit^{tree}")
+          export PRODUCT_COMMIT="$product_commit" PRODUCT_TREE="$product_tree"
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import datetime as dt
+          import hashlib
+          import json
+          import os
+          import re
+          import subprocess
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from collections import defaultdict
+          from pathlib import Path
+
+          repo=os.environ['GH_REPO']; token=os.environ['GH_TOKEN']
+          product_branch=os.environ['PRODUCT_BRANCH']; commit=os.environ['PRODUCT_COMMIT']; tree=os.environ['PRODUCT_TREE']
+          evidence_branch=os.environ['EVIDENCE_BRANCH']; pr=int(os.environ['PR_NUMBER'])
+          blockers=(
+              'EXT-REVIEW-001','EXT-G1-CAMPAIGN-001','EXT-ANCHOR-HSM-001',
+              'EXT-POWERLOSS-001','EXT-AUDIT-001','EXT-SOAK-ACTIVATION-001',
+          )
+          evidence_extensions={'.json','.md','.toml','.yaml','.yml','.txt','.csv','.log','.sha256','.sig','.pem','.crt'}
+          likely_path=re.compile(r'(evidence|audit|qualification|review|campaign|soak|hsm|kms|power|attest|accept|security|red[-_]?team|sign)',re.I)
+          positive_tokens={
+              'source_commit','source_tree','accepted','approved','authenticity_verified','signature','independent',
+              'attestation','non-exportable','power loss','controller cache','72h','7d','30d','2592000',
+          }
+          forbidden_auto_close_reasons=(
+              'candidate discovery cannot authenticate reviewer/operator independence',
+              'candidate discovery cannot verify signature trust chains',
+              'candidate discovery cannot establish physical HSM/KMS or power-loss facts',
+              'candidate discovery cannot prove actually elapsed 72h/7d/30d wall-clock time',
+          )
+
+          def run(*args,check=True):
+              proc=subprocess.run(args,check=check,capture_output=True,text=True)
+              return proc.stdout
+
+          refs=[]
+          for line in run('git','for-each-ref','--format=%(refname:short)%09%(objectname)','refs/remotes/origin').splitlines():
+              ref,sha=line.split('\t',1)
+              if ref=='origin/HEAD': continue
+              refs.append((ref.removeprefix('origin/'),sha))
+
+          findings=[]
+          branch_errors=[]
+          for branch,sha in refs:
+              try:
+                  paths=run('git','ls-tree','-r','--name-only','-z',sha).split('\0')
+              except Exception as exc:
+                  branch_errors.append({'branch':branch,'error':repr(exc)})
+                  continue
+              for path in paths:
+                  if not path: continue
+                  suffix=Path(path).suffix.casefold()
+                  if suffix not in evidence_extensions and not likely_path.search(path):
+                      continue
+                  if not likely_path.search(path):
+                      # For generic config files, require an obvious blocker/evidence path hint.
+                      continue
+                  try:
+                      raw=subprocess.run(['git','show',f'{sha}:{path}'],capture_output=True,check=False).stdout
+                  except Exception:
+                      continue
+                  if not raw or len(raw)>8_000_000: continue
+                  try:text=raw.decode('utf-8')
+                  except UnicodeDecodeError: continue
+                  mentioned=[bid for bid in blockers if bid in text]
+                  exact_commit=commit in text
+                  exact_tree=tree in text
+                  if not mentioned and not (exact_commit and exact_tree):
+                      continue
+                  lower=text.casefold()
+                  tokens=sorted(token for token in positive_tokens if token.casefold() in lower)
+                  parsed_summary={}
+                  if suffix=='.json':
+                      try:
+                          obj=json.loads(text)
+                          if isinstance(obj,dict):
+                              for key in (
+                                  'schema','status','result','source_commit','source_tree','accepted','approved',
+                                  'authenticity_verified','signature_authenticity_verified','identity_trust_chain_verified',
+                                  'all_external_blockers_closed','production_candidate','release_ready',
+                                  'started_at','completed_at','duration_seconds','elapsed_seconds',
+                              ):
+                                  if key in obj and isinstance(obj[key],(str,int,float,bool,type(None),list,dict)):
+                                      value=obj[key]
+                                      parsed_summary[key]=value if isinstance(value,(str,int,float,bool,type(None))) else f'{type(value).__name__}[{len(value)}]'
+                      except Exception:
+                          parsed_summary={'json_parse':'failed'}
+                  findings.append({
+                      'branch':branch,'branch_commit':sha,'path':path,
+                      'blob':run('git','rev-parse',f'{sha}:{path}').strip(),
+                      'sha256':hashlib.sha256(raw).hexdigest(),
+                      'blockers':mentioned,
+                      'exact_product_commit_present':exact_commit,
+                      'exact_product_tree_present':exact_tree,
+                      'exact_source_tuple_present':exact_commit and exact_tree,
+                      'positive_tokens':tokens,
+                      'parsed_summary':parsed_summary,
+                  })
+
+          by_blocker={bid:[] for bid in blockers}
+          exact_candidates=[]
+          for item in findings:
+              if item['exact_source_tuple_present']:
+                  exact_candidates.append(item)
+              for bid in item['blockers']:
+                  by_blocker[bid].append(item)
+
+          audit={
+              'schema':'trnm.poco.all-branch-external-evidence-candidate-audit.v1',
+              'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
+              'repository':repo,
+              'product_branch':product_branch,
+              'product_commit':commit,
+              'product_tree':tree,
+              'branches_scanned':len(refs),
+              'candidate_files':len(findings),
+              'exact_source_tuple_candidates':len(exact_candidates),
+              'findings':findings,
+              'by_blocker_counts':{bid:len(items) for bid,items in by_blocker.items()},
+              'by_blocker_exact_source_counts':{
+                  bid:sum(item['exact_source_tuple_present'] for item in items)
+                  for bid,items in by_blocker.items()
+              },
+              'branch_errors':branch_errors,
+              'automatic_closure_allowed':False,
+              'automatic_closure_prohibited_reasons':forbidden_auto_close_reasons,
+              'all_external_blockers_closed':False,
+              'production_candidate':False,
+              'release_ready':False,
+          }
+          out=Path(os.environ['RUNNER_TEMP'])/'poco-all-branch-evidence-candidate-audit-v1.json'
+          out.write_text(json.dumps(audit,indent=2,sort_keys=True)+'\n')
+
+          def request(method,path,payload=None):
+              data=None if payload is None else json.dumps(payload).encode()
+              req=urllib.request.Request('https://api.github.com'+path,data=data,method=method)
+              for k,v in {
+                  'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json',
+                  'X-GitHub-Api-Version':'2022-11-28','User-Agent':'trnm-all-branch-evidence-audit',
+              }.items(): req.add_header(k,v)
+              try:
+                  with urllib.request.urlopen(req,timeout=60) as response:
+                      raw=response.read(); return response.status,json.loads(raw) if raw else None
+              except urllib.error.HTTPError as exc:
+                  raw=exc.read().decode(errors='replace')
+                  try:body=json.loads(raw)
+                  except:body={'message':raw}
+                  return exc.code,body
+
+          issues=[]
+          for page in range(1,6):
+              status,body=request('GET',f'/repos/{repo}/issues?state=open&per_page=100&page={page}')
+              if status!=200: break
+              issues.extend(body)
+              if len(body)<100: break
+
+          comments=[]
+          for bid in blockers:
+              matches=sorted([
+                  issue for issue in issues if 'pull_request' not in issue
+                  and bid in ((issue.get('title') or '')+'\n'+(issue.get('body') or ''))
+              ],key=lambda issue:issue['number'])
+              if not matches: continue
+              candidates=by_blocker[bid]
+              exact=[item for item in candidates if item['exact_source_tuple_present']]
+              marker=f'<!-- trnm-all-branch-candidate-audit-v1:{commit}:{bid} -->'
+              status,current_comments=request('GET',f'/repos/{repo}/issues/{matches[0]["number"]}/comments?per_page=100')
+              if status==200 and any(marker in (comment.get('body') or '') for comment in current_comments):
+                  comments.append({'blocker':bid,'issue':matches[0]['number'],'status':'already-commented'})
+                  continue
+              sample='\n'.join(
+                  f"- `{item['branch']}` — `{item['path']}` — exact tuple: `{item['exact_source_tuple_present']}`"
+                  for item in exact[:20]
+              ) or '- No historical file was found that embeds both the current product commit and tree.'
+              body=(
+                  f'{marker}\n### All-branch evidence candidate audit\n\n'
+                  f'Current source: `{commit}` / tree `{tree}`.\n\n'
+                  f'Candidate files mentioning `{bid}`: **{len(candidates)}**; candidates embedding the exact current tuple: **{len(exact)}**.\n\n'
+                  f'{sample}\n\n'
+                  'These are discovery candidates only. They do not close the blocker until independent identity, signature trust, real infrastructure/hardware and any wall-clock requirements are authenticated.'
+              )
+              st,_=request('POST',f'/repos/{repo}/issues/{matches[0]["number"]}/comments',{'body':body})
+              comments.append({'blocker':bid,'issue':matches[0]['number'],'status':st})
+          audit['tracker_comment_results']=comments
+          out.write_text(json.dumps(audit,indent=2,sort_keys=True)+'\n')
+          print(json.dumps({
+              'branches_scanned':len(refs),'candidate_files':len(findings),
+              'exact_source_tuple_candidates':len(exact_candidates),
+              'by_blocker_exact_source_counts':audit['by_blocker_exact_source_counts'],
+              'automatic_closure_allowed':False,
+          },sort_keys=True))
+          PY
+
+      - name: Publish candidate audit ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          ledger="${RUNNER_TEMP}/poco-all-branch-evidence-candidate-audit-v1.json"
+          test -s "$ledger"
+          worktree="${RUNNER_TEMP}/trnm-all-branch-audit-ledger"
+          rm -rf "$worktree"
+          git fetch --no-tags origin "$EVIDENCE_BRANCH"
+          git worktree add --detach "$worktree" "origin/$EVIDENCE_BRANCH"
+          cd "$worktree"
+          mkdir -p evidence/external-orchestration
+          cp "$ledger" evidence/external-orchestration/poco-all-branch-evidence-candidate-audit-v1.json
+          git add evidence/external-orchestration/poco-all-branch-evidence-candidate-audit-v1.json
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "evidence: record all-branch external evidence candidate audit"
+          git push origin "HEAD:refs/heads/$EVIDENCE_BRANCH"
+
+      - name: Assert non-acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          audit=json.loads((Path(os.environ['RUNNER_TEMP'])/'poco-all-branch-evidence-candidate-audit-v1.json').read_text())
+          assert audit['product_commit']==os.environ['PRODUCT_COMMIT']
+          assert audit['product_tree']==os.environ['PRODUCT_TREE']
+          assert audit['automatic_closure_allowed'] is False
+          assert audit['all_external_blockers_closed'] is False
+          assert audit['production_candidate'] is False
+          assert audit['release_ready'] is False
+          PY
