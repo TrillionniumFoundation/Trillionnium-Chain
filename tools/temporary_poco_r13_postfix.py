@@ -41,8 +41,19 @@ def remove_obsolete_codec_constant() -> None:
     text = text.replace(line, "", 1)
     if re.search(r"\bAUTH_TREE_SNAPSHOT_CODEC_VERSION_V0\b", text):
         raise RuntimeError("obsolete authenticated-tree codec identifier still referenced")
-    if text.count("NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0") != 3:
-        raise RuntimeError("native authenticated-tree codec definition/use count drift")
+
+    compact = "".join(text.split())
+    native_definition = "constNATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0:u16=1;"
+    native_encode_use = "codec_version:NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0,"
+    native_decode_use = (
+        "snapshot.codec_version==NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0,"
+    )
+    if compact.count(native_definition) != 1:
+        raise RuntimeError("native authenticated-tree codec definition drift")
+    if compact.count(native_encode_use) != 1:
+        raise RuntimeError("native authenticated-tree snapshot encoder drift")
+    if compact.count(native_decode_use) != 1:
+        raise RuntimeError("native authenticated-tree snapshot decoder drift")
     path.write_text(text, encoding="utf-8")
 
 
