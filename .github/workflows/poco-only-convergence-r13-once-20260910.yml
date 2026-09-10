@@ -79,6 +79,15 @@ jobs:
               raise SystemExit("R13 test-write insertion point drift")
           helper.write_text(text.replace(needle, insertion + needle, 1), encoding="utf-8")
 
+          postfix = Path("tools/temporary_poco_r13_postfix.py")
+          postfix_text = postfix.read_text(encoding="utf-8")
+          overstrong = '''    if "AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0" in text:
+              raise RuntimeError("authenticated-tree codec constant still referenced")
+          '''
+          if postfix_text.count(overstrong) != 1:
+              raise SystemExit("R13 obsolete-codec overstrong guard drift")
+          postfix.write_text(postfix_text.replace(overstrong, "", 1), encoding="utf-8")
+
           shell = Path("tools/temporary_poco_convergence_r13.sh")
           script = shell.read_text(encoding="utf-8")
           call = "python3 tools/temporary_poco_native_convergence_r13.py\n"
