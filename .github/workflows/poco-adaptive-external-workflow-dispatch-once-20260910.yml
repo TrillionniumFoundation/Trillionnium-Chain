@@ -1,0 +1,231 @@
+name: PoCO adaptive external workflow dispatch (one-shot)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-adaptive-external-workflow-dispatch-once-20260910.yml
+
+permissions:
+  actions: write
+  contents: write
+  issues: write
+  pull-requests: write
+  metadata: read
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence/poco-external-blocker-convergence-20260910-r2
+  PR_NUMBER: "117"
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Parse manual workflow inputs and dispatch only resolvable jobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$PRODUCT_BRANCH" "$EVIDENCE_BRANCH"
+          product_commit=$(git rev-parse "origin/$PRODUCT_BRANCH")
+          product_tree=$(git rev-parse "$product_commit^{tree}")
+          export PRODUCT_COMMIT="$product_commit" PRODUCT_TREE="$product_tree"
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import datetime as dt
+          import json
+          import os
+          import re
+          import subprocess
+          import tempfile
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          repo=os.environ['GH_REPO']; token=os.environ['GH_TOKEN']
+          branch=os.environ['PRODUCT_BRANCH']; commit=os.environ['PRODUCT_COMMIT']; tree=os.environ['PRODUCT_TREE']
+          evidence_branch=os.environ['EVIDENCE_BRANCH']; pr=int(os.environ['PR_NUMBER'])
+          blockers=(
+              'EXT-REVIEW-001','EXT-G1-CAMPAIGN-001','EXT-ANCHOR-HSM-001',
+              'EXT-POWERLOSS-001','EXT-AUDIT-001','EXT-SOAK-ACTIVATION-001',
+          )
+
+          def req(method,path,payload=None):
+              data=None if payload is None else json.dumps(payload).encode()
+              r=urllib.request.Request('https://api.github.com'+path,data=data,method=method)
+              for k,v in {
+                  'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json',
+                  'X-GitHub-Api-Version':'2022-11-28','User-Agent':'trnm-adaptive-external-dispatch',
+              }.items(): r.add_header(k,v)
+              try:
+                  with urllib.request.urlopen(r,timeout=60) as response:
+                      raw=response.read(); return response.status,json.loads(raw) if raw else None
+              except urllib.error.HTTPError as exc:
+                  raw=exc.read().decode(errors='replace')
+                  try:body=json.loads(raw)
+                  except:body={'message':raw}
+                  return exc.code,body
+
+          status,body=req('GET',f'/repos/{repo}/actions/workflows?per_page=100')
+          if status!=200: raise SystemExit(f'workflow inventory failed: {status} {body}')
+
+          def parse_yaml_with_ruby(text: str):
+              script=r'''
+          require 'yaml'
+          require 'json'
+          doc=YAML.safe_load(STDIN.read, permitted_classes: [], permitted_symbols: [], aliases: true) || {}
+          on=doc['on'] || doc[true] || {}
+          dispatch=on.is_a?(Hash) ? (on['workflow_dispatch'] || {}) : {}
+          inputs=dispatch.is_a?(Hash) ? (dispatch['inputs'] || {}) : {}
+          puts JSON.generate({'inputs'=>inputs})
+          '''
+              proc=subprocess.run(['ruby','-e',script],input=text,text=True,capture_output=True)
+              if proc.returncode!=0:
+                  return None,proc.stderr[-2000:]
+              try:return json.loads(proc.stdout),None
+              except Exception as exc:return None,repr(exc)
+
+          def resolve_input(name: str, spec, workflow_blockers):
+              lower=name.casefold()
+              default=spec.get('default') if isinstance(spec,dict) else None
+              required=bool(spec.get('required')) if isinstance(spec,dict) else False
+              options=spec.get('options') if isinstance(spec,dict) else None
+              if lower in {'source_commit','commit','commit_sha','source_sha','head_sha','revision','git_commit'}:
+                  return commit,None
+              if lower in {'source_tree','tree','tree_sha','git_tree'}:
+                  return tree,None
+              if lower in {'ref','source_ref','git_ref','branch','source_branch','product_branch'}:
+                  return branch,None
+              if lower in {'evidence_branch'}:
+                  return evidence_branch,None
+              if lower in {'pr','pr_number','pull_request','pull_request_number'}:
+                  return str(pr),None
+              if lower in {'blocker','blocker_id','external_blocker_id'} and len(workflow_blockers)==1:
+                  return workflow_blockers[0],None
+              if lower in {'mode','run_mode','campaign_mode'}:
+                  if default not in (None,''): return str(default),None
+                  if isinstance(options,list):
+                      safe=[str(x) for x in options if str(x).casefold() in {'qualification','external','production-shaped','full','verify','audit'}]
+                      if len(safe)==1:return safe[0],None
+              # Never infer duration or destructive hardware inputs. Required defaults are
+              # accepted only when authored in the product workflow itself.
+              if default not in (None,''):
+                  return str(default).lower() if isinstance(default,bool) else str(default),None
+              if not required:
+                  return None,None
+              return None,f'required input `{name}` has no source-bound/default value'
+
+          records=[]
+          for wf in body.get('workflows',[]):
+              path=wf.get('path') or ''
+              if not path.startswith('.github/workflows/'): continue
+              st,obj=req('GET',f'/repos/{repo}/contents/{urllib.parse.quote(path,safe="/")}?ref={urllib.parse.quote(branch,safe="")}')
+              if st!=200 or not isinstance(obj,dict) or not obj.get('content'): continue
+              try:text=base64.b64decode(obj['content']).decode(errors='replace')
+              except Exception:continue
+              wf_blockers=[bid for bid in blockers if bid in text]
+              if not wf_blockers or 'workflow_dispatch' not in text: continue
+              parsed,error=parse_yaml_with_ruby(text)
+              if error:
+                  records.append({'workflow_id':wf.get('id'),'name':wf.get('name'),'path':path,'blockers':wf_blockers,'status':'parse-failed','error':error})
+                  continue
+              specs=parsed.get('inputs') or {}
+              inputs={}; unresolved=[]
+              if not isinstance(specs,dict): specs={}
+              for name,spec in specs.items():
+                  value,problem=resolve_input(str(name),spec if isinstance(spec,dict) else {},wf_blockers)
+                  if problem: unresolved.append(problem)
+                  elif value is not None: inputs[str(name)]=value
+              if unresolved:
+                  records.append({'workflow_id':wf.get('id'),'name':wf.get('name'),'path':path,'blockers':wf_blockers,'status':'not-dispatched-unresolved-required-inputs','inputs':inputs,'unresolved':unresolved})
+                  continue
+              ds,resp=req('POST',f'/repos/{repo}/actions/workflows/{wf["id"]}/dispatches',{'ref':branch,'inputs':inputs})
+              records.append({'workflow_id':wf.get('id'),'name':wf.get('name'),'path':path,'blockers':wf_blockers,'status':'dispatched' if ds==204 else 'dispatch-failed','http_status':ds,'inputs':inputs,'response':resp})
+
+          ledger={
+              'schema':'trnm.poco.adaptive-external-workflow-dispatch.v1',
+              'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
+              'repository':repo,'product_branch':branch,'source_commit':commit,'source_tree':tree,
+              'records':records,
+              'dispatched_count':sum(r['status']=='dispatched' for r in records),
+              'unresolved_count':sum(r['status']=='not-dispatched-unresolved-required-inputs' for r in records),
+              'dispatch_does_not_authenticate_external_evidence':True,
+              'all_external_blockers_closed':False,
+              'release_ready':False,
+          }
+          out=Path(os.environ['RUNNER_TEMP'])/'poco-adaptive-external-workflow-dispatch-v1.json'
+          out.write_text(json.dumps(ledger,indent=2,sort_keys=True)+'\n')
+
+          # Comment unresolved input ownership on canonical trackers, exactly once per source.
+          issues=[]
+          for page in range(1,6):
+              st,b=req('GET',f'/repos/{repo}/issues?state=open&per_page=100&page={page}')
+              if st!=200:break
+              issues.extend(b)
+              if len(b)<100:break
+          for bid in blockers:
+              relevant=[r for r in records if bid in r['blockers']]
+              if not relevant:continue
+              matches=sorted([i for i in issues if 'pull_request' not in i and bid in ((i.get('title') or '')+'\n'+(i.get('body') or ''))],key=lambda i:i['number'])
+              if not matches:continue
+              marker=f'<!-- trnm-adaptive-dispatch-v1:{commit}:{bid} -->'
+              st,comments=req('GET',f'/repos/{repo}/issues/{matches[0]["number"]}/comments?per_page=100')
+              if st==200 and any(marker in (c.get('body') or '') for c in comments):continue
+              lines=[]
+              for r in relevant:
+                  suffix=''
+                  if r.get('unresolved'): suffix=' — '+ '; '.join(r['unresolved'])
+                  lines.append(f"- `{r['name']}` (`{r['path']}`): **{r['status']}**{suffix}")
+              comment=(f'{marker}\n### Source-bound workflow dispatch analysis\n\nExact source: `{commit}` / tree `{tree}`.\n\n'+'\n'.join(lines)+
+                       '\n\nDispatch is execution orchestration only. This blocker remains OPEN until independent authenticated evidence is accepted.')
+              req('POST',f'/repos/{repo}/issues/{matches[0]["number"]}/comments',{'body':comment})
+          print(json.dumps({'source_commit':commit,'record_count':len(records),'dispatched_count':ledger['dispatched_count'],'unresolved_count':ledger['unresolved_count'],'all_external_blockers_closed':False},sort_keys=True))
+          PY
+
+      - name: Publish adaptive dispatch ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          ledger="${RUNNER_TEMP}/poco-adaptive-external-workflow-dispatch-v1.json"
+          test -s "$ledger"
+          worktree="${RUNNER_TEMP}/trnm-adaptive-dispatch-publish"
+          rm -rf "$worktree"
+          git worktree add --detach "$worktree" "origin/$EVIDENCE_BRANCH"
+          cd "$worktree"
+          mkdir -p evidence/external-orchestration
+          cp "$ledger" evidence/external-orchestration/poco-adaptive-external-workflow-dispatch-v1.json
+          git add evidence/external-orchestration/poco-adaptive-external-workflow-dispatch-v1.json
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "evidence: record adaptive external workflow dispatch"
+          git push origin "HEAD:refs/heads/$EVIDENCE_BRANCH"
+
+      - name: Assert fail-closed result
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          d=json.loads((Path(os.environ['RUNNER_TEMP'])/'poco-adaptive-external-workflow-dispatch-v1.json').read_text())
+          assert d['source_commit']==os.environ['PRODUCT_COMMIT']
+          assert d['source_tree']==os.environ['PRODUCT_TREE']
+          assert d['dispatch_does_not_authenticate_external_evidence'] is True
+          assert d['all_external_blockers_closed'] is False
+          assert d['release_ready'] is False
+          PY
