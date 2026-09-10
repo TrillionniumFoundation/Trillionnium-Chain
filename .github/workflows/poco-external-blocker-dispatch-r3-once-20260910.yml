@@ -1,0 +1,136 @@
+name: PoCO external blocker dispatcher R3 (temporary)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-external-blocker-dispatch-r3-once-20260910.yml
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: poco-external-blocker-dispatch-r3
+  cancel-in-progress: false
+
+env:
+  SOURCE_REF: chore/poco-only-purge-20260909
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  dispatch:
+    name: Bind source identity and dispatch eligible evidence campaigns
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out dispatcher branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Resolve immutable product source identity
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_COMMIT="$(gh api "repos/$GITHUB_REPOSITORY/commits/$SOURCE_REF" --jq .sha)"
+          SOURCE_TREE="$(gh api "repos/$GITHUB_REPOSITORY/git/commits/$SOURCE_COMMIT" --jq .tree.sha)"
+          test "${#SOURCE_COMMIT}" -eq 40
+          test "${#SOURCE_TREE}" -eq 40
+          echo "commit=$SOURCE_COMMIT" >> "$GITHUB_OUTPUT"
+          echo "tree=$SOURCE_TREE" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$SOURCE_COMMIT" >/tmp/poco-source-commit.txt
+          printf '%s\n' "$SOURCE_TREE" >/tmp/poco-source-tree.txt
+
+      - name: Dispatch every eligible explicit workflow-dispatch campaign
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ steps.source.outputs.commit }}
+          SOURCE_TREE: ${{ steps.source.outputs.tree }}
+        run: |
+          set -euo pipefail
+          : >/tmp/poco-dispatch-results.jsonl
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/workflows?per_page=100" \
+            --jq '.workflows[] | [.id,.name,.path,.state] | @tsv' \
+            >/tmp/poco-workflows.tsv
+
+          dispatched=0
+          considered=0
+          while IFS=$'\t' read -r workflow_id workflow_name workflow_path workflow_state; do
+            [[ "$workflow_state" = active ]] || continue
+            candidate="${workflow_name} ${workflow_path}"
+            if ! grep -Eqi '(external|evidence|fuzz|fault|soak|power|hsm|audit|review|campaign|qualification|security|reproducible|portability)' <<<"$candidate"; then
+              continue
+            fi
+            if grep -Eqi '(source snapshot|purge|temporary|dispatcher|metadata cleanup)' <<<"$candidate"; then
+              continue
+            fi
+            considered=$((considered + 1))
+
+            encoded="$(gh api "repos/$GITHUB_REPOSITORY/contents/${workflow_path#./}?ref=$SOURCE_COMMIT" --jq .content 2>/dev/null || true)"
+            if [[ -z "$encoded" ]]; then
+              printf '{"workflow_id":%s,"path":%q,"result":"source-file-missing"}\n' \
+                "$workflow_id" "$workflow_path" >>/tmp/poco-dispatch-results.jsonl
+              continue
+            fi
+            printf '%s' "$encoded" | tr -d '\n' | base64 --decode >/tmp/poco-candidate-workflow.yml
+            if ! grep -Eq '(^|[[:space:]])workflow_dispatch:' /tmp/poco-candidate-workflow.yml; then
+              printf '{"workflow_id":%s,"path":%q,"result":"no-workflow-dispatch"}\n' \
+                "$workflow_id" "$workflow_path" >>/tmp/poco-dispatch-results.jsonl
+              continue
+            fi
+
+            set +e
+            response="$(gh api --method POST \
+              "repos/$GITHUB_REPOSITORY/actions/workflows/$workflow_id/dispatches" \
+              -f ref="$SOURCE_REF" 2>&1)"
+            rc=$?
+            set -e
+            if [[ "$rc" -eq 0 ]]; then
+              result=dispatched
+              dispatched=$((dispatched + 1))
+            else
+              result=dispatch-rejected
+            fi
+            WORKFLOW_ID="$workflow_id" \
+            WORKFLOW_NAME="$workflow_name" \
+            WORKFLOW_PATH="$workflow_path" \
+            RESULT="$result" \
+            RESPONSE="$response" \
+            SOURCE_COMMIT="$SOURCE_COMMIT" \
+            SOURCE_TREE="$SOURCE_TREE" \
+              python3 - <<'PY' >>/tmp/poco-dispatch-results.jsonl
+          import json
+          import os
+          print(json.dumps({
+              "workflow_id": int(os.environ["WORKFLOW_ID"]),
+              "workflow_name": os.environ["WORKFLOW_NAME"],
+              "workflow_path": os.environ["WORKFLOW_PATH"],
+              "result": os.environ["RESULT"],
+              "response": os.environ["RESPONSE"][-1000:],
+              "source_commit": os.environ["SOURCE_COMMIT"],
+              "source_tree": os.environ["SOURCE_TREE"],
+          }, sort_keys=True))
+          PY
+          done </tmp/poco-workflows.tsv
+
+          printf 'considered=%s\ndispatched=%s\n' "$considered" "$dispatched" \
+            | tee /tmp/poco-dispatch-summary.txt
+          test "$considered" -gt 0
+
+      - name: Upload immutable dispatch ledger
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-external-dispatch-r3-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            /tmp/poco-source-commit.txt
+            /tmp/poco-source-tree.txt
+            /tmp/poco-workflows.tsv
+            /tmp/poco-dispatch-results.jsonl
+            /tmp/poco-dispatch-summary.txt
