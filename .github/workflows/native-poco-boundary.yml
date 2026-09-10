@@ -1,0 +1,44 @@
+name: native-poco-boundary
+
+on:
+  push:
+  pull_request:
+    paths:
+      - 'trillionnium/**'
+      - 'docs/**'
+      - 'scripts/**'
+      - 'config/**'
+      - 'README.md'
+      - 'RELEASE_READINESS.md'
+      - 'OPERATIONS.md'
+      - 'SECURITY.md'
+      - 'PROJECT_BOUNDARY.json'
+      - 'PROJECT_BOUNDARY.md'
+      - 'deny.toml'
+      - '.github/workflows/native-poco-boundary.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  repository-boundary:
+    name: native-poco-boundary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Check native PoCO boundary
+        run: bash scripts/ci/check_native_poco_boundary.sh
+
+  rust-baseline:
+    name: native-poco-rust-baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
+      - name: Test native Rust workspace
+        working-directory: trillionnium
+        run: cargo test --workspace --locked

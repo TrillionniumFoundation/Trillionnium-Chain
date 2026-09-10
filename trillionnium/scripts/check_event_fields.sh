@@ -10,7 +10,7 @@ OUT="run/event-field-check.log"
 WAL_DIR="run/event-field-check-wal"
 rm -rf "$WAL_DIR"
 
-cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+cargo run -q -p trnm-node --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 1 \
   --max-blocks 8 \
@@ -56,9 +56,8 @@ if [[ -z "$resolve_line" ]]; then
     echo "[OK] event common field check passed (resolve skipped): $OUT"
     exit 0
   fi
-  cargo test -q -p trnm-node --features legacy-harness --bin trnm-sim legacy_resolve_event_line_keeps_frozen_fields
-  echo "[OK] event field check passed with deterministic resolve contract: $OUT"
-  exit 0
+  echo "no resolve event line found in $OUT" >&2
+  exit 4
 fi
 
 for token in "slash_worker=" "resolution_code="; do

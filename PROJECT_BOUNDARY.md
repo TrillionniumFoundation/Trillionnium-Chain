@@ -1,19 +1,20 @@
-# Trillionnium Chain Boundary
+# Trillionnium Chain Project Boundary
 
-- Project ID: `trillionnium-chain`
-- Canonical root: `/home/alex/projects/trillionnium-chain`
-- Lane: `chain-consensus`
-- Private remote: `TrillionniumFoundation/Trillionnium-Chain`
-- Legacy shared source: `legacy-shared` (fetch-only)
+This repository is the active development root for the TRNM chain and its self-developed PoCO consensus and settlement protocol.
 
-## Owns
+## Canonical scope
 
-Consensus, canonical runtime and state, mempool/RPC/node interfaces,
-genesis/validator/operator tooling, and the canonical AppHash/proof/finality
-semantics consumed by other projects.
+- Native node and validator protocol
+- PoCO task validity, consumption settlement, challenge, and resolution
+- Versioned state, state roots, replay protection, balances, and governance
+- Mempool, execution scheduling, RPC, worker-agent, CLI, finality proofs, and operator tooling
+- Chain-facing bridge, oracle, contract, and frontend integration boundaries
 
-## Does not own
+## Repository rules
 
-World gameplay/campaign/economy logic, Hepta services, Nakama authoritative
-match state, or cross-repository E2E orchestration. Game packages and sibling
-working-tree Cargo paths are forbidden here.
+- Active development occurs on branches matching the project branch policy.
+- `main` and `master` are protected integration branches.
+- The canonical remote is `TrillionniumFoundation/Trillionnium-Chain`.
+- Cargo path dependencies must remain inside this repository boundary.
+- Game/server/product repositories must not be imported into the chain workspace.
+- Consensus-critical claims require native node/validator evidence, not isolated mocks or documentation-only assertions.

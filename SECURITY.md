@@ -1,35 +1,36 @@
 # Security Policy
 
-Status: **unverified reporting-policy draft**. Repository owners must enable and
-test a private reporting route before treating this file as an operational
-security contact.
+Status: **reporting process requires operational verification before public release**
 
-## Supported Scope
+## Supported scope
 
-Security reports are accepted for the production-candidate path:
+Security reports are accepted for the native PoCO chain path, including:
 
-`CometBFT -> trnm-consensus-app -> trnm-runtime -> committed state/AppHash`
-
-The bespoke `trnm-chain-node`, `trnm-chain-validator`, `trnm-chain-cli`, and
-`trnm-sim` binaries are legacy harnesses. Reports affecting those paths are still
-useful, but they do not establish impact on the production candidate unless the
-same behavior is reachable through the canonical path.
+- `trnm-node` node and validator protocol;
+- `trnm-pouw` PoCO validity, challenge, and settlement logic;
+- `trnm-state` balances, governance, replay protection, persistence, and state roots;
+- `trnm-mempool`, `trnm-executor`, and `trnm-rpc` resource and concurrency boundaries;
+- finality types, quorum verification, proofs, receipts, worker-agent, CLI, bridge, oracle, contracts, and frontend integrations.
 
 ## Reporting
 
 Do not open a public issue containing details of an unpatched vulnerability.
-GitHub private vulnerability reporting is the intended route, but its enablement
-has not been verified by this repository state. Before release, repository owners
-must enable it, submit a private test report, and record the triage owner.
 
-Until that verification exists, this document does not claim a public security
-contact or invent an unmonitored email address. Reporters who already have an
-established private channel with the maintainers may use it without placing
-vulnerability details in a public issue.
+GitHub private vulnerability reporting is the intended channel. Repository owners must enable it, submit a private test report, verify notification delivery, and record the triage owner before describing this policy as operational.
 
-A report should include the affected commit, a minimal reproduction, expected
-impact, and whether exploitation requires validator, operator, authorized signer,
-or unauthenticated network access.
+Until that verification is recorded, maintainers who already have an established private channel may use it. Do not invent or publish an unmonitored security address.
 
-No bounty, disclosure deadline, or mainnet deployment should be inferred from this
-policy. Coordinated disclosure timing is agreed per report after triage.
+A useful report includes:
+
+- affected commit and component;
+- minimal reproduction;
+- expected and observed behavior;
+- impact and required access level;
+- whether exploitation requires validator, operator, worker, consumer, authorized signer, peer, RPC, or unauthenticated access;
+- suggested containment where known.
+
+## Priority classes
+
+Highest priority includes conflicting finality, unauthorized state transition, forged vote or receipt, supply or escrow violation, replay bypass, remote code execution, key disclosure, validator equivocation, state-root divergence, persistence corruption, and remotely triggerable resource exhaustion.
+
+No bounty, disclosure deadline, or release status should be inferred from this file. Coordinated disclosure timing is agreed after triage.

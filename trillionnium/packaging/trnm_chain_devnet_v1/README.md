@@ -1,11 +1,10 @@
-# TRNM Chain Devnet v1 Package (Frozen Legacy Harness)
+# TRNM Chain Devnet v1 Package
 
 `trnm_chain_devnet_v1` is the signed, loopback-only integration package for
-historical Hepta Research League and Nakama regression. It is not the
-canonical CometBFT runtime, a public-testnet artifact, or release evidence.
-It is not a Trillionnium World/game package.
+Hepta Research League and Nakama development. It is a canonical
+Trillionnium **Chain** artifact. It is not a Trillionnium World/game package.
 
-The package contains exactly three frozen legacy executables:
+The package contains exactly three required live executables:
 
 - `bin/trnm-chain-node` — signed command ingress, block/state commit, read RPC,
   and verifiable finality receipts.

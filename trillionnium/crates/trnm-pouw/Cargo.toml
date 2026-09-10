@@ -2,7 +2,6 @@
 name = "trnm-pouw"
 version = "0.1.0"
 edition = "2021"
-license.workspace = true
 
 [features]
 default = []
@@ -30,8 +29,8 @@ ark-relations = { version = "0.5", optional = true, default-features = false }
 ark-serialize = { version = "0.5", optional = true, default-features = false }
 ark-snark = { version = "0.5", optional = true, default-features = false }
 rand = { version = "0.8", optional = true }
-trnm-state = { version = "0.1.0", path = "../trnm-state" }
-trnm-types = { version = "0.1.0", path = "../trnm-types" }
+trnm-state = { path = "../trnm-state" }
+trnm-types = { path = "../trnm-types" }
 
 [dev-dependencies]
-trnm-state = { version = "0.1.0", path = "../trnm-state", features = ["test-utils"] }
+trnm-state = { path = "../trnm-state", features = ["test-utils"] }

@@ -175,7 +175,7 @@ log "workspace tests"
 cargo test --workspace | tee -a "$LOG"
 
 log "single-node parallel sanity"
-cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+cargo run -q -p trnm-node --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
   --max-blocks 6 \
@@ -188,7 +188,7 @@ if grep -E '\[tx\] apply_error|rollback=true' "$ROOT/run/parallel-sanity.log" >/
   exit 2
 fi
 
-if ! grep -q '^\[consensus\].*finality_p50_ms=' "$ROOT/run/parallel-sanity.log"; then
+if ! grep -q '^\[consensus\] finality_p50_ms=' "$ROOT/run/parallel-sanity.log"; then
   log "parallel sanity failed: missing consensus finality metric"
   exit 3
 fi

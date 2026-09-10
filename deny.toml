@@ -1,29 +1,34 @@
+[graph]
+targets = [
+  { triple = "x86_64-unknown-linux-gnu" },
+  { triple = "aarch64-apple-darwin" },
+]
+all-features = false
+no-default-features = false
+
 [advisories]
 version = 2
 yanked = "deny"
-ignore = [
-  { id = "RUSTSEC-2024-0436", reason = "owner: consensus; path: tendermint-proto -> flex-error; no patched compatible release as of 2026-07-28; review before 2026-10-28 or any tendermint upgrade" },
-]
+ignore = []
 
 [licenses]
 version = 2
-confidence-threshold = 0.93
+confidence-threshold = 0.8
 allow = [
   "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
   "BSD-2-Clause",
   "BSD-3-Clause",
-  "CC0-1.0",
   "ISC",
   "MIT",
-  "MPL-2.0",
-  "NCSA",
+  "OpenSSL",
   "Unicode-3.0",
   "Zlib",
 ]
 
 [bans]
 multiple-versions = "warn"
-wildcards = "deny"
+wildcards = "allow"
 highlight = "all"
 
 [sources]

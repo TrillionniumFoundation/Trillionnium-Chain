@@ -1,21 +1,31 @@
-# Trillionnium Docs Index
+# Trillionnium Documentation Index
 
-## Core
+## Current truth sources
 
-- Architecture entry: `architecture/README.md`
-- Protocol docs: `protocol/`
+- Release posture: `../RELEASE_READINESS.md`
+- Native PoCO consensus policy: `architecture/TRNM_NATIVE_POCO_CONSENSUS_POLICY_2026-09-11.md`
+- Native PoCO protocol and settlement: `../trillionnium/docs/protocol/poco-proof-of-consumption-v1-draft.md`
+- Operator handbook: `../OPERATIONS.md`
+- Security policy: `../SECURITY.md`
+
+## Architecture
+
+- Repository layout: `architecture/rust-l1-repo-layout.md`
+- Hybrid/reference research: `architecture/TRNM_HYBRID_REFERENCE_ARCHITECTURE_V0.md`
+- ZK platform research boundary: `architecture/TRNM_ZKP_PLATFORM_V0.md`
+
+## Protocol and operations
+
+- Protocol documents: `protocol/`
 - Runbooks: `runbooks/`
+- Performance evidence: `performance/`
+- Reports: `reports/`
 - Strategy notes: `strategy/`
-- Alpha run records: `alpha-runs/`
 
-## Rust L1 quick links
+## Historical material
 
-- Repo layout: `architecture/rust-l1-repo-layout.md`
-- PoCO sequence draft: `../trillionnium/docs/protocol/poco-proof-of-consumption-v1-draft.md`
-  - BL09 retirement-prep note: retained `trnm-pouw` naming on migration surfaces is a compatibility label and provenance / audit evidence only, not ongoing payout authority.
-- v1 interface freeze: `protocol/rust-l1-v1-interface-freeze.md`
-- PR-5 challenge treasury 对账 runbook: `runbooks/pr5-challenge-treasury-reconcile.md`
-- PR-6 alert rules runbook: `runbooks/pr6-alert-rules.md`
-- PR-6 nightly security summary runbook: `runbooks/pr6-nightly-security-summary.md`
-- PR-7 alert delivery runbook: `runbooks/pr7-alert-delivery.md`
-- PR-9 weekly alert governance runbook: `runbooks/pr9-weekly-alert-governance.md`
+Files under `archive/` are historical context only. They must not override the current release posture or native PoCO consensus policy.
+
+## Documentation rule
+
+A consensus capability is current only when its documentation points to an implementation and reproducible gate in the native Rust path. Broken links, archived claims, planning boards, and simulator-only results are not release evidence.

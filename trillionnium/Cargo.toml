@@ -1,5 +1,4 @@
 [workspace]
-exclude = ["fuzz"]
 members = [
   "crates/trnm-node",
   "crates/trnm-types",
@@ -16,9 +15,6 @@ members = [
   "crates/trnm-research-protocol",
   "crates/trnm-finality-types",
   "crates/trnm-finality-verifier",
-  "crates/trnm-protocol",
-  "crates/trnm-runtime",
-  "crates/trnm-consensus-app",
 ]
 resolver = "2"
 
