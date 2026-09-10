@@ -1,0 +1,301 @@
+name: PoCO independent review escalation (one-shot)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-independent-review-escalation-once-20260910.yml
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  metadata: read
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence/poco-external-blocker-convergence-20260910-r2
+  PR_NUMBER: "117"
+
+jobs:
+  escalate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Discover independent reviewers and bind ownership
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$PRODUCT_BRANCH" "$EVIDENCE_BRANCH" || true
+          product_commit=$(git rev-parse "origin/$PRODUCT_BRANCH")
+          product_tree=$(git rev-parse "$product_commit^{tree}")
+          export PRODUCT_COMMIT="$product_commit" PRODUCT_TREE="$product_tree"
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import datetime as dt
+          import json
+          import os
+          import re
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          repo = os.environ["GH_REPO"]
+          owner = repo.split("/", 1)[0]
+          token = os.environ["GH_TOKEN"]
+          product_branch = os.environ["PRODUCT_BRANCH"]
+          commit = os.environ["PRODUCT_COMMIT"]
+          tree = os.environ["PRODUCT_TREE"]
+          pr_number = int(os.environ["PR_NUMBER"])
+          api = "https://api.github.com"
+          blocker_ids = (
+              "EXT-REVIEW-001",
+              "EXT-G1-CAMPAIGN-001",
+              "EXT-ANCHOR-HSM-001",
+              "EXT-POWERLOSS-001",
+              "EXT-AUDIT-001",
+              "EXT-SOAK-ACTIVATION-001",
+          )
+
+          def request(method, path, payload=None):
+              url = path if path.startswith("https://") else api + path
+              data = None if payload is None else json.dumps(payload).encode()
+              req = urllib.request.Request(url, data=data, method=method)
+              req.add_header("Authorization", f"Bearer {token}")
+              req.add_header("Accept", "application/vnd.github+json")
+              req.add_header("X-GitHub-Api-Version", "2022-11-28")
+              req.add_header("User-Agent", "trnm-poco-independent-review-escalation")
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as response:
+                      raw = response.read()
+                      return response.status, json.loads(raw) if raw else None
+              except urllib.error.HTTPError as exc:
+                  raw = exc.read().decode(errors="replace")
+                  try:
+                      body = json.loads(raw)
+                  except json.JSONDecodeError:
+                      body = {"message": raw}
+                  return exc.code, body
+
+          def pages(path):
+              result = []
+              for page in range(1, 11):
+                  sep = "&" if "?" in path else "?"
+                  status, body = request("GET", f"{path}{sep}per_page=100&page={page}")
+                  if status != 200 or not isinstance(body, list):
+                      return result, {"status": status, "body": body}
+                  result.extend(body)
+                  if len(body) < 100:
+                      return result, None
+              return result, {"status": "pagination-limit"}
+
+          status, pr = request("GET", f"/repos/{repo}/pulls/{pr_number}")
+          if status != 200:
+              raise SystemExit(f"unable to read PR #{pr_number}: {status} {pr}")
+          author = ((pr.get("user") or {}).get("login") or "").casefold()
+          excluded = {author, os.environ.get("GITHUB_ACTOR", "").casefold()}
+
+          candidates = set()
+          candidate_sources = {}
+
+          collaborators, collaborators_error = pages(f"/repos/{repo}/collaborators?affiliation=all")
+          for item in collaborators:
+              login = item.get("login") or ""
+              permissions = item.get("permissions") or {}
+              if login and permissions.get("pull"):
+                  candidates.add(login)
+                  candidate_sources.setdefault(login, []).append("repository-collaborator")
+
+          members, members_error = pages(f"/orgs/{owner}/members")
+          for item in members:
+              login = item.get("login") or ""
+              if login:
+                  candidates.add(login)
+                  candidate_sources.setdefault(login, []).append("public-organization-member")
+
+          # Parse CODEOWNERS from the exact product source. User owners are candidates;
+          # organization teams are requested separately when GitHub accepts them.
+          status, object_body = request(
+              "GET",
+              f"/repos/{repo}/contents/.github/CODEOWNERS?ref={urllib.parse.quote(product_branch, safe='')}",
+          )
+          codeowner_users = set()
+          codeowner_teams = set()
+          if status == 200 and isinstance(object_body, dict) and object_body.get("content"):
+              text = base64.b64decode(object_body["content"]).decode(errors="replace")
+              for token in re.findall(r"(?<!\w)@([A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?)", text):
+                  if "/" in token:
+                      org, team = token.split("/", 1)
+                      if org.casefold() == owner.casefold():
+                          codeowner_teams.add(team)
+                  else:
+                      codeowner_users.add(token)
+                      candidates.add(token)
+                      candidate_sources.setdefault(token, []).append("CODEOWNERS")
+
+          candidates = sorted(
+              login for login in candidates
+              if login.casefold() not in excluded
+          )
+          # Verify user candidates are valid and retain at most five.
+          verified = []
+          for login in candidates:
+              user_status, user = request("GET", f"/users/{urllib.parse.quote(login)}")
+              if user_status == 200 and (user or {}).get("type") == "User":
+                  verified.append(login)
+              if len(verified) >= 5:
+                  break
+
+          teams = sorted(codeowner_teams)[:5]
+          payload = {}
+          if verified:
+              payload["reviewers"] = verified
+          if teams:
+              payload["team_reviewers"] = teams
+          review_status = None
+          review_response = None
+          if payload:
+              review_status, review_response = request(
+                  "POST", f"/repos/{repo}/pulls/{pr_number}/requested_reviewers", payload
+              )
+
+          issues, issues_error = pages(f"/repos/{repo}/issues?state=open")
+          canonical = {}
+          for blocker_id in blocker_ids:
+              matches = sorted(
+                  [
+                      issue for issue in issues
+                      if "pull_request" not in issue
+                      and blocker_id in ((issue.get("title") or "") + "\n" + (issue.get("body") or ""))
+                  ],
+                  key=lambda issue: issue["number"],
+              )
+              if matches:
+                  canonical[blocker_id] = matches[0]
+
+          # Assign verified repository-capable users where the API permits it. A failed
+          # assignment is recorded, never converted into acceptance.
+          assignment_results = {}
+          for blocker_id, issue in canonical.items():
+              assignees = verified[:2]
+              if not assignees:
+                  assignment_results[blocker_id] = {"status": "no-independent-candidate"}
+                  continue
+              assign_status, assign_body = request(
+                  "PATCH", f"/repos/{repo}/issues/{issue['number']}", {"assignees": assignees}
+              )
+              assignment_results[blocker_id] = {
+                  "status": assign_status,
+                  "issue": issue["number"],
+                  "requested_assignees": assignees,
+                  "accepted_assignees": [x.get("login") for x in (assign_body or {}).get("assignees", [])]
+                  if isinstance(assign_body, dict) else [],
+              }
+
+          comment = (
+              "### Independent-review escalation\n\n"
+              f"Exact PoCO product source: `{commit}` / tree `{tree}`.\n\n"
+              f"Independent user candidates requested: `{', '.join(verified) or 'none available to this token'}`.\n\n"
+              f"CODEOWNERS teams requested: `{', '.join(teams) or 'none'}`.\n\n"
+              "Reviewer requests and issue assignments establish ownership only. They do not close EXT-REVIEW-001 "
+              "or any other external blocker. Formal approval and authenticated evidence must still bind to this exact source tuple."
+          )
+          comment_status, comment_body = request(
+              "POST", f"/repos/{repo}/issues/{pr_number}/comments", {"body": comment}
+          )
+
+          ledger = {
+              "schema": "trnm.poco.independent-review-escalation.v1",
+              "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+              "repository": repo,
+              "product_branch": product_branch,
+              "source_commit": commit,
+              "source_tree": tree,
+              "pull_request": pr_number,
+              "excluded_identities": sorted(excluded),
+              "candidate_sources": candidate_sources,
+              "verified_user_candidates": verified,
+              "codeowners_team_candidates": teams,
+              "review_request": {
+                  "status": review_status,
+                  "payload": payload,
+                  "response_reviewers": [x.get("login") for x in (review_response or {}).get("requested_reviewers", [])]
+                  if isinstance(review_response, dict) else [],
+                  "response_teams": [x.get("slug") for x in (review_response or {}).get("requested_teams", [])]
+                  if isinstance(review_response, dict) else [],
+              },
+              "assignments": assignment_results,
+              "canonical_issues": {key: value["number"] for key, value in canonical.items()},
+              "inventory_errors": {
+                  "collaborators": collaborators_error,
+                  "members": members_error,
+                  "issues": issues_error,
+              },
+              "comment": {
+                  "status": comment_status,
+                  "url": (comment_body or {}).get("html_url") if isinstance(comment_body, dict) else None,
+              },
+              "review_completed": False,
+              "external_blockers_closed": False,
+              "release_ready": False,
+          }
+          out = Path(os.environ["RUNNER_TEMP"]) / "independent-review-escalation-v1.json"
+          out.write_text(json.dumps(ledger, indent=2, sort_keys=True) + "\n")
+          print(json.dumps({
+              "verified_user_candidates": verified,
+              "team_candidates": teams,
+              "review_request_status": review_status,
+              "external_blockers_closed": False,
+          }, sort_keys=True))
+          PY
+
+      - name: Publish review escalation ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          ledger="${RUNNER_TEMP}/independent-review-escalation-v1.json"
+          test -s "$ledger"
+          worktree="${RUNNER_TEMP}/trnm-review-escalation-ledger"
+          rm -rf "$worktree"
+          if git show-ref --verify --quiet "refs/remotes/origin/$EVIDENCE_BRANCH"; then
+            git worktree add --detach "$worktree" "origin/$EVIDENCE_BRANCH"
+          else
+            git worktree add --detach "$worktree" "origin/$PRODUCT_BRANCH"
+          fi
+          cd "$worktree"
+          mkdir -p evidence/external-orchestration
+          cp "$ledger" evidence/external-orchestration/poco-independent-review-escalation-v1.json
+          git add evidence/external-orchestration/poco-independent-review-escalation-v1.json
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "evidence: record independent review escalation"
+          git push origin "HEAD:refs/heads/$EVIDENCE_BRANCH"
+
+      - name: Assert fail-closed review state
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          ledger = json.loads((Path(os.environ["RUNNER_TEMP"]) / "independent-review-escalation-v1.json").read_text())
+          assert ledger["source_commit"] == os.environ["PRODUCT_COMMIT"]
+          assert ledger["source_tree"] == os.environ["PRODUCT_TREE"]
+          assert ledger["review_completed"] is False
+          assert ledger["external_blockers_closed"] is False
+          assert ledger["release_ready"] is False
+          PY
