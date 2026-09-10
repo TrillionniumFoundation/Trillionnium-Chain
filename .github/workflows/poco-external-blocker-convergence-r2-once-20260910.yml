@@ -1,0 +1,419 @@
+name: PoCO external blocker convergence R2 (one-shot)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-external-blocker-convergence-r2-once-20260910.yml
+
+permissions:
+  actions: write
+  contents: write
+  issues: write
+  pull-requests: write
+  metadata: read
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence/poco-external-blocker-convergence-20260910-r2
+  PR_NUMBER: "117"
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out orchestration branch with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Freeze exact product source and verify PoCO-only tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$PRODUCT_BRANCH"
+          product_commit=$(git rev-parse "origin/$PRODUCT_BRANCH")
+          product_tree=$(git rev-parse "$product_commit^{tree}")
+          test -n "$product_commit"
+          test -n "$product_tree"
+          product_worktree="${RUNNER_TEMP}/trnm-product"
+          rm -rf "$product_worktree"
+          git worktree add --detach "$product_worktree" "$product_commit"
+          test -x "$product_worktree/scripts/ci/check_native_consensus_only.py"
+          (
+            cd "$product_worktree"
+            python3 scripts/ci/check_native_consensus_only.py >"${RUNNER_TEMP}/native-only.json"
+            test -z "$(git status --porcelain --untracked-files=all)"
+          )
+          {
+            echo "PRODUCT_COMMIT=$product_commit"
+            echo "PRODUCT_TREE=$product_tree"
+            echo "PRODUCT_WORKTREE=$product_worktree"
+          } >> "$GITHUB_ENV"
+
+      - name: Reconcile blocker issues, independent review requests and eligible dispatches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import base64
+          import datetime as dt
+          import json
+          import os
+          import re
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          repo = os.environ["GH_REPO"]
+          token = os.environ["GH_TOKEN"]
+          product_branch = os.environ["PRODUCT_BRANCH"]
+          product_commit = os.environ["PRODUCT_COMMIT"]
+          product_tree = os.environ["PRODUCT_TREE"]
+          pr_number = int(os.environ["PR_NUMBER"])
+          api = "https://api.github.com"
+
+          blockers = {
+              "EXT-REVIEW-001": {
+                  "title": "Independent review of final PoCO-only source tuple",
+                  "requirement": "Independent qualified reviewer approval of PR #117 bound to the exact source tuple, after all blocking findings are resolved.",
+              },
+              "EXT-G1-CAMPAIGN-001": {
+                  "title": "Independent multi-host PoCO campaign",
+                  "requirement": "Real 4/7/31/100-process campaigns across multiple hosts, operators and key-custody domains, with raw signed traces and independent acceptance.",
+              },
+              "EXT-ANCHOR-HSM-001": {
+                  "title": "Production HSM/KMS signer and monotonic anchor evidence",
+                  "requirement": "Non-exportable production HSM/KMS keys, production remote signer, independent monotonic anti-rollback anchor, rotation/failover/compromise exercises and attestations.",
+              },
+              "EXT-POWERLOSS-001": {
+                  "title": "Physical power-loss and storage-controller recovery campaign",
+                  "requirement": "Real power removal or controller-cache-loss testing across signer, commit, state-head and state-sync boundaries, with restart safety and independent acceptance.",
+              },
+              "EXT-AUDIT-001": {
+                  "title": "Independent consensus, cryptography and economic-security audit",
+                  "requirement": "Independent audit and red-team of the exact source tuple; no unresolved Critical/High findings and explicit disposition of all Medium findings.",
+              },
+              "EXT-SOAK-ACTIVATION-001": {
+                  "title": "72h / 7d / 30d production-shaped soak and activation ceremony",
+                  "requirement": "Actually elapsed 72-hour, 7-day and 30-day multi-host production-shaped soaks, SLOs, fault drills, signed acceptance and final governance activation ceremony.",
+              },
+          }
+
+          def request(method: str, path: str, payload=None, *, accept="application/vnd.github+json"):
+              url = path if path.startswith("https://") else api + path
+              data = None if payload is None else json.dumps(payload).encode()
+              req = urllib.request.Request(url, data=data, method=method)
+              req.add_header("Authorization", f"Bearer {token}")
+              req.add_header("Accept", accept)
+              req.add_header("X-GitHub-Api-Version", "2022-11-28")
+              req.add_header("User-Agent", "trnm-poco-external-convergence-r2")
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as response:
+                      raw = response.read()
+                      return response.status, json.loads(raw) if raw else None, dict(response.headers)
+              except urllib.error.HTTPError as exc:
+                  raw = exc.read().decode(errors="replace")
+                  try:
+                      body = json.loads(raw)
+                  except json.JSONDecodeError:
+                      body = {"message": raw}
+                  return exc.code, body, dict(exc.headers)
+
+          def paginate(path: str):
+              page = 1
+              items = []
+              while True:
+                  separator = "&" if "?" in path else "?"
+                  status, body, _ = request("GET", f"{path}{separator}per_page=100&page={page}")
+                  if status != 200 or not isinstance(body, list):
+                      return items, {"status": status, "body": body}
+                  items.extend(body)
+                  if len(body) < 100:
+                      return items, None
+                  page += 1
+
+          ledger = {
+              "schema": "trnm.poco.external-blocker-orchestration.v2",
+              "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+              "repository": repo,
+              "product_branch": product_branch,
+              "source_commit": product_commit,
+              "source_tree": product_tree,
+              "pull_request": pr_number,
+              "native_only_scan": json.loads(Path(os.environ["RUNNER_TEMP"], "native-only.json").read_text()),
+              "issues": {},
+              "review_request": {},
+              "workflow_dispatches": [],
+              "metadata_cleanup": {},
+              "external_blockers_closed_by_this_workflow": False,
+              "all_external_blockers_closed": False,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+          }
+
+          # Ensure canonical labels exist.
+          labels = {
+              "external-evidence": ("7A2E8E", "Requires evidence produced outside repository-owned CI"),
+              "release-blocker": ("B60205", "Blocks release and production activation"),
+              "poco": ("1D76DB", "Native PoCO consensus route"),
+          }
+          for name, (color, description) in labels.items():
+              status, body, _ = request("GET", f"/repos/{repo}/labels/{urllib.parse.quote(name)}")
+              if status == 404:
+                  status, body, _ = request("POST", f"/repos/{repo}/labels", {
+                      "name": name, "color": color, "description": description,
+                  })
+              elif status == 200:
+                  status, body, _ = request("PATCH", f"/repos/{repo}/labels/{urllib.parse.quote(name)}", {
+                      "new_name": name, "color": color, "description": description,
+                  })
+              ledger.setdefault("labels", {})[name] = {"status": status}
+
+          issues, issue_error = paginate(f"/repos/{repo}/issues?state=all")
+          if issue_error:
+              ledger["issue_inventory_error"] = issue_error
+
+          for blocker_id, spec in blockers.items():
+              matches = [
+                  issue for issue in issues
+                  if "pull_request" not in issue
+                  and blocker_id in ((issue.get("title") or "") + "\n" + (issue.get("body") or ""))
+              ]
+              open_matches = sorted(
+                  [issue for issue in matches if issue.get("state") == "open"],
+                  key=lambda issue: issue["number"],
+              )
+              canonical = open_matches[0] if open_matches else None
+              body = (
+                  f"# {blocker_id}\n\n"
+                  f"**Status: OPEN — external evidence not yet authenticated.**\n\n"
+                  f"Exact product source:\n"
+                  f"- branch: `{product_branch}`\n"
+                  f"- commit: `{product_commit}`\n"
+                  f"- tree: `{product_tree}`\n"
+                  f"- pull request: #{pr_number}\n\n"
+                  f"Required closure evidence:\n\n{spec['requirement']}\n\n"
+                  "This issue may be closed only after evidence is independently authenticated against the exact tuple above. "
+                  "Self-approval, administrator bypass, shortened wall-clock requirements, single-host simulation, software mocks, "
+                  "edited timestamps, or generated acceptance JSON do not satisfy this blocker.\n"
+              )
+              if canonical is None:
+                  status, created, _ = request("POST", f"/repos/{repo}/issues", {
+                      "title": f"[{blocker_id}] {spec['title']}",
+                      "body": body,
+                      "labels": list(labels),
+                  })
+                  if status == 201:
+                      canonical = created
+                      issues.append(created)
+              if canonical is None:
+                  ledger["issues"][blocker_id] = {"error": "unable to create or locate canonical issue"}
+                  continue
+
+              status, updated, _ = request("PATCH", f"/repos/{repo}/issues/{canonical['number']}", {
+                  "title": f"[{blocker_id}] {spec['title']}",
+                  "body": body,
+                  "state": "open",
+                  "labels": list(labels),
+              })
+              canonical_number = canonical["number"]
+              duplicate_numbers = []
+              for duplicate in matches:
+                  if duplicate["number"] == canonical_number or duplicate.get("state") != "open":
+                      continue
+                  duplicate_numbers.append(duplicate["number"])
+                  request("POST", f"/repos/{repo}/issues/{duplicate['number']}/comments", {
+                      "body": f"Duplicate execution tracker. Canonical source-bound tracker: #{canonical_number}. Closing without accepting evidence.",
+                  })
+                  request("PATCH", f"/repos/{repo}/issues/{duplicate['number']}", {
+                      "state": "closed", "state_reason": "not_planned",
+                  })
+              ledger["issues"][blocker_id] = {
+                  "number": canonical_number,
+                  "url": canonical.get("html_url") or (updated or {}).get("html_url"),
+                  "state": "open",
+                  "duplicate_trackers_closed": duplicate_numbers,
+              }
+
+          # Keep the release PR draft and source-bound.
+          pr_status, pr, _ = request("GET", f"/repos/{repo}/pulls/{pr_number}")
+          ledger["pull_request_readback"] = {
+              "status": pr_status,
+              "draft": pr.get("draft") if isinstance(pr, dict) else None,
+              "state": pr.get("state") if isinstance(pr, dict) else None,
+              "head_sha": ((pr.get("head") or {}).get("sha")) if isinstance(pr, dict) else None,
+              "base_ref": ((pr.get("base") or {}).get("ref")) if isinstance(pr, dict) else None,
+          }
+          if pr_status == 200 and not pr.get("draft"):
+              request("POST", f"/graphql", {
+                  "query": "mutation($id:ID!){convertPullRequestToDraft(input:{pullRequestId:$id}){pullRequest{isDraft}}}",
+                  "variables": {"id": pr["node_id"]},
+              })
+
+          # Request independent reviewers from actual collaborators, excluding author/actor.
+          collaborators, collaborator_error = paginate(f"/repos/{repo}/collaborators?affiliation=all")
+          excluded = {
+              os.environ.get("GITHUB_ACTOR", "").casefold(),
+              (((pr or {}).get("user") or {}).get("login") or "").casefold(),
+          }
+          candidates = []
+          for collaborator in collaborators:
+              login = collaborator.get("login") or ""
+              permissions = collaborator.get("permissions") or {}
+              if login and login.casefold() not in excluded and permissions.get("pull"):
+                  candidates.append(login)
+          candidates = sorted(dict.fromkeys(candidates))[:5]
+          if candidates:
+              status, response, _ = request("POST", f"/repos/{repo}/pulls/{pr_number}/requested_reviewers", {
+                  "reviewers": candidates,
+              })
+              ledger["review_request"] = {
+                  "status": status,
+                  "requested_reviewers": candidates,
+                  "response_reviewers": [item.get("login") for item in (response or {}).get("requested_reviewers", [])],
+              }
+          else:
+              ledger["review_request"] = {
+                  "status": "no-independent-collaborator-candidate",
+                  "inventory_error": collaborator_error,
+                  "excluded": sorted(excluded),
+              }
+
+          # Dispatch only existing product-branch workflows that explicitly name a blocker
+          # and expose workflow_dispatch. Dispatch does not count as accepted evidence.
+          workflows, workflow_error = paginate(f"/repos/{repo}/actions/workflows")
+          if workflow_error:
+              ledger["workflow_inventory_error"] = workflow_error
+          for workflow in workflows:
+              path = workflow.get("path") or ""
+              if not path.startswith(".github/workflows/"):
+                  continue
+              status, content_obj, _ = request(
+                  "GET",
+                  f"/repos/{repo}/contents/{urllib.parse.quote(path, safe='/')}?ref={urllib.parse.quote(product_branch, safe='')}",
+              )
+              if status != 200 or not isinstance(content_obj, dict) or "content" not in content_obj:
+                  continue
+              try:
+                  text = base64.b64decode(content_obj["content"]).decode()
+              except Exception:
+                  continue
+              referenced = sorted(blocker for blocker in blockers if blocker in text)
+              if not referenced or "workflow_dispatch" not in text:
+                  continue
+              dispatch_status, dispatch_body, _ = request(
+                  "POST",
+                  f"/repos/{repo}/actions/workflows/{workflow['id']}/dispatches",
+                  {"ref": product_branch},
+              )
+              ledger["workflow_dispatches"].append({
+                  "workflow_id": workflow["id"],
+                  "name": workflow.get("name"),
+                  "path": path,
+                  "blockers": referenced,
+                  "status": dispatch_status,
+                  "response": dispatch_body,
+              })
+
+          # Remove accidental branch only when it exists and is not protected/default.
+          status, repository, _ = request("GET", f"/repos/{repo}")
+          default_branch = repository.get("default_branch") if status == 200 else None
+          status, noop, _ = request("GET", f"/repos/{repo}/branches/noop")
+          if status == 200 and default_branch != "noop" and not noop.get("protected"):
+              delete_status, delete_body, _ = request("DELETE", f"/repos/{repo}/git/refs/heads/noop")
+              ledger["metadata_cleanup"]["noop_branch"] = {"action": "delete", "status": delete_status, "response": delete_body}
+          else:
+              ledger["metadata_cleanup"]["noop_branch"] = {"action": "none", "read_status": status, "default_branch": default_branch}
+
+          # Retain only neutral PoCO topics. This is repository metadata, not evidence.
+          topic_status, topic_body, _ = request("PUT", f"/repos/{repo}/topics", {
+              "names": ["blockchain", "poco", "rust", "trillionnium"],
+          })
+          ledger["metadata_cleanup"]["topics"] = {"status": topic_status, "response": topic_body}
+
+          issue_lines = []
+          for blocker_id in blockers:
+              record = ledger["issues"].get(blocker_id, {})
+              number = record.get("number")
+              issue_lines.append(f"| `{blocker_id}` | OPEN | #{number if number is not None else 'unavailable'} |")
+          comment = (
+              f"### External blocker convergence R2\n\n"
+              f"Exact product source: `{product_commit}` / tree `{product_tree}`.\n\n"
+              "Repository-owned qualification is separate from external acceptance. The following blockers remain fail-closed:\n\n"
+              "| Blocker | Status | Tracker |\n|---|---|---|\n" + "\n".join(issue_lines) + "\n\n"
+              "This orchestration reconciled trackers, requested independent reviewers when available, and dispatched eligible workflows. "
+              "It did **not** accept any external evidence and did not change release or production-activation flags."
+          )
+          comment_status, comment_body, _ = request("POST", f"/repos/{repo}/issues/{pr_number}/comments", {"body": comment})
+          ledger["pull_request_comment"] = {
+              "status": comment_status,
+              "url": (comment_body or {}).get("html_url") if isinstance(comment_body, dict) else None,
+          }
+
+          output = Path(os.environ["RUNNER_TEMP"]) / "external-blocker-orchestration-v2.json"
+          output.write_text(json.dumps(ledger, indent=2, sort_keys=True) + "\n")
+          print(json.dumps({
+              "source_commit": product_commit,
+              "source_tree": product_tree,
+              "canonical_issues": {key: value.get("number") for key, value in ledger["issues"].items()},
+              "review_request": ledger["review_request"],
+              "dispatch_count": len(ledger["workflow_dispatches"]),
+              "all_external_blockers_closed": False,
+          }, sort_keys=True))
+          PY
+
+      - name: Publish immutable orchestration ledger to evidence branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          ledger="${RUNNER_TEMP}/external-blocker-orchestration-v2.json"
+          test -s "$ledger"
+          evidence_worktree="${RUNNER_TEMP}/trnm-external-evidence-ledger"
+          rm -rf "$evidence_worktree"
+          git worktree add --detach "$evidence_worktree" "$PRODUCT_COMMIT"
+          cd "$evidence_worktree"
+          mkdir -p evidence/external-orchestration
+          cp "$ledger" evidence/external-orchestration/poco-external-blocker-orchestration-v2.json
+          git add evidence/external-orchestration/poco-external-blocker-orchestration-v2.json
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "evidence: record source-bound external blocker orchestration v2"
+          git push --force-with-lease origin "HEAD:refs/heads/$EVIDENCE_BRANCH"
+
+      - name: Assert fail-closed orchestration result
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          ledger = json.loads((Path(os.environ["RUNNER_TEMP"]) / "external-blocker-orchestration-v2.json").read_text())
+          assert ledger["source_commit"] == os.environ["PRODUCT_COMMIT"]
+          assert ledger["source_tree"] == os.environ["PRODUCT_TREE"]
+          assert ledger["native_only_scan"]["result"] == "PASS"
+          assert ledger["external_blockers_closed_by_this_workflow"] is False
+          assert ledger["all_external_blockers_closed"] is False
+          assert ledger["production_candidate"] is False
+          assert ledger["production_consensus_activation"] is False
+          assert ledger["public_testnet_ready"] is False
+          assert ledger["release_ready"] is False
+          required = {
+              "EXT-REVIEW-001", "EXT-G1-CAMPAIGN-001", "EXT-ANCHOR-HSM-001",
+              "EXT-POWERLOSS-001", "EXT-AUDIT-001", "EXT-SOAK-ACTIVATION-001",
+          }
+          assert set(ledger["issues"]) == required
+          assert all(record.get("state") == "open" for record in ledger["issues"].values())
+          PY
