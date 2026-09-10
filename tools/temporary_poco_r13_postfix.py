@@ -39,8 +39,10 @@ def remove_obsolete_codec_constant() -> None:
     if text.count(line) != 1:
         raise RuntimeError("obsolete authenticated-tree codec constant drift")
     text = text.replace(line, "", 1)
-    if "AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0" in text:
-        raise RuntimeError("authenticated-tree codec constant still referenced")
+    if re.search(r"\bAUTH_TREE_SNAPSHOT_CODEC_VERSION_V0\b", text):
+        raise RuntimeError("obsolete authenticated-tree codec identifier still referenced")
+    if text.count("NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0") != 3:
+        raise RuntimeError("native authenticated-tree codec definition/use count drift")
     path.write_text(text, encoding="utf-8")
 
 
