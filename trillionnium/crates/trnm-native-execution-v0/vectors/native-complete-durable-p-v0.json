@@ -13,7 +13,7 @@
     "parent_commit_id_hex": "0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a",
     "block_id_hex": "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
     "timestamp_ms": 1700000001000,
-    "initial_state_root_hex": "d5679a569893b373132fa56a8e2a240672a79d30375dabd02de12be2129a04c7",
+    "initial_state_root_hex": "30f2bc697ac873698ebc4cacc4f547952c251db516ccc6502599a06007b27d49",
     "outer_transaction_sha256_hex": [
       "def5d6229e8ca507eaed83a379de8036b1841c93e0ad3fdabf012f4eb1e26ddb",
       "d16c8df742b22d0e7ed830b04686ad50df57b94c25ee9c59a44800705b57220a"
@@ -25,7 +25,7 @@
   },
   "expected": {
     "payload_root_hex": "02da78cb57b3e0cf4f15861b4b5e7af0f423826fbf56a5ef9b01f99389c68dbb",
-    "post_state_root_hex": "341a4f7e164b99ecdb9fedea6959115ef145d51e6ab0d786b28e11c99343679a",
+    "post_state_root_hex": "11382d0234e2665f2f14199d88980738fb07f15dafa692ca5d1ad0147a62672a",
     "receipts_root_hex": "97ce54b75b5e428992460f65804d73540c790594d32bad1616282c271a66cfa0",
     "evidence_root_hex": "df2f0138177d79d16f277d2c45d5a9fdbe492daa75c2b28fb901f3450022b047",
     "durable_sequence_after_p": 2,
