@@ -1,0 +1,505 @@
+name: PoCO external evidence execution pack (one-shot)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-external-evidence-execution-pack-once-20260910.yml
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  metadata: read
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence/poco-external-blocker-convergence-20260910-r2
+  PR_NUMBER: "117"
+
+jobs:
+  publish-pack:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Freeze product source and generate strict execution pack
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$PRODUCT_BRANCH" "$EVIDENCE_BRANCH" || true
+          product_commit=$(git rev-parse "origin/$PRODUCT_BRANCH")
+          product_tree=$(git rev-parse "$product_commit^{tree}")
+          evidence_worktree="${RUNNER_TEMP}/trnm-external-pack"
+          rm -rf "$evidence_worktree"
+          if git show-ref --verify --quiet "refs/remotes/origin/$EVIDENCE_BRANCH"; then
+            git worktree add --detach "$evidence_worktree" "origin/$EVIDENCE_BRANCH"
+          else
+            git worktree add --detach "$evidence_worktree" "$product_commit"
+          fi
+          export PRODUCT_COMMIT="$product_commit" PRODUCT_TREE="$product_tree" EVIDENCE_WORKTREE="$evidence_worktree"
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import datetime as dt
+          import hashlib
+          import json
+          import os
+          import textwrap
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          repo = os.environ["GH_REPO"]
+          token = os.environ["GH_TOKEN"]
+          product_branch = os.environ["PRODUCT_BRANCH"]
+          commit = os.environ["PRODUCT_COMMIT"]
+          tree = os.environ["PRODUCT_TREE"]
+          pr = int(os.environ["PR_NUMBER"])
+          worktree = Path(os.environ["EVIDENCE_WORKTREE"])
+          pack = worktree / "evidence/external-orchestration/execution-pack-v1"
+          pack.mkdir(parents=True, exist_ok=True)
+
+          blockers = {
+              "EXT-REVIEW-001": {
+                  "title": "Independent source review",
+                  "minimum_duration": None,
+                  "required_roles": ["independent-reviewer"],
+                  "required_artifacts": [
+                      "reviewer-independence.json", "review-scope.json", "findings.json",
+                      "pr-approval.json", "artifact-digests.json", "acceptance-signature.json",
+                  ],
+                  "acceptance": [
+                      "Reviewer is not the implementation or automation author.",
+                      "Review and approval bind to the exact source commit and tree.",
+                      "Consensus, safety store, signer, recovery, state sync, production ports and release boundary are covered.",
+                      "Every blocking finding is resolved and independently reverified.",
+                      "PR #117 contains a formal APPROVED review at the exact head SHA.",
+                  ],
+              },
+              "EXT-G1-CAMPAIGN-001": {
+                  "title": "Independent multi-host network campaign",
+                  "minimum_duration": None,
+                  "required_roles": ["campaign-operator", "independent-acceptor"],
+                  "required_artifacts": [
+                      "host-inventory.json", "operator-inventory.json", "key-custody-domains.json",
+                      "network-topology.json", "campaign-4.json", "campaign-7.json",
+                      "campaign-31.json", "campaign-100.json", "fault-matrix.json",
+                      "raw-signed-trace-index.json", "safety-liveness-summary.json",
+                      "artifact-digests.json", "acceptance-signature.json",
+                  ],
+                  "acceptance": [
+                      "4, 7, 31 and 100 process campaigns all ran on real infrastructure.",
+                      "The campaign spans multiple hosts, operating identities and key-custody domains.",
+                      "Network partition, delay, loss, restart, catch-up and state-sync cases were executed.",
+                      "No safety violation or divergent finalized state occurred.",
+                      "Raw signed traces and artifact digests are independently accepted.",
+                  ],
+              },
+              "EXT-ANCHOR-HSM-001": {
+                  "title": "Production HSM/KMS and monotonic anchor",
+                  "minimum_duration": None,
+                  "required_roles": ["key-custodian", "security-reviewer"],
+                  "required_artifacts": [
+                      "provider-attestation.json", "non-exportability-proof.json",
+                      "key-ceremony.json", "custody-boundaries.json", "remote-signer-session.json",
+                      "rollback-rejection.json", "rotation.json", "failover.json",
+                      "compromise-response.json", "artifact-digests.json", "acceptance-signature.json",
+                  ],
+                  "acceptance": [
+                      "Validator keys are non-exportable and held by a real HSM/KMS.",
+                      "Remote signing uses the exact product source and production protocol domains.",
+                      "The monotonic rollback anchor is administered independently from the node host.",
+                      "Rollback, rotation, failover and compromise-response exercises pass.",
+                      "Provider/device attestations and independent security acceptance are present.",
+                  ],
+              },
+              "EXT-POWERLOSS-001": {
+                  "title": "Physical power-loss recovery",
+                  "minimum_duration": None,
+                  "required_roles": ["hardware-operator", "independent-observer"],
+                  "required_artifacts": [
+                      "hardware-inventory.json", "storage-cache-policy.json", "power-cut-controller.json",
+                      "fault-boundaries.json", "signer-journal-recovery.json", "commit-recovery.json",
+                      "state-head-recovery.json", "state-sync-recovery.json", "anti-double-sign.json",
+                      "root-convergence.json", "raw-device-logs-index.json", "artifact-digests.json",
+                      "acceptance-signature.json",
+                  ],
+                  "acceptance": [
+                      "At least one real power removal or storage-controller cache-loss mechanism was used.",
+                      "Signer reservation/journal, commit, state-head and state-sync boundaries were exercised.",
+                      "Restart produces no double-sign, committed-state rollback or split head.",
+                      "Recovered nodes converge to the same committed root.",
+                      "Raw hardware logs and independent observer acceptance are present.",
+                  ],
+              },
+              "EXT-AUDIT-001": {
+                  "title": "Independent security audit and red team",
+                  "minimum_duration": None,
+                  "required_roles": ["independent-auditor", "remediation-reviewer"],
+                  "required_artifacts": [
+                      "auditor-independence.json", "statement-of-work.json", "threat-model-review.json",
+                      "consensus-audit.json", "cryptography-audit.json", "economic-security-audit.json",
+                      "remote-signer-recovery-audit.json", "red-team-report.json", "findings.json",
+                      "remediation-verification.json", "artifact-digests.json", "acceptance-signature.json",
+                  ],
+                  "acceptance": [
+                      "The audit team is organizationally independent of implementation authors.",
+                      "Consensus safety/liveness, cryptography, economic security, signer/recovery and resource exhaustion are covered.",
+                      "No Critical or High finding remains unresolved.",
+                      "Every Medium finding has an explicit disposition, owner and deadline.",
+                      "Remediation verification binds to the exact final source tuple.",
+                  ],
+              },
+              "EXT-SOAK-ACTIVATION-001": {
+                  "title": "Production-shaped soak and activation ceremony",
+                  "minimum_duration": {"phase_72h_seconds": 259200, "phase_7d_seconds": 604800, "phase_30d_seconds": 2592000},
+                  "required_roles": ["operations-owner", "independent-observer", "governance-approver"],
+                  "required_artifacts": [
+                      "phase-72h.json", "phase-7d.json", "phase-30d.json", "wall-clock-attestation.json",
+                      "slo-timeseries-index.json", "fault-drills.json", "validator-restarts.json",
+                      "signer-failovers.json", "disk-pressure.json", "state-sync-catchup.json",
+                      "key-rotation.json", "incident-drills.json", "operator-signatures.json",
+                      "governance-activation.json", "artifact-digests.json", "acceptance-signature.json",
+                  ],
+                  "acceptance": [
+                      "The 72-hour, 7-day and 30-day phases actually elapsed without shortened timers or edited timestamps.",
+                      "The environment is multi-host and production-shaped.",
+                      "Network, validator, signer, disk, state-sync, key-rotation and incident drills were completed.",
+                      "SLO evidence meets the frozen acceptance thresholds.",
+                      "Independent observer and governance activation signatures bind to the exact source tuple.",
+                  ],
+              },
+          }
+
+          manifest = {
+              "schema": "trnm.poco.external-evidence-execution-pack.v1",
+              "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+              "repository": repo,
+              "product_branch": product_branch,
+              "source_commit": commit,
+              "source_tree": tree,
+              "pull_request": pr,
+              "blockers": blockers,
+              "submission_root": "submissions/<BLOCKER_ID>/<SUBMISSION_ID>/",
+              "accepted_status": "accepted",
+              "closed_by_pack_generation": False,
+              "all_external_blockers_closed": False,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "public_testnet_ready": False,
+              "release_ready": False,
+          }
+          (pack / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+
+          schema = {
+              "$schema": "https://json-schema.org/draft/2020-12/schema",
+              "$id": "https://trillionnium.org/schemas/poco-external-evidence-submission-v1.json",
+              "title": "PoCO external evidence submission v1",
+              "type": "object",
+              "additionalProperties": False,
+              "required": [
+                  "schema", "blocker_id", "submission_id", "source_commit", "source_tree",
+                  "started_at", "completed_at", "operators", "independent_acceptors",
+                  "artifacts", "artifact_digests", "acceptance", "signatures",
+              ],
+              "properties": {
+                  "schema": {"const": "trnm.poco.external-evidence-submission.v1"},
+                  "blocker_id": {"enum": sorted(blockers)},
+                  "submission_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{8,128}$"},
+                  "source_commit": {"const": commit},
+                  "source_tree": {"const": tree},
+                  "started_at": {"type": "string", "format": "date-time"},
+                  "completed_at": {"type": "string", "format": "date-time"},
+                  "operators": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/identity"}},
+                  "independent_acceptors": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/identity"}},
+                  "artifacts": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                  "artifact_digests": {
+                      "type": "object", "minProperties": 1,
+                      "additionalProperties": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+                  },
+                  "acceptance": {
+                      "type": "object", "additionalProperties": False,
+                      "required": ["status", "criteria", "critical_open", "high_open"],
+                      "properties": {
+                          "status": {"enum": ["rejected", "pending", "accepted"]},
+                          "criteria": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                          "critical_open": {"type": "integer", "minimum": 0},
+                          "high_open": {"type": "integer", "minimum": 0},
+                      },
+                  },
+                  "signatures": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/signature"}},
+              },
+              "$defs": {
+                  "identity": {
+                      "type": "object", "additionalProperties": False,
+                      "required": ["name", "organization", "role", "independence_statement"],
+                      "properties": {
+                          "name": {"type": "string", "minLength": 1},
+                          "organization": {"type": "string", "minLength": 1},
+                          "role": {"type": "string", "minLength": 1},
+                          "independence_statement": {"type": "string", "minLength": 20},
+                      },
+                  },
+                  "signature": {
+                      "type": "object", "additionalProperties": False,
+                      "required": ["identity", "algorithm", "public_key", "signed_digest", "signature"],
+                      "properties": {
+                          "identity": {"type": "string", "minLength": 1},
+                          "algorithm": {"enum": ["ed25519", "cosign-key", "x509"]},
+                          "public_key": {"type": "string", "minLength": 1},
+                          "signed_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+                          "signature": {"type": "string", "minLength": 16},
+                      },
+                  },
+              },
+          }
+          (pack / "submission.schema.json").write_text(json.dumps(schema, indent=2, sort_keys=True) + "\n")
+
+          validator = r'''#!/usr/bin/env python3
+          from __future__ import annotations
+          import argparse, datetime as dt, hashlib, json, pathlib, re, sys
+
+          ROOT = pathlib.Path(__file__).resolve().parent
+          MANIFEST = json.loads((ROOT / "manifest.json").read_text())
+          COMMIT = MANIFEST["source_commit"]
+          TREE = MANIFEST["source_tree"]
+          HEX64 = re.compile(r"^sha256:[0-9a-f]{64}$")
+
+          def fail(message: str) -> None:
+              raise ValueError(message)
+
+          def parse_time(value: str) -> dt.datetime:
+              parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+              if parsed.tzinfo is None:
+                  fail("timestamps must carry an offset")
+              return parsed.astimezone(dt.timezone.utc)
+
+          def main() -> int:
+              parser = argparse.ArgumentParser()
+              parser.add_argument("submission", type=pathlib.Path)
+              args = parser.parse_args()
+              path = args.submission.resolve()
+              data = json.loads(path.read_text())
+              required = {
+                  "schema", "blocker_id", "submission_id", "source_commit", "source_tree",
+                  "started_at", "completed_at", "operators", "independent_acceptors",
+                  "artifacts", "artifact_digests", "acceptance", "signatures",
+              }
+              if set(data) != required:
+                  fail(f"top-level fields must be exactly {sorted(required)}")
+              if data["schema"] != "trnm.poco.external-evidence-submission.v1":
+                  fail("schema mismatch")
+              blocker = data["blocker_id"]
+              if blocker not in MANIFEST["blockers"]:
+                  fail("unknown blocker")
+              if data["source_commit"] != COMMIT or data["source_tree"] != TREE:
+                  fail("source tuple mismatch")
+              started, completed = parse_time(data["started_at"]), parse_time(data["completed_at"])
+              if completed <= started:
+                  fail("completed_at must be after started_at")
+              minimum = MANIFEST["blockers"][blocker].get("minimum_duration")
+              if minimum:
+                  elapsed = (completed - started).total_seconds()
+                  if blocker == "EXT-SOAK-ACTIVATION-001" and elapsed < minimum["phase_30d_seconds"]:
+                      fail("30-day wall-clock minimum not met")
+              if not data["operators"] or not data["independent_acceptors"]:
+                  fail("operator and independent acceptor identities are required")
+              operator_orgs = {item["organization"].casefold() for item in data["operators"]}
+              acceptor_orgs = {item["organization"].casefold() for item in data["independent_acceptors"]}
+              if operator_orgs & acceptor_orgs:
+                  fail("acceptor organization must be independent of operator organizations")
+              required_artifacts = set(MANIFEST["blockers"][blocker]["required_artifacts"])
+              supplied = set(data["artifacts"])
+              missing = sorted(required_artifacts - supplied)
+              if missing:
+                  fail(f"required artifacts missing: {missing}")
+              root = path.parent
+              for relative in supplied:
+                  artifact = (root / relative).resolve()
+                  if root not in artifact.parents:
+                      fail(f"artifact escapes submission root: {relative}")
+                  if not artifact.is_file():
+                      fail(f"artifact missing: {relative}")
+                  expected = data["artifact_digests"].get(relative)
+                  if not expected or not HEX64.fullmatch(expected):
+                      fail(f"digest missing or malformed: {relative}")
+                  actual = "sha256:" + hashlib.sha256(artifact.read_bytes()).hexdigest()
+                  if actual != expected:
+                      fail(f"digest mismatch: {relative}")
+              acceptance = data["acceptance"]
+              if acceptance.get("status") != "accepted":
+                  fail("acceptance status must be accepted")
+              if acceptance.get("critical_open") != 0 or acceptance.get("high_open") != 0:
+                  fail("Critical/High findings must be zero")
+              required_criteria = set(MANIFEST["blockers"][blocker]["acceptance"])
+              if not required_criteria <= set(acceptance.get("criteria") or []):
+                  fail("required acceptance criteria missing")
+              # Structural validation cannot authenticate signatures. Cryptographic
+              # verification and identity trust-chain validation are mandatory external steps.
+              if not data["signatures"]:
+                  fail("at least one acceptance signature is required")
+              report = {
+                  "schema": "trnm.poco.external-evidence-structural-validation.v1",
+                  "blocker_id": blocker,
+                  "source_commit": COMMIT,
+                  "source_tree": TREE,
+                  "structurally_valid": True,
+                  "signature_authenticity_verified": False,
+                  "identity_trust_chain_verified": False,
+                  "blocker_closed": False,
+              }
+              print(json.dumps(report, sort_keys=True))
+              return 0
+
+          if __name__ == "__main__":
+              try:
+                  raise SystemExit(main())
+              except Exception as exc:
+                  print(f"external evidence submission rejected: {exc}", file=sys.stderr)
+                  raise SystemExit(2)
+          '''
+          validator = textwrap.dedent(validator).lstrip()
+          (pack / "validate_submission.py").write_text(validator)
+          (pack / "validate_submission.py").chmod(0o755)
+
+          readme = f'''# PoCO External Evidence Execution Pack v1
+
+          This pack is bound to one immutable product source tuple:
+
+          - repository: `{repo}`
+          - product branch: `{product_branch}`
+          - commit: `{commit}`
+          - tree: `{tree}`
+          - release PR: `#{pr}`
+
+          ## Purpose
+
+          The pack defines the minimum artifacts, independent roles, wall-clock requirements and
+          source binding for the six external release blockers. Generating this pack does not close
+          a blocker. A submission is only eligible for acceptance after its artifacts, identities,
+          signatures and trust chains are independently authenticated.
+
+          ## Submission layout
+
+          ```text
+          submissions/<BLOCKER_ID>/<SUBMISSION_ID>/
+          ├── submission.json
+          ├── <all required artifacts listed by manifest.json>
+          └── additional raw logs and trace bundles
+          ```
+
+          Validate the deterministic structure and digests with:
+
+          ```bash
+          python3 validate_submission.py submissions/<BLOCKER_ID>/<SUBMISSION_ID>/submission.json
+          ```
+
+          A successful structural validation deliberately reports:
+
+          ```text
+          signature_authenticity_verified=false
+          identity_trust_chain_verified=false
+          blocker_closed=false
+          ```
+
+          Those final checks require an independent verifier with access to the real people,
+          infrastructure, HSM/KMS attestations, hardware logs, audit reports and elapsed-time evidence.
+
+          ## Prohibited substitutions
+
+          - self-approval or administrator bypass;
+          - a single host presented as a multi-host campaign;
+          - software keys or mocks presented as HSM/KMS evidence;
+          - process termination presented as physical power loss;
+          - shortened timers or edited timestamps presented as a 30-day soak;
+          - generated or self-signed acceptance records without an independent trust chain;
+          - evidence produced against a different commit or tree.
+          '''
+          (pack / "README.md").write_text(textwrap.dedent(readme).lstrip())
+
+          for blocker_id, spec in blockers.items():
+              slug = blocker_id.lower()
+              content = [
+                  f"# {blocker_id}: {spec['title']}", "",
+                  f"Source commit: `{commit}`", f"Source tree: `{tree}`", "",
+                  "## Required roles", "",
+              ]
+              content.extend(f"- `{role}`" for role in spec["required_roles"])
+              content += ["", "## Required artifacts", ""]
+              content.extend(f"- `{artifact}`" for artifact in spec["required_artifacts"])
+              content += ["", "## Acceptance criteria", ""]
+              content.extend(f"- {criterion}" for criterion in spec["acceptance"])
+              if spec["minimum_duration"]:
+                  content += ["", "## Frozen wall-clock minima", "", "```json", json.dumps(spec["minimum_duration"], indent=2), "```"]
+              content += ["", "The tracker remains OPEN until independent authentication succeeds.", ""]
+              (pack / f"{slug}.md").write_text("\n".join(content))
+
+          # Record pack digests without self-reference.
+          digests = {}
+          for path in sorted(pack.iterdir()):
+              if path.is_file() and path.name != "pack-digests.json":
+                  digests[path.name] = "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+          (pack / "pack-digests.json").write_text(json.dumps(digests, indent=2, sort_keys=True) + "\n")
+          print(json.dumps({"source_commit": commit, "source_tree": tree, "files": len(digests) + 1}, sort_keys=True))
+          PY
+
+          cd "$evidence_worktree"
+          git add evidence/external-orchestration/execution-pack-v1
+          git diff --cached --check
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "evidence: publish source-bound external execution pack v1"
+          git push origin "HEAD:refs/heads/$EVIDENCE_BRANCH"
+
+      - name: Link execution pack from canonical blocker trackers
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.error, urllib.request
+          repo=os.environ['GH_REPO']; token=os.environ['GH_TOKEN']
+          branch=os.environ['EVIDENCE_BRANCH']; pr=os.environ['PR_NUMBER']
+          commit=os.environ['PRODUCT_COMMIT']; tree=os.environ['PRODUCT_TREE']
+          ids=("EXT-REVIEW-001","EXT-G1-CAMPAIGN-001","EXT-ANCHOR-HSM-001","EXT-POWERLOSS-001","EXT-AUDIT-001","EXT-SOAK-ACTIVATION-001")
+          def req(method,path,payload=None):
+              data=None if payload is None else json.dumps(payload).encode()
+              r=urllib.request.Request('https://api.github.com'+path,data=data,method=method)
+              for k,v in {'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'trnm-pack-linker'}.items(): r.add_header(k,v)
+              try:
+                  with urllib.request.urlopen(r,timeout=60) as x:
+                      b=x.read(); return x.status,json.loads(b) if b else None
+              except urllib.error.HTTPError as e:
+                  b=e.read().decode(errors='replace')
+                  try:b=json.loads(b)
+                  except:b={'message':b}
+                  return e.code,b
+          status,issues=req('GET',f'/repos/{repo}/issues?state=open&per_page=100')
+          linked=[]
+          if status==200:
+              for bid in ids:
+                  matches=sorted([i for i in issues if 'pull_request' not in i and bid in ((i.get('title') or '')+'\n'+(i.get('body') or ''))],key=lambda i:i['number'])
+                  if not matches: continue
+                  issue=matches[0]
+                  url=f'https://github.com/{repo}/tree/{branch}/evidence/external-orchestration/execution-pack-v1'
+                  body=(f'Execution pack v1 for `{bid}` is now source-bound to `{commit}` / tree `{tree}`:\n\n{url}\n\n'
+                        'The pack supplies schemas, artifact requirements and structural validation. It does not authenticate signatures or close the blocker.')
+                  st,resp=req('POST',f'/repos/{repo}/issues/{issue["number"]}/comments',{'body':body})
+                  linked.append({'blocker':bid,'issue':issue['number'],'status':st})
+          Path=os.path
+          print(json.dumps({'linked':linked,'release_ready':False},sort_keys=True))
+          PY
