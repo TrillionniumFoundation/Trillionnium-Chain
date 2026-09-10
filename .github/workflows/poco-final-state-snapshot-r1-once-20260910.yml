@@ -1,0 +1,292 @@
+name: PoCO final-state snapshot R1 (temporary)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-final-state-snapshot-r1-once-20260910.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: poco-final-state-snapshot-r1
+  cancel-in-progress: true
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  PR_NUMBER: "117"
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  snapshot:
+    name: Capture exact product, CI, review and blocker truth
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact current product branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.PRODUCT_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install audit tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep jq
+
+      - name: Capture immutable source and pull-request state
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_COMMIT="$(git rev-parse HEAD)"
+          SOURCE_TREE="$(git rev-parse 'HEAD^{tree}')"
+          printf '%s\n' "$SOURCE_COMMIT" >/tmp/poco-final-source-commit.txt
+          printf '%s\n' "$SOURCE_TREE" >/tmp/poco-final-source-tree.txt
+          git status --porcelain=v2 --branch --untracked-files=all \
+            >/tmp/poco-final-git-status.txt
+          git ls-files -z | tr '\0' '\n' >/tmp/poco-final-tracked-files.txt
+
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" \
+            >/tmp/poco-final-pr.json
+          gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100" \
+            >/tmp/poco-final-pr-reviews.json
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/requested_reviewers" \
+            >/tmp/poco-final-pr-requested-reviewers.json
+          gh api --paginate \
+            -H 'Accept: application/vnd.github+json' \
+            "repos/$GITHUB_REPOSITORY/commits/$SOURCE_COMMIT/check-runs?per_page=100" \
+            >/tmp/poco-final-check-runs.json
+          gh api --paginate \
+            "repos/$GITHUB_REPOSITORY/actions/runs?branch=$PRODUCT_BRANCH&per_page=100" \
+            >/tmp/poco-final-product-runs.json
+          gh api --paginate \
+            "repos/$GITHUB_REPOSITORY/actions/runs?branch=ops/poco-external-blocker-convergence-20260910-r2&per_page=100" \
+            >/tmp/poco-final-ops-runs.json
+
+          PR_HEAD="$(jq -r .head.sha /tmp/poco-final-pr.json)"
+          jq -n \
+            --arg source_commit "$SOURCE_COMMIT" \
+            --arg source_tree "$SOURCE_TREE" \
+            --arg pr_head "$PR_HEAD" \
+            --arg pr_base "$(jq -r .base.sha /tmp/poco-final-pr.json)" \
+            --argjson draft "$(jq .draft /tmp/poco-final-pr.json)" \
+            --arg state "$(jq -r .state /tmp/poco-final-pr.json)" \
+            --arg mergeable_state "$(jq -r '.mergeable_state // "unknown"' /tmp/poco-final-pr.json)" \
+            '{
+              source_commit:$source_commit,
+              source_tree:$source_tree,
+              pr_head:$pr_head,
+              pr_head_matches_product:($pr_head == $source_commit),
+              pr_base:$pr_base,
+              pr_state:$state,
+              pr_draft:$draft,
+              pr_mergeable_state:$mergeable_state
+            }' >/tmp/poco-final-source-summary.json
+
+      - name: Execute every available read-only repository truth checker
+        shell: bash
+        run: |
+          set -uo pipefail
+          : >/tmp/poco-final-truth-results.jsonl
+
+          run_check() {
+            local name="$1"
+            shift
+            local stdout="/tmp/poco-final-${name}.stdout"
+            local stderr="/tmp/poco-final-${name}.stderr"
+            set +e
+            "$@" >"$stdout" 2>"$stderr"
+            local rc=$?
+            set -e
+            NAME="$name" RC="$rc" STDOUT="$stdout" STDERR="$stderr" \
+              python3 - <<'PY' >>/tmp/poco-final-truth-results.jsonl
+          import json
+          import os
+          from pathlib import Path
+          print(json.dumps({
+              "name": os.environ["NAME"],
+              "returncode": int(os.environ["RC"]),
+              "stdout": Path(os.environ["STDOUT"]).read_text(encoding="utf-8", errors="replace")[-20000:],
+              "stderr": Path(os.environ["STDERR"]).read_text(encoding="utf-8", errors="replace")[-20000:],
+          }, sort_keys=True))
+          PY
+          }
+
+          [[ -f scripts/ci/check_native_consensus_only.py ]] && \
+            run_check native-only python3 scripts/ci/check_native_consensus_only.py
+          [[ -f scripts/ci/check_canonical_development_plan.sh ]] && \
+            run_check canonical-plan bash scripts/ci/check_canonical_development_plan.sh
+          [[ -f scripts/ci/check_poco_bft_mainline_truth.sh ]] && \
+            run_check poco-mainline bash scripts/ci/check_poco_bft_mainline_truth.sh
+          [[ -f scripts/ci/check_repository_truth_v1.py ]] && \
+            run_check repository-truth python3 scripts/ci/check_repository_truth_v1.py
+          [[ -f scripts/ci/check_required_protocol_contract_v1.py ]] && \
+            run_check protocol-contract python3 scripts/ci/check_required_protocol_contract_v1.py
+          [[ -f scripts/ci/test_external_evidence_v1.py ]] && \
+            run_check external-evidence-tests python3 scripts/ci/test_external_evidence_v1.py
+
+          find scripts/ci -maxdepth 1 -type f \
+            \( -iname '*gap*' -o -iname '*blocker*' -o -iname '*convergence*' \
+               -o -iname '*release*' -o -iname '*coverage*' \) \
+            -print | sort >/tmp/poco-final-candidate-gap-checkers.txt
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows = []
+          for line in Path('/tmp/poco-final-truth-results.jsonl').read_text().splitlines():
+              if line.strip():
+                  rows.append(json.loads(line))
+          Path('/tmp/poco-final-truth-results.json').write_text(
+              json.dumps(rows, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          PY
+
+      - name: Capture canonical snapshot, runtime gaps and forbidden residue
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f docs/development/CURRENT_SNAPSHOT_V1.json ]]; then
+            cp docs/development/CURRENT_SNAPSHOT_V1.json \
+              /tmp/poco-final-current-snapshot.json
+          else
+            printf '{}\n' >/tmp/poco-final-current-snapshot.json
+          fi
+
+          rg -n --hidden --glob '!.git/**' \
+            '(runtime_gaps|external_blockers|production_candidate|production_consensus_activation|release_ready|independent_review|long_run_fuzz|G1-native-host-incomplete)' \
+            docs scripts config .github trillionnium \
+            >/tmp/poco-final-gap-markers.txt || true
+
+          rg -n --hidden --glob '!.git/**' \
+            '(cometbft|tendermint|abci|external_bft_engine|external_application_adapter|retired-application-path|trnm-consensus-app|trnm_consensus_app)' \
+            . >/tmp/poco-final-forbidden-residue.txt || true
+
+          find . -type f \
+            \( -name 'temporary_poco_*' -o -name 'poco-only-convergence-r*.yml' \
+               -o -name 'DO_NOT_CREATE*' \) \
+            -print | sort >/tmp/poco-final-temporary-files.txt
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          def count_lines(path):
+              p = Path(path)
+              return len(p.read_text(encoding='utf-8', errors='replace').splitlines()) if p.exists() else 0
+
+          reviews = json.loads(Path('/tmp/poco-final-pr-reviews.json').read_text())
+          requested = json.loads(Path('/tmp/poco-final-pr-requested-reviewers.json').read_text())
+          check_runs_raw = Path('/tmp/poco-final-check-runs.json').read_text()
+          product_runs_raw = Path('/tmp/poco-final-product-runs.json').read_text()
+          ops_runs_raw = Path('/tmp/poco-final-ops-runs.json').read_text()
+
+          def load_concatenated(raw):
+              decoder = json.JSONDecoder()
+              values = []
+              index = 0
+              while index < len(raw):
+                  while index < len(raw) and raw[index].isspace():
+                      index += 1
+                  if index >= len(raw):
+                      break
+                  value, end = decoder.raw_decode(raw, index)
+                  values.append(value)
+                  index = end
+              return values
+
+          check_runs = []
+          for value in load_concatenated(check_runs_raw):
+              check_runs.extend(value.get('check_runs', []))
+          product_runs = []
+          for value in load_concatenated(product_runs_raw):
+              product_runs.extend(value.get('workflow_runs', []))
+          ops_runs = []
+          for value in load_concatenated(ops_runs_raw):
+              ops_runs.extend(value.get('workflow_runs', []))
+
+          approvals = [r for r in reviews if r.get('state') == 'APPROVED']
+          changes_requested = [r for r in reviews if r.get('state') == 'CHANGES_REQUESTED']
+          incomplete_checks = [r for r in check_runs if r.get('status') != 'completed']
+          failed_checks = [r for r in check_runs if r.get('status') == 'completed' and r.get('conclusion') not in ('success','neutral','skipped')]
+          relevant_names = ('PoCO-only convergence R14','PoCO-only convergence R15','PoCO-only convergence R16')
+          convergence_runs = [
+              r for r in product_runs
+              if any(name in (r.get('name') or '') for name in relevant_names)
+          ]
+          ops_relevant = [
+              r for r in ops_runs
+              if any(token in (r.get('name') or '') for token in (
+                  'PoCO product postqualification R17',
+                  'PoCO external blocker dispatcher R3',
+                  'PoCO independent review refresh R1',
+              ))
+          ]
+
+          summary = {
+              'schema': 'trnm-poco-final-state-snapshot-r1',
+              'approved_reviews': [
+                  {'user': (r.get('user') or {}).get('login'), 'commit_id': r.get('commit_id'), 'submitted_at': r.get('submitted_at')}
+                  for r in approvals
+              ],
+              'changes_requested_reviews': [
+                  {'user': (r.get('user') or {}).get('login'), 'commit_id': r.get('commit_id'), 'submitted_at': r.get('submitted_at')}
+                  for r in changes_requested
+              ],
+              'requested_reviewers': [u.get('login') for u in requested.get('users', [])],
+              'check_run_count': len(check_runs),
+              'incomplete_checks': [r.get('name') for r in incomplete_checks],
+              'failed_checks': [
+                  {'name': r.get('name'), 'conclusion': r.get('conclusion'), 'details_url': r.get('details_url')}
+                  for r in failed_checks
+              ],
+              'convergence_runs': [
+                  {'id': r.get('id'), 'name': r.get('name'), 'head_sha': r.get('head_sha'), 'status': r.get('status'), 'conclusion': r.get('conclusion')}
+                  for r in convergence_runs[:20]
+              ],
+              'ops_runs': [
+                  {'id': r.get('id'), 'name': r.get('name'), 'head_sha': r.get('head_sha'), 'status': r.get('status'), 'conclusion': r.get('conclusion')}
+                  for r in ops_relevant[:30]
+              ],
+              'forbidden_residue_line_count': count_lines('/tmp/poco-final-forbidden-residue.txt'),
+              'temporary_file_count': count_lines('/tmp/poco-final-temporary-files.txt'),
+              'gap_marker_line_count': count_lines('/tmp/poco-final-gap-markers.txt'),
+          }
+          Path('/tmp/poco-final-state-summary.json').write_text(
+              json.dumps(summary, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          PY
+
+      - name: Upload exact final-state snapshot
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-final-state-snapshot-r1-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            /tmp/poco-final-source-commit.txt
+            /tmp/poco-final-source-tree.txt
+            /tmp/poco-final-git-status.txt
+            /tmp/poco-final-source-summary.json
+            /tmp/poco-final-pr.json
+            /tmp/poco-final-pr-reviews.json
+            /tmp/poco-final-pr-requested-reviewers.json
+            /tmp/poco-final-check-runs.json
+            /tmp/poco-final-product-runs.json
+            /tmp/poco-final-ops-runs.json
+            /tmp/poco-final-truth-results.json
+            /tmp/poco-final-truth-results.jsonl
+            /tmp/poco-final-candidate-gap-checkers.txt
+            /tmp/poco-final-current-snapshot.json
+            /tmp/poco-final-gap-markers.txt
+            /tmp/poco-final-forbidden-residue.txt
+            /tmp/poco-final-temporary-files.txt
+            /tmp/poco-final-state-summary.json
