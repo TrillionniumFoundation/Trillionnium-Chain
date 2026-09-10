@@ -1,0 +1,95 @@
+name: PoCO native vector refresh diagnostic (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-native-vector-refresh-diagnostic-once-20260910.yml
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "1"
+  CARGO_TARGET_DIR: /tmp/trnm-native-vector-target
+  PRODUCTION_PORTS_COMMIT: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
+  REMOTE_SIGNER_FIX_COMMIT: 2f01213918e8da288ce5f598447318c9113edaa2
+
+jobs:
+  derive:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: chore/poco-only-purge-20260909
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Materialize exact native-only candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup override set 1.95.0
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          git fetch --no-tags origin "$PRODUCTION_PORTS_COMMIT" "$REMOTE_SIGNER_FIX_COMMIT"
+          git checkout "$PRODUCTION_PORTS_COMMIT" -- \
+            trillionnium/crates/trnm-node-boundary-v0/src/lib.rs \
+            trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs \
+            trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
+          git checkout "$REMOTE_SIGNER_FIX_COMMIT" -- \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_authority_adapter.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/external_service_os.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/os_process_fixture.rs \
+            trillionnium/crates/trnm-consensus-remote-signer-service/tests/pending_reservation_os.rs
+          python3 tools/temporary_poco_convergence_r5.py prepare
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+      - name: Print exact refreshed vector values
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+          python3 - "$file" <<'PY'
+          from pathlib import Path
+          import sys
+          path = Path(sys.argv[1])
+          text = path.read_text()
+          needle = '''        let inputs = vector.get("inputs").unwrap();
+                  let expected = vector.get("expected").unwrap();
+          '''
+          insertion = '''        let inputs = vector.get("inputs").unwrap();
+                  let expected = vector.get("expected").unwrap();
+                  eprintln!(
+                      "TRNM_NATIVE_VECTOR_ACTUAL={}",
+                      serde_json::json!({
+                          "initial_state_root_hex": hex::encode(config.initial_state_root),
+                          "outer_transaction_sha256_hex": transactions
+                              .iter()
+                              .map(|transaction| hex::encode(sha256_v0(transaction)))
+                              .collect::<Vec<_>>(),
+                          "payload_root_hex": hex::encode(computed.payload_root),
+                          "post_state_root_hex": hex::encode(computed.post_state_root),
+                          "receipts_root_hex": hex::encode(computed.receipts_root),
+                          "evidence_root_hex": hex::encode(computed.evidence_root),
+                      })
+                  );
+          '''
+          if needle not in text:
+              raise SystemExit("assert_complete_vector_v0 insertion point drift")
+          path.write_text(text.replace(needle, insertion, 1))
+          PY
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          echo "TRNM_LEGACY_VECTOR_FILE_SHA256=$(sha256sum trillionnium/crates/trnm-native-execution-v0/vectors/legacy-runtime-jmt-v0.json | awk '{print $1}')"
+          set +e
+          cargo test --manifest-path trillionnium/Cargo.toml --locked --offline -j 1 \
+            -p trnm-native-execution-v0 \
+            durable::tests::artifact_snapshot_store_and_sequence_tampering_fail_closed -- --nocapture
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          echo "diagnostic_expected_failure_rc=$rc"
