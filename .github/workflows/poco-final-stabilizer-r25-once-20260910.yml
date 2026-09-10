@@ -1,0 +1,132 @@
+name: PoCO final stabilizer R25 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-final-stabilizer-r25-once-20260910.yml
+
+concurrency:
+  group: poco-final-stabilizer
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: write
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+
+jobs:
+  stabilize:
+    name: Restore exact product and preserve authentic external-evidence truth
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Check out full convergence history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile ancestry-verified one-shot stabilizer
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 -m py_compile tools/temporary_poco_final_stabilizer_r25.py
+          cp tools/temporary_poco_final_stabilizer_r25.py /tmp/trnm-r25-stabilizer.py
+          python3 -m py_compile /tmp/trnm-r25-stabilizer.py
+
+      - name: Stabilize branch, dispatch evidence and enforce require-all truth
+        id: stabilize
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 /tmp/trnm-r25-stabilizer.py
+
+      - name: Publish exact R25 readback to PR 117
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          {
+            echo '### PoCO R25 stabilized product and external-evidence truth'
+            echo
+            echo "- workflow run: \`$GITHUB_RUN_ID\`"
+            echo "- controller event head: \`$GITHUB_SHA\`"
+            echo "- stabilizer outcome: \`${{ steps.stabilize.outcome }}\`"
+            if [[ -f /tmp/trnm-r25-product-commit.txt ]]; then
+              echo "- stabilized product commit: \`$(cat /tmp/trnm-r25-product-commit.txt)\`"
+            fi
+            if [[ -f /tmp/trnm-r25-product-tree.txt ]]; then
+              echo "- stabilized product tree: \`$(cat /tmp/trnm-r25-product-tree.txt)\`"
+            fi
+            if [[ -f /tmp/trnm-r25-external-status.txt ]]; then
+              echo "- $(tr '\n' ' ' </tmp/trnm-r25-external-status.txt)"
+            fi
+            echo
+            if [[ -f /tmp/trnm-r25-review.json ]]; then
+              echo '#### Independent review readback'
+              echo '```json'
+              jq '{source_commit,exact_head_approval_count:(.exact_head_approvals|length),request_returncode}' \
+                /tmp/trnm-r25-review.json
+              echo '```'
+            fi
+            if [[ -f /tmp/trnm-r25-dispatch.json ]]; then
+              echo '#### External campaign dispatch'
+              echo '```json'
+              jq '{dispatched_count:([.[]|select(.dispatched==true)]|length),skipped_count:([.[]|select(.dispatched!=true)]|length),workflows:[.[]|{workflow,dispatched,external_ids,reason}]}' \
+                /tmp/trnm-r25-dispatch.json
+              echo '```'
+            fi
+            if [[ -f /tmp/trnm-r25-external-runs.json ]]; then
+              echo '#### Exact-source campaign runs'
+              echo '```json'
+              jq '[.[]|{workflow,run_id,status,conclusion,head_sha}]' \
+                /tmp/trnm-r25-external-runs.json
+              echo '```'
+            fi
+            echo
+            echo 'No approval, signature, HSM result, audit result, power-loss result, multihost result, campaign result, or soak result was synthesized.'
+          } >/tmp/trnm-r25-pr-comment-workflow.md
+          gh pr comment 117 --repo "$GITHUB_REPOSITORY" \
+            --body-file /tmp/trnm-r25-pr-comment-workflow.md || true
+
+      - name: Upload exact R25 stabilization diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-r25-final-stabilizer-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 30
+          include-hidden-files: true
+          path: |
+            /tmp/trnm-r25-product-selection.json
+            /tmp/trnm-r25-controller-diff.txt
+            /tmp/trnm-r25-product-commit.txt
+            /tmp/trnm-r25-product-tree.txt
+            /tmp/trnm-r25-dispatch.json
+            /tmp/trnm-r25-external-runs.json
+            /tmp/trnm-r25-external-artifacts
+            /tmp/trnm-r25-review.json
+            /tmp/trnm-r25-external-evidence.json
+            /tmp/trnm-r25-external-evidence.log
+            /tmp/trnm-r25-external-status.txt
+            /tmp/trnm-r25-pr-comment.md
+            /tmp/trnm-r25-pr-comment-workflow.md
+
+      - name: Preserve authentic stabilizer conclusion
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.stabilize.outcome }}" != "success" ]]; then
+            exit 1
+          fi
