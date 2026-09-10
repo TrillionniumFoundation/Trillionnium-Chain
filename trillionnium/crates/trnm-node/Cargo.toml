@@ -6,35 +6,38 @@ license.workspace = true
 authors.workspace = true
 autobins = false
 publish = false
+default-run = "trnm-chain-node"
 
 [features]
-default = []
-legacy-harness = []
+default = ["native-consensus"]
+native-consensus = []
+legacy-harness = ["native-consensus"]
 
 [package.metadata.trnm]
-lane = "legacy-harness"
-protocol_features_frozen = true
-production_candidate = false
+lane = "native-poco-consensus"
+protocol_features_frozen = false
+production_candidate = true
+release_ready = false
 
 [[bin]]
 name = "trnm-sim"
 path = "src/main.rs"
-required-features = ["legacy-harness"]
+required-features = ["native-consensus"]
 
 [[bin]]
 name = "trnm-chain-node"
 path = "src/bin/trnm-chain-node.rs"
-required-features = ["legacy-harness"]
+required-features = ["native-consensus"]
 
 [[bin]]
 name = "trnm-chain-validator"
 path = "src/bin/trnm-chain-validator.rs"
-required-features = ["legacy-harness"]
+required-features = ["native-consensus"]
 
 [[bin]]
 name = "trnm-chain-cli"
 path = "src/bin/trnm-chain-cli.rs"
-required-features = ["legacy-harness"]
+required-features = ["native-consensus"]
 
 [dependencies]
 anyhow = "1"

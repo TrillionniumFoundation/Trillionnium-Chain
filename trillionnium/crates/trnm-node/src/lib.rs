@@ -1,8 +1,8 @@
-//! Frozen legacy TRNM harness surfaces.
+//! Native Trillionnium PoCO consensus and node support.
 //!
-//! The binaries in this package require the explicit `legacy-harness` feature
-//! and are not production candidates. Canonical state transition lives in
-//! `trnm-consensus-app -> trnm-runtime`; this library remains temporarily
-//! available only for shared types and historical regression fixtures.
+//! This package owns the self-developed node, validator, proposal/vote,
+//! round-change, recovery and finality surfaces. The default build enables the
+//! native consensus binaries. The package remains a development candidate and
+//! does not claim public-mainnet readiness.
 
 pub mod live;

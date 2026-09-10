@@ -1,10 +1,15 @@
 {
-  "schema": 1,
+  "schema": 2,
   "project_id": "trillionnium-chain",
   "canonical_dir": "trillionnium-chain",
   "lane": "chain-consensus",
   "lifecycle": "active",
   "development": true,
+  "consensus": {
+    "family": "native-poco",
+    "third_party_engines": "forbidden",
+    "release_ready": false
+  },
   "remote": {
     "policy": "required",
     "canonical_slug": "TrillionniumFoundation/Trillionnium-Chain",
@@ -21,9 +26,11 @@
   "cargo": {
     "workspace_manifest": "trillionnium/Cargo.toml",
     "required_packages": [
-      "trnm-consensus-app",
-      "trnm-runtime",
-      "trnm-state"
+      "trnm-node",
+      "trnm-pouw",
+      "trnm-state",
+      "trnm-executor",
+      "trnm-finality-types"
     ],
     "forbidden_packages": [
       "trnm-first-contact",

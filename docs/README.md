@@ -1,21 +1,14 @@
-# Trillionnium Docs Index
+# Trillionnium Chain Documentation
 
-## Core
+This directory documents the native PoCO chain. The documentation hierarchy is:
 
-- Architecture entry: `architecture/README.md`
-- Protocol docs: `protocol/`
-- Runbooks: `runbooks/`
-- Strategy notes: `strategy/`
-- Alpha run records: `alpha-runs/`
+1. `../RELEASE_READINESS.md` — current release decision and open blockers.
+2. `architecture/TRNM_NATIVE_POCO_CONSENSUS.md` — binding consensus architecture.
+3. `../trillionnium/docs/protocol/poco-proof-of-consumption-v1-draft.md` — PoCO protocol.
+4. `../OPERATIONS.md` — operator entry point.
+5. `../SECURITY.md` — vulnerability reporting and supported scope.
+6. `reports/` — measurements and historical engineering reports.
+7. `archive/` — historical context only; never a current truth source.
 
-## Rust L1 quick links
-
-- Repo layout: `architecture/rust-l1-repo-layout.md`
-- PoCO sequence draft: `../trillionnium/docs/protocol/poco-proof-of-consumption-v1-draft.md`
-  - BL09 retirement-prep note: retained `trnm-pouw` naming on migration surfaces is a compatibility label and provenance / audit evidence only, not ongoing payout authority.
-- v1 interface freeze: `protocol/rust-l1-v1-interface-freeze.md`
-- PR-5 challenge treasury 对账 runbook: `runbooks/pr5-challenge-treasury-reconcile.md`
-- PR-6 alert rules runbook: `runbooks/pr6-alert-rules.md`
-- PR-6 nightly security summary runbook: `runbooks/pr6-nightly-security-summary.md`
-- PR-7 alert delivery runbook: `runbooks/pr7-alert-delivery.md`
-- PR-9 weekly alert governance runbook: `runbooks/pr9-weekly-alert-governance.md`
+A capability is current only when its implementation and evidence run through
+the native node path and are bound to the assessed commit.
