@@ -1,0 +1,232 @@
+name: PoCO external closure matrix (one-shot)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-external-closure-matrix-once-20260910.yml
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+  statuses: read
+  metadata: read
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence/poco-external-blocker-convergence-20260910-r2
+  PR_NUMBER: "117"
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Reconcile source tuple, ledgers, trackers and PR state
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$PRODUCT_BRANCH" "$EVIDENCE_BRANCH"
+          product_commit=$(git rev-parse "origin/$PRODUCT_BRANCH")
+          product_tree=$(git rev-parse "$product_commit^{tree}")
+          export PRODUCT_COMMIT="$product_commit" PRODUCT_TREE="$product_tree"
+          evidence_worktree="${RUNNER_TEMP}/trnm-external-matrix"
+          rm -rf "$evidence_worktree"
+          git worktree add --detach "$evidence_worktree" "origin/$EVIDENCE_BRANCH"
+          export EVIDENCE_WORKTREE="$evidence_worktree"
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import datetime as dt
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from pathlib import Path
+
+          repo=os.environ['GH_REPO']; token=os.environ['GH_TOKEN']
+          product_branch=os.environ['PRODUCT_BRANCH']; commit=os.environ['PRODUCT_COMMIT']; tree=os.environ['PRODUCT_TREE']
+          evidence_branch=os.environ['EVIDENCE_BRANCH']; pr_number=int(os.environ['PR_NUMBER'])
+          root=Path(os.environ['EVIDENCE_WORKTREE'])
+          base=root/'evidence/external-orchestration'
+          blockers=(
+              'EXT-REVIEW-001','EXT-G1-CAMPAIGN-001','EXT-ANCHOR-HSM-001',
+              'EXT-POWERLOSS-001','EXT-AUDIT-001','EXT-SOAK-ACTIVATION-001',
+          )
+          required_ledgers={
+              'orchestration':base/'poco-external-blocker-orchestration-v2.json',
+              'review_escalation':base/'poco-independent-review-escalation-v1.json',
+              'execution_pack':base/'execution-pack-v1/manifest.json',
+              'security_dispatch':base/'poco-final-security-dispatch-v1.json',
+              'all_branch_audit':base/'poco-all-branch-evidence-candidate-audit-v1.json',
+              'submission_inventory':base/'poco-external-evidence-inventory-v1.json',
+          }
+          missing=[name for name,path in required_ledgers.items() if not path.is_file()]
+          if missing:
+              raise SystemExit(f'missing required ledgers: {missing}')
+          ledgers={name:json.loads(path.read_text()) for name,path in required_ledgers.items()}
+          for name,data in ledgers.items():
+              source_commit=data.get('source_commit',data.get('product_commit'))
+              source_tree=data.get('source_tree',data.get('product_tree'))
+              if source_commit!=commit or source_tree!=tree:
+                  raise SystemExit(f'{name}: source tuple drift {source_commit}/{source_tree}')
+          if set(ledgers['execution_pack']['blockers'])!=set(blockers):
+              raise SystemExit('execution pack blocker inventory drift')
+          if ledgers['all_branch_audit']['automatic_closure_allowed'] is not False:
+              raise SystemExit('candidate audit unexpectedly permits automatic closure')
+          if any(ledgers['submission_inventory']['accepted'].values()):
+              raise SystemExit('submission inventory recorded unauthenticated acceptance')
+
+          def request(method,path,payload=None):
+              data=None if payload is None else json.dumps(payload).encode()
+              req=urllib.request.Request('https://api.github.com'+path,data=data,method=method)
+              for k,v in {
+                  'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json',
+                  'X-GitHub-Api-Version':'2022-11-28','User-Agent':'trnm-external-closure-matrix',
+              }.items(): req.add_header(k,v)
+              try:
+                  with urllib.request.urlopen(req,timeout=60) as response:
+                      raw=response.read(); return response.status,json.loads(raw) if raw else None
+              except urllib.error.HTTPError as exc:
+                  raw=exc.read().decode(errors='replace')
+                  try:body=json.loads(raw)
+                  except:body={'message':raw}
+                  return exc.code,body
+
+          status,pr=request('GET',f'/repos/{repo}/pulls/{pr_number}')
+          if status!=200: raise SystemExit(f'PR read failed: {status} {pr}')
+          if pr.get('state')!='open' or pr.get('draft') is not True or pr.get('merged') is not False:
+              raise SystemExit('PR must remain open, Draft and unmerged')
+          if ((pr.get('head') or {}).get('sha'))!=commit:
+              raise SystemExit('PR head is not exact product commit')
+
+          issues=[]
+          for page in range(1,6):
+              status,body=request('GET',f'/repos/{repo}/issues?state=all&per_page=100&page={page}')
+              if status!=200: raise SystemExit(f'issue inventory failed: {status} {body}')
+              issues.extend(body)
+              if len(body)<100: break
+          tracker_matrix={}
+          for bid in blockers:
+              matches=sorted([
+                  issue for issue in issues if 'pull_request' not in issue
+                  and bid in ((issue.get('title') or '')+'\n'+(issue.get('body') or ''))
+              ],key=lambda issue:issue['number'])
+              open_matches=[issue for issue in matches if issue.get('state')=='open']
+              if len(open_matches)!=1:
+                  raise SystemExit(f'{bid}: expected one canonical open tracker, found {len(open_matches)}')
+              canonical=open_matches[0]
+              labels={label['name'] for label in canonical.get('labels',[])}
+              if not {'external-evidence','release-blocker','poco'}<=labels:
+                  raise SystemExit(f'{bid}: required labels missing')
+              tracker_matrix[bid]={
+                  'status':'open',
+                  'canonical_issue':canonical['number'],
+                  'url':canonical['html_url'],
+                  'assignees':[item['login'] for item in canonical.get('assignees',[])],
+                  'closed_duplicate_trackers':[issue['number'] for issue in matches if issue.get('state')=='closed'],
+                  'submission_count':ledgers['submission_inventory']['by_blocker_submission_count'][bid],
+                  'accepted_submission':False,
+                  'independent_acceptance_authenticated':False,
+              }
+
+          status,requested=request('GET',f'/repos/{repo}/pulls/{pr_number}/requested_reviewers')
+          requested_users=[item['login'] for item in requested.get('users',[])] if status==200 else []
+          requested_teams=[item['slug'] for item in requested.get('teams',[])] if status==200 else []
+          status,reviews=request('GET',f'/repos/{repo}/pulls/{pr_number}/reviews?per_page=100')
+          approvals=[
+              {'user':(review.get('user') or {}).get('login'),'commit_id':review.get('commit_id'),'submitted_at':review.get('submitted_at')}
+              for review in reviews if review.get('state')=='APPROVED'
+          ] if status==200 and isinstance(reviews,list) else []
+          exact_head_approvals=[approval for approval in approvals if approval['commit_id']==commit]
+
+          status,statuses=request('GET',f'/repos/{repo}/commits/{commit}/statuses?per_page=100')
+          external_statuses=[entry for entry in statuses if entry.get('context')=='PoCO external evidence / all six blockers'] \
+              if status==200 and isinstance(statuses,list) else []
+          if not external_statuses or external_statuses[0].get('state')!='pending':
+              raise SystemExit('pending external-evidence commit status missing')
+
+          matrix={
+              'schema':'trnm.poco.external-closure-matrix.v1',
+              'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
+              'repository':repo,
+              'product_branch':product_branch,
+              'source_commit':commit,
+              'source_tree':tree,
+              'evidence_branch':evidence_branch,
+              'pull_request':{
+                  'number':pr_number,'state':'open','draft':True,'merged':False,
+                  'head_sha':commit,'requested_reviewers':requested_users,'requested_teams':requested_teams,
+                  'exact_head_approvals':exact_head_approvals,
+              },
+              'repository_owned_qualification':'pass',
+              'external_commit_status':'pending',
+              'required_ledgers':{name:path.relative_to(root).as_posix() for name,path in required_ledgers.items()},
+              'blockers':tracker_matrix,
+              'all_repository_owned_blockers_closed':True,
+              'all_external_blockers_closed':False,
+              'all_gaps_closed':False,
+              'production_candidate':False,
+              'production_consensus_activation':False,
+              'public_testnet_ready':False,
+              'release_ready':False,
+              'next_transition':'Only independently authenticated evidence for all six blockers may change the external status from pending.',
+          }
+          out=Path(os.environ['RUNNER_TEMP'])/'poco-external-closure-matrix-v1.json'
+          out.write_text(json.dumps(matrix,indent=2,sort_keys=True)+'\n')
+          print(json.dumps({
+              'source_commit':commit,'requested_reviewers':requested_users,'requested_teams':requested_teams,
+              'exact_head_approvals':len(exact_head_approvals),
+              'all_repository_owned_blockers_closed':True,'all_external_blockers_closed':False,
+          },sort_keys=True))
+          PY
+
+      - name: Publish closure matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          ledger="${RUNNER_TEMP}/poco-external-closure-matrix-v1.json"
+          test -s "$ledger"
+          worktree="${RUNNER_TEMP}/trnm-closure-matrix-publish"
+          rm -rf "$worktree"
+          git worktree add --detach "$worktree" "origin/$EVIDENCE_BRANCH"
+          cd "$worktree"
+          mkdir -p evidence/external-orchestration
+          cp "$ledger" evidence/external-orchestration/poco-external-closure-matrix-v1.json
+          git add evidence/external-orchestration/poco-external-closure-matrix-v1.json
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "evidence: publish final external blocker closure matrix"
+          git push origin "HEAD:refs/heads/$EVIDENCE_BRANCH"
+
+      - name: Assert final matrix remains truthful
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          d=json.loads((Path(os.environ['RUNNER_TEMP'])/'poco-external-closure-matrix-v1.json').read_text())
+          assert d['source_commit']==os.environ['PRODUCT_COMMIT']
+          assert d['source_tree']==os.environ['PRODUCT_TREE']
+          assert d['all_repository_owned_blockers_closed'] is True
+          assert d['all_external_blockers_closed'] is False
+          assert d['all_gaps_closed'] is False
+          assert d['production_candidate'] is False
+          assert d['production_consensus_activation'] is False
+          assert d['public_testnet_ready'] is False
+          assert d['release_ready'] is False
+          assert all(item['status']=='open' for item in d['blockers'].values())
+          PY
