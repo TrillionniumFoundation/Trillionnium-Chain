@@ -1,0 +1,231 @@
+name: PoCO clean product R24 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-clean-product-r24-once-20260910.yml
+
+concurrency:
+  group: poco-clean-product-head
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  actions: read
+  pull-requests: write
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+
+jobs:
+  clean:
+    name: Restore exact qualified product and re-run authentic evidence collection
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Check out full convergence history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Resolve and validate exact qualified product identity
+        id: product
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git fetch --no-tags origin "+refs/heads/*:refs/remotes/origin/*"
+          mkdir -p /tmp/trnm-r24-r22
+          run_id="$(gh api \
+            "repos/$GITHUB_REPOSITORY/actions/workflows/poco-takeover-r22-once-20260910.yml/runs?branch=$TARGET_BRANCH&per_page=1" \
+            --jq '.workflow_runs[0].id // empty' 2>/dev/null || true)"
+          if [[ -n "$run_id" ]]; then
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" \
+              --dir /tmp/trnm-r24-r22 >/tmp/trnm-r24-r22-download.log 2>&1 || true
+          fi
+
+          python3 - <<'PY'
+          from __future__ import annotations
+          import pathlib
+          import re
+          import subprocess
+
+          root = pathlib.Path.cwd()
+          artifact = pathlib.Path("/tmp/trnm-r24-r22")
+
+          def command(args: list[str], check: bool = True) -> str:
+              completed = subprocess.run(
+                  args, cwd=root, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+              )
+              if check and completed.returncode != 0:
+                  raise RuntimeError(f"command failed: {' '.join(args)}\n{completed.stdout}")
+              return completed.stdout.strip()
+
+          candidates: list[tuple[str, str, str]] = []
+          commit_files = sorted(artifact.rglob("trnm-r20-final-commit.txt"))
+          tree_files = sorted(artifact.rglob("trnm-r20-final-tree.txt"))
+          if commit_files and tree_files:
+              candidates.append(
+                  (
+                      commit_files[0].read_text(encoding="ascii").strip(),
+                      tree_files[0].read_text(encoding="ascii").strip(),
+                      "r22-artifact",
+                  )
+              )
+          for commit in command(
+              [
+                  "git", "log", "--all", "--format=%H", "-n", "30",
+                  "--grep=remove completed PoCO convergence controllers",
+              ],
+              check=False,
+          ).splitlines():
+              tree = command(["git", "rev-parse", f"{commit}^{{tree}}"], check=False)
+              candidates.append((commit, tree, "history"))
+
+          current = command(["git", "rev-parse", "HEAD"])
+          selected = None
+          for commit, tree, source in candidates:
+              if not re.fullmatch(r"[0-9a-f]{40}", commit):
+                  continue
+              if not re.fullmatch(r"[0-9a-f]{40}", tree):
+                  continue
+              if subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=root).returncode != 0:
+                  continue
+              if subprocess.run(["git", "merge-base", "--is-ancestor", commit, current], cwd=root).returncode != 0:
+                  continue
+              actual_tree = command(["git", "rev-parse", f"{commit}^{{tree}}"])
+              if actual_tree != tree:
+                  continue
+              selected = (commit, tree, source)
+              break
+          if selected is None:
+              raise SystemExit("no qualified product commit is an ancestor of the current controller head")
+
+          commit, tree, source = selected
+          changed = command(["git", "diff", "--name-only", commit, current]).splitlines()
+          allowed = []
+          rejected = []
+          for path in changed:
+              is_allowed = (
+                  path.startswith(".github/workflows/poco-")
+                  and any(f"r{number}" in path for number in range(14, 25))
+              ) or path.startswith("tools/temporary_poco_")
+              (allowed if is_allowed else rejected).append(path)
+          pathlib.Path("/tmp/trnm-r24-controller-diff.txt").write_text(
+              "\n".join(changed) + "\n", encoding="utf-8"
+          )
+          if rejected:
+              raise SystemExit(
+                  "refusing leased rewind because non-controller paths changed: "
+                  + ", ".join(rejected)
+              )
+          pathlib.Path("/tmp/trnm-r24-product-commit.txt").write_text(commit + "\n", encoding="ascii")
+          pathlib.Path("/tmp/trnm-r24-product-tree.txt").write_text(tree + "\n", encoding="ascii")
+          pathlib.Path("/tmp/trnm-r24-product-source.txt").write_text(source + "\n", encoding="utf-8")
+          PY
+
+          PRODUCT_COMMIT="$(cat /tmp/trnm-r24-product-commit.txt)"
+          PRODUCT_TREE="$(cat /tmp/trnm-r24-product-tree.txt)"
+          rm -rf /tmp/trnm-r24-product
+          git worktree add --detach /tmp/trnm-r24-product "$PRODUCT_COMMIT"
+          test "$(git -C /tmp/trnm-r24-product rev-parse HEAD)" = "$PRODUCT_COMMIT"
+          test "$(git -C /tmp/trnm-r24-product rev-parse 'HEAD^{tree}')" = "$PRODUCT_TREE"
+          python3 /tmp/trnm-r24-product/scripts/ci/check_native_consensus_only.py \
+            >/tmp/trnm-r24-native-only.json
+          (
+            cd /tmp/trnm-r24-product
+            bash scripts/ci/check_canonical_development_plan.sh \
+              >/tmp/trnm-r24-canonical-plan.log
+            bash scripts/ci/check_poco_bft_mainline_truth.sh \
+              >/tmp/trnm-r24-mainline.log
+            python3 scripts/ci/check_repository_truth_v1.py \
+              >/tmp/trnm-r24-repository-truth.json
+            python3 scripts/ci/check_required_protocol_contract_v1.py \
+              >/tmp/trnm-r24-protocol-contract.json
+            test -z "$(git status --porcelain --untracked-files=all)"
+          )
+          echo "commit=$PRODUCT_COMMIT" >> "$GITHUB_OUTPUT"
+          echo "tree=$PRODUCT_TREE" >> "$GITHUB_OUTPUT"
+
+      - name: Preserve collector outside the leased branch rewind
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f tools/temporary_poco_external_collector_r23.py ]]; then
+            commit="$(git log --all -1 --format=%H -- tools/temporary_poco_external_collector_r23.py)"
+            test -n "$commit"
+            git show "$commit:tools/temporary_poco_external_collector_r23.py" \
+              >/tmp/trnm-r24-collector.py
+          else
+            cp tools/temporary_poco_external_collector_r23.py /tmp/trnm-r24-collector.py
+          fi
+          python3 -m py_compile /tmp/trnm-r24-collector.py
+
+      - name: Restore exact product head using force-with-lease
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git push \
+            --force-with-lease="refs/heads/$TARGET_BRANCH:$GITHUB_SHA" \
+            origin \
+            "${{ steps.product.outputs.commit }}:refs/heads/$TARGET_BRANCH"
+
+      - name: Re-run exact-source external evidence collection on clean product head
+        id: collect
+        continue-on-error: true
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 /tmp/trnm-r24-collector.py
+
+      - name: Upload exact R24 cleanup and evidence diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-r24-clean-product-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 30
+          include-hidden-files: true
+          path: |
+            /tmp/trnm-r24-r22-download.log
+            /tmp/trnm-r24-r22
+            /tmp/trnm-r24-controller-diff.txt
+            /tmp/trnm-r24-product-commit.txt
+            /tmp/trnm-r24-product-tree.txt
+            /tmp/trnm-r24-product-source.txt
+            /tmp/trnm-r24-native-only.json
+            /tmp/trnm-r24-canonical-plan.log
+            /tmp/trnm-r24-mainline.log
+            /tmp/trnm-r24-repository-truth.json
+            /tmp/trnm-r24-protocol-contract.json
+            /tmp/trnm-r23-r22-run.json
+            /tmp/trnm-r23-r22-jobs.json
+            /tmp/trnm-r23-r22.log
+            /tmp/trnm-r23-r22
+            /tmp/trnm-r23-product-commit.txt
+            /tmp/trnm-r23-product-tree.txt
+            /tmp/trnm-r23-review-status.json
+            /tmp/trnm-r23-external-runs.json
+            /tmp/trnm-r23-external-artifacts
+            /tmp/trnm-r23-artifact-inspection.json
+            /tmp/trnm-r23-checker-help.txt
+            /tmp/trnm-r23-gate-attempts.json
+            /tmp/trnm-r23-gate-status.txt
+            /tmp/trnm-r23-external-evidence.json
+            /tmp/trnm-r23-pr-comment.md
+
+      - name: Preserve authentic external-evidence conclusion
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.collect.outcome }}" != "success" ]]; then
+            exit 1
+          fi
