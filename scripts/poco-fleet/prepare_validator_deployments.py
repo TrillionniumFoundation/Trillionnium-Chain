@@ -3,7 +3,7 @@
 
 The coordinator root contains every ephemeral secret and must never be copied
 to a validator host. Each emitted validator deployment contains exactly the
-public topology, public validator set, public workload and zero-Comet bootstrap
+public topology, public validator set, public workload and zero-foreign bootstrap
 sidecars, one local config, and exactly one local PKCS#8 secret for each frozen
 validator key role. The separate observer
 root contains every public coordinator input plus the exact coordinator

@@ -401,7 +401,7 @@ ai-v1-candidate
 lab-and-evidence
 ```
 
-`node-prod-v0` contains no v1 candidate, lab, fixture, benchmark, mock authority, research, PoC, or legacy Comet runtime dependency. No Cargo feature combination may silently activate candidate authority.
+`node-prod-v0` contains no v1 candidate, lab, fixture, benchmark, mock authority, research, PoC, or legacy foreign runtime dependency. No Cargo feature combination may silently activate candidate authority.
 
 **Repository implementation present; exact-head acceptance pending.** `config/build-closures-v1.toml` freezes all four closure roots and forbidden groups. `scripts/ci/check_build_closures_v1.py` recursively resolves local normal/build features, rejects production contamination, and can compare the result with Cargo's locked offline `cargo tree`. The default `trnm-poco-node` closure now resolves zero AI-v1 candidate packages; all eleven AI-v1 package edges and G2 commands/modules require the explicit `ai-v1-candidate` feature. Hosted and X230 gates must still compile both default and explicit-candidate forms on the unchanged source before this blocker is accepted.
 

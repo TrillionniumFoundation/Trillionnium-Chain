@@ -5621,8 +5621,6 @@ mod tests {
             include_str!("runtime_control.rs"),
             include_str!("signed_replay_archive.rs"),
             include_str!("process_event.rs"),
-            include_str!("../../trnm-node/src/lib.rs"),
-            include_str!("../../trnm-node/src/main.rs"),
             include_str!("../../trnm-poco-node/src/lib.rs"),
             include_str!("../../trnm-poco-node/src/main.rs"),
         ] {

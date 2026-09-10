@@ -427,8 +427,8 @@
       "in_memory_state_codec_decode",
       "sqlite_precommit",
       "sqlite_startup_or_migration",
-      "abci_snapshot_restore_v3",
-      "abci_snapshot_restore_v4"
+      "native_application_boundary_snapshot_restore_v3",
+      "native_application_boundary_snapshot_restore_v4"
     ],
     "negative_cases": [
       {

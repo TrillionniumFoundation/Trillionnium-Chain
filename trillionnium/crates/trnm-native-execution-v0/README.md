@@ -1,6 +1,6 @@
 # `trnm-native-execution-v0`
 
-Active zero-Comet deterministic application and durable execution-artifact-P
+Active zero-foreign deterministic application and durable execution-artifact-P
 owner for the frozen PoCO-BFT v0 profile.
 
 For ordinary, non-empty successor blocks, the application:
@@ -100,35 +100,15 @@ or production activation. The finalized-commit adapter is an integration seam
 only; `qc_as_application_commit`, `core_application_seal_eligible`, and
 `production_candidate` remain false in package and project status metadata.
 
-## Fixed differential corpus and historical audit
+## Native complete-execution vector
 
-The automatic boundary gate never builds or executes the excluded historical
-`trnm-consensus-app` archive. It binds the archived authoring source, the
-archive-local lockfile, and the raw SHA-256 of the committed runtime/JMT vector,
-then runs only the zero-Comet active consumer. The complete durable target is
-also recomputed from its authenticated snapshot during fresh readback; the
-caller-provided expected roots are never treated as execution authority.
-`native-complete-durable-p-v0.json` additionally pins the full four-root
-ordinary-body result, transaction-byte digests, local durable sequences, and
-authority-false boundary for the two-transaction overlay witness. Its raw file
-digest is bound by the gate and the Rust test independently recomputes those
-values from the frozen inputs.
-
-An explicit local historical audit may re-author and compare the frozen
-runtime/JMT vector:
-
-```bash
-legacy_target="$(mktemp -d "${TMPDIR:-/tmp}/trnm-poco-legacy-vector-target.XXXXXX")"
-trap 'rm -rf -- "$legacy_target"' EXIT
-CARGO_TARGET_DIR="$legacy_target" cargo test \
-  --manifest-path trillionnium/crates/trnm-consensus-app/Cargo.toml \
-  --locked --offline \
-  checked_native_execution_differential_vector_is_legacy_reproducible_v0
-```
-
-That command intentionally compiles archived Tendermint/ABCI dependencies. It
-is manual historical audit only; automatic workflows and the main truth gate
-must never invoke it.
+The maintained corpus contains only native PoCO inputs and outputs.
+`native-complete-durable-p-v0.json` pins the full four-root ordinary-body
+result, transaction-byte digests, durable sequence transitions, recovery
+dispositions, and authority-false boundary. Its raw file digest is checked by
+the boundary gate, while the Rust test recomputes every value from the native
+inputs. No removed application, node harness, adapter, archive, or differential
+oracle is built or executed.
 
 ## Test-only sync fault ownership
 

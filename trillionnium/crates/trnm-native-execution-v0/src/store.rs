@@ -18,8 +18,6 @@ const KEY_DOMAIN: &[u8] = b"trnm/authenticated-state/v4";
 const OBJECT_NAMESPACE: u8 = 1;
 const OBJECT_RECORD_SCHEMA_VERSION: u16 = 1;
 const NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;
-#[cfg(test)]
-const LEGACY_AUTH_TREE_SNAPSHOT_CODEC_VERSION: u16 = 1;
 
 pub fn stored_object_key_v0(object_key_hex: &str) -> Result<Vec<u8>> {
     ensure!(!object_key_hex.is_empty(), "object key must not be empty");
@@ -475,101 +473,6 @@ impl InMemoryNativeExecutionStoreV0 {
     }
 
     /// Reconstructs the fixed excluded-legacy vector parent for differential
-    /// tests. This is deliberately unavailable outside this crate's tests.
-    #[cfg(test)]
-    pub(crate) fn from_legacy_snapshot_v0(
-        chain_id: impl Into<String>,
-        signers: Vec<AuthorizedSignerV0>,
-        consensus_parameters: ConsensusParametersV0,
-        snapshot_bytes: &[u8],
-    ) -> Result<Self> {
-        let snapshot: PersistentAuthTreeSnapshotV0 =
-            borsh::from_slice(snapshot_bytes).context("decode legacy-authored JMT snapshot")?;
-        ensure!(
-            snapshot.codec_version == LEGACY_AUTH_TREE_SNAPSHOT_CODEC_VERSION,
-            "unsupported legacy-authored JMT snapshot codec"
-        );
-        ensure!(!snapshot.roots.is_empty(), "legacy snapshot has no roots");
-        let latest = *snapshot
-            .roots
-            .last_key_value()
-            .context("legacy snapshot has no latest root")?
-            .0;
-        let mut previous = None;
-        for version in snapshot.roots.keys().copied() {
-            if let Some(previous) = previous {
-                ensure!(
-                    version == previous + 1,
-                    "legacy snapshot roots are not contiguous"
-                );
-            }
-            ensure!(
-                snapshot
-                    .nodes
-                    .keys()
-                    .any(|key| key.version() == version && key.nibble_path().is_empty()),
-                "legacy snapshot is missing a root node"
-            );
-            previous = Some(version);
-        }
-        ensure!(
-            snapshot.nodes.keys().all(|key| key.version() <= latest),
-            "legacy snapshot node version exceeds latest root"
-        );
-        ensure!(
-            snapshot
-                .values
-                .keys()
-                .all(|(_, version)| *version <= latest),
-            "legacy snapshot value version exceeds latest root"
-        );
-        ensure!(
-            snapshot
-                .stale_nodes
-                .iter()
-                .all(|index| index.stale_since_version <= latest),
-            "legacy snapshot stale index exceeds latest root"
-        );
-        for (hash, preimage) in &snapshot.preimages {
-            ensure!(
-                authenticated_key_hash_v0(preimage)? == *hash,
-                "legacy snapshot preimage hash mismatch"
-            );
-        }
-        for leaf in snapshot.nodes.values().filter_map(|node| match node {
-            Node::Leaf(leaf) => Some(leaf),
-            Node::Null | Node::Internal(_) => None,
-        }) {
-            ensure!(
-                snapshot.preimages.contains_key(&leaf.key_hash()),
-                "legacy snapshot live leaf is missing its preimage"
-            );
-        }
-
-        let chain_id = chain_id.into();
-        ensure!(!chain_id.is_empty(), "chain id must not be empty");
-        let signer_policy_commitment = crate::signer_policy_commitment_v0(&signers)?;
-        let store = Self {
-            chain_id,
-            signers,
-            signer_policy_commitment,
-            consensus_parameters,
-            committed_command_ids: BTreeSet::new(),
-            committed_signer_nonces: BTreeSet::new(),
-            nodes: snapshot.nodes,
-            values: snapshot.values,
-            preimages: snapshot.preimages,
-            stale_nodes: snapshot.stale_nodes,
-            roots: snapshot.roots,
-        };
-        let expected = store.roots[&latest];
-        let actual = Sha256Jmt::new(&store)
-            .get_root_hash(latest)
-            .context("verify legacy-authored latest root")?;
-        ensure!(actual == expected, "legacy-authored latest root mismatch");
-        Ok(store)
-    }
-
     pub fn apply_seed_v0(
         &mut self,
         version: Version,

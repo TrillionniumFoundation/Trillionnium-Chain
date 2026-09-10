@@ -388,10 +388,10 @@ the exact positive-height parent header in the payload-validation request, and
 the store consumes that capability to open only an exact committed-head
 height/root. Synthetic genesis is explicitly headerless; speculative/non-head
 parents are retryable source mismatch until a canonical overlay store exists.
-This is bounded validation-parent authority, not a general host/ABCI runtime-
+This is bounded validation-parent authority, not a general host/native application boundary runtime-
 view adapter. The bounded production validation cursor owns a private fallible
 `prior delta -> exact authenticated snapshot` view, while legacy `load_object`
-continues to use its direct-read path and no ABCI outcome consumes that view.
+continues to use its direct-read path and no native application boundary outcome consumes that view.
 
 A separate legacy test-only inert regular-block traversal owns the exact compared
 header/body/configuration and that one parent-bound snapshot. Its only cursor
@@ -452,11 +452,11 @@ parent snapshot until explicit finish.
 This preceding legacy test-only session and its finished-plan/root-matched
 values are not wire objects or terminal authority. They have no production
 constructor, serialization, or conversion to a terminal execution outcome,
-`AuthorizedNativeCheckpointExecutionV0`, checkpoint, Core, or ABCI. A separate
+`AuthorizedNativeCheckpointExecutionV0`, checkpoint, Core, or native application boundary. A separate
 bounded production cursor below now supplies process-local planning and
 four-root comparison with the same non-authority boundary. JMT plan
 application/persistence, non-runtime dispatcher families, matched/mismatch
-terminal promotion, and host/Core/ABCI callback wiring remain open. The Core transport holder now
+terminal promotion, and host/Core/native application boundary callback wiring remain open. The Core transport holder now
 matches the frozen proto projection exactly: one header, one complete
 `ApplicationPayloadV0` CEV0 value, and ordered complete evidence-object CEV0
 values. Core alone constructs an opaque validation request over that retained
@@ -472,7 +472,7 @@ remains `Unavailable`; canonical root-bound logical oversize is
 `DeterministicallyInvalid`. This carrier is process-local comparison authority, not a second
 transport/configuration language; it has no serialization, caller-supplied
 height/root/set/parameters, cache, or second connection. It grants no runtime,
-terminal-result, vote, finality, checkpoint, or ABCI authority.
+terminal-result, vote, finality, checkpoint, or native application boundary authority.
 
 Before that admission succeeds, the exact Core request remains inside a
 private process-local owner. A host failure before snapshot begin returns that
@@ -743,7 +743,7 @@ recovery pins and revalidates that manifest and refuses a new nomination. The
 three canonical store parents must be pairwise non-overlapping, and recovery
 rejects non-owner or group/world-writable parent/main/lock/manifest/existing
 WAL/SHM objects. There is no production
-effect driver, fresh execution, general result takeover, host/AppCore/ABCI
+effect driver, fresh execution, general result takeover, host/AppCore/native application boundary
 network wiring, process-wide Core uniqueness, or exactly-once authority.
 
 The exact node-local integrity labels used by this foundation are:
@@ -815,7 +815,7 @@ retains next index, private delta, and applied receipts, while runtime close
 retains failed index, exact outer/inner bytes, decoded transaction, and derived
 context after intentionally destroying prior delta/receipts. Finish failure
 replaces the pending stage cause without discarding that owner, and none mints
-terminal-result, vote, finality, checkpoint, or ABCI authority. Non-runtime
+terminal-result, vote, finality, checkpoint, or native application boundary authority. Non-runtime
 payloads retain the exact bytes, verified envelope/context, cursor, and
 snapshot in an opaque routing carrier rather than becoming an invented invalid
 result or advancing the index.
@@ -857,13 +857,13 @@ transaction decode/index/context, runtime-gated success-only advance, same-
 snapshot complete-body JMT planning, and four-root comparison.
 Synthetic genesis authority, speculative-parent storage, complete-body JMT
 plan application/state persistence and head update, final typed retryable-
-versus-invariant host mapping, production host/Core callback wiring, ABCI
+versus-invariant host mapping, production host/Core callback wiring, native application boundary
 wiring, non-runtime routing, and promotion of the owning classifications into
 general terminal authority remain hard gaps. The object-graph gate itself
 performs no terminal mapping; only the current private admission branch is
 proven to emit no callback for a losing clone.
 The route-bearing disposition likewise is not a terminal result and invokes no
-Core `Input` or ABCI operation. A narrow consuming bridge may prepare only the
+Core `Input` or native application boundary operation. A narrow consuming bridge may prepare only the
 complete-body state-root or receipts-root deterministic mismatch for the v7
 application-store transaction; it cannot prepare `Valid`, `Unavailable`, or an
 invariant fault. Schema v7 atomically couples that canonical invalid artifact
@@ -884,7 +884,7 @@ Authenticated replay tickets, completion retirement after a durable
 host-delivery acknowledgement, speculative-parent/
 BlockTree reconstruction, application-reservation takeover, `Valid` evaluated-
 artifact persistence, production callback-outbox scheduling/delivery,
-crash takeover, ABCI, the `Valid` validation-time and Finalize-time atomic
+crash takeover, native application boundary, the `Valid` validation-time and Finalize-time atomic
 boundaries, and process-wide callback exactly-once remain absent.
 Runtime
 resource estimation now has a distinct `try_estimate_resources_v0` call and
@@ -895,9 +895,9 @@ the real-execution attempt token. The legacy infallible estimator remains the
 only application caller, so the fallible estimator has no consensus-admission
 authority yet. Historical cutoff/projection reads still use their legacy error
 boundary; the exact estimate-input carrier, terminal native carriers, and
-ABCI/host integration also remain open.
+native application boundary/host integration also remain open.
 Protocol v0 drivers MUST NOT invent failed receipts or choose a different
-classification per implementation. ABCI `ProcessProposal` has no faithful
+classification per implementation. native application boundary `ProcessProposal` has no faithful
 `Unavailable` status; mapping retry to either `REJECT` or `UNKNOWN` is non-
 conforming.
 

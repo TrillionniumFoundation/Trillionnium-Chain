@@ -760,7 +760,7 @@ provenance and cannot mint handoff, activation, or Core-transition authority.
 
 ## B2-H3b1 production persistence and restore boundary (closed)
 
-The in-memory codec, SQLite startup/schema-migration loader, and ABCI snapshot
+The in-memory codec, SQLite startup/schema-migration loader, and native application boundary snapshot
 restore v3/v4 now share one exact namespace-8 projection validator. Before
 activation, zero PoCO leaves is valid. Once any namespace-8 leaf exists, the
 state must contain exactly one 47-byte manifest and only the manifest-named
@@ -786,7 +786,7 @@ mint checkpoint, handoff, activation or Core-transition authority.
 ## B2-H3b2a production checkpoint authority boundary (closed)
 
 The authority configuration is now a genesis-authenticated application object,
-not an uncommitted local setting. Startup, repeated `InitChain`, and ABCI
+not an uncommitted local setting. Startup, repeated `InitChain`, and native application boundary
 snapshot v3/v4 restore reject absence or substitution. At the exact
 authenticated epoch checkpoint, both proposal processing and finalization bind
 the configured genesis/profile, chain ID, protocol v0, active set/parameters,
@@ -893,7 +893,7 @@ Their useful retention boundaries cross epochs, but the production application
 context cannot yet advance across epochs. Production reachability depends on
 Core activation and the authenticated next-epoch configuration transition;
 formal, unit or isolated-JMT witnesses MUST NOT be reported as production,
-ABCI, or authenticated cross-epoch prune closure.
+native application boundary, or authenticated cross-epoch prune closure.
 
 The lower-layer Node corpus still freezes 210 constraint cases (48 accepted,
 162 rejected), while focused Rust tests cover the single-step JMT relation,
@@ -912,7 +912,7 @@ for certificate, consumer-key, meter, and validator identity respectively.
 This boundary emits no candidate, B2-G, production cross-epoch prune closure,
 handoff, activation or Core-transition authority.
 
-## B2-H3b2b2 application-authenticated candidate boundary (bounded shared and ABCI/restart evidence landed; remaining closure in progress)
+## B2-H3b2b2 application-authenticated candidate boundary (bounded shared and native application boundary/restart evidence landed; remaining closure in progress)
 
 The production checkpoint path now holds one exact private historical cutoff
 projection while constructing the checkpoint capability and immediately
@@ -996,7 +996,7 @@ zero. Both paths derive the same private `NextEpochCommitmentV0`; the
 cutoff-only path has no checkpoint block hash. A private two-phase native
 checkpoint kernel now freezes payload/state/receipt/evidence roots and that
 commitment before header construction, then exact-binds the native body,
-receipts and `BlockHeader::id()`. It does not equate the ABCI/Comet header hash
+receipts and `BlockHeader::id()`. It does not equate the native application boundary/foreign header hash
 with a native block ID. The pre-header capability retains the strict-H1
 certified height-27 parent and consumes an opaque parent/post-state execution
 authority rather than a naked state root. A crate-private raw consumer also
@@ -1018,7 +1018,7 @@ bind wrappers must reconstruct the in-memory authorities. Focused Rust tests
 cover same-process reopen, conflicts, higher-view retry, corruption/future
 schema, failed halt persistence, path separation and semantic replay; they are
 not subprocess restart or external rollback-watermark evidence. This sidecar is not wired
-to ABCI startup or the production host, covers checkpoints only rather than
+to native application boundary startup or the production host, covers checkpoints only rather than
 seal 1/2, and is not signer persist-before-sign state. Production host/carrier
 and sidecar-lifecycle integration, seal preparation, signer journaling, live
 proposal/vote/signing plumbing, fields 12--14, activation, production cross-
@@ -1158,15 +1158,15 @@ epoch prune, and Core transition remain open.
    uses maintenance `try_lock` rather than waiting behind maintenance.
 
    This is now bounded production validation-parent authority, not a general
-   host/ABCI runtime-view adapter. Core privately freezes the exact positive-height
+   host/native application boundary runtime-view adapter. Core privately freezes the exact positive-height
    parent header in its payload-validation request; the store consumes that
    capability and opens only when the committed height/root match. Synthetic
    genesis stays headerless and speculative/non-head parents return typed
    retryable source mismatch until a canonical overlay store exists. The
    bounded production validation cursor owns a private fallible
    `prior delta -> exact authenticated snapshot` view, while the general
-   host/ABCI runtime view remains unwired. Legacy `load_object` has retained its
-   old direct-read behavior, and the ABCI outcome policy does not consume the
+   host/native application boundary runtime view remains unwired. Legacy `load_object` has retained its
+   old direct-read behavior, and the native application boundary outcome policy does not consume the
    new snapshot. Each begin also does
    not repeat the startup full scan which rejects future orphan value/node and
    stale-index rows. The in-memory snapshot pin spans only one cloned
@@ -1237,7 +1237,7 @@ epoch prune, and Core transition remain open.
    retained Core request; a second derives a route/full-ID Core callback input
    for valid or computed-root-invalid outcomes while refusing any input for a
    comparator invariant. Neither legacy bridge itself calls `Core::step` or
-   provides `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. A
+   provides `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or native application boundary authority. A
    separate consuming complete-body planner now rebinds the complete mixed
    cursor provenance, merges the replayed runtime final delta with only the
    final replace-only PoCO prefix writes or the no-PoCO scheduled-cutoff
@@ -1251,7 +1251,7 @@ epoch prune, and Core transition remain open.
    writes, verifies the plan/seal and strict ordinary commitments, and exposes
    only private matched/failed/classified owners with state-before-receipts
    deterministic mismatch order. App-private mixed-body `Valid`, JMT plan
-   application/persistence/head update, and host outbox/Core/ABCI callback
+   application/persistence/head update, and host outbox/Core/native application boundary callback
    delivery remain open. A narrow owner-consuming bridge now admits only the
    state-root and receipts-root deterministic mismatch into application-store
    schema v7; one atomic transaction persists its canonical invalid artifact
@@ -1403,7 +1403,7 @@ epoch prune, and Core transition remain open.
    This store is deliberately excluded from AppHash, application snapshots,
    and peer state-sync replacement. The inert G1c node owns it only for the
    bounded three-store deterministic-invalid recovery matrix; there is no
-   production AppCore/ABCI effect driver, general obligation/result replay, or
+   production AppCore/native application boundary effect driver, general obligation/result replay, or
    full crash takeover. The separate signer journal is not a complete
    SafetyRules service and does not bind locked-QC state. The safety store cannot detect
    rollback of the complete database/WAL/sidecar namespace without an
@@ -1496,7 +1496,7 @@ epoch prune, and Core transition remain open.
    route/reason/state SIGKILL checkpoints, but its helper and integration test
    are no longer registered by the active Cargo manifest and contribute zero
    current native-CI checkpoints. There is still no production driver constructor,
-   fresh execution, generic result recovery, host/AppCore/ABCI network wiring,
+   fresh execution, generic result recovery, host/AppCore/native application boundary network wiring,
    complete production crash/power-loss matrix, or process-wide Core
    uniqueness/exactly-once guarantee.
 
@@ -1573,7 +1573,7 @@ epoch prune, and Core transition remain open.
    complete failure while classifying typed dependency/source/capacity loss as
    `Unavailable`, verified body/transaction invalidity as whole-block invalid,
    and authenticated/internal drift as fail-stop. It still grants no checkpoint,
-   Core callback, persistence, or ABCI authority.
+   Core callback, persistence, or native application boundary authority.
 
    The exact `BlockId`, peer body, positive-height parent header, and committed-
    head active configuration plus authoritative tx decode/index/context,
@@ -1585,7 +1585,7 @@ epoch prune, and Core transition remain open.
    Synthetic genesis/native state authority, speculative-parent overlays,
    mixed-body app-private `Valid`, exact JMT plan application/state persistence/head
    update, production host callback-outbox scheduling/delivery, crash takeover,
-   and ABCI wiring remain hard gaps before the general terminal/Core callback.
+   and native application boundary wiring remain hard gaps before the general terminal/Core callback.
    Schema v7's persisted deterministic-invalid callback intent alone is not
    delivery authority. Schema v8 now preserves the live owner retained by the
    first deterministic-invalid seal and
@@ -1962,7 +1962,7 @@ epoch prune, and Core transition remain open.
    facts remain exact, PoCO/validator receipts are frozen empty, system writes
    create no receipt, and all owner/final-source/plan/static invariants precede
    state then receipts mismatch classification. App-private mixed-body `Valid`,
-   plan application/persistence/head update, host/Core/ABCI delivery,
+   plan application/persistence/head update, host/Core/native application boundary delivery,
    speculative parents, cross-epoch/handoff, and every later phase remain open.
    Schema v7 durably seals only those two deterministic root-mismatch outcomes
    with their callback outbox intent; it provides neither a general terminal
@@ -1982,7 +1982,7 @@ epoch prune, and Core transition remain open.
    write. Proposal/synced and mixed runtime-then-non-runtime fixtures prove
    generation and artifacts cannot be detached. Except for the narrow v7
    root-mismatch seal transaction above, this is not persistence; no branch is
-   callback delivery authority, `Core::step`, Finalize, ABCI, or phase closure.
+   callback delivery authority, `Core::step`, Finalize, native application boundary, or phase closure.
    `ResolveChallenge` now carries the exact pending/certificate rows and slots,
    target lifecycle/height/decision, one challenge-decision nullifier, and its
    semantic transition across capacity admission. Signed IDs, pending identity,
@@ -2090,7 +2090,7 @@ epoch prune, and Core transition remain open.
    callback outbox.
    The separate legacy private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
-   does not itself call a Core instance, deliver a callback, or enter ABCI.
+   does not itself call a Core instance, deliver a callback, or enter native application boundary.
    Application-store schema v6 is the historical reserved-only format: it
    durably stores the revalidatable raw request record and checksum-verified
    `reserved` recovery fact for `(route, full ValidationId)`, returns exact
@@ -2165,11 +2165,11 @@ epoch prune, and Core transition remain open.
    text, never produces receipts or mutations, and keeps operator recovery
    estimation independent of the on-chain fee-policy read. The legacy
    infallible estimator remains the only application caller, so no simulation,
-   ABCI, or terminal authority consumes this seam. Historical cutoff/projection
+   native application boundary, or terminal authority consumes this seam. Historical cutoff/projection
    reads retain their legacy error boundary, and the exact estimate-input
    carrier, runtime/terminal host wiring, and
    speculative-parent store remain absent. The
-   current ABCI execution path still erases its errors, `ProcessProposal` has
+   current native application boundary execution path still erases its errors, `ProcessProposal` has
    no `Unavailable` result, and `FinalizeBlock` has no typed non-success
    channel. Those store, estimate, carrier, and adapter integrations remain
    P1; neither `REJECT` nor `UNKNOWN` may be used to claim they are closed.
@@ -2188,7 +2188,7 @@ epoch prune, and Core transition remain open.
    checkpoint/two-seal/B2-F private join now exist, but the core consumes none
    of these epoch tokens and no aggregate handoff CEV0 exists. A separate
    checkpoint-only SQLite preparation sidecar now durably reserves and binds
-   exact checkpoint records, but it is not wired into startup/ABCI/the host,
+   exact checkpoint records, but it is not wired into startup/native application boundary/the host,
    covers neither seal block, restores no opaque authority, and is not the
    signer journal. Production host/carrier integration, seal preparation,
    signer persist-before-sign state, seal voting,

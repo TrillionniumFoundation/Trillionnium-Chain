@@ -66,6 +66,11 @@ impl GenesisQcV0 {
         self.validator_set_hash
     }
 
+    /// Validator-set identity committed by this immutable genesis certificate.
+    pub const fn validator_set_id(&self) -> ValidatorSetId {
+        self.validator_set_hash
+    }
+
     pub const fn view(&self) -> View {
         View::new(0)
     }

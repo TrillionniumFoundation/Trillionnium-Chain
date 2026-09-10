@@ -2,7 +2,7 @@
 
 适用范围：validator/operator 的内部 rehearsal、release handoff、升级窗口准备。
 
-目标：借鉴 Cosmos / CometBFT 的运维纪律，把**谁在什么 worktree / branch / commit 上，用哪份二进制、哪组配置、按什么回滚入口执行**一次性交代清楚，减少 handoff 口径漂移。
+目标：借鉴 Cosmos / PoCO consensus 的运维纪律，把**谁在什么 worktree / branch / commit 上，用哪份二进制、哪组配置、按什么回滚入口执行**一次性交代清楚，减少 handoff 口径漂移。
 
 > 这是一份 fail-closed 模板：字段缺失时，不应把本轮状态描述成 release-ready。
 

@@ -1,8 +1,6 @@
 [workspace]
 exclude = [
   "fuzz",
-  "crates/trnm-consensus-app",
-  "crates/trnm-node",
 ]
 members = [
   "crates/trnm-consensus-core",
@@ -80,12 +78,9 @@ lane = "chain-protocol"
 consensus_target = "poco-bft-v0"
 production_consensus_activation = false
 consensus_mainline = "native-poco-bft"
+consensus_dependency_policy = "native-only"
+external_consensus_dependency_count = 0
 native_poco_mainline_decision = "adopted"
-zero_comet_production_dependency_target = true
-zero_comet_production_dependency_achieved = true
-legacy_comet_migration_residue_present = true
-cometbft_role = "migration-residue-only"
-cometbft_cleanup_eligible = false
 
 [profile.test.package.curve25519-dalek]
 opt-level = 3

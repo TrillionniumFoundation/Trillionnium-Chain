@@ -69,7 +69,7 @@
 //! voting or application. These
 //! omissions keep the scaffold fail-closed until the
 //! frozen production contracts have real adapters; they must not be bypassed
-//! with the private CometBFT application fixture.
+//! with the private PoCO consensus application fixture.
 //!
 //! Consensus private-key material is not part of the default host surface.
 //! The direct `ed25519-dalek` dependency is available only through the
@@ -108,19 +108,7 @@ use std::{
 };
 
 use sha2::{Digest, Sha256};
-#[cfg(all(
-    feature = "legacy-consensus-app",
-    feature = "recovery-process-test-support"
-))]
-use trnm_consensus_app::NativeValidationRecoveredInvalidReasonV0;
-#[cfg(feature = "legacy-consensus-app")]
-use trnm_consensus_app::{
-    NativeValidationRecoveredAckedFactsV0, NativeValidationRecoveredInvalidCallbackFactsV0,
-    NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryOpenFailureV0,
-    NativeValidationRecoveryReconcileFailureV0, NativeValidationRecoveryStoreConfigV0,
-    NativeValidationRecoveryStoreV0, NativeValidationRecoveryTransitionFailureV0,
-};
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_core::{
     Core, Input, PayloadValidationResult, PayloadValidationRouteV0, SafetyStatePersistenceV0,
     ValidationId,
@@ -129,11 +117,11 @@ use trnm_consensus_core::{
     CoreConfig, DurablePayloadValidationResultV1, Effect, SafetyState, SafetyStateRecordLimitsV0,
 };
 use trnm_consensus_crypto::validate_validator_set_strict_ed25519_v0;
-#[cfg(any(feature = "legacy-consensus-app", test))]
+#[cfg(any(any(), test))]
 use trnm_consensus_crypto::StrictEd25519Verifier;
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_safety_store::SqliteSafetyStateStoreV0;
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_safety_store::{
     ConfirmedNativeDeterministicInvalidHeadV0, NativeDeterministicInvalidTransitionV0,
     SafetyTransitionContextV0,
@@ -141,15 +129,24 @@ use trnm_consensus_safety_store::{
 use trnm_consensus_safety_store::{
     RecoveredSafetyStateV0, SafetyStateStoreProfileV0, SafetyStoreErrorV0,
 };
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_signer_journal::JournalCapacityV0;
-#[cfg(any(feature = "legacy-consensus-app", test))]
+#[cfg(any(any(), test))]
 use trnm_consensus_signer_journal::SignerWatermarkV0;
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, SignerJournalErrorV0, SignerJournalProfileV0,
     SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{RolloutPhase, ValidationError};
+#[cfg(all(any(), feature = "recovery-process-test-support"))]
+use trnm_native_application::NativeValidationRecoveredInvalidReasonV0;
+#[cfg(any())]
+use trnm_native_application::{
+    NativeValidationRecoveredAckedFactsV0, NativeValidationRecoveredInvalidCallbackFactsV0,
+    NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryOpenFailureV0,
+    NativeValidationRecoveryReconcileFailureV0, NativeValidationRecoveryStoreConfigV0,
+    NativeValidationRecoveryStoreV0, NativeValidationRecoveryTransitionFailureV0,
+};
 
 /// Raw consensus keys are intentionally unavailable to the default host.
 ///
@@ -163,9 +160,9 @@ pub const FIXTURE_RAW_KEY_FEATURE_ONLY_V0: bool = cfg!(feature = "fixture-raw-ke
 /// changes the production activation claim.
 pub const PRODUCTION_RAW_KEY_DEPENDENCY_V0: bool = false;
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 mod authenticated_genesis_commissioning;
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 mod authenticated_genesis_h1_takeover;
 #[cfg(feature = "ai-v1-candidate")]
 #[allow(dead_code)]
@@ -223,7 +220,7 @@ mod native_vote_recovery;
 mod node_event_wal;
 mod ordinary_timeout;
 mod p2p_session_ingress;
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 mod process_host;
 mod recovery_ready_start;
 mod remote_signer_protocol_adapter_v1;
@@ -234,7 +231,7 @@ mod state_sync_wire_ingress;
 #[cfg(feature = "tx-admission-wal")]
 mod tx_admission_wal;
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 pub use authenticated_genesis_commissioning::{
     PocoNodeAuthenticatedGenesisCommissioningConfigV0,
     PocoNodeAuthenticatedGenesisCommissioningErrorV0,
@@ -250,7 +247,7 @@ pub use authenticated_genesis_commissioning::{
     PocoNodeAuthenticatedGenesisH1StableRecoveryModeV0,
     PocoNodeAuthenticatedGenesisH1StableRecoverySourceV0,
 };
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 pub use authenticated_genesis_h1_takeover::{
     PocoNodeAuthenticatedGenesisH1TakeoverConfigV0, PocoNodeAuthenticatedGenesisH1TakeoverErrorV0,
     PocoNodeAuthenticatedGenesisH1TakeoverFactsV0, PocoNodeAuthenticatedGenesisH1TakeoverHostV0,
@@ -410,7 +407,7 @@ pub use p2p_session_ingress::{
     P2P_SESSION_MAX_PAYLOAD_BYTES_V0, P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0,
     P2P_SESSION_REPLAY_ANCHOR_PRODUCTION_ACTIVATION_V0, P2P_SESSION_REPLAY_WINDOW_V0,
 };
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 pub use process_host::{
     PocoNodeInertEffectKindV0, PocoNodeProcessBootstrapFactsV0, PocoNodeProcessBootstrapModeV0,
     PocoNodeProcessConfigV0, PocoNodeProcessHostErrorV0, PocoNodeProcessHostV0,
@@ -693,7 +690,7 @@ impl PocoNodeStartConfigV0 {
         self.safety_store_profile.record_limits()
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     pub(crate) const fn safety_verifier_profile_ref_v0(&self) -> [u8; 32] {
         self.safety_store_profile.verifier_profile_ref()
     }
@@ -741,7 +738,7 @@ impl PocoNodeStartConfigV0 {
 /// its exact SQLite path before opening it. All three store parents must be
 /// non-overlapping canonical namespaces: equal, ancestor, and descendant
 /// parents are refused.
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[derive(Debug)]
 pub struct PocoNodeValidationRecoveryConfigV0 {
     node: PocoNodeStartConfigV0,
@@ -749,7 +746,7 @@ pub struct PocoNodeValidationRecoveryConfigV0 {
     signer_policy_hash: [u8; 32],
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 impl PocoNodeValidationRecoveryConfigV0 {
     pub fn new(
         node: PocoNodeStartConfigV0,
@@ -852,7 +849,7 @@ pub enum HostLifecyclePhaseV0 {
 }
 
 /// Application-journal state observed before the bounded recovery transition.
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ValidationRecoverySourceStateV0 {
     CallbackPending,
@@ -861,7 +858,7 @@ pub enum ValidationRecoverySourceStateV0 {
 }
 
 /// Exact result of the recovery-aware inert bootstrap.
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ValidationRecoveryBootstrapV0 {
     NotRequired,
@@ -885,10 +882,7 @@ pub enum ValidationRecoveryBootstrapV0 {
 /// both stores have completed their own durability and exact-readback checks.
 /// The observer cannot alter either store and is absent from default builds
 /// and the official `--no-default-features` development-library artifact.
-#[cfg(all(
-    feature = "legacy-consensus-app",
-    feature = "recovery-process-test-support"
-))]
+#[cfg(all(any(), feature = "recovery-process-test-support"))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ValidationRecoveryProcessCheckpointPhaseV0 {
     ObligationCallbackPending,
@@ -897,10 +891,7 @@ pub enum ValidationRecoveryProcessCheckpointPhaseV0 {
     CompletionAcked,
 }
 
-#[cfg(all(
-    feature = "legacy-consensus-app",
-    feature = "recovery-process-test-support"
-))]
+#[cfg(all(any(), feature = "recovery-process-test-support"))]
 impl ValidationRecoveryProcessCheckpointPhaseV0 {
     pub const fn as_str(self) -> &'static str {
         match self {
@@ -913,10 +904,7 @@ impl ValidationRecoveryProcessCheckpointPhaseV0 {
 }
 
 /// Exact facts supplied to the feature-only real-process checkpoint observer.
-#[cfg(all(
-    feature = "legacy-consensus-app",
-    feature = "recovery-process-test-support"
-))]
+#[cfg(all(any(), feature = "recovery-process-test-support"))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ValidationRecoveryProcessCheckpointV0 {
     phase: ValidationRecoveryProcessCheckpointPhaseV0,
@@ -927,10 +915,7 @@ pub struct ValidationRecoveryProcessCheckpointV0 {
     safety_revision: u64,
 }
 
-#[cfg(all(
-    feature = "legacy-consensus-app",
-    feature = "recovery-process-test-support"
-))]
+#[cfg(all(any(), feature = "recovery-process-test-support"))]
 impl ValidationRecoveryProcessCheckpointV0 {
     pub const fn phase(self) -> ValidationRecoveryProcessCheckpointPhaseV0 {
         self.phase
@@ -965,7 +950,7 @@ impl ValidationRecoveryProcessCheckpointV0 {
 /// journal and either complete one exact durable invalid obligation, confirm
 /// one exact already-persisted completion, or prove that no active recovery
 /// work exists.
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 pub struct PocoNodeValidationRecoveryHostV0<W> {
     core: Core,
     safety_store: SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
@@ -977,10 +962,10 @@ pub struct PocoNodeValidationRecoveryHostV0<W> {
     pending_inert_effects: Vec<Effect>,
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 type ValidationRecoveryOpenPartsV0 = (Core, ValidationRecoveryBootstrapV0, Vec<Effect>, bool);
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
     /// Opens all three existing stores and closes the bounded O/P/D/C/K crash
     /// matrix for one deterministic-invalid validation job.
@@ -1192,7 +1177,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
     }
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn recover_without_obligation_v0(
     core_config: CoreConfig,
     head: RecoveredSafetyStateV0,
@@ -1294,7 +1279,7 @@ fn recover_without_obligation_v0(
     }
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn recover_one_invalid_obligation_v0(
     core_config: CoreConfig,
     head: RecoveredSafetyStateV0,
@@ -1458,10 +1443,7 @@ fn recover_one_invalid_obligation_v0(
     ))
 }
 
-#[cfg(all(
-    feature = "legacy-consensus-app",
-    feature = "recovery-process-test-support"
-))]
+#[cfg(all(any(), feature = "recovery-process-test-support"))]
 fn emit_recovery_process_checkpoint_v0(
     observer: &mut Option<&mut dyn FnMut(ValidationRecoveryProcessCheckpointV0)>,
     phase: ValidationRecoveryProcessCheckpointPhaseV0,
@@ -1481,7 +1463,7 @@ fn emit_recovery_process_checkpoint_v0(
     }
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 impl From<NativeValidationRecoveredInvalidStateV0> for ValidationRecoverySourceStateV0 {
     fn from(state: NativeValidationRecoveredInvalidStateV0) -> Self {
         match state {
@@ -1502,7 +1484,7 @@ fn head_has_current_invalid_completion_v0(state: &SafetyState) -> bool {
         })
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn take_exact_recovery_persistence_v0(
     effects: Vec<Effect>,
 ) -> Result<SafetyStatePersistenceV0, PocoNodeHostErrorV0> {
@@ -1570,7 +1552,7 @@ fn validate_signer_safety_revision_v0<W: ExternalMonotonicWatermarkV0>(
     Ok(())
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn validate_inert_post_ack_effects_v0(effects: &[Effect]) -> Result<(), PocoNodeHostErrorV0> {
     if let Some(effect) = effects
         .iter()
@@ -1583,7 +1565,7 @@ fn validate_inert_post_ack_effects_v0(effects: &[Effect]) -> Result<(), PocoNode
     Ok(())
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn validate_callback_identity_v0(
     facts: &NativeValidationRecoveredInvalidCallbackFactsV0,
     route: PayloadValidationRouteV0,
@@ -1595,7 +1577,7 @@ fn validate_callback_identity_v0(
     Ok(())
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn native_invalid_transition_context_v0(
     facts: &NativeValidationRecoveredInvalidCallbackFactsV0,
     completion_revision: u64,
@@ -1621,7 +1603,7 @@ fn native_invalid_transition_context_v0(
     ))
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn validate_acked_facts_against_confirmation_v0(
     acked: &NativeValidationRecoveredAckedFactsV0,
     confirmed: &ConfirmedNativeDeterministicInvalidHeadV0,
@@ -1834,11 +1816,11 @@ pub enum PocoNodeHostErrorV0 {
     },
     #[cfg(feature = "safety-rules-sidecar")]
     SafetyRulesSidecarRecoveryNotPending,
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     ApplicationRecoveryOpen(NativeValidationRecoveryOpenFailureV0),
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     ApplicationRecoveryReconcile(NativeValidationRecoveryReconcileFailureV0),
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     ApplicationRecoveryTransition(NativeValidationRecoveryTransitionFailureV0),
 }
 
@@ -1878,7 +1860,7 @@ impl PocoNodeHostErrorV0 {
         Self::SignerJournalParentIo(Box::new(error))
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     fn application_store_parent(error: io::Error) -> Self {
         Self::ApplicationStoreParentIo(Box::new(error))
     }
@@ -2129,15 +2111,15 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             Self::SafetyRulesSidecarRecoveryNotPending => formatter.write_str(
                 "explicit SafetyRules sidecar recovery was requested without a durable pending marker",
             ),
-            #[cfg(feature = "legacy-consensus-app")]
+            #[cfg(any())]
             Self::ApplicationRecoveryOpen(error) => {
                 write!(formatter, "application recovery open failed: {error}")
             }
-            #[cfg(feature = "legacy-consensus-app")]
+            #[cfg(any())]
             Self::ApplicationRecoveryReconcile(error) => {
                 write!(formatter, "application recovery reconciliation failed: {error:?}")
             }
-            #[cfg(feature = "legacy-consensus-app")]
+            #[cfg(any())]
             Self::ApplicationRecoveryTransition(error) => {
                 write!(formatter, "application recovery transition failed: {error:?}")
             }
@@ -2155,14 +2137,14 @@ impl Error for PocoNodeHostErrorV0 {
             Self::SignerJournal(error) => Some(error.as_ref()),
             #[cfg(feature = "safety-rules-sidecar")]
             Self::SafetyRulesSemanticSidecar(error) => Some(error),
-            #[cfg(feature = "legacy-consensus-app")]
+            #[cfg(any())]
             Self::ApplicationRecoveryOpen(error) => Some(error),
             _ => None,
         }
     }
 }
 
-#[cfg(all(test, feature = "recovery-test-support", target_os = "linux"))]
+#[cfg(all(test, feature = "recovery-process-test-support", target_os = "linux"))]
 mod recovery_tests;
 
 #[cfg(test)]
@@ -2180,7 +2162,7 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     #[cfg(target_os = "linux")]
     use tempfile::TempDir;
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     use trnm_consensus_core::AuthenticatedGenesisApplicationParentV0;
     use trnm_consensus_core::{OutboundMessage, SafetyStateRecordLimitsV0, SignIntent};
     #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
@@ -2195,7 +2177,7 @@ mod tests {
     use trnm_consensus_signer_journal::{
         SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
     };
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     use trnm_consensus_types::StateRoot;
     use trnm_consensus_types::{
         BlockId, CanonicalSignIntentV0, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch,
@@ -2251,7 +2233,7 @@ mod tests {
         compare_calls: Arc<AtomicUsize>,
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     impl MemoryWatermark {
         fn load_call_count(&self) -> usize {
             self.load_calls.load(Ordering::SeqCst)
@@ -2622,7 +2604,7 @@ mod tests {
         (config, SigningKey::from_bytes(&[41; 32]))
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     fn authenticated_genesis_core_config_v0() -> CoreConfig {
         let base = core_config(ConsensusParametersV0::reference_shadow_v0());
         let parent = AuthenticatedGenesisApplicationParentV0::new(
@@ -2668,7 +2650,7 @@ mod tests {
         )
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     fn unchecked_start_config_v0(
         safety_store_path: impl AsRef<Path>,
         signer_journal_path: impl AsRef<Path>,
@@ -2800,14 +2782,14 @@ mod tests {
         store.head().expect("read SafetyStore head")
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     fn triple_store_paths(root: &TempDir) -> (PathBuf, PathBuf, PathBuf) {
         let (safety, signer) = dual_store_paths(root);
         let application = protected_store_namespace(root, "application").join("state.json");
         (safety, signer, application)
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     fn assert_store_parent_empty_v0(path: &Path, context: &str) {
         let parent = path.parent().expect("store path retains its parent");
         let entries = fs::read_dir(parent)
@@ -3026,7 +3008,7 @@ mod tests {
             .all(|contract| !contract.as_str().is_empty()));
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     #[test]
     fn ordinary_config_surfaces_fence_authenticated_genesis_before_path_validation_v0() {
         enum Surface {
@@ -3064,7 +3046,7 @@ mod tests {
         }
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     #[test]
     fn ordinary_host_entries_fence_authenticated_genesis_before_every_owner_v0() {
         #[derive(Clone, Copy, Debug)]
@@ -3142,7 +3124,7 @@ mod tests {
         }
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     #[test]
     fn validation_recovery_config_requires_a_third_canonical_namespace() {
         let directory = protected_temp_dir();
@@ -3165,7 +3147,7 @@ mod tests {
         ));
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     #[test]
     fn validation_recovery_config_rejects_application_ancestor_and_descendant_namespaces() {
         let directory = protected_temp_dir();
@@ -3224,7 +3206,7 @@ mod tests {
         }
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     #[test]
     fn validation_recovery_config_rejects_nested_application_after_symlink_canonicalization() {
         use std::os::unix::fs::symlink;
@@ -3256,7 +3238,7 @@ mod tests {
         ));
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     #[test]
     fn validation_recovery_config_freezes_three_distinct_paths() {
         let directory = protected_temp_dir();
@@ -3275,7 +3257,7 @@ mod tests {
         assert_eq!(recovery.node_config().signer_journal_path(), signer_path);
     }
 
-    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[cfg(all(target_os = "linux", any()))]
     #[test]
     fn validation_recovery_config_rejects_relative_application_path() {
         let directory = protected_temp_dir();

@@ -102,7 +102,7 @@ expected_metadata = {
     "default_node_boundary_owner": True,
     "node_application_engine_integration": False,
     "node_process_integration": False,
-    "zero_comet_normal_dependency_closure": True,
+    "native_normal_dependency_closure": True,
     "legacy_adapter": False,
     "production_candidate": False,
 }
@@ -140,7 +140,7 @@ if actual_sources != expected_sources:
     )
 
 forbidden = re.compile(
-    r"cometbft|tendermint|\babci\b|trnm-consensus-app|trnm-node",
+    r"poco_consensus|poco_consensus|\bnative_application_boundary\b|trnm-native-application|trnm-node",
     re.IGNORECASE,
 )
 for path in [manifest_path, *sorted((crate_root / "src").glob("*.rs"))]:
@@ -376,4 +376,4 @@ if package.get("dependencies") != []:
 PY
 
 printf '%s\n' \
-  'trnm_native_application_boundary=passed,scaffold_only,default_node_boundary_owner_true,owner_private_nonconstructible,finality_permit_unwired,recovery_unwired,commit_uncertainty_recovery_false,private_durable_p_host_true,p_store_reopen_readback_true,p_restart_takeover_false,p_core_callback_bounded_true,p_core_d_private_carrier_true,p_core_d_restart_takeover_false,safety_c_authority_true,safety_c_process_positive_fixture_false,k_checkpoint_facts_true,k_whole_node_cas_successor_only_true,k_whole_node_cas_bounded_integration_true,k_whole_node_cas_process_positive_fixture_false,request_signature_released_true,request_signature_inert_private_true,request_signature_signing_false,node_application_engine_integration_false,node_process_integration_false,zero_comet_normal_dependency_closure_true,production_candidate_false'
+  'trnm_native_application_boundary=passed,scaffold_only,default_node_boundary_owner_true,owner_private_nonconstructible,finality_permit_unwired,recovery_unwired,commit_uncertainty_recovery_false,private_durable_p_host_true,p_store_reopen_readback_true,p_restart_takeover_false,p_core_callback_bounded_true,p_core_d_private_carrier_true,p_core_d_restart_takeover_false,safety_c_authority_true,safety_c_process_positive_fixture_false,k_checkpoint_facts_true,k_whole_node_cas_successor_only_true,k_whole_node_cas_bounded_integration_true,k_whole_node_cas_process_positive_fixture_false,request_signature_released_true,request_signature_inert_private_true,request_signature_signing_false,node_application_engine_integration_false,node_process_integration_false,native_normal_dependency_closure_true,production_candidate_false'

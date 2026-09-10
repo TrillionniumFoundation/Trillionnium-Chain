@@ -11,19 +11,6 @@
 
 use std::{fmt, path::Path};
 
-use trnm_consensus_app::{
-    ConsensusAppConfig, NativeAuthenticatedGenesisH1CompletedAppConfirmationV0,
-    NativeAuthenticatedGenesisH1ObligationTakeoverCompletedHostV0,
-    NativeAuthenticatedGenesisH1ObligationTakeoverConfigV0,
-    NativeAuthenticatedGenesisH1ObligationTakeoverErrorV0,
-    NativeAuthenticatedGenesisH1ObligationTakeoverHostV0,
-    NativeAuthenticatedGenesisH1ObligationTakeoverSourceV0,
-    NativeAuthenticatedGenesisH1StableApplicationHostV0,
-    NativeAuthenticatedGenesisH1StableApplicationSourceV0,
-    NativeAuthenticatedGenesisH1StableRecoveryConfigV0,
-    NativeAuthenticatedGenesisH1StableRecoveryErrorV0,
-    PreparedNativeAuthenticatedGenesisH1InactiveExpectationV0,
-};
 use trnm_consensus_core::{
     AuthenticatedGenesisApplicationH1CompletedV0,
     AuthenticatedGenesisApplicationH1StableNativeValidRecoveredFactsV0, Core, CoreConfig,
@@ -40,6 +27,19 @@ use trnm_consensus_signer_journal::{
     SignerWatermarkV0,
 };
 use trnm_consensus_types::BlockId;
+use trnm_native_application::{
+    ConsensusAppConfig, NativeAuthenticatedGenesisH1CompletedAppConfirmationV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverCompletedHostV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverConfigV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverErrorV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverHostV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverSourceV0,
+    NativeAuthenticatedGenesisH1StableApplicationHostV0,
+    NativeAuthenticatedGenesisH1StableApplicationSourceV0,
+    NativeAuthenticatedGenesisH1StableRecoveryConfigV0,
+    NativeAuthenticatedGenesisH1StableRecoveryErrorV0,
+    PreparedNativeAuthenticatedGenesisH1InactiveExpectationV0,
+};
 
 use crate::{
     authenticated_genesis_commissioning::{
@@ -840,7 +840,7 @@ impl CommonCompletedFactsV0 {
     fn from_stable_v0(
         source: PocoNodeAuthenticatedGenesisH1TakeoverSourceV0,
         recovered: &AuthenticatedGenesisApplicationH1StableNativeValidRecoveredFactsV0,
-        application: &trnm_consensus_app::ConfirmedNativeAuthenticatedGenesisH1StableApplicationV0,
+        application: &trnm_native_application::ConfirmedNativeAuthenticatedGenesisH1StableApplicationV0,
         safety: &trnm_consensus_safety_store::ConfirmedAuthenticatedGenesisApplicationH1StableNativeValidHeadV0,
         safety_core_config_ref: [u8; 32],
     ) -> Self {

@@ -151,7 +151,7 @@ if metadata != expected_metadata:
 if manifest.get("features") != {"default": []}:
     issues.append("default feature set must be empty")
 if set(manifest.get("dependencies", {})) != {"borsh", "ed25519-dalek", "rusqlite", "sha2"}:
-    issues.append("normal dependencies must be the exact zero-Comet candidate set")
+    issues.append("normal dependencies must be the exact zero-foreign candidate set")
 if set(manifest.get("dev-dependencies", {})) != {"hex", "serde", "serde_json", "tempfile"}:
     issues.append("unexpected dev-dependency inventory")
 
@@ -188,7 +188,7 @@ actual_sources = {path.name for path in (crate_root / "src").glob("*.rs")}
 if actual_sources != expected_sources:
     issues.append(f"source inventory={sorted(actual_sources)!r}, expected {sorted(expected_sources)!r}")
 
-forbidden = re.compile(r"tendermint|\babci\b|comet|trnm-consensus-app", re.IGNORECASE)
+forbidden = re.compile(r"poco_consensus|\bnative_application_boundary\b|foreign|trnm-native-application", re.IGNORECASE)
 for path in [manifest_path, *sorted((crate_root / "src").glob("*.rs"))]:
     match = forbidden.search(path.read_text(encoding="utf-8"))
     if match:

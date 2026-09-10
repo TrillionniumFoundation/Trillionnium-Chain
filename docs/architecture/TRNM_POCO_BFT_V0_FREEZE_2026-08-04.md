@@ -26,7 +26,7 @@ deterministic execution adapter
 trnm-runtime -> JMT / committed state -> state root
 ```
 
-The current Comet-based path remains a differential oracle during development. It is not the production PoCO-BFT finality authority. Legacy coordinator/simulator code is not promoted into the v0 safety kernel merely because it shares BFT terminology.
+The current foreign-based path remains a differential oracle during development. It is not the production PoCO-BFT finality authority. Legacy coordinator/simulator code is not promoted into the v0 safety kernel merely because it shares BFT terminology.
 
 ## 2. Non-negotiable boundaries
 
@@ -97,7 +97,7 @@ Local developer machines may edit, compile, and run isolated tests. Persistent n
 
 - Reuse the deterministic runtime where its transition semantics are stable and covered by vectors.
 - Reuse the JMT/authenticated-tree proof machinery behind a narrow committed-state interface.
-- Keep Comet execution available as a differential oracle until equivalence is demonstrated.
+- Keep foreign execution available as a differential oracle until equivalence is demonstrated.
 - Replace simulated signatures, centralized HTTP coordination, implicit round state, and unweighted or cardinality-only quorum logic in the production path.
 - Do not reinterpret existing application-level consumption settlement as a Consumption Certificate or voting-power source without the P3 rules.
 

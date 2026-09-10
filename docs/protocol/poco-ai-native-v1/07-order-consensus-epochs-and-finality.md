@@ -817,7 +817,7 @@ coordinates even for an overlapping validator.
 Overlapping validators sign in each explicitly named role; weight is never
 silently reused across sets. Until both certificates and local durable
 commissioning exist, the successor epoch cannot vote. A failed handoff stalls
-safely; it never falls back to the old set, CometBFT, or an alternate profile.
+safely; it never falls back to the old set, PoCO consensus, or an alternate profile.
 
 ## 9. Dual finality
 

@@ -90,7 +90,7 @@ models, and light-client rules remain v0. They cannot be relabelled as v1.
 
 - the node has no production Vote loop/effect driver/authenticated P2P/state
   sync; its default/all-features closure, the complete active workspace graph,
-  and lockfile no longer reach the legacy application crate or Tendermint;
+  and lockfile no longer reach the legacy application crate or PoCO consensus;
   historical source remains outside the build graph for audit;
 - a non-normative, closed-for-listed-types CEV1 foundation/order-kernel
   candidate now covers contexts, validators/parameters, typed IDs, ordered
@@ -184,7 +184,7 @@ models, and light-client rules remain v0. They cannot be relabelled as v1.
 
 G0's active dependency graph is closed: the legacy application and node are
 excluded from the workspace, the PoCO optional legacy edge is gone,
-`Cargo.lock` contains no Comet/Tendermint/ABCI package, and executable adapter
+`Cargo.lock` contains no foreign/PoCO consensus/native application boundary package, and executable adapter
 and shipped configuration markers carry no old endpoint/binary authority.
 Historical source remains outside the build graph for audit. Reconcile the
 dirty tranche into a reproducible reviewed baseline; production and release

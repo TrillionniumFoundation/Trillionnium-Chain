@@ -47,15 +47,6 @@ use std::{
 #[cfg(unix)]
 use std::os::unix::fs::MetadataExt;
 
-use trnm_consensus_app::{
-    ConsensusAppConfig, NativeConsensusApplicationAppliedKindV0,
-    NativeConsensusApplicationHostConfigV0, NativeConsensusApplicationHostErrorV0,
-    NativeConsensusApplicationHostV0, NativeConsensusApplicationValidCompletionSourceV0,
-    NativeValidationRecoveredAckedFactsV0, NativeValidationRecoveredInvalidCallbackFactsV0,
-    NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryReconcileFailureV0,
-    NativeValidationRecoveryTransitionFailureV0,
-    PreparedNativeApplicationH1ProjectionExpectationV0,
-};
 use trnm_consensus_core::{
     Core, CoreConfig, DurablePayloadValidationResultV1, Effect, Input,
     NativeValidCompletionRecoveredActionV0, NativeValidCompletionRecoveryReplayV0,
@@ -79,6 +70,15 @@ use trnm_consensus_signer_journal::{
     SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{CanonicalSignIntentV0, RolloutPhase, SignedProposalV0};
+use trnm_native_application::{
+    ConsensusAppConfig, NativeConsensusApplicationAppliedKindV0,
+    NativeConsensusApplicationHostConfigV0, NativeConsensusApplicationHostErrorV0,
+    NativeConsensusApplicationHostV0, NativeConsensusApplicationValidCompletionSourceV0,
+    NativeValidationRecoveredAckedFactsV0, NativeValidationRecoveredInvalidCallbackFactsV0,
+    NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryReconcileFailureV0,
+    NativeValidationRecoveryTransitionFailureV0,
+    PreparedNativeApplicationH1ProjectionExpectationV0,
+};
 
 use crate::PocoNodeStartConfigV0;
 
@@ -2244,7 +2244,7 @@ fn confirmed_state_sync_checkpoint_matches_challenge_v0(
 }
 
 fn validate_state_sync_application_facts_v0(
-    facts: trnm_consensus_app::ConfirmedNativeApplicationAppliedFactsV0,
+    facts: trnm_native_application::ConfirmedNativeApplicationAppliedFactsV0,
     safety: &SafetyState,
 ) -> Result<(), PocoNodeProcessHostErrorV0> {
     let Some(anchor) = safety.state_sync_anchor() else {

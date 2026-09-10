@@ -24,7 +24,7 @@ Never restore a rollbackable database and resume signing merely because a local 
 - verify chain/genesis, source checkpoint, validator set, complete chunks, JMT/application root and live DA/legal holds;
 - compare against external monotonic anchor and signer watermark;
 - atomically swap only after fresh readback;
-- never import or lower legacy Comet WAL, keys, SafetyState or watermarks;
+- never import or lower legacy foreign WAL, keys, SafetyState or watermarks;
 - after PoCO finality, recovery is forward-only under explicit governance/migration rules.
 
 ## Key rotation

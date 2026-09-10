@@ -586,7 +586,7 @@ Transport and API negotiation are outside consensus semantics. A peer sends an
 exact supported set; the selected transport version cannot change protocol
 meaning. Unknown or mismatched `protocol_version`, `stack_profile_hash`, epoch
 descriptor, genesis, or network magic fails closed. No downgrade, fallback to
-v0, CometBFT compatibility, or “best effort” decoding is allowed after v1
+v0, PoCO consensus compatibility, or “best effort” decoding is allowed after v1
 activation.
 
 Adapter, transport, RPC, storage, and verification-backend versions have
@@ -790,7 +790,7 @@ production recovery. Accordingly the complete v0 authority verifier,
 migration verifier, upgrade contract, normative freeze, implementation, and
 activation remain absent.
 
-1. zero-Comet native dependency and ownership gates pass on a reproducible
+1. zero-foreign native dependency and ownership gates pass on a reproducible
    v0 implementation baseline;
 2. the complete v1 normative artifacts, schemas, vectors, formal models,
    independent verifier, upgrade program, and review evidence are frozen;

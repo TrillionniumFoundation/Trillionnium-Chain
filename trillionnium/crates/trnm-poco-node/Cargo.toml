@@ -109,14 +109,6 @@ g2f-namespace-test-support = [
   "rustix/fs",
   "dep:tempfile",
 ]
-# The former App-aware recovery modules remain as non-buildable archive source.
-# Keeping their cfg names known avoids warnings without restoring a feature or
-# dependency edge into the active workspace.
-[lints.rust]
-unexpected_cfgs = { level = "allow", check-cfg = [
-  'cfg(feature, values("legacy-consensus-app", "recovery-test-support"))',
-] }
-
 [package.metadata.trnm]
 lane = "poco-bft-g1-host-scaffold"
 protocol = "poco-bft-v0"
@@ -125,12 +117,9 @@ poco_ai_v1_default_dependency_closure = false
 poco_ai_v1_candidate_dependency_feature = "ai-v1-candidate"
 poco_ai_v1_activation = false
 consensus_mainline = "native-poco-bft"
+consensus_dependency_policy = "native-only"
+external_consensus_dependency_count = 0
 native_poco_mainline_decision = "adopted"
-zero_comet_production_dependency_target = true
-zero_comet_production_dependency_achieved = true
-legacy_comet_migration_residue_present = true
-cometbft_role = "migration-residue-only"
-cometbft_cleanup_eligible = false
 production_candidate = false
 production_consensus_activation = false
 tx_admission_wal_runtime_composition = true

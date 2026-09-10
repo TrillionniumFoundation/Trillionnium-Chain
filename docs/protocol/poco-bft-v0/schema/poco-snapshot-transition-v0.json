@@ -8,7 +8,7 @@
       "canonical compare-and-set mutation commitments",
       "one exact next-version atomic in-memory JMT update with conditional live-manifest preservation or target-version refresh",
       "a reusable private-field PoCO state-head kernel derived from an authenticated cutoff",
-      "exact physical namespace-8 admission at in-memory codecs, SQLite precommit/startup/migration, and ABCI snapshot restore"
+      "exact physical namespace-8 admission at in-memory codecs, SQLite precommit/startup/migration, and native application boundary snapshot restore"
     ],
     "does_not_establish": [
       "runtime or profile authorization",
@@ -482,8 +482,8 @@
       "in_memory_state_codec_decode",
       "sqlite_precommit_before_domain_or_JMT_rows",
       "sqlite_startup_or_schema_migration",
-      "abci_snapshot_restore_v3",
-      "abci_snapshot_restore_v4"
+      "native_application_boundary_snapshot_restore_v3",
+      "native_application_boundary_snapshot_restore_v4"
     ],
     "sqlite_atomicity": {
       "transaction": "BEGIN IMMEDIATE",

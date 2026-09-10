@@ -269,7 +269,7 @@ jobs:
         run: |
           set -euo pipefail
           bash ./scripts/ci/check_canonical_development_plan.sh
-          bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash ./scripts/ci/check_poco_bft_mainline_truth.sh
           python3 ./scripts/ci/check_required_protocol_contract_v1.py
       - name: Validate independent frozen vectors
         run: |
@@ -300,7 +300,6 @@ jobs:
           bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
           bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
           bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh

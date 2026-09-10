@@ -77,6 +77,8 @@ def require_tracked_clean(path: str) -> None:
 
 
 def main() -> int:
+    import subprocess
+    subprocess.run([sys.executable, str(ROOT / "scripts/ci/check_native_consensus_only.py")], cwd=ROOT, check=True)
     truth = load_json("config/consensus-mainline.json")
     policy = load_json("config/repository-policy-v1.json")
     boundary = load_json("PROJECT_BOUNDARY.json")
@@ -100,14 +102,8 @@ def main() -> int:
         truth.get("production_consensus_activation") is False,
         "protocol contract cannot activate consensus",
     )
-    require(
-        truth.get("cometbft", {}).get("role") == "migration-residue-only",
-        "CometBFT role must remain migration-only",
-    )
-    require(
-        boundary.get("consensus", {}).get("legacy_comet_may_authorize_release") is False,
-        "legacy Comet path must not authorize release",
-    )
+    require(boundary.get("consensus", {}).get("dependency_policy") == "native-only", "native-only boundary drift")
+    require(boundary.get("consensus", {}).get("external_consensus_engines_allowed") is False, "external engines must remain forbidden")
 
     workspace = cargo.get("workspace", {})
     members = set(workspace.get("members", []))
@@ -126,14 +122,7 @@ def main() -> int:
         required_members <= members,
         f"active protocol workspace members missing: {sorted(required_members - members)}",
     )
-    require(
-        {"crates/trnm-consensus-app", "crates/trnm-node"} <= excluded,
-        "legacy Comet packages must remain excluded",
-    )
-    require(
-        not ({"crates/trnm-consensus-app", "crates/trnm-node"} & members),
-        "legacy Comet packages re-entered the active workspace",
-    )
+    require(excluded == {"fuzz"}, "workspace exclusions must contain only fuzz")
 
     required_checks = policy.get("required_check_names", [])
     require(
@@ -264,18 +253,19 @@ def main() -> int:
         require_tracked_clean(path)
 
     baseline = read(".github/workflows/trnm-required-baseline.yml")
-    legacy_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
+    native_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
     require(
         "runs-on: [self-hosted" not in baseline,
         "required baseline must not depend on a self-hosted runner",
     )
     require(
-        "require_literal" in legacy_truth,
-        "legacy deep CI truth checker unexpectedly disappeared",
+        "check_native_consensus_only.py" in native_truth
+        and "trnm-native-ci-truth-v1" in native_truth,
+        "native CI truth checker contract drift",
     )
     require(
         "check_poco_bft_v0_ci_truth.sh" not in baseline,
-        "historical line-layout checker must not be a required merge dependency",
+        "non-required deep CI checker must not become a required merge dependency",
     )
 
     forbidden_patterns = (

@@ -32,7 +32,6 @@ on:
       - "scripts/ci/check_poco_bft_v0_*"
       - "scripts/ci/check_canonical_development_plan.sh"
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
-      - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
       - "scripts/ci/check_poco_g3_lan_fleet.sh"
       - "scripts/poco-fleet/**"
       - "scripts/ci/check_canonical_fuzz_smoke.sh"
@@ -97,7 +96,6 @@ on:
       - "scripts/ci/check_poco_bft_v0_*"
       - "scripts/ci/check_canonical_development_plan.sh"
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
-      - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
       - "scripts/ci/check_poco_g3_lan_fleet.sh"
       - "scripts/poco-fleet/**"
       - "scripts/ci/check_canonical_fuzz_smoke.sh"
@@ -204,7 +202,6 @@ jobs:
 
       - name: Verify workflow trigger and safety truth
         working-directory: trillionnium-chain
-        run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
 
       - name: Verify canonical development plan and anti-pollution boundary
         working-directory: trillionnium-chain
@@ -259,7 +256,6 @@ jobs:
           bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
           bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
           bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh

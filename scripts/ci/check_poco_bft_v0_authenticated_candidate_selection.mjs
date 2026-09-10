@@ -3839,11 +3839,11 @@ function runNegativeSelfChecks(vector, positive, fallback) {
 
 function validateProductionSourceSurface() {
   const checkpointSource = fs.readFileSync(
-    path.join(ROOT, "trillionnium/crates/trnm-consensus-app/src/poco_checkpoint.rs"),
+    path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_checkpoint.rs"),
     "utf8",
   );
   const candidateSource = fs.readFileSync(
-    path.join(ROOT, "trillionnium/crates/trnm-consensus-app/src/poco_authenticated_candidate.rs"),
+    path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_authenticated_candidate.rs"),
     "utf8",
   );
   const combined = checkpointSource.match(

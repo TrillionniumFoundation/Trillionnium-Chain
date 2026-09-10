@@ -13,18 +13,6 @@ use tempfile::TempDir;
 use crate::external_node_checkpoint::{
     confirm_existing_node_checkpoint_candidate_v0, ExistingNodeCheckpointJoinErrorV0,
 };
-use trnm_consensus_app::{
-    empty_native_application_trusted_base_root_for_recovery_test_v0,
-    empty_state_sync_anchor_successor_commitments_for_recovery_test_v0,
-    initialize_empty_native_application_test_fixture_v0,
-    initialize_native_validation_recovery_test_fixture_v0, NativeConsensusApplicationHostConfigV0,
-    NativeConsensusApplicationHostV0, NativeEmptyAnchorSuccessorCommitmentsV0,
-    NativeValidationRecoveredInvalidCallbackFactsV0, NativeValidationRecoveredInvalidReasonV0,
-    NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryStoreConfigV0,
-    NativeValidationRecoveryStoreV0, NativeValidationRecoveryTestConfigBundleV0,
-    NativeValidationRecoveryTestFixtureConfigV0, NativeValidationRecoveryTestFixtureErrorV0,
-    NativeValidationRecoveryTestFixtureStateV0,
-};
 use trnm_consensus_core::{
     leader_for, AuthenticatedGenesisApplicationParentV0, BlockIdOverlayRefV0, Core,
     DurablePayloadValidationResultV1, Effect, Input, OutboundMessage, PayloadTerminalResult,
@@ -51,6 +39,18 @@ use trnm_consensus_types::{
     GenesisHash, GenesisQcV0, Height, ProposalWitnessV0, ProtocolVersion, QcReferenceV0,
     QuorumCertificate, SignatureBytes, SignedProposalV0, SigningRoot, StateRoot,
     ValidatedBlockCommitmentsV0, Validator, ValidatorId, ValidatorSet, View, Vote, VotingPower,
+};
+use trnm_native_application::{
+    empty_native_application_trusted_base_root_for_recovery_test_v0,
+    empty_state_sync_anchor_successor_commitments_for_recovery_test_v0,
+    initialize_empty_native_application_test_fixture_v0,
+    initialize_native_validation_recovery_test_fixture_v0, NativeConsensusApplicationHostConfigV0,
+    NativeConsensusApplicationHostV0, NativeEmptyAnchorSuccessorCommitmentsV0,
+    NativeValidationRecoveredInvalidCallbackFactsV0, NativeValidationRecoveredInvalidReasonV0,
+    NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryStoreConfigV0,
+    NativeValidationRecoveryStoreV0, NativeValidationRecoveryTestConfigBundleV0,
+    NativeValidationRecoveryTestFixtureConfigV0, NativeValidationRecoveryTestFixtureErrorV0,
+    NativeValidationRecoveryTestFixtureStateV0,
 };
 
 use super::*;
@@ -2085,7 +2085,7 @@ fn prepare_authenticated_h1_checkpoint_process_host_v0(
 fn assert_authenticated_h1_checkpoint_process_host_open_v0(
     opening: usize,
     start: PocoNodeStartConfigV0,
-    application: trnm_consensus_app::ConsensusAppConfig,
+    application: trnm_native_application::ConsensusAppConfig,
     watermark: MemoryWatermark,
 ) {
     let host = PocoNodeProcessHostV0::open_existing_v0(
@@ -2106,7 +2106,7 @@ fn assert_authenticated_h1_checkpoint_process_host_open_v0(
     assert_eq!(facts.safety_revision(), 0);
     assert_eq!(
         facts.application_kind(),
-        trnm_consensus_app::NativeConsensusApplicationAppliedKindV0::TrustedBase
+        trnm_native_application::NativeConsensusApplicationAppliedKindV0::TrustedBase
     );
     assert_eq!(facts.application_height(), 1);
     assert_eq!(facts.application_receipt_count(), 0);

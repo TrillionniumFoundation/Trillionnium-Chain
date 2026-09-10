@@ -22,8 +22,9 @@
     "protocol_target": "poco-bft-v0",
     "production_candidate": false,
     "production_consensus_activation": false,
-    "legacy_comet_role": "migration-residue-only",
-    "legacy_comet_may_authorize_release": false
+    "dependency_policy": "native-only",
+    "external_consensus_engines_allowed": false,
+    "fallback_consensus_engines_allowed": false
   },
   "cargo": {
     "workspace_manifest": "trillionnium/Cargo.toml",
@@ -36,10 +37,7 @@
       "crates/trnm-native-application",
       "crates/trnm-poco-node"
     ],
-    "required_excluded_members": [
-      "crates/trnm-consensus-app",
-      "crates/trnm-node"
-    ],
+    "required_excluded_members": [],
     "forbidden_external_path_dependencies": true
   },
   "owned_surfaces": [

@@ -532,7 +532,7 @@ Because useful prune retention boundaries cross epochs and the production
 application context cannot advance across epochs, production prune reachability
 depends on Core activation plus an authenticated next-epoch configuration
 transition. Unit, formal and isolated-JMT witnesses MUST NOT be reported as
-production, ABCI, authenticated cross-epoch, or H3b2b1 closure evidence.
+production, native application boundary, authenticated cross-epoch, or H3b2b1 closure evidence.
 
 The 210-case Node constraint gate and focused Rust single-step/JMT tests remain
 lower-layer evidence. The nine-sequence raw artifact—not those side facts—
@@ -552,7 +552,7 @@ reconstruction, and non-ignored Rust production replay. Candidate, production
 prune closure, handoff, activation, field 12, fields 13/14 and the atomic Core
 epoch transition remain outside H3b2b1.
 
-### 5.9 B2-H3b2b2 application-authenticated candidate reconstruction (bounded shared and ABCI/restart evidence landed; remaining closure in progress)
+### 5.9 B2-H3b2b2 application-authenticated candidate reconstruction (bounded shared and native application boundary/restart evidence landed; remaining closure in progress)
 
 The implemented production path uses one crate-private call to construct the
 checkpoint-execution capability and reconstruct a fresh B2-G calculation from
@@ -676,7 +676,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   as an applied attempt; an exact
   roots-match capability must still own that attempt before `Valid` exists;
 - host admission preserves the distinction between terminal whole-block
-  invalidity and retryable `Unavailable`; in particular, no ABCI `REJECT` or
+  invalidity and retryable `Unavailable`; in particular, no native application boundary `REJECT` or
   `UNKNOWN` value may be used as an `Unavailable` surrogate;
 - the authenticated runtime-object store slice has a typed self-head reader
   and an opaque snapshot owning one SQLite connection; one `BEGIN` transaction
@@ -698,7 +698,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   body, naked set/parameters, generic verifier, cache, or second connection; it
   is private, non-cloneable, non-serializable, has no `From`/`TryFrom` or
   `into_parts` escape, and cannot convert to execution, terminal-result,
-  checkpoint, Core callback, vote/finality, or ABCI authority;
+  checkpoint, Core callback, vote/finality, or native application boundary authority;
 - before body admission succeeds, the exact Core request MUST remain in one
   private owner; host failure before snapshot begin MUST return that owner
   directly, while source and body-admission failure after begin MUST close with
@@ -1105,7 +1105,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   boundaries only. The separate G1c node MAY join their exact existing
   deterministic-invalid rows to the concrete SafetyStore capability only under
   the bounded matrix above; neither path implies a production driver,
-  host/AppCore/ABCI network wiring, general recovery, or process-wide Core
+  host/AppCore/native application boundary network wiring, general recovery, or process-wide Core
   uniqueness;
 - missing/pruned/foreign committed-parent sources remain retryable and distinct
   from authenticated-tree/physical-singleton/configuration invariants; no
@@ -1125,8 +1125,8 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   `DeterministicallyInvalid`;
 - the bounded production validation cursor owns a private fallible
   `prior delta -> exact authenticated snapshot` view, while the general
-  host/ABCI runtime adapter remains unwired, legacy `load_object` remains a
-  direct read, and no production ABCI/outcome path consumes the carrier;
+  host/native application boundary runtime adapter remains unwired, legacy `load_object` remains a
+  direct read, and no production native application boundary/outcome path consumes the carrier;
 - a separate legacy test-only inert regular-block traversal owns the exact compared
   header/body/configuration plus that parent-bound snapshot; its only cursor
   derives raw outer bytes, index, target height, and target `BlockId` from the
@@ -1200,7 +1200,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   MUST retain the complete owner, and `SourceUnavailable` MUST be structurally
   absent because source admission precedes this comparator; these carriers
   remain non-serializable/non-cloneable and have no conversion to
-  `ExecutionOutcomeV0`, authorized-native-block, checkpoint, Core, or ABCI
+  `ExecutionOutcomeV0`, authorized-native-block, checkpoint, Core, or native application boundary
   authority;
 - the production exact-transaction cursor can only borrow its store, chain,
   and canonical signer-policy preimage from initialized `AppCore`; the policy
@@ -1221,7 +1221,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   cause without discarding those stage facts; non-runtime payloads retain exact
   bytes, verified envelope/context, cursor, and snapshot without advancing or
   becoming terminal invalid; none of these carriers converts into terminal,
-  Core-callback, or ABCI authority;
+  Core-callback, or native application boundary authority;
 - every strictly verified outer command envelope in a regular body, regardless
   of runtime, PoCO, or validator family, MUST enter one body-global command-ID
   and `(signer ID, nonce)` replay namespace before execution or non-runtime
@@ -1236,7 +1236,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   process-local, non-cloneable, and non-serializable; MUST expose no
   `From`/`TryFrom`, parts, standalone-cause, or public constructor from naked
   authority fields; and MUST have no conversion to `ExecutionOutcomeV0`,
-  `PayloadValidationResult`, authorized-native-block, checkpoint, Core, or ABCI
+  `PayloadValidationResult`, authorized-native-block, checkpoint, Core, or native application boundary
   authority; `SourceUnavailable` MUST remain confined to the owning open
   failure and remain structurally absent from comparator disposition;
 - future orphan value/node/stale-index rejection still relies on the startup
@@ -1252,7 +1252,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   synthetic-genesis/native-state authority, speculative-parent overlays,
   JMT plan application/state persistence,
   owning-classification-to-terminal promotion, final typed retryable-versus-
-  invariant host mapping, production host/Core callback wiring, and ABCI
+  invariant host mapping, production host/Core callback wiring, and native application boundary
   wiring/adapter remain open hard prerequisites and provide no terminal
   production execution-path conformance evidence yet; the object-graph gate
   performs no terminal mapping, and only the current private admission branch
@@ -1353,7 +1353,7 @@ protobuf projection source-drift gates. H3b2b1 is closed by its exact kind-16
 validator, strict crypto/capacity/common-seal path and canonical nine-sequence
 shared raw corpus. H3b2b2 has landed its one-call application-authenticated
 candidate implementation, bounded shared reconstruction corpus and canonical
-ABCI/SQLite/cache/restart/V3/V4 plus targeted pruned-cutoff evidence. Its
+native application boundary/SQLite/cache/restart/V3/V4 plus targeted pruned-cutoff evidence. Its
 remaining bounded hardening is a cache/restart TOCTOU mutation and a stronger
 AST/type-aware API gate; production epoch-usage rollover remains open.
 H3b2b3a/H3b2b3b now add the cutoff-only commitment and private native

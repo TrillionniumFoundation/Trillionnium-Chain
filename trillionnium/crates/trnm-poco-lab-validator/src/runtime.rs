@@ -168,7 +168,7 @@ pub struct PositiveCheckpointBootstrapAssessmentV1 {
     pub ordinary_runtime_ready: bool,
 }
 
-/// Machine-readable status of the deployed zero-Comet fresh commissioning
+/// Machine-readable status of the deployed zero-foreign fresh commissioning
 /// route. The closed h1->h2->h3 material is authenticated before the Node
 /// takeover releases one specialized ordinary-runtime owner; none of these
 /// booleans is evidence that a multihost process has actually run.

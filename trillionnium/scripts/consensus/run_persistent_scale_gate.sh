@@ -90,7 +90,7 @@ if [[ -z "$BIN" ]]; then
   cargo build \
     --release \
     --locked \
-    -p trnm-consensus-app \
+    -p trnm-native-application \
     --features scale-gate \
     --bin trnm-persistent-scale
   BIN="$target_dir/release/trnm-persistent-scale"
@@ -293,7 +293,7 @@ jq -n \
       persistent_sqlite: true,
       single_process: true,
       single_host: true,
-      cometbft_end_to_end: false,
+      poco_consensus_end_to_end: false,
       public_testnet_evidence: false
     },
     started_at: $started_at,

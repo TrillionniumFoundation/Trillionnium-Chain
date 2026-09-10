@@ -137,7 +137,7 @@ anchor = "m13"
 slo_profile = "bounded-io-runtime-v1"
 testkit_profile = "light-client-state-sync-v1"
 primary_crates = ["trnm-poco-cross-plane-readback-v1", "trnm-poco-order-finality-verifier-v1", "trnm-finality-types", "trnm-finality-verifier", "trnm-migration-v0", "trnm-state-sync-v0"]
-contract_paths = ["docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md", "docs/runbooks/TRNM_V3_TO_V4_EXPORT_NEW_GENESIS.md"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md", "docs/architecture/TRNM_STATE_SYNC_STAGING_ADMISSION_V0.md"]
 
 [[module_coverage]]
 id = "M14"

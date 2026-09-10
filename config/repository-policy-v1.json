@@ -119,6 +119,7 @@
     "trillionnium/crates/trnm-production-adapter-conformance-v0/Cargo.toml",
     "trillionnium/crates/trnm-release-bundle-v0/Cargo.toml",
     "trillionnium/crates/trnm-state-sync-v0/Cargo.toml",
-    "trillionnium/crates/trnm-tx-lifecycle-v0/Cargo.toml"
+    "trillionnium/crates/trnm-tx-lifecycle-v0/Cargo.toml",
+    "scripts/ci/check_native_consensus_only.py"
   ]
 }

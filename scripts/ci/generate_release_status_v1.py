@@ -82,7 +82,7 @@ def build_status() -> dict[str, Any]:
             "stage": truth["stage"],
             "production_candidate": truth["production_candidate"],
             "production_consensus_activation": truth["production_consensus_activation"],
-            "cometbft_role": truth["cometbft"]["role"],
+            "poco_consensus_role": truth["poco_consensus"]["role"],
         },
         "workspace": {
             "manifest": "trillionnium/Cargo.toml",

@@ -1,6 +1,6 @@
 //! Complete frozen-v0 ordinary-body execution on one pinned parent snapshot.
 //!
-//! This module is the active, zero-Comet extraction of the application state
+//! This module is the active, zero-foreign extraction of the application state
 //! transition. It deliberately stops at an inert full-state plan. Persistence
 //! is added by the durable application owner; Core, Safety, signing, finality,
 //! networking, and broadcast are outside this crate's authority.

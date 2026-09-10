@@ -2,7 +2,7 @@
 
 `trnm_chain_devnet_v1` is the signed, loopback-only integration package for
 historical Hepta Research League and Nakama regression. It is not the
-canonical CometBFT runtime, a public-testnet artifact, or release evidence.
+canonical PoCO consensus runtime, a public-testnet artifact, or release evidence.
 It is not a Trillionnium World/game package.
 
 The package contains exactly three frozen legacy executables:

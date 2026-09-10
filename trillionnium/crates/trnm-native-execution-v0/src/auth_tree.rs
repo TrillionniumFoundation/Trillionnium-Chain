@@ -1,6 +1,6 @@
 //! Frozen-v0 authenticated-key and write primitives used by the native engine.
 //!
-//! This is an active, zero-Comet extraction of the consensus key format.  It
+//! This is an active, zero-foreign extraction of the consensus key format.  It
 //! deliberately exposes only canonical key construction and inert writes;
 //! JMT planning and persistence remain owned by the native execution store.
 

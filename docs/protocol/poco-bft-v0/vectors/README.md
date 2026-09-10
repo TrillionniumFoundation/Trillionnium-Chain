@@ -52,14 +52,14 @@ that do not call the Rust consensus crates:
   checker and are never serialized; `wire_conformance` and activation stay
   false.
 - `migration-boundary-v1.json` freezes the candidate-only one-way
-  `VerifiedCometStateExportV1` -> target-manifest/JMT-root -> fresh-genesis
+  `VerifiedforeignStateExportV1` -> target-manifest/JMT-root -> fresh-genesis
   composition. It includes typed legacy data-directory/WAL/validator-key
   rejection identities, a fresh target-directory identity, nested commitment
   bytes, and eight deterministic policy/root/trailing mutations. The
   standard-library checker `scripts/ci/check_poco_bft_v0_migration_boundary_v1.sh`
   independently reassembles the envelope and rejects every legacy-reuse or
   in-place variant. This is an importer-boundary evidence slice only: there is
-  no Comet reader, physical quarantine, dual quorum, node-start cutover, or
+  no foreign reader, physical quarantine, dual quorum, node-start cutover, or
   production activation.
 - `ed25519-v0.json` freezes an RFC 8032 public key and signature over the
   foundation vote root, plus wrong-root, mutated-signature, undecodable-key,
@@ -492,9 +492,9 @@ that do not call the Rust consensus crates:
   reopen, conflict, corruption and path-identity behavior at this checkpoint-
   only boundary. This is not subprocess restart or external rollback-watermark
   evidence. The sidecar and its crate-private durable wrappers
-  are not wired to ABCI startup or a production host, do not cover seal 1/2,
+  are not wired to native application boundary startup or a production host, do not cover seal 1/2,
   and are not a signer persist-before-sign journal. This corpus also does not
-  prove any Comet/native-ID mapping, live seal proposal/vote/signing path,
+  prove any foreign/native-ID mapping, live seal proposal/vote/signing path,
   field-13 anchor/activation, field 14, field 12, Core rollover or production
   cross-epoch pruning.
 
@@ -540,7 +540,7 @@ atomic semantic-value transition, production persistence/restore, checkpoint-
 execution binding, pure semantic-transition, and authenticated atomic
 application-write kernels under their documented boundaries. B2 overall remains
 open. B2-H3b2b2 has landed its application-authenticated one-call Rust path and
-bounded shared reconstruction corpus plus canonical ABCI/SQLite/cache/restart/
+bounded shared reconstruction corpus plus canonical native application boundary/SQLite/cache/restart/
 V3/V4/pruned-cutoff evidence. Its Node campaign now records 43 fail-closed
 rejections and one non-rejecting eligibility boundary control, including global
 kind-1-through-16 exact payload admission. H3b2b2 remains open only for cache/

@@ -1,4 +1,4 @@
-//! Fresh, laboratory-only commissioning of the public zero-Comet h1-h3 prefix.
+//! Fresh, laboratory-only commissioning of the public zero-foreign h1-h3 prefix.
 //!
 //! This owner is available only with `lab-validator-runtime`.  It consumes an
 //! already decoded public bootstrap through a second strict admission pass,

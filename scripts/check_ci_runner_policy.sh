@@ -212,7 +212,6 @@ def required_guard(name: str) -> str:
         return P1_GUARD
     if name in {
         "trnm-canonical-input-fuzz-smoke.yml",
-        "trnm-cometbft-spike.yml",
         "trnm-gate-quick-check.yml",
         "trnm-merge-gates.yml",
     }:

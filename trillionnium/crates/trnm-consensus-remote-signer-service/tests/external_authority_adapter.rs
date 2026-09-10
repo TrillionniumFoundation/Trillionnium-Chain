@@ -1,8 +1,9 @@
 //! Bounded timeout-only bridge evidence.
 //!
-//! This test deliberately exercises the real external watermark daemon and
-//! response hash-chain, but it does not claim Core/SafetyRules authority or a
-//! production signer. Vote requests remain fail-closed.
+//! This test deliberately exercises the real external watermark daemon
+//! implementation in an isolated child process and its response hash-chain,
+//! but it does not claim Core/SafetyRules authority or a production signer.
+//! Vote requests remain fail-closed.
 
 use std::{
     env, fs,
@@ -16,7 +17,8 @@ use std::{
 use ed25519_dalek::Signer;
 use tempfile::TempDir;
 use trnm_consensus_external_watermark::{
-    ExternalWatermarkAuthorityError, ExternalWatermarkSemanticBindingV1, UnixWatermarkClient,
+    run_semantic_daemon, ExternalWatermarkAuthorityError, ExternalWatermarkSemanticBindingV1,
+    UnixWatermarkClient,
 };
 use trnm_consensus_remote_signer_protocol::decode_unverified_remote_signer_response_v1_exact;
 use trnm_consensus_remote_signer_service::{
@@ -25,6 +27,12 @@ use trnm_consensus_remote_signer_service::{
 };
 
 const CAPABILITY: [u8; 32] = [0x33; 32];
+const DAEMON_CHILD_ENV: &str = "TRNM_TEST_EXTERNAL_WATERMARK_DAEMON_CHILD";
+const DAEMON_SOCKET_ENV: &str = "TRNM_TEST_EXTERNAL_WATERMARK_SOCKET";
+const DAEMON_LOG_ENV: &str = "TRNM_TEST_EXTERNAL_WATERMARK_LOG";
+const DAEMON_SCOPE_ENV: &str = "TRNM_TEST_EXTERNAL_WATERMARK_SCOPE";
+const DAEMON_JOURNAL_ENV: &str = "TRNM_TEST_EXTERNAL_WATERMARK_JOURNAL";
+const DAEMON_CAPABILITY_ENV: &str = "TRNM_TEST_EXTERNAL_WATERMARK_CAPABILITY";
 
 struct AuthorityProcess {
     child: Child,
@@ -34,11 +42,29 @@ struct AuthorityProcess {
 }
 
 impl AuthorityProcess {
-    fn binary() -> PathBuf {
-        if let Ok(path) = env::var("CARGO_BIN_EXE_trnm-external-watermark-v0") {
-            return PathBuf::from(path);
-        }
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/debug/trnm-external-watermark-v0")
+    fn command(
+        socket: &Path,
+        log: &Path,
+        binding: trnm_consensus_remote_signer_protocol::RemoteSignerRequestBindingV1,
+    ) -> Command {
+        let scope = UnixExternalTimeoutAuthorityV1::scope_for_binding(binding);
+        let journal = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding);
+        let mut command = Command::new(
+            env::current_exe().expect("resolve external authority integration test executable"),
+        );
+        command
+            .args([
+                "--exact",
+                "external_watermark_daemon_process",
+                "--nocapture",
+            ])
+            .env(DAEMON_CHILD_ENV, "1")
+            .env(DAEMON_SOCKET_ENV, socket)
+            .env(DAEMON_LOG_ENV, log)
+            .env(DAEMON_SCOPE_ENV, hex32(scope))
+            .env(DAEMON_JOURNAL_ENV, hex32(journal))
+            .env(DAEMON_CAPABILITY_ENV, hex32(CAPABILITY));
+        command
     }
 
     fn start(
@@ -49,22 +75,9 @@ impl AuthorityProcess {
         let log = root.join("authority.log");
         let scope = UnixExternalTimeoutAuthorityV1::scope_for_binding(binding);
         let journal = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding);
-        let child = Command::new(Self::binary())
-            .args([
-                "semantic",
-                "--socket",
-                socket.to_str().expect("authority socket path"),
-                "--log",
-                log.to_str().expect("authority log path"),
-                "--scope",
-                &hex32(scope),
-                "--journal-id",
-                &hex32(journal),
-                "--capability",
-                &hex32(CAPABILITY),
-            ])
+        let child = Self::command(&socket, &log, binding)
             .spawn()
-            .expect("spawn external watermark daemon");
+            .expect("spawn isolated external watermark daemon process");
         let process = Self {
             child,
             socket,
@@ -118,6 +131,44 @@ impl AuthorityProcess {
 
 fn hex32(bytes: [u8; 32]) -> String {
     bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+fn daemon_env_path(name: &str) -> PathBuf {
+    env::var_os(name)
+        .map(PathBuf::from)
+        .unwrap_or_else(|| panic!("missing child daemon environment variable {name}"))
+}
+
+fn daemon_env_hex32(name: &str) -> [u8; 32] {
+    let value = env::var(name)
+        .unwrap_or_else(|_| panic!("missing child daemon environment variable {name}"));
+    assert_eq!(value.len(), 64, "{name} must contain exactly 32 bytes");
+    let mut output = [0_u8; 32];
+    for (index, byte) in output.iter_mut().enumerate() {
+        *byte = u8::from_str_radix(&value[index * 2..index * 2 + 2], 16)
+            .unwrap_or_else(|_| panic!("{name} must contain canonical hexadecimal"));
+    }
+    assert_ne!(output, [0_u8; 32], "{name} must not be the zero identifier");
+    output
+}
+
+#[test]
+fn external_watermark_daemon_process() {
+    if env::var_os(DAEMON_CHILD_ENV).is_none() {
+        return;
+    }
+    let binding = ExternalWatermarkSemanticBindingV1::new(
+        daemon_env_hex32(DAEMON_SCOPE_ENV),
+        daemon_env_hex32(DAEMON_JOURNAL_ENV),
+        daemon_env_hex32(DAEMON_CAPABILITY_ENV),
+    )
+    .expect("child daemon semantic binding");
+    run_semantic_daemon(
+        daemon_env_path(DAEMON_SOCKET_ENV),
+        daemon_env_path(DAEMON_LOG_ENV),
+        binding,
+    )
+    .expect("isolated external watermark daemon must fail closed on invalid durable state");
 }
 
 #[test]
@@ -234,24 +285,7 @@ fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
     authority.stop();
     let bytes = fs::read(&authority.log).expect("read authority log");
     fs::write(&authority.log, &bytes[..bytes.len() - 1]).expect("truncate authority log");
-    let failed = Command::new(AuthorityProcess::binary())
-        .args([
-            "semantic",
-            "--socket",
-            authority.socket.to_str().unwrap(),
-            "--log",
-            authority.log.to_str().unwrap(),
-            "--scope",
-            &hex32(UnixExternalTimeoutAuthorityV1::scope_for_binding(
-                fixture.binding,
-            )),
-            "--journal-id",
-            &hex32(UnixExternalTimeoutAuthorityV1::journal_id_for_binding(
-                fixture.binding,
-            )),
-            "--capability",
-            &hex32(CAPABILITY),
-        ])
+    let failed = AuthorityProcess::command(&authority.socket, &authority.log, fixture.binding)
         .output()
         .expect("spawn tampered authority");
     assert!(!failed.status.success(), "rollback must fail closed");

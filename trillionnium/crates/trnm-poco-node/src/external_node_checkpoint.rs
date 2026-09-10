@@ -28,16 +28,12 @@ use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
 
 use rusqlite::{params, Connection, ErrorCode, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
-#[cfg(feature = "legacy-consensus-app")]
-use trnm_consensus_app::{
-    ConfirmedNativeApplicationNodeCheckpointFactsV0, NativeConsensusApplicationHostV0,
-};
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_core::SafetyState;
 use trnm_consensus_core::SignIntent;
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_core::{safety_state_record_config_ref_v0, SafetyStateRecordContextV0};
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_safety_store::{
     ConfirmedSafetyNodeCheckpointFactsV0, SafetyStoreErrorV0, SqliteSafetyStateStoreV0,
@@ -46,22 +42,26 @@ use trnm_consensus_signer_journal::{
     ConfirmedSignerNodeCheckpointFactsV0, ExternalMonotonicWatermarkV0, SignerJournalErrorV0,
     SignerWatermarkV0, SqliteSignerJournalV0,
 };
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_signer_journal::{
     PinnedSqliteSignerJournalV0, SignerJournalTailFactsV0, SignerPreparedIntentFactsV0,
 };
 use trnm_consensus_types::SignatureVerifier;
 use trnm_consensus_types::{BlockId, StateRoot};
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use trnm_consensus_types::{
     CanonicalSignIntentV0, ChainId, Epoch, ProtocolVersion, ValidatorId, ValidatorSetId,
+};
+#[cfg(any())]
+use trnm_native_application::{
+    ConfirmedNativeApplicationNodeCheckpointFactsV0, NativeConsensusApplicationHostV0,
 };
 use trnm_native_application_sqlite::{
     ConfirmedProposalValidationCheckpointFactsV0, ProposalValidationBindingV0,
     SqliteProposalValidationStoreV0, ValidationStoreErrorV0,
 };
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 use crate::process_host::PocoNodeProcessConfigV0;
 
 const RECORD_MAGIC_V0: [u8; 8] = *b"TRNMNCP0";
@@ -1055,7 +1055,7 @@ fn map_sqlite_checkpoint_error_v0(error: rusqlite::Error) -> ExternalNodeCheckpo
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum ConfirmedNodeCheckpointOriginV0 {
     VirginGenesis,
-    #[cfg_attr(not(any(test, feature = "legacy-consensus-app")), allow(dead_code))]
+    #[cfg_attr(not(any(test, any())), allow(dead_code))]
     ExistingNamespace,
 }
 
@@ -1559,7 +1559,7 @@ fn native_checkpoint_hash_v0(domain: &[u8], parts: &[&[u8]]) -> [u8; 32] {
 /// The join consumes all three store capabilities even when it refuses their
 /// projections.  No variant grants commissioning, successor construction,
 /// CAS access, store ownership, signing, or application authority.
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ExistingNodeCheckpointJoinErrorV0 {
     AuthenticatedGenesisCommissioningRequiresDedicatedHost,
@@ -1591,7 +1591,7 @@ pub(crate) enum ExistingNodeCheckpointJoinErrorV0 {
     ObservedExternalMismatch,
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 impl fmt::Display for ExistingNodeCheckpointJoinErrorV0 {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         let message = match self {
@@ -1671,10 +1671,10 @@ impl fmt::Display for ExistingNodeCheckpointJoinErrorV0 {
     }
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 impl Error for ExistingNodeCheckpointJoinErrorV0 {}
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[derive(Debug, Clone, Copy)]
 struct SafetyNodeCheckpointProjectionV0<'a> {
     state: &'a SafetyState,
@@ -1687,7 +1687,7 @@ struct SafetyNodeCheckpointProjectionV0<'a> {
     chain_checksum: [u8; 32],
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[derive(Debug, Clone, Copy)]
 struct ApplicationNodeCheckpointProjectionV0 {
     host_config_ref: [u8; 32],
@@ -1707,7 +1707,7 @@ struct ApplicationNodeCheckpointProjectionV0 {
     timestamp_ms: u64,
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[derive(Debug, Clone, Copy)]
 struct SignerNodeCheckpointProjectionV0 {
     journal_id: [u8; 32],
@@ -1725,7 +1725,7 @@ struct SignerNodeCheckpointProjectionV0 {
     pending_intent: Option<SignerPreparedIntentFactsV0>,
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct SignerLifecycleCapacityProjectionV0 {
     maximum_safety_revision: Option<u64>,
@@ -1733,7 +1733,7 @@ struct SignerLifecycleCapacityProjectionV0 {
     maximum_timeout_view: Option<u64>,
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 pub(crate) type ExistingNodeCheckpointJoinCapabilitiesV0 = (
     ConfirmedSafetyNodeCheckpointFactsV0,
     ConfirmedNativeApplicationNodeCheckpointFactsV0,
@@ -1749,7 +1749,7 @@ pub(crate) type ExistingNodeCheckpointJoinCapabilitiesV0 = (
 /// is released.  This boundary cannot commission a namespace or construct a
 /// successor, performs only fresh read-only store/watermark confirmation with
 /// no write/CAS/effect, and rejects the permanent h1 replay fence.
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[allow(dead_code)] // The production host and external backend remain deliberately unwired.
 pub(crate) fn confirm_existing_node_checkpoint_candidate_v0<W: ExternalMonotonicWatermarkV0>(
     observed_external: ExternalNodeCheckpointV0,
@@ -1869,7 +1869,7 @@ pub(crate) fn confirm_existing_node_checkpoint_candidate_v0<W: ExternalMonotonic
     )
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 #[allow(clippy::too_many_arguments)]
 fn confirm_existing_node_checkpoint_projected_v0(
     observed_external: ExternalNodeCheckpointV0,
@@ -1992,7 +1992,7 @@ fn confirm_existing_node_checkpoint_projected_v0(
     })
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn safety_application_applied_state_root_v0(safety: &SafetyState) -> Option<StateRoot> {
     let applied = safety.application_applied();
     if let Some(anchor) = safety
@@ -2015,7 +2015,7 @@ fn safety_application_applied_state_root_v0(safety: &SafetyState) -> Option<Stat
         .map(|finalization| finalization.proof().finalized_block().header().state_root())
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn validate_signer_lifecycle_against_safety_v0(
     capacity: SignerLifecycleCapacityProjectionV0,
     tail: Option<SignerJournalTailFactsV0>,
@@ -2087,7 +2087,7 @@ fn validate_signer_lifecycle_against_safety_v0(
     Ok(())
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn canonical_sign_intent_v0(
     config: &trnm_consensus_core::CoreConfig,
     intent: &SignIntent,
@@ -2123,7 +2123,7 @@ fn canonical_sign_intent_v0(
     .map_err(|_| ExistingNodeCheckpointJoinErrorV0::PreparedSignerIntentMismatch)
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn require_signer_view_exact_v0(
     signer_view: Option<u64>,
     safety_view: Option<u64>,
@@ -2139,7 +2139,7 @@ fn require_signer_view_exact_v0(
     })
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn prepared_intent_matches_v0(
     pending: SignerPreparedIntentFactsV0,
     intent: &CanonicalSignIntentV0,
@@ -2153,7 +2153,7 @@ fn prepared_intent_matches_v0(
         && pending.signing_root() == intent.signing_root().into_bytes()
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn signer_tail_matches_v0(tail: SignerJournalTailFactsV0, intent: &CanonicalSignIntentV0) -> bool {
     let (view, kind) = canonical_intent_view_kind_v0(intent);
     tail.fingerprint() == intent.fingerprint().into_bytes()
@@ -2164,7 +2164,7 @@ fn signer_tail_matches_v0(tail: SignerJournalTailFactsV0, intent: &CanonicalSign
         && tail.signing_root() == intent.signing_root().into_bytes()
 }
 
-#[cfg(feature = "legacy-consensus-app")]
+#[cfg(any())]
 fn canonical_intent_view_kind_v0(intent: &CanonicalSignIntentV0) -> (u64, u8) {
     match intent.preimage() {
         trnm_consensus_types::CanonicalSignPreimageV0::Vote(value) => (value.view().get(), 0),
@@ -2513,7 +2513,7 @@ mod tests {
     use super::*;
     use std::sync::{Arc, Mutex};
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     use crate::PocoNodeStartConfigV0;
     use ed25519_dalek::{Signer, SigningKey};
     use tempfile::TempDir;
@@ -2934,7 +2934,7 @@ mod tests {
         .expect("canonical successor checkpoint")
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     struct ProjectedJoinFixtureV0 {
         _root: TempDir,
         start: PocoNodeStartConfigV0,
@@ -2949,7 +2949,7 @@ mod tests {
         observed: ExternalNodeCheckpointV0,
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     fn projected_safety_v0<'a>(
         fixture: &'a ProjectedJoinFixtureV0,
     ) -> SafetyNodeCheckpointProjectionV0<'a> {
@@ -2965,7 +2965,7 @@ mod tests {
         }
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     fn projected_join_fixture_v0() -> ProjectedJoinFixtureV0 {
         let root = TempDir::new().expect("temporary join namespace");
         let safety_parent = root.path().join("safety");
@@ -3127,7 +3127,7 @@ mod tests {
         }
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     fn confirm_projected_join_fixture_v0(
         fixture: &ProjectedJoinFixtureV0,
         observed: ExternalNodeCheckpointV0,
@@ -3146,7 +3146,7 @@ mod tests {
         )
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     #[test]
     fn existing_candidate_is_minted_only_from_exact_joined_observation_v0() {
         let fixture = projected_join_fixture_v0();
@@ -3222,7 +3222,7 @@ mod tests {
         );
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     #[test]
     fn existing_candidate_rejects_foreign_signer_and_lifecycle_v0() {
         let fixture = projected_join_fixture_v0();
@@ -3279,7 +3279,7 @@ mod tests {
         );
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     #[test]
     fn existing_candidate_rejects_foreign_safety_configuration_v0() {
         let fixture = projected_join_fixture_v0();
@@ -3338,7 +3338,7 @@ mod tests {
         );
     }
 
-    #[cfg(feature = "legacy-consensus-app")]
+    #[cfg(any())]
     #[test]
     fn production_join_wrapper_requires_all_three_linear_capabilities_v0() {
         struct UnusedWatermarkV0;

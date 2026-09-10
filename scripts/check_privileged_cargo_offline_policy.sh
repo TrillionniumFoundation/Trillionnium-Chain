@@ -38,16 +38,8 @@ register rust-l1-nightly-health.yml:rust-l1-health required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register rust-l1-testnet-preflight.yml:preflight required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
-register trnm-a22-capability-authority-audit.yml:enforce-capability-authority-policy required 1.95.0 \
-  trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-canonical-input-fuzz-smoke.yml:bounded-smoke cargo-fuzz nightly-2026-07-27 \
   trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
-register trnm-cometbft-spike.yml:dependency-policy cargo-deny 1.95.0 \
-  'trillionnium/Cargo.toml:trillionnium/Cargo.lock contracts/Cargo.toml:contracts/Cargo.lock trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock'
-register trnm-cometbft-spike.yml:cometbft-four-validator required 1.95.0 \
-  'trillionnium/Cargo.toml:trillionnium/Cargo.lock trillionnium/crates/trnm-consensus-app/Cargo.toml:trillionnium/crates/trnm-consensus-app/Cargo.lock trillionnium/crates/trnm-node/Cargo.toml:trillionnium/crates/trnm-node/Cargo.lock'
-register trnm-cometbft-spike.yml:cometbft-partition-matrix required 1.95.0 \
-  'trillionnium/Cargo.toml:trillionnium/Cargo.lock trillionnium/crates/trnm-consensus-app/Cargo.toml:trillionnium/crates/trnm-consensus-app/Cargo.lock trillionnium/crates/trnm-node/Cargo.toml:trillionnium/crates/trnm-node/Cargo.lock'
 register trnm-gate-quick-check.yml:shell-static-checks required 1.95.0 \
   'trillionnium/Cargo.toml:trillionnium/Cargo.lock contracts/Cargo.toml:contracts/Cargo.lock'
 register trnm-live-devnet-package.yml:legacy-harness-reproducibility required 1.95.0 \

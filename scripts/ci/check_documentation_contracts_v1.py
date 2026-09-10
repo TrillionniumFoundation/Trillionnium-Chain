@@ -42,12 +42,12 @@ PROFILES = {
 _V0 = 'docs/protocol/poco-bft-v0/'
 V0_IMPORTS = {
     _V0+'01-system-model-and-threat-model.md': '9b7791addf496d0b88f84bb37592d099ad525eec',
-    _V0+'02-chained-qc-consensus.md': '6f5d6a88e15b3682ffe7d28137032d69f86edb9b',
-    _V0+'03-wire-crypto-and-domain-separation.md': 'd0f79ed79f044eeb09f04224000754ae24d3b23b',
+    _V0+'02-chained-qc-consensus.md': '52deb69f59cb048563b023e82b8ff927f4fb1aac',
+    _V0+'03-wire-crypto-and-domain-separation.md': '57d85f30c9d6ed85d081ffbf63f57d2e5dc6e2ce',
     _V0+'04-epochs-validator-sets-and-upgrades.md': 'c08f835d295d1ca7c747ccf3c3bd1af7ae7f767c',
-    _V0+'05-poco-weights-bond-and-slashing.md': 'd8005598471dff3bae229eda6d129b5a1a14b066',
+    _V0+'05-poco-weights-bond-and-slashing.md': '103c899bd5c60995429feee2848991540cf6e831',
     _V0+'06-light-client.md': '42609bc8e36e990f4bad64b86d687f333ac3b58b',
-    _V0+'07-invariants-and-conformance.md': '4b9c425acc9588ba36d188fc0ea5616ac4f61f5d',
+    _V0+'07-invariants-and-conformance.md': '608dc2486885e162822cbb4344b6424a827fd064',
 }
 REQUIRED_DOMAINS = [
     {'consensus', 'cryptography'}, {'cryptography', 'application-security'},

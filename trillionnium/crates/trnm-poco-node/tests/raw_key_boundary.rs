@@ -151,9 +151,10 @@ fn raw_key_references_are_test_or_fixture_gated() {
         }
 
         if relative == "src/recovery_tests.rs" {
+            let compact_lib: String = lib.chars().filter(|ch| !ch.is_whitespace()).collect();
             assert!(
-                lib.contains(
-                    "#[cfg(all(test, feature = \"recovery-test-support\", target_os = \"linux\"))]\nmod recovery_tests;"
+                compact_lib.contains(
+                    "#[cfg(all(test,feature=\"recovery-process-test-support\",target_os=\"linux\"))]modrecovery_tests;"
                 ),
                 "recovery raw-key module lost its test/fixture gate"
             );

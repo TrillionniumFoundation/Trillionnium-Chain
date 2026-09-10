@@ -1,6 +1,6 @@
 {
   "schema": "trnm-consensus-mainline-truth-v1",
-  "as_of": "2026-08-30",
+  "as_of": "2026-09-07",
   "consensus_mainline": "native-poco-bft",
   "protocol_target": "poco-bft-v0",
   "active_candidate_source": "derived-at-verification-time-from-git-head-and-tree",
@@ -92,16 +92,10 @@
       "production_activation": false
     },
     "migration_boundary": {
-      "commit": "e4581a9c1",
-      "replay_writer_commit": "4958bbf17",
+      "implementation": "trnm-migration-v0",
+      "source_consensus_agnostic": true,
       "fresh_genesis_only": true,
-      "legacy_wal_keys_data_dir_rejected": true,
-      "target_jmt_writer_rehearsal": true,
-      "target_jmt_record_head_fsync_and_reopen": true,
-      "divergent_target_overwrite_rejected": true,
-      "trusted_source_reader": false,
-      "target_jmt_writer": false,
-      "cross_peer_cutover": false,
+      "validator_signing_state_import": false,
       "production_activation": false
     }
   },
@@ -186,51 +180,14 @@
     "activation_manifest_requires_all_flags_false": true,
     "activation_manifest_requires_named_blockers": true
   },
-  "cometbft": {
-    "role": "migration-residue-only",
-    "production_dependency": false,
-    "active_workspace_member": false,
-    "new_features_allowed": false,
-    "historical_replay_allowed": true,
-    "cleanup_eligible": false,
-    "cleanup_gate": "C0-cutover-not-passed"
-  },
   "migration": {
-    "strategy": "finalized-height-export-to-fresh-poco-genesis",
+    "implementation": "trnm-migration-v0",
+    "source_consensus_agnostic": true,
+    "fresh_genesis_only": true,
     "in_place_database_or_wal_conversion": false,
-    "old_validator_state_import": false,
-    "legacy_app_hash_is_poco_state_root": false,
-    "legacy_app_hash_role": "signed-provenance-attestation-only",
-    "post_finality_downgrade_to_comet": false,
-    "poco_genesis_descriptor_v1": {
-      "typed_commitment": true,
-      "typed_source_export_manifest": true,
-      "typed_genesis_qc_quorum_evidence": true,
-      "legacy_source_types_separated": true,
-      "source_namespace_and_instance_bound": true,
-      "export_manifest_and_mapping_commitments_bound": true,
-      "typed_source_export_verifier_boundary": true,
-      "typed_target_projection_verified_source_boundary": true,
-      "target_projection_mapping_digest_rebound": true,
-      "target_projection_manifest_digest_bound": true,
-      "target_projection_claimed_root_type_separated": true,
-      "target_projection_exact_decoder_requires_verified_source": true,
-      "target_projection_root_recompute_verifier_interface": true,
-      "target_projection_ceremony_exact_binding": true,
-      "target_projection_ceremony_commitment_recheck": true,
-      "frozen_genesis_qc_wire_unchanged": true,
-      "qc_binding_exact_decoder": true,
-      "trusted_set_recheck": true,
-      "genesis_qc_quorum_shape_recheck": true,
-      "genesis_qc_quorum_crypto_verified": false,
-      "source_quorum_verified": false,
-      "source_export_and_finality_verifier": false,
-      "target_genesis_manifest_recomputed": false,
-      "target_projection_root_recomputed": false,
-      "target_projection_activation": false,
-      "cross_peer_genesis_qc_activation": false,
-      "import_rehearsal": false
-    }
+    "validator_signing_state_import": false,
+    "fallback_consensus_engine": false,
+    "production_activation": false
   },
   "restart_state_sync": {
     "chain_identity_binding": true,
@@ -259,7 +216,7 @@
       "id": "P0-PROTOCOL-001",
       "severity": "P0",
       "status": "open",
-      "evidence": "PocoGenesisV1 has separated legacy Comet evidence types, profile-tagged canonical bytes, a 1 KiB exact decoding ceiling, migration-instance recheck, and the QC ceremony has a bounded exact decoder with trusted-set recheck. The checksum-pinned protoc bootstrap (`eaf1db12e`) and local Quint formal gate passed the listed safety/TC/epoch/partition/upgrade/handoff/light-client/application invariants and mutant witnesses; independent protocol review, CI reproduction and a second implementation remain open",
+      "evidence": "PocoGenesisV1 has separated legacy foreign evidence types, profile-tagged canonical bytes, a 1 KiB exact decoding ceiling, migration-instance recheck, and the QC ceremony has a bounded exact decoder with trusted-set recheck. The checksum-pinned protoc bootstrap (`eaf1db12e`) and local Quint formal gate passed the listed safety/TC/epoch/partition/upgrade/handoff/light-client/application invariants and mutant witnesses; independent protocol review, CI reproduction and a second implementation remain open",
       "exit": "independent review plus complete schemas, vectors, decoder bounds, and formal mutants"
     },
     {
@@ -321,7 +278,7 @@
       "id": "MIG-ROOT-001",
       "severity": "P1",
       "status": "open",
-      "evidence": "PocoGenesisV1 separates legacy Comet genesis/block/AppHash types and binds source namespace plus complete migration-instance inputs. `f03564038` adds the explicit VerifiedCometStateExportV1 source identity/finality/mapping boundary; `079d695b5` binds the typed target manifest to that verified source and rejects forged source metadata even with a matching export digest. `5d3458e0e` adds a candidate-only one-way fresh-genesis import boundary, and `4958bbf17`/`e4581a9c1` add a bounded target-JMT replay writer with atomic fsynced record/head sidecars, reopen validation and divergent-overwrite rejection. Concrete trusted Comet source reader/finality quorum, independently verified target root authority, dual authority, cross-peer GenesisQC activation and cutover remain false",
+      "evidence": "PocoGenesisV1 separates legacy foreign genesis/block/AppHash types and binds source namespace plus complete migration-instance inputs. `f03564038` adds the explicit VerifiedforeignStateExportV1 source identity/finality/mapping boundary; `079d695b5` binds the typed target manifest to that verified source and rejects forged source metadata even with a matching export digest. `5d3458e0e` adds a candidate-only one-way fresh-genesis import boundary, and `4958bbf17`/`e4581a9c1` add a bounded target-JMT replay writer with atomic fsynced record/head sidecars, reopen validation and divergent-overwrite rejection. Concrete trusted foreign source reader/finality quorum, independently verified target root authority, dual authority, cross-peer GenesisQC activation and cutover remain false",
       "exit": "export/import binds source manifest, mapping digest, independently recomputed new JMT root, and GenesisQC/ceremony across peers with signed rehearsal"
     },
     {
@@ -335,7 +292,7 @@
       "id": "MIG-CLEAN-001",
       "severity": "P3",
       "status": "blocked-by-cutover",
-      "exit": "remove Comet packages, locks, workflows, scripts, fixtures, and active docs after signed cutover"
+      "exit": "remove foreign packages, locks, workflows, scripts, fixtures, and active docs after signed cutover"
     }
   ],
   "authoritative_docs": {

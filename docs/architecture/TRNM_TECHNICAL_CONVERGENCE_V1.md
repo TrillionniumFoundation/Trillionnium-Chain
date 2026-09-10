@@ -50,7 +50,7 @@ binds finalized state provenance, anti-collusion policy, identity independence,
 mainnet economic constants, slash policy, multi-operator observations and a
 signed epoch-boundary governance decision.
 
-CometBFT or another mature engine may be retained only as an offline
+PoCO consensus or another mature engine may be retained only as an offline
 differential oracle. It is not a production dependency, fallback authority or
 alternate source of finality.
 

@@ -109,7 +109,7 @@ assert {path.name for path in (crate_root / "src").glob("*.rs")} == {
     "codec.rs", "error.rs", "lib.rs", "store.rs", "tests.rs", "types.rs"
 }
 for path in [manifest_path, *(crate_root / "src").glob("*.rs")]:
-    assert not re.search(r"tendermint|\\babci\\b|comet|trnm-consensus-app", path.read_text(encoding="utf-8"), re.I), path
+    assert not re.search(r"poco_consensus|\\bnative_application_boundary\\b|foreign|trnm-native-application", path.read_text(encoding="utf-8"), re.I), path
 assert schema["status"] == "candidate-non-normative"
 assert schema["storage"]["journal_schema_version"] == 3
 assert schema["storage"]["tables"] == 4

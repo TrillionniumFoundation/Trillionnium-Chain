@@ -133,10 +133,6 @@ sed -i '/^      CARGO_NET_OFFLINE: "true"$/a\      BASH_ENV: /tmp/attacker-env' 
 expect_fail bash-env-authority-override
 restore_fixture
 
-workflow="$repo/.github/workflows/trnm-cometbft-spike.yml"
-sed -i '/^      CARGO_NET_OFFLINE: "true"$/a\      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache' "$workflow"
-expect_fail runner-temp-cannot-be-used-at-job-scope
-restore_fixture
 
 workflow="$repo/.github/workflows/agent-user-phasea-gate.yml"
 sed -i '/Verify Cargo offline cache readiness/a\        shell: /tmp/attacker-shell {0}' "$workflow"
@@ -223,10 +219,6 @@ sed -i '/Run Agent↔User Phase A gate/a\        run: ./scripts/ci/install_cargo
 expect_fail ordinary-job-cannot-install-cargo-tools
 restore_fixture
 
-workflow="$repo/.github/workflows/trnm-cometbft-spike.yml"
-sed -i '/Verify runner-provisioned cargo-deny/a\        run: ./scripts/ci/install_cargo_deny.sh "$RUNNER_TEMP/tools"' "$workflow"
-expect_fail deny-installer-reintroduction
-restore_fixture
 
 sed -i '0,/ deny --frozen/s/ --frozen//' \
   "$repo/scripts/ci/check_cargo_deny_offline.sh"
@@ -243,20 +235,8 @@ sed -i 's/e915260ced1c90e460153583597cb05efb8f72df489491682f5762710cd0b2ef/aaaaa
 expect_fail cargo-fuzz-hash-drift
 restore_fixture
 
-workflow="$repo/.github/workflows/trnm-cometbft-spike.yml"
-sed -i '/Verify runner-provisioned cargo-deny/a\        continue-on-error: true' "$workflow"
-expect_fail cargo-deny-verifier-cannot-swallow-failure
-restore_fixture
 
-workflow="$repo/.github/workflows/trnm-cometbft-spike.yml"
-sed -i '0,/^          \.\/scripts\/ci\/check_preprovisioned_cargo_deny\.sh$/{s|^          |          # |}' "$workflow"
-expect_fail commented-cargo-deny-verifier-cannot-satisfy-policy
-restore_fixture
 
-workflow="$repo/.github/workflows/trnm-cometbft-spike.yml"
-sed -i '/Run frozen cargo-deny policy checks/a\        continue-on-error: true' "$workflow"
-expect_fail cargo-deny-run-cannot-swallow-failure
-restore_fixture
 
 workflow="$repo/.github/workflows/trnm-canonical-input-fuzz-smoke.yml"
 sed -i '/Verify runner-provisioned cargo-fuzz/a\        continue-on-error: true' "$workflow"

@@ -12,22 +12,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use trnm_consensus_app::{
-    ConfirmedNativeAuthenticatedGenesisApplicationCommissioningV0,
-    ConfirmedNativeAuthenticatedGenesisH1StableApplicationV0, ConsensusAppConfig,
-    NativeAuthenticatedGenesisApplicationCommissioningConfigV0,
-    NativeAuthenticatedGenesisApplicationCommissioningDispositionV0,
-    NativeAuthenticatedGenesisApplicationCommissioningErrorV0,
-    NativeAuthenticatedGenesisApplicationCommissioningHostV0,
-    NativeAuthenticatedGenesisH1CompletedAppConfirmationV0,
-    NativeAuthenticatedGenesisH1OfflineValidationErrorV0,
-    NativeAuthenticatedGenesisH1OfflineValidationHostV0,
-    NativeAuthenticatedGenesisH1StableApplicationHostV0,
-    NativeAuthenticatedGenesisH1StableApplicationSourceV0,
-    NativeAuthenticatedGenesisH1StableRecoveryConfigV0,
-    NativeAuthenticatedGenesisH1StableRecoveryErrorV0, NativeValidationValidAppFactsV0,
-    PreparedNativeAuthenticatedGenesisH1InactiveExpectationV0,
-};
 use trnm_consensus_core::{
     safety_state_record_config_ref_v0, AuthenticatedGenesisApplicationH1CompletedV0,
     AuthenticatedGenesisApplicationH1StableNativeValidRecoveredFactsV0, Core, CoreConfig,
@@ -47,6 +31,22 @@ use trnm_consensus_signer_journal::{
     SignerJournalProfileV0, SignerJournalReconciliationFactsV0, SignerWatermarkV0,
 };
 use trnm_consensus_types::{BlockId, RolloutPhase, SignedProposalV0};
+use trnm_native_application::{
+    ConfirmedNativeAuthenticatedGenesisApplicationCommissioningV0,
+    ConfirmedNativeAuthenticatedGenesisH1StableApplicationV0, ConsensusAppConfig,
+    NativeAuthenticatedGenesisApplicationCommissioningConfigV0,
+    NativeAuthenticatedGenesisApplicationCommissioningDispositionV0,
+    NativeAuthenticatedGenesisApplicationCommissioningErrorV0,
+    NativeAuthenticatedGenesisApplicationCommissioningHostV0,
+    NativeAuthenticatedGenesisH1CompletedAppConfirmationV0,
+    NativeAuthenticatedGenesisH1OfflineValidationErrorV0,
+    NativeAuthenticatedGenesisH1OfflineValidationHostV0,
+    NativeAuthenticatedGenesisH1StableApplicationHostV0,
+    NativeAuthenticatedGenesisH1StableApplicationSourceV0,
+    NativeAuthenticatedGenesisH1StableRecoveryConfigV0,
+    NativeAuthenticatedGenesisH1StableRecoveryErrorV0, NativeValidationValidAppFactsV0,
+    PreparedNativeAuthenticatedGenesisH1InactiveExpectationV0,
+};
 
 use crate::{
     derive_signer_watermark_scope_v0,
@@ -1149,7 +1149,7 @@ pub struct PocoNodeAuthenticatedGenesisCommissioningHostV0<W> {
     facts: PocoNodeAuthenticatedGenesisCommissioningFactsV0,
 }
 
-#[cfg(all(test, feature = "recovery-test-support", target_os = "linux"))]
+#[cfg(all(test, feature = "recovery-process-test-support", target_os = "linux"))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum AuthenticatedGenesisH1ObligationAppCutForTestV0 {
     Absent,
@@ -1367,7 +1367,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeAuthenticatedGenesisCommissioningH
     /// test matrix. This helper is unavailable in production builds and
     /// deliberately returns no Core, callback, persistence barrier, App owner,
     /// or half-state handle. It is not process-SIGKILL or power-loss evidence.
-    #[cfg(all(test, feature = "recovery-test-support", target_os = "linux"))]
+    #[cfg(all(test, feature = "recovery-process-test-support", target_os = "linux"))]
     fn author_exact_empty_h1_c_plus_d_cut_for_test_v0(
         self,
         proposal: SignedProposalV0,
@@ -1466,7 +1466,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeAuthenticatedGenesisCommissioningH
     /// committed and acknowledged by the original narrow Core owner, but the
     /// released request is dropped before App creates a reservation. No
     /// process-local request, callback, Core, or store owner escapes.
-    #[cfg(all(test, feature = "recovery-test-support", target_os = "linux"))]
+    #[cfg(all(test, feature = "recovery-process-test-support", target_os = "linux"))]
     fn author_exact_empty_h1_obligation_cut_for_test_v0(
         self,
         proposal: SignedProposalV0,
@@ -2535,7 +2535,7 @@ fn map_store_path_error_v0(
     }
 }
 
-#[cfg(all(test, feature = "recovery-test-support", target_os = "linux"))]
+#[cfg(all(test, feature = "recovery-process-test-support", target_os = "linux"))]
 mod tests {
     use std::{
         fs,
@@ -2547,10 +2547,6 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use sha2::{Digest, Sha256};
     use tempfile::TempDir;
-    use trnm_consensus_app::{
-        initialize_legacy_genesis_application_test_fixture_v0,
-        NativeValidationRecoveryTestConfigBundleV0, CONFIG_SCHEMA_V1,
-    };
     use trnm_consensus_core::{leader_for, AuthenticatedGenesisApplicationParentV0, Core};
     use trnm_consensus_signer_journal::{
         ExternalWatermarkErrorV0, SignerJournalConflictV0, SqliteSignerJournalV0,
@@ -2561,6 +2557,10 @@ mod tests {
         GenesisQcV0, Height, ProposalWitnessV0, ProtocolVersion, QcReferenceV0, SignatureBytes,
         SignatureVerifier, SignedProposalV0, SigningRoot, StateRoot, Validator, ValidatorId,
         ValidatorSet, View, VotingPower,
+    };
+    use trnm_native_application::{
+        initialize_legacy_genesis_application_test_fixture_v0,
+        NativeValidationRecoveryTestConfigBundleV0, CONFIG_SCHEMA_V1,
     };
 
     use super::*;
@@ -2935,7 +2935,7 @@ mod tests {
             .iter()
             .map(|(id, role, key)| {
                 hash_domain_v0(
-                    "trnm.cometbft.authorized-signer.v1",
+                    "trnm.poco.authorized-signer.v1",
                     &[id.as_bytes(), role.as_bytes(), key.as_bytes()],
                 )
             })
@@ -2943,7 +2943,7 @@ mod tests {
         if leaves.is_empty() {
             return hash_domain_v0(
                 "trnm.merkle.empty.v1",
-                &[b"trnm.cometbft.authorized-signers.v1"],
+                &[b"trnm.poco.authorized-signers.v1"],
             );
         }
         while leaves.len() > 1 {
@@ -2955,7 +2955,7 @@ mod tests {
                     hash_domain_v0(
                         "trnm.merkle.parent.v1",
                         &[
-                            b"trnm.cometbft.authorized-signers.v1",
+                            b"trnm.poco.authorized-signers.v1",
                             left.as_slice(),
                             right.as_slice(),
                         ],
