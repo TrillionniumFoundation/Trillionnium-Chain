@@ -35,10 +35,13 @@ def harden_raw_key_gate() -> None:
 def remove_obsolete_codec_constant() -> None:
     path = ROOT / "trillionnium/crates/trnm-native-execution-v0/src/store.rs"
     text = path.read_text(encoding="utf-8")
-    line = "const AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;\n"
-    if text.count(line) != 1:
-        raise RuntimeError("obsolete authenticated-tree codec constant drift")
-    text = text.replace(line, "", 1)
+    obsolete = (
+        "#[cfg(test)]\n"
+        "const AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;\n"
+    )
+    if text.count(obsolete) != 1:
+        raise RuntimeError("obsolete authenticated-tree codec attribute/constant drift")
+    text = text.replace(obsolete, "", 1)
     if re.search(r"\bAUTH_TREE_SNAPSHOT_CODEC_VERSION_V0\b", text):
         raise RuntimeError("obsolete authenticated-tree codec identifier still referenced")
 
