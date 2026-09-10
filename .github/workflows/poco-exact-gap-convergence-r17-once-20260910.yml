@@ -1,0 +1,514 @@
+name: PoCO exact-gap convergence R17 (temporary)
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+    paths:
+      - .github/workflows/poco-exact-gap-convergence-r17-once-20260910.yml
+
+concurrency:
+  group: poco-only-final-convergence
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  CARGO_BUILD_JOBS: "1"
+  CARGO_TARGET_DIR: /tmp/trnm-r17-target
+  RUST_BACKTRACE: "1"
+  RUST_MIN_STACK: "33554432"
+
+jobs:
+  converge:
+    name: Inventory and qualify one exact native PoCO tree
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Check out exact branch head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Install pinned qualification tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ripgrep jq
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+          cargo fetch --manifest-path contracts/Cargo.toml --locked
+
+      - name: Complete pre-product materialization if required
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f tools/temporary_poco_convergence_r13.sh ]]; then
+            cat > tools/temporary_poco_r13_postfix.py <<'PY'
+          #!/usr/bin/env python3
+          from __future__ import annotations
+          import pathlib
+
+          ROOT = pathlib.Path(__file__).resolve().parents[1]
+
+          def patch_raw_key_boundary() -> None:
+              path = ROOT / "trillionnium/crates/trnm-poco-node/tests/raw_key_boundary.rs"
+              text = path.read_text(encoding="utf-8")
+              begin = text.find('        if relative == "src/recovery_tests.rs" {')
+              marker = "            continue;\n        }\n"
+              end = text.find(marker, begin)
+              if begin < 0 or end < 0:
+                  raise RuntimeError("recovery raw-key assertion block drift")
+              end += len(marker)
+              replacement = '''        if relative == "src/recovery_tests.rs" {
+                      let compact_lib: String = lib.chars().filter(|ch| !ch.is_whitespace()).collect();
+                      assert!(
+                          compact_lib.contains(
+                              "#[cfg(all(test,feature=\\\"recovery-process-test-support\\\",target_os=\\\"linux\\\"))]modrecovery_tests;"
+                          ),
+                          "recovery raw-key module lost its test/fixture gate"
+                      );
+                      continue;
+                  }
+          '''
+              path.write_text(text[:begin] + replacement + text[end:], encoding="utf-8")
+
+          def remove_unused_codec_constant() -> None:
+              path = ROOT / "trillionnium/crates/trnm-native-execution-v0/src/store.rs"
+              text = path.read_text(encoding="utf-8")
+              definition = "const AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;\n"
+              if text.count(definition) != 1:
+                  raise RuntimeError("snapshot codec definition drift")
+              path.write_text(text.replace(definition, "", 1), encoding="utf-8")
+
+          def main() -> int:
+              patch_raw_key_boundary()
+              remove_unused_codec_constant()
+              pathlib.Path(__file__).unlink()
+              return 0
+
+          if __name__ == "__main__":
+              raise SystemExit(main())
+          PY
+
+            python3 - <<'PY'
+          from pathlib import Path
+
+          native = Path("tools/temporary_poco_native_convergence_r13.py")
+          text = native.read_text(encoding="utf-8")
+          write = '    tests_path.write_text(text, encoding="utf-8")\n'
+          repair = (
+              '    stripped = text.rstrip()\n'
+              '    orphan = "#[test]"\n'
+              '    if stripped.endswith(orphan):\n'
+              '        text = stripped[: -len(orphan)].rstrip() + "\\n"\n'
+          )
+          if repair not in text:
+              if text.count(write) != 1:
+                  raise SystemExit("obsolete differential test cleanup drift")
+              text = text.replace(write, repair + write, 1)
+          native.write_text(text, encoding="utf-8")
+
+          shell = Path("tools/temporary_poco_convergence_r13.sh")
+          script = shell.read_text(encoding="utf-8")
+          call = "python3 tools/temporary_poco_native_convergence_r13.py\n"
+          postfix = "python3 tools/temporary_poco_r13_postfix.py\n"
+          if postfix not in script:
+              if script.count(call) != 1:
+                  raise SystemExit("native-transform invocation drift")
+              script = script.replace(call, call + postfix, 1)
+          anchor = "  .github/workflows/poco-only-convergence-r13-once-20260910.yml \\\n"
+          for path in (
+              ".github/workflows/poco-only-convergence-r14-once-20260910.yml",
+              ".github/workflows/poco-only-convergence-r15-once-20260910.yml",
+              ".github/workflows/poco-repository-gap-convergence-r16-once-20260910.yml",
+              ".github/workflows/poco-exact-gap-convergence-r17-once-20260910.yml",
+          ):
+              line = f"  {path} \\\n"
+              if line not in script:
+                  if anchor not in script:
+                      raise SystemExit("temporary cleanup anchor drift")
+                  script = script.replace(anchor, anchor + line, 1)
+          shell.write_text(script, encoding="utf-8")
+          PY
+            python3 -m py_compile \
+              tools/temporary_poco_native_convergence_r13.py \
+              tools/temporary_poco_r13_postfix.py
+            bash -n tools/temporary_poco_convergence_r13.sh
+            CARGO_TARGET_DIR=/tmp/trnm-r17-target \
+              bash tools/temporary_poco_convergence_r13.sh
+          fi
+
+          git fetch origin "$TARGET_BRANCH"
+          git reset --hard "origin/$TARGET_BRANCH"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Materialize controller-free immutable candidate
+        id: product
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f \
+            .github/workflows/poco-only-convergence-r14-once-20260910.yml \
+            .github/workflows/poco-only-convergence-r15-once-20260910.yml \
+            .github/workflows/poco-repository-gap-convergence-r16-once-20260910.yml \
+            .github/workflows/poco-exact-gap-convergence-r17-once-20260910.yml \
+            tools/temporary_poco_r13_postfix.py
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git add -A
+          git diff --cached --check
+          if [[ -n "$(git diff --cached --name-only)" ]]; then
+            git config user.name "Qian QI"
+            git config user.email "102159240+ProfHepta@users.noreply.github.com"
+            git commit -m "ci: remove completed PoCO convergence controllers"
+          fi
+          FINAL_COMMIT="$(git rev-parse HEAD)"
+          FINAL_TREE="$(git rev-parse 'HEAD^{tree}')"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          rm -rf /tmp/trnm-r17-final
+          git worktree add --detach /tmp/trnm-r17-final "$FINAL_COMMIT"
+          test "$(git -C /tmp/trnm-r17-final rev-parse HEAD)" = "$FINAL_COMMIT"
+          test "$(git -C /tmp/trnm-r17-final rev-parse 'HEAD^{tree}')" = "$FINAL_TREE"
+          test -z "$(git -C /tmp/trnm-r17-final status --porcelain --untracked-files=all)"
+          echo "commit=$FINAL_COMMIT" >> "$GITHUB_OUTPUT"
+          echo "tree=$FINAL_TREE" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$FINAL_COMMIT" >/tmp/trnm-r17-final-commit.txt
+          printf '%s\n' "$FINAL_TREE" >/tmp/trnm-r17-final-tree.txt
+
+      - name: Run repository and protocol truth gates
+        working-directory: /tmp/trnm-r17-final
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m compileall -q scripts tools formal conformance
+          python3 scripts/ci/check_native_consensus_only.py \
+            | tee /tmp/trnm-r17-native-only.json
+          bash scripts/ci/check_canonical_development_plan.sh \
+            | tee /tmp/trnm-r17-canonical-plan.log
+          bash scripts/ci/check_poco_bft_mainline_truth.sh \
+            | tee /tmp/trnm-r17-mainline.log
+          python3 scripts/ci/check_repository_truth_v1.py \
+            | tee /tmp/trnm-r17-repository-truth.json
+          python3 scripts/ci/check_required_protocol_contract_v1.py \
+            | tee /tmp/trnm-r17-protocol-contract.json
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build exact repository and external gap inventory
+        id: gaps
+        working-directory: /tmp/trnm-r17-final
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SOURCE_COMMIT="${{ steps.product.outputs.commit }}"
+          export SOURCE_TREE="${{ steps.product.outputs.tree }}"
+          python3 - <<'PY'
+          from __future__ import annotations
+          import json
+          import os
+          import pathlib
+          import re
+          import subprocess
+
+          root = pathlib.Path.cwd()
+          external_ids = {
+              "EXT-ANCHOR-HSM-001",
+              "EXT-AUDIT-001",
+              "EXT-G1-CAMPAIGN-001",
+              "EXT-POWERLOSS-001",
+              "EXT-REVIEW-001",
+              "EXT-SOAK-ACTIVATION-001",
+          }
+          canonical_files = [
+              root / "docs/development/CURRENT_SNAPSHOT_V1.json",
+              root / "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+              root / "docs/development/module-registry-v1.toml",
+              root / "docs/development/plan-manifest-v1.toml",
+              root / "docs/development/release-train-v1.toml",
+          ]
+          command_patterns = (
+              "*technical*convergence*.py",
+              "*technical*convergence*.sh",
+              "*documentation*integrity*.py",
+              "*documentation*integrity*.sh",
+              "*module*coverage*.py",
+              "*module*coverage*.sh",
+          )
+
+          def json_values(text: str):
+              decoder = json.JSONDecoder()
+              values = []
+              for index, char in enumerate(text):
+                  if char not in "[{":
+                      continue
+                  try:
+                      value, _ = decoder.raw_decode(text[index:])
+                  except json.JSONDecodeError:
+                      continue
+                  values.append(value)
+              return values
+
+          commands = []
+          seen = set()
+          for pattern in command_patterns:
+              for path in sorted((root / "scripts/ci").glob(pattern)):
+                  if path in seen or not path.is_file():
+                      continue
+                  seen.add(path)
+                  command = (["python3", str(path.relative_to(root))]
+                             if path.suffix == ".py"
+                             else ["bash", str(path.relative_to(root))])
+                  completed = subprocess.run(command, cwd=root, text=True, capture_output=True)
+                  commands.append({
+                      "path": path.relative_to(root).as_posix(),
+                      "command": command,
+                      "returncode": completed.returncode,
+                      "stdout": completed.stdout,
+                      "stderr": completed.stderr,
+                      "json": json_values(completed.stdout),
+                  })
+
+          marker_re = re.compile(
+              r"\b(?:G[0-9][A-Za-z0-9._-]*|P[0-9][A-Za-z0-9._-]*)"
+              r"[-_:](?:incomplete|open|missing|blocked)\b",
+              re.IGNORECASE,
+          )
+          repository_markers = []
+          external_markers = []
+          for path in canonical_files:
+              if not path.is_file():
+                  continue
+              text = path.read_text(encoding="utf-8")
+              for number, line in enumerate(text.splitlines(), 1):
+                  matches = sorted(set(match.group(0) for match in marker_re.finditer(line)))
+                  if not matches:
+                      continue
+                  row = {
+                      "path": path.relative_to(root).as_posix(),
+                      "line": number,
+                      "markers": matches,
+                      "text": line.strip()[:1000],
+                  }
+                  if any(identifier in line for identifier in external_ids):
+                      external_markers.append(row)
+                  else:
+                      repository_markers.append(row)
+
+          runtime_gap_count = 0
+          operation_open_count = 0
+          operation_catalog_incomplete = False
+          failed_convergence_commands = []
+          evidence = []
+          for command in commands:
+              if command["returncode"] != 0:
+                  failed_convergence_commands.append(command["path"])
+              for value in command["json"]:
+                  if not isinstance(value, dict):
+                      continue
+                  evidence.append(value)
+                  runtime = value.get("runtime_gaps")
+                  if isinstance(runtime, int) and not isinstance(runtime, bool):
+                      runtime_gap_count = max(runtime_gap_count, runtime)
+                  catalog = value.get("operation_catalog")
+                  if isinstance(catalog, dict):
+                      complete = catalog.get("operation_catalog_complete")
+                      if complete is False:
+                          operation_catalog_incomplete = True
+                      opened = catalog.get("operations_with_open_requirements")
+                      if isinstance(opened, int) and not isinstance(opened, bool):
+                          operation_open_count = max(operation_open_count, opened)
+
+          repository_gap_count = (
+              len(repository_markers)
+              + runtime_gap_count
+              + operation_open_count
+              + int(operation_catalog_incomplete)
+              + len(failed_convergence_commands)
+          )
+          report = {
+              "schema": "trnm-poco-exact-gap-inventory-r17-v1",
+              "source_commit": os.environ["SOURCE_COMMIT"],
+              "source_tree": os.environ["SOURCE_TREE"],
+              "repository_gap_count": repository_gap_count,
+              "runtime_gap_count": runtime_gap_count,
+              "operation_open_count": operation_open_count,
+              "operation_catalog_incomplete": operation_catalog_incomplete,
+              "repository_markers": repository_markers,
+              "external_markers": external_markers,
+              "external_blocker_ids": sorted(external_ids),
+              "failed_convergence_commands": failed_convergence_commands,
+              "convergence_commands": commands,
+              "parsed_evidence": evidence,
+          }
+          pathlib.Path("/tmp/trnm-r17-gap-inventory.json").write_text(
+              json.dumps(report, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          summary = [
+              f"source_commit={report['source_commit']}",
+              f"source_tree={report['source_tree']}",
+              f"repository_gap_count={repository_gap_count}",
+              f"runtime_gap_count={runtime_gap_count}",
+              f"operation_open_count={operation_open_count}",
+              f"operation_catalog_incomplete={str(operation_catalog_incomplete).lower()}",
+              f"repository_marker_count={len(repository_markers)}",
+              f"external_blocker_count={len(external_ids)}",
+              f"failed_convergence_command_count={len(failed_convergence_commands)}",
+          ]
+          for row in repository_markers:
+              summary.append(f"REPOSITORY {row['path']}:{row['line']} {row['text']}")
+          for row in external_markers:
+              summary.append(f"EXTERNAL {row['path']}:{row['line']} {row['text']}")
+          pathlib.Path("/tmp/trnm-r17-gap-summary.txt").write_text(
+              "\n".join(summary) + "\n", encoding="utf-8"
+          )
+          print(json.dumps({
+              "repository_gap_count": repository_gap_count,
+              "runtime_gap_count": runtime_gap_count,
+              "operation_open_count": operation_open_count,
+              "external_blocker_count": len(external_ids),
+          }, sort_keys=True))
+          with pathlib.Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(f"repository_gap_count={repository_gap_count}\n")
+              output.write(f"external_blocker_count={len(external_ids)}\n")
+          PY
+
+      - name: Verify external evidence remains fail-closed unless authentic evidence exists
+        working-directory: /tmp/trnm-r17-final
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_external_evidence_v1.py
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py --require-all \
+            --source-commit "${{ steps.product.outputs.commit }}" \
+            --source-tree "${{ steps.product.outputs.tree }}" \
+            --output /tmp/trnm-r17-external-evidence.json \
+            >/tmp/trnm-r17-external-evidence.stdout \
+            2>/tmp/trnm-r17-external-evidence.stderr
+          rc=$?
+          set -e
+          if [[ "${{ steps.gaps.outputs.external_blocker_count }}" = "0" ]]; then
+            test "$rc" -eq 0
+          else
+            test "$rc" -eq 2
+            grep -q "external evidence gate remains open" /tmp/trnm-r17-external-evidence.stderr
+          fi
+
+      - name: Compile every workspace and contract target
+        working-directory: /tmp/trnm-r17-final
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "$CARGO_TARGET_DIR"
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline -j 1 \
+            2>&1 | tee /tmp/trnm-r17-workspace-check.log
+          cargo check --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline -j 1 \
+            2>&1 | tee /tmp/trnm-r17-contract-check.log
+
+      - name: Execute complete workspace and contract regression corpus
+        working-directory: /tmp/trnm-r17-final
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=30s 7200s \
+            cargo test --manifest-path trillionnium/Cargo.toml \
+              --workspace --all-targets --locked --offline --no-fail-fast -j 1 -- \
+              --test-threads=1 \
+            2>&1 | tee /tmp/trnm-r17-workspace-test.log
+          cargo test --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline -j 1 \
+            2>&1 | tee /tmp/trnm-r17-contract-test.log
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Execute strict production-boundary Clippy
+        working-directory: /tmp/trnm-r17-final
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path contracts/Cargo.toml \
+            --workspace --all-targets --locked --offline -j 1 -- -D warnings \
+            2>&1 | tee /tmp/trnm-r17-contract-clippy.log
+          cd trillionnium
+          : >/tmp/trnm-r17-boundary-clippy.log
+          for package in \
+            trnm-state trnm-consensus-types trnm-consensus-crypto \
+            trnm-consensus-core trnm-consensus-safety-rules \
+            trnm-consensus-safety-store trnm-consensus-signer-journal \
+            trnm-native-application trnm-native-application-sqlite \
+            trnm-native-execution-v0 trnm-durable-file-adapters-v0 \
+            trnm-tx-lifecycle-v0 trnm-state-sync-v0 trnm-migration-v0 \
+            trnm-control-plane-v0 trnm-release-bundle-v0 trnm-node-boundary-v0 \
+            trnm-poco-node-production-v0 trnm-production-adapter-conformance-v0 \
+            trnm-poco-node trnm-poco-node-authority trnm-poco-node-io \
+            trnm-poco-node-host trnm-poco-node-cli
+          do
+            echo "strict-clippy package=${package}" | tee -a /tmp/trnm-r17-boundary-clippy.log
+            cargo clippy -p "$package" --all-targets --locked --offline -j 1 -- -D warnings \
+              2>&1 | tee -a /tmp/trnm-r17-boundary-clippy.log
+          done
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Publish only an exact zero-repository-gap candidate
+        if: steps.gaps.outputs.repository_gap_count == '0'
+        working-directory: /tmp/trnm-r17-final
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ steps.product.outputs.commit }}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${{ steps.product.outputs.tree }}"
+          python3 scripts/ci/check_native_consensus_only.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_required_protocol_contract_v1.py
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git -C "$GITHUB_WORKSPACE" push origin \
+            "${{ steps.product.outputs.commit }}:refs/heads/$TARGET_BRANCH"
+
+      - name: Reject nonzero repository-owned gap inventory
+        if: steps.gaps.outputs.repository_gap_count != '0'
+        shell: bash
+        run: |
+          cat /tmp/trnm-r17-gap-summary.txt >&2
+          exit 3
+
+      - name: Upload exact R17 diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-r17-exact-gap-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            /tmp/trnm-r17-final-commit.txt
+            /tmp/trnm-r17-final-tree.txt
+            /tmp/trnm-r17-native-only.json
+            /tmp/trnm-r17-canonical-plan.log
+            /tmp/trnm-r17-mainline.log
+            /tmp/trnm-r17-repository-truth.json
+            /tmp/trnm-r17-protocol-contract.json
+            /tmp/trnm-r17-gap-inventory.json
+            /tmp/trnm-r17-gap-summary.txt
+            /tmp/trnm-r17-external-evidence.json
+            /tmp/trnm-r17-external-evidence.stdout
+            /tmp/trnm-r17-external-evidence.stderr
+            /tmp/trnm-r17-workspace-check.log
+            /tmp/trnm-r17-contract-check.log
+            /tmp/trnm-r17-workspace-test.log
+            /tmp/trnm-r17-contract-test.log
+            /tmp/trnm-r17-contract-clippy.log
+            /tmp/trnm-r17-boundary-clippy.log
