@@ -42,18 +42,23 @@ def remove_obsolete_codec_constant() -> None:
     if re.search(r"\bAUTH_TREE_SNAPSHOT_CODEC_VERSION_V0\b", text):
         raise RuntimeError("obsolete authenticated-tree codec identifier still referenced")
 
-    compact = "".join(text.split())
-    native_definition = "constNATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0:u16=1;"
-    native_encode_use = "codec_version:NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0,"
-    native_decode_use = (
-        "snapshot.codec_version==NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0,"
+    native = "NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0"
+    definitions = re.findall(
+        rf"(?m)^const\s+{native}\s*:\s*u16\s*=\s*1\s*;\s*$",
+        text,
     )
-    if compact.count(native_definition) != 1:
+    if len(definitions) != 1:
         raise RuntimeError("native authenticated-tree codec definition drift")
-    if compact.count(native_encode_use) != 1:
-        raise RuntimeError("native authenticated-tree snapshot encoder drift")
-    if compact.count(native_decode_use) != 1:
-        raise RuntimeError("native authenticated-tree snapshot decoder drift")
+
+    encode_start = text.find("fn encode_authenticated_snapshot_v0")
+    decode_start = text.find("fn decode_authenticated_snapshot_v0")
+    validate_start = text.find("fn validate_snapshot_v0")
+    if not (0 <= encode_start < decode_start < validate_start):
+        raise RuntimeError("native authenticated-tree snapshot function ordering drift")
+    if native not in text[encode_start:decode_start]:
+        raise RuntimeError("native authenticated-tree snapshot encoder lost codec binding")
+    if native not in text[decode_start:validate_start]:
+        raise RuntimeError("native authenticated-tree snapshot decoder lost codec validation")
     path.write_text(text, encoding="utf-8")
 
 
