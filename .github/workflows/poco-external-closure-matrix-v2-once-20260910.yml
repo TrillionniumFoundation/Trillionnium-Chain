@@ -1,0 +1,212 @@
+name: PoCO external closure matrix v2 (one-shot)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-external-closure-matrix-v2-once-20260910.yml
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+  statuses: read
+  metadata: read
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence/poco-external-blocker-convergence-20260910-r2
+  PR_NUMBER: "117"
+
+jobs:
+  finalize-matrix:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out operations branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify all repository-owned external orchestration surfaces
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$PRODUCT_BRANCH" "$EVIDENCE_BRANCH"
+          product_commit=$(git rev-parse "origin/$PRODUCT_BRANCH")
+          product_tree=$(git rev-parse "$product_commit^{tree}")
+          evidence_worktree="${RUNNER_TEMP}/trnm-closure-matrix-v2"
+          rm -rf "$evidence_worktree"
+          git worktree add --detach "$evidence_worktree" "origin/$EVIDENCE_BRANCH"
+          export PRODUCT_COMMIT="$product_commit" PRODUCT_TREE="$product_tree" EVIDENCE_WORKTREE="$evidence_worktree"
+          python3 - <<'PY'
+          from __future__ import annotations
+          import datetime as dt, json, os, urllib.error, urllib.request
+          from pathlib import Path
+
+          repo=os.environ['GH_REPO'];token=os.environ['GH_TOKEN']
+          product_branch=os.environ['PRODUCT_BRANCH'];commit=os.environ['PRODUCT_COMMIT'];tree=os.environ['PRODUCT_TREE']
+          evidence_branch=os.environ['EVIDENCE_BRANCH'];pr_number=int(os.environ['PR_NUMBER'])
+          root=Path(os.environ['EVIDENCE_WORKTREE']);base=root/'evidence/external-orchestration'
+          blockers=(
+              'EXT-REVIEW-001','EXT-G1-CAMPAIGN-001','EXT-ANCHOR-HSM-001',
+              'EXT-POWERLOSS-001','EXT-AUDIT-001','EXT-SOAK-ACTIVATION-001',
+          )
+          paths={
+              'orchestration':base/'poco-external-blocker-orchestration-v2.json',
+              'review_escalation':base/'poco-independent-review-escalation-v1.json',
+              'execution_pack':base/'execution-pack-v1/manifest.json',
+              'security_dispatch':base/'poco-final-security-dispatch-v1.json',
+              'all_branch_candidate_audit':base/'poco-all-branch-evidence-candidate-audit-v1.json',
+              'submission_inventory':base/'poco-external-evidence-inventory-v1.json',
+              'infrastructure_inventory':base/'poco-external-infrastructure-inventory-v1.json',
+              'adaptive_dispatch':base/'poco-adaptive-external-workflow-dispatch-v1.json',
+              'structural_intake_workflow':root/'.github/workflows/poco-external-evidence-intake.yml',
+          }
+          missing=[name for name,path in paths.items() if not path.is_file()]
+          if missing:raise SystemExit(f'missing repository-owned external surfaces: {missing}')
+          docs={name:json.loads(path.read_text()) for name,path in paths.items() if path.suffix=='.json'}
+          for name,data in docs.items():
+              bound_commit=data.get('source_commit',data.get('product_commit'))
+              bound_tree=data.get('source_tree',data.get('product_tree'))
+              if bound_commit!=commit or bound_tree!=tree:
+                  raise SystemExit(f'{name}: source tuple drift: {bound_commit}/{bound_tree}')
+          if set(docs['execution_pack']['blockers'])!=set(blockers):raise SystemExit('blocker inventory drift')
+          if docs['all_branch_candidate_audit']['automatic_closure_allowed'] is not False:raise SystemExit('candidate audit permits auto-close')
+          if any(docs['submission_inventory']['accepted'].values()):raise SystemExit('unauthenticated submission accepted')
+          if docs['infrastructure_inventory']['hardware_or_independence_proven_by_inventory'] is not False:raise SystemExit('inventory falsely proves hardware/independence')
+          if docs['adaptive_dispatch']['dispatch_does_not_authenticate_external_evidence'] is not True:raise SystemExit('dispatch truth drift')
+
+          def req(path):
+              r=urllib.request.Request('https://api.github.com'+path,method='GET')
+              for k,v in {'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'trnm-closure-matrix-v2'}.items():r.add_header(k,v)
+              try:
+                  with urllib.request.urlopen(r,timeout=60) as x:
+                      raw=x.read();return x.status,json.loads(raw) if raw else None
+              except urllib.error.HTTPError as e:
+                  raw=e.read().decode(errors='replace')
+                  try:body=json.loads(raw)
+                  except:body={'message':raw}
+                  return e.code,body
+
+          status,pr=req(f'/repos/{repo}/pulls/{pr_number}')
+          if status!=200:raise SystemExit(f'PR read failed: {status} {pr}')
+          if pr.get('state')!='open' or pr.get('draft') is not True or pr.get('merged') is not False:raise SystemExit('PR fail-closed state drift')
+          if ((pr.get('head') or {}).get('sha'))!=commit:raise SystemExit('PR head/source mismatch')
+          status,requested=req(f'/repos/{repo}/pulls/{pr_number}/requested_reviewers')
+          requested_users=[item['login'] for item in requested.get('users',[])] if status==200 else []
+          requested_teams=[item['slug'] for item in requested.get('teams',[])] if status==200 else []
+          status,reviews=req(f'/repos/{repo}/pulls/{pr_number}/reviews?per_page=100')
+          exact_approvals=[]
+          if status==200 and isinstance(reviews,list):
+              exact_approvals=[{'user':(item.get('user') or {}).get('login'),'commit_id':item.get('commit_id'),'submitted_at':item.get('submitted_at')} for item in reviews if item.get('state')=='APPROVED' and item.get('commit_id')==commit]
+
+          issues=[]
+          for page in range(1,6):
+              status,body=req(f'/repos/{repo}/issues?state=all&per_page=100&page={page}')
+              if status!=200:raise SystemExit(f'issue read failed: {status} {body}')
+              issues.extend(body)
+              if len(body)<100:break
+          tracker={}
+          for bid in blockers:
+              matches=sorted([i for i in issues if 'pull_request' not in i and bid in ((i.get('title') or '')+'\n'+(i.get('body') or ''))],key=lambda i:i['number'])
+              opened=[i for i in matches if i.get('state')=='open']
+              if len(opened)!=1:raise SystemExit(f'{bid}: expected one open canonical tracker, got {len(opened)}')
+              canonical=opened[0]
+              labels={x['name'] for x in canonical.get('labels',[])}
+              if not {'external-evidence','release-blocker','poco'}<=labels:raise SystemExit(f'{bid}: label drift')
+              tracker[bid]={
+                  'status':'open','canonical_issue':canonical['number'],'url':canonical['html_url'],
+                  'assignees':[x['login'] for x in canonical.get('assignees',[])],
+                  'closed_duplicate_trackers':[x['number'] for x in matches if x.get('state')=='closed'],
+                  'submission_count':docs['submission_inventory']['by_blocker_submission_count'][bid],
+                  'accepted_submission':False,'independent_acceptance_authenticated':False,
+                  'historical_candidate_count':docs['all_branch_candidate_audit']['by_blocker_counts'][bid],
+                  'exact_source_candidate_count':docs['all_branch_candidate_audit']['by_blocker_exact_source_counts'][bid],
+                  'visible_matching_runners':len(docs['infrastructure_inventory']['matching_runners'].get(bid,[])),
+                  'adaptive_dispatch_records':[r for r in docs['adaptive_dispatch']['records'] if bid in r.get('blockers',[])],
+              }
+
+          status,statuses=req(f'/repos/{repo}/commits/{commit}/statuses?per_page=100')
+          external_status=[x for x in statuses if x.get('context')=='PoCO external evidence / all six blockers'] if status==200 and isinstance(statuses,list) else []
+          if not external_status or external_status[0].get('state')!='pending':raise SystemExit('pending external commit status missing')
+
+          matrix={
+              'schema':'trnm.poco.external-closure-matrix.v2',
+              'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
+              'repository':repo,'product_branch':product_branch,'source_commit':commit,'source_tree':tree,
+              'evidence_branch':evidence_branch,
+              'pull_request':{
+                  'number':pr_number,'state':'open','draft':True,'merged':False,'head_sha':commit,
+                  'requested_reviewers':requested_users,'requested_teams':requested_teams,
+                  'exact_head_approvals':exact_approvals,
+              },
+              'repository_owned_external_orchestration':{
+                  'status':'complete',
+                  'required_surfaces':{name:path.relative_to(root).as_posix() for name,path in paths.items()},
+                  'security_workflow_dispatch_count':sum(r.get('status')=='dispatched' for r in docs['security_dispatch'].get('records',[])),
+                  'adaptive_dispatch_count':docs['adaptive_dispatch']['dispatched_count'],
+                  'adaptive_unresolved_input_count':docs['adaptive_dispatch']['unresolved_count'],
+                  'infrastructure_api_surface_status':docs['infrastructure_inventory']['api_surface_status'],
+              },
+              'blockers':tracker,
+              'external_commit_status':'pending',
+              'all_repository_owned_blockers_closed':True,
+              'all_repository_owned_external_orchestration_complete':True,
+              'all_external_blockers_closed':False,
+              'all_gaps_closed':False,
+              'production_candidate':False,
+              'production_consensus_activation':False,
+              'public_testnet_ready':False,
+              'release_ready':False,
+              'remaining_dependency':'Independent people, real multi-host infrastructure, non-exportable HSM/KMS, physical power-loss facilities, third-party audit and actually elapsed soak time must produce authenticated evidence.',
+          }
+          out=Path(os.environ['RUNNER_TEMP'])/'poco-external-closure-matrix-v2.json'
+          out.write_text(json.dumps(matrix,indent=2,sort_keys=True)+'\n')
+          print(json.dumps({'source_commit':commit,'orchestration_complete':True,'exact_head_approvals':len(exact_approvals),'all_external_blockers_closed':False},sort_keys=True))
+          PY
+
+      - name: Publish matrix v2
+        shell: bash
+        run: |
+          set -euo pipefail
+          ledger="${RUNNER_TEMP}/poco-external-closure-matrix-v2.json"
+          test -s "$ledger"
+          worktree="${RUNNER_TEMP}/trnm-closure-matrix-v2-publish"
+          rm -rf "$worktree"
+          git worktree add --detach "$worktree" "origin/$EVIDENCE_BRANCH"
+          cd "$worktree"
+          mkdir -p evidence/external-orchestration
+          cp "$ledger" evidence/external-orchestration/poco-external-closure-matrix-v2.json
+          git add evidence/external-orchestration/poco-external-closure-matrix-v2.json
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "evidence: finalize external blocker orchestration matrix v2"
+          git push origin "HEAD:refs/heads/$EVIDENCE_BRANCH"
+
+      - name: Assert truthful final state
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          d=json.loads((Path(os.environ['RUNNER_TEMP'])/'poco-external-closure-matrix-v2.json').read_text())
+          assert d['source_commit']==os.environ['PRODUCT_COMMIT']
+          assert d['source_tree']==os.environ['PRODUCT_TREE']
+          assert d['all_repository_owned_blockers_closed'] is True
+          assert d['all_repository_owned_external_orchestration_complete'] is True
+          assert d['all_external_blockers_closed'] is False
+          assert d['all_gaps_closed'] is False
+          assert d['production_candidate'] is False
+          assert d['production_consensus_activation'] is False
+          assert d['public_testnet_ready'] is False
+          assert d['release_ready'] is False
+          assert all(item['status']=='open' for item in d['blockers'].values())
+          PY
