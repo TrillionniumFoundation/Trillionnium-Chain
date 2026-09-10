@@ -1,0 +1,175 @@
+name: PoCO external evidence inventory (one-shot)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-external-evidence-inventory-once-20260910.yml
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  metadata: read
+
+env:
+  PRODUCT_BRANCH: chore/poco-only-purge-20260909
+  EVIDENCE_BRANCH: evidence/poco-external-blocker-convergence-20260910-r2
+  PR_NUMBER: "117"
+
+jobs:
+  inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out operations branch and fetch evidence
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ops/poco-external-blocker-convergence-20260910-r2
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Validate every current submission without authenticating it
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$PRODUCT_BRANCH" "$EVIDENCE_BRANCH"
+          product_commit=$(git rev-parse "origin/$PRODUCT_BRANCH")
+          product_tree=$(git rev-parse "$product_commit^{tree}")
+          evidence_worktree="${RUNNER_TEMP}/trnm-evidence-inventory"
+          rm -rf "$evidence_worktree"
+          git worktree add --detach "$evidence_worktree" "origin/$EVIDENCE_BRANCH"
+          export PRODUCT_COMMIT="$product_commit" PRODUCT_TREE="$product_tree" EVIDENCE_WORKTREE="$evidence_worktree"
+          python3 - <<'PY'
+          from __future__ import annotations
+          import datetime as dt, json, os, subprocess
+          from pathlib import Path
+
+          root=Path(os.environ['EVIDENCE_WORKTREE'])
+          commit=os.environ['PRODUCT_COMMIT']; tree=os.environ['PRODUCT_TREE']
+          pack=root/'evidence/external-orchestration/execution-pack-v1'
+          manifest=json.loads((pack/'manifest.json').read_text())
+          assert manifest['source_commit']==commit
+          assert manifest['source_tree']==tree
+          blockers=tuple(manifest['blockers'])
+          records=[]
+          submissions_root=pack/'submissions'
+          for submission in sorted(submissions_root.glob('*/*/submission.json')) if submissions_root.is_dir() else []:
+              proc=subprocess.run(
+                  ['python3',str(pack/'validate_submission.py'),str(submission)],
+                  cwd=root,capture_output=True,text=True,
+              )
+              report=None
+              if proc.returncode==0:
+                  try: report=json.loads(proc.stdout)
+                  except Exception: report=None
+              records.append({
+                  'path':submission.relative_to(root).as_posix(),
+                  'blocker_id':submission.parts[-3],
+                  'submission_id':submission.parts[-2],
+                  'structural_validator_rc':proc.returncode,
+                  'stdout':proc.stdout[-4000:],
+                  'stderr':proc.stderr[-4000:],
+                  'structural_report':report,
+                  'signature_authenticity_verified':False,
+                  'identity_trust_chain_verified':False,
+                  'external_acceptance_recorded':False,
+                  'blocker_closed':False,
+              })
+          by_blocker={bid:[r for r in records if r['blocker_id']==bid] for bid in blockers}
+          accepted={bid:False for bid in blockers}
+          inventory={
+              'schema':'trnm.poco.external-evidence-inventory.v1',
+              'generated_at':dt.datetime.now(dt.timezone.utc).isoformat(),
+              'product_commit':commit,
+              'product_tree':tree,
+              'evidence_branch':os.environ['EVIDENCE_BRANCH'],
+              'submission_count':len(records),
+              'records':records,
+              'by_blocker_submission_count':{bid:len(items) for bid,items in by_blocker.items()},
+              'accepted':accepted,
+              'all_external_blockers_closed':False,
+              'production_candidate':False,
+              'production_consensus_activation':False,
+              'public_testnet_ready':False,
+              'release_ready':False,
+              'reason':'Structural validation cannot authenticate signer identity, organizational independence, hardware reality, physical power-loss facts, or elapsed production soak time.',
+          }
+          out=Path(os.environ['RUNNER_TEMP'])/'poco-external-evidence-inventory-v1.json'
+          out.write_text(json.dumps(inventory,indent=2,sort_keys=True)+'\n')
+          print(json.dumps({
+              'submission_count':len(records),
+              'by_blocker_submission_count':inventory['by_blocker_submission_count'],
+              'all_external_blockers_closed':False,
+          },sort_keys=True))
+          PY
+
+      - name: Publish inventory ledger
+        shell: bash
+        run: |
+          set -euo pipefail
+          ledger="${RUNNER_TEMP}/poco-external-evidence-inventory-v1.json"
+          test -s "$ledger"
+          worktree="${RUNNER_TEMP}/trnm-evidence-inventory-publish"
+          rm -rf "$worktree"
+          git worktree add --detach "$worktree" "origin/$EVIDENCE_BRANCH"
+          cd "$worktree"
+          mkdir -p evidence/external-orchestration
+          cp "$ledger" evidence/external-orchestration/poco-external-evidence-inventory-v1.json
+          git add evidence/external-orchestration/poco-external-evidence-inventory-v1.json
+          git config user.name "Qian QI"
+          git config user.email "102159240+ProfHepta@users.noreply.github.com"
+          git commit -m "evidence: inventory current external submissions fail-closed"
+          git push origin "HEAD:refs/heads/$EVIDENCE_BRANCH"
+
+      - name: Report fail-closed inventory on PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.error, urllib.request
+          from pathlib import Path
+          repo=os.environ['GH_REPO']; token=os.environ['GH_TOKEN']; pr=os.environ['PR_NUMBER']
+          d=json.loads((Path(os.environ['RUNNER_TEMP'])/'poco-external-evidence-inventory-v1.json').read_text())
+          marker=f"<!-- trnm-external-evidence-inventory-v1:{d['product_commit']} -->"
+          rows='\n'.join(f"| `{bid}` | {count} | OPEN |" for bid,count in d['by_blocker_submission_count'].items())
+          body=(f"{marker}\n### External evidence submission inventory\n\n"
+                f"Exact source: `{d['product_commit']}` / tree `{d['product_tree']}`.\n\n"
+                "| Blocker | Current submissions | Acceptance |\n|---|---:|---|\n"+rows+"\n\n"
+                "Every blocker remains OPEN. Structural submission presence is not identity/signature/hardware/wall-clock authentication.")
+          def req(method,path,payload=None):
+              data=None if payload is None else json.dumps(payload).encode()
+              r=urllib.request.Request('https://api.github.com'+path,data=data,method=method)
+              for k,v in {'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'trnm-evidence-inventory-comment'}.items():r.add_header(k,v)
+              try:
+                  with urllib.request.urlopen(r,timeout=60) as x:
+                      b=x.read();return x.status,json.loads(b) if b else None
+              except urllib.error.HTTPError as e:
+                  b=e.read().decode(errors='replace')
+                  try:b=json.loads(b)
+                  except:b={'message':b}
+                  return e.code,b
+          status,comments=req('GET',f'/repos/{repo}/issues/{pr}/comments?per_page=100')
+          if not(status==200 and any(marker in (c.get('body') or '') for c in comments)):
+              st,resp=req('POST',f'/repos/{repo}/issues/{pr}/comments',{'body':body})
+              if st!=201: raise SystemExit(f'comment failed: {st} {resp}')
+          PY
+
+      - name: Assert no automatic acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          d=json.loads((Path(os.environ['RUNNER_TEMP'])/'poco-external-evidence-inventory-v1.json').read_text())
+          assert d['product_commit']==os.environ['PRODUCT_COMMIT']
+          assert d['product_tree']==os.environ['PRODUCT_TREE']
+          assert not any(d['accepted'].values())
+          assert d['all_external_blockers_closed'] is False
+          assert d['release_ready'] is False
+          PY
