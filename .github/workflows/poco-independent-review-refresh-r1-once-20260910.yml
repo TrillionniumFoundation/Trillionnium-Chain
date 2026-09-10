@@ -1,0 +1,98 @@
+name: PoCO independent review refresh R1 (temporary)
+
+on:
+  push:
+    branches:
+      - ops/poco-external-blocker-convergence-20260910-r2
+    paths:
+      - .github/workflows/poco-independent-review-refresh-r1-once-20260910.yml
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: poco-independent-review-refresh-r1
+  cancel-in-progress: true
+
+env:
+  TARGET_BRANCH: chore/poco-only-purge-20260909
+  PR_NUMBER: "117"
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  refresh:
+    name: Request independent review against settled exact source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - name: Wait for product publisher to settle
+        shell: bash
+        run: |
+          set -euo pipefail
+          settled=false
+          for attempt in $(seq 1 240); do
+            active="$(gh api \
+              "repos/$GITHUB_REPOSITORY/actions/runs?branch=$TARGET_BRANCH&per_page=100" \
+              --jq '[.workflow_runs[] | select(.name | test("PoCO-only convergence R(14|15|16)")) | select(.status != "completed")] | length')"
+            if [[ "$active" -eq 0 ]]; then
+              settled=true
+              break
+            fi
+            sleep 30
+          done
+          test "$settled" = true
+
+      - name: Resolve final source identity and refresh reviewers
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE_COMMIT="$(gh api "repos/$GITHUB_REPOSITORY/commits/$TARGET_BRANCH" --jq .sha)"
+          SOURCE_TREE="$(gh api "repos/$GITHUB_REPOSITORY/git/commits/$SOURCE_COMMIT" --jq .tree.sha)"
+          PR_HEAD="$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)"
+          test "$PR_HEAD" = "$SOURCE_COMMIT"
+          gh api --method POST \
+            "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/requested_reviewers" \
+            -f 'reviewers[]=Franksudoman' \
+            -f 'reviewers[]=Tomasrgbsf' \
+            >/tmp/poco-review-request.json
+          printf '%s\n' "$SOURCE_COMMIT" >/tmp/poco-review-source-commit.txt
+          printf '%s\n' "$SOURCE_TREE" >/tmp/poco-review-source-tree.txt
+          echo "commit=$SOURCE_COMMIT" >> "$GITHUB_OUTPUT"
+          echo "tree=$SOURCE_TREE" >> "$GITHUB_OUTPUT"
+
+      - name: Publish exact-head review handoff without self-acceptance
+        shell: bash
+        env:
+          SOURCE_COMMIT: ${{ steps.source.outputs.commit }}
+          SOURCE_TREE: ${{ steps.source.outputs.tree }}
+        run: |
+          set -euo pipefail
+          cat >/tmp/poco-review-comment.md <<EOF
+          ### Independent PoCO review handoff
+
+          Review is requested against the exact current source only:
+
+          - commit: \`$SOURCE_COMMIT\`
+          - tree: \`$SOURCE_TREE\`
+          - branch: \`$TARGET_BRANCH\`
+
+          Repository automation does **not** grant approval and does **not** close independent-review, audit, HSM, power-loss, long-campaign, or soak-activation requirements. Please review the exact diff and submit an ordinary GitHub review on this head. Any later head change invalidates this handoff and requires a fresh review.
+          EOF
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" \
+            --body-file /tmp/poco-review-comment.md
+
+      - name: Upload review handoff ledger
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: poco-independent-review-handoff-${{ github.run_id }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            /tmp/poco-review-request.json
+            /tmp/poco-review-source-commit.txt
+            /tmp/poco-review-source-tree.txt
+            /tmp/poco-review-comment.md
