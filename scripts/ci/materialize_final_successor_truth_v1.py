@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib, json, subprocess
+import hashlib, json, re, subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BRANCH = "refs/heads/fix/chain-plan-v2-repository-closure-20260911"
 PR = 121
+FINAL_CONSOLIDATION = "0c769a8eae216e3fbfa9b47e4f545efced7e99f0"
 
 
-def replace(path: str, pairs: list[tuple[str,str]]) -> None:
+def replace(path: str, pairs: list[tuple[str, str]]) -> None:
     p = ROOT / path
     text = p.read_text()
     for old, new in pairs:
         if old not in text:
-            raise SystemExit(f"missing expected text in {path}: {old[:100]!r}")
+            raise SystemExit(f"missing expected text in {path}: {old[:120]!r}")
         text = text.replace(old, new)
     p.write_text(text)
+
 
 plan = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 replace(plan, [
@@ -60,6 +62,7 @@ for item in block.get("repository_blockers", []):
     if item.get("id") == "P0-TRUTH-001":
         item.setdefault("implementation", {})["successor_pr"] = PR
         item["implementation"]["absorbed_source_pull_requests"] = [62, 85, 86]
+        item["implementation"]["full_branch_ancestry_consolidation"] = FINAL_CONSOLIDATION
     item["next_actions"] = [x.replace("PR 62", "PR 121").replace("PR62", "PR121") for x in item.get("next_actions", [])]
 block_path.write_text(json.dumps(block, indent=2) + "\n")
 
@@ -69,27 +72,65 @@ replace("RELEASE_READINESS.md", [
     ("all required checks on one unchanged PR #62 head and its prospective merge;", "all required checks on one unchanged PR #121 head and its prospective merge;"),
 ])
 
+# Converge the active documentation lineage registry itself. Historical PRs stay
+# in Git/Plan provenance only; they are no longer an active integration stack.
+registry_path = ROOT / "config/documentation-contracts-v1.json"
+registry = json.loads(registry_path.read_text())
+obs = registry["integration_observation"]
+obs["observed_source"] = FINAL_CONSOLIDATION
+obs["selected_successor_pr"] = PR
+obs["stack"] = [{
+    "pr": PR,
+    "base_ref": "main",
+    "head_ref": "fix/chain-plan-v2-repository-closure-20260911",
+}]
+registry_path.write_text(json.dumps(registry, indent=2) + "\n")
+
+# Keep the fail-closed documentation validator and its retained mutant test in
+# sync with the single active PR121 lineage. We are changing the asserted truth,
+# not weakening the assertion.
+replace("scripts/ci/check_documentation_contracts_v1.py", [
+    ("and obs['selected_successor_pr'] == 62,", "and obs['selected_successor_pr'] == 121,"),
+    ("    expected_stack = [\n        {'pr': 62, 'base_ref': 'main', 'head_ref': 'work/plan-v2-full-gap-closure-20260902'},\n        {'pr': 85, 'base_ref': 'work/plan-v2-full-gap-closure-20260902', 'head_ref': 'work/poco-authority-ai-convergence-20260907'},\n        {'pr': 86, 'base_ref': 'work/poco-authority-ai-convergence-20260907', 'head_ref': 'fix/chain-pcc1-runtime-integration'},\n    ]", "    expected_stack = [\n        {'pr': 121, 'base_ref': 'main', 'head_ref': 'fix/chain-plan-v2-repository-closure-20260911'},\n    ]"),
+])
+replace("scripts/ci/test_documentation_contracts_v1.py", [
+    ("self.data['integration_observation']['stack'][2]['base_ref'] = 'main'", "self.data['integration_observation']['stack'][0]['head_ref'] = 'work/plan-v2-full-gap-closure-20260902'"),
+])
+
 manifest_path = ROOT / "docs/development/plan-manifest-v1.toml"
 manifest = manifest_path.read_text()
 manifest = manifest.replace('candidate_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"', f'candidate_ref = "{BRANCH}"')
 manifest = manifest.replace("selected_successor_pull_request = 62", f"selected_successor_pull_request = {PR}")
 
+
 def sha256(path: str) -> str:
-    return hashlib.sha256((ROOT/path).read_bytes()).hexdigest()
+    return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+
 
 def git_blob(path: str) -> str:
     return subprocess.check_output(["git", "hash-object", path], cwd=ROOT, text=True).strip()
 
-import re
+
 manifest = re.sub(r'plan_sha256 = "[0-9a-f]{64}"', f'plan_sha256 = "{sha256(plan)}"', manifest)
 manifest = re.sub(r'evidence_contract_sha256 = "[0-9a-f]{64}"', f'evidence_contract_sha256 = "{sha256("docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md")}"', manifest)
-manifest = re.sub(r'blocker_execution_git_blob = "[0-9a-f]{40}"', f'blocker_execution_git_blob = "{git_blob("config/blocker-execution-v1.json")}"', manifest)
-manifest = re.sub(r'current_snapshot_git_blob = "[0-9a-f]{40}"', f'current_snapshot_git_blob = "{git_blob("docs/development/CURRENT_SNAPSHOT_V1.json")}"', manifest)
+for field, path in {
+    "blocker_execution_git_blob": "config/blocker-execution-v1.json",
+    "current_snapshot_git_blob": "docs/development/CURRENT_SNAPSHOT_V1.json",
+    "documentation_contract_registry_git_blob": "config/documentation-contracts-v1.json",
+    "documentation_contract_gate_git_blob": "scripts/ci/check_documentation_contracts_v1.py",
+    "documentation_contract_test_git_blob": "scripts/ci/test_documentation_contracts_v1.py",
+}.items():
+    manifest = re.sub(rf'{field} = "[0-9a-f]{{40}}"', f'{field} = "{git_blob(path)}"', manifest)
 manifest_path.write_text(manifest)
 
-for rel in ["README.md", plan, "docs/development/CURRENT_SNAPSHOT_V1.json", train, "config/blocker-execution-v1.json", "RELEASE_READINESS.md", "docs/development/plan-manifest-v1.toml"]:
-    text = (ROOT/rel).read_text()
-    if "PR #62 is the sole selected" in text or "Draft PR #62" in text:
-        raise SystemExit(f"stale sole-successor truth remains in {rel}")
+active_truth = [
+    "README.md", plan, "docs/development/CURRENT_SNAPSHOT_V1.json", train,
+    "config/blocker-execution-v1.json", "RELEASE_READINESS.md",
+    "docs/development/plan-manifest-v1.toml", "config/documentation-contracts-v1.json",
+]
+for rel in active_truth:
+    text = (ROOT / rel).read_text()
+    if "PR #62 is the sole selected" in text or "Draft PR #62" in text or '"selected_successor_pr": 62' in text:
+        raise SystemExit(f"stale active successor truth remains in {rel}")
 
 print("final_successor_truth_materialized=ok")

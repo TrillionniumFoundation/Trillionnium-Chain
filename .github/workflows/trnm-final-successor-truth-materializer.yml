@@ -33,7 +33,17 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/ci/materialize_final_successor_truth_v1.py
-          git add README.md RELEASE_READINESS.md config/blocker-execution-v1.json docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md docs/development/CURRENT_SNAPSHOT_V1.json docs/development/release-train-v1.toml docs/development/plan-manifest-v1.toml
+          git add \
+            README.md \
+            RELEASE_READINESS.md \
+            config/blocker-execution-v1.json \
+            config/documentation-contracts-v1.json \
+            docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md \
+            docs/development/CURRENT_SNAPSHOT_V1.json \
+            docs/development/release-train-v1.toml \
+            docs/development/plan-manifest-v1.toml \
+            scripts/ci/check_documentation_contracts_v1.py \
+            scripts/ci/test_documentation_contracts_v1.py
           git diff --cached --check
           git config user.name "Trillionnium convergence bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
