@@ -843,6 +843,13 @@ pub struct TxAdmissionReceiptV0 {
 }
 
 impl TxRecordV0 {
+    /// Validate one persisted record against an installed chain. This is the
+    /// same local shape/binding check used by coordinator recovery. It does
+    /// not authenticate a journal history, signature, or finality proof.
+    pub fn validate_persisted_v0(&self, chain_id: Digest32V0) -> Result<(), ProductionTxErrorV0> {
+        validate_recovered_record_v0(chain_id, self)
+    }
+
     #[must_use]
     pub fn canonical_record_digest_v0(&self) -> Digest32V0 {
         let wal = optional_u64_digest_v0(b"trnm.tx.record.wal.v0", self.wal_sequence);
@@ -1042,6 +1049,54 @@ fn validate_recovered_record_v0(
                     || receipt.envelope_digest != intent.envelope_digest
                     || receipt.transport_receipt_digest == Digest32V0([0; 32])
             })
+        })
+    {
+        return Err(ProductionTxErrorV0::InvalidRecoveredRecord);
+    }
+    let valid_sequence_and_terminal_shape = match record.tombstone {
+        None => record.lifecycle_sequence == record.phase as u64,
+        Some(TombstoneReasonV0::Finalized) => {
+            record.lifecycle_sequence == 6
+                && wal_present
+                && proposal_present
+                && ordered_present
+                && execution_present
+                && finality_present
+        }
+        Some(reason) => {
+            let replacement_bound = match reason {
+                TombstoneReasonV0::Replaced { by } => {
+                    by != Digest32V0([0; 32]) && by != record.tx_id
+                }
+                TombstoneReasonV0::Expired | TombstoneReasonV0::Rejected => true,
+                TombstoneReasonV0::Finalized => unreachable!(),
+            };
+            replacement_bound
+                && record.lifecycle_sequence == if wal_present { 2 } else { 1 }
+                && !proposal_present
+                && !ordered_present
+                && !execution_present
+                && !finality_present
+        }
+    };
+    if !valid_sequence_and_terminal_shape
+        || record.wal_sequence == Some(0)
+        || record.proposal.is_some_and(|proposal| {
+            proposal.proposal_id == Digest32V0([0; 32]) || proposal.proposal_index == u32::MAX
+        })
+        || record.ordered.is_some_and(|ordered| {
+            ordered.block_id == Digest32V0([0; 32])
+                || ordered.height == 0
+                || ordered.transaction_index == u32::MAX
+        })
+        || record
+            .execution
+            .is_some_and(|execution| execution.fee_charged > record.intent.fee_bid)
+        || record.broadcast_intent.is_some_and(|intent| {
+            !wal_present
+                || intent.tx_id != record.tx_id
+                || intent.envelope_digest == Digest32V0([0; 32])
+                || intent.intent_sequence == u64::MAX
         })
     {
         return Err(ProductionTxErrorV0::InvalidRecoveredRecord);

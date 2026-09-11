@@ -7,6 +7,14 @@
 //! code, but physical power-loss behavior, filesystem guarantees, deployment
 //! topology, and device-backed signing remain external evidence requirements.
 
+#[cfg(all(feature = "candidate-tx-journal", not(target_os = "linux")))]
+compile_error!("candidate-tx-journal currently requires Linux renameat2 NOREPLACE");
+
+#[cfg(all(feature = "candidate-tx-journal", target_os = "linux"))]
+mod candidate_tx_journal;
+#[cfg(all(feature = "candidate-tx-journal", target_os = "linux"))]
+pub use candidate_tx_journal::*;
+
 mod candidate_authority;
 pub use candidate_authority::{CandidateAuthorityErrorV0, CandidateAuthorityJournalV0};
 

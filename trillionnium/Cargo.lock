@@ -1630,10 +1630,12 @@ name = "trnm-durable-file-adapters-v0"
 version = "0.1.0"
 dependencies = [
  "fs2",
+ "rustix",
  "sha2",
  "trnm-node-boundary-v0",
  "trnm-poco-node-io",
  "trnm-state-sync-v0",
+ "trnm-tx-lifecycle-v0",
 ]
 
 [[package]]

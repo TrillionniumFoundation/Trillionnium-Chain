@@ -11,6 +11,8 @@ use std::{collections::BTreeMap, error::Error, fmt};
 
 mod production;
 pub use production::*;
+mod codec;
+pub use codec::{TxRecordCodecErrorV0, MAX_TX_RECORD_ENCODED_BYTES_V0};
 
 pub const TX_LIFECYCLE_VERSION_V0: u16 = 0;
 pub const MAX_TX_BYTES_V0: usize = 1024 * 1024;
