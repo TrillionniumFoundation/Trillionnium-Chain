@@ -1,0 +1,69 @@
+name: tmp-final-consolidation-inventory
+
+on:
+  push:
+    branches:
+      - fix/chain-plan-v2-repository-closure-20260911
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build complete branch inventory and history bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git remote set-url origin https://github.com/${GITHUB_REPOSITORY}.git
+          git fetch --force --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          out="${RUNNER_TEMP}/final-consolidation-inventory"
+          mkdir -p "$out"
+          git rev-parse HEAD > "$out/candidate-sha.txt"
+          git rev-parse 'HEAD^{tree}' > "$out/candidate-tree.txt"
+          git for-each-ref --sort=refname --format='%(refname:short)\t%(objectname)\t%(objecttype)' refs/remotes/origin/ > "$out/branch-tips.tsv"
+          python3 - "$out" <<'PY'
+          import csv
+          import pathlib
+          import subprocess
+          import sys
+
+          out = pathlib.Path(sys.argv[1])
+          head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+          rows = []
+          for line in (out / "branch-tips.tsv").read_text(encoding="utf-8").splitlines():
+              ref, sha, objtype = line.split("\t")
+              if ref == "origin/HEAD":
+                  continue
+              anc = subprocess.run(["git", "merge-base", "--is-ancestor", sha, head]).returncode == 0
+              left, right = subprocess.check_output(
+                  ["git", "rev-list", "--left-right", "--count", f"{head}...{sha}"], text=True
+              ).split()
+              tree = subprocess.check_output(["git", "rev-parse", f"{sha}^{{tree}}"], text=True).strip()
+              rows.append((ref.removeprefix("origin/"), sha, tree, str(anc).lower(), left, right))
+          with (out / "branch-relations.tsv").open("w", encoding="utf-8", newline="") as handle:
+              writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
+              writer.writerow(["branch", "sha", "tree", "tip_is_ancestor_of_candidate", "candidate_only_commits", "branch_only_commits"])
+              writer.writerows(rows)
+          PY
+          git ls-tree -r --name-only HEAD | LC_ALL=C sort > "$out/candidate-paths.txt"
+          git grep -I -n -i -E 'cometbft|tendermint|abci|trnm-cometbft|tmproto|comet[-_ ]bft' HEAD -- ':!docs/archive/**' ':!**/target/**' > "$out/candidate-cometbft-hits.txt" || true
+          git bundle create "$out/all-refs.bundle" --all
+          (cd "$out" && sha256sum * > SHA256SUMS)
+
+      - name: Upload inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: final-consolidation-inventory-${{ github.sha }}
+          path: ${{ runner.temp }}/final-consolidation-inventory
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
