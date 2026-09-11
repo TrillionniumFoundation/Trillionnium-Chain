@@ -13,10 +13,12 @@ fail() {
 check_workflow() {
   local workflow="$1"
   [[ -f "$workflow" ]] || fail "missing workflow: $workflow"
-  python3 - "$workflow" "$ROOT/trillionnium/Cargo.toml" <<'PY'
+  python3 - "$workflow" "${2:-$ROOT/trillionnium/Cargo.toml}" <<'PY'
+import fnmatch
 import pathlib
 import re
 import sys
+import tomllib
 
 path = pathlib.Path(sys.argv[1])
 workspace = pathlib.Path(sys.argv[2])
@@ -29,10 +31,15 @@ def fail(message: str) -> None:
 
 if not workspace.is_file():
     fail(f"missing workspace manifest {workspace}")
-workspace_text = workspace.read_text(encoding="utf-8")
+workspace_data = tomllib.loads(workspace.read_text(encoding="utf-8"))["workspace"]
+members = workspace_data["members"]
+if not isinstance(members, list) or not all(isinstance(member, str) for member in members):
+    fail("workspace.members must be an array of paths")
 retired_members = ("crates/trnm-consensus-" + "app", "crates/trnm-" + "node")
 for retired_member in retired_members:
-    if retired_member in workspace_text:
+    retired_path = workspace.parent.joinpath(retired_member).resolve()
+    if any(fnmatch.fnmatchcase(str(retired_path), str(workspace.parent.joinpath(member).resolve()))
+           for member in members):
         fail(f"retired consensus member remains active: {retired_member}")
 
 for required in ("on:", "jobs:", "  schedule:", "  workflow_dispatch:", "  pull_request:", "  push:"):
@@ -103,9 +110,27 @@ PY
 
 self_test() {
   check_workflow "$DEFAULT_WORKFLOW"
-  local tmp
+  local tmp manifest
   tmp="$(mktemp)"
-  trap 'rm -f "$tmp"' RETURN
+  manifest="$(mktemp)"
+  trap 'rm -f "$tmp" "$manifest"' RETURN
+
+  # Prefix-sharing active crates and comments must not look like retired members.
+  printf '%s\n' '[workspace]' \
+    'members = ["crates/trnm-node-io", "crates/trnm-node-host"]' \
+    '# crates/trnm-node' > "$manifest"
+  check_workflow "$DEFAULT_WORKFLOW" "$manifest"
+  for member in "crates/trnm-consensus-""app" "crates/trnm-""node" \
+    './crates/trnm-node/' 'crates/trnm-*'; do
+    printf '[workspace]\nmembers = ["%s"]\n' "$member" > "$manifest"
+    if check_workflow "$DEFAULT_WORKFLOW" "$manifest" >/dev/null 2>&1; then
+      fail "self-test accepted retired workspace member: $member"
+    fi
+  done
+  printf '%s\n' '[workspace]' 'members = "crates/trnm-node-io"' > "$manifest"
+  if check_workflow "$DEFAULT_WORKFLOW" "$manifest" >/dev/null 2>&1; then
+    fail "self-test accepted malformed workspace members"
+  fi
 
   cp "$DEFAULT_WORKFLOW" "$tmp"
   python3 - "$tmp" <<'PY'
