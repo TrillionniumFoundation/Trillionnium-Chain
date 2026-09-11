@@ -29,14 +29,17 @@ fn main() -> ExitCode {
         BufReader::new(io::stdin()),
         BufWriter::new(io::stdout()),
     ) {
-        Ok(_summary) => {
-            // stdout is a machine-readable newline protocol.  Keep only a
-            // non-sensitive completion marker on stderr.
-            eprintln!("G1_PROCESS_SUMMARY complete");
+        Ok(summary) => {
+            // stdout is a machine-readable newline protocol. Keep only
+            // non-sensitive process metrics on stderr for operator evidence.
+            eprintln!("G1_PROCESS_SUMMARY {summary:?}");
             ExitCode::SUCCESS
         }
-        Err(_error) => {
-            eprintln!("G1_PROCESS_ERROR");
+        Err(error) => {
+            // Preserve the stable error code/detail needed to distinguish a
+            // fail-closed recovery fence from an ordinary process failure.
+            // G1ProcessHostErrorV0 never embeds private key material.
+            eprintln!("G1_PROCESS_ERROR {error}");
             ExitCode::FAILURE
         }
     }
