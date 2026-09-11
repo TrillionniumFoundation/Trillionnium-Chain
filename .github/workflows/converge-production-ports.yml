@@ -24,6 +24,8 @@ jobs:
           SOURCE_SHA: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
         run: |
           set -euo pipefail
+          # Preserve the exact clean product source while applying it onto the
+          # already-purged native-only tree rather than reviving its older base.
           git fetch --no-tags origin "$SOURCE_SHA"
           git show "$SOURCE_SHA:trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs" > trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs
           git show "$SOURCE_SHA:trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs" > trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
