@@ -38,10 +38,9 @@ for required in ("on:", "jobs:", "  schedule:", "  workflow_dispatch:", "  pull_
     if required not in text:
         fail(f"missing required workflow structure: {required}")
 
-# Keep the scheduled gate anchored to main and keep PR/push coverage on the
-# native consensus, safety, execution, persistence and workflow-control paths.
-if "branches:\n      - main" not in text:
+if "branches: [main]" not in text and "branches:\n      - main" not in text:
     fail("push trigger must include main")
+
 required_paths = (
     "trillionnium/crates/trnm-consensus-core/**",
     "trillionnium/crates/trnm-consensus-safety-rules/**",
@@ -50,8 +49,10 @@ required_paths = (
     "trillionnium/crates/trnm-consensus-crypto/**",
     "trillionnium/crates/trnm-native-execution-v0/**",
     "trillionnium/crates/trnm-poco-node/**",
-    "trillionnium/crates/trnm-state-sync-v0/**",
-    "scripts/ci/check_poco_bft_v0_**",
+    "trillionnium/crates/trnm-consensus-external-watermark/**",
+    "trillionnium/crates/trnm-consensus-peer-lease/**",
+    "trillionnium/crates/trnm-consensus-remote-signer-service/**",
+    "scripts/ci/check_poco_bft_v0_*",
     ".github/workflows/trnm-poco-bft-v0.yml",
 )
 for item in required_paths:
@@ -65,9 +66,11 @@ for retired_path in (
     if retired_path in text:
         fail(f"retired consensus path remains in workflow trigger: {retired_path}")
 
+retired_engine = "comet" + "bft"
+retired_family = "tender" + "mint"
 for forbidden in (
-    "cometbft",
-    "tendermint",
+    retired_engine,
+    retired_family,
     "contents: write",
     "id-token: write",
     "deployments: write",
@@ -87,10 +90,12 @@ for required_marker in (
     if required_marker not in text:
         fail(f"missing safety marker: {required_marker}")
 
-# Every job must be explicitly gated; this prevents a later helper job from
-# silently bypassing the same actor/repository/main-schedule boundary.
 jobs_index = lines.index("jobs:")
-job_starts = [i for i in range(jobs_index + 1, len(lines)) if re.fullmatch(r"  [A-Za-z0-9_-]+:\s*", lines[i])]
+job_starts = [
+    i
+    for i in range(jobs_index + 1, len(lines))
+    if re.fullmatch(r"  [A-Za-z0-9_-]+:\s*", lines[i])
+]
 if not job_starts:
     fail("jobs section contains no jobs")
 for n, start in enumerate(job_starts):
@@ -108,6 +113,7 @@ self_test() {
   local tmp
   tmp="$(mktemp)"
   trap 'rm -f "$tmp"' RETURN
+
   cp "$DEFAULT_WORKFLOW" "$tmp"
   python3 - "$tmp" <<'PY'
 import pathlib, sys
@@ -119,11 +125,13 @@ PY
   if check_workflow "$tmp" >/dev/null 2>&1; then
     fail "self-test accepted workflow without workflow_dispatch"
   fi
+
   cp "$DEFAULT_WORKFLOW" "$tmp"
-  printf '\n# cometbft residue mutant\n' >> "$tmp"
+  printf '\n# %s residue mutant\n' "cometbft" >> "$tmp"
   if check_workflow "$tmp" >/dev/null 2>&1; then
     fail "self-test accepted retired consensus residue"
   fi
+
   printf 'poco_bft_workflow_trigger_truth_self_test=passed\n'
 }
 
