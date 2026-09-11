@@ -1,117 +1,105 @@
 #!/usr/bin/env python3
-"""Reject stale workspace-package invocations of the excluded legacy node."""
+"""Regression guard: retired consensus/node packages must stay outside active Cargo paths.
+
+The file name is retained temporarily because required workflows invoke it by path.
+Its semantics are native-only: the former legacy node, foreign-consensus adapter,
+and helper must be absent rather than buildable in an isolated workspace.
+"""
 
 from __future__ import annotations
 
-import os
 import re
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-HELPER = ROOT / "trillionnium/scripts/legacy_node_cargo.sh"
-MANIFEST = ROOT / "trillionnium/crates/trnm-node/Cargo.toml"
-LOCKFILE = ROOT / "trillionnium/crates/trnm-node/Cargo.lock"
+SELF = Path(__file__).resolve()
+WORKSPACE = ROOT / "trillionnium/Cargo.toml"
+NATIVE_ONLY_CHECK = ROOT / "scripts/ci/check_native_consensus_only.py"
 
-SEARCH_ROOTS = (ROOT / ".github/workflows", ROOT / "scripts", ROOT / "trillionnium/scripts")
-SUFFIXES = {".sh", ".yml", ".yaml", ".py"}
-FORBIDDEN = re.compile(r"\bcargo\s+(?:run|build|test|check|clippy)\b[^\n]*?(?:-p\s+trnm-node|--package(?:=|\s+)trnm-node)\b")
+RETIRED_PATHS = (
+    ROOT / "trillionnium/crates/trnm-node",
+    ROOT / "trillionnium/crates/trnm-consensus-app",
+    ROOT / "trillionnium/scripts/legacy_node_cargo.sh",
+)
+SEARCH_ROOTS = (
+    ROOT / ".github/workflows",
+    ROOT / "scripts",
+    ROOT / "trillionnium/scripts",
+)
+SCRIPT_SUFFIXES = {".sh", ".yml", ".yaml", ".py"}
+
+# Build retired package names from fragments so this guard does not flag its own
+# source merely for naming what it protects against.
+RETIRED_NODE = "trnm-" + "node"
+RETIRED_ADAPTER = "trnm-" + "consensus-app"
+FORBIDDEN_CARGO = re.compile(
+    rf"\bcargo\s+(?:run|build|test|check|clippy)\b[^\n]*?"
+    rf"(?:-p(?:=|\s+)|--package(?:=|\s+))(?:{re.escape(RETIRED_NODE)}|{re.escape(RETIRED_ADAPTER)})\b"
+)
 
 
 def fail(message: str) -> None:
-    raise SystemExit(f"legacy node cargo boundary failed: {message}")
+    raise SystemExit(f"native-only cargo boundary failed: {message}")
 
 
 def main() -> int:
-    for required in (HELPER, MANIFEST, LOCKFILE):
-        if not required.is_file():
-            fail(f"required file missing: {required.relative_to(ROOT)}")
+    for retired in RETIRED_PATHS:
+        if retired.exists():
+            fail(f"retired path reappeared: {retired.relative_to(ROOT)}")
 
-    helper_text = HELPER.read_text(encoding="utf-8")
-    required_fragments = (
-        'MANIFEST="$TRILLIONNIUM_ROOT/crates/trnm-node/Cargo.toml"',
-        'LOCKFILE="$TRILLIONNIUM_ROOT/crates/trnm-node/Cargo.lock"',
-        'exec cargo "$subcommand" --manifest-path "$MANIFEST" --locked "$@"',
-    )
-    for fragment in required_fragments:
-        if fragment not in helper_text:
-            fail(f"helper lost required boundary fragment: {fragment}")
+    if not WORKSPACE.is_file():
+        fail("workspace manifest is missing")
+    if not NATIVE_ONLY_CHECK.is_file():
+        fail("native-consensus-only checker is missing")
+
+    workspace_text = WORKSPACE.read_text(encoding="utf-8")
+    for package in (RETIRED_NODE, RETIRED_ADAPTER):
+        if package in workspace_text:
+            fail(f"retired package remains in active workspace: {package}")
 
     violations: list[str] = []
+    for manifest in sorted((ROOT / "trillionnium").rglob("Cargo.toml")):
+        if not manifest.is_file():
+            continue
+        text = manifest.read_text(encoding="utf-8", errors="strict")
+        for package in (RETIRED_NODE, RETIRED_ADAPTER):
+            if package in text:
+                violations.append(
+                    f"{manifest.relative_to(ROOT)}: retired Cargo package/path reference {package}"
+                )
+
     for search_root in SEARCH_ROOTS:
+        if not search_root.exists():
+            continue
         for path in sorted(search_root.rglob("*")):
-            if not path.is_file() or path.suffix not in SUFFIXES:
+            if not path.is_file() or path.suffix not in SCRIPT_SUFFIXES:
+                continue
+            if path.resolve() == SELF:
                 continue
             text = path.read_text(encoding="utf-8", errors="strict")
-            for match in FORBIDDEN.finditer(text):
+            for match in FORBIDDEN_CARGO.finditer(text):
                 line = text.count("\n", 0, match.start()) + 1
-                violations.append(f"{path.relative_to(ROOT)}:{line}: {match.group(0).strip()}")
+                violations.append(
+                    f"{path.relative_to(ROOT)}:{line}: {match.group(0).strip()}"
+                )
 
     if violations:
-        fail("stale active-workspace invocation(s):\n" + "\n".join(violations))
+        fail("retired active Cargo reference(s):\n" + "\n".join(violations))
 
-    with tempfile.TemporaryDirectory(prefix="trnm-legacy-cargo-boundary-") as tmp:
-        tmp_path = Path(tmp)
-        fake_bin = tmp_path / "bin"
-        fake_bin.mkdir()
-        capture = tmp_path / "capture.txt"
-        fake_cargo = fake_bin / "cargo"
-        fake_cargo.write_text(
-            "#!/usr/bin/env bash\n"
-            "set -euo pipefail\n"
-            "printf '%s\\n' \"$CARGO_TARGET_DIR\" > \"$TRNM_CAPTURE\"\n"
-            "printf '%s\\n' \"$@\" >> \"$TRNM_CAPTURE\"\n",
-            encoding="utf-8",
-        )
-        fake_cargo.chmod(0o755)
-        env = os.environ.copy()
-        env["PATH"] = f"{fake_bin}{os.pathsep}{env.get('PATH', '')}"
-        env["TRNM_CAPTURE"] = str(capture)
-        env.pop("CARGO_TARGET_DIR", None)
-        result = subprocess.run(
-            [str(HELPER), "run", "-q", "--features", "legacy-harness", "--bin", "trnm-sim", "--", "--max-blocks", "1"],
-            cwd=ROOT / "trillionnium",
-            env=env,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            fail(f"helper fake-cargo probe failed: {result.stderr.strip()}")
-        captured = capture.read_text(encoding="utf-8").splitlines()
-        expected = [
-            str(ROOT / "trillionnium/target"),
-            "run",
-            "--manifest-path",
-            str(MANIFEST),
-            "--locked",
-            "-q",
-            "--features",
-            "legacy-harness",
-            "--bin",
-            "trnm-sim",
-            "--",
-            "--max-blocks",
-            "1",
-        ]
-        if captured != expected:
-            fail(f"helper cargo argv/target mismatch: expected={expected!r} actual={captured!r}")
+    result = subprocess.run(
+        [sys.executable, str(NATIVE_ONLY_CHECK)],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip()
+        fail(f"native-consensus-only checker rejected the tree: {detail}")
 
-        for package_selector in (("-p", "trnm-node"), ("-p=trnm-node",), ("--package=trnm-node",)):
-            rejected = subprocess.run(
-                [str(HELPER), "test", *package_selector],
-                cwd=ROOT / "trillionnium",
-                env=env,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-            if rejected.returncode == 0 or "do not select packages" not in rejected.stderr:
-                fail(f"helper did not reject package selector: {package_selector!r}")
-
-    print("legacy_node_cargo_boundary=ok")
+    print("native_only_cargo_boundary=ok")
     return 0
 
 
