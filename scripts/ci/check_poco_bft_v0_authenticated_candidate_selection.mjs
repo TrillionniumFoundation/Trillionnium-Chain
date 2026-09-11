@@ -3839,12 +3839,18 @@ function runNegativeSelfChecks(vector, positive, fallback) {
 
 function validateProductionSourceSurface() {
   const checkpointSource = fs.readFileSync(
-    path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_checkpoint.rs"),
+    path.join(ROOT, "trillionnium/crates/trnm-native-execution-v0/src/poco_checkpoint.rs"),
     "utf8",
   );
   const candidateSource = fs.readFileSync(
-    path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_authenticated_candidate.rs"),
+    path.join(ROOT, "trillionnium/crates/trnm-native-execution-v0/src/poco_authenticated_candidate.rs"),
     "utf8",
+  );
+  invariant(
+    checkpointSource.includes("application.confirmed_finalized_poco_snapshot_v0(") &&
+      checkpointSource.includes("verified_live_values_v0(version)") &&
+      checkpointSource.includes("application.confirm_durable_execution_history_row_v0(executed)?"),
+    "native candidate authority lost the committed JMT or exact durable execution producer",
   );
   const combined = checkpointSource.match(
     /pub\(crate\) fn authorize_poco_checkpoint_candidate_selection_v0\s*\(([\s\S]*?)\)\s*->[^{]+\{/,

@@ -1004,6 +1004,24 @@ pub struct FinalizedNativeApplicationReadV0 {
     replay_signer_nonces: BTreeSet<(String, u64)>,
 }
 
+/// Crate-private historical JMT source sealed by a fresh committed-P read.
+/// The tree cannot be supplied independently from its immutable owner-bound
+/// execution row. This is application state provenance, not Core finality.
+pub(crate) struct ConfirmedPocoCutoffSnapshotV0 {
+    read: FinalizedNativeApplicationReadV0,
+    store: InMemoryNativeExecutionStoreV0,
+}
+
+impl ConfirmedPocoCutoffSnapshotV0 {
+    pub(crate) fn read(&self) -> &FinalizedNativeApplicationReadV0 {
+        &self.read
+    }
+
+    pub(crate) fn store(&self) -> &InMemoryNativeExecutionStoreV0 {
+        &self.store
+    }
+}
+
 impl FinalizedNativeApplicationReadV0 {
     /// The freshly validated application head observed in the same read.
     pub const fn confirmed_head_v0(&self) -> &ApplicationHeadV0 {
@@ -1267,6 +1285,32 @@ impl DurableNativeApplicationV0 {
     ) -> DurableResult<FinalizedNativeApplicationReadV0> {
         let read = self.read_finalized_by_height_v0(height)?;
         self.bind_finality_proof_to_read_v0(read, finality_proof, authenticated_parent_timestamp_ms)
+    }
+
+    /// Loads the exact committed cutoff's retained snapshot through the same
+    /// complete schema, ancestry, artifact and fresh-readback checks as the
+    /// finalized-read API. Prepared P, a caller snapshot, and a naked root
+    /// cannot create this carrier.
+    pub(crate) fn confirmed_finalized_poco_snapshot_v0(
+        &self,
+        height: HeightV0,
+    ) -> DurableResult<ConfirmedPocoCutoffSnapshotV0> {
+        let _guard = self.lock_operation()?;
+        reject_sqlite_sidecars_v0(&self.path)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let p = load_p_by_height_v0(&connection, height.get())?.ok_or_else(|| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::NonContiguous,
+                "poco_cutoff.missing_committed_height",
+            )
+        })?;
+        validate_p_v0(&self.config, &p)?;
+        let store = target_store_v0(&self.config, &p)?;
+        let read = self.finish_finalized_read_v0(metadata, p, Some(height.get()))?;
+        Ok(ConfirmedPocoCutoffSnapshotV0 { read, store })
     }
 
     fn bind_finality_proof_to_read_v0(

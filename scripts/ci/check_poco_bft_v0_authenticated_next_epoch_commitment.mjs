@@ -683,7 +683,7 @@ function validateScenario(raw, candidateVector, label) {
 }
 
 function validateSourceSurface() {
-  const source = fs.readFileSync(path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_epoch_commitment.rs"), "utf8");
+  const source = fs.readFileSync(path.join(ROOT, "trillionnium/crates/trnm-native-execution-v0/src/poco_epoch_commitment.rs"), "utf8");
   const constructor = source.match(/pub\(crate\) fn authorize_poco_next_epoch_commitment_v0\s*\(([\s\S]*?)\)\s*->[^{]+\{/);
   invariant(constructor !== null, "production commitment constructor missing");
   for (const required of [

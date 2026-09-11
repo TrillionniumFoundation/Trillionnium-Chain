@@ -39,10 +39,10 @@ const VECTOR_PATH = process.env.TRNM_POCO_AUTHENTICATED_CHECKPOINT_HANDOFF_VECTO
 );
 const CANDIDATE_VECTOR_PATH = path.join(ROOT, "docs/protocol/poco-bft-v0/vectors/poco-authenticated-candidate-selection-v0.json");
 const H3A_VECTOR_PATH = path.join(ROOT, "docs/protocol/poco-bft-v0/vectors/poco-authenticated-next-epoch-commitment-v0.json");
-const CHECKPOINT_HEADER_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_checkpoint_header.rs");
-const JOINT_HANDOFF_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-application/src/poco_joint_handoff.rs");
-const NATIVE_EXECUTION_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-application/src/native_execution.rs");
-const APP_LIB_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-application/src/lib.rs");
+const CHECKPOINT_HEADER_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-execution-v0/src/poco_checkpoint_header.rs");
+const JOINT_HANDOFF_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-execution-v0/src/poco_joint_handoff.rs");
+const NATIVE_EXECUTION_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-execution-v0/src/poco_checkpoint.rs");
+const APP_LIB_SOURCE_PATH = path.join(ROOT, "trillionnium/crates/trnm-native-execution-v0/src/lib.rs");
 
 const SCHEMA_ID = "trnm.poco-bft.authenticated-checkpoint-handoff.v0";
 const FIXTURE_SCHEMA = "trnm.poco-bft.authenticated-checkpoint-handoff-fixture.v0";
@@ -568,6 +568,20 @@ function validatePrivateSourceSurface() {
   invariant(nativeExecution.includes("pub(crate) struct AuthorizedNativeCheckpointExecutionV0"), "native execution authority missing");
   invariant(nativeExecution.includes("trnm.poco-bft.authorized-native-checkpoint-execution.v0"), "native execution seal domain drift");
   invariant(nativeExecution.includes("try_cev0_bytes"), "native execution authority does not bind exact CEV0");
+  invariant(
+    nativeExecution.includes("application.preview_block_v0(request)?") &&
+      nativeExecution.includes("application.read_finalized_by_height_v0(request.height())?") &&
+      nativeExecution.includes("prepare_native_poco_checkpoint_v0(") &&
+      nativeExecution.includes("confirm_poco_checkpoint_v0(") &&
+      nativeExecution.includes("revalidate_durably_bound_poco_checkpoint_header_v0("),
+    "native checkpoint owner lost live execution, committed recovery, or fresh durable consumption",
+  );
+  invariant(
+    checkpoint.includes("native_execution.parent_id() == exact_parent_header.id()") &&
+      checkpoint.includes("native_execution.timestamp_ms() == checkpoint_timestamp_ms"),
+    "native execution authority lost exact parent identity or execution timestamp binding",
+  );
+
   const authoritySources = `${checkpoint}\n${joint}`;
   invariant(
     !/\binto_authorized\s*\(/.test(authoritySources),

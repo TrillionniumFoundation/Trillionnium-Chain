@@ -79,8 +79,8 @@ protocol:
 
 - evidence must be empty;
 - the committed validator set/epoch supplied at store creation remains the
-  execution authority; activation/handoff and a returned validator-set update
-  are not implemented;
+  execution authority; validator-set activation and a returned validator-set
+  update are not implemented;
 - a local SQLite sequence detects in-file rollback but is not an external
   whole-machine anti-rollback authority;
 - a three-boundary SIGKILL matrix (before SQLite commit, after commit, and
@@ -146,3 +146,63 @@ then the same path is rearmed before the old worker guard is dropped; the new
 registration must survive that drop. All five direct registry tests retain
 parallel execution. These tests supplement the existing SQLite initialization,
 H1 import and finalized-commit uncertainty tests; they do not replace them.
+
+
+## Native checkpoint authorization
+
+Primary module: M06. The native owner now produces the application-side
+checkpoint authority chain in `poco_checkpoint`, `poco_authenticated_candidate`,
+`poco_epoch_commitment`, `poco_checkpoint_header`, `poco_joint_handoff`, and
+`poco_preparation_journal`. The private constructors accept no generic verifier,
+caller-normalized candidate transcript, or inert-kernel conversion.
+
+`prepare_native_poco_checkpoint_v0` reconstructs the exact committed cutoff JMT
+and lifecycle, audits the complete kind-16 projection, computes B2-G with strict
+Ed25519 verification, and joins the raw H1 finality chain and generated H2
+namespace membership proofs. It derives native execution from the live owner's
+preview and freezes the exact parent ID, timestamp, body, receipts and state.
+The returned opaque `PreparedNativePocoCheckpointV0` requires a successful
+independent preparation-journal reservation and exact header binding.
+
+`confirm_poco_checkpoint_v0` revalidates that existing journal reservation,
+requires the exact checkpoint execution to be COMMITTED in the same native
+owner, compares the complete body and receipts, reconstructs the post-execution
+candidate/commitment, and strictly verifies the checkpoint/two-seal and handoff
+proofs. `ConfirmedNativePocoCheckpointV0` retains the owner-affine durable row;
+it has no public constructor or conversion from naked roots or proof kernels.
+After reopening, the same raw proof inputs reconstruct preparation using the
+exact committed P readback instead of pretending an old parent is a live head.
+
+The preparation journal publishes a reservation or binding only after SQLite
+commit and a fresh connection read back the exact transition, preparation,
+bound record and phase, with database path/inode identity checked again. A
+missing row is not recreated by this confirmation. Commit or readback
+uncertainty sets the process-shared sticky halt; the capability is withheld.
+
+Local admission limits are 64 transitions, 1,024 preparation records and
+256 MiB of aggregate encoded records to audit. New records must fit before
+insertion; exact retries and binding an existing reservation remain possible
+at the record-count limit. SQLite also has a 512 MiB database page ceiling,
+with database and sidecar physical bytes checked before connections and after
+commit readback. These checks are not an OS disk quota and do not isolate
+transient WAL space during a transaction. Ordinary capacity exhaustion returns
+an embedded `std::io::ErrorKind::StorageFull` as local unavailability; it does
+not mark a peer block invalid, halt a healthy journal, or erase earlier rows.
+There is no automatic journal garbage collection and no independent external
+rollback anchor: coherently restoring the application and sidecar together
+still requires the separate whole-node recovery authority.
+
+Four native database regressions cover committed-cutoff enforcement, exact
+preparation/reopen, a signed checkpoint/two-seal/handoff with committed P and
+restart recovery, and held-token rejection after sidecar halt, row deletion,
+file replacement or owner substitution. The historical raw protocol corpora
+and all source privacy/durable-preparation checks remain enabled. These are
+local implementation tests, not independent module or production acceptance.
+The 20 journal regressions additionally cover publication-time replacement,
+halt and missing-row faults, exact retries at the real record limit, oversized
+database rejection and scan/transition admission budgets.
+
+This application authority does not advance Core's epoch fence or mint a
+signing permit. The separate consensus checkpoint-applied/seal/activation state
+and the native JMT/version progression through the seal heights remain required
+before a live first block of the next epoch can execute.

@@ -53,7 +53,12 @@ mod complete;
 mod durable;
 mod pcc1_finality;
 mod poco_application;
+mod poco_checkpoint;
+mod poco_checkpoint_header;
+mod poco_epoch_commitment;
+mod poco_joint_handoff;
 mod poco_nullifier;
+mod poco_preparation_journal;
 mod poco_semantics;
 mod poco_snapshot;
 mod poco_transition;
@@ -77,6 +82,7 @@ pub use durable::{
     NativeH1StateSyncTrustedBaseRequestV0, VerifiedNativeSignerReplayFloorV1,
 };
 pub use pcc1_finality::{PocoFinalityCommitErrorV0, PocoFinalizedApplicationReadV0};
+pub use poco_checkpoint::{ConfirmedNativePocoCheckpointV0, PreparedNativePocoCheckpointV0};
 pub use store::{
     authenticated_key_hash_v0, stored_object_key_v0, AuthenticatedObjectRecordV0,
     InMemoryNativeExecutionStoreV0, NativeExecutionStoreV0, NativeStateWriteV0,

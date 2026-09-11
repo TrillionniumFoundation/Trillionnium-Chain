@@ -15,6 +15,14 @@
 #![allow(dead_code)]
 //! converted only by that single JMT merger.
 
+#[path = "poco_authenticated_candidate.rs"]
+mod poco_authenticated_candidate;
+pub(crate) use poco_authenticated_candidate::{
+    authorize_authenticated_poco_candidate_selection_v0,
+    authorize_authenticated_poco_cutoff_candidate_selection_v0,
+    AuthenticatedPocoCandidateSelectionV0, AuthenticatedPocoCutoffCandidateSelectionV0,
+};
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::{
