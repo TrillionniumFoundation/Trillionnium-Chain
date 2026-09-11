@@ -41,9 +41,8 @@ fn authority_command(
 ) -> Command {
     let scope = UnixExternalTimeoutAuthorityV1::scope_for_binding(binding);
     let journal = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding);
-    let mut command = Command::new(
-        env::current_exe().expect("resolve external service OS test executable"),
-    );
+    let mut command =
+        Command::new(env::current_exe().expect("resolve external service OS test executable"));
     command
         .args([
             "--exact",
