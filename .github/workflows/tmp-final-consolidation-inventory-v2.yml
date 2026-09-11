@@ -1,0 +1,97 @@
+name: tmp-final-consolidation-inventory-v2
+
+on:
+  push:
+    branches:
+      - tmp/final-consolidation-inventory-v2-20260911
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CLEAN_CANDIDATE: 6c101b77141949f44c0c9df8dfeb394684714881
+    steps:
+      - name: Checkout inventory carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Capture exact current branch tips
+        shell: bash
+        run: |
+          set -euo pipefail
+          git remote set-url origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --force --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          git cat-file -e "${CLEAN_CANDIDATE}^{commit}"
+          out="${RUNNER_TEMP}/final-consolidation-inventory-v2"
+          mkdir -p "$out"
+          printf '%s\n' "$CLEAN_CANDIDATE" > "$out/clean-candidate-sha.txt"
+          git rev-parse "${CLEAN_CANDIDATE}^{tree}" > "$out/clean-candidate-tree.txt"
+          git for-each-ref --sort=refname --format='%(refname:short)%09%(objectname)%09%(objecttype)' refs/remotes/origin/ > "$out/branch-tips.tsv"
+          python3 - "$out" "$CLEAN_CANDIDATE" <<'PY'
+          import csv
+          import pathlib
+          import subprocess
+          import sys
+
+          out = pathlib.Path(sys.argv[1])
+          candidate = sys.argv[2]
+          rows = []
+          for raw in (out / "branch-tips.tsv").read_text(encoding="utf-8").splitlines():
+              fields = raw.split("\t")
+              if len(fields) != 3:
+                  raise SystemExit(f"malformed ref row: {raw!r}")
+              ref, sha, objtype = fields
+              if ref == "origin/HEAD":
+                  continue
+              branch = ref.removeprefix("origin/")
+              ancestor = subprocess.run(
+                  ["git", "merge-base", "--is-ancestor", sha, candidate],
+                  stdout=subprocess.DEVNULL,
+                  stderr=subprocess.DEVNULL,
+              ).returncode == 0
+              candidate_only, branch_only = subprocess.check_output(
+                  ["git", "rev-list", "--left-right", "--count", f"{candidate}...{sha}"],
+                  text=True,
+              ).split()
+              tree = subprocess.check_output(
+                  ["git", "rev-parse", f"{sha}^{{tree}}"], text=True
+              ).strip()
+              rows.append((branch, sha, tree, str(ancestor).lower(), candidate_only, branch_only))
+          with (out / "branch-relations.tsv").open("w", encoding="utf-8", newline="") as handle:
+              writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
+              writer.writerow([
+                  "branch", "sha", "tree", "tip_is_ancestor_of_clean_candidate",
+                  "candidate_only_commits", "branch_only_commits"
+              ])
+              writer.writerows(rows)
+          non_ancestors = [row for row in rows if row[3] != "true"]
+          with (out / "non-ancestor-tips.tsv").open("w", encoding="utf-8", newline="") as handle:
+              writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
+              writer.writerow([
+                  "branch", "sha", "tree", "tip_is_ancestor_of_clean_candidate",
+                  "candidate_only_commits", "branch_only_commits"
+              ])
+              writer.writerows(non_ancestors)
+          (out / "summary.txt").write_text(
+              f"branch_count={len(rows)}\nnon_ancestor_count={len(non_ancestors)}\n",
+              encoding="utf-8",
+          )
+          PY
+          git ls-tree -r --name-only "$CLEAN_CANDIDATE" | LC_ALL=C sort > "$out/clean-candidate-paths.txt"
+          git grep -I -n -i -E 'cometbft|tendermint|abci|trnm-cometbft|tmproto|comet[-_ ]bft' "$CLEAN_CANDIDATE" -- ':!docs/archive/**' ':!**/target/**' > "$out/clean-candidate-cometbft-hits.txt" || true
+          (cd "$out" && sha256sum * > SHA256SUMS)
+
+      - name: Upload exact inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: final-consolidation-inventory-v2-${{ github.sha }}
+          path: ${{ runner.temp }}/final-consolidation-inventory-v2
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
