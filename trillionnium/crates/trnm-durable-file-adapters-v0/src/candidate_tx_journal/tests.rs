@@ -35,8 +35,70 @@ pub(super) struct Fault {
     point: Point,
     park: bool,
 }
+
+#[derive(Clone, Copy)]
+pub(super) struct PublicationAttack {
+    point: Point,
+    replace_inode: bool,
+}
+
 impl CandidateTxFileJournalV0 {
     pub(super) fn at_fault(&mut self, point: Point) -> Result<()> {
+        if self
+            .publication_attack
+            .is_some_and(|attack| attack.point == point)
+        {
+            let attack = self.publication_attack.take().unwrap();
+            let name = match point {
+                Point::FileSynced => STAGE.to_owned(),
+                Point::Published | Point::DirectorySynced => frame_name(self.state.sequence + 1),
+                _ => panic!("publication attack must target an existing written file"),
+            };
+            let mut bytes = self.read_file(&name, MAX_FRAME_BYTES).unwrap();
+            if attack.replace_inode {
+                // Keep all bytes identical so only retained-descriptor
+                // identity binding, not the frame checksum, detects this.
+                // Preserve the original's single link at a displaced name,
+                // so checking the written fd's nlink alone cannot catch this.
+                rfs::renameat_with(
+                    &self.directory,
+                    &name,
+                    &self.directory,
+                    "test-displaced-publication",
+                    RenameFlags::NOREPLACE,
+                )
+                .unwrap();
+                let mut replacement: File = rfs::openat(
+                    &self.directory,
+                    &name,
+                    OFlags::WRONLY
+                        | OFlags::CREATE
+                        | OFlags::EXCL
+                        | OFlags::NOFOLLOW
+                        | OFlags::CLOEXEC,
+                    Mode::from_raw_mode(0o600),
+                )
+                .unwrap()
+                .into();
+                replacement.write_all(&bytes).unwrap();
+                replacement.sync_all().unwrap();
+            } else {
+                // Retain the inode and exact file length. An inode-only
+                // publication fence must not accept altered frame bytes.
+                bytes[0] ^= 1;
+                let mut named: File = rfs::openat(
+                    &self.directory,
+                    &name,
+                    OFlags::WRONLY | OFlags::NOFOLLOW | OFlags::CLOEXEC,
+                    Mode::empty(),
+                )
+                .unwrap()
+                .into();
+                named.write_all(&bytes).unwrap();
+                named.sync_all().unwrap();
+            }
+            self.directory.sync_all().unwrap();
+        }
         if !self.fault.is_some_and(|fault| fault.point == point) {
             return Ok(());
         }
@@ -805,4 +867,83 @@ fn directory_replacement_poison_fences_the_displaced_owner() {
     ));
     assert!(journal.is_poisoned());
     assert!(!parent.0.join("displaced").join(frame_name(1)).exists());
+}
+
+#[test]
+fn replacement_of_synced_stage_or_published_inode_never_returns_an_ack() {
+    for point in [Point::FileSynced, Point::Published, Point::DirectorySynced] {
+        let directory = Directory::new();
+        let (mut journal, previous) = baseline(&directory.0);
+        let (replaced, admitted) = pair(&previous);
+        journal.publication_attack = Some(PublicationAttack {
+            point,
+            replace_inode: true,
+        });
+        assert!(
+            matches!(
+                journal.compare_and_replace(
+                    previous.canonical_record_digest_v0(),
+                    &replaced,
+                    &admitted
+                ),
+                Err(CandidateTxJournalErrorV0::Namespace)
+            ),
+            "{point:?}"
+        );
+        assert!(journal.is_poisoned());
+        assert!(
+            journal.publication_attack.is_none(),
+            "the swap must really run"
+        );
+        fs::remove_file(directory.0.join("test-displaced-publication")).unwrap();
+        drop(journal);
+        // A pre-publish attack leaves only an unpublished stage. An identical
+        // post-publish replacement retains the whole pair, never one member.
+        // Reopen and exact retry reconcile the uncertain, unacknowledged cut.
+        assert_atomic_recovery(&directory.0, &previous, &replaced, &admitted, point);
+    }
+}
+
+#[test]
+fn same_inode_content_changes_are_rejected_before_ack_and_fail_closed_on_reopen() {
+    for point in [Point::FileSynced, Point::Published, Point::DirectorySynced] {
+        let directory = Directory::new();
+        let (mut journal, previous) = baseline(&directory.0);
+        let (replaced, admitted) = pair(&previous);
+        journal.publication_attack = Some(PublicationAttack {
+            point,
+            replace_inode: false,
+        });
+        assert!(
+            matches!(
+                journal.compare_and_replace(
+                    previous.canonical_record_digest_v0(),
+                    &replaced,
+                    &admitted
+                ),
+                Err(CandidateTxJournalErrorV0::Corrupt(
+                    "written file bytes changed"
+                ))
+            ),
+            "{point:?}"
+        );
+        assert!(journal.is_poisoned());
+        assert!(
+            journal.publication_attack.is_none(),
+            "the tamper must really run"
+        );
+        drop(journal);
+        if point == Point::FileSynced {
+            assert_atomic_recovery(&directory.0, &previous, &replaced, &admitted, point);
+        } else {
+            assert!(matches!(
+                CandidateTxFileJournalV0::open(
+                    &directory.0,
+                    identity(),
+                    CandidateTxJournalLimitsV0::default()
+                ),
+                Err(CandidateTxJournalErrorV0::Corrupt(_))
+            ));
+        }
+    }
 }

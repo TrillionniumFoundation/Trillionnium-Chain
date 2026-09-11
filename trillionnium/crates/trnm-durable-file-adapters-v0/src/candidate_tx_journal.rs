@@ -182,6 +182,8 @@ pub struct CandidateTxFileJournalV0 {
     poisoned: bool,
     #[cfg(test)]
     fault: Option<tests::Fault>,
+    #[cfg(test)]
+    publication_attack: Option<tests::PublicationAttack>,
 }
 
 impl CandidateTxFileJournalV0 {
@@ -254,6 +256,8 @@ impl CandidateTxFileJournalV0 {
             poisoned: false,
             #[cfg(test)]
             fault: None,
+            #[cfg(test)]
+            publication_attack: None,
         };
         owner.check_namespace()?;
         let names = owner.names()?;
@@ -630,6 +634,7 @@ impl CandidateTxFileJournalV0 {
                 self.at_fault(tests::Point::FileSynced)?;
             }
             self.check_namespace()?;
+            self.verify_written_file(staging, &file, bytes)?;
             rfs::renameat_with(
                 &self.directory,
                 staging,
@@ -641,12 +646,14 @@ impl CandidateTxFileJournalV0 {
             if instrument {
                 self.at_fault(tests::Point::Published)?;
             }
+            self.verify_written_file(target, &file, bytes)?;
             self.directory.sync_all()?;
             #[cfg(test)]
             if instrument {
                 self.at_fault(tests::Point::DirectorySynced)?;
             }
             self.check_namespace()?;
+            self.verify_written_file(target, &file, bytes)?;
             #[cfg(not(test))]
             let _ = instrument;
             Ok(())
@@ -655,6 +662,46 @@ impl CandidateTxFileJournalV0 {
             self.poisoned = true;
         }
         outcome
+    }
+
+    // A pathname rename does not identify the file descriptor we wrote and
+    // synced. Bind both names to that retained inode and compare every byte
+    // before publication and again on each side of the directory-sync boundary.
+    // This detects a source/target substitution before an ACK can escape; it
+    // does not isolate a process from a continuously malicious same-UID writer.
+    fn verify_written_file(&self, name: &str, written: &File, expected: &[u8]) -> Result<()> {
+        validate_file(written)?;
+        let mut named = self.open_file(name)?;
+        if !same_inode(&named, written)? {
+            return Err(CandidateTxJournalErrorV0::Namespace);
+        }
+        if named.metadata()?.len() != expected.len() as u64 {
+            return Err(CandidateTxJournalErrorV0::Corrupt(
+                "written file length changed",
+            ));
+        }
+        let mut buffer = [0u8; 8192];
+        for chunk in expected.chunks(buffer.len()) {
+            named.read_exact(&mut buffer[..chunk.len()])?;
+            if &buffer[..chunk.len()] != chunk {
+                return Err(CandidateTxJournalErrorV0::Corrupt(
+                    "written file bytes changed",
+                ));
+            }
+        }
+        let mut extra = [0u8; 1];
+        if named.read(&mut extra)? != 0 || named.metadata()?.len() != expected.len() as u64 {
+            return Err(CandidateTxJournalErrorV0::Corrupt(
+                "written file length changed",
+            ));
+        }
+        validate_file(&named)?;
+        validate_file(written)?;
+        let rebound = self.open_file(name)?;
+        if !same_inode(&rebound, written)? {
+            return Err(CandidateTxJournalErrorV0::Namespace);
+        }
+        Ok(())
     }
 
     fn commit(&mut self, mutation: Mutation) -> Result<Digest32V0> {
