@@ -246,3 +246,16 @@ new operations would produce a different corpus. A reviewed profile mapping
 and complete native submission, commit and recovery evidence remain required.
 The historical operation-sequence gate is not restored or declared complete
 by this negative test.
+
+The same test module now also replays the unchanged corpus through the actual
+private PoCO transition kernel. Nine named cases cover all 18 positive steps
+and nine typed rejections, including the four explicitly isolated prune
+sequences. They compare frozen operation IDs/counts/roots, complete namespace
+writes, mutation roots, manifest/projection bytes and historical JMT roots;
+negative cases require unchanged overlay and snapshot bytes. The corpus SHA-256
+is pinned in the test, and no expected root is regenerated from the kernel.
+
+This seam supplies historical context directly inside `cfg(test)`. It does not
+admit that context through the current application owner, authenticate outer
+signatures, call ProcessProposal/FinalizeBlock, persist a durable P artifact or
+qualify restart. The separate owner-profile rejection above remains required.

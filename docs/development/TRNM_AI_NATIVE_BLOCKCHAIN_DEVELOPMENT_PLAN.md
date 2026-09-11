@@ -610,6 +610,10 @@ does not implement full durable sequence replay. Changing profile labels
 changes genesis commitments and signed operation IDs. A reviewed profile
 migration and source-bound native replay corpus are required before the
 historical full-event gate can be replaced or accepted.
+The unchanged corpus now also has a test-only private-kernel semantic replay for all
+18 positive steps and nine typed rejections, checking frozen writes, operation/mutation
+roots and historical JMT roots. This does not provide current-owner signature/profile
+admission, durable P, full-event or restart acceptance.
 
 History reachability alone does not prove branch-content absorption. Any branch
 whose tip was recorded by a tree-preserving merge needs a content-level review;

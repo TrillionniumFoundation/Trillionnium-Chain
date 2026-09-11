@@ -15,15 +15,29 @@
 //! a fail-closed error.  The owner adapter (compiled when the laboratory
 //! runtime is present) calls the caught-up owner's fresh revalidation before
 //! it can append either row.
+//!
+//! Live handles pin the private parent directory and database descriptors.
+//! Observed namespace loss fences every clone; reopening never creates a
+//! database. Successful reads and writes close SQLite before the final
+//! namespace check. This assumes owner-controlled ancestor directories: it
+//! detects observed replacement, not an unobserved rename-and-restore race or
+//! a coherent in-place rollback. External rollback authentication and runtime
+//! activation remain separate obligations.
 
 use std::{
     error::Error,
     fmt,
-    fs::{self, OpenOptions},
+    fs::{self, File, OpenOptions},
+    os::unix::fs::MetadataExt,
     path::{Component, Path, PathBuf},
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
 };
 
-use rusqlite::{params, Connection, TransactionBehavior};
+use fs2::FileExt;
+use rusqlite::{params, Connection, OpenFlags, TransactionBehavior};
 use sha2::{Digest, Sha256};
 use trnm_consensus_types::{
     Epoch, RecoveryReadySetV1, RecoveryStartCertificateV1, SignatureVerifier, ValidatorId,
@@ -458,6 +472,146 @@ impl TransitionRecordV1 {
 #[derive(Debug, Clone)]
 pub struct Process2RecoveryTransitionJournalV1 {
     path: PathBuf,
+    namespace: Arc<JournalNamespaceV1>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct JournalFileIdentityV1 {
+    device: u64,
+    inode: u64,
+    owner: u32,
+    mode: u32,
+}
+
+fn journal_file_identity_v1(
+    metadata: &fs::Metadata,
+    directory: bool,
+) -> Result<JournalFileIdentityV1, RecoveryTransitionJournalErrorV1> {
+    if metadata.file_type().is_symlink()
+        || metadata.mode() & 0o077 != 0
+        || if directory {
+            !metadata.is_dir()
+        } else {
+            !metadata.is_file() || metadata.nlink() != 1
+        }
+    {
+        return Err(RecoveryTransitionJournalErrorV1::InvalidPath);
+    }
+    Ok(JournalFileIdentityV1 {
+        device: metadata.dev(),
+        inode: metadata.ino(),
+        owner: metadata.uid(),
+        mode: metadata.mode() & 0o777,
+    })
+}
+
+/// Keep descriptors alive across SQLite connections. Reopening and dropping
+/// separate pin descriptors while a transaction is live can release POSIX
+/// process-scoped SQLite locks, so clones share this one lifetime pin.
+#[derive(Debug)]
+struct JournalNamespaceV1 {
+    parent: File,
+    parent_identity: JournalFileIdentityV1,
+    database: File,
+    database_identity: JournalFileIdentityV1,
+    failed: AtomicBool,
+}
+
+impl JournalNamespaceV1 {
+    fn pin(
+        path: &Path,
+        parent: File,
+        database: File,
+    ) -> Result<Self, RecoveryTransitionJournalErrorV1> {
+        let parent = parent;
+        let parent_identity = journal_file_identity_v1(
+            &parent
+                .metadata()
+                .map_err(|_| RecoveryTransitionJournalErrorV1::InvalidPath)?,
+            true,
+        )?;
+        let database_identity = journal_file_identity_v1(
+            &database
+                .metadata()
+                .map_err(|_| RecoveryTransitionJournalErrorV1::InvalidPath)?,
+            false,
+        )?;
+        if database_identity.owner != parent_identity.owner {
+            return Err(RecoveryTransitionJournalErrorV1::InvalidPath);
+        }
+        let namespace = Self {
+            parent,
+            parent_identity,
+            database,
+            database_identity,
+            failed: AtomicBool::new(false),
+        };
+        namespace.validate(path)?;
+        Ok(namespace)
+    }
+
+    fn open_parent(path: &Path) -> Result<File, RecoveryTransitionJournalErrorV1> {
+        let parent = File::open(
+            path.parent()
+                .ok_or(RecoveryTransitionJournalErrorV1::InvalidPath)?,
+        )
+        .map_err(|_| RecoveryTransitionJournalErrorV1::InvalidPath)?;
+        journal_file_identity_v1(
+            &parent
+                .metadata()
+                .map_err(|_| RecoveryTransitionJournalErrorV1::InvalidPath)?,
+            true,
+        )?;
+        // The private parent is the single-owner boundary. Keeping this
+        // flock descriptor alive prevents an independent open_existing call
+        // from opening and later dropping a second inode descriptor while a
+        // SQLite connection in this owner may still hold POSIX locks.
+        parent.try_lock_exclusive().map_err(|_| {
+            RecoveryTransitionJournalErrorV1::Unavailable(
+                "transition journal namespace is already owned",
+            )
+        })?;
+        Ok(parent)
+    }
+
+    fn validate(&self, path: &Path) -> Result<(), RecoveryTransitionJournalErrorV1> {
+        if self.failed.load(Ordering::SeqCst) {
+            return Err(RecoveryTransitionJournalErrorV1::ThirdState(
+                "transition namespace identity was lost",
+            ));
+        }
+        let result = (|| {
+            validate_journal_path_v1(path)?;
+            for (file, pathname, expected, directory) in [
+                (
+                    &self.parent,
+                    path.parent()
+                        .ok_or(RecoveryTransitionJournalErrorV1::InvalidPath)?,
+                    self.parent_identity,
+                    true,
+                ),
+                (&self.database, path, self.database_identity, false),
+            ] {
+                let handle = file
+                    .metadata()
+                    .map_err(|_| RecoveryTransitionJournalErrorV1::InvalidPath)?;
+                let named = fs::symlink_metadata(pathname)
+                    .map_err(|_| RecoveryTransitionJournalErrorV1::InvalidPath)?;
+                if journal_file_identity_v1(&handle, directory)? != expected
+                    || journal_file_identity_v1(&named, directory)? != expected
+                {
+                    return Err(RecoveryTransitionJournalErrorV1::ThirdState(
+                        "transition directory or database identity changed",
+                    ));
+                }
+            }
+            Ok(())
+        })();
+        if result.is_err() {
+            self.failed.store(true, Ordering::SeqCst);
+        }
+        result
+    }
 }
 
 impl Process2RecoveryTransitionJournalV1 {
@@ -465,6 +619,7 @@ impl Process2RecoveryTransitionJournalV1 {
         path: impl AsRef<Path>,
     ) -> Result<Self, RecoveryTransitionJournalErrorV1> {
         let path = validate_journal_path_v1(path.as_ref())?;
+        let parent = JournalNamespaceV1::open_parent(&path)?;
         let mut options = OpenOptions::new();
         options.read(true).write(true).create_new(true);
         #[cfg(unix)]
@@ -475,24 +630,35 @@ impl Process2RecoveryTransitionJournalV1 {
         file.sync_all().map_err(|_| {
             RecoveryTransitionJournalErrorV1::Unavailable("cannot sync transition journal")
         })?;
-        drop(file);
-        let connection = open_connection_v1(&path, true)?;
+        let journal = Self {
+            namespace: Arc::new(JournalNamespaceV1::pin(&path, parent, file)?),
+            path,
+        };
+        let connection = open_connection_v1(&journal, true)?;
         initialize_schema_v1(&connection)?;
-        drop(connection);
-        Ok(Self { path })
+        journal.close_connection_v1(connection)?;
+        journal.namespace.parent.sync_all().map_err(|_| {
+            RecoveryTransitionJournalErrorV1::Unavailable("cannot sync transition namespace")
+        })?;
+        journal.head_record_v1()?;
+        Ok(journal)
     }
 
     pub fn open_existing(path: impl AsRef<Path>) -> Result<Self, RecoveryTransitionJournalErrorV1> {
         let path = validate_journal_path_v1(path.as_ref())?;
-        if !path.is_file() {
-            return Err(RecoveryTransitionJournalErrorV1::Unavailable(
-                "transition journal does not exist",
-            ));
-        }
-        let connection = open_connection_v1(&path, false)?;
-        validate_schema_v1(&connection)?;
-        let journal = Self { path };
-        journal.audit_connection_v1(&connection)?;
+        let parent = JournalNamespaceV1::open_parent(&path)?;
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .open(&path)
+            .map_err(|_| {
+                RecoveryTransitionJournalErrorV1::Unavailable("transition journal does not exist")
+            })?;
+        let journal = Self {
+            namespace: Arc::new(JournalNamespaceV1::pin(&path, parent, file)?),
+            path,
+        };
+        journal.head_record_v1()?;
         Ok(journal)
     }
 
@@ -503,11 +669,7 @@ impl Process2RecoveryTransitionJournalV1 {
     pub fn head_v1(
         &self,
     ) -> Result<Option<Process2RecoveryTransitionFactsV1>, RecoveryTransitionJournalErrorV1> {
-        let connection = open_connection_v1(&self.path, false)?;
-        validate_schema_v1(&connection)?;
-        Ok(self
-            .audit_connection_v1(&connection)?
-            .map(|record| record.facts_v1()))
+        Ok(self.head_record_v1()?.map(|record| record.facts_v1()))
     }
 
     fn audit_connection_v1(
@@ -638,15 +800,22 @@ impl Process2RecoveryTransitionJournalV1 {
         expected: Option<&TransitionRecordV1>,
         target: TransitionRecordV1,
     ) -> Result<TransitionRecordV1, RecoveryTransitionJournalErrorV1> {
-        let mut connection = open_connection_v1(&self.path, false)?;
+        let mut connection = open_connection_v1(self, false)?;
         validate_schema_v1(&connection)?;
         let transaction = connection
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|_| {
                 RecoveryTransitionJournalErrorV1::Unavailable("cannot start journal transaction")
             })?;
-        let observed = self.audit_connection_v1(&transaction)?;
+        let observed = self.audit_or_fence_v1(&transaction)?;
         if observed.as_ref() == Some(&target) {
+            transaction.rollback().map_err(|_| {
+                RecoveryTransitionJournalErrorV1::Unavailable(
+                    "cannot finish transition replay audit",
+                )
+            })?;
+            self.close_connection_v1(connection)?;
+            self.confirm_target_v1(target)?;
             return Ok(target);
         }
         if observed.as_ref() != expected {
@@ -707,20 +876,47 @@ impl Process2RecoveryTransitionJournalV1 {
                 "transition metadata CAS changed no row",
             ));
         }
+        self.namespace.validate(&self.path)?;
         transaction.commit().map_err(|_| {
             RecoveryTransitionJournalErrorV1::Unavailable(
                 "transition commit acknowledgement was lost",
             )
         })?;
-        let reopened = open_connection_v1(&self.path, false)?;
-        validate_schema_v1(&reopened)?;
-        let observed = self.audit_connection_v1(&reopened)?;
-        if observed != Some(target) {
+        self.close_connection_v1(connection)?;
+        self.confirm_target_v1(target)?;
+        Ok(target)
+    }
+
+    fn confirm_target_v1(
+        &self,
+        target: TransitionRecordV1,
+    ) -> Result<(), RecoveryTransitionJournalErrorV1> {
+        if self.head_record_v1()? != Some(target) {
             return Err(RecoveryTransitionJournalErrorV1::ThirdState(
                 "transition commit readback is neither expected nor target",
             ));
         }
-        Ok(target)
+        Ok(())
+    }
+
+    fn audit_or_fence_v1(
+        &self,
+        connection: &Connection,
+    ) -> Result<Option<TransitionRecordV1>, RecoveryTransitionJournalErrorV1> {
+        match self.audit_connection_v1(connection) {
+            Ok(head) => Ok(head),
+            Err(
+                error @ (RecoveryTransitionJournalErrorV1::Tamper(_)
+                | RecoveryTransitionJournalErrorV1::ThirdState(_)),
+            ) => {
+                // These are terminal journal-integrity findings. Do not let a
+                // caller retry the same poisoned object after an operator has
+                // only moved a bad row out of the way.
+                self.namespace.failed.store(true, Ordering::SeqCst);
+                Err(error)
+            }
+            Err(error) => Err(error),
+        }
     }
 
     fn append_ready_v1(
@@ -775,9 +971,28 @@ impl Process2RecoveryTransitionJournalV1 {
     fn head_record_v1(
         &self,
     ) -> Result<Option<TransitionRecordV1>, RecoveryTransitionJournalErrorV1> {
-        let connection = open_connection_v1(&self.path, false)?;
+        let connection = open_connection_v1(self, false)?;
         validate_schema_v1(&connection)?;
-        self.audit_connection_v1(&connection)
+        let transaction = connection.unchecked_transaction().map_err(|_| {
+            RecoveryTransitionJournalErrorV1::Unavailable("cannot begin transition read snapshot")
+        })?;
+        let head = self.audit_or_fence_v1(&transaction)?;
+        transaction.commit().map_err(|_| {
+            RecoveryTransitionJournalErrorV1::Unavailable("cannot finish transition read snapshot")
+        })?;
+        self.close_connection_v1(connection)?;
+        Ok(head)
+    }
+
+    fn close_connection_v1(
+        &self,
+        connection: Connection,
+    ) -> Result<(), RecoveryTransitionJournalErrorV1> {
+        self.namespace.validate(&self.path)?;
+        connection.close().map_err(|_| {
+            RecoveryTransitionJournalErrorV1::Unavailable("cannot close transition journal")
+        })?;
+        self.namespace.validate(&self.path)
     }
 }
 
@@ -1014,7 +1229,10 @@ fn validate_journal_path_v1(path: &Path) -> Result<PathBuf, RecoveryTransitionJo
     let parent = path
         .parent()
         .ok_or(RecoveryTransitionJournalErrorV1::InvalidPath)?;
-    if !parent.is_dir() {
+    if !parent.is_dir()
+        || fs::canonicalize(parent).map_err(|_| RecoveryTransitionJournalErrorV1::InvalidPath)?
+            != parent
+    {
         return Err(RecoveryTransitionJournalErrorV1::InvalidPath);
     }
     #[cfg(unix)]
@@ -1030,12 +1248,19 @@ fn validate_journal_path_v1(path: &Path) -> Result<PathBuf, RecoveryTransitionJo
 }
 
 fn open_connection_v1(
-    path: &Path,
+    journal: &Process2RecoveryTransitionJournalV1,
     initialize: bool,
 ) -> Result<Connection, RecoveryTransitionJournalErrorV1> {
-    let connection = Connection::open(path).map_err(|_| {
-        RecoveryTransitionJournalErrorV1::Unavailable("cannot open transition journal")
-    })?;
+    journal.namespace.validate(&journal.path)?;
+    let connection = Connection::open_with_flags(
+        &journal.path,
+        OpenFlags::SQLITE_OPEN_READ_WRITE
+            | OpenFlags::SQLITE_OPEN_NO_MUTEX
+            | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+    )
+    .map_err(|_| RecoveryTransitionJournalErrorV1::Unavailable("cannot open transition journal"))?;
+    // Check before PRAGMA journal_mode can mutate a substituted database.
+    journal.namespace.validate(&journal.path)?;
     connection
         .busy_timeout(std::time::Duration::from_millis(JOURNAL_BUSY_TIMEOUT_MS_V1))
         .map_err(|_| RecoveryTransitionJournalErrorV1::Unavailable("cannot set busy timeout"))?;
@@ -1057,6 +1282,7 @@ fn open_connection_v1(
                 RecoveryTransitionJournalErrorV1::Unavailable("cannot set schema version")
             })?;
     }
+    journal.namespace.validate(&journal.path)?;
     Ok(connection)
 }
 
@@ -1464,5 +1690,158 @@ mod tests {
         let error = Process2RecoveryTransitionJournalV1::open_existing(&path)
             .expect_err("tamper must fail closed");
         assert!(matches!(error, RecoveryTransitionJournalErrorV1::Tamper(_)));
+    }
+
+    #[test]
+    fn live_record_tamper_fences_all_clones_until_explicit_reopen() {
+        let dir = private_dir();
+        let path = dir.path().join("recovery.sqlite");
+        let journal = Process2RecoveryTransitionJournalV1::initialize_new(&path).expect("init");
+        journal
+            .append_ready_v1(binding(1), [0x61; 32])
+            .expect("ready");
+        let connection = Connection::open(&path).expect("foreign tamper connection");
+        connection
+            .execute(
+                "UPDATE process2_recovery_transition_events_v1 SET record = ?1 WHERE sequence = 0",
+                params![vec![0xA5_u8; JOURNAL_RECORD_BYTES_V1]],
+            )
+            .expect("tamper row");
+        assert!(matches!(
+            journal.head_v1(),
+            Err(RecoveryTransitionJournalErrorV1::Tamper(_))
+        ));
+        assert!(matches!(
+            journal.head_v1(),
+            Err(RecoveryTransitionJournalErrorV1::ThirdState(_))
+        ));
+        drop(connection);
+        drop(journal);
+        assert!(matches!(
+            Process2RecoveryTransitionJournalV1::open_existing(&path),
+            Err(RecoveryTransitionJournalErrorV1::Tamper(_))
+        ));
+    }
+
+    #[test]
+    fn deleted_journal_readback_never_creates_a_replacement_database() {
+        let dir = private_dir();
+        let path = dir.path().join("recovery.sqlite");
+        let journal = Process2RecoveryTransitionJournalV1::initialize_new(&path).expect("init");
+        journal
+            .append_ready_v1(binding(1), [0x61; 32])
+            .expect("ready");
+        fs::remove_file(&path).expect("remove original database");
+        assert!(journal.head_v1().is_err());
+        assert!(
+            !path.exists(),
+            "readback must not initialize a new namespace"
+        );
+    }
+
+    #[test]
+    fn live_journal_rejects_a_valid_database_substitution() {
+        let dir = private_dir();
+        let path = dir.path().join("recovery.sqlite");
+        let journal = Process2RecoveryTransitionJournalV1::initialize_new(&path).expect("init");
+        journal
+            .append_ready_v1(binding(1), [0x61; 32])
+            .expect("ready");
+        let replacement_dir = private_dir();
+        let replacement_path = replacement_dir.path().join("replacement.sqlite");
+        let replacement = Process2RecoveryTransitionJournalV1::initialize_new(&replacement_path)
+            .expect("independent valid empty journal");
+        drop(replacement);
+        fs::rename(&replacement_path, &path).expect("substitute another valid database");
+        assert!(
+            journal.head_v1().is_err(),
+            "a valid foreign history must be rejected"
+        );
+        assert!(journal
+            .append_start_v1(binding(1), [0x61; 32], [0x62; 32])
+            .is_err());
+        drop(journal);
+        let fresh = Process2RecoveryTransitionJournalV1::open_existing(&path)
+            .expect("independent explicit open of replacement");
+        assert_eq!(fresh.head_v1().expect("replacement unchanged"), None);
+    }
+
+    #[test]
+    fn live_journal_rejects_parent_replacement_with_same_database_bytes() {
+        let root = private_dir();
+        let parent = root.path().join("owner");
+        fs::create_dir(&parent).expect("parent");
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).expect("private parent");
+        let path = parent.join("recovery.sqlite");
+        let journal = Process2RecoveryTransitionJournalV1::initialize_new(&path).expect("init");
+        journal
+            .append_ready_v1(binding(1), [0x61; 32])
+            .expect("ready");
+        let original = root.path().join("original-owner");
+        fs::rename(&parent, &original).expect("move authority parent");
+        fs::create_dir(&parent).expect("substitute parent");
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700))
+            .expect("private replacement");
+        fs::copy(original.join("recovery.sqlite"), &path).expect("copy authentic database bytes");
+        assert!(
+            journal.head_v1().is_err(),
+            "bytes do not authorize a different namespace"
+        );
+    }
+
+    #[test]
+    fn existing_journal_rejects_symlink_and_hardlink_aliases() {
+        let dir = private_dir();
+        let path = dir.path().join("recovery.sqlite");
+        let journal = Process2RecoveryTransitionJournalV1::initialize_new(&path).expect("init");
+        let alias = dir.path().join("alias.sqlite");
+        std::os::unix::fs::symlink(&path, &alias).expect("symlink alias");
+        assert!(Process2RecoveryTransitionJournalV1::open_existing(&alias).is_err());
+        fs::remove_file(&alias).expect("remove symlink");
+        fs::hard_link(&path, &alias).expect("hardlink alias");
+        assert!(Process2RecoveryTransitionJournalV1::open_existing(&alias).is_err());
+        assert!(Process2RecoveryTransitionJournalV1::open_existing(&path).is_err());
+        fs::remove_file(&alias).expect("remove hardlink alias");
+        drop(journal);
+        let reopened = Process2RecoveryTransitionJournalV1::open_existing(&path)
+            .expect("original opens after owner release");
+        assert!(reopened.head_v1().is_ok());
+    }
+
+    #[test]
+    fn detected_namespace_change_permanently_fences_all_journal_clones() {
+        let dir = private_dir();
+        let path = dir.path().join("recovery.sqlite");
+        let parked = dir.path().join("parked.sqlite");
+        let journal = Process2RecoveryTransitionJournalV1::initialize_new(&path).expect("init");
+        let clone = journal.clone();
+        journal
+            .append_ready_v1(binding(1), [0x61; 32])
+            .expect("ready");
+        fs::rename(&path, &parked).expect("temporarily move database");
+        assert!(journal.head_v1().is_err());
+        if path.exists() {
+            fs::remove_file(&path).expect("remove unintended replacement");
+        }
+        fs::rename(&parked, &path).expect("restore original database");
+        assert!(
+            clone.head_v1().is_err(),
+            "detected loss must fence shared live handles"
+        );
+        assert!(journal
+            .append_start_v1(binding(1), [0x61; 32], [0x62; 32])
+            .is_err());
+        drop(clone);
+        drop(journal);
+        let reopened =
+            Process2RecoveryTransitionJournalV1::open_existing(&path).expect("explicit reopen");
+        assert_eq!(
+            reopened
+                .head_v1()
+                .expect("original head")
+                .expect("ready")
+                .phase_v1(),
+            Process2RecoveryTransitionPhaseV1::RecoveryReady
+        );
     }
 }
