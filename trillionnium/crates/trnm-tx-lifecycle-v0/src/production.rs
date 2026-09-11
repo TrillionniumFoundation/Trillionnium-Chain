@@ -270,6 +270,7 @@ pub struct SignedTxEnvelopeV0 {
 }
 
 impl SignedTxEnvelopeV0 {
+    #[must_use]
     pub fn new(
         permit: &VerifiedCoreSafetyPermitV0,
         signature: TxSignatureReceiptV0,
@@ -528,7 +529,6 @@ where
             .map_err(TxTransitionErrorV0::from)
     }
 
-    #[allow(clippy::type_complexity)]
     pub fn sign_and_broadcast<P, S, B, J>(
         &mut self,
         permit_verifier: &P,
