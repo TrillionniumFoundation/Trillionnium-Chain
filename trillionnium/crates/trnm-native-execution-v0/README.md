@@ -91,8 +91,11 @@ protocol:
   TrustedBase, and finalized application commits (and during hot-journal
   recovery), but no external anti-rollback, file-descriptor pinning, remote
   signer, or whole-node checkpoint evidence is claimed; and
-- deterministic invalid executions currently use one closed rejection code;
-  production-grade typed invalid classifications remain future work.
+- canonical runtime attempts preserve typed deterministic rejection codes and
+  authenticated-state unavailability; runtime/mutation/PoCO/lifecycle invariant
+  faults fail closed. Non-runtime outer/body/schema failures still use the
+  existing closed fallback rejection code; exhaustive classification of those
+  helpers remains future work.
 
 Accordingly, `durable_artifact_p=true` and
 `native_application_v0_implementation=true` do not imply Core/Safety authority
@@ -206,3 +209,21 @@ This application authority does not advance Core's epoch fence or mint a
 signing permit. The separate consensus checkpoint-applied/seal/activation state
 and the native JMT/version progression through the seal heights remain required
 before a live first block of the next epoch can execute.
+
+## Frozen operation-sequence profile boundary
+
+The retained `poco-application-operation-sequences-v0.json` corpus contains nine
+sequences, 18 positive steps and nine negative cases. Its five full-store
+sequences share eight initial physical writes whose JMT root is exactly
+reproducible by the current native store. Their historical signer-policy hash
+uses a different domain profile, so the current native application constructor
+rejects that genesis with `bootstrap lifecycle signer-policy mismatch`. A Rust
+negative regression locks both the exact initial root and this refusal.
+
+This does not provide a current-profile durable replay of the nine sequences.
+The original signed operations bind their decision IDs to the historical
+source root and authority commitment; rewriting the initial policy and signing
+new operations would produce a different corpus. A reviewed profile mapping
+and complete native submission, commit and recovery evidence remain required.
+The historical operation-sequence gate is not restored or declared complete
+by this negative test.

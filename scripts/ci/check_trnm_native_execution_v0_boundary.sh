@@ -81,10 +81,20 @@ for removed in (("trnm-consensus-" + "app"), ("trnm-" + "node")):
         issues.append(f"removed package remains in Cargo.lock: {removed}")
 expected_sources = {
     "auth_tree.rs", "canonical_lab_bootstrap.rs", "complete.rs", "durable.rs", "lib.rs",
+    "durable/replay_floor_v1.rs", "native_parallel.rs",
+    "native_parallel_dependency_tests.rs", "native_parallel_fee_oracle_tests.rs",
+    "native_parallel_tests.rs", "operation_sequence_profile_boundary_tests.rs",
+    "overlay_delta_tests.rs", "pcc1_finality.rs",
+    "pcc1_finality/tests.rs", "poco_authenticated_candidate.rs",
+    "poco_checkpoint.rs", "poco_checkpoint_header.rs", "poco_epoch_commitment.rs",
+    "poco_joint_handoff.rs", "poco_preparation_journal.rs",
     "poco_application.rs", "poco_nullifier.rs", "poco_semantics.rs", "poco_snapshot.rs",
     "poco_transition.rs", "store.rs", "tests.rs", "validator_lifecycle.rs",
 }
-actual_sources = {item.name for item in (crate_root / "src").glob("*.rs")}
+actual_sources = {
+    item.relative_to(crate_root / "src").as_posix()
+    for item in (crate_root / "src").rglob("*.rs")
+}
 if actual_sources != expected_sources:
     issues.append(f"native execution source inventory drift: {sorted(actual_sources)}")
 raw = vector_path.read_bytes()

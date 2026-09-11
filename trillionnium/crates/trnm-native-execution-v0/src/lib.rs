@@ -89,8 +89,9 @@ pub use store::{
     RuntimeObjectDeltaPlanV0, RuntimeObjectDeltaRootV0,
 };
 
-/// The historical domain labels are frozen v0 state semantics. Their names
-/// do not represent a dependency or current product role.
+/// These current native profile labels bind genesis roots and operation IDs.
+/// Historical corpus compatibility requires the explicit profile boundary
+/// checked in `operation_sequence_profile_boundary_tests` and documented below.
 const SIGNER_TREE_DOMAIN_V0: &str = "trnm.poco.authorized-signers.v1";
 const SIGNER_LEAF_DOMAIN_V0: &str = "trnm.poco.authorized-signer.v1";
 
@@ -691,6 +692,9 @@ where
 
 #[cfg(test)]
 mod overlay_delta_tests;
+
+#[cfg(test)]
+mod operation_sequence_profile_boundary_tests;
 
 #[cfg(test)]
 mod tests;
