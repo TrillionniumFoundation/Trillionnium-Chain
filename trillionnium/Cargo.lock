@@ -1449,6 +1449,7 @@ name = "trnm-consensus-core"
 version = "0.1.0"
 dependencies = [
  "sha2",
+ "trnm-consensus-crypto",
  "trnm-consensus-safety-rules",
  "trnm-consensus-types",
 ]
@@ -1540,6 +1541,7 @@ dependencies = [
  "getrandom 0.2.17",
  "libc",
  "rusqlite",
+ "serde_json",
  "sha2",
  "tempfile",
  "trnm-consensus-core",

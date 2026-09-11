@@ -66,6 +66,14 @@
 
 extern crate alloc;
 
+mod epoch_preparation;
+pub use epoch_preparation::{
+    maximum_epoch_preparation_record_bytes_v1, prepare_epoch_handoff_evidence_v1,
+    recover_epoch_preparation_v1, EpochPreparationErrorV1, EpochPreparationPhaseV1,
+    EpochPreparationRecordV1, EpochPreparationV1, EPOCH_PREPARATION_RECORD_OVERHEAD_V1,
+    EPOCH_PREPARATION_RECORD_SCHEMA_V1, MAX_EPOCH_PREPARATION_RECORD_BYTES_V1,
+};
+
 /// Complete proposal bodies are retained only after the existing bounded
 /// application-Valid transition. This data-only cache is the prerequisite for
 /// a later safety-kernel shadow comparison.

@@ -19,8 +19,10 @@ mod epoch_transition;
 mod strict_finality;
 
 pub use epoch_transition::{
+    recover_epoch_activation_authority_strict_v0, verify_first_epoch_proposal_header_strict_v0,
     verify_same_version_epoch_activation_authority_strict_v0,
-    verify_same_version_epoch_transition_strict_v0, StrictEpochActivationBindingRefV0,
+    verify_same_version_epoch_transition_strict_v0, EpochActivationRecoveryErrorV0,
+    StrictEpochActivationBindingRefV0, StrictEpochFirstProposalHeaderV0,
     StrictSameVersionEpochActivationAuthorityV0, StrictSameVersionEpochTransitionV0,
 };
 pub use strict_finality::{

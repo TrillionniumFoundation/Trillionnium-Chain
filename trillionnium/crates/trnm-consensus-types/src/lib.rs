@@ -24,6 +24,7 @@ mod context;
 mod crypto;
 mod cutoff;
 mod epoch;
+mod epoch_activation_evidence;
 mod error;
 mod evidence;
 mod finality;
@@ -94,6 +95,12 @@ pub use crypto::SignatureVerifier;
 pub use cutoff::{verify_finalized_cutoff_header_v0, AuthenticatedFinalizedCutoffHeaderV0};
 pub use epoch::{
     EpochFallbackReasonV0, EpochGeometryV0, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
+};
+pub use epoch_activation_evidence::{
+    decode_epoch_activation_evidence_v0_exact, epoch_first_proposal_signing_root_v0,
+    DecodedEpochActivationEvidenceV0, EpochActivationEvidenceBytesV0,
+    EpochActivationEvidenceComponentV0, EpochActivationEvidenceErrorV0,
+    EpochActivationEvidencePreimagesV0,
 };
 pub use error::{Result, ValidationError};
 pub use evidence::EquivocationEvidence;

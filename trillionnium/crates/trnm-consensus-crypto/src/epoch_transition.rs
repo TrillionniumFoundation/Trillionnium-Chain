@@ -1,13 +1,17 @@
 use alloc::vec::Vec;
+use core::fmt;
 
 use sha2::{Digest, Sha256};
 use trnm_consensus_types::{
+    decode_epoch_activation_evidence_v0_exact, epoch_first_proposal_signing_root_v0,
     validate_checkpoint_parent_header_v0, verify_same_version_epoch_transition_proof_kernel_v0,
     verify_same_version_joint_handoff_kernel_v0, BlockHeader, BlockId, CertificateId,
-    ConsensusParametersV0, Epoch, EpochAnchorAuthorizationKernelV0, FinalityProofV0,
+    Cev0AdmissionBudgetV0, ConsensusParametersV0, Epoch, EpochActivationEvidenceErrorV0,
+    EpochActivationEvidencePreimagesV0, EpochAnchorAuthorizationKernelV0, FinalityProofV0,
     HandoffCertificateV0, Height, JointHandoffKernelError, JointHandoffKernelV0,
     NextEpochCommitmentV0, QuorumCertificate, SameVersionEpochTransitionKernelError,
-    SameVersionEpochTransitionKernelV0, StateRoot, ValidatorSet, View,
+    SameVersionEpochTransitionKernelV0, Signature64, SignatureVerifier, SigningRoot, StateRoot,
+    ValidationError, ValidatorSet, View,
 };
 
 use crate::{validate_validator_set_strict_ed25519_v0, StrictEd25519Verifier};
@@ -292,6 +296,86 @@ fn strict_epoch_activation_binding_ref_v0(
     ]))
 }
 
+/// Failures while rebuilding strict authority from independently persisted
+/// canonical preimages. No failure consumes the caller's admission budget.
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum EpochActivationRecoveryErrorV0 {
+    ZeroExpectedBinding,
+    Evidence(EpochActivationEvidenceErrorV0),
+    Verification(JointHandoffKernelError),
+    BindingMismatch,
+}
+
+impl fmt::Display for EpochActivationRecoveryErrorV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::ZeroExpectedBinding => {
+                formatter.write_str("epoch recovery expected binding is zero")
+            }
+            Self::Evidence(error) => write!(formatter, "epoch recovery evidence: {error}"),
+            Self::Verification(error) => write!(formatter, "epoch recovery verification: {error}"),
+            Self::BindingMismatch => {
+                formatter.write_str("epoch recovery exact evidence binding differs")
+            }
+        }
+    }
+}
+
+impl core::error::Error for EpochActivationRecoveryErrorV0 {}
+
+/// Rebuilds the complete non-cloneable pre-first-block strict authority from
+/// bounded exact nested CEV0 evidence and an independently pinned old context.
+///
+/// The expected binding must come from the caller's authenticated journal or
+/// checkpoint readback. This function proves the exact evidence matches that
+/// reference; a caller-supplied digest alone supplies no freshness, rollback,
+/// application execution, signer lease, or Core activation authority. No new
+/// aggregate protocol encoding or digest is introduced.
+///
+/// All eight preimages are parsed, their context and checkpoint parent are
+/// checked, every old/new role signature is strictly reverified, and the
+/// existing complete-preimage binding is recomputed before success. Persisted
+/// bytes never deserialize directly into an authority. The returned value
+/// owns every verified preimage for the next explicitly authorized consumer.
+/// Structural admission reserves the complete signature-work charge before
+/// verification starts. A failed signature or final binding check does not
+/// refund work already admitted; malformed preimages rejected before that
+/// reservation leave the budget unchanged.
+pub fn recover_epoch_activation_authority_strict_v0(
+    preimages: EpochActivationEvidencePreimagesV0<'_>,
+    trusted_old_validator_set: &ValidatorSet,
+    trusted_old_consensus_parameters: &ConsensusParametersV0,
+    expected_binding: [u8; 32],
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<StrictSameVersionEpochActivationAuthorityV0, EpochActivationRecoveryErrorV0> {
+    if expected_binding == [0; 32] {
+        return Err(EpochActivationRecoveryErrorV0::ZeroExpectedBinding);
+    }
+    let evidence = decode_epoch_activation_evidence_v0_exact(
+        preimages,
+        trusted_old_validator_set,
+        trusted_old_consensus_parameters,
+        budget,
+    )
+    .map_err(EpochActivationRecoveryErrorV0::Evidence)?;
+    let authority = verify_same_version_epoch_activation_authority_strict_v0(
+        evidence.old_checkpoint_finality(),
+        evidence.next_epoch_commitment(),
+        evidence.authorization_kernel(),
+        evidence.old_validator_set(),
+        evidence.old_consensus_parameters(),
+        evidence.new_validator_set(),
+        evidence.new_consensus_parameters(),
+        evidence.authenticated_checkpoint_parent_header(),
+    )
+    .map_err(EpochActivationRecoveryErrorV0::Verification)?;
+    if authority.binding_ref().as_bytes() != &expected_binding {
+        return Err(EpochActivationRecoveryErrorV0::BindingMismatch);
+    }
+    Ok(authority)
+}
+
 fn strict_epoch_activation_binding_digest_v0(preimages: [&[u8]; 8]) -> [u8; 32] {
     let mut hasher = Sha256::new();
     hasher.update(b"trnm.domain.hash.v1");
@@ -302,6 +386,79 @@ fn strict_epoch_activation_binding_digest_v0(preimages: [&[u8]; 8]) -> [u8; 32] 
         hasher.update(preimage);
     }
     hasher.finalize().into()
+}
+
+/// Strictly signed view-one first-epoch header, bound to the complete epoch
+/// activation evidence. It is not application-Valid, a signer permit, a Core
+/// activation receipt, or a proof of first-block finality.
+#[derive(Debug, PartialEq, Eq)]
+pub struct StrictEpochFirstProposalHeaderV0 {
+    activation_binding: [u8; 32],
+    header: BlockHeader,
+    proposer_signature: Signature64,
+    signing_root: SigningRoot,
+}
+impl StrictEpochFirstProposalHeaderV0 {
+    pub const fn activation_binding_v0(&self) -> [u8; 32] {
+        self.activation_binding
+    }
+    pub const fn header_v0(&self) -> &BlockHeader {
+        &self.header
+    }
+    pub const fn proposer_signature_v0(&self) -> &Signature64 {
+        &self.proposer_signature
+    }
+    pub const fn signing_root_v0(&self) -> SigningRoot {
+        self.signing_root
+    }
+}
+
+/// The supplied complete strict authority authorizes only the cryptographic
+/// context of this check. No bare anchor is accepted or returned. The caller
+/// retains its authority on rejection; a malformed peer header cannot consume
+/// a preparation owner. Work is reserved before Ed25519 verification and is
+/// not refunded on an invalid signature. View > 1 requires a separate
+/// complete TC admission path and is deliberately rejected by this v0 API.
+pub fn verify_first_epoch_proposal_header_strict_v0(
+    activation: &StrictSameVersionEpochActivationAuthorityV0,
+    header: BlockHeader,
+    proposer_signature: Signature64,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<StrictEpochFirstProposalHeaderV0, ValidationError> {
+    let bytes = header.try_cev0_bytes()?;
+    budget.admit_root_bytes(bytes.len()).map_err(|_| {
+        ValidationError::InvalidProposal("first epoch header exceeds admission byte limit")
+    })?;
+    proposer_signature.validate_shape()?;
+    let signing_root = epoch_first_proposal_signing_root_v0(
+        &header,
+        activation.authorization_kernel(),
+        activation.old_validator_set(),
+        activation.new_validator_set(),
+        activation.new_consensus_parameters(),
+    )?;
+    let proposer = activation
+        .new_validator_set()
+        .validator(header.proposer_id())
+        .ok_or_else(|| {
+            ValidationError::UnknownValidator(alloc::boxed::Box::new(header.proposer_id()))
+        })?;
+    budget.charge_signature_work(1).map_err(|_| {
+        ValidationError::InvalidProposal(
+            "first epoch header exceeds admission signature-work limit",
+        )
+    })?;
+    if !StrictEd25519Verifier.verify(proposer, &signing_root, &proposer_signature) {
+        return Err(ValidationError::InvalidSignature(alloc::boxed::Box::new(
+            header.proposer_id(),
+        )));
+    }
+    Ok(StrictEpochFirstProposalHeaderV0 {
+        activation_binding: *activation.binding_ref().as_bytes(),
+        header,
+        proposer_signature,
+        signing_root,
+    })
 }
 
 /// Strict-Ed25519 observation of one bounded same-version epoch transition.

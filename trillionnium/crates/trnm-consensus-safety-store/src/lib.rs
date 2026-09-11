@@ -28,12 +28,16 @@
 //! sidecar, but a production host must still place them behind one dedicated
 //! process owner in an owner-controlled namespace.
 
+mod epoch_preparation_sqlite_v1;
 mod error;
 mod hash;
 mod schema;
 mod sqlite;
 mod transition_context;
 
+pub use epoch_preparation_sqlite_v1::{
+    EpochPreparationCreateCutV1, EpochPreparationStoreErrorV1, SqliteEpochPreparationStoreV1,
+};
 pub use error::{SafetyStoreConflictV0, SafetyStoreErrorV0};
 pub use sqlite::{
     AuthenticatedGenesisApplicationH1ExistingCutV0,
