@@ -5,7 +5,8 @@
     "trnm-node-commit-exec-focused.yml",
     "trnm-native-poco-runtime-fault-matrix-v1.yml",
     "trnm-documentation-truth.yml",
-    "trnm-merge-gates.yml"
+    "trnm-gate-quick-check.yml",
+    "trnm-poco-bft-v0.yml"
   ],
   "source_identity": "derive-at-runtime",
   "accept_stale_or_different_head": false,
