@@ -8,6 +8,7 @@ import pathlib
 import shutil
 import tempfile
 import unittest
+from unittest import mock
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CHECKER = ROOT / "scripts/ci/check_technical_convergence_v1.py"
@@ -16,6 +17,11 @@ if spec is None or spec.loader is None:
     raise RuntimeError("cannot load convergence checker")
 checker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checker)
+binding_spec = importlib.util.spec_from_file_location("documentation_binding", ROOT / "scripts/ci/check_documentation_reference_closure_v1.py")
+if binding_spec is None or binding_spec.loader is None:
+    raise RuntimeError("cannot load documentation binding checker")
+binding_checker = importlib.util.module_from_spec(binding_spec)
+binding_spec.loader.exec_module(binding_checker)
 
 
 class Mutants(unittest.TestCase):
@@ -187,6 +193,85 @@ class Mutants(unittest.TestCase):
         for name, content in workflows.items():
             with self.subTest(name=name):
                 self.reset(); (self.root / checker.WORKFLOW_ROOT / name).write_text(content); self.rejected()
+
+    def test_strict_documentation_binding_and_retention_cannot_be_omitted(self) -> None:
+        cases = (
+            ("Validate repository, development, module, node, and blocker truth", "TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}"),
+            ("Validate repository, development, module, node, and blocker truth", "TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-source-binding.json"),
+            ("Run separately bound prospective-merge regressions", "TRNM_DOC_BINDING_MODE: merge"),
+            ("Run separately bound prospective-merge regressions", "TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-merge-binding.json"),
+            ("Retain strict source and prospective-merge documentation bindings", "if: always()"),
+            ("Retain strict source and prospective-merge documentation bindings", "trnm-documentation-merge-binding.json"),
+            ("Retain strict source and prospective-merge documentation bindings", "if-no-files-found: error"),
+        )
+        for name, token in cases:
+            with self.subTest(token=token):
+                self.reset(); self.step_remove(name, token); self.rejected()
+
+    def test_hosted_candidate_commands_and_outcomes_cannot_be_omitted(self) -> None:
+        step = "Test hosted candidate process recovery with explicit features"
+        for token in (*checker._workflows.CANDIDATE_TEST_COMMANDS, checker._workflows.CANDIDATE_CLIPPY_COMMAND,
+                      'timeout --signal=TERM --kill-after=10s 600s "$@"', 'exit "$rc"',
+                      '--check-candidate-test-log "$root/$name.log"', 'if [[ "$kind" == "test" ]]',
+                      'printf \'%s\\n\' "$rc" > "$root/$name.exit-code"', "x230_acceptance=false"):
+            with self.subTest(token=token):
+                self.reset(); self.step_remove(step, token); self.rejected()
+        self.reset()
+        self.replace(checker.BASELINE_WORKFLOW, "run_candidate test timeout-signing cargo", "run_candidate clippy timeout-signing cargo")
+        self.rejected()
+        for token in ("if: always()", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
+            self.reset(); self.step_remove("Retain hosted candidate process commands and outcomes", token); self.rejected()
+
+
+class RuntimeEvidence(unittest.TestCase):
+    def test_candidate_log_requires_nonempty_unfiltered_success(self) -> None:
+        valid = "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n"
+        self.assertEqual(checker._workflows.candidate_test_summary(valid)["passed"], 2)
+        self.assertEqual(checker._workflows.candidate_test_summary(valid + valid.replace("2 passed", "0 passed"))["test_binaries"], 2)
+        for text in ("", "running 2 tests\n", valid.replace("2 passed", "0 passed"), valid.replace("0 ignored", "1 ignored"),
+                     valid.replace("0 filtered out", "1 filtered out"), valid.replace("0 failed", "1 failed"),
+                     valid.replace("ok.", "FAILED."), valid + "test result: malformed\n"):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                checker._workflows.candidate_test_summary(text)
+
+    def test_strict_runtime_binding_rejects_missing_or_wrong_pr_evidence(self) -> None:
+        head, base, merge = "a" * 40, "b" * 40, "c" * 40
+        with tempfile.TemporaryDirectory() as temp:
+            path = pathlib.Path(temp) / "event.json"
+            def event(**changes):
+                value = {"pull_request": {"number": 124, "head": {"sha": head}, "base": {"sha": base}}}
+                value.update(changes); path.write_text(json.dumps(value))
+            def git_value(*args):
+                if args == ("rev-parse", "HEAD"):
+                    return current[0]
+                if args == ("rev-parse", "HEAD^{tree}"):
+                    return "d" * 40
+                return " ".join(parents)
+            current = [head]; parents = [merge, base, head]
+            with mock.patch.object(binding_checker, "git", side_effect=git_value), mock.patch.dict(binding_checker.os.environ, {}, clear=True):
+                self.assertEqual(binding_checker.runtime_binding("local")["mode"], "local")
+                for mode in ("source", "merge"):
+                    with self.subTest(mode=mode), self.assertRaises(binding_checker.DocumentationTruthError):
+                        binding_checker.runtime_binding(mode)
+                binding_checker.os.environ.update(GITHUB_EVENT_PATH=str(path), GITHUB_SHA=merge)
+                event(pull_request=None)
+                for mode in ("source", "merge"):
+                    with self.assertRaises(binding_checker.DocumentationTruthError):
+                        binding_checker.runtime_binding(mode)
+                event()
+                self.assertEqual(binding_checker.runtime_binding("source")["source_commit"], head)
+                current[0] = merge
+                with self.assertRaises(binding_checker.DocumentationTruthError):
+                    binding_checker.runtime_binding("source")
+                self.assertEqual(binding_checker.runtime_binding("merge")["prospective_merge_commit"], merge)
+                for invalid in ([merge, head, base], [merge, base, head, "e" * 40], [merge, base, "e" * 40]):
+                    parents[:] = invalid
+                    with self.subTest(parents=invalid), self.assertRaises(binding_checker.DocumentationTruthError):
+                        binding_checker.runtime_binding("merge")
+                parents[:] = [merge, base, head]
+                binding_checker.os.environ["GITHUB_SHA"] = "e" * 40
+                with self.assertRaises(binding_checker.DocumentationTruthError):
+                    binding_checker.runtime_binding("merge")
 
 
 if __name__ == "__main__":

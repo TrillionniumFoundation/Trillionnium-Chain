@@ -93,7 +93,7 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
       - name: Validate sole Plan and zero stale consumers
         env:
-          TRNM_DOC_BINDING_MODE: source
+          TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}
           TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/document-source-binding.json
         run: |
           bash scripts/ci/check_canonical_development_plan.sh

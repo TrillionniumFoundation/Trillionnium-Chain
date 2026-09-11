@@ -86,7 +86,7 @@ jobs:
       TRNM_CARGO_OFFLINE_POLICY: "required"
       CARGO_NET_OFFLINE: "true"
       CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
-      TRNM_DOC_BINDING_MODE: source
+      TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}
     steps:
       - name: Check out exact source without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262

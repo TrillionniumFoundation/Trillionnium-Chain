@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import pathlib
 import re
+import argparse
+import json
 from typing import Any, Callable
 
 BASELINE = pathlib.Path(".github/workflows/trnm-required-baseline.yml")
@@ -16,6 +18,35 @@ COMMANDS = (
     "python3 scripts/ci/check_module_coverage_v1.py",
     "python3 scripts/ci/check_required_baseline_closure_v1.py",
 )
+CANDIDATE_TEST_COMMANDS = (
+    "cargo test -p trnm-poco-node --features recovery-process-test-support --test timeout_signing_process_kill_matrix --locked",
+    "cargo test -p trnm-poco-node --features g1-process-test-support --test g1_process_host_e2e --locked",
+    "cargo test -p trnm-poco-node --features g1-process-test-support --test effect_driver_process_e2e --locked",
+    "cargo test -p trnm-poco-node --features external-signer-runtime --test external_signer_runtime --locked",
+    "cargo test -p trnm-poco-node --features ai-v1-candidate --test g2_manifest_bound_process_v2 --locked",
+    "cargo test -p trnm-poco-node --features replay-to-core-coordinator-test-support --bin trnm-poco-replay-to-core-coordinator-v1 --locked",
+    "cargo test -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked",
+)
+CANDIDATE_CLIPPY_COMMAND = "cargo clippy -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked -- -D warnings"
+
+
+def candidate_test_summary(text: str) -> dict[str, int]:
+    """Require nonempty, unfiltered libtest execution; Cargo exit is checked separately."""
+    pattern = re.compile(
+        r"^test result: (ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored; "
+        r"(\d+) measured; (\d+) filtered out; finished in .+$", re.MULTILINE
+    )
+    rows = pattern.findall(text)
+    if not rows or len(rows) != len(re.findall(r"^test result:", text, re.MULTILINE)):
+        raise ValueError("missing or malformed libtest summaries")
+    total = 0
+    for status, passed, failed, ignored, measured, filtered in rows:
+        if status != "ok" or any(int(value) for value in (failed, ignored, measured, filtered)):
+            raise ValueError("failed, ignored, measured, or filtered candidate tests")
+        total += int(passed)
+    if total == 0:
+        raise ValueError("candidate test execution was empty")
+    return {"test_binaries": len(rows), "passed": total, "failed": 0, "ignored": 0, "filtered": 0}
 PROHIBITED = (
     ".github/workflows/trnm-plan-v2-repository-autofix-20260906b.yml",
     ".github/workflows/trnm-rustfmt-export-v1.yml",
@@ -155,6 +186,13 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
     for command in COMMANDS:
         require(command in exact, f"exact-source baseline missing {command}")
         require(command in merge, f"prospective-merge baseline missing {command}")
+    require("TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}" in exact, "exact-source strict documentation binding lost")
+    require("TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-source-binding.json" in exact, "source documentation binding artifact lost")
+    require("TRNM_DOC_BINDING_MODE: merge" in merge, "prospective-merge strict documentation binding lost")
+    require("TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-merge-binding.json" in merge, "merge documentation binding artifact lost")
+    bindings = named_step(baseline, "Retain strict source and prospective-merge documentation bindings", require)
+    for token in ("if: always()", "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", "if-no-files-found: error", "trnm-documentation-source-binding.json", "trnm-documentation-merge-binding.json"):
+        require(token in bindings, f"strict documentation artifact retention missing: {token}")
     require(COMMANDS[3] in mutants, "convergence mutants not retained")
     for path in ("check_plan_manifest_pins_v1.py", "check_technical_convergence_v1.py", "test_technical_convergence_v1.py", "check_required_baseline_closure_v1.py"):
         require(path in compile_step, f"Python compile closure missing {path}")
@@ -177,6 +215,24 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
     ):
         require(command in bridge, f"persistent bridge execution missing: {command}")
     require('exit "$rc"' in bridge, "persistent bridge failure exit lost")
+
+    candidate = named_step(baseline, "Test hosted candidate process recovery with explicit features", require)
+    for command in CANDIDATE_TEST_COMMANDS:
+        require(re.search(rf"(?m)^\s+run_candidate test [a-z0-9-]+ {re.escape(command)}$", candidate) is not None, f"hosted candidate regression missing: {command}")
+    require(re.search(rf"(?m)^\s+run_candidate clippy [a-z0-9-]+ {re.escape(CANDIDATE_CLIPPY_COMMAND)}$", candidate) is not None, "hosted candidate strict clippy missing")
+    for token in (
+        "set -euo pipefail", "timeout-minutes: 85", 'test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"',
+        'timeout --signal=TERM --kill-after=10s 600s "$@"', 'exit "$rc"',
+        'printf \'%s\\n\' "$rc" > "$root/$name.exit-code"',
+        'printf \'%q \' "$@" > "$root/$name.command"',
+        '--check-candidate-test-log "$root/$name.log"', 'if [[ "$kind" == "test" ]]',
+        "x230_acceptance=false", "production_activation=false",
+    ):
+        require(token in candidate, f"hosted candidate execution safeguard missing: {token}")
+    require("continue-on-error" not in candidate and "|| true" not in candidate and not re.search(r"(?m)^\s+if:", candidate), "hosted candidate failure masking forbidden")
+    retained = named_step(baseline, "Retain hosted candidate process commands and outcomes", require)
+    for token in ("if: always()", "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
+        require(token in retained, f"hosted candidate artifact retention missing: {token}")
 
     workflow_paths = sorted(path for path in (root / WORKFLOWS).iterdir() if path.is_file() and path.suffix in {".yml", ".yaml"})
     require(bool(workflow_paths), "workflow inventory empty")
@@ -204,3 +260,10 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
     require(report["pull_request_workflow_count"] > 0, "no PR workflow inspected")
     report.update({"candidate_privileged_job_count": 0, "repository_mutation_marker_count": 0, "custom_repository_credential_count": 0, "pull_request_target_count": 0})
     return report
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check-candidate-test-log", type=pathlib.Path, required=True)
+    args = parser.parse_args()
+    print(json.dumps(candidate_test_summary(args.check_candidate_test_log.read_text(encoding="utf-8")), sort_keys=True))

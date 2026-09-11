@@ -230,9 +230,13 @@ def runtime_binding(mode: str) -> dict[str, Any]:
         "prospective_merge_tree": None,
     }
     event_path = os.environ.get("GITHUB_EVENT_PATH")
+    if mode != "local":
+        require(bool(event_path) and pathlib.Path(event_path).is_file(), "strict binding requires a pull-request event file")
     if event_path and pathlib.Path(event_path).is_file():
         event = load_json(pathlib.Path(event_path))
         pull = event.get("pull_request")
+        if mode != "local":
+            require(isinstance(pull, dict), "strict binding requires pull-request metadata")
         if isinstance(pull, dict):
             number = pull.get("number") or event.get("number")
             head_row = pull.get("head") if isinstance(pull.get("head"), dict) else {}
@@ -244,16 +248,15 @@ def runtime_binding(mode: str) -> dict[str, Any]:
                 pull_request_head=pr_head,
                 pull_request_base=pr_base,
             )
-            require(isinstance(number, int) and number > 0, "pull-request number missing")
-            require(isinstance(pr_head, str) and len(pr_head) == 40, "pull-request head missing")
-            require(isinstance(pr_base, str) and len(pr_base) == 40, "pull-request base missing")
+            require(type(number) is int and number > 0, "pull-request number missing")
+            require(isinstance(pr_head, str) and re.fullmatch(r"[0-9a-f]{40}", pr_head) is not None, "pull-request head missing")
+            require(isinstance(pr_base, str) and re.fullmatch(r"[0-9a-f]{40}", pr_base) is not None, "pull-request base missing")
             if mode == "source":
                 require(head == pr_head, f"source checkout mismatch: HEAD={head} PR={pr_head}")
             elif mode == "merge":
                 parents = git("rev-list", "--parents", "-n", "1", "HEAD").split()
-                require(len(parents) >= 3, "prospective merge must have at least two parents")
-                require(parents[1] == pr_base, "prospective merge first parent is not PR base")
-                require(pr_head in parents[2:], "prospective merge does not contain PR head as a parent")
+                require(head == os.environ.get("GITHUB_SHA"), "prospective merge is not the event commit")
+                require(parents == [head, pr_base, pr_head], "prospective merge must bind exactly the PR base and head in order")
                 binding["prospective_merge_commit"] = head
                 binding["prospective_merge_tree"] = tree
     return binding

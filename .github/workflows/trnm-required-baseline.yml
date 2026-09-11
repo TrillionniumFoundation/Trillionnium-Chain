@@ -94,6 +94,9 @@ jobs:
       - name: Verify canonical project boundary without exemptions
         run: bash scripts/project-preflight.sh --audit
       - name: Validate repository, development, module, node, and blocker truth
+        env:
+          TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}
+          TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-source-binding.json
         run: |
           set -euo pipefail
           python3 scripts/ci/check_repository_truth_v1.py
@@ -183,6 +186,8 @@ jobs:
         env:
           TRNM_EXPECTED_MERGE_SHA: ${{ github.sha }}
           TRNM_EXPECTED_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TRNM_DOC_BINDING_MODE: merge
+          TRNM_DOC_BINDING_OUTPUT: ${{ runner.temp }}/trnm-documentation-merge-binding.json
         run: |
           set -euo pipefail
           if [[ "${GITHUB_EVENT_NAME}" != "pull_request" ]]; then
@@ -229,6 +234,16 @@ jobs:
             git diff --exit-code
             test -z "$(git status --porcelain --untracked-files=all)"
           )
+      - name: Retain strict source and prospective-merge documentation bindings
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-hosted-documentation-bindings-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: |
+            ${{ runner.temp }}/trnm-documentation-source-binding.json
+            ${{ runner.temp }}/trnm-documentation-merge-binding.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Require consumer replay to leave exact-head source unchanged
         run: |
           git diff --exit-code
@@ -480,6 +495,52 @@ jobs:
           timeout --signal=TERM --kill-after=10s 120s cargo test \
             -p trnm-consensus-external-watermark --test authority_blackbox \
             --locked replacing_bound_socket_path_poison_daemon_on_next_original_connection -- --exact
+      - name: Test hosted candidate process recovery with explicit features
+        working-directory: trillionnium
+        timeout-minutes: 85
+        run: |
+          set -euo pipefail
+          root="${RUNNER_TEMP}/trnm-hosted-candidate-process"
+          mkdir -p "$root"
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          git rev-parse HEAD > "$root/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$root/TREE"
+          printf '%s\n' 'scope=hosted-candidate-regressions' 'x230_acceptance=false' 'production_activation=false' > "$root/scope.txt"
+          run_candidate() {
+            local kind="$1" name="$2" rc
+            shift 2
+            printf '%q ' "$@" > "$root/$name.command"
+            printf '\n' >> "$root/$name.command"
+            if timeout --signal=TERM --kill-after=10s 600s "$@" > "$root/$name.log" 2>&1; then
+              rc=0
+            else
+              rc=$?
+            fi
+            printf '%s\n' "$rc" > "$root/$name.exit-code"
+            tail -n 100 "$root/$name.log"
+            if [[ "$rc" -ne 0 ]]; then exit "$rc"; fi
+            if [[ "$kind" == "test" ]]; then
+              python3 ../scripts/ci/technical_convergence_workflows_v1.py \
+                --check-candidate-test-log "$root/$name.log" > "$root/$name.tests.json"
+            fi
+          }
+          run_candidate test timeout-signing cargo test -p trnm-poco-node --features recovery-process-test-support --test timeout_signing_process_kill_matrix --locked
+          run_candidate test g1-process cargo test -p trnm-poco-node --features g1-process-test-support --test g1_process_host_e2e --locked
+          run_candidate test effect-driver cargo test -p trnm-poco-node --features g1-process-test-support --test effect_driver_process_e2e --locked
+          run_candidate test external-signer cargo test -p trnm-poco-node --features external-signer-runtime --test external_signer_runtime --locked
+          run_candidate test g2-manifest cargo test -p trnm-poco-node --features ai-v1-candidate --test g2_manifest_bound_process_v2 --locked
+          run_candidate test replay-coordinator cargo test -p trnm-poco-node --features replay-to-core-coordinator-test-support --bin trnm-poco-replay-to-core-coordinator-v1 --locked
+          run_candidate test node-io cargo test -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked
+          run_candidate clippy node-io-clippy cargo clippy -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked -- -D warnings
+          git diff --exit-code HEAD -- .
+      - name: Retain hosted candidate process commands and outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-hosted-candidate-process-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-hosted-candidate-process
+          if-no-files-found: error
+          retention-days: 7
       - name: Test the unified workspace feature graph with a hard deadline
         working-directory: trillionnium
         run: |

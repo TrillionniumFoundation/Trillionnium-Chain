@@ -70,7 +70,7 @@ jobs:
       TRNM_CARGO_OFFLINE_POLICY: "required"
       CARGO_NET_OFFLINE: "true"
       CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
-      TRNM_DOC_BINDING_MODE: source
+      TRNM_DOC_BINDING_MODE: ${{ github.event_name == 'pull_request' && 'source' || 'local' }}
     steps:
       - name: Check out exact source without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -211,11 +211,28 @@ jobs:
             -p trnm-poco-node --test g2_manifest_bound_process_v2 \
             --features ai-v1-candidate --locked --offline
 
+      - name: Audit current native capability authority and private producers
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          # M17: the retired A22 migration audit referred to removed engine
+          # capabilities. Audit the current native session and checkpoint
+          # producers, including executable privacy and durable-readback tests.
+          python3 -B scripts/ci/check_authenticated_authority_ports_v0.py --self-test
+          bash scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+          bash scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+          bash scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-core -p trnm-native-execution-v0 -p trnm-poco-node \
+            --doc --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --lib --locked --offline \
+            poco_checkpoint::native_authorization_tests::
+
       - name: Revalidate source cleanliness and authority
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
           python3 scripts/ci/check_repository_truth_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
           python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree

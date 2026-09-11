@@ -38,10 +38,58 @@ def toml(path: str) -> dict:
     return value
 
 
-def token_prefix(source: str, declaration: str) -> str:
+def require_linear_token(source: str, declaration: str) -> None:
     offset = source.find(declaration)
     require(offset >= 0, f"missing token declaration: {declaration}")
-    return source[max(0, offset - 240) : offset]
+    # Only attributes attached to this declaration can derive Clone. Nearby
+    # prose (including "deliberately not Clone") is not an implementation.
+    attributes = re.search(r"((?:#\[[^\]]*\]\s*)+)$", source[:offset])
+    require(attributes is not None, f"verification token lost attributes: {declaration}")
+    derives = re.findall(r"\bderive\s*\(([^)]*)\)", attributes[1])
+    require(bool(derives), f"verification token lost derive declaration: {declaration}")
+    require(
+        all(re.search(r"\bClone\b", derive) is None for derive in derives),
+        f"verification token derives Clone: {declaration}",
+    )
+    token = declaration.removeprefix("pub struct ").removesuffix(" {")
+    require(
+        re.search(
+            r"\bimpl\s*(?:<[^{};]*>\s*)?"
+            r"(?:(?:std|core)\s*::\s*clone\s*::\s*)?Clone\s+for\s+"
+            + re.escape(token)
+            + r"\b",
+            source,
+        ) is None,
+        f"verification token implements Clone: {declaration}",
+    )
+
+
+def self_test() -> None:
+    declaration = "pub struct VerifiedAuthorityIngressV0 {"
+    fixture = (
+        "/// This token is deliberately not Clone.\n"
+        "#[must_use = \"consume the verified token\"]\n"
+        "#[derive(Debug)]\n"
+        + declaration
+        + "\n    private_field: u64,\n}\n"
+    )
+    require_linear_token(fixture, declaration)
+    for mutation in (
+        fixture.replace("derive(Debug)", "derive(Debug, Clone)"),
+        fixture.replace("derive(Debug)", "derive(Debug, core::clone::Clone)"),
+        fixture.replace("derive(Debug)", "derive(\n    Debug,\n    Clone,\n)"),
+        fixture.replace("#[derive(Debug)]", "#[derive(Debug)]\n#[cfg_attr(test, derive(Clone))]"),
+        fixture + "impl Clone for VerifiedAuthorityIngressV0 { }\n",
+        fixture + "impl core::clone::Clone for VerifiedAuthorityIngressV0 { }\n",
+        fixture + "impl std::clone::Clone for VerifiedAuthorityIngressV0 { }\n",
+        fixture.replace("#[derive(Debug)]\n", ""),
+    ):
+        try:
+            require_linear_token(mutation, declaration)
+        except GateError:
+            continue
+        raise GateError("linear-token mutation was accepted")
+    print("authenticated authority linear-token self-test: 1 control, 8 mutations PASS")
 
 
 def main() -> int:
@@ -86,8 +134,7 @@ def main() -> int:
         "pub struct VerifiedAuthorityIngressV0 {",
         "pub struct VerifiedAuthorityFactV0 {",
     ):
-        prefix = token_prefix(production, declaration)
-        require("Clone" not in prefix, f"verification token became Clone: {declaration}")
+        require_linear_token(production, declaration)
 
     production_dependencies = production_manifest.get("dependencies", {})
     require(
@@ -160,6 +207,10 @@ def main() -> int:
 
 if __name__ == "__main__":
     try:
+        if sys.argv[1:] == ["--self-test"]:
+            self_test()
+        elif sys.argv[1:]:
+            raise GateError("usage: check_authenticated_authority_ports_v0.py [--self-test]")
         raise SystemExit(main())
     except GateError as error:
         print(f"authenticated authority port gate failed: {error}", file=sys.stderr)

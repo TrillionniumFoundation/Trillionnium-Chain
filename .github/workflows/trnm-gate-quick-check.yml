@@ -322,33 +322,25 @@ jobs:
         run: |
           ./scripts/v2/quick_gate_skip_shellcheck_guard_test.sh
 
-      - name: Nightly health deterministic env guard regression
+      # M17: seven dedicated guards lost their subjects when the old nightly,
+      # testnet and merge lanes retired. Preserve their applicable purposes on
+      # current native CI: deterministic environments, complete triggers,
+      # preflight order, hard failure propagation and exact-source artifacts.
+      # Python and relative-path scanner coverage remain independent below.
+      - name: Current native workflow contract and false-pass regressions
         run: |
-          ./scripts/v2/rust_l1_nightly_health_deterministic_env_guard_test.sh
-
-      - name: Nightly soft-fail signal guard regression
-        run: |
-          ./scripts/v2/nightly_softfail_signal_guard_test.sh
-
-      - name: Nightly health trigger path coverage regression
-        run: |
-          ./scripts/v2/rust_l1_nightly_health_paths_coverage_guard_test.sh
+          set -euo pipefail
+          python3 -B scripts/ci/check_required_baseline_closure_v1.py
+          python3 -B scripts/ci/check_native_workflow_contract_v1.py
+          python3 -B scripts/ci/test_native_workflow_contract_v1.py
 
       - name: Quick-check policy and runbook path coverage regression
         run: |
           ./scripts/v2/trnm_gate_quick_check_policy_runbook_paths_coverage_guard_test.sh
 
-      - name: Nightly artifact binding regression
-        run: |
-          ./scripts/v2/nightly_artifact_binding_guard_test.sh
-
       - name: Consensus fault matrix canonical metrics prefix regression
         run: |
           ./scripts/v2/consensus_fault_matrix_canonical_metrics_prefix_test.sh
-
-      - name: Testnet preflight deterministic env guard regression
-        run: |
-          ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh
 
       - name: Agent-user phaseA gate deterministic env guard regression
         run: |
@@ -617,14 +609,6 @@ jobs:
       - name: Workflow script refs non-executable strict-mode regression
         run: |
           ./scripts/v2/workflow_script_refs_non_exec_strict_mode_guard_test.sh
-
-      - name: Merge gates deterministic environment regression
-        run: |
-          ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
-
-      - name: Merge gates path coverage regression
-        run: |
-          ./scripts/v2/trnm_merge_gates_paths_coverage_guard_test.sh
 
       - name: Local release evidence deterministic entry regression
         run: |

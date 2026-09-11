@@ -598,8 +598,18 @@ The six technical-review classes are tracked by the existing rows above:
 | 2. Native runtime completeness | Native cutoff/candidate/commitment/checkpoint producers; exact nested epoch evidence recovery; production host and persistent adapters | Safety schema migration, dual consensus-height/application-version coordinates and multiple continuous epochs through the real production-shaped path |
 | 3. Module contracts and vectors | M00-M17 technical contracts and enabled operation catalog | Complete operation-level schema/limits/error/vector coverage and independent consumer review |
 | 4. Execution and state scalability | Bounded native runtime speculation; proven transfer fee rebasing; canonical validation; borrowed JMT audits and compact inventory | Incremental authenticated storage, other shared-state hotspots and measured finalized goodput on bounded workloads |
-| 5. One-source quality and integration | Native cleanup; restored branch fixes; explicit candidate-adapter CI; deterministic status generation | Terminal required CI, security-alert dispositions, history-preserving protected merge and post-merge checks |
+| 5. One-source quality and integration | Native cleanup; restored branch fixes; explicit candidate process/adapter CI; strict source/merge document bindings; deterministic status generation | Terminal required CI, security-alert dispositions, history-preserving protected merge and post-merge checks |
 | 6. External acceptance | Independent audit, operators, custody, rollback, physical faults and soak | Genuine source-bound evidence and signed governance acceptance |
+
+The frozen operation-sequence corpus remains an explicit `EXEC-VERTICAL-001`
+and module-vector blocker. Its nine sequences contain 18 positive steps and
+nine negative cases. Current native code reproduces the shared historical
+initial JMT root but rejects its signer-policy domain profile. The retained
+negative regression prevents authority admission across that mismatch; it
+does not implement full durable sequence replay. Changing profile labels
+changes genesis commitments and signed operation IDs. A reviewed profile
+migration and source-bound native replay corpus are required before the
+historical full-event gate can be replaced or accepted.
 
 History reachability alone does not prove branch-content absorption. Any branch
 whose tip was recorded by a tree-preserving merge needs a content-level review;
