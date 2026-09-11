@@ -4,6 +4,20 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
+# A retired adapter must not remain runnable just because no workflow names it.
+# Reject dangling links too, so restoring an external target cannot revive it.
+retired_paths=(
+  scripts/v2/trnm_tx_cli_real_adapter.sh
+  scripts/v2/trnm_tx_cli_real_adapter.template.sh
+  scripts/v2/worker_real_cli.env.example
+)
+for retired_path in "${retired_paths[@]}"; do
+  if [[ -e "$retired_path" || -L "$retired_path" ]]; then
+    echo "[FAIL] retired worker adapter path returned: $retired_path" >&2
+    exit 3
+  fi
+done
+
 active_workflows=()
 for workflow in .github/workflows/*.yml .github/workflows/*.yaml; do
   [[ -f "$workflow" ]] || continue
@@ -23,6 +37,7 @@ retired_refs=(
   run_worker_receipt_gates_real_cli.sh
   trnm_tx_cli_wrapper.sh
   worker_real_cli_
+  worker_real_cli.env.example
   worker_agent_onboard_mvp.sh
   trnm_tx_cli_real_adapter
   TRNM_WORKER_ALLOW_EXTERNAL_TX_CLI
@@ -63,4 +78,4 @@ grep -Fq -- './scripts/v2/worker_poco_cli_cutover_workflow_guard_test.sh' \
   exit 7
 }
 
-echo "[OK] active workflows keep retired worker adapters out of the native PoCO CLI cutover"
+echo "[OK] retired worker adapter paths are absent and active workflows preserve the native PoCO CLI cutover"
