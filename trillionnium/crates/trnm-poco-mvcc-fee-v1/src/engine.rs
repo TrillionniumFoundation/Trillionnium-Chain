@@ -212,12 +212,38 @@ fn value_hash(value: &ObjectStateV1) -> MvccFeeResultV1<Hash32V1> {
     digest_value("trnm.poco-ai.mvcc-object-value.candidate.v1", value)
 }
 
+/// Sequential scheduling oracle used by durable journal audit. This does not
+/// invoke the worker scheduler; only transaction semantics and root codecs are
+/// shared with the parallel path.
 pub(crate) fn execute_block(
     genesis: &MvccFeeGenesisV1,
     parent: &ObjectMapV1,
     block: &MvccBlockV1,
 ) -> MvccFeeResultV1<(ObjectMapV1, MvccBlockReceiptV1)> {
-    execute_block_with_workers(genesis, parent, block, 1)
+    validate_block(genesis, parent, block)?;
+    let parent_root = state_root(parent)?;
+    // Preserve the established parent-read admission before canonical execution.
+    let parent_reads = block
+        .transactions
+        .iter()
+        .map(|transaction| read_set(parent, transaction))
+        .collect::<MvccFeeResultV1<Vec<_>>>()?;
+    let mut current = parent.clone();
+    let mut pending_fees = BTreeMap::new();
+    let mut receipts = Vec::with_capacity(block.transactions.len());
+    for (transaction, initial_reads) in block.transactions.iter().zip(parent_reads) {
+        let current_reads = read_set(&current, transaction)?;
+        let conflicts = conflicting_objects_v1(&initial_reads, &current_reads);
+        let computed = compute_transaction_v1(genesis, &current, transaction, current_reads)?;
+        receipts.push(commit_computed_transaction_v1(
+            &mut current,
+            &mut pending_fees,
+            transaction,
+            computed,
+            conflicts,
+        )?);
+    }
+    finish_block_v1(genesis, block, parent_root, current, pending_fees, receipts)
 }
 
 pub(crate) fn execute_block_with_workers(
@@ -229,34 +255,56 @@ pub(crate) fn execute_block_with_workers(
     validate_worker_count_v1(worker_count)?;
     validate_block(genesis, parent, block)?;
     let parent_root = state_root(parent)?;
-    let speculative_reads =
-        parallel_speculative_reads_v1(parent, &block.transactions, worker_count)?;
+    let speculative =
+        parallel_speculative_transactions_v1(genesis, parent, &block.transactions, worker_count)?;
     let mut current = parent.clone();
-    let mut pending_fees: BTreeMap<(TypedObjectIdV1, TypedObjectIdV1), u128> = BTreeMap::new();
+    let mut pending_fees = BTreeMap::new();
     let mut receipts = Vec::with_capacity(block.transactions.len());
-    for (transaction, speculative) in block.transactions.iter().zip(speculative_reads) {
+    for (transaction, speculative) in block.transactions.iter().zip(speculative) {
         let current_reads = read_set(&current, transaction)?;
-        let conflict_set: Vec<_> = speculative
-            .iter()
-            .zip(&current_reads)
-            .filter_map(|(left, right)| {
-                (left.observed_version != right.observed_version
-                    || left.observed_value_hash != right.observed_value_hash)
-                    .then_some(right.object_id)
-            })
-            .collect();
-        let retry_count = u32::from(!conflict_set.is_empty());
-        let receipt = execute_transaction(
-            genesis,
+        let conflicts = conflicting_objects_v1(&speculative.parent_reads, &current_reads);
+        let computed = if conflicts.is_empty() {
+            // Reuse all worker computation, including metering, fee arithmetic,
+            // successors and transaction-local roots. A speculative error is
+            // authoritative only after its complete read dependencies validate.
+            speculative.computed?
+        } else {
+            compute_transaction_v1(genesis, &current, transaction, current_reads)?
+        };
+        receipts.push(commit_computed_transaction_v1(
             &mut current,
             &mut pending_fees,
             transaction,
-            current_reads,
-            conflict_set,
-            retry_count,
-        )?;
-        receipts.push(receipt);
+            computed,
+            conflicts,
+        )?);
     }
+    finish_block_v1(genesis, block, parent_root, current, pending_fees, receipts)
+}
+
+fn conflicting_objects_v1(
+    initial: &[ReadSetEntryV1],
+    current: &[ReadSetEntryV1],
+) -> Vec<TypedObjectIdV1> {
+    initial
+        .iter()
+        .zip(current)
+        .filter_map(|(left, right)| {
+            (left.observed_version != right.observed_version
+                || left.observed_value_hash != right.observed_value_hash)
+                .then_some(right.object_id)
+        })
+        .collect()
+}
+
+fn finish_block_v1(
+    genesis: &MvccFeeGenesisV1,
+    block: &MvccBlockV1,
+    parent_root: Hash32V1,
+    mut current: ObjectMapV1,
+    pending_fees: BTreeMap<(TypedObjectIdV1, TypedObjectIdV1), u128>,
+    receipts: Vec<TransactionExecutionReceiptV1>,
+) -> MvccFeeResultV1<(ObjectMapV1, MvccBlockReceiptV1)> {
     let aggregated_fee_deltas = reduce_pending_fees(&pending_fees);
     let destination_credits = reduce_destination_credits(&aggregated_fee_deltas)?;
     apply_destination_credits(&mut current, &destination_credits)?;
@@ -310,11 +358,17 @@ pub(crate) fn execute_block_with_workers(
     Ok((current, receipt))
 }
 
-fn parallel_speculative_reads_v1(
+struct SpeculativeTransactionV1 {
+    parent_reads: Vec<ReadSetEntryV1>,
+    computed: MvccFeeResultV1<TransactionComputationV1>,
+}
+
+fn parallel_speculative_transactions_v1(
+    genesis: &MvccFeeGenesisV1,
     parent: &ObjectMapV1,
     transactions: &[MvccTransactionV1],
     worker_count: usize,
-) -> MvccFeeResultV1<Vec<Vec<ReadSetEntryV1>>> {
+) -> MvccFeeResultV1<Vec<SpeculativeTransactionV1>> {
     validate_worker_count_v1(worker_count)?;
     let active_workers = worker_count.min(transactions.len().max(1));
     thread::scope(|scope| {
@@ -324,27 +378,49 @@ fn parallel_speculative_reads_v1(
                 let mut rows = Vec::new();
                 let mut position = worker_index;
                 while position < transactions.len() {
-                    rows.push((position, read_set(parent, &transactions[position])));
+                    let transaction = &transactions[position];
+                    let row = read_set(parent, transaction).map(|parent_reads| {
+                        let computed = compute_transaction_v1(
+                            genesis,
+                            parent,
+                            transaction,
+                            parent_reads.clone(),
+                        );
+                        SpeculativeTransactionV1 {
+                            parent_reads,
+                            computed,
+                        }
+                    });
+                    rows.push((position, row));
                     position += active_workers;
                 }
                 rows
             }));
         }
 
-        let mut ordered: Vec<Option<Vec<ReadSetEntryV1>>> =
+        let mut ordered: Vec<Option<MvccFeeResultV1<SpeculativeTransactionV1>>> =
             (0..transactions.len()).map(|_| None).collect();
+        // Join all workers before selecting any error. Worker completion order
+        // cannot choose a transaction's error or publish partial state.
+        let mut panicked = false;
         for handle in handles {
-            let rows = handle.join().map_err(|_| {
-                error(
-                    MvccFeeErrorCodeV1::InvalidState,
-                    "parallel speculation worker panicked",
-                )
-            })?;
-            for (position, row) in rows {
-                ordered[position] = Some(row?);
+            match handle.join() {
+                Ok(rows) => {
+                    for (position, row) in rows {
+                        ordered[position] = Some(row);
+                    }
+                }
+                Err(_) => panicked = true,
             }
         }
-
+        if panicked {
+            return Err(error(
+                MvccFeeErrorCodeV1::InvalidState,
+                "parallel speculation worker panicked",
+            ));
+        }
+        // Parent admission errors precede transaction execution errors, and are
+        // selected in canonical transaction order, identically for all workers.
         ordered
             .into_iter()
             .map(|row| {
@@ -353,7 +429,7 @@ fn parallel_speculative_reads_v1(
                         MvccFeeErrorCodeV1::InvalidState,
                         "parallel speculation omitted a canonical transaction",
                     )
-                })
+                })?
             })
             .collect()
     })
@@ -487,15 +563,31 @@ fn read_set(
         .collect()
 }
 
-fn execute_transaction(
+/// Private transaction-local computation, never a canonical receipt. No state
+/// or pending fee accumulator can be mutated by speculation.
+struct TransactionComputationV1 {
+    successors: ObjectMapV1,
+    status: ReceiptStatusV1,
+    error_class: Option<u16>,
+    read_set: Vec<ReadSetEntryV1>,
+    write_set: Vec<WriteSetEntryV1>,
+    read_set_root: Hash32V1,
+    write_set_root: Hash32V1,
+    state_delta_root: Hash32V1,
+    resource_usage: Vec<ResourceUsageV1>,
+    fee_charged: u128,
+    refund_amount: u128,
+    fee_deltas: Vec<FeeDeltaV1>,
+    #[cfg(test)]
+    computed_on_thread: thread::ThreadId,
+}
+
+fn compute_transaction_v1(
     genesis: &MvccFeeGenesisV1,
-    state: &mut ObjectMapV1,
-    pending_fees: &mut BTreeMap<(TypedObjectIdV1, TypedObjectIdV1), u128>,
+    state: &ObjectMapV1,
     transaction: &MvccTransactionV1,
     read_set: Vec<ReadSetEntryV1>,
-    conflict_set: Vec<TypedObjectIdV1>,
-    retry_count: u32,
-) -> MvccFeeResultV1<TransactionExecutionReceiptV1> {
+) -> MvccFeeResultV1<TransactionComputationV1> {
     let required_compute = match transaction.program {
         ObjectProgramV1::Add { .. } => 10,
         ObjectProgramV1::Transfer { .. } => 20,
@@ -711,11 +803,42 @@ fn execute_transaction(
             successor_value_hash: value_hash(successor)?,
         });
     }
-    for (id, successor) in successors {
+    let fee_deltas = split_fee(genesis, transaction.fee_payer, fee_charged)?;
+    let read_set_root = digest_value("trnm.poco-ai.read-set-root.candidate.v1", &read_set)?;
+    let write_set_root = digest_value("trnm.poco-ai.write-set-root.candidate.v1", &write_set)?;
+    let state_delta_root = digest_value("trnm.poco-ai.state-delta-root.candidate.v1", &write_set)?;
+    Ok(TransactionComputationV1 {
+        successors,
+        status,
+        error_class,
+        read_set,
+        write_set,
+        read_set_root,
+        write_set_root,
+        state_delta_root,
+        resource_usage,
+        fee_charged,
+        refund_amount: transaction
+            .max_fee
+            .checked_sub(fee_charged)
+            .ok_or_else(|| error(MvccFeeErrorCodeV1::ArithmeticOverflow, "refund underflow"))?,
+        fee_deltas,
+        #[cfg(test)]
+        computed_on_thread: thread::current().id(),
+    })
+}
+
+fn commit_computed_transaction_v1(
+    state: &mut ObjectMapV1,
+    pending_fees: &mut BTreeMap<(TypedObjectIdV1, TypedObjectIdV1), u128>,
+    transaction: &MvccTransactionV1,
+    computed: TransactionComputationV1,
+    conflict_set: Vec<TypedObjectIdV1>,
+) -> MvccFeeResultV1<TransactionExecutionReceiptV1> {
+    for (id, successor) in computed.successors {
         state.insert(id, successor);
     }
-    let fee_deltas = split_fee(genesis, transaction.fee_payer, fee_charged)?;
-    for delta in &fee_deltas {
+    for delta in &computed.fee_deltas {
         let slot = pending_fees
             .entry((delta.source, delta.destination))
             .or_default();
@@ -731,30 +854,24 @@ fn execute_transaction(
         "trnm.poco-ai.mvcc-intermediate-state-root.candidate.v1",
         &(state.values().cloned().collect::<Vec<_>>(), &pending),
     )?;
-    let read_set_root = digest_value("trnm.poco-ai.read-set-root.candidate.v1", &read_set)?;
-    let write_set_root = digest_value("trnm.poco-ai.write-set-root.candidate.v1", &write_set)?;
-    let state_delta_root = digest_value("trnm.poco-ai.state-delta-root.candidate.v1", &write_set)?;
     Ok(TransactionExecutionReceiptV1 {
         schema_version: SCHEMA_VERSION_V1,
         transaction_id: transaction.transaction_id,
         transaction_index: transaction.transaction_index,
-        status,
-        error_class,
-        read_set,
-        write_set,
-        read_set_root,
-        write_set_root,
-        state_delta_root,
+        status: computed.status,
+        error_class: computed.error_class,
+        read_set: computed.read_set,
+        write_set: computed.write_set,
+        read_set_root: computed.read_set_root,
+        write_set_root: computed.write_set_root,
+        state_delta_root: computed.state_delta_root,
         post_transaction_state_root,
-        resource_usage,
-        fee_charged,
-        refund_amount: transaction
-            .max_fee
-            .checked_sub(fee_charged)
-            .ok_or_else(|| error(MvccFeeErrorCodeV1::ArithmeticOverflow, "refund underflow"))?,
-        fee_deltas,
+        resource_usage: computed.resource_usage,
+        fee_charged: computed.fee_charged,
+        refund_amount: computed.refund_amount,
+        fee_deltas: computed.fee_deltas,
+        retry_count: u32::from(!conflict_set.is_empty()),
         conflict_set,
-        retry_count,
     })
 }
 
@@ -956,5 +1073,35 @@ fn aggregate_resources(
                 })
             },
         )
+        .collect()
+}
+
+#[cfg(test)]
+pub(crate) struct WorkerComputationProbeV1 {
+    pub thread_id: thread::ThreadId,
+    pub successors: ObjectMapV1,
+    pub fee_charged: u128,
+    pub resource_usage: Vec<ResourceUsageV1>,
+}
+
+/// Observe completed transaction computation, not task dispatch or read-set work.
+#[cfg(test)]
+pub(crate) fn worker_computation_probe_v1(
+    genesis: &MvccFeeGenesisV1,
+    parent: &ObjectMapV1,
+    transactions: &[MvccTransactionV1],
+    workers: usize,
+) -> MvccFeeResultV1<Vec<WorkerComputationProbeV1>> {
+    parallel_speculative_transactions_v1(genesis, parent, transactions, workers)?
+        .into_iter()
+        .map(|row| {
+            let computed = row.computed?;
+            Ok(WorkerComputationProbeV1 {
+                thread_id: computed.computed_on_thread,
+                successors: computed.successors,
+                fee_charged: computed.fee_charged,
+                resource_usage: computed.resource_usage,
+            })
+        })
         .collect()
 }

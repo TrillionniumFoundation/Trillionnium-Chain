@@ -699,3 +699,6 @@ fn committed_sparse_block_writes_only_changed_objects_and_replays_exactly_v1() {
         }
     }
 }
+
+#[path = "parallel_execution_tests.rs"]
+mod parallel_execution_tests;

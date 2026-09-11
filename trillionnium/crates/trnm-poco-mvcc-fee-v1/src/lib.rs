@@ -1,7 +1,8 @@
 //! Candidate-only deterministic object-MVCC and fee-delta kernel.
 //!
 //! The crate now contains a bounded in-process worker pool whose workers
-//! speculate against one immutable parent snapshot. Canonical transaction-index
+//! compute programs, meters, fee deltas and tentative object successors against
+//! one immutable parent snapshot. Canonical transaction-index
 //! commit and deterministic conflict re-execution keep state, receipt and fee
 //! roots invariant across worker counts. This is still candidate-only: it does
 //! not implement global CEV1 authorization, a production state tree, Order
