@@ -42,6 +42,51 @@ pub struct RecoveredTxRecordV0 {
     pub durable: DurableTxRecordV0,
 }
 
+/// The two records committed by one atomic replacement transaction.
+///
+/// Both receipts use the same journal sequence. That binding is necessary but
+/// not sufficient to prove physical atomicity: the journal adapter must commit
+/// and recover the pair together, even if its response is lost.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DurableTxReplacementV0 {
+    pub replaced: DurableTxRecordV0,
+    pub admitted: DurableTxRecordV0,
+}
+
+impl DurableTxReplacementV0 {
+    pub fn validate(
+        self,
+        previous: &TxRecordV0,
+        replaced: &TxRecordV0,
+        admitted: &TxRecordV0,
+    ) -> Result<Self, ProductionTxErrorV0> {
+        let mut expected = previous.clone();
+        expected
+            .advance(TxPhaseV0::Tombstoned)
+            .map_err(|_| ProductionTxErrorV0::DurableReceiptMismatch)?;
+        expected.tombstone = Some(TombstoneReasonV0::Replaced { by: admitted.tx_id });
+        if !matches!(
+            previous.phase,
+            TxPhaseV0::Admitted | TxPhaseV0::WalPersisted
+        ) || replaced != &expected
+            || admitted.phase != TxPhaseV0::Admitted
+            || admitted.tx_id == previous.tx_id
+            || admitted.intent.chain_id != previous.intent.chain_id
+            || admitted.intent.sender != previous.intent.sender
+            || admitted.intent.nonce != previous.intent.nonce
+            || admitted.intent.fee_bid <= previous.intent.fee_bid
+            || self.replaced.journal_sequence != self.admitted.journal_sequence
+        {
+            return Err(ProductionTxErrorV0::DurableReceiptMismatch);
+        }
+        validate_recovered_record_v0(admitted.intent.chain_id, admitted)?;
+        self.replaced
+            .validate(Some(previous.canonical_record_digest_v0()), replaced)?;
+        self.admitted.validate(None, admitted)?;
+        Ok(self)
+    }
+}
+
 pub trait DurableTxJournalV0 {
     type Error: Error + Send + Sync + 'static;
 
@@ -55,6 +100,21 @@ pub trait DurableTxJournalV0 {
         expected_previous_record_digest: Option<Digest32V0>,
         record: &TxRecordV0,
     ) -> Result<DurableTxRecordV0, Self::Error>;
+
+    /// Atomically replace an exact predecessor and insert one new transaction.
+    ///
+    /// Compare the old transaction's current digest with `expected_previous`,
+    /// require the new transaction to be absent, and persist both records in
+    /// one transaction with one journal sequence. `load_latest` must expose
+    /// either the full predecessor or the full pair after *any* failure,
+    /// including an error returned after commit. Independent appends are not a
+    /// valid implementation. The coordinator must recover after any error.
+    fn compare_and_replace(
+        &mut self,
+        expected_previous: Digest32V0,
+        replaced: &TxRecordV0,
+        admitted: &TxRecordV0,
+    ) -> Result<DurableTxReplacementV0, Self::Error>;
 
     fn delete_collected(
         &mut self,
@@ -270,7 +330,6 @@ pub struct SignedTxEnvelopeV0 {
 }
 
 impl SignedTxEnvelopeV0 {
-    #[must_use]
     pub fn new(
         permit: &VerifiedCoreSafetyPermitV0,
         signature: TxSignatureReceiptV0,
@@ -417,10 +476,42 @@ where
         J: DurableTxJournalV0,
     {
         self.require_live().map_err(TxAdmissionErrorV0::Protocol)?;
+        intent.validate().map_err(|error| {
+            TxAdmissionErrorV0::Lifecycle(TxLifecycleHostErrorV0::Lifecycle(error))
+        })?;
+        // Capture the predecessor before the pure lifecycle mutates its
+        // tombstone. An exact retry of an already-known tx is not a replacement.
+        let replacing = if self.lifecycle.records.contains_key(&intent.tx_id()) {
+            None
+        } else {
+            self.lifecycle
+                .active_nonce
+                .get(&(intent.sender, intent.nonce))
+                .and_then(|id| self.lifecycle.records.get(id))
+                .cloned()
+        };
         let tx_id = self
             .lifecycle
             .admit(intent, current_height)
             .map_err(TxAdmissionErrorV0::Lifecycle)?;
+        let result = self.persist_admission(journal, tx_id, replacing.as_ref());
+        if result.is_err() {
+            // Mutation may already have happened in memory or in the journal.
+            // This includes a successful write with a malformed/lost receipt.
+            self.poisoned = true;
+        }
+        result
+    }
+
+    fn persist_admission<J>(
+        &mut self,
+        journal: &mut J,
+        tx_id: TxIdV0,
+        replacing: Option<&TxRecordV0>,
+    ) -> Result<TxAdmissionReceiptV0, TxAdmissionErrorV0<V::Error, J::Error>>
+    where
+        J: DurableTxJournalV0,
+    {
         if let Some(existing) = self.durable.get(&tx_id).copied() {
             let record = self
                 .lifecycle
@@ -429,7 +520,9 @@ where
             if record.phase != TxPhaseV0::Admitted {
                 return Ok(TxAdmissionReceiptV0 {
                     tx_id,
-                    wal_sequence: existing.journal_sequence,
+                    wal_sequence: record.wal_sequence.ok_or(TxAdmissionErrorV0::Protocol(
+                        ProductionTxErrorV0::MissingDurableRecord,
+                    ))?,
                     record_digest: existing.record_digest,
                     durable_receipt_digest: existing.durable_receipt_digest,
                 });
@@ -441,16 +534,43 @@ where
             .record(tx_id)
             .map_err(|error| TxAdmissionErrorV0::Protocol(error.into()))?
             .clone();
-        let first = match journal.compare_and_append(None, &admitted) {
-            Ok(receipt) => receipt,
-            Err(error) => {
-                self.poisoned = true;
-                return Err(TxAdmissionErrorV0::Journal(error));
+        let first = if let Some(existing) = self.durable.get(&tx_id).copied() {
+            // A crash after the initial transaction (or atomic replacement)
+            // leaves a durable Admitted record. Resume instead of inserting it
+            // with an absent-record CAS, which a real journal must reject.
+            existing
+        } else if let Some(previous) = replacing {
+            let predecessor =
+                self.durable
+                    .get(&previous.tx_id)
+                    .ok_or(TxAdmissionErrorV0::Protocol(
+                        ProductionTxErrorV0::MissingDurableRecord,
+                    ))?;
+            if predecessor.record_digest != previous.canonical_record_digest_v0() {
+                return Err(TxAdmissionErrorV0::Protocol(
+                    ProductionTxErrorV0::DurableReceiptMismatch,
+                ));
             }
+            let replaced = self
+                .lifecycle
+                .record(previous.tx_id)
+                .map_err(|error| TxAdmissionErrorV0::Protocol(error.into()))?;
+            let pair = journal
+                .compare_and_replace(predecessor.record_digest, replaced, &admitted)
+                .map_err(TxAdmissionErrorV0::Journal)?
+                .validate(previous, replaced, &admitted)
+                .map_err(TxAdmissionErrorV0::Protocol)?;
+            self.durable.insert(previous.tx_id, pair.replaced);
+            pair.admitted
+        } else {
+            journal
+                .compare_and_append(None, &admitted)
+                .map_err(TxAdmissionErrorV0::Journal)?
         };
         let first = first
             .validate(None, &admitted)
             .map_err(TxAdmissionErrorV0::Protocol)?;
+        self.durable.insert(tx_id, first);
         self.lifecycle
             .persist_wal(tx_id, first.journal_sequence)
             .map_err(|error| TxAdmissionErrorV0::Protocol(error.into()))?;
@@ -536,7 +656,7 @@ where
         broadcaster: &mut B,
         journal: &mut J,
         claim: CoreSafetyPermitClaimV0,
-    ) -> Result<BroadcastReceiptV0, TxBroadcastErrorV0<P::Error, S::Error, B::Error, J::Error>>
+    ) -> TxBroadcastResultV0<P::Error, S::Error, B::Error, J::Error>
     where
         P: CoreSafetyPermitVerifierV0,
         S: NonExportableTxSignerV0,
@@ -1149,6 +1269,10 @@ pub enum TxAdmissionErrorV0<AuthorizationError, JournalError> {
     Journal(JournalError),
 }
 
+/// Result of the permit, signer, broadcast and durable-journal pipeline.
+pub type TxBroadcastResultV0<P, S, B, J> =
+    Result<BroadcastReceiptV0, TxBroadcastErrorV0<P, S, B, J>>;
+
 impl<A: fmt::Display, J: fmt::Display> fmt::Display for TxAdmissionErrorV0<A, J> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -1312,14 +1436,75 @@ mod tests {
         }
     }
 
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    enum CrashPoint {
+        BeforeCommit,
+        ReplacementStagedOld,
+        ReplacementStagedBoth,
+        AfterCommit,
+        MalformedReceipt,
+    }
+
     #[derive(Default)]
     struct MemoryJournal {
         latest: BTreeMap<TxIdV0, RecoveredTxRecordV0>,
         next_sequence: u64,
+        write_calls: u64,
+        fault: Option<(u64, CrashPoint)>,
+    }
+
+    impl MemoryJournal {
+        fn crash_at(&mut self, point: CrashPoint) -> Result<(), std::io::Error> {
+            if self.fault == Some((self.write_calls, point)) {
+                self.fault = None;
+                return Err(std::io::Error::other("injected durable boundary failure"));
+            }
+            Ok(())
+        }
+
+        fn check_predecessor(
+            &self,
+            tx_id: TxIdV0,
+            expected: Option<Digest32V0>,
+        ) -> Result<(), std::io::Error> {
+            if self
+                .latest
+                .get(&tx_id)
+                .map(|value| value.durable.record_digest)
+                != expected
+            {
+                return Err(std::io::Error::other("journal compare failed"));
+            }
+            Ok(())
+        }
+
+        fn record_at(
+            sequence: u64,
+            expected: Option<Digest32V0>,
+            record: &TxRecordV0,
+        ) -> RecoveredTxRecordV0 {
+            RecoveredTxRecordV0 {
+                record: record.clone(),
+                durable: DurableTxRecordV0 {
+                    tx_id: record.tx_id,
+                    previous_record_digest: expected.unwrap_or(Digest32V0([0; 32])),
+                    record_digest: record.canonical_record_digest_v0(),
+                    journal_sequence: sequence,
+                    durable_receipt_digest: Digest32V0::hash(
+                        b"memory.tx.journal.v0",
+                        &[
+                            &sequence.to_be_bytes(),
+                            &record.tx_id.0,
+                            &record.canonical_record_digest_v0().0,
+                        ],
+                    ),
+                },
+            }
+        }
     }
 
     impl DurableTxJournalV0 for MemoryJournal {
-        type Error = Infallible;
+        type Error = std::io::Error;
 
         fn load_latest(
             &mut self,
@@ -1333,26 +1518,53 @@ mod tests {
             expected_previous_record_digest: Option<Digest32V0>,
             record: &TxRecordV0,
         ) -> Result<DurableTxRecordV0, Self::Error> {
-            self.next_sequence += 1;
-            let durable = DurableTxRecordV0 {
-                tx_id: record.tx_id,
-                previous_record_digest: expected_previous_record_digest
-                    .unwrap_or(Digest32V0([0; 32])),
-                record_digest: record.canonical_record_digest_v0(),
-                journal_sequence: self.next_sequence,
-                durable_receipt_digest: Digest32V0::hash(
-                    b"memory.tx.journal.v0",
-                    &[&self.next_sequence.to_be_bytes(), &record.tx_id.0],
-                ),
-            };
-            self.latest.insert(
-                record.tx_id,
-                RecoveredTxRecordV0 {
-                    record: record.clone(),
-                    durable,
-                },
+            self.write_calls += 1;
+            self.check_predecessor(record.tx_id, expected_previous_record_digest)?;
+            self.crash_at(CrashPoint::BeforeCommit)?;
+            let stored = Self::record_at(
+                self.next_sequence + 1,
+                expected_previous_record_digest,
+                record,
             );
+            let mut durable = stored.durable;
+            self.latest.insert(record.tx_id, stored);
+            self.next_sequence += 1;
+            self.crash_at(CrashPoint::AfterCommit)?;
+            if self.crash_at(CrashPoint::MalformedReceipt).is_err() {
+                durable.record_digest = d(0);
+            }
             Ok(durable)
+        }
+
+        fn compare_and_replace(
+            &mut self,
+            expected_previous: Digest32V0,
+            replaced: &TxRecordV0,
+            admitted: &TxRecordV0,
+        ) -> Result<DurableTxReplacementV0, Self::Error> {
+            self.write_calls += 1;
+            self.check_predecessor(replaced.tx_id, Some(expected_previous))?;
+            self.check_predecessor(admitted.tx_id, None)?;
+            self.crash_at(CrashPoint::BeforeCommit)?;
+            let sequence = self.next_sequence + 1;
+            let old = Self::record_at(sequence, Some(expected_previous), replaced);
+            let new = Self::record_at(sequence, None, admitted);
+            let mut receipt = DurableTxReplacementV0 {
+                replaced: old.durable,
+                admitted: new.durable,
+            };
+            let mut staged = self.latest.clone();
+            staged.insert(replaced.tx_id, old);
+            self.crash_at(CrashPoint::ReplacementStagedOld)?;
+            staged.insert(admitted.tx_id, new);
+            self.crash_at(CrashPoint::ReplacementStagedBoth)?;
+            self.latest = staged;
+            self.next_sequence = sequence;
+            self.crash_at(CrashPoint::AfterCommit)?;
+            if self.crash_at(CrashPoint::MalformedReceipt).is_err() {
+                receipt.replaced.journal_sequence += 1;
+            }
+            Ok(receipt)
         }
 
         fn delete_collected(
@@ -1502,6 +1714,217 @@ mod tests {
                 .phase,
             TxPhaseV0::WalPersisted
         );
+    }
+
+    fn replacement_intent() -> TxIntentV0 {
+        TxIntentV0 {
+            fee_bid: intent().fee_bid + 1,
+            ..intent()
+        }
+    }
+
+    fn assert_replacement_recovered(
+        coordinator: &ProductionTxCoordinatorV0<AcceptAuthorization>,
+        old_id: TxIdV0,
+        new_id: TxIdV0,
+    ) {
+        let lifecycle = coordinator.lifecycle().unwrap();
+        let old = lifecycle.record(old_id).unwrap();
+        assert_eq!(old.phase, TxPhaseV0::Tombstoned);
+        assert_eq!(
+            old.tombstone,
+            Some(TombstoneReasonV0::Replaced { by: new_id })
+        );
+        assert_eq!(
+            lifecycle.record(new_id).unwrap().phase,
+            TxPhaseV0::WalPersisted
+        );
+        assert_eq!(
+            lifecycle
+                .active_nonce
+                .get(&(intent().sender, intent().nonce)),
+            Some(&new_id)
+        );
+        assert_eq!(lifecycle.active_nonce.len(), 1);
+    }
+
+    #[test]
+    fn replacement_ack_survives_restart_and_exact_retry_without_new_writes() {
+        let mut journal = MemoryJournal::default();
+        let mut coordinator = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+        let first = coordinator
+            .admit_and_persist(&mut journal, intent(), 1)
+            .unwrap();
+        let replacement = coordinator
+            .admit_and_persist(&mut journal, replacement_intent(), 1)
+            .unwrap();
+        assert_ne!(first.tx_id, replacement.tx_id);
+        assert_replacement_recovered(&coordinator, first.tx_id, replacement.tx_id);
+        let writes = journal.write_calls;
+        let mut recovered =
+            ProductionTxCoordinatorV0::recover(d(1), AcceptAuthorization, &mut journal).unwrap();
+        assert_replacement_recovered(&recovered, first.tx_id, replacement.tx_id);
+        assert_eq!(
+            recovered
+                .admit_and_persist(&mut journal, replacement_intent(), 1)
+                .unwrap(),
+            replacement,
+        );
+        assert_eq!(journal.write_calls, writes);
+    }
+
+    #[test]
+    fn replacement_every_commit_cut_and_lost_or_malformed_response_converges() {
+        // The replacement is one atomic transaction, followed by a WAL phase
+        // append. Staging failures must expose neither member of the pair;
+        // commit/response failures must expose both. These are port-level
+        // fault semantics, not a claim about a physical storage adapter.
+        for (write_offset, point, replacement_committed, wal_committed) in [
+            (1, CrashPoint::BeforeCommit, false, false),
+            (1, CrashPoint::ReplacementStagedOld, false, false),
+            (1, CrashPoint::ReplacementStagedBoth, false, false),
+            (1, CrashPoint::AfterCommit, true, false),
+            (1, CrashPoint::MalformedReceipt, true, false),
+            (2, CrashPoint::BeforeCommit, true, false),
+            (2, CrashPoint::AfterCommit, true, true),
+            (2, CrashPoint::MalformedReceipt, true, true),
+        ] {
+            let mut journal = MemoryJournal::default();
+            let mut coordinator = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+            let first = coordinator
+                .admit_and_persist(&mut journal, intent(), 1)
+                .unwrap();
+            let old_durable = journal.latest[&first.tx_id].clone();
+            let new_id = replacement_intent().tx_id();
+            journal.fault = Some((journal.write_calls + write_offset, point));
+            assert!(
+                coordinator
+                    .admit_and_persist(&mut journal, replacement_intent(), 1)
+                    .is_err(),
+                "fault {write_offset}/{point:?} must withhold the ACK",
+            );
+            assert!(coordinator.is_poisoned());
+            assert!(coordinator.lifecycle().is_err());
+            assert!(
+                coordinator
+                    .admit_and_persist(&mut journal, replacement_intent(), 1)
+                    .is_err(),
+                "uncertain coordinator must require recovery",
+            );
+
+            let mut recovered =
+                ProductionTxCoordinatorV0::recover(d(1), AcceptAuthorization, &mut journal)
+                    .unwrap();
+            let lifecycle = recovered.lifecycle().unwrap();
+            if replacement_committed {
+                assert_eq!(
+                    lifecycle.record(first.tx_id).unwrap().tombstone,
+                    Some(TombstoneReasonV0::Replaced { by: new_id }),
+                );
+                assert_eq!(
+                    lifecycle.record(new_id).unwrap().phase,
+                    if wal_committed {
+                        TxPhaseV0::WalPersisted
+                    } else {
+                        TxPhaseV0::Admitted
+                    },
+                );
+                assert_eq!(
+                    lifecycle
+                        .active_nonce
+                        .get(&(intent().sender, intent().nonce)),
+                    Some(&new_id)
+                );
+            } else {
+                assert_eq!(journal.latest[&first.tx_id], old_durable);
+                assert!(lifecycle.record(new_id).is_err());
+                assert_eq!(
+                    lifecycle
+                        .active_nonce
+                        .get(&(intent().sender, intent().nonce)),
+                    Some(&first.tx_id)
+                );
+            }
+            let receipt = recovered
+                .admit_and_persist(&mut journal, replacement_intent(), 1)
+                .unwrap();
+            assert_replacement_recovered(&recovered, first.tx_id, new_id);
+            let writes = journal.write_calls;
+            let mut recovered_again =
+                ProductionTxCoordinatorV0::recover(d(1), AcceptAuthorization, &mut journal)
+                    .unwrap();
+            assert_eq!(
+                recovered_again
+                    .admit_and_persist(&mut journal, replacement_intent(), 1)
+                    .unwrap(),
+                receipt,
+            );
+            assert_eq!(journal.write_calls, writes);
+        }
+    }
+
+    #[test]
+    fn fresh_admission_crash_after_first_commit_resumes_existing_admitted_record() {
+        for point in [CrashPoint::AfterCommit, CrashPoint::MalformedReceipt] {
+            let mut journal = MemoryJournal {
+                fault: Some((1, point)),
+                ..MemoryJournal::default()
+            };
+            let mut coordinator = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+            assert!(coordinator
+                .admit_and_persist(&mut journal, intent(), 1)
+                .is_err());
+            assert!(coordinator.is_poisoned());
+            let mut recovered =
+                ProductionTxCoordinatorV0::recover(d(1), AcceptAuthorization, &mut journal)
+                    .unwrap();
+            let receipt = recovered
+                .admit_and_persist(&mut journal, intent(), 1)
+                .unwrap();
+            assert_eq!(receipt.wal_sequence, 1);
+            assert_eq!(journal.next_sequence, 2);
+        }
+    }
+
+    #[test]
+    fn replacement_stale_predecessor_cannot_overwrite_concurrent_proposal() {
+        let mut journal = MemoryJournal::default();
+        let mut stale = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+        let admission = stale.admit_and_persist(&mut journal, intent(), 1).unwrap();
+        let mut current =
+            ProductionTxCoordinatorV0::recover(d(1), AcceptAuthorization, &mut journal).unwrap();
+        current
+            .persist_proposal(
+                &mut journal,
+                admission.tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(50),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        let before = journal.latest.clone();
+        assert!(stale
+            .admit_and_persist(&mut journal, replacement_intent(), 1)
+            .is_err());
+        assert!(stale.is_poisoned());
+        assert_eq!(journal.latest, before);
+        let recovered =
+            ProductionTxCoordinatorV0::recover(d(1), AcceptAuthorization, &mut journal).unwrap();
+        assert_eq!(
+            recovered
+                .lifecycle()
+                .unwrap()
+                .record(admission.tx_id)
+                .unwrap()
+                .phase,
+            TxPhaseV0::Proposed
+        );
+        assert!(recovered
+            .lifecycle()
+            .unwrap()
+            .record(replacement_intent().tx_id())
+            .is_err());
     }
 
     #[test]

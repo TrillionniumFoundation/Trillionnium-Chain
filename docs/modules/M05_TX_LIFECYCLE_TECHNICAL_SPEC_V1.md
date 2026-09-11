@@ -49,6 +49,26 @@ a hash-chained sequence. `HandedOff` is not guessed after a crash. Recovery
 queries the exact downstream durable receipt; ambiguity fails closed and keeps
 the entry retained.
 
+The `DurableTxJournalV0::compare_and_replace` port commits a replacement as one
+compare-and-swap transaction: the exact old record becomes
+`Tombstoned(Replaced { by: new_tx_id })` and the new record becomes `Admitted`.
+The old-record digest must match and the new transaction must be absent. Both
+records carry the same durable journal sequence. There is no implementation
+that falls back to two independent appends. After a crash or lost response,
+`load_latest` returns either the complete predecessor or the complete pair;
+exposing just one member violates the journal contract and blocks adapter
+acceptance. The coordinator retains no authority after an uncertain write or
+a malformed durable receipt.
+
+`Admitted` is a recoverable durable intermediate state, including after this
+atomic replacement. Retry uses its existing receipt as the predecessor of the
+`WalPersisted` append; it must not attempt to insert the transaction again.
+The admission ACK is released only after that append, and exact admission
+retry preserves the original WAL sequence. A recovered replacement tombstone
+is already final for nonce ownership; a retry cannot resurrect the old intent.
+These ports and crash-cut tests specify adapter obligations. They do not
+provide a production storage adapter or physical power-loss qualification.
+
 A tombstone can be removed only with a verified finality proof and a replay
 floor that makes the nonce unspendable. Disk-full, fsync uncertainty, partial
 WAL, database replacement and generation regression return unavailable or stop
