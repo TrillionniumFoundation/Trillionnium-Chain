@@ -13,7 +13,7 @@ from typing import Any
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 HELPER_BLOBS = {
     pathlib.Path("scripts/ci/technical_convergence_contract_v1.py"): "23d3e73f2eb469feaf21de1771f14bbeb5a2ec7c",
-    pathlib.Path("scripts/ci/technical_convergence_workflows_v1.py"): "8580804a01cb01a560270fbe7e362470c163b45d",
+    pathlib.Path("scripts/ci/technical_convergence_workflows_v1.py"): "47bf40b6cc8df8f7fcccb26d7ead63fda1cb68b4",
     pathlib.Path("scripts/ci/technical_convergence_coverage_v1.py"): "791da0546d30a214925fcff7eaa144fe3617d9e9",
 }
 

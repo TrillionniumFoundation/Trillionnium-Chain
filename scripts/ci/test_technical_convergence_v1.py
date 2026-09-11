@@ -149,6 +149,19 @@ class Mutants(unittest.TestCase):
                 self.replace(checker.CONTRACT, old, new)
                 self.rejected()
 
+    def test_durable_transaction_journal_execution_cannot_be_omitted(self) -> None:
+        commands = (
+            "cargo test -p trnm-tx-lifecycle-v0 --all-targets --locked",
+            "cargo test -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked",
+            "cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked -- -D warnings",
+            "set -euo pipefail",
+        )
+        for command in commands:
+            with self.subTest(command=command):
+                self.reset()
+                self.step_remove("Test durable transaction journal without production activation", command)
+                self.rejected()
+
     def test_persistent_bridge_execution_cannot_be_omitted(self) -> None:
         commands = (
             "cargo test -p trnm-durable-file-adapters-v0 --features candidate-peer-replay --all-targets --locked",

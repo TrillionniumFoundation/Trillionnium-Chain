@@ -159,6 +159,15 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
     for path in ("check_plan_manifest_pins_v1.py", "check_technical_convergence_v1.py", "test_technical_convergence_v1.py", "check_required_baseline_closure_v1.py"):
         require(path in compile_step, f"Python compile closure missing {path}")
 
+    tx_journal = named_step(baseline, "Test durable transaction journal without production activation", require)
+    for command in (
+        "cargo test -p trnm-tx-lifecycle-v0 --all-targets --locked",
+        "cargo test -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked",
+        "cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked -- -D warnings",
+    ):
+        require(command in tx_journal, f"durable transaction journal execution missing: {command}")
+    require("set -euo pipefail" in tx_journal, "durable transaction journal failure propagation lost")
+
     bridge = named_step(baseline, "Test persistent peer-to-authority bridge without production activation", require)
     for command in (
         "cargo test -p trnm-durable-file-adapters-v0 --features candidate-peer-replay --all-targets --locked",

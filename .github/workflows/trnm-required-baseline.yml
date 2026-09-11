@@ -443,6 +443,14 @@ jobs:
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
           cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
           git diff --exit-code HEAD -- .
+      - name: Test durable transaction journal without production activation
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-tx-lifecycle-v0 --all-targets --locked
+          timeout --signal=TERM --kill-after=10s 600s cargo test -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked
+          timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked -- -D warnings
+          git diff --exit-code HEAD -- .
       - name: Test persistent peer-to-authority bridge without production activation
         working-directory: trillionnium
         run: |

@@ -225,6 +225,23 @@ def group_sets(config: dict[str, Any]) -> dict[str, set[str]]:
     return groups
 
 
+def validate_candidate_tx_journal_boundary(packages: dict[str, Package]) -> set[str]:
+    adapter = "trnm-durable-file-adapters-v0"
+    lifecycle = "trnm-tx-lifecycle-v0"
+    feature = "candidate-tx-journal"
+    dependency = packages[adapter].dependencies.get(lifecycle)
+    require(dependency is not None and dependency.optional,
+            "transaction journal lifecycle dependency must remain optional")
+    for default in (True, False):
+        reached, features = resolve_closure(packages, [adapter], set(), default)
+        require(lifecycle not in reached and feature not in features[adapter],
+                "transaction journal entered an implicit adapter build")
+    reached, features = resolve_closure(packages, [adapter], {feature}, False)
+    require(lifecycle in reached and feature in features[adapter],
+            "explicit transaction journal feature lost its real lifecycle owner")
+    return reached
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Resolve and verify fail-closed Trillionnium build closures."
@@ -401,6 +418,7 @@ def main() -> int:
     require(not (set(production["resolved_packages"]) & groups["ai-v1-candidate"]), "production closure contains AI-v1 candidate")
 
     candidate_reached = validate_persistent_authority_boundary(packages, reached_by_id["node-prod-v0"])
+    tx_journal_reached = validate_candidate_tx_journal_boundary(packages)
 
     if args.verify_cargo_tree:
         workspace_names = set(packages)
@@ -410,6 +428,12 @@ def main() -> int:
         )
         require(candidate_cargo == candidate_reached,
                 "persistent authority candidate Cargo/static closure mismatch")
+        tx_journal_cargo = cargo_tree_workspace_packages(
+            workspace_manifest, ["trnm-durable-file-adapters-v0"],
+            ["candidate-tx-journal"], False, workspace_names,
+        )
+        require(tx_journal_cargo == tx_journal_reached,
+                "transaction journal candidate Cargo/static closure mismatch")
         for row in closures:
             closure_id = row["id"]
             cargo_reached = cargo_tree_workspace_packages(
@@ -449,6 +473,7 @@ def main() -> int:
         "node_default_ai_v1_dependency_count": 0,
         "node_default_candidate_adapter_count": 0,
         "persistent_candidate_owner_reachable": True,
+        "transaction_journal_requires_explicit_feature": True,
         "cargo_tree_verified": args.verify_cargo_tree,
         "production_candidate": False,
         "production_consensus_activation": False,

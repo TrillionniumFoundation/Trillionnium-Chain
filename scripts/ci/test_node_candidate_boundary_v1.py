@@ -154,6 +154,30 @@ class FeatureClosureTests(unittest.TestCase):
         self.assertIn(ADAPTER, reached)
         self.assertNotIn(ADAPTER, self.resolve())
 
+    def test_transaction_journal_is_explicit_and_has_real_lifecycle_owner(self) -> None:
+        reached = closures.validate_candidate_tx_journal_boundary(self.packages)
+        self.assertIn("trnm-tx-lifecycle-v0", reached)
+
+    def test_transaction_journal_cannot_enter_default_adapter_build(self) -> None:
+        packages = copy.deepcopy(self.packages)
+        packages[ADAPTER].features["default"] = ["candidate-tx-journal"]
+        with self.assertRaises(closures.ClosureError):
+            closures.validate_candidate_tx_journal_boundary(packages)
+
+    def test_transaction_journal_cannot_lose_optional_dependency(self) -> None:
+        packages = copy.deepcopy(self.packages)
+        dependency = "trnm-tx-lifecycle-v0"
+        packages[ADAPTER].dependencies[dependency] = replace(
+            packages[ADAPTER].dependencies[dependency], optional=False)
+        with self.assertRaises(closures.ClosureError):
+            closures.validate_candidate_tx_journal_boundary(packages)
+
+    def test_transaction_journal_cannot_name_empty_feature_as_implementation(self) -> None:
+        packages = copy.deepcopy(self.packages)
+        packages[ADAPTER].features["candidate-tx-journal"] = []
+        with self.assertRaises(closures.ClosureError):
+            closures.validate_candidate_tx_journal_boundary(packages)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
