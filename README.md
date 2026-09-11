@@ -73,9 +73,11 @@ The active workspace is `trillionnium/Cargo.toml`. Use Cargo metadata,
 `config/module-coverage-v1.toml` rather than this overview when exact membership
 or ownership is required.
 
-PoCO consensus, `trnm-native-application`, and `trnm-node` are excluded migration residue.
-They may support historical differential replay and one-way migration only;
-they cannot authorize a release, deployment, fallback, or readiness claim.
+Legacy `trnm-node` and any retained migration-only compatibility fixtures are
+excluded residue. They may support historical differential replay and one-way
+migration only; they cannot authorize a release, deployment, fallback, or
+readiness claim. Native PoCO-BFT, `trnm-native-application`, and the current
+`trnm-poco-node` candidate remain part of the active native architecture.
 
 ## Prerequisites
 
