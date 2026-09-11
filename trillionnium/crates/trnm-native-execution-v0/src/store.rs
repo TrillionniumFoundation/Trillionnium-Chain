@@ -424,6 +424,25 @@ pub struct InMemoryNativeExecutionStoreV0 {
     roots: BTreeMap<Version, RootHash>,
 }
 
+/// The iterator owns an Arc, but the snapshot it reads is borrowed for the
+/// entire audit. Rust prevents the owner from changing these collections while
+/// proofs and iteration inspect them; no historical maps need to be cloned.
+struct BorrowedNativeTreeReaderV0<'a>(&'a InMemoryNativeExecutionStoreV0);
+
+impl TreeReader for BorrowedNativeTreeReaderV0<'_> {
+    fn get_node_option(&self, node_key: &NodeKey) -> Result<Option<Node>> {
+        self.0.get_node_option(node_key)
+    }
+
+    fn get_value_option(&self, max_version: Version, key_hash: KeyHash) -> Result<Option<Vec<u8>>> {
+        self.0.get_value_option(max_version, key_hash)
+    }
+
+    fn get_rightmost_leaf(&self) -> Result<Option<(NodeKey, LeafNode)>> {
+        self.0.get_rightmost_leaf()
+    }
+}
+
 #[derive(BorshDeserialize, BorshSerialize)]
 struct PersistentAuthTreeSnapshotV0 {
     codec_version: u16,
@@ -683,10 +702,10 @@ impl InMemoryNativeExecutionStoreV0 {
             .get(&version)
             .copied()
             .with_context(|| format!("missing authenticated root at version {version}"))?;
-        let reader = Arc::new(self.clone());
+        let reader = Arc::new(BorrowedNativeTreeReaderV0(self));
         let iterator = JellyfishMerkleIterator::new(Arc::clone(&reader), version, KeyHash([0; 32]))
             .with_context(|| format!("open authenticated iterator at version {version}"))?;
-        let tree = Sha256Jmt::new(reader.as_ref());
+        let tree = Sha256Jmt::new(self);
         let mut live = BTreeMap::new();
         for entry in iterator {
             let (hash, value) = entry

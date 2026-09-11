@@ -89,6 +89,13 @@ replay, evidence, slashing and weak-subjectivity horizon. Reaching a local work
 limit yields unavailability or a fenced recovery, not deterministic peer guilt.
 No resource default may turn incomplete history into an accepted checkpoint.
 
+The native v0 snapshot audit borrows the owner's immutable JMT collections
+through a private `TreeReader`. Iteration and each existence proof use the same
+snapshot and expected root for the entire borrow. This removes a full historical
+store clone from every audit while retaining verification of every live value,
+preimage and proof. It does not prune history, change snapshot codec bytes, or
+close the separate full-snapshot persistence and cumulative recovery-work gap.
+
 ## Security
 
 Reject wrong proof class, chain, validator set, epoch, oldest target, root or
