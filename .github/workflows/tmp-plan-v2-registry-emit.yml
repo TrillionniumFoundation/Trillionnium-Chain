@@ -1,0 +1,32 @@
+name: tmp-plan-v2-registry-emit
+
+on:
+  push:
+    branches:
+      - tmp/plan-v2-registry-emit-20260911
+
+permissions:
+  contents: read
+
+jobs:
+  emit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Emit canonical decoder registry
+        run: |
+          set -euo pipefail
+          mkdir -p run/generated-registry
+          python3 scripts/ci/check_poco_bft_v0_registry.py --emit \
+            > run/generated-registry/decoder-error-registry-v0.json
+          python3 -m json.tool run/generated-registry/decoder-error-registry-v0.json >/dev/null
+          sha256sum run/generated-registry/decoder-error-registry-v0.json \
+            > run/generated-registry/SHA256SUMS
+      - name: Upload generated registry
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: plan-v2-decoder-registry-${{ github.sha }}
+          path: run/generated-registry/
+          if-no-files-found: error
+          retention-days: 3
