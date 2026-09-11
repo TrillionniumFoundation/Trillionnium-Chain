@@ -11,11 +11,15 @@ truncation failure observed at restart.  Each accepted record is written,
 success.
 
 The timeout-only bridge uses the additional semantic CAS operation. It stores
-`(epoch, view, Safety revision)` in a separately locked, fixed-record,
-hash-chained sidecar and rejects lower rounds or non-increasing revisions even
-after the authority process restarts. The main watermark log and semantic
-sidecar must advance together; a crash between their durable writes leaves
-unequal lengths and is a startup fail-stop, never an inferred repair.
+the complete `(epoch, view, Safety revision, request nonce, request
+fingerprint, signing root, capability)` tuple in a separately locked,
+fixed-record, hash-chained sidecar, together with an immutable lifecycle-mode
+marker. Pair mode means one odd prepared record followed by one even signed
+record; per-reservation mode is a different protocol and must not be fed to a
+signer-journal pair. The authority rejects lower rounds or non-increasing
+revisions even after restart. The main watermark log and semantic sidecar must
+advance together; a crash between their durable writes leaves unequal lengths
+and is a startup fail-stop, never an inferred repair.
 
 `UnixWatermarkClient` implements the existing
 `ExternalMonotonicWatermarkV0` trait.  The local signer journal therefore
@@ -41,7 +45,10 @@ store, HSM, SafetyRules authorization, or Core admission path. It does not
 claim whole-node clone/rollback detection; that remains an external watermark
 and future host-fencing responsibility.
 
-The executable refuses the legacy opaque mode unless the caller supplies the
+The immutable mode marker is written to a private temporary file, fsynced,
+atomically renamed, and followed by a parent-directory `sync_data`. A crash or
+ambiguous marker/sidecar state must fail closed; no crash-injection result is
+claimed by this README. The executable refuses the legacy opaque mode unless the caller supplies the
 explicit `--fixture-opaque` marker.  This keeps an old supervisor command from
 silently starting an authority without the semantic scope/journal/capability
 binding required by the timeout bridge.  A production-shaped invocation is:

@@ -224,9 +224,20 @@ pub trait ExternalMonotonicWatermarkV0 {
     /// complete reservation.  The strict signer-journal-pair lifecycle uses
     /// two records per intent and is not interchangeable with a transition
     /// store that emits one record per SafetyRules transition.  A semantic
-    /// adapter must reject an authority that does not explicitly identify the
-    /// compatible lifecycle; `false` is deliberately fail-closed/unknown.
+    /// adapter must also explicitly attest the compatible pair lifecycle via
+    /// [`Self::semantic_signer_journal_pair_v0`].
     fn semantic_per_reservation_v0(&self) -> bool {
+        false
+    }
+
+    /// Explicitly attests that this semantic authority implements the
+    /// signer-journal pair lifecycle: one odd prepared record followed by one
+    /// even signed record for every intent.  The default is deliberately
+    /// `false`; an adapter that omits this method is unknown and is rejected
+    /// before a semantic signer journal can be created or used.  This separate
+    /// attestation prevents a wrapper from silently converting an unknown
+    /// lifecycle into signing authority.
+    fn semantic_signer_journal_pair_v0(&self) -> bool {
         false
     }
 

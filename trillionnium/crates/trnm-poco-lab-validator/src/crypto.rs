@@ -387,6 +387,18 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
             .is_some_and(|external| external.semantic_mode_v0())
     }
 
+    fn semantic_per_reservation_v0(&self) -> bool {
+        self.external
+            .as_ref()
+            .is_some_and(|external| external.semantic_per_reservation_v0())
+    }
+
+    fn semantic_signer_journal_pair_v0(&self) -> bool {
+        self.external
+            .as_ref()
+            .is_some_and(|external| external.semantic_signer_journal_pair_v0())
+    }
+
     fn load_semantic_v0(
         &mut self,
         scope: [u8; 32],

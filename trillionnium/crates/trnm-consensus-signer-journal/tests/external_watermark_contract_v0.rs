@@ -13,12 +13,13 @@ use std::{
 };
 
 use ed25519_dalek::{Signer, SigningKey};
+use rusqlite::Connection;
 use sha2::{Digest, Sha256};
 use tempfile::TempDir;
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, ExternalWatermarkSemanticFactsV0,
-    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0,
-    SignerWatermarkV0, SqliteSignerJournalV0,
+    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerJournalErrorV0,
+    SignerJournalProfileV0, SignerWatermarkV0, SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{
     BlockId, CanonicalSignIntentV0, ChainId, ConsensusParametersHash, ConsensusPublicKey, Epoch,
@@ -159,9 +160,35 @@ struct SemanticRegister {
     state: Arc<Mutex<RegisterState>>,
     observations: Arc<Mutex<Vec<ExternalWatermarkSemanticFactsV0>>>,
     genesis_claims: Arc<Mutex<u64>>,
+    semantic_facts: Arc<Mutex<BTreeMap<u64, ExternalWatermarkSemanticFactsV0>>>,
+    per_reservation: bool,
 }
 
 impl SemanticRegister {
+    fn per_reservation() -> Self {
+        Self {
+            per_reservation: true,
+            ..Self::default()
+        }
+    }
+
+    fn genesis_facts() -> ExternalWatermarkSemanticFactsV0 {
+        ExternalWatermarkSemanticFactsV0::new(
+            0, 0, 1, [0x71; 32], [0x72; 32], [0x73; 32], [0x74; 32],
+        )
+        .expect("valid semantic genesis facts")
+    }
+
+    fn tamper_semantic_facts_for_test(&self, sequence: u64) {
+        let mut facts = self.semantic_facts.lock().unwrap();
+        let mut value = facts
+            .get(&sequence)
+            .copied()
+            .expect("semantic facts exist for tamper test");
+        value.request_fingerprint[0] ^= 0x01;
+        facts.insert(sequence, value);
+    }
+
     fn current(
         &self,
         scope: [u8; 32],
@@ -196,6 +223,14 @@ impl ExternalMonotonicWatermarkV0 for SemanticRegister {
         true
     }
 
+    fn semantic_per_reservation_v0(&self) -> bool {
+        self.per_reservation
+    }
+
+    fn semantic_signer_journal_pair_v0(&self) -> bool {
+        !self.per_reservation
+    }
+
     fn load_semantic_v0(
         &mut self,
         scope: [u8; 32],
@@ -207,16 +242,13 @@ impl ExternalMonotonicWatermarkV0 for SemanticRegister {
         let Some(value) = self.current(scope, journal_id)? else {
             return Ok(None);
         };
-        let facts = ExternalWatermarkSemanticFactsV0::new(
-            0,
-            value.sequence(),
-            value.sequence().saturating_add(1),
-            [0x61; 32],
-            [0x62; 32],
-            [0x63; 32],
-            [0x64; 32],
-        )
-        .expect("valid semantic test facts");
+        let facts = self
+            .semantic_facts
+            .lock()
+            .unwrap()
+            .get(&value.sequence())
+            .copied()
+            .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
         Ok(Some((value, facts)))
     }
 
@@ -231,7 +263,22 @@ impl ExternalMonotonicWatermarkV0 for SemanticRegister {
         let mut register = AppendOnlyRegister {
             state: Arc::clone(&self.state),
         };
-        register.compare_and_advance(expected, target)
+        register.compare_and_advance(expected, target)?;
+        let stored = ExternalWatermarkSemanticFactsV0::new(
+            facts.epoch,
+            facts.view,
+            facts.safety_revision,
+            facts.request_nonce,
+            facts.request_fingerprint,
+            facts.signing_root,
+            [0x74; 32],
+        )
+        .expect("valid stored semantic facts");
+        self.semantic_facts
+            .lock()
+            .unwrap()
+            .insert(target.sequence(), stored);
+        Ok(())
     }
 
     fn compare_and_advance_semantic_genesis_v0(
@@ -245,7 +292,96 @@ impl ExternalMonotonicWatermarkV0 for SemanticRegister {
         let mut register = AppendOnlyRegister {
             state: Arc::clone(&self.state),
         };
-        register.compare_and_advance(expected, target)
+        register.compare_and_advance(expected, target)?;
+        self.semantic_facts
+            .lock()
+            .unwrap()
+            .insert(target.sequence(), Self::genesis_facts());
+        Ok(())
+    }
+}
+
+/// Adapter-shaped test double that deliberately omits the explicit pair
+/// attestation.  The signer journal must reject it even though it reports
+/// semantic mode and the legacy per-reservation bit is false.
+#[derive(Debug, Clone, Default)]
+struct UnattestedSemanticRegister(SemanticRegister);
+
+impl ExternalMonotonicWatermarkV0 for UnattestedSemanticRegister {
+    fn load(
+        &mut self,
+        scope: [u8; 32],
+    ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+        self.0.load(scope)
+    }
+
+    fn compare_and_advance(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        self.0.compare_and_advance(expected, target)
+    }
+
+    fn semantic_mode_v0(&self) -> bool {
+        self.0.semantic_mode_v0()
+    }
+
+    fn load_semantic_v0(
+        &mut self,
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+    ) -> Result<
+        Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+        ExternalWatermarkErrorV0,
+    > {
+        self.0.load_semantic_v0(scope, journal_id)
+    }
+
+    fn compare_and_advance_semantic_v0(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        self.0
+            .compare_and_advance_semantic_v0(expected, target, facts)
+    }
+
+    fn compare_and_advance_semantic_genesis_v0(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        self.0
+            .compare_and_advance_semantic_genesis_v0(expected, target)
+    }
+}
+
+/// Deliberately contradictory adapter: it advertises the pair bit while
+/// remaining in opaque mode.  The signer boundary must reject this before it
+/// consults or creates any local journal bytes.
+#[derive(Debug, Clone, Default)]
+struct ContradictorySemanticRegister;
+
+impl ExternalMonotonicWatermarkV0 for ContradictorySemanticRegister {
+    fn load(
+        &mut self,
+        _scope: [u8; 32],
+    ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+        Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+    }
+
+    fn compare_and_advance(
+        &mut self,
+        _expected: Option<SignerWatermarkV0>,
+        _target: SignerWatermarkV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+    }
+
+    fn semantic_signer_journal_pair_v0(&self) -> bool {
+        true
     }
 }
 
@@ -457,4 +593,172 @@ fn semantic_journal_dispatch_binds_exact_intent_facts_and_never_opaque() {
     assert!(facts
         .iter()
         .all(|facts| facts.signing_root == intent.signing_root().into_bytes()));
+    assert_eq!(
+        facts[0].request_nonce,
+        trnm_consensus_signer_journal::signer_journal_lifecycle_nonce_v0(
+            intent.epoch().get(),
+            intent.preimage().context().view().get(),
+            intent.authorizing_safety_revision(),
+            intent.fingerprint().into_bytes(),
+            intent.signing_root().into_bytes(),
+            1,
+        )
+    );
+    assert_eq!(
+        facts[1].request_nonce,
+        trnm_consensus_signer_journal::signer_journal_lifecycle_nonce_v0(
+            intent.epoch().get(),
+            intent.preimage().context().view().get(),
+            intent.authorizing_safety_revision(),
+            intent.fingerprint().into_bytes(),
+            intent.signing_root().into_bytes(),
+            2,
+        )
+    );
+    assert_ne!(facts[0].request_nonce, facts[1].request_nonce);
+}
+
+#[test]
+fn altered_loaded_semantic_facts_fail_before_next_producer_call() {
+    let (profile, key) = fixture();
+    let temp = TempDir::new().unwrap();
+    let register = SemanticRegister::default();
+    let mut journal =
+        SqliteSignerJournalV0::initialize_new(db_path(&temp), profile.clone(), register.clone())
+            .expect("initialize semantic signer journal");
+    let mut producer = ReplayBoundProducer::new(key);
+    let first = vote(&profile, 7, 3, 0x73);
+    journal
+        .sign_exact_v0(&first, &mut producer)
+        .expect("first semantic signature");
+    let calls = producer.calls();
+
+    // Keep the external watermark and chain checksum unchanged, but alter a
+    // semantic field. The next pre-sign synchronization must reject this
+    // mixed cut before appending an intent or invoking the producer.
+    register.tamper_semantic_facts_for_test(2);
+    let next = vote(&profile, 8, 4, 0x74);
+    let error = journal
+        .sign_exact_v0(&next, &mut producer)
+        .expect_err("altered semantic facts must fail closed");
+    assert!(matches!(
+        error,
+        SignerJournalErrorV0::ExternalWatermark {
+            source: ExternalWatermarkErrorV0::InvalidPersistedState,
+            ..
+        }
+    ));
+    assert_eq!(producer.calls(), calls, "producer must not see a mixed cut");
+}
+
+#[test]
+fn per_reservation_external_authority_is_rejected_before_journal_creation() {
+    let (profile, _) = fixture();
+    let temp = TempDir::new().unwrap();
+    let database = db_path(&temp);
+    let result = SqliteSignerJournalV0::initialize_new(
+        &database,
+        profile,
+        SemanticRegister::per_reservation(),
+    );
+    assert!(matches!(
+        result,
+        Err(SignerJournalErrorV0::InvalidProfile(
+            "per-reservation semantic watermark cannot back signer-journal pair lifecycle"
+        ))
+    ));
+    assert!(
+        !database.exists(),
+        "incompatible semantic authority must be rejected before creating a journal"
+    );
+}
+
+#[test]
+fn unattested_semantic_authority_is_rejected_before_journal_creation() {
+    let (profile, _) = fixture();
+    let temp = TempDir::new().unwrap();
+    let database = db_path(&temp);
+    let result = SqliteSignerJournalV0::initialize_new(
+        &database,
+        profile,
+        UnattestedSemanticRegister::default(),
+    );
+    assert!(matches!(
+        result,
+        Err(SignerJournalErrorV0::InvalidProfile(
+            "semantic watermark lacks explicit signer-journal pair lifecycle attestation"
+        ))
+    ));
+    assert!(
+        !database.exists(),
+        "unattested semantic authority must be rejected before creating a journal"
+    );
+}
+
+#[test]
+fn contradictory_pair_attestation_is_rejected_before_journal_creation() {
+    let (profile, _) = fixture();
+    let temp = TempDir::new().unwrap();
+    let database = db_path(&temp);
+    let result =
+        SqliteSignerJournalV0::initialize_new(&database, profile, ContradictorySemanticRegister);
+    assert!(matches!(
+        result,
+        Err(SignerJournalErrorV0::InvalidProfile(
+            "signer-journal pair attestation requires semantic watermark mode"
+        ))
+    ));
+    assert!(!database.exists());
+}
+
+#[test]
+fn tampered_semantic_predecessor_fails_before_next_producer_call() {
+    let (profile, key) = fixture();
+    let temp = TempDir::new().unwrap();
+    let database = db_path(&temp);
+    let register = SemanticRegister::default();
+    let mut journal = SqliteSignerJournalV0::initialize_new(&database, profile.clone(), register)
+        .expect("initialize semantic signer journal");
+    let mut producer = ReplayBoundProducer::new(key);
+    journal
+        .sign_exact_v0(&vote(&profile, 7, 3, 0x73), &mut producer)
+        .expect("persist first semantic signature");
+    let calls = producer.calls();
+
+    // Preserve the target head and its external facts, but substitute the
+    // predecessor event checksum.  This models an in-place historical row
+    // mutation that a pointer-only check would miss.
+    let connection = Connection::open(&database).expect("open raw tamper connection");
+    connection
+        .execute_batch("DROP TRIGGER signer_events_no_update_v0;")
+        .expect("drop immutable-event trigger for mutant");
+    connection
+        .execute(
+            "UPDATE signer_journal_events_v0
+                SET event_checksum=zeroblob(32)
+              WHERE sequence_be=?1",
+            [1_u64.to_be_bytes().as_slice()],
+        )
+        .expect("tamper predecessor checksum");
+    connection
+        .execute_batch(
+            "CREATE TRIGGER signer_events_no_update_v0
+                 BEFORE UPDATE ON signer_journal_events_v0
+                 BEGIN SELECT RAISE(ABORT, 'signer events are append-only'); END;",
+        )
+        .expect("restore immutable-event trigger");
+    let next = vote(&profile, 8, 4, 0x74);
+    let error = journal
+        .sign_exact_v0(&next, &mut producer)
+        .expect_err("tampered predecessor must fail closed");
+    assert!(matches!(
+        error,
+        SignerJournalErrorV0::PersistedRepresentationMalformed(_)
+            | SignerJournalErrorV0::ExternalWatermark {
+                source: ExternalWatermarkErrorV0::InvalidPersistedState,
+                ..
+            }
+    ));
+    assert_eq!(producer.calls(), calls);
+    drop(connection);
 }
