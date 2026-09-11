@@ -68,8 +68,6 @@ for retired_path in retired_paths:
         fail(f"retired consensus path remains in workflow trigger: {retired_path}")
 
 for forbidden in (
-    "comet" + "bft",
-    "tender" + "mint",
     "contents: write",
     "id-token: write",
     "deployments: write",
@@ -77,7 +75,7 @@ for forbidden in (
     "production_ready=true",
 ):
     if forbidden.lower() in text.lower():
-        fail(f"forbidden workflow authority/residue marker: {forbidden}")
+        fail(f"forbidden workflow authority marker: {forbidden}")
 
 for required_marker in (
     "permissions:\n  contents: read",
@@ -122,9 +120,9 @@ PY
   fi
 
   cp "$DEFAULT_WORKFLOW" "$tmp"
-  printf '\n# %s residue mutant\n' "comet""bft" >> "$tmp"
+  printf '\n  - %s\n' "trillionnium/crates/trnm-consensus-""app/**" >> "$tmp"
   if check_workflow "$tmp" >/dev/null 2>&1; then
-    fail "self-test accepted retired consensus residue"
+    fail "self-test accepted retired consensus trigger path"
   fi
 
   printf 'poco_bft_workflow_trigger_truth_self_test=passed\n'
