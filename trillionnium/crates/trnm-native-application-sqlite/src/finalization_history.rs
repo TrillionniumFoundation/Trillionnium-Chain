@@ -8,7 +8,7 @@ use std::{
 #[cfg(unix)]
 use std::{
     fs::{File, OpenOptions},
-    os::unix::fs::{MetadataExt, OpenOptionsExt},
+    os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt, PermissionsExt},
 };
 
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
@@ -111,6 +111,7 @@ impl ConfirmedFinalizationHistoryAuditV0 {
 struct FileIdentityV0 {
     device: u64,
     inode: u64,
+    owner: u32,
 }
 
 /// Lifetime pin for the authoritative parent directory and database inode.
@@ -169,12 +170,7 @@ impl PinnedSqliteNamespaceV0 {
                     "finalization_history.parent",
                 )
             })?;
-            fs::create_dir_all(parent_path).map_err(|_| {
-                error(
-                    ValidationStoreErrorCodeV0::Storage,
-                    "finalization_history.parent_create",
-                )
-            })?;
+            prepare_private_parent_v0(parent_path)?;
             let canonical_parent = fs::canonicalize(parent_path).map_err(|_| {
                 error(
                     ValidationStoreErrorCodeV0::Storage,
@@ -192,6 +188,12 @@ impl PinnedSqliteNamespaceV0 {
             let parent_identity = directory_handle_identity_v0(&parent_file)?;
             let database_file = open_or_create_database_nofollow_v0(path)?;
             let database_identity = file_handle_identity_v0(&database_file)?;
+            if database_identity.owner != parent_identity.owner {
+                return Err(error(
+                    ValidationStoreErrorCodeV0::InvalidPermissions,
+                    "finalization_history.owner_binding",
+                ));
+            }
             let namespace = Self {
                 parent_path: parent_path.to_path_buf(),
                 database_path: path.to_path_buf(),
@@ -707,6 +709,113 @@ struct StoredFinalizationRowV0 {
 }
 
 #[cfg(unix)]
+fn validate_private_directory_permissions_v0(
+    metadata: &fs::Metadata,
+) -> ValidationStoreResultV0<()> {
+    if metadata.permissions().mode() & 0o7777 != 0o700 {
+        return Err(error(
+            ValidationStoreErrorCodeV0::InvalidPermissions,
+            "finalization_history.parent_permissions",
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn validate_parent_ancestor_v0(
+    path: &Path,
+    metadata: &fs::Metadata,
+) -> ValidationStoreResultV0<()> {
+    if metadata.file_type().is_symlink() || !metadata.is_dir() {
+        return Err(error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_type",
+        ));
+    }
+    let mode = metadata.permissions().mode() & 0o7777;
+    // Root-owned sticky ancestors (for example /tmp) protect child names from
+    // other owners. The immediate authoritative directory must still be 0700.
+    if mode & 0o022 != 0 && !(metadata.uid() == 0 && mode & 0o1000 != 0) {
+        return Err(error(
+            ValidationStoreErrorCodeV0::InvalidPermissions,
+            "finalization_history.parent_ancestry_permissions",
+        ));
+    }
+    let canonical = fs::canonicalize(path).map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_canonical",
+        )
+    })?;
+    if canonical != path {
+        return Err(error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_not_canonical",
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn validate_private_parent_v0(path: &Path) -> ValidationStoreResultV0<()> {
+    for ancestor in path.ancestors() {
+        let metadata = fs::symlink_metadata(ancestor).map_err(|_| {
+            error(
+                ValidationStoreErrorCodeV0::ReplacedStore,
+                "finalization_history.parent_missing",
+            )
+        })?;
+        validate_parent_ancestor_v0(ancestor, &metadata)?;
+        if ancestor == path {
+            validate_private_directory_permissions_v0(&metadata)?;
+        }
+    }
+    Ok(())
+}
+
+/// M07: create private directories without a broad-permission exposure window.
+/// Existing directories are checked, never silently chmod-ed into acceptance.
+#[cfg(unix)]
+fn prepare_private_parent_v0(path: &Path) -> ValidationStoreResultV0<()> {
+    let mut missing = Vec::new();
+    for ancestor in path.ancestors() {
+        match fs::symlink_metadata(ancestor) {
+            Ok(metadata) => {
+                validate_parent_ancestor_v0(ancestor, &metadata)?;
+            }
+            Err(cause) if cause.kind() == std::io::ErrorKind::NotFound => missing.push(ancestor),
+            Err(_) => {
+                return Err(error(
+                    ValidationStoreErrorCodeV0::Storage,
+                    "finalization_history.parent_metadata",
+                ))
+            }
+        }
+    }
+    for directory in missing.into_iter().rev() {
+        match fs::DirBuilder::new().mode(0o700).create(directory) {
+            Ok(()) => {}
+            Err(cause) if cause.kind() == std::io::ErrorKind::AlreadyExists => {}
+            Err(_) => {
+                return Err(error(
+                    ValidationStoreErrorCodeV0::Storage,
+                    "finalization_history.parent_create",
+                ))
+            }
+        }
+        let metadata = fs::symlink_metadata(directory).map_err(|_| {
+            error(
+                ValidationStoreErrorCodeV0::ReplacedStore,
+                "finalization_history.parent_missing",
+            )
+        })?;
+        validate_parent_ancestor_v0(directory, &metadata)?;
+        validate_private_directory_permissions_v0(&metadata)?;
+    }
+    validate_private_parent_v0(path)
+}
+
+#[cfg(unix)]
 fn open_directory_nofollow_v0(path: &Path) -> ValidationStoreResultV0<File> {
     let mut options = OpenOptions::new();
     options
@@ -781,6 +890,17 @@ fn validate_regular_file_metadata_v0(
     {
         return Err(error(ValidationStoreErrorCodeV0::ReplacedStore, context));
     }
+    validate_private_file_permissions_v0(metadata)
+}
+
+#[cfg(unix)]
+fn validate_private_file_permissions_v0(metadata: &fs::Metadata) -> ValidationStoreResultV0<()> {
+    if metadata.permissions().mode() & 0o7777 != 0o600 {
+        return Err(error(
+            ValidationStoreErrorCodeV0::InvalidPermissions,
+            "finalization_history.file_permissions",
+        ));
+    }
     Ok(())
 }
 
@@ -789,6 +909,7 @@ fn identity_from_metadata_v0(metadata: &fs::Metadata) -> FileIdentityV0 {
     FileIdentityV0 {
         device: metadata.dev(),
         inode: metadata.ino(),
+        owner: metadata.uid(),
     }
 }
 
@@ -806,6 +927,7 @@ fn file_handle_identity_v0(file: &File) -> ValidationStoreResultV0<FileIdentityV
             "finalization_history.file_handle_type",
         ));
     }
+    validate_private_file_permissions_v0(&metadata)?;
     Ok(identity_from_metadata_v0(&metadata))
 }
 
@@ -823,6 +945,7 @@ fn directory_handle_identity_v0(file: &File) -> ValidationStoreResultV0<FileIden
             "finalization_history.parent_handle_type",
         ));
     }
+    validate_private_directory_permissions_v0(&metadata)?;
     Ok(identity_from_metadata_v0(&metadata))
 }
 
@@ -859,7 +982,7 @@ fn verify_directory_identity_v0(
             "finalization_history.parent_identity",
         ));
     }
-    Ok(())
+    validate_private_parent_v0(path)
 }
 
 #[cfg(unix)]
@@ -925,13 +1048,29 @@ fn validate_auxiliary_namespace_paths_v0(database_path: &Path) -> ValidationStor
     }
     #[cfg(unix)]
     {
+        let database_owner = fs::symlink_metadata(database_path)
+            .map_err(|_| {
+                error(
+                    ValidationStoreErrorCodeV0::ReplacedStore,
+                    "finalization_history.path_missing",
+                )
+            })?
+            .uid();
         for suffix in ["-wal", "-shm"] {
             let path = sqlite_auxiliary_path_v0(database_path, suffix);
             match fs::symlink_metadata(path) {
-                Ok(metadata) => validate_regular_file_metadata_v0(
-                    &metadata,
-                    "finalization_history.auxiliary_type",
-                )?,
+                Ok(metadata) => {
+                    validate_regular_file_metadata_v0(
+                        &metadata,
+                        "finalization_history.auxiliary_type",
+                    )?;
+                    if metadata.uid() != database_owner {
+                        return Err(error(
+                            ValidationStoreErrorCodeV0::InvalidPermissions,
+                            "finalization_history.auxiliary_owner",
+                        ));
+                    }
+                }
                 Err(value) if value.kind() == std::io::ErrorKind::NotFound => {}
                 Err(_) => {
                     return Err(error(
@@ -1715,6 +1854,8 @@ mod tests {
                 nonce
             ));
             fs::create_dir_all(&root).unwrap();
+            #[cfg(unix)]
+            fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
             let database = root.join("history.sqlite");
             Self { root, database }
         }
@@ -2081,5 +2222,104 @@ mod tests {
             ValidationStoreErrorCodeV0::ReplacedStore
         );
         let _ = fs::remove_dir_all(displaced_root);
+    }
+
+    #[test]
+    fn missing_history_is_not_recreated_by_read_audit_or_append() {
+        let path = TestPathV0::new();
+        let h0 = head(0, 151);
+        let first = readback(intent(h0.clone(), head(1, 152), 153), 1, 154);
+        let store = SqliteNativeFinalizationHistoryV0::open(&path.database, scope(15), h0).unwrap();
+        store.append(first.clone()).unwrap();
+        fs::remove_file(&path.database).unwrap();
+        assert_eq!(
+            store.read_sequence(1).unwrap_err().code(),
+            ValidationStoreErrorCodeV0::ReplacedStore
+        );
+        assert_eq!(
+            store.audit().unwrap_err().code(),
+            ValidationStoreErrorCodeV0::ReplacedStore
+        );
+        assert_eq!(
+            store.append(first).unwrap_err().code(),
+            ValidationStoreErrorCodeV0::ReplacedStore
+        );
+        assert!(
+            !path.database.exists(),
+            "bound operations must not recreate a deleted history"
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn private_directory_and_database_modes_are_checked_before_and_after_open() {
+        let path = TestPathV0::new();
+        fs::set_permissions(&path.root, fs::Permissions::from_mode(0o750)).unwrap();
+        assert_eq!(
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(16), head(0, 161))
+                .unwrap_err()
+                .code(),
+            ValidationStoreErrorCodeV0::InvalidPermissions
+        );
+        assert!(
+            !path.database.exists(),
+            "permission rejection must precede file creation"
+        );
+        fs::set_permissions(&path.root, fs::Permissions::from_mode(0o700)).unwrap();
+        let store =
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(16), head(0, 161))
+                .unwrap();
+        fs::set_permissions(&path.database, fs::Permissions::from_mode(0o640)).unwrap();
+        assert_eq!(
+            store.read_sequence(1).unwrap_err().code(),
+            ValidationStoreErrorCodeV0::InvalidPermissions
+        );
+        assert_eq!(
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(16), head(0, 161))
+                .unwrap_err()
+                .code(),
+            ValidationStoreErrorCodeV0::InvalidPermissions
+        );
+        fs::set_permissions(&path.database, fs::Permissions::from_mode(0o600)).unwrap();
+        assert_eq!(store.audit().unwrap().entry_count(), 0);
+        fs::set_permissions(&path.root, fs::Permissions::from_mode(0o750)).unwrap();
+        assert_eq!(
+            store.audit().unwrap_err().code(),
+            ValidationStoreErrorCodeV0::InvalidPermissions
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn private_history_parent_rejects_writable_ancestors_and_creates_private_components() {
+        let path = TestPathV0::new();
+        let broad = path.root.join("broad");
+        let private = broad.join("private");
+        fs::create_dir_all(&private).unwrap();
+        fs::set_permissions(&broad, fs::Permissions::from_mode(0o770)).unwrap();
+        fs::set_permissions(&private, fs::Permissions::from_mode(0o700)).unwrap();
+        let database = private.join("history.sqlite");
+        assert_eq!(
+            SqliteNativeFinalizationHistoryV0::open(&database, scope(17), head(0, 171))
+                .unwrap_err()
+                .code(),
+            ValidationStoreErrorCodeV0::InvalidPermissions
+        );
+        assert!(!database.exists());
+        let created_parent = path.root.join("new-private").join("nested-private");
+        let created = created_parent.join("history.sqlite");
+        let store =
+            SqliteNativeFinalizationHistoryV0::open(&created, scope(17), head(0, 171)).unwrap();
+        for directory in [&created_parent, created_parent.parent().unwrap()] {
+            assert_eq!(
+                fs::metadata(directory).unwrap().permissions().mode() & 0o7777,
+                0o700
+            );
+        }
+        assert_eq!(
+            fs::metadata(&created).unwrap().permissions().mode() & 0o7777,
+            0o600
+        );
+        assert_eq!(store.audit().unwrap().entry_count(), 0);
     }
 }
