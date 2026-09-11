@@ -49,6 +49,10 @@ pub const PAYLOAD_REPLAY_EXTERNAL_RECOVERY_OWNER_CANDIDATE_V1: bool = true;
 pub const PAYLOAD_REPLAY_CORE_ACK_LEDGER_CANDIDATE_V1: bool = true;
 pub const PAYLOAD_REPLAY_CORE_ACK_ATOMIC_WITH_CORE_V1: bool = false;
 pub const PAYLOAD_REPLAY_RECOVERY_PRODUCTION_ACTIVATION_V1: bool = false;
+/// Identity label for descriptor-bound candidate status, not a signature,
+/// independent anti-rollback anchor or Core authority token.
+pub const PAYLOAD_REPLAY_RECOVERY_ENDPOINT_IDENTITY_SCHEMA_V1: &str =
+    "trnm.payload-replay-recovery-endpoint-identity.v1";
 
 const LOG_MAGIC_V1: [u8; 8] = *b"TRNPRW01";
 const LOG_VERSION_V1: u8 = 1;

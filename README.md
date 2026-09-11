@@ -110,6 +110,28 @@ The bounded fuzz smoke is not a long-running fuzz campaign. A green external
 evidence contract validates schema and fail-closed behavior; it does not mean
 that independent real-world evidence already exists.
 
+## Candidate payload recovery socket
+
+`trnm-consensus-peer-lease` retains the native recovery-owner socket behind
+the explicit `candidate-recovery-socket` feature. It is absent from default
+builds; the owner binary and its process test require the same feature.
+
+```bash
+cd trillionnium
+cargo test --locked --offline -p trnm-consensus-peer-lease \
+  --features candidate-recovery-socket --test payload_replay_recovery_owner_socket
+```
+
+The Unix owner fixes one namespace and recovery target at startup, serves one
+connection at a time with an absolute deadline, checks Linux peer credentials,
+and pins its private socket and storage endpoints. It exposes status, bounded
+publication recovery and an explicit caller-provided acknowledgement record.
+That acknowledgement is candidate operator input: it does not prove Core
+acceptance, atomicity with Core, an HSM signature, host attestation or resistance
+to rolling back the entire namespace. Production activation remains false.
+The process tests require an environment that permits Unix sockets; a denied
+socket operation is a failed or environment-blocked test, never a passed check.
+
 ## Development and evidence
 
 Start all engineering work from the canonical plan. The compact machine files in

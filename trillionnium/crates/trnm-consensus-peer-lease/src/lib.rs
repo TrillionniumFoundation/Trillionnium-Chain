@@ -26,7 +26,8 @@ pub use payload::{
     PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayReceiptV1, PayloadReplayStoreV1,
     PAYLOAD_REPLAY_APPEND_ONLY_HASH_CHAIN_V1, PAYLOAD_REPLAY_CANDIDATE_V1,
     PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
-    PAYLOAD_REPLAY_PRODUCTION_ACTIVATION_V1,
+    PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1, PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1,
+    PAYLOAD_REPLAY_MAX_WAL_BYTES_V1, PAYLOAD_REPLAY_PRODUCTION_ACTIVATION_V1,
 };
 pub use payload_body::{
     payload_replay_body_digest_v1, PayloadReplayAuthenticatedBodyV1, PayloadReplayBodyReceiptV1,
@@ -40,10 +41,21 @@ pub use payload_recovery::{
     PayloadReplayRecoveryTargetV1, PAYLOAD_REPLAY_CORE_ACK_ATOMIC_WITH_CORE_V1,
     PAYLOAD_REPLAY_CORE_ACK_LEDGER_CANDIDATE_V1,
     PAYLOAD_REPLAY_EXTERNAL_RECOVERY_OWNER_CANDIDATE_V1,
+    PAYLOAD_REPLAY_RECOVERY_ENDPOINT_IDENTITY_SCHEMA_V1,
     PAYLOAD_REPLAY_RECOVERY_PRODUCTION_ACTIVATION_V1,
     PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_CANDIDATE_V1,
     PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_PRODUCTION_ACTIVATION_V1,
     PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_SCHEMA_V1,
+};
+#[cfg(all(unix, feature = "candidate-recovery-socket"))]
+pub use payload_recovery::{
+    PayloadReplayRecoveryClientV1, PayloadReplayRecoveryDaemonV1, PayloadReplayRecoverySocketAckV1,
+    PayloadReplayRecoverySocketErrorV1, PayloadReplayRecoverySocketStatusV1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_CANDIDATE_V1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_CLIENT_TRANSPORT_ERRORS_NON_FATAL_V1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_MAX_CONCURRENT_CONNECTIONS_V1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_PRODUCTION_ACTIVATION_V1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_SCHEMA_V1,
 };
 pub use protocol::{
     LeaseRejectCodeV1, PeerLeaseDirectionV1, PeerLeaseErrorV1, PeerLeaseScopeV1, PeerLeaseTokenV1,
@@ -97,7 +109,16 @@ mod source_truth_tests {
             "payload_replay_body_store_candidate = true",
             "payload_replay_body_store_production_activation = false",
             "payload_replay_external_recovery_owner_candidate = true",
+            "payload_replay_recovery_socket_candidate = true",
+            "payload_replay_recovery_socket_peer_credentials = true",
+            "payload_replay_recovery_socket_mac = false",
+            "payload_replay_recovery_socket_production_activation = false",
+            "payload_replay_recovery_socket_client_transport_errors_non_fatal = true",
+            "payload_replay_recovery_socket_max_concurrent_connections = 1",
             "payload_replay_core_ack_ledger_candidate = true",
+            "payload_replay_bounded_wal_replay_memory = true",
+            "payload_replay_bounded_temporary_scan = true",
+            "payload_replay_generation_overflow_fail_closed = true",
         ] {
             assert!(
                 manifest.contains(required_true),

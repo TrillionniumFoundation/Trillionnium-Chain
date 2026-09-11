@@ -355,6 +355,34 @@ impl PayloadReplayRecoveryOwnerV1 {
         Ok(())
     }
 
+    /// Return an opaque digest of every descriptor/path identity pinned by
+    /// this owner.  An external supervisor may persist this value and require
+    /// it to remain stable across status/recovery calls.  The digest carries
+    /// no authority: a deliberate daemon restart creates a new socket-bound
+    /// identity, and whole-node anti-rollback remains out of scope.
+    pub fn bound_endpoint_identity_digest(&self) -> Result<[u8; 32], PayloadReplayRecoveryErrorV1> {
+        self.verify_bound_endpoint_identity()?;
+        let mut bytes = Vec::with_capacity(256);
+        bytes.extend_from_slice(self.payload.namespace_digest.as_slice());
+        append_authority_identity(&mut bytes, self.payload.directory_identity);
+        append_authority_identity(&mut bytes, self.payload.file_identity);
+        append_authority_identity(&mut bytes, self.payload.lock_identity);
+        // The head sidecar is intentionally omitted from the stable digest:
+        // bounded recovery may replace that publication inode after repairing
+        // an exact one-record lag.  Its pathname/descriptor identity is still
+        // revalidated before and after every operation above.
+        append_authority_identity(&mut bytes, self.acknowledgement_directory_identity);
+        append_authority_identity(&mut bytes, self.ack_lock_identity);
+        bytes.extend_from_slice(&self.target.record_index.to_be_bytes());
+        bytes.extend_from_slice(&self.target.record_hash);
+        bytes.extend_from_slice(&self.target.frame_fingerprint);
+        let mut hasher = Sha256::new();
+        hasher.update(PAYLOAD_REPLAY_RECOVERY_ENDPOINT_IDENTITY_SCHEMA_V1.as_bytes());
+        hasher.update((bytes.len() as u64).to_be_bytes());
+        hasher.update(bytes);
+        Ok(hasher.finalize().into())
+    }
+
     pub const fn target(&self) -> PayloadReplayRecoveryTargetV1 {
         self.target
     }
@@ -469,5 +497,22 @@ impl PayloadReplayRecoveryOwnerV1 {
             acknowledgement_hash,
             idempotent_replay: false,
         })
+    }
+}
+
+fn append_authority_identity(bytes: &mut Vec<u8>, identity: AuthorityPathIdentityV1) {
+    #[cfg(unix)]
+    {
+        bytes.extend_from_slice(&identity.device.to_be_bytes());
+        bytes.extend_from_slice(&identity.inode.to_be_bytes());
+        bytes.extend_from_slice(&identity.uid.to_be_bytes());
+        bytes.extend_from_slice(&identity.mode.to_be_bytes());
+        bytes.extend_from_slice(&identity.nlink.to_be_bytes());
+    }
+    #[cfg(not(unix))]
+    {
+        bytes.push(u8::from(identity.is_file));
+        bytes.push(u8::from(identity.is_directory));
+        bytes.extend_from_slice(&identity.length.to_be_bytes());
     }
 }
