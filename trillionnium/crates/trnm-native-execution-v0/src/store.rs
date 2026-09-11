@@ -639,19 +639,23 @@ impl InMemoryNativeExecutionStoreV0 {
             .last_key_value()
             .context("authenticated snapshot has no latest root")?
             .0;
+        let tree = Sha256Jmt::new(self);
         let mut previous = None;
-        for version in self.roots.keys().copied() {
+        for (&version, expected_root) in &self.roots {
             if let Some(previous) = previous {
                 ensure!(
                     version == previous + 1,
                     "authenticated roots are not contiguous"
                 );
             }
+            // Check the actual retained commitment, not just root-node presence.
+            // JMT addresses the root by NodeKey instead of scanning all nodes.
+            let actual_root = tree
+                .get_root_hash(version)
+                .context("authenticated snapshot is missing a root node")?;
             ensure!(
-                self.nodes
-                    .keys()
-                    .any(|key| key.version() == version && key.nibble_path().is_empty()),
-                "authenticated snapshot is missing a root node"
+                actual_root == *expected_root,
+                "authenticated snapshot root mismatch at version {version}"
             );
             previous = Some(version);
         }
@@ -684,19 +688,27 @@ impl InMemoryNativeExecutionStoreV0 {
                 "authenticated snapshot live leaf lacks preimage"
             );
         }
-        let expected = self.roots[&latest];
-        let actual = Sha256Jmt::new(self)
-            .get_root_hash(latest)
-            .context("verify native authenticated snapshot root")?;
-        ensure!(actual == expected, "authenticated snapshot root mismatch");
-        let _ = self.verified_live_values_v0(latest)?;
-        Ok(())
+        self.visit_verified_live_values_v0(latest, |_, _| {})
     }
 
     pub(crate) fn verified_live_values_v0(
         &self,
         version: Version,
     ) -> Result<BTreeMap<Vec<u8>, Vec<u8>>> {
+        let mut live = BTreeMap::new();
+        self.visit_verified_live_values_v0(version, |key, value| {
+            live.insert(key.to_vec(), value);
+        })?;
+        Ok(live)
+    }
+
+    /// Consumers share the same proof and duplicate-key checks. Recovery can
+    /// discard each verified value; full-map consumers explicitly retain it.
+    fn visit_verified_live_values_v0(
+        &self,
+        version: Version,
+        mut visit: impl FnMut(&[u8], Vec<u8>),
+    ) -> Result<()> {
         let expected_root = self
             .roots
             .get(&version)
@@ -706,7 +718,7 @@ impl InMemoryNativeExecutionStoreV0 {
         let iterator = JellyfishMerkleIterator::new(Arc::clone(&reader), version, KeyHash([0; 32]))
             .with_context(|| format!("open authenticated iterator at version {version}"))?;
         let tree = Sha256Jmt::new(self);
-        let mut live = BTreeMap::new();
+        let mut seen = BTreeSet::new();
         for entry in iterator {
             let (hash, value) = entry
                 .with_context(|| format!("iterate authenticated tree at version {version}"))?;
@@ -721,18 +733,18 @@ impl InMemoryNativeExecutionStoreV0 {
             let preimage = self
                 .preimages
                 .get(&hash)
-                .with_context(|| format!("missing authenticated key preimage {hash:?}"))?
-                .clone();
+                .with_context(|| format!("missing authenticated key preimage {hash:?}"))?;
             ensure!(
-                authenticated_key_hash_v0(&preimage)? == hash,
+                authenticated_key_hash_v0(preimage)? == hash,
                 "authenticated live key preimage mismatch"
             );
             ensure!(
-                live.insert(preimage, value).is_none(),
+                seen.insert(preimage.as_slice()),
                 "duplicate authenticated live key"
             );
+            visit(preimage, value);
         }
-        Ok(live)
+        Ok(())
     }
 
     pub(crate) fn prove_raw_key_v0(
@@ -909,6 +921,105 @@ mod snapshot_encoding_tests {
                 store.verified_live_values_v0(version).unwrap(),
             );
         }
+    }
+
+    fn historical_store() -> InMemoryNativeExecutionStoreV0 {
+        let mut store = empty_store();
+        for version in 0..3 {
+            store
+                .apply_seed_v0(
+                    version,
+                    vec![
+                        NativeStateWriteV0::raw(b"account".to_vec(), vec![version as u8; 257])
+                            .unwrap(),
+                    ],
+                )
+                .unwrap();
+        }
+        store
+    }
+
+    fn restore(store: &InMemoryNativeExecutionStoreV0) -> Result<InMemoryNativeExecutionStoreV0> {
+        InMemoryNativeExecutionStoreV0::decode_authenticated_snapshot_v0(
+            store.chain_id.clone(),
+            store.signers.clone(),
+            store.consensus_parameters,
+            store.committed_command_ids.clone(),
+            store.committed_signer_nonces.clone(),
+            &store.encode_authenticated_snapshot_v0().unwrap(),
+        )
+    }
+
+    #[test]
+    fn snapshot_rejects_corrupt_historical_root_below_healthy_latest_root() {
+        let mut store = historical_store();
+        let latest_root = store.parent_root_v0().unwrap();
+        store.roots.insert(0, RootHash([42; 32]));
+        assert_eq!(
+            Sha256Jmt::new(&store).get_root_hash(2).unwrap(),
+            latest_root
+        );
+        assert!(
+            restore(&store).is_err(),
+            "historical root corruption was admitted"
+        );
+    }
+
+    #[test]
+    fn snapshot_rejects_substituted_historical_root_node_below_healthy_head() {
+        let mut store = historical_store();
+        let historical_key = store
+            .nodes
+            .keys()
+            .find(|key| key.version() == 0 && key.nibble_path().is_empty())
+            .unwrap()
+            .clone();
+        store.nodes.insert(historical_key, Node::Null);
+        assert_eq!(
+            Sha256Jmt::new(&store).get_root_hash(2).unwrap(),
+            store.parent_root_v0().unwrap(),
+        );
+        assert!(
+            restore(&store).is_err(),
+            "historical root-node substitution was admitted"
+        );
+    }
+
+    #[test]
+    fn snapshot_rejects_missing_historical_root_even_when_latest_is_healthy() {
+        let mut store = historical_store();
+        store
+            .nodes
+            .retain(|key, _| key.version() != 0 || !key.nibble_path().is_empty());
+        assert!(restore(&store).is_err());
+    }
+
+    #[test]
+    fn snapshot_audit_and_live_map_both_reject_corrupt_latest_value() {
+        let mut store = historical_store();
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        store.values.insert((hash, 2), Some(vec![99; 257]));
+        assert!(restore(&store).is_err());
+        assert!(store.verified_live_values_v0(2).is_err());
+        let mut published = 0;
+        assert!(store
+            .visit_verified_live_values_v0(2, |_, _| published += 1)
+            .is_err());
+        assert_eq!(published, 0, "unverified value reached the consumer");
+    }
+
+    #[test]
+    fn snapshot_audit_and_live_map_both_reject_corrupt_latest_preimage() {
+        let mut store = historical_store();
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        store.preimages.insert(hash, b"different-account".to_vec());
+        assert!(restore(&store).is_err());
+        assert!(store.verified_live_values_v0(2).is_err());
+        let mut published = 0;
+        assert!(store
+            .visit_verified_live_values_v0(2, |_, _| published += 1)
+            .is_err());
+        assert_eq!(published, 0, "unverified preimage reached the consumer");
     }
 
     #[test]

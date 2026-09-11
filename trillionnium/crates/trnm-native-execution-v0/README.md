@@ -103,6 +103,25 @@ or production activation. The finalized-commit adapter is an integration seam
 only; `qc_as_application_commit`, `core_application_seal_eligible`, and
 `production_candidate` remain false in package and project status metadata.
 
+## Authenticated snapshot recovery
+
+Primary module: M07. Consumers: M06 execution and M08 finalized recovery.
+Snapshot admission checks every retained root against its indexed JMT root
+node, including historical versions below a healthy latest head. A missing
+root node, substituted root node or mismatched retained root rejects recovery.
+This replaces the per-version scan of the full node map with JMT's indexed
+root lookup; it does not prune history or change snapshot codec bytes.
+
+Latest-state admission still verifies every live value and key preimage against
+the latest root. The shared verifier passes one proven value at a time to its
+consumer and detects duplicate keys using borrowed key references. Recovery
+discards these values after verification; callers that request the full live
+map explicitly collect it. This removes an additional full live-value map from
+recovery's peak memory, not the decoded snapshot itself. Complete historical
+leaf audits, incremental persistence, retention/GC and measured finalized
+throughput remain separate obligations. Local corruption regressions do not
+establish an external rollback anchor or independent storage acceptance.
+
 ## Native complete-execution vector
 
 The maintained corpus contains only native PoCO inputs and outputs.
