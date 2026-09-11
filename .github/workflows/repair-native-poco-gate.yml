@@ -19,7 +19,7 @@ jobs:
           ref: chore/poco-only-purge-20260909
           fetch-depth: 0
           persist-credentials: true
-      - name: Restore native-only workflow truth guard and self-clean
+      - name: Restore workflow truth guard and self-clean
         env:
           PLAN_BASE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
         run: |
@@ -45,21 +45,6 @@ jobs:
           if old_workspace not in text:
               raise SystemExit("legacy workspace assertion fixture not found")
           text = text.replace(old_workspace, new_workspace, 1)
-
-          old_trigger = '''    if "trillionnium/crates/trnm-consensus-app/**" in trigger_block:
-              fail(
-                  f"{trigger_name}: trigger still watches excluded migration package "
-                  "trillionnium/crates/trnm-consensus-app/**"
-              )'''
-          new_trigger = '''    for retired_path in (
-              "trillionnium/crates/trnm-consensus-app/**",
-              "trillionnium/crates/trnm-node/**",
-          ):
-              if retired_path in trigger_block:
-                  fail(f"{trigger_name}: trigger still watches retired consensus path {retired_path}")'''
-          if old_trigger not in text:
-              raise SystemExit("legacy trigger-path assertion fixture not found")
-          text = text.replace(old_trigger, new_trigger, 1)
           script.write_text(text, encoding="utf-8")
 
           workflow = Path(".github/workflows/trnm-poco-bft-v0.yml")
@@ -86,5 +71,5 @@ jobs:
                   scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh \
                   .github/workflows/repair-native-poco-gate.yml
           git diff --cached --check
-          git commit -m "ci(poco): restore native-only workflow trigger truth guard"
+          git commit -m "ci(poco): restore workflow trigger truth guard after native purge"
           git push origin HEAD:chore/poco-only-purge-20260909
