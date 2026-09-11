@@ -339,7 +339,9 @@ backoff. Proposal-carried certificates must update the same timer owner as
 standalone certificates.
 
 The epoch transition remains an implementation blocker. Removing a runtime fence
-is not a transition: acceptance requires a Core-consumable aggregate handoff,
+is not a transition: acceptance requires a Core-consumable complete handoff
+composition with the exact nested CEV0 preimages (the frozen B2-F contract
+forbids an aggregate handoff signing domain),
 durable preparation of both seals, persist-before-sign, anchor activation and an
 atomic first-new-epoch state transition, followed by multi-epoch restart/rejoin
 qualification. The three protocol producer-surface guards must remain failing
@@ -592,11 +594,11 @@ The six technical-review classes are tracked by the existing rows above:
 
 | Class | Repository scope | Closure still required |
 |---|---|---|
-| 1. Recovery and liveness defects | Atomic replacement; compatible TC/QC evidence; pacemaker; retained execution branches | All exact-source regressions and whole-node crash/replay behavior accepted |
-| 2. Native runtime completeness | Core epoch handoff; production host and persistent adapters; finality and rejoin | Multiple continuous epochs through the real production-shaped path |
+| 1. Recovery and liveness defects | Atomic replacement and bounded durable transaction frames; exact inode/byte publication; compatible TC/QC evidence; pacemaker; retained execution branches | All exact-source regressions and whole-node crash/replay behavior accepted; authenticated replay-floor and runtime adoption |
+| 2. Native runtime completeness | Native cutoff/candidate/commitment/checkpoint producers; exact nested epoch evidence recovery; production host and persistent adapters | Safety schema migration, dual consensus-height/application-version coordinates and multiple continuous epochs through the real production-shaped path |
 | 3. Module contracts and vectors | M00-M17 technical contracts and enabled operation catalog | Complete operation-level schema/limits/error/vector coverage and independent consumer review |
-| 4. Execution and state scalability | Full speculative computation; canonical validation; compact audited inventory | Incremental authenticated storage and measured finalized goodput on bounded workloads |
-| 5. One-source quality and integration | Native cleanup; restored branch fixes; deterministic status generation | Terminal required CI, security-alert dispositions, protected merge and post-merge checks |
+| 4. Execution and state scalability | Bounded native runtime speculation; proven transfer fee rebasing; canonical validation; borrowed JMT audits and compact inventory | Incremental authenticated storage, other shared-state hotspots and measured finalized goodput on bounded workloads |
+| 5. One-source quality and integration | Native cleanup; restored branch fixes; explicit candidate-adapter CI; deterministic status generation | Terminal required CI, security-alert dispositions, history-preserving protected merge and post-merge checks |
 | 6. External acceptance | Independent audit, operators, custody, rollback, physical faults and soak | Genuine source-bound evidence and signed governance acceptance |
 
 History reachability alone does not prove branch-content absorption. Any branch
