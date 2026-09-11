@@ -114,13 +114,23 @@ fn read_ack_if_present(
 
 fn scan_ack_temporaries(root: &Path) -> Result<Vec<PathBuf>, PayloadReplayRecoveryErrorV1> {
     let mut paths = Vec::new();
+    let mut scanned = 0_usize;
     for entry in fs::read_dir(root)? {
+        scanned = scanned
+            .checked_add(1)
+            .ok_or(PayloadReplayRecoveryErrorV1::AckLedgerCorrupt)?;
+        if scanned > PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1 {
+            return Err(PayloadReplayRecoveryErrorV1::AckLedgerCorrupt);
+        }
         let entry = entry?;
         let name = entry.file_name();
         let Some(name) = name.to_str() else {
             return Err(PayloadReplayRecoveryErrorV1::AckLedgerCorrupt);
         };
         if name.starts_with(".ack-") && name.contains(".tmp-") {
+            if paths.len() >= PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1 {
+                return Err(PayloadReplayRecoveryErrorV1::AckLedgerCorrupt);
+            }
             let metadata = fs::symlink_metadata(entry.path())?;
             if metadata.file_type().is_symlink() || !private_ack_temporary_mode(&metadata) {
                 return Err(PayloadReplayRecoveryErrorV1::AckLedgerCorrupt);

@@ -243,6 +243,55 @@ mod tests {
     }
 
     #[test]
+    fn recovery_rejects_oversized_wal_before_snapshot_allocation() {
+        let root = private_tempdir("trnm-payload-recovery-oversized-");
+        let path = root.path().join("frames.wal");
+        let file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+            .unwrap();
+        file.set_len(PAYLOAD_REPLAY_MAX_WAL_BYTES_V1 + 1).unwrap();
+        file.sync_all().unwrap();
+        drop(file);
+        let mut file = File::open(&path).unwrap();
+        assert!(matches!(
+            read_snapshot(&mut file, namespace(), namespace_digest(namespace())),
+            Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)
+        ));
+    }
+
+    #[test]
+    fn recovery_temporary_path_collections_are_bounded() {
+        let root = private_tempdir("trnm-payload-recovery-temp-cap-");
+        let payload = root.path().join("frames.wal");
+        let head = sidecar_path(&payload, "head-v1").unwrap();
+        let head_name = utf8_filename(&head, "head").unwrap();
+        for index in 0..=PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1 {
+            let path = head.with_file_name(format!(".{head_name}.tmp-cap-{index}"));
+            fs::write(&path, b"retained evidence").unwrap();
+            #[cfg(unix)]
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+        }
+        assert!(matches!(
+            scan_head_temporaries(&payload),
+            Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)
+        ));
+
+        let acknowledgements = acknowledgement_root(root.path());
+        for index in 0..=PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1 {
+            let path = acknowledgements.join(format!(".ack-cap-{index}.tmp-retained"));
+            fs::write(&path, b"retained evidence").unwrap();
+            #[cfg(unix)]
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+        }
+        assert!(matches!(
+            scan_ack_temporaries(&acknowledgements),
+            Err(PayloadReplayRecoveryErrorV1::AckLedgerCorrupt)
+        ));
+    }
+
+    #[test]
     fn two_link_ack_publication_residue_is_ambiguous() {
         let root = private_tempdir("trnm-payload-ack-hardlink-");
         let wal = root.path().join("frames.wal");
