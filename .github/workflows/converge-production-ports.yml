@@ -24,8 +24,9 @@ jobs:
           SOURCE_SHA: 2ae1915c39774938dc7c8a0799a1224bb5024f2c
         run: |
           set -euo pipefail
-          # Preserve the exact clean product source while applying it onto the
-          # already-purged native-only tree rather than reviving its older base.
+          # Preserve the clean product source while applying it onto the already
+          # purged native-only tree. Formatting is normalized to the active pinned
+          # Rust toolchain before the convergence commit is published.
           git fetch --no-tags origin "$SOURCE_SHA"
           git show "$SOURCE_SHA:trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs" > trillionnium/crates/trnm-node-boundary-v0/src/production_ports.rs
           git show "$SOURCE_SHA:trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs" > trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs
@@ -54,6 +55,7 @@ jobs:
           PY
           (
             cd trillionnium
+            cargo fmt -p trnm-node-boundary-v0 -p trnm-tx-lifecycle-v0
             cargo fmt -p trnm-node-boundary-v0 -p trnm-tx-lifecycle-v0 -- --check
           )
           rm .github/workflows/converge-production-ports.yml
@@ -66,5 +68,5 @@ jobs:
                   .github/workflows/converge-production-ports.yml
           git diff --cached --check
           git commit -m "feat(production): converge security ports and durable tx coordinator" \
-                     -m "Source product delta: 2ae1915c39774938dc7c8a0799a1224bb5024f2c"
+                     -m "Source product delta: 2ae1915c39774938dc7c8a0799a1224bb5024f2c; formatting normalized to the pinned toolchain."
           git push origin HEAD:chore/poco-only-purge-20260909
