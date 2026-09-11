@@ -36,8 +36,9 @@ use trnm_native_application::{
     NativeBlockExecutionRequestV0, NativeBlockExecutionResultV0, NativeDeterministicInvalidV0,
     NativeExecutedBlockV0, NativeRecoveryDispositionV0, NativeRecoveryWatermarksV0,
     NativeSnapshotChunkV0, NativeSnapshotManifestV0, NativeSnapshotRequestV0,
-    NativeStateProofRequestV0, NativeStateProofSchemeV0, NativeStateProofV0, NativeValidatorSetV0,
-    NativeValidatorV0, StateRootV0, ValidatorSetIdV0,
+    NativeStateProofRequestV0, NativeStateProofSchemeV0, NativeStateProofV0,
+    NativeUnavailableReasonV0, NativeValidatorSetV0, NativeValidatorV0, StateRootV0,
+    ValidatorSetIdV0,
 };
 
 use crate::{
@@ -48,7 +49,8 @@ use crate::{
     complete::{
         execute_complete_native_block_v0, load_validator_lifecycle_from_live_v0,
         preview_complete_native_block_v0, validate_application_validator_projection_v0,
-        validator_lifecycle_seed_write_v0, NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
+        validator_lifecycle_seed_write_v0, CompleteNativeExecutionFailureV0,
+        NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
     },
     store::{InMemoryNativeExecutionStoreV0, NativeExecutionStoreV0},
     AuthorizedSignerV0, NativeStateWriteV0,
@@ -2003,18 +2005,8 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
             &request,
         ) {
             Ok(value) => value,
-            Err(_) => {
-                let invalid =
-                    NativeDeterministicInvalidV0::new(&request, "frozen_v0_execution_rejected")
-                        .map_err(|_| {
-                            error(
-                                NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                                "execute.invalid_code",
-                            )
-                        })?;
-                return Ok(NativeBlockExecutionResultV0::DeterministicallyInvalid(
-                    invalid,
-                ));
+            Err(execution_error) => {
+                return complete_execution_failure_result_v0(&request, &execution_error);
             }
         };
         let (executed, plan, replay_identities, lifecycle) = complete.into_parts();
@@ -2165,7 +2157,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         let metadata = load_metadata_v0(&connection, &self.config)?;
-        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let inventory = validate_metadata_v0(&connection, &self.config, &metadata)?;
         let mut p = load_p_by_block_v0(
             &connection,
             *request.executed().request().block_id().as_bytes(),
@@ -2231,7 +2223,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
             )
         })?;
         let commit_id = application_commit_id_v0(&p);
-        let pruned = prepared_blocks_not_descending_from_v0(&connection, p.block_id)?;
+        let pruned = prepared_blocks_not_descending_from_v0(&inventory, p.block_id);
         let transaction = connection
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|_| {
@@ -2534,6 +2526,58 @@ impl MetadataV0 {
     }
 }
 
+/// Keep retryable authenticated-state failures and runtime invariant faults out
+/// of the deterministic transaction-invalid path. This function is private;
+/// callers cannot manufacture a successful execution artifact through it.
+fn complete_execution_failure_result_v0(
+    request: &NativeBlockExecutionRequestV0,
+    execution_error: &anyhow::Error,
+) -> DurableResult<NativeBlockExecutionResultV0> {
+    let invalid_code = match execution_error.downcast_ref::<CompleteNativeExecutionFailureV0>() {
+        Some(CompleteNativeExecutionFailureV0::StateUnavailable) => {
+            return Ok(NativeBlockExecutionResultV0::unavailable(
+                request,
+                NativeUnavailableReasonV0::AuthenticatedStateUnavailable,
+            ));
+        }
+        Some(CompleteNativeExecutionFailureV0::Deterministic(classification)) => {
+            if classification.disposition()
+                == trnm_runtime::DeterministicRuntimeFailureDispositionV0::InvariantFault
+            {
+                return Err(error(
+                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                    "execute.runtime_invariant",
+                ));
+            }
+            classification.code()
+        }
+        Some(CompleteNativeExecutionFailureV0::Invariant(boundary)) => {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                boundary,
+            ));
+        }
+        Some(CompleteNativeExecutionFailureV0::Unclassified) => {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "execute.unclassified_runtime_failure",
+            ));
+        }
+        // These are the existing complete-body/schema rejection paths. Runtime
+        // attempt failures must retain their typed marker above, not display text.
+        None => "frozen_v0_execution_rejected",
+    };
+    let invalid = NativeDeterministicInvalidV0::new(request, invalid_code).map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::CorruptStore,
+            "execute.invalid_code",
+        )
+    })?;
+    Ok(NativeBlockExecutionResultV0::DeterministicallyInvalid(
+        invalid,
+    ))
+}
+
 fn initial_store_v0(
     config: &NativeApplicationConfigV0,
 ) -> DurableResult<InMemoryNativeExecutionStoreV0> {
@@ -2707,6 +2751,49 @@ struct DurablePV0 {
     commit_id: Option<[u8; 32]>,
 }
 
+/// M06: retain only fixed-size links after auditing each complete durable row.
+/// The snapshot, replay sets and artifact are still checked on every audit;
+/// they must not accumulate in memory across the committed history.
+struct ValidatedPInventoryEntryV0 {
+    target_height: u64,
+    p_sequence: u64,
+    status: u64,
+    parent_height: u64,
+    parent_block_id: [u8; 32],
+    parent_state_root: [u8; 32],
+    parent_commit_id: [u8; 32],
+    block_id: [u8; 32],
+    target_state_root: [u8; 32],
+    application_commit_id: [u8; 32],
+    commit_sequence: Option<u64>,
+}
+
+impl ValidatedPInventoryEntryV0 {
+    fn from_durable_v0(config: &NativeApplicationConfigV0, p: DurablePV0) -> DurableResult<Self> {
+        validate_p_v0(config, &p)?;
+        validate_target_snapshot_v0(config, &p)?;
+        let executed = decode_native_executed_block_artifact_v0(&p.artifact).map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "p.inventory_artifact",
+            )
+        })?;
+        Ok(Self {
+            target_height: p.target_height,
+            p_sequence: p.p_sequence,
+            status: p.status,
+            parent_height: p.parent_height,
+            parent_block_id: p.parent_block_id,
+            parent_state_root: p.parent_state_root,
+            parent_commit_id: p.parent_commit_id,
+            block_id: p.block_id,
+            target_state_root: *executed.request().expected().post_state_root().as_bytes(),
+            application_commit_id: application_commit_id_v0(&p),
+            commit_sequence: p.commit_sequence,
+        })
+    }
+}
+
 fn validate_genesis_request_v0(
     config: &NativeApplicationConfigV0,
     request: &NativeApplicationGenesisRequestV0,
@@ -2751,7 +2838,7 @@ fn validate_metadata_v0(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
-) -> DurableResult<()> {
+) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
     if metadata.durable_sequence == 0 || metadata.snapshot_digest != sha256_v0(&metadata.snapshot) {
         return Err(error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,
@@ -2801,16 +2888,17 @@ fn validate_metadata_v0(
             ));
         }
     }
-    validate_p_inventory_v0(connection, config, metadata)?;
-    Ok(())
+    validate_p_inventory_v0(connection, config, metadata)
 }
 
 fn validate_p_inventory_v0(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
-) -> DurableResult<()> {
-    let rows = load_all_p_v0(connection)?;
+) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
+    let rows = map_p_inventory_v0(connection, |p| {
+        ValidatedPInventoryEntryV0::from_durable_v0(config, p)
+    })?;
     let by_block = rows
         .iter()
         .map(|p| (p.block_id, p))
@@ -2889,8 +2977,6 @@ fn validate_p_inventory_v0(
     }
     let mut target_roots = BTreeMap::new();
     for p in &rows {
-        validate_p_v0(config, p)?;
-        validate_target_snapshot_v0(config, p)?;
         if p.p_sequence <= 1
             || p.p_sequence > metadata.durable_sequence
             || !allocated_sequences.insert(p.p_sequence)
@@ -2910,16 +2996,7 @@ fn validate_p_inventory_v0(
             }
             maximum_sequence = maximum_sequence.max(sequence);
         }
-        let executed = decode_native_executed_block_artifact_v0(&p.artifact).map_err(|_| {
-            error(
-                NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                "p.inventory_artifact",
-            )
-        })?;
-        target_roots.insert(
-            p.block_id,
-            *executed.request().expected().post_state_root().as_bytes(),
-        );
+        target_roots.insert(p.block_id, p.target_state_root);
     }
     if maximum_sequence != metadata.durable_sequence {
         return Err(error(
@@ -2966,7 +3043,7 @@ fn validate_p_inventory_v0(
             || parent.target_height.checked_add(1) != Some(p.target_height)
             || parent.p_sequence >= p.p_sequence
             || target_roots.get(&parent.block_id) != Some(&p.parent_state_root)
-            || application_commit_id_v0(parent) != p.parent_commit_id
+            || parent.application_commit_id != p.parent_commit_id
         {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::CorruptStore,
@@ -3057,7 +3134,7 @@ fn validate_p_inventory_v0(
                 "p.inventory_committed_root",
             )
         })?;
-        previous_commit = application_commit_id_v0(p);
+        previous_commit = p.application_commit_id;
     }
     if metadata.head.height().get() != previous_height
         || metadata.head.block_id().as_bytes() != &previous_block
@@ -3070,6 +3147,10 @@ fn validate_p_inventory_v0(
         ));
     }
 
+    // Rows are sorted by persist sequence and every parent link above has a
+    // strictly smaller sequence. Resolve each prepared link once, instead of
+    // walking a shared ancestry again for every descendant (quadratic work).
+    let mut prepared_descendants = BTreeSet::new();
     for p in rows
         .iter()
         .filter(|candidate| candidate.status == P_STATUS_PREPARED)
@@ -3080,35 +3161,25 @@ fn validate_p_inventory_v0(
                 "p.inventory_prepared_below_head",
             ));
         }
-        let mut cursor = p;
-        for _ in 0..=rows.len() {
-            if cursor.parent_height == metadata.head.height().get() {
-                if cursor.parent_block_id != *metadata.head.block_id().as_bytes()
-                    || cursor.parent_state_root != *metadata.head.state_root().as_bytes()
-                    || cursor.parent_commit_id != *metadata.head.commit_id().as_bytes()
-                {
-                    return Err(error(
-                        NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                        "p.inventory_prepared_head",
-                    ));
-                }
-                break;
-            }
-            cursor = by_block.get(&cursor.parent_block_id).ok_or_else(|| {
-                error(
+        if p.parent_height == metadata.head.height().get() {
+            if p.parent_block_id != *metadata.head.block_id().as_bytes()
+                || p.parent_state_root != *metadata.head.state_root().as_bytes()
+                || p.parent_commit_id != *metadata.head.commit_id().as_bytes()
+            {
+                return Err(error(
                     NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                    "p.inventory_prepared_ancestry",
-                )
-            })?;
-        }
-        if cursor.parent_height != metadata.head.height().get() {
+                    "p.inventory_prepared_head",
+                ));
+            }
+        } else if !prepared_descendants.contains(&p.parent_block_id) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                "p.inventory_prepared_cycle",
+                "p.inventory_prepared_ancestry",
             ));
         }
+        prepared_descendants.insert(p.block_id);
     }
-    Ok(())
+    Ok(rows)
 }
 
 fn target_store_v0(
@@ -3647,6 +3718,15 @@ fn load_p_by_height_v0(
 }
 
 fn load_all_p_v0(connection: &Connection) -> DurableResult<Vec<DurablePV0>> {
+    map_p_inventory_v0(connection, Ok)
+}
+
+/// Load and consume one row at a time. Callers performing a whole-history
+/// audit retain compact verified links rather than every historical snapshot.
+fn map_p_inventory_v0<T>(
+    connection: &Connection,
+    mut consume: impl FnMut(DurablePV0) -> DurableResult<T>,
+) -> DurableResult<Vec<T>> {
     let mut statement = connection
         .prepare("SELECT block_id FROM native_durable_execution_p_v0 ORDER BY p_sequence ASC")
         .map_err(|_| {
@@ -3674,47 +3754,35 @@ fn load_all_p_v0(connection: &Connection) -> DurableResult<Vec<DurablePV0>> {
         .into_iter()
         .map(|bytes| {
             let block_id = array32_v0(&bytes, "p.inventory_block")?;
-            load_p_by_block_v0(connection, block_id)?.ok_or_else(|| {
+            let p = load_p_by_block_v0(connection, block_id)?.ok_or_else(|| {
                 error(
                     NativeApplicationExecutionErrorCodeV0::CorruptStore,
                     "p.inventory_missing",
                 )
-            })
+            })?;
+            consume(p)
         })
         .collect()
 }
 
 fn prepared_blocks_not_descending_from_v0(
-    connection: &Connection,
+    rows: &[ValidatedPInventoryEntryV0],
     finalized_block_id: [u8; 32],
-) -> DurableResult<Vec<[u8; 32]>> {
-    let rows = load_all_p_v0(connection)?;
-    let by_block = rows
-        .iter()
-        .map(|p| (p.block_id, p))
-        .collect::<BTreeMap<_, _>>();
+) -> Vec<[u8; 32]> {
+    // commit_block has just fully audited this inventory, including strict
+    // parent-before-child persist sequences. Consume those same verified
+    // links: rereading SQL here would let an unaudited sequence change alter
+    // pruning between the audit and the commit transaction.
+    let mut descendants = BTreeSet::from([finalized_block_id]);
     let mut pruned = Vec::new();
-    for p in rows
-        .iter()
-        .filter(|candidate| candidate.status == P_STATUS_PREPARED)
-    {
-        let mut cursor = p;
-        let mut descends = cursor.block_id == finalized_block_id;
-        for _ in 0..=rows.len() {
-            if descends {
-                break;
-            }
-            let Some(parent) = by_block.get(&cursor.parent_block_id) else {
-                break;
-            };
-            cursor = parent;
-            descends = cursor.block_id == finalized_block_id;
-        }
-        if !descends {
+    for p in rows.iter().filter(|p| p.status == P_STATUS_PREPARED) {
+        if p.block_id == finalized_block_id || descendants.contains(&p.parent_block_id) {
+            descendants.insert(p.block_id);
+        } else {
             pruned.push(p.block_id);
         }
     }
-    Ok(pruned)
+    pruned
 }
 
 fn count_prepared_p_v0(connection: &Connection) -> DurableResult<u64> {
@@ -5362,6 +5430,102 @@ mod tests {
         (path, application, genesis.head().clone(), execution)
     }
 
+    #[test]
+    fn runtime_failure_classification_preserves_unavailable_and_invariant_faults() {
+        let temporary = TempDir::new().unwrap();
+        let (path, _application, _head, request) = initialized(&temporary);
+        let before = fs::read(&path).unwrap();
+        // Context wrappers must preserve the private typed marker. Display
+        // strings are diagnostic only and cannot determine consensus validity.
+        let unavailable = anyhow::Error::new(CompleteNativeExecutionFailureV0::StateUnavailable)
+            .context("execution attempt");
+        match complete_execution_failure_result_v0(&request, &unavailable).unwrap() {
+            NativeBlockExecutionResultV0::Unavailable(result) => {
+                assert_eq!(result.request(), &request);
+                assert_eq!(
+                    result.reason(),
+                    NativeUnavailableReasonV0::AuthenticatedStateUnavailable
+                );
+            }
+            other => panic!("state unavailability was misclassified: {other:?}"),
+        }
+        for failure in [
+            CompleteNativeExecutionFailureV0::Deterministic(
+                trnm_runtime::RuntimeError::ObjectType("account".into()).deterministic_failure_v0(),
+            ),
+            CompleteNativeExecutionFailureV0::Invariant("runtime_mutations"),
+            CompleteNativeExecutionFailureV0::Invariant("poco_application"),
+            CompleteNativeExecutionFailureV0::Invariant("validator_transition"),
+            CompleteNativeExecutionFailureV0::Unclassified,
+        ] {
+            let result =
+                complete_execution_failure_result_v0(&request, &anyhow::Error::new(failure));
+            assert_eq!(
+                result.unwrap_err().code(),
+                NativeApplicationExecutionErrorCodeV0::CorruptStore
+            );
+        }
+        assert_eq!(
+            fs::read(path).unwrap(),
+            before,
+            "failure classification wrote durable state"
+        );
+    }
+
+    #[test]
+    fn complete_runtime_nonce_rejection_keeps_typed_code_and_no_prepared_row() {
+        let temporary = TempDir::new().unwrap();
+        let (path, application, _head, valid_request) = initialized(&temporary);
+        let request = NativeBlockExecutionRequestV0::new(
+            valid_request.chain_id().clone(),
+            valid_request.genesis_hash(),
+            valid_request.parent().clone(),
+            valid_request.block_id(),
+            valid_request.height(),
+            valid_request.timestamp_ms(),
+            valid_request.active_validator_set_id(),
+            outer_transactions_for_v0(99),
+            valid_request.expected(),
+        )
+        .unwrap();
+        let config = config(STORE_A);
+        let store = initial_store_v0(&config).unwrap();
+        let rejected = execute_complete_native_block_v0(
+            &store,
+            &config.validator_set,
+            GenesisHash::new(GENESIS),
+            &request,
+        )
+        .unwrap_err();
+        let CompleteNativeExecutionFailureV0::Deterministic(classification) = rejected
+            .downcast_ref::<CompleteNativeExecutionFailureV0>()
+            .expect("runtime marker lost")
+        else {
+            panic!("wrong runtime disposition")
+        };
+        assert_eq!(
+            classification.disposition(),
+            trnm_runtime::DeterministicRuntimeFailureDispositionV0::TransactionReject
+        );
+        match application.execute_block(request.clone()).unwrap() {
+            NativeBlockExecutionResultV0::DeterministicallyInvalid(invalid) => {
+                assert_eq!(invalid.code(), classification.code());
+                assert_eq!(invalid.request(), &request);
+            }
+            other => panic!("invalid nonce was misclassified: {other:?}"),
+        }
+        let connection = open_writable_connection_v0(&path).unwrap();
+        assert!(
+            load_p_by_block_v0(&connection, *request.block_id().as_bytes())
+                .unwrap()
+                .is_none()
+        );
+        assert!(matches!(
+            application.execute_block(valid_request).unwrap(),
+            NativeBlockExecutionResultV0::Valid(_)
+        ));
+    }
+
     fn computed_executed_without_p(
         config: &NativeApplicationConfigV0,
         request: &NativeBlockExecutionRequestV0,
@@ -6972,6 +7136,185 @@ mod tests {
             )
             .unwrap();
         assert_eq!(exact.disposition(), NativeRecoveryDispositionV0::Exact);
+    }
+
+    #[test]
+    fn inventory_prunes_interleaved_fork_descendants_after_restart() {
+        let temporary = TempDir::new().unwrap();
+        let (path, application, _head, first) = initialized(&temporary);
+        let sibling = NativeBlockExecutionRequestV0::new(
+            first.chain_id().clone(),
+            first.genesis_hash(),
+            first.parent().clone(),
+            BlockIdV0::new([90; 32]).unwrap(),
+            first.height(),
+            first.timestamp_ms(),
+            first.active_validator_set_id(),
+            first.transactions().to_vec(),
+            first.expected(),
+        )
+        .unwrap();
+        let execute = |request| match application.execute_block(request).unwrap() {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("expected valid branch execution, got {other:?}"),
+        };
+        let mut retained = vec![execute(first)];
+        let mut rejected = vec![execute(sibling)];
+        for height in 2..=4 {
+            // Interleave the two branches in persist sequence; neither block
+            // IDs nor height ordering may replace the authenticated DAG.
+            for (branch, byte) in [
+                (&mut rejected, 90 + height as u8),
+                (&mut retained, 40 + height as u8),
+            ] {
+                let parent = application
+                    .confirm_durable_p_v0(branch.last().unwrap())
+                    .unwrap()
+                    .overlay_parent_head_v0()
+                    .unwrap();
+                let request = previewed_execution_request_v0(
+                    &application,
+                    &config(STORE_A),
+                    parent,
+                    height,
+                    byte,
+                    height,
+                );
+                branch.push(execute(request));
+            }
+        }
+        {
+            let connection = open_writable_connection_v0(&path).unwrap();
+            let config = config(STORE_A);
+            let metadata = load_metadata_v0(&connection, &config).unwrap();
+            let audited = validate_metadata_v0(&connection, &config, &metadata).unwrap();
+            let first_id = *retained[0].request().block_id().as_bytes();
+            let original = load_p_by_block_v0(&connection, first_id).unwrap().unwrap();
+            // An independent SQLite writer after the audit must not silently
+            // make the prune decision depend on a new, unverified row order.
+            let writer = open_writable_connection_v0(&path).unwrap();
+            writer
+                .execute(
+                    "UPDATE native_durable_execution_p_v0 SET p_sequence=? WHERE block_id=?",
+                    params![
+                        u64_bytes_v0(original.p_sequence + 1000).as_slice(),
+                        first_id.as_slice()
+                    ],
+                )
+                .unwrap();
+            assert_eq!(
+                prepared_blocks_not_descending_from_v0(&audited, first_id),
+                rejected
+                    .iter()
+                    .map(|p| *p.request().block_id().as_bytes())
+                    .collect::<Vec<_>>(),
+            );
+            assert!(validate_metadata_v0(&connection, &config, &metadata).is_err());
+            writer
+                .execute(
+                    "UPDATE native_durable_execution_p_v0 SET p_sequence=? WHERE block_id=?",
+                    params![
+                        u64_bytes_v0(original.p_sequence).as_slice(),
+                        first_id.as_slice()
+                    ],
+                )
+                .unwrap();
+        }
+        drop(application);
+        let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+        reopened
+            .commit_block(NativeApplicationCommitRequestV0::new(retained[0].clone()))
+            .unwrap();
+        let connection = open_immutable_connection_v0(&path).unwrap();
+        for executed in &rejected {
+            assert!(
+                load_p_by_block_v0(&connection, *executed.request().block_id().as_bytes(),)
+                    .unwrap()
+                    .is_none(),
+                "every conflicting descendant must be pruned"
+            );
+        }
+        for executed in &retained {
+            assert!(
+                load_p_by_block_v0(&connection, *executed.request().block_id().as_bytes(),)
+                    .unwrap()
+                    .is_some(),
+                "all selected descendants must survive"
+            );
+        }
+        drop(connection);
+        drop(reopened);
+        for executed in retained.into_iter().skip(1) {
+            let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+            reopened
+                .commit_block(NativeApplicationCommitRequestV0::new(executed))
+                .unwrap();
+        }
+        let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+        assert_eq!(
+            reopened
+                .confirmed_committed_head_v0()
+                .unwrap()
+                .height()
+                .get(),
+            4
+        );
+    }
+
+    #[test]
+    fn inventory_still_audits_corrupt_committed_history_below_healthy_head() {
+        for mutation in ["snapshot", "artifact", "replay", "lifecycle"] {
+            let temporary = TempDir::new().unwrap();
+            let (path, application, _head, first) = initialized(&temporary);
+            let executed = match application.execute_block(first).unwrap() {
+                NativeBlockExecutionResultV0::Valid(value) => *value,
+                other => panic!("expected valid first execution, got {other:?}"),
+            };
+            let first_id = *executed.request().block_id().as_bytes();
+            let committed = application
+                .commit_block(NativeApplicationCommitRequestV0::new(executed))
+                .unwrap();
+            let next = previewed_execution_request_v0(
+                &application,
+                &config(STORE_A),
+                committed.head().clone(),
+                2,
+                44,
+                2,
+            );
+            let executed = match application.execute_block(next).unwrap() {
+                NativeBlockExecutionResultV0::Valid(value) => *value,
+                other => panic!("expected valid second execution, got {other:?}"),
+            };
+            application
+                .commit_block(NativeApplicationCommitRequestV0::new(executed))
+                .unwrap();
+            drop(application);
+            let connection = open_writable_connection_v0(&path).unwrap();
+            let statement = match mutation {
+                "snapshot" => "UPDATE native_durable_execution_p_v0 SET target_snapshot=? WHERE block_id=?",
+                "artifact" => "UPDATE native_durable_execution_p_v0 SET artifact=? WHERE block_id=?",
+                "replay" => "UPDATE native_durable_execution_p_v0 SET target_replay_command_ids=? WHERE block_id=?",
+                "lifecycle" => "UPDATE native_durable_execution_p_v0 SET target_lifecycle_json=? WHERE block_id=?",
+                _ => unreachable!(),
+            };
+            assert_eq!(
+                connection
+                    .execute(
+                        statement,
+                        params![b"corrupt".as_slice(), first_id.as_slice()]
+                    )
+                    .unwrap(),
+                1
+            );
+            drop(connection);
+            let failure = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap_err();
+            assert_eq!(
+                failure.code(),
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "historical {mutation} corruption must not hide behind a healthy latest snapshot"
+            );
+        }
     }
 
     #[test]
