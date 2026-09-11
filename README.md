@@ -73,9 +73,10 @@ The active workspace is `trillionnium/Cargo.toml`. Use Cargo metadata,
 `config/module-coverage-v1.toml` rather than this overview when exact membership
 or ownership is required.
 
-PoCO consensus, `trnm-native-application`, and `trnm-node` are excluded migration residue.
-They may support historical differential replay and one-way migration only;
-they cannot authorize a release, deployment, fallback, or readiness claim.
+The native PoCO consensus and `trnm-native-application` are active product code.
+Retired package identities are absent from the tracked workspace and may exist only
+in immutable Git history or separately retained evidence; they cannot authorize a
+release, deployment, fallback, or readiness claim.
 
 ## Prerequisites
 

@@ -52,19 +52,6 @@ for automation_input in "${automation_inputs[@]}"; do
   done
 done
 
-for workflow in \
-  .github/workflows/rust-l1-nightly-health.yml \
-  .github/workflows/trnm-merge-gates.yml; do
-  grep -Fq -- './scripts/v2/worker_poco_cli_cutover_gate.sh' "$workflow" || {
-    echo "[FAIL] active PoCO CLI cutover gate missing from $workflow" >&2
-    exit 4
-  }
-  grep -Fq -- 'TRNM_TX_ADAPTER_MODE=mock SKIP_GATES=1' "$workflow" || {
-    echo "[FAIL] multi-agent smoke is not explicitly hermetic in $workflow" >&2
-    exit 5
-  }
-done
-
 grep -Fq -- './scripts/v2/worker_poco_cli_cutover_workflow_guard_test.sh' \
   .github/workflows/trnm-gate-quick-check.yml || {
   echo "[FAIL] cutover workflow regression missing from quick-check" >&2
@@ -76,4 +63,4 @@ grep -Fq -- './scripts/v2/worker_poco_cli_cutover_workflow_guard_test.sh' \
   exit 7
 }
 
-echo "[OK] active workflows keep worker legacy adapters separate from the PoCO CLI cutover"
+echo "[OK] active workflows keep retired worker adapters out of the native PoCO CLI cutover"

@@ -535,8 +535,9 @@ no domain state machine and cannot silently promote machine truth.
 `trnm-poco-node-production-v0`, and `trnm-release-bundle-v0`. The boundary crate
 contains versioned ports only; the production crate performs wiring only; the
 release crate validates exact-source artifact, SBOM, provenance, signature, and
-handoff bindings. Legacy `trnm-native-application` and `trnm-node` remain excluded
-migration residue.
+handoff bindings. `trnm-native-application` is active native product code. Retired
+package identities are absent from the tracked workspace and retained only through
+immutable history or evidence packets.
 
 **Composition contract.** Separate closures are maintained for `node-prod-v0`,
 `node-devnet-v0`, `ai-v1-candidate`, and `lab-and-evidence`. Production closure

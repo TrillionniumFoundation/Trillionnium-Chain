@@ -83,4 +83,4 @@ esac
 
 trap - EXIT HUP INT TERM
 cleanup_snapshot
-printf 'mixed_trust_cargo_policy=passed hosted_required_jobs=5 privileged_offline_jobs=26 source=%s\n' "${source_mode#--}"
+printf 'mixed_trust_cargo_policy=passed hosted_required_jobs=5 privileged_offline_jobs=18 source=%s\n' "${source_mode#--}"
