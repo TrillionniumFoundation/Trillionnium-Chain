@@ -31,6 +31,7 @@ node-event-wal = ["dep:libc"]
 # broadcast in the default node.
 tx-admission-wal = [
   "dep:libc",
+  "dep:rustix",
   "dep:trnm-mempool",
   "dep:trnm-application-tx-builder-v0",
 ]
