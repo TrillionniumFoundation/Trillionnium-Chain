@@ -329,11 +329,35 @@ Tx admission -> authenticated dissemination -> canonical order
 
 M02 remains deterministic and I/O-free. M03 owns persist-before-sign state, signer intent, watermark, checkpoint, and custody adapters. A live host must provide persistent pacemaker, Vote/Timeout, QC/TC, epoch handoff, arbitrary proposal bodies, catch-up, and retained ancestry without allowing local overload or remote control-plane loss to alter deterministic validity.
 
+A timeout certificate is not unique at a timed-out view. Compatible certificates may
+carry different voter subsets and different independently valid referenced QCs.
+Collectors and the host must distinguish a real contradictory QC coordinate from
+an alternative certificate representation, retain the exact evidence needed by
+Core, and preserve replayable executed branches until finality excludes them.
+TC-only view advancement is failed-view progress: it cannot reset pacemaker
+backoff. Proposal-carried certificates must update the same timer owner as
+standalone certificates.
+
+The epoch transition remains an implementation blocker. Removing a runtime fence
+is not a transition: acceptance requires a Core-consumable aggregate handoff,
+durable preparation of both seals, persist-before-sign, anchor activation and an
+atomic first-new-epoch state transition, followed by multi-epoch restart/rejoin
+qualification. The three protocol producer-surface guards must remain failing
+while their native authorization producers are absent; fixtures and renamed
+legacy sources cannot satisfy that obligation.
+
 ### 6.2 Networking
 
 M04 must deliver authenticated peer identity, chain/profile negotiation, bounded ingress, replay protection, backpressure, peer/global quotas, and Byzantine packet handling. Connection or queue failure may delay progress or return retryable local unavailability; it cannot fabricate deterministic invalidity.
 
 Payload replay recovery is an M04 producer / M08 recovery-owner contract consumed by M15. Before Core consumption, the host must durably bind authenticated admission to recoverable payload bytes. Restart/rejoin verifies the namespace, peer/direction, session/generation/sequence, record index/hash, frame fingerprint and retained body against the exact admitted target. The recovery owner verifies the WAL chain and repairs only an exact one-record head lag; it quarantines residual publication temporaries as evidence. Missing bodies, divergent heads, corrupt records, namespace/path replacement or an unprovable target stop the affected ingress path without resetting replay protection.
+
+The opt-in `candidate-recovery-socket` preserves the bounded native recovery-owner
+service from the historical integration branches. Its module, owner binary and
+process test are feature-fenced and absent from default builds. An explicit
+caller-provided ACK is candidate operator input, not Core acceptance or a
+whole-node atomicity/anti-rollback proof; the existing payload CI must exercise
+its real Unix process test on a socket-capable runner.
 
 Recovery distinguishes `recoverable_head_lag`, `recoverable_residual_temporaries`, `admitted_unacknowledged` and `core_acknowledged`. An admission receipt, repaired head or caller-supplied acknowledgement digest does not prove Core consumed the input. The host may record a target-bound acknowledgement only after verifying the real durable Core safety revision and acknowledgement fact; replay is idempotent for the same fact and rejects conflicting facts. A lost Core response or missing acknowledgement remains unresolved until that durable fact is recovered. The candidate acknowledgement ledger is not atomic with Core: the Node Commit Ledger coordinator must prove exact source-or-target convergence and bind replay, Core and acknowledgement stores to the required anti-rollback authority before node acceptance.
 
@@ -343,9 +367,33 @@ Qualification binds the exact source, contract and payload vectors to cross-proc
 
 M05 must close canonical decode, authorization, nonce/replay, fee/resource admission, WAL, replacement, proposal handoff, finalized readback, tombstone, and GC. GC requires finalized proof and replay-floor authority.
 
+Replacement admission requires an atomic durable comparison and replacement of
+the old active record and the new admission. Recovery must see either the old
+record or its tombstone together with the new record, never two active nonces.
+An uncertain receipt poisons the live owner until recovery. A test journal that
+implements this contract is not a production storage adapter. Persisted admission
+also needs namespace-wide capacity across live records and retained tombstones;
+compaction cannot release replay protection before its finalized authority.
+
 ### 6.4 State sync and client proof
 
 M13 must verify arbitrary-length finality/trust paths, weak-subjectivity anchors, epoch transitions, state-sync catalogs/chunks, closed-world schema, root closure, and non-destructive install. Network majority alone cannot choose a trust anchor.
+
+M06 speculative workers must execute the full transaction attempt, resource/fee
+computation and tentative mutations. Canonical order validates their read
+versions and re-executes conflicts, including attempts that failed against the
+parent but become valid after an earlier credit. The serial audit scheduler
+remains independently ordered. Candidate worker equivalence does not establish
+production runtime wiring or end-to-end speedup.
+
+Native recovery audits every historical artifact, authenticated snapshot, replay
+set and lifecycle before using compact inventory links. Fork pruning consumes
+that same validated inventory, not a second unaudited query. This reduces memory
+and repeated ancestry walks; complete snapshots, full-history scanning, canonical
+root work and serialized commit remain scalability blockers. Runtime state
+unavailability and explicit invariant faults must preserve typed dispositions
+through the application boundary and cannot become deterministic transaction
+rejections by string conversion.
 
 The vertical path exits only when full candidate validator behavior survives crash cuts, Byzantine networking, restart/rejoin, state sync, and 1/2/4/8-worker invariance. Production flags remain false until later gates close.
 
@@ -539,6 +587,23 @@ Complete trusted source verification, exact export and root recomputation, multi
 | P2 | MIG-014/016 | M02/M13/M15/M17 | open | signed cutover, cross-peer agreement, downgrade prohibition, safe residue cleanup |
 | P2 | OWNERSHIP-001 | M15/M17 | open | real module teams, two-maintainer minimum, independent consumer/security review |
 | P2 | CONTROL-001 | M16/M17 | open | observer-first, guarded, reversible, non-authoritative control plane demonstrated |
+
+The six technical-review classes are tracked by the existing rows above:
+
+| Class | Repository scope | Closure still required |
+|---|---|---|
+| 1. Recovery and liveness defects | Atomic replacement; compatible TC/QC evidence; pacemaker; retained execution branches | All exact-source regressions and whole-node crash/replay behavior accepted |
+| 2. Native runtime completeness | Core epoch handoff; production host and persistent adapters; finality and rejoin | Multiple continuous epochs through the real production-shaped path |
+| 3. Module contracts and vectors | M00-M17 technical contracts and enabled operation catalog | Complete operation-level schema/limits/error/vector coverage and independent consumer review |
+| 4. Execution and state scalability | Full speculative computation; canonical validation; compact audited inventory | Incremental authenticated storage and measured finalized goodput on bounded workloads |
+| 5. One-source quality and integration | Native cleanup; restored branch fixes; deterministic status generation | Terminal required CI, security-alert dispositions, protected merge and post-merge checks |
+| 6. External acceptance | Independent audit, operators, custody, rollback, physical faults and soak | Genuine source-bound evidence and signed governance acceptance |
+
+History reachability alone does not prove branch-content absorption. Any branch
+whose tip was recorded by a tree-preserving merge needs a content-level review;
+retain current stronger replacements, port valid omitted fixes, and keep retired
+engines out of the active tree. Branch deletion follows protected-main admission
+and final ref/content verification. It does not establish technical acceptance.
 
 External blockers remain:
 

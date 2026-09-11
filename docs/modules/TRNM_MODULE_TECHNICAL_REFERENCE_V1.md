@@ -488,6 +488,15 @@ existing store is not destroyed until the replacement is fully verified.
 Migration targets a fresh namespace and fresh genesis; legacy WAL or signer state
 is never imported as production authority.
 
+The v1 finality receipt verifier fixes transaction and object proof tree domains
+and checks path length, direction, and duplicate-last padding against the
+declared leaf index/count. Equal real leaves and equal subtrees remain valid.
+This Merkle format does not independently commit the exact leaf count in its
+root: appending a duplicate final leaf can produce the same root. Consumers must
+not treat the proof's count as an authenticated total. Removing that ambiguity
+requires a separately versioned root/count commitment and producer/consumer
+review; the existing receipt schema and root rules remain unchanged.
+
 **Verification.** Arbitrary-length trust paths, skipped views, epoch transitions,
 hostile peers/chunks, checkpoint renewal, snapshot restart, independent parser,
 and cross-version migration proofs are required. SLO profile:
@@ -535,8 +544,9 @@ no domain state machine and cannot silently promote machine truth.
 `trnm-poco-node-production-v0`, and `trnm-release-bundle-v0`. The boundary crate
 contains versioned ports only; the production crate performs wiring only; the
 release crate validates exact-source artifact, SBOM, provenance, signature, and
-handoff bindings. Legacy `trnm-native-application` and `trnm-node` remain excluded
-migration residue.
+handoff bindings. `trnm-native-application` is active M06 native product code and
+is required by the `node-prod-v0` build closure. The retired `trnm-node` package
+is absent from the tracked workspace; its provenance remains in Git history.
 
 **Composition contract.** Separate closures are maintained for `node-prod-v0`,
 `node-devnet-v0`, `ai-v1-candidate`, and `lab-and-evidence`. Production closure
