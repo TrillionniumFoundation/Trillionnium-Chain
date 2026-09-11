@@ -24,8 +24,6 @@ jobs:
           PLAN_BASE_SHA: ded43a0704b455cd4bef724cb3ca40fb6db9465d
         run: |
           set -euo pipefail
-          # One-shot repair: restore the generic guard, convert its retired-package
-          # assertions to native-only semantics, validate it, then delete this file.
           git fetch --no-tags origin "$PLAN_BASE_SHA"
           git show "$PLAN_BASE_SHA:scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh" > scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh
           python3 - <<'PY'
@@ -33,45 +31,57 @@ jobs:
 
           script = Path("scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh")
           text = script.read_text(encoding="utf-8")
-          old = '''workspace_text = workspace_manifest.read_text(encoding="utf-8")
+
+          old_workspace = '''workspace_text = workspace_manifest.read_text(encoding="utf-8")
           legacy_marker = '\"crates/trnm-consensus-app\"'
           if legacy_marker not in workspace_text:
               raise SystemExit(f"{path}: expected excluded migration package marker {legacy_marker!r}")
           '''
-          new = '''workspace_text = workspace_manifest.read_text(encoding="utf-8")
+          new_workspace = '''workspace_text = workspace_manifest.read_text(encoding="utf-8")
           retired_markers = ('\"crates/trnm-consensus-app\"', '\"crates/trnm-node\"')
           present = [marker for marker in retired_markers if marker in workspace_text]
           if present:
               raise SystemExit(f"{path}: retired consensus package remains in active workspace: {present!r}")
           '''
-          if old not in text:
+          if old_workspace not in text:
               raise SystemExit("legacy workspace assertion fixture not found")
-          text = text.replace(old, new, 1)
-          text = text.replace(
-              'if "trillionnium/crates/trnm-consensus-app/**" in trigger_block:\n        fail(\n            f"{trigger_name}: trigger still watches excluded migration package "\n            "trillionnium/crates/trnm-consensus-app/**"\n        )',
-              'for retired_path in ("trillionnium/crates/trnm-consensus-app/**", "trillionnium/crates/trnm-node/**"):\n        if retired_path in trigger_block:\n            fail(f"{trigger_name}: trigger still watches retired consensus path {retired_path}")',
-              1,
-          )
+          text = text.replace(old_workspace, new_workspace, 1)
+
+          old_trigger = '''if "trillionnium/crates/trnm-consensus-app/**" in trigger_block:
+              fail(
+                  f"{trigger_name}: trigger still watches excluded migration package "
+                  "trillionnium/crates/trnm-consensus-app/**"
+              )'''
+          new_trigger = '''for retired_path in (
+              "trillionnium/crates/trnm-consensus-app/**",
+              "trillionnium/crates/trnm-node/**",
+          ):
+              if retired_path in trigger_block:
+                  fail(f"{trigger_name}: trigger still watches retired consensus path {retired_path}")'''
+          if old_trigger not in text:
+              raise SystemExit("legacy trigger-path assertion fixture not found")
+          text = text.replace(old_trigger, new_trigger, 1)
           script.write_text(text, encoding="utf-8")
 
           workflow = Path(".github/workflows/trnm-poco-bft-v0.yml")
-          wf = workflow.read_text(encoding="utf-8")
-          empty = '''      - name: Verify workflow trigger and safety truth
-          working-directory: trillionnium-chain
-
-          - name: Verify canonical development plan and anti-pollution boundary
-          '''
-          fixed = '''      - name: Verify workflow trigger and safety truth
-          working-directory: trillionnium-chain
-          run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
-
-          - name: Verify canonical development plan and anti-pollution boundary
-          '''
-          if wf.count(empty) != 1:
-              raise SystemExit(f"expected exactly one empty trigger-truth step, found {wf.count(empty)}")
-          wf = wf.replace(empty, fixed, 1)
-          wf = wf.replace('      - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"\n', '')
-          workflow.write_text(wf, encoding="utf-8")
+          lines = workflow.read_text(encoding="utf-8").splitlines()
+          step_name = "- name: Verify workflow trigger and safety truth"
+          indices = [i for i, line in enumerate(lines) if line.strip() == step_name]
+          if len(indices) != 1:
+              raise SystemExit(f"expected one trigger-truth step, found {len(indices)}")
+          i = indices[0]
+          next_step = next((j for j in range(i + 1, len(lines)) if lines[j].lstrip().startswith("- name:")), len(lines))
+          block = lines[i:next_step]
+          if not any(line.strip().startswith("run:") for line in block):
+              wd = next((j for j in range(i + 1, next_step) if lines[j].strip() == "working-directory: trillionnium-chain"), None)
+              if wd is None:
+                  raise SystemExit("trigger-truth step has no expected working-directory")
+              lines.insert(wd + 1, "        run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test")
+          lines = [
+              line for line in lines
+              if "TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md" not in line
+          ]
+          workflow.write_text("\n".join(lines) + "\n", encoding="utf-8")
           PY
           chmod +x scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh
           bash scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
