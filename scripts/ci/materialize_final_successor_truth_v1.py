@@ -28,6 +28,10 @@ replace(plan, [
     ("current PR #62 head", "current PR #121 head"),
 ])
 
+replace("README.md", [
+    ("Protected `main` remains the canonical destination. Draft PR #62 on\n`work/plan-v2-full-gap-closure-20260902` is the sole selected integration\nsuccessor. The plan assesses ancestor baseline", "Protected `main` remains the canonical destination. PR #121 on\n`fix/chain-plan-v2-repository-closure-20260911` is the sole selected integration\nsuccessor; the former #62/#85/#86 line is absorbed historical provenance. The plan retains ancestor baseline"),
+])
+
 snap_path = ROOT / "docs/development/CURRENT_SNAPSHOT_V1.json"
 snap = json.loads(snap_path.read_text())
 snap["as_of"] = "2026-09-11"
@@ -83,10 +87,9 @@ manifest = re.sub(r'blocker_execution_git_blob = "[0-9a-f]{40}"', f'blocker_exec
 manifest = re.sub(r'current_snapshot_git_blob = "[0-9a-f]{40}"', f'current_snapshot_git_blob = "{git_blob("docs/development/CURRENT_SNAPSHOT_V1.json")}"', manifest)
 manifest_path.write_text(manifest)
 
-# Active integration truth must not point back to PR62/old candidate branch.
-for rel in [plan, "docs/development/CURRENT_SNAPSHOT_V1.json", train, "config/blocker-execution-v1.json", "RELEASE_READINESS.md", "docs/development/plan-manifest-v1.toml"]:
+for rel in ["README.md", plan, "docs/development/CURRENT_SNAPSHOT_V1.json", train, "config/blocker-execution-v1.json", "RELEASE_READINESS.md", "docs/development/plan-manifest-v1.toml"]:
     text = (ROOT/rel).read_text()
-    if "sole selected" in text and "PR #62 is the sole selected" in text:
+    if "PR #62 is the sole selected" in text or "Draft PR #62" in text:
         raise SystemExit(f"stale sole-successor truth remains in {rel}")
 
 print("final_successor_truth_materialized=ok")
