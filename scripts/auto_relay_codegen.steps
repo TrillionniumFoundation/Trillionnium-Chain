@@ -20,6 +20,5 @@ bash ./scripts/codegen/run_codegen_task.sh C2
 bash ./scripts/codegen/run_codegen_task.sh C3
 bash ./scripts/v2/run_worker_receipt_gates.sh
 bash ./scripts/v2/post_vote_verification.sh
-bash ./scripts/v2/emergency_pause_drill.sh
 bash ./scripts/challenge_reexec_template_smoke.sh
 bash ./scripts/demo_storyline.sh

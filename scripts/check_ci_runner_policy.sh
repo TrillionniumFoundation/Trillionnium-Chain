@@ -213,7 +213,6 @@ def required_guard(name: str) -> str:
     if name in {
         "trnm-canonical-input-fuzz-smoke.yml",
         "trnm-gate-quick-check.yml",
-        "trnm-merge-gates.yml",
     }:
         return MAINTAINER_GUARD
     return STANDARD_GUARD

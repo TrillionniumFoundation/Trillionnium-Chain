@@ -34,18 +34,10 @@ register agent-user-phasea-gate.yml:phasea-gate required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register p1-rust-sidecar.yml:p1-with-rust-sidecar required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
-register rust-l1-nightly-health.yml:rust-l1-health required 1.95.0 \
-  trillionnium/Cargo.toml:trillionnium/Cargo.lock
-register rust-l1-testnet-preflight.yml:preflight required 1.95.0 \
-  trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-canonical-input-fuzz-smoke.yml:bounded-smoke cargo-fuzz nightly-2026-07-27 \
   trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
 register trnm-gate-quick-check.yml:shell-static-checks required 1.95.0 \
   'trillionnium/Cargo.toml:trillionnium/Cargo.lock contracts/Cargo.toml:contracts/Cargo.lock'
-register trnm-live-devnet-package.yml:legacy-harness-reproducibility required 1.95.0 \
-  trillionnium/Cargo.toml:trillionnium/Cargo.lock
-register trnm-merge-gates.yml:rust-l1-merge-gates required 1.95.0 \
-  trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-native-poco-runtime-fault-matrix-v1.yml:runtime-fault-matrix required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-node-commit-exec-focused.yml:focused-semantics required 1.95.0 \
@@ -309,7 +301,7 @@ printf '%s\n' "${!class[@]}" | cut -d: -f1 | LC_ALL=C sort -u >"$expected_workfl
 actual_workflows="$tmp/actual-workflows"
 printf '%s\n' "${workflows[@]}" | LC_ALL=C sort -u >"$actual_workflows"
 if ! diff -u "$expected_workflows" "$actual_workflows" >&2; then
-  error "workflow file set differs from the frozen 18-workflow Cargo policy"
+  error "workflow file set differs from the registered privileged Cargo policy"
 fi
 
 actual="$tmp/actual-jobs"
@@ -366,7 +358,7 @@ LC_ALL=C sort -u -o "$actual" "$actual"
 expected="$tmp/expected-jobs"
 printf '%s\n' "${!class[@]}" | LC_ALL=C sort >"$expected"
 if ! diff -u "$expected" "$actual" >&2; then
-  error "workflow/job set differs from the frozen 18-workflow/26-job Cargo policy"
+  error "workflow/job set differs from the registered privileged Cargo policy"
 fi
 
 for key in "${!class[@]}"; do
@@ -634,5 +626,14 @@ while IFS= read -r path; do
 done < <(list_script_paths)
 
 ((error_count == 0)) || exit 1
-printf 'cargo_offline_policy=passed workflows=%d jobs=%d cargo_jobs=22 no_cargo_jobs=4 source=%s\n' \
-  "${#workflows[@]}" "${#class[@]}" "${source_mode#--}"
+cargo_jobs=0
+no_cargo_jobs=0
+for key in "${!class[@]}"; do
+  if [[ "${class[$key]}" == "not-applicable" ]]; then
+    no_cargo_jobs=$((no_cargo_jobs + 1))
+  else
+    cargo_jobs=$((cargo_jobs + 1))
+  fi
+done
+printf 'cargo_offline_policy=passed workflows=%d jobs=%d cargo_jobs=%d no_cargo_jobs=%d source=%s\n' \
+  "${#workflows[@]}" "${#class[@]}" "$cargo_jobs" "$no_cargo_jobs" "${source_mode#--}"

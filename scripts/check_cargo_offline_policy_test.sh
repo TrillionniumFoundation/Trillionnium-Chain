@@ -37,7 +37,7 @@ expect_pass() {
     printf 'FAIL: %s unexpectedly failed\n%s\n' "$name" "$output" >&2
     exit 1
   fi
-  [[ "$output" == *'jobs=26 cargo_jobs=22 no_cargo_jobs=4'* ]] || {
+  [[ "$output" == *'jobs=18 cargo_jobs=14 no_cargo_jobs=4'* ]] || {
     printf 'FAIL: %s returned unexpected summary\n%s\n' "$name" "$output" >&2
     exit 1
   }
@@ -83,27 +83,27 @@ sed -i '0,/^      TRNM_CARGO_OFFLINE_POLICY: "required"$/s//      # TRNM_CARGO_O
 expect_fail comment-cannot-satisfy-classification
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-testnet-preflight.yml"
+workflow="$repo/.github/workflows/agent-user-phasea-gate.yml"
 sed -i 's#\./scripts/ci/check_cargo_offline_ready.sh#\./scripts/ci/missing_ready.sh#' "$workflow"
 expect_fail missing-ready-call
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-testnet-preflight.yml"
+workflow="$repo/.github/workflows/agent-user-phasea-gate.yml"
 sed -i 's@          \./scripts/ci/check_cargo_offline_ready.sh@          # ./scripts/ci/check_cargo_offline_ready.sh@' "$workflow"
 expect_fail commented-ready-call
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-testnet-preflight.yml"
+workflow="$repo/.github/workflows/agent-user-phasea-gate.yml"
 sed -i 's#\./scripts/ci/check_preprovisioned_rust_toolchain.sh#rustup toolchain install 1.95.0#' "$workflow"
 expect_fail rustup-install-cannot-replace-preprovisioned-check
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-testnet-preflight.yml"
+workflow="$repo/.github/workflows/agent-user-phasea-gate.yml"
 sed -i '/Verify runner-provisioned Rust toolchain/a\        uses: dtolnay/rust-toolchain@deadbeef' "$workflow"
 expect_fail dtolnay-toolchain-setup-forbidden
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-nightly-health.yml"
+workflow="$repo/.github/workflows/p1-rust-sidecar.yml"
 sed -i '/check_cargo_offline_ready.sh/a\          || true' "$workflow"
 expect_fail ready-cannot-be-softened
 restore_fixture
@@ -149,12 +149,12 @@ sed -i '/            --toolchain 1.95.0$/a\            --toolchain nightly-2026-
 expect_fail duplicate-toolchain-last-wins-rejected
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-testnet-preflight.yml"
+workflow="$repo/.github/workflows/agent-user-phasea-gate.yml"
 sed -i '/check_cargo_offline_unchanged.sh/a\      - name: late Cargo step\n        run: cargo test --locked' "$workflow"
 expect_fail unchanged-must-be-last-step
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-testnet-preflight.yml"
+workflow="$repo/.github/workflows/agent-user-phasea-gate.yml"
 sed -i '/check_cargo_offline_unchanged.sh/a\      - run: cargo test --locked' "$workflow"
 expect_fail anonymous-step-cannot-follow-unchanged
 restore_fixture
@@ -179,17 +179,17 @@ sed -i '/Verify Cargo offline cache readiness/a\        env:\n          "HOME": 
 expect_fail quoted-home-override
 restore_fixture
 
-workflow="$repo/.github/workflows/trnm-merge-gates.yml"
+workflow="$repo/.github/workflows/trnm-node-commit-exec-focused.yml"
 sed -i '/^      CARGO_NET_OFFLINE: "true"$/a\      CARGO_NET_OFFLINE: false' "$workflow"
 expect_fail step-or-job-offline-false
 restore_fixture
 
-workflow="$repo/.github/workflows/trnm-merge-gates.yml"
+workflow="$repo/.github/workflows/trnm-node-commit-exec-focused.yml"
 sed -i '/^      CARGO_NET_OFFLINE: "true"$/a\      CARGO_NET_OFFLINE: "false"' "$workflow"
 expect_fail quoted-offline-false
 restore_fixture
 
-workflow="$repo/.github/workflows/trnm-merge-gates.yml"
+workflow="$repo/.github/workflows/trnm-node-commit-exec-focused.yml"
 sed -i '/Verify Cargo offline cache readiness/a\        env:\n          RUSTUP_TOOLCHAIN: nightly' "$workflow"
 expect_fail rustup-toolchain-override
 restore_fixture
@@ -277,17 +277,17 @@ chmod +x "$repo/scripts/home-bypass.sh"
 expect_fail nested-home-override
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-nightly-health.yml"
+workflow="$repo/.github/workflows/p1-rust-sidecar.yml"
 sed -i '/check_cargo_offline_ready.sh/a\          --config net.offline=false' "$workflow"
 expect_fail cargo-config-online-bypass
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-nightly-health.yml"
+workflow="$repo/.github/workflows/p1-rust-sidecar.yml"
 sed -i '/check_cargo_offline_ready.sh/a\          env -u CARGO_NET_OFFLINE cargo test --locked' "$workflow"
 expect_fail env-unset-offline-bypass
 restore_fixture
 
-workflow="$repo/.github/workflows/rust-l1-nightly-health.yml"
+workflow="$repo/.github/workflows/p1-rust-sidecar.yml"
 sed -i '/trillionnium\/Cargo.toml:trillionnium\/Cargo.lock/d' "$workflow"
 expect_fail missing-manifest-lock-root
 restore_fixture
