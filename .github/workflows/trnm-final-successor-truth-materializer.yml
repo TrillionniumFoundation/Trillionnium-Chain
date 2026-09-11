@@ -12,12 +12,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: trnm-final-successor-truth-materializer
+  group: trnm-final-successor-truth-materializer-hosted
   cancel-in-progress: false
 
 jobs:
   materialize:
-    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -25,6 +25,9 @@ jobs:
           ref: fix/chain-plan-v2-repository-closure-20260911
           fetch-depth: 0
           persist-credentials: true
+
+      - name: Install repository validation prerequisites
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends ripgrep
 
       - name: Materialize hash-bound PR121 truth
         run: |
