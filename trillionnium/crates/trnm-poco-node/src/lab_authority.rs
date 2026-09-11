@@ -3809,6 +3809,11 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
             .overlay_parent_head_v0()
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         let next_application_overlay = self.inert.overlay_ref_v0();
+        if self.pending_executions.len() >= self.core.config().max_blocks() {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "retained unfinalized execution capacity exhausted before Vote signing",
+            ));
+        }
         let retained = PocoNodeLabRetainedExecutionV0 {
             binding: self.inert.binding_v0().clone(),
             executed: self.inert.executed_for_finalization_v0(),
@@ -5514,7 +5519,6 @@ fn rebase_to_authoritative_high_qc_v0(
         ));
     }
 
-    let mut retained_path = BTreeSet::new();
     let mut cursor_block = high_qc.block_id();
     let mut cursor_height = high_qc.height().get();
     let mut child_view = None;
@@ -5571,7 +5575,6 @@ fn rebase_to_authoritative_high_qc_v0(
                 "retained high-QC path is not height-contiguous",
             ));
         }
-        retained_path.insert(cursor_block);
         child_view = Some(retained.view);
         cursor_block = BlockId::new(*parent.block_id().as_bytes());
         cursor_height = parent.height().get();
@@ -5603,7 +5606,41 @@ fn rebase_to_authoritative_high_qc_v0(
         }
     }
 
-    pending_executions.retain(|block_id, _| retained_path.contains(block_id));
+    // Rebasing the speculative parent to a TC's selected high QC does not
+    // invalidate another executed descendant. A later compatible TC may
+    // carry the QC for that descendant. Keep its exact P/K carrier until
+    // finality excludes the branch; otherwise Core can still know the block
+    // while the host has discarded the only execution needed to adopt it.
+    if pending_executions.len() > core.config().max_blocks() {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "retained unfinalized execution capacity exceeds the Core block bound",
+        ));
+    }
+    let mut retained_ids = BTreeSet::new();
+    for (block_id, retained) in pending_executions.iter() {
+        let mut cursor = *block_id;
+        let mut height = retained.executed.request().height().get();
+        while height > applied.height().get() {
+            let Some(ancestor) = pending_executions.get(&cursor) else {
+                break;
+            };
+            let parent = ancestor.executed.request().parent();
+            if parent.height().get().checked_add(1) != Some(height) {
+                return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                    "retained execution ancestry is not height-contiguous",
+                ));
+            }
+            cursor = BlockId::new(*parent.block_id().as_bytes());
+            height = parent.height().get();
+        }
+        if height == applied.height().get()
+            && cursor == applied.block_id()
+            && retained.executed.request().height().get() > applied.height().get()
+        {
+            retained_ids.insert(*block_id);
+        }
+    }
+    pending_executions.retain(|block_id, _| retained_ids.contains(block_id));
     if let Some((head, overlay)) = target {
         *application_head = head;
         *application_overlay = Some(overlay);
@@ -6040,6 +6077,32 @@ fn timeout_rebase_checkpoint_successor_v0(
     let state = safety.state_v0();
     let finalized = state.finalized();
     let applied = state.application_applied();
+    // A TC can durably advance consensus finality before StorageAck releases
+    // the application queue front. Authenticate the complete pending chain,
+    // while keeping this intermediate checkpoint anchored to applied state.
+    let mut queued_tip = applied;
+    for candidate in state.finalization_queue() {
+        let header = candidate.finalized_block().header();
+        if candidate.authenticated_parent() != queued_tip
+            || queued_tip.height().get().checked_add(1) != Some(header.height().get())
+            || header.parent_id() != queued_tip.block_id()
+        {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "timeout rebase finalization queue does not extend the exact applied tip",
+            ));
+        }
+        queued_tip = trnm_consensus_core::FinalizedTip::new(
+            header.height(),
+            header.view(),
+            header.id(),
+            header.timestamp_ms(),
+        );
+    }
+    if queued_tip != finalized {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "timeout rebase finalization queue does not reach the consensus finalized tip",
+        ));
+    }
     let committed = application
         .confirmed_committed_head_v0()
         .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
@@ -6052,13 +6115,25 @@ fn timeout_rebase_checkpoint_successor_v0(
         || fields.safety_journal_id != safety.journal_id_v0()
         || fields.safety_verifier_profile_ref != safety.verifier_profile_ref_v0()
         || safety.revision_v0() != expected_revision
-        || finalized != applied
         || committed.block_id().as_bytes() != applied.block_id().as_bytes()
         || committed.height().get() != applied.height().get()
         || application_store_id == [0; 32]
     {
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-            "timeout rebase checkpoint successor differs from its durable owners",
+            if fields.scope != signer.exact_watermark().scope()
+                || fields.signer_journal_id != signer.journal_id()
+                || fields.signer_profile_checksum != signer.profile_checksum()
+                || fields.signer_exact_watermark != signer.exact_watermark()
+            {
+                "timeout rebase checkpoint signer owner or watermark differs"
+            } else if fields.safety_journal_id != safety.journal_id_v0()
+                || fields.safety_verifier_profile_ref != safety.verifier_profile_ref_v0()
+                || safety.revision_v0() != expected_revision
+            {
+                "timeout rebase checkpoint Safety owner or successor revision differs"
+            } else {
+                "timeout rebase checkpoint committed application owner differs"
+            },
         ));
     }
 
@@ -6087,8 +6162,8 @@ fn timeout_rebase_checkpoint_successor_v0(
     let high_qc = state.high_qc();
     let high_qc_view = high_qc.qc_ref().view().get().to_be_bytes();
     let high_qc_height = high_qc.qc_ref().height().get().to_be_bytes();
-    let finalized_view = finalized.view().get().to_be_bytes();
-    let finalized_height = finalized.height().get().to_be_bytes();
+    let applied_view = applied.view().get().to_be_bytes();
+    let applied_height = applied.height().get().to_be_bytes();
     let signer_sequence = signer.exact_watermark().sequence().to_be_bytes();
     let application_safety_binding = lab_genesis_hash_v0(
         b"trnm.poco-node.lab-timeout-rebase.safety-binding.v0",
@@ -6117,10 +6192,10 @@ fn timeout_rebase_checkpoint_successor_v0(
             &application_profile,
             &application_safety_binding,
             &committed_head_row,
-            finalized.block_id().as_bytes(),
-            &finalized_view,
-            &finalized_height,
-            &finalized.timestamp_ms().to_be_bytes(),
+            applied.block_id().as_bytes(),
+            &applied_view,
+            &applied_height,
+            &applied.timestamp_ms().to_be_bytes(),
         ],
     );
 
@@ -6141,8 +6216,8 @@ fn timeout_rebase_checkpoint_successor_v0(
     target.application_height = committed.height().get();
     target.application_state_root =
         trnm_consensus_types::StateRoot::new(*committed.state_root().as_bytes());
-    target.application_view = finalized.view().get();
-    target.application_timestamp_ms = finalized.timestamp_ms();
+    target.application_view = applied.view().get();
+    target.application_timestamp_ms = applied.timestamp_ms();
     ExternalNodeCheckpointV0::new(target)
         .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))
 }

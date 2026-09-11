@@ -31,15 +31,6 @@ pub const MAX_PENDING_COORDINATES_V0: usize = 4_096;
 
 type QuorumCoordinateV0 = (View, Height, BlockId);
 
-/// Semantic identity of a QC carrier inside a timeout certificate.
-///
-/// The certificate digest is intentionally omitted: signer-subset variants
-/// may have different bytes while certifying the same logical target.  The
-/// synthetic/ordinary discriminator remains part of the identity because an
-/// authenticated anchor is not interchangeable with an ordinary QC whose
-/// summary happens to match.
-type TimeoutQcTargetV0 = (bool, u64, u64, u64, [u8; 32], [u8; 32]);
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AdmittedConsensusMessageV0 {
     Proposal(Box<UnboundProposalV0>),
@@ -428,6 +419,7 @@ impl ConsensusCertificateCollectorV0 {
         reference: QcReferenceV0,
     ) -> Result<CollectorAdmissionV0, ConsensusIngressErrorV0> {
         verify_qc_reference(&reference, &self.validator_set)?;
+        self.ensure_canonical_qc_reference(&reference)?;
         let id = reference.id();
         if let Some(existing) = self.qc_references.get(&id) {
             if existing != &reference {
@@ -703,14 +695,13 @@ impl ConsensusCertificateCollectorV0 {
         certificate
             .verify(&self.validator_set, None, &StrictEd25519Verifier)
             .map_err(invalid_certificate)?;
-        // A signer-subset/digest alternate for the same logical target is
-        // harmless and is routed through the first frozen bytes.  A
-        // certificate that changes the timeout context or any referenced-QC
-        // target is a safety conflict, even when its signatures are valid.
+        // Different timeout quorums may report different compatible high QCs.
+        // Only a context mismatch or an objectively conflicting QC coordinate
+        // is a conflict; a TC does not establish a unique target for its view.
         // Check this before mutating the staged reference maps so the
         // clone-on-write admission remains fail-closed and atomic.
         if let Some(existing) = self.formed_tcs.get(&timed_out_view) {
-            if !timeout_certificates_same_semantic_target_v0(existing, &certificate)? {
+            if !timeout_certificates_compatible_v0(existing, &certificate) {
                 return Err(ConsensusIngressErrorV0::ConflictingTimeoutCoordinate(
                     timed_out_view,
                 ));
@@ -741,6 +732,18 @@ impl ConsensusCertificateCollectorV0 {
         &self,
         reference: &QcReferenceV0,
     ) -> Result<(), ConsensusIngressErrorV0> {
+        if self
+            .qc_references
+            .values()
+            .any(|existing| !qc_reference_coordinates_compatible_v0(existing, reference))
+        {
+            let summary = reference.qc_ref();
+            return Err(ConsensusIngressErrorV0::ConflictingQcCoordinate {
+                view: summary.view(),
+                height: summary.height(),
+                block_id: summary.block_id(),
+            });
+        }
         let QcReferenceV0::Ordinary(certificate) = reference else {
             return Ok(());
         };
@@ -774,52 +777,35 @@ pub fn required_pending_coordinate_capacity_v0(
         .ok_or(ConsensusIngressErrorV0::Capacity)
 }
 
-fn timeout_qc_target_v0(reference: &QcReferenceV0) -> TimeoutQcTargetV0 {
-    let summary = reference.qc_ref();
-    (
-        reference.as_synthetic().is_some(),
-        summary.epoch().get(),
-        summary.view().get(),
-        summary.height().get(),
-        *summary.block_id().as_bytes(),
-        *summary.validator_set_id().as_bytes(),
-    )
+fn qc_reference_coordinates_compatible_v0(first: &QcReferenceV0, second: &QcReferenceV0) -> bool {
+    let left = first.qc_ref();
+    let right = second.qc_ref();
+    if left.epoch() != right.epoch() || left.validator_set_id() != right.validator_set_id() {
+        return false;
+    }
+    let same_block = left.block_id() == right.block_id();
+    let same_position = left.view() == right.view() && left.height() == right.height();
+    if left.view() == right.view() && (!same_block || !same_position) {
+        return false;
+    }
+    if same_block
+        && (!same_position || first.as_synthetic().is_some() != second.as_synthetic().is_some())
+    {
+        return false;
+    }
+    true
 }
 
-fn timeout_qc_targets_v0(certificate: &TimeoutCertificateV0) -> Vec<TimeoutQcTargetV0> {
-    let mut targets = certificate
-        .referenced_qcs()
-        .iter()
-        .map(timeout_qc_target_v0)
-        .collect::<Vec<_>>();
-    targets.sort_unstable();
-    targets
-}
-
-fn selected_timeout_qc_target_v0(
-    certificate: &TimeoutCertificateV0,
-) -> Result<TimeoutQcTargetV0, ConsensusIngressErrorV0> {
-    let selected_id = certificate.selected_high_qc_digest();
-    let selected = certificate
-        .referenced_qcs()
-        .iter()
-        .find(|reference| reference.id() == selected_id)
-        .ok_or_else(|| {
-            ConsensusIngressErrorV0::InvalidCertificate(
-                "timeout certificate selected high-QC digest is absent from referenced QCs"
-                    .to_owned(),
-            )
-        })?;
-    Ok(timeout_qc_target_v0(selected))
-}
-
-/// Compares authenticated TCs while ignoring only signer-subset/digest
-/// variation.  A different context, referenced-QC target, or selected target
-/// must fail closed at the collector boundary.
-fn timeout_certificates_same_semantic_target_v0(
+/// Compare already verified TCs without inventing global uniqueness of their
+/// high-QC tables. Each certificate independently authenticates its own
+/// quorum, exact references and selected maximum. This comparison detects
+/// conflicting QC coordinates across the two otherwise valid certificates.
+/// It grants no ancestry, execution, finality or proposal-admission authority;
+/// those remain subject to the complete Core/host validation path.
+pub(crate) fn timeout_certificates_compatible_v0(
     accepted: &TimeoutCertificateV0,
     candidate: &TimeoutCertificateV0,
-) -> Result<bool, ConsensusIngressErrorV0> {
+) -> bool {
     if accepted.genesis_hash() != candidate.genesis_hash()
         || accepted.chain_id() != candidate.chain_id()
         || accepted.protocol_version() != candidate.protocol_version()
@@ -827,13 +813,14 @@ fn timeout_certificates_same_semantic_target_v0(
         || accepted.validator_set_hash() != candidate.validator_set_hash()
         || accepted.timed_out_view() != candidate.timed_out_view()
     {
-        return Ok(false);
+        return false;
     }
-    Ok(
-        timeout_qc_targets_v0(accepted) == timeout_qc_targets_v0(candidate)
-            && selected_timeout_qc_target_v0(accepted)?
-                == selected_timeout_qc_target_v0(candidate)?,
-    )
+    accepted.referenced_qcs().iter().all(|first| {
+        candidate
+            .referenced_qcs()
+            .iter()
+            .all(|second| qc_reference_coordinates_compatible_v0(first, second))
+    })
 }
 
 fn signed_power(
@@ -1190,6 +1177,128 @@ mod tests {
     }
 
     #[test]
+    fn compatible_timeout_quorums_with_new_high_qc_are_atomic_and_replay_safe() {
+        let (keys, original_set) = fixture();
+        let validators = original_set.validators()[..4]
+            .iter()
+            .map(|validator| {
+                Validator::new(
+                    validator.id(),
+                    validator.consensus_key(),
+                    VotingPower::new(1).unwrap(),
+                )
+                .unwrap()
+            })
+            .collect();
+        let set = ValidatorSet::new(
+            original_set.genesis_hash(),
+            original_set.chain_id(),
+            original_set.protocol_version(),
+            original_set.epoch(),
+            original_set.consensus_parameters_hash(),
+            validators,
+        )
+        .unwrap();
+        let qcs = [1_u64, 2]
+            .into_iter()
+            .map(|view| {
+                let block = BlockId::new([u8::try_from(view).unwrap(); 32]);
+                QuorumCertificate::new(
+                    set.chain_id(),
+                    set.protocol_version(),
+                    set.epoch(),
+                    View::new(view),
+                    Height::new(view),
+                    block,
+                    set.id(),
+                    (0..3)
+                        .map(|index| vote(&keys, &set, index, view, view, block))
+                        .collect(),
+                    &set,
+                )
+                .unwrap()
+            })
+            .collect::<Vec<_>>();
+        let statements = (0..4)
+            .map(|index| {
+                timeout_vote(
+                    &keys,
+                    &set,
+                    index,
+                    3,
+                    QcRef::from(&qcs[usize::from(index == 3)]),
+                )
+            })
+            .collect::<Vec<_>>();
+        let build_tc = |count: usize| {
+            let entries = statements[..count]
+                .iter()
+                .map(|statement| {
+                    TimeoutEntryV0::new(
+                        statement.author(),
+                        statement.high_qc(),
+                        *statement.signature(),
+                    )
+                    .unwrap()
+                })
+                .collect();
+            let mut references = qcs[..if count == 4 { 2 } else { 1 }]
+                .iter()
+                .cloned()
+                .map(QcReferenceV0::ordinary)
+                .collect::<Vec<_>>();
+            references.sort_by_key(QcReferenceV0::id);
+            let selected = qcs[usize::from(count == 4)].id();
+            let certificate =
+                TimeoutCertificateV0::new(View::new(3), entries, references, selected, &set)
+                    .unwrap();
+            certificate
+                .verify(&set, None, &StrictEd25519Verifier)
+                .unwrap();
+            certificate
+        };
+        let abc = build_tc(3);
+        let abcd = build_tc(4);
+        assert_eq!(
+            abc.entries(),
+            &abcd.entries()[..3],
+            "overlapping validators never double sign"
+        );
+        assert_ne!(
+            abc.selected_high_qc_digest(),
+            abcd.selected_high_qc_digest()
+        );
+        assert!(timeout_certificates_compatible_v0(&abc, &abcd));
+        for (first, alternate) in [(&abc, &abcd), (&abcd, &abc)] {
+            let mut collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+            assert_eq!(
+                collector
+                    .register_timeout_certificate(first.clone())
+                    .unwrap(),
+                *first
+            );
+            assert_eq!(
+                collector
+                    .register_timeout_certificate(alternate.clone())
+                    .unwrap(),
+                *first
+            );
+            assert!(collector.qc_references.contains_key(&qcs[1].id()));
+            let reference_count = collector.qc_references.len();
+            for replay in [first, alternate, alternate, first] {
+                assert_eq!(
+                    collector
+                        .register_timeout_certificate(replay.clone())
+                        .unwrap(),
+                    *first
+                );
+            }
+            assert_eq!(collector.qc_references.len(), reference_count);
+            assert_eq!(collector.formed_tcs.len(), 1);
+        }
+    }
+
+    #[test]
     fn remote_timeout_registration_routes_the_frozen_canonical() {
         let (keys, set) = fixture();
         let block = BlockId::new([0xc5; 32]);
@@ -1240,9 +1349,9 @@ mod tests {
             &first
         );
 
-        // A valid TC for the same timed-out view but a different high-QC
-        // target is not an alternate signer subset; it is a conflicting
-        // consensus coordinate and must be rejected atomically.
+        // A TC that includes a different block certified at the exact same
+        // QC view is an objective conflict and is rejected atomically.
+        // This is distinct from the compatible newer-QC case above.
         let conflict_block = BlockId::new([0xc6; 32]);
         let mut conflicting_collector =
             ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();

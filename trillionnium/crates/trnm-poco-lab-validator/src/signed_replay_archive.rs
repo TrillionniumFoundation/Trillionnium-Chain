@@ -777,7 +777,11 @@ struct AuthenticatedReplayProposalV1 {
 #[derive(Debug)]
 struct StrictReplayArchiveSemanticsV1 {
     proposals: BTreeMap<[u8; 32], AuthenticatedReplayProposalV1>,
+    // Standalone entry accounting stays identical to the signed seal schema.
     certificates: BTreeMap<[u8; 32], QuorumCertificate>,
+    // Exact finality evidence additionally includes QCs carried by already
+    // authenticated Proposal witnesses; these are not new archive entries.
+    proof_certificates: BTreeMap<[u8; 32], QuorumCertificate>,
     signature_share_count: u64,
 }
 
@@ -2391,11 +2395,42 @@ fn decode_strict_archive_semantics_v1(
         ordinary_start_height,
         bootstrap,
     )?;
+    let proof_certificates = proposal_certificate_evidence_v1(&proposals, &certificates)?;
     Ok(StrictReplayArchiveSemanticsV1 {
         proposals,
         certificates,
+        proof_certificates,
         signature_share_count,
     })
+}
+
+fn proposal_certificate_evidence_v1(
+    proposals: &BTreeMap<[u8; 32], AuthenticatedReplayProposalV1>,
+    standalone: &BTreeMap<[u8; 32], QuorumCertificate>,
+) -> Result<BTreeMap<[u8; 32], QuorumCertificate>> {
+    let mut evidence = standalone.clone();
+    for authenticated in proposals.values() {
+        let witness = authenticated.proposal.witness();
+        let referenced = witness.justify_qc().as_ordinary().into_iter().chain(
+            witness
+                .timeout_certificate()
+                .into_iter()
+                .flat_map(|certificate| certificate.referenced_qcs())
+                .filter_map(trnm_consensus_types::QcReferenceV0::as_ordinary),
+        );
+        for certificate in referenced {
+            let id = *certificate.id().as_bytes();
+            if let Some(existing) = evidence.get(&id) {
+                ensure!(
+                    existing == certificate,
+                    "one authenticated QC ID has conflicting bytes"
+                );
+            } else {
+                evidence.insert(id, certificate.clone());
+            }
+        }
+    }
+    Ok(evidence)
 }
 
 fn verify_signed_final_tip_coverage_v1(
@@ -2452,7 +2487,7 @@ fn verify_signed_final_tip_coverage_v1(
         }
         let finalized_qc_ref = child.proposal.witness().justify_qc().qc_ref();
         let Some(finalized_qc) = semantics
-            .certificates
+            .proof_certificates
             .get(finalized_qc_ref.qc_digest().as_bytes())
         else {
             continue;
@@ -2469,7 +2504,7 @@ fn verify_signed_final_tip_coverage_v1(
             }
             let child_qc_ref = grandchild.proposal.witness().justify_qc().qc_ref();
             let Some(child_qc) = semantics
-                .certificates
+                .proof_certificates
                 .get(child_qc_ref.qc_digest().as_bytes())
             else {
                 continue;
@@ -2477,7 +2512,7 @@ fn verify_signed_final_tip_coverage_v1(
             if QcRef::from(child_qc) != child_qc_ref {
                 continue;
             }
-            for grandchild_qc in semantics.certificates.values().filter(|certificate| {
+            for grandchild_qc in semantics.proof_certificates.values().filter(|certificate| {
                 certificate.block_id() == grandchild.proposal.block().id()
                     && certificate.height().get() == grandchild_height
             }) {
@@ -4230,6 +4265,8 @@ mod tests {
             .into_iter()
             .map(|certificate| (*certificate.id().as_bytes(), certificate))
             .collect();
+        let proof_certificates =
+            proposal_certificate_evidence_v1(&proposals, &certificates).unwrap();
         (
             set,
             keys,
@@ -4238,6 +4275,7 @@ mod tests {
             StrictReplayArchiveSemanticsV1 {
                 proposals,
                 certificates,
+                proof_certificates,
                 signature_share_count: 12,
             },
             h4,
@@ -4901,6 +4939,9 @@ mod tests {
             .map(|(id, _)| *id)
             .unwrap();
         missing_grandchild_qc.certificates.remove(&grandchild_qc_id);
+        missing_grandchild_qc
+            .proof_certificates
+            .remove(&grandchild_qc_id);
         assert!(verify_signed_final_tip_coverage_v1(
             &missing_grandchild_qc,
             &set,
@@ -4911,6 +4952,106 @@ mod tests {
             chain_root,
         )
         .is_err());
+    }
+
+    #[test]
+    fn authenticated_proposal_qc_variant_covers_finality_without_rewriting_pinned_qc_v1() {
+        let (set, keys, parameters, bootstrap, semantics, finalized) =
+            strict_three_chain_semantics_fixture_v1();
+        let embedded = semantics
+            .certificates
+            .values()
+            .find(|qc| qc.block_id() == finalized.block().id())
+            .unwrap();
+        let pinned = qc_variant_for_archive_probe_test_v1(
+            &set,
+            &keys,
+            embedded.height().get(),
+            embedded.block_id(),
+            3,
+        );
+        assert_ne!(pinned.id(), embedded.id());
+        let temp = TempDir::new().unwrap();
+        fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let mut archive = initialize_for_test_v1(&temp);
+        archive.append_quorum_certificate_v1(&pinned).unwrap();
+        assert_eq!(
+            archive.quorum_coordinate_state_v1(embedded).unwrap(),
+            ReplayArchiveQcCoordinateStateV1::Conflict
+        );
+        for proposal in semantics.proposals.values() {
+            archive
+                .append_proposal_v1(&UnboundProposalV0::from_signed(&proposal.proposal).unwrap())
+                .unwrap();
+        }
+        for qc in semantics
+            .certificates
+            .values()
+            .filter(|qc| qc.id() != embedded.id())
+        {
+            archive.append_quorum_certificate_v1(qc).unwrap();
+        }
+        let decoded = decode_strict_archive_semantics_v1(
+            &archive.entries_file,
+            &archive.index,
+            archive.context.digest,
+            &set,
+            &parameters,
+            4,
+            bootstrap,
+        )
+        .unwrap();
+        assert_eq!(decoded.certificates.len(), 3);
+        assert_eq!(decoded.signature_share_count, 11);
+        assert!(!decoded.certificates.contains_key(embedded.id().as_bytes()));
+        assert_eq!(
+            decoded.proof_certificates.get(embedded.id().as_bytes()),
+            Some(embedded)
+        );
+        assert_eq!(
+            decoded.certificates.get(pinned.id().as_bytes()),
+            Some(&pinned)
+        );
+        let header = finalized.block().header();
+        let chain_root = hash_parts_v1(
+            FINALIZED_PREFIX_CHAIN_ROOT_DOMAIN_V0,
+            &[
+                set.chain_id().as_str().as_bytes(),
+                set.genesis_hash().as_bytes(),
+                &header.height().get().to_be_bytes(),
+                &header.view().get().to_be_bytes(),
+                finalized.block().id().as_bytes(),
+                &header.timestamp_ms().to_be_bytes(),
+            ],
+        );
+        let coverage = verify_signed_final_tip_coverage_v1(
+            &decoded,
+            &set,
+            &parameters,
+            header.height().get(),
+            *finalized.block().id().as_bytes(),
+            *header.state_root().as_bytes(),
+            chain_root,
+        )
+        .unwrap();
+        assert_ne!(coverage.proof_id, [0; 32]);
+        let mut without_exact_embedded = decoded;
+        without_exact_embedded
+            .proof_certificates
+            .remove(embedded.id().as_bytes());
+        assert!(
+            verify_signed_final_tip_coverage_v1(
+                &without_exact_embedded,
+                &set,
+                &parameters,
+                header.height().get(),
+                *finalized.block().id().as_bytes(),
+                *header.state_root().as_bytes(),
+                chain_root,
+            )
+            .is_err(),
+            "a compatible coordinate cannot substitute for the exact signed witness digest"
+        );
     }
 
     #[test]

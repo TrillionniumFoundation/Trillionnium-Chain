@@ -2499,6 +2499,40 @@ impl ContinuousValidatorAuthorityV0 {
         certificate
             .verify(&self.validator_set, None, &StrictEd25519Verifier)
             .map_err(|error| anyhow!("verify continuous TC: {error}"))?;
+        let mut compatible_alternative = false;
+        if let Some(accepted) = self.proposal_timeout_certificate.as_ref() {
+            if accepted.timed_out_view() == certificate.timed_out_view() {
+                ensure!(
+                    crate::collector::timeout_certificates_compatible_v0(accepted, &certificate),
+                    "timeout alternative contains a conflicting QC coordinate"
+                );
+                compatible_alternative = true;
+            }
+        }
+        let before = self.facts_v0()?;
+        let target_view = certificate
+            .timed_out_view()
+            .get()
+            .checked_add(1)
+            .context("timeout successor view overflows")?;
+        let selected = certificate
+            .referenced_qcs()
+            .iter()
+            .find(|reference| reference.id() == certificate.selected_high_qc_digest())
+            .context("verified timeout lacks its selected QC")?
+            .qc_ref();
+        let high = before.high_qc_v0();
+        if compatible_alternative
+            && (target_view < before.current_view_v0().get()
+                || (target_view == before.current_view_v0().get()
+                    && (selected.view(), selected.block_id(), selected.qc_digest())
+                        < (high.view(), high.block_id(), high.qc_digest())))
+        {
+            // A late compatible quorum is not a replacement for a newer
+            // proposal binding. In particular, do not consume the live owner
+            // and then fail its skipped-view proof check on a stale TC.
+            return Ok(before);
+        }
         // A TC that was already accepted and installed in Ready is an exact
         // replay, not a second phase transition.  In particular, do not take
         // the live phase before this check: a late duplicate can otherwise
@@ -6608,6 +6642,205 @@ mod tests {
     }
 
     #[test]
+    fn compatible_timeout_alternate_can_authorize_a_successor_proposal() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let initial = harness.authorities[0].justify_v0().clone();
+            let proposal = proposal_for_takeover_v0(&harness);
+            let votes = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.vote_proposal_v0(proposal.clone()).unwrap())
+                .collect::<Vec<_>>();
+            let newer_qc = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &proposal,
+                votes[..3].iter().cloned(),
+            );
+            harness.authorities[3]
+                .advance_quorum_certificate_v0(newer_qc.clone())
+                .unwrap();
+
+            let build = |statements: &[TimeoutVote]| {
+                let mut collector = ConsensusCertificateCollectorV0::new(
+                    harness.validator_set.clone(),
+                    MAXIMUM_COLLECTOR_COORDINATES_V0,
+                )
+                .unwrap();
+                collector.register_qc_reference(initial.clone()).unwrap();
+                collector
+                    .register_qc_reference(QcReferenceV0::ordinary(newer_qc.clone()))
+                    .unwrap();
+                for statement in statements {
+                    collector.admit_timeout_vote(statement.clone()).unwrap();
+                }
+                collector
+                    .try_timeout_certificate(statements[0].view())
+                    .unwrap()
+                    .unwrap()
+            };
+            let first_timeouts = harness.authorities[..3]
+                .iter_mut()
+                .map(|authority| authority.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            let first_tc = build(&first_timeouts);
+            for authority in &mut harness.authorities[..3] {
+                authority
+                    .advance_timeout_certificate_v0(first_tc.clone())
+                    .unwrap();
+            }
+            let mixed_timeouts = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            let low_tc = build(&mixed_timeouts[..3]);
+            let high_tc = build(&mixed_timeouts);
+            assert_eq!(low_tc.entries(), &high_tc.entries()[..3]);
+            assert_ne!(
+                low_tc.selected_high_qc_digest(),
+                high_tc.selected_high_qc_digest()
+            );
+            let next_view = View::new(high_tc.timed_out_view().get() + 1);
+            let leader = leader_for(&harness.validator_set, next_view);
+            let leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == leader)
+                .unwrap();
+            let target = (0..3).find(|index| *index != leader_index).unwrap();
+            for (index, authority) in harness.authorities.iter_mut().enumerate() {
+                authority
+                    .advance_timeout_certificate_v0(if index == target {
+                        low_tc.clone()
+                    } else {
+                        high_tc.clone()
+                    })
+                    .unwrap();
+            }
+            let (successor_height, successor_timestamp, successor_transactions) =
+                harness.workloads[1].clone();
+            let successor = harness.authorities[leader_index]
+                .proposal_preimage_for_test_v0(
+                    successor_height,
+                    successor_timestamp,
+                    successor_transactions,
+                )
+                .unwrap()
+                .seal_with_key_v0(&harness.keys[leader_index])
+                .unwrap();
+            assert_eq!(successor.witness().timeout_certificate().unwrap(), &high_tc);
+            let vote = harness.authorities[target]
+                .vote_proposal_v0(successor.clone())
+                .expect(
+                    "compatible leader TC must replace the lower skipped-view proof before voting",
+                );
+            assert_eq!(vote.block_id(), successor.block().id());
+            let signed = harness.authorities[target].facts_v0().unwrap();
+            assert_eq!(signed.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
+            let replay = harness.authorities[target]
+                .advance_timeout_certificate_v0(high_tc.clone())
+                .unwrap();
+            assert_eq!(
+                replay, signed,
+                "exact TC replay must not consume the signed owner"
+            );
+            let old = harness.authorities[target]
+                .advance_timeout_certificate_v0(low_tc)
+                .unwrap();
+            assert_eq!(
+                old, signed,
+                "lower compatible TC must not replace the newer binding or consume the owner"
+            );
+        });
+    }
+
+    #[test]
+    fn consecutive_timeout_certificates_preserve_runtime_backoff() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            use crate::pacemaker::GenerationAwarePacemakerV0;
+            use std::time::{Duration, Instant};
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(1, 4, 5, 4).unwrap();
+            let mut harness = takeover_phase_harness_with_signer_lifetime_v0(4, lifetime);
+            let initial = harness.authorities[0].justify_v0().clone();
+            let mut pacemaker =
+                GenerationAwarePacemakerV0::new(Duration::from_secs(2), Duration::from_secs(30))
+                    .unwrap();
+            let mut now = Instant::now();
+            let first = harness.authorities[0].facts_v0().unwrap();
+            pacemaker
+                .arm(harness.validator_set.epoch(), first.current_view_v0(), now)
+                .unwrap();
+            for (round, delay_ms) in [2000_u64, 3000, 4500, 6750].into_iter().enumerate() {
+                assert!(
+                    pacemaker
+                        .poll(now + Duration::from_millis(delay_ms - 1))
+                        .is_none(),
+                    "TC-only progress must not reset the delay to two seconds"
+                );
+                now += Duration::from_millis(delay_ms);
+                let expiry = pacemaker.poll(now).unwrap();
+                let mut collector = ConsensusCertificateCollectorV0::new(
+                    harness.validator_set.clone(),
+                    MAXIMUM_COLLECTOR_COORDINATES_V0,
+                )
+                .unwrap();
+                collector.register_qc_reference(initial.clone()).unwrap();
+                for authority in &mut harness.authorities {
+                    collector
+                        .admit_timeout_vote(authority.begin_local_timeout_v0().unwrap())
+                        .unwrap();
+                }
+                pacemaker.confirm_timeout_emitted(expiry).unwrap();
+                let tc = collector
+                    .try_timeout_certificate(expiry.view())
+                    .unwrap()
+                    .unwrap();
+                let before = harness.authorities[0].facts_v0().unwrap();
+                for authority in &mut harness.authorities {
+                    authority
+                        .advance_timeout_certificate_v0(tc.clone())
+                        .unwrap();
+                }
+                let after = harness.authorities[0].facts_v0().unwrap();
+                assert_eq!(after.high_qc_v0(), before.high_qc_v0());
+                crate::consensus_runtime::update_pacemaker_after_progress_v1(
+                    &mut pacemaker,
+                    before,
+                    after,
+                )
+                .unwrap();
+                assert_eq!(
+                    pacemaker.consecutive_timeouts(),
+                    u32::try_from(round + 1).unwrap()
+                );
+                pacemaker
+                    .arm(harness.validator_set.epoch(), after.current_view_v0(), now)
+                    .unwrap();
+                let replay = harness.authorities[0]
+                    .advance_timeout_certificate_v0(tc)
+                    .unwrap();
+                crate::consensus_runtime::update_pacemaker_after_progress_v1(
+                    &mut pacemaker,
+                    after,
+                    replay,
+                )
+                .unwrap();
+                assert!(
+                    pacemaker
+                        .poll(now + Duration::from_millis(delay_ms))
+                        .is_none(),
+                    "exact TC replay must preserve the armed next-generation deadline"
+                );
+            }
+        });
+    }
+
+    #[test]
     fn forged_proposer_witness_cannot_advance_carried_timeout_certificate_v0() {
         on_bounded_takeover_owner_stack_v0(|| {
             let signer_lifetime =
@@ -6728,7 +6961,7 @@ mod tests {
     }
 
     #[test]
-    fn phase_complete_lab_authority_v0_tc_rebases_and_ingress_fails_closed() {
+    fn phase_complete_lab_authority_v0_tc_rebases_retains_execution_and_ingress_fails_closed() {
         on_bounded_takeover_owner_stack_v0(|| {
             let signer_lifetime =
                 ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(1, 1, 2, 1)
@@ -6825,19 +7058,20 @@ mod tests {
                 .iter()
                 .position(|validator| validator.id() == next_leader)
                 .expect("post-TC leader belongs to validator set");
-            let sacrifice = (0..harness.authorities.len())
+            let sacrifice = (0..3)
                 .find(|index| *index != next_leader_index)
-                .expect("one non-leader authority is available");
-            let missing = harness.authorities[sacrifice]
-                .advance_quorum_certificate_v0(original_qc)
-                .expect_err("pruned detached execution must fail closed");
-            assert!(
-                missing.to_string().contains("retained execution"),
-                "missing retained execution must be classified explicitly: {missing:#}"
+                .expect("one non-leader original voter is available");
+            let retained = harness.authorities[sacrifice]
+                .advance_quorum_certificate_v0(original_qc.clone())
+                .expect("TC rebase must retain the exact executed original branch for a late QC");
+            assert_eq!(retained.high_qc_v0(), QcRef::from(&original_qc));
+            assert_eq!(
+                retained.proposal_parent_block_id_v0(),
+                original.block().id()
             );
-            assert!(
-                harness.authorities[sacrifice].facts_v0().is_err(),
-                "consumed owner failure must remain fail-closed"
+            assert_eq!(
+                retained.finalized_height_v0(),
+                retained.application_applied_height_v0()
             );
 
             let rebound = proposal_for_takeover_v0(&harness);

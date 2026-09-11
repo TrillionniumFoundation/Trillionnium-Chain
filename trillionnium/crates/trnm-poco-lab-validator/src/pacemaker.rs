@@ -173,12 +173,27 @@ impl GenerationAwarePacemakerV0 {
         Ok(())
     }
 
-    /// QC/TC/finality progress invalidates the current timer and resets
-    /// exponential backoff.  Any queued expiry from the old generation is
-    /// rejected by `validate_generation`.
+    /// Certified block/finality progress invalidates the current timer and
+    /// resets exponential backoff. A TC-only view change is an unsuccessful
+    /// view and must use `observe_view_change` instead.
     pub fn observe_progress(&mut self) {
         self.armed = None;
         self.consecutive_timeouts = 0;
+    }
+
+    /// A valid TC can advance the view without certifying a new block. Keep
+    /// unsuccessful-view backoff while invalidating the old timer generation.
+    /// If the network TC precedes this node's expiry, count that failed view
+    /// here; a locally confirmed timeout already counted it and disarmed.
+    pub fn observe_view_change(&mut self) -> Result<()> {
+        if self.armed.is_some() {
+            self.consecutive_timeouts = self
+                .consecutive_timeouts
+                .checked_add(1)
+                .ok_or_else(|| anyhow!("pacemaker timeout counter overflow"))?;
+        }
+        self.armed = None;
+        Ok(())
     }
 
     pub fn cancel(&mut self) {
@@ -251,6 +266,34 @@ mod tests {
         pacemaker.observe_progress();
         assert_eq!(pacemaker.consecutive_timeouts(), 0);
         assert!(pacemaker.poll(now + Duration::from_secs(2)).is_none());
+    }
+
+    #[test]
+    fn remote_tc_before_local_expiry_counts_the_failed_view_once() {
+        let now = Instant::now();
+        let mut pacemaker =
+            GenerationAwarePacemakerV0::new(Duration::from_secs(2), Duration::from_secs(30))
+                .unwrap();
+        let old = pacemaker.arm(Epoch::new(0), View::new(1), now).unwrap();
+        pacemaker.observe_view_change().unwrap();
+        assert_eq!(pacemaker.consecutive_timeouts(), 1);
+        assert!(!pacemaker.validate_generation(Epoch::new(0), View::new(1), old));
+        pacemaker.arm(Epoch::new(0), View::new(2), now).unwrap();
+        assert!(pacemaker.poll(now + Duration::from_millis(2999)).is_none());
+        let expiry = pacemaker.poll(now + Duration::from_secs(3)).unwrap();
+        pacemaker.confirm_timeout_emitted(expiry).unwrap();
+        pacemaker.observe_view_change().unwrap();
+        assert_eq!(
+            pacemaker.consecutive_timeouts(),
+            2,
+            "a locally emitted timeout and its TC count as one failed view"
+        );
+        pacemaker.arm(Epoch::new(0), View::new(3), now).unwrap();
+        assert!(pacemaker.poll(now + Duration::from_millis(4499)).is_none());
+        pacemaker.observe_progress();
+        assert_eq!(pacemaker.consecutive_timeouts(), 0);
+        pacemaker.arm(Epoch::new(0), View::new(4), now).unwrap();
+        assert!(pacemaker.poll(now + Duration::from_secs(2)).is_some());
     }
 
     #[test]
