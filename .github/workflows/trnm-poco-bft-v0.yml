@@ -87,7 +87,7 @@ jobs:
     name: protocol-contract
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' && github.ref == 'refs/heads/main' ||
        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
         github.triggering_actor == github.actor &&
         (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)))
@@ -175,7 +175,7 @@ jobs:
     name: rust-baseline
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' && github.ref == 'refs/heads/main' ||
        ((github.actor == 'ProfAlexQI' || github.actor == 'Tomasrgbsf' || github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
         github.triggering_actor == github.actor &&
         (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)))
