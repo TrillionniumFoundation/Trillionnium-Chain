@@ -29,27 +29,19 @@ jobs:
       - name: Install repository validation prerequisites
         run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends ripgrep
 
-      - name: Materialize and commit hash-bound PR121 truth
+      - name: Materialize final truth and remove one-shot machinery
         run: |
           set -euo pipefail
           python3 scripts/ci/materialize_final_successor_truth_v1.py
-          git add \
-            README.md \
-            RELEASE_READINESS.md \
-            config/blocker-execution-v1.json \
-            config/documentation-contracts-v1.json \
-            docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md \
-            docs/development/CURRENT_SNAPSHOT_V1.json \
-            docs/development/release-train-v1.toml \
-            docs/development/plan-manifest-v1.toml \
-            scripts/ci/check_documentation_contracts_v1.py \
-            scripts/ci/test_documentation_contracts_v1.py
+          rm scripts/ci/materialize_final_successor_truth_v1.py
+          rm .github/workflows/trnm-final-successor-truth-materializer.yml
+          git add -A
           git diff --cached --check
           git config user.name "Trillionnium convergence bot"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(truth): bind final convergence successor to PR121"
 
-      - name: Validate committed canonical truth
+      - name: Validate final clean canonical tree
         run: |
           set -euo pipefail
           bash scripts/ci/check_canonical_development_plan.sh
@@ -60,12 +52,7 @@ jobs:
           git diff --check
           test -z "$(git status --porcelain --untracked-files=all)"
 
-      - name: Remove one-shot materializer and publish both commits
+      - name: Publish validated final truth commit
         run: |
           set -euo pipefail
-          rm scripts/ci/materialize_final_successor_truth_v1.py
-          rm .github/workflows/trnm-final-successor-truth-materializer.yml
-          git add -A
-          git diff --cached --check
-          git commit -m "chore(ci): remove final successor truth materializer"
           git push origin HEAD:fix/chain-plan-v2-repository-closure-20260911
