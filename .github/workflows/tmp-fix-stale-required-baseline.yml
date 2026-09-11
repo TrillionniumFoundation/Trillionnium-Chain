@@ -1,0 +1,56 @@
+name: tmp-fix-stale-required-baseline
+
+on:
+  push:
+    branches:
+      - tmp/fix-stale-required-baseline-20260911
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      TARGET_BRANCH: fix/chain-plan-v2-repository-closure-20260911
+      EXPECTED_TARGET_SHA: 06cd0e2d41e155cfa9b90ee83358be0cab79f59d
+      TARGET_FILE: .github/workflows/trnm-required-baseline.yml
+    steps:
+      - name: Checkout exact target branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Remove exactly two stale references and publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_TARGET_SHA"
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/trnm-required-baseline.yml')
+          needle = 'scripts/ci/test_legacy_node_cargo_boundary.py'
+          text = path.read_text(encoding='utf-8')
+          if text.count(needle) != 2:
+              raise SystemExit(f'expected exactly two stale references, found {text.count(needle)}')
+          lines = text.splitlines(keepends=True)
+          retained = [line for line in lines if needle not in line]
+          updated = ''.join(retained)
+          if needle in updated:
+              raise SystemExit('stale reference survived edit')
+          path.write_text(updated, encoding='utf-8')
+          PY
+          test "$(git diff --name-only | wc -l)" -eq 1
+          test "$(git diff --name-only)" = "$TARGET_FILE"
+          test "$(git diff --numstat -- "$TARGET_FILE")" = $'0\t2\t.github/workflows/trnm-required-baseline.yml'
+          ! grep -R -n --fixed-strings 'test_legacy_node_cargo_boundary.py' .github/workflows scripts trillionnium/scripts
+          git diff --check
+          git config user.name 'OpenAI GPT-5.6 Sol Pro'
+          git config user.email 'noreply@openai.com'
+          git add "$TARGET_FILE"
+          git commit -m 'ci(plan-v2): remove stale legacy-node test references'
+          git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
