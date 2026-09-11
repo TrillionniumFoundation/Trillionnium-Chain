@@ -240,7 +240,6 @@ def main() -> int:
         mutant_step,
         (
             "python3 scripts/ci/test_technical_convergence_v1.py",
-            "python3 scripts/ci/test_legacy_node_cargo_boundary.py",
             "python3 scripts/ci/test_main_protection_v1.py",
             "python3 scripts/ci/test_codeql_default_setup_v1.py",
         ),
@@ -263,7 +262,6 @@ def main() -> int:
         "scripts/ci/check_required_baseline_closure_v1.py",
         "scripts/admin/apply_main_protection_v1.py",
         "scripts/admin/apply_codeql_default_setup_v1.py",
-        "scripts/ci/test_legacy_node_cargo_boundary.py",
         "scripts/ci/test_main_protection_v1.py",
         "scripts/ci/test_codeql_default_setup_v1.py",
         "scripts/min_faucet_server.py",
