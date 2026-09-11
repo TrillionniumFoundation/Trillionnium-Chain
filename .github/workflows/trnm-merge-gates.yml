@@ -64,52 +64,27 @@ jobs:
       LC_MESSAGES: C
       LC_MONETARY: C
       LC_MEASUREMENT: C
-      # Keep page-size/unit locale formatting deterministic for any helpers
-      # emitting paper/print-related evidence text.
       LC_PAPER: C
-      # Keep locale-derived postal/address formatting deterministic for any
-      # helper serializing operator/site metadata into CI evidence.
       LC_ADDRESS: C
-      # Keep locale-derived personal-name formatting deterministic for helpers
-      # that emit operator identity fields in CI evidence.
       LC_NAME: C
-      # Keep locale-driven telephone formatting deterministic for helpers that
-      # serialize operator contact fields in CI evidence outputs.
       LC_TELEPHONE: C
       PYTHONHASHSEED: "0"
-      # Prevent interpreter bytecode cache writes (.pyc/__pycache__) so
-      # merge-gate CI workspaces remain side-effect free across reruns.
       PYTHONDONTWRITEBYTECODE: "1"
       PYTHONIOENCODING: "UTF-8"
       PYTHONUTF8: "1"
-      # Force unbuffered Python stdio so CI failure evidence ordering is stable
-      # under runner load and replayed logs.
       PYTHONUNBUFFERED: "1"
-      # Ignore user-site Python packages so runner-local residue cannot alter
-      # module resolution during merge-gate probes.
       PYTHONNOUSERSITE: "1"
-      # Disable pip's periodic version check network call to avoid nondeterministic
-      # stderr timing/noise and occasional flaky delays in shell-driven probes.
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
-      # Bound pip network waits so transient index stalls fail fast/retriable
-      # instead of hanging merge-gate jobs until global step timeout.
       PIP_DEFAULT_TIMEOUT: "60"
-      # Suppress pip interpreter lifecycle warning chatter for deterministic logs.
       PIP_NO_PYTHON_VERSION_WARNING: "1"
-      # Disable dynamic pip progress rendering to keep stderr/stdout stable.
       PIP_PROGRESS_BAR: "off"
       CARGO_TERM_COLOR: never
-      # Disable dynamic progress rendering to keep cargo logs deterministic
-      # across reruns and runner load variance.
       CARGO_TERM_PROGRESS_WHEN: never
       CARGO_INCREMENTAL: "0"
-      # Reduce transient crates.io/index fetch flakes during RC gate runs.
       CARGO_NET_RETRY: "5"
       CARGO_HTTP_TIMEOUT: "120"
       CARGO_NET_GIT_FETCH_WITH_CLI: "true"
       CI: "true"
-      # Stabilize created file permissions across runner/image defaults so
-      # replay artifacts and git diffs keep deterministic mode bits.
       UMASK: "022"
       SOURCE_DATE_EPOCH: "1704067200"
       TRNM_CARGO_OFFLINE_POLICY: "required"
@@ -119,6 +94,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
 
       - name: Verify runner-provisioned Rust toolchain
         run: |
@@ -164,29 +141,15 @@ jobs:
       - name: Rust workspace tests
         run: |
           set -euo pipefail
-          # Keep test scheduling deterministic across runner class changes to
-          # reduce timing-sensitive flakes in RC merge-gate runs.
           export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium
           cargo test --workspace --locked
 
-      - name: Run parallel mode sanity (hard gate)
+      - name: Native deterministic parallel execution sanity (hard gate)
         run: |
           set -euo pipefail
           cd trillionnium
-          mkdir -p run run/bench
-          ./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- \
-            --config configs/node1.toml \
-            --block-ms 5 \
-            --max-blocks 6 \
-            --demo-tasks 8 \
-            --demo-keys 3 \
-            --parallel-workers 4 | tee run/parallel-sanity.log
-
-          if grep -E '\[tx\] apply_error|rollback=true' run/parallel-sanity.log; then
-            echo "parallel sanity detected apply_error/rollback" >&2
-            exit 2
-          fi
+          RUNS=${PARALLEL_SANITY_RUNS:-2} ./scripts/check_parallel_flaky.sh
 
       - name: Validate v1 event field freeze (hard gate)
         run: |
@@ -243,7 +206,7 @@ jobs:
           cd trillionnium
           MVP_MODE=prod ALLOW_PARTIAL_EVENT_REPLAY=0 ./scripts/check_event_replay_smoke.sh
 
-      - name: BFT 4-node consensus smoke (hard gate)
+      - name: Native PoCO four-node consensus smoke (hard gate)
         run: |
           set -euo pipefail
           cd trillionnium
@@ -255,13 +218,13 @@ jobs:
           cd trillionnium
           RUNS=${BFT_RECOVERY_RUNS:-5} ./scripts/check_bft_restart_recovery.sh
 
-      - name: BFT message auth anti-replay (hard gate)
+      - name: Native PoCO message authentication (hard gate)
         run: |
           set -euo pipefail
           cd trillionnium
           ./scripts/check_bft_message_auth.sh
 
-      - name: BFT round-change + recovery liveness (hard gate)
+      - name: Native PoCO partition/heal round progress (hard gate)
         run: |
           set -euo pipefail
           cd trillionnium
@@ -397,7 +360,7 @@ jobs:
         with:
           name: trnm-gate-artifacts-${{ github.run_id }}
           path: |
-            trillionnium/run/parallel-sanity.log
+            trillionnium/run/parallel-sanity-flaky-*/**
             trillionnium/run/event-field-check.log
             trillionnium/run/event-replay-smoke.log
             trillionnium/run/bench/aggressive-regression-pr-*.txt
@@ -406,7 +369,7 @@ jobs:
             trillionnium/run/bench/aggressive-scan-correlation-*.md
             trillionnium/run/health/**
             trillionnium/run/bft4-*.txt
-            trillionnium/run/bft4-node*.log
+            trillionnium/run/bft4-*.log
             trillionnium/run/bft-restart-recovery-*.txt
             trillionnium/run/bft-restart-*.log
             trillionnium/run/consensus-wal-restart-*/**
