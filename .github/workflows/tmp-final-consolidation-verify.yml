@@ -1,0 +1,76 @@
+name: tmp-final-consolidation-verify
+
+on:
+  push:
+    branches:
+      - tmp/final-consolidation-verify-20260911
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      FINAL_CONSOLIDATION: 0c769a8eae216e3fbfa9b47e4f545efced7e99f0
+      FINAL_TREE: 2dd4f4b941499b02c33f87c27a79c039a995041a
+      SELF_BRANCH: tmp/final-consolidation-verify-20260911
+    steps:
+      - name: Checkout verification carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify all current tips and final tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          git remote set-url origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --force --prune origin '+refs/heads/*:refs/remotes/origin/*'
+          out="${RUNNER_TEMP}/final-consolidation-verification"
+          mkdir -p "$out"
+          actual_tree="$(git rev-parse "${FINAL_CONSOLIDATION}^{tree}")"
+          printf 'final_sha=%s\nfinal_tree=%s\n' "$FINAL_CONSOLIDATION" "$actual_tree" > "$out/identity.txt"
+          test "$actual_tree" = "$FINAL_TREE"
+          : > "$out/uncovered-current-tips.tsv"
+          count=0
+          uncovered=0
+          while IFS=$'\t' read -r ref sha objtype; do
+            branch="${ref#origin/}"
+            [[ "$ref" == "origin/HEAD" ]] && continue
+            [[ "$branch" == "$SELF_BRANCH" ]] && continue
+            count=$((count + 1))
+            if ! git merge-base --is-ancestor "$sha" "$FINAL_CONSOLIDATION"; then
+              printf '%s\t%s\n' "$branch" "$sha" >> "$out/uncovered-current-tips.tsv"
+              uncovered=$((uncovered + 1))
+            fi
+          done < <(git for-each-ref --sort=refname --format='%(refname:short)%09%(objectname)%09%(objecttype)' refs/remotes/origin/)
+          printf 'checked_branch_count=%s\nuncovered_count=%s\n' "$count" "$uncovered" > "$out/summary.txt"
+          git ls-tree -r --name-only "$FINAL_CONSOLIDATION" | LC_ALL=C sort > "$out/final-paths.txt"
+          if grep -E '(^|/)(tmp-|temporary_|\.plan-v2-tmp/|DO_NOT_CREATE)' "$out/final-paths.txt" > "$out/temporary-path-hits.txt"; then
+            printf 'temporary carrier paths remain\n' >&2
+            exit 1
+          fi
+          : > "$out/temporary-path-hits.txt"
+          git grep -I -n -i -E 'cometbft|tendermint|abci|trnm-cometbft|tmproto|comet[-_ ]bft' "$FINAL_CONSOLIDATION" -- ':!docs/archive/**' ':!**/target/**' > "$out/active-cometbft-hits.txt" || true
+          if [[ -s "$out/active-cometbft-hits.txt" ]]; then
+            printf 'active CometBFT/Tendermint/ABCI residue remains\n' >&2
+            exit 1
+          fi
+          if [[ "$uncovered" -ne 0 ]]; then
+            printf '%s current branch tip(s) moved outside final ancestry\n' "$uncovered" >&2
+            exit 1
+          fi
+          (cd "$out" && sha256sum * > SHA256SUMS)
+
+      - name: Upload verification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: final-consolidation-verification-${{ github.sha }}
+          path: ${{ runner.temp }}/final-consolidation-verification
+          if-no-files-found: warn
+          retention-days: 1
+          compression-level: 0
