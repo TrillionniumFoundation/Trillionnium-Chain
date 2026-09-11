@@ -259,6 +259,19 @@ plan are deterministic. Worker count, CPU topology, interleaving, retries, and
 queue timing cannot change writes, roots, fees, receipts, events, or errors.
 All arithmetic is checked and all resource dimensions have hard bounds.
 
+The native complete-body implementation now speculates real frozen-v0 runtime
+attempts in batches of at most 32 on at most 8 workers, recording actual reads
+and validating absence/type/version/full-value dependencies before ordered
+reuse or re-execution. PoCO/lifecycle operations remain barriers; mutation
+staging, final roots and durable commit remain ordered. This private scheduler
+does not import the separate AI-v1 transaction or fee profile. Read/result
+retention limits, fallback behavior and exact differential tests are specified
+in the implementation guide's M06 native worker boundary. A private proof for
+successful transfers permits canonical rebasing of only the checked collector
+fee addition/version while all other dependencies remain exact; explicit
+collector operations remain barriers. This removes forced collector retries
+for independent transfers, without asserting a measured throughput gain.
+
 **Failure and recovery.** Speculative state is disposable. Only a sealed,
 collision-checked write plan may reach M07 and M08. Partial execution, panic,
 resource exhaustion, or adapter failure leaves the authoritative parent

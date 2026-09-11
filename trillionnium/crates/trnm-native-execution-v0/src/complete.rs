@@ -55,6 +55,13 @@ use crate::{
     AuthorizedSignerV0,
 };
 
+#[path = "native_parallel.rs"]
+mod native_parallel;
+
+#[cfg(test)]
+#[path = "native_parallel_tests.rs"]
+mod native_parallel_tests;
+
 const APPLICATION_GOVERNANCE_SIGNER_DOMAIN_V0: &str =
     "trnm.poco-bft.application-governance-signer.v0";
 const NATIVE_RECEIPT_COMMITMENT_DOMAIN_V0: &str = "trnm.native-application.execution-receipt.v0";
@@ -366,6 +373,8 @@ pub(crate) struct ComputedCompleteExecutionV0 {
     pub(crate) plan: CompleteStatePlanV0,
     pub(crate) replay_identities: Vec<ReplayIdentityV0>,
     pub(crate) final_lifecycle: ValidatorLifecycleStateV1,
+    #[cfg(test)]
+    scheduling_counts: native_parallel::NativeSchedulingCountsV0,
 }
 
 impl ReplayIdentityV0 {
@@ -466,13 +475,36 @@ pub(crate) fn execute_complete_native_block_v0(
     })
 }
 
-#[allow(clippy::too_many_lines)]
 pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 + ?Sized>(
     store: &InMemoryNativeExecutionStoreV0,
     validator_set: &ValidatorSet,
     expected_genesis_hash: GenesisHash,
     request: &R,
 ) -> Result<ComputedCompleteExecutionV0> {
+    compute_complete_native_block_with_workers_v0(
+        store,
+        validator_set,
+        expected_genesis_hash,
+        request,
+        native_parallel::default_worker_count_v0(),
+    )
+}
+
+/// Scheduling is an implementation choice, not a new transaction, fee, or
+/// persistence profile. Zero selects the sequential scheduling oracle used by
+/// local differential tests; operational callers always use bounded workers.
+#[allow(clippy::too_many_lines)]
+fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV0 + ?Sized>(
+    store: &InMemoryNativeExecutionStoreV0,
+    validator_set: &ValidatorSet,
+    expected_genesis_hash: GenesisHash,
+    request: &R,
+    worker_count: usize,
+) -> Result<ComputedCompleteExecutionV0> {
+    ensure!(
+        worker_count <= native_parallel::MAX_WORKERS_V0,
+        "native worker count exceeds bound"
+    );
     let (parent_version, parent_root) = crate::store::verify_parent_root_v0(store)?;
     ensure!(
         parent_version == request.parent_v0().height().get(),
@@ -561,8 +593,37 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
     let mut poco_overlay: Option<PocoApplicationBlockOverlayV0> = None;
     let mut poco_raws = Vec::new();
     let mut validator_transition_count = 0usize;
+    #[cfg(test)]
+    let mut scheduling_counts = native_parallel::NativeSchedulingCountsV0::default();
 
-    for exact_outer_bytes in request.transactions_v0() {
+    // Only runtime attempts are speculative. Outer authorization, replay,
+    // mutation staging, internal operations and final roots remain ordered.
+    // Outcomes (including failures) have no authority before that exact
+    // transaction reaches the canonical loop and its read dependencies match.
+    let mut speculative = std::collections::VecDeque::new();
+    for (index, exact_outer_bytes) in request.transactions_v0().iter().enumerate() {
+        if speculative.is_empty() {
+            let end = request
+                .transactions_v0()
+                .len()
+                .min(index + native_parallel::MAX_BATCH_V0);
+            speculative = native_parallel::speculate_transactions_v0(
+                native_parallel::NativeSpeculationContextV0 {
+                    store,
+                    parent_version,
+                    parent_root,
+                    height: request.height_v0().get(),
+                    chain_id: request.chain_id_v0().as_str(),
+                    timestamp_ms: request.timestamp_ms_v0(),
+                    signers,
+                    changes: &changes,
+                },
+                &request.transactions_v0()[index..end],
+                worker_count,
+            )
+            .into();
+        }
+        let speculative_attempt = speculative.pop_front().flatten();
         let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(exact_outer_bytes)
             .context("decode exact signed command envelope")?;
         envelope
@@ -617,19 +678,28 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
                     signer_role: signer.signer_role(),
                     payload_len: exact_inner.len(),
                 };
-                let receipt =
-                    try_execute_v0(&transaction, runtime_context, &view).map_err(|failure| {
-                        let classified = match failure.deterministic_failure_v0() {
-                            Some(classification) => {
-                                CompleteNativeExecutionFailureV0::Deterministic(classification)
-                            }
-                            None if failure.state_unavailable().is_some() => {
-                                CompleteNativeExecutionFailureV0::StateUnavailable
-                            }
-                            None => CompleteNativeExecutionFailureV0::Unclassified,
-                        };
-                        anyhow::Error::new(classified)
-                    })?;
+                let receipt = match speculative_attempt
+                    .and_then(|attempt| attempt.into_reusable_outcome_v0(&view))
+                {
+                    Some(reused) => {
+                        #[cfg(test)]
+                        if reused.fee_rebased {
+                            scheduling_counts.fee_rebased += 1;
+                        } else {
+                            scheduling_counts.exact_reused += 1;
+                        }
+                        reused.outcome
+                    }
+                    // A parent failure can become valid after an earlier credit
+                    // or nonce update; a parent success can become stale too.
+                    None => {
+                        #[cfg(test)]
+                        {
+                            scheduling_counts.reexecuted += 1;
+                        }
+                        native_parallel::execute_runtime_v0(&transaction, runtime_context, &view)
+                    }
+                }?;
                 let staged = stage_runtime_mutations_v0(
                     &view,
                     request.height_v0().get(),
@@ -643,9 +713,14 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
                     .context(failure)
                 })?;
                 changes.extend(staged);
+                if native_parallel::requires_collector_barrier_v0(&transaction, &receipt) {
+                    speculative.clear();
+                }
                 receipt_facts.push(ReceiptFactsV0::Runtime(receipt));
             }
             POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0 => {
+                // Internal operations are ordered barriers, never workers.
+                speculative.clear();
                 let operation = PocoApplicationOperationV0::decode_exact(&exact_inner)?;
                 ensure!(
                     operation.target_height() == request.height_v0().get(),
@@ -692,6 +767,7 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
                 receipt_facts.push(ReceiptFactsV0::Internal);
             }
             VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1 => {
+                speculative.clear();
                 let transition: ValidatorSetTransitionV1 =
                     serde_json::from_slice(&exact_inner).context("decode validator transition")?;
                 ensure!(
@@ -850,6 +926,8 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
         plan,
         replay_identities,
         final_lifecycle: lifecycle,
+        #[cfg(test)]
+        scheduling_counts,
     })
 }
 
