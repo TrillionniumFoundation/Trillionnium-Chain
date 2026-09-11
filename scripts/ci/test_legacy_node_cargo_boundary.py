@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Regression guard: retired consensus/node packages must stay outside active Cargo paths.
 
-This compatibility filename remains only because required workflows invoke it by
-path; the test itself is a native-only anti-regression boundary. The former
-legacy node, foreign-consensus adapter, and helper must be absent rather than
-buildable in an isolated workspace.
+This compatibility filename is retained only as the stable required-CI entrypoint;
+the test itself is a native-only anti-regression boundary. The former legacy
+node, foreign-consensus adapter, and helper must be absent rather than buildable
+in an isolated workspace.
 """
 
 from __future__ import annotations
