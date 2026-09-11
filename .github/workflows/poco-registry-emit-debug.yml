@@ -1,0 +1,24 @@
+name: poco-registry-emit-debug
+
+on:
+  push:
+    branches:
+      - chore/poco-only-purge-20260909
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  emit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Emit exact canonical decoder registry
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_poco_bft_v0_registry.py --emit
