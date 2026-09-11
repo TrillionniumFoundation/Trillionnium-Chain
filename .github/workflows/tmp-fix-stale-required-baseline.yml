@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Materialize the reviewed bounded repair
+      - name: Materialize and commit the reviewed bounded repair
         shell: bash
         run: |
           set -euo pipefail
@@ -104,11 +104,20 @@ jobs:
           ! grep -R -n --fixed-strings 'test_legacy_node_cargo_boundary.py' .github/workflows scripts trillionnium/scripts
           ! grep -R -n --fixed-strings '.github/workflows/rust-l1-testnet-preflight.yml' .github/workflows
           git diff --check
+          git config user.name 'OpenAI GPT-5.6 Sol Pro'
+          git config user.email 'noreply@openai.com'
+          git add -A
+          git commit -m 'ci(plan-v2): remove retired workflows and repair final truth gates'
+          test -z "$(git status --porcelain --untracked-files=all)"
+          echo "MATERIALIZED_COMMIT=$(git rev-parse HEAD)"
+          echo "MATERIALIZED_TREE=$(git rev-parse 'HEAD^{tree}')"
 
-      - name: Revalidate repository truth and workflow policy
+      - name: Revalidate the immutable committed object
         shell: bash
         run: |
           set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          export TRNM_EXPECTED_SOURCE_SHA="$(git rev-parse HEAD)"
           python3 scripts/ci/check_repository_truth_v1.py
           bash scripts/ci/check_canonical_development_plan.sh
           python3 scripts/ci/check_plan_manifest_pins_v1.py
@@ -120,19 +129,17 @@ jobs:
           python3 scripts/ci/check_blocker_execution_v1.py
           python3 scripts/ci/check_build_closures_v1.py
           python3 scripts/ci/check_documentation_reference_closure_v1.py
-          bash scripts/check_cargo_offline_policy.sh --worktree
+          bash scripts/check_cargo_offline_policy.sh
           python3 scripts/ci/generate_release_status_v1.py --check-deterministic \
             --output "${RUNNER_TEMP}/trnm-release-status-v1.json"
           python3 -m json.tool "${RUNNER_TEMP}/trnm-release-status-v1.json" >/dev/null
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
 
-      - name: Create and upload the immutable Git object without moving the protected source branch
+      - name: Upload immutable Git objects without moving the source branch
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name 'OpenAI GPT-5.6 Sol Pro'
-          git config user.email 'noreply@openai.com'
-          git add -A
-          git commit -m 'ci(plan-v2): remove retired workflows and repair final truth gates'
           echo "MATERIALIZED_COMMIT=$(git rev-parse HEAD)"
           echo "MATERIALIZED_TREE=$(git rev-parse 'HEAD^{tree}')"
           git ls-tree HEAD -- \
