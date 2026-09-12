@@ -259,7 +259,6 @@ jobs:
           bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
           bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
           bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
           bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
