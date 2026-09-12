@@ -406,6 +406,21 @@ jobs:
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
+      # Temporary source-bound diagnostic export for the active remediation.
+      # This exports no runner credentials and does not replace any test below.
+      - name: Materialize offline Rust reproduction inputs
+        if: github.head_ref == 'fix/chain-six-class-publish-20260911'
+        timeout-minutes: 15
+        run: bash scripts/ci/package_offline_rust_inputs_v1.sh "${RUNNER_TEMP}/trnm-offline-rust-inputs"
+      - name: Retain offline Rust reproduction inputs
+        if: github.head_ref == 'fix/chain-six-class-publish-20260911'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-offline-rust-inputs-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-offline-rust-inputs
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
       - name: Bind Cargo target inventory to the exact clean source
         run: |
           set -euo pipefail
