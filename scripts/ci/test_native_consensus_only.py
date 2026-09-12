@@ -5,6 +5,7 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -94,6 +95,61 @@ class NativeSourceScanTests(unittest.TestCase):
         path.parent.mkdir(parents=True)
         path.symlink_to("absent")
         self.rejected([], "retired-directory-present")
+
+    def test_empty_inventory_fails_closed(self) -> None:
+        self.rejected([], "empty-tracked-inventory")
+
+    def test_empty_inventory_cli_has_nonzero_exit(self) -> None:
+        output = io.StringIO()
+        with mock.patch.object(scanner, "ROOT", self.root), \
+                mock.patch.object(scanner, "RETIRED_DIRS", ()), \
+                mock.patch.object(scanner, "tracked_paths", return_value=[]):
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(scanner.main(), 2)
+        self.assertEqual(json.loads(output.getvalue())["result"], "FAIL")
+
+    def test_duplicate_inventory_entry_is_rejected(self) -> None:
+        path = self.file("native.rs")
+        self.rejected([path, path], "duplicate-tracked-path")
+
+    def test_relative_inventory_path_is_rejected_without_reading(self) -> None:
+        with mock.patch.object(Path, "read_bytes", side_effect=AssertionError("unexpected read")):
+            self.rejected([Path("native.rs")], "invalid-tracked-path")
+
+    def test_external_inventory_path_is_rejected_without_reading(self) -> None:
+        with tempfile.TemporaryDirectory() as outside:
+            target = Path(outside).resolve() / "outside.rs"
+            target.write_bytes(b"native")
+            with mock.patch.object(Path, "read_bytes", side_effect=AssertionError("external read")):
+                self.rejected([target], "invalid-tracked-path")
+
+    def test_parent_traversal_entry_cannot_alias_a_tracked_target(self) -> None:
+        target = self.file("native.rs")
+        alias = self.root / "child" / ".." / target.name
+        (self.root / "child").mkdir()
+        self.rejected([alias], "invalid-tracked-path")
+
+    def test_external_directory_link_is_rejected_before_content_read(self) -> None:
+        with tempfile.TemporaryDirectory() as outside:
+            target = Path(outside).resolve()
+            (target / "native.rs").write_bytes(b"native")
+            alias = self.root / "src"
+            alias.symlink_to(target, target_is_directory=True)
+            with mock.patch.object(Path, "read_bytes", side_effect=AssertionError("external read")):
+                self.rejected([alias / "native.rs"], "noncanonical-tracked-parent")
+
+    def test_internal_directory_link_does_not_alias_inventory(self) -> None:
+        target = self.file("real/native.rs")
+        alias = self.root / "src"
+        alias.symlink_to(target.parent, target_is_directory=True)
+        self.rejected([alias / target.name, target], "noncanonical-tracked-parent")
+
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "requires POSIX FIFO support")
+    def test_fifo_is_rejected_without_opening(self) -> None:
+        path = self.root / "pipe"
+        os.mkfifo(path)
+        with mock.patch.object(Path, "read_bytes", side_effect=AssertionError("FIFO read")):
+            self.rejected([path], "non-regular-tracked-file")
 
     def test_git_inventory_failure_cannot_report_pass(self) -> None:
         output = io.StringIO()
