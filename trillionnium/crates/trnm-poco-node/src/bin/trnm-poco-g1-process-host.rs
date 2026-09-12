@@ -30,9 +30,15 @@ fn main() -> ExitCode {
         BufWriter::new(io::stdout()),
     ) {
         Ok(summary) => {
-            // stdout is a machine-readable newline protocol. Keep only
-            // non-sensitive process metrics on stderr for operator evidence.
-            eprintln!("G1_PROCESS_SUMMARY {summary:?}");
+            // stdout is a machine-readable newline protocol. Keep only bounded,
+            // non-sensitive process counters on stderr for operator evidence.
+            // Do not Debug-print the whole summary: whole-value formatting makes
+            // proof/state dataflow appear to cross the logging boundary even when
+            // the public summary carries only process-local candidate evidence.
+            eprintln!(
+                "G1_PROCESS_SUMMARY accepted: {}, rejected: {}, backpressure_rejected: {}",
+                summary.accepted, summary.rejected, summary.backpressure_rejected
+            );
             ExitCode::SUCCESS
         }
         Err(error) => {
