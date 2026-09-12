@@ -39,7 +39,7 @@ jobs:
     env:
       TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
     steps:
-      - name: Upload nine pinned public blobs before checkout
+      - name: Upload ten pinned public blobs before checkout
         if: github.event_name == 'push' && github.ref == 'refs/heads/fix/chain-six-class-publish-20260911'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,7 +50,7 @@ jobs:
           class NoRedirect(urllib.request.HTTPRedirectHandler):
               def redirect_request(self, *args):
                   raise ValueError("authenticated redirect refused")
-          sha = "275f052d0eda32c97283c527d504c4237000db44"
+          sha = "04bece813ac11996f952460c7336de44e89b12ff"
           url = "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/" + sha
           request = urllib.request.Request(url, headers={"Authorization": "Bearer " + os.environ["GH_TOKEN"], "Accept": "application/vnd.github+json"})
           try:
@@ -65,7 +65,7 @@ jobs:
                   raise ValueError("source transport metadata")
               data = base64.b64decode("".join(value["content"].split()), validate=True)
               actual = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
-              if len(data) != 7787 or value.get("size") != len(data) or actual != sha:
+              if len(data) != 9544 or value.get("size") != len(data) or actual != sha:
                   raise ValueError("source transport identity")
               exec(compile(data, "pinned-public-blob-transport", "exec"), {"__name__": "__main__"})
           except Exception as exc:

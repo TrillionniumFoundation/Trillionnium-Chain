@@ -8,12 +8,16 @@ import re
 import struct
 import subprocess
 import tempfile
+import time
+import urllib.error
 import urllib.request
 
 REPOSITORY = 'TrillionniumFoundation/Trillionnium-Chain'
 PREFIX = 'https://api.github.com/repos/' + REPOSITORY + '/git/'
 PACK_BLOB = '656ee221f403f357a77209e0e8f1376bcaa1f421'
 PACK_SHA256 = '6d0837deaa4da86ee7a77275818503c625a3b263402de969f22d25f47c2cfad2'
+M15_PACK_BLOB = '0aa66806660311bc446079ece9920a63fdc2b53f'
+M15_PACK_SHA256 = 'ef047d7eb422a8610ba26366b7e530a23ea585f98db80c6c7374ba94cf6ee777'
 BLOB_PACK_SHA256 = '69920ec43462dde822cbf279b5dc901e8d6eedb6da92f6718bf9b6eca012f24c'
 SLICES = ((1261, 1305), (1457, 1605), (1670, 2608), (2816, 2879),
           (3117, 3212), (3212, 4330), (4426, 11382), (11474, 14942),
@@ -25,7 +29,8 @@ SEEDS = {'5347b1d06e6f44990fa5d5c8c51e38176e33e0e4': 35899,
  '7ca6b54efd62612f04d758c47c09f1d41be2ddeb': 2171,
  'f4399f0209e372048cc50b950406c5d9c8c49417': 15781,
  'c6d74e1fb69c2723aeaaba63c808577602647451': 311089,
- 'fbafeda7918c34a63af912fb67bf74ec9a4933a6': 5105}
+ 'fbafeda7918c34a63af912fb67bf74ec9a4933a6': 5105,
+ 'a0d9f33e05d196dc42f344de38a9315db86b1553': 379159}
 OUTPUTS = {'.github/workflows/trnm-required-baseline.yml': 'f2ea8ec24daa4c1ae40bf138201770d8739c6ada',
  'docs/development/plan-manifest-v1.toml': '4d4aebe14254632b4bd08d612620aae27b2228b2',
  'docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md': '175c37d05ebb881cf829fcbcc3dfbc39aea64151',
@@ -34,7 +39,8 @@ OUTPUTS = {'.github/workflows/trnm-required-baseline.yml': 'f2ea8ec24daa4c1ae40b
  'trillionnium/crates/trnm-native-execution-v0/README.md': '48a4152367b62433bd4ecf0326518cf4626e474b',
  'trillionnium/crates/trnm-native-execution-v0/src/durable.rs': 'fb527ae869ad38e64257ea47ed453c39cd3eebb2',
  'trillionnium/crates/trnm-native-execution-v0/src/durable/namespace_v1.rs': 'a1e658b809f61804957386a3684465e9b9042ef1',
- 'trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs': 'ce8b49ae0de4ce800b2c37f0a9b01057cbe2dbf3'}
+ 'trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs': 'ce8b49ae0de4ce800b2c37f0a9b01057cbe2dbf3',
+ 'trillionnium/crates/trnm-poco-lab-validator/src/process_event.rs': '45c35b3eec96927cd836d63ee6b57322f7637eb3'}
 
 
 def require(ok, reason):
@@ -52,7 +58,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 def api(suffix, token, value=None):
-    allowed = {PACK_BLOB} | set(SEEDS)
+    allowed = {PACK_BLOB, M15_PACK_BLOB} | set(SEEDS)
     require((value is not None and suffix == 'blobs') or
             (value is None and suffix.startswith('blobs/') and suffix[6:] in allowed),
             'fixed blob endpoint only')
@@ -64,11 +70,25 @@ def api(suffix, token, value=None):
             'Content-Type': 'application/json',
             'X-GitHub-Api-Version': '2022-11-28',
             'User-Agent': 'trnm-pinned-public-blob-transport'})
-    with urllib.request.build_opener(NoRedirect()).open(request, timeout=45) as response:
-        require(response.status == (200 if value is None else 201), 'HTTP status')
-        raw = response.read(1500001)
-        require(len(raw) <= 1500000, 'HTTP response bound')
-        return json.loads(raw)
+    # Record only a fixed public object path and numeric status, never
+    # authorization headers or response bodies. Retrying an identical blob
+    # creation is content-addressed and cannot move a branch.
+    for attempt in range(3):
+        print(json.dumps({'operation': request.get_method(), 'object': suffix,
+                          'attempt': attempt + 1}), flush=True)
+        try:
+            with urllib.request.build_opener(NoRedirect()).open(request, timeout=45) as response:
+                require(response.status == (200 if value is None else 201), 'HTTP status')
+                raw = response.read(1500001)
+                require(len(raw) <= 1500000, 'HTTP response bound')
+                return json.loads(raw)
+        except urllib.error.HTTPError as exc:
+            print(json.dumps({'operation': request.get_method(), 'object': suffix,
+                              'http_status': exc.code}), flush=True)
+            if exc.code not in (429, 500, 502, 503, 504) or attempt == 2:
+                raise
+            time.sleep(2 ** attempt)
+    raise ValueError('bounded HTTP attempts exhausted')
 
 
 def load_blob(sha, token):
@@ -102,6 +122,14 @@ def materialize(load, directory):
         return subprocess.run(['git', '--git-dir=' + str(directory), *args], input=data,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, timeout=60).stdout
     packed = blob_pack(load(PACK_BLOB))
+    encoded_m15 = load(M15_PACK_BLOB)
+    require(len(encoded_m15) <= 1200 and digest(encoded_m15) == M15_PACK_BLOB,
+            'M15 carrier identity')
+    m15 = base64.b64decode(''.join(encoded_m15.decode('ascii').split()), validate=True)
+    require(len(m15) == 829 and hashlib.sha256(m15).hexdigest() == M15_PACK_SHA256,
+            'M15 blob-only pack identity')
+    require(m15[:12] == b'PACK' + struct.pack('>II', 2, 1) and
+            hashlib.sha1(m15[:-20]).digest() == m15[-20:], 'M15 pack envelope')
     git('init', '--bare', '--quiet', str(directory))
     for sha, length in SEEDS.items():
         data = load(sha)
@@ -109,6 +137,7 @@ def materialize(load, directory):
         require(git('hash-object', '-w', '--stdin', data=data).decode().strip() == sha,
                 'stored delta base')
     git('index-pack', '--strict', '--stdin', '--fix-thin', data=packed)
+    git('index-pack', '--strict', '--stdin', '--fix-thin', data=m15)
     result = {}
     for path, sha in OUTPUTS.items():
         require(git('cat-file', '-t', sha).strip() == b'blob', 'output type')
