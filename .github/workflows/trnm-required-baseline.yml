@@ -91,6 +91,12 @@ jobs:
           python3 scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py \
             --check-trust-path --self-test-trust-path-mutants
 
+      - name: Enforce native-only source and scanner regressions
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_native_consensus_only.py
+          python3 scripts/ci/check_native_consensus_only.py
       - name: Verify canonical project boundary without exemptions
         run: bash scripts/project-preflight.sh --audit
       - name: Validate repository, development, module, node, and blocker truth

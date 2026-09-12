@@ -34,6 +34,31 @@ class NativeWorkflowMutants(unittest.TestCase):
     def test_current_workflow_contract(self) -> None:
         self.assertEqual(validate_contract(self.root)["retained_guard_purposes"], 7)
 
+    def test_native_scan_comment_or_echo_cannot_substitute_execution(self) -> None:
+        command = "          python3 scripts/ci/check_native_consensus_only.py"
+        self.replace(BASELINE, command, "          # python3 scripts/ci/check_native_consensus_only.py")
+        self.rejected("complete execution commands differ")
+        self.replace(BASELINE, "          # python3 scripts/ci/check_native_consensus_only.py",
+                     '          echo "python3 scripts/ci/check_native_consensus_only.py"')
+        self.rejected("complete execution commands differ")
+
+    def test_native_scan_cannot_skip_or_mask_failure(self) -> None:
+        marker = "      - name: Enforce native-only source and scanner regressions\n"
+        self.replace(BASELINE, marker, marker + "        if: false\n")
+        self.rejected("execution may not be conditional")
+        self.replace(BASELINE, "        if: false\n", "        continue-on-error: true\n")
+        self.rejected("must propagate failure")
+
+    def test_native_scan_mutants_and_working_directory_are_required(self) -> None:
+        command = "          python3 scripts/ci/test_native_consensus_only.py"
+        self.replace(BASELINE, command, "          # no source mutants")
+        self.rejected("complete execution commands differ")
+        self.replace(BASELINE, "          # no source mutants", command)
+        self.replace(BASELINE,
+                     "      - name: Enforce native-only source and scanner regressions\n        working-directory: trillionnium-chain",
+                     "      - name: Enforce native-only source and scanner regressions\n        working-directory: another-tree")
+        self.rejected("working directory differs")
+
     def test_retired_lane_or_dangling_link_cannot_return(self) -> None:
         path = self.root / RETIRED[0]
         path.write_text("name: returned legacy lane\n")

@@ -187,6 +187,15 @@ def validate_contract(root: Path) -> dict[str, object]:
     for path in RETIRED:
         require(not (root / path).exists() and not (root / path).is_symlink(), f"retired lane returned: {path}")
     baseline = (root / BASELINE).read_text()
+    scan_name = "Enforce native-only source and scanner regressions"
+    scan_step = step(baseline, scan_name)
+    hard_step(scan_step, scan_name)
+    require(not re.search(r"^        continue-on-error:", scan_step, re.M),
+            "native source scan must propagate failure")
+    exact_matrix_commands(scan_step, (
+        "python3 scripts/ci/test_native_consensus_only.py",
+        "python3 scripts/ci/check_native_consensus_only.py",
+    ), scan_name)
     runtime = (root / RUNTIME).read_text()
     quick = (root / QUICK).read_text()
     for label, text in (("baseline", baseline), ("runtime", runtime)):
