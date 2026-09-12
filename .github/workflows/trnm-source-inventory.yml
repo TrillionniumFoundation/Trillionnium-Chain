@@ -45,7 +45,9 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
+          # This one-use blob carrier needs only itself, its prior carrier,
+          # and the pinned 8bf base. Ordinary inventory retains full history.
+          fetch-depth: ${{ github.event_name == 'push' && github.ref == 'refs/heads/fix/chain-six-class-publish-20260911' && 3 || 0 }}
           persist-credentials: false
 
       - name: Verify and package tracked source
