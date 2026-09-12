@@ -143,6 +143,8 @@ jobs:
 
   prospective-merge:
     name: documentation-truth-merge
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
     if: >-
       github.event_name == 'pull_request' && (github.repository ==
       'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name ==

@@ -3,6 +3,7 @@
 from __future__ import annotations
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -11,6 +12,8 @@ import unittest
 from unittest.mock import patch
 
 import documentation_binding_log_v1 as codec
+import check_documentation_contracts_v1 as contracts
+import check_documentation_reference_closure_v1 as closure
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts/ci/documentation_binding_log_v1.py"
@@ -155,6 +158,106 @@ class BindingTests(unittest.TestCase):
     def test_hosted_baseline_executes_regression(self):
         workflow = (ROOT / ".github/workflows/trnm-required-baseline.yml").read_text()
         self.assertIn("python3 scripts/ci/test_documentation_binding_log_v1.py", workflow)
+
+
+
+class WorkflowSourceBindingTests(unittest.TestCase):
+    """A same-tree merge is still a different source commit from the PR head."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.parent = Path(self.tmp.name)
+        self.root = self.parent / "repo"
+        self.root.mkdir()
+        self.git("init", "-q")
+        self.git("config", "user.name", "M17 test fixture")
+        self.git("config", "user.email", "fixture@example.invalid")
+        (self.root / "source.txt").write_text("same tree, distinct commit identities\n")
+        self.git("add", "source.txt")
+        self.tree = self.git("write-tree")
+        self.base = self.git("commit-tree", self.tree, "-m", "base fixture")
+        self.head = self.git("commit-tree", self.tree, "-p", self.base, "-m", "head fixture")
+        self.merge = self.git("commit-tree", self.tree, "-p", self.base, "-p", self.head,
+                              "-m", "prospective merge fixture")
+        self.event = self.parent / "event.json"
+        self.event.write_text(json.dumps({"number": 128, "pull_request": {
+            "number": 128, "head": {"sha": self.head}, "base": {"sha": self.base}}}))
+        root_patch = patch.object(closure, "ROOT", self.root)
+        root_patch.start()
+        self.addCleanup(root_patch.stop)
+        env_patch = patch.dict(os.environ, {"GITHUB_EVENT_PATH": str(self.event),
+                                           "GITHUB_SHA": self.merge})
+        env_patch.start()
+        self.addCleanup(env_patch.stop)
+
+    def git(self, *args):
+        return subprocess.run(["git", *args], cwd=self.root, check=True,
+                              capture_output=True, text=True).stdout.strip()
+
+    def checkout(self, sha):
+        self.git("checkout", "--detach", "--force", sha)
+
+    def test_workflow_keeps_source_head_binding(self):
+        workflow = (ROOT / ".github/workflows/trnm-documentation-truth.yml").read_text()
+        global_env, jobs = workflow.split("\njobs:\n", 1)
+        self.assertIn("  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' "
+                      "&& github.event.pull_request.head.sha || github.sha }}", global_env)
+        source = jobs.split("  prospective-merge:\n", 1)[0]
+        self.assertIn("ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}", source)
+        self.assertNotIn("\n    env:\n", source.split("    steps:\n", 1)[0])
+
+    def test_workflow_merge_overrides_inherited_head_binding(self):
+        workflow = (ROOT / ".github/workflows/trnm-documentation-truth.yml").read_text()
+        merge = workflow.split("  prospective-merge:\n", 1)[1]
+        job_scope, steps = merge.split("    steps:\n", 1)
+        self.assertIn("    env:\n      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}\n", job_scope)
+        self.assertIn("ref: ${{ github.sha }}", steps)
+        self.assertIn("TRNM_DOC_BINDING_MODE: merge", steps)
+
+    def test_source_contract_accepts_pr_head_not_event_merge(self):
+        self.checkout(self.head)
+        self.assertEqual(contracts.source_identity(self.root, self.head), (self.head, self.tree))
+        binding = closure.runtime_binding("source")
+        self.assertEqual(binding["source_commit"], self.head)
+        self.assertEqual(binding["pull_request_head"], self.head)
+        self.assertEqual(binding["event_merge_commit"], self.merge)
+
+    def test_merge_contract_accepts_exact_event_and_ordered_parents(self):
+        self.checkout(self.merge)
+        self.assertNotEqual(self.head, self.merge)
+        self.assertEqual(contracts.source_identity(self.root, self.merge), (self.merge, self.tree))
+        binding = closure.runtime_binding("merge")
+        self.assertEqual(binding["prospective_merge_commit"], self.merge)
+        self.assertEqual(binding["source_tree"], self.tree)
+        self.assertEqual(binding["pull_request_head"], self.head)
+        self.assertEqual(binding["pull_request_base"], self.base)
+
+    def test_merge_contract_rejects_inherited_head_even_with_identical_tree(self):
+        self.checkout(self.merge)
+        with self.assertRaises(contracts.DocumentationError) as caught:
+            contracts.source_identity(self.root, self.head)
+        self.assertEqual(caught.exception.code, "DOC-SOURCE")
+
+    def test_merge_contract_rejects_different_event_commit(self):
+        self.checkout(self.merge)
+        with patch.dict(os.environ, {"GITHUB_SHA": self.head}):
+            with self.assertRaisesRegex(closure.DocumentationTruthError, "not the event commit"):
+                closure.runtime_binding("merge")
+
+    def test_merge_contract_rejects_reversed_parent_order(self):
+        reversed_merge = self.git("commit-tree", self.tree, "-p", self.head, "-p", self.base,
+                                  "-m", "reversed parents fixture")
+        self.checkout(reversed_merge)
+        with patch.dict(os.environ, {"GITHUB_SHA": reversed_merge}):
+            with self.assertRaisesRegex(closure.DocumentationTruthError, "base and head in order"):
+                closure.runtime_binding("merge")
+
+    def test_merge_contract_requires_pr_metadata(self):
+        self.checkout(self.merge)
+        self.event.write_text("{}")
+        with self.assertRaisesRegex(closure.DocumentationTruthError, "pull-request metadata"):
+            closure.runtime_binding("merge")
 
 
 if __name__ == "__main__":
