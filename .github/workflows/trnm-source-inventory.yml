@@ -8,8 +8,6 @@ on:
       - fix/chain-six-class-publish-20260911
     paths:
       - .github/workflows/trnm-source-inventory.yml
-      - scripts/ci/publish_native_namespace_objects_v1.py
-      - scripts/ci/native_namespace_objects_v1.pack.b64
 
 permissions:
   contents: read
@@ -25,7 +23,7 @@ env:
 
 jobs:
   exact-source-inventory:
-    name: exact-source-inventory-and-bound-blob-transport
+    name: exact-source-inventory
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
@@ -35,19 +33,51 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository)))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 15
-    # One-use, hash-pinned public blob upload below; never updates refs.
+    # One-use pinned public source-object upload, removed in the product tree.
     permissions:
       contents: write
     env:
       TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
     steps:
+      - name: Upload nine pinned public blobs before checkout
+        if: github.event_name == 'push' && github.ref == 'refs/heads/fix/chain-six-class-publish-20260911'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PYCODE'
+          import base64, hashlib, json, os, urllib.request
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, *args):
+                  raise ValueError("authenticated redirect refused")
+          sha = "275f052d0eda32c97283c527d504c4237000db44"
+          url = "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs/" + sha
+          request = urllib.request.Request(url, headers={"Authorization": "Bearer " + os.environ["GH_TOKEN"], "Accept": "application/vnd.github+json"})
+          try:
+              with urllib.request.build_opener(NoRedirect()).open(request, timeout=45) as response:
+                  if response.status != 200:
+                      raise ValueError("source transport HTTP status")
+                  raw = response.read(20001)
+              if len(raw) > 20000:
+                  raise ValueError("source transport response bound")
+              value = json.loads(raw)
+              if value.get("sha") != sha or value.get("encoding") != "base64":
+                  raise ValueError("source transport metadata")
+              data = base64.b64decode("".join(value["content"].split()), validate=True)
+              actual = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+              if len(data) != 7787 or value.get("size") != len(data) or actual != sha:
+                  raise ValueError("source transport identity")
+              exec(compile(data, "pinned-public-blob-transport", "exec"), {"__name__": "__main__"})
+          except Exception as exc:
+              print("source transport failed: " + type(exc).__name__)
+              raise SystemExit(1)
+          PYCODE
+
       - name: Check out exact source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          # This one-use blob carrier needs only itself, its prior carrier,
-          # and the pinned 8bf base. Ordinary inventory retains full history.
-          fetch-depth: ${{ github.event_name == 'push' && github.ref == 'refs/heads/fix/chain-six-class-publish-20260911' && 3 || 0 }}
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Verify and package tracked source
@@ -81,23 +111,5 @@ jobs:
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
-
-      - name: Import verified native blobs without publishing a branch
-        if: github.event_name == 'push' && github.ref == 'refs/heads/fix/chain-six-class-publish-20260911'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
-          python3 scripts/ci/publish_native_namespace_objects_v1.py --publish \
-            --output "$RUNNER_TEMP/native-blob-transport-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.json"
-      - name: Retain blob identities only, not acceptance evidence
-        if: github.event_name == 'push' && github.ref == 'refs/heads/fix/chain-six-class-publish-20260911'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: native-blob-transport-${{ github.sha }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/native-blob-transport-${{ github.run_id }}-${{ github.run_attempt }}.json
-          if-no-files-found: error
-          retention-days: 1
 
 # Exact-source audit refresh requested on 2026-09-02; no promotion authority.
