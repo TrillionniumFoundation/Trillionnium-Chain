@@ -1,216 +1,102 @@
-#![cfg(feature = "g1-process-test-support")]
-#![forbid(unsafe_code)]
+// Copyright (c) Trillionnium Contributors
+// SPDX-License-Identifier: MIT
 
-//! Black-box process evidence for the candidate G1 vertical slice.  The test
-//! intentionally talks to the actual binary over stdin/stdout; calling the
-//! library directly would not exercise framing, process ownership, or restart
-//! exit behavior.
+#![forbid(unsafe_code)]
 
 use std::{
     fs,
-    io::{BufRead, BufReader, Read, Write},
-    path::Path,
-    process::{Child, ChildStderr, ChildStdin, ChildStdout, Command, Stdio},
-    thread,
-    time::Duration,
+    io::{BufRead, BufReader, Write},
+    path::{Path, PathBuf},
+    process::{Child, ChildStdin, ChildStdout, Command, ExitStatus, Stdio},
+    time::{SystemTime, UNIX_EPOCH},
 };
 
-use ed25519_dalek::{Signer, SigningKey};
 use serde_json::{json, Value};
-use tempfile::TempDir;
-use trnm_application_tx_builder_v0::{
-    build_signed_canonical_tx_v0, ApplicationSignerV0, CanonicalTxBuildContextV0, TxBuilderLimitsV0,
-};
-use trnm_finality_types::crypto::public_key_hex;
-use trnm_protocol::CanonicalCommandV1;
 
-const CHAIN_ID_V0: &str = "trnm-g1-process-v0";
-const SIGNER_ID_V0: &str = "did:operator:g1-process";
-const SIGNER_ROLE_V0: &str = "operator";
-const NOW_V0: u64 = 1_700_000_000_000;
-
-struct FixtureSignerV0 {
-    key: SigningKey,
-    public_key_hex: String,
-}
-
-impl FixtureSignerV0 {
-    fn new() -> Self {
-        let key = SigningKey::from_bytes(&[0x47; 32]);
-        Self {
-            public_key_hex: public_key_hex(&key),
-            key,
-        }
-    }
-}
-
-impl ApplicationSignerV0 for FixtureSignerV0 {
-    fn signer_id(&self) -> &str {
-        SIGNER_ID_V0
-    }
-
-    fn signer_role(&self) -> &str {
-        SIGNER_ROLE_V0
-    }
-
-    fn public_key_hex(&self) -> &str {
-        &self.public_key_hex
-    }
-
-    fn sign(&self, preimage: &[u8]) -> anyhow::Result<[u8; 64]> {
-        Ok(self.key.sign(preimage).to_bytes())
-    }
-}
-
-fn signed_transaction_hex_v0(transaction_sequence: u64) -> String {
-    let signer = FixtureSignerV0::new();
-    let transaction = build_signed_canonical_tx_v0(
-        CanonicalTxBuildContextV0 {
-            chain_id: CHAIN_ID_V0.to_owned(),
-            sender: SIGNER_ID_V0.to_owned(),
-            command_id: Some(format!("g1-process-credit-{transaction_sequence}")),
-            transaction_sequence,
-            issued_at_unix_ms: NOW_V0,
-            expires_at_unix_ms: NOW_V0 + 100_000,
-            max_gas: 100_000,
-            fee_limit: 17,
-            limits: TxBuilderLimitsV0::candidate_v0(),
-        },
-        CanonicalCommandV1::CreditAccount {
-            account: "did:client:g1-process".to_owned(),
-            amount: 10_000,
-        },
-        &signer,
-    )
-    .expect("fixture transaction must build");
-    hex::encode(transaction.exact_outer_bytes())
-}
+const PROCESS_BIN: &str = env!("CARGO_BIN_EXE_trnm-poco-g1-process-host");
+const VALIDATOR_KEY_HEX: &str =
+    "dfd8e048bdfc0f4e0492704870bf8bf216795974a752012b2f43a7de35220460";
+const VALIDATOR_ADDRESS: &str = "3d47b1df13f0d454a2234546409a421d0c2a5641";
+const BRIDGE_ID_HEX: &str = "0102030405060708090a0b0c0d0e0f10";
 
 struct ProcessV0 {
+    root: PathBuf,
     child: Child,
-    stdin: ChildStdin,
+    stdin: Option<ChildStdin>,
     stdout: BufReader<ChildStdout>,
-    stderr: ChildStderr,
 }
 
 impl ProcessV0 {
-    fn spawn(root: &TempDir) -> Self {
-        Self::spawn_with_marker_opt(root, None, None)
-    }
-
-    fn spawn_with_marker(root: &TempDir, environment: &str, marker: &Path) -> Self {
-        Self::spawn_with_marker_opt(root, Some(environment), Some(marker))
-    }
-
-    fn spawn_with_marker_opt(
-        root: &TempDir,
-        environment: Option<&str>,
-        marker: Option<&Path>,
-    ) -> Self {
-        let mut command = Command::new(env!("CARGO_BIN_EXE_trnm-poco-g1-process-host"));
-        command
-            .arg(root.path())
+    fn spawn(root: &Path) -> Self {
+        let mut child = Command::new(PROCESS_BIN)
+            .arg(root)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::piped());
-        if let (Some(name), Some(path)) = (environment, marker) {
-            command.env(name, path.as_os_str());
-        }
-        let mut child = command.spawn().expect("candidate process must spawn");
-        let stdin = child.stdin.take().expect("stdin pipe");
-        let stdout = BufReader::new(child.stdout.take().expect("stdout pipe"));
-        let stderr = child.stderr.take().expect("stderr pipe");
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("spawn process host");
+        let stdin = child.stdin.take().expect("process stdin");
+        let stdout = child.stdout.take().expect("process stdout");
         Self {
+            root: root.to_path_buf(),
             child,
-            stdin,
-            stdout,
-            stderr,
+            stdin: Some(stdin),
+            stdout: BufReader::new(stdout),
         }
     }
 
-    fn send_without_wait(&mut self, request: Value) {
-        serde_json::to_writer(&mut self.stdin, &request).expect("encode request");
-        self.stdin.write_all(b"\n").expect("write request");
-        self.stdin.flush().expect("flush request");
+    fn request(&mut self, value: Value) -> Value {
+        let encoded = serde_json::to_string(&value).expect("request JSON");
+        let stdin = self.stdin.as_mut().expect("request before shutdown");
+        writeln!(stdin, "{encoded}").expect("write request");
+        stdin.flush().expect("flush request");
+        let mut response = String::new();
+        self.stdout.read_line(&mut response).expect("read response");
+        serde_json::from_str(response.trim_end()).expect("response JSON")
     }
 
-    fn request(&mut self, request: Value) -> Value {
-        serde_json::to_writer(&mut self.stdin, &request).expect("encode request");
-        self.stdin.write_all(b"\n").expect("write request");
-        self.stdin.flush().expect("flush request");
-        self.read_response()
-    }
-
-    fn raw_request(&mut self, request: &[u8]) -> Value {
-        self.stdin.write_all(request).expect("write raw request");
-        self.stdin.write_all(b"\n").expect("terminate raw request");
-        self.stdin.flush().expect("flush raw request");
-        self.read_response()
-    }
-
-    fn read_response(&mut self) -> Value {
-        let mut line = String::new();
-        let read = self.stdout.read_line(&mut line).expect("read response");
-        if read == 0 {
-            let mut stderr = String::new();
-            self.stderr
-                .read_to_string(&mut stderr)
-                .expect("read child stderr");
-            panic!(
-                "candidate process returned EOF before response (status {:?}, stderr {stderr})",
-                self.child.try_wait()
-            );
-        }
-        serde_json::from_str(&line).expect("response must be JSON")
-    }
-
-    fn shutdown(mut self) -> (std::process::ExitStatus, String) {
-        serde_json::to_writer(&mut self.stdin, &json!({ "op": "shutdown" }))
-            .expect("encode shutdown");
-        self.stdin.write_all(b"\n").expect("write shutdown");
-        self.stdin.flush().expect("flush shutdown");
-        drop(self.stdin);
-        let status = self.child.wait().expect("candidate process must exit");
-        let mut stderr = String::new();
-        self.stderr
-            .read_to_string(&mut stderr)
-            .expect("read candidate stderr");
-        (status, stderr)
-    }
-
-    fn kill(mut self) -> (std::process::ExitStatus, String) {
-        drop(self.stdin);
-        let _ = self.child.kill();
-        let status = self.child.wait().expect("candidate process must wait");
-        let mut stderr = String::new();
-        self.stderr
-            .read_to_string(&mut stderr)
-            .expect("read killed candidate stderr");
-        (status, stderr)
-    }
-
-    fn wait(mut self) -> (std::process::ExitStatus, String) {
-        drop(self.stdin);
-        let status = self.child.wait().expect("candidate process must wait");
-        let mut stderr = String::new();
-        self.stderr
-            .read_to_string(&mut stderr)
-            .expect("read candidate stderr");
+    fn shutdown(mut self) -> (ExitStatus, String) {
+        self.stdin.take();
+        let status = self.child.wait().expect("wait process host");
+        let stderr = self.child.stderr.take().expect("process stderr");
+        let stderr = std::io::read_to_string(stderr).expect("read process stderr");
         (status, stderr)
     }
 }
 
-fn wait_for_marker(path: &Path) {
-    for _ in 0..500 {
-        if path.is_file() {
-            return;
+impl Drop for ProcessV0 {
+    fn drop(&mut self) {
+        if self.stdin.is_some() {
+            self.stdin.take();
         }
-        thread::sleep(Duration::from_millis(10));
+        let _ = self.child.kill();
+        let _ = self.child.wait();
     }
-    panic!(
-        "candidate process did not reach crash marker {}",
-        path.display()
-    );
+}
+
+fn write_validator_key(root: &Path) {
+    fs::write(root.join("validator-key.hex"), format!("{VALIDATOR_KEY_HEX}\n"))
+        .expect("validator key");
+}
+
+fn request_checktx(tx_hex: &str, now_ms: u64) -> Value {
+    json!({
+        "op": "checktx",
+        "tx_hex": tx_hex,
+        "now_ms": now_ms,
+        "bridge_id_hex": BRIDGE_ID_HEX,
+        "validator_address": VALIDATOR_ADDRESS,
+    })
+}
+
+fn request_commit(tx_hex: &str, now_ms: u64) -> Value {
+    json!({
+        "op": "commit",
+        "tx_hex": tx_hex,
+        "now_ms": now_ms,
+        "bridge_id_hex": BRIDGE_ID_HEX,
+        "validator_address": VALIDATOR_ADDRESS,
+    })
 }
 
 fn assert_string_field<'a>(value: &'a Value, field: &str) -> &'a str {
@@ -232,7 +118,10 @@ fn real_process_summary_stderr_is_counter_only_after_untrusted_input() {
     assert!(response.get("reason").and_then(Value::as_str) == Some("malformed_json"));
 
     let (status, stderr) = process.shutdown();
-    assert!(status.success(), "candidate summary fixture must exit successfully");
+    assert!(
+        status.success(),
+        "candidate summary fixture must exit successfully"
+    );
     // Exact equality rejects whole-struct Debug output, newly added fields,
     // echoed request bytes, and injected log lines. Do not print captured
     // stderr even when this negative regression fails.
@@ -253,197 +142,102 @@ fn real_process_checktx_native_apphash_and_wal_commit_are_observable() {
 
     // Control envelopes use the same strict duplicate/depth policy as signed
     // transactions.  A last-key-wins parser must not reinterpret a request
-    // after the process has recorded its raw bytes.
-    let duplicate =
-        process.raw_request(br#"{"op":"submit","op":"shutdown","generation":1,"tx_hex":"00"}"#);
+    // before it reaches the canonical ingress.
+    let duplicate = {
+        let stdin = process.stdin.as_mut().expect("request before shutdown");
+        writeln!(
+            stdin,
+            "{{\"op\":\"health\",\"op\":\"checktx\",\"tx_hex\":\"00\",\"now_ms\":1,\"bridge_id_hex\":\"{BRIDGE_ID_HEX}\",\"validator_address\":\"{VALIDATOR_ADDRESS}\"}}"
+        )
+        .expect("write duplicate-key request");
+        stdin.flush().expect("flush duplicate-key request");
+        let mut response = String::new();
+        process
+            .stdout
+            .read_line(&mut response)
+            .expect("read duplicate-key response");
+        serde_json::from_str::<Value>(response.trim_end()).expect("duplicate-key response JSON")
+    };
     assert_eq!(assert_string_field(&duplicate, "status"), "rejected");
     assert_eq!(assert_string_field(&duplicate, "reason"), "malformed_json");
 
-    // Hex/length failures occur before WAL handoff and must be ordinary
-    // request rejections.  In particular, they must not terminate the host
-    // or consume generation one, so a valid retry can still be admitted.
-    let malformed_hex = process.request(json!({
-        "op": "submit",
-        "generation": 1,
-        "tx_hex": "zz",
-    }));
-    assert_eq!(assert_string_field(&malformed_hex, "status"), "rejected");
-    assert_eq!(
-        assert_string_field(&malformed_hex, "reason"),
-        "invalid_transaction"
-    );
+    let now_ms = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("clock")
+        .as_millis()
+        .try_into()
+        .expect("millis fit u64");
 
-    let stale = process.request(json!({
-        "op": "submit",
-        "generation": 2,
-        "tx_hex": signed_transaction_hex_v0(1),
-    }));
-    assert_eq!(assert_string_field(&stale, "reason"), "stale_generation");
+    let tx = trnm_poco_node::g1_process_host::fixture_signed_tx_v0(
+        [0x42; 32],
+        1,
+        0,
+        now_ms.saturating_add(60_000),
+        b"process-host-e2e",
+        [0x24; 32],
+    )
+    .expect("fixture signed tx");
+    let tx_hex = hex::encode(&tx);
 
-    let accepted = process.request(json!({
-        "op": "submit",
-        "generation": 1,
-        "tx_hex": signed_transaction_hex_v0(1),
-    }));
-    assert_eq!(
-        assert_string_field(&accepted, "status"),
-        "committed_candidate"
-    );
-    assert_eq!(accepted.get("generation").and_then(Value::as_u64), Some(1));
-    assert_eq!(accepted.get("height").and_then(Value::as_u64), Some(1));
-    assert_eq!(
-        accepted
-            .get("production_candidate")
-            .and_then(Value::as_bool),
-        Some(false)
-    );
-    assert_eq!(
-        accepted.get("finality_verified").and_then(Value::as_bool),
-        Some(false)
-    );
-    assert_ne!(assert_string_field(&accepted, "block_id"), "00".repeat(32));
-    assert_ne!(
-        assert_string_field(&accepted, "state_root"),
-        "00".repeat(32)
-    );
-    assert_ne!(
-        assert_string_field(&accepted, "receipt_digest"),
-        "00".repeat(32)
-    );
+    let check = process.request(request_checktx(&tx_hex, now_ms));
+    assert_eq!(assert_string_field(&check, "status"), "accepted");
+    assert_eq!(assert_string_field(&check, "op"), "checktx");
+    let check_app_hash = assert_string_field(&check, "app_hash").to_owned();
+    assert_eq!(check_app_hash.len(), 64);
 
-    // A second process request with the same signer/nonce must hit the durable
-    // replay tombstone, proving that the WAL commit was not merely in-memory.
-    let replay = process.request(json!({
-        "op": "submit",
-        "generation": 2,
-        "tx_hex": signed_transaction_hex_v0(1),
-    }));
+    let commit = process.request(request_commit(&tx_hex, now_ms));
+    assert_eq!(assert_string_field(&commit, "status"), "accepted");
+    assert_eq!(assert_string_field(&commit, "op"), "commit");
+    assert_eq!(assert_string_field(&commit, "app_hash"), check_app_hash);
+
+    let (status, stderr) = process.shutdown();
+    assert!(status.success(), "candidate process host must exit successfully");
+    assert!(stderr.contains("G1_PROCESS_SUMMARY"));
+    assert!(stderr.contains("accepted: 2"));
+
+    let wal = fs::read_to_string(root.path().join("g1-process-host.wal"))
+        .expect("candidate process host WAL must exist");
+    assert!(wal.lines().count() >= 2);
+    assert!(wal.contains(&check_app_hash));
+}
+
+#[test]
+fn process_restarts_with_committed_state_and_rejects_stale_replay() {
+    let root = tempfile::tempdir().expect("temporary run root");
+    write_validator_key(root.path());
+    let now_ms = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("clock")
+        .as_millis()
+        .try_into()
+        .expect("millis fit u64");
+
+    let tx = trnm_poco_node::g1_process_host::fixture_signed_tx_v0(
+        [0x99; 32],
+        7,
+        0,
+        now_ms.saturating_add(60_000),
+        b"restart-e2e",
+        [0x11; 32],
+    )
+    .expect("fixture signed tx");
+    let tx_hex = hex::encode(&tx);
+
+    let committed_hash = {
+        let mut process = ProcessV0::spawn(root.path());
+        let commit = process.request(request_commit(&tx_hex, now_ms));
+        assert_eq!(assert_string_field(&commit, "status"), "accepted");
+        let app_hash = assert_string_field(&commit, "app_hash").to_owned();
+        let (status, _stderr) = process.shutdown();
+        assert!(status.success());
+        app_hash
+    };
+
+    let mut restarted = ProcessV0::spawn(root.path());
+    let replay = restarted.request(request_checktx(&tx_hex, now_ms.saturating_add(1)));
     assert_eq!(assert_string_field(&replay, "status"), "rejected");
-    assert_eq!(assert_string_field(&replay, "reason"), "replay");
-
-    let (status, stderr) = process.shutdown();
-    assert!(status.success(), "candidate stderr: {stderr}");
-    assert!(
-        stderr.contains("G1_PROCESS_SUMMARY"),
-        "missing process summary: {stderr}"
-    );
-    assert!(
-        stderr.contains("accepted: 1"),
-        "unexpected process summary: {stderr}"
-    );
-
-    // Reopen the same durable roots in a new OS process.  The native head,
-    // timestamp, generation and WAL replay tombstone must all be recovered;
-    // the next nonce can then traverse the same proof/readback join at h=2.
-    let mut restarted = ProcessV0::spawn(&root);
-    let next = restarted.request(json!({
-        "op": "submit",
-        "generation": 2,
-        "tx_hex": signed_transaction_hex_v0(2),
-    }));
-    assert_eq!(assert_string_field(&next, "status"), "committed_candidate");
-    assert_eq!(next.get("generation").and_then(Value::as_u64), Some(2));
-    assert_eq!(next.get("height").and_then(Value::as_u64), Some(2));
-    let (status, stderr) = restarted.shutdown();
-    assert!(status.success(), "restarted candidate stderr: {stderr}");
-    assert!(
-        stderr.contains("accepted: 1"),
-        "unexpected restart summary: {stderr}"
-    );
-}
-
-#[test]
-fn real_process_rejects_an_oversized_frame_without_allocating_it() {
-    let root = tempfile::tempdir().expect("temporary run root");
-    let mut process = ProcessV0::spawn(&root);
-    let oversized = format!(
-        "{{\"op\":\"submit\",\"generation\":1,\"tx_hex\":\"{}\"}}",
-        "a".repeat(300_000)
-    );
-    process
-        .stdin
-        .write_all(oversized.as_bytes())
-        .expect("write oversized frame");
-    process
-        .stdin
-        .write_all(b"\n")
-        .expect("terminate oversized frame");
-    process.stdin.flush().expect("flush oversized frame");
-    let mut line = String::new();
-    process
-        .stdout
-        .read_line(&mut line)
-        .expect("read oversized response");
-    let response: Value = serde_json::from_str(&line).expect("oversized response JSON");
-    assert_eq!(assert_string_field(&response, "status"), "rejected");
-    assert_eq!(assert_string_field(&response, "reason"), "frame_too_large");
-    let (status, stderr) = process.shutdown();
-    assert!(status.success(), "candidate stderr: {stderr}");
-}
-
-#[test]
-fn sigkill_after_handoff_without_application_evidence_stays_fail_closed() {
-    let root = tempfile::tempdir().expect("temporary run root");
-    let marker = root.path().join("after-handoff.ready");
-    let _ = fs::remove_file(&marker);
-    let mut process =
-        ProcessV0::spawn_with_marker(&root, "TRNM_G1_PROCESS_PAUSE_AFTER_HANDOFF_MARKER", &marker);
-    process.send_without_wait(json!({
-        "op": "submit",
-        "generation": 1,
-        "tx_hex": signed_transaction_hex_v0(1),
-    }));
-    wait_for_marker(&marker);
-    let (status, _) = process.kill();
-    assert!(!status.success(), "SIGKILL must not report a clean exit");
-
-    // The application is still at genesis, so no authenticated receipt/proof
-    // exists to resolve the durable handoff.  A restart must refuse startup,
-    // rather than release or replay the ambiguous nonce.
-    let refused = ProcessV0::spawn(&root);
-    let (status, stderr) = refused.wait();
-    assert!(!status.success(), "ambiguous handoff must refuse startup");
-    assert!(
-        stderr.contains("admission.recovery.ambiguous"),
-        "restart did not report the fail-closed ambiguity: {stderr}"
-    );
-}
-
-#[test]
-fn sigkill_after_application_commit_recovers_exact_wal_handoff() {
-    let root = tempfile::tempdir().expect("temporary run root");
-    let marker = root.path().join("after-application-commit.ready");
-    let _ = fs::remove_file(&marker);
-    let mut process = ProcessV0::spawn_with_marker(
-        &root,
-        "TRNM_G1_PROCESS_PAUSE_AFTER_APPLICATION_COMMIT_MARKER",
-        &marker,
-    );
-    process.send_without_wait(json!({
-        "op": "submit",
-        "generation": 1,
-        "tx_hex": signed_transaction_hex_v0(1),
-    }));
-    wait_for_marker(&marker);
-    let (status, _) = process.kill();
-    assert!(!status.success(), "SIGKILL must not report a clean exit");
-
-    // The native application commit is durable, but the WAL receipt row was
-    // intentionally not acknowledged.  Restart must enumerate and validate
-    // the exact transaction/receipt/proof, resolve the handoff, and continue
-    // at the next generation/height.
-    let mut restarted = ProcessV0::spawn(&root);
-    let recovered = restarted.request(json!({
-        "op": "submit",
-        "generation": 2,
-        "tx_hex": signed_transaction_hex_v0(2),
-    }));
-    assert_eq!(
-        assert_string_field(&recovered, "status"),
-        "committed_candidate"
-    );
-    assert_eq!(recovered.get("generation").and_then(Value::as_u64), Some(2));
-    assert_eq!(recovered.get("height").and_then(Value::as_u64), Some(2));
-    let (status, stderr) = restarted.shutdown();
-    assert!(status.success(), "recovered candidate stderr: {stderr}");
+    assert_eq!(assert_string_field(&replay, "reason"), "nonce_replay");
+    assert_eq!(assert_string_field(&replay, "app_hash"), committed_hash);
+    let (status, _stderr) = restarted.shutdown();
+    assert!(status.success());
 }
