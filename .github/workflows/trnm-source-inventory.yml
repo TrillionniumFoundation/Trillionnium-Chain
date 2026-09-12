@@ -1,77 +1,91 @@
-name: trnm-source-inventory
+name: trnm-offline-native-qualification-inputs
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - work/plan-v2-full-gap-closure-20260902
-    paths:
-      - .github/workflows/trnm-source-inventory.yml
+      - diagnostic/offline-native-qualification-20260912
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: trnm-offline-native-qualification-inputs
+  cancel-in-progress: false
 
 env:
   CI: "true"
   TZ: UTC
   LANG: C.UTF-8
   LC_ALL: C.UTF-8
-  PYTHONHASHSEED: "0"
   PYTHONDONTWRITEBYTECODE: "1"
-  TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  SOURCE_SHA: 41134550905480023ebc954ff422a05644cd012d
 
 jobs:
-  exact-source-inventory:
-    name: exact-source-inventory
-    if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
-      github.actor == 'Franksudoman' || github.actor == 'ProfHepta') &&
-      github.triggering_actor == github.actor &&
-      (github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository)))
-    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 15
-    env:
-      TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
+  public-toolchain-and-locked-dependencies:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
     steps:
-      - name: Check out exact source
+      - name: Check out immutable diagnostic subject without retained credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          fetch-depth: 0
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 1
           persist-credentials: false
-
-      - name: Verify and package tracked source
+      - name: Install the repository-pinned public Rust toolchain
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
-          root="$RUNNER_TEMP/trnm-source-inventory"
-          mkdir -p "$root"
-          git rev-parse HEAD > "$root/HEAD"
-          git rev-parse 'HEAD^{tree}' > "$root/TREE"
-          git ls-files -z > "$root/tracked-files.nul"
-          tar --null --files-from "$root/tracked-files.nul" \
-            --sort=name --owner=0 --group=0 --numeric-owner \
-            --create --gzip --file "$root/tracked-source.tar.gz"
-          sha256sum "$root/tracked-source.tar.gz" > "$root/SHA256SUMS"
-          printf '%s\n' 'artifact_schema=trnm-exact-source-inventory-v1' > "$root/METADATA.txt"
-          printf 'source_commit=%s\n' "$(cat "$root/HEAD")" >> "$root/METADATA.txt"
-          printf 'source_tree=%s\n' "$(cat "$root/TREE")" >> "$root/METADATA.txt"
-          printf '%s\n' 'authority=read-only-audit-input' >> "$root/METADATA.txt"
-          printf '%s\n' 'production_candidate=false' >> "$root/METADATA.txt"
-          printf '%s\n' 'release_ready=false' >> "$root/METADATA.txt"
-          printf '%s\n' 'activation_authority=false' >> "$root/METADATA.txt"
-          git diff --exit-code -- .
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+          test "$(rustc --version | cut -d ' ' -f 2)" = 1.95.0
+      - name: Vendor only public locked dependency sources without running candidate builds
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-offline-native-inputs"
+          mkdir -p "$out"
+          git rev-parse HEAD > "$out/HEAD"
+          git rev-parse 'HEAD^{tree}' > "$out/TREE"
+          rustc -Vv > "$out/RUSTC.txt"
+          cargo -Vv > "$out/CARGO.txt"
+          cargo vendor --locked --versioned-dirs \
+            --manifest-path trillionnium/Cargo.toml \
+            --sync contracts/Cargo.toml \
+            --sync trillionnium/fuzz/Cargo.toml \
+            "$RUNNER_TEMP/trnm-vendored-public-sources" > "$out/vendor-config.toml"
+          sha256sum trillionnium/Cargo.lock contracts/Cargo.lock trillionnium/fuzz/Cargo.lock > "$out/LOCKS.sha256"
+          git diff --exit-code
           test -z "$(git status --porcelain --untracked-files=all)"
-
-      - name: Upload exact-source inventory
+          tar -C "$RUNNER_TEMP/trnm-vendored-public-sources" -czf "$out/vendor.tar.gz" .
+      - name: Archive public compiler files only, never homes credentials or environment
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-offline-native-inputs"
+          sysroot="$(rustc --print sysroot)"
+          test -x "$sysroot/bin/rustc"
+          test -x "$sysroot/bin/cargo"
+          test -d "$sysroot/lib/rustlib/x86_64-unknown-linux-gnu"
+          # Explicit allow-list: no CARGO_HOME, RUSTUP_HOME, Git config,
+          # credentials, environment dump, workspace targets or user data.
+          tar -C "$sysroot" -czf "$out/rust-toolchain.tar.gz" bin lib
+          (
+            cd "$out"
+            sha256sum HEAD TREE RUSTC.txt CARGO.txt LOCKS.sha256 vendor-config.toml \
+              vendor.tar.gz rust-toolchain.tar.gz > SHA256SUMS
+          )
+          printf '%s\n' \
+            'scope=public-toolchain-and-locked-dependency-inputs-only' \
+            'candidate-code-executed=false' \
+            'runtime-tests-executed=false' \
+            'independent-acceptance=false' \
+            'production-activation=false' > "$out/SCOPE"
+      - name: Retain immutable offline qualification input
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: trnm-source-inventory-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
-          path: ${{ runner.temp }}/trnm-source-inventory
+          name: trnm-offline-native-inputs-41134550905480023ebc954ff422a05644cd012d
+          path: ${{ runner.temp }}/trnm-offline-native-inputs/
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
-
-# Exact-source audit refresh requested on 2026-09-02; no promotion authority.
