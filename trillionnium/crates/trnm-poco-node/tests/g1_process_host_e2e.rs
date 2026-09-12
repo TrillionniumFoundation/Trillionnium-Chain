@@ -221,6 +221,31 @@ fn assert_string_field<'a>(value: &'a Value, field: &str) -> &'a str {
 }
 
 #[test]
+fn real_process_summary_stderr_is_counter_only_after_untrusted_input() {
+    let root = tempfile::tempdir().expect("temporary run root");
+    let mut process = ProcessV0::spawn(&root);
+    let response = process.request(json!({
+        "op": "not-supported",
+        "message": "untrusted-log-marker\nFORGED_PROCESS_SUMMARY",
+    }));
+    assert!(response.get("status").and_then(Value::as_str) == Some("rejected"));
+    assert!(response.get("reason").and_then(Value::as_str) == Some("malformed_json"));
+
+    let (status, stderr) = process.shutdown();
+    assert!(
+        status.success(),
+        "candidate summary fixture must exit successfully"
+    );
+    // Exact equality rejects whole-struct Debug output, newly added fields,
+    // echoed request bytes, and injected log lines. Do not print captured
+    // stderr even when this negative regression fails.
+    assert!(
+        stderr == "G1_PROCESS_SUMMARY accepted: 0, rejected: 1, backpressure_rejected: 0\n",
+        "stderr must contain only the stable bounded counter summary"
+    );
+}
+
+#[test]
 fn real_process_checktx_native_apphash_and_wal_commit_are_observable() {
     let root = tempfile::tempdir().expect("temporary run root");
     let mut process = ProcessV0::spawn(&root);
