@@ -346,7 +346,10 @@ jobs:
           cargo test --locked -p trnm-consensus-sim
           cargo test --locked -p trnm-finality-types
           cargo test --locked -p trnm-poco-lab-validator --all-targets
-          cargo test --locked -p trnm-poco-node --all-targets --features recovery-process-test-support
+          # The retired recovery-observer unit module is not part of the
+          # default node test surface. Feature-specific process matrices are
+          # exercised by their dedicated jobs below.
+          cargo test --locked -p trnm-poco-node --all-targets
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
 
@@ -395,7 +398,7 @@ jobs:
           # --no-deps keeps strictness on the selected package without
           # turning unrelated retained warnings into PoCO tranche failures.
           cargo clippy --locked -p trnm-finality-types --all-targets --no-deps -- -D warnings
-          cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-process-test-support --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-poco-node --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-protocol --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-runtime --all-targets --no-deps -- -D warnings
 

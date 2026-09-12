@@ -14,15 +14,9 @@ case "$TASK" in
     echo "task=A1 metric hooks scaffold $(date '+%F %T')" > "$ROOT/trillionnium/run/codegen/A1.txt"
     ;;
   A2)
-    mkdir -p "$ROOT/trillionnium/scripts"
-    if [[ ! -f "$ROOT/trillionnium/scripts/run_consensus_fault_matrix.sh" ]]; then
-      cat > "$ROOT/trillionnium/scripts/run_consensus_fault_matrix.sh" <<'EOF'
-#!/usr/bin/env bash
-set -euo pipefail
-echo "[TODO] consensus fault matrix scaffold"
-EOF
-      chmod +x "$ROOT/trillionnium/scripts/run_consensus_fault_matrix.sh"
-    fi
+    # The pre-native fault-matrix scaffold was retired with the external
+    # consensus engine. Native PoCO scenarios own fault coverage now.
+    echo "[OK] task A2 retired: native PoCO fault workflow owns coverage"
     ;;
   A3)
     mkdir -p "$ROOT/docs/protocol"

@@ -594,8 +594,7 @@ while IFS= read -r path; do
   fi
   if grep -Eq "$home_override_re" "$content"; then
     case "$path" in
-      scripts/v2/worker_poco_cli_cutover_gate.sh|\
-      scripts/v2/consensus_fault_matrix_canonical_metrics_prefix_test.sh)
+      scripts/v2/worker_poco_cli_cutover_gate.sh)
         if grep -Eq '(^|[^A-Za-z0-9_])(cargo([[:space:]]|\+|-deny|-fuzz)|rustup([[:space:]]|$))' "$content"; then
           error "$path combines its narrowly allowed application HOME sandbox with Cargo/Rust"
         fi

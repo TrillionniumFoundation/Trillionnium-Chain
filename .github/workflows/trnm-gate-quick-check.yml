@@ -338,10 +338,6 @@ jobs:
         run: |
           ./scripts/v2/trnm_gate_quick_check_policy_runbook_paths_coverage_guard_test.sh
 
-      - name: Consensus fault matrix canonical metrics prefix regression
-        run: |
-          ./scripts/v2/consensus_fault_matrix_canonical_metrics_prefix_test.sh
-
       - name: Agent-user phaseA gate deterministic env guard regression
         run: |
           ./scripts/v2/agent_user_phasea_gate_deterministic_env_guard_test.sh
