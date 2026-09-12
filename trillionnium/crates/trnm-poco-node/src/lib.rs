@@ -2144,6 +2144,10 @@ impl Error for PocoNodeHostErrorV0 {
     }
 }
 
+// G1e validation-recovery is retained as archive-only source.  The active
+// recovery-process feature belongs exclusively to the bounded-timeout G1f
+// helper and matrix, so it must not compile this retired module.
+#[cfg(any())]
 #[cfg(all(test, feature = "recovery-process-test-support", target_os = "linux"))]
 mod recovery_tests;
 
