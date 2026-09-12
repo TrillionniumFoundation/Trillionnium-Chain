@@ -117,7 +117,7 @@ use trnm_consensus_core::{
     CoreConfig, DurablePayloadValidationResultV1, Effect, SafetyState, SafetyStateRecordLimitsV0,
 };
 use trnm_consensus_crypto::validate_validator_set_strict_ed25519_v0;
-#[cfg(any(any(), test))]
+#[cfg(all(test, target_os = "linux"))]
 use trnm_consensus_crypto::StrictEd25519Verifier;
 #[cfg(any())]
 use trnm_consensus_safety_store::SqliteSafetyStateStoreV0;
@@ -131,7 +131,7 @@ use trnm_consensus_safety_store::{
 };
 #[cfg(any())]
 use trnm_consensus_signer_journal::JournalCapacityV0;
-#[cfg(any(any(), test))]
+#[cfg(all(test, target_os = "linux"))]
 use trnm_consensus_signer_journal::SignerWatermarkV0;
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, SignerJournalErrorV0, SignerJournalProfileV0,
@@ -2164,7 +2164,9 @@ mod tests {
     use tempfile::TempDir;
     #[cfg(all(target_os = "linux", any()))]
     use trnm_consensus_core::AuthenticatedGenesisApplicationParentV0;
-    use trnm_consensus_core::{OutboundMessage, SafetyStateRecordLimitsV0, SignIntent};
+    use trnm_consensus_core::SafetyStateRecordLimitsV0;
+    #[cfg(target_os = "linux")]
+    use trnm_consensus_core::{OutboundMessage, SignIntent};
     #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
     use trnm_consensus_safety_rules::{SafetyRulesContextV1, SafetyRulesStateV1};
     #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
@@ -2179,10 +2181,13 @@ mod tests {
     };
     #[cfg(all(target_os = "linux", any()))]
     use trnm_consensus_types::StateRoot;
+    #[cfg(target_os = "linux")]
     use trnm_consensus_types::{
-        BlockId, CanonicalSignIntentV0, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch,
-        GenesisHash, GenesisQcV0, Height, ProtocolVersion, QcReferenceV0, SignatureBytes,
-        Validator, ValidatorId, ValidatorSet, View, VotingPower,
+        BlockId, CanonicalSignIntentV0, GenesisQcV0, Height, QcReferenceV0, SignatureBytes, View,
+    };
+    use trnm_consensus_types::{
+        ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion,
+        Validator, ValidatorId, ValidatorSet, VotingPower,
     };
 
     use super::*;
@@ -2681,6 +2686,7 @@ mod tests {
         }
     }
 
+    #[cfg(target_os = "linux")]
     fn genesis_qc(core_config: &CoreConfig) -> GenesisQcV0 {
         GenesisQcV0::new(
             core_config.validator_set().genesis_hash(),

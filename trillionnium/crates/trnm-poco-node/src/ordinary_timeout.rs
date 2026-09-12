@@ -1559,7 +1559,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         self.finish_runtime_call_v0(result)
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, target_os = "linux"))]
     pub(crate) fn drive_test_effects_v0(
         &mut self,
         effects: Vec<Effect>,
