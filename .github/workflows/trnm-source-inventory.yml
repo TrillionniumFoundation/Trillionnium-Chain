@@ -5,8 +5,11 @@ on:
   push:
     branches:
       - work/plan-v2-full-gap-closure-20260902
+      - fix/chain-six-class-publish-20260911
     paths:
       - .github/workflows/trnm-source-inventory.yml
+      - scripts/ci/publish_native_namespace_objects_v1.py
+      - scripts/ci/native_namespace_objects_v1.pack.b64
 
 permissions:
   contents: read
@@ -22,7 +25,7 @@ env:
 
 jobs:
   exact-source-inventory:
-    name: exact-source-inventory
+    name: exact-source-inventory-and-bound-blob-transport
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' || ((github.actor == 'ProfAlexQI' ||
@@ -32,6 +35,9 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository)))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 15
+    # One-use, hash-pinned public blob upload below; never updates refs.
+    permissions:
+      contents: write
     env:
       TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
     steps:
@@ -73,5 +79,23 @@ jobs:
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
+
+      - name: Import verified native blobs without publishing a branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/fix/chain-six-class-publish-20260911'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TRNM_EXPECTED_SOURCE_SHA"
+          python3 scripts/ci/publish_native_namespace_objects_v1.py --publish \
+            --output "$RUNNER_TEMP/native-blob-transport-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.json"
+      - name: Retain blob identities only, not acceptance evidence
+        if: github.event_name == 'push' && github.ref == 'refs/heads/fix/chain-six-class-publish-20260911'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-blob-transport-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-blob-transport-${{ github.run_id }}-${{ github.run_attempt }}.json
+          if-no-files-found: error
+          retention-days: 1
 
 # Exact-source audit refresh requested on 2026-09-02; no promotion authority.
