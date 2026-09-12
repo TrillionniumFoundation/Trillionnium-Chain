@@ -13,6 +13,9 @@ on:
       - 'scripts/ci/check_documentation_reference_closure_v1.py'
       - 'scripts/ci/check_module_coverage_v1.py'
       - '.github/workflows/trnm-documentation-truth.yml'
+      - 'scripts/ci/documentation_binding_log_v1.py'
+      - 'scripts/ci/codeql_reconcile_regions_v1.py'
+      - 'scripts/ci/test_m17_evidence_tools_v1.py'
   push:
     branches:
       - main
@@ -28,6 +31,9 @@ on:
       - 'scripts/ci/check_documentation_reference_closure_v1.py'
       - 'scripts/ci/check_module_coverage_v1.py'
       - '.github/workflows/trnm-documentation-truth.yml'
+      - 'scripts/ci/documentation_binding_log_v1.py'
+      - 'scripts/ci/codeql_reconcile_regions_v1.py'
+      - 'scripts/ci/test_m17_evidence_tools_v1.py'
   workflow_dispatch:
 
 permissions:
@@ -65,6 +71,9 @@ jobs:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Replay M17 evidence-tool negative regressions
+        run: python3 -B scripts/ci/test_m17_evidence_tools_v1.py
 
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
@@ -131,9 +140,12 @@ jobs:
             echo '### Documentation source binding'
             echo "- source: \`${TRNM_EXPECTED_SOURCE_SHA}\`"
             echo "- SHA-256: \`${digest}\`"
-            echo '- binding was generated and validated on the trusted X230; the check log carries the immutable digest without a separate artifact action dependency'
+            echo '- binding was generated and validated on the trusted X230; the check log retains the complete framed binding bytes and their digest without a separate artifact action dependency'
           } >> "${GITHUB_STEP_SUMMARY}"
           printf 'TRNM_DOCUMENTATION_SOURCE_BINDING_SHA256=%s\n' "${digest}"
+          python3 -B scripts/ci/documentation_binding_log_v1.py emit \
+            --binding "${binding}" --expected-sha256 "${digest}" \
+            --mode source
 
   prospective-merge:
     name: documentation-truth-merge
@@ -182,6 +194,9 @@ jobs:
             echo '### Documentation prospective-merge binding'
             echo "- merge SHA: \`${GITHUB_SHA}\`"
             echo "- SHA-256: \`${digest}\`"
-            echo '- binding was generated and validated on the trusted X230; the check log carries the immutable digest without a separate artifact action dependency'
+            echo '- binding was generated and validated on the trusted X230; the check log retains the complete framed binding bytes and their digest without a separate artifact action dependency'
           } >> "${GITHUB_STEP_SUMMARY}"
           printf 'TRNM_DOCUMENTATION_MERGE_BINDING_SHA256=%s\n' "${digest}"
+          python3 -B scripts/ci/documentation_binding_log_v1.py emit \
+            --binding "${binding}" --expected-sha256 "${digest}" \
+            --mode merge
