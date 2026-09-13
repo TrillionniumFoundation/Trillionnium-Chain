@@ -28,6 +28,13 @@ def load_fixture() -> tuple[dict, dict]:
 class RegistryMutants(unittest.TestCase):
     def setUp(self) -> None:
         self.data, self.coverage = load_fixture()
+        # Synthetic connected lineage tests relationships, not live PR numbers.
+        self.data['integration_observation']['selected_successor_pr'] = 120
+        self.data['integration_observation']['stack'] = [
+            {'pr': 120, 'base_ref': 'main', 'head_ref': 'fix/chain-parent'},
+            {'pr': 121, 'base_ref': 'fix/chain-parent', 'head_ref': 'fix/chain-child'},
+            {'pr': 122, 'base_ref': 'fix/chain-child', 'head_ref': 'fix/chain-leaf'},
+        ]
 
     def rejects(self, code: str) -> None:
         with self.assertRaises(gate.DocumentationError) as caught:
@@ -166,7 +173,7 @@ class RegistryMutants(unittest.TestCase):
         self.rejects('DOC-LINEAGE')
 
     def test_child_is_not_selected_successor(self) -> None:
-        self.data['integration_observation']['selected_successor_pr'] = 86
+        self.data['integration_observation']['selected_successor_pr'] = 122
         self.rejects('DOC-LINEAGE')
 
     def test_historical_source_is_not_mutable_current_tip(self) -> None:

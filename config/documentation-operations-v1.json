@@ -2,7 +2,7 @@
   "schema": "trnm-documentation-operations-v1",
   "plan_id": "trnm-chain-development-plan-v2",
   "primary_module": "M17",
-  "source_observation": "d120c992a144c566a105277bdcbff420a33ccccd",
+  "source_observation": "435c0168558d75fc70aaa11980a179b9d5980f33",
   "scope": "bounded-foundation-operations-not-all-enabled-operations",
   "module_ids": [
     "M02",

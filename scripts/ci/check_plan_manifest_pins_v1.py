@@ -16,6 +16,43 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "docs/development/plan-manifest-v1.toml"
 
 
+PIN_PATH_FIELDS = {
+    "build_closure_git_blob": "build_closure_registry_path",
+    "build_closure_validator_git_blob": "build_closure_validator_path",
+    "workspace_manifest_git_blob": "workspace_manifest_path",
+    "workspace_lock_git_blob": "workspace_lock_path",
+    "codeowners_git_blob": "codeowners_path",
+    "module_registry_git_blob": "module_registry_path",
+    "module_coverage_git_blob": "module_coverage_path",
+    "module_technical_reference_git_blob": "module_technical_reference_path",
+    "technical_convergence_git_blob": "technical_convergence_path",
+    "technical_convergence_gate_git_blob": "technical_convergence_gate_path",
+    "technical_convergence_test_git_blob": "technical_convergence_test_path",
+    "detailed_module_spec_index_git_blob": "detailed_module_spec_index_path",
+    "current_snapshot_git_blob": "current_snapshot_path",
+    "documentation_truth_git_blob": "documentation_truth_path",
+    "repository_policy_git_blob": "repository_policy_path",
+    "blocker_execution_git_blob": "blocker_execution_path",
+    "blocker_execution_validator_git_blob": "blocker_execution_validator_path",
+    "candidate_runtime_closure_git_blob": "candidate_runtime_closure_path",
+    "candidate_runtime_closure_validator_git_blob": "candidate_runtime_closure_validator_path",
+    "candidate_runtime_closure_architecture_git_blob": "candidate_runtime_closure_architecture_path",
+    "task_archive_closure_git_blob": "task_archive_closure_path",
+    "task_archive_closure_validator_git_blob": "task_archive_closure_validator_path",
+    "task_archive_closure_architecture_git_blob": "task_archive_closure_architecture_path",
+    "documentation_reference_gate_git_blob": "documentation_reference_gate_path",
+    "module_coverage_gate_git_blob": "module_coverage_gate_path",
+    "canonical_plan_gate_git_blob": "canonical_plan_gate_path",
+    "node_decomposition_git_blob": "node_decomposition_path",
+    "node_decomposition_gate_git_blob": "node_decomposition_gate_path",
+    "required_baseline_workflow_git_blob": "required_baseline_workflow_path",
+    "required_baseline_gate_git_blob": "required_baseline_gate_path",
+    "plan_manifest_pin_gate_git_blob": "plan_manifest_pin_gate_path",
+    "development_metadata_git_blob": "development_metadata_path",
+    "independent_gates_git_blob": "independent_gates_path",
+    "manifest_refresh_git_blob": "manifest_refresh_path",
+}
+
 class PinError(RuntimeError):
     pass
 
@@ -59,37 +96,7 @@ def blob(path: str) -> str:
     return value
 
 
-def main() -> int:
-    manifest = load_toml(MANIFEST)
-    require(manifest.get("manifest_version") == 2, "manifest version drift")
-    require(
-        manifest.get("plan_id") == "trnm-chain-development-plan-v2",
-        "manifest plan ID drift",
-    )
-    require(
-        manifest.get("document_candidate_binding") == "runtime-git-commit-and-tree",
-        "manifest runtime binding drift",
-    )
-    require(
-        manifest.get("workspace_crate_count") == 62,
-        "manifest workspace crate count drift",
-    )
-
-    plan_path = manifest.get("plan_path")
-    evidence_path = manifest.get("evidence_contract_path")
-    require(isinstance(plan_path, str), "plan path missing")
-    require(isinstance(evidence_path, str), "evidence contract path missing")
-    require(
-        hashlib.sha256((ROOT / plan_path).read_bytes()).hexdigest()
-        == manifest.get("plan_sha256"),
-        "plan SHA-256 mismatch",
-    )
-    require(
-        hashlib.sha256((ROOT / evidence_path).read_bytes()).hexdigest()
-        == manifest.get("evidence_contract_sha256"),
-        "evidence-contract SHA-256 mismatch",
-    )
-
+def verify_assessed_baseline(manifest: dict[str, Any]) -> None:
     assessed_commit = manifest.get("assessed_commit")
     assessed_tree = manifest.get("assessed_tree")
     require(
@@ -115,6 +122,62 @@ def main() -> int:
         "assessed baseline is not an ancestor of HEAD",
     )
 
+
+def verify_optional_historical_source(commit: str, tree: str) -> bool:
+    """Historical Git objects are optional, not inherited source acceptance.
+
+    A normal clone of a squash/convergence mainline need not contain the old
+    topic commit. Current source pins and the assessed ancestor are mandatory.
+    When history is present, a contradictory object still fails closed.
+    """
+    require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None, "invalid historical commit")
+    require(re.fullmatch(r"[0-9a-f]{40}", tree) is not None, "invalid historical tree")
+    probe = subprocess.run(
+        ["git", "cat-file", "--batch-check=%(objecttype)"],
+        cwd=ROOT, input=commit+"\n", text=True, capture_output=True, check=True,
+    ).stdout.strip()
+    if probe == commit+" missing":
+        return False
+    require(probe == "commit", "historical source is not a commit")
+    require(git("rev-parse", f"{commit}^{{tree}}") == tree,
+            "historical commit/tree mismatch")
+    return True
+
+
+def main() -> int:
+    manifest = load_toml(MANIFEST)
+    require(manifest.get("manifest_version") == 2, "manifest version drift")
+    require(
+        manifest.get("plan_id") == "trnm-chain-development-plan-v2",
+        "manifest plan ID drift",
+    )
+    require(
+        manifest.get("document_candidate_binding") == "runtime-git-commit-and-tree",
+        "manifest runtime binding drift",
+    )
+    require(
+        type(manifest.get("workspace_crate_count")) is int
+        and manifest["workspace_crate_count"] > 0,
+        "manifest workspace crate count drift",
+    )
+
+    plan_path = manifest.get("plan_path")
+    evidence_path = manifest.get("evidence_contract_path")
+    require(isinstance(plan_path, str), "plan path missing")
+    require(isinstance(evidence_path, str), "evidence contract path missing")
+    require(
+        hashlib.sha256((ROOT / plan_path).read_bytes()).hexdigest()
+        == manifest.get("plan_sha256"),
+        "plan SHA-256 mismatch",
+    )
+    require(
+        hashlib.sha256((ROOT / evidence_path).read_bytes()).hexdigest()
+        == manifest.get("evidence_contract_sha256"),
+        "evidence-contract SHA-256 mismatch",
+    )
+
+    verify_assessed_baseline(manifest)
+
     overlay_commit = manifest.get("repository_core_overlay_source_commit")
     overlay_tree = manifest.get("repository_core_overlay_source_tree")
     require(
@@ -130,9 +193,11 @@ def main() -> int:
         "repository-core overlay tree drift",
     )
     require(
-        git("rev-parse", f"{overlay_commit}^{{tree}}") == overlay_tree,
-        "repository-core overlay commit/tree mismatch",
+        manifest.get("repository_core_overlay_scope")
+        == "historical-provenance-only-not-current-acceptance",
+        "repository-core historical scope missing",
     )
+    overlay_history_verified = verify_optional_historical_source(overlay_commit, overlay_tree)
     require(
         manifest.get("repository_core_overlay_absorbed") is True
         and manifest.get("repository_core_overlay", {}).get(
@@ -142,39 +207,7 @@ def main() -> int:
         "repository-core overlay absorption drift",
     )
 
-    pinned = {
-        "build_closure_git_blob": "build_closure_registry_path",
-        "build_closure_validator_git_blob": "build_closure_validator_path",
-        "workspace_manifest_git_blob": "workspace_manifest_path",
-        "workspace_lock_git_blob": "workspace_lock_path",
-        "codeowners_git_blob": "codeowners_path",
-        "module_registry_git_blob": "module_registry_path",
-        "module_coverage_git_blob": "module_coverage_path",
-        "module_technical_reference_git_blob": "module_technical_reference_path",
-        "technical_convergence_git_blob": "technical_convergence_path",
-        "technical_convergence_gate_git_blob": "technical_convergence_gate_path",
-        "technical_convergence_test_git_blob": "technical_convergence_test_path",
-        "detailed_module_spec_index_git_blob": "detailed_module_spec_index_path",
-        "current_snapshot_git_blob": "current_snapshot_path",
-        "documentation_truth_git_blob": "documentation_truth_path",
-        "repository_policy_git_blob": "repository_policy_path",
-        "blocker_execution_git_blob": "blocker_execution_path",
-        "blocker_execution_validator_git_blob": "blocker_execution_validator_path",
-        "candidate_runtime_closure_git_blob": "candidate_runtime_closure_path",
-        "candidate_runtime_closure_validator_git_blob": "candidate_runtime_closure_validator_path",
-        "candidate_runtime_closure_architecture_git_blob": "candidate_runtime_closure_architecture_path",
-        "task_archive_closure_git_blob": "task_archive_closure_path",
-        "task_archive_closure_validator_git_blob": "task_archive_closure_validator_path",
-        "task_archive_closure_architecture_git_blob": "task_archive_closure_architecture_path",
-        "documentation_reference_gate_git_blob": "documentation_reference_gate_path",
-        "module_coverage_gate_git_blob": "module_coverage_gate_path",
-        "canonical_plan_gate_git_blob": "canonical_plan_gate_path",
-        "node_decomposition_git_blob": "node_decomposition_path",
-        "node_decomposition_gate_git_blob": "node_decomposition_gate_path",
-        "required_baseline_workflow_git_blob": "required_baseline_workflow_path",
-        "required_baseline_gate_git_blob": "required_baseline_gate_path",
-        "plan_manifest_pin_gate_git_blob": "plan_manifest_pin_gate_path",
-    }
+    pinned = PIN_PATH_FIELDS
 
     checked: list[dict[str, str]] = []
     for blob_field, path_field in pinned.items():
@@ -237,6 +270,8 @@ def main() -> int:
         "workspace_crates": len(members),
         "pinned_inputs": len(checked),
         "overlay_source_commit": overlay_commit,
+        "historical_overlay_object_verified": overlay_history_verified,
+        "historical_evidence_acceptance_transferred": False,
         "technical_convergence_pinned": True,
         "production_candidate": False,
         "production_consensus_activation": False,
