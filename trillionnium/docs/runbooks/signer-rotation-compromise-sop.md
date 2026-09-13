@@ -91,7 +91,7 @@ Stop conditions:
 Before rotation or containment, prove the signer is not active in two places at once:
 
 ```bash
-ps -ef | grep -E 'trnm-node|cometbft' | grep -v grep
+ps -ef | grep -E 'trnm-node|poco_consensus' | grep -v grep
 lsof -iTCP -sTCP:LISTEN | grep -E '26656|26657|26658|26660'
 ```
 
@@ -240,7 +240,7 @@ Use when the new signer failed validation but the old signer was never suspected
 
 Typical shape:
 ```bash
-pkill -f 'trnm-node|cometbft'
+pkill -f 'trnm-node|poco_consensus'
 # then return ownership to the previously recorded known-good signer context
 ```
 

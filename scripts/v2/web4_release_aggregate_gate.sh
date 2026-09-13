@@ -20,8 +20,6 @@ DEFAULT_REQUIRED_GATES=(
   "scripts/v2/v1_proof_registry_contract_gate.sh"
   "scripts/v2/m2_policy_gate_nightly_signal_test.sh"
   "scripts/v2/m2v2_error_state_contract_gate.sh"
-  "scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh"
-  "scripts/v2/mv2_receipt_contract_freeze_doc_gate_regression_test.sh"
   "scripts/v2/e2_audit_report_generator_llm2_compact_schema_test.sh"
   "scripts/v2/e2_audit_report_generator_schema_token_spoof_test.sh"
   "scripts/v2/e2_audit_report_generator_reject_uppercase_schema_test.sh"

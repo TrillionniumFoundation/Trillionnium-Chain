@@ -1,0 +1,261 @@
+# `trnm-native-execution-v0`
+
+Active zero-foreign deterministic application and durable execution-artifact-P
+owner for the frozen PoCO-BFT v0 profile.
+
+For ordinary, non-empty successor blocks, the application:
+
+- opens one exact authenticated parent JMT snapshot containing committed
+  parameters, signer policy, replay indices, validator lifecycle, PoCO state,
+  and runtime objects;
+- verifies exact signed outer bytes and executes the body in order, so later
+  transactions observe earlier in-block writes;
+- applies runtime, validator-lifecycle, PoCO/cutoff, and mandatory system
+  writes to one collision-checked state plan;
+- independently derives the payload, complete post-state, receipts, and
+  empty-evidence roots;
+- exposes an independent immutable preview request with no block ID or
+  caller-supplied roots, returning only the four derived roots, exact receipts,
+  and request/write-plan fingerprints; final execution recomputes everything;
+- atomically records the canonical `NativeExecutedBlockV0` artifact, complete
+  target snapshot/overlay, replay sets, lifecycle record, store identity, and
+  monotonic local sequence in SQLite; and
+- performs an immutable fresh-connection readback and recomputes the complete
+  target JMT/root before it can return `Valid`.
+
+Prepared P records form a BlockId-keyed overlay DAG rather than a height-keyed
+single slot. Sibling forks can coexist, and a child can execute from the exact
+fresh-confirmed snapshot of a prepared parent. The application commit ID is
+derived when P is created, so a child's parent commitment remains stable when
+that parent is later finalized. Committing is permitted only for the exact
+child of the current committed head; it atomically promotes that finalized
+prefix, retains its prepared descendants, and prunes losing siblings.
+A QC is never interpreted as an application commit or finality instruction.
+An explicit `commit_finalized_block_v0` adapter is available for integration
+tests: it requires a complete `FinalityProofV0`, verifies that proof with the
+strict Ed25519 verifier, binds its finalized header (BlockId, height, state
+root, parent, timestamp, and committed roots) to the exact executed block, and
+then delegates to the existing atomic commit. This adapter is not a Core
+callback, does not mint Safety/signer authority, and does not enable
+`qc_as_application_commit` or production activation.
+
+The schema-v3 journal also contains one separate fresh-genesis state-sync
+import path. Given an exact h1 execution request and a nonzero proof identifier,
+it independently recomputes the full transition from the initialized genesis
+snapshot, atomically installs the h1 application TrustedBase, and records a
+checksummed proof/request/artifact/snapshot binding. It deliberately creates no
+local durable-P row, validation job, completion, terminal fact, or speculative
+overlay. Retry and reopen require byte-exact proof/request readback; a foreign
+proof, a previously used store, row tampering, or schema-v2 store is rejected.
+The proof identifier remains comparison input: this crate does not verify BFT
+finality, so only the Node's consuming Core/Safety/signer commissioning join may
+use the confirmed import.
+
+`DurableNativeApplicationV0` implements `NativeApplicationV0`. Its public owner
+is non-`Clone`, the durable-P record is private, a second process is excluded by
+an owner lock, and reopen validates the complete committed-prefix/overlay DAG.
+Store substitution,
+sequence rollback, artifact/snapshot/lifecycle/replay substitution, schema
+drift, malformed/WAL SQLite sidecars, broken ancestry, duplicate sequences,
+and non-exact commit requests fail closed. A regular hot rollback journal left
+by a killed writer is repaired only through SQLite's own write-transaction
+rollback path, followed by database-and-directory fsync and immutable
+readback; WAL/SHM or unverifiable sidecars remain fail-closed.
+An applied-but-acknowledgment-lost commit is recovered by exact idempotent
+readback; either metadata-only or P-only partial-commit third states are
+permanently fenced. Unresolved prepared P records yield
+`ValidationReplayRequired` with their exact count.
+
+## Authority boundary
+
+This is a durable application boundary, not a complete validator safety path.
+It has no Core permit or Valid callback, no SafetyStore authority, no whole-node
+checkpoint/CAS, no signer watermark, no `RequestSignature`, and no signing,
+network, or broadcast capability. It is not wired into the default Node
+process host and is not a production candidate.
+
+The current tranche is also intentionally narrower than the whole frozen-v0
+protocol:
+
+- evidence must be empty;
+- the committed validator set/epoch supplied at store creation remains the
+  execution authority; validator-set activation and a returned validator-set
+  update are not implemented;
+- a local SQLite sequence detects in-file rollback but is not an external
+  whole-machine anti-rollback authority;
+- a three-boundary SIGKILL matrix (before SQLite commit, after commit, and
+  after directory fsync) plus critical-page short-write tests now prove the
+  local commit coordinator's atomic/replay behavior; this is not a full
+  power-loss, filesystem, or multi-process takeover campaign;
+- database and containing-directory fsyncs are attempted after genesis, H1
+  TrustedBase, and finalized application commits (and during hot-journal
+  recovery), but no external anti-rollback, file-descriptor pinning, remote
+  signer, or whole-node checkpoint evidence is claimed; and
+- canonical runtime attempts preserve typed deterministic rejection codes and
+  authenticated-state unavailability; runtime/mutation/PoCO/lifecycle invariant
+  faults fail closed. Non-runtime outer/body/schema failures still use the
+  existing closed fallback rejection code; exhaustive classification of those
+  helpers remains future work.
+
+Accordingly, `durable_artifact_p=true` and
+`native_application_v0_implementation=true` do not imply Core/Safety authority
+or production activation. The finalized-commit adapter is an integration seam
+only; `qc_as_application_commit`, `core_application_seal_eligible`, and
+`production_candidate` remain false in package and project status metadata.
+
+## Authenticated snapshot recovery
+
+Primary module: M07. Consumers: M06 execution and M08 finalized recovery.
+Snapshot admission checks every retained root against its indexed JMT root
+node, including historical versions below a healthy latest head. A missing
+root node, substituted root node or mismatched retained root rejects recovery.
+This replaces the per-version scan of the full node map with JMT's indexed
+root lookup; it does not prune history or change snapshot codec bytes.
+
+Latest-state admission still verifies every live value and key preimage against
+the latest root. The shared verifier passes one proven value at a time to its
+consumer and detects duplicate keys using borrowed key references. Recovery
+discards these values after verification; callers that request the full live
+map explicitly collect it. This removes an additional full live-value map from
+recovery's peak memory, not the decoded snapshot itself. Complete historical
+leaf audits, incremental persistence, retention/GC and measured finalized
+throughput remain separate obligations. Local corruption regressions do not
+establish an external rollback anchor or independent storage acceptance.
+
+## Native complete-execution vector
+
+The maintained corpus contains only native PoCO inputs and outputs.
+`native-complete-durable-p-v0.json` pins the full four-root ordinary-body
+result, transaction-byte digests, durable sequence transitions, recovery
+dispositions, and authority-false boundary. Its raw file digest is checked by
+the boundary gate, while the Rust test recomputes every value from the native
+inputs. No removed application, node harness, adapter, archive, or differential
+oracle is built or executed.
+
+## Test-only sync fault ownership
+
+Primary module: M06. Consumer: M17 exact-source qualification.
+The `cfg(test)` fault registry is scoped by the exact store path. Different
+store paths may be armed concurrently; two outstanding faults for one path
+are rejected before changing the registry. Matching path and boundary consume
+one fault exactly once. A wrong path or boundary consumes nothing.
+
+Each guard owns an independent allocation identity. Its destructor removes only
+that registration, even after consumption and rearming the same path/boundary.
+Panic unwinding must release only the unwinding test's fault. Registration
+rejection releases the mutex before panicking, so it cannot poison unrelated
+store tests. This is fixture isolation, not a production filesystem identity,
+canonical-path, crash-durability or consensus guarantee. Test callers use the
+same application path at arm and consume; aliases are not normalized here.
+
+The retained direct registry regressions supplement, not replace, the existing
+SQLite initialization, H1 import and finalized-commit sync-failure regressions.
+Parallel tests remain enabled and their failure assertions remain unchanged.
+
+```bash
+cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-execution-v0 --lib --locked
+```
+
+The registry and new tests compile only under `cfg(test)`. Production sync calls,
+commit/recovery logic, public APIs, hashes and database schema are unchanged.
+
+The unwind test first proves that registration succeeded and then checks the
+exact injected panic payload. A panic in registration itself must not satisfy
+an unwind-cleanup test. The same-path race uses two workers, bounded start and
+release channels, and overlapping guard lifetimes to require exactly one
+successful registration. The winning fault is consumed from another thread,
+then the same path is rearmed before the old worker guard is dropped; the new
+registration must survive that drop. All five direct registry tests retain
+parallel execution. These tests supplement the existing SQLite initialization,
+H1 import and finalized-commit uncertainty tests; they do not replace them.
+
+
+## Native checkpoint authorization
+
+Primary module: M06. The native owner now produces the application-side
+checkpoint authority chain in `poco_checkpoint`, `poco_authenticated_candidate`,
+`poco_epoch_commitment`, `poco_checkpoint_header`, `poco_joint_handoff`, and
+`poco_preparation_journal`. The private constructors accept no generic verifier,
+caller-normalized candidate transcript, or inert-kernel conversion.
+
+`prepare_native_poco_checkpoint_v0` reconstructs the exact committed cutoff JMT
+and lifecycle, audits the complete kind-16 projection, computes B2-G with strict
+Ed25519 verification, and joins the raw H1 finality chain and generated H2
+namespace membership proofs. It derives native execution from the live owner's
+preview and freezes the exact parent ID, timestamp, body, receipts and state.
+The returned opaque `PreparedNativePocoCheckpointV0` requires a successful
+independent preparation-journal reservation and exact header binding.
+
+`confirm_poco_checkpoint_v0` revalidates that existing journal reservation,
+requires the exact checkpoint execution to be COMMITTED in the same native
+owner, compares the complete body and receipts, reconstructs the post-execution
+candidate/commitment, and strictly verifies the checkpoint/two-seal and handoff
+proofs. `ConfirmedNativePocoCheckpointV0` retains the owner-affine durable row;
+it has no public constructor or conversion from naked roots or proof kernels.
+After reopening, the same raw proof inputs reconstruct preparation using the
+exact committed P readback instead of pretending an old parent is a live head.
+
+The preparation journal publishes a reservation or binding only after SQLite
+commit and a fresh connection read back the exact transition, preparation,
+bound record and phase, with database path/inode identity checked again. A
+missing row is not recreated by this confirmation. Commit or readback
+uncertainty sets the process-shared sticky halt; the capability is withheld.
+
+Local admission limits are 64 transitions, 1,024 preparation records and
+256 MiB of aggregate encoded records to audit. New records must fit before
+insertion; exact retries and binding an existing reservation remain possible
+at the record-count limit. SQLite also has a 512 MiB database page ceiling,
+with database and sidecar physical bytes checked before connections and after
+commit readback. These checks are not an OS disk quota and do not isolate
+transient WAL space during a transaction. Ordinary capacity exhaustion returns
+an embedded `std::io::ErrorKind::StorageFull` as local unavailability; it does
+not mark a peer block invalid, halt a healthy journal, or erase earlier rows.
+There is no automatic journal garbage collection and no independent external
+rollback anchor: coherently restoring the application and sidecar together
+still requires the separate whole-node recovery authority.
+
+Four native database regressions cover committed-cutoff enforcement, exact
+preparation/reopen, a signed checkpoint/two-seal/handoff with committed P and
+restart recovery, and held-token rejection after sidecar halt, row deletion,
+file replacement or owner substitution. The historical raw protocol corpora
+and all source privacy/durable-preparation checks remain enabled. These are
+local implementation tests, not independent module or production acceptance.
+The 20 journal regressions additionally cover publication-time replacement,
+halt and missing-row faults, exact retries at the real record limit, oversized
+database rejection and scan/transition admission budgets.
+
+This application authority does not advance Core's epoch fence or mint a
+signing permit. The separate consensus checkpoint-applied/seal/activation state
+and the native JMT/version progression through the seal heights remain required
+before a live first block of the next epoch can execute.
+
+## Frozen operation-sequence profile boundary
+
+The retained `poco-application-operation-sequences-v0.json` corpus contains nine
+sequences, 18 positive steps and nine negative cases. Its five full-store
+sequences share eight initial physical writes whose JMT root is exactly
+reproducible by the current native store. Their historical signer-policy hash
+uses a different domain profile, so the current native application constructor
+rejects that genesis with `bootstrap lifecycle signer-policy mismatch`. A Rust
+negative regression locks both the exact initial root and this refusal.
+
+This does not provide a current-profile durable replay of the nine sequences.
+The original signed operations bind their decision IDs to the historical
+source root and authority commitment; rewriting the initial policy and signing
+new operations would produce a different corpus. A reviewed profile mapping
+and complete native submission, commit and recovery evidence remain required.
+The historical operation-sequence gate is not restored or declared complete
+by this negative test.
+
+The same test module now also replays the unchanged corpus through the actual
+private PoCO transition kernel. Nine named cases cover all 18 positive steps
+and nine typed rejections, including the four explicitly isolated prune
+sequences. They compare frozen operation IDs/counts/roots, complete namespace
+writes, mutation roots, manifest/projection bytes and historical JMT roots;
+negative cases require unchanged overlay and snapshot bytes. The corpus SHA-256
+is pinned in the test, and no expected root is regenerated from the kernel.
+
+This seam supplies historical context directly inside `cfg(test)`. It does not
+admit that context through the current application owner, authenticate outer
+signatures, call ProcessProposal/FinalizeBlock, persist a durable P artifact or
+qualify restart. The separate owner-profile rejection above remains required.

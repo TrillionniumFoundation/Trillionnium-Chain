@@ -1,0 +1,38 @@
+[package]
+name = "trnm-consensus-signer-journal"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-p1-prototype"
+protocol = "poco-bft-v0"
+production_signer = false
+private_key_api = false
+external_monotonic_watermark_required = true
+external_monotonic_watermark_injection_api = true
+safety_rules = false
+safety_rules_evaluation = false
+safe_vote_authority = false
+production_activation = false
+hotstuff_lock_state = false
+proposal_signer_injection_api = true
+proposal_signer_runtime_wired = false
+proposal_signer_production_activation = false
+
+[dependencies]
+fs2 = "0.4"
+getrandom = "0.2"
+libc = "0.2"
+rusqlite = { version = "0.32", features = ["bundled"] }
+sha2 = "0.10"
+subtle = "2.6"
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+
+[dev-dependencies]
+ed25519-dalek = "2.2"
+serde_json = "1"
+tempfile = "3"

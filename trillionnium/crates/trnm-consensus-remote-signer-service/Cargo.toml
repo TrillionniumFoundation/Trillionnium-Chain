@@ -1,0 +1,47 @@
+[package]
+name = "trnm-consensus-remote-signer-service"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-stage1-remote-signer-service-p0"
+protocol = "poco-bft-v0"
+unix_socket_transport = true
+persistent_monotonic_cas_watermark = true
+request_epoch_view_validator_purpose_nonce_binding = true
+private_key_process_boundary = true
+fixture_private_key = true
+production_credential_source = false
+external_monotonic_watermark = false
+safety_rules_evaluation = false
+safe_vote_authority = false
+signature_event_journal = false
+production_signature_producer = false
+consensus_runtime_integration = false
+runtime_activation = false
+production_activation = false
+production_candidate = false
+
+[lib]
+name = "trnm_consensus_remote_signer_service"
+path = "src/lib.rs"
+
+[[bin]]
+name = "trnm-remote-signer-p0"
+path = "src/bin/trnm-remote-signer-p0.rs"
+
+[dependencies]
+ed25519-dalek = "2"
+libc = "0.2"
+rusqlite = { version = "0.32", features = ["bundled"] }
+sha2 = "0.10"
+trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
+trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark" }
+trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+
+[dev-dependencies]
+tempfile = "3"

@@ -16,6 +16,14 @@ mkdir -p "$OUT_DIR" "$ROOT/run/message-gateway"
 RELIABILITY_STORE="${RELIABILITY_STORE:-sqlite}"
 RELIABILITY_DB_PATH="${RELIABILITY_DB_PATH:-$OUT_DIR/reliability-phasea.sqlite}"
 
+# The trnm-rpc binary is intentionally a development-only local-file/model
+# harness. Require an exact, explicit caller opt-in rather than silently
+# enabling it in this script; production execution stays fail-closed.
+if [[ "${TRNM_RPC_DEVELOPMENT_ONLY:-}" != "1" ]]; then
+  echo "[FAIL] phaseA gate requires explicit TRNM_RPC_DEVELOPMENT_ONLY=1; production_ready=false" >&2
+  exit 5
+fi
+
 INGRESS="$ROOT/run/message-gateway/requests.jsonl"
 BACKUP="$ROOT/run/message-gateway/requests.backup-$TS.jsonl"
 SUBMIT_LOG="/tmp/trnm-worker-agent-submissions-phasea-$TS.jsonl"

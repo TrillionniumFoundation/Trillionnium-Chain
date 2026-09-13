@@ -185,6 +185,8 @@ impl GovernanceGuard {
         Ok(())
     }
 
+    // Public governance ABI: every argument is independently validated and audited.
+    #[allow(clippy::too_many_arguments)]
     pub fn propose(
         &mut self,
         caller: &str,
@@ -423,7 +425,10 @@ impl GovernanceGuard {
         }
         if self.proposals.values().any(|proposal| {
             proposal.kind == ProposalKind::EmergencyUnpause
-                && matches!(proposal.status, ProposalStatus::Pending | ProposalStatus::Queued)
+                && matches!(
+                    proposal.status,
+                    ProposalStatus::Pending | ProposalStatus::Queued
+                )
         }) {
             return Err(Error::PauseRestoreAlreadyScheduled);
         }
@@ -642,7 +647,9 @@ impl GovernanceGuard {
                 normalized.object_id = Some("emergency_pause".to_string());
                 normalized.related_id = Some("pause_state".to_string());
                 normalized.reason = Some("pause_activation".to_string());
-                normalized.note = Some(format!("state={previous_state}->{next_state}, reason_hash={reason_hash}"));
+                normalized.note = Some(format!(
+                    "state={previous_state}->{next_state}, reason_hash={reason_hash}"
+                ));
                 normalized
             }
             GovernanceEvent::PauseRestoreScheduled {
@@ -1436,7 +1443,10 @@ mod tests {
         gov.cancel("alice", pid).unwrap();
         let audit_len_before_requeue = gov.audit_log().len();
 
-        assert_eq!(gov.queue("alice", pid).unwrap_err(), Error::AlreadyFinalized);
+        assert_eq!(
+            gov.queue("alice", pid).unwrap_err(),
+            Error::AlreadyFinalized
+        );
 
         let proposal = gov.proposal(pid).unwrap();
         assert_eq!(proposal.status, ProposalStatus::Cancelled);
@@ -1656,7 +1666,8 @@ mod tests {
 
         let now = 5_800;
         let eta = now + 60;
-        gov.emergency_pause("guardian", "incident-self-exec").unwrap();
+        gov.emergency_pause("guardian", "incident-self-exec")
+            .unwrap();
         let pid = gov
             .schedule_unpause("guardian", eta, "recover-self-exec", now)
             .unwrap();
@@ -1717,10 +1728,10 @@ mod tests {
         assert!(gov.bridge_state().emergency_paused);
         assert_eq!(gov.proposals.len(), 0);
         assert_eq!(gov.audit_log().len(), audit_len_before);
-        assert!(!gov.audit_log().iter().any(|event| matches!(
-            event,
-            GovernanceEvent::PauseRestoreScheduled { .. }
-        )));
+        assert!(!gov
+            .audit_log()
+            .iter()
+            .any(|event| matches!(event, GovernanceEvent::PauseRestoreScheduled { .. })));
     }
 
     #[test]
@@ -1765,7 +1776,8 @@ mod tests {
         let now = 6_500;
         let eta = now + 60;
 
-        gov.emergency_pause("guardian", "incident-non-exec").unwrap();
+        gov.emergency_pause("guardian", "incident-non-exec")
+            .unwrap();
         let pid = gov
             .schedule_unpause("guardian", eta, "recover-non-exec", now)
             .unwrap();
@@ -1925,14 +1937,17 @@ mod tests {
             .iter()
             .find(|event| {
                 event.event_type == "governance.pause_restore_scheduled"
-                    && event.object_id.as_deref() == Some(pid_s.as_str())
+                    && event.object_id.as_deref() == Some("emergency_pause")
+                    && event.related_id.as_deref() == Some(pid_s.as_str())
             })
             .unwrap();
 
         assert_eq!(event.actor.as_deref(), Some("guardian"));
-        assert_eq!(event.related_id.as_deref(), Some("emergency_pause"));
-        assert_eq!(event.reason.as_deref(), Some("recover-schedule-note"));
-        assert_eq!(event.note.as_deref(), Some("eta=7140"));
+        assert_eq!(event.reason.as_deref(), Some("pause_restore_schedule"));
+        assert_eq!(
+            event.note.as_deref(),
+            Some("eta=7140, reason_hash=recover-schedule-note")
+        );
     }
 
     #[test]
@@ -1998,7 +2013,10 @@ mod tests {
             })
             .unwrap();
 
-        assert_eq!(queued.related_id.as_deref(), Some("challenge_window_blocks"));
+        assert_eq!(
+            queued.related_id.as_deref(),
+            Some("challenge_window_blocks")
+        );
         assert_eq!(queued.reason.as_deref(), Some("kind=ParamChange"));
         assert_eq!(event.related_id.as_deref(), Some("challenge_window_blocks"));
         assert_eq!(event.amount, Some(1));
@@ -2038,7 +2056,8 @@ mod tests {
         let now = 7_300;
         let eta = now + 60;
 
-        gov.emergency_pause("guardian", "incident-finalized").unwrap();
+        gov.emergency_pause("guardian", "incident-finalized")
+            .unwrap();
         let pid = gov
             .schedule_unpause("guardian", eta, "recover-finalized", now)
             .unwrap();
@@ -2147,7 +2166,10 @@ mod tests {
 
         gov.set_guardian("admin", "guardian", false).unwrap();
 
-        assert_eq!(gov.cancel("guardian", pid).unwrap_err(), Error::Unauthorized);
+        assert_eq!(
+            gov.cancel("guardian", pid).unwrap_err(),
+            Error::Unauthorized
+        );
 
         let proposal = gov.proposal(pid).unwrap();
         assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
@@ -2203,7 +2225,8 @@ mod tests {
         let now = 7_540;
         let eta = now + 60;
 
-        gov.emergency_pause("guardian", "incident-reschedule").unwrap();
+        gov.emergency_pause("guardian", "incident-reschedule")
+            .unwrap();
         let first_pid = gov
             .schedule_unpause("guardian", eta, "recover-first", now)
             .unwrap();
@@ -2227,10 +2250,7 @@ mod tests {
         assert_eq!(
             gov.audit_log()
                 .iter()
-                .filter(|event| matches!(
-                    event,
-                    GovernanceEvent::PauseRestoreScheduled { .. }
-                ))
+                .filter(|event| matches!(event, GovernanceEvent::PauseRestoreScheduled { .. }))
                 .count(),
             2
         );

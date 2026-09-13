@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package trnm.poco.bft.v0;
+
+import "trnm/poco/bft/v0/common.proto";
+import "trnm/poco/bft/v0/consensus.proto";
+import "trnm/poco/bft/v0/epoch.proto";
+
+// Transport encoding only. Protobuf bytes are NOT signing, finality-proof, or
+// checkpoint commitment bytes. A verifier must reconstruct every CEV0 digest,
+// enforce exact chain/genesis/version/epoch/view/set/parameter bindings, and
+// recompute weighted quorums from the supplied committed validator sets.
+//
+// Reference bounds: at most 64 ordered epoch_handoffs per update, at most 4096
+// contiguous headers, state-proof bytes <= 1 MiB, key <= 4 KiB, value <= 4 MiB,
+// and the max_consensus_message_bytes reference value is 8 MiB. That message
+// limit is measured on the decoded transport body after decompression and
+// before external stream framing; it is not a complete-WireEnvelope bound or
+// a CEV0 logical-object validity rule. Exact sender_node_id and message_id
+// field bounds, session framing, compression, and multiplexing remain P2
+// admission policy and MUST be frozen before network activation.
+
+// One complete signed header proposal plus the QC that certifies its exact
+// block ID. Old pre-freeze tags 2..4 lacked a proposer signature/TC and are
+// intentionally rejected rather than inferred.
+message CertifiedHeader {
+  BlockHeader header = 1;
+  reserved 2, 3, 4;
+  QuorumCertificate justify_qc = 5;
+  TimeoutCertificate timeout_certificate = 6; // Absent for a next-view proposal.
+  EpochAnchorAuthorization epoch_anchor_authorization = 7;
+  bytes proposer_signature = 8; // Exactly 64-byte Ed25519 signature.
+  QuorumCertificate certifying_qc = 9;
+  bytes block_id = 10; // Recomputed transport redundancy; exactly 32 bytes.
+
+  reserved 64 to 127;
+}
+
+// Transport projection of the logical FinalityProofV0: an exact direct
+// b0 <- b1 <- b2 three-certified-block finality witness. All headers/QCs use
+// one epoch, validator set, parameter set, and protocol version.
+message ThreeChainFinalityProof {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint32 protocol_version = 4;
+  uint64 epoch = 5;
+  bytes validator_set_hash = 6;
+  bytes consensus_parameters_hash = 7;
+  CertifiedHeader finalized_block = 8; // signed p0 / certifying q0.
+  CertifiedHeader child = 9; // signed p1 / certifying q1.
+  CertifiedHeader grandchild = 10; // signed p2 / certifying q2.
+  bytes finality_proof_digest = 11; // finality-proof domain; recomputed.
+
+  reserved 64 to 127;
+}
+
+// Persisted weak-subjectivity anchor. trusted_at_local_time_ms and
+// trust_source_description are local metadata and are never reconstructed into
+// a consensus signing preimage.
+message TrustedCheckpoint {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint32 protocol_version = 4;
+  uint64 epoch = 5;
+  uint64 height = 6;
+  bytes block_id = 7;
+  bytes state_root = 8;
+  uint64 header_timestamp_ms = 9;
+  ValidatorSet active_validator_set = 10;
+  bytes active_validator_set_hash = 11;
+  ConsensusParameters active_consensus_parameters = 12;
+  bytes consensus_parameters_hash = 13;
+  bytes finality_proof_digest = 14;
+  uint64 trusted_at_local_time_ms = 15;
+  bytes trust_source_description = 16; // Local metadata, <= 4 KiB.
+
+  reserved 64 to 127;
+}
+
+// Complete transport bundle for one checkpoint+seal+joint-handoff transition.
+// It has no independent frozen CEV0 digest/domain. The old_checkpoint_finality
+// proof MUST be exactly checkpoint <- seal_1 <- seal_2. The new_epoch_finality
+// proof must finalize a block in the activated new epoch before a light client
+// adopts it as a new trusted checkpoint.
+message EpochHandoffProof {
+  uint32 schema_version = 1;
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  ThreeChainFinalityProof old_checkpoint_finality = 4;
+  NextEpochCommitment next_epoch_commitment = 5;
+  ValidatorSet old_validator_set = 6;
+  ValidatorSet new_validator_set = 7;
+  ConsensusParameters old_consensus_parameters = 8;
+  ConsensusParameters new_consensus_parameters = 9;
+  HandoffDescriptor handoff_descriptor = 10;
+  JointHandoffCertificate joint_handoff_certificate = 11;
+  ProtocolUpgradePlan protocol_upgrade_plan = 12; // Absent if no upgrade.
+  Proposal first_new_epoch_proposal = 13;
+  ThreeChainFinalityProof new_epoch_finality = 14;
+  // Removed before activation: no canonical preimage/domain was frozen for an
+  // aggregate handoff-proof identity. Nested objects retain their own digests.
+  reserved 15;
+
+  reserved 64 to 127;
+}
+
+message LightClientUpdate {
+  uint32 schema_version = 1;
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  TrustedCheckpoint trusted_checkpoint = 4;
+  // Contiguous parent-linked headers not already embedded in handoff/finality
+  // proofs. Height equality alone never substitutes for this ancestry.
+  repeated BlockHeader contiguous_header_path = 5;
+  repeated EpochHandoffProof epoch_handoffs = 6;
+  ThreeChainFinalityProof target_finality = 7;
+  ValidatorSet target_validator_set = 8;
+  ConsensusParameters target_consensus_parameters = 9;
+  TrustedCheckpoint target_checkpoint = 10;
+
+  reserved 64 to 127;
+}
+
+enum StateProofKind {
+  STATE_PROOF_KIND_UNSPECIFIED = 0;
+  STATE_PROOF_KIND_MEMBERSHIP = 1;
+  STATE_PROOF_KIND_NON_MEMBERSHIP = 2;
+
+  reserved 16 to 31;
+}
+
+enum StateProofScheme {
+  STATE_PROOF_SCHEME_UNSPECIFIED = 0;
+  STATE_PROOF_SCHEME_ICS23_JMT_V0 = 1;
+
+  reserved 16 to 31;
+}
+
+// Application proof is meaningful only after the named header/state_root is
+// finalized by target_finality and trusted by the light client.
+message StateCommitmentProof {
+  uint32 schema_version = 1;
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint32 protocol_version = 4;
+  uint64 epoch = 5;
+  uint64 view = 6;
+  uint64 height = 7;
+  bytes validator_set_hash = 8;
+  bytes consensus_parameters_hash = 9;
+  bytes block_id = 10;
+  bytes state_root = 11;
+  StateProofKind proof_kind = 12;
+  StateProofScheme proof_scheme = 13;
+  bytes key = 14;
+  bytes value = 15; // Empty for non-membership; otherwise <= 4 MiB.
+  bytes proof = 16; // <= 1 MiB.
+
+  reserved 64 to 127;
+}
+
+message LightClientProof {
+  LightClientUpdate update = 1;
+  repeated StateCommitmentProof state_proofs = 2; // At most 256.
+
+  reserved 64 to 127;
+}

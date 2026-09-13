@@ -1308,7 +1308,6 @@ fn restore_pending_gov_update_mismatched_snapshot_key_rewinds_state_root_by_remo
         }),
     );
 
-    let empty_root = empty_root;
     assert_eq!(
         state.state_root(),
         empty_root,
@@ -1373,7 +1372,7 @@ fn restore_pending_gov_update_rejects_bare_emergency_pause_alias_in_resolve_auth
     let baseline_root = state.state_root();
 
     state
-        .stage_or_confirm_resolve_approval(5_241_1, 7, true, "resolver-a", "resolver-a,resolver-b")
+        .stage_or_confirm_resolve_approval(52_411, 7, true, "resolver-a", "resolver-a,resolver-b")
         .expect("initial staged resolve approval should succeed");
     let pending_root = state.state_root();
     assert_ne!(
@@ -1381,7 +1380,7 @@ fn restore_pending_gov_update_rejects_bare_emergency_pause_alias_in_resolve_auth
         "sanity: staged pending resolve approval must perturb the root before bare emergency_pause alias replay"
     );
     assert!(
-        state.pending_resolve_approval_snapshot(5_241_1).is_some(),
+        state.pending_resolve_approval_snapshot(52_411).is_some(),
         "sanity: pending resolve approval should exist before the fail-closed bare emergency_pause alias restore"
     );
 
@@ -1400,7 +1399,7 @@ fn restore_pending_gov_update_rejects_bare_emergency_pause_alias_in_resolve_auth
         "bare emergency_pause alias resolve_authority restore snapshots must fail closed instead of materializing a queued governance update"
     );
     assert!(
-        state.pending_resolve_approval_snapshot(5_241_1).is_none(),
+        state.pending_resolve_approval_snapshot(52_411).is_none(),
         "rejecting a bare emergency_pause alias resolve_authority restore snapshot must scrub staged pending resolve metadata"
     );
     assert_eq!(
@@ -1776,7 +1775,7 @@ fn task_metering_reward_terms_should_affect_state_root_even_when_usage_metrics_m
     let mut st2 = StateStore::new();
 
     let base_task = TaskObject {
-        task_id: 6_504_1,
+        task_id: 65_041,
         creator: "alice".into(),
         bounty: 42,
         status: TaskStatus::Open,
@@ -8851,7 +8850,9 @@ fn node_recovery_checkpoint_verification_accepts_max_length_canonical_proposal_h
         wal_entry_hash_hex: wal.content_hash_hex(),
     }];
 
-    let got = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &[wal.clone()]).unwrap();
+    let got =
+        verify_wal_and_find_checkpoint_node_recovery(&checkpoints, std::slice::from_ref(&wal))
+            .unwrap();
 
     assert_eq!(
         got,

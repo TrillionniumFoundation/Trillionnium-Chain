@@ -387,8 +387,8 @@ fn oversized_critical_reserve_clamp_reopens_shared_headroom_immediately_after_on
     assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
     assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(g.queued_counts(), (0, 2, 2));
-    assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-    assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+    assert!(!g.qos_snapshot().fresh_normal_admissible);
+    assert!(!g.qos_snapshot().fresh_critical_admissible);
 
     // One real drain must immediately reopen fresh admission for both classes
     // under the clamp, without waiting for a full drain or idle self-heal.

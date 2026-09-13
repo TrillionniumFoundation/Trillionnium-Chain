@@ -32,7 +32,7 @@ jobs:
   guard:
     runs-on: ubuntu-latest
     steps:
-      - run: python3 scripts/summarize_aggressive_profile.py
+      - run: python3 ./scripts/summarize_aggressive_profile.py
 YAML
 
 WORKFLOW_ROOT="$WORKFLOW_ROOT" \

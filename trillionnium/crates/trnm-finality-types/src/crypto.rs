@@ -82,6 +82,17 @@ pub fn verify_hex(public_key_hex: &str, message: &[u8], signature_hex: &str) -> 
         .map_err(|_| anyhow!("Ed25519 signature verification failed"))
 }
 
+pub(crate) fn verify_hex_strict(
+    public_key_hex: &str,
+    message: &[u8],
+    signature_hex: &str,
+) -> Result<()> {
+    let key = verifying_key_from_hex(public_key_hex)?;
+    let signature = decode_signature("signature_hex", signature_hex)?;
+    key.verify_strict(message, &signature)
+        .map_err(|_| anyhow!("strict Ed25519 signature verification failed"))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -97,6 +108,8 @@ mod tests {
         let key = SigningKey::from_bytes(&[7u8; 32]);
         let signature = sign_hex(&key, b"payload");
         verify_hex(&public_key_hex(&key), b"payload", &signature).unwrap();
+        verify_hex_strict(&public_key_hex(&key), b"payload", &signature).unwrap();
         assert!(verify_hex(&public_key_hex(&key), b"tampered", &signature).is_err());
+        assert!(verify_hex_strict(&public_key_hex(&key), b"tampered", &signature).is_err());
     }
 }

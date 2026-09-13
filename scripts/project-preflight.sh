@@ -222,8 +222,9 @@ case "$project_id" in
     ;;
   trillionnium-chain)
     [[ -f "$root/trillionnium/Cargo.toml" ]] || error "missing Chain Cargo workspace"
-    rg -q '"crates/trnm-consensus-app"' "$root/trillionnium/Cargo.toml" || error "canonical consensus app missing"
-    rg -q '"crates/trnm-runtime"' "$root/trillionnium/Cargo.toml" || error "canonical runtime missing"
+    rg -q '"crates/trnm-consensus-core"' "$root/trillionnium/Cargo.toml" || error "native consensus core missing"
+    rg -q '"crates/trnm-poco-node"' "$root/trillionnium/Cargo.toml" || error "native node missing"
+    python3 "$root/scripts/ci/check_native_consensus_only.py" >/dev/null || error "native-only consensus boundary failed"
     ;;
   trillionnium-openra-rts)
     lock="$root/ENGINE_SOURCE_LOCK.json"
@@ -324,7 +325,7 @@ if data.get("schema") != 1:
     issues.append("schema must be 1")
 if data.get("legacy_chain_allowed") is not False:
     issues.append("legacy_chain_allowed must be explicitly false")
-if data.get("canonical_chain_path") != ["CometBFT", "trnm-consensus-app", "trnm-runtime", "AppHash"]:
+if data.get("canonical_chain_path") != ["PoCO consensus", "trnm-native-application", "trnm-runtime", "AppHash"]:
     issues.append("canonical_chain_path is not canonical")
 if data.get("status") not in {"blocked", "ready"}:
     issues.append("status must be blocked or ready")
@@ -599,6 +600,18 @@ if [[ "$mode" == "--push" ]]; then
     esac
   done <"$push_updates_file"
   [[ $update_count -gt 0 ]] || warn "no pre-push ref updates were supplied; URL policy only was checked"
+fi
+
+ci_runner_policy_source=--worktree
+case "$mode" in
+  --staged) ci_runner_policy_source=--staged ;;
+  --push) ci_runner_policy_source=--head ;;
+esac
+if ! bash "$root/scripts/check_ci_runner_policy.sh" "$ci_runner_policy_source"; then
+  error "GitHub Actions jobs must use only the dedicated X230 self-hosted runner"
+fi
+if ! bash "$root/scripts/check_cargo_offline_policy.sh" "$ci_runner_policy_source"; then
+  error "GitHub Actions Cargo jobs must use the frozen X230 offline policy"
 fi
 
 printf 'warnings=%d errors=%d\n' "$warnings" "$errors"

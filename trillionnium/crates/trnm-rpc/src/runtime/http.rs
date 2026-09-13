@@ -228,6 +228,9 @@ fn health_probe_body(ts_unix_ms: u64) -> String {
     serde_json::json!({
         "ok": true,
         "service": "trnm-rpc",
+        "scope": "local-file-model-harness",
+        "development_only": true,
+        "production_ready": false,
         "ts_unix_ms": ts_unix_ms,
         "version": 1
     })
@@ -627,7 +630,7 @@ mod tests {
         };
 
         assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
-        assert!(response.contains("Content-Length: 50\r\n"));
+        assert!(response.contains("Content-Length: 144\r\n"));
         assert!(response.ends_with("\r\n\r\n"));
         assert!(!response.ends_with("\"version\":1}"));
     }
@@ -643,7 +646,7 @@ mod tests {
         let response = json_response_for_method(request.0, "200 OK", &health_probe_body(42));
 
         assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
-        assert!(response.contains("Content-Length: 50\r\n"));
+        assert!(response.contains("Content-Length: 144\r\n"));
         assert!(response.ends_with("\r\n\r\n"));
         assert!(!response.ends_with("\"version\":1}"));
     }
@@ -704,9 +707,21 @@ mod tests {
 
         assert_eq!(json.get("ok"), Some(&serde_json::Value::Bool(true)));
         assert_eq!(json.get("service"), Some(&serde_json::Value::String("trnm-rpc".into())));
+        assert_eq!(
+            json.get("scope"),
+            Some(&serde_json::Value::String("local-file-model-harness".into()))
+        );
+        assert_eq!(
+            json.get("development_only"),
+            Some(&serde_json::Value::Bool(true))
+        );
+        assert_eq!(
+            json.get("production_ready"),
+            Some(&serde_json::Value::Bool(false))
+        );
         assert_eq!(json.get("ts_unix_ms"), Some(&serde_json::Value::from(42u64)));
         assert_eq!(json.get("version"), Some(&serde_json::Value::from(1)));
-        assert_eq!(json.as_object().map(|obj| obj.len()), Some(4));
+        assert_eq!(json.as_object().map(|obj| obj.len()), Some(7));
     }
 
     #[test]

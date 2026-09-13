@@ -1,0 +1,23 @@
+{
+  "schema": "trnm.poco-bft.snapshot-namespace.v0",
+  "version": 0,
+  "status": "B2-H2 cutoff-rooted JMT/ICS23 namespace and manifest-relative completeness",
+  "jmt": { "crate": "jmt", "version": "0.12.0", "hash": "sha256", "ics23_spec": "jmt::ics23_spec()" },
+  "namespace": { "key_domain_ascii": "trnm/authenticated-state/v4", "discriminant": 8, "manifest_component": "manifest", "entry_components": ["entry", "kind_u8", "logical_key"] },
+  "entry_kinds": {
+    "1": "consumption_certificate", "2": "consumer_key_authorization", "3": "consumer_nonce",
+    "4": "unique_consumption_tuple", "5": "meter_definition", "6": "settlement",
+    "7": "measurement_evidence", "8": "relationship_classification", "9": "validator_registration",
+    "10": "active_bond", "11": "jail_status", "12": "revocation_or_challenge",
+    "13": "validator_configuration", "14": "consensus_parameters", "15": "rollout_or_governance"
+  },
+  "entry_cev0": [["schema_version","u16=0"],["kind","u8"],["logical_key","Bytes"],["value","Bytes"]],
+  "manifest_cev0": [["schema_version","u16=0"],["namespace","u8=8"],["cutoff_height","u64"],["entry_count","u32"],["entries_root","Hash32"]],
+  "ordered_root": { "entry_domain": "trnm.poco-bft.snapshot-entry.v0", "node_domain": "trnm.poco-bft.snapshot-node.v0", "root_domain": "trnm.poco-bft.snapshot-root.v0", "sort": "ascending (kind_u8, logical_key raw bytes)", "duplicate_right": true, "outer_binds_count": true },
+  "hard_bounds": { "entries": 10000, "absences": 1000, "logical_key_bytes": 128, "value_bytes": 65536, "encoded_ics23_proof_bytes": 1048576, "aggregate_bundle_bytes": 8388608, "aggregate_check_order": "before entry clone, ordered-root computation, or proof decode" },
+  "authority": {
+    "verified": ["one JMT version/root", "manifest membership", "every manifest member membership", "explicit query non-membership", "canonical uniqueness/order", "manifest count and ordered root"],
+    "cutoff_join": ["JMT version equals finalized cutoff height", "JMT root equals finalized cutoff header state_root"],
+    "not_verified": ["runtime write discipline", "semantic decoding of raw values", "checkpoint execution", "candidate selection", "epoch transition"]
+  }
+}

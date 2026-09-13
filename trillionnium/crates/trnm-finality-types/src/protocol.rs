@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use super::crypto::{
     decode_hash32, hash_domain, public_key_hex, put_bytes, put_str, put_u64, sign_hex, verify_hex,
-    Hash32,
+    verify_hex_strict, Hash32,
 };
 
 pub const SIGNED_COMMAND_SCHEMA_V1: &str = "trnm_signed_command_envelope_v1";
@@ -130,7 +130,7 @@ impl SignedCommandEnvelopeV1 {
         Ok(())
     }
 
-    pub fn validate_at(&self, expected_chain_id: &str, now_unix_ms: u64) -> Result<()> {
+    fn validate_context_at(&self, expected_chain_id: &str, now_unix_ms: u64) -> Result<()> {
         self.validate_shape()?;
         ensure!(self.chain_id == expected_chain_id, "chain_id mismatch");
         ensure!(
@@ -141,7 +141,21 @@ impl SignedCommandEnvelopeV1 {
             now_unix_ms <= self.expires_at_unix_ms,
             "command envelope has expired"
         );
+        Ok(())
+    }
+
+    pub fn validate_at(&self, expected_chain_id: &str, now_unix_ms: u64) -> Result<()> {
+        self.validate_context_at(expected_chain_id, now_unix_ms)?;
         verify_hex(
+            &self.public_key_hex,
+            &self.signing_bytes()?,
+            &self.signature_hex,
+        )
+    }
+
+    pub fn validate_at_strict(&self, expected_chain_id: &str, now_unix_ms: u64) -> Result<()> {
+        self.validate_context_at(expected_chain_id, now_unix_ms)?;
+        verify_hex_strict(
             &self.public_key_hex,
             &self.signing_bytes()?,
             &self.signature_hex,
@@ -483,6 +497,22 @@ impl FinalityReceiptV1 {
 mod tests {
     use super::*;
 
+    fn signed_command_fixture() -> SignedCommandEnvelopeV1 {
+        SignedCommandEnvelopeV1::sign(
+            "trnm-devnet-1",
+            "cmd-strict-1",
+            "did:key:hepta-strict-1",
+            "hepta",
+            1,
+            1_000,
+            2_000,
+            "evaluation_commitment_v1",
+            b"canonical-payload",
+            &SigningKey::from_bytes(&[17u8; 32]),
+        )
+        .unwrap()
+    }
+
     #[test]
     fn command_signature_binds_every_security_field() {
         let key = SigningKey::from_bytes(&[9u8; 32]);
@@ -523,6 +553,68 @@ mod tests {
         .unwrap();
         envelope.payload_hex = hex::encode(b"payload-b");
         assert!(envelope.validate_at("trnm-devnet-1", 1_500).is_err());
+    }
+
+    #[test]
+    fn strict_command_validation_preserves_honest_signing_bytes() {
+        let envelope = signed_command_fixture();
+        let signing_bytes = envelope.signing_bytes().unwrap();
+
+        envelope.validate_at("trnm-devnet-1", 1_500).unwrap();
+        envelope.validate_at_strict("trnm-devnet-1", 1_500).unwrap();
+        assert_eq!(envelope.signing_bytes().unwrap(), signing_bytes);
+    }
+
+    #[test]
+    fn strict_command_validation_rejects_noncanonical_signature_components() {
+        const NONCANONICAL_S_EQUALS_L: [u8; 32] = [
+            0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9,
+            0xde, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x10,
+        ];
+        const NONCANONICAL_R_Y_EQUALS_P: [u8; 32] = [
+            0xed, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+            0xff, 0xff, 0xff, 0x7f,
+        ];
+
+        let mut noncanonical_s = signed_command_fixture();
+        let mut signature = hex::decode(&noncanonical_s.signature_hex).unwrap();
+        signature[32..].copy_from_slice(&NONCANONICAL_S_EQUALS_L);
+        noncanonical_s.signature_hex = hex::encode(signature);
+        noncanonical_s.validate_shape().unwrap();
+        assert!(noncanonical_s
+            .validate_at_strict("trnm-devnet-1", 1_500)
+            .is_err());
+
+        let mut noncanonical_r = signed_command_fixture();
+        let mut signature = hex::decode(&noncanonical_r.signature_hex).unwrap();
+        signature[..32].copy_from_slice(&NONCANONICAL_R_Y_EQUALS_P);
+        noncanonical_r.signature_hex = hex::encode(signature);
+        noncanonical_r.validate_shape().unwrap();
+        assert!(noncanonical_r
+            .validate_at_strict("trnm-devnet-1", 1_500)
+            .is_err());
+    }
+
+    #[test]
+    fn strict_command_validation_rejects_identity_key_forge() {
+        const IDENTITY_POINT: [u8; 32] = [
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+
+        let mut forged = signed_command_fixture();
+        forged.public_key_hex = hex::encode(IDENTITY_POINT);
+        let mut signature = [0u8; 64];
+        signature[..32].copy_from_slice(&IDENTITY_POINT);
+        forged.signature_hex = hex::encode(signature);
+        forged.validate_shape().unwrap();
+
+        // The legacy equation accepts this weak-key construction. The strict
+        // app command path must reject both the small-order key and R point.
+        forged.validate_at("trnm-devnet-1", 1_500).unwrap();
+        assert!(forged.validate_at_strict("trnm-devnet-1", 1_500).is_err());
     }
 
     #[test]

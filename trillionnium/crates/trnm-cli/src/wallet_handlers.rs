@@ -2,7 +2,8 @@ use anyhow::Result;
 
 use crate::{
     cmd::WalletCommand, derive_address_from_priv_hex, ensure_hex_32_bytes,
-    ensure_safe_sign_message, hash, read_key, resolve_wallet_store, wallet_create, write_key,
+    ensure_safe_sign_message, read_key, resolve_wallet_store, sign_message_ed25519, wallet_create,
+    write_key, LOCAL_WALLET_WARNING,
 };
 
 pub(crate) fn handle_wallet_command(wallet: WalletCommand) -> Result<()> {
@@ -35,15 +36,22 @@ pub(crate) fn handle_wallet_command(wallet: WalletCommand) -> Result<()> {
             message,
             store,
         } => {
+            eprintln!("{LOCAL_WALLET_WARNING}");
+            eprintln!(
+                "WARNING: wallet sign produces a development-only offline text signature; it is not a transaction signature, consensus SignIntent, or production authorization."
+            );
             let store = resolve_wallet_store(store)?;
             let priv_hex = read_key(&store, &name)?;
             ensure_safe_sign_message(&message)?;
-            let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
+            let (public_key, signature) = sign_message_ed25519(&priv_hex, &message)?;
             let addr = derive_address_from_priv_hex(&priv_hex)?;
             println!("wallet_name={}", name);
             println!("address={}", addr);
+            println!("signature_scheme=ed25519");
+            println!("signed_bytes=utf8");
+            println!("public_key={}", public_key);
             println!("message={}", message);
-            println!("signature={}", sig);
+            println!("signature={}", signature);
         }
     }
     Ok(())

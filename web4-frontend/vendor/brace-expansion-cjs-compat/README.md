@@ -2,7 +2,7 @@
 
 This private package preserves the callable CommonJS API required by
 `minimatch@3` and the current Next ESLint plugins while delegating to patched
-`brace-expansion@5.0.8`.
+`brace-expansion@5.0.9`.
 
 It exists because the upstream ESLint plugins still constrain `minimatch` to
 the vulnerable 3.x line. Remove this facade as soon as those plugins consume a

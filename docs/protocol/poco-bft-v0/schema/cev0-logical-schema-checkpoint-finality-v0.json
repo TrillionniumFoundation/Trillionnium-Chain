@@ -1,0 +1,297 @@
+{
+  "schema": "trnm_poco_bft_cev0_logical_schema_checkpoint_finality_v0",
+  "schema_version": 0,
+  "scope": "B2-E checkpoint/two-seal semantic kernel only",
+  "status": "closed_for_listed_objects_and_inert_relations_only",
+  "cryptographic_validity_claimed": true,
+  "cryptographic_claim_scope": "deterministic Node.js fixture plus the committed Rust StrictEd25519Verifier integration test only; the inert token does not attest verifier identity",
+  "authorization_output": false,
+  "rust_exact_decoder_entry_points": [
+    "decode_consensus_parameters_v0_exact",
+    "decode_ordinary_certified_header_v0_exact",
+    "decode_checkpoint_finality_proof_v0_exact"
+  ],
+  "rust_strict_integration_test": "trillionnium/crates/trnm-consensus-crypto/tests/checkpoint_two_seal_kernel_vectors.rs",
+  "imports": [
+    {
+      "path": "cev0-logical-schema-v0.json",
+      "reuse": ["CEV0 primitives", "ValidatorSetV0", "QuorumCertificateV0", "TimeoutCertificateV0"]
+    },
+    {
+      "path": "cev0-logical-schema-anchor-handoff-v0.json",
+      "reuse": ["BlockKindV0", "BlockHeaderV0", "EpochAnchorAuthorizationV0"]
+    },
+    {
+      "path": "cev0-logical-schema-epoch-commitment-v0.json",
+      "reuse": ["NextEpochCommitmentV0", "EpochGeometryV0 relations", "RolloutPhaseV0"]
+    },
+    {
+      "path": "cev0-logical-schema-block-body-v0.json",
+      "reuse": ["frozen empty payload root", "frozen empty receipts root", "frozen empty evidence root"]
+    }
+  ],
+  "hard_limits": {
+    "max_chain_id_bytes": "128",
+    "max_validator_id_bytes": "128",
+    "max_certificate_signers": "100",
+    "consensus_parameters_cev0_bytes": "341",
+    "checkpoint_chain_headers": "3",
+    "max_timestamp_step_source": "ConsensusParametersV0.max_block_time_step_ms"
+  },
+  "enums": [
+    {
+      "name": "LeaderScheduleV0",
+      "encoding": "u8",
+      "variants": [{ "name": "canonical_validator_round_robin", "value": 0 }]
+    }
+  ],
+  "objects": [
+    {
+      "name": "ConsensusParametersV0",
+      "coverage": "closed",
+      "fields": [
+        { "name": "schema_version", "type": "u16", "equals": "0" },
+        { "name": "protocol_version", "type": "u32", "equals": "0" },
+        { "name": "production_activation", "type": "bool" },
+        { "name": "max_chain_id_bytes", "type": "u16" },
+        { "name": "max_validator_id_bytes", "type": "u16" },
+        { "name": "max_block_bytes", "type": "u32" },
+        { "name": "max_consensus_message_bytes", "type": "u32" },
+        { "name": "min_validators", "type": "u32" },
+        { "name": "max_validators", "type": "u32" },
+        { "name": "quorum_numerator", "type": "u32" },
+        { "name": "quorum_denominator", "type": "u32" },
+        { "name": "quorum_addend", "type": "u32" },
+        { "name": "finality_certified_chain_length", "type": "u8" },
+        { "name": "max_total_voting_power", "type": "u64" },
+        { "name": "max_block_time_step_ms", "type": "u64" },
+        { "name": "leader_schedule", "type": "LeaderScheduleV0" },
+        { "name": "require_full_payload_before_vote", "type": "bool" },
+        { "name": "base_timeout_ms", "type": "u64" },
+        { "name": "timeout_multiplier_numerator", "type": "u32" },
+        { "name": "timeout_multiplier_denominator", "type": "u32" },
+        { "name": "timeout_max_ms", "type": "u64" },
+        { "name": "epoch_length_blocks", "type": "u64" },
+        { "name": "epoch_seal_blocks", "type": "u8", "equals": "2" },
+        {
+          "name": "snapshot_lead_blocks",
+          "type": "u64",
+          "min": "1",
+          "minimum_from_field": "finality_certified_chain_length"
+        },
+        { "name": "joint_handoff_old_quorum", "type": "bool", "equals": true },
+        { "name": "joint_handoff_new_quorum", "type": "bool", "equals": true },
+        { "name": "upgrade_notice_epochs", "type": "u64" },
+        { "name": "max_protocol_version_jump", "type": "u32" },
+        { "name": "scale_ppm", "type": "u64" },
+        { "name": "maturity_epochs", "type": "u64" },
+        { "name": "max_certificate_age_epochs", "type": "u64" },
+        { "name": "decay_step_ppm_per_epoch", "type": "u64" },
+        { "name": "per_certificate_unit_cap", "type": "u128" },
+        { "name": "per_consumer_provider_epoch_unit_cap", "type": "u128" },
+        { "name": "per_task_provider_epoch_unit_cap", "type": "u128" },
+        { "name": "per_provider_epoch_unit_cap", "type": "u128" },
+        { "name": "units_per_power", "type": "u128" },
+        { "name": "bond_atomic_units_per_power", "type": "u128" },
+        { "name": "min_validator_power", "type": "u64" },
+        { "name": "max_validator_power", "type": "u64" },
+        { "name": "max_validator_share_ppm", "type": "u64" },
+        { "name": "capped_weight_alpha_ppm", "type": "u64" },
+        { "name": "full_weight_alpha_ppm", "type": "u64" },
+        { "name": "rollout_phase", "type": "RolloutPhaseV0" },
+        { "name": "minimum_shadow_epochs", "type": "u64" },
+        { "name": "minimum_eligibility_only_epochs", "type": "u64" },
+        { "name": "minimum_capped_weight_epochs", "type": "u64" },
+        { "name": "automatic_promotion", "type": "bool", "equals": false },
+        { "name": "evidence_window_epochs", "type": "u64" },
+        { "name": "unbonding_delay_epochs", "type": "u64" },
+        { "name": "jail_duration_epochs", "type": "u64" },
+        { "name": "trusting_period_epochs", "type": "u64" },
+        { "name": "require_trusting_period_less_than_evidence", "type": "bool", "equals": true },
+        { "name": "require_evidence_window_le_unbonding_delay", "type": "bool", "equals": true }
+      ],
+      "domain": "trnm.poco-bft.parameters.v0"
+    },
+    {
+      "name": "CertifiedHeaderV0",
+      "coverage": "closed_for_ordinary_old_epoch_checkpoint_chain",
+      "fields": [
+        { "name": "header", "type": "BlockHeaderV0" },
+        { "name": "justify_qc", "type": "QuorumCertificateV0" },
+        { "name": "timeout_certificate", "type": { "kind": "optional", "item": "TimeoutCertificateV0" } },
+        { "name": "epoch_anchor_authorization", "type": { "kind": "optional", "item": "EpochAnchorAuthorizationV0" } },
+        { "name": "proposer_signature", "type": "Signature64" },
+        { "name": "certifying_qc", "type": "QuorumCertificateV0" }
+      ]
+    },
+    {
+      "name": "FinalityProofV0",
+      "coverage": "closed_for_checkpoint_seal_chain",
+      "fields": [
+        { "name": "schema_version", "type": "u16", "equals": "0" },
+        { "name": "genesis_hash", "type": "Hash32" },
+        { "name": "chain_id", "type": "ConsensusString" },
+        { "name": "protocol_version", "type": "u32", "equals": "0" },
+        { "name": "epoch", "type": "u64" },
+        { "name": "validator_set_hash", "type": "Hash32" },
+        { "name": "consensus_parameters_hash", "type": "Hash32" },
+        { "name": "finalized_block", "type": "CertifiedHeaderV0" },
+        { "name": "child", "type": "CertifiedHeaderV0" },
+        { "name": "grandchild", "type": "CertifiedHeaderV0" }
+      ],
+      "domain": "trnm.poco-bft.finality-proof.v0"
+    }
+  ],
+  "semantic_capability": {
+    "name": "CheckpointTwoSealKernelV0",
+    "rust_source": "trillionnium/crates/trnm-consensus-types/src/finality.rs",
+    "inert": true,
+    "peer_decodable": false,
+    "private_fields": true,
+    "verifier_identity_attested": false,
+    "checks": [
+      "old ValidatorSetV0 is recomputed and validated against the complete old ConsensusParametersV0 preimage",
+      "snapshot_lead_blocks is at least finality_certified_chain_length, which is exactly 3 in protocol v0",
+      "checkpoint, seal-1, and seal-2 use one old chain/genesis/version/epoch/set/parameter scope",
+      "checked outgoing geometry fixes checkpoint=epoch_end-2, seal-1=checkpoint+1, and seal-2=seal-1+1",
+      "the three certified headers form a direct parent-linked and height-consecutive chain",
+      "every proposer is the canonical scheduled leader for its actual view",
+      "every proposal and ordinary QC signature is real Ed25519 over the exact domain-separated root",
+      "child and grandchild bind the exact preceding certifying-QC digest, including signer-subset identity",
+      "seal roots equal the frozen empty payload/receipt/evidence constants",
+      "both seals preserve the checkpoint state root and repeat the checkpoint next-epoch commitment digest",
+      "the checkpoint commits the exact supplied NextEpochCommitmentV0 digest",
+      "snapshot cutoff and activation height follow the old committed parameter geometry",
+      "authenticated parent to checkpoint, checkpoint to seal-1, and seal-1 to seal-2 timestamps are positive steps bounded by max_block_time_step_ms"
+    ],
+    "forbidden_entry_points": [
+      "epoch_anchor_qc",
+      "into_authorization",
+      "handoff_signing_capability",
+      "authorized_next_context",
+      "authorize_epoch_transition"
+    ]
+  },
+  "decoder_error_taxonomy": {
+    "rust_source": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+    "reused_codes": [
+      "unexpected_eof",
+      "trailing_bytes",
+      "length_limit_exceeded",
+      "count_limit_exceeded",
+      "aggregate_limit_exceeded",
+      "invalid_schema_version",
+      "invalid_protocol_version",
+      "invalid_consensus_string",
+      "invalid_block_kind",
+      "invalid_optional_tag",
+      "invalid_block_header",
+      "invalid_handoff_descriptor",
+      "invalid_handoff_certificate",
+      "invalid_epoch_anchor_relations",
+      "unauthorized_synthetic_qc",
+      "zero_genesis_hash",
+      "zero_public_key",
+      "zero_voting_power",
+      "empty_validator_set",
+      "duplicate_validator_id",
+      "duplicate_public_key",
+      "noncanonical_validator_order",
+      "context_mismatch",
+      "unknown_signer",
+      "duplicate_signer",
+      "noncanonical_signer_order",
+      "noncanonical_reference_order",
+      "conflicting_same_view_qc",
+      "insufficient_quorum",
+      "invalid_referenced_qc",
+      "empty_tc",
+      "duplicate_reference",
+      "future_reference_view",
+      "same_block_different_coordinates",
+      "reference_summary_mismatch",
+      "unreferenced_qc",
+      "selected_not_maximum",
+      "invalid_boolean",
+      "invalid_rollout_phase",
+      "invalid_fallback_reason",
+      "invalid_next_epoch_commitment",
+      "invalid_utf8",
+      "noncanonical_event_attribute_order",
+      "invalid_double_vote_evidence"
+    ],
+    "new_codes": [
+      "invalid_leader_schedule",
+      "invalid_consensus_parameters",
+      "invalid_finality_proof",
+      "invalid_checkpoint_two_seal"
+    ]
+  },
+  "cryptographic_outcome_taxonomy": {
+    "codes": [
+      "invalid_signature"
+    ],
+    "decoder_contract": false,
+    "note": "Signature verification is a post-decode semantic/cryptographic capability outcome. It is intentionally absent from the Rust exact-decoder DecodeErrorCode vocabulary."
+  },
+  "transport_projections": [
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "message": "ConsensusParameters",
+      "field_roles": {
+        "canonical": [
+          "schema_version", "protocol_version", "production_activation", "max_chain_id_bytes", "max_validator_id_bytes",
+          "max_block_bytes", "max_consensus_message_bytes", "min_validators", "max_validators", "quorum_numerator",
+          "quorum_denominator", "quorum_addend", "finality_certified_chain_length", "max_total_voting_power",
+          "max_block_time_step_ms", "leader_schedule", "require_full_payload_before_vote", "base_timeout_ms",
+          "timeout_multiplier_numerator", "timeout_multiplier_denominator", "timeout_max_ms", "epoch_length_blocks",
+          "epoch_seal_blocks", "snapshot_lead_blocks", "joint_handoff_old_quorum", "joint_handoff_new_quorum",
+          "upgrade_notice_epochs", "max_protocol_version_jump", "scale_ppm", "maturity_epochs", "max_certificate_age_epochs",
+          "decay_step_ppm_per_epoch", "per_certificate_unit_cap_u128_be", "per_consumer_provider_epoch_unit_cap_u128_be",
+          "per_task_provider_epoch_unit_cap_u128_be", "per_provider_epoch_unit_cap_u128_be", "units_per_power_u128_be",
+          "bond_atomic_units_per_power_u128_be", "min_validator_power", "max_validator_power", "max_validator_share_ppm",
+          "capped_weight_alpha_ppm", "full_weight_alpha_ppm", "rollout_phase", "minimum_shadow_epochs",
+          "minimum_eligibility_only_epochs", "minimum_capped_weight_epochs", "automatic_promotion", "evidence_window_epochs",
+          "unbonding_delay_epochs", "jail_duration_epochs", "trusting_period_epochs",
+          "require_trusting_period_less_than_evidence", "require_evidence_window_le_unbonding_delay"
+        ],
+        "derived": ["parameters_hash"]
+      }
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/light_client.proto",
+      "message": "CertifiedHeader",
+      "field_roles": {
+        "canonical": ["header", "justify_qc", "timeout_certificate", "epoch_anchor_authorization", "proposer_signature", "certifying_qc"],
+        "derived": ["block_id"]
+      }
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/light_client.proto",
+      "message": "ThreeChainFinalityProof",
+      "field_roles": {
+        "canonical": ["schema_version", "genesis_hash", "chain_id", "protocol_version", "epoch", "validator_set_hash", "consensus_parameters_hash", "finalized_block", "child", "grandchild"],
+        "derived": ["finality_proof_digest"]
+      }
+    },
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/light_client.proto",
+      "message": "EpochHandoffProof",
+      "field_roles": {
+        "sidecar": ["old_checkpoint_finality"]
+      },
+      "note": "The enclosing handoff bundle has no aggregate CEV0 digest/domain."
+    }
+  ],
+  "honest_boundary": [
+    "B2-E authenticates one old-set checkpoint/two-seal consensus-finality chain and binds the exact next-epoch commitment digest.",
+    "The capability is inert and cannot authorize an EpochAnchorQC, handoff signature, first-new-epoch proposal, vote, or epoch transition.",
+    "The committed protocol-version-1 variant proves exact inert u32 preservation and digest binding only; B2-E does not authenticate an upgrade plan or authorize protocol activation.",
+    "The finalized commitment authenticates snapshot_state_root only as a committed claim; B2-E does not prove equality to a cutoff header state root or authenticated ancestry from that cutoff.",
+    "B2-E does not verify JMT/ICS23 state membership, deterministic candidate construction, lowest fallback reason, PoP, governance, new-set/parameter authority, runtime identity or execution, receipt provenance, checkpoint body execution, or checkpoint-state preimage availability.",
+    "The caller-supplied verifier acceptance is not a type-level attestation of verifier identity; the committed crypto lane uses real Node.js Ed25519 and Rust integration must use StrictEd25519Verifier.",
+    "The committed B2-E fixture is next-view-only and makes no B2-E TimeoutCertificateV0 semantic-coverage claim; B2-A remains authoritative for ordinary TC semantics.",
+    "Closure is limited to the exact Rust decoder entry points and committed StrictEd25519Verifier corpus integration test named in this manifest.",
+    "B2 overall, complete epoch authorization, core integration, transport admission, and wire_conformance remain open."
+  ]
+}

@@ -124,17 +124,15 @@ impl From<&TaskQueryResponse> for TaskQueryResponseWire {
     fn from(task: &TaskQueryResponse) -> Self {
         Self {
             task_id: task.task_id,
-            status: task.status.clone(),
+            status: task.status,
             worker: task.worker.clone(),
             bounty: task.bounty,
             result_hash_hex: task.result_hash_hex.clone(),
             version: task.version,
-            metadata_compatibility: task.metadata_compatibility.clone(),
+            metadata_compatibility: task.metadata_compatibility,
             metadata_runtime_compatible: task.metadata_runtime_compatible,
             metadata_requires_governance_upgrade: task.metadata_requires_governance_upgrade,
-            metadata_primary_compatibility_finding: task
-                .metadata_primary_compatibility_finding
-                .clone(),
+            metadata_primary_compatibility_finding: task.metadata_primary_compatibility_finding,
             metadata_compatibility_findings: task.metadata_compatibility_findings.clone(),
             metering: task.metering.clone(),
             settlement_preview: task.settlement_preview.as_ref().map(Into::into),

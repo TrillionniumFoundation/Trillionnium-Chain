@@ -1,0 +1,250 @@
+{
+  "schema": "trnm_poco_bft_snapshot_candidate_kernel_v0",
+  "schema_version": 0,
+  "scope": "B2-G deterministic same-version v0 candidate/fallback computation kernel",
+  "public_types": [
+    "ValidatorKeyProofOfPossessionV0",
+    "UnauthenticatedSnapshotContributionV0",
+    "UnauthenticatedSnapshotCandidateV0",
+    "UnauthenticatedCandidateSelectionTranscriptV0",
+    "CandidateComputationV0",
+    "CandidateSelectionKernelV0"
+  ],
+  "hard_bounds": {
+    "max_snapshot_candidates": 100,
+    "max_snapshot_contributions": 10000,
+    "validator_id_bytes": "1..128 inclusive; opaque nonempty bytes, including all-zero byte sequences",
+    "task_id_bytes": "1..128 inclusive",
+    "consumer_id_bytes": "1..128 inclusive",
+    "preclone_rule": "Exceeding either cardinality bound, or supplying an empty or over-128-byte task_id/consumer_id, returns atomic fallback reason 1 with empty diagnostics before cloning, sorting, or indexing transcript entries."
+  },
+  "same_version_context": {
+    "schema_version": 0,
+    "protocol_version": 0,
+    "target_epoch_rule": "target_epoch = old active validator-set epoch + 1 using checked u64 arithmetic; snapshot_epoch must equal the old active epoch for reason 0, while mismatch yields atomic fallback reason 1",
+    "upgrade_authorization": false
+  },
+  "validator_key_proof_of_possession_v0": {
+    "canonical_codec": "CEV0",
+    "hash_prefix_ascii": "trnm.cev0.hash.v0",
+    "digest_domain": "trnm.poco-bft.validator-key-pop.v0",
+    "signature_scheme": "strict RFC 8032 Ed25519 over the 32-byte digest",
+    "signing_preimage_field_order": [
+      { "index": 1, "name": "schema_version", "type": "u16", "rule": "equals 0" },
+      { "index": 2, "name": "genesis_hash", "type": "Hash32", "rule": "nonzero" },
+      { "index": 3, "name": "chain_id", "type": "ConsensusString", "rule": "1..128 bytes; first byte [a-z0-9], every remaining byte [a-z0-9._:-]" },
+      { "index": 4, "name": "target_epoch", "type": "u64" },
+      { "index": 5, "name": "validator_id", "type": "Bytes", "rule": "1..128 bytes" },
+      { "index": 6, "name": "public_key", "type": "PublicKey32", "rule": "the exact decoder rejects only the all-zero 32-byte value; invalid strict Ed25519 point/small-order encodings fail production StrictEd25519Verifier and yield reason 4" },
+      { "index": 7, "name": "registration_nonce", "type": "u64" }
+    ],
+    "exact_object_suffix": { "index": 8, "name": "signature", "type": "Signature64", "rule": "fixed 64 bytes" },
+    "exact_object_rule": "The exact bounded object CEV0 is the seven-field signing preimage followed by fixed Signature64. The signature is not part of the signing preimage digest.",
+    "digest_formula": "SHA-256(Frame(ASCII(\"trnm.cev0.hash.v0\")) || Frame(ASCII(\"trnm.poco-bft.validator-key-pop.v0\")) || Frame(CEV0(first seven fields only)))",
+    "scope_binding": [
+      "schema_version",
+      "genesis_hash",
+      "chain_id",
+      "target_epoch",
+      "validator_id",
+      "public_key",
+      "registration_nonce"
+    ],
+    "candidate_rule": "A new or changed key requires a finalized, exact-scope, strict-Ed25519-valid proof and a registration_nonce strictly greater than the caller-supplied previous nonce. Missing, invalid, stale-nonce, wrong-scope, or wrong-key proof invalidates the complete candidate with fallback reason 4; it is never silently dropped into reason 3.",
+    "unchanged_key_rule": "A byte-identical old validator identity/key may omit a new proof; this bounded kernel does not authenticate the old registration state."
+  },
+  "unauthenticated_candidate_selection_transcript_v0": {
+    "canonical_cev0": false,
+    "digest_domain": null,
+    "authenticated": false,
+    "provenance": "caller-supplied computation transcript",
+    "transcript_fields": [
+      { "name": "snapshot_epoch", "type": "u64" },
+      { "name": "snapshot_height", "type": "u64" },
+      { "name": "committed_snapshot_cutoff", "type": "u64", "rule": "must equal snapshot_height" },
+      { "name": "candidates", "type": "List<UnauthenticatedSnapshotCandidateV0>" },
+      { "name": "contributions", "type": "List<UnauthenticatedSnapshotContributionV0>" }
+    ],
+    "kernel_inputs": [
+      {
+        "name": "old_validator_set",
+        "type": "ValidatorSetV0",
+        "rule": "caller-supplied active set; must validate or the caller must halt rather than mint fallback evidence"
+      },
+      {
+        "name": "old_parameters",
+        "type": "ConsensusParametersV0",
+        "rule": "caller-supplied active parameter preimage; must validate or the caller must halt"
+      },
+      {
+        "name": "candidate_parameters",
+        "type": "ConsensusParametersV0",
+        "rule": "caller-supplied candidate parameter preimage; validated by the B2-G bounded relation kernel"
+      },
+      { "name": "signature_verifier", "type": "SignatureVerifier", "rule": "production must use strict Ed25519" }
+    ],
+    "candidate_parameter_preimage_validation": "The complete caller-supplied ConsensusParametersV0 preimage first passes validate_safety_invariants. This list is not an exhaustive acceptance-input list; a successful effective or computed set binds the hash of the complete validated parameter preimage.",
+    "relation_specific_fields_read_after_full_preimage_validation": [
+      "scale_ppm",
+      "maturity_epochs",
+      "max_certificate_age_epochs",
+      "decay_step_ppm_per_epoch",
+      "per_certificate_unit_cap",
+      "per_consumer_provider_epoch_unit_cap",
+      "per_task_provider_epoch_unit_cap",
+      "per_provider_epoch_unit_cap",
+      "units_per_power",
+      "bond_atomic_units_per_power",
+      "min_validator_power",
+      "max_validator_power",
+      "min_validators",
+      "max_validators",
+      "max_total_voting_power",
+      "max_validator_share_ppm",
+      "capped_weight_alpha_ppm",
+      "full_weight_alpha_ppm",
+      "epoch_length_blocks",
+      "production_activation",
+      "rollout_phase",
+      "max_chain_id_bytes",
+      "max_validator_id_bytes",
+      "schema_version",
+      "protocol_version"
+    ],
+    "old_validator_entry": [
+      { "name": "validator_id", "type": "Bytes", "rule": "opaque nonempty 1..128 bytes; all-zero byte sequences are valid identities" },
+      { "name": "public_key", "type": "PublicKey32" },
+      { "name": "effective_weight", "type": "u64", "rule": "positive" }
+    ],
+    "candidate_entry": [
+      { "name": "validator_id", "type": "Bytes", "rule": "opaque nonempty 1..candidate max_validator_id_bytes; all-zero byte sequences are valid identities" },
+      { "name": "consensus_key", "type": "PublicKey32" },
+      { "name": "active_slashable_bond", "type": "u128", "rule": "caller-supplied amount asserted slashable through the target epoch/evidence window" },
+      { "name": "jailed", "type": "bool", "rule": "caller-supplied eligibility input" },
+      { "name": "registration_valid", "type": "bool", "rule": "caller-supplied; false is reason 4" },
+      { "name": "previous_registration_nonce", "type": "Optional<u64>" },
+      { "name": "proof_of_possession", "type": "Optional<ValidatorKeyProofOfPossessionV0>" }
+    ],
+    "contribution_entry": [
+      { "name": "certificate_id", "type": "Hash32", "rule": "globally unique in the transcript" },
+      { "name": "provider_validator_id", "type": "Bytes", "rule": "must identify a supplied candidate when eligible; opaque all-zero nonempty IDs are valid" },
+      { "name": "task_id", "type": "Bytes", "rule": "nonempty 1..128 bytes" },
+      { "name": "consumer_id", "type": "Bytes", "rule": "nonempty 1..128 bytes" },
+      { "name": "finalized_epoch", "type": "u64", "rule": "eligible facts with finalized_epoch > snapshot_epoch are reason 1" },
+      { "name": "consumed_units", "type": "u128", "rule": "positive when eligible" },
+      { "name": "eligible", "type": "bool", "rule": "caller-supplied result of certificate, finalized-state, meter, relationship, challenge, revocation, identity mapping, and cutoff checks" }
+    ],
+    "input_order": "Candidate and contribution input permutations are accepted. The kernel sorts candidates by raw validator_id and contributions by raw certificate_id before deterministic computation. Duplicate candidate IDs, duplicate candidate keys, and duplicate certificate IDs fail closed.",
+    "exact_transcript_binding": false,
+    "explicit_non_freeze": "The transcript does not freeze, decode, authenticate, or replace ConsumptionCertificateV0 transport/application state. It consumes only bounded caller-supplied contribution facts.",
+    "entry_public_names": {
+      "candidate": "UnauthenticatedSnapshotCandidateV0",
+      "contribution": "UnauthenticatedSnapshotContributionV0",
+      "transcript": "UnauthenticatedCandidateSelectionTranscriptV0"
+    }
+  },
+  "checked_arithmetic": {
+    "integer_type": "u128",
+    "division": "floor",
+    "forbidden": [
+      "negative values",
+      "floating point",
+      "decimal-string arithmetic without exact BigInt parsing",
+      "saturating arithmetic",
+      "wrapping arithmetic",
+      "unchecked usize/native-number conversion"
+    ],
+    "overflow_behavior": "Record fallback reason 2 and do not salvage a partial candidate."
+  },
+  "candidate_algorithm": {
+    "candidate_order": "ascending raw validator_id bytes",
+    "contribution_order": "ascending raw certificate_id bytes",
+    "maturity": "snapshot_epoch >= finalized_epoch + maturity_epochs using checked u128",
+    "age": "snapshot_epoch - finalized_epoch - maturity_epochs",
+    "expiry": "age >= max_certificate_age_epochs contributes zero",
+    "decay_ppm": "max(0, scale_ppm - age * decay_step_ppm_per_epoch)",
+    "per_certificate_units": "floor(min(consumed_units, per_certificate_unit_cap) * decay_ppm / scale_ppm)",
+    "relationship_caps": [
+      "x(provider, task, consumer) = checked sum of per-certificate units",
+      "a(provider, task, consumer) = min(x, per_consumer_provider_epoch_unit_cap)",
+      "y(provider, task) = checked sum over consumer_id in ascending raw-byte order",
+      "b(provider, task) = min(y, per_task_provider_epoch_unit_cap)",
+      "z(provider) = checked sum over task_id in ascending raw-byte order",
+      "U(provider) = min(z, per_provider_epoch_unit_cap)"
+    ],
+    "power": [
+      "poco_capacity = floor(U / units_per_power)",
+      "bond_capacity = floor(active_slashable_bond / bond_atomic_units_per_power)",
+      "raw_power = min(poco_capacity, bond_capacity, max_validator_power)"
+    ],
+    "candidate_eligibility": "raw_power >= min_validator_power, registration_valid, not jailed, exact identity mapping, and the PoP rule passes",
+    "selection": "If eligible count exceeds max_validators, select exactly max_validators by descending raw_power then ascending raw validator_id bytes; encode the selected candidate in ascending raw validator_id order.",
+    "rollout_weights": {
+      "shadow": "Compute candidate diagnostics, set computed_candidate_validator_set=None, and atomically carry old membership/keys/weights to target_epoch while binding validated candidate parameters. fallback_used remains false and fallback_reason is 0.",
+      "eligibility-only": "effective_weight = 1",
+      "capped-weight": "effective_weight = 1 + floor(capped_weight_alpha_ppm * (raw_power - 1) / scale_ppm)",
+      "full": "effective_weight = 1 + floor(full_weight_alpha_ppm * (raw_power - 1) / scale_ppm); same-version v0 requires full_weight_alpha_ppm = scale_ppm"
+    },
+    "set_validity": [
+      "min_validators <= N <= max_validators",
+      "0 < W <= max_total_voting_power",
+      "3 * M < W",
+      "M * scale_ppm <= max_validator_share_ppm * W",
+      "validator IDs and public keys are unique, weights are positive, and every weight fits u64"
+    ]
+  },
+  "fallback_reasons": [
+    { "code": 0, "name": "none", "rule": "candidate succeeds; shadow carry is not fallback" },
+    { "code": 1, "name": "malformed_snapshot_input", "example": "snapshot height/cutoff or epoch mismatch, preclone cardinality excess, duplicate certificate ID, invalid task/consumer length, eligible future-finalized fact, or eligible zero-unit/unknown-provider relation" },
+    { "code": 2, "name": "arithmetic_failure", "example": "unexpected checked u128 add/multiply/conversion failure; normative max(0, scale-age*step) decay-to-zero is not a failure" },
+    { "code": 3, "name": "too_few_eligible_validators", "example": "fewer than min_validators after valid eligibility evaluation, including a shadow old count below the candidate minimum" },
+    { "code": 4, "name": "invalid_validator_identity_or_key", "example": "invalid identity/key uniqueness, registration, nonce, missing required PoP, PoP scope, or PoP signature" },
+    { "code": 5, "name": "validator_weight_out_of_bounds", "example": "selected rollout weight lies outside candidate min_validator_power..max_validator_power; eligibility-only with min_validator_power > 1 and shadow carry incompatible with candidate bounds are explicit cases" },
+    { "code": 6, "name": "invalid_total_voting_power", "example": "effective W is zero or exceeds candidate max_total_voting_power, including an incompatible shadow carry" },
+    { "code": 7, "name": "concentration_constraint_violated", "example": "3*M >= W or the ppm share inequality fails" },
+    { "code": 8, "name": "invalid_committed_parameters", "example": "candidate epoch_length_blocks changes, shadow old count exceeds candidate maximum, an old ID exceeds candidate max_validator_id_bytes, or another old/candidate tuple relation is inconsistent" },
+    { "code": 9, "name": "invalid_upgrade_or_activation", "example": "production_activation is false while candidate rollout leaves shadow" }
+  ],
+  "lowest_reason_rule": "Evaluate every deterministically applicable failure class without using iteration order as priority; when multiple reasons apply, commit the numerically lowest code in 1..9.",
+  "fallback_output": {
+    "atomic": true,
+    "protocol_version": "old active protocol version",
+    "validator_set": "old ordered validator ID/public-key/effective-weight tuples re-encoded only for target_epoch",
+    "consensus_parameters": "old active parameters unchanged; candidate parameters are discarded",
+    "rollout_phase": "old active rollout phase unchanged",
+    "upgrade_plan_hash": null,
+    "candidate_diagnostics": "cleared to an empty list because malformed or rejected unauthenticated computations are non-authoritative",
+    "computed_candidate_validator_set": null,
+    "precondition": "The caller-supplied old active set and parameters must themselves validate; otherwise this kernel fails closed instead of inventing a fallback."
+  },
+  "candidate_selection_kernel_v0": {
+    "authorization_output": false,
+    "authorization_outputs": 0,
+    "success_output": "private-field inert computation evidence containing deterministic diagnostics, computed candidate, active next-set selection, fallback flag, and lowest fallback reason",
+    "cannot_mint": [
+      "authenticated snapshot",
+      "ValidatorSetV0 authority",
+      "NextEpochCommitmentV0 authority",
+      "EpochAnchorAuthorizationV0",
+      "EpochAnchorQcV0",
+      "joint handoff authority",
+      "epoch activation or transition authority"
+    ]
+  },
+  "required_vector_coverage": [
+    "deterministic real Ed25519 PoP fixtures with exact CEV0, digest, public key, and signature",
+    "valid shadow, eligibility-only, capped-weight, and full profiles",
+    "registration and contribution input permutations with byte-identical result",
+    "maturity, expiry, decay, per-certificate, consumer-provider, task-provider, provider, bond, raw-power, sorting, truncation, u64, and u128 boundaries",
+    "every fallback reason 1..9 and multi-fault lowest-reason selection",
+    "atomic fallback carry and explicit shadow-non-fallback carry",
+    "wrong PoP domain, chain, genesis, target epoch, validator ID, public key, nonce, stale nonce, missing proof, and invalid signature",
+    "raw invalid ChainId first-byte and tail-byte exact-decoder cases with stable invalid_chain_id code and length-prefix byte offset"
+  ],
+  "honest_boundary": [
+    "Only ValidatorKeyProofOfPossessionV0 has an exact canonical CEV0 preimage, frozen digest domain, and strict Ed25519 verification in B2-G.",
+    "UnauthenticatedCandidateSelectionTranscriptV0, contribution eligibility, finalized cutoff, validator registration state, active slashable bond, jail state, old active set, old parameters, and candidate parameters are caller-supplied and unauthenticated.",
+    "The kernel proves deterministic computation over its supplied transcript, not JMT/ICS23 membership, snapshot-state provenance, runtime execution, receipt provenance, checkpoint-body execution, governance provenance, anchor/handoff authority, activation, transition, or B2 completion.",
+    "A successful value is inert computation evidence only."
+  ]
+}

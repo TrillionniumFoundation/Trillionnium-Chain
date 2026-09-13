@@ -52,6 +52,7 @@ fn apply_market_env_baseline(cmd: &mut Command) {
 
 fn run_ok(args: &[&str]) -> String {
     let mut cmd = Command::new("cargo");
+    cmd.env("TRNM_RPC_DEVELOPMENT_ONLY", "1");
     cmd.args(["run", "-p", "trnm-rpc", "--"]).args(args);
     apply_market_env_baseline(&mut cmd);
     let output = cmd.output().expect("failed to execute trnm-rpc");
@@ -65,6 +66,7 @@ fn run_ok(args: &[&str]) -> String {
 
 fn run_ok_with_env(args: &[&str], envs: &[(&str, &str)]) -> String {
     let mut command = Command::new("cargo");
+    command.env("TRNM_RPC_DEVELOPMENT_ONLY", "1");
     command.args(["run", "-p", "trnm-rpc", "--"]).args(args);
     apply_market_env_baseline(&mut command);
     for (k, v) in envs {
@@ -93,6 +95,7 @@ fn unique_market_fixture_path(name: &str, ext: &str) -> std::path::PathBuf {
 
 fn run_fail(args: &[&str]) -> String {
     let mut cmd = Command::new("cargo");
+    cmd.env("TRNM_RPC_DEVELOPMENT_ONLY", "1");
     cmd.args(["run", "-p", "trnm-rpc", "--"]).args(args);
     apply_market_env_baseline(&mut cmd);
     let output = cmd.output().expect("failed to execute trnm-rpc");

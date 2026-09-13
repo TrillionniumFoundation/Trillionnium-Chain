@@ -1,0 +1,19 @@
+[package]
+name = "trnm-release-bundle-v0"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[dependencies]
+sha2 = "0.10"
+
+[package.metadata.trnm]
+module = "M15"
+secondary_module = "M13"
+role = "reproducible-release-sbom-provenance-contract"
+protocol = "poco-bft-v0"
+production_allowed = true
+candidate_authority = false
+lab_fixture = false

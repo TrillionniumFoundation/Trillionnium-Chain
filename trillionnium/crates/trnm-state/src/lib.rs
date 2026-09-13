@@ -16,6 +16,10 @@ pub use consumption::{
     ConsumptionSettlementStateSnapshot, TaskConsumptionSummary,
 };
 
+// The task variant intentionally preserves the existing public representation.
+// Boxing it is an ABI-wide migration and must be performed with state-root and
+// downstream compatibility evidence rather than as a lint-only edit.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
     Task(TaskObject),
@@ -81,11 +85,10 @@ impl Default for StateStore {
 
 impl Clone for StateStore {
     fn clone(&self) -> Self {
-        let cached = self
+        let cached = *self
             .state_root_cache
             .read()
-            .expect("state root cache poisoned")
-            .clone();
+            .expect("state root cache poisoned");
         Self {
             objects: self.objects.clone(),
             balances: self.balances.clone(),
@@ -112,6 +115,18 @@ pub struct MonetaryState {
 }
 
 pub type MonetaryStateSnapshot = MonetaryState;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct MonetaryTickConfig {
+    interval_blocks: u64,
+    cooldown_blocks: u64,
+    minted: u128,
+    burned: u128,
+    interval_param_version: u64,
+    issuance_param_version: u64,
+    burn_param_version: u64,
+    cooldown_param_version: u64,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PolicyTickEvent {
@@ -383,10 +398,10 @@ fn governance_registry_lookup_id_for_key(
     })
 }
 
-fn governance_registry_unique_dynamic_key_for_id<'a>(
-    gov_param_key_index: &'a BTreeMap<String, u64>,
+fn governance_registry_unique_dynamic_key_for_id(
+    gov_param_key_index: &BTreeMap<String, u64>,
     key_id: u64,
-) -> Result<Option<&'a str>, Vec<&'a str>> {
+) -> Result<Option<&str>, Vec<&str>> {
     let mut matches = gov_param_key_index
         .iter()
         .filter_map(|(indexed_key, indexed_key_id)| {
@@ -406,10 +421,10 @@ fn governance_registry_unique_dynamic_key_for_id<'a>(
     }
 }
 
-fn governance_registry_lookup_key_for_id<'a>(
-    gov_param_key_index: &'a BTreeMap<String, u64>,
+fn governance_registry_lookup_key_for_id(
+    gov_param_key_index: &BTreeMap<String, u64>,
     key_id: u64,
-) -> Option<&'a str> {
+) -> Option<&str> {
     let dynamic_key =
         match governance_registry_unique_dynamic_key_for_id(gov_param_key_index, key_id) {
             Ok(dynamic_key) => dynamic_key,
@@ -986,6 +1001,9 @@ fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
 }
 
 #[cfg(test)]
+// This private test oracle deliberately receives each independent registry so
+// mutation tests cannot accidentally reuse production globals.
+#[allow(clippy::too_many_arguments)]
 fn validate_governance_key_registration_lists(
     gov_param_key_index: &BTreeMap<String, u64>,
     key: &str,
@@ -2278,9 +2296,7 @@ impl StateStore {
         if !is_effective_resolve_authority_match(self, &authority_canonical) {
             return None;
         }
-        let Some(current_ref) = self.get_ref(task_id) else {
-            return None;
-        };
+        let current_ref = self.get_ref(task_id)?;
         if task.task_id != task_id
             || task.status != TaskStatus::Challenged
             || task.version != snapshot.task_version
@@ -2288,7 +2304,7 @@ impl StateStore {
         {
             return None;
         }
-        if snapshot.confirmations == 2 && !task_supports_pending_resolve_snapshot_restore(&task) {
+        if snapshot.confirmations == 2 && !task_supports_pending_resolve_snapshot_restore(task) {
             return None;
         }
 
@@ -2487,7 +2503,7 @@ impl StateStore {
         id: u64,
         task: &TaskObject,
     ) -> bool {
-        self.pending_resolve_approvals.get(&id).is_some()
+        self.pending_resolve_approvals.contains_key(&id)
             && !self.should_preserve_pending_resolve_on_task_restore(id, task)
     }
 
@@ -2617,7 +2633,7 @@ impl StateStore {
                 let had_pending = pending_confirmations > 0;
                 if self.is_emergency_paused()
                     && task.status == TaskStatus::Challenged
-                    && !task.challenge_bond.is_none()
+                    && task.challenge_bond.is_some()
                     && !task_supports_pending_resolve_snapshot_restore(&task)
                 {
                     self.pending_resolve_approvals.remove(&id);
@@ -2643,7 +2659,7 @@ impl StateStore {
                 };
                 if task.status == TaskStatus::Challenged
                     && (self.is_emergency_paused()
-                        && !task.challenge_bond.is_none()
+                        && task.challenge_bond.is_some()
                         && !task_supports_pending_resolve_snapshot_restore(&task)
                         && !is_replay_version_drift)
                 {
@@ -2667,7 +2683,7 @@ impl StateStore {
                             || pending.task_version != task.version
                             || task
                                 .challenge_bond_forfeited
-                                .is_some_and(|forfeited| forfeited != !pending.slash_worker) =>
+                                .is_some_and(|forfeited| forfeited == pending.slash_worker) =>
                     {
                         self.pending_resolve_approvals.remove(&id);
                     }
@@ -3233,7 +3249,7 @@ impl StateStore {
         }
 
         if action != GovPendingUpdateAction::Cancel {
-            if self.pending_gov_updates.get(&key).is_none()
+            if !self.pending_gov_updates.contains_key(&key)
                 && self.gov_param_value(&key) == Some(value.as_str())
             {
                 if let Some(existing_ref) = self
@@ -3546,17 +3562,16 @@ impl StateStore {
                     return;
                 }
 
-                if GOV_ALLOWED_KEYS.contains(&key) {
-                    if snapshot.activate_at_height == 0
-                        || validate_gov_param_value(key, &snapshot.value).is_err()
-                    {
-                        self.pending_gov_updates.remove(key);
-                        if scrubs_resolve_quorum {
-                            self.pending_resolve_approvals.clear();
-                        }
-                        self.invalidate_state_root_cache();
-                        return;
+                if GOV_ALLOWED_KEYS.contains(&key)
+                    && (snapshot.activate_at_height == 0
+                        || validate_gov_param_value(key, &snapshot.value).is_err())
+                {
+                    self.pending_gov_updates.remove(key);
+                    if scrubs_resolve_quorum {
+                        self.pending_resolve_approvals.clear();
                     }
+                    self.invalidate_state_root_cache();
+                    return;
                 }
 
                 self.pending_gov_updates
@@ -3620,7 +3635,7 @@ impl StateStore {
         self.canonical_gov_param_for_key(key)
     }
 
-    fn monetary_tick_config(&self) -> Option<(u64, u64, u128, u128, u64, u64, u64, u64)> {
+    fn monetary_tick_config(&self) -> Option<MonetaryTickConfig> {
         let (_, interval_param) =
             self.gov_param_ref_for_key("monetary_policy_tick_interval_blocks")?;
         let (_, cooldown_param) =
@@ -3641,16 +3656,16 @@ impl StateStore {
             return None;
         }
 
-        Some((
-            interval,
-            cooldown,
+        Some(MonetaryTickConfig {
+            interval_blocks: interval,
+            cooldown_blocks: cooldown,
             minted,
             burned,
-            interval_param.version,
-            issuance_param.version,
-            burn_param.version,
-            cooldown_param.version,
-        ))
+            interval_param_version: interval_param.version,
+            issuance_param_version: issuance_param.version,
+            burn_param_version: burn_param.version,
+            cooldown_param_version: cooldown_param.version,
+        })
     }
 
     pub fn monetary_state(&self) -> &MonetaryState {
@@ -3667,7 +3682,7 @@ impl StateStore {
     }
 
     pub fn should_trigger_policy_tick(&self, block_height: u64) -> bool {
-        let Some((interval, cooldown, _, _, _, _, _, _)) = self.monetary_tick_config() else {
+        let Some(config) = self.monetary_tick_config() else {
             // Fail-closed: missing/invalid monetary params disable policy tick.
             return false;
         };
@@ -3675,16 +3690,16 @@ impl StateStore {
             || self
                 .monetary_state
                 .last_tick_height
-                .saturating_add(cooldown)
+                .saturating_add(config.cooldown_blocks)
                 <= block_height;
         block_height > 0
-            && block_height % interval == 0
+            && block_height.is_multiple_of(config.interval_blocks)
             && cooldown_allows
             && self.monetary_state.last_tick_height < block_height
     }
 
     pub fn policy_tick(&mut self, block_height: u64) -> Option<PolicyTickEvent> {
-        let (
+        let MonetaryTickConfig {
             interval_blocks,
             cooldown_blocks,
             minted,
@@ -3693,7 +3708,7 @@ impl StateStore {
             issuance_param_version,
             burn_param_version,
             cooldown_param_version,
-        ) = self.monetary_tick_config()?;
+        } = self.monetary_tick_config()?;
 
         let cooldown_allows = self.monetary_state.tick_count == 0
             || self
@@ -3703,7 +3718,7 @@ impl StateStore {
                 <= block_height;
 
         if !(block_height > 0
-            && block_height % interval_blocks == 0
+            && block_height.is_multiple_of(interval_blocks)
             && cooldown_allows
             && self.monetary_state.last_tick_height < block_height)
         {
@@ -3885,9 +3900,7 @@ impl StateStore {
     ) -> bool {
         self.billing_window_policies
             .get(&policy.billing_window_id)
-            .map_or(true, |persisted| {
-                policy.preserves_version_boundary_of(persisted)
-            })
+            .is_none_or(|persisted| policy.preserves_version_boundary_of(persisted))
     }
 
     pub fn set_billing_window_policy(
@@ -4046,7 +4059,7 @@ impl StateStore {
         } = snapshot;
         let snapshot_had_invalid_record = record
             .as_ref()
-            .map_or(false, |record| !record.is_persistable_snapshot_for(key));
+            .is_some_and(|record| !record.is_persistable_snapshot_for(key));
         let record = record.filter(|record| record.is_persistable_snapshot_for(key));
         let consumer_nonce = if snapshot_had_invalid_record {
             None
@@ -4160,11 +4173,10 @@ impl StateStore {
     }
 
     pub fn state_root(&self) -> Hash32 {
-        if let Some(cached) = self
+        if let Some(cached) = *self
             .state_root_cache
             .read()
             .expect("state root cache poisoned")
-            .clone()
         {
             return cached;
         }
@@ -4173,7 +4185,7 @@ impl StateStore {
             .state_root_cache
             .write()
             .expect("state root cache poisoned");
-        if let Some(cached) = cache_guard.clone() {
+        if let Some(cached) = *cache_guard {
             return cached;
         }
 
@@ -4456,7 +4468,7 @@ impl StateStore {
         hasher.update(self.monetary_state.total_burned.to_le_bytes());
         hasher.update(self.monetary_state.net_issuance.to_le_bytes());
         let root: Hash32 = hasher.finalize().into();
-        *cache_guard = Some(root.clone());
+        *cache_guard = Some(root);
         root
     }
 }
@@ -11604,9 +11616,8 @@ mod tests {
             "restore must fail closed instead of leaving a resolvable ref for a non-allowlisted governance key"
         );
         assert!(
-            st.gov_param_key_index
-                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
-                .is_none(),
+            !st.gov_param_key_index
+                .contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "restore must not register non-allowlisted governance keys in the shared registry"
         );
     }
@@ -11636,7 +11647,7 @@ mod tests {
             "reserved-id restore must fail closed instead of materializing a non-allowlisted object behind the canonical accessor"
         );
         assert!(
-            st.gov_param_key_index.get("emergency_pause").is_none(),
+            !st.gov_param_key_index.contains_key("emergency_pause"),
             "reserved-id restore must not backfill the canonical registry index from a foreign key snapshot"
         );
         assert_eq!(
@@ -12011,13 +12022,12 @@ mod tests {
             "restore rejection must scrub stale key-id aliases instead of preserving ambiguous pending state"
         );
         assert!(
-            st.pending_gov_updates.get("emergency_pause").is_none(),
+            !st.pending_gov_updates.contains_key("emergency_pause"),
             "rejected restore must not retain the requested canonical pending entry"
         );
         assert!(
-            st.pending_gov_updates
-                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
-                .is_none(),
+            !st.pending_gov_updates
+                .contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "rejected restore must remove the conflicting raw alias entry"
         );
     }
@@ -12041,9 +12051,8 @@ mod tests {
             "pending restore must fail closed for a non-allowlisted governance key"
         );
         assert!(
-            st.pending_gov_updates
-                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
-                .is_none(),
+            !st.pending_gov_updates
+                .contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "pending restore must not retain a raw queued entry for a non-allowlisted governance key"
         );
     }
@@ -12086,9 +12095,8 @@ mod tests {
             "public accessors must not resolve a non-allowlisted applied governance key after rejected restore"
         );
         assert!(
-            st.gov_param_key_index
-                .get(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID)
-                .is_none(),
+            !st.gov_param_key_index
+                .contains_key(NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID),
             "applied restore must not retain a raw key-index entry for a non-allowlisted governance key"
         );
     }
@@ -12649,11 +12657,11 @@ mod tests {
             "accessors must not expose a governance param restored under a pinned id reserved for a different key"
         );
         assert!(
-            st.objects.get(&EMERGENCY_PAUSE_KEY_ID).is_none(),
+            !st.objects.contains_key(&EMERGENCY_PAUSE_KEY_ID),
             "rejected restore must not leave a stray gov param object at the reserved emergency_pause id"
         );
         assert!(
-            st.gov_param_key_index.get("resolve_authority").is_none(),
+            !st.gov_param_key_index.contains_key("resolve_authority"),
             "rejected restore must not register another key against the reserved emergency_pause id"
         );
     }
@@ -13099,7 +13107,7 @@ mod tests {
             "restore must materialize the canonical emergency_pause object at the reserved slot"
         );
         assert!(
-            st.objects.get(&8_000).is_some(),
+            st.objects.contains_key(&8_000),
             "repairing registry drift must not scrub unrelated foreign objects that happened to occupy the stale mutable slot"
         );
         assert!(st.is_emergency_paused());

@@ -532,7 +532,7 @@ mod tests {
             .expect_err("missing account should fail closed");
         assert_eq!(err, VaultError::InsufficientBalance);
         assert_eq!(vault.balance_of("ghost"), 0);
-        assert!(vault.balances.get("ghost").is_none());
+        assert!(!vault.balances.contains_key("ghost"));
         assert!(vault.lock_record("req-missing").is_none());
         assert!(vault.audit_log().is_empty());
     }
@@ -562,7 +562,9 @@ mod tests {
         );
 
         assert_eq!(
-            vault.lock("owner", " req-padded ", "alice", 10).unwrap_err(),
+            vault
+                .lock("owner", " req-padded ", "alice", 10)
+                .unwrap_err(),
             VaultError::InvalidRequestId
         );
         assert!(vault.lock_record(" req-padded ").is_none());
@@ -580,9 +582,12 @@ mod tests {
         assert_eq!(vault.audit_log().len(), audit_len_after_deposit);
         assert!(!vault.normalized_audit_log().iter().any(|event| {
             matches!(
-                &event.event_type[..],
+                event.event_type,
                 "vault.locked" | "vault.released" | "vault.slashed"
-            ) && matches!(event.object_id.as_deref(), Some("   ") | Some(" req-padded "))
+            ) && matches!(
+                event.object_id.as_deref(),
+                Some("   ") | Some(" req-padded ")
+            )
         }));
     }
 
@@ -614,14 +619,18 @@ mod tests {
     fn rejected_actions_do_not_append_audit_events() {
         let mut vault = SettlementVault::new("owner");
 
-        assert_eq!(vault.deposit("mallory", "alice", 10).unwrap_err(), VaultError::Unauthorized);
+        assert_eq!(
+            vault.deposit("mallory", "alice", 10).unwrap_err(),
+            VaultError::Unauthorized
+        );
         assert!(vault.audit_log().is_empty());
 
         vault.deposit("owner", "alice", 10).unwrap();
         let audit_len_after_deposit = vault.audit_log().len();
 
         assert_eq!(
-            vault.lock("mallory", "req-unauthorized", "alice", 5)
+            vault
+                .lock("mallory", "req-unauthorized", "alice", 5)
                 .unwrap_err(),
             VaultError::Unauthorized
         );
@@ -645,22 +654,29 @@ mod tests {
         let mut vault = SettlementVault::new("owner");
 
         vault.deposit("owner", "alice", 50).unwrap();
-        vault.lock("owner", "req-paused-release-slash", "alice", 20)
+        vault
+            .lock("owner", "req-paused-release-slash", "alice", 20)
             .unwrap();
         vault.pause("owner").unwrap();
         let audit_len_while_paused = vault.audit_log().len();
 
         assert_eq!(
-            vault.release("owner", "req-paused-release-slash").unwrap_err(),
-            VaultError::Paused
-        );
-        assert_eq!(
-            vault.slash("owner", "req-paused-release-slash", "treasury")
+            vault
+                .release("owner", "req-paused-release-slash")
                 .unwrap_err(),
             VaultError::Paused
         );
         assert_eq!(
-            vault.lock_record("req-paused-release-slash").unwrap().status,
+            vault
+                .slash("owner", "req-paused-release-slash", "treasury")
+                .unwrap_err(),
+            VaultError::Paused
+        );
+        assert_eq!(
+            vault
+                .lock_record("req-paused-release-slash")
+                .unwrap()
+                .status,
             LockStatus::Locked
         );
         assert_eq!(vault.balance_of("alice"), 30);
@@ -713,7 +729,8 @@ mod tests {
             VaultError::Unauthorized
         );
         assert_eq!(
-            vault.lock("mallory", "req-auth-paused-2", "alice", 1)
+            vault
+                .lock("mallory", "req-auth-paused-2", "alice", 1)
                 .unwrap_err(),
             VaultError::Unauthorized
         );
@@ -722,7 +739,8 @@ mod tests {
             VaultError::Unauthorized
         );
         assert_eq!(
-            vault.slash("mallory", "req-auth-paused", "treasury")
+            vault
+                .slash("mallory", "req-auth-paused", "treasury")
                 .unwrap_err(),
             VaultError::Unauthorized
         );
@@ -785,7 +803,8 @@ mod tests {
         let mut vault = SettlementVault::new("owner");
 
         vault.deposit("owner", "alice", 100).unwrap();
-        vault.lock("owner", "req-release-replay", "alice", 30)
+        vault
+            .lock("owner", "req-release-replay", "alice", 30)
             .unwrap();
         vault.release("owner", "req-release-replay").unwrap();
         let released_audit_len = vault.audit_log().len();
@@ -803,8 +822,12 @@ mod tests {
         );
         assert_eq!(vault.audit_log().len(), released_audit_len);
 
-        vault.lock("owner", "req-slash-replay", "alice", 40).unwrap();
-        vault.slash("owner", "req-slash-replay", "treasury").unwrap();
+        vault
+            .lock("owner", "req-slash-replay", "alice", 40)
+            .unwrap();
+        vault
+            .slash("owner", "req-slash-replay", "treasury")
+            .unwrap();
         let slashed_audit_len = vault.audit_log().len();
 
         assert_eq!(
@@ -866,7 +889,10 @@ mod tests {
     fn unauthorized_pause_and_unpause_do_not_leak_state_or_append_audit_events() {
         let mut vault = SettlementVault::new("owner");
 
-        assert_eq!(vault.pause("mallory").unwrap_err(), VaultError::Unauthorized);
+        assert_eq!(
+            vault.pause("mallory").unwrap_err(),
+            VaultError::Unauthorized
+        );
         assert!(!vault.is_paused());
         assert!(vault.audit_log().is_empty());
 
@@ -874,8 +900,14 @@ mod tests {
         let audit_len_after_pause = vault.audit_log().len();
         assert!(vault.is_paused());
 
-        assert_eq!(vault.pause("mallory").unwrap_err(), VaultError::Unauthorized);
-        assert_eq!(vault.unpause("mallory").unwrap_err(), VaultError::Unauthorized);
+        assert_eq!(
+            vault.pause("mallory").unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.unpause("mallory").unwrap_err(),
+            VaultError::Unauthorized
+        );
         assert!(vault.is_paused());
         assert_eq!(vault.audit_log().len(), audit_len_after_pause);
 
@@ -883,7 +915,10 @@ mod tests {
         let audit_len_after_unpause = vault.audit_log().len();
         assert!(!vault.is_paused());
 
-        assert_eq!(vault.unpause("mallory").unwrap_err(), VaultError::Unauthorized);
+        assert_eq!(
+            vault.unpause("mallory").unwrap_err(),
+            VaultError::Unauthorized
+        );
         assert!(!vault.is_paused());
         assert_eq!(vault.audit_log().len(), audit_len_after_unpause);
     }
@@ -918,7 +953,9 @@ mod tests {
         let mut vault = SettlementVault::new("owner");
 
         vault.deposit("owner", "alice", 20).unwrap();
-        vault.lock("owner", "req-paused-slash", "alice", 20).unwrap();
+        vault
+            .lock("owner", "req-paused-slash", "alice", 20)
+            .unwrap();
         let audit_len_before_pause = vault.audit_log().len();
         vault.pause("owner").unwrap();
         let audit_len_while_paused = vault.audit_log().len();
@@ -942,7 +979,8 @@ mod tests {
         let mut vault = SettlementVault::new("owner");
 
         vault.deposit("owner", "alice", 20).unwrap();
-        vault.lock("owner", "req-paused-release", "alice", 20)
+        vault
+            .lock("owner", "req-paused-release", "alice", 20)
             .unwrap();
         let audit_len_before_pause = vault.audit_log().len();
         vault.pause("owner").unwrap();
@@ -970,12 +1008,14 @@ mod tests {
         let audit_len_while_paused = vault.audit_log().len();
 
         assert_eq!(
-            vault.release("owner", "req-missing")
+            vault
+                .release("owner", "req-missing")
                 .expect_err("paused release should not reveal request absence"),
             VaultError::Paused
         );
         assert_eq!(
-            vault.slash("owner", "req-missing", "treasury")
+            vault
+                .slash("owner", "req-missing", "treasury")
                 .expect_err("paused slash should not reveal request absence"),
             VaultError::Paused
         );
@@ -1367,7 +1407,7 @@ mod tests {
         vault.deposit("owner", "alice", 10).unwrap();
         vault.lock("owner", "req-prune", "alice", 10).unwrap();
         assert_eq!(vault.balance_of("alice"), 0);
-        assert!(vault.balances.get("alice").is_none());
+        assert!(!vault.balances.contains_key("alice"));
 
         vault.release("owner", "req-prune").unwrap();
         assert_eq!(vault.balance_of("alice"), 10);
@@ -1375,7 +1415,7 @@ mod tests {
         vault.transfer("owner", "alice", "bob", 10).unwrap();
         assert_eq!(vault.balance_of("alice"), 0);
         assert_eq!(vault.balance_of("bob"), 10);
-        assert!(vault.balances.get("alice").is_none());
+        assert!(!vault.balances.contains_key("alice"));
     }
 
     #[test]

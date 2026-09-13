@@ -1,0 +1,388 @@
+{
+  "algorithm": {
+    "empty_inner": "Optional::Absent",
+    "first_parent_level": 0,
+    "leaf_preimage": "u16(schema=0) || u8(kind) || u32(index) || Bytes(item)",
+    "node_preimage": "u16(schema=0) || u8(kind) || u32(level) || Hash32(left) || Hash32(right)",
+    "odd_node_rule": "duplicate-right at every level",
+    "outer_root_always_hashed": true,
+    "root_preimage": "u16(schema=0) || u8(kind) || u32(item_count) || Optional<Hash32>(inner)"
+  },
+  "canonical_codec": "CEV0",
+  "cases": {
+    "evidence": [
+      {
+        "inner_hash_hex": null,
+        "item_count": 0,
+        "items_hex": [],
+        "root_hex": "df2f0138177d79d16f277d2c45d5a9fdbe492daa75c2b28fb901f3450022b047",
+        "root_preimage_hex": "0000020000000000"
+      },
+      {
+        "inner_hash_hex": "844d09ec2d5e975b4edf1c010ee7cee1260b2a748a1d07abd9cd7b1f9e6bfd8c",
+        "item_count": 1,
+        "items_hex": [
+          ""
+        ],
+        "root_hex": "30ac7f62248a6377c2a7fdb281c560b54dab6c5f8862474bfcc64b767fdaab5a",
+        "root_preimage_hex": "0000020000000101844d09ec2d5e975b4edf1c010ee7cee1260b2a748a1d07abd9cd7b1f9e6bfd8c"
+      },
+      {
+        "inner_hash_hex": "c9d3f02c728e9f9d1846d07c9934e9903756b7571fa962c52916c39ed71e5f80",
+        "item_count": 2,
+        "items_hex": [
+          "",
+          "00"
+        ],
+        "root_hex": "42906895c1b8ea27175b7ee88c7adb738d1235f0038f89ac7f6517f7946cce3b",
+        "root_preimage_hex": "0000020000000201c9d3f02c728e9f9d1846d07c9934e9903756b7571fa962c52916c39ed71e5f80"
+      },
+      {
+        "inner_hash_hex": "03c32256e5cf2c3ba5d167914a31368ca8f84910275b5f958536193d1e104a4b",
+        "item_count": 3,
+        "items_hex": [
+          "",
+          "00",
+          "00ff"
+        ],
+        "root_hex": "e16d45e768dae8e475c2936759fcf3a609f22ac9b9e4fae935fcfb8d46eaee82",
+        "root_preimage_hex": "000002000000030103c32256e5cf2c3ba5d167914a31368ca8f84910275b5f958536193d1e104a4b"
+      },
+      {
+        "inner_hash_hex": "b10433f122e9fb01e7a9c595a0fc041bfae2b5b2bc9f6ff212097da9b08c2222",
+        "item_count": 4,
+        "items_hex": [
+          "",
+          "00",
+          "00ff",
+          "63657630"
+        ],
+        "root_hex": "ac039a83b50afdd73ff09265232cfd37d6b48b365f0957cbdceef48dd989aa14",
+        "root_preimage_hex": "0000020000000401b10433f122e9fb01e7a9c595a0fc041bfae2b5b2bc9f6ff212097da9b08c2222"
+      }
+    ],
+    "payload": [
+      {
+        "inner_hash_hex": null,
+        "item_count": 0,
+        "items_hex": [],
+        "root_hex": "0165aeb0b26dc305d5d2a639f4d8ad56abd03fcf165af902d856ecf58eebced2",
+        "root_preimage_hex": "0000000000000000"
+      },
+      {
+        "inner_hash_hex": "c07815899df246c8e856b752c824ab2bc44972b953fa7229a3be16b20bcec229",
+        "item_count": 1,
+        "items_hex": [
+          ""
+        ],
+        "root_hex": "d6f18aa559ade3b7deed66f5011262054167d5e9d864722c46c4a55f1704ff29",
+        "root_preimage_hex": "0000000000000101c07815899df246c8e856b752c824ab2bc44972b953fa7229a3be16b20bcec229"
+      },
+      {
+        "inner_hash_hex": "28bab22323d5fc5369f9108c13d12dac1c2c5d09963e890aba282c5ba75efcf0",
+        "item_count": 2,
+        "items_hex": [
+          "",
+          "00"
+        ],
+        "root_hex": "fa07664cecbe0e6b79e35e591278bac0566a963745176a5049018abcff53b708",
+        "root_preimage_hex": "000000000000020128bab22323d5fc5369f9108c13d12dac1c2c5d09963e890aba282c5ba75efcf0"
+      },
+      {
+        "inner_hash_hex": "a96af77025c166b6916f1bd6f4abd1973842ce54a6d74dc95cfee7f19603dec3",
+        "item_count": 3,
+        "items_hex": [
+          "",
+          "00",
+          "00ff"
+        ],
+        "root_hex": "028a1df0f9d6b2b70454d646809baee7468ef1e389199925e037eaf83a65e0cb",
+        "root_preimage_hex": "0000000000000301a96af77025c166b6916f1bd6f4abd1973842ce54a6d74dc95cfee7f19603dec3"
+      },
+      {
+        "inner_hash_hex": "509825253c5e37a345702ae38436057811242fb14e4f5cfebecefbee857142fa",
+        "item_count": 4,
+        "items_hex": [
+          "",
+          "00",
+          "00ff",
+          "63657630"
+        ],
+        "root_hex": "7ff92afa4c2cc258207d4a7baf699be10e53256ef6a4bec372b74f3cc42e1381",
+        "root_preimage_hex": "0000000000000401509825253c5e37a345702ae38436057811242fb14e4f5cfebecefbee857142fa"
+      }
+    ],
+    "receipts": [
+      {
+        "inner_hash_hex": null,
+        "item_count": 0,
+        "items_hex": [],
+        "root_hex": "b455563b0b1e6ce49c079d2ef14e20dbccb1168af66d245d7295c45fa0895156",
+        "root_preimage_hex": "0000010000000000"
+      },
+      {
+        "inner_hash_hex": "abe7a6aa7c44575268b55b1ade1163b9058ceb18c17227282a938a46bb74b292",
+        "item_count": 1,
+        "items_hex": [
+          ""
+        ],
+        "root_hex": "3e6b075b71c916150dcfca239043d274710939321b250e230a49ad744330ce84",
+        "root_preimage_hex": "0000010000000101abe7a6aa7c44575268b55b1ade1163b9058ceb18c17227282a938a46bb74b292"
+      },
+      {
+        "inner_hash_hex": "8130a5e8208d9d0a183aaf1e982eee403aa0aca754d9c9275683f3aa82ff34de",
+        "item_count": 2,
+        "items_hex": [
+          "",
+          "00"
+        ],
+        "root_hex": "bc6adf034143eeb77fc0b4562b9b7a5cd1bebdbb72d10b98801b0a6feb8bd958",
+        "root_preimage_hex": "00000100000002018130a5e8208d9d0a183aaf1e982eee403aa0aca754d9c9275683f3aa82ff34de"
+      },
+      {
+        "inner_hash_hex": "32c6c66950b1882693c00d4999e32856c9a593bc70d53e0be936dbdb35c604f4",
+        "item_count": 3,
+        "items_hex": [
+          "",
+          "00",
+          "00ff"
+        ],
+        "root_hex": "cb5408768e61558432ac94ebdb3688c3d7c0923e8a99fdd2b6451c282565eac8",
+        "root_preimage_hex": "000001000000030132c6c66950b1882693c00d4999e32856c9a593bc70d53e0be936dbdb35c604f4"
+      },
+      {
+        "inner_hash_hex": "de8a0dab5b7dda8a799b16adf46fada1df212bffc13bef4ba2fe8970c7ee58a6",
+        "item_count": 4,
+        "items_hex": [
+          "",
+          "00",
+          "00ff",
+          "63657630"
+        ],
+        "root_hex": "7143d1938552f76cfebc8d137c17bd0122d3220030bccc49e057b4986d2fb314",
+        "root_preimage_hex": "0000010000000401de8a0dab5b7dda8a799b16adf46fada1df212bffc13bef4ba2fe8970c7ee58a6"
+      }
+    ]
+  },
+  "detailed_tree_traces": {
+    "payload_count_3_duplicate_right": {
+      "inner_hash_hex": "a96af77025c166b6916f1bd6f4abd1973842ce54a6d74dc95cfee7f19603dec3",
+      "item_count": 3,
+      "items_hex": [
+        "",
+        "00",
+        "00ff"
+      ],
+      "leaf_hashes_hex": [
+        "c07815899df246c8e856b752c824ab2bc44972b953fa7229a3be16b20bcec229",
+        "379ac18934eba98d53cfb3d1503ed634249cffa44fd8c690c031ecf8594d0206",
+        "4f994a91b7a1a851d02ced774ed8b179811826a949e650c4d8ae4991480e1eff"
+      ],
+      "leaf_preimages_hex": [
+        "0000000000000000000000",
+        "000000000000010000000100",
+        "000000000000020000000200ff"
+      ],
+      "node_levels": [
+        {
+          "level": 0,
+          "pairs": [
+            {
+              "duplicate_right": false,
+              "left_hash_hex": "c07815899df246c8e856b752c824ab2bc44972b953fa7229a3be16b20bcec229",
+              "node_hash_hex": "28bab22323d5fc5369f9108c13d12dac1c2c5d09963e890aba282c5ba75efcf0",
+              "node_preimage_hex": "00000000000000c07815899df246c8e856b752c824ab2bc44972b953fa7229a3be16b20bcec229379ac18934eba98d53cfb3d1503ed634249cffa44fd8c690c031ecf8594d0206",
+              "pair_index": 0,
+              "right_hash_hex": "379ac18934eba98d53cfb3d1503ed634249cffa44fd8c690c031ecf8594d0206"
+            },
+            {
+              "duplicate_right": true,
+              "left_hash_hex": "4f994a91b7a1a851d02ced774ed8b179811826a949e650c4d8ae4991480e1eff",
+              "node_hash_hex": "f563a60461b9347abc3a839a217e760a276817a2eebd1a523e63c6a31d5bac37",
+              "node_preimage_hex": "000000000000004f994a91b7a1a851d02ced774ed8b179811826a949e650c4d8ae4991480e1eff4f994a91b7a1a851d02ced774ed8b179811826a949e650c4d8ae4991480e1eff",
+              "pair_index": 1,
+              "right_hash_hex": "4f994a91b7a1a851d02ced774ed8b179811826a949e650c4d8ae4991480e1eff"
+            }
+          ]
+        },
+        {
+          "level": 1,
+          "pairs": [
+            {
+              "duplicate_right": false,
+              "left_hash_hex": "28bab22323d5fc5369f9108c13d12dac1c2c5d09963e890aba282c5ba75efcf0",
+              "node_hash_hex": "a96af77025c166b6916f1bd6f4abd1973842ce54a6d74dc95cfee7f19603dec3",
+              "node_preimage_hex": "0000000000000128bab22323d5fc5369f9108c13d12dac1c2c5d09963e890aba282c5ba75efcf0f563a60461b9347abc3a839a217e760a276817a2eebd1a523e63c6a31d5bac37",
+              "pair_index": 0,
+              "right_hash_hex": "f563a60461b9347abc3a839a217e760a276817a2eebd1a523e63c6a31d5bac37"
+            }
+          ]
+        }
+      ],
+      "root_hex": "028a1df0f9d6b2b70454d646809baee7468ef1e389199925e037eaf83a65e0cb",
+      "root_preimage_hex": "0000000000000301a96af77025c166b6916f1bd6f4abd1973842ce54a6d74dc95cfee7f19603dec3"
+    },
+    "payload_count_4_balanced": {
+      "inner_hash_hex": "509825253c5e37a345702ae38436057811242fb14e4f5cfebecefbee857142fa",
+      "item_count": 4,
+      "items_hex": [
+        "",
+        "00",
+        "00ff",
+        "63657630"
+      ],
+      "leaf_hashes_hex": [
+        "c07815899df246c8e856b752c824ab2bc44972b953fa7229a3be16b20bcec229",
+        "379ac18934eba98d53cfb3d1503ed634249cffa44fd8c690c031ecf8594d0206",
+        "4f994a91b7a1a851d02ced774ed8b179811826a949e650c4d8ae4991480e1eff",
+        "9996de34b6647d3b0ea2c2f2b07e6d0ba1e67671907340246c55b6286d6b025c"
+      ],
+      "leaf_preimages_hex": [
+        "0000000000000000000000",
+        "000000000000010000000100",
+        "000000000000020000000200ff",
+        "000000000000030000000463657630"
+      ],
+      "node_levels": [
+        {
+          "level": 0,
+          "pairs": [
+            {
+              "duplicate_right": false,
+              "left_hash_hex": "c07815899df246c8e856b752c824ab2bc44972b953fa7229a3be16b20bcec229",
+              "node_hash_hex": "28bab22323d5fc5369f9108c13d12dac1c2c5d09963e890aba282c5ba75efcf0",
+              "node_preimage_hex": "00000000000000c07815899df246c8e856b752c824ab2bc44972b953fa7229a3be16b20bcec229379ac18934eba98d53cfb3d1503ed634249cffa44fd8c690c031ecf8594d0206",
+              "pair_index": 0,
+              "right_hash_hex": "379ac18934eba98d53cfb3d1503ed634249cffa44fd8c690c031ecf8594d0206"
+            },
+            {
+              "duplicate_right": false,
+              "left_hash_hex": "4f994a91b7a1a851d02ced774ed8b179811826a949e650c4d8ae4991480e1eff",
+              "node_hash_hex": "8d1c23db4d852d186261fb93a3ebe2c514ed24f188d2f1f4effb79240bf0b6e8",
+              "node_preimage_hex": "000000000000004f994a91b7a1a851d02ced774ed8b179811826a949e650c4d8ae4991480e1eff9996de34b6647d3b0ea2c2f2b07e6d0ba1e67671907340246c55b6286d6b025c",
+              "pair_index": 1,
+              "right_hash_hex": "9996de34b6647d3b0ea2c2f2b07e6d0ba1e67671907340246c55b6286d6b025c"
+            }
+          ]
+        },
+        {
+          "level": 1,
+          "pairs": [
+            {
+              "duplicate_right": false,
+              "left_hash_hex": "28bab22323d5fc5369f9108c13d12dac1c2c5d09963e890aba282c5ba75efcf0",
+              "node_hash_hex": "509825253c5e37a345702ae38436057811242fb14e4f5cfebecefbee857142fa",
+              "node_preimage_hex": "0000000000000128bab22323d5fc5369f9108c13d12dac1c2c5d09963e890aba282c5ba75efcf08d1c23db4d852d186261fb93a3ebe2c514ed24f188d2f1f4effb79240bf0b6e8",
+              "pair_index": 0,
+              "right_hash_hex": "8d1c23db4d852d186261fb93a3ebe2c514ed24f188d2f1f4effb79240bf0b6e8"
+            }
+          ]
+        }
+      ],
+      "root_hex": "7ff92afa4c2cc258207d4a7baf699be10e53256ef6a4bec372b74f3cc42e1381",
+      "root_preimage_hex": "0000000000000401509825253c5e37a345702ae38436057811242fb14e4f5cfebecefbee857142fa"
+    }
+  },
+  "domains": {
+    "leaf": "trnm.poco-bft.ordered-leaf.v0",
+    "node": "trnm.poco-bft.ordered-node.v0",
+    "root": "trnm.poco-bft.ordered-root.v0"
+  },
+  "fixture_items_hex": [
+    "",
+    "00",
+    "00ff",
+    "63657630"
+  ],
+  "frozen_empty_roots_hex": {
+    "evidence": "df2f0138177d79d16f277d2c45d5a9fdbe492daa75c2b28fb901f3450022b047",
+    "payload": "0165aeb0b26dc305d5d2a639f4d8ad56abd03fcf165af902d856ecf58eebced2",
+    "receipts": "b455563b0b1e6ce49c079d2ef14e20dbccb1168af66d245d7295c45fa0895156"
+  },
+  "hash_algorithm": "sha256",
+  "hash_prefix_ascii": "trnm.cev0.hash.v0",
+  "kind_codes": {
+    "evidence": 2,
+    "payload": 0,
+    "receipts": 1
+  },
+  "protocol_version": 0,
+  "public_leaf_helper": {
+    "index": 0,
+    "item_hex": "61",
+    "kind": "payload",
+    "leaf_digest_hex": "1945223c9d4d3cab94b2b14e3da3be3cfde6c213d9a79043462931dabddae6dd",
+    "leaf_preimage_hex": "000000000000000000000161"
+  },
+  "relational_checks": {
+    "bytes_framing": {
+      "equal_unframed_concatenation_hex": "616263",
+      "kind": "payload",
+      "left_items_hex": [
+        "61",
+        "6263"
+      ],
+      "left_leaf_preimages_hex": [
+        "000000000000000000000161",
+        "00000000000001000000026263"
+      ],
+      "left_root_hex": "7f17a7f09c27076b3e461cf039fdd1fb2b843937f363dcc65abd722cee8d2d99",
+      "right_items_hex": [
+        "6162",
+        "63"
+      ],
+      "right_leaf_preimages_hex": [
+        "00000000000000000000026162",
+        "000000000000010000000163"
+      ],
+      "right_root_hex": "f0ac0bc7a5b38c9300e88f921ebc31fe210d3f7fd15cbcd8d0a90f4e231e393d",
+      "roots_differ": true
+    },
+    "duplicate_right_leaf_count_mutation": {
+      "accepted_by_reference_validator": false,
+      "actual_item_count": 3,
+      "actual_items_hex": [
+        "",
+        "00",
+        "00ff"
+      ],
+      "actual_root_hex": "028a1df0f9d6b2b70454d646809baee7468ef1e389199925e037eaf83a65e0cb",
+      "expected_error": "claimed item_count does not equal the ordered item count",
+      "inner_hash_hex": "a96af77025c166b6916f1bd6f4abd1973842ce54a6d74dc95cfee7f19603dec3",
+      "kind": "payload",
+      "mutated_item_count": 4,
+      "mutated_root_hex": "a745fdffabefc267f48cb191300219590e16ab89235b442926306d2bb092a550",
+      "mutated_root_preimage_hex": "0000000000000401a96af77025c166b6916f1bd6f4abd1973842ce54a6d74dc95cfee7f19603dec3",
+      "roots_differ": true
+    },
+    "item_order": {
+      "kind": "payload",
+      "original_items_hex": [
+        "616c706861",
+        "62657461",
+        "67616d6d61"
+      ],
+      "original_root_hex": "d83649217bd0d6c8371dc809127cb58f3a5d7603f7a33a980475c24a57e7c97e",
+      "reversed_items_hex": [
+        "67616d6d61",
+        "62657461",
+        "616c706861"
+      ],
+      "reversed_root_hex": "15f8eae8f75ea9471ae7cf15c27a0a94a869526335e64f3d4dd38dd49d8d601d",
+      "roots_differ": true
+    },
+    "kind_domain_separation": {
+      "all_roots_distinct": true,
+      "items_hex": [
+        "73616d652d6974656d"
+      ],
+      "roots_hex": {
+        "evidence": "b367727b7d93a014a6696bbf9c1648cbeb6f30e33bf1cc0a147dae27251e9fe4",
+        "payload": "afafea604a74518e3e402a67c4305894085d9654379833d102ea2d6050e382df",
+        "receipts": "8d41f942a5184c06757597921dabb4e463a2390a5443418cf371e0db49857fff"
+      }
+    }
+  },
+  "schema": "trnm_poco_bft_ordered_roots_vectors_v0",
+  "scope": "Independent ordered-root CEV0, SHA-256, kind, order, framing, duplicate-right, and item-count conformance vectors for payload, receipt, and evidence items."
+}

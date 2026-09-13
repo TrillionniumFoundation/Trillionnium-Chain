@@ -6,6 +6,7 @@ use trnm_types::{CapabilityScope, IdentityRegistry};
 
 fn run_ok(args: &[&str], registry_path: &str) -> String {
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args(args)
         .env("TRNM_RPC_IDENTITY_REGISTRY_FILE", registry_path)
@@ -19,6 +20,7 @@ fn run_ok(args: &[&str], registry_path: &str) -> String {
 
 fn run_fail(args: &[&str], registry_path: &str) -> String {
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args(args)
         .env("TRNM_RPC_IDENTITY_REGISTRY_FILE", registry_path)

@@ -25,6 +25,7 @@ fn unique_market_path(name: &str, ext: &str) -> PathBuf {
 
 fn run_ok_with_env(args: &[&str], envs: &[(&str, &str)]) -> String {
     let mut command = Command::new("cargo");
+    command.env("TRNM_RPC_DEVELOPMENT_ONLY", "1");
     command.args(["run", "-p", "trnm-rpc", "--"]).args(args);
     for (k, v) in envs {
         command.env(k, v);

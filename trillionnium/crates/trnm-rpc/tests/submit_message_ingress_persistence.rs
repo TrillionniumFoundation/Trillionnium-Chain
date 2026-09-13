@@ -25,6 +25,7 @@ fn submit_message_task_id_uses_max_existing_plus_one() {
     fs::write(&ingress, format!("{}\n", seed)).expect("seed ingress");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args([
             "submit-message",
@@ -90,6 +91,7 @@ fn submit_message_duplicate_lookup_prefers_latest_record() {
     fs::write(&ingress, format!("{}\n", seed)).expect("seed ingress");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args([
             "submit-message",
@@ -163,6 +165,7 @@ fn submit_message_quarantines_invalid_ingress_row_only_once_across_replays() {
 
     let run_submit = |key: &str| {
         Command::new("cargo")
+            .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
             .args(["run", "-p", "trnm-rpc", "--"])
             .args([
                 "submit-message",
@@ -269,6 +272,7 @@ fn submit_message_dedupes_duplicate_noise_before_quarantine_cap() {
     fs::write(&ingress, fixture).expect("write duplicate-noise ingress fixture");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args([
             "submit-message",
@@ -358,6 +362,7 @@ fn submit_message_does_not_reintroduce_evicted_duplicate_noise_in_same_salvage_c
     fs::write(&ingress, fixture).expect("write evicted-duplicate ingress fixture");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args([
             "submit-message",
@@ -448,6 +453,7 @@ fn submit_message_rewrites_preexisting_duplicate_quarantine_rows() {
     .expect("seed duplicate quarantine");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args([
             "submit-message",

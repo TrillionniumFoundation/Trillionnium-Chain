@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "schema_id": "trnm-poco-ai-native-v1-agent-market-kernel-candidate-v1",
+  "protocol_id": "trnm-poco-ai-native-v1",
+  "status": "candidate-non-normative",
+  "normative": false,
+  "implemented_scope": "bounded-local-sqlite-kernel",
+  "trust_input": {
+    "type": "AgentMarketFreshGenesisTrustBundleV1",
+    "consensus_object": false,
+    "pre_registered": [
+      "requester-agent-controller-session-keys",
+      "provider-agent-controller-session-keys",
+      "requester-account",
+      "provider-bond"
+    ]
+  },
+  "authority": {
+    "signature_scheme": "strict-ed25519",
+    "statement_binds": [
+      "ProtocolContextV1",
+      "operation-kind-and-digest",
+      "sender-and-authorizing-key",
+      "capability-id-and-live-generation",
+      "session-grant-id-and-generation",
+      "nonce-lane-and-exact-nonce",
+      "expected-lane-version",
+      "height-interval"
+    ],
+    "controller_namespace": {
+      "capability_id": null,
+      "session_generation": 0,
+      "lane": 0
+    },
+    "session_lane_zero_forbidden": true
+  },
+  "scope_enforcement": {
+    "operation_task_model_tool_profile_privacy_exact": true,
+    "market_or_endpoint_without_carrier_fails_closed": true,
+    "resource_scope_supported_mode": "ExactList-resource-limit-commitment",
+    "committed_set_verifier_implemented": false,
+    "committed_set_without_verifier_fails_closed": true,
+    "provider_accept_resolves_lease_to_task": true
+  },
+  "order_finalized_execution_context": {
+    "consensus_object": false,
+    "verifier_input": true,
+    "immutable_genesis_anchor_separate": true,
+    "durable_expected_tip_cas": true,
+    "monotonic_height": true,
+    "same_height_requires_same_block_id": true,
+    "node_order_proof_authority_complete": false
+  },
+  "objects": [
+    "CapabilityGrantBodyV1/CapabilityStateV1/CapabilityBudgetStateV1",
+    "SessionKeyGrantBodyV1/SessionKeyGrantStateV1",
+    "NonceLaneKeyBodyV1/NonceLaneStateV1",
+    "AccountBodyV1/AccountStateV1",
+    "BondBodyV1/BondStateV1",
+    "TaskOfferBodyV1/TaskStateV1",
+    "EscrowBodyV1/EscrowStateV1",
+    "BidBodyV1/BidStateV1",
+    "TaskLeaseBodyV1/TaskLeaseStateV1"
+  ],
+  "enabled_operations": [
+    "2-capability-grant",
+    "3-session-grant",
+    "4-task-plus-funded-escrow",
+    "5-bid",
+    "6-requester-lease-acceptance",
+    "7-provider-lease-acceptance"
+  ],
+  "market_transition": {
+    "canonical_order": [
+      "Task+funded-Escrow",
+      "Bid-Active",
+      "Task-Open-to-Leased+Bid-Consumed+Escrow-Reserved+Bond-Held+Lease-Offered",
+      "Lease-Offered-to-Active"
+    ],
+    "task_lifecycle_covered": ["Open", "Leased"],
+    "bid_lifecycle_covered": ["Active", "Consumed"],
+    "lease_lifecycle_covered": ["Offered", "Active"],
+    "escrow_conservation": "funded=available+reserved+disbursed+refunded+forfeited",
+    "bond_conservation": "funded=available+held+released+slashed"
+  },
+  "storage": {
+    "engine": "sqlite",
+    "journal_schema_version": 3,
+    "tables": 4,
+    "triggers": 0,
+    "automatic_migration": false,
+    "sidecars_fail_closed": true,
+    "immutable_read_only_existing_file_preflight": true,
+    "atomic_object_and_operation_commit": true,
+    "exact_replay": true,
+    "gap_free_sequence_and_high_watermark": true,
+    "durable_state_root_checked_every_open_read_write": true,
+    "durable_journal_root_checked_every_open_read_write": true,
+    "durable_finalized_order_block_journal": true,
+    "direct_successor_finalized_block_markers": true,
+    "empty_finalized_blocks_advance": true,
+    "same_block_multiple_operations": true,
+    "finalized_block_root_checked_every_open_read_write": true,
+    "applied_ack_lost_recovered_by_exact_replay": true,
+    "not_applied_ack_lost_changes_state": false,
+    "third_state_permanent_fence": true,
+    "whole_store_rollback_authority": false
+  },
+  "global_truth": {
+    "agent_transaction_wire_complete": false,
+    "identity_key_lifecycle_complete": false,
+    "bootstrap_identity_key_derivation_authority_complete": false,
+    "verify_challenge_complete": false,
+    "g2_global_complete": false,
+    "protocol_implementation_complete": false,
+    "normative_freeze": false,
+    "production_candidate": false,
+    "activation": false
+  }
+}

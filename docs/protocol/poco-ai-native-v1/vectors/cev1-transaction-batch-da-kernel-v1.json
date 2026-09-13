@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "corpus_id": "trnm-poco-ai-native-v1-transaction-batch-da-kernel-candidate-v1",
+  "classification": "candidate-non-normative",
+  "positive_cases": [
+    "deterministic typed batch/chunk derivation",
+    "atomic batch admission and exact replay",
+    "unsigned durable attestation intent survives reopen",
+    "signed attestation survives ack-lost replay",
+    "four-member weighted certificate with three signatures",
+    "bounded certified retrieval",
+    "monotonic retention extension and release",
+    "durable GC tombstone survives reopen",
+    "tamper latch and exact repair",
+    "signed attestor equivocation evidence",
+    "persistent attestation high-watermark survives reopen",
+    "immutable attestation manifest survives certificate retention and repair"
+  ],
+  "negative_cases": [
+    "ArtifactEvidence namespace rejected",
+    "duplicate transaction rejected",
+    "author sequence conflict rejected",
+    "bounded author quota rejected",
+    "bounded global queue rejected",
+    "bad author or attestor signature rejected",
+    "attestation or certificate committed-context substitution rejected",
+    "duplicate or non-canonical certificate signer order rejected",
+    "second attestation preimage under one journal conflict key rejected",
+    "under-quorum certificate rejected",
+    "zero or out-of-range retrieval rejected",
+    "early release and GC rejected",
+    "wrong repair identity rejected",
+    "row tamper rejected on reopen",
+    "schema drift rejected without migration",
+    "unresolved SQLite sidecar rejected",
+    "deleted attestation journal row rejected",
+    "attestation high-watermark tamper rejected",
+    "attestation sequence reuse rejected",
+    "GC without an unforgeable finalized permit is unreachable"
+  ],
+  "crash_and_reopen_cases": [
+    "not-applied transaction rollback leaves no author watermark",
+    "applied-but-ack-lost batch replay is idempotent",
+    "prepared unsigned attestation is recoverable after reopen",
+    "signed attestation replay returns identical attestation",
+    "certificate replay returns identical obligation",
+    "GC tombstone and byte deletion revalidate after reopen",
+    "deleted attestation tail conflicts with persistent high-watermark on reopen"
+  ],
+  "global_claims": {
+    "wire_schemas_complete": false,
+    "conformance_vectors_complete": false,
+    "data_availability_plane_implemented": false,
+    "node_support": false,
+    "protocol_activation": false,
+    "production_candidate": false,
+    "release_ready": false
+  }
+}

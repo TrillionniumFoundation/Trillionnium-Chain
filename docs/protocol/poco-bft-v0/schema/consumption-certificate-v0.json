@@ -1,0 +1,39 @@
+{
+  "schema": "trnm.poco.consumption-certificate.v0",
+  "version": 0,
+  "status": "B2-H exact logical wire and cryptographic admission authority",
+  "body_domain": "trnm.poco.consumption-certificate.v0",
+  "id_domain": "trnm.poco.consumption-certificate-id.v0",
+  "body_fields": [
+    ["schema_version", "u16", "must equal 0"],
+    ["genesis_hash", "Hash32", "nonzero"],
+    ["chain_id", "ConsensusString", "1..128 restricted ASCII bytes"],
+    ["provider_id", "Bytes", "1..128 bytes"],
+    ["consumer_id", "Bytes", "1..128 bytes and differs from provider_id"],
+    ["consumer_key_id", "Bytes", "1..128 bytes"],
+    ["task_id", "Bytes", "1..128 bytes"],
+    ["output_commitment", "Hash32", "all 32-byte values are canonical"],
+    ["meter_id", "Bytes", "1..128 bytes"],
+    ["meter_version", "u32", "registry semantics external"],
+    ["consumed_units", "u128", "positive"],
+    ["billing_start_height", "u64", "at most billing_end_height"],
+    ["billing_end_height", "u64", "strictly below acceptance height"],
+    ["consumer_nonce", "u64", "monotonicity checked by application state"],
+    ["settlement_commitment", "Hash32", "all 32-byte values are canonical"],
+    ["measurement_evidence_root", "Optional<Hash32>", "tag 0 absent; tag 1 plus exactly 32 bytes present"]
+  ],
+  "complete_object_suffix": [
+    ["consumer_signature", "Signature64", "strict Ed25519 over body digest"],
+    ["certificate_id", "Hash32", "recomputed solely from body digest"]
+  ],
+  "exact_decoder": {
+    "trailing_bytes": "rejected",
+    "non_complete_prefixes": "rejected",
+    "alternate_optional_tags": "rejected",
+    "protobuf_signing_bytes": "forbidden"
+  },
+  "authority_boundary": {
+    "proves": ["exact CEV0 object", "body and ID domains", "expected genesis and chain", "billing interval precedes supplied acceptance height", "signature under supplied resolved consumer key"],
+    "does_not_prove": ["consumer-key state resolution", "nonce or tuple uniqueness", "meter activity", "settlement or measurement validity", "application acceptance/finality", "snapshot completeness", "validator weight"]
+  }
+}

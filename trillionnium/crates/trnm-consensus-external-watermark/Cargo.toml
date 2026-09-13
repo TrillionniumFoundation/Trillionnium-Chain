@@ -1,0 +1,42 @@
+[package]
+name = "trnm-consensus-external-watermark"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[[bin]]
+name = "trnm-external-watermark-v0"
+path = "src/main.rs"
+
+[package.metadata.trnm]
+lane = "poco-bft-p0-external-signer-authority"
+protocol = "poco-bft-v0"
+append_only_hash_chain = true
+cross_process_cas = true
+unix_socket_transport = true
+timeout_only_signer_adapter = true
+durable_response_replay_binding = true
+response_binding_append_only_hash_chain = true
+private_key_handling = false
+consensus_runtime = false
+core_admission = false
+safety_rules = false
+host_attestation = false
+validator_runtime = false
+production_signature_producer = false
+vote_authority = false
+epoch_authority = false
+production_activation = false
+
+[dependencies]
+fs2 = "0.4"
+libc = "0.2"
+sha2 = "0.10"
+trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+
+[dev-dependencies]
+ed25519-dalek = "2.2"
+tempfile = "3"

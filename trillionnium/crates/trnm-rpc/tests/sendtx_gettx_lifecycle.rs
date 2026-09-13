@@ -45,6 +45,7 @@ fn run_rpc(temp: &TempDir, args: &[&str]) -> (bool, String, String) {
 
     let output = Command::new(env!("CARGO_BIN_EXE_trnm-rpc"))
         .args(args)
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .env("TRNM_RPC_ACCOUNTS_FILE", &accounts_file)
         .env("TRNM_RPC_TX_FILE", &tx_file)
         .output()

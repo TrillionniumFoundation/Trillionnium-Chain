@@ -29,6 +29,7 @@ fn reserve_loopback_port() -> u16 {
 fn spawn_rpc_serve(port: u16) -> RpcServeProcess {
     let child = Command::new(env!("CARGO_BIN_EXE_trnm-rpc"))
         .args(["serve", "--host", "127.0.0.1", "--port", &port.to_string()])
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .spawn()
@@ -106,11 +107,20 @@ fn serve_health_probe_aliases_keep_minimum_get_and_head_contracts() {
     let get_object = get_json
         .as_object()
         .expect("health GET body should stay a json object");
-    assert_eq!(get_object.len(), 4, "health GET body should stay minimal");
+    assert_eq!(get_object.len(), 7, "health GET body should stay bounded");
     assert_eq!(get_object.get("ok"), Some(&Value::Bool(true)));
     assert_eq!(
         get_object.get("service"),
         Some(&Value::String("trnm-rpc".into()))
+    );
+    assert_eq!(
+        get_object.get("scope"),
+        Some(&Value::String("local-file-model-harness".into()))
+    );
+    assert_eq!(get_object.get("development_only"), Some(&Value::Bool(true)));
+    assert_eq!(
+        get_object.get("production_ready"),
+        Some(&Value::Bool(false))
     );
     assert!(
         get_object

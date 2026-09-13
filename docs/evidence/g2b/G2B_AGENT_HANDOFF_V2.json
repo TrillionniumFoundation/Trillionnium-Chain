@@ -1,0 +1,88 @@
+{
+  "schema": "trnm-agent-handoff-v1",
+  "agent_id": "A12",
+  "package_id": "G2B_AGENT_MARKET_V1",
+  "status": "MODULE_CLOSED_CANDIDATE",
+  "base_commit": "2fb72d01e49350d3b5dad158a6eaada37c0794b5",
+  "base_tree": "62fc26484927cbb9d7aa75a8c094d909e31b1537",
+  "head_commit": "a407e24b88460f77dd8fe586326276a4daeb3ab0",
+  "changed_paths": [
+    "conformance/agent-market/cases-v1.json",
+    "conformance/agent-market/authority-extension-v2-cases.json",
+    "conformance/agent-market/independent_agent_transaction_wire_v1.py",
+    "docs/development/packages/TRNM_G2B_AGENT_MARKET_V1.md",
+    "docs/development/packages/TRNM_G2B_AGENT_TRANSACTION_WIRE_V1.md",
+    "docs/evidence/g2b/G2B_SOURCE_MANIFEST_V2.json",
+    "docs/protocol/poco-ai-native-v1/agent-market/AGENT_MARKET_LIFECYCLE_V1.md",
+    "scripts/ci/check_agent_market_model_v1.sh",
+    "scripts/ci/check_agent_market_replay_v2.sh",
+    "tools/agent-market-model/model.py",
+    "tools/agent-market-model/authority_extension_v2.py",
+    "trillionnium/crates/trnm-poco-agent-market-v1/Cargo.toml",
+    "trillionnium/crates/trnm-poco-agent-market-v1/examples/agent_transaction_wire_v1.rs",
+    "trillionnium/crates/trnm-poco-agent-market-v1/src/agent_transaction_wire_v1.rs",
+    "trillionnium/crates/trnm-poco-agent-market-v1/src/lib.rs",
+    "trillionnium/crates/trnm-poco-agent-market-v1/tests/agent_transaction_wire_v1.rs"
+  ],
+  "gaps_closed": [
+    "A12-REPLAY-EXACT-A11",
+    "A12-CONTROLLER-GENERATION",
+    "A12-RECOVERY-QUORUM",
+    "A12-RESOURCE-SCOPE-ATTENUATION",
+    "A12-DETERMINISTIC-CAPABILITY-COMMITMENT",
+    "A12-FROZEN-WORKFLOW-POLICY-COMPLIANCE",
+    "A12-AGENT-TRANSACTION-OUTER-WIRE-CANDIDATE",
+    "A12-INDEPENDENT-OUTER-WIRE-PARSER-CANDIDATE",
+    "A12-STRICT-ED25519-AUTHORIZATION-EVIDENCE",
+    "A12-DURABLE-SQLITE-REPLAY-EVIDENCE"
+  ],
+  "gaps_open": [
+    "A12-ACCEPTED-AGENT-TRANSACTION-PROTOCOL-AUTHORITY",
+    "A12-PRODUCTION-CRYPTOGRAPHIC-AUTHORITY",
+    "A12-CANONICAL-JMT-ORDER-PROOF",
+    "A12-WHOLE-STORE-ANTI-ROLLBACK",
+    "A12-VERIFY-SETTLEMENT-JOINS",
+    "A12-NORMAL-NODE-PROCESS-INTEGRATION"
+  ],
+  "commands": [
+    "bash scripts/ci/check_agent_market_replay_v2.sh: PASS on exact implementation head a407e24b88460f77dd8fe586326276a4daeb3ab0 via workflow 33278959379",
+    "TRNM replay-to-Core coordinator v1 gate: PASS on exact implementation head via workflow 33278959404"
+  ],
+  "failed_tests": [],
+  "retained_mutants": [
+    "old-session-after-rotation","stale-controller-generation","wrong-controller","rotation-replay",
+    "insufficient-recovery-quorum","duplicate-recovery-signer","unknown-recovery-signer",
+    "model-scope-escalation","tool-scope-escalation","endpoint-scope-escalation","privacy-scope-escalation",
+    "agent-transaction-magic","agent-transaction-version","agent-transaction-flags","agent-transaction-capability-tag",
+    "agent-transaction-session-tag","agent-transaction-operation-kind","agent-transaction-command-length",
+    "agent-transaction-payload","agent-transaction-payload-digest","agent-transaction-wire-digest",
+    "agent-transaction-trailing-data","agent-transaction-truncation"
+  ],
+  "evidence_scope": "crate|model|fixture",
+  "authority": "candidate",
+  "classification": "candidate-non-normative",
+  "known_gaps": [
+    "candidate AgentTransactionV1 bytes and independent parser are not an accepted normative interface",
+    "production controller/session/recovery key lifecycle and custody are absent",
+    "canonical application JMT and finalized Order proof authority are absent",
+    "whole-store external anti-rollback and normal node-process integration are absent",
+    "A14/A15 cross-plane joins are not independently accepted"
+  ],
+  "interface_requests": [
+    "A12-ICR-A10-AGENT-TRANSACTION-WIRE-V1",
+    "A12-ICR-A16-JMT-ORDER-PROOF-V1",
+    "A12-ICR-A14-A15-CROSS-PLANE-JOINS-V1"
+  ],
+  "downstream_invalidation": [
+    "A13 execution/MVCC/fee replay",
+    "A14 verification/challenge replay",
+    "A15 settlement replay",
+    "A16 whole-node/light-client replay",
+    "A17 benchmark/security/activation evidence"
+  ],
+  "next_action": "Rebind A13 through A17 to this exact candidate wire head, rerun each exact-head gate, then obtain independent protocol/interface review. No Gate or production authority is implied.",
+  "implementation_commit": "a407e24b88460f77dd8fe586326276a4daeb3ab0",
+  "implementation_tree": "b933d7fe8c162a7645b36b426ac1e83991c4a5c6",
+  "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
+  "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
+}

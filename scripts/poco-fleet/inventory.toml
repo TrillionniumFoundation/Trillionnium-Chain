@@ -1,0 +1,80 @@
+schema_version = 1
+fleet_id = "trnm-poco-lan-six-host-2026-08-13"
+network_scope = "single-lan"
+lan_cidr = "192.168.0.0/24"
+geo_wan_evidence = false
+host_count = 6
+validator_host_count = 5
+observer_host_count = 1
+
+[[hosts]]
+id = "local"
+management = "local"
+lan_ip = "192.168.0.9"
+os = "linux"
+arch = "x86_64"
+cpu_threads = 24
+memory_bytes = 24781164544
+validator_eligible = true
+run_roles = ["validator"]
+validator_counts = { seven = 2, thirty_one = 5, one_hundred = 20 }
+
+[[hosts]]
+id = "x230"
+management = "p4-x230"
+lan_ip = "192.168.0.3"
+os = "linux"
+arch = "x86_64"
+cpu_threads = 4
+memory_bytes = 8012709888
+validator_eligible = true
+run_roles = ["validator"]
+validator_counts = { seven = 1, thirty_one = 2, one_hundred = 3 }
+
+[[hosts]]
+id = "desktop"
+management = "p4-desktop"
+lan_ip = "192.168.0.4"
+os = "linux"
+arch = "x86_64"
+cpu_threads = 48
+memory_bytes = 134923124736
+validator_eligible = true
+run_roles = ["validator"]
+validator_counts = { seven = 1, thirty_one = 10, one_hundred = 36 }
+
+[[hosts]]
+id = "rog"
+management = "p4-rog"
+lan_ip = "192.168.0.6"
+os = "linux"
+arch = "x86_64"
+cpu_threads = 32
+memory_bytes = 130456432640
+validator_eligible = true
+run_roles = ["validator"]
+validator_counts = { seven = 2, thirty_one = 13, one_hundred = 38 }
+
+[[hosts]]
+id = "j3160"
+management = "p4-j3160"
+lan_ip = "192.168.0.8"
+os = "linux"
+arch = "x86_64"
+cpu_threads = 4
+memory_bytes = 4008587264
+validator_eligible = true
+run_roles = ["validator"]
+validator_counts = { seven = 1, thirty_one = 1, one_hundred = 3 }
+
+[[hosts]]
+id = "mac"
+management = "p4-mac"
+lan_ip = "192.168.0.5"
+os = "macos"
+arch = "arm64"
+cpu_threads = 10
+memory_bytes = 34359738368
+validator_eligible = false
+run_roles = ["load-generator", "evidence-collector", "crypto-cross-verifier"]
+validator_counts = { seven = 0, thirty_one = 0, one_hundred = 0 }

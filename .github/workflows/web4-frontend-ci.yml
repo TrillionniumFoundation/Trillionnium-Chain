@@ -4,11 +4,17 @@ on:
   pull_request:
     paths:
       - 'web4-frontend/**'
+      - '.node-version'
+      - 'scripts/ci/check_preprovisioned_node_v1.py'
+      - 'scripts/ci/test_preprovisioned_node_v1.py'
       - '.github/workflows/web4-frontend-ci.yml'
   push:
     branches: [main]
     paths:
       - 'web4-frontend/**'
+      - '.node-version'
+      - 'scripts/ci/check_preprovisioned_node_v1.py'
+      - 'scripts/ci/test_preprovisioned_node_v1.py'
       - '.github/workflows/web4-frontend-ci.yml'
   workflow_dispatch:
 
@@ -21,8 +27,17 @@ concurrency:
 
 jobs:
   gates:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        ((github.actor == 'ProfAlexQI' ||
+         github.actor == 'Franksudoman' ||
+         github.actor == 'ProfHepta') &&
+         github.triggering_actor == github.actor &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
     env:
       # Keep locale/time hashing deterministic for frontend snapshots/log assertions.
       TZ: UTC
@@ -36,6 +51,7 @@ jobs:
       # Disable npm update notifier network check to avoid nondeterministic stderr timing/noise.
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
       CI: 'true'
+      TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
     defaults:
       run:
         working-directory: web4-frontend
@@ -44,20 +60,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-        with:
-          node-version-file: '.node-version'
-          cache: npm
-          cache-dependency-path: web4-frontend/package-lock.json
+      - name: Verify exact Node cache selector regressions
+        run: python3 ../scripts/ci/test_preprovisioned_node_v1.py
+
+      - name: Verify runner-provisioned exact Node and npm
+        env:
+          RUNNER_TOOL_CACHE: ${{ runner.tool_cache }}
+        run: |
+          set -euo pipefail
+          python3 ../scripts/ci/check_preprovisioned_node_v1.py \
+            --version-file ../.node-version --architecture x64
 
       - name: Install deps
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
         run: npm ci
 
+      - name: Verify Playwright installer contract
+        run: node ./scripts/test-playwright-installer.mjs
+
       - name: Install pinned Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        timeout-minutes: 20
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
+          TRNM_PLAYWRIGHT_CACHE_ROOT: ${{ runner.tool_cache }}/trnm-playwright
+          TRNM_PLAYWRIGHT_INSTALL_TIMEOUT_SECONDS: '900'
+        run: node ./scripts/install-playwright-chromium.mjs
 
       - name: Run CI checks (enforce e2e)
         env:
           CI_RUN_E2E: '1'
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
         run: npm run ci:check

@@ -17,11 +17,11 @@ output="$(cd "$ROOT" && "$SCRIPT" \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF" \
   --expected-head "$EXPECTED_HEAD" \
-  --binary-path target/debug/trnm-cometbft-app \
+  --binary-path target/debug/trnm-poco_consensus-app \
   --cli-binary-path ../trillionnium/target/debug/trnm-cli \
   --rollback-entrypoint scripts/devnet_down.sh)"
 
-printf '%s\n' "$output" | grep -Fqx "binary_path=$WORKSPACE_ROOT/target/debug/trnm-cometbft-app"
+printf '%s\n' "$output" | grep -Fqx "binary_path=$WORKSPACE_ROOT/target/debug/trnm-poco_consensus-app"
 printf '%s\n' "$output" | grep -Fqx "cli_binary_path=$ROOT/trillionnium/target/debug/trnm-cli"
 printf '%s\n' "$output" | grep -Fqx "rollback_entrypoint=$ROOT/scripts/devnet_down.sh"
 

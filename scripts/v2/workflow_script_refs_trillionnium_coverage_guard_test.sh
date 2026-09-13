@@ -41,6 +41,7 @@ jobs:
           ./scripts/run_agent_user_phasea_gate.sh
           ./scripts/run_phasea_fault_injection_suite.sh
           ./scripts/run_phasea_soak_gate.sh
+      - run: ./trillionnium/scripts/run_agent_user_phasea_gate.sh
 YAML
 
 WORKFLOW_ROOT="$WORKFLOW_ROOT" \
@@ -54,7 +55,9 @@ with open(sys.argv[1], 'r', encoding='utf-8') as f:
     data = json.load(f)
 if data.get('status') != 'ok':
     raise SystemExit(f"[FAIL] expected ok status, got: {data}")
-if int(data.get('script_ref_count', 0)) != 3:
-    raise SystemExit(f"[FAIL] expected exactly 3 direct trillionnium refs, got: {data}")
-print('[PASS] workflow script ref validator covers direct trillionnium/scripts references used by workflows')
+if int(data.get('script_ref_count', 0)) != 4:
+    raise SystemExit(f"[FAIL] expected exactly 4 direct trillionnium refs, got: {data}")
+if int(data.get('non_dot_script_ref_count', 0)) != 0:
+    raise SystemExit(f"[FAIL] ./trillionnium/scripts refs must stay relative and deterministic: {data}")
+print('[PASS] workflow script ref validator covers both root-relative and working-directory-relative trillionnium scripts')
 PY

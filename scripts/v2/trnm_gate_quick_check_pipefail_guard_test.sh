@@ -14,9 +14,9 @@ import sys
 from pathlib import Path
 
 wf = Path(sys.argv[1]).read_text()
-needle = "- name: Install shellcheck\n        run: |\n          set -euo pipefail\n"
+needle = "- name: Verify runner-provisioned shellcheck\n        run: |\n          set -euo pipefail\n"
 if needle not in wf:
-    print("[FAIL] quick-check workflow must enable set -euo pipefail in Install shellcheck step", file=sys.stderr)
+    print("[FAIL] quick-check workflow must enable set -euo pipefail in the immutable shellcheck prerequisite step", file=sys.stderr)
     raise SystemExit(1)
-print("[PASS] trnm-gate-quick-check keeps pipefail guard in shellcheck install step")
+print("[PASS] trnm-gate-quick-check keeps pipefail guard in the shellcheck prerequisite step")
 PY

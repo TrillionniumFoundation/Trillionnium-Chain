@@ -6,7 +6,7 @@ use std::path::PathBuf;
 #[command(
     name = "trnm-cli",
     version,
-    about = "Trillionnium native CLI (wallet/query/tx tooling)"
+    about = "Trillionnium development-only CLI adapter (not a production node client)"
 )]
 pub(crate) struct Args {
     #[command(subcommand)]
@@ -104,7 +104,7 @@ pub(crate) enum WalletCommand {
         #[arg(long)]
         store: Option<PathBuf>,
     },
-    /// Sign arbitrary text with a local wallet
+    /// Sign exact text with Ed25519 using the development-only local wallet
     Sign {
         #[arg(long, default_value = "default")]
         name: String,

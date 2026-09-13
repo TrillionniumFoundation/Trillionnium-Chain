@@ -1,0 +1,8 @@
+{
+  "schema":"trnm-mvcc-fee-model-cases-v1",
+  "worker_counts":[1,2,4,8],
+  "seeds":32,
+  "schedule_variants":4,
+  "outcomes":["Success","Reverted","OutOfResource"],
+  "negative":["bad-worker-count","bad-schedule","arithmetic-overflow","undeclared-missing-object"]
+}

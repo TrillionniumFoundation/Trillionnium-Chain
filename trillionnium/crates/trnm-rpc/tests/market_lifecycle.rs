@@ -28,6 +28,7 @@ fn test_env(prefix: &str) -> TestEnv {
 
 fn run_rpc(env: &TestEnv, args: &[&str]) -> String {
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args(args)
         .env("TRNM_RPC_ACCOUNTS_FILE", &env.accounts_file)
@@ -45,6 +46,7 @@ fn run_rpc(env: &TestEnv, args: &[&str]) -> String {
 
 fn run_rpc_fail(env: &TestEnv, args: &[&str]) -> String {
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args(args)
         .env("TRNM_RPC_ACCOUNTS_FILE", &env.accounts_file)

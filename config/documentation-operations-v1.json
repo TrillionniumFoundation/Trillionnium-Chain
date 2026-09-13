@@ -1,0 +1,2615 @@
+{
+  "schema": "trnm-documentation-operations-v1",
+  "plan_id": "trnm-chain-development-plan-v2",
+  "primary_module": "M17",
+  "source_observation": "d120c992a144c566a105277bdcbff420a33ccccd",
+  "scope": "bounded-foundation-operations-not-all-enabled-operations",
+  "module_ids": [
+    "M02",
+    "M03",
+    "M04",
+    "M08",
+    "M15"
+  ],
+  "operation_catalog_complete": false,
+  "production_authority": false,
+  "semantic_acceptance": "not-assessed",
+  "implementation_acceptance": "not-assessed",
+  "operations": [
+    {
+      "id": "M02-OP-VOTE-BARRIER",
+      "module_id": "M02",
+      "requirement_ids": [
+        "M02-LIVE"
+      ],
+      "profile": "bft-v0",
+      "implementation": {
+        "package": "trnm-consensus-core",
+        "path": "trillionnium/crates/trnm-consensus-core/src/core.rs",
+        "symbol": "step",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
+          "heading": "## 2. Complete canonical SignIntent",
+          "rule": "The full authorized sign intent and resulting Safety state precede signature release."
+        },
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "### Signing lifecycle",
+          "rule": "Vote/Timeout publication must not wait for finality of the voted block."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-core/src/lib.rs",
+          "selector": "Input"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-core/src/lib.rs",
+          "selector": "Effect"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "CanonicalSignIntentV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_VOTE"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_SIGN_INTENT"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-core/src/lib.rs",
+          "selector": "CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Commissioned Core configuration, validator/parameter context and authenticated Vote input."
+        ],
+        "preconditions": [
+          "One recovered Core owner; exact current Safety state and retained ancestry; no conflicting in-flight write."
+        ],
+        "accepted_effects": [
+          "Transactional Core successor emits PersistSafetyState before any RequestSignature.",
+          "Exact StorageAck releases only the persisted intent; a verified SignatureReady releases only the matching broadcast."
+        ],
+        "rejected_effects": [
+          "Busy/stale/protocol rejection leaves the prior Core state and no newly released signed broadcast."
+        ],
+        "uncertain_recovery": [
+          "After lost StorageAck or process restart reconstruct from the durable Safety head and replay the identical pending sign intent.",
+          "The host must durably acknowledge a released intent before replacing it with another intent."
+        ],
+        "publication": [
+          "A broadcast here is a consensus vote/timeout, never an application finality receipt."
+        ]
+      },
+      "errors": [
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-core/src/error.rs",
+            "selector": "Busy"
+          },
+          "meaning": "A local in-flight operation blocks new work; it is not peer invalidity."
+        },
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-core/src/error.rs",
+            "selector": "Protocol"
+          },
+          "meaning": "Protocol/signature rejection grants no broadcast authority."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-core/src/error.rs",
+            "selector": "InvalidRecovery"
+          },
+          "meaning": "Inconsistent recovered authority remains fenced."
+        }
+      ],
+      "producer_modules": [
+        "M04",
+        "M03"
+      ],
+      "consumer_modules": [
+        "M03",
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M02-OP-VOTE-BARRIER-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-core",
+          "source_path": "trillionnium/crates/trnm-consensus-core/src/tests.rs",
+          "symbol": "vote_signing_is_persist_ack_sign_verify_broadcast",
+          "target": "lib",
+          "test_filter": "tests::vote_signing_is_persist_ack_sign_verify_broadcast",
+          "features": [],
+          "expected_outcome": "Persist Safety and exact sign intent before StorageAck releases the signature request; verify returned signature before the matching broadcast.",
+          "assertion_fragments": [
+            "intent.authorizing_safety_revision(), barrier.get()"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-VOTE-BARRIER-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-core",
+          "source_path": "trillionnium/crates/trnm-consensus-core/src/tests.rs",
+          "symbol": "vote_signing_is_persist_ack_sign_verify_broadcast",
+          "target": "lib",
+          "test_filter": "tests::vote_signing_is_persist_ack_sign_verify_broadcast",
+          "features": [],
+          "expected_outcome": "Busy input and invalid signer result reject without a signed broadcast.",
+          "assertion_fragments": [
+            "Err(CoreError::Busy(_))",
+            "Err(CoreError::Protocol(_))"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-VOTE-BARRIER-CASE-3",
+          "kind": "recovery",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-core",
+          "source_path": "trillionnium/crates/trnm-consensus-core/src/tests.rs",
+          "symbol": "persisted_sign_intent_is_re_requested_after_recovery",
+          "target": "lib",
+          "test_filter": "tests::persisted_sign_intent_is_re_requested_after_recovery",
+          "features": [],
+          "expected_outcome": "Recover the exact pending intent; do not mint a different signing decision.",
+          "assertion_fragments": [
+            "assert_eq!(id, expected);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "Complete independent byte/signature vectors and exact error precedence for every Input variant.",
+        "Real socket, persistent host, nonzero epoch, HSM and multi-host liveness qualification."
+      ]
+    },
+    {
+      "id": "M02-OP-TIMEOUT-BARRIER",
+      "module_id": "M02",
+      "requirement_ids": [
+        "M02-LIVE"
+      ],
+      "profile": "bft-v0",
+      "implementation": {
+        "package": "trnm-consensus-core",
+        "path": "trillionnium/crates/trnm-consensus-core/src/core.rs",
+        "symbol": "step",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
+          "heading": "## 2. Complete canonical SignIntent",
+          "rule": "The full authorized sign intent and resulting Safety state precede signature release."
+        },
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "### Signing lifecycle",
+          "rule": "Vote/Timeout publication must not wait for finality of the voted block."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-core/src/lib.rs",
+          "selector": "Input"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-core/src/lib.rs",
+          "selector": "Effect"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "CanonicalSignIntentV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_TIMEOUT"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_SIGN_INTENT"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-core/src/lib.rs",
+          "selector": "CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Commissioned Core configuration, validator/parameter context and authenticated Timeout input."
+        ],
+        "preconditions": [
+          "One recovered Core owner; exact current Safety state and retained ancestry; no conflicting in-flight write."
+        ],
+        "accepted_effects": [
+          "Transactional Core successor emits PersistSafetyState before any RequestSignature.",
+          "Exact StorageAck releases only the persisted intent; a verified SignatureReady releases only the matching broadcast."
+        ],
+        "rejected_effects": [
+          "Busy/stale/protocol rejection leaves the prior Core state and no newly released signed broadcast."
+        ],
+        "uncertain_recovery": [
+          "After lost StorageAck or process restart reconstruct from the durable Safety head and replay the identical pending sign intent.",
+          "The host must durably acknowledge a released intent before replacing it with another intent."
+        ],
+        "publication": [
+          "A broadcast here is a consensus vote/timeout, never an application finality receipt."
+        ]
+      },
+      "errors": [
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-core/src/error.rs",
+            "selector": "Busy"
+          },
+          "meaning": "A local in-flight operation blocks new work; it is not peer invalidity."
+        },
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-core/src/error.rs",
+            "selector": "Protocol"
+          },
+          "meaning": "Protocol/signature rejection grants no broadcast authority."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-core/src/error.rs",
+            "selector": "InvalidRecovery"
+          },
+          "meaning": "Inconsistent recovered authority remains fenced."
+        }
+      ],
+      "producer_modules": [
+        "M04",
+        "M03"
+      ],
+      "consumer_modules": [
+        "M03",
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M02-OP-TIMEOUT-BARRIER-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-core",
+          "source_path": "trillionnium/crates/trnm-consensus-core/src/tests.rs",
+          "symbol": "timeout_signing_uses_the_same_durable_barrier",
+          "target": "lib",
+          "test_filter": "tests::timeout_signing_uses_the_same_durable_barrier",
+          "features": [],
+          "expected_outcome": "Persist Safety and exact sign intent before StorageAck releases the signature request; verify returned signature before the matching broadcast.",
+          "assertion_fragments": [
+            "intent.authorizing_safety_revision(), barrier.get()"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TIMEOUT-BARRIER-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-core",
+          "source_path": "trillionnium/crates/trnm-consensus-core/src/tests.rs",
+          "symbol": "vote_signing_is_persist_ack_sign_verify_broadcast",
+          "target": "lib",
+          "test_filter": "tests::vote_signing_is_persist_ack_sign_verify_broadcast",
+          "features": [],
+          "expected_outcome": "Busy input and invalid signer result reject without a signed broadcast.",
+          "assertion_fragments": [
+            "Err(CoreError::Busy(_))",
+            "Err(CoreError::Protocol(_))"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TIMEOUT-BARRIER-CASE-3",
+          "kind": "recovery",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-core",
+          "source_path": "trillionnium/crates/trnm-consensus-core/src/tests.rs",
+          "symbol": "persisted_sign_intent_is_re_requested_after_recovery",
+          "target": "lib",
+          "test_filter": "tests::persisted_sign_intent_is_re_requested_after_recovery",
+          "features": [],
+          "expected_outcome": "Recover the exact pending intent; do not mint a different signing decision.",
+          "assertion_fragments": [
+            "assert_eq!(id, expected);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "Complete independent byte/signature vectors and exact error precedence for every Input variant.",
+        "Real socket, persistent host, nonzero epoch, HSM and multi-host liveness qualification."
+      ]
+    },
+    {
+      "id": "M03-OP-SIGN-EXACT",
+      "module_id": "M03",
+      "requirement_ids": [
+        "M03-PERSIST",
+        "M03-LOSTACK",
+        "M03-ROLLBACK"
+      ],
+      "profile": "bft-v0",
+      "implementation": {
+        "package": "trnm-consensus-signer-journal",
+        "path": "trillionnium/crates/trnm-consensus-signer-journal/src/sqlite.rs",
+        "symbol": "sign_exact_v0",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md",
+          "heading": "## 2. Complete canonical SignIntent",
+          "rule": "Authorize and persist complete exact intent before private-key use; persist signature and reconcile external watermark before trusted return."
+        },
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "## 10. Atomicity, recovery and publication",
+          "rule": "Coherent disk rollback requires a monotonic anchor outside the rollback domain."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "CanonicalSignIntentV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-signer-journal/src/sqlite.rs",
+          "selector": "SignerJournalProfileV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_SIGN_INTENT"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-signer-journal/src/sqlite.rs",
+          "selector": "JournalCapacityV0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Exact CanonicalSignIntentV0 bound to the journal profile, author, chain, validator set and Safety revision."
+        ],
+        "preconditions": [
+          "Operational journal owner with lifetime lock, admissible kind/view/revision and synchronized external watermark."
+        ],
+        "accepted_effects": [
+          "Persist the new intent before invoking SignatureProducerV0; verify and persist returned signature, then synchronize external head and reread it.",
+          "Exact retry returns stored signature without another producer call."
+        ],
+        "rejected_effects": [
+          "Same-round conflicting intent and per-kind view/Safety revision regression do not create a new signing decision."
+        ],
+        "uncertain_recovery": [
+          "A failed producer window can retain a prepared intent; retry that exact fingerprint after fresh readback.",
+          "CommitUncertain or an external watermark fork/ahead/rollback must fence signing until source/target reconciliation."
+        ],
+        "publication": [
+          "This operation returns a journaled signature, not a network broadcast, Safety authorization or finalized receipt."
+        ]
+      },
+      "errors": [
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-signer-journal/src/error.rs",
+            "selector": "SameRoundDifferentIntent"
+          },
+          "meaning": "Conflicting sign intent is a safety event."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-signer-journal/src/error.rs",
+            "selector": "CommitUncertain"
+          },
+          "meaning": "A durable side effect may have occurred; fresh exact readback is required."
+        },
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-signer-journal/src/error.rs",
+            "selector": "SignatureProducer"
+          },
+          "meaning": "Producer errors do not authorize a replacement intent."
+        }
+      ],
+      "producer_modules": [
+        "M02"
+      ],
+      "consumer_modules": [
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M03-OP-SIGN-EXACT-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-signer-journal",
+          "source_path": "trillionnium/crates/trnm-consensus-signer-journal/tests/sqlite_journal.rs",
+          "symbol": "signature_is_persisted_before_return_and_exact_replay_skips_producer",
+          "target": "sqlite_journal",
+          "test_filter": "signature_is_persisted_before_return_and_exact_replay_skips_producer",
+          "features": [],
+          "expected_outcome": "One intent/two journal events, identical replayed signature and exactly one producer invocation.",
+          "assertion_fragments": [
+            "assert_eq!(producer.calls(), 1);",
+            "assert_eq!(replay, first);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M03-OP-SIGN-EXACT-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-signer-journal",
+          "source_path": "trillionnium/crates/trnm-consensus-signer-journal/tests/sqlite_journal.rs",
+          "symbol": "same_round_conflicts_and_per_kind_view_regressions_fail_closed",
+          "target": "sqlite_journal",
+          "test_filter": "same_round_conflicts_and_per_kind_view_regressions_fail_closed",
+          "features": [],
+          "expected_outcome": "Conflicts preserve maximum vote/timeout views and reject replacement signing.",
+          "assertion_fragments": [
+            "SignerJournalConflictV0::SameRoundDifferentIntent",
+            "assert_eq!(capacity.maximum_vote_view(), Some(10));"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M03-OP-SIGN-EXACT-CASE-3",
+          "kind": "recovery",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-signer-journal",
+          "source_path": "trillionnium/crates/trnm-consensus-signer-journal/tests/sqlite_journal.rs",
+          "symbol": "whole_namespace_rollback_is_detected_by_external_watermark",
+          "target": "sqlite_journal",
+          "test_filter": "whole_namespace_rollback_is_detected_by_external_watermark",
+          "features": [],
+          "expected_outcome": "The external watermark detects restoring an older complete journal namespace.",
+          "assertion_fragments": [
+            "SignerJournalConflictV0::ExternalWatermarkAhead"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "The journal is not SafetyRules; prove live Core/Safety/HSM ownership composition.",
+        "The source test uses an injected external watermark/producer, not independently administered HSM/power-loss evidence."
+      ]
+    },
+    {
+      "id": "M04-OP-PERSIST-INGRESS",
+      "module_id": "M04",
+      "requirement_ids": [
+        "M04-REPLAY",
+        "M04-HANDOFF"
+      ],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-durable-file-adapters-v0",
+        "path": "trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs",
+        "symbol": "admit_verified",
+        "features": [
+          "candidate-peer-replay"
+        ]
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/architecture/TRNM_P2_NET_PERSISTENT_REPLAY_CORE_ACK_V0.md",
+          "heading": "## Scope",
+          "rule": "Persist the exact pending authenticated frame before Core; advance replay floor only after exact durable Prepared acknowledgement."
+        },
+        {
+          "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+          "heading": "## 4. Publication ordering: two lifecycles, not one circular wait",
+          "rule": "Prepared remains an inert local integration fact and cannot authorize vote or finality publication."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs",
+          "selector": "PeerReplayStateV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "BoundIngressV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "trnm.node.operation.v0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "trnm.node.ingress-frame.v0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs",
+          "selector": "MAX_CANDIDATE_PEER_FRAME_BYTES_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "MAX_INGRESS_FRAME_BYTES_V0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "A source-verified peer frame and exact BoundIngressV0; session, chain, peer, node generation and replay nonce are bound."
+        ],
+        "preconditions": [
+          "Exclusive replay journal owner; recovered memory/durable state agree; expected nonce and generation."
+        ],
+        "accepted_effects": [
+          "admit_verified persists the pending frame before returning it to the authority consumer.",
+          "acknowledge_prepared persists the exact matching Prepared receipt and advances the replay floor before peer acknowledgement."
+        ],
+        "rejected_effects": [
+          "Wrong binding/stage/nonce preserves the durable replay floor and retained pending frame."
+        ],
+        "uncertain_recovery": [
+          "Crash before acknowledgement reopens the same pending frame; replay it to the same Core operation and acknowledge the identical receipt.",
+          "In-memory/durable mismatch fences the owner; local filesystem failure does not prove Byzantine invalidity."
+        ],
+        "publication": [
+          "Prepared acknowledgement is replay/admission progress only; no consensus signature, finality, TLS session or network production authority is created."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node-host/src/persistent_p2p_ingress_bridge.rs",
+            "selector": "PreparedReceiptMismatch"
+          },
+          "meaning": "A substituted stage or operation cannot advance the peer floor."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs",
+            "selector": "InMemoryStateMismatch"
+          },
+          "meaning": "Recovered memory and durable journal disagreement blocks trusted return."
+        }
+      ],
+      "producer_modules": [
+        "M04",
+        "M15"
+      ],
+      "consumer_modules": [
+        "M02",
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M04-OP-PERSIST-INGRESS-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-host",
+          "source_path": "trillionnium/crates/trnm-poco-node-host/tests/persistent_p2p_ingress_bridge.rs",
+          "symbol": "crash_before_ack_reopens_pending_and_exact_ack_is_idempotent",
+          "target": "persistent_p2p_ingress_bridge",
+          "test_filter": "crash_before_ack_reopens_pending_and_exact_ack_is_idempotent",
+          "features": [
+            "candidate-networked-authority"
+          ],
+          "expected_outcome": "Pending survives reopen; exact ack advances nonce once and removes pending.",
+          "assertion_fragments": [
+            "assert_eq!(state.highest_acknowledged_nonce(), 1);",
+            "assert_eq!(state.pending(), None);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M04-OP-PERSIST-INGRESS-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-host",
+          "source_path": "trillionnium/crates/trnm-poco-node-host/tests/persistent_p2p_ingress_bridge.rs",
+          "symbol": "wrong_receipt_never_advances_the_durable_peer_floor",
+          "target": "persistent_p2p_ingress_bridge",
+          "test_filter": "wrong_receipt_never_advances_the_durable_peer_floor",
+          "features": [
+            "candidate-networked-authority"
+          ],
+          "expected_outcome": "Wrong stage/binding retain nonce zero and pending frame after reopen.",
+          "assertion_fragments": [
+            "assert_eq!(reopened.recovery_state().highest_acknowledged_nonce(), 0);",
+            "assert_eq!(reopened.last_prepared_acknowledgement(), None);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "Production transport wire/handshake/authentication profile and full multi-peer resource policy remain open.",
+        "The code belongs to the M03 durable-adapter package in the coverage inventory; this record does not reassign package ownership.",
+        "Independent peer parser/vectors, cross-platform persistence, coherent rollback anchor and real multi-host fault evidence remain open."
+      ]
+    },
+    {
+      "id": "M04-OP-ACK-PREPARED",
+      "module_id": "M04",
+      "requirement_ids": [
+        "M04-REPLAY",
+        "M04-HANDOFF"
+      ],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-durable-file-adapters-v0",
+        "path": "trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs",
+        "symbol": "acknowledge_prepared",
+        "features": [
+          "candidate-peer-replay"
+        ]
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/architecture/TRNM_P2_NET_PERSISTENT_REPLAY_CORE_ACK_V0.md",
+          "heading": "## Scope",
+          "rule": "Persist the exact pending authenticated frame before Core; advance replay floor only after exact durable Prepared acknowledgement."
+        },
+        {
+          "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+          "heading": "## 4. Publication ordering: two lifecycles, not one circular wait",
+          "rule": "Prepared remains an inert local integration fact and cannot authorize vote or finality publication."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs",
+          "selector": "PeerReplayStateV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "BoundIngressV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "trnm.node.operation.v0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "trnm.node.ingress-frame.v0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs",
+          "selector": "MAX_CANDIDATE_PEER_FRAME_BYTES_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "MAX_INGRESS_FRAME_BYTES_V0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "A source-verified peer frame and exact BoundIngressV0; session, chain, peer, node generation and replay nonce are bound."
+        ],
+        "preconditions": [
+          "Exclusive replay journal owner; recovered memory/durable state agree; expected nonce and generation."
+        ],
+        "accepted_effects": [
+          "admit_verified persists the pending frame before returning it to the authority consumer.",
+          "acknowledge_prepared persists the exact matching Prepared receipt and advances the replay floor before peer acknowledgement."
+        ],
+        "rejected_effects": [
+          "Wrong binding/stage/nonce preserves the durable replay floor and retained pending frame."
+        ],
+        "uncertain_recovery": [
+          "Crash before acknowledgement reopens the same pending frame; replay it to the same Core operation and acknowledge the identical receipt.",
+          "In-memory/durable mismatch fences the owner; local filesystem failure does not prove Byzantine invalidity."
+        ],
+        "publication": [
+          "Prepared acknowledgement is replay/admission progress only; no consensus signature, finality, TLS session or network production authority is created."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node-host/src/persistent_p2p_ingress_bridge.rs",
+            "selector": "PreparedReceiptMismatch"
+          },
+          "meaning": "A substituted stage or operation cannot advance the peer floor."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-durable-file-adapters-v0/src/candidate_peer_replay.rs",
+            "selector": "InMemoryStateMismatch"
+          },
+          "meaning": "Recovered memory and durable journal disagreement blocks trusted return."
+        }
+      ],
+      "producer_modules": [
+        "M04",
+        "M15"
+      ],
+      "consumer_modules": [
+        "M02",
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M04-OP-ACK-PREPARED-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-host",
+          "source_path": "trillionnium/crates/trnm-poco-node-host/tests/persistent_p2p_ingress_bridge.rs",
+          "symbol": "crash_before_ack_reopens_pending_and_exact_ack_is_idempotent",
+          "target": "persistent_p2p_ingress_bridge",
+          "test_filter": "crash_before_ack_reopens_pending_and_exact_ack_is_idempotent",
+          "features": [
+            "candidate-networked-authority"
+          ],
+          "expected_outcome": "Pending survives reopen; exact ack advances nonce once and removes pending.",
+          "assertion_fragments": [
+            "assert_eq!(state.highest_acknowledged_nonce(), 1);",
+            "assert_eq!(state.pending(), None);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M04-OP-ACK-PREPARED-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-host",
+          "source_path": "trillionnium/crates/trnm-poco-node-host/tests/persistent_p2p_ingress_bridge.rs",
+          "symbol": "wrong_receipt_never_advances_the_durable_peer_floor",
+          "target": "persistent_p2p_ingress_bridge",
+          "test_filter": "wrong_receipt_never_advances_the_durable_peer_floor",
+          "features": [
+            "candidate-networked-authority"
+          ],
+          "expected_outcome": "Wrong stage/binding retain nonce zero and pending frame after reopen.",
+          "assertion_fragments": [
+            "assert_eq!(reopened.recovery_state().highest_acknowledged_nonce(), 0);",
+            "assert_eq!(reopened.last_prepared_acknowledgement(), None);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "Production transport wire/handshake/authentication profile and full multi-peer resource policy remain open.",
+        "The code belongs to the M03 durable-adapter package in the coverage inventory; this record does not reassign package ownership.",
+        "Independent peer parser/vectors, cross-platform persistence, coherent rollback anchor and real multi-host fault evidence remain open."
+      ]
+    },
+    {
+      "id": "M08-OP-COMMIT-STRICT",
+      "module_id": "M08",
+      "requirement_ids": [
+        "M08-OLDEST",
+        "M08-PREPARED",
+        "M08-BUDGET"
+      ],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-native-execution-v0",
+        "path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs",
+        "symbol": "commit_poco_finality_bytes_v0",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "## 8. Exact finality predicate",
+          "rule": "Complete three-certified-block proof finalizes only the oldest target under one exact context."
+        },
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "### Application-finality lifecycle",
+          "rule": "Proof admission, durable application commit, checkpoint and receipt publication are distinct facts."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs",
+          "selector": "FinalityExpectationV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "decode_finality_proof"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_FINALITY_PROOF"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs",
+          "selector": "POCO_THREE_CHAIN_PROOF_CLASS_V0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "MAX_CEV0_ROOT_BYTES_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "Cev0AdmissionBudgetV0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Exact proof class/CEV0 bytes; application-commissioned validator set and parameters; trusted Core/checkpoint parent timestamp."
+        ],
+        "preconditions": [
+          "Commit requires exact persisted execution artifact and expected oldest block/parent/roots; read requires an already committed row."
+        ],
+        "accepted_effects": [
+          "Commit verifies exact proof and charges a second crypto pass before calling the idempotent durable application commit.",
+          "Read returns a non-Clone proof/committed-record pair; it never promotes prepared state."
+        ],
+        "rejected_effects": [
+          "Bad class, malformed proof, signature, target or local budget does not publish a new committed application result."
+        ],
+        "uncertain_recovery": [
+          "A durable application error requires exact source/target readback via its existing recovery contract; do not construct a second commit identity."
+        ],
+        "publication": [
+          "Neither strict function commissions Core, advances checkpoint, publishes receipts or authorizes epoch transition."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs",
+            "selector": "UnsupportedProofClass"
+          },
+          "meaning": "Proof class does not downgrade or fall back."
+        },
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs",
+            "selector": "ReverificationBudget"
+          },
+          "meaning": "Local work cap is not deterministic consensus invalidity."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs",
+            "selector": "Application"
+          },
+          "meaning": "Inspect the nested application error and durable readback; the outer wrapper alone does not classify every application failure as uncertain."
+        }
+      ],
+      "producer_modules": [
+        "M02",
+        "M06",
+        "M07"
+      ],
+      "consumer_modules": [
+        "M13",
+        "M14",
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M08-OP-COMMIT-STRICT-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-native-execution-v0",
+          "source_path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality/tests.rs",
+          "symbol": "signed_task_execution_commits_through_strict_bytes_and_reopens_exactly",
+          "target": "lib",
+          "test_filter": "pcc1_finality::tests::signed_task_execution_commits_through_strict_bytes_and_reopens_exactly",
+          "features": [],
+          "expected_outcome": "Oldest proof target commits once and returns the same head/durable sequence after reopen and replay.",
+          "assertion_fragments": [
+            "assert_eq!(replay.head(), committed.head());",
+            "assert_eq!(replay.durable_sequence(), committed.durable_sequence());"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-COMMIT-STRICT-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-native-execution-v0",
+          "source_path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality/tests.rs",
+          "symbol": "second_cryptographic_pass_is_charged_before_any_commit",
+          "target": "lib",
+          "test_filter": "pcc1_finality::tests::second_cryptographic_pass_is_charged_before_any_commit",
+          "features": [],
+          "expected_outcome": "Insufficient total verification budget cannot commit; both passes are charged.",
+          "assertion_fragments": [
+            "Err(PocoFinalityCommitErrorV0::ReverificationBudget(_))",
+            "assert_eq!(enough.signature_work(), measured.signature_work() * 2);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "Trusted parent ancestry commissioning and nonzero-epoch handoff need separate operation records.",
+        "Actual checkpoint/receipt publishing integration, physical crash boundaries and independent expected proof bytes remain open."
+      ]
+    },
+    {
+      "id": "M08-OP-READ-STRICT",
+      "module_id": "M08",
+      "requirement_ids": [
+        "M08-OLDEST",
+        "M08-PREPARED",
+        "M08-BUDGET"
+      ],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-native-execution-v0",
+        "path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs",
+        "symbol": "read_poco_finalized_bytes_v0",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "## 8. Exact finality predicate",
+          "rule": "Complete three-certified-block proof finalizes only the oldest target under one exact context."
+        },
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "### Application-finality lifecycle",
+          "rule": "Proof admission, durable application commit, checkpoint and receipt publication are distinct facts."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs",
+          "selector": "FinalityExpectationV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "decode_finality_proof"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_FINALITY_PROOF"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs",
+          "selector": "POCO_THREE_CHAIN_PROOF_CLASS_V0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "MAX_CEV0_ROOT_BYTES_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "Cev0AdmissionBudgetV0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Exact proof class/CEV0 bytes; application-commissioned validator set and parameters; trusted Core/checkpoint parent timestamp."
+        ],
+        "preconditions": [
+          "Commit requires exact persisted execution artifact and expected oldest block/parent/roots; read requires an already committed row."
+        ],
+        "accepted_effects": [
+          "Commit verifies exact proof and charges a second crypto pass before calling the idempotent durable application commit.",
+          "Read returns a non-Clone proof/committed-record pair; it never promotes prepared state."
+        ],
+        "rejected_effects": [
+          "Bad class, malformed proof, signature, target or local budget does not publish a new committed application result."
+        ],
+        "uncertain_recovery": [
+          "A durable application error requires exact source/target readback via its existing recovery contract; do not construct a second commit identity."
+        ],
+        "publication": [
+          "Neither strict function commissions Core, advances checkpoint, publishes receipts or authorizes epoch transition."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-crypto/src/strict_finality.rs",
+            "selector": "UnsupportedProofClass"
+          },
+          "meaning": "Proof class does not downgrade or fall back."
+        },
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs",
+            "selector": "ReverificationBudget"
+          },
+          "meaning": "Local work cap is not deterministic consensus invalidity."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs",
+            "selector": "Application"
+          },
+          "meaning": "Inspect the nested application error and durable readback; the outer wrapper alone does not classify every application failure as uncertain."
+        }
+      ],
+      "producer_modules": [
+        "M02",
+        "M06",
+        "M07"
+      ],
+      "consumer_modules": [
+        "M13",
+        "M14",
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M08-OP-READ-STRICT-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-native-execution-v0",
+          "source_path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality/tests.rs",
+          "symbol": "signed_task_execution_commits_through_strict_bytes_and_reopens_exactly",
+          "target": "lib",
+          "test_filter": "pcc1_finality::tests::signed_task_execution_commits_through_strict_bytes_and_reopens_exactly",
+          "features": [],
+          "expected_outcome": "Strict read joins the committed application to the exact proof.",
+          "assertion_fragments": [
+            "assert_eq!(read.application().confirmed_head_v0(), committed.head());",
+            "assert_eq!(read.finality().proof().id(), proof.id());"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-READ-STRICT-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-native-execution-v0",
+          "source_path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality/tests.rs",
+          "symbol": "readback_never_promotes_prepared_state_even_with_a_valid_proof",
+          "target": "lib",
+          "test_filter": "pcc1_finality::tests::readback_never_promotes_prepared_state_even_with_a_valid_proof",
+          "features": [],
+          "expected_outcome": "Prepared state remains uncommitted and incurs no signature verification on failed record lookup.",
+          "assertion_fragments": [
+            "Err(PocoFinalityCommitErrorV0::Application(_))",
+            "assert_eq!(budget.signature_work(), 0);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-READ-STRICT-CASE-3",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-native-execution-v0",
+          "source_path": "trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality/tests.rs",
+          "symbol": "readback_rejects_wrong_class_corruption_and_budget_without_losing_committed_state",
+          "target": "lib",
+          "test_filter": "pcc1_finality::tests::readback_rejects_wrong_class_corruption_and_budget_without_losing_committed_state",
+          "features": [],
+          "expected_outcome": "Wrong class/corruption/budget fail while a later valid read still returns the same committed head.",
+          "assertion_fragments": [
+            "StrictFinalityErrorV0::UnsupportedProofClass",
+            "assert_eq!(read.application().confirmed_head_v0(), committed.head());"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "Trusted parent ancestry commissioning and nonzero-epoch handoff need separate operation records.",
+        "Actual checkpoint/receipt publishing integration, physical crash boundaries and independent expected proof bytes remain open."
+      ]
+    },
+    {
+      "id": "M15-OP-RECOVER-SESSION",
+      "module_id": "M15",
+      "requirement_ids": [
+        "M15-WIRING",
+        "M15-START"
+      ],
+      "profile": "legacy-ledger-observation",
+      "implementation": {
+        "package": "trnm-poco-node-production-v0",
+        "path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+        "symbol": "recover",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+          "heading": "## 4. Publication ordering: two lifecycles, not one circular wait",
+          "rule": "These historical stages record caller facts; unmapped records are inert and cannot authorize publication."
+        },
+        {
+          "path": "docs/architecture/TRNM_PRODUCTION_AUTHORITY_SESSION_V0.md",
+          "heading": "## Authority boundary",
+          "rule": "Verified session tokens do not replace actual domain source producers or their recovery."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+          "selector": "VerifiedAuthorityFactV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "AuthorityReceiptV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "trnm.node.authority-record.v0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "trnm.node.operation.v0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "MAX_AUTHORITY_ADVANCES_PER_STEP_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "MAX_INGRESS_FRAME_BYTES_V0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Exact node identity/generation, complete coordinator receipt, validated ingress or private verified fact token."
+        ],
+        "preconditions": [
+          "Recover starts with no trusted current receipt; advance requires Ready and one exact current predecessor."
+        ],
+        "accepted_effects": [
+          "Clean with no retained receipt or Resume with exact complete readback becomes Ready; Quarantine never grants write readiness.",
+          "Verified advance rechecks identity/predecessor/claim digest before delegating and revalidates complete durable readback."
+        ],
+        "rejected_effects": [
+          "Substituted tokens, facts or missing complete receipt cannot create a trusted successor."
+        ],
+        "uncertain_recovery": [
+          "Lost coordinator response clears trusted receipt and leaves Recovering; recover then replay the same exact operation."
+        ],
+        "publication": [
+          "Legacy stage labels are inert local observations. No vote, finalized receipt, domain validity or production activation is authorized by these tests."
+        ]
+      },
+      "errors": [
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+            "selector": "NotReady"
+          },
+          "meaning": "No advance before exact recovered readiness."
+        },
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+            "selector": "ReceiptSubstitution"
+          },
+          "meaning": "Wrong predecessor/digest/complete readback is rejected."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+            "selector": "Coordinator"
+          },
+          "meaning": "A failed write response may have applied; recovery must obtain exact authoritative readback."
+        }
+      ],
+      "producer_modules": [
+        "M03",
+        "M04",
+        "M08"
+      ],
+      "consumer_modules": [
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M15-OP-RECOVER-SESSION-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-production-v0",
+          "source_path": "trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs",
+          "symbol": "full_stage_chain_recovers_and_starts_parent_bound_successor",
+          "target": "lib",
+          "test_filter": "authority_session_tests::full_stage_chain_recovers_and_starts_parent_bound_successor",
+          "features": [],
+          "expected_outcome": "An inert reference coordinator recovers the complete exact receipt and permits only its parent-bound successor.",
+          "assertion_fragments": [
+            "assert_eq!(resumed.current_receipt(), Some(terminal));"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-RECOVER-SESSION-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-production-v0",
+          "source_path": "trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs",
+          "symbol": "resumed_summary_without_complete_receipt_stays_fenced",
+          "target": "lib",
+          "test_filter": "authority_session_tests::resumed_summary_without_complete_receipt_stays_fenced",
+          "features": [],
+          "expected_outcome": "A summary without exact readback retains Recovering and no current receipt.",
+          "assertion_fragments": [
+            "assert_eq!(session.readiness(), AuthoritySessionReadinessV0::Recovering);",
+            "assert_eq!(session.current_receipt(), None);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-RECOVER-SESSION-CASE-3",
+          "kind": "recovery",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-production-v0",
+          "source_path": "trillionnium/crates/trnm-poco-node-production-v0/src/authority_session_tests.rs",
+          "symbol": "lost_acknowledgement_requires_recovery_then_exact_replay",
+          "target": "lib",
+          "test_filter": "authority_session_tests::lost_acknowledgement_requires_recovery_then_exact_replay",
+          "features": [],
+          "expected_outcome": "Lost response fences readiness; after recovery exact replay returns recovered receipt.",
+          "assertion_fragments": [
+            "assert_eq!(replayed, recovered);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "Replace reference/caller-fact producers with separately reviewed real domain sources before PCC1 lifecycle adoption.",
+        "Production commissioning, hardware rollback/custody and multi-host qualification remain open."
+      ]
+    },
+    {
+      "id": "M15-OP-ADVANCE-VERIFIED-FACT",
+      "module_id": "M15",
+      "requirement_ids": [
+        "M15-WIRING",
+        "M15-START"
+      ],
+      "profile": "legacy-ledger-observation",
+      "implementation": {
+        "package": "trnm-poco-node-production-v0",
+        "path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+        "symbol": "advance_verified",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md",
+          "heading": "## 4. Publication ordering: two lifecycles, not one circular wait",
+          "rule": "These historical stages record caller facts; unmapped records are inert and cannot authorize publication."
+        },
+        {
+          "path": "docs/architecture/TRNM_PRODUCTION_AUTHORITY_SESSION_V0.md",
+          "heading": "## Authority boundary",
+          "rule": "Verified session tokens do not replace actual domain source producers or their recovery."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+          "selector": "VerifiedAuthorityFactV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "AuthorityReceiptV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "trnm.node.authority-record.v0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "trnm.node.operation.v0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "MAX_AUTHORITY_ADVANCES_PER_STEP_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+          "selector": "MAX_INGRESS_FRAME_BYTES_V0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Exact node identity/generation, complete coordinator receipt, validated ingress or private verified fact token."
+        ],
+        "preconditions": [
+          "Recover starts with no trusted current receipt; advance requires Ready and one exact current predecessor."
+        ],
+        "accepted_effects": [
+          "Clean with no retained receipt or Resume with exact complete readback becomes Ready; Quarantine never grants write readiness.",
+          "Verified advance rechecks identity/predecessor/claim digest before delegating and revalidates complete durable readback."
+        ],
+        "rejected_effects": [
+          "Substituted tokens, facts or missing complete receipt cannot create a trusted successor."
+        ],
+        "uncertain_recovery": [
+          "Lost coordinator response clears trusted receipt and leaves Recovering; recover then replay the same exact operation."
+        ],
+        "publication": [
+          "Legacy stage labels are inert local observations. No vote, finalized receipt, domain validity or production activation is authorized by these tests."
+        ]
+      },
+      "errors": [
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+            "selector": "NotReady"
+          },
+          "meaning": "No advance before exact recovered readiness."
+        },
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-node-boundary-v0/src/lib.rs",
+            "selector": "ReceiptSubstitution"
+          },
+          "meaning": "Wrong predecessor/digest/complete readback is rejected."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+            "selector": "Coordinator"
+          },
+          "meaning": "A failed write response may have applied; recovery must obtain exact authoritative readback."
+        }
+      ],
+      "producer_modules": [
+        "M03",
+        "M04",
+        "M08"
+      ],
+      "consumer_modules": [
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M15-OP-ADVANCE-VERIFIED-FACT-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-production-v0",
+          "source_path": "trillionnium/crates/trnm-poco-node-production-v0/tests/authenticated_fact_port.rs",
+          "symbol": "token_is_bound_to_one_predecessor_and_exact_replay_claim",
+          "target": "authenticated_fact_port",
+          "test_filter": "token_is_bound_to_one_predecessor_and_exact_replay_claim",
+          "features": [],
+          "expected_outcome": "Verified fact token is bound to one current predecessor and replay claim.",
+          "assertion_fragments": [
+            "assert_eq!(session.advance_verified(replay).unwrap(), sealed);",
+            "BoundaryErrorV0::ReceiptSubstitution"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-ADVANCE-VERIFIED-FACT-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node-production-v0",
+          "source_path": "trillionnium/crates/trnm-poco-node-production-v0/tests/authenticated_fact_port.rs",
+          "symbol": "source_rejection_never_mutates_or_revokes_the_recovered_predecessor",
+          "target": "authenticated_fact_port",
+          "test_filter": "source_rejection_never_mutates_or_revokes_the_recovered_predecessor",
+          "features": [],
+          "expected_outcome": "Failed fact source cannot change the recovered predecessor.",
+          "assertion_fragments": [
+            "assert_eq!(session.current_receipt(), Some(prepared));",
+            "assert_eq!(session.coordinator().current(), Some(prepared));"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These executable source regressions construct their own fixtures; independently authored exact input/output/error byte vectors and authenticated specialist findings are not supplied by this catalog."
+      },
+      "open_requirements": [
+        "Replace reference/caller-fact producers with separately reviewed real domain sources before PCC1 lifecycle adoption.",
+        "Production commissioning, hardware rollback/custody and multi-host qualification remain open."
+      ]
+    },
+    {
+      "id": "M02-OP-TC-ADVANCE",
+      "module_id": "M02",
+      "requirement_ids": [
+        "M02-TC",
+        "M02-LIVE"
+      ],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-poco-node",
+        "path": "trillionnium/crates/trnm-poco-node/src/ordinary_timeout.rs",
+        "symbol": "on_timeout_certificate_bytes_v0",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "## 7. Pacemaker, timeout and stale-message behavior",
+          "rule": "The frozen TC rule controls view advance; stale messages do not mint fresh signing or finality authority."
+        },
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "### Signing lifecycle",
+          "rule": "An exact released sign intent must not be replaced before its durable acknowledgement; TC advance does not wait for finality."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/ordinary_timeout.rs",
+          "selector": "PocoNodeHostActionV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_TIMEOUT"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_TIMEOUT_CERTIFICATE"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "Cev0AdmissionBudgetV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Exact CEV0 TC bytes plus caller work budget; validator set, parameters, epoch-zero context and GenesisQC come from the commissioned host."
+        ],
+        "preconditions": [
+          "One recovered ordinary timeout host; valid TC uses the exact supported GenesisQC references.",
+          "Root/nested signature caps intersect caller budgets with commissioned owner limits; missing authenticated ordinary ancestry is unsupported locally."
+        ],
+        "accepted_effects": [
+          "Strictly decode/verify and reserve the second Core verification cost before any durable write.",
+          "Persist any exact prior SignatureReady release, apply the TC through Core, persist/fresh-read its Safety successor, acknowledge storage and only then return the timer effect.",
+          "This operation invokes no signature producer; the next timeout uses the existing durable signing path."
+        ],
+        "rejected_effects": [
+          "Malformed/context/signature and caller-budget rejection preserve the prior host and durable Safety state.",
+          "Verified ordinary-QC dependencies unavailable to this slice return AuthenticatedAncestryRequired without marking the peer Byzantine."
+        ],
+        "uncertain_recovery": [
+          "Persistence or fresh-readback uncertainty fences the host; reopen from exact durable state before accepting another operation.",
+          "Source tests prove local drop/reopen, six feature-gated userspace panic cuts and SQLite metadata tamper rejection; they do not prove SIGKILL or physical device fault recovery."
+        ],
+        "publication": [
+          "Only a Core-authorized timer/view effect can return; no vote, finality receipt or network activation is granted."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node/src/ordinary_timeout.rs",
+            "selector": "InvalidCertificate"
+          },
+          "meaning": "A cryptographically invalid TC does not alter host state."
+        },
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node/src/ordinary_timeout.rs",
+            "selector": "AuthenticatedAncestryRequired"
+          },
+          "meaning": "The bounded host lacks required verified ancestry; local absence is not consensus invalidity."
+        },
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node/src/ordinary_timeout.rs",
+            "selector": "Admission"
+          },
+          "meaning": "DecodeError preserves the distinction between malformed bytes and caller resource exhaustion; work-cap failure is local."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node/src/ordinary_timeout.rs",
+            "selector": "Host"
+          },
+          "meaning": "After a possibly applied durable operation the nested host error requires recovery; not every Host error implies a write happened."
+        }
+      ],
+      "producer_modules": [
+        "M04",
+        "M03"
+      ],
+      "consumer_modules": [
+        "M02",
+        "M03",
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M02-OP-TC-ADVANCE-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/ordinary_timeout_certificate_recovery.rs",
+          "symbol": "four_hosts_form_tc_advance_reopen_and_sign_the_next_view",
+          "target": "ordinary_timeout_certificate_recovery",
+          "test_filter": "four_hosts_form_tc_advance_reopen_and_sign_the_next_view",
+          "features": [],
+          "expected_outcome": "Four local validator host instances form a real Ed25519 TC; advancing persists view two, reopens identically and signs/replays the next exact timeout without activating production.",
+          "assertion_fragments": [
+            "assert_eq!(reopened.safety_state().current_view(), View::new(2));",
+            "assert_eq!(replayed, next);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TC-ADVANCE-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/ordinary_timeout_certificate_recovery.rs",
+          "symbol": "malformed_wrong_context_and_bad_signatures_leave_the_host_reusable",
+          "target": "ordinary_timeout_certificate_recovery",
+          "test_filter": "malformed_wrong_context_and_bad_signatures_leave_the_host_reusable",
+          "features": [],
+          "expected_outcome": "Malformed/context/substituted signature cases retain current in-memory and durable Safety state and do not invoke custody.",
+          "assertion_fragments": [
+            "assert_eq!(host.safety_state(), &before);",
+            "assert_eq!(host.safety_head().unwrap().state(), &before);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TC-ADVANCE-CASE-3",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/ordinary_timeout_certificate_recovery.rs",
+          "symbol": "local_budget_failure_before_second_crypto_pass_has_no_durable_effect",
+          "target": "ordinary_timeout_certificate_recovery",
+          "test_filter": "local_budget_failure_before_second_crypto_pass_has_no_durable_effect",
+          "features": [],
+          "expected_outcome": "A budget sufficient only for the first verification pass leaves revision zero and no signing invocation.",
+          "assertion_fragments": [
+            "assert_eq!(budget.signature_work(), 3);",
+            "assert_eq!(host.safety_head().unwrap().revision(), 0);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TC-ADVANCE-CASE-4",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/ordinary_timeout_certificate_recovery.rs",
+          "symbol": "certified_missing_ancestry_is_unavailable_and_does_not_poison_the_header",
+          "target": "ordinary_timeout_certificate_recovery",
+          "test_filter": "certified_missing_ancestry_is_unavailable_and_does_not_poison_the_header",
+          "features": [],
+          "expected_outcome": "A strictly verified TC requiring ordinary ancestry unavailable to this bounded host returns local unavailability and preserves its view.",
+          "assertion_fragments": [
+            "assert_eq!(host.safety_state().current_view(), View::new(1));",
+            "assert_eq!(node.calls.load(Ordering::SeqCst), 0);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TC-ADVANCE-CASE-5",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/ordinary_timeout_certificate_recovery.rs",
+          "symbol": "narrow_local_aggregate_and_forged_stale_tc_never_mutate_the_owner",
+          "target": "ordinary_timeout_certificate_recovery",
+          "test_filter": "narrow_local_aggregate_and_forged_stale_tc_never_mutate_the_owner",
+          "features": [],
+          "expected_outcome": "Local aggregate cap rejects before signature verification; a forged stale TC is verified and rejected without state change, while an authentic stale TC is idempotent and still charged.",
+          "assertion_fragments": [
+            "assert_eq!(host.safety_state(), &advanced);",
+            "assert_eq!(stale_budget.signature_work(), 3);",
+            "assert_eq!(host.safety_head().unwrap().revision(), 0);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TC-ADVANCE-CASE-6",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/ordinary_timeout_certificate_recovery.rs",
+          "symbol": "sqlite_tamper_fences_the_host_before_any_timer_and_rejects_reopen",
+          "target": "ordinary_timeout_certificate_recovery",
+          "test_filter": "sqlite_tamper_fences_the_host_before_any_timer_and_rejects_reopen",
+          "features": [],
+          "expected_outcome": "Tampered Safety metadata yields no timer or signing call; the live host fail-stops and durable reopen rejects.",
+          "assertion_fragments": [
+            "Err(PocoNodeHostErrorV0::BoundedTimeoutHostFailStopped)",
+            "assert_eq!(node.calls.load(Ordering::SeqCst), 0);",
+            "node.assert_reopen_rejected();"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TC-ADVANCE-CASE-7",
+          "kind": "recovery",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/ordinary_timeout_certificate_recovery.rs",
+          "symbol": "each_tc_persistence_cut_reopens_the_exact_source_or_target_and_replays",
+          "target": "ordinary_timeout_certificate_recovery",
+          "test_filter": "each_tc_persistence_cut_reopens_the_exact_source_or_target_and_replays",
+          "features": [
+            "recovery-process-test-support"
+          ],
+          "expected_outcome": "Six userspace panic/drop cuts around the signature-release and view-advance persistence barriers reopen to their exact source or target; retry reaches view two and next-timeout signing remains exact. These are not SIGKILL or power-loss tests.",
+          "assertion_fragments": [
+            "assert!(interrupted.is_err());",
+            "assert_eq!(recovered.safety_state().current_view(), View::new(2));",
+            "assert_eq!(node.calls.load(Ordering::SeqCst), 2);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M02-OP-TC-ADVANCE-CASE-8",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/ordinary_timeout_certificate_recovery.rs",
+          "symbol": "tamper_after_each_tc_write_never_releases_a_timer_or_reuses_the_owner",
+          "target": "ordinary_timeout_certificate_recovery",
+          "test_filter": "tamper_after_each_tc_write_never_releases_a_timer_or_reuses_the_owner",
+          "features": [
+            "recovery-process-test-support"
+          ],
+          "expected_outcome": "Metadata tampering after either signature-release or view-advance write is caught before timer publication; the poisoned owner cannot resume and reopen rejects.",
+          "assertion_fragments": [
+            "assert!(injected);",
+            "assert!(matches!(result, Err(TcError::Host(_))));",
+            "Err(PocoNodeHostErrorV0::BoundedTimeoutHostFailStopped)",
+            "node.assert_reopen_rejected();"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "Actual source regressions use repository fixtures. Independent expected bytes, authenticated specialist findings and device/multi-host evidence are not provided by this catalog."
+      },
+      "open_requirements": [
+        "Only the exact commissioned epoch-zero GenesisQC dependency path is integrated; arbitrary ordinary ancestry and nonzero epoch transitions remain open.",
+        "Four instances are within one process with real SQLite/Ed25519 but fixture custody and in-memory watermark; no multi-host or HSM independence claim.",
+        "Independent TC byte/signature/error vectors, network listener/pacemaker campaigns and physical crash qualification remain open."
+      ]
+    },
+    {
+      "id": "M08-OP-RECOVER-EXPECTED-LEDGER",
+      "module_id": "M08",
+      "requirement_ids": [
+        "M08-CUT"
+      ],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-consensus-external-node-checkpoint",
+        "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+        "symbol": "open_existing_expected",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "## 10. Atomicity, recovery and publication",
+          "rule": "Recovery must converge only to an exact allowed source or target; ambiguous state fences the owner before repair/publication."
+        },
+        {
+          "path": "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md",
+          "heading": "## Persistence and recovery",
+          "rule": "A local ledger does not overrule an independently named signer, Safety, application or checkpoint authority."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "ExternalNodeCheckpointV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "SCHEMA_V1"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "ANCHOR_DOMAIN_V1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "RECORD_DOMAIN_V1"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "MAX_RECORDS_V1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "RECORD_BYTES_V1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "HEAD_BYTES_V1"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Caller-supplied exact source/target checkpoint records decoded by the CLI; this operation does not authenticate their provenance."
+        ],
+        "preconditions": [
+          "Target is an exact successor of source; one exclusive owner; bound root/records/anchor/lock identities and exact anchor content.",
+          "CLI expectation files must be retained and authenticated by the caller; they are not an independent rollback anchor just because they were supplied."
+        ],
+        "accepted_effects": [
+          "Validate the complete chain, published head, live monotonic observation and expected source/target before deleting temps or repairing a lagging head.",
+          "At the previously observed live sequence, require the same checkpoint and record digest even if the freshly replayed terminal head is higher.",
+          "Append fsyncs a complete successor record, publishes/syncs its head and freshly replays the exact target before returning trusted success.",
+          "An existing exact target returns without appending a duplicate record."
+        ],
+        "rejected_effects": [
+          "Wrong expected context, record chain, head, endpoint identity, link/unknown entry or live rollback cannot return a trusted head.",
+          "A foreign expected operation leaves old head and temporary evidence unchanged; no pre-validation cleanup."
+        ],
+        "uncertain_recovery": [
+          "Set the live owner to poisoned before recovery or write; only complete fresh validation clears it. Reopen after uncertain write and classify the exact retained source/target.",
+          "Cold rollback of both the entire namespace and caller expectation remains outside the guarantee."
+        ],
+        "publication": [
+          "Returned ledger status is local exact-checkpoint convergence, not a three-chain proof, trusted independent anchor or production release authorization."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+            "selector": "TargetNotSuccessor"
+          },
+          "meaning": "Malformed operation relation rejects before ledger recovery."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+            "selector": "ThirdState"
+          },
+          "meaning": "A durable terminal checkpoint outside the exact supplied source/target fences recovery before cleanup."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+            "selector": "InvalidState"
+          },
+          "meaning": "Historical corruption, observed rollback, unexpected entry or poisoned owner is rejected."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+            "selector": "Io"
+          },
+          "meaning": "Write/sync/readback failure may follow a durable effect; preserve evidence and reopen, rather than assume no write."
+        }
+      ],
+      "producer_modules": [
+        "M03",
+        "M08"
+      ],
+      "consumer_modules": [
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M08-OP-RECOVER-EXPECTED-LEDGER-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "exact_target_retry_is_read_only_and_does_not_append_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::exact_target_retry_is_read_only_and_does_not_append_v1",
+          "features": [],
+          "expected_outcome": "Exact target retry retains the same returned head and only one durable record, including after expected-context reopen.",
+          "assertion_fragments": [
+            ".expect(\"reopened retry\"),",
+            "fs::read_dir(root.join(\"records\")).expect(\"records\").count(),"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-RECOVER-EXPECTED-LEDGER-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1",
+          "features": [],
+          "expected_outcome": "A foreign expected source/target rejects before cleanup or head repair; matching context can then recover the durable target.",
+          "assertion_fragments": [
+            "Err(NodeCommitLedgerErrorV1::ThirdState)",
+            "assert!(retained.exists());",
+            "assert_eq!(reopened.head().checkpoint, target);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-RECOVER-EXPECTED-LEDGER-CASE-3",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "cold_rollback_below_supplied_expected_source_is_rejected_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::cold_rollback_below_supplied_expected_source_is_rejected_v1",
+          "features": [],
+          "expected_outcome": "Caller-retained newer expected context rejects the rolled-back namespace; rolling back both context and store remains outside the local guarantee.",
+          "assertion_fragments": [
+            "Err(NodeCommitLedgerErrorV1::ThirdState)",
+            "a caller that also rolls back its expectation is outside the local guarantee"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-RECOVER-EXPECTED-LEDGER-CASE-4",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "coherent_rewritten_prefix_with_higher_head_is_rejected_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::coherent_rewritten_prefix_with_higher_head_is_rejected_v1",
+          "features": [],
+          "expected_outcome": "A coherent rewritten historical prefix with a higher matching head fails the retained live checkpoint/digest comparison, fences the owner and preserves head/temp evidence.",
+          "assertion_fragments": [
+            "\"observed ledger prefix changed\"",
+            "assert!(ledger.poisoned);",
+            "assert!(retained.exists());",
+            "assert_eq!(fs::read(root.join(\"head.v1\")).expect(\"head\"), head);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-RECOVER-EXPECTED-LEDGER-CASE-5",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "valid_extension_preserves_the_observed_live_prefix_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::valid_extension_preserves_the_observed_live_prefix_v1",
+          "features": [],
+          "expected_outcome": "A valid durable extension retaining the observed checkpoint and record digest recovers to the exact requested target at sequence two.",
+          "assertion_fragments": [
+            ".expect(\"recover extension\"),",
+            "NodeCommitConvergenceV1::Target",
+            "assert_eq!(ledger.head().sequence, 2);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "Actual source regressions use repository fixtures. Independent expected bytes, authenticated specialist findings and device/multi-host evidence are not provided by this catalog."
+      },
+      "open_requirements": [
+        "Caller checkpoint authenticity and independent preservation remain external obligations; no new trusted anti-rollback authority is established.",
+        "Full-history scans, fsync behavior, existing schema and one-million-record limit remain unchanged; scalable authenticated compaction is still open.",
+        "Concurrent adversarial filesystem replacement, physical storage faults and independent expected record bytes require further qualification."
+      ]
+    },
+    {
+      "id": "M08-OP-APPEND-EXACT-LEDGER",
+      "module_id": "M08",
+      "requirement_ids": [
+        "M08-CUT"
+      ],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-consensus-external-node-checkpoint",
+        "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+        "symbol": "append_exact_successor",
+        "features": []
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/protocol/poco-convergence-v1/README.md",
+          "heading": "## 10. Atomicity, recovery and publication",
+          "rule": "Recovery must converge only to an exact allowed source or target; ambiguous state fences the owner before repair/publication."
+        },
+        {
+          "path": "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md",
+          "heading": "## Persistence and recovery",
+          "rule": "A local ledger does not overrule an independently named signer, Safety, application or checkpoint authority."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "ExternalNodeCheckpointV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "SCHEMA_V1"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "ANCHOR_DOMAIN_V1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "RECORD_DOMAIN_V1"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "MAX_RECORDS_V1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "RECORD_BYTES_V1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "selector": "HEAD_BYTES_V1"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Caller-supplied exact source/target checkpoint records decoded by the CLI; this operation does not authenticate their provenance."
+        ],
+        "preconditions": [
+          "Target is an exact successor of source; one exclusive owner; bound root/records/anchor/lock identities and exact anchor content.",
+          "CLI expectation files must be retained and authenticated by the caller; they are not an independent rollback anchor just because they were supplied."
+        ],
+        "accepted_effects": [
+          "Validate the complete chain, published head, live monotonic observation and expected source/target before deleting temps or repairing a lagging head.",
+          "At the previously observed live sequence, require the same checkpoint and record digest even if the freshly replayed terminal head is higher.",
+          "Append fsyncs a complete successor record, publishes/syncs its head and freshly replays the exact target before returning trusted success.",
+          "An existing exact target returns without appending a duplicate record."
+        ],
+        "rejected_effects": [
+          "Wrong expected context, record chain, head, endpoint identity, link/unknown entry or live rollback cannot return a trusted head.",
+          "A foreign expected operation leaves old head and temporary evidence unchanged; no pre-validation cleanup."
+        ],
+        "uncertain_recovery": [
+          "Set the live owner to poisoned before recovery or write; only complete fresh validation clears it. Reopen after uncertain write and classify the exact retained source/target.",
+          "Cold rollback of both the entire namespace and caller expectation remains outside the guarantee."
+        ],
+        "publication": [
+          "Returned ledger status is local exact-checkpoint convergence, not a three-chain proof, trusted independent anchor or production release authorization."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+            "selector": "TargetNotSuccessor"
+          },
+          "meaning": "Malformed operation relation rejects before ledger recovery."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+            "selector": "ThirdState"
+          },
+          "meaning": "A durable terminal checkpoint outside the exact supplied source/target fences recovery before cleanup."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+            "selector": "InvalidState"
+          },
+          "meaning": "Historical corruption, observed rollback, unexpected entry or poisoned owner is rejected."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+            "selector": "Io"
+          },
+          "meaning": "Write/sync/readback failure may follow a durable effect; preserve evidence and reopen, rather than assume no write."
+        }
+      ],
+      "producer_modules": [
+        "M03",
+        "M08"
+      ],
+      "consumer_modules": [
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M08-OP-APPEND-EXACT-LEDGER-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "exact_target_retry_is_read_only_and_does_not_append_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::exact_target_retry_is_read_only_and_does_not_append_v1",
+          "features": [],
+          "expected_outcome": "Exact target retry retains the same returned head and only one durable record, including after expected-context reopen.",
+          "assertion_fragments": [
+            ".expect(\"reopened retry\"),",
+            "fs::read_dir(root.join(\"records\")).expect(\"records\").count(),"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-APPEND-EXACT-LEDGER-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::expected_context_mismatch_preserves_journal_ahead_and_temp_evidence_v1",
+          "features": [],
+          "expected_outcome": "A foreign expected source/target rejects before cleanup or head repair; matching context can then recover the durable target.",
+          "assertion_fragments": [
+            "Err(NodeCommitLedgerErrorV1::ThirdState)",
+            "assert!(retained.exists());",
+            "assert_eq!(reopened.head().checkpoint, target);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-APPEND-EXACT-LEDGER-CASE-3",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "cold_rollback_below_supplied_expected_source_is_rejected_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::cold_rollback_below_supplied_expected_source_is_rejected_v1",
+          "features": [],
+          "expected_outcome": "Caller-retained newer expected context rejects the rolled-back namespace; rolling back both context and store remains outside the local guarantee.",
+          "assertion_fragments": [
+            "Err(NodeCommitLedgerErrorV1::ThirdState)",
+            "a caller that also rolls back its expectation is outside the local guarantee"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-APPEND-EXACT-LEDGER-CASE-4",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "corrupted_older_record_fences_owner_without_cleanup_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::corrupted_older_record_fences_owner_without_cleanup_v1",
+          "features": [],
+          "expected_outcome": "Corrupt historical records fence the live owner without deleting recovery evidence.",
+          "assertion_fragments": [
+            "failed validation must not clean evidence"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-APPEND-EXACT-LEDGER-CASE-5",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "coherent_rewritten_prefix_with_higher_head_is_rejected_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::coherent_rewritten_prefix_with_higher_head_is_rejected_v1",
+          "features": [],
+          "expected_outcome": "A coherent rewritten historical prefix with a higher matching head fails the retained live checkpoint/digest comparison, fences the owner and preserves head/temp evidence.",
+          "assertion_fragments": [
+            "\"observed ledger prefix changed\"",
+            "assert!(ledger.poisoned);",
+            "assert!(retained.exists());",
+            "assert_eq!(fs::read(root.join(\"head.v1\")).expect(\"head\"), head);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M08-OP-APPEND-EXACT-LEDGER-CASE-6",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-external-node-checkpoint",
+          "source_path": "trillionnium/crates/trnm-consensus-external-node-checkpoint/src/node_commit_ledger_v1.rs",
+          "symbol": "valid_extension_preserves_the_observed_live_prefix_v1",
+          "target": "bin:trnm-external-node-checkpoint-v0",
+          "test_filter": "node_commit_ledger_v1::tests::valid_extension_preserves_the_observed_live_prefix_v1",
+          "features": [],
+          "expected_outcome": "A valid durable extension retaining the observed checkpoint and record digest recovers to the exact requested target at sequence two.",
+          "assertion_fragments": [
+            ".expect(\"recover extension\"),",
+            "NodeCommitConvergenceV1::Target",
+            "assert_eq!(ledger.head().sequence, 2);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "Actual source regressions use repository fixtures. Independent expected bytes, authenticated specialist findings and device/multi-host evidence are not provided by this catalog."
+      },
+      "open_requirements": [
+        "Caller checkpoint authenticity and independent preservation remain external obligations; no new trusted anti-rollback authority is established.",
+        "Full-history scans, fsync behavior, existing schema and one-million-record limit remain unchanged; scalable authenticated compaction is still open.",
+        "Concurrent adversarial filesystem replacement, physical storage faults and independent expected record bytes require further qualification."
+      ]
+    },
+    {
+      "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1",
+      "module_id": "M15",
+      "requirement_ids": [
+        "M15-START",
+        "M15-WIRING",
+        "M15-NONPROMOTE"
+      ],
+      "profile": "bft-v0",
+      "implementation": {
+        "package": "trnm-poco-node",
+        "path": "trillionnium/crates/trnm-poco-node/src/native_vote_recovery.rs",
+        "symbol": "open_existing_native_signed_vote_replay_v1",
+        "features": [
+          "lab-validator-runtime"
+        ]
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/modules/TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md",
+          "heading": "## Operation and trust boundary",
+          "rule": "Return only a previously signed exact historical Vote through the laboratory owner; do not activate Core, invoke a producer or grant new signing authority."
+        },
+        {
+          "path": "docs/modules/TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md",
+          "heading": "## Admitted durable cuts",
+          "rule": "Select one current authorizing NativeValid record or its exact durable signature-release successor; require an already-signed journal row, terminal K and Prepared native execution history."
+        },
+        {
+          "path": "docs/modules/TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md",
+          "heading": "## Exact readback sequence and join",
+          "rule": "Freshly join all retained stores and external signer head twice; use the authorizing Safety predecessor in the native-K application projection while binding the checkpoint to current Safety."
+        },
+        {
+          "path": "docs/modules/TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md",
+          "heading": "## Results and failure semantics",
+          "rule": "Every failed readback returns no Vote and fences an opened owner; local Unavailable is not a canonical peer or block invalidity verdict."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/native_vote_recovery.rs",
+          "selector": "PocoNodeReplayedNativeVoteV1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/native_vote_recovery.rs",
+          "selector": "CanonicalSignIntentV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-signer-journal/src/sqlite.rs",
+          "selector": "read_signed_intent_exact_v1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-core/src/model.rs",
+          "selector": "matches_durable_signature_released_successor_of_v1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/external_node_checkpoint.rs",
+          "selector": "native_k_application_projection_v1"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/canonical.rs",
+          "selector": "DOMAIN_VOTE"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/external_node_checkpoint.rs",
+          "selector": "trnm.native-k-checkpoint.safety-binding.v0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/external_node_checkpoint.rs",
+          "selector": "trnm.native-k-checkpoint.recovery-closure.v0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/deployed_lab_recovery.rs",
+          "selector": "MAXIMUM_RECORD_BYTES_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/deployed_lab_recovery.rs",
+          "selector": "MAXIMUM_BLOB_BYTES_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/deployed_lab_recovery.rs",
+          "selector": "MAXIMUM_SAFETY_DATABASE_BYTES_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/deployed_lab_recovery.rs",
+          "selector": "MAXIMUM_SIGNER_INTENTS_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/deployed_lab_recovery.rs",
+          "selector": "MAXIMUM_SIGNER_INTENT_BYTES_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node/src/deployed_lab_recovery.rs",
+          "selector": "MAXIMUM_SIGNER_DATABASE_BYTES_V0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Commissioned epoch-zero Core configuration, matching native application configuration, canonical existing laboratory root and injected external signer watermark; caller-supplied signatures are not accepted."
+        ],
+        "preconditions": [
+          "Linux laboratory feature scope with cooperating root-lock discipline; all five required nonempty regular database namespaces exist before generic application/K store open.",
+          "Retained NativeValid Proposal completion authorizes one pending Vote at its exact revision, K is terminal Acked with no outbox, native execution history is Prepared and the latest whole-node checkpoint binds current stores.",
+          "Safety is either the authorizing NativeValid head or its exact adjacent durable release successor; a strictly verified already-signed exact journal row and local/external signer watermark equality are required."
+        ],
+        "accepted_effects": [
+          "Hold the root lock and joined store owners, perform two complete fresh joins, pin the initial checkpoint and return the same verified historical Vote through a private-constructor carrier.",
+          "Compare current Safety/signer checkpoint fields, but derive all native-K application projection fields from the authorizing Safety record rather than substituting its post-release successor.",
+          "No new signer event, signature production, external watermark CAS, Safety/application/K/checkpoint logical transition or Core activation is performed; ordinary SQLite open/recovery bookkeeping is outside this no-logical-write claim."
+        ],
+        "rejected_effects": [
+          "Missing or unsigned exact signature, watermark repair requirement, unsupported cut, stale/incomplete checkpoint or unavailable native P/K readback returns no Vote.",
+          "Corrupt or foreign retained authority, signatures, bindings or external heads prevents output; no error supplies a signing capability or canonical Byzantine verdict."
+        ],
+        "uncertain_recovery": [
+          "Set the returned owner failed before each replay join and clear it only after complete matching readbacks; any subsequent failure keeps that owner fenced even if test bytes or the external head are restored.",
+          "Discard a partially opened owner and reopen after the underlying condition is resolved. The pre-open checks plus generic SQLite open are not atomic descriptor-relative existing-only operations under unsupported same-UID replacement races."
+        ],
+        "publication": [
+          "Expose only identical already-signed historical Vote bytes. This is neither a continuation of consensus runtime nor permission to sign, vote on another block, publish a finality receipt or activate production."
+        ]
+      },
+      "errors": [
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node/src/native_vote_recovery.rs",
+            "selector": "Unavailable"
+          },
+          "meaning": "Missing supported retained authority, unsigned row, required watermark repair, unsupported cut or unavailable storage prevents local replay without invalidating a block."
+        },
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node/src/native_vote_recovery.rs",
+            "selector": "Rejected"
+          },
+          "meaning": "Context, checksum, signature, owner or join mismatch prevents historical Vote output."
+        },
+        {
+          "class": "halt",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node/src/native_vote_recovery.rs",
+            "selector": "owner_fenced"
+          },
+          "meaning": "After a replay readback failure the same owner remains unavailable; restoring underlying state requires a fresh owner."
+        }
+      ],
+      "producer_modules": [
+        "M03",
+        "M08"
+      ],
+      "consumer_modules": [
+        "M15"
+      ],
+      "cases": [
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-1",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/native_signed_vote_replay.rs",
+          "symbol": "live_native_vote_reopens_exactly_without_new_signatures_or_logical_writes",
+          "target": "native_signed_vote_replay",
+          "test_filter": "live_native_vote_reopens_exactly_without_new_signatures_or_logical_writes",
+          "features": [
+            "lab-validator-runtime-test-support"
+          ],
+          "expected_outcome": "Normal live h4 signature-release successor reopens repeatedly to the identical signed Vote; all five logical stores and external head remain unchanged and the one prior producer call does not increase.",
+          "assertion_fragments": [
+            "assert_eq!(owner.replay_exact_vote_v1().unwrap().vote_v1(), &expected);",
+            "assert_eq!(logical_snapshot(f.root.path()), before);",
+            "assert_eq!(*f.watermark.0.lock().unwrap(), watermark);",
+            "assert_eq!(f.calls.load(Ordering::SeqCst), 1);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-2",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/native_signed_vote_replay.rs",
+          "symbol": "unsigned_native_vote_remains_unavailable_and_never_calls_custody",
+          "target": "native_signed_vote_replay",
+          "test_filter": "unsigned_native_vote_remains_unavailable_and_never_calls_custody",
+          "features": [
+            "lab-validator-runtime-test-support"
+          ],
+          "expected_outcome": "The fixture already attempted one unavailable live signature; recovery returns unsigned_signer_tail with zero additional custody calls and unchanged logical rows.",
+          "assertion_fragments": [
+            "stage: \"unsigned_signer_tail\"",
+            "assert_eq!(logical_snapshot(f.root.path()), before);",
+            "assert_eq!(f.calls.load(Ordering::SeqCst), 1);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-3",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/native_signed_vote_replay.rs",
+          "symbol": "stale_or_foreign_checkpoint_cannot_release_the_signed_vote",
+          "target": "native_signed_vote_replay",
+          "test_filter": "stale_or_foreign_checkpoint_cannot_release_the_signed_vote",
+          "features": [
+            "lab-validator-runtime-test-support"
+          ],
+          "expected_outcome": "An earlier pre-signature checkpoint is locally unavailable, exact restoration allows replay, and a foreign checkpoint cannot release a Vote.",
+          "assertion_fragments": [
+            "stage: \"checkpoint_owner_join\"",
+            "assert!(f.open().is_err());",
+            "assert_eq!(f.calls.load(Ordering::SeqCst), 1);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-4",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/native_signed_vote_replay.rs",
+          "symbol": "missing_or_corrupt_native_artifacts_reject_without_initializing_replacements",
+          "target": "native_signed_vote_replay",
+          "test_filter": "missing_or_corrupt_native_artifacts_reject_without_initializing_replacements",
+          "features": [
+            "lab-validator-runtime-test-support"
+          ],
+          "expected_outcome": "In the tested cooperating namespace, missing and empty K databases stay missing/empty; later native application corruption prevents live replay and reopen.",
+          "assertion_fragments": [
+            "assert!(!path.exists());",
+            "assert_eq!(fs::metadata(&path).unwrap().len(), 0);",
+            "assert!(owner.replay_exact_vote_v1().is_err());",
+            "assert!(f.open().is_err());"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-5",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/native_signed_vote_replay.rs",
+          "symbol": "pinned_journal_readback_returns_only_existing_signatures_and_observes_external_changes",
+          "target": "native_signed_vote_replay",
+          "test_filter": "pinned_journal_readback_returns_only_existing_signatures_and_observes_external_changes",
+          "features": [
+            "lab-validator-runtime-test-support"
+          ],
+          "expected_outcome": "Pinned M03 readback returns the exact stored signature; unsigned/absent rows return None, a changed external head blocks readback, and no new logical rows or producer calls are created.",
+          "assertion_fragments": [
+            "assert_eq!(read.is_none(), unsigned);",
+            "assert_eq!(read.signature_v1(), *f.vote.as_ref().unwrap().signature());",
+            "assert!(journal.read_signed_intent_exact_v1(&f.intent).is_err());",
+            "assert_eq!(logical_snapshot(f.root.path()), before);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-6",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/native_signed_vote_replay.rs",
+          "symbol": "every_local_store_corruption_rejects_and_live_external_change_fences_replay",
+          "target": "native_signed_vote_replay",
+          "test_filter": "every_local_store_corruption_rejects_and_live_external_change_fences_replay",
+          "features": [
+            "lab-validator-runtime-test-support"
+          ],
+          "expected_outcome": "Safety, signer, K and P corruption each prevents output. An external head change fences the existing owner even after restoring that head; a fresh owner can then reopen.",
+          "assertion_fragments": [
+            "assert!(f.open().is_err(),\"{path}\");",
+            "stage: \"owner_fenced\"",
+            "assert!(f.open().is_ok());"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-7",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/tests/native_signed_vote_replay.rs",
+          "symbol": "foreign_local_validator_profile_is_rejected_before_logical_store_changes",
+          "target": "native_signed_vote_replay",
+          "test_filter": "foreign_local_validator_profile_is_rejected_before_logical_store_changes",
+          "features": [
+            "lab-validator-runtime-test-support"
+          ],
+          "expected_outcome": "A foreign commissioned local validator is rejected with unchanged logical rows and no additional custody call.",
+          "assertion_fragments": [
+            "assert!(open_existing_native_signed_vote_replay_v1(",
+            "assert_eq!(logical_snapshot(f.root.path()), before);",
+            "assert_eq!(f.calls.load(Ordering::SeqCst), 1);"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-8",
+          "kind": "negative",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-consensus-core",
+          "source_path": "trillionnium/crates/trnm-consensus-core/src/tests.rs",
+          "symbol": "durable_signature_release_comparison_accepts_only_the_exact_persisted_successor_v1",
+          "target": "lib",
+          "test_filter": "tests::durable_signature_release_comparison_accepts_only_the_exact_persisted_successor_v1",
+          "features": [],
+          "expected_outcome": "The comparison-only helper accepts exactly the adjacent durable release state and rejects volatile, reversed, changed-view and revision-gap substitutions; its standalone Core fixture is not a replay-owner activation.",
+          "assertion_fragments": [
+            "assert!(durable.matches_durable_signature_released_successor_of_v1(&before));",
+            "assert!(!changed.matches_durable_signature_released_successor_of_v1(&before));",
+            "assert!(!gap.matches_durable_signature_released_successor_of_v1(&before));"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        },
+        {
+          "id": "M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1-CASE-9",
+          "kind": "positive",
+          "provenance": "source-regression-not-independent-golden",
+          "package": "trnm-poco-node",
+          "source_path": "trillionnium/crates/trnm-poco-node/src/external_node_checkpoint.rs",
+          "symbol": "real_native_k_uncertain_whole_node_cas_releases_only_inert_request_signature_v0",
+          "target": "lib",
+          "test_filter": "external_node_checkpoint::tests::real_native_k_uncertain_whole_node_cas_releases_only_inert_request_signature_v0",
+          "features": [],
+          "expected_outcome": "The shared native-K projection matches the real persisted checkpoint and rejects each of ten projected-field substitutions; this writer fixture does not grant the replay owner a write capability.",
+          "assertion_fragments": [
+            "assert_eq!(fresh_checkpoint, target);",
+            "assert!(replay_projection.matches_checkpoint_application_v1(&fresh_checkpoint));",
+            "!replay_projection.matches_checkpoint_application_v1(&substituted),"
+          ],
+          "replay_status": "not-run-by-documentation-checker"
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "Repository-generated native fixtures and source regressions are not independently authored golden bytes or authenticated specialist acceptance."
+      },
+      "open_requirements": [
+        "The laboratory replay API does not resume a consensus runtime or finish an unsigned intent; production activation remains blocked.",
+        "Positive source replay covers the normal durable release successor; the recognized signed-before-release shape is not an exercised crash-cut acceptance result.",
+        "SQLite open bookkeeping and unsupported same-UID namespace replacement races are outside the no-logical-write guarantee; independently administered whole-node rollback authority remains open.",
+        "Fixtures use one local process, real SQLite/native execution/Ed25519 and injected in-memory watermark custody. Independent vectors, authenticated producer/consumer/specialist review, process-kill, power-loss and deployment acceptance remain open."
+      ]
+    }
+  ]
+}

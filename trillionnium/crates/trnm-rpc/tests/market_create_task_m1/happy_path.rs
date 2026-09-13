@@ -6,6 +6,7 @@ fn market_create_task_m1_command_works() {
     let _ = fs::remove_dir_all("run/market_test");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args([
             "run",
             "-p",
@@ -42,6 +43,7 @@ fn market_create_task_visible_alias_works() {
     let _ = fs::remove_dir_all("run/market_test");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args([
             "run",
             "-p",

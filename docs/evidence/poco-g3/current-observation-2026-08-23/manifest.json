@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "evidence_id": "trnm-poco-g3-stage0-current-fleet-readiness-af6c2737e-20260823",
+  "classification": "unsigned-manual-ssh-current-read-only-observation",
+  "transport": "manual-ssh",
+  "control_host": "p4-x230",
+  "source": {
+    "commit": "af6c2737e1bf9d770076f8cb8b5a61887df619c7",
+    "git_tree_oid": "03bbc502b9fc716990806968f44da05805db6a39",
+    "cargo_lock_sha256": "72e254afa47d8b92fe8803b35869990bcfaa7f8106d9f0d4ecb45d127fbe150b"
+  },
+  "reports": [
+    {
+      "path": "current-fleet-probe.json",
+      "sha256": "1a4083c655298011b7d167bc9bf3127a3f1d5bba804566342966716bf0b7405d",
+      "bytes": 2526,
+      "acceptor": "probe-fleet-v1",
+      "observed": true,
+      "build": false,
+      "validator_run": false,
+      "multihost_run": false,
+      "geo_wan": false,
+      "production": false
+    },
+    {
+      "path": "current-run-readiness.json",
+      "sha256": "be1e4041a0d7a760b8386204de948bb359410d0b5b83302d8931ac6471bc0be0",
+      "bytes": 5453,
+      "acceptor": "run-readiness-v2",
+      "observed": true,
+      "build": false,
+      "validator_run": false,
+      "multihost_run": false,
+      "geo_wan": false,
+      "production": false
+    }
+  ],
+  "claims": {
+    "current_fleet_probe_observed": true,
+    "current_run_readiness_observed": true,
+    "validator_run_7_completed": false,
+    "production_activation": false,
+    "g3_geo_wan_evidence": false
+  }
+}

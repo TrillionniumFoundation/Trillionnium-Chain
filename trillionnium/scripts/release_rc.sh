@@ -148,7 +148,7 @@ if [ "$audit_ok" -ne 1 ]; then
 fi
 
 # 3) parallel sanity
-cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+./scripts/legacy_node_cargo.sh run -q --features legacy-harness --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
   --max-blocks 6 \

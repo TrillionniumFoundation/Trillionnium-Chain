@@ -1,0 +1,56 @@
+{
+  "schema": "trnm-poco-ai-native-v1-order-ordinary-finality-advance-candidate",
+  "schema_version": 1,
+  "status": "candidate-non-normative",
+  "classification": "bounded-independent-same-epoch-ordinary-finality-advance-evidence",
+  "purpose": "Advance one previously authenticated TrustedOrderStateV1 through an exact three-certified-header Ordinary chain, with at most one single skipped view justified by a complete TimeoutCertificateV1.",
+  "canonical_encoding": "CEV1",
+  "digest_construction": "SHA256(u32_le(len(UTF8(domain))) || UTF8(domain) || CEV1(value))",
+  "imports": {
+    "foundation_schema": "cev1-foundation-order-kernel-v1.json",
+    "one_step_schema": "cev1-order-finality-light-client-kernel-v1.json",
+    "source_authority": "an independently verified FreshGenesis trust bundle plus Ordinary-target OrderFinalityProofV1 supplies the exact initial TrustedOrderStateV1 id and fresh-genesis finalized anchor"
+  },
+  "domains": {
+    "ordinary_finality_advance": "trnm.poco-ai.order-ordinary-finality-advance.v1"
+  },
+  "added_cev1_types": {
+    "OrdinaryFinalityAdvanceBodyV1": [
+      ["schema_version", "u16=1"],
+      ["input_state", "TrustedOrderStateV1; verifier trust input must match state_id"],
+      ["certified_chain", "List<CertifiedHeaderV1>; exactly three Ordinary headers"],
+      ["output_state", "TrustedOrderStateV1; derived exactly by the verifier"]
+    ],
+    "OrdinaryFinalityAdvanceV1": [
+      ["body", "OrdinaryFinalityAdvanceBodyV1"],
+      ["advance_id", "Hash32 = H(trnm.poco-ai.order-ordinary-finality-advance.v1, CEV1(body))"]
+    ]
+  },
+  "verified_relations": [
+    "The source FreshGenesis trust bundle and Ordinary-target OrderFinalityProofV1 are strict-decoded, byte-for-byte re-encoded and fully verified before deriving the initial TrustedOrderStateV1.",
+    "The input state id must equal the exact state id derived from the source proof or the immediately previous accepted advance.",
+    "Each advance carries exactly three Ordinary CertifiedHeaderV1 values in one epoch, context, descriptor, validator set and committed parameters.",
+    "The first header is the immediate height and view successor of the trusted certified head, names its block as parent and consumes its certified-head QC id as justification.",
+    "Every block id, QC id, VoteStatementV1 root, strict Ed25519 signature, sorted unique signer set and checked weighted quorum is independently verified.",
+    "A later edge may skip exactly one view only when a complete TimeoutCertificateV1 independently authenticates the exact prior QC as high justification and lock, the exact fresh-genesis or latest-checkpoint finalized anchor, and the immediate target view.",
+    "At most one skipped-view TimeoutCertificateV1 is admitted per advance; all other edges are consecutive and carry no timeout certificate.",
+    "The three-chain finalizes its first Ordinary header and advances the certified head to its third header while preserving epoch authority, latest checkpoint and latest handoff fields exactly.",
+    "The output finalized height must strictly increase, the complete output state is independently derived, and the state and advance ids are recomputed with length-prefixed DigestV1 domains.",
+    "Two advances are sequentially composed in the corpus by exact output-state-id to next-input-state-id equality."
+  ],
+  "positive_inventory": [
+    "fresh_genesis_ordinary_target_source_with_one_skipped_view_tc",
+    "same_epoch_ordinary_advance_with_one_skipped_view_tc",
+    "second_same_epoch_consecutive_ordinary_advance",
+    "exact_raw_reencode_replay_and_sequential_composition"
+  ],
+  "negative_inventory_count": 52,
+  "explicit_exclusions": [
+    "No payload bytes, transaction execution, application-state derivation or enforcement of payload-dependent byte, count, evidence or execution limits; only committed header roots are authenticated.",
+    "No proposer signature; complete-node admission verifies it while this light-client candidate relies on weighted QC authentication of the exact header and BlockIdV1.",
+    "No checkpoint scheduling transition, epoch handoff, v0 activation authority, migration verification or arbitrary trust-anchor selection.",
+    "No more than one skipped view per advance, more than two composed advances, arbitrary-length history or unbounded iteration.",
+    "No state sync, non-Order proof class, complete wire or crypto corpus, second implementation or interoperability claim.",
+    "No global light-client completeness, normative freeze, node implementation, production activation or release-readiness claim."
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema": "trnm-external-evidence-v1",
+  "evidence_id": "REPLACE-WITH-CONTENT-ADDRESSED-ID",
+  "blocker_id": "EXT-REVIEW-001",
+  "source_commit": "0000000000000000000000000000000000000000",
+  "source_tree": "0000000000000000000000000000000000000000",
+  "producer": "REPLACE",
+  "independent_reviewer": "REPLACE-DIFFERENT-IDENTITY",
+  "independence_declaration": true,
+  "scope": "review",
+  "result": "rejected",
+  "started_at": "1970-01-01T00:00:00Z",
+  "ended_at": "1970-01-01T00:00:00Z",
+  "wall_clock_seconds": 0,
+  "artifacts": [
+    {
+      "name": "REPLACE",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "immutable_uri": "REPLACE"
+    }
+  ],
+  "signatures": [
+    {
+      "signer": "producer",
+      "algorithm": "REPLACE",
+      "signature": "REPLACE-NONEMPTY-SIGNATURE",
+      "signed_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "signer": "independent-reviewer",
+      "algorithm": "REPLACE",
+      "signature": "REPLACE-NONEMPTY-SIGNATURE",
+      "signed_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "claims": {},
+  "notes": "Template only. It is intentionally rejected and cannot close a blocker."
+}

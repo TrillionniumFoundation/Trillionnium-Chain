@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "schema_id": "trnm-poco-ai-native-v1-object-mvcc-fee-kernel-candidate-v1",
+  "protocol_id": "trnm-poco-ai-native-v1",
+  "status": "candidate-non-normative",
+  "normative": false,
+  "implemented_scope": "bounded-local-single-block-object-mvcc-fee-delta-sqlite-kernel",
+  "execution": {
+    "canonical_serial_oracle": true,
+    "speculative_parent_snapshot": true,
+    "validation_order": "gap-free-transaction-index",
+    "read_version_mismatch_retries_in_canonical_index_order": true,
+    "scheduler_or_worker_timing_affects_result": false,
+    "real_parallel_worker_pool": false,
+    "maximum_transactions": 256,
+    "maximum_access_width": 64
+  },
+  "objects": {
+    "typed_object_ids": true,
+    "explicit_declared_read_set": true,
+    "explicit_declared_write_set": true,
+    "observed_version_and_value_hash_bound": true,
+    "prior_and_successor_versions_bound": true,
+    "undeclared_write_invalid": true,
+    "create_delete_complete": false,
+    "authenticated_global_state_tree": false
+  },
+  "receipts": {
+    "statuses": ["Success", "Reverted", "OutOfResource"],
+    "static_invalid_transaction_has_receipt": false,
+    "read_write_state_delta_roots": true,
+    "resource_usage_and_fee_bound": true,
+    "conflict_set_and_retry_count_bound": true,
+    "gap_free_transaction_index": true
+  },
+  "resources_and_fees": {
+    "classes": ["OrderedBytes", "StateReadBytes", "StateWriteBytes", "DeterministicComputeUnit"],
+    "checked_integer_ceiling_pricing": true,
+    "per_transaction_fee_deltas": true,
+    "block_end_sorted_destination_reduction": true,
+    "destination_credits_once_per_block": true,
+    "global_fee_collector_per_transaction_write": false,
+    "fee_split_conservation": true,
+    "full_v1_resource_schedule_complete": false
+  },
+  "storage": {
+    "engine": "sqlite",
+    "journal_schema_version": 1,
+    "tables": 3,
+    "triggers": 0,
+    "automatic_migration": false,
+    "sidecars_fail_closed": true,
+    "immutable_read_only_existing_file_preflight": true,
+    "atomic_block_objects_receipts_resources_fees": true,
+    "exact_replay": true,
+    "durable_state_and_block_journal_roots": true,
+    "deterministic_journal_replay_audit": true,
+    "applied_ack_lost_recovered_by_exact_replay": true,
+    "not_applied_ack_lost_changes_state": false,
+    "third_state_permanent_fence": true,
+    "whole_store_rollback_authority": false
+  },
+  "global_truth": {
+    "agent_transaction_wire_complete": false,
+    "agent_authorization_integrated": false,
+    "order_proof_authority_complete": false,
+    "authenticated_global_state_tree_complete": false,
+    "real_parallel_worker_pool_complete": false,
+    "all_resource_classes_complete": false,
+    "settlement_integration_complete": false,
+    "node_integration_complete": false,
+    "g2_global_complete": false,
+    "protocol_implementation_complete": false,
+    "normative_freeze": false,
+    "production_candidate": false,
+    "activation": false
+  }
+}

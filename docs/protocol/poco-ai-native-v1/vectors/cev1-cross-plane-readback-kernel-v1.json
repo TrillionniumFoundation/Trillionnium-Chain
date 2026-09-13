@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "status": "candidate-non-normative",
+  "positive_inventory": [
+    "stable_double_sample_deterministic_projection",
+    "single_da_snapshot_head_certificate_readback",
+    "domain_separated_projection_hash"
+  ],
+  "negative_inventory": [
+    "intervening_sequence_change",
+    "intervening_journal_root_substitution",
+    "protocol_context_substitution",
+    "order_head_substitution",
+    "store_identity_swap",
+    "wrong_da_batch",
+    "inactive_da_obligation",
+    "cross_plane_result_id_reinterpretation",
+    "receipt_store_identity_or_sequence_mismatch",
+    "receipt_post_state_root_mismatch",
+    "mvcc_receipt_head_root_mismatch",
+    "nonterminal_settlement_receipt",
+    "typed_lifecycle_rejection_before_second_sample"
+  ],
+  "compile_fail_inventory": [
+    "confirmed_readback_external_construction",
+    "confirmed_readback_clone"
+  ],
+  "real_five_store_fixture_complete": false,
+  "whole_node_cas_complete": false,
+  "node_process_integration_complete": false
+}

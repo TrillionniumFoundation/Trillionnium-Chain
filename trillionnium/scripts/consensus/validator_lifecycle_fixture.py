@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Build and verify local CometBFT validator-lifecycle fixtures.
+"""Build and verify local PoCO consensus validator-lifecycle fixtures.
 
-The transition command reads CometBFT private-validator keys only to create the
+The transition command reads PoCO consensus private-validator keys only to create the
 required Ed25519 proof of possession. Private material is kept in memory and is
 never written to output or included in diagnostics.
 """
@@ -128,30 +128,30 @@ def validator_set_hash(validators: list[dict[str, Any]]) -> bytes:
         separators=(",", ":"),
         sort_keys=False,
     ).encode("utf-8")
-    return framed_hash("trnm.cometbft.validator-set.v1", [encoded])
+    return framed_hash("trnm.poco.validator-set.v1", [encoded])
 
 
-def read_comet_private_key(path: Path) -> tuple[str, Ed25519PrivateKey]:
+def read_foreign_private_key(path: Path) -> tuple[str, Ed25519PrivateKey]:
     raw = load_json(path)
-    require(isinstance(raw, dict), f"CometBFT key {path} is not an object")
+    require(isinstance(raw, dict), f"PoCO consensus key {path} is not an object")
     public = raw.get("pub_key")
     private = raw.get("priv_key")
-    require(isinstance(public, dict), f"CometBFT key {path} has no public key")
-    require(isinstance(private, dict), f"CometBFT key {path} has no private key")
+    require(isinstance(public, dict), f"PoCO consensus key {path} has no public key")
+    require(isinstance(private, dict), f"PoCO consensus key {path} has no private key")
     require(
-        public.get("type") == "tendermint/PubKeyEd25519",
-        f"CometBFT key {path} is not Ed25519",
+        public.get("type") == "poco_consensus/PubKeyEd25519",
+        f"PoCO consensus key {path} is not Ed25519",
     )
     require(
-        private.get("type") == "tendermint/PrivKeyEd25519",
-        f"CometBFT key {path} is not Ed25519",
+        private.get("type") == "poco_consensus/PrivKeyEd25519",
+        f"PoCO consensus key {path} is not Ed25519",
     )
     expected_public = decode_base64(public.get("value"), f"{path} public key")
     private_bytes = decode_base64(private.get("value"), f"{path} private key")
-    require(len(expected_public) == 32, f"CometBFT key {path} public key has wrong length")
+    require(len(expected_public) == 32, f"PoCO consensus key {path} public key has wrong length")
     require(
         len(private_bytes) in (32, 64),
-        f"CometBFT key {path} private key has wrong length",
+        f"PoCO consensus key {path} private key has wrong length",
     )
     signing_key = Ed25519PrivateKey.from_private_bytes(private_bytes[:32])
     derived_public = signing_key.public_key().public_bytes(
@@ -160,27 +160,27 @@ def read_comet_private_key(path: Path) -> tuple[str, Ed25519PrivateKey]:
     )
     require(
         derived_public == expected_public,
-        f"CometBFT key {path} public/private key mismatch",
+        f"PoCO consensus key {path} public/private key mismatch",
     )
     return expected_public.hex(), signing_key
 
 
-def public_key_from_comet_key(path: Path) -> str:
+def public_key_from_foreign_key(path: Path) -> str:
     raw = load_json(path)
     public = raw.get("pub_key") if isinstance(raw, dict) else None
-    require(isinstance(public, dict), f"CometBFT key {path} has no public key")
+    require(isinstance(public, dict), f"PoCO consensus key {path} has no public key")
     require(
-        public.get("type") == "tendermint/PubKeyEd25519",
-        f"CometBFT key {path} is not Ed25519",
+        public.get("type") == "poco_consensus/PubKeyEd25519",
+        f"PoCO consensus key {path} is not Ed25519",
     )
     value = decode_base64(public.get("value"), f"{path} public key")
-    require(len(value) == 32, f"CometBFT key {path} public key has wrong length")
+    require(len(value) == 32, f"PoCO consensus key {path} public key has wrong length")
     return value.hex()
 
 
 def command_set(args: argparse.Namespace) -> None:
     validators = [
-        {"public_key_hex": public_key_from_comet_key(path), "voting_power": args.power}
+        {"public_key_hex": public_key_from_foreign_key(path), "voting_power": args.power}
         for path in args.key
     ]
     atomic_json(args.output, canonical_validators(validators))
@@ -206,7 +206,7 @@ def command_transition(args: argparse.Namespace) -> None:
     required_keys = target_keys - base_keys
     proofs: dict[str, str] = {}
     for key_path in args.proof_key:
-        public_key, signing_key = read_comet_private_key(key_path)
+        public_key, signing_key = read_foreign_private_key(key_path)
         require(public_key in required_keys, f"proof key {key_path} is not newly added")
         require(public_key not in proofs, f"duplicate proof key {key_path}")
         signature = signing_key.sign(message)
@@ -276,7 +276,7 @@ def command_assert_phase(args: argparse.Namespace) -> None:
         public = validator.get("pub_key")
         require(isinstance(public, dict), f"RPC validator {index} has no public key")
         require(
-            public.get("type") == "tendermint/PubKeyEd25519",
+            public.get("type") == "poco_consensus/PubKeyEd25519",
             f"RPC validator {index} is not Ed25519",
         )
         key = decode_base64(public.get("value"), f"RPC validator {index} public key")
@@ -289,20 +289,20 @@ def command_assert_phase(args: argparse.Namespace) -> None:
     observed = canonical_validators(observed)
     require(observed == expected, "RPC validator set differs from expected phase set")
 
-    info = rpc_get(args.rpc_url, "abci_info", {})
+    info = rpc_get(args.rpc_url, "native_application_boundary_info", {})
     response = info.get("response")
-    require(isinstance(response, dict), "ABCI info has no response")
+    require(isinstance(response, dict), "native application boundary info has no response")
     require(
         int(response.get("last_block_height", -1)) == args.height,
-        "ABCI height does not equal asserted phase height",
+        "native application boundary height does not equal asserted phase height",
     )
-    abci_hash = normalize_hash(response.get("last_block_app_hash"), "ABCI app hash")
+    native_application_boundary_hash = normalize_hash(response.get("last_block_app_hash"), "native application boundary app hash")
 
     local = load_json(args.state_path)
     require(isinstance(local, dict), "local application status is not an object")
     require(int(local.get("height", -1)) == args.height, "local app height mismatch")
     local_hash = normalize_hash(local.get("app_hash_hex"), "local app hash")
-    require(local_hash == abci_hash, "local and ABCI app hashes differ")
+    require(local_hash == native_application_boundary_hash, "local and native application boundary app hashes differ")
 
     atomic_json(
         args.json_out,
@@ -314,7 +314,7 @@ def command_assert_phase(args: argparse.Namespace) -> None:
             "height": args.height,
             "validator_set_hash_hex": validator_set_hash(observed).hex(),
             "validator_count": len(observed),
-            "app_hash_hex": abci_hash,
+            "app_hash_hex": native_application_boundary_hash,
         },
     )
 

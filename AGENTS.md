@@ -1,15 +1,30 @@
-# Project Boundary (binding)
+# Project and development boundary
 
 This Git root is **Trillionnium Chain** (`trillionnium-chain`), lane
-`chain-consensus`. Before any write, build, commit, branch, remote, or
-dependency change, run `bash scripts/project-preflight.sh`.
+`chain-consensus`. Before a write, build, commit, branch, remote, or dependency
+change, run:
 
-Stop on a root, project ID, lane, remote, branch, topic, or dependency mismatch.
-Use `/home/alex/projects/trillionnium-chain`; the old `TrillionniumChain` path
-and capitalized alias are temporary compatibility links.
+```bash
+bash scripts/project-preflight.sh
+```
 
-This repository owns consensus, canonical runtime/state, mempool/RPC/node
-interfaces, genesis/validator/operator tooling, and canonical finality/proof
-semantics. It does not own World gameplay, Hepta business services, Nakama
-rooms/matches, or integration orchestration. Do not add game-product packages
-or sibling-working-tree Cargo dependencies.
+Stop on a repository, project ID, lane, remote, source tuple, dependency, or
+protected-branch mismatch. Do not rely on person-specific absolute worktree
+paths or compatibility aliases.
+
+The only active development direction is
+`docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`. Machine truth
+is `config/consensus-mainline.json`; compact module and release-train data live
+beside the plan. Git history is the archive. Do not create another roadmap,
+delivery board, sprint plan, agent prompt pack, package narrative, continuation
+note, or active historical-document directory.
+
+Every implementation change declares one primary module from M00-M17. Cross-
+module work changes the versioned contract first and requires producer and
+consumer review. Candidate, fixture, lab, research, benchmark, and legacy code
+must not enter the production dependency closure.
+
+This repository owns consensus, canonical runtime/state, transaction admission,
+RPC/node interfaces, genesis/validator/operator tooling, and canonical finality
+and proof semantics. It does not own World gameplay, business-service
+orchestration, Nakama rooms or matches, or sibling-worktree dependencies.

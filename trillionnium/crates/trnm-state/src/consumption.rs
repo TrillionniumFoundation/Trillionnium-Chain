@@ -18,20 +18,15 @@ impl ConsumptionRecordKey {
 }
 
 #[repr(u8)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub enum ConsumptionRecordStatus {
+    #[default]
     Submitted,
     Challenged,
     Accepted,
     Discounted,
     Rejected,
     Slashed,
-}
-
-impl Default for ConsumptionRecordStatus {
-    fn default() -> Self {
-        Self::Submitted
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -65,15 +60,15 @@ impl ConsumptionRecord {
             && !self.consumed_spans_root.trim().is_empty()
             && self.consumed_token_count > 0
             && self.claimed_consumption_units > 0
-            && self.credited_consumption_units.map_or(true, |credited| {
-                credited > 0 && credited <= self.claimed_consumption_units
-            })
+            && self
+                .credited_consumption_units
+                .is_none_or(|credited| credited > 0 && credited <= self.claimed_consumption_units)
             && self.consumer_nonce > 0
             && self.accepted_at_unix_ms > 0
             && self
                 .resolution_code
                 .as_ref()
-                .map_or(true, |code| !code.trim().is_empty())
+                .is_none_or(|code| !code.trim().is_empty())
     }
 
     pub fn is_compatible_with_consumer_nonce(&self, consumer_nonce: u64) -> bool {
@@ -82,13 +77,13 @@ impl ConsumptionRecord {
 
     pub fn is_compatible_with_billing_window_policy(&self, policy: &BillingWindowPolicy) -> bool {
         policy.is_receipt_compatible(&self.key.billing_window_id, self.accepted_at_unix_ms)
-            && self.credited_consumption_units.map_or(true, |credited| {
+            && self.credited_consumption_units.is_none_or(|credited| {
                 policy
                     .per_consumer_max_credited_units
-                    .map_or(true, |cap| credited <= cap)
+                    .is_none_or(|cap| credited <= cap)
                     && policy
                         .per_task_max_credited_units
-                        .map_or(true, |cap| credited <= cap)
+                        .is_none_or(|cap| credited <= cap)
             })
     }
 
@@ -133,8 +128,8 @@ impl BillingWindowPolicy {
             && self.policy_version > 0
             && self
                 .per_consumer_max_credited_units
-                .map_or(true, |cap| cap > 0)
-            && self.per_task_max_credited_units.map_or(true, |cap| cap > 0)
+                .is_none_or(|cap| cap > 0)
+            && self.per_task_max_credited_units.is_none_or(|cap| cap > 0)
             && match (
                 self.per_consumer_max_credited_units,
                 self.per_task_max_credited_units,
@@ -179,9 +174,7 @@ impl TaskConsumptionSummary {
             && self.accepted_receipt_count <= self.receipt_count
             && self.challenged_receipt_count <= self.receipt_count
             && self.total_credited_consumption_units <= self.total_claimed_consumption_units
-            && self
-                .last_settlement_height
-                .map_or(true, |height| height > 0)
+            && self.last_settlement_height.is_none_or(|height| height > 0)
     }
 }
 
@@ -231,16 +224,18 @@ impl ConsumptionSettlementStateSnapshot {
             && self
                 .record
                 .as_ref()
-                .map_or(true, |record| record.is_persistable_snapshot_for(key))
-            && self.consumer_nonce.map_or(true, |nonce| nonce > 0)
+                .is_none_or(|record| record.is_persistable_snapshot_for(key))
+            && self.consumer_nonce.is_none_or(|nonce| nonce > 0)
             && self.has_record_compatible_consumer_nonce()
-            && self.billing_window_policy.as_ref().map_or(true, |policy| {
-                policy.is_persistable_snapshot_for(&key.billing_window_id)
-            })
+            && self
+                .billing_window_policy
+                .as_ref()
+                .is_none_or(|policy| policy.is_persistable_snapshot_for(&key.billing_window_id))
             && self.has_record_compatible_billing_window_policy()
-            && self.task_summary.as_ref().map_or(true, |summary| {
-                summary.is_persistable_snapshot_for(key.task_id)
-            })
+            && self
+                .task_summary
+                .as_ref()
+                .is_none_or(|summary| summary.is_persistable_snapshot_for(key.task_id))
             && self.has_record_compatible_task_summary()
     }
 

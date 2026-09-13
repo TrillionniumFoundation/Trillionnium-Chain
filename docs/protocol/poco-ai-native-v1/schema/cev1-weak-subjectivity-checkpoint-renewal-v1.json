@@ -1,0 +1,87 @@
+{
+  "schema": "trnm-poco-ai-native-v1-weak-subjectivity-checkpoint-renewal-candidate",
+  "schema_version": 1,
+  "status": "candidate-non-normative",
+  "classification": "bounded-independent-checkpoint-anchor-renewal-evidence",
+  "purpose": "Renew one weak-subjectivity checkpoint anchor from the first to the latest checkpoint authenticated by the exact same bounded three-hop OrderTrustPathV1.",
+  "canonical_encoding": "CEV1",
+  "digest_construction": "SHA256(u32_le(len(UTF8(domain))) || UTF8(domain) || CEV1(value))",
+  "imports": {
+    "foundation_schema": "cev1-foundation-order-kernel-v1.json",
+    "one_step_schema": "cev1-order-finality-light-client-kernel-v1.json",
+    "trust_path_schema": "cev1-order-trust-path-iterator-v1.json",
+    "trust_path_requirement": "exactly three verified hops; first checkpoint comes from ExistingFreshGenesisTransition and renewed checkpoint comes from the final CheckpointAnchoredTransition"
+  },
+  "domains": {
+    "weak_subjectivity_anchor": "trnm.poco-ai.weak-subjectivity-anchor.v1",
+    "weak_subjectivity_renewal_policy": "trnm.poco-ai.weak-subjectivity-renewal-policy.v1",
+    "weak_subjectivity_renewal": "trnm.poco-ai.weak-subjectivity-renewal.v1"
+  },
+  "added_cev1_types": {
+    "WeakSubjectivityCheckpointAnchorBodyV1": [
+      ["schema_version", "u16=1"],
+      ["context", "ProtocolContextV1"],
+      ["checkpoint_id", "EpochCheckpointIdV1"],
+      ["checkpoint_epoch", "u64"],
+      ["checkpoint_height", "u64"],
+      ["checkpoint_block_id", "BlockIdV1"],
+      ["validator_set_hash", "ValidatorSetHashV1"],
+      ["consensus_parameters_hash", "ConsensusParametersHashV1"],
+      ["application_state_root", "Hash32"],
+      ["state_schema_hash", "Hash32"]
+    ],
+    "WeakSubjectivityCheckpointAnchorV1": [
+      ["body", "WeakSubjectivityCheckpointAnchorBodyV1"],
+      ["anchor_id", "Hash32 = H(trnm.poco-ai.weak-subjectivity-anchor.v1, CEV1(body))"]
+    ],
+    "WeakSubjectivityRenewalPolicyBodyV1": [
+      ["schema_version", "u16=1"],
+      ["max_checkpoint_age_epochs", "u64; >0"],
+      ["max_checkpoint_age_blocks", "u64; >0"],
+      ["min_finalized_height_advance", "u64; >0"]
+    ],
+    "WeakSubjectivityRenewalPolicyV1": [
+      ["body", "WeakSubjectivityRenewalPolicyBodyV1"],
+      ["policy_id", "Hash32 = H(trnm.poco-ai.weak-subjectivity-renewal-policy.v1, CEV1(body))"]
+    ],
+    "WeakSubjectivityCheckpointRenewalBodyV1": [
+      ["schema_version", "u16=1"],
+      ["prior_anchor", "WeakSubjectivityCheckpointAnchorV1"],
+      ["terminal_trusted_state", "TrustedOrderStateV1"],
+      ["terminal_checkpoint", "EpochCheckpointV1"],
+      ["policy", "WeakSubjectivityRenewalPolicyV1"],
+      ["observed_finalized_epoch", "u64"],
+      ["observed_finalized_height", "u64"],
+      ["renewed_anchor", "WeakSubjectivityCheckpointAnchorV1"]
+    ],
+    "WeakSubjectivityCheckpointRenewalV1": [
+      ["body", "WeakSubjectivityCheckpointRenewalBodyV1"],
+      ["renewal_id", "Hash32 = H(trnm.poco-ai.weak-subjectivity-renewal.v1, CEV1(body))"]
+    ]
+  },
+  "verified_relations": [
+    "The first and last checkpoint used by renewal are carried by the exact same verified three-hop trust path.",
+    "The supplied OrderTrustPathV1 is independently strict-decoded, byte-for-byte re-encoded and fully verified before renewal semantics are evaluated.",
+    "The prior anchor is derived field-for-field from the exact EpochCheckpointV1 carried by hop zero, including context, epoch, height, block, validator set, parameters and both state roots.",
+    "The renewed anchor is derived field-for-field from the exact EpochCheckpointV1 carried by the final checkpoint-anchored hop; current-epoch authority cannot be substituted for checkpoint-epoch authority.",
+    "The terminal trusted state equals the final hop output bytes and its latest_checkpoint_id equals the renewed checkpoint id.",
+    "Chain id, genesis hash and protocol version preserve lineage; stack profile changes remain committed by the checkpoint contexts.",
+    "Observed finalized epoch and height equal the terminal trusted state's finalized head, not its later certified head.",
+    "The prior checkpoint remains inside both committed epoch-age and block-age windows at the observed finalized head; the renewed checkpoint is strictly later in epoch and height.",
+    "Renewal meets the committed minimum finalized-height advance, rejects rollback, and rejects a different checkpoint id or block id at the same height.",
+    "All anchor, policy and renewal identifiers are recomputed with length-prefixed DigestV1 domains."
+  ],
+  "positive_inventory": [
+    "three_hop_first_to_latest_checkpoint_renewal",
+    "exact_raw_reencode_and_replay"
+  ],
+  "negative_inventory_count": 45,
+  "explicit_exclusions": [
+    "No wall-clock oracle, operator key, governance authorization or external bootstrap-package authentication.",
+    "No renewal from an arbitrary checkpoint not already authenticated by this exact bounded TrustPath.",
+    "No more than three trust-path hops, arbitrary-length iteration or unbounded weak-subjectivity history.",
+    "No v0 activation authority, migration verification, state sync or non-Order proof class.",
+    "No complete wire or crypto corpus, second implementation or interoperability claim.",
+    "No global light-client completeness, normative freeze, node implementation, production activation or release-readiness claim."
+  ]
+}

@@ -1,0 +1,27 @@
+[package]
+name = "trnm-poco-order-types-v1"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-ai-native-v1-order-types-candidate"
+protocol = "poco-ai-native-v1"
+classification = "candidate-non-normative"
+exact_cev1_block_header = true
+eight_named_order_roots = true
+consensus_header_timestamp = false
+typed_block_id = true
+typed_certificate_ids = true
+strict_header_vote_qc_decode = true
+exact_byte_reencoding = true
+node_process_integration = false
+g2_global_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[dependencies]
+sha2 = "0.10"

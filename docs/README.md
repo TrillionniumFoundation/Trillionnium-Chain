@@ -1,21 +1,45 @@
-# Trillionnium Docs Index
+# Trillionnium Chain documentation
 
-## Core
+The repository has one active development direction:
 
-- Architecture entry: `architecture/README.md`
-- Protocol docs: `protocol/`
-- Runbooks: `runbooks/`
-- Strategy notes: `strategy/`
-- Alpha run records: `alpha-runs/`
+- **Development plan:** `development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
+- **Machine truth:** `../config/consensus-mainline.json`
+- **Release projection:** `../RELEASE_READINESS.md`
+- **Technical convergence contract:** `architecture/TRNM_TECHNICAL_CONVERGENCE_V1.md`
+- **Machine convergence policy:** `../config/technical-convergence-v1.toml`
+- **Module technical reference:** `modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`
+- **Detailed module specifications:** `modules/README.md`
+- **Machine module coverage:** `../config/module-coverage-v1.toml`
 
-## Rust L1 quick links
+The [PCC1 authority convergence contract](protocol/poco-convergence-v1/README.md)
+is a candidate domain specification under that plan. It retains the deterministic
+PoCO-BFT kernel and specifies authority lifecycles, AI resource/task state and
+proof-semantic migration. It does not change frozen v0 wire semantics, rewire the
+production runtime, supersede a branch, create a second roadmap or activate a network.
+Its [abstract testkit](../formal/poco-convergence-v1/README.md) is not production evidence.
 
-- Repo layout: `architecture/rust-l1-repo-layout.md`
-- PoCO sequence draft: `../trillionnium/docs/protocol/poco-proof-of-consumption-v1-draft.md`
-  - BL09 retirement-prep note: retained `trnm-pouw` naming on migration surfaces is a compatibility label and provenance / audit evidence only, not ongoing payout authority.
-- v1 interface freeze: `protocol/rust-l1-v1-interface-freeze.md`
-- PR-5 challenge treasury 对账 runbook: `runbooks/pr5-challenge-treasury-reconcile.md`
-- PR-6 alert rules runbook: `runbooks/pr6-alert-rules.md`
-- PR-6 nightly security summary runbook: `runbooks/pr6-nightly-security-summary.md`
-- PR-7 alert delivery runbook: `runbooks/pr7-alert-delivery.md`
-- PR-9 weekly alert governance runbook: `runbooks/pr9-weekly-alert-governance.md`
+`docs/development/` contains the plan and compact machine companions only. Git
+history is the development-document archive; retired history directories,
+dated delivery boards, per-agent prompt packs, package roadmaps, sprint plans,
+and continuation notes are prohibited from active documentation.
+
+Current domain authorities are organized as follows:
+
+- `modules/` — stable M00–M17 technical contracts plus implementation-level
+  supplements for operationally complex boundaries; never a second roadmap;
+- `architecture/` — active architecture decisions and convergence boundaries;
+- `protocol/` — versioned protocol specifications, schemas, vectors, parameters,
+  manifests, and implementation-gap registers;
+- `evidence/` — immutable evidence schemas, submissions, and source-bound records;
+- `runbooks/` and `OPERATIONS.md` — operator procedures and candidate boundaries;
+- `schemas/` — machine-readable repository and evidence schemas;
+- `audits/` — source-bound audit records, never active roadmaps;
+- `bench/` and `performance/` — source-bound measurements and benchmark contracts,
+  never release authority.
+
+A document outside the canonical development plan may define its own domain
+contract, but it may not assign a competing work sequence, alter gate order,
+promote machine truth, or become an alternate development plan. A module is not
+implemented merely because its technical reference exists; implementation and
+promotion require exact-source tests, accepted evidence, protected review and,
+where applicable, independent external evidence and signed governance.

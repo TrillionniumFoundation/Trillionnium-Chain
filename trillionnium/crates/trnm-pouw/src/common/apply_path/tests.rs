@@ -1,3 +1,5 @@
+#![cfg(test)]
+
 use super::*;
 use crate::{LlmTokenMeterV1Receipt, LLM_INFERENCE_WORKLOAD_CLASS, LLM_TOKEN_METER_V1_SCHEMA};
 fn seeded_state() -> StateStore {

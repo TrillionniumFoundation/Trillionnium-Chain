@@ -15,9 +15,11 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import fcntl
 import hashlib
 import json
 import os
+import random
 import subprocess
 import sys
 import time
@@ -28,6 +30,27 @@ from zoneinfo import ZoneInfo
 
 SEVERITY = {"INFO": 0, "WARN": 1, "CRITICAL": 2}
 STATUS_TO_LEVEL = {"PASS": "INFO", "WARN": "WARN", "FAIL": "CRITICAL"}
+
+
+def level_from_status(report: dict[str, str]) -> str | None:
+    status = report.get("status", "").strip().upper()
+    return STATUS_TO_LEVEL.get(status)
+
+
+def validate_status_alert_level_consistency(report: dict[str, str]) -> tuple[bool, str]:
+    """Return (ok, reason). Reject contradictory status/alert_level pairs."""
+    mapped = level_from_status(report)
+    alert_level = report.get("alert_level", "").strip().upper()
+
+    # If either side is missing/unknown, keep backward-compatible behavior and let normalize_level decide.
+    if not mapped or not alert_level or alert_level not in SEVERITY:
+        return True, ""
+
+    if mapped != alert_level:
+        status = report.get("status", "").strip().upper()
+        return False, f"inconsistent_status_alert_level: status={status}=>{mapped}, alert_level={alert_level}"
+
+    return True, ""
 
 
 def parse_report(path: Path) -> dict[str, str]:
@@ -49,11 +72,11 @@ def normalize_level(report: dict[str, str]) -> str:
     if alert_level in SEVERITY:
         return alert_level
 
-    status = report.get("status", "").strip().upper()
-    level = STATUS_TO_LEVEL.get(status)
+    level = level_from_status(report)
     if level:
         return level
 
+    status = report.get("status", "").strip().upper()
     raise ValueError(f"invalid status/alert_level in report: status={status!r} alert_level={alert_level!r}")
 
 
@@ -300,6 +323,45 @@ def deliver_once(channel: str, text: str) -> None:
         raise RuntimeError(f"unsupported channel: {channel}")
 
 
+def consume_global_retry_budget(state_file: Path, window_seconds: int, budget: int) -> bool:
+    state_file.parent.mkdir(parents=True, exist_ok=True)
+    now_ts = int(time.time())
+    window_seconds = max(1, int(window_seconds))
+
+    with state_file.open("a+", encoding="utf-8") as f:
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        f.seek(0)
+        raw = f.read().strip()
+        try:
+            state = json.loads(raw) if raw else {}
+        except json.JSONDecodeError:
+            state = {}
+
+        start = int(state.get("window_start_ts", now_ts))
+        used = int(state.get("retries_used", 0))
+        if now_ts - start >= window_seconds:
+            start = now_ts
+            used = 0
+
+        if used >= max(0, int(budget)):
+            return False
+
+        used += 1
+        state = {
+            "window_start_ts": start,
+            "retries_used": used,
+            "window_seconds": window_seconds,
+            "budget": int(budget),
+            "updated_at_ts": now_ts,
+        }
+        f.seek(0)
+        f.truncate()
+        f.write(json.dumps(state, ensure_ascii=False))
+        f.flush()
+        os.fsync(f.fileno())
+        return True
+
+
 def send_with_retry(
     *,
     channel: str,
@@ -309,7 +371,12 @@ def send_with_retry(
     base_backoff_ms: int,
     max_backoff_ms: int,
     dry_run_simulate_failures: int = 0,
+    global_retry_budget: int = 0,
+    global_retry_window_seconds: int = 300,
+    global_retry_budget_state_file: str = "run/pr7-alert-delivery/retry-budget-state.json",
+    retry_jitter_seed: int | None = None,
 ) -> tuple[bool, int, str]:
+    rng = random.Random(retry_jitter_seed) if retry_jitter_seed is not None else random
     attempt = 0
     while True:
         attempt += 1
@@ -322,19 +389,88 @@ def send_with_retry(
         except (RuntimeError, urllib.error.URLError) as e:
             if attempt > max_retries:
                 return False, attempt, str(e)
+
+            if global_retry_budget > 0:
+                ok_budget = consume_global_retry_budget(
+                    Path(global_retry_budget_state_file),
+                    global_retry_window_seconds,
+                    global_retry_budget,
+                )
+                if not ok_budget:
+                    return False, attempt, (
+                        f"global retry budget exhausted: budget={global_retry_budget} "
+                        f"window_seconds={global_retry_window_seconds}"
+                    )
+
             backoff_ms = min(max_backoff_ms, base_backoff_ms * (2 ** (attempt - 1)))
+            jitter_ms = rng.randint(0, max(1, backoff_ms // 10))
+            sleep_ms = backoff_ms + jitter_ms
             print(
                 f"[PR7][RETRY] channel={channel} attempt={attempt}/{max_retries + 1} "
-                f"backoff_ms={backoff_ms} err={e}",
+                f"backoff_ms={sleep_ms} err={e}",
                 file=sys.stderr,
             )
-            time.sleep(backoff_ms / 1000.0)
+            time.sleep(sleep_ms / 1000.0)
 
 
 def append_dead_letter(path: Path, record: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def append_audit(path: Path, record: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def parse_channels_csv(raw: str) -> set[str]:
+    out: set[str] = set()
+    for x in raw.split(","):
+        c = x.strip().lower()
+        if c:
+            out.add(c)
+    return out
+
+
+def route_targets(level: str, primary: str, backup: str | None) -> list[str]:
+    targets = [primary]
+    if level == "CRITICAL" and backup and backup != primary:
+        targets.append(backup)
+    return targets
+
+
+DELIVERY_CHANNELS = {"slack", "telegram", "imessage"}
+LEVEL_ROUTE_ENV = {
+    "INFO": "ALERT_NOTIFY_CHANNEL_INFO",
+    "WARN": "ALERT_NOTIFY_CHANNEL_WARN",
+    "CRITICAL": "ALERT_NOTIFY_CHANNEL_CRITICAL",
+}
+
+
+def resolve_primary_channel(args: argparse.Namespace, level: str) -> str:
+    """Resolve the primary route for an already-normalized effective level.
+
+    Direct CLI use keeps the historical --primary-channel/--channel behavior.
+    The PR7 gate opts into level routing only when the operator supplied neither
+    ALERT_NOTIFY_PRIMARY_CHANNEL nor legacy ALERT_NOTIFY_CHANNEL. This lets a
+    WARN promoted to CRITICAL select the critical route after escalation while
+    preserving both explicit override contracts.
+    """
+
+    fallback = (args.primary_channel or args.channel).strip().lower()
+    route_by_level = os.environ.get("PR7_ROUTE_BY_EFFECTIVE_LEVEL", "0") == "1"
+    if route_by_level:
+        route_env = LEVEL_ROUTE_ENV.get(level)
+        candidate = (os.environ.get(route_env, "") if route_env else "").strip().lower()
+        channel = candidate or fallback
+    else:
+        channel = fallback
+
+    if channel not in DELIVERY_CHANNELS:
+        raise ValueError(f"invalid delivery channel for effective level={level}: {channel!r}")
+    return channel
 
 
 def main() -> int:
@@ -357,9 +493,21 @@ def main() -> int:
         default=(int(os.environ["ALERT_NOTIFY_COOLDOWN_CRITICAL"]) if "ALERT_NOTIFY_COOLDOWN_CRITICAL" in os.environ else None),
     )
     ap.add_argument("--channel", default=os.environ.get("ALERT_NOTIFY_CHANNEL", "slack"), choices=["slack", "telegram", "imessage"])
+    ap.add_argument("--primary-channel", choices=["slack", "telegram", "imessage"], default=os.environ.get("ALERT_NOTIFY_PRIMARY_CHANNEL", ""))
+    ap.add_argument("--backup-channel", choices=["slack", "telegram", "imessage"], default=os.environ.get("ALERT_NOTIFY_BACKUP_CHANNEL", ""))
+    ap.add_argument("--audit-file", default=os.environ.get("ALERT_NOTIFY_AUDIT_FILE", "run/pr7-alert-delivery/audit.jsonl"))
     ap.add_argument("--max-retries", type=int, default=int(os.environ.get("ALERT_NOTIFY_MAX_RETRIES", "3")))
     ap.add_argument("--base-backoff-ms", type=int, default=int(os.environ.get("ALERT_NOTIFY_BASE_BACKOFF_MS", "500")))
     ap.add_argument("--max-backoff-ms", type=int, default=int(os.environ.get("ALERT_NOTIFY_MAX_BACKOFF_MS", "8000")))
+    ap.add_argument("--global-retry-budget", type=int, default=int(os.environ.get("ALERT_NOTIFY_GLOBAL_RETRY_BUDGET", "0")))
+    ap.add_argument("--global-retry-window-seconds", type=int, default=int(os.environ.get("ALERT_NOTIFY_GLOBAL_RETRY_WINDOW_SECONDS", "300")))
+    ap.add_argument("--global-retry-budget-state-file", default=os.environ.get("ALERT_NOTIFY_GLOBAL_RETRY_BUDGET_STATE_FILE", "run/pr7-alert-delivery/retry-budget-state.json"))
+    ap.add_argument(
+        "--retry-jitter-seed",
+        type=int,
+        default=(int(os.environ["ALERT_NOTIFY_RETRY_JITTER_SEED"]) if "ALERT_NOTIFY_RETRY_JITTER_SEED" in os.environ else None),
+        help="optional deterministic seed for retry jitter (useful for CI replay/regression reproducibility)",
+    )
     ap.add_argument("--quiet-hours-enabled", action="store_true", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_ENABLED", "0") == "1")
     ap.add_argument("--quiet-hours-start", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_START", "23:00"))
     ap.add_argument("--quiet-hours-end", default=os.environ.get("ALERT_NOTIFY_QUIET_HOURS_END", "08:00"))
@@ -372,6 +520,11 @@ def main() -> int:
         type=int,
         default=int(os.environ.get("ALERT_NOTIFY_DRY_RUN_SIMULATE_FAILURES", "0")),
         help="only in dry-run mode: inject N failures before success",
+    )
+    ap.add_argument(
+        "--dry-run-fail-channels",
+        default=os.environ.get("ALERT_NOTIFY_DRY_RUN_FAIL_CHANNELS", ""),
+        help="comma-separated channels to force fail in dry-run, e.g. 'imessage,slack'",
     )
     args = ap.parse_args()
 
@@ -386,11 +539,22 @@ def main() -> int:
     now_iso = now_utc.isoformat()
 
     try:
-        level = normalize_level(report)
+        original_level = normalize_level(report)
+        level = original_level
         min_level = normalize_min_level(args.min_level)
     except ValueError as e:
         print(f"[PR7][FAIL] {e}", file=sys.stderr)
         return 2
+
+    consistency_ok, consistency_reason = validate_status_alert_level_consistency(report)
+
+    try:
+        primary_channel = resolve_primary_channel(args, original_level)
+    except ValueError as e:
+        print(f"[PR7][FAIL] {e}", file=sys.stderr)
+        return 2
+    backup_channel = (args.backup_channel or "").strip().lower() or None
+    dry_run_fail_channels = parse_channels_csv(args.dry_run_fail_channels)
 
     state_path = Path(args.state_file)
     state = load_state(state_path)
@@ -400,6 +564,70 @@ def main() -> int:
     state.setdefault("groups", {})
     state.setdefault("warn_streaks", {})
     stats = ensure_stats(state)
+
+    if not consistency_ok:
+        stats["alerts_suppressed"] += 1
+        mismatch_fp = mk_class_fingerprint(report, level)
+        record_delivery(
+            state,
+            event="suppressed",
+            reason=consistency_reason,
+            channel=primary_channel,
+            report_status=report.get("status", "UNKNOWN"),
+            fingerprint=mismatch_fp,
+            report_path=report_path,
+        )
+        append_audit(
+            Path(args.audit_file),
+            {
+                "at_utc": now_iso,
+                "fingerprint": mismatch_fp,
+                "class_fingerprint": mismatch_fp,
+                "level": level,
+                "report_path": str(report_path),
+                "channel": primary_channel,
+                "reason": consistency_reason,
+                "ok": False,
+                "attempts": 0,
+                "error": consistency_reason,
+                "dry_run": args.dry_run,
+                "rejected": True,
+            },
+        )
+        save_state(state_path, state)
+        print(f"[PR7] suppressed(consistency): {consistency_reason}")
+        return 0
+
+    if args.quiet_hours_enabled and original_level != "CRITICAL":
+        try:
+            in_quiet = is_in_quiet_hours(
+                now_utc=now_utc,
+                tz_name=args.quiet_hours_tz,
+                start_hhmm=args.quiet_hours_start,
+                end_hhmm=args.quiet_hours_end,
+            )
+        except Exception as e:
+            print(f"[PR7][FAIL] invalid quiet-hours config: {e}", file=sys.stderr)
+            return 2
+        if in_quiet:
+            stats["alerts_suppressed"] += 1
+            qh_fp = mk_class_fingerprint(report, original_level)
+            record_delivery(
+                state,
+                event="suppressed",
+                reason=(
+                    f"quiet_hours_{args.quiet_hours_start}-{args.quiet_hours_end}@{args.quiet_hours_tz}"
+                ),
+                channel=primary_channel,
+                report_status=report.get("status", "UNKNOWN"),
+                fingerprint=qh_fp,
+                report_path=report_path,
+            )
+            save_state(state_path, state)
+            print(
+                f"[PR7] suppressed(quiet-hours): level={original_level} window={args.quiet_hours_start}-{args.quiet_hours_end} tz={args.quiet_hours_tz}"
+            )
+            return 0
 
     escalated_from_warn = False
     warn_streak_count = 0
@@ -413,39 +641,45 @@ def main() -> int:
             level = "CRITICAL"
             escalated_from_warn = True
 
-    if args.quiet_hours_enabled and level != "CRITICAL":
-        try:
-            in_quiet = is_in_quiet_hours(
-                now_utc=now_utc,
-                tz_name=args.quiet_hours_tz,
-                start_hhmm=args.quiet_hours_start,
-                end_hhmm=args.quiet_hours_end,
-            )
-        except Exception as e:
-            print(f"[PR7][FAIL] invalid quiet-hours config: {e}", file=sys.stderr)
-            return 2
-        if in_quiet:
-            stats["alerts_suppressed"] += 1
-            qh_fp = mk_class_fingerprint(report, level)
-            record_delivery(
-                state,
-                event="suppressed",
-                reason=(
-                    f"quiet_hours_{args.quiet_hours_start}-{args.quiet_hours_end}@{args.quiet_hours_tz}"
-                ),
-                channel=args.channel,
-                report_status=report.get("status", "UNKNOWN"),
-                fingerprint=qh_fp,
-                report_path=report_path,
-            )
-            save_state(state_path, state)
-            print(
-                f"[PR7] suppressed(quiet-hours): level={level} window={args.quiet_hours_start}-{args.quiet_hours_end} tz={args.quiet_hours_tz}"
-            )
-            return 0
+    try:
+        primary_channel = resolve_primary_channel(args, level)
+    except ValueError as e:
+        print(f"[PR7][FAIL] {e}", file=sys.stderr)
+        return 2
 
     if not should_trigger(level, min_level):
-        print(f"[PR7] skip: level={level} below min_level={min_level}")
+        skip_reason = f"level={level} below min_level={min_level}"
+        skip_fp = mk_class_fingerprint(report, level)
+        record_delivery(
+            state,
+            event="skipped_min_level",
+            reason=skip_reason,
+            channel=primary_channel,
+            report_status=report.get("status", "UNKNOWN"),
+            fingerprint=skip_fp,
+            report_path=report_path,
+        )
+        append_audit(
+            Path(args.audit_file),
+            {
+                "at_utc": now_iso,
+                "record_type": "delivery_summary",
+                "fingerprint": skip_fp,
+                "class_fingerprint": skip_fp,
+                "level": level,
+                "report_path": str(report_path),
+                "channels_total": 0,
+                "channels_ok": 0,
+                "channels_failed": 0,
+                "attempts": 0,
+                "dry_run": args.dry_run,
+                "event": "skipped_min_level",
+                "ok": True,
+                "reason": skip_reason,
+                "primary_channel": primary_channel,
+            },
+        )
+        print(f"[PR7] skip: {skip_reason}")
         save_state(state_path, state)
         return 0
 
@@ -468,7 +702,7 @@ def main() -> int:
             state,
             event="suppressed",
             reason=f"exact_dedup_{cooldown}s",
-            channel=args.channel,
+            channel=primary_channel,
             report_status=report.get("status", "UNKNOWN"),
             fingerprint=exact_fp,
             report_path=report_path,
@@ -485,7 +719,7 @@ def main() -> int:
             state,
             event="suppressed",
             reason=f"class_dedup_{cooldown}s",
-            channel=args.channel,
+            channel=primary_channel,
             report_status=report.get("status", "UNKNOWN"),
             fingerprint=class_fp,
             report_path=report_path,
@@ -506,21 +740,86 @@ def main() -> int:
         warn_escalate_count=warn_escalate_count,
     )
 
-    ok, attempts, err = send_with_retry(
-        channel=args.channel,
-        text=text,
-        dry_run=args.dry_run,
-        max_retries=max(0, args.max_retries),
-        base_backoff_ms=max(1, args.base_backoff_ms),
-        max_backoff_ms=max(1, args.max_backoff_ms),
-        dry_run_simulate_failures=max(0, args.dry_run_simulate_failures),
-    )
+    planned_targets = route_targets(level, primary_channel, backup_channel)
+    route_results: list[dict] = []
+    success_channels: set[str] = set()
 
-    if not ok:
+    def deliver_to_channel(ch: str, reason: str, simulate_failures: int) -> tuple[bool, int, str]:
+        ok0, attempts0, err0 = send_with_retry(
+            channel=ch,
+            text=text,
+            dry_run=args.dry_run,
+            max_retries=max(0, args.max_retries),
+            base_backoff_ms=max(1, args.base_backoff_ms),
+            max_backoff_ms=max(1, args.max_backoff_ms),
+            dry_run_simulate_failures=((simulate_failures if simulate_failures > 0 else (max(0, args.max_retries) + 1)) if (args.dry_run and ch in dry_run_fail_channels) else 0),
+            global_retry_budget=max(0, args.global_retry_budget),
+            global_retry_window_seconds=max(1, args.global_retry_window_seconds),
+            global_retry_budget_state_file=args.global_retry_budget_state_file,
+            retry_jitter_seed=args.retry_jitter_seed,
+        )
+        route_results.append(
+            {
+                "channel": ch,
+                "reason": reason,
+                "ok": ok0,
+                "attempts": attempts0,
+                "error": err0,
+            }
+        )
+        append_audit(
+            Path(args.audit_file),
+            {
+                "at_utc": now_iso,
+                "fingerprint": exact_fp,
+                "class_fingerprint": class_fp,
+                "level": level,
+                "report_path": str(report_path),
+                "channel": ch,
+                "reason": reason,
+                "ok": ok0,
+                "attempts": attempts0,
+                "error": err0,
+                "dry_run": args.dry_run,
+            },
+        )
+        return ok0, attempts0, err0
+
+    for target in planned_targets:
+        ok0, _attempts0, _err0 = deliver_to_channel(target, "planned_route", max(0, args.dry_run_simulate_failures))
+        if ok0:
+            success_channels.add(target)
+
+    primary_ok = any(r["channel"] == primary_channel and r["ok"] for r in route_results)
+    if level != "CRITICAL" and (not primary_ok) and backup_channel and backup_channel != primary_channel and backup_channel not in planned_targets:
+        ok0, _attempts0, _err0 = deliver_to_channel(backup_channel, "fallback_after_primary_failure", max(0, args.dry_run_simulate_failures))
+        if ok0:
+            success_channels.add(backup_channel)
+
+    required_success = len(planned_targets)
+    attempts = sum(int(r.get("attempts", 0) or 0) for r in route_results)
+    failed_items = [r for r in route_results if not r.get("ok")]
+    err = "; ".join(str(x.get("error", "")) for x in failed_items if x.get("error"))
+
+    delivery_summary = {
+        "at_utc": now_iso,
+        "record_type": "delivery_summary",
+        "fingerprint": exact_fp,
+        "class_fingerprint": class_fp,
+        "level": level,
+        "report_path": str(report_path),
+        "channels_total": len(route_results),
+        "channels_ok": len(success_channels),
+        "channels_failed": len([r for r in route_results if not r.get("ok")]),
+        "attempts": attempts,
+        "dry_run": args.dry_run,
+    }
+
+    if len(success_channels) == 0:
         dead_letter = {
             "created_at_utc": now_iso,
             "source": "pr7_alert_delivery",
-            "channel": args.channel,
+            "channel": primary_channel,
             "report_path": str(report_path),
             "fingerprint": exact_fp,
             "class_fingerprint": class_fp,
@@ -538,10 +837,20 @@ def main() -> int:
             state,
             event="failed",
             reason=err,
-            channel=args.channel,
+            channel=primary_channel,
             report_status=report.get("status", "UNKNOWN"),
             fingerprint=exact_fp,
             report_path=report_path,
+        )
+        append_audit(
+            Path(args.audit_file),
+            {
+                **delivery_summary,
+                "event": "failed",
+                "ok": False,
+                "reason": err,
+                "primary_channel": primary_channel,
+            },
         )
         save_state(state_path, state)
         print(
@@ -551,6 +860,8 @@ def main() -> int:
         )
         return 3
 
+    partial_success = len(success_channels) < required_success
+
     stats["alerts_sent"] += 1
     state["last_sent"][exact_fp] = now_ts
     state["last_sent_exact"][exact_fp] = now_ts
@@ -558,22 +869,45 @@ def main() -> int:
     clear_group(state["groups"], class_fp, now_ts)
     if escalated_from_warn:
         clear_warn_streaks(state["warn_streaks"], mk_class_fingerprint(report, "WARN"), now_ts)
+    delivery_event = "partial_success" if partial_success else "sent"
+    delivery_reason = (
+        "partial_success:" + ",".join(sorted(str(r.get("channel")) for r in failed_items if r.get("channel")))
+        if partial_success
+        else "ok"
+    )
     record_delivery(
         state,
-        event="sent",
-        reason="ok",
-        channel=args.channel,
+        event=delivery_event,
+        reason=delivery_reason,
+        channel=primary_channel,
         report_status=report.get("status", "UNKNOWN"),
         fingerprint=exact_fp,
         report_path=report_path,
     )
+    append_audit(
+        Path(args.audit_file),
+        {
+            **delivery_summary,
+            "event": delivery_event,
+            "ok": True,
+            "reason": delivery_reason,
+            "primary_channel": primary_channel,
+        },
+    )
     save_state(state_path, state)
 
     mode = "DRY_RUN" if args.dry_run else "LIVE"
+    if partial_success:
+        print(
+            f"[PR7][WARN] partial_success mode={mode} level={level} primary={primary_channel} backup={backup_channel or '-'} "
+            f"exact={exact_fp} class={class_fp} aggregate_count={aggregate_count} attempts={attempts} "
+            f"failed_channels={[r.get('channel') for r in failed_items]} route_results={route_results}"
+        )
+        return 0
     print(
-        f"[PR7] sent mode={mode} level={level} channel={args.channel} "
+        f"[PR7] sent mode={mode} level={level} primary={primary_channel} backup={backup_channel or '-'} "
         f"exact={exact_fp} class={class_fp} aggregate_count={aggregate_count} attempts={attempts} "
-        f"escalated_from_warn={escalated_from_warn} warn_streak={warn_streak_count}"
+        f"escalated_from_warn={escalated_from_warn} warn_streak={warn_streak_count} route_results={route_results}"
     )
     return 0
 

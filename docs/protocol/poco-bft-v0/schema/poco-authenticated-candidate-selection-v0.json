@@ -1,0 +1,368 @@
+{
+  "schema": "trnm.poco-bft.authenticated-candidate-selection.v0",
+  "schema_version": 0,
+  "status": "B2-H3b2b2-application-authenticated-candidate-reconstruction",
+  "authority_flow": [
+    "one exact retained production JMT cutoff projection",
+    "complete physical and bidirectional kind-16 application audit",
+    "internal canonical B2-G transcript reconstruction",
+    "hard-coded StrictEd25519Verifier",
+    "fresh compute_candidate_selection_kernel_v0",
+    "private checkpoint-and-selection capability"
+  ],
+  "compact_timing_contract": {
+    "epoch_length_blocks": 10,
+    "finality_certified_chain_length": 3,
+    "snapshot_lead_blocks": 3,
+    "active_epoch": 2,
+    "boundary_height": 21,
+    "future_registration_height": 22,
+    "final_semantic_height": 24,
+    "cutoff_height": 25,
+    "checkpoint_parent_height": 27,
+    "checkpoint_height": 28,
+    "lead_two_status": "rejected by consensus-parameter validation and retained only as a negative regression"
+  },
+  "forbidden_inputs": [
+    "caller-supplied transcript",
+    "caller-supplied eligibility",
+    "generic signature verifier",
+    "old CandidateSelectionKernelV0",
+    "status or event telemetry",
+    "current live projection substituted for the historical cutoff"
+  ],
+  "candidate_universe": {
+    "unchanged_old_member": "requires an active non-revoked kind-9 registration and exact kind-16 history matching the old ID/key; proof and predecessor nonce are absent",
+    "changed_old_key": "requires a future-target record for old_epoch + 1, strict PoP, exact authenticated predecessor history head, and exact predecessor nonce",
+    "new_member": "requires a future-target record for old_epoch + 1 and strict PoP; predecessor head is zero and predecessor nonce is absent",
+    "old_set_only": "old-set membership without registration authority does not synthesize a candidate",
+    "genesis": "genesis bootstrap must install matching registration/history authority instead of relying on a permanent exception"
+  },
+  "candidate_parameters": {
+    "approved": "one finalized target-epoch approval selects its exact role-2 kind-14 preimage and kind-15 companion",
+    "no_change": "absence of a finalized target-epoch approval carries the exact active role-1 parameters",
+    "pending": "pending governance has no candidate authority",
+    "malformed_companion": "missing, duplicate, or drifting finalized approval companions reject before B2-G"
+  },
+  "kind16_nested_contract": {
+    "exact_field_order": {
+      "consumer_keys": [
+        "consumer_id_hex",
+        "consumer_key_id_hex",
+        "public_key_hex",
+        "active_from_height",
+        "authorization_decision_id_hex",
+        "revoked_at_height",
+        "revocation_decision_id_hex",
+        "nonce_watermarks"
+      ],
+      "consumer_nonce_watermarks": [
+        "provider_id_hex",
+        "max_accepted_nonce",
+        "logical_key_hex"
+      ],
+      "meter_policies": [
+        "meter_id_hex",
+        "meter_version",
+        "task_id_hex",
+        "output_commitment_hex",
+        "unit_scale",
+        "evidence_policy",
+        "per_certificate_cap",
+        "rolling_cap",
+        "rolling_epoch_span",
+        "retention_blocks",
+        "active_from_height",
+        "retired_at_height"
+      ],
+      "meter_usage": [
+        "meter_id_hex",
+        "meter_version",
+        "window_epoch",
+        "consumed_units"
+      ],
+      "consumer_provider_usage": [
+        "consumer_id_hex",
+        "provider_id_hex",
+        "window_epoch",
+        "consumed_units"
+      ],
+      "task_provider_usage": [
+        "task_id_hex",
+        "provider_id_hex",
+        "window_epoch",
+        "consumed_units"
+      ],
+      "provider_usage": [
+        "provider_id_hex",
+        "window_epoch",
+        "consumed_units"
+      ],
+      "funded_unused_reservations": [
+        "certificate_id_hex",
+        "settlement_commitment_hex",
+        "funding_decision_id_hex",
+        "finalized_height",
+        "reserved_units"
+      ],
+      "active_certificates": [
+        "certificate_id_hex",
+        "consumer_id_hex",
+        "consumer_key_id_hex",
+        "provider_id_hex",
+        "task_id_hex",
+        "meter_id_hex",
+        "meter_version",
+        "settlement_commitment_hex",
+        "settlement_finalized_height",
+        "consumed_units",
+        "evidence_root_hex",
+        "relationship_class",
+        "relationship_key_hex",
+        "provider_consensus_key_hex",
+        "provider_registration_nonce",
+        "provider_proof_digest_hex",
+        "provider_registration_decision_id_hex",
+        "provider_registration_height",
+        "provider_registration_history_head_hex",
+        "acceptance_decision_id_hex",
+        "funding_decision_id_hex",
+        "meter_decision_id_hex",
+        "evidence_decision_id_hex",
+        "accepted_height",
+        "finalized_epoch",
+        "tuple_key_hex",
+        "prunable_after_height",
+        "lifecycle",
+        "lifecycle_effective_height",
+        "lifecycle_decision_id_hex",
+        "semantic_keys"
+      ],
+      "semantic_keys": [
+        "kind",
+        "logical_key_hex"
+      ],
+      "pending_challenges": [
+        "challenge_id_hex",
+        "certificate_id_hex",
+        "opening_decision_id_hex",
+        "opened_height"
+      ],
+      "pending_governance_proposals": [
+        "target_epoch",
+        "proposal_decision_id_hex",
+        "proposed_height",
+        "phase",
+        "parameters_hash_hex",
+        "activation_height"
+      ],
+      "finalized_governance_approvals": [
+        "target_epoch",
+        "phase",
+        "proposal_decision_id_hex",
+        "proposed_height",
+        "decision_id_hex",
+        "approval_height",
+        "parameters_hash_hex",
+        "activation_height"
+      ],
+      "validator_registration_history": [
+        "validator_id_hex",
+        "history_head_hex",
+        "max_registration_nonce",
+        "consensus_key_hex",
+        "current_proof_digest_hex",
+        "previous_history_head_hex",
+        "registration_decision_id_hex",
+        "registration_height",
+        "retired_key_count",
+        "revoked_at_height",
+        "revocation_decision_id_hex"
+      ],
+      "future_candidate_registrations": [
+        "validator_id_hex",
+        "target_epoch",
+        "consensus_key_hex",
+        "registration_nonce",
+        "previous_registration_nonce",
+        "predecessor_history_head_hex",
+        "proof_cev0_hex",
+        "proof_digest_hex",
+        "registration_decision_id_hex",
+        "registration_height"
+      ]
+    },
+    "hard_caps": {
+      "consumer_keys": 4,
+      "nonce_watermarks_per_consumer_key": 8,
+      "total_nonce_watermarks": 8,
+      "meter_policies": 4,
+      "total_usage_buckets": 32,
+      "funded_unused_reservations": 4,
+      "active_certificates": 4,
+      "pending_challenges": 2,
+      "pending_governance_proposals": 2,
+      "finalized_governance_approvals": 2,
+      "validator_registration_history": 4,
+      "future_candidate_registrations": 4,
+      "total_authority_records_including_nonce_watermarks": 70
+    },
+    "canonicality": "every nested object is exact-order and deny-unknown; the four usage arrays share one aggregate cap, nonce watermarks have per-key and aggregate caps, and the total cap counts nested nonce watermarks; future_candidate_registrations is omitted when empty and may be present only when nonempty",
+    "numeric_types": "Rust u8/u32/u64 fields are canonical unquoted JSON integers over their exact ranges, with unsafe u64 values retained losslessly as BigInt by Node; CanonicalU128V0 fields alone are canonical quoted decimal strings and unquoted u128 values are rejected"
+  },
+  "bidirectional_projection_contract": {
+    "exact_raw_decoders": [
+      "kind 1 consumption certificate",
+      "kind 2 consumer-key authorization",
+      "kind 3 consumer/provider nonce watermark",
+      "kind 4 unique consumption tuple",
+      "kind 5 meter definition",
+      "kind 6 settlement",
+      "kind 7 measurement evidence",
+      "kind 8 relationship classification",
+      "kind 9 validator registration",
+      "kind 10 active bond",
+      "kind 11 jail status",
+      "kind 12 revocation/challenge lifecycle",
+      "kind 13 validator configuration",
+      "kind 14 consensus parameters",
+      "kind 15 rollout/governance",
+      "kind 16 application authority state"
+    ],
+    "exact_decode_order": "every physical namespace-8 entry is envelope-checked and kind-specific exact-decoded before kind-16 companion reconstruction or reverse-orphan analysis, matching the Rust production projection constructor",
+    "kind16_companions": "consumer keys, nonce watermarks, meter policies, funded-unused reservations, active certificates, provider registration histories, pending challenges, and pending/final governance records are re-derived from their exact raw semantic entries; usage windows are re-derived from the active epoch and meter span",
+    "active_certificate_join": "the raw certificate and strict consumer Ed25519 signature, key interval, provider nonce watermark, meter task/output/evidence policy, unique tuple, consumed settlement, measurement, relationship expiry at both billing end and acceptance, provider-registration provenance, lifecycle, and exact retained semantic-key set {1,4,6,7,12} must all agree",
+    "reverse_orphan_rejection": [
+      "kind 1 consumption certificate",
+      "kind 2 consumer-key authorization",
+      "kind 3 consumer nonce",
+      "kind 4 unique consumption tuple",
+      "kind 5 meter definition",
+      "kind 6 settlement",
+      "kind 7 measurement evidence",
+      "kind 9 validator registration",
+      "kind 12 lifecycle",
+      "kind 15 governance",
+      "role-2 kind 14 candidate parameters"
+    ],
+    "relationship_exception": "kind 8 relationship classifications may exist independently and are not globally orphan-rejected, but every such physical entry is still kind-specific exact-decoded before companion analysis"
+  },
+  "contribution_projection": {
+    "relationship": "only independent contributes; related, reciprocal, and unresolved contribute zero",
+    "lifecycle": {
+      "accepted_without_pending_challenge": true,
+      "challenge_rejected": true,
+      "challenge_pending": false,
+      "challenge_sustained": false
+    },
+    "candidate_membership": "a retained certificate whose provider is outside the final candidate universe remains valid history but is projected with eligible=false",
+    "historical_epoch": "finalized_epoch is reconstructed from accepted_height and immutable v0 epoch geometry; it is never relabeled as the current epoch"
+  },
+  "bond_and_jail": {
+    "bond": "amount contributes only for active_slashable and checked target_epoch + evidence_window_epochs < locked_until; absence, unbonding, equality, and shorter locks contribute zero",
+    "jail": "jailed exactly when target_epoch < jailed_until; absence is unjailed only after completeness of the full projection is established",
+    "arithmetic": "overflow rejects before B2-G"
+  },
+  "canonical_seals": {
+    "transcript_domain": "trnm.poco-bft.authenticated-candidate-transcript.v0",
+    "result_domain": "trnm.poco-bft.authenticated-candidate-result.v0",
+    "authorization_domain": "trnm.poco-bft.authenticated-candidate-authorization.v0",
+    "authorization_parts": [
+      "checkpoint_execution_canonical_bytes",
+      "transcript_digest",
+      "candidate_parameters_hash",
+      "result_digest"
+    ],
+    "fallback": "fallback suppresses B2-G diagnostics but remains bound to the complete source transcript and rejected candidate parameters"
+  },
+  "fixture_evidence": {
+    "schema": "trnm.poco-bft.authenticated-candidate-selection-fixture.v0",
+    "source": "continuous raw physical write history with one Rust-recorded JMT root per version plus raw cutoff/head projections",
+    "independent_consumer": "Node independently recomputes every jmt 0.12.0 SHA-256 root from the continuous physical writes, proves exact namespace-8 physical completeness at cutoff and head, exact-decodes every kind 1 through 16 payload before companion analysis, and reconstructs application authority, candidates, contributions, strict PoP verification, B2-G, canonical seals, and expected outcome from raw source facts",
+    "lossless_integer_policy": "kind-16 canonical JSON uses unquoted u64 decimal integers over the full 0..2^64-1 range; Node preserves unsafe values as BigInt, emits them unquoted for byte-identical re-encoding, and rejects floats, exponents, signs, leading zeros, overflow, or reformatting",
+    "rust_consumer": "the same canonical semantic corpus is independently reconstructed through ProcessProposal and FinalizeBlock, SQLite restart, cache miss and hit, V3 parent restore, V4 cutoff-25 restore followed by parent 27, and post-checkpoint fresh reconstruction; zero-hash rejection preserves head, pending state, and retained cutoff state; a targeted call to the existing safe pruning authority physically deletes the SQLite height-25 root and advances the retained query floor to 26, after which ProcessProposal rejects and FinalizeBlock fail-stops with the exact pruned-cutoff error while head, pending state, parent state, floor, and two restarts remain unchanged; this production read/rejection test does not establish normal scheduled pruning",
+    "required_positive": "at least four candidates with mature independent contributions and reason 0",
+    "required_fallback": "a complete valid authenticated projection with insufficient eligible candidates and the exact frozen fallback reason",
+    "fixture_only_boundary": "the height-24 epoch-2 source bootstrap used to install the unified cutoff-25 semantic source is test-only evidence setup and is not an application or Core production epoch transition"
+  },
+  "node_retained_mutation_campaign": {
+    "gate_statistics": "43 fail-closed rejection mutations and 1 non-rejecting retained-provider eligibility boundary control",
+    "source_recomposition": "semantic mutations that are intended to reach authority logic rebuild canonical entry bytes, ordered projection roots, manifests, physical writes, every affected JMT root, and cutoff/head source roots; bond, jail, and source-splice mutations additionally refresh checkpoint source bindings before asserting transcript seals",
+    "strict_ed25519_boundary": "Node independently decodes canonical compressed public-key and signature-R points, rejects small-order public-key/R points and S greater than or equal to the Ed25519 scalar order, then runs the OpenSSL Ed25519 equation verification; the identity-key forged PoP is rejected by the explicit point check rather than relying on raw OpenSSL small-order behavior",
+    "covered": [
+      "root-consistent cutoff-version substitution -> profile/cutoff authority reject",
+      "physical/JMT-consistent raw manifest entries-root and entry-count substitutions -> manifest tuple reject",
+      "root-consistent duplicate semantic entry -> canonical-order reject",
+      "positive checkpoint with authenticated-fallback source splice -> transcript seal",
+      "explicit positive result-digest, candidate-parameters-hash, and authenticated-fallback result-digest substitutions -> exact seal rejects",
+      "future PoP valid signature under the wrong domain -> frozen-domain strict signature reject",
+      "future PoP genesis, chain, and validator-ID substitutions with refreshed proof digests -> exact scope rejects",
+      "future PoP target substitution with refreshed proof digest -> target scope reject",
+      "future PoP public-key and nonce substitutions with refreshed proof digests -> exact field reject",
+      "future PoP signature substitution with refreshed proof digest -> strict Ed25519 reject",
+      "future PoP noncanonical R, noncanonical S, and small-order identity-key forge -> strict Ed25519 reject",
+      "changed-key predecessor nonce/history and old-key authority substitution",
+      "new-member short all-zero predecessor head",
+      "raw relationship expiry at acceptance",
+      "pending-challenge lifecycle drift",
+      "pending kind-16 governance record with finalized raw kind-15 companion -> governance companion reject",
+      "bond coverage equality -> changed transcript seal",
+      "jail equality accepted control and one-before -> changed transcript seal",
+      "self-consistent post-cutoff current-head semantic substitution -> cutoff/head equality reject",
+      "kind-16 provider provenance drift and valid orphan authority-managed kind-2 entry",
+      "root/manifest/JMT/checkpoint-consistent independent kind-8 relationship with a trailing malformed payload -> global exact payload decoder reject",
+      "explicit empty future-registration family, quoted u64, unquoted CanonicalU128V0, nested unknown field, and authority record overflow"
+    ],
+    "not_claimed_by_node": "cache hit/miss, SQLite restart, V3/V4 restore, zero-write/head/pending persistence, and retained-history prune/pruned-cutoff rejection are Rust production-path evidence and are not simulated by Node; the retained prune uses a targeted call to existing safe pruning authority and does not establish normal scheduled pruning"
+  },
+  "rejection_contract": {
+    "timing": "ProcessProposal and FinalizeBlock reject before pending state or commit",
+    "writes": 0,
+    "head": "unchanged",
+    "closure_required_families": [
+      "cutoff version/root/manifest/count substitution",
+      "checkpoint/projection splice",
+      "entry omission/addition/duplicate",
+      "kind-16 companion drift",
+      "current-head substitution",
+      "PoP domain/chain/genesis/target/id/key/nonce/signature substitution",
+      "predecessor nonce/history substitution",
+      "bond, jail, lifecycle, relationship, and governance boundary substitution",
+      "old B2-G token, generic verifier, status, and event injection",
+      "cache hit/miss, restart, and retained-history prune"
+    ],
+    "landed_rejection_evidence": {
+      "node_campaign": [
+        "cutoff version/root, raw manifest entries-root/count, exported JMT root, entry omission/duplicate, checkpoint count, and authorization substitutions",
+        "root-consistent hidden physical leaf, orphan semantic entry, provider provenance, source splice, and current-head substitution",
+        "future PoP domain, chain, genesis, target, validator-ID, public-key, nonce, and signature substitutions plus predecessor nonce/history/old-key substitutions",
+        "future PoP noncanonical R/S and small-order identity-key forge under an explicit Rust-equivalent strict verification precheck",
+        "relationship expiry, pending lifecycle, governance pending/finalized, bond equality, and jail boundary substitutions",
+        "exact kind-16 omission, numeric type, nested unknown-field, and family-cap rejects",
+        "global kind 1 through 16 exact payload decoding plus a root-consistent malformed independent kind-8 payload reject",
+        "positive result-digest, candidate-parameters-hash, authenticated-fallback result-digest, transcript, and authorization seal rejects",
+        "constructor surface rejects generic verifier, old kernel/token conversion, status, and event inputs"
+      ],
+      "rust_production_replay": [
+        "canonical positive and authenticated-fallback reconstruction through ProcessProposal and FinalizeBlock",
+        "SQLite restart, cache miss/hit, V3 parent restore, V4 cutoff-25 restore to parent 27, and post-checkpoint fresh reconstruction",
+        "zero-hash rejection preserves head, pending state, and retained cutoff state",
+        "targeted existing safe-pruning authority physically deletes the SQLite height-25 root and advances query floor 26; ProcessProposal and FinalizeBlock then reject the pruned cutoff while head, pending state, parent state, floor, and two restarts remain unchanged, without claiming normal scheduled pruning"
+      ]
+    },
+    "remaining_rejection_evidence": [
+      "cache/restart TOCTOU rejection mutations beyond the landed deterministic replay paths",
+      "structural API enforcement stronger than the landed source-surface gate"
+    ],
+    "evidence_partition_note": "closure_required_families is normative and does not imply execution; landed_rejection_evidence lists only this H3b2b2 Node campaign and Rust production replay, and does not count older H3b2b1 contracts as H3b2b2 mutation evidence"
+  },
+  "does_not_establish": [
+    "H1 finalized-cutoff proof or cutoff block ID authority",
+    "NextEpochCommitmentV0 or B2-F handoff composition",
+    "fields 12, 13, or 14",
+    "anchor activation or atomic Core epoch transition",
+    "production cross-epoch prune or future-registration promotion",
+    "dynamic bond or jail operation authority",
+    "permanent journals, checkpoint-grade complete-ancestor sync, transport admission, light client, or remote workflow"
+  ]
+}

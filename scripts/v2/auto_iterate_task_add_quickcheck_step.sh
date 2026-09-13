@@ -12,6 +12,11 @@ if [[ $# -ne 3 ]]; then
   exit 2
 fi
 
+if [[ "${TRNM_ALLOW_LEGACY_QUICKCHECK_MUTATION:-0}" != "1" ]]; then
+  echo "legacy quick-check mutation is disabled; edit the explicit self-contained regression allowlist in the workflow instead" >&2
+  exit 2
+fi
+
 STEP_NAME="$1"
 STEP_RUN="$2"
 COMMIT_MSG="$3"

@@ -1,0 +1,42 @@
+schema_version = 1
+profile_id = "stack-reference-shadow"
+protocol_id = "trnm-poco-ai-native-v1"
+protocol_major = 1
+status = "reference-shadow"
+reference_only = true
+normative = false
+implemented = false
+activation = false
+production_candidate = false
+performance_evidence = false
+current_implementation_baseline = "poco-bft-v0"
+
+plane_ids = [
+  "agent",
+  "market-task",
+  "compute-verify",
+  "data-availability",
+  "order-coordination-settlement",
+]
+
+[order]
+safety_kernel = "weighted-chained-hotstuff-derived"
+proposal_unit = "certified-batch-references-and-protocol-objects"
+validator_count_target = 7
+region_count_target = 3
+new_bft_safety_theorem = false
+
+[data_availability]
+worker_count_per_validator_target = 4
+durable_store_before_sign = true
+full_replication_first = true
+erasure_coding_active = false
+data_availability_sampling_active = false
+
+[benchmark_targets]
+# Targets are design gates only. They are not measured evidence or claims.
+simple_transfer_committed_goodput_tps_min = 5000
+ai_task_settlement_committed_goodput_tps_min = 1000
+p99_finality_milliseconds_max = 5000
+clean_run_hours_min = 24
+measured = false

@@ -1,0 +1,138 @@
+{
+  "schema": "trnm_poco_bft_cev0_logical_schema_joint_handoff_kernel_v0",
+  "schema_version": 0,
+  "scope": "B2-F EpochHandoffProof fields 1..11 composition kernel only",
+  "imports": [
+    {
+      "tranche": "B2-B",
+      "logical_schema": "cev0-logical-schema-anchor-handoff-v0.json",
+      "objects": ["BlockHeaderV0", "HandoffDescriptorV0", "HandoffVoteSignV0", "HandoffCertificateV0"]
+    },
+    {
+      "tranche": "B2-C",
+      "logical_schema": "cev0-logical-schema-epoch-commitment-v0.json",
+      "objects": ["NextEpochCommitmentV0"]
+    },
+    {
+      "tranche": "B2-E",
+      "logical_schema": "cev0-logical-schema-checkpoint-finality-v0.json",
+      "objects": ["ConsensusParametersV0", "ValidatorSetV0", "CertifiedHeaderV0", "FinalityProofV0"]
+    }
+  ],
+  "aggregate_cev0": {
+    "object": "EpochHandoffProof",
+    "canonical_preimage": null,
+    "digest_domain": null,
+    "digest_field": null,
+    "rule": "The protobuf message is a transport composition only. Every nested CEV0 value is parsed and hashed under its own frozen domain; no aggregate byte string is signed, hashed, or accepted as authority."
+  },
+  "nested_domains": [
+    "trnm.poco-bft.parameters.v0",
+    "trnm.poco-bft.validator-set.v0",
+    "trnm.poco-bft.block.v0",
+    "trnm.poco-bft.vote.v0",
+    "trnm.poco-bft.qc.v0",
+    "trnm.poco-bft.proposal.v0",
+    "trnm.poco-bft.finality-proof.v0",
+    "trnm.poco-bft.epoch-commitment.v0",
+    "trnm.poco-bft.handoff-descriptor.v0",
+    "trnm.poco-bft.handoff-vote.v0",
+    "trnm.poco-bft.handoff-certificate.v0"
+  ],
+  "forbidden_aggregate_domains": [
+    "trnm.poco-bft.epoch-handoff-proof.v0",
+    "trnm.poco-bft.joint-handoff.v0",
+    "trnm.poco-bft.handoff-proof.v0"
+  ],
+  "composition": {
+    "name": "EpochHandoffProofCompositionKernelV0",
+    "authorization_output": false,
+    "inert_result": "JointHandoffKernelV0 bound-facts token only; it cannot construct an EpochAnchorQC or authorize a transition",
+    "verification_order": [
+      "parse and re-encode old/new consensus parameters and recompute each parameters digest",
+      "parse and re-encode old/new validator sets and recompute each validator-set digest",
+      "parse and re-encode the next-epoch commitment and recompute its commitment digest",
+      "parse and independently verify the complete old checkpoint/two-seal finality proof including proposer and QC Ed25519 signatures",
+      "bind the finalized checkpoint and both seals to the exact commitment digest",
+      "bind the commitment to the exact new validator-set and parameter preimages",
+      "bind the handoff descriptor to the exact checkpoint, terminal seal, terminal certifying-QC digest, contexts, commitment, and activation geometry",
+      "parse and verify canonical old-role and new-role signer lists independently under the handoff-vote domain",
+      "recompute each weighted quorum from its exact committed set",
+      "return a fields-1..11 composition token with no aggregate digest"
+    ],
+    "relations": [
+      "schema_version equals 0 across every nested v0 CEV0 value",
+      "genesis_hash and chain_id are byte-identical across the transport context and every nested value",
+      "old_checkpoint_finality is exactly checkpoint <- epoch_seal_1 <- epoch_seal_2 under the old set and old parameters",
+      "the checkpoint and both seals carry the same exact next_epoch_commitment digest",
+      "next_epoch_commitment.old_epoch equals the old set/finality epoch and new_epoch equals old_epoch + 1",
+      "next_epoch_commitment.new_validator_set_hash equals digest(new_validator_set)",
+      "next_epoch_commitment.new_consensus_parameters_hash equals digest(new_consensus_parameters)",
+      "new_validator_set epoch/version/parameters hash and commitment rollout redundancy match the new context",
+      "handoff_descriptor checkpoint fields equal the finalized checkpoint header",
+      "handoff_descriptor terminal fields equal the exact seal_2 header and its exact certifying-QC digest; another valid signer subset is not substitutable",
+      "handoff_descriptor set, parameter, version, epoch, commitment, activation, and initial-view fields equal the supplied preimages",
+      "old and new handoff roots use message kinds 3 and 4 respectively and cannot substitute for one another",
+      "old and new signer lists are separately ordered, unique, members of their role set, strictly Ed25519-valid, and each reaches floor(2W/3)+1",
+      "without field 12, new_protocol_version must equal the old protocol version and upgrade_plan_hash must be absent"
+    ],
+    "positive_profiles": [
+      {
+        "id": "distinct_set",
+        "rule": "The new ordered validator identities and keys differ from the old set; both exact set digest and independent new-role quorum are verified."
+      },
+      {
+        "id": "exact_fallback",
+        "rule": "fallback_used is true with reason 1..9; the new set is the old ordered identity/key/power tuple re-encoded only for new_epoch, parameters are byte-identical, rollout is unchanged, and no upgrade hash is present."
+      }
+    ]
+  },
+  "rejection_classes": [
+    { "class": "checkpoint", "code": "invalid_checkpoint_finality", "rule": "Reject a non-checkpoint first header, broken seal geometry, wrong frozen roots/state, or invalid checkpoint-finality signature." },
+    { "class": "terminal", "code": "terminal_binding_mismatch", "rule": "Reject any terminal height/view/block/QC field not equal to the exact seal_2 witness." },
+    { "class": "commitment", "code": "commitment_binding_mismatch", "rule": "Reject any checkpoint/seal, descriptor, set, parameter, rollout, fallback, cutoff, or activation mismatch to the exact commitment." },
+    { "class": "context", "code": "context_mismatch", "rule": "Reject any genesis, chain, protocol, epoch, set, or parameters context mismatch." },
+    { "class": "substitution", "code": "exact_qc_substitution", "rule": "Reject a different valid QC signer subset at the same block/view/height when its digest is not the one embedded in old_checkpoint_finality." },
+    { "class": "quorum", "code": "insufficient_handoff_quorum", "rule": "Reject either old-role or new-role signer power below its independently recomputed threshold." },
+    { "class": "role", "code": "handoff_role_mismatch", "rule": "Reject cross-role roots, signing contexts, message kinds, or signer-set substitution." },
+    { "class": "domain", "code": "domain_mismatch", "rule": "Reject signatures made under another nested domain and reject any claimed aggregate EpochHandoffProof domain." },
+    { "class": "signature", "code": "invalid_signature", "rule": "Reject a malformed or cryptographically invalid proposer, QC, old-role, or new-role signature." },
+    { "class": "upgrade", "code": "unauthorized_upgrade", "rule": "Fields 1..11 alone cannot authorize a version change or a present upgrade_plan_hash; field 12 is outside this kernel." }
+  ],
+  "rust_shared_corpus_stages": {
+    "composition": 9,
+    "decode": 1,
+    "rule": "Exact decoders remain fail-closed. The one below-quorum certificate is rejected as insufficient_quorum at the committed old-role list-count offset before the B2-F composition verifier is callable; the other nine negatives exact-decode and reach the composition verifier."
+  },
+  "transport_projection": {
+    "proto_file": "proto/trnm/poco/bft/v0/light_client.proto",
+    "message": "EpochHandoffProof",
+    "aggregate_cev0": false,
+    "fields": [
+      { "number": 1, "name": "schema_version", "proto_type": "uint32", "cardinality": "singular", "role": "transport_schema_discriminant" },
+      { "number": 2, "name": "genesis_hash", "proto_type": "bytes", "cardinality": "singular", "role": "transport_context_redundancy" },
+      { "number": 3, "name": "chain_id", "proto_type": "string", "cardinality": "singular", "role": "transport_context_redundancy" },
+      { "number": 4, "name": "old_checkpoint_finality", "proto_type": "ThreeChainFinalityProof", "cardinality": "singular", "role": "nested_cev0_witness" },
+      { "number": 5, "name": "next_epoch_commitment", "proto_type": "NextEpochCommitment", "cardinality": "singular", "role": "nested_cev0_preimage" },
+      { "number": 6, "name": "old_validator_set", "proto_type": "ValidatorSet", "cardinality": "singular", "role": "nested_cev0_preimage" },
+      { "number": 7, "name": "new_validator_set", "proto_type": "ValidatorSet", "cardinality": "singular", "role": "nested_cev0_preimage" },
+      { "number": 8, "name": "old_consensus_parameters", "proto_type": "ConsensusParameters", "cardinality": "singular", "role": "nested_cev0_preimage" },
+      { "number": 9, "name": "new_consensus_parameters", "proto_type": "ConsensusParameters", "cardinality": "singular", "role": "nested_cev0_preimage" },
+      { "number": 10, "name": "handoff_descriptor", "proto_type": "HandoffDescriptor", "cardinality": "singular", "role": "nested_cev0_preimage" },
+      { "number": 11, "name": "joint_handoff_certificate", "proto_type": "JointHandoffCertificate", "cardinality": "singular", "role": "nested_cev0_witness" }
+    ],
+    "deferred_fields": [
+      { "number": 12, "name": "protocol_upgrade_plan", "status": "outside_B2_F" },
+      { "number": 13, "name": "first_new_epoch_proposal", "status": "outside_B2_F" },
+      { "number": 14, "name": "new_epoch_finality", "status": "outside_B2_F" }
+    ],
+    "forbidden_removed_field": { "number": 15, "role": "aggregate_digest", "status": "reserved" }
+  },
+  "honest_boundary": [
+    "B2-F authenticates the exact old checkpoint/two-seal proof, commitment preimage, old/new set and parameter preimages, descriptor, independent handoff roles, and the field-1..11 composition relations only.",
+    "It returns no EpochAnchorQC, first-new-epoch proposal authority, new-epoch finality, trusted-checkpoint advancement, application execution claim, or weak-subjectivity renewal.",
+    "ProtocolUpgradePlan field 12, first_new_epoch_proposal field 13, and new_epoch_finality field 14 remain outside this tranche.",
+    "Snapshot/state membership, deterministic candidate construction, lowest fallback reason, PoP, governance provenance, runtime identity, checkpoint body execution, and persist-before-sign remain external.",
+    "EpochHandoffProof has no canonical aggregate CEV0 preimage, digest domain, or digest field."
+  ]
+}

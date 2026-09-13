@@ -1,0 +1,148 @@
+schema_version = 1
+evidence_id = "trnm-poco-g3-stage0-observations-af6c2737e-20260823"
+protocol_id = "poco-bft-v0"
+classification = "operator-observed-build-fresh-clone-committed-tool-remap-control-and-current-fleet-readiness"
+source_candidate_profile = "clean-commit-v1"
+aggregate_build_report_schema_version = 3
+completed_run_summary_schema_version = 3
+current_fleet_probe_profile = "probe-fleet-v1"
+current_run_readiness_profile = "run-readiness-v2"
+current_observation_source_commit = "af6c2737e1bf9d770076f8cb8b5a61887df619c7"
+current_observation_source_tree_oid = "03bbc502b9fc716990806968f44da05805db6a39"
+current_observation_source_relation = "prior-commit-observation"
+current_observation_cargo_lock_sha256 = "72e254afa47d8b92fe8803b35869990bcfaa7f8106d9f0d4ecb45d127fbe150b"
+current_observation_fleet_probe_path = "docs/evidence/poco-g3/current-observation-2026-08-23/current-fleet-probe.json"
+current_observation_fleet_probe_sha256 = "1a4083c655298011b7d167bc9bf3127a3f1d5bba804566342966716bf0b7405d"
+current_observation_run_readiness_path = "docs/evidence/poco-g3/current-observation-2026-08-23/current-run-readiness.json"
+current_observation_run_readiness_sha256 = "be1e4041a0d7a760b8386204de948bb359410d0b5b83302d8931ac6471bc0be0"
+current_observation_transport = "manual-ssh"
+current_observation_control_host = "p4-x230"
+current_observation_fleet_report_bytes = 2526
+current_observation_readiness_report_bytes = 5453
+# These current_build_* bindings are retained as the separately deep-verified
+# ac5880d2 prior-commit build record. The current 30c remap observation is
+# bound by current_rust_src_cross_time_control_* below and must not inherit
+# this record's no-drift result.
+current_build_evidence_profile = "poco-g3-stage0-linux-x86_64-reproducible-build-observation-v1"
+current_build_evidence_path = "docs/evidence/poco-g3/stage0-repro-ac5880d2-20260823"
+current_build_evidence_source_commit = "ac5880d2c9cadfbdbcf04bb294f499ad16ccecb6"
+current_build_evidence_source_tree_oid = "f6e6079ba172ed3454e93402dba37d8659f32719"
+current_build_evidence_source_candidate_sha256 = "36491b5b4070f30aa1904e0ed5d0d219598abb06e4121b43581a7f2cf989ff89"
+current_build_evidence_manifest_sha256 = "492bc6b526ccd32647ea845bb6a9678be6efd6e9388c7f3f3e0eaa80fa0bd563"
+current_build_evidence_deep_verified = true
+current_build_evidence_source_relation = "prior-commit-observation"
+current_build_v2_report_path = "docs/evidence/poco-g3/stage0-repro-ac5880d2-20260823/v2-build-report.json"
+current_build_v2_report_sha256 = "db68550d05f34625bfbecb6e8b3771665df300e17e25d6a0bb686e6cad316c08"
+current_build_v2_validator_binary_sha256 = "ea89580253a7161f4055b3305c1173121df355e5582ea025e2c596bd734d378f"
+current_build_v2_material_builder_binary_sha256 = "1fa700c52ee8f1f9a7e6f6620ddf3a203234d7e4c8505846d08d8f905aac3ae0"
+current_build_v2_differential_drift_observed = false
+current_fresh_clone_gates_evidence_profile = "poco-g3-stage0-x230-fresh-clone-gates-observation-v1"
+current_fresh_clone_gates_evidence_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/fresh-clone-gates-report.json"
+current_fresh_clone_gates_evidence_sha256 = "77389a6a70942c8bc076882b27a9c555134a08eb24f0568fcc7a49dde6a89b21"
+current_rust_src_cross_time_control_profile = "poco-g3-stage0-rust-src-cross-time-control-v3"
+current_rust_src_cross_time_control_path = "docs/evidence/poco-g3/stage0-remap-observation-30c145ff6-20260824/cross-time-control-report.json"
+current_rust_src_cross_time_control_sha256 = "a18ee984eaba0250815ad941c4c54948e66c5cff94a5a689d3abaa20f598fefc"
+
+# Contract and self-test truth retained by the observed native-build record.
+# These booleans do not imply a validator run or production claim.
+source_candidate_clean_commit_contract = true
+source_candidate_empty_git_status_contract = true
+source_candidate_fresh_clone_byte_identity_self_tested = true
+source_candidate_git_commit_tree_blob_mode_binding_self_tested = true
+source_candidate_cargo_lock_binding_self_tested = true
+reproducible_builder_schema3_boundary_self_tested = true
+reproducible_build_assembler_schema3_boundary_self_tested = true
+no_fault_bundle_schema3_propagation_self_tested = true
+probe_fleet_v1_acceptor_self_tested = true
+run_readiness_v2_acceptor_self_tested = true
+restart_cut_park_parked_ack_contract = true
+restart_status75_supervisor_contract_self_tested = true
+process2_authenticated_inert_boundary_self_tested = true
+
+# The preserved 2026-08-13 raw JSON is historical/audit-only and cannot
+# satisfy either current acceptor.
+historical_2026_08_13_probe_is_current_gate = false
+historical_2026_08_13_readiness_is_current_gate = false
+current_fleet_probe_observed = true
+current_run_readiness_observed = true
+
+# Restart activation remains unavailable after the exact parked handoff.
+successful_process2_restart_observed = false
+authenticated_process2_catchup_operational = false
+recovery_ready_operational = false
+recovery_start_operational = false
+
+# Historical manual-SSH X230 and native macOS invocations each produced two
+# internally identical builds. A later X230 rerun with the same d6bb34c1 input
+# and rustc, but with rust-src installed, drifted from the historical Linux
+# hashes because the physical rust-src sysroot path entered .rodata. Therefore
+# invocation-local identity remains observed and exposes the unpatched v1
+# drift. The d6 historical hashes are preserved in that report; the current
+# 30c145ff6 observation separately binds its frozen candidate-v1 baseline.
+reproducible_builder_invocation_executed = true
+within_invocation_binary_identity_observed = true
+reproducible_build_executed = true
+native_linux_x86_64_reproducible_build_observed = true
+native_cross_time_reproducible_build_observed = true
+native_cross_architecture_build_observed = true
+aggregate_build_report_emitted = true
+build_execution_cryptographically_attested = false
+rust_src_cross_time_drift_observed = true
+rust_src_physical_sysroot_path_in_rodata_observed = true
+rust_src_drift_report_claims_reproducible_build = true
+
+# An unsigned X230 control cloned the complete committed-tool bundle without a
+# local-object shortcut, detached at exact commit c8b8c8977 with empty status,
+# and executed the tracked v2 wrapper against the frozen 30c145ff6 candidate.
+# The evidence-bound v1 builder remained byte-for-byte frozen; v2 replaced only
+# its native build seam, canonically remapped rust-src, and restored the
+# frozen candidate-v1 hashes. It does not restore the separate d6bb34c1
+# historical hashes, and neither d6bb34c1 nor the Stage0 truth base contains
+# the fix. Raw schema 3 still does not bind tool source or cryptographically
+# attest the runner.
+rust_src_remap_control_observed = true
+committed_rust_src_remap_builder_control_observed = true
+rust_src_remap_control_restored_historical_hashes = false
+rust_src_remap_control_restored_frozen_candidate_v1_hashes = true
+rust_src_remap_control_exit_zero = true
+rust_src_remap_control_report_claims_reproducible_build = true
+rust_src_remap_code_under_test_committed = true
+committed_candidate_rust_src_remap_fix_observed = true
+rust_src_remap_in_d6bb_candidate = false
+rust_src_remap_in_stage0_truth_base = false
+rust_src_remap_tool_source_bound_to_raw_report = false
+rust_src_remap_runner_identity_cryptographically_attested = false
+
+# A later unsigned manual-SSH X230 observation bound two byte-identical fresh
+# clones to the same d6bb34c1 tree, Cargo.lock, source archive, and transport
+# bundle. The first offline attempt found the job-local Cargo cache incomplete;
+# public dependency fetch was used before the formal offline rerun passed.
+fresh_clone_gates_observed = true
+fresh_clone_source_candidates_byte_identical_observed = true
+fresh_clone_fmt_observed = true
+fresh_clone_check_observed = true
+key_tests_observed = true
+fresh_clone_gates_initial_offline_cache_ready = false
+fresh_clone_gates_public_dependency_fetch_used = true
+fresh_clone_gates_formal_rerun_offline = true
+fresh_clone_gates_paid_ci_used = false
+fresh_clone_gates_runner_identity_cryptographically_attested = false
+fresh_clone_gates_logs_bundled = false
+stage0_deep_reverification_bundle_available = true
+
+# Operational and release claims remain false until fresh external evidence is
+# produced and accepted by the exact current contracts.
+validator_runtime_started = false
+validator_run_completed = false
+validator_run_7_completed = false
+validator_run_31_completed = false
+validator_run_100_completed = false
+signed_runtime_evidence_multihost_observed = false
+multihost_consensus_observed = false
+fault_restart_fleet_multihost_observed = false
+fault_matrix_completed = false
+performance_evidence = false
+g3_lan_multihost_evidence = false
+g3_geo_wan_evidence = false
+production_activation = false
+production_candidate = false

@@ -1,0 +1,155 @@
+manifest_version = 2
+plan_id = "trnm-chain-development-plan-v2"
+plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+plan_sha256 = "c7bcac4b0acba9d2638acede2ac712964520852a446d9a25e0a1982e56197e1b"
+evidence_contract_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+evidence_contract_sha256 = "c7bcac4b0acba9d2638acede2ac712964520852a446d9a25e0a1982e56197e1b"
+canonical_ref = "refs/heads/main"
+candidate_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
+selected_successor_pull_request = 62
+assessed_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
+assessed_commit = "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea"
+assessed_tree = "af09e389b1a462b3839508b7ef305596c76384c6"
+assessed_scope = "integration baseline ancestor; current PR head and prospective merge are derived at verification time"
+repository_core_overlay_source_commit = "a44d67181dc74ad74e64819b913972d2a49abc54"
+repository_core_overlay_source_tree = "a4480623afae1bedee9f03fcf83ce31ec00a2bb7"
+repository_core_overlay_absorbed = true
+workspace_crate_count = 62
+machine_truth_path = "config/consensus-mainline.json"
+repository_policy_path = "config/repository-policy-v1.json"
+repository_policy_git_blob = "89d7f74a9bd48b1df016ac9dcf78d20a1b6706a5"
+blocker_execution_path = "config/blocker-execution-v1.json"
+blocker_execution_git_blob = "281988baf25f7aff5aa903053ec5e81757c66673"
+blocker_execution_validator_path = "scripts/ci/check_blocker_execution_v1.py"
+blocker_execution_validator_git_blob = "ebfab15ff4b371f8141ac4551f2b8761d1799b13"
+candidate_runtime_closure_path = "config/candidate-runtime-closure-v1.toml"
+candidate_runtime_closure_git_blob = "9a6daef372f585dd9614b646c7f734234dedc389"
+candidate_runtime_closure_validator_path = "scripts/ci/check_candidate_runtime_closure_v1.py"
+candidate_runtime_closure_validator_git_blob = "c53d10439ab4c8b96b24c784b71d34f62aa42a2e"
+candidate_runtime_closure_architecture_path = "docs/architecture/TRNM_CANDIDATE_RUNTIME_CLOSURE_V1.md"
+candidate_runtime_closure_architecture_git_blob = "60527374dbd0da9fb1f5eb4b41fb7b0cc7f75948"
+task_archive_closure_path = "config/task-archive-closure-v1.toml"
+task_archive_closure_git_blob = "8fac33f720c0b16f8df2f0295783d67877146ec8"
+task_archive_closure_validator_path = "scripts/ci/check_task_archive_closure_v1.py"
+task_archive_closure_validator_git_blob = "2ef6fcbf0e53a2b6802d5cc94d2fbb8f9e281a34"
+task_archive_closure_architecture_path = "docs/architecture/TRNM_TASK_ARCHIVE_ADMISSION_CONTRACT_V1.md"
+task_archive_closure_architecture_git_blob = "a34b54e942f1c98bc63d51adf896944d41dcfabd"
+build_closure_registry_path = "config/build-closures-v1.toml"
+build_closure_git_blob = "5d5c1a08d8903920ae8c7f41244c837ffc74ff52"
+build_closure_validator_path = "scripts/ci/check_build_closures_v1.py"
+build_closure_validator_git_blob = "8e7b73a80084a8e32e5a590d0dfdb7bac5dcad6c"
+workspace_manifest_path = "trillionnium/Cargo.toml"
+workspace_manifest_git_blob = "f29b9ceabbedf6b6da2faaf1b1c6a0c9af33150d"
+workspace_lock_path = "trillionnium/Cargo.lock"
+workspace_lock_git_blob = "c047ba6789655de39c2d768b8e0a0e9db32e9b71"
+codeowners_path = ".github/CODEOWNERS"
+codeowners_git_blob = "056c435b39bc9875bbd757d7e4ef8f0c8061cf87"
+module_registry_path = "docs/development/module-registry-v1.toml"
+module_registry_git_blob = "f02504cd15b81fc6e1455df6407908ffd2a00a08"
+module_coverage_path = "config/module-coverage-v1.toml"
+module_coverage_git_blob = "b30f5787d1a2bfa5557d3caeca23a01f00b90ea7"
+module_technical_reference_path = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
+module_technical_reference_git_blob = "938f52dec7c7cc72c58bfe06b15b2eb332d7c01d"
+technical_convergence_path = "config/technical-convergence-v1.toml"
+technical_convergence_git_blob = "d5b6485bd8daeaca182465c43b7b748e33e0c78e"
+technical_convergence_gate_path = "scripts/ci/check_technical_convergence_v1.py"
+technical_convergence_gate_git_blob = "9594a5b26792ad2a8d9fb1156906c1972c2f945c"
+technical_convergence_test_path = "scripts/ci/test_technical_convergence_v1.py"
+technical_convergence_test_git_blob = "df4011e3c2c42a79154bccbf68cf40099d959082"
+detailed_module_spec_index_path = "docs/modules/README.md"
+detailed_module_spec_index_git_blob = "3588b17728239525245cfd59a7dd4fc1bc1d49b7"
+current_snapshot_path = "docs/development/CURRENT_SNAPSHOT_V1.json"
+current_snapshot_git_blob = "d1011db0552eb03d29081ee69f3f797883dbba11"
+documentation_truth_path = "config/documentation-truth-v1.json"
+documentation_truth_git_blob = "9077556792f9fe5193deaf585379d8a08f31a454"
+documentation_reference_gate_path = "scripts/ci/check_documentation_reference_closure_v1.py"
+documentation_reference_gate_git_blob = "1ae0aed0972412a34289b2c1af628de6be34bfa5"
+module_coverage_gate_path = "scripts/ci/check_module_coverage_v1.py"
+module_coverage_gate_git_blob = "78b8ea96fdf3e47ccc96191f3b94f852bf5108f4"
+canonical_plan_gate_path = "scripts/ci/check_canonical_development_plan.sh"
+canonical_plan_gate_git_blob = "d77203354c208e9b7a5c9d67196f11ecd4d3d30b"
+node_decomposition_path = "config/node-decomposition-v1.toml"
+node_decomposition_git_blob = "a151f0ad7d1e6ad021e0dbc647fa59a7dfec87f7"
+node_decomposition_gate_path = "scripts/ci/check_node_decomposition_v1.py"
+node_decomposition_gate_git_blob = "c3ef0621e7b04a61c59e651dc2dddfa008877078"
+required_baseline_workflow_path = ".github/workflows/trnm-required-baseline.yml"
+required_baseline_workflow_git_blob = "10f35f73d8433f92c347f8d8ab5db4ea5c2aafc4"
+required_baseline_gate_path = "scripts/ci/check_required_baseline_closure_v1.py"
+required_baseline_gate_git_blob = "95399b18f2e481d687394fe233f5c7a09af01467"
+plan_manifest_pin_gate_path = "scripts/ci/check_plan_manifest_pins_v1.py"
+plan_manifest_pin_gate_git_blob = "8090d4e196476c0d9279ba8c628778956666d435"
+protocol_manifest_path = "docs/protocol/poco-ai-native-v1/spec-manifest.toml"
+toolchain_lock = "trillionnium/Cargo.lock"
+audit_date = "2026-09-06"
+authority_status = "candidate-until-protected-main-merge-independent-acceptance-and-required-external-evidence"
+documentation_mode = "single-source-plan-plus-stable-module-reference-and-convergence-supplements"
+document_candidate_binding = "runtime-git-commit-and-tree"
+documentation_gate_revision = 4
+history_location = "git-history-only"
+clean_clone_required = true
+tracked_plan_required = true
+signature_required_for_gate_promotion = true
+production_candidate = false
+production_consensus_activation = false
+public_testnet_ready = false
+release_ready = false
+
+# Integrity bindings only; specialist/design/implementation acceptance is separate.
+documentation_authority_path = "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md"
+documentation_authority_git_blob = "1cf290bfbfefe4c68170361f6cc04f7e01f11d70"
+module_implementation_guide_path = "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md"
+module_implementation_guide_git_blob = "96edaba4fac1ba70f5b47c5f61b418afe74b4fb5"
+independent_review_policy_path = "docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md"
+independent_review_policy_git_blob = "128a2038b44bbb7a10cff7f6cdb324097c608e1b"
+documentation_contract_registry_path = "config/documentation-contracts-v1.json"
+documentation_contract_registry_git_blob = "c3b300bc70a10c99c258515288f3941b19986cce"
+documentation_contract_gate_path = "scripts/ci/check_documentation_contracts_v1.py"
+documentation_contract_gate_git_blob = "0cdb41a2ee4d72060d029c5d82d65caa57caa393"
+documentation_contract_test_path = "scripts/ci/test_documentation_contracts_v1.py"
+documentation_contract_test_git_blob = "4246fac9ff041d7f680ecbff7999d3f7db7ddcfd"
+
+[repository_core_overlay]
+source_pull_request = 71
+source_commit = "a44d67181dc74ad74e64819b913972d2a49abc54"
+source_tree = "a4480623afae1bedee9f03fcf83ce31ec00a2bb7"
+absorbed_into_selected_successor = true
+production_activation = false
+packages = [
+  "trnm-node-boundary-v0",
+  "trnm-tx-lifecycle-v0",
+  "trnm-state-sync-v0",
+  "trnm-migration-v0",
+  "trnm-control-plane-v0",
+  "trnm-poco-node-production-v0",
+  "trnm-production-adapter-conformance-v0",
+  "trnm-release-bundle-v0",
+  "trnm-durable-file-adapters-v0",
+]
+
+[replay]
+documentation_contract_command = "python3 scripts/ci/check_documentation_contracts_v1.py"
+documentation_contract_test_command = "python3 scripts/ci/test_documentation_contracts_v1.py"
+canonical_plan_command = "bash scripts/ci/check_canonical_development_plan.sh"
+manifest_pin_command = "python3 scripts/ci/check_plan_manifest_pins_v1.py"
+compatibility_command = "bash scripts/ci/check_agent_development_docs_v1.sh"
+module_coverage_command = "python3 scripts/ci/check_module_coverage_v1.py"
+technical_convergence_command = "python3 scripts/ci/check_technical_convergence_v1.py"
+technical_convergence_test_command = "python3 scripts/ci/test_technical_convergence_v1.py"
+repository_truth_command = "python3 scripts/ci/check_repository_truth_v1.py"
+required_baseline_closure_command = "python3 scripts/ci/check_required_baseline_closure_v1.py"
+blocker_command = "python3 scripts/ci/check_blocker_execution_v1.py"
+build_closure_command = "python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree"
+release_status_command = "python3 scripts/ci/generate_release_status_v1.py --check-deterministic"
+external_evidence_command = "python3 scripts/ci/check_external_evidence_v1.py"
+offline_build_command = "bash scripts/ci/check_poco_bft_mainline_truth.sh"
+
+[gate_dependencies]
+G0 = []
+G1 = ["G0"]
+G1_5 = ["G1"]
+G2_0 = ["G1_5"]
+G2 = ["G1", "G1_5", "G2_0"]
+G3 = ["G1", "G1_5", "G2"]
+G4 = ["G0", "G1", "G1_5", "G2", "G3"]
+G5 = ["G0", "G1", "G1_5", "G2", "G3", "G4"]
+C1 = ["G5"]

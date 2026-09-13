@@ -7,7 +7,7 @@
 
 > 入口约定：
 > - 当前是否 release-ready：看仓库根 `RELEASE_READINESS.md`
-> - 开发排期 / lane 调度：看 `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`
+> - 开发排期 / lane 调度：看 `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
 > - ZKP 平台边界：看 `docs/architecture/TRNM_ZKP_PLATFORM_V0.md`
 >
 > 本文只回答一个问题：

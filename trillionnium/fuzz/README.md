@@ -9,6 +9,9 @@ Targets:
   command dispatch, and accepted-value round trips.
 - `signed_envelope_json`: signed envelope JSON/hex/hash/framing boundaries,
   signature rejection paths, and nested canonical transaction decoding.
+- `poco_cev0_exact`: exact PoCO block-header, next-epoch-commitment and
+  consumption-certificate CEV0 decoders with accepted-value byte-for-byte
+  re-encoding.
 
 The checked-in corpus includes accepted transaction families and an
 unknown-field regression input. Dependencies are locked in this directory.
@@ -47,6 +50,8 @@ cd trillionnium/fuzz
 cargo +nightly-2026-07-27 fuzz run canonical_tx_json -- \
   -max_total_time=3600 -timeout=10 -rss_limit_mb=2048 -max_len=2162688
 cargo +nightly-2026-07-27 fuzz run signed_envelope_json -- \
+  -max_total_time=3600 -timeout=10 -rss_limit_mb=2048 -max_len=2162688
+cargo +nightly-2026-07-27 fuzz run poco_cev0_exact -- \
   -max_total_time=3600 -timeout=10 -rss_limit_mb=2048 -max_len=2162688
 ```
 

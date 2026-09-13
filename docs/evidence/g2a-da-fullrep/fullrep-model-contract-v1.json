@@ -1,0 +1,106 @@
+{
+  "schema": "trnm-g2a-da-fullrep-model-evidence-contract-v1",
+  "schema_version": 1,
+  "package_id": "G2A_DA_FULLREP_V1",
+  "status": "BLOCKED_UPSTREAM",
+  "scope": "independent-model-and-contract",
+  "authority": "candidate",
+  "classification": "candidate-non-normative",
+  "data_scope": "synthetic-local-full-replication",
+  "candidate_only": true,
+  "production": false,
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "g2a_exit": false,
+  "base": {
+    "ref": "refs/heads/feature/chain-a10-g20-traceability-v2-20260829",
+    "commit": "044224a3a6c9100cd64961ea34a28031bb78a636",
+    "tree": "02fb16fd12d2c6387495087e3eff578c2c44100a"
+  },
+  "plan": {
+    "path": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+    "assessed_commit": "8198fea0307eb368df34ff77ffc272a6b0e655ec",
+    "assessed_tree": "a1be71bba1b54c428493d186fafb656d081b31a9",
+    "latest_live_commit": "92449b8e101642f39d644d863db7bb60dea488f7",
+    "latest_live_tree": "cf8f1ab4f5065cb0551a30ec0e036cd44cb31766"
+  },
+  "entrypoint": {
+    "model": "tools/da-fullrep-model/fullrep_model.py",
+    "command": "python3 -B tools/da-fullrep-model/fullrep_model.py --self-test",
+    "focused_gate": "scripts/ci/check_da_fullrep_model_v1.sh",
+    "focused_checker": "scripts/ci/check_da_fullrep_model_v1.py"
+  },
+  "vectors": {
+    "conformance_cases": "conformance/da/fullrep-v1/cases.json",
+    "positive_count": 5,
+    "negative_count": 6,
+    "strict_negative_count": 10,
+    "authenticated_negative_count": 2,
+    "fault_count": 7,
+    "retained_mutant_count": 10,
+    "profile": "DA-FULLREP-V1"
+  },
+  "required_fields": [
+    "schema",
+    "positive",
+    "negative",
+    "strict_negative",
+    "authenticated_negative",
+    "certificate",
+    "withholding",
+    "authenticated_response",
+    "candidate_only",
+    "network_authority"
+  ],
+  "required_invariants": [
+    "no-certificate-without-durable-manifest",
+    "namespace-bound-object-id",
+    "complete-byte-retrieval",
+    "repair-requires-consistent-complete-source",
+    "withholding-requires-certified-provider",
+    "retention-holds-block-gc",
+    "node-permit-is-explicit-and-boolean",
+    "da-das-disabled"
+  ],
+  "gate_requirements": {
+    "clean_worktree": true,
+    "untracked_files_rejected": true,
+    "duplicate_json_keys_rejected": true,
+    "non_finite_json_rejected": true,
+    "strict_types": true,
+    "exact_base_tuple": true,
+    "clean_clone_replay": "required-before-acceptance"
+  },
+  "capabilities": {
+    "durable_before_attest": true,
+    "immutable_manifest_binding": true,
+    "strict_namespace_binding": true,
+    "strict_complete_range": true,
+    "authenticated_request_response_model": true,
+    "repair_requires_complete_matching_source": true,
+    "withholding_requires_certified_provider": true,
+    "retention_and_challenge_holds": true,
+    "node_permit_required_for_gc": true,
+    "sampling_profile_rejected": true,
+    "production_p2p": false,
+    "production_signer_journal": false,
+    "whole_node_cas": false,
+    "order_vote_authority": false
+  },
+  "upstream_blockers": [
+    "A08_CEV1_REGISTRY_INPUT_NOT_ACCEPTED",
+    "A10_BATCHREF_AND_RETRIEVAL_BEFORE_VOTE_INTERFACE_NOT_ACCEPTED",
+    "A10_G20_TRACEABILITY_CANDIDATE_NOT_ACCEPTED",
+    "ARTIFACT_EVIDENCE_NAMESPACE_WIRE_NOT_OWNED_BY_A11",
+    "NODE_WHOLE_NODE_CAS_AND_FINALITY_PERMIT_UNAVAILABLE",
+    "PRODUCTION_REQUESTER_RESPONDER_SIGNER_JOURNALS_UNAVAILABLE"
+  ],
+  "non_claims": [
+    "authenticated-production-p2p",
+    "order-vote-authority",
+    "whole-node-cas",
+    "production-gc-permit",
+    "data-availability-sampling",
+    "production-candidate"
+  ]
+}

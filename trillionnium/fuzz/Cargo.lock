@@ -422,8 +422,17 @@ version = "0.0.0"
 dependencies = [
  "libfuzzer-sys",
  "serde_json",
+ "trnm-consensus-types",
  "trnm-finality-types",
  "trnm-protocol",
+]
+
+[[package]]
+name = "trnm-consensus-types"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "subtle",
 ]
 
 [[package]]

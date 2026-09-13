@@ -59,8 +59,8 @@ if ! grep -q 'probe query hash match: yes' "$REPORT_PATH"; then
   exit 1
 fi
 
-if ! grep -q 'probe query status: true' "$REPORT_PATH"; then
-  echo "[FAIL] readiness report did not preserve scalar lifecycle status evidence" >&2
+if ! grep -q 'probe query status: committed' "$REPORT_PATH"; then
+  echo "[FAIL] readiness report did not normalize scalar lifecycle status evidence" >&2
   sed -n '1,160p' "$REPORT_PATH" >&2 || true
   exit 1
 fi

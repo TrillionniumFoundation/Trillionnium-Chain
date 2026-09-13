@@ -1,8 +1,14 @@
 # PoCO Proof of Consumption v1 (Draft)
 
-Status: Draft  
-Scope: settlement / reward proof for output consumption, intended as a successor candidate to PoUW for application-layer task settlement  
-Compatibility: keeps the current chain-level BFT block consensus intact; changes only the task verification and settlement layer
+Status: Draft
+Scope: historical settlement / reward input retained for PoCO-BFT v0 P3 design
+Compatibility: its claim that PoCO cannot influence block consensus is superseded by the 2026-08-04 PoCO-BFT architecture freeze
+
+> Historical-input notice: this draft remains useful for consumption semantics
+> and anti-fraud requirements, but it is not the normative Consumption
+> Certificate, weight, or production-consensus specification. See
+> `../../../docs/protocol/poco-consumption-certificate-v0.md` and
+> `../../../docs/protocol/poco-bft-v0/05-weights-bonding-and-slashing.md`.
 
 ---
 
@@ -12,7 +18,7 @@ This document uses **PoCO** (`Proof of Consumption`) instead of `PoA` to avoid c
 
 PoCO is **not** a replacement for the chain's block consensus.
 
-- Block production / finality can remain Tendermint-like BFT
+- Block production / finality can remain PoCO consensus-like BFT
 - PoCO replaces or downweights PoUW in the **task settlement** and **reward distribution** path
 
 In other words:

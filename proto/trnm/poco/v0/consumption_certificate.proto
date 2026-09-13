@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package trnm.poco.v0;
+
+// Consumption Certificates are bounded application inputs, not consensus
+// votes, QCs, payment proofs, or direct voting-power claims. Serialized
+// protobuf bytes are NOT CEV0 signing bytes. Validators reconstruct the exact
+// trnm.poco.consumption-certificate.v0 body digest and verify one strict
+// Ed25519 consumer signature, then recompute the certificate ID under the
+// certificate-id domain.
+//
+// Reference transport bounds:
+// - genesis/output/settlement/evidence digests and certificate IDs: 32 bytes;
+// - consumer signature: exactly 64 bytes;
+// - chain_id: 1..128 restricted-ASCII bytes represented as a string;
+// - provider/consumer/key/task/meter IDs: 1..128 bytes;
+// - complete certificate: at most 64 KiB;
+// - no maps, floats, wall-clock fields, issuer sets, alternate key schemes,
+//   attribution splits, reversals, or embedded consensus-power fields.
+
+// Exact transport projection of ConsumptionCertificateBodyV0. consumed_units
+// is the logical CEV0 u128 represented as exactly 16 unsigned big-endian bytes.
+// measurement_evidence_root is empty when absent or exactly 32 bytes.
+message ConsumptionCertificateBody {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  bytes provider_id = 4;
+  bytes consumer_id = 5;
+  bytes consumer_key_id = 6;
+  bytes task_id = 7;
+  bytes output_commitment = 8;
+  bytes meter_id = 9;
+  uint32 meter_version = 10;
+  bytes consumed_units_u128_be = 11; // Exactly 16 bytes, positive.
+  uint64 billing_start_height = 12;
+  uint64 billing_end_height = 13;
+  uint64 consumer_nonce = 14;
+  bytes settlement_commitment = 15;
+  bytes measurement_evidence_root = 16; // Empty or exactly 32 bytes.
+
+  reserved 64 to 127;
+}
+
+message ConsumptionCertificate {
+  ConsumptionCertificateBody body = 1;
+  bytes body_digest = 2; // Exactly 32 bytes; recomputed.
+  bytes consumer_signature = 3; // Exactly 64-byte Ed25519 signature.
+  bytes certificate_id = 4; // Exactly 32 bytes; derived from body_digest only.
+
+  reserved 64 to 127;
+}

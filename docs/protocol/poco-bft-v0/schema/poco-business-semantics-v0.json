@@ -1,0 +1,188 @@
+{
+  "schema": "trnm.poco-bft.business-semantics.v0",
+  "schema_version": 0,
+  "status": "B2-H3b2b0-pure-semantic-kernel",
+  "authority_boundary": {
+    "establishes": [
+      "machine-readable meanings for every state discriminant used by PoCO snapshot kinds 6 through 12 and 15",
+      "exact block-height and target-epoch boundary predicates",
+      "monotonic consumer nonce, key-revocation, meter-retirement, settlement, registration, lifecycle, and rollout transitions",
+      "a conservative create-only or explicit-update policy for every one of the 15 snapshot kinds",
+      "unconditional rejection of deletion for every snapshot kind"
+    ],
+    "does_not_establish": [
+      "external funded-and-unused settlement ledger authority",
+      "measurement, evidence, or challenge-decision provenance",
+      "governance approval authority",
+      "validator key-rotation history or an authenticated previous registration nonce",
+      "runtime, checkpoint, candidate-selection, handoff, activation, or Core epoch-transition authority"
+    ],
+    "output_authority": "pure validation result only; no candidate, handoff, activation, or epoch-transition capability"
+  },
+  "wire_compatibility": {
+    "snapshot_transition_schema": "trnm.poco-bft.snapshot-transition.v0",
+    "kind_3_payload_u64": {
+      "canonical_name": "max_accepted_nonce",
+      "former_diagnostic_name": "next_nonce",
+      "wire_change": false,
+      "encoding": "u64 big-endian"
+    }
+  },
+  "enum_tables": {
+    "settlement_state": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 1, "meaning": "finalized_funded_unused"},
+        {"value": 2, "meaning": "consumed"},
+        {"value": 3, "meaning": "released"}
+      ]
+    },
+    "measurement_state": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 1, "meaning": "not_required"},
+        {"value": 2, "meaning": "verified"},
+        {"value": 3, "meaning": "rejected"}
+      ]
+    },
+    "relationship_class": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 1, "meaning": "independent"},
+        {"value": 2, "meaning": "related"},
+        {"value": 3, "meaning": "reciprocal"},
+        {"value": 4, "meaning": "unresolved"}
+      ]
+    },
+    "registration_state": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 1, "meaning": "active"},
+        {"value": 2, "meaning": "revoked"}
+      ]
+    },
+    "bond_state": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 1, "meaning": "active_slashable"},
+        {"value": 2, "meaning": "unbonding"}
+      ]
+    },
+    "jail_reason": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 1, "meaning": "double_vote"},
+        {"value": 2, "meaning": "downtime"},
+        {"value": 3, "meaning": "governance"}
+      ]
+    },
+    "lifecycle_state": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 1, "meaning": "accepted", "terminal": false},
+        {"value": 2, "meaning": "revoked", "terminal": true},
+        {"value": 3, "meaning": "challenge_pending", "terminal": false},
+        {"value": 4, "meaning": "challenge_rejected", "terminal": true},
+        {"value": 5, "meaning": "challenge_sustained", "terminal": true}
+      ]
+    },
+    "rollout_phase": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 0, "meaning": "shadow"},
+        {"value": 1, "meaning": "eligibility_only"},
+        {"value": 2, "meaning": "capped_weight"},
+        {"value": 3, "meaning": "full"}
+      ]
+    },
+    "approval_state": {
+      "wire_type": "u8",
+      "unknown": "reject",
+      "values": [
+        {"value": 0, "meaning": "proposed"},
+        {"value": 1, "meaning": "approved"}
+      ]
+    }
+  },
+  "clock_contract": {
+    "block_height": {
+      "wire_type": "u64",
+      "rules": [
+        {"id": "certificate_billing_window", "fields": ["billing_start_height", "billing_end_height"], "predicate": "billing_start_height <= block_height <= billing_end_height", "lower": "inclusive", "upper": "inclusive"},
+        {"id": "certificate_acceptance", "fields": ["billing_end_height", "accepted_height"], "predicate": "billing_end_height < accepted_height and block_height >= accepted_height", "boundary": "accepted_height inclusive"},
+        {"id": "consumer_key_active", "fields": ["active_from", "revoked_at"], "predicate": "block_height >= active_from and (revoked_at is None or block_height < revoked_at)", "lower": "inclusive", "upper": "exclusive"},
+        {"id": "meter_active", "fields": ["active_from", "retired_at"], "predicate": "block_height >= active_from and (retired_at is None or block_height < retired_at)", "lower": "inclusive", "upper": "exclusive"},
+        {"id": "settlement_finalized", "fields": ["finalized_height"], "predicate": "block_height >= finalized_height", "lower": "inclusive"},
+        {"id": "measurement_created", "fields": [], "context_field": "authenticated_creation_height", "predicate": "block_height >= authenticated_creation_height", "lower": "inclusive", "note": "kind 7 carries no independent height field"},
+        {"id": "relationship_unexpired", "fields": ["expires_at"], "predicate": "block_height < expires_at", "upper": "exclusive"},
+        {"id": "lifecycle_effective", "fields": ["effective_height"], "predicate": "block_height >= effective_height", "lower": "inclusive"},
+        {"id": "rollout_activation", "fields": ["activation_height"], "predicate": "block_height >= activation_height", "lower": "inclusive"}
+      ]
+    },
+    "target_epoch": {
+      "wire_type": "u64",
+      "rules": [
+        {"id": "bond_unlocked", "field": "locked_until", "predicate": "target_epoch >= locked_until", "boundary": "exclusive lock; eligible at equality"},
+        {"id": "jail_expired", "field": "jailed_until", "predicate": "target_epoch >= jailed_until", "boundary": "exclusive jail; eligible at equality"}
+      ]
+    }
+  },
+  "nonce_watermark": {
+    "kind": 3,
+    "field": "max_accepted_nonce",
+    "absent": "no nonce has been accepted for this consumer/key/provider identity",
+    "accept_predicate": "stored value is absent or candidate_nonce > max_accepted_nonce",
+    "successful_update": "store candidate_nonce exactly",
+    "skip_values": "allowed",
+    "delete": "reject",
+    "decrease_or_equal": "reject",
+    "u64_maximum": "accept at most once when greater than the prior watermark; afterward the identity is exhausted"
+  },
+  "transition_graphs": {
+    "settlement_state": {"allowed_edges": [[1, 2], [1, 3]], "terminal_values": [2, 3]},
+    "registration_state": {"allowed_edges": [[1, 2]], "terminal_values": [2]},
+    "lifecycle_state": {"allowed_edges": [[1, 2], [1, 3], [3, 4], [3, 5]], "terminal_values": [2, 4, 5]},
+    "approval_state": {"allowed_edges": [[0, 1]], "terminal_values": [1]}
+  },
+  "mutation_contract": {
+    "precondition": "both expected and next values, when present, already passed the exact H3a kind decoder and retain the same kind and logical identity",
+    "create": "allowed only after the exact H3a decoder and the kind-specific initial_create rule both accept",
+    "update": "allowed only by the kind-specific rule; semantic no-op revision bumps are rejected",
+    "delete": "reject for every kind",
+    "revision": "create requires revision 1; update requires checked expected_revision + 1; expected revision u64::MAX is exhausted and cannot update",
+    "record_rules": [
+      {"kind": 1, "name": "consumption_certificate", "create": true, "initial_create": "exact_decoder_only", "update": "reject_create_only", "delete": "reject"},
+      {"kind": 2, "name": "consumer_key_authorization", "create": true, "initial_create": "revoked_at is None", "update": "public_key and active_from immutable; revoked_at only None to Some and the new value must be greater than active_from", "delete": "reject"},
+      {"kind": 3, "name": "consumer_nonce", "create": true, "initial_create": "exact_decoder_only", "update": "candidate_nonce strictly greater than max_accepted_nonce; store candidate_nonce", "delete": "reject"},
+      {"kind": 4, "name": "unique_consumption_tuple", "create": true, "initial_create": "exact_decoder_only", "update": "reject_create_only", "delete": "reject"},
+      {"kind": 5, "name": "meter_definition", "create": true, "initial_create": "retired_at is None", "update": "unit_scale and active_from immutable; retired_at only None to Some and the new value must be greater than active_from", "delete": "reject"},
+      {"kind": 6, "name": "settlement", "create": true, "initial_create": "state equals 1 finalized_funded_unused", "update": "settlement_commitment and finalized_height immutable; state follows settlement_state graph", "delete": "reject"},
+      {"kind": 7, "name": "measurement_evidence", "create": true, "initial_create": "exact_decoder_only", "update": "reject_create_only", "delete": "reject"},
+      {"kind": 8, "name": "relationship_classification", "create": true, "initial_create": "exact_decoder_only", "update": "reject_create_only", "delete": "reject"},
+      {"kind": 9, "name": "validator_registration", "create": true, "initial_create": "state equals 1 active", "update": "consensus_key, registration_nonce, and proof_of_possession immutable; state follows registration_state graph; key rotation hard blocked", "delete": "reject"},
+      {"kind": 10, "name": "active_bond", "create": true, "initial_create": "exact_decoder_only", "update": "reject_create_only", "delete": "reject"},
+      {"kind": 11, "name": "jail_status", "create": true, "initial_create": "exact_decoder_only", "update": "reject_create_only", "delete": "reject"},
+      {"kind": 12, "name": "revocation_or_challenge", "create": true, "initial_create": "state equals 1 accepted", "update": "effective_height is a declared block height and strictly increases; equality with the authenticated transition target_height is not established by H3b2b0; state follows lifecycle_state graph", "delete": "reject"},
+      {"kind": 13, "name": "validator_configuration", "create": true, "initial_create": "exact_decoder_only", "update": "reject_create_only", "delete": "reject"},
+      {"kind": 14, "name": "consensus_parameters", "create": true, "initial_create": "exact_decoder_only", "update": "reject_create_only", "delete": "reject"},
+      {"kind": 15, "name": "rollout_or_governance", "create": true, "initial_create": "approved equals 0 proposed", "update": "target_epoch identity, phase, parameters_hash, and activation_height immutable; approval follows approval_state graph", "delete": "reject"}
+    ]
+  },
+  "external_authority_blockers": [
+    {"id": "meter_authority", "affected_kinds": [1, 5, 7], "missing": ["task/output binding", "per-certificate and rolling caps", "evidence format authority"]},
+    {"id": "settlement_authority", "affected_kinds": [1, 6], "missing": ["funded-and-unused ledger proof", "globally unique settlement decision id"]},
+    {"id": "challenge_authority", "affected_kinds": [7, 12], "missing": ["decision id", "evidence id", "idempotence proof"]},
+    {"id": "lifecycle_target_height_binding", "affected_kinds": [12], "missing": ["same-operation equality between declared effective_height and authenticated transition target_height"]},
+    {"id": "governance_authority", "affected_kinds": [15], "missing": ["governance decision id", "approval height", "authenticated approval proof"]},
+    {"id": "validator_rotation_history", "affected_kinds": [9], "missing": ["authenticated previous registration nonce", "rotation history head"]},
+    {"id": "retention_bound", "affected_kinds": [1, 3, 4, 6, 7, 12], "missing": ["safe pruning accumulator beyond the global 10000-entry bound"]}
+  ]
+}

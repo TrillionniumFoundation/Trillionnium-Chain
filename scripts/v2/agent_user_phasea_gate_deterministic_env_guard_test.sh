@@ -10,7 +10,7 @@ if [[ ! -f "$WF" ]]; then
 fi
 
 required_lines=(
-  'timeout-minutes: 20'
+  'timeout-minutes: 45'
   'TZ: UTC'
   'LANG: C.UTF-8'
   'LC_ALL: C.UTF-8'

@@ -1,5 +1,5 @@
 use audit_events::AuditEvent;
-use ed25519_dalek::{Signature, VerifyingKey, Verifier};
+use ed25519_dalek::{Signature, Verifier, VerifyingKey};
 use sha2::{Digest as Sha256Digest, Sha256};
 use sha3::Keccak256;
 
@@ -186,7 +186,10 @@ impl BridgeRelay {
             });
         }
 
-        self.validate_validator_signature_config(self.min_validator_signatures, self.validators.len())?;
+        self.validate_validator_signature_config(
+            self.min_validator_signatures,
+            self.validators.len(),
+        )?;
         self.validate_message_domain(message, now_ts, current_chain_id, self_bridge)?;
         self.validate_message_config(message)?;
         self.validate_message_receipt(message)?;
@@ -259,12 +262,11 @@ impl BridgeRelay {
             old_admin,
             new_admin,
         });
-        self.audit_log
-            .push(BridgeRelayEvent::ConfigVersionUpdated {
-                actor: *caller,
-                old_version,
-                new_version,
-            });
+        self.audit_log.push(BridgeRelayEvent::ConfigVersionUpdated {
+            actor: *caller,
+            old_version,
+            new_version,
+        });
         Ok(())
     }
 
@@ -302,7 +304,9 @@ impl BridgeRelay {
     ) -> Result<(), BridgeRelayError> {
         self.require_admin(caller)?;
         let previous_count = self.validators.len();
-        let new_validators = validators.into_iter().collect::<std::collections::HashSet<_>>();
+        let new_validators = validators
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
         let new_count = new_validators.len();
 
         self.validate_validator_signature_config(self.min_validator_signatures, new_count)?;
@@ -317,12 +321,11 @@ impl BridgeRelay {
             previous_count,
             new_count: self.validators.len(),
         });
-        self.audit_log
-            .push(BridgeRelayEvent::ConfigVersionUpdated {
-                actor: *caller,
-                old_version,
-                new_version,
-            });
+        self.audit_log.push(BridgeRelayEvent::ConfigVersionUpdated {
+            actor: *caller,
+            old_version,
+            new_version,
+        });
         Ok(())
     }
 
@@ -375,7 +378,10 @@ impl BridgeRelay {
         min_validator_signatures: usize,
         validator_count: usize,
     ) -> Result<(), BridgeRelayError> {
-        if validator_count == 0 || min_validator_signatures == 0 || min_validator_signatures > validator_count {
+        if validator_count == 0
+            || min_validator_signatures == 0
+            || min_validator_signatures > validator_count
+        {
             return Err(BridgeRelayError::InvalidValidatorConfiguration {
                 min_validator_signatures,
                 available_validators: validator_count,
@@ -504,10 +510,16 @@ impl BridgeRelay {
                 normalized.related_id = Some("config_version".to_string());
                 normalized.amount = Some(*new_version as u128);
                 normalized.reason = Some("config_version_rotation".to_string());
-                normalized.note = Some(format!("old_version={old_version}, new_version={new_version}"));
+                normalized.note = Some(format!(
+                    "old_version={old_version}, new_version={new_version}"
+                ));
                 normalized
             }
-            BridgeRelayEvent::MinSignaturesUpdated { actor, old_min, new_min } => {
+            BridgeRelayEvent::MinSignaturesUpdated {
+                actor,
+                old_min,
+                new_min,
+            } => {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.min_signatures_updated");
                 normalized.actor = Some(hex32(actor));
@@ -651,9 +663,7 @@ impl BridgeRelay {
     }
 }
 
-fn parse_validator_signature(
-    signature: &[u8],
-) -> Result<([u8; 32], Signature), BridgeRelayError> {
+fn parse_validator_signature(signature: &[u8]) -> Result<([u8; 32], Signature), BridgeRelayError> {
     if signature.len() != VALIDATOR_SIGNATURE_LEN {
         return Err(BridgeRelayError::InvalidValidatorSignatureLength {
             got: signature.len(),
@@ -666,10 +676,7 @@ fn parse_validator_signature(
     let mut raw_signature = [0u8; VALIDATOR_SIGNATURE_BYTES_LEN];
     raw_signature.copy_from_slice(&signature[VALIDATOR_SIGNATURE_KEY_LEN..]);
 
-    Ok((
-        validator,
-        Signature::from_bytes(&raw_signature),
-    ))
+    Ok((validator, Signature::from_bytes(&raw_signature)))
 }
 
 pub fn nonce_key(
@@ -814,11 +821,26 @@ mod tests {
             .consume_nonce(1, b32(1), 31338, addr(9), action_settlement_finalize(), 10)
             .unwrap();
 
-        assert_ne!(n1, n3, "different source bridge ids should isolate nonce domains");
-        assert_ne!(n1, n4, "different target bridges should isolate nonce domains");
-        assert_ne!(n1, n5, "different target chain ids should isolate nonce domains");
-        assert_ne!(n3, n4, "source and target bridge domains should stay independently isolated");
-        assert_ne!(n4, n5, "target bridge and target chain must stay independently isolated");
+        assert_ne!(
+            n1, n3,
+            "different source bridge ids should isolate nonce domains"
+        );
+        assert_ne!(
+            n1, n4,
+            "different target bridges should isolate nonce domains"
+        );
+        assert_ne!(
+            n1, n5,
+            "different target chain ids should isolate nonce domains"
+        );
+        assert_ne!(
+            n3, n4,
+            "source and target bridge domains should stay independently isolated"
+        );
+        assert_ne!(
+            n4, n5,
+            "target bridge and target chain must stay independently isolated"
+        );
 
         let err = relay
             .consume_nonce(1, b32(1), 31337, addr(9), action_settlement_finalize(), 10)
@@ -842,7 +864,14 @@ mod tests {
         let msg = sample_msg();
 
         let err = relay
-            .submit_proof(&msg, &[sig_for(&msg, 7)], msg.deadline - 1, 999, 31337, addr(9))
+            .submit_proof(
+                &msg,
+                &[sig_for(&msg, 7)],
+                msg.deadline - 1,
+                999,
+                31337,
+                addr(9),
+            )
             .unwrap_err();
 
         assert!(matches!(
@@ -852,7 +881,10 @@ mod tests {
                 got,
             } if expected == msg.deadline && got == msg.deadline - 1
         ));
-        assert!(relay.audit_log().is_empty(), "mismatched deadline must not append audit events");
+        assert!(
+            relay.audit_log().is_empty(),
+            "mismatched deadline must not append audit events"
+        );
     }
 
     #[test]
@@ -949,13 +981,21 @@ mod tests {
         fresh_msg.nonce += 1;
 
         let fresh_proof = relay
-            .submit_proof(&fresh_msg, &[sig_for(&fresh_msg, 7)], 1_000, 999, 31337, addr(9))
+            .submit_proof(
+                &fresh_msg,
+                &[sig_for(&fresh_msg, 7)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
             .unwrap();
         assert_ne!(fresh_proof, proof_digest);
     }
 
     #[test]
-    fn finalize_settlement_replay_with_invalid_signature_after_terminal_still_blocked_by_terminal_bound() {
+    fn finalize_settlement_replay_with_invalid_signature_after_terminal_still_blocked_by_terminal_bound(
+    ) {
         let mut relay = relay(1, &[7]);
         let msg = sample_msg();
 
@@ -1061,14 +1101,13 @@ mod tests {
     }
 
     #[test]
-    fn duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state() {
+    fn duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state(
+    ) {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         relay
             .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
             .unwrap();
-        relay
-            .set_min_validator_signatures(&b32(9), 2)
-            .unwrap();
+        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let mut msg = sample_msg();
         msg.config_version = relay.config_version();
@@ -1111,14 +1150,13 @@ mod tests {
     }
 
     #[test]
-    fn duplicate_finalize_with_fresh_config_version_after_governance_change_still_stops_at_terminal_state() {
+    fn duplicate_finalize_with_fresh_config_version_after_governance_change_still_stops_at_terminal_state(
+    ) {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         relay
             .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
             .unwrap();
-        relay
-            .set_min_validator_signatures(&b32(9), 2)
-            .unwrap();
+        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let mut msg = sample_msg();
         msg.config_version = relay.config_version();
@@ -1482,16 +1520,20 @@ mod tests {
             )
             .unwrap();
 
-        let fallback = relay.consume_nonce(
-            settled_msg.source_chain_id,
-            settled_msg.source_bridge_id,
-            settled_msg.target_chain_id,
-            settled_msg.target_bridge,
-            action_settlement_finalize(),
-            settled_msg.nonce,
-        )
-        .unwrap_err();
-        assert!(matches!(fallback, BridgeRelayError::NonceAlreadyUsed { .. }));
+        let fallback = relay
+            .consume_nonce(
+                settled_msg.source_chain_id,
+                settled_msg.source_bridge_id,
+                settled_msg.target_chain_id,
+                settled_msg.target_bridge,
+                action_settlement_finalize(),
+                settled_msg.nonce,
+            )
+            .unwrap_err();
+        assert!(matches!(
+            fallback,
+            BridgeRelayError::NonceAlreadyUsed { .. }
+        ));
 
         assert_ne!(settlement_id, [0u8; 32]);
     }
@@ -1501,15 +1543,16 @@ mod tests {
         let mut relay = relay(1, &[7]);
         let msg = sample_msg();
 
-        relay.consume_nonce(
-            msg.source_chain_id,
-            msg.source_bridge_id,
-            msg.target_chain_id,
-            msg.target_bridge,
-            action_settlement_finalize(),
-            msg.nonce,
-        )
-        .unwrap();
+        relay
+            .consume_nonce(
+                msg.source_chain_id,
+                msg.source_bridge_id,
+                msg.target_chain_id,
+                msg.target_bridge,
+                action_settlement_finalize(),
+                msg.nonce,
+            )
+            .unwrap();
         let audit_len_before = relay.audit_log().len();
         let normalized_before = relay.normalized_audit_log();
 
@@ -1551,9 +1594,7 @@ mod tests {
         relay
             .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
             .unwrap();
-        relay
-            .set_min_validator_signatures(&b32(9), 2)
-            .unwrap();
+        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let mut stale = sample_msg();
         relay.set_admin(&b32(9), b32(10)).unwrap();
@@ -1602,9 +1643,7 @@ mod tests {
         relay
             .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
             .unwrap();
-        relay
-            .set_min_validator_signatures(&b32(9), 2)
-            .unwrap();
+        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let mut stale = sample_msg();
         stale.nonce = 123;
@@ -1656,13 +1695,15 @@ mod tests {
     fn config_version_gating_rejects_stale_expected_version() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         relay
-            .set_validators_with_version(&b32(9), relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .set_validators_with_version(
+                &b32(9),
+                relay.config_version(),
+                vec![validator_pub(7), validator_pub(8)],
+            )
             .unwrap();
 
         let expected = relay.config_version();
-        relay
-            .set_min_validator_signatures(&b32(9), 2)
-            .unwrap();
+        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let err = relay
             .set_admin_with_version(&b32(9), expected, b32(10))
@@ -1684,7 +1725,11 @@ mod tests {
         let admin_before = b32(9);
 
         relay
-            .set_validators_with_version(&admin_before, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .set_validators_with_version(
+                &admin_before,
+                relay.config_version(),
+                vec![validator_pub(7), validator_pub(8)],
+            )
             .unwrap();
         let stale_version = relay.config_version();
 
@@ -1706,7 +1751,10 @@ mod tests {
                 got,
             } if expected == current_version && got == stale_version
         ));
-        assert_eq!(relay.admin, admin_before, "stale write must not rotate admin");
+        assert_eq!(
+            relay.admin, admin_before,
+            "stale write must not rotate admin"
+        );
         assert_eq!(
             relay.config_version(),
             current_version,
@@ -1729,7 +1777,11 @@ mod tests {
         let admin = b32(9);
 
         relay
-            .set_validators_with_version(&admin, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .set_validators_with_version(
+                &admin,
+                relay.config_version(),
+                vec![validator_pub(7), validator_pub(8)],
+            )
             .unwrap();
         let stale_version = relay.config_version();
 
@@ -1749,8 +1801,7 @@ mod tests {
                 if expected == current_version && got == stale_version
         ));
         assert_eq!(
-            relay.min_validator_signatures,
-            1,
+            relay.min_validator_signatures, 1,
             "stale threshold write must leave the previous quorum intact"
         );
         assert_eq!(
@@ -1776,13 +1827,15 @@ mod tests {
         let admin = b32(9);
 
         relay
-            .set_validators_with_version(&admin, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .set_validators_with_version(
+                &admin,
+                relay.config_version(),
+                vec![validator_pub(7), validator_pub(8)],
+            )
             .unwrap();
         let stale_version = relay.config_version();
 
-        relay
-            .set_min_validator_signatures(&admin, 2)
-            .unwrap();
+        relay.set_min_validator_signatures(&admin, 2).unwrap();
 
         let current_version = relay.config_version();
         let audit_len_before = relay.audit_log().len();
@@ -1879,7 +1932,8 @@ mod tests {
 
     #[test]
     fn stale_validator_rotation_does_not_admit_new_validator() {
-        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7), validator_pub(8)], b32(9));
+        let mut relay =
+            BridgeRelay::with_admin(2, vec![validator_pub(7), validator_pub(8)], b32(9));
         let admin = b32(9);
         let stale_version = relay.config_version();
 
@@ -1987,7 +2041,11 @@ mod tests {
         let expected = relay.config_version();
 
         relay
-            .set_validators_with_version(&b32(9), expected, vec![validator_pub(7), validator_pub(8)])
+            .set_validators_with_version(
+                &b32(9),
+                expected,
+                vec![validator_pub(7), validator_pub(8)],
+            )
             .unwrap();
 
         assert_eq!(relay.config_version(), expected + 1);
@@ -2030,14 +2088,7 @@ mod tests {
 
         let replay_sig = sig_for(&replay_msg, 7);
         let err = relay
-            .finalize_settlement(
-                &replay_msg,
-                &vec![replay_sig],
-                1_000,
-                999,
-                31337,
-                addr(9),
-            )
+            .finalize_settlement(&replay_msg, &[replay_sig], 1_000, 999, 31337, addr(9))
             .unwrap_err();
 
         assert!(matches!(
@@ -2070,7 +2121,8 @@ mod tests {
         replay_msg.nonce += 1;
         let replay_sig = sig_for(&replay_msg, 7);
         let replay_sig2 = sig_for(&replay_msg, 8);
-        let mut relay2 = BridgeRelay::with_admin(2, vec![validator_pub(7), validator_pub(8)], b32(9));
+        let mut relay2 =
+            BridgeRelay::with_admin(2, vec![validator_pub(7), validator_pub(8)], b32(9));
         relay2
             .finalize_settlement(
                 &replay_msg,
@@ -2203,7 +2255,10 @@ mod tests {
 
         assert_eq!(event.actor.as_deref(), Some(hex32(&old_admin).as_str()));
         assert_eq!(event.object_id.as_deref(), Some(hex32(&new_admin).as_str()));
-        assert_eq!(event.related_id.as_deref(), Some(hex32(&old_admin).as_str()));
+        assert_eq!(
+            event.related_id.as_deref(),
+            Some(hex32(&old_admin).as_str())
+        );
         assert_eq!(event.reason.as_deref(), Some("admin_rotation"));
         assert_eq!(event.amount, None);
     }

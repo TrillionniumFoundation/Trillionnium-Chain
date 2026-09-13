@@ -1,0 +1,258 @@
+{
+  "schema": "trnm.poco-ai.v0-to-v1-activation-kernel.v1",
+  "schema_version": 1,
+  "status": "candidate-non-normative",
+  "classification": "bounded-cross-version-relation-and-crypto-kernel",
+  "purpose": "Independently check a closed subset of the draft v0-to-v1 epoch-boundary activation contract without treating opaque frozen-v0 evidence as v1 authority.",
+  "digest_construction": "SHA256(u32_le(len(UTF8(domain))) || UTF8(domain) || CEV1(value))",
+  "domains": {
+    "configuration_projection": "trnm.poco-ai.v0-to-v1-configuration-projection.v1",
+    "artifact_manifest": "trnm.poco-ai.v0-to-v1-artifact-manifest.v1",
+    "migration_receipt": "trnm.poco-ai.migration-receipt.v1",
+    "activation_statement": "trnm.poco-ai.v0-to-v1-activation-statement.v1",
+    "activation_old_signature": "trnm.poco-ai.v0-to-v1-activation-old-signature.v1",
+    "activation_new_signature": "trnm.poco-ai.v0-to-v1-activation-new-signature.v1",
+    "activation_anchor": "trnm.poco-ai.activation-anchor.v1",
+    "merkle_list_root": "trnm.poco-ai.merkle-list-root.v1"
+  },
+  "closed_enums": {
+    "rollback_policy_projection": {
+      "NoFallback": 0
+    },
+    "activation_role": {
+      "OldV0Set": 0,
+      "NewV1Set": 1
+    },
+    "first_v1_block_kind_projection": {
+      "V0ActivationFirst": 5
+    },
+    "parent_kind_projection": {
+      "V0TerminalBlock": 2
+    },
+    "signature_scheme": {
+      "StrictEd25519": 0
+    }
+  },
+  "cev1_types": {
+    "ProtocolContextV1": [
+      ["schema_version", "u16"],
+      ["genesis_hash", "Hash32"],
+      ["chain_id", "ConsensusString"],
+      ["protocol_version", "u32"],
+      ["stack_profile_hash", "Hash32"]
+    ],
+    "ValidatorMemberV1": [
+      ["validator_id", "Bytes"],
+      ["consensus_key_scheme", "u16"],
+      ["consensus_public_key", "Bytes"],
+      ["voting_weight", "u128"],
+      ["network_identity_commitment", "Hash32"],
+      ["safety_signer_policy_hash", "Hash32"],
+      ["poco_economic_record_hash", "Hash32"]
+    ],
+    "ValidatorSetDefinitionV1": [
+      ["schema_version", "u16"],
+      ["members", "List<ValidatorMemberV1>"],
+      ["total_weight", "u128"],
+      ["quorum_threshold", "u128"]
+    ],
+    "ValidatorSetDescriptorV1": [
+      ["schema_version", "u16"],
+      ["context", "ProtocolContextV1"],
+      ["epoch", "u64"],
+      ["definition", "ValidatorSetDefinitionV1"]
+    ],
+    "V0ToV1ConfigurationProjectionV1": [
+      ["schema_version", "u16"],
+      ["source_v0_validator_set_hash", "Hash32"],
+      ["source_v0_consensus_parameters_hash", "Hash32"],
+      ["target_v1_validator_set_hash", "Hash32"],
+      ["target_v1_consensus_parameters_hash", "Hash32"],
+      ["validator_supplement_manifest_hash", "Hash32"],
+      ["parameter_mapping_version", "u32"],
+      ["migration_program_hash", "Hash32"]
+    ],
+    "V0ToV1ArtifactManifestBodyV1": [
+      ["schema_version", "u16"],
+      ["target_protocol_version", "u32"],
+      ["upgrade_plan_id", "Hash32"],
+      ["protocol_spec_manifest_hash", "Hash32"],
+      ["schema_manifest_hash", "Hash32"],
+      ["conformance_bundle_hash", "Hash32"],
+      ["binary_artifact_manifest_hash", "Hash32"],
+      ["sbom_hash", "Hash32"],
+      ["provenance_hash", "Hash32"],
+      ["cross_version_verifier_hash", "Hash32"]
+    ],
+    "MigrationReceiptBodyV1": [
+      ["schema_version", "u16"],
+      ["context", "ProtocolContextV1"],
+      ["upgrade_plan_id", "Hash32"],
+      ["source_terminal_checkpoint_id", "Hash32"],
+      ["source_terminal_finality_proof_hash", "Hash32"],
+      ["source_terminal_height", "u64"],
+      ["migration_program_hash", "Hash32"],
+      ["migration_input_root", "Hash32"],
+      ["migration_output_root", "Hash32"],
+      ["migration_receipts_root", "Hash32"],
+      ["rejected_objects_root", "Hash32"],
+      ["audit_manifest_hash", "Hash32"]
+    ],
+    "V0ToV1ActivationStatementBodyV1": [
+      ["schema_version", "u16"],
+      ["context", "ProtocolContextV1"],
+      ["source_v0_genesis_hash", "Hash32"],
+      ["source_v0_chain_id", "ConsensusString"],
+      ["source_upgrade_plan_hash", "Hash32"],
+      ["upgrade_plan_id", "Hash32"],
+      ["source_terminal_checkpoint_id", "Hash32"],
+      ["source_terminal_block_id", "Hash32"],
+      ["source_terminal_finality_proof_hash", "Hash32"],
+      ["migration_receipt_id", "Hash32"],
+      ["source_v0_old_validator_set_hash", "Hash32"],
+      ["source_v0_new_validator_set_hash", "Hash32"],
+      ["source_v0_target_consensus_parameters_hash", "Hash32"],
+      ["target_v1_validator_set_hash", "Hash32"],
+      ["target_v1_consensus_parameters_hash", "Hash32"],
+      ["configuration_projection_hash", "Hash32"],
+      ["target_epoch_descriptor_id", "Hash32"],
+      ["activation_epoch", "u64"],
+      ["activation_height", "u64"]
+    ],
+    "ActivationAnchorBodyV1": [
+      ["schema_version", "u16"],
+      ["target_context", "ProtocolContextV1"],
+      ["activation_statement_id", "Hash32"],
+      ["handoff_certificate_digest_v0", "Hash32"],
+      ["terminal_qc_digest_v0", "Hash32"],
+      ["source_terminal_block_id", "Hash32"],
+      ["target_epoch_descriptor_id", "Hash32"],
+      ["activation_height", "u64"],
+      ["initial_view", "u64"]
+    ],
+    "MerkleListRootBodyV1": [
+      ["root_kind", "u16"],
+      ["item_count", "u32"],
+      ["tree_root", "Option<Hash32>"]
+    ]
+  },
+  "frozen_v0_types": {
+    "digest": "SHA256(Frame(trnm.cev0.hash.v0) || Frame(domain) || Frame(CEV0(value))); Frame uses u32 big-endian length",
+    "integer_endianness": "big-endian",
+    "ValidatorV0": [
+      ["validator_id", "Bytes"],
+      ["consensus_public_key", "PublicKey32"],
+      ["effective_weight", "u64"]
+    ],
+    "ValidatorSetV0": [
+      ["schema_version", "u16=0"],
+      ["genesis_hash", "Hash32"],
+      ["chain_id", "ConsensusString-u16-length"],
+      ["protocol_version", "u32=0"],
+      ["epoch", "u64"],
+      ["consensus_parameters_hash", "Hash32"],
+      ["validators", "List<ValidatorV0>"]
+    ],
+    "validator_set_domain": "trnm.poco-bft.validator-set.v0"
+  },
+  "logical_projection_types": {
+    "UpgradePlanProjectionV1": [
+      "upgrade_plan_id",
+      "source_protocol_version",
+      "target_protocol_version",
+      "source_v0_genesis_hash",
+      "source_v0_chain_id",
+      "activation_epoch",
+      "activation_height",
+      "source_epoch",
+      "source_epoch_start_height",
+      "epoch_length_blocks",
+      "source_terminal_height",
+      "target_stack_profile_hash",
+      "target_runtime_profile_hash",
+      "source_v0_target_validator_set_hash",
+      "source_v0_target_consensus_parameters_hash",
+      "target_v1_validator_set_hash",
+      "target_v1_consensus_parameters_hash",
+      "configuration_projection_hash",
+      "target_epoch_descriptor_id",
+      "target_chain_descriptor_hash",
+      "migration_program_hash",
+      "conformance_bundle_hash",
+      "rollback_policy"
+    ],
+    "FrozenV0EvidenceProjection": [
+      "source_upgrade_plan_hash",
+      "current_protocol_version",
+      "target_protocol_version",
+      "activation_epoch",
+      "activation_height",
+      "target_validator_set_hash",
+      "target_consensus_parameters_hash",
+      "state_migration_hash",
+      "artifact_manifest_hash",
+      "source_terminal_checkpoint_id",
+      "source_terminal_block_id",
+      "source_terminal_finality_proof_hash",
+      "terminal_qc_digest_v0",
+      "handoff_certificate_digest_v0",
+      "old_validator_set_hash",
+      "new_validator_set_hash",
+      "evidence_contract",
+      "source_artifacts",
+      "authorization_output",
+      "deferred_transport_fields"
+    ],
+    "FirstV1BlockProjection": [
+      "block_kind",
+      "context",
+      "epoch",
+      "height",
+      "view",
+      "initial_view",
+      "parent_kind",
+      "parent_block_id",
+      "parent_handoff_certificate_digest_v0",
+      "parent_activation_statement_id",
+      "epoch_descriptor_id",
+      "justify_qc_id",
+      "timeout_certificate_id",
+      "batch_ref_count",
+      "protocol_sidecar_count",
+      "batch_refs_root",
+      "protocol_objects_root",
+      "post_state_root",
+      "transaction_execution_receipts_root",
+      "evidence_root",
+      "consumption_rollups_root",
+      "settlement_root",
+      "resource_usage_root",
+      "next_epoch_descriptor_id",
+      "upgrade_plan_id",
+      "epoch_handoff_id",
+      "activation_statement_id",
+      "activation_anchor_id",
+      "handoff_certificate_digest_v0",
+      "terminal_qc_digest_v0",
+      "migration_receipt_id"
+    ]
+  },
+  "verified_relations": [
+    "the target is exactly protocol version 1 from source protocol version 0",
+    "the projected rollback policy is exactly NoFallback and the activation geometry is the unique next epoch boundary",
+    "the artifact manifest, configuration projection, migration receipt, activation statement, activation role signing roots, activation anchor, and empty list roots recompute under their assigned CEV1 domains",
+    "the checker binds the exact reviewed v0 fields-1-through-11 schema, corpus, and independent checker by path and SHA-256; the evidence explicitly has authorization_output=false and deferred transport fields 12 through 14, so no opaque admitted boolean is trusted",
+    "bounded frozen-v0 evidence facts, plan projection, migration receipt, activation statement, anchor, and first-v1-block projection agree on chain, plan, terminal facts, sets, parameters, migration, epoch, height, and descriptor",
+    "old and new activation signature lists are independently ordered, duplicate-free, role/set exact, strict-Ed25519 valid, and meet independently recomputed weighted quorum thresholds",
+    "the first-v1-block projection is V0ActivationFirst at the declared initial view, extends the exact terminal v0 block, uses the activation anchor, has no QC or TC, carries no ordered payload, uses exact empty roots, and exposes the migration output as post-state"
+  ],
+  "explicit_exclusions": [
+    "UpgradePlanIdV1 recomputation because the draft has not assigned a CEV1 discriminant/encoding for the NoFallback type",
+    "authoritatively decoding and cryptographically verifying UpgradePlanV0 field 12, first-new-epoch proposal field 13, new-epoch finality field 14, the governed v0 upgrade carrier, or a complete cross-version authority proof; the exact bounded fields-1-through-11 sources are hash-bound and independently gated but explicitly return no authority",
+    "proving that the opaque upgrade_plan_id and source_upgrade_plan_hash were governed or order-finalized",
+    "executing the migration program, authenticating complete source state, recomputing migration output/audit/conservation roots, or checking the full configuration mapping",
+    "recomputing ChainDescriptorV1, StackProfileV1, EpochDescriptorV1, ConsensusParametersV1, the full source-v0-successor-to-target-v1 configuration mapping beyond the exact committed validator-set descriptor hash, a full BlockHeaderV1, or OrderProposalV1",
+    "a delayed first-v1 view and its exact TC safe-parent path",
+    "first-v1 three-chain finality, light-client adoption, crash durability, signer journaling, whole-node CAS, implementation, activation, production, release readiness, or normative freeze"
+  ]
+}

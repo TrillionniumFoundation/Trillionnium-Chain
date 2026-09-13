@@ -1,0 +1,135 @@
+{
+  "schema": "trnm-da-fullrep-conformance-cases-v1",
+  "schema_version": 1,
+  "package_id": "G2A_DA_FULLREP_V1",
+  "status": "candidate-non-normative",
+  "profile": "DA-FULLREP-V1",
+  "global_activation": false,
+  "positive": [
+    "durable-attest-certificate-retrieve",
+    "idempotent-attestation",
+    "complete-repair",
+    "retention-release-gc",
+    "certified-withholding-evidence"
+  ],
+  "negative": [
+    "attest-before-durable",
+    "cross-namespace",
+    "duplicate-provider",
+    "sampling-disabled",
+    "gc-with-hold",
+    "gc-without-node-permit"
+  ],
+  "strict_negative": [
+    {
+      "id": "N01-malformed-provider-id",
+      "mutation": "provider_id_not_text",
+      "expected_error": "invalid-provider-id"
+    },
+    {
+      "id": "N02-nonboolean-node-permit",
+      "mutation": "node_permit_not_boolean",
+      "expected_error": "node-permit-required"
+    },
+    {
+      "id": "N03-manifest-drift",
+      "mutation": "manifest_checksum_changed",
+      "expected_error": "manifest-not-durable"
+    },
+    {
+      "id": "N04-stale-object-id",
+      "mutation": "object_id_not_hex64",
+      "expected_error": "invalid-object-id"
+    },
+    {
+      "id": "N05-incomplete-range",
+      "mutation": "range_not_complete",
+      "expected_error": "incomplete-range"
+    },
+    {
+      "id": "N06-stale-certificate",
+      "mutation": "certificate_manifest_changed",
+      "expected_error": "stale-certificate"
+    },
+    {
+      "id": "N07-cross-namespace-object",
+      "mutation": "namespace_substitution",
+      "expected_error": "not-found-or-withheld"
+    },
+    {
+      "id": "N08-duplicate-provider",
+      "mutation": "provider_repeated",
+      "expected_error": "duplicate-provider"
+    },
+    {
+      "id": "N09-das-profile",
+      "mutation": "mode_da_das_v1",
+      "expected_error": "sampling-mode-disabled"
+    },
+    {
+      "id": "N10-incomplete-repair",
+      "mutation": "source_bytes_disagree",
+      "expected_error": "no-consistent-complete-source"
+    }
+  ],
+  "authenticated_negative": [
+    {
+      "id": "N11-nonmember-responder",
+      "mutation": "responder_not_in_certificate",
+      "expected_error": "provider-not-certified"
+    },
+    {
+      "id": "N12-certificate-id-tamper",
+      "mutation": "certificate_id_changed",
+      "expected_error": "stale-certificate"
+    }
+  ],
+  "fault_matrix": [
+    {
+      "id": "F01-attest-before-manifest",
+      "expected": "reject"
+    },
+    {
+      "id": "F02-retrieve-after-tombstone",
+      "expected": "reject"
+    },
+    {
+      "id": "F03-cross-namespace-substitution",
+      "expected": "reject"
+    },
+    {
+      "id": "F04-stale-certificate",
+      "expected": "reject"
+    },
+    {
+      "id": "F05-incomplete-repair",
+      "expected": "reject"
+    },
+    {
+      "id": "F06-withholding-nonmember",
+      "expected": "reject"
+    },
+    {
+      "id": "F07-gc-without-node-permit",
+      "expected": "reject"
+    }
+  ],
+  "required_invariants": [
+    "no-certificate-without-durable-manifest",
+    "namespace-bound-object-id",
+    "complete-byte-retrieval",
+    "repair-requires-consistent-complete-source",
+    "withholding-requires-certified-provider",
+    "retention-holds-block-gc",
+    "node-permit-is-explicit-and-boolean",
+    "da-das-disabled"
+  ],
+  "non_claims": [
+    "authenticated-production-p2p",
+    "order-vote-authority",
+    "whole-node-cas",
+    "production-gc-permit",
+    "data-availability-sampling",
+    "production-candidate"
+  ]
+}

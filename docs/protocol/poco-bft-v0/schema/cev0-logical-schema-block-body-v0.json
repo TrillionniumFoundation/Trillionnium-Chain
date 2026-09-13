@@ -1,0 +1,394 @@
+{
+  "schema": "trnm_poco_bft_cev0_logical_schema_block_body_v0",
+  "schema_version": 0,
+  "scope": "B2-D ordinary epoch-local block-validation body, receipt, mandatory double-vote evidence, ordered-root, logical-size, and ordinary proposal binding kernel only",
+  "status": "closed_for_listed_objects_and_ordinary_inert_relations_only",
+  "cryptographic_validity_claimed": true,
+  "imports": [
+    {
+      "path": "cev0-logical-schema-v0.json",
+      "schema": "trnm_poco_bft_cev0_logical_schema_v0",
+      "schema_version": 0,
+      "reuse": [
+        "hash_construction",
+        "primitives",
+        "Hash32",
+        "Signature64",
+        "MessageKindV0",
+        "CommonConsensusContextV0",
+        "QuorumCertificateV0",
+        "VoteSignV0",
+        "vote domain",
+        "qc domain",
+        "ValidatorSetV0",
+        "validator-set domain"
+      ],
+      "note": "B2-D imports the exact validator set, ordinary QC, and vote signing values needed by its next-view fixture. It imports no TC, never authorizes synthetic QCs, and does not widen any imported decoder."
+    },
+    {
+      "path": "cev0-logical-schema-anchor-handoff-v0.json",
+      "schema": "trnm_poco_bft_cev0_logical_schema_anchor_handoff_v0",
+      "schema_version": 0,
+      "reuse": [
+        "BlockKindV0",
+        "BlockHeaderV0"
+      ],
+      "note": "Only BlockHeaderV0 encoding and BlockKindV0 values are imported. B2-D admits block_kind=regular only and imports no anchor or handoff authorization capability."
+    },
+    {
+      "path": "../vectors/ordered-roots-v0.json",
+      "schema": "trnm_poco_bft_ordered_roots_v0",
+      "schema_version": 0,
+      "reuse": [
+        "OrderedLeafV0",
+        "OrderedNodeV0",
+        "OrderedRootV0",
+        "payload ordered-root kind",
+        "receipts ordered-root kind",
+        "evidence ordered-root kind"
+      ],
+      "note": "The independent B2-D gate recomputes all three root families and their frozen empty roots; it does not call the existing ordered-root checker."
+    },
+    {
+      "path": "../vectors/parameters-v0.json",
+      "schema": "trnm.poco-bft.parameters-vector.v0",
+      "reuse": [
+        "reference ConsensusParametersV0 digest",
+        "reference max_block_bytes=4194304",
+        "reference max_validator_share_ppm=250000"
+      ],
+      "note": "The B2-D reference fixture binds its active parameter hash and byte cap to this committed preimage. The Node gate does not generalize that one fixture into complete parameter-provenance authorization."
+    }
+  ],
+  "hard_limits": {
+    "max_chain_id_bytes": "128",
+    "max_validator_id_bytes": "128",
+    "fixed_hash_bytes": "32",
+    "fixed_signature_bytes": "64",
+    "cev0_length_and_count_width": "u32",
+    "count_preallocation_rule": "Before any Vec/Array allocation, reject a declared count that cannot fit the remaining bytes at the object's minimum encoded item width or the trusted active ConsensusParametersV0 max_block_bytes."
+  },
+  "reference_profile_limits": {
+    "active_committed_max_block_bytes": "4194304",
+    "source": "trusted active ConsensusParametersV0",
+    "root_decoder_byte_cap": "4194304",
+    "receipt_list_byte_cap": "4194304",
+    "equality_rule": "For this committed reference profile, a logical block or CEV0 List<Bytes> of derived receipts exactly 4194304 bytes is accepted; one byte more is rejected.",
+    "non_normative_note": "4194304 is not an eternal B2-D protocol hard cap. A production decoder receives the authenticated active parameter limit; outer decoded/reassembled protobuf transport-body admission is a separate bound."
+  },
+  "objects": [
+    {
+      "name": "ApplicationPayloadV0",
+      "coverage": "closed",
+      "encoding": { "kind": "list", "item": "Bytes" },
+      "semantics": [
+        "items are exact raw transaction bytes in execution order",
+        "decode must consume the complete root byte slice",
+        "zero transactions encodes as exactly 00000000 and never as an absent or zero-length byte string"
+      ]
+    },
+    {
+      "name": "ExecutionEventAttributeV0",
+      "coverage": "closed",
+      "fields": [
+        { "name": "key", "type": "Bytes", "semantic_type": "exact UTF-8 runtime string" },
+        { "name": "value", "type": "Bytes", "semantic_type": "exact UTF-8 runtime string" }
+      ]
+    },
+    {
+      "name": "ExecutionEventV0",
+      "coverage": "closed",
+      "fields": [
+        { "name": "kind", "type": "Bytes", "semantic_type": "exact UTF-8 runtime string" },
+        { "name": "attributes", "type": { "kind": "list", "item": "ExecutionEventAttributeV0" }, "order": "strictly increasing by raw key bytes", "duplicates": "forbidden" }
+      ],
+      "semantics": [
+        "event order is execution order",
+        "kind, key, and value are validated as exact UTF-8 without normalization"
+      ]
+    },
+    {
+      "name": "ExecutionReceiptCommitmentV0",
+      "coverage": "closed",
+      "authority": "derived_by_deterministic_execution",
+      "fields": [
+        { "name": "schema_version", "type": "u16", "equals": "0" },
+        { "name": "transaction_index", "type": "u32" },
+        { "name": "payload_leaf_hash", "type": "Hash32" },
+        { "name": "gas_used", "type": "u64" },
+        { "name": "fee_charged", "type": "u128" },
+        { "name": "events", "type": { "kind": "list", "item": "ExecutionEventV0" }, "order": "execution order" }
+      ]
+    },
+    {
+      "name": "ExecutionReceiptsV0",
+      "coverage": "closed",
+      "encoding": { "kind": "list", "item": "Bytes", "item_bytes": "exact ExecutionReceiptCommitmentV0 CEV0" },
+      "authority": "derived_by_deterministic_execution",
+      "relations": [
+        "receipt count equals transaction count",
+        "receipt transaction_index equals its zero-based list index",
+        "receipt payload_leaf_hash equals the recomputed payload ordered-leaf digest at that index",
+        "complete CEV0 List<Bytes> length is at most active max_block_bytes"
+      ]
+    },
+    {
+      "name": "VoteEvidenceRecordV0",
+      "coverage": "closed",
+      "fields": [
+        { "name": "context", "type": "CommonConsensusContextV0", "message_kind": "vote" },
+        { "name": "height", "type": "u64" },
+        { "name": "block_id", "type": "Hash32" },
+        { "name": "author_validator_id", "type": "Bytes", "min_bytes": "1", "max_bytes": "128" },
+        { "name": "signature", "type": "Signature64" }
+      ],
+      "signature": {
+        "signing_value": "VoteSignV0(context,height,block_id)",
+        "domain": "trnm.poco-bft.vote.v0",
+        "key_resolution": "author_validator_id in the authenticated active validator set"
+      }
+    },
+    {
+      "name": "DoubleVoteEvidenceV0",
+      "coverage": "closed",
+      "fields": [
+        { "name": "schema_version", "type": "u16", "equals": "0" },
+        { "name": "first", "type": "VoteEvidenceRecordV0" },
+        { "name": "second", "type": "VoteEvidenceRecordV0" }
+      ],
+      "relations": [
+        "both contexts are byte-identical and message_kind=vote",
+        "both authors are byte-identical and name an active validator",
+        "the supplied SignatureVerifier accepts both signatures against reconstructed VoteSignV0 roots",
+        "the two (height,block_id) tuples differ",
+        "first signing root is strictly less than second signing root"
+      ],
+      "evidence_id": "Digest(trnm.poco-bft.double-sign-evidence.v0, exact DoubleVoteEvidenceV0 CEV0)",
+      "verifier_contract": "SignatureVerifier is public and unsealed. Production admission MUST supply trnm_consensus_crypto::StrictEd25519Verifier; the concrete strict path is exercised by this cryptographic corpus. A token produced with a permissive verifier proves only that verifier's acceptance."
+    },
+    {
+      "name": "BlockBodyV0",
+      "coverage": "closed_for_ordinary_only",
+      "logical_components": [
+        { "name": "header", "type": "BlockHeaderV0", "source": "proto Block.header" },
+        { "name": "application_payload", "type": "ApplicationPayloadV0", "source": "proto Block.application_payload exact bytes" },
+        { "name": "evidence", "type": { "kind": "list", "item": "DoubleVoteEvidenceV0" }, "source": "proto Block.evidence_objects exact bytes", "order": "strict evidence_id", "duplicates": "forbidden" },
+        { "name": "receipts", "type": "ExecutionReceiptsV0", "source": "local deterministic execution", "transport": "absent" }
+      ],
+      "ordinary_admission": [
+        "header.block_kind equals regular",
+        "header.next_epoch_commitment_hash is absent",
+        "all header genesis/chain/protocol/epoch/set/parameter fields equal the authenticated active ordinary context",
+        "payload_root, receipts_root, and evidence_root equal independent recomputation",
+        "logical block size is at most active max_block_bytes"
+      ]
+    },
+    {
+      "name": "ProposalSignV0",
+      "coverage": "projection_and_logical_fixture_closed_for_ordinary_epoch_local_next_view_only",
+      "fields": [
+        { "name": "context", "type": "CommonConsensusContextV0", "message_kind": "proposal" },
+        { "name": "height", "type": "u64" },
+        { "name": "block_id", "type": "Hash32" },
+        { "name": "justify_qc_digest", "type": "Hash32", "ordinary_only": true },
+        { "name": "timeout_certificate_digest", "type": { "kind": "optional", "item": "Hash32" }, "equals": "None" },
+        { "name": "handoff_certificate_digest", "type": { "kind": "optional", "item": "Hash32" }, "equals": "None" }
+      ],
+      "relations": [
+        "context view and height equal the regular block header",
+        "context genesis, chain, protocol, epoch, and active set equal the authenticated ordinary context and header",
+        "block_id is recomputed from the exact BlockHeaderV0",
+        "justify_qc is a non-empty ordinary QC and digest matches",
+        "this tranche is next-view only: timeout certificate and digest are absent",
+        "epoch_anchor_authorization is absent",
+        "handoff_certificate_digest is absent",
+        "header proposer_id equals CanonicalValidatorRoundRobin(active validator order, header view)",
+        "proposer signature verifies against ProposalSignV0"
+      ]
+    }
+  ],
+  "domains": [
+    { "id": "proposal", "ascii": "trnm.poco-bft.proposal.v0", "logical_object": "ProposalSignV0", "coverage": "imported_binding_closed_for_ordinary_only" },
+    { "id": "vote", "ascii": "trnm.poco-bft.vote.v0", "logical_object": "VoteSignV0", "coverage": "closed_for_double_vote_fixture" },
+    { "id": "double_vote_evidence", "ascii": "trnm.poco-bft.double-sign-evidence.v0", "logical_object": "DoubleVoteEvidenceV0", "coverage": "closed" },
+    { "id": "ordered_leaf", "ascii": "trnm.poco-bft.ordered-leaf.v0", "logical_object": "OrderedLeafV0", "coverage": "closed" },
+    { "id": "ordered_node", "ascii": "trnm.poco-bft.ordered-node.v0", "logical_object": "OrderedNodeV0", "coverage": "closed" },
+    { "id": "ordered_root", "ascii": "trnm.poco-bft.ordered-root.v0", "logical_object": "OrderedRootV0", "coverage": "closed" }
+  ],
+  "logical_block_size": {
+    "formula": "len(CEV0(BlockHeaderV0)) + 4 + len(application_payload) + 4 + sum(4 + len(evidence_i))",
+    "arithmetic": "checked u64 additions only",
+    "included": [
+      "exact header CEV0 bytes",
+      "u32 application_payload byte-frame length plus exact payload bytes",
+      "u32 evidence item count",
+      "one u32 byte-frame length plus exact bytes for each evidence object"
+    ],
+    "excluded": [
+      "execution receipts",
+      "proposal signature and Proposal transport fields",
+      "justify QC",
+      "timeout certificate",
+      "protobuf tags/lengths",
+      "transport envelope, framing, compression, and sidecars"
+    ]
+  },
+  "decoder_error_import": {
+    "path": "cev0-logical-schema-epoch-commitment-v0.json",
+    "required_exact_prefix_count": 41
+  },
+  "rust_decoder_error_additions": [
+    { "code": "invalid_utf8", "scope": "ExecutionEventV0 kind and attribute key/value" },
+    { "code": "noncanonical_event_attribute_order", "scope": "ExecutionEventV0 attribute keys are not strictly increasing" },
+    { "code": "invalid_double_vote_evidence", "scope": "VoteEvidenceRecordV0/DoubleVoteEvidenceV0 semantic admission" }
+  ],
+  "admission_error_codes": [
+    { "code": "receipt_count_mismatch", "class": "derived_relation" },
+    { "code": "receipt_index_mismatch", "class": "derived_relation" },
+    { "code": "payload_leaf_mismatch", "class": "derived_relation" },
+    { "code": "noncanonical_evidence_order", "class": "canonical_relation" },
+    { "code": "duplicate_evidence", "class": "canonical_relation" },
+    { "code": "payload_root_mismatch", "class": "root_relation" },
+    { "code": "receipts_root_mismatch", "class": "root_relation" },
+    { "code": "evidence_root_mismatch", "class": "root_relation" },
+    { "code": "receipt_list_size_exceeded", "class": "size_relation" },
+    { "code": "logical_block_size_exceeded", "class": "size_relation" },
+    { "code": "non_regular_block", "class": "ordinary_context" },
+    { "code": "parameters_context_mismatch", "class": "ordinary_context" },
+    { "code": "validator_set_context_mismatch", "class": "ordinary_context" },
+    { "code": "invalid_evidence_signature", "class": "cryptographic" }
+  ],
+  "checkpoint_admission_error_additions": [
+    { "code": "non_checkpoint_block", "class": "checkpoint_context" },
+    { "code": "state_root_mismatch", "class": "root_relation" },
+    { "code": "next_epoch_commitment_mismatch", "class": "root_relation" }
+  ],
+  "proposal_binding_error_codes": [
+    { "code": "ordinary_proposal_context_mismatch", "class": "ordinary_context" },
+    { "code": "ordinary_proposal_signature_invalid", "class": "cryptographic" },
+    { "code": "ordinary_proposal_certificate_mismatch", "class": "ordinary_context" }
+  ],
+  "gate_error_codes": [
+    { "code": "schema_manifest_invalid", "class": "manifest" },
+    { "code": "proto_projection_drift", "class": "projection" },
+    { "code": "source_vector_drift", "class": "fixture" },
+    { "code": "digest_mismatch", "class": "fixture" }
+  ],
+  "node_decoder_entry_points": [
+    "decodeApplicationPayloadExact",
+    "decodeExecutionReceiptExact",
+    "decodeDoubleVoteEvidenceExact",
+    "validateOrdinaryBlockBody",
+    "validateOrdinaryProposalBinding"
+  ],
+  "rust_type_surface": [
+    "ApplicationPayloadV0",
+    "ExecutionEventAttributeV0",
+    "ExecutionEventV0",
+    "ExecutionReceiptCommitmentV0",
+    "ExecutionReceiptsV0",
+    "VoteEvidenceRecordV0",
+    "DoubleVoteEvidenceV0",
+    "BlockBodyV0",
+    "ValidatedBlockCommitmentsV0",
+    "ValidatedCheckpointCommitmentsV0",
+    "SignedProposalV0"
+  ],
+  "transport_projections": [
+    {
+      "projection_id": "ordinary_block_body_projection",
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "Block",
+      "logical_object": "BlockBodyV0",
+      "fields": [
+        { "number": 1, "name": "header", "proto_type": "BlockHeader", "cardinality": "singular", "role": "canonical", "logical_field": "header" },
+        { "number": 2, "name": "application_payload", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "application_payload", "binding": "exact complete ApplicationPayloadV0 CEV0; empty byte string is invalid" },
+        { "number": 3, "name": "evidence_objects", "proto_type": "bytes", "cardinality": "repeated", "role": "canonical", "logical_field": "evidence", "binding": "each item exact complete DoubleVoteEvidenceV0 CEV0 in strict recomputed evidence_id order" }
+      ],
+      "absent_fields": [
+        { "logical_field": "receipts", "role": "derived", "reason": "locally derived execution output committed only by header.receipts_root" }
+      ]
+    },
+    {
+      "projection_id": "vote_evidence_record_projection",
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "Vote",
+      "logical_object": "VoteEvidenceRecordV0",
+      "fields": [
+        { "number": 1, "name": "context", "proto_type": "CommonConsensusContext", "cardinality": "singular", "role": "canonical", "logical_field": "context" },
+        { "number": 2, "name": "height", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "height" },
+        { "number": 3, "name": "block_id", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "block_id" },
+        { "number": 4, "name": "author_validator_id", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "author_validator_id" },
+        { "number": 5, "name": "signature", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "signature" }
+      ]
+    },
+    {
+      "projection_id": "double_vote_evidence_projection",
+      "proto_file": "proto/trnm/poco/bft/v0/evidence.proto",
+      "proto_message": "DoubleVoteEvidence",
+      "logical_object": "DoubleVoteEvidenceV0",
+      "fields": [
+        { "number": 1, "name": "first", "proto_type": "Vote", "cardinality": "singular", "role": "canonical", "logical_field": "first" },
+        { "number": 2, "name": "second", "proto_type": "Vote", "cardinality": "singular", "role": "canonical", "logical_field": "second" }
+      ],
+      "logical_only_fields": [
+        { "logical_field": "schema_version", "role": "canonical", "binding": "implicit fixed u16=0 in the exact CEV0 preimage" }
+      ]
+    },
+    {
+      "projection_id": "ordinary_proposal_projection",
+      "proto_file": "proto/trnm/poco/bft/v0/consensus.proto",
+      "proto_message": "Proposal",
+      "logical_object": "SignedProposalV0",
+      "ordinary_epoch_local_next_view_fixture_only": true,
+      "fields": [
+        { "number": 1, "name": "context", "proto_type": "CommonConsensusContext", "cardinality": "singular", "role": "canonical", "logical_field": "proposal_sign.context" },
+        { "number": 2, "name": "proposer_validator_id", "proto_type": "bytes", "cardinality": "singular", "role": "redundant", "binding": "equals BlockHeaderV0.proposer_id and selects the signature key" },
+        { "number": 3, "name": "height", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "proposal_sign.height" },
+        { "number": 4, "name": "block", "proto_type": "Block", "cardinality": "singular", "role": "sidecar", "binding": "ordinary BlockBodyV0 availability bytes; proposal signature binds its recomputed block_id" },
+        { "number": 5, "name": "block_id", "proto_type": "bytes", "cardinality": "singular", "role": "derived", "derivation": "BlockHeaderV0 id" },
+        { "number": 6, "name": "justify_qc", "proto_type": "QuorumCertificate", "cardinality": "singular", "role": "sidecar", "binding": "non-empty ordinary QC only" },
+        { "number": 7, "name": "justify_qc_digest", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "proposal_sign.justify_qc_digest", "binding": "recomputed ordinary QC digest" },
+        { "number": 8, "name": "timeout_certificate", "proto_type": "TimeoutCertificate", "cardinality": "singular", "role": "forbidden_in_fixture", "binding": "must be absent; skipped-view proposal admission remains open" },
+        { "number": 9, "name": "timeout_certificate_digest", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "proposal_sign.timeout_certificate_digest", "binding": "empty in this next-view-only fixture" },
+        { "number": 12, "name": "signature", "proto_type": "bytes", "cardinality": "singular", "role": "sidecar", "binding": "exact 64-byte Ed25519 signature over ProposalSignV0" },
+        { "number": 13, "name": "epoch_anchor_authorization", "proto_type": "EpochAnchorAuthorization", "cardinality": "singular", "role": "forbidden", "binding": "must be absent in this ordinary-only B2-D profile" }
+      ],
+      "logical_absence": [
+        { "logical_field": "proposal_sign.handoff_certificate_digest", "role": "canonical", "value": "None" }
+      ]
+    },
+    {
+      "projection_id": "execution_receipts_projection",
+      "proto_file": null,
+      "proto_message": null,
+      "logical_object": "ExecutionReceiptsV0",
+      "fields": [],
+      "role": "derived",
+      "binding": "No peer-supplied protobuf field exists. Exact receipts are local deterministic execution results only."
+    }
+  ],
+  "forbidden_entry_points": [
+    "decode block body -> trusted parent state",
+    "decode block body -> runtime authorization",
+    "decode block body -> checkpoint authorization",
+    "decode block body -> epoch transition authorization",
+    "decode DoubleVoteEvidenceV0 -> slash without authenticated active set and economic policy",
+    "receipt protobuf admission",
+    "synthetic QC ordinary proposal admission",
+    "epoch_anchor_authorization ordinary proposal admission",
+    "handoff_certificate_digest ordinary ProposalSignV0",
+    "first-new-block admission",
+    "skipped-view proposal admission",
+    "seal or checkpoint block admission"
+  ],
+  "honest_boundary": [
+    "B2-D closes only exact ordinary body/receipt/double-vote encodings, independent raw-byte parsing, three ordered roots, logical block size, protobuf projection drift, real strict-Ed25519 double-vote fixtures, and one ordinary epoch-local next-view logical ProposalSignV0/projection binding fixture.",
+    "The empty ApplicationPayloadV0 encoding 00000000 is frozen and tested, including as the body used by a seal elsewhere, but this ordinary-only kernel does not authorize or validate any seal/checkpoint/handoff block.",
+    "Receipt bytes and receipts_root are intended to be locally derived execution commitments. This kernel accepts typed caller-supplied commitments and proves no runtime provenance; B2-D creates no peer receipt transport authority and freezes no runtime execution outcome/status predicate.",
+    "Double-vote cryptography is reproducible and verified, but active-set provenance and economic/slashing authorization remain external authenticated inputs.",
+    "The proposal fixture accepts only a regular next-view block, one ordinary QC, absent TC/digest, absent epoch-anchor authorization, and absent handoff digest. It is not a protobuf Proposal decoder and does not close protobuf presence/default admission, skipped-view TC, genesis-first, first-new-epoch, anchor, handoff, checkpoint, or synthetic-QC paths.",
+    "ValidatedBlockCommitmentsV0 is a private-field typed result with no raw decoder. It proves only Regular kind, evidence shape/order and acceptance by the supplied SignatureVerifier, caller-supplied receipt-to-payload relations, the three roots, and logical/receipt sizes. Because SignatureVerifier is public/unsealed, the token does not attest verifier identity or intrinsically prove strict Ed25519; production MUST use trnm_consensus_crypto::StrictEd25519Verifier, whose concrete path is exercised by the crypto corpus. A permissive verifier can produce a token that proves only permissive acceptance. Public receipt constructors mean the token does not prove execution or authorized-runtime provenance; protocol integration must supply receipts from the locally authorized deterministic runtime. It does not authenticate parent state or authorize a vote.",
+    "Authenticated parent state, runtime/set/parameter provenance, complete Proposal/Block host integration, terminal journals, checkpoint sync, epoch transition, transport admission, light client, B2 overall, and wire_conformance remain open."
+  ]
+}

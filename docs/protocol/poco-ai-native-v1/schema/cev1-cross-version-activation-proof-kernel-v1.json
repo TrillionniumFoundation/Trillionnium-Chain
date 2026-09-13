@@ -1,0 +1,125 @@
+{
+  "schema": "trnm.poco-ai.cev1-cross-version-activation-proof-kernel.v1",
+  "schema_version": 1,
+  "status": "candidate-non-normative",
+  "classification": "bounded-cross-version-activation-finality-proof-kernel",
+  "purpose": "Verify one exact raw CEV0 UpgradePlanV0 field-12 value, forbid the v0-only field-13/14 carriers on a protocol-version change, and independently verify a separately versioned CEV1 V0ActivationFirst proposal witness plus its three-QC finality proof.",
+  "compatibility_contract": {
+    "source_side": "The frozen-v0 EpochHandoffProof contributes its independently checked fields 1 through 11 and exact raw UpgradePlanV0 field 12 only.",
+    "target_side": "V0ActivationFirst proposal/finality bytes live only in V0ToV1ActivationProofV1 under CEV1; they are never decoded as frozen-v0 Proposal or ThreeChainFinalityProof.",
+    "reason": "Frozen-v0 Proposal/ThreeChainFinalityProof exact decoders accept protocol_version=0 only. Reusing fields 13/14 for protocol_version=1 would be an unversioned reinterpretation."
+  },
+  "frozen_v0_field_policy": {
+    "field_12": "exact-raw-CEV0-required",
+    "field_13": "forbidden-for-v0-to-v1",
+    "field_14": "forbidden-for-v0-to-v1"
+  },
+  "digest_constructions": {
+    "cev0": "SHA256(FrameBE32(trnm.cev0.hash.v0) || FrameBE32(domain) || FrameBE32(CEV0(value)))",
+    "cev1": "SHA256(u32_le(len(UTF8(domain))) || UTF8(domain) || CEV1(value))"
+  },
+  "domains": {
+    "upgrade_plan_v0": "trnm.poco-bft.upgrade-plan.v0",
+    "block": "trnm.poco-ai.order-block.v1",
+    "vote_signature": "trnm.poco-ai.order-vote-signature.v1",
+    "qc": "trnm.poco-ai.order-qc.v1",
+    "proposal_carrier": "trnm.poco-ai.v0-activation-first-proposal-carrier.v1",
+    "proposal_carrier_signature": "trnm.poco-ai.v0-activation-first-proposal-carrier-signature.v1",
+    "activation_finality": "trnm.poco-ai.v0-activation-order-finality-proof.v1",
+    "activation_proof": "trnm.poco-ai.v0-to-v1-activation-proof.v1"
+  },
+  "frozen_v0_types": {
+    "UpgradePlanV0": [
+      ["schema_version", "u16=0"],
+      ["genesis_hash", "Hash32"],
+      ["chain_id", "ConsensusString-u16-be-length"],
+      ["governance_decision_id", "Hash32"],
+      ["current_protocol_version", "u32=0"],
+      ["target_protocol_version", "u32=1"],
+      ["approval_epoch", "u64"],
+      ["approval_height", "u64"],
+      ["activation_epoch", "u64"],
+      ["activation_height", "u64"],
+      ["artifact_manifest_hash", "Hash32"],
+      ["target_consensus_parameters_hash", "Hash32"],
+      ["state_migration_hash", "Option<Hash32>; present in this tranche"]
+    ],
+    "integer_endianness": "big-endian",
+    "canonical_round_trip": "The checker strict-decodes source_upgrade_plan_cev0, rejects trailing/truncated/unknown-option bytes, exact-reencodes it, and recomputes UpgradePlanV0 hash."
+  },
+  "cev1_types": {
+    "V0ActivationFirstProposalCarrierBodyV1": [
+      ["schema_version", "u16=1"],
+      ["context", "ProtocolContextV1"],
+      ["header", "BlockHeaderV1; kind V0ActivationFirst"],
+      ["activation_statement_id", "V0ToV1ActivationStatementIdV1"],
+      ["activation_anchor_id", "ActivationAnchorIdV1"],
+      ["migration_receipt_id", "MigrationReceiptIdV1"],
+      ["source_upgrade_plan_hash", "Hash32; frozen-v0 domain"],
+      ["handoff_certificate_digest_v0", "Hash32"],
+      ["terminal_qc_digest_v0", "Hash32"],
+      ["batch_ref_count", "u32=0"],
+      ["protocol_sidecar_count", "u32=0"]
+    ],
+    "V0ActivationFirstProposalCarrierV1": [
+      ["body", "V0ActivationFirstProposalCarrierBodyV1"],
+      ["proposal_id", "Hash32; proposal_carrier domain"],
+      ["proposer_id", "Bytes"],
+      ["signature_scheme", "u16=0 StrictEd25519"],
+      ["signature", "Bytes; exactly 64"]
+    ],
+    "CertifiedActivationHeaderV1": [
+      ["header", "BlockHeaderV1"],
+      ["block_id", "BlockIdV1"],
+      ["certifying_qc", "QuorumCertificateV1"]
+    ],
+    "V0ActivationOrderFinalityProofV1": [
+      ["schema_version", "u16=1"],
+      ["context", "ProtocolContextV1"],
+      ["activation_statement_id", "V0ToV1ActivationStatementIdV1"],
+      ["epoch_descriptor_id", "EpochDescriptorIdV1"],
+      ["validator_set_hash", "Hash32"],
+      ["consensus_parameters_hash", "Hash32"],
+      ["target_block_id", "BlockIdV1"],
+      ["target_height", "u64"],
+      ["target_header", "BlockHeaderV1"],
+      ["certified_chain", "List<CertifiedActivationHeaderV1>; exactly V0ActivationFirst + Ordinary + Ordinary"],
+      ["proof_id", "Hash32; activation_finality domain"]
+    ],
+    "V0ToV1ActivationProofV1": [
+      ["schema_version", "u16=1"],
+      ["source_handoff_evidence_sha256", "Hash32; candidate source-inventory binding, not consensus authority"],
+      ["source_upgrade_plan_cev0", "Bytes; exact UpgradePlanV0 CEV0"],
+      ["frozen_v0_field13_present", "bool=false"],
+      ["frozen_v0_field14_present", "bool=false"],
+      ["activation_statement_id", "V0ToV1ActivationStatementIdV1"],
+      ["activation_anchor_id", "ActivationAnchorIdV1"],
+      ["migration_receipt_id", "MigrationReceiptIdV1"],
+      ["first_v1_proposal_cev1", "Bytes; exact V0ActivationFirstProposalCarrierV1 CEV1"],
+      ["first_v1_finality_proof_cev1", "Bytes; exact V0ActivationOrderFinalityProofV1 CEV1"],
+      ["proof_id", "Hash32; activation_proof domain"]
+    ]
+  },
+  "verified_relations": [
+    "UpgradePlanV0 field 12 exact-reencodes and its v0-domain hash binds activation statement, artifact manifest, target v0 parameter projection, migration program, epoch, and height.",
+    "Frozen-v0 fields 13 and 14 are absent; any attempt to signal either is rejected before CEV1 proposal/finality verification.",
+    "The pre-existing bounded activation kernel is rerun after replacing the source plan hash and freshly signing both role-isolated old/new activation quorums; NoFallback and the unique next-epoch boundary remain mandatory.",
+    "The V0ActivationFirst header uses the exact V0 terminal parent, activation statement/anchor, migration output, empty payload roots, target descriptor, and initial view.",
+    "The proposal wrapper proposer/header/set identity is exact and one strict-Ed25519 proposal-carrier signature is independently verified.",
+    "Three certified target-epoch headers exact-recompute BlockId/QC IDs; twelve strict-Ed25519 Vote signatures are independently verified with ordered unique signers and checked weighted quorum.",
+    "The first two direct parent/QC successors form the exact three-chain that finalizes V0ActivationFirst."
+  ],
+  "global_completion_flags": {
+    "complete_v0_authority_verification": false,
+    "complete_migration_verification": false,
+    "upgrade_contract_complete": false,
+    "normative_freeze": false
+  },
+  "explicit_exclusions": [
+    "frozen-v0 EpochHandoffProof fields 13 and 14 are forbidden on this cross-version path; they are not reinterpreted as CEV1",
+    "governance-state membership/finality for UpgradePlanV0 is not proved",
+    "migration execution, complete source-state authentication, audit/conservation recomputation, and output construction are not proved",
+    "the proposal carrier is a bounded candidate witness binding the exact V0ActivationFirst header and activation IDs; full OrderProposalV1 admission/transport remains outside this tranche",
+    "delayed first-view TC, arbitrary multi-hop light-client updates, signer durability, implementation, activation, production, release readiness, and normative freeze are not proved"
+  ]
+}

@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package trnm.poco.bft.v0;
+
+import "trnm/poco/bft/v0/common.proto";
+
+// Transport encoding only. Protobuf bytes are NOT signing or commitment
+// bytes. All digests and signatures below are reconstructed from the exact
+// normative CEV0 field order and domain in the PoCO-BFT v0 specification.
+// Hashes are exactly 32 bytes; Ed25519 signatures are exactly 64 bytes; signer
+// lists contain at most 100 entries in canonical validator_id order.
+
+message ValidatorKeyProofOfPossession {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint64 target_epoch = 4;
+  bytes validator_id = 5;
+  bytes public_key = 6; // Exactly 32-byte Ed25519 key.
+  uint64 registration_nonce = 7;
+  bytes proof_digest = 8; // trnm.poco-bft.validator-key-pop.v0 digest.
+  bytes signature = 9; // Exactly 64 bytes, made by public_key.
+
+  reserved 64 to 127;
+}
+
+// Exact transport projection of NextEpochCommitmentV0. upgrade_plan_hash is
+// empty when absent or exactly 32 bytes when present.
+message NextEpochCommitment {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint64 old_epoch = 4;
+  uint64 new_epoch = 5;
+  uint64 snapshot_cutoff_height = 6;
+  bytes snapshot_state_root = 7; // Exactly 32 nonzero bytes.
+  uint32 new_protocol_version = 8;
+  bytes new_validator_set_hash = 9; // Exactly 32 nonzero bytes.
+  bytes new_consensus_parameters_hash = 10; // Exactly 32 nonzero bytes.
+  // MUST equal the phase inside new_consensus_parameters_hash's exact
+  // parameter preimage; this is a redundant authenticated consistency check.
+  RolloutPhase rollout_phase = 11;
+  bytes upgrade_plan_hash = 12; // Empty or exactly 32 nonzero bytes.
+  bool fallback_used = 13;
+  uint32 fallback_reason_code = 14; // Logical u16; normative values 0..9.
+  // MUST equal old seal_2 height + 1 under the outgoing active schedule.
+  uint64 activation_height = 15;
+  bytes commitment_digest = 16; // epoch-commitment domain; recomputed.
+
+  reserved 64 to 127;
+}
+
+message HandoffDescriptor {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint64 old_epoch = 4;
+  uint64 new_epoch = 5;
+  uint32 old_protocol_version = 6;
+  uint32 new_protocol_version = 7;
+  bytes old_validator_set_hash = 8;
+  bytes new_validator_set_hash = 9;
+  bytes old_consensus_parameters_hash = 10;
+  bytes new_consensus_parameters_hash = 11;
+  uint64 checkpoint_height = 12;
+  bytes checkpoint_block_id = 13;
+  bytes checkpoint_state_root = 14;
+  bytes next_epoch_commitment_digest = 15;
+  uint64 terminal_old_height = 16;
+  bytes terminal_old_block_id = 17;
+  bytes terminal_old_qc_digest = 18;
+  uint64 terminal_old_view = 19;
+  uint64 activation_height = 20;
+  uint64 initial_new_view = 21; // Pacemaker/signing start; MUST equal 1.
+  bytes descriptor_digest = 22; // handoff-descriptor domain; recomputed.
+
+  reserved 64 to 127;
+}
+
+// Transport projection of HandoffVoteSignV0 plus signer/signature. For an old
+// vote message_kind MUST be 3; for a new vote it MUST be 4. The signing set
+// transitively binds its consensus_parameters_hash.
+message HandoffVote {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint32 signing_protocol_version = 4;
+  uint64 signing_epoch = 5;
+  bytes signing_validator_set_hash = 6;
+  uint64 signing_view = 7;
+  MessageKind message_kind = 8;
+  bytes handoff_descriptor_digest = 9;
+  bytes author_validator_id = 10;
+  bytes signature = 11; // Exactly 64-byte Ed25519 signature.
+
+  reserved 64 to 127;
+}
+
+// Transport projection of the logical HandoffCertificateV0. "Joint" names
+// the required independent old-set and new-set quorum roles; it is not a
+// second canonical schema.
+message JointHandoffCertificate {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  HandoffDescriptor descriptor = 2;
+  // The canonical certificate preimage contains descriptor plus the ordered
+  // (validator_id, signature) pairs. Redundant vote scopes below must match the
+  // descriptor and are validated, then reduced to those pairs for CEV0.
+  repeated HandoffVote old_set_votes = 3; // Canonical unique old-set signers.
+  repeated HandoffVote new_set_votes = 4; // Canonical unique new-set signers.
+  bytes certificate_digest = 5; // handoff-certificate domain; recomputed.
+
+  reserved 64 to 127;
+}
+
+// Exact transport projection of UpgradePlanV0. state_migration_hash is empty
+// when absent or exactly 32 bytes when present.
+message ProtocolUpgradePlan {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  bytes governance_decision_id = 4;
+  uint32 current_protocol_version = 5;
+  uint32 target_protocol_version = 6;
+  uint64 approval_epoch = 7;
+  uint64 approval_height = 8;
+  uint64 activation_epoch = 9;
+  uint64 activation_height = 10;
+  bytes artifact_manifest_hash = 11;
+  bytes target_consensus_parameters_hash = 12;
+  bytes state_migration_hash = 13; // Empty or exactly 32 bytes.
+  bytes upgrade_plan_hash = 14; // upgrade-plan domain; recomputed.
+
+  reserved 64 to 127;
+}

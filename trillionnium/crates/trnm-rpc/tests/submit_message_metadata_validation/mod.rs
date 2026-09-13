@@ -12,6 +12,7 @@ fn unique_fixture_path(name: &str, ext: &str) -> PathBuf {
 
 fn run_submit_message(ingress: &PathBuf, text: &str, key: &str) -> std::process::Output {
     Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args([
             "submit-message",

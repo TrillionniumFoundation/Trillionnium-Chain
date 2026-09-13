@@ -34,16 +34,25 @@ sys.exit(2)
 PY
 }
 
+required_paths=(
+  ".github/workflows/**"
+  "contracts-rust/**"
+)
+
 for trigger in pull_request push; do
-  if ! check_trigger_path "$trigger" "contracts-rust/**"; then
-    rc=$?
-    if [[ "$rc" -eq 2 ]]; then
-      echo "[QUICK-GATE-PATHS][FAIL] missing workflow trigger block: $trigger" >&2
+  for required_path in "${required_paths[@]}"; do
+    if check_trigger_path "$trigger" "$required_path"; then
+      continue
     else
-      echo "[QUICK-GATE-PATHS][FAIL] missing workflow trigger path under $trigger: contracts-rust/**" >&2
+      rc=$?
+      if [[ "$rc" -eq 2 ]]; then
+        echo "[QUICK-GATE-PATHS][FAIL] missing workflow trigger block: $trigger" >&2
+      else
+        echo "[QUICK-GATE-PATHS][FAIL] missing workflow trigger path under $trigger: $required_path" >&2
+      fi
+      exit 1
     fi
-    exit 1
-  fi
+  done
 done
 
-echo "[QUICK-GATE-PATHS][PASS] quick-check workflow trigger paths include contracts-rust/** for pull_request + push"
+echo "[QUICK-GATE-PATHS][PASS] quick-check covers workflow and contracts-rust changes for pull_request + push"

@@ -1,0 +1,70 @@
+{
+  "schema": "trnm-g20-source-manifest-v1",
+  "status": "upstream-pending",
+  "a08": {
+    "role": "a08",
+    "ref": "refs/remotes/origin/feature/chain-a08-g15-registry-parity-v4-20260829",
+    "commit": "6c42673db5bc46f82934dddc678a1752a092ca04",
+    "tree": "df8f6bf0cfe0868668f86ba9b41fc34ce1a085c4",
+    "files": {
+      "docs/protocol/poco-ai-native-v1/registry/operation-registry-v1.json": "ec856f6c02b26137200c9353cadaeac9cb3c4c417f2b8f9844baa81041efecf7",
+      "docs/protocol/poco-ai-native-v1/registry/object-registry-v1.json": "e22c7144a6efc8156b8ca3f7555e1953c1168c34618c49469c0d10e1f733f060",
+      "docs/protocol/poco-ai-native-v1/registry/domain-registry-v1.json": "eef3656106ffd4c6b1853949d596514b4cba6bc4794dbe3153f4997ad104152d",
+      "docs/protocol/poco-ai-native-v1/registry/error-registry-v1.json": "852c793b6e2b95fbdb8ed577140a7acf093701c38bc38196b9687755ea701191",
+      "docs/protocol/poco-ai-native-v1/registry/limit-registry-v1.json": "a3f54705aeaace663186fa57bfa8f7cfcaeb7977257e3276086d05d63b75da40",
+      "docs/protocol/poco-ai-native-v1/registry/verification-profile-registry-v1.json": "b2d9ba750051b05cd501baf8832544087a9e0d7ef8d55c33f70e26f88b1769ad",
+      "docs/protocol/poco-ai-native-v1/schema/object-catalog-v1.toml": "da0919326a807ee9820be88042a93260ffebc03c9017589a7960445a9adea9fc",
+      "scripts/ci/check_cev1_registry_spec_v1.py": "d4f531f62de2074d01251b53be1a8092dad7c3cacbb0bb4c1f29214eaa9fd043"
+    }
+  },
+  "a09": {
+    "role": "a09",
+    "ref": "refs/remotes/origin/feature/chain-a09-g15-independent-conformance-v3-20260829",
+    "commit": "330a1b41e8730b343a51809377574d03596269f7",
+    "tree": "e8fa115857d13049858bd9682a8f1802656e5fd3",
+    "files": {
+      "conformance/cev1/registry-v1/operation-mapping-v1.json": "a1f80d82a06e97f9224a4afc00732424a291b60101933fc2ab0c947be01f6c1b",
+      "conformance/cev1/registry-v1/negative-cases.json": "296c2429eda1ee0e940f0ec23ce93d64de78c082c3faa09b30d021ef99b5cc20",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md": "aba99ae6be2ff8a4aac4d6355e1f778e49a7075a80b09453f16984f85bb0b6cd",
+      "docs/protocol/poco-ai-native-v1/schema/object-catalog-v1.toml": "da0919326a807ee9820be88042a93260ffebc03c9017589a7960445a9adea9fc",
+      "scripts/ci/check_independent_cev1_registry_v1.sh": "c7ddb6c00612e637b696394172e8f8cadb117625c40892e30ad8b9b872072dea",
+      "tools/independent-cev1-parser/registry_conformance.py": "da1a18a801ec70b268f757642ef18d56f940222ab546552623280b9b369dd566"
+    }
+  },
+  "traceability_schema": {
+    "path": "docs/protocol/poco-ai-native-v1/traceability/w0-w7-row-v1.schema.json",
+    "sha256": "a5bf090585323543bfbb1325f3106f17f3cc92bb9d7fac17479ba2445f34712b"
+  },
+  "artifacts": {
+    "closure": "docs/evidence/g2.0/g20-w0-w7-closure-v1.json",
+    "evidence_index": "docs/evidence/g2.0/g20-evidence-index-v1.json"
+  },
+  "policy": {
+    "required_registry_files": [
+      "operation-registry-v1.json",
+      "object-registry-v1.json",
+      "domain-registry-v1.json",
+      "error-registry-v1.json",
+      "limit-registry-v1.json",
+      "verification-profile-registry-v1.json"
+    ],
+    "required_a08_files": [
+      "docs/protocol/poco-ai-native-v1/registry/operation-registry-v1.json",
+      "docs/protocol/poco-ai-native-v1/registry/object-registry-v1.json",
+      "docs/protocol/poco-ai-native-v1/registry/domain-registry-v1.json",
+      "docs/protocol/poco-ai-native-v1/registry/error-registry-v1.json",
+      "docs/protocol/poco-ai-native-v1/registry/limit-registry-v1.json",
+      "docs/protocol/poco-ai-native-v1/registry/verification-profile-registry-v1.json",
+      "docs/protocol/poco-ai-native-v1/schema/object-catalog-v1.toml",
+      "scripts/ci/check_cev1_registry_spec_v1.py"
+    ],
+    "required_a09_files": [
+      "conformance/cev1/registry-v1/operation-mapping-v1.json",
+      "conformance/cev1/registry-v1/negative-cases.json",
+      "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+      "docs/protocol/poco-ai-native-v1/schema/object-catalog-v1.toml",
+      "scripts/ci/check_independent_cev1_registry_v1.sh",
+      "tools/independent-cev1-parser/registry_conformance.py"
+    ]
+  }
+}
