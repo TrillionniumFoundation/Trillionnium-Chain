@@ -1,0 +1,55 @@
+name: Section7 pinned offline build inputs
+
+on:
+  push:
+    branches: [fix/chain-section7-offline-toolkit-20260913]
+    paths: [.github/workflows/trnm-section7-offline-toolkit.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-offline-inputs:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    env:
+      SOURCE_SHA: 435c0168558d75fc70aaa11980a179b9d5980f33
+      RUSTUP_HOME: ${{ runner.temp }}/trnm-section7-rustup
+      CARGO_HOME: ${{ runner.temp }}/trnm-section7-cargo
+    steps:
+      - name: Check out the immutable source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 435c0168558d75fc70aaa11980a179b9d5980f33
+          persist-credentials: false
+      - name: Prepare public offline build inputs only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          kit="$RUNNER_TEMP/trnm-section7-offline-kit"
+          mkdir -p "$kit"
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup run 1.95.0 cargo vendor --locked --versioned-dirs \
+            --manifest-path trillionnium/Cargo.toml "$kit/vendor" > "$kit/vendor-config.txt"
+          compiler="$(rustup which --toolchain 1.95.0 rustc)"
+          toolchain="$(dirname "$(dirname "$compiler")")"
+          # Deliberately export only the compiler and public crate source tree.
+          # Never export HOME, CARGO_HOME, credentials, caches or runner state.
+          tar -C "$toolchain" -czf "$kit/rust-toolchain-1.95.0.tar.gz" .
+          tar -C "$kit" -czf "$kit/vendor-source.tar.gz" vendor
+          rm -rf "$kit/vendor"
+          rustup run 1.95.0 rustc --version --verbose > "$kit/toolchain-version.txt"
+          git rev-parse HEAD HEAD^{tree} > "$kit/source-identity.txt"
+          sha256sum trillionnium/Cargo.lock > "$kit/lockfile.sha256"
+          printf '%s\n' 'scope=offline-build-inputs-not-test-execution-or-independent-acceptance' > "$kit/SCOPE"
+          (cd "$kit" && sha256sum *.tar.gz *.txt lockfile.sha256 SCOPE > SHA256SUMS)
+      - name: Retain bounded diagnostic build inputs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-section7-offline-kit-435c0168
+          path: ${{ runner.temp }}/trnm-section7-offline-kit/
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
