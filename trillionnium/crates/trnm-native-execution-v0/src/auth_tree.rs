@@ -53,8 +53,15 @@ pub(crate) fn validator_state_key() -> Result<Vec<u8>> {
     namespaced_key(StateNamespace::ValidatorLifecycle, &[b"current"])
 }
 
+/// Selection only: malformed keys in the reserved namespace must also be
+/// retained so the existing exact decoder rejects them. This grants no
+/// namespace authority and does not validate a physical key.
+pub(crate) fn is_poco_snapshot_namespace_key_v0(key: &[u8]) -> bool {
+    key.starts_with(POCO_SNAPSHOT_KEY_PREFIX)
+}
+
 pub(crate) fn poco_snapshot_key_components(key: &[u8]) -> Result<Option<Vec<&[u8]>>> {
-    if !key.starts_with(POCO_SNAPSHOT_KEY_PREFIX) {
+    if !is_poco_snapshot_namespace_key_v0(key) {
         return Ok(None);
     }
     let mut cursor = POCO_SNAPSHOT_KEY_PREFIX.len();
@@ -146,5 +153,28 @@ impl AuthWrite {
 
     pub(crate) fn value(&self) -> Option<&[u8]> {
         self.value.as_deref()
+    }
+}
+
+#[cfg(test)]
+mod selection_tests {
+    use super::*;
+
+    #[test]
+    fn namespace_selection_keeps_every_reserved_truncation_and_trailing_mutant() {
+        let exact = namespaced_key(StateNamespace::PocoSnapshot, &[b"manifest"]).unwrap();
+        for length in POCO_SNAPSHOT_KEY_PREFIX.len()..exact.len() {
+            let truncated = &exact[..length];
+            assert!(is_poco_snapshot_namespace_key_v0(truncated));
+            assert!(poco_snapshot_key_components(truncated).is_err());
+        }
+        assert!(poco_snapshot_key_components(&exact).unwrap().is_some());
+        let mut trailing = exact;
+        trailing.push(0);
+        assert!(is_poco_snapshot_namespace_key_v0(&trailing));
+        assert!(poco_snapshot_key_components(&trailing).is_err());
+        let lifecycle = validator_state_key().unwrap();
+        assert!(!is_poco_snapshot_namespace_key_v0(&lifecycle));
+        assert!(poco_snapshot_key_components(&lifecycle).unwrap().is_none());
     }
 }

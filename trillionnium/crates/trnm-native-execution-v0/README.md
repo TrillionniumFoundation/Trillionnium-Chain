@@ -259,3 +259,30 @@ This seam supplies historical context directly inside `cfg(test)`. It does not
 admit that context through the current application owner, authenticate outer
 signatures, call ProcessProposal/FinalizeBlock, persist a durable P artifact or
 qualify restart. The separate owner-profile rejection above remains required.
+
+## Native control-projection read retention
+
+The complete ordinary-body executor audits the authenticated parent before
+reading its PoCO namespace and exact validator-lifecycle control record.
+`verified_selected_live_values_v0` performs every existing live-leaf proof,
+preimage and duplicate-key check, then retains only caller-selected values.
+The complete executor selects the exact lifecycle key and every key with the
+reserved PoCO prefix, including malformed keys for the unchanged strict decoder
+to reject. Runtime objects continue through authenticated point lookup.
+The full-map API delegates to the same audit with an all-values selection.
+
+An empty iterator does not supply a leaf proof, so the shared audit explicitly
+compares the indexed JMT root node with the retained root before iteration.
+A missing or substituted root rejects even when no values are selected. Native
+seed, runtime-plan and complete-plan application also reject an exhausted
+`u64` version before mutating the store rather than wrapping or panicking.
+
+Source regressions cover historical updates/deletion/reopen equivalence,
+selection after authentication, corrupt discarded values and preimages, missing
+and empty-tree roots, malformed reserved namespace keys, all apply paths at
+version exhaustion, and a 257-leaf case that retains only the requested payload.
+These are Rust regression definitions, not an assertion that they have run on
+every source. Retained-result byte counts are not measured peak RSS or TPS.
+Full-state audits, full snapshot encoding/writes, history scans and serialized
+commit remain; this change introduces no pruning, audit cache, trust anchor,
+wire version, epoch-height mapping or production activation.

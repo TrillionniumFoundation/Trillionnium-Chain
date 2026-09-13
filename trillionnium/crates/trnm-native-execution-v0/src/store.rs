@@ -491,16 +491,22 @@ impl InMemoryNativeExecutionStoreV0 {
         })
     }
 
+    fn next_version_v0(&self) -> Result<Version> {
+        match self.roots.last_key_value() {
+            None => Ok(0),
+            Some((version, _)) => version
+                .checked_add(1)
+                .context("native state version exhausted"),
+        }
+    }
+
     /// Reconstructs the fixed excluded-legacy vector parent for differential
     pub fn apply_seed_v0(
         &mut self,
         version: Version,
         writes: Vec<NativeStateWriteV0>,
     ) -> Result<RootHash> {
-        let expected = self
-            .roots
-            .last_key_value()
-            .map_or(0, |(version, _)| version + 1);
+        let expected = self.next_version_v0()?;
         ensure!(version == expected, "seed version is not contiguous");
         let mut hashed = BTreeMap::new();
         let mut preimages = BTreeMap::new();
@@ -559,10 +565,7 @@ impl InMemoryNativeExecutionStoreV0 {
         &mut self,
         plan: RuntimeObjectDeltaPlanV0,
     ) -> Result<RuntimeObjectDeltaRootV0> {
-        let expected = self
-            .roots
-            .last_key_value()
-            .map_or(0, |(version, _)| version + 1);
+        let expected = self.next_version_v0()?;
         ensure!(plan.version == expected, "state update plan is stale");
         let root = plan.root_hash;
         self.apply_batch_v0(plan.version, root, plan.tree_update_batch, plan.preimages)?;
@@ -573,10 +576,7 @@ impl InMemoryNativeExecutionStoreV0 {
         &mut self,
         plan: CompleteStatePlanV0,
     ) -> Result<trnm_consensus_types::StateRoot> {
-        let expected = self
-            .roots
-            .last_key_value()
-            .map_or(0, |(version, _)| version + 1);
+        let expected = self.next_version_v0()?;
         ensure!(plan.version == expected, "complete state plan is stale");
         let root = plan.root_hash;
         self.apply_batch_v0(plan.version, root, plan.tree_update_batch, plan.preimages)?;
@@ -695,9 +695,24 @@ impl InMemoryNativeExecutionStoreV0 {
         &self,
         version: Version,
     ) -> Result<BTreeMap<Vec<u8>, Vec<u8>>> {
+        self.verified_selected_live_values_v0(version, |_| true)
+    }
+
+    /// Audit every live leaf, but retain only the values required by a caller.
+    /// Selection runs *after* proof, preimage and duplicate-key verification;
+    /// corruption in a discarded value still rejects the entire read. No
+    /// partial map escapes if a later proof fails. This saves retained payload
+    /// memory, not scan work, and adds neither an audit cache nor a trust root.
+    pub(crate) fn verified_selected_live_values_v0(
+        &self,
+        version: Version,
+        mut keep: impl FnMut(&[u8]) -> bool,
+    ) -> Result<BTreeMap<Vec<u8>, Vec<u8>>> {
         let mut live = BTreeMap::new();
         self.visit_verified_live_values_v0(version, |key, value| {
-            live.insert(key.to_vec(), value);
+            if keep(key) {
+                live.insert(key.to_vec(), value);
+            }
         })?;
         Ok(live)
     }
@@ -714,10 +729,17 @@ impl InMemoryNativeExecutionStoreV0 {
             .get(&version)
             .copied()
             .with_context(|| format!("missing authenticated root at version {version}"))?;
+        // An empty iterator has no leaf proof to check. Validate the indexed
+        // root node explicitly so an empty selection/tree cannot admit a
+        // substituted expected root merely by producing no values.
+        let tree = Sha256Jmt::new(self);
+        ensure!(
+            tree.get_root_hash(version)? == expected_root,
+            "authenticated live root disagrees with indexed root node"
+        );
         let reader = Arc::new(BorrowedNativeTreeReaderV0(self));
         let iterator = JellyfishMerkleIterator::new(Arc::clone(&reader), version, KeyHash([0; 32]))
             .with_context(|| format!("open authenticated iterator at version {version}"))?;
-        let tree = Sha256Jmt::new(self);
         let mut seen = BTreeSet::new();
         for entry in iterator {
             let (hash, value) = entry
@@ -1020,6 +1042,180 @@ mod snapshot_encoding_tests {
             .visit_verified_live_values_v0(2, |_, _| published += 1)
             .is_err());
         assert_eq!(published, 0, "unverified preimage reached the consumer");
+    }
+
+    #[test]
+    fn selected_live_values_match_full_filter_across_history_and_deletion() {
+        let mut store = empty_store();
+        store
+            .apply_seed_v0(
+                0,
+                vec![
+                    NativeStateWriteV0::raw(b"keep/a".to_vec(), vec![1; 17]).unwrap(),
+                    NativeStateWriteV0::raw(b"drop/b".to_vec(), vec![2; 31]).unwrap(),
+                ],
+            )
+            .unwrap();
+        for (version, writes) in [
+            vec![(b"keep/a".to_vec(), None), (b"keep/c".to_vec(), Some(vec![3]))],
+            vec![(b"keep/a".to_vec(), Some(Vec::new()))],
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let parent = version as Version;
+            let plan = plan_complete_state_update_v0(
+                &store,
+                parent,
+                parent + 1,
+                writes
+                    .into_iter()
+                    .map(|(key, value)| CompleteStateWriteV0::new(key, value).unwrap())
+                    .collect(),
+            )
+            .unwrap();
+            store.apply_complete_state_plan_v0(plan).unwrap();
+        }
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        for version in 0..=2 {
+            let expected: BTreeMap<_, _> = store
+                .verified_live_values_v0(version)
+                .unwrap()
+                .into_iter()
+                .filter(|(key, _)| key.starts_with(b"keep/"))
+                .collect();
+            let actual = store
+                .verified_selected_live_values_v0(version, |key| key.starts_with(b"keep/"))
+                .unwrap();
+            assert_eq!(actual, expected);
+        }
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+        let reopened = restore(&store).unwrap();
+        assert_eq!(
+            reopened
+                .verified_selected_live_values_v0(2, |key| key.starts_with(b"keep/"))
+                .unwrap(),
+            store
+                .verified_selected_live_values_v0(2, |key| key.starts_with(b"keep/"))
+                .unwrap(),
+        );
+    }
+
+    #[test]
+    fn selected_live_values_audit_all_leaves_without_retaining_unrelated_payloads() {
+        let mut store = empty_store();
+        let mut writes = vec![NativeStateWriteV0::raw(b"keep".to_vec(), vec![7; 3]).unwrap()];
+        for index in 0u32..256 {
+            let key = index.to_be_bytes().to_vec();
+            writes.push(NativeStateWriteV0::raw(key, vec![9; 4096]).unwrap());
+        }
+        store.apply_seed_v0(0, writes).unwrap();
+        let mut verified_leaves = 0usize;
+        let actual = store
+            .verified_selected_live_values_v0(0, |key| {
+                verified_leaves += 1;
+                key == b"keep"
+            })
+            .unwrap();
+        assert_eq!(verified_leaves, 257);
+        assert_eq!(actual.len(), 1);
+        assert_eq!(actual.get(b"keep".as_slice()), Some(&vec![7; 3]));
+        assert_eq!(actual.values().map(Vec::len).sum::<usize>(), 3);
+        // This checks retained results, not measured process RSS or scan speed.
+        assert_eq!(store.verified_live_values_v0(0).unwrap().len(), 257);
+    }
+
+    #[test]
+    fn selection_cannot_hide_corrupt_discarded_values() {
+        let mut store = historical_store();
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        store.values.insert((hash, 2), Some(vec![99; 257]));
+        let mut selected = 0;
+        assert!(store
+            .verified_selected_live_values_v0(2, |_| {
+                selected += 1;
+                false
+            })
+            .is_err());
+        assert_eq!(selected, 0, "selection ran before value authentication");
+    }
+
+    #[test]
+    fn selection_cannot_hide_corrupt_discarded_preimages() {
+        let mut store = historical_store();
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        store.preimages.insert(hash, b"different-account".to_vec());
+        let mut selected = 0;
+        assert!(store
+            .verified_selected_live_values_v0(2, |_| {
+                selected += 1;
+                false
+            })
+            .is_err());
+        assert_eq!(selected, 0, "selection ran before preimage authentication");
+    }
+
+    #[test]
+    fn selecting_no_values_still_requires_the_authenticated_root() {
+        let mut store = historical_store();
+        assert!(store.verified_selected_live_values_v0(3, |_| false).is_err());
+        store.roots.insert(2, RootHash([42; 32]));
+        assert!(store.verified_selected_live_values_v0(2, |_| false).is_err());
+    }
+
+    #[test]
+    fn an_empty_tree_cannot_hide_an_indexed_root_mismatch() {
+        let mut store = empty_store();
+        store.apply_seed_v0(0, Vec::new()).unwrap();
+        let empty = store.verified_selected_live_values_v0(0, |_| false).unwrap();
+        assert!(empty.is_empty());
+        store.roots.insert(0, RootHash([42; 32]));
+        assert!(store.verified_selected_live_values_v0(0, |_| false).is_err());
+        assert!(store.verified_live_values_v0(0).is_err());
+        assert!(restore(&store).is_err());
+    }
+
+    #[test]
+    fn exhausted_version_rejects_every_apply_path_without_mutation() {
+        let mut store = historical_store();
+        let complete = plan_complete_state_update_v0(&store, 2, 3, Vec::new()).unwrap();
+        let runtime = plan_state_update_v0(&store, 2, 3, Vec::new()).unwrap();
+        let root = store.parent_root_v0().unwrap();
+        // An unsupported extreme recovered coordinate must reject rather than
+        // panic in debug builds or wrap to zero in optimized builds.
+        store.roots.insert(u64::MAX, root);
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        assert!(store.apply_seed_v0(0, Vec::new()).is_err());
+        assert!(store.apply_complete_state_plan_v0(complete).is_err());
+        assert!(store.apply_runtime_object_delta_plan_v0(runtime).is_err());
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+    }
+
+    #[test]
+    fn native_control_selection_retains_malformed_reserved_namespace_keys() {
+        let mut store = empty_store();
+        let lifecycle = crate::auth_tree::validator_state_key().unwrap();
+        let malformed = b"trnm/authenticated-state/v4\0\x08".to_vec();
+        store
+            .apply_seed_v0(
+                0,
+                vec![
+                    NativeStateWriteV0::raw(lifecycle.clone(), vec![1]).unwrap(),
+                    NativeStateWriteV0::raw(malformed.clone(), vec![2]).unwrap(),
+                    NativeStateWriteV0::raw(b"unrelated".to_vec(), vec![3]).unwrap(),
+                ],
+            )
+            .unwrap();
+        let selected = store
+            .verified_selected_live_values_v0(0, |key| {
+                key == lifecycle.as_slice()
+                    || crate::auth_tree::is_poco_snapshot_namespace_key_v0(key)
+            })
+            .unwrap();
+        assert_eq!(selected.len(), 2);
+        assert!(selected.contains_key(&lifecycle));
+        assert!(selected.contains_key(&malformed));
+        assert!(crate::auth_tree::poco_snapshot_key_components(&malformed).is_err());
     }
 
     #[test]

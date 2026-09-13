@@ -557,7 +557,16 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
         "pinned signer policy commitment mismatch"
     );
 
-    let mut live = store.verified_live_values_v0(parent_version)?;
+    // Ordinary runtime objects are read by authenticated point lookup below.
+    // Retaining them all here duplicates the live state without serving the
+    // control projection. Still audit every leaf; retain all namespace-8 keys
+    // (including malformed keys) and the exact lifecycle key for the unchanged
+    // strict projection/decoder. Proof failures in discarded objects remain
+    // fatal and deterministic control-key error ordering is preserved.
+    let lifecycle_key = auth_tree::validator_state_key()?;
+    let mut live = store.verified_selected_live_values_v0(parent_version, |key| {
+        key == lifecycle_key.as_slice() || auth_tree::is_poco_snapshot_namespace_key_v0(key)
+    })?;
     let source_poco = take_and_validate_production_poco_projection_v0(parent_version, &mut live)?;
     let parent_lifecycle = load_validator_lifecycle_from_live_v0(&live, parent_version)?;
     ensure!(
