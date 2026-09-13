@@ -1,0 +1,181 @@
+name: Section7 fixed object import
+
+on:
+  push:
+    branches: [fix/chain-section7-offline-toolkit-20260913]
+    paths: [.github/workflows/trnm-section7-object-import.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  import-objects-only:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && github.ref == 'refs/heads/fix/chain-section7-offline-toolkit-20260913'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Verify fixed source data and import Git objects only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64
+          import datetime
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import re
+          import subprocess
+          import tempfile
+          import urllib.request
+
+          REPO = 'TrillionniumFoundation/Trillionnium-Chain'
+          BASE = '435c0168558d75fc70aaa11980a179b9d5980f33'
+          COMMITS = ['ca8d264771100742231ccbffa4feae910d0b25e8', '30e2ea24156538fc1fc4b038b5dcc03299023dec']
+          TARGET_TREE = 'de0c79b0348612ebc43ea28fdcc3ee8ffed4ead5'
+          BUNDLE_REF = 'refs/heads/fix/chain-section7-runtime-storage-20260913'
+          BUNDLE_SHA256 = '9926b55354ad1a21927b6f10fa4cb4d973706d8c2e605c080ad43beb79ea3387'
+          PARTS = [
+           ('a87d804d1bb3c04df84c25da75206976255607b2','a87d804d1bb3c04df84c25da75206976255607b2',4096),
+           ('38a697a9f81a845cd5f9afc54ab722136a19ce53','38a697a9f81a845cd5f9afc54ab722136a19ce53',4096),
+           ('a9de4fbf66606244a4d2b4811b2bdc1a0951bbed','a9de4fbf66606244a4d2b4811b2bdc1a0951bbed',4096),
+           ('eabea3b1c54bf002d6e1dd7f960ed3ff11a8e679','eabea3b1c54bf002d6e1dd7f960ed3ff11a8e679',4096),
+           ('b8e9304f39d3d5db17cc725adf00bfe1cfdfac8f','7d2463821ca6bbe9d0fa0c0fecb60757e8f42b0d',4096),
+           ('16466cebe7347a95676b3f45a009e02553fe2acb','16466cebe7347a95676b3f45a009e02553fe2acb',4096),
+           ('be2d1daa2d91a51699551f8b1f926995b5c07361','0f9194277229315de0c1f6d6e4e37cb36be8746d',4096),
+           ('d63346a1732b6e13778f84cde20765b189ac6838','d63346a1732b6e13778f84cde20765b189ac6838',4096),
+           ('601090150568cda791f24703bec50132d6d42ed2','601090150568cda791f24703bec50132d6d42ed2',4096),
+           ('abbca275ddb17f523dfffbd8d6ba8a04afbc2f66','88e154bcbe15c83a8bc13b98b036b92a56602697',1723),
+          ]
+
+          def require(condition, message):
+              if not condition:
+                  raise RuntimeError(message)
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, req, fp, code, msg, headers, newurl):
+                  raise RuntimeError('redirect refused')
+
+          opener = urllib.request.build_opener(NoRedirect)
+          def api(resource, body=None):
+              require(resource.startswith(('git/blobs', 'git/trees', 'git/commits')), 'unsupported endpoint')
+              data = None if body is None else json.dumps(body).encode()
+              request = urllib.request.Request('https://api.github.com/repos/'+REPO+'/'+resource, data=data, headers={
+                  'Authorization': 'Bearer '+os.environ['GH_TOKEN'],
+                  'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json',
+                  'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'fixed-remediation-object-import',
+              }, method='GET' if data is None else 'POST')
+              with opener.open(request, timeout=60) as response:
+                  raw = response.read(2_000_001)
+              require(len(raw) <= 2_000_000, 'response bound exceeded')
+              return json.loads(raw)
+
+          def blob_sha(data):
+              return hashlib.sha1(('blob '+str(len(data))+'\0').encode()+data).hexdigest()
+
+          def restore_transport(index, raw):
+              # Correct measured text-transfer transcription errors only.
+              # Original chunk and complete-bundle digests remain mandatory.
+              encoded = base64.b64encode(raw).decode()
+              if index == 4:
+                  require(encoded.count('rh23Hfx') == 1, 'unexpected part4 bytes')
+                  encoded = encoded.replace('rh23Hfx', 'rh23Nfx')
+              elif index == 6:
+                  require(encoded[4522:4531] == 'GYl5Kluac', 'unexpected part6 bytes')
+                  encoded = encoded[:4527]+'f'+encoded[4527:]
+                  encoded = encoded[:5448]+'d0i9T9hiWjKeFw=='
+              elif index == 9:
+                  require(encoded.count('MI2/6NE3Pfap') == 1, 'unexpected part9 bytes')
+                  encoded = encoded.replace('MI2/6NE3Pfap', 'MI2/6NE3/fap')
+              return base64.b64decode(encoded, validate=True)
+
+          with tempfile.TemporaryDirectory(prefix='trnm-fixed-object-import-') as temp:
+              root = pathlib.Path(temp)
+              bundle = root/'source.bundle'
+              chunks=[]
+              for index,(stored, expected, size) in enumerate(PARTS):
+                  record=api('git/blobs/'+stored)
+                  require(record['encoding']=='base64' and record['sha']==stored, 'blob response mismatch')
+                  raw=base64.b64decode(''.join(record['content'].split()), validate=True)
+                  require(blob_sha(raw)==stored, 'stored blob corrupt')
+                  raw=restore_transport(index, raw)
+                  require(len(raw)==size and blob_sha(raw)==expected, 'original chunk checksum mismatch')
+                  chunks.append(raw)
+              data=b''.join(chunks)
+              require(len(data)==38587 and hashlib.sha256(data).hexdigest()==BUNDLE_SHA256, 'bundle checksum mismatch')
+              bundle.write_bytes(data)
+              gitroot=root/'objects.git'
+              env=dict(os.environ, GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='/dev/null', GIT_TERMINAL_PROMPT='0')
+              def git(*args):
+                  return subprocess.check_output(['git','-c','core.hooksPath=/dev/null',*args], cwd=gitroot,env=env,timeout=120)
+              gitroot.mkdir()
+              git('init','--bare','.')
+              git('fetch','--no-tags','--depth=1','https://github.com/'+REPO+'.git',BASE)
+              git('bundle','verify',str(bundle))
+              require(git('bundle','list-heads',str(bundle)).decode().strip()==COMMITS[-1]+' '+BUNDLE_REF,'bundle refs differ')
+              git('fetch',str(bundle),BUNDLE_REF+':refs/import/candidate')
+              require(git('rev-parse','refs/import/candidate^{tree}').decode().strip()==TARGET_TREE,'candidate tree mismatch')
+              ordered=git('rev-list','--reverse',BASE+'..refs/import/candidate').decode().splitlines()
+              require(ordered==COMMITS,'unexpected candidate commits')
+              changed=git('diff','--name-only',BASE,COMMITS[-1]).decode().splitlines()
+              require(len(changed)==32 and all(not p.startswith('docs/protocol/') for p in changed),'unexpected source scope')
+              new=set(git('rev-list','--objects','--no-object-names',BASE+'..refs/import/candidate').decode().splitlines())
+              uploaded=set()
+              def upload_object(oid):
+                  if oid not in new or oid in uploaded:
+                      return
+                  kind=git('cat-file','-t',oid).decode().strip()
+                  if kind=='blob':
+                      payload=git('cat-file','blob',oid)
+                      require(len(payload)<=1_000_000,'blob bound exceeded')
+                      got=api('git/blobs',{'content':base64.b64encode(payload).decode(),'encoding':'base64'})
+                  elif kind=='tree':
+                      entries=[]
+                      for raw in git('ls-tree','-z',oid).split(b'\0'):
+                          if not raw: continue
+                          meta,path=raw.split(b'\t',1)
+                          mode, child_kind, child=meta.decode().split()
+                          require(child_kind in ('blob','tree'),'unexpected submodule')
+                          upload_object(child)
+                          entries.append({'path':path.decode(),'mode':mode.zfill(6),'type':child_kind,'sha':child})
+                      got=api('git/trees',{'tree':entries})
+                  else:
+                      raise RuntimeError('unexpected object kind: '+kind)
+                  require(got.get('sha')==oid,'uploaded '+kind+' identity mismatch')
+                  uploaded.add(oid)
+              def person(line):
+                  match=re.fullmatch(r'(.*) <([^<>]+)> ([0-9]+) ([+-][0-9]{4})',line)
+                  require(match is not None and match[4]=='+0000','unexpected commit identity encoding')
+                  return {'name':match[1],'email':match[2],'date':datetime.datetime.fromtimestamp(int(match[3]),datetime.timezone.utc).isoformat()}
+              predecessor=BASE
+              for oid in COMMITS:
+                  header,message=git('cat-file','commit',oid).decode().split('\n\n',1)
+                  lines=header.splitlines()
+                  require(len(lines)==4 and lines[1]=='parent '+predecessor,'unsupported commit metadata')
+                  tree=lines[0].removeprefix('tree ')
+                  upload_object(tree)
+                  body={'tree':tree,'parents':[predecessor],'message':message,
+                        'author':person(lines[2].removeprefix('author ')),
+                        'committer':person(lines[3].removeprefix('committer '))}
+                  got=api('git/commits',body)
+                  require(got.get('sha')==oid,'commit identity differs; no ref was moved')
+                  predecessor=oid
+              result={'scope':'data-only-object-import-not-ci-or-independent-acceptance','base':BASE,
+                      'commits':COMMITS,'tree':TARGET_TREE,'bundle_sha256':BUNDLE_SHA256,
+                      'changed_paths':changed,'uploaded_objects':len(uploaded),'refs_updated':False}
+              output=pathlib.Path(os.environ['RUNNER_TEMP'])/'trnm-fixed-object-import.json'
+              output.write_text(json.dumps(result,indent=2)+'\n')
+              print(json.dumps(result,indent=2))
+          PY
+      - name: Retain import receipt without credentials
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-fixed-object-import-30e2ea24
+          path: ${{ runner.temp }}/trnm-fixed-object-import.json
+          retention-days: 7
+          if-no-files-found: error
