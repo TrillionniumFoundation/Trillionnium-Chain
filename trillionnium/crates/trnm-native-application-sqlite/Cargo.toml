@@ -65,7 +65,7 @@ test-support = []
 [dependencies]
 libc = "0.2"
 rusqlite = { version = "0.32", features = ["bundled"] }
-sha2 = "0.10"
+sha2 = "0.11"
 trnm-consensus-core = { path = "../trnm-consensus-core", version = "=0.1.0" }
 trnm-consensus-safety-store = { path = "../trnm-consensus-safety-store", version = "=0.1.0" }
 trnm-consensus-types = { path = "../trnm-consensus-types", version = "=0.1.0" }

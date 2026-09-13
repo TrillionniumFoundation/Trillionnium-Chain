@@ -10,6 +10,6 @@ test-utils = []
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
-sha2 = "0.10"
+sha2 = "0.11"
 hex = "0.4"
 trnm-types = { version = "0.1.0", path = "../trnm-types" }

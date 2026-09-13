@@ -43,7 +43,7 @@ default = []
 [dependencies]
 borsh = { version = "1", features = ["derive"] }
 rusqlite = { version = "0.32", features = ["bundled"] }
-sha2 = "0.10"
+sha2 = "0.11"
 trnm-poco-agent-market-v1 = { path = "../trnm-poco-agent-market-v1", version = "=0.1.0" }
 trnm-poco-consumption-settlement-v1 = { path = "../trnm-poco-consumption-settlement-v1", version = "=0.1.0" }
 trnm-poco-da-v1 = { path = "../trnm-poco-da-v1", version = "=0.1.0" }

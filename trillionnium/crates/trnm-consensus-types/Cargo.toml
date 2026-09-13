@@ -12,5 +12,5 @@ protocol = "poco-bft-v0"
 wire_conformance = false
 
 [dependencies]
-sha2 = { version = "0.10", default-features = false }
+sha2 = { version = "0.11", default-features = false }
 subtle = { version = "2.6", default-features = false }

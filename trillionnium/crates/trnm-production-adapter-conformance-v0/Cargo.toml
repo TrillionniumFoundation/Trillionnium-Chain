@@ -7,7 +7,7 @@ authors.workspace = true
 publish = false
 
 [dependencies]
-sha2 = "0.10"
+sha2 = "0.11"
 trnm-node-boundary-v0 = { path = "../trnm-node-boundary-v0", version = "=0.1.0" }
 trnm-tx-lifecycle-v0 = { path = "../trnm-tx-lifecycle-v0", version = "=0.1.0" }
 trnm-state-sync-v0 = { path = "../trnm-state-sync-v0", version = "=0.1.0" }

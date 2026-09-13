@@ -14,6 +14,6 @@ wire_conformance = false
 genesis_fixture = "signed-qc-independent-block-id-prototype"
 
 [dependencies]
-sha2 = { version = "0.10", default-features = false }
+sha2 = { version = "0.11", default-features = false }
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

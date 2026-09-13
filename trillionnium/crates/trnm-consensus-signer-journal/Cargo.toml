@@ -27,7 +27,7 @@ fs2 = "0.4"
 getrandom = "0.2"
 libc = "0.2"
 rusqlite = { version = "0.32", features = ["bundled"] }
-sha2 = "0.10"
+sha2 = "0.11"
 subtle = "2.6"
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

@@ -35,6 +35,6 @@ safety_rules_production_consensus_activation = false
 
 [dependencies]
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
-sha2 = { version = "0.10", default-features = false }
+sha2 = { version = "0.11", default-features = false }
 trnm-consensus-safety-rules = { version = "0.1.0", path = "../trnm-consensus-safety-rules" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

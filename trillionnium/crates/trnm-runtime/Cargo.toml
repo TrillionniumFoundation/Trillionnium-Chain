@@ -13,7 +13,7 @@ trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 
 [dev-dependencies]
 hex = "0.4"
-sha2 = "0.10"
+sha2 = "0.11"
 trnm-pouw = { version = "0.1.0", path = "../trnm-pouw" }
 trnm-state = { version = "0.1.0", path = "../trnm-state" }
 trnm-types = { version = "0.1.0", path = "../trnm-types" }

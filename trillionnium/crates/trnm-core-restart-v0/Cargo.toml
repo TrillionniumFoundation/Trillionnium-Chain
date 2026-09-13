@@ -27,7 +27,7 @@ production_activation = false
 
 [dependencies]
 fs2 = "0.4"
-sha2 = "0.10"
+sha2 = "0.11"
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
 
