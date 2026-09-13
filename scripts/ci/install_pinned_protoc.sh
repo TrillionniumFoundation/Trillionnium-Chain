@@ -4,6 +4,8 @@ set -euo pipefail
 # Keep the protobuf compiler outside the repository while making the exact
 # toolchain reproducible for local and self-hosted gates.  The caller may pass
 # an install root; no existing file is overwritten in place.
+# stdout is a machine interface: emit only the executable path on success.
+# Keep all diagnostics on stderr for command-substitution and GITHUB_ENV callers.
 VERSION="${TRNM_PROTOC_VERSION:-29.3}"
 ARCHIVE="protoc-${VERSION}-linux-x86_64.zip"
 ARCHIVE_SHA256="3e866620c5be27664f3d2fa2d656b5f3e09b5152b42f1bedbf427b333e90021a"
@@ -32,7 +34,7 @@ fi
 curl --fail --location --retry 3 --retry-all-errors --silent --show-error \
   -A "Trillionnium-CI/1.0" "$URL" --output "$WORK_ROOT/$ARCHIVE"
 printf '%s  %s\n' "$ARCHIVE_SHA256" "$WORK_ROOT/$ARCHIVE" \
-  | sha256sum --check --strict
+  | sha256sum --check --strict >&2
 
 mkdir -p "$WORK_ROOT/extract"
 unzip -q "$WORK_ROOT/$ARCHIVE" -d "$WORK_ROOT/extract"

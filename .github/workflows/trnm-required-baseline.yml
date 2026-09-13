@@ -79,6 +79,8 @@ jobs:
           python3 scripts/ci/test_technical_convergence_v1.py
           python3 scripts/ci/test_main_protection_v1.py
           python3 scripts/ci/test_codeql_default_setup_v1.py
+          python3 scripts/ci/test_documentation_binding_log_v1.py
+          python3 -B scripts/ci/test_codeql_reconcile_regions_v1.py
           bash scripts/check_ci_runner_policy_test.sh
           timeout --signal=TERM --kill-after=30s 900s bash scripts/check_cargo_offline_policy_test.sh
       - name: Run repository security-boundary regressions
@@ -231,6 +233,8 @@ jobs:
             python3 scripts/ci/check_required_baseline_closure_v1.py
             python3 scripts/ci/test_module_coverage_guard_v1.py
             python3 scripts/ci/test_codeql_default_setup_v1.py
+            python3 scripts/ci/test_documentation_binding_log_v1.py
+            python3 -B scripts/ci/test_codeql_reconcile_regions_v1.py
             cd web4-frontend
             npm ci
             node scripts/test-playwright-installer.mjs

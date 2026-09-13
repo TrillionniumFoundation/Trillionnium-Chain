@@ -3,22 +3,44 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/trnm-pr7-gate-concurrency.XXXXXX")"
-trap 'rm -rf "$TMP"' EXIT
+pid1=""
+RELEASE_FIRST="$TMP/release-first"
+READY_FIRST="$TMP/ready-first"
+cleanup() {
+  # Release the holder even when an assertion fails; do not orphan the mock.
+  touch "$RELEASE_FIRST"
+  if [[ -n "$pid1" ]]; then
+    wait "$pid1" 2>/dev/null || true
+  fi
+  rm -rf "$TMP"
+}
+trap cleanup EXIT
 
-MOCK_PR6_SLEEP="$TMP/mock_pr6_sleep.sh"
-cat >"$MOCK_PR6_SLEEP" <<'EOS'
+MOCK_PR6_HOLD="$TMP/mock_pr6_hold.sh"
+cat >"$MOCK_PR6_HOLD" <<'EOS'
 #!/usr/bin/env bash
 set -euo pipefail
 RUN_DIR="${RUN_DIR:?}"
 mkdir -p "$RUN_DIR"
-sleep 2
+# A fixed sleep races with Python/policy startup on the competing runner.
+# Hold the real gate lock until the competing attempt has actually returned.
+: "${PR7_TEST_READY_FILE:?}" "${PR7_TEST_RELEASE_FILE:?}"
+touch "$PR7_TEST_READY_FILE"
+deadline=$((SECONDS + 60))
+while [[ ! -f "$PR7_TEST_RELEASE_FILE" ]]; do
+  if (( SECONDS >= deadline )); then
+    echo "[FAIL] holder release handshake timed out" >&2
+    exit 2
+  fi
+  sleep 0.1
+done
 cat >"$RUN_DIR/summary.txt" <<'EOR'
 status=WARN
 alert_level=WARN
 alert_code=PR6_ALERT_RULES
 EOR
 EOS
-chmod +x "$MOCK_PR6_SLEEP"
+chmod +x "$MOCK_PR6_HOLD"
 
 MOCK_PR6_FAST="$TMP/mock_pr6_fast.sh"
 cat >"$MOCK_PR6_FAST" <<'EOS'
@@ -44,20 +66,20 @@ chmod +x "$MOCK_PR7_OK"
 LOCK_DIR="$TMP/.pr7-lock"
 
 # Case 1: concurrent run should not overlap; second run times out on lock.
-RUN_DIR="$TMP/run-a" PR7_GATE_LOCK_DIR="$LOCK_DIR" PR7_GATE_LOCK_WAIT_SECONDS=10 PR7_GATE_LOCK_JITTER_MIN_MS=120 PR7_GATE_LOCK_JITTER_MAX_MS=120 PR6_GATE_CMD="$MOCK_PR6_SLEEP" PR7_DELIVERY_CMD="$MOCK_PR7_OK" \
+PR7_TEST_READY_FILE="$READY_FIRST" PR7_TEST_RELEASE_FILE="$RELEASE_FIRST" \
+RUN_DIR="$TMP/run-a" PR7_GATE_LOCK_DIR="$LOCK_DIR" PR7_GATE_LOCK_WAIT_SECONDS=10 PR7_GATE_LOCK_JITTER_MIN_MS=120 PR7_GATE_LOCK_JITTER_MAX_MS=120 PR6_GATE_CMD="$MOCK_PR6_HOLD" PR7_DELIVERY_CMD="$MOCK_PR7_OK" \
   "$ROOT/scripts/v2/pr7_alert_delivery_gate.sh" >"$TMP/run-a.out" 2>&1 &
 pid1=$!
 
-# Avoid race on slower CI hosts: wait until run-a has actually acquired the lock.
-for _ in {1..30}; do
-  [[ -d "$LOCK_DIR" ]] && break
+# Observe the holder inside PR6, after the real driver acquired its lock.
+for _ in {1..300}; do
+  [[ -f "$READY_FIRST" && -d "$LOCK_DIR" ]] && break
+  kill -0 "$pid1" 2>/dev/null || break
   sleep 0.1
 done
-if [[ ! -d "$LOCK_DIR" ]]; then
+if [[ ! -f "$READY_FIRST" || ! -d "$LOCK_DIR" ]]; then
   echo "[FAIL] first run did not acquire lock in time"
   cat "$TMP/run-a.out" || true
-  kill "$pid1" 2>/dev/null || true
-  wait "$pid1" 2>/dev/null || true
   exit 1
 fi
 
@@ -66,7 +88,9 @@ RUN_DIR="$TMP/run-b" PR7_GATE_LOCK_DIR="$LOCK_DIR" PR7_GATE_LOCK_WAIT_SECONDS=1 
   "$ROOT/scripts/v2/pr7_alert_delivery_gate.sh" >"$TMP/run-b.out" 2>&1
 rc2=$?
 set -e
+touch "$RELEASE_FIRST"
 wait "$pid1"
+pid1=""
 
 if [[ "$rc2" -ne 5 ]]; then
   echo "[FAIL] expected second concurrent run to exit rc=5 on lock timeout, got rc=$rc2"

@@ -12,6 +12,8 @@ on:
       - 'scripts/ci/check_agent_development_docs_v1.sh'
       - 'scripts/ci/check_documentation_reference_closure_v1.py'
       - 'scripts/ci/check_module_coverage_v1.py'
+      - 'scripts/ci/documentation_binding_log_v1.py'
+      - 'scripts/ci/test_documentation_binding_log_v1.py'
       - '.github/workflows/trnm-documentation-truth.yml'
   push:
     branches:
@@ -27,6 +29,8 @@ on:
       - 'scripts/ci/check_agent_development_docs_v1.sh'
       - 'scripts/ci/check_documentation_reference_closure_v1.py'
       - 'scripts/ci/check_module_coverage_v1.py'
+      - 'scripts/ci/documentation_binding_log_v1.py'
+      - 'scripts/ci/test_documentation_binding_log_v1.py'
       - '.github/workflows/trnm-documentation-truth.yml'
   workflow_dispatch:
 
@@ -131,12 +135,16 @@ jobs:
             echo '### Documentation source binding'
             echo "- source: \`${TRNM_EXPECTED_SOURCE_SHA}\`"
             echo "- SHA-256: \`${digest}\`"
-            echo '- binding was generated and validated on the trusted X230; the check log carries the immutable digest without a separate artifact action dependency'
+            echo '- binding was generated and validated on the trusted X230; the check log retains complete bounded binding bytes and SHA-256; retain the authenticated job log for independent review'
           } >> "${GITHUB_STEP_SUMMARY}"
           printf 'TRNM_DOCUMENTATION_SOURCE_BINDING_SHA256=%s\n' "${digest}"
+          python3 scripts/ci/documentation_binding_log_v1.py emit \
+            --binding "${binding}" --expected-sha256 "${digest}" --mode source
 
   prospective-merge:
     name: documentation-truth-merge
+    env:
+      TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
     if: >-
       github.event_name == 'pull_request' && (github.repository ==
       'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name ==
@@ -182,6 +190,8 @@ jobs:
             echo '### Documentation prospective-merge binding'
             echo "- merge SHA: \`${GITHUB_SHA}\`"
             echo "- SHA-256: \`${digest}\`"
-            echo '- binding was generated and validated on the trusted X230; the check log carries the immutable digest without a separate artifact action dependency'
+            echo '- binding was generated and validated on the trusted X230; the check log retains complete bounded binding bytes and SHA-256; retain the authenticated job log for independent review'
           } >> "${GITHUB_STEP_SUMMARY}"
           printf 'TRNM_DOCUMENTATION_MERGE_BINDING_SHA256=%s\n' "${digest}"
+          python3 scripts/ci/documentation_binding_log_v1.py emit \
+            --binding "${binding}" --expected-sha256 "${digest}" --mode merge

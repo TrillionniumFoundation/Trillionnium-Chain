@@ -28,6 +28,8 @@ exit 0
 EOS
 chmod +x "$MOCK_PR6"
 
+# This contract exercises minimum severity, not the wall-clock quiet window.
+# Preserve production quiet-hours policy and isolate it only in this fixture.
 RUN_DIR="$RUN_DIR" \
 PR6_GATE_CMD="$MOCK_PR6" \
 PR7_STATUS_FILE="$STATUS_FILE" \
@@ -37,6 +39,7 @@ ALERT_NOTIFY_DEAD_LETTER_FILE="$TMP/dead.jsonl" \
 ALERT_NOTIFY_CHANNEL=imessage \
 ALERT_NOTIFY_PRIMARY_CHANNEL=imessage \
 ALERT_NOTIFY_MIN_LEVEL=WARN \
+ALERT_NOTIFY_QUIET_HOURS_ENABLED=0 \
 IMESSAGE_TO=test@example.com \
 "$ROOT/scripts/v2/pr7_alert_delivery_gate.sh" >/dev/null
 
