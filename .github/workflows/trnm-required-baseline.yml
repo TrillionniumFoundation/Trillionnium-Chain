@@ -175,7 +175,7 @@ jobs:
           git diff --exit-code -- .
           test -z "$(git status --porcelain --untracked-files=all)"
       - name: Install repository-pinned Node for consumer replay
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version-file: trillionnium-chain/.node-version
           cache: npm
@@ -285,7 +285,7 @@ jobs:
         run: |
           rustup toolchain install 1.95.0 --profile minimal
           rustup override set 1.95.0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: "24.18.0"
       - name: Validate canonical plan, mainline and active protocol contract
