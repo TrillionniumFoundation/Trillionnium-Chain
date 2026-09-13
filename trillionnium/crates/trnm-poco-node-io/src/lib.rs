@@ -267,13 +267,6 @@ where
 
     pub fn arm(&mut self, arm: PacemakerArmV0) -> Result<PacemakerArmV0, PacemakerErrorV0> {
         let now = self.observe_now()?;
-        let delay = arm
-            .deadline_millis
-            .checked_sub(now)
-            .ok_or(PacemakerErrorV0::InvalidDeadline)?;
-        if delay == 0 || delay > MAX_CANDIDATE_PACEMAKER_DELAY_MILLIS_V0 {
-            return Err(PacemakerErrorV0::InvalidDeadline);
-        }
         if self.pending_fire.is_some() {
             return Err(PacemakerErrorV0::PendingFire);
         }
@@ -294,6 +287,16 @@ where
             if arm.identity < current.identity {
                 return Err(PacemakerErrorV0::StaleArm);
             }
+        }
+        // Exact retry returns the already installed deadline above, even
+        // after it has elapsed. Only a *new* arm needs a future deadline;
+        // retry must neither postpone the pending timeout nor lose its ACK.
+        let delay = arm
+            .deadline_millis
+            .checked_sub(now)
+            .ok_or(PacemakerErrorV0::InvalidDeadline)?;
+        if delay == 0 || delay > MAX_CANDIDATE_PACEMAKER_DELAY_MILLIS_V0 {
+            return Err(PacemakerErrorV0::InvalidDeadline);
         }
         self.armed = Some(arm);
         Ok(arm)
@@ -321,6 +324,12 @@ where
     ) -> Result<(), PacemakerErrorV0> {
         if self.poisoned {
             return Err(PacemakerErrorV0::Poisoned);
+        }
+        // The acknowledgement reply can be lost too. Repeating the last
+        // exact ACK is a no-op, including while a newer arm/fire is pending.
+        // Older, future and conflicting identities still fail below.
+        if self.last_acknowledged == Some(identity) {
+            return Ok(());
         }
         let pending = self
             .pending_fire
