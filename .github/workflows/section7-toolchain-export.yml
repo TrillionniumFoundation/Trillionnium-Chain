@@ -1,0 +1,50 @@
+name: Section7 isolated toolchain export
+
+on:
+  push:
+    branches: [diagnostic/chain-section7-toolchain-20260913]
+    paths: [.github/workflows/section7-toolchain-export.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      RUSTUP_TOOLCHAIN: 1.95.0
+      EXPECTED_SOURCE: 435c0168558d75fc70aaa11980a179b9d5980f33
+    steps:
+      - name: Read exact existing source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 435c0168558d75fc70aaa11980a179b9d5980f33
+          persist-credentials: false
+      - name: Prepare official toolchain and locked dependency source only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE"
+          test "$(git rev-parse HEAD^{tree})" = 1e3db388234eff27b7214cc7879aef6853214709
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          out="$RUNNER_TEMP/section7-toolchain"
+          mkdir -p "$out"
+          rustc -Vv > "$out/rustc-version.txt"
+          cargo -V > "$out/cargo-version.txt"
+          sha256sum trillionnium/Cargo.lock > "$out/source-lock.sha256"
+          cargo vendor --locked --manifest-path trillionnium/Cargo.toml "$RUNNER_TEMP/section7-vendor" > "$out/vendor-config.example.toml"
+          toolchain="$(dirname "$(dirname "$(rustup which rustc)")")"
+          tar -czf "$out/rust-toolchain.tar.gz" -C "$toolchain" .
+          tar -czf "$out/vendor.tar.gz" -C "$RUNNER_TEMP/section7-vendor" .
+          printf '%s\n' 'scope=development-environment-only-not-test-or-production-acceptance' "$EXPECTED_SOURCE" > "$out/SCOPE"
+          (cd "$out" && sha256sum rust-toolchain.tar.gz vendor.tar.gz rustc-version.txt cargo-version.txt source-lock.sha256 vendor-config.example.toml SCOPE > SHA256SUMS)
+          git diff --exit-code -- trillionnium/Cargo.lock
+      - name: Export only toolchain and public dependency sources
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: section7-rust-1.95.0-locked-environment
+          path: ${{ runner.temp }}/section7-toolchain/
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
