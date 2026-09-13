@@ -132,12 +132,12 @@ pub(crate) fn authorize_poco_checkpoint_joint_handoff_for_fixture_v0(
     )
 }
 
-fn authorize_poco_checkpoint_joint_handoff_from_authorized_v0(
+/// Structural admission shared by both phases. This does not verify signatures.
+fn admit_bound_checkpoint_two_seal_v0(
     checkpoint_header: &AuthorizedPocoCheckpointHeaderV0,
     raw_checkpoint_parent_header_cev0: &[u8],
     raw_checkpoint_two_seal_finality_cev0: &[u8],
-    raw_anchor_certificate_kernel_cev0: &[u8],
-) -> Result<AuthorizedPocoJointHandoffV0> {
+) -> Result<(BlockHeader, FinalityProofV0)> {
     let commitment_authority = checkpoint_header.prepared().commitment_authority();
     let old_validator_set = commitment_authority.old_validator_set();
     let old_parameters = commitment_authority.old_parameters();
@@ -230,6 +230,66 @@ fn authorize_poco_checkpoint_joint_handoff_from_authorized_v0(
             && checkpoint_justify.view() == checkpoint_parent_header.view(),
         "checkpoint parent header differs from the exact checkpoint justify QC"
     );
+
+    Ok((checkpoint_parent_header, checkpoint_finality))
+}
+
+/// Strict pre-certificate boundary: no joint certificate, anchor, or handoff
+/// signature is an input. A committed application receipt must be joined by
+/// the native owner before this proof may be returned to a consumer.
+pub(crate) fn verify_bound_checkpoint_two_seal_v0(
+    checkpoint_header: &DurablyBoundPocoCheckpointHeaderV0,
+    raw_checkpoint_parent_header_cev0: &[u8],
+    raw_checkpoint_two_seal_finality_cev0: &[u8],
+) -> Result<FinalityProofV0> {
+    let authorized = checkpoint_header.authorized();
+    let authority = authorized.prepared().commitment_authority();
+    let mut budget =
+        trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(authority.old_parameters());
+    budget
+        .admit_root_bytes(raw_checkpoint_two_seal_finality_cev0.len())
+        .map_err(|error| anyhow::anyhow!("checkpoint proof byte budget: {error:?}"))?;
+    let (parent, finality) = admit_bound_checkpoint_two_seal_v0(
+        authorized,
+        raw_checkpoint_parent_header_cev0,
+        raw_checkpoint_two_seal_finality_cev0,
+    )?;
+    // Reserve the complete nested proof work before the first Ed25519 check.
+    // This is a per-call proof bound, not a network/session rate limiter.
+    budget
+        .charge_finality_proof(&finality)
+        .map_err(|error| anyhow::anyhow!("checkpoint proof signature budget: {error:?}"))?;
+    finality
+        .verify_checkpoint_two_seal_kernel(
+            authority.old_validator_set(),
+            authority.old_parameters(),
+            &authority.commitment(),
+            parent.timestamp_ms(),
+            &StrictEd25519Verifier,
+        )
+        .map_err(|error| anyhow::anyhow!("strict pre-handoff checkpoint finality: {error}"))?;
+    Ok(finality)
+}
+
+fn authorize_poco_checkpoint_joint_handoff_from_authorized_v0(
+    checkpoint_header: &AuthorizedPocoCheckpointHeaderV0,
+    raw_checkpoint_parent_header_cev0: &[u8],
+    raw_checkpoint_two_seal_finality_cev0: &[u8],
+    raw_anchor_certificate_kernel_cev0: &[u8],
+) -> Result<AuthorizedPocoJointHandoffV0> {
+    let commitment_authority = checkpoint_header.prepared().commitment_authority();
+    let old_validator_set = commitment_authority.old_validator_set();
+    let old_parameters = commitment_authority.old_parameters();
+    let new_validator_set = commitment_authority.new_validator_set();
+    let new_parameters = commitment_authority.new_parameters();
+    let commitment = commitment_authority.commitment();
+    let scheduled_cutoff = commitment_authority.scheduled_cutoff();
+    let (checkpoint_parent_header, checkpoint_finality) = admit_bound_checkpoint_two_seal_v0(
+        checkpoint_header,
+        raw_checkpoint_parent_header_cev0,
+        raw_checkpoint_two_seal_finality_cev0,
+    )?;
+    let finalized_checkpoint = checkpoint_finality.finalized_block();
 
     let anchor_certificate_kernel = decode_epoch_anchor_authorization_kernel_v0_exact(
         raw_anchor_certificate_kernel_cev0,

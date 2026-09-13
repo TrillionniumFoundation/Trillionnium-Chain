@@ -1064,6 +1064,98 @@ impl ConfirmedNativePocoCheckpointV0 {
     }
 }
 
+/// A real COMMITTED native checkpoint with strictly verified checkpoint/two-seal
+/// finality, available *before* either handoff certificate quorum exists.
+///
+/// No public constructor, Clone, deserializer, signer, or anchor is exposed.
+/// This is an application-side prerequisite, not role-specific signer admission
+/// or Core epoch activation. A consumer must freshly revalidate the owner and
+/// then independently persist its role-specific signing decision.
+///
+/// ```compile_fail
+/// use trnm_native_execution_v0::ConfirmedNativePreHandoffCheckpointV0;
+/// fn copy(receipt: &ConfirmedNativePreHandoffCheckpointV0) {
+///     let _: ConfirmedNativePreHandoffCheckpointV0 = receipt.clone();
+/// }
+/// ```
+#[must_use]
+pub struct ConfirmedNativePreHandoffCheckpointV0 {
+    read: crate::FinalizedNativeApplicationReadV0,
+    prepared: PreparedNativePocoCheckpointV0,
+    finality: trnm_consensus_types::FinalityProofV0,
+    post_execution_authorization_id: [u8; 32],
+}
+
+impl ConfirmedNativePreHandoffCheckpointV0 {
+    pub fn header(&self) -> &trnm_consensus_types::BlockHeader {
+        self.prepared.header()
+    }
+    pub fn durable_row(&self) -> &crate::ConfirmedDurableExecutionHistoryRowV0 {
+        self.read.durable_row_v0()
+    }
+    pub fn executed(&self) -> &NativeExecutedBlockV0 {
+        self.read.executed_v0()
+    }
+    pub fn checkpoint_finality(&self) -> &trnm_consensus_types::FinalityProofV0 {
+        &self.finality
+    }
+    pub fn post_execution_authorization_id(&self) -> [u8; 32] {
+        self.post_execution_authorization_id
+    }
+
+    /// Immutable evidence for the separately admitted M03 signing role. These
+    /// values are not a signing permit; the consumer supplies its independently
+    /// commissioned old trust context and enforces its own durable sign intent.
+    pub fn next_epoch_commitment(&self) -> trnm_consensus_types::NextEpochCommitmentV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .commitment()
+    }
+    pub fn old_validator_set(&self) -> &ValidatorSet {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .old_validator_set()
+    }
+    pub fn new_validator_set(&self) -> &ValidatorSet {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .new_validator_set()
+    }
+    pub fn old_consensus_parameters(&self) -> &ConsensusParametersV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .old_parameters()
+    }
+    pub fn new_consensus_parameters(&self) -> &ConsensusParametersV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .new_parameters()
+    }
+    pub fn checkpoint_parent_header(&self) -> &trnm_consensus_types::BlockHeader {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .checkpoint_parent()
+            .header()
+    }
+}
+
 impl DurableNativeApplicationV0 {
     /// Rebuild the cutoff proof from this owner's committed JMT, strictly
     /// verify the supplied raw finality chain, execute the exact request, and
@@ -1113,6 +1205,78 @@ impl DurableNativeApplicationV0 {
         })
     }
 
+    /// Joins exact native COMMITTED readback and recomputed cutoff/commitment
+    /// authority to a strict two-seal proof, without requiring a joint handoff
+    /// certificate. Calling this on PREPARED state is an error, never a commit.
+    pub fn confirm_poco_checkpoint_before_handoff_v0(
+        &self,
+        prepared: PreparedNativePocoCheckpointV0,
+        raw_checkpoint_two_seal_finality: &[u8],
+    ) -> Result<ConfirmedNativePreHandoffCheckpointV0> {
+        let (read, post_execution_authorization_id) =
+            self.revalidate_committed_poco_checkpoint_v0(&prepared)?;
+        let parent = prepared
+            .bound
+            .authorized()
+            .prepared()
+            .checkpoint_parent()
+            .header()
+            .try_cev0_bytes()
+            .map_err(|error| anyhow::anyhow!("checkpoint parent encoding: {error:?}"))?;
+        let finality = crate::poco_joint_handoff::verify_bound_checkpoint_two_seal_v0(
+            &prepared.bound,
+            &parent,
+            raw_checkpoint_two_seal_finality,
+        )?;
+        Ok(ConfirmedNativePreHandoffCheckpointV0 {
+            read,
+            prepared,
+            finality,
+            post_execution_authorization_id,
+        })
+    }
+
+    /// Held receipts do not prove that the preparation journal and native store
+    /// still agree. Freshly read both named authorities and recheck the proof.
+    /// This call has no signing or epoch-activation side effect.
+    pub fn revalidate_poco_pre_handoff_checkpoint_v0(
+        &self,
+        receipt: &ConfirmedNativePreHandoffCheckpointV0,
+    ) -> Result<()> {
+        let (read, authorization_id) =
+            self.revalidate_committed_poco_checkpoint_v0(&receipt.prepared)?;
+        ensure!(
+            authorization_id == receipt.post_execution_authorization_id
+                && read.executed_v0() == receipt.read.executed_v0()
+                && read.durable_row_v0().commit_sequence_v0()
+                    == receipt.read.durable_row_v0().commit_sequence_v0(),
+            "pre-handoff native checkpoint receipt changed"
+        );
+        let parent = receipt
+            .prepared
+            .bound
+            .authorized()
+            .prepared()
+            .checkpoint_parent()
+            .header()
+            .try_cev0_bytes()
+            .map_err(|error| anyhow::anyhow!("checkpoint parent encoding: {error:?}"))?;
+        let raw = receipt
+            .finality
+            .try_cev0_bytes()
+            .map_err(|error| anyhow::anyhow!("checkpoint finality encoding: {error:?}"))?;
+        let proof = crate::poco_joint_handoff::verify_bound_checkpoint_two_seal_v0(
+            &receipt.prepared.bound,
+            &parent,
+            &raw,
+        )?;
+        ensure!(
+            proof == receipt.finality,
+            "pre-handoff checkpoint proof changed"
+        );
+        Ok(())
+    }
+
     /// Confirm a prepared checkpoint only after the exact native execution has
     /// become a committed P row in this owner and both frozen handoff proof
     /// layers independently verify. Reopen callers must reconstruct preparation
@@ -1123,6 +1287,35 @@ impl DurableNativeApplicationV0 {
         raw_checkpoint_two_seal_finality: &[u8],
         raw_anchor_certificate_kernel: &[u8],
     ) -> Result<ConfirmedNativePocoCheckpointV0> {
+        let (read, post_execution_authorization_id) =
+            self.revalidate_committed_poco_checkpoint_v0(&prepared)?;
+        // The immutable finality evidence must name the exact parent used by
+        // the original raw cutoff chain, not a caller-selected timestamp/root.
+        let parent = prepared
+            .bound
+            .authorized()
+            .prepared()
+            .checkpoint_parent()
+            .header()
+            .try_cev0_bytes()
+            .map_err(|e| anyhow::anyhow!("checkpoint parent encoding: {e:?}"))?;
+        let handoff = crate::poco_joint_handoff::authorize_poco_checkpoint_joint_handoff_v0(
+            prepared.bound,
+            &parent,
+            raw_checkpoint_two_seal_finality,
+            raw_anchor_certificate_kernel,
+        )?;
+        Ok(ConfirmedNativePocoCheckpointV0 {
+            read,
+            handoff,
+            post_execution_authorization_id,
+        })
+    }
+
+    fn revalidate_committed_poco_checkpoint_v0(
+        &self,
+        prepared: &PreparedNativePocoCheckpointV0,
+    ) -> Result<(crate::FinalizedNativeApplicationReadV0, [u8; 32])> {
         let journal = self.poco_preparation_journal_v0()?;
         crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
             &journal,
@@ -1182,27 +1375,7 @@ impl DurableNativeApplicationV0 {
             "post-execution next-epoch commitment differs from preheader authority"
         );
         let post_execution_authorization_id = commitment.authorization_id();
-        // The immutable finality evidence must name the exact parent used by
-        // the original raw cutoff chain, not a caller-selected timestamp/root.
-        let parent = prepared
-            .bound
-            .authorized()
-            .prepared()
-            .checkpoint_parent()
-            .header()
-            .try_cev0_bytes()
-            .map_err(|e| anyhow::anyhow!("checkpoint parent encoding: {e:?}"))?;
-        let handoff = crate::poco_joint_handoff::authorize_poco_checkpoint_joint_handoff_v0(
-            prepared.bound,
-            &parent,
-            raw_checkpoint_two_seal_finality,
-            raw_anchor_certificate_kernel,
-        )?;
-        Ok(ConfirmedNativePocoCheckpointV0 {
-            read,
-            handoff,
-            post_execution_authorization_id,
-        })
+        Ok((read, post_execution_authorization_id))
     }
 
     fn poco_preparation_journal_v0(
@@ -1282,11 +1455,11 @@ mod native_authorization_tests {
     };
 
     const CHAIN: &str = "native-poco-authorization-test";
-    fn key(index: usize) -> SigningKey {
+    pub(super) fn key(index: usize) -> SigningKey {
         SigningKey::from_bytes(&[20 + index as u8; 32])
     }
 
-    fn config() -> NativeApplicationConfigV0 {
+    pub(super) fn config() -> NativeApplicationConfigV0 {
         let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
         fields.epoch_length_blocks = 10;
         fields.snapshot_lead_blocks = 3;
@@ -1383,7 +1556,7 @@ mod native_authorization_tests {
         .unwrap()
     }
 
-    fn open(
+    pub(super) fn open(
         path: &std::path::Path,
         config: NativeApplicationConfigV0,
     ) -> DurableNativeApplicationV0 {
@@ -1619,10 +1792,7 @@ mod native_authorization_tests {
             .is_err());
     }
 
-    fn handoff_proofs(prepared: &PreparedNativePocoCheckpointV0) -> (Vec<u8>, Vec<u8>) {
-        use trnm_consensus_types::{
-            HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields, SignatureShareV0,
-        };
+    pub(super) fn two_seal_finality(prepared: &PreparedNativePocoCheckpointV0) -> FinalityProofV0 {
         let preheader = prepared.bound.authorized().prepared();
         let authority = preheader.commitment_authority();
         let set = authority.old_validator_set();
@@ -1682,7 +1852,7 @@ mod native_authorization_tests {
             )
             .unwrap()
         };
-        let finality = FinalityProofV0::new(
+        FinalityProofV0::new(
             certified(0),
             certified(1),
             certified(2),
@@ -1691,8 +1861,23 @@ mod native_authorization_tests {
             parameters,
             parent.timestamp_ms(),
         )
-        .unwrap();
-        let terminal = &chain[2];
+        .unwrap()
+    }
+
+    fn handoff_proofs(prepared: &PreparedNativePocoCheckpointV0) -> (Vec<u8>, Vec<u8>) {
+        use trnm_consensus_types::{
+            HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields, SignatureShareV0,
+        };
+        let finality = two_seal_finality(prepared);
+        let authority = prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority();
+        let set = authority.old_validator_set();
+        let parameters = authority.old_parameters();
+        let checkpoint = prepared.header();
+        let terminal = finality.grandchild().header();
         let terminal_qc = qc(terminal, set);
         let new_set = authority.new_validator_set();
         let descriptor = HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
@@ -1748,7 +1933,7 @@ mod native_authorization_tests {
         (finality.try_cev0_bytes().unwrap(), anchor)
     }
 
-    fn ordinary_prefix(app: &DurableNativeApplicationV0) -> Vec<BlockHeader> {
+    pub(super) fn ordinary_prefix(app: &DurableNativeApplicationV0) -> Vec<BlockHeader> {
         (0..7)
             .map(|_| {
                 let (header, executed) = execute(app, next_request(app), BlockKind::Regular);
@@ -1759,7 +1944,7 @@ mod native_authorization_tests {
             .collect()
     }
 
-    fn preparation(
+    pub(super) fn preparation(
         app: &DurableNativeApplicationV0,
         headers: &[BlockHeader],
     ) -> PreparedNativePocoCheckpointV0 {
@@ -1771,6 +1956,192 @@ mod native_authorization_tests {
             &headers[3].try_cev0_bytes().unwrap(),
         )
         .unwrap()
+    }
+
+    pub(super) fn execute_prepared_checkpoint(
+        app: &DurableNativeApplicationV0,
+        prepared: &PreparedNativePocoCheckpointV0,
+    ) -> NativeExecutedBlockV0 {
+        let request = next_request(app);
+        let header = prepared.header();
+        let request = NativeBlockExecutionRequestV0::new(
+            request.chain_id().clone(),
+            request.genesis_hash(),
+            request.parent().clone(),
+            BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+            request.height(),
+            request.timestamp_ms(),
+            request.active_validator_set_id(),
+            request.transactions().to_vec(),
+            NativeExpectedBlockCommitmentsV0::new(
+                trnm_native_application::Hash32V0::new(*header.payload_root().as_bytes()),
+                trnm_native_application::StateRootV0::new(*header.state_root().as_bytes()).unwrap(),
+                trnm_native_application::ReceiptsRootV0::new(*header.receipts_root().as_bytes())
+                    .unwrap(),
+                trnm_native_application::Hash32V0::new(*header.evidence_root().as_bytes()),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        match app.execute_block(request).unwrap() {
+            NativeBlockExecutionResultV0::Valid(executed) => *executed,
+            other => panic!("checkpoint execution did not prepare: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn pre_handoff_checkpoint_requires_no_joint_certificate_and_makes_no_seal_rows() {
+        let directory = tempfile::tempdir().unwrap();
+        let app = open(&directory.path().join("application.sqlite3"), config());
+        let headers = ordinary_prefix(&app);
+        let prepared = preparation(&app, &headers);
+        let header = prepared.header().clone();
+        // This fixture creates only old-set checkpoint/seal signatures, never
+        // HandoffDescriptor signatures or a HandoffCertificate.
+        let proof = two_seal_finality(&prepared).try_cev0_bytes().unwrap();
+        let executed = execute_prepared_checkpoint(&app, &prepared);
+        app.commit_block(NativeApplicationCommitRequestV0::new(executed))
+            .unwrap();
+        let before = app.confirmed_committed_head_v0().unwrap();
+        let receipt = app
+            .confirm_poco_checkpoint_before_handoff_v0(prepared, &proof)
+            .unwrap();
+        assert_eq!(receipt.header(), &header);
+        assert_eq!(receipt.durable_row().commit_sequence_v0(), Some(17));
+        assert_eq!(
+            receipt.checkpoint_finality().finalized_block().header(),
+            &header
+        );
+        assert_eq!(receipt.executed().request().height().get(), 8);
+        assert_ne!(receipt.post_execution_authorization_id(), [0; 32]);
+        app.revalidate_poco_pre_handoff_checkpoint_v0(&receipt)
+            .unwrap();
+        assert_eq!(app.confirmed_committed_head_v0().unwrap(), before);
+        for seal_height in [9, 10] {
+            assert!(app
+                .read_finalized_by_height_v0(HeightV0::new(seal_height))
+                .is_err());
+        }
+    }
+
+    #[test]
+    fn pre_handoff_checkpoint_cannot_promote_prepared_native_execution() {
+        let directory = tempfile::tempdir().unwrap();
+        let app = open(&directory.path().join("application.sqlite3"), config());
+        let headers = ordinary_prefix(&app);
+        let prepared = preparation(&app, &headers);
+        let proof = two_seal_finality(&prepared).try_cev0_bytes().unwrap();
+        let _executed = execute_prepared_checkpoint(&app, &prepared);
+        let before = app.confirmed_committed_head_v0().unwrap();
+        assert!(app
+            .confirm_poco_checkpoint_before_handoff_v0(prepared, &proof)
+            .is_err());
+        assert_eq!(app.confirmed_committed_head_v0().unwrap(), before);
+        assert_eq!(before.height().get(), 7);
+        assert!(app.read_finalized_by_height_v0(HeightV0::new(8)).is_err());
+    }
+
+    #[test]
+    fn pre_handoff_checkpoint_rejects_corrupt_signature_and_wrong_proof_bytes() {
+        let directory = tempfile::tempdir().unwrap();
+        let app = open(&directory.path().join("application.sqlite3"), config());
+        let headers = ordinary_prefix(&app);
+        let prepared = preparation(&app, &headers);
+        let proof = two_seal_finality(&prepared).try_cev0_bytes().unwrap();
+        let executed = execute_prepared_checkpoint(&app, &prepared);
+        app.commit_block(NativeApplicationCommitRequestV0::new(executed))
+            .unwrap();
+        let before = app.confirmed_committed_head_v0().unwrap();
+        let mut changed_signature = proof.clone();
+        *changed_signature.last_mut().unwrap() ^= 1;
+        let parent = prepared
+            .bound
+            .authorized()
+            .prepared()
+            .checkpoint_parent()
+            .header()
+            .try_cev0_bytes()
+            .unwrap();
+        let error = crate::poco_joint_handoff::verify_bound_checkpoint_two_seal_v0(
+            &prepared.bound,
+            &parent,
+            &changed_signature,
+        )
+        .err()
+        .unwrap()
+        .to_string();
+        assert!(
+            error.contains("strict pre-handoff"),
+            "wrong rejection boundary: {error}"
+        );
+        for invalid in [
+            Vec::new(),
+            proof[..proof.len() - 1].to_vec(),
+            [proof.as_slice(), &[0]].concat(),
+            changed_signature,
+        ] {
+            assert!(
+                crate::poco_joint_handoff::verify_bound_checkpoint_two_seal_v0(
+                    &prepared.bound,
+                    &parent,
+                    &invalid,
+                )
+                .is_err()
+            );
+        }
+        // Invalid evidence did not mutate or invalidate the committed source.
+        let receipt = app
+            .confirm_poco_checkpoint_before_handoff_v0(prepared, &proof)
+            .unwrap();
+        app.revalidate_poco_pre_handoff_checkpoint_v0(&receipt)
+            .unwrap();
+        assert_eq!(app.confirmed_committed_head_v0().unwrap(), before);
+    }
+
+    #[test]
+    fn pre_handoff_held_receipt_requires_fresh_owner_and_preparation_readback() {
+        for fault in ["halt", "delete", "replace", "owner"] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("application.sqlite3");
+            let app = open(&path, config());
+            let headers = ordinary_prefix(&app);
+            let prepared = preparation(&app, &headers);
+            let proof = two_seal_finality(&prepared).try_cev0_bytes().unwrap();
+            let executed = execute_prepared_checkpoint(&app, &prepared);
+            app.commit_block(NativeApplicationCommitRequestV0::new(executed))
+                .unwrap();
+            let receipt = app
+                .confirm_poco_checkpoint_before_handoff_v0(prepared, &proof)
+                .unwrap();
+            let journal_path =
+                crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&path);
+            if fault == "owner" {
+                let other_directory = tempfile::tempdir().unwrap();
+                let other = open(
+                    &other_directory.path().join("application.sqlite3"),
+                    config(),
+                );
+                assert!(other
+                    .revalidate_poco_pre_handoff_checkpoint_v0(&receipt)
+                    .is_err());
+            } else {
+                if fault == "replace" {
+                    std::fs::rename(&journal_path, journal_path.with_extension("retired")).unwrap();
+                } else {
+                    let connection = rusqlite::Connection::open(&journal_path).unwrap();
+                    if fault == "delete" {
+                        connection.execute("DELETE FROM preparations", []).unwrap();
+                    } else {
+                        connection.execute("INSERT INTO safety_halt(singleton,reason,conflict_checksum) VALUES (1,'test halt',?1)",[&[1u8;32][..]]).unwrap();
+                    }
+                }
+                assert!(
+                    app.revalidate_poco_pre_handoff_checkpoint_v0(&receipt)
+                        .is_err(),
+                    "{fault}"
+                );
+            }
+        }
     }
 
     #[test]
@@ -1924,3 +2295,7 @@ mod native_authorization_tests {
         }
     }
 }
+
+#[cfg(all(test, target_os = "linux"))]
+#[path = "poco_pre_handoff_signer_tests.rs"]
+mod signer_consumer_tests;
