@@ -195,6 +195,23 @@ it has no public constructor or conversion from naked roots or proof kernels.
 After reopening, the same raw proof inputs reconstruct preparation using the
 exact committed P readback instead of pretending an old parent is a live head.
 
+`confirm_poco_checkpoint_before_handoff_v0` is the earlier, pre-certificate
+boundary. It reuses the exact native COMMITTED/journal/cutoff/commitment checks,
+then verifies the complete checkpoint and two seals under the old set without
+requiring a joint certificate. Its `ConfirmedNativePreHandoffCheckpointV0` is
+non-cloneable, has private fields, and exposes only immutable evidence. A held
+receipt must be revalidated with `revalidate_poco_pre_handoff_checkpoint_v0`
+before use; a changed journal, missing preparation, foreign owner or invalid
+proof cannot authorize the next stage. It does not create seal application
+rows, sign, update Core or change any activation flag.
+
+The producer/consumer tests in `poco_pre_handoff_signer_tests.rs` feed this
+receipt into the existing strict old-role admission and real SQLite signer
+journal. They check durable intent visibility before signing, lost-response
+exact retry and reopen without another signer call. Keys and the in-memory
+anchor are fixtures. New-set-only signing, Core/Safety epoch phases, the
+consensus-height/JMT-version contract and independent custody remain open.
+
 The preparation journal publishes a reservation or binding only after SQLite
 commit and a fresh connection read back the exact transition, preparation,
 bound record and phase, with database path/inode identity checked again. A
@@ -259,3 +276,15 @@ This seam supplies historical context directly inside `cfg(test)`. It does not
 admit that context through the current application owner, authenticate outer
 signatures, call ProcessProposal/FinalizeBlock, persist a durable P artifact or
 qualify restart. The separate owner-profile rejection above remains required.
+
+## Historical proof export and version exhaustion
+
+The requested root now authenticates the exact exported ICS23 proof, including
+non-membership neighbors. Checking an immutable root map against itself is not
+proof verification. Historical corruption fails at export even when latest-state
+audit succeeds; valid proofs retain their original bytes. Native JMT state can
+legally contain empty values, but the pinned ICS23 existence verifier cannot
+prove them: that query fails without altering state or claiming a proof valid.
+All three local apply entry points use checked successor arithmetic and reject
+version exhaustion before mutation. No snapshot format, pruning horizon or
+epoch-coordinate rule changes in this patch.

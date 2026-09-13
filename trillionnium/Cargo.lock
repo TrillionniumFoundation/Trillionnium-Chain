@@ -1717,6 +1717,7 @@ dependencies = [
  "sha2",
  "tempfile",
  "trnm-consensus-crypto",
+ "trnm-consensus-signer-journal",
  "trnm-consensus-types",
  "trnm-finality-types",
  "trnm-native-application",

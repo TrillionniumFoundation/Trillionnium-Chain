@@ -492,15 +492,21 @@ impl InMemoryNativeExecutionStoreV0 {
     }
 
     /// Reconstructs the fixed excluded-legacy vector parent for differential
+    fn next_version_v0(&self) -> Result<Version> {
+        match self.roots.last_key_value() {
+            None => Ok(0),
+            Some((&version, _)) => version
+                .checked_add(1)
+                .context("authenticated state version exhausted"),
+        }
+    }
+
     pub fn apply_seed_v0(
         &mut self,
         version: Version,
         writes: Vec<NativeStateWriteV0>,
     ) -> Result<RootHash> {
-        let expected = self
-            .roots
-            .last_key_value()
-            .map_or(0, |(version, _)| version + 1);
+        let expected = self.next_version_v0()?;
         ensure!(version == expected, "seed version is not contiguous");
         let mut hashed = BTreeMap::new();
         let mut preimages = BTreeMap::new();
@@ -559,10 +565,7 @@ impl InMemoryNativeExecutionStoreV0 {
         &mut self,
         plan: RuntimeObjectDeltaPlanV0,
     ) -> Result<RuntimeObjectDeltaRootV0> {
-        let expected = self
-            .roots
-            .last_key_value()
-            .map_or(0, |(version, _)| version + 1);
+        let expected = self.next_version_v0()?;
         ensure!(plan.version == expected, "state update plan is stale");
         let root = plan.root_hash;
         self.apply_batch_v0(plan.version, root, plan.tree_update_batch, plan.preimages)?;
@@ -573,10 +576,7 @@ impl InMemoryNativeExecutionStoreV0 {
         &mut self,
         plan: CompleteStatePlanV0,
     ) -> Result<trnm_consensus_types::StateRoot> {
-        let expected = self
-            .roots
-            .last_key_value()
-            .map_or(0, |(version, _)| version + 1);
+        let expected = self.next_version_v0()?;
         ensure!(plan.version == expected, "complete state plan is stale");
         let root = plan.root_hash;
         self.apply_batch_v0(plan.version, root, plan.tree_update_batch, plan.preimages)?;
@@ -640,11 +640,11 @@ impl InMemoryNativeExecutionStoreV0 {
             .context("authenticated snapshot has no latest root")?
             .0;
         let tree = Sha256Jmt::new(self);
-        let mut previous = None;
+        let mut previous: Option<Version> = None;
         for (&version, expected_root) in &self.roots {
             if let Some(previous) = previous {
                 ensure!(
-                    version == previous + 1,
+                    Some(version) == previous.checked_add(1),
                     "authenticated roots are not contiguous"
                 );
             }
@@ -761,9 +761,34 @@ impl InMemoryNativeExecutionStoreV0 {
         let (value, proof) = Sha256Jmt::new(self)
             .get_with_ics23_proof(key.to_vec(), version)
             .context("create native JMT ICS23 proof")?;
+        // The immutable borrow keeps the root map stable, but does not prove
+        // that a historical value/node actually belongs to that root. Verify
+        // the exact exported proof, including exclusion neighbors, before it
+        // can reach a checkpoint or client. Comparing the root map with itself
+        // would accept self-consistent proof bytes rooted in corrupted history.
+        let root_bytes = expected_root.0.to_vec();
+        let spec = jmt::ics23_spec();
+        let verified = match value.as_deref() {
+            Some(value) => ics23::verify_membership::<ics23::HostFunctionsManager>(
+                &proof,
+                &spec,
+                &root_bytes,
+                key,
+                value,
+            ),
+            None => ics23::verify_non_membership::<ics23::HostFunctionsManager>(
+                &proof,
+                &spec,
+                &root_bytes,
+                key,
+            ),
+        };
+        ensure!(
+            verified,
+            "native JMT ICS23 proof does not verify under retained root"
+        );
         let proof_bytes = proof.encode_to_vec();
         ensure!(!proof_bytes.is_empty(), "native JMT ICS23 proof is empty");
-        ensure!(expected_root == self.roots[&version], "proof root drift");
         Ok((value, proof_bytes))
     }
 
@@ -948,6 +973,152 @@ mod snapshot_encoding_tests {
             store.committed_signer_nonces.clone(),
             &store.encode_authenticated_snapshot_v0().unwrap(),
         )
+    }
+
+    #[test]
+    fn exhausted_seed_version_rejects_without_panic_wrap_or_mutation() {
+        let mut store = empty_store();
+        store.roots.insert(u64::MAX, RootHash([42; 32]));
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        let error = store.apply_seed_v0(0, Vec::new()).unwrap_err();
+        assert!(error.to_string().contains("version exhausted"));
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+    }
+
+    #[test]
+    fn exhausted_plan_versions_reject_before_touching_any_state() {
+        let source = historical_store();
+        let complete = plan_complete_state_update_v0(&source, 2, 3, Vec::new()).unwrap();
+        let runtime = plan_state_update_v0(&source, 2, 3, Vec::new()).unwrap();
+        let mut exhausted = source;
+        exhausted.roots.insert(u64::MAX, RootHash([42; 32]));
+        let before = exhausted.encode_authenticated_snapshot_v0().unwrap();
+        assert!(exhausted.apply_complete_state_plan_v0(complete).is_err());
+        assert_eq!(
+            exhausted.encode_authenticated_snapshot_v0().unwrap(),
+            before
+        );
+        assert!(exhausted
+            .apply_runtime_object_delta_plan_v0(runtime)
+            .is_err());
+        assert_eq!(
+            exhausted.encode_authenticated_snapshot_v0().unwrap(),
+            before
+        );
+    }
+
+    #[test]
+    fn exported_ics23_proofs_preserve_bytes_and_verify_at_every_retained_version() {
+        use prost::Message;
+        let mut store = historical_store();
+        let deletion = plan_complete_state_update_v0(
+            &store,
+            2,
+            3,
+            vec![
+                CompleteStateWriteV0::new(b"account".to_vec(), None).unwrap(),
+                CompleteStateWriteV0::new(b"survivor".to_vec(), Some(vec![11; 257])).unwrap(),
+            ],
+        )
+        .unwrap();
+        store.apply_complete_state_plan_v0(deletion).unwrap();
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        for version in 0..=3 {
+            for key in [b"account".as_slice(), b"missing", b"survivor"] {
+                let (expected_value, expected_proof) = Sha256Jmt::new(&store)
+                    .get_with_ics23_proof(key.to_vec(), version)
+                    .unwrap();
+                let (value, bytes) = store.prove_raw_key_v0(version, key).unwrap();
+                assert_eq!(value, expected_value);
+                assert_eq!(bytes, expected_proof.encode_to_vec());
+                let proof = ics23::CommitmentProof::decode(bytes.as_slice()).unwrap();
+                let root = store.roots[&version].0.to_vec();
+                match value {
+                    Some(value) => {
+                        assert!(ics23::verify_membership::<ics23::HostFunctionsManager>(
+                            &proof,
+                            &jmt::ics23_spec(),
+                            &root,
+                            key,
+                            &value,
+                        ))
+                    }
+                    None => assert!(ics23::verify_non_membership::<ics23::HostFunctionsManager>(
+                        &proof,
+                        &jmt::ics23_spec(),
+                        &root,
+                        key,
+                    )),
+                }
+            }
+        }
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+    }
+
+    #[test]
+    fn exported_ics23_proof_rejects_wrong_historical_root_without_mutation() {
+        let mut store = historical_store();
+        store.roots.insert(0, RootHash([42; 32]));
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        for key in [b"account".as_slice(), b"missing"] {
+            assert!(store.prove_raw_key_v0(0, key).is_err());
+        }
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+        assert!(store.prove_raw_key_v0(2, b"account").is_ok());
+    }
+
+    #[test]
+    fn exported_ics23_membership_rejects_corrupt_historical_value_below_healthy_head() {
+        let mut store = historical_store();
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        store.values.insert((hash, 0), Some(vec![99; 257]));
+        // Latest-state audit deliberately does not recursively reverify every
+        // historical value. A historical proof must enforce its own root.
+        let store = restore(&store).unwrap();
+        assert!(store.verified_live_values_v0(2).is_ok());
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        assert!(store.prove_raw_key_v0(0, b"account").is_err());
+        assert!(store.prove_raw_key_v0(2, b"account").is_ok());
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+    }
+
+    #[test]
+    fn exported_ics23_absence_rejects_corrupt_historical_neighbor() {
+        let mut store = historical_store();
+        let hash = authenticated_key_hash_v0(b"account").unwrap();
+        store.values.insert((hash, 0), Some(vec![99; 257]));
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        assert!(store.prove_raw_key_v0(0, b"missing").is_err());
+        assert!(store.prove_raw_key_v0(2, b"missing").is_ok());
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+    }
+
+    #[test]
+    fn exported_ics23_proof_missing_version_is_read_only_failure() {
+        let store = historical_store();
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        for version in [3, u64::MAX] {
+            assert!(store.prove_raw_key_v0(version, b"account").is_err());
+        }
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+        assert!(empty_store().prove_raw_key_v0(0, b"missing").is_err());
+    }
+
+    #[test]
+    fn unsupported_ics23_empty_values_do_not_escape_as_verified_proofs() {
+        let mut store = empty_store();
+        store
+            .apply_seed_v0(
+                0,
+                vec![NativeStateWriteV0::raw(b"account".to_vec(), Vec::new()).unwrap()],
+            )
+            .unwrap();
+        let before = store.encode_authenticated_snapshot_v0().unwrap();
+        // JMT permits this value. The pinned ICS23 verifier does not, so the
+        // query must fail without changing storage validity or root semantics.
+        assert!(store.verified_live_values_v0(0).is_ok());
+        assert!(store.prove_raw_key_v0(0, b"account").is_err());
+        assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
     }
 
     #[test]
