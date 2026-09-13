@@ -15,8 +15,6 @@ jobs:
     timeout-minutes: 25
     env:
       SOURCE_SHA: 435c0168558d75fc70aaa11980a179b9d5980f33
-      RUSTUP_HOME: ${{ runner.temp }}/trnm-section7-rustup
-      CARGO_HOME: ${{ runner.temp }}/trnm-section7-cargo
     steps:
       - name: Check out the immutable source without persisted credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -27,6 +25,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          export RUSTUP_HOME="$RUNNER_TEMP/trnm-section7-rustup"
+          export CARGO_HOME="$RUNNER_TEMP/trnm-section7-cargo"
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
           kit="$RUNNER_TEMP/trnm-section7-offline-kit"
           mkdir -p "$kit"
