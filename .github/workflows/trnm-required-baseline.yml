@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+      - 'fix/chain-*'
+      - 'feature/chain-*'
   workflow_dispatch:
 
 permissions:
@@ -410,6 +412,25 @@ jobs:
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
+      - name: Retain provisioned Rust tools for offline reproduction
+        run: |
+          set -euo pipefail
+          toolchain_root="$(dirname "$(dirname "$(rustup which --toolchain 1.95.0 rustc)")")"
+          output="${RUNNER_TEMP}/trnm-rust-toolchain"
+          mkdir -p "$output"
+          rustup run 1.95.0 rustc -Vv > "$output/rustc-version.txt"
+          rustup run 1.95.0 cargo -V > "$output/cargo-version.txt"
+          printf '%s\n' 'scope=provisioned-public-tools-not-release-acceptance' > "$output/SCOPE"
+          tar -C "$toolchain_root" -czf "$output/rust-tools.tar.gz" bin lib
+          (cd "$output" && sha256sum rust-tools.tar.gz > SHA256SUMS)
+      - name: Upload compiler reproduction tools
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-rust-tools-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-rust-toolchain
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
       - name: Bind Cargo target inventory to the exact clean source
         run: |
           set -euo pipefail
