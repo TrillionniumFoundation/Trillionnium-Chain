@@ -3,9 +3,16 @@ name: trnm-node-commit-exec-focused
 on:
   push:
     branches:
-      - work/plan-v2-full-gap-closure-20260902
+      - main
+      - 'fix/chain-*'
+      - 'feature/chain-*'
     paths:
       - '.github/workflows/trnm-node-commit-exec-focused.yml'
+      - 'trillionnium/crates/trnm-poco-node-io/**'
+      - 'trillionnium/crates/trnm-native-execution-v0/**'
+      - 'trillionnium/crates/trnm-core-restart-v0/**'
+      - 'trillionnium/crates/trnm-poco-node-authority/**'
+      - 'trillionnium/crates/trnm-poco-node-host/**'
   workflow_dispatch:
 
 permissions:
@@ -80,19 +87,48 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          cargo check --manifest-path trillionnium/Cargo.toml \
+          status=0
+          run_check() {
+            printf 'FOCUSED_COMMAND'; printf ' %q' "$@"; printf '\n'
+            if "$@"; then
+              printf 'FOCUSED_EXIT=0\n'
+            else
+              rc=$?
+              printf 'FOCUSED_EXIT=%s\n' "$rc"
+              status=1
+            fi
+          }
+          # Independent diagnostics continue after a failure; the step still
+          # fails if any command fails. No skipped work becomes acceptance.
+          run_check cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-io --all-targets --locked --offline
+          run_check cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-io \
+            --features candidate-pacemaker,candidate-authenticated-p2p \
+            --all-targets --locked --offline
+          run_check cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-io \
+            --features candidate-pacemaker,candidate-authenticated-p2p \
+            --all-targets --locked --offline -- -D warnings
+          run_check cargo fmt --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-io -p trnm-native-execution-v0 -- --check
+          run_check cargo check --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-agent-market-v1 \
             -p trnm-poco-node-authority \
             -p trnm-poco-node-host \
             --all-targets --locked --offline
-          cargo test --manifest-path trillionnium/Cargo.toml \
+          run_check cargo test --manifest-path trillionnium/Cargo.toml \
             -p trnm-core-restart-v0 \
             -p trnm-native-execution-v0 \
             -p trnm-poco-node-authority \
             -p trnm-poco-node-host \
             --all-targets --locked --offline
-          git diff --exit-code
-          test -z "$(git status --porcelain --untracked-files=all)"
+          run_check git diff --exit-code
+          if test -n "$(git status --porcelain --untracked-files=all)"; then
+            printf 'FOCUSED_DIRTY_SOURCE=true\n'
+            status=1
+          fi
+          exit "$status"
 
       - name: Verify Cargo offline inputs remained unchanged
         if: always()
