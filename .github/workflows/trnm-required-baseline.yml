@@ -57,7 +57,7 @@ jobs:
           (cd "$root" && sha256sum tracked-source.tar.gz tracked-history.bundle > SHA256SUMS)
           printf '%s\n' 'scope=exact-source-diagnostic-not-acceptance' > "$root/SCOPE"
       - name: Upload exact-source diagnostic input
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-boundary-source-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: ${{ runner.temp }}/trnm-boundary-source
@@ -246,7 +246,7 @@ jobs:
           )
       - name: Retain strict source and prospective-merge documentation bindings
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-hosted-documentation-bindings-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: |
@@ -354,7 +354,7 @@ jobs:
         run: ./scripts/ci/check_canonical_fuzz_smoke.sh
       - name: Upload crash artifacts
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-required-fuzz-${{ github.run_id }}-${{ github.run_attempt }}
           path: trillionnium/fuzz/artifacts/**
@@ -417,7 +417,7 @@ jobs:
             --output "${RUNNER_TEMP}/trnm-cargo-source-inventory-v1.json" >/dev/null
           git rev-parse HEAD 'HEAD^{tree}'
       - name: Retain source-bound Cargo inventory
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-cargo-source-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: ${{ runner.temp }}/trnm-cargo-source-inventory-v1.json
@@ -545,7 +545,7 @@ jobs:
           git diff --exit-code HEAD -- .
       - name: Retain hosted candidate process commands and outcomes
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-hosted-candidate-process-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: ${{ runner.temp }}/trnm-hosted-candidate-process
@@ -563,7 +563,7 @@ jobs:
           timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast 2>&1 | tee "$root/workspace.log"
       - name: Retain exact-source workspace execution log including failure
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-workspace-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: ${{ runner.temp }}/trnm-rust-execution
@@ -582,7 +582,7 @@ jobs:
           python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium 2>&1 | tee "$root/packages.log"
       - name: Retain exact-source package execution log including failure
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-package-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: ${{ runner.temp }}/trnm-package-execution
@@ -617,7 +617,7 @@ jobs:
           } 2>&1 | tee "$root/contracts.log"
       - name: Retain exact-source contract log including failure
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-contract-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: ${{ runner.temp }}/trnm-contract-execution
@@ -664,7 +664,7 @@ jobs:
           } 2>&1 | tee "$root/clippy.log"
       - name: Retain exact-source boundary Clippy log including failure
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-boundary-clippy-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           path: ${{ runner.temp }}/trnm-boundary-clippy

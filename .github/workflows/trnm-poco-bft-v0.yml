@@ -665,7 +665,7 @@ jobs:
           fi
 
       - name: Upload development-only libraries
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-poco-bft-v0-development-libs-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -796,7 +796,7 @@ jobs:
 
       - name: Upload crash artifacts
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: trnm-poco-fuzz-${{ github.run_id }}-${{ github.run_attempt }}
           path: trillionnium-chain/trillionnium/fuzz/artifacts/**
