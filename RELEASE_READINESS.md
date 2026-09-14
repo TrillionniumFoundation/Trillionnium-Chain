@@ -1,6 +1,6 @@
 # Trillionnium Chain release readiness
 
-Updated: **2026-09-02**
+Updated: **2026-09-13**
 
 This file is the human-readable release projection. It is not an independent
 truth source. The machine-readable authority is
@@ -44,12 +44,11 @@ report cannot independently change these values.
 ## Current source state
 
 Protected `main` was observed at
-`b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9`. Draft PR #62 on
-`work/plan-v2-full-gap-closure-20260902` is the sole selected integration
-successor. The plan assesses ancestor baseline
-`af691ea5005e1f0262e90c4fc878ba0a70dbe7ea`
-(tree `af09e389b1a462b3839508b7ef305596c76384c6`); the current PR head and
-prospective-merge identities are derived by CI at verification time.
+`435c0168558d75fc70aaa11980a179b9d5980f33`. The observed source tree is
+`1e3db388234eff27b7214cc7879aef6853214709`. PR #62 is closed, not a selected
+successor. Current source and prospective-merge identities are derived at
+verification time. This observation transfers no earlier branch evidence or
+independent acceptance.
 
 The selected line contains repository implementations for:
 
@@ -74,7 +73,7 @@ custody, physical power-loss proof, or activation artifact.
 
 ## Major repository-owned blockers
 
-- all required checks on one unchanged PR #62 head and its prospective merge;
+- all required checks on the actual unchanged source and prospective merge when applicable;
 - independent module-owner, consumer, security/evidence, and release acceptance;
 - protected-main merge and post-merge replay;
 - actual Cargo dependency and feature closures for production, devnet,

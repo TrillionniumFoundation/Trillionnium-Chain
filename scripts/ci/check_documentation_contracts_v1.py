@@ -12,6 +12,9 @@ import sys
 import tomllib
 from typing import Any
 
+sys.dont_write_bytecode = True
+from development_metadata_v1 import MetadataError, validate_observed_stack, require_same_successor
+
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = 'config/documentation-contracts-v1.json'
 GUIDE = 'docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md'
@@ -81,6 +84,7 @@ PIN_FIELDS = {
     'documentation_contract_registry_git_blob': REGISTRY,
     'documentation_contract_gate_git_blob': SELF,
     'documentation_contract_test_git_blob': TEST,
+    'development_metadata_git_blob': 'scripts/ci/development_metadata_v1.py',
 }
 
 
@@ -156,16 +160,12 @@ def validate_structure(data: dict[str, Any], coverage: dict[str, Any]) -> None:
             'DOC-LINEAGE', 'observation fields')
     require(isinstance(obs['observed_source'], str) and re.fullmatch(r'[0-9a-f]{40}', obs['observed_source']) is not None,
             'DOC-LINEAGE', 'observed source')
-    require(type(obs['selected_successor_pr']) is int and obs['selected_successor_pr'] == 62,
-            'DOC-LINEAGE', 'selected integration successor')
     require(obs['current_identity'] == 'derive-head-tree-base-and-prospective-merge-at-verification-time',
             'DOC-LINEAGE', 'mutable current identity must not be pinned as an observation')
-    expected_stack = [
-        {'pr': 62, 'base_ref': 'main', 'head_ref': 'work/plan-v2-full-gap-closure-20260902'},
-        {'pr': 85, 'base_ref': 'work/plan-v2-full-gap-closure-20260902', 'head_ref': 'work/poco-authority-ai-convergence-20260907'},
-        {'pr': 86, 'base_ref': 'work/poco-authority-ai-convergence-20260907', 'head_ref': 'fix/chain-pcc1-runtime-integration'},
-    ]
-    require(obs['stack'] == expected_stack, 'DOC-LINEAGE', 'observed stack differs; re-observe/review explicitly')
+    try:
+        validate_observed_stack(obs)
+    except MetadataError as error:
+        raise DocumentationError('DOC-LINEAGE', str(error)) from error
     rows = data['modules']
     require(isinstance(rows, list) and all(isinstance(x, dict) for x in rows), 'DOC-MODULES', 'rows')
     require([x.get('id') for x in rows] == MODULES, 'DOC-MODULES', 'exact ordered M00-M17 inventory')
@@ -529,6 +529,7 @@ def source_identity(root: Path, expected: str | None = None) -> tuple[str, str]:
 def validate_files(root: Path, data: dict[str, Any], manifest: dict[str, Any],
                    operation_refs: set[str] | None = None) -> dict[str, dict[str, str]]:
     refs = {REGISTRY, GUIDE, AUTHORITY, REVIEW, PLAN, REFERENCE, MANIFEST, COVERAGE, SELF, TEST}
+    refs.update(PIN_FIELDS.values())
     refs.update(operation_refs or set())
     refs.update(data['pcc1_v0_imports'])
     for row in data['modules']:
@@ -580,8 +581,11 @@ def main() -> int:
     validate_structure(data, coverage)
     operations = json.loads((ROOT/OPERATIONS).read_text(encoding='utf-8'), object_pairs_hook=strict_object)
     operation_report, operation_refs = validate_operations(ROOT, operations, data, coverage)
-    require(manifest.get('selected_successor_pull_request') == data['integration_observation']['selected_successor_pr'],
-            'DOC-LINEAGE', 'plan manifest successor mismatch')
+    try:
+        require_same_successor(manifest.get('selected_successor_pull_request'),
+                               data['integration_observation']['selected_successor_pr'])
+    except MetadataError as error:
+        raise DocumentationError('DOC-LINEAGE', str(error)) from error
     require(subprocess.run(['git', 'merge-base', '--is-ancestor', data['integration_observation']['observed_source'], 'HEAD'],
                            cwd=ROOT, capture_output=True).returncode == 0, 'DOC-LINEAGE', 'observed source is not an ancestor')
     require(subprocess.run(['git', 'merge-base', '--is-ancestor', operations['source_observation'], 'HEAD'],

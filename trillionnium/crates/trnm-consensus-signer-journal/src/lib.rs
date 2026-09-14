@@ -44,6 +44,15 @@
 //! It therefore cannot claim to prevent the same key from signing concurrently
 //! through an old journal or another scope. Schema0 remains read-only to the
 //! schema1 API; runtime wiring remains v0 and inactive.
+//! The explicit non-default `candidate-handoff-signature-recovery` feature
+//! adds schema1 recovery for an already produced old-role handoff signature.
+//! It accepts an exact strict admission, retained intent and observed signature,
+//! never a key/producer. It can record the externally anchored pending result
+//! or reconcile only that exact signed tail's one-event external CAS lag.
+//! Ordinary schema1 startup still rejects pending records. This does not add
+//! new-role signing, claim authenticated HSM readback provenance, or reconcile
+//! the journal with Core/Safety and application state.
+//!
 //! Existing journals can be opened through a two-phase startup boundary:
 //! [`PinnedSqliteSignerJournalV0`] authenticates and pins the local namespace
 //! and observes the external watermark without advancing it; only its

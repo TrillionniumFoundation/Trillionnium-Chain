@@ -42,6 +42,7 @@ canonical_inputs=(
   "$CONVERGENCE_TEST"
   "$CONVERGENCE_CONTRACT"
   "$DETAILED_MODULE_INDEX"
+  "scripts/ci/development_metadata_v1.py"
   "scripts/ci/check_canonical_development_plan.sh"
 )
 
@@ -100,6 +101,9 @@ from typing import Any
     module_gate_rel,
 ) = sys.argv[1:]
 root = Path(root_arg)
+sys.dont_write_bytecode = True
+sys.path.insert(0, str(root / "scripts/ci"))
+from development_metadata_v1 import staffing_observation
 
 
 class GateError(RuntimeError):
@@ -263,6 +267,7 @@ expected_pins = {
     "documentation_reference_gate_git_blob": reference_gate_rel,
     "module_coverage_gate_git_blob": module_gate_rel,
     "canonical_plan_gate_git_blob": "scripts/ci/check_canonical_development_plan.sh",
+    "development_metadata_git_blob": "scripts/ci/development_metadata_v1.py",
 }
 for field, relative in expected_pins.items():
     declared = manifest.get(field)
@@ -279,34 +284,13 @@ require(isinstance(module_rows, list), "module rows missing")
 module_ids = [row.get("id") for row in module_rows if isinstance(row, dict)]
 require(module_ids == [f"M{index:02d}" for index in range(18)], f"module IDs drift: {module_ids}")
 
-staff = 0
-for row in module_rows:
-    count = next(
-        (
-            row.get(key)
-            for key in ("staff", "staff_target", "target_staff", "recommended_staff")
-            if isinstance(row.get(key), int)
-        ),
-        None,
-    )
-    require(isinstance(count, int) and count > 0, f"staff missing for {row.get('id')}")
-    staff += count
-require(staff == 48, f"staff target drift: {staff}")
+# Organizational estimates and wording are not protocol invariants.
+# Module IDs, ownership, source pins and no-promotion checks remain strict.
+staffing = staffing_observation(module_rows)
+staff = staffing["staff_target"]
+for warning in staffing["warnings"]:
+    print(f"planning warning: {warning}", file=sys.stderr)
 
-for marker in (
-    "one active engineering plan",
-    "node commit ledger",
-    "pinnedsqlitenamespace",
-    "global control plane",
-    "production_candidate = false",
-    "no machine flag is promoted",
-    "g5",
-):
-    require(marker in lower, f"plan missing {marker}")
-require(
-    re.search(r"\b(?:18|eighteen)\s+long-lived\s+modules\b", lower) is not None,
-    "plan missing 18 long-lived modules",
-)
 for forbidden in (
     "production_candidate = true",
     "production_consensus_activation = true",

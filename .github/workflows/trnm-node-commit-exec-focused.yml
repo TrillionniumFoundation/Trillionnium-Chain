@@ -3,9 +3,18 @@ name: trnm-node-commit-exec-focused
 on:
   push:
     branches:
-      - work/plan-v2-full-gap-closure-20260902
+      - main
     paths:
       - '.github/workflows/trnm-node-commit-exec-focused.yml'
+      - 'trillionnium/crates/trnm-native-execution-v0/**'
+      - 'trillionnium/crates/trnm-consensus-crypto/**'
+      - 'trillionnium/crates/trnm-consensus-types/**'
+      - 'trillionnium/crates/trnm-consensus-signer-journal/**'
+      - 'trillionnium/crates/trnm-core-restart-v0/**'
+      - 'trillionnium/crates/trnm-poco-node-authority/**'
+      - 'trillionnium/crates/trnm-poco-node-host/**'
+      - 'scripts/ci/test_native_inventory_sql_v0.py'
+      - 'scripts/ci/test_handoff_signature_sql_crash_v1.py'
   workflow_dispatch:
 
 permissions:
@@ -76,6 +85,13 @@ jobs:
           test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
           bash scripts/project-preflight.sh --audit
 
+      - name: Check inventory SQL cursor regressions (not Rust or node acceptance)
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/test_native_inventory_sql_v0.py
+          python3 scripts/ci/test_handoff_signature_sql_crash_v1.py
+
       - name: Check immutable lock and focused node boundaries
         working-directory: trillionnium-chain
         run: |
@@ -86,11 +102,26 @@ jobs:
             -p trnm-poco-node-host \
             --all-targets --locked --offline
           cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-types \
+            -p trnm-consensus-crypto \
             -p trnm-core-restart-v0 \
             -p trnm-native-execution-v0 \
             -p trnm-poco-node-authority \
             -p trnm-poco-node-host \
             --all-targets --locked --offline
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Check candidate old-role observed-signature recovery (no new signing)
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-signer-journal --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-signer-journal \
+            --features candidate-handoff-signature-recovery \
+            --test handoff_sqlite_v1 --locked --offline
           git diff --exit-code
           test -z "$(git status --porcelain --untracked-files=all)"
 

@@ -19,6 +19,8 @@ pub(super) const MAX_BATCH_V0: usize = 32;
 const MAX_READS_V0: usize = 64;
 const MAX_RETAINED_READ_BYTES_V0: usize = 256 * 1024;
 const MAX_RETAINED_RESULT_BYTES_V0: usize = 256 * 1024;
+// Scheduling memory only; larger valid envelopes keep the canonical verifier.
+const MAX_RETAINED_ENVELOPE_BYTES_V0: usize = 64 * 1024;
 
 #[cfg(test)]
 #[derive(Debug, Default)]
@@ -26,6 +28,8 @@ pub(super) struct NativeSchedulingCountsV0 {
     pub(super) exact_reused: usize,
     pub(super) fee_rebased: usize,
     pub(super) reexecuted: usize,
+    pub(super) outer_verification_reused: usize,
+    pub(super) outer_verifications: usize,
 }
 
 pub(super) struct RuntimeReuseV0 {
@@ -64,6 +68,17 @@ pub(super) struct NativeSpeculationContextV0<'a> {
     pub(super) changes: &'a BTreeMap<String, StateObject>,
 }
 
+/// Private one-use evidence of the existing strict envelope verification.
+/// It cannot authorize a signer, consume a nonce, accept a runtime result or
+/// publish anything. Those checks still run at the canonical transaction index.
+/// No constructor, codec or Clone implementation crosses this private module.
+#[derive(Debug)]
+struct VerifiedOuterEnvelopeV0 {
+    exact_outer: Vec<u8>,
+    chain_id: String,
+    timestamp_ms: u64,
+}
+
 #[derive(Debug)]
 pub(super) struct SpeculativeRuntimeAttemptV0 {
     // Absence is a dependency too: a prior transaction may create the object.
@@ -71,11 +86,30 @@ pub(super) struct SpeculativeRuntimeAttemptV0 {
     reads_available: bool,
     pub(super) outcome: Result<RuntimeReceipt>,
     fee_delta: Option<TransferFeeDeltaV0>,
+    verified_outer: Option<VerifiedOuterEnvelopeV0>,
     #[cfg(test)]
     pub(super) worker_id: thread::ThreadId,
 }
 
 impl SpeculativeRuntimeAttemptV0 {
+    /// Consume once even on mismatch. Only exact verified bytes under the same
+    /// chain/time may avoid the duplicate cryptographic pass. The caller must
+    /// still decode, recheck signer policy and perform every ordered replay,
+    /// nonce, fee, state and mutation validation.
+    pub(super) fn consume_verified_outer_v0(
+        &mut self,
+        exact_outer: &[u8],
+        chain_id: &str,
+        timestamp_ms: u64,
+    ) -> bool {
+        let Some(verified) = self.verified_outer.take() else {
+            return false;
+        };
+        verified.exact_outer == exact_outer
+            && verified.chain_id == chain_id
+            && verified.timestamp_ms == timestamp_ms
+    }
+
     pub(super) fn into_reusable_outcome_v0(
         mut self,
         view: &impl TryStateViewV0,
@@ -276,6 +310,7 @@ fn record_runtime_attempt_v0(
         reads_available: recording.reads_available.get(),
         outcome,
         fee_delta: None,
+        verified_outer: None,
         #[cfg(test)]
         worker_id: thread::current().id(),
     };
@@ -287,10 +322,11 @@ fn speculate_outer_v0(
     context: NativeSpeculationContextV0<'_>,
     exact_outer: &[u8],
 ) -> Option<SpeculativeRuntimeAttemptV0> {
-    // This preliminary admission is deliberately inert. The ordered owner
-    // repeats exact envelope verification and checks block/committed replay
-    // before it can consume the retained runtime result. Invalid or internal
-    // inputs are handled only by that existing canonical path.
+    // This preliminary admission is deliberately inert. Only a bounded private
+    // cache of the exact successfully verified bytes may avoid duplicate strict
+    // envelope verification. Signer policy, block/committed replay and runtime
+    // dependencies are still checked by the ordered owner. Invalid or internal
+    // inputs follow the unchanged canonical path.
     let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(exact_outer).ok()?;
     if envelope.payload_type != CANONICAL_TX_PAYLOAD_TYPE_V1 {
         return None;
@@ -311,7 +347,7 @@ fn speculate_outer_v0(
         parent_root: context.parent_root,
         changes: context.changes,
     };
-    let attempt = record_runtime_attempt_v0(
+    let mut attempt = record_runtime_attempt_v0(
         &transaction,
         ExecutionContext {
             height: context.height,
@@ -345,6 +381,18 @@ fn speculate_outer_v0(
         });
         if bytes > MAX_RETAINED_RESULT_BYTES_V0 {
             return None;
+        }
+    }
+    if exact_outer.len() <= MAX_RETAINED_ENVELOPE_BYTES_V0 {
+        let mut retained = Vec::new();
+        // Allocation failure disables only reuse, never canonical validation.
+        if retained.try_reserve_exact(exact_outer.len()).is_ok() {
+            retained.extend_from_slice(exact_outer);
+            attempt.verified_outer = Some(VerifiedOuterEnvelopeV0 {
+                exact_outer: retained,
+                chain_id: context.chain_id.to_owned(),
+                timestamp_ms: context.timestamp_ms,
+            });
         }
     }
     Some(attempt)

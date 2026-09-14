@@ -25,7 +25,7 @@ The AI resource proposal inside PCC1 is a proposed application-profile extension
 
 ## 3. Integration lineage is not protocol authority
 
-The observed stack is `main <- #62 <- #85 <- #86`. PR #62 remains the sole Plan V2 integration successor into protected main. PR #85 is a bounded contract child of #62; PR #86 is its implementation continuation. This documentation change is a bounded child of #86, not another selected successor. The observed source for preparation is `1f5ebbb8dab62cfd4d56447480ad60992f61f0ba`.
+The historical stack was `main <- #62 <- #85 <- #86`, observed while preparing documentation at `1f5ebbb8dab62cfd4d56447480ad60992f61f0ba`. Those PR numbers and refs are provenance, not current integration prerequisites. Main's 2026-09-13 convergence is a new source-only baseline. The current machine observation and runtime Git identities control current source attribution; old source acceptance is never inferred from equivalent files or an administrator statement.
 
 The machine registry records PR/ref relationships as observations. Every review rereads the actual base, head and prospective-merge identities and verifies ancestry/content. It does not assume that a parent contains a child's changes. A branch rename, restack or new head requires a new observation and invalidates affected review evidence. This file does not close, supersede, merge or approve any PR.
 

@@ -103,6 +103,42 @@ or production activation. The finalized-commit adapter is an integration seam
 only; `qc_as_application_commit`, `core_application_seal_eligible`, and
 `production_candidate` remain false in package and project status metadata.
 
+## Bounded execution and inventory read optimizations
+
+`native_parallel.rs` retains a private one-use cache only after the existing
+strict envelope verifier succeeds. The ordered owner may reuse that work only
+for byte-for-byte identical input under the same chain and timestamp. It still
+checks the original decoded envelope, the commissioned signer policy, block
+and committed replay, nonce, runtime dependencies, fees and atomic mutations.
+An invalid envelope cannot construct this cache. A mismatch consumes it; a
+missing cache always runs the original verifier.
+
+Retention is at most 64 KiB of original bytes per attempt, at most 32 attempts
+per batch, plus the already bounded context. A larger valid envelope or failed
+buffer reservation disables reuse, not transaction validity. There are no new
+wire fields, signature domains, fee rules, public constructors or activation
+flags. The six added tests in `native_parallel_tests.rs` cover exact-byte and
+context binding, single use, all worker counts, replay, invalid signatures,
+oversize fallback and the signer-policy boundary. These tests require Rust
+execution; their presence alone supplies neither acceptance nor speed figures.
+
+`durable.rs::map_p_inventory_v0` retains a key-only cursor while consuming each
+complete row. `load_p_by_block_v0` reuses a prepared statement, never cached row
+bytes. This removes repeated statement preparation and the temporary Rust
+collection of all IDs. It does **not** remove N point lookups, history auditing,
+full snapshots, JMT verification or serial commit. It does not add an index or
+sort full historical snapshot BLOBs. The mapper must not write on its own
+connection or publish a prefix before every row has passed validation.
+
+The normal-connection WAL regression tests SQLite cursor snapshot behavior;
+WAL is **not** commissioned for the native immutable-read owner. Its namespace,
+lock, close/readback and full integrity requirements remain unchanged. The
+Python test `scripts/ci/test_native_inventory_sql_v0.py` executes the actual
+schema and key/lookup query strings with synthetic SQL payloads and reproduces
+the old mixed-read pattern. It is SQL-only evidence, not Rust recovery or a
+physical-fault campaign. Three additional Rust inventory tests must run through
+the actual application fixtures before adoption.
+
 ## Authenticated snapshot recovery
 
 Primary module: M07. Consumers: M06 execution and M08 finalized recovery.
@@ -194,6 +230,29 @@ proofs. `ConfirmedNativePocoCheckpointV0` retains the owner-affine durable row;
 it has no public constructor or conversion from naked roots or proof kernels.
 After reopening, the same raw proof inputs reconstruct preparation using the
 exact committed P readback instead of pretending an old parent is a live head.
+
+`confirm_poco_checkpoint_for_handoff_v0` is a separate pre-certificate
+readback candidate. It first bounds and strictly verifies the checkpoint and
+two seals using M01's `decode_verify_checkpoint_finality_strict_v0`, then repeats
+the original COMMITTED-row, preparation-owner, body/receipt and recomputed
+cutoff/next-set provenance checks. It requires no joint handoff certificate.
+The returned `CommittedNativePocoCheckpointForHandoffV0` has private fields and
+no Clone or deserializer; it exposes only readback facts and the existing frozen
+handoff descriptor. Neither this receipt nor its descriptor authorizes a seal or
+old/new-role signature. The supplied admission budget is for this checkpoint
+proof pass; cutoff/native provenance work retains separate existing bounds.
+
+`complete_poco_checkpoint_handoff_v0` consumes the receipt and subsequently
+supplied joint-certificate bytes, reopening/rechecking the same native and
+preparation authority through the original confirmation path. A held receipt
+cannot bypass journal halt, missing/replaced records, another owner or stale
+native state. The six new native regression functions cover pre-certificate
+readback, PREPARED-state refusal, corrupted-proof work charging, zero budget,
+held-receipt invalidation and reopening the actual application stores. Six M01
+regressions cover strict verification and exact budget edges. These Rust
+regressions are authored verification targets, not an assertion of local compiler
+or test execution. The independent Node corpus test is signature/byte evidence
+only, not native runtime, state or epoch acceptance.
 
 The preparation journal publishes a reservation or binding only after SQLite
 commit and a fresh connection read back the exact transition, preparation,

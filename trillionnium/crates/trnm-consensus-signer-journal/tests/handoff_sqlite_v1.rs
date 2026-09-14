@@ -1244,3 +1244,417 @@ fn mutate_behind_immutable_trigger<P: rusqlite::Params>(
         .execute_batch(&trigger_sql)
         .expect("restore exact canonical trigger");
 }
+
+// The candidate recovery consumes an already produced signature. None of these
+// calls hands a producer to recovery; the existing schema1 default stays closed.
+#[cfg(feature = "candidate-handoff-signature-recovery")]
+mod observed_handoff_recovery {
+    use super::*;
+
+    fn readback(producer: &ExactProducer, intent: &CanonicalHandoffSignIntentV1) -> SignatureBytes {
+        let state = producer.state.lock().expect("producer readback mutex");
+        SignatureBytes::from_array(
+            *state
+                .signatures
+                .get(intent.signing_root().as_bytes())
+                .expect("producer must already have signed this exact root"),
+        )
+    }
+
+    // Only hostile-input tests synthesize a signature when the real producer
+    // was never called. Possession of valid bytes alone must not create a row.
+    fn supplied_signature(fixture: &AuthorityFixture) -> SignatureBytes {
+        SignatureBytes::from_array(
+            fixture
+                .signing_key
+                .sign(fixture.old_handoff_intent().signing_root().as_bytes())
+                .to_bytes(),
+        )
+    }
+
+    fn pending_handoff(
+        path: &Path,
+        fixture: &AuthorityFixture,
+        watermark: &MemoryWatermark,
+        producer: &mut ExactProducer,
+    ) {
+        let mut journal = SqliteHandoffSignerJournalV1::create_new(
+            path,
+            fixture.profile(),
+            watermark.clone(),
+        )
+        .expect("create pending handoff journal");
+        producer.fail_after_sign_once();
+        assert!(matches!(
+            journal.sign_old_set_handoff_exact_v1(
+                &fixture.old_handoff_intent(),
+                &fixture.admission(),
+                producer,
+            ),
+            Err(HandoffSignerJournalErrorV1::SignatureProducer(
+                SignatureProducerErrorV0::Unavailable
+            ))
+        ));
+        assert_eq!(table_counts(path), (1, 1, 0));
+        assert_eq!(watermark.snapshot().value.expect("prepare anchor").sequence(), 1);
+    }
+
+    #[test]
+    fn exact_readback_finishes_pending_handoff_once_without_producer() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let path = protected_path(&temporary, "readback.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut producer = ExactProducer::new(fixture.signing_key.clone());
+        pending_handoff(&path, &fixture, &watermark, &mut producer);
+        // Ordinary startup still cannot guess how to recover a pending intent.
+        assert!(matches!(
+            SqliteHandoffSignerJournalV1::open_existing(
+                &path, fixture.profile(), watermark.clone(),
+            ),
+            Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::PreparedIntentPending
+            ))
+        ));
+        let intent = fixture.old_handoff_intent();
+        let signature = readback(&producer, &intent);
+        let calls = producer.calls();
+        let (mut recovered, returned) =
+            SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &path, fixture.profile(), watermark.clone(), &intent,
+                &fixture.admission(), signature,
+            )
+            .expect("record exact observed signature");
+        assert_eq!(returned, signature);
+        assert_eq!(producer.calls(), calls);
+        assert_eq!(table_counts(&path), (1, 2, 1));
+        assert_eq!(watermark.snapshot().value.expect("signed anchor").sequence(), 2);
+        assert_eq!(
+            recovered.sign_old_set_handoff_exact_v1(
+                &intent, &fixture.admission(), &mut producer,
+            ).expect("completed exact replay"),
+            signature,
+        );
+        assert_eq!(producer.calls(), calls);
+        assert!(matches!(
+            recovered.sign_old_epoch_exact_v1(
+                &vote(&fixture.profile(), 1, 1, 0x31), &mut producer,
+            ),
+            Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::TerminalOldEpochFence { .. }
+            ))
+        ));
+        drop(recovered);
+        let before = watermark.snapshot();
+        let (_, again) = SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+            &path, fixture.profile(), watermark.clone(), &intent,
+            &fixture.admission(), signature,
+        ).expect("recovery itself is exact-idempotent");
+        assert_eq!(again, signature);
+        assert_eq!(table_counts(&path), (1, 2, 1));
+        assert_eq!(watermark.snapshot().compares, before.compares);
+        assert_eq!(producer.calls(), calls);
+    }
+
+    #[test]
+    fn signed_tail_recovers_exact_anchor_before_and_after_cas_apply() {
+        for applied in [false, true] {
+            let fixture = authority_fixture();
+            let temporary = TempDir::new().expect("temporary directory");
+            let path = protected_path(&temporary, "signed-tail.sqlite3");
+            let watermark = MemoryWatermark::default();
+            let mut producer = ExactProducer::new(fixture.signing_key.clone());
+            let mut journal = SqliteHandoffSignerJournalV1::create_new(
+                &path, fixture.profile(), watermark.clone(),
+            ).expect("create journal");
+            if applied { watermark.apply_then_fail(2); }
+            else { watermark.fail_before_apply(2); }
+            let intent = fixture.old_handoff_intent();
+            assert!(matches!(
+                journal.sign_old_set_handoff_exact_v1(
+                    &intent, &fixture.admission(), &mut producer,
+                ),
+                Err(HandoffSignerJournalErrorV1::ExternalWatermark { .. })
+            ));
+            drop(journal);
+            let before = watermark.snapshot();
+            let signature = readback(&producer, &intent);
+            let (_, result) = SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &path, fixture.profile(), watermark.clone(), &intent,
+                &fixture.admission(), signature,
+            ).expect("only exact signature CAS may be repaired");
+            assert_eq!(result, signature);
+            assert_eq!(producer.calls(), (0, 1));
+            assert_eq!(table_counts(&path), (1, 2, 1));
+            assert_eq!(watermark.snapshot().value.expect("signed watermark").sequence(), 2);
+            assert_eq!(watermark.snapshot().compares, before.compares + u64::from(!applied));
+        }
+    }
+
+    #[test]
+    fn recovery_cas_failure_returns_no_success_and_exact_retry_finishes() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let path = protected_path(&temporary, "recovery-cas.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut producer = ExactProducer::new(fixture.signing_key.clone());
+        pending_handoff(&path, &fixture, &watermark, &mut producer);
+        let intent = fixture.old_handoff_intent();
+        let signature = readback(&producer, &intent);
+        watermark.fail_before_apply(2);
+        assert!(matches!(
+            SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &path, fixture.profile(), watermark.clone(), &intent,
+                &fixture.admission(), signature,
+            ),
+            Err(HandoffSignerJournalErrorV1::ExternalWatermark { .. })
+        ));
+        assert_eq!(table_counts(&path), (1, 2, 1));
+        assert_eq!(watermark.snapshot().value.expect("predecessor watermark").sequence(), 1);
+        let (_, result) = SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+            &path, fixture.profile(), watermark.clone(), &intent,
+            &fixture.admission(), signature,
+        ).expect("retry reads existing signed event rather than append another");
+        assert_eq!(result, signature);
+        assert_eq!(producer.calls(), (0, 1));
+        assert_eq!(table_counts(&path), (1, 2, 1));
+    }
+
+    #[test]
+    fn new_role_and_bad_signature_are_rejected_before_namespace_or_anchor_access() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let missing = temporary.path().join("must-not-exist.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let before = watermark.snapshot();
+        assert!(matches!(
+            SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &missing, fixture.profile(), watermark.clone(), &fixture.new_handoff_intent(),
+                &fixture.admission(), supplied_signature(&fixture),
+            ),
+            Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable)
+        ));
+        assert!(matches!(
+            SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &missing, fixture.profile(), watermark.clone(), &fixture.old_handoff_intent(),
+                &fixture.admission(), SignatureBytes::from_array([0; 64]),
+            ),
+            Err(HandoffSignerJournalErrorV1::InvalidProducedSignature)
+        ));
+        assert_eq!(watermark.snapshot(), before);
+        assert!(!missing.exists());
+    }
+
+    #[test]
+    fn foreign_signer_and_new_role_signature_cannot_complete_old_role() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let path = protected_path(&temporary, "wrong-signature.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut producer = ExactProducer::new(fixture.signing_key.clone());
+        pending_handoff(&path, &fixture, &watermark, &mut producer);
+        let intent = fixture.old_handoff_intent();
+        let signatures = [
+            SigningKey::from_bytes(&[0x41; 32]).sign(intent.signing_root().as_bytes()),
+            fixture.signing_key.sign(fixture.new_handoff_intent().signing_root().as_bytes()),
+        ];
+        let before = (namespace_snapshot(temporary.path()), watermark.snapshot());
+        for signature in signatures {
+            assert!(matches!(
+                SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                    &path, fixture.profile(), watermark.clone(), &intent,
+                    &fixture.admission(), SignatureBytes::from_array(signature.to_bytes()),
+                ),
+                Err(HandoffSignerJournalErrorV1::InvalidProducedSignature)
+            ));
+            assert_eq!((namespace_snapshot(temporary.path()), watermark.snapshot()), before);
+        }
+        assert_eq!(producer.calls(), (0, 1));
+    }
+
+    #[test]
+    fn changed_descriptor_cannot_borrow_an_old_admission() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let missing = temporary.path().join("no-database.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut fields = fixture.descriptor.fields().clone();
+        fields.terminal_old_view = View::new(
+            fields.terminal_old_view.get().checked_add(1).expect("fixture view increment"),
+        );
+        let descriptor = HandoffDescriptorV0::new(fields).expect("shape-only different descriptor");
+        let intent = CanonicalHandoffSignIntentV1::old_set(
+            &descriptor, &fixture.old_set, &fixture.new_set, &fixture.old_parameters,
+            &fixture.new_parameters, fixture.author,
+        ).expect("shape-only different intent");
+        let before = watermark.snapshot();
+        assert!(matches!(
+            SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &missing, fixture.profile(), watermark.clone(), &intent,
+                &fixture.admission(), supplied_signature(&fixture),
+            ),
+            Err(HandoffSignerJournalErrorV1::AdmissionMismatch("intent fingerprint"))
+        ));
+        assert!(!missing.exists());
+        assert_eq!(watermark.snapshot(), before);
+    }
+
+    #[test]
+    fn valid_signature_cannot_create_an_unretained_intent() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let path = protected_path(&temporary, "no-intent.sqlite3");
+        let watermark = MemoryWatermark::default();
+        drop(SqliteHandoffSignerJournalV1::create_new(
+            &path, fixture.profile(), watermark.clone(),
+        ).expect("empty journal"));
+        let before = watermark.snapshot();
+        assert!(matches!(
+            SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &path, fixture.profile(), watermark.clone(), &fixture.old_handoff_intent(),
+                &fixture.admission(), supplied_signature(&fixture),
+            ),
+            Err(HandoffSignerJournalErrorV1::AdmissionMismatch("no retained handoff intent"))
+        ));
+        assert_eq!(table_counts(&path), (0, 0, 0));
+        assert_eq!(watermark.snapshot().value, before.value);
+        assert_eq!(watermark.snapshot().compares, before.compares);
+    }
+
+    #[test]
+    fn unanchored_prepare_cannot_be_completed_even_with_valid_signature() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let path = protected_path(&temporary, "unanchored.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut producer = ExactProducer::new(fixture.signing_key.clone());
+        let mut journal = SqliteHandoffSignerJournalV1::create_new(
+            &path, fixture.profile(), watermark.clone(),
+        ).expect("create journal");
+        watermark.fail_before_apply(1);
+        assert!(matches!(
+            journal.sign_old_set_handoff_exact_v1(
+                &fixture.old_handoff_intent(), &fixture.admission(), &mut producer,
+            ),
+            Err(HandoffSignerJournalErrorV1::ExternalWatermark { .. })
+        ));
+        drop(journal);
+        let before = watermark.snapshot();
+        assert!(matches!(
+            SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &path, fixture.profile(), watermark.clone(), &fixture.old_handoff_intent(),
+                &fixture.admission(), supplied_signature(&fixture),
+            ),
+            Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::ExternalWatermarkMismatch
+            ))
+        ));
+        assert_eq!(table_counts(&path), (1, 1, 0));
+        assert_eq!(producer.calls(), (0, 0));
+        assert_eq!(watermark.snapshot().value, before.value);
+        assert_eq!(watermark.snapshot().compares, before.compares);
+    }
+
+    #[test]
+    fn other_pending_consensus_intent_remains_fenced() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let path = protected_path(&temporary, "normal-pending.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut producer = ExactProducer::new(fixture.signing_key.clone());
+        producer.fail_after_sign_once();
+        let mut journal = SqliteHandoffSignerJournalV1::create_new(
+            &path, fixture.profile(), watermark.clone(),
+        ).expect("create journal");
+        assert!(journal.sign_old_epoch_exact_v1(
+            &vote(&fixture.profile(), 1, 1, 0x22), &mut producer,
+        ).is_err());
+        drop(journal);
+        let before = watermark.snapshot();
+        assert!(matches!(
+            SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &path, fixture.profile(), watermark.clone(), &fixture.old_handoff_intent(),
+                &fixture.admission(), supplied_signature(&fixture),
+            ),
+            Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::PreparedIntentPending
+            ))
+        ));
+        assert_eq!(table_counts(&path), (1, 1, 0));
+        assert_eq!(producer.calls(), (1, 0));
+        assert_eq!(watermark.snapshot().value, before.value);
+        assert_eq!(watermark.snapshot().compares, before.compares);
+    }
+
+    #[test]
+    fn missing_forked_or_two_event_lag_anchor_is_not_repaired() {
+        for corruption in ["missing", "fork", "two-events-behind"] {
+            let fixture = authority_fixture();
+            let temporary = TempDir::new().expect("temporary directory");
+            let path = protected_path(&temporary, "bad-anchor.sqlite3");
+            let watermark = MemoryWatermark::default();
+            let mut producer = ExactProducer::new(fixture.signing_key.clone());
+            let mut journal = SqliteHandoffSignerJournalV1::create_new(
+                &path, fixture.profile(), watermark.clone(),
+            ).expect("create journal");
+            let initial = watermark.snapshot().value.expect("initial watermark");
+            let intent = fixture.old_handoff_intent();
+            journal.sign_old_set_handoff_exact_v1(
+                &intent, &fixture.admission(), &mut producer,
+            ).expect("complete handoff");
+            drop(journal);
+            let signed = watermark.snapshot().value.expect("signed watermark");
+            watermark.state.lock().expect("watermark mutex").value = match corruption {
+                "missing" => None,
+                "two-events-behind" => Some(initial),
+                _ => Some(SignerWatermarkV0::from_persisted_parts(
+                    WATERMARK_SCOPE, signed.journal_id(), 1, [0x31; 32],
+                ).expect("well-shaped but conflicting external head")),
+            };
+            let before = watermark.snapshot();
+            assert!(SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+                &path, fixture.profile(), watermark.clone(), &intent,
+                &fixture.admission(), readback(&producer, &intent),
+            ).is_err());
+            assert_eq!(table_counts(&path), (1, 2, 1));
+            assert_eq!(producer.calls(), (0, 1));
+            assert_eq!(watermark.snapshot().value, before.value);
+            assert_eq!(watermark.snapshot().compares, before.compares);
+        }
+    }
+
+    #[test]
+    fn recovery_cannot_take_over_a_live_owner_and_still_audits_history() {
+        let fixture = authority_fixture();
+        let temporary = TempDir::new().expect("temporary directory");
+        let path = protected_path(&temporary, "locked.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut producer = ExactProducer::new(fixture.signing_key.clone());
+        let mut journal = SqliteHandoffSignerJournalV1::create_new(
+            &path, fixture.profile(), watermark.clone(),
+        ).expect("create journal");
+        let intent = fixture.old_handoff_intent();
+        producer.fail_after_sign_once();
+        assert!(journal.sign_old_set_handoff_exact_v1(
+            &intent, &fixture.admission(), &mut producer,
+        ).is_err());
+        let signature = readback(&producer, &intent);
+        assert!(SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+            &path, fixture.profile(), watermark.clone(), &intent,
+            &fixture.admission(), signature,
+        ).is_err(), "a second owner cannot obtain the database lifetime lock");
+        drop(journal);
+        Connection::open(&path).expect("fault injector").execute_batch(
+            "UPDATE signer_accounting_v1 SET event_count=0 WHERE singleton=1",
+        ).expect("install accounting inconsistency");
+        let before = watermark.snapshot();
+        assert!(SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1(
+            &path, fixture.profile(), watermark.clone(), &intent,
+            &fixture.admission(), signature,
+        ).is_err(), "full audit must detect historical/accounting corruption");
+        assert_eq!(table_counts(&path), (1, 1, 0));
+        assert_eq!(watermark.snapshot().value, before.value);
+        assert_eq!(watermark.snapshot().compares, before.compares);
+        assert_eq!(producer.calls(), (0, 1));
+    }
+}

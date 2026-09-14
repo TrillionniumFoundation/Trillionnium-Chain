@@ -82,7 +82,10 @@ pub use durable::{
     NativeH1StateSyncTrustedBaseRequestV0, VerifiedNativeSignerReplayFloorV1,
 };
 pub use pcc1_finality::{PocoFinalityCommitErrorV0, PocoFinalizedApplicationReadV0};
-pub use poco_checkpoint::{ConfirmedNativePocoCheckpointV0, PreparedNativePocoCheckpointV0};
+pub use poco_checkpoint::{
+    CommittedNativePocoCheckpointForHandoffV0, ConfirmedNativePocoCheckpointV0,
+    PreparedNativePocoCheckpointV0,
+};
 pub use store::{
     authenticated_key_hash_v0, stored_object_key_v0, AuthenticatedObjectRecordV0,
     InMemoryNativeExecutionStoreV0, NativeExecutionStoreV0, NativeStateWriteV0,

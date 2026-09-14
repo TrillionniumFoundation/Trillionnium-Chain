@@ -455,6 +455,20 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         profile: HandoffSignerJournalProfileV1,
         external_watermark: W,
     ) -> Result<Self, HandoffSignerJournalErrorV1> {
+        let mut store = Self::open_existing_local_v1(database_path, profile, external_watermark)?;
+        store.audit_local(None)?;
+        store.require_external_exact()?;
+        Ok(store)
+    }
+
+    // Private, pinned opener. Every public caller must audit the complete local
+    // history and reconcile the external watermark before returning authority.
+    // This function does not claim or advance any watermark.
+    fn open_existing_local_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+    ) -> Result<Self, HandoffSignerJournalErrorV1> {
         ensure_supported_platform_v1()?;
         reject_semantic_watermark_v1(&external_watermark)?;
         let database_path = absolute_database_path(database_path.as_ref())?;
@@ -482,7 +496,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         validate_canonical_schema_v1(&connection)?;
         let journal_id = read_journal_id_v1(&connection)?;
         let observed_head = read_head_v1(&connection, journal_id)?;
-        let mut store = Self {
+        Ok(Self {
             connection,
             database_file,
             directory_file,
@@ -495,10 +509,142 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             observed_head,
             owned_pending: None,
             owner_pid: std::process::id(),
-        };
-        store.audit_local(None)?;
-        store.require_external_exact()?;
-        Ok(store)
+        })
+    }
+
+    /// Record a signature obtained by exact external signer readback after a
+    /// lost handoff-signing reply. This explicit candidate operation performs
+    /// no signing and accepts no signature producer or normal/new-epoch intent.
+    ///
+    /// The original strict admission and exact journal intent are mandatory.
+    /// A pending intent must already equal the external watermark. A SIGNED
+    /// tail may instead have the exact PREPARED predecessor watermark: only
+    /// that one already committed signature/fence event may finish its CAS.
+    /// Missing anchors, other pending intents, rollback, forks and larger gaps
+    /// stay closed. Ordinary `open_existing` keeps rejecting pending records.
+    ///
+    /// This operation may append the existing signature/fence event and advance
+    /// the supplied external watermark. The host must finish cross-store
+    /// startup reconciliation before invoking it. It does not establish HSM
+    /// readback provenance, SafetyRules, whole-node recovery or production
+    /// activation. If external readback has no signature, this API cannot help:
+    /// it never creates or retries a signing request.
+    #[cfg(feature = "candidate-handoff-signature-recovery")]
+    pub fn recover_old_set_handoff_signature_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictOldSetHandoffAdmissionV1,
+        observed_signature: SignatureBytes,
+    ) -> Result<(Self, SignatureBytes), HandoffSignerJournalErrorV1> {
+        if intent.signer_role() != HandoffSignerRoleV1::OldSet {
+            return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
+        }
+        admission.require_exact(intent, &profile)?;
+        let prepared = prepare_handoff_intent_v1(&profile, intent, admission)?;
+        let validator = profile
+            .old_validator_set()
+            .validator(profile.author())
+            .ok_or(HandoffSignerJournalErrorV1::MetadataMismatch)?;
+        if !StrictEd25519Verifier.verify(validator, &intent.signing_root(), &observed_signature) {
+            return Err(HandoffSignerJournalErrorV1::InvalidProducedSignature);
+        }
+
+        let mut store = Self::open_existing_local_v1(database_path, profile, external_watermark)?;
+        store.ensure_file_identity()?;
+        let pending = pending_fingerprint_v1(&store.connection)?;
+        if pending.is_some_and(|fingerprint| fingerprint != prepared.fingerprint) {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::PreparedIntentPending,
+            ));
+        }
+        // The query above only selects an audit allowance. It supplies no
+        // authority until the complete canonical history and exact intent pass.
+        store.audit_local(pending)?;
+        let stored = read_intent_v1(&store.connection, prepared.fingerprint)?.ok_or(
+            HandoffSignerJournalErrorV1::AdmissionMismatch("no retained handoff intent"),
+        )?;
+        require_exact_intent_v1(&stored, &prepared)?;
+        let recorded =
+            read_persisted_signature_v1(&store.connection, prepared.fingerprint, &store.profile)?;
+        if let Some(signature) = recorded {
+            if signature != observed_signature {
+                return Err(HandoffSignerJournalErrorV1::AdmissionMismatch(
+                    "observed signature differs from recorded signature",
+                ));
+            }
+            store.reconcile_observed_handoff_signature_v1(&prepared, signature)?;
+        } else {
+            if pending != Some(prepared.fingerprint) {
+                return Err(HandoffSignerJournalErrorV1::Conflict(
+                    HandoffSignerJournalConflictV1::PreparedIntentPending,
+                ));
+            }
+            // A pending local-first prepare is deliberately NOT repaired here.
+            // The intent must have been externally anchored before signing.
+            store.require_external_exact()?;
+            store.owned_pending = Some(prepared.fingerprint);
+            store.ensure_operational()?;
+            store.append_signature(&prepared, observed_signature, true)?;
+            store.owned_pending = None;
+            store.advance_external_to_observed()?;
+        }
+        store.ensure_operational()?;
+        let signature =
+            read_persisted_signature_v1(&store.connection, prepared.fingerprint, &store.profile)?
+                .ok_or(HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                    "recovered handoff signature disappeared",
+                ))?;
+        if signature != observed_signature {
+            return Err(HandoffSignerJournalErrorV1::AdmissionMismatch(
+                "recovered signature differs from exact readback",
+            ));
+        }
+        store.ensure_file_identity()?;
+        Ok((store, signature))
+    }
+
+    // Complete only the external CAS of this exact already signed tail. The
+    // schema/history audit has already checked its signature, fence and chain.
+    #[cfg(feature = "candidate-handoff-signature-recovery")]
+    fn reconcile_observed_handoff_signature_v1(
+        &mut self,
+        prepared: &PreparedIntentV1,
+        signature: SignatureBytes,
+    ) -> Result<(), HandoffSignerJournalErrorV1> {
+        self.ensure_file_identity()?;
+        let target = self.watermark_for(self.observed_head)?;
+        let actual = self
+            .external_watermark
+            .load(self.profile.external_watermark_scope())
+            .map_err(|error| {
+                HandoffSignerJournalErrorV1::external("read recovered handoff watermark", error)
+            })?
+            .ok_or(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::ExternalWatermarkMissing,
+            ))?;
+        if actual == target {
+            return Ok(());
+        }
+        let tail = read_event_v1(&self.connection, self.observed_head.sequence)?.ok_or(
+            HandoffSignerJournalErrorV1::PersistedRepresentationMalformed("missing signed tail"),
+        )?;
+        let predecessor = self.watermark_for(JournalHeadV1 {
+            sequence: tail.predecessor_sequence,
+            chain_checksum: tail.predecessor_chain_checksum,
+        })?;
+        if tail.kind != EVENT_SIGNED
+            || tail.fingerprint != prepared.fingerprint
+            || tail.signature != Some(*signature.as_bytes())
+            || tail.predecessor_sequence.checked_add(1) != Some(self.observed_head.sequence)
+            || actual != predecessor
+        {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::ExternalWatermarkMismatch,
+            ));
+        }
+        self.advance_external_to_observed()
     }
 
     pub const fn profile(&self) -> &HandoffSignerJournalProfileV1 {
