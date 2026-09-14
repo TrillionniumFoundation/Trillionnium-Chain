@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, sync::OnceLock};
 
 use rusqlite::Connection;
 
@@ -114,15 +114,35 @@ pub(crate) const JOURNAL_SCHEMA_SQL_V0: &str = "
 pub(crate) fn validate_canonical_schema(
     connection: &Connection,
 ) -> Result<(), SignerJournalErrorV0> {
-    let canonical = Connection::open_in_memory()
-        .map_err(|error| SignerJournalErrorV0::sqlite("open canonical schema", error))?;
-    canonical
-        .execute_batch(JOURNAL_SCHEMA_SQL_V0)
-        .map_err(|error| SignerJournalErrorV0::sqlite("install canonical schema", error))?;
-    if schema_objects(connection)? != schema_objects(&canonical)? {
+    let expected = canonical_schema()?;
+    // Always inspect the caller's current connection. The cache is the fixed
+    // reference, never a successful live-schema check or readiness decision.
+    if &schema_objects(connection)? != expected {
         return Err(SignerJournalErrorV0::SchemaMismatch);
     }
     Ok(())
+}
+
+type SchemaObjects = BTreeMap<(String, String), String>;
+
+fn canonical_schema() -> Result<&'static SchemaObjects, SignerJournalErrorV0> {
+    static EXPECTED: OnceLock<SchemaObjects> = OnceLock::new();
+    if let Some(expected) = EXPECTED.get() {
+        return Ok(expected);
+    }
+    let canonical = Connection::open_in_memory()
+        .map_err(|error| SignerJournalErrorV0::sqlite("open compiled schema reference", error))?;
+    canonical
+        .execute_batch(JOURNAL_SCHEMA_SQL_V0)
+        .map_err(|error| SignerJournalErrorV0::sqlite("build compiled schema reference", error))?;
+    let expected = schema_objects(&canonical)?;
+    canonical.close().map_err(|(_, error)| {
+        SignerJournalErrorV0::sqlite("close compiled schema reference", error)
+    })?;
+    // Racing initializers derive the same immutable map; an initialization
+    // failure is not cached and cannot make a live schema appear acceptable.
+    let _ = EXPECTED.set(expected);
+    EXPECTED.get().ok_or(SignerJournalErrorV0::SchemaMismatch)
 }
 
 fn schema_objects(
@@ -157,4 +177,45 @@ fn schema_objects(
         }
     }
     Ok(objects)
+}
+
+#[cfg(test)]
+mod reference_cache_tests {
+    use super::*;
+
+    #[test]
+    fn cached_reference_never_caches_live_database_acceptance() {
+        let connection = Connection::open_in_memory().unwrap();
+        connection.execute_batch(JOURNAL_SCHEMA_SQL_V0).unwrap();
+        validate_canonical_schema(&connection).unwrap();
+        let reference = canonical_schema().unwrap();
+        connection
+            .execute_batch("CREATE TABLE injected(value TEXT)")
+            .unwrap();
+        assert!(matches!(
+            validate_canonical_schema(&connection),
+            Err(SignerJournalErrorV0::SchemaMismatch)
+        ));
+        connection.execute_batch("DROP TABLE injected").unwrap();
+        validate_canonical_schema(&connection).unwrap();
+        assert!(std::ptr::eq(reference, canonical_schema().unwrap()));
+        assert!(!reference.is_empty());
+    }
+
+    #[test]
+    fn compiled_reference_is_shared_across_threads_not_connections() {
+        let reference = canonical_schema().unwrap();
+        std::thread::scope(|scope| {
+            for _ in 0..4 {
+                scope.spawn(|| {
+                    assert!(std::ptr::eq(reference, canonical_schema().unwrap()));
+                    let empty = Connection::open_in_memory().unwrap();
+                    assert!(matches!(
+                        validate_canonical_schema(&empty),
+                        Err(SignerJournalErrorV0::SchemaMismatch)
+                    ));
+                });
+            }
+        });
+    }
 }

@@ -403,42 +403,63 @@ pub(super) fn speculate_transactions_v0(
     transactions: &[Vec<u8>],
     worker_count: usize,
 ) -> Vec<Option<SpeculativeRuntimeAttemptV0>> {
-    // Zero bypasses the speculation scheduler entirely for differential tests.
-    let mut outcomes: Vec<_> = (0..transactions.len()).map(|_| None).collect();
-    if worker_count == 0 || transactions.is_empty() || transactions.len() > MAX_BATCH_V0 {
+    run_indexed_jobs_v0(transactions.len(), worker_count, |index| {
+        speculate_outer_v0(context, &transactions[index])
+    })
+}
+
+/// The first job of each worker is reserved; remaining jobs are claimed from
+/// one bounded work queue. A slow transaction no longer strands a static chunk
+/// while other workers are idle. Only the ordered owner may use the results.
+fn run_indexed_jobs_v0<T: Send>(
+    count: usize,
+    worker_count: usize,
+    compute: impl Fn(usize) -> Option<T> + Sync,
+) -> Vec<Option<T>> {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    let mut outcomes: Vec<_> = (0..count).map(|_| None).collect();
+    // These are scheduling limits, never transaction validity predicates.
+    if worker_count == 0 || count == 0 || count > MAX_BATCH_V0 {
         return outcomes;
     }
-    let active_workers = worker_count.min(MAX_WORKERS_V0).min(transactions.len());
-    let chunk_size = transactions.len().div_ceil(active_workers);
+    let active_workers = worker_count.min(MAX_WORKERS_V0).min(count);
+    let next = AtomicUsize::new(active_workers);
     thread::scope(|scope| {
-        let handles: Vec<_> = transactions
-            .chunks(chunk_size)
-            .enumerate()
-            .map(|(chunk_index, chunk)| {
-                let handle = thread::Builder::new().spawn_scoped(scope, move || {
-                    chunk
-                        .iter()
-                        .map(|outer| speculate_outer_v0(context, outer))
-                        .collect::<Vec<_>>()
-                });
-                (chunk_index * chunk_size, handle)
+        let handles: Vec<_> = (0..active_workers)
+            .map(|first| {
+                let compute = &compute;
+                let next = &next;
+                thread::Builder::new().spawn_scoped(scope, move || {
+                    let mut computed = vec![(first, compute(first))];
+                    loop {
+                        let index = next.fetch_add(1, Ordering::Relaxed);
+                        if index >= count {
+                            break;
+                        }
+                        computed.push((index, compute(index)));
+                    }
+                    computed
+                })
             })
             .collect();
-        for (start, handle) in handles {
-            // Worker resource failure or panic cannot authorize rejection at
-            // an unrelated transaction index. Join every started worker and
-            // leave its chunk for the unchanged canonical execution path.
-            if let Ok(handle) = handle {
-                if let Ok(computed) = handle.join() {
-                    for (index, attempt) in computed.into_iter().enumerate() {
-                        outcomes[start + index] = attempt;
-                    }
+        // Failed spawns leave their reserved jobs for canonical execution.
+        for handle in handles.into_iter().flatten() {
+            // A panic discards every result held by that worker, including any
+            // dynamically claimed jobs. Join all started workers before return.
+            if let Ok(computed) = handle.join() {
+                for (index, attempt) in computed {
+                    outcomes[index] = attempt;
                 }
             }
         }
     });
     outcomes
 }
+
+#[cfg(test)]
+#[path = "native_parallel_scheduler_tests.rs"]
+mod scheduler_tests;
 
 #[cfg(test)]
 #[path = "native_parallel_dependency_tests.rs"]

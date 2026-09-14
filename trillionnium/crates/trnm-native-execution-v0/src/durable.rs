@@ -3287,14 +3287,30 @@ fn target_store_v0(
             "p.snapshot_artifact_root",
         ));
     }
-    let live = store
-        .verified_live_values_v0(p.target_height)
+    // The snapshot decoder has already checked every live value and every
+    // retained root. Lifecycle validation needs only this one authenticated key,
+    // not a second full-tree proof walk and a copy of the entire live state.
+    let lifecycle_key = crate::auth_tree::validator_state_key().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::CorruptStore,
+            "p.lifecycle_key",
+        )
+    })?;
+    let lifecycle_value = store
+        .verified_raw_value_v0(p.target_height, &lifecycle_key)
         .map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CorruptStore,
                 "p.snapshot_live",
             )
+        })?
+        .ok_or_else(|| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "p.lifecycle_tree",
+            )
         })?;
+    let live = BTreeMap::from([(lifecycle_key, lifecycle_value)]);
     let lifecycle =
         load_validator_lifecycle_from_live_v0(&live, p.target_height).map_err(|_| {
             error(
