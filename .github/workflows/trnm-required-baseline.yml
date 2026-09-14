@@ -80,6 +80,9 @@ jobs:
           python3 scripts/ci/test_main_protection_v1.py
           python3 scripts/ci/test_codeql_default_setup_v1.py
           python3 scripts/ci/test_documentation_binding_log_v1.py
+          python3 scripts/ci/test_development_metadata_v1.py
+          python3 scripts/ci/test_independent_gates_v1.py
+          python3 scripts/ci/test_plan_pin_refresh_v1.py
           python3 -B scripts/ci/test_codeql_reconcile_regions_v1.py
           bash scripts/check_ci_runner_policy_test.sh
           timeout --signal=TERM --kill-after=30s 900s bash scripts/check_cargo_offline_policy_test.sh
@@ -234,6 +237,9 @@ jobs:
             python3 scripts/ci/test_module_coverage_guard_v1.py
             python3 scripts/ci/test_codeql_default_setup_v1.py
             python3 scripts/ci/test_documentation_binding_log_v1.py
+            python3 scripts/ci/test_development_metadata_v1.py
+            python3 scripts/ci/test_independent_gates_v1.py
+            python3 scripts/ci/test_plan_pin_refresh_v1.py
             python3 -B scripts/ci/test_codeql_reconcile_regions_v1.py
             cd web4-frontend
             npm ci
@@ -271,6 +277,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Verify exact source identity
+        id: protocol_source
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
       - name: Validate PCC1 model and single-input workflow coverage
         run: |
@@ -278,55 +285,72 @@ jobs:
           python3 scripts/ci/test_pcc1_workflow_coverage_v1.py
           python3 formal/poco-convergence-v1/check.py
       - name: Install required host tools
+        id: protocol_host_tools
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' }}
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends ripgrep
       - name: Install pinned Rust and Node toolchains
+        id: protocol_rust
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' }}
         run: |
           rustup toolchain install 1.95.0 --profile minimal
           rustup override set 1.95.0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - id: protocol_node
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24.18.0"
       - name: Validate canonical plan, mainline and active protocol contract
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' && steps.protocol_host_tools.outcome == 'success' && steps.protocol_rust.outcome == 'success' && steps.protocol_node.outcome == 'success' }}
         run: |
           set -euo pipefail
-          bash ./scripts/ci/check_canonical_development_plan.sh
-          bash ./scripts/ci/check_poco_bft_mainline_truth.sh
-          python3 ./scripts/ci/check_required_protocol_contract_v1.py
+          source scripts/ci/independent_gates_v1.sh
+          trnm_gate bash ./scripts/ci/check_canonical_development_plan.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_mainline_truth.sh
+          trnm_gate python3 ./scripts/ci/check_required_protocol_contract_v1.py
+          trnm_gate_finish
       - name: Validate independent frozen vectors
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' && steps.protocol_host_tools.outcome == 'success' && steps.protocol_rust.outcome == 'success' && steps.protocol_node.outcome == 'success' }}
         run: |
           set -euo pipefail
-          python3 ./scripts/ci/check_poco_bft_v0_parameters.py
-          python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
-          python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
-          python3 ./scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
-          python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
-          python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
-          bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
-          bash ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
-          bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+          source scripts/ci/independent_gates_v1.sh
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_parameters.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
+          trnm_gate node --test ./scripts/ci/test_checkpoint_pre_certificate_v0.mjs
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+          trnm_gate_finish
       - name: Validate machine-readable schemas and exact parsers
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' && steps.protocol_host_tools.outcome == 'success' && steps.protocol_rust.outcome == 'success' && steps.protocol_node.outcome == 'success' }}
         run: |
           set -euo pipefail
-          bash ./scripts/ci/check_poco_bft_v0_registry.sh
-          bash ./scripts/ci/check_poco_bft_v0_logical_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_block_body_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
-          bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
-          bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+          source scripts/ci/independent_gates_v1.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_registry.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_logical_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_block_body_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+          trnm_gate_finish
       - name: Require protocol gates to leave the checkout clean
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' }}
         run: |
           git diff --exit-code -- .
           test -z "$(git status --porcelain --untracked-files=all)"

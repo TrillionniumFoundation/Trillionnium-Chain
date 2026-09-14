@@ -12,6 +12,7 @@ import time
 ROOT = pathlib.Path(__file__).resolve().parent
 MODULES = (
     "test_external_evidence_intake_v1",
+    "test_external_evidence_intake_bounds_v1",
     "test_external_evidence_authentication_core_v1",
     "test_external_evidence_authentication_policy_v1",
     "test_external_evidence_authentication_artifact_v1",

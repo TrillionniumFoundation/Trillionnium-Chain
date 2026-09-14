@@ -25,25 +25,9 @@
   },
   "independent_review_assignments": [],
   "integration_observation": {
-    "observed_source": "1f5ebbb8dab62cfd4d56447480ad60992f61f0ba",
-    "selected_successor_pr": 62,
-    "stack": [
-      {
-        "pr": 62,
-        "base_ref": "main",
-        "head_ref": "work/plan-v2-full-gap-closure-20260902"
-      },
-      {
-        "pr": 85,
-        "base_ref": "work/plan-v2-full-gap-closure-20260902",
-        "head_ref": "work/poco-authority-ai-convergence-20260907"
-      },
-      {
-        "pr": 86,
-        "base_ref": "work/poco-authority-ai-convergence-20260907",
-        "head_ref": "fix/chain-pcc1-runtime-integration"
-      }
-    ],
+    "observed_source": "435c0168558d75fc70aaa11980a179b9d5980f33",
+    "selected_successor_pr": null,
+    "stack": [],
     "current_identity": "derive-head-tree-base-and-prospective-merge-at-verification-time"
   },
   "modules": [

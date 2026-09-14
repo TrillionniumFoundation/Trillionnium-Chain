@@ -1,22 +1,21 @@
 # Trillionnium Chain Development Plan v2
 
-Plan ID: `trnm-chain-development-plan-v2`  
-Effective: **2026-09-02 (Asia/Singapore)**  
-Status: **sole active engineering plan; candidate-non-normative until independently accepted and merged through protected `main`**  
-Canonical destination: `refs/heads/main`  
-Selected integration entry: Draft PR **#62**, `refs/heads/work/plan-v2-full-gap-closure-20260902`\
-Assessed integration baseline: `work/plan-v2-full-gap-closure-20260902@af691ea5005e1f0262e90c4fc878ba0a70dbe7ea`  
-Assessed tree: `af09e389b1a462b3839508b7ef305596c76384c6`  
-Current PR head, source tree, prospective-merge commit, and prospective-merge tree are derived at verification time and may not be copied from this prose. The assessed baseline is historical provenance, not the current tip.
+Plan ID: `trnm-chain-development-plan-v2`
+Effective: **2026-09-02 (Asia/Singapore)**
+Status: **sole active engineering plan; candidate-non-normative until independently accepted and merged through protected `main`**
+Canonical destination: `refs/heads/main`
+Current source baseline: `main@435c0168558d75fc70aaa11980a179b9d5980f33`
+Source tree: `1e3db388234eff27b7214cc7879aef6853214709`
+Observation revision: **2026-09-13**. No active successor PR is pinned. Actual PR head, source tree, base and prospective-merge identities are derived at verification time; source observation grants no technical or independent acceptance.
 
-Observed bounded child stack: **#62 <- #85 (PCC1 contract) <- #86 (implementation continuation)**. Children are not additional integration successors and their presence does not prove absorption into a parent. Verify current refs, ancestry and file content before integrating or transferring evidence.
+Historical integration: PR #62 and its #85/#86 child stack are provenance, not the current work queue. PR #62 was closed without merging on 2026-09-13. The single-parent convergence commit on main does not retain the prior assessed branch as an ancestor. Previous identities remain in the manifest's historical observation and Git history. No old test, review or external-evidence credit is transferred to this source. Historical overlay objects may be absent from an ordinary clean clone; they are checked if available but are not a prerequisite for current source integrity. The current assessed commit/tree and ancestor relationship remain mandatory.
 
-Machine truth: [`../../config/consensus-mainline.json`](../../config/consensus-mainline.json)  
-Snapshot: [`CURRENT_SNAPSHOT_V1.json`](CURRENT_SNAPSHOT_V1.json)  
-Module registry: [`module-registry-v1.toml`](module-registry-v1.toml)  
-Module coverage: [`../../config/module-coverage-v1.toml`](../../config/module-coverage-v1.toml)  
-Module technical reference: [`../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`](../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md)  
-Release train: [`release-train-v1.toml`](release-train-v1.toml)  
+Machine truth: [`../../config/consensus-mainline.json`](../../config/consensus-mainline.json)
+Snapshot: [`CURRENT_SNAPSHOT_V1.json`](CURRENT_SNAPSHOT_V1.json)
+Module registry: [`module-registry-v1.toml`](module-registry-v1.toml)
+Module coverage: [`../../config/module-coverage-v1.toml`](../../config/module-coverage-v1.toml)
+Module technical reference: [`../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md`](../modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md)
+Release train: [`release-train-v1.toml`](release-train-v1.toml)
 Manifest: [`plan-manifest-v1.toml`](plan-manifest-v1.toml)\
 Applicability: [`docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md`](../architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md)\
 Implementation guide: [`docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md`](../modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md)\
@@ -77,9 +76,7 @@ Development history lives in Git history, closed pull requests, immutable eviden
 
 ## 1. Current assessment and selected successor
 
-Protected `main` was observed at `b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9`. It is the canonical destination but not the assessed implementation baseline for this plan.
-
-Draft PR #62 is the sole selected integration successor into protected main. PCC1/#85 and its implementation continuation #86 are bounded children on that line, not independent release authorities. Their latest source must be assessed separately from this historical integration baseline, which combines:
+Protected `main` was observed at `435c0168558d75fc70aaa11980a179b9d5980f33`. This is the source-only baseline for renewed verification, not an accepted release. The source contains:
 
 - the descriptor-bound A04/A19/A23 application/finality/replay source train;
 - the Plan v2 single-development-truth structure;
@@ -88,7 +85,7 @@ Draft PR #62 is the sole selected integration successor into protected main. PCC
 - exact-source and prospective-merge document validation;
 - M00-M17 technical references and exact primary ownership for every active workspace crate and auxiliary package.
 
-The assessed baseline is an ancestor of the current PR head. It is not release, production, activation, or independent-acceptance authority. Any later commit invalidates prior exact-head evidence and must rerun applicable checks.
+The observed baseline must be an ancestor of the actual checked-out candidate; the gate still verifies this relationship. It is not release, production, activation, or independent-acceptance authority. Any later commit invalidates prior exact-head evidence and must rerun applicable checks.
 
 ### 1.1 Repository implementation retained
 
@@ -108,7 +105,7 @@ These facts mean **implementation present**, not **accepted closed**. Closure ad
 
 The shortest honest path remains:
 
-1. keep PR #62 as the sole successor and supersede overlapping PRs without losing immutable evidence;
+1. reconcile current main and actual PR identities, preserve historical evidence without transferring its acceptance, and run independent behavioral checks even when documentation checks fail;
 2. complete all non-skipped exact-head and prospective-merge gates on the same source;
 3. obtain independent module-owner, consumer, security, and release review;
 4. enforce crate/module dependency and production-build closures;
@@ -175,7 +172,7 @@ Crates are implementation units, not organizational boundaries. Every engineer h
 | M16 | Global Control Plane | registry, observation, planning, rollout, rollback | out of band | 2 |
 | M17 | Observability / Benchmark / Security / Evidence | metrics, fault/fuzz/formal/audit/evidence tooling | tooling | 3 |
 
-Target allocation: 48 engineers.
+Illustrative allocation: 48 engineers. Staffing estimates are advisory and cannot fail protocol or source-integrity gates.
 
 ### 3.1 Module documentation and coverage contract
 
@@ -348,6 +345,16 @@ qualification. The three protocol producer-surface guards must remain failing
 while their native authorization producers are absent; fixtures and renamed
 legacy sources cannot satisfy that obligation.
 
+The non-default old-role observed-signature recovery candidate records only an
+already produced signature against its original strict admission and retained
+intent. It does not call custody or unblock a new epoch. It reuses the atomic
+signature/terminal-fence/accounting/head transaction, then reconciles the exact
+external CAS; only the exact signed tail may repair one prepared-predecessor
+anchor lag. Ordinary startup and unanchored prepares remain closed. Compiler
+execution and independent M03/M08 consumer review are still required. The local
+five-cut SQL process test is not a Rust, HSM, physical-fault or whole-node result;
+new-role custody, Safety14 and live multi-epoch execution remain open.
+
 ### 6.2 Networking
 
 M04 must deliver authenticated peer identity, chain/profile negotiation, bounded ingress, replay protection, backpressure, peer/global quotas, and Byzantine packet handling. Connection or queue failure may delay progress or return retryable local unavailability; it cannot fabricate deterministic invalidity.
@@ -495,22 +502,9 @@ Separate implementation owner, affected consumer reviewer, qualified independent
 
 The trace registry lists the required domains for every module, including consensus, cryptography, storage/recovery and economics. Specialist slots without authenticated appointments remain vacant; semantic acceptance stays not assessed. Real reviewer intake uses the existing external-evidence authentication process, not a local JSON flag. Producer and consumer review cannot replace the required specialist, and specialist review cannot replace affected consumer replay.
 
-Cross-module work normally uses:
+Cross-module protocol changes require an explicit contract diff and producer/consumer review. Split contract, producer and consumer PRs only when that produces independently useful, safely testable changes. A small compatible fix may include all affected consumers atomically in one PR. No detached incomplete contract is treated as delivery.
 
-```text
-PR A: contract/version/limits/vectors/mutants
-PR B: producer implementation
-PR C: consumer adoption and aggregate replay
-```
-
-Limits:
-
-- one active implementation PR per module;
-- one successor per integration surface;
-- at most five concurrent writers across consensus, Safety, state, finality, and recovery;
-- no direct edits to another module implementation without its owner;
-- base movement invalidates exact-head evidence;
-- overlapping work declares one successor or closes.
+Concurrency is limited by actual conflicting ownership of consensus, Safety, state, finality and recovery code, not a fixed engineer count. Independent changes may proceed together; overlapping changes declare an integration owner. Base movement invalidates affected exact-source evidence. This does not weaken independent review, the production dependency closure or runtime authority boundaries.
 
 Merge train:
 
@@ -538,7 +532,7 @@ Skipped, cancelled, queued, stale, synthetic, self-authored, or different-head r
 
 ### P0 — selected integration integrity
 
-PR #62 is the sole selected successor. Preserve the descriptor-bound SQLite namespace/schema/post-check implementation, declare old overlapping PRs superseded, and obtain unchanged exact-head plus prospective-merge checks and independent acceptance. No gate is promoted merely because implementation is present.
+No closed PR number is an executable prerequisite. Preserve the descriptor-bound SQLite namespace/schema/post-check implementation, bind the actual source and obtain unchanged exact-head plus prospective-merge checks and independent acceptance. No gate is promoted merely because implementation is present.
 
 ### P1 — module and production boundaries
 
@@ -560,7 +554,7 @@ Externalize signer/HSM, DA workers, state-sync downloader, RPC/indexer, proof ge
 
 ### P5 — guarded control plane
 
-Deliver registry and read-only observation first; then telemetry/workload classification, signed plan/receipt, offline planner, shadow evaluator, local guard, canary/rollback, bounded OperationalLocal tuning, and only later DeterminismCritical tuning after invariance evidence.
+Keep M16 read-only, with fixed reviewed node configuration and manual tuning, until the persistent validator, two-epoch recovery path and large-state baseline are accepted. Networked planning, automatic rollout, canary/rollback and automatic tuning are deferred; existing candidate guard tests remain. Later DeterminismCritical tuning still requires independent invariance evidence.
 
 ### P6 — migration and external promotion
 
@@ -574,7 +568,7 @@ Complete trusted source verification, exact export and root recomputation, multi
 |---|---|---|---|---|
 | P0 | DOC-TRUTH-001 | M15/M17 | implementation present | exact head, prospective merge, protected-main and post-merge document truth all pass |
 | P0 | MODULE-COVERAGE-001 | M00-M17 | implementation present | every source unit remains uniquely mapped; technical/SLO/testkit/owner/dependency checks pass |
-| P0 | INT-STACK-001 | M15/M17 | open | PR #62 sole successor; overlaps superseded; all required exact-head/merge checks and independent review pass |
+| P0 | INT-STACK-001 | M15/M17 | open | actual source and prospective merge verified; historical evidence not inherited; all required checks and independent review pass |
 | P0 | A19-NS-001 | M07/M08 | implementation present, acceptance pending | descriptor-bound DB and sidecar identity passes all replacement/rollback/reopen mutants |
 | P0 | A19-SCHEMA-001 | M07 | implementation present, acceptance pending | closed-world schema/pragma digest passes exact-source qualification |
 | P0 | A19-RETURN-001 | M07/M08 | implementation present, acceptance pending | no trusted return before close/post-check; crash/replay qualification passes |
@@ -668,16 +662,19 @@ Any source, protocol, dependency, compiler, feature, configuration, validator se
 
 ## 14. Immediate executable order
 
-1. rerun canonical document/module coverage, repository truth, protocol contract, Rust baseline, fuzz smoke, Node Commit, 1/2/4/8-worker, recovery, replay-to-Core, candidate-node, Web4, and prospective-merge gates on the exact current integration or bounded-child head being changed; separately requalify the current PR #62 head when child work is integrated;
-2. repair every exact log failure without weakening source identity, offline dependency, mutation, recovery, or non-promotion requirements;
-3. mark PRs #54, #57, #58, #59, and #61 superseded only after their evidence and unique commits are preserved or proven absorbed;
-4. obtain independent module-owner, consumer, security/evidence, and release acceptance on the unchanged head;
-5. merge only through protected `main`, then run post-merge verification and regenerate source-bound release status;
-6. retain and qualify the implemented Cargo dependency/feature closures for `node-prod-v0`, `node-devnet-v0`, `ai-v1-candidate`, and `lab-and-evidence` on the exact head and prospective merge;
-7. decompose the node composition hotspot and finish the persistent network/pacemaker/Vote/Timeout/finality/recovery path;
-8. complete transaction lifecycle, state sync, migration, packaging, SBOM/provenance, observability, denial/resource, and incident/DR closure;
-9. ingest authentic independent multi-host, HSM/anchor, physical power-loss, audit/red-team, and wall-clock soak evidence;
-10. retain G5 and every activation flag as false until governance signs the exact accepted bundle.
+This section is the current ordering of work; it does not mark any implementation or external gate complete.
+
+| Priority | Work | Required result |
+|---|---|---|
+| P0 | Mainline and CI convergence | Current source/ancestor bindings, no stale active PR constants, organizational estimates advisory, independent behavioral feedback, unchanged required security and activation gates. |
+| P0 | Persistent native validator vertical path | Real signed transaction through authenticated multi-host ingress, Core/Safety, execution, durable finality and proof-aware RPC readback; no flag-only startup bypass. |
+| P0 | Live epoch boundary | Authenticated checkpoint, two non-executing seals, old/new role-specific persist-before-sign, first new block, and restart/rejoin over two successive transitions. |
+| P1 | Incremental authenticated storage and bounded recovery | Reviewed consensus-height/application-version contract, atomic state/metadata ownership, bounded checkpoints and replay, measured growth curves without removing root verification. |
+| P1 | Source-bound end-to-end benchmark | Finalized replay-verified business goodput; submitted/admitted/executed counts separately; p50/p95/p99; fixed measurement windows, independent and hotspot workloads, state/history growth and real multi-host faults. |
+| P1 | PoCO economic trust | Shadow retained; explicit related-party/Sybil/collusion and challenge-griefing analysis, reviewed parameters and activation predicates. No receipt-volume-as-independent-demand assumption. |
+| P2 | AI services, SDK and automatic control plane | Implement only against the accepted base chain and real consumers; read-only M16 first; automatic tuning deferred. |
+
+Run each applicable behavioral family independently after exact-source and toolchain prerequisites succeed. A failed family still fails the job and cannot be converted into acceptance; it must not suppress unrelated vectors or parser diagnostics. Source mismatch, cancellation and missing required tools are not passed checks. Run the prospective merge separately when a PR exists, then retain post-merge results. Preserve every external audit, multi-host, hardware/anchor, physical power-loss, wall-clock soak and governance requirement. All activation flags remain false.
 
 Minimum local replay:
 

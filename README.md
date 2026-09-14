@@ -18,12 +18,12 @@ repository remains an engineering candidate:
 - release readiness is false;
 - the default `trnm-poco-node` path remains fail-closed.
 
-Protected `main` remains the canonical destination. Draft PR #62 on
-`work/plan-v2-full-gap-closure-20260902` is the sole selected integration
-successor. The plan assesses ancestor baseline
-`af691ea5005e1f0262e90c4fc878ba0a70dbe7ea`
-(tree `af09e389b1a462b3839508b7ef305596c76384c6`); current source and
-prospective-merge identities are derived at verification time.
+Protected `main` remains the canonical destination. The source-only baseline is
+`435c0168558d75fc70aaa11980a179b9d5980f33`
+(tree `1e3db388234eff27b7214cc7879aef6853214709`), observed on 2026-09-13.
+PR #62 is closed and is historical provenance, not an active successor.
+Current source, PR and prospective-merge identities are derived at verification
+time. Prior branch test/review credit is not inherited by the convergence tree.
 
 The selected line combines the descriptor-bound A04/A19/A23 source train, the
 Node Commit Ledger, persistent deterministic 1/2/4/8-worker execution
@@ -109,6 +109,14 @@ synthetic-merge, different-source, or self-authored result is not acceptance.
 The bounded fuzz smoke is not a long-running fuzz campaign. A green external
 evidence contract validates schema and fail-closed behavior; it does not mean
 that independent real-world evidence already exists.
+
+Development input pins are derived metadata. After reviewing edits to pinned
+files, run `python3 scripts/ci/refresh_plan_manifest_pins_v1.py --write`, review
+the manifest diff and commit the related files together. The default `--check`
+is read-only. This command does not rebase the assessed source, change frozen
+protocol imports, transfer review credit or modify readiness flags. Ordinary
+exact-source validation remains required. Staffing estimates and historical PR
+numbers are not software-validity predicates.
 
 ## Candidate payload recovery socket
 

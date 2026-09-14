@@ -302,9 +302,13 @@ impl Cev0AdmissionBudgetV0 {
             .map(|certificate| self.timeout_certificate_signature_work(certificate))
             .transpose()?
             .unwrap_or(0);
+        // A certified header also verifies the proposal's own signature.
+        // It is distinct from every justify/certifying QC and TC share. The
+        // intrinsic and validator-count envelopes already reserve this +1.
         justify
             .checked_add(timeout)
             .and_then(|value| value.checked_add(header.certifying_qc().votes().len()))
+            .and_then(|value| value.checked_add(1))
             .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))
     }
 }
@@ -7142,7 +7146,22 @@ mod tests {
         )
         .unwrap();
         assert_eq!(decoded, proof);
-        assert!(accepted.signature_work() > 0);
+        // Genesis contributes no justify signatures, but every real header
+        // still has one proposer signature, including the first block.
+        let headers = [proof.finalized_block(), proof.child(), proof.grandchild()];
+        let expected_work: usize = headers
+            .iter()
+            .map(|header| {
+                assert!(header.timeout_certificate().is_none());
+                header.certifying_qc().votes().len()
+                    + header
+                        .justify_qc()
+                        .as_ordinary()
+                        .map_or(0, |qc| qc.votes().len())
+                    + 1
+            })
+            .sum();
+        assert_eq!(accepted.signature_work(), expected_work);
 
         // The proof is fully shape/semantic-checked before this aggregate
         // charge. A too-small budget must reject without charging the first

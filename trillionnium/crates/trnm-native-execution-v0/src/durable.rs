@@ -3667,22 +3667,35 @@ fn load_p_by_block_v0(
     connection: &Connection,
     block_id: [u8; 32],
 ) -> DurableResult<Option<DurablePV0>> {
-    let row = connection
-        .query_row(
+    let mut statement = connection
+        .prepare_cached(
             "SELECT target_height,store_id,p_sequence,status,parent_height,parent_block_id,parent_state_root,parent_commit_id,block_id,artifact,artifact_digest,target_snapshot,target_snapshot_digest,target_replay_command_ids,target_replay_signer_nonces,target_lifecycle_json,p_digest,commit_sequence,commit_id FROM native_durable_execution_p_v0 WHERE block_id=?",
-            params![block_id.as_slice()],
-            |row| {
-                Ok((
-                    row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?, row.get::<_, Vec<u8>>(2)?,
-                    row.get::<_, Vec<u8>>(3)?, row.get::<_, Vec<u8>>(4)?, row.get::<_, Vec<u8>>(5)?,
-                    row.get::<_, Vec<u8>>(6)?, row.get::<_, Vec<u8>>(7)?, row.get::<_, Vec<u8>>(8)?,
-                    row.get::<_, Vec<u8>>(9)?, row.get::<_, Vec<u8>>(10)?, row.get::<_, Vec<u8>>(11)?,
-                    row.get::<_, Vec<u8>>(12)?, row.get::<_, Vec<u8>>(13)?, row.get::<_, Vec<u8>>(14)?,
-                    row.get::<_, Vec<u8>>(15)?, row.get::<_, Vec<u8>>(16)?, row.get::<_, Option<Vec<u8>>>(17)?,
-                    row.get::<_, Option<Vec<u8>>>(18)?,
-                ))
-            },
         )
+        .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "p.query"))?;
+    let row = statement
+        .query_row(params![block_id.as_slice()], |row| {
+            Ok((
+                row.get::<_, Vec<u8>>(0)?,
+                row.get::<_, Vec<u8>>(1)?,
+                row.get::<_, Vec<u8>>(2)?,
+                row.get::<_, Vec<u8>>(3)?,
+                row.get::<_, Vec<u8>>(4)?,
+                row.get::<_, Vec<u8>>(5)?,
+                row.get::<_, Vec<u8>>(6)?,
+                row.get::<_, Vec<u8>>(7)?,
+                row.get::<_, Vec<u8>>(8)?,
+                row.get::<_, Vec<u8>>(9)?,
+                row.get::<_, Vec<u8>>(10)?,
+                row.get::<_, Vec<u8>>(11)?,
+                row.get::<_, Vec<u8>>(12)?,
+                row.get::<_, Vec<u8>>(13)?,
+                row.get::<_, Vec<u8>>(14)?,
+                row.get::<_, Vec<u8>>(15)?,
+                row.get::<_, Vec<u8>>(16)?,
+                row.get::<_, Option<Vec<u8>>>(17)?,
+                row.get::<_, Option<Vec<u8>>>(18)?,
+            ))
+        })
         .optional()
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "p.query"))?;
     row.map(|row| {
@@ -3779,34 +3792,40 @@ fn map_p_inventory_v0<T>(
                 "p.inventory_prepare",
             )
         })?;
-    let block_ids = statement
-        .query_map([], |row| row.get::<_, Vec<u8>>(0))
-        .map_err(|_| {
-            error(
-                NativeApplicationExecutionErrorCodeV0::Storage,
-                "p.inventory_query",
-            )
-        })?
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|_| {
+    // Keep the keys-only cursor alive for the entire inventory pass. Large
+    // snapshot/artifact BLOBs are never part of the ORDER BY temporary table.
+    // Each lookup reuses the same cached statement and the same SQLite read
+    // transaction. The callback must not mutate this connection or publish
+    // authority; a later row failure discards the complete returned inventory.
+    let mut keys = statement.query([]).map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::Storage,
+            "p.inventory_query",
+        )
+    })?;
+    let mut inventory = Vec::new();
+    while let Some(row) = keys.next().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::Storage,
+            "p.inventory_rows",
+        )
+    })? {
+        let bytes: Vec<u8> = row.get(0).map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::Storage,
                 "p.inventory_rows",
             )
         })?;
-    block_ids
-        .into_iter()
-        .map(|bytes| {
-            let block_id = array32_v0(&bytes, "p.inventory_block")?;
-            let p = load_p_by_block_v0(connection, block_id)?.ok_or_else(|| {
-                error(
-                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                    "p.inventory_missing",
-                )
-            })?;
-            consume(p)
-        })
-        .collect()
+        let block_id = array32_v0(&bytes, "p.inventory_block")?;
+        let p = load_p_by_block_v0(connection, block_id)?.ok_or_else(|| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "p.inventory_missing",
+            )
+        })?;
+        inventory.push(consume(p)?);
+    }
+    Ok(inventory)
 }
 
 fn prepared_blocks_not_descending_from_v0(
@@ -7180,6 +7199,109 @@ mod tests {
             )
             .unwrap();
         assert_eq!(exact.disposition(), NativeRecoveryDispositionV0::Exact);
+    }
+
+    fn two_prepared_rows_for_inventory_v0(temporary: &TempDir) -> PathBuf {
+        let (path, application, _head, first) = initialized(temporary);
+        let sibling = NativeBlockExecutionRequestV0::new(
+            first.chain_id().clone(),
+            first.genesis_hash(),
+            first.parent().clone(),
+            BlockIdV0::new([90; 32]).unwrap(),
+            first.height(),
+            first.timestamp_ms(),
+            first.active_validator_set_id(),
+            first.transactions().to_vec(),
+            first.expected(),
+        )
+        .unwrap();
+        for request in [first, sibling] {
+            assert!(matches!(
+                application.execute_block(request).unwrap(),
+                NativeBlockExecutionResultV0::Valid(_)
+            ));
+        }
+        drop(application);
+        path
+    }
+
+    #[test]
+    fn inventory_cursor_uses_one_sql_snapshot_not_separate_row_transactions() {
+        let temporary = TempDir::new().unwrap();
+        let path = two_prepared_rows_for_inventory_v0(&temporary);
+        // Exercise SQL cursor semantics with ordinary connections. WAL here is
+        // test-only, NOT qualification of the native owner's production modes.
+        let reader = Connection::open(&path).unwrap();
+        reader.execute_batch("PRAGMA journal_mode=WAL").unwrap();
+        let writer = Connection::open(&path).unwrap();
+        let expected = load_all_p_v0(&reader).unwrap();
+        assert_eq!(expected.len(), 2);
+        let later = expected[1].block_id;
+        let mut seen = 0;
+        let observed = map_p_inventory_v0(&reader, |p| {
+            seen += 1;
+            if seen == 1 {
+                writer
+                    .execute(
+                        "UPDATE native_durable_execution_p_v0 SET artifact=? WHERE block_id=?",
+                        params![b"changed-after-cursor-start".as_slice(), later.as_slice()],
+                    )
+                    .unwrap();
+            }
+            Ok(p)
+        })
+        .unwrap();
+        assert_eq!(observed, expected);
+        // The cached prepared statement cannot freeze later read transactions.
+        let fresh = load_p_by_block_v0(&reader, later).unwrap().unwrap();
+        assert_eq!(fresh.artifact, b"changed-after-cursor-start");
+    }
+
+    #[test]
+    fn inventory_cursor_callback_failure_discards_inventory_and_releases_read() {
+        let temporary = TempDir::new().unwrap();
+        let path = two_prepared_rows_for_inventory_v0(&temporary);
+        let reader = Connection::open(&path).unwrap();
+        let mut seen = 0;
+        let failure = map_p_inventory_v0::<u64>(&reader, |p| {
+            seen += 1;
+            if seen == 2 {
+                return Err(error(
+                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                    "inventory.test.consumer",
+                ));
+            }
+            Ok(p.p_sequence)
+        })
+        .unwrap_err();
+        assert_eq!(seen, 2);
+        assert_eq!(failure.field(), "inventory.test.consumer");
+        assert!(reader.is_autocommit());
+        let writer = Connection::open(&path).unwrap();
+        writer.execute_batch("BEGIN EXCLUSIVE; ROLLBACK").unwrap();
+        assert_eq!(load_all_p_v0(&reader).unwrap().len(), 2);
+    }
+
+    #[test]
+    fn cached_p_lookup_returns_current_bytes_after_same_connection_update() {
+        let temporary = TempDir::new().unwrap();
+        let path = two_prepared_rows_for_inventory_v0(&temporary);
+        let connection = Connection::open(&path).unwrap();
+        let rows = load_all_p_v0(&connection).unwrap();
+        assert!(rows[0].p_sequence < rows[1].p_sequence);
+        let id = rows[0].block_id;
+        let original = load_p_by_block_v0(&connection, id).unwrap().unwrap();
+        assert_eq!(original, rows[0]);
+        connection
+            .execute(
+                "UPDATE native_durable_execution_p_v0 SET artifact=? WHERE block_id=?",
+                params![b"replaced-current-artifact".as_slice(), id.as_slice()],
+            )
+            .unwrap();
+        let changed = load_p_by_block_v0(&connection, id).unwrap().unwrap();
+        assert_eq!(changed.artifact, b"replaced-current-artifact");
+        assert_eq!(changed.block_id, original.block_id);
+        assert_ne!(changed, original);
     }
 
     #[test]
