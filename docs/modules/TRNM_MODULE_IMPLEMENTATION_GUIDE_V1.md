@@ -94,6 +94,22 @@ Required `M02-EPOCH` acceptance additions are old-only/new-only/dual-role member
 
 **Exact-source review trace.** For `M03-PERSIST` under `bft-v0`, inspect `trillionnium/crates/trnm-consensus-signer-journal/src/sqlite.rs` symbol `sign_exact_v0`; the current error definition/literal is `SignerJournalErrorV0` in `trillionnium/crates/trnm-consensus-signer-journal/src/error.rs`. Reproduce `signature_is_persisted_before_return_and_exact_replay_skips_producer` in `trillionnium/crates/trnm-consensus-signer-journal/tests/sqlite_journal.rs`. The journal is not SafetyRules; exact HSM replay and Core/Safety/external-anchor reconciliation require separate acceptance.
 
+**Signer namespace and schema inspection.** Both retained signer-journal schemas
+use no-follow metadata inspection when comparing current file/directory entries
+with their pinned descriptors. Renaming a pinned object and linking its old name
+to the same inode is rejected, not treated as unchanged identity. The read-only
+schema classifier explicitly closes SQLite, then repeats database identity,
+persisted mode and auxiliary namespace checks while its pins remain alive. Its
+private post-close regression seam supplies no public admission bypass. These
+checks do not protect unobserved ancestor rename-and-restore, a hostile same-user
+process or coherent rollback of the whole namespace and external anchor.
+
+The immutable compiled schema-object map is initialized once per process/schema;
+every invocation still reads and compares the current connection's complete
+schema inventory. No live-schema acceptance, journal row, watermark or readiness
+is cached. Tests inject live schema drift after warming the reference and verify
+rejection, plus concurrent reference initialization and post-close substitution.
+
 <a id="m04"></a>
 ## M04 — P2P / Session / Dissemination
 
@@ -165,6 +181,19 @@ For this sealed case only, `into_reusable_outcome_v0` retains and authenticates 
 
 The bounds cover retained speculative data; each active worker still pays the existing runtime's transient decoding/execution cost. The internal zero-worker test mode bypasses speculation entirely and executes each runtime attempt on the canonical state. Comparing it with 1/2/4/8 workers covers scheduling equivalence and exact complete roots/receipts/writes, not an independent semantic implementation. Separate test-only counters record exact reuse, fee rebasing and full canonical execution: eight independent fee-paying transfers must consume all eight worker results (one exact reuse, seven fee rebases, zero runtime re-executions), for both an absent and an existing collector. Other command families remain subject to exact collector conflicts/barriers. This removes a specific forced runtime retry for ordinary transfers; it is not a measured end-to-end throughput gain. The exact-byte cache avoids a second successful envelope verification when present; canonical signer-policy/replay checks and canonical staging/root construction/commit remain. Test-only counters distinguish envelope reuse from ordered strict-verifier calls. The Rust regressions must be compiled and executed on the reviewed source before this optimization is accepted; source presence is not a measured throughput result.
 
+**Bounded native work distribution.** The private runtime scheduler reserves one
+initial transaction per started worker and dynamically assigns the remaining
+indices from a bounded queue. Results retain their original transaction index;
+all started workers are joined before the canonical owner checks dependencies,
+replay, signer policy, fees and staged mutations in the unchanged order. Failed
+thread creation leaves its reserved work for canonical execution. A panicking
+worker loses its retained outcomes; missing work uses the ordinary canonical
+fallback, never a fabricated runtime error. The existing 8-worker/32-job and
+retained-data caps are unchanged. Scheduler regressions cover exact-once index
+assignment, slow-first-job progress, panic cleanup and oversize/zero-worker
+fallback. This removes static-chunk idle time, not the final ordered barrier or
+a measured end-to-end throughput limit.
+
 **Native durable inventory boundary (M07/M08 consumers).** In `trillionnium/crates/trnm-native-execution-v0/src/durable.rs`, `map_p_inventory_v0` loads one complete durable P row at a time. `ValidatedPInventoryEntryV0::from_durable_v0` still verifies its artifact, snapshot, replay sets and lifecycle before retaining compact identity/height/sequence/root/commit links. `validate_p_inventory_v0` verifies the complete committed chain and prepared ancestry using those entries. Parent persist sequences must be strictly smaller; their fixed-width big-endian encoding preserves SQL ordering. `commit_block` passes the same validated inventory to `prepared_blocks_not_descending_from_v0`, which resolves prepared descendants in one pass and removes only conflicting prepared forks. It does not reread unaudited SQL links between validation and pruning. The key-only `ORDER BY p_sequence` cursor stays live while each complete row is read with a reused prepared point-lookup statement. This removes the temporary Rust collection of all IDs and repeated SQL preparation, not the N row lookups or full-history scan. It deliberately does not sort complete snapshot BLOBs in an unindexed SQL query. Consumers must neither write through that connection during iteration nor publish partial results. The normal-connection SQLite cursor test checks consistent read snapshots; the native immutable-read owner still relies on its existing namespace/lock/integrity contract and does not gain production WAL support. Full-history validation, complete JMT snapshot encoding/writes and serial commit remain present.
 
 **Typed native failure boundary.** `complete.rs::CompleteNativeExecutionFailureV0` preserves runtime classification through the internal `anyhow` carrier; `durable.rs::complete_execution_failure_result_v0` consumes that private type, not display strings. Authenticated state-read failure returns `Unavailable(AuthenticatedStateUnavailable)` without a prepared row. A classified transaction rejection retains its deterministic runtime code. Runtime `InvariantFault`, explicit `Invariant` from mutation staging/PoCO application/validator-transition invariants, and an unclassified runtime attempt return a `CorruptStore` error rather than transaction invalidity or retryable success. The existing non-runtime body/schema rejection branches retain their existing frozen-v0 rejection handling; this seam does not claim that every generic helper error has a complete independent taxonomy.
@@ -213,6 +242,22 @@ The CEV0 certified-header admission budget now charges its proposer signature as
 
 **Native snapshot recovery boundary.** `trnm-native-execution-v0/src/store.rs` checks each retained root against its indexed JMT root node rather than merely testing historical root-node presence. Historical root/hash substitution must reject even when the latest head still verifies. The shared live-value verifier retains duplicate-key detection and latest-root membership/preimage checks while letting recovery discard each proven value instead of collecting another full live map. Explicit live-map consumers retain their existing results. The snapshot codec and retained history are unchanged. These checks do not recursively prove every historical leaf, implement incremental persistence/GC or supply an external rollback anchor; M06/M08 consumers and independent storage acceptance remain required.
 
+
+**Authenticated point consumers.** After the complete durable snapshot has passed
+its existing root, preimage and live-value audit, lifecycle extraction proves
+only the exact validator-lifecycle key instead of rebuilding and proving the
+entire live-value map a second time. The point reader verifies membership or
+non-membership under the requested retained root, checks present preimages, and
+rejects corrupt values or unknown versions. This is not partial snapshot
+validation, authenticated pruning, incremental persistence or bounded-history
+recovery.
+
+`prove_raw_key_v0` verifies the generated ICS23 membership/non-membership proof
+against the exact requested root before exporting bytes. Comparing a root with
+itself is not validation. Regression inputs substitute a retained root and a
+historical value below a healthy latest head; both reject before publication.
+The proof codec and hash domains are unchanged. Proof consumers still verify
+against their independently trusted root; producer checks do not bootstrap trust.
 
 **Exact-source review trace.** For `M07-SCHEMA` under `bft-v0`, inspect `trillionnium/crates/trnm-native-application-sqlite/src/store.rs` symbol `open`; the current error definition/literal is `ValidationStoreErrorCodeV0` in `trillionnium/crates/trnm-native-application-sqlite/src/error.rs`. Reproduce `schema_or_trigger_drift_is_rejected_on_reopen` in `trillionnium/crates/trnm-native-application-sqlite/src/tests.rs`. Local proposal-validation store/schema regression, not whole-node power-loss or coherent-rollback acceptance.
 

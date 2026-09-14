@@ -126,8 +126,16 @@ pub enum SignerJournalSchemaKindV1 {
 pub fn inspect_signer_journal_schema_read_only_v1(
     database_path: impl AsRef<Path>,
 ) -> Result<SignerJournalSchemaKindV1, HandoffSignerJournalErrorV1> {
+    inspect_schema_after_close_v1(database_path.as_ref(), || {})
+}
+
+// A private hook makes the post-close namespace boundary testable without an
+// environment-controlled fault injection surface in the public classifier.
+fn inspect_schema_after_close_v1(
+    database_path: &Path,
+    after_close: impl FnOnce(),
+) -> Result<SignerJournalSchemaKindV1, HandoffSignerJournalErrorV1> {
     ensure_supported_platform_v1()?;
-    let database_path = database_path.as_ref();
     if !database_path.exists() {
         return Err(HandoffSignerJournalErrorV1::Missing);
     }
@@ -170,26 +178,41 @@ pub fn inspect_signer_journal_schema_read_only_v1(
             |row| row.get(0),
         )
         .map_err(|error| HandoffSignerJournalErrorV1::sqlite("identify schema1", error))?;
-    match (legacy, current) {
+    let (kind, auxiliary_pins) = match (legacy, current) {
         (1, 0) => {
-            let auxiliary_pins = pin_checkpointed_legacy_namespace_v1(database_path)?;
+            let pins = pin_checkpointed_legacy_namespace_v1(database_path)?;
             require_persisted_sqlite_journal_mode_v1(&database_file, 2, "schema0 WAL mode")?;
             validate_canonical_schema(&connection)
                 .map_err(|_| HandoffSignerJournalErrorV1::SchemaMismatch)?;
-            auxiliary_pins.require_unchanged()?;
-            require_path_identity(database_path, database_identity)?;
-            Ok(SignerJournalSchemaKindV1::LegacyV0ReadOnly)
+            pins.require_unchanged()?;
+            (SignerJournalSchemaKindV1::LegacyV0ReadOnly, Some(pins))
         }
         (0, 1) => {
             require_schema1_auxiliary_namespace_absent_v1(database_path)?;
             require_persisted_sqlite_journal_mode_v1(&database_file, 1, "schema1 DELETE mode")?;
             validate_canonical_schema_v1(&connection)?;
-            require_schema1_auxiliary_namespace_absent_v1(database_path)?;
-            require_path_identity(database_path, database_identity)?;
-            Ok(SignerJournalSchemaKindV1::HandoffCapableV1)
+            (SignerJournalSchemaKindV1::HandoffCapableV1, None)
         }
-        _ => Err(HandoffSignerJournalErrorV1::SchemaMismatch),
+        _ => return Err(HandoffSignerJournalErrorV1::SchemaMismatch),
+    };
+    connection.close().map_err(|(_, error)| {
+        HandoffSignerJournalErrorV1::sqlite("close read-only schema classifier", error)
+    })?;
+    after_close();
+    // Keep the file and auxiliary descriptors/locks alive through the last
+    // check. A successful cached schema read cannot bless a replaced namespace.
+    require_path_identity(database_path, database_identity)?;
+    match auxiliary_pins {
+        Some(pins) => {
+            require_persisted_sqlite_journal_mode_v1(&database_file, 2, "schema0 WAL mode")?;
+            pins.require_unchanged()?;
+        }
+        None => {
+            require_persisted_sqlite_journal_mode_v1(&database_file, 1, "schema1 DELETE mode")?;
+            require_schema1_auxiliary_namespace_absent_v1(database_path)?;
+        }
     }
+    Ok(kind)
 }
 
 struct LegacyNamespacePinsV1 {
@@ -3425,7 +3448,7 @@ fn absolute_database_path(path: &Path) -> Result<PathBuf, HandoffSignerJournalEr
 fn validate_private_directory_v1(path: &Path) -> Result<(), HandoffSignerJournalErrorV1> {
     use std::os::unix::fs::MetadataExt;
 
-    let metadata = fs::metadata(path)
+    let metadata = fs::symlink_metadata(path)
         .map_err(|error| HandoffSignerJournalErrorV1::io("stat schema1 directory", error))?;
     // SAFETY: `geteuid` accepts no pointer and touches no caller memory.
     let effective_uid = unsafe { libc::geteuid() };
@@ -3567,7 +3590,7 @@ fn file_handle_identity_v1(file: &File) -> Result<FileIdentityV1, HandoffSignerJ
 }
 
 fn path_identity_v1(path: &Path) -> Result<FileIdentityV1, HandoffSignerJournalErrorV1> {
-    let metadata = fs::metadata(path)
+    let metadata = fs::symlink_metadata(path)
         .map_err(|error| HandoffSignerJournalErrorV1::io("stat schema1 database path", error))?;
     validate_private_file_metadata_v1(&metadata)?;
     Ok(identity_from_metadata_v1(&metadata))
@@ -3591,7 +3614,7 @@ fn directory_handle_identity_v1(
 
 fn directory_path_identity_v1(path: &Path) -> Result<FileIdentityV1, HandoffSignerJournalErrorV1> {
     validate_private_directory_v1(path)?;
-    let metadata = fs::metadata(path)
+    let metadata = fs::symlink_metadata(path)
         .map_err(|error| HandoffSignerJournalErrorV1::io("stat schema1 directory path", error))?;
     Ok(identity_from_metadata_v1(&metadata))
 }
@@ -3902,5 +3925,86 @@ mod tests {
                 )
             )
         ));
+    }
+
+    #[test]
+    fn pinned_file_identity_rejects_same_inode_symlink_alias() {
+        use std::os::unix::fs::symlink;
+        let temporary = TempDir::new().unwrap();
+        let path = temporary.path().join("pinned.sqlite3");
+        let file = create_new_private_file_v1(&path).unwrap();
+        let expected = file_handle_identity_v1(&file).unwrap();
+        let moved = temporary.path().join("moved.sqlite3");
+        fs::rename(&path, &moved).unwrap();
+        symlink(&moved, &path).unwrap();
+        // The target is deliberately the same inode: following it is a false pass.
+        assert_eq!(
+            identity_from_metadata_v1(&fs::metadata(&path).unwrap()),
+            expected
+        );
+        assert!(require_path_identity(&path, expected).is_err());
+    }
+
+    #[test]
+    fn pinned_directory_identity_rejects_same_inode_symlink_alias() {
+        use std::os::unix::fs::symlink;
+        let temporary = TempDir::new().unwrap();
+        let parent = temporary.path().join("owner");
+        fs::create_dir(&parent).unwrap();
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).unwrap();
+        let (handle, expected) = open_parent_directory(&parent.join("state.sqlite3")).unwrap();
+        let moved = temporary.path().join("moved-owner");
+        fs::rename(&parent, &moved).unwrap();
+        symlink(&moved, &parent).unwrap();
+        assert_eq!(directory_handle_identity_v1(&handle).unwrap(), expected);
+        assert!(directory_path_identity_v1(&parent).is_err());
+    }
+
+    fn classifier_fixture(temporary: &TempDir) -> PathBuf {
+        let path = temporary.path().join("classifier.sqlite3");
+        let file = create_new_private_file_v1(&path).unwrap();
+        let connection = Connection::open(&path).unwrap();
+        connection.execute_batch(JOURNAL_SCHEMA_SQL_V1).unwrap();
+        connection.close().unwrap();
+        file.sync_all().unwrap();
+        path
+    }
+
+    #[test]
+    fn schema_classifier_closes_then_rechecks_database_identity() {
+        let temporary = TempDir::new().unwrap();
+        let path = classifier_fixture(&temporary);
+        let before = fs::read(&path).unwrap();
+        assert_eq!(
+            inspect_signer_journal_schema_read_only_v1(&path).unwrap(),
+            SignerJournalSchemaKindV1::HandoffCapableV1
+        );
+        assert_eq!(fs::read(&path).unwrap(), before);
+        let result = inspect_schema_after_close_v1(&path, || {
+            fs::rename(&path, temporary.path().join("old.sqlite3")).unwrap();
+            fs::write(&path, &before).unwrap();
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+        });
+        assert!(matches!(
+            result,
+            Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::FileIdentityChanged
+            ))
+        ));
+    }
+
+    #[test]
+    fn schema_classifier_rejects_sidecars_created_after_close() {
+        for suffix in ["-wal", "-shm", "-journal"] {
+            let temporary = TempDir::new().unwrap();
+            let path = classifier_fixture(&temporary);
+            assert!(
+                inspect_schema_after_close_v1(&path, || {
+                    fs::write(sqlite_auxiliary_path_v1(&path, suffix), b"unexpected").unwrap();
+                })
+                .is_err(),
+                "accepted a new {suffix} after closing SQLite"
+            );
+        }
     }
 }
