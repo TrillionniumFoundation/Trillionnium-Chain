@@ -61,8 +61,11 @@ fn fixture(profile: &str) -> Fixture {
         commitment: decode_next_epoch_commitment_v0_exact(&raw("preheader", "commitment_cev0_hex"))
             .unwrap(),
         header: decode_block_header_v0_exact(&raw("checkpoint", "header_cev0_hex")).unwrap(),
-        parent: decode_block_header_v0_exact(&raw("preheader", "checkpoint_parent_header_cev0_hex"))
-            .unwrap(),
+        parent: decode_block_header_v0_exact(&raw(
+            "preheader",
+            "checkpoint_parent_header_cev0_hex",
+        ))
+        .unwrap(),
     }
 }
 
@@ -89,7 +92,12 @@ fn verify(
 struct CountStrict(Cell<usize>);
 
 impl SignatureVerifier for CountStrict {
-    fn verify(&self, validator: &Validator, root: &SigningRoot, signature: &SignatureBytes) -> bool {
+    fn verify(
+        &self,
+        validator: &Validator,
+        root: &SigningRoot,
+        signature: &SignatureBytes,
+    ) -> bool {
         self.0.set(self.0.get() + 1);
         StrictEd25519Verifier.verify(validator, root, signature)
     }
@@ -136,7 +144,10 @@ fn charged_checkpoint_work_equals_actual_strict_verifier_calls_including_propose
         let mut per_header = Cev0AdmissionBudgetV0::protocol_v0();
         for (header, parent_time) in [
             (proof.finalized_block(), f.parent.timestamp_ms()),
-            (proof.child(), proof.finalized_block().header().timestamp_ms()),
+            (
+                proof.child(),
+                proof.finalized_block().header().timestamp_ms(),
+            ),
             (proof.grandchild(), proof.child().header().timestamp_ms()),
         ] {
             let before = per_header.signature_work();

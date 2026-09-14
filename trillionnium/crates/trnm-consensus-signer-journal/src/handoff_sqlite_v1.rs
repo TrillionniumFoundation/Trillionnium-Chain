@@ -593,9 +593,11 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         store.ensure_operational()?;
         let signature =
             read_persisted_signature_v1(&store.connection, prepared.fingerprint, &store.profile)?
-                .ok_or(HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                .ok_or(
+                HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
                     "recovered handoff signature disappeared",
-                ))?;
+                ),
+            )?;
         if signature != observed_signature {
             return Err(HandoffSignerJournalErrorV1::AdmissionMismatch(
                 "recovered signature differs from exact readback",

@@ -502,11 +502,7 @@ fn cached_envelope_does_not_bypass_block_or_committed_replay() {
         let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(&raw).unwrap();
         if committed {
             store
-                .mark_committed_command_v0(
-                    envelope.command_id,
-                    envelope.signer_id,
-                    envelope.nonce,
-                )
+                .mark_committed_command_v0(envelope.command_id, envelope.signer_id, envelope.nonce)
                 .unwrap();
         }
         let request = request(&store, &set, vec![raw.clone(), raw]);
@@ -521,8 +517,7 @@ fn cached_envelope_does_not_bypass_block_or_committed_replay() {
 #[test]
 fn invalid_signature_never_creates_a_reusable_outer_verification() {
     let (store, set) = fixture(1_000_000);
-    let mut envelope: SignedCommandEnvelopeV1 =
-        serde_json::from_slice(&transfer(2, 1)).unwrap();
+    let mut envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(&transfer(2, 1)).unwrap();
     envelope.signature_hex = "00".repeat(64);
     let invalid = serde_json::to_vec(&envelope).unwrap();
     assert!(speculate_one_outer(&store, &invalid).is_none());

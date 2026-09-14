@@ -1252,7 +1252,11 @@ impl DurableNativeApplicationV0 {
         // Reject invalid or under-budget proofs before the more expensive
         // native-history read. No result escapes until fresh storage and the
         // original preparation owner have been checked below.
-        let authority = prepared.bound.authorized().prepared().commitment_authority();
+        let authority = prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority();
         let finality = trnm_consensus_crypto::decode_verify_checkpoint_finality_strict_v0(
             raw_checkpoint_two_seal_finality,
             authority.old_validator_set(),
@@ -1884,7 +1888,11 @@ mod native_authorization_tests {
         use trnm_consensus_types::{
             HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields, SignatureShareV0,
         };
-        let authority = prepared.bound.authorized().prepared().commitment_authority();
+        let authority = prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority();
         let set = authority.old_validator_set();
         let parameters = authority.old_parameters();
         let checkpoint = prepared.header();
@@ -2204,7 +2212,9 @@ mod native_authorization_tests {
         let headers = ordinary_prefix(&app);
         let prepared = preparation(&app, &headers);
         // Only checkpoint/two-seal signatures exist here, no handoff certificate.
-        let proof = checkpoint_two_seal_proof(&prepared).try_cev0_bytes().unwrap();
+        let proof = checkpoint_two_seal_proof(&prepared)
+            .try_cev0_bytes()
+            .unwrap();
         let execution = execute_prepared_checkpoint(&app, &prepared);
         app.commit_block(NativeApplicationCommitRequestV0::new(execution))
             .unwrap();
@@ -2234,7 +2244,9 @@ mod native_authorization_tests {
         let app = open(&directory.path().join("application.sqlite3"), config());
         let headers = ordinary_prefix(&app);
         let prepared = preparation(&app, &headers);
-        let proof = checkpoint_two_seal_proof(&prepared).try_cev0_bytes().unwrap();
+        let proof = checkpoint_two_seal_proof(&prepared)
+            .try_cev0_bytes()
+            .unwrap();
         let _execution = execute_prepared_checkpoint(&app, &prepared);
         let before = app.confirmed_committed_head_v0().unwrap();
         assert!(app
@@ -2285,7 +2297,9 @@ mod native_authorization_tests {
             let app = open(&path, config());
             let headers = ordinary_prefix(&app);
             let prepared = preparation(&app, &headers);
-            let proof = checkpoint_two_seal_proof(&prepared).try_cev0_bytes().unwrap();
+            let proof = checkpoint_two_seal_proof(&prepared)
+                .try_cev0_bytes()
+                .unwrap();
             let execution = execute_prepared_checkpoint(&app, &prepared);
             app.commit_block(NativeApplicationCommitRequestV0::new(execution))
                 .unwrap();
@@ -2346,7 +2360,9 @@ mod native_authorization_tests {
         let app = open(&directory.path().join("application.sqlite3"), config());
         let headers = ordinary_prefix(&app);
         let prepared = preparation(&app, &headers);
-        let proof = checkpoint_two_seal_proof(&prepared).try_cev0_bytes().unwrap();
+        let proof = checkpoint_two_seal_proof(&prepared)
+            .try_cev0_bytes()
+            .unwrap();
         let execution = execute_prepared_checkpoint(&app, &prepared);
         app.commit_block(NativeApplicationCommitRequestV0::new(execution))
             .unwrap();
@@ -2367,7 +2383,9 @@ mod native_authorization_tests {
         let headers = ordinary_prefix(&app);
         let original_request = next_request(&app);
         let prepared = preparation(&app, &headers);
-        let proof = checkpoint_two_seal_proof(&prepared).try_cev0_bytes().unwrap();
+        let proof = checkpoint_two_seal_proof(&prepared)
+            .try_cev0_bytes()
+            .unwrap();
         let execution = execute_prepared_checkpoint(&app, &prepared);
         app.commit_block(NativeApplicationCommitRequestV0::new(execution))
             .unwrap();
@@ -2404,6 +2422,9 @@ mod native_authorization_tests {
         let confirmed = reopened
             .complete_poco_checkpoint_handoff_v0(recovered, &anchor)
             .unwrap();
-        assert_eq!(confirmed.header().id(), expected.checkpoint_block_id());
+        assert_eq!(
+            confirmed.header().id(),
+            expected.fields().checkpoint_block_id
+        );
     }
 }

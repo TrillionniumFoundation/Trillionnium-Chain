@@ -3673,20 +3673,29 @@ fn load_p_by_block_v0(
         )
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "p.query"))?;
     let row = statement
-        .query_row(
-            params![block_id.as_slice()],
-            |row| {
-                Ok((
-                    row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?, row.get::<_, Vec<u8>>(2)?,
-                    row.get::<_, Vec<u8>>(3)?, row.get::<_, Vec<u8>>(4)?, row.get::<_, Vec<u8>>(5)?,
-                    row.get::<_, Vec<u8>>(6)?, row.get::<_, Vec<u8>>(7)?, row.get::<_, Vec<u8>>(8)?,
-                    row.get::<_, Vec<u8>>(9)?, row.get::<_, Vec<u8>>(10)?, row.get::<_, Vec<u8>>(11)?,
-                    row.get::<_, Vec<u8>>(12)?, row.get::<_, Vec<u8>>(13)?, row.get::<_, Vec<u8>>(14)?,
-                    row.get::<_, Vec<u8>>(15)?, row.get::<_, Vec<u8>>(16)?, row.get::<_, Option<Vec<u8>>>(17)?,
-                    row.get::<_, Option<Vec<u8>>>(18)?,
-                ))
-            },
-        )
+        .query_row(params![block_id.as_slice()], |row| {
+            Ok((
+                row.get::<_, Vec<u8>>(0)?,
+                row.get::<_, Vec<u8>>(1)?,
+                row.get::<_, Vec<u8>>(2)?,
+                row.get::<_, Vec<u8>>(3)?,
+                row.get::<_, Vec<u8>>(4)?,
+                row.get::<_, Vec<u8>>(5)?,
+                row.get::<_, Vec<u8>>(6)?,
+                row.get::<_, Vec<u8>>(7)?,
+                row.get::<_, Vec<u8>>(8)?,
+                row.get::<_, Vec<u8>>(9)?,
+                row.get::<_, Vec<u8>>(10)?,
+                row.get::<_, Vec<u8>>(11)?,
+                row.get::<_, Vec<u8>>(12)?,
+                row.get::<_, Vec<u8>>(13)?,
+                row.get::<_, Vec<u8>>(14)?,
+                row.get::<_, Vec<u8>>(15)?,
+                row.get::<_, Vec<u8>>(16)?,
+                row.get::<_, Option<Vec<u8>>>(17)?,
+                row.get::<_, Option<Vec<u8>>>(18)?,
+            ))
+        })
         .optional()
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "p.query"))?;
     row.map(|row| {

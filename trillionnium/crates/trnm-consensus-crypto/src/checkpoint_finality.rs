@@ -53,7 +53,9 @@ impl fmt::Display for StrictCheckpointFinalityErrorV0 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::TargetMismatch => f.write_str("checkpoint proof targets another exact header"),
-            Self::ParentMismatch => f.write_str("checkpoint proof has another authenticated parent"),
+            Self::ParentMismatch => {
+                f.write_str("checkpoint proof has another authenticated parent")
+            }
             Self::Decode(error) => write!(f, "checkpoint proof decode: {error}"),
             Self::Consensus(error) => write!(f, "checkpoint strict verification: {error}"),
         }
