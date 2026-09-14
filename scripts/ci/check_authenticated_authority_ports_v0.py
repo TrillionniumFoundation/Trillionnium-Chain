@@ -192,6 +192,8 @@ def main() -> int:
 
     report = {
         "schema": "trnm-authenticated-authority-ports-check-v0",
+        "evidence_scope": "source-hygiene-only",
+        "type_safety_acceptance": "requires-rustdoc-and-behavioral-tests",
         "verified_ingress_required": True,
         "verified_stage_fact_required": True,
         "verification_tokens_cloneable": False,
