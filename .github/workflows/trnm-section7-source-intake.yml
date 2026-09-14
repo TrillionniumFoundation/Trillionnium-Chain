@@ -1,0 +1,102 @@
+name: Section7 exact candidate source import
+on:
+  push:
+    branches: [fix/chain-section7-recovery-20260914]
+    paths: [.github/workflows/trnm-section7-source-intake.yml]
+permissions: {}
+concurrency:
+  group: section7-exact-source-intake
+  cancel-in-progress: false
+jobs:
+  source-import:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && github.ref == 'refs/heads/fix/chain-section7-recovery-20260914' && github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reconstruct only the exact previously delivered source tree
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, lzma, os, pathlib, re, subprocess, tempfile
+          BASE = '435c0168558d75fc70aaa11980a179b9d5980f33'
+          TREE = '754c025ed42c46876b92de15ae4ea2c0d4dc1b51'
+          PATCH_SHA = '74a67a0c79a87b89a30f0de98e041a4a3e26ccaa86f2e329cf59c485ac440793'
+          XZ_SHA = '8554081e188e2417db940839efbfb56ea7197276d40dec6a801b24a7b25a8f19'
+          source = os.environ['GITHUB_SHA']
+          assert re.fullmatch('[0-9a-f]{40}', source)
+          def git(*args, env=None, data=None):
+              return subprocess.run(['git', '-c', 'core.hooksPath=/dev/null', *args], env=env,
+                                    input=data, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                    timeout=60, check=True).stdout.decode().strip()
+          assert git('rev-parse', 'HEAD') == source
+          assert git('show', '-s', '--format=%P', source) == BASE
+          parts = []
+          for i in range(10):
+              p = pathlib.Path(f'.ci/section7-intake/part-{i:02}')
+              assert not p.is_symlink() and p.is_file()
+              assert p.stat().st_size == (6000 if i < 9 else 3396)
+              parts.append(p.read_bytes())
+          compressed = b''.join(parts)
+          assert len(compressed) == 57396 and hashlib.sha256(compressed).hexdigest() == XZ_SHA
+          decoder = lzma.LZMADecompressor(memlimit=128*1024*1024)
+          patch = decoder.decompress(compressed, max_length=267139)
+          assert decoder.eof and not decoder.unused_data
+          assert len(patch) == 267138 and hashlib.sha256(patch).hexdigest() == PATCH_SHA
+          with tempfile.TemporaryDirectory() as tmp:
+              env = os.environ.copy()
+              env['GIT_INDEX_FILE'] = str(pathlib.Path(tmp)/'index')
+              git('read-tree', BASE, env=env)
+              git('apply', '--cached', '--whitespace=error-all', '-', env=env, data=patch)
+              assert git('write-tree', env=env) == TREE
+              assert len(git('diff', '--cached', '--name-only', BASE, env=env).splitlines()) == 46
+              env.update(GIT_AUTHOR_NAME='Section7 source importer', GIT_COMMITTER_NAME='Section7 source importer',
+                         GIT_AUTHOR_EMAIL='section7-source-import@users.noreply.github.com',
+                         GIT_COMMITTER_EMAIL='section7-source-import@users.noreply.github.com')
+              commit = git('commit-tree', TREE, '-p', source, '-m',
+                           'fix(chain): import four cumulative Section7 candidates for real CI\n\nExact tree from local candidate eed1d7ada38bceb75f33f7bc2d64fb6c170a1308. Rust build and independent acceptance pending. No activation.', env=env)
+          assert re.fullmatch('[0-9a-f]{40}', commit)
+          assert git('rev-parse', commit+'^{tree}') == TREE
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write(f'commit={commit}\ntree={TREE}\n')
+          print(f'exact_source_tree={TREE} candidate_commit={commit} rust_tested=false production=false')
+          PY
+      - name: Fast-forward only the ordinary repair branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_SHA: ${{ steps.source.outputs.commit }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, os, re, subprocess
+          branch = 'refs/heads/fix/chain-section7-recovery-20260914'
+          remote = 'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git'
+          candidate = os.environ['CANDIDATE_SHA']
+          assert re.fullmatch('[0-9a-f]{40}', candidate)
+          token = os.environ.pop('GH_TOKEN')
+          env = os.environ.copy()
+          env.update(GIT_CONFIG_COUNT='2', GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
+                     GIT_CONFIG_VALUE_0='AUTHORIZATION: basic '+base64.b64encode(('x-access-token:'+token).encode()).decode(),
+                     GIT_CONFIG_KEY_1='core.hooksPath', GIT_CONFIG_VALUE_1='/dev/null')
+          head = subprocess.run(['git','ls-remote','--exit-code',remote,branch], env=env, check=True,
+                                stdout=subprocess.PIPE, timeout=60).stdout.decode().split()
+          assert head == [os.environ['GITHUB_SHA'], branch], 'repair branch moved; refusing publication'
+          subprocess.run(['git','push',remote,candidate+':'+branch], env=env, check=True, timeout=90)
+          print('repair_branch_fast_forwarded=true main_modified=false candidate_execution=false')
+          PY
+      - name: Record import scope
+        env:
+          CANDIDATE_SHA: ${{ steps.source.outputs.commit }}
+          CANDIDATE_TREE: ${{ steps.source.outputs.tree }}
+        shell: bash
+        run: |
+          printf 'Imported candidate `%s`, exact tree `%s`.\n\nNo Rust test, independent acceptance, release or activation is claimed. Import payload and this workflow are absent from the candidate tree.\n' "$CANDIDATE_SHA" "$CANDIDATE_TREE" >> "$GITHUB_STEP_SUMMARY"
