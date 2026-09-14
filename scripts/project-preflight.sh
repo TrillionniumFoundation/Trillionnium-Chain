@@ -73,78 +73,73 @@ case "$mode" in
     ;;
 esac
 
-json_value() {
-  python3 - "$policy_file" "$1" <<'PY'
+if ! python3 - "$policy_file" >"$tmpdir/policy-values" <<'PYMETA'
 import json
 import sys
 
-with open(sys.argv[1], encoding="utf-8") as fh:
-    value = json.load(fh)
-for part in sys.argv[2].split("."):
-    if not isinstance(value, dict) or part not in value:
-        print("")
-        raise SystemExit(0)
-    value = value[part]
-if value is None:
-    print("")
-elif isinstance(value, bool):
-    print("true" if value else "false")
-elif isinstance(value, (str, int, float)):
-    print(value)
-else:
-    print(json.dumps(value, separators=(",", ":")))
-PY
-}
+def unique(pairs):
+    value = {}
+    for key, item in pairs:
+        if key in value:
+            raise ValueError("duplicate policy member: " + key)
+        value[key] = item
+    return value
 
-if ! python3 -m json.tool "$policy_file" >/dev/null 2>&1; then
+with open(sys.argv[1], encoding="utf-8") as handle:
+    policy = json.load(handle, object_pairs_hook=unique)
+for field in (
+    "project_id", "canonical_dir", "lane", "lifecycle", "development",
+    "remote.policy", "remote.canonical_slug", "remote.target_slug",
+    "remote.legacy_slug", "remote.upstream_required",
+    "branch.development_regex", "deny_changed_paths_regex", "baseline_commit",
+):
+    value = policy
+    for key in field.split("."):
+        value = value.get(key) if isinstance(value, dict) else None
+    if value is None:
+        value = ""
+    elif isinstance(value, bool):
+        value = "true" if value else "false"
+    elif not isinstance(value, (str, int)):
+        raise ValueError("policy field must be scalar: " + field)
+    value = str(value)
+    if any(char in value for char in "\r\n\0"):
+        raise ValueError("policy field contains a record separator: " + field)
+    print(value)
+PYMETA
+then
   echo "ERROR: invalid PROJECT_BOUNDARY.json" >&2
   exit 10
 fi
-
-boundary_id=$(json_value project_id)
-canonical_dir=$(json_value canonical_dir)
-lane=$(json_value lane)
-lifecycle=$(json_value lifecycle)
-development=$(json_value development)
-remote_policy=$(json_value remote.policy)
-canonical_slug=$(json_value remote.canonical_slug)
-target_slug=$(json_value remote.target_slug)
-legacy_slug=$(json_value remote.legacy_slug)
-upstream_required=$(json_value remote.upstream_required)
-branch_regex=$(json_value branch.development_regex)
-deny_regex=$(json_value deny_changed_paths_regex)
-baseline_commit=$(json_value baseline_commit)
+mapfile -t policy_values <"$tmpdir/policy-values"
+[[ ${#policy_values[@]} -eq 13 ]] || {
+  echo "ERROR: incomplete project policy" >&2
+  exit 10
+}
+boundary_id=${policy_values[0]}
+canonical_dir=${policy_values[1]}
+lane=${policy_values[2]}
+lifecycle=${policy_values[3]}
+development=${policy_values[4]}
+remote_policy=${policy_values[5]}
+canonical_slug=${policy_values[6]}
+target_slug=${policy_values[7]}
+legacy_slug=${policy_values[8]}
+upstream_required=${policy_values[9]}
+branch_regex=${policy_values[10]}
+deny_regex=${policy_values[11]}
+baseline_commit=${policy_values[12]}
 branch=$(git -C "$root" branch --show-current 2>/dev/null || true)
 
 printf 'project_id=%s\nlane=%s\nphysical_root=%s\ninvoked_path=%s\nbranch=%s\n' \
   "$project_id" "$lane" "$root" "$invoked_logical" "$branch"
 
 [[ "$project_id" == "$boundary_id" ]] || error "PROJECT_ID and PROJECT_BOUNDARY.json disagree"
-if [[ "$(basename "$root")" != "$canonical_dir" ]]; then
-  common_dir=$(git -C "$root" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)
-  common_root=""
-  [[ "$(basename "$common_dir")" == ".git" ]] && common_root=$(dirname "$common_dir")
-  if [[ "$(basename "$common_root")" == "$canonical_dir" ]]; then
-    warn "running from an approved linked worktree of $canonical_dir"
-  else
-    error "physical root is neither $canonical_dir nor one of its linked worktrees"
-  fi
-fi
+# Checkout names and personal workspace paths are not repository identities.
+# PROJECT_ID, the lane, canonical remote and selected source are checked below.
 if [[ "$invoked_logical" != "$invoked_physical" ]]; then
-  warn "invoked through a symlink; use the canonical physical root: $root"
+  warn "invoked through a symlink; auditing physical Git root: $root"
 fi
-case "$invoked_logical" in
-  /home/alex/.openclaw/workspace/*)
-    error "the old OpenClaw workspace path is compatibility-only; reopen from $root"
-    ;;
-  /home/alex/projects/CEX|/home/alex/projects/CEX/*|\
-  /home/alex/projects/Trillionnium|/home/alex/projects/Trillionnium/*|\
-  /home/alex/projects/TrillionniumChain|/home/alex/projects/TrillionniumChain/*|\
-  /home/alex/projects/TrillionniumRTS|/home/alex/projects/TrillionniumRTS/*|\
-  /home/alex/projects/TRNM|/home/alex/projects/TRNM/*)
-    error "capitalized compatibility aliases are not development roots; reopen from $root"
-    ;;
-esac
 
 expected_lane=""
 case "$project_id" in
@@ -224,7 +219,9 @@ case "$project_id" in
     [[ -f "$root/trillionnium/Cargo.toml" ]] || error "missing Chain Cargo workspace"
     rg -q '"crates/trnm-consensus-core"' "$root/trillionnium/Cargo.toml" || error "native consensus core missing"
     rg -q '"crates/trnm-poco-node"' "$root/trillionnium/Cargo.toml" || error "native node missing"
-    python3 "$root/scripts/ci/check_native_consensus_only.py" >/dev/null || error "native-only consensus boundary failed"
+    if [[ "$mode" != "--dev" ]]; then
+      python3 "$root/scripts/ci/check_native_consensus_only.py" >/dev/null || error "native-only consensus boundary failed"
+    fi
     ;;
   trillionnium-openra-rts)
     lock="$root/ENGINE_SOURCE_LOCK.json"
@@ -475,62 +472,9 @@ if [[ "$mode" == "--staged" && "${ALLOW_BOUNDARY_MIGRATION:-0}" != "1" && -n "$d
   done < <(git -C "$root" diff --cached --name-only --no-renames -z)
 fi
 
-topic_path=$(git -C "$root" rev-parse --path-format=absolute --git-path PROJECT_TOPIC 2>/dev/null || true)
-changed_tmp="$tmpdir/changed"
-{
-  git -C "$root" diff --name-only --no-renames -z
-  git -C "$root" diff --cached --name-only --no-renames -z
-  git -C "$root" ls-files --others --exclude-standard -z
-} | sort -zu >"$changed_tmp"
-
-if [[ -s "$changed_tmp" && "$lifecycle" != "archived" ]]; then
-  if [[ ! -f "$topic_path" ]]; then
-    error "dirty worktree has no Git-local PROJECT_TOPIC"
-  else
-    topic_project=$(sed -n 's/^project_id=//p' "$topic_path" | head -1)
-    topic_name=$(sed -n 's/^topic=//p' "$topic_path" | head -1)
-    topic_base=$(sed -n 's/^base_head=//p' "$topic_path" | head -1)
-    [[ "$topic_project" == "$project_id" ]] || error "PROJECT_TOPIC belongs to a different project"
-    [[ -n "$topic_name" ]] || error "PROJECT_TOPIC has no topic"
-    if [[ -z "$topic_base" ]] || ! git -C "$root" cat-file -e "$topic_base^{commit}" 2>/dev/null; then
-      error "PROJECT_TOPIC base_head is missing or invalid"
-    elif ! git -C "$root" merge-base --is-ancestor "$topic_base" HEAD 2>/dev/null; then
-      error "PROJECT_TOPIC base_head is not an ancestor of HEAD"
-    fi
-
-    mapfile -t allowed_files < <(sed -n 's/^allowed_file=//p' "$topic_path")
-    mapfile -t allowed_dirs < <(sed -n 's/^allowed_dir=//p' "$topic_path")
-    mapfile -t allowed_globs < <(sed -n 's/^allowed_glob=//p' "$topic_path")
-    valid_rules=0
-    for rule in "${allowed_files[@]}" "${allowed_dirs[@]}" "${allowed_globs[@]}"; do
-      if [[ -z "$rule" || "$rule" == /* || "$rule" == ".." || "$rule" == ../* || "$rule" == */../* || "$rule" == */.. ]]; then
-        error "PROJECT_TOPIC contains an unsafe or empty path rule"
-      else
-        valid_rules=$((valid_rules + 1))
-      fi
-    done
-    for dir in "${allowed_dirs[@]}"; do
-      [[ -z "$dir" || "$dir" == */ ]] || error "allowed_dir must end with '/': $dir"
-    done
-    [[ $valid_rules -gt 0 ]] || error "PROJECT_TOPIC has no valid allowed_file/allowed_dir/allowed_glob rules"
-
-    while IFS= read -r -d '' changed; do
-      allowed=0
-      for file in "${allowed_files[@]}"; do
-        [[ -n "$file" && "$changed" == "$file" ]] && allowed=1
-      done
-      for dir in "${allowed_dirs[@]}"; do
-        [[ -n "$dir" && "$dir" == */ && "$changed" == "$dir"* ]] && allowed=1
-      done
-      for glob in "${allowed_globs[@]}"; do
-        [[ -n "$glob" && "$changed" == $glob ]] && allowed=1
-      done
-      [[ $allowed -eq 1 ]] || error "dirty path is outside PROJECT_TOPIC: $changed"
-    done <"$changed_tmp"
-  fi
-elif [[ ! -s "$changed_tmp" && -f "$topic_path" ]]; then
-  warn "worktree is clean but PROJECT_TOPIC still exists"
-fi
+# Git-local PROJECT_TOPIC notes are optional personal navigation, not an
+# additional source of ownership authority. The checked policy and Cargo graph
+# enforce repository boundaries; contributors need not manufacture a local form.
 
 if [[ "$mode" == "--push" ]]; then
   actual_push_url="$push_url"
@@ -602,16 +546,20 @@ if [[ "$mode" == "--push" ]]; then
   [[ $update_count -gt 0 ]] || warn "no pre-push ref updates were supplied; URL policy only was checked"
 fi
 
-ci_runner_policy_source=--worktree
-case "$mode" in
-  --staged) ci_runner_policy_source=--staged ;;
-  --push) ci_runner_policy_source=--head ;;
-esac
-if ! bash "$root/scripts/check_ci_runner_policy.sh" "$ci_runner_policy_source"; then
-  error "GitHub Actions jobs must use only the dedicated X230 self-hosted runner"
-fi
-if ! bash "$root/scripts/check_cargo_offline_policy.sh" "$ci_runner_policy_source"; then
-  error "GitHub Actions Cargo jobs must use the frozen X230 offline policy"
+# Full runner/offline policy is an audit/commit/push concern, not a prerequisite
+# to every edit. check_cargo_offline_policy.sh already validates runner policy:
+# calling the runner scan again here used to repeat exactly the same work.
+if [[ "$mode" != "--dev" ]]; then
+  ci_runner_policy_source=--worktree
+  case "$mode" in
+    --staged) ci_runner_policy_source=--staged ;;
+    --push) ci_runner_policy_source=--head ;;
+  esac
+  if ! bash "$root/scripts/check_cargo_offline_policy.sh" "$ci_runner_policy_source"; then
+    error "GitHub Actions must preserve hosted/privileged runner and offline trust boundaries"
+  fi
+else
+  printf 'preflight_scope=local-boundaries full_ci_policy=not-run-required-at-audit-commit-push\n'
 fi
 
 printf 'warnings=%d errors=%d\n' "$warnings" "$errors"

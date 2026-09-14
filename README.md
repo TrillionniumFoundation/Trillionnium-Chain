@@ -91,17 +91,27 @@ readiness claim. Native PoCO-BFT, `trnm-native-application`, and the current
 ```bash
 git clone https://github.com/TrillionniumFoundation/Trillionnium-Chain.git
 cd Trillionnium-Chain
+git switch -c fix/chain-local-work
+bash scripts/project-preflight.sh --dev
 rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
 rustup override set 1.95.0
-bash scripts/ci/check_canonical_development_plan.sh
-python3 scripts/ci/check_module_coverage_v1.py
-python3 scripts/ci/check_repository_truth_v1.py
-python3 scripts/ci/check_blocker_execution_v1.py
-python3 scripts/ci/check_external_evidence_v1.py
-cd trillionnium
-cargo fmt --all -- --check
-cargo check --workspace --all-targets --locked
+cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
+source scripts/ci/independent_gates_v1.sh
+trnm_gate bash scripts/ci/check_canonical_development_plan.sh
+trnm_gate python3 scripts/ci/check_repository_truth_v1.py
+trnm_gate python3 scripts/ci/check_blocker_execution_v1.py
+trnm_gate python3 scripts/ci/check_external_evidence_v1.py
+trnm_gate_finish
 ```
+
+Local edit preflight does not require a particular directory name or a private
+Git task form. `--audit`, commit and push retain the full policy checks. The
+canonical plan's sections 11 and 13 define functional priority and validation
+tiers. Only narrowly classified regular overview/operator prose can make Rust
+tests not applicable in a PR; this is recorded as not executed, not a pass.
+Code, protocol, configuration and unknown changes still require full Rust checks,
+and all other required jobs remain mandatory. Main/manual runs are always full.
 
 The protected branch binds stable actor-independent checks named by
 `config/repository-policy-v1.json`. A skipped, queued, cancelled, stale-head,

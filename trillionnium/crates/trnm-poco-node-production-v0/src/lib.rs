@@ -98,6 +98,43 @@ pub trait AuthorityIngressSourceV0 {
 /// One-use proof that an ingress source accepted the exact session predecessor
 /// and ingress bytes. Fields and constructors remain private, and the token is
 /// deliberately not Clone.
+///
+/// The public contract is checked by the Rust compiler, not declaration spelling.
+/// External callers cannot clone, construct or consume the same token twice.
+///
+/// ```compile_fail,E0277
+/// use trnm_poco_node_production_v0::VerifiedAuthorityIngressV0;
+/// fn requires_clone<T: Clone>() {}
+/// requires_clone::<VerifiedAuthorityIngressV0>();
+/// ```
+///
+/// ```compile_fail,E0451
+/// use trnm_poco_node_production_v0::VerifiedAuthorityIngressV0;
+/// fn forge(
+///     identity: trnm_node_boundary_v0::NodeIdentityV0,
+///     prior: Option<trnm_node_boundary_v0::AuthorityReceiptV0>,
+///     ingress: trnm_node_boundary_v0::BoundIngressV0,
+///     ingress_digest: trnm_node_boundary_v0::Digest32V0,
+/// ) -> VerifiedAuthorityIngressV0 {
+///     VerifiedAuthorityIngressV0 { identity, prior, ingress, ingress_digest }
+/// }
+/// ```
+///
+/// ```compile_fail,E0382
+/// use trnm_poco_node_production_v0::VerifiedAuthorityIngressV0;
+/// fn consume(_: VerifiedAuthorityIngressV0) {}
+/// fn replay(token: VerifiedAuthorityIngressV0) {
+///     consume(token);
+///     consume(token);
+/// }
+/// ```
+///
+/// A positive compilation control uses the same public type without forging it:
+///
+/// ```no_run
+/// use trnm_poco_node_production_v0::VerifiedAuthorityIngressV0;
+/// fn consume_once(token: VerifiedAuthorityIngressV0) { drop(token); }
+/// ```
 #[must_use = "verified ingress must be consumed by begin_verified"]
 #[derive(Debug)]
 pub struct VerifiedAuthorityIngressV0 {
@@ -262,6 +299,43 @@ pub trait AuthorityFactSourceV0 {
 /// One-use proof that a source accepted an exact fact claim against one exact
 /// durable predecessor. It is deliberately not Clone and has no public
 /// constructor.
+///
+/// The public contract is checked by the Rust compiler, not declaration spelling.
+/// External callers cannot clone, construct or consume the same token twice.
+///
+/// ```compile_fail,E0277
+/// use trnm_poco_node_production_v0::VerifiedAuthorityFactV0;
+/// fn requires_clone<T: Clone>() {}
+/// requires_clone::<VerifiedAuthorityFactV0>();
+/// ```
+///
+/// ```compile_fail,E0451
+/// use trnm_poco_node_production_v0::VerifiedAuthorityFactV0;
+/// fn forge(
+///     identity: trnm_node_boundary_v0::NodeIdentityV0,
+///     prior: trnm_node_boundary_v0::AuthorityReceiptV0,
+///     expected_stage: trnm_node_boundary_v0::AuthorityStageV0,
+///     claim: trnm_poco_node_production_v0::AuthorityFactClaimV0,
+/// ) -> VerifiedAuthorityFactV0 {
+///     VerifiedAuthorityFactV0 { identity, prior, expected_stage, claim }
+/// }
+/// ```
+///
+/// ```compile_fail,E0382
+/// use trnm_poco_node_production_v0::VerifiedAuthorityFactV0;
+/// fn consume(_: VerifiedAuthorityFactV0) {}
+/// fn replay(token: VerifiedAuthorityFactV0) {
+///     consume(token);
+///     consume(token);
+/// }
+/// ```
+///
+/// A positive compilation control uses the same public type without forging it:
+///
+/// ```no_run
+/// use trnm_poco_node_production_v0::VerifiedAuthorityFactV0;
+/// fn consume_once(token: VerifiedAuthorityFactV0) { drop(token); }
+/// ```
 #[must_use = "verified fact must be consumed by advance_verified"]
 #[derive(Debug)]
 pub struct VerifiedAuthorityFactV0 {

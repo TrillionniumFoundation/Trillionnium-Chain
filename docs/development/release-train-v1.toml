@@ -80,7 +80,7 @@ exit = "The actual source and any prospective merge are freshly qualified, histo
 
 [[blockers]]
 id = "NODE-COMMIT-001"
-priority = "P1"
+priority = "P0"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M03", "M07", "M08"]
 blocker_classes = ["cross-store", "node", "recovery"]
@@ -88,7 +88,7 @@ exit = "one monotonic Node Commit Ledger proves exact source-or-target convergen
 
 [[blockers]]
 id = "EXEC-VERTICAL-001"
-priority = "P1"
+priority = "P0"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M02", "M06", "M07", "M08"]
 exit = "the real persistent execution and finality path preserves canonical roots, receipts, events and fees across 1, 2, 4 and 8 workers under faults"
@@ -109,21 +109,21 @@ exit = "static and Cargo-resolved node-prod-v0 excludes candidate, lab, fixture,
 
 [[blockers]]
 id = "CORE-LIVE-001"
-priority = "P1"
+priority = "P0"
 status = "open"
 owner_modules = ["M02", "M03", "M04"]
 exit = "persistent authenticated network, pacemaker, Vote/Timeout, epoch, catch-up and finality survive fault campaigns"
 
 [[blockers]]
 id = "TX-PROD-001"
-priority = "P2"
+priority = "P0"
 status = "open"
 owner_modules = ["M05", "M15"]
 exit = "production admission, authorization, WAL, sign/broadcast, finalized readback, tombstone and GC lifecycle closes"
 
 [[blockers]]
 id = "SYNC-PROD-001"
-priority = "P2"
+priority = "P0"
 status = "open"
 owner_modules = ["M07", "M13"]
 exit = "authenticated non-destructive state sync and arbitrary trust-path verification close"

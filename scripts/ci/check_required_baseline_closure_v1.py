@@ -98,6 +98,48 @@ def named_step(text: str, name: str) -> str:
     return tail[:end]
 
 
+
+def validate_scope_wiring(workflow: str) -> None:
+    """Configuration lint only; executable Git and compiler tests prove behavior."""
+    rust = workflow.split("\n  rust-baseline:", 1)[1]
+    selector_name = "Determine Rust validation applicability from exact Git trees"
+    selector = named_step(rust, selector_name)
+    require_tokens(selector, (
+        "id: rust_scope", "TRNM_EVENT_NAME: ${{ github.event_name }}",
+        "TRNM_BASE_SHA: ${{ github.event.pull_request.base.sha }}",
+        'args=(--expected-head "$TRNM_EXPECTED_SOURCE_SHA" --event "$TRNM_EVENT_NAME")',
+        'args+=(--base "$TRNM_BASE_SHA")',
+        'python3 scripts/ci/validation_scope_v1.py "${args[@]}"',
+        '--github-output "$GITHUB_OUTPUT"',
+    ), "exact-tree Rust applicability")
+    require("        if:" not in selector, "scope assessment must not be conditionally bypassed")
+    require(rust.count("id: rust_scope") == 1, "ambiguous scope output owner")
+    require("steps.rust_scope" not in workflow.split("\n  rust-baseline:", 1)[0],
+            "Rust applicability cannot suppress other required jobs")
+    require_tokens(rust, (
+        "cargo test -p trnm-poco-node-production-v0 --doc --locked",
+        'cmp "${RUNNER_TEMP}/trnm-validation-scope-v1.json" "${RUNNER_TEMP}/trnm-validation-scope-recheck-v1.json"',
+        "not executed and not a test pass", "if-no-files-found: error",
+    ), "compiler boundary and applicability evidence")
+    body = rust[rust.index("      - name: Install pinned Rust toolchain\n"):]
+    for block in re.split(r"(?=^      - name: )", body, flags=re.M):
+        if not block or block.startswith("      - name: Recheck applicability"):
+            continue
+        conditions = re.findall(r"^        if: (.+)$", block, re.M)
+        allowed = {
+            "${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}",
+            "${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}",
+        }
+        require(len(conditions) == 1 and conditions[0] in allowed,
+                "Rust step has an unqualified or failure-masking applicability guard")
+    recheck = named_step(rust, "Recheck applicability and record execution scope without claiming a test pass")
+    require("if: ${{ always() && steps.rust_scope.outcome == 'success' }}" in recheck,
+            "source recheck must run after success or failure of Rust")
+    for path in ("test_validation_scope_v1.py", "test_project_preflight_v1.py", "test_required_baseline_scope_v1.py"):
+        require(f"python3 scripts/ci/{path}" in workflow.split("\n  rust-baseline:", 1)[0],
+                f"required executable regression missing: {path}")
+
+
 def main() -> int:
     policy = load_json(POLICY)
     workflow_relative = policy.get("baseline_workflow")
@@ -212,6 +254,8 @@ def main() -> int:
         ),
         "required baseline closure",
     )
+
+    validate_scope_wiring(workflow)
 
     exact_step = named_step(
         workflow,
@@ -357,6 +401,8 @@ def main() -> int:
 
     report = {
         "schema": "trnm-required-baseline-closure-v1",
+                "evidence_scope": "workflow-configuration-only",
+                "rust_execution_scope": "full-except-exact-tree-narrow-prose-pr",
         "required_checks": required_checks,
         "actor_independent": True,
         "hosted_runner": "ubuntu-24.04",

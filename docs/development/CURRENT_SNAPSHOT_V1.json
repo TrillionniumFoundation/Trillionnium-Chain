@@ -90,15 +90,6 @@
     "v1_node_support": false,
     "v1_release_ready": false
   },
-  "current_promotion_critical_stack": [
-    "all applicable checks on the actual source; prospective merge when a PR exists; no pre-convergence evidence transferred",
-    "independent module-owner, consumer, security and release acceptance",
-    "exact-head and prospective-merge Cargo-tree/compiler acceptance of production build closures, plus node decomposition",
-    "persistent authenticated network, pacemaker, Vote/Timeout, finality and recovery",
-    "production transaction lifecycle and authenticated state sync",
-    "trusted migration and target-root recomputation",
-    "independent multi-host, HSM/anchor, physical power-loss, audit/red-team and wall-clock soak evidence",
-    "signed governance and activation record"
-  ],
-  "truth_rule": "protected main, assessed baseline, current PR head, prospective merge, artifact, evidence, accepted release and activated network identities are distinct and must never be silently substituted"
+  "truth_rule": "protected main, assessed baseline, current PR head, prospective merge, artifact, evidence, accepted release and activated network identities are distinct and must never be silently substituted",
+  "execution_order_ref": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md#11-ordered-execution-program"
 }
