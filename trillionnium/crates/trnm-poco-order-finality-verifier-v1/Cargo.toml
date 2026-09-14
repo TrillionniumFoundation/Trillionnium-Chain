@@ -46,7 +46,7 @@ default = []
 test-support = []
 
 [dependencies]
-ed25519-dalek = { version = "2.2", default-features = false }
+ed25519-dalek = { version = "3.0", default-features = false }
 sha2 = "0.10"
 trnm-poco-order-types-v1 = { path = "../trnm-poco-order-types-v1", version = "=0.1.0" }
 

@@ -344,7 +344,7 @@ required-features = ["g1-process-test-support"]
 
 [dependencies]
 borsh = { version = "1.5", features = ["derive"] }
-ed25519-dalek = { version = "2", optional = true }
+ed25519-dalek = { version = "3", optional = true }
 hex = { version = "0.4", optional = true }
 fs2 = "0.4"
 libc = { version = "0.2", optional = true }
