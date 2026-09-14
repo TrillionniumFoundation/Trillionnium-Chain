@@ -38,7 +38,7 @@ jobs:
                                     input=data, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                     timeout=60, check=True).stdout.decode().strip()
           assert git('rev-parse', 'HEAD') == source
-          assert git('show', '-s', '--format=%P', source) == BASE
+          assert git('show', '-s', '--format=%P', source) == '28c37d15505f0b60954e2d9df29be792f55f1bca'
           parts = []
           for i in range(10):
               p = pathlib.Path(f'.ci/section7-intake/part-{i:02}')
@@ -69,34 +69,39 @@ jobs:
               out.write(f'commit={commit}\ntree={TREE}\n')
           print(f'exact_source_tree={TREE} candidate_commit={commit} rust_tested=false production=false')
           PY
-      - name: Fast-forward only the ordinary repair branch
+      - name: Stage source blobs only; publication requires the authorized connector
         env:
           GH_TOKEN: ${{ github.token }}
-          CANDIDATE_SHA: ${{ steps.source.outputs.commit }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import base64, os, re, subprocess
-          branch = 'refs/heads/fix/chain-section7-recovery-20260914'
-          remote = 'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git'
-          candidate = os.environ['CANDIDATE_SHA']
-          assert re.fullmatch('[0-9a-f]{40}', candidate)
-          token = os.environ.pop('GH_TOKEN')
-          env = os.environ.copy()
-          env.update(GIT_CONFIG_COUNT='2', GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
-                     GIT_CONFIG_VALUE_0='AUTHORIZATION: basic '+base64.b64encode(('x-access-token:'+token).encode()).decode(),
-                     GIT_CONFIG_KEY_1='core.hooksPath', GIT_CONFIG_VALUE_1='/dev/null')
-          head = subprocess.run(['git','ls-remote','--exit-code',remote,branch], env=env, check=True,
-                                stdout=subprocess.PIPE, timeout=60).stdout.decode().split()
-          assert head == [os.environ['GITHUB_SHA'], branch], 'repair branch moved; refusing publication'
-          subprocess.run(['git','push',remote,candidate+':'+branch], env=env, check=True, timeout=90)
-          print('repair_branch_fast_forwarded=true main_modified=false candidate_execution=false')
-          PY
-      - name: Record import scope
-        env:
-          CANDIDATE_SHA: ${{ steps.source.outputs.commit }}
           CANDIDATE_TREE: ${{ steps.source.outputs.tree }}
         shell: bash
         run: |
-          printf 'Imported candidate `%s`, exact tree `%s`.\n\nNo Rust test, independent acceptance, release or activation is claimed. Import payload and this workflow are absent from the candidate tree.\n' "$CANDIDATE_SHA" "$CANDIDATE_TREE" >> "$GITHUB_STEP_SUMMARY"
+          set -euo pipefail
+          python3 - <<'PY_BLOBS'
+          import base64, hashlib, json, os, subprocess, urllib.request
+          tree = os.environ['CANDIDATE_TREE']
+          assert tree == '754c025ed42c46876b92de15ae4ea2c0d4dc1b51'
+          token = os.environ.pop('GH_TOKEN')
+          def git(*args):
+              return subprocess.run(['git','-c','core.hooksPath=/dev/null',*args], check=True,
+                                    stdout=subprocess.PIPE, timeout=60).stdout
+          paths = git('diff','--name-only','435c0168558d75fc70aaa11980a179b9d5980f33',tree).decode().splitlines()
+          assert len(paths) == 46
+          staged = []
+          for path in paths:
+              entry = git('ls-tree',tree,'--',path).decode().strip()
+              fields, exact_path = entry.split('\t')
+              mode, kind, expected_sha = fields.split()
+              assert exact_path == path and kind == 'blob' and mode in {'100644','100755','120000'}
+              raw = git('cat-file','blob',expected_sha)
+              assert len(raw) <= 500000
+              assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest() == expected_sha
+              data = json.dumps({'content':base64.b64encode(raw).decode(),'encoding':'base64'}).encode()
+              request = urllib.request.Request('https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs',
+                        data=data, method='POST', headers={'Authorization':'Bearer '+token,
+                        'Accept':'application/vnd.github+json','Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  result = json.load(response)
+              assert result['sha'] == expected_sha
+              staged.append({'path':path,'mode':mode,'type':'blob','sha':expected_sha})
+          print(json.dumps({'blobs_staged':staged,'candidate_tree':tree,'refs_updated':False,'candidate_code_executed':False},sort_keys=True))
+          PY_BLOBS
