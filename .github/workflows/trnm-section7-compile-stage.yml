@@ -1,0 +1,68 @@
+name: Section7 compile-fix source transport only
+on:
+  push:
+    branches: [fix/chain-section7-compile-stage-20260914]
+    paths: [.github/workflows/trnm-section7-compile-stage.yml]
+permissions: {}
+jobs:
+  stage-blobs:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && github.ref == 'refs/heads/fix/chain-section7-compile-stage-20260914' && github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact patch and stage blobs without updating any ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, lzma, os, pathlib, subprocess, tempfile, urllib.request
+          base = '96168e28f4433eedf72c5bef3435eb968c7a379c'
+          target = '753045ef0200325a6e5791b2cafc8956f2519a4d'
+          token = os.environ.pop('GH_TOKEN')
+          def git(*args, env=None, data=None):
+              return subprocess.run(['git','-c','core.hooksPath=/dev/null',*args], env=env,
+                         input=data, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60).stdout
+          assert git('rev-parse','HEAD').decode().strip() == os.environ['GITHUB_SHA']
+          assert git('show','-s','--format=%P','HEAD').decode().strip() == base
+          p = pathlib.Path('.ci/section7-compile-fix.patch.xz')
+          assert p.is_file() and not p.is_symlink() and p.stat().st_size == 6412
+          raw = p.read_bytes()
+          assert hashlib.sha256(raw).hexdigest() == 'c3ddce381289433094b454daecaddfec6e0a255a68d232ee3f632ed1f7f391b2'
+          decoder = lzma.LZMADecompressor(memlimit=128*1024*1024)
+          patch = decoder.decompress(raw,max_length=38953)
+          assert decoder.eof and not decoder.unused_data and len(patch) == 38952
+          assert hashlib.sha256(patch).hexdigest() == '06046f281f3dc04f7f668070769b3f354cd1df57f8cf8883379464b39e4c756e'
+          with tempfile.TemporaryDirectory() as temp:
+              env = os.environ.copy(); env['GIT_INDEX_FILE'] = temp+'/index'
+              git('read-tree',base,env=env)
+              git('apply','--cached','--whitespace=error-all','-',env=env,data=patch)
+              assert git('write-tree',env=env).decode().strip() == target
+          paths = git('diff','--name-only',base,target).decode().splitlines()
+          assert len(paths) == 8 and all(not p.startswith(('.github/', '.ci/')) for p in paths)
+          entries = []
+          for path in paths:
+              fields, exact = git('ls-tree',target,'--',path).decode().strip().split('\t')
+              mode, kind, sha = fields.split()
+              assert exact == path and kind == 'blob' and mode == '100644'
+              data = git('cat-file','blob',sha)
+              assert len(data) <= 500000
+              assert hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest() == sha
+              request = urllib.request.Request('https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/git/blobs',
+                      data=json.dumps({'encoding':'base64','content':base64.b64encode(data).decode()}).encode(),method='POST',
+                      headers={'Authorization':'Bearer '+token,'Accept':'application/vnd.github+json',
+                               'Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'})
+              with urllib.request.urlopen(request,timeout=30) as response:
+                  observed = json.load(response)
+              assert observed['sha'] == sha
+              entries.append(dict(path=path,mode=mode,type=kind,sha=sha))
+          print(json.dumps(dict(tree=target,blobs_staged=entries,refs_updated=False,candidate_code_executed=False),sort_keys=True))
+          PY
