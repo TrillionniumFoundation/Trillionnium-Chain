@@ -72,5 +72,5 @@ trnm-consensus-types = { path = "../trnm-consensus-types", version = "=0.1.0" }
 trnm-native-application = { path = "../trnm-native-application", version = "=0.1.0" }
 
 [dev-dependencies]
-ed25519-dalek = "2"
+ed25519-dalek = "3"
 trnm-consensus-crypto = { path = "../trnm-consensus-crypto", version = "=0.1.0" }

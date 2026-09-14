@@ -107,7 +107,7 @@ incomplete = true
 
 [dependencies]
 anyhow = "1"
-ed25519-dalek = "2"
+ed25519-dalek = "3"
 fs2 = "0.4"
 getrandom = "0.2"
 hex = "0.4"
