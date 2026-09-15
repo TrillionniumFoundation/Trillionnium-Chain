@@ -429,3 +429,17 @@ pre-read resource limits. `snapshot_reader_v1.rs` covers bounded/noncanonical
 Borsh and malformed JMT metadata, including corruption below a healthy latest
 root. Source-bound execution logs are separate from these required properties;
 independent acceptance and whole-node state-sync installation remain open.
+
+## Candidate framed recovery transfer
+
+The real finalized catch-up owner now consumes bounded byte streams through
+`receive_framed_stream_v1`. Source records come from
+`read_finalized_catchup_block_v1`; snapshot bytes come from the existing immutable
+pinned export. Exact framing, preverified target, real execution/commit, final
+JMT equality and trailer/EOF all precede owner release. Failed transfers retain
+only independently finalized prefix work and require fresh database recovery.
+
+See [the operation contract](../../../docs/modules/TRNM_NATIVE_CATCHUP_STREAM_V1.md)
+for every field, resource ceiling, error/retry rule, Node TCP absolute-deadline
+consumer and regression scope. This is candidate application recovery, not
+Core/Safety rejoin, live epoch transitions, incremental persistence or activation.

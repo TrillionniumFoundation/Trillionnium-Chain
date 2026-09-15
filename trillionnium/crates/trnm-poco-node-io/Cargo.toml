@@ -19,5 +19,7 @@ production_consensus_activation = false
 
 [features]
 default = []
+# Candidate byte transport only: no listener, proof/signing or activation authority.
+candidate-state-sync-tcp = []
 candidate-authenticated-p2p = []
 candidate-pacemaker = []

@@ -10,6 +10,12 @@
 //! engine, signing/recovery authority, checkpoint shortcut or bounded-history
 //! storage algorithm. The existing whole-history audits remain in use.
 
+mod stream;
+pub use stream::{
+    write_native_catchup_stream_v1, NativeCatchupBlockV1, NativeCatchupStreamErrorV1,
+    NativeCatchupStreamLimitsV1,
+};
+
 use std::{error::Error, fmt, io};
 
 use trnm_consensus_crypto::{
@@ -621,4 +627,9 @@ fn test_cut(application: &DurableNativeApplicationV0, cut: &str) {
 }
 
 #[cfg(test)]
-mod tests;
+mod tests {
+    include!("finalized_catchup_v1/tests.rs");
+    mod stream_tests {
+        include!("finalized_catchup_v1/stream_tests.rs");
+    }
+}

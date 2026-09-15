@@ -377,12 +377,14 @@
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-native-execution-v0/src/lib.rs",
-        "trillionnium/crates/trnm-native-execution-v0/src/durable/snapshot_export_v1.rs"
+        "trillionnium/crates/trnm-native-execution-v0/src/durable/snapshot_export_v1.rs",
+        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1/stream.rs"
       ],
       "regression_refs": [
         "trillionnium/crates/trnm-native-execution-v0/src/lib.rs",
         "trillionnium/crates/trnm-native-execution-v0/src/overlay_delta_tests.rs",
-        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1/tests.rs"
+        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1/tests.rs",
+        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1/stream_tests.rs"
       ],
       "regression_scope": "existing-review-input-not-independent-golden-acceptance",
       "requirement_ids": [
@@ -751,16 +753,19 @@
       "normative_refs": [
         "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md",
         "docs/protocol/poco-bft-v0/06-light-client.md",
-        "docs/protocol/poco-convergence-v1/PROOF_MIGRATION.md"
+        "docs/protocol/poco-convergence-v1/PROOF_MIGRATION.md",
+        "docs/modules/TRNM_NATIVE_CATCHUP_STREAM_V1.md"
       ],
       "implementation_refs": [
         "trillionnium/crates/trnm-state-sync-v0/src/lib.rs",
         "trillionnium/crates/trnm-native-execution-v0/src/snapshot_stream_v1.rs",
-        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1.rs"
+        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1.rs",
+        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1/stream.rs"
       ],
       "regression_refs": [
         "trillionnium/crates/trnm-state-sync-v0/tests/verification_seals.rs",
-        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1/tests.rs"
+        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1/tests.rs",
+        "trillionnium/crates/trnm-native-execution-v0/src/finalized_catchup_v1/stream_tests.rs"
       ],
       "regression_scope": "existing-review-input-not-independent-golden-acceptance",
       "requirement_ids": [
@@ -867,13 +872,16 @@
       "normative_refs": [
         "docs/architecture/TRNM_POCO_NODE_DECOMPOSITION_V1.md",
         "OPERATIONS.md",
-        "RELEASE_READINESS.md"
+        "RELEASE_READINESS.md",
+        "docs/modules/TRNM_NATIVE_CATCHUP_STREAM_V1.md"
       ],
       "implementation_refs": [
-        "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs"
+        "trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs",
+        "trillionnium/crates/trnm-poco-node-io/src/absolute_deadline_tcp_v1.rs"
       ],
       "regression_refs": [
-        "trillionnium/crates/trnm-poco-node-production-v0/tests/public_authority_surface.rs"
+        "trillionnium/crates/trnm-poco-node-production-v0/tests/public_authority_surface.rs",
+        "trillionnium/crates/trnm-poco-node-io/src/absolute_deadline_tcp_v1.rs"
       ],
       "regression_scope": "existing-review-input-not-independent-golden-acceptance",
       "requirement_ids": [

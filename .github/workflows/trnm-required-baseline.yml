@@ -596,6 +596,7 @@ jobs:
           run_candidate test timeout-signing cargo test -p trnm-poco-node --features recovery-process-test-support --test timeout_signing_process_kill_matrix --locked
           run_candidate test g1-process cargo test -p trnm-poco-node --features g1-process-test-support --test g1_process_host_e2e --locked
           run_candidate test effect-driver cargo test -p trnm-poco-node --features g1-process-test-support --test effect_driver_process_e2e --locked
+          run_candidate test native-catchup-tcp cargo test -p trnm-poco-node-io --features candidate-state-sync-tcp --all-targets --locked
           run_candidate test external-signer cargo test -p trnm-poco-node --features external-signer-runtime --test external_signer_runtime --locked
           run_candidate test g2-manifest cargo test -p trnm-poco-node --features ai-v1-candidate --test g2_manifest_bound_process_v2 --locked
           run_candidate test replay-coordinator cargo test -p trnm-poco-node --features replay-to-core-coordinator-test-support --bin trnm-poco-replay-to-core-coordinator-v1 --locked

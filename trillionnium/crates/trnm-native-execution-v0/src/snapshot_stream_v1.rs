@@ -22,7 +22,7 @@ const MANIFEST_DOMAIN: &str = "trnm.native-application.snapshot-manifest.v0";
 /// restoration. A transport must also bound each chunk before allocating it.
 #[derive(Clone, Copy, Debug)]
 pub struct NativeSnapshotReadLimitsV1 {
-    maximum_bytes: u64,
+    pub(crate) maximum_bytes: u64,
     maximum_entries: u32,
     maximum_record_bytes: usize,
 }

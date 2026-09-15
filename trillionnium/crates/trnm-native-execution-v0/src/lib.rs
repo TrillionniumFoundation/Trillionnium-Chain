@@ -53,8 +53,9 @@ mod complete;
 mod durable;
 mod finalized_catchup_v1;
 pub use finalized_catchup_v1::{
-    NativeCatchupErrorV1, NativeCatchupLimitsV1, NativeCatchupReceiptV1, NativeFinalizedCatchupV1,
-    RestoredNativeApplicationV1,
+    write_native_catchup_stream_v1, NativeCatchupBlockV1, NativeCatchupErrorV1,
+    NativeCatchupLimitsV1, NativeCatchupReceiptV1, NativeCatchupStreamErrorV1,
+    NativeCatchupStreamLimitsV1, NativeFinalizedCatchupV1, RestoredNativeApplicationV1,
 };
 mod pcc1_finality;
 mod poco_application;
