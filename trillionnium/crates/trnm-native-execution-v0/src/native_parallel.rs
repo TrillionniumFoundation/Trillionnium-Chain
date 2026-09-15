@@ -424,6 +424,16 @@ fn run_indexed_jobs_v0<T: Send>(
         return outcomes;
     }
     let active_workers = worker_count.min(MAX_WORKERS_V0).min(count);
+    if active_workers == 1 {
+        // A single logical worker has no parallel work to overlap. Avoid an
+        // OS thread, but retain the spawned worker's all-or-nothing unwind
+        // boundary: a panic discards ALL of its disposable outcomes. Never
+        // publish a completed prefix or turn a panic into a transaction error.
+        let computed = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            (0..count).map(&compute).collect::<Vec<_>>()
+        }));
+        return computed.unwrap_or(outcomes);
+    }
     let next = AtomicUsize::new(active_workers);
     thread::scope(|scope| {
         let handles: Vec<_> = (0..active_workers)

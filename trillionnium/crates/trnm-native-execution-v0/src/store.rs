@@ -19,6 +19,10 @@ const OBJECT_NAMESPACE: u8 = 1;
 const OBJECT_RECORD_SCHEMA_VERSION: u16 = 1;
 const NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;
 
+#[path = "snapshot_reader_v1.rs"]
+mod snapshot_reader_v1;
+pub(crate) use snapshot_reader_v1::{SnapshotReadLimitV1, SnapshotReadLimitsV1};
+
 pub fn stored_object_key_v0(object_key_hex: &str) -> Result<Vec<u8>> {
     ensure!(!object_key_hex.is_empty(), "object key must not be empty");
     let component = object_key_hex.as_bytes();
@@ -630,6 +634,7 @@ impl InMemoryNativeExecutionStoreV0 {
     }
 
     fn validate_snapshot_v0(&self) -> Result<()> {
+        snapshot_reader_v1::validate_native_node_shapes_v1(self)?;
         ensure!(
             !self.roots.is_empty(),
             "authenticated snapshot has no roots"

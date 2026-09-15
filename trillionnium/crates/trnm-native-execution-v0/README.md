@@ -318,3 +318,114 @@ This seam supplies historical context directly inside `cfg(test)`. It does not
 admit that context through the current application owner, authenticate outer
 signatures, call ProcessProposal/FinalizeBlock, persist a durable P artifact or
 qualify restart. The separate owner-profile rejection above remains required.
+
+
+### Pre-certificate checkpoint commit
+
+`commit_poco_checkpoint_for_handoff_v1` joins the existing native preparation
+and exact executed P to actual old-set checkpoint/two-seal finality before
+calling the existing atomic application commit. It needs no joint handoff
+certificate and creates no seal application rows. The independently commissioned
+old configuration must equal the preparation context. One bounded strict
+Ed25519 proof pass verifies the exact prepared header/parent/commitment and all
+required shares before storage commit; header/body/receipt equality, the original
+preparation namespace and a freshly authenticated exact durable execution row
+must also pass. An exact already-COMMITTED replay is allowed only through the
+existing current-head/idempotency checks, never by inventing a row or artifact.
+
+After commit, fresh native/preparation readback reconstructs cutoff/next-set
+provenance and the exact committed receipt. Only then does the operation return
+`CommittedNativePocoCheckpointForHandoffV0` to the later, separately authorized
+role-signing path. The immutable strict proof is retained across that operation;
+there is no late second proof pass whose work budget could fail after commit.
+Existing native/cutoff audits retain their separate bounds. No signature,
+checkpoint CAS, publication or epoch activation is performed by this method.
+
+`NativeCheckpointCommitErrorV1::BeforeCommit` means the native commit call was
+not reached. It is a local preflight result, not a consensus transaction error.
+Every error at or after commit is `Uncertain`; callers must fence dependent
+participation and perform fresh readback or retry the identical checkpoint.
+Reconstruction uses the original preview request and raw cutoff evidence, not a
+new request based on an advanced head. Post-commit sidecar failure cannot be
+reported as "nothing happened". This does not establish atomicity between the
+native database and preparation journal or independent rollback resistance.
+
+The real SQLite/Ed25519 tests in
+`poco_checkpoint/native_authorization_tests/checkpoint_commit_tests_v1.rs` cover
+strict commit before handoff, unchanged application state on invalid signatures,
+byte/work limits, substituted execution, missing/halted/replaced/foreign
+preparation, and database/directory synchronization failures after commit.
+Reopen and repeated exact commit must recover one sequence and one application
+effect; neither seal height may acquire a dummy application row. This closes
+this bounded commit-producer gap, not live seal voting, Safety14, new-epoch
+ancestry, consensus/JMT coordinate progression or two continuous epochs.
+
+
+### Native finalized snapshot read/export
+
+Primary implementation owner: M06; consumers M07/M08/M13. This is an additive
+read boundary over the unchanged native Borsh/JMT and native manifest domains,
+not the generic M13 `TRNMSM01` storage format and not an installation capability.
+
+`DurableNativeApplicationV0::begin_finalized_snapshot_export_v1` first verifies
+actual strict PoCO finality for an already COMMITTED application row. It then
+freshly audits the native source and binds the exact current head, durable
+sequence, store identity and SHA-256 snapshot digest to a private owner-affined
+`NativeSnapshotExportV1`. Historical targets and PREPARED rows cannot export.
+The manifest producer checks its 4,096-descriptor bound before allocating the
+array. `read_snapshot_chunk_v1` accepts that original live owner's token and one
+index, freshly validates source identity/head/sequence/snapshot again, and
+returns only the exact indexed bytes under the existing native chunk domain.
+Reopen, another owner or intervening source movement invalidates the token; the
+caller must re-prove/export the current target rather than mixing generations.
+
+`verify_native_snapshot_stream_v1` consumes an independently trusted
+`StrictFinalityProofV0`, the local immutable native configuration, exact native
+manifest, fallible chunk iterator and local read limits. Manifest metadata never
+chooses the trust anchor or validator set. The oldest certified header must
+match chain, genesis, profile, epoch, validator/parameter commitments and exact
+height/block/root before input is read. Each chunk must match its indexed
+length/digest; one look-ahead item detects extra input. Short, reordered,
+corrupt or over-budget input cannot yield a result. Original transport errors
+are retained separately from local resource exhaustion and invalid snapshots.
+These are local read dispositions, not transaction-invalidity codes.
+
+The reader parses the actual native Borsh snapshot field order: node map,
+versioned values, preimages, stale-node set and retained roots. It limits
+aggregate entries before insertion, checks sorted unique keys, validates length
+prefixes before application-value allocation and compares each re-encoded entry
+to its exact input. JMT NodeKey nibble lengths/padding are validated in at most
+52 stack bytes before the dependency's derived decoder can bypass constructor
+invariants. Shared validation in both the original slice decoder and this reader
+checks node path/type/count/version invariants, actual child references/hashes,
+leaf counts and retained leaf/value hashes at the leaf's own version. It then
+runs the existing retained-root, preimage and latest live-value proof audit.
+These internal historical checks do not independently finalize old roots.
+
+Before returning, the latest actual JMT version/root and authenticated validator
+lifecycle must match the strict target, chain, local signer policy and active
+validator projection. The native snapshot manifest digest is recomputed from
+the exact streamed SHA-256 and native chunk digests. The private non-Clone
+`VerifiedNativeSnapshotReadV1` exposes height/block/root/snapshot/proof digests
+and byte count, but deliberately not the local manifest commit ID: that ID is
+not independently authenticated by consensus. Decoded replay sets are empty,
+the temporary store is discarded, and no Core, signer, install or replay-floor
+authority is issued.
+
+Local limits are positive byte/entry/record budgets, with hard admission caps
+of 4 GiB encoded bytes, 2,000,000 aggregate entries and 16 MiB encoded record
+size; operators must choose budgets appropriate for their actual memory. Only
+one transport chunk and one record copy are retained in addition to the decoded
+JMT collections. A transport must bound allocations/deadlines before yielding
+chunks. The complete decoded JMT remains resident, every source chunk request
+still audits full native history/snapshot, and historical roots remain retained.
+This is not native incremental persistence, bounded-history recovery, pruning,
+a network downloader or an end-to-end throughput improvement.
+
+`pcc1_finality/snapshot_stream_tests.rs` uses actual SQLite native execution and
+strict Ed25519 finality to test export/read, owner replacement, PREPARED refusal,
+root substitution, corruption, short/extra streams, typed transport errors and
+pre-read resource limits. `snapshot_reader_v1.rs` covers bounded/noncanonical
+Borsh and malformed JMT metadata, including corruption below a healthy latest
+root. Source-bound execution logs are separate from these required properties;
+independent acceptance and whole-node state-sync installation remain open.

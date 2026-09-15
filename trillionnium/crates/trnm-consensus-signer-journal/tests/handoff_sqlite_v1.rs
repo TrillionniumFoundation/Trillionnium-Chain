@@ -1797,3 +1797,7 @@ mod observed_handoff_recovery {
         assert_eq!(producer.calls(), (0, 1));
     }
 }
+
+#[cfg(feature = "candidate-carried-new-set-handoff")]
+#[path = "support/carried_new_handoff.rs"]
+mod carried_new_handoff;

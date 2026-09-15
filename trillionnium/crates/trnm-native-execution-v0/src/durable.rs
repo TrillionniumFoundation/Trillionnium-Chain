@@ -56,6 +56,9 @@ use crate::{
     AuthorizedSignerV0, NativeStateWriteV0,
 };
 
+mod snapshot_export_v1;
+pub use snapshot_export_v1::{NativeSnapshotExportV1, PinnedNativeSnapshotExportV1};
+
 mod replay_floor_v1;
 pub use replay_floor_v1::VerifiedNativeSignerReplayFloorV1;
 
@@ -339,7 +342,7 @@ pub fn validate_native_finalized_execution_receipts_v0(
     Ok(())
 }
 
-fn ensure_finalized_header_binding_v0(
+pub(crate) fn ensure_finalized_header_binding_v0(
     header: &BlockHeader,
     execution: &NativeBlockExecutionRequestV0,
 ) -> DurableResult<()> {
@@ -2241,7 +2244,33 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                     "commit.sequence",
                 )
             })?;
-            return NativeApplicationCommitResultV0::new(&request, metadata.head, sequence, None)
+            // An earlier transaction may have committed before file/directory
+            // synchronization failed. A fresh read alone does not discharge
+            // that durability obligation. Close the writer, repeat both syncs,
+            // and authenticate the exact same committed row before returning.
+            connection.close().map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                    "commit.replay_close",
+                )
+            })?;
+            sync_store_commit_boundary_v0(&self.path)?;
+            let fresh = fresh_validate_v0(&self.path, &self.config)?;
+            let replay = fresh_load_p_by_block_v0(&self.path, p.block_id)?;
+            validate_p_v0(&self.config, &replay)?;
+            if fresh.head != metadata.head
+                || fresh.durable_sequence != metadata.durable_sequence
+                || replay.status != P_STATUS_COMMITTED
+                || replay.artifact != exact_artifact
+                || replay.commit_sequence != Some(sequence)
+                || replay.commit_id != p.commit_id
+            {
+                return Err(error(
+                    NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                    "commit.replay_fresh_readback",
+                ));
+            }
+            return NativeApplicationCommitResultV0::new(&request, fresh.head, sequence, None)
                 .map_err(|_| {
                     error(
                         NativeApplicationExecutionErrorCodeV0::BindingMismatch,
@@ -2361,6 +2390,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         })?;
         #[cfg(test)]
         park_for_sigkill_commit_boundary_v0("after_commit");
+        connection.close().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "commit.close",
+            )
+        })?;
         sync_store_commit_boundary_v0(&self.path)?;
         #[cfg(test)]
         park_for_sigkill_commit_boundary_v0("after_fsync");
@@ -2429,54 +2464,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 "snapshot.head",
             ));
         }
-        let maximum = usize::try_from(request.maximum_chunk_bytes()).map_err(|_| {
-            error(
-                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
-                "snapshot.chunk_limit",
-            )
-        })?;
-        let mut chunks = Vec::new();
-        for (index, bytes) in metadata.snapshot.chunks(maximum).enumerate() {
-            let index = u32::try_from(index).map_err(|_| {
-                error(
-                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                    "snapshot.chunk_count",
-                )
-            })?;
-            let digest = hash_domain(SNAPSHOT_CHUNK_DOMAIN_V0, &[&index.to_be_bytes(), bytes]);
-            chunks.push(
-                NativeSnapshotChunkV0::new(
-                    index,
-                    u32::try_from(bytes.len()).map_err(|_| {
-                        error(
-                            NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                            "snapshot.chunk_size",
-                        )
-                    })?,
-                    Hash32V0::new(digest),
-                )
-                .map_err(|_| {
-                    error(
-                        NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                        "snapshot.chunk",
-                    )
-                })?,
-            );
-        }
-        let chunk_digests = chunks
-            .iter()
-            .map(|chunk| chunk.digest().into_bytes())
-            .collect::<Vec<_>>();
-        let mut manifest_parts = Vec::with_capacity(chunk_digests.len() + 1);
-        manifest_parts.push(metadata.snapshot_digest.as_slice());
-        manifest_parts.extend(chunk_digests.iter().map(<[u8; 32]>::as_slice));
-        let digest = hash_domain(SNAPSHOT_MANIFEST_DOMAIN_V0, &manifest_parts);
-        NativeSnapshotManifestV0::new(request, chunks, Hash32V0::new(digest)).map_err(|_| {
-            error(
-                NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                "snapshot.manifest",
-            )
-        })
+        snapshot_export_v1::manifest_for_snapshot_v1(request, &metadata)
     }
 
     fn recover(
@@ -4319,7 +4307,7 @@ fn reject_sqlite_sidecars_v0(path: &Path) -> DurableResult<()> {
 
 #[cfg(test)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum SyncStoreCommitBoundaryFaultPointV0 {
+pub(crate) enum SyncStoreCommitBoundaryFaultPointV0 {
     Database,
     Directory,
 }
@@ -4340,7 +4328,7 @@ fn sync_store_commit_boundary_fault_lock_v0(
 
 #[cfg(test)]
 #[must_use = "the fault guard clears only its own armed sync fault on scope exit"]
-struct SyncStoreCommitBoundaryFaultGuardV0 {
+pub(crate) struct SyncStoreCommitBoundaryFaultGuardV0 {
     identity: Arc<()>,
 }
 
@@ -4355,7 +4343,7 @@ impl Drop for SyncStoreCommitBoundaryFaultGuardV0 {
 }
 
 #[cfg(test)]
-fn arm_sync_store_commit_boundary_fault_v0(
+pub(crate) fn arm_sync_store_commit_boundary_fault_v0(
     path: &Path,
     point: SyncStoreCommitBoundaryFaultPointV0,
 ) -> SyncStoreCommitBoundaryFaultGuardV0 {

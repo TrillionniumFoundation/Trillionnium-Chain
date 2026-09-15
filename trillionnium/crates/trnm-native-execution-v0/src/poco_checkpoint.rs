@@ -25,6 +25,10 @@ use trnm_consensus_types::{
 };
 use trnm_finality_types::{decode_hash32, hash_domain};
 use trnm_native_application::{HeightV0, NativeExecutedBlockV0, NativeExecutionReceiptV0};
+#[path = "poco_checkpoint_commit_v1.rs"]
+mod checkpoint_commit_v1;
+pub use checkpoint_commit_v1::NativeCheckpointCommitErrorV1;
+
 const MAX_POCO_CHECKPOINT_INPUT_TX_BYTES: usize = 8 * 1024 * 1024;
 const SCHEDULED_CUTOFF_AUTHORIZATION_DOMAIN_V0: &str =
     "trnm.poco-bft.scheduled-cutoff-authorization.v0";
@@ -2427,4 +2431,5 @@ mod native_authorization_tests {
             expected.fields().checkpoint_block_id
         );
     }
+    mod checkpoint_commit_tests_v1;
 }

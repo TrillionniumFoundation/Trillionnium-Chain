@@ -47,7 +47,6 @@ source = source_path.read_text(encoding="utf-8")
 cargo = cargo_path.read_text(encoding="utf-8")
 workflow = workflow_path.read_text(encoding="utf-8")
 truth = json.loads(truth_path.read_text(encoding="utf-8"), object_pairs_hook=no_duplicate_object)
-plan = plan_path.read_text(encoding="utf-8")
 modules = tomllib.loads(modules_path.read_text(encoding="utf-8"))
 train = tomllib.loads(train_path.read_text(encoding="utf-8"))
 
@@ -92,16 +91,12 @@ for key in ("production_candidate", "production_consensus_activation"):
     if truth.get(key) is not False:
         fail(f"machine truth {key} must remain false")
 
-plan_lower = plan.lower()
-for marker in (
-    "node commit ledger",
-    "whole-node",
-    "replay",
-    "production_candidate = false",
-    "no machine flag is promoted",
-):
-    if marker not in plan_lower:
-        fail(f"canonical plan missing R2B boundary: {marker}")
+# check_canonical_development_plan.sh owns plan structure/source integrity.
+# Recovery authority is checked through actual machine fields and owner/blocker
+# records, not duplicate English sentences in the condensed execution plan.
+for key in ("production_candidate", "production_consensus_activation", "public_testnet_ready", "release_ready"):
+    if train.get(key) is not False:
+        fail(f"release train {key} must remain false")
 
 module_rows = modules.get("module", modules.get("modules", []))
 ids = {row.get("id") for row in module_rows if isinstance(row, dict)} if isinstance(module_rows, list) else set()

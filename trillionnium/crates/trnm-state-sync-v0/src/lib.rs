@@ -10,6 +10,12 @@
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, error::Error, fmt};
 
+mod streaming;
+pub use streaming::{
+    install_streaming_snapshot_v1, StateRootAccumulatorV1, StreamingFailureV1,
+    StreamingInstallErrorV1, StreamingStateRootRecomputerV1,
+};
+
 pub const STATE_SYNC_VERSION_V0: u16 = 0;
 pub const MAX_TRUST_PATH_LINKS_V0: usize = 4096;
 pub const MAX_CHUNK_COUNT_V0: u32 = 65_536;
@@ -44,10 +50,11 @@ pub struct WeakSubjectivityAnchorV0 {
 }
 
 impl WeakSubjectivityAnchorV0 {
+    // Epoch zero is a real native-v0 epoch. Positive finalized height, explicit
+    // trust identity and verified checkpoint links are still mandatory.
     pub fn validate(self) -> Result<Self, StateSyncErrorV0> {
         if self.chain_id == Digest32V0([0; 32])
             || self.protocol_digest == Digest32V0([0; 32])
-            || self.epoch == 0
             || self.height == 0
             || self.checkpoint_digest == Digest32V0([0; 32])
             || self.validator_set_digest == Digest32V0([0; 32])
@@ -276,10 +283,20 @@ impl SnapshotManifestV0 {
         {
             return Err(StateSyncErrorV0::ManifestTrustMismatch);
         }
+        self.validate_shape()
+    }
+
+    /// Checks canonical fields and allocation/storage bounds, but grants no
+    /// checkpoint or state-root authority. Adapters must repeat this boundary
+    /// before using a caller-supplied manifest to allocate or read files.
+    pub fn validate_shape(&self) -> Result<(), StateSyncErrorV0> {
         let declared_capacity = u64::from(self.chunk_count)
             .checked_mul(u64::from(self.maximum_chunk_bytes))
             .ok_or(StateSyncErrorV0::InvalidManifest)?;
-        if self.chunk_count == 0
+        if self.chain_id == Digest32V0([0; 32])
+            || self.protocol_digest == Digest32V0([0; 32])
+            || self.height == 0
+            || self.chunk_count == 0
             || self.chunk_count > MAX_CHUNK_COUNT_V0
             || self.maximum_chunk_bytes == 0
             || self.maximum_chunk_bytes as usize > MAX_CHUNK_BYTES_V0
@@ -748,6 +765,12 @@ where
 
 #[cfg(test)]
 mod tests {
+    mod epoch_zero_tests {
+        include!("epoch_zero_tests.rs");
+    }
+    mod streaming_tests {
+        include!("streaming_tests.rs");
+    }
     use super::*;
     use std::convert::Infallible;
 

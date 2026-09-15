@@ -25,6 +25,9 @@ proposal_signer_production_activation = false
 [features]
 # Read back an already signed old-role intent; not a signer or runtime activation.
 candidate-handoff-signature-recovery = []
+# Only unchanged carried validator sets, after the same descriptor's durable
+# old-role signature. No new-only member, key rotation, or Core activation.
+candidate-carried-new-set-handoff = ["candidate-handoff-signature-recovery"]
 
 [dependencies]
 fs2 = "0.4"
