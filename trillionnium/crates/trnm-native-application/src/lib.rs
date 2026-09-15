@@ -46,6 +46,7 @@ pub use recovery::{
 pub use snapshot::{
     NativeSnapshotChunkV0, NativeSnapshotManifestV0, NativeSnapshotRequestV0,
     NativeStateProofRequestV0, NativeStateProofSchemeV0, NativeStateProofV0,
+    MAX_SNAPSHOT_CHUNKS_V0,
 };
 pub use validator::{
     NativeValidatorSetTransitionV0, NativeValidatorSetV0, NativeValidatorV0, MAX_VALIDATORS_V0,

@@ -1,4 +1,4 @@
-use trnm_consensus_crypto::StrictEd25519Verifier;
+use trnm_consensus_crypto::{validate_validator_set_strict_ed25519_v0, StrictEd25519Verifier};
 use trnm_consensus_types::{
     validate_checkpoint_parent_header_v0, BlockHeader, CanonicalHandoffSignIntentV1,
     ConsensusParametersV0, FinalityProofV0, HandoffSignerRoleV1, NextEpochCommitmentV0,
@@ -59,6 +59,12 @@ impl HandoffSignerJournalProfileV1 {
         new_validator_set
             .validate_against_parameters(&new_consensus_parameters)
             .map_err(|_| HandoffSignerJournalErrorV1::InvalidProfile("new validator profile"))?;
+        // The generic set constructor checks shape, not the Ed25519 profile.
+        // Check every member, including validators absent from this proof.
+        validate_validator_set_strict_ed25519_v0(&old_validator_set)
+            .map_err(|_| HandoffSignerJournalErrorV1::InvalidProfile("old validator keys"))?;
+        validate_validator_set_strict_ed25519_v0(&new_validator_set)
+            .map_err(|_| HandoffSignerJournalErrorV1::InvalidProfile("new validator keys"))?;
         if old_consensus_parameters.production_activation()
             || new_consensus_parameters.production_activation()
         {
@@ -222,11 +228,12 @@ impl HandoffSignerJournalProfileV1 {
 /// This capability can be minted only after strict Ed25519 verification of
 /// the exact checkpoint plus two-seal finality proof and exact next-epoch
 /// commitment relations. It is intentionally not `Clone` and exposes no raw
-/// constructor. No corresponding new-set constructor exists in this tranche:
-/// the new-set strict pre-certificate verifier (including committed
-/// membership/PoP) has not yet been implemented and migrated, so that
-/// producer path stays closed without waiting for a circular post-certificate
-/// authority.
+/// constructor. General new-set admission (including new-only members,
+/// changed membership/weights and rotated-key registration/PoP) stays closed.
+/// A separate non-default carried-set candidate can consume the same strict
+/// checkpoint proof and unchanged old/new member arrays, then requires a real
+/// stored old-role signature before any new-role custody operation. Neither
+/// admission waits for a circular post-certificate authority.
 #[derive(Debug)]
 pub struct StrictOldSetHandoffAdmissionV1 {
     intent_fingerprint: [u8; 32],
@@ -259,6 +266,13 @@ impl StrictOldSetHandoffAdmissionV1 {
                 "old-set admission cannot authorize the new-set role",
             ));
         }
+        // Admission is public and may precede journal construction. Do not
+        // rely on a separately created profile or on a particular QC subset.
+        // This is key-shape admission, not new-role membership/PoP authority.
+        validate_validator_set_strict_ed25519_v0(old_validator_set)
+            .map_err(|_| HandoffSignerJournalErrorV1::InvalidAdmission("old validator keys"))?;
+        validate_validator_set_strict_ed25519_v0(new_validator_set)
+            .map_err(|_| HandoffSignerJournalErrorV1::InvalidAdmission("new validator keys"))?;
         intent
             .validate(
                 old_validator_set,

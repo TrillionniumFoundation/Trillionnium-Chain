@@ -11,7 +11,7 @@ plan=docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
 modules=docs/development/module-registry-v1.toml
 train=docs/development/release-train-v1.toml
 
-for required in "$manifest" "$recovery_root" "$plan" "$modules" "$train"; do
+for required in "$manifest" "$recovery_root" "$plan" "$modules" "$train" config/consensus-mainline.json; do
   [[ -e "$required" ]] || {
     printf 'payload replay recovery gate failed: missing canonical input: %s\n' "$required" >&2
     exit 2
@@ -43,6 +43,7 @@ cargo clippy --manifest-path "$manifest" --locked --offline -p "$package" \
 
 python3 - <<'PY'
 from pathlib import Path
+import json
 import tomllib
 
 cargo = Path("trillionnium/crates/trnm-consensus-peer-lease/Cargo.toml").read_text(encoding="utf-8")
@@ -71,7 +72,16 @@ if implementation_root.count(socket_guard) != 2 or socket_guard not in crate_roo
     raise SystemExit("candidate recovery socket module and exports must remain Unix feature-gated")
 implementation = implementation_root + "\n" + "\n".join(path.read_text(encoding="utf-8") for path in parts)
 cli = Path("trillionnium/crates/trnm-consensus-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs").read_text(encoding="utf-8")
-plan = Path("docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md").read_text(encoding="utf-8")
+def unique_members(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise SystemExit(f"duplicate machine truth member: {key}")
+        result[key] = value
+    return result
+
+truth = json.loads(Path("config/consensus-mainline.json").read_text(encoding="utf-8"),
+                   object_pairs_hook=unique_members)
 modules = tomllib.loads(Path("docs/development/module-registry-v1.toml").read_text(encoding="utf-8"))
 train = tomllib.loads(Path("docs/development/release-train-v1.toml").read_text(encoding="utf-8"))
 
@@ -113,19 +123,22 @@ for value in ("candidate_only=true", "production=false", "atomic_with_core=false
     if value not in cli:
         raise SystemExit(f"CLI truth output missing: {value}")
 
-plan_lower = plan.lower()
-for marker in ("payload replay", "node commit ledger", "exact source", "production_candidate = false"):
-    if marker not in plan_lower:
-        raise SystemExit(f"canonical plan missing recovery marker: {marker}")
+# The canonical plan is already checked above. Its English wording is not
+# executable recovery authority; read real Boolean fields, never prose markers.
+if not isinstance(truth, dict) or truth.get("stage") != "G1-native-host-incomplete":
+    raise SystemExit("payload recovery machine stage changed without acceptance")
+for key in ("production_candidate", "production_consensus_activation"):
+    if truth.get(key) is not False:
+        raise SystemExit(f"machine truth {key} must remain false")
 
 module_rows = modules.get("module", modules.get("modules", []))
-if not isinstance(module_rows, list) or not any(row.get("id") in {"M04", "M08"} for row in module_rows if isinstance(row, dict)):
-    raise SystemExit("module registry does not assign payload/recovery authority")
+ids = {row.get("id") for row in module_rows if isinstance(row, dict)} if isinstance(module_rows, list) else set()
+if not {"M02", "M03", "M04", "M08", "M15"} <= ids:
+    raise SystemExit("module registry lacks recovery producer/consumer ownership")
 
-encoded_train = repr(train).lower()
-for marker in ("production_candidate", "production_consensus_activation"):
-    if marker not in encoded_train or "false" not in encoded_train:
-        raise SystemExit(f"release train missing fail-closed marker: {marker}")
+for key in ("production_candidate", "production_consensus_activation", "public_testnet_ready", "release_ready"):
+    if train.get(key) is not False:
+        raise SystemExit(f"release train {key} must remain false")
 
 for forbidden in (
     "production_candidate=true",
@@ -135,7 +148,7 @@ for forbidden in (
     if forbidden in cargo or forbidden in implementation:
         raise SystemExit(f"forbidden promotion wording: {forbidden}")
 
-print("payload replay recovery truth gate: PASS; canonical Plan v2 is the only documentation authority")
+print("payload replay recovery metadata: PASS; machine flags remain false; canonical plan checked separately")
 PY
 
 git diff --check

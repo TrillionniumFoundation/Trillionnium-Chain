@@ -51,6 +51,12 @@ mod auth_tree;
 mod canonical_lab_bootstrap;
 mod complete;
 mod durable;
+mod finalized_catchup_v1;
+pub use finalized_catchup_v1::{
+    write_native_catchup_stream_v1, NativeCatchupBlockV1, NativeCatchupErrorV1,
+    NativeCatchupLimitsV1, NativeCatchupReceiptV1, NativeCatchupStreamErrorV1,
+    NativeCatchupStreamLimitsV1, NativeFinalizedCatchupV1, RestoredNativeApplicationV1,
+};
 mod pcc1_finality;
 mod poco_application;
 mod poco_checkpoint;
@@ -62,7 +68,12 @@ mod poco_preparation_journal;
 mod poco_semantics;
 mod poco_snapshot;
 mod poco_transition;
+mod snapshot_stream_v1;
 mod store;
+pub use snapshot_stream_v1::{
+    verify_native_snapshot_stream_v1, NativeSnapshotReadLimitsV1, NativeSnapshotStreamErrorV1,
+    VerifiedNativeSnapshotReadV1,
+};
 mod validator_lifecycle;
 
 pub use canonical_lab_bootstrap::{
@@ -79,12 +90,13 @@ pub use durable::{
     DurableNativeApplicationV0, FinalizedNativeApplicationCommitRequestV0,
     FinalizedNativeApplicationReadV0, NativeApplicationConfigV0,
     NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
-    NativeH1StateSyncTrustedBaseRequestV0, VerifiedNativeSignerReplayFloorV1,
+    NativeH1StateSyncTrustedBaseRequestV0, NativeSnapshotExportV1, PinnedNativeSnapshotExportV1,
+    VerifiedNativeSignerReplayFloorV1,
 };
 pub use pcc1_finality::{PocoFinalityCommitErrorV0, PocoFinalizedApplicationReadV0};
 pub use poco_checkpoint::{
     CommittedNativePocoCheckpointForHandoffV0, ConfirmedNativePocoCheckpointV0,
-    PreparedNativePocoCheckpointV0,
+    NativeCheckpointCommitErrorV1, PreparedNativePocoCheckpointV0,
 };
 pub use store::{
     authenticated_key_hash_v0, stored_object_key_v0, AuthenticatedObjectRecordV0,

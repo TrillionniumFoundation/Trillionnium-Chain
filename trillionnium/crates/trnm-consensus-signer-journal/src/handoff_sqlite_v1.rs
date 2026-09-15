@@ -31,6 +31,9 @@ use crate::{
     SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0, StrictOldSetHandoffAdmissionV1,
 };
 
+#[cfg(feature = "candidate-carried-new-set-handoff")]
+use crate::StrictCarriedNewSetHandoffAdmissionV1;
+
 const DEFAULT_BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 const METADATA_DOMAIN_V1: &str = "trnm.consensus-signer-journal.handoff-metadata.v1";
 const INITIAL_HEAD_DOMAIN_V1: &str = "trnm.consensus-signer-journal.handoff-initial-head.v1";
@@ -566,6 +569,25 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         }
         admission.require_exact(intent, &profile)?;
         let prepared = prepare_handoff_intent_v1(&profile, intent, admission)?;
+        Self::recover_admitted_handoff_signature_v1(
+            database_path,
+            profile,
+            external_watermark,
+            intent,
+            prepared,
+            observed_signature,
+        )
+    }
+
+    #[cfg(feature = "candidate-handoff-signature-recovery")]
+    fn recover_admitted_handoff_signature_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        intent: &CanonicalHandoffSignIntentV1,
+        prepared: PreparedIntentV1,
+        observed_signature: SignatureBytes,
+    ) -> Result<(Self, SignatureBytes), HandoffSignerJournalErrorV1> {
         let validator = profile
             .old_validator_set()
             .validator(profile.author())
@@ -609,7 +631,11 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             store.require_external_exact()?;
             store.owned_pending = Some(prepared.fingerprint);
             store.ensure_operational()?;
-            store.append_signature(&prepared, observed_signature, true)?;
+            store.append_signature(
+                &prepared,
+                observed_signature,
+                intent.signer_role() == HandoffSignerRoleV1::OldSet,
+            )?;
             store.owned_pending = None;
             store.advance_external_to_observed()?;
         }
@@ -776,6 +802,88 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         self.complete_handoff_signature(intent, &prepared, producer)
     }
 
+    /// Candidate carried-set new-role signature. The old signature for this
+    /// exact descriptor must already be durable and externally anchored. Only
+    /// identical ordered IDs/keys/weights are supported, so existing custody
+    /// remains bound to the same key. This does not admit new/rotated keys,
+    /// new-only validators, ordinary new-epoch votes, or Core activation.
+    #[cfg(feature = "candidate-carried-new-set-handoff")]
+    pub fn sign_carried_new_set_handoff_exact_v1<P: HandoffSignatureProducerV1>(
+        &mut self,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictCarriedNewSetHandoffAdmissionV1,
+        producer: &mut P,
+    ) -> Result<SignatureBytes, HandoffSignerJournalErrorV1> {
+        admission.require_exact(intent, &self.profile)?;
+        let prepared = prepare_handoff_with_admission_digest_v1(
+            &self.profile,
+            intent,
+            admission.admission_digest(),
+        )?;
+        self.ensure_operational()?;
+        // The token alone proves neither prior local signing nor its durability.
+        let old = prepare_handoff_intent_v1(
+            &self.profile,
+            admission.old_intent(),
+            admission.old_admission(),
+        )?;
+        let retained = read_intent_v1(&self.connection, old.fingerprint)?.ok_or(
+            HandoffSignerJournalErrorV1::AdmissionMismatch("old signature required"),
+        )?;
+        require_exact_intent_v1(&retained, &old)?;
+        if read_persisted_signature_v1(&self.connection, old.fingerprint, &self.profile)?.is_none()
+            || !terminal_fence_exists_v1(&self.connection)?
+        {
+            return Err(HandoffSignerJournalErrorV1::AdmissionMismatch(
+                "old signature required",
+            ));
+        }
+        if let Some(stored) = read_intent_v1(&self.connection, prepared.fingerprint)? {
+            require_exact_intent_v1(&stored, &prepared)?;
+            if let Some(signature) =
+                read_persisted_signature_v1(&self.connection, prepared.fingerprint, &self.profile)?
+            {
+                return Ok(signature);
+            }
+            self.require_owned_pending(prepared.fingerprint)?;
+            return self.complete_handoff_signature(intent, &prepared, producer);
+        }
+        self.require_no_pending()?;
+        self.require_handoff_admissible(&prepared)?;
+        self.append_prepared(&prepared)?;
+        self.owned_pending = Some(prepared.fingerprint);
+        self.advance_external_to_observed()?;
+        self.complete_handoff_signature(intent, &prepared, producer)
+    }
+
+    /// Reconcile only an already produced carried-new signature. No custody
+    /// call is made, and the exact old-role predecessor remains mandatory in
+    /// the complete history audit. A bare signature cannot create an intent.
+    #[cfg(feature = "candidate-carried-new-set-handoff")]
+    pub fn recover_carried_new_set_handoff_signature_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictCarriedNewSetHandoffAdmissionV1,
+        observed_signature: SignatureBytes,
+    ) -> Result<(Self, SignatureBytes), HandoffSignerJournalErrorV1> {
+        admission.require_exact(intent, &profile)?;
+        let prepared = prepare_handoff_with_admission_digest_v1(
+            &profile,
+            intent,
+            admission.admission_digest(),
+        )?;
+        Self::recover_admitted_handoff_signature_v1(
+            database_path,
+            profile,
+            external_watermark,
+            intent,
+            prepared,
+            observed_signature,
+        )
+    }
+
     fn complete_consensus_signature<P: SignatureProducerV0>(
         &mut self,
         intent: &CanonicalSignIntentV0,
@@ -830,7 +938,11 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         if !StrictEd25519Verifier.verify(validator, &intent.signing_root(), &signature) {
             return Err(HandoffSignerJournalErrorV1::InvalidProducedSignature);
         }
-        self.append_signature(prepared, signature, true)?;
+        self.append_signature(
+            prepared,
+            signature,
+            intent.signer_role() == HandoffSignerRoleV1::OldSet,
+        )?;
         self.owned_pending = None;
         self.advance_external_to_observed()?;
         read_persisted_signature_v1(&self.connection, prepared.fingerprint, &self.profile)?.ok_or(
@@ -1270,6 +1382,52 @@ fn prepare_consensus_intent_v1(
     Ok(prepared)
 }
 
+fn handoff_role_enabled_v1(
+    profile: &HandoffSignerJournalProfileV1,
+    role: HandoffSignerRoleV1,
+) -> bool {
+    role == HandoffSignerRoleV1::OldSet
+        || (cfg!(feature = "candidate-carried-new-set-handoff")
+            && role == HandoffSignerRoleV1::NewSet
+            && profile.old_validator_set().validators() == profile.new_validator_set().validators())
+}
+
+fn carried_new_matches_old_v1(
+    profile: &HandoffSignerJournalProfileV1,
+    old: &PreparedIntentV1,
+    new: &PreparedIntentV1,
+) -> bool {
+    if !handoff_role_enabled_v1(profile, HandoffSignerRoleV1::NewSet) {
+        return false;
+    }
+    match (&old.fields, &new.fields) {
+        (
+            PreparedFieldsV1::Handoff {
+                role: old_role,
+                descriptor_cev0: old_descriptor,
+                admission_digest: old_admission,
+                ..
+            },
+            PreparedFieldsV1::Handoff {
+                role: new_role,
+                descriptor_cev0: new_descriptor,
+                admission_digest: new_admission,
+                ..
+            },
+        ) => {
+            *old_role == HandoffSignerRoleV1::OldSet as u8
+                && *new_role == HandoffSignerRoleV1::NewSet as u8
+                && old_descriptor == new_descriptor
+                && *new_admission
+                    == hash_domain(
+                        "trnm.consensus-signer-journal.carried-new-admission.v1",
+                        &[old_admission, &new.fingerprint],
+                    )
+        }
+        _ => false,
+    }
+}
+
 fn prepare_handoff_intent_v1(
     profile: &HandoffSignerJournalProfileV1,
     intent: &CanonicalHandoffSignIntentV1,
@@ -1291,6 +1449,28 @@ fn prepare_handoff_intent_v1(
         ));
     }
     admission.require_exact(intent, profile)?;
+    prepare_handoff_with_admission_digest_v1(profile, intent, admission.admission_digest())
+}
+
+fn prepare_handoff_with_admission_digest_v1(
+    profile: &HandoffSignerJournalProfileV1,
+    intent: &CanonicalHandoffSignIntentV1,
+    admission_digest: [u8; 32],
+) -> Result<PreparedIntentV1, HandoffSignerJournalErrorV1> {
+    intent
+        .validate(
+            profile.old_validator_set(),
+            profile.new_validator_set(),
+            profile.old_consensus_parameters(),
+            profile.new_consensus_parameters(),
+        )
+        .map_err(|_| HandoffSignerJournalErrorV1::Intent("handoff transition profile"))?;
+    if !handoff_role_enabled_v1(profile, intent.signer_role())
+        || intent.validator_id() != profile.author()
+        || admission_digest == [0; 32]
+    {
+        return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
+    }
     let canonical_intent = intent
         .canonical_bytes()
         .map_err(|_| HandoffSignerJournalErrorV1::Intent("handoff canonical encoding"))?;
@@ -1317,7 +1497,7 @@ fn prepare_handoff_intent_v1(
         validator_id: intent.validator_id().as_bytes().to_vec(),
         descriptor_digest: *preimage.descriptor_digest().as_bytes(),
         descriptor_cev0: preimage.descriptor_bytes().to_vec(),
-        admission_digest: admission.admission_digest(),
+        admission_digest,
     };
     let mut prepared = PreparedIntentV1 {
         fingerprint: *intent.fingerprint().as_bytes(),
@@ -2751,6 +2931,12 @@ fn verify_signature_for_intent_v1(
         PreparedFieldsV1::Handoff { role, .. } if *role == HandoffSignerRoleV1::OldSet as u8 => {
             profile.old_validator_set().validator(profile.author())
         }
+        PreparedFieldsV1::Handoff { role, .. }
+            if *role == HandoffSignerRoleV1::NewSet as u8
+                && handoff_role_enabled_v1(profile, HandoffSignerRoleV1::NewSet) =>
+        {
+            profile.new_validator_set().validator(profile.author())
+        }
         PreparedFieldsV1::Handoff { .. } => {
             return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
         }
@@ -2913,8 +3099,8 @@ fn validate_intent_semantics_v1(
                 )
             })?;
             if intent.class != CLASS_HANDOFF
-                || decoded.signer_role() != HandoffSignerRoleV1::OldSet
-                || *role != HandoffSignerRoleV1::OldSet as u8
+                || !handoff_role_enabled_v1(profile, decoded.signer_role())
+                || *role != decoded.signer_role() as u8
                 || decoded.validator_id() != profile.author()
                 || validator_id != profile.author().as_bytes()
                 || *genesis_hash != *decoded.preimage().genesis_hash().as_bytes()
@@ -3056,7 +3242,8 @@ fn validate_database_v1(
     let mut maximum_vote_view = None;
     let mut maximum_timeout_view = None;
     let mut pending = None;
-    let mut signed_old_handoff = None;
+    let mut signed_old_handoff: Option<([u8; 32], u64)> = None;
+    let mut carried_new_fingerprint = None;
 
     for event in &events {
         let intent = intents.get(&event.fingerprint).ok_or(
@@ -3074,6 +3261,31 @@ fn validate_database_v1(
         }
         match event.kind {
             EVENT_PREPARED => {
+                let is_new = matches!(
+                    &intent.fields, PreparedFieldsV1::Handoff { role, .. }
+                    if *role == HandoffSignerRoleV1::NewSet as u8
+                );
+                if let Some((old_fingerprint, old_sequence)) = signed_old_handoff {
+                    let old = intents
+                        .get(&old_fingerprint)
+                        .ok_or(HandoffSignerJournalErrorV1::IntegrityFailure)?;
+                    if !is_new
+                        || carried_new_fingerprint.is_some()
+                        || old_sequence.checked_add(1) != Some(event.sequence)
+                        || !carried_new_matches_old_v1(profile, old, intent)
+                    {
+                        return Err(HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                            "only the exact carried-new prepare may follow the terminal old signature",
+                        ));
+                    }
+                    carried_new_fingerprint = Some(event.fingerprint);
+                } else if is_new {
+                    return Err(
+                        HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                            "carried-new intent precedes the durable old-role signature",
+                        ),
+                    );
+                }
                 if pending.is_some() {
                     return Err(
                         HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
@@ -3297,7 +3509,10 @@ fn validate_database_v1(
                 || fence.fingerprint != fingerprint
                 || fence.signature_sequence != signature_sequence
                 || fence.fence_checksum != expected_checksum
-                || signature_sequence != expected_head.sequence
+                || (signature_sequence != expected_head.sequence
+                    && !(carried_new_fingerprint.is_some()
+                        && (signature_sequence.checked_add(1) == Some(expected_head.sequence)
+                            || signature_sequence.checked_add(2) == Some(expected_head.sequence))))
             {
                 return Err(
                     HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(

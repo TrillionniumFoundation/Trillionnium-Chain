@@ -86,6 +86,11 @@ fn manifest() -> SnapshotManifestV0 {
         checkpoint_digest: sync_digest(6),
         manifest_digest: sync_digest(0),
     };
+    let binding = manifest.chunk_binding_digest();
+    manifest.chunk_root = trnm_state_sync_v0::chunk_merkle_root_v0(&[
+        trnm_state_sync_v0::SnapshotChunkV0::canonical_digest(binding, 0, b"a"),
+        trnm_state_sync_v0::SnapshotChunkV0::canonical_digest(binding, 1, b"b"),
+    ]);
     manifest.manifest_digest = manifest.canonical_digest();
     manifest
 }

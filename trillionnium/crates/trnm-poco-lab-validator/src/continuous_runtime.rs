@@ -7133,4 +7133,5 @@ mod tests {
     fn seven_validator_real_authorities_finalize_four_nonempty_blocks_v0() {
         run_deployed_convergent_harness_v0(7);
     }
+    include!("continuous_pacemaker_recovery_tests_v1.rs");
 }

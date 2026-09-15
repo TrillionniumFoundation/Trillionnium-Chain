@@ -6,20 +6,30 @@
 //! may construct a Timeout statement.  Re-arm, restart, QC/TC progress and
 //! cancellation invalidate all older generations.
 
-use std::time::{Duration, Instant};
+use std::{
+    sync::atomic::{AtomicU64, Ordering},
+    time::{Duration, Instant},
+};
 
 use anyhow::{anyhow, bail, Result};
 use trnm_consensus_types::{Epoch, View};
 
 const MAX_TIMEOUT: Duration = Duration::from_secs(30);
 const MAX_GENERATION: u64 = u64::MAX - 1;
+// Process-local opaque values are not serializable. A different timer owner
+// must not accept another owner's same-numbered expiry after reconstruction.
+static NEXT_OWNER_V1: AtomicU64 = AtomicU64::new(1);
+const MAX_BACKOFF_STEPS_V1: u32 = 128;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct PacemakerGenerationV0(u64);
+pub struct PacemakerGenerationV0 {
+    owner: u64,
+    sequence: u64,
+}
 
 impl PacemakerGenerationV0 {
     pub const fn get(self) -> u64 {
-        self.0
+        self.sequence
     }
 }
 
@@ -57,6 +67,7 @@ struct ArmedTimeoutV0 {
 pub struct GenerationAwarePacemakerV0 {
     base_timeout: Duration,
     maximum_timeout: Duration,
+    owner: u64,
     next_generation: u64,
     consecutive_timeouts: u32,
     armed: Option<ArmedTimeoutV0>,
@@ -71,7 +82,13 @@ impl GenerationAwarePacemakerV0 {
         {
             bail!("pacemaker timeout bounds are invalid");
         }
+        let owner = NEXT_OWNER_V1
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+                next.checked_add(1)
+            })
+            .map_err(|_| anyhow!("pacemaker owner identity exhausted"))?;
         Ok(Self {
+            owner,
             base_timeout,
             maximum_timeout,
             next_generation: 1,
@@ -80,14 +97,43 @@ impl GenerationAwarePacemakerV0 {
         })
     }
 
+    /// Recreate local timing conservatively from fresh, owner-authenticated
+    /// Core/Safety and signer-inventory observations, not saved timer JSON or
+    /// peer assertions. Old absolute deadlines are never transplanted.
+    ///
+    /// Failed views after highQC and total durable local timeout decisions are
+    /// safe conservative inputs. Historical local timeouts can overestimate the
+    /// current streak, but the wait remains capped; actual QC/finality progress
+    /// resets it normally. This is not a persisted elapsed-time clock or a new
+    /// signing capability, and does not implement whole-node restart.
+    pub(crate) fn from_recovered_authority_v1(
+        base: Duration,
+        maximum: Duration,
+        expected_epoch: Epoch,
+        facts: crate::continuous_runtime::ContinuousRuntimeFactsV0,
+    ) -> Result<Self> {
+        let qc = facts.high_qc_v0();
+        if qc.epoch() != expected_epoch || qc.view() >= facts.current_view_v0() {
+            bail!("recovered pacemaker coordinates are not same-epoch post-highQC");
+        }
+        let failed_views = facts.current_view_v0().get() - qc.view().get() - 1;
+        let conservative = failed_views.max(facts.signed_timeout_intents_v0());
+        let mut result = Self::new(base, maximum)?;
+        result.consecutive_timeouts = conservative.min(u64::from(MAX_BACKOFF_STEPS_V1)) as u32;
+        Ok(result)
+    }
+
     pub fn arm(&mut self, epoch: Epoch, view: View, now: Instant) -> Result<PacemakerGenerationV0> {
         let timeout = scaled_timeout(
             self.base_timeout,
             self.maximum_timeout,
             self.consecutive_timeouts,
         )?;
-        let generation = PacemakerGenerationV0(self.next_generation);
-        self.next_generation = self
+        let generation = PacemakerGenerationV0 {
+            owner: self.owner,
+            sequence: self.next_generation,
+        };
+        let next_generation = self
             .next_generation
             .checked_add(1)
             .filter(|value| *value <= MAX_GENERATION)
@@ -95,6 +141,7 @@ impl GenerationAwarePacemakerV0 {
         let deadline = now
             .checked_add(timeout)
             .ok_or_else(|| anyhow!("pacemaker deadline overflow"))?;
+        self.next_generation = next_generation;
         self.armed = Some(ArmedTimeoutV0 {
             epoch,
             view,
@@ -208,7 +255,7 @@ impl GenerationAwarePacemakerV0 {
 fn scaled_timeout(base: Duration, maximum: Duration, consecutive: u32) -> Result<Duration> {
     let mut nanos = base.as_nanos();
     let maximum_nanos = maximum.as_nanos();
-    for _ in 0..consecutive.min(128) {
+    for _ in 0..consecutive.min(MAX_BACKOFF_STEPS_V1) {
         nanos = nanos
             .checked_mul(3)
             .ok_or_else(|| anyhow!("pacemaker timeout multiplication overflow"))?
@@ -341,4 +388,5 @@ mod tests {
         );
         assert_eq!(pacemaker.consecutive_timeouts(), 1);
     }
+    include!("pacemaker_recovery_tests_v1.rs");
 }

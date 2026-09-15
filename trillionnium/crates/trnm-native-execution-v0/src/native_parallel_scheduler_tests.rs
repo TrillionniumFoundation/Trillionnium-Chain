@@ -68,3 +68,56 @@ fn scheduling_bounds_do_not_invoke_runtime_or_invent_results() {
     }
     assert_eq!(run_indexed_jobs_v0::<usize>(8, 4, |_| None).len(), 8);
 }
+
+#[test]
+fn one_logical_worker_runs_inline_and_keeps_index_order() {
+    let caller = std::thread::current().id();
+    for (count, workers) in [(1, 8), (8, 1), (MAX_BATCH_V0, 1)] {
+        let values = run_indexed_jobs_v0(count, workers, |index| {
+            assert_eq!(std::thread::current().id(), caller);
+            Some(index)
+        });
+        assert_eq!(values, (0..count).map(Some).collect::<Vec<_>>());
+    }
+}
+
+#[test]
+fn inline_worker_unwind_discards_prefix_and_drops_retained_results() {
+    struct Tracked<'a>(&'a AtomicUsize);
+    impl Drop for Tracked<'_> {
+        fn drop(&mut self) {
+            self.0.fetch_add(1, Ordering::Relaxed);
+        }
+    }
+    for fail_at in [0, 3, 7] {
+        let calls = AtomicUsize::new(0);
+        let dropped = AtomicUsize::new(0);
+        let values = run_indexed_jobs_v0(8, 1, |index| {
+            calls.fetch_add(1, Ordering::Relaxed);
+            assert_ne!(index, fail_at, "injected disposable inline panic");
+            Some(Tracked(&dropped))
+        });
+        assert!(values.iter().all(Option::is_none));
+        assert_eq!(calls.load(Ordering::Relaxed), fail_at + 1);
+        assert_eq!(dropped.load(Ordering::Relaxed), fail_at);
+    }
+}
+
+#[test]
+fn inline_worker_preserves_missing_outcomes_without_fabricating_success() {
+    let values = run_indexed_jobs_v0(8, 1, |index| (index % 2 == 0).then_some(index));
+    assert_eq!(
+        values,
+        vec![Some(0), None, Some(2), None, Some(4), None, Some(6), None]
+    );
+}
+
+#[test]
+fn multiple_logical_workers_still_use_joined_worker_threads() {
+    let caller = std::thread::current().id();
+    let values = run_indexed_jobs_v0(8, 4, |index| {
+        assert_ne!(std::thread::current().id(), caller);
+        Some(index)
+    });
+    assert_eq!(values, (0..8).map(Some).collect::<Vec<_>>());
+}
