@@ -35,10 +35,12 @@
 //! domain before this journal may reach a signer producer.
 //!
 //! Proposal witnesses use the separate [`ProposalSignatureProducerV0`] seam.
-//! They are not journaled by this crate and are not admitted by the current
-//! Unix remote-signer protocol; callers must keep that seam disabled until a
-//! proposal-specific durable conflict key and SafetyRules authorization are
-//! implemented.
+//! The default build supplies no proposal journal and the current Unix
+//! remote-signer protocol does not admit them. The Linux-only explicit
+//! `candidate-proposal-journal` feature adds a fixed-epoch, externally anchored
+//! conflict journal and producer adapter. It does not supply Core/Safety
+//! proposal authorization, durable body publication or a production signer;
+//! a real owner must establish those boundaries before using that seam.
 //!
 //! Schema1 also has no atomic migration of a schema0 external-watermark scope.
 //! It therefore cannot claim to prevent the same key from signing concurrently
@@ -115,4 +117,12 @@ pub use sqlite::{
     SignerJournalActivationFailureV0, SignerJournalLifetimeInventoryV1,
     SignerJournalReconciliationFactsV0, SignerJournalTailFactsV0, SignerJournalTailStateV0,
     SignerNodeCheckpointIdentityV0, SignerPreparedIntentFactsV0, SqliteSignerJournalV0,
+};
+
+#[cfg(all(target_os = "linux", feature = "candidate-proposal-journal"))]
+mod proposal_journal_v1;
+#[cfg(all(target_os = "linux", feature = "candidate-proposal-journal"))]
+pub use proposal_journal_v1::{
+    JournaledProposalProducerV1, ProposalJournalErrorV1, ProposalJournalProfileV1,
+    ProposalJournalV1,
 };
