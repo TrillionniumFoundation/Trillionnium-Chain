@@ -76,6 +76,24 @@ Each scenario below has a stable requirement ID (`Mxx-*`). A reference implement
 
 Required `M02-EPOCH` acceptance additions are old-only/new-only/dual-role membership and separate fault bounds; field-by-field proof/configuration/binding substitution; positive view-1 and justified skipped-view proposals; wrong or replayed completion capability without state consumption; interrupted persistence before each seal/new-role signature; schema-13 recovery compatibility and explicit schema-14 phase rejection; old-view/new-view ordering; and two successive epoch transitions. Tests must use the real Core/Store/signer/native producers and consumers. The current `epoch_activation_recovery` regression covers proof recovery and the inert view-1 header capability, not that live matrix.
 
+**Candidate continuous-runtime timer reconstruction (M17 implementation).**
+`trnm-poco-lab-validator::GenerationAwarePacemakerV0` binds each private expiry
+identity to a checked process-local owner and sequence, not just a counter
+which restarts at one. Deadline/generation rejection leaves the existing arm
+unchanged. `BoundedConsensusOwnerV1::new` recreates its timer from fresh actual
+Core/Safety/signer facts: the larger of failed views after highQC and retained
+local timeout decisions, capped at 128 backoff steps. This conservative seed
+may overestimate the current streak after earlier successful views; the actual
+configured maximum timeout (at most 30 seconds) bounds the wait. A genuine
+QC/finality progress event resets it normally; TC-only progress does not.
+Old elapsed time and timer JSON are never authority. This is not a durable clock,
+full node restart, a new signing capability or live epoch support. The real
+four-authority Core/SQLite/signer tests in
+`continuous_pacemaker_recovery_tests_v1.rs` replace the timer after successive
+TCs and preserve backoff; `pacemaker_recovery_tests_v1.rs` tests stale-owner
+expiry, concurrent owner uniqueness and unchanged state at arithmetic/deadline
+rejection. Their bounded timer replacement is not physical power-loss evidence.
+
 <a id="m03"></a>
 ## M03 — Safety / Signer / Checkpoint
 
@@ -176,6 +194,27 @@ qualification. Schema-1 new-set-role and production fences remain unchanged.
 
 
 **Exact-source review trace.** For `M04-LEASE` under `pcc1`, inspect `trillionnium/crates/trnm-consensus-peer-lease/src/store.rs` symbol `apply`; the current error definition/literal is `PeerLeaseErrorV1` in `trillionnium/crates/trnm-consensus-peer-lease/src/protocol.rs`. Reproduce `journal_restarts_and_fences_stale_generation` in `trillionnium/crates/trnm-consensus-peer-lease/src/store.rs`. Lease authority only; this does not certify a persistent consensus payload transport or full node.
+
+**Candidate continuous mesh availability (M17 implementation).** In
+`trnm-poco-lab-validator`, inbound `transport.rs` admission retains error
+provenance: remote hello/record rejection and transient socket I/O are
+connection-scoped; local configuration, entropy and custody failures stay
+terminal, including a local timeout. The mesh creates no lease, generation or
+Core input for a rejected handshake. A bounded fixed pause limits immediate
+rejection churn without attacker-keyed state. This is not an exemption for
+established-session bad frames or a complete flood/peer-isolation policy.
+
+`consensus_runtime.rs::drain_ingress_turn_v1`, called by the actual owner loop,
+handles at most 64 events per turn, including no-op/control events; it returns
+to timer/proposal work without dropping or reordering unread events. A handler
+error still propagates rather than pretending to be progress. This is a local
+scheduling bound, not a transaction/block validity rule. The five tests in
+`mesh_handshake_isolation_tests_v1.rs` use actual TCP and Ed25519 handshakes to
+exercise rejected connections, preserved live streams, local-fault boundaries
+and the bounded pump. Payload probes are not business transactions; test leases
+are explicitly in-memory. `ingress_fairness_tests_v1.rs` covers always-ready and
+no-op ingress, ordering, empty and error cases. Full default-node wiring,
+Byzantine multi-host qualification and end-to-end goodput remain open.
 
 <a id="m05"></a>
 ## M05 — Transaction Admission / Mempool

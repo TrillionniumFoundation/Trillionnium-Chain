@@ -40,6 +40,39 @@ const FINISHED_DOMAIN: &[u8] = b"trnm.poco-g3.receiver-finished.v2";
 const SESSION_DOMAIN: &[u8] = b"trnm.poco-g3.connection-session.v2";
 const TRANSCRIPT_DOMAIN: &[u8] = b"trnm.poco-g3.handshake-transcript.v2";
 const NETWORK_CONTEXT_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.v2";
+
+/// Error provenance for inbound admission. Only bytes read from the remote
+/// socket (or a socket I/O failure) can construct `Peer`; entropy, local configuration and custody
+/// failures remain `Local`. This is not a wire error or accepted identity.
+#[derive(Debug)]
+pub(crate) enum InboundHandshakeFailureV1 {
+    Local(FrameError),
+    Peer(FrameError),
+}
+
+impl From<FrameError> for InboundHandshakeFailureV1 {
+    fn from(error: FrameError) -> Self {
+        Self::Local(error)
+    }
+}
+
+impl InboundHandshakeFailureV1 {
+    fn socket_write(error: FrameError) -> Self {
+        match error {
+            FrameError::Io(_) => Self::Peer(error),
+            // Record shape/size errors on a locally produced challenge are
+            // local invariant faults, not malicious peer input.
+            _ => Self::Local(error),
+        }
+    }
+
+    fn into_frame_error(self) -> FrameError {
+        match self {
+            Self::Local(error) | Self::Peer(error) => error,
+        }
+    }
+}
+
 const EPOCH_SET_BINDING_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.epoch-set-binding.v1";
 const NODE_CONFIG_BINDING_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.node-config-binding.v1";
 
@@ -213,7 +246,7 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
     }
 
     pub fn accept(
-        mut io: T,
+        io: T,
         run_id: &str,
         local: ValidatorId,
         signing_key: &SigningKey,
@@ -221,7 +254,28 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
         key_roles: &ValidatorKeyRoleRegistryV1,
         transport_context: RunTransportContext,
     ) -> Result<Self, FrameError> {
-        let session = server_handshake(
+        Self::accept_scoped_v1(
+            io,
+            run_id,
+            local,
+            signing_key,
+            validator_set,
+            key_roles,
+            transport_context,
+        )
+        .map_err(InboundHandshakeFailureV1::into_frame_error)
+    }
+
+    pub(crate) fn accept_scoped_v1(
+        mut io: T,
+        run_id: &str,
+        local: ValidatorId,
+        signing_key: &SigningKey,
+        validator_set: &ValidatorSet,
+        key_roles: &ValidatorKeyRoleRegistryV1,
+        transport_context: RunTransportContext,
+    ) -> Result<Self, InboundHandshakeFailureV1> {
+        let session = server_handshake_scoped_v1(
             &mut io,
             run_id,
             local,
@@ -402,6 +456,27 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
 
     #[allow(clippy::too_many_arguments)]
     pub fn accept(
+        io: T,
+        run_id: &str,
+        local: ValidatorId,
+        producer: Box<dyn P2pIdentitySignatureProducerV1>,
+        validator_set: &ValidatorSet,
+        key_roles: &ValidatorKeyRoleRegistryV1,
+        transport_context: RunTransportContext,
+    ) -> Result<Self, FrameError> {
+        Self::accept_scoped_v1(
+            io,
+            run_id,
+            local,
+            producer,
+            validator_set,
+            key_roles,
+            transport_context,
+        )
+        .map_err(InboundHandshakeFailureV1::into_frame_error)
+    }
+
+    pub(crate) fn accept_scoped_v1(
         mut io: T,
         run_id: &str,
         local: ValidatorId,
@@ -409,14 +484,14 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
         validator_set: &ValidatorSet,
         key_roles: &ValidatorKeyRoleRegistryV1,
         transport_context: RunTransportContext,
-    ) -> Result<Self, FrameError> {
+    ) -> Result<Self, InboundHandshakeFailureV1> {
         require_external_identity(local, producer.as_ref(), key_roles)?;
         let expected_public_key = key_roles
             .p2p_identity_public_key(local)
             .ok_or(FrameError::UnknownSender)?;
         let network_context_digest =
             network_context_digest(validator_set, key_roles, transport_context);
-        let session = server_handshake_with_external_identity(
+        let session = server_handshake_with_external_identity_scoped_v1(
             &mut io,
             run_id,
             local,
@@ -581,6 +656,27 @@ pub fn server_handshake(
     key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
+    server_handshake_scoped_v1(
+        io,
+        run_id,
+        local,
+        signing_key,
+        validator_set,
+        key_roles,
+        transport_context,
+    )
+    .map_err(InboundHandshakeFailureV1::into_frame_error)
+}
+
+fn server_handshake_scoped_v1(
+    io: &mut (impl Read + Write),
+    run_id: &str,
+    local: ValidatorId,
+    signing_key: &SigningKey,
+    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
+    transport_context: RunTransportContext,
+) -> Result<ConnectionSession, InboundHandshakeFailureV1> {
     transport_context.validate_validator_set_binding(validator_set)?;
     require_local_key(local, signing_key, key_roles)?;
     let mut receiver_nonce = [0u8; 32];
@@ -593,8 +689,8 @@ pub fn server_handshake(
         receiver_nonce,
         signing_key,
     )?;
-    write_record(io, &challenge)?;
-    let hello = read_record(io)?;
+    write_record(io, &challenge).map_err(InboundHandshakeFailureV1::socket_write)?;
+    let hello = read_record(io).map_err(InboundHandshakeFailureV1::Peer)?;
     let session = decode_hello(
         &hello,
         run_id,
@@ -603,7 +699,8 @@ pub fn server_handshake(
         validator_set,
         key_roles,
         transport_context,
-    )?;
+    )
+    .map_err(InboundHandshakeFailureV1::Peer)?;
     let finished = encode_finished(
         run_id,
         local,
@@ -614,7 +711,7 @@ pub fn server_handshake(
         &hello,
         signing_key,
     )?;
-    write_record(io, &finished)?;
+    write_record(io, &finished).map_err(InboundHandshakeFailureV1::socket_write)?;
     Ok(session)
 }
 
@@ -692,6 +789,27 @@ pub fn server_handshake_with_external_identity(
     key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
+    server_handshake_with_external_identity_scoped_v1(
+        io,
+        run_id,
+        local,
+        producer,
+        validator_set,
+        key_roles,
+        transport_context,
+    )
+    .map_err(InboundHandshakeFailureV1::into_frame_error)
+}
+
+fn server_handshake_with_external_identity_scoped_v1(
+    io: &mut (impl Read + Write),
+    run_id: &str,
+    local: ValidatorId,
+    producer: &mut dyn P2pIdentitySignatureProducerV1,
+    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
+    transport_context: RunTransportContext,
+) -> Result<ConnectionSession, InboundHandshakeFailureV1> {
     transport_context.validate_validator_set_binding(validator_set)?;
     require_external_identity(local, producer, key_roles)?;
     let expected_public_key = key_roles
@@ -709,8 +827,8 @@ pub fn server_handshake_with_external_identity(
         expected_public_key,
         producer,
     )?;
-    write_record(io, &challenge)?;
-    let hello = read_record(io)?;
+    write_record(io, &challenge).map_err(InboundHandshakeFailureV1::socket_write)?;
+    let hello = read_record(io).map_err(InboundHandshakeFailureV1::Peer)?;
     let session = decode_hello(
         &hello,
         run_id,
@@ -719,7 +837,8 @@ pub fn server_handshake_with_external_identity(
         validator_set,
         key_roles,
         transport_context,
-    )?;
+    )
+    .map_err(InboundHandshakeFailureV1::Peer)?;
     let finished = encode_finished_with_external_identity(
         run_id,
         local,
@@ -731,7 +850,7 @@ pub fn server_handshake_with_external_identity(
         expected_public_key,
         producer,
     )?;
-    write_record(io, &finished)?;
+    write_record(io, &finished).map_err(InboundHandshakeFailureV1::socket_write)?;
     Ok(session)
 }
 

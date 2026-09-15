@@ -4147,9 +4147,11 @@ impl BoundedConsensusOwnerV1 {
             .context("bounded consensus maximum view overflows")?;
         let mut known_executions = BTreeSet::new();
         known_executions.insert((high_qc.height().get(), *high_qc.block_id().as_bytes()));
-        let mut pacemaker = GenerationAwarePacemakerV0::new(
+        let mut pacemaker = GenerationAwarePacemakerV0::from_recovered_authority_v1(
             PACEMAKER_BASE_TIMEOUT_V1,
             PACEMAKER_MAXIMUM_TIMEOUT_V1,
+            config.validator_set().epoch(),
+            initial,
         )?;
         let started_at = Instant::now();
         let nominal_deadline = started_at
@@ -4353,17 +4355,16 @@ impl BoundedConsensusOwnerV1 {
     }
 
     fn drain_ready_ingress_v1(&mut self) -> Result<bool> {
-        let mut progressed = false;
-        loop {
+        drain_ingress_turn_v1(|| {
             let event = match self.prestarted_ingress.pop_front() {
                 Some(event) => Some(event),
                 None => self.mesh_v1()?.receive_timeout(Duration::ZERO)?,
             };
-            let Some(event) = event else {
-                return Ok(progressed);
-            };
-            progressed |= self.handle_mesh_event_v1(event)?;
-        }
+            match event {
+                Some(event) => self.handle_mesh_event_v1(event).map(Some),
+                None => Ok(None),
+            }
+        })
     }
 
     fn refresh_stop_state_v1(&mut self, now: Instant) -> Result<()> {
@@ -7719,6 +7720,25 @@ fn made_authoritative_progress_v1(
         || after.application_applied_height_v0() > before.application_applied_height_v0()
 }
 
+// A bounded channel is not a bounded drain: concurrent peers can keep it
+// nonempty forever. Count every event (including duplicate/control/no-op), so
+// the same owner regains control for timers, proposals and restart handling.
+// This is a local scheduling limit; no input is relabelled invalid or dropped.
+pub(crate) const MAX_INGRESS_EVENTS_PER_TURN_V1: usize = 64;
+
+pub(crate) fn drain_ingress_turn_v1(
+    mut next: impl FnMut() -> Result<Option<bool>>,
+) -> Result<bool> {
+    let mut progressed = false;
+    for _ in 0..MAX_INGRESS_EVENTS_PER_TURN_V1 {
+        match next()? {
+            Some(effect) => progressed |= effect,
+            None => break,
+        }
+    }
+    Ok(progressed)
+}
+
 pub(crate) fn update_pacemaker_after_progress_v1(
     pacemaker: &mut GenerationAwarePacemakerV0,
     before: ContinuousRuntimeFactsV0,
@@ -10873,4 +10893,5 @@ mod tests {
             Err(panic) => std::panic::resume_unwind(panic),
         }
     }
+    include!("ingress_fairness_tests_v1.rs");
 }
