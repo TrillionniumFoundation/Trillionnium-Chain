@@ -1,0 +1,90 @@
+name: Publish exact Section8 candidate source
+
+on:
+  push:
+    branches: [diagnostic/section8-source-publish-20260915]
+    paths: ['.github/workflows/section8-source-publish.yml', 'source-transfer/section8/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: section8-source-publication-20260915
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Read source-transfer data without retaining credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Reconstruct only the approved candidate tree without executing candidate code
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, lzma, os, pathlib, subprocess, tempfile
+          BASE = '95d0a0bd6feee6fb841263c79a8ab39d936b8153'
+          TREE = '1f0442a730a45794e1b751deea7061261e99ad1f'
+          def git(*args, input=None):
+              return subprocess.check_output(['git', '-c', 'core.hooksPath=/dev/null', *args], input=input).decode().strip()
+          assert git('rev-parse', BASE + '^{tree}') == 'c403e323f4cdf08834649082846123793ccede1d'
+          parts = sorted(pathlib.Path('source-transfer/section8').glob('part-*.b64'))
+          assert [p.name for p in parts] == [f'part-{i:02}.b64' for i in range(10)]
+          assert all(p.is_file() and not p.is_symlink() and p.stat().st_size <= 12001 for p in parts)
+          encoded = ''.join(p.read_text('ascii').strip() for p in parts)
+          assert len(encoded) == 109608
+          packed = base64.b64decode(encoded, validate=True)
+          assert len(packed) == 82204
+          assert hashlib.sha256(packed).hexdigest() == 'd1de6b46940fab09f244bdd4d73d300bd87ed3945b9879f8b2462b03d4c76a0d'
+          decoder = lzma.LZMADecompressor(memlimit=128*1024*1024)
+          patch = decoder.decompress(packed, max_length=452561)
+          assert decoder.eof and not decoder.unused_data and len(patch) == 452560
+          assert hashlib.sha256(patch).hexdigest() == '57cc99b01818c33d4c1bed29348a880b59d810b0943a03f4457ce72778091269'
+          git('checkout', '--detach', BASE)
+          git('apply', '--index', '--check', '-', input=patch)
+          git('apply', '--index', '-', input=patch)
+          assert git('write-tree') == TREE
+          protected = ['.github/workflows', 'docs/protocol', 'rust-toolchain.toml', 'trillionnium/Cargo.lock', 'config/consensus-mainline.json', 'config/build-closures-v1.toml', 'config/repository-policy-v1.json']
+          assert not git('diff', '--cached', '--name-only', BASE, '--', *protected)
+          assert len(git('diff', '--cached', '--name-only', BASE).splitlines()) == 52
+          git('diff', '--cached', '--check')
+          os.environ.update(GIT_AUTHOR_NAME='AI-assisted maintenance', GIT_AUTHOR_EMAIL='ai-assisted-maintenance@invalid', GIT_COMMITTER_NAME='AI-assisted maintenance', GIT_COMMITTER_EMAIL='ai-assisted-maintenance@invalid')
+          message = ('fix(chain): publish tested Section8 application recovery candidate\n\nExact source tree 1f0442a730a45794e1b751deea7061261e99ad1f matches local candidate 292d69c501742037fc8995f167f04ba5f3697586. Source transport only: no candidate code, tests, build scripts, or hooks were executed by this publication job. Local test evidence is not relabeled as remote CI or independent acceptance.\n\nIncludes checkpoint/finality catchup, snapshot integrity/streaming, limited carried-set handoff, durable nonce replay floor and recovery fixes. Transaction admission SQLite schema 3 rejects schema 2 without an implemented migration; no production deployment. Persistent validator integration, continuous live epochs, bounded native recovery, multi-host goodput and all external qualification remain open. No production activation or protected-main change.\n')
+          commit = git('commit-tree', TREE, '-p', BASE, input=message.encode())
+          assert git('rev-parse', commit + '^{tree}') == TREE
+          git('update-ref', 'refs/heads/fix/chain-section8-runtime-20260914', commit)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f: f.write('commit=' + commit + '\n')
+          print('candidate_commit=' + commit + '\ncandidate_tree=' + TREE)
+          PY
+      - name: Fast-forward only the authorized candidate branch
+        shell: bash
+        env:
+          PUBLISH_TOKEN: ${{ github.token }}
+          CANDIDATE_COMMIT: ${{ steps.source.outputs.commit }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, os, subprocess
+          remote = 'https://github.com/TrillionniumFoundation/Trillionnium-Chain.git'
+          ref = 'refs/heads/fix/chain-section8-runtime-20260914'
+          base = '95d0a0bd6feee6fb841263c79a8ab39d936b8153'
+          commit = os.environ['CANDIDATE_COMMIT']
+          auth = base64.b64encode(('x-access-token:' + os.environ['PUBLISH_TOKEN']).encode()).decode()
+          command = ['git', '-c', 'core.hooksPath=/dev/null', '-c', 'http.https://github.com/.extraheader=AUTHORIZATION: basic ' + auth]
+          current = subprocess.check_output(command + ['ls-remote', '--refs', remote, ref], text=True).split()
+          assert current and current[0] == base, 'Candidate ref moved; refusing publication'
+          subprocess.run(command + ['push', remote, commit + ':' + ref], check=True)
+          actual = subprocess.check_output(command + ['ls-remote', '--refs', remote, ref], text=True).split()
+          assert actual and actual[0] == commit
+          print('published_candidate=' + commit)
+          PY
