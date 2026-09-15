@@ -881,7 +881,7 @@
       ],
       "regression_refs": [
         "trillionnium/crates/trnm-poco-node-production-v0/tests/public_authority_surface.rs",
-        "trillionnium/crates/trnm-poco-node-io/src/absolute_deadline_tcp_v1.rs"
+        "trillionnium/crates/trnm-poco-node-io/tests/absolute_deadline_tcp_v1.rs"
       ],
       "regression_scope": "existing-review-input-not-independent-golden-acceptance",
       "requirement_ids": [
