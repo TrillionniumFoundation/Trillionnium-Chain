@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Emit a deterministic, key-free 7/31/100-validator LAN placement plan."""
+"""Emit a deterministic, key-free 4/7/31/100-validator LAN placement plan."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import pathlib
 import tomllib
 
 
-TOPOLOGY_KEYS = {7: "seven", 31: "thirty_one", 100: "one_hundred"}
+TOPOLOGY_KEYS = {4: "four", 7: "seven", 31: "thirty_one", 100: "one_hundred"}
 
 
 def identity(fleet_id: str, validator_index: int) -> str:
@@ -31,6 +31,8 @@ def main() -> None:
         "--weight-profile", choices=("equal", "bounded-unequal"), default="equal"
     )
     args = parser.parse_args()
+    if args.validator_count == 4 and args.weight_profile != "equal":
+        raise SystemExit("four-validator P0 topology requires equal voting weights")
     with args.inventory.open("rb") as source:
         inventory = tomllib.load(source)
 
@@ -58,7 +60,7 @@ def main() -> None:
     if validator_index != args.validator_count:
         raise SystemExit("inventory allocation does not match requested validator count")
 
-    degree = args.validator_count - 1 if args.validator_count == 7 else 8
+    degree = args.validator_count - 1 if args.validator_count in {4, 7} else 8
     for validator in validators:
         index = validator["index"]
         validator["peers"] = [
