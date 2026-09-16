@@ -6,7 +6,7 @@ on:
       - fix/chain-p0-runtime-closure-20260916
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   rustfmt-export:
@@ -18,26 +18,22 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true
       - name: Install exact rustfmt
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt
           rustup override set 1.95.0
-      - name: Format workspace and retain only changed Rust files
+      - name: Apply exact workspace formatting once
         run: |
           set -euo pipefail
           (cd trillionnium && cargo fmt --all)
-          mapfile -t files < <(git diff --name-only --diff-filter=M -- '*.rs')
-          test "${#files[@]}" -gt 0
-          printf '%s\n' "${files[@]}" > "${RUNNER_TEMP}/rustfmt-files.txt"
-          tar -czf "${RUNNER_TEMP}/rustfmt-files.tar.gz" "${files[@]}"
           git diff --check
-      - name: Upload exact formatted files
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-rustfmt-files-${{ github.sha }}
-          path: |
-            ${{ runner.temp }}/rustfmt-files.txt
-            ${{ runner.temp }}/rustfmt-files.tar.gz
-          if-no-files-found: error
-          retention-days: 1
+          if git diff --quiet -- '*.rs'; then
+            echo 'rustfmt_changed=false'
+            exit 0
+          fi
+          git config user.name 'trnm-rustfmt-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- '*.rs'
+          git commit -m 'style(chain): apply exact rustfmt 1.95 output'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
