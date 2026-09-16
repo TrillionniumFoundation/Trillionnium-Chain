@@ -1135,7 +1135,7 @@ impl PublicReportVerifierContext {
                 "observer coordinator manifest sha256",
             )? != expected_coordinator_manifest_sha256
             || manifest.fleet_id != "trnm-poco-lan-six-host-2026-08-13"
-            || !matches!(manifest.validator_count, 7 | 31 | 100)
+            || !matches!(manifest.validator_count, 4 | 7 | 31 | 100)
             || !matches!(
                 manifest.weight_profile.as_str(),
                 "equal" | "bounded-unequal"
@@ -1809,7 +1809,7 @@ fn validate_manifest(
             .is_none()
         || manifest.run_id != run_id
         || manifest.fleet_id != "trnm-poco-lan-six-host-2026-08-13"
-        || !matches!(manifest.validator_count, 7 | 31 | 100)
+        || !matches!(manifest.validator_count, 4 | 7 | 31 | 100)
         || !matches!(
             manifest.weight_profile.as_str(),
             "equal" | "bounded-unequal"
@@ -1956,7 +1956,7 @@ fn validate_topology(
     manifest: &ManifestJson,
     expected_count: usize,
 ) -> Result<()> {
-    let expected_degree = if expected_count == 7 { 6 } else { 8 };
+    let expected_degree = if matches!(expected_count, 4 | 7) { expected_count - 1 } else { 8 };
     if topology.schema_version != 1
         || topology.fleet_id != manifest.fleet_id
         || topology.network_scope != "single-lan"
@@ -2242,8 +2242,8 @@ fn build_validator_set(
     descriptor: &ValidatorSetJson,
     parameters: &ConsensusParametersV0,
 ) -> Result<(ValidatorSet, [u8; 32], ValidatorKeyRoleRegistryV1)> {
-    if !matches!(descriptor.validators.len(), 7 | 31 | 100) {
-        bail!("G3 validator-set cardinality must be 7, 31, or 100");
+    if !matches!(descriptor.validators.len(), 4 | 7 | 31 | 100) {
+        bail!("G3 validator-set cardinality must be 4, 7, 31, or 100");
     }
     let mut previous = None;
     let mut public_keys = BTreeSet::new();
@@ -2363,8 +2363,8 @@ fn validate_peers(
     key_role_registry: &ValidatorKeyRoleRegistryV1,
     local_validator: ValidatorId,
 ) -> Result<()> {
-    let expected_degree = if validator_set.validators().len() == 7 {
-        6
+    let expected_degree = if matches!(validator_set.validators().len(), 4 | 7) {
+        validator_set.validators().len() - 1
     } else {
         8
     };

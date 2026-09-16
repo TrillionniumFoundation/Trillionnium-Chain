@@ -198,7 +198,7 @@ impl MeshHostResourcePreflightV0 {
     }
 }
 
-/// Preflights the 7/31/100 sparse/direct topology against one host placement.
+/// Preflights the 4/7/31/100 sparse/direct topology against one host placement.
 /// Socket accounting includes every owned TCP stream, its shutdown-handle
 /// clone, the listener, and one bounded reconnect overlap. RSS accounting
 /// includes explicit worker stacks, distinct maximum send/receive scratch
@@ -210,8 +210,8 @@ pub fn preflight_mesh_host_resources_v0(
     queue_capacity: usize,
     host: MeshHostCapacityV0,
 ) -> Result<MeshHostResourcePreflightV0> {
-    if !matches!(validator_count, 7 | 31 | 100)
-        || peer_degree != if validator_count == 7 { 6 } else { 8 }
+    if !matches!(validator_count, 4 | 7 | 31 | 100)
+        || peer_degree != if matches!(validator_count, 4 | 7) { validator_count - 1 } else { 8 }
         || validator_processes == 0
         || validator_processes > validator_count
     {

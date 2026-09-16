@@ -833,7 +833,7 @@ fn validate_campaign(
         || identity.validator_set_id() != *validator_set.id().as_bytes()
         || usize::try_from(identity.validator_count()).ok()
             != Some(validator_set.validators().len())
-        || !matches!(validator_set.validators().len(), 7 | 31 | 100)
+        || !matches!(validator_set.validators().len(), 4 | 7 | 31 | 100)
     {
         return Err(IsolatedStartupRejectionErrorV1::WrongCampaign);
     }
