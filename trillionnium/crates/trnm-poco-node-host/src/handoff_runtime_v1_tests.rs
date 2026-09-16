@@ -1,5 +1,8 @@
 //! Real SQLite owners; the external service is deliberately a test double.
 //! These tests qualify original-custody binding, not full native/Safety activation.
+#[cfg(feature = "epoch-join-test-fixtures")]
+#[path = "handoff_native_join_tests_v1.rs"]
+mod native_join;
 use super::*;
 use std::os::unix::fs::PermissionsExt;
 use std::sync::{Arc, Mutex};
@@ -197,17 +200,17 @@ fn original_binding_rejects_second_real_same_key_journal_and_retired_scope_subst
         .unwrap();
     let other_receipt = other_retired.confirm_retirement_v1().unwrap();
     assert!(other_receipt.belongs_to_owner_v1(&mut other_retired));
-    assert!(binding.require_retired(&other_retired).is_err());
+    assert!(binding.require_retired(&mut other_retired).is_err());
     let _ = original.confirm_node_checkpoint_head_exact_v0().unwrap();
     let mut retired = original
         .retire_for_handoff_v1(&f.context, &f.intent, host())
         .unwrap();
     let receipt = retired.confirm_retirement_v1().unwrap();
     assert!(receipt.belongs_to_owner_v1(&mut retired));
-    binding.require_retired(&retired).unwrap();
+    binding.require_retired(&mut retired).unwrap();
     let record = *retired.record_v1();
     drop(retired);
-    let reopened = RetiredSqliteSignerJournalV1::open_existing_v1(
+    let mut reopened = RetiredSqliteSignerJournalV1::open_existing_v1(
         &original_path,
         profile(&f, 1),
         original_watermark,
@@ -217,7 +220,7 @@ fn original_binding_rejects_second_real_same_key_journal_and_retired_scope_subst
     )
     .unwrap();
     assert!(
-        binding.require_retired(&reopened).is_err(),
+        binding.require_retired(&mut reopened).is_err(),
         "scalar-identical reopen cannot recreate original live affinity"
     );
 }

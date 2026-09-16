@@ -220,7 +220,7 @@ pub use crate::core::{
     StateSyncAnchorRecoverySessionV0, StateSyncAnchorSuccessorPhaseV0,
     StateSyncAnchorSuccessorRecoveryChallengeV0, StateSyncAnchorSuccessorRecoveryReconcilerV0,
     StateSyncAnchorSuccessorRecoverySessionV0, StateSyncAnchorSuccessorReplayV0,
-    StrictOldEpochTerminalRecoveryV1,
+    StrictEpochCoreRecoveryV1, StrictOldEpochTerminalRecoveryV1,
     AUTHENTICATED_GENESIS_H1_COMPLETION_CARRIER_CHECKSUM_DOMAIN_V0,
 };
 pub use crate::error::{CoreError, Result};

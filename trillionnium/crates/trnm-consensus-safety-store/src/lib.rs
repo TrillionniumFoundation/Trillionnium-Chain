@@ -28,11 +28,19 @@
 //! sidecar, but a production host must still place them behind one dedicated
 //! process owner in an owner-controlled namespace.
 
+mod epoch_journal_v1;
 mod epoch_preparation_sqlite_v1;
 mod old_epoch_journal_v1;
+#[cfg(feature = "test-fixtures")]
+pub mod test_fixtures;
+pub use epoch_journal_v1::{
+    ConfirmedEpochSafetyHeadV1, EpochJournalCutV1, EpochJournalErrorV1, EpochSafetyHeadPinV1,
+    EpochSafetyJournalProfileV1, SqliteEpochSafetyJournalV1,
+};
 pub use old_epoch_journal_v1::{
     ConfirmedOldEpochSafetyHeadV1, OldEpochJournalCutV1, OldEpochJournalErrorV1,
-    OldEpochSafetyHeadPinV1, OldEpochSafetyJournalProfileV1, SqliteOldEpochSafetyJournalV1,
+    OldEpochMigrationSourceV1, OldEpochSafetyHeadPinV1, OldEpochSafetyJournalProfileV1,
+    SqliteOldEpochSafetyJournalV1,
 };
 mod error;
 mod hash;

@@ -4484,6 +4484,12 @@ impl BoundedConsensusOwnerV1 {
         {
             return Ok(());
         }
+        if !client.sync_prefix_ready_v1() {
+            let prefix = self
+                .replay_archive
+                .native_sync_bootstrap_v1(&self.config, self.preflight.bootstrap_initial_cut)?;
+            client.persist_sync_bootstrap_v1(&prefix)?;
+        }
         let proofs = if facts.finalized_height_v0()
             == after_height.max(self.config.ordinary_start_height() - 1) + 1
         {

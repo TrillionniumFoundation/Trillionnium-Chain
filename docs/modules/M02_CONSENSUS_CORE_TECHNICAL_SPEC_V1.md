@@ -121,12 +121,44 @@ to be settled and the new checkpoint independently verified.
 their decoder returns only `UnverifiedSafetyStateRecordV0`.
 `OldEpochBoundaryCoreV1::prepare_epoch_activation_v1` consumes the old live Core,
 requires the exact completed checkpoint and no pending work, preserves global
-revision+1, and returns `PreparedEpochCoreActivationV1` with no step, persistence
-ACK or signer API. The pure SafetyRules consumer keeps its true old finalized
+revision+1, and returns `PreparedEpochCoreActivationV1` with its exact opaque
+initial persistence request and owner-affine binding, but no step, persistence
+ACK or signer API. `StrictOldEpochTerminalRecoveryV1` can prepare the same
+deterministic record after a crash; this remains inert until the actual source
+journal and native/custody owners are joined. The pure SafetyRules consumer keeps its true old finalized
 reference while using a separate graph coordinate, and its state digest binds
 the full activation. Frozen epoch-zero behavior and schema13 tests remain.
 The Core regression uses real frozen Ed25519 evidence but inert P identifiers;
 it is not evidence of an actual native/journal/custody activation join.
+
+The implemented pure consumer uses the same complete context in BlockTree
+three-chain reconstruction and durable payload obligations. For the first new
+block, consensus height/parent/timestamp checks use terminal C+2, while the
+application obligation and finalization queue retain committed checkpoint C.
+Only the exact edge carrier may bridge this gap; an ordinary single-parent
+record cannot be reinterpreted. Later new-epoch blocks use the ordinary direct
+parent rule. A withheld or missing intermediate application result withholds
+the complete finalization suffix. Its regression uses real Ed25519 proposals
+and QCs, verifies a two-block finalization suffix and 14E round trip, and rejects
+a single-parent terminal-seal substitution and a first-block overlay lacking
+the exact edge. Application result identifiers in this pure-engine fixture
+remain synthetic. Persisted-successor validation compares views only within an
+identical epoch/set/parameters scope. A scope change requires the exact retained
+old checkpoint and first-new dual-parent queue carrier; lower new-epoch views
+are not compared numerically with the old checkpoint view. Tests cover first
+view1, a TC before first view3, strict successor validation, and rejection after
+removing the authenticated edge. This consumer change issues no live owner,
+signer lease, or persistence acknowledgement.
+
+A separate default-off SafetyStore `test-fixtures` producer now drives the real
+old Core through H1..C8 and seals9/10 using strict Ed25519 proposals/QCs, actual
+native speculative P/readbacks and journal8. Each of ten vote callbacks follows
+exact Safety persistence; native commits occur only after the Core finalization
+queue, and seals have no application P. Its journal7 migration source is actual
+unvoted genesis. The caller supplies a durable signer callback for whole-node
+custody tests; the fixture's callback comparison hashes are fixture-adapter
+facts, not a claim to the legacy application-job/outbox tables. This establishes
+the real old-epoch join. Live new-epoch Core release remains a separate boundary.
 
 Pure Core preparation remains inert until concrete candidate composition joins
 fresh journal/external cut, `ConfirmedEpochApplicationEdgeV1` from the live native
@@ -138,6 +170,55 @@ virgin new-role custody namespace; removed validators retire without a new Core.
 Retirement precedes old handoff signing and binds the pre-certificate context.
 The new ordinary lease follows complete joint verification and binds the exact
 phase7 persisted Safety cut; these are distinct, non-circular receipts.
+
+### Planned concrete pending-driver composition
+
+This is the next candidate contract; it is not an implemented activation API.
+Keep the single existing Core state machine and dependency direction
+`SafetyStore -> Core`. M15 owns the concrete native, journal9, custody and
+independent node-checkpoint stores. No generic registrar, caller-chosen
+verification trait, scalar activation constructor, or new capability-only crate
+is introduced to work around that direction.
+
+The proposed Core seam is `PreparedEpochCoreActivationV1::into_candidate_host_pending_v1(self)
+-> PendingEpochHostDriverV1`, feature-gated and explicitly a trusted-host API.
+The returned driver keeps Core private, retains its exact pending initial request
+and affinity, and initially accepts only that request's existing `StorageAck`
+transition. All other inputs return `ActivationPersistencePending`; no timer,
+proposal, vote, callback permit or mutable Core escapes before the ACK. After
+ACK the same private driver runs ordinary strict Core inputs. It exposes no raw
+SafetyState/configuration constructor and never accepts an epoch number or
+checksum as activation proof. This seam has the existing ordinary Core
+`StorageAck` trust model: a caller which bypasses the concrete host can lie
+about persistence. It must not be described as an intrinsically verified durable
+receipt or an independently safe activation entry point.
+
+The public operational constructor instead is the planned
+`CandidateEpochRuntimeV1::activate_continuing_v1(prepared, journal9, application,
+authenticated_edge, retired_original, retired_node_checkpoint, new_ordinary)`.
+Each argument is an actual non-Clone owner/capability, not a decoded record.
+The method freshly checks journal9's initial state/request/owner binding against
+`prepared`, asks the live application to confirm the owned edge at actual C,
+checks complete old/new configurations and local key membership, verifies the
+original retirement/checkpoint, and confirms the new ordinary journal has the
+exact intended new set/author/profile and virgin external watermark. Old/new
+ordinary scopes and journal identities must differ. It persists the M15 V1
+lineage checkpoint containing all cuts, syncs and rechecks every owner, then
+ACKs the still-private driver and installs the new ordinary lease in the same
+returned runtime. The runtime keeps all owners and refreshes the relevant cuts
+before/after key access. It never returns an activated bare Core or signer.
+
+Failure before/during the V1 CAS consumes the moved owners and returns typed
+recovery disposition, never a partially usable runtime. Explicit recovery
+reopens all physical owners, checks independently expected V1 lineage/generation,
+strictly reconstructs the exact 14E record and native edge/P ancestry, reconciles
+any signer decision, then remints private runtime state. Inert
+`StrictEpochCoreRecoveryV1` alone still cannot release a driver. Continuing,
+new-only and removed roles are separate constructors: the first slice accepts
+continuing membership only; new-only requires explicit trusted commissioning
+without fabricating an old local Safety owner, and removed nodes get no new
+ordinary driver. All three policies must be tested before claiming multi-role
+activation complete.
 
 ### Planned epoch owner types
 

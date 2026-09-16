@@ -10,6 +10,8 @@ publish = false
 
 [features]
 default = []
+# Typed outgoing epoch checkpoint join, explicitly outside the default closure.
+epoch-handoff-checkpoint-candidate = []
 # Explicit AI-native v1 candidate closure. The default/production node must not
 # resolve any v1 candidate crate or compile any G2 candidate command/module.
 ai-v1-candidate = [

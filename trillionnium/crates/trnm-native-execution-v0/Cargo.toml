@@ -40,7 +40,15 @@ signing_or_broadcast = false
 whole_node_checkpoint_cas = false
 production_candidate = false
 
+[features]
+default = []
+# Real filesystem/signature test producers; excluded from production closure.
+test-fixtures = ["dep:ed25519-dalek"]
+# Explicit local schema6 prepare/recovery candidate, never enabled by default.
+incremental-epoch-candidate = []
+
 [dependencies]
+ed25519-dalek = { version = "2", optional = true }
 anyhow = "1"
 borsh = { version = "1", features = ["derive"] }
 hex = "0.4"

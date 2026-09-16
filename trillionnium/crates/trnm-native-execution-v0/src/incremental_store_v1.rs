@@ -935,6 +935,7 @@ struct PreparedRow {
     bytes: Vec<u8>,
     delta_hash: [u8; 32],
     committed: bool,
+    epoch: Option<crate::epoch_edge::EpochApplicationCoordinatesV1>,
 }
 fn load_prepared(
     transaction: &Transaction<'_>,
@@ -968,9 +969,13 @@ fn load_prepared(
             && fixed::<32>(row.get(8)?)? == namespace_digest(namespace)?,
         "prepared owner/profile mismatch"
     );
+    let epoch = row
+        .get::<_, Option<Vec<u8>>>(16)?
+        .map(|raw| load_epoch_storage_edge_v1(transaction, namespace, fixed(raw)?))
+        .transpose()?;
     ensure!(
-        row.get::<_, Option<Vec<u8>>>(16)?.is_none(),
-        "epoch delta requires the authenticated edge consumer"
+        epoch.is_none() || cfg!(feature = "incremental-epoch-candidate"),
+        "epoch delta feature disabled"
     );
     let bytes: Vec<u8> = row.get(11)?;
     ensure!(bytes.len() <= MAX_DELTA_BYTES, "stored delta capacity");
@@ -986,10 +991,20 @@ fn load_prepared(
         root: fixed(row.get(13)?)?,
         persist_sequence: u64_blob(row.get(14)?)?,
     };
-    ensure!(
-        parent_height.checked_add(1) == Some(target.height),
-        "ordinary delta is not successor"
-    );
+    if let Some(edge) = epoch {
+        ensure!(
+            matches!(parent, IncrementalParentV1::Committed(_))
+                && edge.checkpoint_version == parent_height
+                && edge.first_version == target.height
+                && edge.checkpoint_root == fixed::<32>(row.get(4)?)?,
+            "epoch delta parent/target"
+        );
+    } else {
+        ensure!(
+            parent_height.checked_add(1) == Some(target.height),
+            "ordinary delta is not successor"
+        );
+    }
     let phase = row.get::<_, u8>(15)?;
     ensure!(phase <= 1, "prepared phase");
     let prepared = PreparedRow {
@@ -1003,6 +1018,7 @@ fn load_prepared(
         bytes,
         delta_hash,
         committed: phase == 1,
+        epoch,
     };
     ensure!(
         storage_artifact_id(namespace, &prepared)? == artifact,
@@ -1189,7 +1205,7 @@ fn parent_fields(parent: IncrementalParentV1) -> (u8, [u8; 32]) {
 }
 fn storage_artifact_id(namespace: &IncrementalNamespaceV1, row: &PreparedRow) -> Result<[u8; 32]> {
     let (kind, parent) = parent_fields(row.parent);
-    Ok(hash(
+    let ordinary = hash(
         b"trnm.native-incremental.prepared.v1",
         &[
             &namespace_digest(namespace)?,
@@ -1205,7 +1221,14 @@ fn storage_artifact_id(namespace: &IncrementalNamespaceV1, row: &PreparedRow) ->
             &row.delta_hash,
             &row.target.persist_sequence.to_be_bytes(),
         ],
-    ))
+    );
+    Ok(match row.epoch {
+        None => ordinary,
+        Some(edge) => hash(
+            b"trnm.native-incremental.prepared-epoch.v1",
+            &[&ordinary, &encode_epoch_storage_edge_v1(edge)],
+        ),
+    })
 }
 
 /// Stage only a changed-node/value batch. The returned storage artifact must be
@@ -1218,17 +1241,41 @@ pub fn stage_incremental_plan_v1(
     block: [u8; 32],
     plan: &CompleteStatePlanV0,
 ) -> Result<PreparedIncrementalDeltaV1> {
-    ensure!(block != [0; 32], "incremental target block missing");
     ensure!(
         plan.epoch_parent.is_none(),
-        "epoch delta requires authenticated persisted edge"
+        "ordinary incremental plan cannot contain epoch edge"
     );
+    stage_incremental_plan_inner_v1(transaction, namespace, parent, block, plan, None)
+}
+
+fn stage_incremental_plan_inner_v1(
+    transaction: &Transaction<'_>,
+    namespace: &IncrementalNamespaceV1,
+    parent: IncrementalParentV1,
+    block: [u8; 32],
+    plan: &CompleteStatePlanV0,
+    epoch: Option<crate::epoch_edge::EpochApplicationCoordinatesV1>,
+) -> Result<PreparedIncrementalDeltaV1> {
+    ensure!(block != [0; 32], "incremental target block missing");
+    ensure!(plan.epoch_parent == epoch, "incremental plan edge differs");
     let head = read_incremental_head_v1(transaction, namespace)?;
     let reader = open_incremental_reader_v1(transaction, namespace, parent)?;
-    ensure!(
-        reader.version.checked_add(1) == Some(plan.version),
-        "incremental target is not successor"
-    );
+    if let Some(edge) = epoch {
+        ensure!(
+            reader.version == edge.checkpoint_version
+                && reader.root.0 == edge.checkpoint_root
+                && plan.version == edge.first_version
+                && reader.deltas.is_empty()
+                && matches!(parent, IncrementalParentV1::Committed(_)),
+            "epoch stage exact committed parent"
+        );
+        require_absent_incremental_seals_v1(transaction, edge)?;
+    } else {
+        ensure!(
+            reader.version.checked_add(1) == Some(plan.version),
+            "incremental target is not successor"
+        );
+    }
     ensure!(
         reader.deltas.len() < MAX_DEPTH,
         "prepared ancestry depth capacity"
@@ -1259,6 +1306,7 @@ pub fn stage_incremental_plan_v1(
         let existing = load_prepared(transaction, namespace, fixed(existing)?)?;
         ensure!(
             existing.parent == parent
+                && existing.epoch == epoch
                 && existing.parent_height == reader.version
                 && existing.parent_root == reader.root.0
                 && existing.target.height == plan.version
@@ -1334,6 +1382,7 @@ pub fn stage_incremental_plan_v1(
         bytes,
         delta_hash,
         committed: false,
+        epoch,
     };
     row.artifact = storage_artifact_id(namespace, &row)?;
     row.target.artifact = row.artifact;
@@ -1368,10 +1417,10 @@ pub fn stage_incremental_plan_v1(
         )? == 1,
         "incremental persist watermark CAS"
     );
-    transaction.execute("INSERT INTO ni_prepared VALUES(?1,?2,?3,?4,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,0,NULL)", params![
+    transaction.execute("INSERT INTO ni_prepared VALUES(?1,?2,?3,?4,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14,?15,0,?16)", params![
         row.artifact.as_slice(), kind, parent_id.as_slice(), row.parent_height.to_be_bytes().as_slice(), row.parent_root.as_slice(),
         row.anchor_version.to_be_bytes().as_slice(), row.anchor_root.as_slice(), namespace.owner_generation.to_be_bytes().as_slice(), namespace_digest(namespace)?.as_slice(),
-        row.target.height.to_be_bytes().as_slice(), block.as_slice(), row.bytes, row.delta_hash.as_slice(), row.target.root.as_slice(), sequence.to_be_bytes().as_slice(),
+        row.target.height.to_be_bytes().as_slice(), block.as_slice(), row.bytes, row.delta_hash.as_slice(), row.target.root.as_slice(), sequence.to_be_bytes().as_slice(), row.epoch.map(|edge| edge.authorization_id.to_vec()),
     ])?;
     transaction.execute(
         "INSERT INTO ni_pin VALUES(?1,1,?2,?3,?4,NULL)",
@@ -1601,6 +1650,10 @@ pub fn apply_incremental_delta_v1(
     );
     let row = load_prepared(transaction, namespace, prepared.artifact)?;
     ensure!(
+        row.epoch.is_none(),
+        "ordinary apply cannot commit an epoch delta"
+    );
+    ensure!(
         row.target == *prepared,
         "incremental prepared target substitution"
     );
@@ -1714,3 +1767,84 @@ pub fn apply_incremental_delta_v1(
 #[cfg(test)]
 #[path = "incremental_store_v1_tests.rs"]
 mod tests;
+
+fn encode_epoch_storage_edge_v1(edge: crate::epoch_edge::EpochApplicationCoordinatesV1) -> Vec<u8> {
+    [
+        &edge.authorization_id[..],
+        &edge.checkpoint_version.to_be_bytes(),
+        &edge.checkpoint_root,
+        &edge.terminal_version.to_be_bytes(),
+        &edge.first_version.to_be_bytes(),
+    ]
+    .concat()
+}
+fn decode_epoch_storage_edge_v1(
+    raw: &[u8],
+) -> Result<crate::epoch_edge::EpochApplicationCoordinatesV1> {
+    ensure!(raw.len() == 88, "incremental edge coordinate length");
+    let edge = crate::epoch_edge::EpochApplicationCoordinatesV1 {
+        authorization_id: raw[..32].try_into()?,
+        checkpoint_version: u64::from_be_bytes(raw[32..40].try_into()?),
+        checkpoint_root: raw[40..72].try_into()?,
+        terminal_version: u64::from_be_bytes(raw[72..80].try_into()?),
+        first_version: u64::from_be_bytes(raw[80..88].try_into()?),
+    };
+    edge.validate()?;
+    Ok(edge)
+}
+fn require_absent_incremental_seals_v1(
+    tx: &Transaction<'_>,
+    edge: crate::epoch_edge::EpochApplicationCoordinatesV1,
+) -> Result<()> {
+    for table in ["ni_roots", "ni_values"] {
+        let count: u64 = tx.query_row(
+            &format!("SELECT count(*) FROM {table} WHERE version>?1 AND version<?2"),
+            params![
+                edge.checkpoint_version.to_be_bytes().as_slice(),
+                edge.first_version.to_be_bytes().as_slice()
+            ],
+            |r| r.get(0),
+        )?;
+        ensure!(count == 0, "seal has an incremental root/value");
+    }
+    let count: u64 = tx.query_row(
+        "SELECT count(*) FROM ni_nodes WHERE node_version>?1 AND node_version<?2",
+        params![
+            edge.checkpoint_version.to_be_bytes().as_slice(),
+            edge.first_version.to_be_bytes().as_slice()
+        ],
+        |r| r.get(0),
+    )?;
+    ensure!(count == 0, "seal has physical incremental node");
+    Ok(())
+}
+
+#[cfg(feature = "incremental-epoch-candidate")]
+#[path = "incremental_epoch_storage_v1.rs"]
+pub(crate) mod epoch_candidate_v1;
+
+fn load_epoch_storage_edge_v1(
+    tx: &Transaction<'_>,
+    namespace: &IncrementalNamespaceV1,
+    binding: [u8; 32],
+) -> Result<crate::epoch_edge::EpochApplicationCoordinatesV1> {
+    type EdgeColumns = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, u8, Option<Vec<u8>>);
+    let (raw, checksum, checkpoint, first, phase, consumed): EdgeColumns = tx.query_row(
+        "SELECT CASE WHEN length(edge)=88 THEN edge ELSE NULL END,checksum,checkpoint_version,first_height,phase,committed_block FROM ni_epoch_edge WHERE strict_binding=?1",
+        [binding.as_slice()], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?)))?;
+    let edge = decode_epoch_storage_edge_v1(&raw)?;
+    ensure!(
+        edge.authorization_id == binding
+            && edge.checkpoint_version == u64_blob(checkpoint)?
+            && edge.first_version == u64_blob(first)?
+            && phase == 0
+            && consumed.is_none()
+            && fixed::<32>(checksum)?
+                == hash(
+                    b"trnm.native-incremental.edge.v1",
+                    &[&namespace_digest(namespace)?, &raw]
+                ),
+        "incremental stored edge mismatch"
+    );
+    Ok(edge)
+}

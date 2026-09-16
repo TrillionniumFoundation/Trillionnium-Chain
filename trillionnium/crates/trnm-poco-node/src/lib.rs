@@ -178,6 +178,13 @@ mod deployed_lab_recovery;
 pub mod effect_driver;
 #[cfg(feature = "g1-process-test-support")]
 pub mod effect_driver_process;
+#[cfg(feature = "epoch-handoff-checkpoint-candidate")]
+mod epoch_retirement_checkpoint_v1;
+#[cfg(feature = "epoch-handoff-checkpoint-candidate")]
+pub use epoch_retirement_checkpoint_v1::{
+    confirm_retired_epoch_node_checkpoint_v1, ConfirmedRetiredEpochNodeCheckpointV1,
+    EpochRetirementCheckpointErrorV1,
+};
 mod external_node_checkpoint;
 #[cfg(feature = "external-proposal-signer")]
 mod external_proposal_signer_runtime;

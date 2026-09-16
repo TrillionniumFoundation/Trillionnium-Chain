@@ -222,13 +222,23 @@ impl OldEpochBoundaryStateV1 {
             .map_err(|_| {
                 CoreError::InvalidRecovery("checkpoint retained body differs from its signed roots")
             })?;
-            p.verify(
-                config.validator_set(),
-                None,
-                config.consensus_parameters(),
-                parent.timestamp_ms(),
-                verifier,
-            )?;
+            if let Some(epoch) = state.epoch_state_v1() {
+                epoch.strict_context()?.verify_proposal_v1(
+                    p,
+                    parent,
+                    &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                        config.consensus_parameters(),
+                    ),
+                )?;
+            } else {
+                p.verify(
+                    config.validator_set(),
+                    None,
+                    config.consensus_parameters(),
+                    parent.timestamp_ms(),
+                    verifier,
+                )?;
+            }
             rebuilt.record_checkpoint(
                 p,
                 checkpoint.parent.clone(),
@@ -243,13 +253,23 @@ impl OldEpochBoundaryStateV1 {
                 .chain(self.seals.iter())
                 .find(|p| p.block().id() == seal.block().header().parent_id())
                 .ok_or(CoreError::MissingBlock(seal.block().header().parent_id()))?;
-            seal.verify(
-                config.validator_set(),
-                None,
-                config.consensus_parameters(),
-                parent.block().header().timestamp_ms(),
-                verifier,
-            )?;
+            if let Some(epoch) = state.epoch_state_v1() {
+                epoch.strict_context()?.verify_proposal_v1(
+                    seal,
+                    parent.block().header(),
+                    &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                        config.consensus_parameters(),
+                    ),
+                )?;
+            } else {
+                seal.verify(
+                    config.validator_set(),
+                    None,
+                    config.consensus_parameters(),
+                    parent.block().header().timestamp_ms(),
+                    verifier,
+                )?;
+            }
             if state.payload_terminal_fact(seal.block().id()).is_some()
                 || state
                     .payload_validation_obligations()

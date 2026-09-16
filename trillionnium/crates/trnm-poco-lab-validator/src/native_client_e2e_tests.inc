@@ -114,6 +114,7 @@ fn run_native_socket_finality_case_v1(defer_archive: bool) {
             ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(4, 0, 4, 0).unwrap();
         let mut authorities = Vec::new();
         let mut headers = std::collections::BTreeMap::new();
+        let mut sync_proofs = std::collections::BTreeMap::new();
         for (index, validator) in set.validators().iter().enumerate() {
             let core =
                 CoreConfig::new(validator.id(), set.clone(), parameters, 0, 64, 1_024).unwrap();
@@ -143,6 +144,7 @@ fn run_native_socket_finality_case_v1(defer_archive: bool) {
                 )
                 .unwrap();
             let (proposals, proof) = verified.into_node_parts_v1();
+            sync_proofs.insert(1, proof.clone());
             for p in &proposals {
                 headers.insert(p.block().id(), p.block().header().clone());
             }
@@ -247,6 +249,8 @@ fn run_native_socket_finality_case_v1(defer_archive: bool) {
         let business_id = proposal.block().id();
         headers.insert(proposal.block().id(), proposal.block().header().clone());
         drive_parallel_deployed_authority_round_v0(&mut authorities, proposal).unwrap();
+        let sync_query = authorities[leader_index].native_finalized_query_v1().unwrap();
+        sync_proofs.insert(sync_query.proof_v0().proof_v0().finalized_block().header().height().get(), sync_query.proof_v0().proof_v0().clone());
         observe_native_test_finality_v1(&mut clients, &authorities[leader_index], &headers)
             .unwrap();
         if !defer_archive {
@@ -268,6 +272,8 @@ fn run_native_socket_finality_case_v1(defer_archive: bool) {
                 .unwrap();
             headers.insert(proposal.block().id(), proposal.block().header().clone());
             drive_parallel_deployed_authority_round_v0(&mut authorities, proposal).unwrap();
+            let sync_query = authorities[leader_index].native_finalized_query_v1().unwrap();
+            sync_proofs.insert(sync_query.proof_v0().proof_v0().finalized_block().header().height().get(), sync_query.proof_v0().proof_v0().clone());
             if defer_archive {
                 if authorities[leader_index]
                     .facts_v0()
@@ -364,6 +370,10 @@ fn run_native_socket_finality_case_v1(defer_archive: bool) {
                 .id(),
             business_id
         );
+        clients.persist_sync_bootstrap_v1(&[sync_proofs[&1].clone(), sync_proofs[&2].clone(), sync_proofs[&3].clone()]).unwrap();
+        if defer_archive {
+            verify_actual_native_replay_sync_v1(&temp, &mut clients, &socket, &set, &profile, facts.finalized_height_v0(), tx.exact_outer_bytes());
+        }
         assert!(clients.drained_v1(facts.finalized_height_v0()));
         drop(clients);
         let mut reopened = crate::native_client_runtime::NativeClientRuntimeV1::open_parts_v1(
@@ -457,4 +467,122 @@ fn native_socket_rejects_duplicate_unknown_uppercase_and_noncanonical_requests_v
         serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":"still-alive","op":"status","data":{}}),
     );
     assert_eq!(status["ok"], true);
+}
+
+fn verify_actual_native_replay_sync_v1(
+    temp: &tempfile::TempDir, client: &mut crate::native_client_runtime::NativeClientRuntimeV1,
+    socket: &Path, set: &ValidatorSet,
+    profile: &crate::native_client_profile::NativeClientProfileV1, target: u64, outer: &[u8],
+) {
+    use crate::native_replay_sync_v1::{NativeReplayReceiverV1, ReplayManifestV1, CHUNK_BYTES};
+    let parameters = ConsensusParametersV0::reference_shadow_v0();
+    let config = || NativeApplicationConfigV0::from_canonical_lab_inputs_v0(
+        CanonicalLabNativeApplicationConfigInputsV0::new("native-replay-receiver", [0x91;32],[0x92;32],[0x93;32],[0x94;32],set.validators()[0].id(),set.clone(),parameters,profile.authorized_signers_v1().unwrap(),profile.governance_signer_id.clone()).unwrap()
+    ).unwrap();
+    let response = native_socket_exchange(client,socket,10_000,target,serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":"sync-manifest","op":"sync_manifest","data":{"target_height":target}}));
+    assert_eq!(response["ok"],true,"sync manifest missing: {response}");
+    let manifest: ReplayManifestV1=serde_json::from_value(response["data"].clone()).unwrap();
+    let root=temp.path().join("sync-receiver");
+    let profile_hash=profile.digest_v1().unwrap();
+    let mut receiver=NativeReplayReceiverV1::open(&root,config(),profile_hash,target,manifest.clone()).unwrap();
+    let application_path=receiver.application_path();
+    assert!(NativeReplayReceiverV1::open(&root,config(),profile_hash,target,manifest.clone()).is_err());
+    let mut transferred=Vec::new();
+    for (offset,record) in manifest.records.iter().enumerate() {
+        let height=offset as u64+1;
+        for index in 0..(record.bytes as usize).div_ceil(CHUNK_BYTES) {
+            let response=native_socket_exchange(client,socket,10_000,target,serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":format!("sync-{height}-{index}"),"op":"sync_chunk","data":{"height":height,"index":index,"record_sha256":record.sha256}}));
+            assert_eq!(response["ok"],true,"sync chunk missing: {response}");
+            let bytes=hex::decode(response["data"]["bytes_hex"].as_str().unwrap()).unwrap();
+            if height<=3 {
+                let mut poison = bytes.clone(); poison[0] ^= 1;
+                assert!(receiver.accept_chunk(height,index,&poison).is_err());
+                assert!(!receiver.has_chunk(height,index).unwrap());
+                receiver.accept_chunk(height,index,&bytes).unwrap();
+            }
+            transferred.push((height,index,bytes));
+        }
+    }
+    assert!(receiver.replay_and_publish(config()).is_err(),"incomplete transfer must not publish");
+    assert!(!root.join("CURRENT").exists()); drop(receiver);
+    let app=trnm_native_execution_v0::DurableNativeApplicationV0::open(application_path.clone(),config()).unwrap();
+    assert_eq!(app.confirmed_committed_head_v0().unwrap().height().get(),3); drop(app);
+    let mut receiver=NativeReplayReceiverV1::open(&root,config(),profile_hash,target,manifest.clone()).unwrap();
+    for (height,index,bytes) in &transferred {
+        receiver.accept_chunk(*height,*index,bytes).unwrap();
+        let mut wrong=bytes.clone(); wrong[0]^=1;
+        assert!(receiver.accept_chunk(*height,*index,&wrong).is_err(),"persisted chunk substitution must reject");
+    }
+    let head=receiver.replay_and_publish(config()).unwrap();
+    assert_eq!(head.height().get(),target);
+    assert_eq!(hex::encode(head.block_id().as_bytes()),manifest.target_block_id);
+    assert!(root.join("CURRENT").is_file()); drop(receiver);
+    let mut retry=NativeReplayReceiverV1::open(&root,config(),profile_hash,target,manifest.clone()).unwrap();
+    assert_eq!(retry.replay_and_publish(config()).unwrap(),head); drop(retry);
+    let app=trnm_native_execution_v0::DurableNativeApplicationV0::open(application_path.clone(),config()).unwrap();
+    let business=app.read_finalized_by_height_v0(trnm_native_application::HeightV0::new(4)).unwrap();
+    assert_eq!(business.executed_v0().request().transactions(), &[outer.to_vec()]);
+    // Replay protection is derived by execution, never supplied by the peer.
+    let parent_time=app.read_finalized_by_height_v0(trnm_native_application::HeightV0::new(target)).unwrap().executed_v0().request().timestamp_ms();
+    let preview=|transactions| trnm_native_execution_v0::NativeBlockPreviewRequestV0::new(
+        trnm_native_application::ChainIdV0::new(set.chain_id().as_str()).unwrap(),
+        trnm_native_application::GenesisHashV0::new(*set.genesis_hash().as_bytes()).unwrap(),
+        head.clone(),trnm_native_application::HeightV0::new(target+1),parent_time+1,
+        trnm_native_application::ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(),transactions,
+    ).unwrap();
+    assert!(app.preview_block_v0(&preview(Vec::new())).is_ok());
+    let duplicate=app.preview_block_v0(&preview(vec![outer.to_vec()])).unwrap_err();
+    assert_eq!(duplicate.code(),trnm_native_execution_v0::NativeApplicationExecutionErrorCodeV0::DeterministicallyInvalid);
+    assert_eq!(app.confirmed_committed_head_v0().unwrap(),head);
+    drop(app);
+    assert!(NativeReplayReceiverV1::open(&temp.path().join("wrong-profile"),config(),[0x55;32],target,manifest.clone()).is_err());
+    assert!(NativeReplayReceiverV1::open(&temp.path().join("wrong-target"),config(),profile_hash,target-1,manifest.clone()).is_err());
+    // A process-local lock cannot survive namespace substitution unnoticed.
+    let swapped=temp.path().join("sync-root-swap");
+    let held=NativeReplayReceiverV1::open(&swapped,config(),profile_hash,target,manifest.clone()).unwrap();
+    std::fs::rename(&swapped,temp.path().join("sync-root-displaced")).unwrap();
+    create_private_directory_v0(&swapped).unwrap();
+    assert!(held.accept_chunk(transferred[0].0,transferred[0].1,&transferred[0].2).is_err()); drop(held);
+    let symlink=temp.path().join("sync-root-alias");
+    std::os::unix::fs::symlink(&root,&symlink).unwrap();
+    assert!(NativeReplayReceiverV1::open(&symlink,config(),profile_hash,target,manifest.clone()).is_err());
+    // Re-hashing an invalid signature still cannot authenticate a source.
+    let mut corrupt_manifest=manifest.clone();
+    let mut corrupt=transferred.clone();
+    let (_,_,first)=&mut corrupt[0];
+    let mut record:crate::native_replay_sync_v1::ReplayRecordV1=serde_json::from_slice(first).unwrap();
+    let last=record.finality_hex.len()-2; let changed=if &record.finality_hex[last..]=="00" {"01"} else {"00"};
+    record.finality_hex.replace_range(last..,changed);
+    *first=serde_json::to_vec(&record).unwrap();
+    corrupt_manifest.records[0].sha256=hex::encode(sha2::Sha256::digest(&*first));
+    corrupt_manifest.records[0].chunk_sha256=first.chunks(CHUNK_BYTES).map(|bytes|hex::encode(sha2::Sha256::digest(bytes))).collect();
+    let badproof_root=temp.path().join("sync-bad-proof");
+    let mut badproof=NativeReplayReceiverV1::open(&badproof_root,config(),profile_hash,target,corrupt_manifest).unwrap();
+    for (height,index,bytes) in &corrupt {badproof.accept_chunk(*height,*index,bytes).unwrap();}
+    assert!(badproof.replay_and_publish(config()).is_err());
+    assert!(!badproof_root.join("CURRENT").exists());
+    drop(badproof);
+    let mut honest_retry=NativeReplayReceiverV1::open(&badproof_root,config(),profile_hash,target,manifest.clone()).unwrap();
+    for (height,index,bytes) in &transferred {honest_retry.accept_chunk(*height,*index,bytes).unwrap();}
+    assert_eq!(honest_retry.replay_and_publish(config()).unwrap(),head);
+    assert!(badproof_root.join("CURRENT").exists());
+
+    // Same byte lengths and a matching attacker-chosen transfer hash do not
+    // authenticate altered proof/body data: actual execution remains decisive.
+    let mut malicious=manifest.clone();
+    let mut changed=transferred.clone();
+    for (height,index,bytes) in &mut changed {
+        if *height==4 && *index==0 {
+            let mut record:crate::native_replay_sync_v1::ReplayRecordV1=serde_json::from_slice(bytes).unwrap();
+            record.transactions_hex[0].replace_range(0..2,"00");
+            *bytes=serde_json::to_vec(&record).unwrap();
+            malicious.records[3].sha256=hex::encode(sha2::Sha256::digest(&*bytes));
+            malicious.records[3].chunk_sha256=bytes.chunks(CHUNK_BYTES).map(|part|hex::encode(sha2::Sha256::digest(part))).collect();
+        }
+    }
+    let badroot=temp.path().join("sync-bad-body");
+    let mut bad=NativeReplayReceiverV1::open(&badroot,config(),profile_hash,target,malicious).unwrap();
+    for (height,index,bytes) in &changed {bad.accept_chunk(*height,*index,bytes).unwrap();}
+    assert!(bad.replay_and_publish(config()).is_err());
+    assert!(!badroot.join("CURRENT").exists());
 }

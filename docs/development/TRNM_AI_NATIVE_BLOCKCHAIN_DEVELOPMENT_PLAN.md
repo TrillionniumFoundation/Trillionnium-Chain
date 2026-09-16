@@ -691,26 +691,50 @@ when it remains reviewable. A wire/root/schema incompatibility requires its
 versioned contract and migration decision before implementation. File partitioning
 and consumer review replace fixed PR-count or writer-count rituals.
 
-The current candidate implementation supports old-epoch checkpoint/seals, strict
-full epoch context and inert TRNMS14E recovery, native schema4 C→C+3 preparation
-and commit, and original-owner-bound ordinary signer retirement before handoff.
+The current candidate implementation supports old-epoch checkpoint/seals,
+strict full epoch context, journal8→journal9 migration and inert TRNMS14E
+recovery, native schema4 C→C+3 preparation and commit, and original-owner-bound
+ordinary signer retirement before handoff. Real first-new three-chain tests
+preserve both C application parent and C+2 consensus parent, including reset
+view numbers in persisted successors. Journal9 verifies its actual terminal
+source, private Core request affinity and exact source/target recovery; three
+initialization SIGKILL cuts pass. It still grants no live new-epoch Core or lease.
+
 The external authority records retirement in its authenticated mode and append
 log, with restart reconciliation, fsync confirmation and actual process-crash
-checks. Old/continuing host restart remains fenced until the original signer
-identity is bound by a durable whole-node epoch checkpoint. Core first-new-block
-ancestry, journal9 and a live new-epoch signing lease are still incomplete.
+checks. Terminal14O host recovery now requires a typed independent node-checkpoint
+join binding the original signer, audited Safety migration origin and committed
+native history. A real ten-vote Core/native/Safety run closes and reopens all local
+owners and reproduces the persisted handoff signature without another key call;
+substituted source cuts and a later external checkpoint fence recovery. The test
+watermark service is not an external HSM acceptance result. Full14E whole-node
+checkpoint migration, a live new ordinary lease and repeated epoch activation
+remain open.
 
-T1 now drives signed candidate submissions through durable admission, actual
+T1 drives signed candidate submissions through durable admission, actual
 proposals, finalized native execution and historical inclusion proofs, including
-complete ancestry for batched finality and an independent client verifier. Native
-schema5 uses the incremental store for ordinary same-epoch P/state/replay commits
-and restart, but execution still reads the complete live state; epoch migration,
-proof/snapshot adapters and reference-safe GC remain open. Public state-sync
-installation is also incomplete. The first six-host native campaign exposed
-listener firewall and workload-identity defects; those are corrected, but no
-successful fault/performance acceptance is claimed before a clean-source rerun.
-Independent review, physical power-loss, HSM, WAN and soak evidence remain open.
-No stage is closed by these candidate implementations alone.
+complete ancestry for batched finality and an independent client verifier. Its
+bounded ordinary finalized-body replay candidate reconstructs application and
+replay state from independently configured genesis; no peer-supplied replay set
+becomes authority. It does not activate consensus or cover cross-epoch sync.
+Native schema5 uses incremental ordinary P/state/replay commits and authenticated
+point reads with bounded deterministic parallel prefetch. Unrelated account growth
+no longer forces a full ordinary execution scan; cutoff/epoch operations still
+need their frozen manifest. The explicit schema6 candidate migrates a committed C
+and prepares a real C+3 sparse delta, preserving both parents, strict edge lineage
+and source replay binding across cold reopen and three SIGKILL cuts. Its committed
+head remains C: incremental epoch commit/descendants, proof/snapshot adapters and
+reference-safe GC remain separate acceptance work.
+
+The clean six-host native campaign exposed a timeout-certificate/high-QC
+checkpoint mismatch after listener firewall and workload-identity fixes. Real
+owner regressions now cover equivalent TC quorums without discarding signed
+phases or checkpoint freshness checks. The remote baseline also exposed default
+stack overflows; actual ownership/frame fixes are being verified at the normal
+stack size. No successful fault/performance acceptance is claimed before a new
+clean-source campaign and exact-source remote checks. Independent review,
+physical power-loss, HSM, WAN and soak evidence remain open. No stage is closed
+by these candidate implementations alone.
 
 After changing a manifest-bound input, regenerate its fingerprints with
 `python3 scripts/ci/check_plan_manifest_pins_v1.py --refresh-input-pins`, review the

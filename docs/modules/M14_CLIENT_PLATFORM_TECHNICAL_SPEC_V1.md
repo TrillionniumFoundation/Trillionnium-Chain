@@ -369,3 +369,31 @@ checks the canonical parent header against the finality-certified parent ID,
 and runs the shared native payload/receipt/finality verifier. It ignores the
 server's verification boolean as authority. Client keys stay outside validator
 and observer-public bundles; no command implicitly generates load or keys.
+
+
+### Candidate ordinary application replica command (M13 consumer)
+
+`native-client sync <observer-public-root> <config> <manifest-sha256>
+<private-socket> <replica-directory> <target-height> <profile-sha256>` loads only
+independently pinned public context and signer policy. It requests exactly that
+positive height using `sync_manifest {target_height}`, then `sync_chunk
+{height,index,record_sha256}`. Responses retain request/chain/genesis/profile
+context. Manifest/chunk response frames are bounded before JSON decoding; unknown
+fields, noncanonical hashes, wrong coordinate, length or chunk hash reject.
+Manifest hashes bind transfer bytes; every finalized proof and executed body is
+still independently verified against the receiver's genesis and previous header.
+
+A private destination lock permits at most two immutable manifest-digest stages
+for resumable downloads, so an invalid first manifest can be retried with an honest
+source without deleting verified state. A third distinct manifest reports capacity
+exhaustion; completed replicas keep their selected stage.
+Existing chunks are rehashed, and invalid incoming chunks are rejected before
+persistence. The client reconstructs the actual schema-3 application database;
+a missing tail retains verified commits but cannot create CURRENT. A retry opens
+the same namespace, verifies the complete prefix against actual committed rows,
+and publishes only after close/reopen confirms the exact target. CURRENT describes
+an application replica, with `application_only=true` and `signing_authority=false`.
+No private consensus key, signer journal or independent node watermark is loaded.
+Epoch/seal targets and schema 4/5/6 are unsupported in this initial command.
+The existing private Unix endpoint is the transport; this does not claim a public
+Internet RPC, a complete validator join, or cross-epoch synchronization.

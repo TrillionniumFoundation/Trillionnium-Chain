@@ -409,6 +409,52 @@ impl<W: ExternalSignerRetirementV1> RetiredSqliteSignerJournalV1<W> {
             owner: Arc::clone(&self.owner),
         })
     }
+    /// Freshly proves that an independently pinned earlier ordinary watermark
+    /// is an exact prefix of this retired journal. A lower sequence alone is
+    /// insufficient. The image audit and event read share one SQLite snapshot.
+    pub fn confirms_ordinary_prefix_v1(
+        &mut self,
+        prefix: SignerWatermarkV0,
+    ) -> Result<bool, SignerJournalErrorV0> {
+        let record = self.record;
+        if prefix.scope() != record.source_v1().scope()
+            || prefix.journal_id() != self.journal_id
+            || prefix.sequence() > record.source_v1().sequence()
+        {
+            return Ok(false);
+        }
+        self.require_exact_retirement_v1(&record)?;
+        let c = Connection::open_with_flags(
+            &self.pins[0].path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(|e| SignerJournalErrorV0::sqlite("open retired prefix", e))?;
+        configure_pinned_read_only_connection(&c)?;
+        c.execute_batch("BEGIN DEFERRED")
+            .map_err(|e| SignerJournalErrorV0::sqlite("begin retired prefix snapshot", e))?;
+        validate_retired_image(&c, &self.profile, self.journal_id, record)?;
+        let actual = if prefix.sequence() == 0 {
+            Some(initial_head(&self.profile, self.journal_id))
+        } else {
+            read_event(&c, prefix.sequence())?.map(|event| JournalHeadV0 {
+                sequence: event.sequence,
+                chain_checksum: event.chain_checksum,
+            })
+        };
+        let exact = actual
+            .map(|head| watermark_for_parts(&self.profile, self.journal_id, head))
+            .transpose()?
+            == Some(prefix);
+        c.execute_batch("COMMIT")
+            .map_err(|e| SignerJournalErrorV0::sqlite("end retired prefix snapshot", e))?;
+        c.close()
+            .map_err(|(_, e)| SignerJournalErrorV0::sqlite("close retired prefix", e))?;
+        self.require_exact_retirement_v1(&record)?;
+        Ok(exact)
+    }
+
     fn advance_external_exact(&mut self) -> Result<(), SignerJournalErrorV0> {
         self.ensure_namespace()?;
         let target = self

@@ -139,6 +139,72 @@ impl PreparedNativeEpochExecutionV1 {
     }
 }
 
+/// Fresh exact P and strict retained-edge reconstruction, never a Core permit.
+/// ```compile_fail
+/// use trnm_native_execution_v0::ConfirmedPreparedNativeEpochExecutionV1;
+/// fn copy_receipt(receipt: ConfirmedPreparedNativeEpochExecutionV1) {
+///     let duplicate = receipt.clone();
+/// }
+/// ```
+#[must_use]
+pub struct ConfirmedPreparedNativeEpochExecutionV1 {
+    prepared: PreparedNativeEpochExecutionV1,
+}
+impl ConfirmedPreparedNativeEpochExecutionV1 {
+    pub fn prepared(&self) -> &PreparedNativeEpochExecutionV1 {
+        &self.prepared
+    }
+    pub const fn artifact_checksum(&self) -> [u8; 32] {
+        self.prepared.row.artifact_digest
+    }
+    pub const fn overlay_checksum(&self) -> [u8; 32] {
+        self.prepared.row.snapshot_digest
+    }
+    pub const fn commit_sequence(&self) -> Option<u64> {
+        self.prepared.row.commit_sequence
+    }
+    pub fn application_payload_and_receipts(
+        &self,
+    ) -> Result<(
+        trnm_consensus_types::ApplicationPayloadV0,
+        trnm_consensus_types::ExecutionReceiptsV0,
+    )> {
+        let row = &self.prepared.row;
+        let exact = if row.artifact_kind == 1 {
+            let executed = trnm_native_application::decode_native_executed_epoch_block_artifact_v1(
+                &row.artifact,
+            )?;
+            crate::poco_checkpoint::native_execution_from_receipts_v0(
+                executed.request().preview().transactions(),
+                executed.receipts(),
+            )?
+        } else {
+            let executed = decode_native_executed_block_artifact_v0(&row.artifact)?;
+            crate::poco_checkpoint::native_execution_from_receipts_v0(
+                executed.request().transactions(),
+                executed.receipts(),
+            )?
+        };
+        Ok((
+            exact.application_payload().clone(),
+            exact.execution_receipts().clone(),
+        ))
+    }
+    pub fn belongs_to_application_at_path(
+        &self,
+        app: &DurableNativeApplicationV0,
+        expected_path: &Path,
+    ) -> bool {
+        app.path() == expected_path
+            && app
+                .confirm_prepared_epoch_execution_v1(&self.prepared)
+                .is_ok_and(|fresh| {
+                    fresh.prepared.row.status == self.prepared.row.status
+                        && fresh.commit_sequence() == self.commit_sequence()
+                })
+    }
+}
+
 impl StoredEpochPV1 {
     fn target_head(&self) -> Result<ApplicationHeadV0> {
         let header = decode_header(&self.header)?;
@@ -1372,6 +1438,25 @@ impl DurableNativeApplicationV0 {
             row,
         })
     }
+
+    pub fn confirm_prepared_epoch_execution_v1(
+        &self,
+        prepared: &PreparedNativeEpochExecutionV1,
+    ) -> Result<ConfirmedPreparedNativeEpochExecutionV1> {
+        ensure!(
+            Arc::ptr_eq(&prepared.owner, &self.owner_affinity),
+            "epoch prepared readback foreign owner"
+        );
+        let fresh = self.reopen_prepared_epoch_execution_v1(prepared.row.block_id)?;
+        ensure!(
+            fresh.row.p_digest == prepared.row.p_digest
+                && fresh.row.p_sequence == prepared.row.p_sequence
+                && fresh.row.artifact == prepared.row.artifact
+                && fresh.row.header == prepared.row.header,
+            "epoch prepared readback substituted"
+        );
+        Ok(ConfirmedPreparedNativeEpochExecutionV1 { prepared: fresh })
+    }
 }
 
 fn insert_p(tx: &rusqlite::Transaction<'_>, p: &StoredEpochPV1) -> Result<()> {
@@ -1404,8 +1489,26 @@ impl CommittedNativeEpochExecutionV1 {
         self.commit_sequence
     }
     pub fn belongs_to_application(&self, app: &DurableNativeApplicationV0) -> bool {
-        Arc::ptr_eq(&self.owner, &app.owner_affinity)
-            && app.confirmed_committed_head_v0().ok().as_ref() == Some(&self.head)
+        if !Arc::ptr_eq(&self.owner, &app.owner_affinity) {
+            return false;
+        }
+        (|| -> Result<bool> {
+            let _guard = app.lock_operation()?;
+            let connection = open_immutable_connection_v0(&app.path)?;
+            verify_schema_v0(&connection)?;
+            let tx = connection.unchecked_transaction()?;
+            let metadata = load_metadata_v0(&tx, &app.config)?;
+            validate_metadata_v0(&tx, &app.config, &metadata)?;
+            let row = load_p(&tx, self.head.block_id().as_bytes())?
+                .context("committed epoch receipt P missing")?;
+            validate_p(&tx, &app.config, &row)?;
+            Ok(metadata.head == self.head
+                && row.target_head()? == self.head
+                && row.status == 1
+                && row.p_digest == self.p_digest
+                && row.commit_sequence == Some(self.commit_sequence))
+        })()
+        .unwrap_or(false)
     }
 }
 

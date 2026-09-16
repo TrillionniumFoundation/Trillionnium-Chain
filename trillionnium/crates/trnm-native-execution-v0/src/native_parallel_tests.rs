@@ -216,7 +216,6 @@ fn native_workers_compute_real_runtime_receipts_and_mutations_on_eight_threads()
     let before = store.encode_authenticated_snapshot_v0().unwrap();
     let outcomes = native_parallel::speculate_transactions_v0(
         native_parallel::NativeSpeculationContextV0 {
-            live: &store.verified_live_values_v0(1).unwrap(),
             height: 2,
             chain_id: CHAIN,
             timestamp_ms: TIMESTAMP,
@@ -225,6 +224,7 @@ fn native_workers_compute_real_runtime_receipts_and_mutations_on_eight_threads()
         },
         request.transactions(),
         8,
+        &CompletePointReadViewV1::new(&store, 1),
     );
     let mut threads = std::collections::HashSet::new();
     for result in outcomes {
@@ -427,6 +427,130 @@ fn native_outer_and_runtime_failures_are_selected_in_canonical_transaction_order
                     .to_string(),
                 expected.to_string()
             );
+        }
+    }
+}
+
+struct PointOnlyStore<'a> {
+    inner: &'a InMemoryNativeExecutionStoreV0,
+    reads: RefCell<BTreeSet<Vec<u8>>>,
+}
+impl jmt::storage::TreeReader for PointOnlyStore<'_> {
+    fn get_node_option(&self, key: &jmt::storage::NodeKey) -> Result<Option<jmt::storage::Node>> {
+        self.inner.get_node_option(key)
+    }
+    fn get_value_option(&self, version: u64, key: jmt::KeyHash) -> Result<Option<Vec<u8>>> {
+        self.inner.get_value_option(version, key)
+    }
+    fn get_rightmost_leaf(
+        &self,
+    ) -> Result<Option<(jmt::storage::NodeKey, jmt::storage::LeafNode)>> {
+        self.inner.get_rightmost_leaf()
+    }
+}
+impl jmt::storage::HasPreimage for PointOnlyStore<'_> {
+    fn preimage(&self, key: jmt::KeyHash) -> Result<Option<Vec<u8>>> {
+        self.inner.preimage(key)
+    }
+}
+impl NativeExecutionStoreV0 for PointOnlyStore<'_> {
+    fn parent_version_v0(&self) -> Result<u64> {
+        self.inner.parent_version_v0()
+    }
+    fn parent_root_v0(&self) -> Result<jmt::RootHash> {
+        self.inner.parent_root_v0()
+    }
+    fn chain_id_v0(&self) -> Result<&str> {
+        self.inner.chain_id_v0()
+    }
+    fn authorized_signers_v0(&self) -> Result<&[AuthorizedSignerV0]> {
+        self.inner.authorized_signers_v0()
+    }
+    fn signer_policy_commitment_v0(&self) -> Result<[u8; 32]> {
+        self.inner.signer_policy_commitment_v0()
+    }
+    fn consensus_parameters_v0(&self) -> Result<ConsensusParametersV0> {
+        self.inner.consensus_parameters_v0()
+    }
+    fn committed_command_id_v0(&self, id: &str) -> Result<bool> {
+        self.inner.committed_command_id_v0(id)
+    }
+    fn committed_signer_nonce_v0(&self, id: &str, nonce: u64) -> Result<bool> {
+        self.inner.committed_signer_nonce_v0(id, nonce)
+    }
+}
+impl CompleteExecutionStoreV1 for PointOnlyStore<'_> {
+    fn complete_live_values_v1(&self, _: u64) -> Result<BTreeMap<Vec<u8>, Vec<u8>>> {
+        anyhow::bail!("ordinary runtime attempted a full live scan")
+    }
+    fn complete_point_value_v1(&self, version: u64, key: &[u8]) -> Result<Option<Vec<u8>>> {
+        self.reads.borrow_mut().insert(key.to_vec());
+        self.inner.complete_point_value_v1(version, key)
+    }
+}
+
+#[test]
+fn lazy_runtime_reads_only_touched_keys_with_ten_thousand_unrelated_objects() {
+    let (small, set) = fixture(1_000_000);
+    let mut seeds = small
+        .verified_live_values_v0(1)
+        .unwrap()
+        .into_iter()
+        .map(|(key, value)| NativeStateWriteV0::raw(key, value).unwrap())
+        .collect::<Vec<_>>();
+    for index in 0..10_000 {
+        let id = format!("did:unrelated:{index}");
+        seeds.push(
+            NativeStateWriteV0::from_object(
+                &account_key(&id),
+                ACCOUNT_OBJECT_TYPE_V1,
+                1,
+                serde_json::to_vec(&AccountV1 {
+                    account: id,
+                    balance: 100,
+                    nonce: 0,
+                })
+                .unwrap(),
+            )
+            .unwrap(),
+        );
+    }
+    let mut large = InMemoryNativeExecutionStoreV0::new(
+        CHAIN,
+        small.authorized_signers_v0().unwrap().to_vec(),
+        small.consensus_parameters_v0().unwrap(),
+    )
+    .unwrap();
+    large.apply_seed_v0(0, Vec::new()).unwrap();
+    large.apply_seed_v0(1, seeds).unwrap();
+    let mut baseline_keys = None;
+    for store in [&small, &large] {
+        let request = request(
+            store,
+            &set,
+            (1..9).map(|index| transfer(index, 1)).collect(),
+        );
+        let expected = compute(store, &set, &request, 0).unwrap();
+        for workers in [0, 1, 2, 4, 8] {
+            let point = PointOnlyStore {
+                inner: store,
+                reads: RefCell::new(BTreeSet::new()),
+            };
+            let actual = compute_complete_native_block_with_workers_v0(
+                &point,
+                &set,
+                GenesisHash::new(GENESIS),
+                &request,
+                workers,
+            )
+            .unwrap();
+            assert_same_complete(&expected, &actual);
+            let keys = point.reads.into_inner();
+            assert!(keys.len() < 32);
+            match &baseline_keys {
+                Some(baseline) => assert_eq!(&keys, baseline),
+                None => baseline_keys = Some(keys),
+            }
         }
     }
 }

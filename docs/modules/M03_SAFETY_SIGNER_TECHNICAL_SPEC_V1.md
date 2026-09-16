@@ -318,30 +318,65 @@ field. It yields the exact terminal-old header and new view-zero synthetic
 reference while true finalized/applied remain C/old epoch. A seal or synthetic
 anchor receives no application P, commit or finalized-reference authority.
 
-Schema14 parent encoding keeps existing provenance tags0/1 and carrier tags0/1/2
-with their existing meanings; add provenance tag2 `AuthenticatedEpochEdge` and
-carrier tag3, which must occur together. The leading qualified tip is the real
-application checkpoint C. Carrier3 encodes Bytes terminal-old header, Bytes
-checkpoint header, Hash32 transition_binding and Hash32 checkpoint artifact.
-Both headers and the exact new anchor are checked against the retained phase
-record before creating a live request. Add a closed versioned overlay binding:
-tag0 followed by the existing `encode_overlay_ref` fields for an ordinary edge;
-tag1 followed by those fields naming the real application parent C, Hash32
-consensus_parent_id=C+2 and Hash32 transition_binding. Tag1 is valid only for
-the exact C+3 target of the retained edge. It never alters the old overlay codec.
+The implemented 14E parent encoding keeps provenance tags0/1 unchanged.
+Carrier tag3 is allowed only with provenance Finalized=0: it encodes the compact
+real application tip C, provenance0, carrier3 and Hash32 activation_binding.
+The decoder derives the two complete headers from the exact retained eight-root
+context, compares the compact C tip and binding, and constructs the private edge
+carrier. It does not accept caller-supplied terminal/header aliases. Tags0/1/2
+retain their prior meanings. No provenance tag2 is implemented.
 
-Each schema14 durable-finalization slot starts with a closed u8 tag: tag0 uses
-the existing field order with its now-qualified parent and ordinary overlay;
-tag1 encodes qualified application parent, the complete tag1 ancestry base,
-Bytes unchanged canonical FinalityProofV0 and the tag1 overlay binding. Tag1
-requires a proof finalizing C+3 wholly under the new set. Its first justify has
-new logical view0 even though the exact terminal parent header retains its old
-view; comparing those as equal numeric views is invalid. Ordinary-finalization
-slots cannot carry an epoch overlay. Retained finality proof headers always keep
-their original scope, and every QC conflict/ordering check selects its epoch/set
-before comparing views. Capacity calculations must include both contexts, all
-required old/new nested proofs and these additional bounded carriers before
-any phase or signer retirement becomes durable.
+In 14E, each overlay encodes block_id Hash32, real application parent_id Hash32,
+overlay_checksum Hash32, then u8 epoch-parent tag. Tag0 has no additional fields;
+tag1 appends consensus_parent_id Hash32 and activation_binding Hash32. Tag1 is
+admitted for the exact first-new target only at the Core callback/finality join.
+The legacy13 and outgoing14O overlay encoders retain their original 96 bytes and
+reject a dual-parent overlay.
+
+Each 14E durable-finalization slot starts with closed u8 parent-kind tag0/1,
+then compact real application parent tip, the preceding 14E overlay encoding,
+and u32-be-length canonical FinalityProofV0 bytes. Tag1 requires the exact old C
+tip and reconstructs its C+2 consensus parent from complete retained evidence;
+the proof must finalize C+3 wholly under the new set and justify by the exact new
+view-zero anchor. It carries no second editable ancestry header. Tag0 follows
+ordinary direct-parent semantics and cannot contain an epoch overlay. Top-level
+true finalized/applied tips separately encode their full epoch/set/parameter
+qualification. Capacity checks include all retained evidence and both parent
+headers in live obligation accounting before a transition can become durable.
+
+The implemented journal9 layer is a separate closed SQLite application ID/schema9 and
+namespace, preserving journal8 bytes and origin. Its immutable profile binds
+the exact 14E codec context, source14O profile, owner generation and byte bounds.
+Initialization must read the actual source journal8 at an independent expected
+pin, strictly recover its settled checkpoint, and match the exact predecessor
+of `PreparedEpochCoreActivationV1`. It persists that preparation's opaque initial
+request at global revision+1 and retains source journal ID, exact source record,
+transition, chain checksum and profile in every successor hash-chain origin.
+The prepared Core remains inaccessible behind its activation persistence
+barrier. Fresh reads return non-Clone owner-affine comparison receipts plus
+`StrictEpochCoreRecoveryV1`; neither has an ACK/sign/step method. Actual host
+composition must consume the fresh receipt together with native application,
+retired custody and a fresh new-role lease before any live epoch is released.
+A reopened store cannot bind arbitrary scalar state to a new live Core. This
+journal is an inert persistence consumer, not completed runtime activation.
+`initialize_from_journal8_v1` takes the exact opaque preparation by reference
+and binds its persistence affinity; `persist_exact_v1` accepts only that owner's
+opaque requests. Reopen has no persistence binding and no scalar rebinding API.
+`ConfirmedEpochSafetyHeadV1` heap-owns its unverified record, freshly compares
+owner/path/expected pin/checksum/transition, and is not Clone. Recovery sessions
+also heap-own retained state to avoid large caller-stack copies.
+
+SQLite row capacity is checked before namespace creation as
+`max(source_record_limit, target_record_limit) + max_transition_bytes + 4096`;
+both BLOBs share a metadata/record row. Closed-schema inventory inspects at most
+four rows for three expected tables, bounds borrowed names/SQL before copying,
+and sorts only that bounded result in memory. Tests use actual source8/native
+checkpoint receipts: exact retry, foreign Core affinity, stale independent pin,
+changed native artifact/profile, and immutable-origin corruption. Real SIGKILL
+at initialization before commit, after commit/before sync, and after sync/before
+readback yields either rejection or the exact strict inert record; none releases
+a Core or lease. The tests do not establish live new-epoch append/ACK, repeated
+journal9-to-next-epoch migration, or cross-store rollback recovery.
 
 Use a single M15 owner to route ordinary Vote/Timeout, old handoff and new
 handoff requests and to hold all relevant namespaces. The existing
@@ -553,13 +588,17 @@ A same-key journal under another scope, or even scalar-identical reopened owner,
 cannot borrow that capability. The live constructor is commissioning, not a
 retired-record-derived recovery constructor.
 
-The terminal14O/14E durable node-checkpoint original-custody producer/consumer
-join remains missing. M15's old/continuing restart entry is therefore closed
-before any CAS, rather than manufacturing expected pins from the retired owner
-it is asked to validate. New-only strict admission remains separate. Actual node
-checkpoint persistence and independent restart rejoining are required before
-removing that fence; the local retirement implementation itself remains usable
-only with its independently selected exact expected record.
+Terminal14O recovery now uses M15's concrete independent node-checkpoint
+producer/consumer. Its predecessor fixes the original signer before retirement;
+fresh readback audits the actual historical signer prefix, exact journal7
+migration origin retained by journal8, terminal Safety and committed native C.
+Only that producer can issue the owner-affine, non-Clone checkpoint token used
+by the new recovery entry. The scalar-only entry remains closed before CAS.
+Closing and reopening all local owners regenerates fresh native/Safety receipts
+and repeats the exact persisted handoff signature without another key call.
+This restores old handoff custody only; full14E activation and a new ordinary
+lease still require the separately specified V1 lineage checkpoint and join.
+New-only strict admission remains separate.
 
 ### External ordinary-signer terminal policy V1
 

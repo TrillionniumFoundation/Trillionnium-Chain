@@ -112,6 +112,21 @@ class CompositionMutationTests(unittest.TestCase):
         with self.assertRaises(decomposition.DecompositionError):
             self.gate()
 
+    def test_native_join_tests_cannot_lose_fixture_gate(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/src/handoff_runtime_v1_tests.rs"
+        original = path.read_text()
+        gate = '#[cfg(feature = "epoch-join-test-fixtures")]\n'
+        self.assertIn(gate, original)
+        path.write_text(original.replace(gate, ''))
+        with self.assertRaises(decomposition.DecompositionError):
+            self.gate()
+
+    def test_native_join_tests_cannot_enter_runtime_module(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/src/lib.rs"
+        path.write_text(path.read_text() + '\n#[path = "handoff_native_join_tests_v1.rs"]\nmod misplaced;\n')
+        with self.assertRaises(decomposition.DecompositionError):
+            self.gate()
+
     def test_fake_journal_ownership_metadata_rejected(self) -> None:
         self.mutate("trnm-poco-node-authority", 'durable_authority_journal_owner = false',
                     'durable_authority_journal_owner = true')

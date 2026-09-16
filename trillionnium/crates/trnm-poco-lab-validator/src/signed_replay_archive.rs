@@ -1084,6 +1084,72 @@ impl SignedReplayArchiveV1 {
     /// Reconstruct every missing ordinary proof on the exact ancestor path of
     /// the current Core finalized ID. This is used only for a skipped range;
     /// the usual single-step path reuses Core's already verified current proof.
+    /// Reconstruct the three finalized empty prefix rows for application-only
+    /// genesis replay, using the existing exact frozen public bootstrap verifier.
+    pub(crate) fn native_sync_bootstrap_v1(
+        &mut self,
+        config: &LoadedValidatorConfig,
+        bootstrap: VerifiedPublicBootstrapInitialCutV1,
+    ) -> Result<[FinalityProofV0; 3]> {
+        self.revalidate_identity_v1()?;
+        let profile = config
+            .native_client_profile_v1()
+            .context("sync requires native profile")?;
+        let verified = crate::bootstrap_material::verify_public_native_bootstrap_with_policy_v1(
+            config.run_root(),
+            config.validator_set(),
+            config.consensus_parameters(),
+            profile.authorized_signers_v1()?,
+            &profile.governance_signer_id,
+        )?;
+        ensure!(
+            verified.initial_ordinary_cut_v1() == bootstrap,
+            "sync bootstrap changed from pinned initial cut"
+        );
+        let (proposals, first) = verified.into_node_parts_v1();
+        let mut semantics = decode_strict_archive_semantics_v1(
+            &self.entries_file,
+            &self.index,
+            self.context.digest,
+            config.validator_set(),
+            config.consensus_parameters(),
+            config.ordinary_start_height(),
+            bootstrap,
+        )?;
+        let mut parent_time = 0;
+        for proposal in proposals {
+            let timestamp = proposal.block().header().timestamp_ms();
+            semantics.proposals.insert(
+                *proposal.block().id().as_bytes(),
+                AuthenticatedReplayProposalV1 {
+                    proposal,
+                    authenticated_parent_timestamp_ms: parent_time,
+                },
+            );
+            parent_time = timestamp;
+        }
+        for certified in [first.finalized_block(), first.child(), first.grandchild()] {
+            semantics.proof_certificates.insert(
+                *certified.certifying_qc().id().as_bytes(),
+                certified.certifying_qc().clone(),
+            );
+        }
+        let second = strict_archive_finality_proof_v1(
+            &semantics,
+            config.validator_set(),
+            config.consensus_parameters(),
+            *first.child().header().id().as_bytes(),
+        )?;
+        let third = strict_archive_finality_proof_v1(
+            &semantics,
+            config.validator_set(),
+            config.consensus_parameters(),
+            *first.grandchild().header().id().as_bytes(),
+        )?;
+        self.revalidate_identity_v1()?;
+        Ok([first, second, third])
+    }
+
     pub(crate) fn native_finality_range_v1(
         &mut self,
         config: &LoadedValidatorConfig,

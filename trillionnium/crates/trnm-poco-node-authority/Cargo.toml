@@ -24,7 +24,7 @@ production_consensus_activation = false
 
 [features]
 default = []
-persistent-authority-candidate = ["dep:trnm-durable-file-adapters-v0"]
+persistent-authority-candidate = ["dep:trnm-durable-file-adapters-v0", "trnm-poco-node/epoch-handoff-checkpoint-candidate"]
 
 [dependencies]
 trnm-durable-file-adapters-v0 = { version = "0.1.0", path = "../trnm-durable-file-adapters-v0", optional = true }

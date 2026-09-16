@@ -171,12 +171,29 @@ fn strict_migration_append_retry_and_readonly_reopen() {
     let (source, mut store, mut owner, pin) = initialize(d.path());
     assert!(store.prepare_terminal_recovery_v1(pin).is_err());
     let source_before = source.head().unwrap();
+    let source_facts = source
+        .confirm_node_checkpoint_head_exact_v0(source_before.state())
+        .unwrap();
     let r = timeout(&mut owner);
     let result = store
         .persist_exact_v1(pin, &r, &SafetyTransitionContextV0::Ordinary)
         .unwrap();
     assert_eq!(result.revision_v1(), pin.revision + 1);
     assert_eq!(result.state_v1(), r.state());
+    let audited = result.migration_source_v1();
+    assert_eq!(audited.revision_v1(), source_before.state().revision());
+
+    assert_eq!(audited.journal_id_v1(), source_facts.journal_id_v0());
+    assert_eq!(audited.chain_checksum_v1(), source_before.chain_checksum());
+    assert_eq!(
+        audited.state_record_checksum_v1(),
+        source_before.state_record_checksum()
+    );
+    assert_eq!(
+        audited.verifier_profile_ref_v1(),
+        source_facts.verifier_profile_ref_v0()
+    );
+    assert_eq!(audited.config_ref_v1(), source_facts.core_config_ref_v0());
     assert!(result.belongs_to_store_at_path_v1(&store, store.path_v1()));
     let next = result.pin_v1();
     assert!(store.prepare_terminal_recovery_v1(next).is_err());
@@ -201,7 +218,16 @@ fn strict_migration_append_retry_and_readonly_reopen() {
         next,
     )
     .unwrap();
-    assert_eq!(reopened.fresh_read_v1(next).unwrap().state_v1(), r.state());
+    let fresh = reopened.fresh_read_v1(next).unwrap();
+    assert_eq!(fresh.state_v1(), r.state());
+    assert_eq!(
+        fresh.migration_source_v1().journal_id_v1(),
+        source_facts.journal_id_v0()
+    );
+    assert_eq!(
+        fresh.migration_source_v1().state_record_checksum_v1(),
+        source_before.state_record_checksum()
+    );
     assert!(!result.belongs_to_store_at_path_v1(&reopened, reopened.path_v1()));
     assert!(reopened
         .persist_exact_v1(next, &r, &SafetyTransitionContextV0::Ordinary)
@@ -373,6 +399,35 @@ fn insufficient_limits_are_rejected_before_file_creation() {
         1
     )
     .is_err());
+}
+
+#[test]
+fn oversized_or_extra_schema_objects_reject_without_repair() {
+    let _g = PROCESS_LOCK.lock().unwrap();
+    for oversized in [false, true] {
+        let d = dir();
+        let (_source, store, _owner, pin) = initialize(d.path());
+        let path = d.path().join("new.db");
+        assert_eq!(store.path_v1(), path);
+        drop(store);
+        let corrupt = tamper_connection(&path);
+        if oversized {
+            let name = "x".repeat(8192);
+            corrupt
+                .execute_batch(&format!("CREATE TABLE {name}(value BLOB)"))
+                .unwrap();
+        } else {
+            for id in 0..128 {
+                corrupt
+                    .execute_batch(&format!("CREATE TABLE extra_{id}(value BLOB)"))
+                    .unwrap();
+            }
+        }
+        drop(corrupt);
+        let before = fs::read(&path).unwrap();
+        assert!(SqliteOldEpochSafetyJournalV1::open_existing_v1(&path, profiles().1, pin).is_err());
+        assert_eq!(fs::read(&path).unwrap(), before);
+    }
 }
 
 #[test]

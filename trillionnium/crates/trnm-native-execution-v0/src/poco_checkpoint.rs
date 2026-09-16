@@ -1592,300 +1592,24 @@ fn cutoff_namespace_proof_v0(
     })
 }
 
+#[cfg(any(test, feature = "test-fixtures"))]
+#[path = "native_checkpoint_fixture_v1.rs"]
+pub(crate) mod native_checkpoint_fixture_v1;
+
 #[cfg(test)]
 mod native_authorization_tests {
+    use super::native_checkpoint_fixture_v1::*;
     use super::*;
-    use crate::{
-        validator_lifecycle::{
-            ValidatorGovernanceV1, ValidatorLifecycleStateV1, VALIDATOR_GOVERNANCE_SCHEMA_V1,
-        },
-        AuthorizedSignerV0, NativeApplicationConfigV0, NativeStateWriteV0,
-    };
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_consensus_types::{
-        BlockHeader, BlockKind, CertifiedHeaderV0, ConsensusPublicKey, EvidenceRoot,
-        FinalityProofV0, ProposalWitnessV0, QcReferenceV0, QuorumCertificate, Signature64,
-        Validator, ValidatorId, View, Vote, VotingPower,
+        BlockHeader, BlockKind, CertifiedHeaderV0, EvidenceRoot, ProposalWitnessV0, QcReferenceV0,
+        Signature64, View,
     };
     use trnm_native_application::{
-        BlockIdV0, ChainIdV0, GenesisHashV0, Hash32V0, NativeApplicationCommitRequestV0,
-        NativeApplicationGenesisRequestV0, NativeApplicationV0, NativeBlockExecutionRequestV0,
-        NativeBlockExecutionResultV0, NativeExpectedBlockCommitmentsV0, StateRootV0,
+        BlockIdV0, ChainIdV0, GenesisHashV0, NativeApplicationCommitRequestV0, NativeApplicationV0,
+        NativeBlockExecutionRequestV0, NativeBlockExecutionResultV0,
+        NativeExpectedBlockCommitmentsV0,
     };
-
-    const CHAIN: &str = "native-poco-authorization-test";
-    fn key(index: usize) -> SigningKey {
-        SigningKey::from_bytes(&[20 + index as u8; 32])
-    }
-
-    fn config() -> NativeApplicationConfigV0 {
-        let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
-        fields.epoch_length_blocks = 10;
-        fields.snapshot_lead_blocks = 3;
-        let parameters = ConsensusParametersV0::new(fields).unwrap();
-        let set = ValidatorSet::new(
-            GenesisHash::new([7; 32]),
-            ChainId::new(CHAIN).unwrap(),
-            ProtocolVersion::V0,
-            Epoch::new(0),
-            parameters.hash(),
-            (0..4)
-                .map(|index| {
-                    Validator::new(
-                        ValidatorId::from_bytes(format!("validator-{index}").as_bytes()).unwrap(),
-                        ConsensusPublicKey::new(key(index).verifying_key().to_bytes()),
-                        VotingPower::new(1).unwrap(),
-                    )
-                    .unwrap()
-                })
-                .collect(),
-        )
-        .unwrap();
-        let signers = vec![AuthorizedSignerV0::new(
-            "did:operator:1",
-            "operator",
-            hex::encode(SigningKey::from_bytes(&[81; 32]).verifying_key().to_bytes()),
-        )
-        .unwrap()];
-        let lifecycle = ValidatorLifecycleStateV1::from_genesis(
-            CHAIN.to_string(),
-            1,
-            hex::encode(crate::signer_policy_commitment_v0(&signers).unwrap()),
-            ValidatorGovernanceV1 {
-                schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
-                signer_id: "did:operator:1".to_string(),
-                min_activation_delay_blocks: 2,
-                unsafe_allow_single_validator_genesis: false,
-            },
-            set.validators()
-                .iter()
-                .map(|v| ConsensusValidatorV1 {
-                    public_key_hex: hex::encode(v.consensus_key().as_bytes()),
-                    voting_power: v.voting_power().get(),
-                })
-                .collect(),
-        )
-        .unwrap();
-        let mut entries = vec![];
-        let mut identity = vec![1];
-        identity.extend_from_slice(&0u64.to_be_bytes());
-        for (kind, raw) in [
-            (
-                PocoSnapshotEntryKindV0::ValidatorConfiguration,
-                set.try_cev0_bytes().unwrap(),
-            ),
-            (
-                PocoSnapshotEntryKindV0::ConsensusParameters,
-                parameters.canonical_bytes(),
-            ),
-        ] {
-            let (logical_key, value) =
-                crate::poco_transition::encode_poco_snapshot_value_envelope_v0(
-                    kind, 1, &identity, &raw,
-                )
-                .unwrap();
-            entries.push(
-                crate::poco_snapshot::PocoSnapshotEntryV0::new(kind, logical_key, value).unwrap(),
-            );
-        }
-        entries
-            .push(crate::poco_application::genesis_poco_application_authority_entry_v0().unwrap());
-        entries.sort_by(|a, b| (a.kind, &a.logical_key).cmp(&(b.kind, &b.logical_key)));
-        let writes = crate::poco_transition::genesis_poco_snapshot_writes_v0(&entries)
-            .unwrap()
-            .into_iter()
-            .map(|write| {
-                NativeStateWriteV0::raw(write.key().to_vec(), write.value().unwrap().to_vec())
-                    .unwrap()
-            })
-            .collect();
-        NativeApplicationConfigV0::new(
-            CHAIN,
-            [7; 32],
-            [8; 32],
-            [11; 32],
-            [9; 32],
-            [10; 32],
-            set,
-            parameters,
-            serde_json::to_vec(&lifecycle).unwrap(),
-            signers,
-            writes,
-        )
-        .unwrap()
-    }
-
-    fn open(
-        path: &std::path::Path,
-        config: NativeApplicationConfigV0,
-    ) -> DurableNativeApplicationV0 {
-        let application = DurableNativeApplicationV0::open(path, config).unwrap();
-        let config = application.config_v0();
-        application
-            .initialize(
-                NativeApplicationGenesisRequestV0::new(
-                    ChainIdV0::new(CHAIN).unwrap(),
-                    GenesisHashV0::new([7; 32]).unwrap(),
-                    Hash32V0::new([8; 32]),
-                    Hash32V0::new(config.signer_policy_commitment_v0()),
-                    StateRootV0::new(config.initial_state_root()).unwrap(),
-                    config.initial_validator_set().clone(),
-                )
-                .unwrap(),
-            )
-            .unwrap();
-        application
-    }
-
-    fn next_request(app: &DurableNativeApplicationV0) -> NativeBlockPreviewRequestV0 {
-        let parent = app.confirmed_committed_head_v0().unwrap();
-        let height = parent.height().checked_next().unwrap();
-        NativeBlockPreviewRequestV0::new(
-            ChainIdV0::new(CHAIN).unwrap(),
-            GenesisHashV0::new([7; 32]).unwrap(),
-            parent,
-            height,
-            height.get() * 1000,
-            trnm_native_application::ValidatorSetIdV0::new(
-                *app.config_v0().validator_set_v0().id().as_bytes(),
-            )
-            .unwrap(),
-            vec![],
-        )
-        .unwrap()
-    }
-
-    fn execute(
-        app: &DurableNativeApplicationV0,
-        preview_request: NativeBlockPreviewRequestV0,
-        kind: BlockKind,
-    ) -> (BlockHeader, NativeExecutedBlockV0) {
-        let preview = app.preview_block_v0(&preview_request).unwrap();
-        let height = preview_request.height().get();
-        let set = app.config_v0().validator_set_v0();
-        let header = BlockHeader::new(
-            set.genesis_hash(),
-            set.chain_id(),
-            set.protocol_version(),
-            set.epoch(),
-            View::new(height),
-            Height::new(height),
-            kind,
-            BlockId::new(*preview_request.parent().block_id().as_bytes()),
-            set.validators()[((height - 1) % 4) as usize].id(),
-            set.id(),
-            set.consensus_parameters_hash(),
-            PayloadDigest::new(*preview.payload_root().as_bytes()),
-            StateRoot::new(*preview.post_state_root().as_bytes()),
-            ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
-            EvidenceRoot::new(*preview.evidence_root().as_bytes()),
-            preview_request.timestamp_ms(),
-            None,
-        )
-        .unwrap();
-        let request = NativeBlockExecutionRequestV0::new(
-            preview_request.chain_id().clone(),
-            preview_request.genesis_hash(),
-            preview_request.parent().clone(),
-            BlockIdV0::new(*header.id().as_bytes()).unwrap(),
-            preview_request.height(),
-            preview_request.timestamp_ms(),
-            preview_request.active_validator_set_id(),
-            preview_request.transactions().to_vec(),
-            NativeExpectedBlockCommitmentsV0::new(
-                preview.payload_root(),
-                preview.post_state_root(),
-                preview.receipts_root(),
-                preview.evidence_root(),
-            )
-            .unwrap(),
-        )
-        .unwrap();
-        let NativeBlockExecutionResultV0::Valid(executed) = app.execute_block(request).unwrap()
-        else {
-            panic!("valid empty native execution rejected")
-        };
-        (header, *executed)
-    }
-
-    fn qc(header: &BlockHeader, set: &ValidatorSet) -> QuorumCertificate {
-        let votes = set
-            .validators()
-            .iter()
-            .enumerate()
-            .take(3)
-            .map(|(index, v)| {
-                let root =
-                    Vote::signing_root_for_set(set, header.view(), header.height(), header.id())
-                        .unwrap();
-                Vote::new(
-                    set.chain_id(),
-                    set.protocol_version(),
-                    set.epoch(),
-                    header.view(),
-                    header.height(),
-                    header.id(),
-                    set.id(),
-                    v.id(),
-                    Signature64::from_array(key(index).sign(root.as_bytes()).to_bytes()),
-                    set,
-                )
-                .unwrap()
-            })
-            .collect();
-        QuorumCertificate::new(
-            set.chain_id(),
-            set.protocol_version(),
-            set.epoch(),
-            header.view(),
-            header.height(),
-            header.id(),
-            set.id(),
-            votes,
-            set,
-        )
-        .unwrap()
-    }
-
-    fn cutoff_proof(headers: &[BlockHeader], config: &NativeApplicationConfigV0) -> Vec<u8> {
-        let set = config.validator_set_v0();
-        let parameters = config.consensus_parameters_v0();
-        let certified = |index: usize| {
-            let header = headers[index].clone();
-            let justify = QcReferenceV0::ordinary(qc(&headers[index - 1], set));
-            let root = ProposalWitnessV0::signing_root_for(&header, &justify, None, None).unwrap();
-            let signer = set
-                .validators()
-                .iter()
-                .position(|v| v.id() == header.proposer_id())
-                .unwrap();
-            CertifiedHeaderV0::new(
-                header.clone(),
-                justify,
-                None,
-                None,
-                Signature64::from_array(key(signer).sign(root.as_bytes()).to_bytes()),
-                qc(&header, set),
-                set,
-                None,
-                parameters,
-                headers[index - 1].timestamp_ms(),
-            )
-            .unwrap()
-        };
-        FinalityProofV0::new(
-            certified(4),
-            certified(5),
-            certified(6),
-            set,
-            None,
-            parameters,
-            headers[3].timestamp_ms(),
-        )
-        .unwrap()
-        .try_cev0_bytes()
-        .unwrap()
-    }
 
     #[test]
     fn actual_committed_cutoff_produces_native_preparation_and_reopens_exactly() {
@@ -1949,135 +1673,6 @@ mod native_authorization_tests {
         assert!(second
             .confirm_durable_execution_history_row_v0(&real)
             .is_err());
-    }
-
-    fn handoff_proofs(prepared: &PreparedNativePocoCheckpointV0) -> (Vec<u8>, Vec<u8>) {
-        use trnm_consensus_types::{
-            HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields, SignatureShareV0,
-        };
-        let preheader = prepared.bound.authorized().prepared();
-        let authority = preheader.commitment_authority();
-        let set = authority.old_validator_set();
-        let parameters = authority.old_parameters();
-        let checkpoint = prepared.header().clone();
-        let parent = preheader.checkpoint_parent().header();
-        let mut chain = vec![checkpoint.clone()];
-        for (height, kind) in [(9, BlockKind::EpochSeal1), (10, BlockKind::EpochSeal2)] {
-            chain.push(
-                BlockHeader::new(
-                    set.genesis_hash(),
-                    set.chain_id(),
-                    set.protocol_version(),
-                    set.epoch(),
-                    View::new(height),
-                    Height::new(height),
-                    kind,
-                    chain.last().unwrap().id(),
-                    set.validators()[((height - 1) % 4) as usize].id(),
-                    set.id(),
-                    parameters.hash(),
-                    checkpoint.payload_digest(),
-                    checkpoint.state_root(),
-                    checkpoint.receipts_root(),
-                    checkpoint.evidence_root(),
-                    height * 1000,
-                    Some(authority.commitment().id()),
-                )
-                .unwrap(),
-            );
-        }
-        let certified = |index: usize| {
-            let header = chain[index].clone();
-            let parent_header = if index == 0 {
-                parent
-            } else {
-                &chain[index - 1]
-            };
-            let justify = QcReferenceV0::ordinary(qc(parent_header, set));
-            let root = ProposalWitnessV0::signing_root_for(&header, &justify, None, None).unwrap();
-            let index = set
-                .validators()
-                .iter()
-                .position(|v| v.id() == header.proposer_id())
-                .unwrap();
-            CertifiedHeaderV0::new(
-                header.clone(),
-                justify,
-                None,
-                None,
-                Signature64::from_array(key(index).sign(root.as_bytes()).to_bytes()),
-                qc(&header, set),
-                set,
-                None,
-                parameters,
-                parent_header.timestamp_ms(),
-            )
-            .unwrap()
-        };
-        let finality = FinalityProofV0::new(
-            certified(0),
-            certified(1),
-            certified(2),
-            set,
-            None,
-            parameters,
-            parent.timestamp_ms(),
-        )
-        .unwrap();
-        let terminal = &chain[2];
-        let terminal_qc = qc(terminal, set);
-        let new_set = authority.new_validator_set();
-        let descriptor = HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
-            genesis_hash: set.genesis_hash(),
-            chain_id: set.chain_id(),
-            old_epoch: set.epoch(),
-            new_epoch: new_set.epoch(),
-            old_protocol_version: set.protocol_version(),
-            new_protocol_version: new_set.protocol_version(),
-            old_validator_set_hash: set.id(),
-            new_validator_set_hash: new_set.id(),
-            old_consensus_parameters_hash: parameters.hash(),
-            new_consensus_parameters_hash: authority.new_parameters().hash(),
-            checkpoint_height: checkpoint.height(),
-            checkpoint_block_id: checkpoint.id(),
-            checkpoint_state_root: checkpoint.state_root(),
-            next_epoch_commitment_digest: authority.commitment().id(),
-            terminal_old_height: terminal.height(),
-            terminal_old_block_id: terminal.id(),
-            terminal_old_qc_digest: terminal_qc.id(),
-            terminal_old_view: terminal.view(),
-            activation_height: Height::new(11),
-            initial_new_view: View::new(1),
-        })
-        .unwrap();
-        let shares = |old: bool| {
-            let root = if old {
-                descriptor.old_set_signing_root()
-            } else {
-                descriptor.new_set_signing_root()
-            };
-            (0..4)
-                .map(|index| {
-                    SignatureShareV0::new(
-                        set.validators()[index].id(),
-                        Signature64::from_array(key(index).sign(root.as_bytes()).to_bytes()),
-                    )
-                    .unwrap()
-                })
-                .collect()
-        };
-        let certificate = HandoffCertificateV0::new(
-            descriptor.clone(),
-            shares(true),
-            shares(false),
-            set,
-            new_set,
-        )
-        .unwrap();
-        let mut anchor = terminal.try_cev0_bytes().unwrap();
-        anchor.extend_from_slice(&terminal_qc.try_cev0_bytes().unwrap());
-        anchor.extend_from_slice(&certificate.try_cev0_bytes().unwrap());
-        (finality.try_cev0_bytes().unwrap(), anchor)
     }
 
     fn epoch_first_finality(
@@ -2167,31 +1762,6 @@ mod native_authorization_tests {
             }
         }
         bytes
-    }
-
-    fn ordinary_prefix(app: &DurableNativeApplicationV0) -> Vec<BlockHeader> {
-        (0..7)
-            .map(|_| {
-                let (header, executed) = execute(app, next_request(app), BlockKind::Regular);
-                app.commit_block(NativeApplicationCommitRequestV0::new(executed))
-                    .unwrap();
-                header
-            })
-            .collect()
-    }
-
-    fn preparation(
-        app: &DurableNativeApplicationV0,
-        headers: &[BlockHeader],
-    ) -> PreparedNativePocoCheckpointV0 {
-        app.prepare_native_poco_checkpoint_v0(
-            &next_request(app),
-            View::new(8),
-            app.config_v0().validator_set_v0().validators()[3].id(),
-            &cutoff_proof(headers, app.config_v0()),
-            &headers[3].try_cev0_bytes().unwrap(),
-        )
-        .unwrap()
     }
 
     #[test]
@@ -2511,6 +2081,17 @@ mod native_authorization_tests {
             .execute_epoch_block_v1(&edge, first_request, &first_header)
             .unwrap();
         assert_eq!(first_p.p_digest(), retry.p_digest());
+        let first_readback = app.confirm_prepared_epoch_execution_v1(&first_p).unwrap();
+        assert!(first_readback.belongs_to_application_at_path(&app, &path));
+        assert_eq!(
+            first_readback
+                .application_payload_and_receipts()
+                .unwrap()
+                .1
+                .receipts_root()
+                .unwrap(),
+            first_header.receipts_root()
+        );
         let mut parent_p = first_p;
         for height in [12, 13] {
             let parent = parent_p.overlay_parent_head().unwrap();
@@ -2566,6 +2147,7 @@ mod native_authorization_tests {
         // Rebuild from exact raw evidence after reopening the actual stores.
         drop(app);
         let reopened = DurableNativeApplicationV0::open(&path, config()).unwrap();
+        assert!(!first_readback.belongs_to_application_at_path(&reopened, &path));
         assert!(
             reopened.confirm_epoch_application_edge_v1(&edge).is_err(),
             "old owner edge must not survive reopen"
@@ -2581,6 +2163,9 @@ mod native_authorization_tests {
         assert_eq!(restored_edge.authorization_id(), saved_edge);
         let first_p = reopened
             .reopen_prepared_epoch_execution_v1(*new_headers[0].id().as_bytes())
+            .unwrap();
+        let before_commit_readback = reopened
+            .confirm_prepared_epoch_execution_v1(&first_p)
             .unwrap();
         let new_finality = epoch_first_finality(&restored_edge, &new_headers);
         if std::env::var_os("TRNM_NATIVE_EPOCH_SIGKILL_STORE").is_some() {
@@ -2618,6 +2203,15 @@ mod native_authorization_tests {
             )
             .unwrap();
         assert_eq!(committed.head().height().get(), 11);
+        assert!(committed.belongs_to_application(&reopened));
+        assert!(!before_commit_readback.belongs_to_application_at_path(&reopened, &path));
+        assert_eq!(
+            reopened
+                .confirm_prepared_epoch_execution_v1(&first_p)
+                .unwrap()
+                .commit_sequence(),
+            Some(committed.commit_sequence())
+        );
         assert!(
             reopened
                 .confirm_epoch_application_edge_v1(&restored_edge)
@@ -3055,6 +2649,21 @@ mod native_authorization_tests {
             .reopen_prepared_incremental_execution_v1(pids[0].0)
             .unwrap();
         assert_eq!(p.p_digest(), pids[0].1);
+        let before_commit_readback = app.confirm_prepared_incremental_execution_v1(&p).unwrap();
+        assert!(before_commit_readback.belongs_to_application_at_path(&app, &path));
+        assert_eq!(
+            before_commit_readback.prepared().persist_sequence(),
+            p.persist_sequence()
+        );
+        assert_eq!(
+            before_commit_readback
+                .application_payload_and_receipts()
+                .unwrap()
+                .1
+                .receipts_root()
+                .unwrap(),
+            headers[4].receipts_root()
+        );
         let proof = cutoff_proof(&headers, app.config_v0());
         if std::env::var_os("TRNM_NATIVE_INCREMENTAL_SIGKILL_STORE").is_some() {
             std::fs::write(
@@ -3087,6 +2696,14 @@ mod native_authorization_tests {
             .unwrap();
         assert_eq!(committed.head().height().get(), 5);
         assert_eq!(committed.commit_sequence(), 14);
+        assert!(committed.belongs_to_application(&app));
+        assert!(!before_commit_readback.belongs_to_application_at_path(&app, &path));
+        assert_eq!(
+            app.confirm_prepared_incremental_execution_v1(&p)
+                .unwrap()
+                .commit_sequence(),
+            Some(14)
+        );
         let retry = app
             .commit_incremental_finality_bytes_v1(
                 &p,
@@ -3095,6 +2712,53 @@ mod native_authorization_tests {
             )
             .unwrap();
         assert_eq!(retry.commit_sequence(), 14);
+        // A coherent local sequence rewrite preserves the application head;
+        // it must nevertheless invalidate a receipt for the earlier exact cut.
+        type OwnerDigestColumns = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>);
+        let columns: OwnerDigestColumns = sql.query_row(
+            "SELECT source_anchor,storage_checksum,replay_version,replay_root,owner_checksum FROM native_incremental_owner_v1", [],
+            |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?))).unwrap();
+        let head = committed.head();
+        let head_bytes = [
+            head.height().get().to_be_bytes().as_slice(),
+            head.block_id().as_bytes(),
+            head.state_root().as_bytes(),
+            head.commit_id().as_bytes(),
+        ]
+        .concat();
+        let replaced = trnm_finality_types::hash_domain(
+            "trnm.native-application.incremental-owner.v1",
+            &[
+                &columns.0,
+                &head_bytes,
+                &15u64.to_be_bytes(),
+                &columns.1,
+                &columns.2,
+                &columns.3,
+            ],
+        );
+        for (sequence, checksum) in [(15u64, replaced.as_slice()), (14u64, columns.4.as_slice())] {
+            sql.execute(
+                "UPDATE native_incremental_p_v1 SET commit_sequence=? WHERE status=1",
+                [sequence.to_be_bytes().as_slice()],
+            )
+            .unwrap();
+            sql.execute(
+                "UPDATE native_application_metadata_v0 SET durable_sequence=?",
+                [sequence.to_be_bytes().as_slice()],
+            )
+            .unwrap();
+            sql.execute(
+                "UPDATE native_incremental_owner_v1 SET head_commit_sequence=?,owner_checksum=?",
+                rusqlite::params![sequence.to_be_bytes().as_slice(), checksum],
+            )
+            .unwrap();
+            assert_eq!(
+                &app.confirmed_committed_head_v0().unwrap(),
+                committed.head()
+            );
+            assert_eq!(committed.belongs_to_application(&app), sequence == 14);
+        }
         assert_eq!(
             app.reopen_prepared_incremental_execution_v1(pids[2].0)
                 .unwrap()
@@ -3149,6 +2813,8 @@ mod native_authorization_tests {
         drop(app);
         let app = DurableNativeApplicationV0::open(&path, config()).unwrap();
         assert_eq!(app.confirmed_committed_head_v0().unwrap().height().get(), 5);
+        assert!(!committed.belongs_to_application(&app));
+        assert!(!before_commit_readback.belongs_to_application_at_path(&app, &path));
         assert_eq!(
             app.reopen_prepared_incremental_execution_v1(pids[2].0)
                 .unwrap()

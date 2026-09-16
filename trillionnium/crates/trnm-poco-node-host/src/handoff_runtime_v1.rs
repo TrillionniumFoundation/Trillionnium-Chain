@@ -9,6 +9,8 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use trnm_poco_node_authority::ConfirmedRetiredEpochNodeCheckpointV1;
+
 use trnm_consensus_crypto::{verify_pre_handoff_context_strict_v1, StrictPreHandoffContextV1};
 use trnm_consensus_safety_store::{
     ConfirmedOldEpochSafetyHeadV1, OldEpochJournalErrorV1, SqliteOldEpochSafetyJournalV1,
@@ -146,7 +148,11 @@ pub struct CandidateHandoffRuntimeV1<W: ExternalMonotonicWatermarkV0> {
 /// scope/journal/full profile. It cannot be reconstructed from retired scalars.
 struct OriginalOrdinaryCustodyV1 {
     path: PathBuf,
-    facts: ConfirmedSignerNodeCheckpointFactsV0,
+    binding: OriginalOrdinaryBindingV1,
+}
+enum OriginalOrdinaryBindingV1 {
+    Live(Box<ConfirmedSignerNodeCheckpointFactsV0>),
+    Checkpointed(Box<ConfirmedRetiredEpochNodeCheckpointV1>),
 }
 impl OriginalOrdinaryCustodyV1 {
     fn commission<W: ExternalMonotonicWatermarkV0>(
@@ -171,26 +177,28 @@ impl OriginalOrdinaryCustodyV1 {
         }
         Ok(Self {
             path: ordinary.path().to_path_buf(),
-            facts,
+            binding: OriginalOrdinaryBindingV1::Live(Box::new(facts)),
         })
     }
     fn require_operational<W: ExternalMonotonicWatermarkV0>(
         &self,
         ordinary: &mut SqliteSignerJournalV0<W>,
     ) -> Result<(), CandidateHandoffRuntimeErrorV1> {
-        if !self
-            .facts
-            .belongs_to_operational_journal_at_path_v0(ordinary, &self.path)
-        {
+        let OriginalOrdinaryBindingV1::Live(facts) = &self.binding else {
+            return Err(CandidateHandoffRuntimeErrorV1::ReceiptMismatch(
+                "checkpointed retirement cannot restore ordinary custody",
+            ));
+        };
+        if !facts.belongs_to_operational_journal_at_path_v0(ordinary, &self.path) {
             return Err(CandidateHandoffRuntimeErrorV1::ReceiptMismatch(
                 "substituted original ordinary owner",
             ));
         }
         let fresh = ordinary.confirm_node_checkpoint_head_exact_v0()?;
-        if fresh.journal_id() != self.facts.journal_id()
-            || fresh.profile_checksum() != self.facts.profile_checksum()
-            || fresh.identity() != self.facts.identity()
-            || fresh.exact_watermark().sequence() < self.facts.exact_watermark().sequence()
+        if fresh.journal_id() != facts.journal_id()
+            || fresh.profile_checksum() != facts.profile_checksum()
+            || fresh.identity() != facts.identity()
+            || fresh.exact_watermark().sequence() < facts.exact_watermark().sequence()
             || fresh.pending_intent().is_some()
         {
             return Err(CandidateHandoffRuntimeErrorV1::ReceiptMismatch(
@@ -201,14 +209,20 @@ impl OriginalOrdinaryCustodyV1 {
     }
     fn require_retired<W: ExternalSignerRetirementV1>(
         &self,
-        retired: &RetiredSqliteSignerJournalV1<W>,
+        retired: &mut RetiredSqliteSignerJournalV1<W>,
     ) -> Result<(), CandidateHandoffRuntimeErrorV1> {
-        if !self
-            .facts
-            .belongs_to_retired_journal_at_path_v1(retired, &self.path)
-        {
+        let valid = retired.path_v1() == self.path
+            && match &self.binding {
+                OriginalOrdinaryBindingV1::Live(facts) => {
+                    facts.belongs_to_retired_journal_at_path_v1(retired, &self.path)
+                }
+                OriginalOrdinaryBindingV1::Checkpointed(checkpoint) => {
+                    checkpoint.belongs_to_retired_owner_v1(retired)
+                }
+            };
+        if !valid {
             return Err(CandidateHandoffRuntimeErrorV1::ReceiptMismatch(
-                "substituted original retired owner",
+                "substituted original retired owner or stale node checkpoint",
             ));
         }
         Ok(())
@@ -235,13 +249,6 @@ impl<W: ExternalMonotonicWatermarkV0> CandidateHandoffRuntimeV1<W> {
         original_facts: ConfirmedSignerNodeCheckpointFactsV0,
     ) -> Result<Self, CandidateHandoffRuntimeErrorV1> {
         verify_ordinary_profile(ordinary.profile(), journal.profile())?;
-        if ordinary.profile().external_watermark_scope()
-            == journal.profile().external_watermark_scope()
-        {
-            return Err(CandidateHandoffRuntimeErrorV1::ReceiptMismatch(
-                "ordinary and handoff scopes must be explicit and distinct",
-            ));
-        }
         let original = OriginalOrdinaryCustodyV1::commission(ordinary, original_facts)?;
         Self::from_joined_owners(application, journal, Some(original))
     }
@@ -435,6 +442,79 @@ impl<W: ExternalMonotonicWatermarkV0> CandidateHandoffRuntimeV1<W> {
         );
         Err(CandidateHandoffRuntimeErrorV1::OriginalOrdinaryRecoveryUnavailable)
     }
+    /// Restart requires a real, freshly confirmed terminal14O whole-node
+    /// checkpoint token, preserving the predecessor's original custody identity.
+    /// All owner joins happen before touching the handoff journal or its CAS.
+    #[allow(clippy::too_many_arguments)]
+    pub fn recover_with_checkpointed_retired_ordinary_exact_v1<RW: ExternalSignerRetirementV1>(
+        application: &DurableNativeApplicationV0,
+        receipt: &PreHandoffCheckpointReceiptV1,
+        descriptor: &HandoffDescriptorV0,
+        role: HandoffSignerRoleV1,
+        journal_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        watermark: W,
+        safety: &SqliteOldEpochSafetyJournalV1,
+        safety_head: &ConfirmedOldEpochSafetyHeadV1,
+        retired: &mut RetiredSqliteSignerJournalV1<RW>,
+        confirmed: &ConfirmedOrdinarySignerRetirementV1,
+        checkpoint: ConfirmedRetiredEpochNodeCheckpointV1,
+    ) -> Result<Self, CandidateHandoffRuntimeErrorV1> {
+        let original = OriginalOrdinaryCustodyV1 {
+            path: retired.path_v1().to_path_buf(),
+            binding: OriginalOrdinaryBindingV1::Checkpointed(Box::new(checkpoint)),
+        };
+        verify_retired_join(
+            &original,
+            application,
+            receipt,
+            descriptor,
+            &profile,
+            safety,
+            safety_head,
+            retired,
+            confirmed,
+        )?;
+        let context = verify_receipt(application, receipt, descriptor, &profile)?;
+        let intent = intent_for_role(role, descriptor, &profile)?;
+        let journal = match role {
+            HandoffSignerRoleV1::OldSet => {
+                let admission =
+                    StrictOldSetHandoffAdmissionV1::from_verified_context(&intent, &context)?;
+                SqliteHandoffSignerJournalV1::recover_old_set_handoff_exact_v1(
+                    journal_path,
+                    profile,
+                    watermark,
+                    &intent,
+                    &admission,
+                )?
+            }
+            HandoffSignerRoleV1::NewSet => {
+                let admission =
+                    StrictNewSetHandoffAdmissionV1::from_verified_context(&intent, &context)?;
+                SqliteHandoffSignerJournalV1::recover_new_set_handoff_exact_v1(
+                    journal_path,
+                    profile,
+                    watermark,
+                    &intent,
+                    &admission,
+                )?
+            }
+        };
+        verify_retired_join(
+            &original,
+            application,
+            receipt,
+            descriptor,
+            journal.profile(),
+            safety,
+            safety_head,
+            retired,
+            confirmed,
+        )?;
+        Self::from_joined_owners(application, journal, Some(original))
+    }
+
     /// Revalidates the native owner and cryptographic context before any
     /// external reconciliation. Only the same persisted role/intent may resume.
     #[allow(clippy::too_many_arguments)]
@@ -631,7 +711,8 @@ fn verify_ordinary_profile(
     ordinary: &SignerJournalProfileV0,
     handoff: &HandoffSignerJournalProfileV1,
 ) -> Result<(), CandidateHandoffRuntimeErrorV1> {
-    if ordinary.validator_set() != handoff.old_validator_set()
+    if ordinary.external_watermark_scope() == handoff.external_watermark_scope()
+        || ordinary.validator_set() != handoff.old_validator_set()
         || ordinary.author() != handoff.author()
         || ordinary.signer_profile_ref() != handoff.signer_profile_ref()
     {

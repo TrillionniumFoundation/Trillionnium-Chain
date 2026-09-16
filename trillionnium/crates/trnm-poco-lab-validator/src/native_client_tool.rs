@@ -25,7 +25,7 @@ use trnm_application_tx_builder_v0::{
 };
 const RESPONSE_LIMIT: usize = 8 * 1024 * 1024 + 16 * 1024;
 const REQUEST_LIMIT: usize = 528_384;
-const USAGE: &str = "native-client sign <profile> <profile-sha256> <chain-id> <signer-id> <private-key> <nonce> <ttl-ms> <max-gas> <fee-limit> <command-json> <outer-output> | request <private-socket> <request-json> <response-output> <profile-sha256> <genesis-hash> | verify <observer-public-root> <config> <manifest-sha256> <response-json> <native-tx-hash> <exact-outer-file> <profile-sha256>";
+const USAGE: &str = "native-client sync <observer-public-root> <config> <manifest-sha256> <private-socket> <replica-directory> <target-height> <profile-sha256> | sign <profile> <profile-sha256> <chain-id> <signer-id> <private-key> <nonce> <ttl-ms> <max-gas> <fee-limit> <command-json> <outer-output> | request <private-socket> <request-json> <response-output> <profile-sha256> <genesis-hash> | verify <observer-public-root> <config> <manifest-sha256> <response-json> <native-tx-hash> <exact-outer-file> <profile-sha256>";
 
 fn text(value: &OsString) -> Result<&str> {
     value.to_str().context("client argument is not UTF-8")
@@ -190,6 +190,160 @@ pub fn verify_response_v1(
         "proved native hash mismatch"
     );
     Ok(verified)
+}
+
+fn exchange_json(
+    socket: &Path,
+    request: &Value,
+    profile: [u8; 32],
+    genesis: [u8; 32],
+) -> Result<Value> {
+    let metadata = std::fs::symlink_metadata(socket)?;
+    ensure!(
+        metadata.file_type().is_socket()
+            && metadata.uid() == rustix::process::geteuid().as_raw()
+            && metadata.mode() & 0o777 == 0o600,
+        "native endpoint must be owner-private socket"
+    );
+    let encoded = serde_json::to_vec(request)?;
+    ensure!(encoded.len() <= REQUEST_LIMIT, "native request frame bound");
+    let deadline = Instant::now() + Duration::from_secs(8);
+    let mut stream = connect_until(socket, deadline)?;
+    write_until(&mut stream, &(encoded.len() as u32).to_be_bytes(), deadline)?;
+    write_until(&mut stream, &encoded, deadline)?;
+    let mut prefix = [0u8; 4];
+    read_until(&mut stream, &mut prefix, deadline)?;
+    let count = u32::from_be_bytes(prefix) as usize;
+    ensure!(
+        count > 0
+            && count
+                <= if request["op"] == "sync_manifest" {
+                    crate::native_replay_sync_v1::MAX_MANIFEST_BYTES + 16 * 1024
+                } else {
+                    2 * crate::native_replay_sync_v1::CHUNK_BYTES + 16 * 1024
+                },
+        "native response frame bound"
+    );
+    let mut response = vec![0; count];
+    read_until(&mut stream, &mut response, deadline)?;
+    trnm_application_tx_builder_v0::validate_strict_json_structure_v0(&response)?;
+    let decoded: Response<Value> = serde_json::from_slice(&response)?;
+    ensure!(
+        decoded.schema == "trnm.native-client.response.v1"
+            && Some(decoded.request_id.as_str()) == request["request_id"].as_str()
+            && decoded.candidate_only
+            && hex32(&decoded.profile_sha256)? == profile
+            && hex32(&decoded.genesis_hash)? == genesis
+            && decoded.ok
+            && decoded.error.is_none(),
+        "native sync transport response context/error"
+    );
+    decoded.data.context("native sync response lacks data")
+}
+
+fn run_sync_v1(args: &[OsString]) -> Result<()> {
+    use crate::native_replay_sync_v1::{NativeReplayReceiverV1, ReplayManifestV1, CHUNK_BYTES};
+    let root = PathBuf::from(&args[1]);
+    let config_path = PathBuf::from(&args[2]);
+    let context = PublicReportVerifierContext::load(&root, &config_path, text(&args[3])?)?;
+    let profile_hash = hex32(text(&args[7])?)?;
+    ensure!(
+        context.native_client_profile_sha256_v1() == Some(profile_hash),
+        "sync profile differs from independent manifest"
+    );
+    let consensus = context
+        .validator_set()
+        .validators()
+        .iter()
+        .map(|v| v.consensus_key().into_bytes())
+        .collect::<Vec<_>>();
+    let profile = NativeClientProfileV1::load_v1(
+        &root.join("public/native-client-profile.json"),
+        profile_hash,
+        context.validator_set().chain_id().as_str(),
+        &consensus,
+    )?;
+    let configuration = || -> Result<trnm_native_execution_v0::NativeApplicationConfigV0> {
+        trnm_native_execution_v0::NativeApplicationConfigV0::from_canonical_lab_inputs_v0(
+            trnm_native_execution_v0::CanonicalLabNativeApplicationConfigInputsV0::new(
+                context.run_id(),
+                context.coordinator_manifest_sha256(),
+                context.topology_sha256(),
+                context.validator_set_sha256(),
+                context.candidate_source_sha256(),
+                context.local_validator(),
+                context.validator_set().clone(),
+                trnm_consensus_types::ConsensusParametersV0::reference_shadow_v0(),
+                profile.authorized_signers_v1()?,
+                profile.governance_signer_id.clone(),
+            )?,
+        )
+    };
+    let target = number(&args[6])?;
+    ensure!(
+        (1..=crate::native_replay_sync_v1::MAX_RECORDS).contains(&target),
+        "sync candidate target bound"
+    );
+    let socket = Path::new(&args[4]);
+    let destination = Path::new(&args[5]);
+    let genesis = *context.validator_set().genesis_hash().as_bytes();
+    let deadline = Instant::now() + Duration::from_secs(600);
+    let response = exchange_json(
+        socket,
+        &json!({"schema":"trnm.native-client.request.v1","request_id":"sync-manifest","op":"sync_manifest","data":{"target_height":target}}),
+        profile_hash,
+        genesis,
+    )?;
+    let manifest: ReplayManifestV1 = serde_json::from_value(response)?;
+    let mut receiver = NativeReplayReceiverV1::open(
+        destination,
+        configuration()?,
+        profile_hash,
+        target,
+        manifest.clone(),
+    )?;
+    for (offset, record) in manifest.records.iter().enumerate() {
+        let height = offset as u64 + 1;
+        for index in 0..(record.bytes as usize).div_ceil(CHUNK_BYTES) {
+            remaining(deadline)?;
+            if receiver.has_chunk(height, index)? {
+                continue;
+            }
+            let response = exchange_json(
+                socket,
+                &json!({"schema":"trnm.native-client.request.v1","request_id":format!("sync-{height}-{index}"),"op":"sync_chunk","data":{"height":height,"index":index,"record_sha256":record.sha256}}),
+                profile_hash,
+                genesis,
+            )?;
+            #[derive(Deserialize)]
+            #[serde(deny_unknown_fields)]
+            struct Chunk {
+                height: u64,
+                index: usize,
+                record_sha256: String,
+                bytes_hex: String,
+            }
+            let chunk: Chunk = serde_json::from_value(response)?;
+            ensure!(
+                chunk.height == height
+                    && chunk.index == index
+                    && chunk.record_sha256 == record.sha256,
+                "sync returned chunk coordinate differs"
+            );
+            receiver.accept_chunk(
+                height,
+                index,
+                &decode_lower_hex(&chunk.bytes_hex, CHUNK_BYTES)?,
+            )?;
+        }
+    }
+    remaining(deadline)?;
+    let head = receiver.replay_and_publish(configuration()?)?;
+    println!(
+        "{}",
+        json!({"candidate_only":true,"application_only":true,"signing_authority":false,"height":head.height().get(),"block_id":hex::encode(head.block_id().as_bytes()),"state_root":hex::encode(head.state_root().as_bytes()),"manifest_sha256":hex::encode(manifest.digest()?)})
+    );
+    Ok(())
 }
 
 fn remaining(deadline: Instant) -> Result<Duration> {
@@ -395,6 +549,7 @@ pub fn run_cli_v1(arguments: impl Iterator<Item = OsString>) -> Result<()> {
                 json!({"transport_response_received":true,"ok":decoded.ok,"proof_verified_by_client":false})
             );
         }
+        "sync" if args.len() == 8 => run_sync_v1(&args)?,
         "verify" if args.len() == 8 => {
             let root = PathBuf::from(&args[1]);
             let config = PathBuf::from(&args[2]);

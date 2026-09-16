@@ -157,6 +157,25 @@ result, physical power-loss qualification or completion of S1.
 
 ### Implemented ordinary native owner (explicit schema 5)
 
+The implemented compatible owner interface is a fresh, affine confirmation of a
+prepared capability: `confirm_prepared_incremental_execution_v1(&prepared)`.
+Its private receipt binds the same live owner/path, exact P digest/prepare
+sequence, header/artifact, application parent, state delta/root and replay
+ancestry. It exposes comparison fields only; a Core adapter must consume the
+receipt together with its actual application owner. A committed receipt matcher
+must additionally re-read the exact COMMITTED P digest and commit sequence,
+not merely compare the current application head. The schema4 epoch counterpart
+uses the same rule with its retained strict edge and snapshot digest.
+
+Ordinary execution uses authenticated point reads within the pinned parent
+transaction. Worker input must distinguish an unrequested key from a proved
+absent key: missing prefetch data requests an owner-side proof, never a negative
+membership result. Bounded read-discovery rounds retain real parallel runtime
+attempts; exhausting a scheduling budget drops the attempt and runs the normal
+ordered execution. PoCO mutations, scheduled cutoff refresh and epoch activation
+still require the complete bounded frozen namespace projection. These changes
+do not alter frozen transaction, receipt, JMT key or finality encodings.
+
 Primary M07, consumer M08. `durable::incremental_owner_v1` installs `ni_*`
 inside the existing application's SQLite transaction and retains the same file
 and operation owner. `upgrade_incremental_schema_v1(expected_head, source_header)`
@@ -233,11 +252,25 @@ uncommitted forks with their exact storage pins. Exact retry synchronizes and
 freshly revalidates without allocating another sequence. Foreign/stale/substituted
 P, missing parent, bad proof, wrong expected predecessor or unreadable suffix fails.
 
-Native speculative workers receive an immutable authenticated current live map;
-they cannot share an unpinned SQLite connection. The map is bounded by65536
-entries,64MiB key/value bytes and1048576 visited nodes. Runtime still scans current
-live state for frozen PoCO/lifecycle validation; this is not constant total
-execution cost. Native pending rows are ≤128 and their artifact/header/replay/
+Native speculative workers receive only an immutable map of proved requested
+objects, including explicit absent entries. Signature/decode admission runs once
+per candidate batch, in workers. Actual runtime read discovery requests missing
+keys; the owner proves sorted keys in the same pinned SQLite transaction and
+retries workers for at most65 rounds (64 bounded dependencies plus the complete
+attempt). No SQLite connection crosses threads. Each attempt retains at most64
+reads/256KiB; the batch prefetch map and owner object cache retain at most2048
+keys/8MiB. These are scheduling limits: exhausted cache capacity bypasses caching,
+while prefetch/worker failure discards speculation and the ordered path executes
+using authenticated point reads. Cache misses are never proof of absence.
+
+The lifecycle is a separate exact point proof. Ordinary runtime, empty blocks
+and legacy validator transitions outside a scheduled cutoff do not enumerate
+live state. A PoCO operation, cutoff refresh or epoch rollover lazily requests
+the frozen complete namespace once; that path still traverses the current tree,
+bounded by65536 entries,64MiB key/value bytes and1048576 visited nodes. Eliminating
+that remaining scan requires a separately authenticated namespace enumeration
+contract; no general constant-cost execution or throughput claim is made.
+Native pending rows are ≤128 and their artifact/header/replay/
 lifecycle bytes total ≤2GiB; state/replay suffix budgets may reject earlier.
 Historical roots are retained; GC and sustained large-history qualification are
 pending. Legacy snapshot/state-proof/preview APIs explicitly reject schema5 until
@@ -250,6 +283,13 @@ retained6/7. Source snapshot byte totals remain unchanged and current snapshot
 metadata remains empty. Three SIGKILL cuts (before SQLite commit, after commit,
 after fsync) reopen as exactly source4 or target5 and retry with the same native
 sequence14. This proves the ordinary slice, not sparse migration or node activation.
+
+The fresh-P receipts reject foreign/reopened owners and old phase readbacks after
+commit. A test rewrites the local native commit sequence and recomputes the owner
+checksum while preserving the same valid head; the prior committed receipt still
+rejects because it binds the exact sequence. A 10000-unrelated-account differential
+uses an adapter that refuses whole-tree reads: runtime results match0/1/2/4/8
+workers and the same fewer-than32 proved keys are read in both small/large states.
 
 ### Owned storage packages and schema separation
 
@@ -636,8 +676,80 @@ local schema/edge bytes and positive/negative vectors before accepting readers.
 The candidate root adapter, real first-new persistence/strict commit and local
 reopen tests pass. The incremental transaction kernel has separate storage tests;
 its ordinary schema3→5 owner has real signed/replay/fork/SIGKILL tests, while
-sparse migration, GC, complete proof adapters and two-epoch matrix must land
+sparse finality commit, GC, complete proof adapters and two-epoch matrix must land
 and pass before removing any remaining fence or full-audit protection.
 If pinned JMT behavior cannot satisfy the root-only design, stop and revise this
 local storage contract under producer/consumer review; never alter frozen
 consensus bytes or publish seal application effects as a workaround.
+
+### Explicit schema6 first-new incremental candidate
+
+Primary M07, consumers M06/M08. Feature `incremental-epoch-candidate` is default
+closed. Schema5 retains its ordinary +1 and old configuration checks. The
+schema6 transition requires an already imported schema5 head exactly at the
+original COMMITTED checkpoint C, zero ordinary incremental preparations, and
+an owner-affine, freshly confirmed `AuthenticatedEpochApplicationEdgeV1`.
+Schema4 remains a separate snapshot bridge; schema4-to6 migration is rejected.
+The schema3-to5 import can precede this transition; neither open nor preview
+migrates a file. Schema6 keeps the immutable migration anchor and original
+legacy P/history for checkpoint/cutoff reconstruction, and stores no new full
+snapshot or cumulative replay sets.
+
+The schema6 owner row contains source-anchor H32, edge-binding H32, original
+checkpoint P digest H32 and actual commit sequence U64, exact encoded recovery
+evidence (at most 64MiB), and a framed owner checksum. The evidence includes
+checkpoint artifact/header, cutoff proof/parent, preparation ID, strict old
+checkpoint/two-seal proof, joint authorization and both exact configurations.
+Its single-entry lineage is the edge binding. Only artifactkind=1 is accepted
+in this first slice: frozen epoch-artifact-v1, actual application parent Head104
+at C, consensus parent C+2/BlockId in the artifact, target C+3, old/new config
+hashes and edge binding must agree with strict evidence. P includes exact
+header, native persist sequence, state storage artifact/sequence, replay parent
+version/root, replay delta (16MiB), lifecycle (1MiB), and digest; native artifact
+is bounded to 16MiB and header to 4096 bytes. Prepared row limits are 128 rows
+and 2GiB aggregate, shared with the underlying ni storage reservation bounds.
+
+The ni first-new stage is a distinct typed-edge entry. It requires a COMMITTED
+parent C and plan coordinates C/C+2/C+3. Only NodeKey(C+2, empty path) aliases
+NodeKey(C, empty path); other paths retain real versions and all value reads
+are capped at C. No roots, physical nodes or values may occur in either seal
+version. The delta contains only target C+3 nodes/values, pins the real C root,
+and hashes the exact edge coordinates in a distinct storage-artifact domain.
+Ordinary stage still rejects every epoch plan and requires parent+1; ordinary
+apply also rejects an epoch delta. No virtual root is inserted into ni_roots.
+
+First-new execution performs the existing authenticated config/usage rollover
+before user transactions in one complete plan. State delta, replay delta,
+exact native P and sequence CAS persist in the same owner transaction followed
+by file/directory sync and fresh confirmation. Reopen reconstructs the strict
+edge from retained native cutoff/checkpoint/preparation and signed evidence;
+matching hashes alone do not issue the receipt. A receipt is non-Clone,
+owner-affine, and rechecks exact P digest/sequence and storage/replay roots.
+Until the dedicated strict commit consumer lands, schema6 retains committed
+head C; descendants, finality commit, public state-sync/proof adapters and GC
+remain unsupported. PREPARED C+3 is never exposed as a committed application
+head or as a Core ACK.
+
+
+Implemented candidate source is `incremental_epoch_owner_v1.rs` plus the private
+`incremental_epoch_storage_v1.rs` adapter. Live schema6 ownership pins the exact
+edge-row checksum, while the row separately retains the immutable schema5 source
+anchor. Cold open checks the closed SQL schema and bounded row inventory; only
+`recover_incremental_epoch_edge_v1` and
+`reopen_prepared_incremental_epoch_v1(block, expected_p_digest)` reconstruct
+native authority from the actual preparation journal and committed source P.
+The latter also matches state storage block, target height, both parent/root
+coordinates, edge binding and storage sequence to the native P. No caller-built
+edge or low-level `ni_*` artifact is an application receipt. The existing v0
+recovery inventory explicitly rejects schema6 instead of reporting an empty
+ordinary table as an exact recovery result.
+
+Three candidate tests cover the real signed C8→C11 path, unchanged root/receipts
+against schema4 execution, owner mismatch, exact retries, cold reopen, altered
+edge/checkpoint/P sequence and missing preparation journal; separate storage
+cases cover empty, leaf and internal roots with unchanged physical child
+versions and rejection of seal values/future nodes. Process SIGKILL cuts before
+SQL commit, after commit before sync and after sync before readback leave either
+zero or one complete native-P/state-delta/edge transaction. Every reopened
+committed head stays C8. These checks establish bounded preparation/recovery,
+not finality commit, storage-device crash certification or production activation.

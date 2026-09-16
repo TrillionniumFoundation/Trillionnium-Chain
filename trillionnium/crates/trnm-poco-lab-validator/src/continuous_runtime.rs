@@ -2324,6 +2324,30 @@ impl ContinuousValidatorAuthorityV0 {
         )
     }
 
+    // Keep the two linear, large Node phase owners in separate call frames.
+    // Otherwise debug/default-stack builds retain both by-value phase moves
+    // while recursively validating every persisted SafetyState record.
+    #[inline(never)]
+    fn drive_boxed_vote_request_v1(
+        runtime: Box<LabRuntimeV0>,
+        proposal: SignedProposalV0,
+    ) -> Result<Box<trnm_poco_node::PocoNodeLabInertRequestOwnerV0<LabFileWatermark>>> {
+        Ok(Box::new(
+            (*runtime)
+                .drive_one_to_inert_request_v0(proposal)
+                .map_err(|error| anyhow!("drive proposal authority chain: {error}"))?,
+        ))
+    }
+    #[inline(never)]
+    fn sign_boxed_vote_request_v1(
+        inert: Box<trnm_poco_node::PocoNodeLabInertRequestOwnerV0<LabFileWatermark>>,
+        producer: &mut ContinuousSignatureProducerV0,
+    ) -> Result<Box<LabSignedVoteOwnerV0>> {
+        Ok(Box::new((*inert).sign_exact_vote_v0(producer).map_err(
+            |error| anyhow!("journal and release exact Vote: {error}"),
+        )?))
+    }
+
     fn vote_bound_proposal_v0(&mut self, proposal: SignedProposalV0) -> Result<Vote> {
         if !matches!(self.phase, Some(ContinuousAuthorityPhaseV0::Ready(_))) {
             bail!("continuous authority is not ready for a proposal");
@@ -2332,15 +2356,11 @@ impl ContinuousValidatorAuthorityV0 {
         let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.take() else {
             unreachable!("phase checked above")
         };
-        let inert = (*runtime)
-            .drive_one_to_inert_request_v0(proposal)
-            .map_err(|error| anyhow!("drive proposal authority chain: {error}"))?;
-        let signed = inert
-            .sign_exact_vote_v0(&mut self.producer)
-            .map_err(|error| anyhow!("journal and release exact Vote: {error}"))?;
+        let inert = Self::drive_boxed_vote_request_v1(runtime, proposal)?;
+        let signed = Self::sign_boxed_vote_request_v1(inert, &mut self.producer)?;
         let vote = signed.outbound_v0().vote_v0().clone();
         self.signer_lifetime.record_vote_v0()?;
-        self.phase = Some(ContinuousAuthorityPhaseV0::VoteSigned(Box::new(signed)));
+        self.phase = Some(ContinuousAuthorityPhaseV0::VoteSigned(signed));
         Ok(vote)
     }
 
@@ -2627,6 +2647,51 @@ impl ContinuousValidatorAuthorityV0 {
             .context("verified timeout lacks its selected QC")?
             .qc_ref();
         let high = before.high_qc_v0();
+        let equivalent_accepted_projection = self
+            .proposal_timeout_certificate
+            .as_ref()
+            .is_some_and(|accepted| {
+                compatible_alternative
+                    && target_view == before.current_view_v0().get()
+                    && selected == high
+                    && certificate
+                        .referenced_qcs()
+                        .iter()
+                        .all(|reference| accepted.referenced_qcs().contains(reference))
+                    && certificate.entries().iter().all(|entry| {
+                        accepted
+                            .entries()
+                            .iter()
+                            .find(|prior| prior.signer_id() == entry.signer_id())
+                            .is_none_or(|prior| prior == entry)
+                    })
+            });
+        if equivalent_accepted_projection {
+            // Different honest quorum subsets can encode distinct TCs for
+            // the same accepted view and complete QC projection. A freshly
+            // prepared child is intentionally ahead of this high QC; taking
+            // its signed owner through the no-effect certificate/rebase path
+            // would lose that phase or reject the authentic child checkpoint.
+            // Reconfirm the exact durable Safety/signer/CAS and P/K cut via
+            // the phase-neutral QC path. Keep the already accepted TC bytes.
+            // A new QC preimage or conflicting overlapping timeout entry is
+            // deliberately excluded and must reach the normal Core path.
+            let authoritative = self
+                .justify
+                .as_ordinary()
+                .context("ordinary equivalent TC requires its owner-bound high QC")?
+                .clone();
+            ensure!(
+                QcRef::from(&authoritative) == high,
+                "equivalent TC differs from the owner-bound proposal high QC"
+            );
+            let after = self.advance_quorum_certificate_v0(authoritative)?;
+            ensure!(
+                after == before,
+                "equivalent TC changed the live authority cut"
+            );
+            return Ok(after);
+        }
         if compatible_alternative
             && (target_view < before.current_view_v0().get()
                 || (target_view == before.current_view_v0().get()
@@ -6860,6 +6925,133 @@ mod tests {
                 old, signed,
                 "lower compatible TC must not replace the newer binding or consume the owner"
             );
+        });
+    }
+
+    #[test]
+    fn equivalent_timeout_quorum_preserves_prepared_signed_owner_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(2, 2, 4, 2).unwrap();
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 2);
+            let initial = harness.authorities[0].justify_v0().clone();
+            let original = proposal_for_takeover_v0(&harness);
+            for authority in &mut harness.authorities {
+                authority.vote_proposal_v0(original.clone()).unwrap();
+            }
+            let timeouts = harness
+                .authorities
+                .iter_mut()
+                .map(|authority| authority.begin_local_timeout_v0().unwrap())
+                .collect::<Vec<_>>();
+            let build = |statements: &[TimeoutVote]| {
+                let mut collector = ConsensusCertificateCollectorV0::new(
+                    harness.validator_set.clone(),
+                    MAXIMUM_COLLECTOR_COORDINATES_V0,
+                )
+                .unwrap();
+                collector.register_qc_reference(initial.clone()).unwrap();
+                for statement in statements {
+                    collector.admit_timeout_vote(statement.clone()).unwrap();
+                }
+                collector
+                    .try_timeout_certificate(statements[0].view())
+                    .unwrap()
+                    .unwrap()
+            };
+            let first = build(&timeouts[..3]);
+            let alternative = build(&timeouts);
+            assert_ne!(first.id(), alternative.id());
+            assert_eq!(
+                first.selected_high_qc_digest(),
+                alternative.selected_high_qc_digest()
+            );
+            let next_leader = leader_for(
+                &harness.validator_set,
+                View::new(first.timed_out_view().get() + 1),
+            );
+            let next_leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == next_leader)
+                .unwrap();
+            for (index, authority) in harness.authorities.iter_mut().enumerate() {
+                authority
+                    .advance_timeout_certificate_v0(if index == next_leader_index {
+                        alternative.clone()
+                    } else {
+                        first.clone()
+                    })
+                    .unwrap();
+            }
+            let rebound = proposal_for_takeover_v0(&harness);
+            assert_eq!(rebound.witness().timeout_certificate(), Some(&alternative));
+            // Followers must also accept a proposer carrying the equivalent
+            // quorum they had not selected locally while still Ready.
+            for authority in &mut harness.authorities {
+                authority.vote_proposal_v0(rebound.clone()).unwrap();
+            }
+            let followers = (0..4)
+                .filter(|index| *index != next_leader_index)
+                .collect::<Vec<_>>();
+            harness.authorities[followers[0]]
+                .begin_local_timeout_v0()
+                .unwrap();
+            for (position, index) in followers[..2].iter().copied().enumerate() {
+                let before = harness.authorities[index].facts_v0().unwrap();
+                assert_eq!(
+                    before.phase_v0(),
+                    if position == 0 {
+                        PocoNodeLabAuthorityPhaseV0::TimeoutSigned
+                    } else {
+                        PocoNodeLabAuthorityPhaseV0::VoteSigned
+                    }
+                );
+                let after = harness.authorities[index]
+                    .advance_timeout_certificate_v0(alternative.clone())
+                    .expect("same selected QC with a distinct valid quorum is phase-neutral");
+                assert_eq!(after, before);
+                assert_eq!(
+                    harness.authorities[index].proposal_timeout_certificate,
+                    Some(first.clone())
+                );
+            }
+            let negative = followers[2];
+            let before = harness.authorities[negative].facts_v0().unwrap();
+            let mut entries = alternative.entries().to_vec();
+            entries[0] = trnm_consensus_types::TimeoutEntryV0::new(
+                entries[0].signer_id(),
+                entries[0].high_qc(),
+                SignatureBytes::from_array([0; 64]),
+            )
+            .unwrap();
+            let invalid = TimeoutCertificateV0::new(
+                alternative.timed_out_view(),
+                entries,
+                alternative.referenced_qcs().to_vec(),
+                alternative.selected_high_qc_digest(),
+                &harness.validator_set,
+            )
+            .unwrap();
+            assert!(harness.authorities[negative]
+                .advance_timeout_certificate_v0(invalid)
+                .is_err());
+            assert_eq!(harness.authorities[negative].facts_v0().unwrap(), before);
+
+            // The equivalent projection is not a cached-success bypass: its
+            // exact owner/CAS path must still exist at fresh readback time.
+            let checkpoint = harness._temp.path().join(format!(
+                "takeover-authority-{negative:03}/checkpoint/checkpoint.sqlite3"
+            ));
+            std::fs::rename(&checkpoint, checkpoint.with_extension("displaced")).unwrap();
+            let error = harness.authorities[negative]
+                .advance_timeout_certificate_v0(alternative)
+                .expect_err("displaced checkpoint owner must fail equivalent TC revalidation");
+            assert!(error
+                .to_string()
+                .contains("reconfirm VoteSigned exact high-QC replay"));
+            assert_eq!(harness.authorities[negative].facts_v0().unwrap(), before);
         });
     }
 

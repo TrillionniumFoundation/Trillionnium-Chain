@@ -344,10 +344,55 @@ Replay existing `tests/verification_seals.rs` functions
 cleanup boundary. Generic fixture proof adapters are not independent native
 crypto verification; acceptance also requires real M01/M02 proofs and M07 install.
 
+### Candidate T1 ordinary finalized-body replay (primary M13)
+
+The first executable public-native receiver starts from an independently pinned
+canonical application genesis, validator set, parameters and client signer policy.
+It never imports peer command IDs, nonce sets, local commit IDs or store checksums:
+the frozen header state root does not authenticate those replay sets. Each record
+contains exact finality CEV0 bytes and the original signed outer transaction bytes;
+strict finality, contiguous parent identity/time, and actual native execution must
+all agree before SQLite commit. Only height 1 may use the existing explicit trusted
+genesis decoder. Epoch changes, checkpoint/seal blocks and schema 4/5/6
+installation remain rejected by this initial schema-3 receiver; it issues no
+signer capability.
+
+The bounded candidate transfer is at most 128 ordinary finalized records, 1 MiB
+per record, 64 MiB total, and 64 KiB per download chunk. A manifest pins the chosen
+height, target block ID, each record length/hash and the hash of every 64 KiB chunk.
+The manifest is limited to 128 KiB; chunk hash/cardinality are checked before
+persistence and rechecked on resume. A wrong same-length peer chunk never occupies
+an immutable slot, so the correct retry can succeed. These hashes detect transfer
+substitution; consensus proofs and execution provide authority. The client selects
+an exact positive target height, so a server cannot silently claim a shorter prefix.
+Persist the manifest and immutable chunks with create-new, file and directory sync.
+On restart re-read every used chunk and verify its exact hash, then compare the real
+application committed head with the replayed prefix. A crash after application
+commit but before progress publication resumes from that exact committed head.
+
+A private, locked receiver directory owns at most two staging directories, keyed
+by manifest digest, and a final CURRENT record. A valid-shaped but unauthenticated
+first peer manifest cannot pin the only download slot: an honest retry can choose
+the second stage without deleting any verified application progress. A third
+distinct manifest reports capacity exhaustion and requires an explicitly chosen
+fresh replica directory. A completed replica keeps its selected stage. CURRENT is published only after the complete target is strictly verified,
+the application owner is dropped, and a freshly reopened schema-3 owner confirms
+the exact head. CURRENT includes the selected application directory. It identifies an application replica only: Core, SafetyRules, independent
+watermarks and signing stay uncommissioned. The actual socket executes proof/sync
+reads through two bounded workers, so a
+128-file manifest read does not occupy the consensus actor. Individual requests
+retain an 8-second client deadline and one sync download has a 600-second bound.
+Source export stops after height 128, and any record larger than 1 MiB reports
+sync unavailable without invalidating an otherwise valid consensus block. These
+are candidate transfer limits, not a hard SQLite disk quota or production SLO.
+Missing files, altered chunks, conflicting manifest, unsupported epoch, invalid proofs or execution mismatch retain the staged
+state and return an error; no invalid input is treated as an empty or virgin store.
+
 ## Activation boundary
 
 Commissioned public synchronization needs authenticated transport, general
 native proof paths, real state recomputation/installer, bounded restart and
 multi-epoch producer/consumer tests. Migration additionally requires exact
 source finality, liabilities, target-root and fresh-custody agreement.
-The planned edge and development downloader are not current runtime capabilities.
+The general multi-epoch installer remains planned; the bounded ordinary application
+replica above is an explicit candidate capability with signing disabled.

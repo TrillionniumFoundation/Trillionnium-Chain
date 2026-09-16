@@ -49,8 +49,32 @@ struct HashData {
     native_tx_hash: String,
 }
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SyncManifestData {
+    target_height: u64,
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SyncChunkData {
+    height: u64,
+    index: u64,
+    record_sha256: String,
+}
+#[derive(Deserialize)]
 #[serde(tag = "op", deny_unknown_fields)]
 enum Request {
+    #[serde(rename = "sync_manifest")]
+    SyncManifest {
+        schema: String,
+        request_id: String,
+        data: SyncManifestData,
+    },
+    #[serde(rename = "sync_chunk")]
+    SyncChunk {
+        schema: String,
+        request_id: String,
+        data: SyncChunkData,
+    },
     #[serde(rename = "capabilities")]
     Capabilities {
         schema: String,
@@ -85,7 +109,13 @@ enum Request {
 impl Request {
     fn context(&self) -> (&str, &str) {
         match self {
-            Self::Capabilities {
+            Self::SyncManifest {
+                schema, request_id, ..
+            }
+            | Self::SyncChunk {
+                schema, request_id, ..
+            }
+            | Self::Capabilities {
                 schema, request_id, ..
             }
             | Self::Submit {
@@ -447,38 +477,37 @@ impl NativeClientRuntimeV1 {
                     if client.bytes.len() == expected + 4
                         && bounded_json_depth(&client.bytes[4..], 64)
                     {
-                        if let Ok(Request::Proof {
-                            schema,
-                            request_id,
-                            data,
-                        }) = serde_json::from_slice::<Request>(&client.bytes[4..])
+                        if let Ok(
+                            request @ (Request::Proof { .. }
+                            | Request::SyncManifest { .. }
+                            | Request::SyncChunk { .. }),
+                        ) = serde_json::from_slice::<Request>(&client.bytes[4..])
                         {
-                            if valid_request_context(&schema, &request_id) {
-                                if let Ok(hash) = hash32(&data.native_tx_hash) {
-                                    if self.proof_jobs.len() < 2 {
-                                        let reader = self.proof_reader_v1();
-                                        let job = std::thread::Builder::new()
-                                            .name("native-proof-query".to_owned())
-                                            .spawn(move || {
-                                                reader.proof_reply_v1(&request_id, hash)
-                                            })?;
-                                        self.proof_jobs.push((client.id, job));
-                                        client.proof_pending = true;
-                                        client.bytes.clear();
-                                        self.clients.push(client);
-                                        handled += 1;
-                                        continue;
-                                    }
-                                    client.reply = Some(frame_response(&self.error_reply(
-                                        &request_id,
-                                        "backpressure",
-                                        true,
-                                    ))?);
+                            let (schema, request_id) = request.context();
+                            if valid_request_context(schema, request_id) {
+                                if self.proof_jobs.len() < 2 {
+                                    let reader = self.proof_reader_v1();
+                                    let job = std::thread::Builder::new()
+                                        .name("native-read-query".to_owned())
+                                        .spawn(move || {
+                                            reader.read_query_reply_v1(request, finalized_height)
+                                        })?;
+                                    self.proof_jobs.push((client.id, job));
+                                    client.proof_pending = true;
                                     client.bytes.clear();
                                     self.clients.push(client);
                                     handled += 1;
                                     continue;
                                 }
+                                client.reply = Some(frame_response(&self.error_reply(
+                                    request_id,
+                                    "backpressure",
+                                    true,
+                                ))?);
+                                client.bytes.clear();
+                                self.clients.push(client);
+                                handled += 1;
+                                continue;
                             }
                         }
                     }
@@ -544,6 +573,9 @@ impl NativeClientRuntimeV1 {
             return self.error_reply(&id, "invalid_request", false);
         }
         match request {
+            Request::SyncManifest { .. } | Request::SyncChunk { .. } => {
+                self.error_reply(&id, "invalid_request", false)
+            }
             Request::Capabilities { data, .. } => {
                 let _ = data;
                 self.reply(&id,json!({"profile":self.profile.schema,"wall_clock_epoch_ms":self.profile.wall_clock_epoch_ms.to_string(),"time_domain":"milliseconds_since_profile_wall_clock_epoch","maximum_outer_bytes":self.profile.maximum_outer_bytes,"maximum_pending":self.profile.maximum_pending,"proof_class":"poco-three-chain-v0","m05_intent_binding":false}))
@@ -800,6 +832,18 @@ fn bounded_json_depth(bytes: &[u8], max: usize) -> bool {
 }
 
 impl NativeClientRuntimeV1 {
+    pub(crate) fn sync_prefix_ready_v1(&self) -> bool {
+        self.root.join("replay-003.id").is_file()
+    }
+    pub(crate) fn persist_sync_bootstrap_v1(
+        &self,
+        proofs: &[trnm_consensus_types::FinalityProofV0; 3],
+    ) -> Result<()> {
+        for proof in proofs {
+            crate::native_replay_sync_v1::persist_export(&self.root, proof, &[])?;
+        }
+        Ok(())
+    }
     pub const fn last_archived_finalized_height_v1(&self) -> u64 {
         self.last_archived_finalized_height
     }
@@ -887,6 +931,7 @@ impl NativeClientRuntimeV1 {
             );
             receipts.push(canonical);
         }
+        crate::native_replay_sync_v1::persist_export(&self.root, proof, transactions)?;
         for (index, transaction) in transactions.iter().enumerate() {
             let built =
                 trnm_application_tx_builder_v0::BuiltCanonicalTxV0::from_exact_outer_bytes_v0(
@@ -970,6 +1015,39 @@ struct NativeProofReaderV1 {
     set: ValidatorSet,
 }
 impl NativeProofReaderV1 {
+    fn read_query_reply_v1(&self, request: Request, finalized: u64) -> Value {
+        let id = request.context().1.to_owned();
+        match request {
+            Request::Proof { data, .. } => match hash32(&data.native_tx_hash) {
+                Ok(hash) => self.proof_reply_v1(&id, hash),
+                Err(_) => self.error_reply(&id, "invalid_request", false),
+            },
+            Request::SyncManifest { data, .. } => {
+                if data.target_height > finalized {
+                    return self.error_reply(&id, "not_finalized", true);
+                }
+                match crate::native_replay_sync_v1::manifest(
+                    &self.root,
+                    &self.set,
+                    self.profile.digest_v1().expect("validated profile"),
+                    data.target_height,
+                ) {
+                    Ok(manifest) => self.reply(&id, json!(manifest)),
+                    Err(_) => self.error_reply(&id, "sync_unavailable", false),
+                }
+            }
+            Request::SyncChunk { data, .. } => {
+                if data.height > finalized {
+                    return self.error_reply(&id, "not_finalized", true);
+                }
+                match crate::native_replay_sync_v1::chunk(&self.root, data.height, data.index, &data.record_sha256) {
+                    Ok(bytes) => self.reply(&id, json!({"height":data.height,"index":data.index,"record_sha256":data.record_sha256,"bytes_hex":hex::encode(bytes)})),
+                    Err(_) => self.error_reply(&id, "sync_unavailable", false),
+                }
+            }
+            _ => self.error_reply(&id, "invalid_request", false),
+        }
+    }
     fn reply(&self, id: &str, data: Value) -> Value {
         json!({"schema":"trnm.native-client.response.v1","request_id":id,"candidate_only":true,"chain_id":self.set.chain_id().as_str(),"genesis_hash":hex::encode(self.set.genesis_hash().as_bytes()),"profile_sha256":hex::encode(self.profile.digest_v1().expect("validated canonical profile")),"ok":true,"data":data})
     }

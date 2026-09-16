@@ -41,3 +41,4 @@ trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 
 [dev-dependencies]
 serde_json = "1"
+ed25519-dalek = { version = "2.2", default-features = false }

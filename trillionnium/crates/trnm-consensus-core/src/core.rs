@@ -7735,6 +7735,7 @@ impl Core {
                 self.config.validator_set(),
                 self.config.consensus_parameters(),
                 self.safety.finalized(),
+                self.safety.epoch_state_v1(),
             )?
             .is_empty()
         {
@@ -9244,13 +9245,7 @@ impl Core {
         // match the freshly rebuilt predecessor and the exact three-chain.
         // This closes the gap where a process-local Core permit could carry a
         // queue-front proof without a live Core/Safety join.
-        receipt.finalization().proof().verify(
-            self.config.validator_set(),
-            None,
-            self.config.consensus_parameters(),
-            receipt.finalization().authenticated_parent().timestamp_ms(),
-            verifier,
-        )?;
+        self.verify_durable_finalization_v1(receipt.finalization(), verifier)?;
         let safety_context = self.safety_rules_shadow_context_v1()?;
         let safety_state = self.safety_rules_shadow_state_v1(&safety_context, verifier)?;
         let application_parent = receipt.finalization().authenticated_parent();
@@ -10378,7 +10373,7 @@ impl Core {
                 received: id.block_id(),
             });
         }
-        Self::validate_payload_artifact_parent(&proposal, result)?;
+        self.validate_payload_artifact_parent(&proposal, result)?;
         self.require_payload_validation_obligation(route, id, &proposal)?;
         self.consume_recovered_payload_validation_fence_v0(route, id, result)?;
         let checkpoint_parent = if result.is_valid()
@@ -11324,7 +11319,7 @@ impl Core {
                 received: id.block_id(),
             });
         }
-        Self::validate_payload_artifact_parent(&proposal, result)?;
+        self.validate_payload_artifact_parent(&proposal, result)?;
         self.require_payload_validation_obligation(route, id, &proposal)?;
         self.consume_recovered_payload_validation_fence_v0(route, id, result)?;
         let checkpoint_parent = if result.is_valid()
@@ -11619,13 +11614,7 @@ impl Core {
         // application-applied watermark.  This keeps a torn or hostile
         // in-memory finalization carrier from becoming a durable application
         // commit even when its block/overlay coordinates still look valid.
-        queue_front.proof().verify(
-            self.config.validator_set(),
-            None,
-            self.config.consensus_parameters(),
-            queue_front.authenticated_parent().timestamp_ms(),
-            verifier,
-        )?;
+        self.verify_durable_finalization_v1(queue_front, verifier)?;
         let committed = durable.proof().finalized_block().header();
         let exact_target = FinalizedTip::new(
             committed.height(),
@@ -12011,6 +12000,7 @@ impl Core {
             self.config.validator_set(),
             self.config.consensus_parameters(),
             self.safety.finalized(),
+            self.safety.epoch_state_v1(),
         )?;
         let queue_len = self
             .safety
@@ -12034,13 +12024,7 @@ impl Core {
             if finalization.authenticated_parent() != expected_parent {
                 return Err(CoreError::ConflictingCertificate);
             }
-            finalization.proof().verify(
-                self.config.validator_set(),
-                None,
-                self.config.consensus_parameters(),
-                finalization.authenticated_parent().timestamp_ms(),
-                verifier,
-            )?;
+            self.verify_durable_finalization_v1(finalization, verifier)?;
             let committed = finalization.proof().finalized_block().header();
             let terminal_overlay = self
                 .safety
@@ -12052,7 +12036,7 @@ impl Core {
             }
             match self.blocks.validated_ancestry(
                 committed.id(),
-                expected_parent,
+                finalization.consensus_parent_tip_v1(),
                 self.config.max_block_time_step_ms(),
             ) {
                 Ancestry::Descends => {}
@@ -12775,6 +12759,7 @@ impl Core {
     }
 
     fn validate_payload_artifact_parent(
+        &self,
         proposal: &SignedProposalV0,
         result: PayloadValidationResult,
     ) -> Result<()> {
@@ -12786,6 +12771,22 @@ impl Core {
         if overlay.block_id() != block_id
             || overlay.consensus_parent_block_id_v1() != proposal.block().header().parent_id()
         {
+            return Err(CoreError::ConflictingPayloadValidation(block_id));
+        }
+        if proposal.block().header().block_kind() == BlockKind::EpochHandoff {
+            let epoch = self
+                .safety
+                .epoch_state_v1()
+                .ok_or(CoreError::UnsupportedEpochAnchor)?;
+            if overlay.parent_block_id() != epoch.checkpoint_header().id()
+                || overlay.consensus_parent_block_id_v1() != epoch.terminal_old_header().id()
+                || overlay.epoch_parent_v1().map(|e| e.activation_binding())
+                    != Some(epoch.activation_binding())
+                || proposal.witness().justify_qc() != epoch.anchor_reference()
+            {
+                return Err(CoreError::ConflictingPayloadValidation(block_id));
+            }
+        } else if overlay.epoch_parent_v1().is_some() {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
         }
         Ok(())
@@ -12935,6 +12936,13 @@ impl Core {
                     "payload validation obligation parent header bytes",
                 ))?;
         }
+        if let Some(edge) = obligation.parent().epoch_application_parent_v1() {
+            size = size
+                .checked_add(4 + edge.terminal_old_header().try_cev0_bytes()?.len() + 32)
+                .ok_or(CoreError::ArithmeticOverflow(
+                    "payload validation epoch edge bytes",
+                ))?;
+        }
         if obligation
             .parent()
             .authenticated_genesis_application_parent_v0()
@@ -12957,6 +12965,14 @@ impl Core {
                 .ok_or(CoreError::ArithmeticOverflow(
                     "payload validation obligation parent overlay bytes",
                 ))?;
+            if matches!(obligation.parent().provenance(), crate::PayloadValidationParentProvenanceV0::Speculative(overlay) if overlay.epoch_parent_v1().is_some())
+            {
+                size = size
+                    .checked_add(1 + 32 + 32)
+                    .ok_or(CoreError::ArithmeticOverflow(
+                        "payload validation speculative epoch overlay bytes",
+                    ))?;
+            }
         }
         Ok(size)
     }
@@ -13993,8 +14009,11 @@ impl Core {
             self.require_supported_proposal_header(header)?;
             let parent = obligation.parent();
             let tip = parent.tip();
-            if header.parent_id() != tip.block_id()
-                || header.height() != tip.height().checked_next()?
+            let consensus_tip = parent.consensus_parent_tip_v1();
+            if (header.block_kind() == BlockKind::EpochHandoff)
+                != parent.epoch_application_parent_v1().is_some()
+                || header.parent_id() != consensus_tip.block_id()
+                || header.height() != consensus_tip.height().checked_next()?
                 || header.genesis_hash() != self.config.validator_set().genesis_hash()
                 || header.chain_id() != self.config.validator_set().chain_id()
                 || header.protocol_version() != self.config.validator_set().protocol_version()
@@ -14006,60 +14025,96 @@ impl Core {
                     "durable payload validation target differs from its authenticated context",
                 ));
             }
-            match (parent.provenance(), parent.exact_header()) {
-                (crate::PayloadValidationParentProvenanceV0::Speculative(overlay), Some(exact))
-                    if overlay.block_id() == exact.id()
+            if let Some(edge) = parent.epoch_application_parent_v1() {
+                let epoch = self
+                    .safety
+                    .epoch_state_v1()
+                    .ok_or(CoreError::UnsupportedEpochAnchor)?;
+                if parent != &PayloadValidationParentV0::from_epoch_checkpoint_v1(epoch)
+                    || header.block_kind() != trnm_consensus_types::BlockKind::EpochHandoff
+                    || proposal.witness().justify_qc() != epoch.anchor_reference()
+                    || edge.activation_binding() != epoch.activation_binding()
+                {
+                    return Err(CoreError::InvalidRecovery(
+                        "durable first-new payload parent differs from its exact epoch edge",
+                    ));
+                }
+            } else {
+                match (parent.provenance(), parent.exact_header()) {
+                    (
+                        crate::PayloadValidationParentProvenanceV0::Speculative(overlay),
+                        Some(exact),
+                    ) if overlay.block_id() == exact.id()
                         && overlay.consensus_parent_block_id_v1() == exact.parent_id()
                         && exact.id() == tip.block_id()
                         && exact.height() == tip.height()
                         && exact.view() == tip.view()
                         && exact.timestamp_ms() == tip.timestamp_ms()
                         && payload_parent_context_matches_target_v0(header, exact)? => {}
-                (crate::PayloadValidationParentProvenanceV0::Speculative(_), _) => {
-                    return Err(CoreError::InvalidRecovery(
-                        "durable speculative payload parent is inconsistent",
-                    ));
-                }
-                (crate::PayloadValidationParentProvenanceV0::Finalized, Some(exact))
-                    if exact.id() == tip.block_id()
-                        && exact.height() == tip.height()
-                        && exact.view() == tip.view()
-                        && exact.timestamp_ms() == tip.timestamp_ms()
-                        && payload_parent_context_matches_target_v0(header, exact)? => {}
-                (crate::PayloadValidationParentProvenanceV0::Finalized, Some(_)) => {
-                    return Err(CoreError::InvalidRecovery(
-                        "durable payload validation exact parent is inconsistent",
-                    ));
-                }
-                (crate::PayloadValidationParentProvenanceV0::Finalized, None)
-                    if payload_genesis_parent_matches_config_v0(parent, &self.config) => {}
-                (crate::PayloadValidationParentProvenanceV0::Finalized, None)
-                    if parent
-                        .authenticated_genesis_application_parent_v0()
-                        .is_some()
-                        || self
-                            .config
+                    (crate::PayloadValidationParentProvenanceV0::Speculative(_), _) => {
+                        return Err(CoreError::InvalidRecovery(
+                            "durable speculative payload parent is inconsistent",
+                        ));
+                    }
+                    (crate::PayloadValidationParentProvenanceV0::Finalized, Some(exact))
+                        if exact.id() == tip.block_id()
+                            && exact.height() == tip.height()
+                            && exact.view() == tip.view()
+                            && exact.timestamp_ms() == tip.timestamp_ms()
+                            && payload_parent_context_matches_target_v0(header, exact)? => {}
+                    (crate::PayloadValidationParentProvenanceV0::Finalized, Some(_)) => {
+                        return Err(CoreError::InvalidRecovery(
+                            "durable payload validation exact parent is inconsistent",
+                        ));
+                    }
+                    (crate::PayloadValidationParentProvenanceV0::Finalized, None)
+                        if payload_genesis_parent_matches_config_v0(parent, &self.config) => {}
+                    (crate::PayloadValidationParentProvenanceV0::Finalized, None)
+                        if parent
                             .authenticated_genesis_application_parent_v0()
-                            .is_some() =>
-                {
-                    return Err(CoreError::InvalidRecovery(
+                            .is_some()
+                            || self
+                                .config
+                                .authenticated_genesis_application_parent_v0()
+                                .is_some() =>
+                    {
+                        return Err(CoreError::InvalidRecovery(
                         "durable authenticated genesis application parent differs from core configuration",
                     ));
-                }
-                (crate::PayloadValidationParentProvenanceV0::Finalized, None) => {
-                    return Err(CoreError::InvalidRecovery(
-                        "durable payload validation lacks a non-genesis parent header",
-                    ));
+                    }
+                    (crate::PayloadValidationParentProvenanceV0::Finalized, None) => {
+                        return Err(CoreError::InvalidRecovery(
+                            "durable payload validation lacks a non-genesis parent header",
+                        ));
+                    }
                 }
             }
             if verify_durable_crypto {
-                proposal.verify(
-                    self.config.validator_set(),
-                    None,
-                    self.config.consensus_parameters(),
-                    tip.timestamp_ms(),
-                    verifier,
-                )?;
+                if let Some(epoch) = self.safety.epoch_state_v1() {
+                    let runtime = epoch.strict_context()?;
+                    let exact = parent
+                        .epoch_application_parent_v1()
+                        .map(|edge| edge.terminal_old_header())
+                        .or_else(|| parent.exact_header())
+                        .ok_or(CoreError::InvalidRecovery(
+                            "epoch obligation requires its exact consensus parent",
+                        ))?;
+                    runtime.verify_proposal_v1(
+                        proposal,
+                        exact,
+                        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                            self.config.consensus_parameters(),
+                        ),
+                    )?;
+                } else {
+                    proposal.verify(
+                        self.config.validator_set(),
+                        None,
+                        self.config.consensus_parameters(),
+                        tip.timestamp_ms(),
+                        verifier,
+                    )?;
+                }
             }
         }
 
@@ -15852,10 +15907,51 @@ impl Core {
         if qc_order_key_ref(self.safety.locked_qc()) < qc_order_key_ref(previous.locked_qc()) {
             return Err(CoreError::InvalidRecovery("locked QC regressed"));
         }
+        let prior_finalized = previous.qualified_finalized_v1(self.config.validator_set());
+        let next_finalized = self
+            .safety
+            .qualified_finalized_v1(self.config.validator_set());
+        let same_finalized_scope = prior_finalized.epoch() == next_finalized.epoch()
+            && prior_finalized.validator_set_id() == next_finalized.validator_set_id()
+            && prior_finalized.parameters_hash() == next_finalized.parameters_hash();
         if self.safety.finalized().height() < previous.finalized().height()
-            || self.safety.finalized().view() < previous.finalized().view()
+            || (same_finalized_scope
+                && self.safety.finalized().view() < previous.finalized().view())
         {
             return Err(CoreError::InvalidRecovery("finalized tip regressed"));
+        }
+        if !same_finalized_scope {
+            // A view reset is admissible only along the retained, strictly
+            // authenticated checkpoint -> first-new application edge. Merely
+            // supplying different epoch/set scalars must never relax ordering.
+            let exact_edge = self.safety.epoch_state_v1().is_some_and(|epoch| {
+                previous.epoch_state_v1() == Some(epoch)
+                    && prior_finalized
+                        == crate::QualifiedFinalizedTipV1::from_header(epoch.checkpoint_header())
+                    && next_finalized.epoch() == self.config.validator_set().epoch()
+                    && next_finalized.validator_set_id() == self.config.validator_set().id()
+                    && next_finalized.parameters_hash() == self.config.consensus_parameters().hash()
+                    && self
+                        .safety
+                        .finalization_queue()
+                        .first()
+                        .is_some_and(|first| {
+                            let expected =
+                                PayloadValidationParentV0::from_epoch_checkpoint_v1(epoch);
+                            first.authenticated_parent() == previous.finalized()
+                                && first.epoch_application_parent_v1()
+                                    == expected.epoch_application_parent_v1()
+                                && first.proof().finalized_block().header().block_kind()
+                                    == trnm_consensus_types::BlockKind::EpochHandoff
+                                && first.proof().finalized_block().justify_qc()
+                                    == epoch.anchor_reference()
+                        })
+            });
+            if !exact_edge {
+                return Err(CoreError::InvalidRecovery(
+                    "finalized scope changed without authenticated epoch edge",
+                ));
+            }
         }
         if self.safety.finalized().height() == previous.finalized().height()
             && self.safety.finalized() != previous.finalized()

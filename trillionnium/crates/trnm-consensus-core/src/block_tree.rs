@@ -398,7 +398,7 @@ impl BlockTree {
         }
         if result.artifact_ref().is_some_and(|artifact| {
             artifact.overlay().block_id() != block_id
-                || artifact.overlay().parent_block_id() != node.header.parent_id()
+                || artifact.overlay().consensus_parent_block_id_v1() != node.header.parent_id()
         }) {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
         }
@@ -692,6 +692,7 @@ impl BlockTree {
         validator_set: &ValidatorSet,
         consensus_parameters: &ConsensusParametersV0,
         finalized: FinalizedTip,
+        epoch: Option<&crate::EpochCoreStateV1>,
     ) -> Result<Option<DurableFinalizationV0>> {
         let Some(grandchild_node) = self.nodes.get(&newest_certificate.block_id()) else {
             return Ok(None);
@@ -736,22 +737,41 @@ impl BlockTree {
             .cloned()
             .ok_or(CoreError::InvalidOrdinaryCertificate)?;
         let grandchild_qc = newest_certificate.clone();
-        let authenticated_parent = self.authenticated_parent(&committed_node.header, finalized)?;
+        let epoch_parent = if committed_node.header.block_kind()
+            == trnm_consensus_types::BlockKind::EpochHandoff
+        {
+            let epoch = epoch.ok_or(CoreError::UnsupportedEpochAnchor)?;
+            Some(crate::PayloadValidationParentV0::from_epoch_checkpoint_v1(
+                epoch,
+            ))
+        } else {
+            None
+        };
+        let authenticated_parent = match &epoch_parent {
+            Some(parent) => parent.tip(),
+            None => self.authenticated_parent(&committed_node.header, finalized)?,
+        };
+        let consensus_parent = epoch_parent
+            .as_ref()
+            .map_or(authenticated_parent, |parent| {
+                parent.consensus_parent_tip_v1()
+            });
+        let old_set = epoch.map(|e| e.old_validator_set());
         let committed = CertifiedHeaderV0::from_proposal_witness(
             committed_node.header.clone(),
             committed_node.witness.clone(),
             committed_qc,
             validator_set,
-            None,
+            old_set,
             consensus_parameters,
-            authenticated_parent.timestamp_ms(),
+            consensus_parent.timestamp_ms(),
         )?;
         let child = CertifiedHeaderV0::from_proposal_witness(
             child_node.header.clone(),
             child_node.witness.clone(),
             child_qc,
             validator_set,
-            None,
+            old_set,
             consensus_parameters,
             committed_node.header.timestamp_ms(),
         )?;
@@ -760,7 +780,7 @@ impl BlockTree {
             grandchild_node.witness.clone(),
             grandchild_qc,
             validator_set,
-            None,
+            old_set,
             consensus_parameters,
             child_node.header.timestamp_ms(),
         )?;
@@ -769,10 +789,17 @@ impl BlockTree {
             child,
             grandchild,
             validator_set,
-            None,
+            old_set,
             consensus_parameters,
-            authenticated_parent.timestamp_ms(),
+            consensus_parent.timestamp_ms(),
         )?;
+        if epoch_parent.is_some() {
+            return Ok(Some(DurableFinalizationV0::for_epoch_application_v1(
+                epoch.ok_or(CoreError::UnsupportedEpochAnchor)?,
+                proof,
+                target_overlay_ref,
+            )?));
+        }
         Ok(Some(DurableFinalizationV0::new(
             authenticated_parent,
             proof,
@@ -798,13 +825,19 @@ impl BlockTree {
         validator_set: &ValidatorSet,
         consensus_parameters: &ConsensusParametersV0,
         finalized: FinalizedTip,
+        epoch: Option<&crate::EpochCoreStateV1>,
     ) -> Result<Vec<DurableFinalizationV0>> {
         let mut newest = newest_certificate.clone();
         let mut newest_first = Vec::new();
 
         for _ in 0..=self.max_blocks {
-            let Some(finalization) =
-                self.detect_three_chain(&newest, validator_set, consensus_parameters, finalized)?
+            let Some(finalization) = self.detect_three_chain(
+                &newest,
+                validator_set,
+                consensus_parameters,
+                finalized,
+                epoch,
+            )?
             else {
                 break;
             };

@@ -443,6 +443,11 @@ jobs:
           tail -n 120 "$root/pcc1-boundary.log"
           printf 'PCC1_BOUNDARY_EXIT_CODE=%s\n' "$rc"
           exit "$rc"
+      - name: Verify explicit incremental epoch preparation candidate
+        working-directory: trillionnium
+        run: |
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-native-execution-v0 --features test-fixtures,incremental-epoch-candidate --lib --locked
+          cargo clippy -p trnm-native-execution-v0 --features test-fixtures,incremental-epoch-candidate --all-targets --locked -- -D warnings
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
@@ -456,6 +461,8 @@ jobs:
           cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-state-sync-v0 --no-default-features --doc --locked
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-durable-file-adapters-v0 --lib --locked -- --nocapture
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features persistent-authority-candidate --all-targets --locked -- --nocapture
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features epoch-join-test-fixtures --lib --locked
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-safety-store --features test-fixtures --test epoch_journal_v1 --locked
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
           cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
           git diff --exit-code HEAD -- .

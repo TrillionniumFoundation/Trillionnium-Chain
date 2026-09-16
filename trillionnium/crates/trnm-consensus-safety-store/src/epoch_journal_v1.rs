@@ -1,76 +1,83 @@
-//! Journal8's closed outgoing-epoch-zero profile. It persists real opaque Core
-//! requests and returns fresh comparison evidence, never a signing/StorageAck
-//! capability. Full epoch activation and external anti-rollback remain separate.
+//! Separate journal9 for exact full-context 14E records. Initial migration
+//! consumes an opaque pending Core request plus the actual fresh journal8 cut.
+//! The store returns inert comparison receipts, never an ACK or signer lease.
 use crate::epoch_preparation_sqlite_v1 as fs_owner;
 use crate::{
     decode_transition_context_v0_exact, encode_transition_context_v0,
-    validate_transition_context_against_state_v0, SafetyStateStoreProfileV0, SafetyStoreErrorV0,
-    SafetyTransitionContextV0, SqliteSafetyStateStoreV0,
+    validate_transition_context_against_state_v0, OldEpochSafetyHeadPinV1,
+    OldEpochSafetyJournalProfileV1, SafetyStoreErrorV0, SafetyTransitionContextV0,
+    SqliteOldEpochSafetyJournalV1,
 };
 use fs_owner::{EpochPreparationStoreErrorV1, PinnedFileV1};
 use rusqlite::{params, Connection, TransactionBehavior};
 use sha2::{Digest, Sha256};
 use std::{io::Write, path::Path, sync::Arc};
 use trnm_consensus_core::{
-    decode_old_epoch_boundary_safety_record_v1_exact, decode_safety_state_record_v0_exact,
-    encode_old_epoch_boundary_safety_record_v1, encode_safety_state_record_v0,
-    old_epoch_boundary_record_context_ref_v1, safety_state_record_config_ref_v0, Core, CoreConfig,
-    CoreError, OldEpochBoundaryCoreV1, SafetyState, SafetyStatePersistenceBindingV0,
-    SafetyStatePersistenceV0, SafetyStateRecordContextV0, SafetyStateRecordErrorV0,
-    SafetyStateRecordLimitsV0, UnverifiedSafetyStateRecordV0,
+    decode_epoch_safety_record_v1_exact, decode_old_epoch_boundary_safety_record_v1_exact,
+    encode_epoch_safety_record_v1, encode_old_epoch_boundary_safety_record_v1,
+    epoch_safety_record_context_ref_v1, Core, CoreConfig, CoreError, EpochCoreStateV1,
+    EpochSafetyStateRecordContextV1, PreparedEpochCoreActivationV1, SafetyState,
+    SafetyStatePersistenceBindingV0, SafetyStatePersistenceV0, SafetyStateRecordContextV0,
+    SafetyStateRecordErrorV0, SafetyStateRecordLimitsV0, UnverifiedSafetyStateRecordV0,
 };
-use trnm_consensus_crypto::{validate_validator_set_strict_ed25519_v0, StrictEd25519Verifier};
+use trnm_consensus_crypto::StrictEd25519Verifier;
 
-const APPLICATION_ID: i64 = 0x54524f38;
-const LOCK_MAGIC: &[u8; 8] = b"TRNMJ8OL";
+const APPLICATION_ID: i64 = 0x54524539;
+const LOCK_MAGIC: &[u8; 8] = b"TRNMJ9EP";
 const MAX_RECORD: usize = 256 * 1024 * 1024;
 const MAX_CONTEXT: usize = 1024 * 1024;
-const SQL: &str = include_str!("old_epoch_journal_v1.sql");
+const SQL: &str = include_str!("epoch_journal_v1.sql");
 
 #[derive(Debug)]
-pub enum OldEpochJournalErrorV1 {
+pub enum EpochJournalErrorV1 {
     Namespace(EpochPreparationStoreErrorV1),
     Sqlite(rusqlite::Error),
     Source(SafetyStoreErrorV0),
+    OldJournal(crate::OldEpochJournalErrorV1),
     Record(SafetyStateRecordErrorV0),
     Core(CoreError),
     Invalid(&'static str),
     Fenced,
 }
-impl std::fmt::Display for OldEpochJournalErrorV1 {
+impl std::fmt::Display for EpochJournalErrorV1 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "outgoing journal8: {self:?}")
+        write!(f, "epoch journal9: {self:?}")
     }
 }
-impl std::error::Error for OldEpochJournalErrorV1 {}
-impl From<EpochPreparationStoreErrorV1> for OldEpochJournalErrorV1 {
+impl std::error::Error for EpochJournalErrorV1 {}
+impl From<EpochPreparationStoreErrorV1> for EpochJournalErrorV1 {
     fn from(e: EpochPreparationStoreErrorV1) -> Self {
         Self::Namespace(e)
     }
 }
-impl From<rusqlite::Error> for OldEpochJournalErrorV1 {
+impl From<rusqlite::Error> for EpochJournalErrorV1 {
     fn from(e: rusqlite::Error) -> Self {
         Self::Sqlite(e)
     }
 }
-impl From<SafetyStoreErrorV0> for OldEpochJournalErrorV1 {
+impl From<SafetyStoreErrorV0> for EpochJournalErrorV1 {
     fn from(e: SafetyStoreErrorV0) -> Self {
         Self::Source(e)
     }
 }
-impl From<SafetyStateRecordErrorV0> for OldEpochJournalErrorV1 {
+impl From<SafetyStateRecordErrorV0> for EpochJournalErrorV1 {
     fn from(e: SafetyStateRecordErrorV0) -> Self {
         Self::Record(e)
     }
 }
-impl From<CoreError> for OldEpochJournalErrorV1 {
+impl From<crate::OldEpochJournalErrorV1> for EpochJournalErrorV1 {
+    fn from(value: crate::OldEpochJournalErrorV1) -> Self {
+        Self::OldJournal(value)
+    }
+}
+impl From<CoreError> for EpochJournalErrorV1 {
     fn from(e: CoreError) -> Self {
         Self::Core(e)
     }
 }
-type Result<T> = std::result::Result<T, OldEpochJournalErrorV1>;
+type Result<T> = std::result::Result<T, EpochJournalErrorV1>;
 fn invalid<T>(why: &'static str) -> Result<T> {
-    Err(OldEpochJournalErrorV1::Invalid(why))
+    Err(EpochJournalErrorV1::Invalid(why))
 }
 fn digest(domain: &[u8], parts: &[&[u8]]) -> [u8; 32] {
     let mut h = Sha256::new();
@@ -81,100 +88,96 @@ fn digest(domain: &[u8], parts: &[&[u8]]) -> [u8; 32] {
     }
     h.finalize().into()
 }
-fn io(stage: &'static str, e: std::io::Error) -> OldEpochJournalErrorV1 {
+fn io(stage: &'static str, e: std::io::Error) -> EpochJournalErrorV1 {
     EpochPreparationStoreErrorV1::Io { stage, error: e }.into()
 }
-fn verifier_ref() -> [u8; 32] {
-    digest(b"trnm.journal8.outgoing.strict-ed25519.v1", &[])
-}
-
-/// Closed profile: only the outgoing epoch-zero record codec, with fixed strict
-/// Ed25519 validation. Capacity is checked before any destination file exists.
+/// Closed profile binds the exact full 14E context and immediate journal8
+/// source context. No caller-selectable verifier or automatic codec upgrade.
 #[derive(Debug, Clone)]
-pub struct OldEpochSafetyJournalProfileV1 {
+pub struct EpochSafetyJournalProfileV1 {
     config: CoreConfig,
     limits: SafetyStateRecordLimitsV0,
-    source_profile: SafetyStateStoreProfileV0,
+    source_profile: OldEpochSafetyJournalProfileV1,
+    epoch: EpochCoreStateV1,
     generation: u64,
     max_db: u64,
     max_row: usize,
     binding: [u8; 32],
 }
-impl OldEpochSafetyJournalProfileV1 {
+impl EpochSafetyJournalProfileV1 {
     pub fn new(
-        source_profile: SafetyStateStoreProfileV0,
-        limits: SafetyStateRecordLimitsV0,
-        generation: u64,
+        source_profile: OldEpochSafetyJournalProfileV1,
+        context: &EpochSafetyStateRecordContextV1<'_>,
     ) -> Result<Self> {
-        let config = source_profile.core_config().clone();
-        validate_validator_set_strict_ed25519_v0(config.validator_set())
-            .map_err(|_| OldEpochJournalErrorV1::Invalid("strict validator keys"))?;
-        if generation == 0
+        let config = context.core_config().clone();
+        let limits = context.limits();
+        let epoch = context.epoch().clone();
+        let source_context = source_profile.context()?;
+        let old_config = source_context.core_config();
+        if old_config.validator_set() != context.runtime().activation().old_validator_set()
+            || old_config.consensus_parameters()
+                != context.runtime().activation().old_consensus_parameters()
+            || old_config.local_validator() != config.local_validator()
+            || source_profile.owner_generation_v1().checked_add(1) != Some(epoch.owner_generation())
             || limits.maximum_record_bytes() > MAX_RECORD
-            || source_profile.record_limits().maximum_record_bytes() > MAX_RECORD
+            || source_context.limits().maximum_record_bytes() > MAX_RECORD
         {
-            return invalid("generation or record capacity");
+            return invalid("source/target profile or capacity mismatch");
         }
-        // SQLite LENGTH bounds the complete row, including the retained
-        // source record and its transition, before any destination is created.
+        // SQLite LENGTH bounds an entire row, not just its largest BLOB.
+        // Immutable metadata retains a source14O record beside its transition.
         let max_row = limits
             .maximum_record_bytes()
-            .max(source_profile.record_limits().maximum_record_bytes())
+            .max(source_context.limits().maximum_record_bytes())
             .checked_add(MAX_CONTEXT)
-            .ok_or(OldEpochJournalErrorV1::Invalid("row capacity overflow"))?;
+            .ok_or(EpochJournalErrorV1::Invalid("row capacity overflow"))?;
         max_row
             .checked_add(4096)
             .and_then(|n| i32::try_from(n).ok())
-            .ok_or(OldEpochJournalErrorV1::Invalid("SQLite row capacity"))?;
-        let context = SafetyStateRecordContextV0::new(&config, verifier_ref(), limits)?;
-        let context_ref = old_epoch_boundary_record_context_ref_v1(&context)?;
-        let source_context = SafetyStateRecordContextV0::new(
-            &config,
-            source_profile.verifier_profile_ref(),
-            source_profile.record_limits(),
-        )?;
-        let source_ref = safety_state_record_config_ref_v0(&source_context)?;
+            .ok_or(EpochJournalErrorV1::Invalid("SQLite row capacity"))?;
+        let context_ref = epoch_safety_record_context_ref_v1(context)?;
         let max_db = (limits.maximum_record_bytes() as u64)
             .checked_mul(6)
-            .and_then(|v| {
-                v.checked_add(
-                    source_profile.record_limits().maximum_record_bytes() as u64 * 2
-                        + 16 * 1024 * 1024,
+            .and_then(|n| {
+                n.checked_add(
+                    source_context.limits().maximum_record_bytes() as u64 * 2 + 16 * 1024 * 1024,
                 )
             })
-            .ok_or(OldEpochJournalErrorV1::Invalid("database capacity"))?;
+            .ok_or(EpochJournalErrorV1::Invalid("database capacity"))?;
+        let generation = epoch.owner_generation();
         let binding = digest(
-            b"trnm.journal8.outgoing.profile.v1",
+            b"trnm.journal9.epoch.profile.v1",
             &[
                 &context_ref,
-                &source_ref,
+                &source_profile.profile_ref_v1(),
+                &source_profile.context_ref_v1()?,
                 &generation.to_be_bytes(),
                 &max_db.to_be_bytes(),
+                &(max_row as u64).to_be_bytes(),
             ],
         );
         Ok(Self {
             config,
             limits,
             source_profile,
+            epoch,
             generation,
             max_db,
             max_row,
             binding,
         })
     }
-    pub(crate) fn context(&self) -> Result<SafetyStateRecordContextV0<'_>> {
-        Ok(SafetyStateRecordContextV0::new(
+    fn context(&self) -> Result<EpochSafetyStateRecordContextV1<'_>> {
+        Ok(EpochSafetyStateRecordContextV1::new(
             &self.config,
-            verifier_ref(),
+            self.epoch.strict_context()?,
+            self.epoch.checkpoint_artifact(),
+            self.generation,
             self.limits,
         )?)
     }
     fn source_context(&self) -> Result<SafetyStateRecordContextV0<'_>> {
-        Ok(SafetyStateRecordContextV0::new(
-            &self.config,
-            self.source_profile.verifier_profile_ref(),
-            self.source_profile.record_limits(),
-        )?)
+        Ok(self.source_profile.context()?)
     }
     pub const fn owner_generation_v1(&self) -> u64 {
         self.generation
@@ -183,13 +186,11 @@ impl OldEpochSafetyJournalProfileV1 {
         self.binding
     }
     pub fn context_ref_v1(&self) -> Result<[u8; 32]> {
-        Ok(old_epoch_boundary_record_context_ref_v1(&self.context()?)?)
+        Ok(epoch_safety_record_context_ref_v1(&self.context()?)?)
     }
-    pub(crate) fn check_state(&self, state: &SafetyState) -> Result<()> {
-        if state.schema_version() != 14
-            || state.old_epoch_boundary_v1().map(|b| b.owner_generation()) != Some(self.generation)
-        {
-            return invalid("outgoing schema or owner generation");
+    fn check_state(&self, state: &SafetyState) -> Result<()> {
+        if state.epoch_state_v1() != Some(&self.epoch) {
+            return invalid("epoch state context mismatch");
         }
         Core::validate_persisted_state_v0(&self.config, state, &StrictEd25519Verifier)?;
         Ok(())
@@ -199,7 +200,7 @@ impl OldEpochSafetyJournalProfileV1 {
 /// Comparison-only expected head. A host obtains freshness by pinning this in
 /// its independent monotonic service, never by reading it from the same image.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct OldEpochSafetyHeadPinV1 {
+pub struct EpochSafetyHeadPinV1 {
     pub journal_id: [u8; 32],
     pub revision: u64,
     pub chain_checksum: [u8; 32],
@@ -208,62 +209,24 @@ pub struct OldEpochSafetyHeadPinV1 {
 /// Real transaction/response-loss cuts, also usable by process-kill tests.
 #[doc(hidden)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum OldEpochJournalCutV1 {
+pub enum EpochJournalCutV1 {
     AfterWriteBeforeCommit,
     AfterCommitBeforeSync,
     AfterSyncBeforeReadback,
 }
 
-/// Immutable source facts obtained only while auditing the retained journal7
-/// origin of a real journal8 head. These are comparison data, not an ACK or a
-/// recovered Core owner. No caller can select another origin via these fields.
-pub struct OldEpochMigrationSourceV1 {
-    revision: u64,
-    state_record_checksum: [u8; 32],
-    journal_id: [u8; 32],
-    chain_checksum: [u8; 32],
-    verifier_profile_ref: [u8; 32],
-    config_ref: [u8; 32],
-}
-impl OldEpochMigrationSourceV1 {
-    pub const fn revision_v1(&self) -> u64 {
-        self.revision
-    }
-    pub const fn state_record_checksum_v1(&self) -> [u8; 32] {
-        self.state_record_checksum
-    }
-    pub const fn journal_id_v1(&self) -> [u8; 32] {
-        self.journal_id
-    }
-    pub const fn chain_checksum_v1(&self) -> [u8; 32] {
-        self.chain_checksum
-    }
-    pub const fn verifier_profile_ref_v1(&self) -> [u8; 32] {
-        self.verifier_profile_ref
-    }
-    pub const fn config_ref_v1(&self) -> [u8; 32] {
-        self.config_ref
-    }
-}
-
 /// Fresh owner-affine facts. This is deliberately neither Clone nor signing or
 /// Core recovery authority; M15 must still reconcile native and signer owners.
-pub struct ConfirmedOldEpochSafetyHeadV1 {
-    // A validated Safety record contains large closed protocol values. Keep
-    // ownership on the heap instead of copying it through readback stack frames.
+pub struct ConfirmedEpochSafetyHeadV1 {
     record: Box<UnverifiedSafetyStateRecordV0>,
     transition: SafetyTransitionContextV0,
-    pin: OldEpochSafetyHeadPinV1,
+    pin: EpochSafetyHeadPinV1,
     context_ref: [u8; 32],
     generation: u64,
     origin: [u8; 32],
-    source: OldEpochMigrationSourceV1,
     owner: Arc<()>,
 }
-impl ConfirmedOldEpochSafetyHeadV1 {
-    pub const fn migration_source_v1(&self) -> &OldEpochMigrationSourceV1 {
-        &self.source
-    }
+impl ConfirmedEpochSafetyHeadV1 {
     pub fn state_v1(&self) -> &SafetyState {
         self.record.state()
     }
@@ -285,7 +248,7 @@ impl ConfirmedOldEpochSafetyHeadV1 {
     pub const fn owner_generation_v1(&self) -> u64 {
         self.generation
     }
-    pub const fn pin_v1(&self) -> OldEpochSafetyHeadPinV1 {
+    pub const fn pin_v1(&self) -> EpochSafetyHeadPinV1 {
         self.pin
     }
     pub const fn transition_context_v1(&self) -> &SafetyTransitionContextV0 {
@@ -296,16 +259,19 @@ impl ConfirmedOldEpochSafetyHeadV1 {
     }
     pub fn belongs_to_store_at_path_v1(
         &self,
-        store: &SqliteOldEpochSafetyJournalV1,
+        store: &SqliteEpochSafetyJournalV1,
         path: &Path,
     ) -> bool {
         Arc::ptr_eq(&self.owner, &store.owner)
             && store.database.path == path
-            && store.require_namespace().is_ok()
+            && store.fresh_read_v1(self.pin).is_ok_and(|fresh| {
+                fresh.state_record_checksum_v1() == self.state_record_checksum_v1()
+                    && fresh.transition_context_v1() == self.transition_context_v1()
+            })
     }
 }
 
-pub struct SqliteOldEpochSafetyJournalV1 {
+pub struct SqliteEpochSafetyJournalV1 {
     // Close connections before pin handles even on errors. Successful public
     // calls retain no SQLite connection/page cache across fresh readback.
     connection: Option<Connection>,
@@ -314,68 +280,89 @@ pub struct SqliteOldEpochSafetyJournalV1 {
     wal: Option<PinnedFileV1>,
     shm: Option<PinnedFileV1>,
     directory: PinnedFileV1,
-    profile: OldEpochSafetyJournalProfileV1,
+    profile: EpochSafetyJournalProfileV1,
     journal_id: [u8; 32],
     owner: Arc<()>,
     pid: u32,
     binding: Option<SafetyStatePersistenceBindingV0>,
     fenced: bool,
 }
-impl SqliteOldEpochSafetyJournalV1 {
-    /// Explicitly migrate a fresh, independently pinned journal7 head. Original
-    /// files stay untouched and owned; no custody retirement or external CAS is
-    /// implied by creating the outgoing namespace.
-    pub fn initialize_from_journal7_v1(
+impl SqliteEpochSafetyJournalV1 {
+    /// Explicit source8-to-journal9 migration of the exact pending activation.
+    /// The returned receipt is inert; this does not ACK Core or commission keys.
+    pub fn initialize_from_journal8_v1(
         path: impl AsRef<Path>,
-        profile: OldEpochSafetyJournalProfileV1,
-        source: &SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
-        expected_source_chain: [u8; 32],
-        owner: &OldEpochBoundaryCoreV1,
-        request: &SafetyStatePersistenceV0,
-    ) -> Result<(Self, ConfirmedOldEpochSafetyHeadV1)> {
+        profile: EpochSafetyJournalProfileV1,
+        source: &SqliteOldEpochSafetyJournalV1,
+        expected_source: OldEpochSafetyHeadPinV1,
+        prepared: &PreparedEpochCoreActivationV1,
+    ) -> Result<(Self, ConfirmedEpochSafetyHeadV1)> {
+        Self::initialize_with_observer_v1(
+            path,
+            profile,
+            source,
+            expected_source,
+            prepared,
+            |_, _| Ok(()),
+        )
+    }
+    /// Real initialization transaction cuts for process-death/reconciliation tests.
+    /// The pin is inert comparison data; observing it acknowledges no Core work.
+    #[doc(hidden)]
+    pub fn initialize_with_observer_v1(
+        path: impl AsRef<Path>,
+        profile: EpochSafetyJournalProfileV1,
+        source: &SqliteOldEpochSafetyJournalV1,
+        expected_source: OldEpochSafetyHeadPinV1,
+        prepared: &PreparedEpochCoreActivationV1,
+        mut observer: impl FnMut(EpochJournalCutV1, EpochSafetyHeadPinV1) -> Result<()>,
+    ) -> Result<(Self, ConfirmedEpochSafetyHeadV1)> {
         fs_owner::require_linux()?;
-        let source_head = source.head()?;
-        let source_facts = source.confirm_node_checkpoint_head_exact_v0(source_head.state())?;
-        if source_head.chain_checksum() != expected_source_chain
-            || source_facts.core_config_ref_v0()
-                != safety_state_record_config_ref_v0(&profile.source_context()?)?
-            || source.verifier_profile_ref_v0() != profile.source_profile.verifier_profile_ref()
+        let (source_head, source_recovery) =
+            source.prepare_terminal_recovery_v1(expected_source)?;
+        if source_head.context_ref_v1() != profile.source_profile.context_ref_v1()?
+            || !source_head.belongs_to_store_at_path_v1(source, source.path_v1())
+            || source_head.owner_generation_v1() != profile.source_profile.owner_generation_v1()
+            || prepared.predecessor() != source_head.state_v1()
+            || prepared.config() != &profile.config
         {
-            return invalid("source head or context differs from independent pin");
+            return invalid("activation source owner/context/predecessor mismatch");
         }
-        let binding = owner.safety_state_persistence_binding_v0();
+        let expected_preparation =
+            source_recovery.prepare_epoch_activation_v1(&profile.context()?)?;
+        let request = prepared.initial_persistence_v1();
+        let binding = prepared.persistence_binding_v1();
         if !binding.accepts(request)
-            || owner.safety_state() != request.state()
-            || owner.config() != &profile.config
+            || request.state() != prepared.state()
+            || prepared.state() != expected_preparation.state()
         {
-            return invalid("migration Core owner or request");
+            return invalid("activation request differs from exact terminal successor");
         }
         profile.check_state(request.state())?;
-        Core::validate_persisted_successor_v0(
-            &profile.config,
-            source_head.state(),
-            request.state(),
-            &StrictEd25519Verifier,
+        let source_record = encode_old_epoch_boundary_safety_record_v1(
+            source_head.state_v1(),
+            &profile.source_context()?,
         )?;
-        let source_record =
-            encode_safety_state_record_v0(source_head.state(), &profile.source_context()?)?;
-        if decode_safety_state_record_v0_exact(&source_record, &profile.source_context()?)?
-            .record_checksum()
-            != source_head.state_record_checksum()
+        if decode_old_epoch_boundary_safety_record_v1_exact(
+            &source_record,
+            &profile.source_context()?,
+        )?
+        .record_checksum()
+            != source_head.state_record_checksum_v1()
         {
             return invalid("source exact record");
         }
-        let source_transition = encode_transition_context_v0(source_head.transition_context())?;
-        let record =
-            encode_old_epoch_boundary_safety_record_v1(request.state(), &profile.context()?)?;
+        let source_transition = encode_transition_context_v0(source_head.transition_context_v1())?;
+        let record = encode_epoch_safety_record_v1(request.state(), &profile.context()?)?;
         let context = SafetyTransitionContextV0::Ordinary;
+        validate_request_manifest(request, &context)?;
         validate_transition_context_against_state_v0(&context, request.state())?;
         let transition = encode_transition_context_v0(&context)?;
         let (path, directory) = fs_owner::pin_namespace(path.as_ref())?;
-        if path == source.path() || path.to_string_lossy().ends_with(".outgoing.lock") {
+        if path == source.path_v1() || path.to_string_lossy().ends_with(".epoch.lock") {
             return invalid("destination namespace collision");
         }
-        let lock_path = fs_owner::auxiliary_path(&path, ".outgoing.lock");
+        let lock_path = fs_owner::auxiliary_path(&path, ".epoch.lock");
         for p in [
             &path,
             &lock_path,
@@ -387,7 +374,7 @@ impl SqliteOldEpochSafetyJournalV1 {
         }
         let mut journal_id = [0; 32];
         getrandom::getrandom(&mut journal_id)
-            .map_err(|_| OldEpochJournalErrorV1::Invalid("journal identity entropy"))?;
+            .map_err(|_| EpochJournalErrorV1::Invalid("journal identity entropy"))?;
         if journal_id == [0; 32] {
             return invalid("zero journal identity");
         }
@@ -397,10 +384,10 @@ impl SqliteOldEpochSafetyJournalV1 {
             .write_all(LOCK_MAGIC)
             .and_then(|_| lock_file.write_all(&journal_id))
             .and_then(|_| lock_file.write_all(&profile.binding))
-            .map_err(|e| io("write journal8 lock", e))?;
+            .map_err(|e| io("write journal9 lock", e))?;
         lock_file
             .sync_all()
-            .map_err(|e| io("sync journal8 lock", e))?;
+            .map_err(|e| io("sync journal9 lock", e))?;
         let lock = PinnedFileV1::new(lock_path, lock_file, false, 72)?;
         let database_file = fs_owner::private_file(&path, true)?;
         fs_owner::lock_exclusive(&database_file)?;
@@ -408,7 +395,7 @@ impl SqliteOldEpochSafetyJournalV1 {
         directory
             .file
             .sync_all()
-            .map_err(|e| io("sync journal8 namespace", e))?;
+            .map_err(|e| io("sync journal9 namespace", e))?;
         let connection = fs_owner::open_connection(&path, false)?;
         fs_owner::configure_connection(&connection, true, profile.max_row, profile.max_db)?;
         let mut store = Self {
@@ -429,12 +416,17 @@ impl SqliteOldEpochSafetyJournalV1 {
         let origin = origin_hash(
             &store.profile,
             journal_id,
-            source.journal_id_v0(),
-            expected_source_chain,
+            expected_source.journal_id,
+            expected_source.chain_checksum,
             &source_record,
             &source_transition,
         );
         let chain = chain_hash(origin, origin, revision, &record, &transition);
+        let expected = EpochSafetyHeadPinV1 {
+            journal_id,
+            revision,
+            chain_checksum: chain,
+        };
         {
             let tx = store
                 .connection
@@ -451,14 +443,14 @@ impl SqliteOldEpochSafetyJournalV1 {
             )?);
             tx.execute_batch(SQL)?;
             tx.pragma_update(None, "application_id", APPLICATION_ID)?;
-            tx.pragma_update(None, "user_version", 8)?;
+            tx.pragma_update(None, "user_version", 9)?;
             tx.execute(
-                "INSERT INTO outgoing_metadata VALUES(1,?1,?2,?3,?4,?5,?6,?7,?8)",
+                "INSERT INTO epoch_metadata VALUES(1,?1,?2,?3,?4,?5,?6,?7,?8)",
                 params![
                     journal_id.as_slice(),
                     store.profile.binding.as_slice(),
-                    source.journal_id_v0().as_slice(),
-                    expected_source_chain.as_slice(),
+                    expected_source.journal_id.as_slice(),
+                    expected_source.chain_checksum.as_slice(),
                     source_record,
                     source_transition,
                     origin.as_slice(),
@@ -466,7 +458,7 @@ impl SqliteOldEpochSafetyJournalV1 {
                 ],
             )?;
             tx.execute(
-                "INSERT INTO outgoing_records VALUES(?1,?2,?3,?4,?5)",
+                "INSERT INTO epoch_records VALUES(?1,?2,?3,?4,?5)",
                 params![
                     revision,
                     origin.as_slice(),
@@ -476,18 +468,21 @@ impl SqliteOldEpochSafetyJournalV1 {
                 ],
             )?;
             tx.execute(
-                "INSERT INTO outgoing_head VALUES(1,?1,?2)",
+                "INSERT INTO epoch_head VALUES(1,?1,?2)",
                 params![revision, chain.as_slice()],
             )?;
+            observer(EpochJournalCutV1::AfterWriteBeforeCommit, expected)?;
             tx.commit()?;
         }
+        observer(EpochJournalCutV1::AfterCommitBeforeSync, expected)?;
         store.close_and_sync()?;
+        observer(EpochJournalCutV1::AfterSyncBeforeReadback, expected)?;
         // Source must still name the same cut before initialization reports
         // success. Any uncertainty leaves a namespace which must be reconciled.
-        if source.head()?.chain_checksum() != expected_source_chain {
+        if source.fresh_read_v1(expected_source)?.state_v1() != prepared.predecessor() {
             return invalid("source advanced during explicit migration");
         }
-        let confirmed = store.fresh_read_v1(OldEpochSafetyHeadPinV1 {
+        let confirmed = store.fresh_read_v1(EpochSafetyHeadPinV1 {
             journal_id,
             revision,
             chain_checksum: chain,
@@ -499,12 +494,12 @@ impl SqliteOldEpochSafetyJournalV1 {
     /// objects, and a stale independently expected head are fatal, never repaired.
     pub fn open_existing_v1(
         path: impl AsRef<Path>,
-        profile: OldEpochSafetyJournalProfileV1,
-        expected: OldEpochSafetyHeadPinV1,
+        profile: EpochSafetyJournalProfileV1,
+        expected: EpochSafetyHeadPinV1,
     ) -> Result<Self> {
         fs_owner::require_linux()?;
         let (path, directory) = fs_owner::pin_namespace(path.as_ref())?;
-        let lock = fs_owner::pin_existing(&fs_owner::auxiliary_path(&path, ".outgoing.lock"), 72)?;
+        let lock = fs_owner::pin_existing(&fs_owner::auxiliary_path(&path, ".epoch.lock"), 72)?;
         fs_owner::lock_exclusive(&lock.file)?;
         let database = fs_owner::pin_existing(&path, profile.max_db)?;
         fs_owner::lock_exclusive(&database.file)?;
@@ -541,27 +536,26 @@ impl SqliteOldEpochSafetyJournalV1 {
     /// Joins a fresh journal read to Core's strict terminal evidence validator
     /// using this owner's exact codec context. Both returned values remain
     /// inert; native application and shared signer custody are still required.
-    pub fn prepare_terminal_recovery_v1(
+    pub fn prepare_recovery_v1(
         &self,
-        expected: OldEpochSafetyHeadPinV1,
+        expected: EpochSafetyHeadPinV1,
     ) -> Result<(
-        ConfirmedOldEpochSafetyHeadV1,
-        trnm_consensus_core::StrictOldEpochTerminalRecoveryV1,
+        ConfirmedEpochSafetyHeadV1,
+        trnm_consensus_core::StrictEpochCoreRecoveryV1,
     )> {
         let confirmed = self.fresh_read_v1(expected)?;
-        let recovery = Core::prepare_old_epoch_terminal_recovery_v1(
+        let recovery = Core::prepare_epoch_recovery_v1(
             &confirmed.record,
             &self.profile.context()?,
             confirmed.state_record_checksum_v1(),
-            self.profile.generation,
         )?;
         self.require_namespace()?;
         Ok((confirmed, recovery))
     }
     pub fn fresh_read_v1(
         &self,
-        expected: OldEpochSafetyHeadPinV1,
-    ) -> Result<ConfirmedOldEpochSafetyHeadV1> {
+        expected: EpochSafetyHeadPinV1,
+    ) -> Result<ConfirmedEpochSafetyHeadV1> {
         self.require_namespace()?;
         let connection = fs_owner::open_connection(&self.database.path, true)?;
         fs_owner::configure_connection(
@@ -573,7 +567,7 @@ impl SqliteOldEpochSafetyJournalV1 {
         let result = self.read_head(&connection, expected);
         connection
             .close()
-            .map_err(|(_, e)| OldEpochJournalErrorV1::Sqlite(e))?;
+            .map_err(|(_, e)| EpochJournalErrorV1::Sqlite(e))?;
         self.require_namespace()?;
         result
     }
@@ -582,20 +576,20 @@ impl SqliteOldEpochSafetyJournalV1 {
     /// journal accepts only requests from its originally bound strict owner.
     pub fn persist_exact_v1(
         &mut self,
-        expected: OldEpochSafetyHeadPinV1,
+        expected: EpochSafetyHeadPinV1,
         request: &SafetyStatePersistenceV0,
         transition: &SafetyTransitionContextV0,
-    ) -> Result<ConfirmedOldEpochSafetyHeadV1> {
+    ) -> Result<ConfirmedEpochSafetyHeadV1> {
         self.persist_with_observer_v1(expected, request, transition, |_| Ok(()))
     }
     #[doc(hidden)]
     pub fn persist_with_observer_v1(
         &mut self,
-        expected: OldEpochSafetyHeadPinV1,
+        expected: EpochSafetyHeadPinV1,
         request: &SafetyStatePersistenceV0,
         transition: &SafetyTransitionContextV0,
-        mut observer: impl FnMut(OldEpochJournalCutV1) -> Result<()>,
-    ) -> Result<ConfirmedOldEpochSafetyHeadV1> {
+        mut observer: impl FnMut(EpochJournalCutV1) -> Result<()>,
+    ) -> Result<ConfirmedEpochSafetyHeadV1> {
         self.require_namespace()?;
         if !self
             .binding
@@ -607,8 +601,7 @@ impl SqliteOldEpochSafetyJournalV1 {
         self.profile.check_state(request.state())?;
         validate_request_manifest(request, transition)?;
         validate_transition_context_against_state_v0(transition, request.state())?;
-        let record =
-            encode_old_epoch_boundary_safety_record_v1(request.state(), &self.profile.context()?)?;
+        let record = encode_epoch_safety_record_v1(request.state(), &self.profile.context()?)?;
         let transition_bytes = encode_transition_context_v0(transition)?;
         if transition_bytes.len() > MAX_CONTEXT {
             return invalid("transition capacity");
@@ -629,16 +622,17 @@ impl SqliteOldEpochSafetyJournalV1 {
     }
     fn persist_inner(
         &mut self,
-        expected: OldEpochSafetyHeadPinV1,
+        expected: EpochSafetyHeadPinV1,
         request: &SafetyStatePersistenceV0,
         transition: &SafetyTransitionContextV0,
         record: &[u8],
         transition_bytes: &[u8],
-        observer: &mut impl FnMut(OldEpochJournalCutV1) -> Result<()>,
-    ) -> Result<ConfirmedOldEpochSafetyHeadV1> {
+        observer: &mut impl FnMut(EpochJournalCutV1) -> Result<()>,
+    ) -> Result<ConfirmedEpochSafetyHeadV1> {
         let head = self.fresh_read_v1(expected)?;
         if head.state_v1() == request.state() && head.transition_context_v1() == transition {
-            return Ok(head);
+            self.close_and_sync()?;
+            return self.fresh_read_v1(expected);
         }
         Core::validate_persisted_successor_v0(
             &self.profile.config,
@@ -667,7 +661,7 @@ impl SqliteOldEpochSafetyJournalV1 {
             record,
             transition_bytes,
         );
-        let next = OldEpochSafetyHeadPinV1 {
+        let next = EpochSafetyHeadPinV1 {
             journal_id: self.journal_id,
             revision,
             chain_checksum: chain,
@@ -689,7 +683,7 @@ impl SqliteOldEpochSafetyJournalV1 {
                 .expect("writer opened")
                 .transaction_with_behavior(TransactionBehavior::Immediate)?;
             let active: (u64, Vec<u8>) = tx.query_row(
-                "SELECT revision,chain FROM outgoing_head WHERE singleton=1",
+                "SELECT revision,chain FROM epoch_head WHERE singleton=1",
                 [],
                 |r| Ok((r.get(0)?, r.get(1)?)),
             )?;
@@ -697,7 +691,7 @@ impl SqliteOldEpochSafetyJournalV1 {
                 return invalid("head changed before transaction");
             }
             tx.execute(
-                "INSERT INTO outgoing_records VALUES(?1,?2,?3,?4,?5)",
+                "INSERT INTO epoch_records VALUES(?1,?2,?3,?4,?5)",
                 params![
                     revision,
                     expected.chain_checksum.as_slice(),
@@ -706,22 +700,22 @@ impl SqliteOldEpochSafetyJournalV1 {
                     transition_bytes
                 ],
             )?;
-            if tx.execute("UPDATE outgoing_head SET revision=?1,chain=?2 WHERE singleton=1 AND revision=?3 AND chain=?4",params![revision,chain.as_slice(),expected.revision,expected.chain_checksum.as_slice()])?!=1 {return invalid("head CAS");}
+            if tx.execute("UPDATE epoch_head SET revision=?1,chain=?2 WHERE singleton=1 AND revision=?3 AND chain=?4",params![revision,chain.as_slice(),expected.revision,expected.chain_checksum.as_slice()])?!=1 {return invalid("head CAS");}
             tx.execute(
-                "DELETE FROM outgoing_records WHERE revision < ?1",
+                "DELETE FROM epoch_records WHERE revision < ?1",
                 [expected.revision],
             )?;
-            observer(OldEpochJournalCutV1::AfterWriteBeforeCommit)?;
+            observer(EpochJournalCutV1::AfterWriteBeforeCommit)?;
             tx.commit()?;
         }
-        observer(OldEpochJournalCutV1::AfterCommitBeforeSync)?;
+        observer(EpochJournalCutV1::AfterCommitBeforeSync)?;
         self.close_and_sync()?;
-        observer(OldEpochJournalCutV1::AfterSyncBeforeReadback)?;
+        observer(EpochJournalCutV1::AfterSyncBeforeReadback)?;
         self.fresh_read_v1(next)
     }
     fn require_namespace(&self) -> Result<()> {
         if self.fenced {
-            return Err(OldEpochJournalErrorV1::Fenced);
+            return Err(EpochJournalErrorV1::Fenced);
         }
         if std::process::id() != self.pid {
             return invalid("owner process changed");
@@ -771,8 +765,7 @@ impl SqliteOldEpochSafetyJournalV1 {
     }
     fn close_connection(&mut self) -> Result<()> {
         if let Some(c) = self.connection.take() {
-            c.close()
-                .map_err(|(_, e)| OldEpochJournalErrorV1::Sqlite(e))?;
+            c.close().map_err(|(_, e)| EpochJournalErrorV1::Sqlite(e))?;
         }
         Ok(())
     }
@@ -786,40 +779,40 @@ impl SqliteOldEpochSafetyJournalV1 {
             &self
                 .wal
                 .as_ref()
-                .ok_or(OldEpochJournalErrorV1::Invalid("missing WAL"))?
+                .ok_or(EpochJournalErrorV1::Invalid("missing WAL"))?
                 .file,
             &self
                 .shm
                 .as_ref()
-                .ok_or(OldEpochJournalErrorV1::Invalid("missing SHM"))?
+                .ok_or(EpochJournalErrorV1::Invalid("missing SHM"))?
                 .file,
             &self.directory.file,
         ] {
-            file.sync_all().map_err(|e| io("sync journal8", e))?;
+            file.sync_all().map_err(|e| io("sync journal9", e))?;
         }
         self.require_namespace()
     }
     fn read_head(
         &self,
         c: &Connection,
-        expected: OldEpochSafetyHeadPinV1,
-    ) -> Result<ConfirmedOldEpochSafetyHeadV1> {
+        expected: EpochSafetyHeadPinV1,
+    ) -> Result<ConfirmedEpochSafetyHeadV1> {
         check_schema(c)?;
         // Query scalar lengths before allocating untrusted persistent blobs.
-        let sizes:(i64,i64)=c.query_row("SELECT length(source_record),length(source_transition) FROM outgoing_metadata WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?)))?;
+        let sizes:(i64,i64)=c.query_row("SELECT length(source_record),length(source_transition) FROM epoch_metadata WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?)))?;
         if sizes.0 <= 0
             || sizes.0 as u64
                 > self
                     .profile
-                    .source_profile
-                    .record_limits()
+                    .source_context()?
+                    .limits()
                     .maximum_record_bytes() as u64
             || sizes.1 <= 0
             || sizes.1 as usize > MAX_CONTEXT
         {
             return invalid("source blob bounds");
         }
-        let m=c.query_row("SELECT journal,profile,source_journal,source_chain,source_record,source_transition,origin,first_revision FROM outgoing_metadata WHERE singleton=1",[],|r|Ok(Metadata{journal:r.get(0)?,profile:r.get(1)?,source_journal:r.get(2)?,source_chain:r.get(3)?,source_record:r.get(4)?,source_transition:r.get(5)?,origin:r.get(6)?,first_revision:r.get(7)?}))?;
+        let m=c.query_row("SELECT journal,profile,source_journal,source_chain,source_record,source_transition,origin,first_revision FROM epoch_metadata WHERE singleton=1",[],|r|Ok(Metadata{journal:r.get(0)?,profile:r.get(1)?,source_journal:r.get(2)?,source_chain:r.get(3)?,source_record:r.get(4)?,source_transition:r.get(5)?,origin:r.get(6)?,first_revision:r.get(7)?}))?;
         if m.journal != self.journal_id
             || m.profile != self.profile.binding
             || expected.journal_id != self.journal_id
@@ -835,31 +828,36 @@ impl SqliteOldEpochSafetyJournalV1 {
         {
             return invalid("metadata profile/source binding");
         }
-        let source =
-            decode_safety_state_record_v0_exact(&m.source_record, &self.profile.source_context()?)?;
-        Core::validate_persisted_state_v0(
-            &self.profile.config,
-            source.state(),
-            &StrictEd25519Verifier,
+        let source = decode_old_epoch_boundary_safety_record_v1_exact(
+            &m.source_record,
+            &self.profile.source_context()?,
         )?;
+        let source_recovery = Core::prepare_old_epoch_terminal_recovery_v1(
+            &source,
+            &self.profile.source_context()?,
+            source.record_checksum(),
+            self.profile.source_profile.owner_generation_v1(),
+        )?;
+        let expected_initial =
+            source_recovery.prepare_epoch_activation_v1(&self.profile.context()?)?;
         let source_transition = decode_transition_context_v0_exact(&m.source_transition)?;
         validate_transition_context_against_state_v0(&source_transition, source.state())?;
         if source.state().revision().checked_add(1) != Some(m.first_revision) {
             return invalid("migration origin revision");
         }
         let head: (u64, [u8; 32]) = c.query_row(
-            "SELECT revision,chain FROM outgoing_head WHERE singleton=1",
+            "SELECT revision,chain FROM epoch_head WHERE singleton=1",
             [],
             |r| Ok((r.get(0)?, r.get(1)?)),
         )?;
         if head != (expected.revision, expected.chain_checksum) || head.0 < m.first_revision {
             return invalid("active head differs from independently expected cut");
         }
-        let count: i64 = c.query_row("SELECT count(*) FROM outgoing_records", [], |r| r.get(0))?;
+        let count: i64 = c.query_row("SELECT count(*) FROM epoch_records", [], |r| r.get(0))?;
         if count != if head.0 == m.first_revision { 1 } else { 2 } {
             return invalid("retained record count");
         }
-        let mut s=c.prepare("SELECT revision,predecessor,chain,length(record),length(transition) FROM outgoing_records ORDER BY revision")?;
+        let mut s=c.prepare("SELECT revision,predecessor,chain,length(record),length(transition) FROM epoch_records ORDER BY revision")?;
         let coordinates = s
             .query_map([], |r| {
                 Ok((
@@ -885,7 +883,7 @@ impl SqliteOldEpochSafetyJournalV1 {
                 return invalid("retained record bounds or revision");
             }
             let (record_bytes, transition_bytes): (Vec<u8>, Vec<u8>) = c.query_row(
-                "SELECT record,transition FROM outgoing_records WHERE revision=?1",
+                "SELECT record,transition FROM epoch_records WHERE revision=?1",
                 [revision],
                 |r| Ok((r.get(0)?, r.get(1)?)),
             )?;
@@ -900,10 +898,8 @@ impl SqliteOldEpochSafetyJournalV1 {
             {
                 return invalid("retained chain checksum");
             }
-            let record = decode_old_epoch_boundary_safety_record_v1_exact(
-                &record_bytes,
-                &self.profile.context()?,
-            )?;
+            let record =
+                decode_epoch_safety_record_v1_exact(&record_bytes, &self.profile.context()?)?;
             self.profile.check_state(record.state())?;
             if record.state().revision() != revision {
                 return invalid("record revision");
@@ -914,12 +910,11 @@ impl SqliteOldEpochSafetyJournalV1 {
                 if predecessor != m.origin {
                     return invalid("migration predecessor");
                 }
-                Core::validate_persisted_successor_v0(
-                    &self.profile.config,
-                    source.state(),
-                    record.state(),
-                    &StrictEd25519Verifier,
-                )?;
+                if record.state() != expected_initial.state()
+                    || transition != SafetyTransitionContextV0::Ordinary
+                {
+                    return invalid("initial epoch record differs from exact strict activation");
+                }
             }
             if let Some((before, before_chain)) = &previous {
                 if predecessor != *before_chain {
@@ -950,29 +945,19 @@ impl SqliteOldEpochSafetyJournalV1 {
                 if chain != head.1 {
                     return invalid("head chain differs from record");
                 }
-                result = Some(ConfirmedOldEpochSafetyHeadV1 {
+                result = Some(ConfirmedEpochSafetyHeadV1 {
                     record: Box::new(record.clone()),
                     transition,
                     pin: expected,
                     context_ref: self.profile.context_ref_v1()?,
                     generation: self.profile.generation,
                     origin: m.origin,
-                    source: OldEpochMigrationSourceV1 {
-                        revision: source.state().revision(),
-                        state_record_checksum: source.record_checksum(),
-                        journal_id: m.source_journal,
-                        chain_checksum: m.source_chain,
-                        verifier_profile_ref: self.profile.source_profile.verifier_profile_ref(),
-                        config_ref: safety_state_record_config_ref_v0(
-                            &self.profile.source_context()?,
-                        )?,
-                    },
                     owner: Arc::clone(&self.owner),
                 });
             }
             previous = Some((record, chain));
         }
-        result.ok_or(OldEpochJournalErrorV1::Invalid("missing head record"))
+        result.ok_or(EpochJournalErrorV1::Invalid("missing head record"))
     }
 }
 struct Metadata {
@@ -986,7 +971,7 @@ struct Metadata {
     first_revision: u64,
 }
 fn origin_hash(
-    profile: &OldEpochSafetyJournalProfileV1,
+    profile: &EpochSafetyJournalProfileV1,
     journal: [u8; 32],
     source_journal: [u8; 32],
     source_chain: [u8; 32],
@@ -994,7 +979,7 @@ fn origin_hash(
     context: &[u8],
 ) -> [u8; 32] {
     digest(
-        b"trnm.journal8.outgoing.origin.v1",
+        b"trnm.journal9.epoch.origin.v1",
         &[
             &profile.binding,
             &journal,
@@ -1013,53 +998,51 @@ fn chain_hash(
     context: &[u8],
 ) -> [u8; 32] {
     digest(
-        b"trnm.journal8.outgoing.chain.v1",
+        b"trnm.journal9.epoch.chain.v1",
         &[&origin, &previous, &revision.to_be_bytes(), record, context],
     )
 }
 fn check_schema(c: &Connection) -> Result<()> {
     let app: i64 = c.query_row("PRAGMA application_id", [], |r| r.get(0))?;
     let version: i64 = c.query_row("PRAGMA user_version", [], |r| r.get(0))?;
-    if app != APPLICATION_ID || version != 8 {
-        return invalid("journal8 application ID/schema");
+    if app != APPLICATION_ID || version != 9 {
+        return invalid("journal9 application ID/schema");
     }
     fn inventory(
         c: &Connection,
     ) -> std::result::Result<Vec<(String, String, String, String)>, rusqlite::Error> {
-        let mut rows: Vec<_> = c
+        let mut rows = c
             .prepare("SELECT type,name,tbl_name,coalesce(sql,'') FROM sqlite_schema LIMIT 4")?
             .query_map([], |r| {
-                fn bounded(
-                    r: &rusqlite::Row<'_>,
-                    i: usize,
-                    max: usize,
-                ) -> rusqlite::Result<String> {
-                    let text = r.get_ref(i)?.as_str()?;
-                    if text.len() > max {
+                // Inspect borrowed text before allocating attacker-controlled SQL.
+                let mut fields = Vec::with_capacity(4);
+                for (index, bound) in [16, 64, 64, 4096].into_iter().enumerate() {
+                    let value = r.get_ref(index)?.as_str()?;
+                    if value.len() > bound {
                         return Err(rusqlite::Error::InvalidQuery);
                     }
-                    Ok(text.to_owned())
+                    fields.push(value.to_owned());
                 }
                 Ok((
-                    bounded(r, 0, 16)?,
-                    bounded(r, 1, 64)?,
-                    bounded(r, 2, 64)?,
-                    bounded(r, 3, 4096)?,
+                    fields.remove(0),
+                    fields.remove(0),
+                    fields.remove(0),
+                    fields.remove(0),
                 ))
             })?
-            .collect::<std::result::Result<_, _>>()?;
+            .collect::<std::result::Result<Vec<_>, _>>()?;
         rows.sort();
         Ok(rows)
     }
     let reference = Connection::open_in_memory()?;
     reference.execute_batch(SQL)?;
     if inventory(c)? != inventory(&reference)? {
-        return invalid("journal8 closed schema inventory");
+        return invalid("journal9 closed schema inventory");
     }
-    let metadata: i64 = c.query_row("SELECT count(*) FROM outgoing_metadata", [], |r| r.get(0))?;
-    let heads: i64 = c.query_row("SELECT count(*) FROM outgoing_head", [], |r| r.get(0))?;
+    let metadata: i64 = c.query_row("SELECT count(*) FROM epoch_metadata", [], |r| r.get(0))?;
+    let heads: i64 = c.query_row("SELECT count(*) FROM epoch_head", [], |r| r.get(0))?;
     if metadata != 1 || heads != 1 {
-        return invalid("journal8 singleton inventory");
+        return invalid("journal9 singleton inventory");
     }
     Ok(())
 }

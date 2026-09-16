@@ -142,6 +142,21 @@ speculation. The native transfer fee-rebasing optimization applies only when
 its proven transfer predicate and dependency checks hold; it is not a general
 permission to ignore writes to the fee collector.
 
+The native parent view now proves lifecycle and runtime keys on demand. Worker
+admission verifies/decodes an envelope once, then actual runtime attempts discover
+dynamic account/task dependencies using a finite prefetch map. A missing entry
+requests an owner-thread JMT proof; an explicit `None` means a verified absence.
+The same frozen parent transaction supplies all rounds. Workers never receive
+the SQLite connection. The canonical loop still checks complete read values and
+re-executes stale successes/failures against earlier mutations. Object revision
+is a per-mutation counter and may exceed consensus height; this optimization
+does not add a height bound to object revision.
+
+Only PoCO operations, scheduled cutoff refresh or an authenticated epoch prefix
+request the complete bounded namespace projection. Ordinary runtime and empty
+non-cutoff blocks no longer pay for unrelated live objects. PoCO's remaining
+whole-tree enumeration and frozen manifest/authority checks are unchanged.
+
 ## Security
 
 ### Metering and fee computation
@@ -192,6 +207,7 @@ CPU pressure is `Unavailable`; it does not change canonical fee or receipt statu
 | AI access width | `MAX_ACCESS_WIDTH_V1 = 64` |
 | AI workers | 1 through `MAX_EXECUTION_WORKERS_V1 = 64` |
 | Native speculative batch | At most 32 transactions and 8 workers; not a whole-block limit |
+| Native prefetch/reuse | At most64 recorded reads/256KiB per attempt; 2048 keys/8MiB per batch; at most65 discovery rounds. Failure abandons speculation, not the transaction. |
 | Native transaction/body limits | Exact authenticated bft-v0 parameters and codec limits |
 | Candidate development host queue, planned | One executing block, two queued bodies; reject admission of a third queued body |
 | Candidate development host retained body bytes, planned | 16 MiB total, additionally subject to the smaller selected protocol limit |
@@ -200,8 +216,20 @@ The planned host limits are local scheduling controls, not consensus validity.
 Missing workers fall back to canonical native execution where already supported;
 an unsupported AI worker count returns `InvalidBounds`. Allocation/queue refusal
 must occur before retaining the new body. Never drop an already committed plan.
-Large-state/long-history persistence still needs measurement: current native
-full snapshots and historical auditing are not made incremental by this document.
+Large-state/long-history persistence still needs measurement. M07's explicit
+ordinary schema5 uses actual state/replay deltas; schema3/4 retain their bounded
+snapshot formats, and PoCO enumeration remains a separate cost.
+
+The default-off `incremental-epoch-candidate` feature now computes the first
+new epoch block against the actual incremental checkpoint reader. Its only
+root alias is C+2's empty path to C's real root; inherited child versions remain
+unchanged. Existing authenticated config/usage rollover and user transactions
+produce one C+3 state delta and actual epoch-artifact-v1. The signed C8→C11
+fixture matches the schema4 root and receipts, persists real P, and reopens it.
+Schema6 currently prepares this first block only; descendant execution, strict
+finality commit and the public/Core adapters remain fenced. This is not evidence
+that a full two-epoch node run is enabled. PoCO rollover's bounded namespace
+scan remains intentional and separate from ordinary per-key execution.
 
 ## Persistence and recovery
 
@@ -318,6 +346,10 @@ Native `native_parallel_tests.rs` and `native_parallel_fee_oracle_tests.rs`
 exercise real runtime receipts and fee reuse. Source regressions are not
 independent golden vectors. For each planned case, independently derive full
 encoded receipts and roots from the pinned source/profile before acceptance.
+The point-read regression adds10000 unaccessed accounts and forbids full scans;
+it retains identical touched keys and0/1/2/4/8-worker roots/receipts. Existing tests
+also require eight actual runtime worker thread IDs, fee-rebase equality, failed
+speculation repaired by an earlier credit, and canonical failure-index ordering.
 The existing [MVCC case inventory](../protocol/poco-ai-native-v1/vectors/cev1-object-mvcc-fee-kernel-v1.json)
 names candidate cases; it is an inventory, not a file of independently frozen bytes.
 

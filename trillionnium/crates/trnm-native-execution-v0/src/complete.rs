@@ -6,6 +6,7 @@
 //! networking, and broadcast are outside this crate's authority.
 
 use std::{
+    cell::{Cell, OnceCell, RefCell},
     collections::{BTreeMap, BTreeSet},
     fmt,
 };
@@ -439,6 +440,26 @@ impl CompleteNativeExecutionV0 {
 /// the externally implementable NativeExecutionStoreV0 an authority boundary.
 pub(crate) trait CompleteExecutionStoreV1: NativeExecutionStoreV0 + Sized {
     fn complete_live_values_v1(&self, version: u64) -> Result<BTreeMap<Vec<u8>, Vec<u8>>>;
+    fn complete_point_value_v1(&self, version: u64, key: &[u8]) -> Result<Option<Vec<u8>>> {
+        ensure!(
+            version == self.parent_version_v0()?,
+            "complete point parent version"
+        );
+        let root = self.parent_root_v0()?;
+        let hash = crate::store::authenticated_key_hash_v0(key)?;
+        let (value, proof) = jmt::Sha256Jmt::new(self).get_with_proof(hash, version)?;
+        match value.as_deref() {
+            Some(bytes) => {
+                proof.verify_existence(root, hash, bytes)?;
+                ensure!(
+                    self.preimage(hash)?.as_deref() == Some(key),
+                    "complete point preimage"
+                );
+            }
+            None => proof.verify_nonexistence(root, hash)?,
+        }
+        Ok(value)
+    }
     fn validate_epoch_parent_v1(
         &self,
         _edge: &crate::AuthenticatedEpochApplicationEdgeV1,
@@ -475,13 +496,13 @@ impl CompleteExecutionStoreV1 for InMemoryNativeExecutionStoreV0 {
     }
 }
 
-struct CompleteOverlayView<'a> {
-    live: &'a BTreeMap<Vec<u8>, Vec<u8>>,
+struct CompleteOverlayView<'a, Source> {
+    source: &'a Source,
     changes: &'a BTreeMap<String, StateObject>,
 }
 
-impl TryStateViewV0 for CompleteOverlayView<'_> {
-    type Error = String;
+impl<Source: TryStateViewV0> TryStateViewV0 for CompleteOverlayView<'_, Source> {
+    type Error = Source::Error;
     fn try_get(
         &self,
         object_key_hex: &str,
@@ -489,21 +510,78 @@ impl TryStateViewV0 for CompleteOverlayView<'_> {
         if let Some(object) = self.changes.get(object_key_hex) {
             return Ok(Some(object.clone()));
         }
-        let key =
-            crate::store::stored_object_key_v0(object_key_hex).map_err(|e| format!("{e:#}"))?;
-        self.live
-            .get(&key)
-            .map(|bytes| {
-                AuthenticatedObjectRecordV0::decode(bytes)
-                    .map(|record| StateObject {
-                        object_type: record.object_type().to_string(),
+        self.source.try_get(object_key_hex)
+    }
+}
+
+/// Owner-thread cache of proved presence *and absence*. Cache limits affect
+/// reuse only; a larger valid workload continues with authenticated reads.
+struct CompletePointReadViewV1<'a, S> {
+    store: &'a S,
+    version: u64,
+    values: RefCell<BTreeMap<String, Option<StateObject>>>,
+    retained: Cell<usize>,
+}
+impl<'a, S> CompletePointReadViewV1<'a, S> {
+    fn new(store: &'a S, version: u64) -> Self {
+        Self {
+            store,
+            version,
+            values: RefCell::new(BTreeMap::new()),
+            retained: Cell::new(0),
+        }
+    }
+}
+impl<S: CompleteExecutionStoreV1> TryStateViewV0 for CompletePointReadViewV1<'_, S> {
+    type Error = String;
+    fn try_get(&self, key: &str) -> std::result::Result<Option<StateObject>, String> {
+        if let Some(value) = self.values.borrow().get(key) {
+            return Ok(value.clone());
+        }
+        let value = (|| -> Result<_> {
+            self.store
+                .complete_point_value_v1(self.version, &crate::store::stored_object_key_v0(key)?)?
+                .map(|bytes| {
+                    let record = AuthenticatedObjectRecordV0::decode(&bytes)?;
+                    Ok(StateObject {
+                        object_type: record.object_type().to_owned(),
                         version: record.object_version(),
                         value_bytes: record.value().to_vec(),
                     })
-                    .map_err(|e| format!("{e:#}"))
-            })
-            .transpose()
+                })
+                .transpose()
+        })()
+        .map_err(|e| format!("{e:#}"))?;
+        let bytes = key
+            .len()
+            .saturating_add(value.as_ref().map_or(0, |object: &StateObject| {
+                object
+                    .object_type
+                    .len()
+                    .saturating_add(object.value_bytes.len())
+            }));
+        let next = self.retained.get().saturating_add(bytes);
+        if self.values.borrow().len() < 2048 && next <= 8 * 1024 * 1024 {
+            self.values
+                .borrow_mut()
+                .insert(key.to_owned(), value.clone());
+            self.retained.set(next);
+        }
+        Ok(value)
     }
+}
+
+fn complete_poco_projection_v1<'a>(
+    store: &impl CompleteExecutionStoreV1,
+    version: u64,
+    slot: &'a OnceCell<Option<crate::poco_transition::ProductionPocoProjectionV0>>,
+) -> Result<&'a Option<crate::poco_transition::ProductionPocoProjectionV0>> {
+    if slot.get().is_none() {
+        let mut live = store.complete_live_values_v1(version)?;
+        let projection = take_and_validate_production_poco_projection_v0(version, &mut live)?;
+        let _ = slot.set(projection);
+    }
+    Ok(slot.get().expect("PoCO projection initialized"))
 }
 
 enum ReceiptFactsV0 {
@@ -670,9 +748,12 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
         "pinned signer policy commitment mismatch"
     );
 
-    let mut live = store.complete_live_values_v1(parent_version)?;
-    let source_poco = take_and_validate_production_poco_projection_v0(parent_version, &mut live)?;
-    let parent_lifecycle = load_validator_lifecycle_from_live_v0(&live, parent_version)?;
+    let source = CompletePointReadViewV1::new(store, parent_version);
+    let source_poco = OnceCell::new();
+    let lifecycle_bytes = store
+        .complete_point_value_v1(parent_version, &auth_tree::validator_state_key()?)?
+        .context("authenticated parent is missing validator lifecycle")?;
+    let parent_lifecycle = decode_validator_lifecycle_v1(&lifecycle_bytes, parent_version)?;
     ensure!(
         parent_lifecycle.chain_id == request.chain_id_v0().as_str(),
         "validator lifecycle chain binding mismatch"
@@ -729,7 +810,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
     let mut poco_overlay: Option<PocoApplicationBlockOverlayV0> = match epoch_edge {
         Some(edge) => Some(
             crate::poco_application::begin_authenticated_epoch_rollover_v1(
-                source_poco
+                complete_poco_projection_v1(store, parent_version, &source_poco)?
                     .as_ref()
                     .context("epoch activation requires authenticated PoCO namespace")?,
                 edge,
@@ -756,7 +837,6 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
                 .min(index + native_parallel::MAX_BATCH_V0);
             speculative = native_parallel::speculate_transactions_v0(
                 native_parallel::NativeSpeculationContextV0 {
-                    live: &live,
                     height: request.height_v0().get(),
                     chain_id: request.chain_id_v0().as_str(),
                     timestamp_ms: request.timestamp_ms_v0(),
@@ -765,6 +845,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
                 },
                 &request.transactions_v0()[index..end],
                 worker_count,
+                &source,
             )
             .into();
         }
@@ -812,7 +893,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
                     "runtime envelope/transaction nonce mismatch"
                 );
                 let view = CompleteOverlayView {
-                    live: &live,
+                    source: &source,
                     changes: &changes,
                 };
                 let runtime_context = ExecutionContext {
@@ -870,7 +951,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
                     "PoCO application target height mismatch"
                 );
                 if poco_overlay.is_none() {
-                    let source = source_poco
+                    let source = complete_poco_projection_v1(store, parent_version, &source_poco)?
                         .as_ref()
                         .context("PoCO application operation requires activated namespace")?;
                     let governance_signer = application_governance_signer_commitment_v0(&lifecycle);
@@ -1040,7 +1121,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
             "invalid scheduled PoCO cutoff"
         );
         if request.height_v0().get() == cutoff_height {
-            let projection = source_poco
+            let projection = complete_poco_projection_v1(store, parent_version, &source_poco)?
                 .as_ref()
                 .context("scheduled PoCO cutoff requires activated namespace")?;
             writes.push(complete_write_from_auth_v0(
@@ -1181,6 +1262,13 @@ pub(crate) fn load_validator_lifecycle_from_live_v0(
     let encoded = live
         .get(&key)
         .context("authenticated parent is missing validator lifecycle")?;
+    decode_validator_lifecycle_v1(encoded, parent_version)
+}
+
+fn decode_validator_lifecycle_v1(
+    encoded: &[u8],
+    parent_version: u64,
+) -> Result<ValidatorLifecycleStateV1> {
     let record = AuthenticatedObjectRecordV0::decode(encoded)?;
     ensure!(
         record.object_type() == VALIDATOR_LIFECYCLE_SCHEMA_V1,

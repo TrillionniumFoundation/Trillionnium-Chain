@@ -268,6 +268,31 @@ continues after consumption for M13 reconstruction and evidence windows.
 
 ### Implemented ordinary incremental native owner (schema 5)
 
+The implemented compatible fresh-readback contract adds
+`confirm_prepared_incremental_execution_v1(&prepared)` and
+`confirm_prepared_epoch_execution_v1(&prepared)`. Neither accepts a caller-built
+P summary. Each checks live owner affinity before I/O, reconstructs the actual
+durable P and its authenticated ancestry, and returns a private non-Clone
+receipt. Its `belongs_to_application_at_path` repeats the exact readback; its
+header, source artifact checksum, overlay checksum and P sequence/digest remain
+comparison data rather than Core authority. COMMITTED matching requires the
+fresh current head, exact P digest and actual commit sequence together. An
+unconfirmed recovery inventory or a reused receipt from another/reopened owner
+cannot satisfy this contract.
+
+Return types are `ConfirmedPreparedNativeIncrementalExecutionV1` and
+`ConfirmedPreparedNativeEpochExecutionV1`. Both expose `prepared()`,
+`artifact_checksum()`, `overlay_checksum()`, `commit_sequence()` and exact
+`application_payload_and_receipts()`. The nested prepared capability retains
+header, application parent, P digest and prepare sequence. Schema4 overlay
+checksum remains the snapshot digest. Schema5 uses domain
+`trnm.native-application.incremental-overlay.v1` over storage artifact H32,
+replay-parent root H32, replay-delta SHA256 H32 and lifecycle SHA256 H32, in that
+order. Storage artifact already binds parent/target root, height, delta digest
+and storage sequence. These are local comparison digests, with no wire change.
+Confirmation of a prepared capability may return its now-COMMITTED phase; an
+older confirmation's matcher then fails until the consumer obtains a fresh one.
+
 M07's explicit schema3→5 migration now uses the actual native SQLite owner,
 not a shadow write. It retains one native P, state delta and authenticated local
 replay delta in the same transaction; ordinary prepare/commit no longer encodes
@@ -290,8 +315,8 @@ P/storage/replay ancestry to the committed head. Missing/corrupt nodes cause
 unavailable/error, never successful replay absence. Native recovery inventory
 counts schema5 pending P rather than reporting an empty legacy table as "Exact".
 The v0 snapshot/preview/state-proof interfaces explicitly reject schema5; their
-versioned adapters, Core callback integration and sparse incremental epoch path
-remain pending and cannot be inferred from ordinary owner tests.
+versioned adapters and Core callback integration remain pending. The separate
+schema6 first-new preparation described below does not provide epoch commit.
 
 A real signed test migrates height4, prepares5/6/7 plus sibling5, strictly commits5,
 retires only the sibling/pin, then reopens6/7. SIGKILL before/after transaction
@@ -597,3 +622,37 @@ implement both separate paths, arbitrary valid proposals/transactions, bounded
 recovery and state-sync rejoin, and independently accepted device, physical-fault
 and multi-host evidence is bound to the exact artifact. The local strict-finality
 seam and persistent ingress bridge alone do not close these requirements.
+
+### Default-off actual checkpoint fixture
+
+The native crate's `test-fixtures` feature exposes a deterministic producer of
+actual SQLite application history through checkpoint C=8, not a receipt
+constructor. It returns the real owner, retained executions, prepared checkpoint
+handles, signed ordinary headers and strict checkpoint/two-seal bytes so M15
+can invoke the normal fresh receipt issuers and replay Core/journal8 with the
+same commitments. This fixture explicitly trusts an operator-selected genesis
+(application initial BlockId equals genesis hash); it does not establish
+CanonicalLabGenesis commissioning. The feature is off by default and must stay
+outside production dependency closure. No receipt, Core ACK or signer custody
+is synthesized by the fixture.
+
+
+### Default-off schema6 incremental first-new recovery
+
+M07's explicit schema5-at-C→6 migration accepts only a fresh owner-affine native
+edge and retains its exact bounded evidence. `execute_incremental_epoch_block_v1`
+atomically writes changed state/replay data and exact first-new P at C+3 without
+advancing the committed C head. `PreparedNativeIncrementalEpochExecutionV1` is
+non-Clone; its P digest/persist sequence and signed header are comparison data.
+Its matcher and `reopen_prepared_incremental_epoch_v1` reconstruct the strict
+native edge from actual cutoff/checkpoint/preparation rows, then bind the exact
+P to state/replay roots, storage identity and both parents. A missing preparation
+journal fails closed and never causes recovery to recreate signing evidence.
+
+Three SIGKILL cuts cover before transaction commit, after commit before fsync,
+and after fsync before fresh readback. Native P and storage edge/delta counts
+must be all zero or all one; committed head remains C in every case. Legacy
+commit/recovery and ordinary ni apply explicitly reject this candidate schema
+or sparse artifact. Dedicated incremental epoch finality commit, C+4/C+5,
+whole-node checkpoint integration, public proofs/replay and GC remain pending;
+no prepare-only result is a committed receipt, Core ACK or production gate.

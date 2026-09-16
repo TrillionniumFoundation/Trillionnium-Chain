@@ -35,6 +35,7 @@ pub enum BlockValidationErrorCode {
     NonCheckpointBlock = 14,
     StateRootMismatch = 15,
     NextEpochCommitmentMismatch = 16,
+    NonEpochHandoffBlock = 17,
 }
 
 impl BlockValidationErrorCode {
@@ -57,6 +58,7 @@ impl BlockValidationErrorCode {
             Self::NonCheckpointBlock => "non_checkpoint_block",
             Self::StateRootMismatch => "state_root_mismatch",
             Self::NextEpochCommitmentMismatch => "next_epoch_commitment_mismatch",
+            Self::NonEpochHandoffBlock => "non_epoch_handoff_block",
         }
     }
 }
@@ -1321,6 +1323,70 @@ impl BlockBodyV0 {
             .map(DoubleVoteEvidenceV0::try_cev0_bytes)
             .collect()
     }
+
+    /// Binds a first-new execution result to its complete canonical body and
+    /// receipt roots. This static capability does not authenticate the epoch
+    /// transition, parent application state, or durable P. Consumers must join
+    /// those independently and use the strict verifier for evidence signatures.
+    pub fn validate_epoch_handoff_commitments_v1<V: SignatureVerifier>(
+        &self,
+        header: &BlockHeader,
+        receipts: &ExecutionReceiptsV0,
+        parameters: &ConsensusParametersV0,
+        expected_state_root: StateRoot,
+        active_validator_set: &ValidatorSet,
+        verifier: &V,
+    ) -> BlockValidationResult<ValidatedBlockCommitmentsV0> {
+        header.validate_shape().map_err(|_| {
+            BlockValidationError::new(BlockValidationErrorCode::ParametersContextMismatch)
+        })?;
+        if header.block_kind() != BlockKind::EpochHandoff {
+            return Err(BlockValidationError::new(
+                BlockValidationErrorCode::NonEpochHandoffBlock,
+            ));
+        }
+        let geometry = crate::EpochGeometryV0::new(header.epoch(), parameters).map_err(|_| {
+            BlockValidationError::new(BlockValidationErrorCode::ParametersContextMismatch)
+        })?;
+        if geometry.expected_block_kind(header.height()) != Ok(BlockKind::EpochHandoff) {
+            return Err(BlockValidationError::new(
+                BlockValidationErrorCode::NonEpochHandoffBlock,
+            ));
+        }
+        if header.state_root() != expected_state_root {
+            return Err(BlockValidationError::new(
+                BlockValidationErrorCode::StateRootMismatch,
+            ));
+        }
+        self.validate_common_static_root_commitments_admission(header, receipts, parameters)?;
+        active_validator_set
+            .validate_against_parameters(parameters)
+            .map_err(|_| {
+                BlockValidationError::new(BlockValidationErrorCode::ValidatorSetContextMismatch)
+            })?;
+        if header.genesis_hash() != active_validator_set.genesis_hash()
+            || header.chain_id() != active_validator_set.chain_id()
+            || header.protocol_version() != active_validator_set.protocol_version()
+            || header.epoch() != active_validator_set.epoch()
+            || header.validator_set_id() != active_validator_set.id()
+        {
+            return Err(BlockValidationError::new(
+                BlockValidationErrorCode::ValidatorSetContextMismatch,
+            ));
+        }
+        self.verify_evidence(active_validator_set, verifier)
+            .map_err(|_| {
+                BlockValidationError::new(BlockValidationErrorCode::InvalidEvidenceSignature)
+            })?;
+        Ok(ValidatedBlockCommitmentsV0 {
+            block_id: header.id(),
+            logical_block_size: self.logical_block_size_v0(header).map_err(|_| {
+                BlockValidationError::new(BlockValidationErrorCode::LogicalBlockSizeExceeded)
+            })?,
+            transaction_count: self.application_payload.transaction_count(),
+            evidence_count: self.evidence.len() as u32,
+        })
+    }
 }
 
 fn validate_evidence_order(evidence: &[DoubleVoteEvidenceV0]) -> BlockValidationResult<()> {
@@ -1393,6 +1459,9 @@ fn block_validation_as_validation_error(error: BlockValidationError) -> Validati
         BlockValidationErrorCode::NextEpochCommitmentMismatch => {
             ValidationError::InvalidBlock("checkpoint next-epoch commitment mismatch")
         }
+        BlockValidationErrorCode::NonEpochHandoffBlock => ValidationError::InvalidBlock(
+            "first-new body-validation kernel requires an epoch-handoff block",
+        ),
     }
 }
 

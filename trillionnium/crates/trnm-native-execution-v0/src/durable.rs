@@ -58,12 +58,18 @@ use crate::{
 
 #[path = "epoch_durable.rs"]
 mod epoch_durable;
-pub use epoch_durable::{CommittedNativeEpochExecutionV1, PreparedNativeEpochExecutionV1};
+pub use epoch_durable::{
+    CommittedNativeEpochExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,
+    PreparedNativeEpochExecutionV1,
+};
 
 #[path = "incremental_owner_v1.rs"]
 mod incremental_owner_v1;
+#[cfg(feature = "incremental-epoch-candidate")]
+pub use incremental_owner_v1::epoch_candidate_v1::PreparedNativeIncrementalEpochExecutionV1;
 pub use incremental_owner_v1::{
-    CommittedNativeIncrementalExecutionV1, PreparedNativeIncrementalExecutionV1,
+    CommittedNativeIncrementalExecutionV1, ConfirmedPreparedNativeIncrementalExecutionV1,
+    PreparedNativeIncrementalExecutionV1,
 };
 
 mod replay_floor_v1;
@@ -1217,6 +1223,15 @@ impl DurableNativeApplicationV0 {
                             &metadata,
                         )?);
                 }
+                #[cfg(feature = "incremental-epoch-candidate")]
+                if epoch_durable::schema_version(&connection)? == 6 {
+                    incremental_migration_pin =
+                        Some(incremental_owner_v1::epoch_candidate_v1::audit_anchor(
+                            &connection,
+                            &config,
+                            &metadata,
+                        )?);
+                }
             } else {
                 validate_virgin_inventory_v0(&connection)?;
             }
@@ -1229,6 +1244,23 @@ impl DurableNativeApplicationV0 {
             owner_affinity: Arc::new(()),
             incremental_migration_pin: Mutex::new(incremental_migration_pin),
         })
+    }
+
+    /// Freshly confirm the exact initialized ordinary schema3 owner. This
+    /// read-only guard never upgrades or grants state-sync/finality authority.
+    pub fn confirm_ordinary_schema_v0(&self) -> DurableResult<()> {
+        let _guard = self.lock_operation()?;
+        let c = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&c)?;
+        if epoch_durable::schema_version(&c)? != APPLICATION_SCHEMA_VERSION_V0 {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "ordinary.exact_schema3",
+            ));
+        }
+        let metadata = load_metadata_v0(&c, &self.config)?;
+        validate_metadata_v0(&c, &self.config, &metadata)?;
+        Ok(())
     }
 
     pub fn path(&self) -> &Path {
@@ -1615,7 +1647,10 @@ impl DurableNativeApplicationV0 {
         reject_sqlite_sidecars_v0(&self.path)?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
-        if epoch_durable::schema_version(&connection)? == incremental_owner_v1::SCHEMA_VERSION {
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            incremental_owner_v1::SCHEMA_VERSION | 6
+        ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
                 "preview_block_v0.incremental_requires_versioned_adapter",
@@ -2055,7 +2090,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         verify_schema_v0(&connection)?;
         if matches!(
             epoch_durable::schema_version(&connection)?,
-            epoch_durable::SCHEMA_VERSION | incremental_owner_v1::SCHEMA_VERSION
+            epoch_durable::SCHEMA_VERSION | incremental_owner_v1::SCHEMA_VERSION | 6
         ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::BindingMismatch,
@@ -2244,6 +2279,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
+        if epoch_durable::schema_version(&connection)? == 6 {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "schema6.requires_dedicated_consumer",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         let inventory = validate_metadata_v0(&connection, &self.config, &metadata)?;
         let mut p = load_p_by_block_v0(
@@ -2433,7 +2474,10 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeStateProofV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
-        if epoch_durable::schema_version(&connection)? == incremental_owner_v1::SCHEMA_VERSION {
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            incremental_owner_v1::SCHEMA_VERSION | 6
+        ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
                 "state_proof.incremental_requires_versioned_adapter",
@@ -2471,7 +2515,10 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeSnapshotManifestV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
-        if epoch_durable::schema_version(&connection)? == incremental_owner_v1::SCHEMA_VERSION {
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            incremental_owner_v1::SCHEMA_VERSION | 6
+        ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
                 "snapshot.incremental_requires_versioned_adapter",
@@ -2541,6 +2588,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeApplicationRecoveryResultV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
+        if epoch_durable::schema_version(&connection)? == 6 {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "schema6.requires_dedicated_consumer",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
         if request.chain_id().as_str() != self.config.chain_id
@@ -2959,6 +3012,12 @@ fn validate_metadata_v0(
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
+    #[cfg(feature = "incremental-epoch-candidate")]
+    if epoch_durable::schema_version(connection)? == 6 {
+        return incremental_owner_v1::epoch_candidate_v1::validate_metadata(
+            connection, config, metadata,
+        );
+    }
     if epoch_durable::schema_version(connection)? == incremental_owner_v1::SCHEMA_VERSION {
         return incremental_owner_v1::validate_metadata(connection, config, metadata);
     }
@@ -3671,7 +3730,10 @@ fn load_metadata_v0(
         APPLICATION_SCHEMA_VERSION_V0
             | epoch_durable::SCHEMA_VERSION
             | incremental_owner_v1::SCHEMA_VERSION
-    ) || array32_v0(&row.1, "metadata.store_id")? != config.store_id
+            | 6
+    ) || (decode_u64_v0(&row.0, "metadata.schema")? == 6
+        && !cfg!(feature = "incremental-epoch-candidate"))
+        || array32_v0(&row.1, "metadata.store_id")? != config.store_id
         || row.2 != config.chain_id
         || array32_v0(&row.3, "metadata.genesis")? != config.genesis_hash
         || array32_v0(&row.4, "metadata.descriptor")? != config.chain_descriptor_hash
@@ -4010,6 +4072,10 @@ fn initialize_schema_v0(connection: &Connection) -> DurableResult<()> {
 }
 
 fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
+    #[cfg(feature = "incremental-epoch-candidate")]
+    if metadata_exists_v0(connection)? && epoch_durable::schema_version(connection)? == 6 {
+        return incremental_owner_v1::epoch_candidate_v1::verify_schema(connection);
+    }
     if metadata_exists_v0(connection)?
         && epoch_durable::schema_version(connection)? == incremental_owner_v1::SCHEMA_VERSION
     {

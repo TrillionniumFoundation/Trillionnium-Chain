@@ -691,6 +691,69 @@ impl PreparedNativeIncrementalExecutionV1 {
         self.p.storage_artifact
     }
 }
+
+/// Fresh reconstruction of an actual native P. Comparison fields alone are
+/// never Core authority; the consumer must join this receipt to the live owner.
+/// ```compile_fail
+/// use trnm_native_execution_v0::ConfirmedPreparedNativeIncrementalExecutionV1;
+/// let receipt = ConfirmedPreparedNativeIncrementalExecutionV1 {};
+/// ```
+#[must_use]
+pub struct ConfirmedPreparedNativeIncrementalExecutionV1 {
+    prepared: PreparedNativeIncrementalExecutionV1,
+}
+impl ConfirmedPreparedNativeIncrementalExecutionV1 {
+    pub fn prepared(&self) -> &PreparedNativeIncrementalExecutionV1 {
+        &self.prepared
+    }
+    pub fn artifact_checksum(&self) -> [u8; 32] {
+        sha256_v0(&self.prepared.p.artifact)
+    }
+    pub fn application_payload_and_receipts(
+        &self,
+    ) -> Result<(
+        trnm_consensus_types::ApplicationPayloadV0,
+        trnm_consensus_types::ExecutionReceiptsV0,
+    )> {
+        let executed = self.prepared.executed()?;
+        let exact = crate::poco_checkpoint::native_execution_from_receipts_v0(
+            executed.request().transactions(),
+            executed.receipts(),
+        )?;
+        Ok((
+            exact.application_payload().clone(),
+            exact.execution_receipts().clone(),
+        ))
+    }
+    pub fn overlay_checksum(&self) -> [u8; 32] {
+        let p = &self.prepared.p;
+        hash_domain(
+            "trnm.native-application.incremental-overlay.v1",
+            &[
+                &p.storage_artifact,
+                &p.replay_parent.root,
+                &sha256_v0(&p.replay_delta),
+                &sha256_v0(&p.lifecycle),
+            ],
+        )
+    }
+    pub const fn commit_sequence(&self) -> Option<u64> {
+        self.prepared.p.commit_sequence
+    }
+    pub fn belongs_to_application_at_path(
+        &self,
+        app: &DurableNativeApplicationV0,
+        expected_path: &Path,
+    ) -> bool {
+        app.path() == expected_path
+            && app
+                .confirm_prepared_incremental_execution_v1(&self.prepared)
+                .is_ok_and(|fresh| {
+                    fresh.prepared.p.status == self.prepared.p.status
+                        && fresh.commit_sequence() == self.commit_sequence()
+                })
+    }
+}
 #[must_use]
 pub struct CommittedNativeIncrementalExecutionV1 {
     owner: Arc<()>,
@@ -709,8 +772,27 @@ impl CommittedNativeIncrementalExecutionV1 {
         self.sequence
     }
     pub fn belongs_to_application(&self, app: &DurableNativeApplicationV0) -> bool {
-        Arc::ptr_eq(&self.owner, &app.owner_affinity)
-            && app.confirmed_committed_head_v0().ok().as_ref() == Some(&self.head)
+        if !Arc::ptr_eq(&self.owner, &app.owner_affinity) {
+            return false;
+        }
+        (|| -> Result<bool> {
+            let _guard = app.lock_operation()?;
+            let connection = open_immutable_connection_v0(&app.path)?;
+            verify_schema_v0(&connection)?;
+            let tx = connection.unchecked_transaction()?;
+            let metadata = load_metadata_v0(&tx, &app.config)?;
+            let owner = app.pinned_incremental_owner(&tx, &metadata)?;
+            let p = load_p(&tx, *self.head.block_id().as_bytes())?
+                .context("committed incremental receipt P missing")?;
+            p.validate(&app.config)?;
+            Ok(metadata.head == self.head
+                && p.target()? == self.head
+                && p.status == 1
+                && p.digest == self.digest
+                && p.commit_sequence == Some(self.sequence)
+                && owner.commit_sequence == self.sequence)
+        })()
+        .unwrap_or(false)
     }
 }
 impl DurableNativeApplicationV0 {
@@ -1096,6 +1178,27 @@ impl DurableNativeApplicationV0 {
         drop(connection);
         self.reopen_incremental_locked(block, p.digest)
     }
+
+    pub fn confirm_prepared_incremental_execution_v1(
+        &self,
+        prepared: &PreparedNativeIncrementalExecutionV1,
+    ) -> Result<ConfirmedPreparedNativeIncrementalExecutionV1> {
+        ensure!(
+            Arc::ptr_eq(&prepared.owner, &self.owner_affinity),
+            "incremental prepared readback foreign owner"
+        );
+        let _guard = self.lock_operation()?;
+        let fresh = self.reopen_incremental_locked(prepared.p.block, prepared.p.digest)?;
+        ensure!(
+            fresh.p.sequence == prepared.p.sequence
+                && fresh.p.artifact == prepared.p.artifact
+                && fresh.p.header == prepared.p.header
+                && fresh.p.storage_artifact == prepared.p.storage_artifact
+                && fresh.p.storage_sequence == prepared.p.storage_sequence,
+            "incremental prepared readback substituted"
+        );
+        Ok(ConfirmedPreparedNativeIncrementalExecutionV1 { prepared: fresh })
+    }
 }
 impl DurableNativeApplicationV0 {
     pub fn commit_incremental_finality_bytes_v1(
@@ -1293,3 +1396,7 @@ impl DurableNativeApplicationV0 {
         })
     }
 }
+
+#[cfg(feature = "incremental-epoch-candidate")]
+#[path = "incremental_epoch_owner_v1.rs"]
+pub(super) mod epoch_candidate_v1;

@@ -51,6 +51,11 @@ impl OldEpochBoundaryCoreV1 {
         self.core
             .issue_application_finalization_apply_authority_v0()
     }
+    pub fn issue_application_finalization_permit_v1(
+        &self,
+    ) -> Result<CoreIssuedApplicationFinalizationPermitV0> {
+        self.core.issue_application_finalization_permit_v0()
+    }
     pub fn step_v1(&mut self, input: Input) -> Result<Vec<Effect>> {
         self.core
             .step(input, &trnm_consensus_crypto::StrictEd25519Verifier)
@@ -89,7 +94,7 @@ impl OldEpochBoundaryCoreV1 {
 #[derive(Debug)]
 pub struct StrictOldEpochTerminalRecoveryV1 {
     config: CoreConfig,
-    state: SafetyState,
+    state: Box<SafetyState>,
     context_ref: [u8; 32],
     record_checksum: [u8; 32],
     owner_generation: u64,
@@ -196,7 +201,7 @@ impl Core {
         }
         Ok(StrictOldEpochTerminalRecoveryV1 {
             config: config.clone(),
-            state: state.clone(),
+            state: Box::new(state.clone()),
             context_ref: crate::old_epoch_boundary_record_context_ref_v1(context)
                 .map_err(|_| CoreError::InvalidRecovery("terminal outgoing context"))?,
             record_checksum: expected_record_checksum,

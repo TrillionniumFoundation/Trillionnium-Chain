@@ -1719,9 +1719,28 @@ fn ordinary_retirement_consumes_real_owner_blocks_old_open_and_rechecks_readback
     let w = MemoryWatermark::default();
     let profile = retirement_profile(&f);
     let mut old = SqliteSignerJournalV0::initialize_new(&path, profile.clone(), w.clone()).unwrap();
+    let genesis = old
+        .confirm_node_checkpoint_head_exact_v0()
+        .unwrap()
+        .exact_watermark();
     let mut producer = ExactProducer::new(f.signing_key.clone());
     old.sign_exact_v0(&vote(&f.profile(), 1, 3, 21), &mut producer)
         .unwrap();
+    let event_checksum: Vec<u8> = Connection::open(&path)
+        .unwrap()
+        .query_row(
+            "SELECT chain_checksum FROM signer_journal_events_v0 WHERE sequence_be=?1",
+            rusqlite::params![1u64.to_be_bytes().as_slice()],
+            |r| r.get(0),
+        )
+        .unwrap();
+    let first_event = SignerWatermarkV0::from_persisted_parts(
+        genesis.scope(),
+        genesis.journal_id(),
+        1,
+        event_checksum.try_into().unwrap(),
+    )
+    .unwrap();
     let ctx = retirement_context(&f);
     let intent = f.old_handoff_intent();
     let mut retired = old
@@ -1731,6 +1750,30 @@ fn ordinary_retirement_consumes_real_owner_blocks_old_open_and_rechecks_readback
     assert_eq!(record.source_v1().sequence(), 2);
     let receipt = retired.confirm_retirement_v1().unwrap();
     assert!(receipt.belongs_to_owner_v1(&mut retired));
+    assert!(retired.confirms_ordinary_prefix_v1(genesis).unwrap());
+    assert!(retired
+        .confirms_ordinary_prefix_v1(record.source_v1())
+        .unwrap());
+    let forked_prefix = SignerWatermarkV0::from_persisted_parts(
+        genesis.scope(),
+        genesis.journal_id(),
+        genesis.sequence(),
+        [0x99; 32],
+    )
+    .unwrap();
+    assert!(
+        !retired.confirms_ordinary_prefix_v1(forked_prefix).unwrap(),
+        "smaller sequence with foreign checksum must not count as ancestry"
+    );
+    assert!(retired.confirms_ordinary_prefix_v1(first_event).unwrap());
+    let false_event = SignerWatermarkV0::from_persisted_parts(
+        genesis.scope(),
+        genesis.journal_id(),
+        1,
+        [0x77; 32],
+    )
+    .unwrap();
+    assert!(!retired.confirms_ordinary_prefix_v1(false_event).unwrap());
     assert!(SqliteSignerJournalV0::open_existing(&path, profile.clone(), w.clone()).is_err());
     drop(retired);
     let before = namespace_snapshot(d.path());
@@ -1745,6 +1788,9 @@ fn ordinary_retirement_consumes_real_owner_blocks_old_open_and_rechecks_readback
             .unwrap();
     assert!(!receipt.belongs_to_owner_v1(&mut reopened));
     assert!(reopened.confirm_retirement_v1().is_ok());
+    assert!(reopened.confirms_ordinary_prefix_v1(genesis).unwrap());
+    assert!(reopened.confirms_ordinary_prefix_v1(first_event).unwrap());
+    assert!(!reopened.confirms_ordinary_prefix_v1(false_event).unwrap());
     let c = Connection::open(&path).unwrap();
     assert!(c
         .execute("UPDATE signer_retirement_v1 SET record=zeroblob(354)", [])

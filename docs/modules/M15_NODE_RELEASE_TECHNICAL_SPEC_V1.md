@@ -469,3 +469,221 @@ links reject. Canonical tar uses a symbolic-link member with fixed metadata.
 The verifier validates this inventory before extraction; the builder extracts
 all regular members first and creates only these validated aliases afterward.
 No source file is materialized under a false original Git hash.
+
+### Terminal outgoing whole-node checkpoint projection v1
+
+The candidate `epoch-handoff-checkpoint-candidate` interface uses the existing
+672-byte external node-checkpoint CAS envelope with a distinct, domain-separated
+application projection. It does not reinterpret the native-K projection or make
+schema13 recovery accept schema14. A successor requires the independently
+recorded predecessor checkpoint, whose signer scope, journal ID and full profile
+checksum must match the retired original owner. Its sequence and application
+height cannot be ahead of the actual retirement source and committed C. A lower
+signer sequence is accepted only when a fresh audited snapshot of the original
+retired journal contains that exact historical checksum (including the special
+sequence-zero initial checksum). Journal8 supplies privately constructed audited
+migration-source facts; predecessor Safety journal/profile/revision/record/chain
+must equal that exact journal7 origin. The retained committed native history must
+also authenticate the predecessor application block/root/height/time. Legacy
+application projection fields do not grant any P, ACK or signing capability.
+
+The producer joins a fresh, owner-affine retired signer receipt, strict
+pre-handoff context, actual journal8 terminal14O head and actual committed native
+C readback. The successor binds the exact retirement terminal watermark, Safety
+journal/context/revision/record/chain checksum, native committed P/artifact/overlay
+and commit sequence digest, descriptor and owner generation. Retirement happens
+before this CAS; losing its response never restores ordinary signing. Before the
+CAS, recovery accepts only the exact predecessor; after it, only the identical
+deterministically rebuilt successor. Every third external state fails closed.
+A fresh synchronized readback is mandatory before returning a non-Clone token.
+
+That token retains the actual independent checkpoint owner and retired receipt.
+Host handoff recovery and both sides of signature production revalidate it; a
+public decoded checkpoint or caller-supplied tuple cannot construct the token.
+The existing scalar-only retired restart entry remains fenced. This projection
+qualifies terminal14O/original-custody recovery only; full14E activation still
+requires journal9, its native epoch edge and a separate new ordinary lease.
+
+The default-off host `epoch-join-test-fixtures` regression drives real Core,
+journal8 and native speculative P through H1..C8 and two seals. Its original
+SQLite signer produces ten votes only after fresh Safety persistence; host
+retirement joins the actual committed C. All local Core/application/Safety,
+independent node-checkpoint, retired signer and handoff owners are closed; native
+and Safety reopen and regenerate fresh receipts from exact retained evidence.
+The recovered host returns the identical persisted handoff signature without
+another key call. Eight independently checksummed
+but substituted genesis predecessors (Safety identity/profile/revision/record/
+chain, application block/root and signer prefix checksum) reject before CAS.
+An identical-key/profile/scope second retired journal rejects; a later independent
+checkpoint fences the recovered host before key access. Genesis commissioning
+and the external watermark service are explicit test inputs. This close/reopen
+test does not claim a combined process-kill matrix, external HSM/KMS rollback
+protection, new ordinary signing authority, or multi-host epoch activation.
+
+
+### Planned full-epoch node-lineage checkpoint v1
+
+This is an implementation-ready local contract, not a source API or activated
+runtime claim. The V0 672-byte record and its invariant
+`signer_exact_watermark.scope == scope` remain frozen. Full epoch activation
+uses a distinct V1 record and explicit SQLite schema2 migration. Stable node
+lineage identity is separate from the current ordinary signer's scope. No new
+scope is hidden inside a V0 recovery-closure hash.
+
+`EpochNodeCheckpointV1` is comparison data. Canonical local encoding is the
+following ordered fields; all integers are unsigned big-endian, every Hash32
+is exactly 32 bytes, and no trailing bytes, padding or unknown tags are allowed:
+
+| Ordered group | Fields and exact local representation |
+|---|---|
+| Envelope | ASCII `TRNMNC01` (8 bytes), codec u16=1, phase u8, role u8, predecessor-kind u8, lineage_id Hash32, origin_checksum Hash32, generation u64, predecessor_checksum Hash32 |
+| Active consensus | genesis_hash Hash32, chain_id as u16 byte length then canonical UTF-8 bytes (1..128, same identity as frozen chain ID), protocol_version u32, epoch u64, author as u16 byte length then canonical ValidatorId bytes (1..128), validator_set_id Hash32, parameters_hash Hash32, owner_generation u64, phase_authority_binding Hash32 |
+| Source Safety | option u8; 0 carries no bytes, 1 carries journal_id Hash32, context_ref Hash32, revision u64, record_checksum Hash32, chain_checksum Hash32 |
+| Target Safety | journal_id Hash32, context_ref Hash32, revision u64, record_checksum Hash32, chain_checksum Hash32 |
+| Epoch/application edge | checkpoint_block_id Hash32, checkpoint_height u64, checkpoint_state_root Hash32, terminal_old_block_id Hash32, terminal_old_height u64, terminal_old_view u64, terminal_old_qc_id Hash32, native_authorization_id Hash32 |
+| Current real application | block_id Hash32, height u64, epoch u64, view u64, timestamp_ms u64, state_root Hash32, native_store_id Hash32, native_commit_id Hash32, p_sequence u64, p_digest Hash32, artifact_digest Hash32, overlay_digest Hash32, commit_sequence u64 |
+| Retired custody | option u8; 0 carries no bytes, 1 carries retired_epoch u64, retired_author as u16 length then canonical ValidatorId bytes (1..128), retired_validator_set_id Hash32, retired_parameters_hash Hash32, scope Hash32, journal_id Hash32, profile_checksum Hash32, source_sequence u64, source_chain_checksum Hash32, terminal_sequence u64, terminal_chain_checksum Hash32, retirement_record_checksum Hash32 |
+| Active ordinary custody | option u8; 0 carries no bytes, 1 carries scope Hash32, journal_id Hash32, profile_checksum Hash32, sequence u64, chain_checksum Hash32 |
+| Integrity | Hash32 = H(`trnm.node.epoch-lineage-checkpoint.v1`, all preceding record bytes) |
+
+Here H(domain, payload) is exactly SHA-256 of the concatenation
+`b"trnm.domain.hash.v1" || u64_be(domain.len()) || domain || u64_be(payload.len()) || payload`.
+The domain is the literal ASCII bytes, without a terminator; lengths count bytes.
+The integrity payload excludes only its final 32-byte integrity field.
+The immutable origin checksum uses the identical H layout with domain
+`trnm.node.epoch-lineage-origin.v1` and the entire canonical origin record,
+including that record's own integrity field. These definitions do not depend
+on a same-named helper in another crate or on a multi-part hash convention.
+
+Closed phase tags are 0 ActivationCommitted, 1 Ordinary, 2 EpochRetired. The name
+ActivationCommitted means the composite physical cut was committed; decoded
+bytes do not prove that a process received a lease. Role tags are 0 Continuing,
+1 VirginNew, 2 Removed. Predecessor kinds are 0 exact terminal V0 record,
+1 exact V1 record, 2 explicitly commissioned virgin lineage record. Hashes are
+nonzero except explicitly absent option payloads; options contain no zero-filled
+placeholder structs. Generation/owner generation are positive and checked for
+overflow. The complete record is at most 8192 bytes before any allocation;
+unknown future layouts require a new codec. This is neither CEV0 nor a new
+consensus signing domain.
+
+Role is explicitly phase-relative. In ActivationCommitted and Ordinary it
+describes how the author entered the **current** epoch e. At EpochRetired it
+describes whether that same current-epoch author remains eligible for e+1;
+the active consensus group still names e, never e+1. Every combination not
+listed below is rejected before persistence or lease issuance:
+
+| Phase / role | Source Safety option | Retired custody option and evidence epoch | Active ordinary option | Authority |
+|---|---|---|---|---|
+| ActivationCommitted / Continuing | 1: exact preceding terminal cut | 1: retired e-1 signer, copied exactly from preceding retired record or first V0 origin | 1: virgin e signer, sequence0 | Live lease only after actual composite owner join and Core ACK |
+| ActivationCommitted / VirginNew | 0: no fabricated local old Safety | 0: no fabricated old custody | 1: virgin e signer, sequence0 | Separate commissioning constructor; currently fenced |
+| Ordinary / Continuing | 1: unchanged incoming source cut | 1: unchanged incoming e-1 retirement | 1: same e scope/journal/profile; actual synchronized watermark | Only the existing e lease can continue |
+| Ordinary / VirginNew | 0: remains absent throughout this epoch | 0: remains absent throughout this epoch | 1: same e scope/journal/profile; actual synchronized watermark | Same rules as ordinary Continuing, without invented old history |
+| EpochRetired / Continuing | 1: exact last recorded local e Safety cut before terminal transition | 1: **current e signer** retirement, replacing any incoming e-1 evidence | 0: no ordinary handle, including no terminal handle in this option | Old-role handoff only; e+1 lease requires a later ActivationCommitted |
+| EpochRetired / Removed | 1: exact last recorded local e Safety cut before terminal transition | 1: **current e signer** retirement, replacing any incoming e-1 evidence | 0 | Old-role handoff only; no next local Core or ordinary lease |
+
+EpochRetired / VirginNew is invalid. An author that entered e as VirginNew
+changes role to Continuing or Removed when retiring e, based on the strictly
+verified outgoing new set. It cannot keep a role label that omits retirement.
+The retired payload must name the preceding active ordinary identity; the
+preceding checkpoint's exact active watermark must be an audited prefix of the
+actual retirement source watermark. Its terminal sequence is the retirement
+source sequence+1. The terminal chain checksum is stored solely in
+retired custody. Keeping the old active option or copying e-1 retirement into
+EpochRetired is invalid, even if that older retirement is authentic.
+
+The other groups also have closed phase semantics. ActivationCommitted and
+Ordinary retain the incoming full joint `phase_authority_binding`, incoming
+C/C+2 edge and native handoff `native_authorization_id`; only target Safety,
+current real application and active ordinary watermark advance in Ordinary.
+EpochRetired replaces those three incoming bindings with the outgoing strict
+pre-handoff context binding, outgoing C/C+2 edge, and freshly confirmed native
+checkpoint `post_execution_authorization_id`, respectively. Target Safety is
+the actual terminal local e cut, and current application is exactly outgoing C.
+This cut requires checkpoint/two-seal finality but **no joint certificate**.
+Requiring a full next joint binding here would circularly require the old-role
+signature before retiring the owner allowed to produce it.
+
+For the first continuing activation, predecessor-kind0 names the actual
+independently stored terminal14O V0 checkpoint. The lineage ID is its original
+scope, and origin_checksum binds that entire original 672-byte record under
+H(`trnm.node.epoch-lineage-origin.v1`, record). Generation is predecessor generation+1.
+Source Safety equals the actual journal8 terminal cut; target Safety equals the
+opaque pending14E initial request freshly persisted to journal9 at revision+1.
+The edge names real C and terminal C+2; current application remains exactly C.
+Retired custody is required and matches the original retired owner/checkpoint;
+active ordinary custody is required, uses the exact new configuration/author,
+a distinct scope/journal identity, and sequence0 with the actual virgin chain
+checksum. The complete joint evidence comes from journal9's strict context.
+No old header/epoch is relabeled and no seal creates a native P.
+
+Ordinary successors preserve lineage/origin/active epoch/configuration and
+custody identity, use generation+1 and the exact previous V1 checksum, and
+advance only through actual ordered Core/P/commit/signer readbacks. Qualified
+application height never decreases; view comparison applies only within the
+same epoch. Exact retries require byte equality, including signer sequence and
+chain checksum. EpochRetired requires actual active-custody retirement before
+any old-role handoff signature and grants no new ordinary lease. The next
+ActivationCommitted must consume that exact retired predecessor, strict next
+epoch evidence, next Safety owner and fresh next ordinary scope: e becomes e+1,
+role becomes Continuing, source Safety equals the predecessor target Safety,
+retired custody is copied byte-for-byte from the predecessor's current e
+retirement, and the new active ordinary payload starts at sequence0. It installs
+the now-complete joint binding and native handoff authorization for that edge.
+An EpochRetired / Removed record cannot take this successor; returning in a
+later epoch needs a separate reviewed commissioning protocol. Same-ID/new-key
+and new-ID/old-key migrations reject unless an explicit custody-migration rule
+is implemented; a new-only ID cannot bypass retirement by reusing an old key.
+
+VirginNew initialization is a separate commissioning API. It requires an
+independently pinned old checkpoint/strict joint evidence and a configured
+virgin lineage identity, no prior local Safety or signer record, a local author
+and key absent from the old set, and a new ordinary sequence0 namespace. It
+must not synthesize a journal8/local-old-validator history. This constructor
+remains fenced until its complete Core/native producer exists. Removed role is
+accepted only in EpochRetired, active ordinary option is absent, and neither a
+live new driver nor a new signing lease can be returned.
+
+The proposed store keeps application_id `0x54524e43` but sets user_version2 in
+the same `BEGIN IMMEDIATE` transaction that creates the exact three STRICT,
+WITHOUT ROWID tables below, copies the verified origin, writes the initial V1
+record/head and removes the legacy table. Migration requires exactly one V0
+scope row, the independently expected exact N1 record and actual old store
+owner. Other scopes cause `MultipleLineagesRequireExplicitMigration`, never
+silent deletion. The old V0 opener rejects user_version2, so an old writer
+cannot append after migration. Reopening schema2 never auto-migrates or creates
+missing files. WAL/FULL mode, descriptor/inode/parent-directory checks and fsync
+barriers retain the V0 owner requirements.
+
+| Table | Columns / keys / checks |
+|---|---|
+| `epoch_node_origin` | lineage_id BLOB32 PRIMARY KEY, origin_checksum BLOB32, predecessor_kind INTEGER CHECK 0..2, original_record BLOB CHECK length 1..8192; immutable after creation |
+| `epoch_node_records` | lineage_id BLOB32, generation BLOB8 big-endian, predecessor_checksum BLOB32, checksum BLOB32, record BLOB length 1..8192; PRIMARY KEY(lineage_id,generation); retain current and previous only |
+| `epoch_node_head` | lineage_id BLOB32 PRIMARY KEY, generation BLOB8, checksum BLOB32; CAS exact previous generation+checksum, changed row count exactly1 |
+
+Every record repeats origin_checksum so two-record pruning cannot disconnect
+it from migration. Readback verifies exact closed schema (at most four bounded
+schema rows, no unbounded SQL sort), one lineage/origin/head, ordered consecutive
+retained generations, canonical records, checksum links and immutable origin.
+SQLite row limit is 12 KiB, SQL limit 64 KiB, maximum database/WAL each 8 MiB,
+SHM limit64 KiB and busy timeout100 ms for this bounded candidate profile.
+These are explicit local fixture limits; deployment profiles may lower them or
+select reviewed larger limits before creating a namespace, never silently
+substitute production defaults. Record lengths are checked before copying.
+
+| Failure/cut | Required disposition and authority result |
+|---|---|
+| Foreign original source, missing edge/P, invalid membership or nonvirgin new signer | `JoinRejected`; no CAS, Core ACK or key call |
+| Before schema2 transaction commit | Source schema1 remains exact or destination is rejected; reopen at independently expected predecessor only |
+| Commit/sync response lost | `CommitUncertain`; consume live candidate handles, accept only exact predecessor or exact deterministic target on explicit reopen; every third state fences |
+| After schema2 durable head, before Core ACK/lease return | Reopen all owners; strict journal9/native/custody joins must match the exact V1 target, then remint one private runtime; no reinitialization of the signer |
+| Pending signer decision after activation | Reconcile the actual signer journal/external watermark and Core intent before any new key request; exact recorded response can replay |
+| Missing sidecar, changed inode, stale independent generation, source/target substitution | `OwnerFenced`; no repair, fallback to V0, scalar override or live Core |
+
+The public candidate activation constructor in M02 owns the actual journal9,
+native edge/application, original retired checkpoint/custody and new ordinary
+journal. Only after this V1 store confirms the exact composite cut may it use
+the private driver's ordinary trusted-host `StorageAck` seam. The store itself
+returns a non-Clone fresh-owner receipt, never a Core, signer or lease. Required
+acceptance includes whole-owner reopen, all three migration crash cuts, both
+new-scope and old-scope substitutions, current/previous pruning, stopped old V0
+writer, pending-sign exact replay, and at least two actual epoch transitions.

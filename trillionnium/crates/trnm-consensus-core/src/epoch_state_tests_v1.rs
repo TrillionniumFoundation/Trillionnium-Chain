@@ -68,6 +68,224 @@ pub(crate) fn artifact(runtime: &StrictEpochRuntimeContextV1) -> ValidatedPayloa
     )
 }
 
+/// Real Ed25519 proposals/QCs, with synthetic application results. This is a
+/// pure-engine fixture and cannot establish a live native application owner.
+pub(crate) fn first_chain(
+    runtime: &StrictEpochRuntimeContextV1,
+    views: &[u64],
+) -> Vec<(
+    SignedProposalV0,
+    QuorumCertificate,
+    ValidatedBlockCommitmentsV0,
+)> {
+    use ed25519_dalek::{Signer, SigningKey};
+    use sha2::{Digest, Sha256};
+    let set = runtime.structural_context().new_validator_set();
+    let params = runtime.structural_context().new_parameters();
+    let key = |id: ValidatorId| {
+        let mut hash = Sha256::new();
+        hash.update(b"trnm.poco-bft.checkpoint-finality.private-fixture.v0:");
+        hash.update(id.as_bytes());
+        SigningKey::from_bytes(&hash.finalize().into())
+    };
+    let payload = ApplicationPayloadV0::new(Vec::new()).unwrap();
+    let receipts = ExecutionReceiptsV0::new(&payload, Vec::new()).unwrap();
+    let body = BlockBodyV0::new(payload, Vec::new()).unwrap();
+    let mut parent = runtime.activation().terminal_old_header().clone();
+    let mut justify = runtime.anchor_reference().clone();
+    let mut result = Vec::new();
+    for (index, view) in views.iter().copied().enumerate() {
+        let view = View::new(view);
+        let proposer = leader_for(set, view);
+        let header = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            view,
+            parent.height().checked_next().unwrap(),
+            if index == 0 {
+                BlockKind::EpochHandoff
+            } else {
+                BlockKind::Regular
+            },
+            parent.id(),
+            proposer,
+            set.id(),
+            params.hash(),
+            body.payload_root().unwrap(),
+            StateRoot::new([0x62; 32]),
+            receipts.receipts_root().unwrap(),
+            body.evidence_root().unwrap(),
+            parent.timestamp_ms() + 1,
+            None,
+        )
+        .unwrap();
+        let auth = (index == 0).then(|| runtime.structural_context().authorization().clone());
+        let timeout = if justify.qc_ref().view().get() + 1 < view.get() {
+            let timed_out = View::new(view.get() - 1);
+            let entries = set
+                .validators()
+                .iter()
+                .map(|v| {
+                    let root = TimeoutVote::signing_root_for_set(set, timed_out, justify.qc_ref())
+                        .unwrap();
+                    TimeoutEntryV0::new(
+                        v.id(),
+                        justify.qc_ref(),
+                        SignatureBytes::from_array(key(v.id()).sign(root.as_bytes()).to_bytes()),
+                    )
+                    .unwrap()
+                })
+                .collect();
+            Some(
+                TimeoutCertificateV0::new(
+                    timed_out,
+                    entries,
+                    alloc::vec![justify.clone()],
+                    justify.id(),
+                    set,
+                )
+                .unwrap(),
+            )
+        } else {
+            None
+        };
+        let root =
+            ProposalWitnessV0::signing_root_for(&header, &justify, timeout.as_ref(), auth.as_ref())
+                .unwrap();
+        let witness = ProposalWitnessV0::new(
+            &header,
+            justify,
+            timeout,
+            auth,
+            SignatureBytes::from_array(key(proposer).sign(root.as_bytes()).to_bytes()),
+            set,
+            Some(runtime.activation().old_validator_set()),
+            params,
+            parent.timestamp_ms(),
+        )
+        .unwrap();
+        let block = Block::new(
+            header.clone(),
+            body.application_payload().try_cev0_bytes().unwrap(),
+            Vec::new(),
+        )
+        .unwrap();
+        let proposal = SignedProposalV0::new(
+            block,
+            witness,
+            set,
+            Some(runtime.activation().old_validator_set()),
+            params,
+            parent.timestamp_ms(),
+        )
+        .unwrap();
+        runtime
+            .verify_proposal_v1(
+                &proposal,
+                &parent,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        let root = Vote::signing_root_for_set(set, view, header.height(), header.id()).unwrap();
+        let votes = set
+            .validators()
+            .iter()
+            .map(|v| {
+                assert_eq!(
+                    key(v.id()).verifying_key().to_bytes(),
+                    v.consensus_key().into_bytes()
+                );
+                Vote::new(
+                    set.chain_id(),
+                    set.protocol_version(),
+                    set.epoch(),
+                    view,
+                    header.height(),
+                    header.id(),
+                    set.id(),
+                    v.id(),
+                    SignatureBytes::from_array(key(v.id()).sign(root.as_bytes()).to_bytes()),
+                    set,
+                )
+                .unwrap()
+            })
+            .collect();
+        let qc = QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            view,
+            header.height(),
+            header.id(),
+            set.id(),
+            votes,
+            set,
+        )
+        .unwrap();
+        runtime
+            .verify_qc_reference_v1(
+                &QcReferenceV0::ordinary(qc.clone()),
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        let commitments = if index == 0 {
+            assert!(body
+                .validate_ordinary_commitments(
+                    &header,
+                    &receipts,
+                    params,
+                    set,
+                    &StrictEd25519Verifier
+                )
+                .is_err());
+            assert!(body
+                .validate_epoch_handoff_commitments_v1(
+                    &header,
+                    &receipts,
+                    params,
+                    StateRoot::new([0; 32]),
+                    set,
+                    &StrictEd25519Verifier
+                )
+                .is_err());
+            body.validate_epoch_handoff_commitments_v1(
+                &header,
+                &receipts,
+                params,
+                header.state_root(),
+                set,
+                &StrictEd25519Verifier,
+            )
+            .unwrap()
+        } else {
+            assert!(body
+                .validate_epoch_handoff_commitments_v1(
+                    &header,
+                    &receipts,
+                    params,
+                    header.state_root(),
+                    set,
+                    &StrictEd25519Verifier
+                )
+                .is_err());
+            body.validate_ordinary_commitments(
+                &header,
+                &receipts,
+                params,
+                set,
+                &StrictEd25519Verifier,
+            )
+            .unwrap()
+        };
+        parent = header;
+        justify = QcReferenceV0::ordinary(qc.clone());
+        result.push((proposal, qc, commitments));
+    }
+    result
+}
+
 #[test]
 fn epoch14_record_retains_real_old_checkpoint_and_separate_new_anchor() {
     let runtime = runtime();
