@@ -4,6 +4,12 @@ Status: **candidate documentation contract; no protocol freeze, activation or in
 
 The sole engineering plan remains `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`. This is a resolver for technical rules, not a roadmap. Machine activation authority remains `config/consensus-mainline.json`. Its false production/release flags are not changed by this contract.
 
+The default build and check profile is frozen to `bft-v0` by
+`config/protocol-profile-registry-v1.toml`. `pcc1` and `ai-v1` are explicit
+candidate profiles; `legacy-ledger-observation` is archived. None of these
+profiles may enter the default node closure, and a candidate command must name
+its profile/feature explicitly.
+
 ## 1. Resolve a rule before implementing it
 
 An implementation or review selects the tuple `(repository, source_commit, source_tree, protocol_version, contract_profile, parameter_commitment, feature_closure)`. A branch name, PR number, file modification date or successful ancestor check is not this tuple. Obtain commit/tree from the actual checkout; obtain active chain/profile/parameters from authenticated commissioning or activation material, never from the proof being verified.

@@ -12,6 +12,7 @@ import hashlib
 import os
 from pathlib import Path
 import re
+import subprocess
 import sys
 import tempfile
 import tomllib
@@ -22,6 +23,7 @@ from check_documentation_contracts_v1 import PIN_FIELDS
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = 'docs/development/plan-manifest-v1.toml'
+SNAPSHOT_FIELDS = ('pin_snapshot_commit', 'pin_snapshot_tree')
 
 
 def bounded_path(root: Path, relative: str) -> Path:
@@ -74,6 +76,38 @@ def refresh(root: Path, text: str) -> str:
     return text
 
 
+def current_snapshot(root: Path) -> tuple[str, str]:
+    """Return the exact commit/tree that receives refreshed content pins."""
+    status = subprocess.run(
+        ['git', 'status', '--porcelain', '--untracked-files=all'], cwd=root,
+        check=True, capture_output=True, text=True,
+    ).stdout
+    if status.strip():
+        raise ValueError('refusing to refresh pins on a dirty worktree; commit source first')
+    commit = subprocess.run(
+        ['git', 'rev-parse', 'HEAD'], cwd=root, check=True,
+        capture_output=True, text=True,
+    ).stdout.strip()
+    tree = subprocess.run(
+        ['git', 'rev-parse', 'HEAD^{tree}'], cwd=root, check=True,
+        capture_output=True, text=True,
+    ).stdout.strip()
+    if re.fullmatch(r'[0-9a-f]{40}', commit) is None or re.fullmatch(r'[0-9a-f]{40}', tree) is None:
+        raise ValueError('git snapshot identity is not a full lowercase hash')
+    return commit, tree
+
+
+def update_snapshot_identity(text: str, commit: str, tree: str) -> str:
+    for field, value in zip(SNAPSHOT_FIELDS, (commit, tree)):
+        text, count = re.subn(
+            r'(?m)^' + re.escape(field) + r' = "[^"\n]*"$',
+            f'{field} = "{value}"', text,
+        )
+        if count != 1:
+            raise ValueError(f'ambiguous or missing snapshot assignment: {field}')
+    return text
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group()
@@ -91,6 +125,11 @@ def main() -> int:
     if not args.write:
         print('development pins stale; review inputs then use --write', file=sys.stderr)
         return 1
+    # Advancing the snapshot is part of the same atomic refresh operation. It
+    # is the only extra metadata required after a release/source-binding edit;
+    # ordinary source changes never enter this path.
+    commit, tree = current_snapshot(ROOT)
+    updated = update_snapshot_identity(updated, commit, tree)
     fd, name = tempfile.mkstemp(prefix='.plan-pins-', dir=path.parent)
     try:
         with os.fdopen(fd, 'w', encoding='utf-8', newline='') as handle:

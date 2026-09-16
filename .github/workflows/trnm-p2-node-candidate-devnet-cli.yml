@@ -9,6 +9,8 @@ on:
       - 'docs/architecture/TRNM_CANDIDATE_RUNTIME_CLOSURE_V1.md'
       - 'config/candidate-runtime-closure-v1.toml'
       - 'scripts/ci/check_candidate_runtime_closure_v1.py'
+      - 'config/runtime-semantic-gate-v1.toml'
+      - 'scripts/ci/check_runtime_semantic_gate_v1.py'
       - 'config/documentation-truth-v1.json'
       - 'scripts/ci/check_canonical_development_plan.sh'
       - 'scripts/ci/check_documentation_reference_closure_v1.py'
@@ -31,6 +33,8 @@ on:
       - 'docs/architecture/TRNM_CANDIDATE_RUNTIME_CLOSURE_V1.md'
       - 'config/candidate-runtime-closure-v1.toml'
       - 'scripts/ci/check_candidate_runtime_closure_v1.py'
+      - 'config/runtime-semantic-gate-v1.toml'
+      - 'scripts/ci/check_runtime_semantic_gate_v1.py'
       - 'config/documentation-truth-v1.json'
       - 'scripts/ci/check_canonical_development_plan.sh'
       - 'scripts/ci/check_documentation_reference_closure_v1.py'
@@ -148,7 +152,7 @@ jobs:
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
 
-      - name: Validate bounded candidate runtime closure
+      - name: Run candidate runtime lexical smoke guards
         run: python3 scripts/ci/check_candidate_runtime_closure_v1.py
 
       - name: Format compile and strict lint

@@ -16,6 +16,7 @@ from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CONFIG_PATH = ROOT / "config/build-closures-v1.toml"
+PROFILE_REGISTRY_CHECK = ROOT / "scripts/ci/check_protocol_profile_registry_v1.py"
 
 
 class ClosureError(RuntimeError):
@@ -304,6 +305,12 @@ def cargo_tree_workspace_packages(
 
 def main() -> int:
     args = parse_args()
+    try:
+        subprocess.run([sys.executable, str(PROFILE_REGISTRY_CHECK)], cwd=ROOT, check=True,
+                       capture_output=True, text=True)
+    except subprocess.CalledProcessError as error:
+        detail = (error.stderr or error.stdout or "protocol profile registry failed").strip()
+        raise ClosureError(detail) from error
     config = load_toml(CONFIG_PATH)
     require(config.get("schema_version") == 1, "build closure schema drift")
     require(config.get("closure_registry_id") == "trnm-build-closures-v1", "build closure ID drift")
@@ -369,6 +376,14 @@ def main() -> int:
         closure_id = row.get("id")
         require(isinstance(closure_id, str) and closure_id not in ids, f"duplicate/invalid closure id: {closure_id!r}")
         ids.add(closure_id)
+        expected_profile = {
+            "node-prod-v0": "bft-v0",
+            "node-devnet-v0": "bft-v0",
+            "ai-v1-candidate": "ai-v1",
+            "lab-and-evidence": "legacy-ledger-observation",
+        }.get(closure_id)
+        require(row.get("profile") == expected_profile,
+                f"{closure_id}: protocol profile binding drift")
         roots = row.get("root_packages")
         features = row.get("features")
         require(isinstance(roots, list) and roots and all(isinstance(item, str) for item in roots), f"{closure_id}: roots missing")
@@ -406,6 +421,7 @@ def main() -> int:
         reached_by_id[closure_id] = reached
         report_rows.append({
             "id": closure_id,
+            "profile": row["profile"],
             "root_packages": roots,
             "root_features": sorted(features),
             "resolved_package_count": len(reached),
@@ -415,6 +431,8 @@ def main() -> int:
 
     require(ids == {"node-prod-v0", "node-devnet-v0", "ai-v1-candidate", "lab-and-evidence"}, f"closure IDs drift: {sorted(ids)}")
     production = next(row for row in report_rows if row["id"] == "node-prod-v0")
+    require(production["root_packages"] == ["trnm-poco-node-cli"],
+            "production closure root drift")
     require(not (set(production["resolved_packages"]) & groups["ai-v1-candidate"]), "production closure contains AI-v1 candidate")
 
     candidate_reached = validate_persistent_authority_boundary(packages, reached_by_id["node-prod-v0"])

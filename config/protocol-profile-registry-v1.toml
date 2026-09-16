@@ -1,0 +1,55 @@
+schema_version = 1
+registry_id = "trnm-protocol-profile-registry-v1"
+
+# One profile is selected for the default node/build/check path.  Other
+# profiles remain available only through an explicit candidate or archive
+# command; they cannot silently change consensus bytes or error semantics.
+canonical_profile = "bft-v0"
+default_build_profiles = ["bft-v0"]
+default_check_profiles = ["bft-v0"]
+
+[[profiles]]
+id = "bft-v0"
+status = "canonical"
+documentation_status = "frozen-implementation-target-not-activation"
+protocol = "poco-bft-v0"
+wire_schema = "CEV0"
+wire_schema_source = "docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md"
+error_namespace = "trnm-consensus-types::DecodeErrorCode"
+default_build = true
+default_check = true
+activation = false
+
+[[profiles]]
+id = "pcc1"
+status = "candidate"
+documentation_status = "candidate-contract-not-wire-version"
+protocol = "poco-bft-v0"
+# PCC1 imports the canonical v0 wire and error definitions.  It owns no
+# duplicate encoding or error-number mapping.
+wire_schema_ref = "bft-v0"
+error_namespace_ref = "bft-v0"
+default_build = false
+default_check = false
+activation = false
+
+[[profiles]]
+id = "ai-v1"
+status = "candidate"
+documentation_status = "draft-protocol-v1-not-activated"
+protocol = "poco-ai-native-v1"
+wire_schema = "CEV1"
+wire_schema_source = "docs/protocol/poco-ai-native-v1/README.md"
+error_namespace = "candidate-local-v1"
+default_build = false
+default_check = false
+activation = false
+
+[[profiles]]
+id = "legacy-ledger-observation"
+status = "archived"
+documentation_status = "historical-local-stage-vocabulary-not-publication-authority"
+protocol = "historical-observation"
+default_build = false
+default_check = false
+activation = false

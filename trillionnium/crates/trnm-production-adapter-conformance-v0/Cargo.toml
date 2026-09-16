@@ -17,6 +17,9 @@ trnm-control-plane-v0 = { path = "../trnm-control-plane-v0", version = "=0.1.0" 
 [package.metadata.trnm]
 module = "M17"
 role = "production-adapter-fault-conformance-testkit"
+build_role = "evidence"
+production_candidate = false
+production_dependency = false
 protocol = "poco-bft-v0"
 production_allowed = false
 candidate_authority = false

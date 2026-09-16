@@ -15,6 +15,13 @@ from typing import Any
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "docs/development/plan-manifest-v1.toml"
 
+# Content pins are a release/source-binding boundary.  They are deliberately
+# anchored to the last refresh commit instead of HEAD, so ordinary Rust,
+# test, or tooling changes do not require rewriting this large manifest.  A
+# change to one of the pinned inputs still fails closed until the refresh tool
+# advances the snapshot and recomputes every digest.
+PIN_REFRESH_POLICY = "change-scoped-v1"
+
 
 PIN_PATH_FIELDS = {
     "build_closure_git_blob": "build_closure_registry_path",
@@ -96,6 +103,56 @@ def blob(path: str) -> str:
     return value
 
 
+def blob_at(commit: str, path: str) -> str:
+    """Return the Git blob for *path* in a declared snapshot commit."""
+    require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
+            "invalid pin snapshot commit")
+    value = git("rev-parse", f"{commit}:{path}")
+    require(
+        re.fullmatch(r"[0-9a-f]{40}", value) is not None,
+        f"invalid Git blob for {path} at {commit}: {value}",
+    )
+    return value
+
+
+def content_at(commit: str, path: str) -> bytes:
+    """Read a tracked file from the immutable pin snapshot."""
+    require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
+            "invalid pin snapshot commit")
+    result = subprocess.run(
+        ["git", "cat-file", "blob", f"{commit}:{path}"],
+        cwd=ROOT, check=True, capture_output=True,
+    )
+    return result.stdout
+
+
+def sha256_at(commit: str, path: str) -> str:
+    return hashlib.sha256(content_at(commit, path)).hexdigest()
+
+
+def changed_paths_since(commit: str) -> set[str]:
+    """Return tracked paths changed after the pin snapshot.
+
+    The snapshot is always an ancestor of the checked-out source.  Comparing
+    the path set, rather than every file hash, is what makes ordinary source
+    changes cheap while preserving a hard failure for stale release inputs.
+    """
+    require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
+            "invalid pin snapshot commit")
+    paths: set[str] = set()
+    for args in (("diff", "--name-only", f"{commit}..HEAD", "--"),
+                 ("diff", "--name-only", "HEAD", "--"),
+                 ("diff", "--cached", "--name-only", "HEAD", "--")):
+        output = git(*args)
+        paths.update(line for line in output.splitlines() if line)
+    return paths
+
+
+def changed_pin_paths(commit: str, pin_paths: set[str]) -> set[str]:
+    """Return only release/source-bound inputs changed after the snapshot."""
+    return changed_paths_since(commit) & pin_paths
+
+
 def verify_assessed_baseline(manifest: dict[str, Any]) -> None:
     assessed_commit = manifest.get("assessed_commit")
     assessed_tree = manifest.get("assessed_tree")
@@ -160,20 +217,46 @@ def main() -> int:
         and manifest["workspace_crate_count"] > 0,
         "manifest workspace crate count drift",
     )
+    require(
+        manifest.get("pin_refresh_policy") == PIN_REFRESH_POLICY,
+        "manifest pin refresh policy drift",
+    )
+    snapshot_commit = manifest.get("pin_snapshot_commit")
+    snapshot_tree = manifest.get("pin_snapshot_tree")
+    require(
+        isinstance(snapshot_commit, str)
+        and re.fullmatch(r"[0-9a-f]{40}", snapshot_commit) is not None,
+        "pin snapshot commit missing",
+    )
+    require(
+        isinstance(snapshot_tree, str)
+        and re.fullmatch(r"[0-9a-f]{40}", snapshot_tree) is not None,
+        "pin snapshot tree missing",
+    )
+    require(
+        git("rev-parse", f"{snapshot_commit}^{{tree}}") == snapshot_tree,
+        "pin snapshot commit/tree mismatch",
+    )
+    require(
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", snapshot_commit, "HEAD"],
+            cwd=ROOT,
+        ).returncode
+        == 0,
+        "pin snapshot is not an ancestor of HEAD",
+    )
 
     plan_path = manifest.get("plan_path")
     evidence_path = manifest.get("evidence_contract_path")
     require(isinstance(plan_path, str), "plan path missing")
     require(isinstance(evidence_path, str), "evidence contract path missing")
     require(
-        hashlib.sha256((ROOT / plan_path).read_bytes()).hexdigest()
-        == manifest.get("plan_sha256"),
-        "plan SHA-256 mismatch",
+        sha256_at(snapshot_commit, plan_path) == manifest.get("plan_sha256"),
+        "plan SHA-256 mismatch in pin snapshot",
     )
     require(
-        hashlib.sha256((ROOT / evidence_path).read_bytes()).hexdigest()
-        == manifest.get("evidence_contract_sha256"),
-        "evidence-contract SHA-256 mismatch",
+        sha256_at(snapshot_commit, evidence_path) == manifest.get("evidence_contract_sha256"),
+        "evidence-contract SHA-256 mismatch in pin snapshot",
     )
 
     verify_assessed_baseline(manifest)
@@ -209,6 +292,29 @@ def main() -> int:
 
     pinned = PIN_PATH_FIELDS
 
+    # Every declared digest is checked against the immutable snapshot.  Only
+    # paths changed after that snapshot are compared with the current tree;
+    # this is the change-scoped part of the policy.  A normal source change
+    # therefore leaves this gate read-only, while a protocol/manifest/gate
+    # edit must run refresh_plan_manifest_pins_v1.py --write.
+    pin_paths = {manifest.get(path_field) for path_field in PIN_PATH_FIELDS.values()}
+    pin_paths.update({plan_path, evidence_path})
+    pin_paths.update(
+        manifest.get(path_field)
+        for path_field in (
+            "documentation_authority_path",
+            "module_implementation_guide_path",
+            "independent_review_policy_path",
+            "documentation_contract_registry_path",
+            "documentation_contract_gate_path",
+            "documentation_contract_test_path",
+            "development_metadata_path",
+        )
+    )
+    require(all(isinstance(path, str) and path for path in pin_paths),
+            "declared pin path missing")
+    changed_pins = changed_pin_paths(snapshot_commit, pin_paths)
+
     checked: list[dict[str, str]] = []
     for blob_field, path_field in pinned.items():
         path = manifest.get(path_field)
@@ -219,14 +325,30 @@ def main() -> int:
             and re.fullmatch(r"[0-9a-f]{40}", expected) is not None,
             f"{blob_field} missing",
         )
-        actual = blob(path)
+        actual = blob_at(snapshot_commit, path)
         require(
             actual == expected,
-            f"{blob_field} mismatch for {path}: {expected} != {actual}",
+            f"{blob_field} mismatch in pin snapshot for {path}: {expected} != {actual}",
         )
+        if path in changed_pins:
+            current = blob(path)
+            require(
+                current == expected,
+                f"stale pin for changed input {path}: {expected} != {current}; "
+                "run scripts/ci/refresh_plan_manifest_pins_v1.py --write",
+            )
         checked.append(
             {"blob_field": blob_field, "path": path, "blob": actual}
         )
+
+    if plan_path in changed_pins:
+        current = hashlib.sha256((ROOT / plan_path).read_bytes()).hexdigest()
+        require(current == manifest.get("plan_sha256"),
+                "stale plan SHA-256; run scripts/ci/refresh_plan_manifest_pins_v1.py --write")
+    if evidence_path in changed_pins:
+        current = hashlib.sha256((ROOT / evidence_path).read_bytes()).hexdigest()
+        require(current == manifest.get("evidence_contract_sha256"),
+                "stale evidence-contract SHA-256; run scripts/ci/refresh_plan_manifest_pins_v1.py --write")
 
     replay = manifest.get("replay")
     require(isinstance(replay, dict), "replay table missing")
@@ -269,6 +391,8 @@ def main() -> int:
         "plan_id": manifest["plan_id"],
         "workspace_crates": len(members),
         "pinned_inputs": len(checked),
+        "pin_snapshot_commit": snapshot_commit,
+        "changed_pinned_inputs": len(changed_pins),
         "overlay_source_commit": overlay_commit,
         "historical_overlay_object_verified": overlay_history_verified,
         "historical_evidence_acceptance_transferred": False,

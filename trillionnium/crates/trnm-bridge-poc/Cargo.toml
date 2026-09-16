@@ -4,6 +4,14 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Trillionnium Contributors"]
 license = "MIT"
+publish = false
+
+[package.metadata.trnm]
+lane = "bridge-proof-of-concept"
+build_role = "poc"
+production_candidate = false
+production_dependency = false
+runtime_authority = false
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }

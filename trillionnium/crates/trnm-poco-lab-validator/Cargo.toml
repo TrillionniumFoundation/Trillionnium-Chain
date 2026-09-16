@@ -15,6 +15,8 @@ safety-rules-sidecar = ["trnm-poco-node/safety-rules-sidecar"]
 [package.metadata.trnm]
 lane = "poco-g3-real-lan-lab-validator"
 protocol = "poco-bft-v0"
+build_role = "candidate-lab"
+production_dependency = false
 network_scope = "single-lan"
 real_core_config = true
 real_core_runtime = true

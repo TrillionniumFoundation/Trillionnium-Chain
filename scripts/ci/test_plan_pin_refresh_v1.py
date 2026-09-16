@@ -67,7 +67,6 @@ class PinRefreshTests(unittest.TestCase):
         path.unlink(); path.symlink_to('/etc/hosts')
         with self.assertRaises(ValueError): pins.refresh(self.root, self.text)
 
-
 class SourceAncestryTests(unittest.TestCase):
     def setUp(self):
         import check_plan_manifest_pins_v1 as gate
@@ -110,6 +109,50 @@ class SourceAncestryTests(unittest.TestCase):
     def test_wrong_historical_tree_still_rejects(self):
         with self.assertRaises(self.gate.PinError):
             self.gate.verify_optional_historical_source(self.commit, '0'*40)
+
+
+class ChangeScopedPinTests(unittest.TestCase):
+    """Only release/source-bound inputs require a pin refresh."""
+
+    def setUp(self):
+        import check_plan_manifest_pins_v1 as gate
+        self.gate = gate
+        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.env = {**os.environ, 'GIT_AUTHOR_NAME': 'Fixture', 'GIT_AUTHOR_EMAIL': 'fixture@example.invalid',
+                    'GIT_COMMITTER_NAME': 'Fixture', 'GIT_COMMITTER_EMAIL': 'fixture@example.invalid'}
+        self.git('init', '-q')
+        (self.root / 'trillionnium').mkdir()
+        (self.root / 'trillionnium/Cargo.toml').write_text('[workspace]\n')
+        (self.root / 'src.rs').write_text('v1\n')
+        self.git('add', '.')
+        self.git('commit', '-q', '-m', 'baseline')
+        self.snapshot = self.git('rev-parse', 'HEAD')
+        self.scope = patch.object(gate, 'ROOT', self.root); self.scope.start(); self.addCleanup(self.scope.stop)
+
+    def git(self, *args):
+        return subprocess.check_output(['git', *args], cwd=self.root, env=self.env,
+                                       stderr=subprocess.DEVNULL, text=True).strip()
+
+    def test_ordinary_source_change_does_not_require_refresh(self):
+        (self.root / 'src.rs').write_text('v2\n')
+        self.git('add', 'src.rs'); self.git('commit', '-q', '-m', 'ordinary source')
+        self.assertEqual(self.gate.changed_pin_paths(self.snapshot, {'trillionnium/Cargo.toml'}), set())
+
+    def test_pinned_input_change_requires_refresh(self):
+        (self.root / 'trillionnium/Cargo.toml').write_text('[workspace]\nmembers=[]\n')
+        self.git('add', 'trillionnium/Cargo.toml'); self.git('commit', '-q', '-m', 'binding change')
+        self.assertEqual(self.gate.changed_pin_paths(self.snapshot, {'trillionnium/Cargo.toml'}),
+                         {'trillionnium/Cargo.toml'})
+
+    def test_uncommitted_pinned_input_change_requires_refresh(self):
+        (self.root / 'trillionnium/Cargo.toml').write_text('[workspace]\nmembers=[]\n')
+        self.assertEqual(self.gate.changed_pin_paths(self.snapshot, {'trillionnium/Cargo.toml'}),
+                         {'trillionnium/Cargo.toml'})
+
+    def test_snapshot_refresh_rejects_dirty_worktree(self):
+        (self.root / 'dirty.txt').write_text('uncommitted\n')
+        with self.assertRaises(ValueError): pins.current_snapshot(self.root)
 
 
 if __name__ == '__main__':

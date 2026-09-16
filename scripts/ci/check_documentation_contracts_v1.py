@@ -28,6 +28,7 @@ SELF = 'scripts/ci/check_documentation_contracts_v1.py'
 TEST = 'scripts/ci/test_documentation_contracts_v1.py'
 OPERATIONS = 'config/documentation-operations-v1.json'
 OPERATION_GUIDE = 'docs/modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md'
+PROFILE_REGISTRY = ROOT / 'config/protocol-profile-registry-v1.toml'
 REQUIRED_FOUNDATION_OPERATIONS = {
     'M02-OP-VOTE-BARRIER', 'M02-OP-TIMEOUT-BARRIER', 'M03-OP-SIGN-EXACT',
     'M04-OP-PERSIST-INGRESS', 'M04-OP-ACK-PREPARED', 'M08-OP-COMMIT-STRICT',
@@ -36,12 +37,11 @@ REQUIRED_FOUNDATION_OPERATIONS = {
     'M15-OP-NATIVE-SIGNED-VOTE-REPLAY-V1',
 }
 MODULES = [f'M{i:02d}' for i in range(18)]
-PROFILES = {
-    'bft-v0': 'frozen-implementation-target-not-activation',
-    'pcc1': 'candidate-contract-not-wire-version',
-    'ai-v1': 'draft-protocol-v1-not-activated',
-    'legacy-ledger-observation': 'historical-local-stage-vocabulary-not-publication-authority',
-}
+with PROFILE_REGISTRY.open('rb') as _profile_handle:
+    PROFILES = {
+        row['id']: row['documentation_status']
+        for row in tomllib.load(_profile_handle).get('profiles', [])
+    }
 _V0 = 'docs/protocol/poco-bft-v0/'
 V0_IMPORTS = {
     _V0+'01-system-model-and-threat-model.md': '9b7791addf496d0b88f84bb37592d099ad525eec',
