@@ -1,0 +1,69 @@
+name: trnm-runtime-closure-apply-once
+
+on:
+  push:
+    branches:
+      - fix/full-runtime-closure-20260916
+    paths:
+      - .trnm/runtime-closure/apply.patch
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-runtime-closure-apply-once
+  cancel-in-progress: false
+
+jobs:
+  apply-exact-head-patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out triggering exact head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Apply bounded source-only patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          patch=.trnm/runtime-closure/apply.patch
+          test -f "$patch"
+          test ! -L "$patch"
+          test "$(wc -c < "$patch")" -gt 0
+          test "$(wc -c < "$patch")" -le 65536
+          git diff --quiet
+          git diff --cached --quiet
+          git apply --check --index --whitespace=error-all "$patch"
+          git apply --index --whitespace=error-all "$patch"
+          mapfile -t changed < <(git diff --cached --name-only)
+          test "${#changed[@]}" -gt 0
+          lane=""
+          for path in "${changed[@]}"; do
+            case "$path" in
+              scripts/poco-fleet/*)
+                test -z "$lane" -o "$lane" = fleet
+                lane=fleet
+                ;;
+              trillionnium/crates/trnm-poco-lab-validator/src/*)
+                test -z "$lane" -o "$lane" = runtime
+                lane=runtime
+                ;;
+              *)
+                echo "patch escaped the bounded runtime-closure source lanes: $path" >&2
+                exit 2
+                ;;
+            esac
+          done
+          case "$lane" in
+            fleet) message='fleet: wire continuous four/seven validator lane' ;;
+            runtime) message='runtime: admit four/seven direct consensus profiles' ;;
+            *) exit 2 ;;
+          esac
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "$message"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
