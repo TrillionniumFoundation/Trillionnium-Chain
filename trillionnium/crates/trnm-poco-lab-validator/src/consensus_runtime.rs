@@ -1945,7 +1945,7 @@ impl ConsensusRuntimePreflightV1 {
         validate_deployed_lab_core_record_envelope_v0(&core_config)
             .map_err(|error| anyhow!("deployed Core record envelope is invalid: {error}"))?;
         let (expected_degree, transport) = match validator_count {
-            4 | 7 => (validator_count - 1, ConsensusTransportProfileV1::Direct)
+            4 | 7 => (validator_count - 1, ConsensusTransportProfileV1::Direct),
             31 | 100 => (
                 SPARSE_PEER_DEGREE_V1,
                 ConsensusTransportProfileV1::SparseRelay {
