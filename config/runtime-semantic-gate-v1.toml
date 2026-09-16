@@ -1,16 +1,17 @@
-schema_version = 1
+schema_version = 2
 gate_id = "trnm-runtime-semantic-gate-v1"
 production_authority = false
 default_mode = "report-only"
+evidence_schema = "trnm-runtime-semantic-evidence-v1"
 
-# These are deliberately command slots rather than claimed evidence.  A
-# runner must provide the exact command through the named environment variable
-# and invoke --run.  Missing commands are reported as NOT_RUN; they never turn
-# into a green semantic result.
+# Each runtime command must also publish one source-bound evidence envelope.
+# A zero exit code without the envelope and its independently re-hashed artifacts
+# is process execution only and cannot make a semantic check green.
 [[check]]
 id = "P0.1-multinode-persistence"
 owner = "runtime-integration"
 command_env = "TRNM_SEMANTIC_P01_COMMAND"
+evidence_env = "TRNM_SEMANTIC_P01_EVIDENCE"
 required = true
 acceptance = "four-to-seven independent validator processes survive kill/restart and replay the same durable state"
 
@@ -18,6 +19,7 @@ acceptance = "four-to-seven independent validator processes survive kill/restart
 id = "P0.2-epoch-transition"
 owner = "consensus-integration"
 command_env = "TRNM_SEMANTIC_P02_COMMAND"
+evidence_env = "TRNM_SEMANTIC_P02_EVIDENCE"
 required = true
 acceptance = "two real epoch transitions cover checkpoint, seal, handoff, coordinate binding and restart recovery"
 
@@ -25,6 +27,7 @@ acceptance = "two real epoch transitions cover checkpoint, seal, handoff, coordi
 id = "P0.3-signer-rollback"
 owner = "signer-security"
 command_env = "TRNM_SEMANTIC_P03_COMMAND"
+evidence_env = "TRNM_SEMANTIC_P03_EVIDENCE"
 required = true
 acceptance = "device-backed signing and an independent monotonic anchor reject power-loss rollback and witness replay"
 
@@ -32,5 +35,6 @@ acceptance = "device-backed signing and an independent monotonic anchor reject p
 id = "P0.4-finalized-goodput"
 owner = "performance-integration"
 command_env = "TRNM_SEMANTIC_P04_COMMAND"
+evidence_env = "TRNM_SEMANTIC_P04_EVIDENCE"
 required = true
 acceptance = "finalized and independently replay-verified transactions report p50/p95/p99 latency and goodput"
