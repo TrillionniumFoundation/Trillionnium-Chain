@@ -17,6 +17,7 @@ import os
 import pathlib
 import stat
 import subprocess
+from dataclasses import dataclass
 from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -25,6 +26,21 @@ SCHEMA = "trnm-runtime-semantic-evidence-v1"
 
 class EvidenceError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True)
+class VerifiedEvidence:
+    """Artifact-integrity result.
+
+    This type is deliberately not a semantic capability.  It means only that
+    the producer's envelope is source-bound and every referenced artifact was
+    re-opened without symlink substitution and matched its declared digest.
+    Semantic acceptance is a second, check-specific operation performed by a
+    fixed repository verifier; producer-authored booleans cannot mint it.
+    """
+
+    document: dict[str, Any]
+    artifacts: dict[str, pathlib.Path]
 
 
 def require(condition: bool, message: str) -> None:
@@ -195,7 +211,7 @@ def _sealed_file_facts(path: pathlib.Path, field: str) -> tuple[str, int]:
     return digest.hexdigest(), size
 
 
-def verify_evidence(path: pathlib.Path, expected_check_id: str) -> dict[str, Any]:
+def verify_evidence(path: pathlib.Path, expected_check_id: str) -> VerifiedEvidence:
     try:
         raw = path.read_bytes()
     except OSError as error:
@@ -208,7 +224,10 @@ def verify_evidence(path: pathlib.Path, expected_check_id: str) -> dict[str, Any
     require(isinstance(document, dict), "evidence envelope must be an object")
     require(document.get("schema") == SCHEMA, f"evidence schema must be {SCHEMA}")
     require(document.get("check_id") == expected_check_id, "evidence check_id mismatch")
-    require(document.get("status") == "PASS", "evidence status must be PASS")
+    require(
+        document.get("status") == "ARTIFACT_INTEGRITY_CANDIDATE",
+        "evidence status must be ARTIFACT_INTEGRITY_CANDIDATE; producer-authored PASS is forbidden",
+    )
     require(document.get("production_authority") is False, "evidence cannot hold production authority")
 
     source_commit, source_tree = current_source_identity()
@@ -220,6 +239,7 @@ def verify_evidence(path: pathlib.Path, expected_check_id: str) -> dict[str, Any
     require(isinstance(artifacts, list) and artifacts, "evidence artifacts must be non-empty")
     seen_roles: set[str] = set()
     seen_paths: set[pathlib.Path] = set()
+    resolved_artifacts: dict[str, pathlib.Path] = {}
     envelope_absolute = pathlib.Path(os.path.abspath(path))
     for index, row in enumerate(artifacts):
         require(isinstance(row, dict), f"artifacts[{index}] must be an object")
@@ -254,7 +274,50 @@ def verify_evidence(path: pathlib.Path, expected_check_id: str) -> dict[str, Any
         require(observed_bytes == expected_bytes, f"artifact {role} size mismatch")
         seen_roles.add(role)
         seen_paths.add(artifact_path)
+        resolved_artifacts[role] = artifact_path
 
     missing_roles = sorted(required_roles - seen_roles)
     require(not missing_roles, f"evidence is missing required artifact roles: {missing_roles}")
-    return document
+    return VerifiedEvidence(document=document, artifacts=resolved_artifacts)
+
+
+def verify_semantics(
+    evidence: VerifiedEvidence,
+    expected_check_id: str,
+    semantic_verifier: str,
+) -> dict[str, Any]:
+    """Run the fixed semantic-verifier boundary for one P0 check.
+
+    A repository-controlled verifier must derive acceptance from the raw
+    artifacts.  Merely declaring a verifier name, claims, counters, or a PASS
+    string is insufficient.  The current branch intentionally has no
+    commissioned P0 verifier yet: this prevents artifact-integrity fixtures
+    from being laundered into runtime acceptance while the real fleet/epoch/
+    device/replay verifiers are wired.
+
+    Implementations are added here only when the verifier independently
+    decodes/replays the underlying facts and has a retained negative-control
+    proving producer-authored claims cannot make it green.
+    """
+
+    expected = {
+        "P0.1-multinode-persistence": "p01-fleet-runtime-v1",
+        "P0.2-epoch-transition": "p02-epoch-runtime-v1",
+        "P0.3-signer-rollback": "p03-device-rollback-v1",
+        "P0.4-finalized-goodput": "p04-finalized-replay-v1",
+    }
+    require(expected_check_id in expected, f"unknown runtime semantic check id: {expected_check_id}")
+    require(
+        semantic_verifier == expected[expected_check_id],
+        f"{expected_check_id}: semantic verifier identity drift",
+    )
+    # Keep the evidence reachable for future fixed verifier implementations and
+    # make it explicit that claims are declarations, not derived results.
+    require(
+        evidence.document.get("check_id") == expected_check_id,
+        "semantic verifier evidence/check mismatch",
+    )
+    raise EvidenceError(
+        f"{expected_check_id}: fixed semantic verifier {semantic_verifier} is not commissioned; "
+        "artifact integrity cannot establish runtime semantics"
+    )
