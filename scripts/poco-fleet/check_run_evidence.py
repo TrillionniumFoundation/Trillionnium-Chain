@@ -2,7 +2,7 @@
 """Strict verifier for one completed PoCO G3 LAN validator run.
 
 The inventory/reachability baseline deliberately does not invoke this checker:
-it accepts only a real, independently-process-hosted 7/31/100-validator run.
+it accepts only a real, independently-process-hosted 4/7/31/100-validator run.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 INVENTORY = pathlib.Path(__file__).with_name("inventory.toml")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 RFC3339_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
-RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
+RUN_ID = re.compile(r"^poco-g3-(4|7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
 REQUIRED_FAULTS = {
     "leader_loss",
     "validator_process_kill",
@@ -143,7 +143,12 @@ def validator_identity(fleet_id: str, index: int) -> str:
 
 
 def expected_validators(inventory: dict, count: int, profile: str) -> dict[str, dict]:
-    topology_key = {7: "seven", 31: "thirty_one", 100: "one_hundred"}[count]
+    topology_key = {
+        4: "four",
+        7: "seven",
+        31: "thirty_one",
+        100: "one_hundred",
+    }[count]
     expected: dict[str, dict] = {}
     index = 0
     for host in inventory["hosts"]:
@@ -287,11 +292,13 @@ def validate(
         {"validator_count", "weight_profile", "peer_degree", "ephemeral_test_keys"},
         "topology",
     )
-    if expected_count not in (7, 31, 100) or topology["validator_count"] != expected_count:
-        fail("validator_count does not match the requested 7/31/100 topology")
+    if expected_count not in (4, 7, 31, 100) or topology["validator_count"] != expected_count:
+        fail("validator_count does not match the requested 4/7/31/100 topology")
     if topology["weight_profile"] not in {"equal", "bounded-unequal"}:
         fail("unknown weight_profile")
-    expected_degree = expected_count - 1 if expected_count == 7 else 8
+    if expected_count == 4 and topology["weight_profile"] != "equal":
+        fail("four-validator topology requires equal voting weights")
+    expected_degree = expected_count - 1 if expected_count in {4, 7} else 8
     if topology["peer_degree"] != expected_degree:
         fail("peer_degree differs from the frozen LAN plan")
     if topology["ephemeral_test_keys"] is not True:
@@ -301,6 +308,9 @@ def validate(
     planned_validators = expected_validators(
         inventory, expected_count, topology["weight_profile"]
     )
+    expected_selected_hosts = {
+        validator["host_id"] for validator in planned_validators.values()
+    }
     validators = document["validators"]
     if not isinstance(validators, list) or len(validators) != expected_count:
         fail("validators must contain the exact topology cardinality")
@@ -367,11 +377,8 @@ def validate(
         )
         if validator["binary_sha256"] != expected_binary:
             fail(f"validator {validator_id} binary hash differs from candidate architecture")
-    expected_validator_hosts = {
-        host_id for host_id, host in known_hosts.items() if host["validator_eligible"]
-    }
-    if observed_hosts != expected_validator_hosts:
-        fail("every validator-eligible physical host must run at least one validator")
+    if observed_hosts != expected_selected_hosts:
+        fail("validator hosts differ from the selected frozen topology")
     if any(validator["weight"] * 4 > total_weight for validator in validators):
         fail("one validator exceeds the 25 percent voting-power cap")
     if configuration_set_digest(validators) != candidate["configuration_set_sha256"]:
@@ -404,7 +411,6 @@ def validate(
         ids_for_host = participant["process_ids"]
         if (
             not isinstance(ids_for_host, list)
-            or not ids_for_host
             or any(isinstance(value, bool) or not isinstance(value, int) or value <= 0 for value in ids_for_host)
             or len(set(ids_for_host)) != len(ids_for_host)
         ):
@@ -419,14 +425,24 @@ def validate(
         config_set = participant["config_set_sha256"]
         if not isinstance(config_set, str) or not HEX64.fullmatch(config_set):
             fail(f"participant {host_id} config_set_sha256 must be canonical")
-        if host["validator_eligible"]:
+        if host_id in expected_selected_hosts:
             host_validators = validators_by_host.get(host_id, [])
+            if not ids_for_host:
+                fail(f"selected validator participant {host_id} must expose validator process ids")
             if sorted(ids_for_host) != sorted(item["process_id"] for item in host_validators):
                 fail(f"participant {host_id} process ids differ from its validators")
             if config_set != host_validator_configuration_set_digest(host_validators):
                 fail(f"participant {host_id} config set does not bind its validators")
-        elif any(validator["host_id"] == host_id for validator in validators):
-            fail(f"observer participant {host_id} must not host validators")
+        elif host["validator_eligible"]:
+            if ids_for_host:
+                fail(f"unselected validator-capable participant {host_id} must expose zero validator process ids")
+            if config_set != host_validator_configuration_set_digest([]):
+                fail(f"unselected validator-capable participant {host_id} must bind an empty validator config set")
+        else:
+            if not ids_for_host:
+                fail(f"observer participant {host_id} must expose its observer process id")
+            if any(validator["host_id"] == host_id for validator in validators):
+                fail(f"observer participant {host_id} must not host validators")
     if participant_ids != set(known_hosts):
         fail("every physical host must participate in its frozen role")
 
@@ -526,8 +542,8 @@ def validate(
     if emit:
         print(
             f"poco_g3_run_evidence=passed validators={expected_count} "
-            "profile=no-fault-v1 validator_hosts=5 mac_observer=true hosts=6 "
-            "nonempty=true faults=0 "
+            f"profile=no-fault-v1 validator_hosts={len(observed_hosts)} "
+            "mac_observer=true hosts=6 nonempty=true faults=0 "
             "committed_block_rate=true transaction_goodput=false geo_wan=false"
         )
 
@@ -535,7 +551,7 @@ def validate(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("evidence", type=pathlib.Path)
-    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
     parser.add_argument(
         "--profile", required=True, choices=sorted(evidence_profiles.KNOWN_PROFILES)
     )
