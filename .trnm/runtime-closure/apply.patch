@@ -1,285 +1,196 @@
-diff --git a/scripts/poco-fleet/assemble_run_bundle_v1.py b/scripts/poco-fleet/assemble_run_bundle_v1.py
-index f662a4223..f53989165 100644
---- a/scripts/poco-fleet/assemble_run_bundle_v1.py
-+++ b/scripts/poco-fleet/assemble_run_bundle_v1.py
-@@ -206,7 +206,7 @@ def normalize_spec(path: pathlib.Path, *, profile: str) -> dict[str, Any]:
-     count = document["validator_count"]
-     if (
-         document["schema_version"] != 1
--        or count not in {7, 31, 100}
-+        or count not in {4, 7, 31, 100}
-         or document["network_scope"] != "single-lan"
-         or document["geo_wan_evidence"] is not False
-         or not isinstance(document["run_id"], str)
-diff --git a/scripts/poco-fleet/check_run_bundle_test.py b/scripts/poco-fleet/check_run_bundle_test.py
-index e90500e59..c449c5974 100644
---- a/scripts/poco-fleet/check_run_bundle_test.py
-+++ b/scripts/poco-fleet/check_run_bundle_test.py
-@@ -879,7 +879,7 @@ def build(root: pathlib.Path, count: int = 7) -> None:
-                 )
-             )
-             continue
--        hosted = validators_by_host[participant["host_id"]]
-+        hosted = validators_by_host.get(participant["host_id"], [])
-         participant["process_ids"] = [validator["process_id"] for validator in hosted]
-         participant["config_set_sha256"] = (
-             bundle_checker.check_run_evidence.host_validator_configuration_set_digest(hosted)
-@@ -1515,7 +1515,7 @@ def main() -> None:
-         "signed_observer_load_submission_log"
+diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/bootstrap_material.rs b/trillionnium/crates/trnm-poco-lab-validator/src/bootstrap_material.rs
+index 76d3c780b..9990734a6 100644
+--- a/trillionnium/crates/trnm-poco-lab-validator/src/bootstrap_material.rs
++++ b/trillionnium/crates/trnm-poco-lab-validator/src/bootstrap_material.rs
+@@ -959,7 +959,7 @@ fn admit_template_and_keys(
+     );
+     let run_count = validate_run_id(&template.run_id)?;
+     ensure!(
+-        matches!(template.validators.len(), 7 | 31 | 100) && template.validators.len() == run_count,
++        matches!(template.validators.len(), 4 | 7 | 31 | 100) && template.validators.len() == run_count,
+         "validator-set template cardinality differs from run ID"
+     );
+     decode_hex32(&template.candidate_source_sha256, "candidate_source_sha256")?;
+@@ -1157,7 +1157,7 @@ fn validate_run_id(value: &str) -> Result<usize> {
+         parts.len() == 5
+             && parts[0] == "poco"
+             && parts[1] == "g3"
+-            && matches!(parts[2], "7" | "31" | "100")
++            && matches!(parts[2], "4" | "7" | "31" | "100")
+             && parts[3].len() == 16
+             && parts[3].as_bytes()[8] == b'T'
+             && parts[3].ends_with('Z')
+diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/config.rs b/trillionnium/crates/trnm-poco-lab-validator/src/config.rs
+index 572b2d5c5..5620449ee 100644
+--- a/trillionnium/crates/trnm-poco-lab-validator/src/config.rs
++++ b/trillionnium/crates/trnm-poco-lab-validator/src/config.rs
+@@ -1135,7 +1135,7 @@ impl PublicReportVerifierContext {
+                 "observer coordinator manifest sha256",
+             )? != expected_coordinator_manifest_sha256
+             || manifest.fleet_id != "trnm-poco-lan-six-host-2026-08-13"
+-            || !matches!(manifest.validator_count, 7 | 31 | 100)
++            || !matches!(manifest.validator_count, 4 | 7 | 31 | 100)
+             || !matches!(
+                 manifest.weight_profile.as_str(),
+                 "equal" | "bounded-unequal"
+@@ -1809,7 +1809,7 @@ fn validate_manifest(
+             .is_none()
+         || manifest.run_id != run_id
+         || manifest.fleet_id != "trnm-poco-lan-six-host-2026-08-13"
+-        || !matches!(manifest.validator_count, 7 | 31 | 100)
++        || !matches!(manifest.validator_count, 4 | 7 | 31 | 100)
+         || !matches!(
+             manifest.weight_profile.as_str(),
+             "equal" | "bounded-unequal"
+@@ -1956,7 +1956,7 @@ fn validate_topology(
+     manifest: &ManifestJson,
+     expected_count: usize,
+ ) -> Result<()> {
+-    let expected_degree = if expected_count == 7 { 6 } else { 8 };
++    let expected_degree = if matches!(expected_count, 4 | 7) { expected_count - 1 } else { 8 };
+     if topology.schema_version != 1
+         || topology.fleet_id != manifest.fleet_id
+         || topology.network_scope != "single-lan"
+@@ -2242,8 +2242,8 @@ fn build_validator_set(
+     descriptor: &ValidatorSetJson,
+     parameters: &ConsensusParametersV0,
+ ) -> Result<(ValidatorSet, [u8; 32], ValidatorKeyRoleRegistryV1)> {
+-    if !matches!(descriptor.validators.len(), 7 | 31 | 100) {
+-        bail!("G3 validator-set cardinality must be 7, 31, or 100");
++    if !matches!(descriptor.validators.len(), 4 | 7 | 31 | 100) {
++        bail!("G3 validator-set cardinality must be 4, 7, 31, or 100");
      }
-     profile_root_checked = False
--    for count in (7, 31, 100):
-+    for count in (4, 7, 31, 100):
-         with tempfile.TemporaryDirectory(prefix="trnm-poco-g3-bundle-positive-") as raw:
-             root = pathlib.Path(raw)
-             build(root, count)
-diff --git a/scripts/poco-fleet/check_run_material.py b/scripts/poco-fleet/check_run_material.py
-index c5d76f7c1..7c3185323 100755
---- a/scripts/poco-fleet/check_run_material.py
-+++ b/scripts/poco-fleet/check_run_material.py
-@@ -29,7 +29,7 @@ HERE = pathlib.Path(__file__).resolve().parent
- INVENTORY = HERE / "inventory.toml"
- HEX64 = re.compile(r"^[0-9a-f]{64}$")
- HEX128 = re.compile(r"^[0-9a-f]{128}$")
--RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
-+RUN_ID = re.compile(r"^poco-g3-(4|7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
- ED25519_SPKI_PREFIX = bytes.fromhex("302a300506032b6570032100")
- KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
- WORKLOAD_CORPUS_MAGIC = b"trnm-poco-g3-workload-corpus-v1\n"
-@@ -1053,7 +1053,7 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
- def main() -> None:
-     parser = argparse.ArgumentParser()
-     parser.add_argument("root", type=pathlib.Path)
--    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
-+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
-     args = parser.parse_args()
-     try:
-         validate(args.root, args.validators)
-diff --git a/scripts/poco-fleet/check_signed_runtime_evidence.py b/scripts/poco-fleet/check_signed_runtime_evidence.py
-index 6cef53b3e..59c671d83 100755
---- a/scripts/poco-fleet/check_signed_runtime_evidence.py
-+++ b/scripts/poco-fleet/check_signed_runtime_evidence.py
-@@ -40,9 +40,9 @@ from poco_consensus_contract import (
- HEX32 = re.compile(r"^[0-9a-f]{64}$")
- HEX64 = re.compile(r"^[0-9a-f]{128}$")
- RUN_ID = re.compile(
--    r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$"
-+    r"^poco-g3-(4|7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$"
- )
--VALID_COUNTS = {7, 31, 100}
-+VALID_COUNTS = {4, 7, 31, 100}
- KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
- REQUIRED_FAULTS = {
-     "leader_loss",
-@@ -1181,7 +1181,7 @@ def validate(
-     except (ValueError, RuntimeError) as error:
-         fail(str(error))
-     if expected_count not in VALID_COUNTS:
--        fail("validator count must be 7, 31, or 100")
-+        fail("validator count must be 4, 7, 31, or 100")
-     if root.is_symlink() or not root.is_dir():
-         fail("bundle root must be one real directory")
-     anchor = hex_bytes(coordinator_manifest_sha256, 32, "coordinator manifest anchor", nonzero=True).hex()
-@@ -1716,7 +1716,7 @@ def validate(
- def main() -> None:
-     parser = argparse.ArgumentParser()
-     parser.add_argument("bundle", type=pathlib.Path)
--    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
-+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
-     parser.add_argument("--coordinator-manifest-sha256", required=True)
-     parser.add_argument(
-         "--profile", required=True, choices=sorted(evidence_profiles.KNOWN_PROFILES)
-diff --git a/scripts/poco-fleet/check_validator_deployments.py b/scripts/poco-fleet/check_validator_deployments.py
-index 09dff7165..31ef71378 100644
---- a/scripts/poco-fleet/check_validator_deployments.py
-+++ b/scripts/poco-fleet/check_validator_deployments.py
-@@ -452,7 +452,7 @@ def main() -> None:
-     parser = argparse.ArgumentParser()
-     parser.add_argument("coordinator_root", type=pathlib.Path)
-     parser.add_argument("deployment_root", type=pathlib.Path)
--    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
-+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
-     args = parser.parse_args()
-     try:
-         validate(args.coordinator_root, args.deployment_root, args.validators)
-diff --git a/scripts/poco-fleet/check_validator_deployments_test.py b/scripts/poco-fleet/check_validator_deployments_test.py
-index d07f1fa4f..fa7b6465c 100644
---- a/scripts/poco-fleet/check_validator_deployments_test.py
-+++ b/scripts/poco-fleet/check_validator_deployments_test.py
-@@ -915,7 +915,7 @@ def main() -> None:
-         prepared: dict[int, tuple[pathlib.Path, pathlib.Path, list[str]]] = {}
-         representatives: dict[int, tuple[str, dict[str, Any]]] = {}
-         signed_reports: dict[int, tuple[pathlib.Path, dict[str, Any]]] = {}
--        for count in (7, 31, 100):
-+        for count in (4, 7, 31, 100):
-             prepared[count] = prepare(parent, material_builder, binary, count)
-             representatives[count] = verify_representative(binary, *prepared[count])
-             coordinator_for_count, deployments_for_count, _ = prepared[count]
-diff --git a/scripts/poco-fleet/collect_no_fault_run_bundle_v1.py b/scripts/poco-fleet/collect_no_fault_run_bundle_v1.py
-index e44114e98..47b0d9b16 100644
---- a/scripts/poco-fleet/collect_no_fault_run_bundle_v1.py
-+++ b/scripts/poco-fleet/collect_no_fault_run_bundle_v1.py
-@@ -42,7 +42,7 @@ PLANNABLE_PROFILES = {
-     evidence_profiles.NO_FAULT_SIGNED_RUNTIME_OBSERVER_V1,
-     evidence_profiles.NO_FAULT_SIGNED_RUNTIME_EXTERNAL_LOAD_V1,
+     let mut previous = None;
+     let mut public_keys = BTreeSet::new();
+@@ -2363,8 +2363,8 @@ fn validate_peers(
+     key_role_registry: &ValidatorKeyRoleRegistryV1,
+     local_validator: ValidatorId,
+ ) -> Result<()> {
+-    let expected_degree = if validator_set.validators().len() == 7 {
+-        6
++    let expected_degree = if matches!(validator_set.validators().len(), 4 | 7) {
++        validator_set.validators().len() - 1
+     } else {
+         8
+     };
+diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs b/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs
+index aae7e2b46..ff54399bf 100644
+--- a/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs
++++ b/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs
+@@ -198,7 +198,7 @@ impl MeshHostResourcePreflightV0 {
+     }
  }
--VALID_COUNTS = {7, 31, 100}
-+VALID_COUNTS = {4, 7, 31, 100}
- HEX64 = re.compile(r"^[0-9a-f]{64}$")
- RFC3339_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
  
-@@ -633,7 +633,7 @@ def validate_mesh_preflight(
- ) -> dict[str, Any]:
-     preflight = exact(value, MESH_PREFLIGHT_KEYS, "mesh resource preflight")
-     resources = consensus_runner.mesh_resources
--    peer_degree = 6 if validator_count == 7 else 8
-+    peer_degree = validator_count - 1 if validator_count in {4, 7} else 8
-     expected_threads = peer_degree * 2 + 1
-     expected_socket_fds = peer_degree * 4 + 2
-     expected_open_fds = expected_socket_fds + resources.PROCESS_FD_RESERVE
-@@ -1806,7 +1806,7 @@ def validate_collection_envelope(
-     require_observer_report: bool,
- ) -> dict[str, Any]:
-     if validator_count not in VALID_COUNTS:
--        fail("validator count must be 7, 31, or 100")
-+        fail("validator count must be 4, 7, 31, or 100")
-     independent_anchor = canonical_sha256(
-         coordinator_manifest_sha256, "independent coordinator manifest anchor"
-     )
-@@ -2067,7 +2067,7 @@ def main() -> None:
-     )
-     parser.add_argument("coordinator_root", type=pathlib.Path)
-     parser.add_argument("runner_output", type=pathlib.Path)
--    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
-+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
-     parser.add_argument(
-         "--profile",
-         default=PROFILE,
-diff --git a/scripts/poco-fleet/prepare_validator_deployments.py b/scripts/poco-fleet/prepare_validator_deployments.py
-index d7f6ce082..a44cbffe5 100644
---- a/scripts/poco-fleet/prepare_validator_deployments.py
-+++ b/scripts/poco-fleet/prepare_validator_deployments.py
-@@ -338,7 +338,7 @@ def main() -> None:
-     parser = argparse.ArgumentParser()
-     parser.add_argument("coordinator_root", type=pathlib.Path)
-     parser.add_argument("--output", required=True, type=pathlib.Path)
--    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
-+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
-     args = parser.parse_args()
-     try:
-         output = prepare(args.coordinator_root, args.output, args.validators)
-diff --git a/scripts/poco-fleet/run_consensus_fleet.py b/scripts/poco-fleet/run_consensus_fleet.py
-index 984d1b318..a381dffe4 100644
---- a/scripts/poco-fleet/run_consensus_fleet.py
-+++ b/scripts/poco-fleet/run_consensus_fleet.py
-@@ -936,20 +936,20 @@ def validated_launch_skew_ns(first_launch_ns: int, last_launch_ns: int) -> int:
- def validate_runtime_topology(validators: int, *, plan_only: bool) -> bool:
-     """Keep 31/100 visible for planning but fail closed for active effects."""
+-/// Preflights the 7/31/100 sparse/direct topology against one host placement.
++/// Preflights the 4/7/31/100 sparse/direct topology against one host placement.
+ /// Socket accounting includes every owned TCP stream, its shutdown-handle
+ /// clone, the listener, and one bounded reconnect overlap. RSS accounting
+ /// includes explicit worker stacks, distinct maximum send/receive scratch
+@@ -210,8 +210,8 @@ pub fn preflight_mesh_host_resources_v0(
+     queue_capacity: usize,
+     host: MeshHostCapacityV0,
+ ) -> Result<MeshHostResourcePreflightV0> {
+-    if !matches!(validator_count, 7 | 31 | 100)
+-        || peer_degree != if validator_count == 7 { 6 } else { 8 }
++    if !matches!(validator_count, 4 | 7 | 31 | 100)
++        || peer_degree != if matches!(validator_count, 4 | 7) { validator_count - 1 } else { 8 }
+         || validator_processes == 0
+         || validator_processes > validator_count
+     {
+diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs b/trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs
+index 3190ee7d2..cafe810e6 100644
+--- a/trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs
++++ b/trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs
+@@ -387,8 +387,7 @@ pub struct Process1TargetParkedHandoffV1 {
+     pub production_activation: bool,
+ }
  
--    if isinstance(validators, bool) or validators not in {7, 31, 100}:
--        base.fail("continuous consensus topology is outside the frozen 7/31/100 profiles")
--    active_supported = validators == 7
-+    if isinstance(validators, bool) or validators not in {4, 7, 31, 100}:
-+        base.fail("continuous consensus topology is outside the frozen 4/7/31/100 profiles")
-+    active_supported = validators in {4, 7}
-     if not plan_only and not active_supported:
-         base.fail(
--            "active consensus is frozen to the direct seven-validator Stage0 profile"
-+            "active consensus is frozen to the direct four/seven-validator P0 profile"
-         )
-     return active_supported
- 
- 
- def runtime_transport_profile(validators: int) -> dict[str, int | str]:
-     validate_runtime_topology(validators, plan_only=True)
--    if validators == 7:
--        return {"mode": "direct", "peer_degree": 6, "relay_hop_budget": 0}
-+    if validators in {4, 7}:
-+        return {"mode": "direct", "peer_degree": validators - 1, "relay_hop_budget": 0}
-     return {
-         "mode": "origin-signed-sparse-relay",
-         "peer_degree": 8,
-@@ -1608,7 +1608,7 @@ def exact_fleet_start_certificate_summary(
-         base.fail("observer fleet StartCertificate verification keys differ from contract")
-     bounds = validated_run_bounds(duration_seconds, max_blocks)
-     expected_transport = runtime_transport_profile(validator_count)
--    expected_mesh_sessions = validator_count * (12 if validator_count == 7 else 16)
-+    expected_mesh_sessions = validator_count * (2 * (validator_count - 1) if validator_count in {4, 7} else 16)
-     integer_fields = (
-         "ordinary_start_height",
-         "duration_seconds",
-@@ -2468,7 +2468,7 @@ def main() -> None:
-     parser = argparse.ArgumentParser()
-     parser.add_argument("coordinator_root", type=pathlib.Path)
-     parser.add_argument("deployment_root", type=pathlib.Path)
--    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
-+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
-     parser.add_argument("--linux-binary", required=True, type=pathlib.Path)
-     parser.add_argument("--macos-binary", required=True, type=pathlib.Path)
-     parser.add_argument(
-diff --git a/scripts/poco-fleet/run_consensus_fleet_test.py b/scripts/poco-fleet/run_consensus_fleet_test.py
-index 2255d660f..0e4b34935 100644
---- a/scripts/poco-fleet/run_consensus_fleet_test.py
-+++ b/scripts/poco-fleet/run_consensus_fleet_test.py
-@@ -473,17 +473,23 @@ def test_run_bounds() -> None:
-             lambda first=first, last=last: fleet.validated_launch_skew_ns(first, last),
-             message,
-         )
-+    assert fleet.validate_runtime_topology(4, plan_only=False) is True
-     assert fleet.validate_runtime_topology(7, plan_only=False) is True
-     assert fleet.validate_runtime_topology(31, plan_only=True) is False
-     assert fleet.validate_runtime_topology(100, plan_only=True) is False
-     expect_failure(
-         lambda: fleet.validate_runtime_topology(31, plan_only=False),
--        "direct seven-validator Stage0 profile",
-+        "direct four/seven-validator P0 profile",
-     )
-     expect_failure(
-         lambda: fleet.validate_runtime_topology(100, plan_only=False),
--        "direct seven-validator Stage0 profile",
-+        "direct four/seven-validator P0 profile",
-     )
-+    assert fleet.runtime_transport_profile(4) == {
-+        "mode": "direct",
-+        "peer_degree": 3,
-+        "relay_hop_budget": 0,
-+    }
-     assert fleet.runtime_transport_profile(7) == {
-         "mode": "direct",
-         "peer_degree": 6,
-@@ -501,11 +507,11 @@ def test_run_bounds() -> None:
+-const DIRECT_VALIDATOR_COUNT_V1: usize = 7;
+-const DIRECT_PEER_DEGREE_V1: usize = 6;
++const DIRECT_VALIDATOR_COUNTS_V1: [usize; 2] = [4, 7];
+ const SPARSE_PEER_DEGREE_V1: usize = 8;
+ const MESH_SETUP_TIMEOUT_V1: Duration =
+     Duration::from_secs(CONSENSUS_RUNTIME_MESH_SETUP_ALLOWANCE_SECONDS_V1);
+@@ -1070,7 +1069,7 @@ impl RuntimeEventSignatureProducerV1 for SharedRuntimeEventSignatureProducerV1 {
      }
-     expect_failure(
-         lambda: fleet.validate_runtime_topology(True, plan_only=False),
--        "frozen 7/31/100 profiles",
-+        "frozen 4/7/31/100 profiles",
-     )
-     expect_failure(
-         lambda: fleet.validate_runtime_topology(30, plan_only=True),
--        "frozen 7/31/100 profiles",
-+        "frozen 4/7/31/100 profiles",
-     )
+ }
  
+-/// Runs one bounded seven-validator Stage0 consensus process.
++/// Runs one bounded four- or seven-validator direct P0 consensus process.
+ ///
+ /// `commission` must consume the already authenticated public bootstrap
+ /// material and return the exact native h1->h2->h3 ordinary takeover owner.
+@@ -1946,9 +1945,7 @@ impl ConsensusRuntimePreflightV1 {
+         validate_deployed_lab_core_record_envelope_v0(&core_config)
+             .map_err(|error| anyhow!("deployed Core record envelope is invalid: {error}"))?;
+         let (expected_degree, transport) = match validator_count {
+-            DIRECT_VALIDATOR_COUNT_V1 => {
+-                (DIRECT_PEER_DEGREE_V1, ConsensusTransportProfileV1::Direct)
+-            }
++            4 | 7 => (validator_count - 1, ConsensusTransportProfileV1::Direct)
+             31 | 100 => (
+                 SPARSE_PEER_DEGREE_V1,
+                 ConsensusTransportProfileV1::SparseRelay {
+@@ -1956,7 +1953,7 @@ impl ConsensusRuntimePreflightV1 {
+                         .map_err(|error| anyhow!("derive sparse relay hop budget: {error}"))?,
+                 },
+             ),
+-            _ => bail!("bounded consensus validator count is outside 7/31/100"),
++            _ => bail!("bounded consensus validator count is outside 4/7/31/100"),
+         };
+         ensure!(
+             config.peers().len() == expected_degree
+@@ -1995,7 +1992,7 @@ impl ConsensusRuntimePreflightV1 {
+                 .collect::<BTreeSet<_>>();
+             ensure!(
+                 outgoing == expected_peers && incoming == expected_peers,
+-                "seven-validator runtime peer inventory is not the exact direct mesh"
++                "four/seven-validator runtime peer inventory is not the exact direct mesh"
+             );
+         } else {
+             ensure!(
+@@ -2074,8 +2071,8 @@ fn validate_deployed_core_max_blocks_v1(max_blocks: u64) -> Result<usize> {
  
-diff --git a/scripts/poco-fleet/run_network_smoke_fleet.py b/scripts/poco-fleet/run_network_smoke_fleet.py
-index 493acd182..7a52cc703 100644
---- a/scripts/poco-fleet/run_network_smoke_fleet.py
-+++ b/scripts/poco-fleet/run_network_smoke_fleet.py
-@@ -33,7 +33,7 @@ from typing import Any
- 
- HERE = pathlib.Path(__file__).resolve().parent
- CHECK_DEPLOYMENTS = HERE / "check_validator_deployments.py"
--RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
-+RUN_ID = re.compile(r"^poco-g3-(4|7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
- VALIDATOR_ID = re.compile(r"^[0-9a-f]{64}$")
- HOST_ID = re.compile(r"^[a-z][a-z0-9-]{0,31}$")
- HEX64 = re.compile(r"^[0-9a-f]{64}$")
-@@ -865,7 +865,7 @@ def main() -> None:
-     parser = argparse.ArgumentParser()
-     parser.add_argument("coordinator_root", type=pathlib.Path)
-     parser.add_argument("deployment_root", type=pathlib.Path)
--    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
-+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
-     parser.add_argument("--linux-binary", required=True, type=pathlib.Path)
-     parser.add_argument("--macos-binary", required=True, type=pathlib.Path)
-     parser.add_argument("--output", required=True, type=pathlib.Path)
+ fn validate_active_validator_count_v1(validator_count: usize) -> Result<()> {
+     ensure!(
+-        validator_count == DIRECT_VALIDATOR_COUNT_V1,
+-        "active bounded consensus is frozen to the direct seven-validator Stage0 profile"
++        DIRECT_VALIDATOR_COUNTS_V1.contains(&validator_count),
++        "active bounded consensus is frozen to the direct four/seven-validator P0 profile"
+     );
+     Ok(())
+ }
+@@ -9698,6 +9695,7 @@ mod tests {
+         assert_eq!(validate_deployed_core_max_blocks_v1(128).unwrap(), 128);
+         assert!(validate_deployed_core_max_blocks_v1(129).is_err());
+         assert!(validate_deployed_core_max_blocks_v1(u64::MAX).is_err());
++        assert!(validate_active_validator_count_v1(4).is_ok());
+         assert!(validate_active_validator_count_v1(7).is_ok());
+         assert!(validate_active_validator_count_v1(31).is_err());
+         assert!(validate_active_validator_count_v1(100).is_err());
+diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/fleet_barrier.rs b/trillionnium/crates/trnm-poco-lab-validator/src/fleet_barrier.rs
+index dbae672af..e1631c019 100644
+--- a/trillionnium/crates/trnm-poco-lab-validator/src/fleet_barrier.rs
++++ b/trillionnium/crates/trnm-poco-lab-validator/src/fleet_barrier.rs
+@@ -1971,7 +1971,7 @@ impl FleetStartCertificateV1 {
+             return Err(FleetBarrierErrorV1::TooLarge);
+         }
+         let expected_count = validator_set.validators().len();
+-        if !matches!(expected_count, 7 | 31 | 100) {
++        if !matches!(expected_count, 4 | 7 | 31 | 100) {
+             return Err(FleetBarrierErrorV1::WrongContext);
+         }
+         let mut cursor = BarrierCursor::new(bytes);
+diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/startup_rejection.rs b/trillionnium/crates/trnm-poco-lab-validator/src/startup_rejection.rs
+index 3f53abaf2..430beb29b 100644
+--- a/trillionnium/crates/trnm-poco-lab-validator/src/startup_rejection.rs
++++ b/trillionnium/crates/trnm-poco-lab-validator/src/startup_rejection.rs
+@@ -833,7 +833,7 @@ fn validate_campaign(
+         || identity.validator_set_id() != *validator_set.id().as_bytes()
+         || usize::try_from(identity.validator_count()).ok()
+             != Some(validator_set.validators().len())
+-        || !matches!(validator_set.validators().len(), 7 | 31 | 100)
++        || !matches!(validator_set.validators().len(), 4 | 7 | 31 | 100)
+     {
+         return Err(IsolatedStartupRejectionErrorV1::WrongCampaign);
+     }
