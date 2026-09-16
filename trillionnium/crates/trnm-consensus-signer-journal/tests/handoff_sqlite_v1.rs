@@ -11,13 +11,14 @@ use rusqlite::{params, Connection};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 use tempfile::TempDir;
+use trnm_consensus_crypto::verify_pre_handoff_context_strict_v1;
 use trnm_consensus_signer_journal::{
     inspect_signer_journal_schema_read_only_v1, ExternalMonotonicWatermarkV0,
     ExternalWatermarkErrorV0, HandoffSignatureProducerV1, HandoffSignatureRequestV1,
     HandoffSignerJournalConflictV1, HandoffSignerJournalErrorV1, HandoffSignerJournalProfileV1,
     SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0,
     SignerJournalSchemaKindV1, SignerWatermarkV0, SqliteHandoffSignerJournalV1,
-    SqliteSignerJournalV0, StrictOldSetHandoffAdmissionV1,
+    SqliteSignerJournalV0, StrictNewSetHandoffAdmissionV1, StrictOldSetHandoffAdmissionV1,
 };
 use trnm_consensus_types::{
     decode_block_header_v0_exact, decode_checkpoint_finality_proof_v0_exact,
@@ -247,6 +248,38 @@ impl AuthorityFixture {
             MAXIMUM_DATABASE_BYTES,
         )
         .expect("valid inert schema1 profile")
+    }
+
+    fn role_profile(&self) -> HandoffSignerJournalProfileV1 {
+        HandoffSignerJournalProfileV1::for_epoch_handoff(
+            self.old_set.clone(),
+            self.new_set.clone(),
+            self.old_parameters,
+            self.new_parameters,
+            self.author,
+            SIGNER_PROFILE_REF,
+            WATERMARK_SCOPE,
+            64,
+            16 * 1024,
+            MAXIMUM_DATABASE_BYTES,
+        )
+        .expect("explicit epoch role profile")
+    }
+
+    fn new_admission(&self) -> StrictNewSetHandoffAdmissionV1 {
+        let context = verify_pre_handoff_context_strict_v1(
+            &self.finality,
+            &self.commitment,
+            &self.descriptor,
+            &self.old_set,
+            &self.old_parameters,
+            &self.new_set,
+            &self.new_parameters,
+            &self.checkpoint_parent,
+        )
+        .expect("strict pre-certificate context without joint signatures");
+        StrictNewSetHandoffAdmissionV1::from_verified_context(&self.new_handoff_intent(), &context)
+            .expect("new role admission")
     }
 
     fn old_handoff_intent(&self) -> CanonicalHandoffSignIntentV1 {
@@ -1243,4 +1276,366 @@ fn mutate_behind_immutable_trigger<P: rusqlite::Params>(
     connection
         .execute_batch(&trigger_sql)
         .expect("restore exact canonical trigger");
+}
+
+#[test]
+fn both_handoff_roles_survive_reopen_in_either_order_and_keep_old_vote_fenced() {
+    for old_first in [true, false] {
+        let fixture = authority_fixture();
+        let profile = fixture.role_profile();
+        assert!(profile.new_set_handoff_enabled());
+        assert_ne!(
+            profile.profile_checksum(),
+            fixture.profile().profile_checksum()
+        );
+        let temporary = TempDir::new().unwrap();
+        let path = protected_path(&temporary, "dual-role.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut producer = ExactProducer::new(fixture.signing_key.clone());
+        let old_intent = fixture.old_handoff_intent();
+        let new_intent = fixture.new_handoff_intent();
+        assert_ne!(old_intent.signing_root(), new_intent.signing_root());
+        let old_admission = fixture.admission();
+        let new_admission = fixture.new_admission();
+        let mut journal =
+            SqliteHandoffSignerJournalV1::create_new(&path, profile.clone(), watermark.clone())
+                .unwrap();
+        if old_first {
+            journal
+                .sign_old_set_handoff_exact_v1(&old_intent, &old_admission, &mut producer)
+                .unwrap();
+        } else {
+            journal
+                .sign_new_set_handoff_exact_v1(&new_intent, &new_admission, &mut producer)
+                .unwrap();
+        }
+        drop(journal);
+        let mut journal =
+            SqliteHandoffSignerJournalV1::open_existing(&path, profile.clone(), watermark.clone())
+                .unwrap();
+        if old_first {
+            journal
+                .sign_new_set_handoff_exact_v1(&new_intent, &new_admission, &mut producer)
+                .unwrap();
+        } else {
+            journal
+                .sign_old_set_handoff_exact_v1(&old_intent, &old_admission, &mut producer)
+                .unwrap();
+        }
+        assert_eq!(table_counts(&path), (2, 4, 1));
+        assert_eq!(producer.calls(), (0, 2));
+        drop(journal);
+        let mut journal =
+            SqliteHandoffSignerJournalV1::open_existing(&path, profile.clone(), watermark.clone())
+                .unwrap();
+        journal
+            .sign_old_set_handoff_exact_v1(&old_intent, &old_admission, &mut producer)
+            .unwrap();
+        journal
+            .sign_new_set_handoff_exact_v1(&new_intent, &new_admission, &mut producer)
+            .unwrap();
+        assert_eq!(
+            producer.calls(),
+            (0, 2),
+            "completed replay never calls custody"
+        );
+        assert!(matches!(
+            journal.sign_old_epoch_exact_v1(&vote(&profile, 1, 1, 9), &mut producer),
+            Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::TerminalOldEpochFence { .. }
+            ))
+        ));
+        drop(journal);
+        assert!(
+            SqliteHandoffSignerJournalV1::open_existing(&path, fixture.profile(), watermark,)
+                .is_err(),
+            "role policy cannot be changed during reopen"
+        );
+    }
+}
+
+#[test]
+fn new_handoff_policy_and_exact_admission_reject_before_any_side_effect() {
+    let fixture = authority_fixture();
+    let temporary = TempDir::new().unwrap();
+    let path = protected_path(&temporary, "old-only.sqlite3");
+    let watermark = MemoryWatermark::default();
+    let mut producer = ExactProducer::new(fixture.signing_key.clone());
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, fixture.profile(), watermark.clone())
+            .unwrap();
+    let before = (
+        fs::read(&path).unwrap(),
+        watermark.snapshot(),
+        producer.calls(),
+    );
+    assert!(matches!(
+        journal.sign_new_set_handoff_exact_v1(
+            &fixture.new_handoff_intent(),
+            &fixture.new_admission(),
+            &mut producer,
+        ),
+        Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable)
+    ));
+    assert_eq!(
+        before,
+        (
+            fs::read(&path).unwrap(),
+            watermark.snapshot(),
+            producer.calls()
+        )
+    );
+    drop(journal);
+
+    let path = protected_path(&temporary, "roles.sqlite3");
+    let watermark = MemoryWatermark::default();
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, fixture.role_profile(), watermark.clone())
+            .unwrap();
+    let before = (
+        fs::read(&path).unwrap(),
+        watermark.snapshot(),
+        producer.calls(),
+    );
+    assert!(journal
+        .sign_new_set_handoff_exact_v1(
+            &fixture.old_handoff_intent(),
+            &fixture.new_admission(),
+            &mut producer,
+        )
+        .is_err());
+    let mut fields = fixture.descriptor.fields().clone();
+    fields.terminal_old_view = View::new(fields.terminal_old_view.get() + 1);
+    let alternate = CanonicalHandoffSignIntentV1::new_set(
+        &HandoffDescriptorV0::new(fields).unwrap(),
+        &fixture.old_set,
+        &fixture.new_set,
+        &fixture.old_parameters,
+        &fixture.new_parameters,
+        fixture.author,
+    )
+    .unwrap();
+    assert!(journal
+        .sign_new_set_handoff_exact_v1(&alternate, &fixture.new_admission(), &mut producer,)
+        .is_err());
+    assert_eq!(
+        before,
+        (
+            fs::read(&path).unwrap(),
+            watermark.snapshot(),
+            producer.calls()
+        )
+    );
+}
+
+#[test]
+fn strict_new_role_recovers_each_durable_window_without_changing_decision() {
+    // prepare-before-external, prepare-response-loss, custody-response-loss,
+    // signature-before-external and signature-response-loss.
+    for window in 0..5 {
+        let fixture = authority_fixture();
+        let profile = fixture.role_profile();
+        let temporary = TempDir::new().unwrap();
+        let path = protected_path(&temporary, "recover-new-role.sqlite3");
+        let watermark = MemoryWatermark::default();
+        let mut producer = ExactProducer::new(fixture.signing_key.clone());
+        let mut journal =
+            SqliteHandoffSignerJournalV1::create_new(&path, profile.clone(), watermark.clone())
+                .unwrap();
+        match window {
+            0 => watermark.fail_before_apply(1),
+            1 => watermark.apply_then_fail(1),
+            2 => producer.fail_after_sign_once(),
+            3 => watermark.fail_before_apply(2),
+            4 => watermark.apply_then_fail(2),
+            _ => unreachable!(),
+        }
+        let intent = fixture.new_handoff_intent();
+        let admission = fixture.new_admission();
+        assert!(journal
+            .sign_new_set_handoff_exact_v1(&intent, &admission, &mut producer)
+            .is_err());
+        let prior_calls = producer.calls();
+        drop(journal);
+        let mut reopened = SqliteHandoffSignerJournalV1::recover_new_set_handoff_exact_v1(
+            &path,
+            profile.clone(),
+            watermark.clone(),
+            &intent,
+            &fixture.new_admission(),
+        )
+        .expect("recover only the strictly reverified exact decision");
+        let signature = reopened
+            .sign_new_set_handoff_exact_v1(&intent, &fixture.new_admission(), &mut producer)
+            .unwrap();
+        assert_eq!(table_counts(&path), (1, 2, 0));
+        assert_eq!(watermark.snapshot().value.unwrap().sequence(), 2);
+        if window >= 3 {
+            assert_eq!(producer.calls(), prior_calls);
+        }
+        let calls = producer.calls();
+        drop(reopened);
+        let mut reopened =
+            SqliteHandoffSignerJournalV1::open_existing(&path, profile, watermark).unwrap();
+        assert_eq!(
+            reopened
+                .sign_new_set_handoff_exact_v1(&intent, &fixture.new_admission(), &mut producer)
+                .unwrap(),
+            signature
+        );
+        assert_eq!(producer.calls(), calls);
+    }
+}
+
+#[test]
+fn new_role_recovery_rejects_rollback_foreign_role_and_invalid_custody_key() {
+    let fixture = authority_fixture();
+    let profile = fixture.role_profile();
+    let temporary = TempDir::new().unwrap();
+    let path = protected_path(&temporary, "rollback-role.sqlite3");
+    let watermark = MemoryWatermark::default();
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, profile.clone(), watermark.clone())
+            .unwrap();
+    let clean_image = fs::read(&path).unwrap();
+    let intent = fixture.new_handoff_intent();
+    let mut wrong_key = ExactProducer::new(SigningKey::from_bytes(&[0xe7; 32]));
+    assert!(matches!(
+        journal.sign_new_set_handoff_exact_v1(&intent, &fixture.new_admission(), &mut wrong_key,),
+        Err(HandoffSignerJournalErrorV1::InvalidProducedSignature)
+    ));
+    assert_eq!(table_counts(&path), (1, 1, 0));
+    drop(journal);
+    assert!(
+        SqliteHandoffSignerJournalV1::recover_old_set_handoff_exact_v1(
+            &path,
+            profile.clone(),
+            watermark.clone(),
+            &fixture.old_handoff_intent(),
+            &fixture.admission(),
+        )
+        .is_err()
+    );
+    let mut journal = SqliteHandoffSignerJournalV1::recover_new_set_handoff_exact_v1(
+        &path,
+        profile.clone(),
+        watermark.clone(),
+        &intent,
+        &fixture.new_admission(),
+    )
+    .unwrap();
+    let mut producer = ExactProducer::new(fixture.signing_key.clone());
+    journal
+        .sign_new_set_handoff_exact_v1(&intent, &fixture.new_admission(), &mut producer)
+        .unwrap();
+    drop(journal);
+    fs::write(&path, clean_image).unwrap();
+    assert!(
+        SqliteHandoffSignerJournalV1::open_existing(&path, profile.clone(), watermark.clone())
+            .is_err()
+    );
+    assert!(
+        SqliteHandoffSignerJournalV1::recover_new_set_handoff_exact_v1(
+            &path,
+            profile,
+            watermark,
+            &intent,
+            &fixture.new_admission(),
+        )
+        .is_err(),
+        "strict admission cannot reconstruct a missing durable decision"
+    );
+}
+
+#[test]
+fn explicit_new_only_profile_round_trips_without_creating_old_membership() {
+    let fixture = authority_fixture();
+    let author = ValidatorId::from_bytes(b"validator-z").unwrap();
+    let mut validators = fixture.new_set.validators().to_vec();
+    let replaced = validators.pop().unwrap();
+    validators
+        .push(Validator::new(author, replaced.consensus_key(), replaced.voting_power()).unwrap());
+    let new_set = ValidatorSet::new(
+        fixture.new_set.genesis_hash(),
+        fixture.new_set.chain_id(),
+        fixture.new_set.protocol_version(),
+        fixture.new_set.epoch(),
+        fixture.new_parameters.hash(),
+        validators,
+    )
+    .unwrap();
+    let profile = HandoffSignerJournalProfileV1::for_epoch_handoff(
+        fixture.old_set,
+        new_set,
+        fixture.old_parameters,
+        fixture.new_parameters,
+        author,
+        SIGNER_PROFILE_REF,
+        WATERMARK_SCOPE,
+        64,
+        16 * 1024,
+        MAXIMUM_DATABASE_BYTES,
+    )
+    .unwrap();
+    assert!(profile.old_validator_set().validator(author).is_none());
+    let temporary = TempDir::new().unwrap();
+    let path = protected_path(&temporary, "new-only.sqlite3");
+    let watermark = MemoryWatermark::default();
+    let journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, profile.clone(), watermark.clone())
+            .unwrap();
+    drop(journal);
+    let journal = SqliteHandoffSignerJournalV1::open_existing(&path, profile, watermark).unwrap();
+    assert!(journal
+        .profile()
+        .old_validator_set()
+        .validator(author)
+        .is_none());
+    assert_eq!(table_counts(&path), (0, 0, 0));
+}
+
+#[test]
+fn old_role_pending_recovery_installs_terminal_fence_before_new_role() {
+    let fixture = authority_fixture();
+    let profile = fixture.role_profile();
+    let temporary = TempDir::new().unwrap();
+    let path = protected_path(&temporary, "old-pending.sqlite3");
+    let watermark = MemoryWatermark::default();
+    let mut producer = ExactProducer::new(fixture.signing_key.clone());
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, profile.clone(), watermark.clone())
+            .unwrap();
+    watermark.fail_before_apply(1);
+    assert!(journal
+        .sign_old_set_handoff_exact_v1(
+            &fixture.old_handoff_intent(),
+            &fixture.admission(),
+            &mut producer,
+        )
+        .is_err());
+    assert_eq!(producer.calls(), (0, 0));
+    drop(journal);
+    let mut journal = SqliteHandoffSignerJournalV1::recover_old_set_handoff_exact_v1(
+        &path,
+        profile,
+        watermark,
+        &fixture.old_handoff_intent(),
+        &fixture.admission(),
+    )
+    .unwrap();
+    journal
+        .sign_old_set_handoff_exact_v1(
+            &fixture.old_handoff_intent(),
+            &fixture.admission(),
+            &mut producer,
+        )
+        .unwrap();
+    journal
+        .sign_new_set_handoff_exact_v1(
+            &fixture.new_handoff_intent(),
+            &fixture.new_admission(),
+            &mut producer,
+        )
+        .unwrap();
+    assert_eq!(table_counts(&path), (2, 4, 1));
 }

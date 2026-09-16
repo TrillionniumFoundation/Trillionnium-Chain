@@ -239,9 +239,10 @@ their real versions; value reads prove the gap contains no writes. The executor
 must not relabel all nodes, create fake seal transactions or relax the ordinary
 parent check globally. Build the first plan in a separate authenticated edge
 variant. Publish C+3 only after normal durable commit; the virtual predecessor
-root is private construction metadata. This path is not implemented today.
+root is private construction metadata. Candidate implementation status is
+described below; this does not activate the production node/Core path.
 
-Before user transactions in C+3, the planned edge executor applies one fixed
+Before user transactions in C+3, the selected edge executor applies one fixed
 system prefix: validate the authenticated old/new configuration edge, install
 the new active configuration, then normalize PoCO usage buckets under
 [frozen weight specification 05, section 20](../protocol/poco-bft-v0/05-poco-weights-bond-and-slashing.md).
@@ -249,6 +250,32 @@ These system writes and user writes belong to the same C+3 JMT/commit transactio
 Seals and anchor installation perform no application rollover. Historical
 certificate finalization epochs remain unchanged; a partial prefix cannot
 survive a failed block or be published as a separate application head.
+
+The candidate runtime now implements this prefix in
+`poco_application::begin_authenticated_epoch_rollover_v1`, consumed by complete
+execution through an opaque `AuthenticatedEpochApplicationEdgeV1`. It validates
+the old projection before normalization, compares the exact old set/parameters
+to the edge, removes both old role-1 configuration entries, and inserts the new
+role-1 set/parameters under the incoming epoch identity. The new identities
+start at envelope revision 1; kind 16 increments exactly once when the whole
+block seals, including a block with zero user operations. Ordinary overlay
+construction still requires source+1; only the edge path admits real source C
+and target C+3. This implementation does not establish Core epoch activation.
+
+Election inputs have a separate lifetime from retained certificate authority.
+The same prefix consumes all kind-16 `future_candidate_registrations`, pending
+governance proposals and finalized governance approvals for the incoming epoch.
+It deletes each consumed governance kind-15 entry and its role-2 parameters
+companion in the same mutation set. An input naming any other target rejects
+the prefix. Pending proposals never become authorization; the new configuration
+comes exclusively from the verified edge, including fallback selection. This
+is expiry of the live election cache, not rewriting historical facts: the
+retained checkpoint still authenticates the exact old records, and permanent
+nullifiers, provider registration history, certificates and their original
+finalization epochs are unchanged. The existing startup validator continues to
+require live election inputs to target exactly active_epoch+1. Independent
+prefix tests exercise pending/approved expiry, strict candidate PoP retention
+at the source, normalized target restore, and zero-operation atomic sealing.
 
 For a child whose parent has not finalized, consume M07's private
 `AuthenticatedPreparedSnapshotV1` through `AuthenticatedApplicationParentV1`.

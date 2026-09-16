@@ -17,3 +17,8 @@ pub use p2p_ingress_bridge::*;
 mod persistent_p2p_ingress_bridge;
 #[cfg(feature = "candidate-networked-authority")]
 pub use persistent_p2p_ingress_bridge::*;
+
+#[cfg(feature = "persistent-authority-candidate")]
+mod handoff_runtime_v1;
+#[cfg(feature = "persistent-authority-candidate")]
+pub use handoff_runtime_v1::*;

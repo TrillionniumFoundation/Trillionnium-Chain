@@ -691,6 +691,19 @@ when it remains reviewable. A wire/root/schema incompatibility requires its
 versioned contract and migration decision before implementation. File partitioning
 and consumer review replace fixed PR-count or writer-count rituals.
 
+The current E1 implementation tranche adds strict pre-certificate context,
+persisted old/new handoff signing and exact recovery, a committed native receipt
+join, authenticated carried-root computation and dual-parent C+3 preview, and
+strict first-new-epoch finality with skipped-view TCs. T1 now has strict native
+transaction/receipt membership and a trust path that verifies ordinary and epoch
+successors. These are bounded library/candidate interfaces; Core still needs its
+durable phase/configuration switch, and native epoch computation still needs its
+executed artifact, durable P rows and reconstructed edge on restart. Public
+submission/proposal wiring, native snapshot installation and incremental storage
+remain open. The six-host readiness/capacity probes are infrastructure evidence;
+they contain no running-chain fault/performance acceptance. No stage is closed
+by this tranche alone.
+
 After changing a manifest-bound input, regenerate its fingerprints with
 `python3 scripts/ci/check_plan_manifest_pins_v1.py --refresh-input-pins`, review the
 diff and commit it with the source change. This updates input provenance only;

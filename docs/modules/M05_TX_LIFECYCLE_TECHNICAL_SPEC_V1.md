@@ -135,6 +135,135 @@ bind the exact committed transaction/receipt and final block root under M13,
 without treating an intermediate transaction root as a header commitment. Until that version is implemented and reviewed, return `PROOF_UNAVAILABLE`
 for unsupported multi-transaction proof mapping; do not manufacture finality.
 
+### Planned public native candidate admission profile
+
+`native-public-candidate-v1` is the selected first live-client profile. It accepts
+exact `BuiltCanonicalTxV0::from_exact_outer_bytes_v0` bytes: canonical outer
+`SignedCommandEnvelopeV1` JSON containing canonical `CanonicalTxV1` JSON. Reject
+duplicate/unknown fields, noncanonical bytes, invalid Ed25519 signatures, wrong
+chain, unknown application signer/role/key and outer/inner sender or nonce
+mismatch. Use existing `SignedCommandEnvelopeV1::tx_hash()` as
+`native_tx_hash`: its domain binds signing bytes and the signature. Preserve the
+outer bytes without normalization. This hash is distinct from M05 `TxIdV0`;
+fee_limit/max_gas and wall-clock expiry must not be translated into invented
+fee_bid, multidimensional limits or valid_until_height. The native proof result
+may derive this native hash from its authenticated exact bytes after strict
+canonical decoding; it may not advertise an M05 intent ID.
+
+The implementation must extend `trnm-poco-node/src/tx_admission_wal.rs` and its
+`NodeOwnedTxAdmissionBoundaryV0`, then connect it to the running consensus owner.
+The existing strict CheckTx, signer/context resolvers, WAL/FULL mode, exclusive
+lock, reservation conflict and sealed native readback remain the authority.
+Neither the disconnected legacy RPC map nor the G1 process fixture is the live
+submission route. Namespace is a domain-separated commitment to genesis,
+chain ID and admission profile. Canonical signer identity comes from the pinned
+application policy, stays stable for that logical signer across key rotation,
+and is never supplied by the request.
+
+#### Canonical body durability and explicit WAL migration
+
+A new, versioned native-body record must atomically bind namespace, native hash,
+exact outer bytes, outer-byte SHA-256, existing admission metadata, receive
+sequence and profile digest to its nonce reservation before ACK. Sequence is a
+checked monotonically increasing u64 assigned in that SQLite transaction.
+Uniqueness is enforced for native hash and for canonical signer/nonce. Exact
+retry returns the original sequence/status; another envelope using the reserved
+nonce is `NONCE_CONFLICT`. Recompute native hash and metadata from retained bytes
+when opening the store, never trust the stored hash alone. No private key is stored.
+
+Schema v2 contains metadata/digests but no recoverable outer body. Opening it
+under the new profile must return `ADMISSION_MIGRATION_REQUIRED`, not create an
+empty replacement. An explicit exclusive migration to the next schema validates
+old schema/identity/receipts/tombstones first. Every nonterminal Reserved row must
+have a caller-supplied exact outer preimage that reproduces its complete stored
+metadata and signature; missing or conflicting preimages abort before mutation.
+Every HandedOff row must first be resolved by authentic application/finality
+readback under the existing recovery owner, or migration remains unavailable.
+Expired Reserved preimages may be retained for audit but cannot reenter the
+ready queue. Preserve all terminal receipts/replay tombstones. Allocate migrated
+receive sequences in deterministic signer/nonce/native-hash order (historical
+arrival order is unavailable); label this ordering in the migration record.
+Write the new body rows, schema and migration commitment in one transaction;
+crash before commit leaves v2, after commit leaves a fully validated new schema.
+Fresh isolated campaign namespaces use the new schema directly.
+
+#### Live queue, batching and finalization
+
+Candidate defaults, bounded further by authenticated parameters: at most 256
+pending transactions, 16 MiB retained pending outer bytes, 256 KiB per outer
+envelope; a proposal takes at most 64 transactions and 1 MiB total canonical
+payload bytes including CEV0 framing. Reject saturation before allocating a new
+reservation. Select by receive sequence; nonce/balance and expiry are rechecked
+against the exact speculative parent selected by Core. A deterministic invalid
+transaction receives a durable local rejection; unavailable/corrupt state pauses
+proposal work and is not mislabeled transaction invalidity. Do not silently
+change signed fees, contents or the order of an already reserved proposal batch.
+
+Before exposing a proposal, persist its selected native IDs and exact
+parent/block/view binding. Live in-flight leases owned by this process do not
+block unrelated admission; an unresolved lease recovered from a previous process
+continues to block serving until authenticated reconciliation. Competing branch,
+timeout and restart never authorize `HandedOff -> Released` from local absence
+alone. Reproposal of identical bytes requires an owner-verified current branch
+and nonce check; committed/expired/conflicting identities remain fenced. Shutdown
+retains accepted bodies and reservations rather than dropping a lease into an
+unrecorded cancellation. If effect certainty is lost, stop that owner and recover.
+
+Upon each actual finalized application commit, join exact native bytes/position,
+receipt commitment and Core finality; persist the inclusion proof and commit
+receipt before publishing `included-finalized` or collecting queue bodies.
+Recovery handles the application-committed/queue-unacknowledged cut idempotently.
+Persist historical proof/evidence bytes so a later finalized tip does not erase
+queryability. The local pending/proposed/rejected status is not a cryptographic
+execution-result field. Empty Regular successors must keep consensus advancing
+when the queue drains: a lone user transaction needs two certified descendants.
+Empty blocks have frozen empty payload/receipt roots and no user receipts or
+business-goodput credit; generated workload transactions are not a substitute.
+
+Acceptance covers exact retry after lost ACK/restart, body/hash/nonce corruption,
+v2 migration cut points, unrelated admission while a proposal is in flight,
+leader change/reproposal, deterministic rejection versus local storage failure,
+one submitted transaction plus empty successors, and durable historical proof
+query after a later commit. These are implementation obligations, not claims that
+the current native proof verifier already provides a networked lifecycle.
+
+### Implemented native inclusion boundary
+
+`trillionnium/crates/trnm-tx-lifecycle-v0/src/finalized_proof_v1.rs`
+implements the native-byte subset of the following contract.
+`NativeTxProofPackageV1::{encode,decode_exact}` enforces the exact schema/framing,
+nonempty required fields, no suffix and at most 32 siblings per branch.
+`verify_native_tx_inclusion_v1` combines strict Ed25519 three-chain finality
+with both ordered memberships. The target must equal the oldest finalized
+header; a valid later QC does not retarget the claim. `OrderedInclusionProofV0`
+in consensus-types shares the frozen kind/index/count/level hashes and requires
+an odd tail's duplicate sibling to equal the current digest.
+
+The separate `verify_native_tx_epoch_inclusion_v1` takes
+`NativeTxEpochProofContextV1`: independently trusted old set/parameters, complete
+eight-root epoch evidence, expected target and local limits. It calls the
+strict epoch-transition boundary, including signed timeout certificates when
+views skip. Receipt parsing and transaction-count caps use the authenticated
+new parameters returned by that boundary. Combined evidence plus package must
+fit the smaller caller budget and 4 MiB; one caller-supplied CEV0 work budget
+remains charged after rejection. The epoch proof digest binds every evidence
+preimage plus the exact package. Ordinary admission never retries a failed
+proof using the epoch route.
+
+Only these functions issue `VerifiedNativeTxInclusionV1`. Its read-only facts
+are native bytes, position/count, exact finalized header and receipt-bound
+gas/fee/events. It authenticates neither the complete M05 admission `tx_id`
+nor execution status or intermediate state roots. `SignedCommandEnvelopeV1`
+and its inner `CanonicalTxV1` still lack some canonical M05 intent fields;
+therefore `FinalizedTxClaimV1`, lifecycle promotion and public RPC publication
+remain integration work. Existing v0 finalization semantics are unchanged.
+
+`finalized_proof_v1_tests.rs` and `finalized_proof_v1_epoch_tests.rs` use real
+Ed25519 signatures and cover odd counts/positions, kind/count/index/receipt
+substitution, wrong target/trust set, exact package truncation/overflow/suffix,
+signature corruption, byte/count/work caps, complete epoch evidence and skipped
+views. The verified result cannot be constructed externally (compile-fail test).
+
 ### Planned V1 multi-transaction proof contract
 
 `FinalizedTxClaimV1` is a new candidate readback variant, not a relaxation of v0.

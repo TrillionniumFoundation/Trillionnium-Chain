@@ -81,6 +81,23 @@ parameter commitments, object allowlist, and authenticated preimages.
 No generic `Deserialize` path constructs M01 verified tokens. M01 consumes the
 inert object and independently supplied expected target to perform verification.
 
+### Epoch finality and ordered membership consumers
+
+The explicit `decode_epoch_first_finality_proof_v1_exact_with_budget` consumer
+accepts only a separately decoded complete eight-preimage activation context.
+It reconstructs the expected authorization bytes, admits exactly that synthetic
+new-epoch anchor, and checks C+3's kind/parent/activation coordinates before
+canonical re-encoding and exact EOF. The ordinary and genesis consumers still
+reject epoch anchors. Decoding yields inert proof data; M01 performs the strict
+signature and independently trusted context verification.
+
+Every certified header charges its proposer signature as well as QC/TC work.
+Nested failed attempts retain their charged budget. The shared
+`OrderedInclusionProofV0` generator/verifier uses the existing ordered-root
+domains and checks count/index, exact path length and canonical odd-leaf padding;
+it introduces no new consensus hash or root algorithm. M05 separately authenticates
+the root through strict finality before interpreting membership as evidence.
+
 ### Other owned foundation packages
 
 These packages have different encodings and authority boundaries. The table

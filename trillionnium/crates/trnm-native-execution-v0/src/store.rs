@@ -19,6 +19,10 @@ const OBJECT_NAMESPACE: u8 = 1;
 const OBJECT_RECORD_SCHEMA_VERSION: u16 = 1;
 const NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;
 
+#[path = "epoch_store.rs"]
+mod epoch_store;
+pub(crate) use epoch_store::CarriedRootReaderV1;
+
 pub fn stored_object_key_v0(object_key_hex: &str) -> Result<Vec<u8>> {
     ensure!(!object_key_hex.is_empty(), "object key must not be empty");
     let component = object_key_hex.as_bytes();
@@ -231,6 +235,8 @@ pub struct CompleteStatePlanV0 {
     tree_update_batch: TreeUpdateBatch,
     preimages: BTreeMap<KeyHash, Vec<u8>>,
     writes: Vec<CompleteStateWriteV0>,
+    epoch_parent: Option<crate::epoch_edge::EpochApplicationCoordinatesV1>,
+    epoch_parameters: Option<ConsensusParametersV0>,
 }
 
 impl CompleteStatePlanV0 {
@@ -357,7 +363,7 @@ pub(crate) fn plan_state_update_v0<S: NativeExecutionStoreV0>(
     })
 }
 
-pub(crate) fn plan_complete_state_update_v0<S: NativeExecutionStoreV0>(
+pub(crate) fn plan_complete_state_update_v0<S: TreeReader + HasPreimage>(
     store: &S,
     parent_version: Version,
     target_version: Version,
@@ -405,6 +411,8 @@ pub(crate) fn plan_complete_state_update_v0<S: NativeExecutionStoreV0>(
         tree_update_batch,
         preimages,
         writes,
+        epoch_parent: None,
+        epoch_parameters: None,
     })
 }
 
@@ -573,17 +581,36 @@ impl InMemoryNativeExecutionStoreV0 {
         &mut self,
         plan: CompleteStatePlanV0,
     ) -> Result<trnm_consensus_types::StateRoot> {
-        let expected = self
-            .roots
-            .last_key_value()
-            .map_or(0, |(version, _)| version + 1);
-        ensure!(plan.version == expected, "complete state plan is stale");
+        if let Some(edge) = plan.epoch_parent {
+            epoch_store::validate_epoch_parent_v1(self, edge)?;
+            ensure!(
+                plan.version == edge.first_version,
+                "epoch state plan target mismatch"
+            );
+        } else {
+            let expected = self
+                .roots
+                .last_key_value()
+                .map_or(Some(0), |(version, _)| version.checked_add(1))
+                .context("complete state parent version exhausted")?;
+            ensure!(plan.version == expected, "complete state plan is stale");
+        }
         let root = plan.root_hash;
         self.apply_batch_v0(plan.version, root, plan.tree_update_batch, plan.preimages)?;
+        if let Some(parameters) = plan.epoch_parameters {
+            self.consensus_parameters = parameters;
+        }
         Ok(trnm_consensus_types::StateRoot::new(root.0))
     }
 
     pub(crate) fn encode_authenticated_snapshot_v0(&self) -> Result<Vec<u8>> {
+        ensure!(
+            self.roots
+                .keys()
+                .zip(self.roots.keys().skip(1))
+                .all(|(previous, next)| previous.checked_add(1) == Some(*next)),
+            "sparse epoch snapshot requires the explicit epoch snapshot codec"
+        );
         borsh::to_vec(&PersistentAuthTreeSnapshotRefV0 {
             codec_version: NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0,
             nodes: &self.nodes,
@@ -630,6 +657,13 @@ impl InMemoryNativeExecutionStoreV0 {
     }
 
     fn validate_snapshot_v0(&self) -> Result<()> {
+        self.validate_snapshot_with_gaps_v1(&BTreeMap::new())
+    }
+
+    fn validate_snapshot_with_gaps_v1(
+        &self,
+        gaps: &BTreeMap<Version, &crate::epoch_edge::EpochApplicationCoordinatesV1>,
+    ) -> Result<()> {
         ensure!(
             !self.roots.is_empty(),
             "authenticated snapshot has no roots"
@@ -640,12 +674,15 @@ impl InMemoryNativeExecutionStoreV0 {
             .context("authenticated snapshot has no latest root")?
             .0;
         let tree = Sha256Jmt::new(self);
-        let mut previous = None;
+        let mut previous: Option<Version> = None;
         for (&version, expected_root) in &self.roots {
             if let Some(previous) = previous {
                 ensure!(
-                    version == previous + 1,
-                    "authenticated roots are not contiguous"
+                    previous.checked_add(1) == Some(version)
+                        || gaps
+                            .get(&previous)
+                            .is_some_and(|edge| edge.first_version == version),
+                    "authenticated root gap lacks an exact verified epoch edge"
                 );
             }
             // Check the actual retained commitment, not just root-node presence.

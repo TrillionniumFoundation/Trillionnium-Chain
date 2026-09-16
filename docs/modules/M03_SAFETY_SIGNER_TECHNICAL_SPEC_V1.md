@@ -14,10 +14,12 @@ persistent decisions but does not reconstruct proposal ancestry by itself.
 remote-signer protocol/service/adapters remain separate owned components.
 
 Current ordinary signing uses `CanonicalSignIntentV0` and `sign_exact_v0`.
-Current handoff code exposes `StrictOldSetHandoffAdmissionV1` and
-`sign_old_set_handoff_exact_v1`; its profile rejects a new-set-only author.
-The target adds independently authorized new-role custody and M02's durable
-phase record. It does not bypass those current restrictions with an old-role token.
+The existing old-only handoff profile remains unchanged. The explicit
+`HandoffSignerJournalProfileV1::for_epoch_handoff` profile additionally supports
+new-only and dual-role authors, with a distinct profile-binding domain.
+`StrictOldSetHandoffAdmissionV1` and `StrictNewSetHandoffAdmissionV1` consume M01's
+strict pre-certificate context. M02's durable phase record and ordinary new-epoch
+vote activation remain separate unfinished work.
 
 ## Interfaces
 
@@ -61,30 +63,43 @@ proof that Safety has authorized another intent. `ExternalMonotonicWatermarkV0`
 provides load and compare-and-advance semantics; a same-directory file is a lab
 implementation, not an independently administered rollback anchor.
 
-### Planned role-specific handoff request
+### Role-specific handoff journal and native receipt join
 
 ```text
-sign_handoff_exact_v2(
-  admission: OldRoleAdmissionV2 | NewRoleAdmissionV2,
-  checkpoint: PreHandoffCheckpointReceiptV1,
-  intent: CanonicalHandoffSignIntentV1,
-  expected: JournalPredecessor,
-  owner: CurrentSignerGeneration
-) -> Result<RecordedHandoffSignatureV2, HandoffSigningFailure>
+SqliteHandoffSignerJournalV1::sign_old_set_handoff_exact_v1(intent, old_admission, producer)
+SqliteHandoffSignerJournalV1::sign_new_set_handoff_exact_v1(intent, new_admission, producer)
+CandidateHandoffRuntimeV1::sign_handoff_exact(application, receipt, descriptor, role, producer)
 ```
 
-These v2 names are planned local interfaces; the existing canonical handoff
-preimage/role codec remains unchanged. Verify exact type names against M00's
-source at implementation; no new peer handoff tag is introduced.
-The admission binds both exact sets/parameters, author and role, descriptor,
-strict checkpoint/two-seal finality, authenticated checkpoint-parent/cutoff,
-and the pre-certificate native receipt defined by M08.
+These are implemented candidate interfaces; canonical handoff bytes and role
+domains remain unchanged. Cryptographic admission binds both exact
+sets/parameters, author and role, descriptor, strict checkpoint/two-seal finality
+and authenticated checkpoint parent. The host wrapper separately joins a
+`PreHandoffCheckpointReceiptV1` to its actual application owner, freshly reads its
+COMMITTED row/head, and matches artifact/overlay/persist/commit identities and
+cutoff-derived configuration before custody. The journal alone does not claim
+this application-owner join.
 
 Old role verifies membership under the old set; new role verifies membership
 under the new set and independent old-chain trust. A dual member obtains two
 admissions and two decisions. The journal uniqueness key is
 `(genesis, chain, old_epoch, new_epoch, author, role)`; every retry must name the
 same canonical descriptor/preimage. Distinct roles cannot overwrite each other.
+
+Both roles retain the existing prepared SQLite transaction → external decision
+CAS → custody → signed SQLite transaction → external signature CAS sequence.
+The old ordinary terminal fence still prohibits later ordinary intents. The
+explicit epoch-role profile permits audited new-role events after that fence;
+the legacy profile retains its final-sequence restriction. A new-only profile's
+absent old key is a zero sentinel, never a verification key. Every returned
+signature is checked against the actual key for its role.
+
+`recover_old_set_handoff_exact_v1` and `recover_new_set_handoff_exact_v1` require
+fresh strict admission and the exact persisted intent. Recovery audits the
+whole journal, admits only the expected pending predecessor/target, reconciles
+that precise external CAS and rereads it. Ordinary open still fences uncertain
+state. It cannot reset or roll back an external anchor. The host's
+`recover_exact` performs the native receipt join before external reconciliation.
 
 `PreHandoffCheckpointReceiptV1` precedes the joint certificate. Existing
 post-certificate confirmation or `EvidenceVerified` cannot authorize producing
@@ -156,7 +171,8 @@ ConsensusParameters. Include exactly contexts referenced by active state,
 retained evidence and the live epoch edge; duplicates/orphans reject. Follow
 with the exact field order and closed tags in current
 `safety_state_record.rs::encode_state_payload`, applying these versioned edits:
-all `encode_finalized_tip` occurrences prepend their explicit u64 epoch (the
+all `encode_finalized_tip` occurrences prepend explicit u64 epoch, Hash32
+validator_set_id and Hash32 consensus_parameters_hash (the
 state finalized/application-applied tips, payload parent, durable finalization
 parent and sync-anchor parent); nested QCs/proofs decode under their own epoch's
 registered context; remove only the schema13 epoch-zero codec restriction after
@@ -167,7 +183,7 @@ u64 record/blob limits. Outer revision equals the payload revision. This is
 local integrity binding, not a new consensus hash/signature domain.
 
 The epoch-record bytes have this exact planned schema: u16=1, u8 phase 0..8,
-u64 revision/generation, Hash32 genesis, u16-framed chain, u64 old_epoch/new_epoch/C,
+then for phases1..8 u64 revision/generation, Hash32 genesis, u16-framed chain, u64 old_epoch/new_epoch/C,
 four Hash32 old-set/old-parameter/new-set/new-parameter commitments, then the
 following fields in fixed order. Every optional is tag0 absent or tag1 followed
 by its payload; a Bytes payload is u32-framed; unknown tags and trailing bytes reject.
@@ -186,7 +202,8 @@ by its payload; a Bytes payload is u32-framed; unknown tags and trailing bytes r
 | anchor completion | Option of u64 Safety revision, checkpoint checksum Hash32, exact anchor digest Hash32. |
 | first-new committed completion | Option of block_id/artifact/root Hash32 and application commit_sequence u64. |
 
-Phase0 has no optional fields; phase1 requires checkpoint identity/prepared ref;
+Phase0 is exactly the three-byte u16=1/u8=0 record with no remaining fields;
+phase1 requires checkpoint identity/prepared ref;
 phase2 additionally QC(C); phase3 seal1; phase4 seal2/pre-receipt; phase5 descriptor;
 phase6 joint evidence; phase7 application edge/anchor completion; phase8 first-new
 completion. Future completion fields are forbidden. The two local decision slots
@@ -203,6 +220,101 @@ fields, trailing bytes or unbounded lengths reject. Migration imports only a
 validated quiescent pre-checkpoint schema-13 state, records original bytes/hash
 and authenticated active epoch, and writes one schema-14 successor atomically.
 Do not infer an epoch for an ambiguous historical FinalizedTip.
+
+### Planned journal8 ownership and activation cut
+
+The first implementation slice specified in M02 must preserve schema13/journal7
+bytes and tests. Use a separate journal8 schema/namespace for schema14; never
+rewrite `safety_schema=13` in an existing metadata row or reinterpret its record
+layout. The immutable journal8 profile binds genesis/chain, local validator ID,
+verifier profile and resource bounds. Each record binds its own exact retained
+configuration table through `context_ref`; a fixed epoch-zero CoreConfig hash
+must not be substituted with a new hash while decoding the old predecessor.
+The independent trusted predecessor cut authorizes the old context. A new context
+can become active only through reverified joint evidence, not by appearing in
+the decoded table. Revision remains globally monotonic across epoch changes.
+
+Append the planned `ConsensusAncestryBaseV1` after `finalized` in the Safety14
+payload: tag0 `Finalized` has no payload; tag1 has u64 new_epoch, Hash32 new_set,
+Hash32 new_parameters, Bytes exact terminal-old BlockHeader, Bytes exact derived
+EpochAnchorQC, and Hash32 transition_binding. Tag1 requires phase>=7 and exact
+agreement with retained joint evidence. The separately encoded true finalized
+and application-applied tips remain C/old_epoch until real new-block finality
+and application commit advance them. A seal or synthetic anchor never receives
+one of those tips. Every phase acknowledgment binds exact predecessor revision,
+record checksum, current generation and transition binding.
+
+Schema14 parent encoding keeps existing provenance tags0/1 and carrier tags0/1/2
+with their existing meanings; add provenance tag2 `AuthenticatedEpochEdge` and
+carrier tag3, which must occur together. The leading qualified tip is the real
+application checkpoint C. Carrier3 encodes Bytes terminal-old header, Bytes
+checkpoint header, Hash32 transition_binding and Hash32 checkpoint artifact.
+Both headers and the exact new anchor are checked against the retained phase
+record before creating a live request. Add a closed versioned overlay binding:
+tag0 followed by the existing `encode_overlay_ref` fields for an ordinary edge;
+tag1 followed by those fields naming the real application parent C, Hash32
+consensus_parent_id=C+2 and Hash32 transition_binding. Tag1 is valid only for
+the exact C+3 target of the retained edge. It never alters the old overlay codec.
+
+Each schema14 durable-finalization slot starts with a closed u8 tag: tag0 uses
+the existing field order with its now-qualified parent and ordinary overlay;
+tag1 encodes qualified application parent, the complete tag1 ancestry base,
+Bytes unchanged canonical FinalityProofV0 and the tag1 overlay binding. Tag1
+requires a proof finalizing C+3 wholly under the new set. Its first justify has
+new logical view0 even though the exact terminal parent header retains its old
+view; comparing those as equal numeric views is invalid. Ordinary-finalization
+slots cannot carry an epoch overlay. Retained finality proof headers always keep
+their original scope, and every QC conflict/ordering check selects its epoch/set
+before comparing views. Capacity calculations must include both contexts, all
+required old/new nested proofs and these additional bounded carriers before
+any phase or signer retirement becomes durable.
+
+Use a single M15 owner to route ordinary Vote/Timeout, old handoff and new
+handoff requests and to hold all relevant namespaces. The existing
+`SqliteHandoffSignerJournalV1` terminal fence only protects its own
+`sign_old_epoch_exact_v1` path. It does not retire a separately open
+`SqliteSignerJournalV0` or a remote signer. Before recording/releasing an old-role
+handoff signature, finish/reconcile any already prepared old ordinary decision,
+persist the shared retirement intent, advance its external owner cut and forbid
+every old Vote/Timeout/proposal custody route. The handoff request itself may
+then proceed through its exact replay-safe journal path. A crash cannot reopen
+old custody merely because the handoff signature's response was lost. A new-only
+local member needs no old local decision; a removed member receives no new
+ordinary signer lease. The profile binds membership/key/epoch for each role.
+
+The exact activation recovery order is:
+
+1. Acquire the new process generation while all custody, timers and output are
+   disabled; load the independent external cut before trusting local phase tags.
+2. Read old/new journal metadata and Safety predecessor/successor bytes without
+   initializing an absent namespace. Reverify complete old checkpoint/two-seal
+   and joint proof under the trusted retained old configuration.
+3. Fresh-read the real COMMITTED checkpoint and its artifact/commit sequence;
+   recreate the owner-affine M08 edge. PREPARED, a root-only snapshot or a missing
+   row cannot satisfy this step.
+4. Reconcile each pending role decision and old ordinary retirement to its exact
+   external predecessor/target. Never resolve uncertainty by resetting a view,
+   dropping an intent, signing again under a different descriptor or creating a
+   replacement journal. Preflight the new profile's complete old+new evidence
+   capacity before making old retirement irreversible.
+5. Persist the exact phase6->7 successor containing both context preimages, true
+   C tips, terminal C+2 ancestry base, new high/lock anchor and revision+1. Fresh
+   readback plus the external whole-node successor CAS records this exact cut.
+   Two local databases are coordinated by intent/readback/CAS, not claimed atomic.
+6. Only after that CAS and a second matching readback may the owner issue the
+   new ordinary signer lease and Core persistence acknowledgment. Exact response
+   loss resumes the same cut. Any third state or ahead/foreign external head
+   fences the owner. Pending C+3 application commit still permits authenticated
+   speculative C+4/C+5 execution and votes.
+
+The full `WholeNodeCheckpointV1` codec currently rejects epoch-transition
+phases even though its reference codec admits their tags. Implement the concrete
+epoch cut and signing-cycle bridge in a versioned full record before using its
+reference as activation completion; an `EpochActive` reference alone proves no
+owner readback or CAS. Crash tests must cover every step above with both shared
+and separate old/new custody keys, including a separately opened ordinary signer
+attempt after the shared retirement cut. Migration keeps the original schema13
+bytes/checksum and forbids effects until the external cut selects journal8.
 
 ## Persistence and recovery
 

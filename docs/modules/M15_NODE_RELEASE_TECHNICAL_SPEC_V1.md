@@ -116,6 +116,83 @@ application/Safety advances, and prove no second publication/signature or false
 readiness. Boundary ports own no hidden durable state: adapters declare their
 store/anchor and reconstruct only from M03/M07/M08 authoritative readback.
 
+The feature-gated `trnm-poco-node-host/src/handoff_runtime_v1.rs` now owns a
+candidate join between a live native application owner, its freshly read
+committed pre-certificate receipt, strict M01 context and the role-specific
+durable journal. `CandidateHandoffRuntimeV1` verifies path/store affinity and
+exact row/head/configuration bindings before signing or recovery. Its private
+recorded result retains intent, signature, application commit/artifact and context
+identity. It creates no keys and cannot activate Core, authorize ordinary votes,
+publish via a Core callback or close the whole-node checkpoint barrier. Full
+positive joined-node and epoch crash/restart acceptance remain necessary.
+
+### Planned native client composition and bootstrap profile
+
+The `native-public-candidate-v1` composition replaces the fixed workload source
+inside `trnm-poco-lab-validator/src/consensus_runtime.rs::maybe_propose_v1`.
+Its leader drains the M05 durable native queue into the existing
+`continuous_runtime.rs` preview/proposal signer/network path. Followers execute
+the exact transmitted block under their own application owner; they need not
+receive the submit request. A nonleader may acknowledge its own durable queue
+and wait for its scheduled view; no transaction-gossip guarantee is implied.
+The live endpoint, queue, proposal owner and finalized readback share the same
+configured chain/root and process lifecycle. `trnm-poco-node-host`'s default
+inert I/O and production-start refusal remain unchanged; wiring a candidate
+socket does not open them. Legacy `trnm-rpc` and G1 fixture finality are excluded
+from this composition.
+
+The signed public campaign descriptor adds the chosen profile, application
+signer-policy digest, genesis timestamp, client socket relative name, M05 queue
+limits, maximum block cadence and finite drain budget. Application signers are
+an explicit list of signer ID, stable canonical identity, role and public key,
+validated for duplicate/conflicting identity and role before store creation.
+Their policy commitment is part of the native genesis/bootstrap derivation;
+existing workload-key genesis or databases must never be silently retargeted.
+Initial credits are either explicit genesis state or real operator-signed
+transactions from the declared campaign policy, not hidden fixture funding.
+
+For an explicitly isolated candidate campaign, generate fresh application client
+and operator keys only under that campaign's owner-controlled 0700 key directory,
+with exclusive 0600 files. Copy only public policy to validators. Client-side
+signing retains the private material; request bodies, reports, logs, validator
+config and proof artifacts contain no client private key. Do not regenerate
+keys on restart or borrow production keys. Campaign generation must reject an
+occupied namespace and derive a fresh declared genesis/bootstrap; an existing
+network joins by its exact public descriptor. Generation does not authorize
+production activation or HSM claims.
+
+Time follows actual campaign wall-clock milliseconds. Choose one agreed fresh
+`genesis_timestamp_ms` in the descriptor, never the workload fixture's zero
+origin or 1ms validity width. Consensus timers use a monotonic clock separately.
+For a regular proposal let `P` be the exact authenticated parent timestamp,
+`W` the local wall time and `S` the authenticated `max_block_time_step_ms`:
+compute checked `T = min(max(W, P+1), P+S)`. If arithmetic overflows or the
+parent is more than the signed candidate skew allowance (default 5,000ms)
+ahead of local wall time, return `TIME_UNREADY`; do not move the clock backwards.
+If a resumed chain lags wall time, empty certified blocks may advance its
+parent-relative clock; new client admission waits until chain time is within
+the same allowance. This local readiness rule changes no frozen timestamp rule.
+
+Suggested candidate client TTL is 300,000ms, with maximum 600,000ms. Admission
+checks the signed envelope at the owner clock and forbids a client from selecting
+the server time; proposal execution rechecks it at T using existing strict
+envelope rules. An accepted transaction can therefore expire before inclusion
+and must obtain a durable local expiry record. All nodes use the block timestamp
+for deterministic execution, never their local wall time. Repeated requests do
+not extend signed expiry. Observed skew is recorded as readiness evidence.
+
+When there are no pending transactions, propose honest empty Regular blocks at
+the declared bounded cadence (development suggestion 250ms). Empty successors
+execute through the same root/commit/Safety path, contain no fake client
+transaction and do not contribute to business goodput. Graceful stop closes
+admission first; selected user blocks must obtain their two certified descendants
+or the bounded drain ends with `DRAIN_INCOMPLETE` and durable pending work.
+Reserve at least two successor heights beyond the last admitted business target;
+`max_blocks` cannot silently truncate finality while reporting campaign success.
+On startup restore body/nonce/proposal/proof state and reconcile unresolved
+handoffs before exposing the client socket as ready. Migration and recovery
+failures preserve the prior databases and keep signing/submission fenced.
+
 ## State machine
 
 ```text

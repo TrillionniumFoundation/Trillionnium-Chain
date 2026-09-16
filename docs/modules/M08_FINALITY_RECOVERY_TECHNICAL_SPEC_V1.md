@@ -1,6 +1,7 @@
 # M08 Finality / Node Commit / Recovery technical specification v1
 
-Status: **existing candidate contract plus planned multi-epoch commit design; semantic acceptance and production activation not granted**
+Status: **strict pre-handoff receipt and read-only epoch computation implemented;
+durable multi-epoch commit/recovery planned; production activation not granted**
 
 Primary module: M08. Producers: M02/M03/M06/M07. Consumers: M02/M03/M13/M14/M15.
 
@@ -58,31 +59,31 @@ bytes through `decode_verify_finality_proof_strict_v0`.
 `PocoFinalizedApplicationReadV0` joins readback with strict finality.
 A valid proof for a PREPARED row remains insufficient to return committed state.
 
-### Planned pre-certificate receipt
+### Implemented pre-certificate receipt; planned persisted retention
 
 M02/M03 need a native checkpoint receipt **before** either handoff role signs.
 The existing `PreparedNativePocoCheckpointV0` is not a committed receipt;
 `ConfirmedNativePocoCheckpointV0` already requires the joint certificate and
-cannot authorize constructing that certificate. Add a separate local capability:
+cannot authorize constructing that certificate. The separate owner capability
+now exists in `trnm-native-execution-v0/src/poco_checkpoint.rs`:
 
 ```text
-confirm_pre_handoff_checkpoint(
-  expected: CheckpointCommitExpectation,
-  strict_old_checkpoint_finality: StrictFinalityProofV0,
-  committed: FreshNativeCheckpointReadback,
-  cutoff: AuthenticatedFinalizedCutoff,
-  next_commitment: RecomputedNextEpochCommitment
-) -> Result<PreHandoffCheckpointReceiptV1, FinalityRecoveryFailure>
+DurableNativeApplicationV0::confirm_pre_handoff_checkpoint_v1(
+  prepared: PreparedNativePocoCheckpointV0,
+  raw_checkpoint_two_seal_finality: &[u8]
+) -> Result<PreHandoffCheckpointReceiptV1>
 ```
 
-All names except the existing strict proof type are planned APIs. Construction
-is private to the commissioned native/application owner; caller-provided JSON,
+Construction is private to the commissioned native/application owner; caller-provided JSON,
 roots, receipt bytes or proof-status booleans cannot construct the capability.
 The call rechecks the actual COMMITTED row, exact checkpoint prepared execution,
 canonical body/roots, complete old-set checkpoint→seal1→seal2 proof, finalized
 cutoff projection and freshly recomputed next commitment. No joint certificate
 is an input. New-only validators reconstruct their own authenticated application
-state/readback before obtaining their local capability.
+state/readback before obtaining their local capability. The receipt is non-Clone,
+retains owner-affine committed readback and exposes shared checkpoint/configuration
+facts. The actual signed SQLite test obtains it without supplying any joint
+certificate and rejects corrupted old-set proof bytes. It is not a signing permit.
 
 Planned persisted receipt layout, in exact local order:
 
@@ -93,7 +94,7 @@ Planned persisted receipt layout, in exact local order:
 | genesis_hash, chain_id | Hash32 and CEV0 ConsensusString; independently trusted. |
 | old_epoch, checkpoint_height | Two u64-be; checkpoint C derived from old parameters. |
 | checkpoint_block_id, prepared_artifact_digest | Two Hash32; exact existing durable P artifact and header. |
-| application_version, commit_sequence | Two u64-be; version=C; sequence is durable local apply ordinal. |
+| application_version, commit_sequence | Two u64-be; version=C; sequence is the checkpoint's immutable local durable commit ordinal, distinct from consensus height. |
 | state_root, receipts_root, evidence_root, payload_root | Four Hash32 matching execution and signed header. |
 | runtime_profile_hash | Hash32, epoch-authorized deterministic execution context. |
 | cutoff_height, cutoff_block_id, cutoff_state_root | u64-be, Hash32, Hash32; independently finalized exact cutoff. |
@@ -109,7 +110,21 @@ strict verification; its checksum cannot establish freshness. Local namespace,
 sequence and receipt checksum need not match other validators' local receipts;
 their verified consensus/root/configuration facts must match.
 
-### Planned post-certificate application edge
+### Implemented in-memory edge; planned durable installation
+
+The current construction is
+`ConfirmedNativePocoCheckpointV0::into_epoch_application_edge_v1()` after
+`confirm_poco_checkpoint_v0(prepared, raw_two_seal_finality, raw_anchor)` verifies
+the exact native checkpoint and strict joint handoff. The opaque, non-Clone
+`AuthenticatedEpochApplicationEdgeV1` retains the committed checkpoint capability,
+old/new configurations, terminal seal2 and checked C/C+2/C+3 coordinates.
+`epoch_edge.rs::preview_epoch_block_v1` requires the same live application owner,
+fresh checkpoint P digest/sequence and exact current committed head C. Its request
+binds both parents and the authorization digest; constructing these raw fields
+alone supplies no authority. A preview neither consumes the edge nor writes P.
+
+The installed/recovered variant below remains planned: the current edge has no
+persistent local encoding, retained independent checkpoint CAS or durable phase.
 
 ```text
 confirm_epoch_application_edge(
@@ -120,7 +135,7 @@ confirm_epoch_application_edge(
 ) -> Result<AuthenticatedEpochApplicationEdgeV1, FinalityRecoveryFailure>
 ```
 
-The private edge fields are: complete pre-certificate receipt; old/new epochs;
+The planned retained edge fields are: complete pre-certificate receipt; old/new epochs;
 exact old/new set and parameter hashes; old checkpoint tuple
 `(C, block_id, application_version=C, root, commit_sequence)`; complete terminal
 seal2 header at C+2 and its block ID; first-new height C+3; exact handoff descriptor
@@ -132,7 +147,7 @@ Its planned local encoding is ASCII `TRNMEDG1`, u16-be 1, then the fields above
 in listed order: receipts/headers/descriptor use u32-framed canonical bytes;
 epoch/height/version/sequence/generation use u64-be; digests use Hash32;
 checkpoint identity uses its existing exact canonical encoding, framed once.
-Append SHA-256 of preceding bytes. The retained eight canonical evidence
+Append SHA-256 of preceding bytes. All retained canonical evidence
 preimages are stored separately under their exact strict binding and verified
 on reopen; they do not acquire an invented aggregate consensus wire encoding.
 A missing evidence object fences recovery even if the edge checksum matches.
@@ -208,7 +223,7 @@ Old/new role signing follows that receipt. After joint verification, persist the
 edge and checkpoint CAS before installing the new anchor. First new block C+3
 is prepared speculatively and voted before its own finality; once a new-set
 three-chain finalizes it, commit one application transition with JMT label C+3
-and commit_sequence+1. Children may be prepared under normal speculative-parent
+and one application commit. Children may be prepared under normal speculative-parent
 rules while that commit waits. No mixed-old/new three-chain is accepted.
 
 Normal apply expects application height+1. The sole planned epoch-edge apply
@@ -228,6 +243,151 @@ can consume it or prevent a later safe proposal. Commit CAS selects one exact
 finalized block. Duplicate edge installation/commit requires byte-identical
 binding; mismatched target or descriptor halts. Historical edge/proof retention
 continues after consumption for M13 reconstruction and evidence windows.
+
+### Planned dual-parent artifact and schema-4 snapshot bridge
+
+The next durable implementation uses an explicit local application schema 3→4
+migration. It keeps schema-3 P/artifact bytes and commissioning pins unchanged;
+opening an old database cannot silently migrate it. The commissioned owner
+checks the exact source inventory/head, migrates in one SQLite transaction and
+freshly audits schema 4 before returning. A schema-3 reader rejects schema 4.
+This bounded snapshot bridge enables native epoch recovery before migration to
+M07's separate `ni_*` incremental backend; it is not a snapshot-growth fix.
+
+`NativeExecutedEpochBlockV1` is a **planned inert boundary value** containing
+`NativeEpochBlockExecutionRequestV1` and ordered native receipts. Its constructor
+checks computed payload/state/receipt/evidence roots against the expected roots,
+exact receipt count and gap-free transaction indices. Successful construction
+is neither finality nor durable P authority. The planned artifact encoding is:
+
+| Ordered component | Exact local representation |
+|---|---|
+| Prefix/version | ASCII `TRNM_NATIVE_EXECUTED_EPOCH_BLOCK_ARTIFACT_V1`, u64-be 1. |
+| Chain/genesis | u32-be byte length plus existing valid UTF-8 chain ID; Hash32 genesis. |
+| Application parent | u64-be height, Hash32 block ID, Hash32 root, Hash32 commit ID; exact checkpoint C. |
+| Consensus parent/edge | u64-be terminal height, Hash32 terminal block ID, Hash32 application handoff authorization binding. |
+| Target | Hash32 block ID, u64-be height, u64-be timestamp, Hash32 active new validator-set ID. |
+| Transactions | u32-be count; each exact signed native transaction has a u32-be byte length; retain the 4 MiB complete-body bound including lengths. |
+| Expected roots | Hash32 payload, state, receipts, evidence, in that order. |
+| Receipts | Existing artifact-v0 receipt sequence encoding, including u32-be count/index, gas u64-be, fee u128-be, bounded event/attribute strings and receipt commitments. No CEV0 or runtime receipt field changes. |
+
+Require exact EOF and byte-identical re-encoding; reject an artifact over 16 MiB
+before allocation. Artifact digest is SHA-256 over the complete local bytes.
+The ordinary artifact domain/version and +1 request constructor remain unchanged.
+Both parent coordinates enter the epoch artifact; a fake application head at
+seal2 is forbidden. For later ordinary C+4/C+5, retain artifact v0 and its +1
+semantics, but use the new durable P family because their stored history is sparse.
+
+Schema 4 adds the following closed tables to the existing schema. `U64` means
+length-8 big-endian BLOB, `H32` length-32 BLOB, `BYTES` bounded BLOB, `TAG` INTEGER
+with the listed CHECK. All fields are NOT NULL unless explicitly optional.
+The migration validates exact declared tables/indexes and rejects unlisted
+triggers/views. Each new table uses a primary key and immutable source fields;
+only the listed phase/commit fields can transition under owner CAS.
+
+| Table/key | Exact required fields and constraints |
+|---|---|
+| `native_epoch_edge_v1` / binding H32 | store_id H32; checkpoint_height U64; checkpoint_block/root/commit_id/P_digest H32; checkpoint_commit_sequence U64; terminal_height U64 and block H32; first_height U64; old_set/new_set/old_parameters/new_parameters BYTES; evidence BYTES and evidence_digest H32; phase TAG {0 Installed,1 Consumed}; optional consumed_block H32 and consumed_sequence U64. Terminal=C+2, first=C+3; both optional fields absent at0 and present at1. |
+| `native_durable_execution_p_v1` / block_id H32 | store_id H32; p_sequence U64 UNIQUE; status TAG {0 Prepared,1 Committed}; artifact_kind TAG {0 ordinary_v0,1 epoch_v1}; artifact BYTES/digest H32; parent_kind TAG {0 Committed,1 Prepared}; parent_height U64 and parent_block/root/commit_id H32; optional parent_P_digest H32 (required only for Prepared); consensus_parent_height U64 and consensus_parent_block H32; target_height U64; edge_lineage BYTES/digest H32; target_snapshot BYTES/digest H32; target_replay_commands/nonces/lifecycle BYTES with individual H32 digests; target_set/parameters BYTES with their protocol hashes; P_digest H32; optional commit_sequence U64 and commit_id H32. Commit fields absent at0 and present at1; target=parent+1 for kind0 or the exact edge C+3 for kind1. |
+| `native_application_epoch_context_v1` / singleton id=1 | store_id H32; head_block/root/commit_id H32; head_height U64; head_commit_sequence U64; active_set/parameters BYTES with protocol hashes; edge_lineage BYTES/digest H32; context_digest H32. Fields must equal the existing metadata head and the exact committed v1 P, or the untouched checkpoint head before first consumption. Commissioning genesis/signer-policy pins remain unchanged. |
+
+`edge_lineage` is u32-be count followed by H32 bindings in strictly increasing
+first-new height. Duplicate/missing edges reject. It includes every retained
+sparse gap needed by the target snapshot; new epoch preparation appends exactly
+one authenticated edge, and ordinary descendants inherit the same sequence.
+Its digest is SHA-256 of that exact encoding. A Prepared parent must resolve one
+immutable P of either family with a smaller p_sequence, matching target root/head;
+traversal terminates at an exact committed head within the depth budget. Child
+rows bind that parent's P digest, preventing same-height sibling substitution.
+Before parent commit, its prospective commit ID remains the
+deterministic application identity derived from its P; readback never represents
+that identity as evidence that commit occurred.
+
+Both P families share the metadata `durable_sequence` allocator. Each prepare
+and each commit advances that local ordinal once; therefore the first-new
+commit_sequence is **latest durable_sequence+1**, not checkpoint_commit_sequence+1
+when speculative P records intervened. The checkpoint's recorded commit_sequence
+remains immutable. The context's head_commit_sequence identifies the committed
+head row, independently of newer prepared rows. An independent count of applied
+blocks, if exposed as a metric, cannot replace this recovery sequence.
+
+In schema 4, metadata still has its existing snapshot column, but codec dispatch
+requires the explicit schema plus authenticated epoch context: before first-new
+commit it is codec1, afterward codec2 with the retained complete edge lineage.
+Do not merely inspect a version byte and accept an unauthenticated sparse tree.
+Old v0 P rows remain codec1; all new sparse-history P rows use family v1/codec2.
+The context lineage contains only consumed gaps of the committed snapshot;
+an Installed edge is retained in its own table and included in its candidate
+P lineage, never prematurely added to the checkpoint's committed lineage.
+
+The v1 P digest uses domain `trnm.native-application.durable-p.v1` and the exact
+ordered tuple: store_id, p_sequence, artifact_kind, artifact_digest, parent_kind,
+complete application-parent tuple, optional parent_P_digest presence/value,
+consensus-parent tuple, target_height, lineage_digest, snapshot_digest, replay
+command digest, replay nonce digest, lifecycle digest, target set ID and parameter
+hash. Integers are fixed u64-be, tags u8 and optional presence u8; hashes are raw
+32 bytes. Use the repository's length-framed `hash_domain` over these fields.
+Commit ID uses domain `trnm.native-application.commit-id.v1` over P_digest,
+block_id and target_snapshot_digest. Phase/commit_sequence are excluded from P
+digest and covered by the commit transaction/readback identity. Never reuse a
+v0 P digest with a changed semantic interpretation.
+
+The planned owner APIs are `execute_epoch_block_v1(&edge, request)` for an exact
+first-new request; `recover_epoch_context_v1(expected_owner_head)` for fresh
+reconstruction; and `commit_epoch_finality_bytes_v1(prepared, strict_new_epoch_proof)`.
+Execution independently revalidates the live edge/checkpoint, recomputes M06's
+complete prefix and user plan, checks every expected root, stores artifact/P/
+snapshot and pins atomically, then returns a private prepared receipt only after
+fresh readback. The existing ordinary executor may consume a reconstructed
+prepared parent under this context, but cannot manufacture an epoch edge.
+Final commit requires strict oldest-target new-set three-chain proof and exact
+application parent CAS. The same transaction marks P Committed, consumes the
+edge only for its first block, writes state/replay/lifecycle/context/metadata and
+increments the application sequence once. Seals produce none of these records.
+
+### Planned retained edge evidence and recovery algorithm
+
+`evidence` is local `TRNMEVD1`, u16-be1, followed by u32-framed exact bytes in this
+order: checkpoint native artifact v0; cutoff finality proof; cutoff parent header;
+checkpoint parent header; checkpoint header; checkpoint two-seal finality proof;
+terminal-old/ordinary-QC/handoff-certificate canonical kernel; then the bound
+checkpoint preparation-journal record identifier H32. Old/new set and parameter
+preimages are retained in the edge row and decoded by their existing codecs.
+Append SHA-256 of preceding evidence bytes. This is a local retention container,
+not a new aggregate protocol proof or signing message. Store raw accepted bytes
+before consuming transient preparation; current in-memory edge construction
+does not yet retain this recoverable bundle.
+
+Recovery first validates owner/store/commissioning identity, schema, checksums,
+bounded lengths and exact inventory. It then opens the retained committed
+checkpoint and cutoff, verifies their JMT roots and P/commit identities, rebuilds
+the exact native preparation and next commitment, checks the journal's original
+bound header, and reruns strict old-set two-seal plus joint verification from the
+retained bytes. A missing cutoff, preparation record, preimage or checkpoint pin
+is a recovery error; no boolean or matching root substitutes for it. After fresh
+capabilities exist, decode codec2 against the exact lineage and restore current
+active configuration only if it matches the committed context and source state.
+
+An Installed edge with head C may prepare C+3 again. A Consumed edge requires
+the exact committed C+3 P/sequence and may only restore historical ancestry for
+later blocks; it cannot execute the prefix again. Reconstruct Prepared C+4/C+5
+through their own immutable ancestry, not the latest unrelated snapshot. Missing
+or conflicting parent/P/edge bytes fence that chain without selecting a sibling.
+Crash before the atomic transaction leaves source; after it leaves exact target;
+lost reply is resolved by fresh row/head/edge-phase readback before any retry.
+The pin set includes checkpoint, cutoff, preparation record, raw evidence and
+all speculative ancestors until retained descendants and export/recovery users
+release them. Neither schema migration nor ordinary fork pruning may delete them.
+
+The explicit development bridge profile reuses M07's 128 prepared records,
+depth8, 2 GiB prepared-byte budget and 32 retained edges; it adds maximum snapshot
+256 MiB, edge evidence64 MiB, replay set16 MiB each, lifecycle1 MiB, and artifact
+16 MiB. Counts/lengths and checked aggregate sums are validated before decoding
+or writing; three largest admitted prepared descendants plus edge/WAL reserve
+must fit the selected budget. A signed deployment profile must provide each
+field, fit enabled proof/body limits and retained history, and cover both current
+and target SQLite/WAL/sidecar space. No profile silently becomes a mainnet default.
+Exceeding a local storage/recovery budget yields unavailable, never peer invalidity.
 
 ### Planned durable intent fields and restart matrix
 

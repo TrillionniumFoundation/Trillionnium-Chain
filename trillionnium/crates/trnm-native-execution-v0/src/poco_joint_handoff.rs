@@ -90,6 +90,10 @@ impl AuthorizedPocoJointHandoffV0 {
     pub(crate) const fn authorization_id(&self) -> [u8; 32] {
         self.authorization_id
     }
+
+    pub(crate) fn terminal_old_header(&self) -> &BlockHeader {
+        self.anchor_certificate_kernel.terminal_old_header()
+    }
 }
 
 /// Fresh-verifies and joins the raw H3b2b3b evidence to one exact durably

@@ -22,6 +22,66 @@ handlers are not automatically conformant, and no production availability is cla
 
 ## Interfaces
 
+### Planned live native candidate socket profile
+
+The first runtime-bound interface is `native-public-candidate-v1`, separate from
+the M05-intent `dev-api-v1` below. It is a client protocol inside the isolated
+candidate namespace, not an Internet-facing production service. A validator
+owns one Unix-domain socket under its canonical data root; the directory is
+0700, socket 0600 and stale socket replacement requires proving the previous
+owner is absent. No request chooses an application database or filesystem path.
+The client may use an independently authenticated tunnel to its host; a later
+HTTP/TLS adapter must preserve this contract and is not implicit here.
+
+Each connection carries one request and one response: u32 big-endian byte length
+followed by UTF-8 JSON, then close. Reject zero/over-limit length before allocation,
+truncation, trailing frames, duplicate/unknown fields and nesting over 64.
+Requests are capped at 528,384 bytes; replies at 8 MiB + 16 KiB, allowing the
+hex encoding of the complete 4 MiB native proof/evidence budget. Use lowercase
+hex without `0x`, decimal strings for u64, no private keys. Suggested local
+budgets are 16 connections, 2 seconds to receive a request, 5 seconds to complete
+it and at most 8 queued submit requests handled per consensus event-loop turn.
+Proof queries have a separate two-worker budget and cannot occupy proposal/vote
+work. Timeout after persistence is an unknown result to the client, not rollback.
+
+All requests have `schema`, opaque `request_id` (1..64 ASCII token bytes), `op`
+and a closed `data` object. `request_id` correlates responses only; native hash
+and nonce govern durable idempotency.
+
+| Operation | Exact data | Successful data / authority |
+|---|---|---|
+| `capabilities` | `{}` | Candidate flag, chain/genesis/profile, socket and transaction limits, supported native proof classes |
+| `submit` | `{ "signed_outer_hex": "..." }` | `native_tx_hash`, persistent `receive_sequence`, `status="admitted"` or current exact-retry status; only after M05 body+nonce transaction commits |
+| `transaction` | `{ "native_tx_hash": "..." }` | Durable local status and optional block/index; explicitly `proof_verified:false` unless accompanied by verified inclusion |
+| `proof` | `{ "native_tx_hash": "..." }` | Exact native package hex; proof class `ordinary-v0` or `epoch-first-v1`; the epoch class includes all eight named evidence preimages, collectively bounded with the package |
+| `status` | `{}` | Readiness reasons, current view, finalized height, durable pending count/bytes; no secret paths or credentials |
+
+Replies contain `schema`, `request_id`, `candidate_only:true`, chain/genesis/profile
+identity, `ok` and exactly one of `data` or `{code,retryable}`. Errors include
+`INVALID_REQUEST`, `UNSUPPORTED_PROFILE`, `BAD_SIGNATURE`, `SIGNER_UNAUTHORIZED`,
+`WRONG_CHAIN`, `NONCE_CONFLICT`, `EXPIRED`, `BACKPRESSURE`, `TIME_UNREADY`,
+`RECOVERY_REQUIRED`, `NOT_FOUND` and `PROOF_UNAVAILABLE`. Only transient capacity,
+readiness and recovery conditions are retryable with the same exact bytes.
+An unknown hash is not a failed transaction; no proof is not proof of absence.
+Querying a retained rejected/expired transaction returns its local record.
+
+The SDK preserves its signed bytes, retries submit verbatim after ambiguous I/O,
+and verifies returned native hash by canonical decoding. Before labeling a
+transaction `included-finalized`, it verifies the dual ordered branches and
+strict finality against independently pinned M13 history, including complete
+epoch evidence on that explicit route; returned set/preimages cannot self-select
+trust. Derive native hash from the proven outer envelope, require the requested
+hash, and expose only committed gas/fee/events. No M05 intent ID, outcome string
+or intermediate post-state root is inferred from this profile. History reads
+must use the proof for that exact block, not the latest Core tip's proof.
+
+The endpoint must invoke the running validator's durable admission and proposal
+owner, then read that owner's authenticated finalized history. A fake accepted
+map, a separately executed G1 fixture or a background generated workload does not
+satisfy this API. Tests use a real client-owned key, submit through this socket,
+observe execution on the multi-validator chain and independently verify the
+returned package, including after lost ACK, leader change and restart.
+
 ### Common encoding and metadata
 
 Use HTTPS JSON with UTF-8, duplicate-key rejection, no unknown request fields,

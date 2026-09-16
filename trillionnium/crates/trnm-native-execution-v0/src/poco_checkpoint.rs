@@ -1035,6 +1035,90 @@ impl PreparedNativePocoCheckpointV0 {
     }
 }
 
+/// Exact committed checkpoint and strictly verified old-set two-seal finality.
+/// This receipt deliberately precedes the joint handoff certificate. It does
+/// not authorize signing: the signer still authenticates its own role, key,
+/// intent and durable anti-equivocation state.
+#[must_use]
+pub struct PreHandoffCheckpointReceiptV1 {
+    prepared: PreparedNativePocoCheckpointV0,
+    read: crate::FinalizedNativeApplicationReadV0,
+    checkpoint_finality: trnm_consensus_types::FinalityProofV0,
+    post_execution_authorization_id: [u8; 32],
+}
+
+impl PreHandoffCheckpointReceiptV1 {
+    pub fn header(&self) -> &trnm_consensus_types::BlockHeader {
+        self.prepared.header()
+    }
+
+    pub fn durable_row(&self) -> &crate::ConfirmedDurableExecutionHistoryRowV0 {
+        self.read.durable_row_v0()
+    }
+
+    pub fn checkpoint_finality(&self) -> &trnm_consensus_types::FinalityProofV0 {
+        &self.checkpoint_finality
+    }
+
+    pub fn next_epoch_commitment(&self) -> trnm_consensus_types::NextEpochCommitmentV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .commitment()
+    }
+
+    pub fn old_validator_set(&self) -> &trnm_consensus_types::ValidatorSet {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .old_validator_set()
+    }
+
+    pub fn old_parameters(&self) -> &trnm_consensus_types::ConsensusParametersV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .old_parameters()
+    }
+
+    pub fn new_validator_set(&self) -> &trnm_consensus_types::ValidatorSet {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .new_validator_set()
+    }
+
+    pub fn new_parameters(&self) -> &trnm_consensus_types::ConsensusParametersV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .new_parameters()
+    }
+
+    pub fn checkpoint_parent_header(&self) -> &trnm_consensus_types::BlockHeader {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .checkpoint_parent()
+            .header()
+    }
+
+    pub fn post_execution_authorization_id(&self) -> [u8; 32] {
+        self.post_execution_authorization_id
+    }
+}
+
 /// A committed native checkpoint joined to freshly verified raw H1/H2,
 /// candidate derivation, checkpoint seals and handoff evidence. Its private
 /// fields retain the exact durable owner-affine readback. This is not an
@@ -1045,6 +1129,10 @@ pub struct ConfirmedNativePocoCheckpointV0 {
     read: crate::FinalizedNativeApplicationReadV0,
     handoff: crate::poco_joint_handoff::AuthorizedPocoJointHandoffV0,
     post_execution_authorization_id: [u8; 32],
+    pub(crate) old_validator_set: ValidatorSet,
+    pub(crate) old_parameters: ConsensusParametersV0,
+    pub(crate) new_validator_set: ValidatorSet,
+    pub(crate) new_parameters: ConsensusParametersV0,
 }
 impl ConfirmedNativePocoCheckpointV0 {
     pub fn header(&self) -> &trnm_consensus_types::BlockHeader {
@@ -1061,6 +1149,16 @@ impl ConfirmedNativePocoCheckpointV0 {
     }
     pub fn post_execution_authorization_id(&self) -> [u8; 32] {
         self.post_execution_authorization_id
+    }
+
+    pub(crate) fn terminal_old_header(&self) -> &trnm_consensus_types::BlockHeader {
+        self.handoff.terminal_old_header()
+    }
+
+    pub fn into_epoch_application_edge_v1(
+        self,
+    ) -> Result<crate::AuthenticatedEpochApplicationEdgeV1> {
+        crate::AuthenticatedEpochApplicationEdgeV1::from_confirmed_checkpoint(self)
     }
 }
 
@@ -1113,16 +1211,14 @@ impl DurableNativeApplicationV0 {
         })
     }
 
-    /// Confirm a prepared checkpoint only after the exact native execution has
-    /// become a committed P row in this owner and both frozen handoff proof
-    /// layers independently verify. Reopen callers must reconstruct preparation
-    /// from the raw inputs, which idempotently revalidates the durable journal.
-    pub fn confirm_poco_checkpoint_v0(
+    /// Issue a pre-certificate receipt only after exact committed execution,
+    /// cutoff-derived configuration reconstruction and strict two-seal finality.
+    /// No joint certificate is accepted or required by this entry point.
+    pub fn confirm_pre_handoff_checkpoint_v1(
         &self,
         prepared: PreparedNativePocoCheckpointV0,
         raw_checkpoint_two_seal_finality: &[u8],
-        raw_anchor_certificate_kernel: &[u8],
-    ) -> Result<ConfirmedNativePocoCheckpointV0> {
+    ) -> Result<PreHandoffCheckpointReceiptV1> {
         let journal = self.poco_preparation_journal_v0()?;
         crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
             &journal,
@@ -1182,6 +1278,72 @@ impl DurableNativeApplicationV0 {
             "post-execution next-epoch commitment differs from preheader authority"
         );
         let post_execution_authorization_id = commitment.authorization_id();
+        let checkpoint_parent = prepared
+            .bound
+            .authorized()
+            .prepared()
+            .checkpoint_parent()
+            .header();
+        let checkpoint_finality = trnm_consensus_types::decode_checkpoint_finality_proof_v0_exact(
+            raw_checkpoint_two_seal_finality,
+            commitment.old_validator_set(),
+            commitment.old_parameters(),
+            &commitment.commitment(),
+            checkpoint_parent.timestamp_ms(),
+        )
+        .map_err(|e| anyhow::anyhow!("decode pre-handoff checkpoint finality: {e:?}"))?;
+        ensure!(
+            checkpoint_finality.finalized_block().header() == header,
+            "pre-handoff finality does not name the committed checkpoint"
+        );
+        let justify = checkpoint_finality
+            .finalized_block()
+            .justify_qc()
+            .as_ordinary()
+            .context("pre-handoff checkpoint justify is not ordinary")?;
+        ensure!(
+            justify.block_id() == checkpoint_parent.id()
+                && justify.height() == checkpoint_parent.height()
+                && justify.view() == checkpoint_parent.view(),
+            "pre-handoff checkpoint parent differs from authenticated parent"
+        );
+        checkpoint_finality
+            .verify_checkpoint_two_seal_kernel(
+                commitment.old_validator_set(),
+                commitment.old_parameters(),
+                &commitment.commitment(),
+                checkpoint_parent.timestamp_ms(),
+                &trnm_consensus_crypto::StrictEd25519Verifier,
+            )
+            .map_err(|e| anyhow::anyhow!("strict pre-handoff checkpoint finality: {e}"))?;
+        Ok(PreHandoffCheckpointReceiptV1 {
+            prepared,
+            read,
+            checkpoint_finality,
+            post_execution_authorization_id,
+        })
+    }
+
+    /// Confirm the joint handoff only after issuing the independent committed
+    /// checkpoint receipt. The ordinary public API retains its exact inputs.
+    pub fn confirm_poco_checkpoint_v0(
+        &self,
+        prepared: PreparedNativePocoCheckpointV0,
+        raw_checkpoint_two_seal_finality: &[u8],
+        raw_anchor_certificate_kernel: &[u8],
+    ) -> Result<ConfirmedNativePocoCheckpointV0> {
+        let receipt =
+            self.confirm_pre_handoff_checkpoint_v1(prepared, raw_checkpoint_two_seal_finality)?;
+        let old_validator_set = receipt.old_validator_set().clone();
+        let old_parameters = *receipt.old_parameters();
+        let new_validator_set = receipt.new_validator_set().clone();
+        let new_parameters = *receipt.new_parameters();
+        let PreHandoffCheckpointReceiptV1 {
+            prepared,
+            read,
+            post_execution_authorization_id,
+            ..
+        } = receipt;
         // The immutable finality evidence must name the exact parent used by
         // the original raw cutoff chain, not a caller-selected timestamp/root.
         let parent = prepared
@@ -1202,6 +1364,10 @@ impl DurableNativeApplicationV0 {
             read,
             handoff,
             post_execution_authorization_id,
+            old_validator_set,
+            old_parameters,
+            new_validator_set,
+            new_parameters,
         })
     }
 
@@ -1775,11 +1941,14 @@ mod native_authorization_tests {
 
     #[test]
     fn real_committed_checkpoint_and_signed_two_seals_produce_exact_handoff_readback() {
+        use crate::NativeExecutionStoreV0;
         let directory = tempfile::tempdir().unwrap();
         let path = directory.path().join("application.sqlite3");
         let app = open(&path, config());
         let headers = ordinary_prefix(&app);
         let prepared = preparation(&app, &headers);
+        let pre_certificate_prepared = preparation(&app, &headers);
+        let invalid_signature_prepared = preparation(&app, &headers);
         let header = prepared.header().clone();
         let (proof, anchor) = handoff_proofs(&prepared);
         let fixture =
@@ -1825,6 +1994,30 @@ mod native_authorization_tests {
         };
         app.commit_block(NativeApplicationCommitRequestV0::new(*executed))
             .unwrap();
+        // No anchor or joint certificate is supplied to this API. The receipt
+        // already authenticates real committed application state and strict
+        // old-set finality, so new-role signing need not depend on its output.
+        let pre_certificate = app
+            .confirm_pre_handoff_checkpoint_v1(pre_certificate_prepared, &proof)
+            .unwrap();
+        assert_eq!(pre_certificate.header(), &header);
+        assert_eq!(pre_certificate.durable_row().commit_sequence_v0(), Some(17));
+        assert_eq!(
+            pre_certificate
+                .checkpoint_finality()
+                .finalized_block()
+                .header(),
+            &header
+        );
+        assert_eq!(
+            pre_certificate.new_validator_set().epoch().get(),
+            pre_certificate.old_validator_set().epoch().get() + 1
+        );
+        let mut corrupted_proof = proof.clone();
+        *corrupted_proof.last_mut().unwrap() ^= 1;
+        assert!(app
+            .confirm_pre_handoff_checkpoint_v1(invalid_signature_prepared, &corrupted_proof)
+            .is_err());
         let confirmed = app
             .confirm_poco_checkpoint_v0(prepared, &proof, &anchor)
             .unwrap();
@@ -1839,10 +2032,150 @@ mod native_authorization_tests {
             confirmed.executed().request().block_id().as_bytes(),
             header.id().as_bytes()
         );
+        let edge = confirmed.into_epoch_application_edge_v1().unwrap();
+        assert_eq!(edge.application_parent().height().get(), 8);
+        assert_eq!(edge.consensus_parent().height().get(), 10);
+        assert_eq!(edge.first_application_height(), 11);
+        let epoch_request = edge.preview_request_v1(11_000, Vec::new()).unwrap();
+        let epoch_preview = app.preview_epoch_block_v1(&edge, &epoch_request).unwrap();
+        // Raw dual-parent fields are inert. Even geometrically valid requests
+        // must match every capability-bound identity at the owner seam.
+        for (binding, terminal, active_set) in [
+            (
+                [88; 32],
+                epoch_request.consensus_parent_id(),
+                epoch_request.active_validator_set_id(),
+            ),
+            (
+                *epoch_request.edge_binding().as_bytes(),
+                BlockIdV0::new([89; 32]).unwrap(),
+                epoch_request.active_validator_set_id(),
+            ),
+            (
+                *epoch_request.edge_binding().as_bytes(),
+                epoch_request.consensus_parent_id(),
+                trnm_native_application::ValidatorSetIdV0::new(
+                    *edge.old_validator_set().id().as_bytes(),
+                )
+                .unwrap(),
+            ),
+        ] {
+            let forged = trnm_native_application::NativeEpochBlockPreviewRequestV1::new(
+                epoch_request.chain_id().clone(),
+                epoch_request.genesis_hash(),
+                edge.application_parent().clone(),
+                terminal,
+                epoch_request.consensus_parent_height(),
+                trnm_native_application::Hash32V0::new(binding),
+                epoch_request.height(),
+                epoch_request.timestamp_ms(),
+                active_set,
+                Vec::new(),
+            )
+            .unwrap();
+            assert!(app.preview_epoch_block_v1(&edge, &forged).is_err());
+        }
+        assert!(edge
+            .preview_request_v1(edge.consensus_parent().timestamp_ms(), Vec::new())
+            .is_err());
+        assert_eq!(
+            app.confirmed_committed_head_v0().unwrap(),
+            *edge.application_parent()
+        );
+        assert!(NativeBlockPreviewRequestV0::new(
+            epoch_request.chain_id().clone(),
+            epoch_request.genesis_hash(),
+            edge.application_parent().clone(),
+            HeightV0::new(11),
+            11_000,
+            epoch_request.active_validator_set_id(),
+            Vec::new(),
+        )
+        .is_err());
+        let snapshot = app
+            .confirmed_finalized_poco_snapshot_v0(HeightV0::new(8))
+            .unwrap();
+        let computed = crate::complete::compute_complete_epoch_native_block_v1(
+            snapshot.store(),
+            &edge,
+            &epoch_request,
+        )
+        .unwrap();
+        assert_eq!(computed.plan.version(), 11);
+        assert_eq!(
+            computed.post_state_root,
+            *epoch_preview.post_state_root().as_bytes()
+        );
+        let mut target = snapshot.store().clone();
+        target.apply_complete_state_plan_v0(computed.plan).unwrap();
+        assert_ne!(
+            target.parent_root_v0().unwrap().0,
+            *edge.application_parent().state_root().as_bytes()
+        );
+        let mut live = target.verified_live_values_v0(11).unwrap();
+        let normalized = take_and_validate_production_poco_projection_v0(11, &mut live)
+            .unwrap()
+            .unwrap();
+        assert_eq!(normalized.manifest().cutoff_height().get(), 11);
+        // Uncommitted first-new overlays can prepare the remaining two blocks
+        // needed by three-chain finality. The durable owner still stays at C.
+        let mut descendant = target.clone();
+        for height in [12, 13] {
+            let parent = trnm_native_application::ApplicationHeadV0::new(
+                HeightV0::new(height - 1),
+                BlockIdV0::new([height as u8; 32]).unwrap(),
+                trnm_native_application::StateRootV0::new(descendant.parent_root_v0().unwrap().0)
+                    .unwrap(),
+                trnm_native_application::ApplicationCommitIdV0::new([height as u8 + 1; 32])
+                    .unwrap(),
+            );
+            let request = NativeBlockPreviewRequestV0::new(
+                epoch_request.chain_id().clone(),
+                epoch_request.genesis_hash(),
+                parent,
+                HeightV0::new(height),
+                height * 1_000,
+                epoch_request.active_validator_set_id(),
+                Vec::new(),
+            )
+            .unwrap();
+            let child = crate::complete::compute_complete_native_block_v0(
+                &descendant,
+                edge.new_validator_set(),
+                edge.new_validator_set().genesis_hash(),
+                &request,
+            )
+            .unwrap();
+            descendant.apply_complete_state_plan_v0(child.plan).unwrap();
+        }
+        assert_eq!(descendant.parent_version_v0().unwrap(), 13);
+        let encoded = target
+            .encode_epoch_authenticated_snapshot_v1(&[&edge])
+            .unwrap();
+        let (commands, nonces) = target.replay_sets_v0();
+        let reopened_tree =
+            crate::InMemoryNativeExecutionStoreV0::decode_epoch_authenticated_snapshot_v1(
+                CHAIN.to_string(),
+                target.authorized_signers_v0().unwrap().to_vec(),
+                target.consensus_parameters_v0().unwrap(),
+                commands.clone(),
+                nonces.clone(),
+                &encoded,
+                &[&edge],
+            )
+            .unwrap();
+        assert_eq!(reopened_tree.parent_version_v0().unwrap(), 11);
+        assert_eq!(
+            reopened_tree.parent_root_v0().unwrap(),
+            target.parent_root_v0().unwrap()
+        );
         // Rebuild from exact raw evidence after reopening the actual stores.
-        drop(confirmed);
         drop(app);
         let reopened = DurableNativeApplicationV0::open(&path, config()).unwrap();
+        assert!(reopened
+            .preview_epoch_block_v1(&edge, &epoch_request)
+            .is_err());
+        drop(edge);
         let parent = reopened
             .read_finalized_by_height_v0(HeightV0::new(7))
             .unwrap()

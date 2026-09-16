@@ -19,8 +19,9 @@ use trnm_consensus_types::{
 use trnm_finality_types::{hash_domain, SignedCommandEnvelopeV1};
 use trnm_native_application::{
     ApplicationHeadV0, ChainIdV0, GenesisHashV0, Hash32V0, HeightV0, NativeBlockExecutionRequestV0,
-    NativeEventAttributeV0, NativeEventV0, NativeExecutedBlockV0, NativeExecutionReceiptV0,
-    ReceiptsRootV0, StateRootV0, ValidatorSetIdV0, MAX_BLOCK_BYTES_V0, MAX_BLOCK_TRANSACTIONS_V0,
+    NativeEpochBlockPreviewRequestV1, NativeEventAttributeV0, NativeEventV0, NativeExecutedBlockV0,
+    NativeExecutionReceiptV0, ReceiptsRootV0, StateRootV0, ValidatorSetIdV0, MAX_BLOCK_BYTES_V0,
+    MAX_BLOCK_TRANSACTIONS_V0,
 };
 use trnm_protocol::{CanonicalTxV1, CANONICAL_TX_PAYLOAD_TYPE_V1};
 use trnm_runtime::{
@@ -243,6 +244,30 @@ pub(crate) trait CompleteBlockExecutionInputV0 {
     fn timestamp_ms_v0(&self) -> u64;
     fn active_validator_set_id_v0(&self) -> ValidatorSetIdV0;
     fn transactions_v0(&self) -> &[Vec<u8>];
+}
+
+impl CompleteBlockExecutionInputV0 for NativeEpochBlockPreviewRequestV1 {
+    fn chain_id_v0(&self) -> &ChainIdV0 {
+        self.chain_id()
+    }
+    fn genesis_hash_v0(&self) -> GenesisHashV0 {
+        self.genesis_hash()
+    }
+    fn parent_v0(&self) -> &ApplicationHeadV0 {
+        self.application_parent()
+    }
+    fn height_v0(&self) -> HeightV0 {
+        self.height()
+    }
+    fn timestamp_ms_v0(&self) -> u64 {
+        self.timestamp_ms()
+    }
+    fn active_validator_set_id_v0(&self) -> ValidatorSetIdV0 {
+        self.active_validator_set_id()
+    }
+    fn transactions_v0(&self) -> &[Vec<u8>] {
+        self.transactions()
+    }
 }
 
 impl CompleteBlockExecutionInputV0 for NativeBlockExecutionRequestV0 {
@@ -501,6 +526,45 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
     request: &R,
     worker_count: usize,
 ) -> Result<ComputedCompleteExecutionV0> {
+    compute_complete_native_block_at_parent_v1(
+        store,
+        validator_set,
+        expected_genesis_hash,
+        request,
+        worker_count,
+        None,
+    )
+}
+
+pub(crate) fn compute_complete_epoch_native_block_v1(
+    store: &InMemoryNativeExecutionStoreV0,
+    edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+    request: &NativeEpochBlockPreviewRequestV1,
+) -> Result<ComputedCompleteExecutionV0> {
+    edge.validate_request_v1(request)?;
+    crate::store::CarriedRootReaderV1::new(store, edge)?;
+    ensure!(
+        store.consensus_parameters_v0()? == *edge.old_parameters(),
+        "epoch execution checkpoint parameters differ from authenticated edge"
+    );
+    compute_complete_native_block_at_parent_v1(
+        store,
+        edge.new_validator_set(),
+        edge.new_validator_set().genesis_hash(),
+        request,
+        native_parallel::default_worker_count_v0(),
+        Some(edge),
+    )
+}
+
+fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 + ?Sized>(
+    store: &InMemoryNativeExecutionStoreV0,
+    validator_set: &ValidatorSet,
+    expected_genesis_hash: GenesisHash,
+    request: &R,
+    worker_count: usize,
+    epoch_edge: Option<&crate::AuthenticatedEpochApplicationEdgeV1>,
+) -> Result<ComputedCompleteExecutionV0> {
     ensure!(
         worker_count <= native_parallel::MAX_WORKERS_V0,
         "native worker count exceeds bound"
@@ -514,13 +578,21 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
         request.parent_v0().state_root().as_bytes() == &parent_root.0,
         "complete execution parent StateRoot mismatch"
     );
-    ensure!(
-        request.height_v0().get()
-            == parent_version
-                .checked_add(1)
-                .context("parent height exhausted")?,
-        "complete execution target is not the exact successor"
-    );
+    if let Some(edge) = epoch_edge {
+        ensure!(
+            request.parent_v0() == edge.application_parent()
+                && request.height_v0().get() == edge.first_application_height(),
+            "epoch execution parent/target differs from authenticated edge"
+        );
+    } else {
+        ensure!(
+            request.height_v0().get()
+                == parent_version
+                    .checked_add(1)
+                    .context("parent height exhausted")?,
+            "complete execution target is not the exact successor"
+        );
+    }
     ensure!(
         request.chain_id_v0().as_str() == store.chain_id_v0()?,
         "complete execution chain ID mismatch"
@@ -541,7 +613,10 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
         validator_set.id().as_bytes() == request.active_validator_set_id_v0().as_bytes(),
         "active validator-set ID mismatch"
     );
-    let parameters = store.consensus_parameters_v0()?;
+    let parameters = match epoch_edge {
+        Some(edge) => *edge.new_parameters(),
+        None => store.consensus_parameters_v0()?,
+    };
     parameters
         .validate_safety_invariants()
         .map_err(consensus_error)?;
@@ -569,6 +644,29 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
         "validator lifecycle signer-policy binding mismatch"
     );
     let mut lifecycle = parent_lifecycle.clone();
+    if let Some(edge) = epoch_edge {
+        validate_application_validator_projection_v0(
+            edge.old_validator_set(),
+            &lifecycle.active_validators,
+        )?;
+        ensure!(
+            lifecycle.pending_transition.is_none(),
+            "pending legacy validator transition conflicts with authenticated epoch activation"
+        );
+        lifecycle.active_validators = edge
+            .new_validator_set()
+            .validators()
+            .iter()
+            .map(|validator| ConsensusValidatorV1 {
+                public_key_hex: hex::encode(validator.consensus_key().as_bytes()),
+                voting_power: validator.voting_power().get(),
+            })
+            .collect();
+        lifecycle
+            .active_validators
+            .sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+        lifecycle.validate()?;
+    }
     lifecycle.prepare_height(request.height_v0().get())?;
     validate_application_validator_projection_v0(validator_set, &lifecycle.active_validators)?;
 
@@ -590,7 +688,18 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
     let mut replay_identities = Vec::with_capacity(request.transactions_v0().len());
     let mut changes = BTreeMap::new();
     let mut receipt_facts = Vec::with_capacity(request.transactions_v0().len());
-    let mut poco_overlay: Option<PocoApplicationBlockOverlayV0> = None;
+    let mut poco_overlay: Option<PocoApplicationBlockOverlayV0> = match epoch_edge {
+        Some(edge) => Some(
+            crate::poco_application::begin_authenticated_epoch_rollover_v1(
+                source_poco
+                    .as_ref()
+                    .context("epoch activation requires authenticated PoCO namespace")?,
+                edge,
+                application_governance_signer_commitment_v0(&lifecycle),
+            )?,
+        ),
+        None => None,
+    };
     let mut poco_raws = Vec::new();
     let mut validator_transition_count = 0usize;
     #[cfg(test)]
@@ -909,8 +1018,14 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
         }
     }
 
-    let plan =
-        plan_complete_state_update_v0(store, parent_version, request.height_v0().get(), writes)?;
+    let plan = match epoch_edge {
+        Some(edge) => crate::store::CarriedRootReaderV1::new(store, edge)?
+            .plan(writes)?
+            .into_complete_plan(),
+        None => {
+            plan_complete_state_update_v0(store, parent_version, request.height_v0().get(), writes)?
+        }
+    };
     let post_state_root = plan.state_root();
     ensure!(
         !post_state_root.is_zero(),
@@ -931,6 +1046,33 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
     })
 }
 
+pub(crate) fn preview_complete_epoch_block_v1(
+    store: &InMemoryNativeExecutionStoreV0,
+    edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+    request: &NativeEpochBlockPreviewRequestV1,
+) -> Result<NativeBlockPreviewV0> {
+    let computed = compute_complete_epoch_native_block_v1(store, edge, request)?;
+    let fingerprint = hash_domain(
+        "trnm.native-application.epoch-preview-request.v1",
+        &[
+            request.chain_id().as_str().as_bytes(),
+            request.genesis_hash().as_bytes(),
+            &request.application_parent().height().get().to_be_bytes(),
+            request.application_parent().block_id().as_bytes(),
+            request.application_parent().state_root().as_bytes(),
+            request.application_parent().commit_id().as_bytes(),
+            request.consensus_parent_id().as_bytes(),
+            &request.consensus_parent_height().get().to_be_bytes(),
+            request.edge_binding().as_bytes(),
+            &request.height().get().to_be_bytes(),
+            &request.timestamp_ms().to_be_bytes(),
+            request.active_validator_set_id().as_bytes(),
+            &computed.payload_root,
+        ],
+    );
+    finish_preview_v0(fingerprint, request.height().get(), computed)
+}
+
 pub(crate) fn preview_complete_native_block_v0(
     store: &InMemoryNativeExecutionStoreV0,
     validator_set: &ValidatorSet,
@@ -939,16 +1081,27 @@ pub(crate) fn preview_complete_native_block_v0(
 ) -> Result<NativeBlockPreviewV0> {
     let computed =
         compute_complete_native_block_v0(store, validator_set, expected_genesis_hash, request)?;
+    finish_preview_v0(
+        request.fingerprint_v0(computed.payload_root),
+        request.height().get(),
+        computed,
+    )
+}
+
+fn finish_preview_v0(
+    request_fingerprint: [u8; 32],
+    height: u64,
+    computed: ComputedCompleteExecutionV0,
+) -> Result<NativeBlockPreviewV0> {
     let write_count =
         u64::try_from(computed.plan.writes().len()).context("preview write count exceeds u64")?;
     let encoded_writes =
         borsh::to_vec(computed.plan.writes()).context("encode canonical preview write plan")?;
-    let request_fingerprint = request.fingerprint_v0(computed.payload_root);
     let write_plan_fingerprint = hash_domain(
         PREVIEW_WRITE_PLAN_DOMAIN_V0,
         &[
             &request_fingerprint,
-            &request.height().get().to_be_bytes(),
+            &height.to_be_bytes(),
             &write_count.to_be_bytes(),
             &computed.post_state_root,
             &computed.receipts_root,

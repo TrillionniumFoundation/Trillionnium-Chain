@@ -17,6 +17,7 @@ import tomllib
 MIN_TMP_FREE_BYTES = 4 * 1024**3
 REQUIRED_TOOLS = ("python3", "tar")
 PING_ATTEMPTS = 3
+MAX_PROBE_BYTES = 64 * 1024
 REMOTE = r'''set -u
 printf 'hostname=%s\n' "$(hostname)"
 printf 'os=%s\n' "$(uname -s)"
@@ -88,6 +89,8 @@ exit "$failed"
 
 
 def parse_lines(raw: str) -> dict[str, str]:
+    if len(raw.encode("utf-8")) > MAX_PROBE_BYTES:
+        raise ValueError("readiness probe output exceeds 64 KiB")
     values: dict[str, str] = {}
     for line in raw.splitlines():
         key, separator, value = line.partition("=")
@@ -178,7 +181,9 @@ def main() -> None:
     observations = []
     failures = []
     epochs = []
+    build_arches: set[tuple[str, str]] = set()
     for host in inventory["hosts"]:
+        facts = None
         try:
             remote_returncode = 0
             if host["management"] == "local":
@@ -214,6 +219,10 @@ def main() -> None:
                 facts = parse_lines(completed.stdout)
             if facts["os"] != expected_os(host["os"]) or facts["arch"] != host["arch"]:
                 raise ValueError("OS/architecture differs from inventory")
+            # A failed network edge does not erase independently observed tools.
+            # This records availability only, never a completed native build.
+            if facts["cargo"] and facts["rustc"]:
+                build_arches.add((facts["os"], facts["arch"]))
             if int(facts["tmp_free_bytes"]) < MIN_TMP_FREE_BYTES:
                 raise ValueError("temporary filesystem has less than 4 GiB free")
             if any(not facts[tool] for tool in REQUIRED_TOOLS) or not facts["sha256"]:
@@ -236,7 +245,13 @@ def main() -> None:
             epochs.append(int(facts["epoch"]))
             observations.append({"id": host["id"], "lan_ip": host["lan_ip"], "facts": facts})
         except (KeyError, OSError, subprocess.SubprocessError, ValueError) as error:
-            failures.append({"id": host["id"], "error": str(error)})
+            failure = {"id": host["id"], "error": str(error)}
+            if facts is not None:
+                # Diagnostic-only; the checker rejects every nonempty failures
+                # list before accepting observations. Never move these facts to
+                # the successful observation list merely to populate a report.
+                failure["facts"] = facts
+            failures.append(failure)
     report = {
         "schema_version": 2,
         "fleet_id": inventory["fleet_id"],
@@ -247,11 +262,6 @@ def main() -> None:
         "observed_epoch_spread_seconds": max(epochs) - min(epochs) if epochs else None,
         "observations": observations,
         "failures": failures,
-    }
-    build_arches = {
-        (facts["os"], facts["arch"])
-        for observation in observations
-        if (facts := observation["facts"])["cargo"] and facts["rustc"]
     }
     expected_build_arches = {
         (expected_os(host["os"]), host["arch"]) for host in inventory["hosts"]

@@ -70,7 +70,7 @@ validator_counts = { seven = 1, thirty_one = 1, one_hundred = 3 }
 [[hosts]]
 id = "mac"
 management = "p4-mac"
-lan_ip = "192.168.0.5"
+lan_ip = "192.168.0.10"
 os = "macos"
 arch = "arm64"
 cpu_threads = 10

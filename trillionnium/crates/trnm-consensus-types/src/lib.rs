@@ -63,6 +63,7 @@ pub use cev0_decode::{
     decode_checkpoint_finality_proof_v0_exact,
     decode_checkpoint_finality_proof_v0_exact_with_budget, decode_consensus_parameters_v0_exact,
     decode_double_vote_evidence_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
+    decode_epoch_first_finality_proof_v1_exact_with_budget,
     decode_execution_receipt_commitment_v0_exact, decode_finality_proof_v0_exact,
     decode_finality_proof_v0_exact_with_budget,
     decode_finality_proof_v0_exact_with_trusted_genesis,
@@ -138,7 +139,7 @@ pub use message::{
     SignIntentFingerprintV0, TimeoutVote, TimeoutVoteSignPreimageV0, Vote, VoteSignPreimageV0,
     CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
 };
-pub use ordered_root::{ordered_leaf_digest_v0, OrderedRootV0, RootKind};
+pub use ordered_root::{ordered_leaf_digest_v0, OrderedInclusionProofV0, OrderedRootV0, RootKind};
 pub use parameters::{
     ConsensusParametersV0, ConsensusParametersV0Fields, LeaderSchedule, RolloutPhase,
 };

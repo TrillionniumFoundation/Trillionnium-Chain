@@ -1,0 +1,725 @@
+use super::*;
+use serde_json::Value;
+use trnm_consensus_crypto::recover_epoch_activation_authority_strict_v0;
+use trnm_consensus_types::{
+    decode_epoch_activation_evidence_v0_exact, EpochActivationEvidenceBytesV0,
+};
+
+// Real Ed25519 fixture builder shared in form with crypto's epoch boundary tests.
+const CORPUS: &str = include_str!(
+    "../../../../docs/protocol/poco-bft-v0/vectors/poco-authenticated-checkpoint-handoff-v0.json"
+);
+
+fn unhex(value: &str) -> Vec<u8> {
+    assert_eq!(value.len() % 2, 0);
+    (0..value.len())
+        .step_by(2)
+        .map(|offset| u8::from_str_radix(&value[offset..offset + 2], 16).unwrap())
+        .collect()
+}
+
+fn fixture(
+    profile: &str,
+) -> (
+    EpochActivationEvidenceBytesV0,
+    ValidatorSet,
+    ConsensusParametersV0,
+    [u8; 32],
+) {
+    let corpus: Value = serde_json::from_str(CORPUS).unwrap();
+    let case = &corpus[profile];
+    let raw = |section: &str, field: &str| unhex(case[section][field].as_str().unwrap());
+    let bytes = EpochActivationEvidenceBytesV0 {
+        old_checkpoint_finality: raw("checkpoint_finality", "raw_finality_proof_cev0_hex"),
+        next_epoch_commitment: raw("preheader", "commitment_cev0_hex"),
+        authorization_kernel: raw("handoff", "raw_anchor_certificate_kernel_cev0_hex"),
+        old_validator_set: raw("preheader", "old_validator_set_cev0_hex"),
+        old_consensus_parameters: raw("preheader", "old_parameters_cev0_hex"),
+        new_validator_set: raw("preheader", "new_validator_set_cev0_hex"),
+        new_consensus_parameters: raw("preheader", "new_parameters_cev0_hex"),
+        authenticated_checkpoint_parent_header: raw(
+            "preheader",
+            "checkpoint_parent_header_cev0_hex",
+        ),
+    };
+    let old_set = decode_validator_set_v0_exact(&bytes.old_validator_set).unwrap();
+    let old_parameters =
+        decode_consensus_parameters_v0_exact(&bytes.old_consensus_parameters).unwrap();
+    let binding = unhex(match profile {
+        "positive" => "4ba70b831d3bd70a1be8669f654ac42148017fca0b83f84e999ac532b9c70e4f",
+        "authenticated_fallback" => {
+            "3f719cc7d84539da791a3206d46c4d529f390b2333c35128847f7b62dcd2fc73"
+        }
+        _ => panic!("unknown frozen fixture"),
+    })
+    .try_into()
+    .unwrap();
+    (bytes, old_set, old_parameters, binding)
+}
+
+fn first_epoch_finality_bytes(
+    activation: &trnm_consensus_crypto::StrictSameVersionEpochActivationAuthorityV0,
+) -> (
+    Vec<u8>,
+    trnm_consensus_crypto::FinalityExpectationV0,
+    Vec<usize>,
+) {
+    first_epoch_finality_with_views(activation, [1, 2, 3], None)
+}
+
+fn first_epoch_finality_with_views(
+    activation: &trnm_consensus_crypto::StrictSameVersionEpochActivationAuthorityV0,
+    views: [u64; 3],
+    anchor_context: Option<(
+        trnm_consensus_types::QcReferenceV0,
+        trnm_consensus_types::EpochAnchorAuthorizationV0,
+    )>,
+) -> (
+    Vec<u8>,
+    trnm_consensus_crypto::FinalityExpectationV0,
+    Vec<usize>,
+) {
+    use ed25519_dalek::{Signer, SigningKey};
+    use sha2::{Digest, Sha256};
+    use trnm_consensus_types::*;
+    let set = activation.new_validator_set();
+    let params = activation.new_consensus_parameters();
+    let key = |validator: &Validator| {
+        let mut h = Sha256::new();
+        h.update(b"trnm.poco-bft.checkpoint-finality.private-fixture.v0:");
+        h.update(validator.id().as_bytes());
+        let key = SigningKey::from_bytes(&h.finalize().into());
+        assert_eq!(
+            key.verifying_key().to_bytes(),
+            validator.consensus_key().into_bytes()
+        );
+        key
+    };
+    let common = || {
+        let mut bytes = 0u16.to_be_bytes().to_vec();
+        bytes.extend(set.genesis_hash().as_bytes());
+        bytes.extend((set.chain_id().as_bytes().len() as u16).to_be_bytes());
+        bytes.extend(set.chain_id().as_bytes());
+        bytes.extend(set.protocol_version().get().to_be_bytes());
+        bytes.extend(set.epoch().get().to_be_bytes());
+        bytes.extend(set.id().as_bytes());
+        bytes
+    };
+    let mut encoded = common();
+    encoded.extend(params.hash().as_bytes());
+    let terminal = activation.terminal_old_header();
+    let mut anchor = common();
+    anchor.extend(0u64.to_be_bytes());
+    anchor.extend(terminal.height().get().to_be_bytes());
+    anchor.extend(terminal.id().as_bytes());
+    anchor.extend(0u32.to_be_bytes());
+    let mut parent_id = terminal.id();
+    let mut previous_qc = None;
+    let mut expected = None;
+    let mut signature_offsets = Vec::new();
+    for (index, view) in views.into_iter().enumerate() {
+        let height_offset = index as u64 + 1;
+        let proposer = &set.validators()[(view as usize - 1) % set.validators().len()];
+        let header = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(view),
+            Height::new(terminal.height().get() + height_offset),
+            if index == 0 {
+                BlockKind::EpochHandoff
+            } else {
+                BlockKind::Regular
+            },
+            parent_id,
+            proposer.id(),
+            set.id(),
+            params.hash(),
+            PayloadDigest::new([0x41; 32]),
+            StateRoot::new([0x42; 32]),
+            ReceiptsRoot::new([0x43; 32]),
+            EvidenceRoot::new([0x44; 32]),
+            terminal.timestamp_ms() + height_offset,
+            None,
+        )
+        .unwrap();
+        let justify_for_timeout = if index == 0 {
+            anchor_context.as_ref().map(|(anchor, _)| anchor.clone())
+        } else {
+            Some(QcReferenceV0::ordinary(previous_qc.clone().unwrap()))
+        };
+        let timeout = if let Some(justify) = justify_for_timeout {
+            if justify.qc_ref().view().get() + 1 < view {
+                let entries = set
+                    .validators()
+                    .iter()
+                    .map(|validator| {
+                        let root = TimeoutVote::signing_root_for_set(
+                            set,
+                            View::new(view - 1),
+                            justify.qc_ref(),
+                        )
+                        .unwrap();
+                        TimeoutEntryV0::new(
+                            validator.id(),
+                            justify.qc_ref(),
+                            SignatureBytes::from_array(
+                                key(validator).sign(root.as_bytes()).to_bytes(),
+                            ),
+                        )
+                        .unwrap()
+                    })
+                    .collect();
+                Some(
+                    TimeoutCertificateV0::new(
+                        View::new(view - 1),
+                        entries,
+                        vec![justify.clone()],
+                        justify.id(),
+                        set,
+                    )
+                    .unwrap(),
+                )
+            } else {
+                None
+            }
+        } else {
+            None
+        };
+        let root =
+            Vote::signing_root_for_set(set, header.view(), header.height(), header.id()).unwrap();
+        let votes = set
+            .validators()
+            .iter()
+            .map(|validator| {
+                Vote::new(
+                    set.chain_id(),
+                    set.protocol_version(),
+                    set.epoch(),
+                    header.view(),
+                    header.height(),
+                    header.id(),
+                    set.id(),
+                    validator.id(),
+                    SignatureBytes::from_array(key(validator).sign(root.as_bytes()).to_bytes()),
+                    set,
+                )
+                .unwrap()
+            })
+            .collect();
+        let qc = QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            header.view(),
+            header.height(),
+            header.id(),
+            set.id(),
+            votes,
+            set,
+        )
+        .unwrap();
+        if index == 0 {
+            let root = if let Some((anchor, authorization)) = &anchor_context {
+                ProposalWitnessV0::signing_root_for(
+                    &header,
+                    anchor,
+                    timeout.as_ref(),
+                    Some(authorization),
+                )
+                .unwrap()
+            } else {
+                epoch_first_proposal_signing_root_v0(
+                    &header,
+                    activation.authorization_kernel(),
+                    activation.old_validator_set(),
+                    set,
+                    params,
+                )
+                .unwrap()
+            };
+            let signature = key(proposer).sign(root.as_bytes()).to_bytes();
+            encoded.extend(header.try_cev0_bytes().unwrap());
+            encoded.extend(&anchor);
+            if let Some(tc) = &timeout {
+                encoded.push(1);
+                encoded.extend(tc.try_cev0_bytes().unwrap());
+            } else {
+                encoded.push(0);
+            }
+            encoded.push(1); // exact authorization follows
+            encoded.extend(activation.authorization_cev0_bytes().unwrap());
+            signature_offsets.push(encoded.len());
+            encoded.extend(signature);
+            encoded.extend(qc.try_cev0_bytes().unwrap());
+            expected = Some(trnm_consensus_crypto::FinalityExpectationV0 {
+                block_id: header.id(),
+                height: header.height(),
+                state_root: header.state_root(),
+                receipts_root: header.receipts_root(),
+                evidence_root: header.evidence_root(),
+                parent_id: terminal.id(),
+                parent_height: terminal.height(),
+                parent_timestamp_ms: terminal.timestamp_ms(),
+            });
+        } else {
+            let justify = QcReferenceV0::ordinary(previous_qc.take().unwrap());
+            let witness = ProposalWitnessV0::new(
+                &header,
+                justify.clone(),
+                timeout.clone(),
+                None,
+                SignatureBytes::from_array([1; 64]),
+                set,
+                None,
+                params,
+                header.timestamp_ms() - 1,
+            )
+            .unwrap();
+            let root = witness.signing_root_for_header(&header).unwrap();
+            let signature =
+                SignatureBytes::from_array(key(proposer).sign(root.as_bytes()).to_bytes());
+            let certified = CertifiedHeaderV0::new(
+                header.clone(),
+                justify,
+                timeout,
+                None,
+                signature,
+                qc.clone(),
+                set,
+                None,
+                params,
+                header.timestamp_ms() - 1,
+            )
+            .unwrap();
+            let raw = certified.try_cev0_bytes().unwrap();
+            let signature_position = raw
+                .windows(64)
+                .position(|x| x == signature.as_bytes())
+                .unwrap();
+            signature_offsets.push(encoded.len() + signature_position);
+            encoded.extend(raw);
+        }
+        parent_id = header.id();
+        previous_qc = Some(qc);
+    }
+    (encoded, expected.unwrap(), signature_offsets)
+}
+
+fn pinned(
+    header: &BlockHeader,
+    set: &ValidatorSet,
+    params: &ConsensusParametersV0,
+) -> NativeTrustAnchorV1 {
+    let h = header.try_cev0_bytes().unwrap();
+    let s = set.try_cev0_bytes().unwrap();
+    let p = params.canonical_bytes();
+    NativeTrustAnchorV1::from_pinned_bytes(
+        &h,
+        &s,
+        &p,
+        native_trust_anchor_pin_v1(&h, &s, &p).unwrap(),
+    )
+    .unwrap()
+}
+fn expectation(header: &BlockHeader, parent: &BlockHeader) -> FinalityExpectationV0 {
+    FinalityExpectationV0 {
+        block_id: header.id(),
+        height: header.height(),
+        state_root: header.state_root(),
+        receipts_root: header.receipts_root(),
+        evidence_root: header.evidence_root(),
+        parent_id: parent.id(),
+        parent_height: parent.height(),
+        parent_timestamp_ms: parent.timestamp_ms(),
+    }
+}
+
+#[test]
+fn real_ordinary_and_epoch_path_joins_exact_head_and_projects_snapshot_target() {
+    for profile in ["positive", "authenticated_fallback"] {
+        let (evidence, set, params, binding) = fixture(profile);
+        let decoded = decode_epoch_activation_evidence_v0_exact(
+            evidence.as_preimages(),
+            &set,
+            &params,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+        let checkpoint = decoded.old_checkpoint_finality().finalized_block().header();
+        let parent = decoded.authenticated_checkpoint_parent_header();
+        let anchor = pinned(parent, &set, &params);
+        let activation = recover_epoch_activation_authority_strict_v0(
+            evidence.as_preimages(),
+            &set,
+            &params,
+            binding,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+        let (new_proof, expected, _) = first_epoch_finality_bytes(&activation);
+        let steps = [
+            NativeTrustStepV1::Ordinary {
+                proof: &evidence.old_checkpoint_finality,
+                expected: expectation(checkpoint, parent),
+            },
+            NativeTrustStepV1::EpochFirst {
+                evidence: evidence.as_preimages(),
+                proof: &new_proof,
+                expected,
+            },
+        ];
+        let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+        let path = verify_native_trust_path_v1(
+            &anchor,
+            &steps,
+            NativeTrustPathLimitsV1::default(),
+            &mut budget,
+        )
+        .unwrap();
+        assert_eq!(path.terminal_header().id(), expected.block_id);
+        assert_eq!(
+            path.terminal_validator_set(),
+            activation.new_validator_set()
+        );
+        assert_eq!(
+            path.terminal_parameters(),
+            activation.new_consensus_parameters()
+        );
+        assert_eq!(path.snapshot_trust_path().link_count(), 2);
+        assert_eq!(
+            path.snapshot_trust_path().terminal().height,
+            expected.height.get()
+        );
+        assert_eq!(
+            path.snapshot_trust_path().terminal().state_root.0,
+            *expected.state_root.as_bytes()
+        );
+        assert!(budget.signature_work() > 0);
+        let projection = path.into_snapshot_trust_path();
+        let mut manifest = crate::SnapshotManifestV0 {
+            chain_id: projection.anchor().chain_id,
+            protocol_digest: projection.anchor().protocol_digest,
+            height: expected.height.get(),
+            epoch: activation.new_validator_set().epoch().get(),
+            state_root: projection.terminal().state_root,
+            chunk_root: Digest32V0([4; 32]),
+            chunk_count: 1,
+            maximum_chunk_bytes: 16,
+            total_bytes: 16,
+            schema_digest: Digest32V0([5; 32]),
+            checkpoint_digest: projection.terminal().checkpoint_digest,
+            manifest_digest: Digest32V0([0; 32]),
+        };
+        manifest.manifest_digest = manifest.canonical_digest();
+        assert!(manifest.validate(&projection).is_ok());
+        manifest.height += 1;
+        assert!(manifest.validate(&projection).is_err());
+        let needed = budget.signature_work();
+        let mut short = Cev0AdmissionBudgetV0::new(budget.maximum_root_bytes(), needed - 1);
+        assert!(verify_native_trust_path_v1(
+            &anchor,
+            &steps,
+            NativeTrustPathLimitsV1::default(),
+            &mut short
+        )
+        .is_err());
+        assert!(short.signature_work() > 0);
+        let total = steps.iter().map(|s| step_digest(*s).unwrap().0).sum();
+        for limits in [
+            NativeTrustPathLimitsV1 {
+                maximum_links: 1,
+                maximum_total_bytes: total,
+            },
+            NativeTrustPathLimitsV1 {
+                maximum_links: 2,
+                maximum_total_bytes: total - 1,
+            },
+        ] {
+            let mut zero_work = Cev0AdmissionBudgetV0::protocol_v0();
+            assert!(verify_native_trust_path_v1(&anchor, &steps, limits, &mut zero_work).is_err());
+            assert_eq!(zero_work.signature_work(), 0);
+        }
+    }
+}
+
+#[test]
+fn native_path_rejects_replay_reordering_disconnected_checkpoint_and_untrusted_set() {
+    let (evidence, set, params, binding) = fixture("positive");
+    let decoded = decode_epoch_activation_evidence_v0_exact(
+        evidence.as_preimages(),
+        &set,
+        &params,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let checkpoint = decoded.old_checkpoint_finality().finalized_block().header();
+    let parent = decoded.authenticated_checkpoint_parent_header();
+    let parent_anchor = pinned(parent, &set, &params);
+    let checkpoint_anchor = pinned(checkpoint, &set, &params);
+    let activation = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &set,
+        &params,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let (bytes, expected, signatures) = first_epoch_finality_bytes(&activation);
+    let ordinary = NativeTrustStepV1::Ordinary {
+        proof: &evidence.old_checkpoint_finality,
+        expected: expectation(checkpoint, parent),
+    };
+    let epoch = NativeTrustStepV1::EpochFirst {
+        evidence: evidence.as_preimages(),
+        proof: &bytes,
+        expected,
+    };
+    let verify = |anchor: &NativeTrustAnchorV1, steps: &[NativeTrustStepV1<'_>]| {
+        verify_native_trust_path_v1(
+            anchor,
+            steps,
+            NativeTrustPathLimitsV1::default(),
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+    };
+    assert!(verify(&checkpoint_anchor, &[epoch]).is_ok());
+    for steps in [
+        vec![],
+        vec![epoch, ordinary],
+        vec![ordinary, ordinary],
+        vec![ordinary, epoch, epoch],
+    ] {
+        assert!(verify(&parent_anchor, &steps).is_err());
+    }
+    let mut wrong_expected = expected;
+    wrong_expected.parent_timestamp_ms += 1;
+    assert!(verify(
+        &checkpoint_anchor,
+        &[NativeTrustStepV1::EpochFirst {
+            evidence: evidence.as_preimages(),
+            proof: &bytes,
+            expected: wrong_expected
+        }]
+    )
+    .is_err());
+    // Equal checkpoint height but another header must fail even if the epoch proof is genuine.
+    let wrong = BlockHeader::new(
+        checkpoint.genesis_hash(),
+        checkpoint.chain_id(),
+        checkpoint.protocol_version(),
+        checkpoint.epoch(),
+        checkpoint.view(),
+        checkpoint.height(),
+        checkpoint.block_kind(),
+        checkpoint.parent_id(),
+        checkpoint.proposer_id(),
+        checkpoint.validator_set_id(),
+        checkpoint.consensus_parameters_hash(),
+        checkpoint.payload_root(),
+        trnm_consensus_types::StateRoot::new([77; 32]),
+        checkpoint.receipts_root(),
+        checkpoint.evidence_root(),
+        checkpoint.timestamp_ms(),
+        checkpoint.next_epoch_commitment_hash(),
+    )
+    .unwrap();
+    assert!(verify(&pinned(&wrong, &set, &params), &[epoch]).is_err());
+    let mut swapped = evidence.clone();
+    swapped.old_validator_set = evidence.new_validator_set.clone();
+    assert!(verify(
+        &checkpoint_anchor,
+        &[NativeTrustStepV1::EpochFirst {
+            evidence: swapped.as_preimages(),
+            proof: &bytes,
+            expected
+        }]
+    )
+    .is_err());
+    for offset in signatures {
+        let mut corrupt = bytes.clone();
+        corrupt[offset] ^= 1;
+        let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+        assert!(verify_native_trust_path_v1(
+            &checkpoint_anchor,
+            &[NativeTrustStepV1::EpochFirst {
+                evidence: evidence.as_preimages(),
+                proof: &corrupt,
+                expected
+            }],
+            NativeTrustPathLimitsV1::default(),
+            &mut budget
+        )
+        .is_err());
+        assert!(budget.signature_work() > 0);
+    }
+    let mut trailing = bytes.clone();
+    trailing.push(0);
+    assert!(verify(
+        &checkpoint_anchor,
+        &[NativeTrustStepV1::EpochFirst {
+            evidence: evidence.as_preimages(),
+            proof: &trailing,
+            expected
+        }]
+    )
+    .is_err());
+    assert!(verify(
+        &checkpoint_anchor,
+        &[NativeTrustStepV1::Ordinary {
+            proof: &bytes,
+            expected
+        }]
+    )
+    .is_err());
+}
+
+#[test]
+fn anchor_pin_covers_every_context_byte_and_generic_epoch_zero_rule_remains() {
+    let (evidence, set, params, _) = fixture("positive");
+    let header = &evidence.authenticated_checkpoint_parent_header;
+    let pin = native_trust_anchor_pin_v1(
+        header,
+        &evidence.old_validator_set,
+        &evidence.old_consensus_parameters,
+    )
+    .unwrap();
+    for index in 0..3 {
+        let mut parts = [
+            header.clone(),
+            evidence.old_validator_set.clone(),
+            evidence.old_consensus_parameters.clone(),
+        ];
+        parts[index][0] ^= 1;
+        assert!(
+            NativeTrustAnchorV1::from_pinned_bytes(&parts[0], &parts[1], &parts[2], pin).is_err()
+        );
+    }
+    assert!(NativeTrustAnchorV1::from_pinned_bytes(
+        header,
+        &evidence.old_validator_set,
+        &evidence.old_consensus_parameters,
+        Digest32V0([0; 32])
+    )
+    .is_err());
+    assert!(NativeTrustAnchorV1::from_pinned_bytes(
+        header,
+        &evidence.new_validator_set,
+        &evidence.old_consensus_parameters,
+        native_trust_anchor_pin_v1(
+            header,
+            &evidence.new_validator_set,
+            &evidence.old_consensus_parameters
+        )
+        .unwrap()
+    )
+    .is_err());
+    let anchor = NativeTrustAnchorV1::from_pinned_bytes(
+        header,
+        &evidence.old_validator_set,
+        &evidence.old_consensus_parameters,
+        pin,
+    )
+    .unwrap();
+    assert_eq!(anchor.validator_set(), &set);
+    assert_eq!(anchor.parameters(), &params);
+    assert!(WeakSubjectivityAnchorV0 {
+        chain_id: Digest32V0([1; 32]),
+        protocol_digest: Digest32V0([2; 32]),
+        epoch: 0,
+        height: 10,
+        checkpoint_digest: pin,
+        validator_set_digest: Digest32V0([3; 32])
+    }
+    .validate()
+    .is_err());
+    assert!(native_trust_anchor_pin_v1(&vec![1; MAX_NATIVE_ANCHOR_BYTES_V1], b"x", b"y").is_err());
+}
+
+#[test]
+fn epoch_path_accepts_strict_timeout_certificate_route() {
+    let (evidence, set, params, binding) = fixture("positive");
+    let activation = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &set,
+        &params,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let (base, expected, _) = first_epoch_finality_bytes(&activation);
+    let verified = decode_verify_epoch_first_finality_strict_v1(
+        evidence.as_preimages(),
+        &base,
+        &set,
+        &params,
+        expected,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let first = verified.proof().finalized_block();
+    let anchor_context = (
+        first.justify_qc().clone(),
+        first.epoch_anchor_authorization().unwrap().clone(),
+    );
+    let (proof, expected, _) =
+        first_epoch_finality_with_views(&activation, [3, 5, 8], Some(anchor_context));
+    let anchor = pinned(verified.checkpoint_header(), &set, &params);
+    let path = verify_native_trust_path_v1(
+        &anchor,
+        &[NativeTrustStepV1::EpochFirst {
+            evidence: evidence.as_preimages(),
+            proof: &proof,
+            expected,
+        }],
+        NativeTrustPathLimitsV1::default(),
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    assert_eq!(path.terminal_header().view().get(), 3);
+    assert_eq!(
+        path.terminal_header().height().get(),
+        anchor.header().height().get() + 3
+    );
+}
+
+#[test]
+fn native_positive_height_epoch_zero_anchor_is_explicitly_supported() {
+    use trnm_consensus_types::{BlockId, BlockKind, Epoch, Height, View};
+    let (evidence, set, params, _) = fixture("positive");
+    let old =
+        decode_block_header_v0_exact(&evidence.authenticated_checkpoint_parent_header).unwrap();
+    let zero = ValidatorSet::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        Epoch::new(0),
+        params.hash(),
+        set.validators().to_vec(),
+    )
+    .unwrap();
+    let header = BlockHeader::new(
+        zero.genesis_hash(),
+        zero.chain_id(),
+        zero.protocol_version(),
+        Epoch::new(0),
+        View::new(1),
+        Height::new(1),
+        BlockKind::Regular,
+        BlockId::new(*zero.genesis_hash().as_bytes()),
+        zero.validators()[0].id(),
+        zero.id(),
+        params.hash(),
+        old.payload_root(),
+        old.state_root(),
+        old.receipts_root(),
+        old.evidence_root(),
+        1000,
+        None,
+    )
+    .unwrap();
+    let anchor = pinned(&header, &zero, &params);
+    assert_eq!(anchor.header().epoch().get(), 0);
+    assert_eq!(anchor.header().height().get(), 1);
+}

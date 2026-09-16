@@ -8,6 +8,7 @@
 
 mod application;
 mod artifact;
+mod epoch;
 mod error;
 mod execution;
 mod primitives;
@@ -30,6 +31,7 @@ pub use artifact::{
     MAX_NATIVE_EXECUTED_BLOCK_ARTIFACT_BYTES_V0, NATIVE_EXECUTED_BLOCK_ARTIFACT_DOMAIN_V0,
     NATIVE_EXECUTED_BLOCK_ARTIFACT_VERSION_V0,
 };
+pub use epoch::{NativeEpochBlockExecutionRequestV1, NativeEpochBlockPreviewRequestV1};
 pub use error::{NativeBoundaryErrorCodeV0, NativeBoundaryErrorV0, NativeBoundaryResultV0};
 pub use execution::{
     NativeEventAttributeV0, NativeEventV0, NativeExecutionReceiptV0, MAX_EVENTS_PER_RECEIPT_V0,

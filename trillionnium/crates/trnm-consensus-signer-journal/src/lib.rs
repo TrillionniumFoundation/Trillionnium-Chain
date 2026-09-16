@@ -74,7 +74,7 @@ pub use error::{
 pub use handoff_error_v1::{HandoffSignerJournalConflictV1, HandoffSignerJournalErrorV1};
 pub use handoff_model_v1::{
     HandoffSignatureProducerV1, HandoffSignatureRequestV1, HandoffSignerJournalProfileV1,
-    StrictOldSetHandoffAdmissionV1,
+    StrictNewSetHandoffAdmissionV1, StrictOldSetHandoffAdmissionV1,
 };
 pub use handoff_sqlite_v1::{
     inspect_signer_journal_schema_read_only_v1, SignerJournalSchemaKindV1,

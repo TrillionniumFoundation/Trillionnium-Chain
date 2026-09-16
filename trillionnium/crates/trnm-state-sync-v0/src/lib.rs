@@ -7,6 +7,9 @@
 //! root, writes only to a staging generation, and swaps that generation into
 //! service with an expected-current-root compare-and-swap.
 
+mod native_trust_v1;
+pub use native_trust_v1::*;
+
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, error::Error, fmt};
 

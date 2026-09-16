@@ -40,6 +40,50 @@ to avoid a self-reference. The final manifest digest binds header digest plus
 chunk root. Chunk digests bind the manifest header, index and exact bytes.
 Do not substitute JSON ordering, a different Merkle construction or AI SMT roots.
 
+### Implemented native PoCO trust adapter
+
+`trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs` provides the
+strict native producer of `VerifiedNativeTrustPathV1`. This is a separate route
+from a generic `CheckpointProofVerifierV0` callback and has no success stub.
+`NativeTrustAnchorV1::from_pinned_bytes` exact-decodes the header, validator set
+and parameters, validates all Ed25519 keys and context fields, and checks their
+length-framed domain hash against an independently configured pin. The anchor
+must have positive height and a nonzero state root; native epoch zero is valid.
+The existing generic `WeakSubjectivityAnchorV0` still rejects epoch zero.
+Anchor freshness/provenance remains an operator trust decision; a peer cannot
+establish it by supplying its own matching hash.
+
+`NativeTrustStepV1::Ordinary` carries exact proof bytes and an untrusted target
+expectation. Its parent ID/height/timestamp must equal the current authenticated
+header, its height must advance exactly one, and strict three-chain verification
+uses only the current set/parameters. `EpochFirst` also carries all eight epoch
+evidence preimages. Strict epoch verification must return the exact current
+checkpoint header, its first new target is checkpoint height + 3 through the
+two old seals, and its epoch advances exactly one. The returned authenticated
+new set/parameters become the sole context for following steps. Signed TCs
+permit skipped views without skipping any of these height or checkpoint joins.
+
+Before signature work, nonempty paths are bounded to 4,096 links and 64 MiB
+aggregate proof/evidence bytes, or smaller caller limits; anchor bytes have a
+4 MiB ceiling. Each decode retains the intrinsic CEV0 root ceiling, and a single
+mutable CEV0 signature-work budget spans all links without failure refunds.
+Overflow, missing bytes, wrong pin/context, disconnected step, exact-decode or
+strict-finality errors issue no verified capability.
+
+The private result exposes its terminal header, set/parameters and
+`snapshot_trust_path()`, a `VerifiedTrustPathV0` projection whose chain/protocol,
+link digests, epoch/height/state root and finality evidence all derive from the
+verified native path. Existing `SnapshotManifestV0::validate` and staging can
+consume that projection. This implements proof and target authentication;
+network download, native state recomputation and a durable installer still
+require their concrete composition. It does not migrate or activate a signer.
+
+`native_trust_v1_tests.rs` covers real signed ordinary-to-epoch paths for normal
+and fallback handoff, signed TC views 3/5/8, snapshot target substitution,
+checkpoint-byte mismatch, peer-set replacement, replay/reordering, signature
+corruption, aggregate limits and work exhaustion. It also proves explicit
+positive-height native epoch-zero admission while the generic rule stays closed.
+
 ### Owned compatibility receipt types and verifier
 
 `trnm-finality-types` supplies `SignedCommandEnvelopeV1`, validator/header/vote/QC
@@ -150,9 +194,9 @@ state proof use their respective exact key-bit/sibling rules.
 
 ### Planned finalized transaction proof adapter
 
-Implement the exact [M05 V1 proof contract](M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md#planned-v1-multi-transaction-proof-contract)
-against native target-header payload/receipt roots and strict oldest-target
-finality. The two ordered branches share index/count but use different frozen
+The native-byte portion of the [M05 V1 proof contract](M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md#planned-v1-multi-transaction-proof-contract)
+is implemented in `trnm-tx-lifecycle-v0/src/finalized_proof_v1.rs` against
+native target-header payload/receipt roots and strict oldest-target finality. The two ordered branches share index/count but use different frozen
 root-kind domains. Receipt membership authenticates gas/fee/events and payload
 binding. Full M05 tx_id inclusion additionally requires the native adapter to
 commit the entire signed intent or its complete verified tx_id; lossy payload
@@ -160,7 +204,8 @@ extraction supplies only native inclusion and local correlation. It does not
 authenticate an intermediate transaction state root or an
 uncommitted outcome string. Return a private verified inclusion capability to
 M05/M14 only after all checks; proof absence is unavailable, never a trusted
-zero digest. This adapter is planned, separate from generic snapshot verification.
+zero digest. Full M05 intent-to-native binding and public response composition
+remain planned, separate from generic snapshot verification.
 
 ### Download, verification and installation
 

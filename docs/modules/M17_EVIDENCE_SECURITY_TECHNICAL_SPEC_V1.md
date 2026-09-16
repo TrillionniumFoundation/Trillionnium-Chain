@@ -25,6 +25,28 @@ The following network campaign, metrics envelope and measurement procedure are
 implementation targets. Existing tests count only for the properties and
 configuration they actually execute; this document does not mark campaigns done.
 
+### Observed fleet readiness and its limits
+
+The 2026-09-16 read-only run of `scripts/poco-fleet/probe_fleet.py` and
+`probe_run_readiness.py` reached all six configured physical hosts: five Linux
+hosts assigned validator roles and one macOS observer. A stale observer LAN IP
+was corrected only after SSH host/interface identity agreed. The repeated
+readiness probe and independent `check_run_readiness_evidence.py` passed all
+six hosts, including LAN reachability, declared tools and free candidate ports;
+observed clock spread was three seconds. Linux resource admission also fit the
+configured 7/31/100 process profiles. Capacity arithmetic is not a running
+validator or throughput result.
+
+This is one controlled LAN, not six independent operators or a WAN campaign.
+These probes start no validators, induce no faults and provide no finality,
+restart or goodput acceptance. Release evidence must rerun against the actual
+binary/source/profile and retain the raw host facts, failures and checker result.
+The probe now retains parsed facts on a failed host and identifies native
+builder availability independently of subsequent LAN checks. Its regression
+suite requires a network failure to remain failure, without inventing an absent
+builder; a genuinely absent platform builder and oversized probe output still
+reject. This repairs diagnostics without weakening the readiness gate.
+
 ## Interfaces
 
 ### Evidence and metric records

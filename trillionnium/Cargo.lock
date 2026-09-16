@@ -1928,7 +1928,11 @@ name = "trnm-poco-node-host"
 version = "0.1.0"
 dependencies = [
  "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
  "trnm-durable-file-adapters-v0",
+ "trnm-native-execution-v0",
  "trnm-node-boundary-v0",
  "trnm-poco-node-authority",
  "trnm-poco-node-io",
@@ -2111,14 +2115,22 @@ dependencies = [
 name = "trnm-state-sync-v0"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
+ "serde_json",
  "sha2",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
 ]
 
 [[package]]
 name = "trnm-tx-lifecycle-v0"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
+ "serde_json",
  "sha2",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
 ]
 
 [[package]]

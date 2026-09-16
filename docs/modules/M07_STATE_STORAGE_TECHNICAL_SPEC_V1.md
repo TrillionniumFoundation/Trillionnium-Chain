@@ -1,7 +1,7 @@
 # M07 State / JMT / Storage technical specification v1
 
-Status: **existing native storage contract plus planned incremental persistence
-and sparse epoch labels; no new implementation or production acceptance claimed**.
+Status: **native sparse-epoch computation implemented as a candidate;
+durable epoch persistence, incremental storage and production acceptance pending**.
 Primary module: M07. Producers: M06/M08/M13. Consumers: M02/M06/M08/M13/M14.
 
 ## Authority
@@ -17,6 +17,35 @@ Current durable execution encodes complete historical JMT snapshots in P records
 and audits retained history. The compact-inventory/borrowed-reader optimizations
 remove copies, not this growth. The planned incremental backend below changes
 local persistence while preserving key/value codecs, state roots and receipts.
+
+### Implemented candidate and remaining persistence boundary
+
+`trnm-native-execution-v0/src/epoch_store.rs::CarriedRootReaderV1` now implements
+the root-only adapter specified below. `complete.rs::compute_complete_epoch_native_block_v1`
+uses it with the opaque M08 edge, computes the authenticated configuration/usage
+prefix and user operations into one C+3 plan, and preserves ordinary +1 checks.
+The public owner entry point is read-only `preview_epoch_block_v1`; it does not
+persist an epoch P or advance the application head. Owner affinity and fresh
+checkpoint P digest/commit sequence are rechecked before opening the snapshot.
+
+The candidate plan's private epoch tag permits exact C to C+3 application to an
+in-memory copy. Tests then compute C+4/C+5 over that copy. This is not yet the
+durable speculative-parent API below. Empty, leaf and internal JMT tests retain
+real child versions, reject physical seal rows and compare roots against ordinary
+contiguous computation. The real signed checkpoint fixture covers C=8 to 11,
+raw request substitution rejection and an old owner capability after reopen.
+
+Sparse snapshot **local codec 2** is presently compiled only for tests in
+`epoch_store.rs`. It retains the existing Borsh snapshot field order and node/
+value encodings, changing the local codec version to 2. Its constructor requires
+the retained verified edges; every root gap must be exact C to C+3, checkpoint
+root must match, all gap rows must be absent, and active parameters must match
+the latest edge. Codec 1 explicitly rejects sparse root histories and its decoder
+rejects codec 2. The test decoder does not recover authority from a checksum.
+Production durable open does not call it; persisted edge evidence, fresh edge
+reconstruction and the schema-4 bridge in M08 are prerequisites to enabling it.
+Incremental `ni_*` storage, bounded GC, two-epoch durable recovery and state-sync
+installation remain planned; the candidate does not close snapshot growth.
 
 ## Interfaces
 
@@ -74,7 +103,9 @@ open_epoch_parent(edge: AuthenticatedEpochApplicationEdgeV1,
   -> Result<CarriedRootReaderV1, StoreFailure>
 ```
 
-All names are planned local interfaces. M08 owns finality/commit intent; M06 owns
+These owned APIs are planned; the internal `CarriedRootReaderV1` candidate now
+exists but does not implement their durable snapshot/namespace lifecycle.
+M08 owns finality/commit intent; M06 owns
 canonical writes; M07 independently verifies parent/root/namespace and applies
 one transaction. No API takes a caller boolean `is_finalized` or untrusted root
 as authority. M13 can stage bytes but cannot call commit without admitted proof.
@@ -203,7 +234,8 @@ that root; internal child entries carry their own possibly much older versions.
 `reader.rs::get_value_option` means latest value at or below the requested version.
 These facts select the following narrowly scoped adapter:
 
-1. `CarriedRootReaderV1` owns the immutable checkpoint snapshot and exact edge.
+1. `CarriedRootReaderV1` borrows the immutable checkpoint snapshot and retains
+   exact edge coordinates; its owner holds the authenticated edge alive.
    It is constructed only for a single first-new target `next_version=C+3`.
 2. For the exact key `NodeKey(C+2, empty nibble path)` only, return the checkpoint
    root node read at `NodeKey(C, empty nibble path)` and independently verify
@@ -239,6 +271,28 @@ ancestry edge; M07 supplies storage ancestry. Merely installing an alias does
 not authorize a consensus height jump or change active application configuration.
 
 ## Persistence and recovery
+
+### Planned schema-4 bridge before incremental migration
+
+M08's planned `native_durable_execution_p_v1` and `native_epoch_edge_v1` provide
+an explicit bounded full-snapshot bridge. Schema 3 retains codec1 and ordinary
+P semantics. Explicit migration to schema 4 adds the epoch evidence/context
+tables; the first-new and later sparse-history preparations use P family v1,
+even when a later ordinary block retains artifact v0. Metadata selects codec2
+only with a freshly reconstructed authenticated lineage. No existing v0 P bytes
+or state-value/JMT codecs change. This bridge is a runtime prerequisite, not
+the incremental backend or a storage-performance result.
+
+To migrate schema 4 into `ni_*`, restore every retained real root under its
+verified edge lineage, materialize exact physical nodes/values/preimages and
+artifact ancestry, and compare all root/replay/lifecycle/configuration digests.
+Virtual seal roots are never emitted into `ni_roots` or `ni_nodes`. Convert
+prepared snapshots to ancestor-relative deltas only after verifying the exact
+parent P and all differences; fork-local collisions stay inside their own delta.
+Persist edge evidence and retention pins before switching the owner/head by CAS.
+The source remains readable until the complete target audit and fresh readback
+succeed. Interrupted migration chooses the exact source or exact target from
+its journal; it never merges two partly populated namespaces.
 
 Store epoch-edge metadata in the same authoritative namespace as its checkpoint
 pin and eventual C+3 commit. It contains exact edge bytes/checksum, predecessor
@@ -377,9 +431,9 @@ local schema/edge bytes and positive/negative vectors before accepting readers.
 
 ## Activation boundary
 
-This selects an implementable candidate, not proof that JMT integration already
-works. The alias adapter, incremental schema/migration, GC and two-epoch matrix
-must land and pass before removing any old fence or full-audit protection.
+The candidate root adapter and real first-new computation have passing local
+tests. The schema-4 durable bridge, incremental schema/migration, GC and two-epoch
+matrix must land and pass before removing any old fence or full-audit protection.
 If pinned JMT behavior cannot satisfy the root-only design, stop and revise this
 local storage contract under producer/consumer review; never alter frozen
 consensus bytes or publish seal application effects as a workaround.
