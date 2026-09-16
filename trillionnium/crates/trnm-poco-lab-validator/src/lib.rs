@@ -48,13 +48,13 @@ pub mod p2p_host_attestation;
 /// verifies each returned signature against the committed role key before
 /// emitting a handshake or frame; no activation authority is implied.
 pub mod p2p_identity;
-pub mod process_lock;
 pub mod pacemaker;
 /// Explicit candidate-only durable authenticated payload replay/fencing seam.
 /// It is consumed by `PersistentAuthenticatedPeerMeshV0` only when a caller
 /// opts into the replay-aware receive API; no production activation follows.
 pub mod payload_replay;
 pub mod process_event;
+pub mod process_lock;
 pub mod relay;
 pub mod restart_catchup;
 pub mod restart_cut;

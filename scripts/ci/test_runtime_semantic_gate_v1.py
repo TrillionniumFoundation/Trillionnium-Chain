@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Regressions for the runtime semantic gate's non-false-pass behavior."""
+"""Regressions for runtime semantic evidence and false-pass resistance."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -12,22 +13,20 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts/ci/check_runtime_semantic_gate_v1.py"
-ENV_NAMES = (
-    "TRNM_SEMANTIC_P01_COMMAND",
-    "TRNM_SEMANTIC_P02_COMMAND",
-    "TRNM_SEMANTIC_P03_COMMAND",
-    "TRNM_SEMANTIC_P04_COMMAND",
-    "TRNM_SEMANTIC_P01_EVIDENCE",
-    "TRNM_SEMANTIC_P02_EVIDENCE",
-    "TRNM_SEMANTIC_P03_EVIDENCE",
-    "TRNM_SEMANTIC_P04_EVIDENCE",
-)
+COMMAND_ENVS = tuple(f"TRNM_SEMANTIC_P0{index}_COMMAND" for index in range(1, 5))
+EVIDENCE_ENVS = tuple(f"TRNM_SEMANTIC_P0{index}_EVIDENCE" for index in range(1, 5))
+
+
+def git_output(*args: str) -> str:
+    return subprocess.check_output(["git", *args], cwd=ROOT, text=True).strip()
 
 
 class RuntimeSemanticGateTests(unittest.TestCase):
-    def run_gate(self, *args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+    def run_gate(
+        self, *args: str, env: dict[str, str] | None = None
+    ) -> subprocess.CompletedProcess[str]:
         merged = os.environ.copy()
-        for name in ENV_NAMES:
+        for name in (*COMMAND_ENVS, *EVIDENCE_ENVS):
             merged.pop(name, None)
         if env:
             merged.update(env)
@@ -44,7 +43,8 @@ class RuntimeSemanticGateTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         report = json.loads(result.stdout)
         self.assertEqual(report["result"], "NOT_RUN")
-        self.assertTrue(report["command_success_is_not_semantic_evidence"])
+        self.assertTrue(report["lexical_smoke_is_not_semantic_evidence"])
+        self.assertTrue(report["zero_exit_is_not_semantic_evidence"])
 
     def test_require_rejects_missing_runtime_commands(self) -> None:
         result = self.run_gate("--require")
@@ -60,55 +60,76 @@ class RuntimeSemanticGateTests(unittest.TestCase):
         report = json.loads(result.stdout)
         self.assertEqual(report["result"], "FAIL")
         self.assertEqual(report["checks"][0]["returncode"], 7)
+        self.assertEqual(report["checks"][0]["evidence_status"], "not-configured")
 
-    def test_true_commands_cannot_create_semantic_pass(self) -> None:
-        env = {
-            "TRNM_SEMANTIC_P01_COMMAND": "true",
-            "TRNM_SEMANTIC_P02_COMMAND": "true",
-            "TRNM_SEMANTIC_P03_COMMAND": "true",
-            "TRNM_SEMANTIC_P04_COMMAND": "true",
-        }
-        result = self.run_gate("--run", "--require", env=env)
+    def test_four_true_commands_cannot_create_semantic_pass(self) -> None:
+        result = self.run_gate(
+            "--run",
+            "--require",
+            env={name: "true" for name in COMMAND_ENVS},
+        )
         self.assertEqual(result.returncode, 2)
         report = json.loads(result.stdout)
-        self.assertEqual(report["result"], "INCOMPLETE")
-        self.assertEqual(report["evidence_accepted_count"], 0)
-        self.assertTrue(all(check["status"] == "evidence-missing" for check in report["checks"]))
+        self.assertEqual(report["result"], "FAIL")
+        self.assertEqual(report["executed_count"], 4)
+        self.assertEqual(report["evidence_verified_count"], 0)
+        self.assertEqual(len(report["required_missing"]), 4)
+        self.assertTrue(
+            all(row["status"] == "failed-evidence-missing" for row in report["checks"])
+        )
 
-    def test_source_bound_p01_evidence_is_accepted_for_its_check_only(self) -> None:
-        head = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
-        ).stdout.strip()
-        evidence = {
-            "schema": "trnm-runtime-semantic-evidence-v1",
-            "check_id": "P0.1-multinode-persistence",
-            "evidence_kind": "multinode-persistence-campaign",
-            "source_commit": head,
-            "result": "PASS",
-            "production_authority": False,
-            "raw_artifact_sha256": "1" * 64,
-            "validator_counts": [4, 7],
-            "independent_processes": True,
-            "distinct_runtime_roots": True,
-            "kill_restart_completed": True,
-            "partition_heal_completed": True,
-            "rejoin_completed": True,
-            "durable_state_replay_verified": True,
-        }
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "p01.json"
-            path.write_text(json.dumps(evidence), encoding="utf-8")
+    def test_valid_source_bound_p01_evidence_can_pass_only_its_check(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="trnm-semantic-evidence-") as directory:
+            root = Path(directory)
+            artifacts: list[dict[str, object]] = []
+            for role in ("process_logs", "signed_final_state", "replay_verification"):
+                path = root / f"{role}.json"
+                payload = json.dumps({"role": role, "fact": "fixture"}, sort_keys=True).encode()
+                path.write_bytes(payload)
+                artifacts.append(
+                    {
+                        "role": role,
+                        "path": path.name,
+                        "sha256": hashlib.sha256(payload).hexdigest(),
+                        "bytes": len(payload),
+                    }
+                )
+            evidence = {
+                "schema": "trnm-runtime-semantic-evidence-v1",
+                "check_id": "P0.1-multinode-persistence",
+                "status": "PASS",
+                "production_authority": False,
+                "source_commit": git_output("rev-parse", "HEAD"),
+                "source_tree": git_output("rev-parse", "HEAD^{tree}"),
+                "claims": {
+                    "validator_processes": 7,
+                    "independent_run_roots": 7,
+                    "four_node_phase": True,
+                    "seven_node_phase": True,
+                    "kill_restart_rejoin": True,
+                    "partition_heal": True,
+                    "lost_reply_recovery": True,
+                    "durable_state_replay_verified": True,
+                    "finality_agreement": True,
+                },
+                "artifacts": artifacts,
+            }
+            evidence_path = root / "p01.json"
+            evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
             result = self.run_gate(
                 "--run",
                 env={
                     "TRNM_SEMANTIC_P01_COMMAND": "true",
-                    "TRNM_SEMANTIC_P01_EVIDENCE": str(path),
+                    "TRNM_SEMANTIC_P01_EVIDENCE": str(evidence_path),
                 },
             )
         self.assertEqual(result.returncode, 0)
         report = json.loads(result.stdout)
-        self.assertEqual(report["checks"][0]["status"], "passed")
         self.assertEqual(report["result"], "INCOMPLETE")
+        self.assertEqual(report["checks"][0]["status"], "passed")
+        self.assertEqual(report["checks"][0]["evidence_status"], "verified")
+        self.assertEqual(report["evidence_verified_count"], 1)
+        self.assertEqual(len(report["required_missing"]), 3)
 
 
 if __name__ == "__main__":

@@ -31,7 +31,10 @@ use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, PinnedSqliteSignerJournalV0, SignerJournalLifetimeInventoryV1,
     SignerJournalProfileV0, SignerWatermarkV0, SqliteSignerJournalV0,
 };
-use trnm_consensus_types::{BlockId, Epoch, QcRef, StateRoot, ValidatorId, ValidatorSetId, View};
+use trnm_consensus_types::{
+    BlockId, Epoch, QcRef, RecoveryModeV1, RecoveryStartCertificateV1, SignatureVerifier,
+    StateRoot, ValidatorId, ValidatorSet, ValidatorSetId, View, RECOVERY_PROCESS_INSTANCE_V1,
+};
 use trnm_native_application::{ApplicationHeadV0, NativeExecutedBlockV0};
 use trnm_native_application_sqlite::{
     ActiveReplaySessionV0, AliasClosedReplayLinkKV0, ConfirmedProposalValidationTerminalAuditV0,
@@ -1406,7 +1409,8 @@ pub struct PocoNodeDeployedLabProcess2CaughtUpOwnerV1<W: ExternalMonotonicWaterm
 #[allow(dead_code)]
 #[must_use = "RecoveryStart must be consumed together with its caught-up owner"]
 struct PocoNodeDeployedLabProcess2RecoveryStartAuthorityV1 {
-    caught_up_cut_digest: [u8; 32],
+    node_caught_up_cut_digest: [u8; 32],
+    recovery_cut_artifact_sha256: [u8; 32],
     certificate_sha256: [u8; 32],
 }
 
@@ -1437,12 +1441,89 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2CaughtUpOwnerV1
         Ok(())
     }
 
+    /// Convert one already-verified and durably journaled direct-7
+    /// RecoveryStart certificate into the private activation authority.
+    ///
+    /// This method is crate-visible only so the recovery transition coordinator
+    /// can call it *after* committing the exact RecoveryStart row.  It never
+    /// accepts a caller-minted certificate digest: signatures, direct-7 shape,
+    /// node facts, RestartCut coordinates and the separately persisted
+    /// RecoveryZeroDeltaCut artifact are all rejoined here before signer
+    /// activation can become reachable.
+    #[allow(clippy::too_many_arguments, clippy::too_many_lines)]
+    pub(crate) fn activate_after_verified_recovery_start_v1(
+        self,
+        recovery_cut_artifact_sha256: [u8; 32],
+        certificate: &RecoveryStartCertificateV1,
+        validator_set: &ValidatorSet,
+        verifier: &impl SignatureVerifier,
+    ) -> Result<
+        PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1<W>,
+        PocoNodeDeployedLabProcess2RecoveryErrorV0,
+    > {
+        if recovery_cut_artifact_sha256 == [0; 32] {
+            return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "activation.recovery_start_cut",
+                "persisted RecoveryZeroDeltaCut digest is zero",
+            ));
+        }
+        certificate
+            .verify(validator_set, verifier)
+            .map_err(|error| {
+                PocoNodeDeployedLabProcess2RecoveryErrorV0::from_debug(
+                    "activation.recovery_start_verify",
+                    error,
+                )
+            })?;
+        let context = certificate.context();
+        context.validate_direct7(validator_set).map_err(|error| {
+            PocoNodeDeployedLabProcess2RecoveryErrorV0::from_debug(
+                "activation.recovery_start_context",
+                error,
+            )
+        })?;
+        let fields = context.fields();
+        let restart = self.facts.restart_cut_v1().fields_v1();
+        if context.mode() != RecoveryModeV1::ZeroDelta
+            || context.process_instance() != RECOVERY_PROCESS_INSTANCE_V1
+            || context.validator_set_id() != restart.validator_set_id
+            || context.target_validator() != restart.local_validator
+            || validator_set.id() != restart.validator_set_id
+            || validator_set.epoch() != restart.epoch
+            || fields.caught_up_cut_artifact_sha256 != recovery_cut_artifact_sha256
+            || fields.node_facts_sha256 != self.facts.node_facts_sha256_v1()
+            || fields.restart_cut_artifact_sha256 != restart.restart_cut_artifact_sha256
+            || fields.restart_cut_epoch != restart.epoch
+            || fields.restart_cut_height.get() != restart.finalized_height
+            || fields.restart_cut_block_id != restart.finalized_block_id
+            || fields.restart_cut_state_root != restart.application_state_root
+            || fields.restart_cut_chain_root != restart.finalized_chain_root
+            || fields.terminal_epoch != restart.epoch
+            || fields.terminal_height.get() != restart.application_height
+            || fields.terminal_block_id != restart.application_block_id
+            || fields.terminal_state_root != restart.application_state_root
+            || fields.terminal_chain_root != restart.finalized_chain_root
+        {
+            return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "activation.recovery_start_join",
+                "RecoveryStart context differs from the exact recovered process2 cut",
+            ));
+        }
+        let authority = PocoNodeDeployedLabProcess2RecoveryStartAuthorityV1 {
+            node_caught_up_cut_digest: self.caught_up_cut_digest,
+            recovery_cut_artifact_sha256,
+            certificate_sha256: certificate.digest(),
+        };
+        self.activate_after_recovery_start_v1(authority)
+    }
+
     /// The sole post-catch-up activation boundary.
     ///
     /// Signer activation occurs only after consuming both the caught-up owner
     /// and the matching typed N/N RecoveryStart authority. No recovery owner or
-    /// passive owner can call this method. The current tranche intentionally
-    /// has no normal-build path that constructs either input.
+    /// passive owner can call this method. The normal-build constructor for
+    /// that authority is the verified certificate join above and is consumed
+    /// only by the durable recovery transition coordinator.
     #[allow(dead_code, clippy::too_many_lines)]
     fn activate_after_recovery_start_v1(
         self,
@@ -1459,7 +1540,8 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2CaughtUpOwnerV1
         if caught_up_cut_digest == [0; 32]
             || caught_up_cut_digest != facts.artifact_sha256_v1()
             || recovery_start.certificate_sha256 == [0; 32]
-            || recovery_start.caught_up_cut_digest != caught_up_cut_digest
+            || recovery_start.recovery_cut_artifact_sha256 == [0; 32]
+            || recovery_start.node_caught_up_cut_digest != caught_up_cut_digest
         {
             return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
                 "activation.recovery_start_join",
@@ -5876,7 +5958,7 @@ mod tests {
         }
         let post_start_source = &normal_source[post_start..activated_facts];
         let recovery_start_join = post_start_source
-            .find("recovery_start.caught_up_cut_digest != caught_up_cut_digest")
+            .find("recovery_start.node_caught_up_cut_digest != caught_up_cut_digest")
             .expect("RecoveryStart digest is checked");
         let passive_after_start = post_start_source
             .find("recovered.prepare_passive_catchup_v1()")
@@ -5915,7 +5997,8 @@ mod tests {
         > {
             if self.caught_up_cut_digest == [0; 32]
                 || recovery_start.certificate_sha256 == [0; 32]
-                || recovery_start.caught_up_cut_digest != self.caught_up_cut_digest
+                || recovery_start.recovery_cut_artifact_sha256 == [0; 32]
+                || recovery_start.node_caught_up_cut_digest != self.caught_up_cut_digest
             {
                 return Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
                     "activation.recovery_start_join",
@@ -5950,7 +6033,8 @@ mod tests {
                 caught_up_cut_digest: cut_digest,
             },
             PocoNodeDeployedLabProcess2RecoveryStartAuthorityV1 {
-                caught_up_cut_digest: cut_digest,
+                node_caught_up_cut_digest: cut_digest,
+                recovery_cut_artifact_sha256: *digest_distinct_from_v1(cut_digest).as_bytes(),
                 certificate_sha256,
             },
         )

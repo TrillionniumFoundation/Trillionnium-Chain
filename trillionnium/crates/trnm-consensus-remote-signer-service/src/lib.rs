@@ -1691,7 +1691,6 @@ impl RemoteSignerService {
         purpose_policy: PurposePolicyV1,
         signing_key: Option<SigningKey>,
     ) -> Result<Self, RemoteSignerServiceError> {
-
         validator_set
             .validate_shape()
             .map_err(|_| ServiceFailure::InvalidConfig("validator set shape"))?;
@@ -1839,14 +1838,8 @@ impl RemoteSignerService {
         // changed generation/lease could add a second scope row and appear
         // to start cleanly until a later invariant check.
         validate_namespace_scope_v1(&connection, scope)?;
-        ensure_metadata_v1(
-            &connection,
-            scope,
-            &binding,
-            &verifying_key,
-            purpose_policy,
-        )
-        .map_err(RemoteSignerServiceError)?;
+        ensure_metadata_v1(&connection, scope, &binding, &verifying_key, purpose_policy)
+            .map_err(RemoteSignerServiceError)?;
         connection
             .execute(
                 "INSERT OR IGNORE INTO signer_watermark
@@ -1885,10 +1878,7 @@ impl RemoteSignerService {
         config: RemoteSignerServiceConfig,
         device_signer: Box<dyn DeviceKeyProviderV1>,
     ) -> Result<Self, RemoteSignerServiceError> {
-        let expected = config
-            .signing_key
-            .verifying_key()
-            .to_bytes();
+        let expected = config.signing_key.verifying_key().to_bytes();
         if device_signer.verifying_key_v1() != expected {
             return Err(ServiceFailure::InvalidConfig(
                 "device key does not match configured validator consensus key",
@@ -2716,12 +2706,18 @@ impl RemoteSignerService {
                 .signing_key
                 .as_ref()
                 .ok_or(ServiceFailure::ExternalAuthorityRequired)?;
-            (signing_key.sign(signing_root).to_bytes(), signing_key.verifying_key().to_bytes())
+            (
+                signing_key.sign(signing_root).to_bytes(),
+                signing_key.verifying_key().to_bytes(),
+            )
         };
         let verifying_key = ed25519_dalek::VerifyingKey::from_bytes(&verifying_key)
             .map_err(|_| ServiceFailure::SignatureFailure)?;
         verifying_key
-            .verify(signing_root, &ed25519_dalek::Signature::from_bytes(&signature))
+            .verify(
+                signing_root,
+                &ed25519_dalek::Signature::from_bytes(&signature),
+            )
             .map_err(|_| ServiceFailure::SignatureFailure)?;
         Ok(signature)
     }
@@ -2998,10 +2994,7 @@ fn ensure_metadata_v1(
             binding.validator_set_id().as_bytes().to_vec(),
         ),
         ("author", binding.author().as_bytes().to_vec()),
-        (
-            "public_key",
-            verifying_key.to_vec(),
-        ),
+        ("public_key", verifying_key.to_vec()),
         ("binding_digest", binding_digest_v1(binding).to_vec()),
         (
             "purpose_policy",
@@ -3425,8 +3418,8 @@ mod tests {
             bytes.extend_from_slice(root);
             bytes.extend_from_slice(signature);
             let temporary = self.counter_path.with_extension("tmp");
-            let mut file = fs::File::create(&temporary)
-                .map_err(|_| DeviceKeyProviderErrorV1::Unavailable)?;
+            let mut file =
+                fs::File::create(&temporary).map_err(|_| DeviceKeyProviderErrorV1::Unavailable)?;
             std::io::Write::write_all(&mut file, &bytes)
                 .map_err(|_| DeviceKeyProviderErrorV1::Unavailable)?;
             file.sync_all()
@@ -3526,10 +3519,7 @@ mod tests {
 
         // A stale sequence and a same-sequence/different-root witness are both
         // rejected by the device boundary itself, independently of SQLite.
-        let mut device = DurableFixtureDeviceSigner::open(
-            fixture.signing_key,
-            counter_path,
-        );
+        let mut device = DurableFixtureDeviceSigner::open(fixture.signing_key, counter_path);
         assert_eq!(
             device.sign_v1(&[0x91; 32], 0),
             Err(DeviceKeyProviderErrorV1::CounterRollback)
