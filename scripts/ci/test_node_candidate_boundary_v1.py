@@ -80,6 +80,29 @@ class CompositionMutationTests(unittest.TestCase):
         with self.assertRaises(decomposition.DecompositionError):
             self.gate()
 
+    def test_handoff_dependencies_cannot_enter_default_host(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/Cargo.toml"
+        original = path.read_text()
+        for dependency in ("trnm-consensus-crypto", "trnm-consensus-signer-journal",
+                           "trnm-consensus-types", "trnm-native-execution-v0"):
+            with self.subTest(dependency=dependency):
+                old = next(line for line in original.splitlines()
+                           if line.startswith(dependency + " ="))
+                path.write_text(original.replace(old, old.replace("optional = true", "optional = false")))
+                with self.assertRaises(decomposition.DecompositionError):
+                    self.gate()
+            path.write_text(original)
+        self.gate()
+
+    def test_handoff_module_cannot_lose_candidate_gate(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/src/lib.rs"
+        original = path.read_text()
+        gated = '#[cfg(feature = "persistent-authority-candidate")]\nmod handoff_runtime_v1;'
+        self.assertIn(gated, original)
+        path.write_text(original.replace(gated, 'mod handoff_runtime_v1;'))
+        with self.assertRaises(decomposition.DecompositionError):
+            self.gate()
+
     def test_fake_journal_ownership_metadata_rejected(self) -> None:
         self.mutate("trnm-poco-node-authority", 'durable_authority_journal_owner = false',
                     'durable_authority_journal_owner = true')

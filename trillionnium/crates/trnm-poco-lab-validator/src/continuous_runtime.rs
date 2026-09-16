@@ -1955,7 +1955,7 @@ impl ContinuousValidatorAuthorityV0 {
             .proposal_parent_height_v0()
             .checked_add(1)
             .context("next workload height overflows")?;
-        let workload = config.workload_corpus_mut().block_at_height(height)?;
+        let workload = config.workload_corpus_mut()?.block_at_height(height)?;
         self.proposal_preimage_v0(workload)
     }
 
@@ -1969,6 +1969,94 @@ impl ContinuousValidatorAuthorityV0 {
     ) -> Result<SignedProposalV0> {
         let preimage = self.proposal_preimage_from_loaded_config_v0(config)?;
         preimage.seal_with_producer_v0(&mut self.proposal_producer, PROPOSAL_SIGNER_PROFILE_REF_V0)
+    }
+
+    /// Construct and sign from actual admitted outer transaction bytes. Empty
+    /// Regular descendants use the same native execution and Core authority.
+    pub fn native_proposal_preimage_v1(
+        &self,
+        transactions: Vec<Vec<u8>>,
+        timestamp_ms: u64,
+    ) -> Result<ContinuousProposalPreimageV0> {
+        let parent = self
+            .ready_runtime_v0()?
+            .proposal_parent_v0()
+            .map_err(|error| anyhow!("read native proposal parent: {error}"))?;
+        let height = parent
+            .application_head_v0()
+            .height()
+            .get()
+            .checked_add(1)
+            .context("native successor height overflows")?;
+        self.proposal_preimage_from_transactions_v0(height, timestamp_ms, transactions)
+    }
+    pub fn seal_native_proposal_v1(
+        &mut self,
+        preimage: ContinuousProposalPreimageV0,
+    ) -> Result<SignedProposalV0> {
+        let binding = self
+            .ready_runtime_v0()?
+            .proposal_binding_v0()
+            .map_err(|e| anyhow!("native proposal binding: {e}"))?;
+        ensure!(
+            preimage.block_v0().header().parent_id().as_bytes()
+                == binding
+                    .parent_v0()
+                    .application_head_v0()
+                    .block_id()
+                    .as_bytes()
+                && preimage.block_v0().header().view() == binding.current_view_v0(),
+            "native proposal preimage became stale"
+        );
+        preimage.seal_with_producer_v0(&mut self.proposal_producer, PROPOSAL_SIGNER_PROFILE_REF_V0)
+    }
+    pub fn signed_native_proposal_v1(
+        &mut self,
+        transactions: Vec<Vec<u8>>,
+        timestamp_ms: u64,
+    ) -> Result<SignedProposalV0> {
+        let preimage = self.native_proposal_preimage_v1(transactions, timestamp_ms)?;
+        self.seal_native_proposal_v1(preimage)
+    }
+    pub fn native_parent_timestamp_v1(&self) -> Result<u64> {
+        Ok(self
+            .ready_runtime_v0()?
+            .proposal_parent_v0()
+            .map_err(|e| anyhow!("native parent: {e}"))?
+            .authenticated_parent_timestamp_ms_v0())
+    }
+    pub fn native_finalized_query_v1(&self) -> Result<trnm_poco_node::PocoNodeLabFinalizedQueryV0> {
+        let runtime = self.ready_runtime_v0()?;
+        runtime
+            .read_finalized_by_height_v0(runtime.facts_v0().finalized_height_v0())
+            .map_err(|e| anyhow!("native finalized read: {e}"))
+    }
+
+    pub fn commit_native_admission_at_finalized_tip_v1(
+        &self,
+        boundary: &mut trnm_poco_node::NodeOwnedTxAdmissionBoundaryV0,
+        admission: &mut trnm_poco_node::NativePendingAdmissionV1,
+    ) -> Result<()> {
+        self.ready_runtime_v0()?
+            .commit_native_admission_at_finalized_tip_v1(boundary, admission)
+            .map_err(|e| anyhow!("native finality admission commit: {e}"))
+    }
+
+    pub fn recover_native_admission_with_finality_v1(
+        &self,
+        boundary: &mut trnm_poco_node::NodeOwnedTxAdmissionBoundaryV0,
+        transaction: &trnm_application_tx_builder_v0::BuiltCanonicalTxV0,
+        proof: &trnm_consensus_types::FinalityProofV0,
+        parent_timestamp: u64,
+    ) -> Result<()> {
+        self.ready_runtime_v0()?
+            .recover_native_admission_with_finality_v1(
+                boundary,
+                transaction,
+                proof,
+                parent_timestamp,
+            )
+            .map_err(|e| anyhow!("native finalized handoff recovery: {e}"))
     }
 
     pub fn proposal_preimage_v0(
@@ -2037,14 +2125,10 @@ impl ContinuousValidatorAuthorityV0 {
             "only the scheduled local leader may author a proposal preimage"
         );
         let payload = ApplicationPayloadV0::new(transactions.clone())
-            .map_err(|error| anyhow!("construct non-empty application payload: {error}"))?;
-        ensure!(
-            payload.transaction_count() > 0,
-            "continuous proposal payload is empty"
-        );
+            .map_err(|error| anyhow!("construct native application payload: {error}"))?;
         let (preview_parent, preview) = runtime
-            .preview_next_nonempty_v0(transactions, timestamp_ms)
-            .map_err(|error| anyhow!("preview exact workload transition: {error}"))?;
+            .preview_next_native_v1(transactions, timestamp_ms)
+            .map_err(|error| anyhow!("preview exact native transition: {error}"))?;
         ensure!(
             preview_parent == parent,
             "native preview changed the authenticated proposal parent"
@@ -7121,6 +7205,55 @@ mod tests {
                     || rejection.to_string().contains("certificate"),
                 "typed ingress rejection must remain attributable: {rejection:#}"
             );
+        });
+    }
+
+    include!("native_client_e2e_tests.inc");
+
+    #[test]
+    fn native_business_block_finalizes_with_two_empty_regular_descendants_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let lifetime = ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(3, 0, 3, 0)
+                .expect("bounded native tail signer lifetime");
+            let mut harness = takeover_phase_harness_with_profile_v0(4, lifetime, 3);
+            let (height, timestamp, transactions) = harness.workloads[0].clone();
+            let mut first_id = None;
+            for offset in 0..3u64 {
+                let view = harness.authorities[0].facts_v0().unwrap().current_view_v0();
+                let leader = leader_for(&harness.validator_set, view);
+                let index = harness
+                    .validator_set
+                    .validators()
+                    .iter()
+                    .position(|validator| validator.id() == leader)
+                    .unwrap();
+                let body = if offset == 0 {
+                    transactions.clone()
+                } else {
+                    Vec::new()
+                };
+                let proposal = harness.authorities[index]
+                    .signed_native_proposal_v1(body, timestamp + offset * 1_000)
+                    .expect("native owner signs exact business or empty Regular body");
+                assert_eq!(proposal.block().header().height().get(), height + offset);
+                if offset == 0 {
+                    first_id = Some(proposal.block().id());
+                }
+                let round =
+                    drive_parallel_deployed_authority_round_v0(&mut harness.authorities, proposal)
+                        .expect("actual Core/Safety/native owners certify native tail");
+                if offset == 2 {
+                    assert_eq!(round.common_cut_v0().finalized_height_v0(), height);
+                    assert_eq!(
+                        round.common_cut_v0().application_applied_height_v0(),
+                        height
+                    );
+                    assert_eq!(
+                        round.common_cut_v0().finalized_block_id_v0(),
+                        first_id.unwrap()
+                    );
+                }
+            }
         });
     }
 

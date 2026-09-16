@@ -24,6 +24,8 @@ mod context;
 mod crypto;
 mod cutoff;
 mod epoch;
+mod epoch_seal;
+pub use epoch_seal::validate_empty_epoch_seal_v1;
 mod epoch_activation_evidence;
 mod error;
 mod evidence;
@@ -47,9 +49,10 @@ mod wire_semantic;
 pub use anchor::{ContextAuthorizedQcV0, EpochAnchorQcV0, GenesisQcV0, QcReferenceV0};
 pub use block::{Block, BlockHeader, BlockKind};
 pub use body_v0::{
-    validate_root_bound_regular_body_v0, ApplicationPayloadV0, BlockBodyV0, BlockValidationError,
-    BlockValidationErrorCode, BlockValidationResult, DoubleVoteEvidenceV0,
-    ExecutionEventAttributeV0, ExecutionEventV0, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0,
+    validate_root_bound_epoch_body_v1, validate_root_bound_regular_body_v0, ApplicationPayloadV0,
+    BlockBodyV0, BlockValidationError, BlockValidationErrorCode, BlockValidationResult,
+    DoubleVoteEvidenceV0, ExecutionEventAttributeV0, ExecutionEventV0,
+    ExecutionReceiptCommitmentV0, ExecutionReceiptsV0, RootBoundEpochBodyV1,
     RootBoundRegularBodyV0, ValidatedBlockCommitmentsV0, ValidatedCheckpointCommitmentsV0,
     VoteEvidenceRecordV0,
 };

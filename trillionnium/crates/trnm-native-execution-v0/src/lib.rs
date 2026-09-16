@@ -52,6 +52,7 @@ mod canonical_lab_bootstrap;
 mod complete;
 mod durable;
 mod epoch_edge;
+mod epoch_recovery;
 mod pcc1_finality;
 mod poco_application;
 mod poco_checkpoint;
@@ -64,6 +65,7 @@ mod poco_semantics;
 mod poco_snapshot;
 mod poco_transition;
 mod store;
+pub use store::incremental_store_v1;
 mod validator_lifecycle;
 
 pub use canonical_lab_bootstrap::{
@@ -75,17 +77,19 @@ pub use canonical_lab_bootstrap::{
 pub use complete::{NativeBlockPreviewRequestV0, NativeBlockPreviewV0};
 pub use durable::{
     validate_native_finalized_execution_receipts_v0, CanonicalLabNativeApplicationConfigInputsV0,
-    ConfirmedDurableExecutionHistoryRowV0, ConfirmedDurableExecutionPV0,
-    ConfirmedNativeH1StateSyncTrustedBaseV0, DurableExecutionHistoryStatusV0,
-    DurableNativeApplicationV0, FinalizedNativeApplicationCommitRequestV0,
-    FinalizedNativeApplicationReadV0, NativeApplicationConfigV0,
-    NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
-    NativeH1StateSyncTrustedBaseRequestV0, VerifiedNativeSignerReplayFloorV1,
+    CommittedNativeEpochExecutionV1, ConfirmedDurableExecutionHistoryRowV0,
+    ConfirmedDurableExecutionPV0, ConfirmedNativeH1StateSyncTrustedBaseV0,
+    DurableExecutionHistoryStatusV0, DurableNativeApplicationV0,
+    FinalizedNativeApplicationCommitRequestV0, FinalizedNativeApplicationReadV0,
+    NativeApplicationConfigV0, NativeApplicationExecutionErrorCodeV0,
+    NativeApplicationExecutionErrorV0, NativeH1StateSyncTrustedBaseRequestV0,
+    PreparedNativeEpochExecutionV1, VerifiedNativeSignerReplayFloorV1,
 };
 pub use epoch_edge::AuthenticatedEpochApplicationEdgeV1;
 pub use pcc1_finality::{PocoFinalityCommitErrorV0, PocoFinalizedApplicationReadV0};
 pub use poco_checkpoint::{
-    ConfirmedNativePocoCheckpointV0, PreHandoffCheckpointReceiptV1, PreparedNativePocoCheckpointV0,
+    ConfirmedNativePocoCheckpointV0, PreHandoffCheckpointReceiptV1,
+    PreparedCheckpointExecutionReceiptV1, PreparedNativePocoCheckpointV0,
 };
 pub use store::{
     authenticated_key_hash_v0, stored_object_key_v0, AuthenticatedObjectRecordV0,

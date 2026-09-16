@@ -150,6 +150,55 @@ Vote digests or two different Timeout digests for that identity conflict.
 Proposal-witness signing uses its separate custody profile and must not invent
 a Vote/Timeout intent variant. Handoff decisions retain one descriptor per role.
 
+### Implemented outgoing schema14 codec and strict inert recovery
+
+This bounded format is distinct from the planned full epoch codec below.
+`encode_old_epoch_boundary_safety_record_v1` and
+`decode_old_epoch_boundary_safety_record_v1_exact` use existing
+`SafetyStateRecordContextV0` with the explicit minimum returned by
+`minimum_old_epoch_boundary_record_limits_v1`. Exact local field order is:
+
+1. ASCII `TRNMS14O`; u16-be codec1; u16-be schema14; context Hash32;
+   revision u64-be; positive owner generation u64-be; phase u8 in 0..4.
+2. Qualified true finalized tip followed by qualified application-applied tip.
+   Each is epoch u64-be, validator-set Hash32, parameters Hash32, then the
+   unchanged 56-byte finalized-tip encoding. Both remain under the old context.
+3. u32-be length plus the unchanged ordered inner Safety payload. No new epoch,
+   synthetic anchor or schema13-context substitution is representable here.
+4. u32-be checkpoint count, sorted by block ID; each entry is the existing exact
+   authenticated parent encoding followed by the complete signed proposal codec.
+5. u32-be seal count, sorted by `(height, block ID)`; each entry begins with its actual
+   authenticated parent timestamp u64-be followed by the complete signed proposal.
+6. Hash32 domain-separated checksum of all preceding bytes under
+   `trnm.consensus-core.old-epoch-safety-record.v1`.
+
+The context hash uses `trnm.consensus-core.old-epoch-context.v1`, the existing
+immutable Core/verifier/limits binding and a fixed outgoing-only layout marker.
+Outer revision/tips/phase must equal the decoded inner state and reconstructed
+retained evidence. Both counts and their sum are bounded by max_observed_messages;
+retained full proposals share the 64 MiB resource ceiling. Required record
+capacity is legacy minimum plus 64 MiB plus `2048*max_observed_messages+1024`,
+using checked arithmetic; the maximum individual blob retains its legacy bound.
+Sorted duplicates, unknown phases, mismatched qualified contexts, wrong checksum,
+overlong/trailing bytes and noncanonical re-encoding reject. Checksums establish
+integrity, not durable freshness or signature verification.
+
+The decoder returns `UnverifiedSafetyStateRecordV0`; journal8 must invoke
+`Core::validate_persisted_state_v0` and `validate_persisted_successor_v0` with
+StrictEd25519. These validate checkpoint P/parent and every retained proposal,
+QC/TC, seal root and geometry. Schema13 migration permits only exact unchanged
+old state plus an empty outgoing owner and revision+1. It cannot reset views,
+remove evidence or alter finalized/applied roots. Old schema13 codec/tests are
+retained. Full `TRNMS14E`, mixed-epoch context tables and phase7 activation remain
+planned; they must not be inferred from the shared schema number.
+
+Strict terminal recovery accepts only a completed C checkpoint with its exact
+retained two seals, no unresolved operation, and independently expected context,
+owner generation and record checksum. Its private result is evidence only.
+There is deliberately no recovery method that accepts public application/signer
+scalar tuples and releases a live owner. Actual M15 owner-affine readbacks are
+required before that consumer may be implemented.
+
 ### Planned Safety14 / epoch record persistence
 
 M02 owns the full field semantics and local phase tags 0..8. M03 stores one
@@ -222,6 +271,32 @@ and authenticated active epoch, and writes one schema-14 successor atomically.
 Do not infer an epoch for an ambiguous historical FinalizedTip.
 
 ### Planned journal8 ownership and activation cut
+
+The first journal8 consumer is the closed **outgoing epoch-zero** subprofile:
+Core record `TRNMS14O`, codec1/schema14, phases0..4. Its distinct SQLite
+application ID and immutable profile forbid reading it as journal7 or as the
+planned full `TRNMS14E` activation journal. It binds the strict Ed25519 verifier,
+exact old Core configuration, resource limits and owner generation. The original
+journal7 remains unchanged and locked during explicit migration; journal8 retains
+its exact source record, transition context, journal ID and chain checksum.
+Migration requires the actual strict Core's opaque phase0 persistence request,
+the fresh source owner head and an independently supplied expected source cut.
+Only schema/owner metadata and revision+1 may change. Creating this destination
+does not retire ordinary signers or select it in an external host watermark.
+
+Within this subprofile each append atomically retains the new and preceding
+record, exact typed transition context, source-bound hash-chain head and global
+revision. It validates Core's strict successor relation, rejects foreign owner
+requests, and accepts an exact retry only at the active head. Before returning
+opaque comparison evidence it closes the writer, syncs the actual database/WAL
+and directory, opens a fresh read-only connection and verifies the retained
+records again. Ordinary open creates no files or replacement metadata and
+requires an independently supplied expected head. A commit/response-loss error
+fences the live owner until explicit reopen at the independently reconciled cut.
+Rollback of the entire namespace remains detectable only through that external
+cut; a database checksum alone supplies no freshness. This consumer does not
+issue StorageAck, signing leases, native application authority or epoch
+activation. Those require the concrete M15 native/signer/readback join below.
 
 The first implementation slice specified in M02 must preserve schema13/journal7
 bytes and tests. Use a separate journal8 schema/namespace for schema14; never

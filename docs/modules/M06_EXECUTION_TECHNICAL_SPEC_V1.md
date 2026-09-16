@@ -225,15 +225,15 @@ Crash cuts cover before transaction, before commit, after commit/lost response,
 and confirmation. Recovery accepts exactly source or target; a third state
 fences. Store-local checks do not establish whole-machine rollback resistance.
 
-### Planned cross-epoch native execution edge
+### Candidate cross-epoch native execution edge
 
-Consume M08's planned `AuthenticatedEpochApplicationEdgeV1`, never caller roots.
+Consume M08's `AuthenticatedEpochApplicationEdgeV1`, never caller roots.
 At checkpoint C the committed application version is C. Seals C+1 and C+2
 produce no application execution, P row or receipt. The first new block has
 consensus parent seal-2 but application parent checkpoint C; its real JMT target
 label is C+3. This preserves frozen cutoff equality for actual executed blocks.
 
-M07's planned `CarriedRootReaderV1` intercepts only the empty root lookup at
+M07's `CarriedRootReaderV1` intercepts only the empty root lookup at
 version C+2 and resolves the authenticated root at C. Other node paths retain
 their real versions; value reads prove the gap contains no writes. The executor
 must not relabel all nodes, create fake seal transactions or relax the ordinary
@@ -241,6 +241,13 @@ parent check globally. Build the first plan in a separate authenticated edge
 variant. Publish C+3 only after normal durable commit; the virtual predecessor
 root is private construction metadata. Candidate implementation status is
 described below; this does not activate the production node/Core path.
+
+M08 now persists the first-new execution and speculative C+4/C+5 through its
+explicit bounded schema-4 bridge. Its separate first-new artifact binds both
+parents, and strict new-set finality commits the prepared state exactly once.
+The ordinary codec/+1 path remains unchanged. Later-epoch checkpoints,
+incremental storage integration and complete default-node activation remain
+outside this candidate slice; see M08 for exact APIs, limits and crash tests.
 
 Before user transactions in C+3, the selected edge executor applies one fixed
 system prefix: validate the authenticated old/new configuration edge, install

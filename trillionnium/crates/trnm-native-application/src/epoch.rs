@@ -26,6 +26,46 @@ pub struct NativeEpochBlockPreviewRequestV1 {
     transaction_bytes: usize,
 }
 
+/// Exact computed epoch artifact. Like its ordinary counterpart this is inert
+/// transport/storage data; only the durable owner can attest a persisted P.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NativeExecutedEpochBlockV1 {
+    request: NativeEpochBlockExecutionRequestV1,
+    receipts: Vec<crate::NativeExecutionReceiptV0>,
+}
+
+impl NativeExecutedEpochBlockV1 {
+    pub fn new(
+        request: NativeEpochBlockExecutionRequestV1,
+        computed: NativeExpectedBlockCommitmentsV0,
+        receipts: Vec<crate::NativeExecutionReceiptV0>,
+    ) -> NativeBoundaryResultV0<Self> {
+        if computed != request.expected()
+            || receipts.len() != request.preview().transactions().len()
+        {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::BindingMismatch,
+                "epoch_executed.commitments",
+            ));
+        }
+        for (index, receipt) in receipts.iter().enumerate() {
+            if usize::try_from(receipt.transaction_index()).ok() != Some(index) {
+                return Err(error(
+                    NativeBoundaryErrorCodeV0::NonContiguous,
+                    "epoch_executed.receipt_indices",
+                ));
+            }
+        }
+        Ok(Self { request, receipts })
+    }
+    pub const fn request(&self) -> &NativeEpochBlockExecutionRequestV1 {
+        &self.request
+    }
+    pub fn receipts(&self) -> &[crate::NativeExecutionReceiptV0] {
+        &self.receipts
+    }
+}
+
 impl NativeEpochBlockPreviewRequestV1 {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
@@ -216,6 +256,72 @@ mod tests {
             );
         }
         assert!(request(8, 10, 11, [0; 32], vec![]).is_err());
+    }
+
+    #[test]
+    fn epoch_artifact_preserves_both_parents_and_rejects_cross_codec_or_truncated_bytes() {
+        let preview = request(
+            8,
+            10,
+            11,
+            [7; 32],
+            vec![b"exact signed native bytes".to_vec()],
+        )
+        .unwrap();
+        let expected = NativeExpectedBlockCommitmentsV0::new(
+            Hash32V0::new([8; 32]),
+            StateRootV0::new([9; 32]).unwrap(),
+            ReceiptsRootV0::new([10; 32]).unwrap(),
+            Hash32V0::new([11; 32]),
+        )
+        .unwrap();
+        let execution = NativeEpochBlockExecutionRequestV1::new(
+            preview,
+            BlockIdV0::new([12; 32]).unwrap(),
+            expected,
+        )
+        .unwrap();
+        let receipt = crate::NativeExecutionReceiptV0::new(
+            0,
+            Hash32V0::new([13; 32]),
+            17,
+            19,
+            vec![],
+            Hash32V0::new([14; 32]),
+        )
+        .unwrap();
+        let executed =
+            NativeExecutedEpochBlockV1::new(execution.clone(), expected, vec![receipt]).unwrap();
+        assert!(NativeExecutedEpochBlockV1::new(execution, expected, vec![]).is_err());
+        let bytes = crate::encode_native_executed_epoch_block_artifact_v1(&executed).unwrap();
+        assert_eq!(
+            crate::decode_native_executed_epoch_block_artifact_v1(&bytes).unwrap(),
+            executed
+        );
+        assert!(crate::decode_native_executed_block_artifact_v0(&bytes).is_err());
+        for end in 0..bytes.len() {
+            assert!(crate::decode_native_executed_epoch_block_artifact_v1(&bytes[..end]).is_err());
+        }
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        assert!(crate::decode_native_executed_epoch_block_artifact_v1(&trailing).is_err());
+        let mut wrong_version = bytes.clone();
+        wrong_version[crate::NATIVE_EXECUTED_EPOCH_BLOCK_ARTIFACT_DOMAIN_V1.len() + 7] = 0;
+        assert!(crate::decode_native_executed_epoch_block_artifact_v1(&wrong_version).is_err());
+        // Changing target geometry cannot be smuggled through the decoder.
+        let mut wrong_geometry = bytes;
+        let target_offset = crate::NATIVE_EXECUTED_EPOCH_BLOCK_ARTIFACT_DOMAIN_V1.len()
+            + 8
+            + 4
+            + "epoch-boundary-test".len()
+            + 32
+            + 8
+            + 32 * 3
+            + 8
+            + 32 * 2
+            + 32;
+        wrong_geometry[target_offset + 7] = 12;
+        assert!(crate::decode_native_executed_epoch_block_artifact_v1(&wrong_geometry).is_err());
     }
 
     #[test]

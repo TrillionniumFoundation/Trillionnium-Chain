@@ -1997,10 +1997,12 @@ impl ConsensusRuntimePreflightV1 {
             .ordinary_start_height()
             .checked_add(max_blocks - 1)
             .context("bounded consensus target height overflows")?;
-        ensure!(
-            target_height <= config.workload_corpus().header().max_height,
-            "bounded consensus target exceeds the committed workload corpus"
-        );
+        if config.native_client_profile_v1().is_none() {
+            ensure!(
+                target_height <= config.workload_corpus()?.header().max_height,
+                "bounded consensus target exceeds the committed workload corpus"
+            );
+        }
         let signer_lifetime = ContinuousSignerLifetimeBoundsV0::from_campaign_v0(
             max_blocks,
             duration_seconds,
@@ -2880,6 +2882,7 @@ fn write_fleet_start_certificate_v1(
 }
 
 struct BoundedConsensusOwnerV1 {
+    native_client: Option<crate::native_client_runtime::NativeClientRuntimeV1>,
     config: LoadedValidatorConfig,
     authority: Option<ContinuousValidatorAuthorityV0>,
     mesh: Option<PersistentAuthenticatedPeerMeshV0>,
@@ -4204,7 +4207,10 @@ impl BoundedConsensusOwnerV1 {
         .map_err(|error| anyhow!("initialize restart ingress: {error}"))?;
         let restart_relay_window = RestartRelayAdmissionWindowV1::new(config.validator_set())
             .map_err(|error| anyhow!("initialize restart relay window: {error}"))?;
+        let native_client =
+            crate::native_client_runtime::NativeClientRuntimeV1::open_v1(&config, &authority)?;
         Ok(Self {
+            native_client,
             config,
             authority: Some(authority),
             mesh: Some(mesh),
@@ -4300,6 +4306,7 @@ impl BoundedConsensusOwnerV1 {
             let outbox_progress = self.flush_outbox_v1()?;
             let pending_proposal_progress = self.drain_pending_proposals_v1()?;
             let certificate_progress = self.drain_pending_certificates_v1()?;
+            let client_progress = self.poll_native_client_v1()?;
             let proposal_progress = self.maybe_propose_v1()?;
             self.refresh_stop_state_v1(Instant::now())?;
 
@@ -4320,6 +4327,7 @@ impl BoundedConsensusOwnerV1 {
                 || pending_proposal_progress
                 || certificate_progress
                 || proposal_progress
+                || client_progress
                 || ingress_progress
                 || timeout_progress
                 || restart_prepare_progress
@@ -4376,8 +4384,13 @@ impl BoundedConsensusOwnerV1 {
             && facts.application_applied_height_v0() == facts.finalized_height_v0();
         let reached_height_bound = self.highest_submitted_height >= self.preflight.target_height;
         let reached_duration_bound = now >= self.nominal_deadline;
+        let native_drained = self
+            .native_client
+            .as_ref()
+            .is_none_or(|client| client.drained_v1(facts.finalized_height_v0()));
         if self.stopping_since.is_none()
             && positive_ordinary_finality
+            && native_drained
             && (reached_height_bound || reached_duration_bound)
         {
             self.stopping_since = Some(now);
@@ -4389,7 +4402,7 @@ impl BoundedConsensusOwnerV1 {
                 .checked_add(TERMINAL_DRAIN_GRACE_V1)
                 .ok_or_else(|| anyhow!("positive-finality drain deadline overflows"))?;
             if now >= grace_deadline {
-                bail!("bounded duration elapsed without one positive ordinary finality cut");
+                bail!("DRAIN_INCOMPLETE: bounded duration elapsed before positive finality and accepted native work drained");
             }
         }
         Ok(())
@@ -4439,6 +4452,28 @@ impl BoundedConsensusOwnerV1 {
         )
     }
 
+    fn poll_native_client_v1(&mut self) -> Result<bool> {
+        let Some(client) = &mut self.native_client else {
+            return Ok(false);
+        };
+        if Instant::now() >= self.nominal_deadline {
+            client.stop_admission_v1();
+        }
+        let authority = self
+            .authority
+            .as_ref()
+            .context("native client authority is unavailable")?;
+        let facts = authority.facts_v0()?;
+        if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
+            return Ok(false);
+        }
+        client.observe_finality_v1(authority)?;
+        client.poll_v1(
+            authority.native_parent_timestamp_v1()?,
+            facts.finalized_height_v0(),
+        )
+    }
+
     fn maybe_propose_v1(&mut self) -> Result<bool> {
         if !self.restart_lifecycle.allows_local_proposal_v1() || self.stopping_since.is_some() {
             return Ok(false);
@@ -4465,8 +4500,23 @@ impl BoundedConsensusOwnerV1 {
             .authority
             .as_mut()
             .ok_or_else(|| anyhow!("continuous authority is unavailable"))?;
-        let proposal =
-            authority.signed_workload_proposal_from_loaded_config_v0(&mut self.config)?;
+        let proposal = if let Some(client) = &mut self.native_client {
+            let allow_business = next_height <= self.preflight.target_height.saturating_sub(2);
+            if !allow_business || Instant::now() >= self.nominal_deadline {
+                client.stop_admission_v1();
+            }
+            let Some(proposal) = client.maybe_proposal_v1(
+                authority,
+                allow_business,
+                self.config.consensus_parameters().max_block_time_step_ms(),
+            )?
+            else {
+                return Ok(false);
+            };
+            proposal
+        } else {
+            authority.signed_workload_proposal_from_loaded_config_v0(&mut self.config)?
+        };
         let block_id = proposal.block().id();
         let height = proposal.block().header().height().get();
         self.record_proposal_first_seen_v1(block_id, height)?;

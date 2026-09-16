@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 import tomllib
 from collections import defaultdict, deque
@@ -219,8 +220,17 @@ def main() -> int:
         require(manifest.get("features", {}).get("default") == [], f"{label}: default feature drift")
     require(authority_manifest["features"].get("persistent-authority-candidate") ==
             ["dep:trnm-durable-file-adapters-v0"], "authority candidate feature drift")
-    require(host_manifest["features"].get("persistent-authority-candidate") ==
-            ["trnm-poco-node-authority/persistent-authority-candidate"], "host candidate feature drift")
+    handoff_dependencies = {"trnm-consensus-crypto", "trnm-consensus-signer-journal",
+                            "trnm-consensus-types", "trnm-native-execution-v0"}
+    expected_host_features = {"trnm-poco-node-authority/persistent-authority-candidate",
+                              *(f"dep:{name}" for name in handoff_dependencies)}
+    host_features = host_manifest["features"].get("persistent-authority-candidate", [])
+    require(set(host_features) == expected_host_features and len(host_features) == len(expected_host_features),
+            "host candidate feature drift")
+    for name in handoff_dependencies:
+        dependency = host_manifest.get("dependencies", {}).get(name)
+        require(isinstance(dependency, dict) and dependency.get("optional") is True,
+                f"host candidate dependency must remain optional: {name}")
     require(package_metadata(packages[declared["authority_boundary"]]).get(
         "durable_authority_journal_owner") is False, "composition may not own the journal")
 
@@ -240,8 +250,21 @@ def main() -> int:
     require_source_contract(
         roots[declared["host_composition"]],
         ["PocoNodeHostV0", "NodeHostStartBlockedV0"],
-        ["trnm_consensus_", "rusqlite", "SigningKey", "TcpListener"],
+        ["rusqlite", "SigningKey", "TcpListener"],
     )
+    # Candidate handoff wiring calls the real verifier and journal owners. Its
+    # imports are legitimate only behind the explicit candidate feature; the
+    # default Cargo closure is independently checked by check_build_closures.
+    host_sources = roots[declared["host_composition"]] / "src"
+    host_lib = (host_sources / "lib.rs").read_text(encoding="utf-8")
+    require(re.search(r'#\[cfg\(feature = "persistent-authority-candidate"\)\]\s*'
+                      r'mod handoff_runtime_v1;', host_lib) is not None,
+            "host handoff module must remain candidate gated")
+    for source in host_sources.rglob("*.rs"):
+        if source == host_sources / "handoff_runtime_v1.rs":
+            continue
+        require("trnm_consensus_" not in source.read_text(encoding="utf-8"),
+                f"host consensus import outside candidate handoff wiring: {source.name}")
     require_source_contract(
         roots[declared["cli_entrypoint"]],
         ["NodeCliCommandV0", "run_v0"],

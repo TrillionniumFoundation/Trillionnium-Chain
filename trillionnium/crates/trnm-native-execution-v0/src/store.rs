@@ -23,6 +23,9 @@ const NATIVE_AUTH_TREE_SNAPSHOT_CODEC_VERSION_V0: u16 = 1;
 mod epoch_store;
 pub(crate) use epoch_store::CarriedRootReaderV1;
 
+#[path = "incremental_store_v1.rs"]
+pub mod incremental_store_v1;
+
 pub fn stored_object_key_v0(object_key_hex: &str) -> Result<Vec<u8>> {
     ensure!(!object_key_hex.is_empty(), "object key must not be empty");
     let component = object_key_hex.as_bytes();

@@ -383,3 +383,11 @@ impl<'a> ArtifactDecoderV0<'a> {
         Ok(())
     }
 }
+
+#[path = "epoch_artifact.rs"]
+mod epoch_artifact;
+pub use epoch_artifact::{
+    decode_native_executed_epoch_block_artifact_v1, encode_native_executed_epoch_block_artifact_v1,
+    NATIVE_EXECUTED_EPOCH_BLOCK_ARTIFACT_DOMAIN_V1,
+    NATIVE_EXECUTED_EPOCH_BLOCK_ARTIFACT_VERSION_V1,
+};

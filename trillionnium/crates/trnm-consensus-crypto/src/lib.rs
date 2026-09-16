@@ -15,7 +15,9 @@ use trnm_consensus_types::{
     Validator, ValidatorSet,
 };
 
+mod epoch_proposal_v1;
 mod epoch_transition;
+pub use epoch_proposal_v1::{verify_first_epoch_proposal_strict_v1, StrictFirstEpochProposalV1};
 mod pre_handoff;
 mod strict_finality;
 

@@ -53,6 +53,9 @@ pub struct AuthenticatedEpochApplicationEdgeV1 {
 }
 
 impl AuthenticatedEpochApplicationEdgeV1 {
+    pub(crate) fn recovery_evidence(&self) -> &crate::epoch_recovery::EpochRecoveryEvidenceV1 {
+        &self.checkpoint.recovery_evidence
+    }
     pub fn preview_request_v1(
         &self,
         timestamp_ms: u64,

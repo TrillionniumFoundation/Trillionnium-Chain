@@ -756,11 +756,65 @@ pub fn validate_root_bound_regular_body_v0(
     active_validator_set: &ValidatorSet,
     parameters: &ConsensusParametersV0,
 ) -> BlockValidationResult<RootBoundRegularBodyV0> {
+    validate_root_bound_body_for_kind_v1(
+        block,
+        active_validator_set,
+        parameters,
+        BlockKind::Regular,
+    )
+}
+
+/// Root-bound checkpoint/handoff body bytes. This is neither application Valid
+/// nor epoch authority: state/receipts and the committed transition still need
+/// their respective execution and strict activation owners.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RootBoundEpochBodyV1(RootBoundRegularBodyV0);
+impl RootBoundEpochBodyV1 {
+    pub const fn block_id(&self) -> BlockId {
+        self.0.block_id
+    }
+    pub const fn logical_block_size(&self) -> u64 {
+        self.0.logical_block_size
+    }
+    pub const fn transaction_count(&self) -> u32 {
+        self.0.transaction_count
+    }
+    pub const fn evidence_count(&self) -> u32 {
+        self.0.evidence_count
+    }
+}
+
+pub fn validate_root_bound_epoch_body_v1(
+    block: &crate::Block,
+    active_validator_set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+) -> BlockValidationResult<RootBoundEpochBodyV1> {
+    let kind = block.header().block_kind();
+    if !matches!(kind, BlockKind::EpochCheckpoint | BlockKind::EpochHandoff)
+        || crate::EpochGeometryV0::new(active_validator_set.epoch(), parameters)
+            .and_then(|g| g.expected_block_kind(block.header().height()))
+            .ok()
+            != Some(kind)
+    {
+        return Err(BlockValidationError::new(
+            BlockValidationErrorCode::NonCheckpointBlock,
+        ));
+    }
+    validate_root_bound_body_for_kind_v1(block, active_validator_set, parameters, kind)
+        .map(RootBoundEpochBodyV1)
+}
+
+fn validate_root_bound_body_for_kind_v1(
+    block: &crate::Block,
+    active_validator_set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+    kind: BlockKind,
+) -> BlockValidationResult<RootBoundRegularBodyV0> {
     let header = block.header();
     header.validate_shape().map_err(|_| {
         BlockValidationError::new(BlockValidationErrorCode::ParametersContextMismatch)
     })?;
-    if header.block_kind() != BlockKind::Regular {
+    if header.block_kind() != kind {
         return Err(BlockValidationError::new(
             BlockValidationErrorCode::NonRegularBlock,
         ));
@@ -869,6 +923,19 @@ pub struct ValidatedCheckpointCommitmentsV0 {
 }
 
 impl ValidatedCheckpointCommitmentsV0 {
+    /// Projects the already checked checkpoint counts into the common
+    /// application callback carrier. This remains static comparison material:
+    /// only a Core-issued request joined to the private application-store seal
+    /// can authorize a live Valid callback. It grants no epoch authority.
+    pub const fn application_commitments_v1(self) -> ValidatedBlockCommitmentsV0 {
+        ValidatedBlockCommitmentsV0 {
+            block_id: self.block_id,
+            logical_block_size: self.logical_block_size,
+            transaction_count: self.transaction_count,
+            evidence_count: self.evidence_count,
+        }
+    }
+
     pub const fn block_id(&self) -> BlockId {
         self.block_id
     }

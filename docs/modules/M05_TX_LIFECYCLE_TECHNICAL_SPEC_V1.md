@@ -574,3 +574,16 @@ Production reachability requires real CheckTx/RPC ingress, production signer and
 context resolvers, durable network broadcast, exact handoff/readback recovery,
 tombstone GC and unchanged-head crash evidence. Candidate WALs and fixtures do
 not activate this boundary.
+
+### Candidate clock binding
+
+For `native-public-candidate-v1`, capabilities bind `wall_clock_epoch_ms` to the
+manifest/profile digest. Envelope validity fields and block time are milliseconds
+since that epoch, despite the frozen envelope's `unix_ms` field names. The node
+computes time using checked subtraction from its own Unix clock; clients cannot
+supply the server time. SDK signing derives the same chain-relative value and
+rejects a future epoch. Genesis remains canonical timestamp 0. M15 defines the
+parent-relative step, skew readiness, empty catch-up and drain rules. An exact
+retry returns its durable prior status even after expiry; recovery of an already
+executed body verifies its historical block time and must not re-admit it using
+a backdated clock.

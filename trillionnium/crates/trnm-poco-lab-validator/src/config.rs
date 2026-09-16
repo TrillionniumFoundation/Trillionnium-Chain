@@ -319,6 +319,8 @@ impl PeerConfig {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ValidatorConfigJson {
+    #[serde(default)]
+    native_client_profile_sha256: Option<String>,
     schema_version: u32,
     run_id: String,
     validator_id: String,
@@ -378,7 +380,8 @@ pub struct LoadedValidatorConfig {
     ordinary_start_height: u64,
     workload_corpus_sha256: [u8; 32],
     workload_policy_sha256: [u8; 32],
-    workload_corpus: VerifiedWorkloadCorpusV1,
+    workload_corpus: Option<VerifiedWorkloadCorpusV1>,
+    native_client_profile: Option<crate::native_client_profile::NativeClientProfileV1>,
     verified_public_bootstrap: Option<VerifiedPublicNativeBootstrapV1>,
 }
 
@@ -523,44 +526,14 @@ impl LoadedValidatorConfig {
             &config.workload_policy_sha256,
             "config.workload_policy_sha256",
         )?;
-        require_manifest_hash(
-            &manifest,
-            "public/workload.corpus",
-            workload_corpus_sha256,
-            false,
-        )?;
-        require_manifest_hash(
-            &manifest,
-            "public/workload-policy.json",
-            workload_policy_sha256,
-            false,
-        )?;
-        let workload_corpus_path =
-            canonical_regular_file(&run_root.join("public/workload.corpus"))?;
-        let workload_policy_path =
-            canonical_regular_file(&run_root.join("public/workload-policy.json"))?;
-        require_descendant(&run_root, &workload_corpus_path, "workload corpus")?;
-        require_descendant(&run_root, &workload_policy_path, "workload policy")?;
-        let consensus_public_keys = validator_set
-            .validators()
-            .iter()
-            .map(|validator| validator.consensus_key().into_bytes())
-            .collect::<Vec<_>>();
-        let workload_corpus = VerifiedWorkloadCorpusV1::load_for_ordinary_start_height(
-            workload_corpus_path,
-            workload_policy_path,
-            workload_corpus_sha256,
-            workload_policy_sha256,
-            validator_set.chain_id().as_str(),
-            config.ordinary_start_height,
-            &consensus_public_keys,
-        )?;
-        let verified_public_bootstrap = verify_public_native_bootstrap_v1(
-            &run_root,
-            &validator_set,
-            &consensus_parameters,
-            &workload_corpus,
-        )?;
+        let (workload_corpus, native_client_profile, verified_public_bootstrap) =
+            load_application_material_v1(
+                &run_root,
+                &manifest,
+                &config,
+                &validator_set,
+                &consensus_parameters,
+            )?;
 
         let local_validator =
             ValidatorId::new(decode_hex32(&config.validator_id, "config.validator_id")?);
@@ -672,6 +645,7 @@ impl LoadedValidatorConfig {
             workload_corpus_sha256,
             workload_policy_sha256,
             workload_corpus,
+            native_client_profile,
             verified_public_bootstrap: Some(verified_public_bootstrap),
         })
     }
@@ -816,8 +790,15 @@ impl LoadedValidatorConfig {
         self.workload_policy_sha256
     }
 
-    pub const fn workload_corpus(&self) -> &VerifiedWorkloadCorpusV1 {
-        &self.workload_corpus
+    pub fn workload_corpus(&self) -> Result<&VerifiedWorkloadCorpusV1> {
+        self.workload_corpus
+            .as_ref()
+            .context("fixed workload is unavailable in the public-native profile")
+    }
+    pub fn native_client_profile_v1(
+        &self,
+    ) -> Option<&crate::native_client_profile::NativeClientProfileV1> {
+        self.native_client_profile.as_ref()
     }
 
     /// Read-only public projection of the already authenticated bootstrap cut.
@@ -832,8 +813,10 @@ impl LoadedValidatorConfig {
             .ok_or_else(|| anyhow!("verified public bootstrap was already consumed"))
     }
 
-    pub fn workload_corpus_mut(&mut self) -> &mut VerifiedWorkloadCorpusV1 {
-        &mut self.workload_corpus
+    pub fn workload_corpus_mut(&mut self) -> Result<&mut VerifiedWorkloadCorpusV1> {
+        self.workload_corpus
+            .as_mut()
+            .context("fixed workload is unavailable in the public-native profile")
     }
 
     /// Derives the exact native application configuration from manifest-bound
@@ -849,8 +832,19 @@ impl LoadedValidatorConfig {
             self.local_validator,
             self.validator_set.clone(),
             self.consensus_parameters,
-            self.workload_corpus.authorized_signers_v0()?,
-            self.workload_corpus.header().governance_signer_id.clone(),
+            if let Some(profile) = &self.native_client_profile {
+                profile.authorized_signers_v1()?
+            } else {
+                self.workload_corpus()?.authorized_signers_v0()?
+            },
+            if let Some(profile) = &self.native_client_profile {
+                profile.governance_signer_id.clone()
+            } else {
+                self.workload_corpus()?
+                    .header()
+                    .governance_signer_id
+                    .clone()
+            },
         )?;
         NativeApplicationConfigV0::from_canonical_lab_inputs_v0(inputs)
     }
@@ -1300,7 +1294,7 @@ impl PublicReportVerifierContext {
         };
         validate_topology(&topology, &shim, manifest.validator_count)?;
 
-        let expected_public = topology
+        let mut expected_public = topology
             .validators
             .iter()
             .map(|validator| {
@@ -1319,6 +1313,11 @@ impl PublicReportVerifierContext {
                 PathBuf::from("public/observer-configs/mac.json"),
             ])
             .collect::<BTreeSet<_>>();
+        if frozen_files.contains_key(Path::new("public/native-client-profile.json")) {
+            expected_public.remove(Path::new("public/workload.corpus"));
+            expected_public.remove(Path::new("public/workload-policy.json"));
+            expected_public.insert(PathBuf::from("public/native-client-profile.json"));
+        }
         if expected_public != frozen_files.keys().cloned().collect() {
             bail!("observer-public file inventory differs from topology");
         }
@@ -1492,25 +1491,12 @@ impl PublicReportVerifierContext {
             &config.workload_policy_sha256,
             "observer config.workload_policy_sha256",
         )?;
-        let consensus_public_keys = validator_set
-            .validators()
-            .iter()
-            .map(|validator| validator.consensus_key().into_bytes())
-            .collect::<Vec<_>>();
-        let verified_public_workload = VerifiedWorkloadCorpusV1::load_for_ordinary_start_height(
-            observer_root.join("public/workload.corpus"),
-            observer_root.join("public/workload-policy.json"),
-            workload_corpus_sha256,
-            workload_policy_sha256,
-            validator_set.chain_id().as_str(),
-            config.ordinary_start_height,
-            &consensus_public_keys,
-        )?;
-        let verified_public_bootstrap = verify_public_native_bootstrap_v1(
+        let (_, _, verified_public_bootstrap) = load_application_material_v1(
             &observer_root,
+            &shim,
+            &config,
             &validator_set,
             &parameters,
-            &verified_public_workload,
         )?;
         let bootstrap_initial_cut = verified_public_bootstrap.initial_ordinary_cut_v1();
 
@@ -1869,7 +1855,7 @@ fn validate_manifest(
     if actual_paths != paths {
         bail!("run root contains an unreferenced or missing manifest file");
     }
-    let expected_public = BTreeSet::from([
+    let mut expected_public = BTreeSet::from([
         PathBuf::from("topology.json"),
         PathBuf::from("public/validator-set.json"),
         PathBuf::from(format!("public/configs/{validator_id}.json")),
@@ -1881,6 +1867,15 @@ fn validate_manifest(
         PathBuf::from("public/bootstrap/finality-proof.cev0"),
         PathBuf::from("public/bootstrap/bootstrap.json"),
     ]);
+    if manifest
+        .public_files
+        .iter()
+        .any(|record| record.path == "public/native-client-profile.json")
+    {
+        expected_public.remove(Path::new("public/workload.corpus"));
+        expected_public.remove(Path::new("public/workload-policy.json"));
+        expected_public.insert(PathBuf::from("public/native-client-profile.json"));
+    }
     let expected_secret = ["consensus", "p2p-identity", "operator-recovery"]
         .map(|role| PathBuf::from(format!("secrets/{role}/{validator_id}.pk8")))
         .into_iter()
@@ -1896,7 +1891,7 @@ fn validate_manifest(
         .map(|record| strict_relative_path(&record.path))
         .collect::<Result<BTreeSet<_>>>()?;
     if actual_public != expected_public || actual_secret != expected_secret {
-        bail!("validator deployment must contain exactly three local role secrets and ten public inputs");
+        bail!("validator deployment must contain exactly three local role secrets and the selected profile public inputs");
     }
     if source == [0; 32] {
         bail!("manifest source digest must not be zero");
@@ -2095,24 +2090,38 @@ fn validate_manifest_binding(
     {
         bail!("manifest does not bind the selected validator config");
     }
-    require_manifest_hash(
-        manifest,
-        "public/workload.corpus",
-        decode_hex32(
-            &config.workload_corpus_sha256,
-            "config.workload_corpus_sha256",
-        )?,
-        false,
-    )?;
-    require_manifest_hash(
-        manifest,
-        "public/workload-policy.json",
-        decode_hex32(
-            &config.workload_policy_sha256,
-            "config.workload_policy_sha256",
-        )?,
-        false,
-    )?;
+    if let Some(profile) = &config.native_client_profile_sha256 {
+        require_manifest_hash(
+            manifest,
+            "public/native-client-profile.json",
+            decode_hex32(profile, "native client profile digest")?,
+            false,
+        )?;
+        if config.workload_corpus_sha256 != "00".repeat(32)
+            || config.workload_policy_sha256 != "00".repeat(32)
+        {
+            bail!("native profile must mark inactive workload digests as zero");
+        }
+    } else {
+        require_manifest_hash(
+            manifest,
+            "public/workload.corpus",
+            decode_hex32(
+                &config.workload_corpus_sha256,
+                "config.workload_corpus_sha256",
+            )?,
+            false,
+        )?;
+        require_manifest_hash(
+            manifest,
+            "public/workload-policy.json",
+            decode_hex32(
+                &config.workload_policy_sha256,
+                "config.workload_policy_sha256",
+            )?,
+            false,
+        )?;
+    }
     Ok(())
 }
 
@@ -2648,5 +2657,65 @@ fn is_private_lan(ip: IpAddr) -> bool {
     match ip {
         IpAddr::V4(value) => value.is_private(),
         IpAddr::V6(_) => false,
+    }
+}
+
+// Both the validator and independent observer derive the application policy
+// from the same exact manifest bytes. Native mode loads no workload corpus.
+fn load_application_material_v1(
+    root: &Path,
+    manifest: &ManifestJson,
+    config: &ValidatorConfigJson,
+    set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+) -> Result<(
+    Option<VerifiedWorkloadCorpusV1>,
+    Option<crate::native_client_profile::NativeClientProfileV1>,
+    VerifiedPublicNativeBootstrapV1,
+)> {
+    let consensus_keys = set
+        .validators()
+        .iter()
+        .map(|v| v.consensus_key().into_bytes())
+        .collect::<Vec<_>>();
+    if let Some(digest) = &config.native_client_profile_sha256 {
+        let hash = decode_hex32(digest, "native client profile digest")?;
+        require_manifest_hash(manifest, "public/native-client-profile.json", hash, false)?;
+        let path = canonical_regular_file(&root.join("public/native-client-profile.json"))?;
+        require_descendant(root, &path, "native client profile")?;
+        let profile = crate::native_client_profile::NativeClientProfileV1::load_v1(
+            &path,
+            hash,
+            set.chain_id().as_str(),
+            &consensus_keys,
+        )?;
+        let bootstrap = crate::bootstrap_material::verify_public_native_bootstrap_with_policy_v1(
+            root,
+            set,
+            parameters,
+            profile.authorized_signers_v1()?,
+            &profile.governance_signer_id,
+        )?;
+        Ok((None, Some(profile), bootstrap))
+    } else {
+        let corpus_hash = decode_hex32(&config.workload_corpus_sha256, "workload corpus digest")?;
+        let policy_hash = decode_hex32(&config.workload_policy_sha256, "workload policy digest")?;
+        require_manifest_hash(manifest, "public/workload.corpus", corpus_hash, false)?;
+        require_manifest_hash(manifest, "public/workload-policy.json", policy_hash, false)?;
+        let corpus_path = canonical_regular_file(&root.join("public/workload.corpus"))?;
+        let policy_path = canonical_regular_file(&root.join("public/workload-policy.json"))?;
+        require_descendant(root, &corpus_path, "workload corpus")?;
+        require_descendant(root, &policy_path, "workload policy")?;
+        let corpus = VerifiedWorkloadCorpusV1::load_for_ordinary_start_height(
+            corpus_path,
+            policy_path,
+            corpus_hash,
+            policy_hash,
+            set.chain_id().as_str(),
+            config.ordinary_start_height,
+            &consensus_keys,
+        )?;
+        let bootstrap = verify_public_native_bootstrap_v1(root, set, parameters, &corpus)?;
+        Ok((Some(corpus), None, bootstrap))
     }
 }

@@ -1,7 +1,7 @@
 # M02 Order / Consensus Kernel technical specification v1
 
-Status: **frozen ordinary v0 rules plus a concrete planned epoch integration;
-current Core remains pre-checkpoint; no activation or implementation claim**.
+Status: **frozen ordinary v0 rules plus implemented candidate outgoing epoch-zero
+checkpoint/seal owner; new-epoch Core activation remains planned and closed**.
 Primary module: M02. Producers/consumers: M00/M01/M03/M04/M06/M07/M08/M13/M15.
 
 ## Authority
@@ -11,8 +11,9 @@ selects a local implementation architecture; it does not alter v0 signing
 bytes, quorum, three-chain finality, seal semantics or epoch geometry.
 `trnm-consensus-core/src/{model,core,block_tree,safety_state_record,error}.rs`
 are current implementation references. `epoch_preparation.rs` currently has
-only `EvidenceVerified`. `Core::require_pre_checkpoint_height` refuses checkpoint
-and later heights, and ordinary admission refuses non-Regular blocks.
+only `EvidenceVerified`. Ordinary schema13 `Core::require_pre_checkpoint_height`
+refuses checkpoint and later heights. The explicit strict outgoing owner below
+admits the scheduled checkpoint/two seals without opening an epoch anchor.
 
 The target is one pure deterministic owner with explicit durability barriers,
 epoch-qualified ancestry and a recoverable checkpoint/seal/handoff path. Removing
@@ -37,6 +38,62 @@ current synthetic GenesisQC and must not be advertised as peer-authenticated.
 Pure kernel code owns no database, sockets, clock, thread pool or signer. M15
 routes effects to one designated adapter; callbacks cannot choose a different
 Core or reconstitute non-cloneable completion tokens from diagnostics.
+
+### Implemented outgoing owner and bounded migration
+
+`Core::into_old_epoch_boundary_v1(self, owner_generation: u64)` consumes a
+quiescent schema13 owner after strict Ed25519 key/state verification and returns
+`(OldEpochBoundaryCoreV1, Vec<Effect>)`. Generation must be positive. The no-Clone
+wrapper exposes strict `step_v1`, exact application-seal/finalization receipt
+callbacks, persistence binding and signature-release callback; no mutable Core
+or caller-selected verifier escapes. Migration is rejected after an explicit
+SafetyRules authorization was issued, or with unresolved persistence, signature,
+application/finality/sync work or unequal finalized/applied tips. The sole
+schema13→14 successor is the exact old state plus empty boundary metadata and
+revision+1. Existing signer state, QCs, views and roots cannot change in migration.
+
+`OldEpochBoundaryStateV1` retains full authenticated checkpoint proposals with
+their exact application parent and full seal proposals. A checkpoint enters this
+record only after the existing authorized Valid callback; no public static body
+summary creates application authority. Multiple bounded candidates may coexist
+until finality; one speculative P is not the chosen checkpoint. Every retained
+proposal and parent, QC/TC signature and terminal Valid overlay is checked by
+strict persistence validation. The owner uses the existing Core vote, lock,
+three-chain and persist-before-sign engine. Journal7 cannot acknowledge the new
+record; M03's distinct journal8 is required.
+
+Scheduled seals use `validate_empty_epoch_seal_v1` and `ConsensusSeal` in the
+existing block tree: unchanged state/next-commitment roots, exact canonical empty
+body/receipts/evidence, direct parent/QC and scheduled old-set geometry. They
+never request application execution, create P/overlay/receipt, or become an
+application-finalization target. QC(C+2) finalizes the actual checkpoint C;
+Core's true finalized/applied tips remain C. Synced seal admission persists the
+same bounded evidence without a vote or application request; exact replay is
+idempotent. The explicit pure SafetyRules context understands these typed seals;
+the ordinary context remains Regular-only.
+
+The implemented outgoing phases are 0..4 only, derived from retained evidence
+and applied checkpoint rather than a mutable scalar. `TRNMS14O` is the separate
+local codec described in M03. The schema13 frozen codec, ordinary owner fence
+and generic recovery rejection of schema14 remain intact. There is no new-set
+view reset, anchor-installed Core, ordinary signer retirement, or full cross-epoch
+`FinalizedTip` support in this slice. Strict full first-proposal verification in
+M01 is a prerequisite, not an activation API.
+
+`Core::prepare_old_epoch_terminal_recovery_v1(record, context,
+expected_record_checksum, expected_owner_generation)` strictly revalidates only
+the stable `CheckpointApplied` cut, exact full retained checkpoint/two-seal proof,
+canonical bytes and independently expected checksum. Pending sign/P/finalization,
+sync, halt or foreign cuts reject. The returned `StrictOldEpochTerminalRecoveryV1`
+is inert: it cannot step, sign, emit timers or yield a Core. M15 must subsequently
+join actual journal8 freshness, native COMMITTED checkpoint and shared signer
+custody capabilities; equality of public scalar tuples cannot replace that join.
+
+Acceptance currently combines a full outgoing Core test using the explicit
+unit verifier/application fixture, exact codec/migration/replay tests, and
+independent real Ed25519 first-proposal tests. A real-signer, native prepared
+checkpoint receipt, journal8 ACK and strict live Core joined positive test is
+still required before candidate host activation can be claimed.
 
 ### Planned epoch owner types
 

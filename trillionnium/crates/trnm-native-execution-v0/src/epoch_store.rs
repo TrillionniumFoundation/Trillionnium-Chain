@@ -6,7 +6,6 @@ use super::*;
 use crate::epoch_edge::EpochApplicationCoordinatesV1;
 use crate::AuthenticatedEpochApplicationEdgeV1;
 
-#[cfg(test)]
 const EPOCH_SNAPSHOT_CODEC_VERSION_V1: u16 = 2;
 
 pub(crate) struct CarriedRootReaderV1<'a> {
@@ -179,8 +178,8 @@ fn verify_absent_seal_rows(
     Ok(())
 }
 
-#[cfg(test)]
 impl InMemoryNativeExecutionStoreV0 {
+    #[cfg(test)]
     pub(crate) fn apply_epoch_state_plan_v1(
         &mut self,
         epoch_plan: EpochStatePlanV1,
@@ -230,6 +229,7 @@ impl InMemoryNativeExecutionStoreV0 {
         .context("encode sparse epoch snapshot")
     }
 
+    #[cfg(test)]
     pub(crate) fn decode_epoch_authenticated_snapshot_v1(
         chain_id: String,
         signers: Vec<AuthorizedSignerV0>,
@@ -291,6 +291,41 @@ impl InMemoryNativeExecutionStoreV0 {
         store.roots = snapshot.roots;
         store.validate_epoch_snapshot(coordinates)?;
         Ok(store)
+    }
+
+    pub(crate) fn decode_recovered_epoch_snapshot_v1(
+        chain_id: String,
+        signers: Vec<AuthorizedSignerV0>,
+        parameters: ConsensusParametersV0,
+        command_ids: BTreeSet<String>,
+        nonces: BTreeSet<(String, u64)>,
+        bytes: &[u8],
+        edges: &[([u8; 32], crate::epoch_recovery::AuditedEpochEvidenceV1)],
+    ) -> Result<Self> {
+        let mut coordinates = Vec::with_capacity(edges.len());
+        for (binding, edge) in edges {
+            ensure!(
+                edge.activation.new_validator_set().chain_id().as_str() == chain_id,
+                "recovered snapshot edge chain mismatch"
+            );
+            coordinates.push(edge.coordinates(*binding)?);
+        }
+        let latest = edges
+            .last()
+            .context("recovered sparse snapshot lacks edge")?;
+        ensure!(
+            parameters == *latest.1.activation.new_consensus_parameters(),
+            "recovered snapshot parameters differ from strict edge"
+        );
+        Self::decode_epoch_snapshot(
+            chain_id,
+            signers,
+            parameters,
+            command_ids,
+            nonces,
+            bytes,
+            &coordinates,
+        )
     }
 
     fn validate_epoch_snapshot(&self, edges: &[EpochApplicationCoordinatesV1]) -> Result<()> {

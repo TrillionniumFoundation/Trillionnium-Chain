@@ -468,11 +468,14 @@ pub use state_sync_wire_ingress::{
 #[cfg(feature = "tx-admission-wal")]
 pub use tx_admission_wal::{
     CanonicalAdmissionContextResolverV0, CanonicalSignerIdentityResolverV0,
-    DurableNativeCommitReceiptVerifierV0, NativeCommitReceiptEvidenceV0,
-    NativeCommitReceiptVerifierV0, NodeOwnedTxAdmissionBoundaryV0, PendingNonceHandoffRecordV0,
-    SqlitePendingNonceAuthorityV0, TxAdmissionReplayFloorEvidenceV1,
+    DurableNativeCommitReceiptVerifierV0, NativeAdmissionErrorV1, NativeAdmissionProfileV1,
+    NativeAdmissionRecordV1, NativeAdmissionStatusV1, NativeCommitReceiptEvidenceV0,
+    NativeCommitReceiptVerifierV0, NativePendingAdmissionV1, NodeOwnedTxAdmissionBoundaryV0,
+    PendingNonceHandoffRecordV0, SqlitePendingNonceAuthorityV0, TxAdmissionReplayFloorEvidenceV1,
     TxAdmissionReplayFloorVerifierV1, TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0,
     VerifiedNativeCommitReceiptV0, VerifiedTxAdmissionReplayFloorV1,
+    MAX_NATIVE_ADMISSION_OUTER_BYTES_V1, MAX_NATIVE_PENDING_BYTES_V1,
+    MAX_NATIVE_PENDING_TRANSACTIONS_V1, NATIVE_PUBLIC_PROFILE_V1,
     TX_ADMISSION_BOUNDARY_BROADCAST_V0, TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0,
     TX_ADMISSION_BOUNDARY_CHECKTX_V0, TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
     TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_V0,

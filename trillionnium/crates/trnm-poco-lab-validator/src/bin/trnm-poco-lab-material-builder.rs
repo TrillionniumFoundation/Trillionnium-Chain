@@ -38,6 +38,8 @@ fn main() -> Result<()> {
         .and_then(|value| value.into_string().ok())
         .ok_or_else(|| anyhow::anyhow!(usage()))?;
     match command.as_str() {
+        "native-client-profile" => build_native_profile(arguments),
+        "native-client-bootstrap" => build_native_client_bootstrap(arguments),
         "workload-corpus" => build_workload(arguments),
         "native-only-bootstrap" => build_bootstrap(arguments),
         _ => bail!(usage()),
@@ -115,4 +117,56 @@ fn parse_hash(value: Option<std::ffi::OsString>, field: &str) -> Result<[u8; 32]
     Ok(bytes
         .try_into()
         .expect("64 hex characters decode to exactly 32 bytes"))
+}
+
+fn build_native_profile(mut arguments: impl Iterator<Item = std::ffi::OsString>) -> Result<()> {
+    let chain = arguments
+        .next()
+        .and_then(|s| s.into_string().ok())
+        .context("native-client-profile requires chain ID")?;
+    let directory = PathBuf::from(
+        arguments
+            .next()
+            .context("native-client-profile requires fresh absolute isolated key directory")?,
+    );
+    if arguments.next().is_some() {
+        bail!("unexpected native profile argument");
+    }
+    let profile =
+        trnm_poco_lab_validator::native_client_profile::generate_isolated_native_client_profile_v1(
+            &directory, &chain,
+        )?;
+    println!(
+        "{}",
+        serde_json::json!({"profile_sha256":hex::encode(profile.digest_v1()?),"profile":profile.schema,"production_activation":false})
+    );
+    Ok(())
+}
+fn build_native_client_bootstrap(
+    mut arguments: impl Iterator<Item = std::ffi::OsString>,
+) -> Result<()> {
+    let template = PathBuf::from(arguments.next().context("missing validator-set template")?);
+    let profile = PathBuf::from(arguments.next().context("missing native public profile")?);
+    let digest = parse_hash(arguments.next(), "native-client-profile-sha256")?;
+    let secrets = PathBuf::from(
+        arguments
+            .next()
+            .context("missing consensus key directory")?,
+    );
+    let set_output = PathBuf::from(arguments.next().context("missing validator-set output")?);
+    let bootstrap_output = PathBuf::from(arguments.next().context("missing bootstrap output")?);
+    if arguments.next().is_some() {
+        bail!("unexpected native bootstrap argument");
+    }
+    let result =
+        trnm_poco_lab_validator::bootstrap_material::build_public_native_client_bootstrap_v1(
+            template,
+            profile,
+            digest,
+            secrets,
+            set_output,
+            bootstrap_output,
+        )?;
+    println!("{}", serde_json::to_string(&result)?);
+    Ok(())
 }

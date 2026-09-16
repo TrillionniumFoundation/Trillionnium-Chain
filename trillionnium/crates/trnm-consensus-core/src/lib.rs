@@ -66,6 +66,10 @@
 
 extern crate alloc;
 
+mod epoch_boundary_v1;
+pub use epoch_boundary_v1::{
+    OldEpochBoundaryPhaseV1, OldEpochBoundaryStateV1, PreparedOldEpochCheckpointV1,
+};
 mod epoch_preparation;
 pub use epoch_preparation::{
     maximum_epoch_preparation_record_bytes_v1, prepare_epoch_handoff_evidence_v1,
@@ -204,15 +208,16 @@ pub use crate::core::{
     NativeValidCompletionRecoveredActionV0, NativeValidCompletionRecoveryAttestationV0,
     NativeValidCompletionRecoveryChallengeV0, NativeValidCompletionRecoveryReconcilerV0,
     NativeValidCompletionRecoveryReplayV0, NativeValidCompletionRecoverySessionV0,
-    PayloadValidationRecoveryChallengeV0, PayloadValidationRecoveryDecisionV0,
-    PayloadValidationRecoveryReconcilerV0, PayloadValidationRecoverySessionV0,
-    PreparedAuthenticatedGenesisApplicationBootstrapV0, PreparedH1StateSyncBootstrapV0,
-    StateSyncAnchorOrdinaryActivationV0, StateSyncAnchorOrdinaryRecoveryChallengeV0,
-    StateSyncAnchorOrdinaryRecoveryReconcilerV0, StateSyncAnchorOrdinaryRecoverySessionV0,
-    StateSyncAnchorRecoveryChallengeV0, StateSyncAnchorRecoveryReconcilerV0,
-    StateSyncAnchorRecoverySessionV0, StateSyncAnchorSuccessorPhaseV0,
-    StateSyncAnchorSuccessorRecoveryChallengeV0, StateSyncAnchorSuccessorRecoveryReconcilerV0,
-    StateSyncAnchorSuccessorRecoverySessionV0, StateSyncAnchorSuccessorReplayV0,
+    OldEpochBoundaryCoreV1, PayloadValidationRecoveryChallengeV0,
+    PayloadValidationRecoveryDecisionV0, PayloadValidationRecoveryReconcilerV0,
+    PayloadValidationRecoverySessionV0, PreparedAuthenticatedGenesisApplicationBootstrapV0,
+    PreparedH1StateSyncBootstrapV0, StateSyncAnchorOrdinaryActivationV0,
+    StateSyncAnchorOrdinaryRecoveryChallengeV0, StateSyncAnchorOrdinaryRecoveryReconcilerV0,
+    StateSyncAnchorOrdinaryRecoverySessionV0, StateSyncAnchorRecoveryChallengeV0,
+    StateSyncAnchorRecoveryReconcilerV0, StateSyncAnchorRecoverySessionV0,
+    StateSyncAnchorSuccessorPhaseV0, StateSyncAnchorSuccessorRecoveryChallengeV0,
+    StateSyncAnchorSuccessorRecoveryReconcilerV0, StateSyncAnchorSuccessorRecoverySessionV0,
+    StateSyncAnchorSuccessorReplayV0, StrictOldEpochTerminalRecoveryV1,
     AUTHENTICATED_GENESIS_H1_COMPLETION_CARRIER_CHECKSUM_DOMAIN_V0,
 };
 pub use crate::error::{CoreError, Result};
@@ -241,11 +246,13 @@ pub use crate::model::{
     PAYLOAD_VALIDATION_PARENT_BINDING_DOMAIN_V0, SAFETY_STATE_SCHEMA_VERSION,
 };
 pub use crate::safety_state_record::{
-    decode_safety_state_record_v0_exact, encode_safety_state_record_v0,
-    minimum_safety_state_record_limits_v0, safety_state_record_config_ref_v0,
+    decode_old_epoch_boundary_safety_record_v1_exact, decode_safety_state_record_v0_exact,
+    encode_old_epoch_boundary_safety_record_v1, encode_safety_state_record_v0,
+    minimum_old_epoch_boundary_record_limits_v1, minimum_safety_state_record_limits_v0,
+    old_epoch_boundary_record_context_ref_v1, safety_state_record_config_ref_v0,
     SafetyStateRecordContextV0, SafetyStateRecordErrorV0, SafetyStateRecordLimitsV0,
-    UnverifiedSafetyStateRecordV0, SAFETY_STATE_RECORD_CODEC_VERSION_V0,
-    SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0,
+    UnverifiedSafetyStateRecordV0, OLD_EPOCH_BOUNDARY_SAFETY_CODEC_V1,
+    SAFETY_STATE_RECORD_CODEC_VERSION_V0, SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0,
 };
 pub use trnm_consensus_safety_rules::SafetyRulesFinalityPermitV1;
 

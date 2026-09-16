@@ -1705,6 +1705,132 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         Ok(PocoNodeLabFinalizedQueryV0 { proof, read })
     }
 
+    /// Resolve a live native handoff only through this owner's fresh durable
+    /// application read and current strictly authenticated finalized proof.
+    #[cfg(feature = "tx-admission-wal")]
+    pub fn commit_native_admission_at_finalized_tip_v1(
+        &self,
+        boundary: &mut crate::tx_admission_wal::NodeOwnedTxAdmissionBoundaryV0,
+        admission: &mut crate::tx_admission_wal::NativePendingAdmissionV1,
+    ) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+        let query = self
+            .read_finalized_by_height_v0(self.facts_v0().finalized_height_v0())
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        let positions = query
+            .read_v0()
+            .executed_v0()
+            .request()
+            .transactions()
+            .iter()
+            .enumerate()
+            .filter(|(_, bytes)| bytes.as_slice() == admission.transaction().exact_outer_bytes())
+            .map(|(index, _)| index)
+            .collect::<Vec<_>>();
+        if positions.len() != 1 {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "native handoff must occur exactly once in finalized block",
+            ));
+        }
+        let proof = query.proof_v0();
+        let receipt = query
+            .read_v0()
+            .receipt_commitments_v0()
+            .get(positions[0])
+            .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "native finalized receipt is absent",
+            ))?;
+        let evidence = crate::tx_admission_wal::NativeCommitReceiptEvidenceV0::new(
+            admission.metadata().digest().as_bytes(),
+            proof.finalized_block_id_v0(),
+            trnm_consensus_types::Height::new(proof.finalized_height_v0()),
+            proof.state_root_v0(),
+            *receipt.as_bytes(),
+            *proof.proof_id_v0().as_bytes(),
+        )
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        boundary
+            .commit_native_with_readback_v1(
+                admission,
+                evidence,
+                &self.application,
+                proof.proof_v0(),
+                proof.authenticated_parent_timestamp_ms_v0(),
+            )
+            .map_err(|error| {
+                PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                    "native handoff finality commit: {error:?}"
+                ))
+            })
+    }
+
+    #[cfg(feature = "tx-admission-wal")]
+    pub fn recover_native_admission_with_finality_v1(
+        &self,
+        boundary: &mut crate::tx_admission_wal::NodeOwnedTxAdmissionBoundaryV0,
+        transaction: &trnm_application_tx_builder_v0::BuiltCanonicalTxV0,
+        finality: &FinalityProofV0,
+        parent_timestamp: u64,
+    ) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+        let header = finality.finalized_block().header();
+        if header.height().get() > self.facts_v0().finalized_height_v0() {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "native recovery target exceeds current Core finality",
+            ));
+        }
+        let read = self
+            .application
+            .read_finalized_by_block_id_with_proof_v0(
+                BlockIdV0::new(*header.id().as_bytes())
+                    .map_err(|e| PocoNodeLabAuthorityErrorV0::AuthorityChain(e.to_string()))?,
+                finality,
+                parent_timestamp,
+            )
+            .map_err(|e| PocoNodeLabAuthorityErrorV0::AuthorityChain(e.to_string()))?;
+        let positions = read
+            .executed_v0()
+            .request()
+            .transactions()
+            .iter()
+            .enumerate()
+            .filter(|(_, bytes)| bytes.as_slice() == transaction.exact_outer_bytes())
+            .map(|(index, _)| index)
+            .collect::<Vec<_>>();
+        if positions.len() != 1 {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "native recovery exact body occurrence mismatch",
+            ));
+        }
+        let digest = transaction
+            .envelope()
+            .tx_hash()
+            .map_err(|e| PocoNodeLabAuthorityErrorV0::AuthorityChain(e.to_string()))?;
+        let receipt = read.receipt_commitments_v0().get(positions[0]).ok_or(
+            PocoNodeLabAuthorityErrorV0::InvalidBootstrap("native recovery receipt missing"),
+        )?;
+        let evidence = crate::tx_admission_wal::NativeCommitReceiptEvidenceV0::new(
+            digest,
+            header.id(),
+            header.height(),
+            header.state_root(),
+            *receipt.as_bytes(),
+            *finality.id().as_bytes(),
+        )
+        .map_err(|e| PocoNodeLabAuthorityErrorV0::AuthorityChain(e.to_string()))?;
+        boundary
+            .recover_handed_off_with_native_readback(
+                transaction,
+                evidence,
+                &self.application,
+                finality,
+                parent_timestamp,
+            )
+            .map_err(|e| {
+                PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                    "native handoff recovery: {e:?}"
+                ))
+            })
+    }
+
     pub const fn checkpoint_v0(&self) -> &ExternalNodeCheckpointV0 {
         &self.checkpoint
     }
@@ -2914,11 +3040,27 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         timestamp_ms: u64,
     ) -> Result<(PocoNodeLabProposalParentV0, NativeBlockPreviewV0), PocoNodeLabAuthorityErrorV0>
     {
-        let parent = self.proposal_parent_v0()?;
-        if transactions.is_empty() || timestamp_ms <= parent.authenticated_parent_timestamp_ms_v0()
-        {
+        if transactions.is_empty() {
             return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "next preview must be non-empty and strictly newer than its authenticated parent",
+                "non-empty preview requires a transaction",
+            ));
+        }
+        self.preview_next_native_v1(transactions, timestamp_ms)
+    }
+
+    /// Preview an exact native Regular successor, including empty descendants
+    /// which carry no business goodput but make the last business block final.
+    /// Every context, parent, time, and execution-root check remains identical.
+    pub fn preview_next_native_v1(
+        &self,
+        transactions: Vec<Vec<u8>>,
+        timestamp_ms: u64,
+    ) -> Result<(PocoNodeLabProposalParentV0, NativeBlockPreviewV0), PocoNodeLabAuthorityErrorV0>
+    {
+        let parent = self.proposal_parent_v0()?;
+        if timestamp_ms <= parent.authenticated_parent_timestamp_ms_v0() {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "native successor must be strictly newer than its authenticated parent",
             ));
         }
         let config = self.application.config_v0();
@@ -3236,7 +3378,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
     }
 
     /// Computes the four frozen-v0 application commitments for one exact
-    /// non-empty candidate body without mutating any application sequence.
+    /// candidate body (including an empty Regular block) without mutating any application sequence.
     ///
     /// The preview is inert proposal-construction input. Admission later
     /// recomputes the complete transition from the same pinned parent and
@@ -3246,8 +3388,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         request: &NativeBlockPreviewRequestV0,
     ) -> Result<NativeBlockPreviewV0, PocoNodeLabAuthorityErrorV0> {
         let config = self.application.config_v0();
-        if request.transactions().is_empty()
-            || request.chain_id().as_str() != config.chain_id_v0()
+        if request.chain_id().as_str() != config.chain_id_v0()
             || request.genesis_hash().as_bytes() != &config.genesis_hash_v0()
             || request.active_validator_set_id().as_bytes()
                 != self.core.config().validator_set().id().as_bytes()

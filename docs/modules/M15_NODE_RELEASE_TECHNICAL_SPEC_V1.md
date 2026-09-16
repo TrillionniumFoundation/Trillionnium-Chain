@@ -142,7 +142,7 @@ socket does not open them. Legacy `trnm-rpc` and G1 fixture finality are exclude
 from this composition.
 
 The signed public campaign descriptor adds the chosen profile, application
-signer-policy digest, genesis timestamp, client socket relative name, M05 queue
+signer-policy digest, `wall_clock_epoch_ms`, client socket relative name, M05 queue
 limits, maximum block cadence and finite drain budget. Application signers are
 an explicit list of signer ID, stable canonical identity, role and public key,
 validated for duplicate/conflicting identity and role before store creation.
@@ -161,15 +161,23 @@ occupied namespace and derive a fresh declared genesis/bootstrap; an existing
 network joins by its exact public descriptor. Generation does not authorize
 production activation or HSM claims.
 
-Time follows actual campaign wall-clock milliseconds. Choose one agreed fresh
-`genesis_timestamp_ms` in the descriptor, never the workload fixture's zero
-origin or 1ms validity width. Consensus timers use a monotonic clock separately.
-For a regular proposal let `P` be the exact authenticated parent timestamp,
-`W` the local wall time and `S` the authenticated `max_block_time_step_ms`:
+The frozen canonical laboratory genesis keeps timestamp 0 and its existing
+hash formula. The new candidate profile commits one agreed `wall_clock_epoch_ms`
+in its manifest-bound descriptor. Native envelope validity and block timestamps
+use **chain-relative milliseconds**: `W = now_unix_ms - wall_clock_epoch_ms`,
+with checked subtraction. The existing envelope field names retain `unix_ms`
+for wire compatibility; capabilities and signing clients must explicitly expose
+this candidate time domain and never sign raw Unix time for this profile.
+The coordinator chooses a fresh epoch before commissioning the h1-h3 prefix;
+validators reject a future epoch or clock skew instead of inventing an offset.
+No 1ms fixture validity width applies. Consensus timers use a monotonic clock
+separately. For a regular proposal let `P` be the exact authenticated parent
+timestamp, `W` the owner-derived chain time and `S` the authenticated
+`max_block_time_step_ms`:
 compute checked `T = min(max(W, P+1), P+S)`. If arithmetic overflows or the
 parent is more than the signed candidate skew allowance (default 5,000ms)
-ahead of local wall time, return `TIME_UNREADY`; do not move the clock backwards.
-If a resumed chain lags wall time, empty certified blocks may advance its
+ahead of local chain time, return `TIME_UNREADY`; do not move the clock backwards.
+If a resumed chain lags owner-derived chain time, empty certified blocks may advance its
 parent-relative clock; new client admission waits until chain time is within
 the same allowance. This local readiness rule changes no frozen timestamp rule.
 

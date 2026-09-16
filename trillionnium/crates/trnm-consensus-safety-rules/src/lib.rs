@@ -139,6 +139,7 @@ pub struct SafetyRulesContextV1 {
     author: ValidatorId,
     trusted_genesis_timestamp_ms: u64,
     max_ancestry_blocks: u32,
+    old_epoch_boundary_v1: bool,
 }
 
 impl SafetyRulesContextV1 {
@@ -167,7 +168,34 @@ impl SafetyRulesContextV1 {
             author,
             trusted_genesis_timestamp_ms,
             max_ancestry_blocks,
+            old_epoch_boundary_v1: false,
         })
+    }
+
+    /// Explicit outgoing-epoch kernel context. The caller must separately own
+    /// the durable phase and checkpoint execution; this pure context alone
+    /// cannot authorize a signer or application transition.
+    pub fn new_old_epoch_boundary_v1(
+        validator_set: ValidatorSet,
+        consensus_parameters: ConsensusParametersV0,
+        author: ValidatorId,
+        trusted_genesis_timestamp_ms: u64,
+        max_ancestry_blocks: u32,
+    ) -> SafetyRulesResultV1<Self> {
+        let mut value = Self::new(
+            validator_set,
+            consensus_parameters,
+            author,
+            trusted_genesis_timestamp_ms,
+            max_ancestry_blocks,
+        )?;
+        trnm_consensus_types::EpochGeometryV0::new(
+            value.validator_set.epoch(),
+            &value.consensus_parameters,
+        )
+        .map_err(|_| SafetyRulesErrorV1::InvalidContext)?;
+        value.old_epoch_boundary_v1 = true;
+        Ok(value)
     }
 
     pub const fn validator_set(&self) -> &ValidatorSet {
@@ -344,6 +372,7 @@ pub struct SafetyRulesStateV1 {
     author: ValidatorId,
     trusted_genesis_timestamp_ms: u64,
     max_ancestry_blocks: u32,
+    old_epoch_boundary_v1: bool,
     current_view: View,
     last_voted_view: Option<View>,
     last_timeout_view: Option<View>,
@@ -377,6 +406,7 @@ impl SafetyRulesStateV1 {
             author: context.author,
             trusted_genesis_timestamp_ms: context.trusted_genesis_timestamp_ms,
             max_ancestry_blocks: context.max_ancestry_blocks,
+            old_epoch_boundary_v1: context.old_epoch_boundary_v1,
             current_view: seed.current_view,
             last_voted_view: seed.last_voted_view,
             last_timeout_view: seed.last_timeout_view,
@@ -522,6 +552,7 @@ impl SafetyRulesStateV1 {
             && self.author == context.author
             && self.trusted_genesis_timestamp_ms == context.trusted_genesis_timestamp_ms
             && self.max_ancestry_blocks == context.max_ancestry_blocks
+            && self.old_epoch_boundary_v1 == context.old_epoch_boundary_v1
     }
 }
 
@@ -954,13 +985,37 @@ where
     let mut previous_height = state.finalized.height;
     let mut previous_block_id = state.finalized.block_id;
     let mut previous_timestamp_ms = state.finalized.timestamp_ms;
+    let mut previous_header = None;
     let mut seen = BTreeSet::new();
     seen.insert(previous_block_id);
 
     for proposal in ancestry.chain(core::iter::once(target)) {
         let block = proposal.block();
         let header = block.header();
-        if header.block_kind() != BlockKind::Regular {
+        if context.old_epoch_boundary_v1 {
+            let geometry = trnm_consensus_types::EpochGeometryV0::new(
+                header.epoch(),
+                &context.consensus_parameters,
+            )
+            .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
+            if geometry.expected_block_kind(header.height()).ok() != Some(header.block_kind())
+                || header.block_kind() == BlockKind::EpochHandoff
+            {
+                return Err(SafetyRulesErrorV1::UnsupportedBlockKind);
+            }
+            if matches!(
+                header.block_kind(),
+                BlockKind::EpochSeal1 | BlockKind::EpochSeal2
+            ) {
+                let parent = previous_header.ok_or(SafetyRulesErrorV1::ParentEdgeMismatch)?;
+                trnm_consensus_types::validate_empty_epoch_seal_v1(
+                    proposal,
+                    parent,
+                    &context.consensus_parameters,
+                )
+                .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
+            }
+        } else if header.block_kind() != BlockKind::Regular {
             return Err(SafetyRulesErrorV1::UnsupportedBlockKind);
         }
         if header.genesis_hash() != context.validator_set.genesis_hash()
@@ -1024,6 +1079,7 @@ where
         previous_height = header.height();
         previous_block_id = block.id();
         previous_timestamp_ms = header.timestamp_ms();
+        previous_header = Some(header);
     }
     Ok(extends_lock)
 }
@@ -1069,6 +1125,9 @@ fn compute_state_digest_v1(state: &SafetyRulesStateV1) -> SafetyRulesStateDigest
     update_qc_reference_v1(&mut hasher, &state.locked_qc);
     update_finalized_v1(&mut hasher, state.finalized);
     hasher.update(state.revision.to_be_bytes());
+    if state.old_epoch_boundary_v1 {
+        hasher.update(b"trnm.safety-rules.old-epoch-boundary.v1");
+    }
     SafetyRulesStateDigestV1(hasher.finalize().into())
 }
 

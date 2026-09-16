@@ -1537,6 +1537,7 @@ dependencies = [
 name = "trnm-consensus-safety-store"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
  "fs2",
  "getrandom 0.2.17",
  "libc",
@@ -1545,6 +1546,7 @@ dependencies = [
  "sha2",
  "tempfile",
  "trnm-consensus-core",
+ "trnm-consensus-crypto",
  "trnm-consensus-types",
 ]
 
@@ -1830,6 +1832,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "tempfile",
+ "trnm-application-tx-builder-v0",
  "trnm-consensus-core",
  "trnm-consensus-crypto",
  "trnm-consensus-external-watermark",
@@ -1842,10 +1845,12 @@ dependencies = [
  "trnm-consensus-unix-fleet-signer",
  "trnm-consensus-unix-remote-signer",
  "trnm-finality-types",
+ "trnm-mempool",
  "trnm-native-application",
  "trnm-native-execution-v0",
  "trnm-poco-node",
  "trnm-protocol",
+ "trnm-tx-lifecycle-v0",
 ]
 
 [[package]]

@@ -79,6 +79,34 @@ entrypoint and rejects an epoch anchor. Neither result activates Core or commits
 application state. Typed failures include `EpochEvidence` and `EpochActivation`
 in addition to the existing decode, context and consensus causes.
 
+### Complete first-proposal verification (implemented candidate)
+
+```text
+verify_first_epoch_proposal_strict_v1(
+  activation: &StrictSameVersionEpochActivationAuthorityV0,
+  proposal: SignedProposalV0,
+  budget: &mut Cev0AdmissionBudgetV0
+) -> Result<StrictFirstEpochProposalV1, ValidationError>
+```
+
+`epoch_proposal_v1.rs` verifies the actual canonical application payload and
+bounded evidence root, exact C+3 handoff header/terminal parent, exact synthetic
+justify/authorization, leader signature and all required skipped-view TC/QC
+references. Its private no-Clone result exposes the exact proposal,
+`RootBoundEpochBodyV1` summary and activation binding. It grants no application
+Valid result, P record, Core migration or signing lease. Consumers still require
+M06/M08 execution against the authenticated application parent.
+
+The shared strict witness verifier is also used by first-epoch finality, avoiding
+a second TC policy. Raw resource, all QC references, nested TC shares, proposer
+and evidence signature work are reserved before cryptographic verification;
+an insufficient budget rejects without starting that work, and an invalid
+signature does not refund a reserved budget. Existing header-only first-proposal
+and ordinary finality APIs keep their distinct authority and anchor restrictions.
+Real Ed25519 tests cover view1, a skipped view with exact TC, one-short budgets,
+substituted payload and bad signature. These establish cryptographic admission,
+not live Core/new-signer activation.
+
 ### Identity and domain binding
 
 | Authority | Required independently authenticated context |

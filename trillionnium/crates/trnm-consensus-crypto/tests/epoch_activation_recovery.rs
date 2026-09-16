@@ -939,3 +939,156 @@ fn skipped_epoch_views_require_and_verify_every_timeout_signature() {
         }
     }
 }
+
+#[test]
+fn complete_first_proposal_strictly_binds_payload_and_tc_before_first_block() {
+    use ed25519_dalek::{Signer, SigningKey};
+    use sha2::{Digest, Sha256};
+    use trnm_consensus_crypto::{
+        decode_verify_epoch_first_finality_strict_v1, verify_first_epoch_proposal_strict_v1,
+    };
+    use trnm_consensus_types::*;
+    let (evidence, old_set, old_params, binding) = fixture("positive");
+    let activation = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &old_set,
+        &old_params,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let (raw, expected, _) = first_epoch_finality_bytes(&activation);
+    let base = decode_verify_epoch_first_finality_strict_v1(
+        evidence.as_preimages(),
+        &raw,
+        &old_set,
+        &old_params,
+        expected,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let first = base.proof().finalized_block();
+    let context = (
+        first.justify_qc().clone(),
+        first.epoch_anchor_authorization().unwrap().clone(),
+    );
+    for views in [[1, 2, 3], [3, 5, 8]] {
+        let (raw, expected, _) =
+            first_epoch_finality_with_views(&activation, views, Some(context.clone()));
+        let proof = decode_verify_epoch_first_finality_strict_v1(
+            evidence.as_preimages(),
+            &raw,
+            &old_set,
+            &old_params,
+            expected,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+        let source = proof.proof().finalized_block();
+        let h = source.header();
+        let payload =
+            ApplicationPayloadV0::new(vec![b"real first transaction bytes".to_vec()]).unwrap();
+        let body = BlockBodyV0::new(payload, Vec::new()).unwrap();
+        let header = BlockHeader::new(
+            h.genesis_hash(),
+            h.chain_id(),
+            h.protocol_version(),
+            h.epoch(),
+            h.view(),
+            h.height(),
+            h.block_kind(),
+            h.parent_id(),
+            h.proposer_id(),
+            h.validator_set_id(),
+            h.consensus_parameters_hash(),
+            body.payload_root().unwrap(),
+            h.state_root(),
+            h.receipts_root(),
+            body.evidence_root().unwrap(),
+            h.timestamp_ms(),
+            None,
+        )
+        .unwrap();
+        let set = activation.new_validator_set();
+        let params = activation.new_consensus_parameters();
+        let mut seed = Sha256::new();
+        seed.update(b"trnm.poco-bft.checkpoint-finality.private-fixture.v0:");
+        seed.update(header.proposer_id().as_bytes());
+        let key = SigningKey::from_bytes(&seed.finalize().into());
+        let make = |payload: Vec<u8>, bad_signature: bool| {
+            let root = ProposalWitnessV0::signing_root_for(
+                &header,
+                source.justify_qc(),
+                source.timeout_certificate(),
+                source.epoch_anchor_authorization(),
+            )
+            .unwrap();
+            let mut signature = key.sign(root.as_bytes()).to_bytes();
+            if bad_signature {
+                signature[0] ^= 1;
+            }
+            let witness = ProposalWitnessV0::new(
+                &header,
+                source.justify_qc().clone(),
+                source.timeout_certificate().cloned(),
+                source.epoch_anchor_authorization().cloned(),
+                Signature64::from_array(signature),
+                set,
+                Some(&old_set),
+                params,
+                activation.terminal_old_header().timestamp_ms(),
+            )
+            .unwrap();
+            SignedProposalV0::new(
+                Block::new(header.clone(), payload, Vec::new()).unwrap(),
+                witness,
+                set,
+                Some(&old_set),
+                params,
+                activation.terminal_old_header().timestamp_ms(),
+            )
+            .unwrap()
+        };
+        let payload = body.application_payload().try_cev0_bytes().unwrap();
+        let valid = make(payload.clone(), false);
+        let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+        let verified =
+            verify_first_epoch_proposal_strict_v1(&activation, valid.clone(), &mut budget).unwrap();
+        assert_eq!(verified.proposal(), &valid);
+        assert_eq!(verified.body().transaction_count(), 1);
+        assert_eq!(verified.activation_binding(), binding);
+        assert_eq!(
+            budget.signature_work(),
+            1 + source
+                .timeout_certificate()
+                .map_or(0, |tc| tc.entries().len())
+        );
+        let short = budget.signature_work() - 1;
+        assert!(verify_first_epoch_proposal_strict_v1(
+            &activation,
+            valid,
+            &mut Cev0AdmissionBudgetV0::new(budget.maximum_root_bytes(), short)
+        )
+        .is_err());
+        assert!(verify_first_epoch_proposal_strict_v1(
+            &activation,
+            make(
+                ApplicationPayloadV0::new(vec![b"substituted transaction".to_vec()])
+                    .unwrap()
+                    .try_cev0_bytes()
+                    .unwrap(),
+                false
+            ),
+            &mut Cev0AdmissionBudgetV0::protocol_v0()
+        )
+        .is_err());
+        let mut bad_budget = Cev0AdmissionBudgetV0::protocol_v0();
+        assert!(verify_first_epoch_proposal_strict_v1(
+            &activation,
+            make(payload, true),
+            &mut bad_budget
+        )
+        .is_err());
+        assert_eq!(bad_budget.signature_work(), budget.signature_work());
+    }
+}

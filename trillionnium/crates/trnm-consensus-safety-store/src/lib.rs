@@ -29,6 +29,11 @@
 //! process owner in an owner-controlled namespace.
 
 mod epoch_preparation_sqlite_v1;
+mod old_epoch_journal_v1;
+pub use old_epoch_journal_v1::{
+    ConfirmedOldEpochSafetyHeadV1, OldEpochJournalCutV1, OldEpochJournalErrorV1,
+    OldEpochSafetyHeadPinV1, OldEpochSafetyJournalProfileV1, SqliteOldEpochSafetyJournalV1,
+};
 mod error;
 mod hash;
 mod schema;

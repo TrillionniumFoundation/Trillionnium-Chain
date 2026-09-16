@@ -1,7 +1,7 @@
 # M07 State / JMT / Storage technical specification v1
 
-Status: **native sparse-epoch computation implemented as a candidate;
-durable epoch persistence, incremental storage and production acceptance pending**.
+Status: **candidate sparse-epoch computation and bounded schema-4 persistence implemented;
+incremental owner integration, multiple-epoch recovery and production acceptance pending**.
 Primary module: M07. Producers: M06/M08/M13. Consumers: M02/M06/M08/M13/M14.
 
 ## Authority
@@ -24,30 +24,174 @@ local persistence while preserving key/value codecs, state roots and receipts.
 the root-only adapter specified below. `complete.rs::compute_complete_epoch_native_block_v1`
 uses it with the opaque M08 edge, computes the authenticated configuration/usage
 prefix and user operations into one C+3 plan, and preserves ordinary +1 checks.
-The public owner entry point is read-only `preview_epoch_block_v1`; it does not
-persist an epoch P or advance the application head. Owner affinity and fresh
-checkpoint P digest/commit sequence are rechecked before opening the snapshot.
+The read-only `preview_epoch_block_v1` and durable `execute_epoch_block_v1`
+require owner affinity, a fresh committed checkpoint P digest/sequence and exact
+current head C. The latter produces a separately encoded dual-parent P through
+M08's explicit schema-4 bridge. `preview_epoch_descendant_v1` and
+`execute_epoch_descendant_v1` use an owner-affine prepared P to compute/store
+C+4/C+5 before the first-new finality arrives. They do not publish those roots.
 
-The candidate plan's private epoch tag permits exact C to C+3 application to an
-in-memory copy. Tests then compute C+4/C+5 over that copy. This is not yet the
-durable speculative-parent API below. Empty, leaf and internal JMT tests retain
-real child versions, reject physical seal rows and compare roots against ordinary
-contiguous computation. The real signed checkpoint fixture covers C=8 to 11,
-raw request substitution rejection and an old owner capability after reopen.
+The plan's private epoch tag permits exact C to C+3 application to an in-memory
+copy. Empty, leaf and internal JMT tests retain real child versions, reject
+physical seal rows and compare roots against ordinary contiguous computation.
+The real signed fixture persists C=8 to P11/P12/P13, closes/reopens the store,
+strictly verifies real new-set three-chain signatures, and commits11 once.
 
-Sparse snapshot **local codec 2** is presently compiled only for tests in
-`epoch_store.rs`. It retains the existing Borsh snapshot field order and node/
-value encodings, changing the local codec version to 2. Its constructor requires
-the retained verified edges; every root gap must be exact C to C+3, checkpoint
-root must match, all gap rows must be absent, and active parameters must match
-the latest edge. Codec 1 explicitly rejects sparse root histories and its decoder
-rejects codec 2. The test decoder does not recover authority from a checksum.
-Production durable open does not call it; persisted edge evidence, fresh edge
-reconstruction and the schema-4 bridge in M08 are prerequisites to enabling it.
-Incremental `ni_*` storage, bounded GC, two-epoch durable recovery and state-sync
-installation remain planned; the candidate does not close snapshot growth.
+Sparse snapshot **local codec 2** is enabled only through the schema-4 epoch
+bridge in `epoch_store.rs` / `epoch_durable.rs`. It retains the existing Borsh
+snapshot field order and node/value encodings, changing the local version to2.
+Every root gap must be exact C to C+3; the checkpoint root must match, all gap
+rows must be absent, and active parameters must match retained strict evidence.
+Codec1 rejects sparse root histories and its decoder rejects codec2. The local
+checksum alone cannot create an edge: prepared-capability recovery reconstructs
+native checkpoint/cutoff, original bound preparation and strict joint evidence.
+The bridge retains complete snapshots and audits retained history; it does not
+close storage growth or per-block cumulative audit cost.
+
+The current bridge admits the first transition from a legacy-v0 committed
+checkpoint and ordinary descendants. A later epoch checkpoint from P familyv1,
+full sparse-history proof/RPC adapters, state-sync installation, incremental
+owner migration and GC remain pending. These limitations are fail-closed.
 
 ## Interfaces
+
+### Implemented incremental transaction kernel; owner integration pending
+
+`store::incremental_store_v1` now contains a real SQLite JMT delta kernel using
+`incremental_schema_v1.sql`. It borrows the native owner's transaction; it opens
+no file, creates no signing owner and returns no native commit/finality receipt.
+The current durable application still uses its snapshot path until an explicit
+owner migration joins these operations to P, replay, lifecycle and commit state
+in the same transaction. There is no automatic backend switch.
+
+- `install_incremental_schema_v1` creates the exact new tables inside the
+  owner's explicit migration transaction. `check_incremental_schema_v1` is the
+  open/migration inventory check and rejects altered definitions, extra indexes
+  and triggers. It is not rerun as a per-block historical audit.
+- `import_incremental_snapshot_v1` currently admits only a fully checked
+  canonical genesis snapshot with one real root and sequence0. Multi-root or
+  positive-height imports use the separate explicit history importer below.
+- `import_incremental_history_v1` accepts a fully audited ordinary snapshot and
+  an owner-authenticated exact root/block/epoch list. It checks every contiguous
+  real root, imports physical history once and records `ni_imported_root`
+  bindings under a source-anchor digest; the native owner must bind that anchor
+  in its explicit migration record. This is a storage primitive, not an owner
+  migration API or downloaded-snapshot authority. Sparse imports remain fenced.
+- `retire_incremental_prepared_v1` retires a selected uncommitted subtree in
+  child-first order and releases exact anchor pins/references. The owner must
+  retire native P rows in the same transaction and roll back on any error.
+  `ni_sequence` retains the prepare watermark after pruning, preventing reuse
+  of a retired last preparation's sequence.
+- `open_incremental_reader_v1` resolves an exact committed block or prepared
+  state-delta artifact. It borrows the owner's SQLite transaction, overlays only
+  the bounded prepared suffix, checks immutable ancestry/record bindings and
+  rebases through an ancestor's exact committed root without changing descendants.
+  `prove` verifies inclusion/noninclusion and key preimages against the pinned
+  root. The restore-only rightmost-leaf API rejects multi-version use.
+- `stage_incremental_plan_v1` consumes the existing complete execution plan,
+  checks its real parent, root and every planned write proof, then inserts only
+  changed nodes/values/preimages into the prepared delta. Same-height siblings
+  never share speculative NodeKey rows. Exact retries return the original
+  persisted reference; a changed plan for the same block rejects.
+- `apply_incremental_delta_v1` requires the entire expected storage head and
+  exact prepared reference, rechecks its parent, and writes selected nodes,
+  values, root, references, commit result, phase and head atomically in that
+  transaction. Exact operation retries compare all bound fields. The application
+  owner must first verify finality, bind the returned storage artifact into P,
+  abort on error and complete its existing SQLite/file/readback durability
+  barriers. Calling this storage operation alone supplies none of that authority.
+
+The local delta codec is u16-be1, u32 node count, then bounded u32-framed pinned
+JMT Borsh NodeKey and Node bytes; u32 value count followed by version u64-be,
+key hash32, presence u8 and framed value; then u32 preimage count followed by
+key hash32 and framed preimage. All maps have strict canonical order; trailing,
+duplicate, oversized and wrong-version data rejects before use. Node paths,
+padding, child versions/hashes/types and redundant leaf/child counts are checked.
+Tombstones retain explicit presence=0 with no bytes. Existing root/key/value
+hash algorithms are unchanged.
+
+The prepared storage artifact is distinct from `NativeExecutedBlockV0`'s
+artifact ID. Its local digest binds namespace/profile, parent kind/id/height/root,
+anchor height/root, target height/block/root, delta hash and persist sequence.
+M08 must include this reference in its own immutable P; neither ID substitutes
+for the other. Head/namespace/record domains are local storage metadata only.
+The storage commit sequence counts applied deltas, independently of schema4's
+durable sequence that also counts preparation operations.
+The migration-support tables are `ni_imported_root(version U64 PRIMARY KEY,
+source_anchor H32, result BYTES[144], checksum H32)` and
+`ni_sequence(id INTEGER PRIMARY KEY CHECK(id=1), persist_sequence U64)`, both
+STRICT. Imported result is exact height8/block32/root32/sequence8/intent32/
+head-checksum32. Its domain `trnm.native-incremental.imported-root.v1` binds the
+namespace digest, source anchor and result using the kernel's framed hash helper.
+These are local schema additions; existing exact-schema databases are rejected
+unless explicitly migrated, never silently relabelled.
+
+This kernel implements only ordinary +1 updates in one epoch; epoch-tagged plans
+and changed-epoch commits reject until persisted edge reconstruction is joined.
+It retains all historical roots/value floors and implements no GC. Current pins
+are only retained-root and speculative-parent pins; their count derives from
+commit sequence plus bounded pending rows, avoiding a history scan per prepare.
+Before enabling other pin reasons or pruning, replace this closed accounting
+with the corresponding atomic counters and audited release authority.
+
+Bounds are 128 live prepared records, depth8, 2 GiB live prepared bytes,
+64 MiB reader suffix, 16,384 pins, 1,024 writes/preimages, 65,537 nodes, 4,096
+bytes per node, 128 per NodeKey, 65,536 per preimage and 16 MiB aggregate values
+and preimages separately. Preparation reserves capacity for two descendants
+before opening a new branch. Enabled deployment profiles must still prove that
+their largest admissible three-block suffix fits these limits; no production
+profile is enabled by constants alone. Pending-capacity queries use the phase
+index and never read committed delta bodies.
+
+The storage tests compare 96 successive real JMT roots with the existing store,
+check that fixed-size updates retain constant delta bytes, and exercise fork
+isolation/rebase, exact retry, tombstones/empty roots, bounded depth, every delta
+truncation, corrupt state/records, schema changes and SQLite transaction abort/
+file reopen. Additional regressions import twelve historical updates and verify
+all roots before continuing with a delta, retire a fork without reusing sequence,
+reject oversized SQL blobs without treating them as absence, and reject a fourth
+16 MiB delta when its suffix would exceed the reader cap. These establish
+storage behavior, not an end-to-end node performance
+result, physical power-loss qualification or completion of S1.
+
+### Owner migration contract under implementation (schema 5)
+
+Primary M07, consumer M08: the ordinary integration must install `ni_*` inside
+the existing application's SQLite transaction and retain the same file/operation
+owner. The schema-5 opt-in migration requires an exact expected committed head,
+a fully audited source schema3 and no unresolved source preparations. It imports
+all authenticated retained real roots with their exact block/root identities,
+then records one immutable migration anchor binding source schema, head, durable
+sequence, snapshot digest, replay-baseline digests and namespace generation. It
+must compare the target roots before atomically changing the schema selector.
+An ordinary open never migrates. Schema4 sparse import is a later explicit path;
+it cannot silently use the ordinary migration.
+
+The new native P family binds exact native artifact, application parent, optional
+parent P digest, storage delta artifact/persist sequence, target root, lifecycle
+and **only new replay identities** into one immutable native P digest. It stores
+no historical JMT snapshot. New replay commands/nonces enter indexed committed
+tables only with finality commit; prepared descendants resolve their bounded
+ancestor replay deltas plus the immutable migration baseline. The same commit
+transaction applies the exact `ni_*` delta, advances native head/sequence, marks
+native P committed and publishes replay identities. Its storage commit sequence
+is independent from the native sequence that also counts preparations.
+
+Native preview/execution must use the same pinned SQLite transaction for root,
+node/value/preimage and replay reads. Runtime speculation receives an immutable
+bounded projection of authenticated current live objects; workers cannot share
+an unpinned SQLite connection. JMT planning reads nodes through the transaction
+reader and stores only changed nodes/values. This initial integration may still
+scan current live application state for frozen PoCO/lifecycle validation; it must
+not claim constant total execution cost. It must never reconstruct or serialize
+all historical nodes/values on ordinary prepare or commit.
+
+Kernel admission requires the newly staged delta **plus its unresolved suffix**
+to fit the reader's 64 MiB budget; success cannot publish an unreadable artifact.
+SQL reads check blob lengths before copying bytes. Owner fork pruning retires
+only uncommitted descendants and releases their exact anchor pins/reference
+counts in the same transaction. Missing/conflicting P, delta, parent, replay or
+root identity fences the operation; it is not a deterministic transaction error.
 
 ### Owned storage packages and schema separation
 
@@ -194,7 +338,7 @@ local storage representation, not replacements for existing Borsh value bytes.
 | Table / primary key | Required columns and constraints |
 |---|---|
 | `ni_meta` / singleton id=1 | schema TAG=1; chain BYTES; genesis H32; namespace H32; owner_generation U64; head_height U64; head_block H32; head_version U64; head_root H32; commit_sequence U64; head_intent H32; head_checksum H32. |
-| `ni_nodes` / node_key BYTES | node_version U64; node_bytes BYTES; node_hash H32; references U64. node_key and node_bytes are exact pinned-JMT Borsh; version equals decoded NodeKey version; hash equals decoded node hash. |
+| `ni_nodes` / node_key BYTES | node_version U64; node_bytes BYTES; node_hash H32; refs U64. node_key and node_bytes are exact pinned-JMT Borsh; version equals decoded NodeKey version; hash equals decoded node hash. |
 | `ni_values` / (key_hash H32, version U64) | present TAG in {0,1}; value BYTES. present=0 requires zero value bytes and means tombstone, not missing database row. |
 | `ni_preimages` / key_hash H32 | preimage BYTES; SHA-256 matches key_hash; a different preimage at the same hash rejects. |
 | `ni_roots` / version U64 | epoch U64; consensus_height U64; block_id H32; root H32; root_node_key BYTES; commit_sequence U64 UNIQUE; intent H32 UNIQUE. Only actually applied blocks enter this table; version=consensus_height. |
@@ -272,9 +416,9 @@ not authorize a consensus height jump or change active application configuration
 
 ## Persistence and recovery
 
-### Planned schema-4 bridge before incremental migration
+### Implemented schema-4 bridge before incremental migration
 
-M08's planned `native_durable_execution_p_v1` and `native_epoch_edge_v1` provide
+M08's `native_durable_execution_p_v1` and `native_epoch_edge_v1` provide
 an explicit bounded full-snapshot bridge. Schema 3 retains codec1 and ordinary
 P semantics. Explicit migration to schema 4 adds the epoch evidence/context
 tables; the first-new and later sparse-history preparations use P family v1,
@@ -431,9 +575,10 @@ local schema/edge bytes and positive/negative vectors before accepting readers.
 
 ## Activation boundary
 
-The candidate root adapter and real first-new computation have passing local
-tests. The schema-4 durable bridge, incremental schema/migration, GC and two-epoch
-matrix must land and pass before removing any old fence or full-audit protection.
+The candidate root adapter, real first-new persistence/strict commit and local
+reopen tests pass. The incremental transaction kernel has separate storage tests;
+its owner migration, GC, complete proof adapters and two-epoch matrix must land
+and pass before removing any remaining fence or full-audit protection.
 If pinned JMT behavior cannot satisfy the root-only design, stop and revise this
 local storage contract under producer/consumer review; never alter frozen
 consensus bytes or publish seal application effects as a workaround.

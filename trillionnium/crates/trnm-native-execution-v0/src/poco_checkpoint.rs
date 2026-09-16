@@ -921,7 +921,7 @@ pub(crate) fn authorize_native_checkpoint_execution_v0(
     })
 }
 
-fn native_execution_from_receipts_v0(
+pub(crate) fn native_execution_from_receipts_v0(
     transactions: &[Vec<u8>],
     receipts: &[NativeExecutionReceiptV0],
 ) -> Result<NativeBlockExecutionV0> {
@@ -1035,6 +1035,66 @@ impl PreparedNativePocoCheckpointV0 {
     }
 }
 
+/// Fresh actual P joined to the exact journal-bound checkpoint, before voting.
+/// It borrows that preparation so the retained reservation cannot be replaced.
+/// This is not a committed checkpoint or an independent Core Valid permit.
+#[must_use]
+pub struct PreparedCheckpointExecutionReceiptV1<'a> {
+    prepared: &'a PreparedNativePocoCheckpointV0,
+    row: crate::ConfirmedDurableExecutionHistoryRowV0,
+}
+impl PreparedCheckpointExecutionReceiptV1<'_> {
+    pub fn header(&self) -> &trnm_consensus_types::BlockHeader {
+        self.prepared.header()
+    }
+    pub fn durable_row(&self) -> &crate::ConfirmedDurableExecutionHistoryRowV0 {
+        &self.row
+    }
+    pub fn validated_commitments(&self) -> trnm_consensus_types::ValidatedCheckpointCommitmentsV0 {
+        self.prepared.bound.authorized().validated_commitments()
+    }
+    pub fn old_validator_set(&self) -> &ValidatorSet {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .old_validator_set()
+    }
+    pub fn new_validator_set(&self) -> &ValidatorSet {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .new_validator_set()
+    }
+    pub fn old_parameters(&self) -> &ConsensusParametersV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .old_parameters()
+    }
+    pub fn new_parameters(&self) -> &ConsensusParametersV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .new_parameters()
+    }
+    pub fn next_epoch_commitment(&self) -> trnm_consensus_types::NextEpochCommitmentV0 {
+        self.prepared
+            .bound
+            .authorized()
+            .prepared()
+            .commitment_authority()
+            .commitment()
+    }
+}
+
 /// Exact committed checkpoint and strictly verified old-set two-seal finality.
 /// This receipt deliberately precedes the joint handoff certificate. It does
 /// not authorize signing: the signer still authenticates its own role, key,
@@ -1133,6 +1193,7 @@ pub struct ConfirmedNativePocoCheckpointV0 {
     pub(crate) old_parameters: ConsensusParametersV0,
     pub(crate) new_validator_set: ValidatorSet,
     pub(crate) new_parameters: ConsensusParametersV0,
+    pub(crate) recovery_evidence: crate::epoch_recovery::EpochRecoveryEvidenceV1,
 }
 impl ConfirmedNativePocoCheckpointV0 {
     pub fn header(&self) -> &trnm_consensus_types::BlockHeader {
@@ -1163,6 +1224,53 @@ impl ConfirmedNativePocoCheckpointV0 {
 }
 
 impl DurableNativeApplicationV0 {
+    pub fn confirm_prepared_checkpoint_execution_v1<'a>(
+        &self,
+        prepared: &'a PreparedNativePocoCheckpointV0,
+        executed: &NativeExecutedBlockV0,
+    ) -> Result<PreparedCheckpointExecutionReceiptV1<'a>> {
+        let journal = self.poco_preparation_journal_v0()?;
+        crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
+            &journal,
+            &prepared.bound,
+        )?;
+        let row = self.confirm_durable_execution_history_row_v0(executed)?;
+        let request = executed.request();
+        let header = prepared.header();
+        ensure!(
+            request.chain_id().as_str() == header.chain_id().as_str()
+                && request.genesis_hash().as_bytes() == header.genesis_hash().as_bytes()
+                && request.block_id().as_bytes() == header.id().as_bytes()
+                && request.height().get() == header.height().get()
+                && request.parent().block_id().as_bytes() == header.parent_id().as_bytes()
+                && request.timestamp_ms() == header.timestamp_ms()
+                && request.active_validator_set_id().as_bytes()
+                    == header.validator_set_id().as_bytes()
+                && request.expected().payload_root().as_bytes() == header.payload_root().as_bytes()
+                && request.expected().post_state_root().as_bytes()
+                    == header.state_root().as_bytes()
+                && request.expected().receipts_root().as_bytes()
+                    == header.receipts_root().as_bytes()
+                && request.expected().evidence_root().as_bytes()
+                    == header.evidence_root().as_bytes(),
+            "persisted checkpoint execution differs from journal-bound header"
+        );
+        let exact = native_execution_from_receipts_v0(request.transactions(), executed.receipts())?;
+        ensure!(
+            exact.application_payload() == prepared.body().application_payload()
+                && exact.execution_receipts() == prepared.receipts(),
+            "checkpoint body/receipt substitution"
+        );
+        crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
+            &journal,
+            &prepared.bound,
+        )?;
+        ensure!(
+            row.belongs_to_application_at_path_v0(self, self.path()),
+            "checkpoint P owner replaced"
+        );
+        Ok(PreparedCheckpointExecutionReceiptV1 { prepared, row })
+    }
     /// Rebuild the cutoff proof from this owner's committed JMT, strictly
     /// verify the supplied raw finality chain, execute the exact request, and
     /// reserve/bind its complete native checkpoint header before returning.
@@ -1338,6 +1446,10 @@ impl DurableNativeApplicationV0 {
         let old_parameters = *receipt.old_parameters();
         let new_validator_set = receipt.new_validator_set().clone();
         let new_parameters = *receipt.new_parameters();
+        let next_commitment = receipt
+            .next_epoch_commitment()
+            .try_cev0_bytes()
+            .map_err(|e| anyhow::anyhow!("encode epoch commitment: {e:?}"))?;
         let PreHandoffCheckpointReceiptV1 {
             prepared,
             read,
@@ -1354,6 +1466,33 @@ impl DurableNativeApplicationV0 {
             .header()
             .try_cev0_bytes()
             .map_err(|e| anyhow::anyhow!("checkpoint parent encoding: {e:?}"))?;
+        let recovery_evidence = crate::epoch_recovery::EpochRecoveryEvidenceV1 {
+            checkpoint_artifact: trnm_native_application::encode_native_executed_block_artifact_v0(
+                read.executed_v0(),
+            )?,
+            cutoff_finality: prepared.raw_cutoff_proof,
+            cutoff_parent: prepared.raw_cutoff_parent,
+            checkpoint_parent: parent.clone(),
+            checkpoint_header: prepared
+                .bound
+                .authorized()
+                .header()
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("checkpoint encoding: {e:?}"))?,
+            checkpoint_finality: raw_checkpoint_two_seal_finality.to_vec(),
+            anchor: raw_anchor_certificate_kernel.to_vec(),
+            preparation_id: prepared.bound.authorized().prepared().preparation_id(),
+            old_set: old_validator_set
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("old set encoding: {e:?}"))?,
+            old_parameters: old_parameters.canonical_bytes(),
+            new_set: new_validator_set
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("new set encoding: {e:?}"))?,
+            new_parameters: new_parameters.canonical_bytes(),
+            next_commitment,
+        };
+        recovery_evidence.encode()?;
         let handoff = crate::poco_joint_handoff::authorize_poco_checkpoint_joint_handoff_v0(
             prepared.bound,
             &parent,
@@ -1368,6 +1507,7 @@ impl DurableNativeApplicationV0 {
             old_parameters,
             new_validator_set,
             new_parameters,
+            recovery_evidence,
         })
     }
 
@@ -1914,6 +2054,95 @@ mod native_authorization_tests {
         (finality.try_cev0_bytes().unwrap(), anchor)
     }
 
+    fn epoch_first_finality(
+        edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+        headers: &[BlockHeader],
+    ) -> Vec<u8> {
+        let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
+        let audit = edge
+            .recovery_evidence()
+            .audit_strict(edge.old_validator_set(), edge.old_parameters(), &mut budget)
+            .unwrap();
+        let activation = &audit.activation;
+        let set = edge.new_validator_set();
+        let parameters = edge.new_parameters();
+        let common = || {
+            let mut bytes = 0u16.to_be_bytes().to_vec();
+            bytes.extend(set.genesis_hash().as_bytes());
+            bytes.extend((set.chain_id().as_bytes().len() as u16).to_be_bytes());
+            bytes.extend(set.chain_id().as_bytes());
+            bytes.extend(set.protocol_version().get().to_be_bytes());
+            bytes.extend(set.epoch().get().to_be_bytes());
+            bytes.extend(set.id().as_bytes());
+            bytes
+        };
+        let mut bytes = common();
+        bytes.extend(parameters.hash().as_bytes());
+        let mut anchor = common();
+        anchor.extend(0u64.to_be_bytes());
+        anchor.extend(edge.consensus_parent().height().get().to_be_bytes());
+        anchor.extend(edge.consensus_parent().id().as_bytes());
+        anchor.extend(0u32.to_be_bytes());
+        for (index, header) in headers.iter().enumerate() {
+            let key_index = set
+                .validators()
+                .iter()
+                .position(|v| v.id() == header.proposer_id())
+                .unwrap();
+            if index == 0 {
+                let root = trnm_consensus_types::epoch_first_proposal_signing_root_v0(
+                    header,
+                    activation.authorization_kernel(),
+                    edge.old_validator_set(),
+                    set,
+                    parameters,
+                )
+                .unwrap();
+                bytes.extend(header.try_cev0_bytes().unwrap());
+                bytes.extend(&anchor);
+                bytes.push(0);
+                bytes.push(1);
+                bytes.extend(activation.authorization_cev0_bytes().unwrap());
+                bytes.extend(key(key_index).sign(root.as_bytes()).to_bytes());
+                bytes.extend(qc(header, set).try_cev0_bytes().unwrap());
+            } else {
+                let justify = QcReferenceV0::ordinary(qc(&headers[index - 1], set));
+                let witness = ProposalWitnessV0::new(
+                    header,
+                    justify.clone(),
+                    None,
+                    None,
+                    Signature64::from_array([1; 64]),
+                    set,
+                    None,
+                    parameters,
+                    headers[index - 1].timestamp_ms(),
+                )
+                .unwrap();
+                let signature = Signature64::from_array(
+                    key(key_index)
+                        .sign(witness.signing_root_for_header(header).unwrap().as_bytes())
+                        .to_bytes(),
+                );
+                let certified = CertifiedHeaderV0::new(
+                    header.clone(),
+                    justify,
+                    None,
+                    None,
+                    signature,
+                    qc(header, set),
+                    set,
+                    None,
+                    parameters,
+                    headers[index - 1].timestamp_ms(),
+                )
+                .unwrap();
+                bytes.extend(certified.try_cev0_bytes().unwrap());
+            }
+        }
+        bytes
+    }
+
     fn ordinary_prefix(app: &DurableNativeApplicationV0) -> Vec<BlockHeader> {
         (0..7)
             .map(|_| {
@@ -1943,7 +2172,9 @@ mod native_authorization_tests {
     fn real_committed_checkpoint_and_signed_two_seals_produce_exact_handoff_readback() {
         use crate::NativeExecutionStoreV0;
         let directory = tempfile::tempdir().unwrap();
-        let path = directory.path().join("application.sqlite3");
+        let path = std::env::var_os("TRNM_NATIVE_EPOCH_SIGKILL_STORE")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| directory.path().join("application.sqlite3"));
         let app = open(&path, config());
         let headers = ordinary_prefix(&app);
         let prepared = preparation(&app, &headers);
@@ -1988,10 +2219,35 @@ mod native_authorization_tests {
             .unwrap(),
         )
         .unwrap();
+        let synthetic = NativeExecutedBlockV0::new(
+            request.clone(),
+            preview.payload_root(),
+            preview.post_state_root(),
+            preview.receipts_root(),
+            preview.evidence_root(),
+            Vec::new(),
+        )
+        .unwrap();
+        assert!(app
+            .confirm_prepared_checkpoint_execution_v1(&prepared, &synthetic)
+            .is_err());
         let NativeBlockExecutionResultV0::Valid(executed) = app.execute_block(request).unwrap()
         else {
             panic!("checkpoint execution invalid")
         };
+        let actual_p = app
+            .confirm_prepared_checkpoint_execution_v1(&prepared, &executed)
+            .unwrap();
+        assert_eq!(
+            actual_p.durable_row().status_v0(),
+            crate::DurableExecutionHistoryStatusV0::Prepared
+        );
+        assert_eq!(actual_p.validated_commitments().block_id(), header.id());
+        assert_eq!(
+            actual_p.new_validator_set().epoch().get(),
+            actual_p.old_validator_set().epoch().get() + 1
+        );
+        drop(actual_p);
         app.commit_block(NativeApplicationCommitRequestV0::new(*executed))
             .unwrap();
         // No anchor or joint certificate is supplied to this API. The receipt
@@ -2169,9 +2425,181 @@ mod native_authorization_tests {
             reopened_tree.parent_root_v0().unwrap(),
             target.parent_root_v0().unwrap()
         );
+        // Schema migration is explicit, and real sparse P rows prepare the
+        // entire three-chain before the first new application commit.
+        app.upgrade_epoch_schema_v1(edge.application_parent())
+            .unwrap();
+        let new_header = |height: u64,
+                          parent: trnm_consensus_types::BlockId,
+                          p: &crate::NativeBlockPreviewV0| {
+            let set = edge.new_validator_set();
+            let view = height - 10;
+            BlockHeader::new(
+                set.genesis_hash(),
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                View::new(view),
+                Height::new(height),
+                if height == 11 {
+                    BlockKind::EpochHandoff
+                } else {
+                    BlockKind::Regular
+                },
+                parent,
+                set.validators()[(view as usize - 1) % set.validators().len()].id(),
+                set.id(),
+                edge.new_parameters().hash(),
+                PayloadDigest::new(*p.payload_root().as_bytes()),
+                StateRoot::new(*p.post_state_root().as_bytes()),
+                trnm_consensus_types::ReceiptsRoot::new(*p.receipts_root().as_bytes()),
+                trnm_consensus_types::EvidenceRoot::new(*p.evidence_root().as_bytes()),
+                height * 1000,
+                None,
+            )
+            .unwrap()
+        };
+        let first_header = new_header(11, edge.consensus_parent().id(), &epoch_preview);
+        let mut new_headers = vec![first_header.clone()];
+        let first_request = trnm_native_application::NativeEpochBlockExecutionRequestV1::new(
+            epoch_request.clone(),
+            BlockIdV0::new(*first_header.id().as_bytes()).unwrap(),
+            NativeExpectedBlockCommitmentsV0::new(
+                epoch_preview.payload_root(),
+                epoch_preview.post_state_root(),
+                epoch_preview.receipts_root(),
+                epoch_preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let first_p = app
+            .execute_epoch_block_v1(&edge, first_request.clone(), &first_header)
+            .unwrap();
+        let retry = app
+            .execute_epoch_block_v1(&edge, first_request, &first_header)
+            .unwrap();
+        assert_eq!(first_p.p_digest(), retry.p_digest());
+        let mut parent_p = first_p;
+        for height in [12, 13] {
+            let parent = parent_p.overlay_parent_head().unwrap();
+            let request = NativeBlockPreviewRequestV0::new(
+                epoch_request.chain_id().clone(),
+                epoch_request.genesis_hash(),
+                parent.clone(),
+                HeightV0::new(height),
+                height * 1000,
+                epoch_request.active_validator_set_id(),
+                Vec::new(),
+            )
+            .unwrap();
+            let preview = app
+                .preview_epoch_descendant_v1(&parent_p, &request)
+                .unwrap();
+            let header = new_header(
+                height,
+                trnm_consensus_types::BlockId::new(*parent.block_id().as_bytes()),
+                &preview,
+            );
+            let request = NativeBlockExecutionRequestV0::new(
+                request.chain_id().clone(),
+                request.genesis_hash(),
+                parent,
+                BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+                request.height(),
+                request.timestamp_ms(),
+                request.active_validator_set_id(),
+                Vec::new(),
+                NativeExpectedBlockCommitmentsV0::new(
+                    preview.payload_root(),
+                    preview.post_state_root(),
+                    preview.receipts_root(),
+                    preview.evidence_root(),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+            parent_p = app
+                .execute_epoch_descendant_v1(&parent_p, request, &header)
+                .unwrap();
+            new_headers.push(header);
+        }
+        assert_eq!(app.confirmed_committed_head_v0().unwrap().height().get(), 8);
+        let last_p_digest = parent_p.p_digest();
+        let last_block = *parent_p
+            .overlay_parent_head()
+            .unwrap()
+            .block_id()
+            .as_bytes();
+        let saved_edge = edge.authorization_id();
         // Rebuild from exact raw evidence after reopening the actual stores.
         drop(app);
         let reopened = DurableNativeApplicationV0::open(&path, config()).unwrap();
+        let restored_p = reopened
+            .reopen_prepared_epoch_execution_v1(last_block)
+            .unwrap();
+        assert_eq!(restored_p.p_digest(), last_p_digest);
+        assert_eq!(restored_p.overlay_parent_head().unwrap().height().get(), 13);
+        let restored_edge = reopened
+            .recover_epoch_application_edge_v1(saved_edge)
+            .unwrap();
+        assert_eq!(restored_edge.authorization_id(), saved_edge);
+        let first_p = reopened
+            .reopen_prepared_epoch_execution_v1(*new_headers[0].id().as_bytes())
+            .unwrap();
+        let new_finality = epoch_first_finality(&restored_edge, &new_headers);
+        if std::env::var_os("TRNM_NATIVE_EPOCH_SIGKILL_STORE").is_some() {
+            let ids = [
+                new_headers[0].id().as_bytes().as_slice(),
+                last_block.as_slice(),
+                saved_edge.as_slice(),
+            ]
+            .concat();
+            std::fs::write(path.with_extension("epoch-ids"), ids).unwrap();
+            std::fs::write(path.with_extension("epoch-finality"), &new_finality).unwrap();
+        }
+        let mut corrupted = new_finality.clone();
+        *corrupted.last_mut().unwrap() ^= 1;
+        assert!(reopened
+            .commit_epoch_finality_bytes_v1(
+                &first_p,
+                &corrupted,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0()
+            )
+            .is_err());
+        assert_eq!(
+            reopened
+                .confirmed_committed_head_v0()
+                .unwrap()
+                .height()
+                .get(),
+            8
+        );
+        let committed = reopened
+            .commit_epoch_finality_bytes_v1(
+                &first_p,
+                &new_finality,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(committed.head().height().get(), 11);
+        assert_eq!(committed.commit_sequence(), 21);
+        let retried = reopened
+            .commit_epoch_finality_bytes_v1(
+                &first_p,
+                &new_finality,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(retried.commit_sequence(), committed.commit_sequence());
+        assert_eq!(retried.head(), committed.head());
+        assert_eq!(
+            reopened
+                .reopen_prepared_epoch_execution_v1(last_block)
+                .unwrap()
+                .p_digest(),
+            last_p_digest
+        );
         assert!(reopened
             .preview_epoch_block_v1(&edge, &epoch_request)
             .is_err());
@@ -2207,6 +2635,156 @@ mod native_authorization_tests {
             .confirm_poco_checkpoint_v0(reconstructed, &proof, &anchor)
             .unwrap();
         assert_eq!(recovered.header(), &header);
+        drop(reopened);
+        let after_commit = DurableNativeApplicationV0::open(&path, config()).unwrap();
+        assert_eq!(
+            after_commit
+                .confirmed_committed_head_v0()
+                .unwrap()
+                .height()
+                .get(),
+            11
+        );
+        assert_eq!(
+            after_commit
+                .reopen_prepared_epoch_execution_v1(last_block)
+                .unwrap()
+                .p_digest(),
+            last_p_digest
+        );
+        assert!(after_commit
+            .preview_epoch_block_v1(
+                &after_commit
+                    .recover_epoch_application_edge_v1(saved_edge)
+                    .unwrap(),
+                &epoch_request
+            )
+            .is_err());
+        // Exact digests and closed schema are checked again on every reopen.
+        let connection = rusqlite::Connection::open(&path).unwrap();
+        let original: Vec<u8> = connection
+            .query_row(
+                "SELECT evidence FROM native_epoch_edge_v1 WHERE binding=?",
+                [saved_edge.as_slice()],
+                |r| r.get(0),
+            )
+            .unwrap();
+        connection
+            .execute(
+                "UPDATE native_epoch_edge_v1 SET evidence=zeroblob(1) WHERE binding=?",
+                [saved_edge.as_slice()],
+            )
+            .unwrap();
+        assert!(DurableNativeApplicationV0::open(&path, config()).is_err());
+        connection
+            .execute(
+                "UPDATE native_epoch_edge_v1 SET evidence=? WHERE binding=?",
+                rusqlite::params![original, saved_edge.as_slice()],
+            )
+            .unwrap();
+        let journal_path = crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&path);
+        let journal = rusqlite::Connection::open(&journal_path).unwrap();
+        journal.execute("DELETE FROM preparations", []).unwrap();
+        assert!(after_commit
+            .recover_epoch_application_edge_v1(saved_edge)
+            .is_err());
+        assert!(after_commit
+            .reopen_prepared_epoch_execution_v1(last_block)
+            .is_err());
+        let count: i64 = journal
+            .query_row("SELECT COUNT(*) FROM preparations", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(count, 0, "recovery must not recreate a missing preparation");
+        drop(journal);
+        std::fs::rename(&journal_path, journal_path.with_extension("retired")).unwrap();
+        assert!(after_commit
+            .recover_epoch_application_edge_v1(saved_edge)
+            .is_err());
+        assert!(
+            !journal_path.exists(),
+            "recovery must not recreate a missing journal"
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn epoch_sigkill_commit_boundaries_preserve_exact_prepared_chain() {
+        for stage in [
+            "epoch_before_commit",
+            "epoch_after_commit",
+            "epoch_after_fsync",
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("application.sqlite3");
+            let marker = directory.path().join("ready");
+            let mut child=std::process::Command::new(std::env::current_exe().unwrap())
+                .args(["--exact","poco_checkpoint::native_authorization_tests::real_committed_checkpoint_and_signed_two_seals_produce_exact_handoff_readback","--nocapture"])
+                .env("TRNM_NATIVE_EPOCH_SIGKILL_STORE",&path)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE",stage)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER",&marker)
+                .spawn().unwrap();
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(45);
+            while !marker.exists() && std::time::Instant::now() < deadline {
+                if child.try_wait().unwrap().is_some() {
+                    break;
+                }
+                std::thread::sleep(std::time::Duration::from_millis(10));
+            }
+            if !marker.exists() {
+                let _ = child.kill();
+                let _ = child.wait();
+                panic!("epoch child failed to reach {stage}");
+            }
+            child.kill().unwrap();
+            assert!(!child.wait().unwrap().success());
+            let ids = std::fs::read(path.with_extension("epoch-ids")).unwrap();
+            let first: [u8; 32] = ids[..32].try_into().unwrap();
+            let last: [u8; 32] = ids[32..64].try_into().unwrap();
+            let binding: [u8; 32] = ids[64..].try_into().unwrap();
+            let proof = std::fs::read(path.with_extension("epoch-finality")).unwrap();
+            let app = DurableNativeApplicationV0::open(&path, config()).unwrap();
+            assert_eq!(
+                app.confirmed_committed_head_v0().unwrap().height().get(),
+                if stage == "epoch_before_commit" {
+                    8
+                } else {
+                    11
+                }
+            );
+            assert_eq!(
+                app.recover_epoch_application_edge_v1(binding)
+                    .unwrap()
+                    .first_application_height(),
+                11
+            );
+            let first = app.reopen_prepared_epoch_execution_v1(first).unwrap();
+            let committed = app
+                .commit_epoch_finality_bytes_v1(
+                    &first,
+                    &proof,
+                    &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+            assert_eq!(committed.head().height().get(), 11);
+            assert_eq!(committed.commit_sequence(), 21);
+            assert_eq!(
+                app.reopen_prepared_epoch_execution_v1(last)
+                    .unwrap()
+                    .overlay_parent_head()
+                    .unwrap()
+                    .height()
+                    .get(),
+                13
+            );
+            let retried = app
+                .commit_epoch_finality_bytes_v1(
+                    &first,
+                    &proof,
+                    &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+            assert_eq!(retried.commit_sequence(), 21);
+        }
     }
 
     #[test]

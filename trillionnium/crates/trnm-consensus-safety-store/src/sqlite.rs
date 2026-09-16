@@ -5470,7 +5470,7 @@ fn validate_authenticated_genesis_application_h1_native_valid_completion_v0(
     Ok(())
 }
 
-fn validate_native_valid_post_ack_manifest_v0(
+pub(crate) fn validate_native_valid_post_ack_manifest_v0(
     revision: u64,
     core_action_code: Option<u32>,
     transition_context: &SafetyTransitionContextV0,
@@ -5496,7 +5496,7 @@ fn validate_native_valid_post_ack_manifest_v0(
     Ok(())
 }
 
-fn validate_native_finalization_applied_manifest_v0(
+pub(crate) fn validate_native_finalization_applied_manifest_v0(
     revision: u64,
     core_manifest: Option<&NativeFinalizationAppliedPersistenceV0>,
     transition_context: &SafetyTransitionContextV0,
@@ -5572,7 +5572,7 @@ fn validate_state_sync_anchor_ordinary_promotion_manifest_v0(
     }
 }
 
-fn validate_native_finalization_applied_successor_v0(
+pub(crate) fn validate_native_finalization_applied_successor_v0(
     revision: u64,
     manifest: &NativeFinalizationAppliedPersistenceV0,
     successor_state: &SafetyState,
@@ -5603,7 +5603,7 @@ fn validate_native_finalization_applied_successor_v0(
     Ok(())
 }
 
-fn validate_native_finalization_applied_predecessor_v0(
+pub(crate) fn validate_native_finalization_applied_predecessor_v0(
     revision: u64,
     manifest: &NativeFinalizationAppliedPersistenceV0,
     predecessor_state: &SafetyState,
@@ -5696,7 +5696,7 @@ fn native_finalization_applied_action_matches_state_v0(
     }
 }
 
-fn validate_persisted_native_finalization_applied_pair_v0(
+pub(crate) fn validate_persisted_native_finalization_applied_pair_v0(
     transition: &NativeFinalizationAppliedTransitionV0,
     predecessor_state: &SafetyState,
     successor_state: &SafetyState,

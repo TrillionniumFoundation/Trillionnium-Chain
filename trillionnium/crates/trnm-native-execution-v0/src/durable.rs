@@ -56,6 +56,10 @@ use crate::{
     AuthorizedSignerV0, NativeStateWriteV0,
 };
 
+#[path = "epoch_durable.rs"]
+mod epoch_durable;
+pub use epoch_durable::{CommittedNativeEpochExecutionV1, PreparedNativeEpochExecutionV1};
+
 mod replay_floor_v1;
 pub use replay_floor_v1::VerifiedNativeSignerReplayFloorV1;
 
@@ -2018,6 +2022,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
+        if epoch_durable::schema_version(&connection)? == epoch_durable::SCHEMA_VERSION {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "p.epoch_context_requires_v1",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
 
@@ -2799,6 +2809,7 @@ struct DurablePV0 {
 /// The snapshot, replay sets and artifact are still checked on every audit;
 /// they must not accumulate in memory across the committed history.
 struct ValidatedPInventoryEntryV0 {
+    epoch_gap: bool,
     target_height: u64,
     p_sequence: u64,
     status: u64,
@@ -2823,6 +2834,7 @@ impl ValidatedPInventoryEntryV0 {
             )
         })?;
         Ok(Self {
+            epoch_gap: false,
             target_height: p.target_height,
             p_sequence: p.p_sequence,
             status: p.status,
@@ -2889,7 +2901,11 @@ fn validate_metadata_v0(
             "metadata.digest_or_sequence",
         ));
     }
-    let store = metadata.to_store(config)?;
+    let store = if epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION {
+        epoch_durable::metadata_store(connection, config, metadata)?
+    } else {
+        metadata.to_store(config)?
+    };
     if store.parent_version_v0().map_err(|_| {
         error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,
@@ -2940,9 +2956,13 @@ fn validate_p_inventory_v0(
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
-    let rows = map_p_inventory_v0(connection, |p| {
+    let mut rows = map_p_inventory_v0(connection, |p| {
         ValidatedPInventoryEntryV0::from_durable_v0(config, p)
     })?;
+    if epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION {
+        rows.extend(epoch_durable::inventory(connection, config)?);
+        rows.sort_unstable_by_key(|p| p.p_sequence);
+    }
     let by_block = rows
         .iter()
         .map(|p| (p.block_id, p))
@@ -3084,7 +3104,10 @@ fn validate_p_inventory_v0(
             )
         })?;
         if parent.target_height != p.parent_height
-            || parent.target_height.checked_add(1) != Some(p.target_height)
+            || parent
+                .target_height
+                .checked_add(if p.epoch_gap { 3 } else { 1 })
+                != Some(p.target_height)
             || parent.p_sequence >= p.p_sequence
             || target_roots.get(&parent.block_id) != Some(&p.parent_state_root)
             || parent.application_commit_id != p.parent_commit_id
@@ -3102,10 +3125,9 @@ fn validate_p_inventory_v0(
         .collect::<Vec<_>>();
     committed.sort_unstable_by_key(|p| p.target_height);
     let imported_height = u64::from(trusted_base.is_some());
-    if u64::try_from(committed.len())
-        .ok()
-        .and_then(|count| count.checked_add(imported_height))
-        != Some(metadata.head.height().get())
+    if committed.iter().try_fold(imported_height, |count, p| {
+        count.checked_add(if p.epoch_gap { 3 } else { 1 })
+    }) != Some(metadata.head.height().get())
     {
         return Err(error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,
@@ -3155,12 +3177,14 @@ fn validate_p_inventory_v0(
         };
     for p in committed {
         if p.target_height
-            != previous_height.checked_add(1).ok_or_else(|| {
-                error(
-                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                    "p.inventory_committed_height_overflow",
-                )
-            })?
+            != previous_height
+                .checked_add(if p.epoch_gap { 3 } else { 1 })
+                .ok_or_else(|| {
+                    error(
+                        NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                        "p.inventory_committed_height_overflow",
+                    )
+                })?
             || p.parent_block_id != previous_block
             || p.parent_state_root != previous_root
             || p.parent_commit_id != previous_commit
@@ -3575,8 +3599,10 @@ fn load_metadata_v0(
             |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?,row.get(4)?,row.get(5)?,row.get(6)?,row.get(7)?,row.get(8)?,row.get(9)?,row.get(10)?,row.get(11)?,row.get(12)?,row.get(13)?,row.get(14)?,row.get(15)?,row.get(16)?)),
         )
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "metadata.query"))?;
-    if decode_u64_v0(&row.0, "metadata.schema")? != APPLICATION_SCHEMA_VERSION_V0
-        || array32_v0(&row.1, "metadata.store_id")? != config.store_id
+    if !matches!(
+        decode_u64_v0(&row.0, "metadata.schema")?,
+        APPLICATION_SCHEMA_VERSION_V0 | epoch_durable::SCHEMA_VERSION
+    ) || array32_v0(&row.1, "metadata.store_id")? != config.store_id
         || row.2 != config.chain_id
         || array32_v0(&row.3, "metadata.genesis")? != config.genesis_hash
         || array32_v0(&row.4, "metadata.descriptor")? != config.chain_descriptor_hash
@@ -3952,10 +3978,20 @@ fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
             })?),
         ));
     }
-    let expected = EXPECTED_SCHEMA_V0
+    let mut expected = EXPECTED_SCHEMA_V0
         .iter()
         .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql)))
         .collect::<Vec<_>>();
+    if metadata_exists_v0(connection)?
+        && epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION
+    {
+        expected.extend(
+            epoch_durable::SCHEMA
+                .iter()
+                .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql))),
+        );
+        expected.sort_unstable_by(|a, b| a.0.cmp(&b.0));
+    }
     if actual != expected {
         return Err(error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,

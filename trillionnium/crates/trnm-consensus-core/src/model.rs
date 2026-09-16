@@ -2041,6 +2041,7 @@ impl DurablePayloadValidationCompletionV0 {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SafetyState {
     schema_version: u16,
+    old_epoch_boundary_v1: Option<crate::OldEpochBoundaryStateV1>,
     chain_id: ChainId,
     protocol_version: ProtocolVersion,
     epoch: Epoch,
@@ -2070,6 +2071,24 @@ pub struct SafetyState {
 }
 
 impl SafetyState {
+    pub const fn old_epoch_boundary_v1(&self) -> Option<&crate::OldEpochBoundaryStateV1> {
+        self.old_epoch_boundary_v1.as_ref()
+    }
+
+    pub(crate) fn install_old_epoch_boundary_v1(
+        &mut self,
+        boundary: crate::OldEpochBoundaryStateV1,
+    ) {
+        self.schema_version = 14;
+        self.old_epoch_boundary_v1 = Some(boundary);
+    }
+
+    pub(crate) fn old_epoch_boundary_mut_v1(
+        &mut self,
+    ) -> Option<&mut crate::OldEpochBoundaryStateV1> {
+        self.old_epoch_boundary_v1.as_mut()
+    }
+
     /// Reconstructs a decoded durable state for read-only validation by
     /// [`crate::Core::validate_persisted_state_v0`].
     ///
@@ -2358,6 +2377,7 @@ impl SafetyState {
     ) -> Self {
         Self {
             schema_version,
+            old_epoch_boundary_v1: None,
             chain_id,
             protocol_version,
             epoch,
@@ -2414,6 +2434,7 @@ impl SafetyState {
 
         let SafetyState {
             schema_version,
+            old_epoch_boundary_v1,
             chain_id,
             protocol_version,
             epoch,
@@ -2442,6 +2463,11 @@ impl SafetyState {
             safety_halt,
         } = self;
 
+        if old_epoch_boundary_v1.is_some() {
+            return Err(CoreError::InvalidRecovery(
+                "epoch boundary state is not genesis commissioning",
+            ));
+        }
         if state_sync_anchor.is_some() {
             return Err(CoreError::InvalidRecovery(
                 "authenticated genesis application bootstrap and h1 state-sync bootstrap are mutually exclusive",
@@ -2687,6 +2713,7 @@ impl SafetyState {
         let genesis_reference = QcReferenceV0::genesis_anchor(genesis_qc.clone());
         Ok(Self {
             schema_version: SAFETY_STATE_SCHEMA_VERSION,
+            old_epoch_boundary_v1: None,
             chain_id: validator_set.chain_id(),
             protocol_version: validator_set.protocol_version(),
             epoch: validator_set.epoch(),
@@ -2758,6 +2785,7 @@ impl SafetyState {
         );
         Ok(Self {
             schema_version: SAFETY_STATE_SCHEMA_VERSION,
+            old_epoch_boundary_v1: None,
             chain_id: validator_set.chain_id(),
             protocol_version: validator_set.protocol_version(),
             epoch: validator_set.epoch(),

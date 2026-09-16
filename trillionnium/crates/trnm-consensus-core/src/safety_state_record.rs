@@ -1199,6 +1199,14 @@ fn decode_signed_proposal(
     parent: &PayloadValidationParentV0,
     context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<SignedProposalV0, SafetyStateRecordErrorV0> {
+    decode_signed_proposal_at_timestamp_v1(decoder, parent.tip().timestamp_ms(), context)
+}
+
+fn decode_signed_proposal_at_timestamp_v1(
+    decoder: &mut Decoder<'_>,
+    parent_timestamp_ms: u64,
+    context: &SafetyStateRecordContextV0<'_>,
+) -> Result<SignedProposalV0, SafetyStateRecordErrorV0> {
     let header_bytes = decoder.blob("proposal header", decoder.limits.maximum_blob_bytes)?;
     let header = decode_block_header_v0_exact(header_bytes)
         .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("proposal header"))?;
@@ -1283,7 +1291,7 @@ fn decode_signed_proposal(
         context.core_config.validator_set(),
         None,
         context.core_config.consensus_parameters(),
-        parent.tip().timestamp_ms(),
+        parent_timestamp_ms,
     )
     .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("proposal witness"))?;
     SignedProposalV0::new(
@@ -1292,7 +1300,7 @@ fn decode_signed_proposal(
         context.core_config.validator_set(),
         None,
         context.core_config.consensus_parameters(),
-        parent.tip().timestamp_ms(),
+        parent_timestamp_ms,
     )
     .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("signed proposal"))
 }
@@ -2047,6 +2055,8 @@ impl<'a> Decoder<'a> {
         }
     }
 }
+
+include!("old_epoch_safety_record_v1.inc");
 
 #[cfg(test)]
 mod tests {
