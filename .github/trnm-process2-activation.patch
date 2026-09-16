@@ -149,7 +149,7 @@ index 609bbbb1d..fc8b6ab91 100644
              PocoNodeDeployedLabProcess2RecoveryStartAuthorityV1 {
 -                caught_up_cut_digest: cut_digest,
 +                node_caught_up_cut_digest: cut_digest,
-+                recovery_cut_artifact_sha256: digest_distinct_from_v1(cut_digest),
++                recovery_cut_artifact_sha256: *digest_distinct_from_v1(cut_digest).as_bytes(),
                  certificate_sha256,
              },
          )
