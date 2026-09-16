@@ -62,15 +62,13 @@ impl fmt::Display for EpochTransitionJournalErrorV1 {
             Self::CheckpointGenerationRegression => {
                 formatter.write_str("epoch journal checkpoint generation regressed")
             }
-            Self::BindingMismatch => formatter.write_str(
-                "epoch journal binding/checkpoint coordinates are zero or inconsistent",
-            ),
+            Self::BindingMismatch => formatter
+                .write_str("epoch journal binding/checkpoint coordinates are zero or inconsistent"),
             Self::IntegerRange(field) => {
                 write!(formatter, "epoch journal {field} exceeds SQLite INTEGER")
             }
-            Self::LegacyConflict => formatter.write_str(
-                "epoch journal v1/v2 histories disagree; refusing automatic migration",
-            ),
+            Self::LegacyConflict => formatter
+                .write_str("epoch journal v1/v2 histories disagree; refusing automatic migration"),
             Self::Recovery(error) => write!(formatter, "epoch journal strict recovery: {error}"),
         }
     }
@@ -149,10 +147,9 @@ impl EpochTransitionJournalV1 {
         }
         let previous = self.latest_entry()?;
         let transition_index = match previous.as_ref() {
-            Some(entry) => entry
-                .transition_index
-                .checked_add(1)
-                .ok_or(EpochTransitionJournalErrorV1::IntegerRange("transition index"))?,
+            Some(entry) => entry.transition_index.checked_add(1).ok_or(
+                EpochTransitionJournalErrorV1::IntegerRange("transition index"),
+            )?,
             None => 0,
         };
 
@@ -185,9 +182,9 @@ impl EpochTransitionJournalV1 {
         if binding_ref == [0; 32] {
             return Err(EpochTransitionJournalErrorV1::BindingMismatch);
         }
-        let bytes = record
-            .encode_v1()
-            .map_err(|_| EpochTransitionJournalErrorV1::Invalid("noncanonical preparation record"))?;
+        let bytes = record.encode_v1().map_err(|_| {
+            EpochTransitionJournalErrorV1::Invalid("noncanonical preparation record")
+        })?;
         let transaction = self
             .conn
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
@@ -264,9 +261,17 @@ fn decode_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<RawEntry> {
     ))
 }
 
-fn decode_entry(raw: RawEntry) -> Result<EpochTransitionJournalEntryV1, EpochTransitionJournalErrorV1> {
+fn decode_entry(
+    raw: RawEntry,
+) -> Result<EpochTransitionJournalEntryV1, EpochTransitionJournalErrorV1> {
     let (index, old, new, generation, checksum, binding, preparation) = raw;
-    if index < 0 || old < 0 || new < 0 || generation <= 0 || checksum.len() != 32 || binding.len() != 32 {
+    if index < 0
+        || old < 0
+        || new < 0
+        || generation <= 0
+        || checksum.len() != 32
+        || binding.len() != 32
+    {
         return Err(EpochTransitionJournalErrorV1::Invalid(
             "row shape or integer range",
         ));
@@ -304,7 +309,9 @@ fn read_entries(
     Ok(entries)
 }
 
-fn validate_entries(entries: &[EpochTransitionJournalEntryV1]) -> Result<(), EpochTransitionJournalErrorV1> {
+fn validate_entries(
+    entries: &[EpochTransitionJournalEntryV1],
+) -> Result<(), EpochTransitionJournalErrorV1> {
     for (position, entry) in entries.iter().enumerate() {
         let expected_index = u64::try_from(position)
             .map_err(|_| EpochTransitionJournalErrorV1::IntegerRange("transition index"))?;
