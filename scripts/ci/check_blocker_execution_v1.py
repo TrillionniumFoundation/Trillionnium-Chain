@@ -148,11 +148,16 @@ def main() -> int:
     snapshot_coverage = snapshot_implementation.get("module_coverage", {})
     members = cargo.get("workspace", {}).get("members")
     require(isinstance(members, list) and members, "Cargo workspace members missing")
+    require(all(type(value) is int for value in (
+        implementation.get("selected_successor"),
+        snapshot.get("selected_successor", {}).get("pull_request"),
+        release_train.get("source", {}).get("selected_successor_pull_request"),
+    )), "runtime-derived successor sentinel must be integer zero")
     require(
         implementation.get("selected_successor")
         == snapshot.get("selected_successor", {}).get("pull_request")
         == release_train.get("source", {}).get("selected_successor_pull_request")
-        == 62,
+        == 0,
         "selected successor drift",
     )
     require(

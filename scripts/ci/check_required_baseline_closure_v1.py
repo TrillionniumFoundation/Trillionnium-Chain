@@ -14,19 +14,26 @@ POLICY = ROOT / "config/repository-policy-v1.json"
 
 CONVERGENCE_COMMANDS = (
     "bash scripts/ci/check_canonical_development_plan.sh",
-    "python3 scripts/ci/check_plan_manifest_pins_v1.py",
-    "python3 scripts/ci/check_technical_convergence_v1.py",
-    "python3 scripts/ci/test_technical_convergence_v1.py",
-    "python3 scripts/ci/check_module_coverage_v1.py",
     "python3 scripts/ci/check_required_baseline_closure_v1.py",
 )
 CONVERGENCE_REQUIRED_PATHS = (
     "config/technical-convergence-v1.toml",
     "docs/architecture/TRNM_TECHNICAL_CONVERGENCE_V1.md",
     "docs/modules/README.md",
+    "docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md",
     "docs/modules/M04_P2P_TECHNICAL_SPEC_V1.md",
     "docs/modules/M05_TX_LIFECYCLE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md",
     "docs/modules/M08_FINALITY_RECOVERY_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M12_SETTLEMENT_TECHNICAL_SPEC_V1.md",
+    "docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md",
     "docs/modules/M14_CLIENT_PLATFORM_TECHNICAL_SPEC_V1.md",
     "docs/modules/M15_NODE_RELEASE_TECHNICAL_SPEC_V1.md",
     "docs/modules/M16_CONTROL_PLANE_TECHNICAL_SPEC_V1.md",
@@ -239,7 +246,6 @@ def main() -> int:
     require_tokens(
         mutant_step,
         (
-            "python3 scripts/ci/test_technical_convergence_v1.py",
             "python3 scripts/ci/test_main_protection_v1.py",
             "python3 scripts/ci/test_codeql_default_setup_v1.py",
         ),

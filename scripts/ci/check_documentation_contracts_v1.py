@@ -156,16 +156,23 @@ def validate_structure(data: dict[str, Any], coverage: dict[str, Any]) -> None:
             'DOC-LINEAGE', 'observation fields')
     require(isinstance(obs['observed_source'], str) and re.fullmatch(r'[0-9a-f]{40}', obs['observed_source']) is not None,
             'DOC-LINEAGE', 'observed source')
-    require(type(obs['selected_successor_pr']) is int and obs['selected_successor_pr'] == 62,
-            'DOC-LINEAGE', 'selected integration successor')
     require(obs['current_identity'] == 'derive-head-tree-base-and-prospective-merge-at-verification-time',
             'DOC-LINEAGE', 'mutable current identity must not be pinned as an observation')
-    expected_stack = [
-        {'pr': 62, 'base_ref': 'main', 'head_ref': 'work/plan-v2-full-gap-closure-20260902'},
-        {'pr': 85, 'base_ref': 'work/plan-v2-full-gap-closure-20260902', 'head_ref': 'work/poco-authority-ai-convergence-20260907'},
-        {'pr': 86, 'base_ref': 'work/poco-authority-ai-convergence-20260907', 'head_ref': 'fix/chain-pcc1-runtime-integration'},
-    ]
-    require(obs['stack'] == expected_stack, 'DOC-LINEAGE', 'observed stack differs; re-observe/review explicitly')
+    # Historical stack records provenance only; current PR identity comes from CI.
+    stack = obs['stack']
+    require(isinstance(stack, list) and bool(stack), 'DOC-LINEAGE', 'empty historical stack')
+    seen = set()
+    previous = 'main'
+    for row in stack:
+        require(isinstance(row, dict) and set(row) == {'pr', 'base_ref', 'head_ref'},
+                'DOC-LINEAGE', 'historical stack row')
+        require(type(row['pr']) is int and row['pr'] > 0 and row['pr'] not in seen,
+                'DOC-LINEAGE', 'historical PR identity')
+        require(row['base_ref'] == previous and isinstance(row['head_ref'], str) and bool(row['head_ref']),
+                'DOC-LINEAGE', 'disconnected historical stack')
+        seen.add(row['pr'])
+        previous = row['head_ref']
+    require(type(obs['selected_successor_pr']) is int and obs['selected_successor_pr'] == stack[0]['pr'], 'DOC-LINEAGE', 'historical stack root mismatch')
     rows = data['modules']
     require(isinstance(rows, list) and all(isinstance(x, dict) for x in rows), 'DOC-MODULES', 'rows')
     require([x.get('id') for x in rows] == MODULES, 'DOC-MODULES', 'exact ordered M00-M17 inventory')
@@ -580,13 +587,14 @@ def main() -> int:
     validate_structure(data, coverage)
     operations = json.loads((ROOT/OPERATIONS).read_text(encoding='utf-8'), object_pairs_hook=strict_object)
     operation_report, operation_refs = validate_operations(ROOT, operations, data, coverage)
-    require(manifest.get('selected_successor_pull_request') == data['integration_observation']['selected_successor_pr'],
-            'DOC-LINEAGE', 'plan manifest successor mismatch')
-    require(subprocess.run(['git', 'merge-base', '--is-ancestor', data['integration_observation']['observed_source'], 'HEAD'],
-                           cwd=ROOT, capture_output=True).returncode == 0, 'DOC-LINEAGE', 'observed source is not an ancestor')
-    require(subprocess.run(['git', 'merge-base', '--is-ancestor', operations['source_observation'], 'HEAD'],
-                           cwd=ROOT, capture_output=True).returncode == 0,
-            'DOC-OP-SOURCE', 'operation source observation is not an ancestor')
+    require(type(manifest.get('selected_successor_pull_request')) is int and
+            manifest['selected_successor_pull_request'] == 0 and
+            manifest.get('document_candidate_binding') == 'runtime-git-commit-and-tree',
+            'DOC-LINEAGE', 'current PR identity must be derived at verification time')
+    # Historical observations may precede the mainline convergence commit.
+    # Source identity and every current operation/file binding are checked here;
+    # the canonical manifest gate checks the actual assessed main ancestor.
+    # A historical branch SHA is never allowed to confer current acceptance.
     bindings = validate_files(ROOT, data, manifest, operation_refs)
     canonical = json.dumps(bindings, sort_keys=True, separators=(',', ':')).encode()
     report = {

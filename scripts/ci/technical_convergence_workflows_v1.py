@@ -12,10 +12,6 @@ BASELINE = pathlib.Path(".github/workflows/trnm-required-baseline.yml")
 WORKFLOWS = pathlib.Path(".github/workflows")
 COMMANDS = (
     "bash scripts/ci/check_canonical_development_plan.sh",
-    "python3 scripts/ci/check_plan_manifest_pins_v1.py",
-    "python3 scripts/ci/check_technical_convergence_v1.py",
-    "python3 scripts/ci/test_technical_convergence_v1.py",
-    "python3 scripts/ci/check_module_coverage_v1.py",
     "python3 scripts/ci/check_required_baseline_closure_v1.py",
 )
 CANDIDATE_TEST_COMMANDS = (
@@ -193,7 +189,18 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
     bindings = named_step(baseline, "Retain strict source and prospective-merge documentation bindings", require)
     for token in ("if: always()", "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", "if-no-files-found: error", "trnm-documentation-source-binding.json", "trnm-documentation-merge-binding.json"):
         require(token in bindings, f"strict documentation artifact retention missing: {token}")
-    require(COMMANDS[3] in mutants, "convergence mutants not retained")
+    canonical = (root / "scripts/ci/check_canonical_development_plan.sh").read_text(encoding="utf-8")
+    canonical = "\n".join(line for line in canonical.splitlines() if not line.lstrip().startswith("#"))
+    require("set -euo pipefail" in canonical.splitlines(), "canonical entrypoint must fail fast")
+    # Structural invocation check; independent review owns shell control flow.
+    for command in ('python3 "$PIN_GATE"', 'python3 "$CONVERGENCE_GATE"',
+                    'python3 "$CONVERGENCE_TEST"', 'python3 "$MODULE_GATE"'):
+        require(canonical.splitlines().count(command) == 1, f"canonical entrypoint must execute once: {command}")
+    for variable, path in (("PIN_GATE", "check_plan_manifest_pins_v1.py"),
+                           ("CONVERGENCE_GATE", "check_technical_convergence_v1.py"),
+                           ("CONVERGENCE_TEST", "test_technical_convergence_v1.py"),
+                           ("MODULE_GATE", "check_module_coverage_v1.py")):
+        require(f'{variable}="scripts/ci/{path}"' in canonical, f"canonical child binding drift: {variable}")
     for path in ("check_plan_manifest_pins_v1.py", "check_technical_convergence_v1.py", "test_technical_convergence_v1.py", "check_required_baseline_closure_v1.py"):
         require(path in compile_step, f"Python compile closure missing {path}")
 

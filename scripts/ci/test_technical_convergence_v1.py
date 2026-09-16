@@ -34,7 +34,8 @@ class Mutants(unittest.TestCase):
             checker.MACHINE_TRUTH,
             checker.MODULE_COVERAGE,
             pathlib.Path("docs/modules/README.md"),
-            *checker.HELPER_BLOBS,
+            pathlib.Path("scripts/ci/check_canonical_development_plan.sh"),
+            *checker.HELPER_PATHS,
             *map(pathlib.Path, checker.EXPECTED_DETAILED_SPECS.values()),
         ]
         for relative in paths:
@@ -89,22 +90,31 @@ class Mutants(unittest.TestCase):
         self.assertEqual(checker.validate(self.root)["result"], "PASS")
 
     def test_helper_and_machine_truth_mutants(self) -> None:
-        relative = next(iter(checker.HELPER_BLOBS))
+        relative = next(iter(checker.HELPER_PATHS))
         path = self.root / relative
         path.write_text(path.read_text(encoding="utf-8") + "\n# drift\n", encoding="utf-8")
+        self.assertEqual(checker.validate(self.root)["result"], "PASS")
+        path.unlink()
         self.rejected()
         self.reset(); self.truth(lambda value: value.__setitem__("public_testnet_ready", True)); self.rejected()
         self.reset(); self.truth(lambda value: value.pop("production_candidate", None)); self.rejected()
         self.reset(); self.truth(lambda value: value["blockers"][0].__setitem__("id", "P0-TRUTH-999")); self.rejected()
 
+    def test_helper_symlink_cannot_supply_execution(self) -> None:
+        relative = checker.HELPER_PATHS[0]
+        path = self.root / relative
+        path.unlink()
+        path.symlink_to(ROOT / relative)
+        self.rejected()
+
     def test_contract_closed_sets(self) -> None:
         mutations = (
             ("production_candidate = false", "production_candidate = true"),
-            (checker.EXPECTED_PARENT_INTEGRATION_HEAD, "0" * 40),
+            ('integration_branch = "derive-from-current-pull-request"', 'integration_branch = "stale-pr-62"'),
             ("large_models_and_nondeterministic_inference_off_chain = true", "large_models_and_nondeterministic_inference_off_chain = false"),
             ('reference_engine_role = "differential-oracle-only"', 'reference_engine_role = "production-fallback"'),
             ('non_authoritative_service = ["M14", "M16"]', 'non_authoritative_service = ["M14", "M16", "M04"]'),
-            ('  "python3 scripts/ci/check_plan_manifest_pins_v1.py",', '  "python3 scripts/ci/check_plan_manifest_pins_v2.py",'),
+            ('  "python3 scripts/ci/check_required_baseline_closure_v1.py",', '  "python3 scripts/ci/check_required_baseline_closure_v2.py",'),
             ("publisher_requires_expected_head_compare_and_swap = true", "publisher_requires_expected_head_compare_and_swap = false"),
             ("release_requires_sbom_and_provenance = true", "release_requires_sbom_and_provenance = false"),
             ('  "P2-NET-001",', '  "P2-NET-999",'),
@@ -132,13 +142,20 @@ class Mutants(unittest.TestCase):
 
     def test_required_baseline_invocation_mutants(self) -> None:
         cases = (
-            ("Run separately bound prospective-merge regressions", "python3 scripts/ci/check_technical_convergence_v1.py"),
-            ("Validate repository, development, module, node, and blocker truth", "python3 scripts/ci/check_plan_manifest_pins_v1.py"),
-            ("Run retained module-documentation false-pass mutants", "python3 scripts/ci/test_technical_convergence_v1.py"),
+            ("Run separately bound prospective-merge regressions", "bash scripts/ci/check_canonical_development_plan.sh"),
+            ("Validate repository, development, module, node, and blocker truth", "bash scripts/ci/check_canonical_development_plan.sh"),
         )
         for name, command in cases:
             with self.subTest(name=name):
                 self.reset(); self.step_remove(name, command); self.rejected()
+
+    def test_canonical_children_cannot_be_omitted(self) -> None:
+        for command in ('python3 "$PIN_GATE"', 'python3 "$CONVERGENCE_GATE"',
+                        'python3 "$CONVERGENCE_TEST"', 'python3 "$MODULE_GATE"'):
+            with self.subTest(command=command):
+                self.reset()
+                self.replace("scripts/ci/check_canonical_development_plan.sh", command, "# omitted")
+                self.rejected()
 
     def test_lifecycle_and_maturity_mutants(self) -> None:
         mutations = (

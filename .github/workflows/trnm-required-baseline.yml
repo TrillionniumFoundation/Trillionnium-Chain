@@ -76,7 +76,6 @@ jobs:
           python3 scripts/ci/test_node_candidate_boundary_v1.py
           python3 scripts/ci/test_cargo_source_inventory_v1.py
           python3 scripts/ci/test_bounded_workspace_tests_v1.py
-          python3 scripts/ci/test_technical_convergence_v1.py
           python3 scripts/ci/test_main_protection_v1.py
           python3 scripts/ci/test_codeql_default_setup_v1.py
           python3 scripts/ci/test_documentation_binding_log_v1.py
@@ -109,10 +108,6 @@ jobs:
           set -euo pipefail
           python3 scripts/ci/check_repository_truth_v1.py
           bash scripts/ci/check_canonical_development_plan.sh
-          python3 scripts/ci/check_plan_manifest_pins_v1.py
-          python3 scripts/ci/check_technical_convergence_v1.py
-          python3 scripts/ci/test_technical_convergence_v1.py
-          python3 scripts/ci/check_module_coverage_v1.py
           python3 scripts/ci/check_required_baseline_closure_v1.py
           python3 scripts/ci/check_node_decomposition_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
@@ -226,10 +221,6 @@ jobs:
             git rev-parse HEAD 'HEAD^{tree}'
             bash scripts/project-preflight.sh --audit
             bash scripts/ci/check_canonical_development_plan.sh
-            python3 scripts/ci/check_plan_manifest_pins_v1.py
-            python3 scripts/ci/check_technical_convergence_v1.py
-            python3 scripts/ci/test_technical_convergence_v1.py
-            python3 scripts/ci/check_module_coverage_v1.py
             python3 scripts/ci/check_required_baseline_closure_v1.py
             python3 scripts/ci/test_module_coverage_guard_v1.py
             python3 scripts/ci/test_codeql_default_setup_v1.py

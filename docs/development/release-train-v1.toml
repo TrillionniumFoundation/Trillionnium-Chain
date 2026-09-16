@@ -1,6 +1,6 @@
 schema_version = 1
 train_id = "trnm-native-poco-release-train-v1-20260902"
-as_of = "2026-09-02"
+as_of = "2026-09-16"
 plan_id = "trnm-chain-development-plan-v2"
 canonical_destination = "refs/heads/main"
 storage_engine = "sqlite"
@@ -10,12 +10,13 @@ public_testnet_ready = false
 release_ready = false
 
 [source]
-selected_successor_pull_request = 62
-head_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
-assessed_baseline_commit = "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea"
-assessed_baseline_tree = "af09e389b1a462b3839508b7ef305596c76384c6"
+# 0 is a sentinel: current PR identity is read from the CI event.
+selected_successor_pull_request = 0
+head_ref = "derive-from-current-pull-request"
+assessed_baseline_commit = "c552c31c6d3c5ac47522a124e02c6b8bca4e23f2"
+assessed_baseline_tree = "c37858e60146147eccf1a6fec6eff04d00a828a7"
 base_ref = "refs/heads/main"
-base_commit_observed = "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9"
+base_commit_observed = "c552c31c6d3c5ac47522a124e02c6b8bca4e23f2"
 status = "draft-integration-candidate"
 qualification_scope = "current PR head and prospective merge are derived at verification time; all required checks and independent acceptance remain mandatory"
 runtime_head_binding = "derived-at-verification-time-from-pr-head-and-tree"
@@ -23,13 +24,13 @@ runtime_head_binding = "derived-at-verification-time-from-pr-head-and-tree"
 [succession]
 one_successor_per_integration_surface = true
 selected_surface = "canonical-plan-v2-native-poco-mainline"
-overlapping_pull_requests_to_supersede = [54, 57, 58, 59, 61]
+overlapping_pull_requests_to_supersede = []
 self_merge_allowed = false
 independent_acceptance_required = true
 administrator_bypass_is_acceptance = false
 
 [documentation]
-candidate_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
+candidate_ref = "derive-from-current-pull-request"
 sole_plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 module_reference_path = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
 module_coverage_path = "config/module-coverage-v1.toml"
@@ -76,7 +77,7 @@ id = "INT-STACK-001"
 priority = "P0"
 status = "open"
 owner_modules = ["M15", "M17"]
-exit = "PR62 is the sole successor, overlaps are superseded, and non-skipped exact-head plus prospective-merge checks pass with independent acceptance"
+exit = "the current PR and base are resolved from CI, overlapping implementations are reconciled, and non-skipped exact-head plus prospective-merge checks pass with independent acceptance"
 
 [[blockers]]
 id = "NODE-COMMIT-001"

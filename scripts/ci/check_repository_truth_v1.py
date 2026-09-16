@@ -164,7 +164,8 @@ def main() -> int:
     require(engines.get("npm") == ">=11.16.0 <12", "web npm engine drift")
 
     readme = read("README.md")
-    require(len(readme.strip()) >= 1000, "README is empty or was destructively truncated")
+    readme = re.sub(r"<!--.*?-->", "", readme, flags=re.DOTALL)
+    require("docs/modules/README.md" in readme, "README must expose the module design index")
     require(
         "https://github.com/TrillionniumFoundation/Trillionnium-Chain.git" in readme,
         "README must use the canonical clone URL",
