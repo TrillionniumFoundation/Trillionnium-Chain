@@ -171,7 +171,7 @@ def validate(
         fail("schema_version must be 1")
     if document["evidence_profile"] != selected_profile:
         fail("manifest evidence_profile differs from the explicit CLI profile")
-    if document["validator_count"] != expected_count or expected_count not in {7, 31, 100}:
+    if document["validator_count"] != expected_count or expected_count not in {4, 7, 31, 100}:
         fail("validator_count mismatch")
     if document["network_scope"] != "single-lan" or document["geo_wan_evidence"] is not False:
         fail("bundle must remain single-lan with geo_wan_evidence=false")
@@ -317,7 +317,7 @@ def validate(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("bundle", type=pathlib.Path)
-    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
     parser.add_argument(
         "--profile", required=True, choices=sorted(evidence_profiles.KNOWN_PROFILES)
     )
