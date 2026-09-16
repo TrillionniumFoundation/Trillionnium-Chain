@@ -211,7 +211,12 @@ pub fn preflight_mesh_host_resources_v0(
     host: MeshHostCapacityV0,
 ) -> Result<MeshHostResourcePreflightV0> {
     if !matches!(validator_count, 4 | 7 | 31 | 100)
-        || peer_degree != if matches!(validator_count, 4 | 7) { validator_count - 1 } else { 8 }
+        || peer_degree
+            != if matches!(validator_count, 4 | 7) {
+                validator_count - 1
+            } else {
+                8
+            }
         || validator_processes == 0
         || validator_processes > validator_count
     {

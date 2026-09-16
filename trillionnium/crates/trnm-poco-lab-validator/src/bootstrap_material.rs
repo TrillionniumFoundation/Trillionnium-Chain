@@ -959,7 +959,8 @@ fn admit_template_and_keys(
     );
     let run_count = validate_run_id(&template.run_id)?;
     ensure!(
-        matches!(template.validators.len(), 4 | 7 | 31 | 100) && template.validators.len() == run_count,
+        matches!(template.validators.len(), 4 | 7 | 31 | 100)
+            && template.validators.len() == run_count,
         "validator-set template cardinality differs from run ID"
     );
     decode_hex32(&template.candidate_source_sha256, "candidate_source_sha256")?;

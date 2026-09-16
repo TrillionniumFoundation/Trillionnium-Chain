@@ -1956,7 +1956,11 @@ fn validate_topology(
     manifest: &ManifestJson,
     expected_count: usize,
 ) -> Result<()> {
-    let expected_degree = if matches!(expected_count, 4 | 7) { expected_count - 1 } else { 8 };
+    let expected_degree = if matches!(expected_count, 4 | 7) {
+        expected_count - 1
+    } else {
+        8
+    };
     if topology.schema_version != 1
         || topology.fleet_id != manifest.fleet_id
         || topology.network_scope != "single-lan"
