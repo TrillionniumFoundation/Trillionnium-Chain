@@ -138,8 +138,8 @@ def main() -> int:
     node_dependency = candidate_dependencies.get("trnm-poco-node")
     require(isinstance(node_dependency, dict), "candidate node dependency missing")
     require(
-        node_dependency.get("features") == ["lab-validator-runtime"],
-        "candidate runtime must opt into the explicit node laboratory owner only",
+        node_dependency.get("features") == ["lab-validator-runtime", "tx-admission-wal"],
+        "candidate runtime must explicitly select its laboratory owner and durable transaction admission",
     )
 
     source_rows = config.get("source_contracts")
