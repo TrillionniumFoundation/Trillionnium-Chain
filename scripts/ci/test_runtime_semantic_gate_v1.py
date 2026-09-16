@@ -78,7 +78,62 @@ class RuntimeSemanticGateTests(unittest.TestCase):
             all(row["status"] == "failed-evidence-missing" for row in report["checks"])
         )
 
-    def test_valid_source_bound_p01_evidence_can_pass_only_its_check(self) -> None:
+    def test_source_bound_p01_integrity_cannot_become_semantic_pass(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="trnm-semantic-evidence-") as directory:
+            root = Path(directory)
+            artifacts: list[dict[str, object]] = []
+            for role in ("process_logs", "signed_final_state", "replay_verification"):
+                path = root / f"{role}.json"
+                payload = json.dumps({"role": role, "fact": "fixture"}, sort_keys=True).encode()
+                path.write_bytes(payload)
+                artifacts.append(
+                    {
+                        "role": role,
+                        "path": path.name,
+                        "sha256": hashlib.sha256(payload).hexdigest(),
+                        "bytes": len(payload),
+                    }
+                )
+            evidence = {
+                "schema": "trnm-runtime-semantic-evidence-v1",
+                "check_id": "P0.1-multinode-persistence",
+                "status": "ARTIFACT_INTEGRITY_CANDIDATE",
+                "production_authority": False,
+                "source_commit": git_output("rev-parse", "HEAD"),
+                "source_tree": git_output("rev-parse", "HEAD^{tree}"),
+                "claims": {
+                    "validator_processes": 7,
+                    "independent_run_roots": 7,
+                    "four_node_phase": True,
+                    "seven_node_phase": True,
+                    "kill_restart_rejoin": True,
+                    "partition_heal": True,
+                    "lost_reply_recovery": True,
+                    "durable_state_replay_verified": True,
+                    "finality_agreement": True,
+                },
+                "artifacts": artifacts,
+            }
+            evidence_path = root / "p01.json"
+            evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
+            result = self.run_gate(
+                "--run",
+                env={
+                    "TRNM_SEMANTIC_P01_COMMAND": "true",
+                    "TRNM_SEMANTIC_P01_EVIDENCE": str(evidence_path),
+                },
+            )
+        self.assertEqual(result.returncode, 0)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["result"], "FAIL")
+        self.assertEqual(report["checks"][0]["status"], "failed-semantic-unverified")
+        self.assertEqual(report["checks"][0]["evidence_status"], "verified")
+        self.assertEqual(report["checks"][0]["semantic_status"], "unverified")
+        self.assertEqual(report["evidence_verified_count"], 1)
+        self.assertEqual(report["semantic_verified_count"], 0)
+        self.assertEqual(len(report["required_missing"]), 4)
+
+    def test_producer_authored_pass_status_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory(prefix="trnm-semantic-evidence-") as directory:
             root = Path(directory)
             artifacts: list[dict[str, object]] = []
@@ -118,18 +173,16 @@ class RuntimeSemanticGateTests(unittest.TestCase):
             evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
             result = self.run_gate(
                 "--run",
+                "--require",
                 env={
                     "TRNM_SEMANTIC_P01_COMMAND": "true",
                     "TRNM_SEMANTIC_P01_EVIDENCE": str(evidence_path),
                 },
             )
-        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.returncode, 2)
         report = json.loads(result.stdout)
-        self.assertEqual(report["result"], "INCOMPLETE")
-        self.assertEqual(report["checks"][0]["status"], "passed")
-        self.assertEqual(report["checks"][0]["evidence_status"], "verified")
-        self.assertEqual(report["evidence_verified_count"], 1)
-        self.assertEqual(len(report["required_missing"]), 3)
+        self.assertEqual(report["checks"][0]["status"], "failed-evidence-invalid")
+        self.assertIn("producer-authored PASS is forbidden", report["checks"][0]["evidence_error"])
 
 
 if __name__ == "__main__":
