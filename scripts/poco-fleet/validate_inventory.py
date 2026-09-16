@@ -10,6 +10,7 @@ import tomllib
 
 
 EXPECTED_TOPOLOGIES = {
+    "four": 4,
     "seven": 7,
     "thirty_one": 31,
     "one_hundred": 100,
@@ -114,7 +115,7 @@ def main() -> None:
         for topology, count in counts.items():
             if not isinstance(count, int) or count < 0:
                 fail(f"{host_id}/{topology} validator count must be non-negative")
-            if validator_eligible and count < 1:
+            if validator_eligible and topology != "four" and count < 1:
                 fail(f"{host_id}/{topology} must allocate at least one validator")
             if not validator_eligible and count != 0:
                 fail(f"{host_id}/{topology} observer must allocate zero validators")
@@ -127,7 +128,7 @@ def main() -> None:
     if architecture_pairs != {("linux", "x86_64"), ("macos", "arm64")}:
         fail("the heterogeneous Linux/x86_64 plus macOS/arm64 boundary is missing")
     print(
-        "poco_g3_lan_inventory=passed hosts=6 topology=7,31,100 "
+        "poco_g3_lan_inventory=passed hosts=6 topology=4,7,31,100 "
         "validator_hosts=5 observer_hosts=1 observer_role=load-generator,evidence-collector,crypto-cross-verifier "
         "network_scope=single-lan geo_wan_evidence=false heterogeneous=true "
         "linux_x86_64_memory_reference_page_aligned=true"
