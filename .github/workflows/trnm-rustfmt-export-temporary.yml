@@ -1,0 +1,43 @@
+name: trnm-rustfmt-export-temporary
+
+on:
+  push:
+    branches:
+      - fix/chain-p0-runtime-closure-20260916
+
+permissions:
+  contents: read
+
+jobs:
+  rustfmt-export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install exact rustfmt
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup override set 1.95.0
+      - name: Format workspace and retain only changed Rust files
+        run: |
+          set -euo pipefail
+          (cd trillionnium && cargo fmt --all)
+          mapfile -t files < <(git diff --name-only --diff-filter=M -- '*.rs')
+          test "${#files[@]}" -gt 0
+          printf '%s\n' "${files[@]}" > "${RUNNER_TEMP}/rustfmt-files.txt"
+          tar -czf "${RUNNER_TEMP}/rustfmt-files.tar.gz" "${files[@]}"
+          git diff --check
+      - name: Upload exact formatted files
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-rustfmt-files-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/rustfmt-files.txt
+            ${{ runner.temp }}/rustfmt-files.tar.gz
+          if-no-files-found: error
+          retention-days: 1
