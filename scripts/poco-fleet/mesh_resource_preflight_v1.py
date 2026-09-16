@@ -145,7 +145,7 @@ def evaluate_mesh_fleet_resources_v1(
     validator_count: int,
     facts_by_host: Mapping[str, Mapping[str, str]],
 ) -> dict[str, Any]:
-    if isinstance(validator_count, bool) or validator_count not in {7, 31, 100}:
+    if isinstance(validator_count, bool) or validator_count not in {4, 7, 31, 100}:
         fail("validator count is outside the frozen topology")
     if len(processes) != validator_count:
         fail("validator process inventory cardinality differs")
@@ -175,7 +175,7 @@ def evaluate_mesh_fleet_resources_v1(
     if sum(item["management"] == "local" for item in host_inventory.values()) != 1:
         fail("capacity preflight requires one exact local coordinator host")
 
-    peer_degree = 6 if validator_count == 7 else 8
+    peer_degree = validator_count - 1 if validator_count in {4, 7} else 8
     per_validator_threads = peer_degree * 2 + 1
     per_validator_socket_fds = peer_degree * 4 + 2
     per_validator_open_file_fds = per_validator_socket_fds + PROCESS_FD_RESERVE
