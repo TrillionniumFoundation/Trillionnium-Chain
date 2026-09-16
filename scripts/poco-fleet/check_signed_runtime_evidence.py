@@ -40,9 +40,9 @@ from poco_consensus_contract import (
 HEX32 = re.compile(r"^[0-9a-f]{64}$")
 HEX64 = re.compile(r"^[0-9a-f]{128}$")
 RUN_ID = re.compile(
-    r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$"
+    r"^poco-g3-(4|7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$"
 )
-VALID_COUNTS = {7, 31, 100}
+VALID_COUNTS = {4, 7, 31, 100}
 KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 REQUIRED_FAULTS = {
     "leader_loss",
@@ -1181,7 +1181,7 @@ def validate(
     except (ValueError, RuntimeError) as error:
         fail(str(error))
     if expected_count not in VALID_COUNTS:
-        fail("validator count must be 7, 31, or 100")
+        fail("validator count must be 4, 7, 31, or 100")
     if root.is_symlink() or not root.is_dir():
         fail("bundle root must be one real directory")
     anchor = hex_bytes(coordinator_manifest_sha256, 32, "coordinator manifest anchor", nonzero=True).hex()
@@ -1716,7 +1716,7 @@ def validate(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("bundle", type=pathlib.Path)
-    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
     parser.add_argument("--coordinator-manifest-sha256", required=True)
     parser.add_argument(
         "--profile", required=True, choices=sorted(evidence_profiles.KNOWN_PROFILES)

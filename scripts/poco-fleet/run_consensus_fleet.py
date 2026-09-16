@@ -936,20 +936,20 @@ def validated_launch_skew_ns(first_launch_ns: int, last_launch_ns: int) -> int:
 def validate_runtime_topology(validators: int, *, plan_only: bool) -> bool:
     """Keep 31/100 visible for planning but fail closed for active effects."""
 
-    if isinstance(validators, bool) or validators not in {7, 31, 100}:
-        base.fail("continuous consensus topology is outside the frozen 7/31/100 profiles")
-    active_supported = validators == 7
+    if isinstance(validators, bool) or validators not in {4, 7, 31, 100}:
+        base.fail("continuous consensus topology is outside the frozen 4/7/31/100 profiles")
+    active_supported = validators in {4, 7}
     if not plan_only and not active_supported:
         base.fail(
-            "active consensus is frozen to the direct seven-validator Stage0 profile"
+            "active consensus is frozen to the direct four/seven-validator P0 profile"
         )
     return active_supported
 
 
 def runtime_transport_profile(validators: int) -> dict[str, int | str]:
     validate_runtime_topology(validators, plan_only=True)
-    if validators == 7:
-        return {"mode": "direct", "peer_degree": 6, "relay_hop_budget": 0}
+    if validators in {4, 7}:
+        return {"mode": "direct", "peer_degree": validators - 1, "relay_hop_budget": 0}
     return {
         "mode": "origin-signed-sparse-relay",
         "peer_degree": 8,
@@ -1608,7 +1608,7 @@ def exact_fleet_start_certificate_summary(
         base.fail("observer fleet StartCertificate verification keys differ from contract")
     bounds = validated_run_bounds(duration_seconds, max_blocks)
     expected_transport = runtime_transport_profile(validator_count)
-    expected_mesh_sessions = validator_count * (12 if validator_count == 7 else 16)
+    expected_mesh_sessions = validator_count * (2 * (validator_count - 1) if validator_count in {4, 7} else 16)
     integer_fields = (
         "ordinary_start_height",
         "duration_seconds",
@@ -2468,7 +2468,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("coordinator_root", type=pathlib.Path)
     parser.add_argument("deployment_root", type=pathlib.Path)
-    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
     parser.add_argument("--linux-binary", required=True, type=pathlib.Path)
     parser.add_argument("--macos-binary", required=True, type=pathlib.Path)
     parser.add_argument(

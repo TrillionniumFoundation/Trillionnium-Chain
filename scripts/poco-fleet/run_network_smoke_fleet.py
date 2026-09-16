@@ -33,7 +33,7 @@ from typing import Any
 
 HERE = pathlib.Path(__file__).resolve().parent
 CHECK_DEPLOYMENTS = HERE / "check_validator_deployments.py"
-RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
+RUN_ID = re.compile(r"^poco-g3-(4|7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
 VALIDATOR_ID = re.compile(r"^[0-9a-f]{64}$")
 HOST_ID = re.compile(r"^[a-z][a-z0-9-]{0,31}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -865,7 +865,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("coordinator_root", type=pathlib.Path)
     parser.add_argument("deployment_root", type=pathlib.Path)
-    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
     parser.add_argument("--linux-binary", required=True, type=pathlib.Path)
     parser.add_argument("--macos-binary", required=True, type=pathlib.Path)
     parser.add_argument("--output", required=True, type=pathlib.Path)

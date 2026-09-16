@@ -42,7 +42,7 @@ PLANNABLE_PROFILES = {
     evidence_profiles.NO_FAULT_SIGNED_RUNTIME_OBSERVER_V1,
     evidence_profiles.NO_FAULT_SIGNED_RUNTIME_EXTERNAL_LOAD_V1,
 }
-VALID_COUNTS = {7, 31, 100}
+VALID_COUNTS = {4, 7, 31, 100}
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 RFC3339_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
@@ -633,7 +633,7 @@ def validate_mesh_preflight(
 ) -> dict[str, Any]:
     preflight = exact(value, MESH_PREFLIGHT_KEYS, "mesh resource preflight")
     resources = consensus_runner.mesh_resources
-    peer_degree = 6 if validator_count == 7 else 8
+    peer_degree = validator_count - 1 if validator_count in {4, 7} else 8
     expected_threads = peer_degree * 2 + 1
     expected_socket_fds = peer_degree * 4 + 2
     expected_open_fds = expected_socket_fds + resources.PROCESS_FD_RESERVE
@@ -1806,7 +1806,7 @@ def validate_collection_envelope(
     require_observer_report: bool,
 ) -> dict[str, Any]:
     if validator_count not in VALID_COUNTS:
-        fail("validator count must be 7, 31, or 100")
+        fail("validator count must be 4, 7, 31, or 100")
     independent_anchor = canonical_sha256(
         coordinator_manifest_sha256, "independent coordinator manifest anchor"
     )
@@ -2067,7 +2067,7 @@ def main() -> None:
     )
     parser.add_argument("coordinator_root", type=pathlib.Path)
     parser.add_argument("runner_output", type=pathlib.Path)
-    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
     parser.add_argument(
         "--profile",
         default=PROFILE,

@@ -29,7 +29,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 INVENTORY = HERE / "inventory.toml"
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 HEX128 = re.compile(r"^[0-9a-f]{128}$")
-RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
+RUN_ID = re.compile(r"^poco-g3-(4|7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
 ED25519_SPKI_PREFIX = bytes.fromhex("302a300506032b6570032100")
 KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 WORKLOAD_CORPUS_MAGIC = b"trnm-poco-g3-workload-corpus-v1\n"
@@ -1053,7 +1053,7 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("root", type=pathlib.Path)
-    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
     args = parser.parse_args()
     try:
         validate(args.root, args.validators)

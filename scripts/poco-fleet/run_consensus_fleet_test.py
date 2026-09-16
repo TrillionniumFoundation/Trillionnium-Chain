@@ -473,17 +473,23 @@ def test_run_bounds() -> None:
             lambda first=first, last=last: fleet.validated_launch_skew_ns(first, last),
             message,
         )
+    assert fleet.validate_runtime_topology(4, plan_only=False) is True
     assert fleet.validate_runtime_topology(7, plan_only=False) is True
     assert fleet.validate_runtime_topology(31, plan_only=True) is False
     assert fleet.validate_runtime_topology(100, plan_only=True) is False
     expect_failure(
         lambda: fleet.validate_runtime_topology(31, plan_only=False),
-        "direct seven-validator Stage0 profile",
+        "direct four/seven-validator P0 profile",
     )
     expect_failure(
         lambda: fleet.validate_runtime_topology(100, plan_only=False),
-        "direct seven-validator Stage0 profile",
+        "direct four/seven-validator P0 profile",
     )
+    assert fleet.runtime_transport_profile(4) == {
+        "mode": "direct",
+        "peer_degree": 3,
+        "relay_hop_budget": 0,
+    }
     assert fleet.runtime_transport_profile(7) == {
         "mode": "direct",
         "peer_degree": 6,
@@ -501,11 +507,11 @@ def test_run_bounds() -> None:
     }
     expect_failure(
         lambda: fleet.validate_runtime_topology(True, plan_only=False),
-        "frozen 7/31/100 profiles",
+        "frozen 4/7/31/100 profiles",
     )
     expect_failure(
         lambda: fleet.validate_runtime_topology(30, plan_only=True),
-        "frozen 7/31/100 profiles",
+        "frozen 4/7/31/100 profiles",
     )
 
 
