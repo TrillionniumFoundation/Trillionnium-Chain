@@ -206,7 +206,7 @@ def normalize_spec(path: pathlib.Path, *, profile: str) -> dict[str, Any]:
     count = document["validator_count"]
     if (
         document["schema_version"] != 1
-        or count not in {7, 31, 100}
+        or count not in {4, 7, 31, 100}
         or document["network_scope"] != "single-lan"
         or document["geo_wan_evidence"] is not False
         or not isinstance(document["run_id"], str)

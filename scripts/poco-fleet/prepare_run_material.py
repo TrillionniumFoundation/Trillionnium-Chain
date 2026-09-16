@@ -35,7 +35,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 INVENTORY = HERE / "inventory.toml"
 PLANNER = HERE / "plan_topology.py"
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
-RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
+RUN_ID = re.compile(r"^poco-g3-(4|7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
 ED25519_SPKI_PREFIX = bytes.fromhex("302a300506032b6570032100")
 
 
@@ -252,6 +252,8 @@ def ref(root: pathlib.Path, path: pathlib.Path) -> dict[str, object]:
 
 
 def prepare(args: argparse.Namespace) -> pathlib.Path:
+    if args.validator_count == 4 and args.weight_profile != "equal":
+        fail("four-validator P0 run material requires equal voting weights")
     selected_run_id = run_id(args.validator_count, args.run_id)
     source_hash = require_hash(args.source_sha256, "--source-sha256")
     linux_hash = require_hash(args.linux_sha256, "--linux-sha256")
@@ -673,7 +675,7 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("validator_count", type=int, choices=(7, 31, 100))
+    parser.add_argument("validator_count", type=int, choices=(4, 7, 31, 100))
     parser.add_argument("--output", type=pathlib.Path, required=True)
     parser.add_argument(
         "--weight-profile", choices=("equal", "bounded-unequal"), default="equal"

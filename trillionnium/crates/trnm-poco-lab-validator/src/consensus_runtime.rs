@@ -387,8 +387,7 @@ pub struct Process1TargetParkedHandoffV1 {
     pub production_activation: bool,
 }
 
-const DIRECT_VALIDATOR_COUNT_V1: usize = 7;
-const DIRECT_PEER_DEGREE_V1: usize = 6;
+const DIRECT_VALIDATOR_COUNTS_V1: [usize; 2] = [4, 7];
 const SPARSE_PEER_DEGREE_V1: usize = 8;
 const MESH_SETUP_TIMEOUT_V1: Duration =
     Duration::from_secs(CONSENSUS_RUNTIME_MESH_SETUP_ALLOWANCE_SECONDS_V1);
@@ -1070,7 +1069,7 @@ impl RuntimeEventSignatureProducerV1 for SharedRuntimeEventSignatureProducerV1 {
     }
 }
 
-/// Runs one bounded seven-validator Stage0 consensus process.
+/// Runs one bounded four- or seven-validator direct P0 consensus process.
 ///
 /// `commission` must consume the already authenticated public bootstrap
 /// material and return the exact native h1->h2->h3 ordinary takeover owner.
@@ -1946,9 +1945,7 @@ impl ConsensusRuntimePreflightV1 {
         validate_deployed_lab_core_record_envelope_v0(&core_config)
             .map_err(|error| anyhow!("deployed Core record envelope is invalid: {error}"))?;
         let (expected_degree, transport) = match validator_count {
-            DIRECT_VALIDATOR_COUNT_V1 => {
-                (DIRECT_PEER_DEGREE_V1, ConsensusTransportProfileV1::Direct)
-            }
+            4 | 7 => (validator_count - 1, ConsensusTransportProfileV1::Direct),
             31 | 100 => (
                 SPARSE_PEER_DEGREE_V1,
                 ConsensusTransportProfileV1::SparseRelay {
@@ -1956,7 +1953,7 @@ impl ConsensusRuntimePreflightV1 {
                         .map_err(|error| anyhow!("derive sparse relay hop budget: {error}"))?,
                 },
             ),
-            _ => bail!("bounded consensus validator count is outside 7/31/100"),
+            _ => bail!("bounded consensus validator count is outside 4/7/31/100"),
         };
         ensure!(
             config.peers().len() == expected_degree
@@ -1995,7 +1992,7 @@ impl ConsensusRuntimePreflightV1 {
                 .collect::<BTreeSet<_>>();
             ensure!(
                 outgoing == expected_peers && incoming == expected_peers,
-                "seven-validator runtime peer inventory is not the exact direct mesh"
+                "four/seven-validator runtime peer inventory is not the exact direct mesh"
             );
         } else {
             ensure!(
@@ -2074,8 +2071,8 @@ fn validate_deployed_core_max_blocks_v1(max_blocks: u64) -> Result<usize> {
 
 fn validate_active_validator_count_v1(validator_count: usize) -> Result<()> {
     ensure!(
-        validator_count == DIRECT_VALIDATOR_COUNT_V1,
-        "active bounded consensus is frozen to the direct seven-validator Stage0 profile"
+        DIRECT_VALIDATOR_COUNTS_V1.contains(&validator_count),
+        "active bounded consensus is frozen to the direct four/seven-validator P0 profile"
     );
     Ok(())
 }
@@ -9698,6 +9695,7 @@ mod tests {
         assert_eq!(validate_deployed_core_max_blocks_v1(128).unwrap(), 128);
         assert!(validate_deployed_core_max_blocks_v1(129).is_err());
         assert!(validate_deployed_core_max_blocks_v1(u64::MAX).is_err());
+        assert!(validate_active_validator_count_v1(4).is_ok());
         assert!(validate_active_validator_count_v1(7).is_ok());
         assert!(validate_active_validator_count_v1(31).is_err());
         assert!(validate_active_validator_count_v1(100).is_err());

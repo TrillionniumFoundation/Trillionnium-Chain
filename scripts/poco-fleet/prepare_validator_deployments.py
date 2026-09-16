@@ -338,7 +338,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("coordinator_root", type=pathlib.Path)
     parser.add_argument("--output", required=True, type=pathlib.Path)
-    parser.add_argument("--validators", required=True, type=int, choices=(7, 31, 100))
+    parser.add_argument("--validators", required=True, type=int, choices=(4, 7, 31, 100))
     args = parser.parse_args()
     try:
         output = prepare(args.coordinator_root, args.output, args.validators)

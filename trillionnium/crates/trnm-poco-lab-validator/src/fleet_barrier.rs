@@ -1971,7 +1971,7 @@ impl FleetStartCertificateV1 {
             return Err(FleetBarrierErrorV1::TooLarge);
         }
         let expected_count = validator_set.validators().len();
-        if !matches!(expected_count, 7 | 31 | 100) {
+        if !matches!(expected_count, 4 | 7 | 31 | 100) {
             return Err(FleetBarrierErrorV1::WrongContext);
         }
         let mut cursor = BarrierCursor::new(bytes);

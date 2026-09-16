@@ -915,7 +915,7 @@ def main() -> None:
         prepared: dict[int, tuple[pathlib.Path, pathlib.Path, list[str]]] = {}
         representatives: dict[int, tuple[str, dict[str, Any]]] = {}
         signed_reports: dict[int, tuple[pathlib.Path, dict[str, Any]]] = {}
-        for count in (7, 31, 100):
+        for count in (4, 7, 31, 100):
             prepared[count] = prepare(parent, material_builder, binary, count)
             representatives[count] = verify_representative(binary, *prepared[count])
             coordinator_for_count, deployments_for_count, _ = prepared[count]

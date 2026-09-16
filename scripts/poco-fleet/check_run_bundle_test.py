@@ -879,7 +879,7 @@ def build(root: pathlib.Path, count: int = 7) -> None:
                 )
             )
             continue
-        hosted = validators_by_host[participant["host_id"]]
+        hosted = validators_by_host.get(participant["host_id"], [])
         participant["process_ids"] = [validator["process_id"] for validator in hosted]
         participant["config_set_sha256"] = (
             bundle_checker.check_run_evidence.host_validator_configuration_set_digest(hosted)
@@ -1515,7 +1515,7 @@ def main() -> None:
         "signed_observer_load_submission_log"
     }
     profile_root_checked = False
-    for count in (7, 31, 100):
+    for count in (4, 7, 31, 100):
         with tempfile.TemporaryDirectory(prefix="trnm-poco-g3-bundle-positive-") as raw:
             root = pathlib.Path(raw)
             build(root, count)

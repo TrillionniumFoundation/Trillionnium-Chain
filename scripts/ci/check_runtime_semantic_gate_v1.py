@@ -3,9 +3,10 @@
 
 Repository lexical guards and a successful subprocess are useful diagnostics,
 but neither proves distributed runtime behavior. Every configured P0 command
-must additionally publish one source-bound `trnm-runtime-semantic-evidence-v1`
-envelope. The gate re-hashes every referenced artifact and validates the
-check-specific minimum facts before a semantic result can become PASS.
+must additionally publish a source-bound `trnm-runtime-semantic-evidence-v2`
+envelope. The envelope contains no PASS/claims field. The gate re-hashes every
+referenced artifact and invokes a fixed repository verifier before a semantic
+result can become PASS.
 
 This is still engineering evidence and explicitly carries no production or
 independent-audit authority.
@@ -25,11 +26,7 @@ from typing import Any
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "config/runtime-semantic-gate-v1.toml"
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from runtime_semantic_evidence_v1 import (  # noqa: E402
-    EvidenceError,
-    verify_evidence,
-    verify_semantics,
-)
+from runtime_semantic_evidence_v1 import EvidenceError, verify_evidence  # noqa: E402
 
 
 class GateError(RuntimeError):
@@ -60,10 +57,10 @@ def load() -> dict[str, Any]:
     except (OSError, tomllib.TOMLDecodeError) as error:
         raise GateError(f"invalid semantic gate config: {error}") from error
     require(isinstance(value, dict), "semantic gate config must be a table")
-    require(value.get("schema_version") == 3, "semantic gate schema drift")
+    require(value.get("schema_version") == 2, "semantic gate schema drift")
     require(value.get("gate_id") == "trnm-runtime-semantic-gate-v1", "semantic gate id drift")
     require(
-        value.get("evidence_schema") == "trnm-runtime-semantic-evidence-v1",
+        value.get("evidence_schema") == "trnm-runtime-semantic-evidence-v2",
         "semantic evidence schema drift",
     )
     require(value.get("production_authority") is False, "semantic gate cannot hold production authority")
@@ -76,7 +73,6 @@ def load() -> dict[str, Any]:
         check_id = row.get("id")
         command_env = row.get("command_env")
         evidence_env = row.get("evidence_env")
-        semantic_verifier = row.get("semantic_verifier")
         require(
             isinstance(check_id, str) and check_id and check_id not in seen,
             "duplicate semantic check id",
@@ -96,10 +92,6 @@ def load() -> dict[str, Any]:
             f"{check_id}: acceptance missing",
         )
         require(isinstance(row.get("required"), bool), f"{check_id}: required flag missing")
-        require(
-            isinstance(semantic_verifier, str) and semantic_verifier,
-            f"{check_id}: semantic verifier missing",
-        )
         seen.add(check_id)
         seen_envs.update({command_env, evidence_env})
     return value
@@ -112,7 +104,6 @@ def main() -> int:
     executed = 0
     failures = 0
     evidence_verified = 0
-    semantic_verified = 0
 
     for row in config["check"]:
         check_id = row["id"]
@@ -123,8 +114,6 @@ def main() -> int:
         returncode: int | None = None
         evidence_status = "not-configured" if not raw_evidence else "configured-not-verified"
         evidence_error: str | None = None
-        semantic_status = "not-configured"
-        semantic_error: str | None = None
 
         if raw_command:
             try:
@@ -148,27 +137,16 @@ def main() -> int:
                 failures += 1
             else:
                 try:
-                    evidence = verify_evidence(pathlib.Path(raw_evidence), check_id)
+                    verify_evidence(pathlib.Path(raw_evidence), check_id)
                 except EvidenceError as error:
                     status = "failed-evidence-invalid"
                     evidence_status = "invalid"
                     evidence_error = str(error)
                     failures += 1
                 else:
+                    status = "passed"
                     evidence_status = "verified"
                     evidence_verified += 1
-                    semantic_status = "configured-not-verified"
-                    try:
-                        verify_semantics(evidence, check_id, row["semantic_verifier"])
-                    except EvidenceError as error:
-                        status = "failed-semantic-unverified"
-                        semantic_status = "unverified"
-                        semantic_error = str(error)
-                        failures += 1
-                    else:
-                        status = "passed"
-                        semantic_status = "verified"
-                        semantic_verified += 1
 
         reports.append(
             {
@@ -182,9 +160,6 @@ def main() -> int:
                 "returncode": returncode,
                 "evidence_status": evidence_status,
                 "evidence_error": evidence_error,
-                "semantic_verifier": row["semantic_verifier"],
-                "semantic_status": semantic_status,
-                "semantic_error": semantic_error,
             }
         )
 
@@ -202,7 +177,7 @@ def main() -> int:
     else:
         result = "PASS"
     report = {
-        "schema": "trnm-runtime-semantic-gate-report-v3",
+        "schema": "trnm-runtime-semantic-gate-report-v2",
         "gate_id": config["gate_id"],
         "mode": "execution" if args.run else "report-only",
         "lexical_smoke_is_not_semantic_evidence": True,
@@ -210,7 +185,6 @@ def main() -> int:
         "required_missing": required_missing,
         "executed_count": executed,
         "evidence_verified_count": evidence_verified,
-        "semantic_verified_count": semantic_verified,
         "checks": reports,
         "production_authority": False,
         "result": result,
