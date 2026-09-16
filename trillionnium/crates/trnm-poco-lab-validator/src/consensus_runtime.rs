@@ -81,13 +81,13 @@ use crate::{
     loop_driver::RoutedConsensusActionV0,
     p2p_admission::{ExternalPeerLeaseAuthorityV1, RejectingExternalPeerLeaseAuthorityV1},
     p2p_identity::P2pIdentitySignatureProducerV1,
-    process_lock::ValidatorProcessLockV1,
     pacemaker::GenerationAwarePacemakerV0,
     process_event::{
         LocalRestartParkJournalCommitV1, Process1TargetParkedJournalCutV1,
         Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1, RuntimeEventJournalV1,
         RuntimeEventKindV1, RuntimeEventSignatureProducerV1, RuntimeRestartPhaseV1,
     },
+    process_lock::ValidatorProcessLockV1,
     recovery_zero_delta_store::{persist_recovery_zero_delta_cut_v1, StoredRecoveryZeroDeltaCutV1},
     relay::{
         required_ring_relay_hops_v0, ConsensusRelayEnvelopeV0, MAX_RELAY_INNER_PAYLOAD_BYTES_V0,

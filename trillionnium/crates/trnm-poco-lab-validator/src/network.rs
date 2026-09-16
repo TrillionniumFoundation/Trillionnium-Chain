@@ -28,8 +28,8 @@ use trnm_consensus_types::{ValidatorId, ValidatorSet};
 use crate::{
     config::{LoadedValidatorConfig, PeerConfig, PublicReportVerifierContext},
     frame::FrameKind,
-    transport::{AuthenticatedConnection, RunTransportContext},
     process_lock::ValidatorProcessLockV1,
+    transport::{AuthenticatedConnection, RunTransportContext},
 };
 
 const HEALTH_MAGIC: &[u8; 8] = b"TRNMG3N1";
