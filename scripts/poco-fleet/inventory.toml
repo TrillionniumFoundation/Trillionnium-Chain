@@ -17,7 +17,7 @@ cpu_threads = 24
 memory_bytes = 24781164544
 validator_eligible = true
 run_roles = ["validator"]
-validator_counts = { seven = 2, thirty_one = 5, one_hundred = 20 }
+validator_counts = { four = 1, seven = 2, thirty_one = 5, one_hundred = 20 }
 
 [[hosts]]
 id = "x230"
@@ -29,7 +29,7 @@ cpu_threads = 4
 memory_bytes = 8012709888
 validator_eligible = true
 run_roles = ["validator"]
-validator_counts = { seven = 1, thirty_one = 2, one_hundred = 3 }
+validator_counts = { four = 1, seven = 1, thirty_one = 2, one_hundred = 3 }
 
 [[hosts]]
 id = "desktop"
@@ -41,7 +41,7 @@ cpu_threads = 48
 memory_bytes = 134923124736
 validator_eligible = true
 run_roles = ["validator"]
-validator_counts = { seven = 1, thirty_one = 10, one_hundred = 36 }
+validator_counts = { four = 1, seven = 1, thirty_one = 10, one_hundred = 36 }
 
 [[hosts]]
 id = "rog"
@@ -53,7 +53,7 @@ cpu_threads = 32
 memory_bytes = 130456432640
 validator_eligible = true
 run_roles = ["validator"]
-validator_counts = { seven = 2, thirty_one = 13, one_hundred = 38 }
+validator_counts = { four = 1, seven = 2, thirty_one = 13, one_hundred = 38 }
 
 [[hosts]]
 id = "j3160"
@@ -65,7 +65,7 @@ cpu_threads = 4
 memory_bytes = 4008587264
 validator_eligible = true
 run_roles = ["validator"]
-validator_counts = { seven = 1, thirty_one = 1, one_hundred = 3 }
+validator_counts = { four = 0, seven = 1, thirty_one = 1, one_hundred = 3 }
 
 [[hosts]]
 id = "mac"
@@ -77,4 +77,4 @@ cpu_threads = 10
 memory_bytes = 34359738368
 validator_eligible = false
 run_roles = ["load-generator", "evidence-collector", "crypto-cross-verifier"]
-validator_counts = { seven = 0, thirty_one = 0, one_hundred = 0 }
+validator_counts = { four = 0, seven = 0, thirty_one = 0, one_hundred = 0 }

@@ -178,8 +178,8 @@ mod deployed_lab_recovery;
 pub mod effect_driver;
 #[cfg(feature = "g1-process-test-support")]
 pub mod effect_driver_process;
-mod external_node_checkpoint;
 mod epoch_transition_journal_v1;
+mod external_node_checkpoint;
 #[cfg(feature = "external-proposal-signer")]
 mod external_proposal_signer_runtime;
 #[cfg(feature = "external-signer-runtime")]

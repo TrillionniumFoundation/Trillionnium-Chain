@@ -11,10 +11,11 @@
 use std::{
     fs::{File, OpenOptions},
     io::Write,
-    #[cfg(unix)]
-    os::unix::fs::OpenOptionsExt,
     path::{Path, PathBuf},
 };
+
+#[cfg(unix)]
+use std::os::unix::fs::OpenOptionsExt;
 
 use anyhow::{Context, Result};
 use fs2::FileExt;
@@ -37,7 +38,9 @@ impl ValidatorProcessLockV1 {
         let mut options = OpenOptions::new();
         options.create(true).read(true).write(true);
         #[cfg(unix)]
-        options.mode(0o600).custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+        options
+            .mode(0o600)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
         let file = options
             .open(&path)
             .with_context(|| format!("open validator process lock {}", path.display()))?;
@@ -51,7 +54,8 @@ impl ValidatorProcessLockV1 {
         // Keep only bounded, non-authoritative diagnostics.  Writing happens
         // after the lock is held, and sync makes the marker useful when
         // investigating a crash without turning it into an activation fact.
-        file.set_len(0).context("truncate validator process lock marker")?;
+        file.set_len(0)
+            .context("truncate validator process lock marker")?;
         let mut marker = format!(
             "schema=trnm.validator-process-lock.v1\nrun_id={run_id}\nvalidator_id={validator_id}\npid={}\n",
             std::process::id()
