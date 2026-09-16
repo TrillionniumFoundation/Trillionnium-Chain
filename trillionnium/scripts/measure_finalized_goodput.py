@@ -130,16 +130,32 @@ def read_events(path: Path) -> tuple[list[dict], str]:
     return events, digest
 
 
-def measure(events: list[dict], digest: str, source: Path) -> dict:
+def measure(
+    events: list[dict],
+    digest: str,
+    source: Path,
+    *,
+    window_start: datetime | None = None,
+    window_end: datetime | None = None,
+) -> dict:
     submitted_times = [e["_submitted"] for e in events]
     verified = [e for e in events if e["finality_status"] == "finalized" and e["replay_verified"]]
     finalized = [e for e in events if e["finality_status"] == "finalized"]
     if not verified:
         fail("no finalized + replay-verified transaction; refusing to claim goodput")
     first_submit = min(submitted_times)
+    last_submit = max(submitted_times)
     last_finalized = max(e["_finalized"] for e in verified)
-    observation_end = max(max(submitted_times), last_finalized)
-    elapsed = (observation_end - first_submit).total_seconds()
+
+    observed_start = window_start if window_start is not None else first_submit
+    observed_end = window_end if window_end is not None else max(last_submit, last_finalized)
+    if observed_start > first_submit:
+        fail("measurement window starts after the first submitted transaction")
+    if observed_end < last_submit:
+        fail("measurement window ends before the last submitted transaction")
+    if observed_end < last_finalized:
+        fail("measurement window ends before the last replay-verified finalization")
+    elapsed = (observed_end - observed_start).total_seconds()
     if elapsed <= 0:
         fail("measurement window must be positive")
     latency_ms = [
@@ -158,12 +174,12 @@ def measure(events: list[dict], digest: str, source: Path) -> dict:
         subset = [e for e in events if e["workload"] == workload]
         good = [e for e in verified if e["workload"] == workload]
         wl_lat = [(e["_finalized"] - e["_submitted"]).total_seconds() * 1000.0 for e in good]
-        wl_start = min((e["_submitted"] for e in subset), default=first_submit)
-        wl_end = max(
-            max((e["_submitted"] for e in subset), default=wl_start),
-            max((e["_finalized"] for e in good), default=wl_start),
-        )
-        wl_duration = (wl_end - wl_start).total_seconds()
+        if subset:
+            wl_start = max(observed_start, min(e["_submitted"] for e in subset))
+            wl_end = observed_end
+            wl_duration = (wl_end - wl_start).total_seconds()
+        else:
+            wl_duration = 0.0
         workloads[workload] = {
             "submitted": len(subset),
             "finalized": len([e for e in subset if e["finality_status"] == "finalized"]),
@@ -175,20 +191,22 @@ def measure(events: list[dict], digest: str, source: Path) -> dict:
             "finality_p99_ms": percentile(wl_lat, 0.99),
         }
     return {
-        "schema": "trnm_finalized_goodput_measurement_v2",
+        "schema": "trnm_finalized_goodput_measurement_v1",
         "generated_at_utc": iso(datetime.now(timezone.utc)),
         "status": "complete",
         "measurement_policy": {
             "included": "canonical records with finality_status=finalized and replay_verified=true",
             "excluded": "pending, rejected, non-replay-verified, and all speculative-worker records",
             "percentile": "nearest-rank; rank=ceil(p*n)",
-            "goodput_denominator": "observation end (latest submission or replay-verified finalization) minus first submission",
+            "goodput_denominator": "explicit observation window; absent CLI bounds use first submission through max(last submission,last replay-verified finalization)",
+            "tail_policy": "pending/rejected submissions remain in the denominator through window_end; success latency percentiles are conditional on replay-verified finalized transactions",
         },
         "source": {"path": str(source), "sha256": digest, "event_count": tx_count},
         "window": {
-            "submit_window_started_at_utc": iso(first_submit),
-            "last_replay_verified_finalized_at_utc": iso(last_finalized),
-            "observation_ended_at_utc": iso(observation_end),
+            "observed_started_at_utc": iso(observed_start),
+            "last_submission_at_utc": iso(last_submit),
+            "last_replay_verified_finality_at_utc": iso(last_finalized),
+            "observed_ended_at_utc": iso(observed_end),
             "duration_ms": round(elapsed * 1000.0, 3),
         },
         "counts": {
@@ -197,6 +215,8 @@ def measure(events: list[dict], digest: str, source: Path) -> dict:
             "replay_verified_finalized": finalized_count,
             "excluded_unfinalized_or_rejected": tx_count - len(finalized),
             "excluded_not_replay_verified": len(finalized) - finalized_count,
+            "pending_at_window_end": sum(e["finality_status"] == "pending" for e in events),
+            "rejected_in_window": sum(e["finality_status"] == "rejected" for e in events),
             "speculative_rejected": 0,
         },
         "metrics": {
@@ -220,9 +240,25 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Measure finalized, replay-verified TRNM goodput from JSONL telemetry")
     parser.add_argument("input", type=Path, help="newline-delimited trnm_e2e_tx_event_v1 telemetry")
     parser.add_argument("-o", "--output", type=Path, help="write measurement JSON here (default: stdout)")
+    parser.add_argument(
+        "--window-start",
+        help="optional RFC3339 UTC observation-window start; must be no later than the first submission",
+    )
+    parser.add_argument(
+        "--window-end",
+        help="optional RFC3339 UTC observation-window end; must cover every submission and replay-verified finalization",
+    )
     args = parser.parse_args()
     events, digest = read_events(args.input)
-    result = measure(events, digest, args.input)
+    window_start = parse_time(args.window_start, "--window-start") if args.window_start else None
+    window_end = parse_time(args.window_end, "--window-end") if args.window_end else None
+    result = measure(
+        events,
+        digest,
+        args.input,
+        window_start=window_start,
+        window_end=window_end,
+    )
     rendered = json.dumps(result, indent=2, sort_keys=True) + "\n"
     if args.output:
         args.output.write_text(rendered, encoding="utf-8")
