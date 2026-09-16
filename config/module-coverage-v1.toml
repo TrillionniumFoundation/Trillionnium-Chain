@@ -33,7 +33,7 @@ anchor = "m00"
 slo_profile = "contract-library-v1"
 testkit_profile = "canonical-codec-conformance-v1"
 primary_crates = ["trnm-consensus-types", "trnm-types", "trnm-protocol", "trnm-poco-order-types-v1"]
-contract_paths = ["docs/protocol/poco-bft-v0", "docs/protocol/poco-ai-native-v1", "proto"]
+contract_paths = ["docs/protocol/poco-bft-v0", "docs/protocol/poco-ai-native-v1", "proto", "docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M01"
@@ -41,7 +41,7 @@ anchor = "m01"
 slo_profile = "contract-library-v1"
 testkit_profile = "crypto-capability-conformance-v1"
 primary_crates = ["trnm-consensus-crypto", "trnm-consensus-remote-signer-protocol"]
-contract_paths = ["docs/protocol/poco-ai-native-v1", "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"]
+contract_paths = ["docs/protocol/poco-ai-native-v1", "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M02"
@@ -49,7 +49,7 @@ anchor = "m02"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "consensus-state-machine-v1"
 primary_crates = ["trnm-consensus-core"]
-contract_paths = ["docs/protocol/poco-bft-v0", "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"]
+contract_paths = ["docs/protocol/poco-bft-v0", "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/modules/M02_CONSENSUS_CORE_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M03"
@@ -57,7 +57,7 @@ anchor = "m03"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "safety-signer-crash-matrix-v1"
 primary_crates = ["trnm-consensus-safety-rules", "trnm-consensus-safety-store", "trnm-consensus-signer-journal", "trnm-consensus-unix-remote-signer", "trnm-consensus-unix-fleet-signer", "trnm-consensus-external-watermark", "trnm-consensus-external-node-checkpoint", "trnm-consensus-remote-signer-service", "trnm-whole-node-checkpoint-types", "trnm-durable-file-adapters-v0"]
-contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/runbooks/TRNM_INCIDENT_DR_KEY_ROTATION_V1.md"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/runbooks/TRNM_INCIDENT_DR_KEY_ROTATION_V1.md", "docs/modules/M03_SAFETY_SIGNER_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M04"
@@ -81,7 +81,7 @@ anchor = "m06"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "deterministic-mvcc-root-invariance-v1"
 primary_crates = ["trnm-native-application", "trnm-native-execution-v0", "trnm-executor", "trnm-poco-mvcc-fee-v1", "trnm-poco-global-execution-v1", "trnm-runtime"]
-contract_paths = ["docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md", "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md", "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md", "docs/modules/M06_EXECUTION_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M07"
@@ -89,7 +89,7 @@ anchor = "m07"
 slo_profile = "authority-hot-path-v1"
 testkit_profile = "pinned-sqlite-jmt-v1"
 primary_crates = ["trnm-state", "trnm-native-application-sqlite", "trnm-poco-order-state-v1"]
-contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md"]
+contract_paths = ["docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md", "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md", "docs/modules/M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M08"
@@ -105,7 +105,7 @@ anchor = "m09"
 slo_profile = "candidate-application-v1"
 testkit_profile = "durable-da-retrieval-repair-v1"
 primary_crates = ["trnm-poco-da-v1"]
-contract_paths = ["docs/protocol/poco-ai-native-v1/06-certified-data-availability.md"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/06-certified-data-availability.md", "docs/modules/M09_DATA_AVAILABILITY_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M10"
@@ -113,7 +113,7 @@ anchor = "m10"
 slo_profile = "candidate-application-v1"
 testkit_profile = "agent-market-lifecycle-v1"
 primary_crates = ["trnm-poco-agent-market-v1", "trnm-worker-agent"]
-contract_paths = ["docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md", "docs/protocol/poco-ai-native-v1/04-market-task-lease-escrow-and-lifecycle.md"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md", "docs/protocol/poco-ai-native-v1/04-market-task-lease-escrow-and-lifecycle.md", "docs/modules/M10_AGENT_MARKET_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M11"
@@ -121,7 +121,7 @@ anchor = "m11"
 slo_profile = "candidate-application-v1"
 testkit_profile = "verify-challenge-profile-v1"
 primary_crates = ["trnm-poco-verify-challenge-v1", "trnm-oracle"]
-contract_paths = ["docs/protocol/poco-ai-native-v1/05-compute-receipts-verification-and-challenges.md"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/05-compute-receipts-verification-and-challenges.md", "docs/modules/M11_VERIFICATION_CHALLENGE_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M12"
@@ -129,7 +129,7 @@ anchor = "m12"
 slo_profile = "candidate-application-v1"
 testkit_profile = "settlement-conservation-v1"
 primary_crates = ["trnm-poco-consumption-settlement-v1", "trnm-pouw"]
-contract_paths = ["docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md", "contracts/README.md"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md", "contracts/README.md", "docs/modules/M12_SETTLEMENT_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M13"
@@ -137,7 +137,7 @@ anchor = "m13"
 slo_profile = "bounded-io-runtime-v1"
 testkit_profile = "light-client-state-sync-v1"
 primary_crates = ["trnm-poco-cross-plane-readback-v1", "trnm-poco-order-finality-verifier-v1", "trnm-finality-types", "trnm-finality-verifier", "trnm-migration-v0", "trnm-state-sync-v0"]
-contract_paths = ["docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md", "docs/architecture/TRNM_STATE_SYNC_STAGING_ADMISSION_V0.md"]
+contract_paths = ["docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md", "docs/architecture/TRNM_STATE_SYNC_STAGING_ADMISSION_V0.md", "docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md"]
 
 [[module_coverage]]
 id = "M14"

@@ -1,26 +1,18 @@
 {
   "schema": "trnm-current-snapshot-v1",
-  "as_of": "2026-09-02",
+  "as_of": "2026-09-16",
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
   "default_branch": "main",
-  "default_branch_head_observed": "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9",
+  "default_branch_head_observed": "c552c31c6d3c5ac47522a124e02c6b8bca4e23f2",
   "selected_successor": {
-    "pull_request": 62,
-    "ref": "refs/heads/work/plan-v2-full-gap-closure-20260902",
-    "assessed_baseline_commit": "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea",
-    "assessed_baseline_tree": "af09e389b1a462b3839508b7ef305596c76384c6",
+    "pull_request": 0,
+    "ref": "derive-from-current-pull-request",
+    "assessed_baseline_commit": "c552c31c6d3c5ac47522a124e02c6b8bca4e23f2",
+    "assessed_baseline_tree": "c37858e60146147eccf1a6fec6eff04d00a828a7",
     "current_head_binding": "derived-at-verification-time",
     "prospective_merge_binding": "derived-at-verification-time",
-    "status": "draft-integration-candidate-independent-acceptance-pending",
-    "supersedes_intent_of": [
-      54,
-      57,
-      58,
-      59,
-      61,
-      69,
-      71
-    ]
+    "status": "runtime-derived-current-pr-independent-acceptance-pending",
+    "supersedes_intent_of": []
   },
   "repository_implementation": {
     "single_development_truth": "present-exact-head-and-prospective-merge-replay-required",
@@ -99,7 +91,7 @@
     "v1_release_ready": false
   },
   "current_promotion_critical_stack": [
-    "all required checks on one unchanged PR62 head and prospective merge",
+    "all required checks on one unchanged current PR head and prospective merge",
     "independent module-owner, consumer, security and release acceptance",
     "exact-head and prospective-merge Cargo-tree/compiler acceptance of production build closures, plus node decomposition",
     "persistent authenticated network, pacemaker, Vote/Timeout, finality and recovery",

@@ -10,36 +10,205 @@ replacement, proposal handoff, finality readback, expiry and tombstone garbage
 collection. It never chooses canonical order and never mutates finalized
 application state.
 
+### Source map and implementation status
+
+| Source | Present behavior | Planned host responsibility |
+|---|---|---|
+| `trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs` | Pure intent/phase/receipt rules and signing/ID digests | Resolve authenticated nonce/balance/height context |
+| `trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs` | `ProductionTxCoordinatorV0`, durable journal/sign/broadcast/readback ports | Real services, proof verification and restart orchestration |
+| `trillionnium/crates/trnm-tx-lifecycle-v0/src/codec.rs` | Closed durable record bytes v0 | Adapter interoperability, not a new transaction signing format |
+| `trillionnium/crates/trnm-mempool/src/lib.rs` | Bounded/lane admission queues | Bind queued work to exact durable M05 IDs |
+| `trillionnium/crates/trnm-application-tx-builder-v0/src/lib.rs` | Strict JSON/canonical application building | Explicit adapter; its object schema is not implicitly `TxIntentV0` |
+| `trillionnium/crates/trnm-durable-file-adapters-v0` | Candidate file journal behind explicit feature | No production rollback anchor or authenticated GC source |
+
 ## Interfaces
 
-- `SubmitTransactionV1(canonical_bytes, principal, lane, nonce, limits)`;
-- `AdmissionViewV1(parent_root, height, epoch, parameter_hash)`;
-- `AdmissionReceiptV1(tx_id, phase, reservation, durable_sequence)`;
-- `ProposalHandoffV1(batch_id, ordered_tx_ids, parent_root, expiry)`;
-- `FinalityReadbackV1(tx_id, finality_proof, receipt_root, state_root)`;
-- `ReplacementV1(principal, lane, nonce, old_tx_id, new_tx_id, fee_delta)`;
-- `GcPermitV1(finalized_height, replay_floor, proof_digest)`.
+### Submitted intent and identity
 
-All IDs derive from exact canonical bytes and context. Callers cannot supply an
-authoritative transaction ID, signer result, admission phase or finality fact.
+The proposed private-devnet HTTP interface is defined in M14 at
+`POST /dev/v1/transactions`; M05 receives an exact typed `TxIntentV0`.
+Fields are chain ID/sender (32 bytes each), nonce `u64`, fee bid `u128`,
+valid-until height `u64`, compute `u64`, reads/writes/events `u32`, nonempty
+payload (<=1 MiB) and nonempty authorization (<=16 KiB). Integers and byte
+encodings follow the M14 request contract before constructing this value.
+Unknown fields and independent nonce lanes are rejected: v0 has only the
+`(sender,nonce)` domain. Future AI-v1 lanes require a different signed profile.
+
+Use existing `TxIntentV0::signing_digest` domain `trnm.tx.signing.v0` and
+`tx_id` domain `trnm.tx.id.v0`; the latter binds signing digest and authorization.
+`Digest32V0::hash` length-prefixes domain and every part with big-endian `u64`.
+Never hash JSON text, a displayed tx ID or a transport frame as a replacement.
+`AuthorizationVerifierV0` must authenticate sender against that exact signing
+digest; an API principal/rate-limit token does not replace sender authorization.
+
+### Operation ports and receipts
+
+| Operation | Input and predecessor | Output / required producer |
+|---|---|---|
+| `admit_and_persist` | Signed intent, trusted current height and recovered journal | `TxAdmissionReceiptV0 {tx_id,wal_sequence,record_digest,durable_receipt_digest}` |
+| `persist_proposal` | WAL-persisted tx and exact proposal/index | Durable Proposed record; M02 proposal construction |
+| `persist_ordered` | Proposed record and verified block/height/index | Durable Ordered record; M02/M08 canonical ordering |
+| `persist_execution` | Ordered record and matching execution receipt | Durable Executed record; M06 execution |
+| `sign_and_broadcast` | Durable record plus verified Core/Safety permit | Persisted broadcast intent/receipt; M03 signer and M04 broadcaster |
+| `apply_finalized_readback` | Exact tx ID, authenticated finalized source | `FinalizedReadbackV0`; M08 commit and M13 proof checks |
+| `tombstone_and_collect` | Finalized tx and authenticated replay-floor witness | Durable tombstone/collection receipt; M07/M08/M13 source |
+
+Initial admission returns phase `WalPersisted`; `wal_sequence` identifies the
+first durable admission, not necessarily the latest journal frame. Exact retry
+preserves tx ID and original WAL sequence; after phase advancement the returned
+record/receipt digest can identify the newer durable record. The planned API
+exposes that current phase explicitly instead of claiming all receipt bytes are
+unchanged forever. Receipt digests are local persistence facts, not finality proofs.
 
 ## State machine
 
 ```text
-Received -> Canonicalized -> Authenticated -> Admitted -> Reserved
- -> HandedOff -> Ordered -> Executed -> Finalized -> ReadBack -> Tombstoned
+Admitted(0) -> WalPersisted(1) -> Proposed(2) -> Ordered(3)
+ -> Executed(4) -> Finalized(5) -> Tombstoned(6)
 ```
 
-Terminal side paths are `Rejected`, `Expired` and `Replaced`. A transition
-requires the exact predecessor, transaction identity and generation. Retry of an
-identical request returns the original receipt. A different transaction at the
-same nonce follows the versioned replacement rule or is rejected; it never
-silently overwrites a durable record.
+These are actual `TxPhaseV0` tags. Parsing/authentication/reservation happen
+before durable admission; ReadBack is a query, not another stored phase.
+Rejected input has no accepted record. Early replacement/expiry/rejection
+uses a typed tombstone only where the v0 phase rules permit it.
 
-Admission is local and provisional. Proposal construction rechecks state,
-nonce, balance, fees, access declaration and limits against the authoritative
-parent root. M02 determines order; M06 determines execution; M08/M13 establish
-finality and readback.
+### Admission and replacement algorithm
+
+1. Enforce transport/decoded resource limits and checked arithmetic. Validate
+   chain, nonzero fee/expiry, resource limits and authorization shape.
+2. Resolve current height, account nonce and spendable balance from one immutable
+   authenticated parent view. The planned dev host permits one active next nonce
+   per sender (or its exact replacement), avoiding an unimplemented nonce-gap
+   pipeline. This is local admission policy, not a new block-validity rule.
+3. Verify authorization; an exact already-recorded intent returns its durable
+   identity even if the present admission view has advanced. Never reinsert it.
+4. Reserve finite queue/byte capacity and local fee/resource budget keyed by
+   sender/nonce; do not debit canonical state. Proposal construction revalidates
+   nonce/balance/expiry against its actual parent root.
+5. Call `admit_and_persist`; fresh intent commits Admitted then WalPersisted
+   using compare-and-append. Only acknowledge after the second durable receipt.
+6. A different same-nonce intent may replace only Admitted/WalPersisted state,
+   and fee must be strictly greater. v0 does not implement a 10% fee-bump rule.
+   Atomic compare-and-replace commits old tombstone plus new Admitted record;
+   then persist the new WalPersisted transition before ACK.
+7. On any uncertain write or malformed receipt, poison the coordinator, stop
+   writes and recover from the journal. Do not release the reservation until
+   exact old/new durable state is resolved. A proposal race returns conflict.
+
+### Proposal, broadcast and result algorithm
+
+Proposal selection consumes eligible WAL-persisted records under byte/work
+limits, rechecks the parent view, and persists the exact proposal/index before
+handoff. M02 selects canonical order; a local FIFO is not consensus order.
+Verified ordering and execution produce separate durable transitions. Expiry
+cannot erase an already ordered transaction; readback resolves its final outcome.
+
+`sign_and_broadcast` verifies `CoreSafetyPermitClaimV0` against the current durable
+record, obtains a signature from `NonExportableTxSignerV0`, persists its broadcast
+intent, calls `AuthenticatedTxBroadcasterV0`, checks the exact returned envelope
+binding, then persists the broadcast receipt. This node-side envelope signature
+is separate from the user's existing transaction authorization. A caller cannot
+supply a fabricated permit or private signing key through RPC.
+
+Lost broadcast response leaves an uncertain effect. Retry/readback uses the same
+intent sequence/envelope identity; it cannot invent a new signed effect merely
+to clear a timeout. Signer idempotence and durable peer receipt are M03/M04 duties.
+`FinalizedTxReadbackSourceV0` must verify the chain/epoch/validator trust path,
+finality certificate and transaction execution binding before returning a claim.
+The coordinator's digest/field checks do not implement that cryptographic verifier.
+
+### Finalized receipt and garbage-collection authority
+
+The current local lifecycle record carries tx ID/sender/nonce, block/height/index,
+execution pre/post roots, receipt/event roots, fee, execution status, finality
+proof digest and optional broadcast receipt. Recording these fields does not
+cryptographically prove each one. Remote V1 responses expose only the verified
+fields defined below; other execution fields remain explicitly local observations
+unless independently replay-proved. An included failed execution must not be
+reported as an unsubmitted transaction.
+
+Current v0 requires `finality.state_root == execution.post_state_root`. Preserve
+that check. If execution's post-root is an intermediate transaction root in a
+multi-transaction block, the general receipt cannot be represented by v0 merely
+by copying the block root over it. Planned `FinalizedTxClaimV1` must separately
+bind the exact committed transaction/receipt and final block root under M13,
+without treating an intermediate transaction root as a header commitment. Until that version is implemented and reviewed, return `PROOF_UNAVAILABLE`
+for unsupported multi-transaction proof mapping; do not manufacture finality.
+
+### Planned V1 multi-transaction proof contract
+
+`FinalizedTxClaimV1` is a new candidate readback variant, not a relaxation of v0.
+Its proof package has this exact local layout: u16-be schema=1; Bytes canonical
+v0 target header; Bytes canonical v0 finality proof; Bytes exact canonical
+application transaction at that block position; Bytes canonical
+`ExecutionReceiptCommitmentV0`; u32-be index; u32-be item_count; List<Hash32>
+payload siblings; List<Hash32> receipt siblings. Bytes/List use u32-be lengths;
+unknown schema, trailing bytes and integer overflow reject. This is a local RPC
+proof envelope, never a new consensus signing preimage. Total package is bounded
+by the smaller authenticated proof budget and 4 MiB; the count is bounded by the
+selected native block transaction limit, and each branch has at most 32 hashes.
+
+M13 verifies the package as follows:
+
+1. Strictly verify finality under the independently installed trust context,
+   expecting the exact target header/block/epoch/height. Merely carrying that
+   header inside a valid proof for a different target is insufficient.
+2. Require 1 <= item_count and index < item_count. Decode the receipt exactly;
+   require its transaction_index equals index and payload_leaf_hash equals
+   `ordered_leaf_digest_v0(RootKind::Payload, index, transaction_bytes)`.
+3. Verify both ordered branches against the target header's payload_root and
+   receipts_root using frozen `ordered_root.rs`: kind Payload=0/Receipts=1,
+   index-bound leaves, level-bound nodes and count-bound outer root. Starting at
+   level 0, orient siblings by index parity, then halve the index and replace
+   width by ceil(width/2). An unpaired right child duplicates the current digest;
+   its supplied sibling must equal it. Require exactly ceil(log2(item_count))
+   siblings (zero when count=1) and reject extra or missing levels.
+4. Recompute the M05 signing digest and tx_id from the entire admitted intent,
+   including chain/sender/nonce/fee/expiry/resource limits/payload/authorization.
+   Require the selected M06 native adapter to prove one of exactly two bindings:
+   `ExactIntent` (the native transaction commits the complete canonical signed
+   intent byte-for-byte), or `IdCommitment` (strict native decoding yields a
+   consensus-validated full tx_id field equal to that recomputation). Its profile
+   hash fixes the codec and execution checks; neither a caller flag nor an
+   arbitrary byte-substring search is a decoder. The adapter must authenticate
+   the complete commitment during execution as well as readback. An extraction
+   that drops fields and maps different intents to the same proved payload
+   cannot supply either binding. Unsupported profiles return `PROOF_UNAVAILABLE`;
+   native payload inclusion alone can be returned with the M05 tx_id labelled
+   local correlation, but cannot advance a remotely verified M05 claim.
+5. Issue a private verified readback containing tx_id, target block/epoch/height,
+   transaction index, the target block state_root, and proved gas_used,
+   fee_charged and events. Persist its proof digest plus exact target/receipt
+   identity before publishing the finalized lifecycle result.
+
+The frozen receipt commits index, payload leaf, gas, fee and events; it does
+**not** commit an intermediate transaction post_state_root or an arbitrary
+success-status string. Such fields stay local execution observations unless
+independent deterministic replay or a separately versioned commitment proves
+them. The API must distinguish `included-finalized` from any application-specific
+outcome inferred from proved events. A proof must not authenticate extra fields
+merely because they accompany a valid branch.
+
+Exact proof retry is idempotent. Wrong target, kind, count, index, sibling,
+receipt bytes, full-intent commitment or trust context rejects without phase
+advance. Missing archived receipt/body is unavailable; it is not license to
+synthesize a leaf. Required vectors cover a three-transaction block at indices
+0/1/2, odd-tail duplication, one-item tree, count substitution, extra branch
+hash, target-header substitution and unproved intermediate-root/status claims.
+Also prove rejection when two intents differ only in fee, expiry, resource limit
+or authorization yet an adapter emits the same native transaction bytes.
+M06 retains the canonical receipt bytes; M08 supplies finality; M13 owns proof
+verification; M14 exposes only the verified result. V0 callers retain their old
+strict contract until this separate path is implemented and qualified.
+
+GC obtains `ReplayFloorWitnessV0` from authenticated finalized account state:
+account matches sender; `minimum_replayable_nonce > tx.nonce`; finalized height
+covers the tx; authority digest binds the verified state/proof context. Neither
+a nonzero digest nor a client-provided floor is sufficient authorization.
+Persist final tombstone, verify exact retained digest, append collection/fence,
+then remove only the latest-record view. Retain collection identity to reject
+future replay; HTTP returns `TX_COLLECTED` with retained proof reference when
+available. Expiry alone does not make a nonce cryptographically unspendable.
 
 ## Persistence and recovery
 
@@ -197,6 +366,21 @@ opens it. There is no unanchored compaction protocol in this version.
 
 ## Resource bounds
 
+Proposed signed private-devnet host limits are 10,000 live/latest records,
+256 MiB retained in-memory payloads, one active nonce/sender, 16 replacements
+per sender/minute and 1 MiB proposal transaction payload budget. Mempool overload
+returns `OVER_BUDGET`; it never evicts acknowledged durable intents. These are
+local development settings; actual protocol block/resource caps take precedence.
+If the installed protocol caps are absent, proposal construction is unavailable.
+Candidate journal's stricter 100,000-frame/1 GiB/10,000-record bounds specified above remain
+hard adapter ceilings. Payloads still count against retained journal bytes after
+logical collection; capacity planning cannot assume physical compaction exists.
+
+The host checks resource sums with overflow detection, charges the replacement
+only for its incremental reservation after durable old/new resolution, and
+reconstructs all reservations from recovered active records before opening RPC.
+A balance change invalidates local eligibility, not an already finalized effect.
+
 Limits cover transaction bytes, decoded nesting, signatures, state keys, read
 and write declarations, proof work, gas dimensions, events, per-principal
 entries, nonce gaps, replacements, global entries, retained bytes, WAL growth,
@@ -205,6 +389,14 @@ signature verification where possible. `u32::MAX` is not an operational count
 limit.
 
 ## Security
+
+The planned M14 error mapping uses `INVALID_ENCODING`, `WRONG_CHAIN`,
+`INVALID_AUTHORIZATION`, `NONCE_REPLAY`, `REPLACEMENT_REJECTED`, `TX_EXPIRED`,
+`OVER_BUDGET`, `NOT_FINALIZED`, `PROOF_UNAVAILABLE`, `RECOVERY_REQUIRED` and
+`IO_UNCERTAIN`. Pure lifecycle/authorization rejection is not-applied; uncertain
+journal/broadcast results carry `outcome:unknown` and exact tx ID. Retry the same
+signed bytes after readback; never silently increment nonce. Stale predecessor
+or receipt substitution stops that coordinator until source-bound recovery.
 
 The implementation rejects cross-chain replay, signer substitution, malformed
 canonical bytes, nonce-lane confusion, fee overflow, replacement front-running,
@@ -221,6 +413,24 @@ handoff age, finality/readback latency, tombstone age, replay rejection and
 resource saturation. Submitted TPS is not committed goodput.
 
 ## Verification and evidence
+
+| Operation | Positive regression | Required negative / fault |
+|---|---|---|
+| Admit/retry | Exact tx and WAL sequence survive restart | Wrong chain/auth, expired intent, capacity exhaustion, duplicate JSON key |
+| Replace | One CAS publishes old tombstone and new record | Concurrent proposal, lower/equal fee, crash at every pair publication cut |
+| Broadcast | Permit, signer and durable peer receipt bind one envelope | Forged permit, lost ACK, altered receipt, unsupported signer |
+| Execute/finalize | Ordered position and verified result agree | Other tx/root, nonzero fake proof, intermediate-root/block-root confusion |
+| Collect | Authenticated finalized nonce floor fences replay | Client floor, floor equal to nonce, missing proof, collection crash |
+
+Existing `production.rs` tests include
+`admission_is_durable_before_ack_and_restart_recovers_exact_state`,
+`replacement_every_commit_cut_and_lost_or_malformed_response_converges`,
+`replacement_stale_predecessor_cannot_overwrite_concurrent_proposal`, and
+`sign_broadcast_finalize_and_gc_are_durably_ordered`. They are port-level evidence;
+networked proof/readback and external custody are separate integration tests.
+Producers are M01 authorization, M02 order, M03 permit/signing, M06 execution,
+M07 account state, M08 durable commit and M13 proofs. Consumers are M04 broadcast,
+M14 API/SDK and M15 recovery. No consumer may treat admission as settlement.
 
 Required tests cover malformed encodings, duplicate and gap nonces, cross-lane
 replay, concurrent replacement, arithmetic overflow, disk-full and every WAL
