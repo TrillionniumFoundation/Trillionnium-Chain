@@ -30,7 +30,7 @@ diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/config.rs b/trillio
 diff --git a/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs b/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs
 --- a/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs
 +++ b/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs
-@@ -211,7 +211,13 @@ pub fn preflight_mesh_host_resources_v0(
+@@ -211,7 +211,12 @@ pub fn preflight_mesh_host_resources_v0(
      host: MeshHostCapacityV0,
  ) -> Result<MeshHostResourcePreflightV0> {
      if !matches!(validator_count, 4 | 7 | 31 | 100)
