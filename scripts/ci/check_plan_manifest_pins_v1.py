@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import pathlib
+import posixpath
 import re
 import subprocess
 import sys
@@ -103,6 +105,19 @@ def blob(path: str) -> str:
     return value
 
 
+def working_blob(path: str) -> str:
+    """Hash the checked-out bytes, preserving Git's symlink representation."""
+    local = ROOT / path
+    require(local.exists() or local.is_symlink(), f"pinned path missing: {path}")
+    if local.is_symlink():
+        data = os.readlink(local).encode("utf-8")
+    else:
+        data = local.read_bytes()
+    return hashlib.sha1(
+        b"blob " + str(len(data)).encode("ascii") + b"\0" + data
+    ).hexdigest()
+
+
 def blob_at(commit: str, path: str) -> str:
     """Return the Git blob for *path* in a declared snapshot commit."""
     require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
@@ -119,11 +134,27 @@ def content_at(commit: str, path: str) -> bytes:
     """Read a tracked file from the immutable pin snapshot."""
     require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
             "invalid pin snapshot commit")
+    mode = git("ls-tree", commit, "--", path).split(maxsplit=1)[0]
     result = subprocess.run(
         ["git", "cat-file", "blob", f"{commit}:{path}"],
         cwd=ROOT, check=True, capture_output=True,
     )
-    return result.stdout
+    content = result.stdout
+    # The evidence-contract path is intentionally a tracked symlink to the
+    # canonical plan.  Git's blob is the link target, while the existing
+    # SHA-256 contract hashes the dereferenced bytes.  Follow only a relative,
+    # repository-local link and reject loops/escapes.
+    if mode == "120000":
+        target = content.decode("utf-8")
+        resolved = posixpath.normpath(posixpath.join(posixpath.dirname(path), target))
+        require(
+            not target.startswith("/") and resolved != ".."
+            and not resolved.startswith("../"),
+            f"pin snapshot symlink escapes repository: {path}",
+        )
+        require(resolved != path, f"pin snapshot symlink loop: {path}")
+        return content_at(commit, resolved)
+    return content
 
 
 def sha256_at(commit: str, path: str) -> str:
@@ -331,7 +362,7 @@ def main() -> int:
             f"{blob_field} mismatch in pin snapshot for {path}: {expected} != {actual}",
         )
         if path in changed_pins:
-            current = blob(path)
+            current = working_blob(path)
             require(
                 current == expected,
                 f"stale pin for changed input {path}: {expected} != {current}; "
