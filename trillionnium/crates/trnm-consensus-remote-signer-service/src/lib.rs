@@ -134,6 +134,60 @@ pub struct RemoteSignerServiceConfig {
     pub purpose_policy: PurposePolicyV1,
 }
 
+/// Public-only configuration for a device-backed signer.  No private-key
+/// bytes are accepted on this constructor path.
+pub struct RemoteSignerDeviceConfigV1 {
+    pub validator_set: ValidatorSet,
+    pub binding: RemoteSignerRequestBindingV1,
+    pub verifying_key: [u8; 32],
+    pub watermark_path: PathBuf,
+    pub purpose_policy: PurposePolicyV1,
+}
+
+/// Alias retained for callers that name the configuration after the service.
+pub type DeviceSignerServiceConfigV1 = RemoteSignerDeviceConfigV1;
+
+/// Private-key boundary for a device-backed signer (HSM, KMS, TPM, or an
+/// independently administered equivalent).
+///
+/// The service never receives key bytes through this trait.  `sequence` is the
+/// durable signer-watermark sequence reserved for the exact request.  A real
+/// device implementation must persist that sequence in its own failure domain
+/// and reject a lower sequence, while allowing an exact `(sequence, root)`
+/// retry to return the same signature after a process crash.  The repository
+/// only supplies fixture implementations; no software file is treated as HSM
+/// evidence or production credential storage.
+pub trait DeviceKeyProviderV1: Send {
+    fn verifying_key_v1(&self) -> [u8; 32];
+
+    fn sign_v1(
+        &mut self,
+        signing_root: &[u8; 32],
+        sequence: u64,
+    ) -> Result<[u8; 64], DeviceKeyProviderErrorV1>;
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DeviceKeyProviderErrorV1 {
+    Unavailable,
+    CounterRollback,
+    ConflictingReplay,
+    InvalidSignature,
+}
+
+impl fmt::Display for DeviceKeyProviderErrorV1 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(match self {
+            Self::Unavailable => "device key provider unavailable",
+            Self::CounterRollback => "device monotonic counter rollback",
+            Self::ConflictingReplay => "device exact-sequence replay conflicts",
+            Self::InvalidSignature => "device returned an invalid signature",
+        })
+    }
+}
+
+impl Error for DeviceKeyProviderErrorV1 {}
+
 /// Request facts an independently administered authority must bind before a
 /// private key can be reached.
 ///
@@ -1575,6 +1629,7 @@ pub struct RemoteSignerService {
     validator_set: ValidatorSet,
     binding: RemoteSignerRequestBindingV1,
     signing_key: Option<SigningKey>,
+    device_signer: Option<Box<dyn DeviceKeyProviderV1>>,
     purpose_policy: PurposePolicyV1,
     scope: [u8; 32],
     watermark_path: PathBuf,
@@ -1615,37 +1670,55 @@ type PersistedWatermarkRowV1 = (Vec<u8>, i64, i64, i64, i64, i64, Vec<u8>, Vec<u
 type ExistingProposalReservationRowV1 = (Vec<u8>, i64, i64, i64, Vec<u8>);
 
 impl RemoteSignerService {
-    /// Opens or creates the independent watermark namespace.
+    /// Opens or creates the independent watermark namespace (fixture/raw-key path).
     pub fn open(config: RemoteSignerServiceConfig) -> Result<Self, RemoteSignerServiceError> {
-        config
-            .validator_set
+        let verifying_key = config.signing_key.verifying_key().to_bytes();
+        Self::open_with_material(
+            config.validator_set,
+            config.binding,
+            verifying_key,
+            config.watermark_path,
+            config.purpose_policy,
+            Some(config.signing_key),
+        )
+    }
+
+    fn open_with_material(
+        validator_set: ValidatorSet,
+        binding: RemoteSignerRequestBindingV1,
+        verifying_key: [u8; 32],
+        watermark_path_input: PathBuf,
+        purpose_policy: PurposePolicyV1,
+        signing_key: Option<SigningKey>,
+    ) -> Result<Self, RemoteSignerServiceError> {
+
+        validator_set
             .validate_shape()
             .map_err(|_| ServiceFailure::InvalidConfig("validator set shape"))?;
-        let validator = config
-            .validator_set
-            .validator(config.binding.author())
+        let validator = validator_set
+            .validator(binding.author())
             .ok_or(ServiceFailure::InvalidConfig("binding author is absent"))?;
-        if validator.consensus_key().as_bytes() != config.signing_key.verifying_key().as_bytes() {
+        if validator.consensus_key().as_bytes() != verifying_key.as_slice() {
             return Err(ServiceFailure::InvalidConfig(
                 "signing key does not match configured validator consensus key",
             )
             .into());
         }
-        if config.binding.genesis_hash() != config.validator_set.genesis_hash()
-            || config.binding.chain_id() != config.validator_set.chain_id()
-            || config.binding.protocol_version() != config.validator_set.protocol_version()
-            || config.binding.epoch() != config.validator_set.epoch()
-            || config.binding.validator_set_id() != config.validator_set.id()
+        if binding.genesis_hash() != validator_set.genesis_hash()
+            || binding.chain_id() != validator_set.chain_id()
+            || binding.protocol_version() != validator_set.protocol_version()
+            || binding.epoch() != validator_set.epoch()
+            || binding.validator_set_id() != validator_set.id()
         {
             return Err(ServiceFailure::InvalidConfig(
                 "binding context differs from validator set",
             )
             .into());
         }
-        let expected_profile = if config.purpose_policy.allow_proposal {
+        let expected_profile = if purpose_policy.allow_proposal {
             // Proposal signing is an explicitly separate fixture purpose. Do
             // not let a policy bit reinterpret an old Vote/Timeout binding.
-            if config.purpose_policy.allow_vote || config.purpose_policy.allow_timeout_vote {
+            if purpose_policy.allow_vote || purpose_policy.allow_timeout_vote {
                 return Err(ServiceFailure::InvalidConfig(
                     "proposal purpose cannot be combined with vote/timeout purpose",
                 )
@@ -1655,12 +1728,12 @@ impl RemoteSignerService {
         } else {
             trnm_consensus_remote_signer_protocol::vote_timeout_purpose_profile_digest_v1()
         };
-        if config.binding.purpose_profile_digest() != expected_profile {
+        if binding.purpose_profile_digest() != expected_profile {
             return Err(ServiceFailure::InvalidConfig("unsupported purpose profile").into());
         }
-        let scope = watermark_scope_v1(&config.binding);
+        let scope = watermark_scope_v1(&binding);
         let (watermark_path, directory_identity, existed) =
-            canonical_watermark_path(&config.watermark_path)?;
+            canonical_watermark_path(&watermark_path_input)?;
         let connection = Connection::open_with_flags(
             &watermark_path,
             OpenFlags::SQLITE_OPEN_READ_WRITE
@@ -1769,9 +1842,9 @@ impl RemoteSignerService {
         ensure_metadata_v1(
             &connection,
             scope,
-            &config.binding,
-            &config.signing_key,
-            config.purpose_policy,
+            &binding,
+            &verifying_key,
+            purpose_policy,
         )
         .map_err(RemoteSignerServiceError)?;
         connection
@@ -1788,10 +1861,11 @@ impl RemoteSignerService {
             .map_err(|error| ServiceFailure::Sqlite("set watermark schema version", error))?;
         validate_persisted_state_v1(&connection, scope)?;
         Ok(Self {
-            validator_set: config.validator_set,
-            binding: config.binding,
-            signing_key: Some(config.signing_key),
-            purpose_policy: config.purpose_policy,
+            validator_set: validator_set,
+            binding: binding,
+            signing_key,
+            device_signer: None,
+            purpose_policy: purpose_policy,
             scope,
             watermark_path,
             watermark_identity,
@@ -1799,6 +1873,67 @@ impl RemoteSignerService {
             connection,
             external_authority: None,
         })
+    }
+
+    /// Opens the signer with a device-backed private-key provider.  The
+    /// `SigningKey` in `config` is used only as public-key configuration for
+    /// backwards-compatible fixture construction; it is discarded before the
+    /// returned service can process a request.  Production callers should
+    /// source that public key from validator-set configuration and implement
+    /// [`DeviceKeyProviderV1`] over their HSM/KMS/TPM client.
+    pub fn open_with_device_signer(
+        config: RemoteSignerServiceConfig,
+        device_signer: Box<dyn DeviceKeyProviderV1>,
+    ) -> Result<Self, RemoteSignerServiceError> {
+        let expected = config
+            .signing_key
+            .verifying_key()
+            .to_bytes();
+        if device_signer.verifying_key_v1() != expected {
+            return Err(ServiceFailure::InvalidConfig(
+                "device key does not match configured validator consensus key",
+            )
+            .into());
+        }
+        // `open` performs all namespace/schema/profile validation.  Once it
+        // returns, remove the fixture/raw key before exposing the service.
+        let mut service = Self::open(config)?;
+        service.signing_key = None;
+        service.device_signer = Some(device_signer);
+        Ok(service)
+    }
+
+    /// Opens a device-backed signer from public configuration only.  This is
+    /// the production-shaped constructor: no `SigningKey` or private-key
+    /// bytes are accepted, and the returned service reaches the key solely
+    /// through [`DeviceKeyProviderV1`].
+    pub fn open_device_signer(
+        config: RemoteSignerDeviceConfigV1,
+        device_signer: Box<dyn DeviceKeyProviderV1>,
+    ) -> Result<Self, RemoteSignerServiceError> {
+        let validator = config
+            .validator_set
+            .validator(config.binding.author())
+            .ok_or(ServiceFailure::InvalidConfig("binding author is absent"))?;
+        if config.verifying_key == [0; 32]
+            || validator.consensus_key().as_bytes() != config.verifying_key.as_slice()
+            || device_signer.verifying_key_v1() != config.verifying_key
+        {
+            return Err(ServiceFailure::InvalidConfig(
+                "device key does not match configured validator consensus key",
+            )
+            .into());
+        }
+        let mut service = Self::open_with_material(
+            config.validator_set,
+            config.binding,
+            config.verifying_key,
+            config.watermark_path,
+            config.purpose_policy,
+            None,
+        )?;
+        service.device_signer = Some(device_signer);
+        Ok(service)
     }
 
     /// Opens the timeout-only Unix service in explicit external-authority
@@ -1933,7 +2068,7 @@ impl RemoteSignerService {
         if reservation.request_fingerprint() != facts.request_fingerprint {
             return Err(ServiceFailure::ReservationFailure.into());
         }
-        let signature = self.sign_and_verify_v1(&facts.signing_root)?;
+        let signature = self.sign_and_verify_v1(&facts.signing_root, reservation.sequence())?;
         // The adapter durably binds before this method returns. Any error is
         // deliberately surfaced; callers must not retry through local mode.
         authority
@@ -1972,7 +2107,8 @@ impl RemoteSignerService {
         let nonce = *request.nonce().as_bytes();
         let fingerprint = *request.fingerprint().as_bytes();
         self.reserve_proposal_v1(&request, revision)?;
-        let signature = self.sign_and_verify_v1(request.signing_root().as_bytes())?;
+        let sequence = self.watermark_sequence_v1()?;
+        let signature = self.sign_and_verify_v1(request.signing_root().as_bytes(), sequence)?;
         self.complete_proposal_v1(nonce, fingerprint)?;
         UnverifiedRemoteProposalSignerResponseV1::from_unverified_signature_bytes(
             &request,
@@ -2019,7 +2155,8 @@ impl RemoteSignerService {
             signing_root,
         })?;
 
-        let signature = self.sign_and_verify_v1(&signing_root)?;
+        let sequence = self.watermark_sequence_v1()?;
+        let signature = self.sign_and_verify_v1(&signing_root, sequence)?;
         self.complete_reservation_v1(nonce, fingerprint)?;
         UnverifiedRemoteSignerResponseV1::from_unverified_signature_bytes(
             &request,
@@ -2564,17 +2701,39 @@ impl RemoteSignerService {
         Ok(())
     }
 
-    fn sign_and_verify_v1(&self, signing_root: &[u8; 32]) -> Result<[u8; 64], ServiceFailure> {
-        let signing_key = self
-            .signing_key
-            .as_ref()
-            .ok_or(ServiceFailure::ExternalAuthorityRequired)?;
-        let signature = signing_key.sign(signing_root);
-        signing_key
-            .verifying_key()
-            .verify(signing_root, &signature)
+    fn sign_and_verify_v1(
+        &mut self,
+        signing_root: &[u8; 32],
+        sequence: u64,
+    ) -> Result<[u8; 64], ServiceFailure> {
+        let (signature, verifying_key) = if let Some(device) = self.device_signer.as_mut() {
+            let signature = device
+                .sign_v1(signing_root, sequence)
+                .map_err(|_| ServiceFailure::SignatureFailure)?;
+            (signature, device.verifying_key_v1())
+        } else {
+            let signing_key = self
+                .signing_key
+                .as_ref()
+                .ok_or(ServiceFailure::ExternalAuthorityRequired)?;
+            (signing_key.sign(signing_root).to_bytes(), signing_key.verifying_key().to_bytes())
+        };
+        let verifying_key = ed25519_dalek::VerifyingKey::from_bytes(&verifying_key)
             .map_err(|_| ServiceFailure::SignatureFailure)?;
-        Ok(signature.to_bytes())
+        verifying_key
+            .verify(signing_root, &ed25519_dalek::Signature::from_bytes(&signature))
+            .map_err(|_| ServiceFailure::SignatureFailure)?;
+        Ok(signature)
+    }
+
+    fn watermark_sequence_v1(&self) -> Result<u64, ServiceFailure> {
+        self.connection
+            .query_row(
+                "SELECT sequence FROM signer_watermark WHERE scope = ?1",
+                params![self.scope.as_slice()],
+                |row| decode_i64_u64(row.get::<_, i64>(0)?, "sequence"),
+            )
+            .map_err(|error| ServiceFailure::Sqlite("read signer sequence", error))
     }
 
     fn verify_external_signature_v1(
@@ -2828,7 +2987,7 @@ fn ensure_metadata_v1(
     connection: &Connection,
     scope: [u8; 32],
     binding: &RemoteSignerRequestBindingV1,
-    signing_key: &SigningKey,
+    verifying_key: &[u8; 32],
     purpose_policy: PurposePolicyV1,
 ) -> Result<(), ServiceFailure> {
     let values = [
@@ -2841,7 +3000,7 @@ fn ensure_metadata_v1(
         ("author", binding.author().as_bytes().to_vec()),
         (
             "public_key",
-            signing_key.verifying_key().to_bytes().to_vec(),
+            verifying_key.to_vec(),
         ),
         ("binding_digest", binding_digest_v1(binding).to_vec()),
         (
@@ -3226,6 +3385,160 @@ mod tests {
         RemoteSignerRequestNonceV1,
     };
     use trnm_consensus_signer_journal::ProposalSignatureRequestV0;
+
+    /// Test-only stand-in for an HSM monotonic counter.  The production API
+    /// intentionally has no software implementation: this fixture exists to
+    /// exercise the crash/restart and exact-replay contract against a durable
+    /// sidecar with atomic replace + fsync semantics.
+    struct DurableFixtureDeviceSigner {
+        key: SigningKey,
+        counter_path: std::path::PathBuf,
+        last: Option<([u8; 32], [u8; 64], u64)>,
+    }
+
+    impl DurableFixtureDeviceSigner {
+        fn open(key: SigningKey, counter_path: std::path::PathBuf) -> Self {
+            let last = fs::read(&counter_path).ok().and_then(|bytes| {
+                if bytes.len() != 8 + 32 + 64 {
+                    return None;
+                }
+                let sequence = u64::from_be_bytes(bytes[..8].try_into().ok()?);
+                let root: [u8; 32] = bytes[8..40].try_into().ok()?;
+                let signature: [u8; 64] = bytes[40..].try_into().ok()?;
+                Some((root, signature, sequence))
+            });
+            Self {
+                key,
+                counter_path,
+                last,
+            }
+        }
+
+        fn persist(
+            &self,
+            root: &[u8; 32],
+            signature: &[u8; 64],
+            sequence: u64,
+        ) -> Result<(), DeviceKeyProviderErrorV1> {
+            let mut bytes = Vec::with_capacity(104);
+            bytes.extend_from_slice(&sequence.to_be_bytes());
+            bytes.extend_from_slice(root);
+            bytes.extend_from_slice(signature);
+            let temporary = self.counter_path.with_extension("tmp");
+            let mut file = fs::File::create(&temporary)
+                .map_err(|_| DeviceKeyProviderErrorV1::Unavailable)?;
+            std::io::Write::write_all(&mut file, &bytes)
+                .map_err(|_| DeviceKeyProviderErrorV1::Unavailable)?;
+            file.sync_all()
+                .map_err(|_| DeviceKeyProviderErrorV1::Unavailable)?;
+            fs::rename(&temporary, &self.counter_path)
+                .map_err(|_| DeviceKeyProviderErrorV1::Unavailable)?;
+            Ok(())
+        }
+    }
+
+    impl DeviceKeyProviderV1 for DurableFixtureDeviceSigner {
+        fn verifying_key_v1(&self) -> [u8; 32] {
+            self.key.verifying_key().to_bytes()
+        }
+
+        fn sign_v1(
+            &mut self,
+            signing_root: &[u8; 32],
+            sequence: u64,
+        ) -> Result<[u8; 64], DeviceKeyProviderErrorV1> {
+            if let Some((root, signature, previous)) = self.last {
+                if sequence < previous {
+                    return Err(DeviceKeyProviderErrorV1::CounterRollback);
+                }
+                if sequence == previous {
+                    return if root == *signing_root {
+                        Ok(signature)
+                    } else {
+                        Err(DeviceKeyProviderErrorV1::ConflictingReplay)
+                    };
+                }
+                if sequence != previous.saturating_add(1) {
+                    return Err(DeviceKeyProviderErrorV1::CounterRollback);
+                }
+            } else if sequence != 1 {
+                return Err(DeviceKeyProviderErrorV1::CounterRollback);
+            }
+            let signature = self.key.sign(signing_root).to_bytes();
+            self.persist(signing_root, &signature, sequence)?;
+            self.last = Some((*signing_root, signature, sequence));
+            Ok(signature)
+        }
+    }
+
+    #[test]
+    fn device_signer_counter_survives_crash_and_rejects_old_witness_replay() {
+        let temporary = TempDir::new().expect("temporary signer directory");
+        let watermark_path = temporary.path().join("watermark.sqlite3");
+        let counter_path = temporary.path().join("device-counter.bin");
+        let fixture = Fixture::new();
+        let fixture_config = fixture_service_config(&watermark_path, PurposePolicyV1::both());
+        let mut service = RemoteSignerService::open_device_signer(
+            RemoteSignerDeviceConfigV1 {
+                validator_set: fixture_config.validator_set.clone(),
+                binding: fixture_config.binding,
+                verifying_key: fixture_config.signing_key.verifying_key().to_bytes(),
+                watermark_path: fixture_config.watermark_path.clone(),
+                purpose_policy: fixture_config.purpose_policy,
+            },
+            Box::new(DurableFixtureDeviceSigner::open(
+                fixture.signing_key.clone(),
+                counter_path.clone(),
+            )),
+        )
+        .expect("open device signer service");
+        let first = fixture_request(&fixture, "vote", 1, b"device-first").unwrap();
+        let first_response = service
+            .process_request(&first.try_exact_bytes().unwrap())
+            .expect("device signature");
+        assert_eq!(service.watermark_snapshot().unwrap().sequence, 1);
+        drop(service);
+
+        // Restarting with the same device recovers its monotonic sequence
+        // from the sidecar.  The old witness is answered by the durable local
+        // reservation and never reaches the key a second time.
+        let fixture_config = fixture_service_config(&watermark_path, PurposePolicyV1::both());
+        let mut reopened = RemoteSignerService::open_device_signer(
+            RemoteSignerDeviceConfigV1 {
+                validator_set: fixture_config.validator_set.clone(),
+                binding: fixture_config.binding,
+                verifying_key: fixture_config.signing_key.verifying_key().to_bytes(),
+                watermark_path: fixture_config.watermark_path.clone(),
+                purpose_policy: fixture_config.purpose_policy,
+            },
+            Box::new(DurableFixtureDeviceSigner::open(
+                fixture.signing_key.clone(),
+                counter_path.clone(),
+            )),
+        )
+        .expect("reopen device signer service");
+        assert!(matches!(
+            reopened.process_request(&first.try_exact_bytes().unwrap()),
+            Err(RemoteSignerServiceError(ServiceFailure::DuplicateRequest))
+        ));
+        assert_eq!(fs::read(&counter_path).unwrap().len(), 104);
+        assert!(!first_response.is_empty());
+
+        // A stale sequence and a same-sequence/different-root witness are both
+        // rejected by the device boundary itself, independently of SQLite.
+        let mut device = DurableFixtureDeviceSigner::open(
+            fixture.signing_key,
+            counter_path,
+        );
+        assert_eq!(
+            device.sign_v1(&[0x91; 32], 0),
+            Err(DeviceKeyProviderErrorV1::CounterRollback)
+        );
+        assert_eq!(
+            device.sign_v1(&[0x92; 32], 1),
+            Err(DeviceKeyProviderErrorV1::ConflictingReplay)
+        );
+    }
 
     #[test]
     fn service_binds_round_purpose_nonce_and_persists_cas_watermark() {

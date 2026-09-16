@@ -29,6 +29,7 @@ use crate::{
     config::{LoadedValidatorConfig, PeerConfig, PublicReportVerifierContext},
     frame::FrameKind,
     transport::{AuthenticatedConnection, RunTransportContext},
+    process_lock::ValidatorProcessLockV1,
 };
 
 const HEALTH_MAGIC: &[u8; 8] = b"TRNMG3N1";
@@ -422,6 +423,15 @@ pub fn run_network_smoke(
     rounds: u64,
     timeout: Duration,
 ) -> Result<SignedNetworkSmokeReport> {
+    // A smoke process still binds the production-shaped runtime namespace and
+    // listener.  Enforce the same one-owner identity boundary as consensus so
+    // two commands cannot race journals, keys, or the configured port.
+    let _process_lock = ValidatorProcessLockV1::acquire(
+        config.run_root(),
+        config.run_id(),
+        &hex::encode(config.local_validator().as_bytes()),
+    )
+    .context("acquire validator process identity lock")?;
     // Network-smoke currently signs its infrastructure-only report with the
     // explicitly loaded fixture consensus key.  An external-authority config
     // must never reach the accessor (which deliberately refuses raw-key

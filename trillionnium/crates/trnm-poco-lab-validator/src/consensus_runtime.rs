@@ -81,6 +81,7 @@ use crate::{
     loop_driver::RoutedConsensusActionV0,
     p2p_admission::{ExternalPeerLeaseAuthorityV1, RejectingExternalPeerLeaseAuthorityV1},
     p2p_identity::P2pIdentitySignatureProducerV1,
+    process_lock::ValidatorProcessLockV1,
     pacemaker::GenerationAwarePacemakerV0,
     process_event::{
         LocalRestartParkJournalCommitV1, Process1TargetParkedJournalCutV1,
@@ -1253,6 +1254,15 @@ where
         + Send
         + 'static,
 {
+    // The runtime namespace is also the signer/replay/journal identity
+    // boundary.  Acquire exclusivity before preflight or any network effect;
+    // a second process using the same validator root must fail closed.
+    let process_lock = ValidatorProcessLockV1::acquire(
+        config.run_root(),
+        config.run_id(),
+        &hex::encode(config.local_validator().as_bytes()),
+    )
+    .context("acquire validator process identity lock")?;
     require_fleet_signing_authority_for_builder_v1(
         config.has_local_consensus_secret(),
         fleet_producer.is_some(),
@@ -1264,6 +1274,7 @@ where
         .name("trnm-g3-consensus-owner-v1".to_owned())
         .stack_size(CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0)
         .spawn(move || {
+            let _process_lock = process_lock;
             let event_journal_path = config.run_root().join("runtime-events.jsonl");
             let initial_event_journal = match runtime_event_producer.as_ref() {
                 Some(producer) => RuntimeEventJournalV1::start_with_loaded_config_external_signature_producer_v1(
