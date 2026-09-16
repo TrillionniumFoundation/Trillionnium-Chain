@@ -82,7 +82,7 @@ def valid_document(count: int) -> dict:
     for item in planned["participants"]:
         host_id = item["host_id"]
         if item["validator_eligible"]:
-            hosted = validators_by_host[host_id]
+            hosted = validators_by_host.get(host_id, [])
             participants.append(
                 {
                     "host_id": host_id,
@@ -126,7 +126,7 @@ def valid_document(count: int) -> dict:
         "topology": {
             "validator_count": count,
             "weight_profile": "equal",
-            "peer_degree": count - 1 if count == 7 else 8,
+            "peer_degree": count - 1 if count in {4, 7} else 8,
             "ephemeral_test_keys": True,
         },
         "started_at": "2026-08-13T12:00:00Z",
@@ -194,8 +194,12 @@ def mutated(base: dict, mutate) -> dict:
     return document
 
 
+def participant(document: dict, host_id: str) -> dict:
+    return next(item for item in document["participants"] if item["host_id"] == host_id)
+
+
 def main() -> None:
-    for count in (7, 31, 100):
+    for count in (4, 7, 31, 100):
         check(valid_document(count), count)
 
     base = valid_document(7)
@@ -389,9 +393,35 @@ def main() -> None:
     for mutate, expected in controls:
         reject(mutated(base, mutate), 7, expected)
 
+    four = valid_document(4)
+    reject(
+        mutated(
+            four,
+            lambda d: participant(d, "j3160").update(process_ids=[7777]),
+        ),
+        4,
+        "unselected validator-capable participant j3160 must expose zero validator process ids",
+    )
+    reject(
+        mutated(
+            four,
+            lambda d: participant(d, "local").update(process_ids=[]),
+        ),
+        4,
+        "selected validator participant local must expose validator process ids",
+    )
+    reject(
+        mutated(
+            four,
+            lambda d: d["topology"].update(weight_profile="bounded-unequal"),
+        ),
+        4,
+        "four-validator topology requires equal voting weights",
+    )
+
     print(
-        "poco_g3_run_evidence_self_test=passed positives=3 negatives=33 "
-        "topologies=7,31,100 geo_wan=false production_activation=false"
+        "poco_g3_run_evidence_self_test=passed positives=4 negatives=36 "
+        "topologies=4,7,31,100 geo_wan=false production_activation=false"
     )
 
 
