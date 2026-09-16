@@ -14,9 +14,7 @@
 //! interrupted transition and gets either the exact already-committed row or
 //! a fail-closed error.  The owner adapter (compiled when the laboratory
 //! runtime is present) calls the caught-up owner's fresh revalidation before
-//! it can append either row.  After the exact Start row is durable, one
-//! consuming coordinator method may join the certificate back to the same
-//! caught-up owner and release the ordinary runtime; no copied facts can do so.
+//! it can append either row.
 //!
 //! Live handles pin the private parent directory and database descriptors.
 //! Observed namespace loss fences every clone; reopening never creates a
@@ -49,9 +47,7 @@ use trnm_consensus_types::{
 use crate::external_node_checkpoint::ExternalNodeCheckpointV0;
 
 #[cfg(feature = "lab-validator-runtime")]
-use crate::deployed_lab_process2_recovery::{
-    PocoNodeDeployedLabProcess2CaughtUpOwnerV1, PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1,
-};
+use crate::deployed_lab_process2_recovery::PocoNodeDeployedLabProcess2CaughtUpOwnerV1;
 #[cfg(feature = "lab-validator-runtime")]
 use trnm_consensus_signer_journal::ExternalMonotonicWatermarkV0;
 
@@ -69,7 +65,7 @@ const JOURNAL_RECORD_BYTES_V1: usize = 8 + 2 + 1 + 8 + 32 + (32 * 11) + (8 * 3) 
 pub const PROCESS2_RECOVERY_TRANSITION_JOURNAL_V1: bool = true;
 pub const PROCESS2_RECOVERY_READY_START_COORDINATOR_V1: bool = true;
 pub const PROCESS2_RECOVERY_RUNTIME_WIRING_V1: bool = false;
-pub const PROCESS2_RECOVERY_START_ACTIVATION_V1: bool = true;
+pub const PROCESS2_RECOVERY_START_ACTIVATION_V1: bool = false;
 
 const CREATE_METADATA_V1: &str = concat!(
     "CREATE TABLE process2_recovery_transition_metadata_v1 (",
@@ -1130,7 +1126,6 @@ impl Process2RecoveryReadyStartCoordinatorV1 {
         owner: &mut PocoNodeDeployedLabProcess2CaughtUpOwnerV1<W>,
         checkpoint: ExternalNodeCheckpointV0,
         fence_token_digest: [u8; 32],
-        recovery_cut_artifact_sha256: [u8; 32],
         ready_set: &RecoveryReadySetV1,
         validator_set: &ValidatorSet,
         verifier: &impl SignatureVerifier,
@@ -1138,12 +1133,7 @@ impl Process2RecoveryReadyStartCoordinatorV1 {
         owner.revalidate_zero_delta_caught_up_v1().map_err(|_| {
             RecoveryTransitionJournalErrorV1::Stale("caught-up owner revalidation failed")
         })?;
-        let binding = binding_from_caught_up_owner_v1(
-            owner,
-            checkpoint,
-            fence_token_digest,
-            recovery_cut_artifact_sha256,
-        )?;
+        let binding = binding_from_caught_up_owner_v1(owner, checkpoint, fence_token_digest)?;
         self.record_recovery_ready_v1(binding, ready_set, validator_set, verifier)
     }
 
@@ -1153,7 +1143,6 @@ impl Process2RecoveryReadyStartCoordinatorV1 {
         owner: &mut PocoNodeDeployedLabProcess2CaughtUpOwnerV1<W>,
         checkpoint: ExternalNodeCheckpointV0,
         fence_token_digest: [u8; 32],
-        recovery_cut_artifact_sha256: [u8; 32],
         start_certificate: &RecoveryStartCertificateV1,
         validator_set: &ValidatorSet,
         verifier: &impl SignatureVerifier,
@@ -1161,73 +1150,8 @@ impl Process2RecoveryReadyStartCoordinatorV1 {
         owner.revalidate_zero_delta_caught_up_v1().map_err(|_| {
             RecoveryTransitionJournalErrorV1::Stale("caught-up owner revalidation failed")
         })?;
-        let binding = binding_from_caught_up_owner_v1(
-            owner,
-            checkpoint,
-            fence_token_digest,
-            recovery_cut_artifact_sha256,
-        )?;
+        let binding = binding_from_caught_up_owner_v1(owner, checkpoint, fence_token_digest)?;
         self.record_recovery_start_v1(binding, start_certificate, validator_set, verifier)
-    }
-
-    /// Persist the exact Start certificate and only then consume the matching
-    /// caught-up owner into the recovered ordinary runtime.  This ordering is
-    /// crash-idempotent: a process loss after the journal commit but before
-    /// activation is recovered by replaying the same certificate against a
-    /// freshly reconstructed owner.  A changed cut, certificate or node facts
-    /// fails before signer activation.
-    #[cfg(feature = "lab-validator-runtime")]
-    #[allow(clippy::too_many_arguments)]
-    pub fn record_recovery_start_and_activate_caught_up_owner_v1<
-        W: ExternalMonotonicWatermarkV0,
-    >(
-        &mut self,
-        mut owner: PocoNodeDeployedLabProcess2CaughtUpOwnerV1<W>,
-        checkpoint: ExternalNodeCheckpointV0,
-        fence_token_digest: [u8; 32],
-        recovery_cut_artifact_sha256: [u8; 32],
-        start_certificate: &RecoveryStartCertificateV1,
-        validator_set: &ValidatorSet,
-        verifier: &impl SignatureVerifier,
-    ) -> Result<PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1<W>, RecoveryTransitionJournalErrorV1>
-    {
-        owner.revalidate_zero_delta_caught_up_v1().map_err(|_| {
-            RecoveryTransitionJournalErrorV1::Stale("caught-up owner revalidation failed")
-        })?;
-        let binding = binding_from_caught_up_owner_v1(
-            &owner,
-            checkpoint,
-            fence_token_digest,
-            recovery_cut_artifact_sha256,
-        )?;
-        let committed =
-            self.record_recovery_start_v1(binding, start_certificate, validator_set, verifier)?;
-        if committed.phase_v1() != Process2RecoveryTransitionPhaseV1::RecoveryStart
-            || committed.binding_digest_v1() != binding.digest_v1()
-            || committed.ready_set_digest_v1() != start_certificate.ready_set().digest()
-            || committed.start_certificate_digest_v1() != start_certificate.digest()
-        {
-            return Err(RecoveryTransitionJournalErrorV1::ThirdState(
-                "durable RecoveryStart head differs from the requested activation",
-            ));
-        }
-        owner.revalidate_zero_delta_caught_up_v1().map_err(|_| {
-            RecoveryTransitionJournalErrorV1::Stale(
-                "caught-up owner changed after durable RecoveryStart",
-            )
-        })?;
-        owner
-            .activate_after_verified_recovery_start_v1(
-                recovery_cut_artifact_sha256,
-                start_certificate,
-                validator_set,
-                verifier,
-            )
-            .map_err(|_| {
-                RecoveryTransitionJournalErrorV1::Stale(
-                    "recovered process2 owner rejected durable RecoveryStart activation",
-                )
-            })
     }
 }
 
@@ -1266,7 +1190,6 @@ fn binding_from_caught_up_owner_v1<W: ExternalMonotonicWatermarkV0>(
     owner: &PocoNodeDeployedLabProcess2CaughtUpOwnerV1<W>,
     checkpoint: ExternalNodeCheckpointV0,
     fence_token_digest: [u8; 32],
-    recovery_cut_artifact_sha256: [u8; 32],
 ) -> Result<Process2RecoveryTransitionBindingV1, RecoveryTransitionJournalErrorV1> {
     let facts = owner.facts_v1();
     let cut = facts.restart_cut_v1().fields_v1();
@@ -1282,7 +1205,7 @@ fn binding_from_caught_up_owner_v1<W: ExternalMonotonicWatermarkV0>(
     }
     Process2RecoveryTransitionBindingV1::new(
         process2.session_id_v0(),
-        recovery_cut_artifact_sha256,
+        facts.artifact_sha256_v1(),
         facts.node_facts_sha256_v1(),
         cut.validator_set_id,
         cut.local_validator,
