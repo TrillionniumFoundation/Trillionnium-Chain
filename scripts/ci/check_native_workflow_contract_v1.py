@@ -34,6 +34,8 @@ ENVIRONMENT = {
 SOURCE = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
 JOBS = {"repository-truth", "protocol-contract", "fuzz-smoke", "external-evidence-contract", "rust-baseline"}
 OFFLINE = {"TRNM_CARGO_OFFLINE_POLICY": "required", "CARGO_NET_OFFLINE": "true", "CARGO_CACHE_AUTO_CLEAN_FREQUENCY": "never"}
+RUST_SCOPE_IF = "${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}"
+RUST_SCOPE_ALWAYS_IF = "${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}"
 
 
 def cargo(arguments: str, command: str = "test") -> str:
@@ -258,7 +260,9 @@ def validate_contract(root: Path) -> dict[str, object]:
     require(scalar(unchanged, "if", 8) == "always()", "offline postcheck must run on failure")
     tokens(unchanged, ("./scripts/ci/check_cargo_offline_unchanged.sh",), "offline postcheck")
     execution = step(baseline, "Test the unified workspace feature graph with a hard deadline")
-    hard_step(execution, "workspace execution")
+    require(scalar(execution, "if", 8) == RUST_SCOPE_IF,
+            "workspace execution: exact Rust scope condition differs")
+    hard_step(execution.replace(f"        if: {RUST_SCOPE_IF}\n", "", 1), "workspace execution")
     tokens(execution, ("cargo test --workspace --all-targets --locked --no-fail-fast", "| tee", "timeout --signal=TERM", 'git rev-parse HEAD > "$root/HEAD"', 'git rev-parse \'HEAD^{tree}\' > "$root/TREE"'), "workspace execution")
     evidence = step(runtime, "Build exact-source runtime evidence record")
     hard_step(evidence, "runtime evidence")
@@ -270,7 +274,8 @@ def validate_contract(root: Path) -> dict[str, object]:
     require(scalar(runtime_upload, "path", 10) == "${{ runner.temp }}/runtime-fault-matrix/", "runtime artifact path differs")
     require(scalar(runtime_upload, "if-no-files-found", 10) == "error", "runtime artifact absence must fail")
     workspace_upload = step(baseline, "Retain exact-source workspace execution log including failure")
-    require(scalar(workspace_upload, "if", 8) == "always()", "workspace failure evidence must be retained")
+    require(scalar(workspace_upload, "if", 8) == RUST_SCOPE_ALWAYS_IF,
+            "workspace failure evidence: exact Rust scope condition differs")
     require(scalar(workspace_upload, "name", 10) == "trnm-workspace-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}", "workspace artifact source binding differs")
     require(scalar(workspace_upload, "path", 10) == "${{ runner.temp }}/trnm-rust-execution", "workspace artifact path differs")
     require(scalar(workspace_upload, "if-no-files-found", 10) == "error", "workspace artifact absence must fail")
