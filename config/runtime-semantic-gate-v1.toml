@@ -1,36 +1,43 @@
-schema_version = 1
+schema_version = 2
 gate_id = "trnm-runtime-semantic-gate-v1"
 production_authority = false
 default_mode = "report-only"
 
-# These are deliberately command slots rather than claimed evidence.  A
-# runner must provide the exact command through the named environment variable
-# and invoke --run.  Missing commands are reported as NOT_RUN; they never turn
-# into a green semantic result.
+# A command exit code is not acceptance. Each command must publish a bounded,
+# source-bound JSON evidence record through the paired evidence environment
+# variable. The gate validates the check-specific behavioral predicates.
 [[check]]
 id = "P0.1-multinode-persistence"
 owner = "runtime-integration"
 command_env = "TRNM_SEMANTIC_P01_COMMAND"
+evidence_env = "TRNM_SEMANTIC_P01_EVIDENCE"
+evidence_kind = "multinode-persistence-campaign"
 required = true
-acceptance = "four-to-seven independent validator processes survive kill/restart and replay the same durable state"
+acceptance = "four-to-seven independent validator processes survive kill/restart, partition/heal, rejoin, and replay the same durable state"
 
 [[check]]
 id = "P0.2-epoch-transition"
 owner = "consensus-integration"
 command_env = "TRNM_SEMANTIC_P02_COMMAND"
+evidence_env = "TRNM_SEMANTIC_P02_EVIDENCE"
+evidence_kind = "continuous-epoch-transition-campaign"
 required = true
-acceptance = "two real epoch transitions cover checkpoint, seal, handoff, coordinate binding and restart recovery"
+acceptance = "two or more real epoch transitions cover checkpoint, seal, handoff, coordinate binding and restart recovery without imposing a two-transition runtime cap"
 
 [[check]]
 id = "P0.3-signer-rollback"
 owner = "signer-security"
 command_env = "TRNM_SEMANTIC_P03_COMMAND"
+evidence_env = "TRNM_SEMANTIC_P03_EVIDENCE"
+evidence_kind = "external-signer-rollback-campaign"
 required = true
-acceptance = "device-backed signing and an independent monotonic anchor reject power-loss rollback and witness replay"
+acceptance = "device-backed signing and an independently administered monotonic anchor reject rollback and replacement"
 
 [[check]]
 id = "P0.4-finalized-goodput"
 owner = "performance-integration"
 command_env = "TRNM_SEMANTIC_P04_COMMAND"
+evidence_env = "TRNM_SEMANTIC_P04_EVIDENCE"
+evidence_kind = "finalized-replay-verified-goodput"
 required = true
-acceptance = "finalized and independently replay-verified transactions report p50/p95/p99 latency and goodput"
+acceptance = "finalized and independently replay-verified successful transactions report positive goodput and p50/p95/p99 finality latency"
