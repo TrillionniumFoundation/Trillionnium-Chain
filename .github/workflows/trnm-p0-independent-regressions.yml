@@ -1,0 +1,82 @@
+name: trnm-p0-independent-regressions
+
+on:
+  pull_request:
+    paths:
+      - 'trillionnium/**'
+      - 'scripts/**'
+      - '.github/workflows/trnm-p0-independent-regressions.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-p0-independent-regressions-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  boundary-clippy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.95.0
+          components: clippy
+      - name: Strict Clippy for executable safety and production boundaries
+        run: |
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-consensus-remote-signer-service \
+            -p trnm-poco-node \
+            -p trnm-poco-lab-validator \
+            --all-targets --locked -- -D warnings
+
+  production-cli-fail-closed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.95.0
+      - name: Production-shaped CLI remains fail-closed
+        run: |
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node-production-v0 --all-targets --locked
+
+  critical-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.95.0
+      - name: Run critical runtime regressions independently
+        run: |
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 \
+            -p trnm-poco-lab-validator \
+            --all-targets --locked
+
+  semantic-evidence-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Reject synthetic semantic evidence
+        run: |
+          python3 -m unittest scripts.ci.test_runtime_semantic_gate_v1 -v
+          python3 -m unittest discover -s tests/performance -p 'test_measure_finalized_goodput.py' -v
+          python3 scripts/poco-fleet/run_consensus_fleet_test.py
+          python3 scripts/poco-fleet/collect_no_fault_run_bundle_v1_test.py

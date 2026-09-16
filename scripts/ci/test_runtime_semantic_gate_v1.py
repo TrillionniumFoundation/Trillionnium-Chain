@@ -110,7 +110,7 @@ class RuntimeSemanticGateTests(unittest.TestCase):
         self.assertIn("fail closed", report["checks"][1]["evidence_error"])
         self.assertIn("fail closed", report["checks"][2]["evidence_error"])
 
-    def test_p04_fixed_verifier_recomputes_measurement_and_binds_manifests(self) -> None:
+    def test_p04_telemetry_claim_cannot_create_semantic_pass(self) -> None:
         with tempfile.TemporaryDirectory(prefix="trnm-semantic-p04-") as directory:
             root = Path(directory)
             manifests: dict[str, Path] = {}
@@ -151,9 +151,10 @@ class RuntimeSemanticGateTests(unittest.TestCase):
                 env={"TRNM_SEMANTIC_P04_COMMAND": "true", "TRNM_SEMANTIC_P04_EVIDENCE": str(evidence_path)},
             )
         report = json.loads(result.stdout)
-        self.assertEqual(report["checks"][3]["status"], "passed")
-        self.assertEqual(report["evidence_verified_count"], 1)
-        self.assertEqual(report["result"], "INCOMPLETE")
+        self.assertEqual(report["checks"][3]["status"], "failed-evidence-invalid")
+        self.assertEqual(report["evidence_verified_count"], 0)
+        self.assertEqual(report["result"], "FAIL")
+        self.assertIn("native finality + durable replay verifier", report["checks"][3]["evidence_error"])
 
 
 if __name__ == "__main__":
