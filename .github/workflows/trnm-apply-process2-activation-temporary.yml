@@ -1,0 +1,46 @@
+name: trnm-apply-process2-activation-temporary
+
+on:
+  push:
+    branches:
+      - fix/chain-p0-runtime-closure-20260916
+
+permissions:
+  contents: write
+
+jobs:
+  apply-check-commit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Install exact Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup override set 1.95.0
+      - name: Apply bounded process2 activation patch
+        run: |
+          set -euo pipefail
+          git apply --index .github/trnm-process2-activation.patch
+          (cd trillionnium && cargo fmt --all)
+          git diff --check
+      - name: Compile complete process2 node surface
+        run: |
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --all-targets --locked \
+            --features lab-validator-runtime,lab-validator-runtime-test-support
+      - name: Commit exact checked source
+        run: |
+          set -euo pipefail
+          git config user.name 'trnm-p0-runtime-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add trillionnium/crates/trnm-poco-node/src/deployed_lab_process2_recovery.rs \
+                  trillionnium/crates/trnm-poco-node/src/recovery_ready_start.rs
+          git diff --cached --check
+          git commit -m 'feat(chain): activate process2 only after durable RecoveryStart'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
