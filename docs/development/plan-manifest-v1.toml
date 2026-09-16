@@ -1,7 +1,7 @@
 manifest_version = 2
 pin_refresh_policy = "change-scoped-v1"
-pin_snapshot_commit = "c1cf883cdd6257d8f18f0c8da443c87fda4b3e20"
-pin_snapshot_tree = "d0d4b29ed7f9fd1461589b8b3dae63ef303fcd4f"
+pin_snapshot_commit = "dd3c9f0aeb26de7f512605e063d123072b3bd7d1"
+pin_snapshot_tree = "9d0ab348b971ac83aec0d39f6c8af3c82450cd75"
 plan_id = "trnm-chain-development-plan-v2"
 plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 plan_sha256 = "ec8634a14fd43ec3f16b8757d6343e22f104a80532aa8e4d036002f32cdcf2c6"
