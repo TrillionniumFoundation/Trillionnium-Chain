@@ -1,0 +1,35 @@
+name: trnm-runtime-closure-rustfmt-once
+on:
+  push:
+    branches: [fix/full-runtime-closure-20260916]
+    paths: [.trnm/runtime-closure/rustfmt.patch]
+permissions:
+  contents: write
+concurrency:
+  group: trnm-runtime-closure-rustfmt-once
+  cancel-in-progress: false
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: true
+      - shell: bash
+        run: |
+          set -euo pipefail
+          patch=.trnm/runtime-closure/rustfmt.patch
+          test -f "$patch" && test ! -L "$patch"
+          test "$(wc -c < "$patch")" -le 8192
+          git diff --quiet && git diff --cached --quiet
+          git apply --check --index --whitespace=error-all "$patch"
+          git apply --index --whitespace=error-all "$patch"
+          expected=$'trillionnium/crates/trnm-poco-lab-validator/src/bootstrap_material.rs\ntrillionnium/crates/trnm-poco-lab-validator/src/config.rs\ntrillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs'
+          test "$(git diff --cached --name-only)" = "$expected"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'runtime: apply exact rustfmt for 4/7 lane'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
