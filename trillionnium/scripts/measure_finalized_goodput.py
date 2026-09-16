@@ -138,7 +138,8 @@ def measure(events: list[dict], digest: str, source: Path) -> dict:
         fail("no finalized + replay-verified transaction; refusing to claim goodput")
     first_submit = min(submitted_times)
     last_finalized = max(e["_finalized"] for e in verified)
-    elapsed = (last_finalized - first_submit).total_seconds()
+    observation_end = max(max(submitted_times), last_finalized)
+    elapsed = (observation_end - first_submit).total_seconds()
     if elapsed <= 0:
         fail("measurement window must be positive")
     latency_ms = [
@@ -157,8 +158,12 @@ def measure(events: list[dict], digest: str, source: Path) -> dict:
         subset = [e for e in events if e["workload"] == workload]
         good = [e for e in verified if e["workload"] == workload]
         wl_lat = [(e["_finalized"] - e["_submitted"]).total_seconds() * 1000.0 for e in good]
-        wl_duration = ((max((e["_finalized"] for e in good), default=first_submit) -
-                        min((e["_submitted"] for e in subset), default=first_submit)).total_seconds())
+        wl_start = min((e["_submitted"] for e in subset), default=first_submit)
+        wl_end = max(
+            max((e["_submitted"] for e in subset), default=wl_start),
+            max((e["_finalized"] for e in good), default=wl_start),
+        )
+        wl_duration = (wl_end - wl_start).total_seconds()
         workloads[workload] = {
             "submitted": len(subset),
             "finalized": len([e for e in subset if e["finality_status"] == "finalized"]),
@@ -170,19 +175,20 @@ def measure(events: list[dict], digest: str, source: Path) -> dict:
             "finality_p99_ms": percentile(wl_lat, 0.99),
         }
     return {
-        "schema": "trnm_finalized_goodput_measurement_v1",
+        "schema": "trnm_finalized_goodput_measurement_v2",
         "generated_at_utc": iso(datetime.now(timezone.utc)),
         "status": "complete",
         "measurement_policy": {
             "included": "canonical records with finality_status=finalized and replay_verified=true",
             "excluded": "pending, rejected, non-replay-verified, and all speculative-worker records",
             "percentile": "nearest-rank; rank=ceil(p*n)",
-            "goodput_denominator": "last replay-verified finalization minus first submission",
+            "goodput_denominator": "observation end (latest submission or replay-verified finalization) minus first submission",
         },
         "source": {"path": str(source), "sha256": digest, "event_count": tx_count},
         "window": {
             "submit_window_started_at_utc": iso(first_submit),
-            "finality_observed_at_utc": iso(last_finalized),
+            "last_replay_verified_finalized_at_utc": iso(last_finalized),
+            "observation_ended_at_utc": iso(observation_end),
             "duration_ms": round(elapsed * 1000.0, 3),
         },
         "counts": {

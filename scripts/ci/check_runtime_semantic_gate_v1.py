@@ -3,9 +3,10 @@
 
 Repository lexical guards and a successful subprocess are useful diagnostics,
 but neither proves distributed runtime behavior. Every configured P0 command
-must additionally publish a source-bound `trnm-runtime-semantic-evidence-v1`
-envelope. The gate re-hashes every referenced artifact and validates the
-check-specific minimum facts before a semantic result can become PASS.
+must additionally publish a source-bound `trnm-runtime-semantic-evidence-v2`
+envelope. The envelope contains no PASS/claims field. The gate re-hashes every
+referenced artifact and invokes a fixed repository verifier before a semantic
+result can become PASS.
 
 This is still engineering evidence and explicitly carries no production or
 independent-audit authority.
@@ -59,7 +60,7 @@ def load() -> dict[str, Any]:
     require(value.get("schema_version") == 2, "semantic gate schema drift")
     require(value.get("gate_id") == "trnm-runtime-semantic-gate-v1", "semantic gate id drift")
     require(
-        value.get("evidence_schema") == "trnm-runtime-semantic-evidence-v1",
+        value.get("evidence_schema") == "trnm-runtime-semantic-evidence-v2",
         "semantic evidence schema drift",
     )
     require(value.get("production_authority") is False, "semantic gate cannot hold production authority")

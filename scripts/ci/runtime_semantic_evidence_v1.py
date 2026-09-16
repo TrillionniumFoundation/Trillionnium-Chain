@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-"""Validate source-bound runtime semantic evidence envelopes.
+"""Verify source-bound runtime evidence with fixed repository verifiers.
 
-This module deliberately sits between a runtime command's exit status and the
-semantic-gate result. A zero exit code is only process execution evidence. A P0
-semantic claim additionally needs a source-bound evidence envelope, required
-claim fields, and immutable artifacts whose digests are independently checked.
-
-The envelope is still repository-side engineering evidence, not production or
-independent audit authority. External qualification remains a separate gate.
+The evidence envelope is only a content-addressed manifest. It contains no
+self-authoritative PASS bit and no boolean claim fields. A semantic check passes
+only when this module invokes the repository-owned verifier for that check over
+the sealed raw artifacts and recomputes the claimed result.
 """
 from __future__ import annotations
 
@@ -17,10 +14,13 @@ import os
 import pathlib
 import stat
 import subprocess
+import sys
+import tempfile
 from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-SCHEMA = "trnm-runtime-semantic-evidence-v1"
+SCHEMA = "trnm-runtime-semantic-evidence-v2"
+HEX64 = set("0123456789abcdef")
 
 
 class EvidenceError(RuntimeError):
@@ -34,11 +34,7 @@ def require(condition: bool, message: str) -> None:
 
 def git_output(*arguments: str) -> str:
     completed = subprocess.run(
-        ["git", *arguments],
-        cwd=ROOT,
-        check=False,
-        text=True,
-        capture_output=True,
+        ["git", *arguments], cwd=ROOT, check=False, text=True, capture_output=True
     )
     if completed.returncode != 0:
         raise EvidenceError(
@@ -59,105 +55,12 @@ def _unsigned(value: object, field: str, *, minimum: int = 0) -> int:
     return value
 
 
-def _positive_number(value: object, field: str) -> float:
-    require(
-        isinstance(value, (int, float))
-        and not isinstance(value, bool)
-        and float(value) > 0,
-        f"{field} must be a positive number",
-    )
-    return float(value)
-
-
-def _true(claims: dict[str, Any], *fields: str) -> None:
-    for field in fields:
-        require(claims.get(field) is True, f"claims.{field} must be true")
-
-
-def _validate_claims(check_id: str, claims: object) -> set[str]:
-    require(isinstance(claims, dict), "claims must be an object")
-    values: dict[str, Any] = claims
-
-    if check_id == "P0.1-multinode-persistence":
-        _unsigned(values.get("validator_processes"), "claims.validator_processes", minimum=7)
-        _unsigned(values.get("independent_run_roots"), "claims.independent_run_roots", minimum=7)
-        require(
-            values["independent_run_roots"] >= values["validator_processes"],
-            "independent_run_roots must cover every validator process",
-        )
-        _true(
-            values,
-            "four_node_phase",
-            "seven_node_phase",
-            "kill_restart_rejoin",
-            "partition_heal",
-            "lost_reply_recovery",
-            "durable_state_replay_verified",
-            "finality_agreement",
-        )
-        return {"process_logs", "signed_final_state", "replay_verification"}
-
-    if check_id == "P0.2-epoch-transition":
-        _unsigned(values.get("completed_transitions"), "claims.completed_transitions", minimum=2)
-        _unsigned(values.get("distinct_epochs"), "claims.distinct_epochs", minimum=3)
-        _true(
-            values,
-            "checkpoint_committed",
-            "seal1_finalized",
-            "seal2_finalized",
-            "joint_handoff_authorized",
-            "first_new_block_executed",
-            "persist_before_sign_cuts_replayed",
-            "cold_restart_rejoin",
-            "proof_replay_verified",
-        )
-        return {"epoch_transition_trace", "signer_journal", "finality_proof"}
-
-    if check_id == "P0.3-signer-rollback":
-        _true(
-            values,
-            "device_backed_custody",
-            "independent_administration",
-            "external_monotonic_anchor",
-            "persist_before_sign",
-            "rollback_rejected",
-            "anchor_replacement_rejected",
-            "lost_response_replay_safe",
-        )
-        return {"device_attestation", "monotonic_anchor_trace", "rollback_trace"}
-
-    if check_id == "P0.4-finalized-goodput":
-        events = _unsigned(values.get("event_count"), "claims.event_count", minimum=1)
-        finalized = _unsigned(
-            values.get("replay_verified_finalized_count"),
-            "claims.replay_verified_finalized_count",
-            minimum=1,
-        )
-        require(finalized <= events, "replay_verified_finalized_count exceeds event_count")
-        _positive_number(values.get("finalized_goodput_tps"), "claims.finalized_goodput_tps")
-        p50 = _positive_number(values.get("finality_p50_ms"), "claims.finality_p50_ms")
-        p95 = _positive_number(values.get("finality_p95_ms"), "claims.finality_p95_ms")
-        p99 = _positive_number(values.get("finality_p99_ms"), "claims.finality_p99_ms")
-        require(p50 <= p95 <= p99, "finality percentiles must be monotonic")
-        _true(values, "workload_bound", "topology_bound", "durability_bound", "confidence_bounds")
-        return {
-            "raw_tx_telemetry",
-            "goodput_measurement",
-            "workload_manifest",
-            "topology_manifest",
-            "durability_profile",
-        }
-
-    raise EvidenceError(f"unknown runtime semantic check id: {check_id}")
-
-
 def _sealed_file_facts(path: pathlib.Path, field: str) -> tuple[str, int]:
     absolute = pathlib.Path(os.path.abspath(path))
     try:
         before_path = absolute.lstat()
         descriptor = os.open(
-            absolute,
-            os.O_RDONLY | os.O_CLOEXEC | getattr(os, "O_NOFOLLOW", 0),
+            absolute, os.O_RDONLY | os.O_CLOEXEC | getattr(os, "O_NOFOLLOW", 0)
         )
     except OSError as error:
         raise EvidenceError(f"cannot open {field}: {error}") from error
@@ -195,66 +98,192 @@ def _sealed_file_facts(path: pathlib.Path, field: str) -> tuple[str, int]:
     return digest.hexdigest(), size
 
 
+def _strict_json(path: pathlib.Path, field: str) -> dict[str, Any]:
+    try:
+        raw = path.read_text(encoding="utf-8")
+        value = json.loads(raw, object_pairs_hook=_unique_pairs)
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise EvidenceError(f"{field} is not one strict UTF-8 JSON object: {error}") from error
+    require(isinstance(value, dict), f"{field} must be a JSON object")
+    return value
+
+
+def _unique_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    value: dict[str, Any] = {}
+    for key, child in pairs:
+        if key in value:
+            raise ValueError(f"duplicate JSON member {key!r}")
+        value[key] = child
+    return value
+
+
+def _run_fixed_verifier(command: list[str], label: str) -> str:
+    completed = subprocess.run(
+        command, cwd=ROOT, check=False, text=True, capture_output=True
+    )
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip()
+        raise EvidenceError(f"{label} rejected evidence: {detail}")
+    return completed.stdout.strip()
+
+
+def _verify_p01(artifacts: dict[str, pathlib.Path]) -> dict[str, Any]:
+    required = {
+        "four_node_bundle_manifest",
+        "four_node_coordinator_manifest",
+        "seven_node_bundle_manifest",
+        "seven_node_coordinator_manifest",
+    }
+    require(set(artifacts) == required, f"P0.1 artifact roles must be exactly {sorted(required)}")
+    results: dict[str, Any] = {"verified_validator_counts": []}
+    for count, prefix in ((4, "four_node"), (7, "seven_node")):
+        manifest = artifacts[f"{prefix}_bundle_manifest"]
+        coordinator = artifacts[f"{prefix}_coordinator_manifest"]
+        require(manifest.name == "manifest.json", f"P0.1 {count}-node bundle artifact must be manifest.json")
+        document = _strict_json(manifest, f"P0.1 {count}-node manifest")
+        require(document.get("validator_count") == count, f"P0.1 {count}-node manifest validator_count mismatch")
+        profile = document.get("evidence_profile")
+        require(isinstance(profile, str) and profile, f"P0.1 {count}-node manifest evidence_profile missing")
+        coordinator_digest, _ = _sealed_file_facts(coordinator, f"P0.1 {count}-node coordinator manifest")
+        output = _run_fixed_verifier(
+            [
+                sys.executable,
+                str(ROOT / "scripts/poco-fleet/check_run_bundle.py"),
+                str(manifest.parent),
+                "--validators",
+                str(count),
+                "--profile",
+                profile,
+                "--coordinator-manifest-sha256",
+                coordinator_digest,
+            ],
+            f"P0.1 {count}-node fixed bundle verifier",
+        )
+        require("poco_g3_run_bundle=passed" in output, f"P0.1 {count}-node verifier did not emit pass marker")
+        results["verified_validator_counts"].append(count)
+    return results
+
+
+def _verify_p04(artifacts: dict[str, pathlib.Path]) -> dict[str, Any]:
+    required = {
+        "raw_tx_telemetry",
+        "goodput_measurement",
+        "workload_manifest",
+        "topology_manifest",
+        "durability_profile",
+    }
+    require(set(artifacts) == required, f"P0.4 artifact roles must be exactly {sorted(required)}")
+    bindings: dict[str, str] = {}
+    for role in ("workload_manifest", "topology_manifest", "durability_profile"):
+        document = _strict_json(artifacts[role], f"P0.4 {role}")
+        require(document.get("production_authority") is False, f"P0.4 {role} cannot hold production authority")
+        digest, _ = _sealed_file_facts(artifacts[role], f"P0.4 {role}")
+        bindings[f"{role}_sha256"] = digest
+
+    # Every raw event must bind the exact workload/topology/durability inputs.
+    raw_path = artifacts["raw_tx_telemetry"]
+    event_count = 0
+    for lineno, line in enumerate(raw_path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            event = json.loads(line, object_pairs_hook=_unique_pairs)
+        except (json.JSONDecodeError, ValueError) as error:
+            raise EvidenceError(f"P0.4 telemetry line {lineno} invalid: {error}") from error
+        require(isinstance(event, dict), f"P0.4 telemetry line {lineno} must be an object")
+        for field, expected in bindings.items():
+            require(event.get(field) == expected, f"P0.4 telemetry line {lineno} {field} mismatch")
+        event_count += 1
+    require(event_count > 0, "P0.4 telemetry is empty")
+
+    with tempfile.TemporaryDirectory(prefix="trnm-p04-recompute-") as directory:
+        recomputed = pathlib.Path(directory) / "measurement.json"
+        _run_fixed_verifier(
+            [
+                sys.executable,
+                str(ROOT / "trillionnium/scripts/measure_finalized_goodput.py"),
+                str(raw_path),
+                "-o",
+                str(recomputed),
+            ],
+            "P0.4 fixed goodput verifier",
+        )
+        observed = _strict_json(artifacts["goodput_measurement"], "P0.4 supplied measurement")
+        expected = _strict_json(recomputed, "P0.4 recomputed measurement")
+
+    # generated_at/environment are observation metadata; semantic values must be exact.
+    for transient in ("generated_at_utc", "environment"):
+        observed.pop(transient, None)
+        expected.pop(transient, None)
+    require(observed == expected, "P0.4 supplied measurement differs from fixed-verifier recomputation")
+    metrics = expected.get("metrics")
+    counts = expected.get("counts")
+    require(isinstance(metrics, dict) and isinstance(counts, dict), "P0.4 recomputation lacks metrics/counts")
+    require(_unsigned(counts.get("replay_verified_finalized"), "P0.4 replay_verified_finalized", minimum=1) >= 1, "P0.4 has no replay-verified finality")
+    goodput = metrics.get("finalized_goodput_tps")
+    require(isinstance(goodput, (int, float)) and not isinstance(goodput, bool) and goodput > 0, "P0.4 finalized goodput must be positive")
+    return {"event_count": event_count, "finalized_goodput_tps": goodput}
+
+
+def _verify_semantics(check_id: str, artifacts: dict[str, pathlib.Path]) -> dict[str, Any]:
+    if check_id == "P0.1-multinode-persistence":
+        return _verify_p01(artifacts)
+    if check_id == "P0.4-finalized-goodput":
+        return _verify_p04(artifacts)
+    if check_id == "P0.2-epoch-transition":
+        raise EvidenceError("P0.2 has no fixed two-transition runtime verifier yet; fail closed")
+    if check_id == "P0.3-signer-rollback":
+        raise EvidenceError("P0.3 has no fixed device/anti-rollback verifier yet; fail closed")
+    raise EvidenceError(f"unknown runtime semantic check id: {check_id}")
+
+
 def verify_evidence(path: pathlib.Path, expected_check_id: str) -> dict[str, Any]:
-    try:
-        raw = path.read_bytes()
-    except OSError as error:
-        raise EvidenceError(f"cannot read evidence envelope {path}: {error}") from error
-    require(raw, "evidence envelope is empty")
-    try:
-        document = json.loads(raw)
-    except json.JSONDecodeError as error:
-        raise EvidenceError(f"invalid evidence envelope JSON: {error}") from error
-    require(isinstance(document, dict), "evidence envelope must be an object")
+    document = _strict_json(path, "evidence envelope")
+    require(
+        set(document)
+        == {"schema", "check_id", "production_authority", "source_commit", "source_tree", "artifacts"},
+        "evidence envelope keys drift; self-authored status/claims fields are forbidden",
+    )
     require(document.get("schema") == SCHEMA, f"evidence schema must be {SCHEMA}")
     require(document.get("check_id") == expected_check_id, "evidence check_id mismatch")
-    require(document.get("status") == "PASS", "evidence status must be PASS")
     require(document.get("production_authority") is False, "evidence cannot hold production authority")
 
     source_commit, source_tree = current_source_identity()
     require(document.get("source_commit") == source_commit, "evidence source_commit does not match HEAD")
     require(document.get("source_tree") == source_tree, "evidence source_tree does not match HEAD tree")
 
-    required_roles = _validate_claims(expected_check_id, document.get("claims"))
-    artifacts = document.get("artifacts")
-    require(isinstance(artifacts, list) and artifacts, "evidence artifacts must be non-empty")
-    seen_roles: set[str] = set()
-    seen_paths: set[pathlib.Path] = set()
+    rows = document.get("artifacts")
+    require(isinstance(rows, list) and rows, "evidence artifacts must be non-empty")
     envelope_absolute = pathlib.Path(os.path.abspath(path))
-    for index, row in enumerate(artifacts):
+    artifacts: dict[str, pathlib.Path] = {}
+    seen_paths: set[pathlib.Path] = set()
+    for index, row in enumerate(rows):
         require(isinstance(row, dict), f"artifacts[{index}] must be an object")
-        require(
-            set(row) == {"role", "path", "sha256", "bytes"},
-            f"artifacts[{index}] keys drift",
-        )
+        require(set(row) == {"role", "path", "sha256", "bytes"}, f"artifacts[{index}] keys drift")
         role = row["role"]
         raw_path = row["path"]
         expected_digest = row["sha256"]
         expected_bytes = row["bytes"]
-        require(isinstance(role, str) and role, f"artifacts[{index}].role missing")
-        require(role not in seen_roles, f"duplicate artifact role {role}")
+        require(isinstance(role, str) and role and role not in artifacts, f"artifacts[{index}].role invalid or duplicate")
         require(isinstance(raw_path, str) and raw_path, f"artifacts[{index}].path missing")
         artifact_path = pathlib.Path(raw_path)
         if not artifact_path.is_absolute():
             artifact_path = path.parent / artifact_path
         artifact_path = pathlib.Path(os.path.abspath(artifact_path))
-        require(artifact_path != envelope_absolute, "evidence envelope cannot cite itself as an artifact")
+        require(artifact_path != envelope_absolute, "evidence envelope cannot cite itself")
         require(artifact_path not in seen_paths, "duplicate artifact path")
         require(
             isinstance(expected_digest, str)
             and len(expected_digest) == 64
-            and all(character in "0123456789abcdef" for character in expected_digest),
+            and all(character in HEX64 for character in expected_digest),
             f"artifacts[{index}].sha256 must be canonical lowercase hex",
         )
         _unsigned(expected_bytes, f"artifacts[{index}].bytes", minimum=1)
-        observed_digest, observed_bytes = _sealed_file_facts(
-            artifact_path, f"artifact {role}"
-        )
+        observed_digest, observed_bytes = _sealed_file_facts(artifact_path, f"artifact {role}")
         require(observed_digest == expected_digest, f"artifact {role} digest mismatch")
         require(observed_bytes == expected_bytes, f"artifact {role} size mismatch")
-        seen_roles.add(role)
+        artifacts[role] = artifact_path
         seen_paths.add(artifact_path)
 
-    missing_roles = sorted(required_roles - seen_roles)
-    require(not missing_roles, f"evidence is missing required artifact roles: {missing_roles}")
-    return document
+    semantic = _verify_semantics(expected_check_id, artifacts)
+    return {"check_id": expected_check_id, "semantic_verifier": semantic}

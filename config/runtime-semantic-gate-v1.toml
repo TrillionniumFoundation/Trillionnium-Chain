@@ -2,11 +2,11 @@ schema_version = 2
 gate_id = "trnm-runtime-semantic-gate-v1"
 production_authority = false
 default_mode = "report-only"
-evidence_schema = "trnm-runtime-semantic-evidence-v1"
+evidence_schema = "trnm-runtime-semantic-evidence-v2"
 
 # Each runtime command must also publish one source-bound evidence envelope.
-# A zero exit code without the envelope and its independently re-hashed artifacts
-# is process execution only and cannot make a semantic check green.
+# The envelope carries only content addresses; fixed repository verifiers recompute
+# semantic results from raw artifacts. A zero exit or self-authored PASS field is never sufficient.
 [[check]]
 id = "P0.1-multinode-persistence"
 owner = "runtime-integration"
