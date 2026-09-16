@@ -51,6 +51,8 @@ class MeasureGoodputTest(unittest.TestCase):
         self.assertEqual(result["metrics"]["finality_p99_ms"], 1000.0)
         self.assertEqual(result["metrics"]["retry_rate"], 0.25)
         self.assertEqual(result["metrics"]["rollback_rate"], 0.25)
+        self.assertEqual(result["counts"]["pending_at_window_end"], 1)
+        self.assertEqual(result["counts"]["rejected_in_window"], 1)
 
     def test_speculative_path_is_rejected(self):
         proc = self.run_tool([event("x", "2026-09-16T00:00:00Z", "2026-09-16T00:00:01Z", path="speculative")])
@@ -61,6 +63,53 @@ class MeasureGoodputTest(unittest.TestCase):
         proc = self.run_tool([event("x", "2026-09-16T00:00:00Z", "2026-09-16T00:00:01Z", replay=False)])
         self.assertNotEqual(proc.returncode, 0)
         self.assertIn("no finalized + replay-verified", proc.stderr + proc.stdout)
+
+    def test_late_pending_submission_extends_default_observation_window(self):
+        rows = [
+            event("a", "2026-09-16T00:00:00Z", "2026-09-16T00:00:01Z"),
+            event(
+                "b",
+                "2026-09-16T00:01:40Z",
+                None,
+                status="pending",
+                replay=False,
+            ),
+        ]
+        proc = self.run_tool(rows)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        result = json.loads(proc.stdout)
+        self.assertEqual(result["window"]["duration_ms"], 100_000.0)
+        self.assertAlmostEqual(result["metrics"]["submit_tps"], 0.02, places=6)
+        self.assertAlmostEqual(result["metrics"]["finalized_goodput_tps"], 0.01, places=6)
+        self.assertEqual(result["counts"]["pending_at_window_end"], 1)
+
+    def test_explicit_window_cannot_end_before_late_submission(self):
+        rows = [
+            event("a", "2026-09-16T00:00:00Z", "2026-09-16T00:00:01Z"),
+            event(
+                "b",
+                "2026-09-16T00:01:40Z",
+                None,
+                status="pending",
+                replay=False,
+            ),
+        ]
+        with tempfile.TemporaryDirectory() as d:
+            src = Path(d) / "events.jsonl"
+            src.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
+            proc = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPT),
+                    str(src),
+                    "--window-end",
+                    "2026-09-16T00:00:01Z",
+                ],
+                text=True,
+                capture_output=True,
+            )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("window ends before the last submitted transaction", proc.stderr + proc.stdout)
 
 
 if __name__ == "__main__":
