@@ -11,10 +11,10 @@
 use std::{
     fs::{File, OpenOptions},
     io::Write,
-    #[cfg(unix)]
-    os::unix::fs::OpenOptionsExt,
     path::{Path, PathBuf},
 };
+#[cfg(unix)]
+use std::os::unix::fs::OpenOptionsExt;
 
 use anyhow::{Context, Result};
 use fs2::FileExt;
