@@ -43,6 +43,7 @@ no_feature_silently_promotes_machine_truth = true
 
 [[closures]]
 id = "node-prod-v0"
+profile = "bft-v0"
 root_packages = ["trnm-poco-node-cli"]
 default_features = true
 features = []
@@ -71,6 +72,7 @@ authority = "fail-closed-engineering-candidate"
 
 [[closures]]
 id = "node-devnet-v0"
+profile = "bft-v0"
 root_packages = ["trnm-poco-lab-validator"]
 default_features = true
 features = []
@@ -80,6 +82,7 @@ authority = "candidate-devnet-only"
 
 [[closures]]
 id = "ai-v1-candidate"
+profile = "ai-v1"
 root_packages = ["trnm-poco-node"]
 default_features = true
 features = ["ai-v1-candidate"]
@@ -89,6 +92,7 @@ authority = "candidate-only-no-activation"
 
 [[closures]]
 id = "lab-and-evidence"
+profile = "legacy-ledger-observation"
 root_packages = [
   "trnm-poco-lab-validator",
   "trnm-bench",

@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import pathlib
+import posixpath
 import re
 import subprocess
 import sys
@@ -15,6 +17,50 @@ from typing import Any
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "docs/development/plan-manifest-v1.toml"
 
+# Content pins are a release/source-binding boundary.  They are deliberately
+# anchored to the last refresh commit instead of HEAD, so ordinary Rust,
+# test, or tooling changes do not require rewriting this large manifest.  A
+# change to one of the pinned inputs still fails closed until the refresh tool
+# advances the snapshot and recomputes every digest.
+PIN_REFRESH_POLICY = "change-scoped-v1"
+
+
+PIN_PATH_FIELDS = {
+    "build_closure_git_blob": "build_closure_registry_path",
+    "build_closure_validator_git_blob": "build_closure_validator_path",
+    "workspace_manifest_git_blob": "workspace_manifest_path",
+    "workspace_lock_git_blob": "workspace_lock_path",
+    "codeowners_git_blob": "codeowners_path",
+    "module_registry_git_blob": "module_registry_path",
+    "module_coverage_git_blob": "module_coverage_path",
+    "module_technical_reference_git_blob": "module_technical_reference_path",
+    "technical_convergence_git_blob": "technical_convergence_path",
+    "technical_convergence_gate_git_blob": "technical_convergence_gate_path",
+    "technical_convergence_test_git_blob": "technical_convergence_test_path",
+    "detailed_module_spec_index_git_blob": "detailed_module_spec_index_path",
+    "current_snapshot_git_blob": "current_snapshot_path",
+    "documentation_truth_git_blob": "documentation_truth_path",
+    "repository_policy_git_blob": "repository_policy_path",
+    "blocker_execution_git_blob": "blocker_execution_path",
+    "blocker_execution_validator_git_blob": "blocker_execution_validator_path",
+    "candidate_runtime_closure_git_blob": "candidate_runtime_closure_path",
+    "candidate_runtime_closure_validator_git_blob": "candidate_runtime_closure_validator_path",
+    "candidate_runtime_closure_architecture_git_blob": "candidate_runtime_closure_architecture_path",
+    "task_archive_closure_git_blob": "task_archive_closure_path",
+    "task_archive_closure_validator_git_blob": "task_archive_closure_validator_path",
+    "task_archive_closure_architecture_git_blob": "task_archive_closure_architecture_path",
+    "documentation_reference_gate_git_blob": "documentation_reference_gate_path",
+    "module_coverage_gate_git_blob": "module_coverage_gate_path",
+    "canonical_plan_gate_git_blob": "canonical_plan_gate_path",
+    "node_decomposition_git_blob": "node_decomposition_path",
+    "node_decomposition_gate_git_blob": "node_decomposition_gate_path",
+    "required_baseline_workflow_git_blob": "required_baseline_workflow_path",
+    "required_baseline_gate_git_blob": "required_baseline_gate_path",
+    "plan_manifest_pin_gate_git_blob": "plan_manifest_pin_gate_path",
+    "development_metadata_git_blob": "development_metadata_path",
+    "independent_gates_git_blob": "independent_gates_path",
+    "manifest_refresh_git_blob": "manifest_refresh_path",
+}
 
 class PinError(RuntimeError):
     pass
@@ -59,37 +105,86 @@ def blob(path: str) -> str:
     return value
 
 
-def main() -> int:
-    manifest = load_toml(MANIFEST)
-    require(manifest.get("manifest_version") == 2, "manifest version drift")
-    require(
-        manifest.get("plan_id") == "trnm-chain-development-plan-v2",
-        "manifest plan ID drift",
-    )
-    require(
-        manifest.get("document_candidate_binding") == "runtime-git-commit-and-tree",
-        "manifest runtime binding drift",
-    )
-    require(
-        manifest.get("workspace_crate_count") == 62,
-        "manifest workspace crate count drift",
-    )
+def working_blob(path: str) -> str:
+    """Hash the checked-out bytes, preserving Git's symlink representation."""
+    local = ROOT / path
+    require(local.exists() or local.is_symlink(), f"pinned path missing: {path}")
+    if local.is_symlink():
+        data = os.readlink(local).encode("utf-8")
+    else:
+        data = local.read_bytes()
+    return hashlib.sha1(
+        b"blob " + str(len(data)).encode("ascii") + b"\0" + data
+    ).hexdigest()
 
-    plan_path = manifest.get("plan_path")
-    evidence_path = manifest.get("evidence_contract_path")
-    require(isinstance(plan_path, str), "plan path missing")
-    require(isinstance(evidence_path, str), "evidence contract path missing")
-    require(
-        hashlib.sha256((ROOT / plan_path).read_bytes()).hexdigest()
-        == manifest.get("plan_sha256"),
-        "plan SHA-256 mismatch",
-    )
-    require(
-        hashlib.sha256((ROOT / evidence_path).read_bytes()).hexdigest()
-        == manifest.get("evidence_contract_sha256"),
-        "evidence-contract SHA-256 mismatch",
-    )
 
+def blob_at(commit: str, path: str) -> str:
+    """Return the Git blob for *path* in a declared snapshot commit."""
+    require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
+            "invalid pin snapshot commit")
+    value = git("rev-parse", f"{commit}:{path}")
+    require(
+        re.fullmatch(r"[0-9a-f]{40}", value) is not None,
+        f"invalid Git blob for {path} at {commit}: {value}",
+    )
+    return value
+
+
+def content_at(commit: str, path: str) -> bytes:
+    """Read a tracked file from the immutable pin snapshot."""
+    require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
+            "invalid pin snapshot commit")
+    mode = git("ls-tree", commit, "--", path).split(maxsplit=1)[0]
+    result = subprocess.run(
+        ["git", "cat-file", "blob", f"{commit}:{path}"],
+        cwd=ROOT, check=True, capture_output=True,
+    )
+    content = result.stdout
+    # The evidence-contract path is intentionally a tracked symlink to the
+    # canonical plan.  Git's blob is the link target, while the existing
+    # SHA-256 contract hashes the dereferenced bytes.  Follow only a relative,
+    # repository-local link and reject loops/escapes.
+    if mode == "120000":
+        target = content.decode("utf-8")
+        resolved = posixpath.normpath(posixpath.join(posixpath.dirname(path), target))
+        require(
+            not target.startswith("/") and resolved != ".."
+            and not resolved.startswith("../"),
+            f"pin snapshot symlink escapes repository: {path}",
+        )
+        require(resolved != path, f"pin snapshot symlink loop: {path}")
+        return content_at(commit, resolved)
+    return content
+
+
+def sha256_at(commit: str, path: str) -> str:
+    return hashlib.sha256(content_at(commit, path)).hexdigest()
+
+
+def changed_paths_since(commit: str) -> set[str]:
+    """Return tracked paths changed after the pin snapshot.
+
+    The snapshot is always an ancestor of the checked-out source.  Comparing
+    the path set, rather than every file hash, is what makes ordinary source
+    changes cheap while preserving a hard failure for stale release inputs.
+    """
+    require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None,
+            "invalid pin snapshot commit")
+    paths: set[str] = set()
+    for args in (("diff", "--name-only", f"{commit}..HEAD", "--"),
+                 ("diff", "--name-only", "HEAD", "--"),
+                 ("diff", "--cached", "--name-only", "HEAD", "--")):
+        output = git(*args)
+        paths.update(line for line in output.splitlines() if line)
+    return paths
+
+
+def changed_pin_paths(commit: str, pin_paths: set[str]) -> set[str]:
+    """Return only release/source-bound inputs changed after the snapshot."""
+    return changed_paths_since(commit) & pin_paths
+
+
+def verify_assessed_baseline(manifest: dict[str, Any]) -> None:
     assessed_commit = manifest.get("assessed_commit")
     assessed_tree = manifest.get("assessed_tree")
     require(
@@ -115,6 +210,88 @@ def main() -> int:
         "assessed baseline is not an ancestor of HEAD",
     )
 
+
+def verify_optional_historical_source(commit: str, tree: str) -> bool:
+    """Historical Git objects are optional, not inherited source acceptance.
+
+    A normal clone of a squash/convergence mainline need not contain the old
+    topic commit. Current source pins and the assessed ancestor are mandatory.
+    When history is present, a contradictory object still fails closed.
+    """
+    require(re.fullmatch(r"[0-9a-f]{40}", commit) is not None, "invalid historical commit")
+    require(re.fullmatch(r"[0-9a-f]{40}", tree) is not None, "invalid historical tree")
+    probe = subprocess.run(
+        ["git", "cat-file", "--batch-check=%(objecttype)"],
+        cwd=ROOT, input=commit+"\n", text=True, capture_output=True, check=True,
+    ).stdout.strip()
+    if probe == commit+" missing":
+        return False
+    require(probe == "commit", "historical source is not a commit")
+    require(git("rev-parse", f"{commit}^{{tree}}") == tree,
+            "historical commit/tree mismatch")
+    return True
+
+
+def main() -> int:
+    manifest = load_toml(MANIFEST)
+    require(manifest.get("manifest_version") == 2, "manifest version drift")
+    require(
+        manifest.get("plan_id") == "trnm-chain-development-plan-v2",
+        "manifest plan ID drift",
+    )
+    require(
+        manifest.get("document_candidate_binding") == "runtime-git-commit-and-tree",
+        "manifest runtime binding drift",
+    )
+    require(
+        type(manifest.get("workspace_crate_count")) is int
+        and manifest["workspace_crate_count"] > 0,
+        "manifest workspace crate count drift",
+    )
+    require(
+        manifest.get("pin_refresh_policy") == PIN_REFRESH_POLICY,
+        "manifest pin refresh policy drift",
+    )
+    snapshot_commit = manifest.get("pin_snapshot_commit")
+    snapshot_tree = manifest.get("pin_snapshot_tree")
+    require(
+        isinstance(snapshot_commit, str)
+        and re.fullmatch(r"[0-9a-f]{40}", snapshot_commit) is not None,
+        "pin snapshot commit missing",
+    )
+    require(
+        isinstance(snapshot_tree, str)
+        and re.fullmatch(r"[0-9a-f]{40}", snapshot_tree) is not None,
+        "pin snapshot tree missing",
+    )
+    require(
+        git("rev-parse", f"{snapshot_commit}^{{tree}}") == snapshot_tree,
+        "pin snapshot commit/tree mismatch",
+    )
+    require(
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", snapshot_commit, "HEAD"],
+            cwd=ROOT,
+        ).returncode
+        == 0,
+        "pin snapshot is not an ancestor of HEAD",
+    )
+
+    plan_path = manifest.get("plan_path")
+    evidence_path = manifest.get("evidence_contract_path")
+    require(isinstance(plan_path, str), "plan path missing")
+    require(isinstance(evidence_path, str), "evidence contract path missing")
+    require(
+        sha256_at(snapshot_commit, plan_path) == manifest.get("plan_sha256"),
+        "plan SHA-256 mismatch in pin snapshot",
+    )
+    require(
+        sha256_at(snapshot_commit, evidence_path) == manifest.get("evidence_contract_sha256"),
+        "evidence-contract SHA-256 mismatch in pin snapshot",
+    )
+
+    verify_assessed_baseline(manifest)
+
     overlay_commit = manifest.get("repository_core_overlay_source_commit")
     overlay_tree = manifest.get("repository_core_overlay_source_tree")
     require(
@@ -130,9 +307,11 @@ def main() -> int:
         "repository-core overlay tree drift",
     )
     require(
-        git("rev-parse", f"{overlay_commit}^{{tree}}") == overlay_tree,
-        "repository-core overlay commit/tree mismatch",
+        manifest.get("repository_core_overlay_scope")
+        == "historical-provenance-only-not-current-acceptance",
+        "repository-core historical scope missing",
     )
+    overlay_history_verified = verify_optional_historical_source(overlay_commit, overlay_tree)
     require(
         manifest.get("repository_core_overlay_absorbed") is True
         and manifest.get("repository_core_overlay", {}).get(
@@ -142,39 +321,30 @@ def main() -> int:
         "repository-core overlay absorption drift",
     )
 
-    pinned = {
-        "build_closure_git_blob": "build_closure_registry_path",
-        "build_closure_validator_git_blob": "build_closure_validator_path",
-        "workspace_manifest_git_blob": "workspace_manifest_path",
-        "workspace_lock_git_blob": "workspace_lock_path",
-        "codeowners_git_blob": "codeowners_path",
-        "module_registry_git_blob": "module_registry_path",
-        "module_coverage_git_blob": "module_coverage_path",
-        "module_technical_reference_git_blob": "module_technical_reference_path",
-        "technical_convergence_git_blob": "technical_convergence_path",
-        "technical_convergence_gate_git_blob": "technical_convergence_gate_path",
-        "technical_convergence_test_git_blob": "technical_convergence_test_path",
-        "detailed_module_spec_index_git_blob": "detailed_module_spec_index_path",
-        "current_snapshot_git_blob": "current_snapshot_path",
-        "documentation_truth_git_blob": "documentation_truth_path",
-        "repository_policy_git_blob": "repository_policy_path",
-        "blocker_execution_git_blob": "blocker_execution_path",
-        "blocker_execution_validator_git_blob": "blocker_execution_validator_path",
-        "candidate_runtime_closure_git_blob": "candidate_runtime_closure_path",
-        "candidate_runtime_closure_validator_git_blob": "candidate_runtime_closure_validator_path",
-        "candidate_runtime_closure_architecture_git_blob": "candidate_runtime_closure_architecture_path",
-        "task_archive_closure_git_blob": "task_archive_closure_path",
-        "task_archive_closure_validator_git_blob": "task_archive_closure_validator_path",
-        "task_archive_closure_architecture_git_blob": "task_archive_closure_architecture_path",
-        "documentation_reference_gate_git_blob": "documentation_reference_gate_path",
-        "module_coverage_gate_git_blob": "module_coverage_gate_path",
-        "canonical_plan_gate_git_blob": "canonical_plan_gate_path",
-        "node_decomposition_git_blob": "node_decomposition_path",
-        "node_decomposition_gate_git_blob": "node_decomposition_gate_path",
-        "required_baseline_workflow_git_blob": "required_baseline_workflow_path",
-        "required_baseline_gate_git_blob": "required_baseline_gate_path",
-        "plan_manifest_pin_gate_git_blob": "plan_manifest_pin_gate_path",
-    }
+    pinned = PIN_PATH_FIELDS
+
+    # Every declared digest is checked against the immutable snapshot.  Only
+    # paths changed after that snapshot are compared with the current tree;
+    # this is the change-scoped part of the policy.  A normal source change
+    # therefore leaves this gate read-only, while a protocol/manifest/gate
+    # edit must run refresh_plan_manifest_pins_v1.py --write.
+    pin_paths = {manifest.get(path_field) for path_field in PIN_PATH_FIELDS.values()}
+    pin_paths.update({plan_path, evidence_path})
+    pin_paths.update(
+        manifest.get(path_field)
+        for path_field in (
+            "documentation_authority_path",
+            "module_implementation_guide_path",
+            "independent_review_policy_path",
+            "documentation_contract_registry_path",
+            "documentation_contract_gate_path",
+            "documentation_contract_test_path",
+            "development_metadata_path",
+        )
+    )
+    require(all(isinstance(path, str) and path for path in pin_paths),
+            "declared pin path missing")
+    changed_pins = changed_pin_paths(snapshot_commit, pin_paths)
 
     checked: list[dict[str, str]] = []
     for blob_field, path_field in pinned.items():
@@ -186,14 +356,30 @@ def main() -> int:
             and re.fullmatch(r"[0-9a-f]{40}", expected) is not None,
             f"{blob_field} missing",
         )
-        actual = blob(path)
+        actual = blob_at(snapshot_commit, path)
         require(
             actual == expected,
-            f"{blob_field} mismatch for {path}: {expected} != {actual}",
+            f"{blob_field} mismatch in pin snapshot for {path}: {expected} != {actual}",
         )
+        if path in changed_pins:
+            current = working_blob(path)
+            require(
+                current == expected,
+                f"stale pin for changed input {path}: {expected} != {current}; "
+                "run scripts/ci/refresh_plan_manifest_pins_v1.py --write",
+            )
         checked.append(
             {"blob_field": blob_field, "path": path, "blob": actual}
         )
+
+    if plan_path in changed_pins:
+        current = hashlib.sha256((ROOT / plan_path).read_bytes()).hexdigest()
+        require(current == manifest.get("plan_sha256"),
+                "stale plan SHA-256; run scripts/ci/refresh_plan_manifest_pins_v1.py --write")
+    if evidence_path in changed_pins:
+        current = hashlib.sha256((ROOT / evidence_path).read_bytes()).hexdigest()
+        require(current == manifest.get("evidence_contract_sha256"),
+                "stale evidence-contract SHA-256; run scripts/ci/refresh_plan_manifest_pins_v1.py --write")
 
     replay = manifest.get("replay")
     require(isinstance(replay, dict), "replay table missing")
@@ -236,7 +422,11 @@ def main() -> int:
         "plan_id": manifest["plan_id"],
         "workspace_crates": len(members),
         "pinned_inputs": len(checked),
+        "pin_snapshot_commit": snapshot_commit,
+        "changed_pinned_inputs": len(changed_pins),
         "overlay_source_commit": overlay_commit,
+        "historical_overlay_object_verified": overlay_history_verified,
+        "historical_evidence_acceptance_transferred": False,
         "technical_convergence_pinned": True,
         "production_candidate": False,
         "production_consensus_activation": False,

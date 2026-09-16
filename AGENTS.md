@@ -1,14 +1,16 @@
 # Project and development boundary
 
 This Git root is **Trillionnium Chain** (`trillionnium-chain`), lane
-`chain-consensus`. Before a write, build, commit, branch, remote, or dependency
-change, run:
+`chain-consensus`. Before editing, building, or changing a branch/remote/dependency, run:
 
 ```bash
 bash scripts/project-preflight.sh
 ```
 
-Stop on a repository, project ID, lane, remote, source tuple, dependency, or
+The default command checks local project, lane, remote, branch and dependency
+boundaries. Commit/push hooks and `--audit` additionally run native-source and
+CI trust-policy validation. Checkout directory names and Git-local task forms
+are not identity evidence. Stop on a project, lane, remote, dependency or
 protected-branch mismatch. Do not rely on person-specific absolute worktree
 paths or compatibility aliases.
 
@@ -20,8 +22,9 @@ delivery board, sprint plan, agent prompt pack, package narrative, continuation
 note, or active historical-document directory.
 
 Every implementation change declares one primary module from M00-M17. Cross-
-module work changes the versioned contract first and requires producer and
-consumer review. Candidate, fixture, lab, research, benchmark, and legacy code
+module semantic changes include a reviewed versioned contract diff and affected
+producer/consumer tests. Keep a compatible producer/consumer fix atomic; separate
+contract-only PRs are not mandatory. Candidate, fixture, lab, research, benchmark, and legacy code
 must not enter the production dependency closure.
 
 This repository owns consensus, canonical runtime/state, transaction admission,

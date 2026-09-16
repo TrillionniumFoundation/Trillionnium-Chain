@@ -432,3 +432,138 @@ fn native_outer_and_runtime_failures_are_selected_in_canonical_transaction_order
         }
     }
 }
+
+fn speculate_one_outer(
+    store: &InMemoryNativeExecutionStoreV0,
+    raw: &[u8],
+) -> Option<native_parallel::SpeculativeRuntimeAttemptV0> {
+    native_parallel::speculate_transactions_v0(
+        native_parallel::NativeSpeculationContextV0 {
+            store,
+            parent_version: 1,
+            parent_root: store.parent_root_v0().unwrap(),
+            height: 2,
+            chain_id: CHAIN,
+            timestamp_ms: TIMESTAMP,
+            signers: store.authorized_signers_v0().unwrap(),
+            changes: &BTreeMap::new(),
+        },
+        &[raw.to_vec()],
+        1,
+    )
+    .pop()
+    .flatten()
+}
+
+#[test]
+fn strict_outer_verification_is_reused_once_for_exact_bytes_and_context_only() {
+    let (store, _set) = fixture(1_000_000);
+    let raw = transfer(1, 1);
+    let mut attempt = speculate_one_outer(&store, &raw).unwrap();
+    assert!(attempt.consume_verified_outer_v0(&raw, CHAIN, TIMESTAMP));
+    assert!(!attempt.consume_verified_outer_v0(&raw, CHAIN, TIMESTAMP));
+    // A mismatch burns this private cache entry, but cannot authorize a reject.
+    for mutation in 0..3 {
+        let mut attempt = speculate_one_outer(&store, &raw).unwrap();
+        let mut changed = raw.clone();
+        changed.push(b' ');
+        let matched = match mutation {
+            0 => attempt.consume_verified_outer_v0(&changed, CHAIN, TIMESTAMP),
+            1 => attempt.consume_verified_outer_v0(&raw, "other-chain", TIMESTAMP),
+            _ => attempt.consume_verified_outer_v0(&raw, CHAIN, TIMESTAMP + 1),
+        };
+        assert!(!matched);
+        assert!(!attempt.consume_verified_outer_v0(&raw, CHAIN, TIMESTAMP));
+    }
+}
+
+#[test]
+fn cached_strict_outer_verification_keeps_canonical_outputs_at_every_worker_count() {
+    let (store, set) = fixture(1_000_000);
+    let request = request(&store, &set, (1..9).map(|i| transfer(i, 1)).collect());
+    let before = store.encode_authenticated_snapshot_v0().unwrap();
+    let expected = compute(&store, &set, &request, 0).unwrap();
+    assert_eq!(expected.scheduling_counts.outer_verifications, 8);
+    assert_eq!(expected.scheduling_counts.outer_verification_reused, 0);
+    for workers in [1, 2, 4, 8] {
+        let actual = compute(&store, &set, &request, workers).unwrap();
+        assert_same_complete(&expected, &actual);
+        assert_eq!(actual.scheduling_counts.outer_verification_reused, 8);
+        assert_eq!(actual.scheduling_counts.outer_verifications, 0);
+    }
+    assert_eq!(store.encode_authenticated_snapshot_v0().unwrap(), before);
+}
+
+#[test]
+fn cached_envelope_does_not_bypass_block_or_committed_replay() {
+    for committed in [false, true] {
+        let (mut store, set) = fixture(1_000_000);
+        let raw = transfer(1, 1);
+        let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(&raw).unwrap();
+        if committed {
+            store
+                .mark_committed_command_v0(envelope.command_id, envelope.signer_id, envelope.nonce)
+                .unwrap();
+        }
+        let request = request(&store, &set, vec![raw.clone(), raw]);
+        let expected = compute(&store, &set, &request, 0).err().unwrap();
+        for workers in [1, 2, 4, 8] {
+            let actual = compute(&store, &set, &request, workers).err().unwrap();
+            assert_eq!(actual.to_string(), expected.to_string());
+        }
+    }
+}
+
+#[test]
+fn invalid_signature_never_creates_a_reusable_outer_verification() {
+    let (store, set) = fixture(1_000_000);
+    let mut envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(&transfer(2, 1)).unwrap();
+    envelope.signature_hex = "00".repeat(64);
+    let invalid = serde_json::to_vec(&envelope).unwrap();
+    assert!(speculate_one_outer(&store, &invalid).is_none());
+    // An earlier runtime error must still win over the later invalid signature.
+    for prefix in [transfer(1, 1), transfer(1, 99)] {
+        let request = request(&store, &set, vec![prefix, invalid.clone()]);
+        let expected = compute(&store, &set, &request, 0).err().unwrap();
+        for workers in [1, 2, 4, 8] {
+            let actual = compute(&store, &set, &request, workers).err().unwrap();
+            assert_eq!(actual.to_string(), expected.to_string());
+        }
+    }
+}
+
+#[test]
+fn envelope_cache_limit_is_not_a_new_validity_limit() {
+    let (store, set) = fixture(1_000_000);
+    let mut raw = transfer(1, 1);
+    // JSON trailing whitespace preserves the exact signed envelope meaning.
+    // It changes the block payload bytes equally for both scheduling paths.
+    raw.resize(64 * 1024 + 1, b' ');
+    let mut attempt = speculate_one_outer(&store, &raw).unwrap();
+    assert!(!attempt.consume_verified_outer_v0(&raw, CHAIN, TIMESTAMP));
+    let request = request(&store, &set, vec![raw]);
+    let expected = compute(&store, &set, &request, 0).unwrap();
+    for workers in [1, 2, 4, 8] {
+        let actual = compute(&store, &set, &request, workers).unwrap();
+        assert_same_complete(&expected, &actual);
+        assert_eq!(actual.scheduling_counts.outer_verifications, 1);
+        assert_eq!(actual.scheduling_counts.outer_verification_reused, 0);
+    }
+}
+
+#[test]
+fn a_verified_envelope_does_not_grant_signer_policy_authority() {
+    let (store, _set) = fixture(1_000_000);
+    let raw = transfer(1, 1);
+    let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(&raw).unwrap();
+    let mut attempt = speculate_one_outer(&store, &raw).unwrap();
+    assert!(attempt.consume_verified_outer_v0(&raw, CHAIN, TIMESTAMP));
+    let revoked = store
+        .authorized_signers_v0()
+        .unwrap()
+        .iter()
+        .filter(|signer| signer.signer_id() != envelope.signer_id.as_str())
+        .cloned()
+        .collect::<Vec<_>>();
+    assert!(validate_signer_v0(&revoked, &envelope).is_err());
+}

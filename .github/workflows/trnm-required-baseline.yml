@@ -72,6 +72,9 @@ jobs:
       - name: Run retained module-documentation false-pass mutants
         run: |
           set -euo pipefail
+          python3 scripts/ci/test_project_preflight_v1.py
+          python3 scripts/ci/test_validation_scope_v1.py
+          python3 scripts/ci/test_required_baseline_scope_v1.py
           python3 scripts/ci/test_module_coverage_guard_v1.py
           python3 scripts/ci/test_node_candidate_boundary_v1.py
           python3 scripts/ci/test_cargo_source_inventory_v1.py
@@ -80,6 +83,9 @@ jobs:
           python3 scripts/ci/test_main_protection_v1.py
           python3 scripts/ci/test_codeql_default_setup_v1.py
           python3 scripts/ci/test_documentation_binding_log_v1.py
+          python3 scripts/ci/test_development_metadata_v1.py
+          python3 scripts/ci/test_independent_gates_v1.py
+          python3 scripts/ci/test_plan_pin_refresh_v1.py
           python3 -B scripts/ci/test_codeql_reconcile_regions_v1.py
           bash scripts/check_ci_runner_policy_test.sh
           timeout --signal=TERM --kill-after=30s 900s bash scripts/check_cargo_offline_policy_test.sh
@@ -170,6 +176,7 @@ jobs:
             scripts/min_faucet_server_test.py \
             scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py \
             scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py
+          python3 -m py_compile scripts/ci/validation_scope_v1.py scripts/ci/test_validation_scope_v1.py scripts/ci/test_project_preflight_v1.py scripts/ci/test_required_baseline_scope_v1.py
       - name: Require generators to leave the checkout clean
         run: |
           git diff --exit-code -- .
@@ -234,6 +241,9 @@ jobs:
             python3 scripts/ci/test_module_coverage_guard_v1.py
             python3 scripts/ci/test_codeql_default_setup_v1.py
             python3 scripts/ci/test_documentation_binding_log_v1.py
+            python3 scripts/ci/test_development_metadata_v1.py
+            python3 scripts/ci/test_independent_gates_v1.py
+            python3 scripts/ci/test_plan_pin_refresh_v1.py
             python3 -B scripts/ci/test_codeql_reconcile_regions_v1.py
             cd web4-frontend
             npm ci
@@ -271,6 +281,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Verify exact source identity
+        id: protocol_source
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
       - name: Validate PCC1 model and single-input workflow coverage
         run: |
@@ -278,55 +289,72 @@ jobs:
           python3 scripts/ci/test_pcc1_workflow_coverage_v1.py
           python3 formal/poco-convergence-v1/check.py
       - name: Install required host tools
+        id: protocol_host_tools
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' }}
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends ripgrep
       - name: Install pinned Rust and Node toolchains
+        id: protocol_rust
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' }}
         run: |
           rustup toolchain install 1.95.0 --profile minimal
           rustup override set 1.95.0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - id: protocol_node
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24.18.0"
       - name: Validate canonical plan, mainline and active protocol contract
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' && steps.protocol_host_tools.outcome == 'success' && steps.protocol_rust.outcome == 'success' && steps.protocol_node.outcome == 'success' }}
         run: |
           set -euo pipefail
-          bash ./scripts/ci/check_canonical_development_plan.sh
-          bash ./scripts/ci/check_poco_bft_mainline_truth.sh
-          python3 ./scripts/ci/check_required_protocol_contract_v1.py
+          source scripts/ci/independent_gates_v1.sh
+          trnm_gate bash ./scripts/ci/check_canonical_development_plan.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_mainline_truth.sh
+          trnm_gate python3 ./scripts/ci/check_required_protocol_contract_v1.py
+          trnm_gate_finish
       - name: Validate independent frozen vectors
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' && steps.protocol_host_tools.outcome == 'success' && steps.protocol_rust.outcome == 'success' && steps.protocol_node.outcome == 'success' }}
         run: |
           set -euo pipefail
-          python3 ./scripts/ci/check_poco_bft_v0_parameters.py
-          python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
-          python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
-          python3 ./scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
-          python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
-          python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
-          bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
-          bash ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
-          bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+          source scripts/ci/independent_gates_v1.sh
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_parameters.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
+          trnm_gate python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
+          trnm_gate node --test ./scripts/ci/test_checkpoint_pre_certificate_v0.mjs
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
+          trnm_gate_finish
       - name: Validate machine-readable schemas and exact parsers
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' && steps.protocol_host_tools.outcome == 'success' && steps.protocol_rust.outcome == 'success' && steps.protocol_node.outcome == 'success' }}
         run: |
           set -euo pipefail
-          bash ./scripts/ci/check_poco_bft_v0_registry.sh
-          bash ./scripts/ci/check_poco_bft_v0_logical_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_block_body_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
-          bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
-          bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
-          bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+          source scripts/ci/independent_gates_v1.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_registry.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_logical_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_block_body_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_application_authority_schema.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+          trnm_gate bash ./scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+          trnm_gate_finish
       - name: Require protocol gates to leave the checkout clean
+        if: ${{ !cancelled() && steps.protocol_source.outcome == 'success' }}
         run: |
           git diff --exit-code -- .
           test -z "$(git status --porcelain --untracked-files=all)"
@@ -406,17 +434,39 @@ jobs:
           persist-credentials: false
       - name: Verify exact source identity
         run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Determine Rust validation applicability from exact Git trees
+        id: rust_scope
+        env:
+          TRNM_EVENT_NAME: ${{ github.event_name }}
+          TRNM_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          args=(--expected-head "$TRNM_EXPECTED_SOURCE_SHA" --event "$TRNM_EVENT_NAME")
+          if [[ "$TRNM_EVENT_NAME" == pull_request ]]; then args+=(--base "$TRNM_BASE_SHA"); fi
+          python3 scripts/ci/validation_scope_v1.py "${args[@]}" \
+            --output "${RUNNER_TEMP}/trnm-validation-scope-v1.json" --github-output "$GITHUB_OUTPUT"
+      - name: Retain source-bound Rust applicability decision
+        if: ${{ always() && steps.rust_scope.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-validation-scope-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-validation-scope-v1.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Install pinned Rust toolchain
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         run: |
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
       - name: Bind Cargo target inventory to the exact clean source
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         run: |
           set -euo pipefail
           python3 scripts/ci/check_cargo_source_inventory_v1.py \
             --output "${RUNNER_TEMP}/trnm-cargo-source-inventory-v1.json" >/dev/null
           git rev-parse HEAD 'HEAD^{tree}'
       - name: Retain source-bound Cargo inventory
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-cargo-source-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
@@ -424,9 +474,11 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Rust format
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: cargo fmt --all -- --check
       - name: Test PCC1 strict proof and durable read boundary
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         run: |
           set -euo pipefail
           root="${RUNNER_TEMP}/trnm-rust-execution"
@@ -453,9 +505,11 @@ jobs:
           printf 'PCC1_BOUNDARY_EXIT_CODE=%s\n' "$rc"
           exit "$rc"
       - name: Compile every active workspace target
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
       - name: Verify default and explicit candidate ownership boundaries
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -463,12 +517,14 @@ jobs:
           git ls-files -s -- crates/trnm-native-execution-v0 crates/trnm-durable-file-adapters-v0 crates/trnm-poco-node-authority crates/trnm-poco-node-host
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-poco-node-cli --all-targets --locked
           cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-state-sync-v0 --no-default-features --doc --locked
+          cargo test -p trnm-poco-node-production-v0 --doc --locked
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-durable-file-adapters-v0 --lib --locked -- --nocapture
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features persistent-authority-candidate --all-targets --locked -- --nocapture
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
           cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
           git diff --exit-code HEAD -- .
       - name: Test durable transaction journal without production activation
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -477,6 +533,7 @@ jobs:
           timeout --signal=TERM --kill-after=10s 600s cargo clippy -p trnm-durable-file-adapters-v0 --features candidate-tx-journal --all-targets --locked -- -D warnings
           git diff --exit-code HEAD -- .
       - name: Test persistent peer-to-authority bridge without production activation
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -499,6 +556,7 @@ jobs:
           tail -n 120 "$root/persistent-ingress.log"
           exit "$rc"
       - name: Replay original-listener socket replacement without masking failure
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -506,6 +564,7 @@ jobs:
             -p trnm-consensus-external-watermark --test authority_blackbox \
             --locked replacing_bound_socket_path_poison_daemon_on_next_original_connection -- --exact
       - name: Test hosted candidate process recovery with explicit features
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         timeout-minutes: 85
         run: |
@@ -537,6 +596,7 @@ jobs:
           run_candidate test timeout-signing cargo test -p trnm-poco-node --features recovery-process-test-support --test timeout_signing_process_kill_matrix --locked
           run_candidate test g1-process cargo test -p trnm-poco-node --features g1-process-test-support --test g1_process_host_e2e --locked
           run_candidate test effect-driver cargo test -p trnm-poco-node --features g1-process-test-support --test effect_driver_process_e2e --locked
+          run_candidate test native-catchup-tcp cargo test -p trnm-poco-node-io --features candidate-state-sync-tcp --all-targets --locked
           run_candidate test external-signer cargo test -p trnm-poco-node --features external-signer-runtime --test external_signer_runtime --locked
           run_candidate test g2-manifest cargo test -p trnm-poco-node --features ai-v1-candidate --test g2_manifest_bound_process_v2 --locked
           run_candidate test replay-coordinator cargo test -p trnm-poco-node --features replay-to-core-coordinator-test-support --bin trnm-poco-replay-to-core-coordinator-v1 --locked
@@ -544,7 +604,7 @@ jobs:
           run_candidate clippy node-io-clippy cargo clippy -p trnm-poco-node-io --features candidate-pacemaker,candidate-authenticated-p2p --all-targets --locked -- -D warnings
           git diff --exit-code HEAD -- .
       - name: Retain hosted candidate process commands and outcomes
-        if: always()
+        if: ${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-hosted-candidate-process-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
@@ -552,6 +612,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Test the unified workspace feature graph with a hard deadline
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -562,7 +623,7 @@ jobs:
           printf '%s\n' 'timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast' > "$root/workspace.command"
           timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace --all-targets --locked --no-fail-fast 2>&1 | tee "$root/workspace.log"
       - name: Retain exact-source workspace execution log including failure
-        if: always()
+        if: ${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-workspace-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
@@ -570,6 +631,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
       - name: Test every active workspace package with bounded execution
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         env:
           TRNM_PACKAGE_TEST_TIMEOUT_SECONDS: "600"
         run: |
@@ -581,7 +643,7 @@ jobs:
           printf '%s\n' 'python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium' > "$root/packages.command"
           python3 scripts/ci/run_bounded_workspace_tests_v1.py --workspace-root trillionnium 2>&1 | tee "$root/packages.log"
       - name: Retain exact-source package execution log including failure
-        if: always()
+        if: ${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-package-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
@@ -589,6 +651,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Verify production and candidate dependency closures with Cargo
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         run: |
           set -euo pipefail
           python3 scripts/ci/check_build_closures_v1.py --verify-cargo-tree
@@ -601,6 +664,7 @@ jobs:
             -p trnm-poco-node --no-default-features \
             --features ai-v1-candidate --locked
       - name: Compile, test, and lint external contract workspace
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         run: |
           set -euo pipefail
           root="${RUNNER_TEMP}/trnm-contract-execution"
@@ -616,7 +680,7 @@ jobs:
             cargo clippy --manifest-path contracts/Cargo.toml --workspace --all-targets --locked -- -D warnings
           } 2>&1 | tee "$root/contracts.log"
       - name: Retain exact-source contract log including failure
-        if: always()
+        if: ${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-contract-execution-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
@@ -624,6 +688,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Strict Clippy for executable safety and production boundaries
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -663,7 +728,7 @@ jobs:
             done
           } 2>&1 | tee "$root/clippy.log"
       - name: Retain exact-source boundary Clippy log including failure
-        if: always()
+        if: ${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-boundary-clippy-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
@@ -671,6 +736,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Prove dedicated production-shaped CLI remains fail-closed
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         run: |
           set -euo pipefail
           status=$(cargo run --manifest-path trillionnium/Cargo.toml \
@@ -691,6 +757,7 @@ jobs:
           test "$rc" -ne 0
           grep -q 'node host start blocked' "${RUNNER_TEMP}/trnm-node-start.err"
       - name: Run critical library regressions
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         working-directory: trillionnium
         run: |
           set -euo pipefail
@@ -701,6 +768,26 @@ jobs:
           cargo test -p trnm-production-adapter-conformance-v0 --all-targets --locked
           cargo test -p trnm-durable-file-adapters-v0 --all-targets --locked
       - name: Require Rust and contract validation to leave checkout clean
+        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}
         run: |
           git diff --exit-code -- .
           test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Recheck applicability and record execution scope without claiming a test pass
+        if: ${{ always() && steps.rust_scope.outcome == 'success' }}
+        env:
+          TRNM_EVENT_NAME: ${{ github.event_name }}
+          TRNM_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TRNM_RUN_RUST: ${{ steps.rust_scope.outputs.run_rust }}
+        run: |
+          set -euo pipefail
+          args=(--expected-head "$TRNM_EXPECTED_SOURCE_SHA" --event "$TRNM_EVENT_NAME")
+          if [[ "$TRNM_EVENT_NAME" == pull_request ]]; then args+=(--base "$TRNM_BASE_SHA"); fi
+          python3 scripts/ci/validation_scope_v1.py "${args[@]}" \
+            --output "${RUNNER_TEMP}/trnm-validation-scope-recheck-v1.json"
+          cmp "${RUNNER_TEMP}/trnm-validation-scope-v1.json" "${RUNNER_TEMP}/trnm-validation-scope-recheck-v1.json"
+          if [[ "$TRNM_RUN_RUST" == false ]]; then
+            echo 'Rust suite: not applicable to regular overview/operator prose only; not executed and not a test pass. Other required jobs remain mandatory.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Rust suite: required. Consult actual step outcomes; applicability does not certify execution or release.' >> "$GITHUB_STEP_SUMMARY"
+          fi

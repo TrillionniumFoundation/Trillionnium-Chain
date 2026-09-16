@@ -20,6 +20,14 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 SUBMISSIONS = ROOT / "docs/evidence/external/submissions"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
+MAX_DOCUMENT_BYTES = 1024 * 1024
+MAX_COLLECTION_ITEMS = 256
+COUNT_FIELDS = {
+    "replayed_p0_mutants", "physical_hosts", "operators", "custody_domains",
+    "conflicting_finality_count", "double_sign_count", "rollback_mutants_rejected",
+    "cloned_namespace_mutants_rejected", "open_critical", "open_high",
+    "chaos_72h_seconds", "public_testnet_7d_seconds", "production_candidate_30d_seconds",
+}
 SCOPES = {
     "EXT-REVIEW-001": "review", "EXT-G1-CAMPAIGN-001": "network",
     "EXT-ANCHOR-HSM-001": "custody", "EXT-POWERLOSS-001": "host",
@@ -45,15 +53,17 @@ def strict_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
 
 
 def reject_constant(value: str) -> Any:
-    raise EvidenceError(f"non-finite JSON number: {value}")
+    raise EvidenceError(f"non-integer JSON number: {value}")
 
 
 def read_json(path: pathlib.Path) -> dict[str, Any]:
     try:
-        value = json.loads(path.read_text(encoding="utf-8"),
-                           object_pairs_hook=strict_object,
-                           parse_constant=reject_constant)
-    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        with path.open("rb") as handle:
+            raw = handle.read(MAX_DOCUMENT_BYTES + 1)
+        require(len(raw) <= MAX_DOCUMENT_BYTES, f"{path.relative_to(ROOT)}: document too large")
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=strict_object,
+                           parse_float=reject_constant, parse_constant=reject_constant)
+    except (OSError, UnicodeError, ValueError, RecursionError) as exc:
         raise EvidenceError(f"{path.relative_to(ROOT)}: invalid JSON: {exc}") from exc
     require(isinstance(value, dict), f"{path.relative_to(ROOT)}: top level must be object")
     return value
@@ -89,7 +99,8 @@ def validate_common(path: pathlib.Path, row: dict[str, Any], allowed: set[str]) 
     require(producer != reviewer, f"{prefix}: producer and independent reviewer must differ")
     require(row.get("independence_declaration") is True,
             f"{prefix}: reviewer independence declaration required")
-    require(row.get("result") in {"accepted", "rejected"}, f"{prefix}: invalid result")
+    require(isinstance(row.get("result"), str) and row["result"] in {"accepted", "rejected"},
+            f"{prefix}: invalid result")
     started = parse_time(row.get("started_at"), f"{prefix}: started_at")
     ended = parse_time(row.get("ended_at"), f"{prefix}: ended_at")
     require(ended >= started, f"{prefix}: ended_at precedes started_at")
@@ -99,7 +110,8 @@ def validate_common(path: pathlib.Path, row: dict[str, Any], allowed: set[str]) 
     require(abs(actual - wall) <= 1, f"{prefix}: wall clock does not match timestamps")
 
     artifacts = row.get("artifacts")
-    require(isinstance(artifacts, list) and artifacts, f"{prefix}: immutable artifacts required")
+    require(isinstance(artifacts, list) and 0 < len(artifacts) <= MAX_COLLECTION_ITEMS,
+            f"{prefix}: bounded immutable artifact list required")
     for index, artifact in enumerate(artifacts):
         require(isinstance(artifact, dict), f"{prefix}: artifact {index} must be object")
         require(isinstance(artifact.get("name"), str) and artifact["name"],
@@ -111,7 +123,7 @@ def validate_common(path: pathlib.Path, row: dict[str, Any], allowed: set[str]) 
                 f"{prefix}: artifact {index} immutable_uri invalid")
 
     signatures = row.get("signatures")
-    require(isinstance(signatures, list) and len(signatures) >= 2,
+    require(isinstance(signatures, list) and 2 <= len(signatures) <= MAX_COLLECTION_ITEMS,
             f"{prefix}: producer and reviewer signatures required")
     signers: set[str] = set()
     digests: set[str] = set()
@@ -119,6 +131,7 @@ def validate_common(path: pathlib.Path, row: dict[str, Any], allowed: set[str]) 
         require(isinstance(signature, dict), f"{prefix}: signature {index} must be object")
         signer = signature.get("signer")
         require(isinstance(signer, str) and signer, f"{prefix}: signature signer required")
+        require(signer not in signers, f"{prefix}: duplicate signature signer")
         signers.add(signer)
         require(isinstance(signature.get("algorithm"), str) and signature["algorithm"],
                 f"{prefix}: signature algorithm required")
@@ -134,11 +147,30 @@ def validate_common(path: pathlib.Path, row: dict[str, Any], allowed: set[str]) 
     require(len(digests) == 1, f"{prefix}: signatures do not cover one digest")
     claims = row.get("claims")
     require(isinstance(claims, dict), f"{prefix}: claims must be object")
+    validate_claim_types(prefix, claims)
+
+
+def validate_claim_types(prefix: str, claims: dict[str, Any]) -> None:
+    # bool is a subclass of int in Python; equality/threshold checks alone
+    # accept True as one experiment and False as zero security findings.
+    for key in sorted(COUNT_FIELDS & claims.keys()):
+        value = claims[key]
+        require(type(value) is int and 0 <= value < 2**128,
+                f"{prefix}: {key} must be a bounded nonnegative integer")
+    if "node_counts" in claims:
+        counts = claims["node_counts"]
+        require(isinstance(counts, list) and 0 < len(counts) <= MAX_COLLECTION_ITEMS,
+                f"{prefix}: node_counts must be a bounded nonempty list")
+        require(all(type(count) is int and 0 < count < 2**128 for count in counts),
+                f"{prefix}: node_counts entries must be positive integers")
+        require(len(set(counts)) == len(counts), f"{prefix}: duplicate node count")
 
 
 def validate_specific(path: pathlib.Path, row: dict[str, Any]) -> None:
     prefix = str(path.relative_to(ROOT))
     claims = row["claims"]
+    require(isinstance(claims, dict), f"{prefix}: claims must be object")
+    validate_claim_types(prefix, claims)
     blocker = row["blocker_id"]
 
     if blocker == "EXT-REVIEW-001":
@@ -254,6 +286,7 @@ def main() -> int:
     files = sorted(SUBMISSIONS.glob("*.json")) if SUBMISSIONS.exists() else []
     declared_accepted: dict[str, str] = {}
     rejected: dict[str, str] = {}
+    rejected_order: dict[str, tuple[dt.datetime, str]] = {}
     seen_ids: set[str] = set()
 
     for path in files:
@@ -277,7 +310,10 @@ def main() -> int:
                     f"multiple declared accepted evidence files for {blocker}")
             declared_accepted[blocker] = evidence_id
         else:
-            rejected[blocker] = evidence_id
+            order = (parse_time(row["ended_at"], f"{path.name}: ended_at"), evidence_id)
+            if blocker not in rejected_order or order > rejected_order[blocker]:
+                rejected_order[blocker] = order
+                rejected[blocker] = evidence_id
 
     # Intake declarations have no authenticated acceptance authority. In
     # particular, neither matching opaque signed_digest strings nor a policy

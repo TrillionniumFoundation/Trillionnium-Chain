@@ -1,65 +1,53 @@
-## Exact source tuple
+## Change and module boundary
 
-- Base ref:
-- Base commit:
-- Base tree:
-- Head commit:
-- Head tree:
-- Prospective merge commit/tree:
-- Plan ID / SHA-256:
-- Module registry SHA-256:
-- Release-train SHA-256:
-- Protocol manifest SHA-256:
-- Cargo.lock SHA-256:
+Describe the concrete behavior corrected or enabled, not a completion percentage.
 
-## Primary module and interface boundary
+- Primary module (`M00`–`M17`) and affected producer/consumer modules:
+- Protocol/profile and build closure affected:
+- Contract change, or why the existing contract is preserved:
+- Safety, determinism, durability and resource bounds preserved:
+- Recovery/rollback behavior and downstream evidence invalidated:
 
-- Primary module: `M00`–`M17`
-- Module owner team:
-- Direct consumer module(s):
-- Contract/version changed:
-- Implementation-only change: `yes | no`
-- Production closure affected: `node-prod-v0 | node-devnet-v0 | ai-v1-candidate | lab-and-evidence | none`
-- Cross-module interface request / accepted digest:
-- Concurrent critical-path writers after this PR: `0`–`5`
+Keep one accountable integration owner for overlapping changes. Independent work
+is not limited by a fixed headcount. A small compatible producer/consumer fix may
+be reviewed atomically; a detached, unusable contract is not delivery.
 
-A pull request has one primary module and one integration successor. Cross-module work changes a versioned contract first and requires producer and consumer review. Node composition may wire implementations but may not acquire domain state-machine logic.
+## Reproducible verification
 
-## Scope and authority
+Link the exact-head CI run and its source/merge/artifact identity records. Do not
+manually copy hashes that CI derives from Git and immutable inputs. Evidence for
+a previous head is not acceptance of this head.
 
-- Package / gate:
-- Evidence scope: `crate | fixture | process | host | network | production`
-- Authority: `candidate | simulation | normative | production`
-- Changed safety/determinism/durability invariants:
-- Resource and queue bounds changed:
-- Downstream invalidation set:
-- Rollback / recovery action:
+| Command / test family | Actual result | Source-bound log / artifact |
+|---|---|---|
+| Relevant positive and negative regressions | | |
+| Recovery, concurrency and consumer replay | | |
+| Applicable repository / protocol / build gates | | |
 
-## Documentation truth
+State explicitly which commands were not run, failed, timed out, or were skipped.
+A test's existence, a process start, and a successful rejection test are not
+successful end-to-end operation. Applicable families must preserve failures while
+allowing independent diagnostics to run. Generated files must reproduce cleanly.
 
-- [ ] Development direction is changed only in `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
-- [ ] No second roadmap, sprint board, continuation note, package narrative, prompt fleet, or retired historical-document tree is introduced.
-- [ ] Current facts belong in the snapshot, module registry, release train, or an immutable evidence record rather than duplicate prose.
-- [ ] `bash scripts/ci/check_canonical_development_plan.sh` passes on the exact source head.
-- [ ] Active workflows, configuration, scripts, and source contain no retired development-document references.
+## Review and remaining blockers
 
-## Verification
+- Requested implementation-owner, affected-consumer and qualified specialist review:
+- Remaining functional or external blockers and their acceptance predicates:
+- Scope actually demonstrated (`unit`, `process`, `multi-host`, or other):
 
-- [ ] `repository-truth` completed successfully on the exact head.
-- [ ] `documentation-truth` completed successfully on the exact head when documentation truth is affected.
-- [ ] `protocol-contract` completed successfully on the exact head when protocol surfaces are affected.
-- [ ] `rust-baseline` completed successfully on the exact head.
-- [ ] Package-owned positive, negative, mutation, recovery, concurrency, and replay tests ran.
-- [ ] Root invariance was checked across every affected worker configuration.
-- [ ] No skipped, stale-head, synthetic-merge, queued, cancelled, different-source, or self-authored result is cited as acceptance evidence.
-- [ ] Generated files are reproducible and the worktree is clean after generation.
-- [ ] Critical paths have non-author review from the module owner and an affected consumer or security/evidence owner.
-- [ ] All production/readiness/activation claims are backed by accepted signed evidence.
+A review request or a second account is not independent acceptance. Required
+exact-head and prospective-merge checks, protected admission and post-merge replay
+still apply. Source, protocol and dependency identity mismatches block acceptance.
 
-## Explicit non-claims
+## Documentation and release boundary
 
-List every gate, production, release, migration, benchmark, security, or activation claim that remains false. A candidate PR must not promote machine truth merely because local tests, hosted CI, simulations, or a carrier qualification pass.
+Update existing technical references when behavior or contracts change. The
+canonical development plan remains the sole development authority; current facts
+are derived or maintained once, not recopied into competing roadmaps. Issue/PR
+execution discussion does not change protocol or release authority.
 
-## Remaining blockers
-
-For each blocker include owner module, exact acceptance predicate, evidence output, invalidation rule, and next executable action.
+State every production, release, migration, benchmark, security and activation
+claim that this change does not establish. Local/hosted tests and fixtures do not
+replace real multi-host, HSM/independent-anchor, physical-power-loss, audit,
+wall-clock soak or governance evidence. No missing evidence is closed by editing
+readiness flags or weakening its validator.

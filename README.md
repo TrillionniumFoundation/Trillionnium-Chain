@@ -8,6 +8,11 @@ operator controls, and source-bound evidence gates.
 
 ## Current status
 
+Status observed **2026-09-15** at candidate commit
+`a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8` (tree
+`e9f2f0d85a1d49758e6f3b180ab0c6a011219cf7`). This is a fresh candidate
+observation; it does not change the assessed `main` baseline or grant acceptance.
+
 **Native PoCO-BFT v0 is the only future production consensus route.** The current
 repository remains an engineering candidate:
 
@@ -18,12 +23,12 @@ repository remains an engineering candidate:
 - release readiness is false;
 - the default `trnm-poco-node` path remains fail-closed.
 
-Protected `main` remains the canonical destination. Draft PR #62 on
-`work/plan-v2-full-gap-closure-20260902` is the sole selected integration
-successor. The plan assesses ancestor baseline
-`af691ea5005e1f0262e90c4fc878ba0a70dbe7ea`
-(tree `af09e389b1a462b3839508b7ef305596c76384c6`); current source and
-prospective-merge identities are derived at verification time.
+Protected `main` remains the canonical destination. The source-only baseline is
+`435c0168558d75fc70aaa11980a179b9d5980f33`
+(tree `1e3db388234eff27b7214cc7879aef6853214709`), observed on 2026-09-13.
+PR #62 is closed and is historical provenance, not an active successor.
+Current source, PR and prospective-merge identities are derived at verification
+time. Prior branch test/review credit is not inherited by the convergence tree.
 
 The selected line combines the descriptor-bound A04/A19/A23 source train, the
 Node Commit Ledger, persistent deterministic 1/2/4/8-worker execution
@@ -31,6 +36,14 @@ equivalence, one active development plan, and machine-checked M00-M17 source and
 technical-document coverage. These are implementation-present,
 acceptance-pending facts. They do not establish public-testnet, production,
 release, protocol-freeze, or activation authority.
+
+P0 acceptance follows one order: (1) a real four-node and then seven-node
+multi-host campaign, (2) two consecutive authenticated epoch transitions, (3)
+coordinate binding for every consensus and application fact, (4) an
+independently administered device-backed signer with a monotonic anti-rollback
+anchor, and (5) finalized replay-verified business goodput with p50/p95/p99
+finality and raw traces. Until all five have independently replayable evidence,
+the candidate remains non-normative and all production/readiness flags stay false.
 
 The machine-readable authority is `config/consensus-mainline.json`. The sole
 active execution, modularization, team, and promotion plan is
@@ -91,17 +104,27 @@ readiness claim. Native PoCO-BFT, `trnm-native-application`, and the current
 ```bash
 git clone https://github.com/TrillionniumFoundation/Trillionnium-Chain.git
 cd Trillionnium-Chain
+git switch -c fix/chain-local-work
+bash scripts/project-preflight.sh --dev
 rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
 rustup override set 1.95.0
-bash scripts/ci/check_canonical_development_plan.sh
-python3 scripts/ci/check_module_coverage_v1.py
-python3 scripts/ci/check_repository_truth_v1.py
-python3 scripts/ci/check_blocker_execution_v1.py
-python3 scripts/ci/check_external_evidence_v1.py
-cd trillionnium
-cargo fmt --all -- --check
-cargo check --workspace --all-targets --locked
+cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
+source scripts/ci/independent_gates_v1.sh
+trnm_gate bash scripts/ci/check_canonical_development_plan.sh
+trnm_gate python3 scripts/ci/check_repository_truth_v1.py
+trnm_gate python3 scripts/ci/check_blocker_execution_v1.py
+trnm_gate python3 scripts/ci/check_external_evidence_v1.py
+trnm_gate_finish
 ```
+
+Local edit preflight does not require a particular directory name or a private
+Git task form. `--audit`, commit and push retain the full policy checks. The
+canonical plan's sections 11 and 13 define functional priority and validation
+tiers. Only narrowly classified regular overview/operator prose can make Rust
+tests not applicable in a PR; this is recorded as not executed, not a pass.
+Code, protocol, configuration and unknown changes still require full Rust checks,
+and all other required jobs remain mandatory. Main/manual runs are always full.
 
 The protected branch binds stable actor-independent checks named by
 `config/repository-policy-v1.json`. A skipped, queued, cancelled, stale-head,
@@ -109,6 +132,14 @@ synthetic-merge, different-source, or self-authored result is not acceptance.
 The bounded fuzz smoke is not a long-running fuzz campaign. A green external
 evidence contract validates schema and fail-closed behavior; it does not mean
 that independent real-world evidence already exists.
+
+Development input pins are derived metadata. After reviewing edits to pinned
+files, run `python3 scripts/ci/refresh_plan_manifest_pins_v1.py --write`, review
+the manifest diff and commit the related files together. The default `--check`
+is read-only. This command does not rebase the assessed source, change frozen
+protocol imports, transfer review credit or modify readiness flags. Ordinary
+exact-source validation remains required. Staffing estimates and historical PR
+numbers are not software-validity predicates.
 
 ## Candidate payload recovery socket
 

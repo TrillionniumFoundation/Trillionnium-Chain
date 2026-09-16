@@ -30,11 +30,15 @@ use crate::{
 const PARENT_TIMESTAMP: u64 = 1_700_000_000_000;
 const BLOCK_TIMESTAMP: u64 = PARENT_TIMESTAMP + 1_000;
 
-fn key(seed: u8) -> SigningKey {
+pub(crate) fn key(seed: u8) -> SigningKey {
     SigningKey::from_bytes(&[seed; 32])
 }
 
-fn config() -> NativeApplicationConfigV0 {
+pub(crate) fn config() -> NativeApplicationConfigV0 {
+    config_for_local(0)
+}
+
+pub(crate) fn config_for_local(local_index: usize) -> NativeApplicationConfigV0 {
     let parameters = ConsensusParametersV0::reference_shadow_v0();
     let validators = (0..4)
         .map(|index| {
@@ -65,7 +69,7 @@ fn config() -> NativeApplicationConfigV0 {
             .unwrap()
     })
     .collect();
-    let local = set.validators()[0].id();
+    let local = set.validators()[local_index].id();
     NativeApplicationConfigV0::from_canonical_lab_inputs_v0(
         CanonicalLabNativeApplicationConfigInputsV0::new(
             "pcc1-durable-test",
@@ -133,7 +137,7 @@ fn transactions(chain: &str) -> Vec<Vec<u8>> {
         .collect()
 }
 
-fn qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
+pub(crate) fn qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
     let root =
         Vote::signing_root_for_set(set, header.view(), header.height(), header.id()).unwrap();
     let votes = set
@@ -171,7 +175,7 @@ fn qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
     .unwrap()
 }
 
-fn certified(
+pub(crate) fn certified(
     set: &ValidatorSet,
     parameters: &ConsensusParametersV0,
     header: BlockHeader,
@@ -588,3 +592,6 @@ fn readback_rejects_wrong_class_corruption_and_budget_without_losing_committed_s
     measured.charge_finality_proof(&proof).unwrap();
     assert_eq!(sufficient.signature_work(), measured.signature_work());
 }
+
+#[path = "snapshot_stream_tests.rs"]
+mod snapshot_stream_tests;

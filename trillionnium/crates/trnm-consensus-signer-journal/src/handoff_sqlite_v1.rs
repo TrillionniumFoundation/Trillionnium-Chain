@@ -31,6 +31,9 @@ use crate::{
     SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0, StrictOldSetHandoffAdmissionV1,
 };
 
+#[cfg(feature = "candidate-carried-new-set-handoff")]
+use crate::StrictCarriedNewSetHandoffAdmissionV1;
+
 const DEFAULT_BUSY_TIMEOUT: Duration = Duration::from_secs(5);
 const METADATA_DOMAIN_V1: &str = "trnm.consensus-signer-journal.handoff-metadata.v1";
 const INITIAL_HEAD_DOMAIN_V1: &str = "trnm.consensus-signer-journal.handoff-initial-head.v1";
@@ -126,8 +129,16 @@ pub enum SignerJournalSchemaKindV1 {
 pub fn inspect_signer_journal_schema_read_only_v1(
     database_path: impl AsRef<Path>,
 ) -> Result<SignerJournalSchemaKindV1, HandoffSignerJournalErrorV1> {
+    inspect_schema_after_close_v1(database_path.as_ref(), || {})
+}
+
+// A private hook makes the post-close namespace boundary testable without an
+// environment-controlled fault injection surface in the public classifier.
+fn inspect_schema_after_close_v1(
+    database_path: &Path,
+    after_close: impl FnOnce(),
+) -> Result<SignerJournalSchemaKindV1, HandoffSignerJournalErrorV1> {
     ensure_supported_platform_v1()?;
-    let database_path = database_path.as_ref();
     if !database_path.exists() {
         return Err(HandoffSignerJournalErrorV1::Missing);
     }
@@ -170,26 +181,41 @@ pub fn inspect_signer_journal_schema_read_only_v1(
             |row| row.get(0),
         )
         .map_err(|error| HandoffSignerJournalErrorV1::sqlite("identify schema1", error))?;
-    match (legacy, current) {
+    let (kind, auxiliary_pins) = match (legacy, current) {
         (1, 0) => {
-            let auxiliary_pins = pin_checkpointed_legacy_namespace_v1(database_path)?;
+            let pins = pin_checkpointed_legacy_namespace_v1(database_path)?;
             require_persisted_sqlite_journal_mode_v1(&database_file, 2, "schema0 WAL mode")?;
             validate_canonical_schema(&connection)
                 .map_err(|_| HandoffSignerJournalErrorV1::SchemaMismatch)?;
-            auxiliary_pins.require_unchanged()?;
-            require_path_identity(database_path, database_identity)?;
-            Ok(SignerJournalSchemaKindV1::LegacyV0ReadOnly)
+            pins.require_unchanged()?;
+            (SignerJournalSchemaKindV1::LegacyV0ReadOnly, Some(pins))
         }
         (0, 1) => {
             require_schema1_auxiliary_namespace_absent_v1(database_path)?;
             require_persisted_sqlite_journal_mode_v1(&database_file, 1, "schema1 DELETE mode")?;
             validate_canonical_schema_v1(&connection)?;
-            require_schema1_auxiliary_namespace_absent_v1(database_path)?;
-            require_path_identity(database_path, database_identity)?;
-            Ok(SignerJournalSchemaKindV1::HandoffCapableV1)
+            (SignerJournalSchemaKindV1::HandoffCapableV1, None)
         }
-        _ => Err(HandoffSignerJournalErrorV1::SchemaMismatch),
+        _ => return Err(HandoffSignerJournalErrorV1::SchemaMismatch),
+    };
+    connection.close().map_err(|(_, error)| {
+        HandoffSignerJournalErrorV1::sqlite("close read-only schema classifier", error)
+    })?;
+    after_close();
+    // Keep the file and auxiliary descriptors/locks alive through the last
+    // check. A successful cached schema read cannot bless a replaced namespace.
+    require_path_identity(database_path, database_identity)?;
+    match auxiliary_pins {
+        Some(pins) => {
+            require_persisted_sqlite_journal_mode_v1(&database_file, 2, "schema0 WAL mode")?;
+            pins.require_unchanged()?;
+        }
+        None => {
+            require_persisted_sqlite_journal_mode_v1(&database_file, 1, "schema1 DELETE mode")?;
+            require_schema1_auxiliary_namespace_absent_v1(database_path)?;
+        }
     }
+    Ok(kind)
 }
 
 struct LegacyNamespacePinsV1 {
@@ -455,6 +481,20 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         profile: HandoffSignerJournalProfileV1,
         external_watermark: W,
     ) -> Result<Self, HandoffSignerJournalErrorV1> {
+        let mut store = Self::open_existing_local_v1(database_path, profile, external_watermark)?;
+        store.audit_local(None)?;
+        store.require_external_exact()?;
+        Ok(store)
+    }
+
+    // Private, pinned opener. Every public caller must audit the complete local
+    // history and reconcile the external watermark before returning authority.
+    // This function does not claim or advance any watermark.
+    fn open_existing_local_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+    ) -> Result<Self, HandoffSignerJournalErrorV1> {
         ensure_supported_platform_v1()?;
         reject_semantic_watermark_v1(&external_watermark)?;
         let database_path = absolute_database_path(database_path.as_ref())?;
@@ -482,7 +522,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         validate_canonical_schema_v1(&connection)?;
         let journal_id = read_journal_id_v1(&connection)?;
         let observed_head = read_head_v1(&connection, journal_id)?;
-        let mut store = Self {
+        Ok(Self {
             connection,
             database_file,
             directory_file,
@@ -495,10 +535,167 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             observed_head,
             owned_pending: None,
             owner_pid: std::process::id(),
-        };
-        store.audit_local(None)?;
-        store.require_external_exact()?;
-        Ok(store)
+        })
+    }
+
+    /// Record a signature obtained by exact external signer readback after a
+    /// lost handoff-signing reply. This explicit candidate operation performs
+    /// no signing and accepts no signature producer or normal/new-epoch intent.
+    ///
+    /// The original strict admission and exact journal intent are mandatory.
+    /// A pending intent must already equal the external watermark. A SIGNED
+    /// tail may instead have the exact PREPARED predecessor watermark: only
+    /// that one already committed signature/fence event may finish its CAS.
+    /// Missing anchors, other pending intents, rollback, forks and larger gaps
+    /// stay closed. Ordinary `open_existing` keeps rejecting pending records.
+    ///
+    /// This operation may append the existing signature/fence event and advance
+    /// the supplied external watermark. The host must finish cross-store
+    /// startup reconciliation before invoking it. It does not establish HSM
+    /// readback provenance, SafetyRules, whole-node recovery or production
+    /// activation. If external readback has no signature, this API cannot help:
+    /// it never creates or retries a signing request.
+    #[cfg(feature = "candidate-handoff-signature-recovery")]
+    pub fn recover_old_set_handoff_signature_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictOldSetHandoffAdmissionV1,
+        observed_signature: SignatureBytes,
+    ) -> Result<(Self, SignatureBytes), HandoffSignerJournalErrorV1> {
+        if intent.signer_role() != HandoffSignerRoleV1::OldSet {
+            return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
+        }
+        admission.require_exact(intent, &profile)?;
+        let prepared = prepare_handoff_intent_v1(&profile, intent, admission)?;
+        Self::recover_admitted_handoff_signature_v1(
+            database_path,
+            profile,
+            external_watermark,
+            intent,
+            prepared,
+            observed_signature,
+        )
+    }
+
+    #[cfg(feature = "candidate-handoff-signature-recovery")]
+    fn recover_admitted_handoff_signature_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        intent: &CanonicalHandoffSignIntentV1,
+        prepared: PreparedIntentV1,
+        observed_signature: SignatureBytes,
+    ) -> Result<(Self, SignatureBytes), HandoffSignerJournalErrorV1> {
+        let validator = profile
+            .old_validator_set()
+            .validator(profile.author())
+            .ok_or(HandoffSignerJournalErrorV1::MetadataMismatch)?;
+        if !StrictEd25519Verifier.verify(validator, &intent.signing_root(), &observed_signature) {
+            return Err(HandoffSignerJournalErrorV1::InvalidProducedSignature);
+        }
+
+        let mut store = Self::open_existing_local_v1(database_path, profile, external_watermark)?;
+        store.ensure_file_identity()?;
+        let pending = pending_fingerprint_v1(&store.connection)?;
+        if pending.is_some_and(|fingerprint| fingerprint != prepared.fingerprint) {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::PreparedIntentPending,
+            ));
+        }
+        // The query above only selects an audit allowance. It supplies no
+        // authority until the complete canonical history and exact intent pass.
+        store.audit_local(pending)?;
+        let stored = read_intent_v1(&store.connection, prepared.fingerprint)?.ok_or(
+            HandoffSignerJournalErrorV1::AdmissionMismatch("no retained handoff intent"),
+        )?;
+        require_exact_intent_v1(&stored, &prepared)?;
+        let recorded =
+            read_persisted_signature_v1(&store.connection, prepared.fingerprint, &store.profile)?;
+        if let Some(signature) = recorded {
+            if signature != observed_signature {
+                return Err(HandoffSignerJournalErrorV1::AdmissionMismatch(
+                    "observed signature differs from recorded signature",
+                ));
+            }
+            store.reconcile_observed_handoff_signature_v1(&prepared, signature)?;
+        } else {
+            if pending != Some(prepared.fingerprint) {
+                return Err(HandoffSignerJournalErrorV1::Conflict(
+                    HandoffSignerJournalConflictV1::PreparedIntentPending,
+                ));
+            }
+            // A pending local-first prepare is deliberately NOT repaired here.
+            // The intent must have been externally anchored before signing.
+            store.require_external_exact()?;
+            store.owned_pending = Some(prepared.fingerprint);
+            store.ensure_operational()?;
+            store.append_signature(
+                &prepared,
+                observed_signature,
+                intent.signer_role() == HandoffSignerRoleV1::OldSet,
+            )?;
+            store.owned_pending = None;
+            store.advance_external_to_observed()?;
+        }
+        store.ensure_operational()?;
+        let signature =
+            read_persisted_signature_v1(&store.connection, prepared.fingerprint, &store.profile)?
+                .ok_or(
+                HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                    "recovered handoff signature disappeared",
+                ),
+            )?;
+        if signature != observed_signature {
+            return Err(HandoffSignerJournalErrorV1::AdmissionMismatch(
+                "recovered signature differs from exact readback",
+            ));
+        }
+        store.ensure_file_identity()?;
+        Ok((store, signature))
+    }
+
+    // Complete only the external CAS of this exact already signed tail. The
+    // schema/history audit has already checked its signature, fence and chain.
+    #[cfg(feature = "candidate-handoff-signature-recovery")]
+    fn reconcile_observed_handoff_signature_v1(
+        &mut self,
+        prepared: &PreparedIntentV1,
+        signature: SignatureBytes,
+    ) -> Result<(), HandoffSignerJournalErrorV1> {
+        self.ensure_file_identity()?;
+        let target = self.watermark_for(self.observed_head)?;
+        let actual = self
+            .external_watermark
+            .load(self.profile.external_watermark_scope())
+            .map_err(|error| {
+                HandoffSignerJournalErrorV1::external("read recovered handoff watermark", error)
+            })?
+            .ok_or(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::ExternalWatermarkMissing,
+            ))?;
+        if actual == target {
+            return Ok(());
+        }
+        let tail = read_event_v1(&self.connection, self.observed_head.sequence)?.ok_or(
+            HandoffSignerJournalErrorV1::PersistedRepresentationMalformed("missing signed tail"),
+        )?;
+        let predecessor = self.watermark_for(JournalHeadV1 {
+            sequence: tail.predecessor_sequence,
+            chain_checksum: tail.predecessor_chain_checksum,
+        })?;
+        if tail.kind != EVENT_SIGNED
+            || tail.fingerprint != prepared.fingerprint
+            || tail.signature != Some(*signature.as_bytes())
+            || tail.predecessor_sequence.checked_add(1) != Some(self.observed_head.sequence)
+            || actual != predecessor
+        {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::ExternalWatermarkMismatch,
+            ));
+        }
+        self.advance_external_to_observed()
     }
 
     pub const fn profile(&self) -> &HandoffSignerJournalProfileV1 {
@@ -605,6 +802,88 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         self.complete_handoff_signature(intent, &prepared, producer)
     }
 
+    /// Candidate carried-set new-role signature. The old signature for this
+    /// exact descriptor must already be durable and externally anchored. Only
+    /// identical ordered IDs/keys/weights are supported, so existing custody
+    /// remains bound to the same key. This does not admit new/rotated keys,
+    /// new-only validators, ordinary new-epoch votes, or Core activation.
+    #[cfg(feature = "candidate-carried-new-set-handoff")]
+    pub fn sign_carried_new_set_handoff_exact_v1<P: HandoffSignatureProducerV1>(
+        &mut self,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictCarriedNewSetHandoffAdmissionV1,
+        producer: &mut P,
+    ) -> Result<SignatureBytes, HandoffSignerJournalErrorV1> {
+        admission.require_exact(intent, &self.profile)?;
+        let prepared = prepare_handoff_with_admission_digest_v1(
+            &self.profile,
+            intent,
+            admission.admission_digest(),
+        )?;
+        self.ensure_operational()?;
+        // The token alone proves neither prior local signing nor its durability.
+        let old = prepare_handoff_intent_v1(
+            &self.profile,
+            admission.old_intent(),
+            admission.old_admission(),
+        )?;
+        let retained = read_intent_v1(&self.connection, old.fingerprint)?.ok_or(
+            HandoffSignerJournalErrorV1::AdmissionMismatch("old signature required"),
+        )?;
+        require_exact_intent_v1(&retained, &old)?;
+        if read_persisted_signature_v1(&self.connection, old.fingerprint, &self.profile)?.is_none()
+            || !terminal_fence_exists_v1(&self.connection)?
+        {
+            return Err(HandoffSignerJournalErrorV1::AdmissionMismatch(
+                "old signature required",
+            ));
+        }
+        if let Some(stored) = read_intent_v1(&self.connection, prepared.fingerprint)? {
+            require_exact_intent_v1(&stored, &prepared)?;
+            if let Some(signature) =
+                read_persisted_signature_v1(&self.connection, prepared.fingerprint, &self.profile)?
+            {
+                return Ok(signature);
+            }
+            self.require_owned_pending(prepared.fingerprint)?;
+            return self.complete_handoff_signature(intent, &prepared, producer);
+        }
+        self.require_no_pending()?;
+        self.require_handoff_admissible(&prepared)?;
+        self.append_prepared(&prepared)?;
+        self.owned_pending = Some(prepared.fingerprint);
+        self.advance_external_to_observed()?;
+        self.complete_handoff_signature(intent, &prepared, producer)
+    }
+
+    /// Reconcile only an already produced carried-new signature. No custody
+    /// call is made, and the exact old-role predecessor remains mandatory in
+    /// the complete history audit. A bare signature cannot create an intent.
+    #[cfg(feature = "candidate-carried-new-set-handoff")]
+    pub fn recover_carried_new_set_handoff_signature_v1(
+        database_path: impl AsRef<Path>,
+        profile: HandoffSignerJournalProfileV1,
+        external_watermark: W,
+        intent: &CanonicalHandoffSignIntentV1,
+        admission: &StrictCarriedNewSetHandoffAdmissionV1,
+        observed_signature: SignatureBytes,
+    ) -> Result<(Self, SignatureBytes), HandoffSignerJournalErrorV1> {
+        admission.require_exact(intent, &profile)?;
+        let prepared = prepare_handoff_with_admission_digest_v1(
+            &profile,
+            intent,
+            admission.admission_digest(),
+        )?;
+        Self::recover_admitted_handoff_signature_v1(
+            database_path,
+            profile,
+            external_watermark,
+            intent,
+            prepared,
+            observed_signature,
+        )
+    }
+
     fn complete_consensus_signature<P: SignatureProducerV0>(
         &mut self,
         intent: &CanonicalSignIntentV0,
@@ -659,7 +938,11 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         if !StrictEd25519Verifier.verify(validator, &intent.signing_root(), &signature) {
             return Err(HandoffSignerJournalErrorV1::InvalidProducedSignature);
         }
-        self.append_signature(prepared, signature, true)?;
+        self.append_signature(
+            prepared,
+            signature,
+            intent.signer_role() == HandoffSignerRoleV1::OldSet,
+        )?;
         self.owned_pending = None;
         self.advance_external_to_observed()?;
         read_persisted_signature_v1(&self.connection, prepared.fingerprint, &self.profile)?.ok_or(
@@ -1099,6 +1382,52 @@ fn prepare_consensus_intent_v1(
     Ok(prepared)
 }
 
+fn handoff_role_enabled_v1(
+    profile: &HandoffSignerJournalProfileV1,
+    role: HandoffSignerRoleV1,
+) -> bool {
+    role == HandoffSignerRoleV1::OldSet
+        || (cfg!(feature = "candidate-carried-new-set-handoff")
+            && role == HandoffSignerRoleV1::NewSet
+            && profile.old_validator_set().validators() == profile.new_validator_set().validators())
+}
+
+fn carried_new_matches_old_v1(
+    profile: &HandoffSignerJournalProfileV1,
+    old: &PreparedIntentV1,
+    new: &PreparedIntentV1,
+) -> bool {
+    if !handoff_role_enabled_v1(profile, HandoffSignerRoleV1::NewSet) {
+        return false;
+    }
+    match (&old.fields, &new.fields) {
+        (
+            PreparedFieldsV1::Handoff {
+                role: old_role,
+                descriptor_cev0: old_descriptor,
+                admission_digest: old_admission,
+                ..
+            },
+            PreparedFieldsV1::Handoff {
+                role: new_role,
+                descriptor_cev0: new_descriptor,
+                admission_digest: new_admission,
+                ..
+            },
+        ) => {
+            *old_role == HandoffSignerRoleV1::OldSet as u8
+                && *new_role == HandoffSignerRoleV1::NewSet as u8
+                && old_descriptor == new_descriptor
+                && *new_admission
+                    == hash_domain(
+                        "trnm.consensus-signer-journal.carried-new-admission.v1",
+                        &[old_admission, &new.fingerprint],
+                    )
+        }
+        _ => false,
+    }
+}
+
 fn prepare_handoff_intent_v1(
     profile: &HandoffSignerJournalProfileV1,
     intent: &CanonicalHandoffSignIntentV1,
@@ -1120,6 +1449,28 @@ fn prepare_handoff_intent_v1(
         ));
     }
     admission.require_exact(intent, profile)?;
+    prepare_handoff_with_admission_digest_v1(profile, intent, admission.admission_digest())
+}
+
+fn prepare_handoff_with_admission_digest_v1(
+    profile: &HandoffSignerJournalProfileV1,
+    intent: &CanonicalHandoffSignIntentV1,
+    admission_digest: [u8; 32],
+) -> Result<PreparedIntentV1, HandoffSignerJournalErrorV1> {
+    intent
+        .validate(
+            profile.old_validator_set(),
+            profile.new_validator_set(),
+            profile.old_consensus_parameters(),
+            profile.new_consensus_parameters(),
+        )
+        .map_err(|_| HandoffSignerJournalErrorV1::Intent("handoff transition profile"))?;
+    if !handoff_role_enabled_v1(profile, intent.signer_role())
+        || intent.validator_id() != profile.author()
+        || admission_digest == [0; 32]
+    {
+        return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
+    }
     let canonical_intent = intent
         .canonical_bytes()
         .map_err(|_| HandoffSignerJournalErrorV1::Intent("handoff canonical encoding"))?;
@@ -1146,7 +1497,7 @@ fn prepare_handoff_intent_v1(
         validator_id: intent.validator_id().as_bytes().to_vec(),
         descriptor_digest: *preimage.descriptor_digest().as_bytes(),
         descriptor_cev0: preimage.descriptor_bytes().to_vec(),
-        admission_digest: admission.admission_digest(),
+        admission_digest,
     };
     let mut prepared = PreparedIntentV1 {
         fingerprint: *intent.fingerprint().as_bytes(),
@@ -2580,6 +2931,12 @@ fn verify_signature_for_intent_v1(
         PreparedFieldsV1::Handoff { role, .. } if *role == HandoffSignerRoleV1::OldSet as u8 => {
             profile.old_validator_set().validator(profile.author())
         }
+        PreparedFieldsV1::Handoff { role, .. }
+            if *role == HandoffSignerRoleV1::NewSet as u8
+                && handoff_role_enabled_v1(profile, HandoffSignerRoleV1::NewSet) =>
+        {
+            profile.new_validator_set().validator(profile.author())
+        }
         PreparedFieldsV1::Handoff { .. } => {
             return Err(HandoffSignerJournalErrorV1::NewSetAdmissionUnavailable);
         }
@@ -2742,8 +3099,8 @@ fn validate_intent_semantics_v1(
                 )
             })?;
             if intent.class != CLASS_HANDOFF
-                || decoded.signer_role() != HandoffSignerRoleV1::OldSet
-                || *role != HandoffSignerRoleV1::OldSet as u8
+                || !handoff_role_enabled_v1(profile, decoded.signer_role())
+                || *role != decoded.signer_role() as u8
                 || decoded.validator_id() != profile.author()
                 || validator_id != profile.author().as_bytes()
                 || *genesis_hash != *decoded.preimage().genesis_hash().as_bytes()
@@ -2885,7 +3242,8 @@ fn validate_database_v1(
     let mut maximum_vote_view = None;
     let mut maximum_timeout_view = None;
     let mut pending = None;
-    let mut signed_old_handoff = None;
+    let mut signed_old_handoff: Option<([u8; 32], u64)> = None;
+    let mut carried_new_fingerprint = None;
 
     for event in &events {
         let intent = intents.get(&event.fingerprint).ok_or(
@@ -2903,6 +3261,31 @@ fn validate_database_v1(
         }
         match event.kind {
             EVENT_PREPARED => {
+                let is_new = matches!(
+                    &intent.fields, PreparedFieldsV1::Handoff { role, .. }
+                    if *role == HandoffSignerRoleV1::NewSet as u8
+                );
+                if let Some((old_fingerprint, old_sequence)) = signed_old_handoff {
+                    let old = intents
+                        .get(&old_fingerprint)
+                        .ok_or(HandoffSignerJournalErrorV1::IntegrityFailure)?;
+                    if !is_new
+                        || carried_new_fingerprint.is_some()
+                        || old_sequence.checked_add(1) != Some(event.sequence)
+                        || !carried_new_matches_old_v1(profile, old, intent)
+                    {
+                        return Err(HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                            "only the exact carried-new prepare may follow the terminal old signature",
+                        ));
+                    }
+                    carried_new_fingerprint = Some(event.fingerprint);
+                } else if is_new {
+                    return Err(
+                        HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                            "carried-new intent precedes the durable old-role signature",
+                        ),
+                    );
+                }
                 if pending.is_some() {
                     return Err(
                         HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
@@ -3126,7 +3509,10 @@ fn validate_database_v1(
                 || fence.fingerprint != fingerprint
                 || fence.signature_sequence != signature_sequence
                 || fence.fence_checksum != expected_checksum
-                || signature_sequence != expected_head.sequence
+                || (signature_sequence != expected_head.sequence
+                    && !(carried_new_fingerprint.is_some()
+                        && (signature_sequence.checked_add(1) == Some(expected_head.sequence)
+                            || signature_sequence.checked_add(2) == Some(expected_head.sequence))))
             {
                 return Err(
                     HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
@@ -3277,7 +3663,7 @@ fn absolute_database_path(path: &Path) -> Result<PathBuf, HandoffSignerJournalEr
 fn validate_private_directory_v1(path: &Path) -> Result<(), HandoffSignerJournalErrorV1> {
     use std::os::unix::fs::MetadataExt;
 
-    let metadata = fs::metadata(path)
+    let metadata = fs::symlink_metadata(path)
         .map_err(|error| HandoffSignerJournalErrorV1::io("stat schema1 directory", error))?;
     // SAFETY: `geteuid` accepts no pointer and touches no caller memory.
     let effective_uid = unsafe { libc::geteuid() };
@@ -3419,7 +3805,7 @@ fn file_handle_identity_v1(file: &File) -> Result<FileIdentityV1, HandoffSignerJ
 }
 
 fn path_identity_v1(path: &Path) -> Result<FileIdentityV1, HandoffSignerJournalErrorV1> {
-    let metadata = fs::metadata(path)
+    let metadata = fs::symlink_metadata(path)
         .map_err(|error| HandoffSignerJournalErrorV1::io("stat schema1 database path", error))?;
     validate_private_file_metadata_v1(&metadata)?;
     Ok(identity_from_metadata_v1(&metadata))
@@ -3443,7 +3829,7 @@ fn directory_handle_identity_v1(
 
 fn directory_path_identity_v1(path: &Path) -> Result<FileIdentityV1, HandoffSignerJournalErrorV1> {
     validate_private_directory_v1(path)?;
-    let metadata = fs::metadata(path)
+    let metadata = fs::symlink_metadata(path)
         .map_err(|error| HandoffSignerJournalErrorV1::io("stat schema1 directory path", error))?;
     Ok(identity_from_metadata_v1(&metadata))
 }
@@ -3754,5 +4140,86 @@ mod tests {
                 )
             )
         ));
+    }
+
+    #[test]
+    fn pinned_file_identity_rejects_same_inode_symlink_alias() {
+        use std::os::unix::fs::symlink;
+        let temporary = TempDir::new().unwrap();
+        let path = temporary.path().join("pinned.sqlite3");
+        let file = create_new_private_file_v1(&path).unwrap();
+        let expected = file_handle_identity_v1(&file).unwrap();
+        let moved = temporary.path().join("moved.sqlite3");
+        fs::rename(&path, &moved).unwrap();
+        symlink(&moved, &path).unwrap();
+        // The target is deliberately the same inode: following it is a false pass.
+        assert_eq!(
+            identity_from_metadata_v1(&fs::metadata(&path).unwrap()),
+            expected
+        );
+        assert!(require_path_identity(&path, expected).is_err());
+    }
+
+    #[test]
+    fn pinned_directory_identity_rejects_same_inode_symlink_alias() {
+        use std::os::unix::fs::symlink;
+        let temporary = TempDir::new().unwrap();
+        let parent = temporary.path().join("owner");
+        fs::create_dir(&parent).unwrap();
+        fs::set_permissions(&parent, fs::Permissions::from_mode(0o700)).unwrap();
+        let (handle, expected) = open_parent_directory(&parent.join("state.sqlite3")).unwrap();
+        let moved = temporary.path().join("moved-owner");
+        fs::rename(&parent, &moved).unwrap();
+        symlink(&moved, &parent).unwrap();
+        assert_eq!(directory_handle_identity_v1(&handle).unwrap(), expected);
+        assert!(directory_path_identity_v1(&parent).is_err());
+    }
+
+    fn classifier_fixture(temporary: &TempDir) -> PathBuf {
+        let path = temporary.path().join("classifier.sqlite3");
+        let file = create_new_private_file_v1(&path).unwrap();
+        let connection = Connection::open(&path).unwrap();
+        connection.execute_batch(JOURNAL_SCHEMA_SQL_V1).unwrap();
+        connection.close().unwrap();
+        file.sync_all().unwrap();
+        path
+    }
+
+    #[test]
+    fn schema_classifier_closes_then_rechecks_database_identity() {
+        let temporary = TempDir::new().unwrap();
+        let path = classifier_fixture(&temporary);
+        let before = fs::read(&path).unwrap();
+        assert_eq!(
+            inspect_signer_journal_schema_read_only_v1(&path).unwrap(),
+            SignerJournalSchemaKindV1::HandoffCapableV1
+        );
+        assert_eq!(fs::read(&path).unwrap(), before);
+        let result = inspect_schema_after_close_v1(&path, || {
+            fs::rename(&path, temporary.path().join("old.sqlite3")).unwrap();
+            fs::write(&path, &before).unwrap();
+            fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+        });
+        assert!(matches!(
+            result,
+            Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::FileIdentityChanged
+            ))
+        ));
+    }
+
+    #[test]
+    fn schema_classifier_rejects_sidecars_created_after_close() {
+        for suffix in ["-wal", "-shm", "-journal"] {
+            let temporary = TempDir::new().unwrap();
+            let path = classifier_fixture(&temporary);
+            assert!(
+                inspect_schema_after_close_v1(&path, || {
+                    fs::write(sqlite_auxiliary_path_v1(&path, suffix), b"unexpected").unwrap();
+                })
+                .is_err(),
+                "accepted a new {suffix} after closing SQLite"
+            );
+        }
     }
 }

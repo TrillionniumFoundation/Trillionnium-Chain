@@ -179,6 +179,7 @@ pub mod effect_driver;
 #[cfg(feature = "g1-process-test-support")]
 pub mod effect_driver_process;
 mod external_node_checkpoint;
+mod epoch_transition_journal_v1;
 #[cfg(feature = "external-proposal-signer")]
 mod external_proposal_signer_runtime;
 #[cfg(feature = "external-signer-runtime")]
@@ -299,6 +300,9 @@ pub use effect_driver_process::{
     EffectDriverProcessSummaryV1, EFFECT_DRIVER_PROCESS_CANDIDATE_V1,
     EFFECT_DRIVER_PROCESS_MAX_FRAME_BYTES_V1, EFFECT_DRIVER_PROCESS_PRODUCTION_ACTIVATION_V1,
     EFFECT_DRIVER_PROCESS_QUEUE_CAPACITY_V1,
+};
+pub use epoch_transition_journal_v1::{
+    EpochTransitionJournalEntryV1, EpochTransitionJournalErrorV1, EpochTransitionJournalV1,
 };
 pub use external_node_checkpoint::{
     reconcile_development_only_external_node_checkpoint_startup_v0,

@@ -7,7 +7,8 @@
 //! unavailable edge remains isolated and may recover later within the process;
 //! other peers continue carrying consensus. A saturated unavailable edge
 //! reports bounded backpressure instead of stopping unrelated sessions.
-//! Authentication ambiguity, replay, malformed frames, worker loss, or
+//! Unauthenticated peer handshake rejection drops only that bounded connection.
+//! Established-session authentication ambiguity, replay, malformed frames, worker loss, or
 //! session-generation exhaustion still fail-stop the whole mesh. Bounded
 //! ingress/outbound saturation applies backpressure without allocating an
 //! unbounded spill queue. There is no cross-process replay authority here; the continuous
@@ -58,7 +59,7 @@ use crate::{
     },
     transport::{
         network_context_digest_v1, AuthenticatedConnection,
-        ExternallySignedAuthenticatedConnectionV1, RunTransportContext,
+        ExternallySignedAuthenticatedConnectionV1, InboundHandshakeFailureV1, RunTransportContext,
     },
 };
 
@@ -952,6 +953,7 @@ enum ConnectAttemptFailureV0 {
 #[derive(Debug)]
 enum IncomingAuthFailureV0 {
     Transient,
+    PeerRejected,
     Terminal(String),
 }
 
@@ -3128,6 +3130,14 @@ fn accept_loop(
                 ) {
                     Ok(connection) => connection,
                     Err(IncomingAuthFailureV0::Transient) => continue,
+                    Err(IncomingAuthFailureV0::PeerRejected) => {
+                        // No lease, session generation, identity event or Core
+                        // ingress has been issued. Drop this connection only.
+                        // A fixed pause bounds immediate bad-handshake churn;
+                        // no attacker-keyed map or unbounded report is kept.
+                        thread::sleep(ACCEPT_POLL);
+                        continue;
+                    }
                     Err(IncomingAuthFailureV0::Terminal(reason)) => {
                         set_terminal(
                             &terminal,
@@ -3728,7 +3738,7 @@ fn authenticate_incoming(
         IncomingAuthFailureV0::Terminal(format!("prepare inbound handshake socket: {error}"))
     })?;
     let mut connection = match match &identity.p2p_identity_signer {
-        MeshIdentitySignerV1::Local(signing_key) => AuthenticatedConnection::accept(
+        MeshIdentitySignerV1::Local(signing_key) => AuthenticatedConnection::accept_scoped_v1(
             io,
             &identity.run_id,
             identity.local,
@@ -3739,7 +3749,7 @@ fn authenticate_incoming(
         )
         .map(MeshAuthenticatedConnectionV1::Local),
         MeshIdentitySignerV1::External(producer) => {
-            ExternallySignedAuthenticatedConnectionV1::accept(
+            ExternallySignedAuthenticatedConnectionV1::accept_scoped_v1(
                 io,
                 &identity.run_id,
                 identity.local,
@@ -3754,15 +3764,11 @@ fn authenticate_incoming(
         Ok(connection) => connection,
         Err(error) => return Err(classify_incoming_auth_failure_v0(error)),
     };
-    let committed = expected.get(&connection.remote()).ok_or_else(|| {
-        IncomingAuthFailureV0::Terminal(
-            "inbound identity is outside frozen direction set".to_owned(),
-        )
-    })?;
+    let committed = expected
+        .get(&connection.remote())
+        .ok_or(IncomingAuthFailureV0::PeerRejected)?;
     if source.ip() != committed.ip() {
-        return Err(IncomingAuthFailureV0::Terminal(
-            "inbound source IP differs from frozen peer address".to_owned(),
-        ));
+        return Err(IncomingAuthFailureV0::PeerRejected);
     }
     connection
         .io_mut()
@@ -3773,11 +3779,31 @@ fn authenticate_incoming(
     Ok(connection)
 }
 
-fn classify_incoming_auth_failure_v0(error: FrameError) -> IncomingAuthFailureV0 {
-    if transient_frame_error(&error) {
+fn classify_incoming_auth_failure_v0(error: InboundHandshakeFailureV1) -> IncomingAuthFailureV0 {
+    // Attribute malformed bytes by their producer boundary, never by matching
+    // error text: a local malformed entropy/custody/config error is fatal.
+    let (source, peer) = match error {
+        InboundHandshakeFailureV1::Local(source) => (source, false),
+        InboundHandshakeFailureV1::Peer(source) => (source, true),
+    };
+    if peer && transient_frame_error(&source) {
         IncomingAuthFailureV0::Transient
+    } else if peer
+        && matches!(
+            source,
+            FrameError::TooLarge
+                | FrameError::Malformed(_)
+                | FrameError::WrongRun
+                | FrameError::UnknownSender
+                | FrameError::InvalidSignature
+                | FrameError::Replay
+        )
+    {
+        IncomingAuthFailureV0::PeerRejected
     } else {
-        IncomingAuthFailureV0::Terminal(format!("inbound authentication failed: {error}"))
+        IncomingAuthFailureV0::Terminal(format!(
+            "inbound local/unknown authentication failure: {source}"
+        ))
     }
 }
 
@@ -4281,6 +4307,8 @@ mod tests {
     use crate::p2p_host_attestation::{
         HostAttestationRequestV1, HostAttestationTokenV1, RejectingHostAttestationAuthorityV1,
     };
+
+    include!("mesh_handshake_isolation_tests_v1.rs");
 
     const TEST_RUN_ID: &str = "poco-g3-7-20260814T000000Z-mesh0001";
 
@@ -5539,19 +5567,20 @@ mod tests {
             "denied"
         )));
         assert!(matches!(
-            classify_incoming_auth_failure_v0(FrameError::Io(io::Error::new(
-                io::ErrorKind::TimedOut,
-                "timeout"
+            classify_incoming_auth_failure_v0(InboundHandshakeFailureV1::Peer(FrameError::Io(
+                io::Error::new(io::ErrorKind::TimedOut, "timeout")
             ))),
             IncomingAuthFailureV0::Transient
         ));
         assert!(matches!(
-            classify_incoming_auth_failure_v0(FrameError::InvalidSignature),
-            IncomingAuthFailureV0::Terminal(reason) if reason.contains("signature")
+            classify_incoming_auth_failure_v0(InboundHandshakeFailureV1::Peer(
+                FrameError::InvalidSignature
+            )),
+            IncomingAuthFailureV0::PeerRejected
         ));
         assert!(matches!(
-            classify_incoming_auth_failure_v0(FrameError::Replay),
-            IncomingAuthFailureV0::Terminal(reason) if reason.contains("replayed")
+            classify_incoming_auth_failure_v0(InboundHandshakeFailureV1::Peer(FrameError::Replay)),
+            IncomingAuthFailureV0::PeerRejected
         ));
     }
 

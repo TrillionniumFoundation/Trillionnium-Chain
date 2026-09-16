@@ -1,26 +1,18 @@
 {
   "schema": "trnm-current-snapshot-v1",
-  "as_of": "2026-09-02",
+  "as_of": "2026-09-15",
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
   "default_branch": "main",
-  "default_branch_head_observed": "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9",
+  "default_branch_head_observed": "435c0168558d75fc70aaa11980a179b9d5980f33",
   "selected_successor": {
-    "pull_request": 62,
-    "ref": "refs/heads/work/plan-v2-full-gap-closure-20260902",
-    "assessed_baseline_commit": "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea",
-    "assessed_baseline_tree": "af09e389b1a462b3839508b7ef305596c76384c6",
+    "pull_request": null,
+    "ref": "refs/heads/main",
+    "assessed_baseline_commit": "435c0168558d75fc70aaa11980a179b9d5980f33",
+    "assessed_baseline_tree": "1e3db388234eff27b7214cc7879aef6853214709",
     "current_head_binding": "derived-at-verification-time",
     "prospective_merge_binding": "derived-at-verification-time",
-    "status": "draft-integration-candidate-independent-acceptance-pending",
-    "supersedes_intent_of": [
-      54,
-      57,
-      58,
-      59,
-      61,
-      69,
-      71
-    ]
+    "status": "post-convergence-source-observed-not-accepted-no-selected-pr",
+    "supersedes_intent_of": []
   },
   "repository_implementation": {
     "single_development_truth": "present-exact-head-and-prospective-merge-replay-required",
@@ -98,15 +90,9 @@
     "v1_node_support": false,
     "v1_release_ready": false
   },
-  "current_promotion_critical_stack": [
-    "all required checks on one unchanged PR62 head and prospective merge",
-    "independent module-owner, consumer, security and release acceptance",
-    "exact-head and prospective-merge Cargo-tree/compiler acceptance of production build closures, plus node decomposition",
-    "persistent authenticated network, pacemaker, Vote/Timeout, finality and recovery",
-    "production transaction lifecycle and authenticated state sync",
-    "trusted migration and target-root recomputation",
-    "independent multi-host, HSM/anchor, physical power-loss, audit/red-team and wall-clock soak evidence",
-    "signed governance and activation record"
-  ],
-  "truth_rule": "protected main, assessed baseline, current PR head, prospective merge, artifact, evidence, accepted release and activated network identities are distinct and must never be silently substituted"
+  "truth_rule": "protected main, assessed baseline, current PR head, prospective merge, artifact, evidence, accepted release and activated network identities are distinct and must never be silently substituted",
+  "execution_order_ref": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md#11-ordered-execution-program",
+  "status_observed_at": "2026-09-15T12:34:26+08:00",
+  "status_source_commit": "a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8",
+  "status_source_tree": "e9f2f0d85a1d49758e6f3b180ab0c6a011219cf7"
 }

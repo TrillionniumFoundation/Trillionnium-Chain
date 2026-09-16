@@ -22,6 +22,15 @@ proposal_signer_injection_api = true
 proposal_signer_runtime_wired = false
 proposal_signer_production_activation = false
 
+[features]
+# Fixed-epoch, separately anchored proposal witness persistence; not vote authority.
+candidate-proposal-journal = []
+# Read back an already signed old-role intent; not a signer or runtime activation.
+candidate-handoff-signature-recovery = []
+# Only unchanged carried validator sets, after the same descriptor's durable
+# old-role signature. No new-only member, key rotation, or Core activation.
+candidate-carried-new-set-handoff = ["candidate-handoff-signature-recovery"]
+
 [dependencies]
 fs2 = "0.4"
 getrandom = "0.2"

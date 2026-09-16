@@ -189,4 +189,4 @@ impl DurableNativeApplicationV0 {
 }
 
 #[cfg(test)]
-mod tests;
+pub(crate) mod tests;

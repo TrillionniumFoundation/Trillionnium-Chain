@@ -224,6 +224,13 @@ def main() -> int:
     report = {
         "schema": "trnm-candidate-runtime-closure-report-v1",
         "closure_id": config["closure_id"],
+        # This checker intentionally remains a fast source-contract smoke gate.
+        # Token presence is useful for catching accidental promotion wiring, but
+        # it cannot establish control-flow, cross-process replay, or consensus
+        # safety.  Those claims belong to check_runtime_semantic_gate_v1.py.
+        "source_contracts_scope": "lexical-smoke-only",
+        "semantic_gate": "scripts/ci/check_runtime_semantic_gate_v1.py",
+        "semantic_acceptance": "not-assessed",
         "candidate_runtime_repository_implementation": True,
         "continuous_consensus_runtime": True,
         "persistent_authenticated_lan_mesh": True,

@@ -596,8 +596,10 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
     #[cfg(test)]
     let mut scheduling_counts = native_parallel::NativeSchedulingCountsV0::default();
 
-    // Only runtime attempts are speculative. Outer authorization, replay,
-    // mutation staging, internal operations and final roots remain ordered.
+    // Runtime attempts and strict envelope verification may be speculative.
+    // Signer policy, replay, mutation staging, internal operations and final
+    // roots remain ordered. Exact private byte/context evidence is required
+    // before the ordered owner may reuse a successful envelope verification.
     // Outcomes (including failures) have no authority before that exact
     // transaction reaches the canonical loop and its read dependencies match.
     let mut speculative = std::collections::VecDeque::new();
@@ -623,12 +625,29 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
             )
             .into();
         }
-        let speculative_attempt = speculative.pop_front().flatten();
+        let mut speculative_attempt = speculative.pop_front().flatten();
         let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(exact_outer_bytes)
             .context("decode exact signed command envelope")?;
-        envelope
-            .validate_at_strict(request.chain_id_v0().as_str(), request.timestamp_ms_v0())
-            .context("strictly verify exact signed command envelope")?;
+        let verified_outer = speculative_attempt.as_mut().is_some_and(|attempt| {
+            attempt.consume_verified_outer_v0(
+                exact_outer_bytes,
+                request.chain_id_v0().as_str(),
+                request.timestamp_ms_v0(),
+            )
+        });
+        #[cfg(test)]
+        {
+            if verified_outer {
+                scheduling_counts.outer_verification_reused += 1;
+            } else {
+                scheduling_counts.outer_verifications += 1;
+            }
+        }
+        if !verified_outer {
+            envelope
+                .validate_at_strict(request.chain_id_v0().as_str(), request.timestamp_ms_v0())
+                .context("strictly verify exact signed command envelope")?;
+        }
         let signer = validate_signer_v0(signers, &envelope)?;
         ensure!(
             command_ids.insert(envelope.command_id.clone()),

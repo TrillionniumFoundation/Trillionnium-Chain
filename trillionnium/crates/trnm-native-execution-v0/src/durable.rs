@@ -56,6 +56,9 @@ use crate::{
     AuthorizedSignerV0, NativeStateWriteV0,
 };
 
+mod snapshot_export_v1;
+pub use snapshot_export_v1::{NativeSnapshotExportV1, PinnedNativeSnapshotExportV1};
+
 mod replay_floor_v1;
 pub use replay_floor_v1::VerifiedNativeSignerReplayFloorV1;
 
@@ -339,7 +342,7 @@ pub fn validate_native_finalized_execution_receipts_v0(
     Ok(())
 }
 
-fn ensure_finalized_header_binding_v0(
+pub(crate) fn ensure_finalized_header_binding_v0(
     header: &BlockHeader,
     execution: &NativeBlockExecutionRequestV0,
 ) -> DurableResult<()> {
@@ -2241,7 +2244,33 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                     "commit.sequence",
                 )
             })?;
-            return NativeApplicationCommitResultV0::new(&request, metadata.head, sequence, None)
+            // An earlier transaction may have committed before file/directory
+            // synchronization failed. A fresh read alone does not discharge
+            // that durability obligation. Close the writer, repeat both syncs,
+            // and authenticate the exact same committed row before returning.
+            connection.close().map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                    "commit.replay_close",
+                )
+            })?;
+            sync_store_commit_boundary_v0(&self.path)?;
+            let fresh = fresh_validate_v0(&self.path, &self.config)?;
+            let replay = fresh_load_p_by_block_v0(&self.path, p.block_id)?;
+            validate_p_v0(&self.config, &replay)?;
+            if fresh.head != metadata.head
+                || fresh.durable_sequence != metadata.durable_sequence
+                || replay.status != P_STATUS_COMMITTED
+                || replay.artifact != exact_artifact
+                || replay.commit_sequence != Some(sequence)
+                || replay.commit_id != p.commit_id
+            {
+                return Err(error(
+                    NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                    "commit.replay_fresh_readback",
+                ));
+            }
+            return NativeApplicationCommitResultV0::new(&request, fresh.head, sequence, None)
                 .map_err(|_| {
                     error(
                         NativeApplicationExecutionErrorCodeV0::BindingMismatch,
@@ -2361,6 +2390,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         })?;
         #[cfg(test)]
         park_for_sigkill_commit_boundary_v0("after_commit");
+        connection.close().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "commit.close",
+            )
+        })?;
         sync_store_commit_boundary_v0(&self.path)?;
         #[cfg(test)]
         park_for_sigkill_commit_boundary_v0("after_fsync");
@@ -2429,54 +2464,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 "snapshot.head",
             ));
         }
-        let maximum = usize::try_from(request.maximum_chunk_bytes()).map_err(|_| {
-            error(
-                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
-                "snapshot.chunk_limit",
-            )
-        })?;
-        let mut chunks = Vec::new();
-        for (index, bytes) in metadata.snapshot.chunks(maximum).enumerate() {
-            let index = u32::try_from(index).map_err(|_| {
-                error(
-                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                    "snapshot.chunk_count",
-                )
-            })?;
-            let digest = hash_domain(SNAPSHOT_CHUNK_DOMAIN_V0, &[&index.to_be_bytes(), bytes]);
-            chunks.push(
-                NativeSnapshotChunkV0::new(
-                    index,
-                    u32::try_from(bytes.len()).map_err(|_| {
-                        error(
-                            NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                            "snapshot.chunk_size",
-                        )
-                    })?,
-                    Hash32V0::new(digest),
-                )
-                .map_err(|_| {
-                    error(
-                        NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                        "snapshot.chunk",
-                    )
-                })?,
-            );
-        }
-        let chunk_digests = chunks
-            .iter()
-            .map(|chunk| chunk.digest().into_bytes())
-            .collect::<Vec<_>>();
-        let mut manifest_parts = Vec::with_capacity(chunk_digests.len() + 1);
-        manifest_parts.push(metadata.snapshot_digest.as_slice());
-        manifest_parts.extend(chunk_digests.iter().map(<[u8; 32]>::as_slice));
-        let digest = hash_domain(SNAPSHOT_MANIFEST_DOMAIN_V0, &manifest_parts);
-        NativeSnapshotManifestV0::new(request, chunks, Hash32V0::new(digest)).map_err(|_| {
-            error(
-                NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                "snapshot.manifest",
-            )
-        })
+        snapshot_export_v1::manifest_for_snapshot_v1(request, &metadata)
     }
 
     fn recover(
@@ -3287,14 +3275,30 @@ fn target_store_v0(
             "p.snapshot_artifact_root",
         ));
     }
-    let live = store
-        .verified_live_values_v0(p.target_height)
+    // The snapshot decoder has already checked every live value and every
+    // retained root. Lifecycle validation needs only this one authenticated key,
+    // not a second full-tree proof walk and a copy of the entire live state.
+    let lifecycle_key = crate::auth_tree::validator_state_key().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::CorruptStore,
+            "p.lifecycle_key",
+        )
+    })?;
+    let lifecycle_value = store
+        .verified_raw_value_v0(p.target_height, &lifecycle_key)
         .map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CorruptStore,
                 "p.snapshot_live",
             )
+        })?
+        .ok_or_else(|| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "p.lifecycle_tree",
+            )
         })?;
+    let live = BTreeMap::from([(lifecycle_key, lifecycle_value)]);
     let lifecycle =
         load_validator_lifecycle_from_live_v0(&live, p.target_height).map_err(|_| {
             error(
@@ -3667,22 +3671,35 @@ fn load_p_by_block_v0(
     connection: &Connection,
     block_id: [u8; 32],
 ) -> DurableResult<Option<DurablePV0>> {
-    let row = connection
-        .query_row(
+    let mut statement = connection
+        .prepare_cached(
             "SELECT target_height,store_id,p_sequence,status,parent_height,parent_block_id,parent_state_root,parent_commit_id,block_id,artifact,artifact_digest,target_snapshot,target_snapshot_digest,target_replay_command_ids,target_replay_signer_nonces,target_lifecycle_json,p_digest,commit_sequence,commit_id FROM native_durable_execution_p_v0 WHERE block_id=?",
-            params![block_id.as_slice()],
-            |row| {
-                Ok((
-                    row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?, row.get::<_, Vec<u8>>(2)?,
-                    row.get::<_, Vec<u8>>(3)?, row.get::<_, Vec<u8>>(4)?, row.get::<_, Vec<u8>>(5)?,
-                    row.get::<_, Vec<u8>>(6)?, row.get::<_, Vec<u8>>(7)?, row.get::<_, Vec<u8>>(8)?,
-                    row.get::<_, Vec<u8>>(9)?, row.get::<_, Vec<u8>>(10)?, row.get::<_, Vec<u8>>(11)?,
-                    row.get::<_, Vec<u8>>(12)?, row.get::<_, Vec<u8>>(13)?, row.get::<_, Vec<u8>>(14)?,
-                    row.get::<_, Vec<u8>>(15)?, row.get::<_, Vec<u8>>(16)?, row.get::<_, Option<Vec<u8>>>(17)?,
-                    row.get::<_, Option<Vec<u8>>>(18)?,
-                ))
-            },
         )
+        .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "p.query"))?;
+    let row = statement
+        .query_row(params![block_id.as_slice()], |row| {
+            Ok((
+                row.get::<_, Vec<u8>>(0)?,
+                row.get::<_, Vec<u8>>(1)?,
+                row.get::<_, Vec<u8>>(2)?,
+                row.get::<_, Vec<u8>>(3)?,
+                row.get::<_, Vec<u8>>(4)?,
+                row.get::<_, Vec<u8>>(5)?,
+                row.get::<_, Vec<u8>>(6)?,
+                row.get::<_, Vec<u8>>(7)?,
+                row.get::<_, Vec<u8>>(8)?,
+                row.get::<_, Vec<u8>>(9)?,
+                row.get::<_, Vec<u8>>(10)?,
+                row.get::<_, Vec<u8>>(11)?,
+                row.get::<_, Vec<u8>>(12)?,
+                row.get::<_, Vec<u8>>(13)?,
+                row.get::<_, Vec<u8>>(14)?,
+                row.get::<_, Vec<u8>>(15)?,
+                row.get::<_, Vec<u8>>(16)?,
+                row.get::<_, Option<Vec<u8>>>(17)?,
+                row.get::<_, Option<Vec<u8>>>(18)?,
+            ))
+        })
         .optional()
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "p.query"))?;
     row.map(|row| {
@@ -3779,34 +3796,40 @@ fn map_p_inventory_v0<T>(
                 "p.inventory_prepare",
             )
         })?;
-    let block_ids = statement
-        .query_map([], |row| row.get::<_, Vec<u8>>(0))
-        .map_err(|_| {
-            error(
-                NativeApplicationExecutionErrorCodeV0::Storage,
-                "p.inventory_query",
-            )
-        })?
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|_| {
+    // Keep the keys-only cursor alive for the entire inventory pass. Large
+    // snapshot/artifact BLOBs are never part of the ORDER BY temporary table.
+    // Each lookup reuses the same cached statement and the same SQLite read
+    // transaction. The callback must not mutate this connection or publish
+    // authority; a later row failure discards the complete returned inventory.
+    let mut keys = statement.query([]).map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::Storage,
+            "p.inventory_query",
+        )
+    })?;
+    let mut inventory = Vec::new();
+    while let Some(row) = keys.next().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::Storage,
+            "p.inventory_rows",
+        )
+    })? {
+        let bytes: Vec<u8> = row.get(0).map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::Storage,
                 "p.inventory_rows",
             )
         })?;
-    block_ids
-        .into_iter()
-        .map(|bytes| {
-            let block_id = array32_v0(&bytes, "p.inventory_block")?;
-            let p = load_p_by_block_v0(connection, block_id)?.ok_or_else(|| {
-                error(
-                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                    "p.inventory_missing",
-                )
-            })?;
-            consume(p)
-        })
-        .collect()
+        let block_id = array32_v0(&bytes, "p.inventory_block")?;
+        let p = load_p_by_block_v0(connection, block_id)?.ok_or_else(|| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "p.inventory_missing",
+            )
+        })?;
+        inventory.push(consume(p)?);
+    }
+    Ok(inventory)
 }
 
 fn prepared_blocks_not_descending_from_v0(
@@ -4284,7 +4307,7 @@ fn reject_sqlite_sidecars_v0(path: &Path) -> DurableResult<()> {
 
 #[cfg(test)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum SyncStoreCommitBoundaryFaultPointV0 {
+pub(crate) enum SyncStoreCommitBoundaryFaultPointV0 {
     Database,
     Directory,
 }
@@ -4305,7 +4328,7 @@ fn sync_store_commit_boundary_fault_lock_v0(
 
 #[cfg(test)]
 #[must_use = "the fault guard clears only its own armed sync fault on scope exit"]
-struct SyncStoreCommitBoundaryFaultGuardV0 {
+pub(crate) struct SyncStoreCommitBoundaryFaultGuardV0 {
     identity: Arc<()>,
 }
 
@@ -4320,7 +4343,7 @@ impl Drop for SyncStoreCommitBoundaryFaultGuardV0 {
 }
 
 #[cfg(test)]
-fn arm_sync_store_commit_boundary_fault_v0(
+pub(crate) fn arm_sync_store_commit_boundary_fault_v0(
     path: &Path,
     point: SyncStoreCommitBoundaryFaultPointV0,
 ) -> SyncStoreCommitBoundaryFaultGuardV0 {
@@ -7180,6 +7203,109 @@ mod tests {
             )
             .unwrap();
         assert_eq!(exact.disposition(), NativeRecoveryDispositionV0::Exact);
+    }
+
+    fn two_prepared_rows_for_inventory_v0(temporary: &TempDir) -> PathBuf {
+        let (path, application, _head, first) = initialized(temporary);
+        let sibling = NativeBlockExecutionRequestV0::new(
+            first.chain_id().clone(),
+            first.genesis_hash(),
+            first.parent().clone(),
+            BlockIdV0::new([90; 32]).unwrap(),
+            first.height(),
+            first.timestamp_ms(),
+            first.active_validator_set_id(),
+            first.transactions().to_vec(),
+            first.expected(),
+        )
+        .unwrap();
+        for request in [first, sibling] {
+            assert!(matches!(
+                application.execute_block(request).unwrap(),
+                NativeBlockExecutionResultV0::Valid(_)
+            ));
+        }
+        drop(application);
+        path
+    }
+
+    #[test]
+    fn inventory_cursor_uses_one_sql_snapshot_not_separate_row_transactions() {
+        let temporary = TempDir::new().unwrap();
+        let path = two_prepared_rows_for_inventory_v0(&temporary);
+        // Exercise SQL cursor semantics with ordinary connections. WAL here is
+        // test-only, NOT qualification of the native owner's production modes.
+        let reader = Connection::open(&path).unwrap();
+        reader.execute_batch("PRAGMA journal_mode=WAL").unwrap();
+        let writer = Connection::open(&path).unwrap();
+        let expected = load_all_p_v0(&reader).unwrap();
+        assert_eq!(expected.len(), 2);
+        let later = expected[1].block_id;
+        let mut seen = 0;
+        let observed = map_p_inventory_v0(&reader, |p| {
+            seen += 1;
+            if seen == 1 {
+                writer
+                    .execute(
+                        "UPDATE native_durable_execution_p_v0 SET artifact=? WHERE block_id=?",
+                        params![b"changed-after-cursor-start".as_slice(), later.as_slice()],
+                    )
+                    .unwrap();
+            }
+            Ok(p)
+        })
+        .unwrap();
+        assert_eq!(observed, expected);
+        // The cached prepared statement cannot freeze later read transactions.
+        let fresh = load_p_by_block_v0(&reader, later).unwrap().unwrap();
+        assert_eq!(fresh.artifact, b"changed-after-cursor-start");
+    }
+
+    #[test]
+    fn inventory_cursor_callback_failure_discards_inventory_and_releases_read() {
+        let temporary = TempDir::new().unwrap();
+        let path = two_prepared_rows_for_inventory_v0(&temporary);
+        let reader = Connection::open(&path).unwrap();
+        let mut seen = 0;
+        let failure = map_p_inventory_v0::<u64>(&reader, |p| {
+            seen += 1;
+            if seen == 2 {
+                return Err(error(
+                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                    "inventory.test.consumer",
+                ));
+            }
+            Ok(p.p_sequence)
+        })
+        .unwrap_err();
+        assert_eq!(seen, 2);
+        assert_eq!(failure.field(), "inventory.test.consumer");
+        assert!(reader.is_autocommit());
+        let writer = Connection::open(&path).unwrap();
+        writer.execute_batch("BEGIN EXCLUSIVE; ROLLBACK").unwrap();
+        assert_eq!(load_all_p_v0(&reader).unwrap().len(), 2);
+    }
+
+    #[test]
+    fn cached_p_lookup_returns_current_bytes_after_same_connection_update() {
+        let temporary = TempDir::new().unwrap();
+        let path = two_prepared_rows_for_inventory_v0(&temporary);
+        let connection = Connection::open(&path).unwrap();
+        let rows = load_all_p_v0(&connection).unwrap();
+        assert!(rows[0].p_sequence < rows[1].p_sequence);
+        let id = rows[0].block_id;
+        let original = load_p_by_block_v0(&connection, id).unwrap().unwrap();
+        assert_eq!(original, rows[0]);
+        connection
+            .execute(
+                "UPDATE native_durable_execution_p_v0 SET artifact=? WHERE block_id=?",
+                params![b"replaced-current-artifact".as_slice(), id.as_slice()],
+            )
+            .unwrap();
+        let changed = load_p_by_block_v0(&connection, id).unwrap().unwrap();
+        assert_eq!(changed.artifact, b"replaced-current-artifact");
+        assert_eq!(changed.block_id, original.block_id);
+        assert_ne!(changed, original);
     }
 
     #[test]

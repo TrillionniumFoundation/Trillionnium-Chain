@@ -3684,7 +3684,7 @@ fn validate_database_file_name(file_name: &std::ffi::OsStr) -> Result<(), Signer
 }
 
 fn validate_private_directory(path: &Path) -> Result<(), SignerJournalErrorV0> {
-    let metadata = fs::metadata(path)
+    let metadata = fs::symlink_metadata(path)
         .map_err(|error| SignerJournalErrorV0::io("stat signer directory", error))?;
     if !metadata.is_dir() {
         return Err(SignerJournalErrorV0::InvalidProfile(
@@ -3894,8 +3894,8 @@ fn sync_directory_handle(directory: &File) -> Result<(), SignerJournalErrorV0> {
 }
 
 fn file_identity(path: &Path) -> Result<FileIdentityV0, SignerJournalErrorV0> {
-    let metadata =
-        fs::metadata(path).map_err(|error| SignerJournalErrorV0::io("stat signer file", error))?;
+    let metadata = fs::symlink_metadata(path)
+        .map_err(|error| SignerJournalErrorV0::io("stat signer file", error))?;
     validate_private_file_metadata(&metadata)?;
     identity_from_metadata(&metadata)
 }
@@ -3925,7 +3925,7 @@ fn validate_private_file_metadata(metadata: &fs::Metadata) -> Result<(), SignerJ
 }
 
 fn directory_identity(path: &Path) -> Result<FileIdentityV0, SignerJournalErrorV0> {
-    let metadata = fs::metadata(path)
+    let metadata = fs::symlink_metadata(path)
         .map_err(|error| SignerJournalErrorV0::io("stat signer directory path", error))?;
     if !metadata.is_dir() {
         return Err(SignerJournalErrorV0::PersistedRepresentationMalformed(
@@ -4057,5 +4057,52 @@ mod lifetime_inventory_tests {
             None,
         );
         assert_ne!(two_vote_one_timeout, one_vote_two_timeout);
+    }
+}
+
+#[cfg(test)]
+mod namespace_alias_tests {
+    use super::*;
+    use std::os::unix::fs::{symlink, OpenOptionsExt, PermissionsExt};
+
+    #[test]
+    fn frozen_journal_rejects_same_inode_file_symlink_alias() {
+        let temp = tempfile::tempdir().unwrap();
+        let path = temp.path().join("journal.sqlite");
+        let moved = temp.path().join("moved.sqlite");
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(&path)
+            .unwrap();
+        let expected = file_handle_identity(&file).unwrap();
+        fs::rename(&path, &moved).unwrap();
+        symlink(&moved, &path).unwrap();
+        assert_eq!(
+            identity_from_metadata(&fs::metadata(&path).unwrap()).unwrap(),
+            expected
+        );
+        assert!(file_identity(&path).is_err());
+    }
+
+    #[test]
+    fn frozen_journal_rejects_same_inode_directory_symlink_alias() {
+        let temp = tempfile::tempdir().unwrap();
+        let path = temp.path().join("owner");
+        let moved = temp.path().join("moved-owner");
+        fs::create_dir(&path).unwrap();
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o700)).unwrap();
+        let file = File::open(&path).unwrap();
+        let expected = directory_handle_identity(&file).unwrap();
+        fs::rename(&path, &moved).unwrap();
+        symlink(&moved, &path).unwrap();
+        assert_eq!(
+            identity_from_metadata(&fs::metadata(&path).unwrap()).unwrap(),
+            expected
+        );
+        assert!(directory_identity(&path).is_err());
+        assert!(validate_private_directory(&path).is_err());
     }
 }

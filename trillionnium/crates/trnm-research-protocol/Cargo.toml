@@ -3,6 +3,14 @@ name = "trnm-research-protocol"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
+publish = false
+
+[package.metadata.trnm]
+lane = "research-evidence-only"
+build_role = "evidence"
+production_candidate = false
+production_dependency = false
+runtime_authority = false
 
 [dependencies]
 ed25519-dalek = "2"

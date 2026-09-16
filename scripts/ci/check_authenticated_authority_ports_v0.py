@@ -44,9 +44,10 @@ def require_linear_token(source: str, declaration: str) -> None:
     # Only attributes attached to this declaration can derive Clone. Nearby
     # prose (including "deliberately not Clone") is not an implementation.
     attributes = re.search(r"((?:#\[[^\]]*\]\s*)+)$", source[:offset])
-    require(attributes is not None, f"verification token lost attributes: {declaration}")
-    derives = re.findall(r"\bderive\s*\(([^)]*)\)", attributes[1])
-    require(bool(derives), f"verification token lost derive declaration: {declaration}")
+    # A type needs neither attributes nor Debug to be non-Clone. This is only
+    # a lexical early warning; compiler-negative tests own type-safety claims.
+    attached = attributes[1] if attributes is not None else ""
+    derives = re.findall(r"\bderive\s*\(([^)]*)\)", attached)
     require(
         all(re.search(r"\bClone\b", derive) is None for derive in derives),
         f"verification token derives Clone: {declaration}",
@@ -73,7 +74,15 @@ def self_test() -> None:
         + declaration
         + "\n    private_field: u64,\n}\n"
     )
-    require_linear_token(fixture, declaration)
+    controls = (
+        fixture,
+        fixture.replace("#[derive(Debug)]\n", ""),
+        fixture.replace("#[derive(Debug)]\n", "").replace(
+            '#[must_use = "consume the verified token"]\n', ""
+        ),
+    )
+    for control in controls:
+        require_linear_token(control, declaration)
     for mutation in (
         fixture.replace("derive(Debug)", "derive(Debug, Clone)"),
         fixture.replace("derive(Debug)", "derive(Debug, core::clone::Clone)"),
@@ -82,14 +91,13 @@ def self_test() -> None:
         fixture + "impl Clone for VerifiedAuthorityIngressV0 { }\n",
         fixture + "impl core::clone::Clone for VerifiedAuthorityIngressV0 { }\n",
         fixture + "impl std::clone::Clone for VerifiedAuthorityIngressV0 { }\n",
-        fixture.replace("#[derive(Debug)]\n", ""),
     ):
         try:
             require_linear_token(mutation, declaration)
         except GateError:
             continue
         raise GateError("linear-token mutation was accepted")
-    print("authenticated authority linear-token self-test: 1 control, 8 mutations PASS")
+    print("authenticated authority linear-token self-test: 3 controls, 7 mutations PASS")
 
 
 def main() -> int:
@@ -192,6 +200,8 @@ def main() -> int:
 
     report = {
         "schema": "trnm-authenticated-authority-ports-check-v0",
+        "evidence_scope": "source-hygiene-only",
+        "type_safety_acceptance": "requires-rustdoc-and-behavioral-tests",
         "verified_ingress_required": True,
         "verified_stage_fact_required": True,
         "verification_tokens_cloneable": False,

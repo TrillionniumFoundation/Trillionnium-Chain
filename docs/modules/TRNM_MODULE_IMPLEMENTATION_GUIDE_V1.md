@@ -70,11 +70,29 @@ Each scenario below has a stable requirement ID (`Mxx-*`). A reference implement
 
 **Remaining live epoch contract.** `trnm-consensus-core/src/epoch_preparation.rs` only represents `EvidenceVerified`, consumed by the actual M08 preparation store below. Main SafetyState remains schema 13. A future explicit Safety schema 14 needs a reviewed closed phase codec and Core input/effect/recovery contract in `model.rs`, `core.rs` and `safety_state_record.rs`, together with matching Safety-store records. It must separately bind the exact committed native checkpoint receipt, old/new configurations, two seals, joint descriptor, new-role signing custody, anchor, and first executed new block. Bind finality/high-QC/lock comparisons to their epochs: an old finalized checkpoint's view cannot be compared numerically with the new view-0 anchor. Preserve the old proof and application head while transitioning consensus ancestry. No existing generic `EpochBoundaryUnsupported` check may be removed merely because strict evidence or a preparation row exists.
 
-**Epoch phase ordering is not yet implemented.** Existing `EvidenceVerified` already requires the complete checkpoint/two-seal finality proof and the joint certificate's old and new quorums. `ConfirmedNativePocoCheckpointV0`, produced by `trnm-native-execution-v0/src/poco_checkpoint.rs::confirm_poco_checkpoint_v0`, also requires the complete joint certificate. Neither is a precondition from which the seals or those handoff signatures can first be produced: that would create circular authorization. Specification 04 sections 6 and 8 require `QC(seal_2)` and complete checkpoint finality before either handoff role signs. A future pre-certificate native receipt must separately bind the real COMMITTED checkpoint execution, exact prepared header/body/roots, authenticated cutoff and recomputed commitment, and strict two-seal proof without requiring a joint certificate. Old/new handoff signing must then consume independent role-specific admission and persist one exact descriptor per transition and role before custody. `StrictOldSetHandoffAdmissionV1` is an existing pre-certificate old-role boundary; `HandoffSignerJournalProfileV1` still rejects a new-set-only author and `sign_old_set_handoff_exact_v1` rejects the new role. These restrictions cannot be bypassed by reusing a post-certificate token or an old-role admission.
+**Epoch phase ordering is not yet implemented.** Existing `EvidenceVerified` already requires the complete checkpoint/two-seal finality proof and the joint certificate's old and new quorums. `ConfirmedNativePocoCheckpointV0`, produced by `trnm-native-execution-v0/src/poco_checkpoint.rs::confirm_poco_checkpoint_v0`, also requires the complete joint certificate. Neither is a precondition from which the seals or those handoff signatures can first be produced: that would create circular authorization. Specification 04 sections 6 and 8 require `QC(seal_2)` and complete checkpoint finality before either handoff role signs. The candidate `confirm_poco_checkpoint_for_handoff_v0` now supplies a separate readback of the real COMMITTED checkpoint execution, exact prepared header/body/roots, authenticated cutoff and recomputed commitment, and strict two-seal proof without requiring a joint certificate. Its private `CommittedNativePocoCheckpointForHandoffV0` is not a signing permit or epoch anchor. `complete_poco_checkpoint_handoff_v0` consumes it only for a later full joint-certificate join and rechecks the original native and preparation stores. This removes the joint-certificate prerequisite from this one application read boundary, not from the still-unimplemented live epoch state machine. The Rust candidate and its regressions require compiler execution and independent consumer acceptance before they can be credited as qualified implementation. Old/new handoff signing must then consume independent role-specific admission and persist one exact descriptor per transition and role before custody. `StrictOldSetHandoffAdmissionV1` is an existing pre-certificate old-role boundary; `HandoffSignerJournalProfileV1` still rejects a new-set-only author and `sign_old_set_handoff_exact_v1` rejects the new role. These restrictions cannot be bypassed by reusing a post-certificate token or an old-role admission.
 
 **Cross-epoch ancestry needs a separate verified edge.** `trnm-consensus-core/src/block_tree.rs::edge_coordinates_match` requires a child's view to exceed its parent's view and the justification view to equal that parent view. The first new block instead has a real old-epoch seal-2 parent and a new-epoch view-0 anchor; those views have different epoch contexts. Removing the epoch-zero fence alone still fails this ancestry check. A reviewed handoff edge must bind the unchanged terminal old header to the exact authorized new anchor without relabeling the old header/QC or relaxing ordinary parent, height, view and timestamp checks. `FinalizedTip` currently has no epoch field, and persisted finality/high-QC/lock comparisons also assume one epoch. Safety14, retained ancestry and first-block finality must preserve those contexts and prohibit a three-chain assembled across signing sets; an anchor itself neither certifies nor finalizes a block.
 
 Required `M02-EPOCH` acceptance additions are old-only/new-only/dual-role membership and separate fault bounds; field-by-field proof/configuration/binding substitution; positive view-1 and justified skipped-view proposals; wrong or replayed completion capability without state consumption; interrupted persistence before each seal/new-role signature; schema-13 recovery compatibility and explicit schema-14 phase rejection; old-view/new-view ordering; and two successive epoch transitions. Tests must use the real Core/Store/signer/native producers and consumers. The current `epoch_activation_recovery` regression covers proof recovery and the inert view-1 header capability, not that live matrix.
+
+**Candidate continuous-runtime timer reconstruction (M17 implementation).**
+`trnm-poco-lab-validator::GenerationAwarePacemakerV0` binds each private expiry
+identity to a checked process-local owner and sequence, not just a counter
+which restarts at one. Deadline/generation rejection leaves the existing arm
+unchanged. `BoundedConsensusOwnerV1::new` recreates its timer from fresh actual
+Core/Safety/signer facts: the larger of failed views after highQC and retained
+local timeout decisions, capped at 128 backoff steps. This conservative seed
+may overestimate the current streak after earlier successful views; the actual
+configured maximum timeout (at most 30 seconds) bounds the wait. A genuine
+QC/finality progress event resets it normally; TC-only progress does not.
+Old elapsed time and timer JSON are never authority. This is not a durable clock,
+full node restart, a new signing capability or live epoch support. The real
+four-authority Core/SQLite/signer tests in
+`continuous_pacemaker_recovery_tests_v1.rs` replace the timer after successive
+TCs and preserve backoff; `pacemaker_recovery_tests_v1.rs` tests stale-owner
+expiry, concurrent owner uniqueness and unchanged state at arithmetic/deadline
+rejection. Their bounded timer replacement is not physical power-loss evidence.
 
 <a id="m03"></a>
 ## M03 — Safety / Signer / Checkpoint
@@ -90,7 +108,76 @@ Required `M02-EPOCH` acceptance additions are old-only/new-only/dual-role member
 **Implementation and consumers.** Trace Safety rules/store, signer journal/service/protocol, watermark/checkpoint types and all adapters into the single M15 owner. `CandidateAuthorityJournalV0` records inert facts under its explicit feature; it does not certify domain operations. Storage-recovery and cryptography specialists must review the boundary separately from the author's process tests.
 
 
+**Observed old-role signature recovery candidate.** Under the explicit non-default `candidate-handoff-signature-recovery` feature, `SqliteHandoffSignerJournalV1::recover_old_set_handoff_signature_v1` records an already produced old-role handoff signature without invoking a signer. It requires the original exact intent and strict admission, verifies the observed signature before namespace access, locks and audits the complete journal, and accepts only an externally anchored pending intent or the exact already SIGNED tail. For that signed tail alone, the external watermark may be its exact one-event PREPARED predecessor; other lag, forks, missing anchors and unrelated pending intents are rejected. The existing signature/fence/accounting/head transaction and external CAS are reused; exact retry returns the same recorded bytes. Ordinary open, the old-role API's new-role rejection, frozen bytes and production status remain unchanged; the separately named carried-set feature below has its own closed new-role path. Eleven Rust regressions are authored but await the pinned compiler; the separate SQL tests execute production DDL/DML at five process-kill cuts using deliberately non-authoritative shape-only rows. SQL success is not Rust execution, HSM provenance, physical power-loss evidence or whole-node recovery. Host cross-store reconciliation must precede this mutating recovery operation. If authoritative signer readback cannot supply a signature, this API does not retry signing or invent a result.
+
+**Carried-set dual-role journal candidate (not live epoch activation).** The
+non-default `candidate-carried-new-set-handoff` feature in
+`trnm-consensus-signer-journal` adds
+`StrictCarriedNewSetHandoffAdmissionV1::verify`,
+`sign_carried_new_set_handoff_exact_v1` and
+`recover_carried_new_set_handoff_signature_v1`. It accepts only completely
+identical, canonically ordered old/new member IDs, public keys and weights.
+The old trust context is independently commissioned. Strict checkpoint/two-seal
+verification and the exact committed new context are required before admission;
+there is no joint-certificate prerequisite. The old signature over that exact
+descriptor must then be present in the real journal and covered by the external
+watermark before the new-role operation may prepare or invoke custody.
+
+The journal reuses the unchanged schema1 columns and frozen signing bytes but
+admits only one closed suffix: old SIGNED, new PREPARED, new SIGNED. Both new-role
+events have their own durable sequence and external CAS. The old terminal fence
+remains bound to the old signature; no later ordinary Vote/Timeout or second
+handoff is admitted. Reopen audits the entire event chain, exact descriptor,
+role-specific admission digest, predecessor, signature and accounting. A default
+build still rejects any new-role record. Lost new-signature responses require
+actual observed signature bytes and a retained externally anchored intent; that
+recovery API has no signer/producer argument. It may reconcile only the exact
+signed tail's single-event external lag. Unanchored PREPARED records, other
+roles, other authors, changed membership/weights/keys and invalid signatures
+remain closed.
+
+The tests in `tests/support/carried_new_handoff.rs` use the existing real-Ed25519
+corpus and SQLite journal, including four separate validator journals whose
+shares are consumed by the existing `HandoffCertificateV0` verifier and compared
+with the frozen certificate bytes. They cover role substitution, lost responses,
+external CAS cuts, replay and rejected mutations, but are not execution results
+until Cargo runs them. `scripts/ci/test_carried_handoff_reference_v1.mjs` is a
+separate standard-library byte/signature reference for the same public test
+corpus. In frozen handoff signing, the new role binds `initial_new_view = 1`,
+not the later anchor's view 0. This reference does not run Rust or certify an
+independent reviewer, HSM or new-key PoP. General new-only membership, key
+rotation, real device custody, live seals, Core/Safety phase transitions,
+consensus/JMT coordinates and two consecutive epochs remain open.
+
 **Exact-source review trace.** For `M03-PERSIST` under `bft-v0`, inspect `trillionnium/crates/trnm-consensus-signer-journal/src/sqlite.rs` symbol `sign_exact_v0`; the current error definition/literal is `SignerJournalErrorV0` in `trillionnium/crates/trnm-consensus-signer-journal/src/error.rs`. Reproduce `signature_is_persisted_before_return_and_exact_replay_skips_producer` in `trillionnium/crates/trnm-consensus-signer-journal/tests/sqlite_journal.rs`. The journal is not SafetyRules; exact HSM replay and Core/Safety/external-anchor reconciliation require separate acceptance.
+
+**Signer namespace and schema inspection.** Both retained signer-journal schemas
+use no-follow metadata inspection when comparing current file/directory entries
+with their pinned descriptors. Renaming a pinned object and linking its old name
+to the same inode is rejected, not treated as unchanged identity. The read-only
+schema classifier explicitly closes SQLite, then repeats database identity,
+persisted mode and auxiliary namespace checks while its pins remain alive. Its
+private post-close regression seam supplies no public admission bypass. These
+checks do not protect unobserved ancestor rename-and-restore, a hostile same-user
+process or coherent rollback of the whole namespace and external anchor.
+
+The immutable compiled schema-object map is initialized once per process/schema;
+every invocation still reads and compares the current connection's complete
+schema inventory. No live-schema acceptance, journal row, watermark or readiness
+is cached. Tests inject live schema drift after warming the reference and verify
+rejection, plus concurrent reference initialization and post-close substitution.
+
+**Handoff key admission boundary.** The candidate schema-1
+`HandoffSignerJournalProfileV1::new` and `StrictOldSetHandoffAdmissionV1::verify`
+repeat `validate_validator_set_strict_ed25519_v0` for every member of both sets,
+including non-author members. The generic validator-set decoder remains
+algorithm-neutral. The real checkpoint corpus is a positive regression control;
+weak and undecodable key substitutions exercise the early rejection path in
+`trnm-consensus-signer-journal/tests/handoff_key_admission.rs`. Those substituted
+sets also alter their commitments, so the tests do not claim the old full proof
+would otherwise have accepted them. This is not new-role membership/PoP,
+new-role custody, a live epoch transition, or independently accepted signing
+qualification. Schema-1 new-set-role and production fences remain unchanged.
 
 <a id="m04"></a>
 ## M04 — P2P / Session / Dissemination
@@ -108,6 +195,27 @@ Required `M02-EPOCH` acceptance additions are old-only/new-only/dual-role member
 
 **Exact-source review trace.** For `M04-LEASE` under `pcc1`, inspect `trillionnium/crates/trnm-consensus-peer-lease/src/store.rs` symbol `apply`; the current error definition/literal is `PeerLeaseErrorV1` in `trillionnium/crates/trnm-consensus-peer-lease/src/protocol.rs`. Reproduce `journal_restarts_and_fences_stale_generation` in `trillionnium/crates/trnm-consensus-peer-lease/src/store.rs`. Lease authority only; this does not certify a persistent consensus payload transport or full node.
 
+**Candidate continuous mesh availability (M17 implementation).** In
+`trnm-poco-lab-validator`, inbound `transport.rs` admission retains error
+provenance: remote hello/record rejection and transient socket I/O are
+connection-scoped; local configuration, entropy and custody failures stay
+terminal, including a local timeout. The mesh creates no lease, generation or
+Core input for a rejected handshake. A bounded fixed pause limits immediate
+rejection churn without attacker-keyed state. This is not an exemption for
+established-session bad frames or a complete flood/peer-isolation policy.
+
+`consensus_runtime.rs::drain_ingress_turn_v1`, called by the actual owner loop,
+handles at most 64 events per turn, including no-op/control events; it returns
+to timer/proposal work without dropping or reordering unread events. A handler
+error still propagates rather than pretending to be progress. This is a local
+scheduling bound, not a transaction/block validity rule. The five tests in
+`mesh_handshake_isolation_tests_v1.rs` use actual TCP and Ed25519 handshakes to
+exercise rejected connections, preserved live streams, local-fault boundaries
+and the bounded pump. Payload probes are not business transactions; test leases
+are explicitly in-memory. `ingress_fairness_tests_v1.rs` covers always-ready and
+no-op ingress, ordering, empty and error cases. Full default-node wiring,
+Byzantine multi-host qualification and end-to-end goodput remain open.
+
 <a id="m05"></a>
 ## M05 — Transaction Admission / Mempool
 
@@ -123,6 +231,56 @@ Required `M02-EPOCH` acceptance additions are old-only/new-only/dual-role member
 
 
 **Exact-source review trace.** For `M05-GC` under `bft-v0`, inspect `trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs` symbol `collect`; the current error definition/literal is `TxLifecycleErrorV0` in `trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs`. Reproduce `full_lifecycle_is_idempotent_and_gc_is_proof_gated` in `trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs`. Contract/core fixture, not a production authorization verifier, durable mempool or network lifecycle.
+
+**Durable replay-floor retention after native recovery.** The candidate
+`tx-admission-wal` owner in `trnm-poco-node/src/tx_admission_wal.rs` now uses
+**local SQLite schema 3**. Schema 2 is rejected before schema repair or WAL-mode
+changes; this is not an in-place migration and does not revise protocol bytes.
+An old namespace must not be deleted or silently reinitialized to bypass that
+boundary. The source/target migration of existing schema-2 stores remains a
+separate operation requiring retained state and authenticated replay inputs.
+
+The sealed native floor verifier still authenticates the actual finalized
+application nonce prefix and exact canonical signer. Physical tombstone purge
+now installs or advances `tx_admission_replay_floor_v1` in **the same
+BEGIN IMMEDIATE / WAL-FULL transaction** as deletion. The record binds
+namespace, signer, nonce floor, finalized height, root, proof digest, policy and
+integrity checksum. Reads decode fixed-width fields without allocating a
+peer-sized Rust value. New reservations, including exact retries after reopen,
+reject every nonce at or below that stored floor. The old behavior could admit
+an already finalized transaction again after all individual tombstones were
+deleted; the application still rejected its replay, so this was a local
+admission/resource-protection gap, not evidence of double execution or double
+spending.
+
+Nonce/height regression, changed same-height root or retention policy, malformed
+records and namespace substitution reject. A legitimate alternate certificate
+for the same height/root need not have the same proof digest. A floor cannot
+resolve or delete a live Reserved/HandedOff obligation. Every floor row counts
+toward the existing one-million-row rich+tombstone+floor inventory bound; purge
+checks the final transactional inventory, so a full store can exchange one
+removed tombstone for its floor without requiring an extra committed slot.
+
+Once floor mutation starts, an error leaves a shared readiness fence on both
+the owner and its outstanding reservation tokens. There is no public live reset.
+Fresh reopen validates the complete catalog, floor checksums and absence of
+active-prefix conflicts before any retry. Process exits after floor insertion,
+after deletion and after COMMIT recover either the old tombstone or its floor,
+never a deletion without the floor. A checksum is not cryptographic freshness:
+coherent rollback or removal of all trusted local state still requires the
+separate node/anchor recovery authority. No production activation is changed.
+
+`tx_admission_wal_replay_floor_store_tests_v1.rs` exercises those storage cuts,
+monotonicity, alternate proof representation, fixed-width corruption, schema-2
+rejection and outstanding-token fencing. Its local sealed-verifier fixture
+isolates SQLite behavior and is not cryptographic evidence. The separate
+`restored_native_replay_floor_prevents_readmission_after_tombstone_purge_v1`
+consumer test replays a real strictly signed finalized block through
+`NativeFinalizedCatchupV1`, matches its downloaded native snapshot, consumes the
+restored application in the existing Node commit/floor readback APIs, physically
+purges, reopens the WAL, and rejects the old signed transaction. This connects
+application reconstruction to the Node admission consumer, not to a live
+validator, network handshake, Core activation or HSM.
 
 <a id="m06"></a>
 ## M06 — Execution / MVCC / Meter
@@ -144,7 +302,7 @@ The canonical loop compares each observed object version **and** value hash agai
 
 **Sequential replay boundary.** `engine.rs::execute_block` is a separate sequential scheduler used by the existing durable journal audit; it does not call the worker scheduler. It shares transaction semantics and root codecs with the parallel path. Differential comparison therefore tests scheduling, conflict resolution and publication equivalence, not an independently implemented protocol oracle. `store.rs` still audits the complete journal from genesis and validates exact stored receipts before trusted readback. No audit cache, new checkpoint authority or committed-history pruning is enabled by this change.
 
-**Native frozen-v0 worker boundary.** `trnm-native-execution-v0/src/complete.rs::compute_complete_native_block_v0` now calls the private `native_parallel.rs` scheduler for canonical runtime payloads. After the existing parent, chain, genesis, signer-policy, validator/lifecycle and body-size checks, each batch borrows the immutable authenticated store plus the canonical overlay at that batch's start. Workers validate exact outer envelopes and runtime context provisionally, then call the real `trnm_runtime::try_execute_v0`, producing gas, frozen-v0 fees, events, mutations or a retained typed failure. They neither stage writes nor mint a durable execution artifact. The canonical loop repeats envelope/signature/policy/replay admission at the original transaction index, so malformed later input or a faster later runtime failure cannot mask an earlier error.
+**Native frozen-v0 worker boundary.** `trnm-native-execution-v0/src/complete.rs::compute_complete_native_block_v0` now calls the private `native_parallel.rs` scheduler for canonical runtime payloads. After the existing parent, chain, genesis, signer-policy, validator/lifecycle and body-size checks, each batch borrows the immutable authenticated store plus the canonical overlay at that batch's start. Workers validate exact outer envelopes and runtime context provisionally, then call the real `trnm_runtime::try_execute_v0`, producing gas, frozen-v0 fees, events, mutations or a retained typed failure. They neither stage writes nor mint a durable execution artifact. The canonical loop decodes the original envelope and always performs signer-policy and replay admission at the original transaction index. A private, one-use `VerifiedOuterEnvelopeV0` may reuse only a successful strict envelope verification for identical raw bytes, chain ID and timestamp. It is retained only after the worker actually verifies that envelope and is consumed even on mismatch; it supplies no signer-policy, nonce, execution or publication authority. Missing, oversized, failed-allocation or mismatched cache input follows the original strict verifier. Malformed later input or a faster later runtime failure cannot mask an earlier error.
 
 `RecordingViewV0` records every `TryStateViewV0::try_get`, including an absent object. Before reusing an outcome, the owner compares every dependency's full `Option<StateObject>`: absence, object type, version and exact value bytes. Except for the proven transfer fee case below, any changed dependency or failed comparison read causes one execution against the current canonical overlay. This applies to errors as well as successes: prior credit or nonce advancement can repair a parent failure, while a fee-policy update can invalidate a parent success. Runtime mutation validation/staging remains the existing atomic `stage_runtime_mutations_v0`. PoCO and validator-transition operations stay serial and clear queued speculation at their ordered barrier; lifecycle/system writes, receipt order and the final JMT plan retain their original owner and codecs.
 
@@ -158,11 +316,41 @@ For this sealed case only, `into_reusable_outcome_v0` retains and authenticates 
 | Retained jobs | At most 32 transactions per batch, under the existing complete-body transaction/byte admission limits. All started workers are joined before canonical application. |
 | Recorded dependencies | At most 64 distinct keys and 256 KiB of retained key/type/value bytes per attempt. Crossing either limit disables reuse and releases the recorded map; authenticated reads retain their original result. |
 | Retained outcome payload | At most 256 KiB of mutation and event string/value bytes per attempt. Larger results are discarded for canonical execution. These are scheduling caps, not new transaction-validity rules. |
+| Verified outer envelope | At most 64 KiB of exact bytes per retained attempt (at most 2 MiB per 32-job batch, plus bounded context). The cache is private, not serializable or cloneable, and carries no authority. Exceeding the limit disables cryptographic reuse only; the transaction still uses ordinary admission. |
+| Single logical worker | The candidate scheduler computes its disposable outcomes on the caller thread instead of spawning an OS thread. An unwinding panic discards the entire worker result, including any successful prefix; missing work uses the existing canonical fallback. This does not add a long-lived pool, change protocol validity, or establish a measured speedup. |
 | Thread creation/join failure | The affected chunk has no reusable outcomes and executes in canonical order. A speculative worker failure cannot produce a successful artifact or choose a transaction-invalid code. |
 
-The bounds cover retained speculative data; each active worker still pays the existing runtime's transient decoding/execution cost. The internal zero-worker test mode bypasses speculation entirely and executes each runtime attempt on the canonical state. Comparing it with 1/2/4/8 workers covers scheduling equivalence and exact complete roots/receipts/writes, not an independent semantic implementation. Separate test-only counters record exact reuse, fee rebasing and full canonical execution: eight independent fee-paying transfers must consume all eight worker results (one exact reuse, seven fee rebases, zero runtime re-executions), for both an absent and an existing collector. Other command families remain subject to exact collector conflicts/barriers. This removes a specific forced runtime retry for ordinary transfers; it is not a measured end-to-end throughput gain. Signature verification is currently repeated at ordered admission, and canonical staging/root construction/commit remain serial.
+The bounds cover retained speculative data; each active worker still pays the existing runtime's transient decoding/execution cost. The internal zero-worker test mode bypasses speculation entirely and executes each runtime attempt on the canonical state. Comparing it with 1/2/4/8 workers covers scheduling equivalence and exact complete roots/receipts/writes, not an independent semantic implementation. Separate test-only counters record exact reuse, fee rebasing and full canonical execution: eight independent fee-paying transfers must consume all eight worker results (one exact reuse, seven fee rebases, zero runtime re-executions), for both an absent and an existing collector. Other command families remain subject to exact collector conflicts/barriers. This removes a specific forced runtime retry for ordinary transfers; it is not a measured end-to-end throughput gain. The exact-byte cache avoids a second successful envelope verification when present; canonical signer-policy/replay checks and canonical staging/root construction/commit remain. Test-only counters distinguish envelope reuse from ordered strict-verifier calls. The Rust regressions must be compiled and executed on the reviewed source before this optimization is accepted; source presence is not a measured throughput result.
 
-**Native durable inventory boundary (M07/M08 consumers).** In `trillionnium/crates/trnm-native-execution-v0/src/durable.rs`, `map_p_inventory_v0` loads one complete durable P row at a time. `ValidatedPInventoryEntryV0::from_durable_v0` still verifies its artifact, snapshot, replay sets and lifecycle before retaining compact identity/height/sequence/root/commit links. `validate_p_inventory_v0` verifies the complete committed chain and prepared ancestry using those entries. Parent persist sequences must be strictly smaller; their fixed-width big-endian encoding preserves SQL ordering. `commit_block` passes the same validated inventory to `prepared_blocks_not_descending_from_v0`, which resolves prepared descendants in one pass and removes only conflicting prepared forks. It does not reread unaudited SQL links between validation and pruning. This reduces retained historical BLOB memory and repeated ancestor walks; full-history validation, complete JMT snapshot encoding/writes and serial commit remain present.
+**Bounded native work distribution.** The private runtime scheduler reserves one
+initial transaction per started worker and dynamically assigns the remaining
+indices from a bounded queue. Results retain their original transaction index;
+all started workers are joined before the canonical owner checks dependencies,
+replay, signer policy, fees and staged mutations in the unchanged order. Failed
+thread creation leaves its reserved work for canonical execution. A panicking
+worker loses its retained outcomes; missing work uses the ordinary canonical
+fallback, never a fabricated runtime error. The existing 8-worker/32-job and
+retained-data caps are unchanged. Scheduler regressions cover exact-once index
+assignment, slow-first-job progress, panic cleanup and oversize/zero-worker
+fallback. This removes static-chunk idle time, not the final ordered barrier or
+a measured end-to-end throughput limit.
+
+**Immutable finalized snapshot pin (M13).**
+`DurableNativeApplicationV0::pin_finalized_snapshot_export_v1` consumes an exact
+owner-bound finalized export, rechecks its original head/sequence/manifest once,
+and retains the authenticated snapshot in private owned bytes.
+`PinnedNativeSnapshotExportV1::chunk` then returns bounded immutable slices with
+no per-chunk database read or historical re-audit. The retained-image cap is
+explicit and at most 512 MiB; it does not bound pre-existing transient audit
+allocations or the consumer's decoded JMT. The original current-head export API
+still rejects source movement. The pinned API is deliberately historical: once
+captured, its exact bytes remain valid if the source advances or closes, without
+claiming freshness of the newest head. Consumers still verify their independently
+trusted finality/manifest. Tests cover valid source advancement, closure, wrong
+owner, stale pre-pin source, bounds and concurrent exact reads. This reduces
+repeated export work, not full-state storage or end-to-end finalized latency.
+
+**Native durable inventory boundary (M07/M08 consumers).** In `trillionnium/crates/trnm-native-execution-v0/src/durable.rs`, `map_p_inventory_v0` loads one complete durable P row at a time. `ValidatedPInventoryEntryV0::from_durable_v0` still verifies its artifact, snapshot, replay sets and lifecycle before retaining compact identity/height/sequence/root/commit links. `validate_p_inventory_v0` verifies the complete committed chain and prepared ancestry using those entries. Parent persist sequences must be strictly smaller; their fixed-width big-endian encoding preserves SQL ordering. `commit_block` passes the same validated inventory to `prepared_blocks_not_descending_from_v0`, which resolves prepared descendants in one pass and removes only conflicting prepared forks. It does not reread unaudited SQL links between validation and pruning. The key-only `ORDER BY p_sequence` cursor stays live while each complete row is read with a reused prepared point-lookup statement. This removes the temporary Rust collection of all IDs and repeated SQL preparation, not the N row lookups or full-history scan. It deliberately does not sort complete snapshot BLOBs in an unindexed SQL query. Consumers must neither write through that connection during iteration nor publish partial results. The normal-connection SQLite cursor test checks consistent read snapshots; the native immutable-read owner still relies on its existing namespace/lock/integrity contract and does not gain production WAL support. Full-history validation, complete JMT snapshot encoding/writes and serial commit remain present.
 
 **Typed native failure boundary.** `complete.rs::CompleteNativeExecutionFailureV0` preserves runtime classification through the internal `anyhow` carrier; `durable.rs::complete_execution_failure_result_v0` consumes that private type, not display strings. Authenticated state-read failure returns `Unavailable(AuthenticatedStateUnavailable)` without a prepared row. A classified transaction rejection retains its deterministic runtime code. Runtime `InvariantFault`, explicit `Invariant` from mutation staging/PoCO application/validator-transition invariants, and an unclassified runtime attempt return a `CorruptStore` error rather than transaction invalidity or retryable success. The existing non-runtime body/schema rejection branches retain their existing frozen-v0 rejection handling; this seam does not claim that every generic helper error has a complete independent taxonomy.
 
@@ -182,12 +370,16 @@ The bounds cover retained speculative data; each active worker still pays the ex
 | Same native durable tests | `inventory_still_audits_corrupt_committed_history_below_healthy_head`: historical artifact, snapshot, replay and lifecycle corruption remains rejected with a healthy latest head. |
 | Same native durable tests | `runtime_failure_classification_preserves_unavailable_and_invariant_faults`; `complete_runtime_nonce_rejection_keeps_typed_code_and_no_prepared_row`: typed unavailable/invariant/reject dispositions and no P row for the rejected execution. |
 
-**Still open.** Native runtime speculation is implemented within the existing complete-body path; it does not establish complete production-node wiring or activation. Collector conflicts outside the proven transfer case, duplicated verification, serial staging/root construction/commit and full-history storage remain performance constraints. Independent golden vectors and a separately implemented serial oracle, large-state/long-history cost curves, hostile hotspot/re-execution campaigns, end-to-end committed goodput and finality tails, authenticated checkpoint/anchor-based bounded recovery, source-bound specialist acceptance and production activation remain separate requirements. No worker count, local test or inventory memory reduction closes these gates.
+**Still open.** Native runtime speculation is implemented within the existing complete-body path; it does not establish complete production-node wiring or activation. Collector conflicts outside the proven transfer case, verification outside the narrow exact-byte reuse case, serial staging/root construction/commit and full-history storage remain performance constraints. Independent golden vectors and a separately implemented serial oracle, large-state/long-history cost curves, hostile hotspot/re-execution campaigns, end-to-end committed goodput and finality tails, authenticated checkpoint/anchor-based bounded recovery, source-bound specialist acceptance and production activation remain separate requirements. No worker count, local test or inventory memory reduction closes these gates.
 
 
 **Exact-source review trace.** For `M06-ATOMIC` under `pcc1`, inspect `trillionnium/crates/trnm-native-execution-v0/src/lib.rs` symbol `stage_runtime_mutations_v0`; the current error definition/literal is `duplicate runtime mutation key` in `trillionnium/crates/trnm-native-execution-v0/src/lib.rs`. Reproduce `later_duplicate_rejects_the_entire_transaction` in `trillionnium/crates/trnm-native-execution-v0/src/overlay_delta_tests.rs`. The current anyhow diagnostic is a local error literal, not a newly frozen external wire code; this case does not prove every worker-count path.
 
 **Native checkpoint authorization trace.** In `trnm-native-execution-v0`, `poco_checkpoint`, `poco_authenticated_candidate`, `poco_epoch_commitment`, `poco_checkpoint_header`, `poco_joint_handoff` and `poco_preparation_journal` form the application-side authorization chain. `prepare_native_poco_checkpoint_v0` joins the committed cutoff JMT/lifecycle, strict H1/H2 and candidate reconstruction to actual native execution and durable exact-header preparation; `confirm_poco_checkpoint_v0` requires the exact COMMITTED P, fresh sidecar reservation readback and strict checkpoint/two-seal/handoff evidence. Four native database regressions exercise the complete chain, reopen and held-token invalidation; 20 journal regressions cover exact post-commit publication, fault injection and local admission caps. See the [native execution README](../../trillionnium/crates/trnm-native-execution-v0/README.md#native-checkpoint-authorization) for API provenance, 64-transition/1,024-preparation/256-MiB audit limits, the 512-MiB database page ceiling and sidecar checks, local `StorageFull`, and the external rollback boundary. These local tests do not advance Core's epoch fence, establish seal-height JMT progression or constitute independent production acceptance.
+
+**Pre-certificate checkpoint readback candidate.** M01's `decode_verify_checkpoint_finality_strict_v0` bounds and decodes the exact checkpoint/two-seal bytes, checks the supplied old/new configuration and exact checkpoint/parent, and uses only strict Ed25519 verification. M06's `confirm_poco_checkpoint_for_handoff_v0` rejects bad proofs before the full native-history read, then reuses the existing fresh committed-row, preparation-owner, cutoff and next-set checks. No PREPARED row is promoted, no seal application is executed, and no joint handoff certificate is an input. The returned receipt derives only the existing frozen handoff descriptor; old/new role-specific admission, persist-before-sign, custody, live seals, Safety14 and multi-epoch JMT progression remain open. The later completion operation repeats fresh storage validation and the full joint-certificate check rather than trusting a held receipt.
+
+The CEV0 certified-header admission budget now charges its proposer signature as well as all justify/certifying QC and optional TC signatures. Each complete three-header proof therefore includes three proposer work units; the existing maximum already reserves them and is unchanged. Admission reserves aggregate work atomically; later signature/binding failure does not refund it. The new native method's supplied budget covers the checkpoint-proof pass only, not a claim that every existing cutoff/native provenance verification is accounted by the same budget. Six strict-crypto and six native regression functions are implementation tests to execute, not recorded passes. The separate Node direct-view frozen-corpus test can compare actual Ed25519 calls to certificate-share counts, but it does not exercise Rust, skipped-view TC paths, native storage or live epoch activation.
 
 **Frozen operation semantic replay.** The existing `operation_sequence_profile_boundary_tests.rs` now invokes the actual private PoCO transition kernel on the unchanged historical corpus: nine named sequences, 18 positive steps and nine typed rejections. Frozen operation IDs/counts/roots, complete namespace writes, mutation roots, manifests/projections and historical JMT roots are checked directly; rejection leaves both the overlay and encoded snapshot unchanged. The four isolated prune sequences remain explicitly isolated. Test-supplied historical context does not pass current-owner policy admission, authenticate outer signatures or supply durable P/ProcessProposal/FinalizeBlock/restart evidence. The retained `frozen_old_operation_profile_cannot_obtain_current_native_authority` regression still requires rejection by the current native owner; full durable corpus admission remains open.
 
@@ -207,7 +399,92 @@ The bounds cover retained speculative data; each active worker still pays the ex
 **Native snapshot recovery boundary.** `trnm-native-execution-v0/src/store.rs` checks each retained root against its indexed JMT root node rather than merely testing historical root-node presence. Historical root/hash substitution must reject even when the latest head still verifies. The shared live-value verifier retains duplicate-key detection and latest-root membership/preimage checks while letting recovery discard each proven value instead of collecting another full live map. Explicit live-map consumers retain their existing results. The snapshot codec and retained history are unchanged. These checks do not recursively prove every historical leaf, implement incremental persistence/GC or supply an external rollback anchor; M06/M08 consumers and independent storage acceptance remain required.
 
 
+**Authenticated point consumers.** After the complete durable snapshot has passed
+its existing root, preimage and live-value audit, lifecycle extraction proves
+only the exact validator-lifecycle key instead of rebuilding and proving the
+entire live-value map a second time. The point reader verifies membership or
+non-membership under the requested retained root, checks present preimages, and
+rejects corrupt values or unknown versions. This is not partial snapshot
+validation, authenticated pruning, incremental persistence or bounded-history
+recovery.
+
+`prove_raw_key_v0` verifies the generated ICS23 membership/non-membership proof
+against the exact requested root before exporting bytes. Comparing a root with
+itself is not validation. Regression inputs substitute a retained root and a
+historical value below a healthy latest head; both reject before publication.
+The proof codec and hash domains are unchanged. Proof consumers still verify
+against their independently trusted root; producer checks do not bootstrap trust.
+
 **Exact-source review trace.** For `M07-SCHEMA` under `bft-v0`, inspect `trillionnium/crates/trnm-native-application-sqlite/src/store.rs` symbol `open`; the current error definition/literal is `ValidationStoreErrorCodeV0` in `trillionnium/crates/trnm-native-application-sqlite/src/error.rs`. Reproduce `schema_or_trigger_drift_is_rejected_on_reopen` in `trillionnium/crates/trnm-native-application-sqlite/src/tests.rs`. Local proposal-validation store/schema regression, not whole-node power-loss or coherent-rollback acceptance.
+
+### Native finalized snapshot read/export
+
+Primary implementation owner: M06; consumers M07/M08/M13. This is an additive
+read boundary over the unchanged native Borsh/JMT and native manifest domains,
+not the generic M13 `TRNMSM01` storage format and not an installation capability.
+
+`DurableNativeApplicationV0::begin_finalized_snapshot_export_v1` first verifies
+actual strict PoCO finality for an already COMMITTED application row. It then
+freshly audits the native source and binds the exact current head, durable
+sequence, store identity and SHA-256 snapshot digest to a private owner-affined
+`NativeSnapshotExportV1`. Historical targets and PREPARED rows cannot export.
+The manifest producer checks its 4,096-descriptor bound before allocating the
+array. `read_snapshot_chunk_v1` accepts that original live owner's token and one
+index, freshly validates source identity/head/sequence/snapshot again, and
+returns only the exact indexed bytes under the existing native chunk domain.
+Reopen, another owner or intervening source movement invalidates the token; the
+caller must re-prove/export the current target rather than mixing generations.
+
+`verify_native_snapshot_stream_v1` consumes an independently trusted
+`StrictFinalityProofV0`, the local immutable native configuration, exact native
+manifest, fallible chunk iterator and local read limits. Manifest metadata never
+chooses the trust anchor or validator set. The oldest certified header must
+match chain, genesis, profile, epoch, validator/parameter commitments and exact
+height/block/root before input is read. Each chunk must match its indexed
+length/digest; one look-ahead item detects extra input. Short, reordered,
+corrupt or over-budget input cannot yield a result. Original transport errors
+are retained separately from local resource exhaustion and invalid snapshots.
+These are local read dispositions, not transaction-invalidity codes.
+
+The reader parses the actual native Borsh snapshot field order: node map,
+versioned values, preimages, stale-node set and retained roots. It limits
+aggregate entries before insertion, checks sorted unique keys, validates length
+prefixes before application-value allocation and compares each re-encoded entry
+to its exact input. JMT NodeKey nibble lengths/padding are validated in at most
+52 stack bytes before the dependency's derived decoder can bypass constructor
+invariants. Shared validation in both the original slice decoder and this reader
+checks node path/type/count/version invariants, actual child references/hashes,
+leaf counts and retained leaf/value hashes at the leaf's own version. It then
+runs the existing retained-root, preimage and latest live-value proof audit.
+These internal historical checks do not independently finalize old roots.
+
+Before returning, the latest actual JMT version/root and authenticated validator
+lifecycle must match the strict target, chain, local signer policy and active
+validator projection. The native snapshot manifest digest is recomputed from
+the exact streamed SHA-256 and native chunk digests. The private non-Clone
+`VerifiedNativeSnapshotReadV1` exposes height/block/root/snapshot/proof digests
+and byte count, but deliberately not the local manifest commit ID: that ID is
+not independently authenticated by consensus. Decoded replay sets are empty,
+the temporary store is discarded, and no Core, signer, install or replay-floor
+authority is issued.
+
+Local limits are positive byte/entry/record budgets, with hard admission caps
+of 4 GiB encoded bytes, 2,000,000 aggregate entries and 16 MiB encoded record
+size; operators must choose budgets appropriate for their actual memory. Only
+one transport chunk and one record copy are retained in addition to the decoded
+JMT collections. A transport must bound allocations/deadlines before yielding
+chunks. The complete decoded JMT remains resident, every source chunk request
+still audits full native history/snapshot, and historical roots remain retained.
+This is not native incremental persistence, bounded-history recovery, pruning,
+a network downloader or an end-to-end throughput improvement.
+
+`pcc1_finality/snapshot_stream_tests.rs` uses actual SQLite native execution and
+strict Ed25519 finality to test export/read, owner replacement, PREPARED refusal,
+root substitution, corruption, short/extra streams, typed transport errors and
+pre-read resource limits. `snapshot_reader_v1.rs` covers bounded/noncanonical
+Borsh and malformed JMT metadata, including corruption below a healthy latest
+root. Source-bound execution logs are separate from these required properties;
+independent acceptance and whole-node state-sync installation remain open.
 
 <a id="m08"></a>
 ## M08 — Finality / Commit / Recovery
@@ -224,6 +501,116 @@ The bounds cover retained speculative data; each active worker still pays the ex
 
 
 **Exact-source review trace.** For `M08-PREPARED` under `pcc1`, inspect `trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs` symbol `read_poco_finalized_bytes_v0`; the current error definition/literal is `PocoFinalityCommitErrorV0` in `trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality.rs`. Reproduce `readback_never_promotes_prepared_state_even_with_a_valid_proof` in `trillionnium/crates/trnm-native-execution-v0/src/pcc1_finality/tests.rs`. Readback boundary only; it does not drive checkpoint or receipt publication.
+
+### Pre-certificate checkpoint commit
+
+`commit_poco_checkpoint_for_handoff_v1` joins the existing native preparation
+and exact executed P to actual old-set checkpoint/two-seal finality before
+calling the existing atomic application commit. It needs no joint handoff
+certificate and creates no seal application rows. The independently commissioned
+old configuration must equal the preparation context. One bounded strict
+Ed25519 proof pass verifies the exact prepared header/parent/commitment and all
+required shares before storage commit; header/body/receipt equality, the original
+preparation namespace and a freshly authenticated exact durable execution row
+must also pass. An exact already-COMMITTED replay is allowed only through the
+existing current-head/idempotency checks, never by inventing a row or artifact.
+
+After commit, fresh native/preparation readback reconstructs cutoff/next-set
+provenance and the exact committed receipt. Only then does the operation return
+`CommittedNativePocoCheckpointForHandoffV0` to the later, separately authorized
+role-signing path. The immutable strict proof is retained across that operation;
+there is no late second proof pass whose work budget could fail after commit.
+Existing native/cutoff audits retain their separate bounds. No signature,
+checkpoint CAS, publication or epoch activation is performed by this method.
+
+`NativeCheckpointCommitErrorV1::BeforeCommit` means the native commit call was
+not reached. It is a local preflight result, not a consensus transaction error.
+Every error at or after commit is `Uncertain`; callers must fence dependent
+participation and perform fresh readback or retry the identical checkpoint.
+Reconstruction uses the original preview request and raw cutoff evidence, not a
+new request based on an advanced head. Post-commit sidecar failure cannot be
+reported as "nothing happened". This does not establish atomicity between the
+native database and preparation journal or independent rollback resistance.
+
+The real SQLite/Ed25519 tests in
+`poco_checkpoint/native_authorization_tests/checkpoint_commit_tests_v1.rs` cover
+strict commit before handoff, unchanged application state on invalid signatures,
+byte/work limits, substituted execution, missing/halted/replaced/foreign
+preparation, and database/directory synchronization failures after commit.
+Reopen and repeated exact commit must recover one sequence and one application
+effect; neither seal height may acquire a dummy application row. This closes
+this bounded commit-producer gap, not live seal voting, Safety14, new-epoch
+ancestry, consensus/JMT coordinate progression or two continuous epochs.
+
+**Proof-driven ordinary catch-up (M06/M07/M13 consumer).**
+`trnm-native-execution-v0/src/finalized_catchup_v1.rs` implements
+`NativeFinalizedCatchupV1` with an exclusively held real
+`DurableNativeApplicationV0`. `recover` binds an independently strict-verified
+target to the commissioned genesis/set/parameters and the locally audited head.
+Epoch zero, regular blocks and exact consecutive heights are the only supported
+profile here; seal execution, imported h1 bases, epoch changes and signer/Core
+activation are not inferred. A non-genesis restart requires a strict proof of
+the actual local head, derives its parent timestamp from the durable preceding
+execution (or explicit genesis time), and re-establishes exact commit durability.
+
+`apply` charges attempted bytes (including rejected work), bounds the CEV0 list
+count before nested allocation, and validates context, height, parent, parent
+view, exact payload root and strict three-chain proof. The existing commit
+verifier's second signature-work pass is reserved before persistence. New-input
+context, canonical-body and cryptographic admission precede the existing
+potentially full-history storage audit. The cached predecessor is only a proof
+expectation; fresh durable equality still precedes preview or mutation, and
+observed source loss fences the session. Read-only
+native preview must reproduce all header commitments before durable execution
+is called. Execution reconstructs command IDs and nonce sets through the existing
+runtime; a peer supplies neither these sets nor a local application commit ID.
+The existing durable-P and finality-commit owners then execute and commit the
+exact artifact, with fresh committed artifact/head readback before success.
+Invalid proofs/bytes, gaps and preflight mismatches create no prepared row.
+Once a mutating API is called, any failed or uncertain result fences the session;
+reopen and prove the actual source/target rather than guessing rollback. An exact
+current-block retry resynchronizes and reads back the existing commit without a
+new logical effect. Other historical duplicates are not a replay shortcut.
+
+`finish_with_snapshot` first requires the exact target. It consumes the existing
+native streaming verifier and compares the downloaded full JMT image digest with
+the freshly audited, locally re-executed image. The native snapshot codec does
+**not** encode the separately stored command/nonce replay sets. Those sets are
+reconstructed by real execution, not authenticated by pretending the latest JMT
+root covers transport metadata. No peer bytes overwrite the local database.
+Only after these checks does `RestoredNativeApplicationV1::into_application`
+release the actual application owner, usable for the next regular execution.
+This is a bounded-session catch-up/restore path, not Core, network listener,
+signer, whole-node anti-rollback or constant-history recovery qualification.
+
+Local limits are 1..4096 target blocks, at most 16 GiB attempted input per
+session, at most 65,536 declared transactions per block and the existing 4 MiB
+payload ceiling. They are configurable local ceilings, not altered consensus
+validity. Repeated sessions still require node-level admission quotas. Exact
+full-image equality intentionally rejects differently pruned histories even
+when they have the same latest root. Full-history audit, complete snapshots and
+serial commits remain; this path is not the planned incremental/checkpoint
+shortcut. A valid committed prefix survives later rejected input, while the
+unfinished session exposes no application-owner completion.
+
+`finalized_catchup_v1/tests.rs` exercises real strict Ed25519 proofs, native
+speculative parents, SQLite execution/commits, empty blocks, a second local store
+identity, nonce-floor readback, malformed/fully signed wrong-state claims,
+pre-persistence verification budgets, repeated synchronization faults, and real
+process exits after prepared P and after committed application state. Keys and
+certificate generation are controlled fixtures, not live consensus or a
+multi-host campaign. The restored real owner also executes and strictly commits
+the next regular block. Test results must bind the reviewed source; fixture
+signatures do not authorize a live epoch.
+
+**Committed-retry durability.** `durable.rs::commit_block` closes the SQLite
+writer before successful-commit synchronization. Its COMMITTED retry branch now
+also closes, synchronizes the database and directory, and revalidates the same
+head, durable sequence, artifact and commit before returning. A stored committed
+row after an earlier sync failure is not by itself a completed durability
+barrier. Retained sync-failure regressions reject success without adding a row.
+This preserves codecs, sequences and finality rules; physical power-loss and
+independent external-anchor evidence remain separate.
 
 **Durable epoch evidence preparation.** `SqliteEpochPreparationStoreV1` in `trnm-consensus-safety-store/src/epoch_preparation_sqlite_v1.rs` consumes a real `EpochPreparationV1`, creates an immutable SQLite record and reopens it through `recover_epoch_preparation_v1`. The local `TRNMEP01` framing has storage schema 1 and exactly one accepted phase, `EvidenceVerified`; it is separate from SafetyState schema 13 and from protocol wire bytes. Creation, `open_existing`, `recover_fresh_v1` and exact idempotent retention keep independent old trust and the expected strict binding. Partial namespaces, different evidence, unsupported schema/phase, invalid signatures, changed file identity, checksum failure or exhausted admission budget cannot reconstruct authority. A host must supply the expected binding from its authenticated context; a self-consistent database/sidecar image cannot prove its own freshness or external rollback resistance. The tests in `tests/epoch_preparation_recovery.rs` include actual process exits at four SQLite transaction/commit/synchronization cuts, strict reopen and exact retry. These are process-crash checks, not power-loss or controller-cache qualification.
 
@@ -315,7 +702,133 @@ Required `M08-CUT` additions are exact checkpoint-to-first-block commit and repl
 **Implementation and consumers.** Trace the finality types/verifiers, cross-plane readback, migration and state-sync crates plus staging/verification-seal tests. M07 supplies authenticated state and M14 displays only the proven class. Require client-proofs, consensus, cryptography and storage-recovery specialists for touched boundaries.
 
 
+**Native epoch-zero coordinates.** The generic M13 anchor and snapshot shapes
+accept a positive finalized height in native epoch `0`; epoch zero is not a
+synthetic genesis anchor. Zero height, zero trust digests, backward/skipped epoch
+links and same-epoch validator substitution still reject. Every accepted link
+still invokes its commissioned proof verifier. `epoch_zero_tests.rs` verifies
+those boundaries; its counting verifier is a fixture, not independent
+cryptographic acceptance. The existing epoch-one storage golden vector remains
+byte-identical, with a separate epoch-zero reference round trip.
+
+**Streaming installation candidate.**
+`trnm-state-sync-v0/src/streaming.rs::install_streaming_snapshot_v1` consumes a
+previously verified trust path, exact manifest, ordered fallible chunk iterator,
+trusted schema-specific incremental root accumulator and real install target.
+It validates the manifest before side effects, reserves bounded digest metadata,
+opens disposable staging and consumes at most the manifest's chunk count plus
+one look-ahead item. Each chunk is index/identity/digest/size checked, absorbed by
+the disposable root accumulator and written to staging before the next input
+is requested. Final byte totals, existing chunk Merkle root and independently
+recomputed application root must all match before CURRENT CAS.
+
+Payloads are not retained in `StateSyncSessionV0` by this new API: its auxiliary
+transport memory is one input chunk plus bounded digest/Merkle levels. This does
+not bound the iterator's allocations, accumulator scratch space or target's
+memory, and it does not implement native JMT incremental decode or a network
+downloader. Input/order/length/digest/root/write failure aborts only staging;
+both original and cleanup failure are retained. Once CAS starts, any error or
+receipt mismatch is uncertain and never calls abort. A panicking adapter leaves
+recovery evidence rather than triggering destructive automatic cleanup. The
+existing buffered API is unchanged and remains buffered.
+
+`trnm-durable-file-adapters-v0/src/streaming_snapshot_tests.rs` connects the new
+installer directly to `AtomicSnapshotFileTargetV0`, with file readback, late
+chunk corruption and lost CURRENT-publication response cases. The target still
+revalidates persisted complete chunks before publication and on reopen. The
+SHA-based root and permissive link verifier used in these tests are explicit
+fixtures, not native JMT or independent light-client authority. The ordered
+in-memory adapter tests in `trnm-state-sync-v0/src/streaming_tests.rs` cover
+short/extra/duplicate/reordered streams, bounded look-ahead, accumulator errors,
+write/abort errors and uncertain CAS. The separate native read verifier below does not implement this generic
+accumulator trait or convert its domains. Source-bound Rust execution and
+independent acceptance are separate; native installation, downloader integration,
+resumable transfer and bounded whole-node recovery remain open. No existing runtime, migration or release flag is
+changed by introducing this consumer path.
+
 **Exact-source review trace.** For `M13-STAGE` under `bft-v0`, inspect `trillionnium/crates/trnm-state-sync-v0/src/lib.rs` symbol `verify_complete`; the current error definition/literal is `StateSyncErrorV0` in `trillionnium/crates/trnm-state-sync-v0/src/lib.rs`. Reproduce `recomputed_root_mismatch_cannot_issue_a_verified_snapshot` in `trillionnium/crates/trnm-state-sync-v0/tests/verification_seals.rs`. Verified snapshot capability only; real transport, independent light client and migration qualification remain separate.
+
+### Candidate durable snapshot file boundary
+
+Primary source ownership remains M03 for `trnm-durable-file-adapters-v0` under
+`config/module-coverage-v1.toml`; M08 recovery and M13 state sync consume this
+boundary. The crate's older embedded `module = "M08"` metadata is not a transfer
+of primary ownership. The following is a local storage-format/implementation
+candidate, not a new protocol wire format or an acceptance of SYNC-PROD-001.
+
+`SnapshotManifestV0::validate_shape` checks canonical manifest bytes and existing
+count/byte bounds without issuing trust. `validate` still binds those fields to
+an actual verified trust path. `AtomicSnapshotFileTargetV0` repeats shape checks
+before storage work. Its `MANIFEST.v0` file now uses storage magic `TRNMSM01` and
+contains all manifest fields plus a domain-separated checksum. Exactly 296 bytes
+are accepted. The old lossy `TRNMSM00` record cannot authenticate the selected
+chunks and is rejected without migration or rewriting. Existing directories,
+including partial initialization and missing CURRENT/lock/subdirectory states,
+are not implicitly fresh-create inputs. Candidate testing requires a fresh
+namespace; retained legacy files require a separately reviewed recovery/export
+procedure, never automatic deletion.
+
+| Storage offset | Field and encoding |
+|---:|---|
+| 0 | 8-byte `TRNMSM01` magic |
+| 8, 40 | chain ID, protocol digest; 32 bytes each |
+| 72, 80 | height, epoch; big-endian u64 |
+| 88, 120 | state root, chunk root; 32 bytes each |
+| 152, 156 | chunk count, maximum chunk bytes; big-endian u32 |
+| 160 | total bytes; big-endian u64 |
+| 168, 200, 232 | schema, checkpoint and manifest digests; 32 bytes each |
+| 264 | 32-byte hash of bytes 0..264 under `trnm.snapshot-staging-manifest.v1` |
+
+The hash uses the existing `Digest32V0::hash` length-prefix convention. Original
+manifest, chunk and Merkle domains and the 120-byte CURRENT pointer layout are
+unchanged. The separate Python stdlib reference in
+`scripts/ci/test_snapshot_manifest_reference_v1.py` generates the retained
+`tests/vectors/snapshot_manifest_v1.hex` bytes; the Rust codec test compares exact
+bytes to that reference. This is a separately implemented byte oracle, not a
+qualified independent reviewer or a recorded Rust execution result.
+
+The installer writes private create-new files, synchronizes them, reads back
+acknowledged chunk bytes, and counts total staged bytes without charging exact
+duplicates twice. Commit re-reads the complete manifest and every chunk, computes
+the exact original chunk digests/root, and rejects unknown names, missing chunks,
+links, over-bounds reads, wrong totals or same-length byte corruption before
+publishing CURRENT. It verifies again after generation publication and after
+pointer publication. Reopen verifies the actual selected generation, not only the
+CURRENT checksum. Plain `current_*` getters remain last-observed coordinates;
+`verify_current_snapshot_v1` is the fresh validation operation. Neither supplies
+an independently trusted checkpoint or recomputes application state semantics;
+the M13 verified session still owns the original state-root check.
+
+The pointer rename is the local publication boundary. An uncertain rename,
+post-rename synchronization failure or failed readback returns an error and
+fences the owner. It never returns a durable success receipt or permits abort to
+remove the selected generation. Reopen must prove the durable source or target.
+Explicit abort and orphan cleanup preflight known contents and any exact
+unpublished pointer before deletion. Unknown or partially undecodable evidence
+is retained. Cleanup is limited to the next unselected local generation and at
+most 1,024 entries per parent; it is not historical pruning, a finalized replay
+floor or general node recovery.
+
+This candidate requires Linux no-follow/nonblocking file admission and one
+cooperating owner. Parent/lock descriptors detect observed replacement and
+permanently fence that handle. New files/directories use 0600/0700; admitted
+existing entries must have the same owner and no group/other write permission.
+The operations are not all descriptor-relative and do not protect against an
+unobserved rename-and-restore race or a continuously malicious same-UID writer.
+Owner-controlled ancestors, filesystem synchronization guarantees and an
+independently administered anti-rollback anchor remain external assumptions.
+A self-consistent whole-namespace rollback is not detected by local checksums.
+
+Verification streams at most one admitted chunk at a time and retains a bounded
+list of chunk hashes; it does not scan every old generation at open. The selected
+snapshot is still scanned in full, and `StateSyncSessionV0` still retains its
+existing in-memory chunks. This is not incremental native JMT persistence,
+bounded-history Node Commit Ledger recovery or a throughput result. The actual
+file/process regressions live in `snapshot_recovery_tests.rs`, including an
+explicit child process exit at generation publication, before pointer rename,
+after pointer rename and after pointer synchronization. They must be compiled
+and executed on the reviewed source; test source is not a pass and process exits
+are not physical power-loss qualification.
 
 <a id="m14"></a>
 ## M14 — RPC / Indexer / SDK / CLI

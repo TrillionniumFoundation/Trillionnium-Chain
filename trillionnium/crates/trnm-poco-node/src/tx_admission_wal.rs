@@ -36,7 +36,7 @@
 #![cfg(feature = "tx-admission-wal")]
 
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     collections::BTreeMap,
     error::Error,
     fmt,
@@ -111,7 +111,9 @@ pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0: bool = false;
 /// Native commit-receipt verification is sealed to implementations owned by this crate.
 pub const TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1: bool = true;
 
-const SCHEMA_VERSION_V0: i64 = 2;
+// Local WAL schema 3 adds a durable signer nonce floor. Schema 2 cannot be
+// silently reopened/migrated: it has no retained floor after physical purge.
+const SCHEMA_VERSION_V0: i64 = 3;
 const WAL_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-admission-wal.v0";
 const LOCK_SUFFIX_V0: &str = ".tx-admission.lock.v0";
 const MAX_RESERVATION_ROWS_V0: usize = 1_000_000;
@@ -158,6 +160,17 @@ CREATE TABLE tx_commit_receipt_v0 (
     commitment BLOB NOT NULL CHECK(length(commitment) = 32),
     PRIMARY KEY(namespace, signer, nonce),
     UNIQUE(namespace, tx_digest)
+);
+CREATE TABLE tx_admission_replay_floor_v1 (
+    namespace BLOB NOT NULL CHECK(length(namespace) = 32),
+    signer BLOB NOT NULL CHECK(length(signer) = 32),
+    reject_nonce_through BLOB NOT NULL CHECK(length(reject_nonce_through) = 8),
+    finalized_height BLOB NOT NULL CHECK(length(finalized_height) = 8),
+    state_root BLOB NOT NULL CHECK(length(state_root) = 32),
+    finality_proof_digest BLOB NOT NULL CHECK(length(finality_proof_digest) = 32),
+    retention_policy_digest BLOB NOT NULL CHECK(length(retention_policy_digest) = 32),
+    commitment BLOB NOT NULL CHECK(length(commitment) = 32),
+    PRIMARY KEY(namespace, signer)
 );
 CREATE TABLE tx_admission_tombstone_v1 (
     namespace BLOB NOT NULL CHECK(length(namespace) = 32),
@@ -1300,7 +1313,8 @@ fn total_inventory_count_v0(connection: &Connection) -> Result<usize, TxAdmissio
     let count: i64 = connection
         .query_row(
             "SELECT (SELECT COUNT(*) FROM pending_nonce)
-             + (SELECT COUNT(*) FROM tx_admission_tombstone_v1)",
+             + (SELECT COUNT(*) FROM tx_admission_tombstone_v1)
+             + (SELECT COUNT(*) FROM tx_admission_replay_floor_v1)",
             [],
             |row| row.get(0),
         )
@@ -1567,6 +1581,7 @@ fn read_receipt_commitment_v0(
 /// safe only as a single local owner; cross-process attempts fail at open.
 pub struct SqlitePendingNonceAuthorityV0 {
     connection: Rc<RefCell<Connection>>,
+    replay_floor_recovery_required: Rc<Cell<bool>>,
     lock: Rc<File>,
     lock_path: PathBuf,
     lock_identity: PathIdentityV0,
@@ -2183,7 +2198,7 @@ impl SqlitePendingNonceAuthorityV0 {
                 .execute_batch(SQLITE_SCHEMA_DDL_V0)
                 .map_err(sqlite_error)?;
             connection
-                .execute_batch("PRAGMA user_version = 2;")
+                .execute_batch("PRAGMA user_version = 3;")
                 .map_err(sqlite_error)?;
         }
         let journal_mode: String = connection
@@ -2250,6 +2265,7 @@ impl SqlitePendingNonceAuthorityV0 {
         validate_pending_rows_v0(&connection, namespace)?;
         validate_receipt_rows_v0(&connection, namespace)?;
         validate_tombstone_rows_v1(&connection, namespace)?;
+        validate_stored_replay_floors_v1(&connection, namespace)?;
         let handed_off: i64 = connection
             .query_row(
                 "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1 AND state = ?2",
@@ -2265,6 +2281,7 @@ impl SqlitePendingNonceAuthorityV0 {
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         Ok(Self {
             connection: Rc::new(RefCell::new(connection)),
+            replay_floor_recovery_required: Rc::new(Cell::new(false)),
             lock,
             lock_path,
             lock_identity,
@@ -2288,9 +2305,9 @@ impl SqlitePendingNonceAuthorityV0 {
         Rc::as_ptr(&self.connection) as usize as u64
     }
 
-    /// Number of rich pending rows plus compact replay tombstones retained for
-    /// this namespace.  A tombstone remains replay-authoritative until an
-    /// authenticated application/finality nonce-floor token permits purge.
+    /// Number of pending rows, compact tombstones and durable signer-floor
+    /// rows retained in this namespace. A floor continues to consume one row
+    /// of the bounded inventory after its individual tombstones are purged.
     pub fn retained_rows(&self) -> Result<usize, TxAdmissionWalErrorV0> {
         self.ensure_identity()?;
         let connection = self
@@ -2299,7 +2316,7 @@ impl SqlitePendingNonceAuthorityV0 {
             .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
         let count: i64 = connection
             .query_row(
-                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1) + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
+                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1) + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1) + (SELECT COUNT(*) FROM tx_admission_replay_floor_v1 WHERE namespace = ?1)",
                 params![self.namespace.as_slice()],
                 |row| row.get(0),
             )
@@ -2373,6 +2390,13 @@ impl SqlitePendingNonceAuthorityV0 {
     }
 
     fn ensure_identity(&self) -> Result<(), TxAdmissionWalErrorV0> {
+        if self.replay_floor_recovery_required.get() {
+            return Err(TxAdmissionWalErrorV0::CommitReadbackUnavailable);
+        }
+        self.ensure_endpoint_identity_v1()
+    }
+
+    fn ensure_endpoint_identity_v1(&self) -> Result<(), TxAdmissionWalErrorV0> {
         ensure_parent_handle_identity_v0(
             &self.path,
             &self.parent_path,
@@ -2397,13 +2421,16 @@ impl SqlitePendingNonceAuthorityV0 {
         let transaction = connection
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(sqlite_error)?;
-        if tombstone_exists_by_nonce_or_digest_v1(
-            &transaction,
-            self.namespace,
-            expected.signer,
-            expected.nonce,
-            expected.digest,
-        )? {
+        if read_stored_replay_floor_v1(&transaction, self.namespace, expected.signer)?
+            .is_some_and(|floor| expected.nonce <= floor.reject_nonce_through)
+            || tombstone_exists_by_nonce_or_digest_v1(
+                &transaction,
+                self.namespace,
+                expected.signer,
+                expected.nonce,
+                expected.digest,
+            )?
+        {
             return Err(TxAdmissionWalErrorV0::Replay);
         }
         if let Some((existing, state)) = read_row_v0(
@@ -2422,6 +2449,7 @@ impl SqlitePendingNonceAuthorityV0 {
             self.ensure_identity()?;
             return Ok(SqlitePendingNonceReservationV0 {
                 connection: Rc::clone(&self.connection),
+                replay_floor_recovery_required: Rc::clone(&self.replay_floor_recovery_required),
                 _lock: Rc::clone(&self.lock),
                 lock_path: self.lock_path.clone(),
                 lock_identity: self.lock_identity,
@@ -2469,6 +2497,7 @@ impl SqlitePendingNonceAuthorityV0 {
         self.ensure_identity()?;
         Ok(SqlitePendingNonceReservationV0 {
             connection: Rc::clone(&self.connection),
+            replay_floor_recovery_required: Rc::clone(&self.replay_floor_recovery_required),
             _lock: Rc::clone(&self.lock),
             lock_path: self.lock_path.clone(),
             lock_identity: self.lock_identity,
@@ -2611,6 +2640,7 @@ impl<E: ?Sized> PendingNonceAuthority<E> for SqlitePendingNonceAuthorityV0 {
 
 #[derive(Debug)]
 struct SqlitePendingNonceReservationV0 {
+    replay_floor_recovery_required: Rc<Cell<bool>>,
     // The Rc lock keeps the single-owner file lock held while a token is live,
     // even if the authority value itself is dropped by the caller.
     connection: Rc<RefCell<Connection>>,
@@ -2631,6 +2661,9 @@ struct SqlitePendingNonceReservationV0 {
 
 impl SqlitePendingNonceReservationV0 {
     fn ensure_identity(&self) -> Result<(), AdmissionReject> {
+        if self.replay_floor_recovery_required.get() {
+            return Err(AdmissionReject::InconsistentState);
+        }
         ensure_parent_handle_identity_v0(
             &self.path,
             &self.parent_path,
@@ -2765,6 +2798,7 @@ fn map_reject_v0(error: TxAdmissionWalErrorV0) -> AdmissionReject {
 
 include!("tx_admission_wal_tombstone_gc_v1.inc");
 include!("tx_admission_wal_native_replay_floor_v1.inc");
+include!("tx_admission_wal_replay_floor_store_v1.inc");
 
 #[cfg(test)]
 mod tests {
@@ -4723,6 +4757,15 @@ mod tests {
 
     #[test]
     fn native_replay_floor_purges_only_strictly_finalized_contiguous_prefix_v1() {
+        native_replay_floor_purge_scenario_v1(false);
+    }
+
+    #[test]
+    fn restored_native_replay_floor_prevents_readmission_after_tombstone_purge_v1() {
+        native_replay_floor_purge_scenario_v1(true);
+    }
+
+    fn native_replay_floor_purge_scenario_v1(restore_application: bool) {
         let application_temp = tempfile::tempdir().unwrap();
         let application_path = application_temp.path().join("native-replay-floor.sqlite");
         let config = native_fixture_config();
@@ -4809,6 +4852,95 @@ mod tests {
             )
             .unwrap();
 
+        // Exercise the actual public native catch-up owner as a producer of
+        // the pre-existing Node WAL readback and replay-floor consumers.
+        // The test-only QC keys prove this composition, not live consensus.
+        let application = if restore_application {
+            use trnm_consensus_crypto::{
+                decode_verify_finality_proof_strict_v0, FinalityExpectationV0,
+                POCO_THREE_CHAIN_PROOF_CLASS_V0,
+            };
+            use trnm_consensus_types::{ApplicationPayloadV0, Cev0AdmissionBudgetV0};
+            use trnm_native_execution_v0::{
+                NativeCatchupLimitsV1, NativeFinalizedCatchupV1, NativeSnapshotReadLimitsV1,
+            };
+            let bytes = proof.try_cev0_bytes().unwrap();
+            let target_header = proof.finalized_block().header();
+            let target = decode_verify_finality_proof_strict_v0(
+                POCO_THREE_CHAIN_PROOF_CLASS_V0,
+                &bytes,
+                &set,
+                &parameters,
+                FinalityExpectationV0 {
+                    block_id: target_header.id(),
+                    height: target_header.height(),
+                    state_root: target_header.state_root(),
+                    receipts_root: target_header.receipts_root(),
+                    evidence_root: target_header.evidence_root(),
+                    parent_id: target_header.parent_id(),
+                    parent_height: Height::new(0),
+                    parent_timestamp_ms,
+                },
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+            let export = application
+                .begin_finalized_snapshot_export_v1(
+                    POCO_THREE_CHAIN_PROOF_CLASS_V0,
+                    &bytes,
+                    trnm_native_application::HeightV0::new(1),
+                    parent_timestamp_ms,
+                    1024,
+                    &mut Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+            let pin = application
+                .pin_finalized_snapshot_export_v1(export, 64 * 1024 * 1024)
+                .unwrap();
+            let replica = DurableNativeApplicationV0::open(
+                application_temp.path().join("restored-native.sqlite"),
+                native_fixture_config(),
+            )
+            .unwrap();
+            replica
+                .initialize(native_fixture_genesis_request(replica.config_v0()))
+                .unwrap();
+            let mut catchup = NativeFinalizedCatchupV1::recover(
+                replica,
+                target,
+                parent_timestamp_ms,
+                None,
+                NativeCatchupLimitsV1::new(4, 16 * 1024 * 1024, 64).unwrap(),
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+            catchup
+                .apply(
+                    target_header,
+                    &ApplicationPayloadV0::new(execution.transactions().to_vec())
+                        .unwrap()
+                        .try_cev0_bytes()
+                        .unwrap(),
+                    &bytes,
+                    &mut Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+            let replica = catchup
+                .finish_with_snapshot(
+                    pin.manifest(),
+                    (0..pin.manifest().chunks().len())
+                        .map(|i| Ok(pin.chunk(i as u32).unwrap().to_vec())),
+                    NativeSnapshotReadLimitsV1::new(64 * 1024 * 1024, 100_000, 1024 * 1024)
+                        .unwrap(),
+                )
+                .unwrap()
+                .into_application();
+            drop(application);
+            replica
+        } else {
+            application
+        };
+
         let signer_id = CanonicalSignerId::from_bytes([0xD6; 32]).unwrap();
         let wal_path = temp_path();
         let mut boundary =
@@ -4881,6 +5013,28 @@ mod tests {
         assert_eq!(purged.purged(), 1);
         assert_eq!(purged.retained_tombstones(), 0);
         drop(boundary);
+        if restore_application {
+            let mut reopened =
+                NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                    &wal_path,
+                    [0xD7; 32],
+                    2,
+                    0,
+                    NativeFixtureSignerResolver { signer: signer_id },
+                )
+                .unwrap();
+            assert_eq!(
+                reopened.check_tx_candidate_with_resolver(
+                    &transaction,
+                    IngressClass::Normal,
+                    "trnm-devnet",
+                    timestamp_ms,
+                ),
+                TypedAdmitOutcome::Rejected(AdmissionReject::Replay),
+                "purge must retain its authenticated nonce floor across WAL restart",
+            );
+            drop(reopened);
+        }
         drop(application);
         cleanup(&wal_path);
     }

@@ -41,6 +41,13 @@ use trnm_state_sync_v0::{
     SnapshotManifestV0, StagingIdentityV0,
 };
 
+mod snapshot_integrity_v1;
+use snapshot_integrity_v1::{
+    create_snapshot_directory_v1, create_snapshot_file_v1, encode_manifest_v1,
+    open_snapshot_lock_v1, read_bounded_v1, read_manifest_v1, validate_directory_v1,
+    verify_generation_v1, SnapshotNamespaceV1,
+};
+
 pub const DURABLE_FILE_ADAPTER_VERSION_V0: u16 = 0;
 const AUTHORITY_MAGIC_V0: &[u8; 8] = b"TRNMAU00";
 const AUTHORITY_RECORD_BYTES_V0: usize = 289;
@@ -787,6 +794,9 @@ impl CurrentPointerV0 {
 
 #[derive(Clone, Debug)]
 struct ActiveStagingV0 {
+    manifest: SnapshotManifestV0,
+    written_chunks: std::collections::BTreeMap<u32, u64>,
+    written_bytes: u64,
     identity: StagingIdentityV0,
     path: PathBuf,
     chunk_count: u32,
@@ -799,10 +809,14 @@ struct ActiveStagingV0 {
 
 pub struct AtomicSnapshotFileTargetV0 {
     root: PathBuf,
+    namespace: SnapshotNamespaceV1,
+    poisoned: bool,
     _lock_file: File,
     current: CurrentPointerV0,
     active: Option<ActiveStagingV0>,
     post_commit_directory_sync_degraded: bool,
+    #[cfg(test)]
+    fault: Option<snapshot_recovery_tests::SnapshotFaultV1>,
 }
 
 impl AtomicSnapshotFileTargetV0 {
@@ -813,45 +827,162 @@ impl AtomicSnapshotFileTargetV0 {
         initial_generation: u64,
     ) -> Result<Self, DurableFileErrorV0> {
         let root = root.as_ref().to_path_buf();
-        fs::create_dir_all(&root)?;
-        fs::create_dir_all(root.join("staging"))?;
-        fs::create_dir_all(root.join("generations"))?;
-        let lock_file = acquire_exclusive_lock(&root.join("snapshot.lock.v0"))?;
-        let pointer_path = root.join("CURRENT.v0");
-        let current = if pointer_path.exists() {
-            let bytes = fs::read(&pointer_path)?;
-            CurrentPointerV0::decode(&bytes)?
-        } else {
+        if !root.is_absolute() {
+            return Err(DurableFileErrorV0::RecoveryRequired(root));
+        }
+        if !root.try_exists()? {
             if initial_state_root == SyncDigestV0([0; 32])
                 || initial_height == 0
                 || initial_generation == 0
             {
                 return Err(DurableFileErrorV0::InvalidSnapshotManifest);
             }
-            let pointer = CurrentPointerV0::new(
-                initial_generation,
-                initial_height,
-                initial_state_root,
-                SyncDigestV0([0; 32]),
-            );
-            let temporary = root.join(format!(".CURRENT.v0.init-{initial_generation}"));
-            let mut file = OpenOptions::new()
-                .create_new(true)
-                .write(true)
-                .open(&temporary)?;
-            file.write_all(&pointer.encode())?;
-            file.sync_all()?;
-            fs::rename(&temporary, &pointer_path)?;
-            sync_directory(&root)?;
-            pointer
+            let parent = root
+                .parent()
+                .ok_or_else(|| DurableFileErrorV0::RecoveryRequired(root.clone()))?;
+            if fs::canonicalize(parent)? != parent {
+                return Err(DurableFileErrorV0::RecoveryRequired(root));
+            }
+            create_snapshot_directory_v1(&root)?;
+            sync_directory(parent)?;
+        }
+        if fs::canonicalize(&root)? != root {
+            return Err(DurableFileErrorV0::RecoveryRequired(root));
+        }
+        validate_directory_v1(&root)?;
+        let initialize = fs::read_dir(&root)?.next().is_none();
+        let pointer_path = root.join("CURRENT.v0");
+        if initialize {
+            if initial_state_root == SyncDigestV0([0; 32])
+                || initial_height == 0
+                || initial_generation == 0
+            {
+                return Err(DurableFileErrorV0::InvalidSnapshotManifest);
+            }
+        } else {
+            // Existing and partial stores never regain fresh-create authority.
+            // Check all required entries before creating or repairing anything.
+            for name in ["CURRENT.v0", "snapshot.lock.v0", "staging", "generations"] {
+                if fs::symlink_metadata(root.join(name)).is_err() {
+                    return Err(DurableFileErrorV0::RecoveryRequired(root.join(name)));
+                }
+            }
+        }
+        // Acquire the sole owner before creating subordinate namespaces. A
+        // replaced lock or directory is detected again at every operation.
+        let lock_file = open_snapshot_lock_v1(&root.join("snapshot.lock.v0"))?;
+        for name in ["staging", "generations"] {
+            let path = root.join(name);
+            if initialize {
+                create_snapshot_directory_v1(&path)?;
+            }
+            validate_directory_v1(&path)?;
+        }
+        let namespace = SnapshotNamespaceV1::pin(&root, &lock_file)?;
+        let current = match read_bounded_v1(&pointer_path, POINTER_BYTES_V0) {
+            Ok(bytes) => CurrentPointerV0::decode(&bytes)?,
+            Err(DurableFileErrorV0::Io(error)) if error.kind() == io::ErrorKind::NotFound => {
+                if !initialize {
+                    return Err(DurableFileErrorV0::RecoveryRequired(pointer_path));
+                }
+                // Missing CURRENT is not permission to reset an existing store.
+                // Retain all partial initialization and generation evidence.
+                for entry in fs::read_dir(&root)? {
+                    let path = entry?.path();
+                    let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
+                        return Err(DurableFileErrorV0::RecoveryRequired(path));
+                    };
+                    if !matches!(name, "staging" | "generations" | "snapshot.lock.v0") {
+                        return Err(DurableFileErrorV0::RecoveryRequired(path));
+                    }
+                }
+                for name in ["staging", "generations"] {
+                    if let Some(entry) = fs::read_dir(root.join(name))?.next() {
+                        return Err(DurableFileErrorV0::RecoveryRequired(entry?.path()));
+                    }
+                }
+                if initial_state_root == SyncDigestV0([0; 32])
+                    || initial_height == 0
+                    || initial_generation == 0
+                {
+                    return Err(DurableFileErrorV0::InvalidSnapshotManifest);
+                }
+                let pointer = CurrentPointerV0::new(
+                    initial_generation,
+                    initial_height,
+                    initial_state_root,
+                    SyncDigestV0([0; 32]),
+                );
+                let temporary = root.join(format!(".CURRENT.v0.init-{initial_generation}"));
+                let mut file = create_snapshot_file_v1(&temporary)?;
+                file.write_all(&pointer.encode())?;
+                file.sync_all()?;
+                fs::rename(&temporary, &pointer_path)?;
+                sync_directory(&root)?;
+                pointer
+            }
+            Err(error) => return Err(error),
         };
-        Ok(Self {
+        let mut target = Self {
             root,
+            namespace,
+            poisoned: false,
             _lock_file: lock_file,
             current,
             active: None,
             post_commit_directory_sync_degraded: false,
-        })
+            #[cfg(test)]
+            fault: None,
+        };
+        // A checksum-valid CURRENT alone is not a validated snapshot. Read the
+        // selected generation only, not every historical generation.
+        target.verify_current_snapshot_v1()?;
+        sync_directory(&target.root)?;
+        Ok(target)
+    }
+
+    fn ensure_owner_v1(&mut self) -> Result<(), DurableFileErrorV0> {
+        if self.poisoned {
+            return Err(DurableFileErrorV0::Poisoned);
+        }
+        let result = (|| {
+            self.namespace.check(&self.root, &self._lock_file)?;
+            let bytes = read_bounded_v1(&self.root.join("CURRENT.v0"), POINTER_BYTES_V0)?;
+            if CurrentPointerV0::decode(&bytes)? != self.current {
+                return Err(DurableFileErrorV0::CurrentRootCasMismatch);
+            }
+            Ok(())
+        })();
+        if result.is_err() {
+            self.poisoned = true;
+        }
+        result
+    }
+
+    /// Fresh, bounded readback of the selected snapshot. This checks storage
+    /// consistency; a caller still needs an independently trusted checkpoint.
+    /// The plain current_* getters remain local observations, not fresh proofs.
+    pub fn verify_current_snapshot_v1(&mut self) -> Result<(), DurableFileErrorV0> {
+        self.ensure_owner_v1()?;
+        let result = (|| {
+            if self.current.manifest_digest != SyncDigestV0([0; 32]) {
+                let path = self.generation_path(self.current.generation);
+                let manifest = read_manifest_v1(&path)?;
+                if manifest.manifest_digest != self.current.manifest_digest
+                    || manifest.state_root != self.current.state_root
+                    || manifest.height != self.current.height
+                {
+                    return Err(DurableFileErrorV0::InvalidSnapshotManifest);
+                }
+                verify_generation_v1(&path, &manifest)?;
+            }
+            self.ensure_owner_v1()?;
+            Ok(())
+        })();
+        if result.is_err() {
+            self.poisoned = true;
+        }
+        result
     }
 
     #[must_use]
@@ -875,37 +1006,106 @@ impl AtomicSnapshotFileTargetV0 {
     }
 
     pub fn recover_unreferenced_generations(&mut self) -> Result<(), DurableFileErrorV0> {
+        self.ensure_owner_v1()?;
         if self.active.is_some() {
             return Err(DurableFileErrorV0::ActiveStagingExists);
         }
-        let staging_root = self.root.join("staging");
-        for entry in fs::read_dir(&staging_root)? {
-            let path = entry?.path();
-            if path.is_dir() {
-                fs::remove_dir_all(path)?;
-            } else {
+        self.verify_current_snapshot_v1()?;
+        let next = self.current.generation.checked_add(1);
+        let mut removable = Vec::new();
+        let mut orphan_manifest: Option<SnapshotManifestV0> = None;
+        // This is a bounded local orphan cleanup, not history compaction or an
+        // independent anti-rollback proof. Validate the entire deletion set
+        // before touching any entry. Unknown evidence is never recursively erased.
+        for (name, staging) in [("staging", true), ("generations", false)] {
+            let directory = self.root.join(name);
+            for (count, entry) in fs::read_dir(&directory)?.enumerate() {
+                let path = entry?.path();
+                if count >= 1024 {
+                    return Err(DurableFileErrorV0::RecoveryRequired(directory));
+                }
+                validate_directory_v1(&path)?;
+                let Some(raw) = path.file_name().and_then(|name| name.to_str()) else {
+                    return Err(DurableFileErrorV0::RecoveryRequired(path));
+                };
+                let generation = raw
+                    .strip_prefix("generation-")
+                    .and_then(|value| value.parse::<u64>().ok())
+                    .filter(|value| *value != 0 && raw == format!("generation-{value}"))
+                    .ok_or_else(|| DurableFileErrorV0::RecoveryRequired(path.clone()))?;
+                if !staging && generation <= self.current.generation {
+                    continue;
+                }
+                if Some(generation) != next {
+                    return Err(DurableFileErrorV0::RecoveryRequired(path));
+                }
+                let manifest = read_manifest_v1(&path)?;
+                if manifest.height <= self.current.height {
+                    return Err(DurableFileErrorV0::RecoveryRequired(path));
+                }
+                snapshot_integrity_v1::validate_staging_inventory_v1(&path, &manifest)?;
+                if orphan_manifest
+                    .as_ref()
+                    .is_some_and(|value| *value != manifest)
+                {
+                    return Err(DurableFileErrorV0::RecoveryRequired(path));
+                }
+                orphan_manifest = Some(manifest);
+                removable.push(path);
+            }
+        }
+        let temporary_pointer = match (next, orphan_manifest) {
+            (Some(generation), Some(manifest)) => {
+                self.unpublished_pointer_v1(generation, &manifest)?
+            }
+            _ => None,
+        };
+        self.ensure_owner_v1()?;
+        let result = (|| {
+            if let Some(path) = temporary_pointer {
                 fs::remove_file(path)?;
+                sync_directory(&self.root)?;
             }
-        }
-        let generations_root = self.root.join("generations");
-        for entry in fs::read_dir(&generations_root)? {
-            let path = entry?.path();
-            let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
-                return Err(DurableFileErrorV0::RecoveryRequired(path));
-            };
-            let Some(raw_generation) = name.strip_prefix("generation-") else {
-                return Err(DurableFileErrorV0::RecoveryRequired(path));
-            };
-            let generation = raw_generation
-                .parse::<u64>()
-                .map_err(|_| DurableFileErrorV0::RecoveryRequired(path.clone()))?;
-            if generation > self.current.generation {
+            for path in removable {
                 fs::remove_dir_all(path)?;
             }
+            sync_directory(&self.root.join("staging"))?;
+            sync_directory(&self.root.join("generations"))?;
+            self.namespace.check(&self.root, &self._lock_file)?;
+            Ok(())
+        })();
+        if result.is_err() {
+            self.poisoned = true;
         }
-        sync_directory(&staging_root)?;
-        sync_directory(&generations_root)?;
-        Ok(())
+        result
+    }
+
+    fn unpublished_pointer_v1(
+        &self,
+        generation: u64,
+        manifest: &SnapshotManifestV0,
+    ) -> Result<Option<PathBuf>, DurableFileErrorV0> {
+        let path = self
+            .root
+            .join(format!(".CURRENT.v0.generation-{generation}"));
+        match read_bounded_v1(&path, POINTER_BYTES_V0) {
+            Ok(bytes)
+                if CurrentPointerV0::decode(&bytes)?
+                    == CurrentPointerV0::new(
+                        generation,
+                        manifest.height,
+                        manifest.state_root,
+                        manifest.manifest_digest,
+                    ) =>
+            {
+                Ok(Some(path))
+            }
+            Ok(_) => Err(DurableFileErrorV0::RecoveryRequired(path)),
+            Err(DurableFileErrorV0::Io(error)) if error.kind() == io::ErrorKind::NotFound => {
+                Ok(None)
+            }
+            Err(error) => Err(error),
+        }
     }
 
     fn generation_path(&self, generation: u64) -> PathBuf {
@@ -929,16 +1129,8 @@ impl AtomicSnapshotFileTargetV0 {
         manifest: &SnapshotManifestV0,
     ) -> Result<(), DurableFileErrorV0> {
         let path = directory.join("MANIFEST.v0");
-        let mut bytes = Vec::with_capacity(128);
-        bytes.extend_from_slice(b"TRNMSM00");
-        bytes.extend_from_slice(&manifest.manifest_digest.0);
-        bytes.extend_from_slice(&manifest.state_root.0);
-        bytes.extend_from_slice(&manifest.height.to_be_bytes());
-        bytes.extend_from_slice(&manifest.chunk_count.to_be_bytes());
-        bytes.extend_from_slice(&manifest.total_bytes.to_be_bytes());
-        let checksum = SyncDigestV0::hash(b"trnm.snapshot-staging-manifest.v0", &[&bytes]);
-        bytes.extend_from_slice(&checksum.0);
-        let mut file = OpenOptions::new().create_new(true).write(true).open(path)?;
+        let bytes = encode_manifest_v1(manifest)?;
+        let mut file = create_snapshot_file_v1(&path)?;
         file.write_all(&bytes)?;
         file.sync_all()?;
         sync_directory(directory)?;
@@ -953,6 +1145,10 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
         &mut self,
         manifest: &SnapshotManifestV0,
     ) -> Result<StagingIdentityV0, Self::Error> {
+        self.ensure_owner_v1()?;
+        manifest
+            .validate_shape()
+            .map_err(|_| DurableFileErrorV0::InvalidSnapshotManifest)?;
         if self.active.is_some() {
             return Err(DurableFileErrorV0::ActiveStagingExists);
         }
@@ -990,9 +1186,14 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
                 generation_path
             }));
         }
-        fs::create_dir(&path)?;
+        create_snapshot_directory_v1(&path)?;
         Self::write_manifest_record(&path, manifest)?;
+        sync_directory(&self.root.join("staging"))?;
+        self.namespace.check(&self.root, &self._lock_file)?;
         self.active = Some(ActiveStagingV0 {
+            manifest: manifest.clone(),
+            written_chunks: std::collections::BTreeMap::new(),
+            written_bytes: 0,
             identity,
             path,
             chunk_count: manifest.chunk_count,
@@ -1011,6 +1212,7 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
         index: u32,
         bytes: &[u8],
     ) -> Result<(), Self::Error> {
+        self.ensure_owner_v1()?;
         let active = self
             .active
             .as_ref()
@@ -1022,24 +1224,58 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
         {
             return Err(DurableFileErrorV0::ChunkOutOfBounds);
         }
-        let destination = active.path.join(format!("chunk-{index:08}.bin"));
-        if destination.exists() {
-            return if fs::read(&destination)? == bytes {
-                Ok(())
-            } else {
-                Err(DurableFileErrorV0::ChunkSubstitution)
+        let path = active.path.clone();
+        let destination = path.join(format!("chunk-{index:08}.bin"));
+        let already_written = active.written_chunks.contains_key(&index);
+        if already_written {
+            let stored = match read_bounded_v1(&destination, active.maximum_chunk_bytes as usize) {
+                Ok(stored) => stored,
+                Err(error) => {
+                    self.poisoned = true;
+                    return Err(error);
+                }
             };
+            if stored != bytes {
+                return Err(DurableFileErrorV0::ChunkSubstitution);
+            }
+            self.ensure_owner_v1()?;
+            return Ok(());
         }
-        let temporary = active.path.join(format!(".chunk-{index:08}.tmp"));
-        let mut file = OpenOptions::new()
-            .create_new(true)
-            .write(true)
-            .open(&temporary)?;
-        file.write_all(bytes)?;
-        file.sync_all()?;
-        fs::rename(&temporary, &destination)?;
-        sync_directory(&active.path)?;
-        Ok(())
+        let next_bytes = active
+            .written_bytes
+            .checked_add(bytes.len() as u64)
+            .ok_or(DurableFileErrorV0::SequenceOverflow)?;
+        if next_bytes > active.total_bytes {
+            return Err(DurableFileErrorV0::SnapshotByteCountMismatch);
+        }
+        // A file not created by this live owner is not an acknowledged chunk.
+        if destination.try_exists()? {
+            return Err(DurableFileErrorV0::RecoveryRequired(destination));
+        }
+        let result = (|| {
+            validate_directory_v1(&path)?;
+            let temporary = path.join(format!(".chunk-{index:08}.tmp"));
+            let mut file = create_snapshot_file_v1(&temporary)?;
+            file.write_all(bytes)?;
+            file.sync_all()?;
+            if read_bounded_v1(&temporary, bytes.len())? != bytes {
+                return Err(DurableFileErrorV0::ChunkSubstitution);
+            }
+            fs::rename(&temporary, &destination)?;
+            sync_directory(&path)?;
+            if read_bounded_v1(&destination, bytes.len())? != bytes {
+                return Err(DurableFileErrorV0::ChunkSubstitution);
+            }
+            self.namespace.check(&self.root, &self._lock_file)?;
+            Ok(())
+        })();
+        if result.is_err() {
+            self.poisoned = true;
+        } else if let Some(active) = self.active.as_mut() {
+            active.written_chunks.insert(index, bytes.len() as u64);
+            active.written_bytes = next_bytes;
+        }
+        result
     }
 
     fn commit_staging_cas(
@@ -1048,6 +1284,10 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
         expected_current_root: SyncDigestV0,
         manifest: &SnapshotManifestV0,
     ) -> Result<InstallReceiptV0, Self::Error> {
+        self.ensure_owner_v1()?;
+        manifest
+            .validate_shape()
+            .map_err(|_| DurableFileErrorV0::InvalidSnapshotManifest)?;
         let active = self
             .active
             .as_ref()
@@ -1057,80 +1297,23 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
         if self.current.state_root != expected_current_root {
             return Err(DurableFileErrorV0::CurrentRootCasMismatch);
         }
-        if active.manifest_digest != manifest.manifest_digest
-            || active.state_root != manifest.state_root
-            || active.height != manifest.height
-            || active.chunk_count != manifest.chunk_count
-            || active.total_bytes != manifest.total_bytes
-        {
+        if active.manifest != *manifest {
             return Err(DurableFileErrorV0::InvalidSnapshotManifest);
         }
-
-        // Fail closed on every staging namespace entry before the pointer
-        // linearization point. Only the exact manifest plus the canonical,
-        // contiguous chunk names declared by this staging owner are admissible.
-        let mut manifest_seen = false;
-        let mut chunk_entries = 0_u32;
-        for entry in fs::read_dir(&active.path)? {
-            let entry = entry?;
-            let path = entry.path();
-            if !entry.file_type()?.is_file() {
-                return Err(DurableFileErrorV0::RecoveryRequired(path));
-            }
-            let Some(name) = path.file_name().and_then(|name| name.to_str()) else {
-                return Err(DurableFileErrorV0::RecoveryRequired(path));
-            };
-            if name == "MANIFEST.v0" {
-                manifest_seen = true;
-                continue;
-            }
-            let Some(raw_index) = name
-                .strip_prefix("chunk-")
-                .and_then(|name| name.strip_suffix(".bin"))
-            else {
-                return Err(DurableFileErrorV0::RecoveryRequired(path));
-            };
-            if raw_index.len() != 8 {
-                return Err(DurableFileErrorV0::RecoveryRequired(path));
-            }
-            let index = raw_index
-                .parse::<u32>()
-                .map_err(|_| DurableFileErrorV0::RecoveryRequired(path.clone()))?;
-            if index >= active.chunk_count || format!("{index:08}") != raw_index {
-                return Err(DurableFileErrorV0::RecoveryRequired(path));
-            }
-            chunk_entries = chunk_entries
-                .checked_add(1)
-                .ok_or(DurableFileErrorV0::SequenceOverflow)?;
-        }
-        if !manifest_seen || chunk_entries != active.chunk_count {
-            return Err(DurableFileErrorV0::RecoveryRequired(active.path.clone()));
-        }
-
-        let mut total_bytes = 0_u64;
-        for index in 0..active.chunk_count {
-            let path = active.path.join(format!("chunk-{index:08}.bin"));
-            let metadata = fs::metadata(path).map_err(|error| {
-                if error.kind() == io::ErrorKind::NotFound {
-                    DurableFileErrorV0::IncompleteSnapshot
-                } else {
-                    DurableFileErrorV0::Io(error)
-                }
-            })?;
-            total_bytes = total_bytes
-                .checked_add(metadata.len())
-                .ok_or(DurableFileErrorV0::SequenceOverflow)?;
-        }
-        if total_bytes != active.total_bytes {
-            return Err(DurableFileErrorV0::SnapshotByteCountMismatch);
-        }
+        verify_generation_v1(&active.path, manifest)?;
         sync_directory(&active.path)?;
         let generation_path = self.generation_path(active.identity.generation);
         if generation_path.exists() {
             return Err(DurableFileErrorV0::RecoveryRequired(generation_path));
         }
         fs::rename(&active.path, &generation_path)?;
+        sync_directory(&self.root.join("staging"))?;
         sync_directory(&self.root.join("generations"))?;
+        #[cfg(test)]
+        self.at_snapshot_fault_v1(snapshot_recovery_tests::SnapshotPointV1::GenerationPublished)?;
+        // Renaming a directory does not prove the contents stayed unchanged.
+        verify_generation_v1(&generation_path, manifest)?;
+        self.ensure_owner_v1()?;
 
         let next = CurrentPointerV0::new(
             active.identity.generation,
@@ -1142,25 +1325,55 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
             ".CURRENT.v0.generation-{}",
             active.identity.generation
         ));
-        let mut pointer_file = OpenOptions::new()
-            .create_new(true)
-            .write(true)
-            .open(&temporary_pointer)?;
+        let mut pointer_file = create_snapshot_file_v1(&temporary_pointer)?;
         pointer_file.write_all(&next.encode())?;
         pointer_file.sync_all()?;
-        fs::rename(&temporary_pointer, self.root.join("CURRENT.v0"))?;
-
-        // The pointer rename is the linearization point. No error is returned
-        // after it, because the caller must never destructively abort a
-        // generation that may already be serving. A directory-sync failure is
-        // retained as a degraded health signal for operator quarantine and
-        // external power-loss qualification.
-        if sync_directory(&self.root).is_err() {
+        #[cfg(test)]
+        self.at_snapshot_fault_v1(snapshot_recovery_tests::SnapshotPointV1::BeforePointerRename)?;
+        self.ensure_owner_v1()?;
+        self.poisoned = true;
+        if let Err(error) = fs::rename(&temporary_pointer, self.root.join("CURRENT.v0")) {
             self.post_commit_directory_sync_degraded = true;
+            return Err(error.into());
         }
+
+        // No post-linearization error may be reported as a durable success or
+        // permit abort to erase the selected generation. Reopen must establish
+        // the exact source or target after an uncertain filesystem response.
         let previous_root = self.current.state_root;
         self.current = next;
         self.active = None;
+        self.poisoned = true;
+        let confirmed = (|| {
+            #[cfg(test)]
+            self.at_snapshot_fault_v1(snapshot_recovery_tests::SnapshotPointV1::PointerPublished)?;
+            sync_directory(&self.root)?;
+            #[cfg(test)]
+            self.at_snapshot_fault_v1(snapshot_recovery_tests::SnapshotPointV1::PointerSynced)?;
+            self.namespace.check(&self.root, &self._lock_file)?;
+            if CurrentPointerV0::decode(&read_bounded_v1(
+                &self.root.join("CURRENT.v0"),
+                POINTER_BYTES_V0,
+            )?)? != next
+            {
+                return Err(DurableFileErrorV0::CurrentRootCasMismatch);
+            }
+            verify_generation_v1(&generation_path, manifest)?;
+            self.namespace.check(&self.root, &self._lock_file)?;
+            if CurrentPointerV0::decode(&read_bounded_v1(
+                &self.root.join("CURRENT.v0"),
+                POINTER_BYTES_V0,
+            )?)? != next
+            {
+                return Err(DurableFileErrorV0::CurrentRootCasMismatch);
+            }
+            Ok(())
+        })();
+        if let Err(error) = confirmed {
+            self.post_commit_directory_sync_degraded = true;
+            return Err(error);
+        }
+        self.poisoned = false;
         let durable_receipt_digest = SyncDigestV0::hash(
             b"trnm.snapshot-install-receipt.v0",
             &[
@@ -1181,6 +1394,7 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
     }
 
     fn abort_staging(&mut self, staging: StagingIdentityV0) -> Result<(), Self::Error> {
+        self.ensure_owner_v1()?;
         // Authenticate the caller against a retained owner snapshot before
         // mutating or consuming the live staging handle.
         let active = self
@@ -1192,16 +1406,31 @@ impl NonDestructiveInstallTargetV0 for AtomicSnapshotFileTargetV0 {
         if active.identity.generation == self.current.generation {
             return Err(DurableFileErrorV0::StagingIdentityMismatch);
         }
-        if active.path.exists() {
-            fs::remove_dir_all(&active.path)?;
-        }
         let generation_path = self.generation_path(active.identity.generation);
-        if generation_path.exists() {
-            fs::remove_dir_all(generation_path)?;
+        let mut removable = Vec::new();
+        for path in [&active.path, &generation_path] {
+            if path.try_exists()? {
+                snapshot_integrity_v1::validate_staging_inventory_v1(path, &active.manifest)?;
+                removable.push(path);
+            }
+        }
+        let temporary_pointer =
+            self.unpublished_pointer_v1(active.identity.generation, &active.manifest)?;
+        self.ensure_owner_v1()?;
+        self.poisoned = true;
+        if let Some(path) = temporary_pointer {
+            fs::remove_file(path)?;
+            sync_directory(&self.root)?;
+        }
+        for path in removable {
+            fs::remove_dir_all(path)?;
         }
         sync_directory(&self.root.join("staging"))?;
         sync_directory(&self.root.join("generations"))?;
+        self.namespace.check(&self.root, &self._lock_file)?;
         self.active = None;
+        self.poisoned = false;
+        self.ensure_owner_v1()?;
         Ok(())
     }
 }
@@ -1429,6 +1658,11 @@ mod tests {
             checkpoint_digest: sync_digest(5),
             manifest_digest: sync_digest(0),
         };
+        let binding = manifest.chunk_binding_digest();
+        manifest.chunk_root = trnm_state_sync_v0::chunk_merkle_root_v0(&[
+            trnm_state_sync_v0::SnapshotChunkV0::canonical_digest(binding, 0, b"a"),
+            trnm_state_sync_v0::SnapshotChunkV0::canonical_digest(binding, 1, b"b"),
+        ]);
         manifest.manifest_digest = manifest.canonical_digest();
         manifest
     }
@@ -1486,3 +1720,9 @@ mod tests {
         assert_eq!(target.current_state_root(), initial_root);
     }
 }
+
+#[cfg(test)]
+mod snapshot_recovery_tests;
+
+#[cfg(test)]
+mod streaming_snapshot_tests;

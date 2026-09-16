@@ -4,6 +4,12 @@ Status: **candidate documentation contract; no protocol freeze, activation or in
 
 The sole engineering plan remains `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`. This is a resolver for technical rules, not a roadmap. Machine activation authority remains `config/consensus-mainline.json`. Its false production/release flags are not changed by this contract.
 
+The default build and check profile is frozen to `bft-v0` by
+`config/protocol-profile-registry-v1.toml`. `pcc1` and `ai-v1` are explicit
+candidate profiles; `legacy-ledger-observation` is archived. None of these
+profiles may enter the default node closure, and a candidate command must name
+its profile/feature explicitly.
+
 ## 1. Resolve a rule before implementing it
 
 An implementation or review selects the tuple `(repository, source_commit, source_tree, protocol_version, contract_profile, parameter_commitment, feature_closure)`. A branch name, PR number, file modification date or successful ancestor check is not this tuple. Obtain commit/tree from the actual checkout; obtain active chain/profile/parameters from authenticated commissioning or activation material, never from the proof being verified.
@@ -25,7 +31,7 @@ The AI resource proposal inside PCC1 is a proposed application-profile extension
 
 ## 3. Integration lineage is not protocol authority
 
-The observed stack is `main <- #62 <- #85 <- #86`. PR #62 remains the sole Plan V2 integration successor into protected main. PR #85 is a bounded contract child of #62; PR #86 is its implementation continuation. This documentation change is a bounded child of #86, not another selected successor. The observed source for preparation is `1f5ebbb8dab62cfd4d56447480ad60992f61f0ba`.
+The historical stack was `main <- #62 <- #85 <- #86`, observed while preparing documentation at `1f5ebbb8dab62cfd4d56447480ad60992f61f0ba`. Those PR numbers and refs are provenance, not current integration prerequisites. Main's 2026-09-13 convergence is a new source-only baseline. The current machine observation and runtime Git identities control current source attribution; old source acceptance is never inferred from equivalent files or an administrator statement.
 
 The machine registry records PR/ref relationships as observations. Every review rereads the actual base, head and prospective-merge identities and verifies ancestry/content. It does not assume that a parent contains a child's changes. A branch rename, restack or new head requires a new observation and invalidates affected review evidence. This file does not close, supersede, merge or approve any PR.
 

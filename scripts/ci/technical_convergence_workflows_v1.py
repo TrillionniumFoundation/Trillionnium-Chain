@@ -179,6 +179,13 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
         require(not (root / relative).exists(), f"prohibited workflow present: {relative}")
 
     baseline = (root / BASELINE).read_text(encoding="utf-8")
+    # A scoped non-applicability decision is not a successful candidate test.
+    # Validate its complete wiring before permitting the one exact guard below.
+    from check_required_baseline_closure_v1 import BaselineClosureError, validate_scope_wiring
+    try:
+        validate_scope_wiring(baseline)
+    except BaselineClosureError as error:
+        require(False, f"invalid Rust applicability wiring: {error}")
     exact = named_step(baseline, "Validate repository, development, module, node, and blocker truth", require)
     merge = named_step(baseline, "Run separately bound prospective-merge regressions", require)
     mutants = named_step(baseline, "Run retained module-documentation false-pass mutants", require)
@@ -229,9 +236,12 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
         "x230_acceptance=false", "production_activation=false",
     ):
         require(token in candidate, f"hosted candidate execution safeguard missing: {token}")
-    require("continue-on-error" not in candidate and "|| true" not in candidate and not re.search(r"(?m)^\s+if:", candidate), "hosted candidate failure masking forbidden")
+    require("continue-on-error" not in candidate and "|| true" not in candidate, "hosted candidate failure masking forbidden")
+    require(re.findall(r"(?m)^        if: (.+)$", candidate) == [
+        "${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}"
+    ], "hosted candidate must use the source-bound applicability guard, never an arbitrary skip")
     retained = named_step(baseline, "Retain hosted candidate process commands and outcomes", require)
-    for token in ("if: always()", "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
+    for token in ("if: ${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}", "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
         require(token in retained, f"hosted candidate artifact retention missing: {token}")
 
     workflow_paths = sorted(path for path in (root / WORKFLOWS).iterdir() if path.is_file() and path.suffix in {".yml", ".yaml"})

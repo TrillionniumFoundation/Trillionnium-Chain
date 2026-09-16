@@ -1,6 +1,6 @@
 {
   "schema": "trnm-consensus-mainline-truth-v1",
-  "as_of": "2026-09-07",
+  "as_of": "2026-09-15",
   "consensus_mainline": "native-poco-bft",
   "protocol_target": "poco-bft-v0",
   "active_candidate_source": "derived-at-verification-time-from-git-head-and-tree",
@@ -311,5 +311,16 @@
     "generator": "scripts/ci/generate_release_status_v1.py",
     "committed_truth_may_not_claim_its_own_future_commit": true,
     "exact_source_required_for_evidence": true
-  }
+  },
+  "status_observed_at": "2026-09-15T12:34:26+08:00",
+  "status_source_commit": "a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8",
+  "status_source_tree": "e9f2f0d85a1d49758e6f3b180ab0c6a011219cf7",
+  "p0_acceptance_order": [
+    "real-4-then-7-node-multi-host-campaign",
+    "two-consecutive-authenticated-epoch-transitions",
+    "coordinate-binding-chain-epoch-height-view-block-parent-qc",
+    "device-backed-signer-and-monotonic-anti-rollback-anchor",
+    "finalized-replay-verified-business-goodput-with-p50-p95-p99-finality"
+  ],
+  "p0_acceptance_status": "candidate-only; all five checklist items require independent replayable evidence"
 }

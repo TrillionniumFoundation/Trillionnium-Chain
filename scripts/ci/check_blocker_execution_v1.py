@@ -10,6 +10,9 @@ import sys
 import tomllib
 from typing import Any
 
+sys.dont_write_bytecode = True
+from development_metadata_v1 import MetadataError, require_same_successor
+
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 
@@ -148,13 +151,15 @@ def main() -> int:
     snapshot_coverage = snapshot_implementation.get("module_coverage", {})
     members = cargo.get("workspace", {}).get("members")
     require(isinstance(members, list) and members, "Cargo workspace members missing")
-    require(
-        implementation.get("selected_successor")
-        == snapshot.get("selected_successor", {}).get("pull_request")
-        == release_train.get("source", {}).get("selected_successor_pull_request")
-        == 62,
-        "selected successor drift",
-    )
+    try:
+        require_same_successor(
+            implementation.get("selected_successor"),
+            snapshot.get("selected_successor", {}).get("pull_request"),
+            release_train.get("source", {}).get("selected_successor_pull_request"),
+            load_toml("docs/development/plan-manifest-v1.toml").get("selected_successor_pull_request"),
+        )
+    except MetadataError as error:
+        raise LedgerError(str(error)) from error
     require(
         implementation.get("workspace_crates")
         == snapshot_coverage.get("workspace_crates_uniquely_mapped")

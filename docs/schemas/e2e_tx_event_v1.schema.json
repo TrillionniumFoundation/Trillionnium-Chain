@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trillionnium.invalid/schemas/e2e_tx_event_v1.schema.json",
+  "title": "TRNM canonical end-to-end transaction telemetry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "tx_id", "workload", "execution_path", "submitted_at_utc", "finalized_at_utc", "finality_status", "replay_verified", "retry_count", "rollback"],
+  "properties": {
+    "schema": {"const": "trnm_e2e_tx_event_v1"},
+    "tx_id": {"type": "string", "minLength": 1},
+    "workload": {"enum": ["classic", "mixed", "hot-streak"]},
+    "execution_path": {"const": "canonical"},
+    "submitted_at_utc": {"type": "string", "format": "date-time"},
+    "finalized_at_utc": {"type": ["string", "null"], "format": "date-time"},
+    "finality_status": {"enum": ["pending", "finalized", "rejected"]},
+    "replay_verified": {"type": "boolean"},
+    "retry_count": {"type": "integer", "minimum": 0},
+    "rollback": {"type": "boolean"},
+    "segment_latency_ms": {
+      "type": "object",
+      "additionalProperties": {"type": "number", "minimum": 0}
+    }
+  }
+}

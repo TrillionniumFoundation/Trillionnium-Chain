@@ -13,6 +13,33 @@ being mistaken for a production validator.
 The machine companion is `config/candidate-runtime-closure-v1.toml`; the
 fail-closed validator is `scripts/ci/check_candidate_runtime_closure_v1.py`.
 
+## Smoke versus semantic acceptance
+
+`check_candidate_runtime_closure_v1.py` is a fast source-contract smoke gate.
+Its `required_tokens` and `forbidden_tokens` checks catch accidental feature
+wiring and promotion-flag drift only. A passing result does not establish
+control-flow, inter-process replay, crash recovery, consensus liveness, or
+security semantics; the report marks this scope as `lexical-smoke-only`.
+
+The single runtime execution entry point is
+`scripts/ci/check_runtime_semantic_gate_v1.py`. It has four required slots for
+P0.1--P0.4. Each slot must receive an exact runner command through its named
+`TRNM_SEMANTIC_*_COMMAND` environment variable and be invoked with `--run`.
+Report-only mode returns `NOT_RUN`; `--require` returns non-zero until every
+required command has actually executed successfully. No absent command or
+source token can be recorded as semantic evidence.
+
+Example (replace the command with the repository's exact integration test):
+
+```bash
+export TRNM_SEMANTIC_P01_COMMAND='cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-lab-validator --test candidate_devnet_cli -- --exact four_to_seven_restart_replay'
+python3 scripts/ci/check_runtime_semantic_gate_v1.py --run --require
+```
+
+The command slots intentionally remain unconfigured until the corresponding
+runtime path exists. This keeps the gate honest while giving P0 implementation
+one stable, machine-readable acceptance boundary.
+
 ## Repository-owned runtime chain
 
 The candidate-only devnet command requires an explicit non-production

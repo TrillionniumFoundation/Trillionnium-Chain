@@ -5,6 +5,11 @@
 //! is constructed by the default build. Explicit candidate adapters remain
 //! bounded, non-activating, and independently qualified before composition use.
 
+#[cfg(feature = "candidate-state-sync-tcp")]
+mod absolute_deadline_tcp_v1;
+#[cfg(feature = "candidate-state-sync-tcp")]
+pub use absolute_deadline_tcp_v1::AbsoluteDeadlineTcpStreamV1;
+
 #[cfg(feature = "candidate-authenticated-p2p")]
 mod authenticated_p2p;
 #[cfg(feature = "candidate-authenticated-p2p")]

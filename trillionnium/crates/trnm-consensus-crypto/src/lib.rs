@@ -15,9 +15,14 @@ use trnm_consensus_types::{
     Validator, ValidatorSet,
 };
 
+mod checkpoint_finality;
 mod epoch_transition;
 mod strict_finality;
 
+pub use checkpoint_finality::{
+    decode_verify_checkpoint_finality_strict_v0, StrictCheckpointFinalityErrorV0,
+    StrictCheckpointFinalityV0,
+};
 pub use epoch_transition::{
     recover_epoch_activation_authority_strict_v0, verify_first_epoch_proposal_header_strict_v0,
     verify_same_version_epoch_activation_authority_strict_v0,

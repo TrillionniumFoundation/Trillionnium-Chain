@@ -219,7 +219,7 @@ class Mutants(unittest.TestCase):
         self.reset()
         self.replace(checker.BASELINE_WORKFLOW, "run_candidate test timeout-signing cargo", "run_candidate clippy timeout-signing cargo")
         self.rejected()
-        for token in ("if: always()", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
+        for token in ("if: ${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
             self.reset(); self.step_remove("Retain hosted candidate process commands and outcomes", token); self.rejected()
 
 

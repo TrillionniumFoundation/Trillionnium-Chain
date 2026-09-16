@@ -1,6 +1,9 @@
 schema_version = 1
 train_id = "trnm-native-poco-release-train-v1-20260902"
-as_of = "2026-09-02"
+status_observed_at = "2026-09-15T12:34:26+08:00"
+status_source_commit = "a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8"
+status_source_tree = "e9f2f0d85a1d49758e6f3b180ab0c6a011219cf7"
+as_of = "2026-09-15"
 plan_id = "trnm-chain-development-plan-v2"
 canonical_destination = "refs/heads/main"
 storage_engine = "sqlite"
@@ -10,26 +13,26 @@ public_testnet_ready = false
 release_ready = false
 
 [source]
-selected_successor_pull_request = 62
-head_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
-assessed_baseline_commit = "af691ea5005e1f0262e90c4fc878ba0a70dbe7ea"
-assessed_baseline_tree = "af09e389b1a462b3839508b7ef305596c76384c6"
+# No selected successor PR; derive current PR identity from the event.
+head_ref = "refs/heads/main"
+assessed_baseline_commit = "435c0168558d75fc70aaa11980a179b9d5980f33"
+assessed_baseline_tree = "1e3db388234eff27b7214cc7879aef6853214709"
 base_ref = "refs/heads/main"
-base_commit_observed = "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9"
-status = "draft-integration-candidate"
+base_commit_observed = "435c0168558d75fc70aaa11980a179b9d5980f33"
+status = "post-convergence-source-only-not-accepted"
 qualification_scope = "current PR head and prospective merge are derived at verification time; all required checks and independent acceptance remain mandatory"
 runtime_head_binding = "derived-at-verification-time-from-pr-head-and-tree"
 
 [succession]
 one_successor_per_integration_surface = true
 selected_surface = "canonical-plan-v2-native-poco-mainline"
-overlapping_pull_requests_to_supersede = [54, 57, 58, 59, 61]
+overlapping_pull_requests_to_supersede = []
 self_merge_allowed = false
 independent_acceptance_required = true
 administrator_bypass_is_acceptance = false
 
 [documentation]
-candidate_ref = "refs/heads/work/plan-v2-full-gap-closure-20260902"
+candidate_ref = "refs/heads/main"
 sole_plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 module_reference_path = "docs/modules/TRNM_MODULE_TECHNICAL_REFERENCE_V1.md"
 module_coverage_path = "config/module-coverage-v1.toml"
@@ -76,11 +79,11 @@ id = "INT-STACK-001"
 priority = "P0"
 status = "open"
 owner_modules = ["M15", "M17"]
-exit = "PR62 is the sole successor, overlaps are superseded, and non-skipped exact-head plus prospective-merge checks pass with independent acceptance"
+exit = "The actual source and any prospective merge are freshly qualified, historical evidence is not inherited, and non-skipped exact-head plus prospective-merge checks pass with independent acceptance"
 
 [[blockers]]
 id = "NODE-COMMIT-001"
-priority = "P1"
+priority = "P0"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M03", "M07", "M08"]
 blocker_classes = ["cross-store", "node", "recovery"]
@@ -88,7 +91,7 @@ exit = "one monotonic Node Commit Ledger proves exact source-or-target convergen
 
 [[blockers]]
 id = "EXEC-VERTICAL-001"
-priority = "P1"
+priority = "P0"
 status = "implementation-present-acceptance-pending"
 owner_modules = ["M02", "M06", "M07", "M08"]
 exit = "the real persistent execution and finality path preserves canonical roots, receipts, events and fees across 1, 2, 4 and 8 workers under faults"
@@ -109,21 +112,21 @@ exit = "static and Cargo-resolved node-prod-v0 excludes candidate, lab, fixture,
 
 [[blockers]]
 id = "CORE-LIVE-001"
-priority = "P1"
+priority = "P0"
 status = "open"
 owner_modules = ["M02", "M03", "M04"]
 exit = "persistent authenticated network, pacemaker, Vote/Timeout, epoch, catch-up and finality survive fault campaigns"
 
 [[blockers]]
 id = "TX-PROD-001"
-priority = "P2"
+priority = "P0"
 status = "open"
 owner_modules = ["M05", "M15"]
 exit = "production admission, authorization, WAL, sign/broadcast, finalized readback, tombstone and GC lifecycle closes"
 
 [[blockers]]
 id = "SYNC-PROD-001"
-priority = "P2"
+priority = "P0"
 status = "open"
 owner_modules = ["M07", "M13"]
 exit = "authenticated non-destructive state sync and arbitrary trust-path verification close"

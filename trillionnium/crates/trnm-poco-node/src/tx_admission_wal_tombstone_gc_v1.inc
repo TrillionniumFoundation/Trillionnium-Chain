@@ -555,6 +555,7 @@ impl SqlitePendingNonceAuthorityV0 {
         let transaction = connection
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(sqlite_error)?;
+        validate_replay_floor_successor_v1(&transaction, evidence)?;
         let floor_nonce = evidence.reject_nonce_through.to_be_bytes();
         let finalized_height = evidence.finalized_height.to_be_bytes();
         let candidates = {
@@ -585,6 +586,13 @@ impl SqlitePendingNonceAuthorityV0 {
             }
             candidates
         };
+        // Floor installation and every deletion are one WAL/FULL transaction.
+        // Once mutation begins, an error leaves this owner and its outstanding
+        // tokens fenced until a complete fresh reopen; no success is guessed.
+        self.replay_floor_recovery_required.set(true);
+        persist_replay_floor_v1(&transaction, floor)?;
+        #[cfg(test)]
+        replay_floor_test_cut_v1(&self.path, "after-floor")?;
         let mut purged = 0usize;
         for (nonce, digest) in candidates {
             let deleted = transaction
@@ -607,10 +615,25 @@ impl SqlitePendingNonceAuthorityV0 {
                 .checked_add(1)
                 .ok_or(TxAdmissionWalErrorV0::TooLarge)?;
         }
+        // One temporary floor row is allowed inside this atomic operation;
+        // the committed inventory cannot exceed the existing global cap.
+        if total_inventory_count_v0(&transaction)? > MAX_RESERVATION_ROWS_V0 {
+            return Err(TxAdmissionWalErrorV0::TooLarge);
+        }
+        #[cfg(test)]
+        replay_floor_test_cut_v1(&self.path, "after-delete")?;
         transaction.commit().map_err(sqlite_error)?;
+        #[cfg(test)]
+        replay_floor_test_cut_v1(&self.path, "after-commit")?;
+        if read_stored_replay_floor_v1(&connection, self.namespace, evidence.signer)?
+            != Some(*evidence)
+        {
+            return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+        }
+        let retained_tombstones = retained_tombstone_count_v1(&connection, self.namespace)?;
         drop(connection);
-        self.ensure_identity()?;
-        let retained_tombstones = self.retained_tombstones_v1()?;
+        self.ensure_endpoint_identity_v1()?;
+        self.replay_floor_recovery_required.set(false);
         Ok(TxAdmissionTombstoneGcResultV1 {
             compacted: 0,
             purged,
@@ -890,7 +913,7 @@ mod tombstone_gc_tests_v1 {
             .unwrap();
         assert_eq!(result.purged(), 2);
         assert_eq!(result.retained_tombstones(), 0);
-        assert_eq!(authority.retained_rows().unwrap(), 0);
+        assert_eq!(authority.retained_rows().unwrap(), 1);
         drop(authority);
         cleanup_v1(&path);
     }
