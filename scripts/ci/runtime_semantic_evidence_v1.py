@@ -222,7 +222,17 @@ def _verify_p04(artifacts: dict[str, pathlib.Path]) -> dict[str, Any]:
     require(_unsigned(counts.get("replay_verified_finalized"), "P0.4 replay_verified_finalized", minimum=1) >= 1, "P0.4 has no replay-verified finality")
     goodput = metrics.get("finalized_goodput_tps")
     require(isinstance(goodput, (int, float)) and not isinstance(goodput, bool) and goodput > 0, "P0.4 finalized goodput must be positive")
-    return {"event_count": event_count, "finalized_goodput_tps": goodput}
+
+    # Telemetry may describe a replay result, but it cannot authenticate its own
+    # finality or execution. Until this gate invokes a fixed repository verifier
+    # over source-bound transaction bytes, finalized proof bytes, committed
+    # application receipts/state roots and replay output, the measurement is
+    # diagnostic only. In particular, replay_verified=true is never semantic
+    # acceptance authority.
+    raise EvidenceError(
+        "P0.4 measurement is internally consistent but no fixed cryptographic "
+        "business-transaction replay verifier is wired yet; fail closed"
+    )
 
 
 def _verify_semantics(check_id: str, artifacts: dict[str, pathlib.Path]) -> dict[str, Any]:
