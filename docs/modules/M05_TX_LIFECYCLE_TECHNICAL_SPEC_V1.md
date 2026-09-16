@@ -587,3 +587,26 @@ parent-relative step, skew readiness, empty catch-up and drain rules. An exact
 retry returns its durable prior status even after expiry; recovery of an already
 executed body verifies its historical block time and must not re-admit it using
 a backdated clock.
+
+### Candidate parent-header proof and batched finality
+
+The ordinary public candidate proof response carries the exact canonical parent
+header beside the unchanged `NativeTxProofPackageV1`. An independent consumer
+pins its validator set, parameters and profile locally, decodes both headers,
+checks chain/genesis/epoch/set/parameter scope and consecutive heights, and
+requires the rehashed parent header ID to equal the target's signed `parent_id`.
+Only then may it derive the timestamp used by the strict three-chain verifier;
+a peer-supplied timestamp or `proof_verified` boolean is never authority. This
+route remains ordinary same-epoch only; epoch-first targets require the separate
+complete strict activation-evidence route. Native transaction hash remains
+distinct from M05 intent ID. Combined package plus parent bytes stay within the
+consumer's bounded proof budget.
+
+The actual consensus owner archives transaction proofs at each completed native
+finalization boundary. If one ingress batch or Core transition advances several
+heights, it traverses the exact signed ancestor path from the current finalized
+ID back to the last archived cut, reconstructs missing ordinary three-chains
+from the existing durable proposal/QC archive, and reads each historical native
+committed row against that proof. Missing ancestry, certificate or native row
+stops progress with recovery required; no skipped height is marked archived.
+Each proof is durable before the corresponding WAL handoff is committed.

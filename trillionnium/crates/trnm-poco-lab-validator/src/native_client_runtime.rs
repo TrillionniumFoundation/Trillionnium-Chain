@@ -230,7 +230,12 @@ impl NativeClientRuntimeV1 {
                 package.transaction == record.exact_outer_bytes(),
                 "native recovery proof body differs from WAL"
             );
-            let parent = stored.parent_timestamp_ms.parse::<u64>()?;
+            let parent = trnm_consensus_types::decode_block_header_v0_exact(&canonical_hex(
+                &stored.parent_header_hex,
+                16 * 1024,
+            )?)
+            .map_err(|e| anyhow!("stored native parent: {e}"))?
+            .timestamp_ms();
             let proof = trnm_consensus_types::decode_finality_proof_v0_exact(
                 &package.finality_proof,
                 validator_set,
@@ -626,6 +631,16 @@ impl NativeClientRuntimeV1 {
             Ok(value) => value,
             Err(_) => return Ok(None),
         };
+        // Cadence follows the committed parent time, so rotating leaders
+        // cannot multiply the configured block rate by validator count.
+        if ready_time
+            && timestamp
+                < parent
+                    .checked_add(self.profile.block_cadence_ms)
+                    .context("native cadence timestamp overflow")?
+        {
+            return Ok(None);
+        }
         while let Some(pending) = self.admission.pop_native_ready_v1()? {
             self.ready.push_back(pending)
         }
@@ -785,18 +800,45 @@ fn bounded_json_depth(bytes: &[u8], max: usize) -> bool {
 }
 
 impl NativeClientRuntimeV1 {
-    /// Capture each newly finalized ordinary tip while Core still retains its
-    /// proof, persist checked packages, then resolve corresponding WAL tokens.
+    pub const fn last_archived_finalized_height_v1(&self) -> u64 {
+        self.last_archived_finalized_height
+    }
+    /// Current-tip convenience adapter; the parent is hash-bound below.
     pub fn observe_finality_v1(
         &mut self,
         authority: &ContinuousValidatorAuthorityV0,
+        parent: &trnm_consensus_types::BlockHeader,
     ) -> Result<()> {
-        let facts = authority.facts_v0()?;
-        if facts.finalized_height_v0() <= self.last_archived_finalized_height {
+        if authority.facts_v0()?.finalized_height_v0() < 4 {
             return Ok(());
         }
         let query = authority.native_finalized_query_v1()?;
-        let executed = query.read_v0().executed_v0();
+        self.observe_finality_evidence_v1(authority, query.proof_v0().proof_v0(), parent)
+    }
+    /// Persist a strictly proved historical native row before resolving WAL.
+    pub fn observe_finality_evidence_v1(
+        &mut self,
+        authority: &ContinuousValidatorAuthorityV0,
+        proof: &trnm_consensus_types::FinalityProofV0,
+        parent: &trnm_consensus_types::BlockHeader,
+    ) -> Result<()> {
+        let header = proof.finalized_block().header();
+        if header.height().get() <= self.last_archived_finalized_height {
+            return Ok(());
+        }
+        ensure!(
+            parent.id() == header.parent_id()
+                && parent.height().get().checked_add(1) == Some(header.height().get())
+                && parent.chain_id() == self.set.chain_id()
+                && parent.genesis_hash() == self.set.genesis_hash()
+                && parent.epoch() == self.set.epoch()
+                && parent.validator_set_id() == self.set.id()
+                && parent.consensus_parameters_hash() == self.set.consensus_parameters_hash(),
+            "native parent header is not bound to finalized target scope"
+        );
+        let read =
+            authority.read_native_finalized_with_finality_v1(proof, parent.timestamp_ms())?;
+        let executed = read.executed_v0();
         let transactions = executed.request().transactions();
         ensure!(
             transactions.len() <= self.profile.maximum_batch_transactions,
@@ -845,8 +887,6 @@ impl NativeClientRuntimeV1 {
             );
             receipts.push(canonical);
         }
-        let proof = query.proof_v0();
-        let header = proof.proof_v0().finalized_block().header();
         for (index, transaction) in transactions.iter().enumerate() {
             let built =
                 trnm_application_tx_builder_v0::BuiltCanonicalTxV0::from_exact_outer_bytes_v0(
@@ -870,7 +910,6 @@ impl NativeClientRuntimeV1 {
                     .try_cev0_bytes()
                     .map_err(|e| anyhow!("target header: {e:?}"))?,
                 finality_proof: proof
-                    .proof_v0()
                     .try_cev0_bytes()
                     .map_err(|e| anyhow!("finality bytes: {e:?}"))?,
                 transaction: transaction.clone(),
@@ -882,10 +921,14 @@ impl NativeClientRuntimeV1 {
             };
             let encoded = package.encode()?;
             let stored = StoredProofV1 {
-                schema: "trnm.native-stored-proof.v1".to_owned(),
+                schema: "trnm.native-stored-proof.v2".to_owned(),
                 profile_sha256: hex::encode(self.profile.digest_v1()?),
                 native_tx_hash: hex::encode(hash),
-                parent_timestamp_ms: proof.authenticated_parent_timestamp_ms_v0().to_string(),
+                parent_header_hex: hex::encode(
+                    parent
+                        .try_cev0_bytes()
+                        .map_err(|e| anyhow!("native parent encode: {e}"))?,
+                ),
                 package_hex: hex::encode(encoded),
             };
             self.proof_reader_v1()
@@ -901,13 +944,15 @@ impl NativeClientRuntimeV1 {
                 return Err(anyhow!("test cut after durable proof before WAL commit"));
             }
             if let Some(mut admission) = self.in_flight.remove(&hash) {
-                authority.commit_native_admission_at_finalized_tip_v1(
+                authority.commit_native_admission_with_finality_v1(
                     &mut self.admission,
                     &mut admission,
+                    proof,
+                    parent.timestamp_ms(),
                 )?;
             }
         }
-        self.last_archived_finalized_height = facts.finalized_height_v0();
+        self.last_archived_finalized_height = header.height().get();
         Ok(())
     }
     fn proof_reader_v1(&self) -> NativeProofReaderV1 {
@@ -937,7 +982,7 @@ impl NativeProofReaderV1 {
     }
     fn verify_stored_proof_v1(&self, stored: &StoredProofV1, hash: [u8; 32]) -> Result<Vec<u8>> {
         ensure!(
-            stored.schema == "trnm.native-stored-proof.v1"
+            stored.schema == "trnm.native-stored-proof.v2"
                 && stored.profile_sha256 == hex::encode(self.profile.digest_v1()?)
                 && stored.native_tx_hash == hex::encode(hash),
             "stored proof context mismatch"
@@ -946,40 +991,14 @@ impl NativeProofReaderV1 {
             &stored.package_hex,
             trnm_tx_lifecycle_v0::MAX_NATIVE_TX_PROOF_BYTES_V1,
         )?;
-        let package = trnm_tx_lifecycle_v0::NativeTxProofPackageV1::decode_exact(
-            &encoded,
-            trnm_tx_lifecycle_v0::MAX_NATIVE_TX_PROOF_BYTES_V1,
-        )?;
-        let header = trnm_consensus_types::decode_block_header_v0_exact(&package.target_header)
-            .map_err(|e| anyhow!("stored native header: {e:?}"))?;
-        let parent_time = stored.parent_timestamp_ms.parse::<u64>()?;
-        ensure!(
-            parent_time.to_string() == stored.parent_timestamp_ms,
-            "noncanonical stored parent time"
-        );
-        let expected = trnm_consensus_crypto::FinalityExpectationV0 {
-            block_id: header.id(),
-            height: header.height(),
-            state_root: header.state_root(),
-            receipts_root: header.receipts_root(),
-            evidence_root: header.evidence_root(),
-            parent_id: header.parent_id(),
-            parent_height: trnm_consensus_types::Height::new(
-                header
-                    .height()
-                    .get()
-                    .checked_sub(1)
-                    .context("proof height zero")?,
-            ),
-            parent_timestamp_ms: parent_time,
-        };
+        let parent = canonical_hex(&stored.parent_header_hex, 16 * 1024)?;
         let parameters = trnm_consensus_types::ConsensusParametersV0::reference_shadow_v0();
-        let verified = trnm_tx_lifecycle_v0::verify_native_tx_inclusion_v1(
+        let verified = trnm_tx_lifecycle_v0::verify_native_tx_inclusion_with_parent_header_v1(
             &encoded,
-            trnm_tx_lifecycle_v0::NativeTxProofContextV1 {
+            &parent,
+            trnm_tx_lifecycle_v0::NativeTxParentHeaderContextV1 {
                 trusted_validator_set: &self.set,
                 trusted_parameters: &parameters,
-                expected,
                 maximum_transactions: self.profile.maximum_batch_transactions as u32,
                 maximum_proof_bytes: trnm_tx_lifecycle_v0::MAX_NATIVE_TX_PROOF_BYTES_V1,
             },
@@ -1019,10 +1038,11 @@ impl NativeProofReaderV1 {
         Ok(stored)
     }
     fn proof_reply_v1(&self, id: &str, hash: [u8; 32]) -> Value {
-        let result = self
-            .read_stored_v1(hash)
-            .and_then(|stored| self.verify_stored_proof_v1(&stored, hash));
-        match result{Ok(package)=>self.reply(id,json!({"native_tx_hash":hex::encode(hash),"proof_class":"poco-three-chain-v0","package_hex":hex::encode(package),"proof_verified":true,"m05_intent_binding":false})),Err(_)=>self.error_reply(id,"proof_unavailable",true)}
+        let result = self.read_stored_v1(hash).and_then(|stored| {
+            self.verify_stored_proof_v1(&stored, hash)
+                .map(|package| (package, stored.parent_header_hex))
+        });
+        match result{Ok((package,parent_header_hex))=>self.reply(id,json!({"parent_header_hex":parent_header_hex,"native_tx_hash":hex::encode(hash),"proof_class":"poco-three-chain-v0","package_hex":hex::encode(package),"proof_verified":true,"m05_intent_binding":false})),Err(_)=>self.error_reply(id,"proof_unavailable",true)}
     }
 }
 #[derive(serde::Serialize, Deserialize)]
@@ -1031,7 +1051,7 @@ struct StoredProofV1 {
     schema: String,
     profile_sha256: String,
     native_tx_hash: String,
-    parent_timestamp_ms: String,
+    parent_header_hex: String,
     package_hex: String,
 }
 

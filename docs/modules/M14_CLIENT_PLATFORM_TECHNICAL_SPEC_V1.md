@@ -353,3 +353,19 @@ parent-relative step, skew readiness, empty catch-up and drain rules. An exact
 retry returns its durable prior status even after expiry; recovery of an already
 executed body verifies its historical block time and must not re-admit it using
 a backdated clock.
+
+### Candidate client executable
+
+The candidate validator executable exposes an explicit `native-client` command
+before validator configuration or consensus keys are loaded. `sign` takes the
+pinned public profile, selected campaign application key, explicit nonce/TTL and
+command file; it writes one exact signed native body with create-new semantics.
+TTL is bounded to five minutes and time comes from the committed profile epoch.
+`request` sends one bounded length-prefixed request to an owner-private Unix
+socket and checks response request/profile/genesis identity; receiving a response
+does not count as proof verification. `verify` loads independently pinned
+observer-public trust, binds the exact signed request bytes and native hash,
+checks the canonical parent header against the finality-certified parent ID,
+and runs the shared native payload/receipt/finality verifier. It ignores the
+server's verification boolean as authority. Client keys stay outside validator
+and observer-public bundles; no command implicitly generates load or keys.

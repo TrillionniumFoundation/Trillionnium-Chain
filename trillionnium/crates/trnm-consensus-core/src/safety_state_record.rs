@@ -118,6 +118,8 @@ pub struct SafetyStateRecordContextV0<'a> {
     core_config: &'a CoreConfig,
     verifier_profile_ref: [u8; 32],
     limits: SafetyStateRecordLimitsV0,
+    epoch_context_v1: Option<&'a trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
+    epoch_state_v1: Option<&'a crate::EpochCoreStateV1>,
 }
 
 impl<'a> SafetyStateRecordContextV0<'a> {
@@ -139,6 +141,8 @@ impl<'a> SafetyStateRecordContextV0<'a> {
             core_config,
             verifier_profile_ref,
             limits,
+            epoch_context_v1: None,
+            epoch_state_v1: None,
         })
     }
 
@@ -259,10 +263,16 @@ impl fmt::Display for SafetyStateRecordErrorV0 {
 pub fn minimum_safety_state_record_limits_v0(
     config: &CoreConfig,
 ) -> Result<SafetyStateRecordLimitsV0, SafetyStateRecordErrorV0> {
+    require_epoch_zero(config.validator_set().epoch())?;
+    minimum_safety_state_record_limits_any_epoch_v1(config)
+}
+
+fn minimum_safety_state_record_limits_any_epoch_v1(
+    config: &CoreConfig,
+) -> Result<SafetyStateRecordLimitsV0, SafetyStateRecordErrorV0> {
     config
         .validate()
         .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("Core configuration"))?;
-    require_epoch_zero(config.validator_set().epoch())?;
 
     let chain_id_bytes = config.validator_set().chain_id().as_bytes().len();
     let validators = config.validator_set().validators();
@@ -421,7 +431,9 @@ pub fn safety_state_record_config_ref_v0(
     context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<[u8; 32], SafetyStateRecordErrorV0> {
     let config = context.core_config;
-    require_epoch_zero(config.validator_set().epoch())?;
+    if context.epoch_context_v1.is_none() {
+        require_epoch_zero(config.validator_set().epoch())?;
+    }
     let mut encoder = Encoder::new_with_blob_limit(
         context.limits.maximum_record_bytes,
         context.limits.maximum_blob_bytes,
@@ -541,14 +553,24 @@ fn validate_state_scope(
     state: &SafetyState,
     context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<(), SafetyStateRecordErrorV0> {
-    if state.schema_version() != SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0 {
+    if state.epoch_state_v1() != context.epoch_state_v1 {
+        return Err(SafetyStateRecordErrorV0::UnsupportedEpochAnchor);
+    }
+    let expected_schema = if context.epoch_state_v1.is_some() {
+        14
+    } else {
+        SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0
+    };
+    if state.schema_version() != expected_schema {
         return Err(SafetyStateRecordErrorV0::UnsupportedSafetySchema(
             state.schema_version(),
         ));
     }
-    require_epoch_zero(state.epoch())?;
     let config = context.core_config;
-    require_epoch_zero(config.validator_set().epoch())?;
+    if context.epoch_context_v1.is_none() {
+        require_epoch_zero(state.epoch())?;
+        require_epoch_zero(config.validator_set().epoch())?;
+    }
     if state.chain_id() != config.validator_set().chain_id()
         || state.protocol_version() != config.validator_set().protocol_version()
         || state.epoch() != config.validator_set().epoch()
@@ -713,7 +735,9 @@ fn decode_state_payload(
     let protocol_version = ProtocolVersion::new(decoder.u32("protocol version")?)
         .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("protocol version"))?;
     let epoch = Epoch::new(decoder.u64("epoch")?);
-    require_epoch_zero(epoch)?;
+    if context.epoch_context_v1.is_none() {
+        require_epoch_zero(epoch)?;
+    }
     let validator_set_id = ValidatorSetId::new(decoder.fixed::<32>("validator-set ID")?);
     let genesis_block_id = BlockId::new(decoder.fixed::<32>("genesis block ID")?);
     let authenticated_genesis_application_parent = decode_optional(
@@ -851,7 +875,7 @@ fn decode_state_payload(
         decode_safety_halt(decoder, context)
     })?;
 
-    let state = SafetyState::from_persisted_parts_v13(
+    let mut state = SafetyState::from_persisted_parts_v13(
         SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0,
         chain_id,
         protocol_version,
@@ -880,6 +904,9 @@ fn decode_state_payload(
         pending_finalize,
         safety_halt,
     );
+    if let Some(epoch) = context.epoch_state_v1 {
+        state.install_epoch_state_v1(epoch.clone());
+    }
     validate_state_scope(&state, context)?;
     Ok(state)
 }
@@ -1014,6 +1041,19 @@ fn encode_parent(
     context: &SafetyStateRecordContextV0<'_>,
     encoder: &mut Encoder,
 ) -> Result<(), SafetyStateRecordErrorV0> {
+    if let Some(edge) = value.epoch_application_parent_v1() {
+        let epoch = context
+            .epoch_state_v1
+            .ok_or(SafetyStateRecordErrorV0::UnsupportedEpochAnchor)?;
+        if value != &PayloadValidationParentV0::from_epoch_checkpoint_v1(epoch) {
+            return Err(SafetyStateRecordErrorV0::ConfigMismatch);
+        }
+        encode_finalized_tip(value.tip(), encoder)?;
+        encoder.u8(TAG_PARENT_FINALIZED)?;
+        encoder.u8(3)?;
+        encoder.fixed(&edge.activation_binding())?;
+        return Ok(());
+    }
     encode_finalized_tip(value.tip(), encoder)?;
     match value.provenance() {
         PayloadValidationParentProvenanceV0::Finalized => {
@@ -1073,7 +1113,7 @@ fn encode_parent(
 
 fn decode_parent(
     decoder: &mut Decoder<'_>,
-    _context: &SafetyStateRecordContextV0<'_>,
+    context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<PayloadValidationParentV0, SafetyStateRecordErrorV0> {
     let tip = decode_finalized_tip(decoder)?;
     let provenance = match decoder.u8("parent provenance")? {
@@ -1089,6 +1129,17 @@ fn decode_parent(
         }
     };
     let parent = match decoder.u8("parent carrier")? {
+        3 if context.epoch_state_v1.is_some() => {
+            let epoch = context
+                .epoch_state_v1
+                .ok_or(SafetyStateRecordErrorV0::UnsupportedEpochAnchor)?;
+            if provenance != PayloadValidationParentProvenanceV0::Finalized
+                || decoder.fixed::<32>("epoch parent binding")? != epoch.activation_binding()
+            {
+                return Err(SafetyStateRecordErrorV0::ConfigMismatch);
+            }
+            PayloadValidationParentV0::from_epoch_checkpoint_v1(epoch)
+        }
         TAG_PARENT_CARRIER_LEGACY_GENESIS => {
             if !matches!(provenance, PayloadValidationParentProvenanceV0::Finalized) {
                 return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
@@ -1122,7 +1173,7 @@ fn decode_parent(
                 }
                 PayloadValidationParentProvenanceV0::Speculative(overlay) => {
                     if overlay.block_id() != header.id()
-                        || overlay.parent_block_id() != header.parent_id()
+                        || overlay.consensus_parent_block_id_v1() != header.parent_id()
                     {
                         return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
                             "speculative parent overlay",
@@ -1187,10 +1238,25 @@ fn encode_signed_proposal(
         encoder,
         |certificate, encoder| encode_timeout_certificate(certificate, context, encoder),
     )?;
-    if witness.epoch_anchor_authorization().is_some() {
-        return Err(SafetyStateRecordErrorV0::UnsupportedEpochAnchor);
+    match witness.epoch_anchor_authorization() {
+        Some(authorization) => {
+            let epoch = context
+                .epoch_context_v1
+                .ok_or(SafetyStateRecordErrorV0::UnsupportedEpochAnchor)?;
+            if authorization != epoch.structural_context().authorization() {
+                return Err(SafetyStateRecordErrorV0::ConfigMismatch);
+            }
+            encoder.u8(TAG_SOME)?;
+            encoder.blob(
+                "epoch authorization",
+                &authorization.try_cev0_bytes().map_err(|_| {
+                    SafetyStateRecordErrorV0::InvalidConsensusValue("epoch authorization")
+                })?,
+                context.limits.maximum_blob_bytes,
+            )?;
+        }
+        None => encoder.u8(TAG_NONE)?,
     }
-    encoder.u8(TAG_NONE)?;
     encoder.fixed(witness.proposer_signature().as_bytes())
 }
 
@@ -1199,7 +1265,11 @@ fn decode_signed_proposal(
     parent: &PayloadValidationParentV0,
     context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<SignedProposalV0, SafetyStateRecordErrorV0> {
-    decode_signed_proposal_at_timestamp_v1(decoder, parent.tip().timestamp_ms(), context)
+    decode_signed_proposal_at_timestamp_v1(
+        decoder,
+        parent.consensus_parent_tip_v1().timestamp_ms(),
+        context,
+    )
 }
 
 fn decode_signed_proposal_at_timestamp_v1(
@@ -1269,16 +1339,30 @@ fn decode_signed_proposal_at_timestamp_v1(
     let timeout_certificate = decode_optional(decoder, "proposal TC", |decoder| {
         decode_timeout_certificate(decoder, context)
     })?;
-    match decoder.u8("epoch authorization presence")? {
-        TAG_NONE => {}
-        TAG_SOME => return Err(SafetyStateRecordErrorV0::UnsupportedEpochAnchor),
+    let epoch_authorization = match decoder.u8("epoch authorization presence")? {
+        TAG_NONE => None,
+        TAG_SOME => {
+            let epoch = context
+                .epoch_context_v1
+                .ok_or(SafetyStateRecordErrorV0::UnsupportedEpochAnchor)?;
+            let expected = epoch.structural_context().authorization();
+            let raw = decoder.blob("epoch authorization", context.limits.maximum_blob_bytes)?;
+            if raw
+                != expected.try_cev0_bytes().map_err(|_| {
+                    SafetyStateRecordErrorV0::InvalidConsensusValue("epoch authorization")
+                })?
+            {
+                return Err(SafetyStateRecordErrorV0::ConfigMismatch);
+            }
+            Some(expected.clone())
+        }
         tag => {
             return Err(SafetyStateRecordErrorV0::UnknownTag(
                 "epoch authorization presence",
                 tag,
             ))
         }
-    }
+    };
     let proposer_signature = Signature64::from_array(decoder.fixed::<64>("proposer signature")?);
     let block = Block::new(header.clone(), application_payload, evidence)
         .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("proposal block"))?;
@@ -1286,10 +1370,12 @@ fn decode_signed_proposal_at_timestamp_v1(
         &header,
         justify_qc,
         timeout_certificate,
-        None,
+        epoch_authorization,
         proposer_signature,
         context.core_config.validator_set(),
-        None,
+        context
+            .epoch_context_v1
+            .map(|epoch| epoch.structural_context().old_validator_set()),
         context.core_config.consensus_parameters(),
         parent_timestamp_ms,
     )
@@ -1298,7 +1384,9 @@ fn decode_signed_proposal_at_timestamp_v1(
         block,
         witness,
         context.core_config.validator_set(),
-        None,
+        context
+            .epoch_context_v1
+            .map(|epoch| epoch.structural_context().old_validator_set()),
         context.core_config.consensus_parameters(),
         parent_timestamp_ms,
     )
@@ -1319,8 +1407,16 @@ fn encode_qc_reference(
             Some(ContextAuthorizedQcV0::Genesis(anchor)) => anchor
                 .try_cev0_bytes()
                 .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("QC reference"))?,
-            Some(ContextAuthorizedQcV0::Epoch(_)) => {
-                return Err(SafetyStateRecordErrorV0::UnsupportedEpochAnchor);
+            Some(ContextAuthorizedQcV0::Epoch(anchor)) => {
+                let epoch = context
+                    .epoch_context_v1
+                    .ok_or(SafetyStateRecordErrorV0::UnsupportedEpochAnchor)?;
+                if value != epoch.anchor_reference() {
+                    return Err(SafetyStateRecordErrorV0::ConfigMismatch);
+                }
+                anchor
+                    .try_cev0_bytes()
+                    .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("epoch anchor"))?
             }
             None => {
                 return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
@@ -1336,11 +1432,19 @@ fn decode_qc_reference(
     decoder: &mut Decoder<'_>,
     context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<QcReferenceV0, SafetyStateRecordErrorV0> {
-    decode_qc_reference_v0_exact_with_trusted_genesis(
-        decoder.blob("QC reference", decoder.limits.maximum_blob_bytes)?,
-        context.core_config.validator_set(),
-    )
-    .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("QC reference"))
+    let bytes = decoder.blob("QC reference", decoder.limits.maximum_blob_bytes)?;
+    if let Some(epoch) = context.epoch_context_v1 {
+        return trnm_consensus_types::decode_epoch_runtime_qc_reference_v1_exact_with_budget(
+            bytes,
+            epoch.structural_context(),
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                context.core_config.consensus_parameters(),
+            ),
+        )
+        .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("epoch QC reference"));
+    }
+    decode_qc_reference_v0_exact_with_trusted_genesis(bytes, context.core_config.validator_set())
+        .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("QC reference"))
 }
 
 fn encode_ordinary_qc(
@@ -1373,7 +1477,9 @@ fn encode_timeout_certificate(
     context: &SafetyStateRecordContextV0<'_>,
     encoder: &mut Encoder,
 ) -> Result<(), SafetyStateRecordErrorV0> {
-    require_epoch_zero(value.epoch())?;
+    if context.epoch_context_v1.is_none() {
+        require_epoch_zero(value.epoch())?;
+    }
     encoder.blob(
         "timeout certificate",
         &value
@@ -1387,8 +1493,13 @@ fn decode_timeout_certificate(
     decoder: &mut Decoder<'_>,
     context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<TimeoutCertificateV0, SafetyStateRecordErrorV0> {
+    let bytes = decoder.blob("timeout certificate", decoder.limits.maximum_blob_bytes)?;
+    if let Some(epoch) = context.epoch_context_v1 {
+        return trnm_consensus_types::decode_epoch_runtime_timeout_certificate_v1_exact_with_budget(bytes, epoch.structural_context(), &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(context.core_config.consensus_parameters()))
+            .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("epoch TC"));
+    }
     decode_timeout_certificate_v0_exact_with_trusted_genesis(
-        decoder.blob("timeout certificate", decoder.limits.maximum_blob_bytes)?,
+        bytes,
         context.core_config.validator_set(),
     )
     .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("timeout certificate"))
@@ -1399,6 +1510,11 @@ fn encode_durable_finalization(
     context: &SafetyStateRecordContextV0<'_>,
     encoder: &mut Encoder,
 ) -> Result<(), SafetyStateRecordErrorV0> {
+    if encoder.epoch_v1 {
+        encoder.u8(u8::from(value.epoch_application_parent_v1().is_some()))?;
+    } else if value.epoch_application_parent_v1().is_some() {
+        return Err(SafetyStateRecordErrorV0::UnsupportedEpochAnchor);
+    }
     encode_finalized_tip(value.authenticated_parent(), encoder)?;
     encode_overlay_ref(value.target_overlay_ref(), encoder)?;
     encode_finality_proof_blob(value.proof(), context, encoder)
@@ -1408,8 +1524,39 @@ fn decode_durable_finalization(
     decoder: &mut Decoder<'_>,
     context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<DurableFinalizationV0, SafetyStateRecordErrorV0> {
+    let epoch_parent = if decoder.epoch_v1 {
+        match decoder.u8("finalization parent kind")? {
+            0 => false,
+            1 => true,
+            tag => {
+                return Err(SafetyStateRecordErrorV0::UnknownTag(
+                    "finalization parent kind",
+                    tag,
+                ))
+            }
+        }
+    } else {
+        false
+    };
     let parent = decode_finalized_tip(decoder)?;
     let target_overlay_ref = decode_overlay_ref(decoder)?;
+    if epoch_parent {
+        let epoch = context
+            .epoch_state_v1
+            .ok_or(SafetyStateRecordErrorV0::UnsupportedEpochAnchor)?;
+        if parent != crate::QualifiedFinalizedTipV1::from_header(epoch.checkpoint_header()).tip() {
+            return Err(SafetyStateRecordErrorV0::ConfigMismatch);
+        }
+        let proof = decode_finality_proof_blob(
+            decoder,
+            context,
+            epoch.terminal_old_header().timestamp_ms(),
+        )?;
+        return DurableFinalizationV0::for_epoch_application_v1(epoch, proof, target_overlay_ref)
+            .map_err(|_| {
+                SafetyStateRecordErrorV0::InvalidConsensusValue("epoch durable finalization")
+            });
+    }
     let proof = decode_finality_proof_blob(decoder, context, parent.timestamp_ms())?;
     DurableFinalizationV0::new(parent, proof, target_overlay_ref)
         .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("durable finalization"))
@@ -1453,8 +1600,20 @@ fn decode_finality_proof_blob(
     context: &SafetyStateRecordContextV0<'_>,
     authenticated_parent_timestamp_ms: u64,
 ) -> Result<trnm_consensus_types::FinalityProofV0, SafetyStateRecordErrorV0> {
+    let bytes = decoder.blob("finality proof", decoder.limits.maximum_blob_bytes)?;
+    if let Some(epoch) = context.epoch_context_v1 {
+        return trnm_consensus_types::decode_epoch_runtime_finality_proof_v1_exact_with_budget(
+            bytes,
+            epoch.structural_context(),
+            authenticated_parent_timestamp_ms,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                context.core_config.consensus_parameters(),
+            ),
+        )
+        .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("epoch finality proof"));
+    }
     decode_finality_proof_v0_exact_with_trusted_genesis(
-        decoder.blob("finality proof", decoder.limits.maximum_blob_bytes)?,
+        bytes,
         context.core_config.validator_set(),
         context.core_config.consensus_parameters(),
         authenticated_parent_timestamp_ms,
@@ -1665,19 +1824,49 @@ fn encode_overlay_ref(
     value: BlockIdOverlayRefV0,
     encoder: &mut Encoder,
 ) -> Result<(), SafetyStateRecordErrorV0> {
+    if !encoder.epoch_v1 && value.epoch_parent_v1().is_some() {
+        return Err(SafetyStateRecordErrorV0::UnsupportedEpochAnchor);
+    }
     encoder.fixed(value.block_id().as_bytes())?;
     encoder.fixed(value.parent_block_id().as_bytes())?;
-    encoder.fixed(&value.overlay_checksum())
+    encoder.fixed(&value.overlay_checksum())?;
+    if encoder.epoch_v1 {
+        encoder.u8(u8::from(value.epoch_parent_v1().is_some()))?;
+        if let Some(edge) = value.epoch_parent_v1() {
+            encoder.fixed(edge.consensus_parent().as_bytes())?;
+            encoder.fixed(&edge.activation_binding())?;
+        }
+    }
+    Ok(())
 }
-
 fn decode_overlay_ref(
     decoder: &mut Decoder<'_>,
 ) -> Result<BlockIdOverlayRefV0, SafetyStateRecordErrorV0> {
-    Ok(BlockIdOverlayRefV0::new(
-        BlockId::new(decoder.fixed::<32>("overlay block ID")?),
-        BlockId::new(decoder.fixed::<32>("overlay parent block ID")?),
-        decoder.fixed::<32>("overlay checksum")?,
-    ))
+    let block = BlockId::new(decoder.fixed::<32>("overlay block ID")?);
+    let parent = BlockId::new(decoder.fixed::<32>("overlay parent block ID")?);
+    let checksum = decoder.fixed::<32>("overlay checksum")?;
+    if decoder.epoch_v1 {
+        match decoder.u8("overlay epoch parent")? {
+            0 => {}
+            1 => {
+                return BlockIdOverlayRefV0::for_epoch_application_v1(
+                    block,
+                    parent,
+                    BlockId::new(decoder.fixed::<32>("overlay consensus parent")?),
+                    decoder.fixed::<32>("overlay activation binding")?,
+                    checksum,
+                )
+                .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("epoch overlay"))
+            }
+            tag => {
+                return Err(SafetyStateRecordErrorV0::UnknownTag(
+                    "overlay epoch parent",
+                    tag,
+                ))
+            }
+        }
+    }
+    Ok(BlockIdOverlayRefV0::new(block, parent, checksum))
 }
 
 fn encode_artifact_ref(
@@ -1842,6 +2031,7 @@ struct Encoder {
     bytes: Vec<u8>,
     maximum: usize,
     maximum_blob: usize,
+    epoch_v1: bool,
 }
 
 impl Encoder {
@@ -1850,6 +2040,7 @@ impl Encoder {
             bytes: Vec::new(),
             maximum,
             maximum_blob: maximum,
+            epoch_v1: false,
         }
     }
 
@@ -1858,6 +2049,7 @@ impl Encoder {
             bytes: Vec::new(),
             maximum,
             maximum_blob,
+            epoch_v1: false,
         }
     }
 
@@ -1936,6 +2128,7 @@ struct Decoder<'a> {
     bytes: &'a [u8],
     offset: usize,
     limits: SafetyStateRecordLimitsV0,
+    epoch_v1: bool,
 }
 
 impl<'a> Decoder<'a> {
@@ -1944,6 +2137,7 @@ impl<'a> Decoder<'a> {
             bytes,
             offset: 0,
             limits,
+            epoch_v1: false,
         }
     }
 
@@ -2057,6 +2251,7 @@ impl<'a> Decoder<'a> {
 }
 
 include!("old_epoch_safety_record_v1.inc");
+include!("epoch_safety_record_v1.inc");
 
 #[cfg(test)]
 mod tests {
@@ -2359,6 +2554,8 @@ mod tests {
             core_config: &config,
             verifier_profile_ref: [0x51; 32],
             limits: bounded,
+            epoch_context_v1: None,
+            epoch_state_v1: None,
         };
 
         assert_eq!(
@@ -2521,5 +2718,59 @@ mod tests {
                 ..
             }) if required_blob_bytes == minimum.maximum_blob_bytes()
         ));
+    }
+}
+
+#[cfg(test)]
+mod epoch_record_parts_tests_v1 {
+    use super::*;
+    use crate::epoch_state_tests_v1::{artifact, config, runtime};
+    #[test]
+    fn epoch_parent_and_overlay_roundtrip_without_relabeling_application_parent() {
+        let runtime = runtime();
+        let config = config(&runtime);
+        let artifact = artifact(&runtime);
+        let limits = minimum_epoch_safety_record_limits_v1(&config, &runtime).unwrap();
+        let context =
+            EpochSafetyStateRecordContextV1::new(&config, runtime, artifact, 2, limits).unwrap();
+        let parent = PayloadValidationParentV0::from_epoch_checkpoint_v1(context.epoch());
+        let overlay = BlockIdOverlayRefV0::for_epoch_application_v1(
+            BlockId::new([0x19; 32]),
+            parent.tip().block_id(),
+            parent.consensus_parent_tip_v1().block_id(),
+            context.epoch().activation_binding(),
+            [0x20; 32],
+        )
+        .unwrap();
+        let mut encoder = Encoder::new_with_blob_limit(
+            limits.maximum_record_bytes(),
+            limits.maximum_blob_bytes(),
+        );
+        encoder.epoch_v1 = true;
+        encode_parent(&parent, &context.inner(), &mut encoder).unwrap();
+        encode_overlay_ref(overlay, &mut encoder).unwrap();
+        let raw = encoder.finish();
+        let mut decoder = Decoder::new(&raw, limits);
+        decoder.epoch_v1 = true;
+        assert_eq!(
+            decode_parent(&mut decoder, &context.inner()).unwrap(),
+            parent
+        );
+        assert_eq!(decode_overlay_ref(&mut decoder).unwrap(), overlay);
+        decoder.finish().unwrap();
+        assert_ne!(
+            overlay.parent_block_id(),
+            overlay.consensus_parent_block_id_v1()
+        );
+        let mut legacy_encoder = Encoder::new(limits.maximum_record_bytes());
+        assert_eq!(
+            encode_overlay_ref(overlay, &mut legacy_encoder),
+            Err(SafetyStateRecordErrorV0::UnsupportedEpochAnchor)
+        );
+        let mut legacy_decoder = Decoder::new(&raw, limits);
+        assert!(
+            decode_parent(&mut legacy_decoder, &context.inner()).is_err()
+                || legacy_decoder.finish().is_err()
+        );
     }
 }

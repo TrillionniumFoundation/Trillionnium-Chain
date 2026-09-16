@@ -60,6 +60,12 @@ use crate::{
 mod epoch_durable;
 pub use epoch_durable::{CommittedNativeEpochExecutionV1, PreparedNativeEpochExecutionV1};
 
+#[path = "incremental_owner_v1.rs"]
+mod incremental_owner_v1;
+pub use incremental_owner_v1::{
+    CommittedNativeIncrementalExecutionV1, PreparedNativeIncrementalExecutionV1,
+};
+
 mod replay_floor_v1;
 pub use replay_floor_v1::VerifiedNativeSignerReplayFloorV1;
 
@@ -681,6 +687,7 @@ pub struct DurableNativeApplicationV0 {
     operation_lock: Mutex<()>,
     config: NativeApplicationConfigV0,
     owner_affinity: Arc<()>,
+    incremental_migration_pin: Mutex<Option<[u8; 32]>>,
 }
 
 /// Exact application transition carried by a proof-derived h1 state-sync
@@ -1185,6 +1192,7 @@ impl DurableNativeApplicationV0 {
                 "lock.exclusive",
             )
         })?;
+        let mut incremental_migration_pin = None;
         if created {
             let connection = open_writable_connection_v0(&path)?;
             initialize_schema_v0(&connection)?;
@@ -1199,6 +1207,16 @@ impl DurableNativeApplicationV0 {
             if metadata_exists_v0(&connection)? {
                 let metadata = load_metadata_v0(&connection, &config)?;
                 validate_metadata_v0(&connection, &config, &metadata)?;
+                if epoch_durable::schema_version(&connection)?
+                    == incremental_owner_v1::SCHEMA_VERSION
+                {
+                    incremental_migration_pin =
+                        Some(incremental_owner_v1::audited_migration_anchor(
+                            &connection,
+                            &config,
+                            &metadata,
+                        )?);
+                }
             } else {
                 validate_virgin_inventory_v0(&connection)?;
             }
@@ -1209,6 +1227,7 @@ impl DurableNativeApplicationV0 {
             operation_lock: Mutex::new(()),
             config,
             owner_affinity: Arc::new(()),
+            incremental_migration_pin: Mutex::new(incremental_migration_pin),
         })
     }
 
@@ -1230,6 +1249,12 @@ impl DurableNativeApplicationV0 {
     /// create a prepared execution artifact or advance the durable sequence.
     pub fn confirmed_committed_head_v0(&self) -> DurableResult<ApplicationHeadV0> {
         let _guard = self.lock_operation()?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        if epoch_durable::schema_version(&connection)? == incremental_owner_v1::SCHEMA_VERSION {
+            drop(connection);
+            return self.confirmed_incremental_head_locked();
+        }
+        drop(connection);
         let metadata = fresh_validate_v0(&self.path, &self.config)?;
         Ok(metadata.head)
     }
@@ -1590,6 +1615,12 @@ impl DurableNativeApplicationV0 {
         reject_sqlite_sidecars_v0(&self.path)?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
+        if epoch_durable::schema_version(&connection)? == incremental_owner_v1::SCHEMA_VERSION {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "preview_block_v0.incremental_requires_versioned_adapter",
+            ));
+        }
         let before = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &before)?;
         let store = resolve_parent_store_v0(&connection, &self.config, &before, request.parent())?;
@@ -2022,7 +2053,10 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
-        if epoch_durable::schema_version(&connection)? == epoch_durable::SCHEMA_VERSION {
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            epoch_durable::SCHEMA_VERSION | incremental_owner_v1::SCHEMA_VERSION
+        ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::BindingMismatch,
                 "p.epoch_context_requires_v1",
@@ -2399,6 +2433,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeStateProofV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
+        if epoch_durable::schema_version(&connection)? == incremental_owner_v1::SCHEMA_VERSION {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "state_proof.incremental_requires_versioned_adapter",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
         if request.head() != &metadata.head {
@@ -2431,6 +2471,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeSnapshotManifestV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
+        if epoch_durable::schema_version(&connection)? == incremental_owner_v1::SCHEMA_VERSION {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "snapshot.incremental_requires_versioned_adapter",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
         if request.head() != &metadata.head {
@@ -2509,7 +2555,25 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 "recover.binding",
             ));
         }
-        let pending = count_prepared_p_v0(&connection)?;
+        let pending = if epoch_durable::schema_version(&connection)?
+            == incremental_owner_v1::SCHEMA_VERSION
+        {
+            connection
+                .query_row(
+                    "SELECT count(*) FROM native_incremental_p_v1 WHERE status=0",
+                    [],
+                    |r| r.get::<_, u64>(0),
+                )
+                .map_err(|_| {
+                    error(
+                        NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                        "recover.incremental_inventory",
+                    )
+                })?
+        } else {
+            count_prepared_p_v0(&connection)?
+        };
+
         let watermarks = NativeRecoveryWatermarksV0::new(metadata.durable_sequence, 0, 0);
         let disposition = if pending == 0 {
             NativeRecoveryDispositionV0::Exact
@@ -2895,6 +2959,9 @@ fn validate_metadata_v0(
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
+    if epoch_durable::schema_version(connection)? == incremental_owner_v1::SCHEMA_VERSION {
+        return incremental_owner_v1::validate_metadata(connection, config, metadata);
+    }
     if metadata.durable_sequence == 0 || metadata.snapshot_digest != sha256_v0(&metadata.snapshot) {
         return Err(error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,
@@ -3601,7 +3668,9 @@ fn load_metadata_v0(
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "metadata.query"))?;
     if !matches!(
         decode_u64_v0(&row.0, "metadata.schema")?,
-        APPLICATION_SCHEMA_VERSION_V0 | epoch_durable::SCHEMA_VERSION
+        APPLICATION_SCHEMA_VERSION_V0
+            | epoch_durable::SCHEMA_VERSION
+            | incremental_owner_v1::SCHEMA_VERSION
     ) || array32_v0(&row.1, "metadata.store_id")? != config.store_id
         || row.2 != config.chain_id
         || array32_v0(&row.3, "metadata.genesis")? != config.genesis_hash
@@ -3941,6 +4010,11 @@ fn initialize_schema_v0(connection: &Connection) -> DurableResult<()> {
 }
 
 fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
+    if metadata_exists_v0(connection)?
+        && epoch_durable::schema_version(connection)? == incremental_owner_v1::SCHEMA_VERSION
+    {
+        return incremental_owner_v1::verify_schema(connection);
+    }
     let mut statement = connection
         .prepare("SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name")
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "schema.prepare"))?;

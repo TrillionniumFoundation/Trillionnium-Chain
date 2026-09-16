@@ -5682,11 +5682,10 @@ impl Core {
             application_parent.view(),
             application_parent.timestamp_ms(),
         );
-        let safety_rules_permit = SafetyRulesFinalityPermitV1::bind_v1(
+        let safety_rules_permit = SafetyRulesFinalityPermitV1::bind_for_context_v1(
             finalization.proof(),
             safety_predecessor,
-            safety_context.validator_set(),
-            safety_context.consensus_parameters(),
+            &safety_context,
         )
         .map_err(|error| {
             CoreError::SafetyRulesShadowMismatch(match error {
@@ -6292,7 +6291,7 @@ impl Core {
                     || commitments.transaction_count() != body.transaction_count()
                     || commitments.evidence_count() != body.evidence_count()
                     || overlay.block_id() != header.id()
-                    || overlay.parent_block_id() != header.parent_id()
+                    || overlay.consensus_parent_block_id_v1() != header.parent_id()
                     || *terminal_fact != PayloadTerminalFact::new_valid(overlay, 2)
                     || self.blocks.payload_overlay_ref(header.id()) != Some(overlay)
                 {
@@ -7221,6 +7220,17 @@ impl Core {
         }
 
         let finalized = self.safety.finalized();
+        if let Some(epoch) = self.safety.epoch_state_v1() {
+            if header.block_kind() == BlockKind::EpochHandoff {
+                if finalized.block_id() != epoch.checkpoint_header().id()
+                    || header.parent_id() != epoch.terminal_old_header().id()
+                    || header.height() != epoch.terminal_old_header().height().checked_next()?
+                {
+                    return Err(CoreError::UnsafeProposal);
+                }
+                return Ok(PayloadValidationParentV0::from_epoch_checkpoint_v1(epoch));
+            }
+        }
         let parent = if header.parent_id() == finalized.block_id() {
             if finalized.height().get() == 0 {
                 match self
@@ -7266,7 +7276,9 @@ impl Core {
                 .blocks
                 .payload_overlay_ref(header.parent_id())
                 .ok_or(CoreError::UnsafeProposal)?;
-            if overlay.block_id() != exact.id() || overlay.parent_block_id() != exact.parent_id() {
+            if overlay.block_id() != exact.id()
+                || overlay.consensus_parent_block_id_v1() != exact.parent_id()
+            {
                 return Err(CoreError::ConflictingPayloadValidation(exact.id()));
             }
             PayloadValidationParentV0::from_speculative_exact_header(exact.clone(), overlay)
@@ -9441,7 +9453,7 @@ impl Core {
                 for referenced in certificate.referenced_qcs() {
                     self.reject_epoch_anchor(referenced)?;
                 }
-                certificate.verify(self.config.validator_set(), None, verifier)?;
+                self.verify_timeout_certificate_v1(certificate, verifier)?;
                 Ok(())
             }
             Input::Resume
@@ -9858,7 +9870,7 @@ impl Core {
         match self.blocks.validate_proposal_parent(
             header,
             proposal.witness().justify_qc().qc_ref(),
-            self.safety.finalized(),
+            self.consensus_ancestry_tip_v1()?,
             self.config.max_block_time_step_ms(),
         ) {
             Ancestry::Descends => {}
@@ -10026,7 +10038,7 @@ impl Core {
         match self.blocks.validate_proposal_parent(
             header,
             proposal.witness().justify_qc().qc_ref(),
-            self.safety.finalized(),
+            self.consensus_ancestry_tip_v1()?,
             self.config.max_block_time_step_ms(),
         ) {
             Ancestry::Descends => {}
@@ -10124,6 +10136,25 @@ impl Core {
         self.ensure_payload_validation_proposal_resource_bound(proposal)?;
         let header = proposal.block().header();
         self.require_supported_proposal_header(header)?;
+        if let Some(epoch) = self.safety.epoch_state_v1() {
+            let parent = if header.parent_id() == epoch.terminal_old_header().id() {
+                epoch.terminal_old_header()
+            } else if let Some(parent) = self.blocks.header(header.parent_id()) {
+                parent
+            } else if let Some(parent) = self.exact_durable_header_v0(header.parent_id()) {
+                parent
+            } else {
+                return Err(CoreError::MissingBlock(header.parent_id()));
+            };
+            epoch.strict_context()?.verify_proposal_v1(
+                proposal,
+                parent,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                    self.config.consensus_parameters(),
+                ),
+            )?;
+            return Ok(parent.timestamp_ms());
+        }
         self.reject_epoch_anchor(proposal.witness().justify_qc())?;
         if proposal.witness().epoch_anchor_authorization().is_some() {
             return Err(CoreError::UnsupportedEpochAnchor);
@@ -10197,6 +10228,15 @@ impl Core {
         self.ensure_payload_validation_proposal_resource_bound(proposal)?;
         let header = proposal.block().header();
         self.require_supported_proposal_header(header)?;
+        if let Some(epoch) = self.safety.epoch_state_v1() {
+            epoch.strict_context()?.verify_proposal_without_parent_v1(
+                proposal,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                    self.config.consensus_parameters(),
+                ),
+            )?;
+            return Ok(());
+        }
         if proposal.witness().epoch_anchor_authorization().is_some() {
             return Err(CoreError::UnsupportedEpochAnchor);
         }
@@ -10213,7 +10253,7 @@ impl Core {
             for referenced in certificate.referenced_qcs() {
                 self.reject_epoch_anchor(referenced)?;
             }
-            certificate.verify(self.config.validator_set(), None, verifier)?;
+            self.verify_timeout_certificate_v1(certificate, verifier)?;
         }
 
         let proposer = self
@@ -10238,7 +10278,13 @@ impl Core {
     }
 
     fn reject_epoch_anchor(&self, reference: &QcReferenceV0) -> Result<()> {
+        if let Some(epoch) = self.safety.epoch_state_v1() {
+            if reference == epoch.anchor_reference() {
+                return Ok(());
+            }
+        }
         if let Some(certificate) = reference.as_ordinary() {
+            self.require_epoch(certificate.epoch())?;
             if certificate.view().get() == 0 || certificate.height().get() == 0 {
                 return Err(CoreError::InvalidOrdinaryCertificate);
             }
@@ -10533,7 +10579,7 @@ impl Core {
         }
 
         let justify = proposal.witness().justify_qc().qc_ref();
-        if justify.block_id() != self.safety.finalized().block_id()
+        if justify.block_id() != self.consensus_ancestry_tip_v1()?.block_id()
             && !self.blocks.contains_header(justify.block_id())
         {
             // A QC proves votes for an identifier, not availability or the
@@ -10542,7 +10588,7 @@ impl Core {
         }
         match self.blocks.validated_ancestry(
             proposal.block().id(),
-            self.safety.finalized(),
+            self.consensus_ancestry_tip_v1()?,
             self.config.max_block_time_step_ms(),
         ) {
             Ancestry::Descends => {}
@@ -10615,7 +10661,7 @@ impl Core {
         };
         if tree_overlay != terminal_overlay
             || tree_overlay.block_id() != block_id
-            || tree_overlay.parent_block_id() != header.parent_id()
+            || tree_overlay.consensus_parent_block_id_v1() != header.parent_id()
         {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
         }
@@ -10627,6 +10673,15 @@ impl Core {
     /// is an additional fail-closed liveness limit: a larger BlockTree may
     /// admit a longer path, but this shadow never truncates or approves it.
     fn safety_rules_shadow_context_v1(&self) -> Result<SafetyRulesContextV1> {
+        if let Some(epoch) = self.safety.epoch_state_v1() {
+            return SafetyRulesContextV1::new_epoch_runtime_v1(
+                epoch.strict_context()?,
+                self.config.local_validator(),
+                self.config.trusted_genesis_timestamp_ms(),
+                CORE_SAFETY_RULES_MAX_ANCESTRY_BLOCKS_V1,
+            )
+            .map_err(|_| CoreError::SafetyRulesShadowMismatch("complete epoch safety context"));
+        }
         let constructor = if self.safety.old_epoch_boundary_v1().is_some() {
             SafetyRulesContextV1::new_old_epoch_boundary_v1
         } else {
@@ -10665,6 +10720,8 @@ impl Core {
                 finalization.proof().finalized_block().header()
             } else if let Some(anchor) = self.safety.state_sync_anchor() {
                 anchor.proof().finalized_block().header()
+            } else if let Some(epoch) = self.safety.epoch_state_v1() {
+                epoch.checkpoint_header()
             } else {
                 return Err(CoreError::SafetyRulesShadowMismatch(
                     "positive finalized tip lacks its exact durable header",
@@ -11006,7 +11063,7 @@ impl Core {
             .blocks
             .exact_validated_proposal_path(
                 proposal.block().id(),
-                self.safety.finalized(),
+                self.consensus_ancestry_tip_v1()?,
                 context.max_ancestry_blocks() as usize,
                 self.config.max_block_time_step_ms(),
             )
@@ -11631,12 +11688,12 @@ impl Core {
             let high_ref = self.safety.high_qc().qc_ref();
             let locked_ref = self.safety.locked_qc().qc_ref();
             let mut anchors = vec![high_ref.block_id()];
-            if locked_ref.block_id() != self.safety.finalized().block_id() {
+            if locked_ref.block_id() != self.consensus_ancestry_tip_v1()?.block_id() {
                 anchors.push(locked_ref.block_id());
             }
             for reference in [self.safety.high_qc(), self.safety.locked_qc()] {
                 if let Some(certificate) = reference.as_ordinary() {
-                    if certificate.block_id() != self.safety.finalized().block_id() {
+                    if certificate.block_id() != self.consensus_ancestry_tip_v1()?.block_id() {
                         self.blocks
                             .validate_certificate_binding(certificate)
                             .map_err(|_| {
@@ -11648,12 +11705,12 @@ impl Core {
                 }
             }
             for block_id in anchors {
-                if block_id == self.safety.finalized().block_id() {
+                if block_id == self.consensus_ancestry_tip_v1()?.block_id() {
                     continue;
                 }
                 match self.blocks.validated_ancestry(
                     block_id,
-                    self.safety.finalized(),
+                    self.consensus_ancestry_tip_v1()?,
                     self.config.max_block_time_step_ms(),
                 ) {
                     Ancestry::Descends => {}
@@ -12046,7 +12103,7 @@ impl Core {
         for referenced in certificate.referenced_qcs() {
             self.reject_epoch_anchor(referenced)?;
         }
-        certificate.verify(self.config.validator_set(), None, verifier)?;
+        self.verify_timeout_certificate_v1(&certificate, verifier)?;
         let mut side_effects = Vec::new();
         for referenced in certificate.referenced_qcs() {
             if let Some(referenced_qc) = referenced.as_ordinary() {
@@ -12186,6 +12243,11 @@ impl Core {
             return Err(CoreError::InvalidOrdinaryCertificate);
         }
         self.require_pre_checkpoint_height(certificate.height())?;
+        if self.safety.epoch_state_v1().is_some()
+            && certificate.height() < self.active_epoch_geometry()?.epoch_start()
+        {
+            return Err(CoreError::InvalidOrdinaryCertificate);
+        }
         certificate.verify(self.config.validator_set(), verifier)?;
         Ok(())
     }
@@ -12195,6 +12257,16 @@ impl Core {
         reference: &QcReferenceV0,
         verifier: &V,
     ) -> Result<()> {
+        if let Some(epoch) = self.safety.epoch_state_v1() {
+            self.reject_epoch_anchor(reference)?;
+            epoch.strict_context()?.verify_qc_reference_v1(
+                reference,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                    self.config.consensus_parameters(),
+                ),
+            )?;
+            return Ok(());
+        }
         match reference {
             QcReferenceV0::Ordinary(certificate) => self.verify_ordinary_qc(certificate, verifier),
             QcReferenceV0::Synthetic(synthetic) => match synthetic.as_ref() {
@@ -12211,7 +12283,7 @@ impl Core {
         if self.qc_is_durably_subsumed(certificate)? {
             return Ok(true);
         }
-        let finalized = self.safety.finalized();
+        let finalized = self.consensus_ancestry_tip_v1()?;
         if self.payload_is_deterministically_invalid(certificate.block_id()) {
             return Err(CoreError::ConflictingCertificate);
         }
@@ -12712,7 +12784,7 @@ impl Core {
         let block_id = proposal.block().id();
         let overlay = artifact_ref.overlay();
         if overlay.block_id() != block_id
-            || overlay.parent_block_id() != proposal.block().header().parent_id()
+            || overlay.consensus_parent_block_id_v1() != proposal.block().header().parent_id()
         {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
         }
@@ -13231,7 +13303,7 @@ impl Core {
     }
 
     fn require_descendant_of_finalized(&self, certificate: &QuorumCertificate) -> Result<()> {
-        let finalized = self.safety.finalized();
+        let finalized = self.consensus_ancestry_tip_v1()?;
         if certificate.block_id() == finalized.block_id() {
             if certificate.height() == finalized.height() && certificate.view() == finalized.view()
             {
@@ -13743,6 +13815,13 @@ impl Core {
         Ok(())
     }
 
+    fn consensus_ancestry_tip_v1(&self) -> Result<FinalizedTip> {
+        Ok(self
+            .safety
+            .consensus_ancestry_base_v1(self.config.validator_set())?
+            .comparison_tip())
+    }
+
     fn active_epoch_geometry(&self) -> Result<EpochGeometryV0> {
         Ok(EpochGeometryV0::new(
             self.safety.epoch(),
@@ -13780,7 +13859,8 @@ impl Core {
                 .active_epoch_geometry()?
                 .expected_block_kind(header.height())?
                 != header.block_kind()
-                || header.block_kind() == BlockKind::EpochHandoff
+                || (header.block_kind() == BlockKind::EpochHandoff
+                    && self.safety.epoch_state_v1().is_none())
             {
                 return Err(CoreError::UnsupportedBlockKind);
             }
@@ -13929,7 +14009,7 @@ impl Core {
             match (parent.provenance(), parent.exact_header()) {
                 (crate::PayloadValidationParentProvenanceV0::Speculative(overlay), Some(exact))
                     if overlay.block_id() == exact.id()
-                        && overlay.parent_block_id() == exact.parent_id()
+                        && overlay.consensus_parent_block_id_v1() == exact.parent_id()
                         && exact.id() == tip.block_id()
                         && exact.height() == tip.height()
                         && exact.view() == tip.view()
@@ -14852,6 +14932,32 @@ impl Core {
                 "unsupported safety-state schema version",
             ));
         }
+        if let Some(epoch) = self.safety.epoch_state_v1() {
+            let context = epoch.strict_context()?;
+            if context.structural_context().new_validator_set() != set
+                || context.structural_context().new_parameters()
+                    != self.config.consensus_parameters()
+                || self
+                    .safety
+                    .old_epoch_boundary_v1()
+                    .map(|b| b.owner_generation())
+                    != Some(epoch.owner_generation())
+                || self.safety.state_sync_anchor().is_some()
+            {
+                return Err(CoreError::InvalidRecovery(
+                    "active epoch context or owner mismatch",
+                ));
+            }
+            let checkpoint =
+                crate::QualifiedFinalizedTipV1::from_header(epoch.checkpoint_header()).tip();
+            for tip in [self.safety.finalized(), self.safety.application_applied()] {
+                if tip.height() <= epoch.terminal_old_header().height() && tip != checkpoint {
+                    return Err(CoreError::InvalidRecovery(
+                        "epoch real application tip may not be a seal or relabeled checkpoint",
+                    ));
+                }
+            }
+        }
         if let Some(boundary) = self.safety.old_epoch_boundary_v1() {
             boundary.validate(&self.config, &self.safety, verifier)?;
         }
@@ -14891,9 +14997,9 @@ impl Core {
                 "durable payload terminal fact has an impossible revision or overlay binding",
             ));
         }
-        if set.epoch() != Epoch::new(0) {
+        if set.epoch() != Epoch::new(0) && self.safety.epoch_state_v1().is_none() {
             return Err(CoreError::InvalidRecovery(
-                "epoch transition is not implemented by this core",
+                "nonzero epoch requires complete strict epoch context",
             ));
         }
         if self.safety.chain_id() != set.chain_id() {
@@ -14977,7 +15083,7 @@ impl Core {
                 self.reject_epoch_anchor(reference)?;
             }
             if verify_durable_crypto {
-                pending.timeout_certificate().verify(set, None, verifier)?;
+                self.verify_timeout_certificate_v1(pending.timeout_certificate(), verifier)?;
             }
             let reconstructed = PendingTcHighQcSync::from_timeout_certificate(
                 pending.timeout_certificate().clone(),
@@ -15042,11 +15148,7 @@ impl Core {
 
         match self.safety.last_finalization() {
             Some(durable) => {
-                let reconstructed = crate::DurableFinalizationV0::new(
-                    durable.authenticated_parent(),
-                    durable.proof().clone(),
-                    durable.target_overlay_ref(),
-                )?;
+                let reconstructed = self.reconstruct_durable_finalization_v1(durable)?;
                 if &reconstructed != durable {
                     return Err(CoreError::InvalidRecovery(
                         "durable finalization is not canonically bound to its parent",
@@ -15063,13 +15165,7 @@ impl Core {
                     ));
                 }
                 if verify_durable_crypto {
-                    durable.proof().verify(
-                        set,
-                        None,
-                        self.config.consensus_parameters(),
-                        durable.authenticated_parent().timestamp_ms(),
-                        verifier,
-                    )?;
+                    self.verify_durable_finalization_v1(durable, verifier)?;
                 }
                 let committed = durable.proof().finalized_block().header();
                 if committed.height() != self.safety.finalized().height()
@@ -15095,6 +15191,20 @@ impl Core {
                         return Err(CoreError::InvalidRecovery(
                                 "an anchor-only finalization state must use the exact state-sync h1 tip",
                             ));
+                    }
+                }
+                None if self.safety.epoch_state_v1().is_some() => {
+                    let epoch = self
+                        .safety
+                        .epoch_state_v1()
+                        .ok_or(CoreError::InvalidRecovery("epoch metadata"))?;
+                    if self.safety.finalized()
+                        != crate::QualifiedFinalizedTipV1::from_header(epoch.checkpoint_header())
+                            .tip()
+                    {
+                        return Err(CoreError::InvalidRecovery(
+                            "epoch inherited finality must be exact old checkpoint",
+                        ));
                     }
                 }
                 None => {
@@ -15128,11 +15238,7 @@ impl Core {
         }
         let mut expected_parent = applied;
         for durable in self.safety.finalization_queue() {
-            let reconstructed = DurableFinalizationV0::new(
-                durable.authenticated_parent(),
-                durable.proof().clone(),
-                durable.target_overlay_ref(),
-            )?;
+            let reconstructed = self.reconstruct_durable_finalization_v1(durable)?;
             if reconstructed != *durable || durable.authenticated_parent() != expected_parent {
                 return Err(CoreError::InvalidRecovery(
                     "application-finalization queue is not canonically ancestor ordered",
@@ -15149,13 +15255,7 @@ impl Core {
                 ));
             }
             if verify_durable_crypto {
-                durable.proof().verify(
-                    set,
-                    None,
-                    self.config.consensus_parameters(),
-                    durable.authenticated_parent().timestamp_ms(),
-                    verifier,
-                )?;
+                self.verify_durable_finalization_v1(durable, verifier)?;
             }
             expected_parent = durable_finalization_target(durable);
         }
@@ -15275,7 +15375,7 @@ impl Core {
 
         let high = self.safety.high_qc().qc_ref();
         let locked = self.safety.locked_qc().qc_ref();
-        let finalized = self.safety.finalized();
+        let finalized = self.consensus_ancestry_tip_v1()?;
         if locked.view() == high.view() && locked.block_id() != high.block_id() {
             return Err(CoreError::InvalidRecovery(
                 "equal-view locked and high QCs certify different blocks",
@@ -15557,7 +15657,7 @@ impl Core {
                                 ));
                             }
                             if verify_durable_crypto {
-                                certificate.verify(set, None, verifier)?;
+                                self.verify_timeout_certificate_v1(certificate, verifier)?;
                             }
                         }
                         InvalidPayloadReference::PendingVote(intent) => {
@@ -16844,3 +16944,4 @@ fn option_regressed(previous: Option<View>, current: Option<View>) -> bool {
 }
 
 include!("old_epoch_core_owner_v1.inc");
+include!("epoch_core_v1.inc");

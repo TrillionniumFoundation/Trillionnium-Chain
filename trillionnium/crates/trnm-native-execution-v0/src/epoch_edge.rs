@@ -184,7 +184,103 @@ impl AuthenticatedEpochApplicationEdgeV1 {
     }
 }
 
+/// Fresh, read-only confirmation for joining the native application owner to
+/// Core activation. This is not an execution, signing or activation permit.
+/// It borrows the strict edge and owns fresh committed readback; no public
+/// constructor or Clone exists.
+#[must_use]
+pub struct ConfirmedEpochApplicationEdgeV1<'a> {
+    edge: &'a AuthenticatedEpochApplicationEdgeV1,
+    read: crate::FinalizedNativeApplicationReadV0,
+}
+impl ConfirmedEpochApplicationEdgeV1<'_> {
+    pub fn edge(&self) -> &AuthenticatedEpochApplicationEdgeV1 {
+        self.edge
+    }
+    pub fn checkpoint_header(&self) -> &BlockHeader {
+        self.edge.checkpoint.header()
+    }
+    pub fn terminal_old_header(&self) -> &BlockHeader {
+        self.edge.consensus_parent()
+    }
+    pub fn durable_checkpoint(&self) -> &crate::ConfirmedDurableExecutionHistoryRowV0 {
+        self.read.durable_row_v0()
+    }
+    pub fn old_validator_set(&self) -> &trnm_consensus_types::ValidatorSet {
+        self.edge.old_validator_set()
+    }
+    pub fn old_parameters(&self) -> &trnm_consensus_types::ConsensusParametersV0 {
+        self.edge.old_parameters()
+    }
+    pub fn new_validator_set(&self) -> &trnm_consensus_types::ValidatorSet {
+        self.edge.new_validator_set()
+    }
+    pub fn new_parameters(&self) -> &trnm_consensus_types::ConsensusParametersV0 {
+        self.edge.new_parameters()
+    }
+    pub fn authorization_id(&self) -> [u8; 32] {
+        self.edge.authorization_id()
+    }
+    pub fn checkpoint_commit_sequence(&self) -> u64 {
+        self.edge.checkpoint_commit_sequence()
+    }
+    pub fn application_parent(&self) -> &ApplicationHeadV0 {
+        self.edge.application_parent()
+    }
+    pub fn belongs_to_application_at_path(
+        &self,
+        app: &crate::DurableNativeApplicationV0,
+        path: &std::path::Path,
+    ) -> bool {
+        path == app.path()
+            && self
+                .read
+                .durable_row_v0()
+                .belongs_to_application_at_path_v0(app, path)
+            && app.confirm_epoch_application_edge_v1(self.edge).is_ok()
+    }
+}
+
 impl crate::DurableNativeApplicationV0 {
+    /// Confirm the exact committed checkpoint and original retained preparation
+    /// without executing C+3, migrating schema or writing an edge row.
+    pub fn confirm_epoch_application_edge_v1<'a>(
+        &self,
+        edge: &'a AuthenticatedEpochApplicationEdgeV1,
+    ) -> Result<ConfirmedEpochApplicationEdgeV1<'a>> {
+        ensure!(
+            edge.durable_checkpoint()
+                .belongs_to_application_at_path_v0(self, self.path()),
+            "epoch confirmation owner mismatch"
+        );
+        ensure!(
+            self.confirmed_committed_head_v0()? == *edge.application_parent(),
+            "epoch confirmation requires current checkpoint head"
+        );
+        let read = self.read_finalized_by_height_v0(edge.application_parent().height())?;
+        let row = read.durable_row_v0();
+        ensure!(
+            row.status_v0() == DurableExecutionHistoryStatusV0::Committed
+                && row.target_head_v0()? == *edge.application_parent()
+                && row.p_digest_v0() == edge.durable_checkpoint().p_digest_v0()
+                && row.artifact_digest_v0() == edge.durable_checkpoint().artifact_digest_v0()
+                && row.commit_sequence_v0() == Some(edge.checkpoint_commit_sequence()),
+            "epoch confirmation checkpoint substituted"
+        );
+        let journal = crate::poco_preparation_journal::PocoPreparationJournalV0::open_existing(
+            crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(self.path()),
+        )?;
+        journal.require_retained_bound(
+            edge.recovery_evidence().preparation_id,
+            &edge.recovery_evidence().checkpoint_header,
+        )?;
+        ensure!(
+            self.confirmed_committed_head_v0()? == *edge.application_parent(),
+            "epoch confirmation head changed"
+        );
+        Ok(ConfirmedEpochApplicationEdgeV1 { edge, read })
+    }
+
     /// Read-only execution of the real first-new application block, including
     /// the authenticated configuration/usage prefix. The preview is not a P,
     /// commit receipt or permission to vote.

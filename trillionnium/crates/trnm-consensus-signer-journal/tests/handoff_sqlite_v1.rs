@@ -47,6 +47,7 @@ struct WatermarkSnapshot {
 #[derive(Debug, Default)]
 struct WatermarkState {
     value: Option<SignerWatermarkV0>,
+    retirement: Option<trnm_consensus_signer_journal::SignerRetirementRecordV1>,
     loads: u64,
     compares: u64,
     fail_before_apply: BTreeSet<u64>,
@@ -92,6 +93,9 @@ impl ExternalMonotonicWatermarkV0 for MemoryWatermark {
     ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
         let mut state = self.state.lock().expect("watermark mutex");
         state.loads += 1;
+        if state.retirement.is_some() {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
         if state.value.is_some_and(|value| value.scope() != scope) {
             return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
         }
@@ -105,6 +109,9 @@ impl ExternalMonotonicWatermarkV0 for MemoryWatermark {
     ) -> Result<(), ExternalWatermarkErrorV0> {
         let mut state = self.state.lock().expect("watermark mutex");
         state.compares += 1;
+        if state.retirement.is_some() {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
         if state.value != expected {
             return Err(ExternalWatermarkErrorV0::CompareFailed);
         }
@@ -1638,4 +1645,189 @@ fn old_role_pending_recovery_installs_terminal_fence_before_new_role() {
         )
         .unwrap();
     assert_eq!(table_counts(&path), (2, 4, 1));
+}
+
+impl trnm_consensus_signer_journal::ExternalSignerRetirementV1 for MemoryWatermark {
+    fn load_signer_retirement_v1(
+        &mut self,
+        scope: [u8; 32],
+    ) -> Result<
+        Option<trnm_consensus_signer_journal::SignerRetirementRecordV1>,
+        ExternalWatermarkErrorV0,
+    > {
+        let state = self.state.lock().unwrap();
+        if state.value.is_some_and(|v| v.scope() != scope) {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
+        Ok(state.retirement)
+    }
+    fn retire_signer_exact_v1(
+        &mut self,
+        record: &trnm_consensus_signer_journal::SignerRetirementRecordV1,
+    ) -> Result<SignerWatermarkV0, ExternalWatermarkErrorV0> {
+        let mut state = self.state.lock().unwrap();
+        if state.retirement == Some(*record) {
+            return Ok(record.terminal_watermark_v1());
+        }
+        if state.retirement.is_some() || state.value != Some(record.source_v1()) {
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        }
+        state.retirement = Some(*record);
+        Ok(record.terminal_watermark_v1())
+    }
+}
+
+fn retirement_profile(f: &AuthorityFixture) -> SignerJournalProfileV0 {
+    SignerJournalProfileV0::new(
+        f.old_set.clone(),
+        f.author,
+        SIGNER_PROFILE_REF,
+        WATERMARK_SCOPE,
+        64,
+        4096,
+        MAXIMUM_DATABASE_BYTES,
+    )
+    .unwrap()
+}
+fn retirement_context(f: &AuthorityFixture) -> trnm_consensus_crypto::StrictPreHandoffContextV1 {
+    verify_pre_handoff_context_strict_v1(
+        &f.finality,
+        &f.commitment,
+        &f.descriptor,
+        &f.old_set,
+        &f.old_parameters,
+        &f.new_set,
+        &f.new_parameters,
+        &f.checkpoint_parent,
+    )
+    .unwrap()
+}
+fn retirement_host() -> trnm_consensus_signer_journal::SignerRetirementHostCutV1 {
+    trnm_consensus_signer_journal::SignerRetirementHostCutV1 {
+        owner_generation: 1,
+        native_committed_cut: [11; 32],
+        safety_revision: 10,
+        safety_record_checksum: [12; 32],
+    }
+}
+#[test]
+fn ordinary_retirement_consumes_real_owner_blocks_old_open_and_rechecks_readback() {
+    use trnm_consensus_signer_journal::RetiredSqliteSignerJournalV1;
+    let f = authority_fixture();
+    let d = TempDir::new().unwrap();
+    let path = protected_path(&d, "retired.sqlite3");
+    let w = MemoryWatermark::default();
+    let profile = retirement_profile(&f);
+    let mut old = SqliteSignerJournalV0::initialize_new(&path, profile.clone(), w.clone()).unwrap();
+    let mut producer = ExactProducer::new(f.signing_key.clone());
+    old.sign_exact_v0(&vote(&f.profile(), 1, 3, 21), &mut producer)
+        .unwrap();
+    let ctx = retirement_context(&f);
+    let intent = f.old_handoff_intent();
+    let mut retired = old
+        .retire_for_handoff_v1(&ctx, &intent, retirement_host())
+        .unwrap();
+    let record = *retired.record_v1();
+    assert_eq!(record.source_v1().sequence(), 2);
+    let receipt = retired.confirm_retirement_v1().unwrap();
+    assert!(receipt.belongs_to_owner_v1(&mut retired));
+    assert!(SqliteSignerJournalV0::open_existing(&path, profile.clone(), w.clone()).is_err());
+    drop(retired);
+    let before = namespace_snapshot(d.path());
+    assert_eq!(
+        inspect_signer_journal_schema_read_only_v1(&path).unwrap(),
+        SignerJournalSchemaKindV1::RetiredOrdinaryV1
+    );
+    assert_eq!(before, namespace_snapshot(d.path()));
+    assert!(SqliteSignerJournalV0::open_existing(&path, profile.clone(), w.clone()).is_err());
+    let mut reopened =
+        RetiredSqliteSignerJournalV1::open_existing_v1(&path, profile, w, record, &ctx, &intent)
+            .unwrap();
+    assert!(!receipt.belongs_to_owner_v1(&mut reopened));
+    assert!(reopened.confirm_retirement_v1().is_ok());
+    let c = Connection::open(&path).unwrap();
+    assert!(c
+        .execute("UPDATE signer_retirement_v1 SET record=zeroblob(354)", [])
+        .is_err());
+    assert!(c
+        .execute("UPDATE signer_journal_head_v0 SET sequence=sequence", [])
+        .is_err());
+}
+#[test]
+fn ordinary_retirement_local_first_uncertainty_reopens_only_retired_owner() {
+    use trnm_consensus_signer_journal::{RetiredSqliteSignerJournalV1, SignerRetirementCutV1};
+    for cut in [
+        SignerRetirementCutV1::AfterLocalWriteBeforeCommit,
+        SignerRetirementCutV1::AfterLocalCommitBeforeSync,
+        SignerRetirementCutV1::AfterLocalSyncBeforeExternal,
+        SignerRetirementCutV1::AfterExternalBeforeReadback,
+    ] {
+        let f = authority_fixture();
+        let d = TempDir::new().unwrap();
+        let path = protected_path(&d, "cut.sqlite3");
+        let w = MemoryWatermark::default();
+        let profile = retirement_profile(&f);
+        let old = SqliteSignerJournalV0::initialize_new(&path, profile.clone(), w.clone()).unwrap();
+        let ctx = retirement_context(&f);
+        let intent = f.old_handoff_intent();
+        assert!(old
+            .retire_with_observer_v1(
+                &ctx,
+                &intent,
+                retirement_host(),
+                |actual| if actual == cut {
+                    Err(trnm_consensus_signer_journal::SignerJournalErrorV0::CapacityExhausted)
+                } else {
+                    Ok(())
+                }
+            )
+            .is_err());
+        if cut == SignerRetirementCutV1::AfterLocalWriteBeforeCommit {
+            assert!(SqliteSignerJournalV0::open_existing(&path, profile, w).is_ok());
+            continue;
+        }
+        assert!(SqliteSignerJournalV0::open_existing(&path, profile.clone(), w.clone()).is_err());
+        let c =
+            Connection::open_with_flags(&path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY).unwrap();
+        let b: Vec<u8> = c
+            .query_row("SELECT record FROM signer_retirement_v1", [], |r| r.get(0))
+            .unwrap();
+        drop(c);
+        let record =
+            trnm_consensus_signer_journal::SignerRetirementRecordV1::decode_v1_exact(&b).unwrap();
+        // In this cut test the harness is the independent expected-record oracle.
+        let mut retired = RetiredSqliteSignerJournalV1::open_existing_v1(
+            &path,
+            profile,
+            w.clone(),
+            record,
+            &ctx,
+            &intent,
+        )
+        .unwrap();
+        assert!(retired.confirm_retirement_v1().is_ok());
+        assert!(w.clone().load(WATERMARK_SCOPE).is_err());
+    }
+}
+#[test]
+fn ordinary_retirement_rejects_unresolved_signing_intent() {
+    let f = authority_fixture();
+    let d = TempDir::new().unwrap();
+    let path = protected_path(&d, "pending.sqlite3");
+    let w = MemoryWatermark::default();
+    let profile = retirement_profile(&f);
+    let mut old = SqliteSignerJournalV0::initialize_new(&path, profile.clone(), w.clone()).unwrap();
+    let mut producer = ExactProducer::new(f.signing_key.clone());
+    producer.fail_after_sign_once();
+    let intent = vote(&f.profile(), 1, 3, 21);
+    assert!(old.sign_exact_v0(&intent, &mut producer).is_err());
+    assert!(old
+        .retire_for_handoff_v1(
+            &retirement_context(&f),
+            &f.old_handoff_intent(),
+            retirement_host()
+        )
+        .is_err());
+    let mut old = SqliteSignerJournalV0::open_existing(&path, profile, w).unwrap();
+    assert!(old.sign_exact_v0(&intent, &mut producer).is_ok());
 }

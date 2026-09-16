@@ -91,6 +91,10 @@ fn run() -> Result<ExitCode> {
     // The lease daemon is an independent candidate-only process.  Dispatch it
     // before the normal command envelope so this subcommand never parses a
     // validator run-root/config and therefore cannot load validator secrets.
+    if command == "native-client" {
+        trnm_poco_lab_validator::native_client_tool::run_cli_v1(arguments)?;
+        return Ok(ExitCode::SUCCESS);
+    }
     if command == "peer-lease-daemon" {
         return run_peer_lease_daemon(arguments);
     }

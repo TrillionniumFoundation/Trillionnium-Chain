@@ -1448,6 +1448,7 @@ dependencies = [
 name = "trnm-consensus-core"
 version = "0.1.0"
 dependencies = [
+ "serde_json",
  "sha2",
  "trnm-consensus-crypto",
  "trnm-consensus-safety-rules",
@@ -1485,8 +1486,10 @@ dependencies = [
  "ed25519-dalek",
  "fs2",
  "libc",
+ "serde_json",
  "sha2",
  "tempfile",
+ "trnm-consensus-crypto",
  "trnm-consensus-signer-journal",
  "trnm-consensus-types",
 ]
@@ -1530,6 +1533,7 @@ name = "trnm-consensus-safety-rules"
 version = "0.1.0"
 dependencies = [
  "sha2",
+ "trnm-consensus-crypto",
  "trnm-consensus-types",
 ]
 
@@ -1932,8 +1936,10 @@ dependencies = [
 name = "trnm-poco-node-host"
 version = "0.1.0"
 dependencies = [
+ "serde_json",
  "tempfile",
  "trnm-consensus-crypto",
+ "trnm-consensus-safety-store",
  "trnm-consensus-signer-journal",
  "trnm-consensus-types",
  "trnm-durable-file-adapters-v0",

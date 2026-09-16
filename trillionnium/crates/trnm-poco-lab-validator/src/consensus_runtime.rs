@@ -2353,20 +2353,36 @@ fn fleet_campaign_context_v1(
     );
     let validator_count = u32::try_from(config.validator_set().validators().len())
         .context("fleet validator count does not fit u32")?;
-    let identity = FleetCampaignIdentityV1::new(
-        config.run_id().to_owned(),
-        config.validator_set().chain_id(),
-        *config.validator_set().genesis_hash().as_bytes(),
-        *config.validator_set().id().as_bytes(),
-        config.validator_set_sha256(),
-        config.topology_sha256(),
-        config.coordinator_manifest_sha256(),
-        config.candidate_source_sha256(),
-        config.binary_sha256(),
-        config.workload_corpus_sha256(),
-        config.workload_policy_sha256(),
-        validator_count,
-    )
+    let identity = if let Some(profile) = config.native_client_profile_v1() {
+        FleetCampaignIdentityV1::new_native_v1(
+            config.run_id().to_owned(),
+            config.validator_set().chain_id(),
+            *config.validator_set().genesis_hash().as_bytes(),
+            *config.validator_set().id().as_bytes(),
+            config.validator_set_sha256(),
+            config.topology_sha256(),
+            config.coordinator_manifest_sha256(),
+            config.candidate_source_sha256(),
+            config.binary_sha256(),
+            profile.digest_v1()?,
+            validator_count,
+        )
+    } else {
+        FleetCampaignIdentityV1::new(
+            config.run_id().to_owned(),
+            config.validator_set().chain_id(),
+            *config.validator_set().genesis_hash().as_bytes(),
+            *config.validator_set().id().as_bytes(),
+            config.validator_set_sha256(),
+            config.topology_sha256(),
+            config.coordinator_manifest_sha256(),
+            config.candidate_source_sha256(),
+            config.binary_sha256(),
+            config.workload_corpus_sha256(),
+            config.workload_policy_sha256(),
+            validator_count,
+        )
+    }
     .map_err(|error| anyhow!("construct fleet campaign identity: {error}"))?;
     let transport = match preflight.transport {
         ConsensusTransportProfileV1::Direct => FleetBarrierTransportV1::Direct,
@@ -4452,7 +4468,55 @@ impl BoundedConsensusOwnerV1 {
         )
     }
 
+    fn archive_native_finality_v1(&mut self) -> Result<()> {
+        let Some(client) = self.native_client.as_ref() else {
+            return Ok(());
+        };
+        let after_height = client.last_archived_finalized_height_v1();
+        let authority = self
+            .authority
+            .as_ref()
+            .context("native finality authority unavailable")?;
+        let facts = authority.facts_v0()?;
+        if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready
+            || facts.finalized_height_v0() < self.config.ordinary_start_height()
+            || facts.finalized_height_v0() <= after_height
+        {
+            return Ok(());
+        }
+        let proofs = if facts.finalized_height_v0()
+            == after_height.max(self.config.ordinary_start_height() - 1) + 1
+        {
+            let query = authority.native_finalized_query_v1()?;
+            let proof = query.proof_v0().proof_v0().clone();
+            let parent = self
+                .replay_archive
+                .native_parent_header_v1(proof.finalized_block().header(), &self.config)?;
+            vec![(proof, parent)]
+        } else {
+            self.replay_archive.native_finality_range_v1(
+                &self.config,
+                self.preflight.bootstrap_initial_cut,
+                *facts.finalized_block_id_v0().as_bytes(),
+                after_height,
+            )?
+        };
+        let client = self
+            .native_client
+            .as_mut()
+            .expect("native client checked above");
+        for (proof, parent) in proofs {
+            client.observe_finality_evidence_v1(authority, &proof, &parent)?;
+        }
+        ensure!(
+            client.last_archived_finalized_height_v1() == facts.finalized_height_v0(),
+            "RECOVERY_REQUIRED: native finality archive did not reach the exact current cut"
+        );
+        Ok(())
+    }
+
     fn poll_native_client_v1(&mut self) -> Result<bool> {
+        self.archive_native_finality_v1()?;
         let Some(client) = &mut self.native_client else {
             return Ok(false);
         };
@@ -4467,7 +4531,6 @@ impl BoundedConsensusOwnerV1 {
         if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
             return Ok(false);
         }
-        client.observe_finality_v1(authority)?;
         client.poll_v1(
             authority.native_parent_timestamp_v1()?,
             facts.finalized_height_v0(),
@@ -6751,6 +6814,7 @@ impl BoundedConsensusOwnerV1 {
                 )
                 .map_err(|error| anyhow!("append application acknowledgement event: {error}"))?;
         }
+        self.archive_native_finality_v1()?;
         Ok(())
     }
 

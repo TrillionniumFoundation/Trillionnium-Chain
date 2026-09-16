@@ -1108,6 +1108,32 @@ pub struct PreHandoffCheckpointReceiptV1 {
 }
 
 impl PreHandoffCheckpointReceiptV1 {
+    /// Comparison digest of the exact committed native owner cut. This does
+    /// not authorize activation/signing and must be joined to fresh owner readback.
+    pub fn committed_owner_cut_ref_v1(&self) -> [u8; 32] {
+        let row = self.durable_row();
+        let header = self.header();
+        let sequence = row
+            .commit_sequence_v0()
+            .expect("pre-handoff receipt retains an actual COMMITTED row");
+        trnm_finality_types::hash_domain(
+            "trnm.native-application.committed-owner-cut.v1",
+            &[
+                &row.store_id_v0(),
+                &row.p_sequence_v0().to_be_bytes(),
+                &row.p_digest_v0(),
+                &row.artifact_digest_v0(),
+                &row.overlay_digest_v0(),
+                &sequence.to_be_bytes(),
+                header.id().as_bytes(),
+                &header.height().get().to_be_bytes(),
+                header.state_root().as_bytes(),
+                header.receipts_root().as_bytes(),
+                &self.post_execution_authorization_id,
+            ],
+        )
+    }
+
     pub fn header(&self) -> &trnm_consensus_types::BlockHeader {
         self.prepared.header()
     }
@@ -2289,6 +2315,11 @@ mod native_authorization_tests {
             header.id().as_bytes()
         );
         let edge = confirmed.into_epoch_application_edge_v1().unwrap();
+        let activation_read = app.confirm_epoch_application_edge_v1(&edge).unwrap();
+        assert_eq!(activation_read.checkpoint_header(), &header);
+        assert_eq!(activation_read.authorization_id(), edge.authorization_id());
+        assert!(activation_read.belongs_to_application_at_path(&app, &path));
+        drop(activation_read);
         assert_eq!(edge.application_parent().height().get(), 8);
         assert_eq!(edge.consensus_parent().height().get(), 10);
         assert_eq!(edge.first_application_height(), 11);
@@ -2535,6 +2566,10 @@ mod native_authorization_tests {
         // Rebuild from exact raw evidence after reopening the actual stores.
         drop(app);
         let reopened = DurableNativeApplicationV0::open(&path, config()).unwrap();
+        assert!(
+            reopened.confirm_epoch_application_edge_v1(&edge).is_err(),
+            "old owner edge must not survive reopen"
+        );
         let restored_p = reopened
             .reopen_prepared_epoch_execution_v1(last_block)
             .unwrap();
@@ -2583,6 +2618,12 @@ mod native_authorization_tests {
             )
             .unwrap();
         assert_eq!(committed.head().height().get(), 11);
+        assert!(
+            reopened
+                .confirm_epoch_application_edge_v1(&restored_edge)
+                .is_err(),
+            "consumed edge is not fresh activation authority"
+        );
         assert_eq!(committed.commit_sequence(), 21);
         let retried = reopened
             .commit_epoch_finality_bytes_v1(
@@ -2784,6 +2825,451 @@ mod native_authorization_tests {
                 )
                 .unwrap();
             assert_eq!(retried.commit_sequence(), 21);
+        }
+    }
+
+    #[test]
+    fn incremental_owner_migrates_real_history_and_commits_signed_finality_without_snapshot_rows() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = std::env::var_os("TRNM_NATIVE_INCREMENTAL_SIGKILL_STORE")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| directory.path().join("incremental.sqlite3"));
+        let app = open(&path, config());
+        let mut headers = Vec::new();
+        let credit = |label: &str, nonce: u64| {
+            let inner = serde_json::to_vec(&trnm_protocol::CanonicalTxV1 {
+                schema: trnm_protocol::CANONICAL_TX_SCHEMA_V1.into(),
+                sender: "did:operator:1".into(),
+                nonce,
+                max_gas: 100_000,
+                fee_limit: 100_000,
+                command: trnm_protocol::CanonicalCommandV1::CreditAccount {
+                    account: "did:operator:1".into(),
+                    amount: 1_000_000,
+                },
+            })
+            .unwrap();
+            serde_json::to_vec(
+                &trnm_finality_types::SignedCommandEnvelopeV1::sign(
+                    CHAIN,
+                    label,
+                    "did:operator:1",
+                    "operator",
+                    nonce,
+                    1000,
+                    100000,
+                    trnm_protocol::CANONICAL_TX_PAYLOAD_TYPE_V1,
+                    &inner,
+                    &SigningKey::from_bytes(&[81; 32]),
+                )
+                .unwrap(),
+            )
+            .unwrap()
+        };
+        for _ in 0..4 {
+            let next = next_request(&app);
+            let request = NativeBlockPreviewRequestV0::new(
+                next.chain_id().clone(),
+                next.genesis_hash(),
+                next.parent().clone(),
+                next.height(),
+                next.timestamp_ms(),
+                next.active_validator_set_id(),
+                if next.height().get() == 2 {
+                    vec![credit("baseline-credit", 1)]
+                } else {
+                    vec![]
+                },
+            )
+            .unwrap();
+            let (header, executed) = execute(&app, request, BlockKind::Regular);
+            app.commit_block(NativeApplicationCommitRequestV0::new(executed))
+                .unwrap();
+            headers.push(header);
+        }
+        let source = app.confirmed_committed_head_v0().unwrap();
+        app.upgrade_incremental_schema_v1(&source, &headers[3])
+            .unwrap();
+        app.upgrade_incremental_schema_v1(&source, &headers[3])
+            .unwrap();
+        let sql = rusqlite::Connection::open(&path).unwrap();
+        let old_bytes: i64 = sql
+            .query_row(
+                "SELECT sum(length(target_snapshot)) FROM native_durable_execution_p_v0",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert_eq!(
+            sql.query_row(
+                "SELECT length(authenticated_snapshot) FROM native_application_metadata_v0",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+            0
+        );
+        let mut parent = source.clone();
+        let mut pids = Vec::new();
+        let mut first_request = None;
+        for height in 5..=7 {
+            let preview_request = NativeBlockPreviewRequestV0::new(
+                ChainIdV0::new(CHAIN).unwrap(),
+                GenesisHashV0::new([7; 32]).unwrap(),
+                parent.clone(),
+                HeightV0::new(height),
+                height * 1000,
+                trnm_native_application::ValidatorSetIdV0::new(
+                    *app.config_v0().validator_set_v0().id().as_bytes(),
+                )
+                .unwrap(),
+                if height == 5 {
+                    vec![credit("incremental-credit", 2)]
+                } else {
+                    vec![]
+                },
+            )
+            .unwrap();
+            let preview = app.preview_incremental_block_v1(&preview_request).unwrap();
+            let set = app.config_v0().validator_set_v0();
+            let header = BlockHeader::new(
+                set.genesis_hash(),
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                View::new(height),
+                Height::new(height),
+                BlockKind::Regular,
+                BlockId::new(*parent.block_id().as_bytes()),
+                set.validators()[((height - 1) % 4) as usize].id(),
+                set.id(),
+                set.consensus_parameters_hash(),
+                PayloadDigest::new(*preview.payload_root().as_bytes()),
+                StateRoot::new(*preview.post_state_root().as_bytes()),
+                ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+                EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+                height * 1000,
+                None,
+            )
+            .unwrap();
+            let request = NativeBlockExecutionRequestV0::new(
+                preview_request.chain_id().clone(),
+                preview_request.genesis_hash(),
+                parent,
+                BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+                HeightV0::new(height),
+                height * 1000,
+                preview_request.active_validator_set_id(),
+                preview_request.transactions().to_vec(),
+                NativeExpectedBlockCommitmentsV0::new(
+                    preview.payload_root(),
+                    preview.post_state_root(),
+                    preview.receipts_root(),
+                    preview.evidence_root(),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+            if height == 5 {
+                first_request = Some(request.clone());
+            }
+            let p = app
+                .execute_incremental_block_v1(request.clone(), &header)
+                .unwrap();
+            let retry = app.execute_incremental_block_v1(request, &header).unwrap();
+            assert_eq!(p.p_digest(), retry.p_digest());
+            parent = p.target_head().unwrap();
+            pids.push((*header.id().as_bytes(), p.p_digest()));
+            headers.push(header);
+        }
+        let first = first_request.unwrap();
+        let h = &headers[4];
+        let fork_header = BlockHeader::new(
+            h.genesis_hash(),
+            h.chain_id(),
+            h.protocol_version(),
+            h.epoch(),
+            View::new(9),
+            h.height(),
+            h.block_kind(),
+            h.parent_id(),
+            h.proposer_id(),
+            h.validator_set_id(),
+            h.consensus_parameters_hash(),
+            h.payload_digest(),
+            h.state_root(),
+            h.receipts_root(),
+            h.evidence_root(),
+            h.timestamp_ms(),
+            None,
+        )
+        .unwrap();
+        let fork_request = NativeBlockExecutionRequestV0::new(
+            first.chain_id().clone(),
+            first.genesis_hash(),
+            first.parent().clone(),
+            BlockIdV0::new(*fork_header.id().as_bytes()).unwrap(),
+            first.height(),
+            first.timestamp_ms(),
+            first.active_validator_set_id(),
+            first.transactions().to_vec(),
+            first.expected(),
+        )
+        .unwrap();
+        let fork = app
+            .execute_incremental_block_v1(fork_request, &fork_header)
+            .unwrap();
+        assert_eq!(app.confirmed_committed_head_v0().unwrap(), source);
+        let replay_request = |label: &str| {
+            NativeBlockPreviewRequestV0::new(
+                ChainIdV0::new(CHAIN).unwrap(),
+                GenesisHashV0::new([7; 32]).unwrap(),
+                parent.clone(),
+                HeightV0::new(8),
+                8000,
+                trnm_native_application::ValidatorSetIdV0::new(
+                    *app.config_v0().validator_set_v0().id().as_bytes(),
+                )
+                .unwrap(),
+                vec![credit(label, 3)],
+            )
+            .unwrap()
+        };
+        assert!(app
+            .preview_incremental_block_v1(&replay_request("baseline-credit"))
+            .unwrap_err()
+            .to_string()
+            .contains("command"));
+        assert!(app
+            .preview_incremental_block_v1(&replay_request("incremental-credit"))
+            .unwrap_err()
+            .to_string()
+            .contains("command"));
+
+        assert!(app
+            .preview_incremental_block_v1(&replay_request("fresh-credit"))
+            .is_ok());
+        drop(app);
+        let app = DurableNativeApplicationV0::open(&path, config()).unwrap();
+        let p = app
+            .reopen_prepared_incremental_execution_v1(pids[0].0)
+            .unwrap();
+        assert_eq!(p.p_digest(), pids[0].1);
+        let proof = cutoff_proof(&headers, app.config_v0());
+        if std::env::var_os("TRNM_NATIVE_INCREMENTAL_SIGKILL_STORE").is_some() {
+            std::fs::write(
+                path.with_extension("incremental-ids"),
+                [
+                    pids[0].0.as_slice(),
+                    pids[2].0.as_slice(),
+                    fork.storage_artifact().as_slice(),
+                ]
+                .concat(),
+            )
+            .unwrap();
+            std::fs::write(path.with_extension("incremental-finality"), &proof).unwrap();
+        }
+        let mut bad = proof.clone();
+        *bad.last_mut().unwrap() ^= 1;
+        assert!(app
+            .commit_incremental_finality_bytes_v1(
+                &p,
+                &bad,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0()
+            )
+            .is_err());
+        let committed = app
+            .commit_incremental_finality_bytes_v1(
+                &p,
+                &proof,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(committed.head().height().get(), 5);
+        assert_eq!(committed.commit_sequence(), 14);
+        let retry = app
+            .commit_incremental_finality_bytes_v1(
+                &p,
+                &proof,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(retry.commit_sequence(), 14);
+        assert_eq!(
+            app.reopen_prepared_incremental_execution_v1(pids[2].0)
+                .unwrap()
+                .p_digest(),
+            pids[2].1
+        );
+        assert!(app
+            .reopen_prepared_incremental_execution_v1(*fork_header.id().as_bytes())
+            .is_err());
+        assert_eq!(
+            sql.query_row(
+                "SELECT count(*) FROM ni_prepared WHERE artifact=?1",
+                [fork.storage_artifact().as_slice()],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+            0
+        );
+        assert_eq!(
+            sql.query_row(
+                "SELECT count(*) FROM ni_pin WHERE owner=?1",
+                [fork.storage_artifact().as_slice()],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+            0
+        );
+        assert_eq!(
+            sql.query_row(
+                "SELECT sum(length(target_snapshot)) FROM native_durable_execution_p_v0",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+            old_bytes
+        );
+        assert_eq!(
+            sql.query_row("SELECT count(*) FROM native_incremental_p_v1", [], |r| r
+                .get::<_, i64>(0))
+                .unwrap(),
+            3
+        );
+        assert_eq!(
+            sql.query_row(
+                "SELECT length(authenticated_snapshot) FROM native_application_metadata_v0",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+            0
+        );
+        drop(app);
+        let app = DurableNativeApplicationV0::open(&path, config()).unwrap();
+        assert_eq!(app.confirmed_committed_head_v0().unwrap().height().get(), 5);
+        assert_eq!(
+            app.reopen_prepared_incremental_execution_v1(pids[2].0)
+                .unwrap()
+                .p_digest(),
+            pids[2].1
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn incremental_sigkill_commit_boundaries_preserve_state_replay_and_forks() {
+        for stage in [
+            "incremental_before_commit",
+            "incremental_after_commit",
+            "incremental_after_fsync",
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("incremental.sqlite3");
+            let marker = directory.path().join("ready");
+            let mut child=std::process::Command::new(std::env::current_exe().unwrap())
+                .args(["--exact","poco_checkpoint::native_authorization_tests::incremental_owner_migrates_real_history_and_commits_signed_finality_without_snapshot_rows","--nocapture"])
+                .env("TRNM_NATIVE_INCREMENTAL_SIGKILL_STORE",&path)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE",stage)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER",&marker).spawn().unwrap();
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(45);
+            while !marker.exists() && std::time::Instant::now() < deadline {
+                if child.try_wait().unwrap().is_some() {
+                    break;
+                }
+                std::thread::sleep(std::time::Duration::from_millis(10));
+            }
+            if !marker.exists() {
+                let _ = child.kill();
+                let _ = child.wait();
+                panic!("incremental child failed to reach {stage}");
+            }
+            child.kill().unwrap();
+            assert!(!child.wait().unwrap().success());
+            let ids = std::fs::read(path.with_extension("incremental-ids")).unwrap();
+            let first: [u8; 32] = ids[..32].try_into().unwrap();
+            let last: [u8; 32] = ids[32..64].try_into().unwrap();
+            let fork: [u8; 32] = ids[64..].try_into().unwrap();
+            let proof = std::fs::read(path.with_extension("incremental-finality")).unwrap();
+            let app = DurableNativeApplicationV0::open(&path, config()).unwrap();
+            assert_eq!(
+                app.confirmed_committed_head_v0().unwrap().height().get(),
+                if stage == "incremental_before_commit" {
+                    4
+                } else {
+                    5
+                }
+            );
+            let sql = rusqlite::Connection::open(&path).unwrap();
+            assert_eq!(
+                sql.query_row(
+                    "SELECT count(*) FROM ni_prepared WHERE artifact=?1",
+                    [fork.as_slice()],
+                    |r| r.get::<_, i64>(0)
+                )
+                .unwrap(),
+                if stage == "incremental_before_commit" {
+                    1
+                } else {
+                    0
+                }
+            );
+            let p = app.reopen_prepared_incremental_execution_v1(first).unwrap();
+            let result = app
+                .commit_incremental_finality_bytes_v1(
+                    &p,
+                    &proof,
+                    &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+            assert_eq!(result.commit_sequence(), 14);
+            assert_eq!(
+                app.reopen_prepared_incremental_execution_v1(last)
+                    .unwrap()
+                    .target_head()
+                    .unwrap()
+                    .height()
+                    .get(),
+                7
+            );
+            assert_eq!(
+                sql.query_row(
+                    "SELECT count(*) FROM ni_prepared WHERE artifact=?1",
+                    [fork.as_slice()],
+                    |r| r.get::<_, i64>(0)
+                )
+                .unwrap(),
+                0
+            );
+            assert_eq!(
+                sql.query_row(
+                    "SELECT length(authenticated_snapshot) FROM native_application_metadata_v0",
+                    [],
+                    |r| r.get::<_, i64>(0)
+                )
+                .unwrap(),
+                0
+            );
+            let retry = app
+                .commit_incremental_finality_bytes_v1(
+                    &p,
+                    &proof,
+                    &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+            assert_eq!(retry.commit_sequence(), 14);
+            drop(sql);
+            drop(app);
+            assert_eq!(
+                DurableNativeApplicationV0::open(&path, config())
+                    .unwrap()
+                    .confirmed_committed_head_v0()
+                    .unwrap()
+                    .height()
+                    .get(),
+                5
+            );
         }
     }
 

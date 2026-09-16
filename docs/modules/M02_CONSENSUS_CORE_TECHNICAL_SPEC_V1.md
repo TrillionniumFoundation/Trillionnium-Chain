@@ -95,6 +95,50 @@ independent real Ed25519 first-proposal tests. A real-signer, native prepared
 checkpoint receipt, journal8 ACK and strict live Core joined positive test is
 still required before candidate host activation can be claimed.
 
+### Full epoch integration (implemented inert slice; live owner pending)
+
+The pure representation uses `QualifiedFinalizedTipV1` for true finality/application
+coordinates and `ConsensusAncestryBaseV1` for the independent graph root. An
+installed edge retains the complete old checkpoint proof/configuration, exact
+terminal-old header and new view-zero anchor; it never changes an old header's
+epoch or view. Before first-new finality, true tips are C/old epoch while graph
+ancestry begins at terminal C+2. A first-new application parent explicitly carries
+both real checkpoint C and consensus terminal C+2 plus the strict activation
+binding. Its overlay/finalization codec must retain both, not reinterpret a v0
+single-parent record. Only a genuine new-set three-chain moves true finality to C+3.
+
+`StrictEpochRuntimeContextV1` is the implemented M01 consumer of all eight strict
+activation roots for exact QC/TC/proposal/finality admission throughout the new
+epoch. Structural decoder context remains inert. Generic genesis/ordinary APIs
+retain their anchor rejection. The full local record uses the separate
+`TRNMS14E` envelope and exact old/new contexts, while schema13 and outgoing
+`TRNMS14O` bytes stay unchanged. Context retention is bounded to those referenced
+by active evidence; replacing an edge requires prior application/finality work
+to be settled and the new checkpoint independently verified.
+
+`EpochCoreStateV1` retains complete strict evidence and the checkpoint artifact.
+`EpochSafetyStateRecordContextV1` and the separate 14E codec are implemented;
+their decoder returns only `UnverifiedSafetyStateRecordV0`.
+`OldEpochBoundaryCoreV1::prepare_epoch_activation_v1` consumes the old live Core,
+requires the exact completed checkpoint and no pending work, preserves global
+revision+1, and returns `PreparedEpochCoreActivationV1` with no step, persistence
+ACK or signer API. The pure SafetyRules consumer keeps its true old finalized
+reference while using a separate graph coordinate, and its state digest binds
+the full activation. Frozen epoch-zero behavior and schema13 tests remain.
+The Core regression uses real frozen Ed25519 evidence but inert P identifiers;
+it is not evidence of an actual native/journal/custody activation join.
+
+Pure Core preparation remains inert until concrete candidate composition joins
+fresh journal/external cut, `ConfirmedEpochApplicationEdgeV1` from the live native
+owner, and actual retired/new custody owners. Optional std integration belongs
+only to `candidate-epoch-activation`; default Core stays no_std and production
+closure excludes the feature. Continuing membership consumes the old live Core;
+new-only commissioning uses independently trusted old checkpoint state and a
+virgin new-role custody namespace; removed validators retire without a new Core.
+Retirement precedes old handoff signing and binds the pre-certificate context.
+The new ordinary lease follows complete joint verification and binds the exact
+phase7 persisted Safety cut; these are distinct, non-circular receipts.
+
 ### Planned epoch owner types
 
 Names below are target local APIs, not source symbols currently implemented:

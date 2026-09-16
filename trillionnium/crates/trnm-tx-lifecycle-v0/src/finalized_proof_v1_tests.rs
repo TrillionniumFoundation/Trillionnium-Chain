@@ -14,6 +14,7 @@ struct Fixture {
     payload: ApplicationPayloadV0,
     receipts: Vec<ExecutionReceiptCommitmentV0>,
     expected: FinalityExpectationV0,
+    parent: BlockHeader,
 }
 
 fn qc(
@@ -111,7 +112,27 @@ fn fixture(count: usize) -> Fixture {
     let empty_root = OrderedRootV0::from_items::<&[u8]>(RootKind::Evidence, &[])
         .unwrap()
         .digest();
-    let parent_id = BlockId::new([19; 32]);
+    let parent = BlockHeader::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        View::new(1),
+        Height::new(1),
+        BlockKind::Regular,
+        BlockId::new([19; 32]),
+        set.validators()[0].id(),
+        set.id(),
+        parameters.hash(),
+        payload.payload_root().unwrap(),
+        StateRoot::new([31; 32]),
+        receipt_root,
+        EvidenceRoot::new(empty_root),
+        1000,
+        None,
+    )
+    .unwrap();
+    let parent_id = parent.id();
     let mut parent_qc = qc(&set, &keys, 1, 1, parent_id);
     let mut certified = Vec::new();
     for view in 2..=4u64 {
@@ -190,6 +211,7 @@ fn fixture(count: usize) -> Fixture {
         payload,
         receipts,
         expected,
+        parent,
     }
 }
 
@@ -404,6 +426,56 @@ fn obeys_authenticated_byte_count_and_signature_budgets() {
         &bytes,
         context(&f),
         &mut Cev0AdmissionBudgetV0::new(bytes.len(), 0)
+    )
+    .is_err());
+}
+
+#[test]
+fn independent_parent_header_authenticates_time_and_rejects_substitution_v1() {
+    let f = fixture(3);
+    let bytes = package(&f, 1).encode().unwrap();
+    let parent = f.parent.try_cev0_bytes().unwrap();
+    let verify_parent = |parent: &[u8], limit: usize| {
+        verify_native_tx_inclusion_with_parent_header_v1(
+            &bytes,
+            parent,
+            NativeTxParentHeaderContextV1 {
+                trusted_validator_set: &f.set,
+                trusted_parameters: &f.parameters,
+                maximum_transactions: 3,
+                maximum_proof_bytes: limit,
+            },
+            &mut Cev0AdmissionBudgetV0::for_validator_set(&f.parameters, &f.set),
+        )
+    };
+    let verified = verify_parent(&parent, MAX_NATIVE_TX_PROOF_BYTES_V1).unwrap();
+    assert_eq!(verified.transaction_index(), 1);
+    let wrong_parent = f.proof.finalized_block().header().try_cev0_bytes().unwrap();
+    assert!(matches!(
+        verify_parent(&wrong_parent, MAX_NATIVE_TX_PROOF_BYTES_V1),
+        Err(NativeTxProofErrorV1::TargetMismatch)
+    ));
+    assert!(verify_parent(&parent[..parent.len() - 1], MAX_NATIVE_TX_PROOF_BYTES_V1).is_err());
+    let mut trailing = parent.clone();
+    trailing.push(0);
+    assert!(verify_parent(&trailing, MAX_NATIVE_TX_PROOF_BYTES_V1).is_err());
+    assert!(matches!(
+        verify_parent(&parent, bytes.len() + parent.len() - 1),
+        Err(NativeTxProofErrorV1::TooLarge)
+    ));
+    // A fabricated success bit is not an input to this cryptographic consumer.
+    let mut forged_package = package(&f, 1);
+    forged_package.transaction[0] ^= 1;
+    assert!(verify_native_tx_inclusion_with_parent_header_v1(
+        &forged_package.encode().unwrap(),
+        &parent,
+        NativeTxParentHeaderContextV1 {
+            trusted_validator_set: &f.set,
+            trusted_parameters: &f.parameters,
+            maximum_transactions: 3,
+            maximum_proof_bytes: MAX_NATIVE_TX_PROOF_BYTES_V1,
+        },
+        &mut Cev0AdmissionBudgetV0::for_validator_set(&f.parameters, &f.set)
     )
     .is_err());
 }

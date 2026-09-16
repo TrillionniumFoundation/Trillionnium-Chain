@@ -216,9 +216,7 @@ fn native_workers_compute_real_runtime_receipts_and_mutations_on_eight_threads()
     let before = store.encode_authenticated_snapshot_v0().unwrap();
     let outcomes = native_parallel::speculate_transactions_v0(
         native_parallel::NativeSpeculationContextV0 {
-            store: &store,
-            parent_version: 1,
-            parent_root: store.parent_root_v0().unwrap(),
+            live: &store.verified_live_values_v0(1).unwrap(),
             height: 2,
             chain_id: CHAIN,
             timestamp_ms: TIMESTAMP,

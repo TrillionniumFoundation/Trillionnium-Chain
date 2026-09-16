@@ -45,6 +45,17 @@ pub struct NativeTxProofContextV1<'a> {
     pub maximum_proof_bytes: usize,
 }
 
+/// The validator set and parameters are independent local trust. Parent bytes
+/// are untrusted: their hash must equal the parent ID committed by the target's
+/// strictly verified certificate. No peer-provided timestamp is accepted.
+#[derive(Clone, Copy)]
+pub struct NativeTxParentHeaderContextV1<'a> {
+    pub trusted_validator_set: &'a ValidatorSet,
+    pub trusted_parameters: &'a ConsensusParametersV0,
+    pub maximum_transactions: u32,
+    pub maximum_proof_bytes: usize,
+}
+
 /// Explicit epoch route. Old trust comes from authenticated local history;
 /// evidence is untrusted and supplies the complete eight exact preimages.
 /// The byte limit includes both this evidence and the transaction package.
@@ -283,6 +294,72 @@ pub fn verify_native_tx_inclusion_v1(
         context.trusted_parameters,
         context.maximum_transactions,
         Digest32V0::hash(b"trnm.tx.native-inclusion-proof.v1", &[bytes]),
+    )
+}
+
+/// Verify an ordinary native claim using a canonical parent header whose ID
+/// is committed by the finality-certified target. This authenticates parent
+/// time without trusting a response scalar. It does not choose trust, prove
+/// freshness, bind an M05 intent, or enable the epoch-anchor decoder.
+pub fn verify_native_tx_inclusion_with_parent_header_v1(
+    bytes: &[u8],
+    parent_header_bytes: &[u8],
+    context: NativeTxParentHeaderContextV1<'_>,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<VerifiedNativeTxInclusionV1, NativeTxProofErrorV1> {
+    let total = bytes
+        .len()
+        .checked_add(parent_header_bytes.len())
+        .ok_or(NativeTxProofErrorV1::TooLarge)?;
+    if total
+        > context
+            .maximum_proof_bytes
+            .min(MAX_NATIVE_TX_PROOF_BYTES_V1)
+    {
+        return Err(NativeTxProofErrorV1::TooLarge);
+    }
+    budget
+        .admit_root_bytes(parent_header_bytes.len())
+        .map_err(NativeTxProofErrorV1::Decode)?;
+    let package = NativeTxProofPackageV1::decode_exact(bytes, context.maximum_proof_bytes)?;
+    let target = decode_block_header_v0_exact(&package.target_header)
+        .map_err(NativeTxProofErrorV1::Decode)?;
+    let parent =
+        decode_block_header_v0_exact(parent_header_bytes).map_err(NativeTxProofErrorV1::Decode)?;
+    let set = context.trusted_validator_set;
+    if parent.id() != target.parent_id()
+        || parent.height().get().checked_add(1) != Some(target.height().get())
+        || [&parent, &target].iter().any(|header| {
+            header.chain_id() != set.chain_id()
+                || header.genesis_hash() != set.genesis_hash()
+                || header.protocol_version() != set.protocol_version()
+                || header.epoch() != set.epoch()
+                || header.validator_set_id() != set.id()
+                || header.consensus_parameters_hash() != context.trusted_parameters.hash()
+        })
+    {
+        return Err(NativeTxProofErrorV1::TargetMismatch);
+    }
+    let expected = FinalityExpectationV0 {
+        block_id: target.id(),
+        height: target.height(),
+        state_root: target.state_root(),
+        receipts_root: target.receipts_root(),
+        evidence_root: target.evidence_root(),
+        parent_id: parent.id(),
+        parent_height: parent.height(),
+        parent_timestamp_ms: parent.timestamp_ms(),
+    };
+    verify_native_tx_inclusion_v1(
+        bytes,
+        NativeTxProofContextV1 {
+            trusted_validator_set: set,
+            trusted_parameters: context.trusted_parameters,
+            expected,
+            maximum_transactions: context.maximum_transactions,
+            maximum_proof_bytes: context.maximum_proof_bytes,
+        },
+        budget,
     )
 }
 

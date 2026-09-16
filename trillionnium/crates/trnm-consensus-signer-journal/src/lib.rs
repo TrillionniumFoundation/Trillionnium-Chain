@@ -64,6 +64,11 @@ mod handoff_schema_v1;
 mod handoff_sqlite_v1;
 mod hash;
 mod model;
+mod retirement_model_v1;
+pub use retirement_model_v1::{
+    ExternalSignerRetirementV1, SignerRetirementHostCutV1, SignerRetirementRecordV1,
+    SIGNER_RETIREMENT_RECORD_BYTES_V1,
+};
 mod schema;
 mod sqlite;
 
@@ -92,4 +97,8 @@ pub use sqlite::{
     SignerJournalActivationFailureV0, SignerJournalLifetimeInventoryV1,
     SignerJournalReconciliationFactsV0, SignerJournalTailFactsV0, SignerJournalTailStateV0,
     SignerNodeCheckpointIdentityV0, SignerPreparedIntentFactsV0, SqliteSignerJournalV0,
+};
+
+pub use sqlite::retirement_v1::{
+    ConfirmedOrdinarySignerRetirementV1, RetiredSqliteSignerJournalV1, SignerRetirementCutV1,
 };

@@ -13,6 +13,9 @@
 
 #![forbid(unsafe_code)]
 
+mod retirement_v1;
+pub use retirement_v1::SignerRetirementAuthorityCutV1;
+
 use std::{
     collections::{BTreeMap, BTreeSet},
     error::Error,
@@ -31,9 +34,10 @@ use std::{
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
 use trnm_consensus_signer_journal::{
-    signer_journal_lifecycle_nonce_v0, ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0,
-    ExternalWatermarkSemanticFactsV0, SignatureProducerV0, SignatureRequestV0,
-    SignerJournalErrorV0, SignerWatermarkV0,
+    signer_journal_lifecycle_nonce_v0, ExternalMonotonicWatermarkV0, ExternalSignerRetirementV1,
+    ExternalWatermarkErrorV0, ExternalWatermarkSemanticFactsV0, SignatureProducerV0,
+    SignatureRequestV0, SignerJournalErrorV0, SignerRetirementRecordV1, SignerWatermarkV0,
+    SIGNER_RETIREMENT_RECORD_BYTES_V1,
 };
 use trnm_consensus_types::{CanonicalSignIntentV0, CanonicalSignPreimageV0, SignatureBytes};
 
@@ -316,6 +320,8 @@ pub struct ExternalWatermarkAuthority {
     semantic_nonce_history: BTreeMap<[u8; 32], [u8; 32]>,
     semantic_binding: Option<ExternalWatermarkSemanticBindingV1>,
     poisoned: bool,
+    retirement: Option<SignerRetirementRecordV1>,
+    retirement_logged: bool,
 }
 
 impl ExternalWatermarkAuthority {
@@ -452,7 +458,7 @@ impl ExternalWatermarkAuthority {
                         "authority mode marker is missing",
                     ));
                 }
-                write_mode_marker(&semantic_mode_path, requested, &directory)?;
+                write_mode_marker(&semantic_mode_path, requested, None, &directory)?;
             }
         }
         let mut authority = Self {
@@ -473,6 +479,8 @@ impl ExternalWatermarkAuthority {
             history: BTreeSet::new(),
             semantic_nonce_history: BTreeMap::new(),
             semantic_binding: requested_binding,
+            retirement: existing_mode.and_then(|mode| mode.retirement),
+            retirement_logged: false,
             poisoned: false,
         };
         authority.replay_log()?;
@@ -486,6 +494,7 @@ impl ExternalWatermarkAuthority {
                 "semantic and watermark logs have different lengths",
             ));
         }
+        authority.validate_retirement_source_v1()?;
         Ok(authority)
     }
 
@@ -497,6 +506,7 @@ impl ExternalWatermarkAuthority {
         &self,
         scope: [u8; 32],
     ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkAuthorityError> {
+        self.require_ordinary_active_v1()?;
         if scope == [0; 32] {
             return Err(ExternalWatermarkAuthorityError::InvalidConfig("zero scope"));
         }
@@ -511,6 +521,7 @@ impl ExternalWatermarkAuthority {
         expected: Option<SignerWatermarkV0>,
         target: SignerWatermarkV0,
     ) -> Result<(), ExternalWatermarkAuthorityError> {
+        self.require_ordinary_active_v1()?;
         if self.poisoned {
             return Err(ExternalWatermarkAuthorityError::Unavailable);
         }
@@ -604,6 +615,7 @@ impl ExternalWatermarkAuthority {
         target: SignerWatermarkV0,
         facts: ExternalWatermarkSemanticFactsV1,
     ) -> Result<(), ExternalWatermarkAuthorityError> {
+        self.require_ordinary_active_v1()?;
         if self.poisoned {
             return Err(ExternalWatermarkAuthorityError::Unavailable);
         }
@@ -714,7 +726,17 @@ impl ExternalWatermarkAuthority {
             previous_record_hash: previous_semantic_hash,
             record_hash: semantic_hash,
         };
-        if metadata_len(&self.log)?.saturating_add(RECORD_BYTES as u64) > MAX_AUTHORITY_LOG_BYTES
+        let terminal_reserve = if binding.lifecycle_mode
+            == ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair
+        {
+            retirement_v1::TERMINAL_LOG_BYTES as u64
+        } else {
+            0
+        };
+        if metadata_len(&self.log)?
+            .saturating_add(RECORD_BYTES as u64)
+            .saturating_add(terminal_reserve)
+            > MAX_AUTHORITY_LOG_BYTES
             || metadata_len(&self.semantic_log)?.saturating_add(SEMANTIC_RECORD_BYTES as u64)
                 > MAX_AUTHORITY_LOG_BYTES
         {
@@ -904,7 +926,8 @@ impl ExternalWatermarkAuthority {
                     stage: "clone log for replay",
                     source,
                 })?;
-        reader
+        Read::by_ref(&mut reader)
+            .take(MAX_AUTHORITY_LOG_BYTES + 1)
             .read_to_end(&mut bytes)
             .map_err(|source| ExternalWatermarkAuthorityError::Io {
                 stage: "read append-only log",
@@ -915,11 +938,21 @@ impl ExternalWatermarkAuthority {
                 "watermark log exceeds configured bound",
             ));
         }
-        if bytes.len() % RECORD_BYTES != 0 {
+        let terminal_len = if bytes.len().is_multiple_of(RECORD_BYTES) {
+            0
+        } else if self.retirement.is_some()
+            && bytes.len() >= retirement_v1::TERMINAL_LOG_BYTES
+            && (bytes.len() - retirement_v1::TERMINAL_LOG_BYTES).is_multiple_of(RECORD_BYTES)
+        {
+            retirement_v1::TERMINAL_LOG_BYTES
+        } else {
             return Err(ExternalWatermarkAuthorityError::InvalidLog(
                 "trailing partial record",
             ));
-        }
+        };
+        let source_len = bytes.len() - terminal_len;
+        let terminal = &bytes[source_len..];
+        let bytes = &bytes[..source_len];
         for chunk in bytes.chunks_exact(RECORD_BYTES) {
             let record = decode_record(chunk)?;
             if record.previous_record_hash != self.head_hash {
@@ -956,13 +989,28 @@ impl ExternalWatermarkAuthority {
                 ExternalWatermarkAuthorityError::InvalidLog("record count exhausted"),
             )?;
         }
+        if terminal_len != 0 {
+            retirement_v1::validate_terminal_log_v1(
+                terminal,
+                self.retirement
+                    .ok_or(ExternalWatermarkAuthorityError::InvalidLog(
+                        "terminal without mode",
+                    ))?,
+                self.head_hash,
+            )?;
+            self.retirement_logged = true;
+        }
         Ok(())
     }
 
     fn reconcile_anchor(&mut self) -> Result<(), ExternalWatermarkAuthorityError> {
-        let bytes = match fs::read(&self.anchor_path) {
-            Ok(bytes) => bytes,
-            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+        let bytes = match read_private_optional_exact(
+            &self.anchor_path,
+            ANCHOR_BYTES as u64,
+            "read durable head anchor",
+        )? {
+            Some(bytes) => bytes,
+            None => {
                 if self.record_count != 0 {
                     return Err(ExternalWatermarkAuthorityError::InvalidLog(
                         "non-empty log has no durable head anchor",
@@ -970,12 +1018,6 @@ impl ExternalWatermarkAuthority {
                 }
                 self.persist_anchor()?;
                 return Ok(());
-            }
-            Err(source) => {
-                return Err(ExternalWatermarkAuthorityError::Io {
-                    stage: "read durable head anchor",
-                    source,
-                })
             }
         };
         let (anchored_count, anchored_head) = decode_anchor(&bytes)?;
@@ -1006,7 +1048,8 @@ impl ExternalWatermarkAuthority {
                 source,
             }
         })?;
-        reader
+        Read::by_ref(&mut reader)
+            .take(MAX_AUTHORITY_LOG_BYTES + 1)
             .read_to_end(&mut bytes)
             .map_err(|source| ExternalWatermarkAuthorityError::Io {
                 stage: "read semantic watermark log",
@@ -1128,9 +1171,13 @@ impl ExternalWatermarkAuthority {
     }
 
     fn reconcile_semantic_anchor(&mut self) -> Result<(), ExternalWatermarkAuthorityError> {
-        let bytes = match fs::read(&self.semantic_anchor_path) {
-            Ok(bytes) => bytes,
-            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+        let bytes = match read_private_optional_exact(
+            &self.semantic_anchor_path,
+            SEMANTIC_ANCHOR_BYTES as u64,
+            "read semantic head anchor",
+        )? {
+            Some(bytes) => bytes,
+            None => {
                 if self.semantic_record_count != 0 {
                     return Err(ExternalWatermarkAuthorityError::InvalidLog(
                         "non-empty semantic log has no durable head anchor",
@@ -1138,12 +1185,6 @@ impl ExternalWatermarkAuthority {
                 }
                 self.persist_semantic_anchor()?;
                 return Ok(());
-            }
-            Err(source) => {
-                return Err(ExternalWatermarkAuthorityError::Io {
-                    stage: "read semantic head anchor",
-                    source,
-                })
             }
         };
         let (anchored_count, anchored_head) = decode_semantic_anchor(&bytes)?;
@@ -1287,22 +1328,37 @@ impl ExternalWatermarkAuthority {
             "validate authority semantic log",
         )?;
 
-        let expected_log_len = self.record_count.checked_mul(RECORD_BYTES as u64).ok_or(
+        let source_log_len = self.record_count.checked_mul(RECORD_BYTES as u64).ok_or(
             ExternalWatermarkAuthorityError::InvalidLog("watermark record count overflow"),
         )?;
+        let expected_log_len = source_log_len
+            .checked_add(if self.retirement_logged {
+                retirement_v1::TERMINAL_LOG_BYTES as u64
+            } else {
+                0
+            })
+            .ok_or(ExternalWatermarkAuthorityError::InvalidLog(
+                "terminal log length overflow",
+            ))?;
         let log_bytes = read_authority_log_exact(
             &self.log,
             &self.log_path,
             expected_log_len,
             "read authority watermark log",
         )?;
-        if log_bytes.len() as u64 != expected_log_len {
-            return Err(ExternalWatermarkAuthorityError::InvalidLog(
-                "watermark log length does not match record count",
-            ));
+        if self.retirement_logged {
+            retirement_v1::validate_terminal_log_v1(
+                &log_bytes[source_log_len as usize..],
+                self.retirement
+                    .ok_or(ExternalWatermarkAuthorityError::InvalidLog(
+                        "terminal without mode",
+                    ))?,
+                self.head_hash,
+            )?;
         }
+        let log_bytes = &log_bytes[..source_log_len as usize];
         validate_main_log_chain(
-            &log_bytes,
+            log_bytes,
             self.record_count,
             self.head_hash,
             &self.current,
@@ -1416,12 +1472,9 @@ impl ExternalWatermarkAuthority {
         }
 
         let mode_path = semantic_mode_path_for(&self.log_path)?;
-        let mode_bytes = read_private_exact(
-            &mode_path,
-            SEMANTIC_MODE_BYTES as u64,
-            "read authority mode marker",
+        let mode = read_mode_marker(&mode_path)?.ok_or(
+            ExternalWatermarkAuthorityError::InvalidLog("authority mode marker missing"),
         )?;
-        let mode = decode_mode_marker(&mode_bytes)?;
         let expected_mode = ModeMarkerV1 {
             semantic: self.semantic_binding.is_some(),
             lifecycle_mode: self
@@ -1429,6 +1482,7 @@ impl ExternalWatermarkAuthority {
                 .map(|binding| binding.lifecycle_mode)
                 .unwrap_or(ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair),
             binding: self.semantic_binding,
+            retirement: self.retirement,
         };
         if mode != expected_mode {
             return Err(ExternalWatermarkAuthorityError::InvalidLog(
@@ -1461,13 +1515,19 @@ impl ExternalWatermarkAuthority {
         let body = read_frame(&mut stream)?;
         let request = decode_request(&body)?;
         let response = match request {
+            RequestV1::LoadRetirement { binding } => self.handle_retirement_load_v1(binding),
+            RequestV1::RetireSigner { binding, record } => {
+                self.handle_retirement_cas_v1(binding, record)
+            }
             RequestV1::Load { scope } => match self.load(scope) {
                 Ok(Some(value)) => encode_value_response(value),
                 Ok(None) => encode_empty_response(STATUS_NONE),
                 Err(_) => encode_empty_response(STATUS_INVALID_STATE),
             },
             RequestV1::LoadSemantic { binding } => {
-                if self.semantic_binding != Some(binding) {
+                if self.require_ordinary_active_v1().is_err()
+                    || self.semantic_binding != Some(binding)
+                {
                     encode_empty_response(STATUS_INVALID_STATE)
                 } else if let Some(value) = self.current.get(&binding.scope).copied() {
                     match self.semantic_current.get(&binding.scope).copied() {
@@ -1673,6 +1733,9 @@ impl UnixWatermarkClient {
         scope: [u8; 32],
     ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkAuthorityError> {
         match self.request(RequestV1::Load { scope })? {
+            ResponseV1::Retirement(_) => Err(ExternalWatermarkAuthorityError::Protocol(
+                "retirement response in ordinary operation",
+            )),
             ResponseV1::None => Ok(None),
             ResponseV1::Value(value) => Ok(Some(value)),
             ResponseV1::SemanticValue(_, _) => Err(ExternalWatermarkAuthorityError::Protocol(
@@ -1694,6 +1757,9 @@ impl UnixWatermarkClient {
         ExternalWatermarkAuthorityError,
     > {
         match self.request(RequestV1::LoadSemantic { binding })? {
+            ResponseV1::Retirement(_) => Err(ExternalWatermarkAuthorityError::Protocol(
+                "retirement response in ordinary operation",
+            )),
             ResponseV1::None => Ok(None),
             ResponseV1::SemanticValue(value, facts) => Ok(Some((value, facts))),
             ResponseV1::Value(_) => Err(ExternalWatermarkAuthorityError::Protocol(
@@ -1713,6 +1779,9 @@ impl UnixWatermarkClient {
         target: SignerWatermarkV0,
     ) -> Result<(), ExternalWatermarkAuthorityError> {
         match self.request(RequestV1::CompareAndAdvance { expected, target })? {
+            ResponseV1::Retirement(_) => Err(ExternalWatermarkAuthorityError::Protocol(
+                "retirement response in ordinary operation",
+            )),
             ResponseV1::None => Ok(()),
             ResponseV1::CompareFailed => Err(ExternalWatermarkAuthorityError::CompareFailed),
             ResponseV1::InvalidState => Err(ExternalWatermarkAuthorityError::InvalidLog(
@@ -1743,6 +1812,9 @@ impl UnixWatermarkClient {
                 .map(|binding| binding.lifecycle_mode)
                 .unwrap_or(ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair),
         })? {
+            ResponseV1::Retirement(_) => Err(ExternalWatermarkAuthorityError::Protocol(
+                "retirement response in ordinary operation",
+            )),
             ResponseV1::None => Ok(()),
             ResponseV1::CompareFailed => Err(ExternalWatermarkAuthorityError::CompareFailed),
             ResponseV1::InvalidState => Err(ExternalWatermarkAuthorityError::InvalidLog(
@@ -2737,6 +2809,13 @@ fn decode_replay_anchor(bytes: &[u8]) -> Result<(u64, [u8; 32]), ReplayBindingEr
 
 #[derive(Debug, Clone, Copy)]
 enum RequestV1 {
+    LoadRetirement {
+        binding: ExternalWatermarkSemanticBindingV1,
+    },
+    RetireSigner {
+        binding: ExternalWatermarkSemanticBindingV1,
+        record: SignerRetirementRecordV1,
+    },
     Load {
         scope: [u8; 32],
     },
@@ -2757,6 +2836,7 @@ enum RequestV1 {
 
 #[derive(Debug, Clone, Copy)]
 enum ResponseV1 {
+    Retirement(Option<SignerRetirementRecordV1>),
     None,
     Value(SignerWatermarkV0),
     SemanticValue(SignerWatermarkV0, ExternalWatermarkSemanticFactsV1),
@@ -2852,6 +2932,7 @@ struct ModeMarkerV1 {
     semantic: bool,
     lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
     binding: Option<ExternalWatermarkSemanticBindingV1>,
+    retirement: Option<SignerRetirementRecordV1>,
 }
 
 fn semantic_mode_path_for(log_path: &Path) -> Result<PathBuf, ExternalWatermarkAuthorityError> {
@@ -2931,6 +3012,18 @@ fn validate_private_directory(
 /// while checking its inode and exact length before and after the read.  This
 /// is used for anchors and mode markers, whose contents are not covered by the
 /// append-only file descriptor itself.
+fn read_private_optional_exact(
+    path: &Path,
+    expected_len: u64,
+    stage: &'static str,
+) -> Result<Option<Vec<u8>>, ExternalWatermarkAuthorityError> {
+    match fs::symlink_metadata(path) {
+        Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(None),
+        Err(source) => Err(ExternalWatermarkAuthorityError::Io { stage, source }),
+        Ok(_) => read_private_exact(path, expected_len, stage).map(Some),
+    }
+}
+
 fn read_private_exact(
     path: &Path,
     expected_len: u64,
@@ -2965,7 +3058,8 @@ fn read_private_exact(
     }
     let mut bytes = Vec::with_capacity(expected_len as usize);
     let mut reader = file;
-    reader
+    Read::by_ref(&mut reader)
+        .take(expected_len.saturating_add(1))
         .read_to_end(&mut bytes)
         .map_err(|source| ExternalWatermarkAuthorityError::Io { stage, source })?;
     let after = reader
@@ -3169,29 +3263,51 @@ fn validate_semantic_log_chain(
 }
 
 fn read_mode_marker(path: &Path) -> Result<Option<ModeMarkerV1>, ExternalWatermarkAuthorityError> {
-    let bytes = match fs::read(path) {
-        Ok(bytes) => bytes,
-        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
+    let length = match fs::symlink_metadata(path) {
+        Ok(m) => m.len(),
+        Err(e) if e.kind() == io::ErrorKind::NotFound => return Ok(None),
         Err(source) => {
             return Err(ExternalWatermarkAuthorityError::Io {
-                stage: "read authority mode marker",
+                stage: "stat mode marker",
                 source,
             })
         }
     };
+    if length != SEMANTIC_MODE_BYTES as u64 && length != retirement_v1::RETIRED_MODE_BYTES as u64 {
+        return Err(ExternalWatermarkAuthorityError::InvalidLog(
+            "mode marker size",
+        ));
+    }
+    let bytes = read_private_exact(path, length, "read bounded mode marker")?;
     decode_mode_marker(&bytes).map(Some)
 }
 
 fn decode_mode_marker(bytes: &[u8]) -> Result<ModeMarkerV1, ExternalWatermarkAuthorityError> {
-    if bytes.len() != SEMANTIC_MODE_BYTES
+    let retired = bytes.len() == retirement_v1::RETIRED_MODE_BYTES;
+    if (!retired && bytes.len() != SEMANTIC_MODE_BYTES)
         || &bytes[..8] != SEMANTIC_MODE_MAGIC
-        || bytes[8] != PROTOCOL_VERSION
-        || bytes[11..12] != [0]
+        || bytes[8] != if retired { 2 } else { PROTOCOL_VERSION }
+        || bytes[11] != 0
     {
         return Err(ExternalWatermarkAuthorityError::InvalidLog(
             "authority mode marker header",
         ));
     }
+    let checksum_offset = bytes.len() - 32;
+    if bytes[checksum_offset..] != mode_marker_checksum(&bytes[..checksum_offset]) {
+        return Err(ExternalWatermarkAuthorityError::InvalidLog(
+            "authority mode marker checksum",
+        ));
+    }
+    let retirement = if retired {
+        Some(
+            SignerRetirementRecordV1::decode_v1_exact(&bytes[108..checksum_offset]).map_err(
+                |_| ExternalWatermarkAuthorityError::InvalidLog("mode retirement record"),
+            )?,
+        )
+    } else {
+        None
+    };
     let semantic = bytes[9] == 1;
     if !semantic && bytes[9] != 0 {
         return Err(ExternalWatermarkAuthorityError::InvalidLog(
@@ -3202,12 +3318,6 @@ fn decode_mode_marker(bytes: &[u8]) -> Result<ModeMarkerV1, ExternalWatermarkAut
     let scope: [u8; 32] = bytes[12..44].try_into().expect("mode scope");
     let journal_id: [u8; 32] = bytes[44..76].try_into().expect("mode journal");
     let capability: [u8; 32] = bytes[76..108].try_into().expect("mode capability");
-    let checksum: [u8; 32] = bytes[108..140].try_into().expect("mode checksum");
-    if checksum != mode_marker_checksum(&bytes[..108]) {
-        return Err(ExternalWatermarkAuthorityError::InvalidLog(
-            "authority mode marker checksum",
-        ));
-    }
     let binding = if semantic {
         ExternalWatermarkSemanticBindingV1::new(scope, journal_id, capability)
             .ok_or(ExternalWatermarkAuthorityError::InvalidLog(
@@ -3238,13 +3348,24 @@ fn decode_mode_marker(bytes: &[u8]) -> Result<ModeMarkerV1, ExternalWatermarkAut
         semantic,
         lifecycle_mode,
         binding,
+        retirement,
     })
 }
 
 fn write_mode_marker(
     path: &Path,
     binding: Option<ExternalWatermarkSemanticBindingV1>,
+    retirement: Option<SignerRetirementRecordV1>,
     directory: &File,
+) -> Result<(), ExternalWatermarkAuthorityError> {
+    write_mode_marker_observed_v1(path, binding, retirement, directory, &mut |_| Ok(()))
+}
+fn write_mode_marker_observed_v1(
+    path: &Path,
+    binding: Option<ExternalWatermarkSemanticBindingV1>,
+    retirement: Option<SignerRetirementRecordV1>,
+    directory: &File,
+    observer: &mut impl FnMut(SignerRetirementAuthorityCutV1) -> io::Result<()>,
 ) -> Result<(), ExternalWatermarkAuthorityError> {
     let (semantic, lifecycle_mode, scope, journal_id, capability) = match binding {
         Some(binding) => (
@@ -3262,17 +3383,32 @@ fn write_mode_marker(
             [0; 32],
         ),
     };
-    let mut bytes = [0_u8; SEMANTIC_MODE_BYTES];
+    let mut bytes = vec![
+        0_u8;
+        if retirement.is_some() {
+            retirement_v1::RETIRED_MODE_BYTES
+        } else {
+            SEMANTIC_MODE_BYTES
+        }
+    ];
     bytes[..8].copy_from_slice(SEMANTIC_MODE_MAGIC);
-    bytes[8] = PROTOCOL_VERSION;
+    bytes[8] = if retirement.is_some() {
+        2
+    } else {
+        PROTOCOL_VERSION
+    };
     bytes[9] = semantic;
     bytes[10] = lifecycle_mode;
     bytes[11] = 0;
     bytes[12..44].copy_from_slice(&scope);
     bytes[44..76].copy_from_slice(&journal_id);
     bytes[76..108].copy_from_slice(&capability);
-    let checksum = mode_marker_checksum(&bytes[..108]);
-    bytes[108..].copy_from_slice(&checksum);
+    let offset = bytes.len() - 32;
+    if let Some(record) = retirement {
+        bytes[108..offset].copy_from_slice(&record.encode_v1());
+    }
+    let checksum = mode_marker_checksum(&bytes[..offset]);
+    bytes[offset..].copy_from_slice(&checksum);
     let name = path.file_name().and_then(|name| name.to_str()).ok_or(
         ExternalWatermarkAuthorityError::InvalidConfig("authority mode filename"),
     )?;
@@ -3285,13 +3421,17 @@ fn write_mode_marker(
             .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
             .open(&temporary)?;
         file.write_all(&bytes)?;
+        observer(SignerRetirementAuthorityCutV1::AfterWriteBeforeFileSync)?;
         file.sync_all()?;
+        observer(SignerRetirementAuthorityCutV1::AfterFileSyncBeforeRename)?;
         fs::rename(&temporary, path)?;
+        observer(SignerRetirementAuthorityCutV1::AfterRenameBeforeDirectorySync)?;
         // The marker selects the immutable semantic/opaque namespace.  Sync
         // the parent directory after the atomic rename so a crash cannot
         // lose the name while retaining semantic sidecars and permit a
         // subsequent opaque downgrade.
         directory.sync_data()?;
+        observer(SignerRetirementAuthorityCutV1::AfterDirectorySyncBeforeReadback)?;
         Ok::<(), io::Error>(())
     })();
     if let Err(source) = result {
@@ -3727,10 +3867,16 @@ fn decode_watermark(bytes: &[u8]) -> Result<SignerWatermarkV0, ExternalWatermark
 }
 
 fn encode_request(request: RequestV1) -> Vec<u8> {
+    if let Some(body) = retirement_v1::encode_request_v2(request) {
+        return body;
+    }
     let mut body = Vec::with_capacity(MAX_FRAME_BYTES);
     body.extend_from_slice(REQUEST_MAGIC);
     body.push(PROTOCOL_VERSION);
     match request {
+        RequestV1::LoadRetirement { .. } | RequestV1::RetireSigner { .. } => {
+            unreachable!("handled version2 retirement")
+        }
         RequestV1::Load { scope } => {
             body.push(OP_LOAD);
             body.push(0);
@@ -3784,6 +3930,9 @@ fn encode_request(request: RequestV1) -> Vec<u8> {
 }
 
 fn decode_request(body: &[u8]) -> Result<RequestV1, ExternalWatermarkAuthorityError> {
+    if body.starts_with(b"EWM2") {
+        return retirement_v1::decode_request_v2(body);
+    }
     if body.len() < 9 || &body[..4] != REQUEST_MAGIC || body[4] != PROTOCOL_VERSION {
         return Err(ExternalWatermarkAuthorityError::Protocol("request header"));
     }
@@ -3951,6 +4100,9 @@ fn encode_semantic_value_response(
 }
 
 fn decode_response(body: &[u8]) -> Result<ResponseV1, ExternalWatermarkAuthorityError> {
+    if body.starts_with(b"EWR2") {
+        return retirement_v1::decode_response_v2(body);
+    }
     if body.len() < 8 || &body[..4] != RESPONSE_MAGIC || body[4] != PROTOCOL_VERSION {
         return Err(ExternalWatermarkAuthorityError::Protocol("response header"));
     }

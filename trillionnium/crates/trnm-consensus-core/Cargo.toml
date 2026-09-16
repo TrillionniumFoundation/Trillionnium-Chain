@@ -38,3 +38,6 @@ trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 sha2 = { version = "0.10", default-features = false }
 trnm-consensus-safety-rules = { version = "0.1.0", path = "../trnm-consensus-safety-rules" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+
+[dev-dependencies]
+serde_json = "1"

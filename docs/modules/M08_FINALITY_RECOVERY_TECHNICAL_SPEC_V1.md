@@ -135,6 +135,14 @@ fresh checkpoint P digest/sequence and exact current committed head C. Its reque
 binds both parents and the authorization digest; constructing these raw fields
 alone supplies no authority. A preview neither consumes the edge nor writes P.
 
+`confirm_epoch_application_edge_v1(&edge)` now supplies a separate read-only
+`ConfirmedEpochApplicationEdgeV1` for host/Core composition. It borrows the
+strict edge, owns fresh COMMITTED checkpoint readback, requires current head C,
+exact P/artifact/commit sequence and the original retained bound preparation.
+It neither executes C+3 nor migrates/writes local state. Its owner/path check
+repeats those fresh checks; exposed headers/configuration and authorization
+facts are insufficient by themselves to activate Core or retire old signing.
+
 The schema-4 application bridge below now retains evidence and an Installed /
 Consumed phase. Its application owner does not claim an independent node checkpoint
 CAS. The broader node-checkpoint composition below remains planned, and its
@@ -257,6 +265,39 @@ can consume it or prevent a later safe proposal. Commit CAS selects one exact
 finalized block. Duplicate edge installation/commit requires byte-identical
 binding; mismatched target or descriptor halts. Historical edge/proof retention
 continues after consumption for M13 reconstruction and evidence windows.
+
+### Implemented ordinary incremental native owner (schema 5)
+
+M07's explicit schema3→5 migration now uses the actual native SQLite owner,
+not a shadow write. It retains one native P, state delta and authenticated local
+replay delta in the same transaction; ordinary prepare/commit no longer encodes
+historical JMT snapshots. The exact closed schema, P/migration/owner digest
+preimages, replay codec and finite bounds are specified in M07's "Implemented
+ordinary native owner" section. Schema4 sparse migration remains fenced.
+
+`PreparedNativeIncrementalExecutionV1` has private fields/no Clone and carries
+actual P/header/parent/target/storage reference/sequence. Its prospective target
+is not evidence of commit. `commit_incremental_finality_bytes_v1` first joins
+fresh exact P and authenticated parent header to strict signed three-chain
+verification, then commits only the oldest exact application predecessor. Native
+commit sequence is current durable sequence+1, including speculative prepares.
+A committed receipt remains owner-affine and exact retries preserve its sequence.
+
+Recovery audits the immutable migration baseline against the original committed
+source P and authenticated replay tree, pins that anchor in the live owner, and
+validates current state/replay/root/commit bindings. Pending readback checks exact
+P/storage/replay ancestry to the committed head. Missing/corrupt nodes cause
+unavailable/error, never successful replay absence. Native recovery inventory
+counts schema5 pending P rather than reporting an empty legacy table as "Exact".
+The v0 snapshot/preview/state-proof interfaces explicitly reject schema5; their
+versioned adapters, Core callback integration and sparse incremental epoch path
+remain pending and cannot be inferred from ordinary owner tests.
+
+A real signed test migrates height4, prepares5/6/7 plus sibling5, strictly commits5,
+retires only the sibling/pin, then reopens6/7. SIGKILL before/after transaction
+commit and after fsync yields only exact pre/post states; replaying finality
+returns native sequence14 without duplicate state or replay writes. New P rows
+have no historical snapshot and the archival snapshot byte sum is unchanged.
 
 ### Implemented dual-parent artifact and schema-4 snapshot bridge
 

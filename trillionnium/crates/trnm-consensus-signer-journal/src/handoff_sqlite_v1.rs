@@ -120,6 +120,8 @@ pub enum SignerJournalSchemaKindV1 {
     LegacyV0ReadOnly,
     /// Exact create-new schema1.
     HandoffCapableV1,
+    /// Terminal schema2: no ordinary or handoff signing owner can be opened.
+    RetiredOrdinaryV1,
 }
 
 /// Read-only exact schema classifier. It performs no migration or PRAGMA that
@@ -175,11 +177,25 @@ pub fn inspect_signer_journal_schema_read_only_v1(
         (1, 0) => {
             let auxiliary_pins = pin_checkpointed_legacy_namespace_v1(database_path)?;
             require_persisted_sqlite_journal_mode_v1(&database_file, 2, "schema0 WAL mode")?;
-            validate_canonical_schema(&connection)
-                .map_err(|_| HandoffSignerJournalErrorV1::SchemaMismatch)?;
+            let version: i64 = connection
+                .query_row("PRAGMA user_version", [], |r| r.get(0))
+                .map_err(|e| {
+                    HandoffSignerJournalErrorV1::sqlite("classify ordinary schema version", e)
+                })?;
+            if version == 2 {
+                crate::sqlite::retirement_v1::validate_retired_schema_v1(&connection)
+                    .map_err(|_| HandoffSignerJournalErrorV1::SchemaMismatch)?;
+            } else {
+                validate_canonical_schema(&connection)
+                    .map_err(|_| HandoffSignerJournalErrorV1::SchemaMismatch)?;
+            }
             auxiliary_pins.require_unchanged()?;
             require_path_identity(database_path, database_identity)?;
-            Ok(SignerJournalSchemaKindV1::LegacyV0ReadOnly)
+            Ok(if version == 2 {
+                SignerJournalSchemaKindV1::RetiredOrdinaryV1
+            } else {
+                SignerJournalSchemaKindV1::LegacyV0ReadOnly
+            })
         }
         (0, 1) => {
             require_schema1_auxiliary_namespace_absent_v1(database_path)?;
@@ -505,6 +521,9 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
                 return Err(HandoffSignerJournalErrorV1::LegacySchemaReadOnly);
             }
             SignerJournalSchemaKindV1::HandoffCapableV1 => {}
+            SignerJournalSchemaKindV1::RetiredOrdinaryV1 => {
+                return Err(HandoffSignerJournalErrorV1::SchemaMismatch)
+            }
         }
         let (directory_file, directory_identity) = open_parent_directory(&database_path)?;
         let database_file = open_existing_private_file_v1(&database_path)?;

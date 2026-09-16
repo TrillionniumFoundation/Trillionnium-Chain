@@ -1716,8 +1716,64 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         let query = self
             .read_finalized_by_height_v0(self.facts_v0().finalized_height_v0())
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
-        let positions = query
-            .read_v0()
+        self.commit_native_admission_with_finality_v1(
+            boundary,
+            admission,
+            query.proof_v0().proof_v0(),
+            query.proof_v0().authenticated_parent_timestamp_ms_v0(),
+        )
+    }
+
+    /// Fresh historical native read, bounded by the current Core finalized
+    /// height and strict local validator/parameter trust. The application also
+    /// verifies that the immutable row is committed to this exact proof.
+    #[cfg(feature = "tx-admission-wal")]
+    pub fn read_native_finalized_with_finality_v1(
+        &self,
+        finality: &FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> Result<FinalizedNativeApplicationReadV0, PocoNodeLabAuthorityErrorV0> {
+        let header = finality.finalized_block().header();
+        if header.height().get() > self.facts_v0().finalized_height_v0() {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "native historical proof exceeds current finality",
+            ));
+        }
+        finality
+            .verify(
+                self.core.config().validator_set(),
+                None,
+                self.core.config().consensus_parameters(),
+                authenticated_parent_timestamp_ms,
+                &StrictEd25519Verifier,
+            )
+            .map_err(|_| {
+                PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                    "native historical proof fails independent local trust",
+                )
+            })?;
+        self.application
+            .read_finalized_by_block_id_with_proof_v0(
+                BlockIdV0::new(*header.id().as_bytes())
+                    .map_err(|e| PocoNodeLabAuthorityErrorV0::AuthorityChain(e.to_string()))?,
+                finality,
+                authenticated_parent_timestamp_ms,
+            )
+            .map_err(|e| PocoNodeLabAuthorityErrorV0::AuthorityChain(e.to_string()))
+    }
+
+    #[cfg(feature = "tx-admission-wal")]
+    pub fn commit_native_admission_with_finality_v1(
+        &self,
+        boundary: &mut crate::tx_admission_wal::NodeOwnedTxAdmissionBoundaryV0,
+        admission: &mut crate::tx_admission_wal::NativePendingAdmissionV1,
+        finality: &FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+        let read = self
+            .read_native_finalized_with_finality_v1(finality, authenticated_parent_timestamp_ms)?;
+        let header = finality.finalized_block().header();
+        let positions = read
             .executed_v0()
             .request()
             .transactions()
@@ -1728,37 +1784,32 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             .collect::<Vec<_>>();
         if positions.len() != 1 {
             return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "native handoff must occur exactly once in finalized block",
+                "native handoff exact body occurrence mismatch",
             ));
         }
-        let proof = query.proof_v0();
-        let receipt = query
-            .read_v0()
-            .receipt_commitments_v0()
-            .get(positions[0])
-            .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "native finalized receipt is absent",
-            ))?;
+        let receipt = read.receipt_commitments_v0().get(positions[0]).ok_or(
+            PocoNodeLabAuthorityErrorV0::InvalidBootstrap("native finalized receipt is absent"),
+        )?;
         let evidence = crate::tx_admission_wal::NativeCommitReceiptEvidenceV0::new(
             admission.metadata().digest().as_bytes(),
-            proof.finalized_block_id_v0(),
-            trnm_consensus_types::Height::new(proof.finalized_height_v0()),
-            proof.state_root_v0(),
+            header.id(),
+            header.height(),
+            header.state_root(),
             *receipt.as_bytes(),
-            *proof.proof_id_v0().as_bytes(),
+            *finality.id().as_bytes(),
         )
-        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        .map_err(|e| PocoNodeLabAuthorityErrorV0::AuthorityChain(e.to_string()))?;
         boundary
             .commit_native_with_readback_v1(
                 admission,
                 evidence,
                 &self.application,
-                proof.proof_v0(),
-                proof.authenticated_parent_timestamp_ms_v0(),
+                finality,
+                authenticated_parent_timestamp_ms,
             )
-            .map_err(|error| {
+            .map_err(|e| {
                 PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
-                    "native handoff finality commit: {error:?}"
+                    "native historical handoff commit: {e:?}"
                 ))
             })
     }

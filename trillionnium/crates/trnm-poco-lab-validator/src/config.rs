@@ -275,7 +275,7 @@ fn expected_participants() -> [ExpectedParticipant; 6] {
         ExpectedParticipant {
             host_id: "mac",
             management: "p4-mac",
-            lan_ip: "192.168.0.5",
+            lan_ip: "192.168.0.10",
             os: "macos",
             arch: "arm64",
             validator_eligible: false,
@@ -411,6 +411,7 @@ pub struct PublicReportVerifierContext {
     ordinary_start_height: u64,
     workload_corpus_sha256: [u8; 32],
     workload_policy_sha256: [u8; 32],
+    native_client_profile_sha256: Option<[u8; 32]>,
     validator_config_sha256: BTreeMap<ValidatorId, [u8; 32]>,
     expected_outgoing_peers: BTreeMap<ValidatorId, BTreeSet<ValidatorId>>,
     bootstrap_initial_cut: VerifiedPublicBootstrapInitialCutV1,
@@ -1011,6 +1012,7 @@ impl PublicReportVerifierContext {
             ordinary_start_height,
             workload_corpus_sha256,
             workload_policy_sha256,
+            native_client_profile_sha256: None,
             validator_config_sha256,
             expected_outgoing_peers: BTreeMap::new(),
             bootstrap_initial_cut,
@@ -1053,6 +1055,7 @@ impl PublicReportVerifierContext {
             ordinary_start_height: campaign.request().ordinary_start_height(),
             workload_corpus_sha256: identity.workload_corpus_sha256(),
             workload_policy_sha256: identity.workload_policy_sha256(),
+            native_client_profile_sha256: identity.native_client_profile_sha256_v1(),
             validator_config_sha256,
             expected_outgoing_peers,
             bootstrap_initial_cut,
@@ -1391,7 +1394,7 @@ impl PublicReportVerifierContext {
         if observer.schema_version != 2
             || observer.run_id != manifest.run_id
             || observer.host_id != "mac"
-            || observer.lan_ip != "192.168.0.5"
+            || observer.lan_ip != "192.168.0.10"
             || observer.os != "macos"
             || observer.arch != "arm64"
             || observer.run_roles
@@ -1491,13 +1494,17 @@ impl PublicReportVerifierContext {
             &config.workload_policy_sha256,
             "observer config.workload_policy_sha256",
         )?;
-        let (_, _, verified_public_bootstrap) = load_application_material_v1(
+        let (_, native_profile, verified_public_bootstrap) = load_application_material_v1(
             &observer_root,
             &shim,
             &config,
             &validator_set,
             &parameters,
         )?;
+        let native_client_profile_sha256 = native_profile
+            .as_ref()
+            .map(|profile| profile.digest_v1())
+            .transpose()?;
         let bootstrap_initial_cut = verified_public_bootstrap.initial_ordinary_cut_v1();
 
         let local_validator =
@@ -1590,6 +1597,7 @@ impl PublicReportVerifierContext {
             ordinary_start_height: config.ordinary_start_height,
             workload_corpus_sha256,
             workload_policy_sha256,
+            native_client_profile_sha256,
             validator_config_sha256,
             expected_outgoing_peers,
             bootstrap_initial_cut,
@@ -1656,6 +1664,10 @@ impl PublicReportVerifierContext {
 
     pub const fn workload_corpus_sha256(&self) -> [u8; 32] {
         self.workload_corpus_sha256
+    }
+
+    pub const fn native_client_profile_sha256_v1(&self) -> Option<[u8; 32]> {
+        self.native_client_profile_sha256
     }
 
     pub const fn workload_policy_sha256(&self) -> [u8; 32] {

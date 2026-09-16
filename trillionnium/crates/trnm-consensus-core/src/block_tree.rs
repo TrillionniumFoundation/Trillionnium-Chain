@@ -242,7 +242,7 @@ impl BlockTree {
                 || proposal.block().id() != block_id
                 || overlay.is_some_and(|overlay| {
                     overlay.block_id() != block_id
-                        || overlay.parent_block_id() != node.header.parent_id()
+                        || overlay.consensus_parent_block_id_v1() != node.header.parent_id()
                 })
             {
                 return None;
@@ -318,7 +318,7 @@ impl BlockTree {
             PayloadValidationResult::Valid(valid) => {
                 let overlay = valid.artifact_ref().overlay();
                 if overlay.block_id() != block_id
-                    || overlay.parent_block_id() != node.header.parent_id()
+                    || overlay.consensus_parent_block_id_v1() != node.header.parent_id()
                 {
                     return Err(CoreError::ConflictingPayloadValidation(block_id));
                 }
@@ -475,7 +475,9 @@ impl BlockTree {
         if proposal.witness() != &node.witness {
             return Err(CoreError::ConflictingProposalWitness(block_id));
         }
-        if overlay.block_id() != block_id || overlay.parent_block_id() != node.header.parent_id() {
+        if overlay.block_id() != block_id
+            || overlay.consensus_parent_block_id_v1() != node.header.parent_id()
+        {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
         }
         if node

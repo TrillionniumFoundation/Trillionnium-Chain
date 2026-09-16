@@ -33,6 +33,7 @@ import evidence_bundle_profiles_v1 as evidence_profiles
 import mesh_resource_preflight_v1 as mesh_resources
 import run_network_smoke_fleet as base
 import sealed_artifact_transport_v1 as sealed_transport
+import native_client_campaign_v1 as native_campaign
 
 
 MAX_DURATION_SECONDS = 7 * 24 * 60 * 60
@@ -96,6 +97,7 @@ RUNNER_SINGLETON_ARTIFACTS = {
     "runner-lifecycle.json": "runner_lifecycle",
     "fleet-launch-observation.json": "runner_launch_observation",
     "consensus-run-summary.json": "runner_summary",
+    native_campaign.ARTIFACT: "native_client_campaign",
 }
 RUNNER_VALIDATOR_ARTIFACT_PATTERNS = (
     (re.compile(r"^signed-reports/([0-9a-f]{64})\.json$"), "validator_consensus_run_report"),
@@ -740,6 +742,20 @@ def validate_runner_output_manifest(
         or summary.get("production_activation") is not False
     ):
         base.fail("manifest-bound runner summary crosses its non-completion boundary")
+    native_selection = plan.get("native_client_campaign")
+    has_native_artifact = native_campaign.ARTIFACT in files
+    if native_selection is None and has_native_artifact:
+        base.fail("legacy runner cannot acquire an undeclared native campaign")
+    if native_selection is not None:
+        if not isinstance(native_selection, dict) or native_selection != {"profile": native_campaign.PROFILE, "business_transfer_count": native_selection.get("business_transfer_count"), "transport": "ssh-private-unix-ipc", "performance_acceptance": False}:
+            base.fail("native campaign plan selection differs")
+        if summary.get("failure") is None and not has_native_artifact:
+            base.fail("successful native runner omitted actual client evidence")
+        if has_native_artifact:
+            native_document = base.read_json(root / native_campaign.ARTIFACT, "native campaign")
+            native_campaign.validate_document(native_document, run_id=expected_run_id, anchor=expected_coordinator_anchor, validator_ids=validator_ids)
+            if native_document["business_transfer_count"] != native_selection["business_transfer_count"]:
+                base.fail("native campaign differs from planned transfer count")
     if summary.get("failure") is None:
         successful_lifecycle_kinds = {
             event.get("kind") for event in lifecycle.get("events", [])
@@ -2479,6 +2495,8 @@ def main() -> None:
     parser.add_argument("--output", required=True, type=pathlib.Path)
     parser.add_argument("--duration-seconds", required=True, type=int)
     parser.add_argument("--max-blocks", required=True, type=int)
+    parser.add_argument("--native-client-key-root", type=pathlib.Path)
+    parser.add_argument("--native-client-transfers", type=int, default=3)
     parser.add_argument("--plan-only", action="store_true")
     args = parser.parse_args()
     run_bounds = validated_run_bounds(args.duration_seconds, args.max_blocks)
@@ -2504,6 +2522,9 @@ def main() -> None:
     )
     verify_coordinator_anchor(anchor_snapshot)
     record_lifecycle_event(lifecycle_events, "contract_loaded")
+    native_application = native_campaign.application_selection(manifest, args.native_client_key_root, args.native_client_transfers)
+    if native_application:
+        native_campaign.key_namespace(args.native_client_key_root, coordinator, deployments, (coordinator / "public/native-client-profile.json").read_bytes())
     candidate = manifest["candidate"]
     linux_binary = base.require_binary(
         args.linux_binary, candidate["linux_x86_64_sha256"], "Linux binary"
@@ -2586,6 +2607,8 @@ def main() -> None:
         "geo_wan_evidence": False,
         "production_activation": False,
     }
+    if native_application:
+        plan["native_client_campaign"] = {"profile": native_campaign.PROFILE, "business_transfer_count": args.native_client_transfers, "transport": "ssh-private-unix-ipc", "performance_acceptance": False}
     if args.plan_only:
         verify_coordinator_anchor(anchor_snapshot)
         print(json.dumps(plan, indent=2, sort_keys=True))
@@ -2755,6 +2778,16 @@ def main() -> None:
             + args.duration_seconds
             + run_bounds["process_completion_allowance_seconds"]
         )
+        if native_application:
+            native_campaign.run_campaign(
+                coordinator=coordinator, deployments=deployments, manifest=manifest,
+                processes=processes, stages=stages, linux_binary=linux_binary,
+                mac_binary=mac_binary, observer_root=observer_root,
+                key_root=args.native_client_key_root, anchor=coordinator_anchor,
+                transfers=args.native_client_transfers, output=output,
+                duration_seconds=args.duration_seconds,
+                running_children=[row[1] for row in running],
+            )
         for (
             process,
             child,

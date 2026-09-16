@@ -539,6 +539,10 @@ fn ordinary_history_migration_preserves_all_roots_and_continues_with_delta() {
         )
         .unwrap();
         assert_eq!(reader.root().0, root.root);
+        assert_eq!(
+            reader.verified_live_values_v1().unwrap(),
+            reference.verified_live_values_v0(root.height).unwrap()
+        );
         let expected = if root.height == 0 {
             b"original".to_vec()
         } else {

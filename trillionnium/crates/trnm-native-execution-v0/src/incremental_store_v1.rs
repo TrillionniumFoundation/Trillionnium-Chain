@@ -348,6 +348,12 @@ fn validate_node(node: &Node) -> Result<()> {
     }
     Ok(())
 }
+pub(crate) fn audit_jmt_node_record_v1(key: &NodeKey, node: &Node) -> Result<()> {
+    validate_node_key(key)?;
+    validate_node(node)?;
+    validate_node_at(key, node)
+}
+
 fn validate_node_at(key: &NodeKey, node: &Node) -> Result<()> {
     match node {
         Node::Null => ensure!(key.nibble_path().num_nibbles() == 0, "null below root"),
@@ -397,6 +403,56 @@ impl IncrementalJmtReaderV1<'_> {
     pub const fn root(&self) -> RootHash {
         self.root
     }
+    /// Enumerates only the reachable current tree, with a finite application
+    /// projection budget. It never scans historical node/value versions.
+    pub(crate) fn verified_live_values_v1(&self) -> Result<BTreeMap<Vec<u8>, Vec<u8>>> {
+        let mut pending = vec![(root_key(self.version), self.root.0)];
+        let mut visited = 0usize;
+        let mut retained = 0usize;
+        let mut result = BTreeMap::new();
+        while let Some((key, expected)) = pending.pop() {
+            visited = visited.checked_add(1).context("live node count overflow")?;
+            ensure!(visited <= 1_048_576, "live node traversal capacity");
+            let node = self
+                .get_node_option(&key)?
+                .context("reachable node missing")?;
+            ensure!(node_hash(&node) == expected, "reachable node hash mismatch");
+            match node {
+                Node::Null => ensure!(key.nibble_path().is_empty(), "null child in live traversal"),
+                Node::Leaf(leaf) => {
+                    ensure!(result.len() < 65_536, "live value count capacity");
+                    let preimage = self
+                        .preimage(leaf.key_hash())?
+                        .context("live preimage missing")?;
+                    let value = self.prove(&preimage)?.context("live value missing")?;
+                    retained = retained
+                        .checked_add(preimage.len())
+                        .and_then(|n| n.checked_add(value.len()))
+                        .context("live projection byte overflow")?;
+                    ensure!(
+                        retained <= 64 * 1024 * 1024,
+                        "live projection byte capacity"
+                    );
+                    ensure!(
+                        result.insert(preimage, value).is_none(),
+                        "duplicate live preimage"
+                    );
+                }
+                Node::Internal(internal) => {
+                    for (nibble, child) in internal.children_sorted() {
+                        let path = key
+                            .nibble_path()
+                            .nibbles()
+                            .chain(std::iter::once(nibble))
+                            .collect();
+                        pending.push((NodeKey::new(child.version, path), child.hash));
+                    }
+                }
+            }
+        }
+        Ok(result)
+    }
+
     pub fn prove(&self, key: &[u8]) -> Result<Option<Vec<u8>>> {
         let key_hash = authenticated_key_hash_v0(key)?;
         let (value, proof) = Sha256Jmt::new(self).get_with_proof(key_hash, self.version)?;
@@ -591,7 +647,7 @@ fn check_namespace(
     namespace_digest(namespace)?;
     let (chain, genesis, id, generation): (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>) = transaction
         .query_row(
-            "SELECT chain,genesis,namespace,owner_generation FROM ni_meta WHERE id=1 AND schema=1",
+            "SELECT CASE WHEN length(chain)<=255 THEN chain ELSE NULL END,genesis,namespace,owner_generation FROM ni_meta WHERE id=1 AND schema=1",
             [],
             |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?)),
         )?;
@@ -613,7 +669,7 @@ pub fn read_incremental_head_v1(
     namespace: &IncrementalNamespaceV1,
 ) -> Result<IncrementalHeadV1> {
     namespace_digest(namespace)?;
-    let mut statement = transaction.prepare("SELECT chain,genesis,namespace,owner_generation,head_height,head_block,head_version,head_root,commit_sequence,head_intent,head_checksum FROM ni_meta WHERE id=1 AND schema=1")?;
+    let mut statement = transaction.prepare("SELECT CASE WHEN length(chain)<=255 THEN chain ELSE NULL END,genesis,namespace,owner_generation,head_height,head_block,head_version,head_root,commit_sequence,head_intent,head_checksum FROM ni_meta WHERE id=1 AND schema=1")?;
     let mut rows = statement.query([])?;
     let row = rows.next()?.context("incremental namespace missing")?;
     ensure!(
@@ -1045,7 +1101,7 @@ fn checked_committed_root(
     namespace: &IncrementalNamespaceV1,
     block: [u8; 32],
 ) -> Result<(u64, [u8; 32])> {
-    let mut statement = transaction.prepare("SELECT version,root,commit_sequence,intent,root_node_key,consensus_height FROM ni_roots WHERE block_id=?1")?;
+    let mut statement = transaction.prepare("SELECT version,root,commit_sequence,intent,CASE WHEN length(root_node_key)<=128 THEN root_node_key ELSE NULL END,consensus_height FROM ni_roots WHERE block_id=?1")?;
     let mut rows = statement.query([block.as_slice()])?;
     let row = rows.next()?.context("committed incremental root missing")?;
     let version = u64_blob(row.get(0)?)?;
@@ -1453,7 +1509,7 @@ fn write_committed_batch(
         );
         let existing: Option<Vec<u8>> = transaction
             .query_row(
-                "SELECT preimage FROM ni_preimages WHERE key_hash=?1",
+                "SELECT CASE WHEN length(preimage)<=65536 THEN preimage ELSE NULL END FROM ni_preimages WHERE key_hash=?1",
                 [key.0.as_slice()],
                 |row| row.get(0),
             )

@@ -2042,6 +2042,27 @@ impl ContinuousValidatorAuthorityV0 {
             .map_err(|e| anyhow!("native finality admission commit: {e}"))
     }
 
+    pub fn read_native_finalized_with_finality_v1(
+        &self,
+        proof: &trnm_consensus_types::FinalityProofV0,
+        parent_timestamp: u64,
+    ) -> Result<trnm_native_execution_v0::FinalizedNativeApplicationReadV0> {
+        self.ready_runtime_v0()?
+            .read_native_finalized_with_finality_v1(proof, parent_timestamp)
+            .map_err(|e| anyhow!("native historical finalized read: {e}"))
+    }
+    pub fn commit_native_admission_with_finality_v1(
+        &self,
+        boundary: &mut trnm_poco_node::NodeOwnedTxAdmissionBoundaryV0,
+        admission: &mut trnm_poco_node::NativePendingAdmissionV1,
+        proof: &trnm_consensus_types::FinalityProofV0,
+        parent_timestamp: u64,
+    ) -> Result<()> {
+        self.ready_runtime_v0()?
+            .commit_native_admission_with_finality_v1(boundary, admission, proof, parent_timestamp)
+            .map_err(|e| anyhow!("native historical handoff commit: {e}"))
+    }
+
     pub fn recover_native_admission_with_finality_v1(
         &self,
         boundary: &mut trnm_poco_node::NodeOwnedTxAdmissionBoundaryV0,

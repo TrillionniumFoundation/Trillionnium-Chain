@@ -434,16 +434,54 @@ impl CompleteNativeExecutionV0 {
     }
 }
 
+/// Internal execution view: every implementation is supplied by the native
+/// owner and pins state/replay/configuration to one parent. This does not make
+/// the externally implementable NativeExecutionStoreV0 an authority boundary.
+pub(crate) trait CompleteExecutionStoreV1: NativeExecutionStoreV0 + Sized {
+    fn complete_live_values_v1(&self, version: u64) -> Result<BTreeMap<Vec<u8>, Vec<u8>>>;
+    fn validate_epoch_parent_v1(
+        &self,
+        _edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+    ) -> Result<()> {
+        anyhow::bail!("epoch execution unavailable for this storage adapter")
+    }
+    fn plan_epoch_v1(
+        &self,
+        _edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+        _writes: Vec<CompleteStateWriteV0>,
+    ) -> Result<CompleteStatePlanV0> {
+        anyhow::bail!("epoch planning unavailable for this storage adapter")
+    }
+}
+impl CompleteExecutionStoreV1 for InMemoryNativeExecutionStoreV0 {
+    fn complete_live_values_v1(&self, version: u64) -> Result<BTreeMap<Vec<u8>, Vec<u8>>> {
+        self.verified_live_values_v0(version)
+    }
+    fn validate_epoch_parent_v1(
+        &self,
+        edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+    ) -> Result<()> {
+        crate::store::CarriedRootReaderV1::new(self, edge)?;
+        Ok(())
+    }
+    fn plan_epoch_v1(
+        &self,
+        edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+        writes: Vec<CompleteStateWriteV0>,
+    ) -> Result<CompleteStatePlanV0> {
+        Ok(crate::store::CarriedRootReaderV1::new(self, edge)?
+            .plan(writes)?
+            .into_complete_plan())
+    }
+}
+
 struct CompleteOverlayView<'a> {
-    store: &'a InMemoryNativeExecutionStoreV0,
-    parent_version: u64,
-    parent_root: jmt::RootHash,
+    live: &'a BTreeMap<Vec<u8>, Vec<u8>>,
     changes: &'a BTreeMap<String, StateObject>,
 }
 
 impl TryStateViewV0 for CompleteOverlayView<'_> {
     type Error = String;
-
     fn try_get(
         &self,
         object_key_hex: &str,
@@ -451,20 +489,20 @@ impl TryStateViewV0 for CompleteOverlayView<'_> {
         if let Some(object) = self.changes.get(object_key_hex) {
             return Ok(Some(object.clone()));
         }
-        crate::store::read_authenticated_object_v0(
-            self.store,
-            self.parent_version,
-            self.parent_root,
-            object_key_hex,
-        )
-        .map(|value| {
-            value.map(|record| StateObject {
-                object_type: record.object_type().to_string(),
-                version: record.object_version(),
-                value_bytes: record.value().to_vec(),
+        let key =
+            crate::store::stored_object_key_v0(object_key_hex).map_err(|e| format!("{e:#}"))?;
+        self.live
+            .get(&key)
+            .map(|bytes| {
+                AuthenticatedObjectRecordV0::decode(bytes)
+                    .map(|record| StateObject {
+                        object_type: record.object_type().to_string(),
+                        version: record.object_version(),
+                        value_bytes: record.value().to_vec(),
+                    })
+                    .map_err(|e| format!("{e:#}"))
             })
-        })
-        .map_err(|error| format!("{error:#}"))
+            .transpose()
     }
 }
 
@@ -476,7 +514,7 @@ enum ReceiptFactsV0 {
 /// Executes the entire frozen-v0 application body against one already pinned
 /// parent tree and its committed validator/parameter metadata.
 pub(crate) fn execute_complete_native_block_v0(
-    store: &InMemoryNativeExecutionStoreV0,
+    store: &impl CompleteExecutionStoreV1,
     validator_set: &ValidatorSet,
     expected_genesis_hash: GenesisHash,
     request: &trnm_native_application::NativeBlockExecutionRequestV0,
@@ -501,7 +539,7 @@ pub(crate) fn execute_complete_native_block_v0(
 }
 
 pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 + ?Sized>(
-    store: &InMemoryNativeExecutionStoreV0,
+    store: &impl CompleteExecutionStoreV1,
     validator_set: &ValidatorSet,
     expected_genesis_hash: GenesisHash,
     request: &R,
@@ -520,7 +558,7 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
 /// local differential tests; operational callers always use bounded workers.
 #[allow(clippy::too_many_lines)]
 fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV0 + ?Sized>(
-    store: &InMemoryNativeExecutionStoreV0,
+    store: &impl CompleteExecutionStoreV1,
     validator_set: &ValidatorSet,
     expected_genesis_hash: GenesisHash,
     request: &R,
@@ -537,12 +575,12 @@ fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV
 }
 
 pub(crate) fn compute_complete_epoch_native_block_v1(
-    store: &InMemoryNativeExecutionStoreV0,
+    store: &impl CompleteExecutionStoreV1,
     edge: &crate::AuthenticatedEpochApplicationEdgeV1,
     request: &NativeEpochBlockPreviewRequestV1,
 ) -> Result<ComputedCompleteExecutionV0> {
     edge.validate_request_v1(request)?;
-    crate::store::CarriedRootReaderV1::new(store, edge)?;
+    store.validate_epoch_parent_v1(edge)?;
     ensure!(
         store.consensus_parameters_v0()? == *edge.old_parameters(),
         "epoch execution checkpoint parameters differ from authenticated edge"
@@ -558,7 +596,7 @@ pub(crate) fn compute_complete_epoch_native_block_v1(
 }
 
 fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 + ?Sized>(
-    store: &InMemoryNativeExecutionStoreV0,
+    store: &impl CompleteExecutionStoreV1,
     validator_set: &ValidatorSet,
     expected_genesis_hash: GenesisHash,
     request: &R,
@@ -632,7 +670,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
         "pinned signer policy commitment mismatch"
     );
 
-    let mut live = store.verified_live_values_v0(parent_version)?;
+    let mut live = store.complete_live_values_v1(parent_version)?;
     let source_poco = take_and_validate_production_poco_projection_v0(parent_version, &mut live)?;
     let parent_lifecycle = load_validator_lifecycle_from_live_v0(&live, parent_version)?;
     ensure!(
@@ -718,9 +756,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
                 .min(index + native_parallel::MAX_BATCH_V0);
             speculative = native_parallel::speculate_transactions_v0(
                 native_parallel::NativeSpeculationContextV0 {
-                    store,
-                    parent_version,
-                    parent_root,
+                    live: &live,
                     height: request.height_v0().get(),
                     chain_id: request.chain_id_v0().as_str(),
                     timestamp_ms: request.timestamp_ms_v0(),
@@ -776,9 +812,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
                     "runtime envelope/transaction nonce mismatch"
                 );
                 let view = CompleteOverlayView {
-                    store,
-                    parent_version,
-                    parent_root,
+                    live: &live,
                     changes: &changes,
                 };
                 let runtime_context = ExecutionContext {
@@ -1019,9 +1053,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
     }
 
     let plan = match epoch_edge {
-        Some(edge) => crate::store::CarriedRootReaderV1::new(store, edge)?
-            .plan(writes)?
-            .into_complete_plan(),
+        Some(edge) => store.plan_epoch_v1(edge, writes)?,
         None => {
             plan_complete_state_update_v0(store, parent_version, request.height_v0().get(), writes)?
         }
@@ -1047,7 +1079,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
 }
 
 pub(crate) fn preview_complete_epoch_block_v1(
-    store: &InMemoryNativeExecutionStoreV0,
+    store: &impl CompleteExecutionStoreV1,
     edge: &crate::AuthenticatedEpochApplicationEdgeV1,
     request: &NativeEpochBlockPreviewRequestV1,
 ) -> Result<NativeBlockPreviewV0> {
@@ -1074,7 +1106,7 @@ pub(crate) fn preview_complete_epoch_block_v1(
 }
 
 pub(crate) fn preview_complete_native_block_v0(
-    store: &InMemoryNativeExecutionStoreV0,
+    store: &impl CompleteExecutionStoreV1,
     validator_set: &ValidatorSet,
     expected_genesis_hash: GenesisHash,
     request: &NativeBlockPreviewRequestV0,

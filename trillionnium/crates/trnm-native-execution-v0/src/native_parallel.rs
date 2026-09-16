@@ -9,9 +9,9 @@ use trnm_protocol::{
 
 use super::{
     try_execute_v0, validate_signer_v0, AuthorizedSignerV0, BTreeMap, CanonicalTxV1,
-    CompleteNativeExecutionFailureV0, CompleteOverlayView, ExecutionContext,
-    InMemoryNativeExecutionStoreV0, Result, RuntimeReceipt, SignedCommandEnvelopeV1, StateObject,
-    TryStateViewV0, CANONICAL_TX_PAYLOAD_TYPE_V1,
+    CompleteNativeExecutionFailureV0, CompleteOverlayView, ExecutionContext, Result,
+    RuntimeReceipt, SignedCommandEnvelopeV1, StateObject, TryStateViewV0,
+    CANONICAL_TX_PAYLOAD_TYPE_V1,
 };
 
 pub(super) const MAX_WORKERS_V0: usize = 8;
@@ -54,9 +54,7 @@ pub(super) fn default_worker_count_v0() -> usize {
 
 #[derive(Clone, Copy)]
 pub(super) struct NativeSpeculationContextV0<'a> {
-    pub(super) store: &'a InMemoryNativeExecutionStoreV0,
-    pub(super) parent_version: u64,
-    pub(super) parent_root: jmt::RootHash,
+    pub(super) live: &'a BTreeMap<Vec<u8>, Vec<u8>>,
     pub(super) height: u64,
     pub(super) chain_id: &'a str,
     pub(super) timestamp_ms: u64,
@@ -306,9 +304,7 @@ fn speculate_outer_v0(
         return None;
     }
     let view = CompleteOverlayView {
-        store: context.store,
-        parent_version: context.parent_version,
-        parent_root: context.parent_root,
+        live: context.live,
         changes: context.changes,
     };
     let attempt = record_runtime_attempt_v0(

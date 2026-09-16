@@ -57,9 +57,41 @@ fn native_socket_exchange(
     }
 }
 
+fn observe_native_test_finality_v1(
+    client: &mut crate::native_client_runtime::NativeClientRuntimeV1,
+    authority: &ContinuousValidatorAuthorityV0,
+    headers: &std::collections::BTreeMap<
+        trnm_consensus_types::BlockId,
+        trnm_consensus_types::BlockHeader,
+    >,
+) -> Result<()> {
+    if authority.facts_v0()?.finalized_height_v0() < 4 {
+        return Ok(());
+    }
+    let query = authority.native_finalized_query_v1()?;
+    let parent = headers
+        .get(
+            &query
+                .proof_v0()
+                .proof_v0()
+                .finalized_block()
+                .header()
+                .parent_id(),
+        )
+        .unwrap();
+    client.observe_finality_v1(authority, parent)
+}
+
 #[test]
 fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
-    on_bounded_takeover_owner_stack_v0(|| {
+    run_native_socket_finality_case_v1(false);
+}
+#[test]
+fn native_delayed_multi_height_archive_commits_real_historical_business_v1() {
+    run_native_socket_finality_case_v1(true);
+}
+fn run_native_socket_finality_case_v1(defer_archive: bool) {
+    on_bounded_takeover_owner_stack_v0(move || {
         use trnm_application_tx_builder_v0::{
             build_signed_canonical_tx_v0, CanonicalTxBuildContextV0, TxBuilderLimitsV0,
         };
@@ -81,6 +113,7 @@ fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
         let lifetime =
             ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(4, 0, 4, 0).unwrap();
         let mut authorities = Vec::new();
+        let mut headers = std::collections::BTreeMap::new();
         for (index, validator) in set.validators().iter().enumerate() {
             let core =
                 CoreConfig::new(validator.id(), set.clone(), parameters, 0, 64, 1_024).unwrap();
@@ -110,6 +143,9 @@ fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
                 )
                 .unwrap();
             let (proposals, proof) = verified.into_node_parts_v1();
+            for p in &proposals {
+                headers.insert(p.block().id(), p.block().header().clone());
+            }
             let bootstrap = trnm_poco_node::PocoNodeDeployedLabBootstrapV0::admit_exact_v0(
                 &core, &app, proposals, proof,
             )
@@ -140,7 +176,7 @@ fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
         // Publish one agreed fresh wall-clock epoch before the public socket
         // opens. The canonical chain prefix/genesis remains timestamp 0.
         profile.wall_clock_epoch_ms =
-            crate::native_client_profile::unix_now_ms_v1().unwrap() - 3_000;
+            crate::native_client_profile::unix_now_ms_v1().unwrap() - 4_000;
         let view = authorities[0].facts_v0().unwrap().current_view_v0();
         let leader = leader_for(&set, view);
         let leader_index = set
@@ -209,11 +245,14 @@ fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
             .unwrap();
         assert_eq!(proposal.block().header().height().get(), 4);
         let business_id = proposal.block().id();
+        headers.insert(proposal.block().id(), proposal.block().header().clone());
         drive_parallel_deployed_authority_round_v0(&mut authorities, proposal).unwrap();
-        clients
-            .observe_finality_v1(&authorities[leader_index])
+        observe_native_test_finality_v1(&mut clients, &authorities[leader_index], &headers)
             .unwrap();
-        clients.cut_after_next_durable_proof_v1();
+        if !defer_archive {
+            clients.cut_after_next_durable_proof_v1();
+        }
+        let mut deferred = Vec::new();
         let mut observed_cut = false;
         for _ in 0..3 {
             let facts = authorities[0].facts_v0().unwrap();
@@ -227,8 +266,27 @@ fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
             let proposal = authorities[index]
                 .signed_native_proposal_v1(Vec::new(), timestamp)
                 .unwrap();
+            headers.insert(proposal.block().id(), proposal.block().header().clone());
             drive_parallel_deployed_authority_round_v0(&mut authorities, proposal).unwrap();
-            if let Err(error) = clients.observe_finality_v1(&authorities[leader_index]) {
+            if defer_archive {
+                if authorities[leader_index]
+                    .facts_v0()
+                    .unwrap()
+                    .finalized_height_v0()
+                    >= 4
+                {
+                    let query = authorities[leader_index]
+                        .native_finalized_query_v1()
+                        .unwrap();
+                    let proof = query.proof_v0().proof_v0().clone();
+                    let parent = headers[&proof.finalized_block().header().parent_id()].clone();
+                    deferred.push((proof, parent));
+                }
+                continue;
+            }
+            if let Err(error) =
+                observe_native_test_finality_v1(&mut clients, &authorities[leader_index], &headers)
+            {
                 assert!(error.to_string().contains("test cut after durable proof"));
                 observed_cut = true;
                 drop(clients);
@@ -244,7 +302,17 @@ fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
                 clients=crate::native_client_runtime::NativeClientRuntimeV1::open_parts_with_recovery_v1(&client_root,&set,set.validators()[leader_index].id(),profile.clone(),Some(&authorities[leader_index])).unwrap();
             }
         }
-        assert!(observed_cut, "native proof/WAL crash cut was not reached");
+        if defer_archive {
+            assert_eq!(deferred.len(), 2);
+            assert_eq!(clients.last_archived_finalized_height_v1(), 0);
+            for (proof, parent) in deferred {
+                clients
+                    .observe_finality_evidence_v1(&authorities[leader_index], &proof, &parent)
+                    .unwrap();
+            }
+        } else {
+            assert!(observed_cut, "native proof/WAL crash cut was not reached");
+        }
         let facts = authorities[leader_index].facts_v0().unwrap();
         assert!(facts.finalized_height_v0() > 4);
         let committed = native_socket_exchange(
@@ -271,6 +339,25 @@ fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
             trnm_tx_lifecycle_v0::NativeTxProofPackageV1::decode_exact(&encoded, 4 * 1024 * 1024)
                 .unwrap();
         assert_eq!(package.transaction, tx.exact_outer_bytes());
+        let parent_bytes =
+            hex::decode(proof["data"]["parent_header_hex"].as_str().unwrap()).unwrap();
+        let independent = trnm_tx_lifecycle_v0::verify_native_tx_inclusion_with_parent_header_v1(
+            &encoded,
+            &parent_bytes,
+            trnm_tx_lifecycle_v0::NativeTxParentHeaderContextV1 {
+                trusted_validator_set: &set,
+                trusted_parameters: &parameters,
+                maximum_transactions: 64,
+                maximum_proof_bytes: 4 * 1024 * 1024,
+            },
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_validator_set(&parameters, &set),
+        )
+        .unwrap();
+        assert_eq!(
+            independent.native_transaction_bytes(),
+            tx.exact_outer_bytes()
+        );
+
         assert_eq!(
             trnm_consensus_types::decode_block_header_v0_exact(&package.target_header)
                 .unwrap()

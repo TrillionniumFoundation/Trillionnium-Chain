@@ -140,6 +140,7 @@ pub struct SafetyRulesContextV1 {
     trusted_genesis_timestamp_ms: u64,
     max_ancestry_blocks: u32,
     old_epoch_boundary_v1: bool,
+    epoch_context_v1: Option<alloc::sync::Arc<trnm_consensus_crypto::StrictEpochRuntimeContextV1>>,
 }
 
 impl SafetyRulesContextV1 {
@@ -169,6 +170,7 @@ impl SafetyRulesContextV1 {
             trusted_genesis_timestamp_ms,
             max_ancestry_blocks,
             old_epoch_boundary_v1: false,
+            epoch_context_v1: None,
         })
     }
 
@@ -198,6 +200,56 @@ impl SafetyRulesContextV1 {
         Ok(value)
     }
 
+    /// Complete strict evidence scopes the special ancestry root. This remains
+    /// pure evaluation: no application, persistence, or signer owner is issued.
+    pub fn new_epoch_runtime_v1(
+        runtime: trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+        author: ValidatorId,
+        trusted_genesis_timestamp_ms: u64,
+        max_ancestry_blocks: u32,
+    ) -> SafetyRulesResultV1<Self> {
+        let mut value = Self::new_old_epoch_boundary_v1(
+            runtime.structural_context().new_validator_set().clone(),
+            *runtime.structural_context().new_parameters(),
+            author,
+            trusted_genesis_timestamp_ms,
+            max_ancestry_blocks,
+        )?;
+        value.epoch_context_v1 = Some(alloc::sync::Arc::new(runtime));
+        Ok(value)
+    }
+    pub fn epoch_runtime_v1(&self) -> Option<&trnm_consensus_crypto::StrictEpochRuntimeContextV1> {
+        self.epoch_context_v1.as_deref()
+    }
+    fn epoch_binding_v1(&self) -> Option<[u8; 32]> {
+        self.epoch_runtime_v1()
+            .map(|r| *r.activation().binding_ref().as_bytes())
+    }
+    fn ancestry_base_v1(&self, finalized: FinalizedBlockRefV1) -> SafetyAncestryBaseV1 {
+        if let Some(runtime) = self.epoch_runtime_v1() {
+            let checkpoint = runtime
+                .activation()
+                .old_checkpoint_finality()
+                .finalized_block()
+                .header();
+            if finalized.block_id == checkpoint.id() {
+                let terminal = runtime.activation().terminal_old_header();
+                return SafetyAncestryBaseV1 {
+                    view: View::new(0),
+                    height: terminal.height(),
+                    block_id: terminal.id(),
+                    timestamp_ms: terminal.timestamp_ms(),
+                };
+            }
+        }
+        SafetyAncestryBaseV1 {
+            view: finalized.view,
+            height: finalized.height,
+            block_id: finalized.block_id,
+            timestamp_ms: finalized.timestamp_ms,
+        }
+    }
+
     pub const fn validator_set(&self) -> &ValidatorSet {
         &self.validator_set
     }
@@ -217,6 +269,17 @@ impl SafetyRulesContextV1 {
     pub const fn max_ancestry_blocks(&self) -> u32 {
         self.max_ancestry_blocks
     }
+}
+
+/// A graph comparison coordinate, never a finalized-reference carrier. In the
+/// cross-epoch case the view belongs to the new synthetic reference while the
+/// retained terminal header remains in its original old scope.
+#[derive(Clone, Copy)]
+struct SafetyAncestryBaseV1 {
+    view: View,
+    height: Height,
+    block_id: BlockId,
+    timestamp_ms: u64,
 }
 
 /// Complete retained coordinate for the finalized ancestry root.
@@ -291,6 +354,20 @@ impl FinalizedBlockRefV1 {
     }
 
     fn matches_context(&self, context: &SafetyRulesContextV1) -> bool {
+        if let Some(runtime) = context.epoch_runtime_v1() {
+            if Self::from_header(
+                runtime
+                    .activation()
+                    .old_checkpoint_finality()
+                    .finalized_block()
+                    .header(),
+            )
+            .ok()
+                == Some(*self)
+            {
+                return true;
+            }
+        }
         self.genesis_hash == context.validator_set.genesis_hash()
             && self.chain_id == context.validator_set.chain_id()
             && self.protocol_version == context.validator_set.protocol_version()
@@ -373,6 +450,7 @@ pub struct SafetyRulesStateV1 {
     trusted_genesis_timestamp_ms: u64,
     max_ancestry_blocks: u32,
     old_epoch_boundary_v1: bool,
+    epoch_binding_v1: Option<[u8; 32]>,
     current_view: View,
     last_voted_view: Option<View>,
     last_timeout_view: Option<View>,
@@ -407,6 +485,7 @@ impl SafetyRulesStateV1 {
             trusted_genesis_timestamp_ms: context.trusted_genesis_timestamp_ms,
             max_ancestry_blocks: context.max_ancestry_blocks,
             old_epoch_boundary_v1: context.old_epoch_boundary_v1,
+            epoch_binding_v1: context.epoch_binding_v1(),
             current_view: seed.current_view,
             last_voted_view: seed.last_voted_view,
             last_timeout_view: seed.last_timeout_view,
@@ -505,6 +584,7 @@ impl SafetyRulesStateV1 {
         verify_qc_reference_v1(context, &self.locked_qc, verifier)?;
         let high = self.high_qc.qc_ref();
         let locked = self.locked_qc.qc_ref();
+        let base = context.ancestry_base_v1(self.finalized);
         // HotStuff QC strength is ordered by view, not height. Across forks a
         // later-view high QC may certify a shallower block than the retained
         // lock. High and lock must nevertheless each remain independently
@@ -512,18 +592,18 @@ impl SafetyRulesStateV1 {
         // must identify the exact finalized block.
         if high.view() >= self.current_view
             || locked.view() > high.view()
-            || self.finalized.view > high.view()
-            || self.finalized.height > high.height()
-            || self.finalized.view > locked.view()
-            || self.finalized.height > locked.height()
-            || (self.finalized.height == high.height()
-                && self.finalized.block_id != high.block_id())
-            || (self.finalized.height == locked.height()
-                && self.finalized.block_id != locked.block_id())
+            || base.view > high.view()
+            || base.height > high.height()
+            || base.view > locked.view()
+            || base.height > locked.height()
+            || (base.height == high.height() && base.block_id != high.block_id())
+            || (base.height == locked.height() && base.block_id != locked.block_id())
             || same_view_conflict(high, locked)
             || repeated_block_has_different_coordinate(high, locked)
-            || qc_conflicts_with_finalized(high, self.finalized)
-            || qc_conflicts_with_finalized(locked, self.finalized)
+            || (high.block_id() == base.block_id
+                && (high.view() != base.view || high.height() != base.height))
+            || (locked.block_id() == base.block_id
+                && (locked.view() != base.view || locked.height() != base.height))
         {
             return Err(SafetyRulesErrorV1::InvalidState);
         }
@@ -553,6 +633,7 @@ impl SafetyRulesStateV1 {
             && self.trusted_genesis_timestamp_ms == context.trusted_genesis_timestamp_ms
             && self.max_ancestry_blocks == context.max_ancestry_blocks
             && self.old_epoch_boundary_v1 == context.old_epoch_boundary_v1
+            && self.epoch_binding_v1 == context.epoch_binding_v1()
     }
 }
 
@@ -623,6 +704,7 @@ pub struct SafetyRulesFinalityPermitV1 {
     target_block_id: BlockId,
     target_height: Height,
     target_view: View,
+    epoch_binding_v1: Option<[u8; 32]>,
 }
 
 impl SafetyRulesFinalityPermitV1 {
@@ -663,7 +745,70 @@ impl SafetyRulesFinalityPermitV1 {
             target_block_id: first.id(),
             target_height: first.height(),
             target_view: first.view(),
+            epoch_binding_v1: None,
         })
+    }
+
+    pub fn bind_for_context_v1(
+        proof: &FinalityProofV0,
+        predecessor: SafetyRulesFinalityPredecessorV1,
+        context: &SafetyRulesContextV1,
+    ) -> SafetyRulesResultV1<Self> {
+        let Some(runtime) = context.epoch_runtime_v1() else {
+            return Self::bind_v1(
+                proof,
+                predecessor,
+                context.validator_set(),
+                context.consensus_parameters(),
+            );
+        };
+        let first = proof.finalized_block().header();
+        let value = if first.block_kind() == BlockKind::EpochHandoff {
+            let checkpoint = runtime
+                .activation()
+                .old_checkpoint_finality()
+                .finalized_block()
+                .header();
+            let terminal = runtime.activation().terminal_old_header();
+            if predecessor.block_id != checkpoint.id()
+                || predecessor.height != checkpoint.height()
+                || predecessor.view != checkpoint.view()
+                || predecessor.timestamp_ms != checkpoint.timestamp_ms()
+                || first.parent_id() != terminal.id()
+                || first.height()
+                    != terminal
+                        .height()
+                        .checked_next()
+                        .map_err(|_| SafetyRulesErrorV1::ArithmeticOverflow)?
+                || proof.finalized_block().justify_qc() != runtime.anchor_reference()
+            {
+                return Err(SafetyRulesErrorV1::FinalityProofBindingMismatch);
+            }
+            proof
+                .validate_shape(
+                    context.validator_set(),
+                    Some(runtime.activation().old_validator_set()),
+                )
+                .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
+            Self {
+                predecessor,
+                proof_id: proof.id(),
+                target_block_id: first.id(),
+                target_height: first.height(),
+                target_view: first.view(),
+                epoch_binding_v1: context.epoch_binding_v1(),
+            }
+        } else {
+            let mut value = Self::bind_v1(
+                proof,
+                predecessor,
+                context.validator_set(),
+                context.consensus_parameters(),
+            )?;
+            value.epoch_binding_v1 = context.epoch_binding_v1();
+            value
+        };
+        Ok(value)
     }
 
     /// Rechecks the exact permit/proof/state join and authenticates all three
@@ -681,14 +826,26 @@ impl SafetyRulesFinalityPermitV1 {
         if state.revision() != self.predecessor.revision || predecessor != self.predecessor {
             return Err(SafetyRulesErrorV1::FinalityProofBindingMismatch);
         }
-        let expected = Self::bind_v1(
-            proof,
-            predecessor,
-            context.validator_set(),
-            context.consensus_parameters(),
-        )?;
+        let expected = Self::bind_for_context_v1(proof, predecessor, context)?;
         if self != &expected {
             return Err(SafetyRulesErrorV1::FinalityProofBindingMismatch);
+        }
+        if let Some(runtime) = context.epoch_runtime_v1() {
+            let timestamp =
+                if proof.finalized_block().header().block_kind() == BlockKind::EpochHandoff {
+                    runtime.activation().terminal_old_header().timestamp_ms()
+                } else {
+                    predecessor.timestamp_ms
+                };
+            return runtime
+                .verify_finality_v1(
+                    proof,
+                    timestamp,
+                    &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                        context.consensus_parameters(),
+                    ),
+                )
+                .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact);
         }
         proof
             .verify(
@@ -947,6 +1104,16 @@ fn verify_qc_reference_v1<V: SignatureVerifier>(
     reference: &QcReferenceV0,
     verifier: &V,
 ) -> SafetyRulesResultV1<()> {
+    if let Some(runtime) = context.epoch_runtime_v1() {
+        return runtime
+            .verify_qc_reference_v1(
+                reference,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                    context.consensus_parameters(),
+                ),
+            )
+            .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact);
+    }
     match reference {
         QcReferenceV0::Ordinary(certificate) => certificate
             .verify(&context.validator_set, verifier)
@@ -980,12 +1147,18 @@ where
     }
 
     let locked = state.locked_qc.qc_ref();
-    let mut extends_lock = finalized_matches_qc_v1(state.finalized, locked);
-    let mut previous_view = state.finalized.view;
-    let mut previous_height = state.finalized.height;
-    let mut previous_block_id = state.finalized.block_id;
-    let mut previous_timestamp_ms = state.finalized.timestamp_ms;
-    let mut previous_header = None;
+    let base = context.ancestry_base_v1(state.finalized);
+    let mut extends_lock = base.view == locked.view()
+        && base.height == locked.height()
+        && base.block_id == locked.block_id();
+    let mut previous_view = base.view;
+    let mut previous_height = base.height;
+    let mut previous_block_id = base.block_id;
+    let mut previous_timestamp_ms = base.timestamp_ms;
+    let mut previous_header = context.epoch_runtime_v1().and_then(|runtime| {
+        let terminal = runtime.activation().terminal_old_header();
+        (terminal.id() == base.block_id).then_some(terminal)
+    });
     let mut seen = BTreeSet::new();
     seen.insert(previous_block_id);
 
@@ -999,7 +1172,8 @@ where
             )
             .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
             if geometry.expected_block_kind(header.height()).ok() != Some(header.block_kind())
-                || header.block_kind() == BlockKind::EpochHandoff
+                || (header.block_kind() == BlockKind::EpochHandoff
+                    && context.epoch_runtime_v1().is_none())
             {
                 return Err(SafetyRulesErrorV1::UnsupportedBlockKind);
             }
@@ -1051,15 +1225,31 @@ where
             return Err(SafetyRulesErrorV1::JustifyEdgeMismatch);
         }
 
-        proposal
-            .verify(
-                &context.validator_set,
-                None,
-                &context.consensus_parameters,
-                previous_timestamp_ms,
-                verifier,
-            )
+        if let Some(runtime) = context.epoch_runtime_v1() {
+            let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
+                context.consensus_parameters(),
+            );
+            if let Some(parent) = previous_header {
+                runtime.verify_proposal_v1(proposal, parent, &mut budget)
+            } else {
+                runtime.verify_proposal_at_parent_timestamp_v1(
+                    proposal,
+                    previous_timestamp_ms,
+                    &mut budget,
+                )
+            }
             .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
+        } else {
+            proposal
+                .verify(
+                    &context.validator_set,
+                    None,
+                    &context.consensus_parameters,
+                    previous_timestamp_ms,
+                    verifier,
+                )
+                .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
+        }
         if block.logical_block_size() > context.consensus_parameters.max_block_bytes() as usize
             || proposal
                 .durable_validation_resource_size_v0()
@@ -1093,17 +1283,6 @@ fn repeated_block_has_different_coordinate(left: QcRef, right: QcRef) -> bool {
         && (left.view() != right.view() || left.height() != right.height())
 }
 
-fn qc_conflicts_with_finalized(reference: QcRef, finalized: FinalizedBlockRefV1) -> bool {
-    reference.block_id() == finalized.block_id
-        && (reference.view() != finalized.view || reference.height() != finalized.height)
-}
-
-fn finalized_matches_qc_v1(finalized: FinalizedBlockRefV1, reference: QcRef) -> bool {
-    finalized.view == reference.view()
-        && finalized.height == reference.height()
-        && finalized.block_id == reference.block_id()
-}
-
 fn compute_state_digest_v1(state: &SafetyRulesStateV1) -> SafetyRulesStateDigestV1 {
     let mut hasher = Sha256::new();
     hasher.update(SAFETY_RULES_STATE_DIGEST_DOMAIN_V1);
@@ -1127,6 +1306,10 @@ fn compute_state_digest_v1(state: &SafetyRulesStateV1) -> SafetyRulesStateDigest
     hasher.update(state.revision.to_be_bytes());
     if state.old_epoch_boundary_v1 {
         hasher.update(b"trnm.safety-rules.old-epoch-boundary.v1");
+    }
+    if let Some(binding) = state.epoch_binding_v1 {
+        hasher.update(b"trnm.safety-rules.complete-epoch.v1");
+        hasher.update(binding);
     }
     SafetyRulesStateDigestV1(hasher.finalize().into())
 }

@@ -372,3 +372,29 @@ Release acceptance requires the same artifact/profile identity, nonempty require
 results and authenticated independent external records where required. Repository
 fixtures, self-review, shortened runs or synthetic clocks cannot close those
 external gates. Critical/High unresolved findings block the affected acceptance.
+
+### Actual native client candidate campaign
+
+`run_consensus_fleet.py --native-client-key-root` selects the native branch only
+when its exact coordinator manifest contains the native application profile
+and excludes both legacy workload files. The existing seven-validator/five-
+Linux-host process, Ready/Start certificate, signed terminal report, runtime
+journal, metrics, final-state and replay-archive requirements still apply.
+Mac signs an operator funding request and bounded client Transfer requests
+using isolated campaign keys in a fresh private directory, then independently
+verifies every returned native payload/receipt/finality proof against the public
+manifest and the exact submitted outer bytes. Keys never enter validator or
+observer-public deployment material. The coordinator bridges requests to the
+real node's private Unix endpoint; this does not establish a public HTTP RPC.
+
+`check_native_client_campaign_v1.py` rechecks the exact runner artifact
+inventory, all original signed fleet artifact sets and each actual native
+proof through the pinned Rust verifier. It decodes the proved command to
+exclude funding from business counts and rejects relabeling, duplicate native
+hashes, wrong exact bytes, substituted parent headers, idempotency sequence
+changes or inconsistent measurement windows. Observed goodput is unique proved
+Transfer requests divided by coordinator monotonic elapsed time from the first
+business submit to the last independent verification, including sequential SSH
+and proof latency. It is a small candidate-path measurement, not peak execution
+TPS, N/N transaction receipts, host attestation, fault-matrix completion, A-tier
+completion, production readiness or the missing full M05 intent binding.

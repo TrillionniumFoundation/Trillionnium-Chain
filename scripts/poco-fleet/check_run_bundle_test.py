@@ -699,7 +699,7 @@ def build(root: pathlib.Path, count: int = 7) -> None:
                 "schema_version": 2,
                 "run_id": summary["run_id"],
                 "host_id": "mac",
-                "lan_ip": "192.168.0.5",
+                "lan_ip": "192.168.0.10",
                 "os": "macos",
                 "arch": "arm64",
                 "run_roles": [

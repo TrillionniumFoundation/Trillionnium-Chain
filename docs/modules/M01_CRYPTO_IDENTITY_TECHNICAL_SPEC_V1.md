@@ -107,6 +107,34 @@ Real Ed25519 tests cover view1, a skipped view with exact TC, one-short budgets,
 substituted payload and bad signature. These establish cryptographic admission,
 not live Core/new-signer activation.
 
+### Full epoch runtime context (implemented inert candidate)
+
+`StrictEpochRuntimeContextV1::from_activation_v1` consumes a complete
+`StrictSameVersionEpochActivationAuthorityV0`. It retains all eight evidence
+roots and exposes only their exact anchor/authorization context for strict
+QC/TC/proposal/finality consumers. Closed exact decoders may reconstruct a
+structural `EpochRuntimeContextDataV1` from complete decoded evidence, but this
+value grants no cryptographic, signing, Core or application authority. No generic
+verifier gains an accept-anchor flag. Runtime verification charges shared QC/TC
+and proposer/evidence work before cryptographic verification. Every retained
+synthetic reference must equal the context's exact new view-zero anchor, including
+skipped-view TC entries; old-context certificates are rejected on active ingress.
+
+The three explicit V1 exact decoders are
+`decode_epoch_runtime_qc_reference_v1_exact_with_budget`,
+`decode_epoch_runtime_timeout_certificate_v1_exact_with_budget`, and
+`decode_epoch_runtime_finality_proof_v1_exact_with_budget`. All use the complete
+structural context and caller-owned byte/signature budget, exhaust the root,
+and require canonical re-encoding. `verify_proposal_v1` verifies the real parent;
+`verify_proposal_without_parent_v1` only preauthenticates Regular/checkpoint
+carriers to request missing ancestry, and cannot establish timestamp or parent
+state. `verify_proposal_at_parent_timestamp_v1` additionally checks an already
+authenticated compact timestamp; seals and handoffs require the full-parent API.
+Real Ed25519 tests cover TC-bearing first finality, exact work boundaries,
+foreign old QCs, bad shares and parent timestamp substitution. Core 14E and the
+pure SafetyRules context consume this verifier; live Core/custody activation is
+still unavailable at this checkpoint.
+
 ### Identity and domain binding
 
 | Authority | Required independently authenticated context |

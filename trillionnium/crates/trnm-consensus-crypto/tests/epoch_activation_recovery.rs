@@ -1092,3 +1092,113 @@ fn complete_first_proposal_strictly_binds_payload_and_tc_before_first_block() {
         assert_eq!(bad_budget.signature_work(), budget.signature_work());
     }
 }
+
+#[test]
+fn strict_runtime_context_admits_only_its_complete_epoch_and_exact_budgets() {
+    use trnm_consensus_crypto::{
+        decode_verify_epoch_first_finality_strict_v1, StrictEpochRuntimeContextV1,
+    };
+    let (evidence, old_set, old_parameters, binding) = fixture("positive");
+    let activation = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &old_set,
+        &old_parameters,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let (first, expected, _) = first_epoch_finality_bytes(&activation);
+    let initial = decode_verify_epoch_first_finality_strict_v1(
+        evidence.as_preimages(),
+        &first,
+        &old_set,
+        &old_parameters,
+        expected,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let source = initial.proof().finalized_block();
+    let (raw, _, _) = first_epoch_finality_with_views(
+        &activation,
+        [3, 5, 8],
+        Some((
+            source.justify_qc().clone(),
+            source.epoch_anchor_authorization().unwrap().clone(),
+        )),
+    );
+    let parent_time = activation.terminal_old_header().timestamp_ms();
+    let old_qc = activation.terminal_old_qc().try_cev0_bytes().unwrap();
+    let runtime = StrictEpochRuntimeContextV1::from_activation_v1(activation).unwrap();
+    assert_eq!(runtime.evidence_bytes(), &evidence);
+    assert_eq!(runtime.anchor_reference(), source.justify_qc());
+    let proof = runtime
+        .decode_verify_finality_v1(&raw, parent_time, &mut Cev0AdmissionBudgetV0::protocol_v0())
+        .unwrap();
+    assert_eq!(proof.finalized_block().header().view().get(), 3);
+    for certified in [proof.finalized_block(), proof.child(), proof.grandchild()] {
+        let tc = certified.timeout_certificate().unwrap();
+        let tc_raw = tc.try_cev0_bytes().unwrap();
+        let mut measured = Cev0AdmissionBudgetV0::protocol_v0();
+        assert_eq!(
+            runtime
+                .decode_verify_timeout_certificate_v1(&tc_raw, &mut measured)
+                .unwrap(),
+            *tc
+        );
+        assert!(runtime
+            .decode_verify_timeout_certificate_v1(
+                &tc_raw,
+                &mut Cev0AdmissionBudgetV0::new(tc_raw.len(), measured.signature_work() - 1)
+            )
+            .is_err());
+        let mut corrupt = tc_raw.clone();
+        let signature = tc.entries()[0].signature().as_bytes();
+        let offset = corrupt
+            .windows(64)
+            .position(|window| window == signature)
+            .unwrap();
+        corrupt[offset] ^= 1;
+        let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+        assert!(runtime
+            .decode_verify_timeout_certificate_v1(&corrupt, &mut budget)
+            .is_err());
+        assert_eq!(budget.signature_work(), measured.signature_work());
+        for reference in tc.referenced_qcs() {
+            let bytes = match reference {
+                trnm_consensus_types::QcReferenceV0::Ordinary(qc) => qc.try_cev0_bytes().unwrap(),
+                trnm_consensus_types::QcReferenceV0::Synthetic(qc) => match qc.as_ref() {
+                    trnm_consensus_types::ContextAuthorizedQcV0::Genesis(qc) => {
+                        qc.try_cev0_bytes().unwrap()
+                    }
+                    trnm_consensus_types::ContextAuthorizedQcV0::Epoch(qc) => {
+                        qc.try_cev0_bytes().unwrap()
+                    }
+                },
+            };
+            assert_eq!(
+                runtime
+                    .decode_verify_qc_reference_v1(
+                        &bytes,
+                        &mut Cev0AdmissionBudgetV0::protocol_v0()
+                    )
+                    .unwrap(),
+                *reference
+            );
+            let mut trailing = bytes;
+            trailing.push(0);
+            assert!(runtime
+                .decode_verify_qc_reference_v1(&trailing, &mut Cev0AdmissionBudgetV0::protocol_v0())
+                .is_err());
+        }
+    }
+    assert!(runtime
+        .decode_verify_qc_reference_v1(&old_qc, &mut Cev0AdmissionBudgetV0::protocol_v0())
+        .is_err());
+    assert!(runtime
+        .decode_verify_finality_v1(
+            &raw,
+            parent_time + 1,
+            &mut Cev0AdmissionBudgetV0::protocol_v0()
+        )
+        .is_err());
+}

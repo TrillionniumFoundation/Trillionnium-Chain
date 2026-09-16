@@ -691,18 +691,26 @@ when it remains reviewable. A wire/root/schema incompatibility requires its
 versioned contract and migration decision before implementation. File partitioning
 and consumer review replace fixed PR-count or writer-count rituals.
 
-The current E1 implementation tranche adds strict pre-certificate context,
-persisted old/new handoff signing and exact recovery, a committed native receipt
-join, authenticated carried-root computation and dual-parent C+3 preview, and
-strict first-new-epoch finality with skipped-view TCs. T1 now has strict native
-transaction/receipt membership and a trust path that verifies ordinary and epoch
-successors. These are bounded library/candidate interfaces; Core still needs its
-durable phase/configuration switch, and native epoch computation still needs its
-executed artifact, durable P rows and reconstructed edge on restart. Public
-submission/proposal wiring, native snapshot installation and incremental storage
-remain open. The six-host readiness/capacity probes are infrastructure evidence;
-they contain no running-chain fault/performance acceptance. No stage is closed
-by this tranche alone.
+The current candidate implementation supports old-epoch checkpoint/seals, strict
+full epoch context and inert TRNMS14E recovery, native schema4 C→C+3 preparation
+and commit, and original-owner-bound ordinary signer retirement before handoff.
+The external authority records retirement in its authenticated mode and append
+log, with restart reconciliation, fsync confirmation and actual process-crash
+checks. Old/continuing host restart remains fenced until the original signer
+identity is bound by a durable whole-node epoch checkpoint. Core first-new-block
+ancestry, journal9 and a live new-epoch signing lease are still incomplete.
+
+T1 now drives signed candidate submissions through durable admission, actual
+proposals, finalized native execution and historical inclusion proofs, including
+complete ancestry for batched finality and an independent client verifier. Native
+schema5 uses the incremental store for ordinary same-epoch P/state/replay commits
+and restart, but execution still reads the complete live state; epoch migration,
+proof/snapshot adapters and reference-safe GC remain open. Public state-sync
+installation is also incomplete. The first six-host native campaign exposed
+listener firewall and workload-identity defects; those are corrected, but no
+successful fault/performance acceptance is claimed before a clean-source rerun.
+Independent review, physical power-loss, HSM, WAN and soak evidence remain open.
+No stage is closed by these candidate implementations alone.
 
 After changing a manifest-bound input, regenerate its fingerprints with
 `python3 scripts/ci/check_plan_manifest_pins_v1.py --refresh-input-pins`, review the

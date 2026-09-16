@@ -381,26 +381,11 @@ pub(crate) fn verify_epoch_proposal_witness_strict_v1(
     header: &trnm_consensus_types::BlockHeader,
     witness: &trnm_consensus_types::ProposalWitnessV0,
 ) -> Result<(), ValidationError> {
-    use trnm_consensus_types::{SignatureVerifier, TimeoutVote};
+    use trnm_consensus_types::SignatureVerifier;
     let set = activation.new_validator_set();
     verify_epoch_qc_reference(activation, witness.justify_qc())?;
     if let Some(tc) = witness.timeout_certificate() {
-        tc.validate_shape(set)?;
-        for reference in tc.referenced_qcs() {
-            verify_epoch_qc_reference(activation, reference)?;
-        }
-        for entry in tc.entries() {
-            let validator = set.validator(entry.signer_id()).ok_or_else(|| {
-                ValidationError::UnknownValidator(alloc::boxed::Box::new(entry.signer_id()))
-            })?;
-            let root =
-                TimeoutVote::signing_root_for_set(set, tc.timed_out_view(), entry.high_qc())?;
-            if !StrictEd25519Verifier.verify(validator, &root, entry.signature()) {
-                return Err(ValidationError::InvalidSignature(alloc::boxed::Box::new(
-                    entry.signer_id(),
-                )));
-            }
-        }
+        verify_epoch_timeout_certificate_strict_v1(activation, tc)?;
     }
     let proposer = set.validator(header.proposer_id()).ok_or_else(|| {
         ValidationError::UnknownValidator(alloc::boxed::Box::new(header.proposer_id()))
@@ -410,6 +395,30 @@ pub(crate) fn verify_epoch_proposal_witness_strict_v1(
         return Err(ValidationError::InvalidSignature(alloc::boxed::Box::new(
             proposer.id(),
         )));
+    }
+    Ok(())
+}
+
+pub(crate) fn verify_epoch_timeout_certificate_strict_v1(
+    activation: &crate::StrictSameVersionEpochActivationAuthorityV0,
+    tc: &trnm_consensus_types::TimeoutCertificateV0,
+) -> Result<(), ValidationError> {
+    use trnm_consensus_types::{SignatureVerifier, TimeoutVote};
+    let set = activation.new_validator_set();
+    tc.validate_shape(set)?;
+    for reference in tc.referenced_qcs() {
+        verify_epoch_qc_reference(activation, reference)?;
+    }
+    for entry in tc.entries() {
+        let validator = set.validator(entry.signer_id()).ok_or_else(|| {
+            ValidationError::UnknownValidator(alloc::boxed::Box::new(entry.signer_id()))
+        })?;
+        let root = TimeoutVote::signing_root_for_set(set, tc.timed_out_view(), entry.high_qc())?;
+        if !StrictEd25519Verifier.verify(validator, &root, entry.signature()) {
+            return Err(ValidationError::InvalidSignature(alloc::boxed::Box::new(
+                entry.signer_id(),
+            )));
+        }
     }
     Ok(())
 }

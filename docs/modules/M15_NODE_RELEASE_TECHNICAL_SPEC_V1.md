@@ -120,7 +120,8 @@ The feature-gated `trnm-poco-node-host/src/handoff_runtime_v1.rs` now owns a
 candidate join between a live native application owner, its freshly read
 committed pre-certificate receipt, strict M01 context and the role-specific
 durable journal. `CandidateHandoffRuntimeV1` verifies path/store affinity and
-exact row/head/configuration bindings before signing or recovery. Its private
+exact row/head/configuration bindings before signing or new-only recovery.
+Old/continuing restart is explicitly fenced as described below. Its private
 recorded result retains intent, signature, application commit/artifact and context
 identity. It creates no keys and cannot activate Core, authorize ordinary votes,
 publish via a Core callback or close the whole-node checkpoint barrier. Full
@@ -384,3 +385,87 @@ custody, rollback protection, multi-host authentication, required independent
 reviews and external fault/soak evidence for the exact release bundle. No
 administrator flag, healthy endpoint or generic port implementation supplies
 those missing capabilities. Current fail-closed production startup remains valid.
+
+### Candidate cadence across rotating leaders
+
+Native public cadence is measured against the committed parent timestamp, not
+only a per-process timer. When chain time is ready, every leader waits until the
+proposed timestamp is at least `parent_timestamp + block_cadence_ms`; checked
+overflow rejects progress. Otherwise leader rotation would multiply the nominal
+block rate and exhaust a bounded campaign before clients can observe finality.
+Empty clock catch-up blocks may advance by the committed maximum time step
+until skew readiness returns. This candidate cadence is a test profile limit,
+not a throughput claim or a change to frozen consensus validity.
+
+
+### Ordinary retirement before candidate handoff custody
+
+Old and continuing validators must commission `CandidateHandoffRuntimeV1` via
+`from_owners_with_original_ordinary_v1`. This consumes an independently obtained
+`ConfirmedSignerNodeCheckpointFactsV0` and checks its affinity against the actual
+original live ordinary journal plus fresh exact local/external readback. The
+private selection retains its path, owner affinity, journal ID, external scope,
+complete profile checksum and original watermark. Ordinary and handoff scopes
+must be explicit and distinct. Same validator, same key and same signer-profile
+reference are insufficient; neither a different-scope journal nor a reopened
+scalar-identical journal can replace the selected live owner.
+
+The retirement method checks this selection before joining native/Safety or
+performing external CAS. It then freshly joins actual journal8 terminal
+`CheckpointApplied`, strict old finality and COMMITTED native checkpoint. Host
+cut generation, Safety revision/checksum and native cut come from those owners.
+Retirement preserves the original owner affinity when consuming its ordinary
+API. Both before and after handoff signing, the host checks that exact retired
+owner and fresh external terminal policy against the prior selection. Bare
+`from_owners` and `sign_handoff_exact` admit only a new-only validator whose ID
+and key have no old-set custody.
+
+**Restart limitation:** the existing native whole-node checkpoint capability is
+private and binds the older Safety profile; a durable terminal14O/14E producer
+that independently restores the original ordinary journal/scope/profile is not
+implemented. `recover_with_retired_ordinary_exact_v1` therefore returns
+`OriginalOrdinaryRecoveryUnavailable` before any owner read/reconciliation/CAS.
+It never assigns the caller's supplied retired fields to the expected selection.
+A complete fix must retain the original source pin in the actual durable node
+checkpoint, fresh-read it under its own owner, join the exact retired local and
+external source, and only then construct a recovery capability. A public scalar
+constructor or a copied live capability is forbidden. This is a remaining
+activation/recovery boundary, not a completed restart feature.
+
+Real SQLite-owner tests use two journals with identical set, author and signing
+key reference but different external scopes. The prior original selection
+rejects the second active and retired owner, allows the real original retirement,
+and rejects a same-path/same-scalar reopened owner. External services in these
+host binding tests are test doubles; M03 separately tests the real Unix daemon.
+Full native/Safety/retirement positive host acceptance remains required.
+
+`trnm-consensus-safety-store` is an optional dependency of the explicit
+`persistent-authority-candidate` host feature solely to perform this owner join.
+It does not enter the default host/production dependency closure. The host does
+not evaluate SafetyRules, write raw Safety records, accept caller-supplied
+activation booleans, or receive private keys. A retired ordinary receipt itself
+is not a publish permit, complete joint certificate, or new-epoch signing lease.
+End-to-end activated runtime and new lease validation remain separate acceptance.
+
+### Native candidate fleet application identity and source aliases
+
+The actual `FleetCampaignIdentityV1` legacy constructor continues to require
+nonzero corpus and policy hashes. The explicit `new_native_v1` constructor
+uses the previously invalid pair of zero workload hashes as a reserved native
+application discriminator and appends exactly one nonzero 32-byte native
+profile digest before the validator count. Old valid campaign encodings stay
+unchanged. The Ready/Start signatures cover this complete identity. The public
+verifier independently loads the manifest-bound application profile and must
+match its digest; missing, zero, mixed or substituted native profiles reject.
+The inactive zero workload fields in summary JSON confer no fixture authority.
+
+Source candidate preparation preserves a tracked documentation alias as Git
+mode `120000`, its literal UTF-8 relative target bytes and original blob hash.
+The strict clean-commit inventory still reconstructs the original commit tree.
+Only `docs/*.md` aliases directly targeting a tracked, non-executable regular
+Markdown document inside `docs/` are accepted; executable paths, untracked
+links, absolute targets, traversal outside docs, chains, cycles and directory
+links reject. Canonical tar uses a symbolic-link member with fixed metadata.
+The verifier validates this inventory before extraction; the builder extracts
+all regular members first and creates only these validated aliases afterward.
+No source file is materialized under a false original Git hash.

@@ -24,6 +24,7 @@ mod context;
 mod crypto;
 mod cutoff;
 mod epoch;
+mod epoch_runtime_context;
 mod epoch_seal;
 pub use epoch_seal::validate_empty_epoch_seal_v1;
 mod epoch_activation_evidence;
@@ -183,6 +184,13 @@ pub use wire_semantic::{
     WireSemanticDecodeError, WireSemanticDecodeErrorCode, MAX_WIRE_NESTED_DEPTH_V0,
     MAX_WIRE_NESTED_FIELDS_V0, MAX_WIRE_NESTED_LIST_ITEMS_V0,
 };
+
+pub use cev0_decode::{
+    decode_epoch_runtime_finality_proof_v1_exact_with_budget,
+    decode_epoch_runtime_qc_reference_v1_exact_with_budget,
+    decode_epoch_runtime_timeout_certificate_v1_exact_with_budget,
+};
+pub use epoch_runtime_context::EpochRuntimeContextDataV1;
 
 #[cfg(test)]
 extern crate std;

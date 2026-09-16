@@ -221,7 +221,7 @@ def main() -> int:
     require(authority_manifest["features"].get("persistent-authority-candidate") ==
             ["dep:trnm-durable-file-adapters-v0"], "authority candidate feature drift")
     handoff_dependencies = {"trnm-consensus-crypto", "trnm-consensus-signer-journal",
-                            "trnm-consensus-types", "trnm-native-execution-v0"}
+                            "trnm-consensus-types", "trnm-native-execution-v0", "trnm-consensus-safety-store"}
     expected_host_features = {"trnm-poco-node-authority/persistent-authority-candidate",
                               *(f"dep:{name}" for name in handoff_dependencies)}
     host_features = host_manifest["features"].get("persistent-authority-candidate", [])
@@ -260,8 +260,16 @@ def main() -> int:
     require(re.search(r'#\[cfg\(feature = "persistent-authority-candidate"\)\]\s*'
                       r'mod handoff_runtime_v1;', host_lib) is not None,
             "host handoff module must remain candidate gated")
+    handoff_source = host_sources / "handoff_runtime_v1.rs"
+    handoff_tests = host_sources / "handoff_runtime_v1_tests.rs"
+    require(re.search(r'#\[cfg\(test\)\]\s*'
+                      r'#\[path = "handoff_runtime_v1_tests.rs"\]\s*mod tests;',
+                      handoff_source.read_text(encoding="utf-8")) is not None,
+            "host handoff tests must remain test gated inside candidate wiring")
+    require("handoff_runtime_v1_tests" not in host_lib,
+            "host handoff tests cannot enter the root module")
     for source in host_sources.rglob("*.rs"):
-        if source == host_sources / "handoff_runtime_v1.rs":
+        if source in (handoff_source, handoff_tests):
             continue
         require("trnm_consensus_" not in source.read_text(encoding="utf-8"),
                 f"host consensus import outside candidate handoff wiring: {source.name}")

@@ -471,7 +471,9 @@
     "B2-A": [
       "decode_ordinary_qc_v0_exact",
       "decode_ordinary_timeout_certificate_v0_exact",
-      "decode_qc_reference_v0_exact_with_trusted_genesis"
+      "decode_qc_reference_v0_exact_with_trusted_genesis",
+      "decode_epoch_runtime_qc_reference_v1_exact_with_budget",
+      "decode_epoch_runtime_timeout_certificate_v1_exact_with_budget"
     ],
     "B2-B": [
       "decode_block_header_v0_exact",
@@ -490,7 +492,8 @@
     "B2-E": [
       "decode_consensus_parameters_v0_exact",
       "decode_ordinary_certified_header_v0_exact",
-      "decode_checkpoint_finality_proof_v0_exact"
+      "decode_checkpoint_finality_proof_v0_exact",
+      "decode_epoch_runtime_finality_proof_v1_exact_with_budget"
     ],
     "node-local": [
       "decode_canonical_sign_intent_v0_exact",

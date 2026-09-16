@@ -4565,6 +4565,8 @@ impl<'a> Cursor<'a> {
     }
 }
 
+include!("epoch_runtime_decode_v1.inc");
+
 #[cfg(test)]
 mod tests {
     use alloc::{vec, vec::Vec};

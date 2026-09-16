@@ -5,6 +5,8 @@
   "rust_registry_const": "DecodeErrorCode::ALL",
   "source_paths": {
     "rust_decoder": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+    "epoch_runtime_decoder_v1": "trillionnium/crates/trnm-consensus-types/src/epoch_runtime_decode_v1.inc",
+    "epoch_runtime_context_v1": "trillionnium/crates/trnm-consensus-types/src/epoch_runtime_context.rs",
     "base_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-v0.json",
     "anchor_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-anchor-handoff-v0.json",
     "epoch_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-epoch-commitment-v0.json",
@@ -12,7 +14,9 @@
     "checkpoint_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-checkpoint-finality-v0.json"
   },
   "source_sha256": {
-    "rust_decoder": "db2a83022fb60ffc3d00f85f02f37cf16533ad60b2b660b3a412d24541edc840",
+    "rust_decoder": "8f5213e4c31005ee18c92432479e63cea0dcf8b64f5f700d7ce609c92ecdefae",
+    "epoch_runtime_decoder_v1": "9de7fad04ef329acc10842d7aea8466ddaeb005ec61469eaa67f08feaf8392ea",
+    "epoch_runtime_context_v1": "3d99daddd2070b6fad03c5406205e0e87d427322dc7e4c28a7a46aa1a5c1e1e0",
     "base_schema": "1130bac8c467baa5fded2105e316799ad01fe1e08625358b9d76c4a9837cd9f7",
     "anchor_schema": "769653d06de4f9f56b80ef951012fb0e55a0f13cb4ed9338a52469fb7b4a5c3b",
     "epoch_schema": "0a117b8bdc166be67fd6cd0836a7473e74783528fa2f083e9e20c6470d490166",
@@ -493,7 +497,9 @@
     "B2-A": [
       "decode_ordinary_qc_v0_exact",
       "decode_ordinary_timeout_certificate_v0_exact",
-      "decode_qc_reference_v0_exact_with_trusted_genesis"
+      "decode_qc_reference_v0_exact_with_trusted_genesis",
+      "decode_epoch_runtime_qc_reference_v1_exact_with_budget",
+      "decode_epoch_runtime_timeout_certificate_v1_exact_with_budget"
     ],
     "B2-B": [
       "decode_block_header_v0_exact",
@@ -512,7 +518,8 @@
     "B2-E": [
       "decode_consensus_parameters_v0_exact",
       "decode_ordinary_certified_header_v0_exact",
-      "decode_checkpoint_finality_proof_v0_exact"
+      "decode_checkpoint_finality_proof_v0_exact",
+      "decode_epoch_runtime_finality_proof_v1_exact_with_budget"
     ],
     "node-local": [
       "decode_canonical_sign_intent_v0_exact",

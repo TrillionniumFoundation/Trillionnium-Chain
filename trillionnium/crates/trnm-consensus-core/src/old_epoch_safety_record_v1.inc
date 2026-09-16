@@ -85,7 +85,8 @@ pub fn encode_old_epoch_boundary_safety_record_v1(
             .ok_or(SafetyStateRecordErrorV0::UnsupportedSafetySchema(
                 state.schema_version(),
             ))?;
-    if state.schema_version() != 14
+    if state.epoch_state_v1().is_some()
+        || state.schema_version() != 14
         || state.epoch() != Epoch::new(0)
         || state.epoch() != context.core_config.validator_set().epoch()
         || state.validator_set_id() != context.core_config.validator_set().id()

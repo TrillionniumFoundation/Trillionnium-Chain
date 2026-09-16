@@ -85,7 +85,8 @@ pub use durable::{
     NativeApplicationExecutionErrorV0, NativeH1StateSyncTrustedBaseRequestV0,
     PreparedNativeEpochExecutionV1, VerifiedNativeSignerReplayFloorV1,
 };
-pub use epoch_edge::AuthenticatedEpochApplicationEdgeV1;
+pub use durable::{CommittedNativeIncrementalExecutionV1, PreparedNativeIncrementalExecutionV1};
+pub use epoch_edge::{AuthenticatedEpochApplicationEdgeV1, ConfirmedEpochApplicationEdgeV1};
 pub use pcc1_finality::{PocoFinalityCommitErrorV0, PocoFinalizedApplicationReadV0};
 pub use poco_checkpoint::{
     ConfirmedNativePocoCheckpointV0, PreHandoffCheckpointReceiptV1,
