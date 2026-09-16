@@ -125,6 +125,30 @@ class NativeWorkflowMutants(unittest.TestCase):
         self.replace(RUNTIME, "        if: always()", "        if: success()")
         self.rejected("offline postcheck must run on failure")
 
+    def test_workspace_scope_condition_must_be_exact(self) -> None:
+        original = (
+            "      - name: Test the unified workspace feature graph with a hard deadline\n"
+            "        if: ${{ success() && steps.rust_scope.outputs.run_rust == 'true' }}\n"
+        )
+        mutated = (
+            "      - name: Test the unified workspace feature graph with a hard deadline\n"
+            "        if: false\n"
+        )
+        self.replace(BASELINE, original, mutated)
+        self.rejected("workspace execution: exact Rust scope condition differs")
+
+    def test_workspace_failure_evidence_scope_condition_must_be_exact(self) -> None:
+        original = (
+            "      - name: Retain exact-source workspace execution log including failure\n"
+            "        if: ${{ (always()) && steps.rust_scope.outputs.run_rust == 'true' }}\n"
+        )
+        mutated = (
+            "      - name: Retain exact-source workspace execution log including failure\n"
+            "        if: always()\n"
+        )
+        self.replace(BASELINE, original, mutated)
+        self.rejected("workspace failure evidence: exact Rust scope condition differs")
+
     def test_workspace_failure_cannot_be_masked_after_tee(self) -> None:
         self.replace(BASELINE, '2>&1 | tee "$root/workspace.log"', '2>&1 | tee "$root/workspace.log" || true # masked')
         self.rejected("workspace execution: failure masking")
