@@ -222,7 +222,17 @@ def _verify_p04(artifacts: dict[str, pathlib.Path]) -> dict[str, Any]:
     require(_unsigned(counts.get("replay_verified_finalized"), "P0.4 replay_verified_finalized", minimum=1) >= 1, "P0.4 has no replay-verified finality")
     goodput = metrics.get("finalized_goodput_tps")
     require(isinstance(goodput, (int, float)) and not isinstance(goodput, bool) and goodput > 0, "P0.4 finalized goodput must be positive")
-    return {"event_count": event_count, "finalized_goodput_tps": goodput}
+
+    # The measurement program intentionally treats ``replay_verified`` as an
+    # input telemetry field; recomputing arithmetic over that field proves
+    # only report consistency.  It does not independently authenticate a
+    # native finality proof, durable execution receipt, or replayed state
+    # transition.  Until P0.4 consumes those raw artifacts through a fixed
+    # repository verifier, the semantic gate must remain fail-closed.
+    raise EvidenceError(
+        "P0.4 telemetry arithmetic is internally consistent, but no fixed "
+        "native finality + durable replay verifier is wired yet; fail closed"
+    )
 
 
 def _verify_semantics(check_id: str, artifacts: dict[str, pathlib.Path]) -> dict[str, Any]:
