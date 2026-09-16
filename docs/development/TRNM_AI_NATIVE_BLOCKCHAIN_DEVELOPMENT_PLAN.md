@@ -1,7 +1,8 @@
 # Trillionnium Chain Development Plan v2
 
 Plan ID: `trnm-chain-development-plan-v2`
-Effective: **2026-09-02 (Asia/Singapore)**
+Effective: **2026-09-15 (Asia/Singapore)**
+Status observed: **2026-09-15 (candidate commit `a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8`)**
 Status: **sole active engineering plan; candidate-non-normative until independently accepted and merged through protected `main`**
 Canonical destination: `refs/heads/main`
 
@@ -52,6 +53,10 @@ The source-only baseline observed on 2026-09-13 is
 candidate. No successor PR number is pinned; derive head/base/merge identities
 from Git and the event. Historical integration identities and their non-transfer
 of acceptance are retained in the manifest and Git history, not a live queue.
+The current documentation candidate is based on commit
+`a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8` (tree
+`e9f2f0d85a1d49758e6f3b180ab0c6a011219cf7`); this observation does not alter the
+assessed `main` baseline or confer acceptance.
 
 ### 1.1 Repository implementation retained
 
@@ -286,7 +291,7 @@ constraint. Release acceptance dependencies are not permission to postpone
 behavioral feedback until paperwork or a future audit finishes. Priorities below
 are delivery priorities, not claims that a blocker is closed.
 
-### P0 — persistent validator vertical path
+### P0.1 — persistent validator vertical path
 
 Primary integration owner: M15; producers/consumers M02/M03/M04/M05/M06/M07/M08/M13/M14.
 Connect actual authenticated ingress, persistent pacemaker, Core/Safety,
@@ -304,7 +309,7 @@ operations must leave the relevant durable state unchanged, and 1/2/4/8-worker
 runs must agree on roots, receipts, events and fees. Start with bounded process
 regressions; independent multi-host qualification remains required for G1.
 
-### P0 — two continuous epoch transitions
+### P0.2 — two continuous epoch transitions
 
 Owners: M02/M03/M06/M07/M08/M13 with M15 integration. First settle the authenticated
 consensus-height/application-version contract in the implementation guide's
@@ -319,6 +324,31 @@ lost acknowledgements; cold restart/rejoin and independent proof verification.
 There is no dummy seal execution, removed epoch fence, caller-minted authority,
 old-view/new-view numeric shortcut or silent reinterpretation of frozen cutoff
 proofs. Unsupported live behavior stays disabled until this path is qualified.
+
+### P0 acceptance checklist (all items required)
+
+The P0.1 and P0.2 exits are conjunctive. A candidate remains
+`candidate-non-normative` and all production/readiness flags remain false until
+each item has source-bound, independently replayable evidence:
+
+1. **Real 4-to-7-node campaign:** run the same persistent validator binary on
+   independently operated hosts at four nodes and then seven nodes, including
+   restart, partition/heal, lost replies and rejoin. Simulator, fixture and
+   single-host process tests do not satisfy this item.
+2. **Two epochs:** complete two successive authenticated epoch transitions with
+   old-only, new-only and dual-role membership, first-new-block execution,
+   interrupted persist-before-sign cuts, cold restart and proof verification.
+3. **Coordinate binding:** every proposal, vote, QC/TC, checkpoint, finality and
+   application receipt must bind and verify `(chain_id, epoch, height, view,
+   block_id, parent_qc)`; mismatches and cross-epoch ancestry are rejected.
+4. **Signer anchor:** signatures come from independently administered,
+   device-backed custody with a monotonic anti-rollback anchor. The durable
+   signer intent precedes custody, and anchor/store rollback or replacement tests
+   fail closed. Local file watermarks are not a substitute.
+5. **Committed goodput:** publish finalized, replay-verified successful business
+   transactions per second with p50/p95/p99 finality, exact workload and
+   durability profile, topology/fault manifest, raw traces and confidence bounds.
+   Submitted or ingress TPS is not accepted as goodput.
 
 ### P1 — operation detail and state/recovery scalability
 

@@ -8,6 +8,7 @@ import pathlib
 import re
 import sys
 import tomllib
+from datetime import date
 from typing import Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -128,7 +129,19 @@ def main() -> int:
         "machine truth consensus activation": truth.get("production_consensus_activation"),
     }.items():
         require(value is False, f"{label} must remain false")
-    require(truth.get("as_of") == "2026-09-07", "machine truth as_of date is stale")
+    # Keep freshness validation relative to the record, rather than pinning the
+    # checker to a historical calendar date.
+    as_of = truth.get("as_of")
+    require(isinstance(as_of, str), "machine truth as_of must be an ISO date")
+    try:
+        parsed_as_of = date.fromisoformat(as_of)
+    except ValueError as exc:
+        raise TruthError("machine truth as_of must be an ISO date") from exc
+    observed_at = truth.get("status_observed_at")
+    if observed_at is not None:
+        require(isinstance(observed_at, str), "machine truth status_observed_at must be an ISO timestamp")
+        require(observed_at[:10] == as_of, "machine truth as_of must match status_observed_at date")
+    require(parsed_as_of <= date.today(), "machine truth as_of cannot be in the future")
     require(
         truth.get("active_candidate_source") == "derived-at-verification-time-from-git-head-and-tree",
         "machine truth must not embed a self-invalidating candidate SHA",

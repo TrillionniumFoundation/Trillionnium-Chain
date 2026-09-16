@@ -1,7 +1,10 @@
 {
   "schema": "trnm-blocker-execution-v1",
-  "as_of": "2026-09-13",
+  "as_of": "2026-09-15",
   "source_binding": "runtime-git-commit-and-tree",
+  "status_observed_at": "2026-09-15T12:34:26+08:00",
+  "status_source_commit": "a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8",
+  "status_source_tree": "e9f2f0d85a1d49758e6f3b180ab0c6a011219cf7",
   "canonical_register": "config/consensus-mainline.json",
   "repository_policy": "config/repository-policy-v1.json",
   "plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",

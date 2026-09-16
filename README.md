@@ -8,6 +8,11 @@ operator controls, and source-bound evidence gates.
 
 ## Current status
 
+Status observed **2026-09-15** at candidate commit
+`a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8` (tree
+`e9f2f0d85a1d49758e6f3b180ab0c6a011219cf7`). This is a fresh candidate
+observation; it does not change the assessed `main` baseline or grant acceptance.
+
 **Native PoCO-BFT v0 is the only future production consensus route.** The current
 repository remains an engineering candidate:
 
@@ -31,6 +36,14 @@ equivalence, one active development plan, and machine-checked M00-M17 source and
 technical-document coverage. These are implementation-present,
 acceptance-pending facts. They do not establish public-testnet, production,
 release, protocol-freeze, or activation authority.
+
+P0 acceptance follows one order: (1) a real four-node and then seven-node
+multi-host campaign, (2) two consecutive authenticated epoch transitions, (3)
+coordinate binding for every consensus and application fact, (4) an
+independently administered device-backed signer with a monotonic anti-rollback
+anchor, and (5) finalized replay-verified business goodput with p50/p95/p99
+finality and raw traces. Until all five have independently replayable evidence,
+the candidate remains non-normative and all production/readiness flags stay false.
 
 The machine-readable authority is `config/consensus-mainline.json`. The sole
 active execution, modularization, team, and promotion plan is

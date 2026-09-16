@@ -1,6 +1,9 @@
 schema_version = 1
 train_id = "trnm-native-poco-release-train-v1-20260902"
-as_of = "2026-09-13"
+status_observed_at = "2026-09-15T12:34:26+08:00"
+status_source_commit = "a1225af2ecad9e849368ff6b3d28dedbd6cb2ee8"
+status_source_tree = "e9f2f0d85a1d49758e6f3b180ab0c6a011219cf7"
+as_of = "2026-09-15"
 plan_id = "trnm-chain-development-plan-v2"
 canonical_destination = "refs/heads/main"
 storage_engine = "sqlite"
