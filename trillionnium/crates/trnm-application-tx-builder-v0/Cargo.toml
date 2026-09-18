@@ -30,4 +30,4 @@ trnm-mempool = { version = "0.1.0", path = "../trnm-mempool" }
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 
 [dev-dependencies]
-ed25519-dalek = "2"
+ed25519-dalek = "3"

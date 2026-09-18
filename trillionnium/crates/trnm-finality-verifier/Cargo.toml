@@ -11,4 +11,4 @@ hex = "0.4"
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 
 [dev-dependencies]
-ed25519-dalek = "2"
+ed25519-dalek = "3"

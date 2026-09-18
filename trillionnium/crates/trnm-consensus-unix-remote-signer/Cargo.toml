@@ -41,7 +41,7 @@ trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-s
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 
 [dependencies.ed25519-dalek]
-version = "2.2"
+version = "3.0"
 optional = true
 
 [dev-dependencies]

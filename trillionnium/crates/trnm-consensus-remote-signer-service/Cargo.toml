@@ -34,7 +34,7 @@ name = "trnm-remote-signer-p0"
 path = "src/bin/trnm-remote-signer-p0.rs"
 
 [dependencies]
-ed25519-dalek = "2"
+ed25519-dalek = "3"
 libc = "0.2"
 rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
