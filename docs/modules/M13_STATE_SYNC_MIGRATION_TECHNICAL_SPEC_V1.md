@@ -319,6 +319,14 @@ remain planned, separate from generic snapshot verification.
 
 ### Download, verification and installation
 
+The native SQLite read APIs (`binding_and_readback_v1`, `retained_chunks_v1`
+and `resume_existing_v1`) must read metadata and all retained chunks inside one
+explicit read transaction. A concurrent committed append may become visible on
+the next call, but must not combine old metadata with new chunks or report a
+legal append as corruption. Rehash and compare the complete snapshot before
+returning it; this observation does not lock out later progress or supply
+snapshot-completion authority.
+
 `StateSyncSessionV0::new` validates manifest against the verified terminal link.
 Require every bound and exact digest before accepting chunks. `accept_chunk`
 checks index, declared bytes and binding; identical duplicate is idempotent,

@@ -719,18 +719,8 @@ impl SqliteNativeStateSyncStoreV1 {
         &self,
     ) -> Result<(NativeStateSyncBindingV1, NativeStateSyncReadbackV1), NativeStateSyncStoreErrorV1>
     {
-        let connection = self.open_connection_v1()?;
-        let metadata = read_metadata_v1(&connection)?;
-        let chunks = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
-        let actual = readback_from_chunks_v1(
-            metadata.binding.binding_digest,
-            metadata.binding.manifest_digest,
-            &chunks,
-        )?;
-        if actual != metadata.readback {
-            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
-        }
-        Ok((metadata.binding, actual))
+        let (metadata, _) = self.read_validated_snapshot_v1()?;
+        Ok((metadata.binding, metadata.readback))
     }
 
     /// Return the immutable session identity after a complete fresh readback.
@@ -749,18 +739,7 @@ impl SqliteNativeStateSyncStoreV1 {
     /// digest/readback check.  The caller must still bind them to a fresh
     /// verified path and manifest before resuming.
     pub fn retained_chunks_v1(&self) -> Result<Vec<SnapshotChunkV0>, NativeStateSyncStoreErrorV1> {
-        let connection = self.open_connection_v1()?;
-        let metadata = read_metadata_v1(&connection)?;
-        let chunks = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
-        let actual = readback_from_chunks_v1(
-            metadata.binding.binding_digest,
-            metadata.binding.manifest_digest,
-            &chunks,
-        )?;
-        if actual != metadata.readback {
-            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
-        }
-        Ok(chunks)
+        self.read_validated_snapshot_v1().map(|(_, chunks)| chunks)
     }
 
     /// Revalidate a freshly authenticated native path, exact manifest and
@@ -772,9 +751,7 @@ impl SqliteNativeStateSyncStoreV1 {
         manifest: SnapshotManifestV0,
         application: NativeApplicationCheckpointV1,
     ) -> Result<NativeStateSyncSessionV1, NativeStateSyncStoreErrorV1> {
-        let connection = self.open_connection_v1()?;
-        let metadata = read_metadata_v1(&connection)?;
-        let chunks = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
+        let (metadata, chunks) = self.read_validated_snapshot_v1()?;
         let resumed = NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application)
             .map_err(NativeStateSyncStoreErrorV1::Protocol)?;
         let binding = resumed.binding();
@@ -783,13 +760,37 @@ impl SqliteNativeStateSyncStoreV1 {
         {
             return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
         }
-        let actual =
-            readback_from_chunks_v1(binding.binding_digest, binding.manifest_digest, &chunks)?;
+        NativeStateSyncSessionV1::resume(path, manifest, application, metadata.readback, &chunks)
+            .map_err(NativeStateSyncStoreErrorV1::Protocol)
+    }
+
+    fn read_validated_snapshot_v1(
+        &self,
+    ) -> Result<(NativeDurableMetadataV1, Vec<SnapshotChunkV0>), NativeStateSyncStoreErrorV1> {
+        let mut connection = self.open_connection_v1()?;
+        // A connection alone is not a SQLite snapshot. Without BEGIN, a writer
+        // can commit between the metadata and chunk SELECTs and a valid append
+        // is then misclassified as corrupt durable progress. A deferred read
+        // transaction pins one WAL snapshot without blocking the append owner.
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Deferred)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        let metadata = read_metadata_v1(&transaction)?;
+        #[cfg(test)]
+        tests::pause_after_metadata_read_v1();
+        let chunks = read_chunks_v1(&transaction, metadata.manifest_binding_digest)?;
+        let actual = readback_from_chunks_v1(
+            metadata.binding.binding_digest,
+            metadata.binding.manifest_digest,
+            &chunks,
+        )?;
         if actual != metadata.readback {
             return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
         }
-        NativeStateSyncSessionV1::resume(path, manifest, application, metadata.readback, &chunks)
-            .map_err(NativeStateSyncStoreErrorV1::Protocol)
+        transaction
+            .commit()
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        Ok((metadata, chunks))
     }
 
     /// Validate and durably append one chunk.  The in-memory session is

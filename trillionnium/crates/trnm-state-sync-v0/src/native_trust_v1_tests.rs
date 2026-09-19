@@ -6,6 +6,40 @@ use trnm_consensus_types::{
     decode_epoch_activation_evidence_v0_exact, EpochActivationEvidenceBytesV0,
 };
 
+use std::sync::atomic::{AtomicBool, Ordering};
+
+static PAUSE_AFTER_METADATA_READ: AtomicBool = AtomicBool::new(false);
+static METADATA_READ_REACHED: AtomicBool = AtomicBool::new(false);
+
+/// Test-only interleaving point used to prove that a durable read observes one
+/// SQLite WAL snapshot even when a writer commits between metadata and chunk
+/// queries. It is deliberately unreachable from non-test builds.
+pub(crate) fn pause_after_metadata_read_v1() {
+    METADATA_READ_REACHED.store(true, Ordering::SeqCst);
+    while PAUSE_AFTER_METADATA_READ.load(Ordering::SeqCst) {
+        std::thread::yield_now();
+    }
+}
+
+fn begin_metadata_read_pause_v1() {
+    METADATA_READ_REACHED.store(false, Ordering::SeqCst);
+    PAUSE_AFTER_METADATA_READ.store(true, Ordering::SeqCst);
+}
+
+fn wait_metadata_read_pause_v1() {
+    for _ in 0..10_000 {
+        if METADATA_READ_REACHED.load(Ordering::SeqCst) {
+            return;
+        }
+        std::thread::yield_now();
+    }
+    panic!("metadata read did not reach deterministic interleaving point");
+}
+
+fn end_metadata_read_pause_v1() {
+    PAUSE_AFTER_METADATA_READ.store(false, Ordering::SeqCst);
+}
+
 // Real Ed25519 fixture builder shared in form with crypto's epoch boundary tests.
 const CORPUS: &str = include_str!(
     "../../../../docs/protocol/poco-bft-v0/vectors/poco-authenticated-checkpoint-handoff-v0.json"
@@ -825,6 +859,41 @@ fn native_sqlite_append_rejects_stale_concurrent_writer_after_durable_cas() {
         NativeStateSyncStoreErrorV1::DurableReadbackMismatch
     ));
     assert_eq!(store.readback_v1().unwrap().received_chunk_count, 1);
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+}
+
+#[test]
+fn native_sqlite_readback_uses_one_snapshot_while_append_commits_between_queries() {
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-read-snapshot-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let mut session = NativeStateSyncSessionV1::begin(path, manifest, application).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &session).unwrap();
+    begin_metadata_read_pause_v1();
+    let reader_store = store.clone();
+    let reader = std::thread::spawn(move || reader_store.binding_and_readback_v1());
+    wait_metadata_read_pause_v1();
+
+    // This commit lands after the reader's metadata SELECT but before its
+    // chunk SELECT. A transaction-pinned reader must continue seeing the
+    // pre-append empty snapshot, not combine count=0 with one retained chunk.
+    store
+        .append_chunk_v1(&mut session, chunks[0].clone())
+        .unwrap();
+    end_metadata_read_pause_v1();
+    let (_, readback) = reader.join().unwrap().unwrap();
+    assert_eq!(readback.received_chunk_count, 0);
+    assert_eq!(readback.received_bytes, 0);
+    assert_eq!(store.readback_v1().unwrap().received_chunk_count, 1);
+
     let _ = std::fs::remove_file(&store_path);
     let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
     let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
