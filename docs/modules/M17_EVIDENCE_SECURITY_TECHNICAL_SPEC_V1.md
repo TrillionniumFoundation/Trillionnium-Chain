@@ -17,6 +17,7 @@ A test count or `PASS` string without an oracle is not conformance evidence.
 | `trillionnium/crates/trnm-consensus-sim` | Deterministic consensus/fault simulation | Simulated scheduling, not WAN/runtime proof |
 | `trillionnium/crates/trnm-bench/src/main.rs` | Benchmark entrypoint | Inspect workload and timed boundary before interpreting TPS |
 | `trillionnium/crates/trnm-poco-lab-validator` | Candidate process/network/restart campaigns | Lab profiles/local keys do not prove production custody |
+| `scripts/poco-fleet/run_local_fault_performance_campaign_v1.py` | Real-process loopback proxy partition/heal/restart campaign | Candidate local transport evidence; not independent multi-host or production performance acceptance |
 | `trillionnium/crates/trnm-production-adapter-conformance-v0/src/lib.rs` | Adapter conformance contracts | Real adapter plus crash evidence still required |
 | `formal/`, `scripts/ci/` | Models, vectors, regression and source checks | Model assumptions and checker scope must be named |
 | `scripts/ci/check_documentation_contracts_v1.py` | Reference/source integrity | Does not establish semantic design acceptance |
@@ -24,6 +25,14 @@ A test count or `PASS` string without an oracle is not conformance evidence.
 The following network campaign, metrics envelope and measurement procedure are
 implementation targets. Existing tests count only for the properties and
 configuration they actually execute; this document does not mark campaigns done.
+
+`trnm-bench` emits `determinism.input_sha256` and
+`determinism.groups_sha256`, which bind the generated workload and ordered
+group membership while excluding host clock data. Passing
+`--determinism-repeats N` replays the exact input in-process and fails closed on
+any ordered-assignment mismatch. These digests make executor scheduling
+regressions mechanically comparable; they are not ingress TPS, consensus
+finality or multi-host performance evidence.
 
 ### Observed fleet readiness and its limits
 
@@ -46,6 +55,25 @@ builder availability independently of subsequent LAN checks. Its regression
 suite requires a network failure to remain failure, without inventing an absent
 builder; a genuinely absent platform builder and oversized probe output still
 reject. This repairs diagnostics without weakening the readiness gate.
+
+### Repository-local multiprocess fault evidence
+
+`python3 scripts/poco-fleet/run_local_fault_performance_campaign_v1.py campaign
+--output <path> --messages <n>` launches three independent endpoint processes
+and a separate `p2p_fault_proxy.py` process. It performs real TCP round trips
+for every link, then records baseline traffic, one-link-at-a-time partition
+rejection with unaffected-link progress, healing, and a clean proxy restart.
+The JSON artifact binds the proxy source digest, canonical link configuration
+digest, exact phase counts, monotonic timing and a sidecar artifact digest. The
+campaign test executes the same child-process path with one message per link.
+
+This closes a reproducible repository-side transport-fault observation and
+loopback latency measurement. It intentionally sets
+`candidate_only=true`, `independent_multihost_evidence=false`,
+`physical_power_loss_evidence=false`, `performance_acceptance=false` and
+`production_activation=false`. Loopback processes share one host and one
+operator, so this result cannot close P2-NET/P2-OPS independent LAN/WAN,
+attestation, HSM, power-loss or production SLO gates.
 
 ## Interfaces
 

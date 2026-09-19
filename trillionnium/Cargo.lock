@@ -1418,6 +1418,7 @@ name = "trnm-bench"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "sha2",
  "trnm-executor",
  "trnm-types",
 ]
