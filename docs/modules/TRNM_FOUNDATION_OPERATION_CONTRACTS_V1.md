@@ -112,6 +112,8 @@ functions, exact Cargo filters and selected assertion fragments. Every reference
 file joins the existing HEAD/tree and input-digest binding. It never executes
 commands stored or generated from the catalog.
 
+`scripts/ci/run_documentation_operation_replays_v1.py` is the separate behavioral replay step. It validates the same source-bound catalog, then executes each declared `cargo test --locked --offline` command without a shell and records the source commit/tree, catalog digest, return code, elapsed time, and stdout/stderr digests in a report outside the checkout. A passing replay report proves only that the declared repository regressions ran on that exact checkout; it does not create independently authored golden bytes, specialist appointment/findings, production authority, or semantic acceptance. Use `--limit 1` only for a smoke run; a complete report must execute every declared case with no limit.
+
 Declared Cargo test/binary `required-features` must be enabled through selected
 or default named local feature edges. Dependency-feature edges do not stand in
 for local features; unsupported required feature forms reject. Direct test
