@@ -586,6 +586,10 @@ and reopened through the normal owner audit. GC is never called automatically
 from block preparation or commit, so the scheduler remains an explicit owner
 decision.
 
+`max_nodes = 0` is an audit-only probe: it validates the complete node/edge/root/
+pin/prepared/queue graph and returns the current queue depth without enqueueing
+or deleting anything. This keeps health checks from becoming durable GC work.
+
 The collector uses immutable node child-reference counts plus explicit root pins. Insert
 each physical node once and increment its exact child edges once; shared nodes
 are not rewritten. Root-pin changes are transactional with head/edge changes.
