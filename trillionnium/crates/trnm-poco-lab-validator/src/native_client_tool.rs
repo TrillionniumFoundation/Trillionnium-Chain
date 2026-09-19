@@ -195,6 +195,7 @@ pub fn verify_response_v1(
 fn exchange_json(
     socket: &Path,
     request: &Value,
+    chain_id: &str,
     profile: [u8; 32],
     genesis: [u8; 32],
 ) -> Result<Value> {
@@ -228,17 +229,29 @@ fn exchange_json(
     read_until(&mut stream, &mut response, deadline)?;
     trnm_application_tx_builder_v0::validate_strict_json_structure_v0(&response)?;
     let decoded: Response<Value> = serde_json::from_slice(&response)?;
+    validate_exchange_response_context_v1(&decoded, request, chain_id, profile, genesis)?;
+    decoded.data.context("native sync response lacks data")
+}
+
+fn validate_exchange_response_context_v1(
+    decoded: &Response<Value>,
+    request: &Value,
+    chain_id: &str,
+    profile: [u8; 32],
+    genesis: [u8; 32],
+) -> Result<()> {
     ensure!(
         decoded.schema == "trnm.native-client.response.v1"
             && Some(decoded.request_id.as_str()) == request["request_id"].as_str()
             && decoded.candidate_only
+            && decoded.chain_id == chain_id
             && hex32(&decoded.profile_sha256)? == profile
             && hex32(&decoded.genesis_hash)? == genesis
             && decoded.ok
             && decoded.error.is_none(),
         "native sync transport response context/error"
     );
-    decoded.data.context("native sync response lacks data")
+    Ok(())
 }
 
 fn run_sync_v1(args: &[OsString]) -> Result<()> {
@@ -286,11 +299,13 @@ fn run_sync_v1(args: &[OsString]) -> Result<()> {
     );
     let socket = Path::new(&args[4]);
     let destination = Path::new(&args[5]);
+    let chain_id = context.validator_set().chain_id().as_str().to_owned();
     let genesis = *context.validator_set().genesis_hash().as_bytes();
     let deadline = Instant::now() + Duration::from_secs(600);
     let response = exchange_json(
         socket,
         &json!({"schema":"trnm.native-client.request.v1","request_id":"sync-manifest","op":"sync_manifest","data":{"target_height":target}}),
+        &chain_id,
         profile_hash,
         genesis,
     )?;
@@ -312,6 +327,7 @@ fn run_sync_v1(args: &[OsString]) -> Result<()> {
             let response = exchange_json(
                 socket,
                 &json!({"schema":"trnm.native-client.request.v1","request_id":format!("sync-{height}-{index}"),"op":"sync_chunk","data":{"height":height,"index":index,"record_sha256":record.sha256}}),
+                &chain_id,
                 profile_hash,
                 genesis,
             )?;
@@ -687,5 +703,44 @@ mod tests {
             Instant::now() - Duration::from_millis(1)
         )
         .is_err());
+    }
+    #[test]
+    fn native_sync_transport_rejects_wrong_chain_context_v1() {
+        let request = json!({
+            "schema": "trnm.native-client.request.v1",
+            "request_id": "sync-context",
+            "op": "sync_manifest",
+            "data": {"target_height": 1}
+        });
+        let profile = [0x11; 32];
+        let genesis = [0x22; 32];
+        let mut response = Response {
+            schema: "trnm.native-client.response.v1".into(),
+            request_id: "sync-context".into(),
+            candidate_only: true,
+            chain_id: "wrong-chain".into(),
+            genesis_hash: hex::encode(genesis),
+            profile_sha256: hex::encode(profile),
+            ok: true,
+            data: Some(json!({})),
+            error: None,
+        };
+        assert!(validate_exchange_response_context_v1(
+            &response,
+            &request,
+            "expected-chain",
+            profile,
+            genesis
+        )
+        .is_err());
+        response.chain_id = "expected-chain".into();
+        validate_exchange_response_context_v1(
+            &response,
+            &request,
+            "expected-chain",
+            profile,
+            genesis,
+        )
+        .unwrap();
     }
 }
