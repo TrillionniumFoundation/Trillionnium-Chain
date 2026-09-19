@@ -154,6 +154,83 @@ pub struct VerifiedExportV0 {
     pub ordered_rows_digest: Digest32V0,
 }
 
+/// Immutable capability describing the exact finalized source that was
+/// verified before migration projection.  This object carries no signer or
+/// cutover authority; it prevents a later projection/store handoff from
+/// silently substituting a source height, root, schema, proof or row set.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct FinalizedSourceBindingV0 {
+    pub source_chain_id: Digest32V0,
+    pub source_protocol_digest: Digest32V0,
+    pub source_height: u64,
+    pub source_state_root: Digest32V0,
+    pub source_schema_digest: Digest32V0,
+    pub source_finality_proof_digest: Digest32V0,
+    pub export_header_digest: Digest32V0,
+    pub export_root: Digest32V0,
+    pub ordered_rows_digest: Digest32V0,
+    pub row_count: u64,
+    pub binding_digest: Digest32V0,
+}
+
+impl FinalizedSourceBindingV0 {
+    #[must_use]
+    pub fn from_verified_export(export: &VerifiedExportV0) -> Self {
+        let header = export.header;
+        let mut binding = Self {
+            source_chain_id: header.source_chain_id,
+            source_protocol_digest: header.source_protocol_digest,
+            source_height: header.source_height,
+            source_state_root: header.source_state_root,
+            source_schema_digest: header.source_schema_digest,
+            source_finality_proof_digest: header.source_finality_proof_digest,
+            export_header_digest: header.header_digest,
+            export_root: header.export_root,
+            ordered_rows_digest: export.ordered_rows_digest,
+            row_count: header.row_count,
+            binding_digest: Digest32V0([0; 32]),
+        };
+        binding.binding_digest = binding.canonical_digest();
+        binding
+    }
+
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.migration.finalized-source-binding.v0",
+            &[
+                &self.source_chain_id.0,
+                &self.source_protocol_digest.0,
+                &self.source_height.to_be_bytes(),
+                &self.source_state_root.0,
+                &self.source_schema_digest.0,
+                &self.source_finality_proof_digest.0,
+                &self.export_header_digest.0,
+                &self.export_root.0,
+                &self.ordered_rows_digest.0,
+                &self.row_count.to_be_bytes(),
+            ],
+        )
+    }
+
+    pub fn validate_against(&self, export: &VerifiedExportV0) -> Result<(), MigrationErrorV0> {
+        if self.binding_digest == Digest32V0([0; 32])
+            || self.binding_digest != self.canonical_digest()
+            || *self != Self::from_verified_export(export)
+        {
+            return Err(MigrationErrorV0::InvalidSourceBinding);
+        }
+        Ok(())
+    }
+}
+
+impl VerifiedExportV0 {
+    #[must_use]
+    pub fn source_binding_v0(&self) -> FinalizedSourceBindingV0 {
+        FinalizedSourceBindingV0::from_verified_export(self)
+    }
+}
+
 fn validate_verified_rows_v0(
     export: &VerifiedExportV0,
     rows: &[ExportRowV0],
@@ -1566,6 +1643,7 @@ pub enum MigrationErrorV0 {
     InvalidExportRow,
     ForbiddenAuthorityState,
     InvalidExportHeader,
+    InvalidSourceBinding,
     RowsNotStrictlyOrdered,
     ExportRootMismatch,
     VerifiedExportMismatch,
@@ -1599,6 +1677,7 @@ impl fmt::Display for MigrationErrorV0 {
             Self::InvalidExportRow => "invalid source export row",
             Self::ForbiddenAuthorityState => "validator or node authority state cannot be migrated",
             Self::InvalidExportHeader => "invalid finalized export header",
+            Self::InvalidSourceBinding => "finalized source binding is malformed or substituted",
             Self::RowsNotStrictlyOrdered => {
                 "source export rows are not strictly ordered and unique"
             }
@@ -2139,6 +2218,36 @@ mod tests {
                 MigrationErrorV0::VerifiedExportMismatch
             ))
         ));
+    }
+
+    #[test]
+    fn finalized_source_binding_rejects_context_and_row_set_substitution() {
+        let (_rows, export, _plan) = verified_fixture();
+        let binding = export.source_binding_v0();
+        assert_eq!(binding.binding_digest, binding.canonical_digest());
+        assert!(binding.validate_against(&export).is_ok());
+
+        let mut wrong_context = binding;
+        wrong_context.source_height += 1;
+        wrong_context.binding_digest = wrong_context.canonical_digest();
+        assert_eq!(
+            wrong_context.validate_against(&export).unwrap_err(),
+            MigrationErrorV0::InvalidSourceBinding
+        );
+
+        let mut wrong_export = export;
+        wrong_export.ordered_rows_digest = d(99);
+        assert_eq!(
+            binding.validate_against(&wrong_export).unwrap_err(),
+            MigrationErrorV0::InvalidSourceBinding
+        );
+
+        let mut wrong_digest = binding;
+        wrong_digest.binding_digest = d(98);
+        assert_eq!(
+            wrong_digest.validate_against(&export).unwrap_err(),
+            MigrationErrorV0::InvalidSourceBinding
+        );
     }
 
     #[test]

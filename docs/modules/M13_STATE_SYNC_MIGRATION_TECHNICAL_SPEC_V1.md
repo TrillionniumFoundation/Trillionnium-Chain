@@ -370,6 +370,16 @@ and independently selected `TargetRootBuilderV0`, retaining liabilities.
 `MigrationPlanV0` binds the source export, target schema/genesis and recomputed
 projection; `verify_cutover_agreement_v0` verifies the exact signer agreement.
 
+After `verify_export_v0` succeeds, `VerifiedExportV0::source_binding_v0`
+produces an immutable `FinalizedSourceBindingV0`. Its canonical digest covers
+the source chain/protocol/height/state root/schema/finality-proof digest, the
+export-header digest, export root, ordered-row digest and row count.
+`validate_against` rejects a changed source context, substituted row set or
+binding digest before a projection or durable handoff can consume it. This is
+a repository-owned source identity seam; it does not make a fixture verifier
+trusted, replace M01/M02 finality verification, sign a multi-peer ceremony or
+set `trusted_source_evidence=true` in the blocker ledger.
+
 Never import `validator_signing_state`, `consensus_private_key`, `signer_journal`,
 `safety_store`, `remote_signer_watermark`, `node_commit_ledger`, or
 `operator_recovery_key` namespaces, including their reserved prefixes.
@@ -455,6 +465,7 @@ Sensitive state data and authority keys are not copied into diagnostic logs.
 | M13-LOSS | Install CAS succeeds, acknowledgement lost: read target, never invoke precommit abort |
 | M13-EPOCH, planned | App checkpoint 100, consensus seal-2 102, first target 103: verify edge; no fake app 101/102; swapped checkpoint root rejects |
 | M13-MIGRATE | Export namespace `signer_journal/...` or omit funded escrow liability: reject before target activation |
+| M13-SOURCE | `FinalizedSourceBindingV0` mutation/substitution: reject before projection or durable handoff; source verifier remains an external M01/M02 obligation |
 
 Replay existing `tests/verification_seals.rs` functions
 `invalid_path_cannot_reach_the_proof_adapter_or_issue_a_result`,
