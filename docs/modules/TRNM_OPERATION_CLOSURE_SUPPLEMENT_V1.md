@@ -43,8 +43,13 @@ be recovered by an exact read-only retry; the two owners are deliberately not
 claimed to be one atomic transaction.
 
 The bridge unit tests cover exact identity and block/state-root substitution.
-An end-to-end listener, authenticated network source and production activation
-remain open.
+`trnm-durable-file-adapters-v0/tests/production_tx_state_sync_e2e.rs::finalized_readback_survives_sync_mismatch_and_exact_recovery_retry`
+adds a candidate-only vertical composition: a real hash-chained transaction
+journal records finality, an intentionally mismatched SQLite binding returns a
+typed `Sync` error, and a recovered `ProductionTxNodeAdapterV0` retries the
+same read-only join against a corrected store. It does not provide a listener,
+authenticated network source, physical crash cut or production activation;
+those remain open.
 
 ## S1 — incremental SQLite state-sync append and crash recovery
 

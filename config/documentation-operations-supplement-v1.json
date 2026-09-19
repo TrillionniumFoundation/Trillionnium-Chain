@@ -271,7 +271,7 @@
       },
       "open_requirements": [
         "The two-owner join remains non-atomic and candidate-only; production RPC/listener, authenticated network source and complete-snapshot proof are open.",
-        "An end-to-end crash cut after durable finality and before sync readback requires a commissioned host."
+        "This candidate journal/SQLite recovery fixture is not a commissioned listener or authenticated network source; a production host crash cut after durable finality and before sync readback remains open."
       ]
     },
     {
