@@ -147,6 +147,7 @@ pub(super) struct PocoNodeLabRetainedExecutionV0 {
 
 enum PocoNodeLabProposalStorageAckEffectV0<T> {
     ValidatePayload(T),
+    ValidateSyncedPayload(T),
     ArmViewTimer { epoch: Epoch, view: View },
     Unsupported,
 }
@@ -185,6 +186,47 @@ fn exact_proposal_validation_effect_v0<T>(
     if effects.next().is_some() {
         return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
             "obligation StorageAck released an unsupported Proposal effect",
+        ));
+    }
+    Ok(request)
+}
+
+fn exact_synced_proposal_validation_effect_v0<T>(
+    effects: impl IntoIterator<Item = PocoNodeLabProposalStorageAckEffectV0<T>>,
+    expected_epoch: Epoch,
+    expected_view: View,
+) -> Result<T, PocoNodeLabAuthorityErrorV0> {
+    let mut effects = effects.into_iter();
+    let request = match effects.next() {
+        Some(PocoNodeLabProposalStorageAckEffectV0::ValidateSyncedPayload(request)) => request,
+        Some(PocoNodeLabProposalStorageAckEffectV0::ArmViewTimer { epoch, view })
+            if epoch == expected_epoch && view == expected_view =>
+        {
+            match effects.next() {
+                Some(PocoNodeLabProposalStorageAckEffectV0::ValidateSyncedPayload(request)) => {
+                    request
+                }
+                _ => {
+                    return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                        "obligation StorageAck did not release one Synced proposal validation request",
+                    ));
+                }
+            }
+        }
+        None => {
+            return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                "obligation StorageAck did not release one Synced proposal validation request",
+            ));
+        }
+        _ => {
+            return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                "obligation StorageAck released an unsupported Synced proposal effect",
+            ));
+        }
+    };
+    if effects.next().is_some() {
+        return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "obligation StorageAck released an unsupported Synced proposal effect",
         ));
     }
     Ok(request)
@@ -1482,6 +1524,37 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabSignedTimeoutOwnerV0<W> {
         Ok(self.phase_facts_v0())
     }
 
+    /// Read-only certificate replay classifier.  Core previews the complete
+    /// authenticated input on an isolated transactional clone; only a strict
+    /// zero-effect result proceeds to the paired fresh Safety/signer/
+    /// checkpoint/P-K readback.  New or conflicting evidence returns `false`
+    /// or an error and must use the normal consuming path.
+    pub fn reconfirm_certificate_no_effect_v0(
+        &mut self,
+        input: Input,
+    ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
+        let no_effect = self
+            .core
+            .preview_no_effect_v0(input, &StrictEd25519Verifier)
+            .map_err(PocoNodeLabAuthorityErrorV0::Core)?;
+        if !no_effect {
+            return Ok(false);
+        }
+        reconfirm_phase_neutral_owner_v0(
+            &self.core,
+            &self.safety_store,
+            &self.application,
+            &mut self.signer_journal,
+            &mut self.checkpoint_store,
+            self.facts.checkpoint,
+            &self.application_head,
+            &self.pending_executions,
+            &self.proposal_journal,
+            None,
+        )?;
+        Ok(true)
+    }
+
     /// A late QC remains admissible after the local timeout vote was released.
     pub fn advance_quorum_certificate_v0(
         self,
@@ -1977,6 +2050,32 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             None,
         )?;
         Ok(self.phase_facts_v0())
+    }
+
+    pub fn reconfirm_certificate_no_effect_v0(
+        &mut self,
+        input: Input,
+    ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
+        let no_effect = self
+            .core
+            .preview_no_effect_v0(input, &StrictEd25519Verifier)
+            .map_err(PocoNodeLabAuthorityErrorV0::Core)?;
+        if !no_effect {
+            return Ok(false);
+        }
+        reconfirm_phase_neutral_owner_v0(
+            &self.core,
+            &self.safety_store,
+            &self.application,
+            &mut self.signer_journal,
+            &mut self.checkpoint_store,
+            self.checkpoint,
+            &self.application_head,
+            &self.pending_executions,
+            &self.proposal_journal,
+            None,
+        )?;
+        Ok(true)
     }
 
     /// Consumes one phase-Ready validator into an inert terminal owner after
@@ -3471,6 +3570,218 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))
     }
 
+    /// Drives one authenticated, ordinary `SyncedProposal` through the full
+    /// no-sign application path.  This is the path used when a proposal is
+    /// learned after the local signing opportunity has passed: the proposal
+    /// is still executed and committed, but it never creates a Vote intent.
+    ///
+    /// The operation is consuming and fail-closed.  The exact sequence is
+    ///
+    /// `SyncedProposal -> Safety obligation -> validation -> P -> Core-D
+    /// -> Safety-C -> K -> whole-node checkpoint -> Core StorageAck`.
+    ///
+    /// The final StorageAck is accepted only after the independent checkpoint
+    /// readback proves the same Safety, application, validation, and signer
+    /// heads.  The signer journal is therefore carried through unchanged.
+    pub fn drive_one_to_synced_no_sign_v0(
+        mut self,
+        proposal: SignedProposalV0,
+    ) -> Result<Self, PocoNodeLabAuthorityErrorV0> {
+        let block_id = proposal.block().id();
+        let view = proposal.block().header().view();
+        if self.pending_executions.len() >= self.core.config().max_blocks() {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "retained unfinalized execution capacity exhausted before synced proposal",
+            ));
+        }
+        if self.pending_executions.contains_key(&block_id) {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "one block acquired more than one retained execution artifact",
+            ));
+        }
+
+        let obligation_effects = self
+            .core
+            .step(
+                Input::SyncedProposal(Box::new(proposal)),
+                &StrictEd25519Verifier,
+            )
+            .map_err(PocoNodeLabAuthorityErrorV0::Core)?;
+        let [Effect::PersistSafetyState(obligation)] = obligation_effects.as_slice() else {
+            return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                "SyncedProposal did not yield exactly one Safety obligation persistence",
+            ));
+        };
+        match self
+            .safety_store
+            .persist_exact_v0(obligation, &SafetyTransitionContextV0::ordinary())
+            .map_err(PocoNodeLabAuthorityErrorV0::Safety)?
+        {
+            SafetyPersistDispositionV0::Inserted
+            | SafetyPersistDispositionV0::Existing
+            | SafetyPersistDispositionV0::ConfirmedAfterCommitError => {}
+        }
+        let validation_effects = self
+            .core
+            .step(
+                Input::StorageAck {
+                    barrier: obligation.barrier(),
+                },
+                &StrictEd25519Verifier,
+            )
+            .map_err(PocoNodeLabAuthorityErrorV0::Core)?;
+        let request = exact_synced_proposal_validation_effect_v0(
+            validation_effects.into_iter().map(|effect| match effect {
+                Effect::ValidateSyncedPayload(request) => {
+                    PocoNodeLabProposalStorageAckEffectV0::ValidateSyncedPayload(request)
+                }
+                Effect::ArmViewTimer { epoch, view } => {
+                    PocoNodeLabProposalStorageAckEffectV0::ArmViewTimer { epoch, view }
+                }
+                _ => PocoNodeLabProposalStorageAckEffectV0::Unsupported,
+            }),
+            self.core.safety_state().epoch(),
+            self.core.safety_state().current_view(),
+        )?;
+        let claimed = request.try_claim().map_err(|_| {
+            PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "Core-issued synced validation request was already claimed",
+            )
+        })?;
+
+        let mut host = PocoNodeNativeProposalPHostV0::open_for_lab_v0(
+            self.application,
+            PocoNodeNativeProposalPHostConfigV0 {
+                store_path: self.proposal_journal.store_path.clone(),
+                cross_store_root: self
+                    .proposal_journal
+                    .store_path
+                    .parent()
+                    .and_then(|path| path.parent())
+                    .map(PathBuf::from),
+                scope: self.proposal_journal.scope,
+                minimum_durable_sequence: self.proposal_journal.minimum_durable_sequence,
+                owner_id: self.proposal_journal.owner_id,
+                authenticated_application_head: self.application_head.clone(),
+                authenticated_application_overlay: self.application_overlay,
+                consensus_parameters: *self.core.config().consensus_parameters(),
+                validator_set: self.core.config().validator_set().clone(),
+            },
+        )
+        .map_err(authority_chain_error_v0)?;
+        let p = host
+            .execute_and_persist_p_v0(claimed)
+            .map_err(authority_chain_error_v0)?;
+        let accepted_d = match host
+            .seal_valid_and_deliver_core_d_v0(
+                p,
+                &mut self.core,
+                &self.seal_authority,
+                &StrictEd25519Verifier,
+            )
+            .map_err(authority_chain_error_v0)?
+        {
+            PocoNodeNativeCoreDOutcomeV0::Applied(value) => *value,
+            PocoNodeNativeCoreDOutcomeV0::NotApplied(pending) => match host
+                .retry_core_d_v0(*pending)
+                .map_err(authority_chain_error_v0)?
+            {
+                PocoNodeNativeCoreDOutcomeV0::Applied(value) => *value,
+                PocoNodeNativeCoreDOutcomeV0::NotApplied(_) => {
+                    return Err(PocoNodeLabAuthorityErrorV0::PersistenceNotApplied("Core-D"));
+                }
+            },
+        };
+        let safety_path = self.safety_store.path().to_path_buf();
+        let acked_k = match host
+            .persist_synced_no_sign_safety_c_and_ack_k_v0(
+                accepted_d,
+                &mut self.safety_store,
+                &safety_path,
+            )
+            .map_err(authority_chain_error_v0)?
+        {
+            PocoNodeNativeKOutcomeV0::Applied(value) => *value,
+            PocoNodeNativeKOutcomeV0::NotApplied(pending) => match host
+                .retry_synced_no_sign_ack_k_v0(*pending, &self.safety_store, &safety_path)
+                .map_err(authority_chain_error_v0)?
+            {
+                PocoNodeNativeKOutcomeV0::Applied(value) => *value,
+                PocoNodeNativeKOutcomeV0::NotApplied(_) => {
+                    return Err(PocoNodeLabAuthorityErrorV0::PersistenceNotApplied("K"));
+                }
+            },
+        };
+
+        let signer_path = self.signer_journal.path().to_path_buf();
+        let checkpointed = match host
+            .checkpoint_synced_no_sign_whole_node_v0(
+                acked_k,
+                &mut self.checkpoint_store,
+                self.checkpoint,
+                &self.safety_store,
+                &safety_path,
+                &mut self.signer_journal,
+                &signer_path,
+            )
+            .map_err(authority_chain_error_v0)?
+        {
+            PocoNodeNativeWholeNodeCheckpointOutcomeV0::Applied(value) => *value,
+            PocoNodeNativeWholeNodeCheckpointOutcomeV0::NotApplied(acked) => match host
+                .checkpoint_synced_no_sign_whole_node_v0(
+                    *acked,
+                    &mut self.checkpoint_store,
+                    self.checkpoint,
+                    &self.safety_store,
+                    &safety_path,
+                    &mut self.signer_journal,
+                    &signer_path,
+                )
+                .map_err(authority_chain_error_v0)?
+            {
+                PocoNodeNativeWholeNodeCheckpointOutcomeV0::Applied(value) => *value,
+                PocoNodeNativeWholeNodeCheckpointOutcomeV0::NotApplied(_) => {
+                    return Err(PocoNodeLabAuthorityErrorV0::PersistenceNotApplied(
+                        "whole-node checkpoint",
+                    ));
+                }
+            },
+        };
+        let final_checkpoint = *checkpointed.checkpoint_v0();
+        let retained = PocoNodeLabRetainedExecutionV0 {
+            binding: checkpointed.binding_v0().clone(),
+            executed: checkpointed.executed_for_finalization_v0(),
+            view,
+            source_artifact_checksum: checkpointed.source_artifact_checksum_v0(),
+            validation_row_checksum: checkpointed.application_row_checksum_v0(),
+            overlay_ref: checkpointed.overlay_ref_v0(),
+            speculative_head: checkpointed
+                .overlay_parent_head_v0()
+                .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?,
+        };
+        let completed = host
+            .acknowledge_synced_no_sign_checkpointed_k_v0(
+                checkpointed,
+                &mut self.core,
+                &StrictEd25519Verifier,
+            )
+            .map_err(authority_chain_error_v0)?;
+        let (application, mut validation_store, _owner_id) = host
+            .into_ready_parts_v0()
+            .map_err(authority_chain_error_v0)?;
+        let minimum_durable_sequence = validation_store
+            .durable_sequence_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+
+        self.pending_executions.insert(block_id, retained);
+        self.application = application;
+        self.application_head = completed.application_head_v0().clone();
+        self.application_overlay = Some(completed.overlay_v0());
+        self.checkpoint = final_checkpoint;
+        self.proposal_journal.minimum_durable_sequence = minimum_durable_sequence;
+        Ok(self)
+    }
+
     /// Drives exactly one ordinary, non-empty, finalized-parent Proposal to a
     /// private inert signing request.  The method consumes the runtime so no
     /// failed or partially advanced owner can be accidentally reused.
@@ -4409,6 +4720,33 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabSignedVoteOwnerV0<W> {
             Some(validation_store),
         )?;
         Ok(self.phase_facts_v0())
+    }
+
+    pub fn reconfirm_certificate_no_effect_v0(
+        &mut self,
+        input: Input,
+    ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
+        let (application, validation_store) = self.host.application_and_validation_store_v0();
+        let no_effect = self
+            .core
+            .preview_no_effect_v0(input, &StrictEd25519Verifier)
+            .map_err(PocoNodeLabAuthorityErrorV0::Core)?;
+        if !no_effect {
+            return Ok(false);
+        }
+        reconfirm_phase_neutral_owner_v0(
+            &self.core,
+            &self.safety_store,
+            application,
+            &mut self.signer_journal,
+            &mut self.checkpoint_store,
+            self.facts.checkpoint,
+            &self.application_head,
+            &self.pending_executions,
+            &self.proposal_journal,
+            Some(validation_store),
+        )?;
+        Ok(true)
     }
 
     /// Advances the exact live Core with one fully verified ordinary QC. The
@@ -5444,19 +5782,6 @@ fn reconfirm_phase_neutral_exact_high_qc_v0<W: ExternalMonotonicWatermarkV0>(
     proposal_journal: &PocoNodeLabProposalJournalConfigV0,
     live_proposal_validation_store: Option<&mut SqliteProposalValidationStoreV0>,
 ) -> Result<(), PocoNodeLabAuthorityErrorV0> {
-    // This audit is a paired P/K read, not merely a Core certificate check.
-    // Keep the authority root exclusively locked before the first durable
-    // read (Safety/signer/checkpoint/application) and through the terminal K
-    // join.  Without this fence a cooperating writer could move P or K after
-    // the initial head read but before `require_fresh_checkpoint_application_join_v0`
-    // reopens/authenticates the selected row, making the replay decision a
-    // split-store snapshot.  Pass the held guard through the join helper so
-    // it does not recursively acquire the same OS lock.
-    let cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
-        application.path(),
-        &proposal_journal.store_path,
-    )
-    .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     certificate
         .verify(core.config().validator_set(), &StrictEd25519Verifier)
         .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
@@ -5470,7 +5795,46 @@ fn reconfirm_phase_neutral_exact_high_qc_v0<W: ExternalMonotonicWatermarkV0>(
             "QC replay differs from the exact authoritative high QC",
         ));
     }
+    reconfirm_phase_neutral_owner_v0(
+        core,
+        safety_store,
+        application,
+        signer_journal,
+        checkpoint_store,
+        checkpoint,
+        application_head,
+        pending_executions,
+        proposal_journal,
+        live_proposal_validation_store,
+    )
+}
 
+#[allow(clippy::too_many_arguments)]
+fn reconfirm_phase_neutral_owner_v0<W: ExternalMonotonicWatermarkV0>(
+    core: &Core,
+    safety_store: &SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
+    application: &DurableNativeApplicationV0,
+    signer_journal: &mut SqliteSignerJournalV0<W>,
+    checkpoint_store: &mut SqliteExternalNodeCheckpointStoreV0,
+    checkpoint: ExternalNodeCheckpointV0,
+    application_head: &ApplicationHeadV0,
+    pending_executions: &BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
+    proposal_journal: &PocoNodeLabProposalJournalConfigV0,
+    live_proposal_validation_store: Option<&mut SqliteProposalValidationStoreV0>,
+) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+    // This audit is a paired P/K read, not merely a Core certificate check.
+    // Keep the authority root exclusively locked before the first durable
+    // read (Safety/signer/checkpoint/application) and through the terminal K
+    // join.  Without this fence a cooperating writer could move P or K after
+    // the initial head read but before `require_fresh_checkpoint_application_join_v0`
+    // reopens/authenticates the selected row, making the replay decision a
+    // split-store snapshot.  Pass the held guard through the join helper so
+    // it does not recursively acquire the same OS lock.
+    let cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+        application.path(),
+        &proposal_journal.store_path,
+    )
+    .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     let safety = confirm_live_or_signature_released_safety_head_v0(core, safety_store)?;
     let signer = signer_journal
         .confirm_node_checkpoint_head_exact_v0()

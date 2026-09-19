@@ -8404,6 +8404,33 @@ impl Core {
         }
     }
 
+    /// Preview an authenticated input on an isolated transactional Core and
+    /// report whether it is a strict no-effect replay. The preview never
+    /// publishes Safety, observation-cache, or permit changes to this Core;
+    /// malformed or conflicting evidence is returned as an error instead of
+    /// being classified as a harmless replay.
+    pub fn preview_no_effect_v0<V: SignatureVerifier>(
+        &self,
+        input: Input,
+        verifier: &V,
+    ) -> Result<bool> {
+        self.reject_state_sync_anchor_successor_input_v0(&input)?;
+        self.reject_while_busy(&input)?;
+        let token = self.preauthentication_token_v0(&input)?;
+        let previous_safety = self.safety.clone();
+        let mut next = self.transactional_clone_v0();
+        let effects = match token.as_ref() {
+            Some(token) => next.step_with_preauthenticated_token_v0(input, verifier, token)?,
+            None => {
+                next.preauthenticate_input(&input, verifier)?;
+                next.apply(input, verifier)?
+            }
+        };
+        next.validate_runtime(verifier, false)?;
+        next.validate_monotonic_transition(&previous_safety)?;
+        Ok(effects.is_empty() && next.safety == previous_safety)
+    }
+
     /// Persists the one-revision acknowledgement of a just-released signer
     /// intent.
     ///

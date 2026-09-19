@@ -496,3 +496,87 @@ fn foreign_local_validator_profile_is_rejected_before_logical_store_changes() {
         assert_eq!(f.calls.load(Ordering::SeqCst), 1);
     });
 }
+
+#[test]
+fn synced_proposal_commits_without_creating_a_signer_intent() {
+    with_stack(|| {
+        let root = TempDir::new().unwrap();
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let watermark = Watermark::default();
+        let bundle =
+            commission_native_h1_ordinary_lab_test_bundle_v0(root.path(), watermark.clone(), 4, 3)
+                .unwrap();
+        let signer_watermark_before = *watermark.0.lock().unwrap();
+        let set = bundle.validator_set_v0().clone();
+        let parameters = *bundle.consensus_parameters_v0();
+        let height = bundle.ordinary_start_height_v0();
+        let timestamp = 400;
+        let transactions = bundle.ordinary_transactions_v0(height, timestamp).unwrap();
+        let binding = bundle.runtime_v0().proposal_binding_v0().unwrap();
+        let (parent, preview) = bundle
+            .runtime_v0()
+            .preview_next_nonempty_v0(transactions.clone(), timestamp)
+            .unwrap();
+        let payload = ApplicationPayloadV0::new(transactions).unwrap();
+        let proposer = bundle.local_validator_v0();
+        let header = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            binding.current_view_v0(),
+            Height::new(height),
+            BlockKind::Regular,
+            BlockId::new(*parent.application_head_v0().block_id().as_bytes()),
+            proposer,
+            set.id(),
+            parameters.hash(),
+            PayloadDigest::new(*preview.payload_root().as_bytes()),
+            StateRoot::new(*preview.post_state_root().as_bytes()),
+            ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+            timestamp,
+            None,
+        )
+        .unwrap();
+        let block = Block::new(header, payload.try_cev0_bytes().unwrap(), Vec::new()).unwrap();
+        let root_hash =
+            ProposalWitnessV0::signing_root_for(block.header(), binding.high_qc_v0(), None, None)
+                .unwrap();
+        let witness = ProposalWitnessV0::new(
+            block.header(),
+            binding.high_qc_v0().clone(),
+            None,
+            None,
+            bundle.sign_consensus_root_v0(proposer, root_hash).unwrap(),
+            &set,
+            None,
+            &parameters,
+            parent.authenticated_parent_timestamp_ms_v0(),
+        )
+        .unwrap();
+        let proposal = SignedProposalV0::new(
+            block,
+            witness,
+            &set,
+            None,
+            &parameters,
+            parent.authenticated_parent_timestamp_ms_v0(),
+        )
+        .unwrap();
+        let (_, _, runtime) = bundle.into_recovery_test_parts_v0();
+        let before = runtime.facts_v0();
+        let runtime = runtime.drive_one_to_synced_no_sign_v0(proposal).unwrap();
+        let after = runtime.facts_v0();
+        assert_eq!(
+            before.proposal_parent_height_v0() + 1,
+            after.proposal_parent_height_v0()
+        );
+        assert_eq!(after.proposal_parent_height_v0(), height);
+        assert_eq!(*watermark.0.lock().unwrap(), signer_watermark_before);
+        assert_eq!(
+            runtime.phase_facts_v0().phase_v0(),
+            trnm_poco_node::PocoNodeLabAuthorityPhaseV0::Ready
+        );
+    });
+}

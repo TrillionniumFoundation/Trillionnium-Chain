@@ -58,7 +58,8 @@ use trnm_native_execution_v0::{ConfirmedDurableExecutionPV0, DurableNativeApplic
 
 use crate::cross_store_lock::CrossStoreLockGuardV0;
 use crate::external_node_checkpoint::{
-    advance_native_k_whole_node_checkpoint_v0, ConfirmedNativeKNodeCheckpointV0,
+    advance_native_k_whole_node_checkpoint_v0,
+    advance_native_k_whole_node_synced_no_sign_checkpoint_v0, ConfirmedNativeKNodeCheckpointV0,
     ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0, NativeKNodeCheckpointAdvanceErrorV0,
     NATIVE_K_SUCCESSOR_CHECKPOINT_CAS_INTEGRATION_V0,
 };
@@ -82,6 +83,7 @@ pub(super) enum PocoNodeNativeProposalPHostStatusV0 {
 enum PocoNodeNativeSafetyClosureModeV0 {
     OrdinaryVote,
     AnchorSuccessorNoSign,
+    SyncedNoSign,
 }
 
 /// Machine-readable position of the default-built ordinary-Proposal splice.
@@ -262,6 +264,35 @@ pub(super) struct PocoNodeNativeWholeNodeCheckpointedKV0 {
 }
 
 impl PocoNodeNativeWholeNodeCheckpointedKV0 {
+    pub(super) const fn binding_v0(&self) -> &ProposalValidationBindingV0 {
+        &self.acked.binding
+    }
+
+    pub(super) fn executed_for_finalization_v0(
+        &self,
+    ) -> trnm_native_application::NativeExecutedBlockV0 {
+        self.acked.executed.clone()
+    }
+
+    pub(super) const fn source_artifact_checksum_v0(&self) -> [u8; 32] {
+        self.acked.confirmed_p.source_artifact_checksum_v0()
+    }
+
+    pub(super) const fn overlay_ref_v0(&self) -> BlockIdOverlayRefV0 {
+        BlockIdOverlayRefV0::new(
+            BlockId::new(self.acked.confirmed_p.block_id_v0()),
+            BlockId::new(self.acked.confirmed_p.parent_block_id_v0()),
+            self.acked.confirmed_p.overlay_checksum_v0(),
+        )
+    }
+
+    pub(super) fn overlay_parent_head_v0(
+        &self,
+    ) -> Result<ApplicationHeadV0, trnm_native_execution_v0::NativeApplicationExecutionErrorV0>
+    {
+        self.acked.confirmed_p.overlay_parent_head_v0()
+    }
+
     pub(super) const fn checkpoint_v0(&self) -> &ExternalNodeCheckpointV0 {
         self.checkpoint.checkpoint_v0()
     }
@@ -1153,6 +1184,30 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         )
     }
 
+    /// Persists a live ordinary `Synced` NativeValid transition and closes
+    /// application K without creating or releasing a signer intent. Unlike
+    /// the anchor-successor path this accepts a previously timed-out Safety
+    /// state; route/action/pending-sign checks remain in the store boundary.
+    pub(super) fn persist_synced_no_sign_safety_c_and_ack_k_v0<V: SignatureVerifier>(
+        &mut self,
+        accepted_d: PocoNodeNativeCoreAcceptedDV0,
+        safety_store: &mut SqliteSafetyStateStoreV0<V>,
+        expected_safety_path: &std::path::Path,
+    ) -> Result<
+        PocoNodeNativeKOutcomeV0,
+        PocoNodeNativeProposalPHostErrorV0<
+            trnm_native_execution_v0::NativeApplicationExecutionErrorV0,
+        >,
+    > {
+        self.persist_safety_c_and_ack_k_inner_v0(
+            accepted_d,
+            safety_store,
+            expected_safety_path,
+            PocoNodeNativeSafetyClosureModeV0::SyncedNoSign,
+            || {},
+        )
+    }
+
     pub(super) fn persist_anchor_successor_safety_c_and_ack_k_v0<V: SignatureVerifier>(
         &mut self,
         accepted_d: PocoNodeNativeCoreAcceptedDV0,
@@ -1283,6 +1338,15 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
                     expected_safety_path,
                 )
             }
+            PocoNodeNativeSafetyClosureModeV0::SyncedNoSign => {
+                self.store.acknowledge_confirmed_synced_no_sign_v0(
+                    accepted_d.delivered,
+                    &accepted_d.binding,
+                    &accepted_d.core_accepted,
+                    safety_store,
+                    expected_safety_path,
+                )
+            }
         };
         let result = match outcome {
             Ok(AckTransitionOutcomeV0::Applied(acked)) => {
@@ -1338,6 +1402,25 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         )
     }
 
+    pub(super) fn retry_synced_no_sign_ack_k_v0<V: SignatureVerifier>(
+        &mut self,
+        pending: PocoNodeNativeSafetyConfirmedCPendingKV0,
+        safety_store: &SqliteSafetyStateStoreV0<V>,
+        expected_safety_path: &std::path::Path,
+    ) -> Result<
+        PocoNodeNativeKOutcomeV0,
+        PocoNodeNativeProposalPHostErrorV0<
+            trnm_native_execution_v0::NativeApplicationExecutionErrorV0,
+        >,
+    > {
+        self.retry_ack_k_inner_v0(
+            pending,
+            safety_store,
+            expected_safety_path,
+            PocoNodeNativeSafetyClosureModeV0::SyncedNoSign,
+        )
+    }
+
     pub(super) fn retry_anchor_successor_ack_k_v0<V: SignatureVerifier>(
         &mut self,
         pending: PocoNodeNativeSafetyConfirmedCPendingKV0,
@@ -1386,6 +1469,15 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
             }
             PocoNodeNativeSafetyClosureModeV0::AnchorSuccessorNoSign => {
                 self.store.acknowledge_confirmed_anchor_successor_safety_v0(
+                    pending.delivered,
+                    &pending.binding,
+                    &pending.core_accepted,
+                    safety_store,
+                    expected_safety_path,
+                )
+            }
+            PocoNodeNativeSafetyClosureModeV0::SyncedNoSign => {
+                self.store.acknowledge_confirmed_synced_no_sign_v0(
                     pending.delivered,
                     &pending.binding,
                     &pending.core_accepted,
@@ -1528,6 +1620,68 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         Ok(completed)
     }
 
+    /// Releases an ordinary Synced validation after the exact no-sign Safety-C,
+    /// K, and whole-node checkpoint successor are durable.  This path is
+    /// deliberately separate from the anchor replay owner: Core's generic
+    /// StorageAck must produce no deferred effect and the existing signer
+    /// watermark remains untouched.
+    pub(super) fn acknowledge_synced_no_sign_checkpointed_k_v0<V: SignatureVerifier>(
+        &mut self,
+        checkpointed: PocoNodeNativeWholeNodeCheckpointedKV0,
+        core: &mut Core,
+        verifier: &V,
+    ) -> Result<
+        PocoNodeNativeAnchoredSuccessorCompletedV0,
+        PocoNodeNativeProposalPHostErrorV0<
+            trnm_native_execution_v0::NativeApplicationExecutionErrorV0,
+        >,
+    > {
+        if self.status != PocoNodeNativeProposalPHostStatusV0::WholeNodeCheckpointed {
+            return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
+        }
+        let accepted = &checkpointed.acked.core_accepted;
+        if accepted.route_v0() != PayloadValidationRouteV0::Synced
+            || accepted
+                .persistence_request_v0()
+                .native_valid_post_ack_action_v0()
+                != Some(trnm_consensus_core::NativeValidPostAckActionV0::None)
+        {
+            return self.fail_v0(PocoNodeNativeProposalPHostErrorV0::NotReady);
+        }
+        let effects = core
+            .step(
+                trnm_consensus_core::Input::StorageAck {
+                    barrier: accepted.barrier_v0(),
+                },
+                verifier,
+            )
+            .map_err(PocoNodeNativeProposalPHostErrorV0::Core)?;
+        if !effects.is_empty() {
+            return self
+                .fail_v0(PocoNodeNativeProposalPHostErrorV0::UnexpectedPostCheckpointEffect);
+        }
+        let application_head = checkpointed
+            .acked
+            .confirmed_p
+            .overlay_parent_head_v0()
+            .map_err(PocoNodeNativeProposalPHostErrorV0::Application)?;
+        let overlay = BlockIdOverlayRefV0::new(
+            BlockId::new(checkpointed.acked.confirmed_p.block_id_v0()),
+            BlockId::new(checkpointed.acked.confirmed_p.parent_block_id_v0()),
+            checkpointed.acked.confirmed_p.overlay_checksum_v0(),
+        );
+        let completed = PocoNodeNativeAnchoredSuccessorCompletedV0 {
+            binding: checkpointed.acked.binding,
+            application_head: application_head.clone(),
+            overlay,
+            safety_revision: accepted.completion_revision_v0(),
+        };
+        self.authenticated_application_head = application_head;
+        self.authenticated_application_overlay = Some(overlay);
+        self.status = PocoNodeNativeProposalPHostStatusV0::Ready;
+        Ok(completed)
+    }
+
     pub(super) fn application_store_path_v0(&self) -> &std::path::Path {
         self.store.path()
     }
@@ -1567,6 +1721,94 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
         Ok((self.application, self.store, self.owner_id))
+    }
+
+    pub(super) fn into_ready_parts_v0(
+        self,
+    ) -> Result<
+        (
+            DurableNativeApplicationV0,
+            SqliteProposalValidationStoreV0,
+            ProposalValidationOwnerIdV0,
+        ),
+        PocoNodeNativeProposalPHostErrorV0<
+            trnm_native_execution_v0::NativeApplicationExecutionErrorV0,
+        >,
+    > {
+        if self.status != PocoNodeNativeProposalPHostStatusV0::Ready {
+            return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
+        }
+        Ok((self.application, self.store, self.owner_id))
+    }
+
+    /// Freshly joins an ordinary Synced no-sign K to the exact Safety and
+    /// operational signer heads, then advances one independent checkpoint.
+    /// The signer journal is read back and carried unchanged; no signer
+    /// intent or watermark mutation is possible through this method.
+    #[allow(clippy::too_many_arguments)]
+    pub(super) fn checkpoint_synced_no_sign_whole_node_v0<V, W, S>(
+        &mut self,
+        acked: PocoNodeNativeApplicationAckedKV0,
+        checkpoint_store: &mut S,
+        expected_external: ExternalNodeCheckpointV0,
+        safety_store: &SqliteSafetyStateStoreV0<V>,
+        expected_safety_path: &std::path::Path,
+        signer_journal: &mut SqliteSignerJournalV0<W>,
+        expected_signer_path: &std::path::Path,
+    ) -> Result<
+        PocoNodeNativeWholeNodeCheckpointOutcomeV0,
+        PocoNodeNativeProposalPHostErrorV0<
+            trnm_native_execution_v0::NativeApplicationExecutionErrorV0,
+        >,
+    >
+    where
+        V: SignatureVerifier,
+        W: ExternalMonotonicWatermarkV0,
+        S: ExternalNodeCheckpointStoreV0,
+    {
+        if !NATIVE_K_SUCCESSOR_CHECKPOINT_CAS_INTEGRATION_V0
+            || self.status != PocoNodeNativeProposalPHostStatusV0::ApplicationAcked
+            || acked.binding.route() != ProposalRouteV0::Synced
+            || acked.core_accepted.route_v0() != PayloadValidationRouteV0::Synced
+            || acked
+                .core_accepted
+                .persistence_request_v0()
+                .native_valid_post_ack_action_v0()
+                != Some(trnm_consensus_core::NativeValidPostAckActionV0::None)
+        {
+            return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
+        }
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let application_path = self.store.path().to_path_buf();
+        let outcome = match advance_native_k_whole_node_synced_no_sign_checkpoint_v0(
+            checkpoint_store,
+            expected_external,
+            safety_store,
+            expected_safety_path,
+            &mut self.store,
+            &application_path,
+            &acked.binding,
+            signer_journal,
+            expected_signer_path,
+        ) {
+            Ok(checkpoint) => {
+                self.status = PocoNodeNativeProposalPHostStatusV0::WholeNodeCheckpointed;
+                Ok(PocoNodeNativeWholeNodeCheckpointOutcomeV0::Applied(
+                    Box::new(PocoNodeNativeWholeNodeCheckpointedKV0 { acked, checkpoint }),
+                ))
+            }
+            Err(error) if error.is_compare_not_applied_v0() => Ok(
+                PocoNodeNativeWholeNodeCheckpointOutcomeV0::NotApplied(Box::new(acked)),
+            ),
+            Err(error) => {
+                self.status = PocoNodeNativeProposalPHostStatusV0::FailStopped;
+                Err(PocoNodeNativeProposalPHostErrorV0::WholeNodeCheckpoint(
+                    error,
+                ))
+            }
+        };
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        outcome
     }
 
     /// Freshly joins terminal K to the real Safety and operational signer

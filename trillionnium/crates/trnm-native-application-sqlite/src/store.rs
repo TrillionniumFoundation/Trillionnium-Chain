@@ -3603,6 +3603,10 @@ impl SqliteProposalValidationStoreV0 {
                 != NativeValidPostAckActionV0::None.code()
             || state.state_sync_anchor().is_none()
             || state.pending_sign().is_some()
+            // The anchor remains as historical provenance after the exact
+            // revision-five ordinary promotion.  Only revisions zero through
+            // four are still inside the anchored successor state machine.
+            || (state.state_sync_anchor().is_some() && state.revision() < 5)
             || !state.payload_validation_obligations().is_empty()
         {
             return Err(error(
@@ -4495,6 +4499,80 @@ impl SqliteProposalValidationStoreV0 {
         let action_code = action.code().to_be_bytes();
         let no_sign_closure = domain_digest_v0(
             ANCHORED_SUCCESSOR_SAFETY_CLOSURE_DOMAIN_V0,
+            &[
+                binding.validation_id().as_bytes(),
+                delivered.core_delivery.digest().as_bytes(),
+                &revision,
+                &confirmed.state_record_checksum(),
+                &action_code,
+            ],
+        );
+        let safety_confirmation = RequestBoundSafetyConfirmationV0::from_confirmed_authority(
+            binding.validation_id(),
+            delivered.core_delivery.digest(),
+            confirmed.revision(),
+            NonZeroDigestV0::new(confirmed.state_record_checksum())?,
+            NonZeroDigestV0::new(no_sign_closure)?,
+        );
+        self.acknowledge_with_confirmation_v0(delivered, safety_confirmation)
+    }
+
+    /// Closes an ordinary late-proposal `Synced` D -> K transition without
+    /// creating a signer intent. This is distinct from the h1/h2 anchor path:
+    /// the live Safety state may have a prior timeout/vote watermark, but the
+    /// exact NativeValid transition must carry `None` and no pending signer.
+    pub fn acknowledge_confirmed_synced_no_sign_v0<V: SignatureVerifier>(
+        &mut self,
+        delivered: DeliveredValidationV0,
+        binding: &ProposalValidationBindingV0,
+        accepted: &CoreAcceptedApplicationValidDV0,
+        safety_store: &SqliteSafetyStateStoreV0<V>,
+        expected_safety_path: &Path,
+    ) -> ValidationStoreResultV0<AckTransitionOutcomeV0> {
+        let context =
+            self.native_valid_transition_context_exact_v0(binding, &delivered, accepted)?;
+        let confirmed = safety_store
+            .confirmed_native_valid_head_exact_v0(
+                accepted.persistence_request_v0().state(),
+                &context,
+            )
+            .map_err(|_| {
+                error(
+                    ValidationStoreErrorCodeV0::BindingMismatch,
+                    "synced_no_sign.exact_head",
+                )
+            })?;
+        let state = confirmed.state();
+        let action = accepted
+            .persistence_request_v0()
+            .native_valid_post_ack_action_v0()
+            .ok_or_else(|| {
+                error(
+                    ValidationStoreErrorCodeV0::BindingMismatch,
+                    "synced_no_sign.action",
+                )
+            })?;
+        if !confirmed.belongs_to_store_at_path_v0(safety_store, expected_safety_path)
+            || confirmed.revision() != accepted.completion_revision_v0()
+            || binding.route() != ProposalRouteV0::Synced
+            || accepted.route_v0() != PayloadValidationRouteV0::Synced
+            || action != NativeValidPostAckActionV0::None
+            || confirmed.transition().route() != PayloadValidationRouteV0::Synced
+            || confirmed.transition().validation_id() != accepted.validation_id_v0()
+            || confirmed.transition().valid_result_checksum() != accepted.valid_result_checksum_v0()
+            || confirmed.transition().post_ack_action_code() != action.code()
+            || state.pending_sign().is_some()
+            || !state.payload_validation_obligations().is_empty()
+        {
+            return Err(error(
+                ValidationStoreErrorCodeV0::BindingMismatch,
+                "synced_no_sign.authority",
+            ));
+        }
+        let revision = confirmed.revision().to_be_bytes();
+        let action_code = action.code().to_be_bytes();
+        let no_sign_closure = domain_digest_v0(
+            ORDINARY_REPLAY_SAFETY_CLOSURE_DOMAIN_V0,
             &[
                 binding.validation_id().as_bytes(),
                 delivered.core_delivery.digest().as_bytes(),

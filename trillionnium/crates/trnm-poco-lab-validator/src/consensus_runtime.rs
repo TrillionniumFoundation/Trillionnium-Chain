@@ -6332,8 +6332,14 @@ impl BoundedConsensusOwnerV1 {
             return Ok(());
         }
         let carried_tc = proposal.timeout_certificate().cloned();
+        let sync_candidate = proposal.clone();
         let before = self.authority_v1()?.facts_v0()?;
         let vote = self.authority_v1()?.receive_unbound_proposal_v1(proposal)?;
+        let synced = if vote.is_none() {
+            self.authority_v1()?.sync_late_proposal_v1(sync_candidate)?
+        } else {
+            false
+        };
         let after = self.authority_v1()?.facts_v0()?;
         self.record_application_progress_v1(before, after)?;
         if made_authoritative_progress_v1(before, after) {
@@ -6356,6 +6362,10 @@ impl BoundedConsensusOwnerV1 {
             self.known_executions.insert((height, *block_id.as_bytes()));
             self.highest_submitted_height = self.highest_submitted_height.max(height);
             self.emit_local_vote_v1(vote)?;
+        } else if synced {
+            self.record_proposal_admitted_v1(block_id, height)?;
+            self.known_executions.insert((height, *block_id.as_bytes()));
+            self.highest_submitted_height = self.highest_submitted_height.max(height);
         } else {
             // The carrier may have advanced certificates, but its late body
             // was not executed/voted. Do not publish an execution coordinate

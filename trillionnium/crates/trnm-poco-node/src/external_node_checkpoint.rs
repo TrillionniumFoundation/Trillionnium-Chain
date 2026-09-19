@@ -1312,6 +1312,121 @@ where
     }
 }
 
+/// Advances the independent K/checkpoint CAS for a live ordinary Synced
+/// validation whose Core post-ack action is `None`. The signer namespace is
+/// freshly confirmed and carried into the successor unchanged; no signer
+/// intent or watermark is consumed by this path.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn advance_native_k_whole_node_synced_no_sign_checkpoint_v0<V, W, S>(
+    checkpoint_store: &mut S,
+    expected_external: ExternalNodeCheckpointV0,
+    safety_store: &SqliteSafetyStateStoreV0<V>,
+    expected_safety_path: &Path,
+    application_store: &mut SqliteProposalValidationStoreV0,
+    expected_application_path: &Path,
+    binding: &ProposalValidationBindingV0,
+    signer_journal: &mut SqliteSignerJournalV0<W>,
+    expected_signer_path: &Path,
+) -> Result<ConfirmedNativeKNodeCheckpointV0, NativeKNodeCheckpointAdvanceErrorV0>
+where
+    V: SignatureVerifier,
+    W: ExternalMonotonicWatermarkV0,
+    S: ExternalNodeCheckpointStoreV0,
+{
+    let scope = expected_external.scope();
+    if checkpoint_store
+        .load(scope)
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Checkpoint)?
+        != Some(expected_external)
+    {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::ExpectedExternalMismatch);
+    }
+    let signer = signer_journal
+        .confirm_node_checkpoint_head_exact_v0()
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Signer)?;
+    if !signer.belongs_to_operational_journal_at_path_v0(signer_journal, expected_signer_path) {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::SignerOwnerMismatch);
+    }
+    let safety_head = safety_store
+        .head()
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Safety)?;
+    let safety = safety_store
+        .confirm_node_checkpoint_head_exact_v0(safety_head.state())
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Safety)?;
+    if !safety.belongs_to_store_at_path_v0(safety_store, expected_safety_path) {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::SafetyOwnerMismatch);
+    }
+    let application = application_store
+        .confirm_proposal_validation_checkpoint_facts_exact_v0(binding)
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Application)?;
+    if !application.belongs_to_store_at_path_v0(application_store, expected_application_path) {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::ApplicationOwnerMismatch);
+    }
+    validate_native_checkpoint_predecessor_v0(expected_external, &safety, &application, &signer)?;
+    validate_native_k_synced_no_sign_join_v0(&safety, &application, &signer, signer_journal)?;
+    let target =
+        native_k_checkpoint_successor_v0(expected_external, &safety, &application, &signer)?;
+    let compare_result = checkpoint_store.compare_and_advance(Some(expected_external), target);
+    let observed = checkpoint_store
+        .load(scope)
+        .map_err(NativeKNodeCheckpointAdvanceErrorV0::Checkpoint)?;
+    match observed {
+        Some(value) if value == target => Ok(ConfirmedNativeKNodeCheckpointV0 {
+            checkpoint: value,
+            application_store_sequence: application.store_sequence_v0(),
+            application_row_checksum: *application.row_checksum_v0().as_bytes(),
+        }),
+        Some(value) if value == expected_external => {
+            let _ = compare_result;
+            Err(NativeKNodeCheckpointAdvanceErrorV0::CompareNotApplied)
+        }
+        _ => Err(NativeKNodeCheckpointAdvanceErrorV0::ThirdExternalState),
+    }
+}
+
+fn validate_native_k_synced_no_sign_join_v0<W: ExternalMonotonicWatermarkV0>(
+    safety: &ConfirmedSafetyNodeCheckpointFactsV0,
+    application: &ConfirmedProposalValidationCheckpointFactsV0,
+    signer: &ConfirmedSignerNodeCheckpointFactsV0,
+    signer_journal: &SqliteSignerJournalV0<W>,
+) -> Result<(), NativeKNodeCheckpointAdvanceErrorV0> {
+    let state = safety.state_v0();
+    let binding = application.binding_v0();
+    let closure = application.safety_closure_v0();
+    if binding.route() != trnm_native_application_sqlite::ProposalRouteV0::Synced
+        || closure.safety_revision() != safety.revision_v0()
+        || closure.core_delivery_digest().as_bytes() == &[0; 32]
+        || closure.safety_record_digest().as_bytes() != &safety.state_record_checksum_v0()
+        || state.pending_sign().is_some()
+        // Revision five is the authenticated ordinary-promotion cut; the
+        // anchor is retained as provenance after that cut.  Reject only an
+        // actually active h1/h2/h3 anchor state here.
+        || (state.state_sync_anchor().is_some() && state.revision() < 5)
+        || !state.payload_validation_obligations().is_empty()
+    {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::SafetyApplicationMismatch);
+    }
+    let identity = signer.identity();
+    let profile = signer_journal.profile();
+    if identity.chain_id() != state.chain_id()
+        || identity.protocol_version() != state.protocol_version()
+        || identity.epoch() != state.epoch()
+        || identity.validator_set_id() != state.validator_set_id()
+        || profile.chain_id() != state.chain_id()
+        || profile.protocol_version() != state.protocol_version()
+        || profile.epoch() != state.epoch()
+        || profile.validator_set_id() != state.validator_set_id()
+        || profile.author() != identity.author()
+        || profile.profile_checksum() != signer.profile_checksum()
+        || profile.external_watermark_scope() != identity.external_watermark_scope()
+        || signer.exact_watermark().scope() != identity.external_watermark_scope()
+        || signer.exact_watermark().journal_id() != signer.journal_id()
+    {
+        return Err(NativeKNodeCheckpointAdvanceErrorV0::SafetySignerMismatch);
+    }
+    Ok(())
+}
+
 fn validate_native_checkpoint_predecessor_v0(
     predecessor: ExternalNodeCheckpointV0,
     safety: &ConfirmedSafetyNodeCheckpointFactsV0,
