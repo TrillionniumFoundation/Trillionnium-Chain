@@ -16,6 +16,12 @@ V0 and AI-v1 proof/hash/tree formats are distinct; unknown profile never falls b
 Current generic components are `trillionnium/crates/trnm-state-sync-v0/src/lib.rs`
 and `trnm-migration-v0/src/lib.rs`. Their verifier/installer traits are host
 obligations, not actual transport or native proof implementation by themselves.
+The state-sync crate now also owns a bounded, transport-neutral byte boundary:
+`SnapshotTransferFrameV0::{encode_v0,decode_v0}` emits and consumes canonical
+`TSYN` v0 manifest/chunk frames. This closes framing and pre-allocation checks
+for a future peer adapter; it does not open a socket, choose a peer, or issue a
+trust anchor. Decoded manifests still require an independently verified trust
+path, and decoded chunks still require the session's exact manifest binding.
 The current native lab h1-h3 sync route is bounded laboratory behavior, not
 the generic arbitrary-height/multi-epoch protocol designed below.
 
@@ -62,6 +68,7 @@ disk-full, replacement, retention, and multi-host evidence separately.
 | `CheckpointProofVerifierV0::verify_link` | M01/M02 actual proof verification; returning success from a stub is not acceptance |
 | `VerifiedTrustPathV0` | Non-public construction after all path checks; authenticates terminal checkpoint |
 | `SnapshotManifestV0` | Exact terminal root/schema/checkpoint, chunk count/max/total, chunk root and manifest digest |
+| `SnapshotTransferFrameV0` | Canonical bounded `TSYN` v0 manifest/chunk frame; exact length, kind, digest and trailing-byte checks before session admission |
 | `StateRootRecomputerV0` | M07 selected schema decoder/tree recomputation, not trusting advertised root |
 | `NonDestructiveInstallTargetV0` | M07 staged writes and expected-current-root CAS, preserving old authority |
 | `VerifiedSnapshotV0` | Complete proof-bound snapshot capability; cannot be issued from an incomplete download |
@@ -73,6 +80,17 @@ function. Checkpoint link fields use their exact `canonical_digest` order;
 to avoid a self-reference. The final manifest digest binds header digest plus
 chunk root. Chunk digests bind the manifest header, index and exact bytes.
 Do not substitute JSON ordering, a different Merkle construction or AI SMT roots.
+
+`SnapshotTransferFrameV0` uses a 10-byte header (`TSYN`, version, kind, big-endian
+payload length). Manifest payloads are capped at 256 KiB; chunk payloads are
+capped at the 4 MiB module chunk limit plus the fixed framing fields. Manifest
+frames carry all twelve manifest fields in the order above. Chunk frames carry
+the manifest binding digest, index, declared byte length, exact bytes and chunk
+digest. Decode rejects an unknown version/kind, truncation, trailing bytes,
+noncanonical digest, zero/oversized payload or length arithmetic failure before
+the frame can enter `StateSyncSessionV0`. The codec is deliberately not a
+network protocol: peer identity, request deadlines, retries, checkpoint proof
+selection, durable resume and multi-host agreement remain host-owned.
 
 ### Implemented native PoCO trust adapter
 
@@ -251,6 +269,15 @@ different bytes for a retained index are `ChunkSubstitution`.
 root before invoking schema-aware state-root recomputation. Root disagreement
 cannot issue `VerifiedSnapshotV0` even if all chunk checksums match.
 
+Transport adapters must decode each complete frame with
+`SnapshotTransferFrameV0::decode_v0` before enqueueing it. A manifest frame is
+then passed to `StateSyncSessionV0::new` with the locally verified trust path;
+each chunk frame is passed to `accept_chunk`. A frame that decodes correctly but
+names another checkpoint, epoch, chunk binding or session is rejected by those
+second-stage checks. The adapter must retain only accepted bytes, rehash retained
+chunks on restart, and request missing indices; frame decoding alone never
+certifies a finalized state.
+
 Installation binds nonzero `StagingIdentityV0` generation/digest and exact
 expected current root. Write only to new staging, verify again, then use
 `commit_staging_cas`. The install receipt must match expected source, target
@@ -366,6 +393,7 @@ Sensitive state data and authority keys are not copied into diagnostic logs.
 | M13-CHUNKS | Manifest 2 chunks/3 total bytes: both nonempty exact chunks needed; missing one→`IncompleteSnapshot` |
 | M13-SUB | Supply two different payloads at index 0: `ChunkSubstitution`, prior staged chunk retained |
 | M13-ROOT | Valid chunk hashes but different recomputed application root: `StateRootMismatch`, no capability/install |
+| M13-FRAME | Canonical manifest/chunk frame round trip; unknown version, trailing byte, altered payload digest and over-limit frame reject before session admission |
 | M13-LOSS | Install CAS succeeds, acknowledgement lost: read target, never invoke precommit abort |
 | M13-EPOCH, planned | App checkpoint 100, consensus seal-2 102, first target 103: verify edge; no fake app 101/102; swapped checkpoint root rejects |
 | M13-MIGRATE | Export namespace `signer_journal/...` or omit funded escrow liability: reject before target activation |

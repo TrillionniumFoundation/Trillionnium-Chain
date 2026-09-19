@@ -56,8 +56,18 @@ independent-evidence task, not an implied success.
 * **P/D/C.** `execute_admitted_epoch_proposal_v1` decodes the bounded payload,
   recomputes payload/state/receipt/evidence roots, calls native schema-4 P,
   confirms P by block id, consumes the Core-issued seal authority for D, and
-  persists Safety NativeValid C from the live Core request. No signer API is
-  reachable in this block.
+  persists Safety NativeValid C from the live Core request. The typed
+  `NativeValidTransitionV0::from_core_delivery_v0` constructor takes the exact
+  non-cloneable Core D carrier, so route, validation identity, Valid checksum,
+  completion revision, delivery attempt and post-ack action cannot be
+  substituted while the 328-byte Safety context is assembled. Its
+  `validate_against_core_delivery_v0` readback is run before C. The seven
+  host-owned commitments remain a separate P/D manifest: they describe native
+  execution and application rows which Core does not own, and must be derived
+  from the same P/D readback and reconciled independently. This typed seam
+  does not, by itself, authenticate an arbitrary host manifest to Core D; that
+  source-binding boundary remains open for a future epoch-specific sealed
+  delivery-facts carrier. No signer API is reachable in this block.
 * **K and receipt.**
   `commit_admitted_epoch_finality_v1` accepts only a strict CEV0 three-chain
   proof for the retained P, performs the native K CAS, reopens the committed
@@ -112,14 +122,17 @@ independent-evidence task, not an implied success.
   verify retained proof bytes and header/root binding; this carrier is not a
   production listener or historical index.
 * **Sync input.** A wiped node first verifies a pinned native trust path, then
-  accepts an exact manifest and bounded indexed chunks. It recomputes the chunk
-  root and target state root in staging, imports with expected-current-root CAS,
-  and only then joins the node checkpoint. No imported bytes can create a
-  signer intent, and a missing or altered chunk remains unavailable/error.
-* **Open boundary.** The production listener, proposer handoff, finalized
-  public response, arbitrary-height/multi-epoch transport and cross-process
-  replay anchor still need real composition. Candidate proof readback and
-  loopback tests do not close those items.
+  decodes canonical bounded `SnapshotTransferFrameV0` (`TSYN` v0) manifest and
+  chunk frames before accepting an exact manifest and bounded indexed chunks.
+  It recomputes the chunk root and target state root in staging, imports with
+  expected-current-root CAS, and only then joins the node checkpoint. No
+  imported bytes can create a signer intent, and a missing, altered, unknown-
+  version or trailing-byte frame remains unavailable/error.
+* **Open boundary.** The canonical frame boundary is implemented, but the
+  production listener, authenticated peer identity/request deadlines, proposer
+  handoff, finalized public response, arbitrary-height/multi-epoch transport and
+  cross-process replay anchor still need real composition. Candidate proof
+  readback, frame round trips and loopback tests do not close those items.
 * **Vectors.** Required cases are duplicate/conflicting nonce, gap,
   overload/backpressure, lost response, peer failure, tampered receipt/proof,
   chunk substitution, interrupted import, and SIGKILL at WAL/P/K/CURRENT.
