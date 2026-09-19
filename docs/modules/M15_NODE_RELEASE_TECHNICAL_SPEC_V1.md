@@ -749,6 +749,20 @@ any new signature. These are local candidate results; proposal/finality driving,
 progressed recovery, commissioning and repeated crossings still require their
 own actual-owner implementation and fault evidence.
 
+The same candidate now exposes one narrower first-proposal boundary through
+`CandidateEpochRuntimeV1::admit_epoch_proposal_v1`. It accepts only the exact
+new-epoch `EpochHandoff` at `edge.first_application_height()`, persists Core's
+Safety request, advances and rereads the independent lineage checkpoint, then
+ACKs the request and retains the single Core-issued `PayloadValidationRequest`.
+The real fixture
+`actual_epoch_runtime_admits_first_proposal_to_durable_validation_without_signing`
+proves the Safety obligation is present, `pending_sign` is empty, the new
+ordinary signer watermark remains at sequence zero, and the key callback count
+does not change. A failed persistence/checkpoint step consumes the runtime.
+This seam deliberately stops before application D, Core C, checkpoint K,
+voting, finality, broadcast or a progressed-obligation recovery constructor;
+it is evidence for P0 durability, not a complete cross-epoch runtime.
+
 ### Runtime handoff and acceptance closure (M15-RUNTIME-CLOSURE-V1)
 
 The current continuous runtime now has an explicit ordinary follower path. A
