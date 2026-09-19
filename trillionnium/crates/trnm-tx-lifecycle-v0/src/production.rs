@@ -892,6 +892,30 @@ where
             self.persist_current(journal, tx_id)
                 .map_err(TxBroadcastErrorV0::Transition)?;
         }
+        // A successful broadcast is a durable terminal effect for this
+        // broadcast intent.  Exact public-transaction retries must read that
+        // receipt and return it without touching the network again.  Calling
+        // the broadcaster a second time would duplicate a transport effect,
+        // while persisting the unchanged lifecycle record would violate the
+        // journal's strict successor relation and poison the owner.
+        if let Some(existing) = self
+            .lifecycle
+            .record(tx_id)
+            .map_err(|error| TxBroadcastErrorV0::Protocol(error.into()))?
+            .broadcast_receipt
+        {
+            if existing.tx_id != intent.tx_id
+                || existing.intent_sequence != intent.intent_sequence
+                || existing.envelope_digest != intent.envelope_digest
+                || existing.envelope_digest != envelope.envelope_digest
+                || existing.transport_receipt_digest == Digest32V0([0; 32])
+            {
+                return Err(TxBroadcastErrorV0::Protocol(
+                    ProductionTxErrorV0::DurableReceiptMismatch,
+                ));
+            }
+            return Ok(existing);
+        }
         let receipt = broadcaster
             .broadcast_authenticated(intent, &envelope)
             .map_err(|error| {
@@ -956,11 +980,30 @@ where
             self.persist_current(journal, tx_id)
                 .map_err(TxFinalizationErrorV0::Transition)?;
         }
+        let phase_before_finalize = self
+            .lifecycle
+            .record(tx_id)
+            .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))?
+            .phase;
         self.lifecycle
             .finalize(tx_id, claim.finality)
             .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))?;
-        self.persist_current(journal, tx_id)
-            .map_err(TxFinalizationErrorV0::Transition)?;
+        // `finalize` is intentionally idempotent for an exact finality
+        // witness.  Do not append an unchanged Finalized record on a retry:
+        // durable journals accept only a real lifecycle successor (or a
+        // receipt field transition), and the retry must remain read-only.
+        if phase_before_finalize != TxPhaseV0::Finalized
+            && !(phase_before_finalize == TxPhaseV0::Tombstoned
+                && self
+                    .lifecycle
+                    .record(tx_id)
+                    .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))?
+                    .tombstone
+                    == Some(TombstoneReasonV0::Finalized))
+        {
+            self.persist_current(journal, tx_id)
+                .map_err(TxFinalizationErrorV0::Transition)?;
+        }
         self.lifecycle
             .finalized_readback(tx_id)
             .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))
@@ -2388,6 +2431,123 @@ mod tests {
             )
             .unwrap();
         assert!(journal.latest.is_empty());
+    }
+
+    #[test]
+    fn exact_broadcast_retry_reads_receipt_without_republishing() {
+        use std::sync::atomic::{AtomicU64, Ordering};
+
+        static SIGN_CALLS: AtomicU64 = AtomicU64::new(0);
+        static BROADCAST_CALLS: AtomicU64 = AtomicU64::new(0);
+        SIGN_CALLS.store(0, Ordering::SeqCst);
+        BROADCAST_CALLS.store(0, Ordering::SeqCst);
+
+        let mut journal = MemoryJournal::default();
+        let mut coordinator = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+        let admission = coordinator
+            .admit_and_persist(&mut journal, intent(), 1)
+            .unwrap();
+        coordinator
+            .persist_proposal(
+                &mut journal,
+                admission.tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(19),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        let mut permit = CoreSafetyPermitClaimV0 {
+            tx_id: admission.tx_id,
+            tx_record_digest: journal.latest[&admission.tx_id].durable.record_digest,
+            safety_state_digest: d(30),
+            authority_receipt_digest: d(31),
+            permit_digest: d(0),
+        };
+        permit.permit_digest = permit.canonical_digest();
+
+        let first = coordinator
+            .sign_and_broadcast(
+                &AcceptPermit,
+                &mut CountingSigner { calls: &SIGN_CALLS },
+                &mut ResponseLossBroadcaster {
+                    calls: &BROADCAST_CALLS,
+                    lost: false,
+                },
+                &mut journal,
+                permit,
+            )
+            .unwrap();
+        let writes_after_first = journal.write_calls;
+        let sign_calls_after_first = SIGN_CALLS.load(Ordering::SeqCst);
+        let broadcast_calls_after_first = BROADCAST_CALLS.load(Ordering::SeqCst);
+
+        let second = coordinator
+            .sign_and_broadcast(
+                &AcceptPermit,
+                &mut CountingSigner { calls: &SIGN_CALLS },
+                &mut ResponseLossBroadcaster {
+                    calls: &BROADCAST_CALLS,
+                    lost: false,
+                },
+                &mut journal,
+                permit,
+            )
+            .unwrap();
+        assert_eq!(second, first);
+        assert_eq!(journal.write_calls, writes_after_first);
+        assert_eq!(SIGN_CALLS.load(Ordering::SeqCst), sign_calls_after_first);
+        assert_eq!(
+            BROADCAST_CALLS.load(Ordering::SeqCst),
+            broadcast_calls_after_first
+        );
+        assert!(!coordinator.is_poisoned());
+    }
+
+    #[test]
+    fn exact_finality_readback_retry_is_read_only() {
+        let mut journal = MemoryJournal::default();
+        let mut coordinator = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+        let admission = coordinator
+            .admit_and_persist(&mut journal, intent(), 1)
+            .unwrap();
+        coordinator
+            .persist_proposal(
+                &mut journal,
+                admission.tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(19),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        let exec = execution(admission.tx_id);
+        let finality = FinalityWitnessV0 {
+            block_id: exec.ordered.block_id,
+            height: exec.ordered.height,
+            state_root: exec.post_state_root,
+            finality_proof_digest: d(25),
+        };
+        let mut claim = FinalizedTxClaimV0 {
+            tx_id: admission.tx_id,
+            ordered: exec.ordered,
+            execution: exec,
+            finality,
+            source_authentication_digest: d(26),
+            claim_digest: d(0),
+        };
+        claim.claim_digest = claim.canonical_digest();
+
+        let first = coordinator
+            .apply_finalized_readback(&mut MemoryFinality { claim }, &mut journal, admission.tx_id)
+            .unwrap();
+        let writes_after_first = journal.write_calls;
+        let second = coordinator
+            .apply_finalized_readback(&mut MemoryFinality { claim }, &mut journal, admission.tx_id)
+            .unwrap();
+        assert_eq!(second, first);
+        assert_eq!(journal.write_calls, writes_after_first);
+        assert!(!coordinator.is_poisoned());
     }
 
     #[test]
