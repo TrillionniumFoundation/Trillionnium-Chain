@@ -76,6 +76,14 @@ that do not call the Rust consensus crates:
   mutation. It is explicitly a candidate fixture
   (`independent_implementation_required=true`): the committed bytes do not
   constitute independent specialist acceptance or production signer custody.
+- `canonical-sign-intent-v0.json` records exact Vote and TimeoutVote
+  `CanonicalSignIntentV0` envelopes, signing roots, and fingerprints used by
+  the signer-journal contract. The consensus-types regression consumes the
+  machine-readable bytes, while
+  `scripts/ci/check_poco_bft_v0_sign_intent_vectors.py` checks widths and
+  canonical root/fingerprint placement. This remains a candidate fixture;
+  independently authored preimage/signature vectors and signer-custody
+  acceptance are still required.
 - `anchor-finality-v0.json` freezes the exact empty-signature `GenesisQC`, a
   skipped-view genesis `ProposalSignV0`, the independently domain-separated
   `HandoffDescriptorV0`, the nested epoch authorization/anchor, three complete
