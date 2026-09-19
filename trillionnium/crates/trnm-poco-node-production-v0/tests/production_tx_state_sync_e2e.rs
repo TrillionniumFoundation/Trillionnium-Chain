@@ -232,29 +232,8 @@ fn state_store(path: &Path, state_root: StateDigest32V0) -> SqliteNativeStateSyn
              PRAGMA user_version=1;
              PRAGMA journal_mode=WAL;
              PRAGMA synchronous=FULL;
-             CREATE TABLE native_state_sync_meta_v1 (
-               singleton INTEGER PRIMARY KEY CHECK(singleton=1),
-               binding_digest BLOB NOT NULL CHECK(length(binding_digest)=32),
-               trust_path_digest BLOB NOT NULL CHECK(length(trust_path_digest)=32),
-               terminal_block_digest BLOB NOT NULL CHECK(length(terminal_block_digest)=32),
-               checkpoint_digest BLOB NOT NULL CHECK(length(checkpoint_digest)=32),
-               manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32),
-               manifest_binding_digest BLOB NOT NULL CHECK(length(manifest_binding_digest)=32),
-               height INTEGER NOT NULL CHECK(height>0),
-               epoch INTEGER NOT NULL CHECK(epoch>=0),
-               state_root BLOB NOT NULL CHECK(length(state_root)=32),
-               schema_digest BLOB NOT NULL CHECK(length(schema_digest)=32),
-               application_version INTEGER NOT NULL CHECK(application_version>0),
-               received_chunk_count INTEGER NOT NULL CHECK(received_chunk_count>=0),
-               received_bytes INTEGER NOT NULL CHECK(received_bytes>=0),
-               progress_digest BLOB NOT NULL CHECK(length(progress_digest)=32)
-             ) STRICT;
-             CREATE TABLE native_state_sync_chunks_v1 (
-               chunk_index INTEGER PRIMARY KEY CHECK(chunk_index>=0),
-               manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32),
-               bytes BLOB NOT NULL,
-               chunk_digest BLOB NOT NULL CHECK(length(chunk_digest)=32)
-             ) WITHOUT ROWID;",
+             CREATE TABLE native_state_sync_meta_v1 (singleton INTEGER PRIMARY KEY CHECK(singleton=1), binding_digest BLOB NOT NULL CHECK(length(binding_digest)=32), trust_path_digest BLOB NOT NULL CHECK(length(trust_path_digest)=32), terminal_block_digest BLOB NOT NULL CHECK(length(terminal_block_digest)=32), checkpoint_digest BLOB NOT NULL CHECK(length(checkpoint_digest)=32), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), manifest_binding_digest BLOB NOT NULL CHECK(length(manifest_binding_digest)=32), height INTEGER NOT NULL CHECK(height>0), epoch INTEGER NOT NULL CHECK(epoch>=0), state_root BLOB NOT NULL CHECK(length(state_root)=32), schema_digest BLOB NOT NULL CHECK(length(schema_digest)=32), application_version INTEGER NOT NULL CHECK(application_version>0), received_chunk_count INTEGER NOT NULL CHECK(received_chunk_count>=0), received_bytes INTEGER NOT NULL CHECK(received_bytes>=0), progress_digest BLOB NOT NULL CHECK(length(progress_digest)=32)) STRICT;
+             CREATE TABLE native_state_sync_chunks_v1 (chunk_index INTEGER PRIMARY KEY CHECK(chunk_index>=0), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), bytes BLOB NOT NULL, chunk_digest BLOB NOT NULL CHECK(length(chunk_digest)=32)) WITHOUT ROWID;",
         )
         .unwrap();
     connection
