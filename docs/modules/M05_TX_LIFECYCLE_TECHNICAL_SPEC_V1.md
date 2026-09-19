@@ -16,6 +16,7 @@ application state.
 |---|---|---|
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs` | Pure intent/phase/receipt rules and signing/ID digests | Resolve authenticated nonce/balance/height context |
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs` | `ProductionTxCoordinatorV0`, durable journal/sign/broadcast/readback ports | Real services, proof verification and restart orchestration |
+| `trillionnium/crates/trnm-poco-node-production-v0/src/transaction_driver.rs` | `NodeOwnedTxCheckTxV0` and `ProductionTxNodeAdapterV0` bind node-owned CheckTx, M05 durable admission, signer, broadcaster and finality readback ports in one ordered session | Supply authenticated node owners and an independently reviewed listener/peer/HSM/finality implementation; this adapter does not activate them |
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/codec.rs` | Closed durable record bytes v0 | Adapter interoperability, not a new transaction signing format |
 | `trillionnium/crates/trnm-mempool/src/lib.rs` | Bounded/lane admission queues | Bind queued work to exact durable M05 IDs |
 | `trillionnium/crates/trnm-application-tx-builder-v0/src/lib.rs` | Strict JSON/canonical application building | Explicit adapter; its object schema is not implicitly `TxIntentV0` |
@@ -336,6 +337,30 @@ does not install a public listener, connect a live peer broadcaster, provide an
 HSM/monotonic signer attestation, or independently verify finality. The
 production `live_sign_broadcast` and `TX-PROD-001` gates therefore remain
 false until those owners and external evidence are wired and reviewed.
+
+### Node-owned composition boundary
+
+`ProductionTxNodeAdapterV0` is the explicit composition boundary for a node
+owner that is ready to supply those missing authorities. Its
+`check_tx_and_admit` method first calls `NodeOwnedTxCheckTxV0::verify_check_tx`
+on the exact `TxIntentV0`; the source returns the authenticated current height,
+and the unchanged intent then enters `ProductionTxCoordinatorV0::admit_and_persist`.
+The adapter owns the journal, permit verifier, non-exportable signer,
+authenticated broadcaster and finalized-readback source, so every subsequent
+operation uses the same owner instance. `sign_and_broadcast` therefore keeps
+the existing sign-intent and signed-envelope persistence fence, while
+`apply_finalized_readback` and `tombstone_and_collect` remain after the
+corresponding durable transitions.
+
+The module has an immutable `NODE_OWNED_TX_PRODUCTION_ACTIVATION_V0 = false`
+flag. Supplying fixture implementations to the ports proves ordering and
+response-loss recovery only; it cannot make the public node live. A production
+owner still must bind the CheckTx source to its authenticated account/parent
+view, the signer to an HSM or equivalent monotonic authority, the broadcaster
+to a peer transport with authenticated receipt deduplication, and readback to
+an independently verified application/finality service. Until that owner and
+its socket/multihost evidence exist, `P2-TX-001.live_sign_broadcast` remains
+false by design.
 
 ### Planned V1 multi-transaction proof contract
 
