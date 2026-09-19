@@ -10,6 +10,10 @@ publish = false
 default = []
 # Explicit trusted-host composition seam. No I/O or durable-authority claim.
 candidate-epoch-host-v1 = []
+# Test-only protocol fixture access for downstream candidate integration tests.
+# This feature exports no runtime authority; it only makes the existing real
+# Ed25519 proposal corpus callable by a fixture-enabled test crate.
+test-support = ["dep:ed25519-dalek", "dep:serde_json"]
 
 [package.metadata.trnm]
 lane = "poco-bft-p1-prototype"
@@ -43,6 +47,8 @@ trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 sha2 = { version = "0.10", default-features = false }
 trnm-consensus-safety-rules = { version = "0.1.0", path = "../trnm-consensus-safety-rules" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+ed25519-dalek = { version = "2.2", default-features = false, optional = true }
+serde_json = { version = "1", optional = true }
 
 [dev-dependencies]
 serde_json = "1"

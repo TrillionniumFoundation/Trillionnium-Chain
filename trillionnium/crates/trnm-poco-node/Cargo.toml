@@ -23,6 +23,7 @@ epoch-runtime-candidate = [
 ]
 epoch-runtime-test-fixtures = [
   "epoch-runtime-candidate",
+  "trnm-consensus-core/test-support",
   "trnm-consensus-safety-store/test-fixtures",
   "trnm-native-execution-v0/test-fixtures",
 ]

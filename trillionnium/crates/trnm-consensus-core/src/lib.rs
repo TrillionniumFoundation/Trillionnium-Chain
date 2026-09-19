@@ -271,5 +271,5 @@ extern crate std;
 #[cfg(test)]
 mod tests;
 
-#[cfg(test)]
-mod epoch_state_tests_v1;
+#[cfg(any(test, feature = "test-support"))]
+pub mod epoch_state_tests_v1;

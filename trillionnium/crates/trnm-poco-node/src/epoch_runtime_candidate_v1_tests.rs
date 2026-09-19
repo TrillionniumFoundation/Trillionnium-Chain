@@ -11,8 +11,9 @@ use std::{
     sync::{Arc, Mutex},
 };
 use trnm_consensus_core::{
-    minimum_epoch_safety_record_limits_v1, BlockIdOverlayRefV0, CoreConfig,
-    EpochSafetyStateRecordContextV1, PreparedEpochCoreActivationV1, ValidatedPayloadArtifactRefV0,
+    epoch_state_tests_v1 as core_fixture, minimum_epoch_safety_record_limits_v1,
+    BlockIdOverlayRefV0, CoreConfig, EpochSafetyStateRecordContextV1,
+    PreparedEpochCoreActivationV1, ValidatedPayloadArtifactRefV0,
 };
 use trnm_consensus_crypto::{
     verify_pre_handoff_context_strict_v1, verify_same_version_epoch_activation_authority_strict_v0,
@@ -30,7 +31,7 @@ use trnm_consensus_signer_journal::{
 };
 use trnm_consensus_types::{
     decode_epoch_anchor_authorization_kernel_v0_exact, decode_finality_proof_v0_exact, BlockId,
-    CanonicalHandoffSignIntentV1, SignatureBytes, StateRoot,
+    CanonicalHandoffSignIntentV1, SignatureBytes, SignedProposalV0, StateRoot,
 };
 use trnm_native_execution_v0::{
     test_fixtures::native_checkpoint_fixture_config_v1, AuthenticatedEpochApplicationEdgeV1,
@@ -176,6 +177,7 @@ fn prepare_from_actual_terminal(
 ) -> (
     EpochSafetyJournalProfileV1,
     Box<PreparedEpochCoreActivationV1>,
+    SignedProposalV0,
 ) {
     let receipt = f
         .application
@@ -206,6 +208,11 @@ fn prepare_from_actual_terminal(
     )
     .unwrap();
     let runtime = StrictEpochRuntimeContextV1::from_activation_v1(activation).unwrap();
+    let proposal = core_fixture::first_chain_native_fixture(&runtime, &[1])
+        .into_iter()
+        .next()
+        .expect("first actual epoch proposal fixture")
+        .0;
     let new_set = runtime.structural_context().new_validator_set();
     let config = CoreConfig::new(
         new_set.validators()[0].id(),
@@ -233,6 +240,7 @@ fn prepare_from_actual_terminal(
     (
         profile,
         Box::new(terminal.prepare_epoch_activation_v1(&context).unwrap()),
+        proposal,
     )
 }
 
@@ -262,6 +270,7 @@ struct RecoveryDataV1 {
     cutoff_parent: Vec<u8>,
     finality: Vec<u8>,
     anchor: Vec<u8>,
+    proposal: SignedProposalV0,
 }
 fn build_epoch_runtime_case_v1() -> Box<EpochRuntimeCaseV1> {
     complete_epoch_runtime_case_v1(initialize_epoch_journal_case_v1(signed_old_case()))
@@ -272,11 +281,12 @@ struct JournalCaseV1 {
     journal: SqliteEpochSafetyJournalV1,
     pin: EpochSafetyHeadPinV1,
     profile: EpochSafetyJournalProfileV1,
+    proposal: SignedProposalV0,
 }
 // Keep the retirement/composite-construction frame out of strict journal
 // initialization, which deliberately revalidates the complete 14E evidence.
 fn initialize_epoch_journal_case_v1(original: Box<SignedOldCase>) -> Box<JournalCaseV1> {
-    let (profile, prepared) = prepare_from_actual_terminal(&original.fixture);
+    let (profile, prepared, proposal) = prepare_from_actual_terminal(&original.fixture);
     let (journal, initial) = SqliteEpochSafetyJournalV1::initialize_from_journal8_v1(
         original.dir.path().join("epoch9.db"),
         profile.clone(),
@@ -292,6 +302,7 @@ fn initialize_epoch_journal_case_v1(original: Box<SignedOldCase>) -> Box<Journal
         journal,
         pin,
         profile,
+        proposal,
     })
 }
 fn complete_epoch_runtime_case_v1(case: Box<JournalCaseV1>) -> Box<EpochRuntimeCaseV1> {
@@ -301,6 +312,7 @@ fn complete_epoch_runtime_case_v1(case: Box<JournalCaseV1>) -> Box<EpochRuntimeC
         journal,
         pin,
         profile,
+        proposal,
     } = *case;
     let SignedOldCase {
         dir,
@@ -450,6 +462,7 @@ fn complete_epoch_runtime_case_v1(case: Box<JournalCaseV1>) -> Box<EpochRuntimeC
         cutoff_parent: f.cutoff_parent_header_bytes.clone(),
         finality: f.checkpoint_finality_bytes.clone(),
         anchor: f.handoff_anchor_bytes.clone(),
+        proposal: proposal.clone(),
     });
     let confirmed = f
         .application
@@ -599,6 +612,48 @@ fn assert_activation_then_timeout_v1(mut live: Box<LiveCaseV1>) {
         .unwrap();
     runtime.journal.fresh_read_v1(runtime.pin).unwrap();
     assert!(dir.path().is_dir());
+}
+
+#[test]
+fn actual_epoch_runtime_admits_first_proposal_to_durable_validation_without_signing() {
+    let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
+    let (dir, runtime, key, recovery) = *live;
+    // The proposal was signed from this activation's exact context before the
+    // Core owner was moved into the candidate runtime.  Reusing the corpus
+    // vector here would silently introduce a different epoch/validator set.
+    let proposal = recovery.proposal.clone();
+    let mut runtime = runtime
+        .admit_epoch_proposal_v1(proposal.clone())
+        .expect("proposal admission persists the Core obligation");
+    let request = runtime
+        .pending_epoch_proposal_validation_v1()
+        .expect("Core retains one exact validation request");
+    assert_eq!(request.block().id(), proposal.block().id());
+    assert_eq!(request.block().header().epoch().get(), 1);
+    assert_eq!(runtime.driver.state().epoch().get(), 1);
+    assert_eq!(runtime.driver.state().pending_sign(), None);
+    assert_eq!(
+        runtime
+            .driver
+            .state()
+            .payload_validation_obligations()
+            .len(),
+        1
+    );
+    assert_eq!(
+        runtime
+            .ordinary
+            .confirm_node_checkpoint_head_exact_v0()
+            .expect("signer checkpoint")
+            .exact_watermark()
+            .sequence(),
+        0,
+        "admission must not consume the new epoch signer"
+    );
+    assert_eq!(key.calls, 10, "proposal admission must not call the signer");
+    runtime.confirm_current_cut_v1().unwrap();
+    assert!(dir.path().is_dir());
+    drop(recovery);
 }
 
 #[test]

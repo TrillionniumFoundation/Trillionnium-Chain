@@ -12,7 +12,7 @@ fn bytes(s: &str) -> Vec<u8> {
         .map(|i| u8::from_str_radix(&s[i..i + 2], 16).unwrap())
         .collect()
 }
-pub(crate) fn runtime() -> StrictEpochRuntimeContextV1 {
+pub fn runtime() -> StrictEpochRuntimeContextV1 {
     let corpus: serde_json::Value = serde_json::from_str(include_str!("../../../../docs/protocol/poco-bft-v0/vectors/poco-authenticated-checkpoint-handoff-v0.json")).unwrap();
     let case = &corpus["positive"];
     let raw = |section: &str, field: &str| bytes(case[section][field].as_str().unwrap());
@@ -43,7 +43,7 @@ pub(crate) fn runtime() -> StrictEpochRuntimeContextV1 {
     .unwrap();
     StrictEpochRuntimeContextV1::from_activation_v1(activation).unwrap()
 }
-pub(crate) fn config(runtime: &StrictEpochRuntimeContextV1) -> CoreConfig {
+pub fn config(runtime: &StrictEpochRuntimeContextV1) -> CoreConfig {
     let set = runtime.structural_context().new_validator_set();
     CoreConfig::new(
         set.validators()[0].id(),
@@ -55,7 +55,7 @@ pub(crate) fn config(runtime: &StrictEpochRuntimeContextV1) -> CoreConfig {
     )
     .unwrap()
 }
-pub(crate) fn artifact(runtime: &StrictEpochRuntimeContextV1) -> ValidatedPayloadArtifactRefV0 {
+pub fn artifact(runtime: &StrictEpochRuntimeContextV1) -> ValidatedPayloadArtifactRefV0 {
     let c = runtime
         .activation()
         .old_checkpoint_finality()
@@ -70,9 +70,10 @@ pub(crate) fn artifact(runtime: &StrictEpochRuntimeContextV1) -> ValidatedPayloa
 
 /// Real Ed25519 proposals/QCs, with synthetic application results. This is a
 /// pure-engine fixture and cannot establish a live native application owner.
-pub(crate) fn first_chain(
+fn first_chain_with_mode(
     runtime: &StrictEpochRuntimeContextV1,
     views: &[u64],
+    native_fixture_keys: bool,
 ) -> Vec<(
     SignedProposalV0,
     QuorumCertificate,
@@ -83,6 +84,14 @@ pub(crate) fn first_chain(
     let set = runtime.structural_context().new_validator_set();
     let params = runtime.structural_context().new_parameters();
     let key = |id: ValidatorId| {
+        if native_fixture_keys {
+            let index = set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == id)
+                .expect("native fixture validator");
+            return SigningKey::from_bytes(&[20 + index as u8; 32]);
+        }
         let mut hash = Sha256::new();
         hash.update(b"trnm.poco-bft.checkpoint-finality.private-fixture.v0:");
         hash.update(id.as_bytes());
@@ -284,6 +293,32 @@ pub(crate) fn first_chain(
         result.push((proposal, qc, commitments));
     }
     result
+}
+
+/// Real Ed25519 first-epoch chain using the native checkpoint fixture's
+/// deterministic `[20 + validator_index; 32]` keys. This remains test-only
+/// evidence and carries no application or finality authority.
+pub fn first_chain_native_fixture(
+    runtime: &StrictEpochRuntimeContextV1,
+    views: &[u64],
+) -> Vec<(
+    SignedProposalV0,
+    QuorumCertificate,
+    ValidatedBlockCommitmentsV0,
+)> {
+    first_chain_with_mode(runtime, views, true)
+}
+
+/// Real Ed25519 proposals/QCs from the protocol vector corpus.
+pub fn first_chain(
+    runtime: &StrictEpochRuntimeContextV1,
+    views: &[u64],
+) -> Vec<(
+    SignedProposalV0,
+    QuorumCertificate,
+    ValidatedBlockCommitmentsV0,
+)> {
+    first_chain_with_mode(runtime, views, false)
 }
 
 #[test]

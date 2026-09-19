@@ -5,7 +5,10 @@ use crate::{
     SqliteEpochNodeCheckpointStoreV1,
 };
 use anyhow::{ensure, Context, Result};
-use trnm_consensus_core::{Effect, Input, PendingEpochHostDriverV1, PreparedEpochCoreActivationV1};
+use trnm_consensus_core::{
+    Effect, Input, PayloadValidationRequest, PendingEpochHostDriverV1,
+    PreparedEpochCoreActivationV1,
+};
 use trnm_consensus_safety_store::{
     ConfirmedEpochSafetyHeadV1, EpochSafetyHeadPinV1, SafetyTransitionContextV0,
     SqliteEpochSafetyJournalV1,
@@ -14,7 +17,7 @@ use trnm_consensus_signer_journal::{
     ConfirmedOrdinarySignerRetirementV1, ExternalMonotonicWatermarkV0, ExternalSignerRetirementV1,
     RetiredSqliteSignerJournalV1, SqliteSignerJournalV0,
 };
-use trnm_consensus_types::CanonicalSignable;
+use trnm_consensus_types::{BlockKind, CanonicalSignable, SignedProposalV0};
 use trnm_native_execution_v0::{
     AuthenticatedEpochApplicationEdgeV1, DurableExecutionHistoryStatusV0,
     DurableNativeApplicationV0,
@@ -45,6 +48,11 @@ pub struct CandidateEpochRuntimeV1<W: ExternalSignerRetirementV1, N: ExternalMon
     checkpoint: EpochNodeCheckpointV1,
     origin: ExternalNodeCheckpointV0,
     startup: Vec<Effect>,
+    /// Core's one live validation request after proposal admission.  This is
+    /// deliberately retained until a future application host consumes the
+    /// request with a Core-affined seal; a request digest alone cannot unlock
+    /// a vote.
+    pending_validation: Option<PayloadValidationRequest>,
     fenced: bool,
 }
 impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEpochRuntimeV1<W, N> {
@@ -114,6 +122,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             checkpoint: target,
             origin,
             startup,
+            pending_validation: None,
             fenced: false,
         })
     }
@@ -190,6 +199,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             checkpoint: expected,
             origin,
             startup,
+            pending_validation: None,
             fenced: false,
         })
     }
@@ -506,6 +516,106 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         self.application
             .ensure_incremental_epoch_commit_owner_v1(&self.edge)?;
         self.confirm_current_cut_v1()
+    }
+
+    /// Admit one authenticated proposal at the first new-epoch runtime
+    /// boundary and durably persist Core's validation obligation.
+    ///
+    /// This is intentionally bounded at `P0 -> validation request`: the
+    /// candidate owns no proposal-validation SQLite store, application seal,
+    /// or finality permit.  It therefore cannot execute, sign, broadcast, or
+    /// finalize from this method.  The returned runtime retains the opaque
+    /// Core-issued request so a future native P/D/C/K host can join the exact
+    /// request; callers must not synthesize a `PayloadValidated` result from
+    /// header digests.  A crash at this point leaves the Safety obligation
+    /// durable and recovery remains fail-closed until that request is joined.
+    ///
+    /// The operation consumes the runtime on error.  This prevents a caller
+    /// from reusing a partially advanced Core/Safety owner after a failed
+    /// persistence or checkpoint CAS.
+    pub fn admit_epoch_proposal_v1(mut self, proposal: SignedProposalV0) -> Result<Self> {
+        self.confirm_current_cut_v1()?;
+        ensure!(
+            self.pending_validation.is_none(),
+            "epoch proposal validation is already pending"
+        );
+        ensure!(
+            proposal.block().header().epoch() == self.driver.state().epoch(),
+            "proposal belongs to a different epoch"
+        );
+        ensure!(
+            proposal.block().header().block_kind() == BlockKind::EpochHandoff
+                && proposal.block().header().height().get() == self.edge.first_application_height(),
+            "proposal is not the exact first new-epoch application block"
+        );
+        ensure!(
+            self.driver.state().pending_sign().is_none()
+                && self.driver.state().pending_finalize().is_none()
+                && self
+                    .driver
+                    .state()
+                    .payload_validation_obligations()
+                    .is_empty(),
+            "epoch proposal admission requires a settled Core state"
+        );
+
+        let effects = self
+            .driver
+            .step_v1(Input::Proposal(Box::new(proposal)))
+            .map_err(|error| anyhow::anyhow!("epoch proposal admission: {error:?}"))?;
+        let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
+            anyhow::bail!("epoch proposal did not yield one Safety persistence barrier");
+        };
+        let head = self.journal.persist_exact_v1(
+            self.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        self.pin = head.pin_v1();
+        let ordinary = self
+            .checkpoint
+            .fields()
+            .ordinary
+            .context("missing live ordinary cut")?;
+        self.advance_exact_cut_v1(safety_cut(&head), ordinary)?;
+        self.journal.confirm_exact_request_v1(
+            self.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+
+        let released = self
+            .driver
+            .step_v1(Input::StorageAck {
+                barrier: request.barrier(),
+            })
+            .map_err(|error| anyhow::anyhow!("epoch proposal validation ACK: {error:?}"))?;
+        let mut validation = None;
+        for effect in released {
+            match effect {
+                Effect::ValidatePayload(candidate) if validation.is_none() => {
+                    validation = Some(candidate)
+                }
+                Effect::ArmViewTimer { .. } => {}
+                _ => {
+                    anyhow::bail!("epoch proposal admission yielded an unexpected post-ACK effect")
+                }
+            }
+        }
+        self.pending_validation =
+            Some(validation.context("epoch proposal admission yielded no validation request")?);
+        self.confirm_current_cut_v1()?;
+        Ok(self)
+    }
+
+    /// Returns a read-only copy of the still-unresolved Core request.
+    ///
+    /// Cloning this carrier does not clone its one-consumer claim.  A native
+    /// application host must claim the request and present the resulting
+    /// Core-issued permit together with its private durable seal before any
+    /// Valid delivery can proceed.
+    pub fn pending_epoch_proposal_validation_v1(&self) -> Option<PayloadValidationRequest> {
+        self.pending_validation.clone()
     }
 }
 // Private adapter: caller-supplied verifiers cannot mint or bypass this join.
