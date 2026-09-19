@@ -89,6 +89,15 @@ def test_campaign_result_rejects_tampered_fault_counts_and_claim_flags() -> None
         else:
             raise AssertionError("promoted performance claim unexpectedly accepted")
 
+        tampered_source = json.loads(json.dumps(result))
+        tampered_source["source_proxy_sha256"] = "0" * 64
+        try:
+            campaign.validate_campaign_result(tampered_source)
+        except RuntimeError as error:
+            assert "does not match the checked-in proxy" in str(error)
+        else:
+            raise AssertionError("tampered source digest unexpectedly accepted")
+
 
 def test_campaign_result_rejects_non_monotonic_latency() -> None:
     with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:

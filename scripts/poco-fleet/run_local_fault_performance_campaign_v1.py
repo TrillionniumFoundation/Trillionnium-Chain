@@ -266,6 +266,10 @@ def validate_campaign_result(result: Any) -> None:
         "source_proxy does not identify the checked-in proxy",
     )
     _require_digest(result.get("source_proxy_sha256"), "source_proxy_sha256")
+    _require(
+        result["source_proxy_sha256"] == sha256_file(PROXY),
+        "source_proxy_sha256 does not match the checked-in proxy",
+    )
     _require_digest(result.get("config_sha256"), "config_sha256")
 
     _require(result.get("endpoint_count") == 3, "endpoint_count must be three")
