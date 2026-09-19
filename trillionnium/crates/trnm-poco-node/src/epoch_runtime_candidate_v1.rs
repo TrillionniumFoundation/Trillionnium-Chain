@@ -982,6 +982,11 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
     pub fn admit_epoch_proposal_v1(mut self, proposal: SignedProposalV0) -> Result<Self> {
         self.confirm_current_cut_v1()?;
         ensure!(
+            self.checkpoint.fields().application.block_id
+                == *self.edge.application_parent().block_id().as_bytes(),
+            "first-new epoch crossing already committed; repeated crossing rejected"
+        );
+        ensure!(
             self.pending_validation.is_none(),
             "epoch proposal validation is already pending"
         );

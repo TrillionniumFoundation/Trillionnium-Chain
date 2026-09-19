@@ -63,6 +63,12 @@ independent-evidence task, not an implied success.
   proof for the retained P, performs the native K CAS, reopens the committed
   row, and advances the independent checkpoint only after the head, P digest,
   artifact, overlay, sequence, owner and activation binding all match.
+  Once that checkpoint names the committed first-new application block,
+  `admit_epoch_proposal_v1` rejects a second crossing at the persisted
+  application cut before consulting Core or any signer; the regression in
+  `actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing`
+  fixes this one-shot boundary. This is a replay guard, not a second-epoch
+  implementation.
 * **Crash contract.** Before native P, a restart may call
   `recover_pending_epoch_validation_readback_v1`; it must find the exact
   first-new Proposal validation obligation, old application head, journal9
@@ -73,7 +79,8 @@ independent-evidence task, not an implied success.
   custody and pre-K application head. Both paths are comparison-only: they do
   not recreate Core, resume the validation callback, or release a signer.
   Authenticated resumed obligation replay, vote/finality collection and a
-  second complete epoch remain `open`.
+  second complete epoch remain `open`; the repeated first-new guard only
+  closes duplicate admission after the first K checkpoint.
 * **Vectors.** The positive vector is
   `actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing`
   followed by strict K and post-K revalidation. The restart vectors are

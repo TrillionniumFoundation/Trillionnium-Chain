@@ -825,6 +825,17 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
             assert!(runtime.pending_epoch_proposal_validation_v1().is_none());
             assert_eq!(runtime.checkpoint.fields().application.height, 11);
             assert_eq!(key.calls, 10, "K must not call the signer");
+            let repeated = match runtime.admit_epoch_proposal_v1(proposal) {
+                Ok(_) => panic!("a committed first-new cut must reject repeated crossing"),
+                Err(error) => error,
+            };
+            assert!(
+                repeated
+                    .to_string()
+                    .contains("first-new epoch crossing already committed"),
+                "repeated crossing must fail at the persisted application cut: {repeated:#}"
+            );
+            assert_eq!(key.calls, 10, "repeated crossing must not call the signer");
             assert!(dir.path().is_dir());
         })
         .expect("spawn epoch native P/D/C test")
