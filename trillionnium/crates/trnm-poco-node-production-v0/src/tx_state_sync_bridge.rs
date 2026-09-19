@@ -13,7 +13,7 @@ use trnm_state_sync_v0::{
     NativeStateSyncBindingV1, NativeStateSyncReadbackV1, NativeStateSyncStoreErrorV1,
     SqliteNativeStateSyncStoreV1,
 };
-use trnm_tx_lifecycle_v0::{Digest32V0, FinalizedReadbackV0};
+use trnm_tx_lifecycle_v0::{Digest32V0, FinalizedReadbackV0, TxFinalizationErrorV0};
 
 const TX_NATIVE_SYNC_BINDING_DOMAIN_V0: &[u8] = b"trnm.tx.native-state-sync-binding.v0";
 
@@ -90,6 +90,48 @@ impl fmt::Display for FinalizedTxNativeStateSyncBindingErrorV0 {
 }
 
 impl Error for FinalizedTxNativeStateSyncBindingErrorV0 {}
+
+/// Result of the candidate transaction-finality to native state-sync join.
+/// The two fields are deliberately returned together only after both owners
+/// have produced their independent readbacks. This type does not imply that
+/// the finality journal write and the SQLite read are one atomic transaction.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct FinalizedTxNativeStateSyncApplyV0 {
+    pub finalized: FinalizedReadbackV0,
+    pub sync_binding: FinalizedTxNativeStateSyncBindingV0,
+}
+
+/// Failure from the composed candidate path. `Finality` means the transaction
+/// owner did not durably apply the source claim. `Sync` means finality may
+/// already be durable, but the fresh state-sync readback could not be joined;
+/// callers must recover and retry the read-only join before publication.
+#[derive(Debug)]
+pub enum FinalizedTxNativeStateSyncApplyErrorV0<ReadbackError, JournalError> {
+    Finality(TxFinalizationErrorV0<ReadbackError, JournalError>),
+    Sync(FinalizedTxNativeStateSyncBindingErrorV0),
+}
+
+impl<ReadbackError, JournalError> fmt::Display
+    for FinalizedTxNativeStateSyncApplyErrorV0<ReadbackError, JournalError>
+where
+    ReadbackError: fmt::Display,
+    JournalError: fmt::Display,
+{
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Finality(error) => write!(formatter, "finality readback failed: {error}"),
+            Self::Sync(error) => write!(formatter, "state-sync join failed: {error}"),
+        }
+    }
+}
+
+impl<ReadbackError, JournalError> Error
+    for FinalizedTxNativeStateSyncApplyErrorV0<ReadbackError, JournalError>
+where
+    ReadbackError: Error + 'static,
+    JournalError: Error + 'static,
+{
+}
 
 fn bind_readbacks(
     finalized: &FinalizedReadbackV0,

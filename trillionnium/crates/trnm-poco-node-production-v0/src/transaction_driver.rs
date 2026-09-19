@@ -9,6 +9,12 @@
 
 use std::error::Error;
 
+use crate::{
+    bind_finalized_readback_to_native_state_sync_store_v1, FinalizedTxNativeStateSyncApplyErrorV0,
+    FinalizedTxNativeStateSyncApplyV0,
+};
+use trnm_state_sync_v0::SqliteNativeStateSyncStoreV1;
+
 use trnm_tx_lifecycle_v0::{
     AuthenticatedTxBroadcasterV0, AuthorizationVerifierV0, CoreSafetyPermitClaimV0,
     CoreSafetyPermitVerifierV0, DurableTxJournalV0, DurableTxRecordV0, ExecutionReceiptV0,
@@ -438,6 +444,30 @@ where
     ) -> Result<FinalizedReadbackV0, TxFinalizationErrorV0<R::Error, J::Error>> {
         self.coordinator
             .apply_finalized_readback(&mut self.readback, &mut self.journal, tx_id)
+    }
+
+    /// Candidate-only composition of the durable transaction finality
+    /// readback and one fresh native state-sync store readback. The finality
+    /// transition is committed first; a later sync mismatch or SQLite error
+    /// therefore does not roll it back and is returned as `Sync`. Callers must
+    /// recover/retry the read-only join before publishing the combined result.
+    pub fn apply_finalized_readback_and_bind_native_sync_v1(
+        &mut self,
+        tx_id: TxIdV0,
+        store: &SqliteNativeStateSyncStoreV1,
+    ) -> Result<
+        FinalizedTxNativeStateSyncApplyV0,
+        FinalizedTxNativeStateSyncApplyErrorV0<R::Error, J::Error>,
+    > {
+        let finalized = self
+            .apply_finalized_readback(tx_id)
+            .map_err(FinalizedTxNativeStateSyncApplyErrorV0::Finality)?;
+        let sync_binding = bind_finalized_readback_to_native_state_sync_store_v1(&finalized, store)
+            .map_err(FinalizedTxNativeStateSyncApplyErrorV0::Sync)?;
+        Ok(FinalizedTxNativeStateSyncApplyV0 {
+            finalized,
+            sync_binding,
+        })
     }
 
     pub fn tombstone_and_collect(
