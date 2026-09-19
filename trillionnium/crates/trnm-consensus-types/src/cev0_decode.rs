@@ -587,6 +587,33 @@ pub struct EpochAnchorAuthorizationKernelV0 {
 }
 
 impl EpochAnchorAuthorizationKernelV0 {
+    /// Builds the inert kernel from already typed components after checking
+    /// their structural relations. This does not verify signatures or mint
+    /// an epoch-anchor QC; strict consumers must still call their dedicated
+    /// verifier before treating the kernel as activation evidence.
+    pub fn from_parts_v0(
+        terminal_old_header: BlockHeader,
+        terminal_old_qc: QuorumCertificate,
+        handoff_certificate: HandoffCertificateV0,
+        old_validator_set: &ValidatorSet,
+        new_validator_set: &ValidatorSet,
+    ) -> crate::Result<Self> {
+        let authorization = EpochAnchorAuthorizationV0::new(
+            terminal_old_header.clone(),
+            terminal_old_qc.clone(),
+            handoff_certificate.clone(),
+            old_validator_set,
+            new_validator_set,
+        )?;
+        let bytes = authorization.try_cev0_bytes()?;
+        decode_epoch_anchor_authorization_kernel_v0_exact(
+            &bytes,
+            old_validator_set,
+            new_validator_set,
+        )
+        .map_err(|_| ValidationError::InvalidJointCertificate("typed kernel encoding"))
+    }
+
     pub const fn terminal_old_header(&self) -> &BlockHeader {
         &self.terminal_old_header
     }
@@ -5803,6 +5830,15 @@ mod tests {
             sample.authorization.handoff_certificate()
         );
         assert_eq!(kernel.try_cev0_bytes().unwrap(), authorization_bytes);
+        let rebuilt = EpochAnchorAuthorizationKernelV0::from_parts_v0(
+            sample.authorization.terminal_old_header().clone(),
+            sample.authorization.terminal_old_qc().clone(),
+            sample.authorization.handoff_certificate().clone(),
+            &sample.old_set,
+            &sample.new_set,
+        )
+        .unwrap();
+        assert_eq!(rebuilt, kernel);
         assert!(kernel
             .verify_certificate_kernel(&sample.old_set, &sample.new_set, &RejectSignatures,)
             .is_err());

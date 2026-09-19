@@ -712,9 +712,13 @@ impl SqliteNativeStateSyncStoreV1 {
         Ok(store)
     }
 
-    /// Read the durable progress after checking every retained chunk's
-    /// canonical digest, manifest binding, byte bound and metadata digest.
-    pub fn readback_v1(&self) -> Result<NativeStateSyncReadbackV1, NativeStateSyncStoreErrorV1> {
+    /// Read the durable identity and progress from one fresh SQLite snapshot.
+    /// Every retained chunk is rehashed before either value is returned, so a
+    /// caller cannot join a binding from one read with progress from another.
+    pub fn binding_and_readback_v1(
+        &self,
+    ) -> Result<(NativeStateSyncBindingV1, NativeStateSyncReadbackV1), NativeStateSyncStoreErrorV1>
+    {
         let connection = self.open_connection_v1()?;
         let metadata = read_metadata_v1(&connection)?;
         let chunks = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
@@ -726,7 +730,19 @@ impl SqliteNativeStateSyncStoreV1 {
         if actual != metadata.readback {
             return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
         }
-        Ok(actual)
+        Ok((metadata.binding, actual))
+    }
+
+    /// Return the immutable session identity after a complete fresh readback.
+    #[must_use]
+    pub fn binding_v1(&self) -> Result<NativeStateSyncBindingV1, NativeStateSyncStoreErrorV1> {
+        self.binding_and_readback_v1().map(|(binding, _)| binding)
+    }
+
+    /// Read the durable progress after checking every retained chunk's
+    /// canonical digest, manifest binding, byte bound and metadata digest.
+    pub fn readback_v1(&self) -> Result<NativeStateSyncReadbackV1, NativeStateSyncStoreErrorV1> {
+        self.binding_and_readback_v1().map(|(_, readback)| readback)
     }
 
     /// Return the exact retained bytes in canonical index order after a full
