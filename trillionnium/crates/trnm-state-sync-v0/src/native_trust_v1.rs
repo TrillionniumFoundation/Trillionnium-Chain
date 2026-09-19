@@ -9,7 +9,7 @@ use crate::{
 };
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
-use std::{error::Error, fmt, path::PathBuf};
+use std::{error::Error, fmt, path::PathBuf, time::Duration};
 use trnm_consensus_crypto::{
     decode_verify_epoch_first_finality_strict_v1, decode_verify_finality_proof_strict_v0,
     validate_validator_set_strict_ed25519_v0, FinalityExpectationV0, StrictFinalityErrorV0,
@@ -919,6 +919,13 @@ impl SqliteNativeStateSyncStoreV1 {
 
     fn open_connection_v1(&self) -> Result<Connection, NativeStateSyncStoreErrorV1> {
         let connection = Connection::open_with_flags(&self.path, OpenFlags::SQLITE_OPEN_READ_WRITE)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        // A concurrent writer must wait for the bounded owner transaction to
+        // finish rather than fail immediately with SQLITE_BUSY.  This keeps
+        // the authenticated resume/join observation atomic while retaining a
+        // finite fail-closed boundary for a stuck or crashed writer.
+        connection
+            .busy_timeout(Duration::from_secs(5))
             .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
         configure_native_connection_v1(&connection, false)?;
         #[cfg(test)]
