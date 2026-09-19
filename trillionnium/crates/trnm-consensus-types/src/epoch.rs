@@ -434,6 +434,44 @@ mod tests {
                 .unwrap(),
             BlockKind::EpochHandoff
         );
+
+        // The transition geometry is an epoch-indexed contract, not a
+        // one-time epoch-1 special case.  Keep later nonzero epochs covered
+        // because their handoff/checkpoint/seal heights are consumed by the
+        // future composed activation path.
+        for (index, start, end, checkpoint) in [
+            (2_u64, 20_001_u64, 30_000_u64, 29_998_u64),
+            (3_u64, 30_001_u64, 40_000_u64, 39_998_u64),
+        ] {
+            let geometry = EpochGeometryV0::new(Epoch::new(index), &parameters).unwrap();
+            assert_eq!(geometry.epoch_start(), Height::new(start));
+            assert_eq!(geometry.epoch_end(), Height::new(end));
+            assert_eq!(geometry.checkpoint_height(), Height::new(checkpoint));
+            assert_eq!(
+                geometry
+                    .expected_block_kind(geometry.epoch_start())
+                    .unwrap(),
+                BlockKind::EpochHandoff
+            );
+            assert_eq!(
+                geometry
+                    .expected_block_kind(geometry.checkpoint_height())
+                    .unwrap(),
+                BlockKind::EpochCheckpoint
+            );
+            assert_eq!(
+                geometry
+                    .expected_block_kind(geometry.seal_1_height())
+                    .unwrap(),
+                BlockKind::EpochSeal1
+            );
+            assert_eq!(
+                geometry
+                    .expected_block_kind(geometry.seal_2_height())
+                    .unwrap(),
+                BlockKind::EpochSeal2
+            );
+        }
     }
 
     #[test]
