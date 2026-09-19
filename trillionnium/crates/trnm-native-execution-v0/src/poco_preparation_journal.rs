@@ -968,7 +968,16 @@ pub(crate) struct PocoPreparationJournalV0 {
 
 impl PocoPreparationJournalV0 {
     pub(crate) fn open(database_path: impl AsRef<Path>) -> Result<Self> {
-        let requested_path = canonical_journal_path(database_path.as_ref())?;
+        Self::open_mode(database_path.as_ref(), true)
+    }
+
+    /// Recovery must not recreate a missing safety journal.
+    pub(crate) fn open_existing(database_path: impl AsRef<Path>) -> Result<Self> {
+        Self::open_mode(database_path.as_ref(), false)
+    }
+
+    fn open_mode(database_path: &Path, may_create: bool) -> Result<Self> {
+        let requested_path = canonical_journal_path(database_path)?;
         validate_path_resource_budget(&requested_path)?;
         let registry = PROCESS_JOURNAL_REGISTRY.get_or_init(|| Mutex::new(Vec::new()));
         let mut registry = registry
@@ -1025,14 +1034,24 @@ impl PocoPreparationJournalV0 {
         }
 
         let initialize = observed_identity.is_none();
+        ensure!(
+            !initialize || may_create,
+            "retained preparation journal missing"
+        );
         let journal_id = if initialize {
             new_journal_id(&requested_path)?
         } else {
             [0; 32]
         };
-        let mut connection = Connection::open(&requested_path).with_context(|| {
-            format!("open PoCO preparation journal {}", requested_path.display())
-        })?;
+        let flags = if may_create {
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE | rusqlite::OpenFlags::SQLITE_OPEN_CREATE
+        } else {
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE
+        };
+        let mut connection =
+            Connection::open_with_flags(&requested_path, flags).with_context(|| {
+                format!("open PoCO preparation journal {}", requested_path.display())
+            })?;
         configure_connection(&connection, initialize)?;
         if initialize {
             let transaction =
@@ -1085,6 +1104,42 @@ impl PocoPreparationJournalV0 {
             database_path: canonical_path,
             shared,
         })
+    }
+
+    /// Read-only comparison against an already bound row; it cannot reserve or
+    /// restore a deleted preparation from the caller's retained bytes.
+    pub(crate) fn require_retained_bound(
+        &self,
+        preparation_id: [u8; 32],
+        header: &[u8],
+    ) -> Result<()> {
+        self.ensure_not_sticky_halted()?;
+        let _writer = self
+            .shared
+            .writer
+            .lock()
+            .map_err(|_| anyhow!("preparation writer lock poisoned"))?;
+        let connection = self.connect()?;
+        validate_database(&connection)?;
+        ensure_not_halted_connection(&connection, &self.shared.sticky_halt)?;
+        let mut statement = connection
+            .prepare("SELECT preparation_record,bound_record FROM preparations WHERE phase=1")?;
+        let rows = statement.query_map([], |r| {
+            Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, Vec<u8>>(1)?))
+        })?;
+        for row in rows {
+            let (preparation, bound) = row?;
+            let preparation = PocoCheckpointPreparationReplayRecordV0::decode_exact(&preparation)?;
+            if preparation.preparation_id() == preparation_id {
+                let bound = PocoCheckpointBoundReplayRecordV0::decode_exact(&bound, &preparation)?;
+                ensure!(
+                    bound.header_cev0 == header,
+                    "retained preparation header mismatch"
+                );
+                return Ok(());
+            }
+        }
+        bail!("retained bound preparation missing")
     }
 
     #[cfg(test)]

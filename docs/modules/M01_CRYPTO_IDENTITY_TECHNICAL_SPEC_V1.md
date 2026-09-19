@@ -47,6 +47,94 @@ Existing `StrictFinalityErrorV0` distinguishes `UnsupportedProofClass`,
 by matching display text. A wrong expected target is not repaired by choosing
 the newest QC from the proof.
 
+### Pre-certificate handoff and first-epoch finality consumers
+
+`verify_pre_handoff_context_strict_v1` in `pre_handoff.rs` takes the old
+checkpoint/two-seal finality, next-epoch commitment, exact handoff descriptor,
+both validator sets/parameter preimages and the independently authenticated
+checkpoint parent. It admits all keys in both sets, verifies old-set signatures
+and parent geometry, reconstructs every descriptor field, and returns private
+`StrictPreHandoffContextV1`. Its binding covers all input identities. It needs
+no joint certificate: M03 must obtain this context before collecting the two
+role quorums. It does not prove checkpoint execution or grant signing authority;
+the native host must separately join a freshly read committed execution receipt
+before asking the durable signer journal to sign the role-specific intent.
+
+`decode_verify_epoch_first_finality_strict_v1` accepts the eight exact activation
+preimages plus a first-new-epoch three-chain proof, independent old-set trust,
+`FinalityExpectationV0` and one mutable admission budget. It bounds their aggregate
+raw length before decoding, strictly verifies complete activation evidence, and
+checks the proof's target against all expected fields and the actual terminal
+seal's ID/height/timestamp. The oldest header is the exact authorized
+`EpochHandoff` at C+3; its children are ordinary blocks. Every proposal, QC, TC
+entry and referenced QC is strictly verified under the authenticated new set.
+Skipped views use a TC whose synthetic epoch references match the already
+verified activation authority; no generic verifier is given an accept-anchor flag.
+
+The private result `StrictEpochFinalityProofV1` retains strict finality, the
+verified old checkpoint header and new configuration. M13 compares that
+checkpoint to its current trusted head before advancing; M05 uses the returned
+new parameters for receipt bounds. Ordinary finality decoding remains a separate
+entrypoint and rejects an epoch anchor. Neither result activates Core or commits
+application state. Typed failures include `EpochEvidence` and `EpochActivation`
+in addition to the existing decode, context and consensus causes.
+
+### Complete first-proposal verification (implemented candidate)
+
+```text
+verify_first_epoch_proposal_strict_v1(
+  activation: &StrictSameVersionEpochActivationAuthorityV0,
+  proposal: SignedProposalV0,
+  budget: &mut Cev0AdmissionBudgetV0
+) -> Result<StrictFirstEpochProposalV1, ValidationError>
+```
+
+`epoch_proposal_v1.rs` verifies the actual canonical application payload and
+bounded evidence root, exact C+3 handoff header/terminal parent, exact synthetic
+justify/authorization, leader signature and all required skipped-view TC/QC
+references. Its private no-Clone result exposes the exact proposal,
+`RootBoundEpochBodyV1` summary and activation binding. It grants no application
+Valid result, P record, Core migration or signing lease. Consumers still require
+M06/M08 execution against the authenticated application parent.
+
+The shared strict witness verifier is also used by first-epoch finality, avoiding
+a second TC policy. Raw resource, all QC references, nested TC shares, proposer
+and evidence signature work are reserved before cryptographic verification;
+an insufficient budget rejects without starting that work, and an invalid
+signature does not refund a reserved budget. Existing header-only first-proposal
+and ordinary finality APIs keep their distinct authority and anchor restrictions.
+Real Ed25519 tests cover view1, a skipped view with exact TC, one-short budgets,
+substituted payload and bad signature. These establish cryptographic admission,
+not live Core/new-signer activation.
+
+### Full epoch runtime context (implemented inert candidate)
+
+`StrictEpochRuntimeContextV1::from_activation_v1` consumes a complete
+`StrictSameVersionEpochActivationAuthorityV0`. It retains all eight evidence
+roots and exposes only their exact anchor/authorization context for strict
+QC/TC/proposal/finality consumers. Closed exact decoders may reconstruct a
+structural `EpochRuntimeContextDataV1` from complete decoded evidence, but this
+value grants no cryptographic, signing, Core or application authority. No generic
+verifier gains an accept-anchor flag. Runtime verification charges shared QC/TC
+and proposer/evidence work before cryptographic verification. Every retained
+synthetic reference must equal the context's exact new view-zero anchor, including
+skipped-view TC entries; old-context certificates are rejected on active ingress.
+
+The three explicit V1 exact decoders are
+`decode_epoch_runtime_qc_reference_v1_exact_with_budget`,
+`decode_epoch_runtime_timeout_certificate_v1_exact_with_budget`, and
+`decode_epoch_runtime_finality_proof_v1_exact_with_budget`. All use the complete
+structural context and caller-owned byte/signature budget, exhaust the root,
+and require canonical re-encoding. `verify_proposal_v1` verifies the real parent;
+`verify_proposal_without_parent_v1` only preauthenticates Regular/checkpoint
+carriers to request missing ancestry, and cannot establish timestamp or parent
+state. `verify_proposal_at_parent_timestamp_v1` additionally checks an already
+authenticated compact timestamp; seals and handoffs require the full-parent API.
+Real Ed25519 tests cover TC-bearing first finality, exact work boundaries,
+foreign old QCs, bad shares and parent timestamp substitution. Core 14E and the
+pure SafetyRules context consume this verifier; live Core/custody activation is
+still unavailable at this checkpoint.
+
 ### Identity and domain binding
 
 | Authority | Required independently authenticated context |
@@ -194,9 +282,11 @@ in the exact independently authorized anchor context and is not a signed QC.
 `recover_epoch_activation_authority_strict_v0` re-verifies the eight exact
 preimages against independent old trust and expected binding. The resulting
 `StrictSameVersionEpochActivationAuthorityV0` is still not a live Core switch.
-`verify_first_epoch_proposal_header_strict_v0` covers the view-1 header only;
-complete payload execution and skipped-view anchor-aware TC admission remain
-separate consumers. Do not turn a header-only token into a voting permit.
+`verify_first_epoch_proposal_header_strict_v0` covers the view-1 header only.
+The v1 first-epoch finality consumer above admits skipped-view TCs with complete
+activation evidence; live Core proposal/vote admission and complete payload
+execution remain separate consumers. Do not turn a header-only token into a
+voting permit.
 
 ### Error dispositions
 
@@ -284,11 +374,32 @@ Required module cases:
 - `M01-REVOKE`: old generation cannot authorize a fresh action; historical proofs remain correctly scoped.
 - `M01-ROLE`: old-only/new-only/dual members and wrong-role signature/quorum substitution.
 - `M01-CACHE`: same bytes under changed trust/role/revocation context misses and revalidates.
-- `M01-EPOCH`: exact view-1 proof and planned skipped-view anchored TC; no mixed-epoch three-chain.
+- `M01-EPOCH`: exact view-1 proof and skipped-view anchored TC; no mixed-epoch three-chain.
+
+`epoch_activation_recovery.rs` additionally exercises a real signed 1/2/3 and
+3/5/8 new-epoch chain, every proposal/TC signature corruption, target/parent
+substitution, truncation/trailing bytes, aggregate admission bounds and ordinary
+entrypoint rejection. These library tests do not stand in for node crash/restart,
+independent verifier or external activation acceptance.
 
 M00 supplies independently generated bytes; M01 supplies expected verification
 outcomes; M02/M03/M08/M13 must consume them at real boundaries. Fuzzing and
 same-library replay supplement, rather than replace, independent verifier work.
+
+### First-new execution commitment projection
+
+`BlockBodyV0::validate_epoch_handoff_commitments_v1(header, receipts, parameters,
+expected_state_root, active_validator_set, verifier)` is a distinct static
+commitment producer. It requires EpochHandoff at its exact epoch start, complete
+canonical payload/evidence/receipt roots and size limits, the independently
+supplied execution state root, active-set context and evidence signatures.
+It returns `ValidatedBlockCommitmentsV0` without weakening the Regular-only
+producer. `NonEpochHandoffBlock` is the additive local semantic error code 17;
+existing error values and frozen bytes remain unchanged. The result alone is
+neither epoch admission nor durable application validation: Core must separately
+join complete strict handoff evidence, actual fresh P and exact dual-parent
+overlay. The Core regression covers first-new acceptance and wrong state root,
+wrong kind and missing edge rejection with real Ed25519 signatures.
 
 ## Activation boundary
 

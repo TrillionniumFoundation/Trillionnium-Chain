@@ -122,6 +122,32 @@ pub trait DurableTxJournalV0 {
         final_record_digest: Digest32V0,
         replay_floor: ReplayFloorWitnessV0,
     ) -> Result<Digest32V0, Self::Error>;
+
+    /// Persist the exact Core/Safety signer request before invoking any
+    /// non-exportable signer. Implementations must make an exact retry
+    /// idempotent and reject a conflicting request for the same transaction.
+    fn persist_sign_intent(
+        &mut self,
+        intent: DurableTxSignIntentV0,
+    ) -> Result<DurableTxSignIntentV0, Self::Error>;
+
+    /// Read the retained signer request during restart/retry recovery.
+    fn load_sign_intent(
+        &mut self,
+        tx_id: TxIdV0,
+    ) -> Result<Option<DurableTxSignIntentV0>, Self::Error>;
+
+    /// Persist the exact signed envelope before the first network call.
+    fn persist_signed_envelope(
+        &mut self,
+        envelope: DurableSignedTxEnvelopeV0,
+    ) -> Result<DurableSignedTxEnvelopeV0, Self::Error>;
+
+    /// Read the retained signed envelope during response-loss recovery.
+    fn load_signed_envelope(
+        &mut self,
+        tx_id: TxIdV0,
+    ) -> Result<Option<DurableSignedTxEnvelopeV0>, Self::Error>;
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -272,6 +298,59 @@ impl TxSignRequestV0 {
     }
 }
 
+/// The exact signer request that a durable host must retain before invoking
+/// its non-exportable signer. Keeping this separate from
+/// [`BroadcastIntentV0`] is intentional: the signed envelope digest cannot be
+/// known until the signer has returned, while the request itself must survive
+/// a crash or a lost signer response.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DurableTxSignIntentV0 {
+    pub request: TxSignRequestV0,
+    pub intent_digest: Digest32V0,
+}
+
+impl DurableTxSignIntentV0 {
+    #[must_use]
+    pub fn from_request(request: TxSignRequestV0) -> Self {
+        let mut intent = Self {
+            request,
+            intent_digest: Digest32V0([0; 32]),
+        };
+        intent.intent_digest = intent.canonical_digest();
+        intent
+    }
+
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.tx.durable-sign-intent.v0",
+            &[
+                &self.request.tx_id.0,
+                &self.request.record_digest.0,
+                &self.request.safety_state_digest.0,
+                &self.request.authority_receipt_digest.0,
+                &self.request.permit_digest.0,
+                &self.request.request_digest.0,
+            ],
+        )
+    }
+
+    pub fn validate(&self) -> Result<(), ProductionTxErrorV0> {
+        if self.request.tx_id == Digest32V0([0; 32])
+            || self.request.record_digest == Digest32V0([0; 32])
+            || self.request.safety_state_digest == Digest32V0([0; 32])
+            || self.request.authority_receipt_digest == Digest32V0([0; 32])
+            || self.request.permit_digest == Digest32V0([0; 32])
+            || self.request.request_digest != self.request.canonical_digest()
+            || self.intent_digest == Digest32V0([0; 32])
+            || self.intent_digest != self.canonical_digest()
+        {
+            return Err(ProductionTxErrorV0::SignIntentMismatch);
+        }
+        Ok(())
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TxSignatureReceiptV0 {
     pub request_digest: Digest32V0,
@@ -353,6 +432,78 @@ impl SignedTxEnvelopeV0 {
             signer_attestation_digest: signature.signer_attestation_digest,
             envelope_digest,
         })
+    }
+}
+
+/// A signed envelope retained by the node before any network call. The
+/// envelope is independently bound to the exact durable sign intent so a
+/// response-loss retry can broadcast the original bytes without invoking the
+/// signer again.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DurableSignedTxEnvelopeV0 {
+    pub intent_digest: Digest32V0,
+    pub envelope: SignedTxEnvelopeV0,
+    pub receipt_digest: Digest32V0,
+}
+
+impl DurableSignedTxEnvelopeV0 {
+    #[must_use]
+    pub fn from_envelope(intent: &DurableTxSignIntentV0, envelope: SignedTxEnvelopeV0) -> Self {
+        let mut retained = Self {
+            intent_digest: intent.intent_digest,
+            envelope,
+            receipt_digest: Digest32V0([0; 32]),
+        };
+        retained.receipt_digest = retained.canonical_digest();
+        retained
+    }
+
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.tx.durable-signed-envelope.v0",
+            &[
+                &self.intent_digest.0,
+                &self.envelope.tx_id.0,
+                &self.envelope.permit_digest.0,
+                &self.envelope.signature,
+                &self.envelope.signature_digest.0,
+                &self.envelope.signer_attestation_digest.0,
+                &self.envelope.envelope_digest.0,
+            ],
+        )
+    }
+
+    pub fn validate_against(
+        &self,
+        intent: &DurableTxSignIntentV0,
+    ) -> Result<(), ProductionTxErrorV0> {
+        intent.validate()?;
+        let expected_envelope_digest = Digest32V0::hash(
+            b"trnm.tx.signed-envelope.v0",
+            &[
+                &intent.request.tx_id.0,
+                &intent.request.permit_digest.0,
+                &self.envelope.signature_digest.0,
+                &self.envelope.signer_attestation_digest.0,
+            ],
+        );
+        if self.intent_digest != intent.intent_digest
+            || self.envelope.tx_id != intent.request.tx_id
+            || self.envelope.permit_digest != intent.request.permit_digest
+            || self.envelope.permit_digest == Digest32V0([0; 32])
+            || self.envelope.signature.is_empty()
+            || self.envelope.signature.len() > MAX_AUTHORIZATION_BYTES_V0
+            || self.envelope.signature_digest
+                != Digest32V0::hash(b"trnm.tx.signature-bytes.v0", &[&self.envelope.signature])
+            || self.envelope.signer_attestation_digest == Digest32V0([0; 32])
+            || self.envelope.envelope_digest != expected_envelope_digest
+            || self.receipt_digest == Digest32V0([0; 32])
+            || self.receipt_digest != self.canonical_digest()
+        {
+            return Err(ProductionTxErrorV0::SignedEnvelopeMismatch);
+        }
+        Ok(())
     }
 }
 
@@ -665,30 +816,116 @@ where
     {
         self.require_live().map_err(TxBroadcastErrorV0::Protocol)?;
         let tx_id = claim.tx_id;
-        let record_digest = self
+        let current_record_digest = self
             .durable
             .get(&tx_id)
             .ok_or(TxBroadcastErrorV0::Protocol(
                 ProductionTxErrorV0::MissingDurableRecord,
             ))?
             .record_digest;
-        let permit = verify_core_safety_permit_v0(permit_verifier, claim, tx_id, record_digest)
-            .map_err(TxBroadcastErrorV0::Permit)?;
+        // A retry after the broadcast intent was durably appended sees a new
+        // lifecycle record digest. The retained sign intent intentionally
+        // names the exact predecessor digest that authorized signing; reuse
+        // that digest on retry instead of asking the caller to mint a new
+        // permit for the already signed effect.
+        let retained_before_permit = journal.load_sign_intent(tx_id).map_err(|error| {
+            self.poisoned = true;
+            TxBroadcastErrorV0::Transition(PersistTxErrorV0::Journal(error))
+        })?;
+        let permit_record_digest = retained_before_permit
+            .as_ref()
+            .map_or(current_record_digest, |intent| intent.request.record_digest);
+        let permit =
+            verify_core_safety_permit_v0(permit_verifier, claim, tx_id, permit_record_digest)
+                .map_err(TxBroadcastErrorV0::Permit)?;
         let request = TxSignRequestV0::from_permit(&permit);
-        let signature = signer
-            .sign_transaction(&request)
-            .map_err(TxBroadcastErrorV0::Signer)?;
-        let envelope =
-            SignedTxEnvelopeV0::new(&permit, signature).map_err(TxBroadcastErrorV0::Protocol)?;
+        let sign_intent = DurableTxSignIntentV0::from_request(request);
+        sign_intent
+            .validate()
+            .map_err(TxBroadcastErrorV0::Protocol)?;
+        // This write is the signing fence.  A signer call is never made until
+        // the exact request, permit and record digest have a durable owner.
+        let retained_intent = journal.persist_sign_intent(sign_intent).map_err(|error| {
+            self.poisoned = true;
+            TxBroadcastErrorV0::Transition(PersistTxErrorV0::Journal(error))
+        })?;
+        retained_intent
+            .validate()
+            .map_err(TxBroadcastErrorV0::Protocol)?;
+
+        let retained_envelope = journal.load_signed_envelope(tx_id).map_err(|error| {
+            self.poisoned = true;
+            TxBroadcastErrorV0::Transition(PersistTxErrorV0::Journal(error))
+        })?;
+        let envelope = if let Some(retained) = retained_envelope {
+            retained
+                .validate_against(&retained_intent)
+                .map_err(TxBroadcastErrorV0::Protocol)?;
+            retained.envelope
+        } else {
+            let signature = signer
+                .sign_transaction(&request)
+                .map_err(TxBroadcastErrorV0::Signer)?;
+            let envelope = SignedTxEnvelopeV0::new(&permit, signature)
+                .map_err(TxBroadcastErrorV0::Protocol)?;
+            let durable = DurableSignedTxEnvelopeV0::from_envelope(&retained_intent, envelope);
+            let retained = journal.persist_signed_envelope(durable).map_err(|error| {
+                self.poisoned = true;
+                TxBroadcastErrorV0::Transition(PersistTxErrorV0::Journal(error))
+            })?;
+            retained
+                .validate_against(&retained_intent)
+                .map_err(TxBroadcastErrorV0::Protocol)?;
+            retained.envelope
+        };
+        let had_broadcast_intent = self
+            .lifecycle
+            .record(tx_id)
+            .map_err(|error| TxBroadcastErrorV0::Protocol(error.into()))?
+            .broadcast_intent
+            .is_some();
         let intent = self
             .lifecycle
             .create_broadcast_intent(tx_id, envelope.envelope_digest)
             .map_err(|error| TxBroadcastErrorV0::Protocol(error.into()))?;
-        self.persist_current(journal, tx_id)
-            .map_err(TxBroadcastErrorV0::Transition)?;
+        if !had_broadcast_intent {
+            self.persist_current(journal, tx_id)
+                .map_err(TxBroadcastErrorV0::Transition)?;
+        }
+        // A successful broadcast is a durable terminal effect for this
+        // broadcast intent.  Exact public-transaction retries must read that
+        // receipt and return it without touching the network again.  Calling
+        // the broadcaster a second time would duplicate a transport effect,
+        // while persisting the unchanged lifecycle record would violate the
+        // journal's strict successor relation and poison the owner.
+        if let Some(existing) = self
+            .lifecycle
+            .record(tx_id)
+            .map_err(|error| TxBroadcastErrorV0::Protocol(error.into()))?
+            .broadcast_receipt
+        {
+            if existing.tx_id != intent.tx_id
+                || existing.intent_sequence != intent.intent_sequence
+                || existing.envelope_digest != intent.envelope_digest
+                || existing.envelope_digest != envelope.envelope_digest
+                || existing.transport_receipt_digest == Digest32V0([0; 32])
+            {
+                return Err(TxBroadcastErrorV0::Protocol(
+                    ProductionTxErrorV0::DurableReceiptMismatch,
+                ));
+            }
+            return Ok(existing);
+        }
         let receipt = broadcaster
             .broadcast_authenticated(intent, &envelope)
-            .map_err(TxBroadcastErrorV0::Broadcast)?;
+            .map_err(|error| {
+                // The signed envelope and broadcast intent are durable.  A
+                // transport error is therefore an uncertain effect, not a
+                // fresh signer opportunity; recovery must retry these exact
+                // bytes through the same durable request.
+                self.poisoned = true;
+                TxBroadcastErrorV0::Broadcast(error)
+            })?;
         self.lifecycle
             .confirm_broadcast(receipt)
             .map_err(|error| TxBroadcastErrorV0::Protocol(error.into()))?;
@@ -743,11 +980,30 @@ where
             self.persist_current(journal, tx_id)
                 .map_err(TxFinalizationErrorV0::Transition)?;
         }
+        let phase_before_finalize = self
+            .lifecycle
+            .record(tx_id)
+            .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))?
+            .phase;
         self.lifecycle
             .finalize(tx_id, claim.finality)
             .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))?;
-        self.persist_current(journal, tx_id)
-            .map_err(TxFinalizationErrorV0::Transition)?;
+        // `finalize` is intentionally idempotent for an exact finality
+        // witness.  Do not append an unchanged Finalized record on a retry:
+        // durable journals accept only a real lifecycle successor (or a
+        // receipt field transition), and the retry must remain read-only.
+        if phase_before_finalize != TxPhaseV0::Finalized
+            && !(phase_before_finalize == TxPhaseV0::Tombstoned
+                && self
+                    .lifecycle
+                    .record(tx_id)
+                    .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))?
+                    .tombstone
+                    == Some(TombstoneReasonV0::Finalized))
+        {
+            self.persist_current(journal, tx_id)
+                .map_err(TxFinalizationErrorV0::Transition)?;
+        }
         self.lifecycle
             .finalized_readback(tx_id)
             .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))
@@ -1227,6 +1483,10 @@ pub enum ProductionTxErrorV0 {
     DurableDeleteMismatch,
     InvalidCoreSafetyPermit,
     SignatureReceiptMismatch,
+    SignIntentMismatch,
+    SignedEnvelopeMismatch,
+    MissingDurableSignIntent,
+    MissingDurableSignedEnvelope,
     FinalizedReadbackMismatch,
     InvalidRecoveredRecord,
     DuplicateRecoveredTransaction,
@@ -1260,6 +1520,16 @@ impl fmt::Display for ProductionTxErrorV0 {
             }
             Self::SignatureReceiptMismatch => {
                 f.write_str("non-exportable transaction signature receipt is misbound")
+            }
+            Self::SignIntentMismatch => f.write_str("durable transaction sign intent is misbound"),
+            Self::SignedEnvelopeMismatch => {
+                f.write_str("durable signed transaction envelope is misbound")
+            }
+            Self::MissingDurableSignIntent => {
+                f.write_str("transaction has no durable signer intent")
+            }
+            Self::MissingDurableSignedEnvelope => {
+                f.write_str("transaction has no durable signed envelope")
             }
             Self::FinalizedReadbackMismatch => {
                 f.write_str("finalized transaction readback is unauthenticated or misbound")
@@ -1503,6 +1773,8 @@ mod tests {
     #[derive(Default)]
     struct MemoryJournal {
         latest: BTreeMap<TxIdV0, RecoveredTxRecordV0>,
+        sign_intents: BTreeMap<TxIdV0, DurableTxSignIntentV0>,
+        signed_envelopes: BTreeMap<TxIdV0, DurableSignedTxEnvelopeV0>,
         next_sequence: u64,
         write_calls: u64,
         fault: Option<(u64, CrashPoint)>,
@@ -1631,6 +1903,59 @@ mod tests {
             self.latest.remove(&tx_id);
             Ok(d(99))
         }
+
+        fn persist_sign_intent(
+            &mut self,
+            intent: DurableTxSignIntentV0,
+        ) -> Result<DurableTxSignIntentV0, Self::Error> {
+            intent
+                .validate()
+                .map_err(|_| std::io::Error::other("intent"))?;
+            if let Some(existing) = self.sign_intents.get(&intent.request.tx_id) {
+                if existing != &intent {
+                    return Err(std::io::Error::other("conflicting sign intent"));
+                }
+                return Ok(*existing);
+            }
+            self.sign_intents.insert(intent.request.tx_id, intent);
+            Ok(intent)
+        }
+
+        fn load_sign_intent(
+            &mut self,
+            tx_id: TxIdV0,
+        ) -> Result<Option<DurableTxSignIntentV0>, Self::Error> {
+            Ok(self.sign_intents.get(&tx_id).copied())
+        }
+
+        fn persist_signed_envelope(
+            &mut self,
+            envelope: DurableSignedTxEnvelopeV0,
+        ) -> Result<DurableSignedTxEnvelopeV0, Self::Error> {
+            let intent = self
+                .sign_intents
+                .get(&envelope.envelope.tx_id)
+                .ok_or_else(|| std::io::Error::other("missing intent"))?;
+            envelope
+                .validate_against(intent)
+                .map_err(|_| std::io::Error::other("envelope"))?;
+            if let Some(existing) = self.signed_envelopes.get(&envelope.envelope.tx_id) {
+                if existing != &envelope {
+                    return Err(std::io::Error::other("conflicting envelope"));
+                }
+                return Ok(existing.clone());
+            }
+            self.signed_envelopes
+                .insert(envelope.envelope.tx_id, envelope.clone());
+            Ok(envelope)
+        }
+
+        fn load_signed_envelope(
+            &mut self,
+            tx_id: TxIdV0,
+        ) -> Result<Option<DurableSignedTxEnvelopeV0>, Self::Error> {
+            Ok(self.signed_envelopes.get(&tx_id).cloned())
+        }
     }
 
     struct AcceptPermit;
@@ -1684,6 +2009,61 @@ mod tests {
                 envelope_digest: envelope.envelope_digest,
                 transport_receipt_digest: d(71),
             })
+        }
+    }
+
+    #[derive(Clone, Copy)]
+    struct ResponseLossBroadcaster {
+        calls: &'static std::sync::atomic::AtomicU64,
+        lost: bool,
+    }
+
+    impl AuthenticatedTxBroadcasterV0 for ResponseLossBroadcaster {
+        type Error = std::io::Error;
+
+        fn broadcast_authenticated(
+            &mut self,
+            intent: BroadcastIntentV0,
+            envelope: &SignedTxEnvelopeV0,
+        ) -> Result<BroadcastReceiptV0, Self::Error> {
+            use std::sync::atomic::Ordering;
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            if self.lost {
+                self.lost = false;
+                return Err(std::io::Error::other("response lost after peer acceptance"));
+            }
+            Ok(BroadcastReceiptV0 {
+                tx_id: intent.tx_id,
+                intent_sequence: intent.intent_sequence,
+                envelope_digest: envelope.envelope_digest,
+                transport_receipt_digest: d(72),
+            })
+        }
+    }
+
+    struct CountingSigner {
+        calls: &'static std::sync::atomic::AtomicU64,
+    }
+
+    impl NonExportableTxSignerV0 for CountingSigner {
+        type Error = std::io::Error;
+
+        fn sign_transaction(
+            &mut self,
+            request: &TxSignRequestV0,
+        ) -> Result<TxSignatureReceiptV0, Self::Error> {
+            use std::sync::atomic::Ordering;
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            let signature = vec![7; 64];
+            let mut receipt = TxSignatureReceiptV0 {
+                request_digest: request.request_digest,
+                signature_digest: Digest32V0::hash(b"trnm.tx.signature-bytes.v0", &[&signature]),
+                signature,
+                signer_attestation_digest: d(70),
+                receipt_digest: d(0),
+            };
+            receipt.receipt_digest = receipt.canonical_digest();
+            Ok(receipt)
         }
     }
 
@@ -2051,5 +2431,214 @@ mod tests {
             )
             .unwrap();
         assert!(journal.latest.is_empty());
+    }
+
+    #[test]
+    fn exact_broadcast_retry_reads_receipt_without_republishing() {
+        use std::sync::atomic::{AtomicU64, Ordering};
+
+        static SIGN_CALLS: AtomicU64 = AtomicU64::new(0);
+        static BROADCAST_CALLS: AtomicU64 = AtomicU64::new(0);
+        SIGN_CALLS.store(0, Ordering::SeqCst);
+        BROADCAST_CALLS.store(0, Ordering::SeqCst);
+
+        let mut journal = MemoryJournal::default();
+        let mut coordinator = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+        let admission = coordinator
+            .admit_and_persist(&mut journal, intent(), 1)
+            .unwrap();
+        coordinator
+            .persist_proposal(
+                &mut journal,
+                admission.tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(19),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        let mut permit = CoreSafetyPermitClaimV0 {
+            tx_id: admission.tx_id,
+            tx_record_digest: journal.latest[&admission.tx_id].durable.record_digest,
+            safety_state_digest: d(30),
+            authority_receipt_digest: d(31),
+            permit_digest: d(0),
+        };
+        permit.permit_digest = permit.canonical_digest();
+
+        let first = coordinator
+            .sign_and_broadcast(
+                &AcceptPermit,
+                &mut CountingSigner { calls: &SIGN_CALLS },
+                &mut ResponseLossBroadcaster {
+                    calls: &BROADCAST_CALLS,
+                    lost: false,
+                },
+                &mut journal,
+                permit,
+            )
+            .unwrap();
+        let writes_after_first = journal.write_calls;
+        let sign_calls_after_first = SIGN_CALLS.load(Ordering::SeqCst);
+        let broadcast_calls_after_first = BROADCAST_CALLS.load(Ordering::SeqCst);
+
+        let second = coordinator
+            .sign_and_broadcast(
+                &AcceptPermit,
+                &mut CountingSigner { calls: &SIGN_CALLS },
+                &mut ResponseLossBroadcaster {
+                    calls: &BROADCAST_CALLS,
+                    lost: false,
+                },
+                &mut journal,
+                permit,
+            )
+            .unwrap();
+        assert_eq!(second, first);
+        assert_eq!(journal.write_calls, writes_after_first);
+        assert_eq!(SIGN_CALLS.load(Ordering::SeqCst), sign_calls_after_first);
+        assert_eq!(
+            BROADCAST_CALLS.load(Ordering::SeqCst),
+            broadcast_calls_after_first
+        );
+        assert!(!coordinator.is_poisoned());
+    }
+
+    #[test]
+    fn exact_finality_readback_retry_is_read_only() {
+        let mut journal = MemoryJournal::default();
+        let mut coordinator = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+        let admission = coordinator
+            .admit_and_persist(&mut journal, intent(), 1)
+            .unwrap();
+        coordinator
+            .persist_proposal(
+                &mut journal,
+                admission.tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(19),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        let exec = execution(admission.tx_id);
+        let finality = FinalityWitnessV0 {
+            block_id: exec.ordered.block_id,
+            height: exec.ordered.height,
+            state_root: exec.post_state_root,
+            finality_proof_digest: d(25),
+        };
+        let mut claim = FinalizedTxClaimV0 {
+            tx_id: admission.tx_id,
+            ordered: exec.ordered,
+            execution: exec,
+            finality,
+            source_authentication_digest: d(26),
+            claim_digest: d(0),
+        };
+        claim.claim_digest = claim.canonical_digest();
+
+        let first = coordinator
+            .apply_finalized_readback(&mut MemoryFinality { claim }, &mut journal, admission.tx_id)
+            .unwrap();
+        let writes_after_first = journal.write_calls;
+        let second = coordinator
+            .apply_finalized_readback(&mut MemoryFinality { claim }, &mut journal, admission.tx_id)
+            .unwrap();
+        assert_eq!(second, first);
+        assert_eq!(journal.write_calls, writes_after_first);
+        assert!(!coordinator.is_poisoned());
+    }
+
+    #[test]
+    fn signing_fence_and_lost_broadcast_response_retry_reuse_exact_bytes() {
+        use std::sync::atomic::AtomicU64;
+
+        static SIGN_CALLS: AtomicU64 = AtomicU64::new(0);
+        static BROADCAST_CALLS: AtomicU64 = AtomicU64::new(0);
+        SIGN_CALLS.store(0, std::sync::atomic::Ordering::SeqCst);
+        BROADCAST_CALLS.store(0, std::sync::atomic::Ordering::SeqCst);
+
+        let mut journal = MemoryJournal::default();
+        let mut coordinator = ProductionTxCoordinatorV0::new(d(1), AcceptAuthorization);
+        let admission = coordinator
+            .admit_and_persist(&mut journal, intent(), 1)
+            .unwrap();
+        coordinator
+            .persist_proposal(
+                &mut journal,
+                admission.tx_id,
+                ProposalHandoffV0 {
+                    proposal_id: d(19),
+                    proposal_index: 0,
+                },
+            )
+            .unwrap();
+        let predecessor_digest = journal.latest[&admission.tx_id].durable.record_digest;
+        let mut permit = CoreSafetyPermitClaimV0 {
+            tx_id: admission.tx_id,
+            tx_record_digest: predecessor_digest,
+            safety_state_digest: d(30),
+            authority_receipt_digest: d(31),
+            permit_digest: d(0),
+        };
+        permit.permit_digest = permit.canonical_digest();
+
+        let first = coordinator.sign_and_broadcast(
+            &AcceptPermit,
+            &mut CountingSigner { calls: &SIGN_CALLS },
+            &mut ResponseLossBroadcaster {
+                calls: &BROADCAST_CALLS,
+                lost: true,
+            },
+            &mut journal,
+            permit,
+        );
+        assert!(matches!(first, Err(TxBroadcastErrorV0::Broadcast(_))));
+        assert!(coordinator.is_poisoned());
+        assert_eq!(SIGN_CALLS.load(std::sync::atomic::Ordering::SeqCst), 1);
+        assert_eq!(BROADCAST_CALLS.load(std::sync::atomic::Ordering::SeqCst), 1);
+        let retained_intent = journal
+            .sign_intents
+            .get(&admission.tx_id)
+            .copied()
+            .expect("sign intent persisted before signer");
+        let retained_envelope = journal
+            .signed_envelopes
+            .get(&admission.tx_id)
+            .cloned()
+            .expect("signed envelope persisted before broadcast");
+        retained_envelope
+            .validate_against(&retained_intent)
+            .unwrap();
+
+        let mut recovered =
+            ProductionTxCoordinatorV0::recover(d(1), AcceptAuthorization, &mut journal).unwrap();
+        let retry = recovered
+            .sign_and_broadcast(
+                &AcceptPermit,
+                &mut CountingSigner { calls: &SIGN_CALLS },
+                &mut ResponseLossBroadcaster {
+                    calls: &BROADCAST_CALLS,
+                    lost: false,
+                },
+                &mut journal,
+                permit,
+            )
+            .unwrap();
+        assert_eq!(
+            retry.envelope_digest,
+            retained_envelope.envelope.envelope_digest
+        );
+        assert_eq!(SIGN_CALLS.load(std::sync::atomic::Ordering::SeqCst), 1);
+        assert_eq!(BROADCAST_CALLS.load(std::sync::atomic::Ordering::SeqCst), 2);
+        assert_eq!(
+            journal.latest[&admission.tx_id]
+                .record
+                .broadcast_receipt
+                .unwrap()
+                .envelope_digest,
+            retained_envelope.envelope.envelope_digest
+        );
     }
 }

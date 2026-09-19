@@ -7,6 +7,9 @@
 //! root, writes only to a staging generation, and swaps that generation into
 //! service with an expected-current-root compare-and-swap.
 
+mod native_trust_v1;
+pub use native_trust_v1::*;
+
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, error::Error, fmt};
 
@@ -15,6 +18,15 @@ pub const MAX_TRUST_PATH_LINKS_V0: usize = 4096;
 pub const MAX_CHUNK_COUNT_V0: u32 = 65_536;
 pub const MAX_CHUNK_BYTES_V0: usize = 4 * 1024 * 1024;
 pub const MAX_SNAPSHOT_BYTES_V0: u64 = 512 * 1024 * 1024 * 1024;
+/// Maximum encoded manifest frame accepted before any field allocation.
+pub const MAX_SNAPSHOT_MANIFEST_WIRE_BYTES_V0: usize = 256 * 1024;
+/// Maximum encoded chunk frame accepted before any payload allocation.
+pub const MAX_SNAPSHOT_CHUNK_WIRE_BYTES_V0: usize = 10 + 32 + 4 + 4 + MAX_CHUNK_BYTES_V0 + 32;
+const SNAPSHOT_WIRE_MAGIC_V0: [u8; 4] = *b"TSYN";
+const SNAPSHOT_WIRE_VERSION_V0: u8 = 0;
+const SNAPSHOT_WIRE_MANIFEST_KIND_V0: u8 = 1;
+const SNAPSHOT_WIRE_CHUNK_KIND_V0: u8 = 2;
+const SNAPSHOT_WIRE_HEADER_BYTES_V0: usize = 10;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Digest32V0(pub [u8; 32]);
@@ -266,16 +278,7 @@ impl SnapshotManifestV0 {
         )
     }
 
-    pub fn validate(&self, trust_path: &VerifiedTrustPathV0) -> Result<(), StateSyncErrorV0> {
-        if self.chain_id != trust_path.anchor.chain_id
-            || self.protocol_digest != trust_path.anchor.protocol_digest
-            || self.height != trust_path.terminal.height
-            || self.epoch != trust_path.terminal.epoch
-            || self.state_root != trust_path.terminal.state_root
-            || self.checkpoint_digest != trust_path.terminal.checkpoint_digest
-        {
-            return Err(StateSyncErrorV0::ManifestTrustMismatch);
-        }
+    fn validate_shape(&self) -> Result<(), StateSyncErrorV0> {
         let declared_capacity = u64::from(self.chunk_count)
             .checked_mul(u64::from(self.maximum_chunk_bytes))
             .ok_or(StateSyncErrorV0::InvalidManifest)?;
@@ -295,6 +298,20 @@ impl SnapshotManifestV0 {
         {
             return Err(StateSyncErrorV0::InvalidManifest);
         }
+        Ok(())
+    }
+
+    pub fn validate(&self, trust_path: &VerifiedTrustPathV0) -> Result<(), StateSyncErrorV0> {
+        if self.chain_id != trust_path.anchor.chain_id
+            || self.protocol_digest != trust_path.anchor.protocol_digest
+            || self.height != trust_path.terminal.height
+            || self.epoch != trust_path.terminal.epoch
+            || self.state_root != trust_path.terminal.state_root
+            || self.checkpoint_digest != trust_path.terminal.checkpoint_digest
+        {
+            return Err(StateSyncErrorV0::ManifestTrustMismatch);
+        }
+        self.validate_shape()?;
         Ok(())
     }
 }
@@ -328,6 +345,203 @@ impl SnapshotChunkV0 {
         }
         Ok(())
     }
+
+    fn validate_wire_shape(&self) -> Result<(), StateSyncErrorV0> {
+        if self.manifest_digest == Digest32V0([0; 32])
+            || self.index >= MAX_CHUNK_COUNT_V0
+            || self.bytes.is_empty()
+            || self.bytes.len() > MAX_CHUNK_BYTES_V0
+            || self.chunk_digest
+                != Self::canonical_digest(self.manifest_digest, self.index, &self.bytes)
+        {
+            return Err(StateSyncErrorV0::InvalidChunk);
+        }
+        Ok(())
+    }
+}
+
+/// Transport-neutral, bounded frames for a manifest or a snapshot chunk.
+///
+/// This is only the canonical byte boundary. It does not open a socket, select
+/// a peer, or authenticate a checkpoint; callers must still pass the decoded
+/// manifest through `SnapshotManifestV0::validate` and chunks through a
+/// `StateSyncSessionV0` bound to an independently verified trust path.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum SnapshotTransferFrameV0 {
+    Manifest(SnapshotManifestV0),
+    Chunk(SnapshotChunkV0),
+}
+
+impl SnapshotTransferFrameV0 {
+    /// Encode one exact frame. Unknown fields and alternate encodings are not
+    /// produced by this method and are rejected by `decode_v0`.
+    pub fn encode_v0(&self) -> Result<Vec<u8>, StateSyncErrorV0> {
+        let (kind, payload, maximum) = match self {
+            Self::Manifest(manifest) => {
+                manifest.validate_shape()?;
+                let mut payload = Vec::with_capacity(256);
+                put_digest(&mut payload, manifest.chain_id);
+                put_digest(&mut payload, manifest.protocol_digest);
+                payload.extend_from_slice(&manifest.height.to_be_bytes());
+                payload.extend_from_slice(&manifest.epoch.to_be_bytes());
+                put_digest(&mut payload, manifest.state_root);
+                put_digest(&mut payload, manifest.chunk_root);
+                payload.extend_from_slice(&manifest.chunk_count.to_be_bytes());
+                payload.extend_from_slice(&manifest.maximum_chunk_bytes.to_be_bytes());
+                payload.extend_from_slice(&manifest.total_bytes.to_be_bytes());
+                put_digest(&mut payload, manifest.schema_digest);
+                put_digest(&mut payload, manifest.checkpoint_digest);
+                put_digest(&mut payload, manifest.manifest_digest);
+                (
+                    SNAPSHOT_WIRE_MANIFEST_KIND_V0,
+                    payload,
+                    MAX_SNAPSHOT_MANIFEST_WIRE_BYTES_V0,
+                )
+            }
+            Self::Chunk(chunk) => {
+                chunk.validate_wire_shape()?;
+                let mut payload = Vec::with_capacity(72 + chunk.bytes.len());
+                put_digest(&mut payload, chunk.manifest_digest);
+                payload.extend_from_slice(&chunk.index.to_be_bytes());
+                payload.extend_from_slice(
+                    &u32::try_from(chunk.bytes.len())
+                        .map_err(|_| StateSyncErrorV0::InvalidChunk)?
+                        .to_be_bytes(),
+                );
+                payload.extend_from_slice(&chunk.bytes);
+                put_digest(&mut payload, chunk.chunk_digest);
+                (
+                    SNAPSHOT_WIRE_CHUNK_KIND_V0,
+                    payload,
+                    MAX_SNAPSHOT_CHUNK_WIRE_BYTES_V0,
+                )
+            }
+        };
+        let frame_len = SNAPSHOT_WIRE_HEADER_BYTES_V0
+            .checked_add(payload.len())
+            .ok_or(StateSyncErrorV0::WireFrameTooLarge)?;
+        if frame_len > maximum || payload.len() > u32::MAX as usize {
+            return Err(StateSyncErrorV0::WireFrameTooLarge);
+        }
+        let mut frame = Vec::with_capacity(frame_len);
+        frame.extend_from_slice(&SNAPSHOT_WIRE_MAGIC_V0);
+        frame.push(SNAPSHOT_WIRE_VERSION_V0);
+        frame.push(kind);
+        frame.extend_from_slice(&(payload.len() as u32).to_be_bytes());
+        frame.extend_from_slice(&payload);
+        Ok(frame)
+    }
+
+    /// Decode one complete canonical frame without selecting a trust anchor.
+    /// The caller must perform manifest-to-checkpoint and chunk-to-manifest
+    /// checks after decoding.
+    pub fn decode_v0(bytes: &[u8]) -> Result<Self, StateSyncErrorV0> {
+        if bytes.len() < SNAPSHOT_WIRE_HEADER_BYTES_V0
+            || bytes[..4] != SNAPSHOT_WIRE_MAGIC_V0
+            || bytes[4] != SNAPSHOT_WIRE_VERSION_V0
+        {
+            return Err(StateSyncErrorV0::InvalidWireFrame);
+        }
+        let kind = bytes[5];
+        let declared_len = u32::from_be_bytes(
+            bytes[6..10]
+                .try_into()
+                .map_err(|_| StateSyncErrorV0::InvalidWireFrame)?,
+        ) as usize;
+        if declared_len != bytes.len() - SNAPSHOT_WIRE_HEADER_BYTES_V0 {
+            return Err(StateSyncErrorV0::InvalidWireFrame);
+        }
+        let maximum = match kind {
+            SNAPSHOT_WIRE_MANIFEST_KIND_V0 => MAX_SNAPSHOT_MANIFEST_WIRE_BYTES_V0,
+            SNAPSHOT_WIRE_CHUNK_KIND_V0 => MAX_SNAPSHOT_CHUNK_WIRE_BYTES_V0,
+            _ => return Err(StateSyncErrorV0::InvalidWireFrame),
+        };
+        if bytes.len() > maximum {
+            return Err(StateSyncErrorV0::WireFrameTooLarge);
+        }
+        let mut payload = &bytes[SNAPSHOT_WIRE_HEADER_BYTES_V0..];
+        match kind {
+            SNAPSHOT_WIRE_MANIFEST_KIND_V0 => {
+                let manifest = SnapshotManifestV0 {
+                    chain_id: take_digest(&mut payload)?,
+                    protocol_digest: take_digest(&mut payload)?,
+                    height: take_u64(&mut payload)?,
+                    epoch: take_u64(&mut payload)?,
+                    state_root: take_digest(&mut payload)?,
+                    chunk_root: take_digest(&mut payload)?,
+                    chunk_count: take_u32(&mut payload)?,
+                    maximum_chunk_bytes: take_u32(&mut payload)?,
+                    total_bytes: take_u64(&mut payload)?,
+                    schema_digest: take_digest(&mut payload)?,
+                    checkpoint_digest: take_digest(&mut payload)?,
+                    manifest_digest: take_digest(&mut payload)?,
+                };
+                if !payload.is_empty() {
+                    return Err(StateSyncErrorV0::InvalidWireFrame);
+                }
+                manifest.validate_shape()?;
+                Ok(Self::Manifest(manifest))
+            }
+            SNAPSHOT_WIRE_CHUNK_KIND_V0 => {
+                let manifest_digest = take_digest(&mut payload)?;
+                let index = take_u32(&mut payload)?;
+                let byte_len = take_u32(&mut payload)? as usize;
+                if byte_len == 0 || byte_len > MAX_CHUNK_BYTES_V0 || payload.len() < byte_len + 32 {
+                    return Err(StateSyncErrorV0::InvalidWireFrame);
+                }
+                let bytes = take_slice(&mut payload, byte_len)?.to_vec();
+                let chunk = SnapshotChunkV0 {
+                    manifest_digest,
+                    index,
+                    bytes,
+                    chunk_digest: take_digest(&mut payload)?,
+                };
+                if !payload.is_empty() {
+                    return Err(StateSyncErrorV0::InvalidWireFrame);
+                }
+                chunk.validate_wire_shape()?;
+                Ok(Self::Chunk(chunk))
+            }
+            _ => Err(StateSyncErrorV0::InvalidWireFrame),
+        }
+    }
+}
+
+fn put_digest(output: &mut Vec<u8>, digest: Digest32V0) {
+    output.extend_from_slice(&digest.0);
+}
+
+fn take_slice<'a>(input: &mut &'a [u8], count: usize) -> Result<&'a [u8], StateSyncErrorV0> {
+    if input.len() < count {
+        return Err(StateSyncErrorV0::InvalidWireFrame);
+    }
+    let (head, tail) = input.split_at(count);
+    *input = tail;
+    Ok(head)
+}
+
+fn take_digest(input: &mut &[u8]) -> Result<Digest32V0, StateSyncErrorV0> {
+    Ok(Digest32V0(
+        take_slice(input, 32)?
+            .try_into()
+            .map_err(|_| StateSyncErrorV0::InvalidWireFrame)?,
+    ))
+}
+
+fn take_u32(input: &mut &[u8]) -> Result<u32, StateSyncErrorV0> {
+    Ok(u32::from_be_bytes(
+        take_slice(input, 4)?
+            .try_into()
+            .map_err(|_| StateSyncErrorV0::InvalidWireFrame)?,
+    ))
+}
+
+fn take_u64(input: &mut &[u8]) -> Result<u64, StateSyncErrorV0> {
+    Ok(u64::from_be_bytes(
+        take_slice(input, 8)?
+            .try_into()
+            .map_err(|_| StateSyncErrorV0::InvalidWireFrame)?,
+    ))
 }
 
 #[must_use]
@@ -400,6 +614,7 @@ pub trait NonDestructiveInstallTargetV0 {
     fn abort_staging(&mut self, staging: StagingIdentityV0) -> Result<(), Self::Error>;
 }
 
+#[derive(Clone)]
 pub struct StateSyncSessionV0 {
     trust_path: VerifiedTrustPathV0,
     manifest: SnapshotManifestV0,
@@ -446,11 +661,47 @@ impl StateSyncSessionV0 {
         Ok(())
     }
 
+    /// Return a deterministic readback of the retained chunk set.  This is
+    /// deliberately independent from the order in which a transport delivered
+    /// chunks, so a restart can compare durable bytes with the exact session
+    /// binding instead of trusting a bitmap alone.
+    #[must_use]
+    pub fn progress_digest(&self) -> Digest32V0 {
+        let mut parts = Vec::with_capacity(self.chunks.len() * 2 + 1);
+        parts.push(self.manifest.manifest_digest.0.to_vec());
+        for (index, chunk) in &self.chunks {
+            parts.push(index.to_be_bytes().to_vec());
+            parts.push(chunk.chunk_digest.0.to_vec());
+        }
+        let refs: Vec<&[u8]> = parts.iter().map(Vec::as_slice).collect();
+        Digest32V0::hash(b"trnm.state-sync.session-progress.v0", &refs)
+    }
+
+    #[must_use]
+    pub(crate) fn manifest_binding_digest(&self) -> Digest32V0 {
+        self.manifest.chunk_binding_digest()
+    }
+
+    #[must_use]
+    pub fn received_chunk_count(&self) -> u32 {
+        self.chunks.len() as u32
+    }
+
+    #[must_use]
+    pub const fn received_bytes(&self) -> u64 {
+        self.received_bytes
+    }
+
     #[must_use]
     pub fn missing_chunks(&self) -> Vec<u32> {
         (0..self.manifest.chunk_count)
             .filter(|index| !self.chunks.contains_key(index))
             .collect()
+    }
+
+    #[must_use]
+    pub(crate) fn retained_chunks_v0(&self) -> Vec<SnapshotChunkV0> {
+        self.chunks.values().cloned().collect()
     }
 
     pub fn verify_complete<R>(
@@ -651,6 +902,10 @@ pub enum StateSyncErrorV0 {
     InvalidExpectedCurrentRoot,
     InvalidStagingIdentity,
     InstallReceiptMismatch,
+    InvalidWireFrame,
+    WireFrameTooLarge,
+    NativeApplicationBindingMismatch,
+    NativeSessionReadbackMismatch,
 }
 
 impl fmt::Display for StateSyncErrorV0 {
@@ -672,6 +927,14 @@ impl fmt::Display for StateSyncErrorV0 {
             Self::InvalidExpectedCurrentRoot => "expected current state root is invalid",
             Self::InvalidStagingIdentity => "snapshot staging identity is invalid",
             Self::InstallReceiptMismatch => "non-destructive install receipt mismatch",
+            Self::InvalidWireFrame => "snapshot transfer frame is noncanonical or truncated",
+            Self::WireFrameTooLarge => "snapshot transfer frame exceeds its protocol bound",
+            Self::NativeApplicationBindingMismatch => {
+                "native snapshot does not match its authenticated application checkpoint"
+            }
+            Self::NativeSessionReadbackMismatch => {
+                "native state-sync restart readback does not match retained bytes"
+            }
         })
     }
 }
@@ -903,6 +1166,80 @@ mod tests {
                 StateSyncErrorV0::IncompleteSnapshot
             ))
         ));
+    }
+
+    #[test]
+    fn canonical_transfer_frames_round_trip_into_bound_session() {
+        let (trust, manifest, chunks) = fixture();
+        let manifest_frame = SnapshotTransferFrameV0::Manifest(manifest.clone())
+            .encode_v0()
+            .unwrap();
+        let SnapshotTransferFrameV0::Manifest(decoded_manifest) =
+            SnapshotTransferFrameV0::decode_v0(&manifest_frame).unwrap()
+        else {
+            panic!("expected manifest frame");
+        };
+        assert_eq!(decoded_manifest, manifest);
+
+        let mut session = StateSyncSessionV0::new(trust, decoded_manifest).unwrap();
+        for chunk in chunks {
+            let frame = SnapshotTransferFrameV0::Chunk(chunk.clone())
+                .encode_v0()
+                .unwrap();
+            let SnapshotTransferFrameV0::Chunk(decoded_chunk) =
+                SnapshotTransferFrameV0::decode_v0(&frame).unwrap()
+            else {
+                panic!("expected chunk frame");
+            };
+            session.accept_chunk(decoded_chunk).unwrap();
+        }
+        assert!(session.verify_complete(&HashRoot).is_ok());
+    }
+
+    #[test]
+    fn transfer_frames_reject_version_trailing_and_digest_mutations() {
+        let (_, manifest, chunks) = fixture();
+        let mut manifest_frame = SnapshotTransferFrameV0::Manifest(manifest)
+            .encode_v0()
+            .unwrap();
+        manifest_frame[4] = SNAPSHOT_WIRE_VERSION_V0.saturating_add(1);
+        assert_eq!(
+            SnapshotTransferFrameV0::decode_v0(&manifest_frame),
+            Err(StateSyncErrorV0::InvalidWireFrame)
+        );
+
+        let mut chunk_frame = SnapshotTransferFrameV0::Chunk(chunks[0].clone())
+            .encode_v0()
+            .unwrap();
+        chunk_frame.push(0);
+        assert_eq!(
+            SnapshotTransferFrameV0::decode_v0(&chunk_frame),
+            Err(StateSyncErrorV0::InvalidWireFrame)
+        );
+
+        let mut tampered_chunk = SnapshotTransferFrameV0::Chunk(chunks[0].clone())
+            .encode_v0()
+            .unwrap();
+        tampered_chunk[SNAPSHOT_WIRE_HEADER_BYTES_V0 + 32 + 4 + 4] ^= 1;
+        assert_eq!(
+            SnapshotTransferFrameV0::decode_v0(&tampered_chunk),
+            Err(StateSyncErrorV0::InvalidChunk)
+        );
+    }
+
+    #[test]
+    fn transfer_frame_size_is_rejected_before_payload_decode() {
+        let mut oversized = vec![0u8; MAX_SNAPSHOT_MANIFEST_WIRE_BYTES_V0 + 1];
+        oversized[..4].copy_from_slice(&SNAPSHOT_WIRE_MAGIC_V0);
+        oversized[4] = SNAPSHOT_WIRE_VERSION_V0;
+        oversized[5] = SNAPSHOT_WIRE_MANIFEST_KIND_V0;
+        let oversized_payload_len = oversized.len() - SNAPSHOT_WIRE_HEADER_BYTES_V0;
+        oversized[6..10]
+            .copy_from_slice(&u32::try_from(oversized_payload_len).unwrap().to_be_bytes());
+        assert_eq!(
+            SnapshotTransferFrameV0::decode_v0(&oversized),
+            Err(StateSyncErrorV0::WireFrameTooLarge)
+        );
     }
 
     #[derive(Debug)]

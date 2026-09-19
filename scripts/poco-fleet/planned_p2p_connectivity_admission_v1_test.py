@@ -69,7 +69,7 @@ def material_fixture() -> tuple[
         {
             "host_id": "mac",
             "management": "p4-mac",
-            "lan_ip": "192.168.0.5",
+            "lan_ip": "192.168.0.10",
             "os": "macos",
             "arch": "arm64",
             "validator_eligible": False,

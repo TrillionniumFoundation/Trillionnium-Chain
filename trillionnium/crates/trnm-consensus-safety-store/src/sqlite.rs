@@ -5373,17 +5373,9 @@ fn validate_authenticated_genesis_application_h1_native_valid_v0(
             )?
         || transition.route() != facts.route()
         || transition.validation_id() != validation_id
-        || transition.request_fingerprint() != facts.request_fingerprint()
-        || transition.job_immutable_checksum() != facts.job_immutable_checksum()
-        || transition.application_host_config_ref() != facts.application_host_config_ref()
-        || transition.valid_result_checksum() != facts.valid_result_checksum()
-        || transition.callback_payload_checksum() != facts.callback_payload_checksum()
-        || transition.idempotency_key() != facts.idempotency_key()
-        || transition.delivery_attempt() != facts.delivery_attempt()
-        || transition.delivered_job_row_checksum() != facts.delivered_job_row_checksum()
-        || transition.outbox_checksum() != facts.outbox_checksum()
-        || transition.completion_revision() != facts.completion_revision()
-        || transition.post_ack_action_code() != facts.post_ack_action().code()
+        || transition
+            .validate_against_application_delivery_facts_v0(&facts)
+            .is_err()
     {
         return Err(
             SafetyStoreErrorV0::AuthenticatedGenesisApplicationH1OfflinePersistenceMismatch {
@@ -5399,21 +5391,7 @@ fn native_valid_transition_from_application_seal_v0(
     sealed_transition: &ApplicationSealedNativeValidTransitionV0,
 ) -> Result<NativeValidTransitionV0, SafetyStoreErrorV0> {
     let facts = sealed_transition.delivery_facts_v0();
-    NativeValidTransitionV0::new(
-        facts.route(),
-        facts.validation_id(),
-        facts.request_fingerprint(),
-        facts.job_immutable_checksum(),
-        facts.application_host_config_ref(),
-        facts.valid_result_checksum(),
-        facts.callback_payload_checksum(),
-        facts.idempotency_key(),
-        facts.delivery_attempt(),
-        facts.delivered_job_row_checksum(),
-        facts.outbox_checksum(),
-        facts.post_ack_action().code(),
-        facts.completion_revision(),
-    )
+    NativeValidTransitionV0::from_application_delivery_facts_v0(&facts)
 }
 
 fn validate_authenticated_genesis_application_h1_native_valid_completion_v0(
@@ -5470,7 +5448,7 @@ fn validate_authenticated_genesis_application_h1_native_valid_completion_v0(
     Ok(())
 }
 
-fn validate_native_valid_post_ack_manifest_v0(
+pub(crate) fn validate_native_valid_post_ack_manifest_v0(
     revision: u64,
     core_action_code: Option<u32>,
     transition_context: &SafetyTransitionContextV0,
@@ -5496,7 +5474,7 @@ fn validate_native_valid_post_ack_manifest_v0(
     Ok(())
 }
 
-fn validate_native_finalization_applied_manifest_v0(
+pub(crate) fn validate_native_finalization_applied_manifest_v0(
     revision: u64,
     core_manifest: Option<&NativeFinalizationAppliedPersistenceV0>,
     transition_context: &SafetyTransitionContextV0,
@@ -5572,7 +5550,7 @@ fn validate_state_sync_anchor_ordinary_promotion_manifest_v0(
     }
 }
 
-fn validate_native_finalization_applied_successor_v0(
+pub(crate) fn validate_native_finalization_applied_successor_v0(
     revision: u64,
     manifest: &NativeFinalizationAppliedPersistenceV0,
     successor_state: &SafetyState,
@@ -5603,7 +5581,7 @@ fn validate_native_finalization_applied_successor_v0(
     Ok(())
 }
 
-fn validate_native_finalization_applied_predecessor_v0(
+pub(crate) fn validate_native_finalization_applied_predecessor_v0(
     revision: u64,
     manifest: &NativeFinalizationAppliedPersistenceV0,
     predecessor_state: &SafetyState,
@@ -5696,7 +5674,7 @@ fn native_finalization_applied_action_matches_state_v0(
     }
 }
 
-fn validate_persisted_native_finalization_applied_pair_v0(
+pub(crate) fn validate_persisted_native_finalization_applied_pair_v0(
     transition: &NativeFinalizationAppliedTransitionV0,
     predecessor_state: &SafetyState,
     successor_state: &SafetyState,

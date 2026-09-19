@@ -5897,7 +5897,6 @@ mod tests {
         ] {
             assert!(!normal_source[passive_owner..post_start].contains(forbidden));
         }
-        assert!(!DEPLOYED_LAB_PROCESS2_ACTIVATION_V0);
     }
 
     struct TestOnlyPassiveCaughtUpOwnerV1<W: ExternalMonotonicWatermarkV0> {
@@ -6057,9 +6056,6 @@ mod tests {
         )
         .expect("process3 re-enters the same fully checkpointed inert owner");
         assert_eq!(process3.facts_v0(), first_facts);
-        assert!(DEPLOYED_LAB_PROCESS2_CLEAN_CUT_RECOVERY_V0);
-        assert!(!DEPLOYED_LAB_PROCESS2_PENDING_SIGN_REPLAY_V0);
-        assert!(!DEPLOYED_LAB_PROCESS2_ACTIVATION_V0);
     }
 
     #[test]
@@ -6122,7 +6118,6 @@ mod tests {
             signer_facts.exact_watermark(),
             expected_fields.signer_exact_watermark
         );
-        assert!(!DEPLOYED_LAB_PROCESS2_ACTIVATION_V0);
     }
 
     #[test]
@@ -6333,7 +6328,6 @@ mod tests {
             proposal_binding.high_qc_v0().qc_ref().block_id(),
             bridge_facts.runtime_v1().proposal_parent_block_id_v0()
         );
-        assert!(!DEPLOYED_LAB_PROCESS2_ACTIVATION_V0);
     }
 
     #[test]

@@ -178,7 +178,34 @@ mod deployed_lab_recovery;
 pub mod effect_driver;
 #[cfg(feature = "g1-process-test-support")]
 pub mod effect_driver_process;
+#[cfg(feature = "epoch-handoff-checkpoint-candidate")]
+mod epoch_retirement_checkpoint_v1;
+#[cfg(feature = "epoch-handoff-checkpoint-candidate")]
+pub use epoch_retirement_checkpoint_v1::{
+    confirm_retired_epoch_node_checkpoint_v1, ConfirmedRetiredEpochNodeCheckpointV1,
+    EpochRetirementCheckpointErrorV1,
+};
+#[cfg(feature = "epoch-runtime-candidate")]
+mod epoch_node_checkpoint_v1;
+#[cfg(feature = "epoch-runtime-candidate")]
+pub use epoch_node_checkpoint_v1::{
+    EpochApplicationCutV1, EpochApplicationEdgeCutV1, EpochCheckpointPhaseV1,
+    EpochCheckpointPredecessorV1, EpochCheckpointRoleV1, EpochNodeCheckpointErrorV1,
+    EpochNodeCheckpointFieldsV1, EpochNodeCheckpointV1, EpochOrdinaryCustodyCutV1,
+    EpochRetiredCustodyCutV1, EpochSafetyCutV1, EPOCH_NODE_CHECKPOINT_MAX_BYTES_V1,
+};
+#[cfg(feature = "epoch-runtime-candidate")]
+mod epoch_runtime_candidate_v1;
+#[cfg(feature = "epoch-runtime-candidate")]
+pub use epoch_runtime_candidate_v1::{
+    CandidateEpochRuntimeV1, FirstNewEpochPhaseV1, PendingEpochValidationRecoveryReadbackV1,
+    ProgressedEpochRecoveryReadbackV1,
+};
 mod external_node_checkpoint;
+#[cfg(feature = "epoch-runtime-candidate")]
+pub use external_node_checkpoint::epoch_node_store_v1::{
+    EpochNodeStoreErrorV1, SqliteEpochNodeCheckpointStoreV1,
+};
 #[cfg(feature = "external-proposal-signer")]
 mod external_proposal_signer_runtime;
 #[cfg(feature = "external-signer-runtime")]
@@ -344,6 +371,8 @@ pub use g2f_namespace_identity::{
     POCO_NODE_G2F_NAMESPACE_IDENTITY_CONTRACT_V1, POCO_NODE_G2F_NAMESPACE_OPENAT_DESCRIPTOR_V1,
     POCO_NODE_G2F_NAMESPACE_PROCESS_INTEGRATION_V1, POCO_NODE_G2F_PRODUCTION_ACTIVATION_V1,
 };
+#[cfg(all(feature = "lab-validator-runtime", feature = "tx-admission-wal"))]
+pub use lab_authority::PocoNodeLabFinalizedTransactionV1;
 #[cfg(feature = "lab-validator-runtime")]
 pub use lab_authority::{
     PocoNodeLabAuthorityErrorV0, PocoNodeLabAuthorityPhaseV0, PocoNodeLabCertificateAdvanceV0,
@@ -402,6 +431,8 @@ pub use ordinary_timeout::{
 pub use p2p_session_ingress::{
     P2pSessionIngressErrorCodeV0, PocoNodeP2pAcceptedFrameV0, PocoNodeP2pReplayAnchorErrorV0,
     PocoNodeP2pReplayAnchorV0, PocoNodeP2pSessionErrorV0, PocoNodeP2pSessionV0,
+    P2P_SESSION_FRAME_REPLAY_AUTHORITY_CANDIDATE_V0,
+    P2P_SESSION_FRAME_REPLAY_AUTHORITY_PRODUCTION_ACTIVATION_V0,
     P2P_SESSION_INGRESS_PRODUCTION_ACTIVATION_V0, P2P_SESSION_INGRESS_RUNTIME_COMPOSITION_V0,
     P2P_SESSION_MAX_FRAME_BYTES_V0, P2P_SESSION_MAX_HANDSHAKE_BYTES_V0,
     P2P_SESSION_MAX_PAYLOAD_BYTES_V0, P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0,
@@ -468,11 +499,14 @@ pub use state_sync_wire_ingress::{
 #[cfg(feature = "tx-admission-wal")]
 pub use tx_admission_wal::{
     CanonicalAdmissionContextResolverV0, CanonicalSignerIdentityResolverV0,
-    DurableNativeCommitReceiptVerifierV0, NativeCommitReceiptEvidenceV0,
-    NativeCommitReceiptVerifierV0, NodeOwnedTxAdmissionBoundaryV0, PendingNonceHandoffRecordV0,
-    SqlitePendingNonceAuthorityV0, TxAdmissionReplayFloorEvidenceV1,
-    TxAdmissionReplayFloorVerifierV1, TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0,
-    VerifiedNativeCommitReceiptV0, VerifiedTxAdmissionReplayFloorV1,
+    DurableNativeCommitReceiptVerifierV0, NativeAdmissionErrorV1, NativeAdmissionProfileV1,
+    NativeAdmissionRecordV1, NativeAdmissionStatusV1, NativeCommitReceiptEvidenceV0,
+    NativeCommitReceiptVerifierV0, NativePendingAdmissionV1, NodeOwnedTxAdmissionBoundaryV0,
+    PendingNonceHandoffRecordV0, SqlitePendingNonceAuthorityV0, StoredNativeCommitReceiptV0,
+    TxAdmissionReplayFloorEvidenceV1, TxAdmissionReplayFloorVerifierV1,
+    TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0, VerifiedNativeCommitReceiptV0,
+    VerifiedTxAdmissionReplayFloorV1, MAX_NATIVE_ADMISSION_OUTER_BYTES_V1,
+    MAX_NATIVE_PENDING_BYTES_V1, MAX_NATIVE_PENDING_TRANSACTIONS_V1, NATIVE_PUBLIC_PROFILE_V1,
     TX_ADMISSION_BOUNDARY_BROADCAST_V0, TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0,
     TX_ADMISSION_BOUNDARY_CHECKTX_V0, TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
     TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_V0,

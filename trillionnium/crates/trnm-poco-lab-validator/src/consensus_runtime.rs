@@ -1997,10 +1997,12 @@ impl ConsensusRuntimePreflightV1 {
             .ordinary_start_height()
             .checked_add(max_blocks - 1)
             .context("bounded consensus target height overflows")?;
-        ensure!(
-            target_height <= config.workload_corpus().header().max_height,
-            "bounded consensus target exceeds the committed workload corpus"
-        );
+        if config.native_client_profile_v1().is_none() {
+            ensure!(
+                target_height <= config.workload_corpus()?.header().max_height,
+                "bounded consensus target exceeds the committed workload corpus"
+            );
+        }
         let signer_lifetime = ContinuousSignerLifetimeBoundsV0::from_campaign_v0(
             max_blocks,
             duration_seconds,
@@ -2351,20 +2353,36 @@ fn fleet_campaign_context_v1(
     );
     let validator_count = u32::try_from(config.validator_set().validators().len())
         .context("fleet validator count does not fit u32")?;
-    let identity = FleetCampaignIdentityV1::new(
-        config.run_id().to_owned(),
-        config.validator_set().chain_id(),
-        *config.validator_set().genesis_hash().as_bytes(),
-        *config.validator_set().id().as_bytes(),
-        config.validator_set_sha256(),
-        config.topology_sha256(),
-        config.coordinator_manifest_sha256(),
-        config.candidate_source_sha256(),
-        config.binary_sha256(),
-        config.workload_corpus_sha256(),
-        config.workload_policy_sha256(),
-        validator_count,
-    )
+    let identity = if let Some(profile) = config.native_client_profile_v1() {
+        FleetCampaignIdentityV1::new_native_v1(
+            config.run_id().to_owned(),
+            config.validator_set().chain_id(),
+            *config.validator_set().genesis_hash().as_bytes(),
+            *config.validator_set().id().as_bytes(),
+            config.validator_set_sha256(),
+            config.topology_sha256(),
+            config.coordinator_manifest_sha256(),
+            config.candidate_source_sha256(),
+            config.binary_sha256(),
+            profile.digest_v1()?,
+            validator_count,
+        )
+    } else {
+        FleetCampaignIdentityV1::new(
+            config.run_id().to_owned(),
+            config.validator_set().chain_id(),
+            *config.validator_set().genesis_hash().as_bytes(),
+            *config.validator_set().id().as_bytes(),
+            config.validator_set_sha256(),
+            config.topology_sha256(),
+            config.coordinator_manifest_sha256(),
+            config.candidate_source_sha256(),
+            config.binary_sha256(),
+            config.workload_corpus_sha256(),
+            config.workload_policy_sha256(),
+            validator_count,
+        )
+    }
     .map_err(|error| anyhow!("construct fleet campaign identity: {error}"))?;
     let transport = match preflight.transport {
         ConsensusTransportProfileV1::Direct => FleetBarrierTransportV1::Direct,
@@ -2880,6 +2898,7 @@ fn write_fleet_start_certificate_v1(
 }
 
 struct BoundedConsensusOwnerV1 {
+    native_client: Option<crate::native_client_runtime::NativeClientRuntimeV1>,
     config: LoadedValidatorConfig,
     authority: Option<ContinuousValidatorAuthorityV0>,
     mesh: Option<PersistentAuthenticatedPeerMeshV0>,
@@ -4204,7 +4223,10 @@ impl BoundedConsensusOwnerV1 {
         .map_err(|error| anyhow!("initialize restart ingress: {error}"))?;
         let restart_relay_window = RestartRelayAdmissionWindowV1::new(config.validator_set())
             .map_err(|error| anyhow!("initialize restart relay window: {error}"))?;
+        let native_client =
+            crate::native_client_runtime::NativeClientRuntimeV1::open_v1(&config, &authority)?;
         Ok(Self {
+            native_client,
             config,
             authority: Some(authority),
             mesh: Some(mesh),
@@ -4300,6 +4322,7 @@ impl BoundedConsensusOwnerV1 {
             let outbox_progress = self.flush_outbox_v1()?;
             let pending_proposal_progress = self.drain_pending_proposals_v1()?;
             let certificate_progress = self.drain_pending_certificates_v1()?;
+            let client_progress = self.poll_native_client_v1()?;
             let proposal_progress = self.maybe_propose_v1()?;
             self.refresh_stop_state_v1(Instant::now())?;
 
@@ -4320,6 +4343,7 @@ impl BoundedConsensusOwnerV1 {
                 || pending_proposal_progress
                 || certificate_progress
                 || proposal_progress
+                || client_progress
                 || ingress_progress
                 || timeout_progress
                 || restart_prepare_progress
@@ -4376,8 +4400,13 @@ impl BoundedConsensusOwnerV1 {
             && facts.application_applied_height_v0() == facts.finalized_height_v0();
         let reached_height_bound = self.highest_submitted_height >= self.preflight.target_height;
         let reached_duration_bound = now >= self.nominal_deadline;
+        let native_drained = self
+            .native_client
+            .as_ref()
+            .is_none_or(|client| client.drained_v1(facts.finalized_height_v0()));
         if self.stopping_since.is_none()
             && positive_ordinary_finality
+            && native_drained
             && (reached_height_bound || reached_duration_bound)
         {
             self.stopping_since = Some(now);
@@ -4389,7 +4418,7 @@ impl BoundedConsensusOwnerV1 {
                 .checked_add(TERMINAL_DRAIN_GRACE_V1)
                 .ok_or_else(|| anyhow!("positive-finality drain deadline overflows"))?;
             if now >= grace_deadline {
-                bail!("bounded duration elapsed without one positive ordinary finality cut");
+                bail!("DRAIN_INCOMPLETE: bounded duration elapsed before positive finality and accepted native work drained");
             }
         }
         Ok(())
@@ -4439,6 +4468,81 @@ impl BoundedConsensusOwnerV1 {
         )
     }
 
+    fn archive_native_finality_v1(&mut self) -> Result<()> {
+        let Some(client) = self.native_client.as_ref() else {
+            return Ok(());
+        };
+        let after_height = client.last_archived_finalized_height_v1();
+        let authority = self
+            .authority
+            .as_ref()
+            .context("native finality authority unavailable")?;
+        let facts = authority.facts_v0()?;
+        if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready
+            || facts.finalized_height_v0() < self.config.ordinary_start_height()
+            || facts.finalized_height_v0() <= after_height
+        {
+            return Ok(());
+        }
+        if !client.sync_prefix_ready_v1() {
+            let prefix = self
+                .replay_archive
+                .native_sync_bootstrap_v1(&self.config, self.preflight.bootstrap_initial_cut)?;
+            client.persist_sync_bootstrap_v1(&prefix)?;
+        }
+        let proofs = if facts.finalized_height_v0()
+            == after_height.max(self.config.ordinary_start_height() - 1) + 1
+        {
+            let query = authority.native_finalized_query_v1()?;
+            let proof = query.proof_v0().proof_v0().clone();
+            let parent = self
+                .replay_archive
+                .native_parent_header_v1(proof.finalized_block().header(), &self.config)?;
+            vec![(proof, parent)]
+        } else {
+            self.replay_archive.native_finality_range_v1(
+                &self.config,
+                self.preflight.bootstrap_initial_cut,
+                *facts.finalized_block_id_v0().as_bytes(),
+                after_height,
+            )?
+        };
+        let client = self
+            .native_client
+            .as_mut()
+            .expect("native client checked above");
+        for (proof, parent) in proofs {
+            client.observe_finality_evidence_v1(authority, &proof, &parent)?;
+        }
+        ensure!(
+            client.last_archived_finalized_height_v1() == facts.finalized_height_v0(),
+            "RECOVERY_REQUIRED: native finality archive did not reach the exact current cut"
+        );
+        Ok(())
+    }
+
+    fn poll_native_client_v1(&mut self) -> Result<bool> {
+        self.archive_native_finality_v1()?;
+        let Some(client) = &mut self.native_client else {
+            return Ok(false);
+        };
+        if Instant::now() >= self.nominal_deadline {
+            client.stop_admission_v1();
+        }
+        let authority = self
+            .authority
+            .as_ref()
+            .context("native client authority is unavailable")?;
+        let facts = authority.facts_v0()?;
+        if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
+            return Ok(false);
+        }
+        client.poll_v1(
+            authority.native_parent_timestamp_v1()?,
+            facts.finalized_height_v0(),
+        )
+    }
+
     fn maybe_propose_v1(&mut self) -> Result<bool> {
         if !self.restart_lifecycle.allows_local_proposal_v1() || self.stopping_since.is_some() {
             return Ok(false);
@@ -4465,8 +4569,23 @@ impl BoundedConsensusOwnerV1 {
             .authority
             .as_mut()
             .ok_or_else(|| anyhow!("continuous authority is unavailable"))?;
-        let proposal =
-            authority.signed_workload_proposal_from_loaded_config_v0(&mut self.config)?;
+        let proposal = if let Some(client) = &mut self.native_client {
+            let allow_business = next_height <= self.preflight.target_height.saturating_sub(2);
+            if !allow_business || Instant::now() >= self.nominal_deadline {
+                client.stop_admission_v1();
+            }
+            let Some(proposal) = client.maybe_proposal_v1(
+                authority,
+                allow_business,
+                self.config.consensus_parameters().max_block_time_step_ms(),
+            )?
+            else {
+                return Ok(false);
+            };
+            proposal
+        } else {
+            authority.signed_workload_proposal_from_loaded_config_v0(&mut self.config)?
+        };
         let block_id = proposal.block().id();
         let height = proposal.block().header().height().get();
         self.record_proposal_first_seen_v1(block_id, height)?;
@@ -6213,8 +6332,14 @@ impl BoundedConsensusOwnerV1 {
             return Ok(());
         }
         let carried_tc = proposal.timeout_certificate().cloned();
+        let sync_candidate = proposal.clone();
         let before = self.authority_v1()?.facts_v0()?;
-        let vote = self.authority_v1()?.vote_unbound_proposal_v0(proposal)?;
+        let vote = self.authority_v1()?.receive_unbound_proposal_v1(proposal)?;
+        let synced = if vote.is_none() {
+            self.authority_v1()?.sync_late_proposal_v1(sync_candidate)?
+        } else {
+            false
+        };
         let after = self.authority_v1()?.facts_v0()?;
         self.record_application_progress_v1(before, after)?;
         if made_authoritative_progress_v1(before, after) {
@@ -6222,15 +6347,31 @@ impl BoundedConsensusOwnerV1 {
             // Core view change must fence/rearm the old timer just like a
             // standalone certificate; a same-view Vote alone is not progress.
             self.rearm_after_progress_v1(before, after)?;
+        } else if vote.is_none() && before.phase_v0() != after.phase_v0() {
+            // A certificate can restore Ready without advancing the cut.
+            // Match standalone-certificate timer behavior without treating
+            // an ignored body as progress or resetting timeout backoff.
+            self.rearm_after_phase_transition_v1(after)?;
         }
         if let Some(certificate) = carried_tc {
             self.accepted_tc_by_view
                 .insert(certificate.timed_out_view().get(), certificate);
         }
-        self.record_proposal_admitted_v1(block_id, height)?;
-        self.known_executions.insert((height, *block_id.as_bytes()));
-        self.highest_submitted_height = self.highest_submitted_height.max(height);
-        self.emit_local_vote_v1(vote)?;
+        if let Some(vote) = vote {
+            self.record_proposal_admitted_v1(block_id, height)?;
+            self.known_executions.insert((height, *block_id.as_bytes()));
+            self.highest_submitted_height = self.highest_submitted_height.max(height);
+            self.emit_local_vote_v1(vote)?;
+        } else if synced {
+            self.record_proposal_admitted_v1(block_id, height)?;
+            self.known_executions.insert((height, *block_id.as_bytes()));
+            self.highest_submitted_height = self.highest_submitted_height.max(height);
+        } else {
+            // The carrier may have advanced certificates, but its late body
+            // was not executed/voted. Do not publish an execution coordinate
+            // or turn a normal network/timeout race into actor termination.
+            forget_proposal_first_seen_v1(&mut self.proposal_first_seen, block_id);
+        }
         self.drain_pending_certificates_v1()?;
         self.queue_ready_timeout_certificates_v1()?;
         Ok(())
@@ -6701,6 +6842,7 @@ impl BoundedConsensusOwnerV1 {
                 )
                 .map_err(|error| anyhow!("append application acknowledgement event: {error}"))?;
         }
+        self.archive_native_finality_v1()?;
         Ok(())
     }
 

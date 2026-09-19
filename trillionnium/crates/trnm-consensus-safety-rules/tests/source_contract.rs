@@ -36,7 +36,9 @@ fn inert_safety_rules_source_contract_remains_narrow() {
     assert!(source.contains("trnm.consensus.safety-rules.state.v1"));
     assert!(source.contains("trnm.consensus.safety-rules.transition.v1"));
     assert!(source.contains("pub const RECOVERY_REPLAY_AUTHORITY_V1: bool = false;"));
-    assert!(source.contains("proposal\n            .verify("));
+    let compact_source: String = source.split_whitespace().collect();
+    assert!(compact_source.contains("proposal.verify("));
+    assert!(source.contains("runtime.verify_proposal_v1"));
     assert!(readme.contains("inert consensus-safety candidate"));
     assert!(readme.contains("Fresh intent creation is the complete v1 coverage boundary"));
     assert!(readme.contains("`Resume` after `Core::recover`"));

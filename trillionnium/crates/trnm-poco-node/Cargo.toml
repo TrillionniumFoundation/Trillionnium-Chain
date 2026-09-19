@@ -10,6 +10,23 @@ publish = false
 
 [features]
 default = []
+# Typed outgoing epoch checkpoint join, explicitly outside the default closure.
+epoch-handoff-checkpoint-candidate = []
+# Explicit full-epoch trusted-host candidate; never enabled by the outgoing-only join.
+epoch-runtime-candidate = [
+  "dep:anyhow",
+  "epoch-handoff-checkpoint-candidate",
+  "trnm-consensus-core/candidate-epoch-host-v1",
+  "trnm-consensus-safety-store/candidate-epoch-host-v1",
+  "trnm-native-execution-v0/incremental-epoch-candidate",
+  "rusqlite/limits",
+]
+epoch-runtime-test-fixtures = [
+  "epoch-runtime-candidate",
+  "trnm-consensus-core/test-support",
+  "trnm-consensus-safety-store/test-fixtures",
+  "trnm-native-execution-v0/test-fixtures",
+]
 # Explicit AI-native v1 candidate closure. The default/production node must not
 # resolve any v1 candidate crate or compile any G2 candidate command/module.
 ai-v1-candidate = [
@@ -348,6 +365,7 @@ ed25519-dalek = { version = "2", optional = true }
 hex = { version = "0.4", optional = true }
 fs2 = "0.4"
 libc = { version = "0.2", optional = true }
+anyhow = { version = "1", optional = true }
 rusqlite = { version = "0.32", features = ["bundled"] }
 rustix = { version = "1.1.4", features = ["process"], optional = true }
 serde = { version = "1", features = ["derive"], optional = true }

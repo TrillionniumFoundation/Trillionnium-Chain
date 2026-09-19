@@ -15,8 +15,15 @@ use trnm_consensus_types::{
     Validator, ValidatorSet,
 };
 
+mod epoch_proposal_v1;
+mod epoch_runtime_v1;
+pub use epoch_runtime_v1::StrictEpochRuntimeContextV1;
 mod epoch_transition;
+pub use epoch_proposal_v1::{verify_first_epoch_proposal_strict_v1, StrictFirstEpochProposalV1};
+mod pre_handoff;
 mod strict_finality;
+
+pub use pre_handoff::{verify_pre_handoff_context_strict_v1, StrictPreHandoffContextV1};
 
 pub use epoch_transition::{
     recover_epoch_activation_authority_strict_v0, verify_first_epoch_proposal_header_strict_v0,
@@ -26,7 +33,8 @@ pub use epoch_transition::{
     StrictSameVersionEpochActivationAuthorityV0, StrictSameVersionEpochTransitionV0,
 };
 pub use strict_finality::{
-    decode_verify_finality_proof_strict_v0, FinalityExpectationV0, StrictFinalityErrorV0,
+    decode_verify_epoch_first_finality_strict_v1, decode_verify_finality_proof_strict_v0,
+    FinalityExpectationV0, StrictEpochFinalityProofV1, StrictFinalityErrorV0,
     StrictFinalityProofV0, POCO_THREE_CHAIN_PROOF_CLASS_V0,
 };
 

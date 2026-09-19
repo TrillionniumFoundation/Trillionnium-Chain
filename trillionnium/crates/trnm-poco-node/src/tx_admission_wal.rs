@@ -198,6 +198,7 @@ pub enum TxAdmissionWalErrorV0 {
     PathReplaced,
     Sqlite,
     SchemaMismatch,
+    NativeMigrationRequired,
     NamespaceMismatch,
     Malformed,
     TooLarge,
@@ -222,6 +223,9 @@ impl fmt::Display for TxAdmissionWalErrorV0 {
             Self::PathReplaced => "transaction admission WAL path identity changed",
             Self::Sqlite => "transaction admission WAL SQLite operation failed",
             Self::SchemaMismatch => "transaction admission WAL schema mismatch",
+            Self::NativeMigrationRequired => {
+                "transaction admission WAL requires explicit native-body migration"
+            }
             Self::NamespaceMismatch => "transaction admission WAL namespace mismatch",
             Self::Malformed => "transaction admission WAL row is malformed",
             Self::TooLarge => "transaction admission WAL row bound exceeded",
@@ -839,6 +843,27 @@ pub struct VerifiedNativeCommitReceiptV0 {
 }
 
 impl VerifiedNativeCommitReceiptV0 {
+    pub const fn evidence(&self) -> &NativeCommitReceiptEvidenceV0 {
+        &self.evidence
+    }
+
+    pub const fn commitment(&self) -> [u8; 32] {
+        self.commitment
+    }
+}
+
+/// Authenticated facts returned by a candidate public transaction-status
+/// lookup.  The row is revalidated against the pending-nonce record and its
+/// canonical commitment before this value is returned.  It is an evidence
+/// handle, not a finality proof: callers still need the independently
+/// retained proof bytes (or another proof service) to verify consensus.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct StoredNativeCommitReceiptV0 {
+    evidence: NativeCommitReceiptEvidenceV0,
+    commitment: [u8; 32],
+}
+
+impl StoredNativeCommitReceiptV0 {
     pub const fn evidence(&self) -> &NativeCommitReceiptEvidenceV0 {
         &self.evidence
     }
@@ -1560,6 +1585,85 @@ fn read_receipt_commitment_v0(
     raw.map_or(Ok(None), |value| decode_fixed::<32>(value).map(Some))
 }
 
+fn read_receipt_by_digest_v0(
+    connection: &Connection,
+    namespace: [u8; 32],
+    digest: [u8; 32],
+) -> Result<Option<StoredNativeCommitReceiptV0>, TxAdmissionWalErrorV0> {
+    if digest == [0; 32] {
+        return Err(TxAdmissionWalErrorV0::Malformed);
+    }
+    let raw: Option<RawReceiptRowV0> = connection
+        .query_row(
+            "SELECT signer, nonce, tx_digest, block_id, block_height, state_root,
+                    receipt_digest, finality_proof_digest, commitment
+             FROM tx_commit_receipt_v0
+             WHERE namespace = ?1 AND tx_digest = ?2",
+            params![namespace.as_slice(), digest.as_slice()],
+            |row| {
+                Ok((
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    row.get(3)?,
+                    row.get(4)?,
+                    row.get(5)?,
+                    row.get(6)?,
+                    row.get(7)?,
+                    row.get(8)?,
+                ))
+            },
+        )
+        .optional()
+        .map_err(sqlite_error)?;
+    let Some((
+        signer,
+        nonce,
+        tx_digest,
+        block_id,
+        block_height,
+        state_root,
+        receipt_digest,
+        finality_proof_digest,
+        commitment,
+    )) = raw
+    else {
+        return Ok(None);
+    };
+    let signer = decode_fixed::<32>(signer)?;
+    let nonce = u64::from_be_bytes(decode_fixed::<8>(nonce)?);
+    let tx_digest = decode_fixed::<32>(tx_digest)?;
+    let block_id = decode_fixed::<32>(block_id)?;
+    let block_height = u64::from_be_bytes(decode_fixed::<8>(block_height)?);
+    let state_root = decode_fixed::<32>(state_root)?;
+    let receipt_digest = decode_fixed::<32>(receipt_digest)?;
+    let finality_proof_digest = decode_fixed::<32>(finality_proof_digest)?;
+    let commitment = decode_fixed::<32>(commitment)?;
+    let Some((pending, state)) = read_row_v0(connection, namespace, signer, nonce)? else {
+        return Err(TxAdmissionWalErrorV0::Malformed);
+    };
+    if state != STATE_COMMITTED_V0 || pending.digest != tx_digest || tx_digest != digest {
+        return Err(TxAdmissionWalErrorV0::Malformed);
+    }
+    let evidence = NativeCommitReceiptEvidenceV0::new(
+        tx_digest,
+        BlockId::new(block_id),
+        Height::new(block_height),
+        StateRoot::new(state_root),
+        receipt_digest,
+        finality_proof_digest,
+    )?;
+    if evidence.canonical_commitment() != commitment {
+        return Err(TxAdmissionWalErrorV0::Malformed);
+    }
+    Ok(Some(StoredNativeCommitReceiptV0 {
+        evidence,
+        commitment,
+    }))
+}
+
+type NativeLiveHandoffsV1 = Rc<RefCell<BTreeMap<([u8; 32], u64), std::rc::Weak<()>>>>;
+
 /// A node-owned SQLite pending-nonce authority.
 ///
 /// The authority is intentionally not `Clone` and its lock is held for its
@@ -1576,6 +1680,9 @@ pub struct SqlitePendingNonceAuthorityV0 {
     parent_handle: Rc<File>,
     parent_identity: PathIdentityV0,
     namespace: [u8; 32],
+    native_profile: Option<NativeAdmissionProfileV1>,
+    pending_native_body: Option<Vec<u8>>,
+    native_live_handoffs: NativeLiveHandoffsV1,
 }
 
 /// The candidate node-owned transaction-admission boundary.
@@ -1611,6 +1718,7 @@ pub struct NodeOwnedTxAdmissionBoundaryV0 {
     /// constructor convention, so a normal admission owner cannot accidentally
     /// invoke the restart path.
     allow_handed_off_recovery: bool,
+    native_recovery_required: bool,
 }
 
 impl NodeOwnedTxAdmissionBoundaryV0 {
@@ -1658,6 +1766,7 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             signer_resolver,
             context_resolver,
             allow_handed_off_recovery: allow_handed_off,
+            native_recovery_required: false,
         })
     }
 
@@ -1823,6 +1932,9 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         E: SignedEnvelopeView + ?Sized,
         H: SignedAdmissionHooks<E>,
     {
+        if self.authority.native_profile.is_some() && self.authority.pending_native_body.is_none() {
+            return TypedAdmitOutcome::Rejected(AdmissionReject::InconsistentState);
+        }
         if self.authority.has_unresolved_handoff_v0().unwrap_or(true) {
             return TypedAdmitOutcome::Rejected(AdmissionReject::InconsistentState);
         }
@@ -1926,6 +2038,14 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             .as_ref()
             .map(|context| (context.chain_id_v0().to_owned(), context.now_unix_ms_v0()))
             .ok_or(AdmissionReject::RecheckUnavailable)?;
+        // Recovery authenticates historical execution time through the sealed
+        // application/finality verifier below. Today's expiry cannot erase a
+        // committed native transaction; this exception never admits new work.
+        let now_unix_ms = if self.authority.native_profile.is_some() {
+            transaction.envelope().issued_at_unix_ms
+        } else {
+            now_unix_ms
+        };
         let mut hooks = CanonicalCheckTxHooksV0 {
             chain_id,
             now_unix_ms,
@@ -2061,6 +2181,17 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
     pub fn retained_rows(&self) -> Result<usize, TxAdmissionWalErrorV0> {
         self.authority.retained_rows()
     }
+
+    /// Look up an authenticated native commit receipt by the canonical
+    /// transaction digest. This is a candidate status/readback seam: it
+    /// returns only durable evidence and commitment, never a fabricated
+    /// finality proof or an RPC success claim.
+    pub fn lookup_commit_receipt_v0(
+        &self,
+        tx_digest: [u8; 32],
+    ) -> Result<Option<StoredNativeCommitReceiptV0>, TxAdmissionWalErrorV0> {
+        self.authority.lookup_commit_receipt_v0(tx_digest)
+    }
 }
 
 impl fmt::Debug for SqlitePendingNonceAuthorityV0 {
@@ -2120,14 +2251,47 @@ impl SqlitePendingNonceAuthorityV0 {
         authority.handed_off_records_v0()
     }
 
+    /// Read one committed native receipt by transaction digest while holding
+    /// the same exclusive WAL owner lock used by admission. The row is
+    /// revalidated against its pending-nonce record and canonical commitment;
+    /// malformed or tampered rows fail closed.
+    pub fn lookup_commit_receipt_v0(
+        &self,
+        tx_digest: [u8; 32],
+    ) -> Result<Option<StoredNativeCommitReceiptV0>, TxAdmissionWalErrorV0> {
+        self.ensure_identity()?;
+        let connection = self
+            .connection
+            .try_borrow()
+            .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
+        read_receipt_by_digest_v0(&connection, self.namespace, tx_digest)
+    }
+
     fn open_with_handoff_policy(
         path: impl AsRef<Path>,
         namespace: [u8; 32],
         allow_handed_off: bool,
     ) -> Result<Self, TxAdmissionWalErrorV0> {
+        Self::open_with_native_profile_v1(path, namespace, allow_handed_off, None)
+    }
+
+    fn open_with_native_profile_v1(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        allow_handed_off: bool,
+        native_profile: Option<NativeAdmissionProfileV1>,
+    ) -> Result<Self, TxAdmissionWalErrorV0> {
         if namespace == [0; 32] {
             return Err(TxAdmissionWalErrorV0::InvalidNamespace);
         }
+        if let Some(profile) = native_profile {
+            profile.validate()?;
+        }
+        let schema_version = if native_profile.is_some() {
+            NATIVE_BODY_SCHEMA_VERSION_V1
+        } else {
+            SCHEMA_VERSION_V0
+        };
         let path = path.as_ref().to_path_buf();
         let (parent_path, parent_handle, parent_identity) = capture_parent_v0(&path)?;
         let (path_identity, created_new) =
@@ -2159,7 +2323,7 @@ impl SqlitePendingNonceAuthorityV0 {
         // tombstones and permit nonce reuse. Only the file created by this
         // invocation may start with an empty user schema.
         let pre_schema = sqlite_schema_objects_v0(&connection)?;
-        let canonical_schema = canonical_sqlite_schema_objects_v0()?;
+        let canonical_schema = canonical_native_schema_v1(native_profile.is_some())?;
         let pre_user_version: i64 = connection
             .query_row("PRAGMA user_version", [], |row| row.get(0))
             .map_err(sqlite_error)?;
@@ -2167,7 +2331,12 @@ impl SqlitePendingNonceAuthorityV0 {
             if !pre_schema.is_empty() || pre_user_version != 0 {
                 return Err(TxAdmissionWalErrorV0::SchemaMismatch);
             }
-        } else if pre_schema != canonical_schema || pre_user_version != SCHEMA_VERSION_V0 {
+        } else if native_profile.is_some()
+            && pre_user_version == SCHEMA_VERSION_V0
+            && pre_schema == canonical_sqlite_schema_objects_v0()?
+        {
+            return Err(TxAdmissionWalErrorV0::NativeMigrationRequired);
+        } else if pre_schema != canonical_schema || pre_user_version != schema_version {
             return Err(TxAdmissionWalErrorV0::SchemaMismatch);
         }
         connection
@@ -2182,8 +2351,13 @@ impl SqlitePendingNonceAuthorityV0 {
             connection
                 .execute_batch(SQLITE_SCHEMA_DDL_V0)
                 .map_err(sqlite_error)?;
+            if native_profile.is_some() {
+                connection
+                    .execute_batch(NATIVE_BODY_SCHEMA_DDL_V1)
+                    .map_err(sqlite_error)?;
+            }
             connection
-                .execute_batch("PRAGMA user_version = 2;")
+                .pragma_update(None, "user_version", schema_version)
                 .map_err(sqlite_error)?;
         }
         let journal_mode: String = connection
@@ -2200,7 +2374,13 @@ impl SqlitePendingNonceAuthorityV0 {
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         // Recheck after initialization to bind the exact schema that will be
         // used by all subsequent authority-row reads and mutations.
-        validate_sqlite_schema_v0(&connection)?;
+        if native_profile.is_some() {
+            if sqlite_schema_objects_v0(&connection)? != canonical_schema {
+                return Err(TxAdmissionWalErrorV0::SchemaMismatch);
+            }
+        } else {
+            validate_sqlite_schema_v0(&connection)?;
+        }
         let persisted: Option<(i64, Vec<u8>)> = connection
             .query_row(
                 "SELECT schema_version, namespace FROM tx_admission_meta WHERE singleton = 1",
@@ -2211,7 +2391,7 @@ impl SqlitePendingNonceAuthorityV0 {
             .map_err(sqlite_error)?;
         match persisted {
             Some((schema, stored_namespace)) => {
-                if schema != SCHEMA_VERSION_V0 {
+                if schema != schema_version {
                     return Err(TxAdmissionWalErrorV0::SchemaMismatch);
                 }
                 if stored_namespace.as_slice() != namespace {
@@ -2229,7 +2409,7 @@ impl SqlitePendingNonceAuthorityV0 {
                     .execute(
                         "INSERT INTO tx_admission_meta(singleton, schema_version, namespace)
                          VALUES (1, ?1, ?2)",
-                        params![SCHEMA_VERSION_V0, namespace.as_slice()],
+                        params![schema_version, namespace.as_slice()],
                     )
                     .map_err(sqlite_error)?;
                 // The metadata insert is part of the same FULL-synchronous
@@ -2238,6 +2418,10 @@ impl SqlitePendingNonceAuthorityV0 {
                 // rejects PRAGMAs which return rows, and SQLite owns WAL
                 // checkpoint scheduling after this point.
             }
+        }
+        if let Some(profile) = native_profile {
+            initialize_or_validate_native_profile_v1(&connection, profile, created_new)?;
+            validate_native_body_inventory_v1(&connection, namespace, profile)?;
         }
         // Bound the inventory before the validator allocates a key vector or
         // decodes any attacker-controlled rows.  A copied SQLite file can be
@@ -2274,6 +2458,9 @@ impl SqlitePendingNonceAuthorityV0 {
             parent_handle,
             parent_identity,
             namespace,
+            native_profile,
+            pending_native_body: None,
+            native_live_handoffs: Rc::new(RefCell::new(BTreeMap::new())),
         })
     }
 
@@ -2359,6 +2546,33 @@ impl SqlitePendingNonceAuthorityV0 {
             .connection
             .try_borrow()
             .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
+        if self.native_profile.is_some() {
+            let mut statement = connection
+                .prepare(
+                    "SELECT signer, nonce FROM pending_nonce WHERE namespace = ?1 AND state = ?2",
+                )
+                .map_err(sqlite_error)?;
+            let mut rows = statement
+                .query(params![self.namespace.as_slice(), STATE_HANDED_OFF_V0])
+                .map_err(sqlite_error)?;
+            let live = self
+                .native_live_handoffs
+                .try_borrow()
+                .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
+            while let Some(row) = rows.next().map_err(sqlite_error)? {
+                let signer = decode_fixed::<32>(row.get(0).map_err(sqlite_error)?)?;
+                let nonce =
+                    u64::from_be_bytes(decode_fixed::<8>(row.get(1).map_err(sqlite_error)?)?);
+                if live
+                    .get(&(signer, nonce))
+                    .and_then(std::rc::Weak::upgrade)
+                    .is_none()
+                {
+                    return Ok(true);
+                }
+            }
+            return Ok(false);
+        }
         let count: i64 = connection
             .query_row(
                 "SELECT COUNT(*) FROM pending_nonce
@@ -2418,6 +2632,17 @@ impl SqlitePendingNonceAuthorityV0 {
             if state != STATE_RESERVED_V0 {
                 return Err(TxAdmissionWalErrorV0::Replay);
             }
+            if let Some(profile) = self.native_profile {
+                persist_native_body_v1(
+                    &transaction,
+                    self.namespace,
+                    profile,
+                    expected,
+                    self.pending_native_body
+                        .as_deref()
+                        .ok_or(TxAdmissionWalErrorV0::Malformed)?,
+                )?;
+            }
             transaction.commit().map_err(sqlite_error)?;
             self.ensure_identity()?;
             return Ok(SqlitePendingNonceReservationV0 {
@@ -2433,6 +2658,9 @@ impl SqlitePendingNonceAuthorityV0 {
                 namespace: self.namespace,
                 record: expected,
                 state: STATE_RESERVED_V0,
+                native_durable_body: self.native_profile.is_some(),
+                native_live_handoffs: Rc::clone(&self.native_live_handoffs),
+                native_lease_liveness: Rc::new(()),
             });
         }
         if read_state_by_digest_v0(&transaction, self.namespace, expected.digest)?.is_some() {
@@ -2465,6 +2693,17 @@ impl SqlitePendingNonceAuthorityV0 {
                 ],
             )
             .map_err(map_insert_error_v0)?;
+        if let Some(profile) = self.native_profile {
+            persist_native_body_v1(
+                &transaction,
+                self.namespace,
+                profile,
+                expected,
+                self.pending_native_body
+                    .as_deref()
+                    .ok_or(TxAdmissionWalErrorV0::Malformed)?,
+            )?;
+        }
         transaction.commit().map_err(sqlite_error)?;
         self.ensure_identity()?;
         Ok(SqlitePendingNonceReservationV0 {
@@ -2480,6 +2719,9 @@ impl SqlitePendingNonceAuthorityV0 {
             namespace: self.namespace,
             record: expected,
             state: STATE_RESERVED_V0,
+            native_durable_body: self.native_profile.is_some(),
+            native_live_handoffs: Rc::clone(&self.native_live_handoffs),
+            native_lease_liveness: Rc::new(()),
         })
     }
 
@@ -2627,6 +2869,9 @@ struct SqlitePendingNonceReservationV0 {
     namespace: [u8; 32],
     record: AdmissionRecordV0,
     state: i64,
+    native_durable_body: bool,
+    native_live_handoffs: NativeLiveHandoffsV1,
+    native_lease_liveness: Rc<()>,
 }
 
 impl SqlitePendingNonceReservationV0 {
@@ -2669,6 +2914,19 @@ impl SqlitePendingNonceReservationV0 {
         if !row_matches_v0(existing, self.record) {
             return Err(AdmissionReject::InconsistentState);
         }
+        if self.native_durable_body
+            && target_state == STATE_COMMITTED_V0
+            && read_receipt_commitment_v0(
+                &transaction,
+                self.namespace,
+                self.record.signer,
+                self.record.nonce,
+            )
+            .map_err(map_reject_v0)?
+            .is_none()
+        {
+            return Err(AdmissionReject::ReservationStateConflict);
+        }
         let idempotent = matches!(
             (target_state, state),
             (STATE_HANDED_OFF_V0, STATE_HANDED_OFF_V0)
@@ -2710,6 +2968,15 @@ impl SqlitePendingNonceReservationV0 {
             .map_err(|_| AdmissionReject::InconsistentState)?;
         self.ensure_identity()?;
         self.state = target_state;
+        if self.native_durable_body && target_state == STATE_HANDED_OFF_V0 {
+            self.native_live_handoffs
+                .try_borrow_mut()
+                .map_err(|_| AdmissionReject::InconsistentState)?
+                .insert(
+                    (self.record.signer, self.record.nonce),
+                    Rc::downgrade(&self.native_lease_liveness),
+                );
+        }
         Ok(())
     }
 }
@@ -2734,6 +3001,12 @@ impl PendingNonceReservation for SqlitePendingNonceReservationV0 {
     }
 
     fn release(&mut self) -> Result<(), AdmissionReject> {
+        // Native durable admission outlives in-memory leases. Explicit expiry
+        // and rejection use the body-aware owner operation; Drop cannot cancel
+        // an acknowledged transaction or erase a recovery obligation.
+        if self.native_durable_body {
+            return Err(AdmissionReject::ReservationStateConflict);
+        }
         if self.state != STATE_RESERVED_V0 {
             return Err(AdmissionReject::ReservationStateConflict);
         }
@@ -2757,11 +3030,14 @@ fn map_reject_v0(error: TxAdmissionWalErrorV0) -> AdmissionReject {
         | TxAdmissionWalErrorV0::Io
         | TxAdmissionWalErrorV0::Sqlite
         | TxAdmissionWalErrorV0::SchemaMismatch
+        | TxAdmissionWalErrorV0::NativeMigrationRequired
         | TxAdmissionWalErrorV0::NamespaceMismatch
         | TxAdmissionWalErrorV0::Malformed
         | TxAdmissionWalErrorV0::TooLarge => AdmissionReject::InconsistentState,
     }
 }
+
+include!("tx_admission_wal_native_body_v1.inc");
 
 include!("tx_admission_wal_tombstone_gc_v1.inc");
 include!("tx_admission_wal_native_replay_floor_v1.inc");
@@ -2803,6 +3079,8 @@ mod tests {
     use trnm_protocol::CanonicalCommandV1;
 
     static NEXT_PATH_V0: AtomicU64 = AtomicU64::new(0);
+
+    include!("tx_admission_wal_native_body_v1_tests.inc");
 
     #[derive(Debug)]
     struct FixtureEnvelope {
@@ -4046,6 +4324,121 @@ mod tests {
         cleanup(&path);
     }
 
+    /// Exercise the real SQLite transaction boundary in a separate process.
+    /// The parent kills the child while an uncommitted Reserved -> HandedOff
+    /// transition is held by BEGIN IMMEDIATE; reopening must observe the
+    /// original Reserved row and an exact admission retry must still commit.
+    /// This proves process-crash rollback of this WAL transaction, while
+    /// intentionally remaining below physical power-loss evidence.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_during_uncommitted_handoff_rolls_back_and_exact_retry_resumes() {
+        let path = temp_path();
+        let namespace = [0xD7; 32];
+        seed_row(&path, namespace, STATE_RESERVED_V0);
+        let ready_path = path.with_extension("sigkill-ready");
+        let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "tx_admission_wal::tests::tx_admission_wal_child_hold_uncommitted_handoff",
+                "--nocapture",
+            ])
+            .env("TRNM_TX_ADMISSION_SIGKILL_PATH_V0", &path)
+            .env("TRNM_TX_ADMISSION_SIGKILL_READY_V0", &ready_path)
+            .spawn()
+            .unwrap();
+
+        let mut ready = false;
+        for _ in 0..250 {
+            if ready_path.exists() {
+                ready = true;
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+        if !ready {
+            let _ = child.kill();
+            let _ = child.wait();
+            cleanup(&path);
+            let _ = fs::remove_file(&ready_path);
+            panic!("transaction WAL crash child did not reach its uncommitted handoff");
+        }
+        child.kill().unwrap();
+        let status = child.wait().unwrap();
+        assert!(
+            !status.success(),
+            "SIGKILL child unexpectedly exited cleanly"
+        );
+
+        let mut authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        {
+            let connection = authority.connection.borrow();
+            let state: i64 = connection
+                .query_row(
+                    "SELECT state FROM pending_nonce
+                     WHERE namespace = ?1 AND signer = ?2 AND nonce = ?3",
+                    params![
+                        namespace.as_slice(),
+                        [0x22_u8; 32].as_slice(),
+                        to_blob_u64(7).as_slice(),
+                    ],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(state, STATE_RESERVED_V0);
+        }
+
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let mut hooks = Hooks;
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &fixture(),
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = gate.pop_ready_with_lifecycle().unwrap();
+        ready.handoff().unwrap();
+        ready.commit().unwrap();
+        drop(ready);
+        drop(gate);
+        cleanup(&path);
+        let _ = fs::remove_file(&ready_path);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn tx_admission_wal_child_hold_uncommitted_handoff() {
+        let Ok(path) = std::env::var("TRNM_TX_ADMISSION_SIGKILL_PATH_V0") else {
+            return;
+        };
+        let Ok(ready_path) = std::env::var("TRNM_TX_ADMISSION_SIGKILL_READY_V0") else {
+            return;
+        };
+        let connection = Connection::open(path).unwrap();
+        let transaction = connection
+            .unchecked_transaction()
+            .expect("begin uncommitted transaction");
+        transaction
+            .execute(
+                "UPDATE pending_nonce SET state = ?1
+                 WHERE namespace = ?2 AND signer = ?3 AND nonce = ?4",
+                params![
+                    STATE_HANDED_OFF_V0,
+                    [0xD7_u8; 32].as_slice(),
+                    [0x22_u8; 32].as_slice(),
+                    to_blob_u64(7).as_slice(),
+                ],
+            )
+            .unwrap();
+        fs::write(ready_path, b"uncommitted").unwrap();
+        loop {
+            std::thread::sleep(std::time::Duration::from_secs(1));
+        }
+    }
+
     #[test]
     fn handed_off_release_and_drop_remain_ambiguous_until_receipt_recovery() {
         // An explicit release after handoff must fail before it can rewrite
@@ -4840,6 +5233,7 @@ mod tests {
             *proof.id().as_bytes(),
         )
         .unwrap();
+        let expected_commitment = evidence.canonical_commitment();
         boundary
             .commit_candidate_with_native_readback(
                 &mut ready,
@@ -4850,6 +5244,20 @@ mod tests {
                 parent_timestamp_ms,
             )
             .unwrap();
+        let stored = boundary
+            .lookup_commit_receipt_v0(transaction.protocol_tx_hash_v1())
+            .unwrap()
+            .expect("committed receipt is queryable by tx digest");
+        assert_eq!(
+            stored.evidence().tx_digest(),
+            transaction.protocol_tx_hash_v1()
+        );
+        assert_eq!(stored.evidence().receipt_digest(), receipt_digest);
+        assert_eq!(stored.commitment(), expected_commitment);
+        assert!(boundary
+            .lookup_commit_receipt_v0([0xEE; 32])
+            .unwrap()
+            .is_none());
         drop(ready);
         let compacted = boundary.compact_terminal_rows_v1(8).unwrap();
         assert_eq!(compacted.compacted(), 1);

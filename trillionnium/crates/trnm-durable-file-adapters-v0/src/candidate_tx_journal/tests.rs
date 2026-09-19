@@ -8,7 +8,9 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_tx_lifecycle_v0::{
-    AuthorizationVerifierV0, ProductionTxCoordinatorV0, ResourceLimitsV0, TxIntentV0, TxLifecycleV0,
+    AuthorizationVerifierV0, DurableSignedTxEnvelopeV0, DurableTxSignIntentV0,
+    ProductionTxCoordinatorV0, ResourceLimitsV0, SignedTxEnvelopeV0, TxIntentV0, TxLifecycleV0,
+    TxSignRequestV0,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -230,6 +232,68 @@ fn pair(previous: &TxRecordV0) -> (TxRecordV0, TxRecordV0) {
     replaced.lifecycle_sequence += 1;
     replaced.tombstone = Some(TombstoneReasonV0::Replaced { by: admitted.tx_id });
     (replaced, admitted)
+}
+
+#[test]
+fn durable_sign_intent_and_signed_envelope_survive_reopen_exactly() {
+    let directory = Directory::new();
+    let (mut journal, record) = baseline(&directory.0);
+    let mut request = TxSignRequestV0 {
+        tx_id: record.tx_id,
+        record_digest: record.canonical_record_digest_v0(),
+        safety_state_digest: Digest32V0([30; 32]),
+        authority_receipt_digest: Digest32V0([31; 32]),
+        permit_digest: Digest32V0([0; 32]),
+        request_digest: Digest32V0([0; 32]),
+    };
+    let mut permit = trnm_tx_lifecycle_v0::CoreSafetyPermitClaimV0 {
+        tx_id: request.tx_id,
+        tx_record_digest: request.record_digest,
+        safety_state_digest: request.safety_state_digest,
+        authority_receipt_digest: request.authority_receipt_digest,
+        permit_digest: Digest32V0([0; 32]),
+    };
+    permit.permit_digest = permit.canonical_digest();
+    request.permit_digest = permit.permit_digest;
+    request.request_digest = request.canonical_digest();
+    let intent = DurableTxSignIntentV0::from_request(request);
+    assert_eq!(journal.persist_sign_intent(intent).unwrap(), intent);
+    let signature = vec![7; 64];
+    let signature_digest = Digest32V0::hash(b"trnm.tx.signature-bytes.v0", &[&signature]);
+    let envelope_digest = Digest32V0::hash(
+        b"trnm.tx.signed-envelope.v0",
+        &[
+            &request.tx_id.0,
+            &request.permit_digest.0,
+            &signature_digest.0,
+            &[70; 32],
+        ],
+    );
+    let envelope = DurableSignedTxEnvelopeV0::from_envelope(
+        &intent,
+        SignedTxEnvelopeV0 {
+            tx_id: request.tx_id,
+            permit_digest: request.permit_digest,
+            signature,
+            signature_digest,
+            signer_attestation_digest: Digest32V0([70; 32]),
+            envelope_digest,
+        },
+    );
+    assert_eq!(
+        journal.persist_signed_envelope(envelope.clone()).unwrap(),
+        envelope
+    );
+    drop(journal);
+    let mut reopened = open(&directory.0);
+    assert_eq!(
+        reopened.load_sign_intent(record.tx_id).unwrap(),
+        Some(intent)
+    );
+    assert_eq!(
+        reopened.load_signed_envelope(record.tx_id).unwrap(),
+        Some(envelope)
+    );
 }
 
 #[test]

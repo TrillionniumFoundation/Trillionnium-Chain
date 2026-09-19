@@ -119,6 +119,52 @@ impl UnboundProposalV0 {
         Ok(())
     }
 
+    /// Parent-time-independent carrier relations. These checks let the
+    /// network discard a late proposal without skipping a separately carried
+    /// justify QC: a TC must contain and select that exact complete QC.
+    /// Full proposal validation still requires the locally authenticated
+    /// parent timestamp and remains in `bind_authenticated_parent`.
+    pub(crate) fn validate_certificate_relations_v1(&self) -> Result<(), ConsensusWireError> {
+        let header = self.block.header();
+        let justify = self.justify_qc.qc_ref();
+        let direct_view = justify.view().get().checked_add(1);
+        if let Some(certificate) = &self.timeout_certificate {
+            if certificate.selected_high_qc_digest() != self.justify_qc.id()
+                || !certificate.referenced_qcs().contains(&self.justify_qc)
+            {
+                return Err(ConsensusWireError::Malformed(
+                    "TC does not contain and select the exact justify QC",
+                ));
+            }
+            if certificate.timed_out_view().get().checked_add(1) != Some(header.view().get())
+                || direct_view == Some(header.view().get())
+            {
+                return Err(ConsensusWireError::Malformed(
+                    "TC differs from proposal view relation",
+                ));
+            }
+        } else if direct_view != Some(header.view().get()) {
+            return Err(ConsensusWireError::Malformed(
+                "proposal skips a view without a TC",
+            ));
+        }
+        if header.view() <= justify.view()
+            || header.parent_id() != justify.block_id()
+            || justify.height().get().checked_add(1) != Some(header.height().get())
+        {
+            return Err(ConsensusWireError::Malformed(
+                "proposal differs from justify parent relation",
+            ));
+        }
+        Ok(())
+    }
+
+    #[cfg(test)]
+    pub(crate) fn with_justify_qc_for_test(mut self, justify: QcReferenceV0) -> Self {
+        self.justify_qc = justify;
+        self
+    }
+
     #[cfg(test)]
     pub(crate) fn with_proposer_signature_for_test(mut self, signature: SignatureBytes) -> Self {
         self.proposer_signature = signature;
@@ -326,6 +372,7 @@ impl UnboundProposalV0 {
             proposer_signature,
         };
         proposal.verify_proposer_signature(validator_set)?;
+        proposal.validate_certificate_relations_v1()?;
         Ok(proposal)
     }
 }

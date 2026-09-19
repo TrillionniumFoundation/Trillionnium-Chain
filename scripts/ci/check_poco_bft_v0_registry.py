@@ -344,6 +344,8 @@ def build_registry() -> dict[str, Any]:
 
     source_paths = {
         "rust_decoder": RUST_RELATIVE,
+        "epoch_runtime_decoder_v1": "trillionnium/crates/trnm-consensus-types/src/epoch_runtime_decode_v1.inc",
+        "epoch_runtime_context_v1": "trillionnium/crates/trnm-consensus-types/src/epoch_runtime_context.rs",
         "base_schema": str(BASE_SCHEMA.relative_to(ROOT)),
         "anchor_schema": str(ANCHOR_SCHEMA.relative_to(ROOT)),
         "epoch_schema": str(EPOCH_SCHEMA.relative_to(ROOT)),
@@ -389,6 +391,8 @@ def build_registry() -> dict[str, Any]:
                 "decode_ordinary_qc_v0_exact",
                 "decode_ordinary_timeout_certificate_v0_exact",
                 "decode_qc_reference_v0_exact_with_trusted_genesis",
+                "decode_epoch_runtime_qc_reference_v1_exact_with_budget",
+                "decode_epoch_runtime_timeout_certificate_v1_exact_with_budget",
             ],
             "B2-B": [
                 "decode_block_header_v0_exact",
@@ -406,6 +410,7 @@ def build_registry() -> dict[str, Any]:
                 "decode_consensus_parameters_v0_exact",
                 "decode_ordinary_certified_header_v0_exact",
                 "decode_checkpoint_finality_proof_v0_exact",
+                "decode_epoch_runtime_finality_proof_v1_exact_with_budget",
             ],
             "node-local": [
                 "decode_canonical_sign_intent_v0_exact",

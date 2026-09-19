@@ -3,9 +3,11 @@ set -euo pipefail
 
 # This Stage0 contract self-test is deliberately local and read-only. It
 # compiles Python into a temporary directory and runs fixture/self-test
-# contracts only. Cargo/Rust integration, strict Clippy, SSH fleet execution,
-# and evidence production are later gates and are not represented as green
-# here.
+# contracts only by default. Explicit --material-builder and --validator-binary
+# inputs additionally run native material parity against already-built binaries;
+# their prerequisite is the existing locked/offline lab-validator binary build.
+# This gate never invokes Cargo or SSH. Strict Clippy, live fleet execution and
+# evidence production remain separate gates and are not represented as green.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 FLEET="$ROOT/scripts/poco-fleet"
@@ -21,6 +23,34 @@ fail() {
   exit 1
 }
 
+# Both paths are required together. There is no implicit Cargo build, PATH
+# fallback or dummy-binary success when the Python-only gate is selected.
+native_material_builder=""
+native_validator_binary=""
+while (( $# )); do
+  case "$1" in
+    --material-builder)
+      (( $# >= 2 )) || fail "--material-builder requires a path"
+      [[ -n "$2" ]] || fail "empty --material-builder"
+      [[ -z "$native_material_builder" ]] || fail "duplicate --material-builder"
+      native_material_builder="$2"
+      shift 2
+      ;;
+    --validator-binary)
+      (( $# >= 2 )) || fail "--validator-binary requires a path"
+      [[ -n "$2" ]] || fail "empty --validator-binary"
+      [[ -z "$native_validator_binary" ]] || fail "duplicate --validator-binary"
+      native_validator_binary="$2"
+      shift 2
+      ;;
+    *) fail "unsupported argument $1" ;;
+  esac
+done
+if [[ -n "$native_material_builder" || -n "$native_validator_binary" ]]; then
+  [[ -n "$native_material_builder" && -n "$native_validator_binary" ]] \
+    || fail "native material parity requires both prebuilt binary paths"
+fi
+
 readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/inventory.toml"
   "scripts/poco-fleet/assemble_reproducible_build_report.py"
@@ -32,6 +62,12 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/build_reproducible_lab_candidate_test.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_v2.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_v2_test.py"
+  "scripts/poco-fleet/source_candidate_doc_alias_v1.py"
+  "scripts/poco-fleet/source_candidate_doc_alias_v1_test.py"
+  "scripts/poco-fleet/native_client_campaign_v1.py"
+  "scripts/poco-fleet/native_client_campaign_v1_test.py"
+  "scripts/poco-fleet/check_native_client_campaign_v1.py"
+  "scripts/poco-fleet/check_native_client_material_test.py"
   "scripts/poco-fleet/check_baseline.py"
   "scripts/poco-fleet/check_baseline_test.py"
   "scripts/poco-fleet/check_raw_run_artifacts.py"
@@ -81,6 +117,8 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/run_isolated_startup_rejection_v1_test.py"
   "scripts/poco-fleet/run_network_smoke_fleet.py"
   "scripts/poco-fleet/run_network_smoke_fleet_test.py"
+  "scripts/poco-fleet/run_local_fault_performance_campaign_v1.py"
+  "scripts/poco-fleet/run_local_fault_performance_campaign_v1_test.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1_test.py"
   "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py"
@@ -103,6 +141,12 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/build_reproducible_lab_candidate_test.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_v2.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_v2_test.py"
+  "scripts/poco-fleet/source_candidate_doc_alias_v1.py"
+  "scripts/poco-fleet/source_candidate_doc_alias_v1_test.py"
+  "scripts/poco-fleet/native_client_campaign_v1.py"
+  "scripts/poco-fleet/native_client_campaign_v1_test.py"
+  "scripts/poco-fleet/check_native_client_campaign_v1.py"
+  "scripts/poco-fleet/check_native_client_material_test.py"
   "scripts/poco-fleet/check_baseline.py"
   "scripts/poco-fleet/check_baseline_test.py"
   "scripts/poco-fleet/check_raw_run_artifacts.py"
@@ -152,6 +196,8 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/run_isolated_startup_rejection_v1_test.py"
   "scripts/poco-fleet/run_network_smoke_fleet.py"
   "scripts/poco-fleet/run_network_smoke_fleet_test.py"
+  "scripts/poco-fleet/run_local_fault_performance_campaign_v1.py"
+  "scripts/poco-fleet/run_local_fault_performance_campaign_v1_test.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1_test.py"
   "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py"
@@ -171,6 +217,7 @@ readonly -a NO_CARGO_SELF_TESTS=(
   "scripts/poco-fleet/assemble_run_bundle_v1_test.py"
   "scripts/poco-fleet/check_run_material_test.py"
   "scripts/poco-fleet/run_network_smoke_fleet_test.py"
+  "scripts/poco-fleet/run_local_fault_performance_campaign_v1_test.py"
   "scripts/poco-fleet/mesh_resource_preflight_v1_test.py"
   "scripts/poco-fleet/run_consensus_fleet_test.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1_test.py"
@@ -184,21 +231,24 @@ readonly -a NO_CARGO_SELF_TESTS=(
   "scripts/poco-fleet/collect_no_fault_run_bundle_v1_test.py"
   "scripts/poco-fleet/planned_p2p_connectivity_admission_v1_test.py"
   "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py"
+  "scripts/poco-fleet/source_candidate_doc_alias_v1_test.py"
+  "scripts/poco-fleet/native_client_campaign_v1_test.py"
 )
 
 readonly -a NO_CARGO_EXPECTED_SUMMARIES=(
   'poco_consensus_contract_self_test=passed vectors=2 mutations=4 deployment_inputs_absent=true'
   'poco_g3_current_fleet_observation_self_test=passed producer_positive=1 bounded_memory_positives=3 negatives=25 inventory_alignment_negatives=2 linux_memtotal_tolerance_bytes=32768 linux_page_bytes=4096 macos_memory_exact=true historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
-  'poco_g3_current_run_readiness_self_test=passed producer_positive=1 negatives=23 historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
+  'poco_g3_current_run_readiness_self_test=passed producer_positive=1 negatives=23 producer_diagnostic_regressions=3 historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
   'poco_g3_source_candidate_test=passed strict_profile=clean-commit-v1 fresh_clone_byte_identity=true git_tree_blob_binding=true commit_tree_binding=true cargo_lock_bound=true dirty_worktrees_rejected=true legacy_v1_audit_only=true actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_reproducible_builder_boundary_test=passed ambient_overrides=12 git_authority_overrides=5 all_cargo_configs_rejected=true closed_build_environment=true cargo_home_and_environment_paths_remapped=true candidate_inode_pinned=true strict_checker_required=true cargo_lock_verified_before_build=true schema3_provenance=true binary_inode_pinned=true output_inode_pinned=true unowned_replacement_preserved=true actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_reproducible_builder_v2_boundary_test=passed v1_evidence_bytes_unchanged=true rust_src_canonical_remap=true absent_rust_src_compatible=true malformed_and_duplicate_commit=fail-closed relative_sysroot=fail-closed symlink_rust_src=fail-closed unexpected_stderr=fail-closed actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_stage0_observation_status_test=passed positives=1 negatives=9 structured_incomplete=true require_complete_fail_closed=true contract_self_tests_not_observations=true production_activation_blocked=true report_hash_bound=true cross_time_control_bound=true rust_src_drift_not_reproducible=true committed_v2_remap_control=true committed_clean_tool_boundary_fail_closed=true initial_cache_miss_preserved=true'
   'poco_g3_stage0_reproducible_build_evidence_test=passed positives=3 negatives=51 shallow_binary_bytes_rehashed=false deep_binary_bytes_rehashed=true operator_recorded_execution=true cryptographic_execution_attestation=false duplicate_json=fail-closed unchecked_pyc=ignored unsafe_paths=fail-closed symlinks=fail-closed actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_reproducible_build_report_test=passed strict_candidate=true schema3_provenance=true both_architectures_bound=true legacy_candidate_rejected=true schema2_local_rejected=true validator_binary_bytes_rehashed=true material_builder_bytes_rehashed=true input_inode_pinned=true output_inode_pinned=true unique_json=true actual_build_executed=false production_activation=false geo_wan=false'
-  'poco_g3_run_bundle_assembler_v1_test=passed positives=13 negatives=14 no_fault_active_assembly=true mixed_plan_only=true mixed_active_assembly=fail-closed no_partial_output=true creates_runtime_evidence=false g3_complete=false geo_wan=false production_activation=false'
+  'poco_g3_run_bundle_assembler_v1_test=passed summary_schema=4 schema3_summary=blocked no_fault_active_assembly=true mixed_plan_only=true mixed_active_assembly=fail-closed no_partial_output=true creates_runtime_evidence=false g3_complete=false geo_wan=false production_activation=false'
   'poco_g3_run_material_self_test=passed positives=3 negatives=36 validator_hosts=5 mac_observer=true ephemeral_role_keys=three pop=true public_workload=true ordinary_start_height=4 ordinal_height_mapping=true content_addressed=true application_private_keys=false builder_inode_pinned=true builder_path_substitution_rejected=true material_builder_validator_binary_distinct=true same_binary_fallback_rejected=true material_author_hash_bound=true material_author_runtime_deployed=false run_root_symlink_rejected=true generator_output_symlink_rejected=true public_bootstrap_bundle=true bootstrap_runtime_closed=false role_reopen=true production_activation=false geo_wan=false'
   'poco_g3_network_smoke_fleet_test=passed positives=19 negatives=15 unique_json=true safe_remote_paths=true input_symlinks_rejected=true file_backed_process_io=true partial_cleanup=true local_stage_directories=true remote_binary_hash=true frozen_alias_deploy=true exact_scp_alias=true public_schema_unchanged=true runtime_stage_short=true aliases_100_unique=true socket_bytes_100_accepted=true socket_bytes_101_rejected=true generation_u64_max_bound=true old_207_rejected=true layout_collision_rejected=true frozen_stage_plan=true preflight_effects_zero=true plan_only_layout_frozen=true validator_run_completed=false fault_matrix_completed=false performance_evidence=false g3_complete=false geo_wan=false production_activation=false'
+  'trnm_local_fault_performance_campaign_v1_test=passed real_endpoint_processes=true real_proxy_process=true partition_heal=true proxy_restart=true candidate_only=true independent_multihost=false performance_acceptance=false'
   'poco_g3_mesh_resource_preflight_v1_test=passed positives=18 negatives=11 topology=100 per_process_rlimit=distinct host_file_capacity=system-wide uid_threads=bounded system_threads=bounded rss=bounded coordinator_capture_fds=per-process-bounded inherited_rlimit=true pre_effect_runners=consensus,fault ulimit_elevation=false validator_run=false g3_complete=false'
   'poco_g3_consensus_fleet_test=passed positives=24 negatives=44 parallel_process_contract=true signed_journal_required=true fleet_start_certificate_required=true signed_report_required=true signed_metrics_required=true signed_final_state_required=true macos_independent_verifier_required=true sealed_replay_archive_export_required=true macos_replay_archive_verifier_required=true fault_matrix_completed=false performance_evidence=false g3_complete=false geo_wan=false production_activation=false'
   'sealed_artifact_transport_v1_test=passed positives=5 negatives=13 nofollow=true o_excl=true double_hash=true fixed_frames=true observer_receipt=true source_mutation_fail_closed=true runtime_evidence_observed=false g3_complete=false'
@@ -211,7 +261,9 @@ readonly -a NO_CARGO_EXPECTED_SUMMARIES=(
   'poco_g3_signed_runtime_evidence_tests=passed positives=1 negatives=27 unsigned_observation_authority=false g3_complete=false'
   'poco_g3_no_fault_bundle_collector_v1_test=passed positive_fixture_only=true production_active=blocked plan_only=no_outputs signed_observer_profile=plan-only external_load_profile=plan-only independent_anchor=required active_bounds=exact prestart_schema=exact real_public_inventory=exact symlink_ancestor=blocked input_overlap=blocked missing_pid=blocked external_window=blocked qc_n=blocked invalid_signature_control=blocked nonempty_workload=blocked mac_signature_fact=blocked validator_signature=blocked missing_artifact=blocked replay_export=required replay_observer=required replay_hash_join=exact truth_bits_changed=false fault_gate_released=false'
   'planned_p2p_connectivity_admission_v1_test=passed source_hosts=5 endpoints=7 physical_edges=35 logical_edges=42 strict_frames=true double_sided_join=true bounded_retry=true icmp_green_tcp_edge_failure=blocked helper_ttl=true rebind_cleanup=true firewall_mutated=false firewall_policy_attested=false p2p_identity_metadata_bound=true p2p_identity_authenticated=false validator_binary_deployed=false validator_secret_deployed=false validator_run=false production=false g3=false fault=false performance=false geo_wan=false'
-  'poco_g3_stage0_direct_seven_bundle_v1_test=passed cargo_executed=false fixture_only=true deep_candidate=true cargo_lock_member=true dual_arch_binaries=4 symlink=blocked duplicate_json=blocked trailing=blocked ancestor_dirfd_swap=blocked failure_cleanup=close-only private_quarantine_retained=true foreign_nested_secret=preserved foreign_leaf=preserved fstat_fault_fd_baseline=true linux_renameat2_noreplace=verified unverified_publish=blocked quarantine_rng_alias=blocked unsafe_publish_parent=blocked prepublish_failure_final_absent=true publish_collision_foreign=preserved postrename_failure=indeterminate rename_exception_identity_recheck=true pinned_root_decoy=blocked cryptographic_content_equivalence_binding=true checker_itself_fd_rooted=false path_alias_authority=false binding_extra_directory=blocked binding_identical_inode_swap=blocked binding_fault_fd_baseline=true binding_manifest_16m_plus_one=blocked hostile_same_euid_postbinding=false same_euid_source_swap=indeterminate postrename_inode_match=required successful_publish_inode=preserved successful_quarantine=absent double_slash_disjoint=blocked public_secret_prewrite=blocked oversized_128m_plus_one_prewrite=blocked low_disk_prewrite=blocked tree_entries_4096_plus_one=blocked tree_depth_64_plus_one=blocked stage0_profile_max_file_bytes=134217728 runner_generic_512m_compatibility_claim=false exact_json_integers=blocked manifest_complete=true roles_unique=true failure=blocked cleanup=blocked observer_set=7 replay_sets=7 raw_replay_substitution=blocked raw_replay_hash_chain=blocked terminal_seal_signature=verified terminal_seal_signature_mutation=blocked terminal_agreement=exact proposal_qc_finality_semantics_independently_decoded=false runner_validator_run_completed=false stage0_direct_seven_observed=scoped validator_run_7_completed_observed=true fault_matrix=false performance=false g3_lan=false geo_wan=false production=false'
+  'poco_g3_stage0_direct_seven_bundle_v1_test=passed cargo_executed=false fixture_only=true deep_candidate=true cargo_lock_member=true dual_arch_binaries=4 symlink=blocked duplicate_json=blocked trailing=blocked ancestor_dirfd_swap=blocked failure_cleanup=close-only private_quarantine_retained=true foreign_nested_secret=preserved foreign_leaf=preserved fstat_fault_fd_baseline=true linux_renameat2_noreplace=verified unverified_publish=blocked quarantine_rng_alias=blocked unsafe_publish_parent=blocked prepublish_failure_final_absent=true publish_collision_foreign=preserved postrename_failure=indeterminate rename_exception_identity_recheck=true pinned_root_decoy=blocked cryptographic_content_equivalence_binding=true checker_itself_fd_rooted=false path_alias_authority=false binding_extra_directory=blocked binding_identical_inode_swap=blocked binding_fault_fd_baseline=true binding_manifest_16m_plus_one=blocked hostile_same_euid_postbinding=false same_euid_source_swap=indeterminate postrename_inode_match=required successful_publish_inode=preserved successful_quarantine=absent double_slash_disjoint=blocked public_secret_prewrite=blocked oversized_128m_plus_one_prewrite=blocked low_disk_prewrite=blocked tree_entries_4096_plus_one=blocked tree_depth_64_plus_one=blocked stage0_profile_max_file_bytes=134217728 runner_generic_512m_compatibility_claim=false exact_json_integers=blocked manifest_complete=true roles_unique=true failure=blocked cleanup=blocked observer_set=7 replay_sets=7 raw_replay_substitution=blocked raw_replay_hash_chain=blocked terminal_seal_signature=verified terminal_seal_signature_mutation=blocked terminal_agreement=exact sealed_memfd_exact=true missing_sealing_capability=blocked proposal_qc_finality_semantics_independently_decoded=false runner_validator_run_completed=false stage0_direct_seven_observed=scoped validator_run_7_completed_observed=true fault_matrix=false performance=false g3_lan=false geo_wan=false production=false'
+  'source_doc_alias_tests=passed clean_git_tree_reconstructed=true extracted_after_regular_files=true negatives=11'
+  'native_campaign_structural_tests=passed negatives=31 cryptographic_success_claim=false real_campaign_required=true'
 )
 
 for relative in "${REQUIRED_FILES[@]}"; do
@@ -461,6 +513,17 @@ for index in "${!NO_CARGO_SELF_TESTS[@]}"; do
     "${NO_CARGO_SELF_TESTS[$index]}" \
     "${NO_CARGO_EXPECTED_SUMMARIES[$index]}"
 done
+
+native_material_parity="not_run_requires_prebuilt_binaries"
+if [[ -n "$native_material_builder" ]]; then
+  run_exact_python \
+    "scripts/poco-fleet/check_native_client_material_test.py" \
+    'native_client_material=passed real_rust_author=true validators_loaded=7 observer_loaded=true negatives=9 campaign_keys_not_deployed=true legacy_profile_unchanged=true runtime_started=false production_activation=false' \
+    --material-builder "$native_material_builder" \
+    --validator-binary "$native_validator_binary"
+  native_material_parity="passed_prebuilt_binaries"
+fi
+printf 'native_material_parity=%s cargo_build_invoked=false live_campaign_invoked=false\n' "$native_material_parity"
 
 printf '%s\n' \
   "poco_g3_lan_fleet_contract_self_test_gate=passed stage0_observation_complete=false observation_status_evaluated=false required_files=${#REQUIRED_FILES[@]} python_compile=${#PYTHON_FILES[@]} no_cargo_self_tests=${#NO_CARGO_SELF_TESTS[@]} readiness=current_fixture_self_tests_only strict_candidate=clean-commit-v1 strict_builder_schema=3 strict_aggregate_schema=3 commit_tree_blob_cargo_lock_bound=true cargo_executed=false ssh_executed=false evidence_generated=false validator_run=false multihost_observed=false fault_matrix_completed=false performance_evidence=false geo_wan=false production_activation=false strict_clippy_gate_closed=false dormant_clippy_warning_baseline=31_normal,13_test"

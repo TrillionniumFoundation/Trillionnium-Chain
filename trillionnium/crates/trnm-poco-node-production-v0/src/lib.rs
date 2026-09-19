@@ -8,6 +8,10 @@
 
 mod authority_driver;
 pub use authority_driver::*;
+mod transaction_driver;
+pub use transaction_driver::*;
+mod tx_state_sync_bridge;
+pub use tx_state_sync_bridge::*;
 
 use std::{error::Error, fmt};
 use trnm_node_boundary_v0::{

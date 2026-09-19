@@ -22,6 +22,8 @@ import subprocess
 import sys
 from typing import Any
 
+from check_run_material import application_public_paths_v1
+
 
 HERE = pathlib.Path(__file__).resolve().parent
 CHECK_MATERIAL = HERE / "check_run_material.py"
@@ -270,20 +272,8 @@ def prepare(coordinator: pathlib.Path, output: pathlib.Path, count: int) -> path
                 False,
                 public_by_path.get(f"public/configs/{validator_id}.json"),
             ),
-            (
-                coordinator / "public/workload.corpus",
-                root / "public/workload.corpus",
-                0o644,
-                False,
-                public_by_path.get("public/workload.corpus"),
-            ),
-            (
-                coordinator / "public/workload-policy.json",
-                root / "public/workload-policy.json",
-                0o644,
-                False,
-                public_by_path.get("public/workload-policy.json"),
-            ),
+            *[(coordinator / relative, root / relative, 0o644, False, public_by_path.get(relative))
+              for relative in application_public_paths_v1(coordinator_manifest)],
         ]
         for relative in BOOTSTRAP_RELATIVE_PATHS:
             targets.append(
@@ -344,14 +334,15 @@ def main() -> None:
         output = prepare(args.coordinator_root, args.output, args.validators)
     except (OSError, subprocess.SubprocessError, ValueError, json.JSONDecodeError) as error:
         fail(str(error))
-    policy = json.loads(
+    observer_coordinator = json.loads((output / "observer-public/coordinator-manifest.json").read_text(encoding="utf-8"))
+    native_client = application_public_paths_v1(observer_coordinator) == ("public/native-client-profile.json",)
+    ordinary_start_height = 4 if native_client else json.loads(
         (output / "observer-public/public/workload-policy.json").read_text(encoding="utf-8")
-    )
-    ordinary_start_height = policy["header"]["ordinary_start_height"]
+    )["header"]["ordinary_start_height"]
     print(
         f"poco_g3_validator_deployments=prepared validators={args.validators} root={output} "
         f"ordinary_start_height={ordinary_start_height} "
-        "secrets_per_validator=3 public_workload_per_validator=true "
+        f"secrets_per_validator=3 public_workload_per_validator={str(not native_client).lower()} native_client_profile={str(native_client).lower()} "
         "public_bootstrap_bundle_per_validator=true "
         "application_private_keys=false observer_public_bundle=true "
         "material_author_hash_bound=true material_author_runtime_deployed=false "

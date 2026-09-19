@@ -2780,6 +2780,12 @@ function validateManifest(manifest, b2c) {
   ) {
     fail("schema_manifest_invalid", 0, "checkpoint admission taxonomy drift", "gate");
   }
+  // The original ordinary/checkpoint partition is frozen. The explicit epoch
+  // body API adds one appended semantic error without renumbering that prefix.
+  const epochAdmission = manifest.epoch_handoff_admission_error_additions?.map((item) => item.code);
+  if (JSON.stringify(epochAdmission) !== JSON.stringify(["non_epoch_handoff_block"])) {
+    fail("schema_manifest_invalid", 0, "epoch handoff admission taxonomy drift", "gate");
+  }
   const proposalObject = manifest.objects.find((object) => object.name === "ProposalSignV0");
   if (
     !proposalObject.coverage.includes("next_view_only") ||
@@ -2935,7 +2941,7 @@ function validateRustSurface(manifest, b2c, base) {
     manifest.checkpoint_admission_error_additions.map((item) => item.code);
   if (
     JSON.stringify(rustAdmissionCodes) !==
-    JSON.stringify([...manifestAdmissionCodes, ...checkpointAdmissionCodes])
+    JSON.stringify([...manifestAdmissionCodes, ...checkpointAdmissionCodes, ...manifest.epoch_handoff_admission_error_additions.map((item) => item.code)])
   ) {
     fail("schema_manifest_invalid", 0, "Rust ordinary/checkpoint admission taxonomy drift", "gate");
   }

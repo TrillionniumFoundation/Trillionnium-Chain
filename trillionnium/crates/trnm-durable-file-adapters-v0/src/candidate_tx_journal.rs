@@ -20,8 +20,9 @@ use std::{
     path::Path,
 };
 use trnm_tx_lifecycle_v0::{
-    Digest32V0, DurableTxJournalV0, DurableTxRecordV0, DurableTxReplacementV0, RecoveredTxRecordV0,
-    ReplayFloorWitnessV0, TombstoneReasonV0, TxIdV0, TxPhaseV0, TxRecordV0,
+    Digest32V0, DurableSignedTxEnvelopeV0, DurableTxJournalV0, DurableTxRecordV0,
+    DurableTxReplacementV0, DurableTxSignIntentV0, RecoveredTxRecordV0, ReplayFloorWitnessV0,
+    SignedTxEnvelopeV0, TombstoneReasonV0, TxIdV0, TxPhaseV0, TxRecordV0,
     MAX_TX_RECORD_ENCODED_BYTES_V0,
 };
 
@@ -38,6 +39,11 @@ const LOCK: &str = "owner.lock";
 const IDENTITY: &str = "identity.v0";
 const STAGE: &str = "pending.frame";
 const IDENTITY_STAGE: &str = "pending.identity";
+const SIDECAR_STAGE: &str = "pending.sidecar";
+const SIGN_INTENT_MAGIC: &[u8; 8] = b"TRNMSI00";
+const SIGNED_ENVELOPE_MAGIC: &[u8; 8] = b"TRNMSE00";
+const SIDECAR_VERSION: u16 = 0;
+const MAX_SIDECAR_BYTES: usize = 8 + 2 + 7 * 32 + 4 + 16 * 1024 + 4 * 32;
 const MAX_FRAME_BYTES: usize = 2 * MAX_TX_RECORD_ENCODED_BYTES_V0 + 256;
 const IDENTITY_BYTES: usize = 8 + 2 + 32 + 32 + 24 + 32;
 
@@ -282,6 +288,8 @@ impl CandidateTxFileJournalV0 {
         // transaction record can be removed through this recovery path.
         owner.discard_stage(STAGE)?;
         owner.discard_stage(IDENTITY_STAGE)?;
+        owner.discard_stage(SIDECAR_STAGE)?;
+        owner.validate_sidecar_inventory()?;
         owner.directory.sync_all()?;
         owner.parent.sync_all()?;
         Ok(owner)
@@ -325,6 +333,7 @@ impl CandidateTxFileJournalV0 {
             if self.state.sequence > 0 {
                 self.verify_frame(self.state.sequence)?;
             }
+            self.validate_sidecar_inventory()?;
             Ok(())
         })();
         if let Err(error) = check {
@@ -418,7 +427,10 @@ impl CandidateTxFileJournalV0 {
                 && name != IDENTITY
                 && name != STAGE
                 && name != IDENTITY_STAGE
+                && name != SIDECAR_STAGE
                 && parse_frame_name(name).is_none()
+                && parse_sign_intent_name(name).is_none()
+                && parse_signed_envelope_name(name).is_none()
             {
                 return Err(CandidateTxJournalErrorV0::Namespace);
             }
@@ -664,6 +676,47 @@ impl CandidateTxFileJournalV0 {
         outcome
     }
 
+    fn publish_immutable_sidecar(&mut self, target: &str, bytes: &[u8]) -> Result<()> {
+        if bytes.len() > MAX_SIDECAR_BYTES {
+            return Err(CandidateTxJournalErrorV0::Capacity);
+        }
+        match self.read_file(target, MAX_SIDECAR_BYTES) {
+            Ok(existing) => {
+                if existing == bytes {
+                    return Ok(());
+                }
+                return Err(CandidateTxJournalErrorV0::CompareFailed);
+            }
+            Err(CandidateTxJournalErrorV0::Io(error))
+                if error.kind() == io::ErrorKind::NotFound => {}
+            Err(error) => return Err(error),
+        }
+        self.publish_bytes(SIDECAR_STAGE, target, bytes, false)
+    }
+
+    fn validate_sidecar_inventory(&self) -> Result<()> {
+        for name in self.names()? {
+            if let Some(tx_id) = parse_sign_intent_name(&name) {
+                let bytes = self.read_file(&name, MAX_SIDECAR_BYTES)?;
+                let intent = decode_sign_intent(&bytes)?;
+                if intent.request.tx_id != tx_id {
+                    return Err(CandidateTxJournalErrorV0::Corrupt(
+                        "sign intent filename binding mismatch",
+                    ));
+                }
+            } else if let Some(tx_id) = parse_signed_envelope_name(&name) {
+                let bytes = self.read_file(&name, MAX_SIDECAR_BYTES)?;
+                let envelope = decode_signed_envelope(&bytes)?;
+                if envelope.envelope.tx_id != tx_id {
+                    return Err(CandidateTxJournalErrorV0::Corrupt(
+                        "signed envelope filename binding mismatch",
+                    ));
+                }
+            }
+        }
+        Ok(())
+    }
+
     // A pathname rename does not identify the file descriptor we wrote and
     // synced. Bind both names to that retained inode and compare every byte
     // before publication and again on each side of the directory-sync boundary.
@@ -866,6 +919,80 @@ impl DurableTxJournalV0 for CandidateTxFileJournalV0 {
             floor: replay_floor,
         })
     }
+
+    fn persist_sign_intent(
+        &mut self,
+        intent: DurableTxSignIntentV0,
+    ) -> Result<DurableTxSignIntentV0> {
+        self.ensure_healthy()?;
+        intent
+            .validate()
+            .map_err(|_| CandidateTxJournalErrorV0::InvalidRecord)?;
+        let tx_id = intent.request.tx_id;
+        let name = sign_intent_name(tx_id);
+        let bytes = encode_sign_intent(intent);
+        if let Ok(existing) = self.read_file(&name, MAX_SIDECAR_BYTES) {
+            let decoded = decode_sign_intent(&existing)?;
+            if decoded != intent {
+                return Err(CandidateTxJournalErrorV0::CompareFailed);
+            }
+            return Ok(decoded);
+        }
+        self.publish_immutable_sidecar(&name, &bytes)?;
+        Ok(intent)
+    }
+
+    fn load_sign_intent(&mut self, tx_id: TxIdV0) -> Result<Option<DurableTxSignIntentV0>> {
+        self.ensure_healthy()?;
+        let name = sign_intent_name(tx_id);
+        match self.read_file(&name, MAX_SIDECAR_BYTES) {
+            Ok(bytes) => Ok(Some(decode_sign_intent(&bytes)?)),
+            Err(CandidateTxJournalErrorV0::Io(error))
+                if error.kind() == io::ErrorKind::NotFound =>
+            {
+                Ok(None)
+            }
+            Err(error) => Err(error),
+        }
+    }
+
+    fn persist_signed_envelope(
+        &mut self,
+        envelope: DurableSignedTxEnvelopeV0,
+    ) -> Result<DurableSignedTxEnvelopeV0> {
+        self.ensure_healthy()?;
+        let intent = self
+            .load_sign_intent(envelope.envelope.tx_id)?
+            .ok_or(CandidateTxJournalErrorV0::CompareFailed)?;
+        envelope
+            .validate_against(&intent)
+            .map_err(|_| CandidateTxJournalErrorV0::InvalidRecord)?;
+        let name = signed_envelope_name(envelope.envelope.tx_id);
+        let bytes = encode_signed_envelope(&envelope)?;
+        if let Ok(existing) = self.read_file(&name, MAX_SIDECAR_BYTES) {
+            let decoded = decode_signed_envelope(&existing)?;
+            if decoded != envelope {
+                return Err(CandidateTxJournalErrorV0::CompareFailed);
+            }
+            return Ok(decoded);
+        }
+        self.publish_immutable_sidecar(&name, &bytes)?;
+        Ok(envelope)
+    }
+
+    fn load_signed_envelope(&mut self, tx_id: TxIdV0) -> Result<Option<DurableSignedTxEnvelopeV0>> {
+        self.ensure_healthy()?;
+        let name = signed_envelope_name(tx_id);
+        match self.read_file(&name, MAX_SIDECAR_BYTES) {
+            Ok(bytes) => Ok(Some(decode_signed_envelope(&bytes)?)),
+            Err(CandidateTxJournalErrorV0::Io(error))
+                if error.kind() == io::ErrorKind::NotFound =>
+            {
+                Ok(None)
+            }
+            Err(error) => Err(error),
+        }
+    }
 }
 
 fn same_inode(left: &File, right: &File) -> Result<bool> {
@@ -908,6 +1035,162 @@ fn parse_frame_name(name: &str) -> Option<u64> {
     }
     let sequence = digits.parse::<u64>().ok()?;
     (sequence > 0).then_some(sequence)
+}
+fn hex_digest_name(prefix: &str, suffix: &str, tx_id: Digest32V0) -> String {
+    let mut hex = String::with_capacity(64);
+    for byte in tx_id.0 {
+        hex.push(char::from(b"0123456789abcdef"[(byte >> 4) as usize]));
+        hex.push(char::from(b"0123456789abcdef"[(byte & 0x0f) as usize]));
+    }
+    format!("{prefix}{hex}{suffix}")
+}
+fn parse_hex_digest_name(name: &str, prefix: &str, suffix: &str) -> Option<Digest32V0> {
+    let value = name.strip_prefix(prefix)?.strip_suffix(suffix)?;
+    if value.len() != 64 {
+        return None;
+    }
+    let mut bytes = [0u8; 32];
+    for (index, pair) in value.as_bytes().chunks_exact(2).enumerate() {
+        let high = pair[0]
+            .is_ascii_digit()
+            .then(|| pair[0] - b'0')
+            .or_else(|| {
+                (b'a'..=b'f')
+                    .contains(&pair[0])
+                    .then(|| pair[0] - b'a' + 10)
+            })?;
+        let low = pair[1]
+            .is_ascii_digit()
+            .then(|| pair[1] - b'0')
+            .or_else(|| {
+                (b'a'..=b'f')
+                    .contains(&pair[1])
+                    .then(|| pair[1] - b'a' + 10)
+            })?;
+        bytes[index] = (high << 4) | low;
+    }
+    Some(Digest32V0(bytes))
+}
+fn sign_intent_name(tx_id: TxIdV0) -> String {
+    hex_digest_name("sign-intent-", ".v0", tx_id)
+}
+fn signed_envelope_name(tx_id: TxIdV0) -> String {
+    hex_digest_name("signed-envelope-", ".v0", tx_id)
+}
+fn parse_sign_intent_name(name: &str) -> Option<TxIdV0> {
+    parse_hex_digest_name(name, "sign-intent-", ".v0")
+}
+fn parse_signed_envelope_name(name: &str) -> Option<TxIdV0> {
+    parse_hex_digest_name(name, "signed-envelope-", ".v0")
+}
+
+fn encode_sign_intent(intent: DurableTxSignIntentV0) -> Vec<u8> {
+    let request = intent.request;
+    let mut bytes = Vec::with_capacity(8 + 2 + 7 * 32);
+    bytes.extend_from_slice(SIGN_INTENT_MAGIC);
+    bytes.extend_from_slice(&SIDECAR_VERSION.to_be_bytes());
+    for digest in [
+        request.tx_id,
+        request.record_digest,
+        request.safety_state_digest,
+        request.authority_receipt_digest,
+        request.permit_digest,
+        request.request_digest,
+        intent.intent_digest,
+    ] {
+        bytes.extend_from_slice(&digest.0);
+    }
+    bytes
+}
+
+fn encode_signed_envelope(retained: &DurableSignedTxEnvelopeV0) -> Result<Vec<u8>> {
+    let envelope = &retained.envelope;
+    if envelope.signature.len() > u32::MAX as usize {
+        return Err(CandidateTxJournalErrorV0::Capacity);
+    }
+    let mut bytes = Vec::with_capacity(8 + 2 + 7 * 32 + 4 + envelope.signature.len());
+    bytes.extend_from_slice(SIGNED_ENVELOPE_MAGIC);
+    bytes.extend_from_slice(&SIDECAR_VERSION.to_be_bytes());
+    for digest in [
+        retained.intent_digest,
+        envelope.tx_id,
+        envelope.permit_digest,
+    ] {
+        bytes.extend_from_slice(&digest.0);
+    }
+    bytes.extend_from_slice(&(envelope.signature.len() as u32).to_be_bytes());
+    bytes.extend_from_slice(&envelope.signature);
+    for digest in [
+        envelope.signature_digest,
+        envelope.signer_attestation_digest,
+        envelope.envelope_digest,
+        retained.receipt_digest,
+    ] {
+        bytes.extend_from_slice(&digest.0);
+    }
+    Ok(bytes)
+}
+
+fn decode_sign_intent(bytes: &[u8]) -> Result<DurableTxSignIntentV0> {
+    let mut decoder = Decoder(bytes);
+    if decoder.take(8)? != SIGN_INTENT_MAGIC
+        || u16::from_be_bytes(decoder.array()?) != SIDECAR_VERSION
+    {
+        return Err(CandidateTxJournalErrorV0::Corrupt("sign intent header"));
+    }
+    let request = trnm_tx_lifecycle_v0::TxSignRequestV0 {
+        tx_id: decoder.digest()?,
+        record_digest: decoder.digest()?,
+        safety_state_digest: decoder.digest()?,
+        authority_receipt_digest: decoder.digest()?,
+        permit_digest: decoder.digest()?,
+        request_digest: decoder.digest()?,
+    };
+    let intent = DurableTxSignIntentV0 {
+        request,
+        intent_digest: decoder.digest()?,
+    };
+    if !decoder.0.is_empty() {
+        return Err(CandidateTxJournalErrorV0::Corrupt("sign intent suffix"));
+    }
+    intent
+        .validate()
+        .map_err(|_| CandidateTxJournalErrorV0::Corrupt("sign intent digest"))?;
+    Ok(intent)
+}
+
+fn decode_signed_envelope(bytes: &[u8]) -> Result<DurableSignedTxEnvelopeV0> {
+    let mut decoder = Decoder(bytes);
+    if decoder.take(8)? != SIGNED_ENVELOPE_MAGIC
+        || u16::from_be_bytes(decoder.array()?) != SIDECAR_VERSION
+    {
+        return Err(CandidateTxJournalErrorV0::Corrupt("signed envelope header"));
+    }
+    let intent_digest = decoder.digest()?;
+    let tx_id = decoder.digest()?;
+    let permit_digest = decoder.digest()?;
+    let signature_len = decoder.u32()? as usize;
+    if signature_len > 16 * 1024 {
+        return Err(CandidateTxJournalErrorV0::Capacity);
+    }
+    let signature = decoder.take(signature_len)?.to_vec();
+    let envelope = SignedTxEnvelopeV0 {
+        tx_id,
+        permit_digest,
+        signature,
+        signature_digest: decoder.digest()?,
+        signer_attestation_digest: decoder.digest()?,
+        envelope_digest: decoder.digest()?,
+    };
+    let retained = DurableSignedTxEnvelopeV0 {
+        intent_digest,
+        envelope,
+        receipt_digest: decoder.digest()?,
+    };
+    if !decoder.0.is_empty() {
+        return Err(CandidateTxJournalErrorV0::Corrupt("signed envelope suffix"));
+    }
+    Ok(retained)
 }
 fn encode_identity(
     identity: CandidateTxJournalIdentityV0,
@@ -1155,6 +1438,9 @@ impl<'a> Decoder<'a> {
     }
     fn u64(&mut self) -> Result<u64> {
         Ok(u64::from_be_bytes(self.array()?))
+    }
+    fn u32(&mut self) -> Result<u32> {
+        Ok(u32::from_be_bytes(self.array()?))
     }
     fn record(&mut self) -> Result<Box<TxRecordV0>> {
         let length = u32::from_be_bytes(self.array()?) as usize;

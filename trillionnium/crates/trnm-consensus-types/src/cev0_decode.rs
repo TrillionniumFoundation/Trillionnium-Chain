@@ -303,7 +303,8 @@ impl Cev0AdmissionBudgetV0 {
             .transpose()?
             .unwrap_or(0);
         justify
-            .checked_add(timeout)
+            .checked_add(1) // proposer signature
+            .and_then(|value| value.checked_add(timeout))
             .and_then(|value| value.checked_add(header.certifying_qc().votes().len()))
             .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))
     }
@@ -586,6 +587,33 @@ pub struct EpochAnchorAuthorizationKernelV0 {
 }
 
 impl EpochAnchorAuthorizationKernelV0 {
+    /// Builds the inert kernel from already typed components after checking
+    /// their structural relations. This does not verify signatures or mint
+    /// an epoch-anchor QC; strict consumers must still call their dedicated
+    /// verifier before treating the kernel as activation evidence.
+    pub fn from_parts_v0(
+        terminal_old_header: BlockHeader,
+        terminal_old_qc: QuorumCertificate,
+        handoff_certificate: HandoffCertificateV0,
+        old_validator_set: &ValidatorSet,
+        new_validator_set: &ValidatorSet,
+    ) -> crate::Result<Self> {
+        let authorization = EpochAnchorAuthorizationV0::new(
+            terminal_old_header.clone(),
+            terminal_old_qc.clone(),
+            handoff_certificate.clone(),
+            old_validator_set,
+            new_validator_set,
+        )?;
+        let bytes = authorization.try_cev0_bytes()?;
+        decode_epoch_anchor_authorization_kernel_v0_exact(
+            &bytes,
+            old_validator_set,
+            new_validator_set,
+        )
+        .map_err(|_| ValidationError::InvalidJointCertificate("typed kernel encoding"))
+    }
+
     pub const fn terminal_old_header(&self) -> &BlockHeader {
         &self.terminal_old_header
     }
@@ -2317,6 +2345,54 @@ pub fn decode_finality_proof_v0_exact_with_trusted_genesis_and_budget(
     Ok(proof)
 }
 
+/// Exact first-new-epoch finality decoding with all eight epoch evidence roots.
+///
+/// This is structural admission only. Consumers must verify the complete
+/// checkpoint/joint handoff AND this new-set three-chain with strict crypto.
+/// No caller-selected bare anchor or certificate-only context is accepted.
+pub fn decode_epoch_first_finality_proof_v1_exact_with_budget(
+    bytes: &[u8],
+    evidence: &crate::DecodedEpochActivationEvidenceV0,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<FinalityProofV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let kernel = evidence.authorization_kernel();
+    let authorization = EpochAnchorAuthorizationV0::new(
+        kernel.terminal_old_header().clone(),
+        kernel.terminal_old_qc().clone(),
+        kernel.handoff_certificate().clone(),
+        evidence.old_validator_set(),
+        evidence.new_validator_set(),
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidEpochAnchorRelations, 0))?;
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_finality_proof_with_epoch_context(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+        Some(&authorization),
+    )?;
+    cursor.finish()?;
+    let proof = admit_raw_finality_proof_with_reference_admission(
+        raw,
+        evidence.new_validator_set(),
+        evidence.new_consensus_parameters(),
+        kernel.terminal_old_header().timestamp_ms(),
+        QcReferenceAdmissionV0::EpochContext(&authorization, evidence.old_validator_set()),
+    )?;
+    let header = proof.finalized_block().header();
+    let descriptor = kernel.handoff_certificate().descriptor().fields();
+    if header.block_kind() != BlockKind::EpochHandoff
+        || header.height() != descriptor.activation_height
+        || header.parent_id() != descriptor.terminal_old_block_id
+        || proof.finalized_block().epoch_anchor_authorization() != Some(&authorization)
+    {
+        return Err(DecodeError::new(DecodeErrorCode::InvalidFinalityProof, 0));
+    }
+    require_exact_canonical_reencoding(bytes, proof.try_cev0_bytes(), 0)?;
+    budget.charge_finality_proof(&proof)?;
+    Ok(proof)
+}
+
 /// Decodes the exact old-set checkpoint/two-seal finality kernel.
 ///
 /// This performs bounded root-exhausting CEV0 decoding, complete ordinary
@@ -2403,6 +2479,14 @@ fn parse_raw_ordinary_certified_header_with_aggregate_limit<'a>(
     cursor: &mut Cursor<'a>,
     maximum_aggregate_shares: usize,
 ) -> DecodeResult<RawOrdinaryCertifiedHeader<'a>> {
+    parse_raw_certified_header_with_epoch_context(cursor, maximum_aggregate_shares, None)
+}
+
+fn parse_raw_certified_header_with_epoch_context<'a>(
+    cursor: &mut Cursor<'a>,
+    maximum_aggregate_shares: usize,
+    expected_authorization: Option<&EpochAnchorAuthorizationV0>,
+) -> DecodeResult<RawOrdinaryCertifiedHeader<'a>> {
     let object_offset = cursor.offset();
     let header = parse_raw_block_header(cursor)?;
     let maximum_qc_shares = maximum_aggregate_shares.min(MAX_CEV0_CERTIFICATE_ITEMS);
@@ -2422,21 +2506,33 @@ fn parse_raw_ordinary_certified_header_with_aggregate_limit<'a>(
         }
     };
     let anchor_tag_offset = cursor.offset();
-    match cursor.u8()? {
-        0 => {}
+    let epoch_anchor_authorization = match cursor.u8()? {
+        0 => None,
         1 => {
-            return Err(DecodeError::new(
-                DecodeErrorCode::InvalidCheckpointTwoSeal,
-                anchor_tag_offset,
-            ));
+            let expected = expected_authorization.ok_or_else(|| {
+                DecodeError::new(DecodeErrorCode::InvalidCheckpointTwoSeal, anchor_tag_offset)
+            })?;
+            let canonical = expected.try_cev0_bytes().map_err(|_| {
+                DecodeError::new(
+                    DecodeErrorCode::InvalidEpochAnchorRelations,
+                    anchor_tag_offset,
+                )
+            })?;
+            if cursor.take(canonical.len())? != canonical.as_slice() {
+                return Err(DecodeError::new(
+                    DecodeErrorCode::InvalidEpochAnchorRelations,
+                    anchor_tag_offset,
+                ));
+            }
+            Some(expected.clone())
         }
         _ => {
             return Err(DecodeError::new(
                 DecodeErrorCode::InvalidOptionalTag,
                 anchor_tag_offset,
-            ));
+            ))
         }
-    }
+    };
     let proposer_signature = Signature64::from_array(cursor.fixed()?);
     let certifying_qc = parse_raw_qc(cursor, maximum_qc_shares)?;
     Ok(RawOrdinaryCertifiedHeader {
@@ -2444,6 +2540,7 @@ fn parse_raw_ordinary_certified_header_with_aggregate_limit<'a>(
         header,
         justify_qc,
         timeout_certificate,
+        epoch_anchor_authorization,
         proposer_signature,
         certifying_qc,
     })
@@ -2514,11 +2611,11 @@ fn admit_raw_certified_header_with_reference_admission(
         header,
         justify_qc,
         timeout_certificate,
-        None,
+        raw.epoch_anchor_authorization,
         raw.proposer_signature,
         certifying_qc,
         validator_set,
-        None,
+        reference_admission.old_validator_set(),
         consensus_parameters,
         authenticated_parent_timestamp_ms,
     )
@@ -2538,6 +2635,14 @@ fn parse_raw_checkpoint_finality_proof_with_aggregate_limit<'a>(
     cursor: &mut Cursor<'a>,
     maximum_aggregate_shares: usize,
 ) -> DecodeResult<RawCheckpointFinalityProof<'a>> {
+    parse_raw_finality_proof_with_epoch_context(cursor, maximum_aggregate_shares, None)
+}
+
+fn parse_raw_finality_proof_with_epoch_context<'a>(
+    cursor: &mut Cursor<'a>,
+    maximum_aggregate_shares: usize,
+    expected_authorization: Option<&EpochAnchorAuthorizationV0>,
+) -> DecodeResult<RawCheckpointFinalityProof<'a>> {
     let object_offset = cursor.offset();
     let schema_version = cursor.u16()?;
     let genesis_offset = cursor.offset();
@@ -2549,12 +2654,21 @@ fn parse_raw_checkpoint_finality_proof_with_aggregate_limit<'a>(
     let validator_set_id = ValidatorSetId::new(cursor.fixed()?);
     let parameters_hash_offset = cursor.offset();
     let consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
-    let finalized_block =
-        parse_raw_ordinary_certified_header_with_aggregate_limit(cursor, maximum_aggregate_shares)?;
-    let child =
-        parse_raw_ordinary_certified_header_with_aggregate_limit(cursor, maximum_aggregate_shares)?;
-    let grandchild =
-        parse_raw_ordinary_certified_header_with_aggregate_limit(cursor, maximum_aggregate_shares)?;
+    let finalized_block = parse_raw_certified_header_with_epoch_context(
+        cursor,
+        maximum_aggregate_shares,
+        expected_authorization,
+    )?;
+    let child = parse_raw_certified_header_with_epoch_context(
+        cursor,
+        maximum_aggregate_shares,
+        expected_authorization,
+    )?;
+    let grandchild = parse_raw_certified_header_with_epoch_context(
+        cursor,
+        maximum_aggregate_shares,
+        expected_authorization,
+    )?;
     Ok(RawCheckpointFinalityProof {
         object_offset,
         schema_version,
@@ -2658,7 +2772,7 @@ fn admit_raw_finality_proof_with_reference_admission(
         child,
         grandchild,
         active_validator_set,
-        None,
+        reference_admission.old_validator_set(),
         consensus_parameters,
         authenticated_finalized_parent_timestamp_ms,
     )
@@ -3398,6 +3512,16 @@ fn parse_raw_timeout_certificate_with_aggregate_limit<'a>(
 enum QcReferenceAdmissionV0<'a> {
     OrdinaryOnly,
     TrustedGenesis(&'a GenesisQcV0),
+    EpochContext(&'a EpochAnchorAuthorizationV0, &'a ValidatorSet),
+}
+
+impl<'a> QcReferenceAdmissionV0<'a> {
+    fn old_validator_set(self) -> Option<&'a ValidatorSet> {
+        match self {
+            Self::EpochContext(_, old_set) => Some(old_set),
+            _ => None,
+        }
+    }
 }
 
 fn admit_raw_qc_reference(
@@ -3405,6 +3529,31 @@ fn admit_raw_qc_reference(
     validator_set: &ValidatorSet,
     admission: QcReferenceAdmissionV0<'_>,
 ) -> DecodeResult<QcReferenceV0> {
+    if let QcReferenceAdmissionV0::EpochContext(authorization, _) = admission {
+        if !raw.signatures.is_empty() {
+            return admit_raw_ordinary_qc(raw, validator_set).map(QcReferenceV0::ordinary);
+        }
+        require_schema_v0(raw.schema_version, raw.object_offset)?;
+        let chain = admit_consensus_string(raw.chain_id)?;
+        let version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+        let anchor = authorization.epoch_anchor_qc();
+        if raw.genesis_hash != anchor.genesis_hash()
+            || chain != anchor.chain_id()
+            || version != anchor.protocol_version()
+            || raw.epoch != anchor.epoch()
+            || raw.validator_set_id != anchor.validator_set_hash()
+            || raw.view != anchor.view()
+            || raw.height != anchor.height()
+            || raw.block_id != anchor.block_id()
+            || validator_set.id() != anchor.validator_set_hash()
+        {
+            return Err(DecodeError::new(
+                DecodeErrorCode::UnauthorizedSyntheticQc,
+                raw.object_offset,
+            ));
+        }
+        return Ok(QcReferenceV0::epoch_anchor(anchor));
+    }
     match admission {
         QcReferenceAdmissionV0::OrdinaryOnly => {
             admit_raw_ordinary_qc(raw, validator_set).map(QcReferenceV0::ordinary)
@@ -3412,6 +3561,7 @@ fn admit_raw_qc_reference(
         QcReferenceAdmissionV0::TrustedGenesis(trusted_genesis) => {
             admit_raw_qc_reference_with_trusted_genesis(raw, validator_set, trusted_genesis)
         }
+        QcReferenceAdmissionV0::EpochContext(_, _) => unreachable!("handled above"),
     }
 }
 
@@ -3884,6 +4034,7 @@ struct RawOrdinaryCertifiedHeader<'a> {
     header: RawBlockHeader<'a>,
     justify_qc: RawQc<'a>,
     timeout_certificate: Option<RawTimeoutCertificate<'a>>,
+    epoch_anchor_authorization: Option<EpochAnchorAuthorizationV0>,
     proposer_signature: Signature64,
     certifying_qc: RawQc<'a>,
 }
@@ -4440,6 +4591,8 @@ impl<'a> Cursor<'a> {
         Ok(length)
     }
 }
+
+include!("epoch_runtime_decode_v1.inc");
 
 #[cfg(test)]
 mod tests {
@@ -5677,6 +5830,15 @@ mod tests {
             sample.authorization.handoff_certificate()
         );
         assert_eq!(kernel.try_cev0_bytes().unwrap(), authorization_bytes);
+        let rebuilt = EpochAnchorAuthorizationKernelV0::from_parts_v0(
+            sample.authorization.terminal_old_header().clone(),
+            sample.authorization.terminal_old_qc().clone(),
+            sample.authorization.handoff_certificate().clone(),
+            &sample.old_set,
+            &sample.new_set,
+        )
+        .unwrap();
+        assert_eq!(rebuilt, kernel);
         assert!(kernel
             .verify_certificate_kernel(&sample.old_set, &sample.new_set, &RejectSignatures,)
             .is_err());

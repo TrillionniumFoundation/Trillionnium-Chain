@@ -1,7 +1,7 @@
 # M02 Order / Consensus Kernel technical specification v1
 
-Status: **frozen ordinary v0 rules plus a concrete planned epoch integration;
-current Core remains pre-checkpoint; no activation or implementation claim**.
+Status: **frozen ordinary v0 rules plus implemented candidate outgoing epoch-zero
+checkpoint/seal owner; new-epoch Core activation remains planned and closed**.
 Primary module: M02. Producers/consumers: M00/M01/M03/M04/M06/M07/M08/M13/M15.
 
 ## Authority
@@ -11,8 +11,9 @@ selects a local implementation architecture; it does not alter v0 signing
 bytes, quorum, three-chain finality, seal semantics or epoch geometry.
 `trnm-consensus-core/src/{model,core,block_tree,safety_state_record,error}.rs`
 are current implementation references. `epoch_preparation.rs` currently has
-only `EvidenceVerified`. `Core::require_pre_checkpoint_height` refuses checkpoint
-and later heights, and ordinary admission refuses non-Regular blocks.
+only `EvidenceVerified`. Ordinary schema13 `Core::require_pre_checkpoint_height`
+refuses checkpoint and later heights. The explicit strict outgoing owner below
+admits the scheduled checkpoint/two seals without opening an epoch anchor.
 
 The target is one pure deterministic owner with explicit durability barriers,
 epoch-qualified ancestry and a recoverable checkpoint/seal/handoff path. Removing
@@ -37,6 +38,235 @@ current synthetic GenesisQC and must not be advertised as peer-authenticated.
 Pure kernel code owns no database, sockets, clock, thread pool or signer. M15
 routes effects to one designated adapter; callbacks cannot choose a different
 Core or reconstitute non-cloneable completion tokens from diagnostics.
+
+### Implemented outgoing owner and bounded migration
+
+`Core::into_old_epoch_boundary_v1(self, owner_generation: u64)` consumes a
+quiescent schema13 owner after strict Ed25519 key/state verification and returns
+`(OldEpochBoundaryCoreV1, Vec<Effect>)`. Generation must be positive. The no-Clone
+wrapper exposes strict `step_v1`, exact application-seal/finalization receipt
+callbacks, persistence binding and signature-release callback; no mutable Core
+or caller-selected verifier escapes. Migration is rejected after an explicit
+SafetyRules authorization was issued, or with unresolved persistence, signature,
+application/finality/sync work or unequal finalized/applied tips. The sole
+schema13→14 successor is the exact old state plus empty boundary metadata and
+revision+1. Existing signer state, QCs, views and roots cannot change in migration.
+
+`OldEpochBoundaryStateV1` retains full authenticated checkpoint proposals with
+their exact application parent and full seal proposals. A checkpoint enters this
+record only after the existing authorized Valid callback; no public static body
+summary creates application authority. Multiple bounded candidates may coexist
+until finality; one speculative P is not the chosen checkpoint. Every retained
+proposal and parent, QC/TC signature and terminal Valid overlay is checked by
+strict persistence validation. The owner uses the existing Core vote, lock,
+three-chain and persist-before-sign engine. Journal7 cannot acknowledge the new
+record; M03's distinct journal8 is required.
+
+Scheduled seals use `validate_empty_epoch_seal_v1` and `ConsensusSeal` in the
+existing block tree: unchanged state/next-commitment roots, exact canonical empty
+body/receipts/evidence, direct parent/QC and scheduled old-set geometry. They
+never request application execution, create P/overlay/receipt, or become an
+application-finalization target. QC(C+2) finalizes the actual checkpoint C;
+Core's true finalized/applied tips remain C. Synced seal admission persists the
+same bounded evidence without a vote or application request; exact replay is
+idempotent. The explicit pure SafetyRules context understands these typed seals;
+the ordinary context remains Regular-only.
+
+The implemented outgoing phases are 0..4 only, derived from retained evidence
+and applied checkpoint rather than a mutable scalar. `TRNMS14O` is the separate
+local codec described in M03. The schema13 frozen codec, ordinary owner fence
+and generic recovery rejection of schema14 remain intact. There is no new-set
+view reset, anchor-installed Core, ordinary signer retirement, or full cross-epoch
+`FinalizedTip` support in this slice. Strict full first-proposal verification in
+M01 is a prerequisite, not an activation API.
+
+`Core::prepare_old_epoch_terminal_recovery_v1(record, context,
+expected_record_checksum, expected_owner_generation)` strictly revalidates only
+the stable `CheckpointApplied` cut, exact full retained checkpoint/two-seal proof,
+canonical bytes and independently expected checksum. Pending sign/P/finalization,
+sync, halt or foreign cuts reject. The returned `StrictOldEpochTerminalRecoveryV1`
+is inert: it cannot step, sign, emit timers or yield a Core. M15 must subsequently
+join actual journal8 freshness, native COMMITTED checkpoint and shared signer
+custody capabilities; equality of public scalar tuples cannot replace that join.
+
+Acceptance currently combines a full outgoing Core test using the explicit
+unit verifier/application fixture, exact codec/migration/replay tests, and
+independent real Ed25519 first-proposal tests. A real-signer, native prepared
+checkpoint receipt, journal8 ACK and strict live Core joined positive test is
+still required before candidate host activation can be claimed.
+
+### Full epoch integration (implemented inert slice; live owner pending)
+
+The pure representation uses `QualifiedFinalizedTipV1` for true finality/application
+coordinates and `ConsensusAncestryBaseV1` for the independent graph root. An
+installed edge retains the complete old checkpoint proof/configuration, exact
+terminal-old header and new view-zero anchor; it never changes an old header's
+epoch or view. Before first-new finality, true tips are C/old epoch while graph
+ancestry begins at terminal C+2. A first-new application parent explicitly carries
+both real checkpoint C and consensus terminal C+2 plus the strict activation
+binding. Its overlay/finalization codec must retain both, not reinterpret a v0
+single-parent record. Only a genuine new-set three-chain moves true finality to C+3.
+
+`StrictEpochRuntimeContextV1` is the implemented M01 consumer of all eight strict
+activation roots for exact QC/TC/proposal/finality admission throughout the new
+epoch. Structural decoder context remains inert. Generic genesis/ordinary APIs
+retain their anchor rejection. The full local record uses the separate
+`TRNMS14E` envelope and exact old/new contexts, while schema13 and outgoing
+`TRNMS14O` bytes stay unchanged. Context retention is bounded to those referenced
+by active evidence; replacing an edge requires prior application/finality work
+to be settled and the new checkpoint independently verified.
+
+`EpochCoreStateV1` retains complete strict evidence and the checkpoint artifact.
+`EpochSafetyStateRecordContextV1` and the separate 14E codec are implemented;
+their decoder returns only `UnverifiedSafetyStateRecordV0`.
+`OldEpochBoundaryCoreV1::prepare_epoch_activation_v1` consumes the old live Core,
+requires the exact completed checkpoint and no pending work, preserves global
+revision+1, and returns `PreparedEpochCoreActivationV1` with its exact opaque
+initial persistence request and owner-affine binding, but no step, persistence
+ACK or signer API. `StrictOldEpochTerminalRecoveryV1` can prepare the same
+deterministic record after a crash; this remains inert until the actual source
+journal and native/custody owners are joined. The pure SafetyRules consumer keeps its true old finalized
+reference while using a separate graph coordinate, and its state digest binds
+the full activation. Frozen epoch-zero behavior and schema13 tests remain.
+The Core regression uses real frozen Ed25519 evidence but inert P identifiers;
+it is not evidence of an actual native/journal/custody activation join.
+
+The implemented pure consumer uses the same complete context in BlockTree
+three-chain reconstruction and durable payload obligations. For the first new
+block, consensus height/parent/timestamp checks use terminal C+2, while the
+application obligation and finalization queue retain committed checkpoint C.
+Only the exact edge carrier may bridge this gap; an ordinary single-parent
+record cannot be reinterpreted. Later new-epoch blocks use the ordinary direct
+parent rule. A withheld or missing intermediate application result withholds
+the complete finalization suffix. Its regression uses real Ed25519 proposals
+and QCs, verifies a two-block finalization suffix and 14E round trip, and rejects
+a single-parent terminal-seal substitution and a first-block overlay lacking
+the exact edge. Application result identifiers in this pure-engine fixture
+remain synthetic. Persisted-successor validation compares views only within an
+identical epoch/set/parameters scope. A scope change requires the exact retained
+old checkpoint and first-new dual-parent queue carrier; lower new-epoch views
+are not compared numerically with the old checkpoint view. Tests cover first
+view1, a TC before first view3, strict successor validation, and rejection after
+removing the authenticated edge. This consumer change issues no live owner,
+signer lease, or persistence acknowledgement.
+
+A separate default-off SafetyStore `test-fixtures` producer now drives the real
+old Core through H1..C8 and seals9/10 using strict Ed25519 proposals/QCs, actual
+native speculative P/readbacks and journal8. Each of ten vote callbacks follows
+exact Safety persistence; native commits occur only after the Core finalization
+queue, and seals have no application P. Its journal7 migration source is actual
+unvoted genesis. The caller supplies a durable signer callback for whole-node
+custody tests; the fixture's callback comparison hashes are fixture-adapter
+facts, not a claim to the legacy application-job/outbox tables. This establishes
+the real old-epoch join. Live new-epoch Core release remains a separate boundary.
+
+Pure Core preparation remains inert until concrete candidate composition joins
+fresh journal/external cut, `ConfirmedEpochApplicationEdgeV1` from the live native
+owner, and actual retired/new custody owners. M15 I/O integration stays under
+`epoch-runtime-candidate`; Core's `candidate-epoch-host-v1` remains no_std and
+default-off, and production closure excludes both candidate features.
+Continuing membership consumes the old live Core;
+new-only commissioning uses independently trusted old checkpoint state and a
+virgin new-role custody namespace; removed validators retire without a new Core.
+Retirement precedes old handoff signing and binds the pre-certificate context.
+The new ordinary lease follows complete joint verification and binds the exact
+phase7 persisted Safety cut; these are distinct, non-circular receipts.
+
+### Candidate pending driver and concrete initial activation composition
+
+The default-off `candidate-epoch-host-v1` Core seam below is implemented.
+M15 supplies the concrete continuing-author initial activation consumer under
+`epoch-runtime-candidate`; full ordinary event driving and all-role recovery
+remain subsequent work.
+Keep the single existing Core state machine and dependency direction
+`SafetyStore -> Core`. M15 owns the concrete native, journal9, custody and
+independent node-checkpoint stores. No generic registrar, caller-chosen
+verification trait, scalar activation constructor, or new capability-only crate
+is introduced to work around that direction.
+
+`PreparedEpochCoreActivationV1::into_candidate_host_pending_v1(self)
+-> PendingEpochHostDriverV1` is explicitly a trusted-host API, retaining no_std.
+The returned driver keeps Core private, retains its exact pending initial request
+and affinity, and initially accepts only that request's existing `StorageAck`
+transition. All other inputs return `EpochActivationPersistencePending`; no timer,
+proposal, vote, callback permit or mutable Core escapes before the ACK. After
+ACK the same private driver runs ordinary strict Core inputs. It exposes no raw
+SafetyState/configuration constructor and never accepts an epoch number or
+checksum as activation proof. This seam has the existing ordinary Core
+`StorageAck` trust model: a caller which bypasses the concrete host can lie
+about persistence. It must not be described as an intrinsically verified durable
+receipt or an independently safe activation entry point.
+
+The exact initial ACK emits one `ArmViewTimer` for new epoch/view1, without a
+new Safety revision. Preparation retains this deferred effect behind the same
+persistence barrier; an incorrect or repeated ACK cannot arm it. Strict
+`step_v1` forwards to the existing transactional Core; application seal/apply
+authorities, finalization permits, sealed Valid delivery, finalization receipts
+and signature-release persistence all remain gated until that first ACK.
+The driver has immutable state/config/request/binding accessors, no Clone,
+mutable-Core accessor, selectable verifier, unchecked state constructor or key.
+
+`StrictEpochCoreRecoveryV1::into_candidate_host_initial_pending_v1` is available
+under that same explicit trusted-host feature only. It reconstructs exactly the
+canonical initial14E state, preserves its revision and remints a fresh process
+affinity with the initial timer still deferred. Any progressed obligation,
+signing/finalization outbox, changed view or other noninitial field rejects.
+M03's actual journal9 recovery helper additionally checks the immutable source
+migration's initial revision, fresh exact state/transition and single binding;
+decoded state alone is not its physical persistence authority. Recovery of
+progressed new-epoch cuts remains fenced pending dedicated cross-store joins.
+
+Regression tests use real strict Ed25519 proposals and public driver inputs:
+the first Handoff creates and persists the C/C+2 obligation before issuing its
+linear validation permit; a single-parent result rejects; the sealed Valid
+result creates a second persistence barrier before the vote signature request.
+No private BlockTree insertion substitutes for that path. The pure Core test's
+application artifact IDs are synthetic. The store integration uses the actual
+native/Core old-epoch fixture and real journal9 reopen, then verifies a real
+new-epoch timeout append; its test-only trusted ACK does not claim a complete
+M15 checkpoint/custody activation join.
+
+The concrete public initial activation constructor is
+`CandidateEpochRuntimeV1::activate_continuing_v1(prepared, journal9, pin, application,
+authenticated_edge, retired_original, retired_node_checkpoint, new_ordinary)`.
+Each argument is an actual non-Clone owner/capability, not a decoded record.
+The method freshly checks journal9's initial state/request/owner binding against
+`prepared`, asks the live application to confirm the owned edge at actual C,
+checks complete old/new configurations and local key membership, verifies the
+original retirement/checkpoint, and confirms the new ordinary journal has the
+exact intended new set/author/profile and virgin external watermark. Old/new
+ordinary scopes and journal identities must differ. It persists the M15 V1
+lineage checkpoint containing all cuts, syncs and rechecks every owner, then
+ACKs the still-private driver and installs the new ordinary lease in the same
+returned runtime. The runtime keeps all owners. Initial activation returns only a private runtime;
+`take_initial_timer_effects_v1` freshly joins all owners before releasing the
+one initial `ArmViewTimer`. `confirm_initial_activation_v1` returns comparison
+bytes only and permanently fences changed owners. It never returns an activated bare Core or signer.
+
+Failure before/during the V1 CAS consumes the moved owners and returns typed
+recovery disposition, never a partially usable runtime. Explicit recovery
+reopens all physical owners, checks independently expected V1 lineage/generation,
+strictly reconstructs the exact 14E record and native edge/P ancestry, reconciles
+the virgin signer cut, then remints private runtime state. Initial-only recovery
+rejects progressed Safety/signature cuts; pending-decision reconciliation is
+not yet exposed by this consumer. The inert recovery
+record never by itself proves that join; using its candidate pending-driver
+conversion carries the explicit trusted-host obligation above. Continuing,
+new-only and removed roles are separate constructors: the first slice accepts
+continuing membership only; new-only requires explicit trusted commissioning
+without fabricating an old local Safety owner, and removed nodes get no new
+ordinary driver. All three policies must be tested before claiming multi-role
+activation complete.
+
+The bounded first-timeout consumer `sign_initial_timeout_v1(self, producer)`
+consumes the runtime on failure. It must persist the real `LocalTimeout` request
+in journal9, join the still-virgin signer and native C, advance and sync V1, and
+only then ACK the signing request. A fresh composite read precedes key access.
+The signed journal's exact two-event successor is independently checkpointed
+before Core receives `SignatureReady`. Its broadcast stays private until the
+cleared pending-sign state crosses its own journal9/V1 persistence and ACK.
+Only the verified TimeoutVote may leave. This first timeout does not implement
+progressed-cut recovery, generic proposal processing, or another epoch transition.
 
 ### Planned epoch owner types
 
@@ -156,6 +386,96 @@ real parent ID is old seal2; its justify is new view-0 anchor, not a relabelled
 old QC. Validate timestamp against the actual seal2 timestamp. A skipped initial
 view requires a complete new-set TC selecting that exact anchor. Three-chain
 finality never mixes old seals with new-set votes.
+
+### First coherent Safety14 / Core implementation slice (planned)
+
+This is the selected next implementation boundary, not an implemented activation
+API. It must connect the existing candidate M08 checkpoint/edge producer,
+Core's real Vote/Timeout path, M03 durable recovery and the M15 owner. Adding a
+decoded activation token or removing an epoch-zero check alone does not satisfy
+this slice. The production entry point stays closed while it is implemented.
+
+Introduce `EpochQualifiedTipV1 { epoch, validator_set_id,
+consensus_parameters_hash, height, view, block_id, timestamp_ms }` for every
+true finalized and application-applied coordinate. Keep one independent
+`ConsensusAncestryBaseV1` with closed variants `Finalized` and
+`InstalledEpochAnchor { epoch, validator_set_id, consensus_parameters_hash,
+terminal_old_header, anchor_qc, transition_binding }`. The anchor variant is
+reconstructed from the exact joint evidence and durable activation completion;
+it has the new epoch's logical view 0 and real terminal height C+2. It is not a
+`FinalizedTip`, a certified new block, or an application head. Immediately after
+installation, true finalized and application-applied remain the old checkpoint
+C with their old epoch/view, while ancestry begins at the verified terminal
+seal C+2. Never rewrite the old header/QC epoch or view to manufacture this base.
+
+The first new application validation parent needs a closed
+`EpochEdge { consensus_parent: terminal_old_header, application_parent:
+checkpoint_header, transition_binding, checkpoint_artifact_ref }` carrier in
+`PayloadValidationParentV0`. Its request digest binds both coordinates and the
+exact edge. The application P/overlay names real application parent C; network
+proposal parent/justify names C+2 and the new anchor. A dedicated
+`DurableEpochFinalizationV1` carries both parents when C+3 later finalizes.
+The ordinary parent/overlay variant still requires exact equality and height+1.
+Finalization queue continuity follows application parents, whereas proposal and
+timestamp checks follow consensus parents. C+4/C+5 use authenticated speculative
+application parents; the pending C+3 application commit cannot fence those votes.
+
+The concrete producer/consumer changes belong together:
+
+| Existing file / boundary | Required implementation in this slice |
+|---|---|
+| `trnm-consensus-core/src/model.rs` | Add qualified tips, ancestry-base and epoch-parent variants, phase record and versioned finalization carrier. Do not overload `FinalizedTip::new` or a raw `BlockIdOverlayRefV0` with dual meanings. Keep signed objects unchanged. |
+| `trnm-consensus-core/src/core.rs` | Replace `require_pre_checkpoint_height` only behind the installed phase owner; dispatch Regular/Checkpoint/Seal/EpochStart by exact `EpochGeometryV0`, frozen kind rules and phase evidence. Extend `validate_runtime`, monotonic transitions, retained-QC verification and the live SafetyRules bridge. |
+| `trnm-consensus-core/src/block_tree.rs` | Add private `ConsensusValidatedSealV1` validity alongside application-valid overlay validity. Verify exact empty seal body/roots and checkpoint linkage; a seal never acquires application P/Valid authority. Three-chain construction can use valid seals as checkpoint descendants, but never queues a seal application commit. Ancestry traversal uses the qualified base. |
+| `trnm-consensus-safety-rules/src/lib.rs` | Evaluate the same phase/kind/ancestry rules in the pure kernel used by real Core signing. Add an epoch context verified from complete old/new evidence, and permit only the exact installed anchor in proposals and TCs. Do not bypass the current pure-kernel comparison. |
+| `trnm-consensus-core/src/safety_state_record.rs` and M03 store | Implement the separate schema14 codec and old/new context table; decode/reverify each proof with its own configuration. Add exact qualified-tip, epoch-parent, seal-validity and phase records; retain the schema13 decoder/tests as an explicit read-only import path. |
+| `trnm-poco-node-host/src/handoff_runtime_v1.rs` and M15 owner | Join the existing real committed receipt/edge to the durable phase and shared signer retirement. Neither `EpochPreparationV1` nor a `WholeNodeCheckpointRefV1::EpochActive` alone can open signing. |
+
+Planned Core entry signatures are:
+
+```text
+begin_epoch_activation_v1(&mut self, evidence: StrictSameVersionEpochActivationAuthorityV0)
+    -> Result<CoreEpochActivationSessionV1, CoreError>
+CoreEpochActivationSessionV1::challenge() -> &EpochActivationReadbackChallengeV1
+CoreEpochActivationSessionV1::complete_exact(
+    &mut self, readbacks: OwnerJoinedEpochReadbacksV1)
+    -> Result<EpochActivationPersistenceV1, CoreError>
+Core::acknowledge_epoch_activation_persisted_v1(
+    &mut self, ack: ConfirmedEpochActivationHeadV1)
+    -> Result<Vec<Effect>, CoreError>
+Core::begin_epoch_activation_recovery_v1(
+    contexts: RetainedEpochContextsV1, record: SafetyStateRecordV14)
+    -> Result<CoreEpochActivationRecoveryV1, CoreError>
+```
+
+All named completion/session types are planned non-cloneable private-field
+owners. `OwnerJoinedEpochReadbacksV1` is issued only by the M15 adapter after
+fresh application/Safety/signer/external-checkpoint readbacks; inert decoded
+fields or a generic boolean callback cannot construct it. Resolve this bridge
+through the existing Core-issued challenge/native-owner adapter pattern; do not
+add a Core dependency on native execution. The ordinary generic `recover`
+continues rejecting transition records. A new-only validator uses the dedicated
+checkpoint/edge recovery path without inventing a local old-role signature;
+an old-only validator retires rather than constructing an invalid new CoreConfig.
+
+All view/QC comparisons must first match epoch and set. In particular, retained
+old finality proofs and new observed QCs must not be called conflicting merely
+because their numeric views match. Ordering active votes/locks uses only the
+active epoch. Reset `current_view` to 1 and last Vote/Timeout watermarks to None
+only in the exact durable phase6->7 transition; Safety revision and owner
+generation never reset. Preserve old watermarks and decision IDs in the retired
+epoch cut. Do not weaken ordinary same-epoch monotonic comparisons or allow a
+same-block old ordinary QC to become a new synthetic anchor by relabeling.
+
+The first acceptance scenario must run checkpoint C, two seals, committed C
+readback, both handoff roles, joint verification, anchor installation, and
+real Core preparation/voting of C+3/C+4/C+5 followed by exactly one C+3 commit.
+Add a TC-before-first-proposal scenario, changed/new/removed local membership,
+same numeric views across epochs, restart at every durable boundary and exact
+replay. Rejected/missing readbacks must emit no custody request, timer or network
+effect. Physical application rows at C+1/C+2 must remain absent. A later batch
+can extend the matrix to the next epoch; it may not advertise full activation
+on the strength of an inert record round trip.
 
 ## Persistence and recovery
 

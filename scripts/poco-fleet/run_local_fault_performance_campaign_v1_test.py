@@ -1,0 +1,82 @@
+"""Contract tests for the real-process local fault/performance campaign."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import pathlib
+import sys
+import tempfile
+
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+
+import run_local_fault_performance_campaign_v1 as campaign
+
+
+def test_campaign_runs_real_endpoint_and_proxy_processes() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:
+        output = pathlib.Path(raw) / "evidence.json"
+        result = campaign.run_campaign(output=output, messages=1)
+
+        assert result["schema"] == campaign.SCHEMA
+        assert result["campaign_scope"] == "single-host-loopback-multiprocess"
+        assert result["candidate_only"] is True
+        assert result["host_attestation"] is False
+        assert result["independent_multihost_evidence"] is False
+        assert result["physical_power_loss_evidence"] is False
+        assert result["performance_acceptance"] is False
+        assert result["production_activation"] is False
+        assert result["restart_count"] == 1
+
+        phases = result["phases"]
+        assert [phase["name"] for phase in phases] == [
+            "baseline",
+            "partition",
+            "heal",
+            "partition",
+            "heal",
+            "partition",
+            "heal",
+            "proxy_restart",
+        ]
+        baseline = phases[0]
+        assert baseline["accepted"] == 3
+        assert baseline["rejected"] == 0
+        for phase in phases:
+            if phase["name"] == "partition":
+                assert phase["rejected"] == phase["expected_rejected"] == 1
+            if phase["name"] == "heal":
+                assert phase["accepted"] == 1
+
+        persisted = json.loads(output.read_text(encoding="utf-8"))
+        assert persisted == result
+        digest = hashlib.sha256(output.read_bytes()).hexdigest()
+        assert output.with_suffix(output.suffix + ".sha256").read_text() == (
+            f"{digest}  {output.name}\n"
+        )
+
+
+def test_campaign_rejects_invalid_message_bound() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:
+        try:
+            campaign.run_campaign(output=pathlib.Path(raw) / "bad.json", messages=0)
+        except RuntimeError as error:
+            assert "messages must be between" in str(error)
+        else:
+            raise AssertionError("invalid message bound unexpectedly accepted")
+
+
+def main() -> None:
+    test_campaign_runs_real_endpoint_and_proxy_processes()
+    test_campaign_rejects_invalid_message_bound()
+    print(
+        "trnm_local_fault_performance_campaign_v1_test=passed "
+        "real_endpoint_processes=true real_proxy_process=true "
+        "partition_heal=true proxy_restart=true "
+        "candidate_only=true independent_multihost=false performance_acceptance=false"
+    )
+
+
+if __name__ == "__main__":
+    main()

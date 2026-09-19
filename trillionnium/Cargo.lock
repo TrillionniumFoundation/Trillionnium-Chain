@@ -1418,6 +1418,7 @@ name = "trnm-bench"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "sha2",
  "trnm-executor",
  "trnm-types",
 ]
@@ -1448,6 +1449,8 @@ dependencies = [
 name = "trnm-consensus-core"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
+ "serde_json",
  "sha2",
  "trnm-consensus-crypto",
  "trnm-consensus-safety-rules",
@@ -1485,8 +1488,10 @@ dependencies = [
  "ed25519-dalek",
  "fs2",
  "libc",
+ "serde_json",
  "sha2",
  "tempfile",
+ "trnm-consensus-crypto",
  "trnm-consensus-signer-journal",
  "trnm-consensus-types",
 ]
@@ -1530,6 +1535,7 @@ name = "trnm-consensus-safety-rules"
 version = "0.1.0"
 dependencies = [
  "sha2",
+ "trnm-consensus-crypto",
  "trnm-consensus-types",
 ]
 
@@ -1537,6 +1543,8 @@ dependencies = [
 name = "trnm-consensus-safety-store"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "ed25519-dalek",
  "fs2",
  "getrandom 0.2.17",
  "libc",
@@ -1545,7 +1553,10 @@ dependencies = [
  "sha2",
  "tempfile",
  "trnm-consensus-core",
+ "trnm-consensus-crypto",
  "trnm-consensus-types",
+ "trnm-native-application",
+ "trnm-native-execution-v0",
 ]
 
 [[package]]
@@ -1677,6 +1688,7 @@ version = "0.1.0"
 name = "trnm-migration-v0"
 version = "0.1.0"
 dependencies = [
+ "rusqlite",
  "sha2",
 ]
 
@@ -1830,6 +1842,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "tempfile",
+ "trnm-application-tx-builder-v0",
  "trnm-consensus-core",
  "trnm-consensus-crypto",
  "trnm-consensus-external-watermark",
@@ -1842,10 +1855,12 @@ dependencies = [
  "trnm-consensus-unix-fleet-signer",
  "trnm-consensus-unix-remote-signer",
  "trnm-finality-types",
+ "trnm-mempool",
  "trnm-native-application",
  "trnm-native-execution-v0",
  "trnm-poco-node",
  "trnm-protocol",
+ "trnm-tx-lifecycle-v0",
 ]
 
 [[package]]
@@ -1927,8 +1942,15 @@ dependencies = [
 name = "trnm-poco-node-host"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
+ "serde_json",
  "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-safety-store",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
  "trnm-durable-file-adapters-v0",
+ "trnm-native-execution-v0",
  "trnm-node-boundary-v0",
  "trnm-poco-node-authority",
  "trnm-poco-node-io",
@@ -2111,14 +2133,23 @@ dependencies = [
 name = "trnm-state-sync-v0"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
+ "rusqlite",
+ "serde_json",
  "sha2",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
 ]
 
 [[package]]
 name = "trnm-tx-lifecycle-v0"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
+ "serde_json",
  "sha2",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
 ]
 
 [[package]]

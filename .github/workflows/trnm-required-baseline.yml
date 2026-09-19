@@ -112,6 +112,7 @@ jobs:
           python3 scripts/ci/check_node_decomposition_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
           python3 scripts/ci/check_build_closures_v1.py
+          python3 scripts/ci/test_build_closures_v1.py
       - name: Validate deterministic release-status projection
         run: |
           python3 scripts/ci/generate_release_status_v1.py --check-deterministic \
@@ -142,6 +143,7 @@ jobs:
             scripts/ci/check_repository_truth_v1.py \
             scripts/ci/check_blocker_execution_v1.py \
             scripts/ci/check_build_closures_v1.py \
+            scripts/ci/test_build_closures_v1.py \
             scripts/ci/check_documentation_reference_closure_v1.py \
             scripts/ci/check_module_coverage_v1.py \
             scripts/ci/check_module_coverage_core_v1.py \
@@ -223,6 +225,7 @@ jobs:
             bash scripts/ci/check_canonical_development_plan.sh
             python3 scripts/ci/check_required_baseline_closure_v1.py
             python3 scripts/ci/test_module_coverage_guard_v1.py
+            python3 scripts/ci/test_build_closures_v1.py
             python3 scripts/ci/test_codeql_default_setup_v1.py
             python3 scripts/ci/test_documentation_binding_log_v1.py
             python3 -B scripts/ci/test_codeql_reconcile_regions_v1.py
@@ -443,6 +446,11 @@ jobs:
           tail -n 120 "$root/pcc1-boundary.log"
           printf 'PCC1_BOUNDARY_EXIT_CODE=%s\n' "$rc"
           exit "$rc"
+      - name: Verify explicit incremental epoch execution candidate
+        working-directory: trillionnium
+        run: |
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-native-execution-v0 --features test-fixtures,incremental-epoch-candidate --lib --locked
+          cargo clippy -p trnm-native-execution-v0 --features test-fixtures,incremental-epoch-candidate --all-targets --locked -- -D warnings
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
@@ -456,8 +464,13 @@ jobs:
           cargo test -p trnm-poco-node-authority -p trnm-poco-node-host -p trnm-state-sync-v0 --no-default-features --doc --locked
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-durable-file-adapters-v0 --lib --locked -- --nocapture
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features persistent-authority-candidate --all-targets --locked -- --nocapture
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-host --features epoch-join-test-fixtures --lib --locked
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked
           timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- --nocapture
           cargo clippy -p trnm-poco-node-host -p trnm-poco-node-authority --features persistent-authority-candidate --all-targets --locked -- -D warnings
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-poco-node --features epoch-runtime-test-fixtures --lib --locked
+          cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked
+          cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings
           git diff --exit-code HEAD -- .
       - name: Test durable transaction journal without production activation
         working-directory: trillionnium

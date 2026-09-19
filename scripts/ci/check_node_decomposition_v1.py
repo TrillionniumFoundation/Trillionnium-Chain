@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 import sys
 import tomllib
 from collections import defaultdict, deque
@@ -103,10 +104,12 @@ def assert_acyclic(edges: set[tuple[str, str]], nodes: set[str]) -> None:
     require(visited == len(nodes), "node decomposition runtime edges contain a cycle")
 
 
-def require_source_contract(package_root: pathlib.Path, required: list[str], forbidden: list[str]) -> None:
+def require_source_contract(package_root: pathlib.Path, required: list[str], forbidden: list[str],
+                            test_sources: tuple[str, ...] = ()) -> None:
     source_root = package_root / "src"
     require(source_root.is_dir(), f"{package_root.relative_to(ROOT)}: src directory missing")
-    sources = sorted(source_root.rglob("*.rs"))
+    sources = sorted(path for path in source_root.rglob("*.rs")
+                     if path.relative_to(source_root).as_posix() not in test_sources)
     require(sources, f"{package_root.relative_to(ROOT)}: Rust source missing")
     text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
     for token in required:
@@ -218,9 +221,18 @@ def main() -> int:
     for label, manifest in (("authority", authority_manifest), ("host", host_manifest)):
         require(manifest.get("features", {}).get("default") == [], f"{label}: default feature drift")
     require(authority_manifest["features"].get("persistent-authority-candidate") ==
-            ["dep:trnm-durable-file-adapters-v0"], "authority candidate feature drift")
-    require(host_manifest["features"].get("persistent-authority-candidate") ==
-            ["trnm-poco-node-authority/persistent-authority-candidate"], "host candidate feature drift")
+            ["dep:trnm-durable-file-adapters-v0", "trnm-poco-node/epoch-handoff-checkpoint-candidate"], "authority candidate feature drift")
+    handoff_dependencies = {"trnm-consensus-crypto", "trnm-consensus-signer-journal",
+                            "trnm-consensus-types", "trnm-native-execution-v0", "trnm-consensus-safety-store"}
+    expected_host_features = {"trnm-poco-node-authority/persistent-authority-candidate",
+                              *(f"dep:{name}" for name in handoff_dependencies)}
+    host_features = host_manifest["features"].get("persistent-authority-candidate", [])
+    require(set(host_features) == expected_host_features and len(host_features) == len(expected_host_features),
+            "host candidate feature drift")
+    for name in handoff_dependencies:
+        dependency = host_manifest.get("dependencies", {}).get(name)
+        require(isinstance(dependency, dict) and dependency.get("optional") is True,
+                f"host candidate dependency must remain optional: {name}")
     require(package_metadata(packages[declared["authority_boundary"]]).get(
         "durable_authority_journal_owner") is False, "composition may not own the journal")
 
@@ -240,8 +252,43 @@ def main() -> int:
     require_source_contract(
         roots[declared["host_composition"]],
         ["PocoNodeHostV0", "NodeHostStartBlockedV0"],
-        ["trnm_consensus_", "rusqlite", "SigningKey", "TcpListener"],
+        ["rusqlite", "SigningKey", "TcpListener"],
+        # The exact nested module's test/feature gates are verified below.
+        test_sources=("handoff_native_join_tests_v1.rs",),
     )
+    # Candidate handoff wiring calls the real verifier and journal owners. Its
+    # imports are legitimate only behind the explicit candidate feature; the
+    # default Cargo closure is independently checked by check_build_closures.
+    host_sources = roots[declared["host_composition"]] / "src"
+    host_lib = (host_sources / "lib.rs").read_text(encoding="utf-8")
+    require(re.search(r'#\[cfg\(feature = "persistent-authority-candidate"\)\]\s*'
+                      r'mod handoff_runtime_v1;', host_lib) is not None,
+            "host handoff module must remain candidate gated")
+    handoff_source = host_sources / "handoff_runtime_v1.rs"
+    handoff_tests = host_sources / "handoff_runtime_v1_tests.rs"
+    native_join_tests = host_sources / "handoff_native_join_tests_v1.rs"
+    require(re.search(r'#\[cfg\(test\)\]\s*'
+                      r'#\[path = "handoff_runtime_v1_tests.rs"\]\s*mod tests;',
+                      handoff_source.read_text(encoding="utf-8")) is not None,
+            "host handoff tests must remain test gated inside candidate wiring")
+    require("handoff_runtime_v1_tests" not in host_lib,
+            "host handoff tests cannot enter the root module")
+    require(re.search(r'#\[cfg\(feature = "epoch-join-test-fixtures"\)\]\s*'
+                      r'#\[path = "handoff_native_join_tests_v1.rs"\]\s*mod native_join;',
+                      handoff_tests.read_text(encoding="utf-8")) is not None,
+            "native join fixture must remain inside test-gated handoff module")
+    require(host_manifest["features"].get("epoch-join-test-fixtures") ==
+            ["persistent-authority-candidate", "trnm-consensus-safety-store/test-fixtures"],
+            "host real join fixture feature drift")
+    for source in host_sources.rglob("*.rs"):
+        if source != handoff_tests:
+            require("handoff_native_join_tests_v1" not in source.read_text(encoding="utf-8"),
+                    "native join tests cannot enter another host module")
+    for source in host_sources.rglob("*.rs"):
+        if source in (handoff_source, handoff_tests, native_join_tests):
+            continue
+        require("trnm_consensus_" not in source.read_text(encoding="utf-8"),
+                f"host consensus import outside candidate handoff wiring: {source.name}")
     require_source_contract(
         roots[declared["cli_entrypoint"]],
         ["NodeCliCommandV0", "run_v0"],

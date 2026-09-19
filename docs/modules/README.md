@@ -53,6 +53,13 @@ incomplete; extending a module design does not invent executable operation cover
 The [native signed Vote replay contract](TRNM_NATIVE_SIGNED_VOTE_REPLAY_CONTRACT_V1.md)
 grants laboratory readback only, with no new signing/recovery authority.
 
+The [target closure design](TRNM_TARGET_CLOSURE_DESIGN_V1.md) is the
+implementation-ready cross-module index for the current E1/T1/S1/F1 work. It
+records the exact P/D/C/K/checkpoint order, durable fields, crash cuts, error
+dispositions, source symbols and acceptance evidence for each target stage.
+It is a design contract and evidence map; its status column deliberately does
+not promote a candidate into production.
+
 ## Reviewing a design change
 
 For the affected boundary, review exact input/output fields and versioning;

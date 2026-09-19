@@ -17,6 +17,7 @@ import tomllib
 MIN_TMP_FREE_BYTES = 4 * 1024**3
 REQUIRED_TOOLS = ("python3", "tar")
 PING_ATTEMPTS = 3
+MAX_PROBE_BYTES = 64 * 1024
 REMOTE = r'''set -u
 printf 'hostname=%s\n' "$(hostname)"
 printf 'os=%s\n' "$(uname -s)"
@@ -88,6 +89,8 @@ exit "$failed"
 
 
 def parse_lines(raw: str) -> dict[str, str]:
+    if len(raw.encode("utf-8")) > MAX_PROBE_BYTES:
+        raise ValueError("readiness probe output exceeds 64 KiB")
     values: dict[str, str] = {}
     for line in raw.splitlines():
         key, separator, value = line.partition("=")
@@ -97,7 +100,49 @@ def parse_lines(raw: str) -> dict[str, str]:
     return values
 
 
-def local_facts(lan_ips: list[str]) -> dict[str, str]:
+def local_inventory_addresses(
+    lan_ips: list[str], expected_local_ip: str | None = None
+) -> set[str]:
+    # The coordinator stage is bound to the inventory's one `management=local`
+    # host.  Probing every LAN edge is insufficient: a desktop running this
+    # script could otherwise emit a report that still labels itself as the
+    # inventory's 192.168.0.9 coordinator.  Require the local kernel to expose
+    # exactly one inventory address and fail closed when the address inventory
+    # cannot be read.  Remote facts remain SSH-bound to their management alias.
+    try:
+        address_probe = subprocess.run(
+            ["ip", "-j", "-4", "addr", "show"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if address_probe.returncode != 0:
+            raise ValueError("local IPv4 address probe failed")
+        address_rows = json.loads(address_probe.stdout)
+        local_addresses = {
+            address["local"]
+            for interface in address_rows
+            for address in interface.get("addr_info", [])
+            if address.get("family") == "inet" and isinstance(address.get("local"), str)
+        }
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError, TypeError, KeyError) as error:
+        raise ValueError(f"local IPv4 identity probe failed: {error}") from error
+    matched_addresses = local_addresses.intersection(lan_ips)
+    if len(matched_addresses) != 1 or (
+        expected_local_ip is not None and matched_addresses != {expected_local_ip}
+    ):
+        raise ValueError(
+            "local IPv4 identity must match the inventory local LAN address exactly; "
+            f"expected={expected_local_ip!r} observed={sorted(matched_addresses)!r}"
+        )
+    return matched_addresses
+
+
+def local_facts(
+    lan_ips: list[str], expected_local_ip: str | None = None
+) -> dict[str, str]:
+    local_inventory_addresses(lan_ips, expected_local_ip)
     stat = shutil.disk_usage("/tmp")
     soft, hard = subprocess.check_output(
         ["bash", "-lc", "printf '%s %s' \"$(ulimit -Sn)\" \"$(ulimit -Hn)\""],
@@ -178,11 +223,13 @@ def main() -> None:
     observations = []
     failures = []
     epochs = []
+    build_arches: set[tuple[str, str]] = set()
     for host in inventory["hosts"]:
+        facts = None
         try:
             remote_returncode = 0
             if host["management"] == "local":
-                facts = local_facts(lan_ips)
+                facts = local_facts(lan_ips, host["lan_ip"])
             else:
                 completed = subprocess.run(
                     [
@@ -214,6 +261,10 @@ def main() -> None:
                 facts = parse_lines(completed.stdout)
             if facts["os"] != expected_os(host["os"]) or facts["arch"] != host["arch"]:
                 raise ValueError("OS/architecture differs from inventory")
+            # A failed network edge does not erase independently observed tools.
+            # This records availability only, never a completed native build.
+            if facts["cargo"] and facts["rustc"]:
+                build_arches.add((facts["os"], facts["arch"]))
             if int(facts["tmp_free_bytes"]) < MIN_TMP_FREE_BYTES:
                 raise ValueError("temporary filesystem has less than 4 GiB free")
             if any(not facts[tool] for tool in REQUIRED_TOOLS) or not facts["sha256"]:
@@ -236,7 +287,13 @@ def main() -> None:
             epochs.append(int(facts["epoch"]))
             observations.append({"id": host["id"], "lan_ip": host["lan_ip"], "facts": facts})
         except (KeyError, OSError, subprocess.SubprocessError, ValueError) as error:
-            failures.append({"id": host["id"], "error": str(error)})
+            failure = {"id": host["id"], "error": str(error)}
+            if facts is not None:
+                # Diagnostic-only; the checker rejects every nonempty failures
+                # list before accepting observations. Never move these facts to
+                # the successful observation list merely to populate a report.
+                failure["facts"] = facts
+            failures.append(failure)
     report = {
         "schema_version": 2,
         "fleet_id": inventory["fleet_id"],
@@ -247,11 +304,6 @@ def main() -> None:
         "observed_epoch_spread_seconds": max(epochs) - min(epochs) if epochs else None,
         "observations": observations,
         "failures": failures,
-    }
-    build_arches = {
-        (facts["os"], facts["arch"])
-        for observation in observations
-        if (facts := observation["facts"])["cargo"] and facts["rustc"]
     }
     expected_build_arches = {
         (expected_os(host["os"]), host["arch"]) for host in inventory["hosts"]

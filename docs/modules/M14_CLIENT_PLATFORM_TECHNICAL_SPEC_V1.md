@@ -22,6 +22,66 @@ handlers are not automatically conformant, and no production availability is cla
 
 ## Interfaces
 
+### Planned live native candidate socket profile
+
+The first runtime-bound interface is `native-public-candidate-v1`, separate from
+the M05-intent `dev-api-v1` below. It is a client protocol inside the isolated
+candidate namespace, not an Internet-facing production service. A validator
+owns one Unix-domain socket under its canonical data root; the directory is
+0700, socket 0600 and stale socket replacement requires proving the previous
+owner is absent. No request chooses an application database or filesystem path.
+The client may use an independently authenticated tunnel to its host; a later
+HTTP/TLS adapter must preserve this contract and is not implicit here.
+
+Each connection carries one request and one response: u32 big-endian byte length
+followed by UTF-8 JSON, then close. Reject zero/over-limit length before allocation,
+truncation, trailing frames, duplicate/unknown fields and nesting over 64.
+Requests are capped at 528,384 bytes; replies at 8 MiB + 16 KiB, allowing the
+hex encoding of the complete 4 MiB native proof/evidence budget. Use lowercase
+hex without `0x`, decimal strings for u64, no private keys. Suggested local
+budgets are 16 connections, 2 seconds to receive a request, 5 seconds to complete
+it and at most 8 queued submit requests handled per consensus event-loop turn.
+Proof queries have a separate two-worker budget and cannot occupy proposal/vote
+work. Timeout after persistence is an unknown result to the client, not rollback.
+
+All requests have `schema`, opaque `request_id` (1..64 ASCII token bytes), `op`
+and a closed `data` object. `request_id` correlates responses only; native hash
+and nonce govern durable idempotency.
+
+| Operation | Exact data | Successful data / authority |
+|---|---|---|
+| `capabilities` | `{}` | Candidate flag, chain/genesis/profile, socket and transaction limits, supported native proof classes |
+| `submit` | `{ "signed_outer_hex": "..." }` | `native_tx_hash`, persistent `receive_sequence`, `status="admitted"` or current exact-retry status; only after M05 body+nonce transaction commits |
+| `transaction` | `{ "native_tx_hash": "..." }` | Durable local status and optional block/index; explicitly `proof_verified:false` unless accompanied by verified inclusion |
+| `proof` | `{ "native_tx_hash": "..." }` | Exact native package hex; proof class `ordinary-v0` or `epoch-first-v1`; the epoch class includes all eight named evidence preimages, collectively bounded with the package |
+| `status` | `{}` | Readiness reasons, current view, finalized height, durable pending count/bytes; no secret paths or credentials |
+
+Replies contain `schema`, `request_id`, `candidate_only:true`, chain/genesis/profile
+identity, `ok` and exactly one of `data` or `{code,retryable}`. Errors include
+`INVALID_REQUEST`, `UNSUPPORTED_PROFILE`, `BAD_SIGNATURE`, `SIGNER_UNAUTHORIZED`,
+`WRONG_CHAIN`, `NONCE_CONFLICT`, `EXPIRED`, `BACKPRESSURE`, `TIME_UNREADY`,
+`RECOVERY_REQUIRED`, `NOT_FOUND` and `PROOF_UNAVAILABLE`. Only transient capacity,
+readiness and recovery conditions are retryable with the same exact bytes.
+An unknown hash is not a failed transaction; no proof is not proof of absence.
+Querying a retained rejected/expired transaction returns its local record.
+
+The SDK preserves its signed bytes, retries submit verbatim after ambiguous I/O,
+and verifies returned native hash by canonical decoding. Before labeling a
+transaction `included-finalized`, it verifies the dual ordered branches and
+strict finality against independently pinned M13 history, including complete
+epoch evidence on that explicit route; returned set/preimages cannot self-select
+trust. Derive native hash from the proven outer envelope, require the requested
+hash, and expose only committed gas/fee/events. No M05 intent ID, outcome string
+or intermediate post-state root is inferred from this profile. History reads
+must use the proof for that exact block, not the latest Core tip's proof.
+
+The endpoint must invoke the running validator's durable admission and proposal
+owner, then read that owner's authenticated finalized history. A fake accepted
+map, a separately executed G1 fixture or a background generated workload does not
+satisfy this API. Tests use a real client-owned key, submit through this socket,
+observe execution on the multi-validator chain and independently verify the
+returned package, including after lost ACK, leader change and restart.
+
 ### Common encoding and metadata
 
 Use HTTPS JSON with UTF-8, duplicate-key rejection, no unknown request fields,
@@ -115,6 +175,17 @@ establish its particular outcome under that profile; inclusion alone does not.
 Current v0 still requires execution post-root to equal finality state root;
 unsupported intermediate-root/multi-transaction mappings return
 `PROOF_UNAVAILABLE`. A transport receipt is not a finality proof.
+
+The current candidate query seam is
+`PocoNodeLabOrdinaryProposalRuntimeV0::read_finalized_transaction_by_digest_v1`
+(`trillionnium/crates/trnm-poco-node/src/lab_authority.rs`). It performs a
+fresh current-tip proof/application read, reparses every stored outer envelope
+with `BuiltCanonicalTxV0::from_exact_outer_bytes_v0`, requires one exact digest
+occurrence and parallel receipt cardinality, and returns the canonical outer
+bytes, transaction index, receipt commitment and proof identity. An unknown
+digest returns no result; malformed or duplicate stored rows fail closed. This
+is a candidate readback carrier only: it does not expose a production listener,
+historical index, standalone membership proof or finality capability.
 
 ### Errors and retry contract
 
@@ -280,3 +351,71 @@ A labelled candidate API may expose only capabilities actually wired. Public
 API readiness requires versioned schemas, independent client vectors, bounded
 abuse tests, real-node proof readback and index-rebuild evidence. Deploying the
 frontend or returning a status document does not activate the chain.
+
+### Candidate clock binding
+
+For `native-public-candidate-v1`, capabilities bind `wall_clock_epoch_ms` to the
+manifest/profile digest. Envelope validity fields and block time are milliseconds
+since that epoch, despite the frozen envelope's `unix_ms` field names. The node
+computes time using checked subtraction from its own Unix clock; clients cannot
+supply the server time. SDK signing derives the same chain-relative value and
+rejects a future epoch. Genesis remains canonical timestamp 0. M15 defines the
+parent-relative step, skew readiness, empty catch-up and drain rules. An exact
+retry returns its durable prior status even after expiry; recovery of an already
+executed body verifies its historical block time and must not re-admit it using
+a backdated clock.
+
+### Candidate client executable
+
+The candidate validator executable exposes an explicit `native-client` command
+before validator configuration or consensus keys are loaded. `sign` takes the
+pinned public profile, selected campaign application key, explicit nonce/TTL and
+command file; it writes one exact signed native body with create-new semantics.
+TTL is bounded to five minutes and time comes from the committed profile epoch.
+`request` sends one bounded length-prefixed request to an owner-private Unix
+socket and checks response request/profile/genesis identity; receiving a response
+does not count as proof verification. `verify` loads independently pinned
+observer-public trust, binds the exact signed request bytes and native hash,
+checks the canonical parent header against the finality-certified parent ID,
+and runs the shared native payload/receipt/finality verifier. It ignores the
+server's verification boolean as authority. Client keys stay outside validator
+and observer-public bundles; no command implicitly generates load or keys.
+
+
+### Candidate ordinary application replica command (M13 consumer)
+
+`native-client sync <observer-public-root> <config> <manifest-sha256>
+<private-socket> <replica-directory> <target-height> <profile-sha256>` loads only
+independently pinned public context and signer policy. It requests exactly that
+positive height using `sync_manifest {target_height}`, then `sync_chunk
+{height,index,record_sha256}`. Responses retain request/chain/genesis/profile
+context. Manifest/chunk response frames are bounded before JSON decoding; unknown
+fields, noncanonical hashes, wrong coordinate, length or chunk hash reject.
+Manifest hashes bind transfer bytes; every finalized proof and executed body is
+still independently verified against the receiver's genesis and previous header.
+
+A private destination lock permits at most two immutable manifest-digest stages
+for resumable downloads, so an invalid first manifest can be retried with an honest
+source without deleting verified state. A third distinct manifest reports capacity
+exhaustion; completed replicas keep their selected stage.
+Existing chunks are rehashed, and invalid incoming chunks are rejected before
+persistence. The client reconstructs the actual schema-3 application database;
+a missing tail retains verified commits but cannot create CURRENT. A retry opens
+the same namespace, verifies the complete prefix against actual committed rows,
+and publishes only after close/reopen confirms the exact target. CURRENT describes
+an application replica, with `application_only=true` and `signing_authority=false`.
+No private consensus key, signer journal or independent node watermark is loaded.
+Epoch/seal targets and schema 4/5/6 are unsupported in this initial command.
+The existing private Unix endpoint is the transport; this does not claim a public
+Internet RPC, a complete validator join, or cross-epoch synchronization.
+
+When this client is backed by the M13 incremental SQLite staging adapter, a
+restart first performs the adapter's exact schema, journal and readback checks.
+A process crash before the delta transaction commits leaves the prior generation
+and root; a committed generation is returned only after independent row/root
+recomputation. A mismatch is surfaced as `RECOVERY_REQUIRED`; the client keeps
+the signed manifest/transfer identity rather than silently rebuilding or treating
+an empty directory as a valid replica. The repository has a real child-process
+`SIGKILL` regression for the pre-commit cut, but this remains candidate
+process-crash evidence and does not establish disk-full, physical power-loss,
+peer-transfer, or multi-host guarantees.

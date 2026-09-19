@@ -20,6 +20,7 @@ Production activation requires a separately reviewed network profile.
 | Source | Implemented responsibility | Remaining integration |
 |---|---|---|
 | `trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs` | `PeerSessionIdentityV0`, exact-next nonce, one pending frame, typed verification token | No socket, TLS, discovery or persistent backend |
+| `trillionnium/crates/trnm-poco-node/src/p2p_session_ingress.rs` | Candidate Ed25519 handshake/frame ingress, nested Vote/TimeoutVote/QC/TC verification, fsynced session and authenticated-frame replay anchor, child-process restart/tamper checks | No listener, TLS identity administration, Core ACK atomicity or external anti-rollback |
 | `trillionnium/crates/trnm-poco-node-host/src/persistent_p2p_ingress_bridge.rs` | Candidate bridge to prepared Core ingress and ACK | Connect an independently authenticated listener |
 | `trillionnium/crates/trnm-poco-lab-validator/src/p2p_admission.rs` | Candidate peer-admission integration | Multi-host production authentication |
 | `trillionnium/crates/trnm-consensus-peer-lease/src/lib.rs` | Unix lease transport, append-only chain, cross-process fencing | Not consensus payload transport or host attestation |

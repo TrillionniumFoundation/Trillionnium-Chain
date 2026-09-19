@@ -116,6 +116,108 @@ application/Safety advances, and prove no second publication/signature or false
 readiness. Boundary ports own no hidden durable state: adapters declare their
 store/anchor and reconstruct only from M03/M07/M08 authoritative readback.
 
+The feature-gated `trnm-poco-node-host/src/handoff_runtime_v1.rs` now owns a
+candidate join between a live native application owner, its freshly read
+committed pre-certificate receipt, strict M01 context and the role-specific
+durable journal. `CandidateHandoffRuntimeV1` verifies path/store affinity and
+exact row/head/configuration bindings before signing or new-only recovery.
+Old/continuing restart is explicitly fenced as described below. Its private
+recorded result retains intent, signature, application commit/artifact and context
+identity. It creates no keys and cannot activate Core, authorize ordinary votes,
+publish via a Core callback or close the whole-node checkpoint barrier. Full
+positive joined-node and epoch crash/restart acceptance remain necessary.
+
+### Planned native client composition and bootstrap profile
+
+The `native-public-candidate-v1` composition replaces the fixed workload source
+inside `trnm-poco-lab-validator/src/consensus_runtime.rs::maybe_propose_v1`.
+Its leader drains the M05 durable native queue into the existing
+`continuous_runtime.rs` preview/proposal signer/network path. Followers execute
+the exact transmitted block under their own application owner; they need not
+receive the submit request. A nonleader may acknowledge its own durable queue
+and wait for its scheduled view; no transaction-gossip guarantee is implied.
+The live endpoint, queue, proposal owner and finalized readback share the same
+configured chain/root and process lifecycle. `trnm-poco-node-host`'s default
+inert I/O and production-start refusal remain unchanged; wiring a candidate
+socket does not open them. Legacy `trnm-rpc` and G1 fixture finality are excluded
+from this composition.
+
+Network delivery can race a local Timeout or an earlier Vote in the same
+view. The candidate ingress first authenticates the proposer witness and
+checks the parent-time-independent view/parent/height relations and requires
+any TC to contain and select the exact separate justify QC. Only then does it
+strictly process the complete carried QC/TC and read the resulting local view
+and phase. A proposal for an older view, or for the current view
+whose owner is already `VoteSigned`/`TimeoutSigned`, returns an explicit
+no-vote outcome. This outcome does not attest body execution or full proposal
+acceptance, issue a signing lease, reset a signed owner, or add an execution
+coordinate. Any actual carried-certificate progress still updates finality
+bookkeeping and the timer; future proposals must pass the unchanged exact
+parent/binding/execution path. Invalid witnesses, conflicting certificates,
+failed durable readback and unexpected authority errors remain errors. The
+network actor must not terminate merely because an authenticated delayed
+proposal arrives after its local timeout; direct local voting remains strict.
+
+The signed public campaign descriptor adds the chosen profile, application
+signer-policy digest, `wall_clock_epoch_ms`, client socket relative name, M05 queue
+limits, maximum block cadence and finite drain budget. Application signers are
+an explicit list of signer ID, stable canonical identity, role and public key,
+validated for duplicate/conflicting identity and role before store creation.
+Their policy commitment is part of the native genesis/bootstrap derivation;
+existing workload-key genesis or databases must never be silently retargeted.
+Initial credits are either explicit genesis state or real operator-signed
+transactions from the declared campaign policy, not hidden fixture funding.
+
+For an explicitly isolated candidate campaign, generate fresh application client
+and operator keys only under that campaign's owner-controlled 0700 key directory,
+with exclusive 0600 files. Copy only public policy to validators. Client-side
+signing retains the private material; request bodies, reports, logs, validator
+config and proof artifacts contain no client private key. Do not regenerate
+keys on restart or borrow production keys. Campaign generation must reject an
+occupied namespace and derive a fresh declared genesis/bootstrap; an existing
+network joins by its exact public descriptor. Generation does not authorize
+production activation or HSM claims.
+
+The frozen canonical laboratory genesis keeps timestamp 0 and its existing
+hash formula. The new candidate profile commits one agreed `wall_clock_epoch_ms`
+in its manifest-bound descriptor. Native envelope validity and block timestamps
+use **chain-relative milliseconds**: `W = now_unix_ms - wall_clock_epoch_ms`,
+with checked subtraction. The existing envelope field names retain `unix_ms`
+for wire compatibility; capabilities and signing clients must explicitly expose
+this candidate time domain and never sign raw Unix time for this profile.
+The coordinator chooses a fresh epoch before commissioning the h1-h3 prefix;
+validators reject a future epoch or clock skew instead of inventing an offset.
+No 1ms fixture validity width applies. Consensus timers use a monotonic clock
+separately. For a regular proposal let `P` be the exact authenticated parent
+timestamp, `W` the owner-derived chain time and `S` the authenticated
+`max_block_time_step_ms`:
+compute checked `T = min(max(W, P+1), P+S)`. If arithmetic overflows or the
+parent is more than the signed candidate skew allowance (default 5,000ms)
+ahead of local chain time, return `TIME_UNREADY`; do not move the clock backwards.
+If a resumed chain lags owner-derived chain time, empty certified blocks may advance its
+parent-relative clock; new client admission waits until chain time is within
+the same allowance. This local readiness rule changes no frozen timestamp rule.
+
+Suggested candidate client TTL is 300,000ms, with maximum 600,000ms. Admission
+checks the signed envelope at the owner clock and forbids a client from selecting
+the server time; proposal execution rechecks it at T using existing strict
+envelope rules. An accepted transaction can therefore expire before inclusion
+and must obtain a durable local expiry record. All nodes use the block timestamp
+for deterministic execution, never their local wall time. Repeated requests do
+not extend signed expiry. Observed skew is recorded as readiness evidence.
+
+When there are no pending transactions, propose honest empty Regular blocks at
+the declared bounded cadence (development suggestion 250ms). Empty successors
+execute through the same root/commit/Safety path, contain no fake client
+transaction and do not contribute to business goodput. Graceful stop closes
+admission first; selected user blocks must obtain their two certified descendants
+or the bounded drain ends with `DRAIN_INCOMPLETE` and durable pending work.
+Reserve at least two successor heights beyond the last admitted business target;
+`max_blocks` cannot silently truncate finality while reporting campaign success.
+On startup restore body/nonce/proposal/proof state and reconcile unresolved
+handoffs before exposing the client socket as ready. Migration and recovery
+failures preserve the prior databases and keep signing/submission fenced.
+
 ## State machine
 
 ```text
@@ -135,6 +237,11 @@ any state -> Blocked(reason)   or   RecoveryRequired
 4. Recover Safety and signer journals, then the M08 commit ledger and its M07
    application/checkpoint targets. Let each owner verify its own predecessor
    chain; M15 only compares returned verified identities and completion status.
+   The default-off epoch candidate may then call the owner-only
+   `CandidateEpochRuntimeV1::ensure_incremental_epoch_commit_owner_v1()` bridge;
+   it requires an already joined schema6 edge, rechecks every physical cut, and
+   returns no node or signing authority. A missing schema6 owner, malformed
+   schema7 row, or lost migration response remains recovery-required.
 5. Recover M04 pending ingress/payload and M05 transaction journal. Resolve each
    uncertain prepared/commit receipt against M08; retain unresolved work.
 6. Establish the M13 trusted checkpoint context and exact validator epoch.
@@ -299,3 +406,434 @@ custody, rollback protection, multi-host authentication, required independent
 reviews and external fault/soak evidence for the exact release bundle. No
 administrator flag, healthy endpoint or generic port implementation supplies
 those missing capabilities. Current fail-closed production startup remains valid.
+
+### Candidate cadence across rotating leaders
+
+Native public cadence is measured against the committed parent timestamp, not
+only a per-process timer. When chain time is ready, every leader waits until the
+proposed timestamp is at least `parent_timestamp + block_cadence_ms`; checked
+overflow rejects progress. Otherwise leader rotation would multiply the nominal
+block rate and exhaust a bounded campaign before clients can observe finality.
+Empty clock catch-up blocks may advance by the committed maximum time step
+until skew readiness returns. This candidate cadence is a test profile limit,
+not a throughput claim or a change to frozen consensus validity.
+
+
+### Ordinary retirement before candidate handoff custody
+
+Old and continuing validators must commission `CandidateHandoffRuntimeV1` via
+`from_owners_with_original_ordinary_v1`. This consumes an independently obtained
+`ConfirmedSignerNodeCheckpointFactsV0` and checks its affinity against the actual
+original live ordinary journal plus fresh exact local/external readback. The
+private selection retains its path, owner affinity, journal ID, external scope,
+complete profile checksum and original watermark. Ordinary and handoff scopes
+must be explicit and distinct. Same validator, same key and same signer-profile
+reference are insufficient; neither a different-scope journal nor a reopened
+scalar-identical journal can replace the selected live owner.
+
+The retirement method checks this selection before joining native/Safety or
+performing external CAS. It then freshly joins actual journal8 terminal
+`CheckpointApplied`, strict old finality and COMMITTED native checkpoint. Host
+cut generation, Safety revision/checksum and native cut come from those owners.
+Retirement preserves the original owner affinity when consuming its ordinary
+API. Both before and after handoff signing, the host checks that exact retired
+owner and fresh external terminal policy against the prior selection. Bare
+`from_owners` and `sign_handoff_exact` admit only a new-only validator whose ID
+and key have no old-set custody.
+
+**Restart limitation:** the existing native whole-node checkpoint capability is
+private and binds the older Safety profile; a durable terminal14O/14E producer
+that independently restores the original ordinary journal/scope/profile is not
+implemented. `recover_with_retired_ordinary_exact_v1` therefore returns
+`OriginalOrdinaryRecoveryUnavailable` before any owner read/reconciliation/CAS.
+It never assigns the caller's supplied retired fields to the expected selection.
+A complete fix must retain the original source pin in the actual durable node
+checkpoint, fresh-read it under its own owner, join the exact retired local and
+external source, and only then construct a recovery capability. A public scalar
+constructor or a copied live capability is forbidden. This is a remaining
+activation/recovery boundary, not a completed restart feature.
+
+Real SQLite-owner tests use two journals with identical set, author and signing
+key reference but different external scopes. The prior original selection
+rejects the second active and retired owner, allows the real original retirement,
+and rejects a same-path/same-scalar reopened owner. External services in these
+host binding tests are test doubles; M03 separately tests the real Unix daemon.
+Full native/Safety/retirement positive host acceptance remains required.
+
+`trnm-consensus-safety-store` is an optional dependency of the explicit
+`persistent-authority-candidate` host feature solely to perform this owner join.
+It does not enter the default host/production dependency closure. The host does
+not evaluate SafetyRules, write raw Safety records, accept caller-supplied
+activation booleans, or receive private keys. A retired ordinary receipt itself
+is not a publish permit, complete joint certificate, or new-epoch signing lease.
+End-to-end activated runtime and new lease validation remain separate acceptance.
+
+### Native candidate fleet application identity and source aliases
+
+The actual `FleetCampaignIdentityV1` legacy constructor continues to require
+nonzero corpus and policy hashes. The explicit `new_native_v1` constructor
+uses the previously invalid pair of zero workload hashes as a reserved native
+application discriminator and appends exactly one nonzero 32-byte native
+profile digest before the validator count. Old valid campaign encodings stay
+unchanged. The Ready/Start signatures cover this complete identity. The public
+verifier independently loads the manifest-bound application profile and must
+match its digest; missing, zero, mixed or substituted native profiles reject.
+The inactive zero workload fields in summary JSON confer no fixture authority.
+
+Source candidate preparation preserves a tracked documentation alias as Git
+mode `120000`, its literal UTF-8 relative target bytes and original blob hash.
+The strict clean-commit inventory still reconstructs the original commit tree.
+Only `docs/*.md` aliases directly targeting a tracked, non-executable regular
+Markdown document inside `docs/` are accepted; executable paths, untracked
+links, absolute targets, traversal outside docs, chains, cycles and directory
+links reject. Canonical tar uses a symbolic-link member with fixed metadata.
+The verifier validates this inventory before extraction; the builder extracts
+all regular members first and creates only these validated aliases afterward.
+No source file is materialized under a false original Git hash.
+
+### Terminal outgoing whole-node checkpoint projection v1
+
+The candidate `epoch-handoff-checkpoint-candidate` interface uses the existing
+672-byte external node-checkpoint CAS envelope with a distinct, domain-separated
+application projection. It does not reinterpret the native-K projection or make
+schema13 recovery accept schema14. A successor requires the independently
+recorded predecessor checkpoint, whose signer scope, journal ID and full profile
+checksum must match the retired original owner. Its sequence and application
+height cannot be ahead of the actual retirement source and committed C. A lower
+signer sequence is accepted only when a fresh audited snapshot of the original
+retired journal contains that exact historical checksum (including the special
+sequence-zero initial checksum). Journal8 supplies privately constructed audited
+migration-source facts; predecessor Safety journal/profile/revision/record/chain
+must equal that exact journal7 origin. The retained committed native history must
+also authenticate the predecessor application block/root/height/time. Legacy
+application projection fields do not grant any P, ACK or signing capability.
+
+The producer joins a fresh, owner-affine retired signer receipt, strict
+pre-handoff context, actual journal8 terminal14O head and actual committed native
+C readback. The successor binds the exact retirement terminal watermark, Safety
+journal/context/revision/record/chain checksum, native committed P/artifact/overlay
+and commit sequence digest, descriptor and owner generation. Retirement happens
+before this CAS; losing its response never restores ordinary signing. Before the
+CAS, recovery accepts only the exact predecessor; after it, only the identical
+deterministically rebuilt successor. Every third external state fails closed.
+A fresh synchronized readback is mandatory before returning a non-Clone token.
+
+That token retains the actual independent checkpoint owner and retired receipt.
+Host handoff recovery and both sides of signature production revalidate it; a
+public decoded checkpoint or caller-supplied tuple cannot construct the token.
+The existing scalar-only retired restart entry remains fenced. This projection
+qualifies terminal14O/original-custody recovery only; full14E activation still
+requires journal9, its native epoch edge and a separate new ordinary lease.
+
+The default-off host `epoch-join-test-fixtures` regression drives real Core,
+journal8 and native speculative P through H1..C8 and two seals. Its original
+SQLite signer produces ten votes only after fresh Safety persistence; host
+retirement joins the actual committed C. All local Core/application/Safety,
+independent node-checkpoint, retired signer and handoff owners are closed; native
+and Safety reopen and regenerate fresh receipts from exact retained evidence.
+The recovered host returns the identical persisted handoff signature without
+another key call. Eight independently checksummed
+but substituted genesis predecessors (Safety identity/profile/revision/record/
+chain, application block/root and signer prefix checksum) reject before CAS.
+An identical-key/profile/scope second retired journal rejects; a later independent
+checkpoint fences the recovered host before key access. Genesis commissioning
+and the external watermark service are explicit test inputs. This close/reopen
+test does not claim a combined process-kill matrix, external HSM/KMS rollback
+protection, new ordinary signing authority, or multi-host epoch activation.
+
+
+### Full-epoch node-lineage checkpoint v1 candidate
+
+The default-off `epoch-runtime-candidate` implements this comparison codec,
+bounded schema2 store, continuing-author initial activation and initial-only
+recovery. This is not a production activation claim. The V0 672-byte record and its invariant
+`signer_exact_watermark.scope == scope` remain frozen. Full epoch activation
+uses a distinct V1 record and explicit SQLite schema2 migration. Stable node
+lineage identity is separate from the current ordinary signer's scope. No new
+scope is hidden inside a V0 recovery-closure hash.
+
+`EpochNodeCheckpointV1` is comparison data. Canonical local encoding is the
+following ordered fields; all integers are unsigned big-endian, every Hash32
+is exactly 32 bytes, and no trailing bytes, padding or unknown tags are allowed:
+
+| Ordered group | Fields and exact local representation |
+|---|---|
+| Envelope | ASCII `TRNMNC01` (8 bytes), codec u16=1, phase u8, role u8, predecessor-kind u8, lineage_id Hash32, origin_checksum Hash32, generation u64, predecessor_checksum Hash32 |
+| Active consensus | genesis_hash Hash32, chain_id as u16 byte length then canonical UTF-8 bytes (1..128, same identity as frozen chain ID), protocol_version u32, epoch u64, author as u16 byte length then canonical ValidatorId bytes (1..128), validator_set_id Hash32, parameters_hash Hash32, owner_generation u64, phase_authority_binding Hash32 |
+| Source Safety | option u8; 0 carries no bytes, 1 carries journal_id Hash32, context_ref Hash32, revision u64, record_checksum Hash32, chain_checksum Hash32 |
+| Target Safety | journal_id Hash32, context_ref Hash32, revision u64, record_checksum Hash32, chain_checksum Hash32 |
+| Epoch/application edge | checkpoint_block_id Hash32, checkpoint_height u64, checkpoint_state_root Hash32, terminal_old_block_id Hash32, terminal_old_height u64, terminal_old_view u64, terminal_old_qc_id Hash32, native_authorization_id Hash32 |
+| Current real application | block_id Hash32, height u64, epoch u64, view u64, timestamp_ms u64, state_root Hash32, native_store_id Hash32, native_commit_id Hash32, p_sequence u64, p_digest Hash32, artifact_digest Hash32, overlay_digest Hash32, commit_sequence u64 |
+| Retired custody | option u8; 0 carries no bytes, 1 carries retired_epoch u64, retired_author as u16 length then canonical ValidatorId bytes (1..128), retired_validator_set_id Hash32, retired_parameters_hash Hash32, scope Hash32, journal_id Hash32, profile_checksum Hash32, source_sequence u64, source_chain_checksum Hash32, terminal_sequence u64, terminal_chain_checksum Hash32, retirement_record_checksum Hash32 |
+| Active ordinary custody | option u8; 0 carries no bytes, 1 carries scope Hash32, journal_id Hash32, profile_checksum Hash32, sequence u64, chain_checksum Hash32 |
+| Integrity | Hash32 = H(`trnm.node.epoch-lineage-checkpoint.v1`, all preceding record bytes) |
+
+Here H(domain, payload) is exactly SHA-256 of the concatenation
+`b"trnm.domain.hash.v1" || u64_be(domain.len()) || domain || u64_be(payload.len()) || payload`.
+The domain is the literal ASCII bytes, without a terminator; lengths count bytes.
+The integrity payload excludes only its final 32-byte integrity field.
+The immutable origin checksum uses the identical H layout with domain
+`trnm.node.epoch-lineage-origin.v1` and the entire canonical origin record,
+including that record's own integrity field. These definitions do not depend
+on a same-named helper in another crate or on a multi-part hash convention.
+
+Closed phase tags are 0 ActivationCommitted, 1 Ordinary, 2 EpochRetired. The name
+ActivationCommitted means the composite physical cut was committed; decoded
+bytes do not prove that a process received a lease. Role tags are 0 Continuing,
+1 VirginNew, 2 Removed. Predecessor kinds are 0 exact terminal V0 record,
+1 exact V1 record, 2 explicitly commissioned virgin lineage record. Hashes are
+nonzero except explicitly absent option payloads; options contain no zero-filled
+placeholder structs. Generation/owner generation are positive and checked for
+overflow. The complete record is at most 8192 bytes before any allocation;
+unknown future layouts require a new codec. This is neither CEV0 nor a new
+consensus signing domain.
+
+Role is explicitly phase-relative. In ActivationCommitted and Ordinary it
+describes how the author entered the **current** epoch e. At EpochRetired it
+describes whether that same current-epoch author remains eligible for e+1;
+the active consensus group still names e, never e+1. Every combination not
+listed below is rejected before persistence or lease issuance:
+
+| Phase / role | Source Safety option | Retired custody option and evidence epoch | Active ordinary option | Authority |
+|---|---|---|---|---|
+| ActivationCommitted / Continuing | 1: exact preceding terminal cut | 1: retired e-1 signer, copied exactly from preceding retired record or first V0 origin | 1: virgin e signer, sequence0 | Live lease only after actual composite owner join and Core ACK |
+| ActivationCommitted / VirginNew | 0: no fabricated local old Safety | 0: no fabricated old custody | 1: virgin e signer, sequence0 | Separate commissioning constructor; currently fenced |
+| Ordinary / Continuing | 1: unchanged incoming source cut | 1: unchanged incoming e-1 retirement | 1: same e scope/journal/profile; actual synchronized watermark | Only the existing e lease can continue |
+| Ordinary / VirginNew | 0: remains absent throughout this epoch | 0: remains absent throughout this epoch | 1: same e scope/journal/profile; actual synchronized watermark | Same rules as ordinary Continuing, without invented old history |
+| EpochRetired / Continuing | 1: exact last recorded local e Safety cut before terminal transition | 1: **current e signer** retirement, replacing any incoming e-1 evidence | 0: no ordinary handle, including no terminal handle in this option | Old-role handoff only; e+1 lease requires a later ActivationCommitted |
+| EpochRetired / Removed | 1: exact last recorded local e Safety cut before terminal transition | 1: **current e signer** retirement, replacing any incoming e-1 evidence | 0 | Old-role handoff only; no next local Core or ordinary lease |
+
+EpochRetired / VirginNew is invalid. An author that entered e as VirginNew
+changes role to Continuing or Removed when retiring e, based on the strictly
+verified outgoing new set. It cannot keep a role label that omits retirement.
+The retired payload must name the preceding active ordinary identity; the
+preceding checkpoint's exact active watermark must be an audited prefix of the
+actual retirement source watermark. Its terminal sequence is the retirement
+source sequence+1. The terminal chain checksum is stored solely in
+retired custody. Keeping the old active option or copying e-1 retirement into
+EpochRetired is invalid, even if that older retirement is authentic.
+
+The other groups also have closed phase semantics. ActivationCommitted and
+Ordinary retain the incoming full joint `phase_authority_binding`, incoming
+C/C+2 edge and native handoff `native_authorization_id`; only target Safety,
+current real application and active ordinary watermark advance in Ordinary.
+EpochRetired replaces those three incoming bindings with the outgoing strict
+pre-handoff context binding, outgoing C/C+2 edge, and freshly confirmed native
+checkpoint `post_execution_authorization_id`, respectively. Target Safety is
+the actual terminal local e cut, and current application is exactly outgoing C.
+This cut requires checkpoint/two-seal finality but **no joint certificate**.
+Requiring a full next joint binding here would circularly require the old-role
+signature before retiring the owner allowed to produce it.
+
+For the first continuing activation, predecessor-kind0 names the actual
+independently stored terminal14O V0 checkpoint. The lineage ID is its original
+scope, and origin_checksum binds that entire original 672-byte record under
+H(`trnm.node.epoch-lineage-origin.v1`, record). Generation is predecessor generation+1.
+Source Safety equals the actual journal8 terminal cut; target Safety equals the
+opaque pending14E initial request freshly persisted to journal9 at revision+1.
+The edge names real C and terminal C+2; current application remains exactly C.
+Retired custody is required and matches the original retired owner/checkpoint;
+active ordinary custody is required, uses the exact new configuration/author,
+a distinct scope/journal identity, and sequence0 with the actual virgin chain
+checksum. The complete joint evidence comes from journal9's strict context.
+No old header/epoch is relabeled and no seal creates a native P.
+
+Ordinary successors preserve lineage/origin/active epoch/configuration and
+custody identity, use generation+1 and the exact previous V1 checksum, and
+advance only through actual ordered Core/P/commit/signer readbacks. Owner
+generation stays exact through Ordinary and EpochRetired; the next
+ActivationCommitted increments it by exactly one. Any real application-height
+advance strictly increases both P sequence and native commit sequence. Qualified
+application height never decreases; view comparison applies only within the
+same epoch. Exact retries require byte equality, including signer sequence and
+chain checksum. EpochRetired requires actual active-custody retirement before
+any old-role handoff signature and grants no new ordinary lease. The next
+ActivationCommitted must consume that exact retired predecessor, strict next
+epoch evidence, next Safety owner and fresh next ordinary scope: e becomes e+1,
+role becomes Continuing, source Safety equals the predecessor target Safety,
+retired custody is copied byte-for-byte from the predecessor's current e
+retirement, and the new active ordinary payload starts at sequence0. It installs
+the now-complete joint binding and native handoff authorization for that edge.
+An EpochRetired / Removed record cannot take this successor; returning in a
+later epoch needs a separate reviewed commissioning protocol. Same-ID/new-key
+and new-ID/old-key migrations reject unless an explicit custody-migration rule
+is implemented; a new-only ID cannot bypass retirement by reusing an old key.
+
+VirginNew initialization is a separate commissioning API. It requires an
+independently pinned old checkpoint/strict joint evidence and a configured
+virgin lineage identity, no prior local Safety or signer record, a local author
+and key absent from the old set, and a new ordinary sequence0 namespace. It
+must not synthesize a journal8/local-old-validator history. This constructor
+remains fenced until its complete Core/native producer exists. Removed role is
+accepted only in EpochRetired, active ordinary option is absent, and neither a
+live new driver nor a new signing lease can be returned.
+
+The candidate store keeps application_id `0x54524e43` but sets user_version2 in
+the same `BEGIN IMMEDIATE` transaction that creates the exact three STRICT,
+WITHOUT ROWID tables below, copies the verified origin, writes the initial V1
+record/head and removes the legacy table. Migration requires exactly one V0
+scope row, the independently expected exact N1 record and actual old store
+owner. Other scopes cause `MultipleLineagesRequireExplicitMigration`, never
+silent deletion. The old V0 opener rejects user_version2, so an old writer
+cannot append after migration. Reopening schema2 never auto-migrates or creates
+missing files. WAL/FULL mode, descriptor/inode/parent-directory checks and fsync
+barriers retain the V0 owner requirements. Schema2 enables SQLite
+`NO_CKPT_ON_CLOSE` through its safe configuration API; explicit sync remains
+mandatory and WAL/SHM survive owner closure. Both sidecars must already exist
+with unchanged identity before and after cold open; missing files fence without
+recreation.
+
+| Table | Columns / keys / checks |
+|---|---|
+| `epoch_node_origin` | lineage_id BLOB32 PRIMARY KEY, origin_checksum BLOB32, predecessor_kind INTEGER CHECK 0..2, original_record BLOB CHECK length 1..8192; immutable after creation |
+| `epoch_node_records` | lineage_id BLOB32, generation BLOB8 big-endian, predecessor_checksum BLOB32, checksum BLOB32, record BLOB length 1..8192; PRIMARY KEY(lineage_id,generation); retain current and previous only |
+| `epoch_node_head` | lineage_id BLOB32 PRIMARY KEY, generation BLOB8, checksum BLOB32; CAS exact previous generation+checksum, changed row count exactly1 |
+
+Every record repeats origin_checksum so two-record pruning cannot disconnect
+it from migration. Readback verifies exact closed schema (at most four bounded
+schema rows, no unbounded SQL sort), one lineage/origin/head, ordered consecutive
+retained generations, canonical records, checksum links and immutable origin.
+SQLite row limit is 12 KiB, SQL limit 64 KiB, maximum database/WAL each 8 MiB,
+SHM limit64 KiB and busy timeout100 ms for this bounded candidate profile.
+These are explicit local fixture limits; deployment profiles may lower them or
+select reviewed larger limits before creating a namespace, never silently
+substitute production defaults. Record lengths are checked before copying.
+
+| Failure/cut | Required disposition and authority result |
+|---|---|
+| Foreign original source, missing edge/P, invalid membership or nonvirgin new signer | `JoinRejected`; no CAS, Core ACK or key call |
+| Before schema2 transaction commit | Source schema1 remains exact or destination is rejected; reopen at independently expected predecessor only |
+| Commit/sync response lost | `CommitUncertain`; consume live candidate handles, accept only exact predecessor or exact deterministic target on explicit reopen; every third state fences |
+| After schema2 durable head, before Core ACK/lease return | Reopen all owners; strict journal9/native/custody joins must match the exact V1 target, then remint one private runtime; no reinitialization of the signer |
+| Pending signer decision after activation | Reconcile the actual signer journal/external watermark and Core intent before any new key request; exact recorded response can replay |
+| Missing sidecar, changed inode, stale independent generation, source/target substitution | `OwnerFenced`; no repair, fallback to V0, scalar override or live Core |
+
+The public candidate activation constructor in M02 owns the actual journal9,
+native edge/application, original retired checkpoint/custody and new ordinary
+journal. Only after this V1 store confirms the exact composite cut may it use
+the private driver's ordinary trusted-host `StorageAck` seam. The store itself
+returns a non-Clone fresh-owner receipt, never a Core, signer or lease. Required
+acceptance includes whole-owner reopen, all three migration crash cuts, both
+new-scope and old-scope substitutions, current/previous pruning, stopped old V0
+writer, pending-sign exact replay, and at least two actual epoch transitions.
+
+The schema2 store has actual SIGKILL tests before transaction commit, after
+commit and after explicit sync; each cold read accepts only the exact original
+V0 cut or exact deterministic V1 target. Additional regressions cover the
+already-open old writer, multiple V0 lineages, immutable origin substitution,
+closed schema, current/previous pruning, independent stale head and live/cold
+missing-sidecar fencing. The concrete consumer freshly compares native's strict
+activation binding with journal9's exact joint binding (distinct from the native
+application authorization ID), verifies same continuing author/key, and consumes
+the typed retired checkpoint owner before migration. Codec/store fixtures alone
+do not establish a complete repeated-epoch runtime or multi-host epoch acceptance.
+
+Migration retains the original DB/WAL/SHM identities through the transaction,
+checks them before commit and after commit before sync, and never re-pins a
+replacement sidecar. The first-timeout signer uses a private producer adapter:
+after the journal's final external-watermark callbacks, it freshly checks the
+independent V1 cut, actual Safety, native C/strict edge and original retirement
+immediately before entering the injected key producer and before accepting its
+result. A changed owner rejects at that boundary, including changes caused by
+an external-watermark callback after earlier runtime checks.
+
+The actual continuing-author fixture starts from ten old-epoch signatures and
+consumes the native checkpoint, strict handoff, journal9, original retirement and
+virgin new signer. Its activation emits one timer and no signature; first timeout
+advances the independent generation three times and emits one new signature.
+A whole-owner close/reopen reproduces the initial activation with no key call,
+then the same first-timeout path succeeds. Progressed Ordinary recovery through
+the initial-only constructor rejects. The final watermark callback replacement
+test copies identical native DB bytes to a new inode and proves rejection before
+any new signature. These are local candidate results; proposal/finality driving,
+progressed recovery, commissioning and repeated crossings still require their
+own actual-owner implementation and fault evidence.
+
+The same candidate exposes the exact first-proposal boundary through
+`CandidateEpochRuntimeV1::admit_epoch_proposal_v1`. It accepts only the exact
+new-epoch `EpochHandoff` at `edge.first_application_height()`, persists Core's
+Safety request, advances and rereads the independent lineage checkpoint, then
+ACKs the request and retains the single Core-issued `PayloadValidationRequest`.
+`execute_admitted_epoch_proposal_v1` continues that retained request through the
+explicit native schema-4 bridge, deterministic application preview, durable P,
+fresh P readback, strict epoch body commitments, Core's issued application seal,
+typed D, and the exact Safety NativeValid C journal request. The regression
+`actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing`
+runs this with a real native-root proposal and proves the key callback count
+does not change; the test uses a bounded 32 MiB worker stack because the native
+authenticated snapshot computation is intentionally large. A failed
+persistence/checkpoint step consumes the runtime. The strict native K
+continuation is implemented below, and the regression now supplies a real
+first-new proof vector, commits K, and revalidates the progressed application
+cut without another signer call. Vote/finality collection, crash recovery after
+a progressed obligation, and repeated crossing remain separate gates.
+
+The epoch C construction uses
+`NativeValidTransitionV0::from_core_delivery_v0` and its
+`validate_against_core_delivery_v0` readback. This binds the exact Core D
+carrier's route, validation identity, canonical Valid checksum, completion
+revision and post-ack action while enforcing the canonical one-attempt shape
+and preserving the frozen 328-byte Safety context. The seven host-owned commitments in that context are
+still derived from the native P/application D readback because Core does not
+own those rows; this seam therefore does not constitute complete source
+authentication for an arbitrary host manifest. A future epoch-specific sealed
+delivery-facts carrier must close that remaining boundary before production
+release.
+
+### Runtime handoff and acceptance closure (M15-RUNTIME-CLOSURE-V1)
+
+The current continuous runtime now has an explicit ordinary follower path. A
+late authenticated proposal is queued only after the signed-owner admission
+decision; `Ready` can execute it through the M13 `SyncedNoSign` route, while a
+`VoteSigned` or `TimeoutSigned` owner remains untouched. The route is
+`receive_unbound_proposal_v1` → `vote_ready_proposal_v1` →
+`sync_late_proposal_v1` → native P/D/C/K/whole-node checkpoint → `Ready`.
+The final Core ACK is required to emit no effects, and the external signer
+watermark must be byte-identical before and after the operation.
+
+This is a concrete composition boundary, not a liveness claim. The executable
+regressions are
+`trnm-poco-lab-validator/src/continuous_runtime.rs::ready_synced_proposal_commits_without_vote_or_watermark_advance_v1`,
+`...::late_network_proposal_after_timeout_preserves_signed_owner_v1`, and
+`trnm-poco-node/tests/native_signed_vote_replay.rs::synced_proposal_commits_without_creating_a_signer_intent`.
+They prove no-sign execution and signed-owner preservation with real SQLite,
+native execution and Ed25519 proposal evidence. They do not prove a production
+listener, arbitrary fork catch-up, cross-epoch import, or physical-host
+performance.
+
+After D/C, `commit_admitted_epoch_finality_v1` accepts only the caller-owned
+bounded CEV0 first-new finality bytes, calls the native strict K verifier and
+commit CAS, freshly reads the committed epoch P/K row, and then advances the
+independent node checkpoint's application cut. A malformed, substituted or
+replayed proof consumes and fences the runtime before any alternative proof can
+be tried. The regression
+`actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing`
+now includes a real descendant proof vector, successful K, and a post-K current
+cut revalidation. `recover_pending_epoch_validation_readback_v1` now provides a
+strict pre-P crash/restart readback: it authenticates the exact first-new
+proposal obligation, old application head and all custody/checkpoint owners,
+and returns a typed receipt without resuming validation.
+`recover_progressed_obligation_readback_v1` provides the pre-K boundary: it
+reconstructs the strict journal9 state, verifies the exact pending vote
+obligation, reopens native P, confirms the pre-K application edge and all
+custody/checkpoint owners, and returns a typed receipt without rebinding Core
+or releasing a signer. The follow-on
+`recover_progressed_continuing_v1` path now consumes that exact receipt after a
+process-shaped restart: it rebinds a private Core with the persisted signature
+gate, joins the same native P and custody/checkpoint owners, writes the signer
+intent before invoking the producer, then persists and reads back the Safety
+release before returning one verified Vote broadcast. The regression
+`actual_epoch_runtime_progressed_recovery_resumes_one_vote_after_restart`
+proves one producer call and no pending signer/Safety intent after recovery.
+Finality collection, a second complete epoch and repeated-crossing campaign
+remain separate gates.
+
+The F1 acceptance harness must therefore run only after this route is present
+in the built binary: at least four independent hosts, declared CPU/RAM/disk,
+fixed signed workload, packet loss/RTT/partition matrix, process crash and
+separately labelled power-cut runs, then catch-up across the C/C+1/C+2/C+3
+boundary. Raw logs must include finalized goodput, end-to-end p50/p95/p99,
+queue/drop rates, state bytes, restart and catch-up time, source/tree and
+configuration digests. A local lab test or a successful build cannot promote
+`CORE-LIVE-001`, `TX-PROD-001`, `SYNC-PROD-001` or `F1`; machine truth stays
+fail-closed until those artifacts are independently reviewed.

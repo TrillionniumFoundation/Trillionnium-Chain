@@ -142,6 +142,21 @@ speculation. The native transfer fee-rebasing optimization applies only when
 its proven transfer predicate and dependency checks hold; it is not a general
 permission to ignore writes to the fee collector.
 
+The native parent view now proves lifecycle and runtime keys on demand. Worker
+admission verifies/decodes an envelope once, then actual runtime attempts discover
+dynamic account/task dependencies using a finite prefetch map. A missing entry
+requests an owner-thread JMT proof; an explicit `None` means a verified absence.
+The same frozen parent transaction supplies all rounds. Workers never receive
+the SQLite connection. The canonical loop still checks complete read values and
+re-executes stale successes/failures against earlier mutations. Object revision
+is a per-mutation counter and may exceed consensus height; this optimization
+does not add a height bound to object revision.
+
+Only PoCO operations, scheduled cutoff refresh or an authenticated epoch prefix
+request the complete bounded namespace projection. Ordinary runtime and empty
+non-cutoff blocks no longer pay for unrelated live objects. PoCO's remaining
+whole-tree enumeration and frozen manifest/authority checks are unchanged.
+
 ## Security
 
 ### Metering and fee computation
@@ -192,6 +207,7 @@ CPU pressure is `Unavailable`; it does not change canonical fee or receipt statu
 | AI access width | `MAX_ACCESS_WIDTH_V1 = 64` |
 | AI workers | 1 through `MAX_EXECUTION_WORKERS_V1 = 64` |
 | Native speculative batch | At most 32 transactions and 8 workers; not a whole-block limit |
+| Native prefetch/reuse | At most64 recorded reads/256KiB per attempt; 2048 keys/8MiB per batch; at most65 discovery rounds. Failure abandons speculation, not the transaction. |
 | Native transaction/body limits | Exact authenticated bft-v0 parameters and codec limits |
 | Candidate development host queue, planned | One executing block, two queued bodies; reject admission of a third queued body |
 | Candidate development host retained body bytes, planned | 16 MiB total, additionally subject to the smaller selected protocol limit |
@@ -200,8 +216,20 @@ The planned host limits are local scheduling controls, not consensus validity.
 Missing workers fall back to canonical native execution where already supported;
 an unsupported AI worker count returns `InvalidBounds`. Allocation/queue refusal
 must occur before retaining the new body. Never drop an already committed plan.
-Large-state/long-history persistence still needs measurement: current native
-full snapshots and historical auditing are not made incremental by this document.
+Large-state/long-history persistence still needs measurement. M07's explicit
+ordinary schema5 uses actual state/replay deltas; schema3/4 retain their bounded
+snapshot formats, and PoCO enumeration remains a separate cost.
+
+The default-off `incremental-epoch-candidate` feature now computes the first
+new epoch block against the actual incremental checkpoint reader. Its only
+root alias is C+2's empty path to C's real root; inherited child versions remain
+unchanged. Existing authenticated config/usage rollover and user transactions
+produce one C+3 state delta and actual epoch-artifact-v1. The signed C8→C11
+fixture matches the schema4 root and receipts, persists real P, and reopens it.
+Schema6 currently prepares this first block only; descendant execution, strict
+finality commit and the public/Core adapters remain fenced. This is not evidence
+that a full two-epoch node run is enabled. PoCO rollover's bounded namespace
+scan remains intentional and separate from ordinary per-key execution.
 
 ## Persistence and recovery
 
@@ -225,23 +253,31 @@ Crash cuts cover before transaction, before commit, after commit/lost response,
 and confirmation. Recovery accepts exactly source or target; a third state
 fences. Store-local checks do not establish whole-machine rollback resistance.
 
-### Planned cross-epoch native execution edge
+### Candidate cross-epoch native execution edge
 
-Consume M08's planned `AuthenticatedEpochApplicationEdgeV1`, never caller roots.
+Consume M08's `AuthenticatedEpochApplicationEdgeV1`, never caller roots.
 At checkpoint C the committed application version is C. Seals C+1 and C+2
 produce no application execution, P row or receipt. The first new block has
 consensus parent seal-2 but application parent checkpoint C; its real JMT target
 label is C+3. This preserves frozen cutoff equality for actual executed blocks.
 
-M07's planned `CarriedRootReaderV1` intercepts only the empty root lookup at
+M07's `CarriedRootReaderV1` intercepts only the empty root lookup at
 version C+2 and resolves the authenticated root at C. Other node paths retain
 their real versions; value reads prove the gap contains no writes. The executor
 must not relabel all nodes, create fake seal transactions or relax the ordinary
 parent check globally. Build the first plan in a separate authenticated edge
 variant. Publish C+3 only after normal durable commit; the virtual predecessor
-root is private construction metadata. This path is not implemented today.
+root is private construction metadata. Candidate implementation status is
+described below; this does not activate the production node/Core path.
 
-Before user transactions in C+3, the planned edge executor applies one fixed
+M08 now persists the first-new execution and speculative C+4/C+5 through its
+explicit bounded schema-4 bridge. Its separate first-new artifact binds both
+parents, and strict new-set finality commits the prepared state exactly once.
+The ordinary codec/+1 path remains unchanged. Later-epoch checkpoints,
+incremental storage integration and complete default-node activation remain
+outside this candidate slice; see M08 for exact APIs, limits and crash tests.
+
+Before user transactions in C+3, the selected edge executor applies one fixed
 system prefix: validate the authenticated old/new configuration edge, install
 the new active configuration, then normalize PoCO usage buckets under
 [frozen weight specification 05, section 20](../protocol/poco-bft-v0/05-poco-weights-bond-and-slashing.md).
@@ -249,6 +285,32 @@ These system writes and user writes belong to the same C+3 JMT/commit transactio
 Seals and anchor installation perform no application rollover. Historical
 certificate finalization epochs remain unchanged; a partial prefix cannot
 survive a failed block or be published as a separate application head.
+
+The candidate runtime now implements this prefix in
+`poco_application::begin_authenticated_epoch_rollover_v1`, consumed by complete
+execution through an opaque `AuthenticatedEpochApplicationEdgeV1`. It validates
+the old projection before normalization, compares the exact old set/parameters
+to the edge, removes both old role-1 configuration entries, and inserts the new
+role-1 set/parameters under the incoming epoch identity. The new identities
+start at envelope revision 1; kind 16 increments exactly once when the whole
+block seals, including a block with zero user operations. Ordinary overlay
+construction still requires source+1; only the edge path admits real source C
+and target C+3. This implementation does not establish Core epoch activation.
+
+Election inputs have a separate lifetime from retained certificate authority.
+The same prefix consumes all kind-16 `future_candidate_registrations`, pending
+governance proposals and finalized governance approvals for the incoming epoch.
+It deletes each consumed governance kind-15 entry and its role-2 parameters
+companion in the same mutation set. An input naming any other target rejects
+the prefix. Pending proposals never become authorization; the new configuration
+comes exclusively from the verified edge, including fallback selection. This
+is expiry of the live election cache, not rewriting historical facts: the
+retained checkpoint still authenticates the exact old records, and permanent
+nullifiers, provider registration history, certificates and their original
+finalization epochs are unchanged. The existing startup validator continues to
+require live election inputs to target exactly active_epoch+1. Independent
+prefix tests exercise pending/approved expiry, strict candidate PoP retention
+at the source, normalized target restore, and zero-operation atomic sealing.
 
 For a child whose parent has not finalized, consume M07's private
 `AuthenticatedPreparedSnapshotV1` through `AuthenticatedApplicationParentV1`.
@@ -284,6 +346,10 @@ Native `native_parallel_tests.rs` and `native_parallel_fee_oracle_tests.rs`
 exercise real runtime receipts and fee reuse. Source regressions are not
 independent golden vectors. For each planned case, independently derive full
 encoded receipts and roots from the pinned source/profile before acceptance.
+The point-read regression adds10000 unaccessed accounts and forbids full scans;
+it retains identical touched keys and0/1/2/4/8-worker roots/receipts. Existing tests
+also require eight actual runtime worker thread IDs, fee-rebase equality, failed
+speculation repaired by an earlier credit, and canonical failure-index ordering.
 The existing [MVCC case inventory](../protocol/poco-ai-native-v1/vectors/cev1-object-mvcc-fee-kernel-v1.json)
 names candidate cases; it is an inventory, not a file of independently frozen bytes.
 
@@ -317,3 +383,35 @@ Only selected existing native and AI candidate operations may be invoked under
 their current feature/profile closures. The epoch edge and planned host limits
 need implementation and exact producer/consumer replay. Protocol byte changes,
 independent oracle acceptance and production enablement remain separate decisions.
+
+
+### Incremental epoch execution implementation boundary
+
+The default-off native schema7 candidate composes the actual C+3 authenticated
+config/usage prefix with changed JMT and replay data, followed by ordinary +1
+execution through the actual prepared C+4/C+5 lineage. Descendants use the new
+parameters and validator set recovered from strict edge evidence, not caller
+configuration or the owner's original old-set defaults. Their actual native P
+parent digest binds both speculative application state and command/nonce replay.
+The ordinary demand-prefetch reader and real parallel workers remain active;
+PoCO rollover retains its bounded namespace scan where the protocol requires
+complete configuration/cache normalization.
+
+The signed local business fixture credits the operator at11, transfers to eight
+accounts at12, and compares serial and1/2/4/8-worker full roots, exact payload and
+receipts on the incremental reader. Duplicate command errors agree as well.
+This proves deterministic equivalence for the covered workload, not throughput
+or speedup. Schema7 rejects a second checkpoint/handoff; schema6 remains
+prepare-only and schema5's ordinary +1 guards have not been broadened. The M07
+and M08 commit/reopen receipts do not independently grant a Core vote or node
+activation.
+
+The candidate-only node bridge exposes
+`CandidateEpochRuntimeV1::ensure_incremental_epoch_commit_owner_v1()`. It may
+run only after the complete initial owner cut is joined and an explicit schema6
+native edge exists; it calls the native
+`DurableNativeApplicationV0::ensure_incremental_epoch_commit_owner_v1(&edge)`
+under the native owner lock, then rechecks Safety, signer, retirement,
+checkpoint, and native identities. The call is resumable across a lost response
+and never executes a block, verifies finality, signs, broadcasts, or enables the
+default node. Schema5→6 migration remains a separate explicit operation.

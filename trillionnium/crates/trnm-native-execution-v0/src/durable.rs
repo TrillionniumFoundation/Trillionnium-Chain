@@ -56,6 +56,25 @@ use crate::{
     AuthorizedSignerV0, NativeStateWriteV0,
 };
 
+#[path = "epoch_durable.rs"]
+mod epoch_durable;
+pub use epoch_durable::{
+    CommittedNativeEpochExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,
+    PreparedNativeEpochExecutionV1,
+};
+
+#[path = "incremental_owner_v1.rs"]
+mod incremental_owner_v1;
+#[cfg(feature = "incremental-epoch-candidate")]
+pub use incremental_owner_v1::epoch_candidate_v1::{
+    CommittedNativeIncrementalEpochExecutionV1, IncrementalEpochParentV1,
+    PreparedNativeIncrementalEpochDescendantV1, PreparedNativeIncrementalEpochExecutionV1,
+};
+pub use incremental_owner_v1::{
+    CommittedNativeIncrementalExecutionV1, ConfirmedPreparedNativeIncrementalExecutionV1,
+    PreparedNativeIncrementalExecutionV1,
+};
+
 mod replay_floor_v1;
 pub use replay_floor_v1::VerifiedNativeSignerReplayFloorV1;
 
@@ -675,8 +694,205 @@ pub struct DurableNativeApplicationV0 {
     path: PathBuf,
     _lock_file: File,
     operation_lock: Mutex<()>,
+    #[cfg(unix)]
+    namespace_identity: Mutex<NativeNamespaceIdentityV1>,
     config: NativeApplicationConfigV0,
     owner_affinity: Arc<()>,
+    incremental_migration_pin: Mutex<Option<[u8; 32]>>,
+}
+
+// Held descriptors prevent inode reuse from making a replaced live namespace
+// look like the original owner. These pins are process-local, never persisted
+// or accepted as replacement for authenticated contents on a cold open.
+#[cfg(unix)]
+struct NativeNamespaceFileV1 {
+    file: File,
+    directory: bool,
+    mode: u32,
+    uid: u32,
+    gid: u32,
+}
+#[cfg(unix)]
+impl NativeNamespaceFileV1 {
+    fn open(path: &Path, directory: bool) -> DurableResult<Self> {
+        use std::os::unix::fs::MetadataExt;
+        let before = fs::symlink_metadata(path).map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.open_metadata",
+            )
+        })?;
+        if before.file_type().is_symlink()
+            || (directory && !before.is_dir())
+            || (!directory && (!before.is_file() || before.nlink() != 1))
+        {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.file_type_links",
+            ));
+        }
+        let file = File::open(path).map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.open",
+            )
+        })?;
+        let after = file.metadata().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.fd_metadata",
+            )
+        })?;
+        if before.dev() != after.dev() || before.ino() != after.ino() {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.open_replaced",
+            ));
+        }
+        let result = Self {
+            file,
+            directory,
+            mode: before.mode(),
+            uid: before.uid(),
+            gid: before.gid(),
+        };
+        result.confirm(path)?;
+        Ok(result)
+    }
+    fn confirm(&self, path: &Path) -> DurableResult<()> {
+        use std::os::unix::fs::MetadataExt;
+        let observed = fs::symlink_metadata(path).map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.path_metadata",
+            )
+        })?;
+        let held = self.file.metadata().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.held_metadata",
+            )
+        })?;
+        if observed.file_type().is_symlink()
+            || observed.dev() != held.dev()
+            || observed.ino() != held.ino()
+            || observed.mode() != self.mode
+            || observed.uid() != self.uid
+            || observed.gid() != self.gid
+            || held.mode() != self.mode
+            || held.uid() != self.uid
+            || held.gid() != self.gid
+            || (self.directory && (!observed.is_dir() || !held.is_dir()))
+            || (!self.directory
+                && (!observed.is_file()
+                    || !held.is_file()
+                    || observed.nlink() != 1
+                    || held.nlink() != 1))
+        {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.identity",
+            ));
+        }
+        Ok(())
+    }
+}
+#[cfg(unix)]
+struct NativeNamespaceIdentityV1 {
+    database: NativeNamespaceFileV1,
+    directory: NativeNamespaceFileV1,
+    lock: NativeNamespaceFileV1,
+    preparation: Option<NativeNamespaceFileV1>,
+    halted: bool,
+}
+#[cfg(unix)]
+impl NativeNamespaceIdentityV1 {
+    fn capture(path: &Path, lock: &File) -> DurableResult<Self> {
+        use std::os::unix::fs::MetadataExt;
+        let mut result = Self {
+            database: NativeNamespaceFileV1::open(path, false)?,
+            directory: NativeNamespaceFileV1::open(
+                path.parent().ok_or_else(|| {
+                    error(
+                        NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                        "namespace.parent",
+                    )
+                })?,
+                true,
+            )?,
+            lock: NativeNamespaceFileV1::open(&lock_path_v0(path)?, false)?,
+            preparation: None,
+            halted: false,
+        };
+        let held = lock.metadata().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.lock_fd",
+            )
+        })?;
+        let pinned = result.lock.file.metadata().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.lock_pin",
+            )
+        })?;
+        if held.dev() != pinned.dev() || held.ino() != pinned.ino() {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.lock_replaced",
+            ));
+        }
+        result.confirm(path)?;
+        Ok(result)
+    }
+    fn confirm(&mut self, path: &Path) -> DurableResult<()> {
+        if self.halted {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                "namespace.halted",
+            ));
+        }
+        let result = (|| {
+            let parent = path.parent().ok_or_else(|| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                    "namespace.parent",
+                )
+            })?;
+            if fs::canonicalize(parent).ok().as_deref() != Some(parent) {
+                return Err(error(
+                    NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                    "namespace.parent_alias",
+                ));
+            }
+            self.database.confirm(path)?;
+            self.directory.confirm(parent)?;
+            self.lock.confirm(&lock_path_v0(path)?)?;
+            let preparation =
+                crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(path);
+            if let Some(pin) = &self.preparation {
+                pin.confirm(&preparation)?;
+            } else {
+                match fs::symlink_metadata(&preparation) {
+                    Ok(_) => {
+                        self.preparation = Some(NativeNamespaceFileV1::open(&preparation, false)?)
+                    }
+                    Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+                    Err(_) => {
+                        return Err(error(
+                            NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                            "namespace.preparation_metadata",
+                        ))
+                    }
+                }
+            }
+            Ok(())
+        })();
+        if result.is_err() {
+            self.halted = true;
+        }
+        result
+    }
 }
 
 /// Exact application transition carried by a proof-derived h1 state-sync
@@ -795,7 +1011,9 @@ impl ConfirmedNativeH1StateSyncTrustedBaseV0 {
     ) -> bool {
         Arc::ptr_eq(&self.owner_affinity, &application.owner_affinity)
             && application.path() == expected_path
+            && application.confirm_namespace_identity_v1().is_ok()
             && fresh_validate_v0(&application.path, &application.config).is_ok()
+            && application.confirm_namespace_identity_v1().is_ok()
     }
 
     pub const fn store_id_v0(&self) -> [u8; 32] {
@@ -981,7 +1199,9 @@ impl ConfirmedDurableExecutionHistoryRowV0 {
     ) -> bool {
         Arc::ptr_eq(&self.owner_affinity, &application.owner_affinity)
             && application.path == expected_path
+            && application.confirm_namespace_identity_v1().is_ok()
             && fresh_validate_v0(&application.path, &application.config).is_ok()
+            && application.confirm_namespace_identity_v1().is_ok()
     }
 }
 
@@ -1077,7 +1297,9 @@ impl ConfirmedDurableExecutionPV0 {
     ) -> bool {
         Arc::ptr_eq(&self.owner_affinity, &application.owner_affinity)
             && application.path == expected_path
+            && application.confirm_namespace_identity_v1().is_ok()
             && fresh_validate_v0(&application.path, &application.config).is_ok()
+            && application.confirm_namespace_identity_v1().is_ok()
     }
 
     pub const fn store_id_v0(&self) -> [u8; 32] {
@@ -1181,6 +1403,7 @@ impl DurableNativeApplicationV0 {
                 "lock.exclusive",
             )
         })?;
+        let mut incremental_migration_pin = None;
         if created {
             let connection = open_writable_connection_v0(&path)?;
             initialize_schema_v0(&connection)?;
@@ -1195,17 +1418,58 @@ impl DurableNativeApplicationV0 {
             if metadata_exists_v0(&connection)? {
                 let metadata = load_metadata_v0(&connection, &config)?;
                 validate_metadata_v0(&connection, &config, &metadata)?;
+                if epoch_durable::schema_version(&connection)?
+                    == incremental_owner_v1::SCHEMA_VERSION
+                {
+                    incremental_migration_pin =
+                        Some(incremental_owner_v1::audited_migration_anchor(
+                            &connection,
+                            &config,
+                            &metadata,
+                        )?);
+                }
+                #[cfg(feature = "incremental-epoch-candidate")]
+                if matches!(epoch_durable::schema_version(&connection)?, 6 | 7) {
+                    incremental_migration_pin =
+                        Some(incremental_owner_v1::epoch_candidate_v1::audit_anchor(
+                            &connection,
+                            &config,
+                            &metadata,
+                        )?);
+                }
             } else {
                 validate_virgin_inventory_v0(&connection)?;
             }
         }
+        #[cfg(unix)]
+        let namespace_identity = Mutex::new(NativeNamespaceIdentityV1::capture(&path, &lock_file)?);
         Ok(Self {
             path,
+            #[cfg(unix)]
+            namespace_identity,
             _lock_file: lock_file,
             operation_lock: Mutex::new(()),
             config,
             owner_affinity: Arc::new(()),
+            incremental_migration_pin: Mutex::new(incremental_migration_pin),
         })
+    }
+
+    /// Freshly confirm the exact initialized ordinary schema3 owner. This
+    /// read-only guard never upgrades or grants state-sync/finality authority.
+    pub fn confirm_ordinary_schema_v0(&self) -> DurableResult<()> {
+        let _guard = self.lock_operation()?;
+        let c = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&c)?;
+        if epoch_durable::schema_version(&c)? != APPLICATION_SCHEMA_VERSION_V0 {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "ordinary.exact_schema3",
+            ));
+        }
+        let metadata = load_metadata_v0(&c, &self.config)?;
+        validate_metadata_v0(&c, &self.config, &metadata)?;
+        Ok(())
     }
 
     pub fn path(&self) -> &Path {
@@ -1226,6 +1490,12 @@ impl DurableNativeApplicationV0 {
     /// create a prepared execution artifact or advance the durable sequence.
     pub fn confirmed_committed_head_v0(&self) -> DurableResult<ApplicationHeadV0> {
         let _guard = self.lock_operation()?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        if epoch_durable::schema_version(&connection)? == incremental_owner_v1::SCHEMA_VERSION {
+            drop(connection);
+            return self.confirmed_incremental_head_locked();
+        }
+        drop(connection);
         let metadata = fresh_validate_v0(&self.path, &self.config)?;
         Ok(metadata.head)
     }
@@ -1586,6 +1856,15 @@ impl DurableNativeApplicationV0 {
         reject_sqlite_sidecars_v0(&self.path)?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            incremental_owner_v1::SCHEMA_VERSION | 6 | 7
+        ) {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "preview_block_v0.incremental_requires_versioned_adapter",
+            ));
+        }
         let before = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &before)?;
         let store = resolve_parent_store_v0(&connection, &self.config, &before, request.parent())?;
@@ -1850,13 +2129,38 @@ impl DurableNativeApplicationV0 {
         NativeApplicationV0::commit_block(self, NativeApplicationCommitRequestV0::new(executed))
     }
 
+    pub(crate) fn confirm_namespace_identity_v1(&self) -> DurableResult<()> {
+        #[cfg(unix)]
+        {
+            self.namespace_identity
+                .lock()
+                .map_err(|_| {
+                    error(
+                        NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                        "namespace.poisoned",
+                    )
+                })?
+                .confirm(&self.path)
+        }
+        #[cfg(not(unix))]
+        {
+            Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "namespace.identity_requires_unix",
+            ))
+        }
+    }
+
     fn lock_operation(&self) -> DurableResult<std::sync::MutexGuard<'_, ()>> {
-        self.operation_lock.lock().map_err(|_| {
+        let guard = self.operation_lock.lock().map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::Busy,
                 "operation_lock",
             )
-        })
+        })?;
+        #[cfg(unix)]
+        self.confirm_namespace_identity_v1()?;
+        Ok(guard)
     }
 }
 
@@ -2018,6 +2322,15 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            epoch_durable::SCHEMA_VERSION | incremental_owner_v1::SCHEMA_VERSION | 6 | 7
+        ) {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "p.epoch_context_requires_v1",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
 
@@ -2200,6 +2513,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
+        if matches!(epoch_durable::schema_version(&connection)?, 6 | 7) {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "schema6.requires_dedicated_consumer",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         let inventory = validate_metadata_v0(&connection, &self.config, &metadata)?;
         let mut p = load_p_by_block_v0(
@@ -2389,6 +2708,15 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeStateProofV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            incremental_owner_v1::SCHEMA_VERSION | 6 | 7
+        ) {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "state_proof.incremental_requires_versioned_adapter",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
         if request.head() != &metadata.head {
@@ -2421,6 +2749,15 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeSnapshotManifestV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            incremental_owner_v1::SCHEMA_VERSION | 6 | 7
+        ) {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "snapshot.incremental_requires_versioned_adapter",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
         if request.head() != &metadata.head {
@@ -2485,6 +2822,12 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeApplicationRecoveryResultV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
+        if matches!(epoch_durable::schema_version(&connection)?, 6 | 7) {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                "schema6.requires_dedicated_consumer",
+            ));
+        }
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
         if request.chain_id().as_str() != self.config.chain_id
@@ -2499,7 +2842,25 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 "recover.binding",
             ));
         }
-        let pending = count_prepared_p_v0(&connection)?;
+        let pending = if epoch_durable::schema_version(&connection)?
+            == incremental_owner_v1::SCHEMA_VERSION
+        {
+            connection
+                .query_row(
+                    "SELECT count(*) FROM native_incremental_p_v1 WHERE status=0",
+                    [],
+                    |r| r.get::<_, u64>(0),
+                )
+                .map_err(|_| {
+                    error(
+                        NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                        "recover.incremental_inventory",
+                    )
+                })?
+        } else {
+            count_prepared_p_v0(&connection)?
+        };
+
         let watermarks = NativeRecoveryWatermarksV0::new(metadata.durable_sequence, 0, 0);
         let disposition = if pending == 0 {
             NativeRecoveryDispositionV0::Exact
@@ -2799,6 +3160,7 @@ struct DurablePV0 {
 /// The snapshot, replay sets and artifact are still checked on every audit;
 /// they must not accumulate in memory across the committed history.
 struct ValidatedPInventoryEntryV0 {
+    epoch_gap: bool,
     target_height: u64,
     p_sequence: u64,
     status: u64,
@@ -2823,6 +3185,7 @@ impl ValidatedPInventoryEntryV0 {
             )
         })?;
         Ok(Self {
+            epoch_gap: false,
             target_height: p.target_height,
             p_sequence: p.p_sequence,
             status: p.status,
@@ -2883,13 +3246,26 @@ fn validate_metadata_v0(
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
+    #[cfg(feature = "incremental-epoch-candidate")]
+    if matches!(epoch_durable::schema_version(connection)?, 6 | 7) {
+        return incremental_owner_v1::epoch_candidate_v1::validate_metadata(
+            connection, config, metadata,
+        );
+    }
+    if epoch_durable::schema_version(connection)? == incremental_owner_v1::SCHEMA_VERSION {
+        return incremental_owner_v1::validate_metadata(connection, config, metadata);
+    }
     if metadata.durable_sequence == 0 || metadata.snapshot_digest != sha256_v0(&metadata.snapshot) {
         return Err(error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,
             "metadata.digest_or_sequence",
         ));
     }
-    let store = metadata.to_store(config)?;
+    let store = if epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION {
+        epoch_durable::metadata_store(connection, config, metadata)?
+    } else {
+        metadata.to_store(config)?
+    };
     if store.parent_version_v0().map_err(|_| {
         error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,
@@ -2940,9 +3316,13 @@ fn validate_p_inventory_v0(
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
-    let rows = map_p_inventory_v0(connection, |p| {
+    let mut rows = map_p_inventory_v0(connection, |p| {
         ValidatedPInventoryEntryV0::from_durable_v0(config, p)
     })?;
+    if epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION {
+        rows.extend(epoch_durable::inventory(connection, config)?);
+        rows.sort_unstable_by_key(|p| p.p_sequence);
+    }
     let by_block = rows
         .iter()
         .map(|p| (p.block_id, p))
@@ -3084,7 +3464,10 @@ fn validate_p_inventory_v0(
             )
         })?;
         if parent.target_height != p.parent_height
-            || parent.target_height.checked_add(1) != Some(p.target_height)
+            || parent
+                .target_height
+                .checked_add(if p.epoch_gap { 3 } else { 1 })
+                != Some(p.target_height)
             || parent.p_sequence >= p.p_sequence
             || target_roots.get(&parent.block_id) != Some(&p.parent_state_root)
             || parent.application_commit_id != p.parent_commit_id
@@ -3102,10 +3485,9 @@ fn validate_p_inventory_v0(
         .collect::<Vec<_>>();
     committed.sort_unstable_by_key(|p| p.target_height);
     let imported_height = u64::from(trusted_base.is_some());
-    if u64::try_from(committed.len())
-        .ok()
-        .and_then(|count| count.checked_add(imported_height))
-        != Some(metadata.head.height().get())
+    if committed.iter().try_fold(imported_height, |count, p| {
+        count.checked_add(if p.epoch_gap { 3 } else { 1 })
+    }) != Some(metadata.head.height().get())
     {
         return Err(error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,
@@ -3155,12 +3537,14 @@ fn validate_p_inventory_v0(
         };
     for p in committed {
         if p.target_height
-            != previous_height.checked_add(1).ok_or_else(|| {
-                error(
-                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                    "p.inventory_committed_height_overflow",
-                )
-            })?
+            != previous_height
+                .checked_add(if p.epoch_gap { 3 } else { 1 })
+                .ok_or_else(|| {
+                    error(
+                        NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                        "p.inventory_committed_height_overflow",
+                    )
+                })?
             || p.parent_block_id != previous_block
             || p.parent_state_root != previous_root
             || p.parent_commit_id != previous_commit
@@ -3575,7 +3959,15 @@ fn load_metadata_v0(
             |row| Ok((row.get(0)?,row.get(1)?,row.get(2)?,row.get(3)?,row.get(4)?,row.get(5)?,row.get(6)?,row.get(7)?,row.get(8)?,row.get(9)?,row.get(10)?,row.get(11)?,row.get(12)?,row.get(13)?,row.get(14)?,row.get(15)?,row.get(16)?)),
         )
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "metadata.query"))?;
-    if decode_u64_v0(&row.0, "metadata.schema")? != APPLICATION_SCHEMA_VERSION_V0
+    if !matches!(
+        decode_u64_v0(&row.0, "metadata.schema")?,
+        APPLICATION_SCHEMA_VERSION_V0
+            | epoch_durable::SCHEMA_VERSION
+            | incremental_owner_v1::SCHEMA_VERSION
+            | 6
+            | 7
+    ) || (matches!(decode_u64_v0(&row.0, "metadata.schema")?, 6 | 7)
+        && !cfg!(feature = "incremental-epoch-candidate"))
         || array32_v0(&row.1, "metadata.store_id")? != config.store_id
         || row.2 != config.chain_id
         || array32_v0(&row.3, "metadata.genesis")? != config.genesis_hash
@@ -3915,6 +4307,17 @@ fn initialize_schema_v0(connection: &Connection) -> DurableResult<()> {
 }
 
 fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
+    #[cfg(feature = "incremental-epoch-candidate")]
+    if metadata_exists_v0(connection)?
+        && matches!(epoch_durable::schema_version(connection)?, 6 | 7)
+    {
+        return incremental_owner_v1::epoch_candidate_v1::verify_schema(connection);
+    }
+    if metadata_exists_v0(connection)?
+        && epoch_durable::schema_version(connection)? == incremental_owner_v1::SCHEMA_VERSION
+    {
+        return incremental_owner_v1::verify_schema(connection);
+    }
     let mut statement = connection
         .prepare("SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name")
         .map_err(|_| error(NativeApplicationExecutionErrorCodeV0::Storage, "schema.prepare"))?;
@@ -3952,10 +4355,20 @@ fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
             })?),
         ));
     }
-    let expected = EXPECTED_SCHEMA_V0
+    let mut expected = EXPECTED_SCHEMA_V0
         .iter()
         .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql)))
         .collect::<Vec<_>>();
+    if metadata_exists_v0(connection)?
+        && epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION
+    {
+        expected.extend(
+            epoch_durable::SCHEMA
+                .iter()
+                .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql))),
+        );
+        expected.sort_unstable_by(|a, b| a.0.cmp(&b.0));
+    }
     if actual != expected {
         return Err(error(
             NativeApplicationExecutionErrorCodeV0::CorruptStore,
@@ -5472,6 +5885,94 @@ mod tests {
         let application = DurableNativeApplicationV0::open(&path, config).unwrap();
         let genesis = application.initialize(request).unwrap();
         (path, application, genesis.head().clone(), execution)
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn live_owner_namespace_replacement_is_sticky_and_cold_reopen_is_independent() {
+        use std::os::unix::fs::{symlink, PermissionsExt};
+        for mutant in [
+            "database",
+            "directory",
+            "lock",
+            "preparation",
+            "symlink",
+            "hardlink",
+            "mode",
+        ] {
+            let temporary = TempDir::new().unwrap();
+            let home = temporary.path().join("owner");
+            fs::create_dir(&home).unwrap();
+            let path = home.join("native.sqlite3");
+            let app = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+            app.initialize(genesis_request(&app.config)).unwrap();
+            let original = app.confirmed_committed_head_v0().unwrap();
+            let target = match mutant {
+                "lock" => lock_path_v0(&path).unwrap(),
+                "preparation" => {
+                    let p =
+                        crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&path);
+                    drop(
+                        crate::poco_preparation_journal::PocoPreparationJournalV0::open(&p)
+                            .unwrap(),
+                    );
+                    p
+                }
+                _ => path.clone(),
+            };
+            app.confirm_namespace_identity_v1().unwrap();
+            let saved = temporary.path().join("original");
+            match mutant {
+                "directory" => {
+                    fs::rename(&home, &saved).unwrap();
+                    fs::create_dir(&home).unwrap();
+                    fs::copy(saved.join("native.sqlite3"), &path).unwrap();
+                    fs::copy(
+                        saved.join("native.sqlite3.lock"),
+                        lock_path_v0(&path).unwrap(),
+                    )
+                    .unwrap();
+                }
+                "hardlink" => {
+                    fs::hard_link(&target, &saved).unwrap();
+                }
+                "mode" => {
+                    let mode = fs::metadata(&target).unwrap().permissions().mode();
+                    fs::set_permissions(&target, fs::Permissions::from_mode(mode ^ 0o020)).unwrap();
+                }
+                "symlink" => {
+                    fs::rename(&target, &saved).unwrap();
+                    symlink(&saved, &target).unwrap();
+                }
+                _ => {
+                    fs::rename(&target, &saved).unwrap();
+                    fs::copy(&saved, &target).unwrap();
+                }
+            }
+            assert!(app.confirmed_committed_head_v0().is_err(), "{mutant}");
+            match mutant {
+                "directory" => {
+                    fs::remove_dir_all(&home).unwrap();
+                    fs::rename(&saved, &home).unwrap();
+                }
+                "hardlink" => fs::remove_file(&saved).unwrap(),
+                "mode" => {
+                    let mode = fs::metadata(&target).unwrap().permissions().mode();
+                    fs::set_permissions(&target, fs::Permissions::from_mode(mode ^ 0o020)).unwrap();
+                }
+                _ => {
+                    fs::remove_file(&target).unwrap();
+                    fs::rename(&saved, &target).unwrap();
+                }
+            }
+            assert!(
+                app.confirmed_committed_head_v0().is_err(),
+                "restored {mutant} must stay halted"
+            );
+            drop(app);
+            let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+            assert_eq!(reopened.confirmed_committed_head_v0().unwrap(), original);
+        }
     }
 
     #[test]

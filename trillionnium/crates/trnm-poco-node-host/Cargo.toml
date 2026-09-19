@@ -24,7 +24,16 @@ production_consensus_activation = false
 
 [features]
 default = []
-persistent-authority-candidate = ["trnm-poco-node-authority/persistent-authority-candidate"]
+# Actual native/Core/Safety fixture replay; never selected by a runtime feature.
+epoch-join-test-fixtures = ["persistent-authority-candidate", "trnm-consensus-safety-store/test-fixtures"]
+persistent-authority-candidate = [
+  "trnm-poco-node-authority/persistent-authority-candidate",
+  "dep:trnm-consensus-crypto",
+  "dep:trnm-consensus-signer-journal",
+  "dep:trnm-consensus-safety-store",
+  "dep:trnm-consensus-types",
+  "dep:trnm-native-execution-v0",
+]
 candidate-networked-authority = [
   "persistent-authority-candidate",
   "trnm-poco-node-io/candidate-authenticated-p2p",
@@ -32,6 +41,11 @@ candidate-networked-authority = [
 ]
 
 [dependencies]
+trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store", optional = true }
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto", optional = true }
+trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal", optional = true }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types", optional = true }
+trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0", optional = true }
 trnm-durable-file-adapters-v0 = { version = "0.1.0", path = "../trnm-durable-file-adapters-v0", optional = true, features = ["candidate-peer-replay"] }
 trnm-node-boundary-v0 = { version = "0.1.0", path = "../trnm-node-boundary-v0" }
 trnm-poco-node-authority = { version = "0.1.0", path = "../trnm-poco-node-authority" }
@@ -39,4 +53,6 @@ trnm-poco-node-io = { version = "0.1.0", path = "../trnm-poco-node-io" }
 trnm-poco-node-production-v0 = { version = "0.1.0", path = "../trnm-poco-node-production-v0" }
 
 [dev-dependencies]
+ed25519-dalek = { version = "2", default-features = false, features = ["std"] }
+serde_json = "1"
 tempfile = "3"

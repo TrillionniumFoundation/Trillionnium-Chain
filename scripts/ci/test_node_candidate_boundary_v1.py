@@ -80,6 +80,53 @@ class CompositionMutationTests(unittest.TestCase):
         with self.assertRaises(decomposition.DecompositionError):
             self.gate()
 
+    def test_handoff_dependencies_cannot_enter_default_host(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/Cargo.toml"
+        original = path.read_text()
+        for dependency in ("trnm-consensus-crypto", "trnm-consensus-signer-journal", "trnm-consensus-safety-store",
+                           "trnm-consensus-types", "trnm-native-execution-v0"):
+            with self.subTest(dependency=dependency):
+                old = next(line for line in original.splitlines()
+                           if line.startswith(dependency + " ="))
+                path.write_text(original.replace(old, old.replace("optional = true", "optional = false")))
+                with self.assertRaises(decomposition.DecompositionError):
+                    self.gate()
+            path.write_text(original)
+        self.gate()
+
+    def test_handoff_module_cannot_lose_candidate_gate(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/src/lib.rs"
+        original = path.read_text()
+        gated = '#[cfg(feature = "persistent-authority-candidate")]\nmod handoff_runtime_v1;'
+        self.assertIn(gated, original)
+        path.write_text(original.replace(gated, 'mod handoff_runtime_v1;'))
+        with self.assertRaises(decomposition.DecompositionError):
+            self.gate()
+
+    def test_handoff_tests_cannot_lose_test_gate(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/src/handoff_runtime_v1.rs"
+        original = path.read_text()
+        gated = '#[cfg(test)]\n#[path = "handoff_runtime_v1_tests.rs"]'
+        self.assertIn(gated, original)
+        path.write_text(original.replace(gated, '#[path = "handoff_runtime_v1_tests.rs"]'))
+        with self.assertRaises(decomposition.DecompositionError):
+            self.gate()
+
+    def test_native_join_tests_cannot_lose_fixture_gate(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/src/handoff_runtime_v1_tests.rs"
+        original = path.read_text()
+        gate = '#[cfg(feature = "epoch-join-test-fixtures")]\n'
+        self.assertIn(gate, original)
+        path.write_text(original.replace(gate, ''))
+        with self.assertRaises(decomposition.DecompositionError):
+            self.gate()
+
+    def test_native_join_tests_cannot_enter_runtime_module(self) -> None:
+        path = self.root / "trillionnium/crates/trnm-poco-node-host/src/lib.rs"
+        path.write_text(path.read_text() + '\n#[path = "handoff_native_join_tests_v1.rs"]\nmod misplaced;\n')
+        with self.assertRaises(decomposition.DecompositionError):
+            self.gate()
+
     def test_fake_journal_ownership_metadata_rejected(self) -> None:
         self.mutate("trnm-poco-node-authority", 'durable_authority_journal_owner = false',
                     'durable_authority_journal_owner = true')

@@ -141,6 +141,125 @@ pub fn ordered_leaf_digest_v0(kind: RootKind, index: u32, item: &[u8]) -> Result
     })
 }
 
+/// A bounded branch in the frozen ordered tree. Construction checks shape;
+/// only `verify` authenticates membership against a caller's trusted root.
+/// This adds no new consensus bytes or hash domain.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct OrderedInclusionProofV0 {
+    kind: RootKind,
+    index: u32,
+    item_count: u32,
+    siblings: Vec<[u8; 32]>,
+}
+
+impl OrderedInclusionProofV0 {
+    pub fn new(
+        kind: RootKind,
+        index: u32,
+        item_count: u32,
+        siblings: Vec<[u8; 32]>,
+    ) -> Result<Self> {
+        if item_count == 0 || index >= item_count {
+            return Err(ValidationError::InvalidBlock("ordered proof index/count"));
+        }
+        let mut width = item_count;
+        let mut depth = 0usize;
+        while width > 1 {
+            width = width / 2 + width % 2;
+            depth += 1;
+        }
+        if siblings.len() != depth {
+            return Err(ValidationError::InvalidBlock("ordered proof branch length"));
+        }
+        Ok(Self {
+            kind,
+            index,
+            item_count,
+            siblings,
+        })
+    }
+
+    /// Build one branch from the exact logical items used by `OrderedRootV0`.
+    /// The caller must apply its authenticated total item/byte resource budget.
+    pub fn from_items<T: AsRef<[u8]>>(kind: RootKind, items: &[T], index: u32) -> Result<Self> {
+        let item_count =
+            u32::try_from(items.len()).map_err(|_| ValidationError::LengthOverflow {
+                field: "OrderedInclusionProofV0 items",
+                actual: items.len(),
+                maximum: u32::MAX as usize,
+            })?;
+        if item_count == 0 || index >= item_count {
+            return Err(ValidationError::InvalidBlock("ordered proof index/count"));
+        }
+        let mut layer = items
+            .iter()
+            .enumerate()
+            .map(|(position, item)| ordered_leaf_digest_v0(kind, position as u32, item.as_ref()))
+            .collect::<Result<Vec<_>>>()?;
+        let mut position = index as usize;
+        let mut level = 0u32;
+        let mut siblings = Vec::new();
+        while layer.len() > 1 {
+            siblings.push(*layer.get(position ^ 1).unwrap_or(&layer[position]));
+            let mut next = Vec::with_capacity(layer.len() / 2 + layer.len() % 2);
+            for pair in layer.chunks(2) {
+                next.push(node_digest(
+                    kind,
+                    level,
+                    &pair[0],
+                    pair.get(1).unwrap_or(&pair[0]),
+                ));
+            }
+            layer = next;
+            position /= 2;
+            level += 1;
+        }
+        Self::new(kind, index, item_count, siblings)
+    }
+
+    pub const fn kind(&self) -> RootKind {
+        self.kind
+    }
+    pub const fn index(&self) -> u32 {
+        self.index
+    }
+    pub const fn item_count(&self) -> u32 {
+        self.item_count
+    }
+    pub fn siblings(&self) -> &[[u8; 32]] {
+        &self.siblings
+    }
+
+    pub fn verify(&self, item: &[u8], expected_root: &[u8; 32]) -> Result<()> {
+        let mut digest = ordered_leaf_digest_v0(self.kind, self.index, item)?;
+        let mut position = self.index;
+        let mut width = self.item_count;
+        for (level, sibling) in self.siblings.iter().enumerate() {
+            if width % 2 == 1 && position == width - 1 && *sibling != digest {
+                return Err(ValidationError::InvalidBlock(
+                    "ordered proof duplicate-right mismatch",
+                ));
+            }
+            digest = if position.is_multiple_of(2) {
+                node_digest(self.kind, level as u32, &digest, sibling)
+            } else {
+                node_digest(self.kind, level as u32, sibling, &digest)
+            };
+            position /= 2;
+            width = width / 2 + width % 2;
+        }
+        let root = OrderedRootV0 {
+            kind: self.kind,
+            item_count: self.item_count,
+            inner: Some(digest),
+        };
+        if root.digest() != *expected_root {
+            return Err(ValidationError::InvalidBlock("ordered proof root mismatch"));
+        }
+        Ok(())
+    }
+}
+
 fn node_digest(kind: RootKind, level: u32, left: &[u8; 32], right: &[u8; 32]) -> [u8; 32] {
     canonical_hash(DOMAIN_ORDERED_NODE, |encoder| {
         encoder.u16(SCHEMA_VERSION_V0);
@@ -344,5 +463,54 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn ordered_inclusion_proofs_cover_odd_tails_and_reject_substitution() {
+        for kind in [RootKind::Payload, RootKind::Receipts, RootKind::Evidence] {
+            for count in [1usize, 2, 3, 5, 17] {
+                let items: Vec<Vec<u8>> = (0..count).map(|i| vec![i as u8, 0, 255]).collect();
+                let expected = OrderedRootV0::from_items(kind, &items).unwrap().digest();
+                for index in 0..count {
+                    let proof =
+                        OrderedInclusionProofV0::from_items(kind, &items, index as u32).unwrap();
+                    proof.verify(&items[index], &expected).unwrap();
+                    assert!(proof.verify(b"substituted", &expected).is_err());
+                    let mut other_root = expected;
+                    other_root[0] ^= 1;
+                    assert!(proof.verify(&items[index], &other_root).is_err());
+                    let wrong_kind = if kind == RootKind::Payload {
+                        RootKind::Receipts
+                    } else {
+                        RootKind::Payload
+                    };
+                    let substituted = OrderedInclusionProofV0::new(
+                        wrong_kind,
+                        index as u32,
+                        count as u32,
+                        proof.siblings.clone(),
+                    )
+                    .unwrap();
+                    assert!(substituted.verify(&items[index], &expected).is_err());
+                    if !proof.siblings.is_empty() {
+                        let mut bad = proof.clone();
+                        bad.siblings[0][0] ^= 1;
+                        assert!(bad.verify(&items[index], &expected).is_err());
+                    }
+                }
+            }
+        }
+        assert!(OrderedInclusionProofV0::new(RootKind::Payload, 0, 0, vec![]).is_err());
+        assert!(OrderedInclusionProofV0::new(RootKind::Payload, 1, 1, vec![]).is_err());
+        assert!(OrderedInclusionProofV0::new(RootKind::Payload, 0, 1, vec![[0; 32]]).is_err());
+        assert!(OrderedInclusionProofV0::new(RootKind::Payload, 0, 3, vec![[0; 32]]).is_err());
+        let items = [b"a".as_slice(), b"b", b"c"];
+        let proof = OrderedInclusionProofV0::from_items(RootKind::Payload, &items, 2).unwrap();
+        let different_count =
+            OrderedInclusionProofV0::new(RootKind::Payload, 2, 4, proof.siblings.clone()).unwrap();
+        let root = OrderedRootV0::from_items(RootKind::Payload, &items)
+            .unwrap()
+            .digest();
+        assert!(different_count.verify(b"c", &root).is_err());
     }
 }

@@ -137,16 +137,21 @@ struct FileIdentityV1 {
     inode: u64,
 }
 
-struct PinnedFileV1 {
-    path: PathBuf,
-    file: File,
+pub(crate) struct PinnedFileV1 {
+    pub(crate) path: PathBuf,
+    pub(crate) file: File,
     identity: FileIdentityV1,
     is_directory: bool,
     maximum_bytes: u64,
 }
 
 impl PinnedFileV1 {
-    fn new(path: PathBuf, file: File, is_directory: bool, maximum_bytes: u64) -> StoreResult<Self> {
+    pub(crate) fn new(
+        path: PathBuf,
+        file: File,
+        is_directory: bool,
+        maximum_bytes: u64,
+    ) -> StoreResult<Self> {
         let identity = checked_identity(
             &file
                 .metadata()
@@ -165,7 +170,7 @@ impl PinnedFileV1 {
         Ok(pinned)
     }
 
-    fn require_unchanged(&self) -> StoreResult<()> {
+    pub(crate) fn require_unchanged(&self) -> StoreResult<()> {
         let named = fs::symlink_metadata(&self.path)
             .map_err(|error| io_error("stat pinned path", error))?;
         let opened = self
@@ -759,7 +764,7 @@ fn database_limit(record_limit: usize) -> StoreResult<u64> {
         .ok_or(EpochPreparationStoreErrorV1::ResourceLimit)
 }
 
-fn open_connection(path: &Path, read_only: bool) -> StoreResult<Connection> {
+pub(crate) fn open_connection(path: &Path, read_only: bool) -> StoreResult<Connection> {
     let access = if read_only {
         OpenFlags::SQLITE_OPEN_READ_ONLY
     } else {
@@ -772,7 +777,7 @@ fn open_connection(path: &Path, read_only: bool) -> StoreResult<Connection> {
     .map_err(|error| sql_error("open existing SQLite file without create", error))
 }
 
-fn configure_connection(
+pub(crate) fn configure_connection(
     connection: &Connection,
     initialize: bool,
     maximum_record_bytes: usize,
@@ -870,7 +875,7 @@ fn enable_persistent_wal(connection: &Connection) -> StoreResult<()> {
     Ok(())
 }
 
-fn pin_namespace(path: &Path) -> StoreResult<(PathBuf, PinnedFileV1)> {
+pub(crate) fn pin_namespace(path: &Path) -> StoreResult<(PathBuf, PinnedFileV1)> {
     let absolute = if path.is_absolute() {
         path.to_path_buf()
     } else {
@@ -990,7 +995,7 @@ fn checked_identity(
     }
 }
 
-fn private_file(path: &Path, create_new: bool) -> StoreResult<File> {
+pub(crate) fn private_file(path: &Path, create_new: bool) -> StoreResult<File> {
     let mut options = OpenOptions::new();
     options.read(true).write(create_new).create_new(create_new);
     #[cfg(unix)]
@@ -1011,12 +1016,12 @@ fn private_file(path: &Path, create_new: bool) -> StoreResult<File> {
     })
 }
 
-fn pin_existing(path: &Path, maximum_bytes: u64) -> StoreResult<PinnedFileV1> {
+pub(crate) fn pin_existing(path: &Path, maximum_bytes: u64) -> StoreResult<PinnedFileV1> {
     let file = private_file(path, false)?;
     PinnedFileV1::new(path.to_path_buf(), file, false, maximum_bytes)
 }
 
-fn lock_exclusive(file: &File) -> StoreResult<()> {
+pub(crate) fn lock_exclusive(file: &File) -> StoreResult<()> {
     file.try_lock_exclusive().map_err(|error| {
         if error.kind() == io::ErrorKind::WouldBlock {
             EpochPreparationStoreErrorV1::Locked
@@ -1062,13 +1067,13 @@ fn require_lock_binding(lock: &PinnedFileV1, binding: [u8; 32]) -> StoreResult<(
     Ok(())
 }
 
-fn auxiliary_path(path: &Path, suffix: &str) -> PathBuf {
+pub(crate) fn auxiliary_path(path: &Path, suffix: &str) -> PathBuf {
     let mut name = path.as_os_str().to_os_string();
     name.push(suffix);
     PathBuf::from(name)
 }
 
-fn require_absent(path: &Path) -> StoreResult<()> {
+pub(crate) fn require_absent(path: &Path) -> StoreResult<()> {
     match fs::symlink_metadata(path) {
         Ok(_) => Err(EpochPreparationStoreErrorV1::AlreadyExists),
         Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
@@ -1076,7 +1081,7 @@ fn require_absent(path: &Path) -> StoreResult<()> {
     }
 }
 
-fn require_linux() -> StoreResult<()> {
+pub(crate) fn require_linux() -> StoreResult<()> {
     if cfg!(target_os = "linux") {
         Ok(())
     } else {
