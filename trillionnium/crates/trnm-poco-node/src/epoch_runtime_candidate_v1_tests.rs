@@ -1144,6 +1144,99 @@ fn actual_epoch_runtime_progressed_obligation_recovery_rejoins_pdc_without_signi
 }
 
 #[test]
+fn actual_epoch_runtime_progressed_recovery_resumes_one_vote_after_restart() {
+    std::thread::Builder::new()
+        .name("epoch-progressed-vote-recovery-test".into())
+        .stack_size(32 * 1024 * 1024)
+        .spawn(|| {
+            let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
+            let (dir, runtime, key, recovery) = *live;
+            let proposal = native_first_proposal_v1(
+                &runtime.application,
+                &runtime.edge,
+                recovery.proposal.witness().justify_qc(),
+                recovery
+                    .proposal
+                    .witness()
+                    .epoch_anchor_authorization()
+                    .expect("epoch proposal anchor authorization"),
+            );
+            let block_id = *proposal.block().id().as_bytes();
+            let runtime = runtime
+                .admit_epoch_proposal_v1(proposal)
+                .expect("native proposal admission");
+            let (runtime, _) = runtime
+                .execute_admitted_epoch_proposal_v1()
+                .expect("native P/D/C execution");
+            assert_eq!(key.calls, 10, "P/D/C must not call the signer");
+            let closed = close_actual_runtime_v1(Box::new((dir, runtime, key, recovery)));
+            let (application, edge) = reopen_actual_native_v1(&closed);
+            let journal = SqliteEpochSafetyJournalV1::open_existing_v1(
+                &closed.safety_path,
+                closed.recovery.profile.clone(),
+                closed.safety_pin,
+            )
+            .expect("reopen Safety journal");
+            let mut retired = RetiredSqliteSignerJournalV1::open_existing_v1(
+                &closed.old_path,
+                closed.old_profile.clone(),
+                closed.recovery.old_watermark.clone(),
+                closed.retirement,
+                &closed.recovery.context,
+                &closed.recovery.intent,
+            )
+            .expect("reopen retired signer");
+            let retirement = retired
+                .confirm_retirement_v1()
+                .expect("retirement readback");
+            let ordinary = SqliteSignerJournalV0::open_existing(
+                &closed.new_path,
+                closed.new_profile.clone(),
+                closed.recovery.new_watermark.clone(),
+            )
+            .expect("reopen ordinary signer");
+            let checkpoint_store = SqliteEpochNodeCheckpointStoreV1::open_existing(
+                &closed.external_path,
+                &closed.checkpoint,
+            )
+            .expect("reopen node checkpoint");
+            let mut key = closed.key;
+            let (mut runtime, effects) = CandidateEpochRuntimeV1::recover_progressed_continuing_v1(
+                journal,
+                application,
+                edge,
+                retired,
+                retirement,
+                ordinary,
+                checkpoint_store,
+                closed.checkpoint,
+                block_id,
+                &mut key,
+            )
+            .expect("resume progressed Vote after restart");
+            assert_eq!(key.calls, 11, "recovery signs exactly one persisted Vote");
+            assert!(effects.iter().any(|effect| matches!(
+                effect,
+                trnm_consensus_core::Effect::Broadcast(trnm_consensus_core::OutboundMessage::Vote(
+                    _
+                ))
+            )));
+            assert!(runtime.driver.state().pending_sign().is_none());
+            assert!(runtime
+                .journal
+                .fresh_read_v1(runtime.pin)
+                .expect("fresh Safety readback")
+                .state_v1()
+                .pending_sign()
+                .is_none());
+            assert!(runtime.confirm_initial_activation_v1().is_err());
+        })
+        .expect("spawn progressed Vote recovery test")
+        .join()
+        .expect("progressed Vote recovery test panicked");
+}
+
+#[test]
 fn actual_epoch_runtime_all_owner_initial_recovery_rearms_without_signing() {
     assert_initial_recovery_v1(activate_actual_case_v1(build_epoch_runtime_case_v1()));
 }

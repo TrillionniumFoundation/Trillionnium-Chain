@@ -1983,7 +1983,11 @@ mod tests {
         }
         assert!(marker.exists(), "child never reached pre-commit failpoint");
         child.kill().unwrap();
-        let _ = child.wait();
+        let status = child.wait().unwrap();
+        assert!(
+            !status.success(),
+            "child unexpectedly exited before SIGKILL"
+        );
         let reopened = SqliteIncrementalStateStoreV0::open_existing_with_root_builder_v0(
             &path,
             d(95),

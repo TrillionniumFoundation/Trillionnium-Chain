@@ -665,6 +665,47 @@ impl SqliteEpochSafetyJournalV1 {
         self.binding = Some(driver.persistence_binding_v1());
         Ok((fresh, driver))
     }
+
+    /// Rebind a reopened journal to the exact progressed Core owner whose
+    /// durable state contains one pending Vote.  Unlike initial recovery this
+    /// does not synthesize an activation ACK; it only installs the fresh
+    /// process affinity required for the already-recorded signature release.
+    #[cfg(feature = "candidate-epoch-host-v1")]
+    pub fn prepare_candidate_host_progressed_recovery_v1(
+        &mut self,
+        expected: EpochSafetyHeadPinV1,
+    ) -> Result<(
+        ConfirmedEpochSafetyHeadV1,
+        trnm_consensus_core::PendingEpochHostDriverV1,
+    )> {
+        if self.binding.is_some() {
+            return invalid("journal already bound; recovery cannot duplicate a live driver");
+        }
+        let (confirmed, recovery) = self.prepare_recovery_v1(expected)?;
+        if !matches!(
+            confirmed.state_v1().pending_sign(),
+            Some(trnm_consensus_core::SignIntent::Vote { .. })
+        ) || confirmed.state_v1().pending_finalize().is_some()
+            || !confirmed
+                .state_v1()
+                .payload_validation_obligations()
+                .is_empty()
+        {
+            return invalid("candidate progressed recovery requires one pending Vote");
+        }
+        let driver = recovery.into_candidate_host_progressed_v1()?;
+        if driver.state() != confirmed.state_v1() {
+            return invalid("strict progressed driver differs from fresh journal cut");
+        }
+        let fresh = self.fresh_read_v1(expected)?;
+        if fresh.state_record_checksum_v1() != confirmed.state_record_checksum_v1()
+            || fresh.transition_context_v1() != confirmed.transition_context_v1()
+        {
+            return invalid("journal changed during progressed recovery binding");
+        }
+        self.binding = Some(driver.persistence_binding_v1());
+        Ok((fresh, driver))
+    }
     /// A reopened journal cannot bind an arbitrary Core. It remains read-only
     /// until a concrete M15 recovery join is implemented. A live initialized
     /// journal accepts only requests from its originally bound strict owner.

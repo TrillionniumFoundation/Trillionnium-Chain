@@ -77,6 +77,44 @@ impl StrictEpochCoreRecoveryV1 {
             activation_pending: true,
         })
     }
+
+    /// Rebind an exact progressed epoch record after a process-shaped restart.
+    ///
+    /// This path is intentionally narrower than initial activation recovery:
+    /// it accepts only a state with one already-persisted Vote intent and does
+    /// not manufacture a new Safety persistence barrier.  The caller must
+    /// still join the native P/D/C row, signer custody and independent node
+    /// checkpoint before asking this private driver to release the signature.
+    pub fn into_candidate_host_progressed_v1(self) -> Result<PendingEpochHostDriverV1> {
+        if !matches!(self.state.pending_sign(), Some(SignIntent::Vote { .. }))
+            || self.state.pending_finalize().is_some()
+            || !self.state.payload_validation_obligations().is_empty()
+        {
+            return Err(CoreError::InvalidRecovery(
+                "progressed epoch recovery requires exactly one pending Vote intent",
+            ));
+        }
+        let mut core = Box::new(Core::empty(self.config, *self.state, false));
+        // The durable Safety record says Core had already emitted its single
+        // RequestSignature effect before the crash. Rehydrate that private
+        // process-local gate so SignatureReady is accepted exactly once.
+        core.awaiting_signature = true;
+        let initial_request = SafetyStatePersistenceV0::new(
+            BarrierId::new(core.safety.revision()),
+            Box::new(core.safety.clone()),
+            None,
+            None,
+            None,
+            Arc::clone(&core.persistence_affinity.0),
+            CorePersistenceSealV0::new(),
+        );
+        core.validate_runtime(&trnm_consensus_crypto::StrictEd25519Verifier, true)?;
+        Ok(PendingEpochHostDriverV1 {
+            core,
+            initial_request,
+            activation_pending: false,
+        })
+    }
 }
 
 impl PendingEpochHostDriverV1 {

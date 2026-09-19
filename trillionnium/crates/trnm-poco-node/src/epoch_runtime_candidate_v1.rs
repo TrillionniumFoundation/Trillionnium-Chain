@@ -21,7 +21,7 @@ use trnm_consensus_signer_journal::{
 };
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, decode_double_vote_evidence_v0_exact, BlockBodyV0,
-    BlockId, BlockKind, CanonicalSignable, SignedProposalV0,
+    BlockId, BlockKind, CanonicalSignIntentV0, CanonicalSignable, SignedProposalV0,
 };
 use trnm_native_execution_v0::{
     AuthenticatedEpochApplicationEdgeV1, DurableExecutionHistoryStatusV0,
@@ -1368,6 +1368,247 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         }
         self.pending_epoch_commit = None;
         Ok(self)
+    }
+
+    /// Reopen the exact post-P/D/C cut after a process-shaped restart and
+    /// resume its one durable Vote intent. The journal installs a fresh Core
+    /// process affinity only after a second exact read; native, custody and
+    /// checkpoint joins are checked before the signer is touched. The signer
+    /// journal persists the intent before producing the signature, and the
+    /// Safety release is persisted and read back before this method returns.
+    #[allow(clippy::too_many_arguments)]
+    pub fn recover_progressed_continuing_v1<
+        P: trnm_consensus_signer_journal::SignatureProducerV0,
+    >(
+        mut journal: SqliteEpochSafetyJournalV1,
+        application: DurableNativeApplicationV0,
+        edge: AuthenticatedEpochApplicationEdgeV1,
+        mut retired: RetiredSqliteSignerJournalV1<W>,
+        retirement: ConfirmedOrdinarySignerRetirementV1,
+        mut ordinary: SqliteSignerJournalV0<N>,
+        mut checkpoint_store: SqliteEpochNodeCheckpointStoreV1,
+        expected: EpochNodeCheckpointV1,
+        block_id: [u8; 32],
+        producer: &mut P,
+    ) -> Result<(Self, Vec<Effect>)> {
+        ensure!(
+            expected.fields().phase == EpochCheckpointPhaseV1::Ordinary
+                && expected.fields().role == EpochCheckpointRoleV1::Continuing
+                && expected.fields().predecessor_kind == EpochCheckpointPredecessorV1::V1,
+            "progressed recovery requires an ordinary V1 checkpoint"
+        );
+        checkpoint_store.confirm_exact(&expected)?;
+        let pin = EpochSafetyHeadPinV1 {
+            journal_id: expected.fields().target_safety.journal_id,
+            revision: expected.fields().target_safety.revision,
+            chain_checksum: expected.fields().target_safety.chain_checksum,
+        };
+        let (confirmed, driver) = journal.prepare_candidate_host_progressed_recovery_v1(pin)?;
+        let Some(SignIntent::Vote {
+            block_id: pending, ..
+        }) = driver.state().pending_sign()
+        else {
+            anyhow::bail!("progressed recovery did not retain one Vote intent");
+        };
+        ensure!(
+            pending.as_bytes() == &block_id,
+            "progressed Vote block differs"
+        );
+        ensure!(
+            confirmed
+                .transition_context_v1()
+                .native_valid_transition()
+                .is_some(),
+            "progressed recovery is not a NativeValid cut"
+        );
+        ensure!(
+            retirement.belongs_to_owner_v1(&mut retired)
+                && retirement.record_v1().checksum_v1()
+                    == expected
+                        .fields()
+                        .retired
+                        .context("missing retired custody")?
+                        .retirement_record_checksum,
+            "retired custody changed during progressed recovery"
+        );
+        let signer = ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        let mark = signer.exact_watermark();
+        let expected_ordinary = expected
+            .fields()
+            .ordinary
+            .context("missing ordinary custody")?;
+        ensure!(
+            signer.belongs_to_operational_journal_at_path_v0(&ordinary, ordinary.path())
+                && mark.scope() == expected_ordinary.scope
+                && mark.journal_id() == expected_ordinary.journal_id
+                && signer.profile_checksum() == expected_ordinary.profile_checksum
+                && signer.pending_intent().is_none(),
+            "ordinary signer custody changed before resumed Vote"
+        );
+        ensure!(
+            application.confirmed_committed_head_v0()? == *edge.application_parent(),
+            "progressed recovery application head is not pre-K"
+        );
+        let prepared = application.reopen_prepared_epoch_execution_v1(block_id)?;
+        let confirmed_native = application.confirm_prepared_epoch_execution_v1(&prepared)?;
+        let native_parent = prepared.application_parent();
+        let app = expected.fields().application;
+        ensure!(
+            edge.strict_activation_binding_v1()? == expected.fields().phase_authority_binding
+                && confirmed_native
+                    .belongs_to_application_at_path(&application, application.path())
+                && confirmed_native.commit_sequence().is_none()
+                && native_parent.block_id().as_bytes() == &app.block_id
+                && native_parent.state_root().as_bytes() == &app.state_root
+                && native_parent.commit_id().as_bytes() == &app.native_commit_id,
+            "progressed recovery native P differs from checkpoint"
+        );
+        let header = prepared.header()?;
+        let origin = checkpoint_store.original_v0(&expected)?;
+        let seal_authority = driver
+            .issue_application_seal_authority_v1()
+            .map_err(|e| anyhow::anyhow!("progressed recovery seal authority: {e:?}"))?;
+        let pending_epoch_commit = Some(PendingEpochCommitV1 {
+            epoch: header.epoch().get(),
+            view: header.view().get(),
+            timestamp_ms: header.timestamp_ms(),
+            overlay_digest: confirmed_native.overlay_checksum(),
+            prepared,
+        });
+        let mut runtime = Self {
+            driver,
+            journal,
+            pin,
+            application,
+            edge,
+            retired,
+            retirement,
+            ordinary,
+            checkpoint_store,
+            checkpoint: expected,
+            origin,
+            startup: Vec::new(),
+            seal_authority,
+            pending_epoch_commit,
+            pending_validation: None,
+            fenced: false,
+        };
+        runtime.confirm_current_cut_v1()?;
+        let intent = runtime
+            .driver
+            .state()
+            .pending_sign()
+            .cloned()
+            .context("progressed Vote intent disappeared")?;
+        let canonical = match &intent {
+            SignIntent::Vote {
+                authorizing_safety_revision,
+                view,
+                height,
+                block_id,
+                ..
+            } => CanonicalSignIntentV0::vote(
+                runtime.driver.config().validator_set(),
+                runtime.driver.config().local_validator(),
+                *authorizing_safety_revision,
+                *view,
+                *height,
+                *block_id,
+            )
+            .map_err(|e| anyhow::anyhow!("canonical Vote intent: {e:?}"))?,
+            _ => anyhow::bail!("progressed recovery retained a non-Vote intent"),
+        };
+        let before = runtime.ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        let mut guarded = FreshEpochSignatureProducerV1 {
+            producer,
+            expected: &canonical,
+            confirm: || {
+                confirm_key_owners_v1(
+                    &runtime.driver,
+                    &runtime.journal,
+                    runtime.pin,
+                    &runtime.application,
+                    &runtime.edge,
+                    &mut runtime.retired,
+                    &runtime.retirement,
+                    &mut runtime.checkpoint_store,
+                    &runtime.checkpoint,
+                )
+            },
+        };
+        let signature = runtime.ordinary.sign_exact_v0(&canonical, &mut guarded)?;
+        let after = runtime.ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        ensure!(
+            after.exact_watermark().sequence() == before.exact_watermark().sequence() + 2
+                && after.pending_intent().is_none(),
+            "resumed Vote did not persist one signer intent pair"
+        );
+        let signed_state = runtime.driver.state().clone();
+        let outbound = runtime
+            .driver
+            .step_v1(Input::SignatureReady {
+                id: trnm_consensus_core::SignId::new(canonical.signing_root()),
+                signature,
+            })
+            .map_err(|e| anyhow::anyhow!("resumed Vote signature delivery: {e:?}"))?;
+        let [Effect::Broadcast(message)] = outbound.as_slice() else {
+            anyhow::bail!("resumed Vote signature yielded unexpected effect");
+        };
+        let vote = match message {
+            trnm_consensus_core::OutboundMessage::Vote(vote) => vote,
+            _ => anyhow::bail!("resumed signature yielded non-Vote broadcast"),
+        };
+        vote.verify(
+            runtime.driver.config().validator_set(),
+            &trnm_consensus_crypto::StrictEd25519Verifier,
+        )
+        .map_err(|e| anyhow::anyhow!("resumed Vote verification: {e:?}"))?;
+        ensure!(
+            vote.author() == canonical.author()
+                && vote.signing_root() == canonical.signing_root()
+                && vote.signature() == &signature
+                && runtime.driver.state().pending_sign().is_none(),
+            "resumed Vote differs from durable signer intent"
+        );
+        let release = runtime
+            .driver
+            .persist_signature_release_v1(&signed_state)
+            .map_err(|e| anyhow::anyhow!("resumed Vote release: {e:?}"))?;
+        let [Effect::PersistSafetyState(request)] = release.as_slice() else {
+            anyhow::bail!("resumed Vote release did not persist Safety");
+        };
+        let head = runtime.journal.persist_exact_v1(
+            runtime.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        runtime.pin = head.pin_v1();
+        let mark = after.exact_watermark();
+        let signed_cut = EpochOrdinaryCustodyCutV1 {
+            scope: mark.scope(),
+            journal_id: mark.journal_id(),
+            profile_checksum: after.profile_checksum(),
+            sequence: mark.sequence(),
+            chain_checksum: mark.chain_checksum(),
+        };
+        runtime.advance_exact_cut_v1(safety_cut(&head), signed_cut)?;
+        runtime.journal.confirm_exact_request_v1(
+            runtime.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        let ack = runtime
+            .driver
+            .step_v1(Input::StorageAck {
+                barrier: request.barrier(),
+            })
+            .map_err(|e| anyhow::anyhow!("resumed Vote release ACK: {e:?}"))?;
+        ensure!(
+            ack.is_empty(),
+            "resumed Vote release yielded extra authority"
+        );
+        runtime.confirm_current_cut_v1()?;
+        Ok((runtime, vec![Effect::Broadcast(message.clone())]))
     }
 
     /// Returns a read-only copy of the still-unresolved Core request.

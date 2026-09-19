@@ -817,9 +817,16 @@ and returns a typed receipt without resuming validation.
 reconstructs the strict journal9 state, verifies the exact pending vote
 obligation, reopens native P, confirms the pre-K application edge and all
 custody/checkpoint owners, and returns a typed receipt without rebinding Core
-or releasing a signer. These are evidence-producing fences, not resumed
-signing capabilities; full progressed obligation replay and repeated-crossing
-campaign remain separate gates.
+or releasing a signer. The follow-on
+`recover_progressed_continuing_v1` path now consumes that exact receipt after a
+process-shaped restart: it rebinds a private Core with the persisted signature
+gate, joins the same native P and custody/checkpoint owners, writes the signer
+intent before invoking the producer, then persists and reads back the Safety
+release before returning one verified Vote broadcast. The regression
+`actual_epoch_runtime_progressed_recovery_resumes_one_vote_after_restart`
+proves one producer call and no pending signer/Safety intent after recovery.
+Finality collection, a second complete epoch and repeated-crossing campaign
+remain separate gates.
 
 The F1 acceptance harness must therefore run only after this route is present
 in the built binary: at least four independent hosts, declared CPU/RAM/disk,
