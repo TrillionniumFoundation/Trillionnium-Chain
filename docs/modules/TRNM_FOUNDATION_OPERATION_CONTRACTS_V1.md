@@ -49,6 +49,12 @@ qualification. An input that is unavailable locally must not be described as
 Byzantine invalidity. A possibly applied operation requires exact authoritative
 readback before retry. No unspecified error, codec or platform gets a default.
 
+The implementation-ready details for every currently registered operation are in
+[`TRNM_OPERATION_GAP_DESIGN_V1.md`](TRNM_OPERATION_GAP_DESIGN_V1.md). That annex
+binds the authenticated fields, durable keys, transition order, error classes,
+crash cuts, deterministic-concurrency rules and required vectors without
+claiming that the open external obligations have passed.
+
 ## Recorded boundaries
 
 | Operation | Boundary |
