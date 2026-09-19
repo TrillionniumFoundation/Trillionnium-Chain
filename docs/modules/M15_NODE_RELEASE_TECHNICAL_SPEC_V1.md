@@ -797,13 +797,17 @@ replayed proof consumes and fences the runtime before any alternative proof can
 be tried. The regression
 `actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing`
 now includes a real descendant proof vector, successful K, and a post-K current
-cut revalidation. `recover_progressed_obligation_readback_v1` now provides the
-crash/restart readback at the pre-K boundary: it reconstructs the strict
-journal9 state, verifies the exact pending vote obligation, reopens native P,
-confirms the pre-K application edge and all custody/checkpoint owners, and
-returns a typed receipt without rebinding Core or releasing a signer. This is
-an evidence-producing fence, not a resumed signing capability; full progressed
-obligation replay and repeated-crossing campaign remain separate gates.
+cut revalidation. `recover_pending_epoch_validation_readback_v1` now provides a
+strict pre-P crash/restart readback: it authenticates the exact first-new
+proposal obligation, old application head and all custody/checkpoint owners,
+and returns a typed receipt without resuming validation.
+`recover_progressed_obligation_readback_v1` provides the pre-K boundary: it
+reconstructs the strict journal9 state, verifies the exact pending vote
+obligation, reopens native P, confirms the pre-K application edge and all
+custody/checkpoint owners, and returns a typed receipt without rebinding Core
+or releasing a signer. These are evidence-producing fences, not resumed
+signing capabilities; full progressed obligation replay and repeated-crossing
+campaign remain separate gates.
 
 The F1 acceptance harness must therefore run only after this route is present
 in the built binary: at least four independent hosts, declared CPU/RAM/disk,
