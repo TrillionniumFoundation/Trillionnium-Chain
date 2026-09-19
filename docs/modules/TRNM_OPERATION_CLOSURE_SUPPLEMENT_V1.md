@@ -19,7 +19,10 @@ and parameters to equal the predecessor new set and parameters, the successor
 new epoch to be exactly one greater, and the retained ancestry to begin at the
 predecessor terminal old header and end at the successor checkpoint parent.
 Every edge is checked for consecutive height, exact parent ID, chain, protocol,
-and successor genesis identity.  The result is a verification-only context; it
+and successor genesis identity.  The path must contain a real cross-context edge;
+every child after the predecessor terminal header must carry the successor old
+set's epoch, validator-set identity, and parameter hash.  The result is a
+verification-only context; it
 does not create Safety14, a Core owner, a signer lease, a persistence ACK, or an
 application checkpoint transition.
 
