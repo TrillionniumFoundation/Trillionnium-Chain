@@ -107,6 +107,11 @@ impl StrictEpochRuntimeContextV1 {
         let last = retained_ancestry
             .last()
             .ok_or(invalid("successor retained ancestry is empty"))?;
+        if retained_ancestry.len() < 2 {
+            return Err(invalid(
+                "successor retained ancestry lacks the epoch-context edge",
+            ));
+        }
         let expected_last = successor_activation
             .authenticated_checkpoint_parent_header()
             .id();
@@ -126,6 +131,8 @@ impl StrictEpochRuntimeContextV1 {
         let protocol = predecessor_activation
             .new_validator_set()
             .protocol_version();
+        let successor_old_set = successor_activation.old_validator_set();
+        let successor_old_parameters = successor_activation.old_consensus_parameters();
         for pair in retained_ancestry.windows(2) {
             let parent = &pair[0];
             let child = &pair[1];
@@ -134,6 +141,15 @@ impl StrictEpochRuntimeContextV1 {
                 || child.genesis_hash() != genesis
                 || child.chain_id() != chain
                 || child.protocol_version() != protocol
+                // The first retained header is the predecessor's terminal
+                // old-set seal.  Every child belongs to the successor's old
+                // context (the predecessor new set) all the way to the
+                // successor checkpoint parent.  Without these checks a
+                // caller could splice a validly linked header chain carrying
+                // a foreign epoch/set/parameter scope into the handoff.
+                || child.epoch() != successor_old_set.epoch()
+                || child.validator_set_id() != successor_old_set.id()
+                || child.consensus_parameters_hash() != successor_old_parameters.hash()
             {
                 return Err(invalid("successor retained ancestry edge mismatch"));
             }

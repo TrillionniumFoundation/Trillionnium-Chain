@@ -513,3 +513,48 @@ fn strict_runtime_context_rejects_a_disconnected_successor_ancestry_edge() {
     .expect_err("a disconnected retained ancestry edge must not compose");
     assert!(format!("{error:?}").contains("successor retained ancestry edge mismatch"));
 }
+
+#[test]
+fn strict_runtime_context_rejects_a_foreign_epoch_in_retained_successor_ancestry() {
+    let predecessor_context =
+        StrictEpochRuntimeContextV1::from_activation_v1(predecessor()).unwrap();
+    let (evidence, old_set, old_params, binding, mut ancestry) =
+        successor_evidence(predecessor_context.activation());
+    let successor = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &old_set,
+        &old_params,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let successor_context = StrictEpochRuntimeContextV1::from_activation_v1(successor).unwrap();
+    let child = ancestry[1].clone();
+    ancestry[1] = BlockHeader::new(
+        child.genesis_hash(),
+        child.chain_id(),
+        child.protocol_version(),
+        predecessor_context.activation().old_validator_set().epoch(),
+        child.view(),
+        child.height(),
+        child.block_kind(),
+        child.parent_id(),
+        child.proposer_id(),
+        child.validator_set_id(),
+        child.consensus_parameters_hash(),
+        child.payload_root(),
+        child.state_root(),
+        child.receipts_root(),
+        child.evidence_root(),
+        child.timestamp_ms(),
+        child.next_epoch_commitment_hash(),
+    )
+    .unwrap();
+    let error = StrictEpochRuntimeContextV1::compose_successor_v1(
+        &predecessor_context,
+        successor_context,
+        &ancestry,
+    )
+    .expect_err("a foreign epoch ancestry child must not compose");
+    assert!(format!("{error:?}").contains("successor retained ancestry edge mismatch"));
+}
