@@ -149,9 +149,24 @@ pub trait SourceFinalityVerifierV0 {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+/// Issued only by [`verify_export_v0`].  The fields are intentionally private
+/// so a caller cannot manufacture a finalized-source capability from a peer
+/// header or a row checksum.
 pub struct VerifiedExportV0 {
-    pub header: FinalizedExportHeaderV0,
-    pub ordered_rows_digest: Digest32V0,
+    header: FinalizedExportHeaderV0,
+    ordered_rows_digest: Digest32V0,
+}
+
+impl VerifiedExportV0 {
+    #[must_use]
+    pub const fn header(&self) -> FinalizedExportHeaderV0 {
+        self.header
+    }
+
+    #[must_use]
+    pub const fn ordered_rows_digest(&self) -> Digest32V0 {
+        self.ordered_rows_digest
+    }
 }
 
 /// Immutable capability describing the exact finalized source that was
