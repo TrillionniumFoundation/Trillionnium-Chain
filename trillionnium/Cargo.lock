@@ -1687,6 +1687,7 @@ version = "0.1.0"
 name = "trnm-migration-v0"
 version = "0.1.0"
 dependencies = [
+ "rusqlite",
  "sha2",
 ]
 

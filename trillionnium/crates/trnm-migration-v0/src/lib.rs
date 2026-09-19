@@ -7,8 +7,14 @@
 //! injected canonical builder, and binds cutover agreement to a no-fallback
 //! plan.
 
+use rusqlite::{params, Connection, OptionalExtension};
 use sha2::{Digest, Sha256};
-use std::{collections::BTreeSet, error::Error, fmt};
+use std::{
+    collections::BTreeSet,
+    error::Error,
+    fmt,
+    path::{Path, PathBuf},
+};
 
 pub const MIGRATION_VERSION_V0: u16 = 0;
 pub const MAX_EXPORT_ROWS_V0: u64 = 100_000_000;
@@ -645,6 +651,400 @@ where
     Ok(output)
 }
 
+const DURABLE_STORE_APP_ID_V0: i64 = 0x5452_4d44;
+const DURABLE_META_SQL_V0: &str = "CREATE TABLE migration_delta_meta_v0 (singleton INTEGER PRIMARY KEY CHECK(singleton=1), plan_digest BLOB NOT NULL CHECK(length(plan_digest)=32), schema_digest BLOB NOT NULL CHECK(length(schema_digest)=32), rows_digest BLOB NOT NULL CHECK(length(rows_digest)=32), state_root BLOB NOT NULL CHECK(length(state_root)=32), row_count INTEGER NOT NULL CHECK(row_count>=0), generation INTEGER NOT NULL CHECK(generation>=0), last_delta_digest BLOB NOT NULL CHECK(length(last_delta_digest)=32)) STRICT";
+const DURABLE_ROWS_SQL_V0: &str = "CREATE TABLE migration_delta_rows_v0 (namespace BLOB NOT NULL, key BLOB NOT NULL, value BLOB NOT NULL, PRIMARY KEY(namespace,key)) WITHOUT ROWID";
+
+/// Durable readback from the bounded SQLite staging adapter.  The rows remain
+/// private to the adapter; callers receive them only through `read_rows_v0`,
+/// which validates the closed-world ordering and digests again.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DurableDeltaReadbackV0 {
+    pub plan_digest: Digest32V0,
+    pub target_schema_digest: Digest32V0,
+    pub rows_digest: Digest32V0,
+    pub state_root: Digest32V0,
+    pub row_count: u64,
+    pub generation: u64,
+    pub last_delta_digest: Digest32V0,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DurableDeltaInstallReceiptV0 {
+    pub previous_root: Digest32V0,
+    pub installed_root: Digest32V0,
+    pub generation: u64,
+    pub delta_digest: Digest32V0,
+}
+
+#[derive(Debug)]
+pub enum DurableDeltaStoreErrorV0 {
+    Protocol(MigrationErrorV0),
+    RootBuilder(String),
+    Sqlite(String),
+    Io(String),
+}
+
+impl fmt::Display for DurableDeltaStoreErrorV0 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Protocol(error) => write!(f, "durable delta protocol rejected input: {error}"),
+            Self::RootBuilder(error) => {
+                write!(f, "durable delta root recomputation failed: {error}")
+            }
+            Self::Sqlite(error) => write!(f, "durable delta sqlite failure: {error}"),
+            Self::Io(error) => write!(f, "durable delta filesystem failure: {error}"),
+        }
+    }
+}
+
+impl Error for DurableDeltaStoreErrorV0 {}
+
+/// A small, real SQLite staging/install adapter for incremental target state.
+/// Each install uses one immediate transaction, verifies the target root and
+/// row digest before commit, then reopens and reads metadata after commit. It
+/// is intentionally a M07 integration primitive: no signer/finality authority,
+/// network transport, pruning, or production availability claim is attached.
+#[derive(Clone, Debug)]
+pub struct SqliteIncrementalStateStoreV0 {
+    path: PathBuf,
+    plan_digest: Digest32V0,
+    target_schema_digest: Digest32V0,
+}
+
+impl SqliteIncrementalStateStoreV0 {
+    pub fn initialize<R>(
+        path: impl Into<PathBuf>,
+        plan_digest: Digest32V0,
+        target_schema_digest: Digest32V0,
+        rows: &[TargetRowV0],
+        root_builder: &R,
+    ) -> Result<Self, DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        if plan_digest == Digest32V0([0; 32]) || target_schema_digest == Digest32V0([0; 32]) {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::InvalidIncrementalDelta,
+            ));
+        }
+        validate_target_rows_v0(rows).map_err(DurableDeltaStoreErrorV0::Protocol)?;
+        let state_root = root_builder
+            .recompute_target_root(target_schema_digest, rows.iter())
+            .map_err(|error| DurableDeltaStoreErrorV0::RootBuilder(error.to_string()))?;
+        if state_root == Digest32V0([0; 32]) {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::InvalidTargetRoot,
+            ));
+        }
+        let path = path.into();
+        if Path::new(&path).exists() {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::StoreAlreadyInitialized,
+            ));
+        }
+        let connection = Connection::open(&path)
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        connection
+            .pragma_update(None, "application_id", DURABLE_STORE_APP_ID_V0)
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        connection
+            .pragma_update(None, "user_version", 1_i64)
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let transaction = connection
+            .unchecked_transaction()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        transaction
+            .execute_batch(&format!("{DURABLE_META_SQL_V0};{DURABLE_ROWS_SQL_V0};"))
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        for row in rows {
+            transaction
+                .execute(
+                    "INSERT INTO migration_delta_rows_v0(namespace,key,value) VALUES(?1,?2,?3)",
+                    params![&row.namespace, &row.key, &row.value],
+                )
+                .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        }
+        transaction
+            .execute(
+                "INSERT INTO migration_delta_meta_v0(singleton,plan_digest,schema_digest,rows_digest,state_root,row_count,generation,last_delta_digest) VALUES(1,?1,?2,?3,?4,?5,0,?6)",
+                params![
+                    &plan_digest.0[..],
+                    &target_schema_digest.0[..],
+                    &target_rows_digest_v0(rows).0[..],
+                    &state_root.0[..],
+                    rows.len() as i64,
+                    &[0_u8; 32][..],
+                ],
+            )
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        transaction
+            .commit()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let store = Self {
+            path,
+            plan_digest,
+            target_schema_digest,
+        };
+        let readback = store.readback_with_root_builder_v0(root_builder)?;
+        if readback.state_root != state_root || readback.row_count != rows.len() as u64 {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        Ok(store)
+    }
+
+    /// Open and validate the closed-world schema plus metadata. This method
+    /// intentionally does not recompute the state root; use
+    /// [`Self::open_existing_with_root_builder_v0`] at an integrity boundary.
+    pub fn open_existing(
+        path: impl Into<PathBuf>,
+        plan_digest: Digest32V0,
+        target_schema_digest: Digest32V0,
+    ) -> Result<Self, DurableDeltaStoreErrorV0> {
+        let store = Self {
+            path: path.into(),
+            plan_digest,
+            target_schema_digest,
+        };
+        let _ = store.readback_v0()?;
+        Ok(store)
+    }
+
+    pub fn open_existing_with_root_builder_v0<R>(
+        path: impl Into<PathBuf>,
+        plan_digest: Digest32V0,
+        target_schema_digest: Digest32V0,
+        root_builder: &R,
+    ) -> Result<Self, DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        let store = Self::open_existing(path, plan_digest, target_schema_digest)?;
+        store.readback_with_root_builder_v0(root_builder)?;
+        Ok(store)
+    }
+
+    pub fn read_rows_v0(&self) -> Result<Vec<TargetRowV0>, DurableDeltaStoreErrorV0> {
+        let connection = self.open_connection()?;
+        let mut statement = connection
+            .prepare(
+                "SELECT namespace,key,value FROM migration_delta_rows_v0 ORDER BY namespace,key",
+            )
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let mut rows = Vec::new();
+        let mapped = statement
+            .query_map([], |row| {
+                Ok(TargetRowV0 {
+                    namespace: row.get(0)?,
+                    key: row.get(1)?,
+                    value: row.get(2)?,
+                })
+            })
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        for row in mapped {
+            rows.push(row.map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?);
+        }
+        validate_target_rows_v0(&rows).map_err(DurableDeltaStoreErrorV0::Protocol)?;
+        Ok(rows)
+    }
+
+    pub fn readback_v0(&self) -> Result<DurableDeltaReadbackV0, DurableDeltaStoreErrorV0> {
+        let connection = self.open_connection()?;
+        let metadata = connection
+            .query_row(
+                "SELECT plan_digest,schema_digest,rows_digest,state_root,row_count,generation,last_delta_digest FROM migration_delta_meta_v0 WHERE singleton=1",
+                [],
+                |row| {
+                    Ok((
+                        row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?,
+                        row.get::<_, Vec<u8>>(2)?, row.get::<_, Vec<u8>>(3)?,
+                        row.get::<_, i64>(4)?, row.get::<_, i64>(5)?, row.get::<_, Vec<u8>>(6)?,
+                    ))
+                },
+            )
+            .optional()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?
+            .ok_or(DurableDeltaStoreErrorV0::Protocol(MigrationErrorV0::StoreSchemaMismatch))?;
+        let decode = |bytes: Vec<u8>| -> Result<Digest32V0, DurableDeltaStoreErrorV0> {
+            <[u8; 32]>::try_from(bytes.as_slice())
+                .map(Digest32V0)
+                .map_err(|_| {
+                    DurableDeltaStoreErrorV0::Protocol(MigrationErrorV0::StoreSchemaMismatch)
+                })
+        };
+        let plan = decode(metadata.0)?;
+        let schema = decode(metadata.1)?;
+        if plan != self.plan_digest
+            || schema != self.target_schema_digest
+            || metadata.4 < 0
+            || metadata.5 < 0
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableStoreMismatch,
+            ));
+        }
+        let rows = self.read_rows_v0()?;
+        let rows_digest = target_rows_digest_v0(&rows);
+        let readback = DurableDeltaReadbackV0 {
+            plan_digest: plan,
+            target_schema_digest: schema,
+            rows_digest,
+            state_root: decode(metadata.3)?,
+            row_count: metadata.4 as u64,
+            generation: metadata.5 as u64,
+            last_delta_digest: decode(metadata.6)?,
+        };
+        if readback.row_count != rows.len() as u64 || readback.rows_digest != decode(metadata.2)? {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        Ok(readback)
+    }
+
+    /// Read back metadata and independently recompute the root from the
+    /// durable rows. Metadata-only readback remains available for cheap health
+    /// checks; this method is the integrity gate used around installation.
+    pub fn readback_with_root_builder_v0<R>(
+        &self,
+        root_builder: &R,
+    ) -> Result<DurableDeltaReadbackV0, DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        let readback = self.readback_v0()?;
+        let rows = self.read_rows_v0()?;
+        let recomputed = root_builder
+            .recompute_target_root(self.target_schema_digest, rows.iter())
+            .map_err(|error| DurableDeltaStoreErrorV0::RootBuilder(error.to_string()))?;
+        if recomputed != readback.state_root {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        Ok(readback)
+    }
+
+    pub fn apply_delta_v0<R>(
+        &self,
+        delta: &IncrementalStateDeltaV0,
+        root_builder: &R,
+    ) -> Result<DurableDeltaInstallReceiptV0, DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        if delta.plan_digest != self.plan_digest
+            || delta.target_schema_digest != self.target_schema_digest
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::PlanSchemaMismatch,
+            ));
+        }
+        let before = self.readback_v0()?;
+        if before.state_root != delta.base_state_root
+            || before.rows_digest != delta.base_rows_digest
+            || before.row_count != delta.base_row_count
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::BaseStateMismatch,
+            ));
+        }
+        let base_rows = self.read_rows_v0()?;
+        let target_rows = apply_incremental_delta_v0(delta, &base_rows, root_builder).map_err(
+            |error| match error {
+                IncrementalDeltaErrorV0::Protocol(error) => {
+                    DurableDeltaStoreErrorV0::Protocol(error)
+                }
+                IncrementalDeltaErrorV0::RootBuilder(error) => {
+                    DurableDeltaStoreErrorV0::RootBuilder(error.to_string())
+                }
+            },
+        )?;
+        let connection = self.open_connection()?;
+        let transaction = connection
+            .unchecked_transaction()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        for entry in &delta.entries {
+            if entry.value.is_some() {
+                transaction.execute(
+                    "INSERT INTO migration_delta_rows_v0(namespace,key,value) VALUES(?1,?2,?3) ON CONFLICT(namespace,key) DO UPDATE SET value=excluded.value",
+                    params![&entry.namespace, &entry.key, entry.value.as_ref().expect("checked")],
+                ).map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+            } else {
+                transaction
+                    .execute(
+                        "DELETE FROM migration_delta_rows_v0 WHERE namespace=?1 AND key=?2",
+                        params![&entry.namespace, &entry.key],
+                    )
+                    .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+            }
+        }
+        let stored_rows_digest = target_rows_digest_v0(&target_rows);
+        let changed = transaction
+            .execute(
+                "UPDATE migration_delta_meta_v0 SET rows_digest=?1,state_root=?2,row_count=?3,generation=generation+1,last_delta_digest=?4 WHERE singleton=1 AND generation=?5 AND rows_digest=?6 AND state_root=?7",
+                params![
+                    &stored_rows_digest.0[..],
+                    &delta.target_state_root.0[..],
+                    target_rows.len() as i64,
+                    &delta.delta_digest.0[..],
+                    before.generation as i64,
+                    &before.rows_digest.0[..],
+                    &before.state_root.0[..],
+                ],
+            )
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        if changed != 1 {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::BaseStateMismatch,
+            ));
+        }
+        transaction
+            .commit()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let after = self.readback_with_root_builder_v0(root_builder)?;
+        if after.state_root != delta.target_state_root
+            || after.rows_digest != delta.target_rows_digest
+            || after.row_count != delta.target_row_count
+            || after.last_delta_digest != delta.delta_digest
+            || after.generation != before.generation.saturating_add(1)
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        Ok(DurableDeltaInstallReceiptV0 {
+            previous_root: before.state_root,
+            installed_root: after.state_root,
+            generation: after.generation,
+            delta_digest: after.last_delta_digest,
+        })
+    }
+
+    fn open_connection(&self) -> Result<Connection, DurableDeltaStoreErrorV0> {
+        let connection = Connection::open(&self.path)
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let application_id = connection
+            .pragma_query_value(None, "application_id", |row| row.get::<_, i64>(0))
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let user_version = connection
+            .pragma_query_value(None, "user_version", |row| row.get::<_, i64>(0))
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        if application_id != DURABLE_STORE_APP_ID_V0 || user_version != 1 {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::StoreSchemaMismatch,
+            ));
+        }
+        Ok(connection)
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MigrationPlanV0 {
     pub source_chain_id: Digest32V0,
@@ -914,6 +1314,11 @@ pub enum MigrationErrorV0 {
     TargetRowsOutOfBounds,
     BaseStateMismatch,
     TargetStateMismatch,
+    PlanSchemaMismatch,
+    StoreAlreadyInitialized,
+    StoreSchemaMismatch,
+    DurableStoreMismatch,
+    DurableReadbackMismatch,
 }
 
 impl fmt::Display for MigrationErrorV0 {
@@ -943,6 +1348,11 @@ impl fmt::Display for MigrationErrorV0 {
             Self::TargetRowsOutOfBounds => "target state exceeds its row bound",
             Self::BaseStateMismatch => "incremental delta base state mismatch",
             Self::TargetStateMismatch => "incremental delta target state mismatch",
+            Self::PlanSchemaMismatch => "incremental delta plan or schema mismatch",
+            Self::StoreAlreadyInitialized => "durable delta store already exists",
+            Self::StoreSchemaMismatch => "durable delta store schema mismatch",
+            Self::DurableStoreMismatch => "durable delta store metadata mismatch",
+            Self::DurableReadbackMismatch => "durable delta readback mismatch",
         })
     }
 }
@@ -1120,6 +1530,65 @@ mod tests {
                 MigrationErrorV0::InvalidDeltaRow
             ))
         ));
+    }
+
+    #[test]
+    fn sqlite_incremental_store_commits_and_reopens_exact_readback() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-migration-delta-{}-{}.sqlite",
+            std::process::id(),
+            d(94).0[0]
+        ));
+        let _ = std::fs::remove_file(&path);
+        let base = vec![target_row(1, 10), target_row(2, 20)];
+        let target = vec![target_row(1, 11), target_row(3, 30)];
+        let store =
+            SqliteIncrementalStateStoreV0::initialize(&path, d(95), d(96), &base, &HashRoot)
+                .unwrap();
+        let delta = derive_incremental_delta_v0(d(95), d(96), &base, &target, &HashRoot).unwrap();
+        let receipt = store.apply_delta_v0(&delta, &HashRoot).unwrap();
+        assert_eq!(receipt.previous_root, delta.base_state_root);
+        assert_eq!(receipt.installed_root, delta.target_state_root);
+        assert_eq!(receipt.generation, 1);
+        let reopened = SqliteIncrementalStateStoreV0::open_existing_with_root_builder_v0(
+            &path,
+            d(95),
+            d(96),
+            &HashRoot,
+        )
+        .unwrap();
+        assert_eq!(reopened.read_rows_v0().unwrap(), target);
+        assert_eq!(
+            reopened.readback_v0().unwrap().last_delta_digest,
+            delta.delta_digest
+        );
+        assert_eq!(
+            reopened
+                .readback_with_root_builder_v0(&HashRoot)
+                .unwrap()
+                .state_root,
+            delta.target_state_root
+        );
+        let tamper = Connection::open(&path).unwrap();
+        tamper
+            .execute(
+                "UPDATE migration_delta_rows_v0 SET value=?1 WHERE namespace=?2 AND key=?3",
+                params![&[99_u8][..], b"accounts".as_slice(), &[1_u8][..]],
+            )
+            .unwrap();
+        assert!(matches!(
+            reopened.readback_with_root_builder_v0(&HashRoot),
+            Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch
+            ))
+        ));
+        assert!(matches!(
+            SqliteIncrementalStateStoreV0::open_existing(&path, d(97), d(96)),
+            Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableStoreMismatch
+            ))
+        ));
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]

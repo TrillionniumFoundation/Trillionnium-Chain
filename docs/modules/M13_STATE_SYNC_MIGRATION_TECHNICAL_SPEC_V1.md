@@ -28,9 +28,16 @@ and target root before returning the applied rows. Deletes and empty values
 are distinct, authority namespaces remain forbidden, and the delta has an
 independent one-million-row bound. This is a deterministic projection and
 verification primitive, not a database rewrite, network transport, garbage
-collector, or production multi-host acceptance. A host still needs an
-M07-owned durable staging adapter and crash/space/retention campaign before
-claiming incremental installation.
+collector, or production multi-host acceptance. A bounded SQLite adapter,
+`SqliteIncrementalStateStoreV0`, now supplies a concrete staging/install seam:
+it initializes a closed-world schema, applies one delta in an immediate
+transaction, and reopens to verify generation, rows digest, target root and
+last-delta digest, with the integrity-boundary reopen path independently
+recomputing the root from durable rows. It rejects plan/schema substitution
+and stale base state.
+It remains a candidate integration adapter; an M07-owned deployment must still
+bind its namespace/retention policy and pass crash, disk-full, replacement,
+space and multi-host campaigns before claiming production installation.
 
 ## Interfaces
 
