@@ -105,7 +105,7 @@ independent_review_policy_git_blob = "128a2038b44bbb7a10cff7f6cdb324097c608e1b"
 documentation_contract_registry_path = "config/documentation-contracts-v1.json"
 documentation_contract_registry_git_blob = "c3b300bc70a10c99c258515288f3941b19986cce"
 documentation_contract_gate_path = "scripts/ci/check_documentation_contracts_v1.py"
-documentation_contract_gate_git_blob = "e966989eb25d078740c9e9ba8df2fd64e10746cd"
+documentation_contract_gate_git_blob = "3242b2cd146f6a682e1a3dbaa0694977f0db3a0e"
 documentation_contract_test_path = "scripts/ci/test_documentation_contracts_v1.py"
 documentation_contract_test_git_blob = "4246fac9ff041d7f680ecbff7999d3f7db7ddcfd"
 
