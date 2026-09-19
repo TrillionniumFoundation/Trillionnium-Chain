@@ -412,7 +412,8 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         application: EpochApplicationCutV1,
     ) -> Result<()> {
         self.checkpoint_store.confirm_exact(&self.checkpoint)?;
-        if application == self.checkpoint.fields().application {
+        let application_changed = application != self.checkpoint.fields().application;
+        if !application_changed {
             ensure!(
                 self.fresh_current_cuts_v1()? == (safety, ordinary),
                 "physical cut differs before CAS"
@@ -441,7 +442,11 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         self.checkpoint_store
             .compare_and_advance(&self.checkpoint, &next)?;
         self.checkpoint = next;
-        self.confirm_current_cut_v1()
+        if application_changed {
+            self.confirm_current_cut_after_application_v1()
+        } else {
+            self.confirm_current_cut_v1()
+        }
     }
     fn confirm_current_cut_v1(&mut self) -> Result<()> {
         ensure!(!self.fenced, "epoch runtime fenced");
@@ -462,30 +467,121 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
     }
     fn fresh_current_cuts_v1(&mut self) -> Result<(EpochSafetyCutV1, EpochOrdinaryCustodyCutV1)> {
         let (safety, ordinary) = self.fresh_custody_cuts_v1()?;
-        let native = self
-            .application
-            .confirm_epoch_application_edge_v1(&self.edge)?;
-        let row = native.durable_checkpoint();
         let app = self.checkpoint.fields().application;
-        let head = row.target_head_v0()?;
+        if app.block_id == *self.edge.application_parent().block_id().as_bytes() {
+            let native = self
+                .application
+                .confirm_epoch_application_edge_v1(&self.edge)?;
+            let row = native.durable_checkpoint();
+            let head = row.target_head_v0()?;
+            ensure!(
+                native.strict_activation_binding_v1().as_bytes()
+                    == &self.checkpoint.fields().phase_authority_binding
+                    && row.p_digest_v0() == app.p_digest
+                    && row.artifact_digest_v0() == app.artifact_digest
+                    && row.overlay_digest_v0() == app.overlay_digest
+                    && row.p_sequence_v0() == app.p_sequence
+                    && row.commit_sequence_v0() == Some(app.commit_sequence)
+                    && row.store_id_v0() == app.native_store_id
+                    && head.block_id().as_bytes() == &app.block_id
+                    && head.state_root().as_bytes() == &app.state_root
+                    && head.commit_id().as_bytes() == &app.native_commit_id
+                    && head.height().get() == app.height
+                    && native
+                        .belongs_to_application_at_path(&self.application, self.application.path()),
+                "native activation checkpoint changed"
+            );
+        } else {
+            // After strict first-new K the immutable activation edge still
+            // names the old checkpoint parent.  Requiring that edge's old
+            // head here would reject the intended progressed application cut.
+            // Freshly validate the complete committed row at the checkpoint's
+            // current application block instead, while retaining the edge's
+            // owner/path check and the checkpoint's persisted authority cut.
+            ensure!(
+                self.edge
+                    .durable_checkpoint()
+                    .belongs_to_application_at_path_v0(&self.application, self.application.path(),),
+                "native activation edge owner changed"
+            );
+            let prepared = self
+                .application
+                .reopen_prepared_epoch_execution_v1(app.block_id)?;
+            let confirmed = self
+                .application
+                .confirm_prepared_epoch_execution_v1(&prepared)?;
+            let head = prepared.overlay_parent_head()?;
+            let committed = self.application.confirmed_committed_head_v0()?;
+            ensure!(
+                self.edge.strict_activation_binding_v1()?
+                    == self.checkpoint.fields().phase_authority_binding
+                    && confirmed.commit_sequence() == Some(app.commit_sequence)
+                    && confirmed.prepared().p_digest() == app.p_digest
+                    && confirmed.prepared().artifact_digest() == app.artifact_digest
+                    && confirmed.overlay_checksum() == app.overlay_digest
+                    && confirmed.prepared().persist_sequence() == app.p_sequence
+                    && confirmed
+                        .belongs_to_application_at_path(&self.application, self.application.path())
+                    && head.block_id().as_bytes() == &app.block_id
+                    && head.state_root().as_bytes() == &app.state_root
+                    && head.commit_id().as_bytes() == &app.native_commit_id
+                    && head.height().get() == app.height
+                    && committed == head,
+                "native progressed application checkpoint changed"
+            );
+        }
+        Ok((safety, ordinary))
+    }
+
+    /// Freshly confirms the independent checkpoint after native K has moved
+    /// the application head to the first committed block of the new epoch.
+    /// The activation edge intentionally still names the predecessor head,
+    /// so `confirm_epoch_application_edge_v1` cannot be reused here.  This
+    /// read joins the exact checkpoint block to the fully revalidated native
+    /// committed row while retaining the same owner/path and activation
+    /// binding checks as the pre-K confirmation.
+    fn confirm_current_cut_after_application_v1(&mut self) -> Result<()> {
+        ensure!(!self.fenced, "epoch runtime fenced");
+        self.checkpoint_store.confirm_exact(&self.checkpoint)?;
         ensure!(
-            native.strict_activation_binding_v1().as_bytes()
-                == &self.checkpoint.fields().phase_authority_binding
-                && row.p_digest_v0() == app.p_digest
-                && row.artifact_digest_v0() == app.artifact_digest
-                && row.overlay_digest_v0() == app.overlay_digest
-                && row.p_sequence_v0() == app.p_sequence
-                && row.commit_sequence_v0() == Some(app.commit_sequence)
-                && row.store_id_v0() == app.native_store_id
+            self.fresh_custody_cuts_v1()?
+                == (
+                    self.checkpoint.fields().target_safety,
+                    self.checkpoint
+                        .fields()
+                        .ordinary
+                        .context("missing active custody")?
+                ),
+            "live custody differs from independent checkpoint"
+        );
+        let checkpoint = self.checkpoint.fields();
+        let app = checkpoint.application;
+        let prepared = self
+            .application
+            .reopen_prepared_epoch_execution_v1(app.block_id)?;
+        let confirmed = self
+            .application
+            .confirm_prepared_epoch_execution_v1(&prepared)?;
+        let head = prepared.overlay_parent_head()?;
+        let committed = self.application.confirmed_committed_head_v0()?;
+        ensure!(
+            self.edge.strict_activation_binding_v1()? == checkpoint.phase_authority_binding
+                && confirmed.commit_sequence() == Some(app.commit_sequence)
+                && confirmed.prepared().p_digest() == app.p_digest
+                && confirmed.prepared().artifact_digest() == app.artifact_digest
+                && confirmed.overlay_checksum() == app.overlay_digest
+                && confirmed.prepared().persist_sequence() == app.p_sequence
+                && confirmed
+                    .belongs_to_application_at_path(&self.application, self.application.path(),)
                 && head.block_id().as_bytes() == &app.block_id
                 && head.state_root().as_bytes() == &app.state_root
                 && head.commit_id().as_bytes() == &app.native_commit_id
                 && head.height().get() == app.height
-                && native
-                    .belongs_to_application_at_path(&self.application, self.application.path()),
-            "native activation checkpoint changed"
+                && committed == head,
+            "native post-K activation checkpoint changed"
         );
-        Ok((safety, ordinary))
+        self.checkpoint_store.confirm_exact(&self.checkpoint)?;
+        Ok(())
     }
 
     /// Read the Safety, retired custody and ordinary signer cuts without
@@ -986,7 +1082,6 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             return Err(error.context("epoch K independent checkpoint CAS"));
         }
         self.pending_epoch_commit = None;
-        self.confirm_current_cut_v1()?;
         Ok(self)
     }
 

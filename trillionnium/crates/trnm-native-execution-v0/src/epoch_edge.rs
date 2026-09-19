@@ -176,6 +176,20 @@ impl AuthenticatedEpochApplicationEdgeV1 {
     pub const fn authorization_id(&self) -> [u8; 32] {
         self.coordinates.authorization_id
     }
+
+    /// Re-audits the retained handoff evidence and returns the strict
+    /// activation binding without requiring the native application to remain
+    /// at the predecessor checkpoint head. This is needed after native K has
+    /// advanced the application head to the first block of the new epoch.
+    pub fn strict_activation_binding_v1(&self) -> Result<[u8; 32]> {
+        let activation = self.recovery_evidence().audit_strict(
+            self.old_validator_set(),
+            self.old_parameters(),
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )?;
+        Ok(*activation.activation.binding_ref().as_bytes())
+    }
+
     pub fn durable_checkpoint(&self) -> &crate::ConfirmedDurableExecutionHistoryRowV0 {
         self.checkpoint.durable_row()
     }

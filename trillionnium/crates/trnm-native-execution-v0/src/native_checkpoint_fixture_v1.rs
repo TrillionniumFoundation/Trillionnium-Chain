@@ -691,8 +691,8 @@ mod feature_tests {
     }
 }
 
-#[cfg(test)]
-pub(crate) fn epoch_first_finality(
+#[cfg(any(test, feature = "test-fixtures"))]
+pub fn epoch_first_finality(
     edge: &crate::AuthenticatedEpochApplicationEdgeV1,
     headers: &[BlockHeader],
 ) -> Vec<u8> {

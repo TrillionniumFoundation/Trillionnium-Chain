@@ -763,9 +763,10 @@ runs this with a real native-root proposal and proves the key callback count
 does not change; the test uses a bounded 32 MiB worker stack because the native
 authenticated snapshot computation is intentionally large. A failed
 persistence/checkpoint step consumes the runtime. The strict native K
-continuation is implemented below, but its positive finality vector, vote and
-finality collection, crash recovery after a progressed obligation, and repeated
-crossing remain separate gates.
+continuation is implemented below, and the regression now supplies a real
+first-new proof vector, commits K, and revalidates the progressed application
+cut without another signer call. Vote/finality collection, crash recovery after
+a progressed obligation, and repeated crossing remain separate gates.
 
 ### Runtime handoff and acceptance closure (M15-RUNTIME-CLOSURE-V1)
 
@@ -790,11 +791,14 @@ performance.
 
 After D/C, `commit_admitted_epoch_finality_v1` accepts only the caller-owned
 bounded CEV0 first-new finality bytes, calls the native strict K verifier and
-commit CAS, freshly reads the committed head, and then advances the independent
-node checkpoint's application cut. A malformed, substituted or replayed proof
-consumes and fences the runtime before any alternative proof can be tried. The
-current candidate still lacks a positive end-to-end finality-vector regression,
-progressed-obligation recovery constructor, and repeated-crossing campaign.
+commit CAS, freshly reads the committed epoch P/K row, and then advances the
+independent node checkpoint's application cut. A malformed, substituted or
+replayed proof consumes and fences the runtime before any alternative proof can
+be tried. The regression
+`actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing`
+now includes a real descendant proof vector, successful K, and a post-K current
+cut revalidation. A progressed-obligation recovery constructor and repeated-
+crossing campaign are still separate gates.
 
 The F1 acceptance harness must therefore run only after this route is present
 in the built binary: at least four independent hosts, declared CPU/RAM/disk,

@@ -641,6 +641,41 @@ fn native_first_proposal_v1(
     .unwrap()
 }
 
+fn native_epoch_descendants_v1(
+    first: &BlockHeader,
+    set: &trnm_consensus_types::ValidatorSet,
+    params: &trnm_consensus_types::ConsensusParametersV0,
+) -> [BlockHeader; 2] {
+    let mut parent = first.clone();
+    let mut descendants = Vec::with_capacity(2);
+    for _ in 0..2 {
+        let view = View::new(parent.view().get().checked_add(1).unwrap());
+        let header = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            view,
+            trnm_consensus_types::Height::new(parent.height().get().checked_add(1).unwrap()),
+            BlockKind::Regular,
+            parent.id(),
+            trnm_consensus_core::leader_for(set, view),
+            set.id(),
+            params.hash(),
+            parent.payload_root().clone(),
+            parent.state_root().clone(),
+            parent.receipts_root().clone(),
+            parent.evidence_root().clone(),
+            parent.timestamp_ms().checked_add(1).unwrap(),
+            None,
+        )
+        .unwrap();
+        parent = header.clone();
+        descendants.push(header);
+    }
+    descendants.try_into().unwrap()
+}
+
 #[test]
 fn actual_epoch_runtime_activation_releases_timer_then_persisted_timeout_once() {
     assert_activation_then_timeout_v1(activate_actual_case_v1(build_epoch_runtime_case_v1()));
@@ -769,13 +804,27 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
                 .reopen_prepared_epoch_execution_v1(block_id)
                 .expect("durable native P readback");
             assert_eq!(p.header().unwrap(), *proposal.block().header());
-            let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
-            assert!(
-                runtime
-                    .commit_admitted_epoch_finality_v1(&[], &mut budget)
-                    .is_err(),
-                "malformed first-new finality must fail closed"
+            let descendants = native_epoch_descendants_v1(
+                proposal.block().header(),
+                runtime.edge.new_validator_set(),
+                runtime.edge.new_parameters(),
             );
+            let mut headers = vec![proposal.block().header().clone()];
+            headers.extend(descendants);
+            let proof = trnm_native_execution_v0::test_fixtures::epoch_first_finality(
+                &runtime.edge,
+                &headers,
+            );
+            let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
+            let mut runtime = runtime
+                .commit_admitted_epoch_finality_v1(&proof, &mut budget)
+                .expect("strict first-new finality commits native K");
+            runtime
+                .confirm_current_cut_v1()
+                .expect("post-K current cut revalidation");
+            assert!(runtime.pending_epoch_proposal_validation_v1().is_none());
+            assert_eq!(runtime.checkpoint.fields().application.height, 11);
+            assert_eq!(key.calls, 10, "K must not call the signer");
             assert!(dir.path().is_dir());
         })
         .expect("spawn epoch native P/D/C test")
