@@ -54,6 +54,13 @@ production and public batch verification must all reject the mutant.
 accepts the maximum representable first-prunable height before rejecting a
 one-height extension whose expiry cannot be represented.
 
+`archive::tests::bounded_archive_planner_handles_hard_batch_scale_deterministically`
+drives the planner with the hard 4,096-record batch bound, verifies the bounded
+Merkle proofs at multiple positions, and replays the same plan from reversed
+input. This is a repository scale smoke and determinism check; it does not
+claim wall-clock throughput, storage deletion, or independently operated
+long-history acceptance.
+
 The existing public-wrapper retention mutant retains its positive control and
 now also requires direct validation and proof construction to reject early
 archiving. Existing archive, market, wire and consumer regressions remain.
