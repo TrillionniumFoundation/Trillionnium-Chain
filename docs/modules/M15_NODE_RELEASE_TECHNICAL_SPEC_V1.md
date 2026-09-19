@@ -772,8 +772,8 @@ The epoch C construction uses
 `NativeValidTransitionV0::from_core_delivery_v0` and its
 `validate_against_core_delivery_v0` readback. This binds the exact Core D
 carrier's route, validation identity, canonical Valid checksum, completion
-revision, delivery attempt and post-ack action while preserving the frozen
-328-byte Safety context. The seven host-owned commitments in that context are
+revision and post-ack action while enforcing the canonical one-attempt shape
+and preserving the frozen 328-byte Safety context. The seven host-owned commitments in that context are
 still derived from the native P/application D readback because Core does not
 own those rows; this seam therefore does not constitute complete source
 authentication for an arbitrary host manifest. A future epoch-specific sealed

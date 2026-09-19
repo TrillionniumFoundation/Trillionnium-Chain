@@ -59,8 +59,8 @@ independent-evidence task, not an implied success.
   persists Safety NativeValid C from the live Core request. The typed
   `NativeValidTransitionV0::from_core_delivery_v0` constructor takes the exact
   non-cloneable Core D carrier, so route, validation identity, Valid checksum,
-  completion revision, delivery attempt and post-ack action cannot be
-  substituted while the 328-byte Safety context is assembled. Its
+  completion revision and post-ack action cannot be substituted while the
+  canonical one-attempt, 328-byte Safety context is assembled. Its
   `validate_against_core_delivery_v0` readback is run before C. The seven
   host-owned commitments remain a separate P/D manifest: they describe native
   execution and application rows which Core does not own, and must be derived

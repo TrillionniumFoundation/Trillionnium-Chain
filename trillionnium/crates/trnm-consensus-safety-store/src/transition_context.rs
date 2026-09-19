@@ -728,7 +728,8 @@ impl NativeValidTransitionV0 {
     /// The carrier owns the route, validation identity, canonical Valid
     /// checksum, completion revision, and Core post-ack action.  Callers can
     /// therefore no longer substitute any of those values while constructing
-    /// the 328-byte transition record.  The seven host-owned commitments stay
+    /// the 328-byte transition record; the canonical one-attempt invariant is
+    /// enforced at the same boundary.  The seven host-owned commitments stay
     /// explicit because Core does not own the application/database rows they
     /// describe; a production host must derive them from the same P/D
     /// readback and retain that source-specific reconciliation.
@@ -784,7 +785,8 @@ impl NativeValidTransitionV0 {
     }
 
     /// Checks the Core-owned portion of this persisted transition against the
-    /// exact accepted D carrier before Safety C is written.  The seven host
+    /// exact accepted D carrier before Safety C is written.  The canonical
+    /// one-attempt invariant is checked here as well.  The seven host
     /// commitments remain checked by their independent P/D source readback;
     /// they are intentionally not reconstructed from inert Core state.
     pub fn validate_against_core_delivery_v0(
