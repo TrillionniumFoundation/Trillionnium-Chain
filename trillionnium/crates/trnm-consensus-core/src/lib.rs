@@ -169,6 +169,8 @@ mod error;
 mod model;
 mod safety_state_record;
 
+#[cfg(feature = "candidate-epoch-host-v1")]
+pub use crate::core::PendingEpochHostDriverV1;
 pub use crate::core::{
     leader_for, reconstruct_h1_state_sync_anchor_successor_prefix_v0, AnchoredOrdinaryActivatedV0,
     AnchoredOrdinaryArmViewTimerV0, AnchoredOrdinaryCheckpointedLinkClaimV0,

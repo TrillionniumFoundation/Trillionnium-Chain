@@ -6333,7 +6333,7 @@ impl BoundedConsensusOwnerV1 {
         }
         let carried_tc = proposal.timeout_certificate().cloned();
         let before = self.authority_v1()?.facts_v0()?;
-        let vote = self.authority_v1()?.vote_unbound_proposal_v0(proposal)?;
+        let vote = self.authority_v1()?.receive_unbound_proposal_v1(proposal)?;
         let after = self.authority_v1()?.facts_v0()?;
         self.record_application_progress_v1(before, after)?;
         if made_authoritative_progress_v1(before, after) {
@@ -6341,15 +6341,27 @@ impl BoundedConsensusOwnerV1 {
             // Core view change must fence/rearm the old timer just like a
             // standalone certificate; a same-view Vote alone is not progress.
             self.rearm_after_progress_v1(before, after)?;
+        } else if vote.is_none() && before.phase_v0() != after.phase_v0() {
+            // A certificate can restore Ready without advancing the cut.
+            // Match standalone-certificate timer behavior without treating
+            // an ignored body as progress or resetting timeout backoff.
+            self.rearm_after_phase_transition_v1(after)?;
         }
         if let Some(certificate) = carried_tc {
             self.accepted_tc_by_view
                 .insert(certificate.timed_out_view().get(), certificate);
         }
-        self.record_proposal_admitted_v1(block_id, height)?;
-        self.known_executions.insert((height, *block_id.as_bytes()));
-        self.highest_submitted_height = self.highest_submitted_height.max(height);
-        self.emit_local_vote_v1(vote)?;
+        if let Some(vote) = vote {
+            self.record_proposal_admitted_v1(block_id, height)?;
+            self.known_executions.insert((height, *block_id.as_bytes()));
+            self.highest_submitted_height = self.highest_submitted_height.max(height);
+            self.emit_local_vote_v1(vote)?;
+        } else {
+            // The carrier may have advanced certificates, but its late body
+            // was not executed/voted. Do not publish an execution coordinate
+            // or turn a normal network/timeout race into actor termination.
+            forget_proposal_first_seen_v1(&mut self.proposal_first_seen, block_id);
+        }
         self.drain_pending_certificates_v1()?;
         self.queue_ready_timeout_certificates_v1()?;
         Ok(())

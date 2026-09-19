@@ -35,7 +35,7 @@ mod old_epoch_journal_v1;
 pub mod test_fixtures;
 pub use epoch_journal_v1::{
     ConfirmedEpochSafetyHeadV1, EpochJournalCutV1, EpochJournalErrorV1, EpochSafetyHeadPinV1,
-    EpochSafetyJournalProfileV1, SqliteEpochSafetyJournalV1,
+    EpochSafetyJournalProfileV1, EpochSafetyMigrationSourceV1, SqliteEpochSafetyJournalV1,
 };
 pub use old_epoch_journal_v1::{
     ConfirmedOldEpochSafetyHeadV1, OldEpochJournalCutV1, OldEpochJournalErrorV1,

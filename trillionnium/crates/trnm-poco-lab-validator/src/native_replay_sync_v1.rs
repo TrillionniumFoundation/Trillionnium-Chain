@@ -215,12 +215,24 @@ fn persist_exact(path: &Path, bytes: &[u8]) -> Result<()> {
         .mode(0o600)
         .custom_flags(libc::O_NOFOLLOW)
         .open(&temporary)?;
+    #[cfg(test)]
+    if test_persist_cut_matches_v1("partial", path) {
+        file.write_all(&bytes[..bytes.len() / 2])?;
+        file.sync_all()?;
+        test_persist_cut_v1("partial", path);
+    }
     file.write_all(bytes)?;
     file.sync_all()?;
+    #[cfg(test)]
+    test_persist_cut_v1("file-synced", path);
     fs::hard_link(&temporary, path)?;
+    #[cfg(test)]
+    test_persist_cut_v1("linked", path);
     File::open(parent)?.sync_all()?;
     fs::remove_file(&temporary)?;
     File::open(parent)?.sync_all()?;
+    #[cfg(test)]
+    test_persist_cut_v1("published", path);
     Ok(())
 }
 fn record_path(root: &Path, height: u64) -> PathBuf {
@@ -400,6 +412,8 @@ impl NativeReplayReceiverV1 {
         private_dir(&root)?;
         let stage_file = File::open(&root)?;
         persist_exact(&root.join("manifest.json"), &encoded)?;
+        #[cfg(test)]
+        test_replay_cut_v1("manifest-published", &root);
         Ok(Self {
             base,
             root,
@@ -630,11 +644,19 @@ impl NativeReplayReceiverV1 {
                     NativeBlockExecutionResultV0::Valid(executed) => *executed,
                     other => return Err(anyhow!("sync native execution rejected: {other:?}")),
                 };
+                #[cfg(test)]
+                if height == 4 {
+                    test_replay_cut_v1("native-prepared-h4", &path);
+                }
                 app.commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
                     executed,
                     proof.clone(),
                     previous_time,
                 ))?;
+                #[cfg(test)]
+                if height == 4 {
+                    test_replay_cut_v1("native-committed-h4", &path);
+                }
             }
             previous_id = *header.id().as_bytes();
             previous_time = header.timestamp_ms();
@@ -659,6 +681,78 @@ impl NativeReplayReceiverV1 {
         persist_exact(&self.base.join("CURRENT"), &published)?;
         Ok(head)
     }
+}
+
+// These hooks are absent from every library/binary deployment build. Only an
+// explicitly armed child test thread can pause; other parallel tests are inert.
+#[cfg(test)]
+thread_local! {
+    static REPLAY_TEST_CUT_V1: std::cell::RefCell<Option<(String, PathBuf)>> = const {
+        std::cell::RefCell::new(None)
+    };
+}
+#[cfg(test)]
+pub(crate) fn arm_replay_test_cut_v1(cut: String, marker: PathBuf) {
+    REPLAY_TEST_CUT_V1.with(|slot| {
+        assert!(slot.borrow().is_none());
+        *slot.borrow_mut() = Some((cut, marker));
+    });
+}
+#[cfg(test)]
+fn test_persist_cut_name_v1(phase: &str, path: &Path) -> Option<String> {
+    match path.file_name()?.to_str()? {
+        "chunk-001-00" => Some(format!("chunk-{phase}")),
+        "CURRENT" => Some(format!("current-{phase}")),
+        _ => None,
+    }
+}
+#[cfg(test)]
+fn test_persist_cut_matches_v1(phase: &str, path: &Path) -> bool {
+    let Some(name) = test_persist_cut_name_v1(phase, path) else {
+        return false;
+    };
+    REPLAY_TEST_CUT_V1.with(|slot| slot.borrow().as_ref().is_some_and(|(cut, _)| *cut == name))
+}
+#[cfg(test)]
+fn test_persist_cut_v1(phase: &str, path: &Path) {
+    if let Some(name) = test_persist_cut_name_v1(phase, path) {
+        test_replay_cut_v1(&name, path);
+    }
+}
+#[cfg(test)]
+fn test_replay_cut_v1(name: &str, path: &Path) {
+    REPLAY_TEST_CUT_V1.with(|slot| {
+        let armed = slot.borrow();
+        let Some((cut, marker)) = armed.as_ref() else {
+            return;
+        };
+        if cut != name {
+            return;
+        }
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(marker)
+            .expect("create child crash-cut notification");
+        file.write_all(
+            &serde_json::to_vec(&serde_json::json!({
+                "cut":name,"pid":std::process::id(),"path":path,
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        file.sync_all().unwrap();
+        File::open(marker.parent().unwrap())
+            .unwrap()
+            .sync_all()
+            .unwrap();
+        // The parent checks this durable marker, sends actual SIGKILL, and
+        // waits for its status. No destructor/normal shutdown runs at the cut.
+        loop {
+            std::thread::park();
+        }
+    });
 }
 
 #[cfg(test)]

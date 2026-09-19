@@ -198,6 +198,143 @@ fn journal9_actual_source_exact_retry_strict_reopen_and_foreign_affinity() {
     assert!(reopened.fresh_read_v1(stale).is_err());
 }
 
+#[cfg(feature = "candidate-epoch-host-v1")]
+#[test]
+fn journal9_initial_host_recovery_fresh_binds_then_persists_real_timeout() {
+    let dir = directory();
+    let f = actual_fixture(&dir.path().join("chain"));
+    let (profile, prepared) = prepare(&f);
+    let path = dir.path().join("epoch9.db");
+    let (journal, head) = SqliteEpochSafetyJournalV1::initialize_from_journal8_v1(
+        &path,
+        profile.clone(),
+        &f.journal,
+        f.pin,
+        &prepared,
+    )
+    .unwrap();
+    let pin = head.pin_v1();
+    let source = f.journal.fresh_read_v1(f.pin).unwrap();
+    assert_eq!(head.migration_source_v1().pin_v1(), f.pin);
+    assert_eq!(
+        head.migration_source_v1().state_record_checksum_v1(),
+        source.state_record_checksum_v1()
+    );
+    assert_eq!(
+        head.migration_source_v1().context_ref_v1(),
+        source.context_ref_v1()
+    );
+    assert_eq!(
+        head.migration_source_v1().profile_ref_v1(),
+        f.profile.profile_ref_v1()
+    );
+    assert_eq!(
+        head.migration_source_v1().initial_revision_v1(),
+        pin.revision
+    );
+    let old_request = prepared.initial_persistence_v1().clone();
+    journal
+        .confirm_exact_request_v1(pin, &old_request, &SafetyTransitionContextV0::ordinary())
+        .unwrap();
+    drop(journal);
+    drop(prepared);
+    let mut reopened =
+        SqliteEpochSafetyJournalV1::open_existing_v1(&path, profile.clone(), pin).unwrap();
+    assert!(reopened
+        .confirm_exact_request_v1(pin, &old_request, &SafetyTransitionContextV0::ordinary())
+        .is_err());
+    assert!(reopened
+        .prepare_candidate_host_initial_recovery_v1(EpochSafetyHeadPinV1 {
+            revision: pin.revision + 1,
+            ..pin
+        })
+        .is_err());
+    let (fresh, mut pending) = reopened
+        .prepare_candidate_host_initial_recovery_v1(pin)
+        .unwrap();
+    assert!(fresh.belongs_to_store_at_path_v1(&reopened, &path));
+    assert!(!head.belongs_to_store_at_path_v1(&reopened, &path));
+    assert!(pending.activation_persistence_pending_v1());
+    assert!(reopened
+        .prepare_candidate_host_initial_recovery_v1(pin)
+        .is_err());
+    assert!(reopened
+        .confirm_exact_request_v1(pin, &old_request, &SafetyTransitionContextV0::ordinary())
+        .is_err());
+    reopened
+        .confirm_exact_request_v1(
+            pin,
+            pending.initial_persistence_v1(),
+            &SafetyTransitionContextV0::ordinary(),
+        )
+        .unwrap();
+    assert!(matches!(
+        pending.step_v1(Input::Resume),
+        Err(CoreError::EpochActivationPersistencePending)
+    ));
+    // Test supplies the ordinary trusted-host ACK only to exercise the engine;
+    // this test does not claim an external node checkpoint or signer lease join.
+    assert_eq!(
+        pending
+            .step_v1(Input::StorageAck {
+                barrier: pending.initial_persistence_v1().barrier()
+            })
+            .unwrap(),
+        vec![Effect::ArmViewTimer {
+            epoch: Epoch::new(1),
+            view: View::new(1)
+        }]
+    );
+    let before = pending.state().clone();
+    let effects = pending
+        .step_v1(Input::LocalTimeout {
+            epoch: Epoch::new(1),
+            view: View::new(1),
+        })
+        .unwrap();
+    let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
+        panic!("timeout must persist before signing")
+    };
+    assert!(request.state().pending_sign().is_some());
+    Core::validate_persisted_successor_v0(
+        pending.config(),
+        &before,
+        request.state(),
+        &StrictEd25519Verifier,
+    )
+    .unwrap();
+    let appended = reopened
+        .persist_exact_v1(pin, request, &SafetyTransitionContextV0::ordinary())
+        .unwrap();
+    let next = appended.pin_v1();
+    reopened
+        .confirm_exact_request_v1(next, request, &SafetyTransitionContextV0::ordinary())
+        .unwrap();
+    assert!(!fresh.belongs_to_store_at_path_v1(&reopened, &path));
+    assert!(matches!(
+        pending
+            .step_v1(Input::StorageAck {
+                barrier: request.barrier()
+            })
+            .unwrap()
+            .as_slice(),
+        [Effect::RequestSignature { .. }]
+    ));
+    drop(pending);
+    drop(reopened);
+    let mut progressed =
+        SqliteEpochSafetyJournalV1::open_existing_v1(&path, profile, next).unwrap();
+    assert!(progressed
+        .prepare_candidate_host_initial_recovery_v1(next)
+        .is_err());
+    assert!(progressed
+        .fresh_read_v1(next)
+        .unwrap()
+        .state_v1()
+        .pending_sign()
+        .is_some());
+}
+
 fn profile_for_artifact(
     f: &NativeOldEpochTerminalFixtureV1,
     artifact: ValidatedPayloadArtifactRefV0,

@@ -158,6 +158,14 @@ impl P {
         })
     }
     fn validate(&self, config: &NativeApplicationConfigV0) -> Result<()> {
+        self.validate_context(config, &config.validator_set, &config.parameters)
+    }
+    fn validate_context(
+        &self,
+        config: &NativeApplicationConfigV0,
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+    ) -> Result<()> {
         ensure!(
             self.sequence > 1 && self.digest == self.calculate_digest(config),
             "incremental P digest"
@@ -175,17 +183,16 @@ impl P {
                 && request.block_id().as_bytes() == &self.block
                 && request.chain_id().as_str() == config.chain_id
                 && request.genesis_hash().as_bytes() == &config.genesis_hash
-                && request.active_validator_set_id().as_bytes()
-                    == config.validator_set.id().as_bytes(),
+                && request.active_validator_set_id().as_bytes() == set.id().as_bytes(),
             "incremental P request"
         );
         ensure_finalized_header_binding_v0(&h, request)?;
         validate_native_finalized_execution_receipts_v0(&executed)?;
         ensure!(
             h.block_kind() == trnm_consensus_types::BlockKind::Regular
-                && h.validator_set_id() == config.validator_set.id()
-                && h.epoch() == config.validator_set.epoch()
-                && h.consensus_parameters_hash() == config.parameters.hash(),
+                && h.validator_set_id() == set.id()
+                && h.epoch() == set.epoch()
+                && h.consensus_parameters_hash() == parameters.hash(),
             "incremental ordinary context"
         );
         ensure!(
@@ -393,6 +400,7 @@ struct ExecutionView<'a> {
     state: ni::IncrementalJmtReaderV1<'a>,
     replay: ReplayReader<'a>,
     config: &'a NativeApplicationConfigV0,
+    parameters: ConsensusParametersV0,
 }
 impl TreeReader for ExecutionView<'_> {
     fn get_node_option(&self, key: &NodeKey) -> Result<Option<Node>> {
@@ -427,7 +435,7 @@ impl NativeExecutionStoreV0 for ExecutionView<'_> {
         Ok(self.config.signer_policy_commitment)
     }
     fn consensus_parameters_v0(&self) -> Result<ConsensusParametersV0> {
-        Ok(self.config.parameters)
+        Ok(self.parameters)
     }
     fn committed_command_id_v0(&self, id: &str) -> Result<bool> {
         self.replay.contains(replay::command_key(id)?)
@@ -455,6 +463,7 @@ fn execution_view<'a>(
         state: ni::open_incremental_reader_v1(tx, &namespace(config), parent.state)?,
         replay: ReplayReader::new(tx, Some(owner.replay), &parent.replay)?,
         config,
+        parameters: config.parameters,
     })
 }
 fn validate_source_replay(

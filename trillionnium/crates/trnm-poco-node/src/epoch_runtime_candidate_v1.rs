@@ -1,0 +1,818 @@
+//! Concrete continuing-author activation at the exact initial full14E cut.
+//! The owner retains every physical store and never returns its Core or signer.
+use crate::{
+    epoch_node_checkpoint_v1::*, ConfirmedRetiredEpochNodeCheckpointV1, ExternalNodeCheckpointV0,
+    SqliteEpochNodeCheckpointStoreV1,
+};
+use anyhow::{ensure, Context, Result};
+use trnm_consensus_core::{Effect, Input, PendingEpochHostDriverV1, PreparedEpochCoreActivationV1};
+use trnm_consensus_safety_store::{
+    ConfirmedEpochSafetyHeadV1, EpochSafetyHeadPinV1, SafetyTransitionContextV0,
+    SqliteEpochSafetyJournalV1,
+};
+use trnm_consensus_signer_journal::{
+    ConfirmedOrdinarySignerRetirementV1, ExternalMonotonicWatermarkV0, ExternalSignerRetirementV1,
+    RetiredSqliteSignerJournalV1, SqliteSignerJournalV0,
+};
+use trnm_consensus_types::CanonicalSignable;
+use trnm_native_execution_v0::{
+    AuthenticatedEpochApplicationEdgeV1, DurableExecutionHistoryStatusV0,
+    DurableNativeApplicationV0,
+};
+
+/// Candidate activation owns the live continuing author, including virgin new
+/// custody. No unchecked Core/input forwarding, raw signer handle or signing
+/// callback is exposed. Ordinary event driving is a separate checked method.
+///
+/// ```compile_fail
+/// use trnm_poco_node::CandidateEpochRuntimeV1;
+/// use trnm_consensus_signer_journal::{ExternalSignerRetirementV1, ExternalMonotonicWatermarkV0};
+/// fn require_clone<T: Clone>() {}
+/// fn duplicate<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>() {
+///     require_clone::<CandidateEpochRuntimeV1<W, N>>();
+/// }
+/// ```
+pub struct CandidateEpochRuntimeV1<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> {
+    driver: PendingEpochHostDriverV1,
+    journal: SqliteEpochSafetyJournalV1,
+    pin: EpochSafetyHeadPinV1,
+    application: DurableNativeApplicationV0,
+    edge: AuthenticatedEpochApplicationEdgeV1,
+    retired: RetiredSqliteSignerJournalV1<W>,
+    retirement: ConfirmedOrdinarySignerRetirementV1,
+    ordinary: SqliteSignerJournalV0<N>,
+    checkpoint_store: SqliteEpochNodeCheckpointStoreV1,
+    checkpoint: EpochNodeCheckpointV1,
+    origin: ExternalNodeCheckpointV0,
+    startup: Vec<Effect>,
+    fenced: bool,
+}
+impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEpochRuntimeV1<W, N> {
+    /// Consume every actual owner. The exact journal9/native/original retirement/
+    /// new virgin custody cut is checked before and after the independent schema2
+    /// migration and sync. Only then does the private driver receive its ACK.
+    #[allow(clippy::too_many_arguments)]
+    pub fn activate_continuing_v1(
+        prepared: PreparedEpochCoreActivationV1,
+        journal: SqliteEpochSafetyJournalV1,
+        pin: EpochSafetyHeadPinV1,
+        application: DurableNativeApplicationV0,
+        edge: AuthenticatedEpochApplicationEdgeV1,
+        mut retired: RetiredSqliteSignerJournalV1<W>,
+        retired_checkpoint: ConfirmedRetiredEpochNodeCheckpointV1,
+        mut ordinary: SqliteSignerJournalV0<N>,
+    ) -> Result<Self> {
+        ensure!(
+            retired_checkpoint.belongs_to_retired_owner_v1(&mut retired),
+            "retired checkpoint owner changed"
+        );
+        let origin = *retired_checkpoint.checkpoint_v1();
+        let mut driver = prepared.into_candidate_host_pending_v1();
+        let retirement = retired.confirm_retirement_v1()?;
+        let target = join_initial(
+            &driver,
+            &journal,
+            pin,
+            &application,
+            &edge,
+            &mut retired,
+            &retirement,
+            &mut ordinary,
+            &origin,
+        )?;
+        // Consume the typed retirement checkpoint only after every other join.
+        // A failed or uncertain migration drops all live owners with this call.
+        let old_store = retired_checkpoint.into_epoch_lineage_source_v1(&mut retired)?;
+        let mut checkpoint_store =
+            SqliteEpochNodeCheckpointStoreV1::migrate_continuing_v0(old_store, &origin, &target)?;
+        ensure!(
+            join_initial(
+                &driver,
+                &journal,
+                pin,
+                &application,
+                &edge,
+                &mut retired,
+                &retirement,
+                &mut ordinary,
+                &origin
+            )? == target,
+            "owners changed after composite persistence"
+        );
+        checkpoint_store.confirm_exact(&target)?;
+        let startup = ack_initial(&mut driver)?;
+        Ok(Self {
+            driver,
+            journal,
+            pin,
+            application,
+            edge,
+            retired,
+            retirement,
+            ordinary,
+            checkpoint_store,
+            checkpoint: target,
+            origin,
+            startup,
+            fenced: false,
+        })
+    }
+
+    /// Recover only the exact initial activation cut from independently expected
+    /// schema2 bytes. Progressed Safety or signer decisions reject until their
+    /// dedicated whole-owner replay protocol is implemented.
+    #[allow(clippy::too_many_arguments)]
+    pub fn recover_initial_continuing_v1(
+        mut journal: SqliteEpochSafetyJournalV1,
+        application: DurableNativeApplicationV0,
+        edge: AuthenticatedEpochApplicationEdgeV1,
+        mut retired: RetiredSqliteSignerJournalV1<W>,
+        mut ordinary: SqliteSignerJournalV0<N>,
+        mut checkpoint_store: SqliteEpochNodeCheckpointStoreV1,
+        expected: EpochNodeCheckpointV1,
+    ) -> Result<Self> {
+        ensure!(
+            expected.fields().phase == EpochCheckpointPhaseV1::ActivationCommitted
+                && expected.fields().role == EpochCheckpointRoleV1::Continuing
+                && expected.fields().predecessor_kind == EpochCheckpointPredecessorV1::TerminalV0,
+            "unsupported recovery phase"
+        );
+        checkpoint_store.confirm_exact(&expected)?;
+        let origin = checkpoint_store.original_v0(&expected)?;
+        let cut = expected.fields().target_safety;
+        let pin = EpochSafetyHeadPinV1 {
+            journal_id: cut.journal_id,
+            revision: cut.revision,
+            chain_checksum: cut.chain_checksum,
+        };
+        let (_, mut driver) = journal.prepare_candidate_host_initial_recovery_v1(pin)?;
+        let retirement = retired.confirm_retirement_v1()?;
+        ensure!(
+            join_initial(
+                &driver,
+                &journal,
+                pin,
+                &application,
+                &edge,
+                &mut retired,
+                &retirement,
+                &mut ordinary,
+                &origin
+            )? == expected,
+            "recovered owners differ from independent activation checkpoint"
+        );
+        checkpoint_store.confirm_exact(&expected)?;
+        ensure!(
+            join_initial(
+                &driver,
+                &journal,
+                pin,
+                &application,
+                &edge,
+                &mut retired,
+                &retirement,
+                &mut ordinary,
+                &origin
+            )? == expected,
+            "recovered owners changed before ACK"
+        );
+        let startup = ack_initial(&mut driver)?;
+        Ok(Self {
+            driver,
+            journal,
+            pin,
+            application,
+            edge,
+            retired,
+            retirement,
+            ordinary,
+            checkpoint_store,
+            checkpoint: expected,
+            origin,
+            startup,
+            fenced: false,
+        })
+    }
+
+    /// Sign the first new-epoch timeout through three physical checkpoints:
+    /// pending intent, signed journal, and released Safety outbox. Every failure
+    /// consumes all owners; no broadcast can escape a failed persistence cut.
+    pub fn sign_initial_timeout_v1<P: trnm_consensus_signer_journal::SignatureProducerV0>(
+        mut self,
+        producer: &mut P,
+    ) -> Result<(Self, trnm_consensus_types::TimeoutVote)> {
+        self.confirm_initial_activation_v1()?;
+        let effects = self
+            .driver
+            .step_v1(Input::LocalTimeout {
+                epoch: self.driver.config().validator_set().epoch(),
+                view: trnm_consensus_types::View::new(1),
+            })
+            .map_err(|e| anyhow::anyhow!("initial timeout: {e:?}"))?;
+        let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
+            anyhow::bail!("timeout did not persist one signing obligation");
+        };
+        let head = self.journal.persist_exact_v1(
+            self.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        self.pin = head.pin_v1();
+        let ordinary = self
+            .checkpoint
+            .fields()
+            .ordinary
+            .context("missing live ordinary cut")?;
+        self.advance_exact_cut_v1(safety_cut(&head), ordinary)?;
+        self.journal.confirm_exact_request_v1(
+            self.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        let released = self
+            .driver
+            .step_v1(Input::StorageAck {
+                barrier: request.barrier(),
+            })
+            .map_err(|e| anyhow::anyhow!("timeout persistence ACK: {e:?}"))?;
+        let [Effect::RequestSignature { intent }] = released.as_slice() else {
+            anyhow::bail!("timeout ACK did not yield exactly one intent");
+        };
+        ensure!(
+            matches!(
+                intent.preimage(),
+                trnm_consensus_types::CanonicalSignPreimageV0::TimeoutVote(_)
+            ) && intent.authorizing_safety_revision() == self.pin.revision,
+            "unexpected timeout intent"
+        );
+        self.confirm_current_cut_v1()?;
+        let before = self.ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        // The journal calls its external service again while reserving the
+        // intent. Recheck the other physical owners at the actual key boundary,
+        // after those callbacks, and again before returning the signature.
+        let mut guarded = FreshEpochSignatureProducerV1 {
+            producer,
+            expected: intent,
+            confirm: || {
+                confirm_key_owners_v1(
+                    &self.driver,
+                    &self.journal,
+                    self.pin,
+                    &self.application,
+                    &self.edge,
+                    &mut self.retired,
+                    &self.retirement,
+                    &mut self.checkpoint_store,
+                    &self.checkpoint,
+                )
+            },
+        };
+        let signature = self.ordinary.sign_exact_v0(intent, &mut guarded)?;
+        let after = self.ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        ensure!(
+            before.exact_watermark().sequence().checked_add(2)
+                == Some(after.exact_watermark().sequence())
+                && before.journal_id() == after.journal_id()
+                && before.profile_checksum() == after.profile_checksum()
+                && after.pending_intent().is_none(),
+            "signature did not persist exact one journal pair"
+        );
+        let mark = after.exact_watermark();
+        let signed_cut = EpochOrdinaryCustodyCutV1 {
+            scope: mark.scope(),
+            journal_id: mark.journal_id(),
+            profile_checksum: after.profile_checksum(),
+            sequence: mark.sequence(),
+            chain_checksum: mark.chain_checksum(),
+        };
+        self.advance_exact_cut_v1(self.checkpoint.fields().target_safety, signed_cut)?;
+        self.confirm_current_cut_v1()?;
+        let signed_state = self.driver.state().clone();
+        let outbound = self
+            .driver
+            .step_v1(Input::SignatureReady {
+                id: trnm_consensus_core::SignId::new(intent.signing_root()),
+                signature,
+            })
+            .map_err(|e| anyhow::anyhow!("timeout signature delivery: {e:?}"))?;
+        let [Effect::Broadcast(trnm_consensus_core::OutboundMessage::TimeoutVote(vote))] =
+            outbound.as_slice()
+        else {
+            anyhow::bail!("timeout signature yielded unexpected effect");
+        };
+        vote.verify(
+            self.driver.config().validator_set(),
+            &trnm_consensus_crypto::StrictEd25519Verifier,
+        )
+        .map_err(|e| anyhow::anyhow!("timeout verification: {e:?}"))?;
+        ensure!(
+            vote.author() == intent.author()
+                && vote.signing_root() == intent.signing_root()
+                && vote.signature() == &signature
+                && self.driver.state().pending_sign().is_none(),
+            "released timeout differs from persisted signature"
+        );
+        let effects = self
+            .driver
+            .persist_signature_release_v1(&signed_state)
+            .map_err(|e| anyhow::anyhow!("signature release persistence: {e:?}"))?;
+        let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
+            anyhow::bail!("release did not persist one Safety cut");
+        };
+        let head = self.journal.persist_exact_v1(
+            self.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        self.pin = head.pin_v1();
+        self.advance_exact_cut_v1(safety_cut(&head), signed_cut)?;
+        self.journal.confirm_exact_request_v1(
+            self.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        let ack = self
+            .driver
+            .step_v1(Input::StorageAck {
+                barrier: request.barrier(),
+            })
+            .map_err(|e| anyhow::anyhow!("signature release ACK: {e:?}"))?;
+        ensure!(
+            ack.is_empty(),
+            "signature release ACK yielded new authority"
+        );
+        self.confirm_current_cut_v1()?;
+        self.startup.clear();
+        Ok((self, vote.clone()))
+    }
+    fn advance_exact_cut_v1(
+        &mut self,
+        safety: EpochSafetyCutV1,
+        ordinary: EpochOrdinaryCustodyCutV1,
+    ) -> Result<()> {
+        self.checkpoint_store.confirm_exact(&self.checkpoint)?;
+        ensure!(
+            self.fresh_current_cuts_v1()? == (safety, ordinary),
+            "physical cut differs before CAS"
+        );
+        let mut f = *self.checkpoint.fields();
+        f.phase = EpochCheckpointPhaseV1::Ordinary;
+        f.predecessor_kind = EpochCheckpointPredecessorV1::V1;
+        f.generation = f
+            .generation
+            .checked_add(1)
+            .context("checkpoint generation exhausted")?;
+        f.predecessor_checksum = self.checkpoint.checksum();
+        f.target_safety = safety;
+        f.ordinary = Some(ordinary);
+        let next = EpochNodeCheckpointV1::new(f)?;
+        self.checkpoint_store
+            .compare_and_advance(&self.checkpoint, &next)?;
+        self.checkpoint = next;
+        self.confirm_current_cut_v1()
+    }
+    fn confirm_current_cut_v1(&mut self) -> Result<()> {
+        ensure!(!self.fenced, "epoch runtime fenced");
+        self.checkpoint_store.confirm_exact(&self.checkpoint)?;
+        ensure!(
+            self.fresh_current_cuts_v1()?
+                == (
+                    self.checkpoint.fields().target_safety,
+                    self.checkpoint
+                        .fields()
+                        .ordinary
+                        .context("missing active custody")?
+                ),
+            "live cut differs from independent checkpoint"
+        );
+        self.checkpoint_store.confirm_exact(&self.checkpoint)?;
+        Ok(())
+    }
+    fn fresh_current_cuts_v1(&mut self) -> Result<(EpochSafetyCutV1, EpochOrdinaryCustodyCutV1)> {
+        let safety = self.journal.fresh_read_v1(self.pin)?;
+        ensure!(
+            safety.state_v1() == self.driver.state()
+                && safety.belongs_to_store_at_path_v1(&self.journal, self.journal.path_v1()),
+            "current Safety owner mismatch"
+        );
+        let native = self
+            .application
+            .confirm_epoch_application_edge_v1(&self.edge)?;
+        let row = native.durable_checkpoint();
+        let app = self.checkpoint.fields().application;
+        let head = row.target_head_v0()?;
+        ensure!(
+            native.strict_activation_binding_v1().as_bytes()
+                == &self.checkpoint.fields().phase_authority_binding
+                && row.p_digest_v0() == app.p_digest
+                && row.artifact_digest_v0() == app.artifact_digest
+                && row.overlay_digest_v0() == app.overlay_digest
+                && row.p_sequence_v0() == app.p_sequence
+                && row.commit_sequence_v0() == Some(app.commit_sequence)
+                && row.store_id_v0() == app.native_store_id
+                && head.block_id().as_bytes() == &app.block_id
+                && head.state_root().as_bytes() == &app.state_root
+                && head.commit_id().as_bytes() == &app.native_commit_id
+                && head.height().get() == app.height
+                && native
+                    .belongs_to_application_at_path(&self.application, self.application.path()),
+            "native activation checkpoint changed"
+        );
+        ensure!(
+            self.retirement.belongs_to_owner_v1(&mut self.retired)
+                && self.retirement.record_v1().checksum_v1()
+                    == self
+                        .checkpoint
+                        .fields()
+                        .retired
+                        .context("missing original retirement")?
+                        .retirement_record_checksum,
+            "retired custody changed"
+        );
+        let signer = self.ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        let mark = signer.exact_watermark();
+        let expected = self
+            .checkpoint
+            .fields()
+            .ordinary
+            .context("missing ordinary custody")?;
+        ensure!(
+            signer.belongs_to_operational_journal_at_path_v0(&self.ordinary, self.ordinary.path())
+                && mark.scope() == expected.scope
+                && mark.journal_id() == expected.journal_id
+                && signer.profile_checksum() == expected.profile_checksum
+                && self.ordinary.profile().validator_set() == self.driver.config().validator_set()
+                && self.ordinary.profile().author() == self.driver.config().local_validator()
+                && signer.pending_intent().is_none(),
+            "ordinary custody changed or has unresolved decision"
+        );
+        ensure!(
+            safety.belongs_to_store_at_path_v1(&self.journal, self.journal.path_v1())
+                && self.retirement.belongs_to_owner_v1(&mut self.retired),
+            "owners changed during live readback"
+        );
+        Ok((
+            safety_cut(&safety),
+            EpochOrdinaryCustodyCutV1 {
+                scope: mark.scope(),
+                journal_id: mark.journal_id(),
+                profile_checksum: signer.profile_checksum(),
+                sequence: mark.sequence(),
+                chain_checksum: mark.chain_checksum(),
+            },
+        ))
+    }
+
+    /// Freshly revalidate the exact initial cut; comparison bytes grant no lease.
+    pub fn confirm_initial_activation_v1(&mut self) -> Result<EpochNodeCheckpointV1> {
+        ensure!(!self.fenced, "epoch candidate fenced");
+        let result = (|| {
+            self.checkpoint_store.confirm_exact(&self.checkpoint)?;
+            ensure!(
+                join_initial(
+                    &self.driver,
+                    &self.journal,
+                    self.pin,
+                    &self.application,
+                    &self.edge,
+                    &mut self.retired,
+                    &self.retirement,
+                    &mut self.ordinary,
+                    &self.origin
+                )? == self.checkpoint,
+                "epoch initial owners changed"
+            );
+            self.checkpoint_store.confirm_exact(&self.checkpoint)?;
+            Ok(self.checkpoint)
+        })();
+        if result.is_err() {
+            self.fenced = true;
+        }
+        result
+    }
+    /// Startup may only contain the first-view timer, minted after the actual
+    /// composite persistence barrier. It can be obtained once after fresh join.
+    pub fn take_initial_timer_effects_v1(&mut self) -> Result<Vec<Effect>> {
+        self.confirm_initial_activation_v1()?;
+        Ok(std::mem::take(&mut self.startup))
+    }
+}
+// Private adapter: caller-supplied verifiers cannot mint or bypass this join.
+struct FreshEpochSignatureProducerV1<'a, P, F> {
+    producer: &'a mut P,
+    expected: &'a trnm_consensus_types::CanonicalSignIntentV0,
+    confirm: F,
+}
+impl<P, F> trnm_consensus_signer_journal::SignatureProducerV0
+    for FreshEpochSignatureProducerV1<'_, P, F>
+where
+    P: trnm_consensus_signer_journal::SignatureProducerV0,
+    F: FnMut() -> Result<()>,
+{
+    fn sign(
+        &mut self,
+        request: trnm_consensus_signer_journal::SignatureRequestV0<'_>,
+    ) -> std::result::Result<
+        trnm_consensus_types::SignatureBytes,
+        trnm_consensus_signer_journal::SignatureProducerErrorV0,
+    > {
+        use trnm_consensus_signer_journal::SignatureProducerErrorV0;
+        if request.intent() != self.expected {
+            return Err(SignatureProducerErrorV0::Rejected);
+        }
+        (self.confirm)().map_err(|_| SignatureProducerErrorV0::Rejected)?;
+        let signature = self.producer.sign(request)?;
+        (self.confirm)().map_err(|_| SignatureProducerErrorV0::Rejected)?;
+        Ok(signature)
+    }
+}
+#[allow(clippy::too_many_arguments)]
+fn confirm_key_owners_v1<W: ExternalSignerRetirementV1>(
+    driver: &PendingEpochHostDriverV1,
+    journal: &SqliteEpochSafetyJournalV1,
+    pin: EpochSafetyHeadPinV1,
+    application: &DurableNativeApplicationV0,
+    edge: &AuthenticatedEpochApplicationEdgeV1,
+    retired: &mut RetiredSqliteSignerJournalV1<W>,
+    retirement: &ConfirmedOrdinarySignerRetirementV1,
+    store: &mut SqliteEpochNodeCheckpointStoreV1,
+    checkpoint: &EpochNodeCheckpointV1,
+) -> Result<()> {
+    store.confirm_exact(checkpoint)?;
+    let safety = journal.fresh_read_v1(pin)?;
+    ensure!(
+        safety_cut(&safety) == checkpoint.fields().target_safety
+            && safety.state_v1() == driver.state()
+            && safety.belongs_to_store_at_path_v1(journal, journal.path_v1()),
+        "Safety changed at key boundary"
+    );
+    let native = application.confirm_epoch_application_edge_v1(edge)?;
+    let row = native.durable_checkpoint();
+    let app = checkpoint.fields().application;
+    let head = row.target_head_v0()?;
+    ensure!(
+        native.strict_activation_binding_v1().as_bytes()
+            == &checkpoint.fields().phase_authority_binding
+            && row.p_digest_v0() == app.p_digest
+            && row.artifact_digest_v0() == app.artifact_digest
+            && row.overlay_digest_v0() == app.overlay_digest
+            && row.p_sequence_v0() == app.p_sequence
+            && row.commit_sequence_v0() == Some(app.commit_sequence)
+            && row.store_id_v0() == app.native_store_id
+            && head.block_id().as_bytes() == &app.block_id
+            && head.state_root().as_bytes() == &app.state_root
+            && head.commit_id().as_bytes() == &app.native_commit_id
+            && head.height().get() == app.height
+            && native.belongs_to_application_at_path(application, application.path()),
+        "native changed at key boundary"
+    );
+    ensure!(
+        retirement.belongs_to_owner_v1(retired)
+            && retirement.record_v1().checksum_v1()
+                == checkpoint
+                    .fields()
+                    .retired
+                    .context("missing retired key cut")?
+                    .retirement_record_checksum,
+        "retired custody changed at key boundary"
+    );
+    // The signer owns its own pending-intent transaction/watermark. The V1 cut
+    // deliberately still names the pre-signature head; only its exact two-event
+    // successor can be installed after the signed journal returns.
+    ensure!(
+        safety.belongs_to_store_at_path_v1(journal, journal.path_v1())
+            && native.belongs_to_application_at_path(application, application.path()),
+        "owner changed during key-boundary confirmation"
+    );
+    store.confirm_exact(checkpoint)?;
+    Ok(())
+}
+
+fn ack_initial(driver: &mut PendingEpochHostDriverV1) -> Result<Vec<Effect>> {
+    ensure!(
+        driver.activation_persistence_pending_v1(),
+        "initial ACK already consumed"
+    );
+    let effects = driver
+        .step_v1(Input::StorageAck {
+            barrier: driver.initial_persistence_v1().barrier(),
+        })
+        .map_err(|e| anyhow::anyhow!("initial Core ACK: {e:?}"))?;
+    ensure!(
+        effects.len() == 1
+            && effects
+                .iter()
+                .all(|e| matches!(e, Effect::ArmViewTimer { .. })),
+        "initial ACK emitted unexpected authority"
+    );
+    Ok(effects)
+}
+fn safety_cut(head: &ConfirmedEpochSafetyHeadV1) -> EpochSafetyCutV1 {
+    EpochSafetyCutV1 {
+        journal_id: head.journal_id_v1(),
+        context_ref: head.context_ref_v1(),
+        revision: head.revision_v1(),
+        record_checksum: head.state_record_checksum_v1(),
+        chain_checksum: head.chain_checksum_v1(),
+    }
+}
+#[allow(clippy::too_many_arguments)]
+fn join_initial<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>(
+    driver: &PendingEpochHostDriverV1,
+    journal: &SqliteEpochSafetyJournalV1,
+    pin: EpochSafetyHeadPinV1,
+    application: &DurableNativeApplicationV0,
+    edge: &AuthenticatedEpochApplicationEdgeV1,
+    retired: &mut RetiredSqliteSignerJournalV1<W>,
+    retirement: &ConfirmedOrdinarySignerRetirementV1,
+    ordinary: &mut SqliteSignerJournalV0<N>,
+    origin: &ExternalNodeCheckpointV0,
+) -> Result<EpochNodeCheckpointV1> {
+    let safety = journal.confirm_exact_request_v1(
+        pin,
+        driver.initial_persistence_v1(),
+        &SafetyTransitionContextV0::ordinary(),
+    )?;
+    ensure!(
+        safety.belongs_to_store_at_path_v1(journal, journal.path_v1())
+            && safety.state_v1() == driver.state(),
+        "Safety owner/state mismatch"
+    );
+    let epoch = driver
+        .state()
+        .epoch_state_v1()
+        .context("missing strict epoch state")?;
+    let strict = epoch
+        .strict_context()
+        .map_err(|e| anyhow::anyhow!("strict Core epoch context: {e:?}"))?;
+    let activation = strict.activation();
+    let native = application.confirm_epoch_application_edge_v1(edge)?;
+    let row = native.durable_checkpoint();
+    let header = native.checkpoint_header();
+    let terminal = native.terminal_old_header();
+    let config = driver.config();
+    let new = config.validator_set();
+    let author = config.local_validator();
+    ensure!(
+        native.belongs_to_application_at_path(application, application.path())
+            && row.status_v0() == DurableExecutionHistoryStatusV0::Committed
+            && native.old_validator_set() == epoch.old_validator_set()
+            && native.old_parameters() == epoch.old_parameters()
+            && native.new_validator_set() == new
+            && native.new_parameters() == config.consensus_parameters()
+            && native.strict_activation_binding_v1().as_bytes() == &epoch.activation_binding()
+            && header == epoch.checkpoint_header()
+            && terminal == epoch.terminal_old_header()
+            && row.artifact_digest_v0() == epoch.checkpoint_artifact().source_artifact_checksum()
+            && row.overlay_digest_v0() == epoch.checkpoint_artifact().overlay().overlay_checksum(),
+        "native strict joint, P or configuration mismatch"
+    );
+    ensure!(
+        retirement.belongs_to_owner_v1(retired) && retirement.record_v1() == retired.record_v1(),
+        "retired owner changed"
+    );
+    let retired_profile = retired.profile_v1();
+    let record = *retired.record_v1();
+    ensure!(
+        retired_profile.validator_set() == epoch.old_validator_set()
+            && retired_profile.author() == author
+            && record.host_cut_v1().owner_generation.checked_add(1)
+                == Some(epoch.owner_generation())
+            && record.host_cut_v1().safety_revision == origin.fields().safety_revision
+            && record.host_cut_v1().safety_record_checksum
+                == origin.fields().safety_state_record_checksum
+            && record.host_cut_v1().native_committed_cut
+                == origin.fields().application_committed_head_row_checksum
+            && record.terminal_watermark_v1() == origin.fields().signer_exact_watermark
+            && record.source_profile_checksum_v1() == origin.fields().signer_profile_checksum,
+        "original retired custody/independent cut mismatch"
+    );
+    let old_key = epoch
+        .old_validator_set()
+        .validator(author)
+        .context("continuing author absent from old set")?
+        .consensus_key();
+    let new_key = new
+        .validator(author)
+        .context("continuing author absent from new set")?
+        .consensus_key();
+    ensure!(
+        old_key == new_key,
+        "continuing key migration requires separate custody protocol"
+    );
+    let signer = ordinary.confirm_node_checkpoint_head_exact_v0()?;
+    ensure!(
+        signer.belongs_to_operational_journal_at_path_v0(ordinary, ordinary.path())
+            && ordinary.profile().validator_set() == new
+            && ordinary.profile().author() == author
+            && ordinary.profile().signer_profile_ref() == retired_profile.signer_profile_ref()
+            && signer.exact_watermark().sequence() == 0
+            && signer.tail().is_none()
+            && signer.pending_intent().is_none()
+            && signer.capacity().intent_count() == 0
+            && signer.capacity().event_count() == 0
+            && signer.exact_watermark().scope() != record.source_v1().scope()
+            && signer.journal_id() != record.source_v1().journal_id(),
+        "new ordinary custody is not exact distinct virgin continuing owner"
+    );
+    let source = safety.migration_source_v1();
+    let source_pin = source.pin_v1();
+    let source_cut = EpochSafetyCutV1 {
+        journal_id: source_pin.journal_id,
+        context_ref: source.context_ref_v1(),
+        revision: source_pin.revision,
+        record_checksum: source.state_record_checksum_v1(),
+        chain_checksum: source_pin.chain_checksum,
+    };
+    ensure!(
+        source.initial_revision_v1() == safety.revision_v1(),
+        "initial activation journal already progressed"
+    );
+    let head = row.target_head_v0()?;
+    let watermark = signer.exact_watermark();
+    let terminal_watermark = record.terminal_watermark_v1();
+    let target = EpochNodeCheckpointV1::new(EpochNodeCheckpointFieldsV1 {
+        phase: EpochCheckpointPhaseV1::ActivationCommitted,
+        role: EpochCheckpointRoleV1::Continuing,
+        predecessor_kind: EpochCheckpointPredecessorV1::TerminalV0,
+        lineage_id: origin.scope(),
+        origin_checksum: epoch_origin_checksum_v1(&origin.encode_canonical()),
+        generation: origin
+            .generation()
+            .checked_add(1)
+            .context("node generation exhausted")?,
+        predecessor_checksum: origin.checkpoint_checksum(),
+        genesis_hash: new.genesis_hash().into_bytes(),
+        chain_id: new.chain_id(),
+        protocol_version: new.protocol_version().get(),
+        epoch: new.epoch().get(),
+        author,
+        validator_set_id: new.id().into_bytes(),
+        parameters_hash: config.consensus_parameters().hash().into_bytes(),
+        owner_generation: epoch.owner_generation(),
+        phase_authority_binding: epoch.activation_binding(),
+        source_safety: Some(source_cut),
+        target_safety: safety_cut(&safety),
+        edge: EpochApplicationEdgeCutV1 {
+            checkpoint_block_id: header.id().into_bytes(),
+            checkpoint_height: header.height().get(),
+            checkpoint_state_root: header.state_root().into_bytes(),
+            terminal_old_block_id: terminal.id().into_bytes(),
+            terminal_old_height: terminal.height().get(),
+            terminal_old_view: terminal.view().get(),
+            terminal_old_qc_id: activation.terminal_old_qc().id().into_bytes(),
+            native_authorization_id: native.authorization_id(),
+        },
+        application: EpochApplicationCutV1 {
+            block_id: *head.block_id().as_bytes(),
+            height: head.height().get(),
+            epoch: header.epoch().get(),
+            view: header.view().get(),
+            timestamp_ms: header.timestamp_ms(),
+            state_root: *head.state_root().as_bytes(),
+            native_store_id: row.store_id_v0(),
+            native_commit_id: *head.commit_id().as_bytes(),
+            p_sequence: row.p_sequence_v0(),
+            p_digest: row.p_digest_v0(),
+            artifact_digest: row.artifact_digest_v0(),
+            overlay_digest: row.overlay_digest_v0(),
+            commit_sequence: row
+                .commit_sequence_v0()
+                .context("checkpoint is not committed")?,
+        },
+        retired: Some(EpochRetiredCustodyCutV1 {
+            epoch: retired_profile.epoch().get(),
+            author: retired_profile.author(),
+            validator_set_id: retired_profile.validator_set_id().into_bytes(),
+            parameters_hash: epoch.old_parameters().hash().into_bytes(),
+            scope: record.source_v1().scope(),
+            journal_id: record.source_v1().journal_id(),
+            profile_checksum: record.source_profile_checksum_v1(),
+            source_sequence: record.source_v1().sequence(),
+            source_chain_checksum: record.source_v1().chain_checksum(),
+            terminal_sequence: terminal_watermark.sequence(),
+            terminal_chain_checksum: terminal_watermark.chain_checksum(),
+            retirement_record_checksum: record.checksum_v1(),
+        }),
+        ordinary: Some(EpochOrdinaryCustodyCutV1 {
+            scope: watermark.scope(),
+            journal_id: watermark.journal_id(),
+            profile_checksum: signer.profile_checksum(),
+            sequence: watermark.sequence(),
+            chain_checksum: watermark.chain_checksum(),
+        }),
+    })?;
+    target.validate_first_continuing_v0(origin)?;
+    ensure!(
+        retirement.belongs_to_owner_v1(retired)
+            && signer.belongs_to_operational_journal_at_path_v0(ordinary, ordinary.path())
+            && safety.belongs_to_store_at_path_v1(journal, journal.path_v1())
+            && native.belongs_to_application_at_path(application, application.path()),
+        "owners changed during activation join"
+    );
+    Ok(target)
+}
+
+#[cfg(all(test, feature = "epoch-runtime-test-fixtures"))]
+#[path = "epoch_runtime_candidate_v1_tests.rs"]
+mod tests;

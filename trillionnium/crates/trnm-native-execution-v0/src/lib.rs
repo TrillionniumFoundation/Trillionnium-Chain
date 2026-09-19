@@ -721,4 +721,7 @@ pub mod test_fixtures {
 }
 
 #[cfg(feature = "incremental-epoch-candidate")]
-pub use durable::PreparedNativeIncrementalEpochExecutionV1;
+pub use durable::{
+    CommittedNativeIncrementalEpochExecutionV1, IncrementalEpochParentV1,
+    PreparedNativeIncrementalEpochDescendantV1, PreparedNativeIncrementalEpochExecutionV1,
+};

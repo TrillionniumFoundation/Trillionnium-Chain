@@ -753,3 +753,79 @@ SQL commit, after commit before sync and after sync before readback leave either
 zero or one complete native-P/state-delta/edge transaction. Every reopened
 committed head stays C8. These checks establish bounded preparation/recovery,
 not finality commit, storage-device crash certification or production activation.
+
+### Explicit schema6-to7 commit and descendant owner
+
+The default-off `incremental-epoch-candidate` feature implements schema7 in
+`incremental_epoch_commit_v1.rs` and `incremental_epoch_descendant_v1.rs`.
+`upgrade_incremental_epoch_commit_v1(&actual_edge)` freshly confirms the original
+COMMITTED checkpoint C, then installs two closed SQL tables and CASes the
+version from6 to7 in one transaction. Open never migrates. Schema6's codec and
+prepare-only behavior remain unchanged; schema5's ordinary +1 guards continue
+to reject either epoch schema. The empty revision grants no finality authority.
+
+| Schema7 record | Exact persisted fields and validation |
+| --- | --- |
+| `native_incremental_epoch_commit_v1` | Singleton id=1, revision=1; block H32 unique, native P digest H32, actual commit sequence U64 unique, target Head104, full first-new proof BYTES (1..64MiB), checksum H32. Domain `trnm.native-application.incremental-epoch-commit-record.v1` binds store ID, immutable edge-owner checksum, block, P digest, sequence, target head and SHA256(proof). |
+| `native_incremental_epoch_descendant_commit_v1` | Block H32 primary key; native P digest H32, actual commit sequence U64 unique, target Head104, full ordinary new-set proof BYTES (1..64MiB), checksum H32. Domain `trnm.native-application.incremental-epoch-descendant-commit.v1` binds the same fields. Aggregate retained descendant proof bytes must not exceed64MiB. |
+
+The actual first-new commit consumer revalidates the owner-affine P, rebuilds
+its native edge from original checkpoint/preparation/evidence, and verifies the
+strict epoch-first three-chain proof using terminal seal C+2 and the exact full
+signed C+3 header. One owner transaction applies the sparse JMT delta, exact
+command/nonce replay delta, first commit record, ni edge phase0→1 and selected
+block, native head/sequence CAS, and fork retirement. No seal root/value/P is
+created. Sync and fresh readback precede the committed receipt. Exact retries
+return the original native commit sequence; another valid proof for the same
+full header/edge does not replace the retained first evidence.
+
+`IncrementalEpochParentV1::{First,Descendant}` borrows an actual non-Clone native
+P capability. Ordinary C+4/C+5 and later pre-checkpoint preparations bind its
+real application target Head104 and P digest, inherit the authenticated new
+validator/parameter set, and compose pending state/replay deltas. They use the
+ordinary artifact codec and `native_incremental_p_v1` table with explicit new-set
+context validation; merely constructing a low-level ni reference is insufficient.
+The complete pending chain is bounded to8 deltas and64MiB replay bytes. Each
+native P table bounds inventory to128 rows/2GiB; the underlying ni reservation
+limits also apply. A full capacity error does not prune arbitrary safety data.
+
+Descendant commit requires the first block already committed, exact current
+application parent, exact replay predecessor, and a strict ordinary three-chain
+proof under the retained new set/parameters. State, replay, P status and commit
+sequence, proof record and owner head update atomically. Losing branches are
+removed child first; winning pending descendants remain readable. The next
+checkpoint height is an explicit fence: this version does not implement a
+second handoff, retained-history GC, public historical proof adapters or M13
+schema7 transfer. Internal retained proofs serve cold auditing only.
+
+Cold audit verifies the original checkpoint/source P and strict joint evidence,
+then binds first-new artifact request, exact signed header and all four roots,
+actual payload/receipts, checkpoint application parent, edge, native P sequence,
+ni block/parent/root/storage sequence and replay identities. It verifies every
+committed descendant's bounded ancestry, retained strict proof, exact native/ni
+parent and persist identity, replay key delta and P/head sequence linkage. A rehashed local checksum cannot substitute for these joins.
+The live edge pin stays the original immutable edge-owner checksum; every
+operation compares it again after recovering the edge and acquiring its native
+operation lock. Historical reconstruction may recover ancestry evidence, but
+cannot issue the fresh activation-at-C receipt after the application head advances.
+
+### Live native namespace continuity
+
+On Unix, `DurableNativeApplicationV0` retains open descriptors for its database,
+canonical parent directory and actual lock file; it pins the preparation sidecar
+once present. Fresh checks compare path metadata with held-FD dev/inode, uid,
+gid and mode; reject symlinks and non-single-linked regular files; and reject
+parent-path aliasing. Directory link counts may change as unrelated files are
+created, so directory identity uses the descriptor rather than a fixed link count.
+An observed mismatch permanently fences that live owner, including after an
+attacker restores the old file. Ordinary SQLite transactions and explicit schema
+migrations must preserve the pinned database identity.
+
+Operation entry, direct durable receipt matching and the at-C epoch confirmation
+check this owner state; the latter repeats it after its content/proof readback.
+Preparation open also checks before/after and binds the new sidecar to this owner.
+A new explicit cold open independently audits the durable contents and obtains
+new pins; these local descriptors are not an external anti-rollback service or a
+claim of arbitrary hostile-filesystem atomicity. Unix identity validation is a
+requirement of the current custody receipt path; other platforms cannot silently
+substitute pathname equality for it.

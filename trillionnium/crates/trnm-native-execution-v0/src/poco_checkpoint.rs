@@ -1541,7 +1541,9 @@ impl DurableNativeApplicationV0 {
         &self,
     ) -> Result<crate::poco_preparation_journal::PocoPreparationJournalV0> {
         let path = crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(self.path());
+        self.confirm_namespace_identity_v1()?;
         let journal = crate::poco_preparation_journal::PocoPreparationJournalV0::open(path)?;
+        self.confirm_namespace_identity_v1()?;
         // A fresh open audits every stored replay record. Halted journals can
         // never mint a new preparation, even after process restart.
         ensure!(
@@ -1600,11 +1602,8 @@ pub(crate) mod native_checkpoint_fixture_v1;
 mod native_authorization_tests {
     use super::native_checkpoint_fixture_v1::*;
     use super::*;
-    use ed25519_dalek::{Signer, SigningKey};
-    use trnm_consensus_types::{
-        BlockHeader, BlockKind, CertifiedHeaderV0, EvidenceRoot, ProposalWitnessV0, QcReferenceV0,
-        Signature64, View,
-    };
+    use ed25519_dalek::SigningKey;
+    use trnm_consensus_types::{BlockHeader, BlockKind, EvidenceRoot, View};
     use trnm_native_application::{
         BlockIdV0, ChainIdV0, GenesisHashV0, NativeApplicationCommitRequestV0, NativeApplicationV0,
         NativeBlockExecutionRequestV0, NativeBlockExecutionResultV0,
@@ -1673,95 +1672,6 @@ mod native_authorization_tests {
         assert!(second
             .confirm_durable_execution_history_row_v0(&real)
             .is_err());
-    }
-
-    fn epoch_first_finality(
-        edge: &crate::AuthenticatedEpochApplicationEdgeV1,
-        headers: &[BlockHeader],
-    ) -> Vec<u8> {
-        let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
-        let audit = edge
-            .recovery_evidence()
-            .audit_strict(edge.old_validator_set(), edge.old_parameters(), &mut budget)
-            .unwrap();
-        let activation = &audit.activation;
-        let set = edge.new_validator_set();
-        let parameters = edge.new_parameters();
-        let common = || {
-            let mut bytes = 0u16.to_be_bytes().to_vec();
-            bytes.extend(set.genesis_hash().as_bytes());
-            bytes.extend((set.chain_id().as_bytes().len() as u16).to_be_bytes());
-            bytes.extend(set.chain_id().as_bytes());
-            bytes.extend(set.protocol_version().get().to_be_bytes());
-            bytes.extend(set.epoch().get().to_be_bytes());
-            bytes.extend(set.id().as_bytes());
-            bytes
-        };
-        let mut bytes = common();
-        bytes.extend(parameters.hash().as_bytes());
-        let mut anchor = common();
-        anchor.extend(0u64.to_be_bytes());
-        anchor.extend(edge.consensus_parent().height().get().to_be_bytes());
-        anchor.extend(edge.consensus_parent().id().as_bytes());
-        anchor.extend(0u32.to_be_bytes());
-        for (index, header) in headers.iter().enumerate() {
-            let key_index = set
-                .validators()
-                .iter()
-                .position(|v| v.id() == header.proposer_id())
-                .unwrap();
-            if index == 0 {
-                let root = trnm_consensus_types::epoch_first_proposal_signing_root_v0(
-                    header,
-                    activation.authorization_kernel(),
-                    edge.old_validator_set(),
-                    set,
-                    parameters,
-                )
-                .unwrap();
-                bytes.extend(header.try_cev0_bytes().unwrap());
-                bytes.extend(&anchor);
-                bytes.push(0);
-                bytes.push(1);
-                bytes.extend(activation.authorization_cev0_bytes().unwrap());
-                bytes.extend(key(key_index).sign(root.as_bytes()).to_bytes());
-                bytes.extend(qc(header, set).try_cev0_bytes().unwrap());
-            } else {
-                let justify = QcReferenceV0::ordinary(qc(&headers[index - 1], set));
-                let witness = ProposalWitnessV0::new(
-                    header,
-                    justify.clone(),
-                    None,
-                    None,
-                    Signature64::from_array([1; 64]),
-                    set,
-                    None,
-                    parameters,
-                    headers[index - 1].timestamp_ms(),
-                )
-                .unwrap();
-                let signature = Signature64::from_array(
-                    key(key_index)
-                        .sign(witness.signing_root_for_header(header).unwrap().as_bytes())
-                        .to_bytes(),
-                );
-                let certified = CertifiedHeaderV0::new(
-                    header.clone(),
-                    justify,
-                    None,
-                    None,
-                    signature,
-                    qc(header, set),
-                    set,
-                    None,
-                    parameters,
-                    headers[index - 1].timestamp_ms(),
-                )
-                .unwrap();
-                bytes.extend(certified.try_cev0_bytes().unwrap());
-            }
-        }
-        bytes
     }
 
     #[test]
@@ -2977,13 +2887,22 @@ mod native_authorization_tests {
                     .unwrap()
                     .to_string()
             };
-            assert!(
-                error.contains("journal")
-                    || error.contains("sidecar")
-                    || error.contains("preparation")
-                    || error.contains("reservation"),
-                "{fault} rejected at wrong boundary: {error}"
-            );
+            if fault == "replace" {
+                // The live native namespace pin now fences a removed sidecar
+                // before reopening its journal or interpreting supplied proof.
+                assert!(
+                    error.contains("ReplacedStore:namespace.path_metadata"),
+                    "{error}"
+                );
+            } else {
+                assert!(
+                    error.contains("journal")
+                        || error.contains("sidecar")
+                        || error.contains("preparation")
+                        || error.contains("reservation"),
+                    "{fault} rejected at wrong boundary: {error}"
+                );
+            }
         }
     }
 }

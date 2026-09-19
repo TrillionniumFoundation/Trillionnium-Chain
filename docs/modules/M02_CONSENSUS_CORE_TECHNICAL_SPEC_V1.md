@@ -162,29 +162,33 @@ the real old-epoch join. Live new-epoch Core release remains a separate boundary
 
 Pure Core preparation remains inert until concrete candidate composition joins
 fresh journal/external cut, `ConfirmedEpochApplicationEdgeV1` from the live native
-owner, and actual retired/new custody owners. Optional std integration belongs
-only to `candidate-epoch-activation`; default Core stays no_std and production
-closure excludes the feature. Continuing membership consumes the old live Core;
+owner, and actual retired/new custody owners. M15 I/O integration stays under
+`epoch-runtime-candidate`; Core's `candidate-epoch-host-v1` remains no_std and
+default-off, and production closure excludes both candidate features.
+Continuing membership consumes the old live Core;
 new-only commissioning uses independently trusted old checkpoint state and a
 virgin new-role custody namespace; removed validators retire without a new Core.
 Retirement precedes old handoff signing and binds the pre-certificate context.
 The new ordinary lease follows complete joint verification and binds the exact
 phase7 persisted Safety cut; these are distinct, non-circular receipts.
 
-### Planned concrete pending-driver composition
+### Candidate pending driver and concrete initial activation composition
 
-This is the next candidate contract; it is not an implemented activation API.
+The default-off `candidate-epoch-host-v1` Core seam below is implemented.
+M15 supplies the concrete continuing-author initial activation consumer under
+`epoch-runtime-candidate`; full ordinary event driving and all-role recovery
+remain subsequent work.
 Keep the single existing Core state machine and dependency direction
 `SafetyStore -> Core`. M15 owns the concrete native, journal9, custody and
 independent node-checkpoint stores. No generic registrar, caller-chosen
 verification trait, scalar activation constructor, or new capability-only crate
 is introduced to work around that direction.
 
-The proposed Core seam is `PreparedEpochCoreActivationV1::into_candidate_host_pending_v1(self)
--> PendingEpochHostDriverV1`, feature-gated and explicitly a trusted-host API.
+`PreparedEpochCoreActivationV1::into_candidate_host_pending_v1(self)
+-> PendingEpochHostDriverV1` is explicitly a trusted-host API, retaining no_std.
 The returned driver keeps Core private, retains its exact pending initial request
 and affinity, and initially accepts only that request's existing `StorageAck`
-transition. All other inputs return `ActivationPersistencePending`; no timer,
+transition. All other inputs return `EpochActivationPersistencePending`; no timer,
 proposal, vote, callback permit or mutable Core escapes before the ACK. After
 ACK the same private driver runs ordinary strict Core inputs. It exposes no raw
 SafetyState/configuration constructor and never accepts an epoch number or
@@ -193,8 +197,37 @@ checksum as activation proof. This seam has the existing ordinary Core
 about persistence. It must not be described as an intrinsically verified durable
 receipt or an independently safe activation entry point.
 
-The public operational constructor instead is the planned
-`CandidateEpochRuntimeV1::activate_continuing_v1(prepared, journal9, application,
+The exact initial ACK emits one `ArmViewTimer` for new epoch/view1, without a
+new Safety revision. Preparation retains this deferred effect behind the same
+persistence barrier; an incorrect or repeated ACK cannot arm it. Strict
+`step_v1` forwards to the existing transactional Core; application seal/apply
+authorities, finalization permits, sealed Valid delivery, finalization receipts
+and signature-release persistence all remain gated until that first ACK.
+The driver has immutable state/config/request/binding accessors, no Clone,
+mutable-Core accessor, selectable verifier, unchecked state constructor or key.
+
+`StrictEpochCoreRecoveryV1::into_candidate_host_initial_pending_v1` is available
+under that same explicit trusted-host feature only. It reconstructs exactly the
+canonical initial14E state, preserves its revision and remints a fresh process
+affinity with the initial timer still deferred. Any progressed obligation,
+signing/finalization outbox, changed view or other noninitial field rejects.
+M03's actual journal9 recovery helper additionally checks the immutable source
+migration's initial revision, fresh exact state/transition and single binding;
+decoded state alone is not its physical persistence authority. Recovery of
+progressed new-epoch cuts remains fenced pending dedicated cross-store joins.
+
+Regression tests use real strict Ed25519 proposals and public driver inputs:
+the first Handoff creates and persists the C/C+2 obligation before issuing its
+linear validation permit; a single-parent result rejects; the sealed Valid
+result creates a second persistence barrier before the vote signature request.
+No private BlockTree insertion substitutes for that path. The pure Core test's
+application artifact IDs are synthetic. The store integration uses the actual
+native/Core old-epoch fixture and real journal9 reopen, then verifies a real
+new-epoch timeout append; its test-only trusted ACK does not claim a complete
+M15 checkpoint/custody activation join.
+
+The concrete public initial activation constructor is
+`CandidateEpochRuntimeV1::activate_continuing_v1(prepared, journal9, pin, application,
 authenticated_edge, retired_original, retired_node_checkpoint, new_ordinary)`.
 Each argument is an actual non-Clone owner/capability, not a decoded record.
 The method freshly checks journal9's initial state/request/owner binding against
@@ -205,20 +238,35 @@ exact intended new set/author/profile and virgin external watermark. Old/new
 ordinary scopes and journal identities must differ. It persists the M15 V1
 lineage checkpoint containing all cuts, syncs and rechecks every owner, then
 ACKs the still-private driver and installs the new ordinary lease in the same
-returned runtime. The runtime keeps all owners and refreshes the relevant cuts
-before/after key access. It never returns an activated bare Core or signer.
+returned runtime. The runtime keeps all owners. Initial activation returns only a private runtime;
+`take_initial_timer_effects_v1` freshly joins all owners before releasing the
+one initial `ArmViewTimer`. `confirm_initial_activation_v1` returns comparison
+bytes only and permanently fences changed owners. It never returns an activated bare Core or signer.
 
 Failure before/during the V1 CAS consumes the moved owners and returns typed
 recovery disposition, never a partially usable runtime. Explicit recovery
 reopens all physical owners, checks independently expected V1 lineage/generation,
 strictly reconstructs the exact 14E record and native edge/P ancestry, reconciles
-any signer decision, then remints private runtime state. Inert
-`StrictEpochCoreRecoveryV1` alone still cannot release a driver. Continuing,
+the virgin signer cut, then remints private runtime state. Initial-only recovery
+rejects progressed Safety/signature cuts; pending-decision reconciliation is
+not yet exposed by this consumer. The inert recovery
+record never by itself proves that join; using its candidate pending-driver
+conversion carries the explicit trusted-host obligation above. Continuing,
 new-only and removed roles are separate constructors: the first slice accepts
 continuing membership only; new-only requires explicit trusted commissioning
 without fabricating an old local Safety owner, and removed nodes get no new
 ordinary driver. All three policies must be tested before claiming multi-role
 activation complete.
+
+The bounded first-timeout consumer `sign_initial_timeout_v1(self, producer)`
+consumes the runtime on failure. It must persist the real `LocalTimeout` request
+in journal9, join the still-virgin signer and native C, advance and sync V1, and
+only then ACK the signing request. A fresh composite read precedes key access.
+The signed journal's exact two-event successor is independently checkpointed
+before Core receives `SignatureReady`. Its broadcast stays private until the
+cleared pending-sign state crosses its own journal9/V1 persistence and ACK.
+Only the verified TimeoutVote may leave. This first timeout does not implement
+progressed-cut recovery, generic proposal processing, or another epoch transition.
 
 ### Planned epoch owner types
 

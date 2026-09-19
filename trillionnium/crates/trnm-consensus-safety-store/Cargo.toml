@@ -7,6 +7,7 @@ authors.workspace = true
 
 [features]
 default = []
+candidate-epoch-host-v1 = ["trnm-consensus-core/candidate-epoch-host-v1"]
 test-fixtures = ["dep:anyhow", "dep:trnm-native-execution-v0", "dep:trnm-native-application"]
 
 [dependencies]

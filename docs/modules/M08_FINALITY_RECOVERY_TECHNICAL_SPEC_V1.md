@@ -653,6 +653,65 @@ Three SIGKILL cuts cover before transaction commit, after commit before fsync,
 and after fsync before fresh readback. Native P and storage edge/delta counts
 must be all zero or all one; committed head remains C in every case. Legacy
 commit/recovery and ordinary ni apply explicitly reject this candidate schema
-or sparse artifact. Dedicated incremental epoch finality commit, C+4/C+5,
-whole-node checkpoint integration, public proofs/replay and GC remain pending;
-no prepare-only result is a committed receipt, Core ACK or production gate.
+or sparse artifact. Schema6 itself still rejects finality commit and descendants. The separate
+schema7 migration below adds those native operations; whole-node schema7
+integration, public proofs/replay and GC remain pending. No prepare-only result
+is a committed receipt, Core ACK or production gate.
+
+The fresh at-C `ConfirmedEpochApplicationEdgeV1` exposes
+`strict_activation_binding_v1() -> &StrictEpochActivationBindingRefV0`, obtained
+by strict decoding/reverification of its exact retained joint evidence. M15
+compares this typed digest to journal9's activation binding; the separate native
+`authorization_id` uses a different domain and must not substitute for it.
+Issuance also explicitly requires checkpoint P sequence>0 and actual commit
+sequence>P sequence, plus the existing exact owner/head/P and preparation checks.
+
+
+### Implemented schema7 strict commit and pending descendants
+
+The default-off native candidate now exposes two distinct finality consumers:
+`commit_incremental_epoch_finality_bytes_v1(&first_p, bytes, budget)` validates
+strict epoch-first finality; `commit_incremental_epoch_descendant_finality_bytes_v1`
+validates ordinary three-chain finality under the authenticated new configuration.
+Both return `CommittedNativeIncrementalEpochExecutionV1` only after the state,
+replay, native P/commit record and current head share one committed transaction,
+file/directory sync and fresh owner readback. Their exact retries preserve the
+original native commit sequence. A prepared C+4 cannot commit ahead of C+3.
+
+`confirm_prepared_incremental_epoch_execution_v1` and
+`confirm_prepared_incremental_epoch_descendant_v1` take the actual owner-affine
+capability and re-read its exact persisted P. Returned comparison data includes
+full header, actual application parent/target head, artifact/overlay checksum,
+exact native payload/receipts, native persist sequence, optional commit sequence,
+and native edge identity. The first block's consensus parent remains C+2 while
+its application parent remains C. The non-Clone receipt and its live owner/path
+matcher must be consumed together; getters alone cannot seal Core or acknowledge
+application commit. Fresh committed matchers compare current head, exact P
+digest and actual commit sequence, including after a lost-response retry.
+
+Reopen re-verifies strict retained evidence and the original COMMITTED checkpoint
+P. The first retained artifact is checked against all signed header commitments,
+actual payload/receipts, both parents, native/storage persist identity and exact
+command/nonce replay delta. Committed descendants form one bounded chain back
+to that first record with strict proofs under the same new configuration. Pending
+forks are reauthenticated before use; an inventory row is not a reusable P.
+
+The local signed fixture executes a real credit at11 and eight transfers at12;
+serial and1/2/4/8-worker results agree on roots, payload, receipts and duplicate
+command failure. Strict commit11 advances C8→11 and preserves prepared12/13;
+strict commit12 selects its branch and preserves13/14 while retiring losing
+branches. Two three-cut SIGKILL matrices interrupt before SQL commit, after
+commit and after fsync: first-new restart yields only head8 or11 with exact
+retry sequence21; descendant restart yields only head11 or12 with exact retry25.
+Rehashed artifact timestamp, application-parent commit ID and storage-sequence
+mutants must fail cold open despite recomputed local P/head/record checksums.
+These are actual local process-crash and consistency tests, not device-loss or
+independent production acceptance.
+
+Live custody confirmation additionally binds held Unix database, parent-directory,
+lock-file and preparation-sidecar identities as specified in M07. Replacing the
+DB with byte-identical content cannot preserve the live owner's receipt authority;
+identity failure is sticky even if the original file is restored. Cold reopening
+creates an independently validated owner, so an old receipt cannot become affine
+to it. Current native schema7 support does not claim a joined Core/node adapter,
+second epoch transition, state-sync/public proof endpoint or garbage collection.

@@ -4637,3 +4637,7 @@ mod tests {
         assert_eq!(store.advances, 0);
     }
 }
+
+#[cfg(feature = "epoch-runtime-candidate")]
+#[path = "epoch_node_checkpoint_store_v1.rs"]
+pub(crate) mod epoch_node_store_v1;

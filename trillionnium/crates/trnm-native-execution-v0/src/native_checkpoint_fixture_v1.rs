@@ -690,3 +690,140 @@ mod feature_tests {
         );
     }
 }
+
+#[cfg(test)]
+pub(crate) fn epoch_first_finality(
+    edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+    headers: &[BlockHeader],
+) -> Vec<u8> {
+    let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
+    let audit = edge
+        .recovery_evidence()
+        .audit_strict(edge.old_validator_set(), edge.old_parameters(), &mut budget)
+        .unwrap();
+    let activation = &audit.activation;
+    let set = edge.new_validator_set();
+    let parameters = edge.new_parameters();
+    let common = || {
+        let mut bytes = 0u16.to_be_bytes().to_vec();
+        bytes.extend(set.genesis_hash().as_bytes());
+        bytes.extend((set.chain_id().as_bytes().len() as u16).to_be_bytes());
+        bytes.extend(set.chain_id().as_bytes());
+        bytes.extend(set.protocol_version().get().to_be_bytes());
+        bytes.extend(set.epoch().get().to_be_bytes());
+        bytes.extend(set.id().as_bytes());
+        bytes
+    };
+    let mut bytes = common();
+    bytes.extend(parameters.hash().as_bytes());
+    let mut anchor = common();
+    anchor.extend(0u64.to_be_bytes());
+    anchor.extend(edge.consensus_parent().height().get().to_be_bytes());
+    anchor.extend(edge.consensus_parent().id().as_bytes());
+    anchor.extend(0u32.to_be_bytes());
+    for (index, header) in headers.iter().enumerate() {
+        let key_index = set
+            .validators()
+            .iter()
+            .position(|v| v.id() == header.proposer_id())
+            .unwrap();
+        if index == 0 {
+            let root = trnm_consensus_types::epoch_first_proposal_signing_root_v0(
+                header,
+                activation.authorization_kernel(),
+                edge.old_validator_set(),
+                set,
+                parameters,
+            )
+            .unwrap();
+            bytes.extend(header.try_cev0_bytes().unwrap());
+            bytes.extend(&anchor);
+            bytes.push(0);
+            bytes.push(1);
+            bytes.extend(activation.authorization_cev0_bytes().unwrap());
+            bytes.extend(key(key_index).sign(root.as_bytes()).to_bytes());
+            bytes.extend(qc(header, set).try_cev0_bytes().unwrap());
+        } else {
+            let justify = QcReferenceV0::ordinary(qc(&headers[index - 1], set));
+            let witness = ProposalWitnessV0::new(
+                header,
+                justify.clone(),
+                None,
+                None,
+                Signature64::from_array([1; 64]),
+                set,
+                None,
+                parameters,
+                headers[index - 1].timestamp_ms(),
+            )
+            .unwrap();
+            let signature = Signature64::from_array(
+                key(key_index)
+                    .sign(witness.signing_root_for_header(header).unwrap().as_bytes())
+                    .to_bytes(),
+            );
+            let certified = CertifiedHeaderV0::new(
+                header.clone(),
+                justify,
+                None,
+                None,
+                signature,
+                qc(header, set),
+                set,
+                None,
+                parameters,
+                headers[index - 1].timestamp_ms(),
+            )
+            .unwrap();
+            bytes.extend(certified.try_cev0_bytes().unwrap());
+        }
+    }
+    bytes
+}
+
+#[cfg(test)]
+pub(crate) fn ordinary_epoch_finality(
+    edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+    parent: &BlockHeader,
+    headers: &[BlockHeader],
+) -> Vec<u8> {
+    assert_eq!(headers.len(), 3);
+    let set = edge.new_validator_set();
+    let parameters = edge.new_parameters();
+    let certified = |i: usize| {
+        let h = &headers[i];
+        let prior = if i == 0 { parent } else { &headers[i - 1] };
+        let justify = QcReferenceV0::ordinary(qc(prior, set));
+        let root = ProposalWitnessV0::signing_root_for(h, &justify, None, None).unwrap();
+        let signer = set
+            .validators()
+            .iter()
+            .position(|v| v.id() == h.proposer_id())
+            .unwrap();
+        CertifiedHeaderV0::new(
+            h.clone(),
+            justify,
+            None,
+            None,
+            Signature64::from_array(key(signer).sign(root.as_bytes()).to_bytes()),
+            qc(h, set),
+            set,
+            None,
+            parameters,
+            prior.timestamp_ms(),
+        )
+        .unwrap()
+    };
+    FinalityProofV0::new(
+        certified(0),
+        certified(1),
+        certified(2),
+        set,
+        None,
+        parameters,
+        parent.timestamp_ms(),
+    )
+    .unwrap()
+    .try_cev0_bytes()
+    .unwrap()
+}

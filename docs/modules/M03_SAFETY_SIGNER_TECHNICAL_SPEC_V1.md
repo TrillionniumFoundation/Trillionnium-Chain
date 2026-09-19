@@ -359,6 +359,27 @@ composition must consume the fresh receipt together with native application,
 retired custody and a fresh new-role lease before any live epoch is released.
 A reopened store cannot bind arbitrary scalar state to a new live Core. This
 journal is an inert persistence consumer, not completed runtime activation.
+`confirm_exact_request_v1(pin, request, transition)` now checks the live Core
+affinity and freshly matches the complete persisted state/barrier/transition;
+it returns only a fresh non-Clone head. Its `migration_source_v1()` exposes the
+audited immutable source8 pin, record checksum, context/profile and exact first
+revision, derived again from retained strict source evidence on every read.
+Those comparison fields cannot construct a source owner or grant an ACK.
+
+The default-off `candidate-epoch-host-v1` feature forwards Core's same-named
+trusted-host seam. `prepare_candidate_host_initial_recovery_v1(expected_pin)`
+requires an unbound reopened journal, exactly its immutable initial revision
+and Ordinary transition, and the strictly reconstructed canonical initial14E
+state. A second fresh read precedes binding the one returned pending driver's
+new process affinity. Duplicate binding, stale pin, prior-process requests and
+progressed/outbox cuts reject. No revision is appended and no ACK, timer or
+signer lease is emitted; M15 must still join the actual native/custody/external
+checkpoint owners before the driver's trusted ACK. Default builds remain
+read-only after reopen. The actual native/source8 integration test reopens
+journal9, checks these affinity/freshness failures, and persists a new-epoch
+timeout after a test-only host ACK; the later pending-sign cut cannot use this
+narrow initial-recovery helper.
+
 `initialize_from_journal8_v1` takes the exact opaque preparation by reference
 and binds its persistence affinity; `persist_exact_v1` accepts only that owner's
 opaque requests. Reopen has no persistence binding and no scalar rebinding API.
@@ -375,8 +396,8 @@ checkpoint receipts: exact retry, foreign Core affinity, stale independent pin,
 changed native artifact/profile, and immutable-origin corruption. Real SIGKILL
 at initialization before commit, after commit/before sync, and after sync/before
 readback yields either rejection or the exact strict inert record; none releases
-a Core or lease. The tests do not establish live new-epoch append/ACK, repeated
-journal9-to-next-epoch migration, or cross-store rollback recovery.
+a Core or lease. The tests do not establish a complete M15 activation lease,
+repeated journal9-to-next-epoch migration, or cross-store rollback recovery.
 
 Use a single M15 owner to route ordinary Vote/Timeout, old handoff and new
 handoff requests and to hold all relevant namespaces. The existing

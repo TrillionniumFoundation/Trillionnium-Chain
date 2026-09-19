@@ -6,6 +6,11 @@ license.workspace = true
 authors.workspace = true
 publish = false
 
+[features]
+default = []
+# Explicit trusted-host composition seam. No I/O or durable-authority claim.
+candidate-epoch-host-v1 = []
+
 [package.metadata.trnm]
 lane = "poco-bft-p1-prototype"
 protocol = "poco-bft-v0"

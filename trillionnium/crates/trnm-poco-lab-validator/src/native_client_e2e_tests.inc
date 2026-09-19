@@ -84,14 +84,17 @@ fn observe_native_test_finality_v1(
 
 #[test]
 fn actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1() {
-    run_native_socket_finality_case_v1(false);
+    run_native_socket_finality_case_v1(NativeSocketCaseV1::Immediate);
 }
 #[test]
 fn native_delayed_multi_height_archive_commits_real_historical_business_v1() {
-    run_native_socket_finality_case_v1(true);
+    run_native_socket_finality_case_v1(NativeSocketCaseV1::Deferred);
 }
-fn run_native_socket_finality_case_v1(defer_archive: bool) {
+#[derive(Clone, Copy)]
+enum NativeSocketCaseV1 { Immediate, Deferred, ReplaySigkill }
+fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
     on_bounded_takeover_owner_stack_v0(move || {
+        let defer_archive = !matches!(case, NativeSocketCaseV1::Immediate);
         use trnm_application_tx_builder_v0::{
             build_signed_canonical_tx_v0, CanonicalTxBuildContextV0, TxBuilderLimitsV0,
         };
@@ -372,7 +375,10 @@ fn run_native_socket_finality_case_v1(defer_archive: bool) {
         );
         clients.persist_sync_bootstrap_v1(&[sync_proofs[&1].clone(), sync_proofs[&2].clone(), sync_proofs[&3].clone()]).unwrap();
         if defer_archive {
-            verify_actual_native_replay_sync_v1(&temp, &mut clients, &socket, &set, &profile, facts.finalized_height_v0(), tx.exact_outer_bytes());
+            let export = verify_actual_native_replay_sync_v1(&temp, &mut clients, &socket, &set, &profile, facts.finalized_height_v0(), tx.exact_outer_bytes());
+            if matches!(case, NativeSocketCaseV1::ReplaySigkill) {
+                verify_native_replay_sigkill_matrix_v1(&temp, &set, &profile, export, tx.exact_outer_bytes());
+            }
         }
         assert!(clients.drained_v1(facts.finalized_height_v0()));
         drop(clients);
@@ -473,7 +479,7 @@ fn verify_actual_native_replay_sync_v1(
     temp: &tempfile::TempDir, client: &mut crate::native_client_runtime::NativeClientRuntimeV1,
     socket: &Path, set: &ValidatorSet,
     profile: &crate::native_client_profile::NativeClientProfileV1, target: u64, outer: &[u8],
-) {
+) -> NativeReplayTestExportV1 {
     use crate::native_replay_sync_v1::{NativeReplayReceiverV1, ReplayManifestV1, CHUNK_BYTES};
     let parameters = ConsensusParametersV0::reference_shadow_v0();
     let config = || NativeApplicationConfigV0::from_canonical_lab_inputs_v0(
@@ -585,4 +591,5 @@ fn verify_actual_native_replay_sync_v1(
     for (height,index,bytes) in &changed {bad.accept_chunk(*height,*index,bytes).unwrap();}
     assert!(bad.replay_and_publish(config()).is_err());
     assert!(!badroot.join("CURRENT").exists());
+    NativeReplayTestExportV1 { manifest, chunks: transferred, head }
 }

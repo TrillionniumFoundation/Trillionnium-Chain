@@ -192,8 +192,16 @@ impl AuthenticatedEpochApplicationEdgeV1 {
 pub struct ConfirmedEpochApplicationEdgeV1<'a> {
     edge: &'a AuthenticatedEpochApplicationEdgeV1,
     read: crate::FinalizedNativeApplicationReadV0,
+    strict_activation: trnm_consensus_crypto::StrictSameVersionEpochActivationAuthorityV0,
 }
 impl ConfirmedEpochApplicationEdgeV1<'_> {
+    /// Exact strict joint-proof binding used by Core journal9. This differs
+    /// from the native execution authorization ID and grants no native ACK.
+    pub fn strict_activation_binding_v1(
+        &self,
+    ) -> &trnm_consensus_crypto::StrictEpochActivationBindingRefV0 {
+        self.strict_activation.binding_ref()
+    }
     pub fn edge(&self) -> &AuthenticatedEpochApplicationEdgeV1 {
         self.edge
     }
@@ -248,6 +256,7 @@ impl crate::DurableNativeApplicationV0 {
         &self,
         edge: &'a AuthenticatedEpochApplicationEdgeV1,
     ) -> Result<ConfirmedEpochApplicationEdgeV1<'a>> {
+        self.confirm_namespace_identity_v1()?;
         ensure!(
             edge.durable_checkpoint()
                 .belongs_to_application_at_path_v0(self, self.path()),
@@ -264,6 +273,8 @@ impl crate::DurableNativeApplicationV0 {
                 && row.target_head_v0()? == *edge.application_parent()
                 && row.p_digest_v0() == edge.durable_checkpoint().p_digest_v0()
                 && row.artifact_digest_v0() == edge.durable_checkpoint().artifact_digest_v0()
+                && row.p_sequence_v0() > 0
+                && edge.checkpoint_commit_sequence() > row.p_sequence_v0()
                 && row.commit_sequence_v0() == Some(edge.checkpoint_commit_sequence()),
             "epoch confirmation checkpoint substituted"
         );
@@ -274,11 +285,24 @@ impl crate::DurableNativeApplicationV0 {
             edge.recovery_evidence().preparation_id,
             &edge.recovery_evidence().checkpoint_header,
         )?;
+        let strict_activation = edge
+            .recovery_evidence()
+            .audit_strict(
+                edge.old_validator_set(),
+                edge.old_parameters(),
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )?
+            .activation;
         ensure!(
             self.confirmed_committed_head_v0()? == *edge.application_parent(),
             "epoch confirmation head changed"
         );
-        Ok(ConfirmedEpochApplicationEdgeV1 { edge, read })
+        self.confirm_namespace_identity_v1()?;
+        Ok(ConfirmedEpochApplicationEdgeV1 {
+            edge,
+            read,
+            strict_activation,
+        })
     }
 
     /// Read-only execution of the real first-new application block, including

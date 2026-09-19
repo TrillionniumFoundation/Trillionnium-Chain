@@ -1567,78 +1567,36 @@ fn retirement_sigkill_child() {
         .unwrap();
     panic!("requested retirement crash cut was not reached");
 }
+// A test-owned child is always reaped, including assertion/panic paths. This
+// changes no production lock behavior and does not turn failed opens into retries.
+struct RetirementTestChild(Child);
+
+impl Drop for RetirementTestChild {
+    fn drop(&mut self) {
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+    }
+}
+
 #[test]
-fn retirement_sigkill_six_cuts_recover_exactly_and_never_revive_after_mode_cut() {
-    use std::os::unix::process::ExitStatusExt;
+fn retirement_recovery_child() {
     use trnm_consensus_external_watermark::ExternalWatermarkAuthority;
-    for cut in 0..6 {
-        let root = tempdir().unwrap();
-        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
-        let mut child = Command::new(env::current_exe().unwrap())
-            .args(["--exact", "retirement_sigkill_child", "--nocapture"])
-            .env("TRNM_RETIREMENT_CRASH_ROOT", root.path())
-            .env("TRNM_RETIREMENT_CRASH_CUT", cut.to_string())
-            .spawn()
+    let Ok(root) = env::var("TRNM_RETIREMENT_RECOVERY_ROOT") else {
+        return;
+    };
+    let root = PathBuf::from(root);
+    let cut: usize = env::var("TRNM_RETIREMENT_CRASH_CUT")
+        .unwrap()
+        .parse()
+        .unwrap();
+    assert!(cut < 6);
+    let mut authority =
+        ExternalWatermarkAuthority::open_semantic(root.join("authority.log"), semantic_binding())
             .unwrap();
-        for _ in 0..500 {
-            if root.path().join("cut.ready").exists() {
-                break;
-            }
-            assert!(
-                child.try_wait().unwrap().is_none(),
-                "child exited before cut {cut}"
-            );
-            thread::sleep(Duration::from_millis(10));
-        }
-        assert!(root.path().join("cut.ready").exists(), "cut {cut} deadline");
-        child.kill().unwrap();
-        assert_eq!(child.wait().unwrap().signal(), Some(9));
-        let mut authority = ExternalWatermarkAuthority::open_semantic(
-            root.path().join("authority.log"),
-            semantic_binding(),
-        )
-        .unwrap();
-        let source = mark(0, 53);
-        let record = retirement_policy_fixture(source, 1);
-        if cut >= 2 {
-            assert!(authority
-                .compare_and_advance_semantic(
-                    Some(source),
-                    mark(1, 54),
-                    semantic_facts(7, 1, 2, 13, 14)
-                )
-                .is_err());
-        }
-        if (2..4).contains(&cut) {
-            assert!(authority
-                .load_signer_retirement_v1(semantic_binding())
-                .is_err());
-        }
-        assert_eq!(
-            authority
-                .retire_signer_exact_v1(semantic_binding(), record)
-                .unwrap(),
-            record.terminal_watermark_v1()
-        );
-        assert_eq!(
-            authority
-                .load_signer_retirement_v1(semantic_binding())
-                .unwrap(),
-            Some(record)
-        );
-        drop(authority);
-        let mut reopened = ExternalWatermarkAuthority::open_semantic(
-            root.path().join("authority.log"),
-            semantic_binding(),
-        )
-        .unwrap();
-        assert_eq!(
-            reopened
-                .load_signer_retirement_v1(semantic_binding())
-                .unwrap(),
-            Some(record)
-        );
-        assert!(reopened
+    let source = mark(0, 53);
+    let record = retirement_policy_fixture(source, 1);
+    if cut >= 2 {
+        assert!(authority
             .compare_and_advance_semantic(
                 Some(source),
                 mark(1, 54),
@@ -1646,16 +1604,105 @@ fn retirement_sigkill_six_cuts_recover_exactly_and_never_revive_after_mode_cut()
             )
             .is_err());
     }
+    if (2..4).contains(&cut) {
+        assert!(authority
+            .load_signer_retirement_v1(semantic_binding())
+            .is_err());
+    }
+    assert_eq!(
+        authority
+            .retire_signer_exact_v1(semantic_binding(), record)
+            .unwrap(),
+        record.terminal_watermark_v1()
+    );
+    assert_eq!(
+        authority
+            .load_signer_retirement_v1(semantic_binding())
+            .unwrap(),
+        Some(record)
+    );
+    drop(authority);
+    let mut reopened =
+        ExternalWatermarkAuthority::open_semantic(root.join("authority.log"), semantic_binding())
+            .unwrap();
+    assert_eq!(
+        reopened
+            .load_signer_retirement_v1(semantic_binding())
+            .unwrap(),
+        Some(record)
+    );
+    assert!(reopened
+        .compare_and_advance_semantic(Some(source), mark(1, 54), semantic_facts(7, 1, 2, 13, 14))
+        .is_err());
 }
 
 #[test]
-fn retirement_recovered_confirmation_sync_failure_never_acknowledges() {
+fn retirement_sigkill_six_cuts_recover_exactly_and_never_revive_after_mode_cut() {
+    use std::os::unix::process::ExitStatusExt;
+    for cut in 0..6 {
+        let root = tempdir().unwrap();
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+        let mut child = RetirementTestChild(
+            Command::new(env::current_exe().unwrap())
+                .args(["--exact", "retirement_sigkill_child", "--nocapture"])
+                .env("TRNM_RETIREMENT_CRASH_ROOT", root.path())
+                .env("TRNM_RETIREMENT_CRASH_CUT", cut.to_string())
+                .spawn()
+                .unwrap(),
+        );
+        for _ in 0..500 {
+            if root.path().join("cut.ready").exists() {
+                break;
+            }
+            assert!(
+                child.0.try_wait().unwrap().is_none(),
+                "child exited before cut {cut}"
+            );
+            thread::sleep(Duration::from_millis(10));
+        }
+        assert!(root.path().join("cut.ready").exists(), "cut {cut} deadline");
+        child.0.kill().unwrap();
+        assert_eq!(child.0.wait().unwrap().signal(), Some(9));
+
+        // Keep *all* namespace owners out of this multithreaded parent.
+        // Parallel tests may fork another daemon while an in-process owner
+        // exists. O_CLOEXEC closes its inherited flock only at exec, so a
+        // parent drop/immediate reopen can otherwise see EWOULDBLOCK even
+        // after the deliberately killed child has been reaped. This exact
+        // recovery child spawns no descendants and still uses fail-fast
+        // production opens for both recovery and the second cold reopen.
+        let mut recovery = RetirementTestChild(
+            Command::new(env::current_exe().unwrap())
+                .args(["--exact", "retirement_recovery_child", "--nocapture"])
+                .env("TRNM_RETIREMENT_RECOVERY_ROOT", root.path())
+                .env("TRNM_RETIREMENT_CRASH_CUT", cut.to_string())
+                .spawn()
+                .unwrap(),
+        );
+        let deadline = std::time::Instant::now() + Duration::from_secs(30);
+        loop {
+            if let Some(status) = recovery.0.try_wait().unwrap() {
+                assert!(
+                    status.success(),
+                    "recovery failed after SIGKILL cut {cut}: {status}"
+                );
+                break;
+            }
+            assert!(
+                std::time::Instant::now() < deadline,
+                "recovery child deadline after SIGKILL cut {cut}"
+            );
+            thread::sleep(Duration::from_millis(10));
+        }
+    }
+}
+
+fn retirement_recovered_confirmation_sync_failure_impl(root: &Path) {
     use trnm_consensus_external_watermark::{
         ExternalWatermarkAuthority, SignerRetirementAuthorityCutV1,
     };
-    let root = tempdir().unwrap();
-    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
-    let path = root.path().join("authority.log");
+    fs::set_permissions(root, fs::Permissions::from_mode(0o700)).unwrap();
+    let path = root.join("authority.log");
     let mut authority =
         ExternalWatermarkAuthority::open_semantic(&path, semantic_binding()).unwrap();
     let source = mark(0, 53);
@@ -1696,6 +1743,33 @@ fn retirement_recovered_confirmation_sync_failure_never_acknowledges() {
         record.terminal_watermark_v1()
     );
 }
+
+#[test]
+fn retirement_recovered_confirmation_sync_failure_child() {
+    let Ok(raw_root) = env::var("TRNM_RECOVERED_CONFIRMATION_ROOT") else {
+        return;
+    };
+    retirement_recovered_confirmation_sync_failure_impl(Path::new(&raw_root));
+}
+
+#[test]
+fn retirement_recovered_confirmation_sync_failure_never_acknowledges() {
+    let root = tempdir().unwrap();
+    let mut child = RetirementTestChild(
+        Command::new(env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "retirement_recovered_confirmation_sync_failure_child",
+                "--nocapture",
+            ])
+            .env("TRNM_RECOVERED_CONFIRMATION_ROOT", root.path())
+            .spawn()
+            .unwrap(),
+    );
+    let status = child.0.wait().unwrap();
+    assert!(status.success(), "isolated recovery test failed: {status}");
+}
+
 #[test]
 fn authority_startup_rejects_oversized_and_symlink_fixed_anchors() {
     use std::os::unix::fs::symlink;

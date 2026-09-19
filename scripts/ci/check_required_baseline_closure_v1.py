@@ -237,10 +237,17 @@ def main() -> int:
         "Run repository security-boundary regressions",
     )
     compile_step = named_step(workflow, "Compile Python CI tooling")
-    require_tokens(exact_step, CONVERGENCE_COMMANDS, "exact-source convergence closure")
+    epoch_step = named_step(workflow, "Verify default and explicit candidate ownership boundaries")
+    require_tokens(epoch_step, (
+        "cargo test -p trnm-poco-node --features epoch-runtime-test-fixtures --lib --locked",
+        "cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked",
+        "cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings",
+        "cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked",
+    ), "explicit epoch runtime test closure")
+    require_tokens(exact_step, CONVERGENCE_COMMANDS + ("python3 scripts/ci/test_build_closures_v1.py",), "exact-source convergence closure")
     require_tokens(
         prospective_step,
-        CONVERGENCE_COMMANDS,
+        CONVERGENCE_COMMANDS + ("python3 scripts/ci/test_build_closures_v1.py",),
         "prospective-merge convergence closure",
     )
     require_tokens(
@@ -262,6 +269,7 @@ def main() -> int:
         "required baseline security regressions",
     )
     for path in (
+        "scripts/ci/test_build_closures_v1.py",
         "scripts/ci/check_plan_manifest_pins_v1.py",
         "scripts/ci/check_technical_convergence_v1.py",
         "scripts/ci/test_technical_convergence_v1.py",

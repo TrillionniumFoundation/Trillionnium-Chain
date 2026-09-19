@@ -63,6 +63,23 @@ pub struct ConfirmedRetiredEpochNodeCheckpointV1 {
     fenced: Cell<bool>,
 }
 impl ConfirmedRetiredEpochNodeCheckpointV1 {
+    #[cfg(feature = "epoch-runtime-candidate")]
+    pub(crate) fn into_epoch_lineage_source_v1<W: ExternalSignerRetirementV1>(
+        self,
+        retired: &mut RetiredSqliteSignerJournalV1<W>,
+    ) -> Result<SqliteExternalNodeCheckpointStoreV0> {
+        if !self.belongs_to_retired_owner_v1(retired) {
+            return invalid("retired checkpoint changed before migration");
+        }
+        let mut store = self.store.into_inner();
+        store
+            .confirm_exact_durable_v1(self.checkpoint)
+            .map_err(EpochRetirementCheckpointErrorV1::Store)?;
+        if !self.retired.belongs_to_owner_v1(retired) {
+            return invalid("retired custody changed before migration");
+        }
+        Ok(store)
+    }
     /// Inert persistent identity; possession of these bytes is not this token.
     pub const fn checkpoint_v1(&self) -> &ExternalNodeCheckpointV0 {
         &self.checkpoint

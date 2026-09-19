@@ -698,7 +698,12 @@ ordinary signer retirement before handoff. Real first-new three-chain tests
 preserve both C application parent and C+2 consensus parent, including reset
 view numbers in persisted successors. Journal9 verifies its actual terminal
 source, private Core request affinity and exact source/target recovery; three
-initialization SIGKILL cuts pass. It still grants no live new-epoch Core or lease.
+initialization SIGKILL cuts pass. A separate default-off continuing-author host
+now consumes the actual owners, migrates the independent V0 checkpoint to its
+bounded V1 lineage store, and acknowledges the initial Core state only after
+all physical cuts match. Its first timeout persists intent, signer decision and
+signature release through journal9 and the independent checkpoint before
+broadcast. It exposes no raw Core or signer handle.
 
 The external authority records retirement in its authenticated mode and append
 log, with restart reconciliation, fsync confirmation and actual process-crash
@@ -707,32 +712,46 @@ join binding the original signer, audited Safety migration origin and committed
 native history. A real ten-vote Core/native/Safety run closes and reopens all local
 owners and reproduces the persisted handoff signature without another key call;
 substituted source cuts and a later external checkpoint fence recovery. The test
-watermark service is not an external HSM acceptance result. Full14E whole-node
-checkpoint migration, a live new ordinary lease and repeated epoch activation
-remain open.
+watermark service is not an external HSM acceptance result. The new candidate
+also closes and reopens all owners at initial full14E activation, then signs its
+first timeout once. Database replacement during the final external-watermark
+callback rejects before the key call, even with identical bytes. Progressed
+whole-node recovery, actual new-epoch proposal/execution/finality driving,
+new-only commissioning and repeated activation remain open.
 
 T1 drives signed candidate submissions through durable admission, actual
 proposals, finalized native execution and historical inclusion proofs, including
 complete ancestry for batched finality and an independent client verifier. Its
 bounded ordinary finalized-body replay candidate reconstructs application and
 replay state from independently configured genesis; no peer-supplied replay set
-becomes authority. It does not activate consensus or cover cross-epoch sync.
+becomes authority. Ten real process-kill cuts cover manifest/chunk publication,
+native preparation/commit, and CURRENT publication; recovery rejects forged
+bodies and forged retained finality without changing the accepted head. This
+replay path does not activate consensus or cover cross-epoch sync.
 Native schema5 uses incremental ordinary P/state/replay commits and authenticated
 point reads with bounded deterministic parallel prefetch. Unrelated account growth
 no longer forces a full ordinary execution scan; cutoff/epoch operations still
 need their frozen manifest. The explicit schema6 candidate migrates a committed C
 and prepares a real C+3 sparse delta, preserving both parents, strict edge lineage
-and source replay binding across cold reopen and three SIGKILL cuts. Its committed
-head remains C: incremental epoch commit/descendants, proof/snapshot adapters and
-reference-safe GC remain separate acceptance work.
+and source replay binding across cold reopen and three SIGKILL cuts. Explicit
+schema6→7 migration adds strict first-new finality and ordinary descendant
+commits, atomic JMT/replay/P/head updates, speculative descendant retention and
+competing-fork retirement. Real signed execution agrees at 1/2/4/8 workers;
+first-new and descendant commit process-kill cuts and cold tamper checks cover
+the new records. Snapshot/proof adapters, reference-safe GC, full node integration
+and growing-history performance acceptance remain separate work.
 
-The clean six-host native campaign exposed a timeout-certificate/high-QC
-checkpoint mismatch after listener firewall and workload-identity fixes. Real
-owner regressions now cover equivalent TC quorums without discarding signed
-phases or checkpoint freshness checks. The remote baseline also exposed default
-stack overflows; actual ownership/frame fixes are being verified at the normal
-stack size. No successful fault/performance acceptance is claimed before a new
-clean-source campaign and exact-source remote checks. Independent review,
+The clean six-host native campaigns exposed a timeout-certificate/high-QC
+checkpoint mismatch and then actor failure on a proposal received after signing
+a timeout. Real-owner regressions now preserve equivalent TC quorums and verify
+late proposals without issuing a conflicting vote. Nonvoting execution/catch-up
+still needs its complete runtime path. The previous exact-source Rust baseline
+passed at the normal stack size after ownership/frame fixes. Its schema taxonomy
+and dependency checks exposed separate drift, now corrected without weakening
+the frozen ordinary error partition or dependency policy. New candidate and
+fixture feature closures are checked against Cargo's actual resolution. No
+successful fault/performance acceptance is claimed before a new clean-source
+campaign and exact-source remote checks. Independent review,
 physical power-loss, HSM, WAN and soak evidence remain open. No stage is closed
 by these candidate implementations alone.
 

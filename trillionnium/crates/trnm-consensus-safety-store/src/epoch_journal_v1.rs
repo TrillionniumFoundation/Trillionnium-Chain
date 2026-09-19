@@ -215,6 +215,34 @@ pub enum EpochJournalCutV1 {
     AfterSyncBeforeReadback,
 }
 
+/// Immutable source facts audited from the retained, strictly decoded journal8
+/// origin on every fresh read. These are comparison data, not source ownership.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EpochSafetyMigrationSourceV1 {
+    pin: OldEpochSafetyHeadPinV1,
+    record_checksum: [u8; 32],
+    context_ref: [u8; 32],
+    profile_ref: [u8; 32],
+    initial_revision: u64,
+}
+impl EpochSafetyMigrationSourceV1 {
+    pub const fn pin_v1(&self) -> OldEpochSafetyHeadPinV1 {
+        self.pin
+    }
+    pub const fn state_record_checksum_v1(&self) -> [u8; 32] {
+        self.record_checksum
+    }
+    pub const fn context_ref_v1(&self) -> [u8; 32] {
+        self.context_ref
+    }
+    pub const fn profile_ref_v1(&self) -> [u8; 32] {
+        self.profile_ref
+    }
+    pub const fn initial_revision_v1(&self) -> u64 {
+        self.initial_revision
+    }
+}
+
 /// Fresh owner-affine facts. This is deliberately neither Clone nor signing or
 /// Core recovery authority; M15 must still reconcile native and signer owners.
 pub struct ConfirmedEpochSafetyHeadV1 {
@@ -224,6 +252,7 @@ pub struct ConfirmedEpochSafetyHeadV1 {
     context_ref: [u8; 32],
     generation: u64,
     origin: [u8; 32],
+    source: EpochSafetyMigrationSourceV1,
     owner: Arc<()>,
 }
 impl ConfirmedEpochSafetyHeadV1 {
@@ -253,6 +282,9 @@ impl ConfirmedEpochSafetyHeadV1 {
     }
     pub const fn transition_context_v1(&self) -> &SafetyTransitionContextV0 {
         &self.transition
+    }
+    pub const fn migration_source_v1(&self) -> &EpochSafetyMigrationSourceV1 {
+        &self.source
     }
     pub fn into_unverified_record_v1(self) -> UnverifiedSafetyStateRecordV0 {
         *self.record
@@ -570,6 +602,68 @@ impl SqliteEpochSafetyJournalV1 {
             .map_err(|(_, e)| EpochJournalErrorV1::Sqlite(e))?;
         self.require_namespace()?;
         result
+    }
+
+    /// Fresh, exact confirmation for this journal's actual process-bound Core
+    /// request. No writes, ACK, signing, or host activation are performed.
+    pub fn confirm_exact_request_v1(
+        &self,
+        expected: EpochSafetyHeadPinV1,
+        request: &SafetyStatePersistenceV0,
+        transition: &SafetyTransitionContextV0,
+    ) -> Result<ConfirmedEpochSafetyHeadV1> {
+        if !self.binding.as_ref().is_some_and(|b| b.accepts(request)) {
+            return invalid("exact confirmation requires this journal's bound Core request");
+        }
+        validate_request_manifest(request, transition)?;
+        let confirmed = self.fresh_read_v1(expected)?;
+        if confirmed.state_v1() != request.state()
+            || confirmed.revision_v1() != request.barrier().get()
+            || confirmed.transition_context_v1() != transition
+        {
+            return invalid("fresh journal cut differs from exact Core request/manifest");
+        }
+        Ok(confirmed)
+    }
+
+    /// Default-off trusted-host composition plumbing. Rebinds a read-only
+    /// reopened owner only to the strictly reconstructed exact initial14E cut.
+    /// The returned driver still rejects every input except its pending ACK.
+    /// M15 must complete all physical native/custody/checkpoint joins before
+    /// using that ACK. This method is not a lease or an external rollback check.
+    #[cfg(feature = "candidate-epoch-host-v1")]
+    pub fn prepare_candidate_host_initial_recovery_v1(
+        &mut self,
+        expected: EpochSafetyHeadPinV1,
+    ) -> Result<(
+        ConfirmedEpochSafetyHeadV1,
+        trnm_consensus_core::PendingEpochHostDriverV1,
+    )> {
+        if self.binding.is_some() {
+            return invalid("journal already bound; recovery cannot duplicate a live driver");
+        }
+        let (confirmed, recovery) = self.prepare_recovery_v1(expected)?;
+        if confirmed.revision_v1() != confirmed.source.initial_revision
+            || confirmed.transition_context_v1() != &SafetyTransitionContextV0::ordinary()
+        {
+            return invalid("candidate epoch recovery supports only the exact initial cut");
+        }
+        let driver = recovery.into_candidate_host_initial_pending_v1()?;
+        if driver.state() != confirmed.state_v1()
+            || driver.initial_persistence_v1().state() != confirmed.state_v1()
+        {
+            return invalid("strict initial driver differs from fresh journal cut");
+        }
+        // A second exact physical read precedes installation of the sole new
+        // process affinity. Failure leaves the reopened journal unbound.
+        let fresh = self.fresh_read_v1(expected)?;
+        if fresh.state_record_checksum_v1() != confirmed.state_record_checksum_v1()
+            || fresh.transition_context_v1() != confirmed.transition_context_v1()
+        {
+            return invalid("journal changed during initial recovery binding");
+        }
+        self.binding = Some(driver.persistence_binding_v1());
+        Ok((fresh, driver))
     }
     /// A reopened journal cannot bind an arbitrary Core. It remains read-only
     /// until a concrete M15 recovery join is implemented. A live initialized
@@ -952,6 +1046,17 @@ impl SqliteEpochSafetyJournalV1 {
                     context_ref: self.profile.context_ref_v1()?,
                     generation: self.profile.generation,
                     origin: m.origin,
+                    source: EpochSafetyMigrationSourceV1 {
+                        pin: OldEpochSafetyHeadPinV1 {
+                            journal_id: m.source_journal,
+                            revision: source.state().revision(),
+                            chain_checksum: m.source_chain,
+                        },
+                        record_checksum: source.record_checksum(),
+                        context_ref: self.profile.source_profile.context_ref_v1()?,
+                        profile_ref: self.profile.source_profile.profile_ref_v1(),
+                        initial_revision: m.first_revision,
+                    },
                     owner: Arc::clone(&self.owner),
                 });
             }

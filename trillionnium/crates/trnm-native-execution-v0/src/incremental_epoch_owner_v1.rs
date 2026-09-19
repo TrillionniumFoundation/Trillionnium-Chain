@@ -1,5 +1,5 @@
-//! Explicit schema6 first-new preparation. Committed head remains C until the
-//! dedicated epoch finality consumer lands; no public commit/ACK is issued.
+//! Explicit schema6 first-new preparation and separately migrated schema7
+//! strict finality/descendant owner. Neither mode grants Core or node authority.
 use super::*;
 use crate::epoch_recovery::{EpochRecoveryEvidenceV1, MAX_EPOCH_EVIDENCE_BYTES_V1};
 use crate::AuthenticatedEpochApplicationEdgeV1;
@@ -8,6 +8,19 @@ use trnm_native_application::{
     NativeExecutedEpochBlockV1,
 };
 pub(in crate::durable) const SCHEMA_VERSION: u64 = 6;
+#[path = "incremental_epoch_commit_v1.rs"]
+mod commit;
+#[path = "incremental_epoch_descendant_v1.rs"]
+mod descendant;
+pub use commit::CommittedNativeIncrementalEpochExecutionV1;
+pub use descendant::{IncrementalEpochParentV1, PreparedNativeIncrementalEpochDescendantV1};
+pub(in crate::durable) const COMMIT_SCHEMA_VERSION: u64 = 7;
+fn epoch_schema(c: &Connection) -> Result<bool> {
+    Ok(matches!(
+        epoch_durable::schema_version(c)?,
+        SCHEMA_VERSION | COMMIT_SCHEMA_VERSION
+    ))
+}
 const SQL: &str = "
 CREATE TABLE native_incremental_epoch_owner_v1 (
  id INTEGER PRIMARY KEY CHECK(id=1), source_anchor BLOB NOT NULL CHECK(length(source_anchor)=32),
@@ -78,8 +91,7 @@ fn audit_owner(
         "schema6 edge checksum/source"
     );
     ensure!(
-        metadata.head == base.source
-            && metadata.snapshot.is_empty()
+        metadata.snapshot.is_empty()
             && metadata.snapshot_digest == sha256_v0(&[])
             && metadata.command_ids.is_empty()
             && metadata.signer_nonces.is_empty(),
@@ -87,13 +99,7 @@ fn audit_owner(
     );
     ensure!(
         base.anchor == base.source_digest(config)
-            && base.checksum == base.current_digest(&metadata.head)
-            && base.commit_sequence == base.source_sequence
-            && base.replay
-                == (ReplayHead {
-                    version: 0,
-                    root: base.source_replay
-                }),
+            && base.checksum == base.current_digest(&metadata.head),
         "schema6 base owner"
     );
     let storage = ni::read_incremental_head_v1(tx, &namespace(config))?;
@@ -117,29 +123,60 @@ fn audit_owner(
         .finalized_block()
         .header();
     ensure!(
-        checkpoint.id().as_bytes() == metadata.head.block_id().as_bytes()
-            && checkpoint.height().get() == metadata.head.height().get()
-            && checkpoint.state_root().as_bytes() == metadata.head.state_root().as_bytes()
+        checkpoint.id().as_bytes() == base.source.block_id().as_bytes()
+            && checkpoint.height().get() == base.source.height().get()
+            && checkpoint.state_root().as_bytes() == base.source.state_root().as_bytes()
             && evidence.checkpoint_header == base.source_header,
         "schema6 checkpoint/context"
     );
     type CheckpointColumns = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>);
-    let actual: CheckpointColumns = tx.query_row("SELECT p_digest,commit_sequence,artifact_digest,status,commit_id FROM native_durable_execution_p_v0 WHERE block_id=?1", [metadata.head.block_id().as_bytes().as_slice()], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
+    let actual: CheckpointColumns = tx.query_row("SELECT p_digest,commit_sequence,artifact_digest,status,commit_id FROM native_durable_execution_p_v0 WHERE block_id=?1", [base.source.block_id().as_bytes().as_slice()], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
     ensure!(
         fixed::<32>(actual.0)? == edge.checkpoint_p
             && number(actual.1)? == edge.sequence
             && fixed::<32>(actual.2)? == sha256_v0(&evidence.checkpoint_artifact)
             && number(actual.3)? == P_STATUS_COMMITTED
-            && fixed::<32>(actual.4)? == *metadata.head.commit_id().as_bytes(),
+            && fixed::<32>(actual.4)? == *base.source.commit_id().as_bytes(),
         "schema6 original committed P"
     );
+    let committed = commit::load(tx)?;
+    if let Some(record) = &committed {
+        ensure!(
+            epoch_durable::schema_version(tx)? == COMMIT_SCHEMA_VERSION,
+            "epoch commit in prepare-only schema"
+        );
+        let p = commit::audit(tx, config, &edge, &base.source, &audit, record)?;
+        if metadata.head == record.head {
+            ensure!(
+                base.commit_sequence == record.sequence
+                    && base.replay == ReplayDelta::decode(&p.replay_delta)?.head,
+                "epoch committed native/replay head"
+            );
+        } else {
+            descendant::audit_committed_head(
+                tx, config, &evidence, &edge, &base, metadata, record,
+            )?;
+        }
+    } else {
+        ensure!(
+            metadata.head == base.source
+                && base.commit_sequence == base.source_sequence
+                && base.replay
+                    == (ReplayHead {
+                        version: 0,
+                        root: base.source_replay
+                    }),
+            "uncommitted epoch source head"
+        );
+    }
     let ordinary: u64 = tx.query_row("SELECT count(*) FROM native_incremental_p_v1", [], |r| {
         r.get(0)
     })?;
     ensure!(
-        ordinary == 0,
+        ordinary == 0 || epoch_durable::schema_version(tx)? == COMMIT_SCHEMA_VERSION,
         "schema6 ordinary migration history unsupported"
     );
+    let ordinary_max = descendant::audit_inventory(tx, metadata.durable_sequence, &base)?;
     let (count, bytes, maximum): (u64,u64,Option<Vec<u8>>) = tx.query_row("SELECT count(*),coalesce(sum(length(artifact)+length(header)+length(replay_delta)+length(lifecycle)),0),max(sequence) FROM native_incremental_epoch_p_v1", [], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?;
     ensure!(
         count <= MAX_PREPARED as u64
@@ -148,6 +185,8 @@ fn audit_owner(
                 .map(number)
                 .transpose()?
                 .unwrap_or(base.source_sequence)
+                .max(committed.as_ref().map_or(0, |r| r.sequence))
+                .max(ordinary_max)
                 == metadata.durable_sequence,
         "schema6 P inventory/sequence"
     );
@@ -189,6 +228,9 @@ pub(in crate::durable) fn verify_schema(c: &Connection) -> DurableResult<()> {
         tx.execute_batch(SCHEMA)?;
         tx.execute_batch(replay::SCHEMA)?;
         tx.execute_batch(SQL)?;
+        if epoch_durable::schema_version(c)? == COMMIT_SCHEMA_VERSION {
+            tx.execute_batch(commit::SQL)?;
+        }
         tx.commit()?;
         fn objects(c: &Connection) -> Result<Vec<(String, String, String)>> {
             let mut q = c.prepare(
@@ -235,7 +277,63 @@ struct EpochP {
     lifecycle: Vec<u8>,
     digest: [u8; 32],
 }
+// Private validation inputs are rebuilt from either an owner-affine edge or
+// independently audited retained evidence. They never mint an edge capability.
+struct EpochPContext<'a> {
+    parent: &'a ApplicationHeadV0,
+    checkpoint_sequence: u64,
+    binding: [u8; 32],
+    terminal: &'a BlockHeader,
+    set: &'a trnm_consensus_types::ValidatorSet,
+    parameters: &'a ConsensusParametersV0,
+}
+fn require_live_edge(
+    app: &DurableNativeApplicationV0,
+    row: &EdgeRow,
+    edge: &AuthenticatedEpochApplicationEdgeV1,
+) -> Result<()> {
+    ensure!(
+        row.binding == edge.authorization_id()
+            && *app
+                .incremental_migration_pin
+                .lock()
+                .map_err(|_| anyhow::anyhow!("epoch migration pin"))?
+                == Some(row.checksum),
+        "epoch owner edge changed after recovery"
+    );
+    Ok(())
+}
 impl EpochP {
+    fn target(&self) -> Result<ApplicationHeadV0> {
+        let executed = self.executed()?;
+        let r = executed.request();
+        let replay = ReplayDelta::decode(&self.replay_delta)?;
+        let id = hash_domain(
+            "trnm.native-application.incremental-epoch-commit.v1",
+            &[
+                &self.digest,
+                &self.block,
+                r.expected().post_state_root().as_bytes(),
+                &replay.head.root,
+            ],
+        );
+        Ok(ApplicationHeadV0::new(
+            r.preview().height(),
+            r.block_id(),
+            r.expected().post_state_root(),
+            ApplicationCommitIdV0::new(id)?,
+        ))
+    }
+    fn storage(&self) -> Result<ni::PreparedIncrementalDeltaV1> {
+        let h = self.target()?;
+        Ok(ni::PreparedIncrementalDeltaV1 {
+            artifact: self.storage_artifact,
+            block: self.block,
+            height: h.height().get(),
+            root: *h.state_root().as_bytes(),
+            persist_sequence: self.storage_sequence,
+        })
+    }
     fn executed(&self) -> Result<NativeExecutedEpochBlockV1> {
         Ok(
             trnm_native_application::decode_native_executed_epoch_block_artifact_v1(
@@ -268,6 +366,33 @@ impl EpochP {
         config: &NativeApplicationConfigV0,
         edge: &AuthenticatedEpochApplicationEdgeV1,
     ) -> Result<()> {
+        self.validate_context(
+            config,
+            &EpochPContext {
+                parent: edge.application_parent(),
+                checkpoint_sequence: edge.checkpoint_commit_sequence(),
+                binding: edge.authorization_id(),
+                terminal: edge.consensus_parent(),
+                set: edge.new_validator_set(),
+                parameters: edge.new_parameters(),
+            },
+        )
+    }
+    fn validate_context(
+        &self,
+        config: &NativeApplicationConfigV0,
+        edge: &EpochPContext<'_>,
+    ) -> Result<()> {
+        let first_height = edge
+            .terminal
+            .height()
+            .get()
+            .checked_add(1)
+            .context("epoch first height exhausted")?;
+        ensure!(
+            edge.parent.height().get().checked_add(3) == Some(first_height),
+            "epoch exact gap"
+        );
         ensure!(
             self.artifact.len() <= 16 * 1024 * 1024
                 && self.header.len() <= 4096
@@ -277,26 +402,39 @@ impl EpochP {
         );
         ensure!(
             self.digest == self.digest(config)
-                && self.sequence > edge.checkpoint_commit_sequence()
-                && self.parent == *edge.application_parent()
-                && self.edge == edge.authorization_id(),
+                && self.sequence > edge.checkpoint_sequence
+                && self.parent == *edge.parent
+                && self.edge == edge.binding,
             "schema6 P digest/parent"
         );
         let executed = self.executed()?;
         let request = executed.request();
-        edge.validate_request_v1(request.preview())?;
+        let preview = request.preview();
+        ensure!(
+            preview.chain_id().as_str() == edge.terminal.chain_id().as_str()
+                && preview.genesis_hash().as_bytes() == edge.terminal.genesis_hash().as_bytes()
+                && preview.application_parent() == edge.parent
+                && preview.consensus_parent_id().as_bytes() == edge.terminal.id().as_bytes()
+                && preview.consensus_parent_height().get() == edge.terminal.height().get()
+                && preview.edge_binding().as_bytes() == &edge.binding
+                && preview.height().get() == first_height
+                && preview.active_validator_set_id().as_bytes() == edge.set.id().as_bytes()
+                && preview.timestamp_ms() > edge.terminal.timestamp_ms(),
+            "schema7 retained epoch request context"
+        );
         let h = header(&self.header)?;
         ensure!(
-            h.id().as_bytes() == request.block_id().as_bytes()
-                && h.parent_id() == edge.consensus_parent().id()
-                && h.height().get() == edge.first_application_height()
+            self.block == *request.block_id().as_bytes()
+                && h.id().as_bytes() == request.block_id().as_bytes()
+                && h.parent_id() == edge.terminal.id()
+                && h.height().get() == first_height
                 && h.timestamp_ms() == request.preview().timestamp_ms()
                 && h.block_kind() == trnm_consensus_types::BlockKind::EpochHandoff
-                && h.validator_set_id() == edge.new_validator_set().id()
-                && h.consensus_parameters_hash() == edge.new_parameters().hash()
-                && h.epoch() == edge.new_validator_set().epoch()
-                && h.chain_id() == edge.new_validator_set().chain_id()
-                && h.genesis_hash() == edge.new_validator_set().genesis_hash(),
+                && h.validator_set_id() == edge.set.id()
+                && h.consensus_parameters_hash() == edge.parameters.hash()
+                && h.epoch() == edge.set.epoch()
+                && h.chain_id() == edge.set.chain_id()
+                && h.genesis_hash() == edge.set.genesis_hash(),
             "schema6 exact first-new header"
         );
         let expected = request.expected();
@@ -333,6 +471,24 @@ impl EpochP {
         );
         Ok(())
     }
+    fn validate_storage(&self, tx: &rusqlite::Transaction<'_>) -> Result<()> {
+        let storage = tx.query_row(
+            "SELECT persist_sequence,block_id,edge,target_height,parent_id,parent_height,parent_root FROM ni_prepared WHERE artifact=?1",
+            [self.storage_artifact.as_slice()],
+            |r| Ok((row_blob(r,0,8,8)?,row_blob(r,1,32,32)?,row_blob(r,2,32,32)?,row_blob(r,3,8,8)?,row_blob(r,4,32,32)?,row_blob(r,5,8,8)?,row_blob(r,6,32,32)?)),
+        )?;
+        ensure!(
+            number(storage.0)? == self.storage_sequence
+                && fixed::<32>(storage.1)? == self.block
+                && fixed::<32>(storage.2)? == self.edge
+                && number(storage.3)? == self.target()?.height().get()
+                && fixed::<32>(storage.4)? == *self.parent.block_id().as_bytes()
+                && number(storage.5)? == self.parent.height().get()
+                && fixed::<32>(storage.6)? == *self.parent.state_root().as_bytes(),
+            "schema6 P storage identity/sequence"
+        );
+        Ok(())
+    }
 }
 fn load_epoch_p(c: &Connection, block: [u8; 32]) -> Result<Option<EpochP>> {
     let r=c.query_row("SELECT sequence,kind,parent,edge,CASE WHEN length(artifact)<=16777216 THEN artifact ELSE NULL END,CASE WHEN length(header)<=4096 THEN header ELSE NULL END,storage_artifact,storage_sequence,replay_parent_version,replay_parent_root,CASE WHEN length(replay_delta)<=16777216 THEN replay_delta ELSE NULL END,CASE WHEN length(lifecycle)<=1048576 THEN lifecycle ELSE NULL END,digest FROM native_incremental_epoch_p_v1 WHERE block=?1",[block.as_slice()],|r|Ok((row_blob(r,0,8,8)?,r.get::<_,u8>(1)?,row_blob(r,2,104,104)?,row_blob(r,3,32,32)?,row_blob(r,4,1,16*1024*1024)?,row_blob(r,5,1,4096)?,row_blob(r,6,32,32)?,row_blob(r,7,8,8)?,row_blob(r,8,8,8)?,row_blob(r,9,32,32)?,row_blob(r,10,1,MAX_REPLAY_DELTA)?,row_blob(r,11,0,1024*1024)?,row_blob(r,12,32,32)?))).optional()?;
@@ -364,6 +520,7 @@ fn load_epoch_p(c: &Connection, block: [u8; 32]) -> Result<Option<EpochP>> {
 pub struct PreparedNativeIncrementalEpochExecutionV1 {
     owner: Arc<()>,
     p: EpochP,
+    commit_sequence: Option<u64>,
 }
 impl PreparedNativeIncrementalEpochExecutionV1 {
     pub fn executed(&self) -> Result<NativeExecutedEpochBlockV1> {
@@ -378,11 +535,48 @@ impl PreparedNativeIncrementalEpochExecutionV1 {
     pub const fn p_digest(&self) -> [u8; 32] {
         self.p.digest
     }
+    pub fn target_head(&self) -> Result<ApplicationHeadV0> {
+        self.p.target()
+    }
+    pub const fn commit_sequence(&self) -> Option<u64> {
+        self.commit_sequence
+    }
     pub const fn persist_sequence(&self) -> u64 {
         self.p.sequence
     }
     pub const fn edge_binding(&self) -> [u8; 32] {
         self.p.edge
+    }
+    pub fn artifact_checksum(&self) -> [u8; 32] {
+        sha256_v0(&self.p.artifact)
+    }
+    pub fn overlay_checksum(&self) -> [u8; 32] {
+        hash_domain(
+            "trnm.native-application.incremental-epoch-overlay.v1",
+            &[
+                &self.p.edge,
+                &self.p.storage_artifact,
+                &self.p.replay_parent.root,
+                &sha256_v0(&self.p.replay_delta),
+                &sha256_v0(&self.p.lifecycle),
+            ],
+        )
+    }
+    pub fn application_payload_and_receipts(
+        &self,
+    ) -> Result<(
+        trnm_consensus_types::ApplicationPayloadV0,
+        trnm_consensus_types::ExecutionReceiptsV0,
+    )> {
+        let executed = self.executed()?;
+        let exact = crate::poco_checkpoint::native_execution_from_receipts_v0(
+            executed.request().preview().transactions(),
+            executed.receipts(),
+        )?;
+        Ok((
+            exact.application_payload().clone(),
+            exact.execution_receipts().clone(),
+        ))
     }
     pub fn belongs_to_application_at_path(
         &self,
@@ -393,7 +587,10 @@ impl PreparedNativeIncrementalEpochExecutionV1 {
             && Arc::ptr_eq(&self.owner, &app.owner_affinity)
             && app
                 .reopen_prepared_incremental_epoch_v1(self.p.block, self.p.digest)
-                .is_ok_and(|fresh| fresh.p.sequence == self.p.sequence)
+                .is_ok_and(|fresh| {
+                    fresh.p.sequence == self.p.sequence
+                        && fresh.commit_sequence == self.commit_sequence
+                })
     }
 }
 impl crate::complete::CompleteExecutionStoreV1 for EpochView<'_> {
@@ -540,10 +737,7 @@ impl DurableNativeApplicationV0 {
     pub fn recover_incremental_epoch_edge_v1(&self) -> Result<AuthenticatedEpochApplicationEdgeV1> {
         let c = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&c)?;
-        ensure!(
-            epoch_durable::schema_version(&c)? == SCHEMA_VERSION,
-            "schema6 required"
-        );
+        ensure!(epoch_schema(&c)?, "incremental epoch schema required");
         let tx = c.unchecked_transaction()?;
         let m = load_metadata_v0(&tx, &self.config)?;
         let (_, row) = audit_owner(&tx, &self.config, &m)?;
@@ -607,10 +801,7 @@ impl DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let c = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&c)?;
-        ensure!(
-            epoch_durable::schema_version(&c)? == SCHEMA_VERSION,
-            "schema6 required"
-        );
+        ensure!(epoch_schema(&c)?, "incremental epoch schema required");
         let tx = c.unchecked_transaction()?;
         let m = load_metadata_v0(&tx, &self.config)?;
         let (base, row) = audit_owner(&tx, &self.config, &m)?;
@@ -645,10 +836,7 @@ impl DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let mut c = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&c)?;
-        ensure!(
-            epoch_durable::schema_version(&c)? == SCHEMA_VERSION,
-            "schema6 required"
-        );
+        ensure!(epoch_schema(&c)?, "incremental epoch schema required");
         let tx = c.transaction_with_behavior(TransactionBehavior::Immediate)?;
         let m = load_metadata_v0(&tx, &self.config)?;
         let (base, row) = audit_owner(&tx, &self.config, &m)?;
@@ -767,7 +955,7 @@ impl DurableNativeApplicationV0 {
                 p.digest.as_slice()
             ],
         )?;
-        ensure!(tx.execute("UPDATE native_application_metadata_v0 SET durable_sequence=?1 WHERE singleton=1 AND durable_sequence=?2 AND schema_version=?3",params![p.sequence.to_be_bytes().as_slice(),m.durable_sequence.to_be_bytes().as_slice(),SCHEMA_VERSION.to_be_bytes().as_slice()])?==1,"schema6 P sequence CAS");
+        ensure!(tx.execute("UPDATE native_application_metadata_v0 SET durable_sequence=?1 WHERE singleton=1 AND durable_sequence=?2 AND schema_version=?3",params![p.sequence.to_be_bytes().as_slice(),m.durable_sequence.to_be_bytes().as_slice(),epoch_durable::schema_version(&tx)?.to_be_bytes().as_slice()])?==1,"schema6 P sequence CAS");
         #[cfg(test)]
         park_for_sigkill_commit_boundary_v0("incremental_epoch_before_commit");
         tx.commit()?;
@@ -779,6 +967,21 @@ impl DurableNativeApplicationV0 {
         park_for_sigkill_commit_boundary_v0("incremental_epoch_after_fsync_before_readback");
         drop(_guard);
         self.reopen_prepared_incremental_epoch_v1(p.block, p.digest)
+    }
+    pub fn confirm_prepared_incremental_epoch_execution_v1(
+        &self,
+        p: &PreparedNativeIncrementalEpochExecutionV1,
+    ) -> Result<PreparedNativeIncrementalEpochExecutionV1> {
+        ensure!(
+            Arc::ptr_eq(&p.owner, &self.owner_affinity),
+            "incremental epoch P readback foreign owner"
+        );
+        let fresh = self.reopen_prepared_incremental_epoch_v1(p.p.block, p.p.digest)?;
+        ensure!(
+            fresh.p.sequence == p.p.sequence,
+            "incremental epoch P sequence changed"
+        );
+        Ok(fresh)
     }
     pub fn reopen_prepared_incremental_epoch_v1(
         &self,
@@ -792,14 +995,12 @@ impl DurableNativeApplicationV0 {
         let tx = c.unchecked_transaction()?;
         let m = load_metadata_v0(&tx, &self.config)?;
         let (base, row) = audit_owner(&tx, &self.config, &m)?;
-        ensure!(
-            row.binding == edge.authorization_id(),
-            "schema6 reopen edge changed"
-        );
+        require_live_edge(self, &row, &edge)?;
         let p = load_epoch_p(&tx, block)?.context("schema6 P missing")?;
         p.validate(&self.config, &edge)?;
+        let committed = commit::load(&tx)?.filter(|r| r.block == p.block);
         ensure!(
-            p.digest == expected && p.replay_parent == base.replay,
+            p.digest == expected && (committed.is_some() || p.replay_parent == base.replay),
             "schema6 P expected/replay"
         );
         let reader = ni::open_incremental_reader_v1(
@@ -818,26 +1019,17 @@ impl DurableNativeApplicationV0 {
                         .as_bytes(),
             "schema6 P storage root"
         );
-        let storage = tx.query_row(
-            "SELECT persist_sequence,block_id,edge,target_height,parent_id,parent_height,parent_root FROM ni_prepared WHERE artifact=?1",
-            [p.storage_artifact.as_slice()],
-            |r| Ok((row_blob(r,0,8,8)?,row_blob(r,1,32,32)?,row_blob(r,2,32,32)?,row_blob(r,3,8,8)?,row_blob(r,4,32,32)?,row_blob(r,5,8,8)?,row_blob(r,6,32,32)?)),
-        )?;
-        ensure!(
-            number(storage.0)? == p.storage_sequence
-                && fixed::<32>(storage.1)? == p.block
-                && fixed::<32>(storage.2)? == p.edge
-                && number(storage.3)? == edge.first_application_height()
-                && fixed::<32>(storage.4)? == *p.parent.block_id().as_bytes()
-                && number(storage.5)? == p.parent.height().get()
-                && fixed::<32>(storage.6)? == *p.parent.state_root().as_bytes(),
-            "schema6 P storage identity/sequence"
-        );
+        p.validate_storage(&tx)?;
         let deltas = [ReplayDelta::decode(&p.replay_delta)?];
-        let _ = ReplayReader::new(&tx, Some(base.replay), &deltas)?;
+        let _ = ReplayReader::new(
+            &tx,
+            Some(base.replay),
+            if committed.is_some() { &[] } else { &deltas },
+        )?;
         Ok(PreparedNativeIncrementalEpochExecutionV1 {
             owner: Arc::clone(&self.owner_affinity),
             p,
+            commit_sequence: committed.map(|r| r.sequence),
         })
     }
 }

@@ -383,3 +383,25 @@ Only selected existing native and AI candidate operations may be invoked under
 their current feature/profile closures. The epoch edge and planned host limits
 need implementation and exact producer/consumer replay. Protocol byte changes,
 independent oracle acceptance and production enablement remain separate decisions.
+
+
+### Incremental epoch execution implementation boundary
+
+The default-off native schema7 candidate composes the actual C+3 authenticated
+config/usage prefix with changed JMT and replay data, followed by ordinary +1
+execution through the actual prepared C+4/C+5 lineage. Descendants use the new
+parameters and validator set recovered from strict edge evidence, not caller
+configuration or the owner's original old-set defaults. Their actual native P
+parent digest binds both speculative application state and command/nonce replay.
+The ordinary demand-prefetch reader and real parallel workers remain active;
+PoCO rollover retains its bounded namespace scan where the protocol requires
+complete configuration/cache normalization.
+
+The signed local business fixture credits the operator at11, transfers to eight
+accounts at12, and compares serial and1/2/4/8-worker full roots, exact payload and
+receipts on the incremental reader. Duplicate command errors agree as well.
+This proves deterministic equivalence for the covered workload, not throughput
+or speedup. Schema7 rejects a second checkpoint/handoff; schema6 remains
+prepare-only and schema5's ordinary +1 guards have not been broadened. The M07
+and M08 commit/reopen receipts do not independently grant a Core vote or node
+activation.

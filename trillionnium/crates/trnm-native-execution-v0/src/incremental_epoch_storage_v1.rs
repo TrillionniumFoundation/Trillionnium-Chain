@@ -146,6 +146,31 @@ pub(crate) fn stage(
     )
 }
 
+/// Only the native owner, after strict finality verification, may invoke this
+/// transaction-scoped sparse apply. This is not independent finality authority.
+pub(crate) fn apply(
+    tx: &Transaction<'_>,
+    ns: &IncrementalNamespaceV1,
+    edge: &AuthenticatedEpochApplicationEdgeV1,
+    expected: &IncrementalHeadV1,
+    prepared: &PreparedIncrementalDeltaV1,
+    operation: [u8; 32],
+) -> Result<IncrementalHeadV1> {
+    ensure!(
+        expected.block == *edge.application_parent().block_id().as_bytes(),
+        "sparse commit source block"
+    );
+    apply_incremental_delta_inner_v1(
+        tx,
+        ns,
+        expected,
+        prepared,
+        operation,
+        edge.new_validator_set().epoch().get(),
+        Some(edge.coordinates()),
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

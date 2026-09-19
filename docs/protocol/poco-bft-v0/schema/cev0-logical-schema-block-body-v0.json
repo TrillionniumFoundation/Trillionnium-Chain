@@ -263,6 +263,9 @@
     { "code": "state_root_mismatch", "class": "root_relation" },
     { "code": "next_epoch_commitment_mismatch", "class": "root_relation" }
   ],
+  "epoch_handoff_admission_error_additions": [
+    { "code": "non_epoch_handoff_block", "class": "epoch_handoff_context" }
+  ],
   "proposal_binding_error_codes": [
     { "code": "ordinary_proposal_context_mismatch", "class": "ordinary_context" },
     { "code": "ordinary_proposal_signature_invalid", "class": "cryptographic" },

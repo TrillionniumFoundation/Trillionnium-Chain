@@ -128,7 +128,10 @@ fn prepare_epoch_from_terminal_v1(
         old.revision(),
     )?;
     let mut core = Core::empty(context.core_config().clone(), state, false);
-    let effects = core.persist(Vec::new())?;
+    // Activation is a real pacemaker start: its exact durable ACK arms view 1.
+    // Keeping this behind the existing barrier prevents timers or timeouts from
+    // racing the independent host's native/custody/checkpoint join.
+    let effects = core.persist(vec![DeferredEffect::ArmViewTimer])?;
     let [Effect::PersistSafetyState(initial_request)] = effects.as_slice() else {
         return Err(CoreError::InvalidRecovery(
             "epoch activation did not produce its exact persistence barrier",

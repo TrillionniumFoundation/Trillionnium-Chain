@@ -1635,6 +1635,26 @@ pub fn apply_incremental_delta_v1(
     operation: [u8; 32],
     epoch: u64,
 ) -> Result<IncrementalHeadV1> {
+    apply_incremental_delta_inner_v1(
+        transaction,
+        namespace,
+        expected,
+        prepared,
+        operation,
+        epoch,
+        None,
+    )
+}
+
+fn apply_incremental_delta_inner_v1(
+    transaction: &Transaction<'_>,
+    namespace: &IncrementalNamespaceV1,
+    expected: &IncrementalHeadV1,
+    prepared: &PreparedIncrementalDeltaV1,
+    operation: [u8; 32],
+    epoch: u64,
+    edge: Option<crate::epoch_edge::EpochApplicationCoordinatesV1>,
+) -> Result<IncrementalHeadV1> {
     ensure!(
         operation != [0; 32] && expected.checksum == head_checksum(namespace, expected)?,
         "incremental expected head/operation"
@@ -1644,15 +1664,32 @@ pub fn apply_incremental_delta_v1(
         [expected.height.to_be_bytes().as_slice()],
         |record| record.get(0),
     )?;
-    ensure!(
-        u64_blob(parent_epoch)? == epoch,
-        "ordinary incremental commit cannot change epoch"
-    );
+    let parent_epoch = u64_blob(parent_epoch)?;
     let row = load_prepared(transaction, namespace, prepared.artifact)?;
-    ensure!(
-        row.epoch.is_none(),
-        "ordinary apply cannot commit an epoch delta"
-    );
+    match edge {
+        None => {
+            ensure!(
+                parent_epoch == epoch,
+                "ordinary incremental commit cannot change epoch"
+            );
+            ensure!(
+                row.epoch.is_none(),
+                "ordinary apply cannot commit an epoch delta"
+            );
+        }
+        Some(edge) => {
+            edge.validate()?;
+            ensure!(
+                row.epoch == Some(edge)
+                    && expected.height == edge.checkpoint_version
+                    && expected.root == edge.checkpoint_root
+                    && prepared.height == edge.first_version
+                    && parent_epoch.checked_add(1) == Some(epoch),
+                "epoch apply exact edge/epochs"
+            );
+            require_absent_incremental_seals_v1(transaction, edge)?;
+        }
+    }
     ensure!(
         row.target == *prepared,
         "incremental prepared target substitution"
@@ -1721,6 +1758,9 @@ pub fn apply_incremental_delta_v1(
     let delta = Delta::decode(&row.bytes, prepared.height)?;
     write_committed_batch(transaction, &delta.batch, &delta.preimages)?;
     insert_root(transaction, &target, epoch)?;
+    if let Some(edge) = edge {
+        ensure!(transaction.execute("UPDATE ni_epoch_edge SET phase=1,committed_block=?1 WHERE strict_binding=?2 AND phase=0 AND committed_block IS NULL",params![target.block.as_slice(),edge.authorization_id.as_slice()])?==1,"epoch edge commit CAS");
+    }
     ensure!(
         transaction.execute(
             "UPDATE ni_prepared SET phase=1 WHERE artifact=?1 AND phase=0",
@@ -1837,8 +1877,11 @@ fn load_epoch_storage_edge_v1(
         edge.authorization_id == binding
             && edge.checkpoint_version == u64_blob(checkpoint)?
             && edge.first_version == u64_blob(first)?
-            && phase == 0
-            && consumed.is_none()
+            && ((phase == 0 && consumed.is_none())
+                || (phase == 1
+                    && consumed
+                        .as_ref()
+                        .is_some_and(|b| b.len() == 32 && b.as_slice() != [0; 32])))
             && fixed::<32>(checksum)?
                 == hash(
                     b"trnm.native-incremental.edge.v1",

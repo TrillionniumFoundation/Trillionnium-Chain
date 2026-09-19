@@ -370,6 +370,23 @@ On restart re-read every used chunk and verify its exact hash, then compare the 
 application committed head with the replayed prefix. A crash after application
 commit but before progress publication resumes from that exact committed head.
 
+The receiver crash contract requires real child-process `SIGKILL` tests at
+manifest persistence, partial chunk write, chunk file sync/link/publication,
+native P before finalized commit, native K before CURRENT, and CURRENT file
+sync/link/publication. Each parent must observe the selected cut before killing
+the child, assert signal 9 (no normal shutdown), reopen the same stage, recheck
+persisted hashes and native committed rows, and complete honest replay with the
+same semantic head. Exact retries must retain committed transaction dedup;
+forged chunks/proofs must not replace the prefix or acquire publication. These
+are local process/storage recovery tests, not power-loss, cross-epoch, signing
+activation or fleet fault/performance acceptance. Fault hooks are test-only.
+`native_replay_sigkill_matrix_v1` exercises all ten cuts using actual finalized
+records from the signed-client/WAL/four-owner execution path; its child helper
+is compiled only in the test binary. The P cut confirms K is still height 3;
+the K cut confirms height 4 before replay resumes to the target. A forged proof
+with recomputed transfer hashes is rejected in a separate stage after the K cut,
+while the honest stage retains its original progress.
+
 A private, locked receiver directory owns at most two staging directories, keyed
 by manifest digest, and a final CURRENT record. A valid-shaped but unauthenticated
 first peer manifest cannot pin the only download slot: an honest retry can choose

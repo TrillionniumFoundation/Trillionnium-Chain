@@ -48,13 +48,17 @@ fn has_raw_key(source: &str) -> bool {
 }
 
 fn assert_raw_lines_are_after_test_cfg(path: &Path, source: &str) {
+    // An external test module may guard its whole file with an inner cfg;
+    // that gate also keeps raw keys out if its parent declaration is moved.
     let first_test_cfg = source
         .match_indices("#[cfg")
-        .find_map(|(offset, _)| {
+        .chain(source.match_indices("#![cfg"))
+        .filter_map(|(offset, _)| {
             let tail = &source[offset..];
             let end = tail.find(']').map(|index| index + 1)?;
             tail[..end].contains("test").then_some(offset)
         })
+        .min()
         .unwrap_or_else(|| panic!("raw-key source is not test-gated: {}", path.display()));
     for (line_number, line) in source.lines().enumerate() {
         if RAW_KEY_TOKENS.iter().any(|token| line.contains(token)) {

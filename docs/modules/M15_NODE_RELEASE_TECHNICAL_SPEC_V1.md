@@ -142,6 +142,22 @@ inert I/O and production-start refusal remain unchanged; wiring a candidate
 socket does not open them. Legacy `trnm-rpc` and G1 fixture finality are excluded
 from this composition.
 
+Network delivery can race a local Timeout or an earlier Vote in the same
+view. The candidate ingress first authenticates the proposer witness and
+checks the parent-time-independent view/parent/height relations and requires
+any TC to contain and select the exact separate justify QC. Only then does it
+strictly process the complete carried QC/TC and read the resulting local view
+and phase. A proposal for an older view, or for the current view
+whose owner is already `VoteSigned`/`TimeoutSigned`, returns an explicit
+no-vote outcome. This outcome does not attest body execution or full proposal
+acceptance, issue a signing lease, reset a signed owner, or add an execution
+coordinate. Any actual carried-certificate progress still updates finality
+bookkeeping and the timer; future proposals must pass the unchanged exact
+parent/binding/execution path. Invalid witnesses, conflicting certificates,
+failed durable readback and unexpected authority errors remain errors. The
+network actor must not terminate merely because an authenticated delayed
+proposal arrives after its local timeout; direct local voting remains strict.
+
 The signed public campaign descriptor adds the chosen profile, application
 signer-policy digest, `wall_clock_epoch_ms`, client socket relative name, M05 queue
 limits, maximum block cadence and finite drain budget. Application signers are
@@ -521,10 +537,11 @@ test does not claim a combined process-kill matrix, external HSM/KMS rollback
 protection, new ordinary signing authority, or multi-host epoch activation.
 
 
-### Planned full-epoch node-lineage checkpoint v1
+### Full-epoch node-lineage checkpoint v1 candidate
 
-This is an implementation-ready local contract, not a source API or activated
-runtime claim. The V0 672-byte record and its invariant
+The default-off `epoch-runtime-candidate` implements this comparison codec,
+bounded schema2 store, continuing-author initial activation and initial-only
+recovery. This is not a production activation claim. The V0 672-byte record and its invariant
 `signer_exact_watermark.scope == scope` remain frozen. Full epoch activation
 uses a distinct V1 record and explicit SQLite schema2 migration. Stable node
 lineage identity is separate from the current ordinary signer's scope. No new
@@ -618,7 +635,10 @@ No old header/epoch is relabeled and no seal creates a native P.
 
 Ordinary successors preserve lineage/origin/active epoch/configuration and
 custody identity, use generation+1 and the exact previous V1 checksum, and
-advance only through actual ordered Core/P/commit/signer readbacks. Qualified
+advance only through actual ordered Core/P/commit/signer readbacks. Owner
+generation stays exact through Ordinary and EpochRetired; the next
+ActivationCommitted increments it by exactly one. Any real application-height
+advance strictly increases both P sequence and native commit sequence. Qualified
 application height never decreases; view comparison applies only within the
 same epoch. Exact retries require byte equality, including signer sequence and
 chain checksum. EpochRetired requires actual active-custody retirement before
@@ -643,7 +663,7 @@ remains fenced until its complete Core/native producer exists. Removed role is
 accepted only in EpochRetired, active ordinary option is absent, and neither a
 live new driver nor a new signing lease can be returned.
 
-The proposed store keeps application_id `0x54524e43` but sets user_version2 in
+The candidate store keeps application_id `0x54524e43` but sets user_version2 in
 the same `BEGIN IMMEDIATE` transaction that creates the exact three STRICT,
 WITHOUT ROWID tables below, copies the verified origin, writes the initial V1
 record/head and removes the legacy table. Migration requires exactly one V0
@@ -652,7 +672,11 @@ owner. Other scopes cause `MultipleLineagesRequireExplicitMigration`, never
 silent deletion. The old V0 opener rejects user_version2, so an old writer
 cannot append after migration. Reopening schema2 never auto-migrates or creates
 missing files. WAL/FULL mode, descriptor/inode/parent-directory checks and fsync
-barriers retain the V0 owner requirements.
+barriers retain the V0 owner requirements. Schema2 enables SQLite
+`NO_CKPT_ON_CLOSE` through its safe configuration API; explicit sync remains
+mandatory and WAL/SHM survive owner closure. Both sidecars must already exist
+with unchanged identity before and after cold open; missing files fence without
+recreation.
 
 | Table | Columns / keys / checks |
 |---|---|
@@ -687,3 +711,35 @@ returns a non-Clone fresh-owner receipt, never a Core, signer or lease. Required
 acceptance includes whole-owner reopen, all three migration crash cuts, both
 new-scope and old-scope substitutions, current/previous pruning, stopped old V0
 writer, pending-sign exact replay, and at least two actual epoch transitions.
+
+The schema2 store has actual SIGKILL tests before transaction commit, after
+commit and after explicit sync; each cold read accepts only the exact original
+V0 cut or exact deterministic V1 target. Additional regressions cover the
+already-open old writer, multiple V0 lineages, immutable origin substitution,
+closed schema, current/previous pruning, independent stale head and live/cold
+missing-sidecar fencing. The concrete consumer freshly compares native's strict
+activation binding with journal9's exact joint binding (distinct from the native
+application authorization ID), verifies same continuing author/key, and consumes
+the typed retired checkpoint owner before migration. Codec/store fixtures alone
+do not establish a complete repeated-epoch runtime or multi-host epoch acceptance.
+
+Migration retains the original DB/WAL/SHM identities through the transaction,
+checks them before commit and after commit before sync, and never re-pins a
+replacement sidecar. The first-timeout signer uses a private producer adapter:
+after the journal's final external-watermark callbacks, it freshly checks the
+independent V1 cut, actual Safety, native C/strict edge and original retirement
+immediately before entering the injected key producer and before accepting its
+result. A changed owner rejects at that boundary, including changes caused by
+an external-watermark callback after earlier runtime checks.
+
+The actual continuing-author fixture starts from ten old-epoch signatures and
+consumes the native checkpoint, strict handoff, journal9, original retirement and
+virgin new signer. Its activation emits one timer and no signature; first timeout
+advances the independent generation three times and emits one new signature.
+A whole-owner close/reopen reproduces the initial activation with no key call,
+then the same first-timeout path succeeds. Progressed Ordinary recovery through
+the initial-only constructor rejects. The final watermark callback replacement
+test copies identical native DB bytes to a new inode and proves rejection before
+any new signature. These are local candidate results; proposal/finality driving,
+progressed recovery, commissioning and repeated crossings still require their
+own actual-owner implementation and fault evidence.

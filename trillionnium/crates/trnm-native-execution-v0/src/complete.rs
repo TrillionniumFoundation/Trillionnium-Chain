@@ -635,7 +635,9 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
 /// persistence profile. Zero selects the sequential scheduling oracle used by
 /// local differential tests; operational callers always use bounded workers.
 #[allow(clippy::too_many_lines)]
-fn compute_complete_native_block_with_workers_v0<R: CompleteBlockExecutionInputV0 + ?Sized>(
+pub(crate) fn compute_complete_native_block_with_workers_v0<
+    R: CompleteBlockExecutionInputV0 + ?Sized,
+>(
     store: &impl CompleteExecutionStoreV1,
     validator_set: &ValidatorSet,
     expected_genesis_hash: GenesisHash,

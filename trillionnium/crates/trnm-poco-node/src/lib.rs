@@ -185,7 +185,24 @@ pub use epoch_retirement_checkpoint_v1::{
     confirm_retired_epoch_node_checkpoint_v1, ConfirmedRetiredEpochNodeCheckpointV1,
     EpochRetirementCheckpointErrorV1,
 };
+#[cfg(feature = "epoch-runtime-candidate")]
+mod epoch_node_checkpoint_v1;
+#[cfg(feature = "epoch-runtime-candidate")]
+pub use epoch_node_checkpoint_v1::{
+    EpochApplicationCutV1, EpochApplicationEdgeCutV1, EpochCheckpointPhaseV1,
+    EpochCheckpointPredecessorV1, EpochCheckpointRoleV1, EpochNodeCheckpointErrorV1,
+    EpochNodeCheckpointFieldsV1, EpochNodeCheckpointV1, EpochOrdinaryCustodyCutV1,
+    EpochRetiredCustodyCutV1, EpochSafetyCutV1, EPOCH_NODE_CHECKPOINT_MAX_BYTES_V1,
+};
+#[cfg(feature = "epoch-runtime-candidate")]
+mod epoch_runtime_candidate_v1;
+#[cfg(feature = "epoch-runtime-candidate")]
+pub use epoch_runtime_candidate_v1::CandidateEpochRuntimeV1;
 mod external_node_checkpoint;
+#[cfg(feature = "epoch-runtime-candidate")]
+pub use external_node_checkpoint::epoch_node_store_v1::{
+    EpochNodeStoreErrorV1, SqliteEpochNodeCheckpointStoreV1,
+};
 #[cfg(feature = "external-proposal-signer")]
 mod external_proposal_signer_runtime;
 #[cfg(feature = "external-signer-runtime")]

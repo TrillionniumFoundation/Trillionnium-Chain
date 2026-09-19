@@ -20,7 +20,7 @@
     "base_schema": "1130bac8c467baa5fded2105e316799ad01fe1e08625358b9d76c4a9837cd9f7",
     "anchor_schema": "769653d06de4f9f56b80ef951012fb0e55a0f13cb4ed9338a52469fb7b4a5c3b",
     "epoch_schema": "0a117b8bdc166be67fd6cd0836a7473e74783528fa2f083e9e20c6470d490166",
-    "block_body_schema": "7ccb53a96492b676b3884f8b049392eef64e63ee4fd2f29f5a1999f1fd5f39f2",
+    "block_body_schema": "ec5d72e78ab0bb831612d802c90c195cc215313ba6fa21e5b8ccffc8ee29c1a2",
     "checkpoint_schema": "ec3f02602c36e648cd142898b4771337d3327f1a2777131ce162f389706a88ec"
   },
   "scope_order": [
