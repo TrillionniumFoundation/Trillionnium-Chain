@@ -6,10 +6,17 @@ use trnm_consensus_types::{
     decode_epoch_activation_evidence_v0_exact, EpochActivationEvidenceBytesV0,
 };
 
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Mutex,
+};
 
 static PAUSE_AFTER_METADATA_READ: AtomicBool = AtomicBool::new(false);
 static METADATA_READ_REACHED: AtomicBool = AtomicBool::new(false);
+// The failpoint is process-global because it lives in the test module. Keep
+// the two interleaving tests mutually exclusive so one test cannot release or
+// observe the other test's pause state when libtest runs them in parallel.
+static METADATA_INTERLEAVING_TEST_LOCK: Mutex<()> = Mutex::new(());
 
 /// Test-only interleaving point used to prove that a durable read observes one
 /// SQLite WAL snapshot even when a writer commits between metadata and chunk
@@ -27,11 +34,12 @@ fn begin_metadata_read_pause_v1() {
 }
 
 fn wait_metadata_read_pause_v1() {
-    for _ in 0..10_000 {
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while std::time::Instant::now() < deadline {
         if METADATA_READ_REACHED.load(Ordering::SeqCst) {
             return;
         }
-        std::thread::yield_now();
+        std::thread::sleep(std::time::Duration::from_millis(1));
     }
     panic!("metadata read did not reach deterministic interleaving point");
 }
@@ -952,6 +960,7 @@ fn native_sqlite_append_rejects_stale_concurrent_writer_after_durable_cas() {
 
 #[test]
 fn native_sqlite_readback_uses_one_snapshot_while_append_commits_between_queries() {
+    let _interleaving_guard = METADATA_INTERLEAVING_TEST_LOCK.lock().unwrap();
     let (path, manifest, application, chunks) = durable_session_fixture();
     let store_path = std::env::temp_dir().join(format!(
         "trnm-native-sync-read-snapshot-{}-{}.sqlite",
@@ -987,6 +996,7 @@ fn native_sqlite_readback_uses_one_snapshot_while_append_commits_between_queries
 
 #[test]
 fn native_sqlite_resume_holds_writer_lock_until_authenticated_join_finishes() {
+    let _interleaving_guard = METADATA_INTERLEAVING_TEST_LOCK.lock().unwrap();
     let (path, manifest, application, chunks) = durable_session_fixture();
     let store_path = std::env::temp_dir().join(format!(
         "trnm-native-sync-resume-lock-{}-{}.sqlite",
