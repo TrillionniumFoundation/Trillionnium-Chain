@@ -1656,6 +1656,62 @@ mod native_authorization_tests {
     }
 
     #[test]
+    fn incremental_gc_is_owner_bound_bounded_and_never_runs_from_block_commit() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("application.sqlite3");
+        let app = open(&path, config());
+        let (header, executed) = execute(&app, next_request(&app), BlockKind::Regular);
+        app.commit_block(NativeApplicationCommitRequestV0::new(executed))
+            .unwrap();
+        let source = app.confirmed_committed_head_v0().unwrap();
+        app.upgrade_incremental_schema_v1(&source, &header).unwrap();
+
+        let report = app.collect_incremental_nodes_v1(0).unwrap();
+        assert_eq!(report.deleted_nodes, 0);
+        assert!(report.audited_nodes > 0);
+        let sql = rusqlite::Connection::open(&path).unwrap();
+        let anchor: [u8; 32] = sql
+            .query_row(
+                "SELECT source_anchor FROM native_incremental_owner_v1",
+                [],
+                |row| {
+                    let bytes: Vec<u8> = row.get(0)?;
+                    bytes.try_into().map_err(|_| rusqlite::Error::InvalidQuery)
+                },
+            )
+            .unwrap();
+        assert_eq!(report.owner_anchor, Some(anchor));
+        assert_eq!(
+            sql.query_row("SELECT count(*) FROM ni_gc_queue", [], |row| {
+                row.get::<_, u64>(0)
+            })
+            .unwrap(),
+            0
+        );
+
+        // The sidecar lock prevents a second owner from opening the same
+        // durable namespace while the first owner is live.
+        assert!(DurableNativeApplicationV0::open(&path, config()).is_err());
+
+        // Corrupting the independently pinned owner identity fences the
+        // maintenance transaction before collection; no queue mutation is
+        // committed. This also proves block commit did not silently invoke GC.
+        sql.execute(
+            "UPDATE native_incremental_owner_v1 SET source_anchor=?1",
+            [vec![0u8; 32]],
+        )
+        .unwrap();
+        assert!(app.collect_incremental_nodes_v1(1).is_err());
+        assert_eq!(
+            sql.query_row("SELECT count(*) FROM ni_gc_queue", [], |row| {
+                row.get::<_, u64>(0)
+            })
+            .unwrap(),
+            0
+        );
+    }
+
+    #[test]
     fn shape_valid_unpersisted_artifact_cannot_mint_checkpoint_authority() {
         let directory = tempfile::tempdir().unwrap();
         let app = open(&directory.path().join("application.sqlite3"), config());

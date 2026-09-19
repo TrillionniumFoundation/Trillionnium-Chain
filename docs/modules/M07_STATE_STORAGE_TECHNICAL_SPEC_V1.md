@@ -572,8 +572,21 @@ first-new edges, state-sync exports, light-client/accountability horizons and
 unacknowledged commits. An edge pins checkpoint root C and its complete reachable
 physical node/value closure; the virtual root itself owns no data to prune.
 
-Incremental node-only GC is implemented by `collect_incremental_nodes_v1`.
-It uses immutable node child-reference counts plus explicit root pins. Insert
+Incremental node-only GC is implemented by the explicit
+`DurableNativeApplicationV0::collect_incremental_nodes_v1(max_nodes)` owner
+maintenance API. The underlying transaction primitive is crate-private and
+cannot be invoked by a caller that supplies an arbitrary SQLite transaction or
+namespace. The API holds the durable owner's operation lock, confirms the
+process-pinned namespace identity, opens an immediate SQLite writer transaction,
+audits the schema-5 `native_incremental_owner_v1` anchor and head binding, and
+only then invokes the collector. Its report carries the validated owner anchor;
+a report with no owner anchor is storage-primitive output and is not an owner
+maintenance result. A successful pass is committed, database/directory synced,
+and reopened through the normal owner audit. GC is never called automatically
+from block preparation or commit, so the scheduler remains an explicit owner
+decision.
+
+The collector uses immutable node child-reference counts plus explicit root pins. Insert
 each physical node once and increment its exact child edges once; shared nodes
 are not rewritten. Root-pin changes are transactional with head/edge changes.
 The collector first audits all node records, child hashes, roots, pins,

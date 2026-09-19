@@ -74,6 +74,11 @@ pub struct PreparedIncrementalDeltaV1 {
 /// retention authority and remain available for replay and recovery.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IncrementalGcReportV1 {
+    /// `None` identifies the storage primitive's transaction-only report. The
+    /// durable owner fills this field only after validating its owner anchor,
+    /// operation lock and writer transaction; callers should require `Some`
+    /// before treating a report as an owner maintenance result.
+    pub owner_anchor: Option<[u8; 32]>,
     pub audited_nodes: u64,
     pub enqueued_nodes: u64,
     pub stale_queue_entries: u64,
@@ -956,7 +961,7 @@ struct GcNodeRecord {
 /// unreachable children in this same transaction. No value, preimage, root or
 /// prepared row is removed, since this owner does not have a proven value
 /// retention floor.
-pub fn collect_incremental_nodes_v1(
+pub(crate) fn collect_incremental_nodes_v1(
     transaction: &Transaction<'_>,
     namespace: &IncrementalNamespaceV1,
     max_nodes: usize,
@@ -1135,6 +1140,7 @@ pub fn collect_incremental_nodes_v1(
     let queue_depth: u64 =
         transaction.query_row("SELECT count(*) FROM ni_gc_queue", [], |row| row.get(0))?;
     Ok(IncrementalGcReportV1 {
+        owner_anchor: None,
         audited_nodes: nodes.len() as u64,
         enqueued_nodes,
         stale_queue_entries,

@@ -981,6 +981,48 @@ impl DurableNativeApplicationV0 {
         })()
         .map_err(fail)
     }
+
+    /// Run one explicit, bounded node-only maintenance pass as the live
+    /// schema-5 incremental owner.
+    ///
+    /// The storage collector is intentionally crate-private: a caller cannot
+    /// provide an arbitrary `Transaction` or namespace and claim GC
+    /// authority. This owner boundary takes the process-local operation lock,
+    /// revalidates the held namespace identity, opens an immediate SQLite
+    /// writer transaction, verifies the independently pinned migration owner,
+    /// and only then invokes the collector. A successful pass is fsynced and
+    /// re-audited before its report is returned. No block commit calls this
+    /// method automatically; scheduling remains an explicit maintenance
+    /// decision by the owner.
+    pub fn collect_incremental_nodes_v1(
+        &self,
+        max_nodes: usize,
+    ) -> Result<ni::IncrementalGcReportV1> {
+        let _guard = self.lock_operation()?;
+        let mut connection = open_writable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        ensure!(
+            epoch_durable::schema_version(&connection)? == SCHEMA_VERSION,
+            "incremental GC owner schema unavailable"
+        );
+        let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let metadata = load_metadata_v0(&tx, &self.config)?;
+        let owner = self.pinned_incremental_owner(&tx, &metadata)?;
+        let mut report =
+            ni::collect_incremental_nodes_v1(&tx, &namespace(&self.config), max_nodes)?;
+        // The storage primitive has no owner authority and therefore leaves
+        // this field empty. Fill it only after the owner and writer checks
+        // above have succeeded.
+        report.owner_anchor = Some(owner.anchor);
+        tx.commit()?;
+        drop(connection);
+        sync_store_commit_boundary_v0(&self.path)?;
+        // Reopen through the same owner audit so a successful report cannot
+        // hide a broken owner/head join introduced by maintenance.
+        fresh_validate_v0(&self.path, &self.config)?;
+        Ok(report)
+    }
+
     fn pinned_incremental_owner(
         &self,
         tx: &rusqlite::Transaction<'_>,
