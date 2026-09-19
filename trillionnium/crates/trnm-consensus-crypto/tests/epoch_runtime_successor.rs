@@ -443,3 +443,73 @@ fn strict_runtime_context_accepts_a_real_repeated_epoch_successor() {
         Epoch::new(4)
     );
 }
+
+#[test]
+fn strict_runtime_context_rejects_a_successor_endpoint_substitution() {
+    let predecessor_context =
+        StrictEpochRuntimeContextV1::from_activation_v1(predecessor()).unwrap();
+    let (evidence, old_set, old_params, binding, mut ancestry) =
+        successor_evidence(predecessor_context.activation());
+    let successor = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &old_set,
+        &old_params,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let successor_context = StrictEpochRuntimeContextV1::from_activation_v1(successor).unwrap();
+    ancestry.pop();
+    let error = StrictEpochRuntimeContextV1::compose_successor_v1(
+        &predecessor_context,
+        successor_context,
+        &ancestry,
+    )
+    .expect_err("a missing successor checkpoint parent must not compose");
+    assert!(format!("{error:?}").contains("successor retained ancestry endpoints differ"));
+}
+
+#[test]
+fn strict_runtime_context_rejects_a_disconnected_successor_ancestry_edge() {
+    let predecessor_context =
+        StrictEpochRuntimeContextV1::from_activation_v1(predecessor()).unwrap();
+    let (evidence, old_set, old_params, binding, mut ancestry) =
+        successor_evidence(predecessor_context.activation());
+    let successor = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &old_set,
+        &old_params,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let successor_context = StrictEpochRuntimeContextV1::from_activation_v1(successor).unwrap();
+    let broken = ancestry[1].clone();
+    ancestry[1] = BlockHeader::new(
+        broken.genesis_hash(),
+        broken.chain_id(),
+        broken.protocol_version(),
+        broken.epoch(),
+        broken.view(),
+        broken.height(),
+        broken.block_kind(),
+        BlockId::new([0xabu8; 32]),
+        broken.proposer_id(),
+        broken.validator_set_id(),
+        broken.consensus_parameters_hash(),
+        broken.payload_root(),
+        broken.state_root(),
+        broken.receipts_root(),
+        broken.evidence_root(),
+        broken.timestamp_ms(),
+        broken.next_epoch_commitment_hash(),
+    )
+    .unwrap();
+    let error = StrictEpochRuntimeContextV1::compose_successor_v1(
+        &predecessor_context,
+        successor_context,
+        &ancestry,
+    )
+    .expect_err("a disconnected retained ancestry edge must not compose");
+    assert!(format!("{error:?}").contains("successor retained ancestry edge mismatch"));
+}
