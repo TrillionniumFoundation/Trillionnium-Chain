@@ -16,6 +16,7 @@ import argparse
 import asyncio
 import hashlib
 import json
+import math
 import pathlib
 import signal
 import socket
@@ -207,6 +208,161 @@ def percentile(values: list[float], fraction: float) -> float:
     return ordered[index]
 
 
+def _require(condition: bool, message: str) -> None:
+    if not condition:
+        fail(f"invalid campaign evidence: {message}")
+
+
+def _require_digest(value: Any, field: str) -> None:
+    _require(
+        isinstance(value, str)
+        and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value),
+        f"{field} must be a lowercase sha256 digest",
+    )
+
+
+def _validate_latency(value: Any, phase_name: str) -> None:
+    _require(isinstance(value, dict), f"{phase_name}.latency_ms must be an object")
+    expected = ("min", "p50", "p95", "max")
+    _require(
+        all(field in value for field in expected),
+        f"{phase_name}.latency_ms is missing a percentile",
+    )
+    samples: list[float] = []
+    for field in expected:
+        sample = value[field]
+        _require(
+            isinstance(sample, (int, float))
+            and not isinstance(sample, bool)
+            and math.isfinite(sample)
+            and sample >= 0,
+            f"{phase_name}.latency_ms.{field} must be finite and non-negative",
+        )
+        samples.append(float(sample))
+    _require(
+        samples == sorted(samples),
+        f"{phase_name}.latency_ms percentiles are not monotonic",
+    )
+
+
+def validate_campaign_result(result: Any) -> None:
+    """Reject locally-produced evidence that cannot represent this campaign.
+
+    This is an integrity check for the bounded loopback campaign, not a
+    signature or an acceptance gate.  In particular, all claims that require
+    independent hosts, physical power loss, production activation or a
+    performance target stay explicitly false.
+    """
+
+    _require(isinstance(result, dict), "result must be an object")
+    _require(result.get("schema") == SCHEMA, "schema mismatch")
+    _require(
+        result.get("campaign_scope") == "single-host-loopback-multiprocess",
+        "campaign scope must remain single-host loopback",
+    )
+    _require(
+        result.get("source_proxy") == str(PROXY.relative_to(ROOT)),
+        "source_proxy does not identify the checked-in proxy",
+    )
+    _require_digest(result.get("source_proxy_sha256"), "source_proxy_sha256")
+    _require_digest(result.get("config_sha256"), "config_sha256")
+
+    _require(result.get("endpoint_count") == 3, "endpoint_count must be three")
+    _require(result.get("link_count") == 3, "link_count must be three")
+    messages = result.get("messages_per_link")
+    _require(
+        isinstance(messages, int) and not isinstance(messages, bool) and 1 <= messages <= 10_000,
+        "messages_per_link is outside the accepted bound",
+    )
+    _require(result.get("restart_count") == 1, "exactly one proxy restart is required")
+
+    started = result.get("started_monotonic_ns")
+    completed = result.get("completed_monotonic_ns")
+    elapsed = result.get("elapsed_ms")
+    _require(
+        isinstance(started, int)
+        and not isinstance(started, bool)
+        and isinstance(completed, int)
+        and not isinstance(completed, bool)
+        and completed > started,
+        "monotonic timestamps must increase",
+    )
+    _require(
+        isinstance(elapsed, (int, float))
+        and not isinstance(elapsed, bool)
+        and math.isfinite(elapsed)
+        and elapsed > 0,
+        "elapsed_ms must be finite and positive",
+    )
+    expected_elapsed = (completed - started) / 1_000_000.0
+    _require(
+        math.isclose(float(elapsed), expected_elapsed, rel_tol=1e-9, abs_tol=1e-6),
+        "elapsed_ms does not match monotonic timestamps",
+    )
+
+    expected_flags = {
+        "candidate_only": True,
+        "host_attestation": False,
+        "independent_multihost_evidence": False,
+        "physical_power_loss_evidence": False,
+        "performance_acceptance": False,
+        "production_activation": False,
+    }
+    for field, expected in expected_flags.items():
+        _require(type(result.get(field)) is bool and result[field] is expected, f"{field} flag drifted")
+
+    phases = result.get("phases")
+    _require(isinstance(phases, list) and len(phases) == 8, "phase list must contain eight phases")
+    expected_names = [
+        "baseline",
+        "partition",
+        "heal",
+        "partition",
+        "heal",
+        "partition",
+        "heal",
+        "proxy_restart",
+    ]
+    _require(
+        [phase.get("name") if isinstance(phase, dict) else None for phase in phases]
+        == expected_names,
+        "phase ordering does not match baseline/partition/heal/restart",
+    )
+    link_names = [f"link-{index}" for index in range(3)]
+    baseline = phases[0]
+    _require(isinstance(baseline, dict), "baseline phase must be an object")
+    _require(baseline.get("links") == link_names, "baseline links do not cover all links")
+    _require(baseline.get("accepted") == 3 * messages, "baseline accepted count mismatch")
+    _require(baseline.get("rejected") == 0, "baseline rejected count must be zero")
+    _validate_latency(baseline.get("latency_ms"), "baseline")
+
+    for index in range(3):
+        partition = phases[1 + index * 2]
+        heal = phases[2 + index * 2]
+        link_name = link_names[index]
+        _require(isinstance(partition, dict), f"partition {index} must be an object")
+        _require(isinstance(heal, dict), f"heal {index} must be an object")
+        _require(partition.get("link") == link_name, f"partition {index} link mismatch")
+        _require(heal.get("link") == link_name, f"heal {index} link mismatch")
+        _require(
+            partition.get("accepted") == 2 * messages
+            and partition.get("rejected") == messages
+            and partition.get("expected_rejected") == messages,
+            f"partition {index} counts do not prove one-link isolation",
+        )
+        _require(
+            heal.get("accepted") == messages and heal.get("rejected") == 0,
+            f"heal {index} counts do not prove recovery",
+        )
+
+    restart = phases[-1]
+    _require(isinstance(restart, dict), "proxy_restart phase must be an object")
+    _require(restart.get("links") == link_names, "proxy_restart links do not cover all links")
+    _require(restart.get("accepted") == 3 and restart.get("rejected") == 0, "proxy restart counts mismatch")
+    _validate_latency(restart.get("latency_ms"), "proxy_restart")
+
+
 def run_campaign(*, output: pathlib.Path, messages: int) -> dict[str, Any]:
     if messages < 1 or messages > 10_000:
         fail("messages must be between 1 and 10000")
@@ -391,6 +547,7 @@ def run_campaign(*, output: pathlib.Path, messages: int) -> dict[str, Any]:
         "performance_acceptance": False,
         "production_activation": False,
     }
+    validate_campaign_result(result)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_bytes(canonical(result))
     digest_path = output.with_suffix(output.suffix + ".sha256")

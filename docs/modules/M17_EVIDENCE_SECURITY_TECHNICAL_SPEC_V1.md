@@ -67,6 +67,13 @@ The JSON artifact binds the proxy source digest, canonical link configuration
 digest, exact phase counts, monotonic timing and a sidecar artifact digest. The
 campaign test executes the same child-process path with one message per link.
 
+Before the artifact is written, `validate_campaign_result` rechecks the
+schema, source/config digest shape, monotonic elapsed time, exact phase order,
+per-link isolation/recovery counts and latency percentile ordering. It also
+fails closed if any candidate-only boundary flag is changed. The regression
+suite mutates partition counts, latency ordering and the performance flag to
+prove that a hand-edited result cannot be accepted by this local verifier.
+
 This closes a reproducible repository-side transport-fault observation and
 loopback latency measurement. It intentionally sets
 `candidate_only=true`, `independent_multihost_evidence=false`,

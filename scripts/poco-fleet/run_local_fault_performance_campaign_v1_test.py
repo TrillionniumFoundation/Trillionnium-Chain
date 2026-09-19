@@ -67,9 +67,47 @@ def test_campaign_rejects_invalid_message_bound() -> None:
             raise AssertionError("invalid message bound unexpectedly accepted")
 
 
+def test_campaign_result_rejects_tampered_fault_counts_and_claim_flags() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:
+        result = campaign.run_campaign(output=pathlib.Path(raw) / "evidence.json", messages=2)
+
+        tampered_counts = json.loads(json.dumps(result))
+        tampered_counts["phases"][1]["rejected"] = 1
+        try:
+            campaign.validate_campaign_result(tampered_counts)
+        except RuntimeError as error:
+            assert "partition 0 counts" in str(error)
+        else:
+            raise AssertionError("tampered partition counts unexpectedly accepted")
+
+        tampered_claim = json.loads(json.dumps(result))
+        tampered_claim["performance_acceptance"] = True
+        try:
+            campaign.validate_campaign_result(tampered_claim)
+        except RuntimeError as error:
+            assert "performance_acceptance flag" in str(error)
+        else:
+            raise AssertionError("promoted performance claim unexpectedly accepted")
+
+
+def test_campaign_result_rejects_non_monotonic_latency() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:
+        result = campaign.run_campaign(output=pathlib.Path(raw) / "evidence.json", messages=1)
+        tampered = json.loads(json.dumps(result))
+        tampered["phases"][0]["latency_ms"]["p95"] = tampered["phases"][0]["latency_ms"]["max"] + 1
+        try:
+            campaign.validate_campaign_result(tampered)
+        except RuntimeError as error:
+            assert "percentiles are not monotonic" in str(error)
+        else:
+            raise AssertionError("non-monotonic latency unexpectedly accepted")
+
+
 def main() -> None:
     test_campaign_runs_real_endpoint_and_proxy_processes()
     test_campaign_rejects_invalid_message_bound()
+    test_campaign_result_rejects_tampered_fault_counts_and_claim_flags()
+    test_campaign_result_rejects_non_monotonic_latency()
     print(
         "trnm_local_fault_performance_campaign_v1_test=passed "
         "real_endpoint_processes=true real_proxy_process=true "
