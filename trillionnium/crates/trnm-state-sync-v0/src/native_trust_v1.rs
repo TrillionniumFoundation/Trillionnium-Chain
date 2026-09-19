@@ -976,8 +976,11 @@ fn configure_native_connection_v1(
     {
         return Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch);
     }
+    // Keep the owner transaction's wait bounded but long enough for a
+    // legitimate resume/join to finish its complete authenticated readback.
+    // A stuck writer still fails closed after this finite deadline.
     connection
-        .busy_timeout(std::time::Duration::from_millis(250))
+        .busy_timeout(Duration::from_secs(5))
         .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
     Ok(())
 }
