@@ -78,6 +78,19 @@ progress, and resumes with a valid append.  This is SQLite process-crash evidenc
 it does not qualify physical power loss, controller-cache durability, or an
 independent host rollback floor.
 
+The migration adapter has a separate read-side atomicity boundary:
+`SqliteIncrementalStateStoreV0::read_snapshot_v0` reads metadata and ordered
+target rows through one deferred SQLite transaction.  `readback_v0`, the
+root-checked readback, snapshot export and the delta base read all consume that
+same pinned observation, so a concurrent committed delta cannot pair a new
+generation with predecessor rows.  The regression
+`sqlite_incremental_readback_pins_metadata_and_rows_to_one_snapshot` commits a
+delta after the reader has observed metadata and requires the reader to return
+the complete predecessor generation and rows digest.  This closes local
+metadata/row observation skew; it remains staging evidence and does not qualify
+peer transfer, physical durability, retention/compaction, or independent host
+rollback authority.
+
 ## Acceptance boundary
 
 The supplement requires a positive and a negative source regression for every
