@@ -61,6 +61,14 @@ path never repairs it. A deployment still needs externally administered
 fault-injection or physical power-loss evidence and a bounded disk-exhaustion
 campaign before enabling replacement or cutover.
 
+The native chunk owner also has a bounded local `SQLITE_FULL` regression:
+`native_sqlite_append_fails_closed_at_database_page_ceiling` applies a real SQLite
+`max_page_count` ceiling to an 8 KiB append, requires the writer transaction to fail,
+and verifies that the durable readback and retained chunk set remain byte-for-byte
+unchanged. This is repository-level disk-exhaustion rollback evidence only; it does
+not qualify physical power interruption, controller-cache behavior, filesystem
+replacement, or independent host rollback authority.
+
 The adapter also exposes a bounded local handoff pair:
 `export_snapshot_v0` emits `DurableDeltaSnapshotV0` only after metadata, ordered
 rows, row digest, and target root have been read back and independently

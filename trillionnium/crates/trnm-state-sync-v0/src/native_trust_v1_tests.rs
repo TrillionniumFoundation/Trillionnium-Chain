@@ -725,6 +725,62 @@ fn native_sqlite_uncommitted_append_is_rolled_back_after_sigkill_and_can_resume(
 }
 
 #[test]
+fn native_sqlite_append_fails_closed_at_database_page_ceiling() {
+    let (path, mut manifest, application, _) = durable_session_fixture();
+    // Use a page-sized payload so the bounded SQLite ceiling is exercised
+    // deterministically even when the empty store still has free space in its
+    // last page.
+    let bytes = vec![0xA5; 8 * 1024];
+    manifest.chunk_count = 1;
+    manifest.maximum_chunk_bytes = bytes.len() as u32;
+    manifest.total_bytes = bytes.len() as u64;
+    manifest.chunk_root = Digest32V0([0; 32]);
+    manifest.manifest_digest = Digest32V0([0; 32]);
+    let binding = manifest.chunk_binding_digest();
+    let chunk = SnapshotChunkV0 {
+        manifest_digest: binding,
+        index: 0,
+        chunk_digest: SnapshotChunkV0::canonical_digest(binding, 0, &bytes),
+        bytes,
+    };
+    manifest.chunk_root = chunk_merkle_root_v0(&[chunk.chunk_digest]);
+    manifest.manifest_digest = manifest.canonical_digest();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-full-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let mut session = NativeStateSyncSessionV1::begin(path, manifest, application).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &session).unwrap();
+
+    // Bound the real SQLite file to its current page count.  The next append
+    // therefore reaches SQLITE_FULL after beginning the writer transaction;
+    // this is a bounded disk-exhaustion regression, not a simulated error.
+    let connection = rusqlite::Connection::open(&store_path).unwrap();
+    let pages: i64 = connection
+        .query_row("PRAGMA page_count", [], |row| row.get(0))
+        .unwrap();
+    assert!(pages > 0);
+    drop(connection);
+
+    let before = store.readback_v1().unwrap();
+    let limited_store = store.clone().with_test_max_page_count_v1(pages);
+    let result = limited_store.append_chunk_v1(&mut session, chunk);
+    let error = result.expect_err("page ceiling must reject the append");
+    assert!(matches!(error, NativeStateSyncStoreErrorV1::Sqlite(_)));
+    assert_eq!(session.readback(), before);
+    assert_eq!(store.readback_v1().unwrap(), before);
+    assert!(store.retained_chunks_v1().unwrap().is_empty());
+
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+}
+
+#[test]
 fn native_sqlite_initialize_persists_prefilled_session_chunks() {
     let (path, manifest, application, chunks) = durable_session_fixture();
     let store_path = std::env::temp_dir().join(format!(

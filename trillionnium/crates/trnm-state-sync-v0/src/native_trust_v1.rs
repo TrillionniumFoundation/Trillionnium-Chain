@@ -640,6 +640,8 @@ impl NativeStateSyncSessionV1 {
 #[derive(Clone, Debug)]
 pub struct SqliteNativeStateSyncStoreV1 {
     path: PathBuf,
+    #[cfg(test)]
+    test_max_page_count: Option<i64>,
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -695,7 +697,11 @@ impl SqliteNativeStateSyncStoreV1 {
         transaction
             .commit()
             .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
-        let store = Self { path };
+        let store = Self {
+            path,
+            #[cfg(test)]
+            test_max_page_count: None,
+        };
         let actual = store.readback_v1()?;
         if actual != readback {
             return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
@@ -707,9 +713,22 @@ impl SqliteNativeStateSyncStoreV1 {
     /// retained chunk bytes.  This is intentionally independent of a trust
     /// path; source authority is re-established only by `resume_existing_v1`.
     pub fn open_existing(path: impl Into<PathBuf>) -> Result<Self, NativeStateSyncStoreErrorV1> {
-        let store = Self { path: path.into() };
+        let store = Self {
+            path: path.into(),
+            #[cfg(test)]
+            test_max_page_count: None,
+        };
         let _ = store.readback_v1()?;
         Ok(store)
+    }
+
+    /// Apply a real SQLite page ceiling to the next writer connections. This
+    /// is test-only fault injection: production callers cannot lower a store's
+    /// durable resource policy through this API.
+    #[cfg(test)]
+    pub(crate) fn with_test_max_page_count_v1(mut self, pages: i64) -> Self {
+        self.test_max_page_count = Some(pages);
+        self
     }
 
     /// Read the durable identity and progress from one fresh SQLite snapshot.
@@ -872,6 +891,12 @@ impl SqliteNativeStateSyncStoreV1 {
         let connection = Connection::open_with_flags(&self.path, OpenFlags::SQLITE_OPEN_READ_WRITE)
             .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
         configure_native_connection_v1(&connection, false)?;
+        #[cfg(test)]
+        if let Some(pages) = self.test_max_page_count {
+            connection
+                .pragma_update(None, "max_page_count", pages)
+                .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        }
         verify_native_schema_v1(&connection)?;
         Ok(connection)
     }
