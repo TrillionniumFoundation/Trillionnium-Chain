@@ -20,13 +20,6 @@ trnm-node-boundary-v0 = { path = "../trnm-node-boundary-v0", version = "=0.1.0" 
 trnm-poco-node-io = { path = "../trnm-poco-node-io", version = "=0.1.0", optional = true, features = ["candidate-authenticated-p2p"] }
 trnm-state-sync-v0 = { path = "../trnm-state-sync-v0", version = "=0.1.0" }
 
-[dev-dependencies]
-# The composition test exercises the real candidate journal against the
-# node-owned adapter without adding this candidate package to M15's production
-# dependency closure.
-trnm-poco-node-production-v0 = { path = "../trnm-poco-node-production-v0", version = "=0.1.0" }
-rusqlite = { version = "0.32", features = ["bundled"] }
-
 [package.metadata.trnm]
 module = "M08"
 secondary_module = "M13"

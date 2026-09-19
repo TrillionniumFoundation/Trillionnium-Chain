@@ -43,7 +43,7 @@ be recovered by an exact read-only retry; the two owners are deliberately not
 claimed to be one atomic transaction.
 
 The bridge unit tests cover exact identity and block/state-root substitution.
-`trnm-durable-file-adapters-v0/tests/production_tx_state_sync_e2e.rs::finalized_readback_survives_sync_mismatch_and_exact_recovery_retry`
+`trnm-poco-node-production-v0/tests/production_tx_state_sync_e2e.rs::finalized_readback_survives_sync_mismatch_and_exact_recovery_retry`
 adds a candidate-only vertical composition: a real hash-chained transaction
 journal records finality, an intentionally mismatched SQLite binding returns a
 typed `Sync` error, and a recovered `ProductionTxNodeAdapterV0` retries the

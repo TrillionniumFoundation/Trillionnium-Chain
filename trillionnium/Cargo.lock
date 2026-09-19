@@ -1643,12 +1643,10 @@ name = "trnm-durable-file-adapters-v0"
 version = "0.1.0"
 dependencies = [
  "fs2",
- "rusqlite",
  "rustix",
  "sha2",
  "trnm-node-boundary-v0",
  "trnm-poco-node-io",
- "trnm-poco-node-production-v0",
  "trnm-state-sync-v0",
  "trnm-tx-lifecycle-v0",
 ]
@@ -1967,7 +1965,9 @@ version = "0.1.0"
 name = "trnm-poco-node-production-v0"
 version = "0.1.0"
 dependencies = [
+ "rusqlite",
  "trnm-control-plane-v0",
+ "trnm-durable-file-adapters-v0",
  "trnm-migration-v0",
  "trnm-node-boundary-v0",
  "trnm-state-sync-v0",

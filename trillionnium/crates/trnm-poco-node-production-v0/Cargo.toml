@@ -13,6 +13,12 @@ trnm-state-sync-v0 = { path = "../trnm-state-sync-v0", version = "=0.1.0" }
 trnm-migration-v0 = { path = "../trnm-migration-v0", version = "=0.1.0" }
 trnm-control-plane-v0 = { path = "../trnm-control-plane-v0", version = "=0.1.0" }
 
+[dev-dependencies]
+# Candidate journal wiring is exercised only by this M15 integration test;
+# the production dependency closure remains candidate-free.
+trnm-durable-file-adapters-v0 = { path = "../trnm-durable-file-adapters-v0", version = "=0.1.0", features = ["candidate-tx-journal"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+
 [package.metadata.trnm]
 module = "M15"
 secondary_modules = ["M05", "M13", "M16"]
