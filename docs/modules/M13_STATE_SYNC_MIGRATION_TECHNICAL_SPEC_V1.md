@@ -335,10 +335,13 @@ remain planned, separate from generic snapshot verification.
 
 The native SQLite read APIs (`binding_and_readback_v1`, `retained_chunks_v1`
 and `resume_existing_v1`) must read metadata and all retained chunks inside one
-explicit read transaction. A concurrent committed append may become visible on
-the next call, but must not combine old metadata with new chunks or report a
-legal append as corruption. Rehash and compare the complete snapshot before
-returning it; this observation does not lock out later progress or supply
+explicit transaction. A concurrent committed append may become visible on the
+next call, but must not combine old metadata with new chunks or report a legal
+append as corruption. `resume_existing_v1` additionally holds `BEGIN IMMEDIATE`
+until the freshly supplied trust path, manifest and application checkpoint have
+been joined to the rehashed complete snapshot; a writer therefore cannot commit
+between durable readback and the returned resume handle. Rehash and compare the
+complete snapshot before returning it; this observation does not supply
 snapshot-completion authority.
 
 `StateSyncSessionV0::new` validates manifest against the verified terminal link.

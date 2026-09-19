@@ -986,6 +986,61 @@ fn native_sqlite_readback_uses_one_snapshot_while_append_commits_between_queries
 }
 
 #[test]
+fn native_sqlite_resume_holds_writer_lock_until_authenticated_join_finishes() {
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-resume-lock-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let base =
+        NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &base).unwrap();
+
+    // Pause after the resume transaction has read metadata.  A writer that
+    // could interleave here would make the returned session describe a stale
+    // durable snapshot; BEGIN IMMEDIATE must keep it waiting until resume
+    // commits.
+    begin_metadata_read_pause_v1();
+    let resume_store = store.clone();
+    let resume_path = path.clone();
+    let resume_manifest = manifest.clone();
+    let resume = std::thread::spawn(move || {
+        resume_store.resume_existing_v1(resume_path, resume_manifest, application)
+    });
+    wait_metadata_read_pause_v1();
+
+    let writer_done = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let writer_done_clone = writer_done.clone();
+    let writer_store = store.clone();
+    let writer_base = base.clone();
+    let writer_chunk = chunks[0].clone();
+    let writer = std::thread::spawn(move || {
+        let mut session = writer_base;
+        let result = writer_store.append_chunk_v1(&mut session, writer_chunk);
+        writer_done_clone.store(true, Ordering::SeqCst);
+        result
+    });
+    // The writer must not complete while the authenticated resume still owns
+    // the SQLite writer lock.
+    std::thread::sleep(std::time::Duration::from_millis(20));
+    assert!(!writer_done.load(Ordering::SeqCst));
+    end_metadata_read_pause_v1();
+
+    let resumed = resume.join().unwrap().unwrap();
+    assert_eq!(resumed.readback().received_chunk_count, 0);
+    writer.join().unwrap().unwrap();
+    assert_eq!(store.readback_v1().unwrap().received_chunk_count, 1);
+
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+}
+
+#[test]
 fn native_path_rejects_replay_reordering_disconnected_checkpoint_and_untrusted_set() {
     let (evidence, set, params, binding) = fixture("positive");
     let decoded = decode_epoch_activation_evidence_v0_exact(

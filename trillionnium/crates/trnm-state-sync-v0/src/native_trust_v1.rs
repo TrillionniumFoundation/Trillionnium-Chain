@@ -770,17 +770,47 @@ impl SqliteNativeStateSyncStoreV1 {
         manifest: SnapshotManifestV0,
         application: NativeApplicationCheckpointV1,
     ) -> Result<NativeStateSyncSessionV1, NativeStateSyncStoreErrorV1> {
-        let (metadata, chunks) = self.read_validated_snapshot_v1()?;
-        let resumed = NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application)
+        // Keep the writer lock until the fresh authenticated session has been
+        // reconstructed.  A deferred read followed by `begin` would leave a
+        // gap in which another process could append a chunk and make the
+        // returned session describe an older durable snapshot.  The caller may
+        // still choose to append after this method returns, but the join itself
+        // is one durable observation and cannot straddle a committed append.
+        let mut connection = self.open_connection_v1()?;
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        let metadata = read_metadata_v1(&transaction)?;
+        #[cfg(test)]
+        tests::pause_after_metadata_read_v1();
+        let chunks = read_chunks_v1(&transaction, metadata.manifest_binding_digest)?;
+        let actual = readback_from_chunks_v1(
+            metadata.binding.binding_digest,
+            metadata.binding.manifest_digest,
+            &chunks,
+        )?;
+        if actual != metadata.readback {
+            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
+        }
+        let binding = NativeStateSyncBindingV1::from_path_manifest(&path, &manifest, application)
             .map_err(NativeStateSyncStoreErrorV1::Protocol)?;
-        let binding = resumed.binding();
         if binding != metadata.binding
             || manifest.chunk_binding_digest() != metadata.manifest_binding_digest
         {
             return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
         }
-        NativeStateSyncSessionV1::resume(path, manifest, application, metadata.readback, &chunks)
-            .map_err(NativeStateSyncStoreErrorV1::Protocol)
+        let resumed = NativeStateSyncSessionV1::resume(
+            path,
+            manifest,
+            application,
+            metadata.readback,
+            &chunks,
+        )
+        .map_err(NativeStateSyncStoreErrorV1::Protocol)?;
+        transaction
+            .commit()
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        Ok(resumed)
     }
 
     fn read_validated_snapshot_v1(

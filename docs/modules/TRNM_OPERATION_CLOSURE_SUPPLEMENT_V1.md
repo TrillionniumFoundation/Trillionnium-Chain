@@ -63,7 +63,12 @@ crash cut or production activation; those remain open.
 manifest and chunk identity, then updates the chunk and metadata rows in one
 `BEGIN IMMEDIATE` transaction.  Exact duplicates are idempotent; substitutions,
 stale writers and disconnected checkpoint context are rejected.  Fresh metadata
-and chunk readback is required before a result escapes the owner.
+and chunk readback is required before a result escapes the owner.  The
+`resume_existing_v1` recovery join also holds `BEGIN IMMEDIATE` while it
+revalidates the supplied trust path and reconstructs the session, preventing a
+committed append from interleaving between the durable snapshot and the returned
+resume handle; `native_sqlite_resume_holds_writer_lock_until_authenticated_join_finishes`
+covers this boundary.
 
 `native_sqlite_session_survives_cross_process_restart_and_rejects_readback_tamper`
 proves reopen and tamper detection.  The process-crash case
