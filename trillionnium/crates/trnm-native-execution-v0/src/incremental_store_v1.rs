@@ -992,7 +992,7 @@ pub(crate) fn collect_incremental_nodes_v1(
         |row| row.get(0),
     )?;
     let generation = u64_blob(generation)?;
-    let (_queue_depth, mut queue_bytes): (u64, u64) = transaction.query_row(
+    let (queue_depth, mut queue_bytes): (u64, u64) = transaction.query_row(
         "SELECT count(*),coalesce(sum(length(node_key)+length(enqueued_generation)+length(expected_hash)),0) FROM ni_gc_queue",
         [],
         |row| Ok((row.get(0)?, row.get(1)?)),
@@ -1001,6 +1001,21 @@ pub(crate) fn collect_incremental_nodes_v1(
         queue_bytes <= MAX_GC_QUEUE_BYTES as u64,
         "incremental GC queue capacity"
     );
+
+    // A zero-sized pass is an audit-only probe.  Do not enqueue every
+    // currently unreachable node when the caller explicitly requested no
+    // deletion work; otherwise a health check could consume the bounded GC
+    // queue and create a durable mutation despite reporting zero work.
+    if max_nodes == 0 {
+        return Ok(IncrementalGcReportV1 {
+            owner_anchor: None,
+            audited_nodes: nodes.len() as u64,
+            enqueued_nodes: 0,
+            stale_queue_entries: 0,
+            deleted_nodes: 0,
+            queue_depth: queue_depth,
+        });
+    }
 
     let mut enqueued_nodes = 0u64;
     for (key_bytes, record) in &nodes {

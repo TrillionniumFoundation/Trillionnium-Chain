@@ -745,6 +745,54 @@ fn bounded_gc_deletes_only_an_unreferenced_node_and_keeps_retention_rows() {
 }
 
 #[test]
+fn zero_sized_gc_pass_is_a_read_only_audit_and_does_not_fill_queue() {
+    let mut connection = Connection::open_in_memory().unwrap();
+    let (_, store) = initialize(&mut connection);
+    let (source_key, source_node) = store
+        .nodes
+        .iter()
+        .find(|(_, node)| matches!(node, Node::Leaf(_)))
+        .map(|(key, node)| (key.clone(), node.clone()))
+        .expect("seed contains a leaf");
+    let orphan_key = NodeKey::new(779, source_key.nibble_path().nibbles().collect());
+    let orphan_bytes = borsh::to_vec(&orphan_key).unwrap();
+    let tx = connection.transaction().unwrap();
+    tx.execute(
+        "INSERT INTO ni_nodes VALUES(?1,?2,?3,?4,?5)",
+        params![
+            orphan_bytes.as_slice(),
+            779u64.to_be_bytes().as_slice(),
+            borsh::to_vec(&source_node).unwrap().as_slice(),
+            node_hash(&source_node).as_slice(),
+            0u64.to_be_bytes().as_slice()
+        ],
+    )
+    .unwrap();
+    let report = collect_incremental_nodes_v1(&tx, &namespace(), 0).unwrap();
+    assert_eq!(report.deleted_nodes, 0);
+    assert_eq!(report.enqueued_nodes, 0);
+    assert_eq!(report.queue_depth, 0);
+    tx.commit().unwrap();
+    assert_eq!(
+        connection
+            .query_row(
+                "SELECT count(*) FROM ni_nodes WHERE node_key=?1",
+                [orphan_bytes.as_slice()],
+                |row| row.get::<_, u64>(0)
+            )
+            .unwrap(),
+        1
+    );
+    assert_eq!(
+        connection
+            .query_row("SELECT count(*) FROM ni_gc_queue", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        0
+    );
+}
+
+#[test]
 fn gc_fences_reference_count_corruption_and_transaction_drop_rolls_back_queue() {
     let mut connection = Connection::open_in_memory().unwrap();
     let (_, store) = initialize(&mut connection);
