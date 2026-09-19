@@ -492,7 +492,7 @@ pub struct NativeStateSyncReadbackV1 {
 
 const NATIVE_SYNC_STORE_APP_ID_V1: i64 = 0x5453_594e;
 const NATIVE_SYNC_STORE_USER_VERSION_V1: i64 = 1;
-const NATIVE_SYNC_META_SQL_V1: &str = "CREATE TABLE native_state_sync_meta_v1 (singleton INTEGER PRIMARY KEY CHECK(singleton=1), binding_digest BLOB NOT NULL CHECK(length(binding_digest)=32), trust_path_digest BLOB NOT NULL CHECK(length(trust_path_digest)=32), terminal_block_digest BLOB NOT NULL CHECK(length(terminal_block_digest)=32), checkpoint_digest BLOB NOT NULL CHECK(length(checkpoint_digest)=32), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), manifest_binding_digest BLOB NOT NULL CHECK(length(manifest_binding_digest)=32), height INTEGER NOT NULL CHECK(height>0), epoch INTEGER NOT NULL CHECK(epoch>0), state_root BLOB NOT NULL CHECK(length(state_root)=32), schema_digest BLOB NOT NULL CHECK(length(schema_digest)=32), application_version INTEGER NOT NULL CHECK(application_version>0), received_chunk_count INTEGER NOT NULL CHECK(received_chunk_count>=0), received_bytes INTEGER NOT NULL CHECK(received_bytes>=0), progress_digest BLOB NOT NULL CHECK(length(progress_digest)=32)) STRICT";
+const NATIVE_SYNC_META_SQL_V1: &str = "CREATE TABLE native_state_sync_meta_v1 (singleton INTEGER PRIMARY KEY CHECK(singleton=1), binding_digest BLOB NOT NULL CHECK(length(binding_digest)=32), trust_path_digest BLOB NOT NULL CHECK(length(trust_path_digest)=32), terminal_block_digest BLOB NOT NULL CHECK(length(terminal_block_digest)=32), checkpoint_digest BLOB NOT NULL CHECK(length(checkpoint_digest)=32), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), manifest_binding_digest BLOB NOT NULL CHECK(length(manifest_binding_digest)=32), height INTEGER NOT NULL CHECK(height>0), epoch INTEGER NOT NULL CHECK(epoch>=0), state_root BLOB NOT NULL CHECK(length(state_root)=32), schema_digest BLOB NOT NULL CHECK(length(schema_digest)=32), application_version INTEGER NOT NULL CHECK(application_version>0), received_chunk_count INTEGER NOT NULL CHECK(received_chunk_count>=0), received_bytes INTEGER NOT NULL CHECK(received_bytes>=0), progress_digest BLOB NOT NULL CHECK(length(progress_digest)=32)) STRICT";
 const NATIVE_SYNC_CHUNKS_SQL_V1: &str = "CREATE TABLE native_state_sync_chunks_v1 (chunk_index INTEGER PRIMARY KEY CHECK(chunk_index>=0), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), bytes BLOB NOT NULL, chunk_digest BLOB NOT NULL CHECK(length(chunk_digest)=32)) WITHOUT ROWID";
 
 /// Errors from the candidate durable native state-sync adapter.  A SQLite
@@ -958,7 +958,6 @@ fn read_metadata_v1(
     if binding.binding_digest == Digest32V0([0; 32])
         || binding.canonical_digest() != binding.binding_digest
         || binding.height == 0
-        || binding.epoch == 0
         || binding.schema_digest == Digest32V0([0; 32])
         || binding.application_version == 0
     {
@@ -1003,6 +1002,11 @@ fn read_chunks_v1(
     let mut chunks = Vec::new();
     let mut total_bytes = 0_u64;
     for item in mapped {
+        if chunks.len() >= crate::MAX_CHUNK_COUNT_V0 as usize {
+            return Err(NativeStateSyncStoreErrorV1::Protocol(
+                StateSyncErrorV0::SnapshotTooLarge,
+            ));
+        }
         let (index, manifest_digest, bytes, chunk_digest) =
             item.map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
         let index = u32::try_from(u64_from_i64_v1(index)?)
