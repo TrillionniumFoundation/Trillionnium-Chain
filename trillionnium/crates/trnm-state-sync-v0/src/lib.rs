@@ -379,7 +379,7 @@ impl SnapshotTransferFrameV0 {
         let (kind, payload, maximum) = match self {
             Self::Manifest(manifest) => {
                 manifest.validate_shape()?;
-                let mut payload = Vec::with_capacity(252);
+                let mut payload = Vec::with_capacity(256);
                 put_digest(&mut payload, manifest.chain_id);
                 put_digest(&mut payload, manifest.protocol_digest);
                 payload.extend_from_slice(&manifest.height.to_be_bytes());
