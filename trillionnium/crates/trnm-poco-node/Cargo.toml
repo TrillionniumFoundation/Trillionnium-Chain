@@ -18,6 +18,7 @@ epoch-runtime-candidate = [
   "epoch-handoff-checkpoint-candidate",
   "trnm-consensus-core/candidate-epoch-host-v1",
   "trnm-consensus-safety-store/candidate-epoch-host-v1",
+  "trnm-native-execution-v0/incremental-epoch-candidate",
   "rusqlite/limits",
 ]
 epoch-runtime-test-fixtures = [

@@ -496,6 +496,17 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         self.confirm_initial_activation_v1()?;
         Ok(std::mem::take(&mut self.startup))
     }
+
+    /// Install or resume the native schema7 commit owner after the complete
+    /// initial activation cut is joined. This adapter is candidate-only and
+    /// remains detached from proposal, signing, and public sync paths; every
+    /// retry rechecks all physical owners before returning.
+    pub fn ensure_incremental_epoch_commit_owner_v1(&mut self) -> Result<()> {
+        self.confirm_initial_activation_v1()?;
+        self.application
+            .ensure_incremental_epoch_commit_owner_v1(&self.edge)?;
+        self.confirm_current_cut_v1()
+    }
 }
 // Private adapter: caller-supplied verifiers cannot mint or bypass this join.
 struct FreshEpochSignatureProducerV1<'a, P, F> {

@@ -715,3 +715,12 @@ identity failure is sticky even if the original file is restored. Cold reopening
 creates an independently validated owner, so an old receipt cannot become affine
 to it. Current native schema7 support does not claim a joined Core/node adapter,
 second epoch transition, state-sync/public proof endpoint or garbage collection.
+
+The candidate closure now has a narrow owner-only bridge:
+`CandidateEpochRuntimeV1::ensure_incremental_epoch_commit_owner_v1()` joins the
+already recovered full owner cut, calls the native resumable schema7 owner
+dispatcher, and confirms all physical cuts again. It does not submit a block,
+consume finality, produce a receipt, sign, broadcast, or enable public sync;
+schema5→6 migration and strict first-new finality remain explicit preceding and
+following operations. The bridge is covered by native cold-reopen and malformed
+commit-row fencing tests and remains default-off.

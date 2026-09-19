@@ -764,6 +764,17 @@ version from6 to7 in one transaction. Open never migrates. Schema6's codec and
 prepare-only behavior remain unchanged; schema5's ordinary +1 guards continue
 to reject either epoch schema. The empty revision grants no finality authority.
 
+The resumable owner entry point is
+`DurableNativeApplicationV0::ensure_incremental_epoch_commit_owner_v1(&edge)`;
+the older `upgrade_...` name delegates to it for compatibility. It takes the
+native operation lock, reaudits the immutable edge-owner checksum and migration
+pin, creates schema7 only from schema6, and on retry strictly decodes any
+retained commit row before syncing and fresh-validating the file. A malformed
+retained row rejects the owner operation. It returns no prepared or committed receipt, so
+strict finality remains the only path that moves the application head. The
+candidate node adapter invokes this method only after its complete owner join;
+it is outside the default feature closure.
+
 | Schema7 record | Exact persisted fields and validation |
 | --- | --- |
 | `native_incremental_epoch_commit_v1` | Singleton id=1, revision=1; block H32 unique, native P digest H32, actual commit sequence U64 unique, target Head104, full first-new proof BYTES (1..64MiB), checksum H32. Domain `trnm.native-application.incremental-epoch-commit-record.v1` binds store ID, immutable edge-owner checksum, block, P digest, sequence, target head and SHA256(proof). |

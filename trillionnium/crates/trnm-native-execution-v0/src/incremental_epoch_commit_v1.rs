@@ -244,9 +244,16 @@ impl CommittedNativeIncrementalEpochExecutionV1 {
     }
 }
 impl DurableNativeApplicationV0 {
-    /// Explicit closed local revision. Existing schema6 preparation files remain
-    /// readable; no open, preview or ordinary commit installs this table.
-    pub fn upgrade_incremental_epoch_commit_v1(
+    /// Ensure the schema7 commit owner exists, while retaining the schema6
+    /// preparation owner and its exact migration pin. This is deliberately a
+    /// single-owner, resumable dispatcher: retrying after an uncertain close
+    /// re-audits the live edge and the retained commit row instead of assuming
+    /// that a previous response was lost before SQLite committed.
+    ///
+    /// The method only installs/validates the local commit owner. It does not
+    /// execute a block, verify finality, move the application head, or return a
+    /// receipt. Those actions remain behind the strict finality methods below.
+    pub fn ensure_incremental_epoch_commit_owner_v1(
         &self,
         edge: &AuthenticatedEpochApplicationEdgeV1,
     ) -> Result<()> {
@@ -271,12 +278,32 @@ impl DurableNativeApplicationV0 {
             ensure!(!installed(&tx)?, "schema6 unexpected commit table");
             tx.execute_batch(SQL)?;
             ensure!(tx.execute("UPDATE native_application_metadata_v0 SET schema_version=?1 WHERE singleton=1 AND schema_version=?2",params![COMMIT_SCHEMA_VERSION.to_be_bytes().as_slice(),SCHEMA_VERSION.to_be_bytes().as_slice()])?==1,"schema7 migration CAS");
+        } else {
+            ensure!(
+                epoch_durable::schema_version(&tx)? == COMMIT_SCHEMA_VERSION && installed(&tx)?,
+                "schema7 commit owner missing"
+            );
+            // A retry is only resumable when any retained record still decodes
+            // under the bounded schema. Empty is valid before first finality;
+            // malformed bytes reject the owner operation rather than being
+            // silently treated as an empty commit ledger.
+            let _ = load(&tx)?;
         }
         tx.commit()?;
         drop(c);
         sync_store_commit_boundary_v0(&self.path)?;
         fresh_validate_v0(&self.path, &self.config)?;
         Ok(())
+    }
+
+    /// Compatibility name retained for candidate callers that used the
+    /// original one-shot migration API. The owner is now explicitly resumable
+    /// and validates the same live pin on every retry.
+    pub fn upgrade_incremental_epoch_commit_v1(
+        &self,
+        edge: &AuthenticatedEpochApplicationEdgeV1,
+    ) -> Result<()> {
+        self.ensure_incremental_epoch_commit_owner_v1(edge)
     }
     pub fn commit_incremental_epoch_finality_bytes_v1(
         &self,
@@ -754,6 +781,48 @@ mod tests {
             .unwrap(),
             0
         );
+    }
+
+    #[test]
+    fn schema7_commit_owner_resumes_cold_and_fences_tampered_record() {
+        let d = tempfile::tempdir().unwrap();
+        let path = d.path().join("native.sqlite3");
+        let (app, edge, _p, _proof, _descendants) = setup(&path);
+        app.ensure_incremental_epoch_commit_owner_v1(&edge).unwrap();
+        // The migration is a resumable owner operation, not a one-shot flag.
+        app.ensure_incremental_epoch_commit_owner_v1(&edge).unwrap();
+        drop(app);
+
+        // Keep the authenticated edge while reopening the native owner from a
+        // fresh process-equivalent handle.  The method must rejoin the actual
+        // path and schema7 table before returning.
+        let reopened =
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+        let reopened_edge = reopened.recover_incremental_epoch_edge_v1().unwrap();
+        reopened
+            .ensure_incremental_epoch_commit_owner_v1(&reopened_edge)
+            .unwrap();
+
+        // A syntactically present but malformed retained record is corruption;
+        // a retry must fence rather than silently treating it as an empty owner.
+        let c = Connection::open(&path).unwrap();
+        c.execute(
+            "INSERT INTO native_incremental_epoch_commit_v1
+             VALUES(1,1,zeroblob(32),zeroblob(32),zeroblob(8),zeroblob(104),zeroblob(1),zeroblob(32))",
+            [],
+        )
+        .unwrap();
+        c.pragma_update(None, "ignore_check_constraints", true)
+            .unwrap();
+        c.execute(
+            "UPDATE native_incremental_epoch_commit_v1 SET revision=2 WHERE id=1",
+            [],
+        )
+        .unwrap();
+        drop(c);
+        assert!(reopened
+            .ensure_incremental_epoch_commit_owner_v1(&reopened_edge)
+            .is_err());
     }
 
     #[test]

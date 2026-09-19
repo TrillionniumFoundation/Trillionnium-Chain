@@ -405,3 +405,13 @@ or speedup. Schema7 rejects a second checkpoint/handoff; schema6 remains
 prepare-only and schema5's ordinary +1 guards have not been broadened. The M07
 and M08 commit/reopen receipts do not independently grant a Core vote or node
 activation.
+
+The candidate-only node bridge exposes
+`CandidateEpochRuntimeV1::ensure_incremental_epoch_commit_owner_v1()`. It may
+run only after the complete initial owner cut is joined and an explicit schema6
+native edge exists; it calls the native
+`DurableNativeApplicationV0::ensure_incremental_epoch_commit_owner_v1(&edge)`
+under the native owner lock, then rechecks Safety, signer, retirement,
+checkpoint, and native identities. The call is resumable across a lost response
+and never executes a block, verifies finality, signs, broadcasts, or enables the
+default node. Schema5→6 migration remains a separate explicit operation.

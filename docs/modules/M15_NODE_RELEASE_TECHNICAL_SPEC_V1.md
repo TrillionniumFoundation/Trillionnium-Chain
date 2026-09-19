@@ -237,6 +237,11 @@ any state -> Blocked(reason)   or   RecoveryRequired
 4. Recover Safety and signer journals, then the M08 commit ledger and its M07
    application/checkpoint targets. Let each owner verify its own predecessor
    chain; M15 only compares returned verified identities and completion status.
+   The default-off epoch candidate may then call the owner-only
+   `CandidateEpochRuntimeV1::ensure_incremental_epoch_commit_owner_v1()` bridge;
+   it requires an already joined schema6 edge, rechecks every physical cut, and
+   returns no node or signing authority. A missing schema6 owner, malformed
+   schema7 row, or lost migration response remains recovery-required.
 5. Recover M04 pending ingress/payload and M05 transaction journal. Resolve each
    uncertain prepared/commit receipt against M08; retain unresolved work.
 6. Establish the M13 trusted checkpoint context and exact validator epoch.
