@@ -7,7 +7,7 @@
 //! injected canonical builder, and binds cutover agreement to a no-fallback
 //! plan.
 
-use rusqlite::{params, Connection, OptionalExtension};
+use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeSet,
@@ -814,7 +814,7 @@ impl SqliteIncrementalStateStoreV0 {
                 MigrationErrorV0::StoreAlreadyInitialized,
             ));
         }
-        let connection = Connection::open(&path)
+        let mut connection = Connection::open(&path)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         connection
             .pragma_update(None, "application_id", DURABLE_STORE_APP_ID_V0)
@@ -822,8 +822,9 @@ impl SqliteIncrementalStateStoreV0 {
         connection
             .pragma_update(None, "user_version", 1_i64)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        configure_durable_connection_v0(&connection)?;
         let transaction = connection
-            .unchecked_transaction()
+            .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         transaction
             .execute_batch(&format!("{DURABLE_META_SQL_V0};{DURABLE_ROWS_SQL_V0};"))
@@ -1048,7 +1049,7 @@ impl SqliteIncrementalStateStoreV0 {
                 MigrationErrorV0::StoreAlreadyInitialized,
             ));
         }
-        let connection = Connection::open(&path)
+        let mut connection = Connection::open(&path)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         connection
             .pragma_update(None, "application_id", DURABLE_STORE_APP_ID_V0)
@@ -1056,8 +1057,9 @@ impl SqliteIncrementalStateStoreV0 {
         connection
             .pragma_update(None, "user_version", 1_i64)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        configure_durable_connection_v0(&connection)?;
         let transaction = connection
-            .unchecked_transaction()
+            .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         transaction
             .execute_batch(&format!("{DURABLE_META_SQL_V0};{DURABLE_ROWS_SQL_V0};"))
@@ -1144,9 +1146,9 @@ impl SqliteIncrementalStateStoreV0 {
                 }
             },
         )?;
-        let connection = self.open_connection()?;
+        let mut connection = self.open_connection()?;
         let transaction = connection
-            .unchecked_transaction()
+            .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         for entry in &delta.entries {
             if entry.value.is_some() {
@@ -1163,6 +1165,8 @@ impl SqliteIncrementalStateStoreV0 {
                     .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
             }
         }
+        #[cfg(test)]
+        test_pause_after_delta_rows_v0();
         let stored_rows_digest = target_rows_digest_v0(&target_rows);
         let changed = transaction
             .execute(
@@ -1206,8 +1210,9 @@ impl SqliteIncrementalStateStoreV0 {
     }
 
     fn open_connection(&self) -> Result<Connection, DurableDeltaStoreErrorV0> {
-        let connection = Connection::open(&self.path)
+        let connection = Connection::open_with_flags(&self.path, OpenFlags::SQLITE_OPEN_READ_WRITE)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        verify_durable_connection_v0(&connection)?;
         let application_id = connection
             .pragma_query_value(None, "application_id", |row| row.get::<_, i64>(0))
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
@@ -1219,7 +1224,93 @@ impl SqliteIncrementalStateStoreV0 {
                 MigrationErrorV0::StoreSchemaMismatch,
             ));
         }
+        let mut statement = connection
+            .prepare(
+                "SELECT name,type FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY name",
+            )
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let objects = statement
+            .query_map([], |row| {
+                Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+            })
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        if objects
+            != vec![
+                ("migration_delta_meta_v0".to_owned(), "table".to_owned()),
+                ("migration_delta_rows_v0".to_owned(), "table".to_owned()),
+            ]
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::StoreSchemaMismatch,
+            ));
+        }
+        drop(statement);
         Ok(connection)
+    }
+}
+
+/// All durable writes use WAL + FULL synchronous mode and an IMMEDIATE
+/// transaction.  This makes a committed metadata/root update survive a
+/// process restart while ensuring a killed writer rolls back its uncommitted
+/// row mutations.  A different journal mode is a schema/operational mismatch,
+/// not a best-effort downgrade.
+fn configure_durable_connection_v0(
+    connection: &Connection,
+) -> Result<(), DurableDeltaStoreErrorV0> {
+    let journal_mode: String = connection
+        .pragma_query_value(None, "journal_mode", |row| row.get(0))
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    if journal_mode.to_ascii_lowercase() != "wal" {
+        connection
+            .pragma_update(None, "journal_mode", "WAL")
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    }
+    let journal_mode: String = connection
+        .pragma_query_value(None, "journal_mode", |row| row.get(0))
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    let synchronous: i64 = connection
+        .pragma_query_value(None, "synchronous", |row| row.get(0))
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    if journal_mode.to_ascii_lowercase() != "wal" || synchronous != 2 {
+        return Err(DurableDeltaStoreErrorV0::Protocol(
+            MigrationErrorV0::StoreSchemaMismatch,
+        ));
+    }
+    connection
+        .busy_timeout(std::time::Duration::from_millis(250))
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    Ok(())
+}
+
+fn verify_durable_connection_v0(connection: &Connection) -> Result<(), DurableDeltaStoreErrorV0> {
+    let journal_mode: String = connection
+        .pragma_query_value(None, "journal_mode", |row| row.get(0))
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    let synchronous: i64 = connection
+        .pragma_query_value(None, "synchronous", |row| row.get(0))
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    if journal_mode.to_ascii_lowercase() != "wal" || synchronous != 2 {
+        return Err(DurableDeltaStoreErrorV0::Protocol(
+            MigrationErrorV0::StoreSchemaMismatch,
+        ));
+    }
+    connection
+        .busy_timeout(std::time::Duration::from_millis(250))
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    Ok(())
+}
+
+#[cfg(test)]
+fn test_pause_after_delta_rows_v0() {
+    let Ok(marker) = std::env::var("TRNM_MIGRATION_SIGKILL_PAUSE_FILE") else {
+        return;
+    };
+    let marker = PathBuf::from(marker);
+    let _ = std::fs::write(&marker, b"rows-updated-before-commit\n");
+    loop {
+        std::thread::sleep(std::time::Duration::from_millis(20));
     }
 }
 
@@ -1839,6 +1930,85 @@ mod tests {
             std::process::id(),
             d(100).0[0]
         )));
+    }
+
+    /// This is an actual process-level interruption: the child is killed while
+    /// an IMMEDIATE SQLite transaction has changed rows but before metadata or
+    /// commit.  Reopening the same file must expose the exact pre-transaction
+    /// root.  It does not stand in for physical power-loss evidence.
+    #[cfg(unix)]
+    #[test]
+    fn sqlite_process_kill_rolls_back_uncommitted_delta() {
+        if std::env::var_os("TRNM_MIGRATION_SIGKILL_CHILD").is_some() {
+            let path = std::env::var_os("TRNM_MIGRATION_SIGKILL_STORE").unwrap();
+            let base = vec![target_row(1, 10), target_row(2, 20)];
+            let target = vec![target_row(1, 11), target_row(3, 30)];
+            let store = SqliteIncrementalStateStoreV0::open_existing(&path, d(95), d(96)).unwrap();
+            let delta =
+                derive_incremental_delta_v0(d(95), d(96), &base, &target, &HashRoot).unwrap();
+            let _ = store.apply_delta_v0(&delta, &HashRoot);
+            return;
+        }
+        let path = std::env::temp_dir().join(format!(
+            "trnm-migration-sigkill-{}-{}.sqlite",
+            std::process::id(),
+            d(101).0[0]
+        ));
+        let marker = std::env::temp_dir().join(format!(
+            "trnm-migration-sigkill-{}-{}.marker",
+            std::process::id(),
+            d(102).0[0]
+        ));
+        remove_sqlite_artifacts_v0(&path);
+        let _ = std::fs::remove_file(&marker);
+        let base = vec![target_row(1, 10), target_row(2, 20)];
+        let store =
+            SqliteIncrementalStateStoreV0::initialize(&path, d(95), d(96), &base, &HashRoot)
+                .unwrap();
+        let child_test = "tests::sqlite_process_kill_rolls_back_uncommitted_delta";
+        let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+            .arg("--exact")
+            .arg(child_test)
+            .arg("--nocapture")
+            .env("TRNM_MIGRATION_SIGKILL_CHILD", "1")
+            .env("TRNM_MIGRATION_SIGKILL_STORE", &path)
+            .env("TRNM_MIGRATION_SIGKILL_PAUSE_FILE", &marker)
+            .spawn()
+            .unwrap();
+        for _ in 0..250 {
+            if marker.exists() {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+        assert!(marker.exists(), "child never reached pre-commit failpoint");
+        child.kill().unwrap();
+        let _ = child.wait();
+        let reopened = SqliteIncrementalStateStoreV0::open_existing_with_root_builder_v0(
+            &path,
+            d(95),
+            d(96),
+            &HashRoot,
+        )
+        .unwrap();
+        assert_eq!(reopened.read_rows_v0().unwrap(), base);
+        assert_eq!(reopened.readback_v0().unwrap().generation, 0);
+        assert_eq!(
+            reopened
+                .readback_with_root_builder_v0(&HashRoot)
+                .unwrap()
+                .state_root,
+            store.readback_v0().unwrap().state_root
+        );
+        remove_sqlite_artifacts_v0(&path);
+        let _ = std::fs::remove_file(marker);
+    }
+
+    #[cfg(unix)]
+    fn remove_sqlite_artifacts_v0(path: &std::path::Path) {
+        let _ = std::fs::remove_file(path);
+        let _ = std::fs::remove_file(path.with_extension("sqlite-wal"));
+        let _ = std::fs::remove_file(path.with_extension("sqlite-shm"));
     }
 
     #[test]

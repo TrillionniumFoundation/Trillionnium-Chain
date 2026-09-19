@@ -45,6 +45,22 @@ It remains a candidate integration adapter; an M07-owned deployment must still
 bind its namespace/retention policy and pass crash, disk-full, replacement,
 space and multi-host campaigns before claiming production installation.
 
+The adapter's durability boundary is explicit: every connection requires the
+expected application id, schema version and exactly the two migration tables,
+configures SQLite WAL with `synchronous=FULL`, and opens each install with
+`BEGIN IMMEDIATE`. A committed metadata/root update is recovered from the WAL
+after an ordinary process restart; a writer killed after row mutation but before
+metadata update is rolled back by SQLite and readback keeps the prior
+generation/root. The repository test
+`sqlite_process_kill_rolls_back_uncommitted_delta` exercises this with a real
+child process and `SIGKILL`, then independently reopens the same file and
+recomputes its root. This is process-crash evidence only: it does not claim
+physical power-loss, disk-full, filesystem-corruption, or cross-host durability.
+Schema/journal mismatches fail closed; opening a missing or partially-created
+path never repairs it. A deployment still needs externally administered
+fault-injection or physical power-loss evidence and a bounded disk-exhaustion
+campaign before enabling replacement or cutover.
+
 The adapter also exposes a bounded local handoff pair:
 `export_snapshot_v0` emits `DurableDeltaSnapshotV0` only after metadata, ordered
 rows, row digest, and target root have been read back and independently
@@ -129,6 +145,28 @@ verified native path. Existing `SnapshotManifestV0::validate` and staging can
 consume that projection. This implements proof and target authentication;
 network download, native state recomputation and a durable installer still
 require their concrete composition. It does not migrate or activate a signer.
+
+The candidate native session composition is now explicit in
+`NativeStateSyncSessionV1`. `NativeApplicationCheckpointV1` requires a nonzero
+application schema digest and monotonic application version. Session admission
+binds those facts to the native trust-path digest, terminal block ID,
+checkpoint digest, manifest digest, terminal epoch/height and state root in a
+single `NativeStateSyncBindingV1`; the binding digest is the persistence key.
+This prevents a verified proof from being reused with another application
+schema/version or a manifest from another terminal checkpoint. The wrapper
+retains all generic bounds and chunk substitution checks and returns a
+`NativeVerifiedSnapshotV1` that carries the same binding after recomputation.
+
+Restart is a proof revalidation operation, not a bitmap restore. The session's
+`NativeStateSyncReadbackV1` records binding/manifest identity, retained byte
+count, chunk count and a content-derived progress digest over sorted
+`(index, chunk_digest)` pairs. `resume` requires the same freshly verified native
+path, exact manifest, application facts and every retained chunk; changed bytes,
+binding, schema/version or progress are rejected before a verified snapshot is
+issued. Tests cover successful interrupted-resume, chunk substitution and
+tampered readback. This is a candidate local session contract: it does not yet
+persist the record in the M07 store, select peers, authenticate a remote
+source, or claim crash/power-loss durability.
 
 `native_trust_v1_tests.rs` covers real signed ordinary-to-epoch paths for normal
 and fallback handoff, signed TC views 3/5/8, snapshot target substitution,

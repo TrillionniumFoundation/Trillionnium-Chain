@@ -408,3 +408,14 @@ No private consensus key, signer journal or independent node watermark is loaded
 Epoch/seal targets and schema 4/5/6 are unsupported in this initial command.
 The existing private Unix endpoint is the transport; this does not claim a public
 Internet RPC, a complete validator join, or cross-epoch synchronization.
+
+When this client is backed by the M13 incremental SQLite staging adapter, a
+restart first performs the adapter's exact schema, journal and readback checks.
+A process crash before the delta transaction commits leaves the prior generation
+and root; a committed generation is returned only after independent row/root
+recomputation. A mismatch is surfaced as `RECOVERY_REQUIRED`; the client keeps
+the signed manifest/transfer identity rather than silently rebuilding or treating
+an empty directory as a valid replica. The repository has a real child-process
+`SIGKILL` regression for the pre-commit cut, but this remains candidate
+process-crash evidence and does not establish disk-full, physical power-loss,
+peer-transfer, or multi-host guarantees.

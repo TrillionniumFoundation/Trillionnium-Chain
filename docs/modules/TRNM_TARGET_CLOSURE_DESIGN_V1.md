@@ -160,6 +160,11 @@ independent-evidence task, not an implied success.
 * **Transfer boundary.** `SqliteIncrementalStateStoreV0::export_snapshot_v0`
   and `initialize_from_snapshot_v0` now provide a bounded local snapshot
   handoff with exact rows/root/generation readback and no authority import.
+  The adapter enforces its application/schema identity and closed-world table
+  set, uses SQLite WAL + `synchronous=FULL` with an immediate transaction, and
+  has a real child-process SIGKILL regression proving that an interrupted
+  pre-commit delta reopens at the prior generation/root. This is ordinary
+  process-crash evidence, not physical power-loss or disk-fault evidence.
   Public peer export/import still requires a verified checkpoint/export binding,
   interrupted-transfer and disk-full evidence, and transport ownership;
   tombstone GC, arbitrary trust paths and an independently administered
