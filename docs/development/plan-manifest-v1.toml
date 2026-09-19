@@ -1,9 +1,9 @@
 manifest_version = 2
 plan_id = "trnm-chain-development-plan-v2"
 plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
-plan_sha256 = "8f5b65fb5a279f57816c293169cb6f207c3ab53e401cf46e7a54ced5dfdc6689"
+plan_sha256 = "978121a9b996dad46548e263f24e8cb8dc3653b6378d5234dcaacf38cc632f78"
 evidence_contract_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
-evidence_contract_sha256 = "8f5b65fb5a279f57816c293169cb6f207c3ab53e401cf46e7a54ced5dfdc6689"
+evidence_contract_sha256 = "978121a9b996dad46548e263f24e8cb8dc3653b6378d5234dcaacf38cc632f78"
 canonical_ref = "refs/heads/main"
 candidate_ref = "derive-from-current-pull-request"
 # 0 means resolve the live PR event; never an actual PR number.
@@ -99,7 +99,7 @@ release_ready = false
 documentation_authority_path = "docs/architecture/TRNM_DOCUMENTATION_AUTHORITY_V1.md"
 documentation_authority_git_blob = "1cf290bfbfefe4c68170361f6cc04f7e01f11d70"
 module_implementation_guide_path = "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md"
-module_implementation_guide_git_blob = "423de78a5ac5b93a14f161d5ba6e13be256d467d"
+module_implementation_guide_git_blob = "118257fe7de08fba43215a762201f8059bfb1a6f"
 independent_review_policy_path = "docs/modules/TRNM_INDEPENDENT_REVIEW_V1.md"
 independent_review_policy_git_blob = "128a2038b44bbb7a10cff7f6cdb324097c608e1b"
 documentation_contract_registry_path = "config/documentation-contracts-v1.json"

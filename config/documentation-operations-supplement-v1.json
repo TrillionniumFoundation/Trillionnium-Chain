@@ -1,0 +1,427 @@
+{
+  "schema": "trnm-documentation-operations-supplement-v1",
+  "plan_id": "trnm-chain-development-plan-v2",
+  "scope": "E1-cross-epoch-T1-public-transaction-state-sync-S1-incremental-storage",
+  "production_authority": false,
+  "semantic_acceptance": "not-assessed",
+  "implementation_acceptance": "not-assessed",
+  "operations": [
+    {
+      "id": "M01-OP-EPOCH-SUCCESSOR-COMPOSE",
+      "workstream": "E1",
+      "module_id": "M01",
+      "requirement_ids": ["M01-TARGET"],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-consensus-crypto",
+        "path": "trillionnium/crates/trnm-consensus-crypto/src/epoch_runtime_v1.rs",
+        "symbol": "compose_successor_v1"
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/modules/TRNM_OPERATION_CLOSURE_SUPPLEMENT_V1.md",
+          "heading": "## E1 — strict repeated-epoch context composition",
+          "rule": "A successor context must bind the predecessor new configuration, exact next epoch, retained ancestry endpoints and every consecutive ancestry edge before returning a verification-only context."
+        },
+        {
+          "path": "docs/protocol/poco-bft-v0/04-epochs-validator-sets-and-upgrades.md",
+          "heading": "## 6. Epoch seals and checkpoint finality",
+          "rule": "An epoch handoff must retain authenticated old and new context and cannot infer live activation from a local context object."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-crypto/src/epoch_runtime_v1.rs",
+          "selector": "StrictEpochRuntimeContextV1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/lib.rs",
+          "selector": "EpochRuntimeContextDataV1"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/lib.rs",
+          "selector": "ValidationError"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/lib.rs",
+          "selector": "EpochActivationEvidenceBytesV0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "Cev0AdmissionBudgetV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+          "selector": "MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "Predecessor and successor strict activation authorities and the complete retained header ancestry."
+        ],
+        "preconditions": [
+          "Successor old validator set and parameters equal predecessor new values; successor epoch is the checked next epoch; retained ancestry is nonempty and endpoint-bound."
+        ],
+        "accepted_effects": [
+          "Return the supplied successor as a verification-only context after exact parent, height, genesis, chain and protocol checks."
+        ],
+        "rejected_effects": [
+          "Configuration, epoch, endpoint, parent, height or context substitution returns ValidationError without creating a Core or signer authority."
+        ],
+        "uncertain_recovery": [
+          "No durable write is performed by this operation; any interrupted caller must reconstruct both complete authorities and retry the identical composition."
+        ],
+        "publication": [
+          "No Safety transition, signing lease, persistence ACK or first-new-block capability is published."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-types/src/lib.rs",
+            "selector": "ValidationError"
+          },
+          "meaning": "A malformed or substituted successor context or retained ancestry is rejected before any authority is created."
+        },
+        {
+          "class": "unavailable",
+          "reference": {
+            "path": "trillionnium/crates/trnm-consensus-crypto/src/epoch_runtime_v1.rs",
+            "selector": "retained_ancestry"
+          },
+          "meaning": "Missing retained ancestry is local unavailability for this bounded verification operation, not peer Byzantine evidence."
+        }
+      ],
+      "producer_modules": ["M01"],
+      "consumer_modules": ["M02", "M08", "M13"],
+      "cases": [
+        {
+          "id": "M01-OP-EPOCH-SUCCESSOR-COMPOSE-CASE-1",
+          "kind": "positive",
+          "package": "trnm-consensus-crypto",
+          "source_path": "trillionnium/crates/trnm-consensus-crypto/tests/epoch_runtime_successor.rs",
+          "symbol": "strict_runtime_context_accepts_a_real_repeated_epoch_successor",
+          "target": "epoch_runtime_successor",
+          "test_filter": "strict_runtime_context_accepts_a_real_repeated_epoch_successor",
+          "features": [],
+          "expected_outcome": "Real Ed25519 successor activation, handoff quorums and retained ancestry compose into a strict repeated-epoch context.",
+          "assertion_fragments": [
+            "let composed = StrictEpochRuntimeContextV1::compose_successor_v1(",
+            "Epoch::new(4)"
+          ]
+        },
+        {
+          "id": "M01-OP-EPOCH-SUCCESSOR-COMPOSE-CASE-2",
+          "kind": "negative",
+          "package": "trnm-consensus-crypto",
+          "source_path": "trillionnium/crates/trnm-consensus-crypto/tests/epoch_activation_recovery.rs",
+          "symbol": "successor_context_rejects_same_epoch_or_missing_retained_ancestry",
+          "target": "epoch_activation_recovery",
+          "test_filter": "successor_context_rejects_same_epoch_or_missing_retained_ancestry",
+          "features": [],
+          "expected_outcome": "A same-context substitution is rejected and cannot be mistaken for a successor epoch.",
+          "assertion_fragments": [
+            "expect_err(\"a repeated epoch context must never be accepted as a successor\")",
+            "successor old context differs from predecessor new context"
+          ]
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "The repository fixture uses real signatures but independently authored byte vectors, crash cuts and external custody evidence are not supplied."
+      },
+      "open_requirements": [
+        "Safety14/Core first-new execution, signer custody, application checkpoint carry-over and two-successive-epoch live activation remain open.",
+        "Independent epoch byte/signature vectors and multi-host/HSM recovery remain open."
+      ]
+    },
+    {
+      "id": "M15-OP-TX-SYNC-BIND",
+      "workstream": "T1",
+      "module_id": "M15",
+      "requirement_ids": ["M15-WIRING", "M15-NONPROMOTE"],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-poco-node-production-v0",
+        "path": "trillionnium/crates/trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs",
+        "symbol": "bind_finalized_readback_to_native_state_sync_store_v1"
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/modules/TRNM_OPERATION_CLOSURE_SUPPLEMENT_V1.md",
+          "heading": "## T1 — finalized transaction to state-sync binding",
+          "rule": "Join only fresh finalized-transaction and state-sync readbacks whose block, height, state-root, binding and manifest identities agree; the join is not an atomic finality transaction."
+        },
+        {
+          "path": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md",
+          "heading": "## M13 — State Sync / Light Client / Proofs",
+          "rule": "A state-sync readback carries partial progress and cannot claim finality or a complete snapshot without the existing verification capability."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs",
+          "selector": "FinalizedTxNativeStateSyncBindingV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs",
+          "selector": "NativeStateSyncReadbackV1"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs",
+          "selector": "TX_NATIVE_SYNC_BINDING_DOMAIN_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs",
+          "selector": "FinalizedTxNativeStateSyncBindingErrorV0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs",
+          "selector": "MAX_NATIVE_TRUST_PATH_BYTES_V1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/lib.rs",
+          "selector": "MAX_SNAPSHOT_BYTES_V0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "A finalized transaction owner readback and a durable native state-sync store owned by separate lifecycles."
+        ],
+        "preconditions": [
+          "Both owners return fresh readbacks; block, height, state root, binding digest and manifest digest must match exactly."
+        ],
+        "accepted_effects": [
+          "Return a domain-separated joined binding containing the exact finalized transaction identity and current sync progress digest."
+        ],
+        "rejected_effects": [
+          "Any identity substitution returns a typed Sync error; finality and state-sync owners are not rewritten by the join."
+        ],
+        "uncertain_recovery": [
+          "A sync readback failure may follow durable finality; reopen both owners and retry the exact read-only join, never submit a second transaction."
+        ],
+        "publication": [
+          "The result is a candidate binding only and cannot claim finality, complete snapshot verification or production listener activation."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs",
+            "selector": "StateRootMismatch"
+          },
+          "meaning": "A finalized state-root or block substitution is rejected before a binding digest is returned."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs",
+            "selector": "FinalizedTxNativeStateSyncApplyErrorV0"
+          },
+          "meaning": "A state-sync readback error can occur after finality is durable and requires exact recovery/retry."
+        }
+      ],
+      "producer_modules": ["M08", "M13"],
+      "consumer_modules": ["M14", "M15"],
+      "cases": [
+        {
+          "id": "M15-OP-TX-SYNC-BIND-CASE-1",
+          "kind": "positive",
+          "package": "trnm-poco-node-production-v0",
+          "source_path": "trillionnium/crates/trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs",
+          "symbol": "exact_finalized_readback_binds_to_sync_identity_and_progress",
+          "target": "lib",
+          "test_filter": "tx_state_sync_bridge::tests::exact_finalized_readback_binds_to_sync_identity_and_progress",
+          "features": [],
+          "expected_outcome": "Matching finalized and state-sync readbacks produce a joined digest with exact block, root and progress identity.",
+          "assertion_fragments": [
+            "assert_eq!(joined.block_id, digest(2));",
+            "assert_eq!(joined.binding_digest, joined.canonical_digest());"
+          ]
+        },
+        {
+          "id": "M15-OP-TX-SYNC-BIND-CASE-2",
+          "kind": "negative",
+          "package": "trnm-poco-node-production-v0",
+          "source_path": "trillionnium/crates/trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs",
+          "symbol": "state_root_or_block_substitution_cannot_bind",
+          "target": "lib",
+          "test_filter": "tx_state_sync_bridge::tests::state_root_or_block_substitution_cannot_bind",
+          "features": [],
+          "expected_outcome": "A substituted state root or block ID returns the corresponding deterministic mismatch and no joined digest.",
+          "assertion_fragments": [
+            "FinalizedTxNativeStateSyncBindingErrorV0::StateRootMismatch",
+            "FinalizedTxNativeStateSyncBindingErrorV0::BlockMismatch"
+          ]
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "Bridge tests are source regressions; independent transaction bytes, authenticated finality sources and listener/network evidence are not supplied."
+      },
+      "open_requirements": [
+        "The two-owner join remains non-atomic and candidate-only; production RPC/listener, authenticated network source and complete-snapshot proof are open.",
+        "An end-to-end crash cut after durable finality and before sync readback requires a commissioned host."
+      ]
+    },
+    {
+      "id": "M13-OP-INCREMENTAL-SYNC-APPEND",
+      "workstream": "S1",
+      "module_id": "M13",
+      "requirement_ids": ["M13-STAGE", "M13-MIGRATE"],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-state-sync-v0",
+        "path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs",
+        "symbol": "append_chunk_v1"
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/modules/TRNM_OPERATION_CLOSURE_SUPPLEMENT_V1.md",
+          "heading": "## S1 — incremental SQLite state-sync append and crash recovery",
+          "rule": "Chunk and metadata progress update in one SQLite transaction, require fresh readback, accept exact duplicates and reject substitutions or stale writers."
+        },
+        {
+          "path": "docs/modules/TRNM_MODULE_IMPLEMENTATION_GUIDE_V1.md",
+          "heading": "## M13 — State Sync / Light Client / Proofs",
+          "rule": "The durable native state-sync owner validates each chunk and metadata identity before allowing progress to escape."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs",
+          "selector": "SqliteNativeStateSyncStoreV1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs",
+          "selector": "NativeStateSyncReadbackV1"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs",
+          "selector": "NATIVE_SYNC_STORE_APP_ID_V1"
+        },
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs",
+          "selector": "NATIVE_SYNC_META_SQL_V1"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/lib.rs",
+          "selector": "MAX_CHUNK_COUNT_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-state-sync-v0/src/lib.rs",
+          "selector": "MAX_CHUNK_BYTES_V0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "An open native state-sync session, its manifest and a chunk whose index, bytes and manifest digest are authenticated by the session."
+        ],
+        "preconditions": [
+          "SQLite namespace identity, binding and manifest match the session; chunk index and byte limits are within the selected profile."
+        ],
+        "accepted_effects": [
+          "One BEGIN IMMEDIATE transaction writes the exact chunk and metadata progress, then fresh readback confirms the new state."
+        ],
+        "rejected_effects": [
+          "Duplicate identity is read-only; substituted chunk, stale concurrent writer, wrong manifest or disconnected checkpoint leaves the durable source unchanged."
+        ],
+        "uncertain_recovery": [
+          "A process killed during an uncommitted append reopens at the exact source progress; resume only the identical valid chunk after readback."
+        ],
+        "publication": [
+          "Append progress is not a finality receipt, trust anchor or complete snapshot capability."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-state-sync-v0/src/lib.rs",
+            "selector": "StateSyncErrorV0"
+          },
+          "meaning": "Chunk, manifest, ordering or session substitution rejects without partial progress."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1.rs",
+            "selector": "NativeStateSyncStoreErrorV1"
+          },
+          "meaning": "A SQLite write or readback error requires reopen and exact source/target classification before retry."
+        }
+      ],
+      "producer_modules": ["M13"],
+      "consumer_modules": ["M08", "M13", "M15"],
+      "cases": [
+        {
+          "id": "M13-OP-INCREMENTAL-SYNC-APPEND-CASE-1",
+          "kind": "positive",
+          "package": "trnm-state-sync-v0",
+          "source_path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1_tests.rs",
+          "symbol": "native_sqlite_session_survives_cross_process_restart_and_rejects_readback_tamper",
+          "target": "lib",
+          "test_filter": "native_trust_v1::tests::native_sqlite_session_survives_cross_process_restart_and_rejects_readback_tamper",
+          "features": [],
+          "expected_outcome": "A durable append survives a child-process reopen, while tampered progress readback is rejected.",
+          "assertion_fragments": [
+            "assert_eq!(resumed.readback().received_chunk_count, 2);",
+            "NativeStateSyncStoreErrorV1::DurableReadbackMismatch"
+          ]
+        },
+        {
+          "id": "M13-OP-INCREMENTAL-SYNC-APPEND-CASE-2",
+          "kind": "negative",
+          "package": "trnm-state-sync-v0",
+          "source_path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1_tests.rs",
+          "symbol": "native_sqlite_append_rejects_stale_concurrent_writer_after_durable_cas",
+          "target": "lib",
+          "test_filter": "native_trust_v1::tests::native_sqlite_append_rejects_stale_concurrent_writer_after_durable_cas",
+          "features": [],
+          "expected_outcome": "A stale second writer cannot replace a durable chunk or advance metadata.",
+          "assertion_fragments": [
+            "usize::from(left_result.is_ok()) + usize::from(right_result.is_ok()),",
+            "NativeStateSyncStoreErrorV1::DurableReadbackMismatch"
+          ]
+        },
+        {
+          "id": "M13-OP-INCREMENTAL-SYNC-APPEND-CASE-3",
+          "kind": "recovery",
+          "package": "trnm-state-sync-v0",
+          "source_path": "trillionnium/crates/trnm-state-sync-v0/src/native_trust_v1_tests.rs",
+          "symbol": "native_sqlite_uncommitted_append_is_rolled_back_after_sigkill_and_can_resume",
+          "target": "lib",
+          "test_filter": "native_trust_v1::tests::native_sqlite_uncommitted_append_is_rolled_back_after_sigkill_and_can_resume",
+          "features": [],
+          "expected_outcome": "SIGKILL during an uncommitted SQLite append leaves zero chunks and exact source progress; a valid append then resumes.",
+          "assertion_fragments": [
+            "assert_eq!(reopened.readback_v1().unwrap().received_chunk_count, 0);",
+            "assert_eq!(store.readback_v1().unwrap().received_chunk_count, 1);"
+          ]
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "SQLite process-crash evidence is real but independently authored bytes, physical power-loss/controller-cache tests and external rollback authority are not supplied."
+      },
+      "open_requirements": [
+        "Physical power-loss and controller-cache durability, independent host rollback floors and scalable incremental compaction remain open.",
+        "A production peer transport and authenticated complete-snapshot verifier remain separate requirements."
+      ]
+    }
+  ]
+}

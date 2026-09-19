@@ -25,6 +25,8 @@ Trace registry: [`config/documentation-contracts-v1.json`](../../config/document
 Foundation operations: [`docs/modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md`](../modules/TRNM_FOUNDATION_OPERATION_CONTRACTS_V1.md)\
 Operation catalog: [`config/documentation-operations-v1.json`](../../config/documentation-operations-v1.json)
 
+Supplemental E1/T1/S1 operation closure: [`config/documentation-operations-supplement-v1.json`](../../config/documentation-operations-supplement-v1.json), validated by [`scripts/ci/check_documentation_operations_supplement_v1.py`](../../scripts/ci/check_documentation_operations_supplement_v1.py). The bounded foundation catalogue remains intentionally incomplete for future and disabled operations.
+
 ---
 
 ## 0. Authority, truth hierarchy, and non-claims

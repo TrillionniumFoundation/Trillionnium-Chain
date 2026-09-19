@@ -416,6 +416,18 @@ This boundary assumes owner-controlled ancestor directories and one live journal
 
 **Reproducible binary boundary.** `scripts/poco-fleet/build_reproducible_lab_candidate_v2.py` was run from a clean source candidate and completed two independent release builds of the validator and material-builder binaries with equal bytes, while binding the source commit/tree, Cargo.lock, selected rustc and candidate archive. This is a real build-precondition result only; it does not create deployment roots, validator receipts, host attestation, fault evidence or production activation. The runner must still consume a complete `prepare_validator_deployments.py` output and independently observed signed artifacts before any fleet metric is accepted.
 
+## Supplemental operation closure
+
+The E1 repeated-epoch composition, T1 finalized-transaction/state-sync join and
+S1 incremental SQLite append now have explicit operation records in
+[`TRNM_OPERATION_CLOSURE_SUPPLEMENT_V1.md`](TRNM_OPERATION_CLOSURE_SUPPLEMENT_V1.md)
+and `config/documentation-operations-supplement-v1.json`. Run
+`python3 scripts/ci/check_documentation_operations_supplement_v1.py` to verify
+their implementation symbols, normative headings, error selectors and positive
+/negative/recovery regressions. The checker reports completeness only for these
+three declared records; the bounded foundation catalogue remains incomplete and
+all semantic, independent and production acceptance flags remain closed.
+
 ## Acceptance boundary
 
 All eighteen sections are implementation/conformance requirements. The machine index supplies concrete starting points, not an exhaustive automatically accepted operation catalog. Before a module is called independently implementable, its reviewers must close each requirement-level schema/state/error/vector/symbol record, including any disabled production transport, AI codec, migration or hardware boundary. Actual people, signatures, independent vector production and execution results cannot be manufactured by editing this guide. They remain visible acceptance prerequisites under `TRNM_INDEPENDENT_REVIEW_V1.md`.
