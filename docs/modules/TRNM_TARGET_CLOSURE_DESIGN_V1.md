@@ -123,8 +123,13 @@ independent-evidence task, not an implied success.
   fence. Read/write bytes, retained replay depth and reopen time are measured
   against the growing-history budget; a local unit test is not a performance
   claim.
-* **Open boundary.** Public export/import, tombstone GC, arbitrary trust paths
-  and an independently administered growing-history campaign remain open.
+* **Transfer boundary.** `SqliteIncrementalStateStoreV0::export_snapshot_v0`
+  and `initialize_from_snapshot_v0` now provide a bounded local snapshot
+  handoff with exact rows/root/generation readback and no authority import.
+  Public peer export/import still requires a verified checkpoint/export binding,
+  interrupted-transfer and disk-full evidence, and transport ownership;
+  tombstone GC, arbitrary trust paths and an independently administered
+  growing-history campaign remain open.
 
 ### F1: multi-host fault and performance acceptance
 

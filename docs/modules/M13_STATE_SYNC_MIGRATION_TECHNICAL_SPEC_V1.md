@@ -39,6 +39,20 @@ It remains a candidate integration adapter; an M07-owned deployment must still
 bind its namespace/retention policy and pass crash, disk-full, replacement,
 space and multi-host campaigns before claiming production installation.
 
+The adapter also exposes a bounded local handoff pair:
+`export_snapshot_v0` emits `DurableDeltaSnapshotV0` only after metadata, ordered
+rows, row digest, and target root have been read back and independently
+recomputed. `initialize_from_snapshot_v0` validates the snapshot digest, row
+ordering, authority-namespace exclusions, row digest, target root, and integer
+bounds before creating a new closed-world store; it rejects an existing path and
+checks every field again after the commit. Snapshot generation and the last
+delta digest are retained, so an import/export round trip is byte-equivalent at
+the protocol object level. This is an authenticated-by-caller staging artifact,
+not a finalized source export, peer trust path, network protocol, tombstone
+collector, or signer/finality handoff. A production transfer must bind the
+snapshot to a verified checkpoint/export and exercise interrupted transfer,
+disk-full, replacement, retention, and multi-host evidence separately.
+
 ## Interfaces
 
 | Type / port | Meaning and owner |

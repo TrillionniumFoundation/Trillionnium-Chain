@@ -677,6 +677,76 @@ pub struct DurableDeltaInstallReceiptV0 {
     pub delta_digest: Digest32V0,
 }
 
+/// A deterministic, authority-free snapshot of one durable incremental-state
+/// generation.  The snapshot is suitable for a local staging handoff; it is
+/// not a finalized-export proof and cannot authorize a signer or a cutover.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DurableDeltaSnapshotV0 {
+    pub plan_digest: Digest32V0,
+    pub target_schema_digest: Digest32V0,
+    pub rows_digest: Digest32V0,
+    pub state_root: Digest32V0,
+    pub row_count: u64,
+    pub generation: u64,
+    pub last_delta_digest: Digest32V0,
+    pub rows: Vec<TargetRowV0>,
+    pub snapshot_digest: Digest32V0,
+}
+
+impl DurableDeltaSnapshotV0 {
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.migration.durable-delta-snapshot.v0",
+            &[
+                &self.plan_digest.0,
+                &self.target_schema_digest.0,
+                &self.rows_digest.0,
+                &self.state_root.0,
+                &self.row_count.to_be_bytes(),
+                &self.generation.to_be_bytes(),
+                &self.last_delta_digest.0,
+            ],
+        )
+    }
+
+    fn validate<R>(&self, root_builder: &R) -> Result<(), DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        if self.plan_digest == Digest32V0([0; 32])
+            || self.target_schema_digest == Digest32V0([0; 32])
+            || self.rows_digest == Digest32V0([0; 32])
+            || self.state_root == Digest32V0([0; 32])
+            || self.snapshot_digest != self.canonical_digest()
+            || self.row_count > MAX_EXPORT_ROWS_V0
+            || self.generation > i64::MAX as u64
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::InvalidDurableSnapshot,
+            ));
+        }
+        validate_target_rows_v0(&self.rows).map_err(DurableDeltaStoreErrorV0::Protocol)?;
+        if self.row_count != self.rows.len() as u64
+            || target_rows_digest_v0(&self.rows) != self.rows_digest
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::SnapshotRowsMismatch,
+            ));
+        }
+        let recomputed = root_builder
+            .recompute_target_root(self.target_schema_digest, self.rows.iter())
+            .map_err(|error| DurableDeltaStoreErrorV0::RootBuilder(error.to_string()))?;
+        if recomputed != self.state_root {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::SnapshotRootMismatch,
+            ));
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug)]
 pub enum DurableDeltaStoreErrorV0 {
     Protocol(MigrationErrorV0),
@@ -928,6 +998,114 @@ impl SqliteIncrementalStateStoreV0 {
             ));
         }
         Ok(readback)
+    }
+
+    /// Export the exact durable rows and metadata at one integrity-checked
+    /// generation.  This is a local staging handoff primitive: callers must
+    /// authenticate any peer/transport and independently bind finality before
+    /// treating the snapshot as a migration input.
+    pub fn export_snapshot_v0<R>(
+        &self,
+        root_builder: &R,
+    ) -> Result<DurableDeltaSnapshotV0, DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        let readback = self.readback_with_root_builder_v0(root_builder)?;
+        let rows = self.read_rows_v0()?;
+        let mut snapshot = DurableDeltaSnapshotV0 {
+            plan_digest: readback.plan_digest,
+            target_schema_digest: readback.target_schema_digest,
+            rows_digest: readback.rows_digest,
+            state_root: readback.state_root,
+            row_count: readback.row_count,
+            generation: readback.generation,
+            last_delta_digest: readback.last_delta_digest,
+            rows,
+            snapshot_digest: Digest32V0([0; 32]),
+        };
+        snapshot.snapshot_digest = snapshot.canonical_digest();
+        snapshot.validate(root_builder)?;
+        Ok(snapshot)
+    }
+
+    /// Install a validated snapshot into a new closed-world SQLite store.
+    /// Existing paths are rejected and no signer/finality state is imported.
+    pub fn initialize_from_snapshot_v0<R>(
+        path: impl Into<PathBuf>,
+        snapshot: &DurableDeltaSnapshotV0,
+        root_builder: &R,
+    ) -> Result<Self, DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        snapshot.validate(root_builder)?;
+        let path = path.into();
+        if Path::new(&path).exists() {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::StoreAlreadyInitialized,
+            ));
+        }
+        let connection = Connection::open(&path)
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        connection
+            .pragma_update(None, "application_id", DURABLE_STORE_APP_ID_V0)
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        connection
+            .pragma_update(None, "user_version", 1_i64)
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let transaction = connection
+            .unchecked_transaction()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        transaction
+            .execute_batch(&format!("{DURABLE_META_SQL_V0};{DURABLE_ROWS_SQL_V0};"))
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        for row in &snapshot.rows {
+            transaction
+                .execute(
+                    "INSERT INTO migration_delta_rows_v0(namespace,key,value) VALUES(?1,?2,?3)",
+                    params![&row.namespace, &row.key, &row.value],
+                )
+                .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        }
+        transaction
+            .execute(
+                "INSERT INTO migration_delta_meta_v0(singleton,plan_digest,schema_digest,rows_digest,state_root,row_count,generation,last_delta_digest) VALUES(1,?1,?2,?3,?4,?5,?6,?7)",
+                params![
+                    &snapshot.plan_digest.0[..],
+                    &snapshot.target_schema_digest.0[..],
+                    &snapshot.rows_digest.0[..],
+                    &snapshot.state_root.0[..],
+                    snapshot.row_count as i64,
+                    snapshot.generation as i64,
+                    &snapshot.last_delta_digest.0[..],
+                ],
+            )
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        transaction
+            .commit()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let store = Self {
+            path,
+            plan_digest: snapshot.plan_digest,
+            target_schema_digest: snapshot.target_schema_digest,
+        };
+        let readback = store.readback_with_root_builder_v0(root_builder)?;
+        if readback.plan_digest != snapshot.plan_digest
+            || readback.target_schema_digest != snapshot.target_schema_digest
+            || readback.rows_digest != snapshot.rows_digest
+            || readback.state_root != snapshot.state_root
+            || readback.row_count != snapshot.row_count
+            || readback.generation != snapshot.generation
+            || readback.last_delta_digest != snapshot.last_delta_digest
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        Ok(store)
     }
 
     pub fn apply_delta_v0<R>(
@@ -1319,6 +1497,9 @@ pub enum MigrationErrorV0 {
     StoreSchemaMismatch,
     DurableStoreMismatch,
     DurableReadbackMismatch,
+    InvalidDurableSnapshot,
+    SnapshotRowsMismatch,
+    SnapshotRootMismatch,
 }
 
 impl fmt::Display for MigrationErrorV0 {
@@ -1353,6 +1534,9 @@ impl fmt::Display for MigrationErrorV0 {
             Self::StoreSchemaMismatch => "durable delta store schema mismatch",
             Self::DurableStoreMismatch => "durable delta store metadata mismatch",
             Self::DurableReadbackMismatch => "durable delta readback mismatch",
+            Self::InvalidDurableSnapshot => "durable delta snapshot is malformed",
+            Self::SnapshotRowsMismatch => "durable delta snapshot rows mismatch",
+            Self::SnapshotRootMismatch => "durable delta snapshot root mismatch",
         })
     }
 }
@@ -1589,6 +1773,72 @@ mod tests {
             ))
         ));
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn sqlite_snapshot_export_import_is_exact_and_rejects_row_substitution() {
+        let source_path = std::env::temp_dir().join(format!(
+            "trnm-migration-snapshot-source-{}-{}.sqlite",
+            std::process::id(),
+            d(98).0[0]
+        ));
+        let target_path = std::env::temp_dir().join(format!(
+            "trnm-migration-snapshot-target-{}-{}.sqlite",
+            std::process::id(),
+            d(99).0[0]
+        ));
+        let _ = std::fs::remove_file(&source_path);
+        let _ = std::fs::remove_file(&target_path);
+        let base = vec![target_row(1, 10), target_row(2, 20)];
+        let target = vec![target_row(1, 11), target_row(3, 30)];
+        let source =
+            SqliteIncrementalStateStoreV0::initialize(&source_path, d(95), d(96), &base, &HashRoot)
+                .unwrap();
+        let delta = derive_incremental_delta_v0(d(95), d(96), &base, &target, &HashRoot).unwrap();
+        source.apply_delta_v0(&delta, &HashRoot).unwrap();
+        let snapshot = source.export_snapshot_v0(&HashRoot).unwrap();
+        let imported = SqliteIncrementalStateStoreV0::initialize_from_snapshot_v0(
+            &target_path,
+            &snapshot,
+            &HashRoot,
+        )
+        .unwrap();
+        assert_eq!(imported.read_rows_v0().unwrap(), target);
+        assert_eq!(imported.export_snapshot_v0(&HashRoot).unwrap(), snapshot);
+        assert!(matches!(
+            SqliteIncrementalStateStoreV0::initialize_from_snapshot_v0(
+                &target_path,
+                &snapshot,
+                &HashRoot,
+            ),
+            Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::StoreAlreadyInitialized
+            ))
+        ));
+
+        let mut substituted = snapshot.clone();
+        substituted.rows[0].value[0] = 99;
+        assert!(matches!(
+            SqliteIncrementalStateStoreV0::initialize_from_snapshot_v0(
+                std::env::temp_dir().join(format!(
+                    "trnm-migration-snapshot-invalid-{}-{}.sqlite",
+                    std::process::id(),
+                    d(100).0[0]
+                )),
+                &substituted,
+                &HashRoot,
+            ),
+            Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::SnapshotRowsMismatch
+            ))
+        ));
+        let _ = std::fs::remove_file(source_path);
+        let _ = std::fs::remove_file(target_path);
+        let _ = std::fs::remove_file(std::env::temp_dir().join(format!(
+            "trnm-migration-snapshot-invalid-{}-{}.sqlite",
+            std::process::id(),
+            d(100).0[0]
+        )));
     }
 
     #[test]
