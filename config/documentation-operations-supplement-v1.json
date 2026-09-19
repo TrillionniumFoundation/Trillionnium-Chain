@@ -280,7 +280,9 @@
             "assert_eq!(broadcaster_calls.load(Ordering::SeqCst), 2);",
             "FinalizedTxNativeStateSyncApplyErrorV0::Sync",
             "ProductionTxNodeAdapterV0::recover",
-            "assert_eq!(joined.finalized.tx_id, admission.tx_id);"
+            "bind_durable_finalized_readback_to_native_sync_v1(admission.tx_id, &correct_store)",
+            "assert_eq!(joined.tx_id, admission.tx_id);",
+            "finality_calls.load(Ordering::SeqCst)"
           ]
         }
       ],
