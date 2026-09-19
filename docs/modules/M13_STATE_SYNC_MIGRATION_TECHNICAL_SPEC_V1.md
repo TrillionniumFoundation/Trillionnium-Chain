@@ -164,9 +164,29 @@ count, chunk count and a content-derived progress digest over sorted
 path, exact manifest, application facts and every retained chunk; changed bytes,
 binding, schema/version or progress are rejected before a verified snapshot is
 issued. Tests cover successful interrupted-resume, chunk substitution and
-tampered readback. This is a candidate local session contract: it does not yet
-persist the record in the M07 store, select peers, authenticate a remote
-source, or claim crash/power-loss durability.
+tampered readback.
+
+`SqliteNativeStateSyncStoreV1` now persists that boundary in a closed-world
+SQLite database. It sets an application ID, schema version, WAL journal and
+`synchronous=FULL`; initialization rejects an existing path. The metadata row
+stores every `NativeStateSyncBindingV1` field, the manifest chunk-binding
+digest, and the exact readback. A separate WITHOUT ROWID chunk table stores
+immutable `(index, manifest_binding, bytes, chunk_digest)` rows. Every open,
+readback and resume rechecks the schema/table set, binding canonical digest,
+chunk bounds, chunk digest, sorted-index progress digest, byte/count totals and
+metadata equality. `append_chunk_v1` validates against a cloned in-memory
+session, writes the chunk and readback in one immediate transaction, and only
+then advances process-local state; a different payload at an existing index is
+`ChunkSubstitution`.
+
+`resume_existing_v1` still requires a newly verified `VerifiedNativeTrustPathV1`,
+exact manifest and application checkpoint. The database is therefore a crash
+resume record, not a trust anchor or peer-selected source. The repository
+test `native_sqlite_session_survives_cross_process_restart_and_rejects_readback_tamper`
+closes a real child-process reopen and rejects a modified durable progress
+digest. This is process-restart evidence only; it does not establish physical
+power-loss, disk-full, filesystem-corruption, peer transport, signer, or
+multihost durability, and it does not authorize production installation.
 
 `native_trust_v1_tests.rs` covers real signed ordinary-to-epoch paths for normal
 and fallback handoff, signed TC views 3/5/8, snapshot target substitution,

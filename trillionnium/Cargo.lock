@@ -2133,6 +2133,7 @@ name = "trnm-state-sync-v0"
 version = "0.1.0"
 dependencies = [
  "ed25519-dalek",
+ "rusqlite",
  "serde_json",
  "sha2",
  "trnm-consensus-crypto",

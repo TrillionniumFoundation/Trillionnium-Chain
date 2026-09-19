@@ -7,8 +7,9 @@ use crate::{
     StateSyncErrorV0, StateSyncHostErrorV0, StateSyncSessionV0, VerifiedSnapshotV0,
     VerifiedTrustPathV0, WeakSubjectivityAnchorV0, MAX_TRUST_PATH_LINKS_V0,
 };
+use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
-use std::{error::Error, fmt};
+use std::{error::Error, fmt, path::PathBuf};
 use trnm_consensus_crypto::{
     decode_verify_epoch_first_finality_strict_v1, decode_verify_finality_proof_strict_v0,
     validate_validator_set_strict_ed25519_v0, FinalityExpectationV0, StrictFinalityErrorV0,
@@ -489,10 +490,50 @@ pub struct NativeStateSyncReadbackV1 {
     pub progress_digest: Digest32V0,
 }
 
+const NATIVE_SYNC_STORE_APP_ID_V1: i64 = 0x5453_594e;
+const NATIVE_SYNC_STORE_USER_VERSION_V1: i64 = 1;
+const NATIVE_SYNC_META_SQL_V1: &str = "CREATE TABLE native_state_sync_meta_v1 (singleton INTEGER PRIMARY KEY CHECK(singleton=1), binding_digest BLOB NOT NULL CHECK(length(binding_digest)=32), trust_path_digest BLOB NOT NULL CHECK(length(trust_path_digest)=32), terminal_block_digest BLOB NOT NULL CHECK(length(terminal_block_digest)=32), checkpoint_digest BLOB NOT NULL CHECK(length(checkpoint_digest)=32), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), manifest_binding_digest BLOB NOT NULL CHECK(length(manifest_binding_digest)=32), height INTEGER NOT NULL CHECK(height>0), epoch INTEGER NOT NULL CHECK(epoch>0), state_root BLOB NOT NULL CHECK(length(state_root)=32), schema_digest BLOB NOT NULL CHECK(length(schema_digest)=32), application_version INTEGER NOT NULL CHECK(application_version>0), received_chunk_count INTEGER NOT NULL CHECK(received_chunk_count>=0), received_bytes INTEGER NOT NULL CHECK(received_bytes>=0), progress_digest BLOB NOT NULL CHECK(length(progress_digest)=32)) STRICT";
+const NATIVE_SYNC_CHUNKS_SQL_V1: &str = "CREATE TABLE native_state_sync_chunks_v1 (chunk_index INTEGER PRIMARY KEY CHECK(chunk_index>=0), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), bytes BLOB NOT NULL, chunk_digest BLOB NOT NULL CHECK(length(chunk_digest)=32)) WITHOUT ROWID";
+
+/// Errors from the candidate durable native state-sync adapter.  A SQLite
+/// success is not treated as a trusted source: every reopen revalidates the
+/// closed-world metadata, chunk digests and caller-supplied verified path.
+#[derive(Debug)]
+pub enum NativeStateSyncStoreErrorV1 {
+    Protocol(StateSyncErrorV0),
+    Sqlite(String),
+    Io(String),
+    StoreAlreadyInitialized,
+    StoreSchemaMismatch,
+    BindingMismatch,
+    DurableReadbackMismatch,
+}
+
+impl fmt::Display for NativeStateSyncStoreErrorV1 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Protocol(error) => {
+                write!(f, "native state-sync protocol rejected input: {error}")
+            }
+            Self::Sqlite(error) => write!(f, "native state-sync sqlite failure: {error}"),
+            Self::Io(error) => write!(f, "native state-sync filesystem failure: {error}"),
+            Self::StoreAlreadyInitialized => f.write_str("native state-sync store already exists"),
+            Self::StoreSchemaMismatch => f.write_str("native state-sync store schema mismatch"),
+            Self::BindingMismatch => f.write_str("native state-sync durable binding mismatch"),
+            Self::DurableReadbackMismatch => {
+                f.write_str("native state-sync durable readback mismatch")
+            }
+        }
+    }
+}
+
+impl Error for NativeStateSyncStoreErrorV1 {}
+
 /// Native proof-bound download session. This composes the existing bounded
 /// chunk session; it does not choose peers, issue anchors, or perform a
 /// production install. Restart requires the same independently verified path,
 /// exact manifest, application schema/version and every retained chunk.
+#[derive(Clone)]
 pub struct NativeStateSyncSessionV1 {
     binding: NativeStateSyncBindingV1,
     session: StateSyncSessionV0,
@@ -557,6 +598,11 @@ impl NativeStateSyncSessionV1 {
         }
     }
 
+    #[must_use]
+    fn manifest_binding_digest(&self) -> Digest32V0 {
+        self.session.manifest_binding_digest()
+    }
+
     pub fn verify_complete<R>(
         &self,
         recomputer: &R,
@@ -579,6 +625,501 @@ impl NativeStateSyncSessionV1 {
             binding: self.binding,
         })
     }
+}
+
+/// A closed-world SQLite persistence adapter for one native state-sync
+/// session.  It stores only the verified session binding, immutable accepted
+/// chunks, and a content-derived readback.  Reopening it never creates a
+/// trust path: `resume_existing_v1` requires the caller to supply a freshly
+/// verified native path and exact manifest/application checkpoint again.
+#[derive(Clone, Debug)]
+pub struct SqliteNativeStateSyncStoreV1 {
+    path: PathBuf,
+}
+
+#[derive(Clone, Copy, Debug)]
+struct NativeDurableMetadataV1 {
+    binding: NativeStateSyncBindingV1,
+    manifest_binding_digest: Digest32V0,
+    readback: NativeStateSyncReadbackV1,
+}
+
+impl SqliteNativeStateSyncStoreV1 {
+    /// Create a new store from the current in-memory session.  Existing paths
+    /// are rejected so a stale or substituted database cannot be adopted.
+    pub fn initialize(
+        path: impl Into<PathBuf>,
+        session: &NativeStateSyncSessionV1,
+    ) -> Result<Self, NativeStateSyncStoreErrorV1> {
+        let path = path.into();
+        if path.exists() {
+            return Err(NativeStateSyncStoreErrorV1::StoreAlreadyInitialized);
+        }
+        let mut connection = Connection::open(&path)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        configure_native_connection_v1(&connection, true)?;
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        transaction
+            .execute_batch(&format!(
+                "{NATIVE_SYNC_META_SQL_V1};{NATIVE_SYNC_CHUNKS_SQL_V1};"
+            ))
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        let binding = session.binding();
+        let readback = session.readback();
+        insert_metadata_v1(
+            &transaction,
+            binding,
+            session.manifest_binding_digest(),
+            readback,
+        )?;
+        transaction
+            .commit()
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        let store = Self { path };
+        let actual = store.readback_v1()?;
+        if actual != readback {
+            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
+        }
+        Ok(store)
+    }
+
+    /// Open an existing closed-world store and validate its metadata and all
+    /// retained chunk bytes.  This is intentionally independent of a trust
+    /// path; source authority is re-established only by `resume_existing_v1`.
+    pub fn open_existing(path: impl Into<PathBuf>) -> Result<Self, NativeStateSyncStoreErrorV1> {
+        let store = Self { path: path.into() };
+        let _ = store.readback_v1()?;
+        Ok(store)
+    }
+
+    /// Read the durable progress after checking every retained chunk's
+    /// canonical digest, manifest binding, byte bound and metadata digest.
+    pub fn readback_v1(&self) -> Result<NativeStateSyncReadbackV1, NativeStateSyncStoreErrorV1> {
+        let connection = self.open_connection_v1()?;
+        let metadata = read_metadata_v1(&connection)?;
+        let chunks = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
+        let actual = readback_from_chunks_v1(
+            metadata.binding.binding_digest,
+            metadata.binding.manifest_digest,
+            &chunks,
+        )?;
+        if actual != metadata.readback {
+            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
+        }
+        Ok(actual)
+    }
+
+    /// Return the exact retained bytes in canonical index order after a full
+    /// digest/readback check.  The caller must still bind them to a fresh
+    /// verified path and manifest before resuming.
+    pub fn retained_chunks_v1(&self) -> Result<Vec<SnapshotChunkV0>, NativeStateSyncStoreErrorV1> {
+        let connection = self.open_connection_v1()?;
+        let metadata = read_metadata_v1(&connection)?;
+        let chunks = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
+        let actual = readback_from_chunks_v1(
+            metadata.binding.binding_digest,
+            metadata.binding.manifest_digest,
+            &chunks,
+        )?;
+        if actual != metadata.readback {
+            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
+        }
+        Ok(chunks)
+    }
+
+    /// Revalidate a freshly authenticated native path, exact manifest and
+    /// application checkpoint against the persisted source binding, then
+    /// reconstruct the in-memory session from every retained chunk.
+    pub fn resume_existing_v1(
+        &self,
+        path: VerifiedNativeTrustPathV1,
+        manifest: SnapshotManifestV0,
+        application: NativeApplicationCheckpointV1,
+    ) -> Result<NativeStateSyncSessionV1, NativeStateSyncStoreErrorV1> {
+        let connection = self.open_connection_v1()?;
+        let metadata = read_metadata_v1(&connection)?;
+        let chunks = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
+        let resumed = NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application)
+            .map_err(NativeStateSyncStoreErrorV1::Protocol)?;
+        let binding = resumed.binding();
+        if binding != metadata.binding
+            || manifest.chunk_binding_digest() != metadata.manifest_binding_digest
+        {
+            return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
+        }
+        let actual =
+            readback_from_chunks_v1(binding.binding_digest, binding.manifest_digest, &chunks)?;
+        if actual != metadata.readback {
+            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
+        }
+        NativeStateSyncSessionV1::resume(path, manifest, application, metadata.readback, &chunks)
+            .map_err(NativeStateSyncStoreErrorV1::Protocol)
+    }
+
+    /// Validate and durably append one chunk.  The in-memory session is
+    /// replaced only after SQLite commit succeeds, so an I/O error cannot
+    /// advance process-local accounting past the durable state.
+    pub fn append_chunk_v1(
+        &self,
+        session: &mut NativeStateSyncSessionV1,
+        chunk: SnapshotChunkV0,
+    ) -> Result<(), NativeStateSyncStoreErrorV1> {
+        let connection = self.open_connection_v1()?;
+        let metadata = read_metadata_v1(&connection)?;
+        let current = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
+        let actual = readback_from_chunks_v1(
+            metadata.binding.binding_digest,
+            metadata.binding.manifest_digest,
+            &current,
+        )?;
+        if actual != metadata.readback
+            || actual != session.readback()
+            || session.binding() != metadata.binding
+            || session.manifest_binding_digest() != metadata.manifest_binding_digest
+        {
+            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
+        }
+
+        let mut next = session.clone();
+        next.accept_chunk(chunk.clone())
+            .map_err(NativeStateSyncStoreErrorV1::Protocol)?;
+        let transaction = connection
+            .unchecked_transaction()
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        let existing: Option<(Vec<u8>, Vec<u8>, Vec<u8>)> = transaction
+            .query_row(
+                "SELECT manifest_digest,bytes,chunk_digest FROM native_state_sync_chunks_v1 WHERE chunk_index=?1",
+                params![i64::from(chunk.index)],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+            )
+            .optional()
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        if let Some((manifest_digest, bytes, chunk_digest)) = existing {
+            if manifest_digest != chunk.manifest_digest.0
+                || bytes != chunk.bytes
+                || chunk_digest != chunk.chunk_digest.0
+            {
+                return Err(NativeStateSyncStoreErrorV1::Protocol(
+                    StateSyncErrorV0::ChunkSubstitution,
+                ));
+            }
+        } else {
+            transaction
+                .execute(
+                    "INSERT INTO native_state_sync_chunks_v1(chunk_index,manifest_digest,bytes,chunk_digest) VALUES(?1,?2,?3,?4)",
+                    params![
+                        i64::from(chunk.index),
+                        &chunk.manifest_digest.0[..],
+                        &chunk.bytes,
+                        &chunk.chunk_digest.0[..]
+                    ],
+                )
+                .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        }
+        let next_readback = next.readback();
+        update_metadata_readback_v1(&transaction, next_readback)?;
+        transaction
+            .commit()
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        *session = next;
+        Ok(())
+    }
+
+    fn open_connection_v1(&self) -> Result<Connection, NativeStateSyncStoreErrorV1> {
+        let connection = Connection::open_with_flags(&self.path, OpenFlags::SQLITE_OPEN_READ_WRITE)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        configure_native_connection_v1(&connection, false)?;
+        verify_native_schema_v1(&connection)?;
+        Ok(connection)
+    }
+}
+
+fn configure_native_connection_v1(
+    connection: &Connection,
+    initialize: bool,
+) -> Result<(), NativeStateSyncStoreErrorV1> {
+    if initialize {
+        connection
+            .pragma_update(None, "application_id", NATIVE_SYNC_STORE_APP_ID_V1)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        connection
+            .pragma_update(None, "user_version", NATIVE_SYNC_STORE_USER_VERSION_V1)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        connection
+            .pragma_update(None, "journal_mode", "WAL")
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        connection
+            .pragma_update(None, "synchronous", "FULL")
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    }
+    let application_id: i64 = connection
+        .pragma_query_value(None, "application_id", |row| row.get(0))
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    let user_version: i64 = connection
+        .pragma_query_value(None, "user_version", |row| row.get(0))
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    let journal_mode: String = connection
+        .pragma_query_value(None, "journal_mode", |row| row.get(0))
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    let synchronous: i64 = connection
+        .pragma_query_value(None, "synchronous", |row| row.get(0))
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    if application_id != NATIVE_SYNC_STORE_APP_ID_V1
+        || user_version != NATIVE_SYNC_STORE_USER_VERSION_V1
+        || journal_mode.to_ascii_lowercase() != "wal"
+        || synchronous != 2
+    {
+        return Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch);
+    }
+    connection
+        .busy_timeout(std::time::Duration::from_millis(250))
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    Ok(())
+}
+
+fn verify_native_schema_v1(connection: &Connection) -> Result<(), NativeStateSyncStoreErrorV1> {
+    let mut statement = connection
+        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    let names = statement
+        .query_map([], |row| row.get::<_, String>(0))
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    if names
+        != [
+            "native_state_sync_chunks_v1".to_owned(),
+            "native_state_sync_meta_v1".to_owned(),
+        ]
+    {
+        return Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch);
+    }
+    Ok(())
+}
+
+fn digest_from_blob_v1(bytes: Vec<u8>) -> Result<Digest32V0, NativeStateSyncStoreErrorV1> {
+    <[u8; 32]>::try_from(bytes.as_slice())
+        .map(Digest32V0)
+        .map_err(|_| NativeStateSyncStoreErrorV1::StoreSchemaMismatch)
+}
+
+fn u64_from_i64_v1(value: i64) -> Result<u64, NativeStateSyncStoreErrorV1> {
+    u64::try_from(value).map_err(|_| NativeStateSyncStoreErrorV1::StoreSchemaMismatch)
+}
+
+fn u64_to_i64_v1(value: u64) -> Result<i64, NativeStateSyncStoreErrorV1> {
+    i64::try_from(value)
+        .map_err(|_| NativeStateSyncStoreErrorV1::Protocol(StateSyncErrorV0::SnapshotTooLarge))
+}
+
+fn read_metadata_v1(
+    connection: &Connection,
+) -> Result<NativeDurableMetadataV1, NativeStateSyncStoreErrorV1> {
+    let row = connection
+        .query_row(
+            "SELECT binding_digest,trust_path_digest,terminal_block_digest,checkpoint_digest,manifest_digest,manifest_binding_digest,height,epoch,state_root,schema_digest,application_version,received_chunk_count,received_bytes,progress_digest FROM native_state_sync_meta_v1 WHERE singleton=1",
+            [],
+            |row| {
+                Ok((
+                    row.get::<_, Vec<u8>>(0)?,
+                    row.get::<_, Vec<u8>>(1)?,
+                    row.get::<_, Vec<u8>>(2)?,
+                    row.get::<_, Vec<u8>>(3)?,
+                    row.get::<_, Vec<u8>>(4)?,
+                    row.get::<_, Vec<u8>>(5)?,
+                    row.get::<_, i64>(6)?,
+                    row.get::<_, i64>(7)?,
+                    row.get::<_, Vec<u8>>(8)?,
+                    row.get::<_, Vec<u8>>(9)?,
+                    row.get::<_, i64>(10)?,
+                    row.get::<_, i64>(11)?,
+                    row.get::<_, i64>(12)?,
+                    row.get::<_, Vec<u8>>(13)?,
+                ))
+            },
+        )
+        .optional()
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?
+        .ok_or(NativeStateSyncStoreErrorV1::StoreSchemaMismatch)?;
+    let binding = NativeStateSyncBindingV1 {
+        binding_digest: digest_from_blob_v1(row.0.clone())?,
+        trust_path_digest: digest_from_blob_v1(row.1)?,
+        terminal_block_digest: digest_from_blob_v1(row.2)?,
+        checkpoint_digest: digest_from_blob_v1(row.3)?,
+        manifest_digest: digest_from_blob_v1(row.4)?,
+        height: u64_from_i64_v1(row.6)?,
+        epoch: u64_from_i64_v1(row.7)?,
+        state_root: digest_from_blob_v1(row.8)?,
+        schema_digest: digest_from_blob_v1(row.9)?,
+        application_version: u64_from_i64_v1(row.10)?,
+    };
+    if binding.binding_digest == Digest32V0([0; 32])
+        || binding.canonical_digest() != binding.binding_digest
+        || binding.height == 0
+        || binding.epoch == 0
+        || binding.schema_digest == Digest32V0([0; 32])
+        || binding.application_version == 0
+    {
+        return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
+    }
+    let received_chunk_count = u32::try_from(u64_from_i64_v1(row.11)?)
+        .map_err(|_| NativeStateSyncStoreErrorV1::StoreSchemaMismatch)?;
+    let readback = NativeStateSyncReadbackV1 {
+        binding_digest: binding.binding_digest,
+        manifest_digest: binding.manifest_digest,
+        received_chunk_count,
+        received_bytes: u64_from_i64_v1(row.12)?,
+        progress_digest: digest_from_blob_v1(row.13)?,
+    };
+    Ok(NativeDurableMetadataV1 {
+        binding,
+        manifest_binding_digest: digest_from_blob_v1(row.5)?,
+        readback,
+    })
+}
+
+fn read_chunks_v1(
+    connection: &Connection,
+    expected_manifest_binding: Digest32V0,
+) -> Result<Vec<SnapshotChunkV0>, NativeStateSyncStoreErrorV1> {
+    if expected_manifest_binding == Digest32V0([0; 32]) {
+        return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
+    }
+    let mut statement = connection
+        .prepare("SELECT chunk_index,manifest_digest,bytes,chunk_digest FROM native_state_sync_chunks_v1 ORDER BY chunk_index")
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    let mapped = statement
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, i64>(0)?,
+                row.get::<_, Vec<u8>>(1)?,
+                row.get::<_, Vec<u8>>(2)?,
+                row.get::<_, Vec<u8>>(3)?,
+            ))
+        })
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    let mut chunks = Vec::new();
+    let mut total_bytes = 0_u64;
+    for item in mapped {
+        let (index, manifest_digest, bytes, chunk_digest) =
+            item.map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        let index = u32::try_from(u64_from_i64_v1(index)?)
+            .map_err(|_| NativeStateSyncStoreErrorV1::StoreSchemaMismatch)?;
+        if bytes.is_empty() || bytes.len() > crate::MAX_CHUNK_BYTES_V0 {
+            return Err(NativeStateSyncStoreErrorV1::Protocol(
+                StateSyncErrorV0::InvalidChunk,
+            ));
+        }
+        total_bytes = total_bytes.checked_add(bytes.len() as u64).ok_or(
+            NativeStateSyncStoreErrorV1::Protocol(StateSyncErrorV0::SnapshotTooLarge),
+        )?;
+        if total_bytes > crate::MAX_SNAPSHOT_BYTES_V0 {
+            return Err(NativeStateSyncStoreErrorV1::Protocol(
+                StateSyncErrorV0::SnapshotTooLarge,
+            ));
+        }
+        let manifest_digest = digest_from_blob_v1(manifest_digest)?;
+        let chunk_digest = digest_from_blob_v1(chunk_digest)?;
+        if manifest_digest != expected_manifest_binding
+            || chunk_digest != SnapshotChunkV0::canonical_digest(manifest_digest, index, &bytes)
+        {
+            return Err(NativeStateSyncStoreErrorV1::Protocol(
+                StateSyncErrorV0::InvalidChunk,
+            ));
+        }
+        chunks.push(SnapshotChunkV0 {
+            manifest_digest,
+            index,
+            bytes,
+            chunk_digest,
+        });
+    }
+    Ok(chunks)
+}
+
+fn readback_from_chunks_v1(
+    binding_digest: Digest32V0,
+    manifest_digest: Digest32V0,
+    chunks: &[SnapshotChunkV0],
+) -> Result<NativeStateSyncReadbackV1, NativeStateSyncStoreErrorV1> {
+    let mut previous = None;
+    let mut received_bytes = 0_u64;
+    let mut parts = Vec::with_capacity(chunks.len() * 2 + 1);
+    parts.push(manifest_digest.0.to_vec());
+    for chunk in chunks {
+        if previous.is_some_and(|index| index >= chunk.index) {
+            return Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch);
+        }
+        previous = Some(chunk.index);
+        received_bytes = received_bytes.checked_add(chunk.bytes.len() as u64).ok_or(
+            NativeStateSyncStoreErrorV1::Protocol(StateSyncErrorV0::SnapshotTooLarge),
+        )?;
+        parts.push(chunk.index.to_be_bytes().to_vec());
+        parts.push(chunk.chunk_digest.0.to_vec());
+    }
+    let refs: Vec<&[u8]> = parts.iter().map(Vec::as_slice).collect();
+    Ok(NativeStateSyncReadbackV1 {
+        binding_digest,
+        manifest_digest,
+        received_chunk_count: u32::try_from(chunks.len())
+            .map_err(|_| NativeStateSyncStoreErrorV1::StoreSchemaMismatch)?,
+        received_bytes,
+        progress_digest: Digest32V0::hash(b"trnm.state-sync.session-progress.v0", &refs),
+    })
+}
+
+fn insert_metadata_v1(
+    transaction: &rusqlite::Transaction<'_>,
+    binding: NativeStateSyncBindingV1,
+    manifest_binding_digest: Digest32V0,
+    readback: NativeStateSyncReadbackV1,
+) -> Result<(), NativeStateSyncStoreErrorV1> {
+    transaction
+        .execute(
+            "INSERT INTO native_state_sync_meta_v1(singleton,binding_digest,trust_path_digest,terminal_block_digest,checkpoint_digest,manifest_digest,manifest_binding_digest,height,epoch,state_root,schema_digest,application_version,received_chunk_count,received_bytes,progress_digest) VALUES(1,?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14)",
+            params![
+                &binding.binding_digest.0[..],
+                &binding.trust_path_digest.0[..],
+                &binding.terminal_block_digest.0[..],
+                &binding.checkpoint_digest.0[..],
+                &binding.manifest_digest.0[..],
+                &manifest_binding_digest.0[..],
+                u64_to_i64_v1(binding.height)?,
+                u64_to_i64_v1(binding.epoch)?,
+                &binding.state_root.0[..],
+                &binding.schema_digest.0[..],
+                u64_to_i64_v1(binding.application_version)?,
+                i64::from(readback.received_chunk_count),
+                u64_to_i64_v1(readback.received_bytes)?,
+                &readback.progress_digest.0[..],
+            ],
+        )
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    Ok(())
+}
+
+fn update_metadata_readback_v1(
+    transaction: &rusqlite::Transaction<'_>,
+    readback: NativeStateSyncReadbackV1,
+) -> Result<(), NativeStateSyncStoreErrorV1> {
+    let updated = transaction
+        .execute(
+            "UPDATE native_state_sync_meta_v1 SET received_chunk_count=?1,received_bytes=?2,progress_digest=?3 WHERE singleton=1 AND binding_digest=?4 AND manifest_digest=?5",
+            params![
+                i64::from(readback.received_chunk_count),
+                u64_to_i64_v1(readback.received_bytes)?,
+                &readback.progress_digest.0[..],
+                &readback.binding_digest.0[..],
+                &readback.manifest_digest.0[..],
+            ],
+        )
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    if updated != 1 {
+        return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
+    }
+    Ok(())
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

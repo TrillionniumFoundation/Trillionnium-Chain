@@ -614,6 +614,7 @@ pub trait NonDestructiveInstallTargetV0 {
     fn abort_staging(&mut self, staging: StagingIdentityV0) -> Result<(), Self::Error>;
 }
 
+#[derive(Clone)]
 pub struct StateSyncSessionV0 {
     trust_path: VerifiedTrustPathV0,
     manifest: SnapshotManifestV0,
@@ -674,6 +675,11 @@ impl StateSyncSessionV0 {
         }
         let refs: Vec<&[u8]> = parts.iter().map(Vec::as_slice).collect();
         Digest32V0::hash(b"trnm.state-sync.session-progress.v0", &refs)
+    }
+
+    #[must_use]
+    pub(crate) fn manifest_binding_digest(&self) -> Digest32V0 {
+        self.manifest.chunk_binding_digest()
     }
 
     #[must_use]

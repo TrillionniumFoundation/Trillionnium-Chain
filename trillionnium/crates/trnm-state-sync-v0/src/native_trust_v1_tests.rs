@@ -1,4 +1,5 @@
 use super::*;
+use crate::chunk_merkle_root_v0;
 use serde_json::Value;
 use trnm_consensus_crypto::recover_epoch_activation_authority_strict_v0;
 use trnm_consensus_types::{
@@ -490,6 +491,156 @@ fn real_ordinary_and_epoch_path_joins_exact_head_and_projects_snapshot_target() 
             assert_eq!(zero_work.signature_work(), 0);
         }
     }
+}
+
+fn durable_session_fixture() -> (
+    VerifiedNativeTrustPathV1,
+    SnapshotManifestV0,
+    NativeApplicationCheckpointV1,
+    Vec<SnapshotChunkV0>,
+) {
+    let (evidence, set, params, binding) = fixture("positive");
+    let decoded = decode_epoch_activation_evidence_v0_exact(
+        evidence.as_preimages(),
+        &set,
+        &params,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let checkpoint = decoded.old_checkpoint_finality().finalized_block().header();
+    let parent = decoded.authenticated_checkpoint_parent_header();
+    let anchor = pinned(parent, &set, &params);
+    let activation = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &set,
+        &params,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let (proof, expected, _) = first_epoch_finality_bytes(&activation);
+    let path = verify_native_trust_path_v1(
+        &anchor,
+        &[
+            NativeTrustStepV1::Ordinary {
+                proof: &evidence.old_checkpoint_finality,
+                expected: expectation(checkpoint, parent),
+            },
+            NativeTrustStepV1::EpochFirst {
+                evidence: evidence.as_preimages(),
+                proof: &proof,
+                expected,
+            },
+        ],
+        NativeTrustPathLimitsV1::default(),
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let projection = path.snapshot_trust_path();
+    let bytes = [vec![7_u8], vec![8_u8]];
+    let mut manifest = SnapshotManifestV0 {
+        chain_id: projection.anchor().chain_id,
+        protocol_digest: projection.anchor().protocol_digest,
+        height: expected.height.get(),
+        epoch: activation.new_validator_set().epoch().get(),
+        state_root: projection.terminal().state_root,
+        chunk_root: Digest32V0([0; 32]),
+        chunk_count: 2,
+        maximum_chunk_bytes: 1,
+        total_bytes: 2,
+        schema_digest: Digest32V0([5; 32]),
+        checkpoint_digest: projection.terminal().checkpoint_digest,
+        manifest_digest: Digest32V0([0; 32]),
+    };
+    let chunk_binding = manifest.chunk_binding_digest();
+    let chunks = bytes
+        .iter()
+        .enumerate()
+        .map(|(index, bytes)| SnapshotChunkV0 {
+            manifest_digest: chunk_binding,
+            index: index as u32,
+            bytes: bytes.clone(),
+            chunk_digest: SnapshotChunkV0::canonical_digest(chunk_binding, index as u32, bytes),
+        })
+        .collect::<Vec<_>>();
+    manifest.chunk_root = chunk_merkle_root_v0(
+        &chunks
+            .iter()
+            .map(|chunk| chunk.chunk_digest)
+            .collect::<Vec<_>>(),
+    );
+    manifest.manifest_digest = manifest.canonical_digest();
+    let application = NativeApplicationCheckpointV1 {
+        schema_digest: manifest.schema_digest,
+        application_version: 1,
+    };
+    (path, manifest, application, chunks)
+}
+
+#[test]
+fn native_sqlite_session_survives_cross_process_restart_and_rejects_readback_tamper() {
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-store-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let mut session =
+        NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &session).unwrap();
+    store
+        .append_chunk_v1(&mut session, chunks[0].clone())
+        .unwrap();
+    let child = std::process::Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            "native_trust_v1::tests::native_sqlite_session_child_reopen",
+            "--nocapture",
+        ])
+        .env("TRNM_NATIVE_SYNC_CHILD_PATH_V1", &store_path)
+        .status()
+        .unwrap();
+    assert!(child.success(), "cross-process state-sync child failed");
+    let reopened = SqliteNativeStateSyncStoreV1::open_existing(&store_path).unwrap();
+    let resumed = reopened
+        .resume_existing_v1(path, manifest, application)
+        .unwrap();
+    assert_eq!(resumed.readback().received_chunk_count, 2);
+    assert_eq!(resumed.readback().received_bytes, 2);
+
+    let connection = rusqlite::Connection::open(&store_path).unwrap();
+    connection
+        .execute(
+            "UPDATE native_state_sync_meta_v1 SET progress_digest=?1 WHERE singleton=1",
+            rusqlite::params![&[9_u8; 32][..]],
+        )
+        .unwrap();
+    assert!(matches!(
+        reopened.readback_v1(),
+        Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch)
+    ));
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+}
+
+#[test]
+fn native_sqlite_session_child_reopen() {
+    let Ok(store_path) = std::env::var("TRNM_NATIVE_SYNC_CHILD_PATH_V1") else {
+        return;
+    };
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let store = SqliteNativeStateSyncStoreV1::open_existing(&store_path).unwrap();
+    let mut session = store
+        .resume_existing_v1(path, manifest, application)
+        .unwrap();
+    store
+        .append_chunk_v1(&mut session, chunks[1].clone())
+        .unwrap();
+    assert_eq!(store.readback_v1().unwrap().received_chunk_count, 2);
 }
 
 #[test]
