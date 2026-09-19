@@ -64,6 +64,91 @@ impl StrictEpochRuntimeContextV1 {
     pub const fn evidence_bytes(&self) -> &EpochActivationEvidenceBytesV0 {
         &self.evidence
     }
+
+    /// Joins a freshly verified successor activation to this context's exact
+    /// terminal old-epoch header.  This is deliberately a verification-only
+    /// composition boundary: it returns the successor context, but does not
+    /// create a Core owner, signer lease, epoch anchor, or persistence ACK.
+    ///
+    /// `retained_ancestry` must include both endpoints.  Requiring the full
+    /// path here prevents a caller from proving only that validator sets are
+    /// equal while silently substituting an unrelated checkpoint parent.
+    /// Every edge is checked for consecutive height, exact parent ID, and
+    /// chain/protocol/genesis identity.  The successor's old set and
+    /// parameters must be exactly this context's new set and parameters, and
+    /// its epoch must be the checked successor epoch.
+    pub fn compose_successor_v1(
+        predecessor: &Self,
+        successor: Self,
+        retained_ancestry: &[BlockHeader],
+    ) -> Result<Self, ValidationError> {
+        let predecessor_activation = predecessor.activation();
+        let successor_activation = successor.activation();
+        if successor_activation.old_validator_set() != predecessor_activation.new_validator_set()
+            || successor_activation.old_consensus_parameters()
+                != predecessor_activation.new_consensus_parameters()
+        {
+            return Err(invalid(
+                "successor old context differs from predecessor new context",
+            ));
+        }
+        if successor_activation.new_validator_set().epoch()
+            != successor_activation
+                .old_validator_set()
+                .epoch()
+                .checked_next()?
+        {
+            return Err(invalid("successor new epoch is not the exact next epoch"));
+        }
+
+        let first = retained_ancestry
+            .first()
+            .ok_or(invalid("successor retained ancestry is empty"))?;
+        let last = retained_ancestry
+            .last()
+            .ok_or(invalid("successor retained ancestry is empty"))?;
+        let expected_last = successor_activation
+            .authenticated_checkpoint_parent_header()
+            .id();
+        if first != predecessor_activation.terminal_old_header()
+            || last.id() != expected_last
+            || last.id()
+                != successor_activation
+                    .old_checkpoint_finality()
+                    .finalized_block()
+                    .header()
+                    .parent_id()
+        {
+            return Err(invalid("successor retained ancestry endpoints differ"));
+        }
+        let genesis = predecessor_activation.new_validator_set().genesis_hash();
+        let chain = predecessor_activation.new_validator_set().chain_id();
+        let protocol = predecessor_activation
+            .new_validator_set()
+            .protocol_version();
+        for pair in retained_ancestry.windows(2) {
+            let parent = &pair[0];
+            let child = &pair[1];
+            if child.parent_id() != parent.id()
+                || child.height() != parent.height().checked_next()?
+                || child.genesis_hash() != genesis
+                || child.chain_id() != chain
+                || child.protocol_version() != protocol
+            {
+                return Err(invalid("successor retained ancestry edge mismatch"));
+            }
+        }
+        if first.genesis_hash() != predecessor_activation.old_validator_set().genesis_hash()
+            || first.chain_id() != predecessor_activation.old_validator_set().chain_id()
+            || first.protocol_version()
+                != predecessor_activation
+                    .old_validator_set()
+                    .protocol_version()
+        {
+            return Err(invalid("successor retained ancestry root context mismatch"));
+        }
+        Ok(successor)
+    }
     pub const fn anchor_reference(&self) -> &QcReferenceV0 {
         self.data.anchor_reference()
     }

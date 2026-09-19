@@ -1202,3 +1202,36 @@ fn strict_runtime_context_admits_only_its_complete_epoch_and_exact_budgets() {
         )
         .is_err());
 }
+
+#[test]
+fn successor_context_rejects_same_epoch_or_missing_retained_ancestry() {
+    use trnm_consensus_crypto::StrictEpochRuntimeContextV1;
+    let (evidence, old_set, old_parameters, binding) = fixture("positive");
+    let activation = recover_epoch_activation_authority_strict_v0(
+        evidence.as_preimages(),
+        &old_set,
+        &old_parameters,
+        binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let predecessor = StrictEpochRuntimeContextV1::from_activation_v1(activation).unwrap();
+    let (same_evidence, same_old_set, same_old_parameters, same_binding) = fixture("positive");
+    let same_activation = recover_epoch_activation_authority_strict_v0(
+        same_evidence.as_preimages(),
+        &same_old_set,
+        &same_old_parameters,
+        same_binding,
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let successor = StrictEpochRuntimeContextV1::from_activation_v1(same_activation).unwrap();
+    let error = StrictEpochRuntimeContextV1::compose_successor_v1(&predecessor, successor, &[])
+        .expect_err("a repeated epoch context must never be accepted as a successor");
+    assert!(matches!(
+        error,
+        trnm_consensus_types::ValidationError::InvalidProposal(
+            "successor old context differs from predecessor new context"
+        )
+    ));
+}

@@ -1297,6 +1297,159 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         Ok((self, effects))
     }
 
+    /// Complete the online first-new Vote path after native P/D/C.
+    ///
+    /// `execute_admitted_epoch_proposal_v1` has already durably installed Core's
+    /// NativeValid transition and ACKed it; at that point the retained
+    /// `SignIntent::Vote` is an obligation, not a signer capability. This
+    /// method persists the exact signer intent through the node-owned journal,
+    /// revalidates every other owner before and after the producer call, then
+    /// delivers and durably releases the exact signature. A failed join fences
+    /// the owner and cannot be retried with a different statement.
+    pub fn sign_pending_epoch_vote_v1<P: trnm_consensus_signer_journal::SignatureProducerV0>(
+        mut self,
+        producer: &mut P,
+    ) -> Result<(Self, trnm_consensus_core::OutboundMessage)> {
+        self.confirm_current_cut_v1()?;
+        let intent = match self.driver.state().pending_sign().cloned() {
+            Some(SignIntent::Vote { .. }) => self
+                .driver
+                .state()
+                .pending_sign()
+                .cloned()
+                .context("pending epoch Vote disappeared")?,
+            Some(_) => anyhow::bail!("epoch online signing retained a non-Vote intent"),
+            None => anyhow::bail!("epoch online Vote intent is not pending"),
+        };
+        let (authorizing_safety_revision, view, height, block_id) = match &intent {
+            SignIntent::Vote {
+                authorizing_safety_revision,
+                view,
+                height,
+                block_id,
+                ..
+            } => (*authorizing_safety_revision, *view, *height, *block_id),
+            SignIntent::TimeoutVote { .. } => unreachable!("Vote match above"),
+        };
+        ensure!(
+            self.pending_epoch_commit
+                .as_ref()
+                .and_then(|pending| pending.prepared.header().ok().map(|header| header.id()))
+                == Some(block_id),
+            "pending Vote is not bound to the retained native P"
+        );
+        let canonical = CanonicalSignIntentV0::vote(
+            self.driver.config().validator_set(),
+            self.driver.config().local_validator(),
+            authorizing_safety_revision,
+            view,
+            height,
+            block_id,
+        )
+        .map_err(|error| anyhow::anyhow!("canonical epoch Vote intent: {error:?}"))?;
+        ensure!(
+            canonical.signing_root() == intent.signing_root(),
+            "Core Vote intent differs from canonical signer request"
+        );
+        let before = self.ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        let mut guarded = FreshEpochSignatureProducerV1 {
+            producer,
+            expected: &canonical,
+            confirm: || {
+                confirm_key_owners_v1(
+                    &self.driver,
+                    &self.journal,
+                    self.pin,
+                    &self.application,
+                    &self.edge,
+                    &mut self.retired,
+                    &self.retirement,
+                    &mut self.checkpoint_store,
+                    &self.checkpoint,
+                )
+            },
+        };
+        let signature = self.ordinary.sign_exact_v0(&canonical, &mut guarded)?;
+        let after = self.ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        ensure!(
+            after.exact_watermark().sequence() == before.exact_watermark().sequence() + 2
+                && before.journal_id() == after.journal_id()
+                && before.profile_checksum() == after.profile_checksum()
+                && after.pending_intent().is_none(),
+            "online epoch Vote did not persist one signer intent pair"
+        );
+        let mark = after.exact_watermark();
+        let signed_cut = EpochOrdinaryCustodyCutV1 {
+            scope: mark.scope(),
+            journal_id: mark.journal_id(),
+            profile_checksum: after.profile_checksum(),
+            sequence: mark.sequence(),
+            chain_checksum: mark.chain_checksum(),
+        };
+        // The C transition already names the exact pending Vote Safety state;
+        // only the ordinary signer custody changes at this boundary.
+        self.advance_exact_cut_v1(self.checkpoint.fields().target_safety, signed_cut)?;
+        let signed_state = self.driver.state().clone();
+        let outbound = self
+            .driver
+            .step_v1(Input::SignatureReady {
+                id: trnm_consensus_core::SignId::new(canonical.signing_root()),
+                signature,
+            })
+            .map_err(|error| anyhow::anyhow!("online epoch Vote signature delivery: {error:?}"))?;
+        let [Effect::Broadcast(message)] = outbound.as_slice() else {
+            anyhow::bail!("online epoch Vote yielded unexpected effect")
+        };
+        let vote = match message {
+            trnm_consensus_core::OutboundMessage::Vote(vote) => vote,
+            _ => anyhow::bail!("online epoch signature yielded non-Vote broadcast"),
+        };
+        vote.verify(
+            self.driver.config().validator_set(),
+            &trnm_consensus_crypto::StrictEd25519Verifier,
+        )
+        .map_err(|error| anyhow::anyhow!("online epoch Vote verification: {error:?}"))?;
+        ensure!(
+            vote.author() == canonical.author()
+                && vote.signing_root() == canonical.signing_root()
+                && vote.signature() == &signature
+                && self.driver.state().pending_sign().is_none(),
+            "online epoch Vote differs from persisted signer intent"
+        );
+        let effects = self
+            .driver
+            .persist_signature_release_v1(&signed_state)
+            .map_err(|error| anyhow::anyhow!("online epoch Vote release: {error:?}"))?;
+        let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
+            anyhow::bail!("online epoch Vote release did not persist one Safety cut")
+        };
+        let head = self.journal.persist_exact_v1(
+            self.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        self.pin = head.pin_v1();
+        self.advance_exact_cut_v1(safety_cut(&head), signed_cut)?;
+        self.journal.confirm_exact_request_v1(
+            self.pin,
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )?;
+        let ack = self
+            .driver
+            .step_v1(Input::StorageAck {
+                barrier: request.barrier(),
+            })
+            .map_err(|error| anyhow::anyhow!("online epoch Vote release ACK: {error:?}"))?;
+        ensure!(
+            ack.is_empty(),
+            "online epoch Vote release yielded unexpected authority"
+        );
+        self.confirm_current_cut_v1()?;
+        self.startup.clear();
+        Ok((self, message.clone()))
+    }
+
     /// Verify and commit strict first-new finality for the exact native P
     /// retained by `execute_admitted_epoch_proposal_v1`.  The finality proof
     /// is bounded by the caller-owned Cev0 budget; malformed, substituted or

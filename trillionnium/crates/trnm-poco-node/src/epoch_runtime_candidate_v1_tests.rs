@@ -775,7 +775,7 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
         .stack_size(32 * 1024 * 1024)
         .spawn(|| {
             let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
-            let (dir, runtime, key, recovery) = *live;
+            let (dir, runtime, mut key, recovery) = *live;
             let proposal = native_first_proposal_v1(
                 &runtime.application,
                 &runtime.edge,
@@ -799,6 +799,16 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
             )));
             assert_eq!(key.calls, 10, "P/D/C must not call the signer");
             assert_eq!(runtime.driver.state().pending_sign().is_some(), true);
+            let (runtime, vote) = runtime
+                .sign_pending_epoch_vote_v1(&mut key)
+                .expect("online first-new Vote persists, signs, and releases");
+            let trnm_consensus_core::OutboundMessage::Vote(vote) = vote else {
+                panic!("online first-new signing returned a non-Vote message")
+            };
+            assert_eq!(vote.author(), runtime.driver.config().local_validator());
+            assert_eq!(vote.epoch().get(), 1);
+            assert_eq!(key.calls, 11, "online first-new Vote calls the signer once");
+            assert!(runtime.driver.state().pending_sign().is_none());
             let p = runtime
                 .application
                 .reopen_prepared_epoch_execution_v1(block_id)
@@ -824,7 +834,7 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
                 .expect("post-K current cut revalidation");
             assert!(runtime.pending_epoch_proposal_validation_v1().is_none());
             assert_eq!(runtime.checkpoint.fields().application.height, 11);
-            assert_eq!(key.calls, 10, "K must not call the signer");
+            assert_eq!(key.calls, 11, "K must not call the signer");
             let repeated = match runtime.admit_epoch_proposal_v1(proposal) {
                 Ok(_) => panic!("a committed first-new cut must reject repeated crossing"),
                 Err(error) => error,
@@ -835,7 +845,7 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
                     .contains("first-new epoch crossing already committed"),
                 "repeated crossing must fail at the persisted application cut: {repeated:#}"
             );
-            assert_eq!(key.calls, 10, "repeated crossing must not call the signer");
+            assert_eq!(key.calls, 11, "repeated crossing must not call the signer");
             assert!(dir.path().is_dir());
         })
         .expect("spawn epoch native P/D/C test")
