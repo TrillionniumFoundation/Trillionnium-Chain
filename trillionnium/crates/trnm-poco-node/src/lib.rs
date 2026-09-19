@@ -197,7 +197,10 @@ pub use epoch_node_checkpoint_v1::{
 #[cfg(feature = "epoch-runtime-candidate")]
 mod epoch_runtime_candidate_v1;
 #[cfg(feature = "epoch-runtime-candidate")]
-pub use epoch_runtime_candidate_v1::{CandidateEpochRuntimeV1, ProgressedEpochRecoveryReadbackV1};
+pub use epoch_runtime_candidate_v1::{
+    CandidateEpochRuntimeV1, PendingEpochValidationRecoveryReadbackV1,
+    ProgressedEpochRecoveryReadbackV1,
+};
 mod external_node_checkpoint;
 #[cfg(feature = "epoch-runtime-candidate")]
 pub use external_node_checkpoint::epoch_node_store_v1::{
@@ -368,6 +371,8 @@ pub use g2f_namespace_identity::{
     POCO_NODE_G2F_NAMESPACE_IDENTITY_CONTRACT_V1, POCO_NODE_G2F_NAMESPACE_OPENAT_DESCRIPTOR_V1,
     POCO_NODE_G2F_NAMESPACE_PROCESS_INTEGRATION_V1, POCO_NODE_G2F_PRODUCTION_ACTIVATION_V1,
 };
+#[cfg(all(feature = "lab-validator-runtime", feature = "tx-admission-wal"))]
+pub use lab_authority::PocoNodeLabFinalizedTransactionV1;
 #[cfg(feature = "lab-validator-runtime")]
 pub use lab_authority::{
     PocoNodeLabAuthorityErrorV0, PocoNodeLabAuthorityPhaseV0, PocoNodeLabCertificateAdvanceV0,

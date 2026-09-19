@@ -176,6 +176,17 @@ Current v0 still requires execution post-root to equal finality state root;
 unsupported intermediate-root/multi-transaction mappings return
 `PROOF_UNAVAILABLE`. A transport receipt is not a finality proof.
 
+The current candidate query seam is
+`PocoNodeLabOrdinaryProposalRuntimeV0::read_finalized_transaction_by_digest_v1`
+(`trillionnium/crates/trnm-poco-node/src/lab_authority.rs`). It performs a
+fresh current-tip proof/application read, reparses every stored outer envelope
+with `BuiltCanonicalTxV0::from_exact_outer_bytes_v0`, requires one exact digest
+occurrence and parallel receipt cardinality, and returns the canonical outer
+bytes, transaction index, receipt commitment and proof identity. An unknown
+digest returns no result; malformed or duplicate stored rows fail closed. This
+is a candidate readback carrier only: it does not expose a production listener,
+historical index, standalone membership proof or finality capability.
+
 ### Errors and retry contract
 
 Errors use `{schema, request_id, error:{code,message,retryable,outcome,

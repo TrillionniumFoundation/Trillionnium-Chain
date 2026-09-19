@@ -49,6 +49,22 @@ pub struct ProgressedEpochRecoveryReadbackV1 {
     pub artifact_digest: [u8; 32],
 }
 
+/// Exact readback of the first-new proposal validation cut before native P.
+///
+/// This is intentionally an inert receipt.  The compact Safety record retains
+/// the complete proposal obligation, but does not by itself authorize a
+/// callback, application execution, vote, or signer lease after a restart.
+/// A later authenticated body/WAL replay protocol must consume this receipt
+/// before any resumed validation can be admitted.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PendingEpochValidationRecoveryReadbackV1 {
+    pub block_id: [u8; 32],
+    pub safety_revision: u64,
+    pub validation_view: u64,
+    pub validation_generation: u64,
+    pub proposal_root: [u8; 32],
+}
+
 /// Candidate activation owns the live continuing author, including virgin new
 /// custody. No unchecked Core/input forwarding, raw signer handle or signing
 /// callback is exposed. Ordinary event driving is a separate checked method.
@@ -388,6 +404,131 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             p_sequence: p.prepared().persist_sequence(),
             p_digest: p.prepared().p_digest(),
             artifact_digest: p.prepared().artifact_digest(),
+        })
+    }
+
+    /// Reconcile a crash after first-new proposal admission and before native
+    /// P.  This cut has one durable Core payload-validation obligation and the
+    /// old application head; it must never be mistaken for a permission to
+    /// recreate the validation callback or a proposal vote.  The complete
+    /// proposal is authenticated by the journal's strict epoch-record
+    /// recovery, then joined to every custody owner and the independent
+    /// checkpoint.  The returned receipt is comparison evidence only.
+    #[allow(clippy::too_many_arguments)]
+    pub fn recover_pending_epoch_validation_readback_v1(
+        journal: SqliteEpochSafetyJournalV1,
+        application: DurableNativeApplicationV0,
+        edge: AuthenticatedEpochApplicationEdgeV1,
+        mut retired: RetiredSqliteSignerJournalV1<W>,
+        mut ordinary: SqliteSignerJournalV0<N>,
+        mut checkpoint_store: SqliteEpochNodeCheckpointStoreV1,
+        expected: EpochNodeCheckpointV1,
+        block_id: [u8; 32],
+    ) -> Result<PendingEpochValidationRecoveryReadbackV1> {
+        ensure!(
+            expected.fields().phase == EpochCheckpointPhaseV1::Ordinary
+                && expected.fields().role == EpochCheckpointRoleV1::Continuing
+                && expected.fields().predecessor_kind == EpochCheckpointPredecessorV1::V1,
+            "pending validation recovery requires an ordinary V1 checkpoint"
+        );
+        ensure!(
+            expected.fields().application.block_id
+                == *edge.application_parent().block_id().as_bytes(),
+            "pending validation recovery requires the pre-P application checkpoint"
+        );
+        checkpoint_store.confirm_exact(&expected)?;
+        let app = expected.fields().application;
+        let pin = EpochSafetyHeadPinV1 {
+            journal_id: expected.fields().target_safety.journal_id,
+            revision: expected.fields().target_safety.revision,
+            chain_checksum: expected.fields().target_safety.chain_checksum,
+        };
+        let (confirmed, recovery) = journal.prepare_recovery_v1(pin)?;
+        ensure!(
+            confirmed.state_v1() == recovery.state(),
+            "recovered Safety state changed during strict reconstruction"
+        );
+        let state = recovery.state();
+        let [obligation] = state.payload_validation_obligations() else {
+            anyhow::bail!("pending validation recovery requires exactly one durable obligation");
+        };
+        ensure!(
+            obligation.route() == trnm_consensus_core::PayloadValidationRouteV0::Proposal
+                && obligation.proposal().block().id().as_bytes() == &block_id
+                && obligation.proposal().block().header().epoch()
+                    == edge.new_validator_set().epoch()
+                && obligation.proposal().block().header().block_kind() == BlockKind::EpochHandoff
+                && obligation.proposal().block().header().height().get()
+                    == edge.first_application_height()
+                && obligation.first_recorded_revision() == expected.fields().target_safety.revision
+                && state.pending_sign().is_none()
+                && state.pending_finalize().is_none()
+                && state.payload_validation_completions().is_empty(),
+            "recovered validation obligation differs from the exact first-new cut"
+        );
+        ensure!(
+            confirmed.state_record_checksum_v1() == expected.fields().target_safety.record_checksum
+                && confirmed.revision_v1() == expected.fields().target_safety.revision
+                && confirmed.belongs_to_store_at_path_v1(&journal, journal.path_v1()),
+            "recovered Safety validation cut differs from the independent checkpoint"
+        );
+        ensure!(
+            application.confirmed_committed_head_v0()? == *edge.application_parent(),
+            "native application advanced before pending validation recovery"
+        );
+        ensure!(
+            edge.durable_checkpoint()
+                .belongs_to_application_at_path_v0(&application, application.path(),),
+            "native activation edge owner changed"
+        );
+        ensure!(
+            edge.strict_activation_binding_v1()? == expected.fields().phase_authority_binding
+                && edge.durable_checkpoint().p_digest_v0() == app.p_digest
+                && edge.durable_checkpoint().artifact_digest_v0() == app.artifact_digest
+                && edge.durable_checkpoint().overlay_digest_v0() == app.overlay_digest
+                && edge.durable_checkpoint().p_sequence_v0() == app.p_sequence
+                && edge.durable_checkpoint().commit_sequence_v0() == Some(app.commit_sequence)
+                && edge
+                    .durable_checkpoint()
+                    .target_head_v0()?
+                    .block_id()
+                    .as_bytes()
+                    == &app.block_id,
+            "native pre-P checkpoint changed"
+        );
+
+        let retirement = retired.confirm_retirement_v1()?;
+        ensure!(
+            retirement.belongs_to_owner_v1(&mut retired)
+                && retirement.record_v1().checksum_v1()
+                    == expected
+                        .fields()
+                        .retired
+                        .context("missing retired custody")?
+                        .retirement_record_checksum,
+            "recovered retired custody changed"
+        );
+        let signer = ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        let mark = signer.exact_watermark();
+        let expected_ordinary = expected
+            .fields()
+            .ordinary
+            .context("missing ordinary custody")?;
+        ensure!(
+            signer.belongs_to_operational_journal_at_path_v0(&ordinary, ordinary.path())
+                && mark.scope() == expected_ordinary.scope
+                && mark.journal_id() == expected_ordinary.journal_id
+                && signer.profile_checksum() == expected_ordinary.profile_checksum
+                && signer.pending_intent().is_none(),
+            "recovered ordinary custody changed"
+        );
+        checkpoint_store.confirm_exact(&expected)?;
+        Ok(PendingEpochValidationRecoveryReadbackV1 {
+            block_id,
+            safety_revision: confirmed.revision_v1(),
+            validation_view: obligation.id().view().get(),
+            validation_generation: obligation.id().generation(),
+            proposal_root: *obligation.proposal().proposal_signing_root().as_bytes(),
         })
     }
 

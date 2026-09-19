@@ -1003,6 +1003,88 @@ fn readback_actual_progressed_v1(
     )
 }
 
+fn readback_actual_pending_validation_v1(
+    closed: &ClosedLiveCaseV1,
+    block_id: [u8; 32],
+) -> anyhow::Result<PendingEpochValidationRecoveryReadbackV1> {
+    let (application, edge) = reopen_actual_native_v1(closed);
+    let journal = SqliteEpochSafetyJournalV1::open_existing_v1(
+        &closed.safety_path,
+        closed.recovery.profile.clone(),
+        closed.safety_pin,
+    )?;
+    let retired = RetiredSqliteSignerJournalV1::open_existing_v1(
+        &closed.old_path,
+        closed.old_profile.clone(),
+        closed.recovery.old_watermark.clone(),
+        closed.retirement,
+        &closed.recovery.context,
+        &closed.recovery.intent,
+    )?;
+    let ordinary = SqliteSignerJournalV0::open_existing(
+        &closed.new_path,
+        closed.new_profile.clone(),
+        closed.recovery.new_watermark.clone(),
+    )?;
+    let checkpoint_store =
+        SqliteEpochNodeCheckpointStoreV1::open_existing(&closed.external_path, &closed.checkpoint)?;
+    Ok(
+        CandidateEpochRuntimeV1::recover_pending_epoch_validation_readback_v1(
+            journal,
+            application,
+            edge,
+            retired,
+            ordinary,
+            checkpoint_store,
+            closed.checkpoint,
+            block_id,
+        )?,
+    )
+}
+
+#[test]
+fn actual_epoch_runtime_pending_validation_recovery_rejoins_without_execution_or_signing() {
+    std::thread::Builder::new()
+        .name("epoch-pending-validation-recovery-test".into())
+        .stack_size(32 * 1024 * 1024)
+        .spawn(|| {
+            let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
+            let (dir, runtime, key, recovery) = *live;
+            let proposal = native_first_proposal_v1(
+                &runtime.application,
+                &runtime.edge,
+                recovery.proposal.witness().justify_qc(),
+                recovery
+                    .proposal
+                    .witness()
+                    .epoch_anchor_authorization()
+                    .expect("epoch proposal anchor authorization"),
+            );
+            let block_id = *proposal.block().id().as_bytes();
+            let runtime = runtime
+                .admit_epoch_proposal_v1(proposal)
+                .expect("native proposal admission");
+            assert!(runtime.pending_epoch_proposal_validation_v1().is_some());
+            assert_eq!(key.calls, 10, "admission must not call the signer");
+            let closed = close_actual_runtime_v1(Box::new((dir, runtime, key, recovery)));
+            let readback = readback_actual_pending_validation_v1(&closed, block_id)
+                .expect("pending validation readback after process-shaped restart");
+            assert_eq!(readback.block_id, block_id);
+            assert_eq!(
+                readback.safety_revision,
+                closed.checkpoint.fields().target_safety.revision
+            );
+            assert_eq!(readback.validation_view, 1);
+            assert_eq!(readback.validation_generation, readback.safety_revision);
+            assert_ne!(readback.proposal_root, [0; 32]);
+            assert_eq!(closed.key.calls, 10, "readback must never call the signer");
+            assert!(closed.dir.path().is_dir());
+        })
+        .expect("spawn pending validation recovery test")
+        .join()
+        .expect("pending validation recovery test panicked");
+}
+
 #[test]
 fn actual_epoch_runtime_progressed_obligation_recovery_rejoins_pdc_without_signing() {
     std::thread::Builder::new()

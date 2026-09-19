@@ -63,16 +63,24 @@ independent-evidence task, not an implied success.
   proof for the retained P, performs the native K CAS, reopens the committed
   row, and advances the independent checkpoint only after the head, P digest,
   artifact, overlay, sequence, owner and activation binding all match.
-* **Crash contract.** Before K, a restart may call
-  `recover_progressed_obligation_readback_v1`; it must find the exact pending
-  Vote, journal9 revision, native P, retired custody, ordinary signer custody
-  and pre-K application head, then return a read-only receipt. It must not
-  recreate Core or release a signer. Resumed obligation replay, vote/finality
-  collection and a second complete epoch remain `open`.
+* **Crash contract.** Before native P, a restart may call
+  `recover_pending_epoch_validation_readback_v1`; it must find the exact
+  first-new Proposal validation obligation, old application head, journal9
+  revision, retired custody, ordinary signer custody and independent
+  checkpoint, then return a read-only receipt. After P/D/C and before K it may
+  call `recover_progressed_obligation_readback_v1`, which must find the exact
+  pending Vote, journal9 revision, native P, retired custody, ordinary signer
+  custody and pre-K application head. Both paths are comparison-only: they do
+  not recreate Core, resume the validation callback, or release a signer.
+  Authenticated resumed obligation replay, vote/finality collection and a
+  second complete epoch remain `open`.
 * **Vectors.** The positive vector is
   `actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing`
-  followed by strict K and post-K revalidation. The restart vector is
-  `actual_epoch_runtime_progressed_obligation_recovery_rejoins_pdc_without_signing`.
+  followed by strict K and post-K revalidation. The restart vectors are
+  `actual_epoch_runtime_pending_validation_recovery_rejoins_without_execution_or_signing`
+  at the pre-P cut, followed by
+  `actual_epoch_runtime_progressed_obligation_recovery_rejoins_pdc_without_signing`
+  at the pre-K cut.
   Negative vectors must cover swapped edge/root, wrong epoch height, proof
   substitution, K replay, old-key use and checkpoint CAS loss.
 
@@ -88,8 +96,14 @@ independent-evidence task, not an implied success.
   authenticated HandedOff recovery path) must write the final receipt and
   commitment in one SQLite transaction, close/revalidate the namespace, and
   return `StoredNativeCommitReceiptV0` only after the pending row is
-  `Committed`. A receipt digest lookup is evidence, not finality; M14 must
-  independently verify the retained proof bytes and header/root binding.
+  `Committed`. A receipt digest lookup is evidence, not finality. The
+  candidate `PocoNodeLabOrdinaryProposalRuntimeV0::read_finalized_transaction_by_digest_v1`
+  path now performs a fresh finalized-tip application/proof read, reparses
+  every stored canonical envelope, rejects vector cardinality drift or
+  duplicate digest matches, and returns the exact outer bytes, transaction
+  index, receipt commitment and proof identity. M14 must still independently
+  verify retained proof bytes and header/root binding; this carrier is not a
+  production listener or historical index.
 * **Sync input.** A wiped node first verifies a pinned native trust path, then
   accepts an exact manifest and bounded indexed chunks. It recomputes the chunk
   root and target state root in staging, imports with expected-current-root CAS,

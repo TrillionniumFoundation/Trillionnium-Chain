@@ -71,6 +71,9 @@ use trnm_native_execution_v0::{
     NativeApplicationExecutionErrorV0, NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
 };
 
+#[cfg(feature = "tx-admission-wal")]
+use trnm_application_tx_builder_v0::BuiltCanonicalTxV0;
+
 #[cfg(feature = "safety-rules-sidecar")]
 use crate::safety_rules_sidecar::SafetyRulesSemanticSidecarV1;
 use crate::{
@@ -801,6 +804,44 @@ impl PocoNodeLabFinalizedProofV0 {
 pub struct PocoNodeLabFinalizedQueryV0 {
     proof: PocoNodeLabFinalizedProofV0,
     read: FinalizedNativeApplicationReadV0,
+}
+
+/// One transaction selected from a freshly proof-bound finalized application
+/// read.  This is deliberately a small candidate query carrier: it exposes
+/// the exact canonical outer bytes and receipt commitment together with the
+/// proof identity, but it does not mint a membership proof or a finality
+/// capability for another block.
+#[cfg(feature = "tx-admission-wal")]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PocoNodeLabFinalizedTransactionV1 {
+    proof: PocoNodeLabFinalizedProofV0,
+    transaction_digest: [u8; 32],
+    transaction_index: u32,
+    receipt_commitment: [u8; 32],
+    exact_outer_bytes: Vec<u8>,
+}
+
+#[cfg(feature = "tx-admission-wal")]
+impl PocoNodeLabFinalizedTransactionV1 {
+    pub const fn proof_v0(&self) -> &PocoNodeLabFinalizedProofV0 {
+        &self.proof
+    }
+
+    pub const fn transaction_digest_v0(&self) -> [u8; 32] {
+        self.transaction_digest
+    }
+
+    pub const fn transaction_index_v0(&self) -> u32 {
+        self.transaction_index
+    }
+
+    pub const fn receipt_commitment_v0(&self) -> [u8; 32] {
+        self.receipt_commitment
+    }
+
+    pub fn exact_outer_bytes_v0(&self) -> &[u8] {
+        &self.exact_outer_bytes
+    }
 }
 
 impl PocoNodeLabFinalizedQueryV0 {
@@ -1776,6 +1817,25 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             .map_err(|error| PocoNodeLabFinalizedQueryErrorV0::Application(error.to_string()))?;
         bind_finalized_query_v0(&proof, &read)?;
         Ok(PocoNodeLabFinalizedQueryV0 { proof, read })
+    }
+
+    /// Select one canonical transaction from the current finalized tip after
+    /// the same strict proof/application readback used by the block query.
+    /// Unknown digests return `None`; malformed stored transaction bytes or a
+    /// duplicate digest fail closed. This is a candidate status/proof carrier,
+    /// not an HTTP/RPC activation or a general historical index.
+    #[cfg(feature = "tx-admission-wal")]
+    pub fn read_finalized_transaction_by_digest_v1(
+        &self,
+        transaction_digest: [u8; 32],
+    ) -> Result<Option<PocoNodeLabFinalizedTransactionV1>, PocoNodeLabFinalizedQueryErrorV0> {
+        if transaction_digest == [0; 32] {
+            return Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(
+                "transaction digest must be nonzero",
+            ));
+        }
+        let query = self.read_finalized_by_height_v0(self.facts_v0().finalized_height_v0())?;
+        find_finalized_transaction_v1(&query, transaction_digest)
     }
 
     /// Resolve a live native handoff only through this owner's fresh durable
@@ -6494,6 +6554,183 @@ fn bind_finalized_query_v0(
         ));
     }
     Ok(())
+}
+
+#[cfg(feature = "tx-admission-wal")]
+fn find_finalized_transaction_v1(
+    query: &PocoNodeLabFinalizedQueryV0,
+    transaction_digest: [u8; 32],
+) -> Result<Option<PocoNodeLabFinalizedTransactionV1>, PocoNodeLabFinalizedQueryErrorV0> {
+    let transactions = query.read.executed_v0().request().transactions();
+    let receipts = query.read.receipt_commitments_v0();
+    let located = locate_finalized_transaction_v1(transactions, receipts, transaction_digest)?;
+    Ok(located.map(
+        |(transaction_index, receipt_commitment, exact_outer_bytes)| {
+            PocoNodeLabFinalizedTransactionV1 {
+                proof: query.proof.clone(),
+                transaction_digest,
+                transaction_index,
+                receipt_commitment,
+                exact_outer_bytes,
+            }
+        },
+    ))
+}
+
+#[cfg(feature = "tx-admission-wal")]
+fn locate_finalized_transaction_v1(
+    transactions: &[Vec<u8>],
+    receipts: &[Hash32V0],
+    transaction_digest: [u8; 32],
+) -> Result<Option<(u32, [u8; 32], Vec<u8>)>, PocoNodeLabFinalizedQueryErrorV0> {
+    if transactions.len() != receipts.len() {
+        return Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(
+            "application transaction and receipt vectors differ",
+        ));
+    }
+    let mut match_value = None;
+    for (index, outer_bytes) in transactions.iter().enumerate() {
+        let built =
+            BuiltCanonicalTxV0::from_exact_outer_bytes_v0(outer_bytes).map_err(|error| {
+                PocoNodeLabFinalizedQueryErrorV0::Application(format!(
+                    "stored transaction is not canonical: {error}"
+                ))
+            })?;
+        if built.protocol_tx_hash_v1() != transaction_digest {
+            continue;
+        }
+        if match_value.is_some() {
+            return Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(
+                "transaction digest occurs more than once in finalized block",
+            ));
+        }
+        let transaction_index = u32::try_from(index).map_err(|_| {
+            PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(
+                "transaction index exceeds candidate response bound",
+            )
+        })?;
+        match_value = Some((
+            transaction_index,
+            *receipts[index].as_bytes(),
+            built.exact_outer_bytes().to_vec(),
+        ));
+    }
+    Ok(match_value)
+}
+
+#[cfg(all(
+    test,
+    feature = "tx-admission-wal",
+    feature = "lab-validator-runtime-test-support"
+))]
+mod finalized_transaction_query_tests_v1 {
+    use super::*;
+    use ed25519_dalek::{Signer, SigningKey};
+    use trnm_application_tx_builder_v0::{
+        build_signed_canonical_tx_v0, ApplicationSignerV0, CanonicalTxBuildContextV0,
+        TxBuilderLimitsV0,
+    };
+    use trnm_protocol::CanonicalCommandV1;
+
+    struct FixtureSigner {
+        key: SigningKey,
+        public_key: String,
+    }
+
+    impl ApplicationSignerV0 for FixtureSigner {
+        fn signer_id(&self) -> &str {
+            "did:trnm:query-fixture"
+        }
+
+        fn signer_role(&self) -> &str {
+            "account"
+        }
+
+        fn public_key_hex(&self) -> &str {
+            &self.public_key
+        }
+
+        fn sign(&self, preimage: &[u8]) -> anyhow::Result<[u8; 64]> {
+            Ok(self.key.sign(preimage).to_bytes())
+        }
+    }
+
+    fn transaction(nonce: u64) -> trnm_application_tx_builder_v0::BuiltCanonicalTxV0 {
+        let key = SigningKey::from_bytes(&[0x42; 32]);
+        let signer = FixtureSigner {
+            public_key: hex::encode(key.verifying_key().to_bytes()),
+            key,
+        };
+        build_signed_canonical_tx_v0(
+            CanonicalTxBuildContextV0 {
+                chain_id: "trnm-query-fixture".to_owned(),
+                sender: signer.signer_id().to_owned(),
+                command_id: None,
+                transaction_sequence: nonce,
+                issued_at_unix_ms: 1_000,
+                expires_at_unix_ms: 2_000,
+                max_gas: 10_000,
+                fee_limit: 10,
+                limits: TxBuilderLimitsV0::candidate_v0(),
+            },
+            CanonicalCommandV1::Transfer {
+                to: "did:trnm:query-recipient".to_owned(),
+                amount: nonce as u128,
+            },
+            &signer,
+        )
+        .expect("fixture transaction")
+    }
+
+    #[test]
+    fn finalized_transaction_lookup_binds_digest_index_receipt_and_exact_bytes() {
+        let first = transaction(1);
+        let second = transaction(2);
+        let transactions = vec![
+            first.exact_outer_bytes().to_vec(),
+            second.exact_outer_bytes().to_vec(),
+        ];
+        let receipts = vec![Hash32V0::new([0x11; 32]), Hash32V0::new([0x22; 32])];
+        let found =
+            locate_finalized_transaction_v1(&transactions, &receipts, second.protocol_tx_hash_v1())
+                .expect("lookup")
+                .expect("second transaction");
+        assert_eq!(found.0, 1);
+        assert_eq!(found.1, [0x22; 32]);
+        assert_eq!(found.2, second.exact_outer_bytes());
+        assert!(
+            locate_finalized_transaction_v1(&transactions, &receipts, [0xEE; 32])
+                .expect("unknown lookup")
+                .is_none()
+        );
+    }
+
+    #[test]
+    fn finalized_transaction_lookup_rejects_malformed_and_duplicate_rows() {
+        let tx = transaction(1);
+        let receipt = Hash32V0::new([0x33; 32]);
+        let malformed =
+            locate_finalized_transaction_v1(&[b"not-canonical".to_vec()], &[receipt], [0x44; 32])
+                .expect_err("malformed stored transaction must fail closed");
+        assert!(matches!(
+            malformed,
+            PocoNodeLabFinalizedQueryErrorV0::Application(_)
+        ));
+
+        let duplicate = locate_finalized_transaction_v1(
+            &[
+                tx.exact_outer_bytes().to_vec(),
+                tx.exact_outer_bytes().to_vec(),
+            ],
+            &[receipt, receipt],
+            tx.protocol_tx_hash_v1(),
+        )
+        .expect_err("duplicate digest must fail closed");
+        assert!(matches!(
+            duplicate,
+            PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(_)
+        ));
+    }
 }
 
 fn require_checkpoint_heads_v0(
