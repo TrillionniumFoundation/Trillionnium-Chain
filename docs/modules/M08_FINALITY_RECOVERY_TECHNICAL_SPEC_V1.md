@@ -724,3 +724,10 @@ consume finality, produce a receipt, sign, broadcast, or enable public sync;
 schema5→6 migration and strict first-new finality remain explicit preceding and
 following operations. The bridge is covered by native cold-reopen and malformed
 commit-row fencing tests and remains default-off.
+
+Certificate replay has an explicit no-effect seam: when a verified late TC or
+QC is already consumed by Core and produces no persistence effect, the node
+returns the unchanged Ready/VoteSigned/TimeoutSigned owner. It does not force a
+prepared K to match an older high QC, and it does not clear the persisted
+prepared owner. Any certificate that changes Core still goes through the full
+preflight, checkpoint CAS, and high-QC path audit above.

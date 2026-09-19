@@ -3296,7 +3296,25 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
                     "certificate changed Core without a persistence effect",
                 ));
             }
-            return self.finish_certificate_advance_v0(source_checkpoint, None);
+            // A verified but already-consumed certificate is a true no-op.
+            // Preserve the live prepared P/K owner and its checkpoint exactly;
+            // forcing a high-QC rebase here would compare an intentionally
+            // retained child against an unchanged older high QC and turn a
+            // safe late replay into a false recovery halt.
+            return Ok(PocoNodeLabCertificateAdvanceV0::Ready(Box::new(Self {
+                core: self.core,
+                seal_authority: self.seal_authority,
+                finalization_authority: self.finalization_authority,
+                safety_store: self.safety_store,
+                application: self.application,
+                signer_journal: self.signer_journal,
+                checkpoint_store: self.checkpoint_store,
+                checkpoint: self.checkpoint,
+                application_head: self.application_head,
+                application_overlay: self.application_overlay,
+                pending_executions: self.pending_executions,
+                proposal_journal: self.proposal_journal,
+            })));
         }
         let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
             return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
