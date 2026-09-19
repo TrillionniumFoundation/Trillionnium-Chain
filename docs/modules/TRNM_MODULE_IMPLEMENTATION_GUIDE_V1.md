@@ -146,6 +146,14 @@ After C, Core retains a `SignIntent::Vote` obligation. `sign_pending_epoch_vote_
 
 `trnm-poco-node/src/tx_admission_wal.rs::NodeOwnedTxAdmissionBoundaryV0` supplies candidate CheckTx/WAL recovery, resolver-bound admission, commit-receipt lookup and native readback. A `HandedOff` record with no authoritative receipt remains unresolved and cannot be reopened by guessing or rebroadcasting. `CandidateTxFileJournalV0` is an append-only, fsync-before-ack candidate journal. The source flags keep signer, broadcaster, external rollback and production activation disabled; these adapters do not create a Core ACK, RPC listener or finality authority.
 
+After reopening the exact journal for the state-sync recovery boundary, use
+`bind_durable_finalized_readback_to_native_sync_v1`; it reconstructs the
+finalized readback from the recovered lifecycle and performs only a fresh
+state-sync join, with no second finality-source call, journal frame, signature,
+or broadcast. The production E2E asserts the source-call count and retained
+frame count remain unchanged. The latest recovery implementation is
+`f1696f6e`.
+
 <a id="m06"></a>
 ## M06 — Execution / MVCC / Meter
 
