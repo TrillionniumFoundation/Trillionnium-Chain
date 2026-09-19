@@ -339,6 +339,8 @@ Required `M08-CUT` acceptance is a real checkpoint-to-first-block commit at C to
 
 Initialization now persists every chunk already retained by a non-empty session before it can claim durable progress; `native_sqlite_initialize_persists_prefilled_session_chunks` covers reopen/readback of that cut. Resume must revalidate the supplied trust path, manifest, schema and application version and recompute every chunk binding; independent transport, rollback and power-loss acceptance remain open. The store does not authenticate a network transport, choose a weak-subjectivity anchor, import signer/WAL state or provide an external anti-rollback authority.
 
+`native_sqlite_uncommitted_append_is_rolled_back_after_sigkill_and_can_resume` starts a child test process, holds a SQLite `BEGIN IMMEDIATE` chunk/metadata update without committing, kills that process, reopens the store and proves the uncommitted row and progress are absent before resuming with a valid append. This is real SQLite process-crash rollback evidence; it does not qualify physical power loss, controller-cache behavior or independent host rollback authority.
+
 `trnm-poco-node-production-v0/src/tx_state_sync_bridge.rs::bind_finalized_readback_to_native_state_sync_store_v1` is the candidate cross-owner bridge: it obtains the transaction `FinalizedReadbackV0` and the sync store's binding plus chunk progress from one fresh durable readback, checks block/height/state-root/manifest equality, and returns a new domain-separated binding digest. It cannot claim finality or a complete snapshot; a caller still needs the existing `verify_complete` capability and an authenticated finality source.
 
 <a id="m14"></a>
