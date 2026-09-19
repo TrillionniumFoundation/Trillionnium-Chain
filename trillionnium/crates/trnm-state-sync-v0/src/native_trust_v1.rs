@@ -583,6 +583,11 @@ impl NativeStateSyncSessionV1 {
     }
 
     #[must_use]
+    pub(crate) fn retained_chunks_v1(&self) -> Vec<SnapshotChunkV0> {
+        self.session.retained_chunks_v0()
+    }
+
+    #[must_use]
     pub const fn binding(&self) -> NativeStateSyncBindingV1 {
         self.binding
     }
@@ -674,6 +679,19 @@ impl SqliteNativeStateSyncStoreV1 {
             session.manifest_binding_digest(),
             readback,
         )?;
+        for chunk in session.retained_chunks_v1() {
+            transaction
+                .execute(
+                    "INSERT INTO native_state_sync_chunks_v1(chunk_index,manifest_digest,bytes,chunk_digest) VALUES(?1,?2,?3,?4)",
+                    params![
+                        i64::from(chunk.index),
+                        &chunk.manifest_digest.0[..],
+                        &chunk.bytes,
+                        &chunk.chunk_digest.0[..]
+                    ],
+                )
+                .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        }
         transaction
             .commit()
             .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
@@ -766,9 +784,18 @@ impl SqliteNativeStateSyncStoreV1 {
         session: &mut NativeStateSyncSessionV1,
         chunk: SnapshotChunkV0,
     ) -> Result<(), NativeStateSyncStoreErrorV1> {
-        let connection = self.open_connection_v1()?;
-        let metadata = read_metadata_v1(&connection)?;
-        let current = read_chunks_v1(&connection, metadata.manifest_binding_digest)?;
+        // Acquire the writer lock before reading any state.  A deferred
+        // transaction here would allow two callers to validate against the
+        // same snapshot and then one caller could overwrite the other's
+        // progress bookkeeping.  The session check below is deliberately
+        // inside this IMMEDIATE transaction, making the in-memory session a
+        // conditional-CAS witness for the durable row set.
+        let mut connection = self.open_connection_v1()?;
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        let metadata = read_metadata_v1(&transaction)?;
+        let current = read_chunks_v1(&transaction, metadata.manifest_binding_digest)?;
         let actual = readback_from_chunks_v1(
             metadata.binding.binding_digest,
             metadata.binding.manifest_digest,
@@ -785,9 +812,6 @@ impl SqliteNativeStateSyncStoreV1 {
         let mut next = session.clone();
         next.accept_chunk(chunk.clone())
             .map_err(NativeStateSyncStoreErrorV1::Protocol)?;
-        let transaction = connection
-            .unchecked_transaction()
-            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
         let existing: Option<(Vec<u8>, Vec<u8>, Vec<u8>)> = transaction
             .query_row(
                 "SELECT manifest_digest,bytes,chunk_digest FROM native_state_sync_chunks_v1 WHERE chunk_index=?1",

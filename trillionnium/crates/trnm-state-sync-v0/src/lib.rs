@@ -699,6 +699,11 @@ impl StateSyncSessionV0 {
             .collect()
     }
 
+    #[must_use]
+    pub(crate) fn retained_chunks_v0(&self) -> Vec<SnapshotChunkV0> {
+        self.chunks.values().cloned().collect()
+    }
+
     pub fn verify_complete<R>(
         &self,
         recomputer: &R,

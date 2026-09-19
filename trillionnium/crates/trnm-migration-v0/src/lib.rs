@@ -1300,6 +1300,29 @@ impl SqliteIncrementalStateStoreV0 {
                 }
             },
         )?;
+
+        // An empty delta has identical base and target state.  Its exact
+        // replay therefore passes the base-state check above, unlike a
+        // non-empty delta whose target becomes the next base.  Treat an
+        // already committed digest as an idempotent durable operation so a
+        // retry cannot manufacture additional generations.
+        if before.last_delta_digest == delta.delta_digest {
+            if before.rows_digest != delta.target_rows_digest
+                || before.state_root != delta.target_state_root
+                || before.row_count != delta.target_row_count
+            {
+                return Err(DurableDeltaStoreErrorV0::Protocol(
+                    MigrationErrorV0::DurableReadbackMismatch,
+                ));
+            }
+            return Ok(DurableDeltaInstallReceiptV0 {
+                previous_root: before.state_root,
+                installed_root: before.state_root,
+                generation: before.generation,
+                delta_digest: before.last_delta_digest,
+            });
+        }
+
         let mut connection = self.open_connection()?;
         let transaction = connection
             .transaction_with_behavior(TransactionBehavior::Immediate)
@@ -2020,6 +2043,29 @@ mod tests {
             ))
         ));
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn sqlite_incremental_store_replays_empty_delta_idempotently() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-migration-empty-delta-{}-{}.sqlite",
+            std::process::id(),
+            d(103).0[0]
+        ));
+        let _ = std::fs::remove_file(&path);
+        let rows = vec![target_row(1, 10), target_row(2, 20)];
+        let store =
+            SqliteIncrementalStateStoreV0::initialize(&path, d(95), d(96), &rows, &HashRoot)
+                .unwrap();
+        let delta = derive_incremental_delta_v0(d(95), d(96), &rows, &rows, &HashRoot).unwrap();
+        assert!(delta.entries.is_empty());
+        let first = store.apply_delta_v0(&delta, &HashRoot).unwrap();
+        assert_eq!(first.generation, 1);
+        let replay = store.apply_delta_v0(&delta, &HashRoot).unwrap();
+        assert_eq!(replay.generation, first.generation);
+        assert_eq!(replay.delta_digest, delta.delta_digest);
+        assert_eq!(store.readback_v0().unwrap().generation, 1);
+        let _ = std::fs::remove_file(&path);
     }
 
     #[test]

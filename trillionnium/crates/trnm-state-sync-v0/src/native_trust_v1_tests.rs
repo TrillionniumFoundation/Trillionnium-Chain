@@ -628,6 +628,33 @@ fn native_sqlite_session_survives_cross_process_restart_and_rejects_readback_tam
 }
 
 #[test]
+fn native_sqlite_initialize_persists_prefilled_session_chunks() {
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-prefilled-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let mut session =
+        NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application).unwrap();
+    session.accept_chunk(chunks[0].clone()).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &session).unwrap();
+    assert_eq!(store.readback_v1().unwrap().received_chunk_count, 1);
+    assert_eq!(store.retained_chunks_v1().unwrap(), vec![chunks[0].clone()]);
+    let reopened = SqliteNativeStateSyncStoreV1::open_existing(&store_path).unwrap();
+    let resumed = reopened
+        .resume_existing_v1(path, manifest, application)
+        .unwrap();
+    assert_eq!(resumed.readback(), session.readback());
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+}
+
+#[test]
 fn native_sqlite_session_child_reopen() {
     let Ok(store_path) = std::env::var("TRNM_NATIVE_SYNC_CHILD_PATH_V1") else {
         return;
@@ -641,6 +668,59 @@ fn native_sqlite_session_child_reopen() {
         .append_chunk_v1(&mut session, chunks[1].clone())
         .unwrap();
     assert_eq!(store.readback_v1().unwrap().received_chunk_count, 2);
+}
+
+#[test]
+fn native_sqlite_append_rejects_stale_concurrent_writer_after_durable_cas() {
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-stale-writer-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let base = NativeStateSyncSessionV1::begin(path, manifest, application).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &base).unwrap();
+    let gate = std::sync::Arc::new(std::sync::Barrier::new(3));
+    let left_gate = gate.clone();
+    let left_store = store.clone();
+    let left_session = base.clone();
+    let left_chunk = chunks[0].clone();
+    let left = std::thread::spawn(move || {
+        let mut session = left_session;
+        left_gate.wait();
+        left_store.append_chunk_v1(&mut session, left_chunk)
+    });
+    let right_gate = gate.clone();
+    let right_store = store.clone();
+    let right_session = base;
+    let right_chunk = chunks[1].clone();
+    let right = std::thread::spawn(move || {
+        let mut session = right_session;
+        right_gate.wait();
+        right_store.append_chunk_v1(&mut session, right_chunk)
+    });
+    gate.wait();
+    let left_result = left.join().unwrap();
+    let right_result = right.join().unwrap();
+    assert_eq!(
+        usize::from(left_result.is_ok()) + usize::from(right_result.is_ok()),
+        1
+    );
+    let stale = [left_result, right_result]
+        .into_iter()
+        .find_map(Result::err)
+        .expect("one writer must lose the durable compare-and-swap");
+    assert!(matches!(
+        stale,
+        NativeStateSyncStoreErrorV1::DurableReadbackMismatch
+    ));
+    assert_eq!(store.readback_v1().unwrap().received_chunk_count, 1);
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
 }
 
 #[test]
