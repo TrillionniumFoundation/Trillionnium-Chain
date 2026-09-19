@@ -956,11 +956,30 @@ where
                 ProductionTxErrorV0::FinalizedReadbackMismatch,
             ));
         }
-        let phase = self
+        let existing = self
             .lifecycle
             .record(tx_id)
-            .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))?
-            .phase;
+            .map_err(|error| TxFinalizationErrorV0::Protocol(error.into()))?;
+        // Once an ordered/executed/finalized field is durable, a later
+        // readback must reproduce that exact field. `finalize` checks only the
+        // finality witness, so comparing the whole retained claim here closes
+        // a substitution path where a changed execution receipt could be
+        // silently ignored on an otherwise idempotent retry.
+        if existing
+            .ordered
+            .is_some_and(|ordered| ordered != claim.ordered)
+            || existing
+                .execution
+                .is_some_and(|execution| execution != claim.execution)
+            || existing
+                .finality
+                .is_some_and(|finality| finality != claim.finality)
+        {
+            return Err(TxFinalizationErrorV0::Protocol(
+                ProductionTxErrorV0::FinalizedReadbackMismatch,
+            ));
+        }
+        let phase = existing.phase;
         if phase == TxPhaseV0::Proposed {
             self.lifecycle
                 .mark_ordered(tx_id, claim.ordered)
@@ -2542,6 +2561,21 @@ mod tests {
             .apply_finalized_readback(&mut MemoryFinality { claim }, &mut journal, admission.tx_id)
             .unwrap();
         let writes_after_first = journal.write_calls;
+        let mut substituted = claim;
+        substituted.execution.receipt_digest = d(99);
+        substituted.claim_digest = substituted.canonical_digest();
+        let rejected = coordinator.apply_finalized_readback(
+            &mut MemoryFinality { claim: substituted },
+            &mut journal,
+            admission.tx_id,
+        );
+        assert!(matches!(
+            rejected,
+            Err(TxFinalizationErrorV0::Protocol(
+                ProductionTxErrorV0::FinalizedReadbackMismatch
+            ))
+        ));
+        assert_eq!(journal.write_calls, writes_after_first);
         let second = coordinator
             .apply_finalized_readback(&mut MemoryFinality { claim }, &mut journal, admission.tx_id)
             .unwrap();
