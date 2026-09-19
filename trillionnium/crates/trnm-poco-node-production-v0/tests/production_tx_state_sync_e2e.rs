@@ -246,6 +246,19 @@ fn journal_directory(label: &str) -> (PathBuf, PathBuf) {
     (root, directory.canonicalize().unwrap())
 }
 
+fn published_frame_count(directory: &Path) -> usize {
+    fs::read_dir(directory)
+        .unwrap()
+        .filter_map(Result::ok)
+        .filter(|entry| {
+            entry
+                .file_name()
+                .to_str()
+                .is_some_and(|name| name.ends_with(".txf"))
+        })
+        .count()
+}
+
 #[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 
@@ -298,6 +311,7 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
     assert!(!adapter.is_poisoned());
     drop(wrong_store);
     drop(adapter);
+    let frame_count_after_finality = published_frame_count(&journal_path);
 
     let journal = CandidateTxFileJournalV0::open(
         &journal_path,
@@ -325,5 +339,10 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
     assert_eq!(joined.sync_binding.block_id, tx_digest(20));
     drop(recovered);
     drop(correct_store);
+    assert_eq!(
+        published_frame_count(&journal_path),
+        frame_count_after_finality,
+        "sync retry must not append a second finality transition"
+    );
     let _ = fs::remove_dir_all(root);
 }
