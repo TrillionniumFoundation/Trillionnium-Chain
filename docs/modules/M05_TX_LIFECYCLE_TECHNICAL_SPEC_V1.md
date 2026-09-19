@@ -307,6 +307,36 @@ query and tombstone/GC trace. Until that trace is wired into the default
 listener and independently reviewed, `TX-PROD-001` remains open and the
 candidate WAL must remain feature-gated.
 
+### Candidate durable signer and broadcast retry composition
+
+The lifecycle coordinator now has an executable candidate composition for the
+sign/broadcast seam. `ProductionTxCoordinatorV0::sign_and_broadcast` first
+derives `DurableTxSignIntentV0` from the verified `CoreSafetyPermitClaimV0`
+and persists that exact request through `DurableTxJournalV0` before invoking
+`NonExportableTxSignerV0`. The returned `SignedTxEnvelopeV0` is validated and
+persisted as `DurableSignedTxEnvelopeV0` before the lifecycle's
+`BroadcastIntentV0` record is appended or any `AuthenticatedTxBroadcasterV0`
+call is made. The signer request binds the transaction ID, predecessor record
+digest, Safety state, authority receipt, permit and request digest; the
+retained envelope binds the same request, signature bytes, attestation and
+envelope digest. A conflicting retry fails closed.
+
+If the transport response is lost, the coordinator poisons its in-memory
+owner. Recovery reopens the durable journal, reuses the retained sign intent
+and signed envelope, and retries the same broadcast identity; it does not call
+the signer again or mint a new permit for the post-intent record digest. The
+authenticated broadcaster remains responsible for deduplicating that exact
+envelope. `CandidateTxFileJournalV0` retains the two sidecars with private
+namespace/inode checks, fsynced publication, exact decode and tamper rejection;
+the candidate tests cover reopen equality and a lost-response retry with one
+signer call and two identical broadcast attempts.
+
+This is a real durable candidate composition, not production activation. It
+does not install a public listener, connect a live peer broadcaster, provide an
+HSM/monotonic signer attestation, or independently verify finality. The
+production `live_sign_broadcast` and `TX-PROD-001` gates therefore remain
+false until those owners and external evidence are wired and reviewed.
+
 ### Planned V1 multi-transaction proof contract
 
 `FinalizedTxClaimV1` is a new candidate readback variant, not a relaxation of v0.
