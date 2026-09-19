@@ -434,6 +434,9 @@ impl PocoNodeP2pReplayAnchorV0 {
             Err(_) => return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath),
         };
         let virgin_frame = existing_frame_metadata.is_none();
+        if virgin_frame && fs::symlink_metadata(&frame_head_path).is_ok() {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
         if virgin
             && (fs::symlink_metadata(&frame_path).is_ok()
                 || fs::symlink_metadata(&frame_head_path).is_ok())
@@ -513,9 +516,6 @@ impl PocoNodeP2pReplayAnchorV0 {
         }
         if !virgin_frame && frame_file_metadata.len() == 0 {
             return Err(PocoNodeP2pReplayAnchorErrorV0::Truncated);
-        }
-        if virgin_frame && fs::symlink_metadata(&frame_head_path).is_ok() {
-            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
         }
         let mut anchor = Self {
             path,
