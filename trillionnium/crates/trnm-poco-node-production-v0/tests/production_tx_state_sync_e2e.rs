@@ -11,13 +11,17 @@ use std::{
     convert::Infallible,
     fs, io,
     path::{Path, PathBuf},
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc,
+    },
 };
 
 use rusqlite::{params, Connection};
 use trnm_durable_file_adapters_v0::{
     CandidateTxFileJournalV0, CandidateTxJournalIdentityV0, CandidateTxJournalLimitsV0,
 };
-use trnm_poco_node_production_v0::ProductionTxNodeAdapterV0;
+use trnm_poco_node_production_v0::{NodeOwnedTxCheckTxV0, ProductionTxNodeAdapterV0};
 use trnm_state_sync_v0::{
     Digest32V0 as StateDigest32V0, NativeStateSyncBindingV1, SqliteNativeStateSyncStoreV1,
 };
@@ -51,40 +55,85 @@ impl AuthorizationVerifierV0 for AcceptAuthorization {
     }
 }
 
-struct UnusedPermit;
-impl CoreSafetyPermitVerifierV0 for UnusedPermit {
+struct AcceptPermit;
+impl CoreSafetyPermitVerifierV0 for AcceptPermit {
     type Error = io::Error;
 
     fn verify_core_safety_permit(
         &self,
-        _claim: &CoreSafetyPermitClaimV0,
+        claim: &CoreSafetyPermitClaimV0,
     ) -> Result<(), Self::Error> {
-        Err(io::Error::other("signing is not part of this fixture"))
+        if claim.permit_digest != claim.canonical_digest() {
+            return Err(io::Error::other("invalid permit digest"));
+        }
+        Ok(())
     }
 }
 
-struct UnusedSigner;
-impl NonExportableTxSignerV0 for UnusedSigner {
+struct CountingSigner {
+    calls: Arc<AtomicUsize>,
+}
+impl NonExportableTxSignerV0 for CountingSigner {
     type Error = io::Error;
 
     fn sign_transaction(
         &mut self,
-        _request: &TxSignRequestV0,
+        request: &TxSignRequestV0,
     ) -> Result<TxSignatureReceiptV0, Self::Error> {
-        Err(io::Error::other("signing is not part of this fixture"))
+        self.calls.fetch_add(1, Ordering::SeqCst);
+        let signature = vec![7; 64];
+        let mut receipt = TxSignatureReceiptV0 {
+            request_digest: request.request_digest,
+            signature_digest: trnm_tx_lifecycle_v0::Digest32V0::hash(
+                b"trnm.tx.signature-bytes.v0",
+                &[&signature],
+            ),
+            signature,
+            signer_attestation_digest: tx_digest(70),
+            receipt_digest: tx_digest(0),
+        };
+        receipt.receipt_digest = receipt.canonical_digest();
+        Ok(receipt)
     }
 }
 
-struct UnusedBroadcaster;
-impl AuthenticatedTxBroadcasterV0 for UnusedBroadcaster {
+struct CountingBroadcaster {
+    calls: Arc<AtomicUsize>,
+    fail_once: bool,
+}
+impl AuthenticatedTxBroadcasterV0 for CountingBroadcaster {
     type Error = io::Error;
 
     fn broadcast_authenticated(
         &mut self,
-        _intent: BroadcastIntentV0,
-        _envelope: &SignedTxEnvelopeV0,
+        intent: BroadcastIntentV0,
+        envelope: &SignedTxEnvelopeV0,
     ) -> Result<BroadcastReceiptV0, Self::Error> {
-        Err(io::Error::other("broadcast is not part of this fixture"))
+        self.calls.fetch_add(1, Ordering::SeqCst);
+        if self.fail_once {
+            self.fail_once = false;
+            return Err(io::Error::other(
+                "response lost after authenticated acceptance",
+            ));
+        }
+        Ok(BroadcastReceiptV0 {
+            tx_id: intent.tx_id,
+            intent_sequence: intent.intent_sequence,
+            envelope_digest: envelope.envelope_digest,
+            transport_receipt_digest: tx_digest(71),
+        })
+    }
+}
+
+struct FixedCheckTx;
+impl NodeOwnedTxCheckTxV0 for FixedCheckTx {
+    type Error = io::Error;
+
+    fn verify_check_tx(&mut self, intent: &TxIntentV0) -> Result<u64, Self::Error> {
+        if intent.chain_id != tx_digest(1) || intent.sender != tx_digest(2) {
+            return Err(io::Error::other("unexpected authenticated intent"));
+        }
+        Ok(1)
     }
 }
 
@@ -278,17 +327,26 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
     )
     .unwrap();
     let claim = finalized_claim(intent().tx_id());
+    let signer_calls = Arc::new(AtomicUsize::new(0));
+    let broadcaster_calls = Arc::new(AtomicUsize::new(0));
     let mut adapter = ProductionTxNodeAdapterV0::new(
         chain_id,
         AcceptAuthorization,
         journal,
-        UnusedPermit,
-        UnusedSigner,
-        UnusedBroadcaster,
+        AcceptPermit,
+        CountingSigner {
+            calls: Arc::clone(&signer_calls),
+        },
+        CountingBroadcaster {
+            calls: Arc::clone(&broadcaster_calls),
+            fail_once: true,
+        },
         FinalitySource { claim },
     );
-    let admission = adapter.admit_and_persist(intent(), 1).unwrap();
-    adapter
+    let admission = adapter
+        .check_tx_and_admit(&mut FixedCheckTx, intent())
+        .unwrap();
+    let proposal = adapter
         .persist_proposal(
             admission.tx_id,
             ProposalHandoffV0 {
@@ -297,6 +355,50 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
             },
         )
         .unwrap();
+    let mut permit = CoreSafetyPermitClaimV0 {
+        tx_id: admission.tx_id,
+        tx_record_digest: proposal.record_digest,
+        safety_state_digest: tx_digest(30),
+        authority_receipt_digest: tx_digest(31),
+        permit_digest: tx_digest(0),
+    };
+    permit.permit_digest = permit.canonical_digest();
+    let uncertain = adapter.sign_and_broadcast(permit);
+    assert!(matches!(
+        uncertain,
+        Err(trnm_tx_lifecycle_v0::TxBroadcastErrorV0::Broadcast(_))
+    ));
+    assert!(adapter.is_poisoned());
+    assert_eq!(signer_calls.load(Ordering::SeqCst), 1);
+    assert_eq!(broadcaster_calls.load(Ordering::SeqCst), 1);
+    drop(adapter);
+
+    let journal = CandidateTxFileJournalV0::open(
+        &journal_path,
+        identity,
+        CandidateTxJournalLimitsV0::default(),
+    )
+    .unwrap();
+    let mut adapter = ProductionTxNodeAdapterV0::recover(
+        chain_id,
+        AcceptAuthorization,
+        journal,
+        AcceptPermit,
+        CountingSigner {
+            calls: Arc::clone(&signer_calls),
+        },
+        CountingBroadcaster {
+            calls: Arc::clone(&broadcaster_calls),
+            fail_once: false,
+        },
+        FinalitySource { claim },
+    )
+    .unwrap();
+    let receipt = adapter.sign_and_broadcast(permit).unwrap();
+    assert_eq!(receipt.tx_id, admission.tx_id);
+    assert_eq!(signer_calls.load(Ordering::SeqCst), 1);
+    assert_eq!(broadcaster_calls.load(Ordering::SeqCst), 2);
+
     let wrong_path = root.join("wrong.sqlite");
     let wrong_store = state_store(&wrong_path, state_digest(99));
     let error = adapter
@@ -325,9 +427,14 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
         chain_id,
         AcceptAuthorization,
         journal,
-        UnusedPermit,
-        UnusedSigner,
-        UnusedBroadcaster,
+        AcceptPermit,
+        CountingSigner {
+            calls: Arc::clone(&signer_calls),
+        },
+        CountingBroadcaster {
+            calls: Arc::clone(&broadcaster_calls),
+            fail_once: false,
+        },
         FinalitySource { claim },
     )
     .unwrap();
