@@ -987,7 +987,7 @@ pub fn collect_incremental_nodes_v1(
         |row| row.get(0),
     )?;
     let generation = u64_blob(generation)?;
-    let (_queue_depth, queue_bytes): (u64, u64) = transaction.query_row(
+    let (_queue_depth, mut queue_bytes): (u64, u64) = transaction.query_row(
         "SELECT count(*),coalesce(sum(length(node_key)+length(enqueued_generation)+length(expected_hash)),0) FROM ni_gc_queue",
         [],
         |row| Ok((row.get(0)?, row.get(1)?)),
@@ -1030,6 +1030,7 @@ pub fn collect_incremental_nodes_v1(
                         record.hash.as_slice()
                     ],
                 )?;
+                queue_bytes = next_bytes;
                 enqueued_nodes = enqueued_nodes
                     .checked_add(1)
                     .context("incremental GC enqueue count overflow")?;

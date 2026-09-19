@@ -100,7 +100,49 @@ def parse_lines(raw: str) -> dict[str, str]:
     return values
 
 
-def local_facts(lan_ips: list[str]) -> dict[str, str]:
+def local_inventory_addresses(
+    lan_ips: list[str], expected_local_ip: str | None = None
+) -> set[str]:
+    # The coordinator stage is bound to the inventory's one `management=local`
+    # host.  Probing every LAN edge is insufficient: a desktop running this
+    # script could otherwise emit a report that still labels itself as the
+    # inventory's 192.168.0.9 coordinator.  Require the local kernel to expose
+    # exactly one inventory address and fail closed when the address inventory
+    # cannot be read.  Remote facts remain SSH-bound to their management alias.
+    try:
+        address_probe = subprocess.run(
+            ["ip", "-j", "-4", "addr", "show"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if address_probe.returncode != 0:
+            raise ValueError("local IPv4 address probe failed")
+        address_rows = json.loads(address_probe.stdout)
+        local_addresses = {
+            address["local"]
+            for interface in address_rows
+            for address in interface.get("addr_info", [])
+            if address.get("family") == "inet" and isinstance(address.get("local"), str)
+        }
+    except (OSError, subprocess.SubprocessError, json.JSONDecodeError, TypeError, KeyError) as error:
+        raise ValueError(f"local IPv4 identity probe failed: {error}") from error
+    matched_addresses = local_addresses.intersection(lan_ips)
+    if len(matched_addresses) != 1 or (
+        expected_local_ip is not None and matched_addresses != {expected_local_ip}
+    ):
+        raise ValueError(
+            "local IPv4 identity must match the inventory local LAN address exactly; "
+            f"expected={expected_local_ip!r} observed={sorted(matched_addresses)!r}"
+        )
+    return matched_addresses
+
+
+def local_facts(
+    lan_ips: list[str], expected_local_ip: str | None = None
+) -> dict[str, str]:
+    local_inventory_addresses(lan_ips, expected_local_ip)
     stat = shutil.disk_usage("/tmp")
     soft, hard = subprocess.check_output(
         ["bash", "-lc", "printf '%s %s' \"$(ulimit -Sn)\" \"$(ulimit -Hn)\""],
@@ -187,7 +229,7 @@ def main() -> None:
         try:
             remote_returncode = 0
             if host["management"] == "local":
-                facts = local_facts(lan_ips)
+                facts = local_facts(lan_ips, host["lan_ip"])
             else:
                 completed = subprocess.run(
                     [

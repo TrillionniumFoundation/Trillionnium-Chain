@@ -63,6 +63,42 @@ def facts_for(host: dict, lan_ips: list[str], epoch: int) -> dict[str, str]:
     return facts
 
 
+def test_local_identity_is_inventory_bound() -> None:
+    probe = load_probe()
+    probe_output = json.dumps(
+        [
+            {
+                "ifname": "wlp195s0",
+                "addr_info": [
+                    {"family": "inet", "local": "192.168.0.9"},
+                    {"family": "inet", "local": "100.119.126.104"},
+                ],
+            }
+        ]
+    )
+    completed = subprocess.CompletedProcess(
+        ["ip"], 0, stdout=probe_output, stderr=""
+    )
+    with mock.patch.object(probe.subprocess, "run", return_value=completed):
+        assert probe.local_inventory_addresses(
+            ["192.168.0.9", "192.168.0.4"], "192.168.0.9"
+        ) == {"192.168.0.9"}
+    mismatch = probe_output.replace("192.168.0.9", "192.168.0.4")
+    with mock.patch.object(
+        probe.subprocess,
+        "run",
+        return_value=subprocess.CompletedProcess(["ip"], 0, stdout=mismatch, stderr=""),
+    ):
+        try:
+            probe.local_inventory_addresses(
+                ["192.168.0.9", "192.168.0.4"], "192.168.0.9"
+            )
+        except ValueError as error:
+            assert "inventory local LAN address exactly" in str(error)
+        else:
+            raise AssertionError("local identity substitution was accepted")
+
+
 def produce_current_document(
     *, failed_lan: bool = False, missing_builder_os: str | None = None,
 ) -> dict:
@@ -81,7 +117,9 @@ def produce_current_document(
     local_facts = iter(item for host, item in zip(hosts, facts) if host["management"] == "local")
     remote_facts = iter(item for host, item in zip(hosts, facts) if host["management"] != "local")
 
-    def fake_local(_lan_ips: list[str]) -> dict[str, str]:
+    def fake_local(
+        _lan_ips: list[str], _expected_local_ip: str | None = None
+    ) -> dict[str, str]:
         return copy.deepcopy(next(local_facts))
 
     def fake_remote(*_args, **_kwargs) -> subprocess.CompletedProcess[str]:
@@ -169,6 +207,7 @@ def clear_builders(document: dict, os_name: str) -> None:
 
 
 def main() -> None:
+    test_local_identity_is_inventory_bound()
     base = produce_current_document()
     positive = run(base)
     if positive.returncode != 0:
