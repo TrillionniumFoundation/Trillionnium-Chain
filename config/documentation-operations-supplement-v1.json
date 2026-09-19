@@ -443,6 +443,155 @@
         "Physical power-loss and controller-cache durability, independent host rollback floors and scalable incremental compaction remain open.",
         "A production peer transport and authenticated complete-snapshot verifier remain separate requirements."
       ]
+    },
+    {
+      "id": "M13-OP-INCREMENTAL-SNAPSHOT-READ",
+      "workstream": "S1",
+      "module_id": "M13",
+      "requirement_ids": ["M13-STAGE", "M13-MIGRATE"],
+      "profile": "pcc1",
+      "implementation": {
+        "package": "trnm-migration-v0",
+        "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+        "symbol": "read_snapshot_v0"
+      },
+      "normative_clauses": [
+        {
+          "path": "docs/modules/TRNM_OPERATION_CLOSURE_SUPPLEMENT_V1.md",
+          "heading": "## S1 — incremental SQLite state-sync append and crash recovery",
+          "rule": "The migration read-side joins metadata and ordered target rows in one deferred SQLite transaction; readback, root verification, export and delta-base reads use that pinned observation."
+        },
+        {
+          "path": "docs/modules/M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md",
+          "heading": "The adapter also exposes a bounded local handoff pair:",
+          "rule": "read_snapshot_v0 pins metadata and ordered rows to one deferred transaction, and snapshot export/import validates the complete row and metadata binding."
+        }
+      ],
+      "schema_refs": [
+        {
+          "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "selector": "SqliteIncrementalStateStoreV0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "selector": "DurableDeltaReadbackV0"
+        }
+      ],
+      "domain_refs": [
+        {
+          "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "selector": "DURABLE_STORE_APP_ID_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "selector": "MigrationErrorV0"
+        }
+      ],
+      "limit_refs": [
+        {
+          "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "selector": "MAX_INCREMENTAL_DELTA_ROWS_V0"
+        },
+        {
+          "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "selector": "MAX_EXPORT_ROWS_V0"
+        }
+      ],
+      "state": {
+        "authenticated_inputs": [
+          "A configured migration plan/schema binding and the SQLite metadata and target rows in the closed-world store."
+        ],
+        "preconditions": [
+          "The store namespace, schema objects, metadata digests and ordered target rows are readable under the selected bounded profile."
+        ],
+        "accepted_effects": [
+          "One deferred SQLite transaction yields metadata and rows from one generation; callers may independently verify the root or export that exact snapshot."
+        ],
+        "rejected_effects": [
+          "Metadata/row count or digest mismatch, plan/schema substitution, malformed rows or root mismatch rejects the observation without publishing a mixed generation."
+        ],
+        "uncertain_recovery": [
+          "A read or commit error remains local storage uncertainty; reopen and revalidate the exact source generation before retrying an export or delta."
+        ],
+        "publication": [
+          "The readback/export is a staging artifact and does not issue finality, signer custody, peer trust or production migration authority."
+        ]
+      },
+      "errors": [
+        {
+          "class": "reject",
+          "reference": {
+            "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+            "selector": "DurableDeltaStoreErrorV0"
+          },
+          "meaning": "Schema, metadata, row ordering, digest or root substitution rejects the snapshot observation."
+        },
+        {
+          "class": "uncertain",
+          "reference": {
+            "path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+            "selector": "DurableDeltaStoreErrorV0"
+          },
+          "meaning": "SQLite read or transaction failure requires reopen and exact generation classification before a caller retries."
+        }
+      ],
+      "producer_modules": ["M13"],
+      "consumer_modules": ["M07", "M08", "M13", "M15"],
+      "cases": [
+        {
+          "id": "M13-OP-INCREMENTAL-SNAPSHOT-READ-CASE-1",
+          "kind": "positive",
+          "package": "trnm-migration-v0",
+          "source_path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "symbol": "sqlite_incremental_readback_pins_metadata_and_rows_to_one_snapshot",
+          "target": "lib",
+          "test_filter": "tests::sqlite_incremental_readback_pins_metadata_and_rows_to_one_snapshot",
+          "features": [],
+          "expected_outcome": "A commit between metadata and row queries leaves the reader on one coherent predecessor generation and rows digest.",
+          "assertion_fragments": [
+            "assert_eq!(before.generation, 0);",
+            "assert_eq!(before.rows_digest, target_rows_digest_v0(&base));",
+            "assert_eq!(store.readback_v0().unwrap().generation, 1);"
+          ]
+        },
+        {
+          "id": "M13-OP-INCREMENTAL-SNAPSHOT-READ-CASE-2",
+          "kind": "negative",
+          "package": "trnm-migration-v0",
+          "source_path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "symbol": "sqlite_snapshot_export_import_is_exact_and_rejects_row_substitution",
+          "target": "lib",
+          "test_filter": "tests::sqlite_snapshot_export_import_is_exact_and_rejects_row_substitution",
+          "features": [],
+          "expected_outcome": "A substituted snapshot row is rejected and cannot initialize a target store.",
+          "assertion_fragments": [
+            "MigrationErrorV0::SnapshotRowsMismatch"
+          ]
+        },
+        {
+          "id": "M13-OP-INCREMENTAL-SNAPSHOT-READ-CASE-3",
+          "kind": "recovery",
+          "package": "trnm-migration-v0",
+          "source_path": "trillionnium/crates/trnm-migration-v0/src/lib.rs",
+          "symbol": "sqlite_process_kill_rolls_back_uncommitted_delta",
+          "target": "lib",
+          "test_filter": "tests::sqlite_process_kill_rolls_back_uncommitted_delta",
+          "features": [],
+          "expected_outcome": "A process killed before commit reopens at the exact predecessor rows and generation.",
+          "assertion_fragments": [
+            "assert_eq!(reopened.read_rows_v0().unwrap(), base);",
+            "assert_eq!(reopened.readback_v0().unwrap().generation, 0);"
+          ]
+        }
+      ],
+      "independent_vectors": {
+        "status": "open",
+        "reason": "These are repository SQLite regressions; independently authored snapshot bytes, physical power-loss/controller-cache tests, retention/compaction and external rollback authority remain open."
+      },
+      "open_requirements": [
+        "Peer-authenticated complete-snapshot transfer, retention/compaction policy and independent host rollback floors remain open.",
+        "Physical power-loss, controller-cache and disk-exhaustion campaigns remain separate deployment evidence."
+      ]
     }
   ]
 }

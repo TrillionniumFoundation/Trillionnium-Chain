@@ -18,9 +18,9 @@ class SupplementalOperationMutants(unittest.TestCase):
 
     def test_positive_scope(self) -> None:
         report = gate.validate(self.data)
-        self.assertEqual(report["operation_count"], 3)
-        self.assertEqual(report["source_regression_case_count"], 8)
-        self.assertEqual(report["recovery_case_count"], 2)
+        self.assertEqual(report["operation_count"], 4)
+        self.assertEqual(report["source_regression_case_count"], 11)
+        self.assertEqual(report["recovery_case_count"], 3)
         self.assertTrue(report["catalog_complete_for_declared_scope"])
         self.assertFalse(report["production_authority"])
 
