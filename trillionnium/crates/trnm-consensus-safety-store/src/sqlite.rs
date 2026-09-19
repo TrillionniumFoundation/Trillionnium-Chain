@@ -5373,17 +5373,9 @@ fn validate_authenticated_genesis_application_h1_native_valid_v0(
             )?
         || transition.route() != facts.route()
         || transition.validation_id() != validation_id
-        || transition.request_fingerprint() != facts.request_fingerprint()
-        || transition.job_immutable_checksum() != facts.job_immutable_checksum()
-        || transition.application_host_config_ref() != facts.application_host_config_ref()
-        || transition.valid_result_checksum() != facts.valid_result_checksum()
-        || transition.callback_payload_checksum() != facts.callback_payload_checksum()
-        || transition.idempotency_key() != facts.idempotency_key()
-        || transition.delivery_attempt() != facts.delivery_attempt()
-        || transition.delivered_job_row_checksum() != facts.delivered_job_row_checksum()
-        || transition.outbox_checksum() != facts.outbox_checksum()
-        || transition.completion_revision() != facts.completion_revision()
-        || transition.post_ack_action_code() != facts.post_ack_action().code()
+        || transition
+            .validate_against_application_delivery_facts_v0(&facts)
+            .is_err()
     {
         return Err(
             SafetyStoreErrorV0::AuthenticatedGenesisApplicationH1OfflinePersistenceMismatch {
@@ -5399,21 +5391,7 @@ fn native_valid_transition_from_application_seal_v0(
     sealed_transition: &ApplicationSealedNativeValidTransitionV0,
 ) -> Result<NativeValidTransitionV0, SafetyStoreErrorV0> {
     let facts = sealed_transition.delivery_facts_v0();
-    NativeValidTransitionV0::new(
-        facts.route(),
-        facts.validation_id(),
-        facts.request_fingerprint(),
-        facts.job_immutable_checksum(),
-        facts.application_host_config_ref(),
-        facts.valid_result_checksum(),
-        facts.callback_payload_checksum(),
-        facts.idempotency_key(),
-        facts.delivery_attempt(),
-        facts.delivered_job_row_checksum(),
-        facts.outbox_checksum(),
-        facts.post_ack_action().code(),
-        facts.completion_revision(),
-    )
+    NativeValidTransitionV0::from_application_delivery_facts_v0(&facts)
 }
 
 fn validate_authenticated_genesis_application_h1_native_valid_completion_v0(

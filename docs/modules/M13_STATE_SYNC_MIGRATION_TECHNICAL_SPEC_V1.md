@@ -19,6 +19,19 @@ obligations, not actual transport or native proof implementation by themselves.
 The current native lab h1-h3 sync route is bounded laboratory behavior, not
 the generic arbitrary-height/multi-epoch protocol designed below.
 
+The migration core now also exposes a bounded authenticated incremental-state
+seam in `trnm-migration-v0`: `derive_incremental_delta_v0` computes a strictly
+ordered delete/put delta between two target row sets while independently
+recomputing both roots; `apply_incremental_delta_v0` verifies the plan/schema,
+base rows digest/root, operation digests, delta Merkle root, target row digest
+and target root before returning the applied rows. Deletes and empty values
+are distinct, authority namespaces remain forbidden, and the delta has an
+independent one-million-row bound. This is a deterministic projection and
+verification primitive, not a database rewrite, network transport, garbage
+collector, or production multi-host acceptance. A host still needs an
+M07-owned durable staging adapter and crash/space/retention campaign before
+claiming incremental installation.
+
 ## Interfaces
 
 | Type / port | Meaning and owner |

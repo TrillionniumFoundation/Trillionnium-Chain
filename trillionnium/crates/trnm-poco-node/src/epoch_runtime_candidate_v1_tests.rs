@@ -964,6 +964,92 @@ fn reopen_actual_runtime_v1(closed: Box<ClosedLiveCaseV1>) -> anyhow::Result<Box
     Ok(Box::new((closed.dir, runtime, closed.key, closed.recovery)))
 }
 
+fn readback_actual_progressed_v1(
+    closed: &ClosedLiveCaseV1,
+    block_id: [u8; 32],
+) -> anyhow::Result<ProgressedEpochRecoveryReadbackV1> {
+    let (application, edge) = reopen_actual_native_v1(closed);
+    let journal = SqliteEpochSafetyJournalV1::open_existing_v1(
+        &closed.safety_path,
+        closed.recovery.profile.clone(),
+        closed.safety_pin,
+    )?;
+    let retired = RetiredSqliteSignerJournalV1::open_existing_v1(
+        &closed.old_path,
+        closed.old_profile.clone(),
+        closed.recovery.old_watermark.clone(),
+        closed.retirement,
+        &closed.recovery.context,
+        &closed.recovery.intent,
+    )?;
+    let ordinary = SqliteSignerJournalV0::open_existing(
+        &closed.new_path,
+        closed.new_profile.clone(),
+        closed.recovery.new_watermark.clone(),
+    )?;
+    let checkpoint_store =
+        SqliteEpochNodeCheckpointStoreV1::open_existing(&closed.external_path, &closed.checkpoint)?;
+    Ok(
+        CandidateEpochRuntimeV1::recover_progressed_obligation_readback_v1(
+            journal,
+            application,
+            edge,
+            retired,
+            ordinary,
+            checkpoint_store,
+            closed.checkpoint,
+            block_id,
+        )?,
+    )
+}
+
+#[test]
+fn actual_epoch_runtime_progressed_obligation_recovery_rejoins_pdc_without_signing() {
+    std::thread::Builder::new()
+        .name("epoch-progressed-recovery-test".into())
+        .stack_size(32 * 1024 * 1024)
+        .spawn(|| {
+            let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
+            let (dir, runtime, key, recovery) = *live;
+            let proposal = native_first_proposal_v1(
+                &runtime.application,
+                &runtime.edge,
+                recovery.proposal.witness().justify_qc(),
+                recovery
+                    .proposal
+                    .witness()
+                    .epoch_anchor_authorization()
+                    .expect("epoch proposal anchor authorization"),
+            );
+            let block_id = *proposal.block().id().as_bytes();
+            let runtime = runtime
+                .admit_epoch_proposal_v1(proposal)
+                .expect("native proposal admission");
+            let (runtime, effects) = runtime
+                .execute_admitted_epoch_proposal_v1()
+                .expect("native P/D/C execution");
+            assert!(effects.iter().any(|effect| matches!(
+                effect,
+                trnm_consensus_core::Effect::RequestSignature { .. }
+            )));
+            assert_eq!(key.calls, 10, "P/D/C must not call the signer");
+            let closed = close_actual_runtime_v1(Box::new((dir, runtime, key, recovery)));
+            let readback = readback_actual_progressed_v1(&closed, block_id)
+                .expect("progressed P/D/C readback after process-shaped restart");
+            assert_eq!(readback.block_id, block_id);
+            assert_eq!(
+                readback.safety_revision,
+                closed.checkpoint.fields().target_safety.revision
+            );
+            assert_ne!(readback.p_digest, [0; 32]);
+            assert_ne!(readback.artifact_digest, [0; 32]);
+            assert!(closed.dir.path().is_dir());
+        })
+        .expect("spawn progressed recovery test")
+        .join()
+        .expect("progressed recovery test panicked");
+}
+
 #[test]
 fn actual_epoch_runtime_all_owner_initial_recovery_rearms_without_signing() {
     assert_initial_recovery_v1(activate_actual_case_v1(build_epoch_runtime_case_v1()));

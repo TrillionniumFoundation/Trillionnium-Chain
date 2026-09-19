@@ -227,6 +227,16 @@ one submitted transaction plus empty successors, and durable historical proof
 query after a later commit. These are implementation obligations, not claims that
 the current native proof verifier already provides a networked lifecycle.
 
+The candidate node WAL now exposes `lookup_commit_receipt_v0(tx_digest)` after
+an authenticated native readback has committed the row. The lookup rechecks the
+namespace, committed pending-nonce row, transaction digest and canonical
+receipt commitment before returning the stored block/height/state-root and
+receipt/finality digests. It is a durable status/readback seam for a future
+public query adapter; it does not return proof bytes, verify consensus on its
+own, or publish an RPC success response. Missing rows return `None`, while a
+malformed or tampered receipt fails closed. The public network query and proof
+retention adapter remain separate M05/M13 work.
+
 ### Implemented native inclusion boundary
 
 `trillionnium/crates/trnm-tx-lifecycle-v0/src/finalized_proof_v1.rs`

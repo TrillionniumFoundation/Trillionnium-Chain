@@ -16,6 +16,10 @@ pub const MAX_NAMESPACE_BYTES_V0: usize = 128;
 pub const MAX_KEY_BYTES_V0: usize = 64 * 1024;
 pub const MAX_VALUE_BYTES_V0: usize = 16 * 1024 * 1024;
 pub const MAX_CUTOVER_SIGNERS_V0: usize = 1024;
+/// A delta is deliberately bounded independently from a full export.  Hosts
+/// must split larger catch-up work into multiple authenticated deltas rather
+/// than allowing one allocation to become an unbounded migration primitive.
+pub const MAX_INCREMENTAL_DELTA_ROWS_V0: usize = 1_000_000;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Digest32V0(pub [u8; 32]);
@@ -271,10 +275,381 @@ pub trait TargetRootBuilderV0 {
         I: IntoIterator<Item = &'a TargetRowV0>;
 }
 
+/// One canonical key mutation in an incremental target-state delta.
+///
+/// `value = None` is a deletion; `Some(empty)` is a distinct empty value.  The
+/// operation digest commits to that distinction and to the exact namespace/key
+/// bytes, so a caller cannot reinterpret a deletion as an insertion while
+/// replaying an otherwise valid delta.
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub struct TargetDeltaRowV0 {
+    pub namespace: Vec<u8>,
+    pub key: Vec<u8>,
+    pub value: Option<Vec<u8>>,
+    pub operation_digest: Digest32V0,
+}
+
+impl TargetDeltaRowV0 {
+    #[must_use]
+    pub fn canonical_digest(namespace: &[u8], key: &[u8], value: Option<&[u8]>) -> Digest32V0 {
+        let kind = [u8::from(value.is_some())];
+        Digest32V0::hash(
+            b"trnm.migration.incremental-delta-row.v0",
+            &[namespace, key, &kind, value.unwrap_or_default()],
+        )
+    }
+
+    pub fn validate(&self) -> Result<(), MigrationErrorV0> {
+        if self.namespace.is_empty()
+            || self.namespace.len() > MAX_NAMESPACE_BYTES_V0
+            || self.key.is_empty()
+            || self.key.len() > MAX_KEY_BYTES_V0
+            || self
+                .value
+                .as_ref()
+                .is_some_and(|value| value.len() > MAX_VALUE_BYTES_V0)
+            || forbidden_authority_namespace(&self.namespace)
+            || self.operation_digest
+                != Self::canonical_digest(&self.namespace, &self.key, self.value.as_deref())
+        {
+            return Err(MigrationErrorV0::InvalidDeltaRow);
+        }
+        Ok(())
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct IncrementalStateDeltaV0 {
+    pub plan_digest: Digest32V0,
+    pub target_schema_digest: Digest32V0,
+    pub base_rows_digest: Digest32V0,
+    pub base_state_root: Digest32V0,
+    pub target_rows_digest: Digest32V0,
+    pub target_state_root: Digest32V0,
+    pub base_row_count: u64,
+    pub target_row_count: u64,
+    pub delta_root: Digest32V0,
+    pub delta_digest: Digest32V0,
+    pub entries: Vec<TargetDeltaRowV0>,
+}
+
+impl IncrementalStateDeltaV0 {
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.migration.incremental-delta.v0",
+            &[
+                &self.plan_digest.0,
+                &self.target_schema_digest.0,
+                &self.base_rows_digest.0,
+                &self.base_state_root.0,
+                &self.target_rows_digest.0,
+                &self.target_state_root.0,
+                &self.base_row_count.to_be_bytes(),
+                &self.target_row_count.to_be_bytes(),
+                &self.delta_root.0,
+                &(self.entries.len() as u64).to_be_bytes(),
+            ],
+        )
+    }
+
+    fn validate(&self) -> Result<(), MigrationErrorV0> {
+        if self.plan_digest == Digest32V0([0; 32])
+            || self.target_schema_digest == Digest32V0([0; 32])
+            || self.base_rows_digest == Digest32V0([0; 32])
+            || self.base_state_root == Digest32V0([0; 32])
+            || self.target_rows_digest == Digest32V0([0; 32])
+            || self.target_state_root == Digest32V0([0; 32])
+            || self.delta_root == Digest32V0([0; 32])
+            || self.entries.len() > MAX_INCREMENTAL_DELTA_ROWS_V0
+            || self.base_row_count > MAX_EXPORT_ROWS_V0
+            || self.target_row_count > MAX_EXPORT_ROWS_V0
+            || self.entries.len() as u64 > MAX_INCREMENTAL_DELTA_ROWS_V0 as u64
+            || self.delta_digest != self.canonical_digest()
+        {
+            return Err(MigrationErrorV0::InvalidIncrementalDelta);
+        }
+        let mut previous: Option<(&[u8], &[u8])> = None;
+        let mut digests = Vec::with_capacity(self.entries.len());
+        for entry in &self.entries {
+            entry.validate()?;
+            if previous.is_some_and(|(namespace, key)| {
+                (entry.namespace.as_slice(), entry.key.as_slice()) <= (namespace, key)
+            }) {
+                return Err(MigrationErrorV0::RowsNotStrictlyOrdered);
+            }
+            previous = Some((&entry.namespace, &entry.key));
+            digests.push(entry.operation_digest);
+        }
+        if incremental_delta_root_v0(&digests) != self.delta_root {
+            return Err(MigrationErrorV0::DeltaRootMismatch);
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub enum IncrementalDeltaErrorV0<RootError> {
+    Protocol(MigrationErrorV0),
+    RootBuilder(RootError),
+}
+
+impl<R: fmt::Display> fmt::Display for IncrementalDeltaErrorV0<R> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Protocol(error) => write!(f, "incremental migration delta rejected: {error}"),
+            Self::RootBuilder(error) => write!(f, "incremental target root failed: {error}"),
+        }
+    }
+}
+
+impl<R: Error + 'static> Error for IncrementalDeltaErrorV0<R> {}
+
+fn validate_target_rows_v0(rows: &[TargetRowV0]) -> Result<(), MigrationErrorV0> {
+    if rows.len() > MAX_EXPORT_ROWS_V0 as usize {
+        return Err(MigrationErrorV0::TargetRowsOutOfBounds);
+    }
+    let mut previous: Option<(&[u8], &[u8])> = None;
+    for row in rows {
+        row.validate()?;
+        if previous.is_some_and(|(namespace, key)| {
+            (row.namespace.as_slice(), row.key.as_slice()) <= (namespace, key)
+        }) {
+            return Err(MigrationErrorV0::RowsNotStrictlyOrdered);
+        }
+        previous = Some((&row.namespace, &row.key));
+    }
+    Ok(())
+}
+
+fn target_rows_digest_v0(rows: &[TargetRowV0]) -> Digest32V0 {
+    let mut digest = Sha256::new();
+    digest.update(b"trnm.migration.target-rows.v0");
+    for row in rows {
+        digest.update(ExportRowV0::canonical_digest(&row.namespace, &row.key, &row.value).0);
+    }
+    Digest32V0(digest.finalize().into())
+}
+
+#[must_use]
+pub fn incremental_delta_root_v0(digests: &[Digest32V0]) -> Digest32V0 {
+    if digests.is_empty() {
+        return Digest32V0::hash(b"trnm.migration.empty-delta-root.v0", &[]);
+    }
+    let mut level = digests.to_vec();
+    while level.len() > 1 {
+        let mut next = Vec::with_capacity(level.len().div_ceil(2));
+        for pair in level.chunks(2) {
+            let right = pair.get(1).copied().unwrap_or(pair[0]);
+            next.push(Digest32V0::hash(
+                b"trnm.migration.incremental-delta-node.v0",
+                &[&pair[0].0, &right.0],
+            ));
+        }
+        level = next;
+    }
+    level[0]
+}
+
+/// Compute a bounded, authenticated delta between two strictly ordered target
+/// states and independently recompute both roots.  This is a pure producer:
+/// it writes no database and does not grant cutover or signer authority.
+pub fn derive_incremental_delta_v0<R>(
+    plan_digest: Digest32V0,
+    target_schema_digest: Digest32V0,
+    base_rows: &[TargetRowV0],
+    target_rows: &[TargetRowV0],
+    root_builder: &R,
+) -> Result<IncrementalStateDeltaV0, IncrementalDeltaErrorV0<R::Error>>
+where
+    R: TargetRootBuilderV0,
+{
+    if plan_digest == Digest32V0([0; 32]) || target_schema_digest == Digest32V0([0; 32]) {
+        return Err(IncrementalDeltaErrorV0::Protocol(
+            MigrationErrorV0::InvalidIncrementalDelta,
+        ));
+    }
+    validate_target_rows_v0(base_rows).map_err(IncrementalDeltaErrorV0::Protocol)?;
+    validate_target_rows_v0(target_rows).map_err(IncrementalDeltaErrorV0::Protocol)?;
+    let base_state_root = root_builder
+        .recompute_target_root(target_schema_digest, base_rows.iter())
+        .map_err(IncrementalDeltaErrorV0::RootBuilder)?;
+    let target_state_root = root_builder
+        .recompute_target_root(target_schema_digest, target_rows.iter())
+        .map_err(IncrementalDeltaErrorV0::RootBuilder)?;
+    if base_state_root == Digest32V0([0; 32]) || target_state_root == Digest32V0([0; 32]) {
+        return Err(IncrementalDeltaErrorV0::Protocol(
+            MigrationErrorV0::InvalidTargetRoot,
+        ));
+    }
+    let mut entries = Vec::new();
+    let (mut base_index, mut target_index) = (0_usize, 0_usize);
+    while base_index < base_rows.len() || target_index < target_rows.len() {
+        let next = match (base_rows.get(base_index), target_rows.get(target_index)) {
+            (Some(base), Some(target)) => match (
+                base.namespace.as_slice(),
+                base.key.as_slice(),
+                target.namespace.as_slice(),
+                target.key.as_slice(),
+            ) {
+                (bn, bk, tn, tk) if (bn, bk) < (tn, tk) => {
+                    base_index += 1;
+                    TargetDeltaRowV0 {
+                        namespace: bn.to_vec(),
+                        key: bk.to_vec(),
+                        value: None,
+                        operation_digest: Digest32V0([0; 32]),
+                    }
+                }
+                (bn, bk, tn, tk) if (bn, bk) > (tn, tk) => {
+                    target_index += 1;
+                    TargetDeltaRowV0 {
+                        namespace: tn.to_vec(),
+                        key: tk.to_vec(),
+                        value: Some(target.value.clone()),
+                        operation_digest: Digest32V0([0; 32]),
+                    }
+                }
+                _ => {
+                    base_index += 1;
+                    target_index += 1;
+                    if base.value == target.value {
+                        continue;
+                    }
+                    TargetDeltaRowV0 {
+                        namespace: target.namespace.clone(),
+                        key: target.key.clone(),
+                        value: Some(target.value.clone()),
+                        operation_digest: Digest32V0([0; 32]),
+                    }
+                }
+            },
+            (Some(base), None) => {
+                base_index += 1;
+                TargetDeltaRowV0 {
+                    namespace: base.namespace.clone(),
+                    key: base.key.clone(),
+                    value: None,
+                    operation_digest: Digest32V0([0; 32]),
+                }
+            }
+            (None, Some(target)) => {
+                target_index += 1;
+                TargetDeltaRowV0 {
+                    namespace: target.namespace.clone(),
+                    key: target.key.clone(),
+                    value: Some(target.value.clone()),
+                    operation_digest: Digest32V0([0; 32]),
+                }
+            }
+            (None, None) => unreachable!(),
+        };
+        if entries.len() == MAX_INCREMENTAL_DELTA_ROWS_V0 {
+            return Err(IncrementalDeltaErrorV0::Protocol(
+                MigrationErrorV0::DeltaRowsOutOfBounds,
+            ));
+        }
+        let mut next = next;
+        next.operation_digest =
+            TargetDeltaRowV0::canonical_digest(&next.namespace, &next.key, next.value.as_deref());
+        entries.push(next);
+    }
+    let digests = entries
+        .iter()
+        .map(|entry| entry.operation_digest)
+        .collect::<Vec<_>>();
+    let delta_root = incremental_delta_root_v0(&digests);
+    let mut delta = IncrementalStateDeltaV0 {
+        plan_digest,
+        target_schema_digest,
+        base_rows_digest: target_rows_digest_v0(base_rows),
+        base_state_root,
+        target_rows_digest: target_rows_digest_v0(target_rows),
+        target_state_root,
+        base_row_count: base_rows.len() as u64,
+        target_row_count: target_rows.len() as u64,
+        delta_root,
+        delta_digest: Digest32V0([0; 32]),
+        entries,
+    };
+    delta.delta_digest = delta.canonical_digest();
+    Ok(delta)
+}
+
+/// Verify and apply one authenticated delta to an exact base state.  Every
+/// key/value and both roots are recomputed before a target vector is returned.
+pub fn apply_incremental_delta_v0<R>(
+    delta: &IncrementalStateDeltaV0,
+    base_rows: &[TargetRowV0],
+    root_builder: &R,
+) -> Result<Vec<TargetRowV0>, IncrementalDeltaErrorV0<R::Error>>
+where
+    R: TargetRootBuilderV0,
+{
+    delta
+        .validate()
+        .map_err(IncrementalDeltaErrorV0::Protocol)?;
+    validate_target_rows_v0(base_rows).map_err(IncrementalDeltaErrorV0::Protocol)?;
+    if base_rows.len() as u64 != delta.base_row_count
+        || target_rows_digest_v0(base_rows) != delta.base_rows_digest
+        || root_builder
+            .recompute_target_root(delta.target_schema_digest, base_rows.iter())
+            .map_err(IncrementalDeltaErrorV0::RootBuilder)?
+            != delta.base_state_root
+    {
+        return Err(IncrementalDeltaErrorV0::Protocol(
+            MigrationErrorV0::BaseStateMismatch,
+        ));
+    }
+    let mut output = Vec::with_capacity(delta.target_row_count as usize);
+    let mut base_index = 0_usize;
+    for entry in &delta.entries {
+        while let Some(base) = base_rows.get(base_index) {
+            let base_key = (base.namespace.as_slice(), base.key.as_slice());
+            let entry_key = (entry.namespace.as_slice(), entry.key.as_slice());
+            if base_key < entry_key {
+                output.push(base.clone());
+                base_index += 1;
+            } else {
+                break;
+            }
+        }
+        if let Some(base) = base_rows.get(base_index) {
+            if (base.namespace.as_slice(), base.key.as_slice())
+                == (entry.namespace.as_slice(), entry.key.as_slice())
+            {
+                base_index += 1;
+            }
+        }
+        if let Some(value) = &entry.value {
+            output.push(TargetRowV0 {
+                namespace: entry.namespace.clone(),
+                key: entry.key.clone(),
+                value: value.clone(),
+            });
+        }
+    }
+    output.extend(base_rows[base_index..].iter().cloned());
+    validate_target_rows_v0(&output).map_err(IncrementalDeltaErrorV0::Protocol)?;
+    if output.len() as u64 != delta.target_row_count
+        || target_rows_digest_v0(&output) != delta.target_rows_digest
+        || root_builder
+            .recompute_target_root(delta.target_schema_digest, output.iter())
+            .map_err(IncrementalDeltaErrorV0::RootBuilder)?
+            != delta.target_state_root
+    {
+        return Err(IncrementalDeltaErrorV0::Protocol(
+            MigrationErrorV0::TargetStateMismatch,
+        ));
+    }
+    Ok(output)
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MigrationPlanV0 {
     pub source_chain_id: Digest32V0,
     pub source_protocol_digest: Digest32V0,
+    pub source_schema_digest: Digest32V0,
     pub source_height: u64,
     pub source_export_header_digest: Digest32V0,
     pub target_chain_id: Digest32V0,
@@ -294,6 +669,7 @@ impl MigrationPlanV0 {
             &[
                 &self.source_chain_id.0,
                 &self.source_protocol_digest.0,
+                &self.source_schema_digest.0,
                 &self.source_height.to_be_bytes(),
                 &self.source_export_header_digest.0,
                 &self.target_chain_id.0,
@@ -311,8 +687,10 @@ impl MigrationPlanV0 {
             || !self.downgrade_prohibited
             || self.source_chain_id == Digest32V0([0; 32])
             || self.source_protocol_digest == Digest32V0([0; 32])
+            || self.source_schema_digest == Digest32V0([0; 32])
             || self.source_chain_id != export.header.source_chain_id
             || self.source_protocol_digest != export.header.source_protocol_digest
+            || self.source_schema_digest != export.header.source_schema_digest
             || self.source_height != export.header.source_height
             || self.source_export_header_digest != export.header.header_digest
             || self.target_chain_id == Digest32V0([0; 32])
@@ -529,6 +907,13 @@ pub enum MigrationErrorV0 {
     InvalidCutoverAgreement,
     InsufficientCutoverWeight,
     WeightOverflow,
+    InvalidDeltaRow,
+    InvalidIncrementalDelta,
+    DeltaRootMismatch,
+    DeltaRowsOutOfBounds,
+    TargetRowsOutOfBounds,
+    BaseStateMismatch,
+    TargetStateMismatch,
 }
 
 impl fmt::Display for MigrationErrorV0 {
@@ -551,6 +936,13 @@ impl fmt::Display for MigrationErrorV0 {
             Self::InvalidCutoverAgreement => "cutover attestation is malformed or misbound",
             Self::InsufficientCutoverWeight => "cutover attestations do not meet required weight",
             Self::WeightOverflow => "cutover signer weight overflow",
+            Self::InvalidDeltaRow => "invalid incremental delta row",
+            Self::InvalidIncrementalDelta => "invalid incremental migration delta",
+            Self::DeltaRootMismatch => "incremental delta root mismatch",
+            Self::DeltaRowsOutOfBounds => "incremental delta exceeds its row bound",
+            Self::TargetRowsOutOfBounds => "target state exceeds its row bound",
+            Self::BaseStateMismatch => "incremental delta base state mismatch",
+            Self::TargetStateMismatch => "incremental delta target state mismatch",
         })
     }
 }
@@ -680,6 +1072,56 @@ mod tests {
         }
     }
 
+    fn target_row(byte: u8, value: u8) -> TargetRowV0 {
+        TargetRowV0 {
+            namespace: b"accounts".to_vec(),
+            key: vec![byte],
+            value: vec![value],
+        }
+    }
+
+    #[test]
+    fn incremental_delta_recomputes_and_applies_exact_state() {
+        let base = vec![target_row(1, 10), target_row(2, 20), target_row(4, 40)];
+        let target = vec![target_row(2, 21), target_row(3, 30), target_row(4, 40)];
+        let delta = derive_incremental_delta_v0(d(90), d(91), &base, &target, &HashRoot).unwrap();
+        assert_eq!(
+            delta.entries.len(),
+            3,
+            "delete, insert and update are distinct operations"
+        );
+        assert_eq!(delta.base_row_count, 3);
+        assert_eq!(delta.target_row_count, 3);
+        assert_eq!(
+            apply_incremental_delta_v0(&delta, &base, &HashRoot).unwrap(),
+            target
+        );
+    }
+
+    #[test]
+    fn incremental_delta_rejects_base_substitution_and_entry_tampering() {
+        let base = vec![target_row(1, 10), target_row(2, 20)];
+        let target = vec![target_row(1, 11), target_row(2, 20)];
+        let delta = derive_incremental_delta_v0(d(92), d(93), &base, &target, &HashRoot).unwrap();
+        let mut substituted = base.clone();
+        substituted[0].value[0] = 99;
+        assert!(matches!(
+            apply_incremental_delta_v0(&delta, &substituted, &HashRoot),
+            Err(IncrementalDeltaErrorV0::Protocol(
+                MigrationErrorV0::BaseStateMismatch
+            ))
+        ));
+
+        let mut tampered = delta.clone();
+        tampered.entries[0].value = Some(vec![77]);
+        assert!(matches!(
+            apply_incremental_delta_v0(&tampered, &base, &HashRoot),
+            Err(IncrementalDeltaErrorV0::Protocol(
+                MigrationErrorV0::InvalidDeltaRow
+            ))
+        ));
+    }
+
     #[test]
     fn finalized_export_projection_and_cutover_are_exactly_bound() {
         let rows = vec![row(1), row(2)];
@@ -701,6 +1143,7 @@ mod tests {
         let mut plan = MigrationPlanV0 {
             source_chain_id: header.source_chain_id,
             source_protocol_digest: header.source_protocol_digest,
+            source_schema_digest: header.source_schema_digest,
             source_height: header.source_height,
             source_export_header_digest: header.header_digest,
             target_chain_id: d(6),
@@ -772,6 +1215,7 @@ mod tests {
         let mut plan = MigrationPlanV0 {
             source_chain_id: header.source_chain_id,
             source_protocol_digest: header.source_protocol_digest,
+            source_schema_digest: header.source_schema_digest,
             source_height: header.source_height,
             source_export_header_digest: header.header_digest,
             target_chain_id: d(6),

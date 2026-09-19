@@ -852,6 +852,27 @@ impl VerifiedNativeCommitReceiptV0 {
     }
 }
 
+/// Authenticated facts returned by a candidate public transaction-status
+/// lookup.  The row is revalidated against the pending-nonce record and its
+/// canonical commitment before this value is returned.  It is an evidence
+/// handle, not a finality proof: callers still need the independently
+/// retained proof bytes (or another proof service) to verify consensus.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct StoredNativeCommitReceiptV0 {
+    evidence: NativeCommitReceiptEvidenceV0,
+    commitment: [u8; 32],
+}
+
+impl StoredNativeCommitReceiptV0 {
+    pub const fn evidence(&self) -> &NativeCommitReceiptEvidenceV0 {
+        &self.evidence
+    }
+
+    pub const fn commitment(&self) -> [u8; 32] {
+        self.commitment
+    }
+}
+
 /// Strict CheckTx hooks for the canonical builder carrier.
 ///
 /// The builder has already produced byte-stable inner/outer envelopes, but a
@@ -1564,6 +1585,83 @@ fn read_receipt_commitment_v0(
     raw.map_or(Ok(None), |value| decode_fixed::<32>(value).map(Some))
 }
 
+fn read_receipt_by_digest_v0(
+    connection: &Connection,
+    namespace: [u8; 32],
+    digest: [u8; 32],
+) -> Result<Option<StoredNativeCommitReceiptV0>, TxAdmissionWalErrorV0> {
+    if digest == [0; 32] {
+        return Err(TxAdmissionWalErrorV0::Malformed);
+    }
+    let raw: Option<RawReceiptRowV0> = connection
+        .query_row(
+            "SELECT signer, nonce, tx_digest, block_id, block_height, state_root,
+                    receipt_digest, finality_proof_digest, commitment
+             FROM tx_commit_receipt_v0
+             WHERE namespace = ?1 AND tx_digest = ?2",
+            params![namespace.as_slice(), digest.as_slice()],
+            |row| {
+                Ok((
+                    row.get(0)?,
+                    row.get(1)?,
+                    row.get(2)?,
+                    row.get(3)?,
+                    row.get(4)?,
+                    row.get(5)?,
+                    row.get(6)?,
+                    row.get(7)?,
+                    row.get(8)?,
+                ))
+            },
+        )
+        .optional()
+        .map_err(sqlite_error)?;
+    let Some((
+        signer,
+        nonce,
+        tx_digest,
+        block_id,
+        block_height,
+        state_root,
+        receipt_digest,
+        finality_proof_digest,
+        commitment,
+    )) = raw
+    else {
+        return Ok(None);
+    };
+    let signer = decode_fixed::<32>(signer)?;
+    let nonce = u64::from_be_bytes(decode_fixed::<8>(nonce)?);
+    let tx_digest = decode_fixed::<32>(tx_digest)?;
+    let block_id = decode_fixed::<32>(block_id)?;
+    let block_height = u64::from_be_bytes(decode_fixed::<8>(block_height)?);
+    let state_root = decode_fixed::<32>(state_root)?;
+    let receipt_digest = decode_fixed::<32>(receipt_digest)?;
+    let finality_proof_digest = decode_fixed::<32>(finality_proof_digest)?;
+    let commitment = decode_fixed::<32>(commitment)?;
+    let Some((pending, state)) = read_row_v0(connection, namespace, signer, nonce)? else {
+        return Err(TxAdmissionWalErrorV0::Malformed);
+    };
+    if state != STATE_COMMITTED_V0 || pending.digest != tx_digest || tx_digest != digest {
+        return Err(TxAdmissionWalErrorV0::Malformed);
+    }
+    let evidence = NativeCommitReceiptEvidenceV0::new(
+        tx_digest,
+        BlockId::new(block_id),
+        Height::new(block_height),
+        StateRoot::new(state_root),
+        receipt_digest,
+        finality_proof_digest,
+    )?;
+    if evidence.canonical_commitment() != commitment {
+        return Err(TxAdmissionWalErrorV0::Malformed);
+    }
+    Ok(Some(StoredNativeCommitReceiptV0 {
+        evidence,
+        commitment,
+    }))
+}
+
 type NativeLiveHandoffsV1 = Rc<RefCell<BTreeMap<([u8; 32], u64), std::rc::Weak<()>>>>;
 
 /// A node-owned SQLite pending-nonce authority.
@@ -2083,6 +2181,17 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
     pub fn retained_rows(&self) -> Result<usize, TxAdmissionWalErrorV0> {
         self.authority.retained_rows()
     }
+
+    /// Look up an authenticated native commit receipt by the canonical
+    /// transaction digest. This is a candidate status/readback seam: it
+    /// returns only durable evidence and commitment, never a fabricated
+    /// finality proof or an RPC success claim.
+    pub fn lookup_commit_receipt_v0(
+        &self,
+        tx_digest: [u8; 32],
+    ) -> Result<Option<StoredNativeCommitReceiptV0>, TxAdmissionWalErrorV0> {
+        self.authority.lookup_commit_receipt_v0(tx_digest)
+    }
 }
 
 impl fmt::Debug for SqlitePendingNonceAuthorityV0 {
@@ -2140,6 +2249,22 @@ impl SqlitePendingNonceAuthorityV0 {
     ) -> Result<Vec<PendingNonceHandoffRecordV0>, TxAdmissionWalErrorV0> {
         let authority = Self::open_with_handoff_policy(path, namespace, true)?;
         authority.handed_off_records_v0()
+    }
+
+    /// Read one committed native receipt by transaction digest while holding
+    /// the same exclusive WAL owner lock used by admission. The row is
+    /// revalidated against its pending-nonce record and canonical commitment;
+    /// malformed or tampered rows fail closed.
+    pub fn lookup_commit_receipt_v0(
+        &self,
+        tx_digest: [u8; 32],
+    ) -> Result<Option<StoredNativeCommitReceiptV0>, TxAdmissionWalErrorV0> {
+        self.ensure_identity()?;
+        let connection = self
+            .connection
+            .try_borrow()
+            .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
+        read_receipt_by_digest_v0(&connection, self.namespace, tx_digest)
     }
 
     fn open_with_handoff_policy(
@@ -4993,6 +5118,7 @@ mod tests {
             *proof.id().as_bytes(),
         )
         .unwrap();
+        let expected_commitment = evidence.canonical_commitment();
         boundary
             .commit_candidate_with_native_readback(
                 &mut ready,
@@ -5003,6 +5129,20 @@ mod tests {
                 parent_timestamp_ms,
             )
             .unwrap();
+        let stored = boundary
+            .lookup_commit_receipt_v0(transaction.protocol_tx_hash_v1())
+            .unwrap()
+            .expect("committed receipt is queryable by tx digest");
+        assert_eq!(
+            stored.evidence().tx_digest(),
+            transaction.protocol_tx_hash_v1()
+        );
+        assert_eq!(stored.evidence().receipt_digest(), receipt_digest);
+        assert_eq!(stored.commitment(), expected_commitment);
+        assert!(boundary
+            .lookup_commit_receipt_v0([0xEE; 32])
+            .unwrap()
+            .is_none());
         drop(ready);
         let compacted = boundary.compact_terminal_rows_v1(8).unwrap();
         assert_eq!(compacted.compacted(), 1);

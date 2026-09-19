@@ -9,7 +9,7 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_core::{
     native_valid_result_checksum_v0, BlockIdOverlayRefV0, CoreIssuedApplicationSealAuthorityV0,
     Effect, Input, PayloadValidationRequest, PendingEpochHostDriverV1,
-    PreparedEpochCoreActivationV1,
+    PreparedEpochCoreActivationV1, SignIntent,
 };
 use trnm_consensus_safety_store::{
     ConfirmedEpochSafetyHeadV1, EpochSafetyHeadPinV1, NativeValidTransitionV0,
@@ -34,6 +34,19 @@ struct PendingEpochCommitV1 {
     epoch: u64,
     view: u64,
     timestamp_ms: u64,
+}
+
+/// Exact owner readback for a progressed first-new proposal after a process
+/// crash.  This is deliberately a read-only receipt: it does not recreate a
+/// Core driver or release a pending vote.  A caller must still run the
+/// dedicated progressed-obligation replay before resuming any signing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ProgressedEpochRecoveryReadbackV1 {
+    pub block_id: [u8; 32],
+    pub safety_revision: u64,
+    pub p_sequence: u64,
+    pub p_digest: [u8; 32],
+    pub artifact_digest: [u8; 32],
 }
 
 /// Candidate activation owns the live continuing author, including virgin new
@@ -243,6 +256,138 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             pending_epoch_commit: None,
             pending_validation: None,
             fenced: false,
+        })
+    }
+
+    /// Reconcile a crash after first-new P/D/C and before native K.
+    ///
+    /// The journal9 state and native P are independently durable at this cut,
+    /// but the Core driver intentionally cannot be recreated by guessing an
+    /// outbox or by treating a checkpoint scalar as authority.  This method
+    /// therefore performs the complete owner-affine readback and returns a
+    /// typed receipt while leaving all owners unbound and unable to sign.  A
+    /// future progressed-obligation replay may consume this receipt after it
+    /// has independently revalidated the proposal and finality proof.
+    #[allow(clippy::too_many_arguments)]
+    pub fn recover_progressed_obligation_readback_v1(
+        journal: SqliteEpochSafetyJournalV1,
+        application: DurableNativeApplicationV0,
+        edge: AuthenticatedEpochApplicationEdgeV1,
+        mut retired: RetiredSqliteSignerJournalV1<W>,
+        mut ordinary: SqliteSignerJournalV0<N>,
+        mut checkpoint_store: SqliteEpochNodeCheckpointStoreV1,
+        expected: EpochNodeCheckpointV1,
+        block_id: [u8; 32],
+    ) -> Result<ProgressedEpochRecoveryReadbackV1> {
+        ensure!(
+            expected.fields().phase == EpochCheckpointPhaseV1::Ordinary
+                && expected.fields().role == EpochCheckpointRoleV1::Continuing
+                && expected.fields().predecessor_kind == EpochCheckpointPredecessorV1::V1,
+            "progressed recovery requires an ordinary V1 checkpoint"
+        );
+        ensure!(
+            expected.fields().application.block_id
+                == *edge.application_parent().block_id().as_bytes(),
+            "progressed recovery requires the pre-K application checkpoint"
+        );
+        checkpoint_store.confirm_exact(&expected)?;
+        let app = expected.fields().application;
+        let pin = EpochSafetyHeadPinV1 {
+            journal_id: expected.fields().target_safety.journal_id,
+            revision: expected.fields().target_safety.revision,
+            chain_checksum: expected.fields().target_safety.chain_checksum,
+        };
+        let (confirmed, recovery) = journal.prepare_recovery_v1(pin)?;
+        ensure!(
+            confirmed.state_v1() == recovery.state(),
+            "recovered Safety state changed during strict reconstruction"
+        );
+        let state = recovery.state();
+        ensure!(
+            state.payload_validation_obligations().is_empty()
+                && state.pending_finalize().is_none()
+                && matches!(
+                    state.pending_sign(),
+                    Some(SignIntent::Vote {
+                        block_id: pending_block,
+                        ..
+                    }) if *pending_block == trnm_consensus_types::BlockId::new(block_id)
+                ),
+            "progressed recovery does not contain the exact post-C vote obligation"
+        );
+        ensure!(
+            confirmed.state_record_checksum_v1() == expected.fields().target_safety.record_checksum
+                && confirmed.revision_v1() == expected.fields().target_safety.revision
+                && confirmed.belongs_to_store_at_path_v1(&journal, journal.path_v1()),
+            "recovered Safety cut differs from the independent checkpoint"
+        );
+
+        let prepared = application.reopen_prepared_epoch_execution_v1(block_id)?;
+        let p = application.confirm_prepared_epoch_execution_v1(&prepared)?;
+        let header = p.prepared().header()?;
+        ensure!(
+            header.id().as_bytes() == &block_id
+                && header.block_kind() == BlockKind::EpochHandoff
+                && header.height().get() == edge.first_application_height()
+                && p.prepared().application_parent() == edge.application_parent(),
+            "recovered native P differs from the authenticated first-new edge"
+        );
+        ensure!(
+            application.confirmed_committed_head_v0()? == *edge.application_parent(),
+            "native K unexpectedly advanced before progressed recovery"
+        );
+        let native = application.confirm_epoch_application_edge_v1(&edge)?;
+        let row = native.durable_checkpoint();
+        let head = row.target_head_v0()?;
+        ensure!(
+            native.strict_activation_binding_v1().as_bytes()
+                == &expected.fields().phase_authority_binding
+                && row.p_digest_v0() == app.p_digest
+                && row.artifact_digest_v0() == app.artifact_digest
+                && row.overlay_digest_v0() == app.overlay_digest
+                && row.p_sequence_v0() == app.p_sequence
+                && row.commit_sequence_v0() == Some(app.commit_sequence)
+                && row.store_id_v0() == app.native_store_id
+                && head.block_id().as_bytes() == &app.block_id
+                && head.state_root().as_bytes() == &app.state_root
+                && head.commit_id().as_bytes() == &app.native_commit_id
+                && head.height().get() == app.height
+                && native.belongs_to_application_at_path(&application, application.path()),
+            "recovered native pre-K checkpoint changed"
+        );
+
+        let retirement = retired.confirm_retirement_v1()?;
+        ensure!(
+            retirement.belongs_to_owner_v1(&mut retired)
+                && retirement.record_v1().checksum_v1()
+                    == expected
+                        .fields()
+                        .retired
+                        .context("missing retired custody")?
+                        .retirement_record_checksum,
+            "recovered retired custody changed"
+        );
+        let signer = ordinary.confirm_node_checkpoint_head_exact_v0()?;
+        let mark = signer.exact_watermark();
+        let expected_ordinary = expected
+            .fields()
+            .ordinary
+            .context("missing ordinary custody")?;
+        ensure!(
+            signer.belongs_to_operational_journal_at_path_v0(&ordinary, ordinary.path())
+                && mark.scope() == expected_ordinary.scope
+                && mark.journal_id() == expected_ordinary.journal_id
+                && signer.profile_checksum() == expected_ordinary.profile_checksum
+                && signer.pending_intent().is_none(),
+            "recovered ordinary custody changed"
+        );
+        checkpoint_store.confirm_exact(&expected)?;
+        Ok(ProgressedEpochRecoveryReadbackV1 {
+            block_id,
+            safety_revision: confirmed.revision_v1(),
+            p_sequence: p.prepared().persist_sequence(),
+            p_digest: p.prepared().p_digest(),
+            artifact_digest: p.prepared().artifact_digest(),
         })
     }
 
