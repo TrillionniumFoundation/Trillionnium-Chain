@@ -776,6 +776,10 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
         .spawn(|| {
             let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
             let (dir, runtime, mut key, recovery) = *live;
+            assert_eq!(
+                runtime.first_new_phase_v1().unwrap(),
+                FirstNewEpochPhaseV1::Activated
+            );
             let proposal = native_first_proposal_v1(
                 &runtime.application,
                 &runtime.edge,
@@ -790,9 +794,17 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
             let runtime = runtime
                 .admit_epoch_proposal_v1(proposal.clone())
                 .expect("native proposal admission");
+            assert_eq!(
+                runtime.first_new_phase_v1().unwrap(),
+                FirstNewEpochPhaseV1::ProposalAdmitted
+            );
             let (runtime, effects) = runtime
                 .execute_admitted_epoch_proposal_v1()
                 .expect("native P/D/C execution");
+            assert_eq!(
+                runtime.first_new_phase_v1().unwrap(),
+                FirstNewEpochPhaseV1::NativePrepared
+            );
             assert!(effects.iter().any(|effect| matches!(
                 effect,
                 trnm_consensus_core::Effect::RequestSignature { .. }
@@ -802,6 +814,10 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
             let (runtime, vote) = runtime
                 .sign_pending_epoch_vote_v1(&mut key)
                 .expect("online first-new Vote persists, signs, and releases");
+            assert_eq!(
+                runtime.first_new_phase_v1().unwrap(),
+                FirstNewEpochPhaseV1::VoteReleased
+            );
             let trnm_consensus_core::OutboundMessage::Vote(vote) = vote else {
                 panic!("online first-new signing returned a non-Vote message")
             };
@@ -829,6 +845,10 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
             let mut runtime = runtime
                 .commit_admitted_epoch_finality_v1(&proof, &mut budget)
                 .expect("strict first-new finality commits native K");
+            assert_eq!(
+                runtime.first_new_phase_v1().unwrap(),
+                FirstNewEpochPhaseV1::Committed
+            );
             runtime
                 .confirm_current_cut_v1()
                 .expect("post-K current cut revalidation");

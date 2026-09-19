@@ -36,6 +36,27 @@ struct PendingEpochCommitV1 {
     timestamp_ms: u64,
 }
 
+/// Ordered phases of the candidate first-new execution owner.
+///
+/// This is a read-only projection of the real owner state.  It is intentionally
+/// separate from Safety14 and cannot mint an activation, signer lease, or Core
+/// authority.  The transition methods below require the predecessor phase before
+/// consuming their one-shot operation, so a stale or partially reconstructed
+/// owner cannot skip proposal admission, native P/D/C, or persist-before-sign.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FirstNewEpochPhaseV1 {
+    /// The authenticated edge is installed and no first-new obligation exists.
+    Activated,
+    /// Core has durably retained exactly one first-new payload-validation request.
+    ProposalAdmitted,
+    /// Native P and Core D/Safety C are durable; the exact Vote is pending.
+    NativePrepared,
+    /// The Vote has been durably signed/released; strict K/finality is pending.
+    VoteReleased,
+    /// Native K and the independent application checkpoint both name C+3.
+    Committed,
+}
+
 /// Exact owner readback for a progressed first-new proposal after a process
 /// crash.  This is deliberately a read-only receipt: it does not recreate a
 /// Core driver or release a pending vote.  A caller must still run the
@@ -117,6 +138,70 @@ fn epoch_transition_digest(domain: &str, parts: &[&[u8]]) -> [u8; 32] {
     hasher.finalize().into()
 }
 impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEpochRuntimeV1<W, N> {
+    /// Return the exact first-new phase derived from live Core, native and
+    /// checkpoint owners.  Inconsistent combinations are rejected rather than
+    /// mapped to the nearest phase, because a phase tag is never authority.
+    pub fn first_new_phase_v1(&self) -> Result<FirstNewEpochPhaseV1> {
+        let application_parent_id = self.edge.application_parent().block_id();
+        let application_parent = application_parent_id.as_bytes();
+        let application_block = self.checkpoint.fields().application.block_id;
+        let pending_sign = self.driver.state().pending_sign();
+        let pending_finalize = self.driver.state().pending_finalize();
+        let obligations = self.driver.state().payload_validation_obligations();
+
+        if application_block != *application_parent {
+            ensure!(
+                self.pending_validation.is_none()
+                    && self.pending_epoch_commit.is_none()
+                    && pending_sign.is_none()
+                    && pending_finalize.is_none()
+                    && obligations.is_empty(),
+                "committed first-new phase retains an unresolved Core obligation"
+            );
+            return Ok(FirstNewEpochPhaseV1::Committed);
+        }
+
+        if self.pending_validation.is_some() {
+            ensure!(
+                self.pending_epoch_commit.is_none()
+                    && pending_sign.is_none()
+                    && pending_finalize.is_none()
+                    && obligations.len() == 1,
+                "first-new proposal phase has an inconsistent Core obligation"
+            );
+            return Ok(FirstNewEpochPhaseV1::ProposalAdmitted);
+        }
+
+        if self.pending_epoch_commit.is_some() {
+            ensure!(
+                pending_finalize.is_none() && obligations.is_empty(),
+                "first-new native phase retains an unresolved validation/finalize state"
+            );
+            return match pending_sign {
+                Some(SignIntent::Vote { .. }) => Ok(FirstNewEpochPhaseV1::NativePrepared),
+                None => Ok(FirstNewEpochPhaseV1::VoteReleased),
+                Some(SignIntent::TimeoutVote { .. }) => Err(anyhow::anyhow!(
+                    "first-new native phase retained a timeout instead of the exact Vote"
+                )),
+            };
+        }
+
+        ensure!(
+            pending_sign.is_none() && pending_finalize.is_none() && obligations.is_empty(),
+            "activated first-new phase retains an unresolved Core obligation"
+        );
+        Ok(FirstNewEpochPhaseV1::Activated)
+    }
+
+    fn require_first_new_phase_v1(&self, expected: FirstNewEpochPhaseV1) -> Result<()> {
+        let actual = self.first_new_phase_v1()?;
+        ensure!(
+            actual == expected,
+            "first-new phase ordering: expected {expected:?}, observed {actual:?}"
+        );
+        Ok(())
+    }
+
     /// Consume every actual owner. The exact journal9/native/original retirement/
     /// new virgin custody cut is checked before and after the independent schema2
     /// migration and sync. Only then does the private driver receive its ACK.
@@ -990,6 +1075,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             self.pending_validation.is_none(),
             "epoch proposal validation is already pending"
         );
+        self.require_first_new_phase_v1(FirstNewEpochPhaseV1::Activated)?;
         ensure!(
             proposal.block().header().epoch() == self.driver.state().epoch(),
             "proposal belongs to a different epoch"
@@ -1070,6 +1156,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
     /// path.
     pub fn execute_admitted_epoch_proposal_v1(mut self) -> Result<(Self, Vec<Effect>)> {
         self.confirm_current_cut_v1()?;
+        self.require_first_new_phase_v1(FirstNewEpochPhaseV1::ProposalAdmitted)?;
         ensure!(
             self.pending_epoch_commit.is_none(),
             "an admitted epoch P is already awaiting finality"
@@ -1311,6 +1398,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         producer: &mut P,
     ) -> Result<(Self, trnm_consensus_core::OutboundMessage)> {
         self.confirm_current_cut_v1()?;
+        self.require_first_new_phase_v1(FirstNewEpochPhaseV1::NativePrepared)?;
         let intent = match self.driver.state().pending_sign().cloned() {
             Some(SignIntent::Vote { .. }) => self
                 .driver
@@ -1461,6 +1549,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
     ) -> Result<Self> {
         self.confirm_current_cut_v1()?;
+        self.require_first_new_phase_v1(FirstNewEpochPhaseV1::VoteReleased)?;
         let pending = self
             .pending_epoch_commit
             .take()
