@@ -140,7 +140,29 @@ def test_rejects_raw_artifact_mutation_after_runner_summary() -> None:
             raise AssertionError("mutated raw artifact was accepted")
 
 
+def test_rejects_raw_report_semantic_substitution_even_when_rehashed() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-candidate-performance-") as raw:
+        root = pathlib.Path(raw)
+        fixture(root)
+        summary_path = root / "consensus-run-summary.json"
+        summary = json.loads(summary_path.read_text())
+        process = summary["processes"][0]
+        report_path = root / "signed-reports" / f"{process['validator_id']}.json"
+        report = json.loads(report_path.read_text())
+        report["candidate_source_sha256"] = "99" * 32
+        new_hash = write(report_path, report)
+        process["signed_report_sha256"] = new_hash
+        write(summary_path, summary)
+        try:
+            collector.collect(root)
+        except SystemExit as error:
+            assert "raw signed report candidate_source_sha256 differs" in str(error)
+        else:
+            raise AssertionError("rehashed semantic substitution was accepted")
+
+
 if __name__ == "__main__":
     test_derives_committed_block_goodput_and_keeps_acceptance_false()
     test_rejects_raw_artifact_mutation_after_runner_summary()
+    test_rejects_raw_report_semantic_substitution_even_when_rehashed()
     print("collect_candidate_performance_v1_test=passed")
