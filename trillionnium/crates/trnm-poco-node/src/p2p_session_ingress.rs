@@ -1590,7 +1590,7 @@ impl PocoNodeP2pSessionV0 {
         &mut self,
         frame: &'a [u8],
         budget: &mut Cev0AdmissionBudgetV0,
-        mut replay_anchor: Option<&mut PocoNodeP2pReplayAnchorV0>,
+        replay_anchor: Option<&mut PocoNodeP2pReplayAnchorV0>,
     ) -> Result<PocoNodeP2pAcceptedFrameV0<'a>, PocoNodeP2pSessionErrorV0> {
         let parsed = parse_frame(frame)?;
         if parsed.protocol_version != PROTOCOL_VERSION_V0 {
@@ -1663,7 +1663,7 @@ impl PocoNodeP2pSessionV0 {
         proof
             .verify_signatures(&self.validator_set, &StrictEd25519Verifier)
             .map_err(PocoNodeP2pSessionErrorV0::semantic)?;
-        if let Some(anchor) = replay_anchor.as_deref_mut() {
+        if let Some(anchor) = replay_anchor {
             anchor
                 .reserve_frame(self.session_id, parsed.sequence, frame)
                 .map_err(map_replay_anchor_error_v0)?;
