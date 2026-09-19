@@ -36,8 +36,14 @@ def fixture(root: pathlib.Path) -> None:
     for index in range(7):
         validator_id = f"{index + 1:064x}"
         host_id = ("local", "x230", "desktop", "rog", "rog", "j3160", "local")[index]
+        run_id = "poco-g3-7-20260920T120000Z-01234567"
+        anchor = "aa" * 32
         validators.append({"validator_id": validator_id, "host_id": host_id, "management": host_id})
         report = {
+            "run_id": run_id,
+            "validator_id": validator_id,
+            "host_id": host_id,
+            "coordinator_manifest_sha256": anchor,
             "candidate_source_sha256": "11" * 32,
             "topology_sha256": "22" * 32,
             "binary_sha256": "33" * 32,
@@ -48,6 +54,9 @@ def fixture(root: pathlib.Path) -> None:
             "committed_ordinary_block_count": 10,
             "finalized_height": 13,
             "finalized_ordinary_block_count": 10,
+            "report_sha256": "55" * 32,
+            "production_activation": False,
+            "g3_evidence_complete": False,
         }
         process = {
             "validator_id": validator_id,
@@ -66,7 +75,7 @@ def fixture(root: pathlib.Path) -> None:
                 "signed_runtime_final_state_sha256": root / "signed-runtime-final-states" / f"{validator_id}.json",
                 "signed_runtime_journal_sha256": root / "signed-runtime-journals" / f"{validator_id}.jsonl",
             }[role]
-            value = write(path, {"role": suffix, "validator_id": validator_id})
+            value = write(path, report if role == "signed_report_sha256" else {"role": suffix, "validator_id": validator_id})
             process[role] = value
         processes.append(process)
 

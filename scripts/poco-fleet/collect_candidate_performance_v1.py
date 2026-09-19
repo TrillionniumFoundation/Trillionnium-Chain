@@ -34,13 +34,21 @@ def fail(message: str) -> None:
 
 
 def read_json(path: pathlib.Path, field: str) -> dict[str, Any]:
+    def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        value: dict[str, Any] = {}
+        for key, child in pairs:
+            if key in value:
+                fail(f"{field} contains duplicate JSON key {key!r}")
+            value[key] = child
+        return value
+
     try:
         metadata = path.lstat()
         if path.is_symlink() or not path.is_file() or metadata.st_size <= 0:
             fail(f"{field} must be one regular non-symlink file")
         if metadata.st_size > MAX_JSON_BYTES:
             fail(f"{field} exceeds its byte bound")
-        value = json.loads(path.read_text(encoding="utf-8"))
+        value = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique_object)
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         fail(f"cannot read {field}: {error}")
     if not isinstance(value, dict):
@@ -215,6 +223,26 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
             if declared != observed:
                 fail(f"{validator_id}.{role} hash differs from raw artifact")
             artifact_hashes.append({"validator_id": validator_id, "role": role, "sha256": observed})
+        raw_report = read_json(artifact_paths["signed_report_sha256"], f"{validator_id} signed report")
+        raw_bindings = {
+            "run_id": run_id,
+            "validator_id": validator_id,
+            "host_id": host_id,
+            "coordinator_manifest_sha256": anchor,
+            "candidate_source_sha256": verification["candidate_source_sha256"],
+            "topology_sha256": verification["topology_sha256"],
+            "binary_sha256": verification["binary_sha256"],
+            "config_sha256": verification["config_sha256"],
+            "committed_ordinary_block_count": verification["committed_ordinary_block_count"],
+            "finalized_height": verification["finalized_height"],
+            "finalized_ordinary_block_count": verification["finalized_ordinary_block_count"],
+        }
+        for field, expected in raw_bindings.items():
+            if raw_report.get(field) != expected:
+                fail(f"{validator_id} raw signed report {field} differs from observer verification")
+        hex_digest(raw_report.get("report_sha256"), f"{validator_id}.report_sha256")
+        if raw_report.get("production_activation") is not False or raw_report.get("g3_evidence_complete") is not False:
+            fail(f"{validator_id} raw signed report crosses candidate boundary")
     if len(source_digests) != 1 or len(topology_digests) != 1:
         fail("signed reports disagree on source or topology")
     if len(committed_blocks) != 1 or len(finalized_heights) != 1 or len(finalized_blocks) != 1:
