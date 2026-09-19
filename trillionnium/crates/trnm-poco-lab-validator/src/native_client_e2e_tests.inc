@@ -397,6 +397,29 @@ fn run_native_socket_finality_case_v1(case: NativeSocketCaseV1) {
             serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":"after-reopen","op":"transaction","data":{"native_tx_hash":hex::encode(hash)}}),
         );
         assert_eq!(status["data"]["status"], "committed");
+        assert_eq!(
+            status["data"]["proof_verified"],
+            true,
+            "committed status must carry a locally reverified durable proof"
+        );
+        // A committed WAL row without an independently re-verified proof must
+        // fail closed instead of regressing to the old false status claim.
+        let proof_path = client_root
+            .join("native-client-v1")
+            .join(format!("proof-{}.json", hex::encode(hash)));
+        let mut corrupted = std::fs::read(&proof_path).unwrap();
+        let last = corrupted.len().checked_sub(1).unwrap();
+        corrupted[last] ^= 1;
+        std::fs::write(&proof_path, corrupted).unwrap();
+        let corrupted_status = native_socket_exchange(
+            &mut reopened,
+            &socket,
+            now + 10,
+            facts.finalized_height_v0(),
+            serde_json::json!({"schema":"trnm.native-client.request.v1","request_id":"corrupted-proof","op":"transaction","data":{"native_tx_hash":hex::encode(hash)}}),
+        );
+        assert_eq!(corrupted_status["ok"], false);
+        assert_eq!(corrupted_status["error"]["code"], "recovery_required");
     });
 }
 

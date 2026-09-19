@@ -748,3 +748,34 @@ test copies identical native DB bytes to a new inode and proves rejection before
 any new signature. These are local candidate results; proposal/finality driving,
 progressed recovery, commissioning and repeated crossings still require their
 own actual-owner implementation and fault evidence.
+
+### Runtime handoff and acceptance closure (M15-RUNTIME-CLOSURE-V1)
+
+The current continuous runtime now has an explicit ordinary follower path. A
+late authenticated proposal is queued only after the signed-owner admission
+decision; `Ready` can execute it through the M13 `SyncedNoSign` route, while a
+`VoteSigned` or `TimeoutSigned` owner remains untouched. The route is
+`receive_unbound_proposal_v1` → `vote_ready_proposal_v1` →
+`sync_late_proposal_v1` → native P/D/C/K/whole-node checkpoint → `Ready`.
+The final Core ACK is required to emit no effects, and the external signer
+watermark must be byte-identical before and after the operation.
+
+This is a concrete composition boundary, not a liveness claim. The executable
+regressions are
+`trnm-poco-lab-validator/src/continuous_runtime.rs::ready_synced_proposal_commits_without_vote_or_watermark_advance_v1`,
+`...::late_network_proposal_after_timeout_preserves_signed_owner_v1`, and
+`trnm-poco-node/tests/native_signed_vote_replay.rs::synced_proposal_commits_without_creating_a_signer_intent`.
+They prove no-sign execution and signed-owner preservation with real SQLite,
+native execution and Ed25519 proposal evidence. They do not prove a production
+listener, arbitrary fork catch-up, cross-epoch import, or physical-host
+performance.
+
+The F1 acceptance harness must therefore run only after this route is present
+in the built binary: at least four independent hosts, declared CPU/RAM/disk,
+fixed signed workload, packet loss/RTT/partition matrix, process crash and
+separately labelled power-cut runs, then catch-up across the C/C+1/C+2/C+3
+boundary. Raw logs must include finalized goodput, end-to-end p50/p95/p99,
+queue/drop rates, state bytes, restart and catch-up time, source/tree and
+configuration digests. A local lab test or a successful build cannot promote
+`CORE-LIVE-001`, `TX-PROD-001`, `SYNC-PROD-001` or `F1`; machine truth stays
+fail-closed until those artifacts are independently reviewed.

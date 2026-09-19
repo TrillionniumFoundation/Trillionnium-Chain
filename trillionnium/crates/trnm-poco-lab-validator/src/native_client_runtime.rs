@@ -599,7 +599,10 @@ impl NativeClientRuntimeV1 {
                     if let Ok(hash) = built.envelope().tx_hash() {
                         if let Ok(Some(record)) = self.admission.native_record_v1(hash) {
                             if record.exact_outer_bytes() == bytes {
-                                return self.reply(&id, record_json(&record));
+                                return match self.record_response_v1(&record) {
+                                    Ok(data) => self.reply(&id, data),
+                                    Err(_) => self.error_reply(&id, "recovery_required", true),
+                                };
                             }
                         }
                     }
@@ -615,7 +618,10 @@ impl NativeClientRuntimeV1 {
                     return self.error_reply(&id, "time_unready", true);
                 }
                 match self.admission.submit_native_bytes_v1(&bytes) {
-                    Ok(record) => self.reply(&id, record_json(&record)),
+                    Ok(record) => match self.record_response_v1(&record) {
+                        Ok(data) => self.reply(&id, data),
+                        Err(_) => self.error_reply(&id, "recovery_required", true),
+                    },
                     Err(NativeAdmissionErrorV1::Backpressure) => {
                         self.error_reply(&id, "backpressure", true)
                     }
@@ -637,7 +643,10 @@ impl NativeClientRuntimeV1 {
                     Err(_) => return self.error_reply(&id, "invalid_request", false),
                 };
                 match self.admission.native_record_v1(hash) {
-                    Ok(Some(record)) => self.reply(&id, record_json(&record)),
+                    Ok(Some(record)) => match self.record_response_v1(&record) {
+                        Ok(data) => self.reply(&id, data),
+                        Err(_) => self.error_reply(&id, "recovery_required", true),
+                    },
                     Ok(None) => self.error_reply(&id, "not_found", false),
                     Err(_) => self.error_reply(&id, "recovery_required", true),
                 }
@@ -647,6 +656,31 @@ impl NativeClientRuntimeV1 {
                 Err(_) => self.error_reply(&id, "invalid_request", false),
             },
         }
+    }
+    fn record_response_v1(&self, record: &NativeAdmissionRecordV1) -> Result<Value> {
+        let proof_verified = if record.status() == NativeAdmissionStatusV1::Committed {
+            let stored = self
+                .proof_reader_v1()
+                .read_stored_v1(record.native_tx_hash())?;
+            self.proof_reader_v1()
+                .verify_stored_proof_v1(&stored, record.native_tx_hash())?;
+            true
+        } else {
+            false
+        };
+        Ok(json!({
+            "native_tx_hash": hex::encode(record.native_tx_hash()),
+            "receive_sequence": record.receive_sequence().to_string(),
+            "status": match record.status() {
+                NativeAdmissionStatusV1::Pending => "pending",
+                NativeAdmissionStatusV1::InFlight => "in_flight",
+                NativeAdmissionStatusV1::Committed => "committed",
+                NativeAdmissionStatusV1::Expired => "expired",
+                NativeAdmissionStatusV1::Rejected => "rejected",
+            },
+            "proof_verified": proof_verified,
+            "m05_intent_binding": false
+        }))
     }
     pub fn maybe_proposal_v1(
         &mut self,
@@ -794,9 +828,6 @@ fn hash32(value: &str) -> Result<[u8; 32]> {
     canonical_hex(value, 32)?
         .try_into()
         .map_err(|_| anyhow!("hash length"))
-}
-fn record_json(record: &NativeAdmissionRecordV1) -> Value {
-    json!({"native_tx_hash":hex::encode(record.native_tx_hash()),"receive_sequence":record.receive_sequence().to_string(),"status":match record.status(){NativeAdmissionStatusV1::Pending=>"pending",NativeAdmissionStatusV1::InFlight=>"in_flight",NativeAdmissionStatusV1::Committed=>"committed",NativeAdmissionStatusV1::Expired=>"expired",NativeAdmissionStatusV1::Rejected=>"rejected"},"proof_verified":false,"m05_intent_binding":false})
 }
 fn bounded_json_depth(bytes: &[u8], max: usize) -> bool {
     let (mut depth, mut quoted, mut escaped) = (0usize, false, false);

@@ -264,6 +264,39 @@ substitution, wrong target/trust set, exact package truncation/overflow/suffix,
 signature corruption, byte/count/work caps, complete epoch evidence and skipped
 views. The verified result cannot be constructed externally (compile-fail test).
 
+### Public submission handoff used by the current runtime (M05-PUBLIC-HANDOFF-V1)
+
+The repository contains a bounded signed-transaction WAL and a native body
+adapter, but the production M15 node still has no enabled public admission
+listener. The implementation boundary is therefore explicit so a candidate
+test cannot be mistaken for a production path.
+
+The candidate handoff is ordered as follows: decode the exact signed outer
+bytes; authenticate chain/profile/signer and the complete nonce lane; reserve
+the `(signer_id, nonce)` identity in the durable WAL; return the same receipt
+for an exact duplicate; reject a conflicting body at the same identity; and
+release a proposer-owned immutable transaction only after the WAL row is
+durable. Proposal recheck uses the authenticated parent state and may return
+local `Unavailable` under capacity pressure without changing consensus
+validity. Finalized readback records the exact target block/proof before a
+tombstone or replay-floor GC operation can remove the WAL entry.
+
+The current code anchors are
+`trnm-poco-node/src/tx_admission_wal.rs`,
+`trnm-poco-node/src/tx_admission_wal_native_body_v1.inc`, and
+`trnm-poco-lab-validator/src/continuous_runtime.rs`. The handoff is consumed
+by the native execution P/D/C/K path; it does not call a signer and it cannot
+choose block order. Lost replies are resolved by reopening the same WAL row,
+never by re-accepting a new nonce reservation. Capacity, malformed canonical
+bytes, nonce conflict and schema mismatch have distinct reject/unavailable/halt
+dispositions and preserve the authoritative WAL root.
+
+Required implementation evidence is a real socket submission, duplicate and
+nonce-gap replay, lost reply, proposer handoff, execution/commit, finalized
+query and tombstone/GC trace. Until that trace is wired into the default
+listener and independently reviewed, `TX-PROD-001` remains open and the
+candidate WAL must remain feature-gated.
+
 ### Planned V1 multi-transaction proof contract
 
 `FinalizedTxClaimV1` is a new candidate readback variant, not a relaxation of v0.

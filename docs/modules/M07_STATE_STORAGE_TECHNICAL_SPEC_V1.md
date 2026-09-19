@@ -820,6 +820,30 @@ operation compares it again after recovering the edge and acquiring its native
 operation lock. Historical reconstruction may recover ancestry evidence, but
 cannot issue the fresh activation-at-C receipt after the application head advances.
 
+#### Schema7 implementation checklist and crash cuts
+
+The implementation review for this block is intentionally byte-specific:
+
+| Cut | Durable source/target that may be observed after reopen | Required action |
+| --- | --- | --- |
+| before schema7 transaction | schema6 edge only | retry the CAS; do not infer a migration from a directory name |
+| after table creation, before metadata CAS | schema6 metadata plus uncommitted tables | roll back the SQLite transaction and retry |
+| after metadata CAS, before sync | schema7 metadata and both tables | sync/read back exact descriptors, or fence on any third state |
+| retained first-new P/commit row | exact block/P/sequence/head/proof/checksum tuple | decode and re-audit the strict edge before returning the same receipt |
+| descendant row conflict | existing row is accepted only if every field is byte-equal | conflicting payload/proof is a halt, never replacement |
+
+The candidate implementation symbols are
+`trnm-native-execution-v0/src/incremental_epoch_commit_v1.rs::ensure_incremental_epoch_commit_owner_v1`,
+`...::commit_incremental_epoch_finality_bytes_v1`, and
+`trnm-native-execution-v0/src/incremental_epoch_descendant_v1.rs`.
+The node-side join is
+`trnm-poco-node/src/epoch_runtime_candidate_v1.rs::ensure_incremental_epoch_commit_owner_v1`.
+These APIs are feature-gated and candidate-only: they do not enable the
+default node, create a signer intent, or make an unfinalized P a committed
+application head. Acceptance still requires measured growing-history bytes,
+SIGKILL/device-fault evidence, pruning-reference replay and a complete M13
+multi-epoch import path.
+
 ### Live native namespace continuity
 
 On Unix, `DurableNativeApplicationV0` retains open descriptors for its database,

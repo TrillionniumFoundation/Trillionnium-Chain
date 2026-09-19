@@ -405,6 +405,59 @@ are candidate transfer limits, not a hard SQLite disk quota or production SLO.
 Missing files, altered chunks, conflicting manifest, unsupported epoch, invalid proofs or execution mismatch retain the staged
 state and return an error; no invalid input is treated as an empty or virgin store.
 
+### Ordinary proposal synchronization without a signing side effect (M13-ORDINARY-SYNC-V1)
+
+The live laboratory receiver has a second, deliberately narrower path for a
+proposal that arrived after the local vote/timeout owner was already released.
+This path is now an implementation contract rather than an unnamed fallback. It
+is entered only after `receive_unbound_proposal_v1` has authenticated the
+proposal and its certified parent and returned no voting owner, and only while
+the phase is `Ready`. A `VoteSigned` or `TimeoutSigned` owner is never consumed
+by this operation.
+
+The exact operation is:
+
+1. `vote_ready_proposal_v1` clones the inert proposal for the admission queue;
+   the queue retains the authenticated body and route. Stale proposals whose
+   justify tuple is below the local high QC remain `IgnoreStale` and do not
+   reach execution.
+2. `sync_late_proposal_v1` rechecks the authoritative parent binding, height,
+   block ID, timestamp and route, then calls
+   `PocoNodeLabOrdinaryProposalRuntimeV0::drive_one_to_synced_no_sign_v0`.
+3. The runtime performs `Input::SyncedProposal`, Safety persistence and exact
+   `StorageAck`, one `ValidateSyncedPayload` claim, native P reservation and
+   durable execution, and the application-sealed Core D transition. The final
+   Core ACK must have an empty effect list; it cannot mint a Vote, Timeout or
+   signer intent.
+4. M03/M08 persist the distinct `SyncedNoSign` Safety-C/K closure and an
+   independent whole-node checkpoint. The checkpoint compares the fresh Safety
+   head, application head, P/K artifact digests and signer watermark before and
+   after the operation. The runtime then returns to `Ready` and records the
+   execution artifact for later finalization/readback.
+
+The implementation symbols are
+`trillionnium/crates/trnm-poco-lab-validator/src/continuous_runtime.rs::sync_late_proposal_v1`,
+`...::vote_ready_proposal_v1`, and
+`trillionnium/crates/trnm-poco-node/src/lab_authority.rs::drive_one_to_synced_no_sign_v0`.
+The SQLite adapter is
+`trnm-native-application-sqlite/src/store.rs::acknowledge_confirmed_synced_no_sign_v0`;
+the K/checkpoint adapter is
+`trnm-poco-node/src/external_node_checkpoint.rs::advance_native_k_whole_node_synced_no_sign_checkpoint_v0`.
+The operation is covered by the real SQLite/native test
+`ready_synced_proposal_commits_without_vote_or_watermark_advance_v1` and the
+node integration test
+`synced_proposal_commits_without_creating_a_signer_intent`.
+
+Failure and recovery are closed as follows: any parent/route/digest mismatch
+fences the runtime before application mutation; an uncertain P, Safety, K or
+checkpoint write is resolved by exact source/target readback; a signer
+watermark change or pending intent fails the checkpoint join; and a duplicate
+block identity is idempotent only when all retained bytes and bindings match.
+The operation is an ordinary proposal execution/readback path, not a finality
+certificate, public production state-sync protocol, epoch activation, or
+permission to sign. Cross-epoch transfer still requires the authenticated
+M08/M07 edge and the multi-host acceptance described below.
+
 ## Activation boundary
 
 Commissioned public synchronization needs authenticated transport, general
