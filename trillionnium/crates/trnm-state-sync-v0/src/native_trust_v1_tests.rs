@@ -628,6 +628,69 @@ fn native_sqlite_session_survives_cross_process_restart_and_rejects_readback_tam
 }
 
 #[test]
+fn native_sqlite_uncommitted_append_is_rolled_back_after_sigkill_and_can_resume() {
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-sigkill-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let ready_path = store_path.with_extension("ready");
+    let base =
+        NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &base).unwrap();
+    let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            "native_trust_v1::tests::native_sqlite_session_child_hold_uncommitted_append",
+            "--nocapture",
+        ])
+        .env("TRNM_NATIVE_SYNC_SIGKILL_PATH_V1", &store_path)
+        .env("TRNM_NATIVE_SYNC_SIGKILL_READY_V1", &ready_path)
+        .spawn()
+        .unwrap();
+
+    let mut ready = false;
+    for _ in 0..250 {
+        if ready_path.exists() {
+            ready = true;
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    if !ready {
+        let _ = child.kill();
+        let _ = child.wait();
+        panic!("state-sync crash child did not reach its uncommitted transaction");
+    }
+    child.kill().unwrap();
+    let status = child.wait().unwrap();
+    assert!(
+        !status.success(),
+        "SIGKILL child unexpectedly exited cleanly"
+    );
+
+    let reopened = SqliteNativeStateSyncStoreV1::open_existing(&store_path).unwrap();
+    assert_eq!(reopened.readback_v1().unwrap().received_chunk_count, 0);
+    assert!(reopened.retained_chunks_v1().unwrap().is_empty());
+    let mut resumed = reopened
+        .resume_existing_v1(path, manifest, application)
+        .unwrap();
+    store
+        .append_chunk_v1(&mut resumed, chunks[0].clone())
+        .unwrap();
+    assert_eq!(store.readback_v1().unwrap().received_chunk_count, 1);
+
+    let _ = std::fs::remove_file(&ready_path);
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+}
+
+#[test]
 fn native_sqlite_initialize_persists_prefilled_session_chunks() {
     let (path, manifest, application, chunks) = durable_session_fixture();
     let store_path = std::env::temp_dir().join(format!(
@@ -668,6 +731,50 @@ fn native_sqlite_session_child_reopen() {
         .append_chunk_v1(&mut session, chunks[1].clone())
         .unwrap();
     assert_eq!(store.readback_v1().unwrap().received_chunk_count, 2);
+}
+
+#[test]
+fn native_sqlite_session_child_hold_uncommitted_append() {
+    let Ok(store_path) = std::env::var("TRNM_NATIVE_SYNC_SIGKILL_PATH_V1") else {
+        return;
+    };
+    let Ok(ready_path) = std::env::var("TRNM_NATIVE_SYNC_SIGKILL_READY_V1") else {
+        return;
+    };
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let _store = SqliteNativeStateSyncStoreV1::open_existing(&store_path).unwrap();
+    let mut next = NativeStateSyncSessionV1::begin(path, manifest, application).unwrap();
+    next.accept_chunk(chunks[0].clone()).unwrap();
+    let readback = next.readback();
+    let mut connection = rusqlite::Connection::open(&store_path).unwrap();
+    let transaction = connection
+        .transaction_with_behavior(TransactionBehavior::Immediate)
+        .unwrap();
+    transaction
+        .execute(
+            "INSERT INTO native_state_sync_chunks_v1(chunk_index,manifest_digest,bytes,chunk_digest) VALUES(?1,?2,?3,?4)",
+            params![
+                i64::from(chunks[0].index),
+                &chunks[0].manifest_digest.0[..],
+                &chunks[0].bytes,
+                &chunks[0].chunk_digest.0[..]
+            ],
+        )
+        .unwrap();
+    transaction
+        .execute(
+            "UPDATE native_state_sync_meta_v1 SET received_chunk_count=?1,received_bytes=?2,progress_digest=?3 WHERE singleton=1",
+            params![
+                i64::from(readback.received_chunk_count),
+                i64::try_from(readback.received_bytes).unwrap(),
+                &readback.progress_digest.0[..]
+            ],
+        )
+        .unwrap();
+    std::fs::write(ready_path, b"uncommitted").unwrap();
+    loop {
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    }
 }
 
 #[test]
