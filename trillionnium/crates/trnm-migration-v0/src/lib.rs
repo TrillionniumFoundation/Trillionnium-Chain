@@ -173,22 +173,84 @@ impl VerifiedExportV0 {
 /// verified before migration projection.  This object carries no signer or
 /// cutover authority; it prevents a later projection/store handoff from
 /// silently substituting a source height, root, schema, proof or row set.
+/// Its fields are private; callers must obtain it from a `VerifiedExportV0`
+/// and use `validate_against` before handing it to another adapter.
+///
+/// ```compile_fail
+/// use trnm_migration_v0::FinalizedSourceBindingV0;
+/// let _forged = FinalizedSourceBindingV0 {};
+/// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct FinalizedSourceBindingV0 {
-    pub source_chain_id: Digest32V0,
-    pub source_protocol_digest: Digest32V0,
-    pub source_height: u64,
-    pub source_state_root: Digest32V0,
-    pub source_schema_digest: Digest32V0,
-    pub source_finality_proof_digest: Digest32V0,
-    pub export_header_digest: Digest32V0,
-    pub export_root: Digest32V0,
-    pub ordered_rows_digest: Digest32V0,
-    pub row_count: u64,
-    pub binding_digest: Digest32V0,
+    source_chain_id: Digest32V0,
+    source_protocol_digest: Digest32V0,
+    source_height: u64,
+    source_state_root: Digest32V0,
+    source_schema_digest: Digest32V0,
+    source_finality_proof_digest: Digest32V0,
+    export_header_digest: Digest32V0,
+    export_root: Digest32V0,
+    ordered_rows_digest: Digest32V0,
+    row_count: u64,
+    binding_digest: Digest32V0,
 }
 
 impl FinalizedSourceBindingV0 {
+    #[must_use]
+    pub const fn source_chain_id(&self) -> Digest32V0 {
+        self.source_chain_id
+    }
+
+    #[must_use]
+    pub const fn source_protocol_digest(&self) -> Digest32V0 {
+        self.source_protocol_digest
+    }
+
+    #[must_use]
+    pub const fn source_height(&self) -> u64 {
+        self.source_height
+    }
+
+    #[must_use]
+    pub const fn source_state_root(&self) -> Digest32V0 {
+        self.source_state_root
+    }
+
+    #[must_use]
+    pub const fn source_schema_digest(&self) -> Digest32V0 {
+        self.source_schema_digest
+    }
+
+    #[must_use]
+    pub const fn source_finality_proof_digest(&self) -> Digest32V0 {
+        self.source_finality_proof_digest
+    }
+
+    #[must_use]
+    pub const fn export_header_digest(&self) -> Digest32V0 {
+        self.export_header_digest
+    }
+
+    #[must_use]
+    pub const fn export_root(&self) -> Digest32V0 {
+        self.export_root
+    }
+
+    #[must_use]
+    pub const fn ordered_rows_digest(&self) -> Digest32V0 {
+        self.ordered_rows_digest
+    }
+
+    #[must_use]
+    pub const fn row_count(&self) -> u64 {
+        self.row_count
+    }
+
+    #[must_use]
+    pub const fn binding_digest(&self) -> Digest32V0 {
+        self.binding_digest
+    }
+
     #[must_use]
     pub fn from_verified_export(export: &VerifiedExportV0) -> Self {
         let header = export.header;
