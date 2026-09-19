@@ -8,6 +8,8 @@ use trnm_executor::{
 };
 use trnm_types::{ObjectRef, Tx};
 
+const MAX_DETERMINISM_REPEATS: usize = 1_000;
+
 #[derive(Debug, Clone, Copy, clap::ValueEnum)]
 enum Workload {
     Classic,
@@ -87,6 +89,10 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
+    if args.determinism_repeats > MAX_DETERMINISM_REPEATS {
+        eprintln!("--determinism-repeats exceeds bounded maximum {MAX_DETERMINISM_REPEATS}");
+        std::process::exit(2);
+    }
     let n = args.txs.max(1);
     let keys = args.keys.max(1);
 
