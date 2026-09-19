@@ -4324,6 +4324,121 @@ mod tests {
         cleanup(&path);
     }
 
+    /// Exercise the real SQLite transaction boundary in a separate process.
+    /// The parent kills the child while an uncommitted Reserved -> HandedOff
+    /// transition is held by BEGIN IMMEDIATE; reopening must observe the
+    /// original Reserved row and an exact admission retry must still commit.
+    /// This proves process-crash rollback of this WAL transaction, while
+    /// intentionally remaining below physical power-loss evidence.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_during_uncommitted_handoff_rolls_back_and_exact_retry_resumes() {
+        let path = temp_path();
+        let namespace = [0xD7; 32];
+        seed_row(&path, namespace, STATE_RESERVED_V0);
+        let ready_path = path.with_extension("sigkill-ready");
+        let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+            .args([
+                "--exact",
+                "tx_admission_wal::tests::tx_admission_wal_child_hold_uncommitted_handoff",
+                "--nocapture",
+            ])
+            .env("TRNM_TX_ADMISSION_SIGKILL_PATH_V0", &path)
+            .env("TRNM_TX_ADMISSION_SIGKILL_READY_V0", &ready_path)
+            .spawn()
+            .unwrap();
+
+        let mut ready = false;
+        for _ in 0..250 {
+            if ready_path.exists() {
+                ready = true;
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+        if !ready {
+            let _ = child.kill();
+            let _ = child.wait();
+            cleanup(&path);
+            let _ = fs::remove_file(&ready_path);
+            panic!("transaction WAL crash child did not reach its uncommitted handoff");
+        }
+        child.kill().unwrap();
+        let status = child.wait().unwrap();
+        assert!(
+            !status.success(),
+            "SIGKILL child unexpectedly exited cleanly"
+        );
+
+        let mut authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        {
+            let connection = authority.connection.borrow();
+            let state: i64 = connection
+                .query_row(
+                    "SELECT state FROM pending_nonce
+                     WHERE namespace = ?1 AND signer = ?2 AND nonce = ?3",
+                    params![
+                        namespace.as_slice(),
+                        [0x22_u8; 32].as_slice(),
+                        to_blob_u64(7).as_slice(),
+                    ],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(state, STATE_RESERVED_V0);
+        }
+
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let mut hooks = Hooks;
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &fixture(),
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = gate.pop_ready_with_lifecycle().unwrap();
+        ready.handoff().unwrap();
+        ready.commit().unwrap();
+        drop(ready);
+        drop(gate);
+        cleanup(&path);
+        let _ = fs::remove_file(&ready_path);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn tx_admission_wal_child_hold_uncommitted_handoff() {
+        let Ok(path) = std::env::var("TRNM_TX_ADMISSION_SIGKILL_PATH_V0") else {
+            return;
+        };
+        let Ok(ready_path) = std::env::var("TRNM_TX_ADMISSION_SIGKILL_READY_V0") else {
+            return;
+        };
+        let connection = Connection::open(path).unwrap();
+        let transaction = connection
+            .unchecked_transaction()
+            .expect("begin uncommitted transaction");
+        transaction
+            .execute(
+                "UPDATE pending_nonce SET state = ?1
+                 WHERE namespace = ?2 AND signer = ?3 AND nonce = ?4",
+                params![
+                    STATE_HANDED_OFF_V0,
+                    [0xD7_u8; 32].as_slice(),
+                    [0x22_u8; 32].as_slice(),
+                    to_blob_u64(7).as_slice(),
+                ],
+            )
+            .unwrap();
+        fs::write(ready_path, b"uncommitted").unwrap();
+        loop {
+            std::thread::sleep(std::time::Duration::from_secs(1));
+        }
+    }
+
     #[test]
     fn handed_off_release_and_drop_remain_ambiguous_until_receipt_recovery() {
         // An explicit release after handoff must fail before it can rewrite
