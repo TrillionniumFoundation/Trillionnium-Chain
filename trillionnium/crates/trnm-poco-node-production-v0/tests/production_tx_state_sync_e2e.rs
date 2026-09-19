@@ -137,9 +137,10 @@ impl NodeOwnedTxCheckTxV0 for FixedCheckTx {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 struct FinalitySource {
     claim: FinalizedTxClaimV0,
+    calls: Arc<AtomicUsize>,
 }
 impl FinalizedTxReadbackSourceV0 for FinalitySource {
     type Error = Infallible;
@@ -148,6 +149,7 @@ impl FinalizedTxReadbackSourceV0 for FinalitySource {
         &mut self,
         _tx_id: TxIdV0,
     ) -> Result<FinalizedTxClaimV0, Self::Error> {
+        self.calls.fetch_add(1, Ordering::SeqCst);
         Ok(self.claim)
     }
 }
@@ -329,6 +331,7 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
     let claim = finalized_claim(intent().tx_id());
     let signer_calls = Arc::new(AtomicUsize::new(0));
     let broadcaster_calls = Arc::new(AtomicUsize::new(0));
+    let finality_calls = Arc::new(AtomicUsize::new(0));
     let mut adapter = ProductionTxNodeAdapterV0::new(
         chain_id,
         AcceptAuthorization,
@@ -341,7 +344,10 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
             calls: Arc::clone(&broadcaster_calls),
             fail_once: true,
         },
-        FinalitySource { claim },
+        FinalitySource {
+            claim,
+            calls: Arc::clone(&finality_calls),
+        },
     );
     let admission = adapter
         .check_tx_and_admit(&mut FixedCheckTx, intent())
@@ -391,7 +397,10 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
             calls: Arc::clone(&broadcaster_calls),
             fail_once: false,
         },
-        FinalitySource { claim },
+        FinalitySource {
+            claim,
+            calls: Arc::clone(&finality_calls),
+        },
     )
     .unwrap();
     let receipt = adapter.sign_and_broadcast(permit).unwrap();
@@ -410,6 +419,11 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
             trnm_poco_node_production_v0::FinalizedTxNativeStateSyncBindingErrorV0::StateRootMismatch
         )
     ));
+    assert_eq!(
+        finality_calls.load(Ordering::SeqCst),
+        1,
+        "the first sync attempt reads finality exactly once"
+    );
     assert!(!adapter.is_poisoned());
     drop(wrong_store);
     drop(adapter);
@@ -423,7 +437,7 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
     .unwrap();
     let correct_path = root.join("correct.sqlite");
     let correct_store = state_store(&correct_path, state_digest(22));
-    let mut recovered = ProductionTxNodeAdapterV0::recover(
+    let recovered = ProductionTxNodeAdapterV0::recover(
         chain_id,
         AcceptAuthorization,
         journal,
@@ -435,15 +449,23 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
             calls: Arc::clone(&broadcaster_calls),
             fail_once: false,
         },
-        FinalitySource { claim },
+        FinalitySource {
+            claim,
+            calls: Arc::clone(&finality_calls),
+        },
     )
     .unwrap();
     let joined = recovered
-        .apply_finalized_readback_and_bind_native_sync_v1(admission.tx_id, &correct_store)
+        .bind_durable_finalized_readback_to_native_sync_v1(admission.tx_id, &correct_store)
         .unwrap();
-    assert_eq!(joined.finalized.tx_id, admission.tx_id);
-    assert_eq!(joined.sync_binding.state_root, tx_digest(22));
-    assert_eq!(joined.sync_binding.block_id, tx_digest(20));
+    assert_eq!(joined.tx_id, admission.tx_id);
+    assert_eq!(joined.state_root, tx_digest(22));
+    assert_eq!(joined.block_id, tx_digest(20));
+    assert_eq!(
+        finality_calls.load(Ordering::SeqCst),
+        1,
+        "recovery retry must use the durable finalized record without re-reading finality"
+    );
     drop(recovered);
     drop(correct_store);
     assert_eq!(

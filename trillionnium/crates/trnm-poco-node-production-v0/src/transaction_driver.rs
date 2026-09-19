@@ -10,8 +10,10 @@
 use std::error::Error;
 
 use crate::{
-    bind_finalized_readback_to_native_state_sync_store_v1, FinalizedTxNativeStateSyncApplyErrorV0,
-    FinalizedTxNativeStateSyncApplyV0,
+    bind_durable_finalized_readback_to_native_state_sync_store_v1,
+    bind_finalized_readback_to_native_state_sync_store_v1,
+    DurableFinalizedTxNativeStateSyncBindingErrorV0, FinalizedTxNativeStateSyncApplyErrorV0,
+    FinalizedTxNativeStateSyncApplyV0, FinalizedTxNativeStateSyncBindingV0,
 };
 use trnm_state_sync_v0::SqliteNativeStateSyncStoreV1;
 
@@ -468,6 +470,28 @@ where
             finalized,
             sync_binding,
         })
+    }
+
+    /// Retry only the read-only transaction-to-state-sync join after a crash
+    /// or response loss that occurred after finality was durably committed.
+    /// The recovered lifecycle is the authority for `finalized`; no external
+    /// finality source is called and no journal frame is appended. Callers
+    /// must use this method for the recovery boundary instead of submitting a
+    /// second finality readback request.
+    pub fn bind_durable_finalized_readback_to_native_sync_v1(
+        &self,
+        tx_id: TxIdV0,
+        store: &SqliteNativeStateSyncStoreV1,
+    ) -> Result<FinalizedTxNativeStateSyncBindingV0, DurableFinalizedTxNativeStateSyncBindingErrorV0>
+    {
+        let finalized = self
+            .coordinator
+            .lifecycle()
+            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Finality)?
+            .finalized_readback(tx_id)
+            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Lifecycle)?;
+        bind_durable_finalized_readback_to_native_state_sync_store_v1(&finalized, store)
+            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Sync)
     }
 
     pub fn tombstone_and_collect(

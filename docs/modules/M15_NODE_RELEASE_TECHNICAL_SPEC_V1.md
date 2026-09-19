@@ -283,6 +283,27 @@ restore a convenient older database to make the previous binary run.
 
 ## Persistence and recovery
 
+### Public transaction to state-sync recovery join
+
+The public transaction adapter persists in this order: authenticated `CheckTx`,
+the M05 admission/WAL record, proposal and ordered/execution receipts, the
+sign-intent fence, the signed envelope, broadcast intent/receipt, and finally
+the authenticated finality readback. A state-sync join is a separate read-only
+owner operation. `apply_finalized_readback_and_bind_native_sync_v1` may therefore
+return `Sync` after the finality record is already durable; it must not roll that
+record back or submit the transaction again.
+
+After a process crash or lost sync response, reopen the exact journal and call
+`ProductionTxNodeAdapterV0::bind_durable_finalized_readback_to_native_sync_v1`.
+This path reconstructs `FinalizedReadbackV0` from the recovered lifecycle and
+performs one fresh SQLite snapshot read through
+`bind_durable_finalized_readback_to_native_state_sync_store_v1`. It does not
+call the external finality source, append a finality frame, re-sign, or
+re-broadcast. The join still carries only partial sync progress; claiming a
+complete snapshot requires M13's independently verified
+`NativeVerifiedSnapshotV1` capability. Block, height, state-root, binding and
+manifest substitutions remain typed fail-closed errors.
+
 ### Bridge-relay auxiliary contract boundary
 
 Registry-owned `contracts/bridge-relay/src/lib.rs` is an in-memory Rust model,

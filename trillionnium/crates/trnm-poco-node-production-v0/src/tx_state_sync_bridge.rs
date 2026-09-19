@@ -13,7 +13,9 @@ use trnm_state_sync_v0::{
     NativeStateSyncBindingV1, NativeStateSyncReadbackV1, NativeStateSyncStoreErrorV1,
     SqliteNativeStateSyncStoreV1,
 };
-use trnm_tx_lifecycle_v0::{Digest32V0, FinalizedReadbackV0, TxFinalizationErrorV0};
+use trnm_tx_lifecycle_v0::{
+    Digest32V0, FinalizedReadbackV0, ProductionTxErrorV0, TxFinalizationErrorV0, TxLifecycleErrorV0,
+};
 
 const TX_NATIVE_SYNC_BINDING_DOMAIN_V0: &[u8] = b"trnm.tx.native-state-sync-binding.v0";
 
@@ -111,6 +113,37 @@ pub enum FinalizedTxNativeStateSyncApplyErrorV0<ReadbackError, JournalError> {
     Sync(FinalizedTxNativeStateSyncBindingErrorV0),
 }
 
+/// Failure from the crash-recovery-only join which reads finality from the
+/// coordinator's already recovered durable lifecycle and never calls an
+/// external finality source.  A `Finality` error means the recovered journal
+/// does not contain a valid finalized record; `Sync` means the read-only
+/// native store binding still cannot be joined.
+#[derive(Debug)]
+pub enum DurableFinalizedTxNativeStateSyncBindingErrorV0 {
+    Finality(ProductionTxErrorV0),
+    Lifecycle(TxLifecycleErrorV0),
+    Sync(FinalizedTxNativeStateSyncBindingErrorV0),
+}
+
+impl fmt::Display for DurableFinalizedTxNativeStateSyncBindingErrorV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Finality(error) => {
+                write!(formatter, "durable finality owner unavailable: {error}")
+            }
+            Self::Lifecycle(error) => {
+                write!(formatter, "durable finality lifecycle rejected: {error}")
+            }
+            Self::Sync(error) => write!(
+                formatter,
+                "state-sync join failed after durable recovery: {error}"
+            ),
+        }
+    }
+}
+
+impl Error for DurableFinalizedTxNativeStateSyncBindingErrorV0 {}
+
 impl<ReadbackError, JournalError> fmt::Display
     for FinalizedTxNativeStateSyncApplyErrorV0<ReadbackError, JournalError>
 where
@@ -169,6 +202,23 @@ fn bind_readbacks(
     Ok(joined)
 }
 
+/// Bind a finalized readback that has already been recovered from the
+/// transaction coordinator to a fresh native state-sync readback.  This is
+/// deliberately separate from [`bind_finalized_readback_to_native_state_sync_store_v1`]:
+/// after a host crash between finality commit and sync publication, callers
+/// must not query an external finality source again or append another finality
+/// record.  The caller supplies the durable lifecycle readback and this
+/// function only performs a fresh, read-only SQLite snapshot.
+pub fn bind_durable_finalized_readback_to_native_state_sync_store_v1(
+    finalized: &FinalizedReadbackV0,
+    store: &SqliteNativeStateSyncStoreV1,
+) -> Result<FinalizedTxNativeStateSyncBindingV0, FinalizedTxNativeStateSyncBindingErrorV0> {
+    let (binding, sync_readback) = store
+        .binding_and_readback_v1()
+        .map_err(FinalizedTxNativeStateSyncBindingErrorV0::Store)?;
+    bind_readbacks(finalized, binding, sync_readback)
+}
+
 /// Bind an already-authoritative public transaction readback to the exact
 /// durable native state-sync store identity. `readback_v1` runs before any
 /// binding is returned, so stale/tampered SQLite metadata cannot be published
@@ -178,10 +228,7 @@ pub fn bind_finalized_readback_to_native_state_sync_store_v1(
     finalized: &FinalizedReadbackV0,
     store: &SqliteNativeStateSyncStoreV1,
 ) -> Result<FinalizedTxNativeStateSyncBindingV0, FinalizedTxNativeStateSyncBindingErrorV0> {
-    let (binding, sync_readback) = store
-        .binding_and_readback_v1()
-        .map_err(FinalizedTxNativeStateSyncBindingErrorV0::Store)?;
-    bind_readbacks(finalized, binding, sync_readback)
+    bind_durable_finalized_readback_to_native_state_sync_store_v1(finalized, store)
 }
 
 #[cfg(test)]
