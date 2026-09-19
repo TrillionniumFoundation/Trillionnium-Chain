@@ -73,7 +73,9 @@ Each scenario below has a stable requirement ID (`Mxx-*`). A reference implement
 The candidate vector `docs/protocol/poco-bft-v0/vectors/epoch-first-proposal-signing-v0.json`
 now pins one positive view-one root and signature, and
 `tests/epoch_activation_recovery.rs` asserts both exact byte strings before
-the strict verifier is called. Its provenance is deliberately marked
+the strict verifier is called. The standard-library checker
+`scripts/ci/check_poco_bft_v0_epoch_first_proposal_vector.py` independently
+reproduces the RFC 8032 signature relation and rejects a bit mutation. Its provenance is deliberately marked
 `candidate-fixture` with `independent_implementation_required=true`; this
 narrows one byte-drift gap without claiming independent cryptography review,
 HSM custody, or production activation.

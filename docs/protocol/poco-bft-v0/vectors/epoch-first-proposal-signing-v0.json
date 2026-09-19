@@ -5,6 +5,7 @@
   "fixture_source": "poco-authenticated-checkpoint-handoff-v0.json#positive",
   "operation": "epoch_first_proposal_signing_root_v0",
   "description": "View-one first-new-epoch EpochHandoff signing root and Ed25519 signature for the positive checkpoint/handoff fixture. The private test seed is never serialized.",
+  "expected_public_key_hex": "f8321141d41818aba486e1c3e5c4e69a87958102a5e2a953d7ac3e2a4c6ac608",
   "expected_signing_root_hex": "1f9b08c50455c46ac2dd83761c5ef6c99201829c93c24ec77ce76fd6aebf303a",
   "expected_signature_hex": "e4f621911f40d14e1e0c38f9937aad2a0a97c550a06336d1f38b28d966ed30351135e4448fe88c639a2c14c68446d019d5d89b872253ab428f38fcbb1618c40c",
   "negative_mutation": "flip_first_signature_byte_must_reject"
