@@ -352,6 +352,12 @@ the existing sign-intent and signed-envelope persistence fence, while
 `apply_finalized_readback` and `tombstone_and_collect` remain after the
 corresponding durable transitions.
 
+When the state-sync join fails after finality is durable, recovery must call
+`bind_durable_finalized_readback_to_native_sync_v1` after reopening the exact
+journal. That method reads the finalized record from the recovered lifecycle
+and performs only a fresh state-sync snapshot read; it does not call the
+finality source again, append a journal frame, re-sign, or re-broadcast.
+
 The module has an immutable `NODE_OWNED_TX_PRODUCTION_ACTIVATION_V0 = false`
 flag. Supplying fixture implementations to the ports proves ordering and
 response-loss recovery only; it cannot make the public node live. A production

@@ -42,8 +42,9 @@ it is not a finality proof or a complete snapshot.  The adapter method
 `apply_finalized_readback_and_bind_native_sync_v1` commits the transaction
 readback first and then performs this join, returning typed `Finality` versus
 `Sync` errors.  A sync mismatch can therefore follow durable finality and must
-be recovered by an exact read-only retry; the two owners are deliberately not
-claimed to be one atomic transaction.
+be recovered by the exact read-only
+`bind_durable_finalized_readback_to_native_sync_v1` retry; the two owners are
+deliberately not claimed to be one atomic transaction.
 
 The bridge unit tests cover exact identity and block/state-root substitution.
 `trnm-poco-node-production-v0/tests/production_tx_state_sync_e2e.rs::finalized_readback_survives_sync_mismatch_and_exact_recovery_retry`
@@ -52,8 +53,9 @@ journal receives the authenticated CheckTx intent, persists the signing fence,
 survives one lost broadcast response without a second signature, records
 finality, an intentionally mismatched SQLite binding returns a typed `Sync`
 error, and a recovered `ProductionTxNodeAdapterV0` retries the same read-only
-join against a corrected store. It does not provide a listener, authenticated
-network source, physical crash cut or production activation; those remain open.
+join against a corrected store without a second finality-source call or journal
+frame. It does not provide a listener, authenticated network source, physical
+crash cut or production activation; those remain open.
 
 ## S1 — incremental SQLite state-sync append and crash recovery
 
