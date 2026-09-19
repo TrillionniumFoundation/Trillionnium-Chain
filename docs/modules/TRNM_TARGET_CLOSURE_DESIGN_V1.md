@@ -135,11 +135,14 @@ independent-evidence task, not an implied success.
   expected-current-root CAS, and only then joins the node checkpoint. No
   imported bytes can create a signer intent, and a missing, altered, unknown-
   version or trailing-byte frame remains unavailable/error.
-* **Open boundary.** The canonical frame boundary is implemented, but the
-  production listener, authenticated peer identity/request deadlines, proposer
-  handoff, finalized public response, arbitrary-height/multi-epoch transport and
-  cross-process replay anchor still need real composition. Candidate proof
-  readback, frame round trips and loopback tests do not close those items.
+* **Open boundary.** The canonical frame boundary and a candidate fsynced
+  authenticated-frame replay anchor are implemented. The latter is exercised
+  by a child-process restart test and rejects exact-frame replay plus journal
+  tamper, but it remains an explicit node-local seam. The production listener,
+  authenticated peer identity/request deadlines, proposer handoff, finalized
+  public response, arbitrary-height/multi-epoch transport, Core-atomic ACK,
+  and external anti-rollback authority still need real composition. Candidate
+  proof readback, frame round trips and loopback tests do not close those items.
 * **Vectors.** Required cases are duplicate/conflicting nonce, gap,
   overload/backpressure, lost response, peer failure, tampered receipt/proof,
   chunk substitution, interrupted import, and SIGKILL at WAL/P/K/CURRENT.

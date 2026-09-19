@@ -5,8 +5,11 @@
 //! peer session.  This module adds the smallest useful node-owned boundary:
 //! an exact bounded handshake, a strict field-framed data record, a
 //! domain-separated Ed25519 signature over each record, and a 64-entry
-//! replay window.  A successfully accepted record is then passed through the
-//! nested semantic decoder for the adapted Vote/TimeoutVote/QC/TC bodies.
+//! replay window.  An explicit durable replay-anchor path can additionally
+//! fsync every authenticated frame identity before exposure, so a restarted
+//! process rejects an exact frame or a conflicting same-sequence frame.  A
+//! successfully accepted record is then passed through the nested semantic
+//! decoder for the adapted Vote/TimeoutVote/QC/TC bodies.
 //!
 //! This is deliberately a candidate composition seam.  It owns no socket,
 //! lease, validator-set update, broadcast, Core input, or production flag.
@@ -15,7 +18,7 @@
 //! that choice before network activation.
 
 use std::{
-    collections::BTreeSet,
+    collections::{BTreeMap, BTreeSet},
     error::Error,
     fmt,
     fs::{self, File, OpenOptions},
@@ -64,6 +67,8 @@ pub const P2P_SESSION_REPLAY_WINDOW_V0: u64 = 64;
 /// production activation.
 pub const P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0: bool = true;
 pub const P2P_SESSION_REPLAY_ANCHOR_PRODUCTION_ACTIVATION_V0: bool = false;
+pub const P2P_SESSION_FRAME_REPLAY_AUTHORITY_CANDIDATE_V0: bool = true;
+pub const P2P_SESSION_FRAME_REPLAY_AUTHORITY_PRODUCTION_ACTIVATION_V0: bool = false;
 
 const HANDSHAKE_MAGIC: &[u8; 4] = b"TRNH";
 const FRAME_MAGIC: &[u8; 4] = b"TRNF";
@@ -89,6 +94,18 @@ const REPLAY_ANCHOR_SESSION_KIND_V0: u8 = 1;
 const REPLAY_ANCHOR_FRAME_BYTES_V0: usize = 172;
 const REPLAY_ANCHOR_HEAD_BYTES_V0: usize = 84;
 const REPLAY_ANCHOR_MAX_ENTRIES_V0: u64 = 1_048_576;
+const REPLAY_FRAME_MAGIC_V0: [u8; 8] = *b"TRNMP2FR";
+const REPLAY_FRAME_HEAD_MAGIC_V0: [u8; 8] = *b"TRNMP2FH";
+const REPLAY_FRAME_VERSION_V0: u8 = 1;
+const REPLAY_FRAME_GENESIS_KIND_V0: u8 = 0;
+const REPLAY_FRAME_ACCEPT_KIND_V0: u8 = 1;
+const REPLAY_FRAME_PREFIX_BYTES_V0: usize = 180;
+const REPLAY_FRAME_BYTES_V0: usize = REPLAY_FRAME_PREFIX_BYTES_V0 + HASH_BYTES_V0;
+const REPLAY_FRAME_HEAD_BYTES_V0: usize = 84;
+const REPLAY_FRAME_MAX_ENTRIES_V0: u64 = 1_048_576;
+const DOMAIN_REPLAY_FRAME_RECORD_V0: &[u8] = b"trnm.poco.p2p.replay-frame-record.v0\0";
+const DOMAIN_REPLAY_FRAME_HEAD_V0: &[u8] = b"trnm.poco.p2p.replay-frame-head.v0\0";
+const DOMAIN_REPLAY_FRAME_IDENTITY_V0: &[u8] = b"trnm.poco.p2p.replay-frame-identity.v0\0";
 #[cfg(unix)]
 const REPLAY_ANCHOR_PRIVATE_FILE_MODE_V0: u32 = 0o600;
 
@@ -121,6 +138,8 @@ pub enum P2pSessionIngressErrorCodeV0 {
     SequenceTooOld,
     SessionReplay,
     ReplayAnchor,
+    DurableFrameReplay,
+    DurableFrameConflict,
     UnsupportedBodyKind,
     WirePreflight,
     SemanticDecode,
@@ -153,6 +172,8 @@ impl P2pSessionIngressErrorCodeV0 {
             Self::SequenceTooOld => "sequence_too_old",
             Self::SessionReplay => "session_replay",
             Self::ReplayAnchor => "replay_anchor",
+            Self::DurableFrameReplay => "durable_frame_replay",
+            Self::DurableFrameConflict => "durable_frame_conflict",
             Self::UnsupportedBodyKind => "unsupported_body_kind",
             Self::WirePreflight => "wire_preflight",
             Self::SemanticDecode => "semantic_decode",
@@ -269,6 +290,8 @@ pub enum PocoNodeP2pReplayAnchorErrorV0 {
     Corrupt,
     Truncated,
     SessionReplay,
+    FrameReplay,
+    FrameConflict,
     TooLarge,
 }
 
@@ -281,6 +304,8 @@ impl fmt::Display for PocoNodeP2pReplayAnchorErrorV0 {
             Self::Corrupt => "P2P replay anchor is corrupt",
             Self::Truncated => "P2P replay anchor is truncated",
             Self::SessionReplay => "P2P handshake session was already anchored",
+            Self::FrameReplay => "P2P authenticated frame was already anchored",
+            Self::FrameConflict => "P2P authenticated frame sequence conflicts with its anchor",
             Self::TooLarge => "P2P replay anchor exceeds its bound",
         })
     }
@@ -327,15 +352,22 @@ impl ReplayAnchorPathIdentityV0 {
 pub struct PocoNodeP2pReplayAnchorV0 {
     path: PathBuf,
     head_path: PathBuf,
+    frame_path: PathBuf,
+    frame_head_path: PathBuf,
     parent_file: File,
     file: File,
+    frame_file: File,
     parent_identity: ReplayAnchorPathIdentityV0,
     file_identity: ReplayAnchorPathIdentityV0,
+    frame_file_identity: ReplayAnchorPathIdentityV0,
     context_digest: [u8; HASH_BYTES_V0],
     peer_id: ValidatorId,
     head: [u8; HASH_BYTES_V0],
     record_count: u64,
     seen_sessions: BTreeSet<[u8; HASH_BYTES_V0]>,
+    frame_head: [u8; HASH_BYTES_V0],
+    frame_record_count: u64,
+    seen_frames: BTreeMap<([u8; HASH_BYTES_V0], u64), [u8; HASH_BYTES_V0]>,
     poisoned: bool,
 }
 
@@ -364,6 +396,8 @@ impl PocoNodeP2pReplayAnchorV0 {
             return Err(PocoNodeP2pReplayAnchorErrorV0::ContextMismatch);
         }
         let path = path.as_ref().to_path_buf();
+        let frame_path = replay_anchor_frame_path_v0(&path)?;
+        let frame_head_path = replay_anchor_frame_head_path_v0(&path)?;
         let parent = path
             .parent()
             .ok_or(PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
@@ -389,6 +423,23 @@ impl PocoNodeP2pReplayAnchorV0 {
             Err(_) => return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath),
         };
         let virgin = existing_metadata.is_none();
+        let existing_frame_metadata = match fs::symlink_metadata(&frame_path) {
+            Ok(metadata) => {
+                if !metadata.is_file() || !replay_anchor_private_file_v0(&metadata) {
+                    return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+                }
+                Some(metadata)
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+            Err(_) => return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath),
+        };
+        let virgin_frame = existing_frame_metadata.is_none();
+        if virgin
+            && (fs::symlink_metadata(&frame_path).is_ok()
+                || fs::symlink_metadata(&frame_head_path).is_ok())
+        {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
         let mut options = OpenOptions::new();
         options.read(true).write(true).append(true);
         if virgin {
@@ -426,18 +477,65 @@ impl PocoNodeP2pReplayAnchorV0 {
         if virgin && fs::symlink_metadata(&head_path).is_ok() {
             return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
         }
+        let mut frame_options = OpenOptions::new();
+        frame_options.read(true).write(true).append(true);
+        if virgin_frame {
+            frame_options.create_new(true);
+            #[cfg(unix)]
+            frame_options.mode(REPLAY_ANCHOR_PRIVATE_FILE_MODE_V0);
+        } else {
+            frame_options.create(false);
+        }
+        let frame_file = frame_options
+            .open(&frame_path)
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        if virgin_frame {
+            set_replay_anchor_private_file_v0(&frame_file)?;
+        }
+        frame_file
+            .try_lock_exclusive()
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        let frame_file_metadata = frame_file
+            .metadata()
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        if !replay_anchor_private_file_v0(&frame_file_metadata) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        let frame_file_identity = ReplayAnchorPathIdentityV0::from_metadata(&frame_file_metadata);
+        if existing_frame_metadata.is_some_and(|metadata| {
+            ReplayAnchorPathIdentityV0::from_metadata(&metadata) != frame_file_identity
+        }) || !replay_anchor_path_binding_matches_v0(
+            &frame_path,
+            parent_identity,
+            frame_file_identity,
+        ) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        if !virgin_frame && frame_file_metadata.len() == 0 {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Truncated);
+        }
+        if virgin_frame && fs::symlink_metadata(&frame_head_path).is_ok() {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
         let mut anchor = Self {
             path,
             head_path,
+            frame_path,
+            frame_head_path,
             parent_file,
             file,
+            frame_file,
             parent_identity,
             file_identity,
+            frame_file_identity,
             context_digest: replay_anchor_context_digest_v0(validator_set, peer_id),
             peer_id,
             head: [0; HASH_BYTES_V0],
             record_count: 0,
             seen_sessions: BTreeSet::new(),
+            frame_head: [0; HASH_BYTES_V0],
+            frame_record_count: 0,
+            seen_frames: BTreeMap::new(),
             poisoned: false,
         };
         if virgin {
@@ -461,8 +559,33 @@ impl PocoNodeP2pReplayAnchorV0 {
                 .sync_all()
                 .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
         }
+        if virgin_frame {
+            let genesis = encode_replay_frame_record_v0(
+                REPLAY_FRAME_GENESIS_KIND_V0,
+                anchor.context_digest,
+                peer_id,
+                [0; HASH_BYTES_V0],
+                0,
+                [0; HASH_BYTES_V0],
+                [0; HASH_BYTES_V0],
+            );
+            anchor
+                .frame_file
+                .write_all(&genesis)
+                .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+            anchor
+                .frame_file
+                .sync_all()
+                .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+            anchor
+                .parent_file
+                .sync_all()
+                .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        }
         anchor.reload_v0()?;
         anchor.reconcile_head_v0(virgin)?;
+        anchor.reload_frames_v0()?;
+        anchor.reconcile_frame_head_v0(virgin_frame)?;
         Ok(anchor)
     }
 
@@ -488,6 +611,100 @@ impl PocoNodeP2pReplayAnchorV0 {
 
     pub fn contains_session(&self, session_id: [u8; HASH_BYTES_V0]) -> bool {
         self.seen_sessions.contains(&session_id)
+    }
+
+    /// Number of authenticated data frames durably anchored by this owner.
+    /// The handshake/session record count remains separate because an accepted
+    /// session and an accepted data frame have different replay identities.
+    pub const fn frame_record_count(&self) -> u64 {
+        self.frame_record_count
+    }
+
+    /// Returns the durable frame fingerprint for one `(session, sequence)`
+    /// tuple when it is present in the replay journal.
+    pub fn frame_fingerprint(
+        &self,
+        session_id: [u8; HASH_BYTES_V0],
+        sequence: u64,
+    ) -> Option<[u8; HASH_BYTES_V0]> {
+        self.seen_frames.get(&(session_id, sequence)).copied()
+    }
+
+    /// Durably reserves one authenticated frame after its complete signature
+    /// and nested semantic proof have been checked.  Reopening this owner in a
+    /// new process therefore rejects an exact old frame, while a different
+    /// payload/signature at the same `(session, sequence)` fails closed as a
+    /// durable conflict.  This is candidate evidence only: no Core or host
+    /// rollback authority is implied by the local journal.
+    fn reserve_frame(
+        &mut self,
+        session_id: [u8; HASH_BYTES_V0],
+        sequence: u64,
+        frame: &[u8],
+    ) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+        if self.poisoned {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+        }
+        if session_id == [0; HASH_BYTES_V0] {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::ContextMismatch);
+        }
+        let frame_digest = replay_frame_identity_digest_v0(frame);
+        let key = (session_id, sequence);
+        let expected_head = self.frame_head;
+        let expected_count = self.frame_record_count;
+        if let Err(error) = self.reload_frames_v0() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        if self.frame_head != expected_head || self.frame_record_count != expected_count {
+            self.poisoned = true;
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+        }
+        if let Some(existing) = self.seen_frames.get(&key) {
+            return if *existing == frame_digest {
+                Err(PocoNodeP2pReplayAnchorErrorV0::FrameReplay)
+            } else {
+                Err(PocoNodeP2pReplayAnchorErrorV0::FrameConflict)
+            };
+        }
+        if self.frame_record_count >= REPLAY_FRAME_MAX_ENTRIES_V0 {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::TooLarge);
+        }
+        let record = encode_replay_frame_record_v0(
+            REPLAY_FRAME_ACCEPT_KIND_V0,
+            self.context_digest,
+            self.peer_id,
+            session_id,
+            sequence,
+            frame_digest,
+            self.frame_head,
+        );
+        if self.frame_file.write_all(&record).is_err()
+            || self.frame_file.sync_all().is_err()
+            || self.parent_file.sync_all().is_err()
+        {
+            self.poisoned = true;
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Io);
+        }
+        if !replay_anchor_path_binding_matches_v0(
+            &self.frame_path,
+            self.parent_identity,
+            self.frame_file_identity,
+        ) {
+            self.poisoned = true;
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        self.frame_head = replay_frame_record_digest_v0(&record[..REPLAY_FRAME_PREFIX_BYTES_V0]);
+        self.frame_record_count = self
+            .frame_record_count
+            .checked_add(1)
+            .ok_or(PocoNodeP2pReplayAnchorErrorV0::TooLarge)?;
+        self.seen_frames.insert(key, frame_digest);
+        if self.persist_frame_head_v0().is_err() {
+            self.poisoned = true;
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Io);
+        }
+        Ok(())
     }
 
     /// Durably reserves one authenticated handshake session ID.  A duplicate
@@ -598,6 +815,47 @@ impl PocoNodeP2pReplayAnchorV0 {
         Ok(())
     }
 
+    fn reload_frames_v0(&mut self) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+        if !replay_anchor_path_binding_matches_v0(
+            &self.frame_path,
+            self.parent_identity,
+            self.frame_file_identity,
+        ) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        let maximum_bytes = (REPLAY_FRAME_MAX_ENTRIES_V0 + 1)
+            .checked_mul(REPLAY_FRAME_BYTES_V0 as u64)
+            .ok_or(PocoNodeP2pReplayAnchorErrorV0::TooLarge)?;
+        let file_len = self
+            .frame_file
+            .metadata()
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?
+            .len();
+        if file_len > maximum_bytes {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::TooLarge);
+        }
+        self.frame_file
+            .seek(SeekFrom::Start(0))
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        let mut bytes = Vec::new();
+        std::io::Read::by_ref(&mut self.frame_file)
+            .take(maximum_bytes.saturating_add(1))
+            .read_to_end(&mut bytes)
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        if bytes.len() as u64 > maximum_bytes {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::TooLarge);
+        }
+        self.frame_file
+            .seek(SeekFrom::End(0))
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        let (head, count, seen) =
+            parse_replay_frame_bytes_v0(&bytes, self.context_digest, self.peer_id)?;
+        self.frame_head = head;
+        self.frame_record_count = count;
+        self.seen_frames = seen;
+        Ok(())
+    }
+
     fn reconcile_head_v0(&self, virgin: bool) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
         let anchored = match read_replay_anchor_head_v0(&self.head_path) {
             Ok(value) => Some(value),
@@ -614,6 +872,28 @@ impl PocoNodeP2pReplayAnchorV0 {
                 Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt)
             }
             Some((count, _)) if count < self.record_count => self.persist_head_v0(),
+            Some(_) => Ok(()),
+        }
+    }
+
+    fn reconcile_frame_head_v0(&self, virgin: bool) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+        let anchored = match read_replay_frame_head_v0(&self.frame_head_path) {
+            Ok(value) => Some(value),
+            Err(PocoNodeP2pReplayAnchorErrorV0::Io) if !self.frame_head_path.exists() && virgin => {
+                None
+            }
+            Err(error) => return Err(error),
+        };
+        match anchored {
+            None if virgin && self.frame_record_count == 0 => self.persist_frame_head_v0(),
+            None => Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt),
+            Some((count, _head)) if count > self.frame_record_count => {
+                Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt)
+            }
+            Some((count, head)) if count == self.frame_record_count && head != self.frame_head => {
+                Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt)
+            }
+            Some((count, _)) if count < self.frame_record_count => self.persist_frame_head_v0(),
             Some(_) => Ok(()),
         }
     }
@@ -653,6 +933,49 @@ impl PocoNodeP2pReplayAnchorV0 {
             file.write_all(&bytes)?;
             file.sync_all()?;
             fs::rename(&temporary, &self.head_path)?;
+            self.parent_file.sync_all()?;
+            Ok::<(), std::io::Error>(())
+        })();
+        if let Err(_error) = result {
+            let _ = fs::remove_file(&temporary);
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Io);
+        }
+        Ok(())
+    }
+
+    fn persist_frame_head_v0(&self) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+        if !replay_anchor_path_binding_matches_v0(
+            &self.frame_path,
+            self.parent_identity,
+            self.frame_file_identity,
+        ) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        if let Ok(metadata) = fs::symlink_metadata(&self.frame_head_path) {
+            if !metadata.is_file() || !replay_anchor_private_file_v0(&metadata) {
+                return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+            }
+        }
+        let name = self
+            .frame_head_path
+            .file_name()
+            .and_then(|value| value.to_str())
+            .ok_or(PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
+        let temporary = self.frame_head_path.with_file_name(format!(
+            ".{name}.tmp-{}-{}",
+            std::process::id(),
+            self.frame_record_count
+        ));
+        let bytes = encode_replay_frame_head_v0(self.frame_record_count, self.frame_head);
+        let result = (|| {
+            let mut options = OpenOptions::new();
+            options.write(true).create_new(true);
+            #[cfg(unix)]
+            options.mode(REPLAY_ANCHOR_PRIVATE_FILE_MODE_V0);
+            let mut file = options.open(&temporary)?;
+            file.write_all(&bytes)?;
+            file.sync_all()?;
+            fs::rename(&temporary, &self.frame_head_path)?;
             self.parent_file.sync_all()?;
             Ok::<(), std::io::Error>(())
         })();
@@ -728,6 +1051,89 @@ fn parse_replay_anchor_bytes_v0(
     Ok((head, record_count, seen_sessions))
 }
 
+type ReplayFrameDecodedV0 = (
+    [u8; HASH_BYTES_V0],
+    u64,
+    BTreeMap<([u8; HASH_BYTES_V0], u64), [u8; HASH_BYTES_V0]>,
+);
+
+fn parse_replay_frame_bytes_v0(
+    bytes: &[u8],
+    context_digest: [u8; HASH_BYTES_V0],
+    peer_id: ValidatorId,
+) -> Result<ReplayFrameDecodedV0, PocoNodeP2pReplayAnchorErrorV0> {
+    if bytes.is_empty() {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Truncated);
+    }
+    if !bytes.len().is_multiple_of(REPLAY_FRAME_BYTES_V0) {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Truncated);
+    }
+    let frame_count = bytes.len() / REPLAY_FRAME_BYTES_V0;
+    if frame_count == 0 || frame_count - 1 > REPLAY_FRAME_MAX_ENTRIES_V0 as usize {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::TooLarge);
+    }
+    let mut head = [0; HASH_BYTES_V0];
+    let mut record_count = 0u64;
+    let mut seen_frames = BTreeMap::new();
+    for (index, record) in bytes.chunks_exact(REPLAY_FRAME_BYTES_V0).enumerate() {
+        if record[..8] != REPLAY_FRAME_MAGIC_V0
+            || record[8] != REPLAY_FRAME_VERSION_V0
+            || record[10..12] != [0, 0]
+        {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+        }
+        if &record[12..44] != context_digest.as_slice() || &record[44..76] != peer_id.as_bytes() {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::ContextMismatch);
+        }
+        let stored_digest: [u8; HASH_BYTES_V0] = record[REPLAY_FRAME_PREFIX_BYTES_V0..]
+            .try_into()
+            .expect("fixed replay frame digest");
+        if stored_digest != replay_frame_record_digest_v0(&record[..REPLAY_FRAME_PREFIX_BYTES_V0]) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+        }
+        let session_id: [u8; HASH_BYTES_V0] = record[76..108]
+            .try_into()
+            .expect("fixed replay frame session");
+        let sequence = u64::from_be_bytes(
+            record[108..116]
+                .try_into()
+                .expect("fixed replay frame sequence"),
+        );
+        let frame_digest: [u8; HASH_BYTES_V0] = record[116..148]
+            .try_into()
+            .expect("fixed replay frame identity");
+        let predecessor: [u8; HASH_BYTES_V0] = record[148..180]
+            .try_into()
+            .expect("fixed replay frame predecessor");
+        if index == 0 {
+            if record[9] != REPLAY_FRAME_GENESIS_KIND_V0
+                || session_id != [0; HASH_BYTES_V0]
+                || sequence != 0
+                || frame_digest != [0; HASH_BYTES_V0]
+                || predecessor != [0; HASH_BYTES_V0]
+            {
+                return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+            }
+        } else {
+            if record[9] != REPLAY_FRAME_ACCEPT_KIND_V0
+                || session_id == [0; HASH_BYTES_V0]
+                || frame_digest == [0; HASH_BYTES_V0]
+                || predecessor != head
+                || seen_frames
+                    .insert((session_id, sequence), frame_digest)
+                    .is_some()
+            {
+                return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+            }
+            record_count = record_count
+                .checked_add(1)
+                .ok_or(PocoNodeP2pReplayAnchorErrorV0::TooLarge)?;
+        }
+        head = stored_digest;
+    }
+    Ok((head, record_count, seen_frames))
+}
+
 fn encode_replay_anchor_frame_v0(
     kind: u8,
     context_digest: [u8; HASH_BYTES_V0],
@@ -746,6 +1152,104 @@ fn encode_replay_anchor_frame_v0(
     let digest = replay_anchor_frame_digest_v0(&frame[..140]);
     frame[140..].copy_from_slice(&digest);
     frame
+}
+
+fn encode_replay_frame_record_v0(
+    kind: u8,
+    context_digest: [u8; HASH_BYTES_V0],
+    peer_id: ValidatorId,
+    session_id: [u8; HASH_BYTES_V0],
+    sequence: u64,
+    frame_digest: [u8; HASH_BYTES_V0],
+    predecessor: [u8; HASH_BYTES_V0],
+) -> [u8; REPLAY_FRAME_BYTES_V0] {
+    let mut record = [0u8; REPLAY_FRAME_BYTES_V0];
+    record[..8].copy_from_slice(&REPLAY_FRAME_MAGIC_V0);
+    record[8] = REPLAY_FRAME_VERSION_V0;
+    record[9] = kind;
+    record[12..44].copy_from_slice(&context_digest);
+    record[44..76].copy_from_slice(peer_id.as_bytes());
+    record[76..108].copy_from_slice(&session_id);
+    record[108..116].copy_from_slice(&sequence.to_be_bytes());
+    record[116..148].copy_from_slice(&frame_digest);
+    record[148..180].copy_from_slice(&predecessor);
+    let digest = replay_frame_record_digest_v0(&record[..REPLAY_FRAME_PREFIX_BYTES_V0]);
+    record[REPLAY_FRAME_PREFIX_BYTES_V0..].copy_from_slice(&digest);
+    record
+}
+
+fn replay_frame_record_digest_v0(prefix: &[u8]) -> [u8; HASH_BYTES_V0] {
+    let mut hasher = Sha256::new();
+    hasher.update(DOMAIN_REPLAY_FRAME_RECORD_V0);
+    hasher.update((prefix.len() as u64).to_be_bytes());
+    hasher.update(prefix);
+    hasher.finalize().into()
+}
+
+fn encode_replay_frame_head_v0(
+    record_count: u64,
+    head: [u8; HASH_BYTES_V0],
+) -> [u8; REPLAY_FRAME_HEAD_BYTES_V0] {
+    let mut bytes = [0u8; REPLAY_FRAME_HEAD_BYTES_V0];
+    bytes[..8].copy_from_slice(&REPLAY_FRAME_HEAD_MAGIC_V0);
+    bytes[8] = REPLAY_FRAME_VERSION_V0;
+    bytes[12..20].copy_from_slice(&record_count.to_be_bytes());
+    bytes[20..52].copy_from_slice(&head);
+    let digest = replay_frame_head_digest_v0(&bytes[..52]);
+    bytes[52..].copy_from_slice(&digest);
+    bytes
+}
+
+fn read_replay_frame_head_v0(
+    path: &Path,
+) -> Result<(u64, [u8; HASH_BYTES_V0]), PocoNodeP2pReplayAnchorErrorV0> {
+    let metadata = fs::symlink_metadata(path).map_err(|error| {
+        if error.kind() == std::io::ErrorKind::NotFound {
+            PocoNodeP2pReplayAnchorErrorV0::Io
+        } else {
+            PocoNodeP2pReplayAnchorErrorV0::InvalidPath
+        }
+    })?;
+    if !metadata.is_file() || !replay_anchor_private_file_v0(&metadata) {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+    }
+    if metadata.len() != REPLAY_FRAME_HEAD_BYTES_V0 as u64 {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+    }
+    let bytes = fs::read(path).map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+    if bytes.len() != REPLAY_FRAME_HEAD_BYTES_V0 {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+    }
+    if bytes[..8] != REPLAY_FRAME_HEAD_MAGIC_V0
+        || bytes[8] != REPLAY_FRAME_VERSION_V0
+        || bytes[9..12] != [0, 0, 0]
+        || bytes[52..] != replay_frame_head_digest_v0(&bytes[..52])
+    {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+    }
+    let count = u64::from_be_bytes(
+        bytes[12..20]
+            .try_into()
+            .expect("fixed replay frame head count"),
+    );
+    let head = bytes[20..52].try_into().expect("fixed replay frame head");
+    Ok((count, head))
+}
+
+fn replay_frame_head_digest_v0(prefix: &[u8]) -> [u8; HASH_BYTES_V0] {
+    let mut hasher = Sha256::new();
+    hasher.update(DOMAIN_REPLAY_FRAME_HEAD_V0);
+    hasher.update((prefix.len() as u64).to_be_bytes());
+    hasher.update(prefix);
+    hasher.finalize().into()
+}
+
+fn replay_frame_identity_digest_v0(frame: &[u8]) -> [u8; HASH_BYTES_V0] {
+    let mut hasher = Sha256::new();
+    hasher.update(DOMAIN_REPLAY_FRAME_IDENTITY_V0);
+    hasher.update((frame.len() as u64).to_be_bytes());
+    hasher.update(frame);
+    hasher.finalize().into()
 }
 
 fn replay_anchor_frame_digest_v0(prefix: &[u8]) -> [u8; HASH_BYTES_V0] {
@@ -835,6 +1339,25 @@ fn replay_anchor_head_path_v0(path: &Path) -> Result<PathBuf, PocoNodeP2pReplayA
         .and_then(|value| value.to_str())
         .ok_or(PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
     Ok(path.with_file_name(format!(".{name}.head")))
+}
+
+fn replay_anchor_frame_path_v0(path: &Path) -> Result<PathBuf, PocoNodeP2pReplayAnchorErrorV0> {
+    let name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
+    Ok(path.with_file_name(format!(".{name}.frames")))
+}
+
+fn replay_anchor_frame_head_path_v0(
+    path: &Path,
+) -> Result<PathBuf, PocoNodeP2pReplayAnchorErrorV0> {
+    let frame_path = replay_anchor_frame_path_v0(path)?;
+    let name = frame_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
+    Ok(frame_path.with_file_name(format!(".{name}.head")))
 }
 
 fn replay_anchor_path_binding_matches_v0(
@@ -1041,6 +1564,34 @@ impl PocoNodeP2pSessionV0 {
         frame: &'a [u8],
         budget: &mut Cev0AdmissionBudgetV0,
     ) -> Result<PocoNodeP2pAcceptedFrameV0<'a>, PocoNodeP2pSessionErrorV0> {
+        self.accept_frame_inner(frame, budget, None)
+    }
+
+    /// Verifies and durably reserves one exact authenticated frame before it
+    /// becomes visible to the caller.  The anchor is caller-owned so this
+    /// method remains an explicit candidate seam rather than silently adding
+    /// persistence or activation to the process-local compatibility method.
+    pub fn accept_frame_with_replay_anchor<'a>(
+        &mut self,
+        frame: &'a [u8],
+        budget: &mut Cev0AdmissionBudgetV0,
+        replay_anchor: &mut PocoNodeP2pReplayAnchorV0,
+    ) -> Result<PocoNodeP2pAcceptedFrameV0<'a>, PocoNodeP2pSessionErrorV0> {
+        if replay_anchor.peer_id != self.peer_id
+            || replay_anchor.context_digest
+                != replay_anchor_context_digest_v0(&self.validator_set, self.peer_id)
+        {
+            return Err(err(P2pSessionIngressErrorCodeV0::ContextMismatch, 0));
+        }
+        self.accept_frame_inner(frame, budget, Some(replay_anchor))
+    }
+
+    fn accept_frame_inner<'a>(
+        &mut self,
+        frame: &'a [u8],
+        budget: &mut Cev0AdmissionBudgetV0,
+        mut replay_anchor: Option<&mut PocoNodeP2pReplayAnchorV0>,
+    ) -> Result<PocoNodeP2pAcceptedFrameV0<'a>, PocoNodeP2pSessionErrorV0> {
         let parsed = parse_frame(frame)?;
         if parsed.protocol_version != PROTOCOL_VERSION_V0 {
             return Err(err(
@@ -1112,6 +1663,11 @@ impl PocoNodeP2pSessionV0 {
         proof
             .verify_signatures(&self.validator_set, &StrictEd25519Verifier)
             .map_err(PocoNodeP2pSessionErrorV0::semantic)?;
+        if let Some(anchor) = replay_anchor.as_deref_mut() {
+            anchor
+                .reserve_frame(self.session_id, parsed.sequence, frame)
+                .map_err(map_replay_anchor_error_v0)?;
+        }
         self.replay = next_replay;
         Ok(PocoNodeP2pAcceptedFrameV0 {
             peer_id: self.peer_id,
@@ -1502,6 +2058,12 @@ fn map_replay_anchor_error_v0(error: PocoNodeP2pReplayAnchorErrorV0) -> PocoNode
         PocoNodeP2pReplayAnchorErrorV0::SessionReplay => {
             P2pSessionIngressErrorCodeV0::SessionReplay
         }
+        PocoNodeP2pReplayAnchorErrorV0::FrameReplay => {
+            P2pSessionIngressErrorCodeV0::DurableFrameReplay
+        }
+        PocoNodeP2pReplayAnchorErrorV0::FrameConflict => {
+            P2pSessionIngressErrorCodeV0::DurableFrameConflict
+        }
         PocoNodeP2pReplayAnchorErrorV0::InvalidPath
         | PocoNodeP2pReplayAnchorErrorV0::Io
         | PocoNodeP2pReplayAnchorErrorV0::Corrupt
@@ -1554,6 +2116,7 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     #[cfg(unix)]
     use std::os::unix::fs::PermissionsExt;
+    use std::{env, process::Command};
     use trnm_consensus_types::{
         BlockId, CanonicalSignable, ChainId, ConsensusPublicKey, Epoch, Height, MessageKind,
         ProtocolVersion, QcRef, QuorumCertificate, TimeoutCertificateV0, TimeoutEntryV0,
@@ -1716,10 +2279,20 @@ mod tests {
         author: ValidatorId,
         signature: &[u8; SIGNATURE_BYTES],
     ) -> Vec<u8> {
+        vote_body_for_block(set, view, author, [0x42; 32], signature)
+    }
+
+    fn vote_body_for_block(
+        set: &ValidatorSet,
+        view: u64,
+        author: ValidatorId,
+        block_id: [u8; 32],
+        signature: &[u8; SIGNATURE_BYTES],
+    ) -> Vec<u8> {
         let mut bytes = Vec::new();
         pfield_bytes(&mut bytes, 1, &common_context(set, view, MessageKind::Vote));
         pfield_varint(&mut bytes, 2, 1);
-        pfield_bytes(&mut bytes, 3, &[0x42; 32]);
+        pfield_bytes(&mut bytes, 3, &block_id);
         pfield_bytes(&mut bytes, 4, author.as_bytes());
         pfield_bytes(&mut bytes, 5, signature);
         bytes
@@ -2368,6 +2941,8 @@ mod tests {
         const {
             assert!(P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0);
             assert!(!P2P_SESSION_REPLAY_ANCHOR_PRODUCTION_ACTIVATION_V0);
+            assert!(P2P_SESSION_FRAME_REPLAY_AUTHORITY_CANDIDATE_V0);
+            assert!(!P2P_SESSION_FRAME_REPLAY_AUTHORITY_PRODUCTION_ACTIVATION_V0);
             assert!(!P2P_SESSION_INGRESS_PRODUCTION_ACTIVATION_V0);
         }
     }
@@ -2460,6 +3035,125 @@ mod tests {
                 .unwrap_err()
                 .code(),
             P2pSessionIngressErrorCodeV0::SessionMismatch
+        );
+    }
+
+    const CHILD_FRAME_REPLAY_ANCHOR_PATH_ENV_V0: &str =
+        "TRNM_P2P_CHILD_FRAME_REPLAY_ANCHOR_PATH_V0";
+    const CHILD_FRAME_REPLAY_CONFLICT_ENV_V0: &str = "TRNM_P2P_CHILD_FRAME_REPLAY_CONFLICT_V0";
+
+    /// Child-process half of the durable frame replay test.  The child opens
+    /// a fresh in-memory session for the old authenticated handshake, so a
+    /// process-local bitmap cannot make this assertion pass.
+    #[test]
+    fn durable_frame_replay_child_helper() {
+        let Some(path) = env::var_os(CHILD_FRAME_REPLAY_ANCHOR_PATH_ENV_V0) else {
+            return;
+        };
+        let fixture = Fixture::new();
+        let mut anchor = PocoNodeP2pReplayAnchorV0::open(path, &fixture.set, fixture.peer)
+            .expect("child reopens durable frame anchor");
+        let mut session =
+            PocoNodeP2pSessionV0::open(&fixture.handshake, &fixture.set, &fixture.parameters)
+                .expect("child reopens old authenticated session");
+        let payload = if env::var_os(CHILD_FRAME_REPLAY_CONFLICT_ENV_V0).is_some() {
+            let alternate_vote = signed_vote(
+                &fixture.set,
+                &fixture.key,
+                fixture.peer,
+                View::new(1),
+                Height::new(1),
+                BlockId::new([0x43; 32]),
+            );
+            outer(
+                &fixture.set,
+                fixture.peer,
+                1,
+                WireBodyKindV0::Vote,
+                &vote_body_for_block(
+                    &fixture.set,
+                    1,
+                    fixture.peer,
+                    [0x43; 32],
+                    alternate_vote.signature().as_bytes(),
+                ),
+                Some(MessageKind::Vote),
+            )
+        } else {
+            fixture.vote_payload.clone()
+        };
+        let frame = signed_frame(session.session_id(), 1, &payload, &fixture.key);
+        let mut budget =
+            Cev0AdmissionBudgetV0::for_validator_set(&fixture.parameters, &fixture.set);
+        let error = session
+            .accept_frame_with_replay_anchor(&frame, &mut budget, &mut anchor)
+            .expect_err("durable frame replay must fail closed after restart");
+        let expected = if env::var_os(CHILD_FRAME_REPLAY_CONFLICT_ENV_V0).is_some() {
+            P2pSessionIngressErrorCodeV0::DurableFrameConflict
+        } else {
+            P2pSessionIngressErrorCodeV0::DurableFrameReplay
+        };
+        assert_eq!(error.code(), expected);
+    }
+
+    #[test]
+    fn durable_frame_replay_rejects_exact_frame_after_child_restart_and_tamper() {
+        let fixture = Fixture::new();
+        let directory = private_replay_anchor_directory();
+        let path = directory.path().join("p2p-session.replay");
+        let mut anchor = PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer)
+            .expect("fresh replay anchor");
+        let mut session = PocoNodeP2pSessionV0::open_with_replay_anchor(
+            &fixture.handshake,
+            &fixture.set,
+            &fixture.parameters,
+            &mut anchor,
+        )
+        .expect("anchored session");
+        let frame = signed_frame(session.session_id(), 1, &fixture.vote_payload, &fixture.key);
+        let mut budget =
+            Cev0AdmissionBudgetV0::for_validator_set(&fixture.parameters, &fixture.set);
+        session
+            .accept_frame_with_replay_anchor(&frame, &mut budget, &mut anchor)
+            .expect("first durable frame");
+        assert_eq!(anchor.frame_record_count(), 1);
+        assert_eq!(
+            anchor.frame_fingerprint(session.session_id(), 1).is_some(),
+            true
+        );
+        drop(session);
+        drop(anchor);
+
+        let status = Command::new(env::current_exe().expect("current test executable"))
+            .arg("--exact")
+            .arg("p2p_session_ingress::tests::durable_frame_replay_child_helper")
+            .arg("--nocapture")
+            .env(CHILD_FRAME_REPLAY_ANCHOR_PATH_ENV_V0, &path)
+            .status()
+            .expect("spawn frame replay restart child");
+        assert!(status.success(), "frame replay child process failed");
+
+        let conflict_status = Command::new(env::current_exe().expect("current test executable"))
+            .arg("--exact")
+            .arg("p2p_session_ingress::tests::durable_frame_replay_child_helper")
+            .arg("--nocapture")
+            .env(CHILD_FRAME_REPLAY_ANCHOR_PATH_ENV_V0, &path)
+            .env(CHILD_FRAME_REPLAY_CONFLICT_ENV_V0, "1")
+            .status()
+            .expect("spawn frame replay conflict child");
+        assert!(
+            conflict_status.success(),
+            "frame replay conflict child process failed"
+        );
+
+        let frame_path = replay_anchor_frame_path_v0(&path).expect("frame path");
+        let original = fs::read(&frame_path).expect("read frame journal");
+        let mut tampered = original.clone();
+        tampered[REPLAY_FRAME_BYTES_V0 + 116] ^= 0x01;
+        fs::write(&frame_path, tampered).expect("write frame journal mutant");
+        assert_eq!(
+            PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer).unwrap_err(),
+            PocoNodeP2pReplayAnchorErrorV0::Corrupt
         );
     }
 
