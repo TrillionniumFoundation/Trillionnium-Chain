@@ -477,37 +477,83 @@ impl NativeClientRuntimeV1 {
                     if client.bytes.len() == expected + 4
                         && bounded_json_depth(&client.bytes[4..], 64)
                     {
-                        if let Ok(
-                            request @ (Request::Proof { .. }
-                            | Request::SyncManifest { .. }
-                            | Request::SyncChunk { .. }),
-                        ) = serde_json::from_slice::<Request>(&client.bytes[4..])
-                        {
+                        if let Ok(request) = serde_json::from_slice::<Request>(&client.bytes[4..]) {
                             let (schema, request_id) = request.context();
                             if valid_request_context(schema, request_id) {
-                                if self.proof_jobs.len() < 2 {
-                                    let reader = self.proof_reader_v1();
-                                    let job = std::thread::Builder::new()
-                                        .name("native-read-query".to_owned())
-                                        .spawn(move || {
-                                            reader.read_query_reply_v1(request, finalized_height)
-                                        })?;
-                                    self.proof_jobs.push((client.id, job));
-                                    client.proof_pending = true;
+                                // Committed Transaction lookups and exact
+                                // Submit retries perform proof-file reads,
+                                // bounded package decoding, and strict
+                                // signature verification. Keep the WAL lookup
+                                // on the owner, then offload only the
+                                // committed proof work to the same bounded
+                                // two-worker pool used by Proof/Sync queries.
+                                if let Ok(Some(record)) =
+                                    self.committed_record_for_query_v1(&request)
+                                {
+                                    if self.proof_jobs.len() < 2 {
+                                        let reader = self.proof_reader_v1();
+                                        let request_id = request_id.to_owned();
+                                        let job = std::thread::Builder::new()
+                                            .name("native-read-query".to_owned())
+                                            .spawn(move || match record_response_with_reader_v1(
+                                                &reader, &record,
+                                            ) {
+                                                Ok(data) => reader.reply(&request_id, data),
+                                                Err(_) => reader.error_reply(
+                                                    &request_id,
+                                                    "recovery_required",
+                                                    true,
+                                                ),
+                                            })?;
+                                        self.proof_jobs.push((client.id, job));
+                                        client.proof_pending = true;
+                                        client.bytes.clear();
+                                        self.clients.push(client);
+                                        handled += 1;
+                                        continue;
+                                    }
+                                    client.reply = Some(frame_response(&self.error_reply(
+                                        request_id,
+                                        "backpressure",
+                                        true,
+                                    ))?);
                                     client.bytes.clear();
                                     self.clients.push(client);
                                     handled += 1;
                                     continue;
                                 }
-                                client.reply = Some(frame_response(&self.error_reply(
-                                    request_id,
-                                    "backpressure",
-                                    true,
-                                ))?);
-                                client.bytes.clear();
-                                self.clients.push(client);
-                                handled += 1;
-                                continue;
+                                let query_request = matches!(
+                                    request,
+                                    Request::Proof { .. }
+                                        | Request::SyncManifest { .. }
+                                        | Request::SyncChunk { .. }
+                                );
+                                if query_request {
+                                    if self.proof_jobs.len() < 2 {
+                                        let reader = self.proof_reader_v1();
+                                        let job = std::thread::Builder::new()
+                                            .name("native-read-query".to_owned())
+                                            .spawn(move || {
+                                                reader
+                                                    .read_query_reply_v1(request, finalized_height)
+                                            })?;
+                                        self.proof_jobs.push((client.id, job));
+                                        client.proof_pending = true;
+                                        client.bytes.clear();
+                                        self.clients.push(client);
+                                        handled += 1;
+                                        continue;
+                                    }
+                                    client.reply = Some(frame_response(&self.error_reply(
+                                        request_id,
+                                        "backpressure",
+                                        true,
+                                    ))?);
+                                    client.bytes.clear();
+                                    self.clients.push(client);
+                                    handled += 1;
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -657,30 +703,54 @@ impl NativeClientRuntimeV1 {
             },
         }
     }
-    fn record_response_v1(&self, record: &NativeAdmissionRecordV1) -> Result<Value> {
-        let proof_verified = if record.status() == NativeAdmissionStatusV1::Committed {
-            let stored = self
-                .proof_reader_v1()
-                .read_stored_v1(record.native_tx_hash())?;
-            self.proof_reader_v1()
-                .verify_stored_proof_v1(&stored, record.native_tx_hash())?;
-            true
-        } else {
-            false
-        };
-        Ok(json!({
-            "native_tx_hash": hex::encode(record.native_tx_hash()),
-            "receive_sequence": record.receive_sequence().to_string(),
-            "status": match record.status() {
-                NativeAdmissionStatusV1::Pending => "pending",
-                NativeAdmissionStatusV1::InFlight => "in_flight",
-                NativeAdmissionStatusV1::Committed => "committed",
-                NativeAdmissionStatusV1::Expired => "expired",
-                NativeAdmissionStatusV1::Rejected => "rejected",
+    fn committed_record_for_query_v1(
+        &self,
+        request: &Request,
+    ) -> Result<Option<NativeAdmissionRecordV1>> {
+        let hash = match request {
+            Request::Transaction { data, .. } => match hash32(&data.native_tx_hash) {
+                Ok(hash) => Some(hash),
+                Err(_) => return Ok(None),
             },
-            "proof_verified": proof_verified,
-            "m05_intent_binding": false
-        }))
+            Request::Submit { data, .. } => {
+                let bytes =
+                    match canonical_hex(&data.signed_outer_hex, self.profile.maximum_outer_bytes) {
+                        Ok(bytes) => bytes,
+                        Err(_) => return Ok(None),
+                    };
+                let built = match trnm_application_tx_builder_v0::BuiltCanonicalTxV0::from_exact_outer_bytes_v0(&bytes) {
+                    Ok(built) => built,
+                    Err(_) => return Ok(None),
+                };
+                match built.envelope().tx_hash() {
+                    Ok(hash) => Some(hash),
+                    Err(_) => return Ok(None),
+                }
+            }
+            _ => None,
+        };
+        let Some(hash) = hash else { return Ok(None) };
+        let Some(record) = self.admission.native_record_v1(hash)? else {
+            return Ok(None);
+        };
+        if record.status() == NativeAdmissionStatusV1::Committed {
+            if let Request::Submit { data, .. } = request {
+                let bytes =
+                    match canonical_hex(&data.signed_outer_hex, self.profile.maximum_outer_bytes) {
+                        Ok(bytes) => bytes,
+                        Err(_) => return Ok(None),
+                    };
+                if record.exact_outer_bytes() != bytes.as_slice() {
+                    return Ok(None);
+                }
+            }
+            Ok(Some(record))
+        } else {
+            Ok(None)
+        }
+    }
+    fn record_response_v1(&self, record: &NativeAdmissionRecordV1) -> Result<Value> {
+        record_response_with_reader_v1(&self.proof_reader_v1(), record)
     }
     pub fn maybe_proposal_v1(
         &mut self,
@@ -1039,6 +1109,33 @@ impl NativeClientRuntimeV1 {
         }
     }
 }
+
+fn record_response_with_reader_v1(
+    reader: &NativeProofReaderV1,
+    record: &NativeAdmissionRecordV1,
+) -> Result<Value> {
+    let proof_verified = if record.status() == NativeAdmissionStatusV1::Committed {
+        let stored = reader.read_stored_v1(record.native_tx_hash())?;
+        reader.verify_stored_proof_v1(&stored, record.native_tx_hash())?;
+        true
+    } else {
+        false
+    };
+    Ok(json!({
+        "native_tx_hash": hex::encode(record.native_tx_hash()),
+        "receive_sequence": record.receive_sequence().to_string(),
+        "status": match record.status() {
+            NativeAdmissionStatusV1::Pending => "pending",
+            NativeAdmissionStatusV1::InFlight => "in_flight",
+            NativeAdmissionStatusV1::Committed => "committed",
+            NativeAdmissionStatusV1::Expired => "expired",
+            NativeAdmissionStatusV1::Rejected => "rejected",
+        },
+        "proof_verified": proof_verified,
+        "m05_intent_binding": false
+    }))
+}
+
 #[derive(Clone)]
 struct NativeProofReaderV1 {
     root: PathBuf,

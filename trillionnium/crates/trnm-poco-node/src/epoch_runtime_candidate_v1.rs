@@ -5,23 +5,36 @@ use crate::{
     SqliteEpochNodeCheckpointStoreV1,
 };
 use anyhow::{ensure, Context, Result};
+use sha2::{Digest, Sha256};
 use trnm_consensus_core::{
+    native_valid_result_checksum_v0, BlockIdOverlayRefV0, CoreIssuedApplicationSealAuthorityV0,
     Effect, Input, PayloadValidationRequest, PendingEpochHostDriverV1,
     PreparedEpochCoreActivationV1,
 };
 use trnm_consensus_safety_store::{
-    ConfirmedEpochSafetyHeadV1, EpochSafetyHeadPinV1, SafetyTransitionContextV0,
-    SqliteEpochSafetyJournalV1,
+    ConfirmedEpochSafetyHeadV1, EpochSafetyHeadPinV1, NativeValidTransitionV0,
+    SafetyTransitionContextV0, SqliteEpochSafetyJournalV1,
 };
 use trnm_consensus_signer_journal::{
     ConfirmedOrdinarySignerRetirementV1, ExternalMonotonicWatermarkV0, ExternalSignerRetirementV1,
     RetiredSqliteSignerJournalV1, SqliteSignerJournalV0,
 };
-use trnm_consensus_types::{BlockKind, CanonicalSignable, SignedProposalV0};
+use trnm_consensus_types::{
+    decode_application_payload_v0_exact, decode_double_vote_evidence_v0_exact, BlockBodyV0,
+    BlockId, BlockKind, CanonicalSignable, SignedProposalV0,
+};
 use trnm_native_execution_v0::{
     AuthenticatedEpochApplicationEdgeV1, DurableExecutionHistoryStatusV0,
-    DurableNativeApplicationV0,
+    DurableNativeApplicationV0, PreparedNativeEpochExecutionV1,
 };
+
+struct PendingEpochCommitV1 {
+    prepared: PreparedNativeEpochExecutionV1,
+    overlay_digest: [u8; 32],
+    epoch: u64,
+    view: u64,
+    timestamp_ms: u64,
+}
 
 /// Candidate activation owns the live continuing author, including virgin new
 /// custody. No unchecked Core/input forwarding, raw signer handle or signing
@@ -48,12 +61,31 @@ pub struct CandidateEpochRuntimeV1<W: ExternalSignerRetirementV1, N: ExternalMon
     checkpoint: EpochNodeCheckpointV1,
     origin: ExternalNodeCheckpointV0,
     startup: Vec<Effect>,
-    /// Core's one live validation request after proposal admission.  This is
-    /// deliberately retained until a future application host consumes the
-    /// request with a Core-affined seal; a request digest alone cannot unlock
-    /// a vote.
+    /// One process-local Core-issued authority retained by the private native
+    /// application host for every validation generation.
+    seal_authority: CoreIssuedApplicationSealAuthorityV0,
+    /// The one native P that passed Core D and Safety C.  It is retained until
+    /// the strict first-new finality proof commits K; dropping it would make a
+    /// later finality callback unable to bind itself to the validated block.
+    pending_epoch_commit: Option<PendingEpochCommitV1>,
+    /// Core's one live validation request after proposal admission. It is
+    /// consumed only by `execute_admitted_epoch_proposal_v1`, which joins the
+    /// request to a fresh native P readback and the retained Core seal
+    /// authority; a request digest alone cannot unlock a vote.
     pending_validation: Option<PayloadValidationRequest>,
     fenced: bool,
+}
+
+fn epoch_transition_digest(domain: &str, parts: &[&[u8]]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(b"trnm.poco-node.epoch-native-valid.v1");
+    hasher.update((domain.len() as u64).to_be_bytes());
+    hasher.update(domain.as_bytes());
+    for part in parts {
+        hasher.update((part.len() as u64).to_be_bytes());
+        hasher.update(part);
+    }
+    hasher.finalize().into()
 }
 impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEpochRuntimeV1<W, N> {
     /// Consume every actual owner. The exact journal9/native/original retirement/
@@ -109,6 +141,9 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         );
         checkpoint_store.confirm_exact(&target)?;
         let startup = ack_initial(&mut driver)?;
+        let seal_authority = driver
+            .issue_application_seal_authority_v1()
+            .map_err(|e| anyhow::anyhow!("epoch seal authority: {e:?}"))?;
         Ok(Self {
             driver,
             journal,
@@ -122,6 +157,8 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             checkpoint: target,
             origin,
             startup,
+            seal_authority,
+            pending_epoch_commit: None,
             pending_validation: None,
             fenced: false,
         })
@@ -186,6 +223,9 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             "recovered owners changed before ACK"
         );
         let startup = ack_initial(&mut driver)?;
+        let seal_authority = driver
+            .issue_application_seal_authority_v1()
+            .map_err(|e| anyhow::anyhow!("epoch seal authority recovery: {e:?}"))?;
         Ok(Self {
             driver,
             journal,
@@ -199,6 +239,8 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             checkpoint: expected,
             origin,
             startup,
+            seal_authority,
+            pending_epoch_commit: None,
             pending_validation: None,
             fenced: false,
         })
@@ -360,11 +402,30 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         safety: EpochSafetyCutV1,
         ordinary: EpochOrdinaryCustodyCutV1,
     ) -> Result<()> {
+        let application = self.checkpoint.fields().application;
+        self.advance_exact_cut_with_application_v1(safety, ordinary, application)
+    }
+    fn advance_exact_cut_with_application_v1(
+        &mut self,
+        safety: EpochSafetyCutV1,
+        ordinary: EpochOrdinaryCustodyCutV1,
+        application: EpochApplicationCutV1,
+    ) -> Result<()> {
         self.checkpoint_store.confirm_exact(&self.checkpoint)?;
-        ensure!(
-            self.fresh_current_cuts_v1()? == (safety, ordinary),
-            "physical cut differs before CAS"
-        );
+        if application == self.checkpoint.fields().application {
+            ensure!(
+                self.fresh_current_cuts_v1()? == (safety, ordinary),
+                "physical cut differs before CAS"
+            );
+        } else {
+            // The native commit is already durable, while the independent
+            // node checkpoint still names its predecessor.  Validate every
+            // non-application owner before publishing the successor CAS.
+            ensure!(
+                self.fresh_custody_cuts_v1()? == (safety, ordinary),
+                "physical custody differs before application CAS"
+            );
+        }
         let mut f = *self.checkpoint.fields();
         f.phase = EpochCheckpointPhaseV1::Ordinary;
         f.predecessor_kind = EpochCheckpointPredecessorV1::V1;
@@ -375,6 +436,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         f.predecessor_checksum = self.checkpoint.checksum();
         f.target_safety = safety;
         f.ordinary = Some(ordinary);
+        f.application = application;
         let next = EpochNodeCheckpointV1::new(f)?;
         self.checkpoint_store
             .compare_and_advance(&self.checkpoint, &next)?;
@@ -399,12 +461,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         Ok(())
     }
     fn fresh_current_cuts_v1(&mut self) -> Result<(EpochSafetyCutV1, EpochOrdinaryCustodyCutV1)> {
-        let safety = self.journal.fresh_read_v1(self.pin)?;
-        ensure!(
-            safety.state_v1() == self.driver.state()
-                && safety.belongs_to_store_at_path_v1(&self.journal, self.journal.path_v1()),
-            "current Safety owner mismatch"
-        );
+        let (safety, ordinary) = self.fresh_custody_cuts_v1()?;
         let native = self
             .application
             .confirm_epoch_application_edge_v1(&self.edge)?;
@@ -427,6 +484,21 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                 && native
                     .belongs_to_application_at_path(&self.application, self.application.path()),
             "native activation checkpoint changed"
+        );
+        Ok((safety, ordinary))
+    }
+
+    /// Read the Safety, retired custody and ordinary signer cuts without
+    /// consulting the application head.  K uses this between the durable
+    /// native commit and the independent checkpoint CAS: at that instant the
+    /// application has intentionally advanced while the checkpoint still
+    /// names the old committed head.
+    fn fresh_custody_cuts_v1(&mut self) -> Result<(EpochSafetyCutV1, EpochOrdinaryCustodyCutV1)> {
+        let safety = self.journal.fresh_read_v1(self.pin)?;
+        ensure!(
+            safety.state_v1() == self.driver.state()
+                && safety.belongs_to_store_at_path_v1(&self.journal, self.journal.path_v1()),
+            "current Safety owner mismatch"
         );
         ensure!(
             self.retirement.belongs_to_owner_v1(&mut self.retired)
@@ -455,11 +527,6 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                 && self.ordinary.profile().author() == self.driver.config().local_validator()
                 && signer.pending_intent().is_none(),
             "ordinary custody changed or has unresolved decision"
-        );
-        ensure!(
-            safety.belongs_to_store_at_path_v1(&self.journal, self.journal.path_v1())
-                && self.retirement.belongs_to_owner_v1(&mut self.retired),
-            "owners changed during live readback"
         );
         Ok((
             safety_cut(&safety),
@@ -521,14 +588,11 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
     /// Admit one authenticated proposal at the first new-epoch runtime
     /// boundary and durably persist Core's validation obligation.
     ///
-    /// This is intentionally bounded at `P0 -> validation request`: the
-    /// candidate owns no proposal-validation SQLite store, application seal,
-    /// or finality permit.  It therefore cannot execute, sign, broadcast, or
-    /// finalize from this method.  The returned runtime retains the opaque
-    /// Core-issued request so a future native P/D/C/K host can join the exact
-    /// request; callers must not synthesize a `PayloadValidated` result from
-    /// header digests.  A crash at this point leaves the Safety obligation
-    /// durable and recovery remains fail-closed until that request is joined.
+    /// This method stops at the durable Core validation obligation. The
+    /// follow-up execution method owns native P/D/C; callers must not
+    /// synthesize a `PayloadValidated` result from header digests. A crash at
+    /// this point leaves the Safety obligation durable and recovery remains
+    /// fail-closed until the dedicated progressed-obligation protocol joins it.
     ///
     /// The operation consumes the runtime on error.  This prevents a caller
     /// from reusing a partially advanced Core/Safety owner after a failed
@@ -604,6 +668,324 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         }
         self.pending_validation =
             Some(validation.context("epoch proposal admission yielded no validation request")?);
+        self.confirm_current_cut_v1()?;
+        Ok(self)
+    }
+
+    /// Execute the exact admitted first-new proposal through the real native
+    /// epoch owner and Core's typed D carrier. The native owner durably writes
+    /// P and reads it back before the seal is minted; the Core carrier then
+    /// supplies the exact NativeValid persistence request. Journal9 C is
+    /// persisted with transition facts derived from the live request, P, D,
+    /// and Core post-ack manifest, followed by the exact Core StorageAck. No
+    /// signer is called here; the returned effects may contain the pending
+    /// Core vote intent and must be handled by the separate persist-before-sign
+    /// path.
+    pub fn execute_admitted_epoch_proposal_v1(mut self) -> Result<(Self, Vec<Effect>)> {
+        self.confirm_current_cut_v1()?;
+        ensure!(
+            self.pending_epoch_commit.is_none(),
+            "an admitted epoch P is already awaiting finality"
+        );
+        // The durable native epoch owner is deliberately entered through its
+        // explicit schema-4 bridge.  This is a real migration from the
+        // ordinary committed checkpoint, not an implicit open-time upgrade;
+        // retrying after a crash is idempotent and still revalidates the
+        // authenticated application parent.
+        self.application
+            .upgrade_epoch_schema_v1(self.edge.application_parent())?;
+        self.confirm_current_cut_v1()?;
+        let request = self
+            .pending_validation
+            .take()
+            .context("epoch proposal validation is not pending")?;
+        let claimed = request.try_claim().map_err(|_| {
+            anyhow::anyhow!("epoch proposal validation request was already claimed")
+        })?;
+        let (route, validation_id, block, parent, permit) = claimed.into_parts();
+        ensure!(
+            route == trnm_consensus_core::PayloadValidationRouteV0::Proposal,
+            "epoch execution requires the Proposal validation route"
+        );
+        ensure!(
+            block.header().block_kind() == BlockKind::EpochHandoff
+                && block.header().height().get() == self.edge.first_application_height(),
+            "epoch execution received a non-first-new block"
+        );
+        ensure!(
+            parent.consensus_parent_tip_v1().block_id().as_bytes()
+                == self.edge.consensus_parent().id().as_bytes(),
+            "epoch execution parent witness differs from authenticated edge"
+        );
+        let application_parent = self.edge.application_parent();
+        ensure!(
+            parent.tip().block_id().as_bytes() == application_parent.block_id().as_bytes()
+                && parent.tip().height().get() == application_parent.height().get(),
+            "epoch execution application parent witness differs from authenticated edge"
+        );
+
+        let payload = decode_application_payload_v0_exact(
+            block.application_payload(),
+            self.driver.config().consensus_parameters(),
+        )
+        .map_err(|e| anyhow::anyhow!("epoch payload decode: {e:?}"))?;
+        let native_request = self.edge.preview_request_v1(
+            block.header().timestamp_ms(),
+            payload.transactions().to_vec(),
+        )?;
+        let preview = self
+            .application
+            .preview_epoch_block_v1(&self.edge, &native_request)?;
+        ensure!(
+            *block.header().payload_root().as_bytes() == *preview.payload_root().as_bytes()
+                && *block.header().state_root().as_bytes() == *preview.post_state_root().as_bytes()
+                && *block.header().receipts_root().as_bytes()
+                    == *preview.receipts_root().as_bytes()
+                && *block.header().evidence_root().as_bytes()
+                    == *preview.evidence_root().as_bytes(),
+            "epoch proposal roots differ from deterministic native preview"
+        );
+        let expected = trnm_native_application::NativeExpectedBlockCommitmentsV0::new(
+            trnm_native_application::Hash32V0::new(*preview.payload_root().as_bytes()),
+            trnm_native_application::StateRootV0::new(*preview.post_state_root().as_bytes())?,
+            trnm_native_application::ReceiptsRootV0::new(*preview.receipts_root().as_bytes())?,
+            trnm_native_application::Hash32V0::new(*preview.evidence_root().as_bytes()),
+        )?;
+        let execution_request = trnm_native_application::NativeEpochBlockExecutionRequestV1::new(
+            native_request,
+            trnm_native_application::BlockIdV0::new(*block.id().as_bytes())?,
+            expected,
+        )?;
+        let prepared = self.application.execute_epoch_block_v1(
+            &self.edge,
+            execution_request,
+            block.header(),
+        )?;
+        let confirmed = self
+            .application
+            .confirm_prepared_epoch_execution_v1(&prepared)?;
+        ensure!(
+            confirmed.prepared().header()? == *block.header(),
+            "epoch P readback header substitution"
+        );
+        let (stored_payload, receipts) = confirmed.application_payload_and_receipts()?;
+        ensure!(
+            stored_payload == payload,
+            "epoch P readback payload substitution"
+        );
+        let evidence = block
+            .evidence_objects()
+            .iter()
+            .map(|encoded| {
+                decode_double_vote_evidence_v0_exact(encoded, self.edge.new_validator_set())
+                    .map_err(|e| anyhow::anyhow!("epoch evidence decode: {e:?}"))
+            })
+            .collect::<Result<Vec<_>>>()?;
+        let body = BlockBodyV0::new(payload, evidence)
+            .map_err(|e| anyhow::anyhow!("epoch body construction: {e:?}"))?;
+        let commitments = body
+            .validate_epoch_handoff_commitments_v1(
+                block.header(),
+                &receipts,
+                self.edge.new_parameters(),
+                block.header().state_root().clone(),
+                self.edge.new_validator_set(),
+                &trnm_consensus_crypto::StrictEd25519Verifier,
+            )
+            .map_err(|e| anyhow::anyhow!("epoch commitment validation: {e:?}"))?;
+        let artifact = trnm_consensus_core::ValidatedPayloadArtifactRefV0::new(
+            BlockIdOverlayRefV0::for_epoch_application_v1(
+                block.id(),
+                BlockId::new(*self.edge.application_parent().block_id().as_bytes()),
+                self.edge.consensus_parent().id(),
+                self.driver
+                    .state()
+                    .epoch_state_v1()
+                    .context("epoch Core state lacks activation binding")?
+                    .activation_binding(),
+                confirmed.overlay_checksum(),
+            )
+            .map_err(|e| anyhow::anyhow!("epoch artifact binding: {e:?}"))?,
+            confirmed.artifact_checksum(),
+        );
+        let proof = self.seal_authority.seal_after_application_store_commit_v0(
+            permit,
+            commitments,
+            artifact,
+        );
+        let accepted = self
+            .driver
+            .step_application_sealed_valid_to_delivery_v1(&proof)
+            .map_err(|e| anyhow::anyhow!("epoch Core D: {e:?}"))?;
+        let persistence = accepted.persistence_request_v0();
+        let action = persistence
+            .native_valid_post_ack_action_v0()
+            .context("epoch Core D omitted NativeValid post-ack manifest")?;
+        let p = confirmed.prepared();
+        let request_fingerprint = epoch_transition_digest(
+            "request",
+            &[
+                block.id().as_bytes(),
+                &validation_id.view().get().to_be_bytes(),
+                &validation_id.generation().to_be_bytes(),
+                &self.edge.authorization_id(),
+            ],
+        );
+        let job_checksum =
+            epoch_transition_digest("job", &[&p.p_digest(), &p.persist_sequence().to_be_bytes()]);
+        let host_config = epoch_transition_digest(
+            "host",
+            &[
+                &self.edge.authorization_id(),
+                &self.edge.durable_checkpoint().store_id_v0(),
+            ],
+        );
+        let callback_checksum = epoch_transition_digest(
+            "callback",
+            &[
+                &confirmed.artifact_checksum(),
+                &confirmed.overlay_checksum(),
+            ],
+        );
+        let idempotency_key = epoch_transition_digest(
+            "idempotency",
+            &[block.id().as_bytes(), &accepted.delivery_digest_v0()],
+        );
+        let delivered_job = epoch_transition_digest(
+            "delivered-job",
+            &[&p.p_digest(), &accepted.valid_result_checksum_v0()],
+        );
+        let outbox_checksum =
+            epoch_transition_digest("outbox", &[&accepted.delivery_digest_v0(), &p.p_digest()]);
+        ensure!(
+            native_valid_result_checksum_v0(
+                persistence
+                    .state()
+                    .payload_validation_completions()
+                    .iter()
+                    .find(|completion| {
+                        completion.route() == route && completion.id() == validation_id
+                    })
+                    .context("epoch Core D completion missing")?
+                    .result(),
+            ) == Some(accepted.valid_result_checksum_v0()),
+            "epoch D result checksum changed before Safety C"
+        );
+        let transition = SafetyTransitionContextV0::native_valid(NativeValidTransitionV0::new(
+            route,
+            validation_id,
+            request_fingerprint,
+            job_checksum,
+            host_config,
+            accepted.valid_result_checksum_v0(),
+            callback_checksum,
+            idempotency_key,
+            1,
+            delivered_job,
+            outbox_checksum,
+            action.code(),
+            accepted.completion_revision_v0(),
+        )?);
+        let head = self
+            .journal
+            .persist_exact_v1(self.pin, persistence, &transition)?;
+        self.pin = head.pin_v1();
+        let ordinary = self
+            .checkpoint
+            .fields()
+            .ordinary
+            .context("missing live ordinary cut")?;
+        self.advance_exact_cut_v1(safety_cut(&head), ordinary)?;
+        self.journal
+            .confirm_exact_request_v1(self.pin, persistence, &transition)?;
+        let effects = self
+            .driver
+            .step_v1(Input::StorageAck {
+                barrier: accepted.barrier_v0(),
+            })
+            .map_err(|e| anyhow::anyhow!("epoch Core D/K ACK: {e:?}"))?;
+        let header = block.header();
+        self.pending_epoch_commit = Some(PendingEpochCommitV1 {
+            prepared,
+            overlay_digest: confirmed.overlay_checksum(),
+            epoch: header.epoch().get(),
+            view: header.view().get(),
+            timestamp_ms: header.timestamp_ms(),
+        });
+        self.confirm_current_cut_v1()?;
+        Ok((self, effects))
+    }
+
+    /// Verify and commit strict first-new finality for the exact native P
+    /// retained by `execute_admitted_epoch_proposal_v1`.  The finality proof
+    /// is bounded by the caller-owned Cev0 budget; malformed, substituted or
+    /// replayed proofs fail closed before the native K CAS.  The independent
+    /// node checkpoint is advanced only after native K's fresh readback.
+    pub fn commit_admitted_epoch_finality_v1(
+        mut self,
+        proof_bytes: &[u8],
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+    ) -> Result<Self> {
+        self.confirm_current_cut_v1()?;
+        let pending = self
+            .pending_epoch_commit
+            .take()
+            .context("no admitted epoch P is awaiting finality")?;
+        let committed = match self.application.commit_epoch_finality_bytes_v1(
+            &pending.prepared,
+            proof_bytes,
+            budget,
+        ) {
+            Ok(committed) => committed,
+            Err(error) => {
+                // The native owner remains authoritative on a failed proof;
+                // discard the one-shot continuation so a caller cannot retry
+                // with a different proof against the same P in this process.
+                self.fenced = true;
+                return Err(error.context("epoch strict finality/K"));
+            }
+        };
+        ensure!(
+            committed.belongs_to_application(&self.application),
+            "epoch K committed readback lost native owner affinity"
+        );
+        let head = committed.head();
+        ensure!(
+            head.block_id().as_bytes() == pending.prepared.header()?.id().as_bytes(),
+            "epoch K committed head does not match retained P"
+        );
+        let old = self.checkpoint.fields().application;
+        let application = EpochApplicationCutV1 {
+            block_id: *head.block_id().as_bytes(),
+            height: head.height().get(),
+            epoch: pending.epoch,
+            view: pending.view,
+            timestamp_ms: pending.timestamp_ms,
+            state_root: *head.state_root().as_bytes(),
+            native_store_id: old.native_store_id,
+            native_commit_id: *head.commit_id().as_bytes(),
+            p_sequence: pending.prepared.persist_sequence(),
+            p_digest: committed.p_digest(),
+            artifact_digest: pending.prepared.artifact_digest(),
+            overlay_digest: pending.overlay_digest,
+            commit_sequence: committed.commit_sequence(),
+        };
+        let safety = self.checkpoint.fields().target_safety;
+        let ordinary = self
+            .checkpoint
+            .fields()
+            .ordinary
+            .context("missing live ordinary cut")?;
+        if let Err(error) =
+            self.advance_exact_cut_with_application_v1(safety, ordinary, application)
+        {
+            // Native K is already durable.  A failed independent checkpoint
+            // CAS must therefore stop this owner rather than permit a second
+            // proposal/finality attempt against a mismatched cut.
+            self.fenced = true;
+            return Err(error.context("epoch K independent checkpoint CAS"));
+        }
+        self.pending_epoch_commit = None;
         self.confirm_current_cut_v1()?;
         Ok(self)
     }

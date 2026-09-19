@@ -144,6 +144,21 @@ impl PendingEpochHostDriverV1 {
         self.core
             .step_application_sealed_valid_v0(proof, &trnm_consensus_crypto::StrictEd25519Verifier)
     }
+
+    /// Accept one epoch Valid callback and retain Core's typed D carrier. The
+    /// carrier owns the exact Safety persistence request, completion revision,
+    /// result checksum, and delivery digest; callers must persist that
+    /// request before acknowledging it.
+    pub fn step_application_sealed_valid_to_delivery_v1(
+        &mut self,
+        proof: &ApplicationSealedValidV0,
+    ) -> Result<CoreAcceptedApplicationValidDV0> {
+        self.require_activated_v1()?;
+        self.core.step_application_sealed_valid_to_delivery_v0(
+            proof,
+            &trnm_consensus_crypto::StrictEd25519Verifier,
+        )
+    }
     pub fn step_application_finalization_receipt_v1(
         &mut self,
         receipt: ApplicationFinalizationReceiptV0,

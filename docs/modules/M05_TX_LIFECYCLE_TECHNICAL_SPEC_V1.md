@@ -635,6 +635,16 @@ complete strict activation-evidence route. Native transaction hash remains
 distinct from M05 intent ID. Combined package plus parent bytes stay within the
 consumer's bounded proof budget.
 
+The native client owner keeps proof-bearing committed `Transaction` reads and
+exact `Submit` retries off the consensus poll loop. It performs the WAL lookup
+and exact-byte identity check on the owner, then dispatches only a committed
+record to the bounded two-worker query pool. The worker rereads and strictly
+verifies the durable proof before returning `proof_verified=true`; missing,
+oversized, malformed or tampered proof bytes return `recovery_required`. A full
+pool returns retryable `backpressure`, and pending/in-flight/noncommitted rows
+remain on the small inline path because they require no proof read. This
+preserves the strict proof contract while bounding owner-loop work.
+
 The actual consensus owner archives transaction proofs at each completed native
 finalization boundary. If one ingress batch or Core transition advances several
 heights, it traverses the exact signed ancestor path from the current finalized

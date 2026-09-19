@@ -749,19 +749,23 @@ any new signature. These are local candidate results; proposal/finality driving,
 progressed recovery, commissioning and repeated crossings still require their
 own actual-owner implementation and fault evidence.
 
-The same candidate now exposes one narrower first-proposal boundary through
+The same candidate exposes the exact first-proposal boundary through
 `CandidateEpochRuntimeV1::admit_epoch_proposal_v1`. It accepts only the exact
 new-epoch `EpochHandoff` at `edge.first_application_height()`, persists Core's
 Safety request, advances and rereads the independent lineage checkpoint, then
 ACKs the request and retains the single Core-issued `PayloadValidationRequest`.
-The real fixture
-`actual_epoch_runtime_admits_first_proposal_to_durable_validation_without_signing`
-proves the Safety obligation is present, `pending_sign` is empty, the new
-ordinary signer watermark remains at sequence zero, and the key callback count
-does not change. A failed persistence/checkpoint step consumes the runtime.
-This seam deliberately stops before application D, Core C, checkpoint K,
-voting, finality, broadcast or a progressed-obligation recovery constructor;
-it is evidence for P0 durability, not a complete cross-epoch runtime.
+`execute_admitted_epoch_proposal_v1` continues that retained request through the
+explicit native schema-4 bridge, deterministic application preview, durable P,
+fresh P readback, strict epoch body commitments, Core's issued application seal,
+typed D, and the exact Safety NativeValid C journal request. The regression
+`actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing`
+runs this with a real native-root proposal and proves the key callback count
+does not change; the test uses a bounded 32 MiB worker stack because the native
+authenticated snapshot computation is intentionally large. A failed
+persistence/checkpoint step consumes the runtime. The strict native K
+continuation is implemented below, but its positive finality vector, vote and
+finality collection, crash recovery after a progressed obligation, and repeated
+crossing remain separate gates.
 
 ### Runtime handoff and acceptance closure (M15-RUNTIME-CLOSURE-V1)
 
@@ -783,6 +787,14 @@ They prove no-sign execution and signed-owner preservation with real SQLite,
 native execution and Ed25519 proposal evidence. They do not prove a production
 listener, arbitrary fork catch-up, cross-epoch import, or physical-host
 performance.
+
+After D/C, `commit_admitted_epoch_finality_v1` accepts only the caller-owned
+bounded CEV0 first-new finality bytes, calls the native strict K verifier and
+commit CAS, freshly reads the committed head, and then advances the independent
+node checkpoint's application cut. A malformed, substituted or replayed proof
+consumes and fences the runtime before any alternative proof can be tried. The
+current candidate still lacks a positive end-to-end finality-vector regression,
+progressed-obligation recovery constructor, and repeated-crossing campaign.
 
 The F1 acceptance harness must therefore run only after this route is present
 in the built binary: at least four independent hosts, declared CPU/RAM/disk,

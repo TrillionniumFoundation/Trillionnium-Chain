@@ -30,8 +30,10 @@ use trnm_consensus_signer_journal::{
     SignerRetirementRecordV1, SignerWatermarkV0, SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{
-    decode_epoch_anchor_authorization_kernel_v0_exact, decode_finality_proof_v0_exact, BlockId,
-    CanonicalHandoffSignIntentV1, SignatureBytes, SignedProposalV0, StateRoot,
+    decode_epoch_anchor_authorization_kernel_v0_exact, decode_finality_proof_v0_exact, Block,
+    BlockHeader, BlockId, BlockKind, CanonicalHandoffSignIntentV1, EvidenceRoot, PayloadDigest,
+    ProposalWitnessV0, QcReferenceV0, ReceiptsRoot, SignatureBytes, SignedProposalV0, StateRoot,
+    View,
 };
 use trnm_native_execution_v0::{
     test_fixtures::native_checkpoint_fixture_config_v1, AuthenticatedEpochApplicationEdgeV1,
@@ -564,6 +566,81 @@ fn activate_actual_case_v1(case: Box<EpochRuntimeCaseV1>) -> Box<LiveCaseV1> {
     Box::new((dir, runtime, key, recovery))
 }
 
+fn native_first_proposal_v1(
+    application: &DurableNativeApplicationV0,
+    edge: &AuthenticatedEpochApplicationEdgeV1,
+    justify: &QcReferenceV0,
+    authorization: &trnm_consensus_types::EpochAnchorAuthorizationV0,
+) -> SignedProposalV0 {
+    let timestamp = edge
+        .consensus_parent()
+        .timestamp_ms()
+        .checked_add(1)
+        .unwrap();
+    let request = edge.preview_request_v1(timestamp, Vec::new()).unwrap();
+    let preview = application.preview_epoch_block_v1(edge, &request).unwrap();
+    let set = edge.new_validator_set();
+    let params = edge.new_parameters();
+    let proposer = trnm_consensus_core::leader_for(set, View::new(1));
+    let header = BlockHeader::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        View::new(1),
+        trnm_consensus_types::Height::new(edge.first_application_height()),
+        BlockKind::EpochHandoff,
+        edge.consensus_parent().id(),
+        proposer,
+        set.id(),
+        params.hash(),
+        PayloadDigest::new(*preview.payload_root().as_bytes()),
+        StateRoot::new(*preview.post_state_root().as_bytes()),
+        ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+        EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+        timestamp,
+        None,
+    )
+    .unwrap();
+    let root =
+        ProposalWitnessV0::signing_root_for(&header, justify, None, Some(authorization)).unwrap();
+    let index = set
+        .validators()
+        .iter()
+        .position(|validator| validator.id() == proposer)
+        .unwrap();
+    let signature = SigningKey::from_bytes(&[20 + index as u8; 32]).sign(root.as_bytes());
+    let witness = ProposalWitnessV0::new(
+        &header,
+        justify.clone(),
+        None,
+        Some(authorization.clone()),
+        SignatureBytes::from_array(signature.to_bytes()),
+        set,
+        Some(edge.old_validator_set()),
+        params,
+        edge.consensus_parent().timestamp_ms(),
+    )
+    .unwrap();
+    SignedProposalV0::new(
+        Block::new(
+            header,
+            trnm_consensus_types::ApplicationPayloadV0::new(Vec::new())
+                .unwrap()
+                .try_cev0_bytes()
+                .unwrap(),
+            Vec::new(),
+        )
+        .unwrap(),
+        witness,
+        set,
+        Some(edge.old_validator_set()),
+        params,
+        edge.consensus_parent().timestamp_ms(),
+    )
+    .unwrap()
+}
+
 #[test]
 fn actual_epoch_runtime_activation_releases_timer_then_persisted_timeout_once() {
     assert_activation_then_timeout_v1(activate_actual_case_v1(build_epoch_runtime_case_v1()));
@@ -654,6 +731,56 @@ fn actual_epoch_runtime_admits_first_proposal_to_durable_validation_without_sign
     runtime.confirm_current_cut_v1().unwrap();
     assert!(dir.path().is_dir());
     drop(recovery);
+}
+
+#[test]
+fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() {
+    std::thread::Builder::new()
+        .name("epoch-native-pdc-test".into())
+        .stack_size(32 * 1024 * 1024)
+        .spawn(|| {
+            let live = activate_actual_case_v1(build_epoch_runtime_case_v1());
+            let (dir, runtime, key, recovery) = *live;
+            let proposal = native_first_proposal_v1(
+                &runtime.application,
+                &runtime.edge,
+                recovery.proposal.witness().justify_qc(),
+                recovery
+                    .proposal
+                    .witness()
+                    .epoch_anchor_authorization()
+                    .expect("epoch proposal anchor authorization"),
+            );
+            let block_id = *proposal.block().id().as_bytes();
+            let runtime = runtime
+                .admit_epoch_proposal_v1(proposal.clone())
+                .expect("native proposal admission");
+            let (runtime, effects) = runtime
+                .execute_admitted_epoch_proposal_v1()
+                .expect("native P/D/C execution");
+            assert!(effects.iter().any(|effect| matches!(
+                effect,
+                trnm_consensus_core::Effect::RequestSignature { .. }
+            )));
+            assert_eq!(key.calls, 10, "P/D/C must not call the signer");
+            assert_eq!(runtime.driver.state().pending_sign().is_some(), true);
+            let p = runtime
+                .application
+                .reopen_prepared_epoch_execution_v1(block_id)
+                .expect("durable native P readback");
+            assert_eq!(p.header().unwrap(), *proposal.block().header());
+            let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
+            assert!(
+                runtime
+                    .commit_admitted_epoch_finality_v1(&[], &mut budget)
+                    .is_err(),
+                "malformed first-new finality must fail closed"
+            );
+            assert!(dir.path().is_dir());
+        })
+        .expect("spawn epoch native P/D/C test")
+        .join()
+        .expect("epoch native P/D/C test panicked");
 }
 
 #[test]
