@@ -11,6 +11,9 @@ use trnm_consensus_types::{
 const CORPUS: &str = include_str!(
     "../../../../docs/protocol/poco-bft-v0/vectors/poco-authenticated-checkpoint-handoff-v0.json"
 );
+const FIRST_PROPOSAL_VECTOR: &str = include_str!(
+    "../../../../docs/protocol/poco-bft-v0/vectors/epoch-first-proposal-signing-v0.json"
+);
 
 fn unhex(value: &str) -> Vec<u8> {
     assert_eq!(value.len() % 2, 0);
@@ -373,6 +376,19 @@ fn strict_first_epoch_header_binds_recovered_authority_and_preserves_it_on_rejec
     )
     .unwrap();
     let signature = SignatureBytes::from_array(key.sign(root.as_bytes()).to_bytes());
+    // The expected bytes are committed outside this Rust fixture. The
+    // deterministic signing key is test-only; production signer custody is
+    // deliberately not inferred from this vector.
+    let vector: Value = serde_json::from_str(FIRST_PROPOSAL_VECTOR).unwrap();
+    assert_eq!(vector["status"], "candidate-fixture");
+    assert_eq!(vector["independent_implementation_required"], true);
+    assert_eq!(vector["operation"], "epoch_first_proposal_signing_root_v0");
+    let expected_root = unhex(vector["expected_signing_root_hex"].as_str().unwrap());
+    let expected_signature = unhex(vector["expected_signature_hex"].as_str().unwrap());
+    assert_eq!(expected_root.len(), 32);
+    assert_eq!(expected_signature.len(), 64);
+    assert_eq!(root.as_bytes(), expected_root.as_slice());
+    assert_eq!(signature.as_bytes(), expected_signature.as_slice());
     let verified = verify_first_epoch_proposal_header_strict_v0(
         &activation,
         header.clone(),
