@@ -1055,31 +1055,20 @@ impl SqliteIncrementalStateStoreV0 {
 
     pub fn read_rows_v0(&self) -> Result<Vec<TargetRowV0>, DurableDeltaStoreErrorV0> {
         let connection = self.open_connection()?;
-        let mut statement = connection
-            .prepare(
-                "SELECT namespace,key,value FROM migration_delta_rows_v0 ORDER BY namespace,key",
-            )
-            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
-        let mut rows = Vec::new();
-        let mapped = statement
-            .query_map([], |row| {
-                Ok(TargetRowV0 {
-                    namespace: row.get(0)?,
-                    key: row.get(1)?,
-                    value: row.get(2)?,
-                })
-            })
-            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
-        for row in mapped {
-            rows.push(row.map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?);
-        }
-        validate_target_rows_v0(&rows).map_err(DurableDeltaStoreErrorV0::Protocol)?;
-        Ok(rows)
+        read_rows_from_connection_v0(&connection)
     }
 
-    pub fn readback_v0(&self) -> Result<DurableDeltaReadbackV0, DurableDeltaStoreErrorV0> {
-        let connection = self.open_connection()?;
-        let metadata = connection
+    /// Read metadata and rows from one pinned SQLite snapshot.  Keeping these
+    /// reads in one transaction prevents a committed delta from being joined
+    /// with the predecessor metadata (or vice versa) during recovery/export.
+    fn read_snapshot_v0(
+        &self,
+    ) -> Result<(DurableDeltaReadbackV0, Vec<TargetRowV0>), DurableDeltaStoreErrorV0> {
+        let mut connection = self.open_connection()?;
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Deferred)
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        let metadata = transaction
             .query_row(
                 "SELECT plan_digest,schema_digest,rows_digest,state_root,row_count,generation,last_delta_digest FROM migration_delta_meta_v0 WHERE singleton=1",
                 [],
@@ -1112,7 +1101,9 @@ impl SqliteIncrementalStateStoreV0 {
                 MigrationErrorV0::DurableStoreMismatch,
             ));
         }
-        let rows = self.read_rows_v0()?;
+        #[cfg(test)]
+        test_pause_after_snapshot_metadata_v0();
+        let rows = read_rows_from_connection_v0(&transaction)?;
         let rows_digest = target_rows_digest_v0(&rows);
         let readback = DurableDeltaReadbackV0 {
             plan_digest: plan,
@@ -1128,7 +1119,34 @@ impl SqliteIncrementalStateStoreV0 {
                 MigrationErrorV0::DurableReadbackMismatch,
             ));
         }
-        Ok(readback)
+        transaction
+            .commit()
+            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        Ok((readback, rows))
+    }
+
+    pub fn readback_v0(&self) -> Result<DurableDeltaReadbackV0, DurableDeltaStoreErrorV0> {
+        self.read_snapshot_v0().map(|(readback, _)| readback)
+    }
+
+    fn read_snapshot_with_root_builder_v0<R>(
+        &self,
+        root_builder: &R,
+    ) -> Result<(DurableDeltaReadbackV0, Vec<TargetRowV0>), DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        let (readback, rows) = self.read_snapshot_v0()?;
+        let recomputed = root_builder
+            .recompute_target_root(self.target_schema_digest, rows.iter())
+            .map_err(|error| DurableDeltaStoreErrorV0::RootBuilder(error.to_string()))?;
+        if recomputed != readback.state_root {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        Ok((readback, rows))
     }
 
     /// Read back metadata and independently recompute the root from the
@@ -1142,16 +1160,7 @@ impl SqliteIncrementalStateStoreV0 {
         R: TargetRootBuilderV0,
         R::Error: fmt::Display,
     {
-        let readback = self.readback_v0()?;
-        let rows = self.read_rows_v0()?;
-        let recomputed = root_builder
-            .recompute_target_root(self.target_schema_digest, rows.iter())
-            .map_err(|error| DurableDeltaStoreErrorV0::RootBuilder(error.to_string()))?;
-        if recomputed != readback.state_root {
-            return Err(DurableDeltaStoreErrorV0::Protocol(
-                MigrationErrorV0::DurableReadbackMismatch,
-            ));
-        }
+        let (readback, _) = self.read_snapshot_with_root_builder_v0(root_builder)?;
         Ok(readback)
     }
 
@@ -1167,8 +1176,7 @@ impl SqliteIncrementalStateStoreV0 {
         R: TargetRootBuilderV0,
         R::Error: fmt::Display,
     {
-        let readback = self.readback_with_root_builder_v0(root_builder)?;
-        let rows = self.read_rows_v0()?;
+        let (readback, rows) = self.read_snapshot_with_root_builder_v0(root_builder)?;
         let mut snapshot = DurableDeltaSnapshotV0 {
             plan_digest: readback.plan_digest,
             target_schema_digest: readback.target_schema_digest,
@@ -1280,7 +1288,7 @@ impl SqliteIncrementalStateStoreV0 {
                 MigrationErrorV0::PlanSchemaMismatch,
             ));
         }
-        let before = self.readback_v0()?;
+        let (before, base_rows) = self.read_snapshot_v0()?;
         if before.state_root != delta.base_state_root
             || before.rows_digest != delta.base_rows_digest
             || before.row_count != delta.base_row_count
@@ -1289,7 +1297,6 @@ impl SqliteIncrementalStateStoreV0 {
                 MigrationErrorV0::BaseStateMismatch,
             ));
         }
-        let base_rows = self.read_rows_v0()?;
         let target_rows = apply_incremental_delta_v0(delta, &base_rows, root_builder).map_err(
             |error| match error {
                 IncrementalDeltaErrorV0::Protocol(error) => {
@@ -1428,6 +1435,28 @@ impl SqliteIncrementalStateStoreV0 {
     }
 }
 
+fn read_rows_from_connection_v0(
+    connection: &Connection,
+) -> Result<Vec<TargetRowV0>, DurableDeltaStoreErrorV0> {
+    let mut statement = connection
+        .prepare("SELECT namespace,key,value FROM migration_delta_rows_v0 ORDER BY namespace,key")
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    let mapped = statement
+        .query_map([], |row| {
+            Ok(TargetRowV0 {
+                namespace: row.get(0)?,
+                key: row.get(1)?,
+                value: row.get(2)?,
+            })
+        })
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    let rows = mapped
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+    validate_target_rows_v0(&rows).map_err(DurableDeltaStoreErrorV0::Protocol)?;
+    Ok(rows)
+}
+
 /// All durable writes use WAL + FULL synchronous mode and an IMMEDIATE
 /// transaction.  This makes a committed metadata/root update survive a
 /// process restart while ensuring a killed writer rolls back its uncommitted
@@ -1488,6 +1517,29 @@ fn test_pause_after_delta_rows_v0() {
     let _ = std::fs::write(&marker, b"rows-updated-before-commit\n");
     loop {
         std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+}
+
+#[cfg(test)]
+static PAUSE_AFTER_SNAPSHOT_METADATA_V0: std::sync::atomic::AtomicBool =
+    std::sync::atomic::AtomicBool::new(false);
+#[cfg(test)]
+static SNAPSHOT_METADATA_REACHED_V0: std::sync::atomic::AtomicBool =
+    std::sync::atomic::AtomicBool::new(false);
+#[cfg(test)]
+std::thread_local! {
+    static SNAPSHOT_METADATA_PAUSE_ARMED_V0: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+#[cfg(test)]
+fn test_pause_after_snapshot_metadata_v0() {
+    let armed = SNAPSHOT_METADATA_PAUSE_ARMED_V0.with(std::cell::Cell::get);
+    if !armed {
+        return;
+    }
+    SNAPSHOT_METADATA_REACHED_V0.store(true, std::sync::atomic::Ordering::SeqCst);
+    while PAUSE_AFTER_SNAPSHOT_METADATA_V0.load(std::sync::atomic::Ordering::SeqCst) {
+        std::thread::yield_now();
     }
 }
 
@@ -2066,6 +2118,49 @@ mod tests {
         assert_eq!(replay.delta_digest, delta.delta_digest);
         assert_eq!(store.readback_v0().unwrap().generation, 1);
         let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn sqlite_incremental_readback_pins_metadata_and_rows_to_one_snapshot() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-migration-read-snapshot-{}-{}.sqlite",
+            std::process::id(),
+            d(104).0[0]
+        ));
+        let _ = std::fs::remove_file(&path);
+        let base = vec![target_row(1, 10), target_row(2, 20)];
+        let target = vec![target_row(1, 11), target_row(3, 30)];
+        let store =
+            SqliteIncrementalStateStoreV0::initialize(&path, d(95), d(96), &base, &HashRoot)
+                .unwrap();
+        let delta = derive_incremental_delta_v0(d(95), d(96), &base, &target, &HashRoot).unwrap();
+
+        PAUSE_AFTER_SNAPSHOT_METADATA_V0.store(true, std::sync::atomic::Ordering::SeqCst);
+        SNAPSHOT_METADATA_REACHED_V0.store(false, std::sync::atomic::Ordering::SeqCst);
+        let reader_store = store.clone();
+        let reader = std::thread::spawn(move || {
+            SNAPSHOT_METADATA_PAUSE_ARMED_V0.with(|armed| armed.set(true));
+            reader_store.readback_with_root_builder_v0(&HashRoot)
+        });
+        for _ in 0..10_000 {
+            if SNAPSHOT_METADATA_REACHED_V0.load(std::sync::atomic::Ordering::SeqCst) {
+                break;
+            }
+            std::thread::yield_now();
+        }
+        assert!(SNAPSHOT_METADATA_REACHED_V0.load(std::sync::atomic::Ordering::SeqCst));
+
+        // WAL permits the writer to commit after the reader's metadata query;
+        // a pinned deferred transaction must still return the predecessor
+        // metadata and predecessor rows as one coherent readback.
+        store.apply_delta_v0(&delta, &HashRoot).unwrap();
+        PAUSE_AFTER_SNAPSHOT_METADATA_V0.store(false, std::sync::atomic::Ordering::SeqCst);
+        let before = reader.join().unwrap().unwrap();
+        assert_eq!(before.generation, 0);
+        assert_eq!(before.rows_digest, target_rows_digest_v0(&base));
+        assert_eq!(store.readback_v0().unwrap().generation, 1);
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]

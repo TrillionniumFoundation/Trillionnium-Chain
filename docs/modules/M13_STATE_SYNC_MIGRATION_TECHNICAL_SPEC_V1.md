@@ -76,14 +76,20 @@ drift path while leaving filesystem replacement and cross-host identity checks t
 the deployment owner.
 
 The adapter also exposes a bounded local handoff pair:
-`export_snapshot_v0` emits `DurableDeltaSnapshotV0` only after metadata, ordered
-rows, row digest, and target root have been read back and independently
-recomputed. `initialize_from_snapshot_v0` validates the snapshot digest, row
-ordering, authority-namespace exclusions, row digest, target root, and integer
-bounds before creating a new closed-world store; it rejects an existing path and
-checks every field again after the commit. Snapshot generation and the last
-delta digest are retained, so an import/export round trip is byte-equivalent at
-the protocol object level. This is an authenticated-by-caller staging artifact,
+`read_snapshot_v0` pins metadata and ordered rows to one deferred SQLite
+transaction; `readback_with_root_builder_v0`, `export_snapshot_v0` and the delta
+base check consume that same coherent observation, so a concurrent committed
+delta cannot be joined to the wrong generation. The regression
+`sqlite_incremental_readback_pins_metadata_and_rows_to_one_snapshot` commits a
+delta between the metadata and row queries and requires the reader to return the
+complete predecessor snapshot. `export_snapshot_v0` emits
+`DurableDeltaSnapshotV0` only after metadata, ordered rows, row digest, and target
+root have been read back and independently recomputed. `initialize_from_snapshot_v0`
+validates the snapshot digest, row ordering, authority-namespace exclusions, row
+digest, target root, and integer bounds before creating a new closed-world store;
+it rejects an existing path and checks every field again after the commit. Snapshot
+generation and the last delta digest are retained, so an import/export round trip
+is byte-equivalent at the protocol object level. This is an authenticated-by-caller staging artifact,
 not a finalized source export, peer trust path, network protocol, tombstone
 collector, or signer/finality handoff. A production transfer must bind the
 snapshot to a verified checkpoint/export and exercise interrupted transfer,
