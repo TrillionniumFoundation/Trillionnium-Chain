@@ -302,7 +302,6 @@ impl SnapshotManifestV0 {
     }
 
     pub fn validate(&self, trust_path: &VerifiedTrustPathV0) -> Result<(), StateSyncErrorV0> {
-        self.validate_shape()?;
         if self.chain_id != trust_path.anchor.chain_id
             || self.protocol_digest != trust_path.anchor.protocol_digest
             || self.height != trust_path.terminal.height
@@ -312,6 +311,7 @@ impl SnapshotManifestV0 {
         {
             return Err(StateSyncErrorV0::ManifestTrustMismatch);
         }
+        self.validate_shape()?;
         Ok(())
     }
 }
