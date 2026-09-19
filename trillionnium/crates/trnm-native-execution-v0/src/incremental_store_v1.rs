@@ -28,6 +28,8 @@ const MAX_DEPTH: usize = 8;
 const MAX_PREPARED_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 const MAX_READER_DELTA_BYTES: usize = 64 * 1024 * 1024;
 const MAX_PINS: u64 = 16_384;
+const MAX_GC_QUEUE_BYTES: usize = 256 * 1024 * 1024;
+const MAX_GC_BATCH_NODES: usize = 4_096;
 
 /// Local profile and owner identity, independently retained by the application
 /// owner. Supplying these values from the same database is not rollback defense.
@@ -65,6 +67,18 @@ pub struct PreparedIncrementalDeltaV1 {
     pub height: u64,
     pub root: [u8; 32],
     pub persist_sequence: u64,
+}
+
+/// Result of one bounded node-only collection pass. Collection never removes
+/// values, preimages, roots, prepared rows or pins; those records are the
+/// retention authority and remain available for replay and recovery.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct IncrementalGcReportV1 {
+    pub audited_nodes: u64,
+    pub enqueued_nodes: u64,
+    pub stale_queue_entries: u64,
+    pub deleted_nodes: u64,
+    pub queue_depth: u64,
 }
 
 #[derive(Debug)]
@@ -920,6 +934,575 @@ pub fn retire_incremental_prepared_v1(
             )? == 1,
             "retired delta missing"
         );
+    }
+    Ok(())
+}
+
+struct GcNodeRecord {
+    key: NodeKey,
+    node: Node,
+    hash: [u8; 32],
+    refs: u64,
+}
+
+/// Audit and collect only unreachable physical JMT nodes.
+///
+/// The audit is deliberately stricter than the deletion operation. It walks
+/// every node and every child edge, validates all root pins and phase-0
+/// prepared anchors, and requires `ni_nodes.refs` to equal the independently
+/// derived incoming-edge plus pin count. Any malformed record fences the whole
+/// transaction. A zero-reference node is queued and deleted with an expected
+/// hash/refs CAS; deleting a parent decrements each child and queues newly
+/// unreachable children in this same transaction. No value, preimage, root or
+/// prepared row is removed, since this owner does not have a proven value
+/// retention floor.
+pub fn collect_incremental_nodes_v1(
+    transaction: &Transaction<'_>,
+    namespace: &IncrementalNamespaceV1,
+    max_nodes: usize,
+) -> Result<IncrementalGcReportV1> {
+    check_namespace(transaction, namespace)?;
+    ensure!(
+        max_nodes <= MAX_GC_BATCH_NODES,
+        "incremental GC batch capacity"
+    );
+
+    let (mut nodes, incoming) = audit_gc_nodes_v1(transaction)?;
+    let pin_refs = audit_gc_roots_pins_and_prepared_v1(transaction, &nodes)?;
+    for (key_bytes, record) in &nodes {
+        let edge_refs = incoming.get(key_bytes).copied().unwrap_or_default();
+        let pin_count = pin_refs.get(key_bytes).copied().unwrap_or_default();
+        let expected = edge_refs
+            .checked_add(pin_count)
+            .context("incremental GC reference count overflow")?;
+        ensure!(
+            record.refs == expected,
+            "incremental GC reference count mismatch"
+        );
+    }
+
+    let generation: Vec<u8> = transaction.query_row(
+        "SELECT commit_sequence FROM ni_meta WHERE id=1 AND schema=1",
+        [],
+        |row| row.get(0),
+    )?;
+    let generation = u64_blob(generation)?;
+    let (_queue_depth, queue_bytes): (u64, u64) = transaction.query_row(
+        "SELECT count(*),coalesce(sum(length(node_key)+length(enqueued_generation)+length(expected_hash)),0) FROM ni_gc_queue",
+        [],
+        |row| Ok((row.get(0)?, row.get(1)?)),
+    )?;
+    ensure!(
+        queue_bytes <= MAX_GC_QUEUE_BYTES as u64,
+        "incremental GC queue capacity"
+    );
+
+    let mut enqueued_nodes = 0u64;
+    for (key_bytes, record) in &nodes {
+        if record.refs != 0 {
+            continue;
+        }
+        let existing: Option<Vec<u8>> = transaction
+            .query_row(
+                "SELECT expected_hash FROM ni_gc_queue WHERE node_key=?1",
+                [key_bytes],
+                |row| row.get(0),
+            )
+            .optional()?;
+        match existing {
+            Some(existing) => ensure!(
+                fixed::<32>(existing)? == record.hash,
+                "incremental GC queue hash mismatch"
+            ),
+            None => {
+                let next_bytes = queue_bytes
+                    .checked_add((key_bytes.len() + 8 + 32) as u64)
+                    .context("incremental GC queue size overflow")?;
+                ensure!(
+                    next_bytes <= MAX_GC_QUEUE_BYTES as u64,
+                    "incremental GC queue capacity"
+                );
+                transaction.execute(
+                    "INSERT INTO ni_gc_queue VALUES(?1,?2,?3)",
+                    params![
+                        key_bytes,
+                        generation.to_be_bytes().as_slice(),
+                        record.hash.as_slice()
+                    ],
+                )?;
+                enqueued_nodes = enqueued_nodes
+                    .checked_add(1)
+                    .context("incremental GC enqueue count overflow")?;
+            }
+        }
+    }
+
+    // Re-read the queue in key order. This gives deterministic bounded work and
+    // includes entries carried over from an earlier committed pass.
+    let mut queue = Vec::new();
+    {
+        let mut statement = transaction.prepare(
+            "SELECT node_key,enqueued_generation,expected_hash FROM ni_gc_queue ORDER BY node_key",
+        )?;
+        let mut rows = statement.query([])?;
+        while let Some(row) = rows.next()? {
+            queue.push((
+                row.get::<_, Vec<u8>>(0)?,
+                u64_blob(row.get(1)?)?,
+                fixed::<32>(row.get(2)?)?,
+            ));
+        }
+    }
+    let mut stale_queue_entries = 0u64;
+    let mut deleted_nodes = 0u64;
+    for (key_bytes, _enqueued_generation, expected_hash) in queue {
+        let Some(record) = nodes.get(&key_bytes) else {
+            anyhow::bail!("incremental GC queue node disappeared during audit")
+        };
+        ensure!(
+            record.hash == expected_hash,
+            "incremental GC queued node hash mismatch"
+        );
+        if record.refs != 0 {
+            // A pin may have been restored since an earlier queue insertion.
+            // Remove only this stale queue row; a future zero-ref audit will
+            // enqueue it again if the pin is later released.
+            ensure!(
+                transaction.execute(
+                    "DELETE FROM ni_gc_queue WHERE node_key=?1 AND expected_hash=?2",
+                    params![key_bytes.as_slice(), expected_hash.as_slice()]
+                )? == 1,
+                "incremental GC stale queue CAS"
+            );
+            stale_queue_entries = stale_queue_entries
+                .checked_add(1)
+                .context("incremental GC stale queue count overflow")?;
+            continue;
+        }
+        if deleted_nodes as usize >= max_nodes {
+            continue;
+        }
+
+        // Re-check the physical row and hash immediately before deletion. This
+        // is the final same-transaction CAS guard against a repaired/pinned
+        // record being mistaken for the queued zero-reference node.
+        let current: Option<(Vec<u8>, Vec<u8>)> = transaction
+            .query_row(
+                "SELECT node_hash,refs FROM ni_nodes WHERE node_key=?1",
+                [key_bytes.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .optional()?;
+        let Some((hash_bytes, refs_bytes)) = current else {
+            anyhow::bail!("incremental GC node disappeared before delete")
+        };
+        ensure!(
+            fixed::<32>(hash_bytes)? == expected_hash,
+            "incremental GC node hash changed"
+        );
+        let current_refs = u64_blob(refs_bytes)?;
+        ensure!(current_refs == 0, "incremental GC node became referenced");
+
+        let node = &record.node;
+        let children = gc_children_v1(&record.key, node)?;
+        ensure!(
+            transaction.execute(
+                "DELETE FROM ni_nodes WHERE node_key=?1 AND refs=?2 AND node_hash=?3",
+                params![
+                    key_bytes.as_slice(),
+                    0u64.to_be_bytes().as_slice(),
+                    expected_hash.as_slice()
+                ]
+            )? == 1,
+            "incremental GC node delete CAS"
+        );
+        ensure!(
+            transaction.execute(
+                "DELETE FROM ni_gc_queue WHERE node_key=?1 AND expected_hash=?2",
+                params![key_bytes.as_slice(), expected_hash.as_slice()]
+            )? == 1,
+            "incremental GC queue delete CAS"
+        );
+        deleted_nodes = deleted_nodes
+            .checked_add(1)
+            .context("incremental GC delete count overflow")?;
+        for child_key in children {
+            decrement_gc_child_v1(transaction, &child_key, generation, &mut nodes)?;
+        }
+    }
+
+    let queue_depth: u64 =
+        transaction.query_row("SELECT count(*) FROM ni_gc_queue", [], |row| row.get(0))?;
+    Ok(IncrementalGcReportV1 {
+        audited_nodes: nodes.len() as u64,
+        enqueued_nodes,
+        stale_queue_entries,
+        deleted_nodes,
+        queue_depth,
+    })
+}
+
+fn audit_gc_nodes_v1(
+    transaction: &Transaction<'_>,
+) -> Result<(BTreeMap<Vec<u8>, GcNodeRecord>, BTreeMap<Vec<u8>, u64>)> {
+    let mut nodes = BTreeMap::new();
+    {
+        let mut statement = transaction.prepare(
+            "SELECT node_key,node_version,node_bytes,node_hash,refs FROM ni_nodes ORDER BY node_key",
+        )?;
+        let mut rows = statement.query([])?;
+        while let Some(row) = rows.next()? {
+            let key_bytes: Vec<u8> = row.get(0)?;
+            ensure!(
+                key_bytes.len() <= MAX_KEY_BYTES,
+                "incremental GC node key capacity"
+            );
+            let key: NodeKey = borsh::from_slice(&key_bytes)?;
+            ensure!(
+                borsh::to_vec(&key)? == key_bytes,
+                "incremental GC noncanonical key"
+            );
+            validate_node_key(&key)?;
+            ensure!(
+                u64_blob(row.get(1)?)? == key.version(),
+                "incremental GC node version mismatch"
+            );
+            let node_bytes: Vec<u8> = row.get(2)?;
+            ensure!(
+                node_bytes.len() <= MAX_NODE_BYTES,
+                "incremental GC node capacity"
+            );
+            let node: Node = borsh::from_slice(&node_bytes)?;
+            ensure!(
+                borsh::to_vec(&node)? == node_bytes,
+                "incremental GC noncanonical node"
+            );
+            validate_node(&node)?;
+            validate_node_at(&key, &node)?;
+            let hash = fixed::<32>(row.get(3)?)?;
+            ensure!(
+                hash == node_hash(&node),
+                "incremental GC node hash mismatch"
+            );
+            let refs = u64_blob(row.get(4)?)?;
+            ensure!(
+                nodes
+                    .insert(
+                        key_bytes,
+                        GcNodeRecord {
+                            key,
+                            node,
+                            hash,
+                            refs
+                        }
+                    )
+                    .is_none(),
+                "incremental GC duplicate node"
+            );
+        }
+    }
+    let mut incoming = BTreeMap::<Vec<u8>, u64>::new();
+    for record in nodes.values() {
+        for child_key in gc_children_v1(&record.key, &record.node)? {
+            let child_bytes = borsh::to_vec(&child_key)?;
+            let child = nodes
+                .get(&child_bytes)
+                .context("incremental GC missing child node")?;
+            let child_node = &child.node;
+            let (child_is_leaf, child_leaves) = match child_node {
+                Node::Leaf(_) => (true, 1),
+                Node::Internal(internal) => (false, internal.leaf_count()),
+                Node::Null => anyhow::bail!("incremental GC null child node"),
+            };
+            ensure!(
+                child.hash == child_hash_for_edge(&record.node, &child_key)?,
+                "incremental GC child hash mismatch"
+            );
+            let next = incoming
+                .get(&child_bytes)
+                .copied()
+                .unwrap_or_default()
+                .checked_add(1)
+                .context("incremental GC incoming reference overflow")?;
+            incoming.insert(child_bytes, next);
+            ensure!(
+                child_key.version() <= record.key.version() && (child_is_leaf || child_leaves >= 2),
+                "incremental GC child metadata mismatch"
+            );
+        }
+    }
+    Ok((nodes, incoming))
+}
+
+fn gc_children_v1(key: &NodeKey, node: &Node) -> Result<Vec<NodeKey>> {
+    let Node::Internal(internal) = node else {
+        return Ok(Vec::new());
+    };
+    ensure!(
+        key.nibble_path().num_nibbles() < 64,
+        "incremental GC internal path too long"
+    );
+    internal
+        .children_sorted()
+        .map(|(nibble, child)| {
+            ensure!(
+                child.version <= key.version(),
+                "incremental GC future child"
+            );
+            let path = key
+                .nibble_path()
+                .nibbles()
+                .chain(std::iter::once(nibble))
+                .collect();
+            Ok(NodeKey::new(child.version, path))
+        })
+        .collect()
+}
+
+fn child_hash_for_edge(node: &Node, child_key: &NodeKey) -> Result<[u8; 32]> {
+    let Node::Internal(internal) = node else {
+        anyhow::bail!("incremental GC edge from non-internal node")
+    };
+    let nibble = child_key
+        .nibble_path()
+        .nibbles()
+        .last()
+        .context("incremental GC child path missing")?;
+    let child = internal
+        .children_sorted()
+        .find(|(candidate, child)| {
+            let _ = child;
+            *candidate == nibble
+        })
+        .map(|(_, child)| child)
+        .context("incremental GC child edge missing")?;
+    Ok(child.hash)
+}
+
+fn audit_gc_roots_pins_and_prepared_v1(
+    transaction: &Transaction<'_>,
+    nodes: &BTreeMap<Vec<u8>, GcNodeRecord>,
+) -> Result<BTreeMap<Vec<u8>, u64>> {
+    let mut pin_refs = BTreeMap::<Vec<u8>, u64>::new();
+    let mut statement = transaction.prepare(
+        "SELECT owner,reason,version,root,reference_count,release_authority FROM ni_pin ORDER BY owner,reason,version",
+    )?;
+    let mut rows = statement.query([])?;
+    while let Some(row) = rows.next()? {
+        let owner: [u8; 32] = fixed(row.get(0)?)?;
+        let reason = row.get::<_, u8>(1)?;
+        ensure!(reason <= 5, "incremental GC pin reason");
+        let version = u64_blob(row.get(2)?)?;
+        let root = fixed::<32>(row.get(3)?)?;
+        let reference_count = u64_blob(row.get(4)?)?;
+        ensure!(reference_count > 0, "incremental GC empty pin");
+        if let Some(authority) = row.get::<_, Option<Vec<u8>>>(5)? {
+            ensure!(authority.len() == 32, "incremental GC release authority");
+        }
+        let key_bytes = borsh::to_vec(&root_key(version))?;
+        let node = nodes
+            .get(&key_bytes)
+            .context("incremental GC pin root missing")?;
+        ensure!(node.hash == root, "incremental GC pin root hash mismatch");
+        let committed_root: Option<Vec<u8>> = transaction
+            .query_row(
+                "SELECT root FROM ni_roots WHERE version=?1",
+                [version.to_be_bytes().as_slice()],
+                |r| r.get(0),
+            )
+            .optional()?;
+        ensure!(
+            committed_root
+                .is_some_and(|stored| fixed::<32>(stored).is_ok_and(|stored| stored == root)),
+            "incremental GC pin has no committed root"
+        );
+        if reason == 0 {
+            let (row_version, row_root): (Vec<u8>, Vec<u8>) = transaction.query_row(
+                "SELECT version,root FROM ni_roots WHERE block_id=?1",
+                [owner.as_slice()],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )?;
+            ensure!(
+                u64_blob(row_version)? == version && fixed::<32>(row_root)? == root,
+                "incremental GC retained root pin mismatch"
+            );
+            ensure!(reference_count == 1, "incremental GC retained root count");
+        } else if reason == 1 {
+            let (anchor_version, anchor_root, phase): (Vec<u8>, Vec<u8>, u8) = transaction
+                .query_row(
+                    "SELECT anchor_version,anchor_root,phase FROM ni_prepared WHERE artifact=?1",
+                    [owner.as_slice()],
+                    |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+                )?;
+            ensure!(phase == 0, "incremental GC speculative pin is committed");
+            ensure!(
+                u64_blob(anchor_version)? == version && fixed::<32>(anchor_root)? == root,
+                "incremental GC speculative anchor mismatch"
+            );
+            ensure!(reference_count == 1, "incremental GC speculative count");
+        }
+        let next = pin_refs
+            .get(&key_bytes)
+            .copied()
+            .unwrap_or_default()
+            .checked_add(reference_count)
+            .context("incremental GC pin reference overflow")?;
+        pin_refs.insert(key_bytes, next);
+    }
+
+    let mut roots = transaction.prepare(
+        "SELECT version,block_id,root,CASE WHEN length(root_node_key)<=128 THEN root_node_key ELSE NULL END FROM ni_roots ORDER BY version",
+    )?;
+    let mut root_rows = roots.query([])?;
+    while let Some(row) = root_rows.next()? {
+        let version = u64_blob(row.get(0)?)?;
+        let block: [u8; 32] = fixed(row.get(1)?)?;
+        let root: [u8; 32] = fixed(row.get(2)?)?;
+        let key_bytes = borsh::to_vec(&root_key(version))?;
+        ensure!(
+            row.get::<_, Vec<u8>>(3)? == key_bytes,
+            "incremental GC root key mismatch"
+        );
+        ensure!(
+            nodes.get(&key_bytes).is_some_and(|node| node.hash == root),
+            "incremental GC root node mismatch"
+        );
+        let pin_count: u64 = transaction.query_row(
+            "SELECT count(*) FROM ni_pin WHERE owner=?1 AND reason=0 AND version=?2 AND root=?3",
+            params![
+                block.as_slice(),
+                version.to_be_bytes().as_slice(),
+                root.as_slice()
+            ],
+            |r| r.get(0),
+        )?;
+        ensure!(
+            pin_count == 1,
+            "incremental GC retained root pin missing/duplicate"
+        );
+    }
+
+    let mut prepared = transaction.prepare(
+        "SELECT artifact,anchor_version,anchor_root,phase FROM ni_prepared WHERE phase=0 ORDER BY persist_sequence",
+    )?;
+    let mut prepared_rows = prepared.query([])?;
+    while let Some(row) = prepared_rows.next()? {
+        let artifact: [u8; 32] = fixed(row.get(0)?)?;
+        let version = u64_blob(row.get(1)?)?;
+        let root: [u8; 32] = fixed(row.get(2)?)?;
+        ensure!(row.get::<_, u8>(3)? == 0, "incremental GC prepared phase");
+        let key_bytes = borsh::to_vec(&root_key(version))?;
+        ensure!(
+            nodes.get(&key_bytes).is_some_and(|node| node.hash == root),
+            "incremental GC prepared anchor node mismatch"
+        );
+        let pin_count: u64 = transaction.query_row(
+            "SELECT count(*) FROM ni_pin WHERE owner=?1 AND reason=1 AND version=?2 AND root=?3",
+            params![
+                artifact.as_slice(),
+                version.to_be_bytes().as_slice(),
+                root.as_slice()
+            ],
+            |r| r.get(0),
+        )?;
+        ensure!(
+            pin_count == 1,
+            "incremental GC prepared anchor pin missing/duplicate"
+        );
+    }
+
+    let mut queue =
+        transaction.prepare("SELECT node_key,expected_hash FROM ni_gc_queue ORDER BY node_key")?;
+    let mut queue_rows = queue.query([])?;
+    while let Some(row) = queue_rows.next()? {
+        let key_bytes: Vec<u8> = row.get(0)?;
+        let expected_hash: [u8; 32] = fixed(row.get(1)?)?;
+        let node = nodes
+            .get(&key_bytes)
+            .context("incremental GC queue node missing")?;
+        ensure!(
+            node.hash == expected_hash,
+            "incremental GC queue hash mismatch"
+        );
+    }
+    Ok(pin_refs)
+}
+
+fn decrement_gc_child_v1(
+    transaction: &Transaction<'_>,
+    child_key: &NodeKey,
+    generation: u64,
+    nodes: &mut BTreeMap<Vec<u8>, GcNodeRecord>,
+) -> Result<()> {
+    let key_bytes = borsh::to_vec(child_key)?;
+    let (hash_bytes, refs_bytes, node_bytes): (Vec<u8>, Vec<u8>, Vec<u8>) = transaction.query_row(
+        "SELECT node_hash,refs,node_bytes FROM ni_nodes WHERE node_key=?1",
+        [key_bytes.as_slice()],
+        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+    )?;
+    let hash = fixed::<32>(hash_bytes)?;
+    let refs = u64_blob(refs_bytes)?;
+    ensure!(refs > 0, "incremental GC child reference underflow");
+    let node: Node = borsh::from_slice(&node_bytes)?;
+    validate_node(&node)?;
+    validate_node_at(child_key, &node)?;
+    ensure!(
+        hash == node_hash(&node),
+        "incremental GC child hash changed"
+    );
+    let next = refs - 1;
+    ensure!(
+        transaction.execute(
+            "UPDATE ni_nodes SET refs=?1 WHERE node_key=?2 AND refs=?3 AND node_hash=?4",
+            params![
+                next.to_be_bytes().as_slice(),
+                key_bytes.as_slice(),
+                refs.to_be_bytes().as_slice(),
+                hash.as_slice()
+            ],
+        )? == 1,
+        "incremental GC child reference CAS"
+    );
+    if let Some(record) = nodes.get_mut(&key_bytes) {
+        record.refs = next;
+    } else {
+        anyhow::bail!("incremental GC child audit record missing")
+    }
+    if next == 0 {
+        let existing: Option<Vec<u8>> = transaction
+            .query_row(
+                "SELECT expected_hash FROM ni_gc_queue WHERE node_key=?1",
+                [key_bytes.as_slice()],
+                |r| r.get(0),
+            )
+            .optional()?;
+        match existing {
+            Some(existing) => ensure!(
+                fixed::<32>(existing)? == hash,
+                "incremental GC child queue hash"
+            ),
+            None => {
+                let bytes: u64 = transaction.query_row(
+                    "SELECT coalesce(sum(length(node_key)+length(enqueued_generation)+length(expected_hash)),0) FROM ni_gc_queue",
+                    [],
+                    |r| r.get(0),
+                )?;
+                ensure!(
+                    bytes
+                        .checked_add((key_bytes.len() + 8 + 32) as u64)
+                        .is_some_and(|n| n <= MAX_GC_QUEUE_BYTES as u64),
+                    "incremental GC queue capacity"
+                );
+                transaction.execute(
+                    "INSERT INTO ni_gc_queue VALUES(?1,?2,?3)",
+                    params![
+                        key_bytes.as_slice(),
+                        generation.to_be_bytes().as_slice(),
+                        hash.as_slice()
+                    ],
+                )?;
+            }
+        }
     }
     Ok(())
 }

@@ -1,7 +1,8 @@
 # M07 State / JMT / Storage technical specification v1
 
 Status: **candidate sparse-epoch computation and bounded schema-4 persistence implemented;
-ordinary schema-5 incremental owner implemented; sparse migration, GC, multiple-epoch recovery and production acceptance pending**.
+ordinary schema-5 incremental owner and conservative node-only GC implemented; sparse
+migration, multiple-epoch recovery and production acceptance pending**.
 Primary module: M07. Producers: M06/M08/M13. Consumers: M02/M06/M08/M13/M14.
 
 ## Authority
@@ -51,8 +52,8 @@ close storage growth or per-block cumulative audit cost.
 
 The current bridge admits the first transition from a legacy-v0 committed
 checkpoint and ordinary descendants. A later epoch checkpoint from P familyv1,
-full sparse-history proof/RPC adapters, state-sync installation, schema4→5
-incremental migration and GC remain pending. These limitations are fail-closed.
+full sparse-history proof/RPC adapters, state-sync installation and schema4→5
+incremental migration remain pending. These limitations are fail-closed.
 
 ## Interfaces
 
@@ -127,13 +128,26 @@ namespace digest, source anchor and result using the kernel's framed hash helper
 These are local schema additions; existing exact-schema databases are rejected
 unless explicitly migrated, never silently relabelled.
 
+`collect_incremental_nodes_v1` performs a bounded, writer-transaction node-only
+collection pass. It first audits every immutable node, child hash/path and
+`refs` count against all `ni_roots`/`ni_pin` rows and phase-0 `ni_prepared`
+anchors, then validates each `ni_gc_queue` item. It queues only zero-reference
+nodes and deletes with an expected-hash/zero-ref CAS; each deleted internal
+node decrements and, when necessary, queues its children in the same
+transaction. A malformed counter, child, pin, anchor or queue row aborts the
+transaction. The pass never deletes `ni_values`, `ni_preimages`, historical
+roots or prepared records, because this owner cannot prove a value/replay
+retention floor. SQLite rollback therefore leaves both queue and nodes intact.
+
 This kernel implements only ordinary +1 updates in one epoch; epoch-tagged plans
 and changed-epoch commits reject until persisted edge reconstruction is joined.
-It retains all historical roots/value floors and implements no GC. Current pins
+It retains all historical roots/value floors. Current pins
 are only retained-root and speculative-parent pins; their count derives from
 commit sequence plus bounded pending rows, avoiding a history scan per prepare.
-Before enabling other pin reasons or pruning, replace this closed accounting
-with the corresponding atomic counters and audited release authority.
+Before enabling additional pin reasons or value pruning, replace this closed
+accounting with the corresponding atomic counters and audited release authority;
+node-only collection remains conservative and cannot claim production retention
+qualification.
 
 Bounds are 128 live prepared records, depth8, 2 GiB live prepared bytes,
 64 MiB reader suffix, 16,384 pins, 1,024 writes/preimages, 65,537 nodes, 4,096
@@ -558,14 +572,17 @@ first-new edges, state-sync exports, light-client/accountability horizons and
 unacknowledged commits. An edge pins checkpoint root C and its complete reachable
 physical node/value closure; the virtual root itself owns no data to prune.
 
-Planned incremental GC uses immutable node child-reference counts plus explicit
-root pins. Insert each physical node once and increment its exact child edges
-once; shared nodes are not rewritten. Root-pin changes are transactional with
-head/edge changes. Removing a pin queues only zero-reference nodes; bounded
-background batches recheck zero references under the writer lock before deletion
-and decrement child counts atomically. Never delete from a stale-list alone.
-Counters are derived indexes: a malformed count/edge or inconsistent root audit
-fences GC; independently audit them against retained roots before qualifying GC.
+Incremental node-only GC is implemented by `collect_incremental_nodes_v1`.
+It uses immutable node child-reference counts plus explicit root pins. Insert
+each physical node once and increment its exact child edges once; shared nodes
+are not rewritten. Root-pin changes are transactional with head/edge changes.
+The collector first audits all node records, child hashes, roots, pins,
+phase-0 prepared anchors and queue hashes, then queues only zero-reference
+nodes. Each bounded batch rechecks zero references and the expected hash under
+the writer transaction before deletion and decrements child counts atomically.
+Never delete from a stale-list alone. A malformed count/edge/root/pin/queue
+fences the transaction. Historical roots, values, preimages and prepared rows
+are never deleted by this pass.
 
 MVCC values need a separate retention floor: for each key retain all versions at
 or above the oldest required real root and the latest predecessor value/tombstone

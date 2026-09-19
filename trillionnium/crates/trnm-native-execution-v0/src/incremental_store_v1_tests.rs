@@ -676,3 +676,136 @@ fn stage_rejects_suffix_that_its_reader_cannot_reopen() {
     assert_eq!(count, 3);
     assert_eq!(reader.prove(b"a").unwrap(), Some(value));
 }
+
+#[test]
+fn bounded_gc_deletes_only_an_unreferenced_node_and_keeps_retention_rows() {
+    let mut connection = Connection::open_in_memory().unwrap();
+    let (head, store) = initialize(&mut connection);
+    let (source_key, source_node) = store
+        .nodes
+        .iter()
+        .find(|(_, node)| matches!(node, Node::Leaf(_)))
+        .map(|(key, node)| (key.clone(), node.clone()))
+        .expect("seed contains a leaf");
+    let orphan_key = NodeKey::new(777, source_key.nibble_path().nibbles().collect());
+    let orphan_bytes = borsh::to_vec(&orphan_key).unwrap();
+    let orphan_node_bytes = borsh::to_vec(&source_node).unwrap();
+    let orphan_hash = node_hash(&source_node);
+    let tx = connection.transaction().unwrap();
+    tx.execute(
+        "INSERT INTO ni_nodes VALUES(?1,?2,?3,?4,?5)",
+        params![
+            orphan_bytes.as_slice(),
+            777u64.to_be_bytes().as_slice(),
+            orphan_node_bytes.as_slice(),
+            orphan_hash.as_slice(),
+            0u64.to_be_bytes().as_slice()
+        ],
+    )
+    .unwrap();
+    let report = collect_incremental_nodes_v1(&tx, &namespace(), 1).unwrap();
+    assert_eq!(report.deleted_nodes, 1);
+    assert!(report.queue_depth <= 1);
+    tx.commit().unwrap();
+    assert_eq!(
+        connection
+            .query_row(
+                "SELECT count(*) FROM ni_nodes WHERE node_key=?1",
+                [orphan_bytes.as_slice()],
+                |row| row.get::<_, u64>(0)
+            )
+            .unwrap(),
+        0
+    );
+    assert_eq!(
+        connection
+            .query_row("SELECT count(*) FROM ni_roots", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        1
+    );
+    assert_eq!(
+        connection
+            .query_row("SELECT count(*) FROM ni_values", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        2
+    );
+    assert_eq!(
+        connection
+            .query_row("SELECT count(*) FROM ni_preimages", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        2
+    );
+    assert_eq!(
+        read_incremental_head_v1(&connection.transaction().unwrap(), &namespace()).unwrap(),
+        head
+    );
+}
+
+#[test]
+fn gc_fences_reference_count_corruption_and_transaction_drop_rolls_back_queue() {
+    let mut connection = Connection::open_in_memory().unwrap();
+    let (_, store) = initialize(&mut connection);
+    let (source_key, source_node) = store
+        .nodes
+        .iter()
+        .find(|(_, node)| matches!(node, Node::Leaf(_)))
+        .map(|(key, node)| (key.clone(), node.clone()))
+        .expect("seed contains a leaf");
+    let orphan_key = NodeKey::new(778, source_key.nibble_path().nibbles().collect());
+    let orphan_bytes = borsh::to_vec(&orphan_key).unwrap();
+    let tx = connection.transaction().unwrap();
+    tx.execute(
+        "INSERT INTO ni_nodes VALUES(?1,?2,?3,?4,?5)",
+        params![
+            orphan_bytes.as_slice(),
+            778u64.to_be_bytes().as_slice(),
+            borsh::to_vec(&source_node).unwrap().as_slice(),
+            node_hash(&source_node).as_slice(),
+            0u64.to_be_bytes().as_slice()
+        ],
+    )
+    .unwrap();
+    tx.commit().unwrap();
+    let tx = connection.transaction().unwrap();
+    tx.execute(
+        "UPDATE ni_nodes SET refs=?1 WHERE node_key=?2",
+        params![
+            0u64.to_be_bytes().as_slice(),
+            borsh::to_vec(&root_key(0)).unwrap()
+        ],
+    )
+    .unwrap();
+    assert!(collect_incremental_nodes_v1(&tx, &namespace(), 4).is_err());
+    drop(tx);
+    assert_eq!(
+        connection
+            .query_row(
+                "SELECT refs FROM ni_nodes WHERE node_key=?1",
+                [borsh::to_vec(&root_key(0)).unwrap()],
+                |row| row.get::<_, Vec<u8>>(0)
+            )
+            .map(|raw| u64_blob(raw).unwrap())
+            .unwrap(),
+        1
+    );
+    assert_eq!(
+        connection
+            .query_row("SELECT count(*) FROM ni_gc_queue", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        0
+    );
+    assert_eq!(
+        connection
+            .query_row(
+                "SELECT count(*) FROM ni_nodes WHERE node_key=?1",
+                [orphan_bytes.as_slice()],
+                |row| row.get::<_, u64>(0)
+            )
+            .unwrap(),
+        1
+    );
+}
