@@ -947,19 +947,36 @@ fn configure_native_connection_v1(
 
 fn verify_native_schema_v1(connection: &Connection) -> Result<(), NativeStateSyncStoreErrorV1> {
     let mut statement = connection
-        .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+        .prepare("SELECT type,name,tbl_name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name")
         .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
-    let names = statement
-        .query_map([], |row| row.get::<_, String>(0))
+    type SchemaObject = (String, String, String, String);
+    let objects = statement
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, String>(2)?,
+                row.get::<_, String>(3)?,
+            ))
+        })
         .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?
-        .collect::<Result<Vec<_>, _>>()
+        .collect::<Result<Vec<SchemaObject>, _>>()
         .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
-    if names
-        != [
+    let expected = vec![
+        (
+            "table".to_owned(),
             "native_state_sync_chunks_v1".to_owned(),
+            "native_state_sync_chunks_v1".to_owned(),
+            NATIVE_SYNC_CHUNKS_SQL_V1.to_owned(),
+        ),
+        (
+            "table".to_owned(),
             "native_state_sync_meta_v1".to_owned(),
-        ]
-    {
+            "native_state_sync_meta_v1".to_owned(),
+            NATIVE_SYNC_META_SQL_V1.to_owned(),
+        ),
+    ];
+    if objects != expected {
         return Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch);
     }
     Ok(())

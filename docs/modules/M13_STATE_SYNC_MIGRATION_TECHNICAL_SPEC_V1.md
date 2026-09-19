@@ -69,6 +69,12 @@ unchanged. This is repository-level disk-exhaustion rollback evidence only; it d
 not qualify physical power interruption, controller-cache behavior, filesystem
 replacement, or independent host rollback authority.
 
+`native_sqlite_reopen_rejects_schema_object_drift` also compares the complete
+`sqlite_master` inventory and canonical SQL for both tables, rejecting an added
+index or trigger before any session readback. This closes the local schema-object
+drift path while leaving filesystem replacement and cross-host identity checks to
+the deployment owner.
+
 The adapter also exposes a bounded local handoff pair:
 `export_snapshot_v0` emits `DurableDeltaSnapshotV0` only after metadata, ordered
 rows, row digest, and target root have been read back and independently

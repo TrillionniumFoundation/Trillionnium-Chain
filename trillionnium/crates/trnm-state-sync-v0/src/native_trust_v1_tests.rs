@@ -808,6 +808,36 @@ fn native_sqlite_initialize_persists_prefilled_session_chunks() {
 }
 
 #[test]
+fn native_sqlite_reopen_rejects_schema_object_drift() {
+    let (path, manifest, application, _) = durable_session_fixture();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-schema-drift-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let session = NativeStateSyncSessionV1::begin(path, manifest, application).unwrap();
+    let _store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &session).unwrap();
+    let connection = rusqlite::Connection::open(&store_path).unwrap();
+    connection
+        .execute(
+            "CREATE INDEX native_state_sync_chunk_drift ON native_state_sync_chunks_v1(chunk_index)",
+            [],
+        )
+        .unwrap();
+    drop(connection);
+    assert!(matches!(
+        SqliteNativeStateSyncStoreV1::open_existing(&store_path),
+        Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch)
+    ));
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+}
+
+#[test]
 fn native_sqlite_session_child_reopen() {
     let Ok(store_path) = std::env::var("TRNM_NATIVE_SYNC_CHILD_PATH_V1") else {
         return;
