@@ -660,6 +660,32 @@ impl StateSyncSessionV0 {
         Ok(())
     }
 
+    /// Return a deterministic readback of the retained chunk set.  This is
+    /// deliberately independent from the order in which a transport delivered
+    /// chunks, so a restart can compare durable bytes with the exact session
+    /// binding instead of trusting a bitmap alone.
+    #[must_use]
+    pub fn progress_digest(&self) -> Digest32V0 {
+        let mut parts = Vec::with_capacity(self.chunks.len() * 2 + 1);
+        parts.push(self.manifest.manifest_digest.0.to_vec());
+        for (index, chunk) in &self.chunks {
+            parts.push(index.to_be_bytes().to_vec());
+            parts.push(chunk.chunk_digest.0.to_vec());
+        }
+        let refs: Vec<&[u8]> = parts.iter().map(Vec::as_slice).collect();
+        Digest32V0::hash(b"trnm.state-sync.session-progress.v0", &refs)
+    }
+
+    #[must_use]
+    pub fn received_chunk_count(&self) -> u32 {
+        self.chunks.len() as u32
+    }
+
+    #[must_use]
+    pub const fn received_bytes(&self) -> u64 {
+        self.received_bytes
+    }
+
     #[must_use]
     pub fn missing_chunks(&self) -> Vec<u32> {
         (0..self.manifest.chunk_count)
@@ -867,6 +893,8 @@ pub enum StateSyncErrorV0 {
     InstallReceiptMismatch,
     InvalidWireFrame,
     WireFrameTooLarge,
+    NativeApplicationBindingMismatch,
+    NativeSessionReadbackMismatch,
 }
 
 impl fmt::Display for StateSyncErrorV0 {
@@ -890,6 +918,12 @@ impl fmt::Display for StateSyncErrorV0 {
             Self::InstallReceiptMismatch => "non-destructive install receipt mismatch",
             Self::InvalidWireFrame => "snapshot transfer frame is noncanonical or truncated",
             Self::WireFrameTooLarge => "snapshot transfer frame exceeds its protocol bound",
+            Self::NativeApplicationBindingMismatch => {
+                "native snapshot does not match its authenticated application checkpoint"
+            }
+            Self::NativeSessionReadbackMismatch => {
+                "native state-sync restart readback does not match retained bytes"
+            }
         })
     }
 }

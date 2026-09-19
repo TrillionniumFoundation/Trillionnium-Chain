@@ -397,7 +397,7 @@ fn real_ordinary_and_epoch_path_joins_exact_head_and_projects_snapshot_target() 
             *expected.state_root.as_bytes()
         );
         assert!(budget.signature_work() > 0);
-        let projection = path.into_snapshot_trust_path();
+        let projection = path.snapshot_trust_path().clone();
         let mut manifest = crate::SnapshotManifestV0 {
             chain_id: projection.anchor().chain_id,
             protocol_digest: projection.anchor().protocol_digest,
@@ -414,6 +414,54 @@ fn real_ordinary_and_epoch_path_joins_exact_head_and_projects_snapshot_target() 
         };
         manifest.manifest_digest = manifest.canonical_digest();
         assert!(manifest.validate(&projection).is_ok());
+        let application = NativeApplicationCheckpointV1 {
+            schema_digest: manifest.schema_digest,
+            application_version: 1,
+        };
+        let binding = manifest.chunk_binding_digest();
+        let retained = SnapshotChunkV0 {
+            manifest_digest: binding,
+            index: 0,
+            bytes: vec![7; 16],
+            chunk_digest: SnapshotChunkV0::canonical_digest(binding, 0, &[7; 16]),
+        };
+        let mut session =
+            NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application).unwrap();
+        session.accept_chunk(retained.clone()).unwrap();
+        let readback = session.readback();
+        let resumed = NativeStateSyncSessionV1::resume(
+            path.clone(),
+            manifest.clone(),
+            application,
+            readback,
+            &[retained.clone()],
+        )
+        .unwrap();
+        assert_eq!(resumed.readback(), readback);
+        let mut substituted = retained.clone();
+        substituted.bytes[0] ^= 1;
+        assert!(matches!(
+            NativeStateSyncSessionV1::resume(
+                path.clone(),
+                manifest.clone(),
+                application,
+                readback,
+                &[substituted]
+            ),
+            Err(StateSyncErrorV0::InvalidChunk)
+        ));
+        let mut wrong_readback = readback;
+        wrong_readback.binding_digest = Digest32V0([8; 32]);
+        assert!(matches!(
+            NativeStateSyncSessionV1::resume(
+                path.clone(),
+                manifest.clone(),
+                application,
+                wrong_readback,
+                &[retained]
+            ),
+            Err(StateSyncErrorV0::NativeSessionReadbackMismatch)
+        ));
         manifest.height += 1;
         assert!(manifest.validate(&projection).is_err());
         let needed = budget.signature_work();

@@ -3,8 +3,9 @@
 //! is deliberately separate from the unchanged generic weak-subjectivity API.
 
 use crate::{
-    CheckpointLinkV0, Digest32V0, VerifiedTrustPathV0, WeakSubjectivityAnchorV0,
-    MAX_TRUST_PATH_LINKS_V0,
+    CheckpointLinkV0, Digest32V0, SnapshotChunkV0, SnapshotManifestV0, StateRootRecomputerV0,
+    StateSyncErrorV0, StateSyncHostErrorV0, StateSyncSessionV0, VerifiedSnapshotV0,
+    VerifiedTrustPathV0, WeakSubjectivityAnchorV0, MAX_TRUST_PATH_LINKS_V0,
 };
 use sha2::{Digest, Sha256};
 use std::{error::Error, fmt};
@@ -134,7 +135,7 @@ impl Default for NativeTrustPathLimitsV1 {
 /// use trnm_state_sync_v0::VerifiedNativeTrustPathV1;
 /// let forged = VerifiedNativeTrustPathV1 {};
 /// ```
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct VerifiedNativeTrustPathV1 {
     header: BlockHeader,
     set: ValidatorSet,
@@ -392,6 +393,210 @@ pub fn verify_native_trust_path_v1(
             path_digest: Digest32V0(hasher.finalize().into()),
         },
     })
+}
+
+/// Application-facing checkpoint facts that must travel with a native trust
+/// path. `application_version` is an M07-owned monotonic version retained in
+/// this binding so a peer cannot replay a session under another schema/version.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct NativeApplicationCheckpointV1 {
+    pub schema_digest: Digest32V0,
+    pub application_version: u64,
+}
+
+/// Immutable identity of a native state-sync session. It binds the exact
+/// verified proof path, terminal block/checkpoint, manifest and application
+/// schema/version. The digest is the persistence adapter's session foreign key.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct NativeStateSyncBindingV1 {
+    pub trust_path_digest: Digest32V0,
+    pub terminal_block_digest: Digest32V0,
+    pub checkpoint_digest: Digest32V0,
+    pub manifest_digest: Digest32V0,
+    pub height: u64,
+    pub epoch: u64,
+    pub state_root: Digest32V0,
+    pub schema_digest: Digest32V0,
+    pub application_version: u64,
+    pub binding_digest: Digest32V0,
+}
+
+impl NativeStateSyncBindingV1 {
+    fn from_path_manifest(
+        path: &VerifiedNativeTrustPathV1,
+        manifest: &SnapshotManifestV0,
+        application: NativeApplicationCheckpointV1,
+    ) -> Result<Self, StateSyncErrorV0> {
+        manifest.validate(path.snapshot_trust_path())?;
+        if application.schema_digest == Digest32V0([0; 32]) || application.application_version == 0
+        {
+            return Err(StateSyncErrorV0::NativeApplicationBindingMismatch);
+        }
+        let terminal = path.terminal_header();
+        let trust = path.snapshot_trust_path();
+        if manifest.height != terminal.height().get()
+            || manifest.epoch != terminal.epoch().get()
+            || manifest.state_root != Digest32V0(*terminal.state_root().as_bytes())
+            || manifest.checkpoint_digest != trust.terminal().checkpoint_digest
+        {
+            return Err(StateSyncErrorV0::NativeApplicationBindingMismatch);
+        }
+        let terminal_block_digest = Digest32V0(*terminal.id().as_bytes());
+        let mut binding = Self {
+            trust_path_digest: trust.path_digest(),
+            terminal_block_digest,
+            checkpoint_digest: manifest.checkpoint_digest,
+            manifest_digest: manifest.manifest_digest,
+            height: manifest.height,
+            epoch: manifest.epoch,
+            state_root: manifest.state_root,
+            schema_digest: application.schema_digest,
+            application_version: application.application_version,
+            binding_digest: Digest32V0([0; 32]),
+        };
+        binding.binding_digest = binding.canonical_digest();
+        Ok(binding)
+    }
+
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.state-sync.native-session-binding.v1",
+            &[
+                &self.trust_path_digest.0,
+                &self.terminal_block_digest.0,
+                &self.checkpoint_digest.0,
+                &self.manifest_digest.0,
+                &self.height.to_be_bytes(),
+                &self.epoch.to_be_bytes(),
+                &self.state_root.0,
+                &self.schema_digest.0,
+                &self.application_version.to_be_bytes(),
+            ],
+        )
+    }
+}
+
+/// The minimal durable readback required before resuming a download. A bitmap
+/// without the content-derived `progress_digest` is insufficient: restart must
+/// revalidate every retained chunk under the same manifest.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct NativeStateSyncReadbackV1 {
+    pub binding_digest: Digest32V0,
+    pub manifest_digest: Digest32V0,
+    pub received_chunk_count: u32,
+    pub received_bytes: u64,
+    pub progress_digest: Digest32V0,
+}
+
+/// Native proof-bound download session. This composes the existing bounded
+/// chunk session; it does not choose peers, issue anchors, or perform a
+/// production install. Restart requires the same independently verified path,
+/// exact manifest, application schema/version and every retained chunk.
+pub struct NativeStateSyncSessionV1 {
+    binding: NativeStateSyncBindingV1,
+    session: StateSyncSessionV0,
+}
+
+impl NativeStateSyncSessionV1 {
+    pub fn begin(
+        path: VerifiedNativeTrustPathV1,
+        manifest: SnapshotManifestV0,
+        application: NativeApplicationCheckpointV1,
+    ) -> Result<Self, StateSyncErrorV0> {
+        let binding = NativeStateSyncBindingV1::from_path_manifest(&path, &manifest, application)?;
+        let session = StateSyncSessionV0::new(path.into_snapshot_trust_path(), manifest)?;
+        Ok(Self { binding, session })
+    }
+
+    pub fn resume(
+        path: VerifiedNativeTrustPathV1,
+        manifest: SnapshotManifestV0,
+        application: NativeApplicationCheckpointV1,
+        readback: NativeStateSyncReadbackV1,
+        retained_chunks: &[SnapshotChunkV0],
+    ) -> Result<Self, StateSyncErrorV0> {
+        let mut resumed = Self::begin(path, manifest, application)?;
+        if readback.binding_digest != resumed.binding.binding_digest
+            || readback.manifest_digest != resumed.binding.manifest_digest
+        {
+            return Err(StateSyncErrorV0::NativeSessionReadbackMismatch);
+        }
+        for chunk in retained_chunks {
+            resumed.session.accept_chunk(chunk.clone())?;
+        }
+        let actual = resumed.readback();
+        if actual != readback {
+            return Err(StateSyncErrorV0::NativeSessionReadbackMismatch);
+        }
+        Ok(resumed)
+    }
+
+    pub fn accept_chunk(&mut self, chunk: SnapshotChunkV0) -> Result<(), StateSyncErrorV0> {
+        self.session.accept_chunk(chunk)
+    }
+
+    #[must_use]
+    pub fn missing_chunks(&self) -> Vec<u32> {
+        self.session.missing_chunks()
+    }
+
+    #[must_use]
+    pub const fn binding(&self) -> NativeStateSyncBindingV1 {
+        self.binding
+    }
+
+    #[must_use]
+    pub fn readback(&self) -> NativeStateSyncReadbackV1 {
+        NativeStateSyncReadbackV1 {
+            binding_digest: self.binding.binding_digest,
+            manifest_digest: self.binding.manifest_digest,
+            received_chunk_count: self.session.received_chunk_count(),
+            received_bytes: self.session.received_bytes(),
+            progress_digest: self.session.progress_digest(),
+        }
+    }
+
+    pub fn verify_complete<R>(
+        &self,
+        recomputer: &R,
+    ) -> Result<NativeVerifiedSnapshotV1, StateSyncHostErrorV0<R::Error>>
+    where
+        R: StateRootRecomputerV0,
+    {
+        let snapshot = self.session.verify_complete(recomputer)?;
+        if snapshot.manifest_digest() != self.binding.manifest_digest
+            || snapshot.height() != self.binding.height
+            || snapshot.epoch() != self.binding.epoch
+            || snapshot.state_root() != self.binding.state_root
+        {
+            return Err(StateSyncHostErrorV0::Protocol(
+                StateSyncErrorV0::NativeApplicationBindingMismatch,
+            ));
+        }
+        Ok(NativeVerifiedSnapshotV1 {
+            snapshot,
+            binding: self.binding,
+        })
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct NativeVerifiedSnapshotV1 {
+    snapshot: VerifiedSnapshotV0,
+    binding: NativeStateSyncBindingV1,
+}
+
+impl NativeVerifiedSnapshotV1 {
+    #[must_use]
+    pub const fn snapshot(&self) -> VerifiedSnapshotV0 {
+        self.snapshot
+    }
+
+    #[must_use]
+    pub const fn binding(&self) -> NativeStateSyncBindingV1 {
+        self.binding
+    }
 }
 
 #[cfg(test)]
