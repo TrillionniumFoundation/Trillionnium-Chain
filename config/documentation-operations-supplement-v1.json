@@ -273,8 +273,11 @@
           "target": "production_tx_state_sync_e2e",
           "test_filter": "finalized_readback_survives_sync_mismatch_and_exact_recovery_retry",
           "features": [],
-          "expected_outcome": "A real candidate journal retains durable finality after a state-root join mismatch; a recovered node-owned adapter retries the exact read-only join against the corrected store.",
+          "expected_outcome": "A real candidate journal admits an authenticated CheckTx intent, persists the signing fence, survives one lost broadcast response without re-signing, retains durable finality after a state-root join mismatch, and retries the exact read-only join after recovery.",
           "assertion_fragments": [
+            "check_tx_and_admit(&mut FixedCheckTx, intent())",
+            "assert_eq!(signer_calls.load(Ordering::SeqCst), 1);",
+            "assert_eq!(broadcaster_calls.load(Ordering::SeqCst), 2);",
             "FinalizedTxNativeStateSyncApplyErrorV0::Sync",
             "ProductionTxNodeAdapterV0::recover",
             "assert_eq!(joined.finalized.tx_id, admission.tx_id);"
