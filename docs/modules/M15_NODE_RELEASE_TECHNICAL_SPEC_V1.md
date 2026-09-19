@@ -768,6 +768,18 @@ first-new proof vector, commits K, and revalidates the progressed application
 cut without another signer call. Vote/finality collection, crash recovery after
 a progressed obligation, and repeated crossing remain separate gates.
 
+The epoch C construction uses
+`NativeValidTransitionV0::from_core_delivery_v0` and its
+`validate_against_core_delivery_v0` readback. This binds the exact Core D
+carrier's route, validation identity, canonical Valid checksum, completion
+revision, delivery attempt and post-ack action while preserving the frozen
+328-byte Safety context. The seven host-owned commitments in that context are
+still derived from the native P/application D readback because Core does not
+own those rows; this seam therefore does not constitute complete source
+authentication for an arbitrary host manifest. A future epoch-specific sealed
+delivery-facts carrier must close that remaining boundary before production
+release.
+
 ### Runtime handoff and acceptance closure (M15-RUNTIME-CLOSURE-V1)
 
 The current continuous runtime now has an explicit ordinary follower path. A

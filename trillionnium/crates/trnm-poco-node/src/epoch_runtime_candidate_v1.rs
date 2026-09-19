@@ -12,8 +12,8 @@ use trnm_consensus_core::{
     PreparedEpochCoreActivationV1, SignIntent,
 };
 use trnm_consensus_safety_store::{
-    ConfirmedEpochSafetyHeadV1, EpochSafetyHeadPinV1, NativeValidTransitionV0,
-    SafetyTransitionContextV0, SqliteEpochSafetyJournalV1,
+    ConfirmedEpochSafetyHeadV1, EpochSafetyHeadPinV1, NativeValidHostManifestV0,
+    NativeValidTransitionV0, SafetyTransitionContextV0, SqliteEpochSafetyJournalV1,
 };
 use trnm_consensus_signer_journal::{
     ConfirmedOrdinarySignerRetirementV1, ExternalMonotonicWatermarkV0, ExternalSignerRetirementV1,
@@ -1205,9 +1205,6 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             .step_application_sealed_valid_to_delivery_v1(&proof)
             .map_err(|e| anyhow::anyhow!("epoch Core D: {e:?}"))?;
         let persistence = accepted.persistence_request_v0();
-        let action = persistence
-            .native_valid_post_ack_action_v0()
-            .context("epoch Core D omitted NativeValid post-ack manifest")?;
         let p = confirmed.prepared();
         let request_fingerprint = epoch_transition_digest(
             "request",
@@ -1258,21 +1255,18 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
             ) == Some(accepted.valid_result_checksum_v0()),
             "epoch D result checksum changed before Safety C"
         );
-        let transition = SafetyTransitionContextV0::native_valid(NativeValidTransitionV0::new(
-            route,
-            validation_id,
+        let host_manifest = NativeValidHostManifestV0::new(
             request_fingerprint,
             job_checksum,
             host_config,
-            accepted.valid_result_checksum_v0(),
             callback_checksum,
             idempotency_key,
-            1,
             delivered_job,
             outbox_checksum,
-            action.code(),
-            accepted.completion_revision_v0(),
-        )?);
+        )?;
+        let transition = SafetyTransitionContextV0::native_valid(
+            NativeValidTransitionV0::from_core_delivery_v0(&accepted, host_manifest)?,
+        );
         let head = self
             .journal
             .persist_exact_v1(self.pin, persistence, &transition)?;

@@ -1,8 +1,8 @@
 use trnm_consensus_core::{
     native_valid_result_checksum_v0 as core_native_valid_result_checksum_v0,
     ApplicationNativeValidDeliveryFactsV0, AuthenticatedGenesisApplicationParentV0,
-    DurablePayloadValidationResultV1, DurableStateSyncAnchorV0, PayloadTerminalResult,
-    PayloadValidationRouteV0, SafetyState, ValidationId,
+    CoreAcceptedApplicationValidDV0, DurablePayloadValidationResultV1, DurableStateSyncAnchorV0,
+    PayloadTerminalResult, PayloadValidationRouteV0, SafetyState, ValidationId,
 };
 use trnm_consensus_types::{BlockId, CertificateId, Height, StateRoot, View};
 
@@ -722,6 +722,45 @@ impl NativeValidTransitionV0 {
         )
     }
 
+    /// Builds the compact Safety transition from Core's exact accepted D
+    /// carrier and a separately read-back host manifest.
+    ///
+    /// The carrier owns the route, validation identity, canonical Valid
+    /// checksum, completion revision, and Core post-ack action.  Callers can
+    /// therefore no longer substitute any of those values while constructing
+    /// the 328-byte transition record.  The seven host-owned commitments stay
+    /// explicit because Core does not own the application/database rows they
+    /// describe; a production host must derive them from the same P/D
+    /// readback and retain that source-specific reconciliation.
+    pub fn from_core_delivery_v0(
+        accepted: &CoreAcceptedApplicationValidDV0,
+        host_manifest: NativeValidHostManifestV0,
+    ) -> Result<Self, SafetyStoreErrorV0> {
+        let post_ack_action = accepted
+            .persistence_request_v0()
+            .native_valid_post_ack_action_v0()
+            .ok_or(SafetyStoreErrorV0::PersistedRepresentationMalformed(
+                "Core D carrier omitted NativeValid post-ack action",
+            ))?;
+        let transition = Self::new(
+            accepted.route_v0(),
+            accepted.validation_id_v0(),
+            host_manifest.request_fingerprint(),
+            host_manifest.job_immutable_checksum(),
+            host_manifest.application_host_config_ref(),
+            accepted.valid_result_checksum_v0(),
+            host_manifest.callback_payload_checksum(),
+            host_manifest.idempotency_key(),
+            1,
+            host_manifest.delivered_job_row_checksum(),
+            host_manifest.outbox_checksum(),
+            post_ack_action.code(),
+            accepted.completion_revision_v0(),
+        )?;
+        transition.validate_against_core_delivery_v0(accepted)?;
+        Ok(transition)
+    }
+
     /// Exact readback check against Core's sealed D facts.  The comparison
     /// includes route, identity, action, revision, and the seven host
     /// manifest commitments.
@@ -742,6 +781,34 @@ impl NativeValidTransitionV0 {
         }
         self.host_manifest
             .validate_against_application_delivery_facts_v0(facts)
+    }
+
+    /// Checks the Core-owned portion of this persisted transition against the
+    /// exact accepted D carrier before Safety C is written.  The seven host
+    /// commitments remain checked by their independent P/D source readback;
+    /// they are intentionally not reconstructed from inert Core state.
+    pub fn validate_against_core_delivery_v0(
+        &self,
+        accepted: &CoreAcceptedApplicationValidDV0,
+    ) -> Result<(), SafetyStoreErrorV0> {
+        let expected_action = accepted
+            .persistence_request_v0()
+            .native_valid_post_ack_action_v0()
+            .ok_or(SafetyStoreErrorV0::PersistedRepresentationMalformed(
+                "Core D carrier omitted NativeValid post-ack action",
+            ))?;
+        if self.route != accepted.route_v0()
+            || self.validation_id != accepted.validation_id_v0()
+            || self.valid_result_checksum != accepted.valid_result_checksum_v0()
+            || self.delivery_attempt != 1
+            || self.post_ack_action_code != expected_action.code()
+            || self.completion_revision != accepted.completion_revision_v0()
+        {
+            return Err(SafetyStoreErrorV0::PersistedRepresentationMalformed(
+                "native Valid transition differs from Core D carrier",
+            ));
+        }
+        Ok(())
     }
 
     pub const fn host_manifest_v0(&self) -> NativeValidHostManifestV0 {
@@ -1864,6 +1931,41 @@ mod tests {
     fn valid_facts() -> NativeValidTransitionV0 {
         valid_facts_with(1, NATIVE_VALID_POST_ACK_ARM_VIEW_TIMER_THEN_FINALIZE_V0, 10)
             .expect("valid native Valid facts")
+    }
+
+    #[test]
+    fn native_valid_application_delivery_readback_rejects_host_manifest_mutation() {
+        let validation_id = ValidationId::new(BlockId::new([0x91; 32]), View::new(3), 1);
+        let facts = |request_fingerprint| {
+            ApplicationNativeValidDeliveryFactsV0::new(
+                PayloadValidationRouteV0::Synced,
+                validation_id,
+                request_fingerprint,
+                [0x92; 32],
+                [0x93; 32],
+                [0x94; 32],
+                [0x95; 32],
+                [0x96; 32],
+                1,
+                [0x97; 32],
+                [0x98; 32],
+                trnm_consensus_core::NativeValidPostAckActionV0::None,
+                2,
+            )
+            .expect("bounded application delivery facts")
+        };
+        let canonical = facts([0x91; 32]);
+        let transition = NativeValidTransitionV0::from_application_delivery_facts_v0(&canonical)
+            .expect("canonical transition from application D facts");
+        assert!(transition
+            .validate_against_application_delivery_facts_v0(&canonical)
+            .is_ok());
+        let mut substituted = [0x91; 32];
+        substituted[0] ^= 1;
+        let changed = facts(substituted);
+        assert!(transition
+            .validate_against_application_delivery_facts_v0(&changed)
+            .is_err());
     }
 
     fn finalization_facts_with(
