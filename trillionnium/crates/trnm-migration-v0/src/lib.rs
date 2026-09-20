@@ -552,9 +552,7 @@ pub fn verify_source_checkpoint_context_v0<V>(
 where
     V: SourceCheckpointContextVerifierV0,
 {
-    context
-        .validate()
-        .map_err(MigrationHostErrorV0::Protocol)?;
+    context.validate().map_err(MigrationHostErrorV0::Protocol)?;
     verifier
         .verify_checkpoint_context(&context)
         .map_err(MigrationHostErrorV0::SourceCheckpointContext)?;
@@ -2192,6 +2190,27 @@ pub struct MigrationProjectionV0 {
     pub rows: Vec<TargetRowV0>,
 }
 
+impl MigrationProjectionV0 {
+    /// Digest of the projection commitment carried across the host handoff.
+    /// Rows are represented by their independently checked digest; the durable
+    /// delta store remains the source of the complete installed rows.
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.migration.projection.v0",
+            &[
+                &self.plan_digest.0,
+                &self.source_export_root.0,
+                &self.source_ordered_rows_digest.0,
+                &self.target_row_count.to_be_bytes(),
+                &self.target_rows_digest.0,
+                &self.target_state_root.0,
+                &self.target_genesis_id.0,
+            ],
+        )
+    }
+}
+
 pub fn project_and_recompute_v0<P, R>(
     plan: &MigrationPlanV0,
     export: &VerifiedExportV0,
@@ -2275,6 +2294,23 @@ pub struct CutoverAgreementV0 {
     pub required_weight: u64,
     pub signer_set_digest: Digest32V0,
     pub agreement_digest: Digest32V0,
+}
+
+impl CutoverAgreementV0 {
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.migration.cutover-agreement-record.v0",
+            &[
+                &self.plan_digest.0,
+                &self.target_state_root.0,
+                &self.target_genesis_id.0,
+                &self.signed_weight.to_be_bytes(),
+                &self.required_weight.to_be_bytes(),
+                &self.signer_set_digest.0,
+            ],
+        )
+    }
 }
 
 pub fn verify_cutover_agreement_v0<V>(
@@ -2365,6 +2401,1042 @@ where
     })
 }
 
+/// Host-owned durable migration handoff state. A projection in memory never
+/// implies that a state-sync store was installed or that runtime activation is
+/// safe.
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum MigrationHandoffStateV0 {
+    VerifiedSource = 1,
+    ProjectedDelta = 2,
+    DurableInstall = 3,
+    ReadbackCas = 4,
+    CutoverAgreed = 5,
+    RuntimeReady = 6,
+    Fenced = 255,
+}
+
+impl TryFrom<u8> for MigrationHandoffStateV0 {
+    type Error = MigrationHandoffErrorV0;
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            1 => Ok(Self::VerifiedSource),
+            2 => Ok(Self::ProjectedDelta),
+            3 => Ok(Self::DurableInstall),
+            4 => Ok(Self::ReadbackCas),
+            5 => Ok(Self::CutoverAgreed),
+            6 => Ok(Self::RuntimeReady),
+            255 => Ok(Self::Fenced),
+            _ => Err(MigrationHandoffErrorV0::Codec(
+                "unknown handoff state".into(),
+            )),
+        }
+    }
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum MigrationReadinessModuleV0 {
+    M01 = 1,
+    M02 = 2,
+    M08 = 8,
+}
+
+impl TryFrom<u8> for MigrationReadinessModuleV0 {
+    type Error = MigrationHandoffErrorV0;
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            1 => Ok(Self::M01),
+            2 => Ok(Self::M02),
+            8 => Ok(Self::M08),
+            _ => Err(MigrationHandoffErrorV0::Codec(
+                "unknown readiness module".into(),
+            )),
+        }
+    }
+}
+
+/// Receipt supplied by the real M01/M02/M08 owner. This crate validates only
+/// the typed module and nonzero digest; it never manufactures external proof.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct MigrationReadinessReceiptV0 {
+    pub module: MigrationReadinessModuleV0,
+    pub receipt_digest: Digest32V0,
+}
+
+impl MigrationReadinessReceiptV0 {
+    pub fn validate(self) -> Result<(), MigrationHandoffErrorV0> {
+        if self.receipt_digest == Digest32V0([0; 32]) {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidReadinessReceipt,
+            ));
+        }
+        Ok(())
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct HandoffInstallV0 {
+    previous_root: Digest32V0,
+    installed_root: Digest32V0,
+    generation: u64,
+    delta_digest: Digest32V0,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct HandoffReadbackV0 {
+    plan_digest: Digest32V0,
+    target_schema_digest: Digest32V0,
+    source_context_digest: Digest32V0,
+    target_context_digest: Digest32V0,
+    rows_digest: Digest32V0,
+    state_root: Digest32V0,
+    row_count: u64,
+    generation: u64,
+    last_delta_digest: Digest32V0,
+}
+
+/// One complete handoff record. Its digest covers all fields and every
+/// optional field has an explicit presence marker in the durable encoding.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct MigrationHandoffRecordV0 {
+    pub state: MigrationHandoffStateV0,
+    pub revision: u64,
+    pub plan_digest: Digest32V0,
+    pub target_schema_digest: Digest32V0,
+    pub source_binding_digest: Digest32V0,
+    pub source_context_digest: Digest32V0,
+    pub target_context_digest: Digest32V0,
+    pub projection_digest: Digest32V0,
+    pub target_rows_digest: Digest32V0,
+    pub target_genesis_id: Digest32V0,
+    pub target_state_root: Digest32V0,
+    pub rollback_floor: u64,
+    pub store_identity_digest: Option<Digest32V0>,
+    install: Option<HandoffInstallV0>,
+    readback: Option<HandoffReadbackV0>,
+    cutover: Option<CutoverAgreementV0>,
+    readiness: [Option<MigrationReadinessReceiptV0>; 3],
+    pub fence_reason_digest: Option<Digest32V0>,
+    pub record_digest: Digest32V0,
+}
+
+impl MigrationHandoffRecordV0 {
+    pub fn new_verified_source(
+        plan: &MigrationPlanV0,
+        source_binding: &FinalizedSourceBindingV0,
+        source_context: &VerifiedSourceCheckpointContextV0,
+        rollback_floor: u64,
+    ) -> Result<Self, MigrationHandoffErrorV0> {
+        if plan.plan_digest == Digest32V0([0; 32])
+            || plan.plan_digest != plan.canonical_digest()
+            || plan.target_schema_digest == Digest32V0([0; 32])
+            || rollback_floor > plan.source_height
+            || source_binding.binding_digest() == Digest32V0([0; 32])
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffRecord,
+            ));
+        }
+        let context = source_context.context();
+        if context.chain_id != source_binding.source_chain_id()
+            || context.protocol_digest != source_binding.source_protocol_digest()
+            || context.height != source_binding.source_height()
+            || context.state_root != source_binding.source_state_root()
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::SourceCheckpointContextMismatch,
+            ));
+        }
+        let mut record = Self {
+            state: MigrationHandoffStateV0::VerifiedSource,
+            revision: 0,
+            plan_digest: plan.plan_digest,
+            target_schema_digest: plan.target_schema_digest,
+            source_binding_digest: source_binding.binding_digest(),
+            source_context_digest: context.canonical_digest(),
+            target_context_digest: Digest32V0([0; 32]),
+            projection_digest: Digest32V0([0; 32]),
+            target_rows_digest: Digest32V0([0; 32]),
+            target_genesis_id: plan.target_genesis_id,
+            target_state_root: Digest32V0([0; 32]),
+            rollback_floor,
+            store_identity_digest: None,
+            install: None,
+            readback: None,
+            cutover: None,
+            readiness: [None, None, None],
+            fence_reason_digest: None,
+            record_digest: Digest32V0([0; 32]),
+        };
+        record.record_digest = record.canonical_digest();
+        Ok(record)
+    }
+
+    #[must_use]
+    pub fn canonical_digest(&self) -> Digest32V0 {
+        Digest32V0::hash(
+            b"trnm.migration.handoff-record.v0",
+            &[&self.canonical_bytes()],
+        )
+    }
+    #[must_use]
+    pub fn projection_digest(&self) -> Digest32V0 {
+        self.projection_digest
+    }
+    #[must_use]
+    pub fn install_receipt(&self) -> Option<DurableDeltaInstallReceiptV0> {
+        self.install.map(|v| DurableDeltaInstallReceiptV0 {
+            previous_root: v.previous_root,
+            installed_root: v.installed_root,
+            generation: v.generation,
+            delta_digest: v.delta_digest,
+        })
+    }
+    #[must_use]
+    pub fn readback(&self) -> Option<DurableDeltaReadbackV0> {
+        self.readback.map(|v| DurableDeltaReadbackV0 {
+            plan_digest: v.plan_digest,
+            target_schema_digest: v.target_schema_digest,
+            source_context_digest: v.source_context_digest,
+            target_context_digest: v.target_context_digest,
+            rows_digest: v.rows_digest,
+            state_root: v.state_root,
+            row_count: v.row_count,
+            generation: v.generation,
+            last_delta_digest: v.last_delta_digest,
+        })
+    }
+    #[must_use]
+    pub fn cutover_agreement(&self) -> Option<CutoverAgreementV0> {
+        self.cutover
+    }
+    #[must_use]
+    pub fn readiness(&self) -> &[Option<MigrationReadinessReceiptV0>; 3] {
+        &self.readiness
+    }
+
+    fn canonical_bytes(&self) -> Vec<u8> {
+        let mut b = Vec::with_capacity(1024);
+        b.extend_from_slice(b"MHOF");
+        b.extend_from_slice(&1_u16.to_be_bytes());
+        b.push(self.state as u8);
+        put_u64(&mut b, self.revision);
+        for d in [
+            self.plan_digest,
+            self.target_schema_digest,
+            self.source_binding_digest,
+            self.source_context_digest,
+            self.target_context_digest,
+            self.projection_digest,
+            self.target_rows_digest,
+            self.target_genesis_id,
+            self.target_state_root,
+        ] {
+            put_digest(&mut b, d);
+        }
+        put_u64(&mut b, self.rollback_floor);
+        put_optional_digest(&mut b, self.store_identity_digest);
+        if let Some(v) = self.install {
+            b.push(1);
+            put_digest(&mut b, v.previous_root);
+            put_digest(&mut b, v.installed_root);
+            put_u64(&mut b, v.generation);
+            put_digest(&mut b, v.delta_digest);
+        } else {
+            b.push(0);
+        }
+        if let Some(v) = self.readback {
+            b.push(1);
+            for d in [
+                v.plan_digest,
+                v.target_schema_digest,
+                v.source_context_digest,
+                v.target_context_digest,
+                v.rows_digest,
+                v.state_root,
+            ] {
+                put_digest(&mut b, d);
+            }
+            put_u64(&mut b, v.row_count);
+            put_u64(&mut b, v.generation);
+            put_digest(&mut b, v.last_delta_digest);
+        } else {
+            b.push(0);
+        }
+        if let Some(v) = self.cutover {
+            b.push(1);
+            for d in [v.plan_digest, v.target_state_root, v.target_genesis_id] {
+                put_digest(&mut b, d);
+            }
+            put_u64(&mut b, v.signed_weight);
+            put_u64(&mut b, v.required_weight);
+            put_digest(&mut b, v.signer_set_digest);
+            put_digest(&mut b, v.agreement_digest);
+        } else {
+            b.push(0);
+        }
+        for v in self.readiness {
+            if let Some(v) = v {
+                b.push(1);
+                b.push(v.module as u8);
+                put_digest(&mut b, v.receipt_digest);
+            } else {
+                b.push(0);
+            }
+        }
+        put_optional_digest(&mut b, self.fence_reason_digest);
+        b
+    }
+    fn encode(&self) -> Vec<u8> {
+        let mut b = self.canonical_bytes();
+        b.extend_from_slice(&self.record_digest.0);
+        b
+    }
+    fn validate(&self) -> Result<(), MigrationHandoffErrorV0> {
+        if self.record_digest == Digest32V0([0; 32])
+            || self.record_digest != self.canonical_digest()
+            || self.plan_digest == Digest32V0([0; 32])
+            || self.target_schema_digest == Digest32V0([0; 32])
+            || self.source_binding_digest == Digest32V0([0; 32])
+            || self.source_context_digest == Digest32V0([0; 32])
+            || self.target_genesis_id == Digest32V0([0; 32])
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffRecord,
+            ));
+        }
+        if self.state == MigrationHandoffStateV0::Fenced {
+            if self.fence_reason_digest.is_none()
+                || self.fence_reason_digest == Some(Digest32V0([0; 32]))
+            {
+                return Err(MigrationHandoffErrorV0::Protocol(
+                    MigrationErrorV0::InvalidHandoffRecord,
+                ));
+            }
+            return Ok(());
+        }
+        if self.fence_reason_digest.is_some() {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffRecord,
+            ));
+        }
+        if self.state == MigrationHandoffStateV0::VerifiedSource
+            && (self.projection_digest != Digest32V0([0; 32])
+                || self.target_context_digest != Digest32V0([0; 32])
+                || self.target_state_root != Digest32V0([0; 32])
+                || self.target_rows_digest != Digest32V0([0; 32])
+                || self.store_identity_digest.is_some()
+                || self.install.is_some()
+                || self.readback.is_some()
+                || self.cutover.is_some())
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffRecord,
+            ));
+        }
+        if self.state as u8 >= MigrationHandoffStateV0::ProjectedDelta as u8
+            && (self.projection_digest == Digest32V0([0; 32])
+                || self.target_context_digest == Digest32V0([0; 32])
+                || self.target_state_root == Digest32V0([0; 32])
+                || self.target_rows_digest == Digest32V0([0; 32]))
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffRecord,
+            ));
+        }
+        if matches!(
+            self.state,
+            MigrationHandoffStateV0::DurableInstall
+                | MigrationHandoffStateV0::ReadbackCas
+                | MigrationHandoffStateV0::CutoverAgreed
+                | MigrationHandoffStateV0::RuntimeReady
+        ) && (self.store_identity_digest.is_none()
+            || self.install.is_none()
+            || self.readback.is_none())
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffRecord,
+            ));
+        }
+        if matches!(
+            self.state,
+            MigrationHandoffStateV0::CutoverAgreed | MigrationHandoffStateV0::RuntimeReady
+        ) && self.cutover.is_none()
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffRecord,
+            ));
+        }
+        if self.state == MigrationHandoffStateV0::RuntimeReady
+            && self.readiness.iter().any(Option::is_none)
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidReadinessReceipt,
+            ));
+        }
+        for v in self.readiness.iter().flatten() {
+            v.validate()?;
+        }
+        Ok(())
+    }
+
+    fn projected_delta(
+        mut self,
+        projection: &MigrationProjectionV0,
+        source: &VerifiedSourceCheckpointContextV0,
+        target: &VerifiedSourceCheckpointContextV0,
+    ) -> Result<Self, MigrationHandoffErrorV0> {
+        if self.state != MigrationHandoffStateV0::VerifiedSource
+            || projection.plan_digest != self.plan_digest
+            || projection.target_genesis_id != self.target_genesis_id
+            || projection.target_state_root == Digest32V0([0; 32])
+            || source.context_digest() != self.source_context_digest
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffTransition,
+            ));
+        }
+        if projection.target_row_count != projection.rows.len() as u64
+            || validate_target_rows_v0(&projection.rows).is_err()
+            || target_rows_digest_v0(&projection.rows) != projection.target_rows_digest
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::VerifiedExportMismatch,
+            ));
+        }
+        let s = source.context();
+        let t = target.context();
+        if t.chain_id != s.chain_id
+            || t.protocol_digest != s.protocol_digest
+            || t.height <= s.height
+            || t.epoch < s.epoch
+            || t.epoch > s.epoch.saturating_add(1)
+            || t.state_root != projection.target_state_root
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::SourceCheckpointContextMismatch,
+            ));
+        }
+        self.state = MigrationHandoffStateV0::ProjectedDelta;
+        self.target_context_digest = t.canonical_digest();
+        self.projection_digest = projection.canonical_digest();
+        self.target_rows_digest = projection.target_rows_digest;
+        self.target_state_root = projection.target_state_root;
+        self.record_digest = self.canonical_digest();
+        Ok(self)
+    }
+    fn durable_install(
+        mut self,
+        identity: Digest32V0,
+        receipt: DurableDeltaInstallReceiptV0,
+        readback: DurableDeltaReadbackV0,
+    ) -> Result<Self, MigrationHandoffErrorV0> {
+        if self.state != MigrationHandoffStateV0::ProjectedDelta
+            || identity == Digest32V0([0; 32])
+            || receipt.previous_root == Digest32V0([0; 32])
+            || receipt.installed_root != self.target_state_root
+            || receipt.generation == 0
+            || receipt.delta_digest == Digest32V0([0; 32])
+            || readback.plan_digest != self.plan_digest
+            || readback.target_schema_digest != self.target_schema_digest
+            || readback.source_context_digest != self.source_context_digest
+            || readback.target_context_digest != self.target_context_digest
+            || readback.state_root != self.target_state_root
+            || readback.rows_digest != self.target_rows_digest
+            || readback.rows_digest == Digest32V0([0; 32])
+            || readback.generation != receipt.generation
+            || readback.last_delta_digest != receipt.delta_digest
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        self.state = MigrationHandoffStateV0::DurableInstall;
+        self.store_identity_digest = Some(identity);
+        self.install = Some(HandoffInstallV0 {
+            previous_root: receipt.previous_root,
+            installed_root: receipt.installed_root,
+            generation: receipt.generation,
+            delta_digest: receipt.delta_digest,
+        });
+        self.readback = Some(HandoffReadbackV0 {
+            plan_digest: readback.plan_digest,
+            target_schema_digest: readback.target_schema_digest,
+            source_context_digest: readback.source_context_digest,
+            target_context_digest: readback.target_context_digest,
+            rows_digest: readback.rows_digest,
+            state_root: readback.state_root,
+            row_count: readback.row_count,
+            generation: readback.generation,
+            last_delta_digest: readback.last_delta_digest,
+        });
+        self.record_digest = self.canonical_digest();
+        Ok(self)
+    }
+    fn readback_cas(
+        mut self,
+        readback: DurableDeltaReadbackV0,
+    ) -> Result<Self, MigrationHandoffErrorV0> {
+        let expected = HandoffReadbackV0 {
+            plan_digest: readback.plan_digest,
+            target_schema_digest: readback.target_schema_digest,
+            source_context_digest: readback.source_context_digest,
+            target_context_digest: readback.target_context_digest,
+            rows_digest: readback.rows_digest,
+            state_root: readback.state_root,
+            row_count: readback.row_count,
+            generation: readback.generation,
+            last_delta_digest: readback.last_delta_digest,
+        };
+        if self.state != MigrationHandoffStateV0::DurableInstall || self.readback != Some(expected)
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        self.state = MigrationHandoffStateV0::ReadbackCas;
+        self.record_digest = self.canonical_digest();
+        Ok(self)
+    }
+    fn cutover_agreed(
+        mut self,
+        agreement: CutoverAgreementV0,
+    ) -> Result<Self, MigrationHandoffErrorV0> {
+        let expected = Digest32V0::hash(
+            b"trnm.migration.cutover-agreement.v0",
+            &[
+                &agreement.plan_digest.0,
+                &agreement.target_state_root.0,
+                &agreement.target_genesis_id.0,
+                &agreement.signed_weight.to_be_bytes(),
+                &agreement.required_weight.to_be_bytes(),
+                &agreement.signer_set_digest.0,
+            ],
+        );
+        if self.state != MigrationHandoffStateV0::ReadbackCas
+            || agreement.plan_digest != self.plan_digest
+            || agreement.target_state_root != self.target_state_root
+            || agreement.target_genesis_id != self.target_genesis_id
+            || agreement.required_weight == 0
+            || agreement.signed_weight < agreement.required_weight
+            || agreement.agreement_digest == Digest32V0([0; 32])
+            || agreement.agreement_digest != expected
+        {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidCutoverAgreement,
+            ));
+        }
+        self.state = MigrationHandoffStateV0::CutoverAgreed;
+        self.cutover = Some(agreement);
+        self.record_digest = self.canonical_digest();
+        Ok(self)
+    }
+    fn runtime_ready(
+        mut self,
+        readiness: [MigrationReadinessReceiptV0; 3],
+    ) -> Result<Self, MigrationHandoffErrorV0> {
+        if self.state != MigrationHandoffStateV0::CutoverAgreed {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffTransition,
+            ));
+        }
+        let expected = [
+            MigrationReadinessModuleV0::M01,
+            MigrationReadinessModuleV0::M02,
+            MigrationReadinessModuleV0::M08,
+        ];
+        for (i, v) in readiness.into_iter().enumerate() {
+            v.validate()?;
+            if v.module != expected[i] {
+                return Err(MigrationHandoffErrorV0::Protocol(
+                    MigrationErrorV0::InvalidReadinessReceipt,
+                ));
+            }
+            self.readiness[i] = Some(v);
+        }
+        self.state = MigrationHandoffStateV0::RuntimeReady;
+        self.record_digest = self.canonical_digest();
+        Ok(self)
+    }
+    fn fenced(mut self, reason: Digest32V0) -> Result<Self, MigrationHandoffErrorV0> {
+        if reason == Digest32V0([0; 32]) {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffRecord,
+            ));
+        }
+        self.state = MigrationHandoffStateV0::Fenced;
+        self.fence_reason_digest = Some(reason);
+        self.record_digest = self.canonical_digest();
+        Ok(self)
+    }
+}
+
+fn put_digest(b: &mut Vec<u8>, d: Digest32V0) {
+    b.extend_from_slice(&d.0)
+}
+fn put_u64(b: &mut Vec<u8>, v: u64) {
+    b.extend_from_slice(&v.to_be_bytes())
+}
+fn put_optional_digest(b: &mut Vec<u8>, d: Option<Digest32V0>) {
+    if let Some(d) = d {
+        b.push(1);
+        put_digest(b, d)
+    } else {
+        b.push(0)
+    }
+}
+
+#[derive(Debug)]
+pub enum MigrationHandoffErrorV0 {
+    Protocol(MigrationErrorV0),
+    Sqlite(String),
+    Io(String),
+    Codec(String),
+    ConcurrentUpdate,
+}
+impl fmt::Display for MigrationHandoffErrorV0 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Protocol(e) => write!(f, "migration handoff rejected input: {e}"),
+            Self::Sqlite(e) => write!(f, "migration handoff sqlite failure: {e}"),
+            Self::Io(e) => write!(f, "migration handoff filesystem failure: {e}"),
+            Self::Codec(e) => write!(f, "migration handoff codec failure: {e}"),
+            Self::ConcurrentUpdate => f.write_str("migration handoff changed concurrently"),
+        }
+    }
+}
+impl Error for MigrationHandoffErrorV0 {}
+
+const HANDOFF_STORE_APP_ID_V0: i64 = 0x484f_4630;
+const HANDOFF_META_SQL_V0:&str="CREATE TABLE migration_handoff_record_v0 (singleton INTEGER PRIMARY KEY CHECK(singleton=1), revision INTEGER NOT NULL CHECK(revision>=0), record_digest BLOB NOT NULL CHECK(length(record_digest)=32), record BLOB NOT NULL CHECK(length(record)>0)) STRICT";
+
+/// Durable handoff store. Each transition commits atomically, fsyncs the
+/// database and parent, and decodes the committed record again before return.
+#[derive(Clone, Debug)]
+pub struct SqliteMigrationHandoffStoreV0 {
+    path: PathBuf,
+}
+
+impl SqliteMigrationHandoffStoreV0 {
+    pub fn initialize(
+        path: impl Into<PathBuf>,
+        record: MigrationHandoffRecordV0,
+    ) -> Result<Self, MigrationHandoffErrorV0> {
+        record.validate()?;
+        let path = path.into();
+        prepare_store_parent_handoff_v0(&path)?;
+        let (tp, tf) = reserve_temporary_store_file_handoff_v0(&path)?;
+        let mut published = false;
+        let result = (|| {
+            let mut c = open_handoff_connection_create_v0(&tp)?;
+            let tx = c
+                .transaction_with_behavior(TransactionBehavior::Immediate)
+                .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+            tx.execute_batch(HANDOFF_META_SQL_V0)
+                .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+            tx.execute("INSERT INTO migration_handoff_record_v0(singleton,revision,record_digest,record) VALUES(1,?1,?2,?3)",params![record.revision as i64,&record.record_digest.0[..],&record.encode()]).map_err(|e|MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+            tx.commit()
+                .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+            c.execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
+                .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+            drop(c);
+            sync_store_file_v0(&tf, &tp).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+            remove_temporary_store_sidecars_v0(&tp)
+                .map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+            if (Self { path: tp.clone() }).readback_v0()?.record_digest != record.record_digest {
+                return Err(MigrationHandoffErrorV0::Protocol(
+                    MigrationErrorV0::DurableReadbackMismatch,
+                ));
+            }
+            fs::hard_link(&tp, &path).map_err(|e| {
+                if e.kind() == std::io::ErrorKind::AlreadyExists {
+                    MigrationHandoffErrorV0::Protocol(MigrationErrorV0::StoreAlreadyInitialized)
+                } else {
+                    MigrationHandoffErrorV0::Io(e.to_string())
+                }
+            })?;
+            published = true;
+            fs::remove_file(&tp).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+            sync_store_parent_v0(&path).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+            let store = Self { path };
+            if store.readback_v0()?.record_digest != record.record_digest {
+                return Err(MigrationHandoffErrorV0::Protocol(
+                    MigrationErrorV0::DurableReadbackMismatch,
+                ));
+            }
+            Ok(store)
+        })();
+        if !published {
+            remove_temporary_store_artifacts_v0(&tp)
+        }
+        result
+    }
+    pub fn open_existing(path: impl Into<PathBuf>) -> Result<Self, MigrationHandoffErrorV0> {
+        let path = path.into();
+        validate_existing_store_path_v0(&path)
+            .map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+        let s = Self { path };
+        s.readback_v0()?;
+        Ok(s)
+    }
+    pub fn readback_v0(&self) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0> {
+        let c = self.open_connection()?;
+        let (rev,digest,bytes)=c.query_row("SELECT revision,record_digest,record FROM migration_handoff_record_v0 WHERE singleton=1",[],|r|Ok((r.get::<_,i64>(0)?,r.get::<_,Vec<u8>>(1)?,r.get::<_,Vec<u8>>(2)?))).optional().map_err(|e|MigrationHandoffErrorV0::Sqlite(e.to_string()))?.ok_or(MigrationHandoffErrorV0::Protocol(MigrationErrorV0::StoreSchemaMismatch))?;
+        if rev < 0 {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::StoreSchemaMismatch,
+            ));
+        }
+        let r = decode_handoff_record_v0(&bytes)?;
+        let d = <[u8; 32]>::try_from(digest.as_slice())
+            .map(Digest32V0)
+            .map_err(|_| MigrationHandoffErrorV0::Codec("invalid digest length".into()))?;
+        if r.revision != rev as u64 || r.record_digest != d {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        Ok(r)
+    }
+    pub fn projected_delta_v0(
+        &self,
+        p: &MigrationProjectionV0,
+        s: &VerifiedSourceCheckpointContextV0,
+        t: &VerifiedSourceCheckpointContextV0,
+    ) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0> {
+        self.transition(|r| r.projected_delta(p, s, t))
+    }
+    pub fn durable_install_v0(
+        &self,
+        i: Digest32V0,
+        receipt: DurableDeltaInstallReceiptV0,
+        readback: DurableDeltaReadbackV0,
+    ) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0> {
+        self.transition(|r| r.durable_install(i, receipt, readback))
+    }
+    pub fn readback_cas_v0(
+        &self,
+        r: DurableDeltaReadbackV0,
+    ) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0> {
+        self.transition(|v| v.readback_cas(r))
+    }
+    pub fn cutover_agreed_v0(
+        &self,
+        a: CutoverAgreementV0,
+    ) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0> {
+        self.transition(|r| r.cutover_agreed(a))
+    }
+    pub fn runtime_ready_v0(
+        &self,
+        r: [MigrationReadinessReceiptV0; 3],
+    ) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0> {
+        self.transition(|v| v.runtime_ready(r))
+    }
+    pub fn fence_v0(
+        &self,
+        d: Digest32V0,
+    ) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0> {
+        self.transition(|v| v.fenced(d))
+    }
+    fn transition<F>(&self, apply: F) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0>
+    where
+        F: FnOnce(
+            MigrationHandoffRecordV0,
+        ) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0>,
+    {
+        let mut c = self.open_connection()?;
+        let tx = c
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+        let(rev,digest,bytes)=tx.query_row("SELECT revision,record_digest,record FROM migration_handoff_record_v0 WHERE singleton=1",[],|r|Ok((r.get::<_,i64>(0)?,r.get::<_,Vec<u8>>(1)?,r.get::<_,Vec<u8>>(2)?))).map_err(|e|MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+        if rev < 0 {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::StoreSchemaMismatch,
+            ));
+        }
+        let cur = decode_handoff_record_v0(&bytes)?;
+        let sd = <[u8; 32]>::try_from(digest.as_slice())
+            .map(Digest32V0)
+            .map_err(|_| MigrationHandoffErrorV0::Codec("invalid digest length".into()))?;
+        if cur.revision != rev as u64 || cur.record_digest != sd {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        let mut next = apply(cur)?;
+        next.revision = rev as u64 + 1;
+        next.record_digest = next.canonical_digest();
+        next.validate()?;
+        let changed=tx.execute("UPDATE migration_handoff_record_v0 SET revision=?1,record_digest=?2,record=?3 WHERE singleton=1 AND revision=?4 AND record_digest=?5",params![next.revision as i64,&next.record_digest.0[..],&next.encode(),rev,&sd.0[..]]).map_err(|e|MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+        if changed != 1 {
+            return Err(MigrationHandoffErrorV0::ConcurrentUpdate);
+        }
+        tx.commit()
+            .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+        c.execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
+            .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+        drop(c);
+        sync_store_file_path_v0(&self.path)?;
+        let rb = self.readback_v0()?;
+        if rb != next {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch,
+            ));
+        }
+        Ok(rb)
+    }
+    fn open_connection(&self) -> Result<Connection, MigrationHandoffErrorV0> {
+        validate_existing_store_path_v0(&self.path)
+            .map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+        let c = Connection::open_with_flags(
+            &self.path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+        verify_handoff_connection_v0(&c)?;
+        let mut st = c
+            .prepare(
+                "SELECT name,type FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY name",
+            )
+            .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+        let objects = st
+            .query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)))
+            .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+        if objects != vec![("migration_handoff_record_v0".to_owned(), "table".to_owned())] {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::StoreSchemaMismatch,
+            ));
+        }
+        drop(st);
+        Ok(c)
+    }
+}
+
+fn decode_handoff_record_v0(
+    bytes: &[u8],
+) -> Result<MigrationHandoffRecordV0, MigrationHandoffErrorV0> {
+    let mut p = 0usize;
+    let take = |p: &mut usize, n: usize| -> Result<&[u8], MigrationHandoffErrorV0> {
+        let end = p
+            .checked_add(n)
+            .ok_or_else(|| MigrationHandoffErrorV0::Codec("length overflow".into()))?;
+        let out = bytes
+            .get(*p..end)
+            .ok_or_else(|| MigrationHandoffErrorV0::Codec("truncated record".into()))?;
+        *p = end;
+        Ok(out)
+    };
+    let u64v = |p: &mut usize| -> Result<u64, MigrationHandoffErrorV0> {
+        Ok(u64::from_be_bytes(take(p, 8)?.try_into().expect("fixed")))
+    };
+    let dig = |p: &mut usize| -> Result<Digest32V0, MigrationHandoffErrorV0> {
+        Ok(Digest32V0(take(p, 32)?.try_into().expect("fixed")))
+    };
+    let optdig = |p: &mut usize| -> Result<Option<Digest32V0>, MigrationHandoffErrorV0> {
+        match take(p, 1)?[0] {
+            0 => Ok(None),
+            1 => Ok(Some(dig(p)?)),
+            _ => Err(MigrationHandoffErrorV0::Codec(
+                "invalid optional flag".into(),
+            )),
+        }
+    };
+    if take(&mut p, 4)? != b"MHOF" || take(&mut p, 2)? != 1u16.to_be_bytes() {
+        return Err(MigrationHandoffErrorV0::Codec(
+            "invalid record header".into(),
+        ));
+    }
+    let state = MigrationHandoffStateV0::try_from(take(&mut p, 1)?[0])?;
+    let revision = u64v(&mut p)?;
+    let plan_digest = dig(&mut p)?;
+    let target_schema_digest = dig(&mut p)?;
+    let source_binding_digest = dig(&mut p)?;
+    let source_context_digest = dig(&mut p)?;
+    let target_context_digest = dig(&mut p)?;
+    let projection_digest = dig(&mut p)?;
+    let target_rows_digest = dig(&mut p)?;
+    let target_genesis_id = dig(&mut p)?;
+    let target_state_root = dig(&mut p)?;
+    let rollback_floor = u64v(&mut p)?;
+    let store_identity_digest = optdig(&mut p)?;
+    let install = match take(&mut p, 1)?[0] {
+        0 => None,
+        1 => Some(HandoffInstallV0 {
+            previous_root: dig(&mut p)?,
+            installed_root: dig(&mut p)?,
+            generation: u64v(&mut p)?,
+            delta_digest: dig(&mut p)?,
+        }),
+        _ => {
+            return Err(MigrationHandoffErrorV0::Codec(
+                "invalid install flag".into(),
+            ))
+        }
+    };
+    let readback = match take(&mut p, 1)?[0] {
+        0 => None,
+        1 => Some(HandoffReadbackV0 {
+            plan_digest: dig(&mut p)?,
+            target_schema_digest: dig(&mut p)?,
+            source_context_digest: dig(&mut p)?,
+            target_context_digest: dig(&mut p)?,
+            rows_digest: dig(&mut p)?,
+            state_root: dig(&mut p)?,
+            row_count: u64v(&mut p)?,
+            generation: u64v(&mut p)?,
+            last_delta_digest: dig(&mut p)?,
+        }),
+        _ => {
+            return Err(MigrationHandoffErrorV0::Codec(
+                "invalid readback flag".into(),
+            ))
+        }
+    };
+    let cutover = match take(&mut p, 1)?[0] {
+        0 => None,
+        1 => Some(CutoverAgreementV0 {
+            plan_digest: dig(&mut p)?,
+            target_state_root: dig(&mut p)?,
+            target_genesis_id: dig(&mut p)?,
+            signed_weight: u64v(&mut p)?,
+            required_weight: u64v(&mut p)?,
+            signer_set_digest: dig(&mut p)?,
+            agreement_digest: dig(&mut p)?,
+        }),
+        _ => {
+            return Err(MigrationHandoffErrorV0::Codec(
+                "invalid cutover flag".into(),
+            ))
+        }
+    };
+    let mut readiness = [None, None, None];
+    for slot in &mut readiness {
+        *slot = match take(&mut p, 1)?[0] {
+            0 => None,
+            1 => Some(MigrationReadinessReceiptV0 {
+                module: MigrationReadinessModuleV0::try_from(take(&mut p, 1)?[0])?,
+                receipt_digest: dig(&mut p)?,
+            }),
+            _ => {
+                return Err(MigrationHandoffErrorV0::Codec(
+                    "invalid readiness flag".into(),
+                ))
+            }
+        };
+    }
+    let fence_reason_digest = optdig(&mut p)?;
+    let record_digest = dig(&mut p)?;
+    if p != bytes.len() {
+        return Err(MigrationHandoffErrorV0::Codec(
+            "trailing record bytes".into(),
+        ));
+    }
+    let record = MigrationHandoffRecordV0 {
+        state,
+        revision,
+        plan_digest,
+        target_schema_digest,
+        source_binding_digest,
+        source_context_digest,
+        target_context_digest,
+        projection_digest,
+        target_rows_digest,
+        target_genesis_id,
+        target_state_root,
+        rollback_floor,
+        store_identity_digest,
+        install,
+        readback,
+        cutover,
+        readiness,
+        fence_reason_digest,
+        record_digest,
+    };
+    record.validate()?;
+    Ok(record)
+}
+fn open_handoff_connection_create_v0(path: &Path) -> Result<Connection, MigrationHandoffErrorV0> {
+    let c = Connection::open_with_flags(
+        path,
+        OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+    )
+    .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    c.pragma_update(None, "application_id", HANDOFF_STORE_APP_ID_V0)
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    c.pragma_update(None, "user_version", 1_i64)
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    configure_handoff_connection_v0(&c)?;
+    Ok(c)
+}
+fn configure_handoff_connection_v0(c: &Connection) -> Result<(), MigrationHandoffErrorV0> {
+    let mode: String = c
+        .pragma_query_value(None, "journal_mode", |r| r.get(0))
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    if mode.to_ascii_lowercase() != "wal" {
+        c.pragma_update(None, "journal_mode", "WAL")
+            .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    }
+    let mode: String = c
+        .pragma_query_value(None, "journal_mode", |r| r.get(0))
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    let sync: i64 = c
+        .pragma_query_value(None, "synchronous", |r| r.get(0))
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    if mode.to_ascii_lowercase() != "wal" || sync != 2 {
+        return Err(MigrationHandoffErrorV0::Protocol(
+            MigrationErrorV0::StoreSchemaMismatch,
+        ));
+    }
+    c.busy_timeout(std::time::Duration::from_millis(250))
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    Ok(())
+}
+fn verify_handoff_connection_v0(c: &Connection) -> Result<(), MigrationHandoffErrorV0> {
+    let id: i64 = c
+        .pragma_query_value(None, "application_id", |r| r.get(0))
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    let ver: i64 = c
+        .pragma_query_value(None, "user_version", |r| r.get(0))
+        .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
+    if id != HANDOFF_STORE_APP_ID_V0 || ver != 1 {
+        return Err(MigrationHandoffErrorV0::Protocol(
+            MigrationErrorV0::StoreSchemaMismatch,
+        ));
+    }
+    configure_handoff_connection_v0(c)
+}
+fn prepare_store_parent_handoff_v0(path: &Path) -> Result<(), MigrationHandoffErrorV0> {
+    match fs::symlink_metadata(path) {
+        Ok(_) => {
+            return Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::StoreAlreadyInitialized,
+            ))
+        }
+        Err(e) if e.kind() != std::io::ErrorKind::NotFound => {
+            return Err(MigrationHandoffErrorV0::Io(e.to_string()))
+        }
+        Err(_) => {}
+    }
+    if let Some(parent) = path.parent().filter(|p| !p.as_os_str().is_empty()) {
+        fs::create_dir_all(parent).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+    }
+    reject_store_path_ancestors_v0(path).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+    reject_store_sidecars_v0(path).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+    Ok(())
+}
+fn reserve_temporary_store_file_handoff_v0(
+    path: &Path,
+) -> Result<(PathBuf, fs::File), MigrationHandoffErrorV0> {
+    reserve_temporary_store_file_v0(path).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))
+}
+fn sync_store_file_path_v0(path: &Path) -> Result<(), MigrationHandoffErrorV0> {
+    let f = fs::File::open(path).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))?;
+    sync_store_file_v0(&f, path).map_err(|e| MigrationHandoffErrorV0::Io(e.to_string()))
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MigrationErrorV0 {
     InvalidExportRow,
@@ -2398,6 +3470,9 @@ pub enum MigrationErrorV0 {
     InvalidDurableSnapshot,
     SnapshotRowsMismatch,
     SnapshotRootMismatch,
+    InvalidHandoffRecord,
+    InvalidHandoffTransition,
+    InvalidReadinessReceipt,
 }
 
 impl fmt::Display for MigrationErrorV0 {
@@ -2442,6 +3517,9 @@ impl fmt::Display for MigrationErrorV0 {
             Self::InvalidDurableSnapshot => "durable delta snapshot is malformed",
             Self::SnapshotRowsMismatch => "durable delta snapshot rows mismatch",
             Self::SnapshotRootMismatch => "durable delta snapshot root mismatch",
+            Self::InvalidHandoffRecord => "migration handoff record is malformed",
+            Self::InvalidHandoffTransition => "migration handoff transition is out of order",
+            Self::InvalidReadinessReceipt => "migration module readiness receipt is malformed",
         })
     }
 }
@@ -2689,14 +3767,8 @@ mod tests {
         )
         .unwrap();
         assert_eq!(
-            apply_incremental_delta_verified_v0(
-                &delta,
-                &source,
-                &target_cap,
-                &base,
-                &HashRoot,
-            )
-            .unwrap(),
+            apply_incremental_delta_verified_v0(&delta, &source, &target_cap, &base, &HashRoot,)
+                .unwrap(),
             target
         );
 
@@ -2704,13 +3776,7 @@ mod tests {
         let foreign_target =
             verify_source_checkpoint_context_v0(&AcceptFinality, foreign_target_raw).unwrap();
         assert!(matches!(
-            apply_incremental_delta_verified_v0(
-                &delta,
-                &source,
-                &foreign_target,
-                &base,
-                &HashRoot,
-            ),
+            apply_incremental_delta_verified_v0(&delta, &source, &foreign_target, &base, &HashRoot,),
             Err(IncrementalDeltaErrorV0::Protocol(
                 MigrationErrorV0::SourceCheckpointContextMismatch
             ))
@@ -3432,5 +4498,157 @@ mod tests {
         let b = verify_cutover_agreement_v0(&WeightOne, &projection, 2, &[second, first]).unwrap();
         assert_eq!(a.signer_set_digest, b.signer_set_digest);
         assert_eq!(a.agreement_digest, b.agreement_digest);
+    }
+
+    #[test]
+    fn durable_handoff_transitions_atomically_and_rejects_stale_mutation() {
+        let (rows, export, plan) = verified_fixture();
+        let binding = export.source_binding_v0();
+        let source_raw = SourceCheckpointContextV0 {
+            chain_id: d(1),
+            protocol_digest: d(2),
+            checkpoint_digest: d(10),
+            block_id: d(11),
+            height: 100,
+            epoch: 1,
+            state_root: d(3),
+            validator_set_digest: d(12),
+            finality_proof_digest: d(13),
+        };
+        let source = verify_source_checkpoint_context_v0(&AcceptFinality, source_raw).unwrap();
+        let projection =
+            project_and_recompute_v0(&plan, &export, &rows, &IdentityProjector, &HashRoot).unwrap();
+        let target_raw = SourceCheckpointContextV0 {
+            chain_id: d(1),
+            protocol_digest: d(2),
+            checkpoint_digest: d(14),
+            block_id: d(15),
+            height: 101,
+            epoch: 1,
+            state_root: projection.target_state_root,
+            validator_set_digest: d(16),
+            finality_proof_digest: d(17),
+        };
+        let target = verify_source_checkpoint_context_v0(&AcceptFinality, target_raw).unwrap();
+        let path = std::env::temp_dir().join(format!(
+            "trnm-migration-handoff-{}-{}.sqlite",
+            std::process::id(),
+            d(201).0[0]
+        ));
+        let _ = std::fs::remove_file(&path);
+        let record =
+            MigrationHandoffRecordV0::new_verified_source(&plan, &binding, &source, 99).unwrap();
+        let store = SqliteMigrationHandoffStoreV0::initialize(&path, record).unwrap();
+        assert_eq!(
+            store.readback_v0().unwrap().state,
+            MigrationHandoffStateV0::VerifiedSource
+        );
+        let projected = store
+            .projected_delta_v0(&projection, &source, &target)
+            .unwrap();
+        assert_eq!(projected.state, MigrationHandoffStateV0::ProjectedDelta);
+        let readback = DurableDeltaReadbackV0 {
+            plan_digest: plan.plan_digest,
+            target_schema_digest: plan.target_schema_digest,
+            source_context_digest: source_raw.canonical_digest(),
+            target_context_digest: target_raw.canonical_digest(),
+            rows_digest: projection.target_rows_digest,
+            state_root: projection.target_state_root,
+            row_count: projection.target_row_count,
+            generation: 1,
+            last_delta_digest: d(202),
+        };
+        let receipt = DurableDeltaInstallReceiptV0 {
+            previous_root: d(203),
+            installed_root: projection.target_state_root,
+            generation: 1,
+            delta_digest: d(202),
+        };
+        let mut substituted_readback = readback.clone();
+        substituted_readback.rows_digest = d(206);
+        assert!(matches!(
+            store.durable_install_v0(d(204), receipt, substituted_readback),
+            Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::DurableReadbackMismatch
+            ))
+        ));
+        assert_eq!(
+            store.readback_v0().unwrap().state,
+            MigrationHandoffStateV0::ProjectedDelta
+        );
+        store
+            .durable_install_v0(d(204), receipt, readback.clone())
+            .unwrap();
+        assert!(matches!(
+            store.runtime_ready_v0([
+                MigrationReadinessReceiptV0 {
+                    module: MigrationReadinessModuleV0::M01,
+                    receipt_digest: d(1)
+                },
+                MigrationReadinessReceiptV0 {
+                    module: MigrationReadinessModuleV0::M02,
+                    receipt_digest: d(2)
+                },
+                MigrationReadinessReceiptV0 {
+                    module: MigrationReadinessModuleV0::M08,
+                    receipt_digest: d(8)
+                },
+            ]),
+            Err(MigrationHandoffErrorV0::Protocol(
+                MigrationErrorV0::InvalidHandoffTransition
+            ))
+        ));
+        assert_eq!(
+            store.readback_v0().unwrap().state,
+            MigrationHandoffStateV0::DurableInstall
+        );
+        store.readback_cas_v0(readback).unwrap();
+        let agreement_digest = Digest32V0::hash(
+            b"trnm.migration.cutover-agreement.v0",
+            &[
+                &plan.plan_digest.0,
+                &projection.target_state_root.0,
+                &plan.target_genesis_id.0,
+                &2_u64.to_be_bytes(),
+                &2_u64.to_be_bytes(),
+                &d(205).0,
+            ],
+        );
+        store
+            .cutover_agreed_v0(CutoverAgreementV0 {
+                plan_digest: plan.plan_digest,
+                target_state_root: projection.target_state_root,
+                target_genesis_id: plan.target_genesis_id,
+                signed_weight: 2,
+                required_weight: 2,
+                signer_set_digest: d(205),
+                agreement_digest,
+            })
+            .unwrap();
+        let ready = store
+            .runtime_ready_v0([
+                MigrationReadinessReceiptV0 {
+                    module: MigrationReadinessModuleV0::M01,
+                    receipt_digest: d(1),
+                },
+                MigrationReadinessReceiptV0 {
+                    module: MigrationReadinessModuleV0::M02,
+                    receipt_digest: d(2),
+                },
+                MigrationReadinessReceiptV0 {
+                    module: MigrationReadinessModuleV0::M08,
+                    receipt_digest: d(8),
+                },
+            ])
+            .unwrap();
+        assert_eq!(ready.state, MigrationHandoffStateV0::RuntimeReady);
+        assert_eq!(
+            SqliteMigrationHandoffStoreV0::open_existing(&path)
+                .unwrap()
+                .readback_v0()
+                .unwrap(),
+            ready
+        );
+        let _ = std::fs::remove_file(path);
     }
 }

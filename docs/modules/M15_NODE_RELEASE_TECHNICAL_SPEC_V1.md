@@ -20,6 +20,7 @@ That deliverable is distinct from production activation and external acceptance.
 | `trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs` | `ProductionNodeCompositionV0`, verified authority ingress/facts/session | Generic ports are not a deployed service set |
 | `trillionnium/crates/trnm-poco-node-production-v0/src/public_ingress.rs` | Transport-neutral `ProductionTxPublicIngressV0` dispatches a validated typed request into node-owned CheckTx and the durable M05 WAL | No socket, wire decoder, peer/HSM, proposal, or finality authority; production activation remains false |
 | `trillionnium/crates/trnm-poco-node-host/src/lib.rs` | Persistent host lifecycle boundary | Recover actual module owners before serving |
+| `trillionnium/crates/trnm-migration-v0::SqliteMigrationHandoffStoreV0` | Host-owned durable migration handoff ledger; atomic phase CAS and fsync/readback | Does not open production activation or manufacture M01/M02/M08 evidence |
 | `trillionnium/crates/trnm-poco-lab-validator/src/candidate_devnet.rs` | Explicit bounded candidate CLI with external Unix peer lease | Single-LAN, local test keys; no HSM or public-testnet authority |
 | `trillionnium/crates/trnm-release-bundle-v0/src/lib.rs` | Bundle validation, signatures and independent build comparison | Does not itself authorize publication |
 
@@ -218,6 +219,27 @@ Reserve at least two successor heights beyond the last admitted business target;
 On startup restore body/nonce/proposal/proof state and reconcile unresolved
 handoffs before exposing the client socket as ready. Migration and recovery
 failures preserve the prior databases and keep signing/submission fenced.
+
+### Migration handoff ownership
+
+M15 hosts the M13 handoff ledger but does not become the source-finality or
+state-sync authority. `MigrationHandoffRecordV0` is persisted through
+`SqliteMigrationHandoffStoreV0`; its typed phases are
+`VerifiedSource -> ProjectedDelta -> DurableInstall -> ReadbackCas ->
+CutoverAgreed -> RuntimeReady`. The record digest binds the finalized source
+binding, verified checkpoint-context digests, target genesis/root, projection,
+durable install/readback, cutover agreement, rollback floor, and separate
+M01/M02/M08 readiness receipts. Every mutation is an immediate SQLite CAS,
+followed by WAL checkpoint, file/parent fsync and full decode/readback. Any
+stale revision, substituted context/projection, root mismatch, incomplete
+readback, malformed cutover agreement, or missing readiness receipt fails
+closed; `fence_v0` records uncertainty durably.
+
+This ledger closes the in-memory-projection gap. It remains a candidate
+integration contract: M15 must obtain actual owner receipts and external
+crash, disk-full, replacement, multi-host and finality evidence before a
+deployment can enable installation or consensus activation. No production
+switch is changed by the presence of this API.
 
 ## State machine
 

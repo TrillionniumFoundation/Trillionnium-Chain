@@ -140,27 +140,28 @@ unbound snapshot initializer is crate-internal and cannot be used by a node
 integration. A verifier that simply returns `Ok(())` is test-only and cannot
 close the production acceptance gate.
 
-### Production handoff boundary (still open)
+### Production handoff boundary (implemented contract; activation remains closed)
 
-The verified context APIs are intentionally not a production cutover API. The
-current `trnm-poco-node-production-v0` composition has no owner for a migration
-projector, an installed state-sync store, a target-genesis record, or a
-cutover/rollback agreement. It also has no authenticated handoff into M01
-signer admission, M02 runtime activation, or M08 finality/recovery readiness.
-Calling the pure verified delta or snapshot functions from that composition
-would only produce an in-memory projection and would incorrectly present it as
-an installed node state.
+`trnm-migration-v0` now provides the host-owned
+`SqliteMigrationHandoffStoreV0` and `MigrationHandoffRecordV0`. The record binds
+`FinalizedSourceBindingV0`, target schema/genesis/root, opaque verified source
+and target checkpoint-context digests, projection digest, durable state-sync
+store identity, install receipt, readback metadata, cutover agreement,
+rollback floor, and typed M01/M02/M08 readiness receipts in one canonical
+record digest. The host must issue the verified contexts through
+`verify_source_checkpoint_context_v0`; a raw peer context cannot enter this
+state machine.
 
-The next implementation must introduce one host-owned, durable handoff record
-with these fields bound in one digest: `FinalizedSourceBindingV0`, target
-genesis and state-root, verified source/target context digests, installed
-state-sync store identity, installation receipt, cutover agreement, rollback
-floor, and the M01/M02/M08 readiness receipts. Its ordered transition is
-`VerifiedSource -> ProjectedDelta -> DurableInstall -> Readback/CAS ->
-CutoverAgreed -> RuntimeReady`; every uncertain boundary must resolve to the
-exact source or target record, otherwise fence. Until that owner and its
-crash/restart, multi-peer, and external finality tests exist, production
-installation and consensus activation remain false.
+The only accepted order is
+`VerifiedSource -> ProjectedDelta -> DurableInstall -> ReadbackCas ->
+CutoverAgreed -> RuntimeReady`. Each transition is one SQLite `BEGIN
+IMMEDIATE` compare-and-swap, followed by WAL checkpoint, file/parent `fsync`,
+and a complete record decode/readback. Schema, digest, stale revision,
+projection-row, target-root, context, install/readback, cutover, or readiness
+mismatch fails closed without advancing the record. `fence_v0` durably records
+an explicit uncertainty fence. The store is a handoff ledger and does not
+enable production activation; the M15 composition still requires real owner
+receipts and external crash, disk, replacement, and finality evidence.
 
 ## Interfaces
 
