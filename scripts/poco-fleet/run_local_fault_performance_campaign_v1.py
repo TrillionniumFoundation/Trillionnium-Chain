@@ -65,9 +65,15 @@ def publish_exclusive(path: pathlib.Path, content: bytes) -> None:
 
     path = path.absolute()
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    parent_metadata = path.parent.lstat()
-    if path.parent.is_symlink() or not stat.S_ISDIR(parent_metadata.st_mode):
-        raise RuntimeError(f"evidence parent is not a real directory: {path.parent}")
+    current = path.parent
+    while True:
+        parent_metadata = current.lstat()
+        if current.is_symlink() or not stat.S_ISDIR(parent_metadata.st_mode):
+            raise RuntimeError(f"evidence parent is not a real directory: {current}")
+        ancestor = current.parent
+        if ancestor == current:
+            break
+        current = ancestor
     temporary = path.parent / (
         f".{path.name}.tmp-{os.getpid()}-{time.monotonic_ns()}"
     )

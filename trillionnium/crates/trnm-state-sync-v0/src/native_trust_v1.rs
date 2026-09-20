@@ -9,7 +9,13 @@ use crate::{
 };
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
-use std::{error::Error, fmt, path::PathBuf, time::Duration};
+use std::{
+    error::Error,
+    fmt, fs,
+    path::{Path, PathBuf},
+    sync::atomic::{AtomicU64, Ordering},
+    time::{Duration, SystemTime, UNIX_EPOCH},
+};
 use trnm_consensus_crypto::{
     decode_verify_epoch_first_finality_strict_v1, decode_verify_finality_proof_strict_v0,
     validate_validator_set_strict_ed25519_v0, FinalityExpectationV0, StrictFinalityErrorV0,
@@ -494,6 +500,7 @@ const NATIVE_SYNC_STORE_APP_ID_V1: i64 = 0x5453_594e;
 const NATIVE_SYNC_STORE_USER_VERSION_V1: i64 = 1;
 const NATIVE_SYNC_META_SQL_V1: &str = "CREATE TABLE native_state_sync_meta_v1 (singleton INTEGER PRIMARY KEY CHECK(singleton=1), binding_digest BLOB NOT NULL CHECK(length(binding_digest)=32), trust_path_digest BLOB NOT NULL CHECK(length(trust_path_digest)=32), terminal_block_digest BLOB NOT NULL CHECK(length(terminal_block_digest)=32), checkpoint_digest BLOB NOT NULL CHECK(length(checkpoint_digest)=32), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), manifest_binding_digest BLOB NOT NULL CHECK(length(manifest_binding_digest)=32), height INTEGER NOT NULL CHECK(height>0), epoch INTEGER NOT NULL CHECK(epoch>=0), state_root BLOB NOT NULL CHECK(length(state_root)=32), schema_digest BLOB NOT NULL CHECK(length(schema_digest)=32), application_version INTEGER NOT NULL CHECK(application_version>0), received_chunk_count INTEGER NOT NULL CHECK(received_chunk_count>=0), received_bytes INTEGER NOT NULL CHECK(received_bytes>=0), progress_digest BLOB NOT NULL CHECK(length(progress_digest)=32)) STRICT";
 const NATIVE_SYNC_CHUNKS_SQL_V1: &str = "CREATE TABLE native_state_sync_chunks_v1 (chunk_index INTEGER PRIMARY KEY CHECK(chunk_index>=0), manifest_digest BLOB NOT NULL CHECK(length(manifest_digest)=32), bytes BLOB NOT NULL, chunk_digest BLOB NOT NULL CHECK(length(chunk_digest)=32)) WITHOUT ROWID";
+static NATIVE_SYNC_INITIALIZATION_NONCE_V1: AtomicU64 = AtomicU64::new(0);
 
 /// Errors from the candidate durable native state-sync adapter.  A SQLite
 /// success is not treated as a trusted source: every reopen revalidates the
@@ -659,62 +666,163 @@ impl SqliteNativeStateSyncStoreV1 {
         session: &NativeStateSyncSessionV1,
     ) -> Result<Self, NativeStateSyncStoreErrorV1> {
         let path = path.into();
-        if path.exists() {
-            return Err(NativeStateSyncStoreErrorV1::StoreAlreadyInitialized);
+        match fs::symlink_metadata(&path) {
+            Ok(_) => return Err(NativeStateSyncStoreErrorV1::StoreAlreadyInitialized),
+            Err(error) if error.kind() != std::io::ErrorKind::NotFound => {
+                return Err(NativeStateSyncStoreErrorV1::Io(error.to_string()))
+            }
+            Err(_) => {}
         }
-        let mut connection = Connection::open(&path)
-            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
-        configure_native_connection_v1(&connection, true)?;
-        let transaction = connection
-            .transaction_with_behavior(TransactionBehavior::Immediate)
-            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
-        transaction
-            .execute_batch(&format!(
-                "{NATIVE_SYNC_META_SQL_V1};{NATIVE_SYNC_CHUNKS_SQL_V1};"
-            ))
-            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
-        let binding = session.binding();
-        let readback = session.readback();
-        insert_metadata_v1(
-            &transaction,
-            binding,
-            session.manifest_binding_digest(),
-            readback,
-        )?;
-        for chunk in session.retained_chunks_v1() {
-            transaction
-                .execute(
-                    "INSERT INTO native_state_sync_chunks_v1(chunk_index,manifest_digest,bytes,chunk_digest) VALUES(?1,?2,?3,?4)",
-                    params![
-                        i64::from(chunk.index),
-                        &chunk.manifest_digest.0[..],
-                        &chunk.bytes,
-                        &chunk.chunk_digest.0[..]
-                    ],
-                )
+        if let Some(parent) = path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+        {
+            fs::create_dir_all(parent)
+                .map_err(|error| NativeStateSyncStoreErrorV1::Io(error.to_string()))?;
+        }
+        reject_path_ancestors_v1(&path)?;
+        reject_sidecar_symlinks_v1(&path)?;
+
+        // Build and verify the complete SQLite image under a same-directory
+        // temporary inode first.  A crash before publication therefore leaves
+        // no final path that a later opener could mistake for an initialized
+        // state-sync session.  hard_link() publishes without replacing a path
+        // created by a racing initializer.
+        let mut reservation = None;
+        for _ in 0..32 {
+            let candidate = initialization_temp_path_v1(&path)?;
+            match fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(&candidate)
+            {
+                Ok(file) => {
+                    reservation = Some((candidate, file));
+                    break;
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
+                Err(error) => return Err(NativeStateSyncStoreErrorV1::Io(error.to_string())),
+            }
+        }
+        let (temporary_path, file) = reservation.ok_or_else(|| {
+            NativeStateSyncStoreErrorV1::Io(
+                "native state-sync temporary namespace is exhausted".to_owned(),
+            )
+        })?;
+
+        let initialized = (|| -> Result<(), NativeStateSyncStoreErrorV1> {
+            file.sync_all()
+                .map_err(|error| NativeStateSyncStoreErrorV1::Io(error.to_string()))?;
+            drop(file);
+
+            let mut connection = open_initialization_connection_v1(&temporary_path)?;
+            configure_native_connection_v1(&connection, true)?;
+            let transaction = connection
+                .transaction_with_behavior(TransactionBehavior::Immediate)
                 .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+            transaction
+                .execute_batch(&format!(
+                    "{NATIVE_SYNC_META_SQL_V1};{NATIVE_SYNC_CHUNKS_SQL_V1};"
+                ))
+                .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+            let binding = session.binding();
+            let readback = session.readback();
+            insert_metadata_v1(
+                &transaction,
+                binding,
+                session.manifest_binding_digest(),
+                readback,
+            )?;
+            for chunk in session.retained_chunks_v1() {
+                transaction
+                    .execute(
+                        "INSERT INTO native_state_sync_chunks_v1(chunk_index,manifest_digest,bytes,chunk_digest) VALUES(?1,?2,?3,?4)",
+                        params![
+                            i64::from(chunk.index),
+                            &chunk.manifest_digest.0[..],
+                            &chunk.bytes,
+                            &chunk.chunk_digest.0[..]
+                        ],
+                    )
+                    .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+            }
+            transaction
+                .commit()
+                .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+            // WAL frames belong to the temporary basename.  Checkpoint before
+            // publication so the final inode is self-contained and no
+            // temporary WAL sidecar is accidentally treated as authoritative.
+            connection
+                .execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
+                .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+            drop(connection);
+
+            let temporary_store = Self {
+                path: temporary_path.clone(),
+                #[cfg(test)]
+                test_max_page_count: None,
+            };
+            let actual = temporary_store.readback_v1()?;
+            if actual != session.readback() {
+                return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
+            }
+            fs::File::open(&temporary_path)
+                .and_then(|file| file.sync_all())
+                .map_err(|error| NativeStateSyncStoreErrorV1::Io(error.to_string()))?;
+            Ok(())
+        })();
+        if let Err(error) = initialized {
+            let _ = fs::remove_file(&temporary_path);
+            return Err(error);
         }
-        transaction
-            .commit()
-            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
-        let store = Self {
+
+        if let Err(error) = fs::hard_link(&temporary_path, &path) {
+            let _ = fs::remove_file(&temporary_path);
+            return Err(if error.kind() == std::io::ErrorKind::AlreadyExists {
+                NativeStateSyncStoreErrorV1::StoreAlreadyInitialized
+            } else {
+                NativeStateSyncStoreErrorV1::Io(error.to_string())
+            });
+        }
+        let parent = path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or(Path::new("."));
+        if let Err(error) = fs::File::open(parent).and_then(|parent| parent.sync_all()) {
+            // Publication has happened; report uncertainty and retain the
+            // final inode for explicit operator recovery rather than deleting
+            // a possibly durable store.
+            return Err(NativeStateSyncStoreErrorV1::Io(error.to_string()));
+        }
+        fs::remove_file(&temporary_path)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Io(error.to_string()))?;
+        fs::File::open(parent)
+            .and_then(|parent| parent.sync_all())
+            .map_err(|error| NativeStateSyncStoreErrorV1::Io(error.to_string()))?;
+
+        Ok(Self {
             path,
             #[cfg(test)]
             test_max_page_count: None,
-        };
-        let actual = store.readback_v1()?;
-        if actual != readback {
-            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
-        }
-        Ok(store)
+        })
     }
 
     /// Open an existing closed-world store and validate its metadata and all
     /// retained chunk bytes.  This is intentionally independent of a trust
     /// path; source authority is re-established only by `resume_existing_v1`.
     pub fn open_existing(path: impl Into<PathBuf>) -> Result<Self, NativeStateSyncStoreErrorV1> {
+        let path = path.into();
+        let metadata = fs::symlink_metadata(&path)
+            .map_err(|error| NativeStateSyncStoreErrorV1::Io(error.to_string()))?;
+        if !metadata.is_file() || metadata.file_type().is_symlink() {
+            return Err(NativeStateSyncStoreErrorV1::Io(
+                "native state-sync store path is not a regular file".to_owned(),
+            ));
+        }
+        reject_path_ancestors_v1(&path)?;
+        reject_sidecar_symlinks_v1(&path)?;
         let store = Self {
-            path: path.into(),
+            path,
             #[cfg(test)]
             test_max_page_count: None,
         };
@@ -918,8 +1026,14 @@ impl SqliteNativeStateSyncStoreV1 {
     }
 
     fn open_connection_v1(&self) -> Result<Connection, NativeStateSyncStoreErrorV1> {
-        let connection = Connection::open_with_flags(&self.path, OpenFlags::SQLITE_OPEN_READ_WRITE)
-            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+        ensure_regular_store_path_v1(&self.path)?;
+        reject_path_ancestors_v1(&self.path)?;
+        reject_sidecar_symlinks_v1(&self.path)?;
+        let connection = Connection::open_with_flags(
+            &self.path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
         // A concurrent writer must wait for the bounded owner transaction to
         // finish rather than fail immediately with SQLITE_BUSY.  This keeps
         // the authenticated resume/join observation atomic while retaining a
@@ -937,6 +1051,104 @@ impl SqliteNativeStateSyncStoreV1 {
         verify_native_schema_v1(&connection)?;
         Ok(connection)
     }
+}
+
+fn open_initialization_connection_v1(
+    path: &Path,
+) -> Result<Connection, NativeStateSyncStoreErrorV1> {
+    let connection = Connection::open_with_flags(
+        path,
+        OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+    )
+    .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    connection
+        .busy_timeout(Duration::from_secs(5))
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    Ok(connection)
+}
+
+fn ensure_regular_store_path_v1(path: &Path) -> Result<(), NativeStateSyncStoreErrorV1> {
+    let metadata = fs::symlink_metadata(path)
+        .map_err(|error| NativeStateSyncStoreErrorV1::Io(error.to_string()))?;
+    if !metadata.is_file() || metadata.file_type().is_symlink() {
+        return Err(NativeStateSyncStoreErrorV1::Io(
+            "native state-sync store path is not a regular file".to_owned(),
+        ));
+    }
+    Ok(())
+}
+
+fn reject_path_ancestors_v1(path: &Path) -> Result<(), NativeStateSyncStoreErrorV1> {
+    let mut current = Some(
+        path.parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or(Path::new(".")),
+    );
+    while let Some(parent) = current {
+        match fs::symlink_metadata(parent) {
+            Ok(metadata) if metadata.file_type().is_symlink() => {
+                return Err(NativeStateSyncStoreErrorV1::Io(
+                    "native state-sync parent path is a symlink".to_owned(),
+                ))
+            }
+            Ok(metadata) if !metadata.is_dir() => {
+                return Err(NativeStateSyncStoreErrorV1::Io(
+                    "native state-sync parent path is not a directory".to_owned(),
+                ))
+            }
+            Ok(_) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => return Err(NativeStateSyncStoreErrorV1::Io(error.to_string())),
+        }
+        current = parent
+            .parent()
+            .filter(|ancestor| !ancestor.as_os_str().is_empty());
+    }
+    Ok(())
+}
+
+fn reject_sidecar_symlinks_v1(path: &Path) -> Result<(), NativeStateSyncStoreErrorV1> {
+    for suffix in ["-wal", "-shm", "-journal"] {
+        let mut sidecar_name = path.as_os_str().to_os_string();
+        sidecar_name.push(suffix);
+        let sidecar = PathBuf::from(sidecar_name);
+        match fs::symlink_metadata(&sidecar) {
+            Ok(metadata) if metadata.file_type().is_symlink() => {
+                return Err(NativeStateSyncStoreErrorV1::Io(
+                    "native state-sync SQLite sidecar is a symlink".to_owned(),
+                ))
+            }
+            Ok(metadata) if !metadata.is_file() => {
+                return Err(NativeStateSyncStoreErrorV1::Io(
+                    "native state-sync SQLite sidecar is not a regular file".to_owned(),
+                ))
+            }
+            Ok(_) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => return Err(NativeStateSyncStoreErrorV1::Io(error.to_string())),
+        }
+    }
+    Ok(())
+}
+
+fn initialization_temp_path_v1(path: &Path) -> Result<PathBuf, NativeStateSyncStoreErrorV1> {
+    let parent = path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    let name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("native-state-sync-v1");
+    let nonce = NATIVE_SYNC_INITIALIZATION_NONCE_V1.fetch_add(1, Ordering::Relaxed);
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|error| NativeStateSyncStoreErrorV1::Io(error.to_string()))?
+        .as_nanos();
+    Ok(parent.join(format!(
+        ".{name}.init-{}-{nonce}-{nanos}",
+        std::process::id()
+    )))
 }
 
 fn configure_native_connection_v1(

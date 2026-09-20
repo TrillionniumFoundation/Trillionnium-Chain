@@ -1051,6 +1051,92 @@ fn native_sqlite_resume_holds_writer_lock_until_authenticated_join_finishes() {
 }
 
 #[test]
+fn native_sqlite_initialize_is_single_publisher_under_concurrency() {
+    let (path, manifest, application, _) = durable_session_fixture();
+    let store_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-init-race-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let session = NativeStateSyncSessionV1::begin(path, manifest, application).unwrap();
+    let gate = std::sync::Arc::new(std::sync::Barrier::new(3));
+    let left_gate = gate.clone();
+    let left_path = store_path.clone();
+    let left_session = session.clone();
+    let left = std::thread::spawn(move || {
+        left_gate.wait();
+        SqliteNativeStateSyncStoreV1::initialize(left_path, &left_session)
+    });
+    let right_gate = gate.clone();
+    let right_path = store_path.clone();
+    let right_session = session;
+    let right = std::thread::spawn(move || {
+        right_gate.wait();
+        SqliteNativeStateSyncStoreV1::initialize(right_path, &right_session)
+    });
+    gate.wait();
+    let left_result = left.join().unwrap();
+    let right_result = right.join().unwrap();
+    assert_eq!(
+        usize::from(left_result.is_ok()) + usize::from(right_result.is_ok()),
+        1
+    );
+    let loser = [left_result, right_result]
+        .into_iter()
+        .find_map(Result::err)
+        .expect("one initializer must lose the publication race");
+    assert!(matches!(
+        loser,
+        NativeStateSyncStoreErrorV1::StoreAlreadyInitialized
+    ));
+    let reopened = SqliteNativeStateSyncStoreV1::open_existing(&store_path).unwrap();
+    assert_eq!(reopened.readback_v1().unwrap().received_chunk_count, 0);
+    let _ = std::fs::remove_file(&store_path);
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+}
+
+#[cfg(unix)]
+#[test]
+fn native_sqlite_paths_reject_symlink_aliases_and_dangling_reservations() {
+    let (path, manifest, application, _) = durable_session_fixture();
+    let root = std::env::temp_dir().join(format!(
+        "trnm-native-sync-symlink-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir(&root).unwrap();
+    let target = root.join("target.sqlite");
+    let alias = root.join("alias.sqlite");
+    let dangling = root.join("dangling.sqlite");
+    let session = NativeStateSyncSessionV1::begin(path, manifest, application).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&target, &session).unwrap();
+    drop(store);
+    std::os::unix::fs::symlink(&target, &alias).unwrap();
+    assert!(matches!(
+        SqliteNativeStateSyncStoreV1::open_existing(&alias),
+        Err(NativeStateSyncStoreErrorV1::Io(_))
+    ));
+    std::os::unix::fs::symlink(root.join("missing.sqlite"), &dangling).unwrap();
+    assert!(matches!(
+        SqliteNativeStateSyncStoreV1::initialize(&dangling, &session),
+        Err(NativeStateSyncStoreErrorV1::StoreAlreadyInitialized)
+    ));
+    let _ = std::fs::remove_file(&alias);
+    let _ = std::fs::remove_file(&dangling);
+    let _ = std::fs::remove_file(&target);
+    let _ = std::fs::remove_file(target.with_extension("sqlite-wal"));
+    let _ = std::fs::remove_file(target.with_extension("sqlite-shm"));
+    let _ = std::fs::remove_dir(&root);
+}
+
+#[test]
 fn native_path_rejects_replay_reordering_disconnected_checkpoint_and_untrusted_set() {
     let (evidence, set, params, binding) = fixture("positive");
     let decoded = decode_epoch_activation_evidence_v0_exact(

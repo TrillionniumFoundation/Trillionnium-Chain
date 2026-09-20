@@ -208,6 +208,22 @@ digest. This is process-restart evidence only; it does not establish physical
 power-loss, disk-full, filesystem-corruption, peer transport, signer, or
 multihost durability, and it does not authorize production installation.
 
+Initialization is now a same-directory temporary-inode publication. The owner
+reserves a unique temporary path with `create_new`, creates and verifies the
+complete WAL database, checkpoints the temporary WAL, fsyncs the file, then
+publishes with a non-replacing hard link and fsyncs the parent directory. A
+crash before publication therefore leaves no final path that can be reopened as
+a partial session; a concurrent initializer gets an explicit
+`StoreAlreadyInitialized` result. `open_existing` and every later connection
+reject final-path or SQLite-sidecar symlinks and non-directory ancestors, and
+use SQLite `NOFOLLOW` for the final inode. These checks reduce path substitution
+and publication races but do not claim resistance to an attacker who can race
+directory replacement between the preflight and the OS open; production
+deployment still needs descriptor-anchored directory ownership. The tests
+`native_sqlite_initialize_is_single_publisher_under_concurrency` and
+`native_sqlite_paths_reject_symlink_aliases_and_dangling_reservations` cover the
+local publication and path-admission boundaries.
+
 `native_trust_v1_tests.rs` covers real signed ordinary-to-epoch paths for normal
 and fallback handoff, signed TC views 3/5/8, snapshot target substitution,
 checkpoint-byte mismatch, peer-set replacement, replay/reordering, signature

@@ -81,6 +81,21 @@ def test_campaign_does_not_replace_published_evidence() -> None:
         assert output.read_bytes() == before
 
 
+def test_evidence_publisher_rejects_symlinked_parent() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:
+        root = pathlib.Path(raw)
+        target = root / "target"
+        target.mkdir()
+        alias = root / "alias"
+        alias.symlink_to(target, target_is_directory=True)
+        try:
+            campaign.publish_exclusive(alias / "evidence.json", b"{}\n")
+        except RuntimeError as error:
+            assert "real directory" in str(error)
+        else:
+            raise AssertionError("symlinked evidence parent was accepted")
+
+
 def test_campaign_result_rejects_tampered_fault_counts_and_claim_flags() -> None:
     with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:
         result = campaign.run_campaign(output=pathlib.Path(raw) / "evidence.json", messages=2)
