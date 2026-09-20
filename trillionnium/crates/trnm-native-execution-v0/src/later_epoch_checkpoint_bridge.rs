@@ -44,6 +44,9 @@ pub struct LaterEpochCheckpointFinalityV1 {
 impl LaterEpochCheckpointFinalityV1 {
     pub fn belongs_to_application(&self, application: &DurableNativeApplicationV0) -> bool {
         self.context.belongs_to_application(application)
+            && application
+                .inspect_later_epoch_checkpoint_context_v1()
+                .is_ok_and(|fresh| ensure_context_fresh(&self.context, &fresh).is_ok())
     }
 
     pub const fn context_digest(&self) -> [u8; 32] {
