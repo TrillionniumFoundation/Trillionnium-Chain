@@ -734,13 +734,40 @@ impl DurableNativeApplicationV0 {
             .map_err(|_| anyhow::anyhow!("migration lock"))? = Some(row.checksum);
         Ok(())
     }
+    /// Recover the currently active schema6/7 edge without accepting a caller
+    /// supplied edge as authority.  The no-argument compatibility entry point
+    /// remains intentionally singleton-scoped until a versioned edge-history
+    /// record exists.
     pub fn recover_incremental_epoch_edge_v1(&self) -> Result<AuthenticatedEpochApplicationEdgeV1> {
+        self.recover_incremental_epoch_edge_inner_v1(None)
+    }
+
+    /// Recover one exact active edge binding.  A non-active binding fails
+    /// before any checkpoint reconstruction, so callers cannot accidentally
+    /// attach a future or foreign epoch to the schema7 singleton owner.
+    pub fn recover_incremental_epoch_edge_for_binding_v1(
+        &self,
+        binding: [u8; 32],
+    ) -> Result<AuthenticatedEpochApplicationEdgeV1> {
+        self.recover_incremental_epoch_edge_inner_v1(Some(binding))
+    }
+
+    fn recover_incremental_epoch_edge_inner_v1(
+        &self,
+        expected_binding: Option<[u8; 32]>,
+    ) -> Result<AuthenticatedEpochApplicationEdgeV1> {
         let c = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&c)?;
         ensure!(epoch_schema(&c)?, "incremental epoch schema required");
         let tx = c.unchecked_transaction()?;
         let m = load_metadata_v0(&tx, &self.config)?;
         let (_, row) = audit_owner(&tx, &self.config, &m)?;
+        if let Some(binding) = expected_binding {
+            ensure!(
+                row.binding == binding,
+                "requested incremental epoch edge is not the active owner binding"
+            );
+        }
         ensure!(
             *self
                 .incremental_migration_pin
@@ -1080,6 +1107,13 @@ mod tests {
         assert!(app.confirm_ordinary_schema_v0().is_err());
         app.upgrade_incremental_epoch_schema_v1(&edge).unwrap();
         app.upgrade_incremental_epoch_schema_v1(&edge).unwrap();
+        let recovered = app
+            .recover_incremental_epoch_edge_for_binding_v1(edge.authorization_id())
+            .unwrap();
+        assert_eq!(recovered.authorization_id(), edge.authorization_id());
+        assert!(app
+            .recover_incremental_epoch_edge_for_binding_v1([0xa5; 32])
+            .is_err());
         let preview = app
             .preview_incremental_epoch_block_v1(&edge, &request)
             .unwrap();

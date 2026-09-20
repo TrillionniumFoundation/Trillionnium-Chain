@@ -780,3 +780,54 @@ pub fn epoch_first_finality(
     }
     bytes
 }
+
+/// Build an ordinary new-set three-chain for one sparse epoch descendant.
+///
+/// This fixture helper deliberately takes the authenticated epoch edge and
+/// parent header rather than a caller-supplied validator set.  It is test-only
+/// evidence for the schema7 ordinary descendant commit path; it does not
+/// create checkpoint/two-seal/handoff evidence.
+#[cfg(any(test, feature = "test-fixtures"))]
+pub fn ordinary_epoch_finality(
+    edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+    parent: &BlockHeader,
+    headers: &[BlockHeader],
+) -> Vec<u8> {
+    assert_eq!(headers.len(), 3, "ordinary finality requires a three-chain");
+    let set = edge.new_validator_set();
+    let parameters = edge.new_parameters();
+    let certified = |header: &BlockHeader, parent: &BlockHeader| {
+        let justify = QcReferenceV0::ordinary(qc(parent, set));
+        let root = ProposalWitnessV0::signing_root_for(header, &justify, None, None).unwrap();
+        let proposer = set
+            .validators()
+            .iter()
+            .position(|validator| validator.id() == header.proposer_id())
+            .unwrap();
+        CertifiedHeaderV0::new(
+            header.clone(),
+            justify,
+            None,
+            None,
+            Signature64::from_array(key(proposer).sign(root.as_bytes()).to_bytes()),
+            qc(header, set),
+            set,
+            None,
+            parameters,
+            parent.timestamp_ms(),
+        )
+        .unwrap()
+    };
+    FinalityProofV0::new(
+        certified(&headers[0], parent),
+        certified(&headers[1], &headers[0]),
+        certified(&headers[2], &headers[1]),
+        set,
+        None,
+        parameters,
+        parent.timestamp_ms(),
+    )
+    .unwrap()
+    .try_cev0_bytes()
+    .unwrap()
+}

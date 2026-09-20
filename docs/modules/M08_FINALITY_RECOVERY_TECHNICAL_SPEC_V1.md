@@ -420,6 +420,11 @@ The implemented owner entry points are:
   `recover_epoch_application_edge_v1(binding)`: persist/reconstruct exact raw
   evidence under the native owner; edge installation advances no application
   height or sequence. Recovery does not recreate a missing preparation journal.
+- `recover_incremental_epoch_edge_for_binding_v1(binding)`: schema7's
+  binding-aware recovery seam. It audits the singleton owner and rejects any
+  binding other than the active persisted authorization before rebuilding the
+  strict checkpoint/handoff evidence. The no-argument compatibility recovery
+  remains singleton-scoped and is not a multi-edge history API.
 - `execute_epoch_block_v1(&edge, request, &header)`: recompute the complete M06
   prefix/user plan, check the exact canonical header and all roots, persist P and
   replay/snapshot bytes atomically, synchronize and return private prepared P.

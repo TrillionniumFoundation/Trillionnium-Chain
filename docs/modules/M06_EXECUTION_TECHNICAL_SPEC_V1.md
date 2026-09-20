@@ -415,3 +415,13 @@ under the native owner lock, then rechecks Safety, signer, retirement,
 checkpoint, and native identities. The call is resumable across a lost response
 and never executes a block, verifies finality, signs, broadcasts, or enables the
 default node. Schema5→6 migration remains a separate explicit operation.
+
+Recovery is binding-aware even while the schema7 owner is still a singleton:
+`recover_incremental_epoch_edge_for_binding_v1(binding)` audits the complete
+owner row, checks that `binding` is the active persisted authorization ID, and
+only then reconstructs the checkpoint/handoff evidence. A foreign, stale, or
+future binding fails before checkpoint reconstruction. The no-argument recovery
+entry point remains compatibility-only; it must not be used as evidence that
+schema7 supports multiple edge owners. A versioned edge-history record and
+lineage-aware storage/replay contract are required before the singleton guard
+or the first-new `count == 0` restriction may be relaxed.
