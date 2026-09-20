@@ -109,6 +109,7 @@ pub(super) const LATER_SCHEMA: &[(&str, &str)] = &[
        checkpoint_commit_sequence BLOB NOT NULL CHECK(length(checkpoint_commit_sequence)=8),
        checkpoint_height BLOB NOT NULL CHECK(length(checkpoint_height)=8),
        checkpoint_root BLOB NOT NULL CHECK(length(checkpoint_root)=32),
+       checkpoint_commit_id BLOB NOT NULL CHECK(length(checkpoint_commit_id)=32),
        terminal_height BLOB NOT NULL CHECK(length(terminal_height)=8),
        terminal_block BLOB NOT NULL CHECK(length(terminal_block)=32),
        first_height BLOB NOT NULL CHECK(length(first_height)=8),
@@ -877,6 +878,7 @@ pub struct LaterEpochApplicationEdgeV1 {
     checkpoint_commit_sequence: u64,
     checkpoint_height: u64,
     checkpoint_root: [u8; 32],
+    checkpoint_commit_id: [u8; 32],
     terminal_height: u64,
     terminal_block: [u8; 32],
     first_height: u64,
@@ -908,6 +910,9 @@ impl LaterEpochApplicationEdgeV1 {
     pub const fn checkpoint_root(&self) -> [u8; 32] {
         self.checkpoint_root
     }
+    pub const fn checkpoint_commit_id(&self) -> [u8; 32] {
+        self.checkpoint_commit_id
+    }
     pub const fn terminal_height(&self) -> u64 {
         self.terminal_height
     }
@@ -932,6 +937,32 @@ impl LaterEpochApplicationEdgeV1 {
     pub fn belongs_to_application(&self, application: &DurableNativeApplicationV0) -> bool {
         Arc::ptr_eq(&self.owner, &application.owner_affinity)
     }
+
+    /// Crate-internal transition coordinates for a future incremental/JMT
+    /// adapter.  This is deliberately separate from
+    /// `AuthenticatedEpochApplicationEdgeV1`; callers still need to load and
+    /// verify the retained old/new configuration before constructing the
+    /// complete PoCO rollover context.
+    #[allow(dead_code)]
+    pub(crate) fn coordinates_v1(&self) -> crate::epoch_edge::EpochApplicationCoordinatesV1 {
+        crate::epoch_edge::EpochApplicationCoordinatesV1 {
+            checkpoint_version: self.checkpoint_height,
+            checkpoint_root: self.checkpoint_root,
+            terminal_version: self.terminal_height,
+            first_version: self.first_height,
+            authorization_id: self.successor_binding,
+        }
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn application_parent_v1(&self) -> ApplicationHeadV0 {
+        ApplicationHeadV0::new(
+            HeightV0::new(self.checkpoint_height),
+            BlockIdV0::new(self.checkpoint_block).expect("validated checkpoint block"),
+            StateRootV0::new(self.checkpoint_root).expect("validated checkpoint root"),
+            ApplicationCommitIdV0::new(self.checkpoint_commit_id).expect("validated commit id"),
+        )
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -943,6 +974,7 @@ struct LaterSuccessorFactsV1 {
     checkpoint_commit_sequence: u64,
     checkpoint_height: u64,
     checkpoint_root: [u8; 32],
+    checkpoint_commit_id: [u8; 32],
     terminal_height: u64,
     terminal_block: [u8; 32],
     first_height: u64,
@@ -1402,7 +1434,7 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
     );
     let mut statement = connection.prepare(
         "SELECT successor_binding,predecessor_edge,checkpoint_block,checkpoint_p_digest,
-                checkpoint_commit_sequence,checkpoint_height,checkpoint_root,terminal_height,
+                checkpoint_commit_sequence,checkpoint_height,checkpoint_root,checkpoint_commit_id,terminal_height,
                 terminal_block,first_height,proof_context_digest,successor_context_digest,
                 authority_digest,phase,consumed_block,consumed_sequence,record_digest
          FROM native_later_epoch_edge_v1 ORDER BY checkpoint_commit_sequence",
@@ -1416,6 +1448,7 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
             col64(row, "checkpoint_commit_sequence")?,
             col64(row, "checkpoint_height")?,
             col32(row, "checkpoint_root")?,
+            col32(row, "checkpoint_commit_id")?,
             col64(row, "terminal_height")?,
             col32(row, "terminal_block")?,
             col64(row, "first_height")?,
@@ -1438,6 +1471,7 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
             sequence,
             checkpoint_height,
             checkpoint_root,
+            checkpoint_commit_id,
             terminal_height,
             terminal_block,
             first_height,
@@ -1466,7 +1500,8 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
         let header = decode_header(&p.header)?;
         ensure!(
             header.height().get() == checkpoint_height
-                && header.state_root().as_bytes() == &checkpoint_root,
+                && header.state_root().as_bytes() == &checkpoint_root
+                && p.target_head()?.commit_id().as_bytes() == &checkpoint_commit_id,
             "later successor checkpoint geometry"
         );
         let evidence = connection.query_row(
@@ -1500,6 +1535,7 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
                 && facts.checkpoint_commit_sequence == sequence
                 && facts.checkpoint_height == checkpoint_height
                 && facts.checkpoint_root == checkpoint_root
+                && facts.checkpoint_commit_id == checkpoint_commit_id
                 && facts.terminal_height == terminal_height
                 && facts.terminal_block == terminal_block
                 && facts.first_height == first_height
@@ -1744,6 +1780,7 @@ fn derive_later_successor_facts(
         .checked_add(1)
         .context("successor edge first height exhausted")?;
     let target_head = p.target_head()?;
+    let checkpoint_commit_id = *target_head.commit_id().as_bytes();
     let successor_context_digest = context_digest(
         config.store_id,
         &target_head,
@@ -1782,6 +1819,7 @@ fn derive_later_successor_facts(
             &sequence.to_be_bytes(),
             &header.height().get().to_be_bytes(),
             &checkpoint_root,
+            &checkpoint_commit_id,
             &terminal.height().get().to_be_bytes(),
             terminal.id().as_bytes(),
             &first_height.to_be_bytes(),
@@ -1798,6 +1836,7 @@ fn derive_later_successor_facts(
         checkpoint_commit_sequence: sequence,
         checkpoint_height: header.height().get(),
         checkpoint_root,
+        checkpoint_commit_id,
         terminal_height: terminal.height().get(),
         terminal_block: *terminal.id().as_bytes(),
         first_height,
@@ -2298,7 +2337,7 @@ impl DurableNativeApplicationV0 {
         validate_metadata_v0(&connection, &self.config, &metadata)?;
         let row = connection.query_row(
             "SELECT successor_binding,predecessor_edge,checkpoint_block,checkpoint_p_digest,
-                    checkpoint_commit_sequence,checkpoint_height,checkpoint_root,terminal_height,
+                    checkpoint_commit_sequence,checkpoint_height,checkpoint_root,checkpoint_commit_id,terminal_height,
                     terminal_block,first_height,proof_context_digest,successor_context_digest,
                     authority_digest,phase,record_digest
              FROM native_later_epoch_edge_v1 WHERE checkpoint_block=?1",
@@ -2312,6 +2351,7 @@ impl DurableNativeApplicationV0 {
                     col64(row, "checkpoint_commit_sequence")?,
                     col64(row, "checkpoint_height")?,
                     col32(row, "checkpoint_root")?,
+                    col32(row, "checkpoint_commit_id")?,
                     col64(row, "terminal_height")?,
                     col32(row, "terminal_block")?,
                     col64(row, "first_height")?,
@@ -2323,7 +2363,7 @@ impl DurableNativeApplicationV0 {
                 ))
             },
         )?;
-        ensure!(row.13 == 0, "later successor edge is already consumed");
+        ensure!(row.14 == 0, "later successor edge is already consumed");
         Ok(LaterEpochApplicationEdgeV1 {
             owner: Arc::clone(&self.owner_affinity),
             successor_binding: row.0,
@@ -2333,13 +2373,14 @@ impl DurableNativeApplicationV0 {
             checkpoint_commit_sequence: row.4,
             checkpoint_height: row.5,
             checkpoint_root: row.6,
-            terminal_height: row.7,
-            terminal_block: row.8,
-            first_height: row.9,
-            proof_context_digest: row.10,
-            successor_context_digest: row.11,
-            authority_digest: row.12,
-            record_digest: row.14,
+            checkpoint_commit_id: row.7,
+            terminal_height: row.8,
+            terminal_block: row.9,
+            first_height: row.10,
+            proof_context_digest: row.11,
+            successor_context_digest: row.12,
+            authority_digest: row.13,
+            record_digest: row.15,
         })
     }
 
@@ -3726,7 +3767,7 @@ impl DurableNativeApplicationV0 {
                 ],
             )?;
             tx.execute(
-                "INSERT INTO native_later_epoch_edge_v1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO native_later_epoch_edge_v1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 params![
                     facts.successor_binding.as_slice(),
                     facts.predecessor_edge.as_slice(),
@@ -3735,6 +3776,7 @@ impl DurableNativeApplicationV0 {
                     facts.checkpoint_commit_sequence.to_be_bytes().as_slice(),
                     facts.checkpoint_height.to_be_bytes().as_slice(),
                     facts.checkpoint_root.as_slice(),
+                    facts.checkpoint_commit_id.as_slice(),
                     facts.terminal_height.to_be_bytes().as_slice(),
                     facts.terminal_block.as_slice(),
                     facts.first_height.to_be_bytes().as_slice(),

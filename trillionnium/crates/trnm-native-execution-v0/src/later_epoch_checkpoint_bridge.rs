@@ -1169,6 +1169,9 @@ mod tests {
         assert_eq!(successor.checkpoint_height(), 18);
         assert_eq!(successor.terminal_height(), 20);
         assert_eq!(successor.first_application_height(), 21);
+        let coordinates = successor.coordinates_v1();
+        coordinates.validate().unwrap();
+        assert_eq!(successor.application_parent_v1().height().get(), 18);
         assert_ne!(successor.authority_digest(), [0; 32]);
         assert_ne!(successor.record_digest(), [0; 32]);
         assert!(reopened

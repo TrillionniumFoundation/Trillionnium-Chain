@@ -464,4 +464,14 @@ persists that binding in `native_later_epoch_edge_v1`; `require_...` reopens it
 only after a complete cold audit and returns an owner-affine capability. The
 capability still cannot execute C+3: the atomic first-new state/P commit and
 its crash-recovery proof remain open. The old H17 edge is rejected by the
-owner once the application head is C18.
+owner once the application head is C18. The code-level blocker is explicit:
+`compute_complete_epoch_native_block_v1`, `CompleteExecutionStoreV1`'s epoch
+planning methods, and incremental `stage/apply` currently accept only the
+legacy `AuthenticatedEpochApplicationEdgeV1`; they also obtain the old/new
+validator sets and PoCO rollover context through that type. The new capability
+therefore exposes only crate-internal `coordinates_v1()` and the committed
+application parent as a transition seam. A safe C+3 implementation must add a
+versioned transition-context trait carrying those coordinates plus the strictly
+decoded old/new configuration, then atomically stage C+3 P, consume this edge,
+and recover both rows across the existing SIGKILL cuts. Constructing or casting
+the legacy edge would bypass this evidence boundary and is prohibited.
