@@ -60,7 +60,7 @@ use crate::{
 mod epoch_durable;
 pub use epoch_durable::{
     CommittedNativeEpochExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,
-    PreparedNativeEpochExecutionV1,
+    FinalizedNativeEpochApplicationReadV1, PreparedNativeEpochExecutionV1,
 };
 
 #[path = "incremental_owner_v1.rs"]

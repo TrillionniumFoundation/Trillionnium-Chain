@@ -439,6 +439,13 @@ The implemented owner entry points are:
   verify the exact oldest target; first-new proof uses the retained activation
   preimages and dedicated strict decoder, while ordinary descendants use the
   ordinary new-set decoder. Commit requires current application-parent CAS.
+- `read_finalized_by_height_v1(height)`: returns private
+  `FinalizedNativeEpochApplicationReadV1` only for the unique committed
+  schema4 ordinary (`artifact_kind=0`, `Regular`, no next commitment) P at the
+  height. Full inventory/lineage/snapshot/replay/receipt validation and a
+  second immutable read must agree. Prepared, missing, ambiguous, foreign
+  owner and checkpoint/handoff rows fail closed. This carrier is local
+  application history, not a consensus proof or public RPC authorization.
 
 The commit transaction updates metadata/snapshot/replay and P status together,
 consumes the edge only for its first block, installs active context, prunes only
@@ -463,8 +470,8 @@ commitment match exactly. It recursively audits each predecessor `P` with a
 bounded seen-set and rejects cycles, missing predecessors and owner mismatches;
 an epoch checkpoint is admitted to descendant preparation but cannot be passed
 to ordinary `commit_epoch_finality_bytes_v1`. The later checkpoint's required
-second edge, strict two-seal plus handoff finality commit, schema4
-`read_finalized_by_height` mapping and schema7 multi-edge history/owner API are
+second edge, strict two-seal plus handoff finality commit, checkpoint/handoff
+schema4 finalized-read mapping and schema7 multi-edge history/owner API are
 not implemented yet. Their public entry points fail closed with an explicit
 bridge-required error, and the schema7 singleton owner must not be weakened to
 silently attach a second edge to the first. This boundary is intentional until

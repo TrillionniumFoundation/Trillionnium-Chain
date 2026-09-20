@@ -106,6 +106,73 @@ struct StoredEpochPV1 {
     commit_id: Option<[u8; 32]>,
 }
 
+/// Fresh, authenticated readback of one committed schema-4 ordinary
+/// descendant.  This is deliberately a separate carrier from the frozen-v0
+/// read API: schema-4 checkpoint/handoff artifacts do not yet have a public
+/// finalized-read bridge and therefore cannot be returned here.
+#[derive(Debug)]
+#[must_use = "the schema-4 finalized read must remain joined to its owner"]
+pub struct FinalizedNativeEpochApplicationReadV1 {
+    owner: Arc<()>,
+    confirmed_head: ApplicationHeadV0,
+    row: StoredEpochPV1,
+    executed: NativeExecutedBlockV0,
+    receipt_commitments: Vec<Hash32V0>,
+}
+
+impl FinalizedNativeEpochApplicationReadV1 {
+    /// The freshly validated application head observed in the same read.
+    pub const fn confirmed_head_v1(&self) -> &ApplicationHeadV0 {
+        &self.confirmed_head
+    }
+
+    /// The exact target head represented by the committed schema-4 P row.
+    pub fn finalized_head_v1(&self) -> Result<ApplicationHeadV0> {
+        self.row.target_head()
+    }
+
+    /// The canonical ordinary execution artifact decoded from the P row.
+    pub const fn executed_v1(&self) -> &NativeExecutedBlockV0 {
+        &self.executed
+    }
+
+    /// Per-transaction receipt commitments in canonical transaction order.
+    pub fn receipt_commitments_v1(&self) -> &[Hash32V0] {
+        &self.receipt_commitments
+    }
+
+    pub const fn p_digest_v1(&self) -> [u8; 32] {
+        self.row.p_digest
+    }
+
+    pub const fn commit_sequence_v1(&self) -> Option<u64> {
+        self.row.commit_sequence
+    }
+
+    pub const fn artifact_digest_v1(&self) -> [u8; 32] {
+        self.row.artifact_digest
+    }
+
+    /// Confirms that this carrier belongs to the same live owner and exact
+    /// path, then repeats the authenticated height read to close a stale-read
+    /// window.  A reopened owner intentionally fails the affinity check.
+    pub fn belongs_to_application_at_path_v1(
+        &self,
+        application: &DurableNativeApplicationV0,
+        expected_path: &Path,
+    ) -> bool {
+        Arc::ptr_eq(&self.owner, &application.owner_affinity)
+            && application.path() == expected_path
+            && application
+                .read_finalized_by_height_v1(HeightV0::new(self.row.target_height))
+                .is_ok_and(|fresh| {
+                    fresh.row.p_digest == self.row.p_digest
+                        && fresh.row.commit_sequence == self.row.commit_sequence
+                        && fresh.row.artifact_digest == self.row.artifact_digest
+                })
+    }
+}
+
 /// Actual persisted P, owner-affine and private-construction. The prospective
 /// head is a speculative parent identity, never a committed receipt.
 #[must_use]
@@ -457,6 +524,32 @@ fn load_p(connection: &Connection, block: &[u8; 32]) -> Result<Option<StoredEpoc
     Ok(Some(value))
 }
 
+/// Load the unique committed schema-4 P at a target height.  Prepared rows
+/// are intentionally ignored: a height-keyed finalized read must never pick a
+/// speculative fork.  More than one committed row at a height is treated as
+/// corruption rather than resolved by sequence ordering.
+fn load_committed_p_by_height(
+    connection: &Connection,
+    target_height: u64,
+) -> Result<Option<StoredEpochPV1>> {
+    let mut statement = connection.prepare(
+        "SELECT block_id FROM native_durable_execution_p_v1 \
+         WHERE target_height=? AND status=1 ORDER BY p_sequence",
+    )?;
+    let ids = statement
+        .query_map(params![target_height.to_be_bytes().as_slice()], |row| {
+            col32(row, "block_id")
+        })?
+        .collect::<rusqlite::Result<Vec<_>>>()?;
+    ensure!(
+        ids.len() <= 1,
+        "schema4 finalized read has multiple committed rows at height"
+    );
+    ids.first()
+        .map(|id| load_p(connection, id)?.context("schema4 committed P disappeared"))
+        .transpose()
+}
+
 struct StoredEdgeV1 {
     binding: [u8; 32],
     checkpoint: ApplicationHeadV0,
@@ -572,6 +665,77 @@ fn decode_lineage(bytes: &[u8]) -> Result<Vec<[u8; 32]>> {
 }
 
 impl DurableNativeApplicationV0 {
+    /// Read one committed schema-4 ordinary descendant by application
+    /// height.  This bridge is intentionally narrower than the frozen-v0
+    /// finalized-read API: it accepts only `artifact_kind=0` with a Regular
+    /// header and no next-epoch commitment.  Checkpoint/handoff rows remain
+    /// fail-closed until their dedicated finality bridge is specified.
+    pub fn read_finalized_by_height_v1(
+        &self,
+        height: HeightV0,
+    ) -> Result<FinalizedNativeEpochApplicationReadV1> {
+        let _guard = self.lock_operation()?;
+        ensure!(height.get() > 0, "schema4 finalized read genesis");
+        reject_sqlite_sidecars_v0(&self.path)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        ensure!(
+            schema_version(&connection)? == SCHEMA_VERSION,
+            "schema4 finalized read requires schema4"
+        );
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let p = load_committed_p_by_height(&connection, height.get())?
+            .context("schema4 finalized read missing committed height")?;
+        ensure!(
+            p.status == 1
+                && p.commit_sequence.is_some()
+                && p.commit_id == Some(p.commit_identity())
+                && p.target_height == height.get()
+                && p.target_height <= metadata.head.height().get(),
+            "schema4 finalized read row is not committed"
+        );
+        ensure!(
+            p.artifact_kind == 0,
+            "schema4 finalized read checkpoint/handoff bridge required"
+        );
+        let header = decode_header(&p.header)?;
+        ensure!(
+            header.block_kind() == BlockKind::Regular
+                && header.next_epoch_commitment_hash().is_none(),
+            "schema4 finalized read checkpoint/handoff bridge required"
+        );
+        // Validate lineage, replay state, snapshot, parent binding, and exact
+        // receipt roots before exposing any artifact bytes to the caller.
+        validate_p(&connection, &self.config, &p)?;
+        let target = p.target_head()?;
+        ensure!(
+            p.commit_id == Some(*target.commit_id().as_bytes()),
+            "schema4 finalized read commit identity mismatch"
+        );
+        let executed = decode_native_executed_block_artifact_v0(&p.artifact)?;
+        ensure_finalized_header_binding_v0(&header, executed.request())?;
+        let receipt_commitments = executed
+            .receipts()
+            .iter()
+            .map(|receipt| Hash32V0::new(*receipt.commitment().as_bytes()))
+            .collect::<Vec<_>>();
+        // A fresh immutable validation closes the read's TOCTOU window. Any
+        // metadata/sequence change means this response is not coherent.
+        let after = fresh_validate_v0(&self.path, &self.config)?;
+        ensure!(
+            after == metadata,
+            "schema4 finalized read concurrent mutation"
+        );
+        Ok(FinalizedNativeEpochApplicationReadV1 {
+            owner: Arc::clone(&self.owner_affinity),
+            confirmed_head: metadata.head,
+            row: p,
+            executed,
+            receipt_commitments,
+        })
+    }
+
     /// Retain exact evidence before a first-new preparation. This does not
     /// consume an edge or modify application state/sequence.
     pub fn install_epoch_application_edge_v1(

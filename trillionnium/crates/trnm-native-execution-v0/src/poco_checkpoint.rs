@@ -2102,6 +2102,49 @@ mod native_authorization_tests {
                 .unwrap();
             new_headers.push(header);
         }
+        // Keep one additional prepared Regular descendant so the committed
+        // height-12 row can be joined to an independent three-chain proof in
+        // the finalized-read regression below.  It remains speculative.
+        let parent = parent_p.overlay_parent_head().unwrap();
+        let request = NativeBlockPreviewRequestV0::new(
+            epoch_request.chain_id().clone(),
+            epoch_request.genesis_hash(),
+            parent.clone(),
+            HeightV0::new(14),
+            14_000,
+            epoch_request.active_validator_set_id(),
+            Vec::new(),
+        )
+        .unwrap();
+        let preview = app
+            .preview_epoch_descendant_v1(&parent_p, &request)
+            .unwrap();
+        let fourth_header = new_header(
+            14,
+            trnm_consensus_types::BlockId::new(*parent.block_id().as_bytes()),
+            &preview,
+        );
+        let request = NativeBlockExecutionRequestV0::new(
+            request.chain_id().clone(),
+            request.genesis_hash(),
+            parent,
+            BlockIdV0::new(*fourth_header.id().as_bytes()).unwrap(),
+            request.height(),
+            request.timestamp_ms(),
+            request.active_validator_set_id(),
+            Vec::new(),
+            NativeExpectedBlockCommitmentsV0::new(
+                preview.payload_root(),
+                preview.post_state_root(),
+                preview.receipts_root(),
+                preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let _fourth_p = app
+            .execute_epoch_descendant_v1(&parent_p, request, &fourth_header)
+            .unwrap();
         assert_eq!(app.confirmed_committed_head_v0().unwrap().height().get(), 8);
         let last_p_digest = parent_p.p_digest();
         let last_block = *parent_p
@@ -2184,7 +2227,7 @@ mod native_authorization_tests {
                 .is_err(),
             "consumed edge is not fresh activation authority"
         );
-        assert_eq!(committed.commit_sequence(), 21);
+        assert_eq!(committed.commit_sequence(), 22);
         let retried = reopened
             .commit_epoch_finality_bytes_v1(
                 &first_p,
@@ -2194,6 +2237,47 @@ mod native_authorization_tests {
             .unwrap();
         assert_eq!(retried.commit_sequence(), committed.commit_sequence());
         assert_eq!(retried.head(), committed.head());
+        // The handoff row is committed but has no schema-4 finalized-read
+        // bridge.  It must remain fail-closed while an uncommitted Regular
+        // descendant at height 13 is ignored by the height lookup.
+        let handoff_error = reopened
+            .read_finalized_by_height_v1(HeightV0::new(11))
+            .unwrap_err();
+        assert!(handoff_error
+            .to_string()
+            .contains("checkpoint/handoff bridge required"));
+        assert!(reopened
+            .read_finalized_by_height_v1(HeightV0::new(13))
+            .is_err());
+        let second_p = reopened
+            .reopen_prepared_epoch_execution_v1(*new_headers[1].id().as_bytes())
+            .unwrap();
+        let ordinary_finality = ordinary_epoch_finality(
+            &restored_edge,
+            &new_headers[0],
+            &[
+                new_headers[1].clone(),
+                new_headers[2].clone(),
+                fourth_header.clone(),
+            ],
+        );
+        let second_committed = reopened
+            .commit_epoch_finality_bytes_v1(
+                &second_p,
+                &ordinary_finality,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(second_committed.head().height().get(), 12);
+        let ordinary_read = reopened
+            .read_finalized_by_height_v1(HeightV0::new(12))
+            .unwrap();
+        assert_eq!(
+            ordinary_read.finalized_head_v1().unwrap().height().get(),
+            12
+        );
+        assert_eq!(ordinary_read.executed_v1().request().height().get(), 12);
+        assert!(ordinary_read.belongs_to_application_at_path_v1(&reopened, &path));
         assert_eq!(
             reopened
                 .reopen_prepared_epoch_execution_v1(last_block)
@@ -2244,7 +2328,7 @@ mod native_authorization_tests {
                 .unwrap()
                 .height()
                 .get(),
-            11
+            12
         );
         assert_eq!(
             after_commit
@@ -2367,7 +2451,7 @@ mod native_authorization_tests {
                 )
                 .unwrap();
             assert_eq!(committed.head().height().get(), 11);
-            assert_eq!(committed.commit_sequence(), 21);
+            assert_eq!(committed.commit_sequence(), 22);
             assert_eq!(
                 app.reopen_prepared_epoch_execution_v1(last)
                     .unwrap()
@@ -2384,7 +2468,7 @@ mod native_authorization_tests {
                     &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
                 )
                 .unwrap();
-            assert_eq!(retried.commit_sequence(), 21);
+            assert_eq!(retried.commit_sequence(), 22);
         }
     }
 
