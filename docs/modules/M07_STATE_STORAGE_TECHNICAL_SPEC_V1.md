@@ -141,6 +141,13 @@ retention floor. SQLite rollback therefore leaves both queue and nodes intact.
 
 This kernel implements only ordinary +1 updates in one epoch; epoch-tagged plans
 and changed-epoch commits reject until persisted edge reconstruction is joined.
+The candidate sparse path admits one explicitly owned first-new edge, and its
+closed `ni_epoch_edge` table deliberately rejects a second edge or any attempt
+to reuse a consumed/rolled-back edge. A later epoch therefore has no storage
+authority yet: it needs a versioned successor-edge record, independently bound
+cutoff/predecessor evidence, and an atomic C+3 application path before it may
+write a second sparse root. This is an intentional fail-closed gap, not a
+production multi-epoch claim.
 It retains all historical roots/value floors. Current pins
 are only retained-root and speculative-parent pins; their count derives from
 commit sequence plus bounded pending rows, avoiding a history scan per prepare.
@@ -166,8 +173,12 @@ file reopen. Additional regressions import twelve historical updates and verify
 all roots before continuing with a delta, retire a fork without reusing sequence,
 reject oversized SQL blobs without treating them as absence, and reject a fourth
 16 MiB delta when its suffix would exceed the reader cap. These establish
-storage behavior, not an end-to-end node performance
-result, physical power-loss qualification or completion of S1.
+storage behavior. A real SQLite `max_page_count` ceiling regression also forces
+the prepare write through the `SQLITE_FULL` path and reopens the file to verify
+that the head, prepared rows and persist watermark are unchanged. This is
+bounded local disk-exhaustion rollback evidence only; it is not physical
+power-loss, filesystem replacement, multi-host rollback or an end-to-end node
+performance result, and does not complete S1.
 
 ### Implemented ordinary native owner (explicit schema 5)
 

@@ -678,6 +678,68 @@ fn stage_rejects_suffix_that_its_reader_cannot_reopen() {
 }
 
 #[test]
+fn incremental_sqlite_full_rolls_back_prepare_without_partial_state() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("incremental.sqlite3");
+    let mut connection = Connection::open(&path).unwrap();
+    let (head, _) = initialize(&mut connection);
+
+    // Cap the real database at its current allocation.  A large prepared
+    // delta must therefore hit SQLite's SQLITE_FULL path before its sequence,
+    // artifact, or pin can become durable.
+    let current_pages: i64 = connection
+        .query_row("PRAGMA page_count", [], |row| row.get(0))
+        .unwrap();
+    connection
+        .pragma_update(None, "max_page_count", current_pages)
+        .unwrap();
+    let transaction = connection.transaction().unwrap();
+    let reader = open_incremental_reader_v1(
+        &transaction,
+        &namespace(),
+        IncrementalParentV1::Committed(head.block),
+    )
+    .unwrap();
+    let value = vec![0x5a; 4 * 1024 * 1024];
+    let plan = plan(&reader, &[(b"a", Some(value.as_slice()))]);
+    assert!(stage_incremental_plan_v1(
+        &transaction,
+        &namespace(),
+        IncrementalParentV1::Committed(head.block),
+        [61; 32],
+        &plan,
+    )
+    .is_err());
+    drop(transaction);
+    drop(connection);
+
+    let mut reopened = Connection::open(&path).unwrap();
+    let transaction = reopened.transaction().unwrap();
+    assert_eq!(
+        read_incremental_head_v1(&transaction, &namespace()).unwrap(),
+        head
+    );
+    assert_eq!(
+        transaction
+            .query_row("SELECT count(*) FROM ni_prepared", [], |row| row
+                .get::<_, u64>(0))
+            .unwrap(),
+        0
+    );
+    assert_eq!(
+        transaction
+            .query_row(
+                "SELECT persist_sequence FROM ni_sequence WHERE id=1",
+                [],
+                |row| { row.get::<_, Vec<u8>>(0) }
+            )
+            .map(|bytes| u64_blob(bytes).unwrap())
+            .unwrap(),
+        0
+    );
+}
+
+#[test]
 fn bounded_gc_deletes_only_an_unreferenced_node_and_keeps_retention_rows() {
     let mut connection = Connection::open_in_memory().unwrap();
     let (head, store) = initialize(&mut connection);

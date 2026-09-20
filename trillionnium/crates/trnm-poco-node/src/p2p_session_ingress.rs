@@ -1429,6 +1429,37 @@ pub struct PocoNodeP2pAcceptedFrameV0<'a> {
     proof: WireEnvelopeSemanticProof<'a>,
 }
 
+/// Proof that one authenticated frame was reserved in the caller-owned,
+/// fsynced replay anchor before the accepted frame was exposed.  The fields
+/// are intentionally private: a host cannot manufacture durable evidence by
+/// copying a peer/session/sequence tuple.  Obtain this token only from
+/// [`PocoNodeP2pSessionV0::accept_frame_with_durable_reservation`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PocoNodeP2pDurableFrameReservationV0 {
+    peer_id: [u8; MAX_PROTOBUF_WIRE_SENDER_NODE_ID_BYTES_V0],
+    session_id: [u8; HASH_BYTES_V0],
+    sequence: u64,
+    frame_digest: [u8; HASH_BYTES_V0],
+}
+
+impl PocoNodeP2pDurableFrameReservationV0 {
+    pub const fn peer_id(self) -> [u8; MAX_PROTOBUF_WIRE_SENDER_NODE_ID_BYTES_V0] {
+        self.peer_id
+    }
+
+    pub const fn session_id(self) -> [u8; HASH_BYTES_V0] {
+        self.session_id
+    }
+
+    pub const fn sequence(self) -> u64 {
+        self.sequence
+    }
+
+    pub const fn frame_digest(self) -> [u8; HASH_BYTES_V0] {
+        self.frame_digest
+    }
+}
+
 impl<'a> PocoNodeP2pAcceptedFrameV0<'a> {
     pub const fn peer_id(&self) -> ValidatorId {
         self.peer_id
@@ -1584,6 +1615,40 @@ impl PocoNodeP2pSessionV0 {
             return Err(err(P2pSessionIngressErrorCodeV0::ContextMismatch, 0));
         }
         self.accept_frame_inner(frame, budget, Some(replay_anchor))
+    }
+
+    /// Verify and durably reserve one frame, returning an unforgeable host
+    /// token alongside the accepted semantic proof.  This is the only API
+    /// which can supply the reservation evidence required by a typed public
+    /// dispatcher; the process-local [`Self::accept_frame`] path deliberately
+    /// cannot cross that boundary.
+    pub fn accept_frame_with_durable_reservation<'a>(
+        &mut self,
+        frame: &'a [u8],
+        budget: &mut Cev0AdmissionBudgetV0,
+        replay_anchor: &mut PocoNodeP2pReplayAnchorV0,
+    ) -> Result<
+        (
+            PocoNodeP2pAcceptedFrameV0<'a>,
+            PocoNodeP2pDurableFrameReservationV0,
+        ),
+        PocoNodeP2pSessionErrorV0,
+    > {
+        let accepted = self.accept_frame_with_replay_anchor(frame, budget, replay_anchor)?;
+        let peer_id = self.peer_id.as_bytes();
+        let peer_id: [u8; MAX_PROTOBUF_WIRE_SENDER_NODE_ID_BYTES_V0] = peer_id
+            .try_into()
+            .map_err(|_| err(P2pSessionIngressErrorCodeV0::ContextMismatch, 0))?;
+        let sequence = accepted.sequence;
+        Ok((
+            accepted,
+            PocoNodeP2pDurableFrameReservationV0 {
+                peer_id,
+                session_id: self.session_id,
+                sequence,
+                frame_digest: replay_frame_identity_digest_v0(frame),
+            },
+        ))
     }
 
     fn accept_frame_inner<'a>(
@@ -3117,10 +3182,7 @@ mod tests {
             .accept_frame_with_replay_anchor(&frame, &mut budget, &mut anchor)
             .expect("first durable frame");
         assert_eq!(anchor.frame_record_count(), 1);
-        assert_eq!(
-            anchor.frame_fingerprint(session.session_id(), 1).is_some(),
-            true
-        );
+        assert!(anchor.frame_fingerprint(session.session_id(), 1).is_some());
         drop(session);
         drop(anchor);
 
