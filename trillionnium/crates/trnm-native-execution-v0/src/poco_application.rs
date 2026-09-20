@@ -3199,6 +3199,40 @@ pub(crate) fn begin_authenticated_epoch_rollover_v1(
     Ok(block)
 }
 
+/// Context-generic form used by the later successor-edge adapter.  The
+/// context is sealed and must already have been reconstructed from strict
+/// durable evidence; this function does not mint or infer transition facts.
+pub(crate) fn begin_authenticated_epoch_rollover_with_context_v1(
+    source: &ProductionPocoProjectionV0,
+    context: &dyn crate::epoch_edge::EpochExecutionContextV1,
+    authority_signer_commitment: [u8; 32],
+) -> Result<PocoApplicationBlockOverlayV0> {
+    let new_set = context.new_validator_set_v1();
+    let mut authenticated = AuthenticatedPocoApplicationContextV0::new(
+        context.consensus_parent_v1().height().get(),
+        *context.application_parent_v1().state_root().as_bytes(),
+        Height::new(context.first_application_height_v1()),
+        new_set.chain_id(),
+        new_set.genesis_hash(),
+        new_set.epoch(),
+        *context.new_parameters_v1(),
+        authority_signer_commitment,
+    )?;
+    authenticated.source_version = context.application_parent_v1().height().get();
+    ensure!(
+        authenticated.source_version.checked_add(3) == Some(authenticated.target_height.get()),
+        "authenticated context is not checkpoint plus three"
+    );
+    let mut block = PocoApplicationBlockOverlayV0::from_projection(authenticated, source)?;
+    block.install_epoch_configuration_v1(
+        context.old_validator_set_v1(),
+        context.old_parameters_v1(),
+        context.new_validator_set_v1(),
+        context.new_parameters_v1(),
+    )?;
+    Ok(block)
+}
+
 /// Plans a full block of application-authorized PoCO operations.
 ///
 /// `source_projection` must already have been recovered from the authenticated

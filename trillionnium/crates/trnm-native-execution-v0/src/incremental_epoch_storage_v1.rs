@@ -1,14 +1,14 @@
 //! Only the explicit epoch candidate can stage a sparse first-new delta.
 use super::*;
+use crate::epoch_edge::EpochExecutionContextV1;
 use crate::store::{plan_complete_state_update_v0, CompleteStateWriteV0};
-use crate::AuthenticatedEpochApplicationEdgeV1;
 
 pub(crate) fn plan(
     reader: &IncrementalJmtReaderV1<'_>,
-    edge: &AuthenticatedEpochApplicationEdgeV1,
+    context: &dyn EpochExecutionContextV1,
     writes: Vec<CompleteStateWriteV0>,
 ) -> Result<CompleteStatePlanV0> {
-    let coordinates = edge.coordinates();
+    let coordinates = context.coordinates_v1();
     coordinates.validate()?;
     ensure!(
         reader.version == coordinates.checkpoint_version
@@ -46,7 +46,7 @@ pub(crate) fn plan(
             && i.node_key.nibble_path().is_empty())
     });
     plan.epoch_parent = Some(coordinates);
-    plan.epoch_parameters = Some(*edge.new_parameters());
+    plan.epoch_parameters = Some(*context.new_parameters_v1());
     Ok(plan)
 }
 struct Carried<'a, 'tx> {
@@ -87,20 +87,21 @@ impl HasPreimage for Carried<'_, '_> {
 pub(crate) fn stage(
     transaction: &Transaction<'_>,
     namespace: &IncrementalNamespaceV1,
-    edge: &AuthenticatedEpochApplicationEdgeV1,
+    context: &dyn EpochExecutionContextV1,
     block: [u8; 32],
     plan: &CompleteStatePlanV0,
 ) -> Result<PreparedIncrementalDeltaV1> {
-    let coordinates = edge.coordinates();
+    let coordinates = context.coordinates_v1();
     ensure!(
         plan.epoch_parent == Some(coordinates)
-            && plan.epoch_parameters == Some(*edge.new_parameters()),
+            && plan.epoch_parameters == Some(*context.new_parameters_v1()),
         "sparse plan edge/config"
     );
-    let parent = IncrementalParentV1::Committed(*edge.application_parent().block_id().as_bytes());
+    let parent =
+        IncrementalParentV1::Committed(*context.application_parent_v1().block_id().as_bytes());
     let head = read_incremental_head_v1(transaction, namespace)?;
     ensure!(
-        head.block == *edge.application_parent().block_id().as_bytes()
+        head.block == *context.application_parent_v1().block_id().as_bytes()
             && head.height == coordinates.checkpoint_version
             && head.root == coordinates.checkpoint_root,
         "sparse stage current checkpoint"
@@ -151,13 +152,13 @@ pub(crate) fn stage(
 pub(crate) fn apply(
     tx: &Transaction<'_>,
     ns: &IncrementalNamespaceV1,
-    edge: &AuthenticatedEpochApplicationEdgeV1,
+    context: &dyn EpochExecutionContextV1,
     expected: &IncrementalHeadV1,
     prepared: &PreparedIncrementalDeltaV1,
     operation: [u8; 32],
 ) -> Result<IncrementalHeadV1> {
     ensure!(
-        expected.block == *edge.application_parent().block_id().as_bytes(),
+        expected.block == *context.application_parent_v1().block_id().as_bytes(),
         "sparse commit source block"
     );
     apply_incremental_delta_inner_v1(
@@ -166,8 +167,8 @@ pub(crate) fn apply(
         expected,
         prepared,
         operation,
-        edge.new_validator_set().epoch().get(),
-        Some(edge.coordinates()),
+        context.new_validator_set_v1().epoch().get(),
+        Some(context.coordinates_v1()),
     )
 }
 

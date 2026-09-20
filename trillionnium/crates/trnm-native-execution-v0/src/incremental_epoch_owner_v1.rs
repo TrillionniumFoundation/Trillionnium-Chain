@@ -597,20 +597,24 @@ impl crate::complete::CompleteExecutionStoreV1 for EpochView<'_> {
     fn complete_live_values_v1(&self, version: u64) -> Result<BTreeMap<Vec<u8>, Vec<u8>>> {
         self.0.complete_live_values_v1(version)
     }
-    fn validate_epoch_parent_v1(&self, edge: &AuthenticatedEpochApplicationEdgeV1) -> Result<()> {
+    fn validate_epoch_parent_v1(
+        &self,
+        context: &dyn crate::epoch_edge::EpochExecutionContextV1,
+    ) -> Result<()> {
         ensure!(
-            self.0.state.version() == edge.application_parent().height().get()
-                && self.0.state.root().0 == *edge.application_parent().state_root().as_bytes(),
+            self.0.state.version() == context.application_parent_v1().height().get()
+                && self.0.state.root().0
+                    == *context.application_parent_v1().state_root().as_bytes(),
             "schema6 execution parent"
         );
         Ok(())
     }
     fn plan_epoch_v1(
         &self,
-        edge: &AuthenticatedEpochApplicationEdgeV1,
+        context: &dyn crate::epoch_edge::EpochExecutionContextV1,
         writes: Vec<crate::store::CompleteStateWriteV0>,
     ) -> Result<crate::store::CompleteStatePlanV0> {
-        ni::epoch_candidate_v1::plan(&self.0.state, edge, writes)
+        ni::epoch_candidate_v1::plan(&self.0.state, context, writes)
     }
 }
 struct EpochView<'a>(ExecutionView<'a>);

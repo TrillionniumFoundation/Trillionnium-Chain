@@ -3,7 +3,7 @@
 //! cannot masquerade as an ordinary executed parent.
 
 use super::*;
-use crate::epoch_edge::EpochApplicationCoordinatesV1;
+use crate::epoch_edge::{EpochApplicationCoordinatesV1, EpochExecutionContextV1};
 use crate::AuthenticatedEpochApplicationEdgeV1;
 
 const EPOCH_SNAPSHOT_CODEC_VERSION_V1: u16 = 2;
@@ -15,16 +15,16 @@ pub(crate) struct CarriedRootReaderV1<'a> {
 }
 
 impl<'a> CarriedRootReaderV1<'a> {
-    pub(crate) fn new(
+    pub(crate) fn from_context(
         store: &'a InMemoryNativeExecutionStoreV0,
-        edge: &AuthenticatedEpochApplicationEdgeV1,
+        context: &dyn EpochExecutionContextV1,
     ) -> Result<Self> {
         ensure!(
-            store.chain_id_v0()? == edge.consensus_parent().chain_id().as_str(),
+            store.chain_id_v0()? == context.consensus_parent_v1().chain_id().as_str(),
             "epoch reader chain mismatch"
         );
-        let mut reader = Self::from_coordinates(store, edge.coordinates())?;
-        reader.new_parameters = Some(*edge.new_parameters());
+        let mut reader = Self::from_coordinates(store, context.coordinates_v1())?;
+        reader.new_parameters = Some(*context.new_parameters_v1());
         Ok(reader)
     }
 
@@ -210,6 +210,36 @@ impl InMemoryNativeExecutionStoreV0 {
             );
         }
         let coordinates: Vec<_> = edges.iter().map(|edge| edge.coordinates()).collect();
+        self.encode_epoch_snapshot(&coordinates)
+    }
+
+    /// Context-generic snapshot entry point for the later successor adapter.
+    /// The legacy edge wrapper remains unchanged; a sealed transition context
+    /// can use this without being cast to `AuthenticatedEpochApplicationEdgeV1`.
+    #[allow(dead_code)]
+    pub(crate) fn encode_epoch_authenticated_snapshot_for_context_v1(
+        &self,
+        contexts: &[&dyn EpochExecutionContextV1],
+    ) -> Result<Vec<u8>> {
+        ensure!(
+            contexts.iter().all(|context| {
+                context.consensus_parent_v1().chain_id().as_str() == self.chain_id
+            }),
+            "sparse snapshot context chain mismatch"
+        );
+        if let Some(latest) = contexts
+            .iter()
+            .max_by_key(|context| context.first_application_height_v1())
+        {
+            ensure!(
+                self.consensus_parameters == *latest.new_parameters_v1(),
+                "sparse snapshot active parameters differ from authenticated context"
+            );
+        }
+        let coordinates: Vec<_> = contexts
+            .iter()
+            .map(|context| context.coordinates_v1())
+            .collect();
         self.encode_epoch_snapshot(&coordinates)
     }
 

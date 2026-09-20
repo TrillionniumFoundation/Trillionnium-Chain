@@ -40,6 +40,50 @@ impl EpochApplicationCoordinatesV1 {
     }
 }
 
+pub(crate) mod sealed {
+    pub trait Sealed {}
+}
+
+/// Internal common context consumed by the complete and incremental epoch
+/// engines.  It is sealed so an unverified caller cannot provide coordinates
+/// or configuration that look like an authenticated legacy edge.
+pub(crate) trait EpochExecutionContextV1: sealed::Sealed {
+    fn application_parent_v1(&self) -> &ApplicationHeadV0;
+    fn consensus_parent_v1(&self) -> &BlockHeader;
+    fn first_application_height_v1(&self) -> u64;
+    fn old_validator_set_v1(&self) -> &trnm_consensus_types::ValidatorSet;
+    fn old_parameters_v1(&self) -> &trnm_consensus_types::ConsensusParametersV0;
+    fn new_validator_set_v1(&self) -> &trnm_consensus_types::ValidatorSet;
+    fn new_parameters_v1(&self) -> &trnm_consensus_types::ConsensusParametersV0;
+    fn authorization_id_v1(&self) -> [u8; 32];
+    fn coordinates_v1(&self) -> EpochApplicationCoordinatesV1;
+    fn validate_request_v1(
+        &self,
+        request: &trnm_native_application::NativeEpochBlockPreviewRequestV1,
+    ) -> Result<()> {
+        ensure!(
+            request.chain_id().as_str() == self.consensus_parent_v1().chain_id().as_str()
+                && request.genesis_hash().as_bytes()
+                    == self.consensus_parent_v1().genesis_hash().as_bytes()
+                && request.application_parent() == self.application_parent_v1()
+                && request.consensus_parent_id().as_bytes()
+                    == self.consensus_parent_v1().id().as_bytes()
+                && request.consensus_parent_height().get()
+                    == self.consensus_parent_v1().height().get()
+                && request.edge_binding().as_bytes() == &self.authorization_id_v1()
+                && request.height().get() == self.first_application_height_v1()
+                && request.active_validator_set_id().as_bytes()
+                    == self.new_validator_set_v1().id().as_bytes(),
+            "epoch request does not match authenticated execution context"
+        );
+        ensure!(
+            request.timestamp_ms() > self.consensus_parent_v1().timestamp_ms(),
+            "first new application timestamp does not advance terminal seal"
+        );
+        Ok(())
+    }
+}
+
 /// Owner-affine committed application checkpoint joined to strict two-seal and
 /// joint handoff evidence. No public constructor, deserializer or Clone exists.
 /// The receipt keeps the application owner alive; opening the read view still
@@ -195,6 +239,38 @@ impl AuthenticatedEpochApplicationEdgeV1 {
     }
     pub(crate) const fn coordinates(&self) -> EpochApplicationCoordinatesV1 {
         self.coordinates
+    }
+}
+
+impl sealed::Sealed for AuthenticatedEpochApplicationEdgeV1 {}
+
+impl EpochExecutionContextV1 for AuthenticatedEpochApplicationEdgeV1 {
+    fn application_parent_v1(&self) -> &ApplicationHeadV0 {
+        self.application_parent()
+    }
+    fn consensus_parent_v1(&self) -> &BlockHeader {
+        self.consensus_parent()
+    }
+    fn first_application_height_v1(&self) -> u64 {
+        self.first_application_height()
+    }
+    fn old_validator_set_v1(&self) -> &trnm_consensus_types::ValidatorSet {
+        self.old_validator_set()
+    }
+    fn old_parameters_v1(&self) -> &trnm_consensus_types::ConsensusParametersV0 {
+        self.old_parameters()
+    }
+    fn new_validator_set_v1(&self) -> &trnm_consensus_types::ValidatorSet {
+        self.new_validator_set()
+    }
+    fn new_parameters_v1(&self) -> &trnm_consensus_types::ConsensusParametersV0 {
+        self.new_parameters()
+    }
+    fn authorization_id_v1(&self) -> [u8; 32] {
+        self.authorization_id()
+    }
+    fn coordinates_v1(&self) -> EpochApplicationCoordinatesV1 {
+        self.coordinates()
     }
 }
 

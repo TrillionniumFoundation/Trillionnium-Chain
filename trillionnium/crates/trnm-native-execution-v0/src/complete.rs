@@ -462,13 +462,13 @@ pub(crate) trait CompleteExecutionStoreV1: NativeExecutionStoreV0 + Sized {
     }
     fn validate_epoch_parent_v1(
         &self,
-        _edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+        _context: &dyn crate::epoch_edge::EpochExecutionContextV1,
     ) -> Result<()> {
         anyhow::bail!("epoch execution unavailable for this storage adapter")
     }
     fn plan_epoch_v1(
         &self,
-        _edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+        _context: &dyn crate::epoch_edge::EpochExecutionContextV1,
         _writes: Vec<CompleteStateWriteV0>,
     ) -> Result<CompleteStatePlanV0> {
         anyhow::bail!("epoch planning unavailable for this storage adapter")
@@ -480,19 +480,21 @@ impl CompleteExecutionStoreV1 for InMemoryNativeExecutionStoreV0 {
     }
     fn validate_epoch_parent_v1(
         &self,
-        edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+        context: &dyn crate::epoch_edge::EpochExecutionContextV1,
     ) -> Result<()> {
-        crate::store::CarriedRootReaderV1::new(self, edge)?;
+        crate::store::CarriedRootReaderV1::from_context(self, context)?;
         Ok(())
     }
     fn plan_epoch_v1(
         &self,
-        edge: &crate::AuthenticatedEpochApplicationEdgeV1,
+        context: &dyn crate::epoch_edge::EpochExecutionContextV1,
         writes: Vec<CompleteStateWriteV0>,
     ) -> Result<CompleteStatePlanV0> {
-        Ok(crate::store::CarriedRootReaderV1::new(self, edge)?
-            .plan(writes)?
-            .into_complete_plan())
+        Ok(
+            crate::store::CarriedRootReaderV1::from_context(self, context)?
+                .plan(writes)?
+                .into_complete_plan(),
+        )
     }
 }
 
@@ -659,19 +661,27 @@ pub(crate) fn compute_complete_epoch_native_block_v1(
     edge: &crate::AuthenticatedEpochApplicationEdgeV1,
     request: &NativeEpochBlockPreviewRequestV1,
 ) -> Result<ComputedCompleteExecutionV0> {
-    edge.validate_request_v1(request)?;
-    store.validate_epoch_parent_v1(edge)?;
+    compute_complete_epoch_native_block_with_context_v1(store, edge, request)
+}
+
+pub(crate) fn compute_complete_epoch_native_block_with_context_v1(
+    store: &impl CompleteExecutionStoreV1,
+    context: &dyn crate::epoch_edge::EpochExecutionContextV1,
+    request: &NativeEpochBlockPreviewRequestV1,
+) -> Result<ComputedCompleteExecutionV0> {
+    context.validate_request_v1(request)?;
+    store.validate_epoch_parent_v1(context)?;
     ensure!(
-        store.consensus_parameters_v0()? == *edge.old_parameters(),
+        store.consensus_parameters_v0()? == *context.old_parameters_v1(),
         "epoch execution checkpoint parameters differ from authenticated edge"
     );
     compute_complete_native_block_at_parent_v1(
         store,
-        edge.new_validator_set(),
-        edge.new_validator_set().genesis_hash(),
+        context.new_validator_set_v1(),
+        context.new_validator_set_v1().genesis_hash(),
         request,
         native_parallel::default_worker_count_v0(),
-        Some(edge),
+        Some(context),
     )
 }
 
@@ -681,7 +691,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
     expected_genesis_hash: GenesisHash,
     request: &R,
     worker_count: usize,
-    epoch_edge: Option<&crate::AuthenticatedEpochApplicationEdgeV1>,
+    epoch_edge: Option<&dyn crate::epoch_edge::EpochExecutionContextV1>,
 ) -> Result<ComputedCompleteExecutionV0> {
     ensure!(
         worker_count <= native_parallel::MAX_WORKERS_V0,
@@ -698,8 +708,8 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
     );
     if let Some(edge) = epoch_edge {
         ensure!(
-            request.parent_v0() == edge.application_parent()
-                && request.height_v0().get() == edge.first_application_height(),
+            request.parent_v0() == edge.application_parent_v1()
+                && request.height_v0().get() == edge.first_application_height_v1(),
             "epoch execution parent/target differs from authenticated edge"
         );
     } else {
@@ -732,7 +742,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
         "active validator-set ID mismatch"
     );
     let parameters = match epoch_edge {
-        Some(edge) => *edge.new_parameters(),
+        Some(edge) => *edge.new_parameters_v1(),
         None => store.consensus_parameters_v0()?,
     };
     parameters
@@ -767,7 +777,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
     let mut lifecycle = parent_lifecycle.clone();
     if let Some(edge) = epoch_edge {
         validate_application_validator_projection_v0(
-            edge.old_validator_set(),
+            edge.old_validator_set_v1(),
             &lifecycle.active_validators,
         )?;
         ensure!(
@@ -775,7 +785,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
             "pending legacy validator transition conflicts with authenticated epoch activation"
         );
         lifecycle.active_validators = edge
-            .new_validator_set()
+            .new_validator_set_v1()
             .validators()
             .iter()
             .map(|validator| ConsensusValidatorV1 {
@@ -811,7 +821,7 @@ fn compute_complete_native_block_at_parent_v1<R: CompleteBlockExecutionInputV0 +
     let mut receipt_facts = Vec::with_capacity(request.transactions_v0().len());
     let mut poco_overlay: Option<PocoApplicationBlockOverlayV0> = match epoch_edge {
         Some(edge) => Some(
-            crate::poco_application::begin_authenticated_epoch_rollover_v1(
+            crate::poco_application::begin_authenticated_epoch_rollover_with_context_v1(
                 complete_poco_projection_v1(store, parent_version, &source_poco)?
                     .as_ref()
                     .context("epoch activation requires authenticated PoCO namespace")?,
