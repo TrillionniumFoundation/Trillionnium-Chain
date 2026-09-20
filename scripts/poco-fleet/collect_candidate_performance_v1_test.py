@@ -253,4 +253,6 @@ if __name__ == "__main__":
     test_derives_committed_block_goodput_and_keeps_acceptance_false()
     test_rejects_raw_artifact_mutation_after_runner_summary()
     test_rejects_raw_report_semantic_substitution_even_when_rehashed()
+    test_rejects_duplicate_and_missing_validator_process_records()
+    test_rejects_rehashed_terminal_state_substitution()
     print("collect_candidate_performance_v1_test=passed")
