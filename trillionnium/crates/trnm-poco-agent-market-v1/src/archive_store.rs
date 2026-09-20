@@ -92,12 +92,14 @@ impl TaskArchiveStoreV1 {
         // store.  hard_link() publishes the inode without replacing a path
         // created by a racing initializer.
         let temporary_path = initialization_temp_path(&path)?;
+        // Acquire ownership before entering any cleanup path. A collided
+        // temporary name belongs to another invocation and must be left alone.
+        let file = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary_path)
+            .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?;
         let initialized = (|| -> AgentMarketResultV1<()> {
-            let file = fs::OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .open(&temporary_path)
-                .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?;
             file.sync_all()
                 .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?;
             drop(file);
@@ -771,7 +773,9 @@ fn sql_integer(value: u64) -> AgentMarketResultV1<i64> {
 
 fn reject_sidecars(path: &Path) -> AgentMarketResultV1<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
-        let sidecar = PathBuf::from(format!("{}{}", path.display(), suffix));
+        let mut sidecar = path.as_os_str().to_os_string();
+        sidecar.push(suffix);
+        let sidecar = PathBuf::from(sidecar);
         if fs::symlink_metadata(&sidecar).is_ok() {
             return Err(error(
                 AgentMarketErrorCodeV1::SidecarPresent,
@@ -787,12 +791,9 @@ fn initialization_temp_path(path: &Path) -> AgentMarketResultV1<PathBuf> {
         .duration_since(UNIX_EPOCH)
         .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?
         .as_nanos();
-    Ok(PathBuf::from(format!(
-        "{}.init-{}-{}",
-        path.display(),
-        std::process::id(),
-        timestamp
-    )))
+    let mut temporary = path.as_os_str().to_os_string();
+    temporary.push(format!(".init-{}-{}", std::process::id(), timestamp));
+    Ok(PathBuf::from(temporary))
 }
 
 fn reject_path_ancestors(path: &Path) -> AgentMarketResultV1<()> {
