@@ -768,6 +768,16 @@ schema5→6 migration and strict first-new finality remain explicit preceding an
 following operations. The bridge is covered by native cold-reopen and malformed
 commit-row fencing tests and remains default-off.
 
+Later checkpoint proof recovery has an explicit strict observation seam:
+`DurableNativeApplicationV0::verify_later_epoch_checkpoint_finality_v1()` joins
+the durable C-1 application head, exact checkpoint/two-seal evidence, cutoff
+state-root, old/new validator and parameter preimages, and handoff kernel under
+one bounded verifier. It reopens the owner context after verification, so a
+stale or foreign observation is rejected. The native fixture covers H17 -> C18
+-> S19 -> S20 with real signatures and a mutated commitment negative. This
+does not write the M08 commit ledger or issue an activation certificate; the
+multi-edge durable commit consumer and production finality source remain open.
+
 Certificate replay has an explicit no-effect seam: when a verified late TC or
 QC is already consumed by Core and produces no persistence effect, the node
 returns the unchanged Ready/VoteSigned/TimeoutSigned owner. It does not force a
