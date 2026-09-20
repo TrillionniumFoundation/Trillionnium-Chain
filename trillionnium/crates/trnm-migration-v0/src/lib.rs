@@ -2531,6 +2531,7 @@ impl MigrationHandoffRecordV0 {
         if plan.plan_digest == Digest32V0([0; 32])
             || plan.plan_digest != plan.canonical_digest()
             || plan.target_schema_digest == Digest32V0([0; 32])
+            || rollback_floor == 0
             || rollback_floor > plan.source_height
             || source_binding.binding_digest() == Digest32V0([0; 32])
         {
