@@ -94,8 +94,8 @@ impl LaterEpochCheckpointFinalityV1 {
 /// parameter preimages.  Requiring those preimages here lets the strict
 /// anchor-kernel decoder verify both handoff signer roles without trusting a
 /// caller-supplied hash or a legacy epoch-0 configuration.
-#[allow(clippy::too_many_arguments)]
 impl DurableNativeApplicationV0 {
+    #[allow(clippy::too_many_arguments)]
     pub fn verify_later_epoch_checkpoint_finality_v1(
         &self,
         context: LaterEpochCheckpointContextV1,
