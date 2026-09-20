@@ -495,6 +495,79 @@ impl SourceCheckpointContextV0 {
     }
 }
 
+/// A checkpoint context that has passed an owner-supplied finality/trust-path
+/// verifier.  The raw [`SourceCheckpointContextV0`] remains a wire/projection
+/// value and therefore is not proof.  This capability is the typed boundary
+/// that a node integration must cross before it can derive or install an
+/// incremental migration artifact.  Its fields are private so a caller
+/// cannot manufacture a verified context by copying peer supplied bytes.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct VerifiedSourceCheckpointContextV0 {
+    context: SourceCheckpointContextV0,
+    verification_digest: Digest32V0,
+}
+
+impl VerifiedSourceCheckpointContextV0 {
+    #[must_use]
+    pub const fn context(&self) -> SourceCheckpointContextV0 {
+        self.context
+    }
+
+    #[must_use]
+    pub fn context_digest(&self) -> Digest32V0 {
+        self.context.canonical_digest()
+    }
+
+    /// A stable identity for the typed verification handoff.  This is not a
+    /// substitute for the proof digest inside `context`; it prevents adapters
+    /// from accidentally dropping the fact that the owner verification step
+    /// was executed before publication.
+    #[must_use]
+    pub const fn verification_digest(&self) -> Digest32V0 {
+        self.verification_digest
+    }
+}
+
+/// Owner boundary for turning a decoded checkpoint context into a migration
+/// capability.  Implementations must perform the real checkpoint/finality
+/// verification (including chain, epoch, validator-set and proof binding).
+/// This crate deliberately has no consensus verifier dependency and therefore
+/// cannot provide a production implementation itself.
+pub trait SourceCheckpointContextVerifierV0 {
+    type Error: Error + Send + Sync + 'static;
+
+    fn verify_checkpoint_context(
+        &self,
+        context: &SourceCheckpointContextV0,
+    ) -> Result<(), Self::Error>;
+}
+
+/// Verify and issue an opaque context capability.  A verifier that merely
+/// returns `Ok(())` is suitable only for a fixture; production callers must
+/// wire this to the M01/M02/M08 trust path.
+pub fn verify_source_checkpoint_context_v0<V>(
+    verifier: &V,
+    context: SourceCheckpointContextV0,
+) -> Result<VerifiedSourceCheckpointContextV0, MigrationHostErrorV0<V::Error>>
+where
+    V: SourceCheckpointContextVerifierV0,
+{
+    context
+        .validate()
+        .map_err(MigrationHostErrorV0::Protocol)?;
+    verifier
+        .verify_checkpoint_context(&context)
+        .map_err(MigrationHostErrorV0::SourceCheckpointContext)?;
+    let verification_digest = Digest32V0::hash(
+        b"trnm.migration.verified-source-checkpoint-context.v0",
+        &[&context.canonical_digest().0],
+    );
+    Ok(VerifiedSourceCheckpointContextV0 {
+        context,
+        verification_digest,
+    })
+}
+
 /// One canonical key mutation in an incremental target-state delta.
 ///
 /// `value = None` is a deletion; `Some(empty)` is a distinct empty value.  The
@@ -831,6 +904,33 @@ where
     Ok(delta)
 }
 
+/// Derive a delta only after both checkpoint contexts crossed the opaque
+/// owner-verification boundary.  This is the intended node integration API;
+/// the raw-context variant remains useful to low-level protocol producers and
+/// fixtures but does not claim finality authentication.
+pub fn derive_incremental_delta_verified_v0<R>(
+    plan_digest: Digest32V0,
+    target_schema_digest: Digest32V0,
+    source_context: &VerifiedSourceCheckpointContextV0,
+    target_context: &VerifiedSourceCheckpointContextV0,
+    base_rows: &[TargetRowV0],
+    target_rows: &[TargetRowV0],
+    root_builder: &R,
+) -> Result<IncrementalStateDeltaV0, IncrementalDeltaErrorV0<R::Error>>
+where
+    R: TargetRootBuilderV0,
+{
+    derive_incremental_delta_v0(
+        plan_digest,
+        target_schema_digest,
+        source_context.context,
+        target_context.context,
+        base_rows,
+        target_rows,
+        root_builder,
+    )
+}
+
 /// Verify and apply one authenticated delta to an exact base state.  Every
 /// key/value and both roots are recomputed before a target vector is returned.
 pub fn apply_incremental_delta_v0<R>(
@@ -905,6 +1005,29 @@ where
         ));
     }
     Ok(output)
+}
+
+/// Apply a delta while requiring exact opaque owner-verified source and target
+/// contexts.  The durable store still performs its own persisted CAS; this
+/// wrapper closes the earlier API gap where a caller could pass an arbitrary
+/// context struct to the pure apply function.
+pub fn apply_incremental_delta_verified_v0<R>(
+    delta: &IncrementalStateDeltaV0,
+    source_context: &VerifiedSourceCheckpointContextV0,
+    target_context: &VerifiedSourceCheckpointContextV0,
+    base_rows: &[TargetRowV0],
+    root_builder: &R,
+) -> Result<Vec<TargetRowV0>, IncrementalDeltaErrorV0<R::Error>>
+where
+    R: TargetRootBuilderV0,
+{
+    apply_incremental_delta_v0(
+        delta,
+        &source_context.context,
+        &target_context.context,
+        base_rows,
+        root_builder,
+    )
 }
 
 const DURABLE_STORE_APP_ID_V0: i64 = 0x5452_4d44;
@@ -1484,7 +1607,7 @@ impl SqliteIncrementalStateStoreV0 {
     /// [`Self::initialize_from_snapshot_v0`] helper remains available only
     /// for local staging; this public variant is the safe handoff boundary
     /// when a node has separately verified source/target checkpoint contexts.
-    pub fn initialize_from_snapshot_bound_v0<R>(
+    pub(crate) fn initialize_from_snapshot_bound_v0<R>(
         path: impl Into<PathBuf>,
         snapshot: &DurableDeltaSnapshotV0,
         source_context: SourceCheckpointContextV0,
@@ -1518,6 +1641,31 @@ impl SqliteIncrementalStateStoreV0 {
             ));
         }
         Self::initialize_from_snapshot_v0(path, snapshot, root_builder)
+    }
+
+    /// Install a snapshot using contexts that were issued by
+    /// [`verify_source_checkpoint_context_v0`].  A node integration should
+    /// use this entrypoint instead of passing raw peer context structs; the
+    /// underlying no-clobber publication and persisted context CAS remain the
+    /// same as the lower-level staging path.
+    pub fn initialize_from_verified_snapshot_v0<R>(
+        path: impl Into<PathBuf>,
+        snapshot: &DurableDeltaSnapshotV0,
+        source_context: &VerifiedSourceCheckpointContextV0,
+        target_context: &VerifiedSourceCheckpointContextV0,
+        root_builder: &R,
+    ) -> Result<Self, DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        Self::initialize_from_snapshot_bound_v0(
+            path,
+            snapshot,
+            source_context.context,
+            target_context.context,
+            root_builder,
+        )
     }
 
     pub fn apply_delta_v0<R>(
@@ -2304,6 +2452,7 @@ impl Error for MigrationErrorV0 {}
 pub enum MigrationHostErrorV0<AdapterError> {
     Protocol(MigrationErrorV0),
     SourceFinality(AdapterError),
+    SourceCheckpointContext(AdapterError),
     CutoverSignature(AdapterError),
 }
 
@@ -2313,6 +2462,9 @@ impl<A: fmt::Display> fmt::Display for MigrationHostErrorV0<A> {
             Self::Protocol(error) => write!(f, "migration protocol rejected input: {error}"),
             Self::SourceFinality(error) => {
                 write!(f, "source finality verification failed: {error}")
+            }
+            Self::SourceCheckpointContext(error) => {
+                write!(f, "source checkpoint context verification failed: {error}")
             }
             Self::CutoverSignature(error) => {
                 write!(f, "cutover signature verification failed: {error}")
@@ -2362,6 +2514,17 @@ mod tests {
         fn verify_finalized_export(
             &self,
             _header: &FinalizedExportHeaderV0,
+        ) -> Result<(), Self::Error> {
+            Ok(())
+        }
+    }
+
+    impl SourceCheckpointContextVerifierV0 for AcceptFinality {
+        type Error = Infallible;
+
+        fn verify_checkpoint_context(
+            &self,
+            _context: &SourceCheckpointContextV0,
         ) -> Result<(), Self::Error> {
             Ok(())
         }
@@ -2481,6 +2644,77 @@ mod tests {
             apply_incremental_delta_v0(&delta, &source, &target_context, &base, &HashRoot).unwrap(),
             target
         );
+    }
+
+    struct RejectContext;
+    impl SourceCheckpointContextVerifierV0 for RejectContext {
+        type Error = std::io::Error;
+
+        fn verify_checkpoint_context(
+            &self,
+            _context: &SourceCheckpointContextV0,
+        ) -> Result<(), Self::Error> {
+            Err(std::io::Error::new(
+                std::io::ErrorKind::PermissionDenied,
+                "test finality rejection",
+            ))
+        }
+    }
+
+    #[test]
+    fn verified_context_capability_is_required_for_typed_delta_path() {
+        let base = vec![target_row(1, 10), target_row(2, 20)];
+        let target = vec![target_row(1, 11), target_row(2, 20)];
+        let source_raw = source_context(&base, d(121), 30, 4, 4);
+        let target_raw = source_context(&target, d(121), 31, 5, 5);
+
+        assert!(matches!(
+            verify_source_checkpoint_context_v0(&RejectContext, source_raw),
+            Err(MigrationHostErrorV0::SourceCheckpointContext(_))
+        ));
+
+        let source = verify_source_checkpoint_context_v0(&AcceptFinality, source_raw).unwrap();
+        let target_cap = verify_source_checkpoint_context_v0(&AcceptFinality, target_raw).unwrap();
+        assert_eq!(source.context_digest(), source_raw.canonical_digest());
+        assert_ne!(source.verification_digest(), Digest32V0([0; 32]));
+
+        let delta = derive_incremental_delta_verified_v0(
+            d(120),
+            d(121),
+            &source,
+            &target_cap,
+            &base,
+            &target,
+            &HashRoot,
+        )
+        .unwrap();
+        assert_eq!(
+            apply_incremental_delta_verified_v0(
+                &delta,
+                &source,
+                &target_cap,
+                &base,
+                &HashRoot,
+            )
+            .unwrap(),
+            target
+        );
+
+        let foreign_target_raw = source_context(&target, d(121), 32, 6, 5);
+        let foreign_target =
+            verify_source_checkpoint_context_v0(&AcceptFinality, foreign_target_raw).unwrap();
+        assert!(matches!(
+            apply_incremental_delta_verified_v0(
+                &delta,
+                &source,
+                &foreign_target,
+                &base,
+                &HashRoot,
+            ),
+            Err(IncrementalDeltaErrorV0::Protocol(
+                MigrationErrorV0::SourceCheckpointContextMismatch
+            ))
+        ));
     }
 
     #[test]

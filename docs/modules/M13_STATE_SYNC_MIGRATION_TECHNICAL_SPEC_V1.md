@@ -124,13 +124,21 @@ snapshot to a verified checkpoint/export and exercise interrupted transfer,
 disk-full, replacement, retention, and multi-host evidence separately.
 
 When a host has independently verified the source and target checkpoint identities,
-it must use the public `initialize_from_snapshot_bound_v0`; the unbound snapshot
-initializer is crate-internal and cannot be used by a node integration. This typed entrypoint recomputes
-each `SourceCheckpointContextV0` digest, checks the chain/protocol and same-context
-or one-epoch progression relation, requires the target context root to equal the
-snapshot root, and only then delegates to the atomic snapshot publication path.
-The legacy initializer remains a local staging primitive; recomputing a snapshot
-digest alone does not authenticate a substituted checkpoint context.
+it must first call `verify_source_checkpoint_context_v0` with the M01/M02/M08
+owner verifier. That function issues the opaque
+`VerifiedSourceCheckpointContextV0`; its private fields prevent a peer header or
+row digest from being relabeled as verified. Node integrations then use
+`derive_incremental_delta_verified_v0`,
+`apply_incremental_delta_verified_v0`, and
+`SqliteIncrementalStateStoreV0::initialize_from_verified_snapshot_v0`.
+Those typed entrypoints still recompute each context digest, check the
+chain/protocol and same-context or one-epoch progression relation, require the
+target context root to equal the snapshot root, and only then delegate to the
+atomic snapshot publication/CAS path. The raw-context helpers remain available
+to low-level protocol producers and fixtures but carry no finality claim; the
+unbound snapshot initializer is crate-internal and cannot be used by a node
+integration. A verifier that simply returns `Ok(())` is test-only and cannot
+close the production acceptance gate.
 
 ## Interfaces
 
