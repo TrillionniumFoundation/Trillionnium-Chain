@@ -63,6 +63,11 @@ reject. This repairs diagnostics without weakening the readiness gate.
 and a separate `p2p_fault_proxy.py` process. It performs real TCP round trips
 for every link, then records baseline traffic, one-link-at-a-time partition
 rejection with unaffected-link progress, healing, and a clean proxy restart.
+Each partition is applied while its link has an established TCP stream; the
+proxy must observe EOF/reset on that existing stream before recording rejection,
+so a test cannot pass merely because new connections fail while an old stream
+continues to carry traffic. Healing opens a fresh stream and proves progress
+under the same link identity.
 The JSON artifact binds the proxy source digest, canonical link configuration
 digest, exact phase counts, monotonic timing and a sidecar artifact digest. The
 campaign test executes the same child-process path with one message per link.

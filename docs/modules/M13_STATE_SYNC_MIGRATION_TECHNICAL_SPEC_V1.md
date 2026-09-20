@@ -61,6 +61,34 @@ path never repairs it. A deployment still needs externally administered
 fault-injection or physical power-loss evidence and a bounded disk-exhaustion
 campaign before enabling replacement or cutover.
 
+### Incremental delta context and publication contract
+
+`IncrementalStateDeltaV0` carries two complete
+`SourceCheckpointContextV0` values, not only row/root digests. Each context
+commits `(chain_id, protocol_digest, checkpoint_digest, block_id, height, epoch,
+state_root, validator_set_digest, finality_proof_digest)` under the dedicated
+`trnm.migration.source-checkpoint-context.v0` domain. Derivation rejects a
+chain or protocol substitution, a non-increasing height, an epoch jump greater
+than one, or a context root that differs from the independently recomputed
+base/target root. `apply_incremental_delta_v0` requires the caller's exact
+source and target contexts to equal the delta; SQLite stores both digests and
+uses the persisted target digest as a compare-and-swap fence before applying a
+new delta. A retry is idempotent only when its complete delta digest and target
+context already match the durable metadata. Context bytes are identifiers, not
+proof: M01/M02/M08 still have to authenticate the checkpoint and finality proof
+before a host supplies them here.
+
+Fresh `initialize` and `initialize_from_snapshot_v0` stores are built in a
+same-directory temporary inode. The owner creates the complete WAL image,
+checkpoints it, fsyncs the file, verifies a reopened readback (including rows,
+roots, contexts and generation), then publishes with a non-replacing
+`hard_link` and fsyncs the parent directory. A process kill before publication
+therefore leaves no final path that can be mistaken for an installed store;
+concurrent publishers resolve through the final no-clobber link. Temporary
+SQLite sidecars are removed before publication. This is local
+process/filesystem publication evidence; it does not claim physical power-loss,
+directory replacement or multi-host durability.
+
 The native chunk owner also has a bounded local `SQLITE_FULL` regression:
 `native_sqlite_append_fails_closed_at_database_page_ceiling` applies a real SQLite
 `max_page_count` ceiling to an 8 KiB append, requires the writer transaction to fail,
@@ -108,6 +136,8 @@ disk-full, replacement, retention, and multi-host evidence separately.
 | `StateRootRecomputerV0` | M07 selected schema decoder/tree recomputation, not trusting advertised root |
 | `NonDestructiveInstallTargetV0` | M07 staged writes and expected-current-root CAS, preserving old authority |
 | `VerifiedSnapshotV0` | Complete proof-bound snapshot capability; cannot be issued from an incomplete download |
+| `SourceCheckpointContextV0` / `IncrementalStateDeltaV0` | Exact source/target checkpoint identities and row mutations; context digests, root equality, `height+1`/same-or-next-epoch bounds and delta digest are mandatory before SQLite CAS |
+| `SqliteIncrementalStateStoreV0` | Closed-world two-table WAL store; temporary-inode initialization/import, no-clobber hard-link publication, generation/target-context CAS and crash readback |
 
 `Digest32V0::hash` in this candidate module uses SHA-256 with big-endian u64
 length-prefixes for domain and each part. It is not the consensus CEV0 digest

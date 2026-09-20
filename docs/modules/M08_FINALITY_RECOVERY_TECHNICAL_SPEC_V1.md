@@ -452,6 +452,19 @@ publication ownership are still fenced or pending. Schema4 rejects ordinary
 `execute_block` so the legacy +1 path cannot synthesize application effects for
 seals. It is not the full multi-epoch default-node pipeline.
 
+The schema4 lineage audit now accepts a committed familyv1 checkpoint `P` only
+when its artifact kind, target, prepared digest, header kind and next-epoch
+commitment match exactly. It recursively audits each predecessor `P` with a
+bounded seen-set and rejects cycles, missing predecessors and owner mismatches;
+an epoch checkpoint is admitted to descendant preparation but cannot be passed
+to ordinary `commit_epoch_finality_bytes_v1`. The later checkpoint's required
+second edge, strict two-seal plus handoff finality commit, schema4
+`read_finalized_by_height` mapping and schema7 multi-edge history/owner API are
+not implemented yet. Their public entry points fail closed with an explicit
+bridge-required error, and the schema7 singleton owner must not be weakened to
+silently attach a second edge to the first. This boundary is intentional until
+the edge-history record and recovery contract are versioned and tested.
+
 ### Implemented retained edge evidence and recovery algorithm
 
 `evidence` is local `TRNMEVD1`, u16-be1, followed by u32-framed exact bytes in this
