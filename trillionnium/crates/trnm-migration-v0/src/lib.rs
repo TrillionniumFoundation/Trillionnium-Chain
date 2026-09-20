@@ -2554,6 +2554,55 @@ mod tests {
     }
 
     #[test]
+    fn sqlite_incremental_store_rejects_same_root_foreign_checkpoint_context() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-migration-context-fence-{}-{}.sqlite",
+            std::process::id(),
+            d(106).0[0]
+        ));
+        let _ = std::fs::remove_file(&path);
+        let base = vec![target_row(1, 10), target_row(2, 20)];
+        let target = vec![target_row(1, 11), target_row(3, 30)];
+        let source = source_context(&base, d(96), 30, 4, 4);
+        let target_context = source_context(&target, d(96), 31, 5, 4);
+        let foreign_source = source_context(&base, d(96), 32, 4, 4);
+        let store = SqliteIncrementalStateStoreV0::initialize(
+            &path,
+            d(95),
+            d(96),
+            source,
+            &base,
+            &HashRoot,
+        )
+        .unwrap();
+        // The foreign source has the exact same rows and recomputed root. Its
+        // only difference is the finalized checkpoint identity. A rows/root
+        // check alone would accept this delta; the persisted context digest
+        // must reject it before any SQLite row mutation or generation bump.
+        let foreign_delta = derive_incremental_delta_v0(
+            d(95),
+            d(96),
+            foreign_source,
+            target_context,
+            &base,
+            &target,
+            &HashRoot,
+        )
+        .unwrap();
+        assert!(matches!(
+            store.apply_delta_v0(&foreign_delta, &HashRoot),
+            Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::SourceCheckpointContextMismatch
+            ))
+        ));
+        let readback = store.readback_with_root_builder_v0(&HashRoot).unwrap();
+        assert_eq!(readback.generation, 0);
+        assert_eq!(readback.state_root, source.state_root);
+        assert_eq!(store.read_rows_v0().unwrap(), base);
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn sqlite_incremental_store_replays_empty_delta_idempotently() {
         let path = std::env::temp_dir().join(format!(
             "trnm-migration-empty-delta-{}-{}.sqlite",
