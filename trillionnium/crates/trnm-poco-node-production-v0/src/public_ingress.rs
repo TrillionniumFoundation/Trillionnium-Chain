@@ -133,6 +133,10 @@ impl PublicTxAdmissionReceiptV0 {
 /// Errors returned by the public dispatch boundary.
 #[derive(Debug)]
 pub enum PublicTxIngressErrorV0<CheckTxError, AuthorizationError, JournalError> {
+    /// The request intent is bound to a different chain. Reject before the
+    /// host CheckTx owner sees it, so a misbound transport cannot make a
+    /// cross-chain request observable to node-local admission logic.
+    ChainMismatch,
     Admission(NodeOwnedTxCheckTxErrorV0<CheckTxError, AuthorizationError, JournalError>),
 }
 
@@ -144,6 +148,8 @@ where
 {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
+            Self::ChainMismatch => formatter
+                .write_str("public transaction intent chain does not match the node-owned chain"),
             Self::Admission(error) => {
                 write!(formatter, "public transaction admission failed: {error}")
             }
@@ -213,6 +219,9 @@ where
     ) -> Result<PublicTxAdmissionReceiptV0, PublicTxIngressErrorV0<A::Error, V::Error, J::Error>>
     {
         let (request_id, intent) = request.into_parts();
+        if intent.chain_id != self.adapter.chain_id() {
+            return Err(PublicTxIngressErrorV0::ChainMismatch);
+        }
         let receipt = self
             .adapter
             .check_tx_and_admit(&mut self.check_tx, intent)
@@ -246,6 +255,14 @@ mod tests {
         type Error = io::Error;
         fn verify_check_tx(&mut self, _intent: &TxIntentV0) -> Result<u64, Self::Error> {
             Ok(1)
+        }
+    }
+
+    struct UnexpectedCheckTx;
+    impl NodeOwnedTxCheckTxV0 for UnexpectedCheckTx {
+        type Error = io::Error;
+        fn verify_check_tx(&mut self, _intent: &TxIntentV0) -> Result<u64, Self::Error> {
+            Err(io::Error::other("cross-chain intent reached CheckTx"))
         }
     }
 
@@ -437,6 +454,28 @@ mod tests {
         let response = ingress.submit(request).unwrap();
         assert_eq!(response.request_id(), "req-1");
         assert_eq!(response.receipt().wal_sequence, 1);
+        assert!(!ingress.production_activation_v0());
+    }
+
+    #[test]
+    fn cross_chain_intent_is_rejected_before_checktx_dispatch() {
+        let adapter = ProductionTxNodeAdapterV0::new(
+            trnm_tx_lifecycle_v0::Digest32V0([1; 32]),
+            AcceptAuthorization,
+            MemoryJournal::default(),
+            RejectPermit,
+            RejectSigner,
+            RejectBroadcaster,
+            RejectReadback,
+        );
+        let mut ingress = ProductionTxPublicIngressV0::new(adapter, UnexpectedCheckTx);
+        let mut foreign = intent();
+        foreign.chain_id = trnm_tx_lifecycle_v0::Digest32V0([9; 32]);
+        let request = PublicTxIngressRequestV0::new("foreign-chain", foreign).unwrap();
+        assert!(matches!(
+            ingress.submit(request),
+            Err(PublicTxIngressErrorV0::ChainMismatch)
+        ));
         assert!(!ingress.production_activation_v0());
     }
 }
