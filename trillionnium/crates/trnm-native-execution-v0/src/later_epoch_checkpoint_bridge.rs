@@ -1094,6 +1094,57 @@ mod tests {
             )
             .unwrap();
         assert_eq!(record_count, 1);
+        // A pre-commit-id schema-8 image must fail closed. The compact edge
+        // row cannot safely invent the committed application commit identity;
+        // operators must rebuild it through an explicit migration.
+        let legacy_path = path.with_extension("legacy-edge.sqlite3");
+        std::fs::copy(&path, &legacy_path).unwrap();
+        let legacy = rusqlite::Connection::open(&legacy_path).unwrap();
+        legacy
+            .execute_batch(
+                "ALTER TABLE native_later_epoch_edge_v1 RENAME TO native_later_epoch_edge_v1_old;
+                 CREATE TABLE native_later_epoch_edge_v1 (
+                   successor_binding BLOB PRIMARY KEY CHECK(length(successor_binding)=32),
+                   predecessor_edge BLOB NOT NULL UNIQUE CHECK(length(predecessor_edge)=32),
+                   checkpoint_block BLOB NOT NULL UNIQUE CHECK(length(checkpoint_block)=32),
+                   checkpoint_p_digest BLOB NOT NULL CHECK(length(checkpoint_p_digest)=32),
+                   checkpoint_commit_sequence BLOB NOT NULL CHECK(length(checkpoint_commit_sequence)=8),
+                   checkpoint_height BLOB NOT NULL CHECK(length(checkpoint_height)=8),
+                   checkpoint_root BLOB NOT NULL CHECK(length(checkpoint_root)=32),
+                   terminal_height BLOB NOT NULL CHECK(length(terminal_height)=8),
+                   terminal_block BLOB NOT NULL CHECK(length(terminal_block)=32),
+                   first_height BLOB NOT NULL CHECK(length(first_height)=8),
+                   proof_context_digest BLOB NOT NULL CHECK(length(proof_context_digest)=32),
+                   successor_context_digest BLOB NOT NULL CHECK(length(successor_context_digest)=32),
+                   authority_digest BLOB NOT NULL CHECK(length(authority_digest)=32),
+                   phase INTEGER NOT NULL CHECK(phase IN (0,1)),
+                   consumed_block BLOB, consumed_sequence BLOB,
+                   record_digest BLOB NOT NULL CHECK(length(record_digest)=32),
+                   CHECK((phase=0 AND consumed_block IS NULL AND consumed_sequence IS NULL) OR
+                     (phase=1 AND length(consumed_block)=32 AND length(consumed_sequence)=8))
+                 );
+                 INSERT INTO native_later_epoch_edge_v1
+                   SELECT successor_binding,predecessor_edge,checkpoint_block,checkpoint_p_digest,
+                          checkpoint_commit_sequence,checkpoint_height,checkpoint_root,terminal_height,
+                          terminal_block,first_height,proof_context_digest,successor_context_digest,
+                          authority_digest,phase,consumed_block,consumed_sequence,record_digest
+                     FROM native_later_epoch_edge_v1_old;
+                 DROP TABLE native_later_epoch_edge_v1_old;",
+            )
+            .unwrap();
+        let legacy_error = match DurableNativeApplicationV0::open(
+            &legacy_path,
+            native_checkpoint_fixture_config_v1(),
+        ) {
+            Ok(_) => panic!("legacy successor schema unexpectedly opened"),
+            Err(error) => error,
+        };
+        assert!(
+            legacy_error.to_string().contains("schema.exact"),
+            "legacy schema error: {legacy_error:#}"
+        );
+        drop(legacy);
+        std::fs::remove_file(&legacy_path).unwrap();
         assert!(
             reopened
                 .commit_later_epoch_checkpoint_finality_v1(&observed)

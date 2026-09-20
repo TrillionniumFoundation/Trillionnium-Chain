@@ -323,6 +323,32 @@ impl InMemoryNativeExecutionStoreV0 {
         Ok(store)
     }
 
+    /// Decode a sparse snapshot after the caller has independently audited
+    /// every transition context.  This is crate-internal so later-epoch
+    /// validation can carry a sealed successor context without casting it to
+    /// the legacy edge type.
+    #[allow(dead_code)]
+    pub(crate) fn decode_epoch_snapshot_for_coordinates_v1(
+        chain_id: String,
+        signers: Vec<AuthorizedSignerV0>,
+        parameters: ConsensusParametersV0,
+        command_ids: BTreeSet<String>,
+        nonces: BTreeSet<(String, u64)>,
+        bytes: &[u8],
+        coordinates: &[EpochApplicationCoordinatesV1],
+    ) -> Result<Self> {
+        Self::decode_epoch_snapshot(
+            chain_id,
+            signers,
+            parameters,
+            command_ids,
+            nonces,
+            bytes,
+            coordinates,
+        )
+    }
+
+    #[allow(dead_code)]
     pub(crate) fn decode_recovered_epoch_snapshot_v1(
         chain_id: String,
         signers: Vec<AuthorizedSignerV0>,
