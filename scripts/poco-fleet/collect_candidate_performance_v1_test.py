@@ -161,6 +161,33 @@ def test_rejects_raw_report_semantic_substitution_even_when_rehashed() -> None:
             raise AssertionError("rehashed semantic substitution was accepted")
 
 
+def test_rejects_duplicate_and_missing_validator_process_records() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-candidate-performance-") as raw:
+        root = pathlib.Path(raw)
+        fixture(root)
+        summary_path = root / "consensus-run-summary.json"
+        summary = json.loads(summary_path.read_text())
+        processes = summary["processes"]
+        # Keep the list cardinality and every individual record well-formed,
+        # while omitting one topology member and repeating another.  A
+        # cardinality-only collector must not treat that as a seven-validator
+        # observation.
+        processes[1]["validator_id"] = processes[0]["validator_id"]
+        processes[1]["host_id"] = processes[0]["host_id"]
+        processes[1]["signed_report_sha256"] = processes[0]["signed_report_sha256"]
+        processes[1]["signed_runtime_metrics_sha256"] = processes[0]["signed_runtime_metrics_sha256"]
+        processes[1]["signed_runtime_final_state_sha256"] = processes[0]["signed_runtime_final_state_sha256"]
+        processes[1]["signed_runtime_journal_sha256"] = processes[0]["signed_runtime_journal_sha256"]
+        processes[1]["observer_report_verification"] = processes[0]["observer_report_verification"]
+        write(summary_path, summary)
+        try:
+            collector.collect(root)
+        except SystemExit as error:
+            assert "repeats validator_id" in str(error)
+        else:
+            raise AssertionError("duplicate validator process record was accepted")
+
+
 if __name__ == "__main__":
     test_derives_committed_block_goodput_and_keeps_acceptance_false()
     test_rejects_raw_artifact_mutation_after_runner_summary()

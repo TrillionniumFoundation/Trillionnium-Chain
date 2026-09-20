@@ -181,12 +181,16 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
     finalized_heights: set[int] = set()
     finalized_blocks: set[int] = set()
     artifact_hashes: list[dict[str, Any]] = []
+    observed_validator_ids: set[str] = set()
     for index, process in enumerate(processes):
         if not isinstance(process, dict):
             fail(f"process[{index}] is malformed")
         validator_id = process.get("validator_id")
         if not isinstance(validator_id, str) or HEX64.fullmatch(validator_id) is None:
             fail(f"process[{index}] validator_id is not canonical")
+        if validator_id in observed_validator_ids:
+            fail(f"process[{index}] repeats validator_id {validator_id}")
+        observed_validator_ids.add(validator_id)
         verification = process.get("observer_report_verification")
         if not isinstance(verification, dict):
             fail(f"process[{index}] lacks observer report verification")
@@ -249,6 +253,14 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
         fail("signed validators disagree on committed/finalized cut")
     if len(host_ids) < 2:
         fail("candidate performance run must observe at least two provisioned hosts")
+    planned_validator_ids = set(planned_by_id)
+    if observed_validator_ids != planned_validator_ids:
+        missing = sorted(planned_validator_ids - observed_validator_ids)
+        unexpected = sorted(observed_validator_ids - planned_validator_ids)
+        fail(
+            "signed process set differs from prestart topology: "
+            f"missing={missing!r} unexpected={unexpected!r}"
+        )
 
     topology = topology_digest([planned_by_id[key] for key in sorted(planned_by_id)])
     observed_topology = next(iter(topology_digests))

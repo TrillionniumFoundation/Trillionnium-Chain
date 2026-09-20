@@ -67,6 +67,20 @@ def test_campaign_rejects_invalid_message_bound() -> None:
             raise AssertionError("invalid message bound unexpectedly accepted")
 
 
+def test_campaign_does_not_replace_published_evidence() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:
+        output = pathlib.Path(raw) / "evidence.json"
+        campaign.run_campaign(output=output, messages=1)
+        before = output.read_bytes()
+        try:
+            campaign.run_campaign(output=output, messages=1)
+        except FileExistsError:
+            pass
+        else:
+            raise AssertionError("existing evidence path was silently replaced")
+        assert output.read_bytes() == before
+
+
 def test_campaign_result_rejects_tampered_fault_counts_and_claim_flags() -> None:
     with tempfile.TemporaryDirectory(prefix="trnm-local-fault-campaign-test-") as raw:
         result = campaign.run_campaign(output=pathlib.Path(raw) / "evidence.json", messages=2)
@@ -97,6 +111,15 @@ def test_campaign_result_rejects_tampered_fault_counts_and_claim_flags() -> None
             assert "does not match the checked-in proxy" in str(error)
         else:
             raise AssertionError("tampered source digest unexpectedly accepted")
+
+        tampered_runner = json.loads(json.dumps(result))
+        tampered_runner["source_campaign_sha256"] = "0" * 64
+        try:
+            campaign.validate_campaign_result(tampered_runner)
+        except RuntimeError as error:
+            assert "does not match the checked-in campaign" in str(error)
+        else:
+            raise AssertionError("tampered campaign digest unexpectedly accepted")
 
 
 def test_campaign_result_rejects_non_monotonic_latency() -> None:

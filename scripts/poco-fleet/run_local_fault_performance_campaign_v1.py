@@ -17,9 +17,11 @@ import asyncio
 import hashlib
 import json
 import math
+import os
 import pathlib
 import signal
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -28,6 +30,7 @@ from typing import Any
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+CAMPAIGN = pathlib.Path(__file__).resolve()
 PROXY = ROOT / "trillionnium" / "scripts" / "consensus" / "p2p_fault_proxy.py"
 SCHEMA = "trnm-local-fault-performance-campaign-v1"
 
@@ -46,6 +49,59 @@ def sha256_bytes(value: bytes) -> str:
 
 def sha256_file(path: pathlib.Path) -> str:
     return sha256_bytes(path.read_bytes())
+
+
+def publish_exclusive(path: pathlib.Path, content: bytes) -> None:
+    """Publish one evidence artifact atomically without replacing an older run.
+
+    Evidence files are immutable once observed.  A direct ``write_bytes`` can
+    leave a truncated artifact after a coordinator crash and can silently
+    replace an earlier run when a caller reuses its output path.  The same
+    directory temporary file plus an exclusive hard-link gives readers either
+    the complete file or no file at all, while ``EEXIST`` keeps prior evidence
+    immutable.  A parent-directory fsync makes the rename-equivalent directory
+    entry durable on filesystems that provide that guarantee.
+    """
+
+    path = path.absolute()
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    parent_metadata = path.parent.lstat()
+    if path.parent.is_symlink() or not stat.S_ISDIR(parent_metadata.st_mode):
+        raise RuntimeError(f"evidence parent is not a real directory: {path.parent}")
+    temporary = path.parent / (
+        f".{path.name}.tmp-{os.getpid()}-{time.monotonic_ns()}"
+    )
+    descriptor = os.open(
+        temporary,
+        os.O_WRONLY
+        | os.O_CREAT
+        | os.O_EXCL
+        | os.O_CLOEXEC
+        | getattr(os, "O_NOFOLLOW", 0),
+        0o600,
+    )
+    try:
+        with os.fdopen(descriptor, "wb") as output:
+            descriptor = -1
+            output.write(content)
+            output.flush()
+            os.fsync(output.fileno())
+        # Hard-linking is atomic and refuses to replace an existing regular
+        # file or symlink at the destination.
+        os.link(temporary, path)
+    finally:
+        if descriptor != -1:
+            os.close(descriptor)
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
+    directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | os.O_CLOEXEC
+    directory_descriptor = os.open(path.parent, directory_flags)
+    try:
+        os.fsync(directory_descriptor)
+    finally:
+        os.close(directory_descriptor)
 
 
 def reserve_ports(count: int) -> list[int]:
@@ -264,6 +320,15 @@ def validate_campaign_result(result: Any) -> None:
     _require(
         result.get("source_proxy") == str(PROXY.relative_to(ROOT)),
         "source_proxy does not identify the checked-in proxy",
+    )
+    _require(
+        result.get("source_campaign") == str(CAMPAIGN.relative_to(ROOT)),
+        "source_campaign does not identify the checked-in campaign",
+    )
+    _require_digest(result.get("source_campaign_sha256"), "source_campaign_sha256")
+    _require(
+        result["source_campaign_sha256"] == sha256_file(CAMPAIGN),
+        "source_campaign_sha256 does not match the checked-in campaign",
     )
     _require_digest(result.get("source_proxy_sha256"), "source_proxy_sha256")
     _require(
@@ -533,6 +598,8 @@ def run_campaign(*, output: pathlib.Path, messages: int) -> dict[str, Any]:
     result = {
         "schema": SCHEMA,
         "campaign_scope": "single-host-loopback-multiprocess",
+        "source_campaign": str(CAMPAIGN.relative_to(ROOT)),
+        "source_campaign_sha256": sha256_file(CAMPAIGN),
         "source_proxy": str(PROXY.relative_to(ROOT)),
         "source_proxy_sha256": sha256_file(PROXY),
         "config_sha256": sha256_bytes(config_bytes),
@@ -552,10 +619,13 @@ def run_campaign(*, output: pathlib.Path, messages: int) -> dict[str, Any]:
         "production_activation": False,
     }
     validate_campaign_result(result)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_bytes(canonical(result))
+    serialized = canonical(result)
+    publish_exclusive(output, serialized)
     digest_path = output.with_suffix(output.suffix + ".sha256")
-    digest_path.write_text(sha256_file(output) + "  " + output.name + "\n", encoding="utf-8")
+    publish_exclusive(
+        digest_path,
+        (sha256_bytes(serialized) + "  " + output.name + "\n").encode("utf-8"),
+    )
     return result
 
 
