@@ -12,7 +12,7 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeSet,
     error::Error,
-    fmt,
+    fmt, fs,
     path::{Path, PathBuf},
 };
 
@@ -963,13 +963,13 @@ impl SqliteIncrementalStateStoreV0 {
             ));
         }
         let path = path.into();
-        if Path::new(&path).exists() {
-            return Err(DurableDeltaStoreErrorV0::Protocol(
-                MigrationErrorV0::StoreAlreadyInitialized,
-            ));
-        }
-        let mut connection = Connection::open(&path)
-            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        prepare_store_parent_v0(&path)?;
+        let file = reserve_new_store_file_v0(&path)?;
+        let mut connection = Connection::open_with_flags(
+            &path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         connection
             .pragma_update(None, "application_id", DURABLE_STORE_APP_ID_V0)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
@@ -1007,6 +1007,8 @@ impl SqliteIncrementalStateStoreV0 {
         transaction
             .commit()
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        drop(connection);
+        sync_store_file_v0(&file, &path)?;
         let store = Self {
             path,
             plan_digest,
@@ -1029,8 +1031,10 @@ impl SqliteIncrementalStateStoreV0 {
         plan_digest: Digest32V0,
         target_schema_digest: Digest32V0,
     ) -> Result<Self, DurableDeltaStoreErrorV0> {
+        let path = path.into();
+        validate_existing_store_path_v0(&path)?;
         let store = Self {
-            path: path.into(),
+            path,
             plan_digest,
             target_schema_digest,
         };
@@ -1206,13 +1210,13 @@ impl SqliteIncrementalStateStoreV0 {
     {
         snapshot.validate(root_builder)?;
         let path = path.into();
-        if Path::new(&path).exists() {
-            return Err(DurableDeltaStoreErrorV0::Protocol(
-                MigrationErrorV0::StoreAlreadyInitialized,
-            ));
-        }
-        let mut connection = Connection::open(&path)
-            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        prepare_store_parent_v0(&path)?;
+        let file = reserve_new_store_file_v0(&path)?;
+        let mut connection = Connection::open_with_flags(
+            &path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         connection
             .pragma_update(None, "application_id", DURABLE_STORE_APP_ID_V0)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
@@ -1251,6 +1255,8 @@ impl SqliteIncrementalStateStoreV0 {
         transaction
             .commit()
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        drop(connection);
+        sync_store_file_v0(&file, &path)?;
         let store = Self {
             path,
             plan_digest: snapshot.plan_digest,
@@ -1394,8 +1400,12 @@ impl SqliteIncrementalStateStoreV0 {
     }
 
     fn open_connection(&self) -> Result<Connection, DurableDeltaStoreErrorV0> {
-        let connection = Connection::open_with_flags(&self.path, OpenFlags::SQLITE_OPEN_READ_WRITE)
-            .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
+        validate_existing_store_path_v0(&self.path)?;
+        let connection = Connection::open_with_flags(
+            &self.path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         verify_durable_connection_v0(&connection)?;
         let application_id = connection
             .pragma_query_value(None, "application_id", |row| row.get::<_, i64>(0))
@@ -1433,6 +1443,120 @@ impl SqliteIncrementalStateStoreV0 {
         drop(statement);
         Ok(connection)
     }
+}
+
+fn prepare_store_parent_v0(path: &Path) -> Result<(), DurableDeltaStoreErrorV0> {
+    match fs::symlink_metadata(path) {
+        Ok(_) => {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::StoreAlreadyInitialized,
+            ));
+        }
+        Err(error) if error.kind() != std::io::ErrorKind::NotFound => {
+            return Err(DurableDeltaStoreErrorV0::Io(error.to_string()));
+        }
+        Err(_) => {}
+    }
+    if let Some(parent) = path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+    {
+        fs::create_dir_all(parent)
+            .map_err(|error| DurableDeltaStoreErrorV0::Io(error.to_string()))?;
+    }
+    reject_store_path_ancestors_v0(path)?;
+    reject_store_sidecars_v0(path)?;
+    Ok(())
+}
+
+fn reserve_new_store_file_v0(path: &Path) -> Result<fs::File, DurableDeltaStoreErrorV0> {
+    let file = fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create_new(true)
+        .open(path)
+        .map_err(|error| {
+            if error.kind() == std::io::ErrorKind::AlreadyExists {
+                DurableDeltaStoreErrorV0::Protocol(MigrationErrorV0::StoreAlreadyInitialized)
+            } else {
+                DurableDeltaStoreErrorV0::Io(error.to_string())
+            }
+        })?;
+    file.sync_all()
+        .map_err(|error| DurableDeltaStoreErrorV0::Io(error.to_string()))?;
+    Ok(file)
+}
+
+fn sync_store_file_v0(file: &fs::File, path: &Path) -> Result<(), DurableDeltaStoreErrorV0> {
+    file.sync_all()
+        .map_err(|error| DurableDeltaStoreErrorV0::Io(error.to_string()))?;
+    let parent = path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    fs::File::open(parent)
+        .and_then(|parent| parent.sync_all())
+        .map_err(|error| DurableDeltaStoreErrorV0::Io(error.to_string()))
+}
+
+fn validate_existing_store_path_v0(path: &Path) -> Result<(), DurableDeltaStoreErrorV0> {
+    let metadata = fs::symlink_metadata(path)
+        .map_err(|error| DurableDeltaStoreErrorV0::Io(error.to_string()))?;
+    if !metadata.is_file() || metadata.file_type().is_symlink() {
+        return Err(DurableDeltaStoreErrorV0::Io(
+            "incremental state store path is not a regular file".to_owned(),
+        ));
+    }
+    reject_store_path_ancestors_v0(path)?;
+    reject_store_sidecars_v0(path)
+}
+
+fn reject_store_sidecars_v0(path: &Path) -> Result<(), DurableDeltaStoreErrorV0> {
+    for suffix in ["-wal", "-shm", "-journal"] {
+        let mut sidecar = path.as_os_str().to_os_string();
+        sidecar.push(suffix);
+        if let Ok(metadata) = fs::symlink_metadata(PathBuf::from(sidecar)) {
+            // WAL/SHM files are normal for this adapter. A sidecar symlink is
+            // different: SQLite could follow it to an operator-controlled
+            // path, so it remains a closed-world path violation.
+            if metadata.file_type().is_symlink() {
+                return Err(DurableDeltaStoreErrorV0::Io(
+                    "incremental state store sidecar is a symlink".to_owned(),
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+fn reject_store_path_ancestors_v0(path: &Path) -> Result<(), DurableDeltaStoreErrorV0> {
+    let mut current = Some(
+        path.parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or(Path::new(".")),
+    );
+    while let Some(parent) = current {
+        match fs::symlink_metadata(parent) {
+            Ok(metadata) if metadata.file_type().is_symlink() => {
+                return Err(DurableDeltaStoreErrorV0::Io(
+                    "incremental state store parent path is a symlink".to_owned(),
+                ));
+            }
+            Ok(metadata) if !metadata.is_dir() => {
+                return Err(DurableDeltaStoreErrorV0::Io(
+                    "incremental state store parent path is not a directory".to_owned(),
+                ));
+            }
+            Ok(_) => {}
+            Err(error) => {
+                return Err(DurableDeltaStoreErrorV0::Io(error.to_string()));
+            }
+        }
+        current = parent
+            .parent()
+            .filter(|ancestor| !ancestor.as_os_str().is_empty());
+    }
+    Ok(())
 }
 
 fn read_rows_from_connection_v0(
@@ -2303,6 +2427,54 @@ mod tests {
         );
         remove_sqlite_artifacts_v0(&path);
         let _ = std::fs::remove_file(marker);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn sqlite_incremental_store_rejects_symlinked_store_and_sidecar_paths() {
+        use std::os::unix::fs::symlink;
+
+        let root = std::env::temp_dir().join(format!(
+            "trnm-migration-path-{}-{}",
+            std::process::id(),
+            d(105).0[0]
+        ));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(&root).unwrap();
+        let real = root.join("real.sqlite");
+        let store =
+            SqliteIncrementalStateStoreV0::initialize(&real, d(95), d(96), &[], &HashRoot).unwrap();
+
+        let alias = root.join("alias.sqlite");
+        symlink(&real, &alias).unwrap();
+        assert!(matches!(
+            SqliteIncrementalStateStoreV0::open_existing(&alias, d(95), d(96)),
+            Err(DurableDeltaStoreErrorV0::Io(_))
+        ));
+
+        let sidecar = PathBuf::from(format!("{}-wal", real.display()));
+        symlink(&real, &sidecar).unwrap();
+        assert!(matches!(
+            store.readback_v0(),
+            Err(DurableDeltaStoreErrorV0::Io(_))
+        ));
+
+        let real_parent = root.join("real-parent");
+        let alias_parent = root.join("alias-parent");
+        std::fs::create_dir_all(&real_parent).unwrap();
+        let nested = real_parent.join("nested.sqlite");
+        let nested_store =
+            SqliteIncrementalStateStoreV0::initialize(&nested, d(95), d(96), &[], &HashRoot)
+                .unwrap();
+        symlink(&real_parent, &alias_parent).unwrap();
+        let nested_alias = alias_parent.join("nested.sqlite");
+        assert!(matches!(
+            SqliteIncrementalStateStoreV0::open_existing(&nested_alias, d(95), d(96)),
+            Err(DurableDeltaStoreErrorV0::Io(_))
+        ));
+        drop(nested_store);
+        drop(store);
+        let _ = std::fs::remove_dir_all(root);
     }
 
     #[cfg(unix)]
