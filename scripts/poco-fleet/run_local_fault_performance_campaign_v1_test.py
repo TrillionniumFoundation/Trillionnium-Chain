@@ -109,6 +109,15 @@ def test_campaign_result_rejects_tampered_fault_counts_and_claim_flags() -> None
         else:
             raise AssertionError("tampered partition counts unexpectedly accepted")
 
+        tampered_active = json.loads(json.dumps(result))
+        tampered_active["phases"][1]["active_connection_closed"] = False
+        try:
+            campaign.validate_campaign_result(tampered_active)
+        except RuntimeError as error:
+            assert "left an active connection open" in str(error)
+        else:
+            raise AssertionError("active connection omission unexpectedly accepted")
+
         tampered_claim = json.loads(json.dumps(result))
         tampered_claim["performance_acceptance"] = True
         try:

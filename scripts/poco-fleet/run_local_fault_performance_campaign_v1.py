@@ -262,6 +262,40 @@ def denied_round_trip(port: int, payload: str) -> bool:
     return result < 0
 
 
+def disable_closes_active_connection(
+    control_port: int,
+    link_name: str,
+    listener_port: int,
+    endpoint_id: str,
+) -> bool:
+    """Disable one link while an established flow is still open.
+
+    A connect-failure-only partition test can pass even if the proxy leaves
+    existing streams alive.  The fault contract requires an active stream to
+    observe EOF/reset before the link is re-enabled, otherwise traffic that was
+    admitted before the cut can cross the partition boundary.
+    """
+
+    try:
+        with socket.create_connection(("127.0.0.1", listener_port), timeout=1.0) as connection:
+            connection.settimeout(1.0)
+            connection.sendall(b"active-before\n")
+            expected = f"{endpoint_id}:active-before\n".encode()
+            if connection.recv(len(expected)) != expected:
+                fail(f"active connection did not establish before partition: {link_name}")
+            proxy_control(control_port, "disable", [link_name])
+            try:
+                response = connection.recv(1)
+            except socket.timeout as error:
+                fail(f"active connection remained open after partition {link_name}: {error}")
+            except (ConnectionError, OSError):
+                return True
+            return response == b""
+    except (ConnectionError, OSError, TimeoutError) as error:
+        fail(f"active connection setup failed before partition {link_name}: {error}")
+    return False
+
+
 def percentile(values: list[float], fraction: float) -> float:
     if not values:
         return 0.0
@@ -427,6 +461,10 @@ def validate_campaign_result(result: Any) -> None:
             f"partition {index} counts do not prove one-link isolation",
         )
         _require(
+            partition.get("active_connection_closed") is True,
+            f"partition {index} left an active connection open",
+        )
+        _require(
             heal.get("accepted") == messages and heal.get("rejected") == 0,
             f"heal {index} counts do not prove recovery",
         )
@@ -510,7 +548,9 @@ def run_campaign(*, output: pathlib.Path, messages: int) -> dict[str, Any]:
             for index, (name, listener, endpoint_id) in enumerate(
                 zip(link_names, listener_ports, endpoint_ids)
             ):
-                proxy_control(control_port, "disable", [name])
+                active_closed = disable_closes_active_connection(
+                    control_port, name, listener, endpoint_id
+                )
                 denied = 0
                 unaffected = 0
                 for message_index in range(messages):
@@ -540,6 +580,7 @@ def run_campaign(*, output: pathlib.Path, messages: int) -> dict[str, Any]:
                         "accepted": unaffected,
                         "rejected": denied,
                         "expected_rejected": messages,
+                        "active_connection_closed": active_closed,
                     }
                 )
                 proxy_control(control_port, "enable", [name])
