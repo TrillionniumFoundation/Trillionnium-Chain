@@ -1740,10 +1740,10 @@ impl SqliteIncrementalStateStoreV0 {
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
         for entry in &delta.entries {
-            if entry.value.is_some() {
+            if let Some(value) = &entry.value {
                 transaction.execute(
                     "INSERT INTO migration_delta_rows_v0(namespace,key,value) VALUES(?1,?2,?3) ON CONFLICT(namespace,key) DO UPDATE SET value=excluded.value",
-                    params![&entry.namespace, &entry.key, entry.value.as_ref().expect("checked")],
+                    params![&entry.namespace, &entry.key, value],
                 ).map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
             } else {
                 transaction
@@ -2041,7 +2041,7 @@ fn configure_durable_connection_v0(
     let journal_mode: String = connection
         .pragma_query_value(None, "journal_mode", |row| row.get(0))
         .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
-    if journal_mode.to_ascii_lowercase() != "wal" {
+    if !journal_mode.eq_ignore_ascii_case("wal") {
         connection
             .pragma_update(None, "journal_mode", "WAL")
             .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
@@ -2052,7 +2052,7 @@ fn configure_durable_connection_v0(
     let synchronous: i64 = connection
         .pragma_query_value(None, "synchronous", |row| row.get(0))
         .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
-    if journal_mode.to_ascii_lowercase() != "wal" || synchronous != 2 {
+    if !journal_mode.eq_ignore_ascii_case("wal") || synchronous != 2 {
         return Err(DurableDeltaStoreErrorV0::Protocol(
             MigrationErrorV0::StoreSchemaMismatch,
         ));
@@ -2070,7 +2070,7 @@ fn verify_durable_connection_v0(connection: &Connection) -> Result<(), DurableDe
     let synchronous: i64 = connection
         .pragma_query_value(None, "synchronous", |row| row.get(0))
         .map_err(|error| DurableDeltaStoreErrorV0::Sqlite(error.to_string()))?;
-    if journal_mode.to_ascii_lowercase() != "wal" || synchronous != 2 {
+    if !journal_mode.eq_ignore_ascii_case("wal") || synchronous != 2 {
         return Err(DurableDeltaStoreErrorV0::Protocol(
             MigrationErrorV0::StoreSchemaMismatch,
         ));
@@ -3383,7 +3383,7 @@ fn configure_handoff_connection_v0(c: &Connection) -> Result<(), MigrationHandof
     let mode: String = c
         .pragma_query_value(None, "journal_mode", |r| r.get(0))
         .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
-    if mode.to_ascii_lowercase() != "wal" {
+    if !mode.eq_ignore_ascii_case("wal") {
         c.pragma_update(None, "journal_mode", "WAL")
             .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
     }
@@ -3393,7 +3393,7 @@ fn configure_handoff_connection_v0(c: &Connection) -> Result<(), MigrationHandof
     let sync: i64 = c
         .pragma_query_value(None, "synchronous", |r| r.get(0))
         .map_err(|e| MigrationHandoffErrorV0::Sqlite(e.to_string()))?;
-    if mode.to_ascii_lowercase() != "wal" || sync != 2 {
+    if !mode.eq_ignore_ascii_case("wal") || sync != 2 {
         return Err(MigrationHandoffErrorV0::Protocol(
             MigrationErrorV0::StoreSchemaMismatch,
         ));
