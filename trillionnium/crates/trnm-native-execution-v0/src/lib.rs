@@ -53,6 +53,7 @@ mod complete;
 mod durable;
 mod epoch_edge;
 mod epoch_recovery;
+mod later_epoch_checkpoint_bridge;
 mod pcc1_finality;
 mod poco_application;
 mod poco_checkpoint;
@@ -92,6 +93,7 @@ pub use durable::{
     ConfirmedPreparedNativeIncrementalExecutionV1, PreparedNativeIncrementalExecutionV1,
 };
 pub use epoch_edge::{AuthenticatedEpochApplicationEdgeV1, ConfirmedEpochApplicationEdgeV1};
+pub use later_epoch_checkpoint_bridge::LaterEpochCheckpointFinalityV1;
 pub use pcc1_finality::{PocoFinalityCommitErrorV0, PocoFinalizedApplicationReadV0};
 pub use poco_checkpoint::{
     ConfirmedNativePocoCheckpointV0, PreHandoffCheckpointReceiptV1,
