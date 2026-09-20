@@ -275,7 +275,7 @@
           "features": [],
           "expected_outcome": "A real candidate journal admits an authenticated CheckTx intent, persists the signing fence, survives one lost broadcast response without re-signing, retains durable finality after a state-root join mismatch, and retries the exact read-only join after recovery.",
           "assertion_fragments": [
-            "check_tx_and_admit(&mut FixedCheckTx, intent())",
+            "public_ingress\n        .submit(PublicTxIngressRequestV0::new(\"e2e-submit\", intent()).unwrap())",
             "assert_eq!(signer_calls.load(Ordering::SeqCst), 1);",
             "assert_eq!(broadcaster_calls.load(Ordering::SeqCst), 2);",
             "FinalizedTxNativeStateSyncApplyErrorV0::Sync",
