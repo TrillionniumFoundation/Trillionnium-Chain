@@ -1,9 +1,9 @@
 # TaskV1 archive admission contract v1
 
 Primary module: M10. Consumers: archive exporters, proof producers and verifiers.
-Status: candidate technical contract; no storage-deletion or activation
-authority. A candidate local storage owner is now specified below, but it has
-no consensus finality or external hold authority.
+Status: candidate technical contract; no storage-deletion or activation authority.
+A candidate local storage owner is now specified below, but it has no consensus
+finality or external hold authority.
 The only execution plan remains
 [Plan v2](../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md).
 The module entry remains the
