@@ -86,6 +86,7 @@ def fixture(root: pathlib.Path) -> None:
                     "ordinary_start_height": 4,
                     "finality_samples_ms": [1.0],
                     "fsync_count": 1,
+                    "consensus_report_sha256": report["report_sha256"],
                     "validator_run_completed": True,
                     "g3_evidence_complete": False,
                     "geo_wan_evidence": False,

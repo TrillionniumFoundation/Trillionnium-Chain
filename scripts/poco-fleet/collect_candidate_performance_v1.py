@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import pathlib
 import re
 import sys
@@ -274,9 +275,19 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
         samples = raw_metrics.get("finality_samples_ms")
         if not isinstance(samples, list) or not samples:
             fail(f"{validator_id} runtime metrics finality samples are missing")
+        if any(
+            isinstance(sample, bool)
+            or not isinstance(sample, (int, float))
+            or not math.isfinite(float(sample))
+            or sample <= 0
+            for sample in samples
+        ):
+            fail(f"{validator_id} runtime metrics finality samples are invalid")
         metrics_body_sha256 = hex_digest(
             raw_metrics.get("body_sha256"), f"{validator_id}.runtime_metrics.body_sha256"
         )
+        if raw_metrics.get("consensus_report_sha256") != raw_report["report_sha256"]:
+            fail(f"{validator_id} runtime metrics consensus report differs from signed report")
         final_context = {
             "run_id": run_id,
             "validator_id": validator_id,
