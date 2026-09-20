@@ -16,6 +16,7 @@ use std::{
     collections::BTreeSet,
     fs,
     path::{Path, PathBuf},
+    sync::atomic::{AtomicU64, Ordering},
     time::{SystemTime, UNIX_EPOCH},
 };
 
@@ -35,6 +36,7 @@ const LIVE_SQL: &str = "CREATE TABLE task_archive_live_records_v1 (task_id BLOB 
 const HOLD_SQL: &str = "CREATE TABLE task_archive_legal_holds_v1 (task_id BLOB PRIMARY KEY CHECK(length(task_id)=32)) WITHOUT ROWID";
 const SEAL_SQL: &str = "CREATE TABLE task_archive_seals_v1 (batch_sequence INTEGER PRIMARY KEY CHECK(batch_sequence>0), seal BLOB NOT NULL, seal_hash BLOB NOT NULL UNIQUE CHECK(length(seal_hash)=32), generation INTEGER NOT NULL CHECK(generation>=1), live_root_before BLOB NOT NULL CHECK(length(live_root_before)=32), live_root_after BLOB NOT NULL CHECK(length(live_root_after)=32)) WITHOUT ROWID";
 const ARCHIVE_SQL: &str = "CREATE TABLE task_archive_records_v1 (batch_sequence INTEGER NOT NULL, task_id BLOB NOT NULL CHECK(length(task_id)=32), record BLOB NOT NULL, record_hash BLOB NOT NULL CHECK(length(record_hash)=32), PRIMARY KEY(batch_sequence,task_id), FOREIGN KEY(batch_sequence) REFERENCES task_archive_seals_v1(batch_sequence)) WITHOUT ROWID";
+static INITIALIZATION_NONCE_V1: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct TaskArchiveDeletionReceiptV1 {
@@ -91,14 +93,35 @@ impl TaskArchiveStoreV1 {
         // database path that a later opener could mistake for an initialized
         // store.  hard_link() publishes the inode without replacing a path
         // created by a racing initializer.
-        let temporary_path = initialization_temp_path(&path)?;
+        let mut reservation = None;
+        for _ in 0..32 {
+            let candidate = initialization_temp_path(&path)?;
+            match fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(&candidate)
+            {
+                Ok(file) => {
+                    reservation = Some((candidate, file));
+                    break;
+                }
+                Err(cause) if cause.kind() == std::io::ErrorKind::AlreadyExists => continue,
+                Err(cause) => {
+                    return Err(error(
+                        AgentMarketErrorCodeV1::StoreFailure,
+                        cause.to_string(),
+                    ));
+                }
+            }
+        }
+        let (temporary_path, file) = reservation.ok_or_else(|| {
+            error(
+                AgentMarketErrorCodeV1::Conflict,
+                "TaskV1 archive temporary namespace is exhausted",
+            )
+        })?;
         // Acquire ownership before entering any cleanup path. A collided
-        // temporary name belongs to another invocation and must be left alone.
-        let file = fs::OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(&temporary_path)
-            .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?;
+        // temporary name belongs to another invocation and is never removed.
         let initialized = (|| -> AgentMarketResultV1<()> {
             file.sync_all()
                 .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?;
@@ -183,6 +206,7 @@ impl TaskArchiveStoreV1 {
                 "TaskV1 archive store path is not a regular file",
             ));
         }
+        reject_path_ancestors(&path)?;
         reject_sidecars(&path)?;
         let store = Self {
             path,
@@ -457,6 +481,7 @@ impl TaskArchiveStoreV1 {
 
     fn open_connection(&self, create: bool) -> AgentMarketResultV1<Connection> {
         if !create {
+            reject_path_ancestors(&self.path)?;
             reject_sidecars(&self.path)?;
         }
         open_connection(&self.path, create)
@@ -791,9 +816,17 @@ fn initialization_temp_path(path: &Path) -> AgentMarketResultV1<PathBuf> {
         .duration_since(UNIX_EPOCH)
         .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?
         .as_nanos();
-    let mut temporary = path.as_os_str().to_os_string();
-    temporary.push(format!(".init-{}-{}", std::process::id(), timestamp));
-    Ok(PathBuf::from(temporary))
+    let nonce = INITIALIZATION_NONCE_V1.fetch_add(1, Ordering::Relaxed);
+    let parent = path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+        .unwrap_or(Path::new("."));
+    Ok(parent.join(format!(
+        ".trnm-task-archive-init-{}-{}-{}",
+        std::process::id(),
+        timestamp,
+        nonce
+    )))
 }
 
 fn reject_path_ancestors(path: &Path) -> AgentMarketResultV1<()> {
@@ -945,6 +978,8 @@ fn digest32(bytes: &[u8]) -> AgentMarketResultV1<Hash32V1> {
 
 #[cfg(test)]
 mod tests {
+    use std::{sync::Arc, thread};
+
     use super::*;
     use crate::{
         archive::{plan_task_archive_pruning_v1, TASK_ARCHIVE_SCHEMA_VERSION_V1},
@@ -972,6 +1007,41 @@ mod tests {
             maximum_archive_batch_bytes: 800,
             retention_charge_units_per_byte_block: 2,
         }
+    }
+
+    #[test]
+    fn initialization_handles_long_final_names_and_concurrent_publishers() {
+        let directory = tempdir().unwrap();
+        let long_name = format!("{}.sqlite", "a".repeat(220));
+        let path = Arc::new(directory.path().join(long_name));
+        let policy = Arc::new(policy());
+        let mut workers = Vec::new();
+        for _ in 0..8 {
+            let path = Arc::clone(&path);
+            let policy = Arc::clone(&policy);
+            workers.push(thread::spawn(move || {
+                TaskArchiveStoreV1::initialize(path.as_ref(), (*policy).clone())
+            }));
+        }
+        let results = workers
+            .into_iter()
+            .map(|worker| worker.join().unwrap())
+            .collect::<Vec<_>>();
+        assert_eq!(results.iter().filter(|result| result.is_ok()).count(), 1);
+        assert_eq!(results.iter().filter(|result| result.is_err()).count(), 7);
+        let reopened = TaskArchiveStoreV1::open_existing(path.as_ref(), (*policy).clone());
+        assert!(reopened.is_ok());
+        let temporary_count = fs::read_dir(directory.path())
+            .unwrap()
+            .filter_map(Result::ok)
+            .filter(|entry| {
+                entry
+                    .file_name()
+                    .to_string_lossy()
+                    .starts_with(".trnm-task-archive-init-")
+            })
+            .count();
+        assert_eq!(temporary_count, 0);
     }
 
     fn record(id: u8) -> TerminalTaskArchiveRecordV1 {
