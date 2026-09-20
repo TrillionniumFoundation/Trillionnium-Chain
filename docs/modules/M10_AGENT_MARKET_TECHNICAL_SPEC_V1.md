@@ -197,6 +197,9 @@ triggers and indexes), row keys/hashes, the contiguous sequence, seal/root
 chain and archived records; it reconstructs and replays each deletion before
 an exact retry can return the original receipt. Changed batch bytes, sequence,
 roots, sidecars, database-path symlinks or SQLite settings fail closed.
+The candidate requires an owner-controlled parent directory; resistant
+dirfd/openat2-style pathname publication remains required for production
+storage-deletion qualification.
 
 This owner is deliberately not a finality source, peer-replication service,
 external legal-hold authority, production listener, HSM/power-loss guarantee or

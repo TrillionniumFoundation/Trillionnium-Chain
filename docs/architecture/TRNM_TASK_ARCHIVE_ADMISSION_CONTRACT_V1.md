@@ -36,6 +36,9 @@ initial inventory from archived plus live rows and replays every batch's exact
 removals to verify predecessor/successor roots. Exact retries return the
 committed receipt only after that audit; changed bytes, roots, sequences,
 sidecars, the database-path symlink or SQLite header settings fail closed.
+The candidate assumes an owner-controlled parent directory; a hostile directory
+writer can still race a pathname between reservation and SQLite open, so
+dirfd/openat2-style publication remains a production hardening requirement.
 
 The field encodings, hash domains, schema version and public signatures remain
 unchanged. Validation has no durable write set. Rejected inputs cannot grant a
