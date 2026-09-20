@@ -278,9 +278,22 @@ views. The verified result cannot be constructed externally (compile-fail test).
 ### Public submission handoff used by the current runtime (M05-PUBLIC-HANDOFF-V1)
 
 The repository contains a bounded signed-transaction WAL and a native body
-adapter, but the production M15 node still has no enabled public admission
-listener. The implementation boundary is therefore explicit so a candidate
-test cannot be mistaken for a production path.
+adapter. The candidate validator also has a real owner-private Unix listener
+(`NativeClientRuntimeV1`) that is polled by the same continuous consensus owner;
+the production M15 composition still has no enabled public admission listener.
+The implementation boundary is therefore explicit so a candidate socket cannot
+be mistaken for a production Internet/RPC path.
+
+The candidate wire contract is the M14 `native-public-candidate-v1` profile:
+one big-endian u32 length followed by canonical JSON, at most 528,384 request
+bytes, schema `trnm.native-client.request.v1`, and an owner-private mode-0600
+Unix socket. `submit` carries exact lowercase-hex signed outer bytes;
+`capabilities`, `status`, `transaction`, `proof`, `sync_manifest` and
+`sync_chunk` are bounded read/query operations. The owner binds chain,
+genesis, profile digest and request ID in every response. `NativeClientRuntimeV1`
+rejects unknown fields, duplicate/noncanonical bodies, malformed framing,
+oversized requests, stale socket identity and profile/chain mismatches before
+calling the admission owner.
 
 The candidate handoff is ordered as follows: decode the exact signed outer
 bytes; authenticate chain/profile/signer and the complete nonce lane; reserve
@@ -294,19 +307,30 @@ tombstone or replay-floor GC operation can remove the WAL entry.
 
 The current code anchors are
 `trnm-poco-node/src/tx_admission_wal.rs`,
-`trnm-poco-node/src/tx_admission_wal_native_body_v1.inc`, and
+`trnm-poco-node/src/tx_admission_wal_native_body_v1.inc`,
+`trnm-poco-lab-validator/src/native_client_runtime.rs`, and
 `trnm-poco-lab-validator/src/continuous_runtime.rs`. The handoff is consumed
 by the native execution P/D/C/K path; it does not call a signer and it cannot
 choose block order. Lost replies are resolved by reopening the same WAL row,
 never by re-accepting a new nonce reservation. Capacity, malformed canonical
 bytes, nonce conflict and schema mismatch have distinct reject/unavailable/halt
-dispositions and preserve the authoritative WAL root.
+dispositions and preserve the authoritative WAL root. The consensus owner
+drains ready rows only at the committed parent-relative cadence, persists the
+selection and exact handoff, archives each finalized inclusion proof before
+committing the corresponding WAL row, and exposes historical proof queries only
+after independent proof verification.
 
-Required implementation evidence is a real socket submission, duplicate and
-nonce-gap replay, lost reply, proposer handoff, execution/commit, finalized
-query and tombstone/GC trace. Until that trace is wired into the default
-listener and independently reviewed, `TX-PROD-001` remains open and the
-candidate WAL must remain feature-gated.
+Repository candidate evidence now includes
+`actual_native_socket_submit_wal_consensus_commit_and_historical_proof_v1`,
+`native_delayed_multi_height_archive_commits_real_historical_business_v1`,
+`native_socket_rejects_duplicate_unknown_uppercase_and_noncanonical_requests_v1`,
+and the native replay/SIGKILL matrix. These tests exercise real socket framing,
+duplicate retry, proposal/finality/proof readback, delayed archive traversal,
+malformed input and a crash cut. They are candidate-process evidence only:
+`m05_intent_binding=false`, the listener is Unix-local and owner-private, and
+there is no production HSM/peer broadcaster or Internet RPC authority. Until a
+host-owned production listener and independently reviewed authority are wired,
+`TX-PROD-001` remains open and the candidate WAL must remain feature-gated.
 
 ### Candidate durable signer and broadcast retry composition
 
