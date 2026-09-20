@@ -133,7 +133,6 @@ impl PublicTxAdmissionReceiptV0 {
 /// Errors returned by the public dispatch boundary.
 #[derive(Debug)]
 pub enum PublicTxIngressErrorV0<CheckTxError, AuthorizationError, JournalError> {
-    Request(PublicTxIngressRequestErrorV0),
     Admission(NodeOwnedTxCheckTxErrorV0<CheckTxError, AuthorizationError, JournalError>),
 }
 
@@ -145,9 +144,6 @@ where
 {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Request(error) => {
-                write!(formatter, "public transaction request rejected: {error}")
-            }
             Self::Admission(error) => {
                 write!(formatter, "public transaction admission failed: {error}")
             }
