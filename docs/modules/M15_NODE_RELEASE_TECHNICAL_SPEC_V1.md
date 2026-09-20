@@ -18,6 +18,7 @@ That deliverable is distinct from production activation and external acceptance.
 | `trillionnium/crates/trnm-poco-node/src/main.rs` | Fail-closed production entrypoint and bounded candidate preparation | Does not start an enabled production validator |
 | `trillionnium/crates/trnm-poco-node-cli/src/lib.rs` | `status`, `start` commands | Current `start` is expected to refuse |
 | `trillionnium/crates/trnm-poco-node-production-v0/src/lib.rs` | `ProductionNodeCompositionV0`, verified authority ingress/facts/session | Generic ports are not a deployed service set |
+| `trillionnium/crates/trnm-poco-node-production-v0/src/public_ingress.rs` | Transport-neutral `ProductionTxPublicIngressV0` dispatches a validated typed request into node-owned CheckTx and the durable M05 WAL | No socket, wire decoder, peer/HSM, proposal, or finality authority; production activation remains false |
 | `trillionnium/crates/trnm-poco-node-host/src/lib.rs` | Persistent host lifecycle boundary | Recover actual module owners before serving |
 | `trillionnium/crates/trnm-poco-lab-validator/src/candidate_devnet.rs` | Explicit bounded candidate CLI with external Unix peer lease | Single-LAN, local test keys; no HSM or public-testnet authority |
 | `trillionnium/crates/trnm-release-bundle-v0/src/lib.rs` | Bundle validation, signatures and independent build comparison | Does not itself authorize publication |

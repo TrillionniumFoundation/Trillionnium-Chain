@@ -21,7 +21,10 @@ use rusqlite::{params, Connection};
 use trnm_durable_file_adapters_v0::{
     CandidateTxFileJournalV0, CandidateTxJournalIdentityV0, CandidateTxJournalLimitsV0,
 };
-use trnm_poco_node_production_v0::{NodeOwnedTxCheckTxV0, ProductionTxNodeAdapterV0};
+use trnm_poco_node_production_v0::{
+    NodeOwnedTxCheckTxV0, ProductionTxNodeAdapterV0, ProductionTxPublicIngressV0,
+    PublicTxIngressRequestV0,
+};
 use trnm_state_sync_v0::{
     Digest32V0 as StateDigest32V0, NativeStateSyncBindingV1, SqliteNativeStateSyncStoreV1,
 };
@@ -311,7 +314,7 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
     let signer_calls = Arc::new(AtomicUsize::new(0));
     let broadcaster_calls = Arc::new(AtomicUsize::new(0));
     let finality_calls = Arc::new(AtomicUsize::new(0));
-    let mut adapter = ProductionTxNodeAdapterV0::new(
+    let adapter = ProductionTxNodeAdapterV0::new(
         chain_id,
         AcceptAuthorization,
         journal,
@@ -328,9 +331,13 @@ fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
             calls: Arc::clone(&finality_calls),
         },
     );
-    let admission = adapter
-        .check_tx_and_admit(&mut FixedCheckTx, intent())
+    let mut public_ingress = ProductionTxPublicIngressV0::new(adapter, FixedCheckTx);
+    let admission_response = public_ingress
+        .submit(PublicTxIngressRequestV0::new("e2e-submit", intent()).unwrap())
         .unwrap();
+    assert_eq!(admission_response.request_id(), "e2e-submit");
+    let admission = admission_response.receipt();
+    let (mut adapter, _check_tx) = public_ingress.into_parts();
     let proposal = adapter
         .persist_proposal(
             admission.tx_id,

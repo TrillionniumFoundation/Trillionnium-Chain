@@ -10,6 +10,8 @@ mod authority_driver;
 pub use authority_driver::*;
 mod transaction_driver;
 pub use transaction_driver::*;
+mod public_ingress;
+pub use public_ingress::*;
 mod tx_state_sync_bridge;
 pub use tx_state_sync_bridge::*;
 

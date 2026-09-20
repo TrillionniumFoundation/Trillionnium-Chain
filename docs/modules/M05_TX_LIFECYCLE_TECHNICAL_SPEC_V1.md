@@ -17,6 +17,7 @@ application state.
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/lib.rs` | Pure intent/phase/receipt rules and signing/ID digests | Resolve authenticated nonce/balance/height context |
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/production.rs` | `ProductionTxCoordinatorV0`, durable journal/sign/broadcast/readback ports | Real services, proof verification and restart orchestration |
 | `trillionnium/crates/trnm-poco-node-production-v0/src/transaction_driver.rs` | `NodeOwnedTxCheckTxV0` and `ProductionTxNodeAdapterV0` bind node-owned CheckTx, M05 durable admission, signer, broadcaster and finality readback ports in one ordered session | Supply authenticated node owners and an independently reviewed listener/peer/HSM/finality implementation; this adapter does not activate them |
+| `trillionnium/crates/trnm-poco-node-production-v0/src/public_ingress.rs` | `ProductionTxPublicIngressV0` consumes a validated request ID plus exact `TxIntentV0`, dispatches into the adapter's CheckTx -> WAL path, and returns the unchanged correlation ID only after the durable receipt | Transport owner must provide wire decoding, peer/client authentication, rate limiting and lifecycle wiring; this boundary opens no listener and does not add idempotency beyond M05's exact intent/WAL identity |
 | `trillionnium/crates/trnm-tx-lifecycle-v0/src/codec.rs` | Closed durable record bytes v0 | Adapter interoperability, not a new transaction signing format |
 | `trillionnium/crates/trnm-mempool/src/lib.rs` | Bounded/lane admission queues | Bind queued work to exact durable M05 IDs |
 | `trillionnium/crates/trnm-application-tx-builder-v0/src/lib.rs` | Strict JSON/canonical application building | Explicit adapter; its object schema is not implicitly `TxIntentV0` |
@@ -375,6 +376,19 @@ operation uses the same owner instance. `sign_and_broadcast` therefore keeps
 the existing sign-intent and signed-envelope persistence fence, while
 `apply_finalized_readback` and `tombstone_and_collect` remain after the
 corresponding durable transitions.
+
+`ProductionTxPublicIngressV0` is the transport-neutral dispatch boundary for
+the next host integration. A host transport constructs
+`PublicTxIngressRequestV0` only after its exact wire decoder and authentication
+policy have produced a typed `TxIntentV0`; the request ID is restricted to 64
+bytes of `[A-Za-z0-9._-]` and is response correlation only. `submit` consumes
+that request, calls `ProductionTxNodeAdapterV0::check_tx_and_admit` with the
+same node-owned CheckTx instance, and returns the ID only after the journal's
+durable receipt has validated. It cannot bypass CheckTx, reserve a nonce
+itself, or claim finality. The integration test
+`production_tx_state_sync_e2e::finalized_readback_survives_sync_mismatch_and_exact_recovery_retry`
+exercises this dispatch against the candidate file journal; it remains
+candidate composition evidence, not a public socket or production service.
 
 When the state-sync join fails after finality is durable, recovery must call
 `bind_durable_finalized_readback_to_native_sync_v1` after reopening the exact
