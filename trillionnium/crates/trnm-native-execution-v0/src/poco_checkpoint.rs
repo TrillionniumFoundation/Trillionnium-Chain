@@ -2215,6 +2215,61 @@ mod native_authorization_tests {
         assert_eq!(committed.head().height().get(), 11);
         assert!(committed.belongs_to_application(&reopened));
         assert!(!before_commit_readback.belongs_to_application_at_path(&reopened, &path));
+        // The consumed first edge exposes the exact next-epoch planning
+        // context. This is intentionally not a checkpoint capability: the
+        // bridge entry point remains fail-closed until later two-seal/handoff
+        // persistence is implemented.
+        let later_context = reopened
+            .inspect_later_epoch_checkpoint_context_v1()
+            .unwrap();
+        assert_eq!(later_context.epoch().get(), 1);
+        assert_eq!(later_context.old_validator_set().epoch().get(), 1);
+        assert_eq!(later_context.checkpoint_height().get(), 18);
+        assert_eq!(later_context.seal_1_height().get(), 19);
+        assert_eq!(later_context.seal_2_height().get(), 20);
+        assert_eq!(later_context.first_application_height().get(), 21);
+        assert_eq!(later_context.cutoff_height().get(), 15);
+        assert_ne!(later_context.context_digest(), [0; 32]);
+        assert!(later_context.belongs_to_application(&reopened));
+        let bridge_error = reopened
+            .require_later_epoch_checkpoint_bridge_v1(&later_context)
+            .unwrap_err();
+        assert!(bridge_error
+            .to_string()
+            .contains("later checkpoint/two-seal/handoff bridge is not implemented"));
+        let context_sql = rusqlite::Connection::open(&path).unwrap();
+        let context_digest: Vec<u8> = context_sql
+            .query_row(
+                "SELECT context_digest FROM native_application_epoch_context_v1 WHERE singleton=1",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        context_sql
+            .execute(
+                "UPDATE native_application_epoch_context_v1 SET context_digest=zeroblob(32) WHERE singleton=1",
+                [],
+            )
+            .unwrap();
+        assert!(reopened
+            .inspect_later_epoch_checkpoint_context_v1()
+            .is_err());
+        context_sql
+            .execute(
+                "UPDATE native_application_epoch_context_v1 SET context_digest=?1 WHERE singleton=1",
+                [context_digest],
+            )
+            .unwrap();
+        let foreign_directory = tempfile::tempdir().unwrap();
+        let foreign = open(
+            &foreign_directory.path().join("application.sqlite3"),
+            config(),
+        );
+        assert!(foreign
+            .require_later_epoch_checkpoint_bridge_v1(&later_context)
+            .unwrap_err()
+            .to_string()
+            .contains("belongs to another owner"));
         assert_eq!(
             reopened
                 .confirm_prepared_epoch_execution_v1(&first_p)
@@ -2270,6 +2325,11 @@ mod native_authorization_tests {
             )
             .unwrap();
         assert_eq!(second_committed.head().height().get(), 12);
+        assert!(reopened
+            .require_later_epoch_checkpoint_bridge_v1(&later_context)
+            .unwrap_err()
+            .to_string()
+            .contains("later checkpoint context is stale"));
         let ordinary_read = reopened
             .read_finalized_by_height_v1(HeightV0::new(12))
             .unwrap();

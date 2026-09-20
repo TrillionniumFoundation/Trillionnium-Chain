@@ -436,6 +436,13 @@ The implemented owner entry points are:
   rejected. This carrier is read/recovery state only; it does not issue a
   second edge or provide the later checkpoint two-seal + handoff finality
   bridge.
+- `inspect_later_epoch_checkpoint_context_v1()`: owner-affine, read-only
+  planning context for the next checkpoint. It verifies the consumed lineage,
+  active context digest, canonical old validator set/parameters, and derives
+  the authenticated checkpoint/seal/first-new geometry and cutoff. It does not
+  accept proofs or mutate the store. `require_later_epoch_checkpoint_bridge_v1`
+  rechecks that context and returns a typed fail-closed error until the later
+  checkpoint/two-seal/handoff implementation and multi-edge schema are landed.
 - `execute_epoch_block_v1(&edge, request, &header)`: recompute the complete M06
   prefix/user plan, check the exact canonical header and all roots, persist P and
   replay/snapshot bytes atomically, synchronize and return private prepared P.

@@ -82,9 +82,10 @@ pub use durable::{
     DurableExecutionHistoryStatusV0, DurableNativeApplicationV0, EpochEdgeHistoryEntryV1,
     EpochEdgeHistoryV1, EpochEdgePhaseV1, FinalizedNativeApplicationCommitRequestV0,
     FinalizedNativeApplicationReadV0, FinalizedNativeEpochApplicationReadV1,
-    NativeApplicationConfigV0, NativeApplicationExecutionErrorCodeV0,
-    NativeApplicationExecutionErrorV0, NativeH1StateSyncTrustedBaseRequestV0,
-    PreparedNativeEpochExecutionV1, VerifiedNativeSignerReplayFloorV1,
+    LaterEpochCheckpointContextV1, NativeApplicationConfigV0,
+    NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
+    NativeH1StateSyncTrustedBaseRequestV0, PreparedNativeEpochExecutionV1,
+    VerifiedNativeSignerReplayFloorV1,
 };
 pub use durable::{
     CommittedNativeIncrementalExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,

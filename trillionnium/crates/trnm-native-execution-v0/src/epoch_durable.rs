@@ -636,6 +636,85 @@ pub struct EpochEdgeHistoryV1 {
     entries: Vec<EpochEdgeHistoryEntryV1>,
 }
 
+/// Authenticated context for the *next* epoch checkpoint.
+///
+/// This is an observation carrier, not a checkpoint or signing capability.
+/// It is deliberately exposed before the later checkpoint bridge is
+/// implemented so callers can bind their planning state to the exact
+/// committed epoch context instead of retrying the legacy epoch-0 APIs.  The
+/// carrier is owner-affine and is rebuilt from the singleton context row and
+/// recursively audited edge history on every request.
+#[must_use = "later-epoch context must remain joined to its durable owner"]
+pub struct LaterEpochCheckpointContextV1 {
+    owner: Arc<()>,
+    application_head: ApplicationHeadV0,
+    predecessor_edge: [u8; 32],
+    lineage: Vec<[u8; 32]>,
+    old_validator_set: ValidatorSet,
+    old_parameters: ConsensusParametersV0,
+    epoch: trnm_consensus_types::Epoch,
+    checkpoint_height: trnm_consensus_types::Height,
+    seal_1_height: trnm_consensus_types::Height,
+    seal_2_height: trnm_consensus_types::Height,
+    first_application_height: trnm_consensus_types::Height,
+    cutoff_height: trnm_consensus_types::Height,
+    context_digest: [u8; 32],
+}
+
+impl LaterEpochCheckpointContextV1 {
+    pub fn application_head(&self) -> &ApplicationHeadV0 {
+        &self.application_head
+    }
+
+    pub const fn predecessor_edge(&self) -> [u8; 32] {
+        self.predecessor_edge
+    }
+
+    pub fn lineage(&self) -> &[[u8; 32]] {
+        &self.lineage
+    }
+
+    pub fn old_validator_set(&self) -> &ValidatorSet {
+        &self.old_validator_set
+    }
+
+    pub const fn old_parameters(&self) -> &ConsensusParametersV0 {
+        &self.old_parameters
+    }
+
+    pub const fn epoch(&self) -> trnm_consensus_types::Epoch {
+        self.epoch
+    }
+
+    pub const fn checkpoint_height(&self) -> trnm_consensus_types::Height {
+        self.checkpoint_height
+    }
+
+    pub const fn seal_1_height(&self) -> trnm_consensus_types::Height {
+        self.seal_1_height
+    }
+
+    pub const fn seal_2_height(&self) -> trnm_consensus_types::Height {
+        self.seal_2_height
+    }
+
+    pub const fn first_application_height(&self) -> trnm_consensus_types::Height {
+        self.first_application_height
+    }
+
+    pub const fn cutoff_height(&self) -> trnm_consensus_types::Height {
+        self.cutoff_height
+    }
+
+    pub const fn context_digest(&self) -> [u8; 32] {
+        self.context_digest
+    }
+
+    pub fn belongs_to_application(&self, application: &DurableNativeApplicationV0) -> bool {
+        Arc::ptr_eq(&self.owner, &application.owner_affinity)
+    }
+}
+
 impl EpochEdgeHistoryV1 {
     pub const fn application_head(&self) -> &ApplicationHeadV0 {
         &self.application_head
@@ -849,6 +928,163 @@ impl DurableNativeApplicationV0 {
             application_head: metadata.head,
             entries,
         })
+    }
+
+    /// Reconstruct the authenticated old configuration and exact geometry for
+    /// the next epoch checkpoint. This is a read-only planning boundary: it
+    /// does not prepare a block, consume an edge, or verify caller proof. The
+    /// cutoff may still be ahead of the committed head; the eventual bridge
+    /// must re-open and prove that historical version before mutation.
+    /// Later checkpoints must use this context rather than the legacy epoch-0
+    /// configuration captured in `self.config`.
+    pub fn inspect_later_epoch_checkpoint_context_v1(
+        &self,
+    ) -> Result<LaterEpochCheckpointContextV1> {
+        let history = self.read_epoch_edge_history_v1()?;
+        let predecessor = history
+            .entries()
+            .last()
+            .context("later checkpoint requires a retained epoch edge")?;
+        ensure!(
+            predecessor.phase == EpochEdgePhaseV1::Consumed,
+            "later checkpoint requires a consumed predecessor edge"
+        );
+        let lineage = predecessor.lineage.clone();
+        let predecessor_edge = predecessor.binding;
+
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        ensure!(
+            schema_version(&connection)? == SCHEMA_VERSION,
+            "later checkpoint context requires schema4"
+        );
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let row = connection.query_row(
+            "SELECT store_id,head_block,head_root,head_commit_id,head_height,\
+                    head_commit_sequence,active_set,active_parameters,edge_lineage,context_digest \
+             FROM native_application_epoch_context_v1 WHERE singleton=1",
+            [],
+            |r| {
+                Ok((
+                    col32(r, "store_id")?,
+                    col32(r, "head_block")?,
+                    col32(r, "head_root")?,
+                    col32(r, "head_commit_id")?,
+                    col64(r, "head_height")?,
+                    col64(r, "head_commit_sequence")?,
+                    r.get::<_, Vec<u8>>("active_set")?,
+                    r.get::<_, Vec<u8>>("active_parameters")?,
+                    r.get::<_, Vec<u8>>("edge_lineage")?,
+                    col32(r, "context_digest")?,
+                ))
+            },
+        )?;
+        ensure!(
+            row.0 == self.config.store_id
+                && row.1 == *metadata.head.block_id().as_bytes()
+                && row.2 == *metadata.head.state_root().as_bytes()
+                && row.3 == *metadata.head.commit_id().as_bytes()
+                && row.4 == metadata.head.height().get()
+                && row.5 == metadata.durable_sequence,
+            "later checkpoint context head differs from metadata"
+        );
+        let expected_lineage = encode_lineage(&lineage)?;
+        ensure!(
+            row.8 == expected_lineage,
+            "later checkpoint context lineage differs from edge history"
+        );
+        ensure!(
+            row.9
+                == context_digest(
+                    self.config.store_id,
+                    &metadata.head,
+                    row.5,
+                    &row.6,
+                    &row.7,
+                    &row.8,
+                ),
+            "later checkpoint context digest mismatch"
+        );
+        let old_validator_set = trnm_consensus_types::decode_validator_set_v0_exact(&row.6)
+            .map_err(|e| anyhow::anyhow!("later checkpoint active validator set: {e:?}"))?;
+        let old_parameters = trnm_consensus_types::decode_consensus_parameters_v0_exact(&row.7)
+            .map_err(|e| anyhow::anyhow!("later checkpoint active parameters: {e:?}"))?;
+        ensure!(
+            old_validator_set.chain_id() == self.config.validator_set.chain_id()
+                && old_validator_set.genesis_hash() == self.config.validator_set.genesis_hash()
+                && old_validator_set.protocol_version()
+                    == self.config.validator_set.protocol_version()
+                && old_validator_set.consensus_parameters_hash() == old_parameters.hash(),
+            "later checkpoint active configuration identity mismatch"
+        );
+        let geometry =
+            trnm_consensus_types::EpochGeometryV0::new(old_validator_set.epoch(), &old_parameters)
+                .map_err(|e| anyhow::anyhow!("later checkpoint geometry: {e:?}"))?;
+        ensure!(
+            old_validator_set.epoch() > self.config.validator_set.epoch(),
+            "later checkpoint is not a successor epoch"
+        );
+        ensure!(
+            geometry.checkpoint_height().get() > metadata.head.height().get(),
+            "later checkpoint is not ahead of committed head"
+        );
+        let cutoff = geometry
+            .checkpoint_height()
+            .get()
+            .checked_sub(old_parameters.snapshot_lead_blocks())
+            .context("later checkpoint cutoff underflow")?;
+        ensure!(
+            cutoff < geometry.checkpoint_height().get(),
+            "later checkpoint cutoff is outside checkpoint geometry"
+        );
+        let after = fresh_validate_v0(&self.path, &self.config)?;
+        ensure!(
+            after == metadata,
+            "later checkpoint context concurrent mutation"
+        );
+        Ok(LaterEpochCheckpointContextV1 {
+            owner: Arc::clone(&self.owner_affinity),
+            application_head: metadata.head,
+            predecessor_edge,
+            lineage,
+            old_validator_set,
+            old_parameters,
+            epoch: geometry.epoch(),
+            checkpoint_height: geometry.checkpoint_height(),
+            seal_1_height: geometry.seal_1_height(),
+            seal_2_height: geometry.seal_2_height(),
+            first_application_height: geometry
+                .seal_2_height()
+                .checked_next()
+                .map_err(|e| anyhow::anyhow!("later checkpoint activation height: {e:?}"))?,
+            cutoff_height: trnm_consensus_types::Height::new(cutoff),
+            context_digest: row.9,
+        })
+    }
+
+    /// Fail-closed entry point reserved for the later checkpoint/two-seal/
+    /// handoff implementation. Keeping this explicit prevents callers from
+    /// routing a later checkpoint through the epoch-0 API or treating a
+    /// syntactically valid proof as a durable edge.
+    pub fn require_later_epoch_checkpoint_bridge_v1(
+        &self,
+        context: &LaterEpochCheckpointContextV1,
+    ) -> Result<()> {
+        ensure!(
+            context.belongs_to_application(self),
+            "later checkpoint context belongs to another owner"
+        );
+        let fresh = self.inspect_later_epoch_checkpoint_context_v1()?;
+        ensure!(
+            fresh.context_digest == context.context_digest
+                && fresh.application_head == context.application_head
+                && fresh.predecessor_edge == context.predecessor_edge,
+            "later checkpoint context is stale"
+        );
+        anyhow::bail!(
+            "later checkpoint/two-seal/handoff bridge is not implemented; no durable authority issued"
+        )
     }
 
     /// Recover one edge selected by its validated history position.  The

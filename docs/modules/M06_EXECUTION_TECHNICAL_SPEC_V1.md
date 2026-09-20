@@ -434,3 +434,18 @@ corrupt lineage, missing predecessor, or concurrent mutation fails closed.
 This closes the observation/recovery contract without authorizing a second
 edge; schema7 storage migration and the later checkpoint two-seal + handoff
 finality bridge remain explicit prerequisites for multi-epoch issuance.
+
+`DurableNativeApplicationV0::inspect_later_epoch_checkpoint_context_v1()` is
+the explicit planning boundary for that future bridge. It re-reads the
+consumed edge lineage and the authenticated epoch-context row, verifies the
+context digest and canonical active validator set/parameters, and derives the
+next checkpoint, seal-1, seal-2, first-new height and exact cutoff geometry
+(the fixture yields 18/19/20/21 and cutoff 15). The returned
+`LaterEpochCheckpointContextV1` is owner-affine observation data; it cannot
+prepare, sign or commit a checkpoint. Its cutoff is planning geometry and may
+be ahead of the current head; the eventual bridge must re-open the exact
+historical cutoff before mutation. The paired
+`require_later_epoch_checkpoint_bridge_v1()` deliberately fails closed after
+fresh context comparison until the strict later checkpoint/two-seal/handoff
+and multi-edge storage bridge exists. This typed seam prevents callers from
+silently routing epoch-1 planning through the legacy epoch-0 configuration.
