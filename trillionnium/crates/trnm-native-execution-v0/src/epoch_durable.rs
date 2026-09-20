@@ -1,6 +1,7 @@
 //! Explicit schema-4 bridge. No schema migration is performed by ordinary open.
 //! Frozen v0 rows remain immutable; sparse-history executions use a separate P.
 use super::*;
+use crate::epoch_edge::EpochExecutionContextV1;
 use crate::epoch_recovery::{EpochRecoveryEvidenceV1, MAX_EPOCH_EVIDENCE_BYTES_V1};
 use anyhow::Result;
 use trnm_consensus_types::BlockKind;
@@ -472,7 +473,7 @@ impl DurableNativeApplicationV0 {
                 && decode_lineage(&prepared.row.lineage)? == finality.lineage(),
             "later checkpoint P/header/lineage binding"
         );
-        self.commit_epoch_p(&prepared, Some(&preimages))
+        self.commit_epoch_p(&prepared, Some(&preimages), None)
     }
 
     pub fn preview_epoch_descendant_v1(
@@ -1565,8 +1566,9 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
         ensure!(sequence > previous_sequence, "later edge sequence order");
         previous_sequence = sequence;
         ensure!(
-            phase == 0 && consumed_block.is_none() && consumed_sequence.is_none(),
-            "later successor edge is not in the supported installed phase"
+            (phase == 0 && consumed_block.is_none() && consumed_sequence.is_none())
+                || (phase == 1 && consumed_block.is_some() && consumed_sequence.is_some()),
+            "later successor edge phase/consumption shape"
         );
         let p = load_p(connection, &checkpoint_block)?.context("later successor P missing")?;
         ensure!(
@@ -1576,6 +1578,26 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
                 && p.artifact_kind == 0,
             "later successor P binding"
         );
+        if phase == 0 {
+            let metadata = load_metadata_v0(connection, config)?;
+            ensure!(
+                metadata.head == p.target_head()?,
+                "installed later successor requires current checkpoint head"
+            );
+        } else {
+            let consumed = load_p(
+                connection,
+                &consumed_block.context("later consumed block missing")?,
+            )?
+            .context("later consumed P missing")?;
+            ensure!(
+                consumed.status == 1
+                    && consumed.artifact_kind == 1
+                    && consumed.commit_sequence == consumed_sequence
+                    && decode_lineage(&consumed.lineage)?.last() == Some(&successor_binding),
+                "later successor consumed P binding"
+            );
+        }
         let header = decode_header(&p.header)?;
         ensure!(
             header.height().get() == checkpoint_height
@@ -2248,10 +2270,28 @@ impl DurableNativeApplicationV0 {
                 && stored_predecessor == predecessor_edge,
             "later application edge finality row is not bound to checkpoint P"
         );
-        ensure!(
-            metadata.head == p.target_head()?,
-            "later application edge requires the committed checkpoint head"
-        );
+        let (edge_phase, edge_consumed): (i64, Option<Vec<u8>>) = connection.query_row(
+            "SELECT phase,consumed_block FROM native_later_epoch_edge_v1 WHERE checkpoint_block=?1",
+            [checkpoint_block.as_slice()],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        )?;
+        if edge_phase == 0 {
+            ensure!(
+                metadata.head == p.target_head()?,
+                "later application edge requires the committed checkpoint head"
+            );
+        } else {
+            let consumed_block: [u8; 32] = edge_consumed
+                .context("later application edge consumed block missing")?
+                .try_into()
+                .map_err(|_| anyhow::anyhow!("later application edge consumed block width"))?;
+            let consumed = load_p(&connection, &consumed_block)?
+                .context("later application edge consumed P missing")?;
+            ensure!(
+                consumed.status == 1 && metadata.head == consumed.target_head()?,
+                "later application edge consumed head mismatch"
+            );
+        }
         let target_head = p.target_head()?;
         let successor_context_digest = context_digest(
             self.config.store_id,
@@ -2442,7 +2482,6 @@ impl DurableNativeApplicationV0 {
                 ))
             },
         )?;
-        ensure!(row.14 == 0, "later successor edge is already consumed");
         Ok(LaterEpochApplicationEdgeV1 {
             owner: Arc::clone(&self.owner_affinity),
             successor_binding: row.0,
@@ -2488,10 +2527,26 @@ impl DurableNativeApplicationV0 {
         ensure!(
             p.status == 1
                 && p.p_digest == edge.checkpoint_p_digest
-                && p.commit_sequence == Some(edge.checkpoint_commit_sequence)
-                && p.target_head()? == metadata.head,
-            "later execution checkpoint P is not the current committed head"
+                && p.commit_sequence == Some(edge.checkpoint_commit_sequence),
+            "later execution checkpoint P binding"
         );
+        if p.target_head()? != metadata.head {
+            let (phase, consumed_block): (i64, Option<Vec<u8>>) = connection.query_row(
+                "SELECT phase,consumed_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
+                [edge.successor_binding.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )?;
+            let consumed_block: [u8; 32] = consumed_block
+                .context("later execution consumed block missing")?
+                .try_into()
+                .map_err(|_| anyhow::anyhow!("later execution consumed block width"))?;
+            let consumed = load_p(&connection, &consumed_block)?
+                .context("later execution consumed P missing")?;
+            ensure!(
+                phase == 1 && consumed.status == 1 && consumed.target_head()? == metadata.head,
+                "later execution checkpoint is neither current nor consumed"
+            );
+        }
         let evidence = connection.query_row(
             "SELECT context_digest,predecessor_edge,checkpoint_parent_header,
                     checkpoint_header,checkpoint_finality,anchor_kernel,
@@ -2607,10 +2662,135 @@ impl DurableNativeApplicationV0 {
         })
     }
 
-    /// The first-new execution path is intentionally fail-closed until it can
-    /// atomically persist C+3 P, consume this edge, and recover both states
-    /// after SIGKILL.  Holding the capability therefore cannot accidentally
-    /// route C+3 through the legacy epoch-0 edge API.
+    /// Prepare the first application block after a later epoch handoff.
+    ///
+    /// The sealed successor context supplies the C18 application parent, the
+    /// C+2 consensus parent, and the new validator/configuration.  The
+    /// resulting P is still inert until `commit_epoch_finality_bytes_v1`
+    /// verifies a strict proof; that commit consumes the successor edge in the
+    /// same SQLite transaction as metadata and P.
+    pub fn prepare_later_epoch_first_new_block_v1(
+        &self,
+        edge: &LaterEpochApplicationEdgeV1,
+        request: NativeEpochBlockExecutionRequestV1,
+        header: &BlockHeader,
+    ) -> Result<PreparedNativeEpochExecutionV1> {
+        ensure!(
+            edge.belongs_to_application(self),
+            "later successor edge belongs to another owner"
+        );
+        let context = self.open_later_epoch_execution_context_v1(edge)?;
+        context.validate_request_v1(request.preview())?;
+        ensure!(
+            header.block_kind() == BlockKind::EpochHandoff
+                && header.next_epoch_commitment_hash().is_none(),
+            "later first-new header kind"
+        );
+        ensure!(
+            header.id().as_bytes() == request.block_id().as_bytes()
+                && header.height().get() == request.preview().height().get()
+                && header.parent_id().as_bytes()
+                    == request.preview().consensus_parent_id().as_bytes()
+                && header.timestamp_ms() == request.preview().timestamp_ms(),
+            "later first-new header/request binding"
+        );
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let checkpoint = load_p(&connection, &edge.checkpoint_block)?
+            .context("later first-new checkpoint P missing")?;
+        ensure!(
+            checkpoint.status == 1
+                && checkpoint.p_digest == edge.checkpoint_p_digest
+                && checkpoint.commit_sequence == Some(edge.checkpoint_commit_sequence)
+                && checkpoint.target_head()? == metadata.head,
+            "later first-new checkpoint is not current"
+        );
+        let target = validate_p(&connection, &self.config, &checkpoint)?;
+        drop(connection);
+        let computed = crate::complete::compute_complete_epoch_native_block_with_context_v1(
+            &target,
+            &context,
+            request.preview(),
+        )?;
+        let expected = trnm_native_application::NativeExpectedBlockCommitmentsV0::new(
+            Hash32V0::new(computed.payload_root),
+            StateRootV0::new(computed.post_state_root)?,
+            trnm_native_application::ReceiptsRootV0::new(computed.receipts_root)?,
+            Hash32V0::new(computed.evidence_root),
+        )?;
+        ensure_roots(header, expected)?;
+        let executed =
+            NativeExecutedEpochBlockV1::new(request, expected, computed.native_receipts)?;
+        let artifact =
+            trnm_native_application::encode_native_executed_epoch_block_artifact_v1(&executed)?;
+        let mut target = target;
+        target.apply_complete_state_plan_v0(computed.plan)?;
+        for replay in computed.replay_identities {
+            target.mark_committed_command_v0(
+                replay.command_id(),
+                replay.signer_id(),
+                replay.nonce(),
+            )?;
+        }
+        let mut lineage = decode_lineage(&checkpoint.lineage)?;
+        ensure!(
+            lineage.last() == Some(&edge.predecessor_edge),
+            "later first-new predecessor lineage"
+        );
+        let prior_edges = lineage
+            .iter()
+            .map(|binding| self.recover_epoch_application_edge_v1(*binding))
+            .collect::<Result<Vec<_>>>()?;
+        let mut contexts: Vec<&dyn EpochExecutionContextV1> = prior_edges
+            .iter()
+            .map(|prior| prior as &dyn EpochExecutionContextV1)
+            .collect();
+        contexts.push(&context);
+        let snapshot = target.encode_epoch_authenticated_snapshot_for_context_v1(&contexts)?;
+        let (commands, nonces) = target.replay_sets_v0();
+        lineage.push(edge.successor_binding);
+        let lineage = encode_lineage(&lineage)?;
+        let row = StoredEpochPV1 {
+            store_id: self.config.store_id,
+            p_sequence: 0,
+            status: 0,
+            artifact_kind: 1,
+            artifact_digest: sha256_v0(&artifact),
+            artifact,
+            header: header
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("later first-new header encode: {e:?}"))?,
+            parent_kind: 1,
+            parent: context.application_parent_v1().clone(),
+            parent_p_digest: Some(checkpoint.p_digest),
+            consensus_parent_height: context.consensus_parent_v1().height().get(),
+            consensus_parent_block: *context.consensus_parent_v1().id().as_bytes(),
+            target_height: executed.request().preview().height().get(),
+            block_id: *executed.request().block_id().as_bytes(),
+            lineage_digest: sha256_v0(&lineage),
+            lineage,
+            snapshot_digest: sha256_v0(&snapshot),
+            snapshot,
+            commands: borsh::to_vec(commands)?,
+            nonces: borsh::to_vec(nonces)?,
+            lifecycle: serde_json::to_vec(&computed.final_lifecycle)?,
+            target_set: context
+                .new_validator_set_v1()
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("later first-new set encode: {e:?}"))?,
+            target_parameters: context.new_parameters_v1().canonical_bytes(),
+            p_digest: [0; 32],
+            commit_sequence: None,
+            commit_id: None,
+        };
+        self.persist_epoch_p(row)
+    }
+
+    /// Legacy name retained as a fail-closed audit-only operation. Callers
+    /// must provide the exact request/header to create a first-new P through
+    /// `prepare_later_epoch_first_new_block_v1`.
     pub fn execute_later_epoch_first_new_block_v1(
         &self,
         edge: &LaterEpochApplicationEdgeV1,
@@ -3913,8 +4093,33 @@ impl DurableNativeApplicationV0 {
             "epoch commit foreign owner"
         );
         let ids = decode_lineage(&prepared.row.lineage)?;
-        let edge = self
-            .recover_epoch_application_edge_v1(*ids.last().context("epoch commit missing edge")?)?;
+        let binding = *ids.last().context("epoch commit missing edge")?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        let legacy_edge = load_edges(&connection, &self.config)?
+            .into_iter()
+            .find(|edge| edge.binding == binding)
+            .map(|_| binding);
+        drop(connection);
+        let edge = legacy_edge
+            .map(|binding| self.recover_epoch_application_edge_v1(binding))
+            .transpose()?;
+        let later_edge = if edge.is_none() {
+            let requirements = self.inspect_later_epoch_application_edge_requirements_v1(
+                *prepared.row.parent.block_id().as_bytes(),
+            )?;
+            ensure!(
+                requirements.successor_binding() == binding,
+                "later first-new lineage binding"
+            );
+            Some(self.recover_later_epoch_application_edge_v1(&requirements)?)
+        } else {
+            None
+        };
+        let later_context = later_edge
+            .as_ref()
+            .map(|edge| self.open_later_epoch_execution_context_v1(edge))
+            .transpose()?;
         let header = prepared.header()?;
         ensure!(
             header.block_kind() != BlockKind::EpochCheckpoint,
@@ -3929,7 +4134,12 @@ impl DurableNativeApplicationV0 {
             parent_id: trnm_consensus_types::BlockId::new(prepared.row.consensus_parent_block),
             parent_height: trnm_consensus_types::Height::new(prepared.row.consensus_parent_height),
             parent_timestamp_ms: if prepared.row.artifact_kind == 1 {
-                edge.consensus_parent().timestamp_ms()
+                edge.as_ref()
+                    .context("legacy epoch edge missing")?
+                    .consensus_parent()
+                    .timestamp_ms()
+            } else if let Some(context) = later_context.as_ref() {
+                context.consensus_parent_v1().timestamp_ms()
             } else {
                 let connection = open_immutable_connection_v0(&self.path)?;
                 let parent = load_p(&connection, prepared.row.parent.block_id().as_bytes())?
@@ -3938,47 +4148,101 @@ impl DurableNativeApplicationV0 {
             },
         };
         let final_header = if prepared.row.artifact_kind == 1 {
-            let verified = trnm_consensus_crypto::decode_verify_epoch_first_finality_strict_v1(
-                edge.recovery_evidence().proof_preimages(),
-                proof_bytes,
-                edge.old_validator_set(),
-                edge.old_parameters(),
-                expected,
-                budget,
-            )
-            .map_err(|e| anyhow::anyhow!("first-new strict finality: {e}"))?;
-            ensure!(
-                verified.checkpoint_header().id().as_bytes()
-                    == edge.application_parent().block_id().as_bytes(),
-                "epoch finality checkpoint substitution"
-            );
+            let verified = if let Some(context) = later_context.as_ref() {
+                let connection = open_immutable_connection_v0(&self.path)?;
+                let evidence =
+                    connection.query_row(
+                        "SELECT checkpoint_parent_header,checkpoint_header,checkpoint_finality,
+                            anchor_kernel,next_epoch_commitment,new_validator_set,new_parameters
+                     FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
+                        [prepared.row.parent.block_id().as_bytes().as_slice()],
+                        |row| {
+                            Ok(crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1 {
+                            context_digest: [0; 32],
+                            predecessor_edge: [0; 32],
+                            checkpoint_parent_header: row.get(0)?,
+                            checkpoint_header: row.get(1)?,
+                            checkpoint_finality: row.get(2)?,
+                            anchor_kernel: row.get(3)?,
+                            next_epoch_commitment: row.get(4)?,
+                            new_validator_set: row.get(5)?,
+                            new_parameters: row.get(6)?,
+                        })
+                        },
+                    )?;
+                let old_set = context.old_validator_set_v1();
+                let old_set_bytes = old_set
+                    .try_cev0_bytes()
+                    .map_err(|e| anyhow::anyhow!("later first-new old set: {e:?}"))?;
+                let evidence = trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
+                    old_checkpoint_finality: &evidence.checkpoint_finality,
+                    next_epoch_commitment: &evidence.next_epoch_commitment,
+                    authorization_kernel: &evidence.anchor_kernel,
+                    old_validator_set: &old_set_bytes,
+                    old_consensus_parameters: &context.old_parameters_v1().canonical_bytes(),
+                    new_validator_set: &evidence.new_validator_set,
+                    new_consensus_parameters: &evidence.new_parameters,
+                    authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
+                };
+                trnm_consensus_crypto::decode_verify_epoch_first_finality_strict_v1(
+                    evidence,
+                    proof_bytes,
+                    old_set,
+                    context.old_parameters_v1(),
+                    expected,
+                    budget,
+                )
+                .map_err(|e| anyhow::anyhow!("later first-new strict finality: {e}"))?
+            } else {
+                let edge = edge.as_ref().context("legacy epoch edge missing")?;
+                trnm_consensus_crypto::decode_verify_epoch_first_finality_strict_v1(
+                    edge.recovery_evidence().proof_preimages(),
+                    proof_bytes,
+                    edge.old_validator_set(),
+                    edge.old_parameters(),
+                    expected,
+                    budget,
+                )
+                .map_err(|e| anyhow::anyhow!("first-new strict finality: {e}"))?
+            };
             verified.proof().finalized_block().header().clone()
         } else {
-            trnm_consensus_crypto::decode_verify_finality_proof_strict_v0(
-                trnm_consensus_crypto::POCO_THREE_CHAIN_PROOF_CLASS_V0,
-                proof_bytes,
-                edge.new_validator_set(),
-                edge.new_parameters(),
-                expected,
-                budget,
-            )
-            .map_err(|e| anyhow::anyhow!("ordinary sparse strict finality: {e}"))?
-            .proof()
-            .finalized_block()
-            .header()
-            .clone()
+            let verified = if let Some(context) = later_context.as_ref() {
+                trnm_consensus_crypto::decode_verify_finality_proof_strict_v0(
+                    trnm_consensus_crypto::POCO_THREE_CHAIN_PROOF_CLASS_V0,
+                    proof_bytes,
+                    context.new_validator_set_v1(),
+                    context.new_parameters_v1(),
+                    expected,
+                    budget,
+                )
+                .map_err(|e| anyhow::anyhow!("later first-new strict finality: {e}"))?
+            } else {
+                let edge = edge.as_ref().context("ordinary epoch edge missing")?;
+                trnm_consensus_crypto::decode_verify_finality_proof_strict_v0(
+                    trnm_consensus_crypto::POCO_THREE_CHAIN_PROOF_CLASS_V0,
+                    proof_bytes,
+                    edge.new_validator_set(),
+                    edge.new_parameters(),
+                    expected,
+                    budget,
+                )
+                .map_err(|e| anyhow::anyhow!("ordinary sparse strict finality: {e}"))?
+            };
+            verified.proof().finalized_block().header().clone()
         };
         ensure!(
             final_header == header,
             "strict finality differs from complete retained header"
         );
-        self.commit_epoch_p(prepared, None)
+        self.commit_epoch_p(prepared, None, later_edge.as_ref())
     }
 
     fn commit_epoch_p(
         &self,
         prepared: &PreparedNativeEpochExecutionV1,
         later: Option<&crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1>,
+        later_application: Option<&LaterEpochApplicationEdgeV1>,
     ) -> Result<CommittedNativeEpochExecutionV1> {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
@@ -4106,9 +4370,23 @@ impl DurableNativeApplicationV0 {
         if p.artifact_kind == 1 {
             let ids = decode_lineage(&p.lineage)?;
             let binding = ids.last().context("epoch commit edge missing")?;
-            ensure!(tx.execute("UPDATE native_epoch_edge_v1 SET phase=1,consumed_block=?,consumed_sequence=? WHERE binding=? AND phase=0 AND checkpoint_block=? AND checkpoint_root=?",
-                params![p.block_id.as_slice(),sequence.to_be_bytes().as_slice(),binding.as_slice(),p.parent.block_id().as_bytes().as_slice(),p.parent.state_root().as_bytes().as_slice()])?==1,
-                "epoch commit edge already consumed/conflicting");
+            if let Some(later_edge) = later_application {
+                ensure!(
+                    later_edge.successor_binding == *binding
+                        && later_edge.checkpoint_block == *p.parent.block_id().as_bytes()
+                        && later_edge.checkpoint_p_digest
+                            == p.parent_p_digest
+                                .context("later successor parent P digest missing")?,
+                    "later successor commit edge binding"
+                );
+                ensure!(tx.execute("UPDATE native_later_epoch_edge_v1 SET phase=1,consumed_block=?,consumed_sequence=? WHERE successor_binding=? AND phase=0 AND checkpoint_block=? AND checkpoint_p_digest=? AND checkpoint_commit_sequence=?",
+                    params![p.block_id.as_slice(),sequence.to_be_bytes().as_slice(),binding.as_slice(),p.parent.block_id().as_bytes().as_slice(),later_edge.checkpoint_p_digest.as_slice(),later_edge.checkpoint_commit_sequence.to_be_bytes().as_slice()])?==1,
+                    "later successor edge already consumed/conflicting");
+            } else {
+                ensure!(tx.execute("UPDATE native_epoch_edge_v1 SET phase=1,consumed_block=?,consumed_sequence=? WHERE binding=? AND phase=0 AND checkpoint_block=? AND checkpoint_root=?",
+                    params![p.block_id.as_slice(),sequence.to_be_bytes().as_slice(),binding.as_slice(),p.parent.block_id().as_bytes().as_slice(),p.parent.state_root().as_bytes().as_slice()])?==1,
+                    "epoch commit edge already consumed/conflicting");
+            }
         }
         let context = context_digest(
             self.config.store_id,
