@@ -10,6 +10,10 @@ publish = false
 
 [features]
 default = []
+# Candidate-only authenticated transport adapter. This exposes bounded socket
+# framing around the existing session verifier; it does not enable a node,
+# peer lease, Core input, signer, or production activation.
+candidate-authenticated-transport = []
 # Typed outgoing epoch checkpoint join, explicitly outside the default closure.
 epoch-handoff-checkpoint-candidate = []
 # Explicit full-epoch trusted-host candidate; never enabled by the outgoing-only join.

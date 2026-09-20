@@ -1952,6 +1952,7 @@ dependencies = [
  "trnm-durable-file-adapters-v0",
  "trnm-native-execution-v0",
  "trnm-node-boundary-v0",
+ "trnm-poco-node",
  "trnm-poco-node-authority",
  "trnm-poco-node-io",
  "trnm-poco-node-production-v0",

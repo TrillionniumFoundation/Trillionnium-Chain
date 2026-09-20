@@ -36,6 +36,8 @@ persistent-authority-candidate = [
 ]
 candidate-networked-authority = [
   "persistent-authority-candidate",
+  "dep:trnm-poco-node",
+  "trnm-poco-node/candidate-authenticated-transport",
   "trnm-poco-node-io/candidate-authenticated-p2p",
   "dep:trnm-durable-file-adapters-v0",
 ]
@@ -49,6 +51,7 @@ trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution
 trnm-durable-file-adapters-v0 = { version = "0.1.0", path = "../trnm-durable-file-adapters-v0", optional = true, features = ["candidate-peer-replay"] }
 trnm-node-boundary-v0 = { version = "0.1.0", path = "../trnm-node-boundary-v0" }
 trnm-poco-node-authority = { version = "0.1.0", path = "../trnm-poco-node-authority" }
+trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", optional = true }
 trnm-poco-node-io = { version = "0.1.0", path = "../trnm-poco-node-io" }
 trnm-poco-node-production-v0 = { version = "0.1.0", path = "../trnm-poco-node-production-v0" }
 

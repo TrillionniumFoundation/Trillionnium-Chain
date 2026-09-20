@@ -21,6 +21,7 @@ Production activation requires a separately reviewed network profile.
 |---|---|---|
 | `trillionnium/crates/trnm-poco-node-io/src/authenticated_p2p.rs` | `PeerSessionIdentityV0`, exact-next nonce, one pending frame, typed verification token | No socket, TLS, discovery or persistent backend |
 | `trillionnium/crates/trnm-poco-node/src/p2p_session_ingress.rs` | Candidate Ed25519 handshake/frame ingress, nested Vote/TimeoutVote/QC/TC verification, fsynced session and authenticated-frame replay anchor, child-process restart/tamper checks | No listener, TLS identity administration, Core ACK atomicity or external anti-rollback |
+| `trillionnium/crates/trnm-poco-node/src/authenticated_transport.rs` | Candidate-only bounded TCP adapter around the authenticated session; length-prefix checks before allocation, read deadlines, response bound and caller-owned replay-anchor handoff | No TLS/static peer administration, peer lease, typed transaction/sync dispatch, Core ACK, signer, proposal/finality or production activation |
 | `trillionnium/crates/trnm-poco-node-host/src/persistent_p2p_ingress_bridge.rs` | Candidate bridge to prepared Core ingress and ACK | Connect an independently authenticated listener |
 | `trillionnium/crates/trnm-poco-lab-validator/src/p2p_admission.rs` | Candidate peer-admission integration | Multi-host production authentication |
 | `trillionnium/crates/trnm-consensus-peer-lease/src/lib.rs` | Unix lease transport, append-only chain, cross-process fencing | Not consensus payload transport or host attestation |
@@ -28,6 +29,37 @@ Production activation requires a separately reviewed network profile.
 The existing admission frame has a 4 MiB **payload** maximum. Unix credentials
 and local test keys do not establish cross-host validator identity. New ports
 below are planned adapters; their names do not claim current implementation.
+
+### Candidate authenticated socket seam
+
+`CandidateAuthenticatedP2pTransportV0` is the only socket implementation in
+the current tree. It is compiled only by the explicit
+`candidate-authenticated-transport` feature (and re-exported by the host's
+`candidate-networked-authority` feature). `bind` validates the supplied
+validator set against the consensus parameters and switches the listener to
+nonblocking mode. `accept_one` polls one connection and serves it
+synchronously; it creates no worker thread and has no hidden queue. The
+configured connection cap is at most 16 and zero is rejected.
+
+Each connection reads a four-byte big-endian length before allocating. A zero
+record, a handshake over `P2P_SESSION_MAX_HANDSHAKE_BYTES_V0`, or a frame over
+`P2P_SESSION_MAX_FRAME_BYTES_V0` is rejected before the body allocation. The
+handshake has a two-second read deadline and the frame has a five-second read
+deadline. The adapter then calls `PocoNodeP2pSessionV0::open` and
+`accept_frame`; with `accept_one_with_replay_anchor`, the caller-owned replay
+anchor is used so the session/frame reservation is fsynced before the callback
+is exposed. The callback returns a bounded response (at most 8 MiB), which is
+written as another length-prefixed record.
+
+This seam deliberately has no message-kind router. The callback receives an
+authenticated consensus frame only; it cannot by itself admit a public
+transaction, download state, acknowledge Core, acquire a peer lease, invoke a
+signer, propose, or finalize. `AUTHENTICATED_TRANSPORT_PRODUCTION_ACTIVATION_V0`
+is a compile-time `false` constant. The two unit tests cover zero-length and
+oversized-prefix rejection before allocation; the existing session tests cover
+signature, replay, persistence and restart semantics. A production listener
+still requires the TLS/static-peer identity profile above, a host-owned peer
+lease, typed M05/M13 dispatch, exact ACK recovery, and multi-host acceptance.
 
 ## Interfaces
 

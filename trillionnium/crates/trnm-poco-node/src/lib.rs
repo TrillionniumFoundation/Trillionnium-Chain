@@ -225,6 +225,8 @@ mod g2_order_commit_v1;
 // Candidate-only G2F descriptor/openat and external-anchor contract.  The
 // feature is intentionally opt-in and remains disconnected from every node,
 // signer, voting, activation, and release path.
+#[cfg(feature = "candidate-authenticated-transport")]
+mod authenticated_transport;
 #[cfg(all(feature = "g2f-namespace-test-support", unix))]
 #[allow(dead_code)]
 mod g2f_namespace_identity;
@@ -281,6 +283,8 @@ pub use authenticated_genesis_h1_takeover::{
     PocoNodeAuthenticatedGenesisH1TakeoverModeV0, PocoNodeAuthenticatedGenesisH1TakeoverSourceV0,
 };
 
+#[cfg(feature = "candidate-authenticated-transport")]
+pub use authenticated_transport::*;
 #[cfg(feature = "lab-validator-runtime")]
 pub use deployed_lab_commissioning::{
     commission_deployed_lab_ordinary_runtime_v0, validate_deployed_lab_core_record_envelope_v0,
