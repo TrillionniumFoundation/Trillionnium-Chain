@@ -809,6 +809,75 @@ pub struct LaterEpochCheckpointContextV1 {
     context_digest: [u8; 32],
 }
 
+/// The exact successor-edge facts that must be persisted after a later
+/// checkpoint/finality commit.  This is an observation carrier only: it has
+/// no execution, signing, or activation authority.  Keeping these facts
+/// explicit prevents callers from accidentally treating the schema-8
+/// checkpoint-finality row as the second application edge.
+#[must_use = "later-edge requirements must remain joined to their owner"]
+pub struct LaterEpochApplicationEdgeRequirementsV1 {
+    owner: Arc<()>,
+    predecessor_edge: [u8; 32],
+    successor_binding: [u8; 32],
+    checkpoint_block: [u8; 32],
+    checkpoint_height: u64,
+    terminal_height: u64,
+    terminal_block: [u8; 32],
+    first_application_height: u64,
+    checkpoint_commit_sequence: u64,
+    proof_context_digest: [u8; 32],
+    successor_context_digest: [u8; 32],
+}
+
+impl LaterEpochApplicationEdgeRequirementsV1 {
+    pub const fn predecessor_edge(&self) -> [u8; 32] {
+        self.predecessor_edge
+    }
+
+    pub const fn successor_binding(&self) -> [u8; 32] {
+        self.successor_binding
+    }
+
+    pub const fn checkpoint_block(&self) -> [u8; 32] {
+        self.checkpoint_block
+    }
+
+    pub const fn checkpoint_height(&self) -> u64 {
+        self.checkpoint_height
+    }
+
+    pub const fn terminal_height(&self) -> u64 {
+        self.terminal_height
+    }
+
+    pub const fn terminal_block(&self) -> [u8; 32] {
+        self.terminal_block
+    }
+
+    pub const fn first_application_height(&self) -> u64 {
+        self.first_application_height
+    }
+
+    pub const fn checkpoint_commit_sequence(&self) -> u64 {
+        self.checkpoint_commit_sequence
+    }
+
+    pub const fn proof_context_digest(&self) -> [u8; 32] {
+        self.proof_context_digest
+    }
+
+    /// Digest of the post-checkpoint singleton context that a future
+    /// successor-edge row must bind.  This is deliberately distinct from the
+    /// pre-C18 context digest retained in the schema-8 proof row.
+    pub const fn successor_context_digest(&self) -> [u8; 32] {
+        self.successor_context_digest
+    }
+
+    pub fn belongs_to_application(&self, application: &DurableNativeApplicationV0) -> bool {
+        Arc::ptr_eq(&self.owner, &application.owner_affinity)
+    }
+}
+
 impl LaterEpochCheckpointContextV1 {
     pub fn application_head(&self) -> &ApplicationHeadV0 {
         &self.application_head
@@ -1585,6 +1654,208 @@ impl DurableNativeApplicationV0 {
         );
         anyhow::bail!(
             "later checkpoint/two-seal/handoff bridge is not implemented; no durable authority issued"
+        )
+    }
+
+    /// Inspect the successor edge that a later checkpoint commit would need.
+    ///
+    /// Schema 8 durably records the checkpoint finality and its predecessor,
+    /// but it does not yet record the *new* application edge.  This method
+    /// therefore returns only independently checked requirements.  In
+    /// particular, the strict activation binding is recomputed from the
+    /// retained CEV0 preimages; it is never copied from a caller or from the
+    /// predecessor edge.
+    pub fn inspect_later_epoch_application_edge_requirements_v1(
+        &self,
+        checkpoint_block: [u8; 32],
+    ) -> Result<LaterEpochApplicationEdgeRequirementsV1> {
+        let _guard = self.lock_operation()?;
+        reject_sqlite_sidecars_v0(&self.path)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        ensure!(
+            has_later_schema(schema_version(&connection)?),
+            "later application edge requirements need schema8"
+        );
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let p = load_p(&connection, &checkpoint_block)?
+            .context("later application edge checkpoint P missing")?;
+        ensure!(
+            p.status == 1 && p.commit_sequence.is_some(),
+            "later application edge checkpoint is not committed"
+        );
+        validate_p(&connection, &self.config, &p)?;
+        let header = decode_header(&p.header)?;
+        ensure!(
+            header.block_kind() == BlockKind::EpochCheckpoint,
+            "later application edge requires a checkpoint P"
+        );
+        let parent = load_p(&connection, p.parent.block_id().as_bytes())?
+            .context("later application edge checkpoint parent P missing")?;
+        ensure!(
+            parent.status == 1
+                && parent.target_head()? == p.parent
+                && p.parent_p_digest == Some(parent.p_digest)
+                && parent.lineage == p.lineage,
+            "later application edge checkpoint parent binding"
+        );
+        let predecessor_edge = decode_lineage(&p.lineage)?
+            .last()
+            .copied()
+            .context("later application edge predecessor missing")?;
+        let (stored_p_digest, stored_sequence, stored_context, stored_predecessor) = connection
+            .query_row(
+                "SELECT p_digest,commit_sequence,context_digest,predecessor_edge
+                 FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
+                [checkpoint_block.as_slice()],
+                |row| {
+                    Ok((
+                        col32(row, "p_digest")?,
+                        col64(row, "commit_sequence")?,
+                        col32(row, "context_digest")?,
+                        col32(row, "predecessor_edge")?,
+                    ))
+                },
+            )?;
+        ensure!(
+            stored_p_digest == p.p_digest
+                && Some(stored_sequence) == p.commit_sequence
+                && stored_predecessor == predecessor_edge,
+            "later application edge finality row is not bound to checkpoint P"
+        );
+        ensure!(
+            metadata.head == p.target_head()?,
+            "later application edge requires the committed checkpoint head"
+        );
+        let target_head = p.target_head()?;
+        let successor_context_digest = context_digest(
+            self.config.store_id,
+            &target_head,
+            stored_sequence,
+            &p.target_set,
+            &p.target_parameters,
+            &p.lineage,
+        );
+
+        let old_set = trnm_consensus_types::decode_validator_set_v0_exact(&parent.target_set)
+            .map_err(|e| anyhow::anyhow!("later application edge old validator set: {e:?}"))?;
+        let old_parameters =
+            trnm_consensus_types::decode_consensus_parameters_v0_exact(&parent.target_parameters)
+                .map_err(|e| anyhow::anyhow!("later application edge old parameters: {e:?}"))?;
+        let geometry = trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), &old_parameters)
+            .map_err(|e| anyhow::anyhow!("later application edge geometry: {e:?}"))?;
+        ensure!(
+            header.height() == geometry.checkpoint_height()
+                && header.epoch() == old_set.epoch()
+                && old_set.epoch() > self.config.validator_set.epoch(),
+            "later application edge checkpoint geometry"
+        );
+
+        // `validate_later_records` has already checked all retained rows and
+        // all CEV0 signatures during open. Re-read the exact evidence here to
+        // derive the successor binding from the strict authority once more.
+        let evidence = connection.query_row(
+            "SELECT checkpoint_parent_header,checkpoint_finality,anchor_kernel,
+                    next_epoch_commitment,new_validator_set,new_parameters
+             FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
+            [checkpoint_block.as_slice()],
+            |row| {
+                Ok((
+                    row.get::<_, Vec<u8>>(0)?,
+                    row.get::<_, Vec<u8>>(1)?,
+                    row.get::<_, Vec<u8>>(2)?,
+                    row.get::<_, Vec<u8>>(3)?,
+                    row.get::<_, Vec<u8>>(4)?,
+                    row.get::<_, Vec<u8>>(5)?,
+                ))
+            },
+        )?;
+        let old_set_bytes = old_set
+            .try_cev0_bytes()
+            .map_err(|e| anyhow::anyhow!("encode later application edge old set: {e:?}"))?;
+        let old_parameters_bytes = old_parameters.canonical_bytes();
+        let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
+            trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
+                old_checkpoint_finality: &evidence.1,
+                next_epoch_commitment: &evidence.3,
+                authorization_kernel: &evidence.2,
+                old_validator_set: &old_set_bytes,
+                old_consensus_parameters: &old_parameters_bytes,
+                new_validator_set: &evidence.4,
+                new_consensus_parameters: &evidence.5,
+                authenticated_checkpoint_parent_header: &evidence.0,
+            },
+            &old_set,
+            &old_parameters,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .map_err(|e| anyhow::anyhow!("decode later application edge evidence: {e:?}"))?;
+        let authority =
+            trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
+                decoded.old_checkpoint_finality(),
+                decoded.next_epoch_commitment(),
+                decoded.authorization_kernel(),
+                &old_set,
+                &old_parameters,
+                decoded.new_validator_set(),
+                decoded.new_consensus_parameters(),
+                decoded.authenticated_checkpoint_parent_header(),
+            )
+            .map_err(|e| anyhow::anyhow!("later application edge strict authority: {e:?}"))?;
+        ensure!(
+            authority
+                .old_checkpoint_finality()
+                .finalized_block()
+                .header()
+                == &header,
+            "later application edge authority checkpoint substitution"
+        );
+        let terminal = authority.old_checkpoint_finality().grandchild().header();
+        ensure!(
+            terminal.height().get() == geometry.epoch_end().get(),
+            "later application edge terminal geometry"
+        );
+        let after = fresh_validate_v0(&self.path, &self.config)?;
+        ensure!(
+            after == metadata,
+            "later application edge concurrent mutation"
+        );
+        Ok(LaterEpochApplicationEdgeRequirementsV1 {
+            owner: Arc::clone(&self.owner_affinity),
+            predecessor_edge,
+            successor_binding: *authority.binding_ref().as_bytes(),
+            checkpoint_block,
+            checkpoint_height: geometry.checkpoint_height().get(),
+            terminal_height: geometry.epoch_end().get(),
+            terminal_block: *terminal.id().as_bytes(),
+            first_application_height: geometry
+                .epoch_end()
+                .get()
+                .checked_add(1)
+                .context("later application edge first height exhausted")?,
+            checkpoint_commit_sequence: stored_sequence,
+            proof_context_digest: stored_context,
+            successor_context_digest,
+        })
+    }
+
+    /// Keep the second durable edge fail-closed until its versioned ledger and
+    /// atomic first-new execution path exist.  The requirements inspection is
+    /// deliberately separate so callers can test every binding before this
+    /// method is allowed to return an application capability.
+    pub fn require_later_epoch_application_edge_v1(
+        &self,
+        requirements: &LaterEpochApplicationEdgeRequirementsV1,
+    ) -> Result<()> {
+        ensure!(
+            requirements.belongs_to_application(self),
+            "later application edge requirements belong to another owner"
+        );
+        let _ = self
+            .inspect_later_epoch_application_edge_requirements_v1(requirements.checkpoint_block)?;
+        anyhow::bail!(
+            "later application edge ledger and first-new execution bridge are not implemented; no durable authority issued"
         )
     }
 

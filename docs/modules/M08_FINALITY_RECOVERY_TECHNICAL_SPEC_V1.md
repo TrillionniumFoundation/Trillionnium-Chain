@@ -739,6 +739,22 @@ the checkpoint application head only. The second durable edge, first-new C+3,
 schema7 incremental multi-edge storage and production Core/signing remain
 separate open requirements.
 
+The explicit `inspect_later_epoch_application_edge_requirements_v1(C18)` seam
+now makes the remaining edge contract executable as a fail-closed check. It
+reopens and validates the committed checkpoint P, parent P, proof record,
+predecessor lineage and strict CEV0 activation authority, then returns the
+predecessor binding, independently recomputed successor activation binding,
+checkpoint/terminal/first-new heights, and two context digests. The proof
+context digest is the pre-C18 context retained by schema8; the successor
+context digest is recomputed from the post-C18 head, sequence, target
+configuration and lineage. They must remain separate fields in the future
+`native_later_epoch_edge_v1` row. `require_later_epoch_application_edge_v1`
+currently rejects after these checks because that row, its atomic binding to
+the C18 P, and the C+3 first-new execution/commit path are not implemented.
+The fixture asserts predecessor H17, successor height 21, distinct non-zero
+bindings and distinct context digests, and proves the old H17 edge cannot open
+an application store after C18 is committed.
+
 The native fixture now exercises migration, C18 commit, exact retry and cold
 recovery. A signature mutation with a recomputed local record digest, a
 deleted proof record, and an installed-phase predecessor edge all reject

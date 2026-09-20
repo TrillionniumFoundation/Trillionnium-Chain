@@ -61,8 +61,8 @@ mod epoch_durable;
 pub use epoch_durable::{
     CommittedNativeEpochExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,
     EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1, EpochEdgePhaseV1,
-    FinalizedNativeEpochApplicationReadV1, LaterEpochCheckpointContextV1,
-    PreparedNativeEpochExecutionV1,
+    FinalizedNativeEpochApplicationReadV1, LaterEpochApplicationEdgeRequirementsV1,
+    LaterEpochCheckpointContextV1, PreparedNativeEpochExecutionV1,
 };
 
 #[path = "incremental_owner_v1.rs"]

@@ -453,3 +453,13 @@ commit a second edge, and the legacy `require_later_epoch_checkpoint_bridge_v1()
 continues to fail closed. M08's schema8 commit binds the checkpoint P/state
 root before the later checkpoint becomes durable; the second edge and new
 epoch application authority remain separate gates.
+
+The post-C18 edge seam is intentionally explicit:
+`inspect_later_epoch_application_edge_requirements_v1` derives the successor
+activation binding from retained strict evidence and returns the exact
+C18/C+2/C+3 geometry while keeping the pre-C18 proof-context digest distinct
+from the recomputed post-C18 successor-context digest. It does not issue an
+execution capability. Until a versioned later-edge row is atomically committed
+with that binding and the first-new C+3 P, the old H17 edge is rejected by the
+owner when the application head is C18, and
+`require_later_epoch_application_edge_v1` remains fail-closed.

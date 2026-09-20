@@ -1104,6 +1104,58 @@ mod tests {
             .recover_later_epoch_checkpoint_commit_v1(*checkpoint_header.id().as_bytes())
             .unwrap();
         assert_eq!(recovered.commit_sequence(), committed.commit_sequence());
+
+        // Schema 8 durably proves C18 and retains the H17 predecessor, but it
+        // does not silently turn that proof row into the C18 -> C21
+        // application edge.  Inspect the exact successor requirements and
+        // keep the capability boundary fail-closed until its own ledger and
+        // first-new execution path are implemented.
+        let requirements = reopened
+            .inspect_later_epoch_application_edge_requirements_v1(
+                *checkpoint_header.id().as_bytes(),
+            )
+            .unwrap();
+        assert!(requirements.belongs_to_application(&reopened));
+        assert_eq!(requirements.checkpoint_height(), 18);
+        assert_eq!(requirements.terminal_height(), 20);
+        assert_ne!(requirements.terminal_block(), [0; 32]);
+        assert_eq!(requirements.first_application_height(), 21);
+        assert_ne!(requirements.proof_context_digest(), [0; 32]);
+        assert_ne!(requirements.successor_context_digest(), [0; 32]);
+        assert_ne!(
+            requirements.proof_context_digest(),
+            requirements.successor_context_digest()
+        );
+        assert_ne!(requirements.successor_binding(), [0; 32]);
+        assert_ne!(
+            requirements.successor_binding(),
+            requirements.predecessor_edge()
+        );
+        let stored_predecessor: [u8; 32] = rusqlite::Connection::open(&path)
+            .unwrap()
+            .query_row(
+                "SELECT predecessor_edge FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?",
+                [checkpoint_header.id().as_bytes().as_slice()],
+                |row| {
+                    let bytes: Vec<u8> = row.get(0)?;
+                    bytes.try_into().map_err(|_| rusqlite::Error::InvalidQuery)
+                },
+            )
+            .unwrap();
+        assert_eq!(requirements.predecessor_edge(), stored_predecessor);
+        let missing_edge = reopened
+            .require_later_epoch_application_edge_v1(&requirements)
+            .unwrap_err();
+        assert!(missing_edge.to_string().contains(
+            "later application edge ledger and first-new execution bridge are not implemented"
+        ));
+        let old_edge = reopened
+            .recover_epoch_application_edge_v1(requirements.predecessor_edge())
+            .unwrap();
+        assert!(
+            reopened.open_epoch_checkpoint_store_v1(&old_edge).is_err(),
+            "the H17 edge cannot execute C21 after the C18 checkpoint commit"
+        );
         drop(reopened);
         let sql = rusqlite::Connection::open(&path).unwrap();
         let original_finality: Vec<u8> = sql
