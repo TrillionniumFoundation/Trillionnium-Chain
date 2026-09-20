@@ -12,6 +12,7 @@ from types import ModuleType
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 CORE = pathlib.Path("scripts/ci/check_module_coverage_core_v1.py")
 BINDING = pathlib.Path("scripts/ci/technical_convergence_coverage_v1.py")
+DESIGN = pathlib.Path("scripts/ci/check_module_design_completeness_v1.py")
 SPECS = {
     "M00": "docs/modules/M00_FOUNDATION_PROTOCOL_TECHNICAL_SPEC_V1.md",
     "M01": "docs/modules/M01_CRYPTO_IDENTITY_TECHNICAL_SPEC_V1.md",
@@ -63,14 +64,18 @@ def load(relative: pathlib.Path) -> ModuleType:
 def main() -> int:
     core = load(CORE)
     binding = load(BINDING)
+    design = load(DESIGN)
     result = core.main()
     require(result == 0, "core module coverage gate did not return success")
     supplement = binding.validate(ROOT, SPECS, require)
+    design_report = design.validate(ROOT, SPECS)
+    require(design_report.get("result") == "PASS", "module design completeness gate did not pass")
     print(json.dumps({
         "schema": "trnm-module-coverage-convergence-binding-v1",
         "core_blob": blob(ROOT / CORE),
         "binding_blob": blob(ROOT / BINDING),
         **supplement,
+        "design_completeness": design_report,
         "production_authority": False,
         "result": "PASS",
     }, sort_keys=True, separators=(",", ":")))
@@ -80,6 +85,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (CoverageWrapperError, RuntimeError, OSError, UnicodeError) as error:
+    except (CoverageWrapperError, RuntimeError, OSError, UnicodeError, ValueError) as error:
         print(f"module coverage wrapper failed: {error}", file=sys.stderr)
         raise SystemExit(2)
