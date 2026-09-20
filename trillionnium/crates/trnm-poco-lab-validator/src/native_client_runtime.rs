@@ -133,6 +133,99 @@ impl Request {
         }
     }
 }
+
+/// Decode a request only when its wire bytes are the exact closed-profile
+/// encoding.  `serde_json` validates the typed shape, but by itself accepts
+/// insignificant whitespace and alternate object-member order.  The native
+/// socket profile treats the request bytes as the retry identity, so those
+/// alternate encodings must not reach the admission owner.
+fn decode_request_v1(bytes: &[u8]) -> Result<Request> {
+    let request: Request = serde_json::from_slice(bytes)
+        .context("decode native client request")?;
+    let canonical = canonical_request_bytes_v1(&request)?;
+    ensure!(canonical == bytes, "native client request is not canonical JSON");
+    Ok(request)
+}
+
+fn canonical_request_bytes_v1(request: &Request) -> Result<Vec<u8>> {
+    let value = match request {
+        Request::SyncManifest {
+            schema,
+            request_id,
+            data,
+        } => json!({
+            "schema": schema,
+            "request_id": request_id,
+            "op": "sync_manifest",
+            "data": {"target_height": data.target_height},
+        }),
+        Request::SyncChunk {
+            schema,
+            request_id,
+            data,
+        } => json!({
+            "schema": schema,
+            "request_id": request_id,
+            "op": "sync_chunk",
+            "data": {
+                "height": data.height,
+                "index": data.index,
+                "record_sha256": data.record_sha256,
+            },
+        }),
+        Request::Capabilities {
+            schema,
+            request_id,
+            ..
+        } => json!({
+            "schema": schema,
+            "request_id": request_id,
+            "op": "capabilities",
+            "data": {},
+        }),
+        Request::Submit {
+            schema,
+            request_id,
+            data,
+        } => json!({
+            "schema": schema,
+            "request_id": request_id,
+            "op": "submit",
+            "data": {"signed_outer_hex": data.signed_outer_hex},
+        }),
+        Request::Transaction {
+            schema,
+            request_id,
+            data,
+        } => json!({
+            "schema": schema,
+            "request_id": request_id,
+            "op": "transaction",
+            "data": {"native_tx_hash": data.native_tx_hash},
+        }),
+        Request::Proof {
+            schema,
+            request_id,
+            data,
+        } => json!({
+            "schema": schema,
+            "request_id": request_id,
+            "op": "proof",
+            "data": {"native_tx_hash": data.native_tx_hash},
+        }),
+        Request::Status {
+            schema,
+            request_id,
+            ..
+        } => json!({
+            "schema": schema,
+            "request_id": request_id,
+            "op": "status",
+            "data": {},
+        }),
+    };
+    serde_json::to_vec(&value).context("encode canonical native client request")
+}
 struct Client {
     id: u64,
     proof_pending: bool,
@@ -477,7 +570,7 @@ impl NativeClientRuntimeV1 {
                     if client.bytes.len() == expected + 4
                         && bounded_json_depth(&client.bytes[4..], 64)
                     {
-                        if let Ok(request) = serde_json::from_slice::<Request>(&client.bytes[4..]) {
+                        if let Ok(request) = decode_request_v1(&client.bytes[4..]) {
                             let (schema, request_id) = request.context();
                             if valid_request_context(schema, request_id) {
                                 // Committed Transaction lookups and exact
@@ -603,7 +696,7 @@ impl NativeClientRuntimeV1 {
         reply
     }
     fn handle_request(&mut self, bytes: &[u8], parent: u64, finalized: u64) -> Value {
-        let request: Request = match serde_json::from_slice(bytes) {
+        let request: Request = match decode_request_v1(bytes) {
             Ok(r) => r,
             Err(_) => return self.error_reply("", "invalid_request", false),
         };

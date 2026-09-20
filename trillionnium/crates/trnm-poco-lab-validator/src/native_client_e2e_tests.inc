@@ -449,6 +449,8 @@ fn native_socket_rejects_duplicate_unknown_uppercase_and_noncanonical_requests_v
         r#"{"schema":"trnm.native-client.request.v1","request_id":"x","op":"status","data":{},"surprise":1}"#,
         r#"{"schema":"trnm.native-client.request.v1","request_id":"x","op":"submit","data":{"signed_outer_hex":"AA"}}"#,
         r#"{"schema":"trnm.native-client.request.v1","request_id":"x","request_id":"y","op":"status","data":{}}"#,
+        r#" {"schema":"trnm.native-client.request.v1","request_id":"x","op":"status","data":{}}"#,
+        r#"{"op":"status","schema":"trnm.native-client.request.v1","request_id":"x","data":{}}"#,
     ] {
         let mut peer = std::os::unix::net::UnixStream::connect(&socket).unwrap();
         peer.write_all(&(request.len() as u32).to_be_bytes())

@@ -36,6 +36,9 @@ HTTP/TLS adapter must preserve this contract and is not implicit here.
 Each connection carries one request and one response: u32 big-endian byte length
 followed by UTF-8 JSON, then close. Reject zero/over-limit length before allocation,
 truncation, trailing frames, duplicate/unknown fields and nesting over 64.
+The request body is the exact `serde_json::to_vec` encoding of the closed typed
+request shape below (the repository's deterministic JSON map ordering); leading,
+trailing, or inter-member whitespace and alternate member order are invalid.
 Requests are capped at 528,384 bytes; replies at 8 MiB + 16 KiB, allowing the
 hex encoding of the complete 4 MiB native proof/evidence budget. Use lowercase
 hex without `0x`, decimal strings for u64, no private keys. Suggested local
