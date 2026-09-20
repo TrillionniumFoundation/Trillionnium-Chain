@@ -60,6 +60,7 @@ use crate::{
 mod epoch_durable;
 pub use epoch_durable::{
     CommittedNativeEpochExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,
+    EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1, EpochEdgePhaseV1,
     FinalizedNativeEpochApplicationReadV1, PreparedNativeEpochExecutionV1,
 };
 

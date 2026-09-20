@@ -425,3 +425,12 @@ entry point remains compatibility-only; it must not be used as evidence that
 schema7 supports multiple edge owners. A versioned edge-history record and
 lineage-aware storage/replay contract are required before the singleton guard
 or the first-new `count == 0` restriction may be relaxed.
+
+Schema4 now exposes the read-only `read_epoch_edge_history_v1()` contract and
+the indexed `recover_epoch_application_edge_at_index_v1()` seam. They return
+only a recursively audited, owner-affine history: every consumed P must carry
+the complete ordered lineage, while a second unconsumed row, duplicate height,
+corrupt lineage, missing predecessor, or concurrent mutation fails closed.
+This closes the observation/recovery contract without authorizing a second
+edge; schema7 storage migration and the later checkpoint two-seal + handoff
+finality bridge remain explicit prerequisites for multi-epoch issuance.

@@ -79,12 +79,12 @@ pub use durable::{
     validate_native_finalized_execution_receipts_v0, CanonicalLabNativeApplicationConfigInputsV0,
     CommittedNativeEpochExecutionV1, ConfirmedDurableExecutionHistoryRowV0,
     ConfirmedDurableExecutionPV0, ConfirmedNativeH1StateSyncTrustedBaseV0,
-    DurableExecutionHistoryStatusV0, DurableNativeApplicationV0,
-    FinalizedNativeApplicationCommitRequestV0, FinalizedNativeApplicationReadV0,
-    FinalizedNativeEpochApplicationReadV1, NativeApplicationConfigV0,
-    NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
-    NativeH1StateSyncTrustedBaseRequestV0, PreparedNativeEpochExecutionV1,
-    VerifiedNativeSignerReplayFloorV1,
+    DurableExecutionHistoryStatusV0, DurableNativeApplicationV0, EpochEdgeHistoryEntryV1,
+    EpochEdgeHistoryV1, EpochEdgePhaseV1, FinalizedNativeApplicationCommitRequestV0,
+    FinalizedNativeApplicationReadV0, FinalizedNativeEpochApplicationReadV1,
+    NativeApplicationConfigV0, NativeApplicationExecutionErrorCodeV0,
+    NativeApplicationExecutionErrorV0, NativeH1StateSyncTrustedBaseRequestV0,
+    PreparedNativeEpochExecutionV1, VerifiedNativeSignerReplayFloorV1,
 };
 pub use durable::{
     CommittedNativeIncrementalExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,

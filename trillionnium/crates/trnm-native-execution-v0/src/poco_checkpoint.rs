@@ -1602,6 +1602,7 @@ pub(crate) mod native_checkpoint_fixture_v1;
 mod native_authorization_tests {
     use super::native_checkpoint_fixture_v1::*;
     use super::*;
+    use crate::EpochEdgePhaseV1;
     use ed25519_dalek::SigningKey;
     use trnm_consensus_types::{BlockHeader, BlockKind, EvidenceRoot, View};
     use trnm_native_application::{
@@ -2278,6 +2279,58 @@ mod native_authorization_tests {
         );
         assert_eq!(ordinary_read.executed_v1().request().height().get(), 12);
         assert!(ordinary_read.belongs_to_application_at_path_v1(&reopened, &path));
+        // The retained edge is exposed only through the versioned, recursively
+        // audited history carrier.  Recovery by index rechecks the history
+        // after reconstruction and therefore cannot attach a stale binding.
+        let history = reopened.read_epoch_edge_history_v1().unwrap();
+        assert_eq!(history.entries().len(), 1);
+        let history_edge = &history.entries()[0];
+        assert_eq!(history_edge.binding(), saved_edge);
+        assert_eq!(history_edge.phase(), EpochEdgePhaseV1::Consumed);
+        assert_eq!(history_edge.lineage(), &[saved_edge]);
+        assert!(history.belongs_to_application_at_path_v1(&reopened, &path));
+        let indexed_edge = reopened
+            .recover_epoch_application_edge_at_index_v1(0)
+            .unwrap();
+        assert_eq!(indexed_edge.authorization_id(), saved_edge);
+        assert!(reopened
+            .recover_epoch_application_edge_at_index_v1(1)
+            .is_err());
+        // A second pending row has no authenticated lineage and is rejected
+        // before it can be mistaken for a second epoch.  A malformed consumed
+        // lineage is rejected by the same recursive history audit.
+        let sql = rusqlite::Connection::open(&path).unwrap();
+        let foreign_binding = [0x5a; 32];
+        sql.execute(
+            "INSERT INTO native_epoch_edge_v1(binding,store_id,checkpoint_height,checkpoint_block,checkpoint_root,checkpoint_commit_id,checkpoint_p_digest,checkpoint_commit_sequence,terminal_height,terminal_block,first_height,evidence,evidence_digest,phase,consumed_block,consumed_sequence) SELECT ?1,store_id,checkpoint_height,checkpoint_block,checkpoint_root,checkpoint_commit_id,checkpoint_p_digest,checkpoint_commit_sequence,terminal_height,terminal_block,first_height,evidence,evidence_digest,0,NULL,NULL FROM native_epoch_edge_v1 WHERE binding=?2",
+            rusqlite::params![foreign_binding.as_slice(), saved_edge.as_slice()],
+        )
+        .unwrap();
+        assert!(reopened.read_epoch_edge_history_v1().is_err());
+        sql.execute(
+            "DELETE FROM native_epoch_edge_v1 WHERE binding=?",
+            [foreign_binding.as_slice()],
+        )
+        .unwrap();
+        let consumed_block = history_edge.consumed_block().unwrap();
+        let original_lineage: Vec<u8> = sql
+            .query_row(
+                "SELECT edge_lineage FROM native_durable_execution_p_v1 WHERE block_id=?",
+                [consumed_block.as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        sql.execute(
+            "UPDATE native_durable_execution_p_v1 SET edge_lineage=zeroblob(0) WHERE block_id=?",
+            [consumed_block.as_slice()],
+        )
+        .unwrap();
+        assert!(reopened.read_epoch_edge_history_v1().is_err());
+        sql.execute(
+            "UPDATE native_durable_execution_p_v1 SET edge_lineage=? WHERE block_id=?",
+            rusqlite::params![original_lineage, consumed_block.as_slice()],
+        )
+        .unwrap();
         assert_eq!(
             reopened
                 .reopen_prepared_epoch_execution_v1(last_block)

@@ -564,6 +564,101 @@ struct StoredEdgeV1 {
     consumed_sequence: Option<u64>,
 }
 
+/// The durable phase of one retained epoch edge.  This is an observation of
+/// the on-disk state, never an execution or voting permit.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum EpochEdgePhaseV1 {
+    Installed,
+    Consumed,
+}
+
+/// One entry in the versioned schema-4 epoch-edge history.  The lineage is
+/// ordered from the genesis-era edge through this entry and is re-audited
+/// before this carrier is returned.  Keeping the lineage in the carrier makes
+/// a recovery caller prove which prior edges it is joining rather than passing
+/// an arbitrary binding into the singleton recovery seam.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct EpochEdgeHistoryEntryV1 {
+    binding: [u8; 32],
+    checkpoint: ApplicationHeadV0,
+    checkpoint_sequence: u64,
+    terminal_height: u64,
+    terminal_block: [u8; 32],
+    first_height: u64,
+    phase: EpochEdgePhaseV1,
+    consumed_block: Option<[u8; 32]>,
+    consumed_sequence: Option<u64>,
+    lineage: Vec<[u8; 32]>,
+}
+
+impl EpochEdgeHistoryEntryV1 {
+    pub const fn binding(&self) -> [u8; 32] {
+        self.binding
+    }
+    pub const fn checkpoint(&self) -> &ApplicationHeadV0 {
+        &self.checkpoint
+    }
+    pub const fn checkpoint_sequence(&self) -> u64 {
+        self.checkpoint_sequence
+    }
+    pub const fn terminal_height(&self) -> u64 {
+        self.terminal_height
+    }
+    pub const fn terminal_block(&self) -> [u8; 32] {
+        self.terminal_block
+    }
+    pub const fn first_height(&self) -> u64 {
+        self.first_height
+    }
+    pub const fn phase(&self) -> EpochEdgePhaseV1 {
+        self.phase
+    }
+    pub const fn consumed_block(&self) -> Option<[u8; 32]> {
+        self.consumed_block
+    }
+    pub const fn consumed_sequence(&self) -> Option<u64> {
+        self.consumed_sequence
+    }
+    pub fn lineage(&self) -> &[[u8; 32]] {
+        &self.lineage
+    }
+}
+
+/// Owner-affine, versioned read of all retained epoch edges.  It is the first
+/// multi-edge recovery contract: every row, phase transition, and recursive
+/// lineage is checked together.  It intentionally does not authorize a
+/// second edge, and an unconsumed edge after the first one is rejected until
+/// the dedicated two-seal/handoff bridge exists.
+#[must_use = "the epoch-edge history must remain joined to its owner"]
+pub struct EpochEdgeHistoryV1 {
+    owner: Arc<()>,
+    application_head: ApplicationHeadV0,
+    entries: Vec<EpochEdgeHistoryEntryV1>,
+}
+
+impl EpochEdgeHistoryV1 {
+    pub const fn application_head(&self) -> &ApplicationHeadV0 {
+        &self.application_head
+    }
+    pub fn entries(&self) -> &[EpochEdgeHistoryEntryV1] {
+        &self.entries
+    }
+    pub fn belongs_to_application_at_path_v1(
+        &self,
+        application: &DurableNativeApplicationV0,
+        expected_path: &Path,
+    ) -> bool {
+        if !Arc::ptr_eq(&self.owner, &application.owner_affinity)
+            || application.path() != expected_path
+        {
+            return false;
+        }
+        application.read_epoch_edge_history_v1().is_ok_and(|fresh| {
+            fresh.application_head == self.application_head && fresh.entries == self.entries
+        })
+    }
+}
+
 fn load_edges(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
@@ -665,6 +760,119 @@ fn decode_lineage(bytes: &[u8]) -> Result<Vec<[u8; 32]>> {
 }
 
 impl DurableNativeApplicationV0 {
+    /// Read the complete retained schema-4 epoch-edge history and recursively
+    /// audit every edge before returning it.  This is deliberately a
+    /// read-only, owner-affine carrier: it does not mint an edge or relax the
+    /// later checkpoint/two-seal/handoff finality requirement.
+    pub fn read_epoch_edge_history_v1(&self) -> Result<EpochEdgeHistoryV1> {
+        let _guard = self.lock_operation()?;
+        reject_sqlite_sidecars_v0(&self.path)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        ensure!(
+            schema_version(&connection)? == SCHEMA_VERSION,
+            "epoch history requires schema4"
+        );
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let mut stored = load_edges(&connection, &self.config)?;
+        stored.sort_by_key(|edge| edge.first_height);
+        let mut entries = Vec::with_capacity(stored.len());
+        let mut previous_first = 0;
+        for (index, edge) in stored.iter().enumerate() {
+            ensure!(
+                edge.first_height > previous_first,
+                "epoch history first-height order"
+            );
+            // An unconsumed edge has no authenticated lineage carrier.  It is
+            // safe as the first retained edge, but a second pending edge must
+            // wait for the dedicated checkpoint/two-seal/handoff bridge.
+            let lineage = if edge.phase == 0 {
+                ensure!(
+                    index == 0,
+                    "second epoch edge requires a versioned handoff bridge"
+                );
+                vec![edge.binding]
+            } else {
+                let consumed = edge
+                    .consumed
+                    .context("consumed epoch history target missing")?;
+                let p =
+                    load_p(&connection, &consumed)?.context("consumed epoch history P missing")?;
+                ensure!(
+                    p.status == 1
+                        && p.artifact_kind == 1
+                        && p.commit_sequence == edge.consumed_sequence,
+                    "consumed epoch history target phase"
+                );
+                decode_lineage(&p.lineage)?
+            };
+            ensure!(
+                lineage.last() == Some(&edge.binding)
+                    && lineage.len() == index + 1
+                    && lineage
+                        .iter()
+                        .enumerate()
+                        .all(|(position, binding)| stored[position].binding == *binding),
+                "epoch history lineage/order"
+            );
+            // This recursive audit validates checkpoint identity, old/new
+            // validator context, phase, and every ancestor edge.  In
+            // particular, a later checkpoint without the two-seal/handoff
+            // bridge cannot enter the history carrier.
+            audited_lineage(&connection, &self.config, &lineage)?;
+            entries.push(EpochEdgeHistoryEntryV1 {
+                binding: edge.binding,
+                checkpoint: edge.checkpoint.clone(),
+                checkpoint_sequence: edge.checkpoint_sequence,
+                terminal_height: edge.terminal_height,
+                terminal_block: edge.terminal_block,
+                first_height: edge.first_height,
+                phase: if edge.phase == 0 {
+                    EpochEdgePhaseV1::Installed
+                } else {
+                    EpochEdgePhaseV1::Consumed
+                },
+                consumed_block: edge.consumed,
+                consumed_sequence: edge.consumed_sequence,
+                lineage,
+            });
+            previous_first = edge.first_height;
+        }
+        // The history and metadata must be from one immutable owner view.  A
+        // concurrent writer makes this read unusable instead of returning a
+        // partially joined edge sequence.
+        let after = fresh_validate_v0(&self.path, &self.config)?;
+        ensure!(after == metadata, "epoch history concurrent mutation");
+        Ok(EpochEdgeHistoryV1 {
+            owner: Arc::clone(&self.owner_affinity),
+            application_head: metadata.head,
+            entries,
+        })
+    }
+
+    /// Recover one edge selected by its validated history position.  The
+    /// history is read again after reconstruction so an edge replacement or
+    /// lineage mutation cannot be hidden behind a stale index.
+    pub fn recover_epoch_application_edge_at_index_v1(
+        &self,
+        index: usize,
+    ) -> Result<crate::AuthenticatedEpochApplicationEdgeV1> {
+        let before = self.read_epoch_edge_history_v1()?;
+        let binding = before
+            .entries()
+            .get(index)
+            .map(EpochEdgeHistoryEntryV1::binding)
+            .context("epoch history index missing")?;
+        let edge = self.recover_epoch_application_edge_v1(binding)?;
+        let after = self.read_epoch_edge_history_v1()?;
+        ensure!(
+            before.application_head == after.application_head && before.entries == after.entries,
+            "epoch history changed during recovery"
+        );
+        Ok(edge)
+    }
+
     /// Read one committed schema-4 ordinary descendant by application
     /// height.  This bridge is intentionally narrower than the frozen-v0
     /// finalized-read API: it accepts only `artifact_kind=0` with a Regular

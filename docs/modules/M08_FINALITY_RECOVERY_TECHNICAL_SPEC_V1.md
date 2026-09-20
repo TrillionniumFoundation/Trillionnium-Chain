@@ -425,6 +425,17 @@ The implemented owner entry points are:
   binding other than the active persisted authorization before rebuilding the
   strict checkpoint/handoff evidence. The no-argument compatibility recovery
   remains singleton-scoped and is not a multi-edge history API.
+- `read_epoch_edge_history_v1()` and
+  `recover_epoch_application_edge_at_index_v1(index)`: schema4's versioned,
+  owner-affine multi-edge history/readback contract. The history is sorted by
+  first-new height, recursively audits every retained lineage, checks consumed
+  P identity and phase, and performs a fresh metadata read before returning.
+  Recovery selects only a binding already present in that validated history and
+  re-reads the history after reconstruction. A second pending edge, duplicate
+  height, malformed lineage, missing predecessor, or concurrent mutation is
+  rejected. This carrier is read/recovery state only; it does not issue a
+  second edge or provide the later checkpoint two-seal + handoff finality
+  bridge.
 - `execute_epoch_block_v1(&edge, request, &header)`: recompute the complete M06
   prefix/user plan, check the exact canonical header and all roots, persist P and
   replay/snapshot bytes atomically, synchronize and return private prepared P.
@@ -471,11 +482,11 @@ bounded seen-set and rejects cycles, missing predecessors and owner mismatches;
 an epoch checkpoint is admitted to descendant preparation but cannot be passed
 to ordinary `commit_epoch_finality_bytes_v1`. The later checkpoint's required
 second edge, strict two-seal plus handoff finality commit, checkpoint/handoff
-schema4 finalized-read mapping and schema7 multi-edge history/owner API are
-not implemented yet. Their public entry points fail closed with an explicit
-bridge-required error, and the schema7 singleton owner must not be weakened to
-silently attach a second edge to the first. This boundary is intentional until
-the edge-history record and recovery contract are versioned and tested.
+schema4 finalized-read mapping and schema7 multi-edge owner/storage migration
+remain unimplemented. The schema4 history/readback contract above is the
+versioned observation boundary; these later public entry points still fail
+closed with an explicit bridge-required error, and the schema7 singleton owner
+must not be weakened to silently attach a second edge to the first.
 
 ### Implemented retained edge evidence and recovery algorithm
 
