@@ -1158,6 +1158,34 @@ mod tests {
         assert!(
             DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
         );
+        // A later proof cannot advance from an edge that was rolled back to
+        // the installed phase. The phase mutation is made SQL-valid by
+        // clearing its consumed target, then restored byte-for-byte.
+        let predecessor = *observed.lineage().last().unwrap();
+        let (consumed_block, consumed_sequence): (Vec<u8>, Vec<u8>) = sql
+            .query_row(
+                "SELECT consumed_block,consumed_sequence FROM native_epoch_edge_v1 WHERE binding=?",
+                [predecessor.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .unwrap();
+        sql.execute(
+            "UPDATE native_epoch_edge_v1 SET phase=0,consumed_block=NULL,consumed_sequence=NULL WHERE binding=?",
+            [predecessor.as_slice()],
+        )
+        .unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err(),
+            "later proof must reject an unconsumed predecessor edge"
+        );
+        sql.execute(
+            "UPDATE native_epoch_edge_v1 SET phase=1,consumed_block=?,consumed_sequence=? WHERE binding=?",
+            rusqlite::params![consumed_block, consumed_sequence, predecessor.as_slice()],
+        )
+        .unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+        );
         // Every committed checkpoint needs its retained strict record even
         // when all of its native execution data are otherwise unchanged.
         sql.execute_batch("CREATE TEMP TABLE saved_later AS SELECT * FROM native_later_epoch_finality_v1; DELETE FROM native_later_epoch_finality_v1;").unwrap();

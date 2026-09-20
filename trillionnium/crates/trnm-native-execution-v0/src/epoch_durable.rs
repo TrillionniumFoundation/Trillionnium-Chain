@@ -1056,6 +1056,18 @@ fn validate_later_records(
         [], |row| row.get(0),
     )?;
     ensure!(invalid == 0, "later finality byte/type budget");
+    let duplicate_predecessors: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM (
+             SELECT predecessor_edge FROM native_later_epoch_finality_v1
+             GROUP BY predecessor_edge HAVING COUNT(*) > 1
+         )",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        duplicate_predecessors == 0,
+        "later finality predecessor has multiple successors"
+    );
     let mut query = connection.prepare(
         "SELECT checkpoint_block,p_digest,commit_sequence,context_digest,predecessor_edge,
                 checkpoint_parent_header,checkpoint_header,checkpoint_finality,anchor_kernel,
@@ -1199,6 +1211,16 @@ fn validate_later_preimages(
     ensure!(
         lineage.last() == Some(&evidence.predecessor_edge),
         "later predecessor lineage"
+    );
+    let predecessor = load_edges(connection, config)?
+        .into_iter()
+        .find(|edge| edge.binding == evidence.predecessor_edge)
+        .context("later predecessor edge missing")?;
+    ensure!(
+        predecessor.phase == 1
+            && predecessor.consumed.is_some()
+            && predecessor.consumed_sequence.is_some(),
+        "later predecessor edge is not consumed"
     );
     let audited = audited_lineage(connection, config, &lineage)?;
     let active = &audited

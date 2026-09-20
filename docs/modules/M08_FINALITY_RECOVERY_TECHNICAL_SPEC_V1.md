@@ -726,6 +726,11 @@ proof and its local P/parent/cutoff bindings, not merely its checksum. Missing,
 oversized, substituted or detached records reject recovery. Repeated commit
 must return the same sequence; a reopened owner obtains recovery readback
 from retained evidence rather than reusing an old live-owner token.
+Each predecessor edge is single-successor: the ledger rejects duplicate
+`predecessor_edge` values, and a later proof is admissible only after the
+predecessor edge is durably `Consumed` with its exact handoff P and sequence.
+An installed or rolled-back predecessor therefore cannot be promoted by a
+proof-row insertion.
 
 Acceptance requires real C18/S19/S20 evidence, explicit migration and reopen,
 exact retry, foreign-owner rejection, proof/record corruption, and process
@@ -735,8 +740,9 @@ schema7 incremental multi-edge storage and production Core/signing remain
 separate open requirements.
 
 The native fixture now exercises migration, C18 commit, exact retry and cold
-recovery. A signature mutation with a recomputed local record digest and a
-deleted proof record both reject reopen. The three-cut
+recovery. A signature mutation with a recomputed local record digest, a
+deleted proof record, and an installed-phase predecessor edge all reject
+reopen. The three-cut
 `later_checkpoint_sigkill_commit_cuts_recover_exact_native_and_proof_record`
 test kills actual subprocesses before SQLite commit, after commit and after
 fsync; restart sees only H17 with prepared C18 or fully committed C18, and
