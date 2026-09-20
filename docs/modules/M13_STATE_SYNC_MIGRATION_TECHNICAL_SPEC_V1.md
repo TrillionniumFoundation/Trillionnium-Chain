@@ -140,6 +140,28 @@ unbound snapshot initializer is crate-internal and cannot be used by a node
 integration. A verifier that simply returns `Ok(())` is test-only and cannot
 close the production acceptance gate.
 
+### Production handoff boundary (still open)
+
+The verified context APIs are intentionally not a production cutover API. The
+current `trnm-poco-node-production-v0` composition has no owner for a migration
+projector, an installed state-sync store, a target-genesis record, or a
+cutover/rollback agreement. It also has no authenticated handoff into M01
+signer admission, M02 runtime activation, or M08 finality/recovery readiness.
+Calling the pure verified delta or snapshot functions from that composition
+would only produce an in-memory projection and would incorrectly present it as
+an installed node state.
+
+The next implementation must introduce one host-owned, durable handoff record
+with these fields bound in one digest: `FinalizedSourceBindingV0`, target
+genesis and state-root, verified source/target context digests, installed
+state-sync store identity, installation receipt, cutover agreement, rollback
+floor, and the M01/M02/M08 readiness receipts. Its ordered transition is
+`VerifiedSource -> ProjectedDelta -> DurableInstall -> Readback/CAS ->
+CutoverAgreed -> RuntimeReady`; every uncertain boundary must resolve to the
+exact source or target record, otherwise fence. Until that owner and its
+crash/restart, multi-peer, and external finality tests exist, production
+installation and consensus activation remain false.
+
 ## Interfaces
 
 | Type / port | Meaning and owner |
