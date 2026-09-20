@@ -11,7 +11,8 @@ pub(super) const SCHEMA_VERSION: u64 = 4;
 /// Versioned later-edge/finality storage.  The original schema-4 rows remain
 /// byte-for-byte compatible; this version is entered only by the explicit
 /// migration below and is never selected by ordinary open.
-pub(super) const LATER_SCHEMA_VERSION: u64 = 8;
+pub(super) const LEGACY_LATER_SCHEMA_VERSION: u64 = 8;
+pub(super) const LATER_SCHEMA_VERSION: u64 = 9;
 const MAX_P_ROWS: usize = 128;
 const MAX_PREPARED_BYTES: usize = 2 * 1024 * 1024 * 1024;
 const MAX_SNAPSHOT_BYTES: usize = 256 * 1024 * 1024;
@@ -125,13 +126,35 @@ pub(super) const LATER_SCHEMA: &[(&str, &str)] = &[
          (phase=1 AND length(consumed_block)=32 AND length(consumed_sequence)=8))
      )",
     ),
+    (
+        "native_later_epoch_application_finality_v1",
+        "CREATE TABLE native_later_epoch_application_finality_v1 (
+       block_id BLOB PRIMARY KEY CHECK(length(block_id)=32),
+       p_digest BLOB NOT NULL CHECK(length(p_digest)=32),
+       commit_sequence BLOB NOT NULL CHECK(length(commit_sequence)=8),
+       edge_binding BLOB NOT NULL CHECK(length(edge_binding)=32),
+       proof BLOB NOT NULL,
+       proof_digest BLOB NOT NULL CHECK(length(proof_digest)=32),
+       record_digest BLOB NOT NULL CHECK(length(record_digest)=32)
+     )",
+    ),
 ];
 
+/// Exact schema-8 shape retained for an explicit 8 -> 9 migration.  The
+/// application-finality proof ledger did not exist in schema 8.
+pub(super) const LATER_SCHEMA_V8: &[(&str, &str)] = &[LATER_SCHEMA[0], LATER_SCHEMA[1]];
+
 pub(super) const fn is_epoch_schema(version: u64) -> bool {
-    version == SCHEMA_VERSION || version == LATER_SCHEMA_VERSION
+    version == SCHEMA_VERSION
+        || version == LEGACY_LATER_SCHEMA_VERSION
+        || version == LATER_SCHEMA_VERSION
 }
 
 pub(super) const fn has_later_schema(version: u64) -> bool {
+    version == LEGACY_LATER_SCHEMA_VERSION || version == LATER_SCHEMA_VERSION
+}
+
+pub(super) const fn has_later_application_finality_schema(version: u64) -> bool {
     version == LATER_SCHEMA_VERSION
 }
 
@@ -473,7 +496,7 @@ impl DurableNativeApplicationV0 {
                 && decode_lineage(&prepared.row.lineage)? == finality.lineage(),
             "later checkpoint P/header/lineage binding"
         );
-        self.commit_epoch_p(&prepared, Some(&preimages), None)
+        self.commit_epoch_p(&prepared, Some(&preimages), None, None)
     }
 
     pub fn preview_epoch_descendant_v1(
@@ -544,11 +567,10 @@ impl DurableNativeApplicationV0 {
         Ok(())
     }
 
-    /// Explicit schema-4 to schema-8 migration for later checkpoint/finality
-    /// records.  The old edge and P tables are retained unchanged.  The new
-    /// table is an append-only, checkpoint-keyed commit ledger; opening a
-    /// schema-4 store never creates it and therefore cannot silently grant a
-    /// later-epoch commit capability.
+    /// Explicit schema-4 to schema-9 migration for later checkpoint/finality
+    /// records. The old edge and P tables are retained unchanged. A legacy
+    /// schema-8 image may explicitly add only the application-finality ledger;
+    /// ordinary open never performs either migration.
     pub fn upgrade_later_epoch_schema_v1(&self, expected: &ApplicationHeadV0) -> Result<()> {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
@@ -562,24 +584,47 @@ impl DurableNativeApplicationV0 {
         let version = schema_version(&connection)?;
         if version == LATER_SCHEMA_VERSION {
             ensure!(
-                later_finality_table_installed(&connection)?,
-                "later finality schema table missing"
+                later_table_installed(&connection)?,
+                "later schema-9 table missing"
             );
             ensure!(
                 !later_edge_table_installed(&connection)?
                     || later_edge_has_commit_id_column(&connection)?,
                 "legacy later successor edge schema requires an explicit rebuild"
             );
-            if !later_table_installed(&connection)? {
-                let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
-                tx.execute_batch(LATER_SCHEMA[1].1)?;
-                tx.commit()?;
-            }
+            drop(connection);
+            ensure!(
+                fresh_validate_v0(&self.path, &self.config)? == metadata,
+                "later schema retry changed application state"
+            );
+            return Ok(());
+        }
+        if version == LEGACY_LATER_SCHEMA_VERSION {
+            ensure!(
+                later_finality_table_installed(&connection)?
+                    && later_edge_table_installed(&connection)?
+                    && later_edge_has_commit_id_column(&connection)?,
+                "schema-8 later ledger is incomplete"
+            );
+            let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+            tx.execute_batch(LATER_SCHEMA[2].1)?;
+            ensure!(
+                tx.execute(
+                    "UPDATE native_application_metadata_v0 SET schema_version=?1 WHERE singleton=1 AND schema_version=?2 AND durable_sequence=?3",
+                    params![
+                        LATER_SCHEMA_VERSION.to_be_bytes().as_slice(),
+                        LEGACY_LATER_SCHEMA_VERSION.to_be_bytes().as_slice(),
+                        metadata.durable_sequence.to_be_bytes().as_slice()
+                    ]
+                )? == 1,
+                "later schema 8-to-9 migration CAS failed"
+            );
+            tx.commit()?;
             drop(connection);
             sync_store_commit_boundary_v0(&self.path)?;
             ensure!(
                 fresh_validate_v0(&self.path, &self.config)? == metadata,
-                "later schema retry changed application state"
+                "later schema 8-to-9 migration changed application state"
             );
             return Ok(());
         }
@@ -870,10 +915,11 @@ pub struct LaterEpochApplicationEdgeRequirementsV1 {
 }
 
 /// Owner-affine durable successor edge installed by a committed later-epoch
-/// checkpoint.  This capability is intentionally narrower than the legacy
-/// `AuthenticatedEpochApplicationEdgeV1`: it can prove that the successor
-/// edge is present and unchanged, but it cannot execute a first-new block
-/// until the dedicated C+3 execution bridge is implemented.
+/// checkpoint. This capability is intentionally narrower than the legacy
+/// `AuthenticatedEpochApplicationEdgeV1`: it proves that the successor edge
+/// is present and unchanged. The request/header-based C+3 preparation method
+/// performs candidate execution; the legacy edge-only method remains
+/// fail-closed because it has no block inputs.
 #[must_use = "later successor edge must remain joined to its durable owner"]
 pub struct LaterEpochApplicationEdgeV1 {
     owner: Arc<()>,
@@ -1270,6 +1316,14 @@ fn later_table_installed(connection: &Connection) -> Result<bool> {
         && later_edge_has_commit_id_column(connection)?)
 }
 
+fn later_application_finality_table_installed(connection: &Connection) -> Result<bool> {
+    Ok(connection.query_row(
+        "SELECT EXISTS(SELECT 1 FROM sqlite_schema WHERE type='table' AND name='native_later_epoch_application_finality_v1')",
+        [],
+        |row| row.get(0),
+    )?)
+}
+
 fn later_finality_table_installed(connection: &Connection) -> Result<bool> {
     Ok(connection.query_row(
         "SELECT EXISTS(SELECT 1 FROM sqlite_schema WHERE type='table' AND name='native_later_epoch_finality_v1')",
@@ -1324,6 +1378,123 @@ fn later_record_digest(
             &sha256_v0(&preimages.new_parameters),
         ],
     )
+}
+
+fn later_application_finality_record_digest(
+    config: &NativeApplicationConfigV0,
+    block_id: &[u8; 32],
+    p_digest: &[u8; 32],
+    sequence: u64,
+    edge_binding: &[u8; 32],
+    proof_digest: &[u8; 32],
+) -> [u8; 32] {
+    hash_domain(
+        "trnm.native-application.later-epoch-application-finality.v1",
+        &[
+            &config.store_id,
+            block_id,
+            p_digest,
+            &sequence.to_be_bytes(),
+            edge_binding,
+            proof_digest,
+        ],
+    )
+}
+
+fn validate_later_application_finality(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+) -> Result<()> {
+    let version = schema_version(connection)?;
+    if !has_later_application_finality_schema(version) {
+        return Ok(());
+    }
+    ensure!(
+        later_application_finality_table_installed(connection)?,
+        "later application finality ledger missing"
+    );
+    let count: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM native_later_epoch_application_finality_v1",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        count >= 0 && count as usize <= MAX_EDGES,
+        "later application finality count budget"
+    );
+    let invalid: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM native_later_epoch_application_finality_v1 WHERE
+         typeof(proof)!='blob' OR length(proof) NOT BETWEEN 1 AND 67108864",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(invalid == 0, "later application finality proof bounds");
+    let mut statement = connection.prepare(
+        "SELECT block_id,p_digest,commit_sequence,edge_binding,proof,proof_digest,record_digest
+         FROM native_later_epoch_application_finality_v1 ORDER BY commit_sequence",
+    )?;
+    let rows = statement.query_map([], |row| {
+        Ok((
+            col32(row, "block_id")?,
+            col32(row, "p_digest")?,
+            col64(row, "commit_sequence")?,
+            col32(row, "edge_binding")?,
+            row.get::<_, Vec<u8>>("proof")?,
+            col32(row, "proof_digest")?,
+            col32(row, "record_digest")?,
+        ))
+    })?;
+    let mut previous_sequence = 0;
+    for row in rows {
+        let (block_id, p_digest, sequence, edge_binding, proof, proof_digest, record_digest) = row?;
+        ensure!(
+            sequence > previous_sequence,
+            "later application finality sequence order"
+        );
+        previous_sequence = sequence;
+        ensure!(
+            sha256_v0(&proof) == proof_digest,
+            "later application proof digest"
+        );
+        ensure!(
+            record_digest
+                == later_application_finality_record_digest(
+                    config,
+                    &block_id,
+                    &p_digest,
+                    sequence,
+                    &edge_binding,
+                    &proof_digest,
+                ),
+            "later application finality record digest"
+        );
+        let p = load_p(connection, &block_id)?.context("later application finality P missing")?;
+        ensure!(
+            p.status == 1
+                && p.artifact_kind == 1
+                && p.p_digest == p_digest
+                && p.commit_sequence == Some(sequence)
+                && decode_lineage(&p.lineage)?.last() == Some(&edge_binding),
+            "later application finality P binding"
+        );
+        let (phase, consumed_block, consumed_sequence): (i64, Option<Vec<u8>>, Option<Vec<u8>>) =
+            connection.query_row(
+                "SELECT phase,consumed_block,consumed_sequence FROM native_later_epoch_edge_v1
+                 WHERE successor_binding=?1",
+                [edge_binding.as_slice()],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+            )?;
+        ensure!(
+            phase == 1
+                && consumed_block.as_deref() == Some(block_id.as_slice())
+                && consumed_sequence
+                    .as_deref()
+                    .map(|v| v == sequence.to_be_bytes().as_slice())
+                    .unwrap_or(false),
+            "later application finality edge binding"
+        );
+    }
+    Ok(())
 }
 
 fn validate_later_records(
@@ -2405,9 +2576,8 @@ impl DurableNativeApplicationV0 {
     }
 
     /// Reopen the durable successor edge after rechecking every requirement.
-    /// The returned capability is sufficient to identify the C18→C21 edge,
-    /// but first-new execution remains a separate fail-closed operation until
-    /// its atomic C+3 P/state commit and recovery path are implemented.
+    /// The returned capability identifies the C18→C21 edge; callers use the
+    /// request/header-based preparation method for candidate C+3 execution.
     pub fn require_later_epoch_application_edge_v1(
         &self,
         requirements: &LaterEpochApplicationEdgeRequirementsV1,
@@ -2660,6 +2830,36 @@ impl DurableNativeApplicationV0 {
             coordinates,
             authorization_id: edge.successor_binding,
         })
+    }
+
+    /// Derive commitments for the first application block after a later
+    /// handoff without persisting a P or consuming the successor edge.
+    pub fn preview_later_epoch_block_v1(
+        &self,
+        edge: &LaterEpochApplicationEdgeV1,
+        request: &trnm_native_application::NativeEpochBlockPreviewRequestV1,
+    ) -> Result<NativeBlockPreviewV0> {
+        ensure!(
+            edge.belongs_to_application(self),
+            "later successor edge belongs to another owner"
+        );
+        let context = self.open_later_epoch_execution_context_v1(edge)?;
+        context.validate_request_v1(request)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let checkpoint = load_p(&connection, &edge.checkpoint_block)?
+            .context("later preview checkpoint P missing")?;
+        ensure!(
+            checkpoint.status == 1
+                && checkpoint.p_digest == edge.checkpoint_p_digest
+                && checkpoint.commit_sequence == Some(edge.checkpoint_commit_sequence)
+                && checkpoint.target_head()? == metadata.head,
+            "later preview checkpoint is not current"
+        );
+        let target = validate_p(&connection, &self.config, &checkpoint)?;
+        crate::complete::preview_complete_epoch_block_with_context_v1(&target, &context, request)
     }
 
     /// Prepare the first application block after a later epoch handoff.
@@ -3144,7 +3344,7 @@ fn audit_later_successor_for_lineage_v1(
 ) -> Result<crate::epoch_recovery::AuditedEpochEvidenceV1> {
     validate_later_edges(connection, config)?;
     let row = connection.query_row(
-        "SELECT checkpoint_block,p_digest,commit_sequence FROM native_later_epoch_edge_v1
+        "SELECT checkpoint_block,checkpoint_p_digest,checkpoint_commit_sequence FROM native_later_epoch_edge_v1
          WHERE successor_binding=?1",
         [binding.as_slice()],
         |row| {
@@ -3543,6 +3743,7 @@ pub(super) fn inventory(
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
     (|| -> Result<_> {
         validate_later_records(connection, config)?;
+        validate_later_application_finality(connection, config)?;
         validate_later_edges(connection, config)?;
         // Even an installed edge not yet referenced by a P must retain valid evidence.
         for edge in load_edges(connection, config)? {
@@ -3989,9 +4190,39 @@ impl DurableNativeApplicationV0 {
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         let prior = load_p(&connection, &block)?.context("epoch P missing")?;
+        let lineage = decode_lineage(&prior.lineage)?;
+        let bindings = lineage
+            .iter()
+            .map(|binding| -> Result<([u8; 32], Option<[u8; 32]>)> {
+                let legacy: bool = connection.query_row(
+                    "SELECT EXISTS(SELECT 1 FROM native_epoch_edge_v1 WHERE binding=?1)",
+                    [binding.as_slice()],
+                    |row| row.get(0),
+                )?;
+                if legacy {
+                    return Ok((*binding, None));
+                }
+                let checkpoint = connection.query_row(
+                    "SELECT checkpoint_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
+                    [binding.as_slice()],
+                    |row| col32(row, "checkpoint_block"),
+                )?;
+                Ok((*binding, Some(checkpoint)))
+            })
+            .collect::<Result<Vec<_>>>()?;
         drop(connection);
-        for id in decode_lineage(&prior.lineage)? {
-            let _edge = self.recover_epoch_application_edge_v1(id)?;
+        for (binding, later_checkpoint) in bindings {
+            if let Some(checkpoint) = later_checkpoint {
+                let requirements =
+                    self.inspect_later_epoch_application_edge_requirements_v1(checkpoint)?;
+                ensure!(
+                    requirements.successor_binding() == binding,
+                    "reopened P later successor binding"
+                );
+                let _edge = self.recover_later_epoch_application_edge_v1(&requirements)?;
+            } else {
+                let _edge = self.recover_epoch_application_edge_v1(binding)?;
+            }
         }
         let _guard = self.lock_operation()?;
         fresh_validate_v0(&self.path, &self.config)?;
@@ -4133,13 +4364,13 @@ impl DurableNativeApplicationV0 {
             evidence_root: header.evidence_root(),
             parent_id: trnm_consensus_types::BlockId::new(prepared.row.consensus_parent_block),
             parent_height: trnm_consensus_types::Height::new(prepared.row.consensus_parent_height),
-            parent_timestamp_ms: if prepared.row.artifact_kind == 1 {
+            parent_timestamp_ms: if let Some(context) = later_context.as_ref() {
+                context.consensus_parent_v1().timestamp_ms()
+            } else if prepared.row.artifact_kind == 1 {
                 edge.as_ref()
                     .context("legacy epoch edge missing")?
                     .consensus_parent()
                     .timestamp_ms()
-            } else if let Some(context) = later_context.as_ref() {
-                context.consensus_parent_v1().timestamp_ms()
             } else {
                 let connection = open_immutable_connection_v0(&self.path)?;
                 let parent = load_p(&connection, prepared.row.parent.block_id().as_bytes())?
@@ -4235,7 +4466,7 @@ impl DurableNativeApplicationV0 {
             final_header == header,
             "strict finality differs from complete retained header"
         );
-        self.commit_epoch_p(prepared, None, later_edge.as_ref())
+        self.commit_epoch_p(prepared, None, later_edge.as_ref(), Some(proof_bytes))
     }
 
     fn commit_epoch_p(
@@ -4243,6 +4474,7 @@ impl DurableNativeApplicationV0 {
         prepared: &PreparedNativeEpochExecutionV1,
         later: Option<&crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1>,
         later_application: Option<&LaterEpochApplicationEdgeV1>,
+        application_proof: Option<&[u8]>,
     ) -> Result<CommittedNativeEpochExecutionV1> {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
@@ -4290,6 +4522,17 @@ impl DurableNativeApplicationV0 {
         } else {
             None
         };
+        if later_application.is_some() {
+            ensure!(
+                has_later_application_finality_schema(schema_version(&connection)?),
+                "schema9 application finality ledger required"
+            );
+            let proof = application_proof.context("later application finality proof missing")?;
+            ensure!(
+                !proof.is_empty() && proof.len() <= MAX_EPOCH_EVIDENCE_BYTES_V1,
+                "later application finality proof budget"
+            );
+        }
         if let Some(evidence) = later {
             let facts = later_facts
                 .as_ref()
@@ -4332,6 +4575,39 @@ impl DurableNativeApplicationV0 {
                 ensure!(
                     facts.record_digest == retained_edge,
                     "later successor edge conflicting retry"
+                );
+            }
+            if let Some(later_edge) = later_application {
+                let proof =
+                    application_proof.context("later application finality proof missing")?;
+                let proof_digest = sha256_v0(proof);
+                let retained: (Vec<u8>, Vec<u8>, Vec<u8>) = connection.query_row(
+                    "SELECT proof,proof_digest,record_digest
+                     FROM native_later_epoch_application_finality_v1 WHERE block_id=?1",
+                    [p.block_id.as_slice()],
+                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+                )?;
+                let retained_proof_digest: [u8; 32] = retained
+                    .1
+                    .try_into()
+                    .map_err(|_| anyhow::anyhow!("retained application proof digest width"))?;
+                let retained_record_digest: [u8; 32] = retained
+                    .2
+                    .try_into()
+                    .map_err(|_| anyhow::anyhow!("retained application record digest width"))?;
+                ensure!(
+                    retained.0 == proof
+                        && retained_proof_digest == proof_digest
+                        && retained_record_digest
+                            == later_application_finality_record_digest(
+                                &self.config,
+                                &p.block_id,
+                                &p.p_digest,
+                                sequence,
+                                &later_edge.successor_binding,
+                                &proof_digest,
+                            ),
+                    "later application conflicting retry"
                 );
             }
             drop(connection);
@@ -4447,6 +4723,30 @@ impl DurableNativeApplicationV0 {
                 ],
             )?;
         }
+        if let Some(later_edge) = later_application {
+            let proof = application_proof.context("later application finality proof missing")?;
+            let proof_digest = sha256_v0(proof);
+            let record_digest = later_application_finality_record_digest(
+                &self.config,
+                &p.block_id,
+                &p.p_digest,
+                sequence,
+                &later_edge.successor_binding,
+                &proof_digest,
+            );
+            tx.execute(
+                "INSERT INTO native_later_epoch_application_finality_v1 VALUES (?,?,?,?,?,?,?)",
+                params![
+                    p.block_id.as_slice(),
+                    p.p_digest.as_slice(),
+                    sequence.to_be_bytes().as_slice(),
+                    later_edge.successor_binding.as_slice(),
+                    proof,
+                    proof_digest.as_slice(),
+                    record_digest.as_slice(),
+                ],
+            )?;
+        }
         let pruned = prepared_blocks_not_descending_from_v0(&inventory, p.block_id);
         for block in pruned {
             tx.execute(
@@ -4459,14 +4759,18 @@ impl DurableNativeApplicationV0 {
             )?;
         }
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0(if later.is_some() {
+        park_for_sigkill_commit_boundary_v0(if later_application.is_some() {
+            "later_application_before_commit"
+        } else if later.is_some() {
             "later_epoch_before_commit"
         } else {
             "epoch_before_commit"
         });
         tx.commit()?;
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0(if later.is_some() {
+        park_for_sigkill_commit_boundary_v0(if later_application.is_some() {
+            "later_application_after_commit"
+        } else if later.is_some() {
             "later_epoch_after_commit"
         } else {
             "epoch_after_commit"
@@ -4474,7 +4778,9 @@ impl DurableNativeApplicationV0 {
         drop(connection);
         sync_store_commit_boundary_v0(&self.path)?;
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0(if later.is_some() {
+        park_for_sigkill_commit_boundary_v0(if later_application.is_some() {
+            "later_application_after_fsync"
+        } else if later.is_some() {
             "later_epoch_after_fsync"
         } else {
             "epoch_after_fsync"

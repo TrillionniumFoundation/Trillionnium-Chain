@@ -145,8 +145,11 @@ facts are insufficient by themselves to activate Core or retire old signing.
 
 The schema-4 application bridge below now retains evidence and an Installed /
 Consumed phase. Its application owner does not claim an independent node checkpoint
-CAS. The broader node-checkpoint composition below remains planned, and its
-proposed `TRNMEDG1` container is not the implemented schema-4 encoding.
+CAS. The broader node-checkpoint composition below remains planned. Its proposed
+`TRNMEDG1` container is an **unimplemented design format**, not an encoding used by
+the schema-4 or schema-8 owners. A schema-8 implementation must use only its exact
+SQLite rows and retained CEV0/native bytes described below; it must not emit,
+decode, migrate from, or treat `TRNMEDG1` bytes as recovery authority.
 
 ```text
 confirm_epoch_application_edge(
@@ -173,6 +176,9 @@ Append SHA-256 of preceding bytes. All retained canonical evidence
 preimages are stored separately under their exact strict binding and verified
 on reopen; they do not acquire an invented aggregate consensus wire encoding.
 A missing evidence object fences recovery even if the edge checksum matches.
+This paragraph specifies a future node-checkpoint composition only. No current
+producer or consumer may persist these planned bytes, and schema 8 must fail
+closed rather than substituting this format for either of its versioned tables.
 
 M07 consumes this edge only to construct its root-only `CarriedRootReaderV1`;
 M06 binds the distinct consensus and application parents; M02 installs the
@@ -456,6 +462,17 @@ The implemented owner entry points are:
   verify the exact oldest target; first-new proof uses the retained activation
   preimages and dedicated strict decoder, while ordinary descendants use the
   ordinary new-set decoder. Commit requires current application-parent CAS.
+- `prepare_later_epoch_first_new_block_v1(&later_edge, request, &header)`:
+  reconstruct the schema-8 successor context from retained authority, enforce
+  application parent C, consensus parent C+2 and target C+3, recompute the
+  complete execution and roots, and durably prepare the exact family-v1 P. The
+  older `execute_later_epoch_first_new_block_v1(&later_edge)` has no request or
+  header and intentionally remains fail-closed; it is not the executing seam.
+  `commit_epoch_finality_bytes_v1` strictly verifies the prepared later C+3
+  proof and atomically updates P, metadata/context and successor edge phase to
+  Consumed. The candidate schema-9 ledger retains the exact proof and its
+  bound digest for cold re-verification; local positive and three-cut crash
+  fixtures pass, while production Core/Safety activation remains open.
 - `read_finalized_by_height_v1(height)`: returns private
   `FinalizedNativeEpochApplicationReadV1` only for the unique committed
   schema4 ordinary (`artifact_kind=0`, `Regular`, no next commitment) P at the
@@ -469,30 +486,42 @@ consumes the edge only for its first block, installs active context, prunes only
 unrelated prepared forks and advances durable_sequence once. Database/file/
 directory synchronization and fresh metadata/P readback precede return. Exact
 prepare/commit retries repeat synchronization/readback and keep their immutable
-P/commit sequences. Seals produce none of these records. The context digest is
+P/commit sequences where the corresponding finality record is retained. The
+schema-8 checkpoint/successor ledger is paired with a schema-9
+application-finality ledger that preserves bounded proof bytes and exact
+retry/recovery digests. Seals produce none of these records. The context digest is
 `hash_domain("trnm.native-application.epoch-context.v1", [store_id, complete head
 (height/block/root/commit), head_commit_sequence, SHA256(set), SHA256(parameters),
 SHA256(lineage)])`, with U64/H32 encoding above.
 
 This bridge currently admits a legacy-v0 committed checkpoint, its first-new
 block and ordinary descendants. Schema8 additionally admits a strictly
-verified later checkpoint through its explicit proof ledger; general
-sparse-history finalized RPC/proof interfaces and independent node checkpoint /
-publication ownership are still fenced or pending. Schema4 rejects ordinary
-`execute_block` so the legacy +1 path cannot synthesize application effects for
-seals. It is not the full multi-epoch default-node pipeline.
+verified later checkpoint through its explicit proof ledger and has a candidate
+request/header-based path that prepares and strictly commits its first-new C+3.
+General sparse-history finalized RPC/proof interfaces and independent node
+checkpoint/publication ownership are still fenced or pending. Schema4 rejects
+ordinary `execute_block` so the legacy +1 path cannot synthesize application
+effects for seals. The schema-8 C+4 descendant path and repeated later handoffs
+do not yet resolve the mixed legacy/later lineage, so this is not the full
+multi-epoch default-node pipeline.
 
 The schema4/schema8 lineage audit now accepts a committed familyv1 checkpoint `P` only
 when its artifact kind, target, prepared digest, header kind and next-epoch
 commitment match exactly. It recursively audits each predecessor `P` with a
 bounded seen-set and rejects cycles, missing predecessors and owner mismatches;
 an epoch checkpoint is admitted to descendant preparation but cannot be passed
-to ordinary `commit_epoch_finality_bytes_v1`. The later checkpoint's first-new
-C+3 execution/commit, checkpoint/handoff schema4 finalized-read mapping and
-schema7 incremental multi-edge owner/storage migration remain unimplemented.
-Schema8 durably commits and strictly reverifies the later checkpoint proof
-record and its separate successor-edge row; neither path silently reuses the
-predecessor edge.
+to ordinary checkpoint finality handling in `commit_epoch_finality_bytes_v1`.
+The later checkpoint's first-new C+3 candidate now prepares a real P through
+`prepare_later_epoch_first_new_block_v1`, strictly verifies caller finality, and
+commits the P, metadata/context and successor phase-1 consumption atomically.
+The schema-9 ledger retains that C+3 proof for cold re-verification. The local
+positive C21 fixture and three process-kill cuts cover the exact P/edge/proof
+retry path. The
+checkpoint/handoff schema4 finalized-read mapping, schema7 incremental
+multi-edge owner/storage migration, C+4 continuation and repeated handoffs
+remain unimplemented. Schema8 durably commits and strictly reverifies the later
+checkpoint proof record and its separate successor-edge row; neither path
+silently reuses the predecessor edge.
 
 ### Implemented retained edge evidence and recovery algorithm
 
@@ -635,7 +664,9 @@ loss or HSM evidence. Structural documentation checks are not runtime proofs.
   pre-certificate receipt without a joint certificate; prepared-only, wrong
   cutoff/body/runtime/commitment or a post-certificate substitution rejects.
 - `M08-CUT`: actual checkpoint C, seals without application effects, first-new
-  JMT C+3, and the next epoch's exact cutoff. Verify both roots and commit_sequence.
+  JMT C+3, and the next epoch's exact cutoff. The native request/header seam
+  supplies a candidate C+3 P and strict commit; the local positive fixture,
+  schema-9 proof retention and exact commit_sequence checks pass.
 - `M08-EDGE`: wrong terminal seal, descriptor, source receipt, new configuration,
   target height, namespace or expected CAS cannot install or consume an edge.
 - `M08-REPLAY`: inject every row of the restart matrix, including receipt
@@ -650,6 +681,12 @@ missing bound preparation/journal rejects capability recovery without recreating
 rows or files. SIGKILL tests cover before transaction commit, after commit and
 after synchronization, requiring complete head8 or head11 and exact retry21.
 These are process-crash tests, not physical device-loss certification.
+
+The C18/S19/S20 fixture now drives a real C21 positive candidate path. The
+schema-9 application-finality row, cold-reopen proof check, exact retry and
+three SIGKILL cuts pass locally. Independent byte-exact vectors, Core/Safety
+activation and signer retirement, and multi-host/device fault evidence remain
+required acceptance work.
 
 Freeze byte-exact planned node receipt/edge/local-intent vectors with positive and
 negative independent consumers before implementing public restore paths.
@@ -709,13 +746,14 @@ Issuance also explicitly requires checkpoint P sequence>0 and actual commit
 sequence>P sequence, plus the existing exact owner/head/P and preparation checks.
 
 
-### Versioned later checkpoint commit contract (schema8)
+### Versioned later checkpoint commit contract (schema8 plus schema9)
 
 Primary module: M08; producers M06 and M02, storage consumer M07. An explicit
 `upgrade_later_epoch_schema_v1(expected_head)` migrates schema4 by atomically
-adding `native_later_epoch_finality_v1`, `native_later_epoch_edge_v1` and CASing
-the version to 8. A schema8 retry installs the edge table if an older schema8
-image predates it; ordinary open never migrates. Existing schema4 edge/P/context
+adding `native_later_epoch_finality_v1`, `native_later_epoch_edge_v1` and the
+schema-9 application-finality ledger, then CASing the version to 9. A legacy
+schema-8 image is accepted only by this explicit 8-to-9 migration after exact
+table/edge checks; ordinary open never migrates. Existing schema4 edge/P/context
 records remain unchanged.
 
 `commit_later_epoch_checkpoint_finality_v1` consumes the owner-bound strict
@@ -739,8 +777,10 @@ Acceptance requires real C18/S19/S20 evidence, explicit migration and reopen,
 exact retry, foreign-owner rejection, proof/record corruption, and process
 termination before commit, after commit and after fsync. This contract advances
 the checkpoint application head and installs the successor-edge ledger row.
-First-new C+3 execution, schema7 incremental multi-edge storage and production
-Core/signing remain separate open requirements.
+First-new C+3 execution has a candidate prepare/strict-commit seam, a retained
+application proof, a positive C21 fixture and three crash/recovery cuts. Schema7
+incremental multi-edge storage and production Core/signing remain separate open
+requirements.
 
 The explicit `inspect_later_epoch_application_edge_requirements_v1(C18)` seam
 now makes the successor contract executable. It
@@ -753,8 +793,13 @@ context digest is recomputed from the post-C18 head, sequence, target
 configuration and lineage. Schema8 persists those fields in
 `native_later_epoch_edge_v1`, and `require_later_epoch_application_edge_v1`
 returns an owner-affine capability only after a complete cold audit. The
-capability's C+3 execution method still fails closed because the atomic
-first-new state/P commit and crash-recovery path are not implemented. The
+capability's old `execute_later_epoch_first_new_block_v1(&edge)` method still
+fails closed because it has no request/header inputs; the new
+`prepare_later_epoch_first_new_block_v1` seam performs candidate C+3 execution.
+Its strict finality consumer atomically updates the P, metadata/context and
+successor edge phase, and the schema-9 application-finality ledger retains and
+cold-reverifies the C+3 proof. The local fixture and three crash cuts cover the
+real positive C21 path. The current
 fixture asserts predecessor H17, successor height 21, distinct non-zero
 bindings and distinct context digests, and proves the old H17 edge cannot open
 an application store after C18 is committed.
@@ -768,6 +813,22 @@ test kills actual subprocesses before SQLite commit, after commit and after
 fsync; restart sees only H17 with prepared C18 or fully committed C18, and
 recovery retains the exact commit sequence. These are local process-crash
 results, not physical power-loss or repeated multi-epoch acceptance.
+
+### Candidate schema-9 first-new application-finality ledger
+
+Schema 8 remains the immutable checkpoint/finality and successor-edge ledger.
+The C+3 application finality proof is a separate schema-9 record so schema 8
+does not silently change its table shape. The record must retain the complete
+bounded proof bytes and a checksum/domain digest bound to store, successor
+binding, C+3 block, P digest, committed sequence, target head and proof hash.
+Cold open, exact retry and owner recovery must verify this record before
+returning a committed C+3 receipt. A schema-8 database with an Installed
+phase-0 successor may migrate explicitly only after exact C18 evidence, P and
+edge checks; a schema-8 database whose successor is already Consumed but has
+no retained C+3 proof must fail closed rather than inventing a proof record.
+No ordinary open performs this migration. C+4 descendants and repeated
+handoffs remain outside this candidate until their mixed lineage and multi-host
+acceptance are implemented.
 
 ### Implemented schema7 strict commit and pending descendants
 

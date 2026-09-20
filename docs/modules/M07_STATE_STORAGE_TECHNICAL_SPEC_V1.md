@@ -529,7 +529,7 @@ querying a seal may return its carried checkpoint root plus the consensus seal
 proof, explicitly identifying application coordinate C. It cannot relabel a
 checkpoint membership proof as an execution receipt at seal height.
 
-This requires a dedicated first-new execution path in M06; ordinary parent
+M06 now supplies a dedicated sealed first-new execution path; ordinary parent
 height/version checks remain unchanged. The request explicitly binds consensus
 parent seal2 and application parent checkpoint. M02 validates the handoff
 ancestry edge; M07 supplies storage ancestry. Merely installing an alias does

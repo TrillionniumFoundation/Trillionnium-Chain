@@ -1861,6 +1861,7 @@ impl DurableNativeApplicationV0 {
         if matches!(
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
@@ -2331,6 +2332,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         if matches!(
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
@@ -2525,7 +2527,11 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         verify_schema_v0(&connection)?;
         if matches!(
             epoch_durable::schema_version(&connection)?,
-            epoch_durable::SCHEMA_VERSION | epoch_durable::LATER_SCHEMA_VERSION | 6 | 7
+            epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+                | epoch_durable::LATER_SCHEMA_VERSION
+                | 6
+                | 7
         ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
@@ -2724,6 +2730,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         if matches!(
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
@@ -2769,6 +2776,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         if matches!(
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
@@ -2845,7 +2853,11 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let connection = open_writable_connection_v0(&self.path)?;
         if matches!(
             epoch_durable::schema_version(&connection)?,
-            epoch_durable::SCHEMA_VERSION | epoch_durable::LATER_SCHEMA_VERSION | 6 | 7
+            epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+                | epoch_durable::LATER_SCHEMA_VERSION
+                | 6
+                | 7
         ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
@@ -3987,6 +3999,7 @@ fn load_metadata_v0(
         decode_u64_v0(&row.0, "metadata.schema")?,
         APPLICATION_SCHEMA_VERSION_V0
             | epoch_durable::SCHEMA_VERSION
+            | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
             | epoch_durable::LATER_SCHEMA_VERSION
             | incremental_owner_v1::SCHEMA_VERSION
             | 6
@@ -4393,8 +4406,15 @@ fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
                 .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql))),
         );
         if epoch_durable::has_later_schema(epoch_durable::schema_version(connection)?) {
-            expected.extend(
+            let later_schema = if epoch_durable::schema_version(connection)?
+                == epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+            {
+                epoch_durable::LATER_SCHEMA_V8
+            } else {
                 epoch_durable::LATER_SCHEMA
+            };
+            expected.extend(
+                later_schema
                     .iter()
                     .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql))),
             );

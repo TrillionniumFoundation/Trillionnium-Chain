@@ -454,6 +454,7 @@ mod tests {
     };
     use crate::NativeBlockPreviewRequestV0;
     use ed25519_dalek::{Signer, SigningKey};
+    use sha2::Digest;
     use trnm_consensus_types::{
         BlockId, Epoch, EpochAnchorAuthorizationKernelV0, EpochFallbackReasonV0, EvidenceRoot,
         FinalityProofV0, HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields,
@@ -462,8 +463,9 @@ mod tests {
         SignatureShareV0, StateRoot, Validator, ValidatorSet, View, Vote, SCHEMA_VERSION_V0,
     };
     use trnm_native_application::{
-        BlockIdV0, ChainIdV0, HeightV0, NativeBlockExecutionRequestV0,
-        NativeEpochBlockExecutionRequestV1, NativeExpectedBlockCommitmentsV0,
+        BlockIdV0, ChainIdV0, GenesisHashV0, Hash32V0, HeightV0, NativeBlockExecutionRequestV0,
+        NativeEpochBlockExecutionRequestV1, NativeEpochBlockPreviewRequestV1,
+        NativeExpectedBlockCommitmentsV0,
     };
 
     fn key(index: usize) -> SigningKey {
@@ -556,7 +558,40 @@ mod tests {
         receipts_root: ReceiptsRoot,
         evidence_root: EvidenceRoot,
     ) -> BlockHeader {
-        let view = height - 10;
+        let view = if kind == BlockKind::EpochHandoff {
+            1
+        } else {
+            height - 10
+        };
+        checkpoint_like_header_at_view(
+            set,
+            kind,
+            height,
+            parent,
+            state_root,
+            commitment,
+            timestamp_ms,
+            payload_root,
+            receipts_root,
+            evidence_root,
+            view,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn checkpoint_like_header_at_view(
+        set: &ValidatorSet,
+        kind: BlockKind,
+        height: u64,
+        parent: BlockId,
+        state_root: StateRoot,
+        commitment: Option<trnm_consensus_types::NextEpochCommitmentHash>,
+        timestamp_ms: u64,
+        payload_root: PayloadDigest,
+        receipts_root: ReceiptsRoot,
+        evidence_root: EvidenceRoot,
+        view: u64,
+    ) -> BlockHeader {
         BlockHeader::new(
             set.genesis_hash(),
             set.chain_id(),
@@ -597,6 +632,140 @@ mod tests {
                     .digest(),
             ),
         )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn later_epoch_first_finality(
+        old_set: &ValidatorSet,
+        old_parameters: &ConsensusParametersV0,
+        old_set_bytes: &[u8],
+        new_set_bytes: &[u8],
+        new_parameters_bytes: &[u8],
+        checkpoint_parent_header: &[u8],
+        checkpoint_finality: &[u8],
+        anchor_kernel: &[u8],
+        next_epoch_commitment: &[u8],
+        headers: &[BlockHeader],
+    ) -> Vec<u8> {
+        let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+        let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
+            EpochActivationEvidencePreimagesV0 {
+                old_checkpoint_finality: checkpoint_finality,
+                next_epoch_commitment,
+                authorization_kernel: anchor_kernel,
+                old_validator_set: old_set_bytes,
+                old_consensus_parameters: &old_parameters.canonical_bytes(),
+                new_validator_set: new_set_bytes,
+                new_consensus_parameters: new_parameters_bytes,
+                authenticated_checkpoint_parent_header: checkpoint_parent_header,
+            },
+            old_set,
+            old_parameters,
+            &mut budget,
+        )
+        .unwrap();
+        let activation =
+            trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
+                decoded.old_checkpoint_finality(),
+                decoded.next_epoch_commitment(),
+                decoded.authorization_kernel(),
+                old_set,
+                old_parameters,
+                decoded.new_validator_set(),
+                decoded.new_consensus_parameters(),
+                decoded.authenticated_checkpoint_parent_header(),
+            )
+            .unwrap();
+        let set = decoded.new_validator_set();
+        let parameters = decoded.new_consensus_parameters();
+        let common = || {
+            let mut bytes = 0u16.to_be_bytes().to_vec();
+            bytes.extend(set.genesis_hash().as_bytes());
+            bytes.extend((set.chain_id().as_bytes().len() as u16).to_be_bytes());
+            bytes.extend(set.chain_id().as_bytes());
+            bytes.extend(set.protocol_version().get().to_be_bytes());
+            bytes.extend(set.epoch().get().to_be_bytes());
+            bytes.extend(set.id().as_bytes());
+            bytes
+        };
+        let mut bytes = common();
+        bytes.extend(parameters.hash().as_bytes());
+        let mut anchor = common();
+        anchor.extend(0u64.to_be_bytes());
+        anchor.extend(
+            activation
+                .authorization_kernel()
+                .terminal_old_header()
+                .height()
+                .get()
+                .to_be_bytes(),
+        );
+        anchor.extend(
+            activation
+                .authorization_kernel()
+                .terminal_old_header()
+                .id()
+                .as_bytes(),
+        );
+        anchor.extend(0u32.to_be_bytes());
+        for (index, header) in headers.iter().enumerate() {
+            let key_index = set
+                .validators()
+                .iter()
+                .position(|v| v.id() == header.proposer_id())
+                .unwrap();
+            if index == 0 {
+                let root = trnm_consensus_types::epoch_first_proposal_signing_root_v0(
+                    header,
+                    activation.authorization_kernel(),
+                    old_set,
+                    set,
+                    parameters,
+                )
+                .unwrap();
+                bytes.extend(header.try_cev0_bytes().unwrap());
+                bytes.extend(&anchor);
+                bytes.push(0);
+                bytes.push(1);
+                bytes.extend(activation.authorization_cev0_bytes().unwrap());
+                bytes.extend(key(key_index).sign(root.as_bytes()).to_bytes());
+                bytes.extend(qc(header, set).try_cev0_bytes().unwrap());
+            } else {
+                let justify = QcReferenceV0::ordinary(qc(&headers[index - 1], set));
+                let witness = ProposalWitnessV0::new(
+                    header,
+                    justify.clone(),
+                    None,
+                    None,
+                    Signature64::from_array([1; 64]),
+                    set,
+                    None,
+                    parameters,
+                    headers[index - 1].timestamp_ms(),
+                )
+                .unwrap();
+                let signature = Signature64::from_array(
+                    key(key_index)
+                        .sign(witness.signing_root_for_header(header).unwrap().as_bytes())
+                        .to_bytes(),
+                );
+                let certified = trnm_consensus_types::CertifiedHeaderV0::new(
+                    header.clone(),
+                    justify,
+                    None,
+                    None,
+                    signature,
+                    qc(header, set),
+                    set,
+                    None,
+                    parameters,
+                    headers[index - 1].timestamp_ms(),
+                )
+                .unwrap();
+                bytes.extend(certified.try_cev0_bytes().unwrap());
+            }
+        }
+        bytes
     }
 
     fn rehash_record(sql: &rusqlite::Connection) {
@@ -1159,8 +1328,9 @@ mod tests {
         // Schema 8 durably proves C18, retains the H17 predecessor, and
         // installs a separately checksummed C18 -> C21 successor-edge row.
         // Inspect the exact successor requirements before reopening that
-        // owner-affine capability; first-new execution remains a separate
-        // fail-closed operation until its atomic C+3 path exists.
+        // owner-affine capability; the request/header-based C+3 seam below
+        // is the only candidate execution path and remains independently
+        // gated from the legacy edge-only API.
         let requirements = reopened
             .inspect_later_epoch_application_edge_requirements_v1(
                 *checkpoint_header.id().as_bytes(),
@@ -1225,6 +1395,125 @@ mod tests {
         assert_eq!(successor.application_parent_v1().height().get(), 18);
         assert_ne!(successor.authority_digest(), [0; 32]);
         assert_ne!(successor.record_digest(), [0; 32]);
+        let first_request = NativeEpochBlockPreviewRequestV1::new(
+            ChainIdV0::new(new_set.chain_id().as_str()).unwrap(),
+            GenesisHashV0::new(*new_set.genesis_hash().as_bytes()).unwrap(),
+            successor.application_parent_v1(),
+            BlockIdV0::new(successor.terminal_block()).unwrap(),
+            HeightV0::new(successor.terminal_height()),
+            Hash32V0::new(successor.successor_binding()),
+            HeightV0::new(successor.first_application_height()),
+            21_000,
+            trnm_native_application::ValidatorSetIdV0::new(*new_set.id().as_bytes()).unwrap(),
+            Vec::new(),
+        )
+        .unwrap();
+        let first_preview = reopened
+            .preview_later_epoch_block_v1(&successor, &first_request)
+            .unwrap();
+        let first_header = checkpoint_like_header(
+            &new_set,
+            BlockKind::EpochHandoff,
+            successor.first_application_height(),
+            BlockId::new(successor.terminal_block()),
+            StateRoot::new(*first_preview.post_state_root().as_bytes()),
+            None,
+            first_request.timestamp_ms(),
+            PayloadDigest::new(*first_preview.payload_root().as_bytes()),
+            ReceiptsRoot::new(*first_preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*first_preview.evidence_root().as_bytes()),
+        );
+        let first_execution = NativeEpochBlockExecutionRequestV1::new(
+            first_request,
+            BlockIdV0::new(*first_header.id().as_bytes()).unwrap(),
+            NativeExpectedBlockCommitmentsV0::new(
+                first_preview.payload_root(),
+                first_preview.post_state_root(),
+                first_preview.receipts_root(),
+                first_preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let prepared_first = reopened
+            .prepare_later_epoch_first_new_block_v1(&successor, first_execution, &first_header)
+            .unwrap();
+        let reopened_first = reopened
+            .reopen_prepared_epoch_execution_v1(*first_header.id().as_bytes())
+            .unwrap();
+        assert_eq!(reopened_first.p_digest(), prepared_first.p_digest());
+        let second_header = checkpoint_like_header_at_view(
+            &new_set,
+            BlockKind::Regular,
+            successor.first_application_height() + 1,
+            first_header.id(),
+            StateRoot::new(*first_preview.post_state_root().as_bytes()),
+            None,
+            22_000,
+            PayloadDigest::new(*first_preview.payload_root().as_bytes()),
+            ReceiptsRoot::new(*first_preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*first_preview.evidence_root().as_bytes()),
+            2,
+        );
+        let third_header = checkpoint_like_header_at_view(
+            &new_set,
+            BlockKind::Regular,
+            successor.first_application_height() + 2,
+            second_header.id(),
+            StateRoot::new(*first_preview.post_state_root().as_bytes()),
+            None,
+            23_000,
+            PayloadDigest::new(*first_preview.payload_root().as_bytes()),
+            ReceiptsRoot::new(*first_preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*first_preview.evidence_root().as_bytes()),
+            3,
+        );
+        let later_first_proof = later_epoch_first_finality(
+            &old_set,
+            &old_parameters,
+            &old_set.try_cev0_bytes().unwrap(),
+            &new_set_bytes,
+            &new_parameters_bytes,
+            &parent_bytes,
+            &finality_bytes,
+            &anchor_bytes,
+            &commitment_bytes,
+            &[first_header.clone(), second_header, third_header],
+        );
+        // The C+3 crash harness records the exact first-new header and
+        // finality bytes before entering the durable commit boundary.  The
+        // subprocess is killed at the requested boundary and the parent test
+        // reopens this same owner to exercise the retry path.
+        if let Some(crash_store) = std::env::var_os("TRNM_LATER_APPLICATION_CRASH_STORE") {
+            std::fs::write(
+                std::path::PathBuf::from(crash_store).with_extension("later-application-proof"),
+                serde_json::to_vec(&vec![
+                    first_header.try_cev0_bytes().unwrap(),
+                    later_first_proof.clone(),
+                ])
+                .unwrap(),
+            )
+            .unwrap();
+        }
+        let committed_first = reopened
+            .commit_epoch_finality_bytes_v1(
+                &prepared_first,
+                &later_first_proof,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(committed_first.head().height().get(), 21);
+        let retry_first = reopened
+            .commit_epoch_finality_bytes_v1(
+                &prepared_first,
+                &later_first_proof,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(
+            retry_first.commit_sequence(),
+            committed_first.commit_sequence()
+        );
         assert!(reopened
             .execute_later_epoch_first_new_block_v1(&successor)
             .is_err());
@@ -1462,6 +1751,122 @@ mod tests {
                     .unwrap()
                     .commit_sequence(),
                 sequence
+            );
+        }
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn later_application_c21_sigkill_commit_cuts_recover_exact_p_and_proof() {
+        for stage in [
+            "later_application_before_commit",
+            "later_application_after_commit",
+            "later_application_after_fsync",
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("application.sqlite3");
+            let marker = directory.path().join("ready");
+            let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "later_epoch_checkpoint_bridge::tests::later_checkpoint_bridge_accepts_real_h17_c18_s19_s20_evidence",
+                    "--nocapture",
+                ])
+                .env("TRNM_LATER_EPOCH_CRASH_STORE", &path)
+                .env("TRNM_LATER_APPLICATION_CRASH_STORE", &path)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE", stage)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER", &marker)
+                .spawn()
+                .unwrap();
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(90);
+            while !marker.exists() && std::time::Instant::now() < deadline {
+                if child.try_wait().unwrap().is_some() {
+                    break;
+                }
+                std::thread::sleep(std::time::Duration::from_millis(10));
+            }
+            assert!(
+                marker.exists(),
+                "C21 child did not reach {stage} before exiting"
+            );
+            child.kill().unwrap();
+            assert!(!child.wait().unwrap().success());
+
+            let encoded: Vec<Vec<u8>> = serde_json::from_slice(
+                &std::fs::read(path.with_extension("later-application-proof")).unwrap(),
+            )
+            .unwrap();
+            let first_header = decode_block_header_v0_exact(&encoded[0]).unwrap();
+            let first_block = *first_header.id().as_bytes();
+            let app =
+                DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1())
+                    .unwrap();
+            let head = app.confirmed_committed_head_v0().unwrap();
+            assert_eq!(
+                head.height().get(),
+                if stage == "later_application_before_commit" {
+                    18
+                } else {
+                    21
+                },
+                "C21 crash cut committed head"
+            );
+
+            // A prepared row can always be reconstructed after a kill.  The
+            // caller re-submits the exact proof bytes captured before commit;
+            // phase-1 cuts must accept only the same durable proof record.
+            let prepared = app.reopen_prepared_epoch_execution_v1(first_block).unwrap();
+            let committed = app
+                .commit_epoch_finality_bytes_v1(
+                    &prepared,
+                    &encoded[1],
+                    &mut Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+            assert_eq!(committed.head().height().get(), 21);
+            let retry = app
+                .commit_epoch_finality_bytes_v1(
+                    &prepared,
+                    &encoded[1],
+                    &mut Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+            assert_eq!(retry.commit_sequence(), committed.commit_sequence());
+
+            let sql = rusqlite::Connection::open(&path).unwrap();
+            let (proof, proof_digest, record_digest): (Vec<u8>, Vec<u8>, Vec<u8>) = sql
+                .query_row(
+                    "SELECT proof,proof_digest,record_digest
+                       FROM native_later_epoch_application_finality_v1
+                      WHERE block_id=?",
+                    [first_block.as_slice()],
+                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+                )
+                .unwrap();
+            assert_eq!(proof, encoded[1]);
+            assert_eq!(proof_digest, sha2::Sha256::digest(&encoded[1]).to_vec());
+            assert_eq!(record_digest.len(), 32);
+            drop(app);
+            sql.execute(
+                "UPDATE native_later_epoch_application_finality_v1
+                    SET proof=zeroblob(length(proof)) WHERE block_id=?",
+                [first_block.as_slice()],
+            )
+            .unwrap();
+            assert!(
+                DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1())
+                    .is_err(),
+                "mutated C21 proof must fail closed on cold reopen"
+            );
+            sql.execute(
+                "UPDATE native_later_epoch_application_finality_v1 SET proof=? WHERE block_id=?",
+                rusqlite::params![proof, first_block.as_slice()],
+            )
+            .unwrap();
+            assert!(
+                DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1())
+                    .is_ok(),
+                "C21 P/proof record must survive cold reopen"
             );
         }
     }

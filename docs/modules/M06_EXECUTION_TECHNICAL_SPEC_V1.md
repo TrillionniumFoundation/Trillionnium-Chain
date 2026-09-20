@@ -273,9 +273,12 @@ described below; this does not activate the production node/Core path.
 M08 now persists the first-new execution and speculative C+4/C+5 through its
 explicit bounded schema-4 bridge. Its separate first-new artifact binds both
 parents, and strict new-set finality commits the prepared state exactly once.
-The ordinary codec/+1 path remains unchanged. Later-epoch checkpoints,
-incremental storage integration and complete default-node activation remain
-outside this candidate slice; see M08 for exact APIs, limits and crash tests.
+The sealed `EpochExecutionContextV1` path also prepares a later successor C+3
+P, carries the complete prior lineage into the authenticated snapshot, and
+commits the P, metadata CAS, and schema-8 successor-edge consumption in one
+transaction. The ordinary codec/+1 path remains unchanged. This later path
+is candidate-only: there is no independent C21 positive proof vector or
+production Core/Safety activation, so those gates remain closed.
 
 Before user transactions in C+3, the selected edge executor applies one fixed
 system prefix: validate the authenticated old/new configuration edge, install
@@ -431,12 +434,14 @@ the indexed `recover_epoch_application_edge_at_index_v1()` seam. They return
 only a recursively audited, owner-affine history: every consumed P must carry
 the complete ordered lineage, while a second unconsumed row, duplicate height,
 corrupt lineage, missing predecessor, or concurrent mutation fails closed.
-This closes the observation/recovery contract without authorizing a first-new
-execution. The explicit schema8 M08 consumer now durably commits a strictly
-verified later checkpoint, retains all CEV0 preimages for restart auditing, and
-installs a separate checksummed successor-edge row with its own binding and
-post-checkpoint context digest. The C+3 state/P commit remains an explicit
-prerequisite for full multi-epoch issuance.
+This closes the observation/recovery contract, and phase-1 recovery binds the
+consumed C+3 P to the current metadata head. The explicit schema8 M08
+consumer durably commits a strictly verified later checkpoint, retains all
+CEV0 preimages for restart auditing, and installs a separate checksummed
+successor-edge row with its own binding and post-checkpoint context digest.
+The C+3 path is implemented as a candidate owner seam with schema-9 proof
+retention, a local C21 positive fixture and three crash cuts; independent C21
+vectors and production activation remain acceptance gates.
 
 `DurableNativeApplicationV0::inspect_later_epoch_checkpoint_context_v1()` is
 the owner-affine context boundary. It re-reads the consumed edge lineage and
@@ -449,11 +454,12 @@ old/new configuration preimages and handoff kernel, applies the bounded CEV0
 budget and strict Ed25519 checks, and revalidates the owner context after the
 cryptographic work. The feature-gated fixture proves H11-H17 ordinary old-epoch
 execution followed by C18/S19/S20 evidence and rejects a commitment-byte
-mutation. The returned observation is read-only: it cannot prepare, sign or
-commit a C+3 block, and the legacy `require_later_epoch_checkpoint_bridge_v1()`
-continues to fail closed. M08's schema8 commit binds the checkpoint P/state
-root and installs the separate successor-edge row before the later checkpoint
-becomes durable; first-new application authority remains a separate gate.
+mutation. The checkpoint observation remains read-only; the separate
+`prepare_later_epoch_first_new_block_v1` and `commit_epoch_finality_bytes_v1`
+seams perform C+3 preparation and strict proof/commit, while the legacy
+`require_later_epoch_checkpoint_bridge_v1()` continues to fail closed. M08's
+schema8 commit binds the checkpoint P/state root and installs the separate
+successor-edge row before the later checkpoint becomes durable.
 
 The post-C18 edge seam is intentionally explicit:
 `inspect_later_epoch_application_edge_requirements_v1` derives the successor
@@ -462,16 +468,10 @@ C18/C+2/C+3 geometry while keeping the pre-C18 proof-context digest distinct
 from the recomputed post-C18 successor-context digest. Schema8 atomically
 persists that binding in `native_later_epoch_edge_v1`; `require_...` reopens it
 only after a complete cold audit and returns an owner-affine capability. The
-capability still cannot execute C+3: the atomic first-new state/P commit and
-its crash-recovery proof remain open. The old H17 edge is rejected by the
-owner once the application head is C18. The code-level blocker is explicit:
-`compute_complete_epoch_native_block_v1`, `CompleteExecutionStoreV1`'s epoch
-planning methods, and incremental `stage/apply` currently accept only the
-legacy `AuthenticatedEpochApplicationEdgeV1`; they also obtain the old/new
-validator sets and PoCO rollover context through that type. The new capability
-therefore exposes only crate-internal `coordinates_v1()` and the committed
-application parent as a transition seam. A safe C+3 implementation must add a
-versioned transition-context trait carrying those coordinates plus the strictly
-decoded old/new configuration, then atomically stage C+3 P, consume this edge,
-and recover both rows across the existing SIGKILL cuts. Constructing or casting
-the legacy edge would bypass this evidence boundary and is prohibited.
+sealed transition-context trait carries the coordinates and strictly decoded
+old/new configuration into complete and incremental execution. C+3 preparation
+atomically stages a versioned P, and finality commit CASes metadata/P and
+consumes the successor edge; phase-1 validation binds the consumed P and
+survives reopen. The old H17 edge is rejected once the application head is
+C18. Independent C21 proof vectors, external rollback anchors and production
+Core/Safety activation remain outside this candidate owner.

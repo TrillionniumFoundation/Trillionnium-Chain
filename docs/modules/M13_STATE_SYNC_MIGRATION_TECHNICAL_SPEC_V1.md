@@ -1,7 +1,8 @@
 # M13 State Sync, Light Client and Migration technical specification v1
 
-Status: candidate implementation contract, with planned native multi-epoch
-installation and transport. Primary module: M13; no new trust anchor is issued here.
+Status: candidate implementation contract, with a native multi-epoch execution
+owner path and planned transport installation. Primary module: M13; no new
+trust anchor is issued here.
 
 ## Authority
 
@@ -466,7 +467,7 @@ expected current root. Write only to new staging, verify again, then use
 and staging identity. Another owner moving the root causes CAS rejection;
 never overwrite that successor because the downloaded snapshot is newer.
 
-### Planned native multi-epoch snapshot binding
+### Native multi-epoch snapshot binding
 
 Persist M08's distinct `consensus_tip` and `application_head` coordinates.
 At checkpoint C, seals C+1/C+2 do not create application versions, P rows or
@@ -476,13 +477,16 @@ later consensus seal-2 tip. It must include the exact independently verified
 
 Verify the old checkpoint, two seals, joint handoff, old/new configurations,
 checkpoint application root/version/commit sequence, terminal seal parent and
-first target C+3 before installing edge metadata. M07's planned
-`CarriedRootReaderV1` redirects only empty root lookup C+2 to the authenticated
-root at C. Child node references retain real versions; value lookup at C+2
-must establish no writes in the gap. This is private construction metadata,
-not a claimed seal application state. The first real new application version
-is C+3. Reopen reauthenticates edge and predecessor before allowing that view.
-Unknown edge schema or unsupported live epoch phase remains disabled.
+first target C+3 before installing edge metadata. The sealed transition
+context redirects only empty root lookup C+2 to the authenticated root at C.
+Child node references retain real versions; value lookup at C+2 must establish
+no writes in the gap. This is private construction metadata, not a claimed
+seal application state. The first real new application version is C+3. Reopen
+reauthenticates edge and predecessor before allowing that view; phase-1
+recovery also binds the consumed C+3 P to the current metadata head. Unknown
+edge schema or unsupported live epoch phase remains disabled. The path is
+candidate-only until an independent C21 proof vector and external host
+acceptance are recorded.
 
 ### Migration, not ordinary state sync
 

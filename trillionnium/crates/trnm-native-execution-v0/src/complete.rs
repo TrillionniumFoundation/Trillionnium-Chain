@@ -1176,7 +1176,15 @@ pub(crate) fn preview_complete_epoch_block_v1(
     edge: &crate::AuthenticatedEpochApplicationEdgeV1,
     request: &NativeEpochBlockPreviewRequestV1,
 ) -> Result<NativeBlockPreviewV0> {
-    let computed = compute_complete_epoch_native_block_v1(store, edge, request)?;
+    preview_complete_epoch_block_with_context_v1(store, edge, request)
+}
+
+pub(crate) fn preview_complete_epoch_block_with_context_v1(
+    store: &impl CompleteExecutionStoreV1,
+    context: &dyn crate::epoch_edge::EpochExecutionContextV1,
+    request: &NativeEpochBlockPreviewRequestV1,
+) -> Result<NativeBlockPreviewV0> {
+    let computed = compute_complete_epoch_native_block_with_context_v1(store, context, request)?;
     let fingerprint = hash_domain(
         "trnm.native-application.epoch-preview-request.v1",
         &[
