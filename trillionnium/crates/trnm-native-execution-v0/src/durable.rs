@@ -1860,11 +1860,15 @@ impl DurableNativeApplicationV0 {
         verify_schema_v0(&connection)?;
         if matches!(
             epoch_durable::schema_version(&connection)?,
-            incremental_owner_v1::SCHEMA_VERSION | 6 | 7
+            epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LATER_SCHEMA_VERSION
+                | incremental_owner_v1::SCHEMA_VERSION
+                | 6
+                | 7
         ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
-                "preview_block_v0.incremental_requires_versioned_adapter",
+                "preview_block_v0.epoch_requires_versioned_adapter",
             ));
         }
         let before = load_metadata_v0(&connection, &self.config)?;
@@ -2326,7 +2330,11 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         verify_schema_v0(&connection)?;
         if matches!(
             epoch_durable::schema_version(&connection)?,
-            epoch_durable::SCHEMA_VERSION | incremental_owner_v1::SCHEMA_VERSION | 6 | 7
+            epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LATER_SCHEMA_VERSION
+                | incremental_owner_v1::SCHEMA_VERSION
+                | 6
+                | 7
         ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::BindingMismatch,
@@ -2515,10 +2523,13 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
-        if matches!(epoch_durable::schema_version(&connection)?, 6 | 7) {
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            epoch_durable::SCHEMA_VERSION | epoch_durable::LATER_SCHEMA_VERSION | 6 | 7
+        ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
-                "schema6.requires_dedicated_consumer",
+                "epoch.requires_dedicated_consumer",
             ));
         }
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -2712,11 +2723,15 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let connection = open_writable_connection_v0(&self.path)?;
         if matches!(
             epoch_durable::schema_version(&connection)?,
-            incremental_owner_v1::SCHEMA_VERSION | 6 | 7
+            epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LATER_SCHEMA_VERSION
+                | incremental_owner_v1::SCHEMA_VERSION
+                | 6
+                | 7
         ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
-                "state_proof.incremental_requires_versioned_adapter",
+                "state_proof.epoch_requires_versioned_adapter",
             ));
         }
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -2753,11 +2768,15 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
         let connection = open_writable_connection_v0(&self.path)?;
         if matches!(
             epoch_durable::schema_version(&connection)?,
-            incremental_owner_v1::SCHEMA_VERSION | 6 | 7
+            epoch_durable::SCHEMA_VERSION
+                | epoch_durable::LATER_SCHEMA_VERSION
+                | incremental_owner_v1::SCHEMA_VERSION
+                | 6
+                | 7
         ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
-                "snapshot.incremental_requires_versioned_adapter",
+                "snapshot.epoch_requires_versioned_adapter",
             ));
         }
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -2824,10 +2843,13 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     ) -> Result<NativeApplicationRecoveryResultV0, Self::Error> {
         let _guard = self.lock_operation()?;
         let connection = open_writable_connection_v0(&self.path)?;
-        if matches!(epoch_durable::schema_version(&connection)?, 6 | 7) {
+        if matches!(
+            epoch_durable::schema_version(&connection)?,
+            epoch_durable::SCHEMA_VERSION | epoch_durable::LATER_SCHEMA_VERSION | 6 | 7
+        ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
-                "schema6.requires_dedicated_consumer",
+                "epoch.requires_dedicated_consumer",
             ));
         }
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -3263,7 +3285,7 @@ fn validate_metadata_v0(
             "metadata.digest_or_sequence",
         ));
     }
-    let store = if epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION {
+    let store = if epoch_durable::is_epoch_schema(epoch_durable::schema_version(connection)?) {
         epoch_durable::metadata_store(connection, config, metadata)?
     } else {
         metadata.to_store(config)?
@@ -3321,7 +3343,7 @@ fn validate_p_inventory_v0(
     let mut rows = map_p_inventory_v0(connection, |p| {
         ValidatedPInventoryEntryV0::from_durable_v0(config, p)
     })?;
-    if epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION {
+    if epoch_durable::is_epoch_schema(epoch_durable::schema_version(connection)?) {
         rows.extend(epoch_durable::inventory(connection, config)?);
         rows.sort_unstable_by_key(|p| p.p_sequence);
     }
@@ -3965,6 +3987,7 @@ fn load_metadata_v0(
         decode_u64_v0(&row.0, "metadata.schema")?,
         APPLICATION_SCHEMA_VERSION_V0
             | epoch_durable::SCHEMA_VERSION
+            | epoch_durable::LATER_SCHEMA_VERSION
             | incremental_owner_v1::SCHEMA_VERSION
             | 6
             | 7
@@ -4362,13 +4385,20 @@ fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
         .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql)))
         .collect::<Vec<_>>();
     if metadata_exists_v0(connection)?
-        && epoch_durable::schema_version(connection)? == epoch_durable::SCHEMA_VERSION
+        && epoch_durable::is_epoch_schema(epoch_durable::schema_version(connection)?)
     {
         expected.extend(
             epoch_durable::SCHEMA
                 .iter()
                 .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql))),
         );
+        if epoch_durable::has_later_schema(epoch_durable::schema_version(connection)?) {
+            expected.extend(
+                epoch_durable::LATER_SCHEMA
+                    .iter()
+                    .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql))),
+            );
+        }
         expected.sort_unstable_by(|a, b| a.0.cmp(&b.0));
     }
     if actual != expected {

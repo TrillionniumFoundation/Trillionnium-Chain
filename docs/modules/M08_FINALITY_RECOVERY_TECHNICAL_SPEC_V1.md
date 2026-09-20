@@ -434,15 +434,14 @@ The implemented owner entry points are:
   re-reads the history after reconstruction. A second pending edge, duplicate
   height, malformed lineage, missing predecessor, or concurrent mutation is
   rejected. This carrier is read/recovery state only; it does not issue a
-  second edge or provide the later checkpoint two-seal + handoff finality
-  bridge.
+  second edge.
 - `inspect_later_epoch_checkpoint_context_v1()`: owner-affine, read-only
   planning context for the next checkpoint. It verifies the consumed lineage,
   active context digest, canonical old validator set/parameters, and derives
   the authenticated checkpoint/seal/first-new geometry and cutoff. It does not
   accept proofs or mutate the store. `require_later_epoch_checkpoint_bridge_v1`
-  rechecks that context and returns a typed fail-closed error until the later
-  checkpoint/two-seal/handoff implementation and multi-edge schema are landed.
+  rechecks that context and always returns a fail-closed error; the versioned
+  schema8 checkpoint consumer below is a distinct API and grants no new edge.
 - `execute_epoch_block_v1(&edge, request, &header)`: recompute the complete M06
   prefix/user plan, check the exact canonical header and all roots, persist P and
   replay/snapshot bytes atomically, synchronize and return private prepared P.
@@ -476,24 +475,23 @@ P/commit sequences. Seals produce none of these records. The context digest is
 SHA256(lineage)])`, with U64/H32 encoding above.
 
 This bridge currently admits a legacy-v0 committed checkpoint, its first-new
-block and ordinary descendants. Later-epoch checkpoints from familyv1, general
+block and ordinary descendants. Schema8 additionally admits a strictly
+verified later checkpoint through its explicit proof ledger; general
 sparse-history finalized RPC/proof interfaces and independent node checkpoint /
 publication ownership are still fenced or pending. Schema4 rejects ordinary
 `execute_block` so the legacy +1 path cannot synthesize application effects for
 seals. It is not the full multi-epoch default-node pipeline.
 
-The schema4 lineage audit now accepts a committed familyv1 checkpoint `P` only
+The schema4/schema8 lineage audit now accepts a committed familyv1 checkpoint `P` only
 when its artifact kind, target, prepared digest, header kind and next-epoch
 commitment match exactly. It recursively audits each predecessor `P` with a
 bounded seen-set and rejects cycles, missing predecessors and owner mismatches;
 an epoch checkpoint is admitted to descendant preparation but cannot be passed
 to ordinary `commit_epoch_finality_bytes_v1`. The later checkpoint's required
-second edge, strict two-seal plus handoff finality commit, checkpoint/handoff
-schema4 finalized-read mapping and schema7 multi-edge owner/storage migration
-remain unimplemented. The schema4 history/readback contract above is the
-versioned observation boundary; these later public entry points still fail
-closed with an explicit bridge-required error, and the schema7 singleton owner
-must not be weakened to silently attach a second edge to the first.
+second edge, first-new C+3, checkpoint/handoff schema4 finalized-read mapping
+and schema7 multi-edge owner/storage migration remain unimplemented. Schema8
+does durably commit and strictly reverify the later checkpoint proof record;
+neither path silently attaches a second edge to the first.
 
 ### Implemented retained edge evidence and recovery algorithm
 
@@ -710,6 +708,41 @@ Issuance also explicitly requires checkpoint P sequence>0 and actual commit
 sequence>P sequence, plus the existing exact owner/head/P and preparation checks.
 
 
+### Versioned later checkpoint commit contract (schema8)
+
+Primary module: M08; producers M06 and M02, storage consumer M07. An explicit
+`upgrade_later_epoch_schema_v1(expected_head)` migrates schema4 by atomically
+adding `native_later_epoch_finality_v1` and CASing the version to 8. Ordinary
+open never migrates. Existing schema4 edge/P/context records remain unchanged.
+
+`commit_later_epoch_checkpoint_finality_v1` consumes the owner-bound strict
+observation for the exact prepared checkpoint. Under the owner lock it joins
+the committed C-1 P, active configuration and lineage, historical cutoff root,
+checkpoint/two-seal proof and old/new handoff signatures. A single transaction
+commits the checkpoint P, native metadata/context and checkpoint-keyed proof
+record. Seals never execute application state. Fsync and fresh immutable
+readback precede the returned commit receipt. Reopen must reverify the strict
+proof and its local P/parent/cutoff bindings, not merely its checksum. Missing,
+oversized, substituted or detached records reject recovery. Repeated commit
+must return the same sequence; a reopened owner obtains recovery readback
+from retained evidence rather than reusing an old live-owner token.
+
+Acceptance requires real C18/S19/S20 evidence, explicit migration and reopen,
+exact retry, foreign-owner rejection, proof/record corruption, and process
+termination before commit, after commit and after fsync. This contract advances
+the checkpoint application head only. The second durable edge, first-new C+3,
+schema7 incremental multi-edge storage and production Core/signing remain
+separate open requirements.
+
+The native fixture now exercises migration, C18 commit, exact retry and cold
+recovery. A signature mutation with a recomputed local record digest and a
+deleted proof record both reject reopen. The three-cut
+`later_checkpoint_sigkill_commit_cuts_recover_exact_native_and_proof_record`
+test kills actual subprocesses before SQLite commit, after commit and after
+fsync; restart sees only H17 with prepared C18 or fully committed C18, and
+recovery retains the exact commit sequence. These are local process-crash
+results, not physical power-loss or repeated multi-epoch acceptance.
+
 ### Implemented schema7 strict commit and pending descendants
 
 The default-off native candidate now exposes two distinct finality consumers:
@@ -768,15 +801,17 @@ schema5→6 migration and strict first-new finality remain explicit preceding an
 following operations. The bridge is covered by native cold-reopen and malformed
 commit-row fencing tests and remains default-off.
 
-Later checkpoint proof recovery has an explicit strict observation seam:
+Later checkpoint proof recovery has an explicit strict observation and schema8
+commit seam:
 `DurableNativeApplicationV0::verify_later_epoch_checkpoint_finality_v1()` joins
 the durable C-1 application head, exact checkpoint/two-seal evidence, cutoff
 state-root, old/new validator and parameter preimages, and handoff kernel under
 one bounded verifier. It reopens the owner context after verification, so a
 stale or foreign observation is rejected. The native fixture covers H17 -> C18
--> S19 -> S20 with real signatures and a mutated commitment negative. This
-does not write the M08 commit ledger or issue an activation certificate; the
-multi-edge durable commit consumer and production finality source remain open.
+-> S19 -> S20 with real signatures and a mutated commitment negative.
+The schema8 owner writes the M08 checkpoint ledger and recovers it with fresh
+strict verification. It does not issue the second activation certificate or
+production finality source; those remain open.
 
 Certificate replay has an explicit no-effect seam: when a verified late TC or
 QC is already consumed by Core and produces no persistence effect, the node

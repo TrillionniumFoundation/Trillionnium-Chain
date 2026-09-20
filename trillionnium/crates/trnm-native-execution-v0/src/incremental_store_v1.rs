@@ -1013,7 +1013,7 @@ pub(crate) fn collect_incremental_nodes_v1(
             enqueued_nodes: 0,
             stale_queue_entries: 0,
             deleted_nodes: 0,
-            queue_depth: queue_depth,
+            queue_depth,
         });
     }
 
@@ -1164,9 +1164,9 @@ pub(crate) fn collect_incremental_nodes_v1(
     })
 }
 
-fn audit_gc_nodes_v1(
-    transaction: &Transaction<'_>,
-) -> Result<(BTreeMap<Vec<u8>, GcNodeRecord>, BTreeMap<Vec<u8>, u64>)> {
+type GcNodeInventory = (BTreeMap<Vec<u8>, GcNodeRecord>, BTreeMap<Vec<u8>, u64>);
+
+fn audit_gc_nodes_v1(transaction: &Transaction<'_>) -> Result<GcNodeInventory> {
     let mut nodes = BTreeMap::new();
     {
         let mut statement = transaction.prepare(

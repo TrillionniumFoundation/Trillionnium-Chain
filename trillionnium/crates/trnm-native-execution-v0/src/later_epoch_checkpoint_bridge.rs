@@ -42,6 +42,10 @@ pub struct LaterEpochCheckpointFinalityV1 {
 }
 
 impl LaterEpochCheckpointFinalityV1 {
+    pub(crate) fn has_owner_v1(&self, application: &DurableNativeApplicationV0) -> bool {
+        self.context.belongs_to_application(application)
+    }
+
     pub fn belongs_to_application(&self, application: &DurableNativeApplicationV0) -> bool {
         self.context.belongs_to_application(application)
             && application
@@ -88,6 +92,52 @@ impl LaterEpochCheckpointFinalityV1 {
     pub const fn joint_handoff(&self) -> &JointHandoffKernelV0 {
         &self.joint_handoff
     }
+
+    /// Canonical CEV0 preimages retained by the durable later-checkpoint
+    /// ledger. Only the owner can consume this crate-private carrier.
+    pub(crate) fn durable_preimages_v1(&self) -> Result<LaterEpochFinalityPreimagesV1> {
+        Ok(LaterEpochFinalityPreimagesV1 {
+            context_digest: self.context_digest(),
+            predecessor_edge: self.context.predecessor_edge(),
+            checkpoint_parent_header: self
+                .checkpoint_parent_header
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("encode later checkpoint parent: {e:?}"))?,
+            checkpoint_header: self
+                .checkpoint_header
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("encode later checkpoint: {e:?}"))?,
+            checkpoint_finality: self
+                .checkpoint_finality
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("encode later finality: {e:?}"))?,
+            anchor_kernel: self
+                .anchor_certificate_kernel
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("encode later anchor: {e:?}"))?,
+            next_epoch_commitment: self
+                .commitment
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("encode later commitment: {e:?}"))?,
+            new_validator_set: self
+                .new_validator_set
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("encode later validator set: {e:?}"))?,
+            new_parameters: self.new_parameters.canonical_bytes(),
+        })
+    }
+}
+
+pub(crate) struct LaterEpochFinalityPreimagesV1 {
+    pub(crate) context_digest: [u8; 32],
+    pub(crate) predecessor_edge: [u8; 32],
+    pub(crate) checkpoint_parent_header: Vec<u8>,
+    pub(crate) checkpoint_header: Vec<u8>,
+    pub(crate) checkpoint_finality: Vec<u8>,
+    pub(crate) anchor_kernel: Vec<u8>,
+    pub(crate) next_epoch_commitment: Vec<u8>,
+    pub(crate) new_validator_set: Vec<u8>,
+    pub(crate) new_parameters: Vec<u8>,
 }
 
 /// Verify one later checkpoint against a freshly inspected context.
@@ -399,7 +449,8 @@ fn ensure_checkpoint_geometry(
 mod tests {
     use super::*;
     use crate::poco_checkpoint::native_checkpoint_fixture_v1::{
-        build_native_checkpoint_fixture_v1, epoch_first_finality, ordinary_epoch_finality,
+        build_native_checkpoint_fixture_v1, epoch_first_finality,
+        native_checkpoint_fixture_config_v1, ordinary_epoch_finality,
     };
     use crate::NativeBlockPreviewRequestV0;
     use ed25519_dalek::{Signer, SigningKey};
@@ -492,6 +543,7 @@ mod tests {
         .unwrap()
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn checkpoint_like_header(
         set: &ValidatorSet,
         kind: BlockKind,
@@ -547,11 +599,41 @@ mod tests {
         )
     }
 
+    fn rehash_record(sql: &rusqlite::Connection) {
+        use sha2::{Digest, Sha256};
+        let mut values: Vec<Vec<u8>> = sql
+            .query_row(
+                "SELECT checkpoint_block,p_digest,commit_sequence,context_digest,predecessor_edge,
+                    checkpoint_parent_header,checkpoint_header,checkpoint_finality,anchor_kernel,
+                    next_epoch_commitment,new_validator_set,new_parameters
+             FROM native_later_epoch_finality_v1",
+                [],
+                |row| (0..12).map(|i| row.get(i)).collect(),
+            )
+            .unwrap();
+        for value in &mut values[5..] {
+            *value = Sha256::digest(&*value).to_vec();
+        }
+        values.insert(0, native_checkpoint_fixture_config_v1().store_id().to_vec());
+        let parts = values.iter().map(Vec::as_slice).collect::<Vec<_>>();
+        let digest = trnm_finality_types::hash_domain(
+            "trnm.native-application.later-epoch-finality-record.v1",
+            &parts,
+        );
+        sql.execute(
+            "UPDATE native_later_epoch_finality_v1 SET record_digest=?",
+            [digest.as_slice()],
+        )
+        .unwrap();
+    }
+
     #[test]
     fn later_checkpoint_bridge_accepts_real_h17_c18_s19_s20_evidence() {
         let directory = tempfile::tempdir().unwrap();
-        let fixture =
-            build_native_checkpoint_fixture_v1(&directory.path().join("application.sqlite3"));
+        let path = std::env::var_os("TRNM_LATER_EPOCH_CRASH_STORE")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| directory.path().join("application.sqlite3"));
+        let fixture = build_native_checkpoint_fixture_v1(&path);
         let app = fixture.application;
         let confirmed = app
             .confirm_poco_checkpoint_v0(
@@ -949,6 +1031,227 @@ mod tests {
             observed.joint_handoff().terminal_old_height(),
             Height::new(20)
         );
+        assert!(
+            app.commit_later_epoch_checkpoint_finality_v1(&observed)
+                .is_err(),
+            "schema4 cannot silently enter the later commit path"
+        );
+        let expected_parent = app.confirmed_committed_head_v0().unwrap();
+        // The strict observation is now consumed by the explicit schema-8
+        // owner.  The migration itself is opt-in and preserves the schema-4
+        // rows; commit/retry must survive a fresh owner reopen.
+        app.upgrade_later_epoch_schema_v1(&app.confirmed_committed_head_v0().unwrap())
+            .unwrap();
+        app.upgrade_later_epoch_schema_v1(&expected_parent).unwrap();
+        if std::env::var_os("TRNM_LATER_EPOCH_CRASH_STORE").is_some() {
+            std::fs::write(
+                path.with_extension("later-proof"),
+                serde_json::to_vec(&vec![
+                    parent_bytes.clone(),
+                    checkpoint_bytes.clone(),
+                    finality_bytes.clone(),
+                    anchor_bytes.clone(),
+                    commitment_bytes.clone(),
+                    new_set_bytes.clone(),
+                    new_parameters_bytes.clone(),
+                ])
+                .unwrap(),
+            )
+            .unwrap();
+        }
+        let committed = app
+            .commit_later_epoch_checkpoint_finality_v1(&observed)
+            .unwrap();
+        assert_eq!(
+            committed.head().block_id().as_bytes(),
+            checkpoint_header.id().as_bytes()
+        );
+        assert_eq!(
+            app.confirmed_committed_head_v0().unwrap(),
+            *committed.head()
+        );
+        let retried = app
+            .commit_later_epoch_checkpoint_finality_v1(&observed)
+            .unwrap();
+        assert_eq!(retried.commit_sequence(), committed.commit_sequence());
+        drop(app);
+        let config = native_checkpoint_fixture_config_v1();
+        let reopened = DurableNativeApplicationV0::open(&path, config).unwrap();
+        assert_eq!(
+            reopened
+                .confirmed_committed_head_v0()
+                .unwrap()
+                .block_id()
+                .as_bytes(),
+            checkpoint_header.id().as_bytes()
+        );
+        let record_count: i64 = rusqlite::Connection::open(&path)
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM native_later_epoch_finality_v1",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(record_count, 1);
+        assert!(
+            reopened
+                .commit_later_epoch_checkpoint_finality_v1(&observed)
+                .is_err(),
+            "old owner observation cannot authorize a reopened owner"
+        );
+        let recovered = reopened
+            .recover_later_epoch_checkpoint_commit_v1(*checkpoint_header.id().as_bytes())
+            .unwrap();
+        assert_eq!(recovered.commit_sequence(), committed.commit_sequence());
+        drop(reopened);
+        let sql = rusqlite::Connection::open(&path).unwrap();
+        let original_finality: Vec<u8> = sql
+            .query_row(
+                "SELECT checkpoint_finality FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?",
+                [checkpoint_header.id().as_bytes().as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        sql.execute(
+            "UPDATE native_later_epoch_finality_v1 SET checkpoint_finality=zeroblob(length(checkpoint_finality)) WHERE checkpoint_block=?",
+            [checkpoint_header.id().as_bytes().as_slice()],
+        )
+        .unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err()
+        );
+        sql.execute(
+            "UPDATE native_later_epoch_finality_v1 SET checkpoint_finality=? WHERE checkpoint_block=?",
+            rusqlite::params![original_finality, checkpoint_header.id().as_bytes().as_slice()],
+        )
+        .unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+        );
+        // Corrupt a signature and recompute the complete local checksum. The
+        // cryptographic verifier, not the checksum, must reject cold recovery.
+        let original: Vec<u8> = sql
+            .query_row(
+                "SELECT checkpoint_finality FROM native_later_epoch_finality_v1",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        let mut bad_signature = original.clone();
+        *bad_signature.last_mut().unwrap() ^= 1;
+        sql.execute(
+            "UPDATE native_later_epoch_finality_v1 SET checkpoint_finality=?",
+            [&bad_signature],
+        )
+        .unwrap();
+        rehash_record(&sql);
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err()
+        );
+        sql.execute(
+            "UPDATE native_later_epoch_finality_v1 SET checkpoint_finality=?",
+            [&original],
+        )
+        .unwrap();
+        rehash_record(&sql);
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+        );
+        // Every committed checkpoint needs its retained strict record even
+        // when all of its native execution data are otherwise unchanged.
+        sql.execute_batch("CREATE TEMP TABLE saved_later AS SELECT * FROM native_later_epoch_finality_v1; DELETE FROM native_later_epoch_finality_v1;").unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err()
+        );
+        sql.execute_batch("INSERT INTO native_later_epoch_finality_v1 SELECT * FROM saved_later;")
+            .unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+        );
         drop(checkpoint_p);
+    }
+    #[cfg(unix)]
+    #[test]
+    fn later_checkpoint_sigkill_commit_cuts_recover_exact_native_and_proof_record() {
+        for stage in [
+            "later_epoch_before_commit",
+            "later_epoch_after_commit",
+            "later_epoch_after_fsync",
+        ] {
+            let directory = tempfile::tempdir().unwrap();
+            let path = directory.path().join("application.sqlite3");
+            let marker = directory.path().join("ready");
+            let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+                .args(["--exact", "later_epoch_checkpoint_bridge::tests::later_checkpoint_bridge_accepts_real_h17_c18_s19_s20_evidence", "--nocapture"])
+                .env("TRNM_LATER_EPOCH_CRASH_STORE", &path)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE", stage)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER", &marker)
+                .spawn().unwrap();
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(90);
+            while !marker.exists() && std::time::Instant::now() < deadline {
+                if child.try_wait().unwrap().is_some() {
+                    break;
+                }
+                std::thread::sleep(std::time::Duration::from_millis(10));
+            }
+            if !marker.exists() {
+                let _ = child.kill();
+                let _ = child.wait();
+                panic!("later checkpoint child did not reach {stage}");
+            }
+            child.kill().unwrap();
+            assert!(!child.wait().unwrap().success());
+            let bytes: Vec<Vec<u8>> =
+                serde_json::from_slice(&std::fs::read(path.with_extension("later-proof")).unwrap())
+                    .unwrap();
+            let app =
+                DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1())
+                    .unwrap();
+            let checkpoint = decode_block_header_v0_exact(&bytes[1]).unwrap();
+            assert_eq!(
+                app.confirmed_committed_head_v0().unwrap().height().get(),
+                if stage == "later_epoch_before_commit" {
+                    17
+                } else {
+                    18
+                }
+            );
+            if stage == "later_epoch_before_commit" {
+                assert!(app
+                    .recover_later_epoch_checkpoint_commit_v1(*checkpoint.id().as_bytes())
+                    .is_err());
+                let proof = app
+                    .verify_later_epoch_checkpoint_finality_v1(
+                        app.inspect_later_epoch_checkpoint_context_v1().unwrap(),
+                        &bytes[0],
+                        &bytes[1],
+                        &bytes[2],
+                        &bytes[3],
+                        &bytes[4],
+                        &bytes[5],
+                        &bytes[6],
+                    )
+                    .unwrap();
+                let _ = app
+                    .commit_later_epoch_checkpoint_finality_v1(&proof)
+                    .unwrap();
+            }
+            let committed = app
+                .recover_later_epoch_checkpoint_commit_v1(*checkpoint.id().as_bytes())
+                .unwrap();
+            assert_eq!(committed.head().height().get(), 18);
+            let sequence = committed.commit_sequence();
+            drop(app);
+            let app =
+                DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1())
+                    .unwrap();
+            assert_eq!(
+                app.recover_later_epoch_checkpoint_commit_v1(*checkpoint.id().as_bytes())
+                    .unwrap()
+                    .commit_sequence(),
+                sequence
+            );
+        }
     }
 }

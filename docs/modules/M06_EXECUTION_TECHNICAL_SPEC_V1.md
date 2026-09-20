@@ -432,8 +432,10 @@ only a recursively audited, owner-affine history: every consumed P must carry
 the complete ordered lineage, while a second unconsumed row, duplicate height,
 corrupt lineage, missing predecessor, or concurrent mutation fails closed.
 This closes the observation/recovery contract without authorizing a second
-edge; schema7 storage migration and the later checkpoint two-seal + handoff
-finality bridge remain explicit prerequisites for multi-epoch issuance.
+edge. The explicit schema8 M08 consumer now durably commits a strictly
+verified later checkpoint and retains all CEV0 preimages for restart auditing;
+schema7 multi-edge storage, the second durable edge and first-new execution
+remain explicit prerequisites for full multi-epoch issuance.
 
 `DurableNativeApplicationV0::inspect_later_epoch_checkpoint_context_v1()` is
 the owner-affine context boundary. It re-reads the consumed edge lineage and
@@ -448,5 +450,6 @@ cryptographic work. The feature-gated fixture proves H11-H17 ordinary old-epoch
 execution followed by C18/S19/S20 evidence and rejects a commitment-byte
 mutation. The returned observation is read-only: it cannot prepare, sign or
 commit a second edge, and the legacy `require_later_epoch_checkpoint_bridge_v1()`
-continues to fail closed. A versioned multi-edge storage/commit bridge must bind
-the checkpoint P/state-root before any later epoch becomes durable authority.
+continues to fail closed. M08's schema8 commit binds the checkpoint P/state
+root before the later checkpoint becomes durable; the second edge and new
+epoch application authority remain separate gates.

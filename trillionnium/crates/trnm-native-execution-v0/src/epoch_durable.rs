@@ -7,6 +7,10 @@ use trnm_consensus_types::BlockKind;
 use trnm_native_application::{NativeEpochBlockExecutionRequestV1, NativeExecutedEpochBlockV1};
 
 pub(super) const SCHEMA_VERSION: u64 = 4;
+/// Versioned later-edge/finality storage.  The original schema-4 rows remain
+/// byte-for-byte compatible; this version is entered only by the explicit
+/// migration below and is never selected by ordinary open.
+pub(super) const LATER_SCHEMA_VERSION: u64 = 8;
 const MAX_P_ROWS: usize = 128;
 const MAX_PREPARED_BYTES: usize = 2 * 1024 * 1024 * 1024;
 const MAX_SNAPSHOT_BYTES: usize = 256 * 1024 * 1024;
@@ -75,6 +79,33 @@ pub(super) const SCHEMA: &[(&str, &str)] = &[
        edge_lineage BLOB NOT NULL, context_digest BLOB NOT NULL CHECK(length(context_digest)=32)
      )"),
 ];
+
+pub(super) const LATER_SCHEMA: &[(&str, &str)] = &[(
+    "native_later_epoch_finality_v1",
+    "CREATE TABLE native_later_epoch_finality_v1 (
+       checkpoint_block BLOB PRIMARY KEY CHECK(length(checkpoint_block)=32),
+       p_digest BLOB NOT NULL CHECK(length(p_digest)=32),
+       commit_sequence BLOB NOT NULL CHECK(length(commit_sequence)=8),
+       context_digest BLOB NOT NULL CHECK(length(context_digest)=32),
+       predecessor_edge BLOB NOT NULL CHECK(length(predecessor_edge)=32),
+       checkpoint_parent_header BLOB NOT NULL,
+       checkpoint_header BLOB NOT NULL,
+       checkpoint_finality BLOB NOT NULL,
+       anchor_kernel BLOB NOT NULL,
+       next_epoch_commitment BLOB NOT NULL,
+       new_validator_set BLOB NOT NULL,
+       new_parameters BLOB NOT NULL,
+       record_digest BLOB NOT NULL CHECK(length(record_digest)=32)
+     )",
+)];
+
+pub(super) const fn is_epoch_schema(version: u64) -> bool {
+    version == SCHEMA_VERSION || version == LATER_SCHEMA_VERSION
+}
+
+pub(super) const fn has_later_schema(version: u64) -> bool {
+    version == LATER_SCHEMA_VERSION
+}
 
 #[derive(Debug, Clone)]
 struct StoredEpochPV1 {
@@ -357,6 +388,66 @@ pub(super) fn schema_version(connection: &Connection) -> DurableResult<u64> {
 }
 
 impl DurableNativeApplicationV0 {
+    /// Recover the current later checkpoint after an uncertain commit or a
+    /// process restart. Revalidates retained signatures and every native join
+    /// before returning a receipt affiliated with this newly opened owner.
+    pub fn recover_later_epoch_checkpoint_commit_v1(
+        &self,
+        checkpoint_block: [u8; 32],
+    ) -> Result<CommittedNativeEpochExecutionV1> {
+        let _guard = self.lock_operation()?;
+        sync_store_commit_boundary_v0(&self.path)?;
+        let metadata = fresh_validate_v0(&self.path, &self.config)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        ensure!(
+            has_later_schema(schema_version(&connection)?),
+            "later recovery requires schema8"
+        );
+        let p = load_p(&connection, &checkpoint_block)?.context("later recovery P missing")?;
+        validate_p(&connection, &self.config, &p)?;
+        ensure!(
+            p.status == 1
+                && p.target_head()? == metadata.head
+                && decode_header(&p.header)?.block_kind() == BlockKind::EpochCheckpoint,
+            "later recovery requires current committed checkpoint"
+        );
+        let sequence = p
+            .commit_sequence
+            .context("later recovery sequence missing")?;
+        ensure!(
+            fresh_validate_v0(&self.path, &self.config)? == metadata,
+            "later recovery changed during readback"
+        );
+        Ok(CommittedNativeEpochExecutionV1 {
+            owner: Arc::clone(&self.owner_affinity),
+            head: p.target_head()?,
+            p_digest: p.p_digest,
+            commit_sequence: sequence,
+        })
+    }
+
+    /// Commit a strictly verified later-epoch checkpoint through the explicit
+    /// schema-8 ledger.  The checkpoint is an application block (its seals
+    /// remain consensus-only), so the P/metadata/context update and the
+    /// proof record are one SQLite transaction followed by the normal fsync
+    /// and immutable readback barriers.
+    pub fn commit_later_epoch_checkpoint_finality_v1(
+        &self,
+        finality: &crate::LaterEpochCheckpointFinalityV1,
+    ) -> Result<CommittedNativeEpochExecutionV1> {
+        ensure!(finality.has_owner_v1(self), "later finality foreign owner");
+        let preimages = finality.durable_preimages_v1()?;
+        let block = *finality.checkpoint_header().id().as_bytes();
+        let prepared = self.reopen_prepared_epoch_execution_v1(block)?;
+        ensure!(
+            prepared.row.artifact_kind == 0
+                && prepared.header()? == *finality.checkpoint_header()
+                && decode_lineage(&prepared.row.lineage)? == finality.lineage(),
+            "later checkpoint P/header/lineage binding"
+        );
+        self.commit_epoch_p(&prepared, Some(&preimages))
+    }
+
     pub fn preview_epoch_descendant_v1(
         &self,
         parent: &PreparedNativeEpochExecutionV1,
@@ -398,7 +489,7 @@ impl DurableNativeApplicationV0 {
             &metadata.head == expected,
             "epoch migration predecessor mismatch"
         );
-        if schema_version(&connection)? == SCHEMA_VERSION {
+        if is_epoch_schema(schema_version(&connection)?) {
             return Ok(());
         }
         ensure!(
@@ -421,6 +512,63 @@ impl DurableNativeApplicationV0 {
         ensure!(
             after == metadata,
             "epoch migration changed application state"
+        );
+        Ok(())
+    }
+
+    /// Explicit schema-4 to schema-8 migration for later checkpoint/finality
+    /// records.  The old edge and P tables are retained unchanged.  The new
+    /// table is an append-only, checkpoint-keyed commit ledger; opening a
+    /// schema-4 store never creates it and therefore cannot silently grant a
+    /// later-epoch commit capability.
+    pub fn upgrade_later_epoch_schema_v1(&self, expected: &ApplicationHeadV0) -> Result<()> {
+        let _guard = self.lock_operation()?;
+        let mut connection = open_writable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        ensure!(
+            &metadata.head == expected,
+            "later schema migration predecessor mismatch"
+        );
+        let version = schema_version(&connection)?;
+        if version == LATER_SCHEMA_VERSION {
+            ensure!(
+                later_table_installed(&connection)?,
+                "later schema table missing"
+            );
+            drop(connection);
+            sync_store_commit_boundary_v0(&self.path)?;
+            ensure!(
+                fresh_validate_v0(&self.path, &self.config)? == metadata,
+                "later schema retry changed application state"
+            );
+            return Ok(());
+        }
+        ensure!(
+            version == SCHEMA_VERSION,
+            "explicit schema4 later migration required"
+        );
+        let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        tx.execute_batch(LATER_SCHEMA[0].1)?;
+        ensure!(
+            tx.execute(
+                "UPDATE native_application_metadata_v0 SET schema_version=?1 WHERE singleton=1 AND schema_version=?2 AND durable_sequence=?3",
+                params![
+                    LATER_SCHEMA_VERSION.to_be_bytes().as_slice(),
+                    SCHEMA_VERSION.to_be_bytes().as_slice(),
+                    metadata.durable_sequence.to_be_bytes().as_slice()
+                ]
+            )? == 1,
+            "later schema migration CAS failed"
+        );
+        tx.commit()?;
+        drop(connection);
+        sync_store_commit_boundary_v0(&self.path)?;
+        let after = fresh_validate_v0(&self.path, &self.config)?;
+        ensure!(
+            after == metadata,
+            "later schema migration changed application state"
         );
         Ok(())
     }
@@ -838,6 +986,331 @@ fn decode_lineage(bytes: &[u8]) -> Result<Vec<[u8; 32]>> {
     Ok(values)
 }
 
+fn later_table_installed(connection: &Connection) -> Result<bool> {
+    Ok(connection.query_row(
+        "SELECT EXISTS(SELECT 1 FROM sqlite_schema WHERE type='table' AND name='native_later_epoch_finality_v1')",
+        [],
+        |row| row.get(0),
+    )?)
+}
+
+fn later_record_digest(
+    config: &NativeApplicationConfigV0,
+    checkpoint_block: &[u8; 32],
+    p_digest: &[u8; 32],
+    sequence: u64,
+    preimages: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
+) -> [u8; 32] {
+    hash_domain(
+        "trnm.native-application.later-epoch-finality-record.v1",
+        &[
+            &config.store_id,
+            checkpoint_block,
+            p_digest,
+            &sequence.to_be_bytes(),
+            &preimages.context_digest,
+            &preimages.predecessor_edge,
+            &sha256_v0(&preimages.checkpoint_parent_header),
+            &sha256_v0(&preimages.checkpoint_header),
+            &sha256_v0(&preimages.checkpoint_finality),
+            &sha256_v0(&preimages.anchor_kernel),
+            &sha256_v0(&preimages.next_epoch_commitment),
+            &sha256_v0(&preimages.new_validator_set),
+            &sha256_v0(&preimages.new_parameters),
+        ],
+    )
+}
+
+fn validate_later_records(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+) -> Result<()> {
+    let version = schema_version(connection)?;
+    if !has_later_schema(version) {
+        return Ok(());
+    }
+    ensure!(
+        later_table_installed(connection)?,
+        "later finality table missing"
+    );
+    let count: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM native_later_epoch_finality_v1",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        count >= 0 && count as usize <= MAX_EDGES,
+        "later finality count budget"
+    );
+    // Bound storage before allocating blobs, including a total record budget.
+    let invalid: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM native_later_epoch_finality_v1 WHERE
+         typeof(checkpoint_parent_header)!='blob' OR length(checkpoint_parent_header) NOT BETWEEN 1 AND 4096 OR
+         typeof(checkpoint_header)!='blob' OR length(checkpoint_header) NOT BETWEEN 1 AND 4096 OR
+         typeof(checkpoint_finality)!='blob' OR length(checkpoint_finality) NOT BETWEEN 1 AND 67108864 OR
+         typeof(anchor_kernel)!='blob' OR length(anchor_kernel) NOT BETWEEN 1 AND 67108864 OR
+         typeof(next_epoch_commitment)!='blob' OR length(next_epoch_commitment) NOT BETWEEN 1 AND 4096 OR
+         typeof(new_validator_set)!='blob' OR length(new_validator_set) NOT BETWEEN 1 AND 1048576 OR
+         typeof(new_parameters)!='blob' OR length(new_parameters) NOT BETWEEN 1 AND 4096 OR
+         length(checkpoint_parent_header)+length(checkpoint_header)+length(checkpoint_finality)+length(anchor_kernel)+length(next_epoch_commitment)+length(new_validator_set)+length(new_parameters)>67108864",
+        [], |row| row.get(0),
+    )?;
+    ensure!(invalid == 0, "later finality byte/type budget");
+    let mut query = connection.prepare(
+        "SELECT checkpoint_block,p_digest,commit_sequence,context_digest,predecessor_edge,
+                checkpoint_parent_header,checkpoint_header,checkpoint_finality,anchor_kernel,
+                next_epoch_commitment,new_validator_set,new_parameters,record_digest
+         FROM native_later_epoch_finality_v1 ORDER BY commit_sequence",
+    )?;
+    let rows = query.query_map([], |row| {
+        Ok((
+            col32(row, "checkpoint_block")?,
+            col32(row, "p_digest")?,
+            col64(row, "commit_sequence")?,
+            col32(row, "context_digest")?,
+            col32(row, "predecessor_edge")?,
+            row.get::<_, Vec<u8>>("checkpoint_parent_header")?,
+            row.get::<_, Vec<u8>>("checkpoint_header")?,
+            row.get::<_, Vec<u8>>("checkpoint_finality")?,
+            row.get::<_, Vec<u8>>("anchor_kernel")?,
+            row.get::<_, Vec<u8>>("next_epoch_commitment")?,
+            row.get::<_, Vec<u8>>("new_validator_set")?,
+            row.get::<_, Vec<u8>>("new_parameters")?,
+            col32(row, "record_digest")?,
+        ))
+    })?;
+    let mut previous_sequence = 0;
+    for row in rows {
+        let (
+            checkpoint_block,
+            p_digest,
+            sequence,
+            context_digest,
+            predecessor_edge,
+            checkpoint_parent_header,
+            checkpoint_header,
+            checkpoint_finality,
+            anchor_kernel,
+            next_epoch_commitment,
+            new_validator_set,
+            new_parameters,
+            record_digest,
+        ) = row?;
+        ensure!(
+            sequence > previous_sequence,
+            "later finality sequence order"
+        );
+        previous_sequence = sequence;
+        ensure!(
+            !checkpoint_parent_header.is_empty()
+                && checkpoint_parent_header.len() <= MAX_HEADER_BYTES,
+            "later parent header bounds"
+        );
+        ensure!(
+            !checkpoint_header.is_empty() && checkpoint_header.len() <= MAX_HEADER_BYTES,
+            "later header bounds"
+        );
+        ensure!(
+            checkpoint_finality.len() <= MAX_EPOCH_EVIDENCE_BYTES_V1,
+            "later finality bounds"
+        );
+        ensure!(
+            anchor_kernel.len() <= MAX_EPOCH_EVIDENCE_BYTES_V1,
+            "later anchor bounds"
+        );
+        ensure!(
+            next_epoch_commitment.len() <= MAX_HEADER_BYTES,
+            "later commitment bounds"
+        );
+        ensure!(
+            new_validator_set.len() <= MAX_SET_BYTES,
+            "later validator set bounds"
+        );
+        ensure!(
+            new_parameters.len() <= MAX_PARAMETERS_BYTES,
+            "later parameter bounds"
+        );
+        let preimages = crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1 {
+            context_digest,
+            predecessor_edge,
+            checkpoint_parent_header,
+            checkpoint_header,
+            checkpoint_finality,
+            anchor_kernel,
+            next_epoch_commitment,
+            new_validator_set,
+            new_parameters,
+        };
+        ensure!(
+            record_digest
+                == later_record_digest(config, &checkpoint_block, &p_digest, sequence, &preimages),
+            "later finality record digest"
+        );
+        let p = load_p(connection, &checkpoint_block)?.context("later finality P missing")?;
+        ensure!(
+            p.status == 1 && p.p_digest == p_digest && p.commit_sequence == Some(sequence),
+            "later finality committed P binding"
+        );
+        ensure!(p.artifact_kind == 0, "later finality artifact kind");
+        let header = decode_header(&p.header)?;
+        ensure!(
+            header.block_kind() == BlockKind::EpochCheckpoint,
+            "later finality checkpoint kind"
+        );
+        ensure!(
+            header
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("later header encode: {e:?}"))?
+                == preimages.checkpoint_header,
+            "later finality header binding"
+        );
+        validate_later_preimages(connection, config, &p, &preimages)?;
+    }
+    Ok(())
+}
+
+/// Strict recovery joins retained evidence to the authenticated local history.
+/// It deliberately uses no live context API: after C commits, the current
+/// head is C, whereas the observation's context is the retained C-1 commit.
+fn validate_later_preimages(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
+) -> Result<()> {
+    let parts = [
+        (&evidence.checkpoint_parent_header, MAX_HEADER_BYTES),
+        (&evidence.checkpoint_header, MAX_HEADER_BYTES),
+        (&evidence.checkpoint_finality, MAX_EPOCH_EVIDENCE_BYTES_V1),
+        (&evidence.anchor_kernel, MAX_EPOCH_EVIDENCE_BYTES_V1),
+        (&evidence.next_epoch_commitment, MAX_HEADER_BYTES),
+        (&evidence.new_validator_set, MAX_SET_BYTES),
+        (&evidence.new_parameters, MAX_PARAMETERS_BYTES),
+    ];
+    ensure!(
+        parts
+            .iter()
+            .all(|(bytes, cap)| !bytes.is_empty() && bytes.len() <= *cap)
+            && parts.iter().map(|(bytes, _)| bytes.len()).sum::<usize>()
+                <= MAX_EPOCH_EVIDENCE_BYTES_V1,
+        "later finality aggregate byte budget"
+    );
+    let lineage = decode_lineage(&p.lineage)?;
+    ensure!(
+        lineage.last() == Some(&evidence.predecessor_edge),
+        "later predecessor lineage"
+    );
+    let audited = audited_lineage(connection, config, &lineage)?;
+    let active = &audited
+        .last()
+        .context("later predecessor edge missing")?
+        .1
+        .activation;
+    let old_set = active.new_validator_set();
+    let old_parameters = active.new_consensus_parameters();
+    let header = decode_header(&p.header)?;
+    let parent = load_p(connection, p.parent.block_id().as_bytes())?
+        .context("later checkpoint parent P missing")?;
+    ensure!(
+        p.artifact_kind == 0
+            && p.parent_kind == 1
+            && parent.status == 1
+            && parent.target_head()? == p.parent
+            && parent.lineage == p.lineage
+            && p.parent_p_digest == Some(parent.p_digest)
+            && p.target_set == parent.target_set
+            && p.target_parameters == parent.target_parameters
+            && p.header == evidence.checkpoint_header
+            && parent.header == evidence.checkpoint_parent_header,
+        "later finality native parent/configuration binding"
+    );
+    ensure!(
+        evidence.context_digest
+            == context_digest(
+                config.store_id,
+                &p.parent,
+                parent
+                    .commit_sequence
+                    .context("later parent sequence missing")?,
+                &parent.target_set,
+                &parent.target_parameters,
+                &parent.lineage,
+            ),
+        "later finality original context binding"
+    );
+    let geometry = trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), old_parameters)
+        .map_err(|e| anyhow::anyhow!("later recovery geometry: {e:?}"))?;
+    ensure!(
+        header.block_kind() == BlockKind::EpochCheckpoint
+            && header.height() == geometry.checkpoint_height()
+            && header.epoch() == old_set.epoch()
+            && old_set.epoch() > config.validator_set.epoch(),
+        "later recovery checkpoint geometry"
+    );
+    let old_set_bytes = old_set
+        .try_cev0_bytes()
+        .map_err(|e| anyhow::anyhow!("later recovery old set: {e:?}"))?;
+    let old_parameters_bytes = old_parameters.canonical_bytes();
+    let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
+        trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
+            old_checkpoint_finality: &evidence.checkpoint_finality,
+            next_epoch_commitment: &evidence.next_epoch_commitment,
+            authorization_kernel: &evidence.anchor_kernel,
+            old_validator_set: &old_set_bytes,
+            old_consensus_parameters: &old_parameters_bytes,
+            new_validator_set: &evidence.new_validator_set,
+            new_consensus_parameters: &evidence.new_parameters,
+            authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
+        },
+        old_set,
+        old_parameters,
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .map_err(|e| anyhow::anyhow!("later recovery bounded decode: {e:?}"))?;
+    let verified = trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
+        decoded.old_checkpoint_finality(),
+        decoded.next_epoch_commitment(),
+        decoded.authorization_kernel(),
+        old_set,
+        old_parameters,
+        decoded.new_validator_set(),
+        decoded.new_consensus_parameters(),
+        decoded.authenticated_checkpoint_parent_header(),
+    )
+    .map_err(|e| anyhow::anyhow!("later recovery strict finality: {e:?}"))?;
+    ensure!(
+        verified
+            .old_checkpoint_finality()
+            .finalized_block()
+            .header()
+            == &header,
+        "later recovery proof checkpoint substitution"
+    );
+    let cutoff_height = geometry
+        .checkpoint_height()
+        .get()
+        .checked_sub(old_parameters.snapshot_lead_blocks())
+        .context("later cutoff underflow")?;
+    let cutoff = load_committed_p_by_height(connection, cutoff_height)?
+        .context("later finality cutoff P missing")?;
+    let commitment = decoded.next_epoch_commitment().fields();
+    ensure!(
+        cutoff.status == 1
+            && cutoff.lineage == p.lineage
+            && cutoff
+                .commit_sequence
+                .context("later cutoff sequence missing")?
+                <= parent
+                    .commit_sequence
+                    .context("later parent sequence missing")?
+            && commitment.snapshot_cutoff_height.get() == cutoff_height
+            && commitment.snapshot_state_root.as_bytes()
+                == cutoff.target_head()?.state_root().as_bytes(),
+        "later finality cutoff binding"
+    );
+    Ok(())
+}
+
 impl DurableNativeApplicationV0 {
     /// Read the complete retained schema-4 epoch-edge history and recursively
     /// audit every edge before returning it.  This is deliberately a
@@ -849,7 +1322,7 @@ impl DurableNativeApplicationV0 {
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         ensure!(
-            schema_version(&connection)? == SCHEMA_VERSION,
+            is_epoch_schema(schema_version(&connection)?),
             "epoch history requires schema4"
         );
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -955,7 +1428,7 @@ impl DurableNativeApplicationV0 {
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         ensure!(
-            schema_version(&connection)? == SCHEMA_VERSION,
+            is_epoch_schema(schema_version(&connection)?),
             "later checkpoint context requires schema4"
         );
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -1043,6 +1516,12 @@ impl DurableNativeApplicationV0 {
             after == metadata,
             "later checkpoint context concurrent mutation"
         );
+        let after_history = self.read_epoch_edge_history_v1()?;
+        ensure!(
+            after_history.application_head == history.application_head
+                && after_history.entries == history.entries,
+            "later checkpoint context lineage changed"
+        );
         Ok(LaterEpochCheckpointContextV1 {
             owner: Arc::clone(&self.owner_affinity),
             application_head: metadata.head,
@@ -1124,7 +1603,7 @@ impl DurableNativeApplicationV0 {
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         ensure!(
-            schema_version(&connection)? == SCHEMA_VERSION,
+            is_epoch_schema(schema_version(&connection)?),
             "schema4 finalized read requires schema4"
         );
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -1192,7 +1671,7 @@ impl DurableNativeApplicationV0 {
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         ensure!(
-            schema_version(&connection)? == SCHEMA_VERSION,
+            is_epoch_schema(schema_version(&connection)?),
             "explicit epoch schema migration required"
         );
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -1443,6 +1922,21 @@ fn validate_p_with_seen(
         "epoch P phase binding"
     );
     let header = decode_header(&p.header)?;
+    if p.status == 1 && header.block_kind() == BlockKind::EpochCheckpoint {
+        ensure!(
+            has_later_schema(schema_version(connection)?),
+            "committed later checkpoint requires schema8"
+        );
+        let count: i64 = connection.query_row(
+            "SELECT COUNT(*) FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1 AND p_digest=?2 AND commit_sequence=?3",
+            params![p.block_id.as_slice(), p.p_digest.as_slice(), p.commit_sequence.context("later sequence")?.to_be_bytes().as_slice()],
+            |row| row.get(0),
+        )?;
+        ensure!(
+            count == 1,
+            "committed later checkpoint proof record missing"
+        );
+    }
     ensure!(
         header.id().as_bytes() == &p.block_id
             && header.height().get() == p.target_height
@@ -1654,6 +2148,7 @@ pub(super) fn inventory(
     config: &NativeApplicationConfigV0,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
     (|| -> Result<_> {
+        validate_later_records(connection, config)?;
         // Even an installed edge not yet referenced by a P must retain valid evidence.
         for edge in load_edges(connection, config)? {
             audited_lineage(connection, config, &[edge.binding])?;
@@ -1732,7 +2227,7 @@ impl DurableNativeApplicationV0 {
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         ensure!(
-            schema_version(&connection)? == SCHEMA_VERSION,
+            is_epoch_schema(schema_version(&connection)?),
             "epoch schema unavailable"
         );
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -1962,7 +2457,7 @@ impl DurableNativeApplicationV0 {
         let mut connection = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         ensure!(
-            schema_version(&connection)? == SCHEMA_VERSION,
+            is_epoch_schema(schema_version(&connection)?),
             "epoch schema unavailable"
         );
         let metadata = load_metadata_v0(&connection, &self.config)?;
@@ -2262,12 +2757,13 @@ impl DurableNativeApplicationV0 {
             final_header == header,
             "strict finality differs from complete retained header"
         );
-        self.commit_epoch_p(prepared)
+        self.commit_epoch_p(prepared, None)
     }
 
     fn commit_epoch_p(
         &self,
         prepared: &PreparedNativeEpochExecutionV1,
+        later: Option<&crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1>,
     ) -> Result<CommittedNativeEpochExecutionV1> {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
@@ -2282,10 +2778,46 @@ impl DurableNativeApplicationV0 {
             "epoch commit P substituted"
         );
         validate_p(&connection, &self.config, &p)?;
+        if let Some(evidence) = later {
+            ensure!(
+                has_later_schema(schema_version(&connection)?),
+                "explicit schema8 later finality revision required"
+            );
+            validate_later_preimages(&connection, &self.config, &p, evidence)?;
+            if p.status == 0 {
+                let count: u64 = connection.query_row(
+                    "SELECT COUNT(*) FROM native_later_epoch_finality_v1",
+                    [],
+                    |row| row.get(0),
+                )?;
+                ensure!(
+                    count < MAX_EDGES as u64,
+                    "later checkpoint ledger capacity unavailable"
+                );
+            }
+        } else {
+            ensure!(
+                decode_header(&p.header)?.block_kind() != BlockKind::EpochCheckpoint,
+                "later-epoch checkpoint finality bridge required"
+            );
+        }
         if p.status == 1 {
             let sequence = p
                 .commit_sequence
                 .context("committed epoch sequence missing")?;
+            if let Some(evidence) = later {
+                ensure!(
+                    metadata.head == p.target_head()?,
+                    "later checkpoint retry is no longer current"
+                );
+                let digest =
+                    later_record_digest(&self.config, &p.block_id, &p.p_digest, sequence, evidence);
+                let retained: [u8; 32] = connection.query_row(
+                    "SELECT record_digest FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
+                    [p.block_id.as_slice()], |row| col32(row, "record_digest"),
+                )?;
+                ensure!(digest == retained, "later checkpoint conflicting retry");
+            }
             drop(connection);
             sync_store_commit_boundary_v0(&self.path)?;
             fresh_validate_v0(&self.path, &self.config)?;
@@ -2340,6 +2872,28 @@ impl DurableNativeApplicationV0 {
         tx.execute("INSERT INTO native_application_epoch_context_v1 VALUES (1,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(singleton) DO UPDATE SET head_block=excluded.head_block,head_root=excluded.head_root,head_commit_id=excluded.head_commit_id,head_height=excluded.head_height,head_commit_sequence=excluded.head_commit_sequence,active_set=excluded.active_set,active_parameters=excluded.active_parameters,edge_lineage=excluded.edge_lineage,context_digest=excluded.context_digest",
             params![self.config.store_id.as_slice(),head.block_id().as_bytes().as_slice(),head.state_root().as_bytes().as_slice(),head.commit_id().as_bytes().as_slice(),head.height().get().to_be_bytes().as_slice(),
                 sequence.to_be_bytes().as_slice(),&p.target_set,&p.target_parameters,&p.lineage,context.as_slice()])?;
+        if let Some(evidence) = later {
+            let digest =
+                later_record_digest(&self.config, &p.block_id, &p.p_digest, sequence, evidence);
+            tx.execute(
+                "INSERT INTO native_later_epoch_finality_v1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                params![
+                    p.block_id.as_slice(),
+                    p.p_digest.as_slice(),
+                    sequence.to_be_bytes().as_slice(),
+                    evidence.context_digest.as_slice(),
+                    evidence.predecessor_edge.as_slice(),
+                    &evidence.checkpoint_parent_header,
+                    &evidence.checkpoint_header,
+                    &evidence.checkpoint_finality,
+                    &evidence.anchor_kernel,
+                    &evidence.next_epoch_commitment,
+                    &evidence.new_validator_set,
+                    &evidence.new_parameters,
+                    digest.as_slice(),
+                ],
+            )?;
+        }
         let pruned = prepared_blocks_not_descending_from_v0(&inventory, p.block_id);
         for block in pruned {
             tx.execute(
@@ -2352,14 +2906,26 @@ impl DurableNativeApplicationV0 {
             )?;
         }
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0("epoch_before_commit");
+        park_for_sigkill_commit_boundary_v0(if later.is_some() {
+            "later_epoch_before_commit"
+        } else {
+            "epoch_before_commit"
+        });
         tx.commit()?;
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0("epoch_after_commit");
+        park_for_sigkill_commit_boundary_v0(if later.is_some() {
+            "later_epoch_after_commit"
+        } else {
+            "epoch_after_commit"
+        });
         drop(connection);
         sync_store_commit_boundary_v0(&self.path)?;
         #[cfg(test)]
-        park_for_sigkill_commit_boundary_v0("epoch_after_fsync");
+        park_for_sigkill_commit_boundary_v0(if later.is_some() {
+            "later_epoch_after_fsync"
+        } else {
+            "epoch_after_fsync"
+        });
         let fresh = fresh_validate_v0(&self.path, &self.config)?;
         ensure!(
             fresh.head == head && fresh.durable_sequence == sequence,
@@ -2405,52 +2971,6 @@ fn context_digest(
             &sha256_v0(lineage),
         ],
     )
-}
-
-#[cfg(test)]
-mod descendant_kind_tests {
-    use super::*;
-    use trnm_consensus_types::{
-        BlockId, ChainId, ConsensusParametersHash, Epoch, EvidenceRoot, GenesisHash, Height,
-        NextEpochCommitmentHash, PayloadDigest, ProtocolVersion, ReceiptsRoot, StateRoot,
-        ValidatorId, ValidatorSetId, View,
-    };
-
-    fn header(kind: BlockKind, commitment: Option<NextEpochCommitmentHash>) -> BlockHeader {
-        BlockHeader::new(
-            GenesisHash::new([1; 32]),
-            ChainId::new("epoch-descendant-kind-test").unwrap(),
-            ProtocolVersion::V0,
-            Epoch::new(0),
-            View::new(1),
-            Height::new(1),
-            kind,
-            BlockId::new([2; 32]),
-            ValidatorId::from_bytes(b"validator-0").unwrap(),
-            ValidatorSetId::new([3; 32]),
-            ConsensusParametersHash::new([4; 32]),
-            PayloadDigest::new([5; 32]),
-            StateRoot::new([6; 32]),
-            ReceiptsRoot::new([7; 32]),
-            EvidenceRoot::new([8; 32]),
-            1,
-            commitment,
-        )
-        .unwrap()
-    }
-
-    #[test]
-    fn descendant_kind_requires_a_dedicated_checkpoint_bridge() {
-        let commitment = Some(NextEpochCommitmentHash::new([9; 32]));
-        assert!(validate_epoch_descendant_kind(&header(BlockKind::Regular, None)).is_ok());
-        assert!(
-            validate_epoch_descendant_kind(&header(BlockKind::EpochCheckpoint, commitment)).is_ok()
-        );
-        assert!(
-            validate_epoch_descendant_kind(&header(BlockKind::EpochSeal1, commitment)).is_err()
-        );
-        assert!(validate_epoch_descendant_kind(&header(BlockKind::EpochHandoff, None)).is_err());
-    }
 }
 
 fn validate_context(
@@ -2499,4 +3019,50 @@ fn validate_context(
         "committed epoch context mismatch"
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod descendant_kind_tests {
+    use super::*;
+    use trnm_consensus_types::{
+        BlockId, ChainId, ConsensusParametersHash, Epoch, EvidenceRoot, GenesisHash, Height,
+        NextEpochCommitmentHash, PayloadDigest, ProtocolVersion, ReceiptsRoot, StateRoot,
+        ValidatorId, ValidatorSetId, View,
+    };
+
+    fn header(kind: BlockKind, commitment: Option<NextEpochCommitmentHash>) -> BlockHeader {
+        BlockHeader::new(
+            GenesisHash::new([1; 32]),
+            ChainId::new("epoch-descendant-kind-test").unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            View::new(1),
+            Height::new(1),
+            kind,
+            BlockId::new([2; 32]),
+            ValidatorId::from_bytes(b"validator-0").unwrap(),
+            ValidatorSetId::new([3; 32]),
+            ConsensusParametersHash::new([4; 32]),
+            PayloadDigest::new([5; 32]),
+            StateRoot::new([6; 32]),
+            ReceiptsRoot::new([7; 32]),
+            EvidenceRoot::new([8; 32]),
+            1,
+            commitment,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn descendant_kind_requires_a_dedicated_checkpoint_bridge() {
+        let commitment = Some(NextEpochCommitmentHash::new([9; 32]));
+        assert!(validate_epoch_descendant_kind(&header(BlockKind::Regular, None)).is_ok());
+        assert!(
+            validate_epoch_descendant_kind(&header(BlockKind::EpochCheckpoint, commitment)).is_ok()
+        );
+        assert!(
+            validate_epoch_descendant_kind(&header(BlockKind::EpochSeal1, commitment)).is_err()
+        );
+        assert!(validate_epoch_descendant_kind(&header(BlockKind::EpochHandoff, None)).is_err());
+    }
 }
