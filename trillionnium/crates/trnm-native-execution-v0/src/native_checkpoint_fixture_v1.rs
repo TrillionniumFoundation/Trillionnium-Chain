@@ -788,6 +788,7 @@ pub fn epoch_first_finality(
 /// evidence for the schema7 ordinary descendant commit path; it does not
 /// create checkpoint/two-seal/handoff evidence.
 #[cfg(any(test, feature = "test-fixtures"))]
+#[allow(dead_code)]
 pub fn ordinary_epoch_finality(
     edge: &crate::AuthenticatedEpochApplicationEdgeV1,
     parent: &BlockHeader,

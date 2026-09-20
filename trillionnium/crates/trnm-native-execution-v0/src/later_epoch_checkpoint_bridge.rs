@@ -380,3 +380,561 @@ fn ensure_checkpoint_geometry(
     );
     Ok(())
 }
+
+#[cfg(all(test, feature = "test-fixtures"))]
+mod tests {
+    use super::*;
+    use crate::poco_checkpoint::native_checkpoint_fixture_v1::{
+        build_native_checkpoint_fixture_v1, epoch_first_finality, ordinary_epoch_finality,
+    };
+    use crate::NativeBlockPreviewRequestV0;
+    use ed25519_dalek::{Signer, SigningKey};
+    use trnm_consensus_types::{
+        BlockId, Epoch, EpochAnchorAuthorizationKernelV0, EpochFallbackReasonV0, EvidenceRoot,
+        FinalityProofV0, HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields,
+        Height, NextEpochCommitmentV0Fields, OrderedRootV0, PayloadDigest, ProposalWitnessV0,
+        ProtocolVersion, QcReferenceV0, QuorumCertificate, ReceiptsRoot, RootKind, Signature64,
+        SignatureShareV0, StateRoot, Validator, ValidatorSet, View, Vote, SCHEMA_VERSION_V0,
+    };
+    use trnm_native_application::{
+        BlockIdV0, ChainIdV0, HeightV0, NativeBlockExecutionRequestV0,
+        NativeEpochBlockExecutionRequestV1, NativeExpectedBlockCommitmentsV0,
+    };
+
+    fn key(index: usize) -> SigningKey {
+        SigningKey::from_bytes(&[20 + index as u8; 32])
+    }
+
+    fn qc(header: &BlockHeader, set: &ValidatorSet) -> QuorumCertificate {
+        let root =
+            Vote::signing_root_for_set(set, header.view(), header.height(), header.id()).unwrap();
+        let votes = set
+            .validators()
+            .iter()
+            .map(|validator| {
+                Vote::new(
+                    set.chain_id(),
+                    set.protocol_version(),
+                    set.epoch(),
+                    header.view(),
+                    header.height(),
+                    header.id(),
+                    set.id(),
+                    validator.id(),
+                    trnm_consensus_types::SignatureBytes::from_array(
+                        key(set
+                            .validators()
+                            .iter()
+                            .position(|v| v.id() == validator.id())
+                            .unwrap())
+                        .sign(root.as_bytes())
+                        .to_bytes(),
+                    ),
+                    set,
+                )
+                .unwrap()
+            })
+            .collect();
+        QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            header.view(),
+            header.height(),
+            header.id(),
+            set.id(),
+            votes,
+            set,
+        )
+        .unwrap()
+    }
+
+    fn certified(
+        header: BlockHeader,
+        justify: QuorumCertificate,
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        parent_timestamp_ms: u64,
+    ) -> trnm_consensus_types::CertifiedHeaderV0 {
+        let justify_ref = QcReferenceV0::ordinary(justify);
+        let root = ProposalWitnessV0::signing_root_for(&header, &justify_ref, None, None).unwrap();
+        let proposer = set
+            .validators()
+            .iter()
+            .position(|validator| validator.id() == header.proposer_id())
+            .unwrap();
+        trnm_consensus_types::CertifiedHeaderV0::new(
+            header.clone(),
+            justify_ref,
+            None,
+            None,
+            Signature64::from_array(key(proposer).sign(root.as_bytes()).to_bytes()),
+            qc(&header, set),
+            set,
+            None,
+            parameters,
+            parent_timestamp_ms,
+        )
+        .unwrap()
+    }
+
+    fn checkpoint_like_header(
+        set: &ValidatorSet,
+        kind: BlockKind,
+        height: u64,
+        parent: BlockId,
+        state_root: StateRoot,
+        commitment: Option<trnm_consensus_types::NextEpochCommitmentHash>,
+        timestamp_ms: u64,
+        payload_root: PayloadDigest,
+        receipts_root: ReceiptsRoot,
+        evidence_root: EvidenceRoot,
+    ) -> BlockHeader {
+        let view = height - 10;
+        BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(view),
+            Height::new(height),
+            kind,
+            parent,
+            set.validators()[((view - 1) as usize) % set.validators().len()].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            payload_root,
+            state_root,
+            receipts_root,
+            evidence_root,
+            timestamp_ms,
+            commitment,
+        )
+        .unwrap()
+    }
+
+    fn empty_roots() -> (PayloadDigest, ReceiptsRoot, EvidenceRoot) {
+        (
+            PayloadDigest::new(
+                OrderedRootV0::from_items::<&[u8]>(RootKind::Payload, &[])
+                    .unwrap()
+                    .digest(),
+            ),
+            ReceiptsRoot::new(
+                OrderedRootV0::from_items::<&[u8]>(RootKind::Receipts, &[])
+                    .unwrap()
+                    .digest(),
+            ),
+            EvidenceRoot::new(
+                OrderedRootV0::from_items::<&[u8]>(RootKind::Evidence, &[])
+                    .unwrap()
+                    .digest(),
+            ),
+        )
+    }
+
+    #[test]
+    fn later_checkpoint_bridge_accepts_real_h17_c18_s19_s20_evidence() {
+        let directory = tempfile::tempdir().unwrap();
+        let fixture =
+            build_native_checkpoint_fixture_v1(&directory.path().join("application.sqlite3"));
+        let app = fixture.application;
+        let confirmed = app
+            .confirm_poco_checkpoint_v0(
+                fixture.pre_handoff_preparation,
+                &fixture.checkpoint_finality_bytes,
+                &fixture.handoff_anchor_bytes,
+            )
+            .unwrap();
+        let edge = confirmed.into_epoch_application_edge_v1().unwrap();
+        app.upgrade_epoch_schema_v1(edge.application_parent())
+            .unwrap();
+
+        let epoch_request = edge.preview_request_v1(11_000, Vec::new()).unwrap();
+        let epoch_preview = app.preview_epoch_block_v1(&edge, &epoch_request).unwrap();
+        let first_header = checkpoint_like_header(
+            edge.new_validator_set(),
+            BlockKind::EpochHandoff,
+            11,
+            edge.consensus_parent().id(),
+            StateRoot::new(*epoch_preview.post_state_root().as_bytes()),
+            None,
+            epoch_request.timestamp_ms(),
+            PayloadDigest::new(*epoch_preview.payload_root().as_bytes()),
+            ReceiptsRoot::new(*epoch_preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*epoch_preview.evidence_root().as_bytes()),
+        );
+        let first_request = NativeEpochBlockExecutionRequestV1::new(
+            epoch_request,
+            BlockIdV0::new(*first_header.id().as_bytes()).unwrap(),
+            NativeExpectedBlockCommitmentsV0::new(
+                epoch_preview.payload_root(),
+                epoch_preview.post_state_root(),
+                epoch_preview.receipts_root(),
+                epoch_preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let mut prepared = vec![app
+            .execute_epoch_block_v1(&edge, first_request, &first_header)
+            .unwrap()];
+        let mut headers = vec![first_header];
+        for height in 12..=17 {
+            let parent = prepared.last().unwrap().overlay_parent_head().unwrap();
+            let request = NativeBlockPreviewRequestV0::new(
+                ChainIdV0::new(edge.consensus_parent().chain_id().as_str()).unwrap(),
+                trnm_native_application::GenesisHashV0::new(
+                    *edge.consensus_parent().genesis_hash().as_bytes(),
+                )
+                .unwrap(),
+                parent,
+                HeightV0::new(height),
+                height * 1_000,
+                trnm_native_application::ValidatorSetIdV0::new(
+                    *edge.new_validator_set().id().as_bytes(),
+                )
+                .unwrap(),
+                Vec::new(),
+            )
+            .unwrap();
+            let preview = app
+                .preview_epoch_descendant_v1(prepared.last().unwrap(), &request)
+                .unwrap();
+            let header = checkpoint_like_header(
+                edge.new_validator_set(),
+                BlockKind::Regular,
+                height,
+                BlockId::new(*request.parent().block_id().as_bytes()),
+                StateRoot::new(*preview.post_state_root().as_bytes()),
+                None,
+                request.timestamp_ms(),
+                PayloadDigest::new(*preview.payload_root().as_bytes()),
+                ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+                EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+            );
+            let execution = NativeBlockExecutionRequestV0::new(
+                request.chain_id().clone(),
+                request.genesis_hash(),
+                request.parent().clone(),
+                BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+                request.height(),
+                request.timestamp_ms(),
+                request.active_validator_set_id(),
+                Vec::new(),
+                NativeExpectedBlockCommitmentsV0::new(
+                    preview.payload_root(),
+                    preview.post_state_root(),
+                    preview.receipts_root(),
+                    preview.evidence_root(),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+            prepared.push(
+                app.execute_epoch_descendant_v1(prepared.last().unwrap(), execution, &header)
+                    .unwrap(),
+            );
+            headers.push(header);
+        }
+        for index in 0..=4 {
+            let proof = if index == 0 {
+                epoch_first_finality(&edge, &headers[index..index + 3])
+            } else {
+                ordinary_epoch_finality(&edge, &headers[index - 1], &headers[index..index + 3])
+            };
+            let _ = app
+                .commit_epoch_finality_bytes_v1(
+                    &prepared[index],
+                    &proof,
+                    &mut Cev0AdmissionBudgetV0::protocol_v0(),
+                )
+                .unwrap();
+        }
+
+        let cutoff = app
+            .read_finalized_by_height_v1(HeightV0::new(15))
+            .unwrap()
+            .finalized_head_v1()
+            .unwrap();
+        let old_set = edge.new_validator_set().clone();
+        let old_parameters = *edge.new_parameters();
+        let new_set = ValidatorSet::new(
+            old_set.genesis_hash(),
+            old_set.chain_id(),
+            old_set.protocol_version(),
+            Epoch::new(2),
+            old_parameters.hash(),
+            old_set
+                .validators()
+                .iter()
+                .map(|validator| {
+                    Validator::new(
+                        validator.id(),
+                        validator.consensus_key(),
+                        validator.voting_power(),
+                    )
+                    .unwrap()
+                })
+                .collect(),
+        )
+        .unwrap();
+        let geometry =
+            trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), &old_parameters).unwrap();
+        let commitment = NextEpochCommitmentV0::new(NextEpochCommitmentV0Fields {
+            schema_version: SCHEMA_VERSION_V0,
+            genesis_hash: old_set.genesis_hash(),
+            chain_id: old_set.chain_id(),
+            old_epoch: old_set.epoch(),
+            new_epoch: new_set.epoch(),
+            snapshot_cutoff_height: Height::new(15),
+            snapshot_state_root: StateRoot::new(*cutoff.state_root().as_bytes()),
+            new_protocol_version: ProtocolVersion::V0,
+            new_validator_set_hash: new_set.id(),
+            new_consensus_parameters_hash: old_parameters.hash(),
+            rollout_phase: old_parameters.rollout_phase(),
+            upgrade_plan_hash: None,
+            fallback_used: false,
+            fallback_reason: EpochFallbackReasonV0::None,
+            activation_height: geometry.epoch_end().checked_next().unwrap(),
+        })
+        .unwrap();
+
+        let parent = prepared[6].overlay_parent_head().unwrap();
+        let request = NativeBlockPreviewRequestV0::new(
+            ChainIdV0::new(edge.consensus_parent().chain_id().as_str()).unwrap(),
+            trnm_native_application::GenesisHashV0::new(
+                *edge.consensus_parent().genesis_hash().as_bytes(),
+            )
+            .unwrap(),
+            parent,
+            HeightV0::new(18),
+            18_000,
+            trnm_native_application::ValidatorSetIdV0::new(*old_set.id().as_bytes()).unwrap(),
+            Vec::new(),
+        )
+        .unwrap();
+        let preview = app
+            .preview_epoch_descendant_v1(&prepared[6], &request)
+            .unwrap();
+        let checkpoint_header = checkpoint_like_header(
+            &old_set,
+            BlockKind::EpochCheckpoint,
+            18,
+            BlockId::new(*request.parent().block_id().as_bytes()),
+            StateRoot::new(*preview.post_state_root().as_bytes()),
+            Some(commitment.id()),
+            request.timestamp_ms(),
+            PayloadDigest::new(*preview.payload_root().as_bytes()),
+            ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+        );
+        let checkpoint_request = NativeBlockExecutionRequestV0::new(
+            request.chain_id().clone(),
+            request.genesis_hash(),
+            request.parent().clone(),
+            BlockIdV0::new(*checkpoint_header.id().as_bytes()).unwrap(),
+            request.height(),
+            request.timestamp_ms(),
+            request.active_validator_set_id(),
+            Vec::new(),
+            NativeExpectedBlockCommitmentsV0::new(
+                preview.payload_root(),
+                preview.post_state_root(),
+                preview.receipts_root(),
+                preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let checkpoint_p = app
+            .execute_epoch_descendant_v1(&prepared[6], checkpoint_request, &checkpoint_header)
+            .unwrap();
+        let (empty_payload, empty_receipts, empty_evidence) = empty_roots();
+        let seal_1 = checkpoint_like_header(
+            &old_set,
+            BlockKind::EpochSeal1,
+            19,
+            checkpoint_header.id(),
+            checkpoint_header.state_root(),
+            Some(commitment.id()),
+            19_000,
+            empty_payload,
+            empty_receipts,
+            empty_evidence,
+        );
+        let proof_16 = ordinary_epoch_finality(
+            &edge,
+            &headers[4],
+            &[
+                headers[5].clone(),
+                headers[6].clone(),
+                checkpoint_header.clone(),
+            ],
+        );
+        let _ = app
+            .commit_epoch_finality_bytes_v1(
+                &prepared[5],
+                &proof_16,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        let proof_17 = ordinary_epoch_finality(
+            &edge,
+            &headers[5],
+            &[
+                headers[6].clone(),
+                checkpoint_header.clone(),
+                seal_1.clone(),
+            ],
+        );
+        let _ = app
+            .commit_epoch_finality_bytes_v1(
+                &prepared[6],
+                &proof_17,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        let seal_2 = checkpoint_like_header(
+            &old_set,
+            BlockKind::EpochSeal2,
+            20,
+            seal_1.id(),
+            checkpoint_header.state_root(),
+            Some(commitment.id()),
+            20_000,
+            empty_payload,
+            empty_receipts,
+            empty_evidence,
+        );
+        let checkpoint_finality = FinalityProofV0::new(
+            certified(
+                checkpoint_header.clone(),
+                qc(&headers[6], &old_set),
+                &old_set,
+                &old_parameters,
+                headers[6].timestamp_ms(),
+            ),
+            certified(
+                seal_1.clone(),
+                qc(&checkpoint_header, &old_set),
+                &old_set,
+                &old_parameters,
+                checkpoint_header.timestamp_ms(),
+            ),
+            certified(
+                seal_2.clone(),
+                qc(&seal_1, &old_set),
+                &old_set,
+                &old_parameters,
+                seal_1.timestamp_ms(),
+            ),
+            &old_set,
+            None,
+            &old_parameters,
+            headers[6].timestamp_ms(),
+        )
+        .unwrap();
+        let descriptor = HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
+            genesis_hash: old_set.genesis_hash(),
+            chain_id: old_set.chain_id(),
+            old_epoch: old_set.epoch(),
+            new_epoch: new_set.epoch(),
+            old_protocol_version: old_set.protocol_version(),
+            new_protocol_version: new_set.protocol_version(),
+            old_validator_set_hash: old_set.id(),
+            new_validator_set_hash: new_set.id(),
+            old_consensus_parameters_hash: old_parameters.hash(),
+            new_consensus_parameters_hash: old_parameters.hash(),
+            checkpoint_height: checkpoint_header.height(),
+            checkpoint_block_id: checkpoint_header.id(),
+            checkpoint_state_root: checkpoint_header.state_root(),
+            next_epoch_commitment_digest: commitment.id(),
+            terminal_old_height: seal_2.height(),
+            terminal_old_block_id: seal_2.id(),
+            terminal_old_qc_digest: qc(&seal_2, &old_set).id(),
+            terminal_old_view: seal_2.view(),
+            activation_height: geometry.epoch_end().checked_next().unwrap(),
+            initial_new_view: View::new(1),
+        })
+        .unwrap();
+        let old_root = descriptor.old_set_signing_root();
+        let new_root = descriptor.new_set_signing_root();
+        let shares = |set: &ValidatorSet, root: trnm_consensus_types::SigningRoot| {
+            set.validators()
+                .iter()
+                .take(3)
+                .map(|validator| {
+                    let index = set
+                        .validators()
+                        .iter()
+                        .position(|item| item.id() == validator.id())
+                        .unwrap();
+                    SignatureShareV0::new(
+                        validator.id(),
+                        Signature64::from_array(key(index).sign(root.as_bytes()).to_bytes()),
+                    )
+                    .unwrap()
+                })
+                .collect()
+        };
+        let handoff = HandoffCertificateV0::new(
+            descriptor,
+            shares(&old_set, old_root),
+            shares(&new_set, new_root),
+            &old_set,
+            &new_set,
+        )
+        .unwrap();
+        let anchor = EpochAnchorAuthorizationKernelV0::from_parts_v0(
+            seal_2.clone(),
+            qc(&seal_2, &old_set),
+            handoff,
+            &old_set,
+            &new_set,
+        )
+        .unwrap();
+        let parent_bytes = headers[6].try_cev0_bytes().unwrap();
+        let checkpoint_bytes = checkpoint_header.try_cev0_bytes().unwrap();
+        let finality_bytes = checkpoint_finality.try_cev0_bytes().unwrap();
+        let anchor_bytes = anchor.try_cev0_bytes().unwrap();
+        let commitment_bytes = commitment.try_cev0_bytes().unwrap();
+        let new_set_bytes = new_set.try_cev0_bytes().unwrap();
+        let new_parameters_bytes = old_parameters.canonical_bytes();
+        let mut mutated_commitment = commitment_bytes.clone();
+        let last_commitment_byte = mutated_commitment.len() - 1;
+        mutated_commitment[last_commitment_byte] ^= 1;
+        assert!(app
+            .verify_later_epoch_checkpoint_finality_v1(
+                app.inspect_later_epoch_checkpoint_context_v1().unwrap(),
+                &parent_bytes,
+                &checkpoint_bytes,
+                &finality_bytes,
+                &anchor_bytes,
+                &mutated_commitment,
+                &new_set_bytes,
+                &new_parameters_bytes,
+            )
+            .is_err());
+        let context = app.inspect_later_epoch_checkpoint_context_v1().unwrap();
+        let observed = app
+            .verify_later_epoch_checkpoint_finality_v1(
+                context,
+                &parent_bytes,
+                &checkpoint_bytes,
+                &finality_bytes,
+                &anchor_bytes,
+                &commitment_bytes,
+                &new_set_bytes,
+                &new_parameters_bytes,
+            )
+            .unwrap();
+        assert!(observed.belongs_to_application(&app));
+        assert_eq!(observed.checkpoint_header(), &checkpoint_header);
+        assert_eq!(
+            observed.joint_handoff().terminal_old_height(),
+            Height::new(20)
+        );
+        drop(checkpoint_p);
+    }
+}
