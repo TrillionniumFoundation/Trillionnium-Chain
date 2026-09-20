@@ -18,8 +18,9 @@ use std::{
 use trnm_consensus_types::{Cev0AdmissionBudgetV0, ConsensusParametersV0, ValidatorSet};
 
 use crate::{
-    PocoNodeP2pAcceptedFrameV0, PocoNodeP2pReplayAnchorV0, PocoNodeP2pSessionErrorV0,
-    PocoNodeP2pSessionV0, P2P_SESSION_MAX_FRAME_BYTES_V0, P2P_SESSION_MAX_HANDSHAKE_BYTES_V0,
+    PocoNodeP2pAcceptedFrameV0, PocoNodeP2pDurableFrameReservationV0, PocoNodeP2pReplayAnchorV0,
+    PocoNodeP2pSessionErrorV0, PocoNodeP2pSessionV0, P2P_SESSION_MAX_FRAME_BYTES_V0,
+    P2P_SESSION_MAX_HANDSHAKE_BYTES_V0,
 };
 
 /// This adapter is available only through the explicitly named candidate
@@ -178,6 +179,43 @@ impl CandidateAuthenticatedP2pTransportV0 {
         self.accept_one_inner(budget, Some(replay_anchor), &mut dispatch)
     }
 
+    /// Poll one connection and expose a non-forgeable durable reservation
+    /// token alongside the accepted frame.  A host-owned typed transaction or
+    /// state-sync dispatcher must use this entry point; the token proves that
+    /// replay admission was fsynced before the callback ran.
+    pub fn accept_one_with_durable_reservation<F>(
+        &mut self,
+        budget: &mut Cev0AdmissionBudgetV0,
+        replay_anchor: &mut PocoNodeP2pReplayAnchorV0,
+        mut dispatch: F,
+    ) -> Result<(), AuthenticatedTransportErrorV0>
+    where
+        F: FnMut(
+            &PocoNodeP2pAcceptedFrameV0<'_>,
+            PocoNodeP2pDurableFrameReservationV0,
+        ) -> Result<Vec<u8>, AuthenticatedTransportErrorV0>,
+    {
+        let (stream, _) = self.listener.accept()?;
+        if self.active_connections >= self.max_connections {
+            return Err(io::Error::new(
+                io::ErrorKind::WouldBlock,
+                "transport connection cap reached",
+            )
+            .into());
+        }
+        self.active_connections += 1;
+        let result = Self::serve_stream_with_durable_reservation(
+            stream,
+            &self.validator_set,
+            &self.parameters,
+            budget,
+            replay_anchor,
+            &mut dispatch,
+        );
+        self.active_connections = self.active_connections.saturating_sub(1);
+        result
+    }
+
     fn accept_one_inner<F>(
         &mut self,
         budget: &mut Cev0AdmissionBudgetV0,
@@ -240,6 +278,50 @@ impl CandidateAuthenticatedP2pTransportV0 {
         }
         .map_err(AuthenticatedTransportErrorV0::Session)?;
         let response = dispatch(&accepted)?;
+        if response.is_empty() {
+            return Err(AuthenticatedTransportErrorV0::EmptyRecord);
+        }
+        if response.len() > AUTHENTICATED_TRANSPORT_MAX_RESPONSE_BYTES_V0 {
+            return Err(AuthenticatedTransportErrorV0::ResponseTooLarge {
+                length: response.len(),
+            });
+        }
+        write_record(&mut stream, &response)?;
+        stream.flush()?;
+        Ok(())
+    }
+
+    /// Socket-level variant of [`Self::serve_stream`] which retains the
+    /// fsynced reservation token for a typed host dispatcher.
+    pub fn serve_stream_with_durable_reservation<F>(
+        mut stream: TcpStream,
+        validator_set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        budget: &mut Cev0AdmissionBudgetV0,
+        replay_anchor: &mut PocoNodeP2pReplayAnchorV0,
+        dispatch: &mut F,
+    ) -> Result<(), AuthenticatedTransportErrorV0>
+    where
+        F: FnMut(
+            &PocoNodeP2pAcceptedFrameV0<'_>,
+            PocoNodeP2pDurableFrameReservationV0,
+        ) -> Result<Vec<u8>, AuthenticatedTransportErrorV0>,
+    {
+        stream.set_read_timeout(Some(AUTHENTICATED_TRANSPORT_HANDSHAKE_TIMEOUT_V0))?;
+        let handshake = read_record(&mut stream, P2P_SESSION_MAX_HANDSHAKE_BYTES_V0)?;
+        let mut session = PocoNodeP2pSessionV0::open_with_replay_anchor(
+            &handshake,
+            validator_set,
+            parameters,
+            replay_anchor,
+        )
+        .map_err(AuthenticatedTransportErrorV0::Session)?;
+        stream.set_read_timeout(Some(AUTHENTICATED_TRANSPORT_FRAME_TIMEOUT_V0))?;
+        let frame = read_record(&mut stream, P2P_SESSION_MAX_FRAME_BYTES_V0)?;
+        let (accepted, reservation) = session
+            .accept_frame_with_durable_reservation(&frame, budget, replay_anchor)
+            .map_err(AuthenticatedTransportErrorV0::Session)?;
+        let response = dispatch(&accepted, reservation)?;
         if response.is_empty() {
             return Err(AuthenticatedTransportErrorV0::EmptyRecord);
         }
