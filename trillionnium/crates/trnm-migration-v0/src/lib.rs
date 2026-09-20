@@ -1479,6 +1479,47 @@ impl SqliteIncrementalStateStoreV0 {
         result
     }
 
+    /// Install a snapshot while binding both persisted context digests to
+    /// caller-supplied finalized checkpoint identities. The legacy
+    /// [`Self::initialize_from_snapshot_v0`] remains available for local
+    /// staging, but this variant is the safe handoff boundary when a node has
+    /// a separately verified source/target checkpoint context.
+    pub fn initialize_from_snapshot_bound_v0<R>(
+        path: impl Into<PathBuf>,
+        snapshot: &DurableDeltaSnapshotV0,
+        source_context: SourceCheckpointContextV0,
+        target_context: SourceCheckpointContextV0,
+        root_builder: &R,
+    ) -> Result<Self, DurableDeltaStoreErrorV0>
+    where
+        R: TargetRootBuilderV0,
+        R::Error: fmt::Display,
+    {
+        snapshot.validate(root_builder)?;
+        source_context
+            .validate()
+            .map_err(DurableDeltaStoreErrorV0::Protocol)?;
+        target_context
+            .validate()
+            .map_err(DurableDeltaStoreErrorV0::Protocol)?;
+        let same_context = source_context == target_context;
+        let valid_progression = source_context.chain_id == target_context.chain_id
+            && source_context.protocol_digest == target_context.protocol_digest
+            && target_context.height > source_context.height
+            && target_context.epoch >= source_context.epoch
+            && target_context.epoch <= source_context.epoch.saturating_add(1);
+        if snapshot.source_context_digest != source_context.canonical_digest()
+            || snapshot.target_context_digest != target_context.canonical_digest()
+            || target_context.state_root != snapshot.state_root
+            || (!same_context && !valid_progression)
+        {
+            return Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::SourceCheckpointContextMismatch,
+            ));
+        }
+        Self::initialize_from_snapshot_v0(path, snapshot, root_builder)
+    }
+
     pub fn apply_delta_v0<R>(
         &self,
         delta: &IncrementalStateDeltaV0,
@@ -2741,14 +2782,40 @@ mod tests {
         .unwrap();
         source.apply_delta_v0(&delta, &HashRoot).unwrap();
         let snapshot = source.export_snapshot_v0(&HashRoot).unwrap();
-        let imported = SqliteIncrementalStateStoreV0::initialize_from_snapshot_v0(
+        let imported = SqliteIncrementalStateStoreV0::initialize_from_snapshot_bound_v0(
             &target_path,
             &snapshot,
+            source_ctx,
+            target_ctx,
             &HashRoot,
         )
         .unwrap();
         assert_eq!(imported.read_rows_v0().unwrap(), target);
         assert_eq!(imported.export_snapshot_v0(&HashRoot).unwrap(), snapshot);
+
+        // Recomputing a snapshot digest does not authenticate a replacement
+        // checkpoint context. The typed bound API requires the independently
+        // verified contexts and rejects that substitution before publication.
+        let foreign_source = source_context(&base, d(96), 62, 7, 7);
+        let mut context_substituted = snapshot.clone();
+        context_substituted.source_context_digest = foreign_source.canonical_digest();
+        context_substituted.snapshot_digest = context_substituted.canonical_digest();
+        assert!(matches!(
+            SqliteIncrementalStateStoreV0::initialize_from_snapshot_bound_v0(
+                std::env::temp_dir().join(format!(
+                    "trnm-migration-snapshot-context-invalid-{}-{}.sqlite",
+                    std::process::id(),
+                    d(107).0[0]
+                )),
+                &context_substituted,
+                source_ctx,
+                target_ctx,
+                &HashRoot,
+            ),
+            Err(DurableDeltaStoreErrorV0::Protocol(
+                MigrationErrorV0::SourceCheckpointContextMismatch
+            ))
+        ));
         assert!(matches!(
             SqliteIncrementalStateStoreV0::initialize_from_snapshot_v0(
                 &target_path,

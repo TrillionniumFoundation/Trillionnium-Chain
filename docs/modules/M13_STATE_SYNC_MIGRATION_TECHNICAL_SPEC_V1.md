@@ -123,6 +123,14 @@ collector, or signer/finality handoff. A production transfer must bind the
 snapshot to a verified checkpoint/export and exercise interrupted transfer,
 disk-full, replacement, retention, and multi-host evidence separately.
 
+When a host has independently verified the source and target checkpoint identities,
+it must use `initialize_from_snapshot_bound_v0`. That typed entrypoint recomputes
+each `SourceCheckpointContextV0` digest, checks the chain/protocol and same-context
+or one-epoch progression relation, requires the target context root to equal the
+snapshot root, and only then delegates to the atomic snapshot publication path.
+The legacy initializer remains a local staging primitive; recomputing a snapshot
+digest alone does not authenticate a substituted checkpoint context.
+
 ## Interfaces
 
 | Type / port | Meaning and owner |
