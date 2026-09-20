@@ -228,6 +228,18 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
                 fail(f"{validator_id}.{role} hash differs from raw artifact")
             artifact_hashes.append({"validator_id": validator_id, "role": role, "sha256": observed})
         raw_report = read_json(artifact_paths["signed_report_sha256"], f"{validator_id} signed report")
+        # Do not treat the metrics/final-state files as opaque byte blobs.  A
+        # summary can carry a valid report hash while pairing it with a
+        # different rehashed terminal artifact; those joins are the source of
+        # every derived block-rate fact below.
+        raw_metrics = read_json(
+            artifact_paths["signed_runtime_metrics_sha256"],
+            f"{validator_id} signed runtime metrics",
+        )
+        raw_final_state = read_json(
+            artifact_paths["signed_runtime_final_state_sha256"],
+            f"{validator_id} signed runtime final state",
+        )
         raw_bindings = {
             "run_id": run_id,
             "validator_id": validator_id,
@@ -247,6 +259,51 @@ def collect(run_root: pathlib.Path) -> dict[str, Any]:
         hex_digest(raw_report.get("report_sha256"), f"{validator_id}.report_sha256")
         if raw_report.get("production_activation") is not False or raw_report.get("g3_evidence_complete") is not False:
             fail(f"{validator_id} raw signed report crosses candidate boundary")
+        for field, expected in {
+            "run_id": run_id,
+            "validator_id": validator_id,
+            "validator_run_completed": True,
+            "g3_evidence_complete": False,
+            "geo_wan_evidence": False,
+            "production_activation": False,
+        }.items():
+            if raw_metrics.get(field) != expected:
+                fail(f"{validator_id} raw runtime metrics {field} differs from report context")
+        for field in ("process_id", "process_instance_count", "ordinary_start_height", "fsync_count"):
+            positive_int(raw_metrics.get(field), f"{validator_id}.runtime_metrics.{field}")
+        samples = raw_metrics.get("finality_samples_ms")
+        if not isinstance(samples, list) or not samples:
+            fail(f"{validator_id} runtime metrics finality samples are missing")
+        metrics_body_sha256 = hex_digest(
+            raw_metrics.get("body_sha256"), f"{validator_id}.runtime_metrics.body_sha256"
+        )
+        final_context = {
+            "run_id": run_id,
+            "validator_id": validator_id,
+            "finalized_height": verification["finalized_height"],
+            "finalized_ordinary_block_count": verification["finalized_ordinary_block_count"],
+            "validator_run_completed": True,
+            "g3_evidence_complete": False,
+            "geo_wan_evidence": False,
+            "production_activation": False,
+            "runtime_metrics_sha256": metrics_body_sha256,
+            "consensus_report_sha256": raw_report["report_sha256"],
+        }
+        for field, expected in final_context.items():
+            if raw_final_state.get(field) != expected:
+                fail(f"{validator_id} raw final state {field} differs from terminal evidence")
+        if raw_final_state.get("finalized_nonempty_ordinary_block_count") != raw_final_state.get(
+            "finalized_ordinary_block_count"
+        ):
+            fail(f"{validator_id} raw final state includes an empty finalized block")
+        for field in (
+            "double_sign_events",
+            "duplicate_apply_events",
+            "state_drift_events",
+            "safety_halt_violations",
+        ):
+            if raw_final_state.get(field) != 0:
+                fail(f"{validator_id} raw final state {field} is nonzero")
     if len(source_digests) != 1 or len(topology_digests) != 1:
         fail("signed reports disagree on source or topology")
     if len(committed_blocks) != 1 or len(finalized_heights) != 1 or len(finalized_blocks) != 1:

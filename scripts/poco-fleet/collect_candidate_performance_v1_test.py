@@ -75,7 +75,44 @@ def fixture(root: pathlib.Path) -> None:
                 "signed_runtime_final_state_sha256": root / "signed-runtime-final-states" / f"{validator_id}.json",
                 "signed_runtime_journal_sha256": root / "signed-runtime-journals" / f"{validator_id}.jsonl",
             }[role]
-            value = write(path, report if role == "signed_report_sha256" else {"role": suffix, "validator_id": validator_id})
+            if role == "signed_report_sha256":
+                artifact = report
+            elif role == "signed_runtime_metrics_sha256":
+                artifact = {
+                    "run_id": run_id,
+                    "validator_id": validator_id,
+                    "process_id": 1000 + index,
+                    "process_instance_count": 1,
+                    "ordinary_start_height": 4,
+                    "finality_samples_ms": [1.0],
+                    "fsync_count": 1,
+                    "validator_run_completed": True,
+                    "g3_evidence_complete": False,
+                    "geo_wan_evidence": False,
+                    "production_activation": False,
+                    "body_sha256": "66" * 32,
+                }
+            elif role == "signed_runtime_final_state_sha256":
+                artifact = {
+                    "run_id": run_id,
+                    "validator_id": validator_id,
+                    "finalized_height": 13,
+                    "finalized_ordinary_block_count": 10,
+                    "finalized_nonempty_ordinary_block_count": 10,
+                    "runtime_metrics_sha256": "66" * 32,
+                    "consensus_report_sha256": report["report_sha256"],
+                    "validator_run_completed": True,
+                    "g3_evidence_complete": False,
+                    "geo_wan_evidence": False,
+                    "production_activation": False,
+                    "double_sign_events": 0,
+                    "duplicate_apply_events": 0,
+                    "state_drift_events": 0,
+                    "safety_halt_violations": 0,
+                }
+            else:
+                artifact = {"role": suffix, "validator_id": validator_id}
+            value = write(path, artifact)
             process[role] = value
         processes.append(process)
 
@@ -186,6 +223,29 @@ def test_rejects_duplicate_and_missing_validator_process_records() -> None:
             assert "repeats validator_id" in str(error)
         else:
             raise AssertionError("duplicate validator process record was accepted")
+
+
+def test_rejects_rehashed_terminal_state_substitution() -> None:
+    with tempfile.TemporaryDirectory(prefix="trnm-candidate-performance-") as raw:
+        root = pathlib.Path(raw)
+        fixture(root)
+        summary_path = root / "consensus-run-summary.json"
+        summary = json.loads(summary_path.read_text())
+        process = summary["processes"][0]
+        validator_id = process["validator_id"]
+        final_path = root / "signed-runtime-final-states" / f"{validator_id}.json"
+        final_state = json.loads(final_path.read_text())
+        final_state["finalized_ordinary_block_count"] = 11
+        final_state["finalized_nonempty_ordinary_block_count"] = 11
+        final_hash = write(final_path, final_state)
+        process["signed_runtime_final_state_sha256"] = final_hash
+        write(summary_path, summary)
+        try:
+            collector.collect(root)
+        except SystemExit as error:
+            assert "raw final state finalized_ordinary_block_count" in str(error)
+        else:
+            raise AssertionError("rehashed terminal-state substitution was accepted")
 
 
 if __name__ == "__main__":
