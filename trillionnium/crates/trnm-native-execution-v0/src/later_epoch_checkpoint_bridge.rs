@@ -193,6 +193,17 @@ impl DurableNativeApplicationV0 {
             &checkpoint_parent_header,
             &checkpoint_header,
         )?;
+        // A cryptographically valid header is not enough to authorize a
+        // native checkpoint.  Join it to the real owner-prepared P row and
+        // let the durable validator re-audit its artifact, snapshot, lineage,
+        // target configuration, and digest.  This is read-only and remains
+        // before any finality/commit transition.
+        let prepared_checkpoint =
+            application.reopen_prepared_epoch_execution_v1(*checkpoint_header.id().as_bytes())?;
+        ensure!(
+            prepared_checkpoint.header()? == checkpoint_header,
+            "later checkpoint header differs from the owner-prepared native P"
+        );
         let parent_read = application.read_finalized_by_height_v1(
             trnm_native_application::HeightV0::new(checkpoint_parent_header.height().get()),
         )?;
