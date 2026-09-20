@@ -1,6 +1,8 @@
 # M10 Agent, Task and Market technical specification v1
 
 Status: candidate module contract; terminal-lifecycle extension below is planned.
+The archive storage owner is implemented as a candidate local adapter; its
+external authority and production activation remain open.
 Primary module: M10. No identity, market or economic activation is granted here.
 
 ## Authority
@@ -178,6 +180,26 @@ service cursor with the same state update; restart repeats only the exact item.
 Resource release requires settlement/refund and retention obligations resolved.
 Archive proofs retain retired task IDs, nonces and terminal receipts; deleting
 active rows cannot reopen an old task or permit ID reuse.
+
+### Candidate archive storage owner
+
+`trnm-poco-agent-market-v1::TaskArchiveStoreV1` owns only the local durable
+storage step after an authenticated terminal/retention service has produced a
+`TaskArchiveBatchV1`. It persists a closed SQLite schema with policy hash,
+live-record root, generation, legal-hold snapshot, append-only seal rows and
+archived record bodies. `archive_and_delete_v1` takes an immediate transaction,
+rechecks every batch record and durable hold against the live inventory, then
+inserts archive rows, deletes live rows, advances the root/generation and seals
+the chain atomically. Reopen audits the schema/header, contiguous sequence,
+seal/root chain and archived records; an exact retry returns the original
+receipt while changed batch bytes, sequence, roots, sidecars, symlinks or
+SQLite settings fail closed.
+
+This owner is deliberately not a finality source, peer-replication service,
+external legal-hold authority, production listener, HSM/power-loss guarantee or
+multi-host deletion acceptance. The planner and proof verifier remain
+side-effect free, and production deletion still requires a finalized whole-node
+permit plus independently accepted retention/scale evidence.
 
 ## Resource bounds
 

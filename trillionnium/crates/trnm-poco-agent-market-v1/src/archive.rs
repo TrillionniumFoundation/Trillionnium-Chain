@@ -43,7 +43,7 @@ impl TaskArchivePolicyV1 {
         digest_value("trnm.poco-ai.task-archive-policy.candidate.v1", self)
     }
 
-    fn validate(&self) -> AgentMarketResultV1<()> {
+    pub(crate) fn validate(&self) -> AgentMarketResultV1<()> {
         if self.schema_version != TASK_ARCHIVE_SCHEMA_VERSION_V1 {
             return Err(error(
                 AgentMarketErrorCodeV1::SchemaMismatch,
@@ -103,7 +103,7 @@ impl TerminalTaskArchiveRecordV1 {
         digest_value("trnm.poco-ai.task-archive-record.candidate.v1", self)
     }
 
-    fn validate_against(
+    pub(crate) fn validate_against(
         &self,
         policy: &TaskArchivePolicyV1,
         current_height: u64,
@@ -173,7 +173,7 @@ impl TerminalTaskArchiveRecordV1 {
         Ok(())
     }
 
-    fn first_prunable_height(&self) -> AgentMarketResultV1<u64> {
+    pub(crate) fn first_prunable_height(&self) -> AgentMarketResultV1<u64> {
         self.retention_paid_through_height
             .checked_add(1)
             .ok_or_else(|| {
