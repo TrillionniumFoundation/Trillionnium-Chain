@@ -3,6 +3,7 @@
 use super::*;
 use crate::epoch_recovery::{EpochRecoveryEvidenceV1, MAX_EPOCH_EVIDENCE_BYTES_V1};
 use anyhow::Result;
+use trnm_consensus_types::BlockKind;
 use trnm_native_application::{NativeEpochBlockExecutionRequestV1, NativeExecutedEpochBlockV1};
 
 pub(super) const SCHEMA_VERSION: u64 = 4;
@@ -657,12 +658,29 @@ fn audited_lineage(
     config: &NativeApplicationConfigV0,
     ids: &[[u8; 32]],
 ) -> Result<Vec<([u8; 32], crate::epoch_recovery::AuditedEpochEvidenceV1)>> {
+    audited_lineage_with_seen(connection, config, ids, &mut BTreeSet::new())
+}
+
+/// Audit an ordered edge lineage while carrying the active recursion set.
+///
+/// A later checkpoint P is itself stored in the schema-4 table and its
+/// lineage points at the already-consumed edge(s).  Reusing `validate_p`
+/// therefore makes the audit recursive.  The active set is required so a
+/// forged cycle (A -> B -> A) cannot recurse until stack exhaustion or be
+/// mistaken for a valid second epoch.
+fn audited_lineage_with_seen(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    ids: &[[u8; 32]],
+    seen: &mut BTreeSet<[u8; 32]>,
+) -> Result<Vec<([u8; 32], crate::epoch_recovery::AuditedEpochEvidenceV1)>> {
     let edges = load_edges(connection, config)?;
     let mut old_set = config.validator_set.clone();
     let mut parameters = config.parameters;
     let mut previous_height = 0;
     let mut result = Vec::new();
     for id in ids {
+        ensure!(seen.insert(*id), "epoch lineage cycle");
         let edge = edges
             .iter()
             .find(|e| &e.binding == id)
@@ -671,21 +689,46 @@ fn audited_lineage(
             edge.first_height > previous_height,
             "epoch lineage height order"
         );
-        let checkpoint = load_p_by_block_v0(connection, *edge.checkpoint.block_id().as_bytes())?
-            .context(
-                "retained legacy checkpoint missing; later-epoch checkpoint bridge not enabled",
-            )?;
-        validate_p_v0(config, &checkpoint)?;
-        validate_target_snapshot_v0(config, &checkpoint)?;
-        ensure!(
-            checkpoint.status == P_STATUS_COMMITTED
-                && checkpoint.p_digest == edge.checkpoint_p_digest
-                && checkpoint.commit_sequence == Some(edge.checkpoint_sequence)
-                && checkpoint.commit_id == Some(*edge.checkpoint.commit_id().as_bytes())
-                && checkpoint.target_height == edge.checkpoint.height().get()
-                && checkpoint.artifact == edge.evidence.checkpoint_artifact,
-            "retained checkpoint identity mismatch"
-        );
+        if let Some(checkpoint) =
+            load_p_by_block_v0(connection, *edge.checkpoint.block_id().as_bytes())?
+        {
+            validate_p_v0(config, &checkpoint)?;
+            validate_target_snapshot_v0(config, &checkpoint)?;
+            ensure!(
+                checkpoint.status == P_STATUS_COMMITTED
+                    && checkpoint.p_digest == edge.checkpoint_p_digest
+                    && checkpoint.commit_sequence == Some(edge.checkpoint_sequence)
+                    && checkpoint.commit_id == Some(*edge.checkpoint.commit_id().as_bytes())
+                    && checkpoint.target_height == edge.checkpoint.height().get()
+                    && checkpoint.artifact == edge.evidence.checkpoint_artifact,
+                "retained checkpoint identity mismatch"
+            );
+        } else {
+            // A later epoch's checkpoint is a committed schema-4 ordinary P
+            // whose lineage names the already authenticated edge(s).  It is
+            // intentionally not accepted by the legacy v0 loader above.
+            let checkpoint = load_p(connection, edge.checkpoint.block_id().as_bytes())?
+                .context("retained checkpoint P missing")?;
+            ensure!(
+                checkpoint.status == P_STATUS_COMMITTED as i64
+                    && checkpoint.artifact_kind == 0
+                    && checkpoint.target_head()? == edge.checkpoint
+                    && checkpoint.p_digest == edge.checkpoint_p_digest
+                    && checkpoint.commit_sequence == Some(edge.checkpoint_sequence)
+                    && checkpoint.commit_id == Some(*edge.checkpoint.commit_id().as_bytes())
+                    && checkpoint.artifact == edge.evidence.checkpoint_artifact,
+                "retained later-epoch checkpoint identity mismatch"
+            );
+            let checkpoint_header = decode_header(&checkpoint.header)?;
+            ensure!(
+                checkpoint_header.block_kind() == BlockKind::EpochCheckpoint
+                    && checkpoint_header.next_epoch_commitment_hash().is_some(),
+                "retained later-epoch checkpoint kind/commitment"
+            );
+            // This validates the complete v1 artifact, snapshot, replay and
+            // parent binding.  Its recursive lineage audit reuses `seen`.
+            validate_p_with_seen(connection, config, &checkpoint, seen)?;
+        }
         let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
         let audit = edge
             .evidence
@@ -728,14 +771,44 @@ fn audited_lineage(
         parameters = *audit.activation.new_consensus_parameters();
         previous_height = edge.first_height;
         result.push((*id, audit));
+        seen.remove(id);
     }
     Ok(result)
+}
+
+fn validate_epoch_descendant_kind(header: &BlockHeader) -> Result<()> {
+    match header.block_kind() {
+        BlockKind::Regular => {
+            ensure!(
+                header.next_epoch_commitment_hash().is_none(),
+                "ordinary sparse descendant carries an epoch commitment"
+            );
+            Ok(())
+        }
+        BlockKind::EpochCheckpoint => {
+            ensure!(
+                header.next_epoch_commitment_hash().is_some(),
+                "epoch checkpoint is missing its next-epoch commitment"
+            );
+            Ok(())
+        }
+        _ => anyhow::bail!("epoch descendant kind requires a dedicated seal/handoff bridge"),
+    }
 }
 
 fn validate_p(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     p: &StoredEpochPV1,
+) -> Result<InMemoryNativeExecutionStoreV0> {
+    validate_p_with_seen(connection, config, p, &mut BTreeSet::new())
+}
+
+fn validate_p_with_seen(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    seen: &mut BTreeSet<[u8; 32]>,
 ) -> Result<InMemoryNativeExecutionStoreV0> {
     ensure!(
         p.store_id == config.store_id
@@ -771,7 +844,7 @@ fn validate_p(
         "epoch P header identity"
     );
     let lineage = decode_lineage(&p.lineage)?;
-    let edges = audited_lineage(connection, config, &lineage)?;
+    let edges = audited_lineage_with_seen(connection, config, &lineage, seen)?;
     let (_, latest) = edges.last().context("epoch P has no lineage")?;
     ensure!(
         latest
@@ -882,6 +955,7 @@ fn validate_p(
             "epoch receipt roots mismatch"
         );
     } else {
+        validate_epoch_descendant_kind(&header)?;
         let executed = decode_native_executed_block_artifact_v0(&p.artifact)?;
         ensure!(
             p.target_height
@@ -1229,10 +1303,7 @@ impl DurableNativeApplicationV0 {
         )?;
         let (executed, plan, replay, lifecycle) = execution.into_parts();
         ensure_finalized_header_binding_v0(header, &request)?;
-        ensure!(
-            header.block_kind() == trnm_consensus_types::BlockKind::Regular,
-            "only ordinary sparse descendant implemented"
-        );
+        validate_epoch_descendant_kind(header)?;
         target.apply_complete_state_plan_v0(plan)?;
         for identity in replay {
             target.mark_committed_command_v0(
@@ -1527,6 +1598,10 @@ impl DurableNativeApplicationV0 {
         let edge = self
             .recover_epoch_application_edge_v1(*ids.last().context("epoch commit missing edge")?)?;
         let header = prepared.header()?;
+        ensure!(
+            header.block_kind() != BlockKind::EpochCheckpoint,
+            "later-epoch checkpoint finality bridge required"
+        );
         let expected = trnm_consensus_crypto::FinalityExpectationV0 {
             block_id: header.id(),
             height: header.height(),
@@ -1722,6 +1797,52 @@ fn context_digest(
             &sha256_v0(lineage),
         ],
     )
+}
+
+#[cfg(test)]
+mod descendant_kind_tests {
+    use super::*;
+    use trnm_consensus_types::{
+        BlockId, ChainId, ConsensusParametersHash, Epoch, EvidenceRoot, GenesisHash, Height,
+        NextEpochCommitmentHash, PayloadDigest, ProtocolVersion, ReceiptsRoot, StateRoot,
+        ValidatorId, ValidatorSetId, View,
+    };
+
+    fn header(kind: BlockKind, commitment: Option<NextEpochCommitmentHash>) -> BlockHeader {
+        BlockHeader::new(
+            GenesisHash::new([1; 32]),
+            ChainId::new("epoch-descendant-kind-test").unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            View::new(1),
+            Height::new(1),
+            kind,
+            BlockId::new([2; 32]),
+            ValidatorId::from_bytes(b"validator-0").unwrap(),
+            ValidatorSetId::new([3; 32]),
+            ConsensusParametersHash::new([4; 32]),
+            PayloadDigest::new([5; 32]),
+            StateRoot::new([6; 32]),
+            ReceiptsRoot::new([7; 32]),
+            EvidenceRoot::new([8; 32]),
+            1,
+            commitment,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn descendant_kind_requires_a_dedicated_checkpoint_bridge() {
+        let commitment = Some(NextEpochCommitmentHash::new([9; 32]));
+        assert!(validate_epoch_descendant_kind(&header(BlockKind::Regular, None)).is_ok());
+        assert!(
+            validate_epoch_descendant_kind(&header(BlockKind::EpochCheckpoint, commitment)).is_ok()
+        );
+        assert!(
+            validate_epoch_descendant_kind(&header(BlockKind::EpochSeal1, commitment)).is_err()
+        );
+        assert!(validate_epoch_descendant_kind(&header(BlockKind::EpochHandoff, None)).is_err());
+    }
 }
 
 fn validate_context(
