@@ -2506,6 +2506,7 @@ pub struct MigrationHandoffRecordV0 {
     pub target_schema_digest: Digest32V0,
     pub source_binding_digest: Digest32V0,
     pub source_context_digest: Digest32V0,
+    pub source_state_root: Digest32V0,
     pub target_context_digest: Digest32V0,
     pub projection_digest: Digest32V0,
     pub target_rows_digest: Digest32V0,
@@ -2556,6 +2557,7 @@ impl MigrationHandoffRecordV0 {
             target_schema_digest: plan.target_schema_digest,
             source_binding_digest: source_binding.binding_digest(),
             source_context_digest: context.canonical_digest(),
+            source_state_root: context.state_root,
             target_context_digest: Digest32V0([0; 32]),
             projection_digest: Digest32V0([0; 32]),
             target_rows_digest: Digest32V0([0; 32]),
@@ -2628,6 +2630,7 @@ impl MigrationHandoffRecordV0 {
             self.target_schema_digest,
             self.source_binding_digest,
             self.source_context_digest,
+            self.source_state_root,
             self.target_context_digest,
             self.projection_digest,
             self.target_rows_digest,
@@ -2701,6 +2704,7 @@ impl MigrationHandoffRecordV0 {
             || self.target_schema_digest == Digest32V0([0; 32])
             || self.source_binding_digest == Digest32V0([0; 32])
             || self.source_context_digest == Digest32V0([0; 32])
+            || self.source_state_root == Digest32V0([0; 32])
             || self.target_genesis_id == Digest32V0([0; 32])
         {
             return Err(MigrationHandoffErrorV0::Protocol(
@@ -2836,6 +2840,7 @@ impl MigrationHandoffRecordV0 {
         if self.state != MigrationHandoffStateV0::ProjectedDelta
             || identity == Digest32V0([0; 32])
             || receipt.previous_root == Digest32V0([0; 32])
+            || receipt.previous_root != self.source_state_root
             || receipt.installed_root != self.target_state_root
             || receipt.generation == 0
             || receipt.delta_digest == Digest32V0([0; 32])
@@ -3256,6 +3261,7 @@ fn decode_handoff_record_v0(
     let target_schema_digest = dig(&mut p)?;
     let source_binding_digest = dig(&mut p)?;
     let source_context_digest = dig(&mut p)?;
+    let source_state_root = dig(&mut p)?;
     let target_context_digest = dig(&mut p)?;
     let projection_digest = dig(&mut p)?;
     let target_rows_digest = dig(&mut p)?;
@@ -3342,6 +3348,7 @@ fn decode_handoff_record_v0(
         target_schema_digest,
         source_binding_digest,
         source_context_digest,
+        source_state_root,
         target_context_digest,
         projection_digest,
         target_rows_digest,
@@ -4560,7 +4567,7 @@ mod tests {
             last_delta_digest: d(202),
         };
         let receipt = DurableDeltaInstallReceiptV0 {
-            previous_root: d(203),
+            previous_root: d(3),
             installed_root: projection.target_state_root,
             generation: 1,
             delta_digest: d(202),
