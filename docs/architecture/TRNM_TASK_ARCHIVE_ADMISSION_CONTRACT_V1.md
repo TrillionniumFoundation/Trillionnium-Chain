@@ -20,16 +20,22 @@ it does not establish full-batch uniqueness or accept an external hold registry.
 
 `TaskArchiveStoreV1` is the implementation seam for a single local SQLite
 archive owner. `initialize` creates a closed schema with SQLite application and
-schema identities, rollback journaling and `synchronous=FULL`. The owner can
+schema identities, rollback journaling and `synchronous=FULL`; it builds the
+schema in a same-directory temporary inode and publishes it with a
+non-replacing hard-link so an initialization crash cannot leave a final path
+that looks initialized. The owner can
 install one canonical live terminal inventory, persist a complete legal-hold
 snapshot, and execute `archive_and_delete_v1` in one immediate transaction.
 That transaction revalidates the full batch against durable live rows and holds,
 appends the sealed records, deletes the selected live rows, advances the live
 root/generation and records the seal-chain roots before commit. Reopening audits
-the table set, policy hash, live root, contiguous batch sequence, seal chain,
-archive rows and metadata. Exact retries return the committed receipt; changed
-bytes, roots, sequences, sidecars, symlinks or SQLite header settings fail
-closed.
+the exact SQLite table definitions (and rejects user triggers, indexes and
+other schema objects), policy hash, live root, contiguous batch sequence, seal
+chain, archive/live row keys and hashes, and metadata. It reconstructs the
+initial inventory from archived plus live rows and replays every batch's exact
+removals to verify predecessor/successor roots. Exact retries return the
+committed receipt only after that audit; changed bytes, roots, sequences,
+sidecars, the database-path symlink or SQLite header settings fail closed.
 
 The field encodings, hash domains, schema version and public signatures remain
 unchanged. Validation has no durable write set. Rejected inputs cannot grant a
@@ -87,7 +93,8 @@ reopen-time audit and exact idempotent retry.
 `archive_store::tests::durable_hold_blocks_delete_before_any_archive_mutation`
 proves a durable hold rejects the batch before either archive or live rows are
 changed. The store also rejects non-contiguous batch sequences and any existing
-SQLite sidecar/symlink/header mismatch before it can serve an owner operation.
+SQLite sidecar/database-path-symlink/header mismatch before it can serve an
+owner operation.
 
 The existing public-wrapper retention mutant retains its positive control and
 now also requires direct validation and proof construction to reject early
@@ -102,3 +109,4 @@ review, exact-source consumer replay, real scale/retention campaigns,
 authoritative hold ingestion, replicated/multi-host deletion, physical
 power-loss recovery and production storage-deletion qualification remain
 separate acceptance.
+Storage-deletion qualification remain separate acceptance for production.

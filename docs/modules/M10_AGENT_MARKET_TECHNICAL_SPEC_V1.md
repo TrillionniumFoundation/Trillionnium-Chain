@@ -185,15 +185,18 @@ active rows cannot reopen an old task or permit ID reuse.
 
 `trnm-poco-agent-market-v1::TaskArchiveStoreV1` owns only the local durable
 storage step after an authenticated terminal/retention service has produced a
-`TaskArchiveBatchV1`. It persists a closed SQLite schema with policy hash,
+`TaskArchiveBatchV1`. Initialization constructs that schema in a same-directory
+temporary inode and publishes it without replacing a competing final path. It
+persists a closed SQLite schema with policy hash,
 live-record root, generation, legal-hold snapshot, append-only seal rows and
 archived record bodies. `archive_and_delete_v1` takes an immediate transaction,
 rechecks every batch record and durable hold against the live inventory, then
 inserts archive rows, deletes live rows, advances the root/generation and seals
-the chain atomically. Reopen audits the schema/header, contiguous sequence,
-seal/root chain and archived records; an exact retry returns the original
-receipt while changed batch bytes, sequence, roots, sidecars, symlinks or
-SQLite settings fail closed.
+the chain atomically. Reopen audits exact SQLite definitions (rejecting user
+triggers and indexes), row keys/hashes, the contiguous sequence, seal/root
+chain and archived records; it reconstructs and replays each deletion before
+an exact retry can return the original receipt. Changed batch bytes, sequence,
+roots, sidecars, database-path symlinks or SQLite settings fail closed.
 
 This owner is deliberately not a finality source, peer-replication service,
 external legal-hold authority, production listener, HSM/power-loss guarantee or

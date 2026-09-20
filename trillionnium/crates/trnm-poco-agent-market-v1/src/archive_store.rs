@@ -16,6 +16,7 @@ use std::{
     collections::BTreeSet,
     fs,
     path::{Path, PathBuf},
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
@@ -83,21 +84,80 @@ impl TaskArchiveStoreV1 {
             fs::create_dir_all(parent)
                 .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?;
         }
-        let connection = open_connection(&path, true)?;
-        connection.execute_batch(&format!(
-            "{META_SQL};{LIVE_SQL};{HOLD_SQL};{SEAL_SQL};{ARCHIVE_SQL};"
-        ))?;
-        let empty_live_root = live_root_v1(&[])?;
-        connection.execute(
-            "INSERT INTO task_archive_metadata_v1(singleton,schema_version,policy_hash,generation,live_root,last_batch_sequence,last_seal_hash) VALUES(1,?1,?2,0,?3,0,?4)",
-            params![
-                i64::from(STORE_SCHEMA_VERSION_V1),
-                &policy_hash.0[..],
-                &empty_live_root.0[..],
-                &[0_u8; 32][..],
-            ],
-        )?;
-        connection.execute_batch("PRAGMA wal_checkpoint(TRUNCATE)")?;
+        reject_path_ancestors(&path)?;
+        reject_sidecars(&path)?;
+        // Build the schema in a same-directory temporary inode first.  A
+        // process crash during schema creation therefore leaves no final
+        // database path that a later opener could mistake for an initialized
+        // store.  hard_link() publishes the inode without replacing a path
+        // created by a racing initializer.
+        let temporary_path = initialization_temp_path(&path)?;
+        let initialized = (|| -> AgentMarketResultV1<()> {
+            let file = fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(&temporary_path)
+                .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?;
+            file.sync_all()
+                .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?;
+            drop(file);
+
+            let mut connection = open_connection(&temporary_path, true)?;
+            let transaction =
+                connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+            transaction.execute_batch(&format!(
+                "{META_SQL};{LIVE_SQL};{HOLD_SQL};{SEAL_SQL};{ARCHIVE_SQL};"
+            ))?;
+            let empty_live_root = live_root_v1(&[])?;
+            transaction.execute(
+                "INSERT INTO task_archive_metadata_v1(singleton,schema_version,policy_hash,generation,live_root,last_batch_sequence,last_seal_hash) VALUES(1,?1,?2,0,?3,0,?4)",
+                params![
+                    i64::from(STORE_SCHEMA_VERSION_V1),
+                    &policy_hash.0[..],
+                    &empty_live_root.0[..],
+                    &[0_u8; 32][..],
+                ],
+            )?;
+            transaction.commit()?;
+            drop(connection);
+            fs::File::open(&temporary_path)
+                .and_then(|file| file.sync_all())
+                .map_err(|cause| {
+                    error(AgentMarketErrorCodeV1::CommitUncertain, cause.to_string())
+                })?;
+            Ok(())
+        })();
+        if let Err(cause) = initialized {
+            let _ = fs::remove_file(&temporary_path);
+            return Err(cause);
+        }
+        if let Err(cause) = fs::hard_link(&temporary_path, &path) {
+            let _ = fs::remove_file(&temporary_path);
+            return Err(if cause.kind() == std::io::ErrorKind::AlreadyExists {
+                error(
+                    AgentMarketErrorCodeV1::Conflict,
+                    "TaskV1 archive store path was created during initialization",
+                )
+            } else {
+                error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string())
+            });
+        }
+        let parent = path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or(Path::new("."));
+        let parent_sync = fs::File::open(parent)
+            .and_then(|parent| parent.sync_all())
+            .map_err(|cause| error(AgentMarketErrorCodeV1::CommitUncertain, cause.to_string()));
+        if let Err(cause) = parent_sync {
+            let _ = fs::remove_file(&temporary_path);
+            return Err(cause);
+        }
+        fs::remove_file(&temporary_path)
+            .map_err(|cause| error(AgentMarketErrorCodeV1::CommitUncertain, cause.to_string()))?;
+        fs::File::open(parent)
+            .and_then(|parent| parent.sync_all())
+            .map_err(|cause| error(AgentMarketErrorCodeV1::CommitUncertain, cause.to_string()))?;
         Ok(Self {
             path,
             policy,
@@ -127,8 +187,9 @@ impl TaskArchiveStoreV1 {
             policy,
             policy_hash,
         };
-        let connection = store.open_connection(false)?;
-        store.audit(&connection)?;
+        let mut connection = store.open_connection(false)?;
+        let transaction = connection.transaction_with_behavior(TransactionBehavior::Deferred)?;
+        store.audit(&transaction)?;
         Ok(store)
     }
 
@@ -141,6 +202,7 @@ impl TaskArchiveStoreV1 {
     ) -> AgentMarketResultV1<()> {
         let mut connection = self.open_connection(false)?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        self.audit(&transaction)?;
         transaction.execute("DELETE FROM task_archive_legal_holds_v1", [])?;
         for task_id in holds {
             transaction.execute(
@@ -152,9 +214,8 @@ impl TaskArchiveStoreV1 {
         Ok(())
     }
 
-    /// Replace the complete live terminal inventory before the first archive
-    /// operation.  Existing rows are accepted only when their canonical body
-    /// and hash are identical; conflicting identity is fail-closed.
+    /// Install the complete live terminal inventory into an empty store.
+    /// An already populated inventory cannot be replaced by this API.
     pub fn install_live_records_v1(
         &self,
         records: &[TerminalTaskArchiveRecordV1],
@@ -164,6 +225,7 @@ impl TaskArchiveStoreV1 {
         let root = live_root_v1(&rows)?;
         let mut connection = self.open_connection(false)?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        self.audit(&transaction)?;
         let (generation, live_root) = read_meta(&transaction, self.policy_hash)?;
         if generation != 0 || live_root != live_root_v1(&[])? {
             return Err(error(
@@ -195,14 +257,18 @@ impl TaskArchiveStoreV1 {
         batch: &TaskArchiveBatchV1,
     ) -> AgentMarketResultV1<TaskArchiveDeletionReceiptV1> {
         batch.validate(&self.policy)?;
+        let sql_sequence = sql_integer(batch.seal.batch_sequence)?;
         let seal_hash = batch.seal.seal_hash()?;
         let mut connection = self.open_connection(false)?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        // Revalidate history before both new deletion and exact retry. A
+        // cached seal cannot acknowledge archive rows that disappeared.
+        self.audit(&transaction)?;
         let (generation, live_root_before) = read_meta(&transaction, self.policy_hash)?;
         if let Some(existing) = transaction
             .query_row(
                 "SELECT seal FROM task_archive_seals_v1 WHERE batch_sequence=?1",
-                params![batch.seal.batch_sequence as i64],
+                params![sql_sequence],
                 |row| row.get::<_, Vec<u8>>(0),
             )
             .optional()?
@@ -216,7 +282,7 @@ impl TaskArchiveStoreV1 {
             }
             let stored_receipt = transaction.query_row(
                 "SELECT generation,live_root_before,live_root_after FROM task_archive_seals_v1 WHERE batch_sequence=?1",
-                params![batch.seal.batch_sequence as i64],
+                params![sql_sequence],
                 |row| Ok((row.get::<_, i64>(0)?, row.get::<_, Vec<u8>>(1)?, row.get::<_, Vec<u8>>(2)?)),
             )?;
             return Ok(TaskArchiveDeletionReceiptV1 {
@@ -234,19 +300,17 @@ impl TaskArchiveStoreV1 {
             });
         }
         let previous = read_last_seal_hash(&transaction)?;
-        let expected_sequence = transaction
-            .query_row(
-                "SELECT last_batch_sequence FROM task_archive_metadata_v1 WHERE singleton=1",
-                [],
-                |row| row.get::<_, i64>(0),
-            )
-            .and_then(|sequence| {
-                u64::try_from(sequence).map_err(|_| {
-                    rusqlite::Error::ToSqlConversionFailure(Box::new(std::io::Error::new(
-                        std::io::ErrorKind::InvalidData,
-                        "negative TaskV1 archive sequence",
-                    )))
-                })
+        let last_sequence: i64 = transaction.query_row(
+            "SELECT last_batch_sequence FROM task_archive_metadata_v1 WHERE singleton=1",
+            [],
+            |row| row.get::<_, i64>(0),
+        )?;
+        let expected_sequence = u64::try_from(last_sequence)
+            .map_err(|_| {
+                error(
+                    AgentMarketErrorCodeV1::SchemaMismatch,
+                    "negative TaskV1 archive sequence",
+                )
             })?
             .checked_add(1)
             .ok_or_else(|| {
@@ -323,25 +387,32 @@ impl TaskArchiveStoreV1 {
                 "TaskV1 archive generation overflow",
             )
         })?;
+        let sql_generation = sql_integer(next_generation)?;
         let encoded_batch = canonical_bytes(batch)?;
         transaction.execute(
             "INSERT INTO task_archive_seals_v1(batch_sequence,seal,seal_hash,generation,live_root_before,live_root_after) VALUES(?1,?2,?3,?4,?5,?6)",
-            params![batch.seal.batch_sequence as i64, encoded_batch, &seal_hash.0[..], next_generation as i64, &live_root_before.0[..], &live_root_after.0[..]],
+            params![sql_sequence, encoded_batch, &seal_hash.0[..], sql_generation, &live_root_before.0[..], &live_root_after.0[..]],
         )?;
         for record in &live_records {
             let encoded = canonical_bytes(record)?;
             transaction.execute(
                 "INSERT INTO task_archive_records_v1(batch_sequence,task_id,record,record_hash) VALUES(?1,?2,?3,?4)",
-                params![batch.seal.batch_sequence as i64, &record.task_id.0[..], encoded, &record.record_hash()?.0[..]],
+                params![sql_sequence, &record.task_id.0[..], encoded, &record.record_hash()?.0[..]],
             )?;
-            transaction.execute(
+            let deleted = transaction.execute(
                 "DELETE FROM task_archive_live_records_v1 WHERE task_id=?1",
                 params![&record.task_id.0[..]],
             )?;
+            if deleted != 1 {
+                return Err(error(
+                    AgentMarketErrorCodeV1::TamperDetected,
+                    "TaskV1 archive deletion did not remove exactly one live row",
+                ));
+            }
         }
         transaction.execute(
             "UPDATE task_archive_metadata_v1 SET generation=?1,live_root=?2,last_batch_sequence=?3,last_seal_hash=?4 WHERE singleton=1 AND generation=?5 AND live_root=?6",
-            params![next_generation as i64, &live_root_after.0[..], batch.seal.batch_sequence as i64, &seal_hash.0[..], generation as i64, &live_root_before.0[..]],
+            params![sql_generation, &live_root_after.0[..], sql_sequence, &seal_hash.0[..], sql_integer(generation)?, &live_root_before.0[..]],
         )?;
         if transaction.changes() != 1 {
             return Err(error(
@@ -364,13 +435,22 @@ impl TaskArchiveStoreV1 {
         &self,
         batch_sequence: u64,
     ) -> AgentMarketResultV1<TaskArchiveBatchV1> {
-        let connection = self.open_connection(false)?;
-        read_archive_batch_from_connection(&connection, &self.policy, batch_sequence)
+        let sql_sequence = sql_integer(batch_sequence)?;
+        let mut connection = self.open_connection(false)?;
+        let transaction = connection.transaction_with_behavior(TransactionBehavior::Deferred)?;
+        self.audit(&transaction)?;
+        read_archive_batch_from_connection_with_sql_sequence(
+            &transaction,
+            &self.policy,
+            sql_sequence,
+        )
     }
 
     pub fn live_root_v1(&self) -> AgentMarketResultV1<Hash32V1> {
-        let connection = self.open_connection(false)?;
-        Ok(read_meta(&connection, self.policy_hash)?.1)
+        let mut connection = self.open_connection(false)?;
+        let transaction = connection.transaction_with_behavior(TransactionBehavior::Deferred)?;
+        self.audit(&transaction)?;
+        Ok(read_meta(&transaction, self.policy_hash)?.1)
     }
 
     fn open_connection(&self, create: bool) -> AgentMarketResultV1<Connection> {
@@ -396,6 +476,7 @@ impl TaskArchiveStoreV1 {
                 "TaskV1 live root audit failed",
             ));
         }
+        let mut all_records = live.clone();
         let mut statement = connection.prepare(
             "SELECT batch_sequence,seal,seal_hash,generation,live_root_before,live_root_after FROM task_archive_seals_v1 ORDER BY batch_sequence",
         )?;
@@ -413,6 +494,9 @@ impl TaskArchiveStoreV1 {
         let mut previous_seal = Hash32V1([0; 32]);
         let mut previous_root = None;
         let mut archived_generation = 0_u64;
+        let mut sealed_batches = Vec::new();
+        let mut seen_task_ids: BTreeSet<TaskIdV1> =
+            live.iter().map(|record| record.task_id).collect();
         for row in rows {
             let (sequence, encoded, encoded_hash, stored_generation, before, after) = row?;
             let sequence = u64::try_from(sequence).map_err(|_| {
@@ -459,6 +543,16 @@ impl TaskArchiveStoreV1 {
                     "TaskV1 archived records differ from sealed batch",
                 ));
             }
+            for record in &stored.records {
+                if !seen_task_ids.insert(record.task_id) {
+                    return Err(error(
+                        AgentMarketErrorCodeV1::TamperDetected,
+                        "TaskV1 archive task identity is duplicated across live/archive rows",
+                    ));
+                }
+            }
+            all_records.extend(stored.records.iter().cloned());
+            sealed_batches.push((stored, before, after));
             previous_sequence = sequence;
             previous_seal = seal_hash;
             previous_root = Some(after);
@@ -475,7 +569,8 @@ impl TaskArchiveStoreV1 {
                 "TaskV1 metadata batch sequence is negative",
             )
         })?;
-        if metadata_sequence != previous_sequence
+        if previous_root.is_some_and(|root| live_root != root)
+            || metadata_sequence != previous_sequence
             || digest32(&metadata.1)? != previous_seal
             || generation != archived_generation
         {
@@ -484,31 +579,81 @@ impl TaskArchiveStoreV1 {
                 "TaskV1 archive metadata chain is invalid",
             ));
         }
+        let mut reconstructed = all_records;
+        for (batch, before, after) in sealed_batches {
+            if live_root_v1(&reconstructed)? != before {
+                return Err(error(
+                    AgentMarketErrorCodeV1::TamperDetected,
+                    "TaskV1 archive predecessor root does not match the retained inventory",
+                ));
+            }
+            let selected: BTreeSet<TaskIdV1> =
+                batch.records.iter().map(|record| record.task_id).collect();
+            let original_len = reconstructed.len();
+            reconstructed.retain(|record| !selected.contains(&record.task_id));
+            if reconstructed.len() + selected.len() != original_len
+                || live_root_v1(&reconstructed)? != after
+            {
+                return Err(error(
+                    AgentMarketErrorCodeV1::TamperDetected,
+                    "TaskV1 archive successor root does not match the exact deletion",
+                ));
+            }
+        }
+        if live_root_v1(&reconstructed)? != live_root {
+            return Err(error(
+                AgentMarketErrorCodeV1::TamperDetected,
+                "TaskV1 archive reconstruction does not reach the live root",
+            ));
+        }
         Ok(())
     }
 }
 
 fn audit_schema(connection: &Connection) -> AgentMarketResultV1<()> {
     let mut statement = connection.prepare(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
+        "SELECT type,name,sql FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name",
     )?;
     let names = statement
-        .query_map([], |row| row.get::<_, String>(0))?
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, Option<String>>(2)?,
+            ))
+        })?
         .collect::<Result<Vec<_>, _>>()?;
-    let expected = vec![
-        "task_archive_legal_holds_v1".to_owned(),
-        "task_archive_live_records_v1".to_owned(),
-        "task_archive_metadata_v1".to_owned(),
-        "task_archive_records_v1".to_owned(),
-        "task_archive_seals_v1".to_owned(),
+    let expected = [
+        ("table", "task_archive_legal_holds_v1", HOLD_SQL),
+        ("table", "task_archive_live_records_v1", LIVE_SQL),
+        ("table", "task_archive_metadata_v1", META_SQL),
+        ("table", "task_archive_records_v1", ARCHIVE_SQL),
+        ("table", "task_archive_seals_v1", SEAL_SQL),
     ];
-    if names != expected {
+    if names.len() != expected.len()
+        || expected.iter().any(|(kind, name, sql)| {
+            !names.iter().any(|(actual_kind, actual_name, actual_sql)| {
+                actual_kind == kind
+                    && actual_name == name
+                    && actual_sql
+                        .as_deref()
+                        .is_some_and(|actual| normalize_sql(actual) == normalize_sql(sql))
+            })
+        })
+    {
         return Err(error(
             AgentMarketErrorCodeV1::SchemaMismatch,
-            "TaskV1 archive table set differs from the closed schema",
+            "TaskV1 archive schema objects differ from the closed schema",
         ));
     }
     Ok(())
+}
+
+fn normalize_sql(sql: &str) -> String {
+    sql.chars()
+        .filter(|character| !character.is_whitespace())
+        .flat_map(char::to_lowercase)
+        .collect()
 }
 
 fn read_archive_batch_from_connection(
@@ -516,10 +661,22 @@ fn read_archive_batch_from_connection(
     policy: &TaskArchivePolicyV1,
     batch_sequence: u64,
 ) -> AgentMarketResultV1<TaskArchiveBatchV1> {
+    read_archive_batch_from_connection_with_sql_sequence(
+        connection,
+        policy,
+        sql_integer(batch_sequence)?,
+    )
+}
+
+fn read_archive_batch_from_connection_with_sql_sequence(
+    connection: &Connection,
+    policy: &TaskArchivePolicyV1,
+    sql_sequence: i64,
+) -> AgentMarketResultV1<TaskArchiveBatchV1> {
     let encoded = connection
         .query_row(
             "SELECT seal FROM task_archive_seals_v1 WHERE batch_sequence=?1",
-            params![batch_sequence as i64],
+            params![sql_sequence],
             |row| row.get::<_, Vec<u8>>(0),
         )
         .optional()?
@@ -530,15 +687,31 @@ fn read_archive_batch_from_connection(
             )
         })?;
     let mut batch: TaskArchiveBatchV1 = strict_decode(&encoded)?;
-    let mut statement =
-        connection.prepare("SELECT record FROM task_archive_records_v1 WHERE batch_sequence=?1")?;
-    let rows = statement.query_map(params![batch_sequence as i64], |row| {
-        row.get::<_, Vec<u8>>(0)
+    let mut statement = connection.prepare(
+        "SELECT task_id,record,record_hash FROM task_archive_records_v1 WHERE batch_sequence=?1",
+    )?;
+    let rows = statement.query_map(params![sql_sequence], |row| {
+        Ok((
+            row.get::<_, Vec<u8>>(0)?,
+            row.get::<_, Vec<u8>>(1)?,
+            row.get::<_, Vec<u8>>(2)?,
+        ))
     })?;
     batch.records = rows
         .map(|row| {
             row.map_err(Into::into)
-                .and_then(|bytes| strict_decode(&bytes))
+                .and_then(|(task_id, bytes, record_hash)| {
+                    let record: TerminalTaskArchiveRecordV1 = strict_decode(&bytes)?;
+                    if task_id.as_slice() != record.task_id.0
+                        || record_hash.as_slice() != record.record_hash()?.0
+                    {
+                        return Err(error(
+                            AgentMarketErrorCodeV1::TamperDetected,
+                            "TaskV1 archive row key or hash differs from record",
+                        ));
+                    }
+                    Ok(record)
+                })
         })
         .collect::<AgentMarketResultV1<Vec<_>>>()?;
     batch
@@ -550,9 +723,11 @@ fn read_archive_batch_from_connection(
 
 fn open_connection(path: &Path, create: bool) -> AgentMarketResultV1<Connection> {
     let flags = if create {
-        OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_CREATE
-    } else {
         OpenFlags::SQLITE_OPEN_READ_WRITE
+            | OpenFlags::SQLITE_OPEN_CREATE
+            | OpenFlags::SQLITE_OPEN_NOFOLLOW
+    } else {
+        OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NOFOLLOW
     };
     let connection = Connection::open_with_flags(path, flags)?;
     if create {
@@ -585,6 +760,15 @@ fn open_connection(path: &Path, create: bool) -> AgentMarketResultV1<Connection>
     Ok(connection)
 }
 
+fn sql_integer(value: u64) -> AgentMarketResultV1<i64> {
+    i64::try_from(value).map_err(|_| {
+        error(
+            AgentMarketErrorCodeV1::ArithmeticOverflow,
+            "TaskV1 archive integer exceeds SQLite signed range",
+        )
+    })
+}
+
 fn reject_sidecars(path: &Path) -> AgentMarketResultV1<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
         let sidecar = PathBuf::from(format!("{}{}", path.display(), suffix));
@@ -594,6 +778,54 @@ fn reject_sidecars(path: &Path) -> AgentMarketResultV1<()> {
                 "TaskV1 archive sidecar is present",
             ));
         }
+    }
+    Ok(())
+}
+
+fn initialization_temp_path(path: &Path) -> AgentMarketResultV1<PathBuf> {
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|cause| error(AgentMarketErrorCodeV1::StoreFailure, cause.to_string()))?
+        .as_nanos();
+    Ok(PathBuf::from(format!(
+        "{}.init-{}-{}",
+        path.display(),
+        std::process::id(),
+        timestamp
+    )))
+}
+
+fn reject_path_ancestors(path: &Path) -> AgentMarketResultV1<()> {
+    let mut current = Some(
+        path.parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or(Path::new(".")),
+    );
+    while let Some(parent) = current {
+        match fs::symlink_metadata(parent) {
+            Ok(metadata) if metadata.file_type().is_symlink() => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::StoreFailure,
+                    "TaskV1 archive parent path is a symlink",
+                ));
+            }
+            Ok(metadata) if !metadata.is_dir() => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::StoreFailure,
+                    "TaskV1 archive parent path is not a directory",
+                ));
+            }
+            Ok(_) => {}
+            Err(cause) => {
+                return Err(error(
+                    AgentMarketErrorCodeV1::StoreFailure,
+                    cause.to_string(),
+                ));
+            }
+        }
+        current = parent
+            .parent()
+            .filter(|ancestor| !ancestor.as_os_str().is_empty());
     }
     Ok(())
 }
@@ -644,12 +876,30 @@ fn read_last_seal_hash(connection: &Connection) -> AgentMarketResultV1<Hash32V1>
 fn read_live_records(
     connection: &Connection,
 ) -> AgentMarketResultV1<Vec<TerminalTaskArchiveRecordV1>> {
-    let mut statement =
-        connection.prepare("SELECT record FROM task_archive_live_records_v1 ORDER BY task_id")?;
-    let rows = statement.query_map([], |row| row.get::<_, Vec<u8>>(0))?;
+    let mut statement = connection.prepare(
+        "SELECT task_id,record,record_hash FROM task_archive_live_records_v1 ORDER BY task_id",
+    )?;
+    let rows = statement.query_map([], |row| {
+        Ok((
+            row.get::<_, Vec<u8>>(0)?,
+            row.get::<_, Vec<u8>>(1)?,
+            row.get::<_, Vec<u8>>(2)?,
+        ))
+    })?;
     rows.map(|row| {
         row.map_err(Into::into)
-            .and_then(|bytes| strict_decode(&bytes))
+            .and_then(|(task_id, bytes, record_hash)| {
+                let record: TerminalTaskArchiveRecordV1 = strict_decode(&bytes)?;
+                if task_id.as_slice() != record.task_id.0
+                    || record_hash.as_slice() != record.record_hash()?.0
+                {
+                    return Err(error(
+                        AgentMarketErrorCodeV1::TamperDetected,
+                        "TaskV1 live row key or hash differs from record",
+                    ));
+                }
+                Ok(record)
+            })
     })
     .collect()
 }
@@ -827,5 +1077,69 @@ mod tests {
             live_root_v1(&records).unwrap()
         );
         assert!(store.read_archive_batch_v1(2).is_err());
+    }
+
+    #[test]
+    fn schema_and_archive_row_tamper_fail_closed_before_reopen_or_retry() {
+        let directory = tempdir().unwrap();
+        let path = directory.path().join("archive-schema.sqlite");
+        let policy = policy();
+        let store = TaskArchiveStoreV1::initialize(&path, policy.clone()).unwrap();
+        let records = vec![record(1), record(2), record(3)];
+        store.install_live_records_v1(&records, 20).unwrap();
+        drop(store);
+        let connection = rusqlite::Connection::open(&path).unwrap();
+        connection
+            .execute_batch(
+                "CREATE TRIGGER archive_row_tamper_v1 AFTER INSERT ON task_archive_live_records_v1 BEGIN SELECT RAISE(IGNORE); END;",
+            )
+            .unwrap();
+        drop(connection);
+        assert_eq!(
+            TaskArchiveStoreV1::open_existing(&path, policy.clone())
+                .unwrap_err()
+                .code(),
+            AgentMarketErrorCodeV1::SchemaMismatch
+        );
+
+        let path = directory.path().join("archive-row.sqlite");
+        let store = TaskArchiveStoreV1::initialize(&path, policy.clone()).unwrap();
+        store.install_live_records_v1(&records, 20).unwrap();
+        let plan = plan_task_archive_pruning_v1(
+            &policy,
+            &records,
+            &BTreeSet::new(),
+            20,
+            1,
+            Hash32V1([0; 32]),
+        )
+        .unwrap();
+        let batch = plan.archive_batch().unwrap().clone();
+        let receipt = store.archive_and_delete_v1(&batch).unwrap();
+        drop(store);
+        let connection = rusqlite::Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "UPDATE task_archive_seals_v1 SET live_root_before=?1 WHERE batch_sequence=1",
+                params![&Hash32V1([88; 32]).0[..]],
+            )
+            .unwrap();
+        drop(connection);
+        assert!(TaskArchiveStoreV1::open_existing(&path, policy.clone()).is_err());
+        let connection = rusqlite::Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "UPDATE task_archive_seals_v1 SET live_root_before=?1 WHERE batch_sequence=1",
+                params![&receipt.live_root_before.0[..]],
+            )
+            .unwrap();
+        connection
+            .execute(
+                "UPDATE task_archive_records_v1 SET task_id=?1 WHERE batch_sequence=1 AND task_id=(SELECT task_id FROM task_archive_records_v1 WHERE batch_sequence=1 ORDER BY task_id LIMIT 1)",
+                params![&TaskIdV1([99; 32]).0[..]],
+            )
+            .unwrap();
+        drop(connection);
+        assert!(TaskArchiveStoreV1::open_existing(&path, policy).is_err());
     }
 }
