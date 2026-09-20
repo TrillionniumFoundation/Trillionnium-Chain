@@ -78,7 +78,7 @@ context already match the durable metadata. Context bytes are identifiers, not
 proof: M01/M02/M08 still have to authenticate the checkpoint and finality proof
 before a host supplies them here.
 
-Fresh `initialize` and `initialize_from_snapshot_v0` stores are built in a
+Fresh `initialize` and the internal `initialize_from_snapshot_v0` staging stores are built in a
 same-directory temporary inode. The owner creates the complete WAL image,
 checkpoints it, fsyncs the file, verifies a reopened readback (including rows,
 roots, contexts and generation), then publishes with a non-replacing
@@ -112,7 +112,7 @@ delta cannot be joined to the wrong generation. The regression
 delta between the metadata and row queries and requires the reader to return the
 complete predecessor snapshot. `export_snapshot_v0` emits
 `DurableDeltaSnapshotV0` only after metadata, ordered rows, row digest, and target
-root have been read back and independently recomputed. `initialize_from_snapshot_v0`
+root have been read back and independently recomputed. The internal `initialize_from_snapshot_v0`
 validates the snapshot digest, row ordering, authority-namespace exclusions, row
 digest, target root, and integer bounds before creating a new closed-world store;
 it rejects an existing path and checks every field again after the commit. Snapshot
@@ -124,7 +124,8 @@ snapshot to a verified checkpoint/export and exercise interrupted transfer,
 disk-full, replacement, retention, and multi-host evidence separately.
 
 When a host has independently verified the source and target checkpoint identities,
-it must use `initialize_from_snapshot_bound_v0`. That typed entrypoint recomputes
+it must use the public `initialize_from_snapshot_bound_v0`; the unbound snapshot
+initializer is crate-internal and cannot be used by a node integration. This typed entrypoint recomputes
 each `SourceCheckpointContextV0` digest, checks the chain/protocol and same-context
 or one-epoch progression relation, requires the target context root to equal the
 snapshot root, and only then delegates to the atomic snapshot publication path.

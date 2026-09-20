@@ -1356,7 +1356,7 @@ impl SqliteIncrementalStateStoreV0 {
 
     /// Install a validated snapshot into a new closed-world SQLite store.
     /// Existing paths are rejected and no signer/finality state is imported.
-    pub fn initialize_from_snapshot_v0<R>(
+    pub(crate) fn initialize_from_snapshot_v0<R>(
         path: impl Into<PathBuf>,
         snapshot: &DurableDeltaSnapshotV0,
         root_builder: &R,
@@ -1480,10 +1480,10 @@ impl SqliteIncrementalStateStoreV0 {
     }
 
     /// Install a snapshot while binding both persisted context digests to
-    /// caller-supplied finalized checkpoint identities. The legacy
-    /// [`Self::initialize_from_snapshot_v0`] remains available for local
-    /// staging, but this variant is the safe handoff boundary when a node has
-    /// a separately verified source/target checkpoint context.
+    /// caller-supplied finalized checkpoint identities. The internal
+    /// [`Self::initialize_from_snapshot_v0`] helper remains available only
+    /// for local staging; this public variant is the safe handoff boundary
+    /// when a node has separately verified source/target checkpoint contexts.
     pub fn initialize_from_snapshot_bound_v0<R>(
         path: impl Into<PathBuf>,
         snapshot: &DurableDeltaSnapshotV0,
