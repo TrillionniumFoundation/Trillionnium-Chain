@@ -1105,11 +1105,11 @@ mod tests {
             .unwrap();
         assert_eq!(recovered.commit_sequence(), committed.commit_sequence());
 
-        // Schema 8 durably proves C18 and retains the H17 predecessor, but it
-        // does not silently turn that proof row into the C18 -> C21
-        // application edge.  Inspect the exact successor requirements and
-        // keep the capability boundary fail-closed until its own ledger and
-        // first-new execution path are implemented.
+        // Schema 8 durably proves C18, retains the H17 predecessor, and
+        // installs a separately checksummed C18 -> C21 successor-edge row.
+        // Inspect the exact successor requirements before reopening that
+        // owner-affine capability; first-new execution remains a separate
+        // fail-closed operation until its atomic C+3 path exists.
         let requirements = reopened
             .inspect_later_epoch_application_edge_requirements_v1(
                 *checkpoint_header.id().as_bytes(),
@@ -1143,12 +1143,46 @@ mod tests {
             )
             .unwrap();
         assert_eq!(requirements.predecessor_edge(), stored_predecessor);
-        let missing_edge = reopened
+        let successor = reopened
             .require_later_epoch_application_edge_v1(&requirements)
-            .unwrap_err();
-        assert!(missing_edge.to_string().contains(
-            "later application edge ledger and first-new execution bridge are not implemented"
-        ));
+            .unwrap();
+        let reopened_successor = reopened
+            .recover_later_epoch_application_edge_v1(&requirements)
+            .unwrap();
+        assert!(successor.belongs_to_application(&reopened));
+        assert_eq!(
+            reopened_successor.record_digest(),
+            successor.record_digest()
+        );
+        assert_eq!(
+            successor.successor_binding(),
+            requirements.successor_binding()
+        );
+        assert_eq!(
+            successor.predecessor_edge(),
+            requirements.predecessor_edge()
+        );
+        assert_eq!(
+            successor.checkpoint_block(),
+            requirements.checkpoint_block()
+        );
+        assert_eq!(successor.checkpoint_height(), 18);
+        assert_eq!(successor.terminal_height(), 20);
+        assert_eq!(successor.first_application_height(), 21);
+        assert_ne!(successor.authority_digest(), [0; 32]);
+        assert_ne!(successor.record_digest(), [0; 32]);
+        assert!(reopened
+            .execute_later_epoch_first_new_block_v1(&successor)
+            .is_err());
+        let successor_count: i64 = rusqlite::Connection::open(&path)
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM native_later_epoch_edge_v1",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(successor_count, 1);
         let old_edge = reopened
             .recover_epoch_application_edge_v1(requirements.predecessor_edge())
             .unwrap();
@@ -1158,6 +1192,33 @@ mod tests {
         );
         drop(reopened);
         let sql = rusqlite::Connection::open(&path).unwrap();
+        let original_successor_record: Vec<u8> = sql
+            .query_row(
+                "SELECT record_digest FROM native_later_epoch_edge_v1 WHERE checkpoint_block=?",
+                [checkpoint_header.id().as_bytes().as_slice()],
+                |row| row.get(0),
+            )
+            .unwrap();
+        sql.execute(
+            "UPDATE native_later_epoch_edge_v1 SET record_digest=zeroblob(32) WHERE checkpoint_block=?",
+            [checkpoint_header.id().as_bytes().as_slice()],
+        )
+        .unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err(),
+            "successor edge checksum mutation must fail cold open"
+        );
+        sql.execute(
+            "UPDATE native_later_epoch_edge_v1 SET record_digest=? WHERE checkpoint_block=?",
+            rusqlite::params![
+                original_successor_record,
+                checkpoint_header.id().as_bytes().as_slice()
+            ],
+        )
+        .unwrap();
+        assert!(
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+        );
         let original_finality: Vec<u8> = sql
             .query_row(
                 "SELECT checkpoint_finality FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?",
@@ -1321,6 +1382,22 @@ mod tests {
                 .recover_later_epoch_checkpoint_commit_v1(*checkpoint.id().as_bytes())
                 .unwrap();
             assert_eq!(committed.head().height().get(), 18);
+            let requirements = app
+                .inspect_later_epoch_application_edge_requirements_v1(*checkpoint.id().as_bytes())
+                .unwrap();
+            let successor = app
+                .require_later_epoch_application_edge_v1(&requirements)
+                .unwrap();
+            assert_eq!(successor.first_application_height(), 21);
+            let successor_count: i64 = rusqlite::Connection::open(&path)
+                .unwrap()
+                .query_row(
+                    "SELECT COUNT(*) FROM native_later_epoch_edge_v1",
+                    [],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(successor_count, 1);
             let sequence = committed.commit_sequence();
             drop(app);
             let app =

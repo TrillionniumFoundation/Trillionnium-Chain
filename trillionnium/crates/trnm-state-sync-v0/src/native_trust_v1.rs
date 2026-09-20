@@ -851,7 +851,6 @@ impl SqliteNativeStateSyncStoreV1 {
     }
 
     /// Return the immutable session identity after a complete fresh readback.
-    #[must_use]
     pub fn binding_v1(&self) -> Result<NativeStateSyncBindingV1, NativeStateSyncStoreErrorV1> {
         self.binding_and_readback_v1().map(|(binding, _)| binding)
     }
@@ -1183,7 +1182,7 @@ fn configure_native_connection_v1(
         .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
     if application_id != NATIVE_SYNC_STORE_APP_ID_V1
         || user_version != NATIVE_SYNC_STORE_USER_VERSION_V1
-        || journal_mode.to_ascii_lowercase() != "wal"
+        || !journal_mode.eq_ignore_ascii_case("wal")
         || synchronous != 2
     {
         return Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch);

@@ -507,6 +507,123 @@ impl SnapshotTransferFrameV0 {
     }
 }
 
+/// The transport-neutral state machine for a canonical snapshot stream.
+///
+/// A wire decoder by itself does not establish which checkpoint a chunk belongs
+/// to.  This dispatcher makes the required ordering executable: the first
+/// manifest must validate against the independently verified trust path before
+/// any chunk is accepted, and a retried manifest must be byte-for-byte equal to
+/// the one that opened the session.  It still owns no socket, peer selection,
+/// checkpoint-proof verifier, or installation side effect.
+#[derive(Clone)]
+pub struct StateSyncFrameDispatcherV0 {
+    trust_path: VerifiedTrustPathV0,
+    session: Option<StateSyncSessionV0>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum StateSyncFrameDispatchResultV0 {
+    ManifestAccepted {
+        manifest_digest: Digest32V0,
+    },
+    ChunkAccepted {
+        index: u32,
+        progress_digest: Digest32V0,
+    },
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum StateSyncFrameDispatchErrorV0 {
+    Wire(StateSyncErrorV0),
+    ManifestRequired,
+    ManifestSubstitution,
+}
+
+impl fmt::Display for StateSyncFrameDispatchErrorV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Wire(error) => write!(formatter, "state-sync frame rejected: {error}"),
+            Self::ManifestRequired => {
+                formatter.write_str("state-sync manifest is required before chunks")
+            }
+            Self::ManifestSubstitution => {
+                formatter.write_str("state-sync manifest was substituted after session start")
+            }
+        }
+    }
+}
+
+impl Error for StateSyncFrameDispatchErrorV0 {}
+
+impl StateSyncFrameDispatcherV0 {
+    #[must_use]
+    pub fn new(trust_path: VerifiedTrustPathV0) -> Self {
+        Self {
+            trust_path,
+            session: None,
+        }
+    }
+
+    /// Decode and accept one complete canonical frame.
+    pub fn accept_wire_frame(
+        &mut self,
+        bytes: &[u8],
+    ) -> Result<StateSyncFrameDispatchResultV0, StateSyncFrameDispatchErrorV0> {
+        let frame = SnapshotTransferFrameV0::decode_v0(bytes)
+            .map_err(StateSyncFrameDispatchErrorV0::Wire)?;
+        self.accept_frame(frame)
+    }
+
+    /// Accept one already-decoded frame under the session's manifest ordering
+    /// and substitution rules.
+    pub fn accept_frame(
+        &mut self,
+        frame: SnapshotTransferFrameV0,
+    ) -> Result<StateSyncFrameDispatchResultV0, StateSyncFrameDispatchErrorV0> {
+        match frame {
+            SnapshotTransferFrameV0::Manifest(manifest) => {
+                if let Some(session) = &self.session {
+                    if session.manifest() != &manifest {
+                        return Err(StateSyncFrameDispatchErrorV0::ManifestSubstitution);
+                    }
+                    return Ok(StateSyncFrameDispatchResultV0::ManifestAccepted {
+                        manifest_digest: manifest.manifest_digest,
+                    });
+                }
+                let manifest_digest = manifest.manifest_digest;
+                let session = StateSyncSessionV0::new(self.trust_path.clone(), manifest)
+                    .map_err(StateSyncFrameDispatchErrorV0::Wire)?;
+                self.session = Some(session);
+                Ok(StateSyncFrameDispatchResultV0::ManifestAccepted { manifest_digest })
+            }
+            SnapshotTransferFrameV0::Chunk(chunk) => {
+                let session = self
+                    .session
+                    .as_mut()
+                    .ok_or(StateSyncFrameDispatchErrorV0::ManifestRequired)?;
+                let index = chunk.index;
+                session
+                    .accept_chunk(chunk)
+                    .map_err(StateSyncFrameDispatchErrorV0::Wire)?;
+                Ok(StateSyncFrameDispatchResultV0::ChunkAccepted {
+                    index,
+                    progress_digest: session.progress_digest(),
+                })
+            }
+        }
+    }
+
+    #[must_use]
+    pub fn session(&self) -> Option<&StateSyncSessionV0> {
+        self.session.as_ref()
+    }
+
+    pub fn into_session(self) -> Result<StateSyncSessionV0, StateSyncFrameDispatchErrorV0> {
+        self.session
+            .ok_or(StateSyncFrameDispatchErrorV0::ManifestRequired)
+    }
+}
+
 fn put_digest(output: &mut Vec<u8>, digest: Digest32V0) {
     output.extend_from_slice(&digest.0);
 }
@@ -659,6 +776,11 @@ impl StateSyncSessionV0 {
         self.chunks.insert(chunk.index, chunk);
         self.received_bytes = next_received_bytes;
         Ok(())
+    }
+
+    #[must_use]
+    pub fn manifest(&self) -> &SnapshotManifestV0 {
+        &self.manifest
     }
 
     /// Return a deterministic readback of the retained chunk set.  This is
@@ -1194,6 +1316,62 @@ mod tests {
             session.accept_chunk(decoded_chunk).unwrap();
         }
         assert!(session.verify_complete(&HashRoot).is_ok());
+    }
+
+    #[test]
+    fn frame_dispatcher_requires_manifest_before_chunks() {
+        let (trust, manifest, chunks) = fixture();
+        let mut dispatcher = StateSyncFrameDispatcherV0::new(trust);
+        let chunk_frame = SnapshotTransferFrameV0::Chunk(chunks[0].clone())
+            .encode_v0()
+            .unwrap();
+        assert_eq!(
+            dispatcher.accept_wire_frame(&chunk_frame),
+            Err(StateSyncFrameDispatchErrorV0::ManifestRequired)
+        );
+
+        let manifest_digest = manifest.manifest_digest;
+        let manifest_frame = SnapshotTransferFrameV0::Manifest(manifest)
+            .encode_v0()
+            .unwrap();
+        assert_eq!(
+            dispatcher.accept_wire_frame(&manifest_frame),
+            Ok(StateSyncFrameDispatchResultV0::ManifestAccepted { manifest_digest })
+        );
+    }
+
+    #[test]
+    fn frame_dispatcher_is_idempotent_for_manifest_and_rejects_substitution() {
+        let (trust, manifest, chunks) = fixture();
+        let mut dispatcher = StateSyncFrameDispatcherV0::new(trust);
+        let manifest_frame = SnapshotTransferFrameV0::Manifest(manifest.clone())
+            .encode_v0()
+            .unwrap();
+        let accepted = dispatcher.accept_wire_frame(&manifest_frame).unwrap();
+        assert_eq!(
+            accepted,
+            StateSyncFrameDispatchResultV0::ManifestAccepted {
+                manifest_digest: manifest.manifest_digest,
+            }
+        );
+        assert_eq!(dispatcher.accept_wire_frame(&manifest_frame), Ok(accepted));
+
+        let mut substituted = manifest.clone();
+        substituted.state_root = d(99);
+        assert_eq!(
+            dispatcher.accept_frame(SnapshotTransferFrameV0::Manifest(substituted)),
+            Err(StateSyncFrameDispatchErrorV0::ManifestSubstitution)
+        );
+
+        let chunk_frame = SnapshotTransferFrameV0::Chunk(chunks[0].clone())
+            .encode_v0()
+            .unwrap();
+        let accepted_chunk = dispatcher.accept_wire_frame(&chunk_frame).unwrap();
+        assert!(matches!(
+            accepted_chunk,
+            StateSyncFrameDispatchResultV0::ChunkAccepted { index: 0, .. }
+        ));
+        assert_eq!(dispatcher.session().unwrap().received_chunk_count(), 1);
     }
 
     #[test]

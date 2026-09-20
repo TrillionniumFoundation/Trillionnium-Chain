@@ -139,15 +139,13 @@ transaction. The pass never deletes `ni_values`, `ni_preimages`, historical
 roots or prepared records, because this owner cannot prove a value/replay
 retention floor. SQLite rollback therefore leaves both queue and nodes intact.
 
-This kernel implements only ordinary +1 updates in one epoch; epoch-tagged plans
-and changed-epoch commits reject until persisted edge reconstruction is joined.
-The candidate sparse path admits one explicitly owned first-new edge, and its
-closed `ni_epoch_edge` table deliberately rejects a second edge or any attempt
-to reuse a consumed/rolled-back edge. A later epoch therefore has no storage
-authority yet: it needs a versioned successor-edge record, independently bound
-cutoff/predecessor evidence, and an atomic C+3 application path before it may
-write a second sparse root. This is an intentional fail-closed gap, not a
-production multi-epoch claim.
+This kernel implements ordinary +1 updates in one epoch; epoch-tagged plans and
+changed-epoch commits reject until persisted edge reconstruction is joined. The
+schema8 candidate now admits one separately checksummed later successor-edge
+row, with independently bound cutoff/predecessor evidence and a cold-recovery
+capability. The first-new C+3 sparse-root/P commit is still fail-closed, so the
+ledger does not claim production multi-epoch execution or value-retention
+qualification.
 It retains all historical roots/value floors. Current pins
 are only retained-root and speculative-parent pins; their count derives from
 commit sequence plus bounded pending rows, avoiding a history scan per prepare.

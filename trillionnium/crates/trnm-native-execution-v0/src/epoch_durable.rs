@@ -80,9 +80,10 @@ pub(super) const SCHEMA: &[(&str, &str)] = &[
      )"),
 ];
 
-pub(super) const LATER_SCHEMA: &[(&str, &str)] = &[(
-    "native_later_epoch_finality_v1",
-    "CREATE TABLE native_later_epoch_finality_v1 (
+pub(super) const LATER_SCHEMA: &[(&str, &str)] = &[
+    (
+        "native_later_epoch_finality_v1",
+        "CREATE TABLE native_later_epoch_finality_v1 (
        checkpoint_block BLOB PRIMARY KEY CHECK(length(checkpoint_block)=32),
        p_digest BLOB NOT NULL CHECK(length(p_digest)=32),
        commit_sequence BLOB NOT NULL CHECK(length(commit_sequence)=8),
@@ -97,7 +98,32 @@ pub(super) const LATER_SCHEMA: &[(&str, &str)] = &[(
        new_parameters BLOB NOT NULL,
        record_digest BLOB NOT NULL CHECK(length(record_digest)=32)
      )",
-)];
+    ),
+    (
+        "native_later_epoch_edge_v1",
+        "CREATE TABLE native_later_epoch_edge_v1 (
+       successor_binding BLOB PRIMARY KEY CHECK(length(successor_binding)=32),
+       predecessor_edge BLOB NOT NULL UNIQUE CHECK(length(predecessor_edge)=32),
+       checkpoint_block BLOB NOT NULL UNIQUE CHECK(length(checkpoint_block)=32),
+       checkpoint_p_digest BLOB NOT NULL CHECK(length(checkpoint_p_digest)=32),
+       checkpoint_commit_sequence BLOB NOT NULL CHECK(length(checkpoint_commit_sequence)=8),
+       checkpoint_height BLOB NOT NULL CHECK(length(checkpoint_height)=8),
+       checkpoint_root BLOB NOT NULL CHECK(length(checkpoint_root)=32),
+       terminal_height BLOB NOT NULL CHECK(length(terminal_height)=8),
+       terminal_block BLOB NOT NULL CHECK(length(terminal_block)=32),
+       first_height BLOB NOT NULL CHECK(length(first_height)=8),
+       proof_context_digest BLOB NOT NULL CHECK(length(proof_context_digest)=32),
+       successor_context_digest BLOB NOT NULL CHECK(length(successor_context_digest)=32),
+       authority_digest BLOB NOT NULL CHECK(length(authority_digest)=32),
+       phase INTEGER NOT NULL CHECK(phase IN (0,1)),
+       consumed_block BLOB,
+       consumed_sequence BLOB,
+       record_digest BLOB NOT NULL CHECK(length(record_digest)=32),
+       CHECK((phase=0 AND consumed_block IS NULL AND consumed_sequence IS NULL) OR
+         (phase=1 AND length(consumed_block)=32 AND length(consumed_sequence)=8))
+     )",
+    ),
+];
 
 pub(super) const fn is_epoch_schema(version: u64) -> bool {
     version == SCHEMA_VERSION || version == LATER_SCHEMA_VERSION
@@ -534,9 +560,14 @@ impl DurableNativeApplicationV0 {
         let version = schema_version(&connection)?;
         if version == LATER_SCHEMA_VERSION {
             ensure!(
-                later_table_installed(&connection)?,
-                "later schema table missing"
+                later_finality_table_installed(&connection)?,
+                "later finality schema table missing"
             );
+            if !later_table_installed(&connection)? {
+                let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+                tx.execute_batch(LATER_SCHEMA[1].1)?;
+                tx.commit()?;
+            }
             drop(connection);
             sync_store_commit_boundary_v0(&self.path)?;
             ensure!(
@@ -550,7 +581,9 @@ impl DurableNativeApplicationV0 {
             "explicit schema4 later migration required"
         );
         let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
-        tx.execute_batch(LATER_SCHEMA[0].1)?;
+        for (_, sql) in LATER_SCHEMA {
+            tx.execute_batch(sql)?;
+        }
         ensure!(
             tx.execute(
                 "UPDATE native_application_metadata_v0 SET schema_version=?1 WHERE singleton=1 AND schema_version=?2 AND durable_sequence=?3",
@@ -829,6 +862,96 @@ pub struct LaterEpochApplicationEdgeRequirementsV1 {
     successor_context_digest: [u8; 32],
 }
 
+/// Owner-affine durable successor edge installed by a committed later-epoch
+/// checkpoint.  This capability is intentionally narrower than the legacy
+/// `AuthenticatedEpochApplicationEdgeV1`: it can prove that the successor
+/// edge is present and unchanged, but it cannot execute a first-new block
+/// until the dedicated C+3 execution bridge is implemented.
+#[must_use = "later successor edge must remain joined to its durable owner"]
+pub struct LaterEpochApplicationEdgeV1 {
+    owner: Arc<()>,
+    successor_binding: [u8; 32],
+    predecessor_edge: [u8; 32],
+    checkpoint_block: [u8; 32],
+    checkpoint_p_digest: [u8; 32],
+    checkpoint_commit_sequence: u64,
+    checkpoint_height: u64,
+    checkpoint_root: [u8; 32],
+    terminal_height: u64,
+    terminal_block: [u8; 32],
+    first_height: u64,
+    proof_context_digest: [u8; 32],
+    successor_context_digest: [u8; 32],
+    authority_digest: [u8; 32],
+    record_digest: [u8; 32],
+}
+
+impl LaterEpochApplicationEdgeV1 {
+    pub const fn successor_binding(&self) -> [u8; 32] {
+        self.successor_binding
+    }
+    pub const fn predecessor_edge(&self) -> [u8; 32] {
+        self.predecessor_edge
+    }
+    pub const fn checkpoint_block(&self) -> [u8; 32] {
+        self.checkpoint_block
+    }
+    pub const fn checkpoint_p_digest(&self) -> [u8; 32] {
+        self.checkpoint_p_digest
+    }
+    pub const fn checkpoint_commit_sequence(&self) -> u64 {
+        self.checkpoint_commit_sequence
+    }
+    pub const fn checkpoint_height(&self) -> u64 {
+        self.checkpoint_height
+    }
+    pub const fn checkpoint_root(&self) -> [u8; 32] {
+        self.checkpoint_root
+    }
+    pub const fn terminal_height(&self) -> u64 {
+        self.terminal_height
+    }
+    pub const fn terminal_block(&self) -> [u8; 32] {
+        self.terminal_block
+    }
+    pub const fn first_application_height(&self) -> u64 {
+        self.first_height
+    }
+    pub const fn proof_context_digest(&self) -> [u8; 32] {
+        self.proof_context_digest
+    }
+    pub const fn successor_context_digest(&self) -> [u8; 32] {
+        self.successor_context_digest
+    }
+    pub const fn authority_digest(&self) -> [u8; 32] {
+        self.authority_digest
+    }
+    pub const fn record_digest(&self) -> [u8; 32] {
+        self.record_digest
+    }
+    pub fn belongs_to_application(&self, application: &DurableNativeApplicationV0) -> bool {
+        Arc::ptr_eq(&self.owner, &application.owner_affinity)
+    }
+}
+
+#[derive(Clone, Copy)]
+struct LaterSuccessorFactsV1 {
+    successor_binding: [u8; 32],
+    predecessor_edge: [u8; 32],
+    checkpoint_block: [u8; 32],
+    checkpoint_p_digest: [u8; 32],
+    checkpoint_commit_sequence: u64,
+    checkpoint_height: u64,
+    checkpoint_root: [u8; 32],
+    terminal_height: u64,
+    terminal_block: [u8; 32],
+    first_height: u64,
+    proof_context_digest: [u8; 32],
+    successor_context_digest: [u8; 32],
+    authority_digest: [u8; 32],
+    record_digest: [u8; 32],
+}
+
 impl LaterEpochApplicationEdgeRequirementsV1 {
     pub const fn predecessor_edge(&self) -> [u8; 32] {
         self.predecessor_edge
@@ -1057,6 +1180,15 @@ fn decode_lineage(bytes: &[u8]) -> Result<Vec<[u8; 32]>> {
 
 fn later_table_installed(connection: &Connection) -> Result<bool> {
     Ok(connection.query_row(
+        "SELECT EXISTS(SELECT 1 FROM sqlite_schema WHERE type='table' AND name='native_later_epoch_finality_v1')
+          AND EXISTS(SELECT 1 FROM sqlite_schema WHERE type='table' AND name='native_later_epoch_edge_v1')",
+        [],
+        |row| row.get(0),
+    )?)
+}
+
+fn later_finality_table_installed(connection: &Connection) -> Result<bool> {
+    Ok(connection.query_row(
         "SELECT EXISTS(SELECT 1 FROM sqlite_schema WHERE type='table' AND name='native_later_epoch_finality_v1')",
         [],
         |row| row.get(0),
@@ -1250,6 +1382,137 @@ fn validate_later_records(
     Ok(())
 }
 
+fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfigV0) -> Result<()> {
+    let version = schema_version(connection)?;
+    if !has_later_schema(version) {
+        return Ok(());
+    }
+    ensure!(
+        later_table_installed(connection)?,
+        "later successor edge table missing"
+    );
+    let count: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM native_later_epoch_edge_v1",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        count >= 0 && count as usize <= MAX_EDGES,
+        "later edge count budget"
+    );
+    let mut statement = connection.prepare(
+        "SELECT successor_binding,predecessor_edge,checkpoint_block,checkpoint_p_digest,
+                checkpoint_commit_sequence,checkpoint_height,checkpoint_root,terminal_height,
+                terminal_block,first_height,proof_context_digest,successor_context_digest,
+                authority_digest,phase,consumed_block,consumed_sequence,record_digest
+         FROM native_later_epoch_edge_v1 ORDER BY checkpoint_commit_sequence",
+    )?;
+    let rows = statement.query_map([], |row| {
+        Ok((
+            col32(row, "successor_binding")?,
+            col32(row, "predecessor_edge")?,
+            col32(row, "checkpoint_block")?,
+            col32(row, "checkpoint_p_digest")?,
+            col64(row, "checkpoint_commit_sequence")?,
+            col64(row, "checkpoint_height")?,
+            col32(row, "checkpoint_root")?,
+            col64(row, "terminal_height")?,
+            col32(row, "terminal_block")?,
+            col64(row, "first_height")?,
+            col32(row, "proof_context_digest")?,
+            col32(row, "successor_context_digest")?,
+            col32(row, "authority_digest")?,
+            row.get::<_, i64>("phase")?,
+            opt32(row, "consumed_block")?,
+            opt64(row, "consumed_sequence")?,
+            col32(row, "record_digest")?,
+        ))
+    })?;
+    let mut previous_sequence = 0;
+    for row in rows {
+        let (
+            successor_binding,
+            predecessor_edge,
+            checkpoint_block,
+            checkpoint_p_digest,
+            sequence,
+            checkpoint_height,
+            checkpoint_root,
+            terminal_height,
+            terminal_block,
+            first_height,
+            proof_context_digest,
+            successor_context_digest,
+            authority_digest,
+            phase,
+            consumed_block,
+            consumed_sequence,
+            record_digest,
+        ) = row?;
+        ensure!(sequence > previous_sequence, "later edge sequence order");
+        previous_sequence = sequence;
+        ensure!(
+            phase == 0 && consumed_block.is_none() && consumed_sequence.is_none(),
+            "later successor edge is not in the supported installed phase"
+        );
+        let p = load_p(connection, &checkpoint_block)?.context("later successor P missing")?;
+        ensure!(
+            p.status == 1
+                && p.p_digest == checkpoint_p_digest
+                && p.commit_sequence == Some(sequence)
+                && p.artifact_kind == 0,
+            "later successor P binding"
+        );
+        let header = decode_header(&p.header)?;
+        ensure!(
+            header.height().get() == checkpoint_height
+                && header.state_root().as_bytes() == &checkpoint_root,
+            "later successor checkpoint geometry"
+        );
+        let evidence = connection.query_row(
+            "SELECT context_digest,predecessor_edge,checkpoint_parent_header,
+                    checkpoint_header,checkpoint_finality,anchor_kernel,
+                    next_epoch_commitment,new_validator_set,new_parameters
+             FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
+            [checkpoint_block.as_slice()],
+            |row| {
+                Ok(
+                    crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1 {
+                        context_digest: col32(row, "context_digest")?,
+                        predecessor_edge: col32(row, "predecessor_edge")?,
+                        checkpoint_parent_header: row.get(2)?,
+                        checkpoint_header: row.get(3)?,
+                        checkpoint_finality: row.get(4)?,
+                        anchor_kernel: row.get(5)?,
+                        next_epoch_commitment: row.get(6)?,
+                        new_validator_set: row.get(7)?,
+                        new_parameters: row.get(8)?,
+                    },
+                )
+            },
+        )?;
+        let facts = derive_later_successor_facts(connection, config, &p, sequence, &evidence)?;
+        ensure!(
+            facts.successor_binding == successor_binding
+                && facts.predecessor_edge == predecessor_edge
+                && facts.checkpoint_block == checkpoint_block
+                && facts.checkpoint_p_digest == checkpoint_p_digest
+                && facts.checkpoint_commit_sequence == sequence
+                && facts.checkpoint_height == checkpoint_height
+                && facts.checkpoint_root == checkpoint_root
+                && facts.terminal_height == terminal_height
+                && facts.terminal_block == terminal_block
+                && facts.first_height == first_height
+                && facts.proof_context_digest == proof_context_digest
+                && facts.successor_context_digest == successor_context_digest
+                && facts.authority_digest == authority_digest
+                && facts.record_digest == record_digest,
+            "later successor edge record binding",
+        );
+    }
+    Ok(())
+}
+
 /// Strict recovery joins retained evidence to the authenticated local history.
 /// It deliberately uses no live context API: after C commits, the current
 /// head is C, whereas the observation's context is the retained C-1 commit.
@@ -1400,6 +1663,149 @@ fn validate_later_preimages(
         "later finality cutoff binding"
     );
     Ok(())
+}
+
+/// Reconstruct the successor edge from the exact retained CEV0 preimages.
+/// This is intentionally separate from the legacy edge constructor: the
+/// predecessor is read from the committed lineage, the binding is returned
+/// by strict authority verification, and the post-C18 context is derived from
+/// the committed P row.  No caller-provided coordinates enter this function.
+fn derive_later_successor_facts(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    sequence: u64,
+    evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
+) -> Result<LaterSuccessorFactsV1> {
+    validate_later_preimages(connection, config, p, evidence)?;
+    let lineage = decode_lineage(&p.lineage)?;
+    let predecessor_edge = *lineage
+        .last()
+        .context("later successor predecessor missing")?;
+    let audited = audited_lineage(connection, config, &lineage)?;
+    let active = &audited
+        .last()
+        .context("later successor active epoch missing")?
+        .1
+        .activation;
+    let old_set = active.new_validator_set();
+    let old_parameters = active.new_consensus_parameters();
+    let old_set_bytes = old_set
+        .try_cev0_bytes()
+        .map_err(|e| anyhow::anyhow!("encode successor old validator set: {e:?}"))?;
+    let old_parameters_bytes = old_parameters.canonical_bytes();
+    let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
+        trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
+            old_checkpoint_finality: &evidence.checkpoint_finality,
+            next_epoch_commitment: &evidence.next_epoch_commitment,
+            authorization_kernel: &evidence.anchor_kernel,
+            old_validator_set: &old_set_bytes,
+            old_consensus_parameters: &old_parameters_bytes,
+            new_validator_set: &evidence.new_validator_set,
+            new_consensus_parameters: &evidence.new_parameters,
+            authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
+        },
+        old_set,
+        old_parameters,
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .map_err(|e| anyhow::anyhow!("decode successor authority evidence: {e:?}"))?;
+    let authority =
+        trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
+            decoded.old_checkpoint_finality(),
+            decoded.next_epoch_commitment(),
+            decoded.authorization_kernel(),
+            old_set,
+            old_parameters,
+            decoded.new_validator_set(),
+            decoded.new_consensus_parameters(),
+            decoded.authenticated_checkpoint_parent_header(),
+        )
+        .map_err(|e| anyhow::anyhow!("verify successor authority evidence: {e:?}"))?;
+    let header = decode_header(&p.header)?;
+    ensure!(
+        authority
+            .old_checkpoint_finality()
+            .finalized_block()
+            .header()
+            == &header,
+        "successor authority checkpoint substitution"
+    );
+    let geometry = trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), old_parameters)
+        .map_err(|e| anyhow::anyhow!("successor edge geometry: {e:?}"))?;
+    let terminal = authority.old_checkpoint_finality().grandchild().header();
+    ensure!(
+        terminal.height() == geometry.epoch_end(),
+        "successor edge terminal geometry"
+    );
+    let first_height = terminal
+        .height()
+        .get()
+        .checked_add(1)
+        .context("successor edge first height exhausted")?;
+    let target_head = p.target_head()?;
+    let successor_context_digest = context_digest(
+        config.store_id,
+        &target_head,
+        sequence,
+        &p.target_set,
+        &p.target_parameters,
+        &p.lineage,
+    );
+    let successor_binding = *authority.binding_ref().as_bytes();
+    let checkpoint_root = *header.state_root().as_bytes();
+    let authority_digest = hash_domain(
+        "trnm.native-application.later-epoch-successor-authority.v1",
+        &[
+            &config.store_id,
+            &successor_binding,
+            &predecessor_edge,
+            &p.block_id,
+            &p.p_digest,
+            &sha256_v0(&evidence.checkpoint_parent_header),
+            &sha256_v0(&evidence.checkpoint_header),
+            &sha256_v0(&evidence.checkpoint_finality),
+            &sha256_v0(&evidence.anchor_kernel),
+            &sha256_v0(&evidence.next_epoch_commitment),
+            &sha256_v0(&evidence.new_validator_set),
+            &sha256_v0(&evidence.new_parameters),
+        ],
+    );
+    let record_digest = hash_domain(
+        "trnm.native-application.later-epoch-successor-record.v1",
+        &[
+            &config.store_id,
+            &successor_binding,
+            &predecessor_edge,
+            &p.block_id,
+            &p.p_digest,
+            &sequence.to_be_bytes(),
+            &header.height().get().to_be_bytes(),
+            &checkpoint_root,
+            &terminal.height().get().to_be_bytes(),
+            terminal.id().as_bytes(),
+            &first_height.to_be_bytes(),
+            &evidence.context_digest,
+            &successor_context_digest,
+            &authority_digest,
+        ],
+    );
+    Ok(LaterSuccessorFactsV1 {
+        successor_binding,
+        predecessor_edge,
+        checkpoint_block: p.block_id,
+        checkpoint_p_digest: p.p_digest,
+        checkpoint_commit_sequence: sequence,
+        checkpoint_height: header.height().get(),
+        checkpoint_root,
+        terminal_height: terminal.height().get(),
+        terminal_block: *terminal.id().as_bytes(),
+        first_height,
+        proof_context_digest: evidence.context_digest,
+        successor_context_digest,
+        authority_digest,
+        record_digest,
+    })
 }
 
 impl DurableNativeApplicationV0 {
@@ -1840,22 +2246,117 @@ impl DurableNativeApplicationV0 {
         })
     }
 
-    /// Keep the second durable edge fail-closed until its versioned ledger and
-    /// atomic first-new execution path exist.  The requirements inspection is
-    /// deliberately separate so callers can test every binding before this
-    /// method is allowed to return an application capability.
+    /// Reopen the durable successor edge after rechecking every requirement.
+    /// The returned capability is sufficient to identify the C18→C21 edge,
+    /// but first-new execution remains a separate fail-closed operation until
+    /// its atomic C+3 P/state commit and recovery path are implemented.
     pub fn require_later_epoch_application_edge_v1(
         &self,
         requirements: &LaterEpochApplicationEdgeRequirementsV1,
-    ) -> Result<()> {
+    ) -> Result<LaterEpochApplicationEdgeV1> {
         ensure!(
             requirements.belongs_to_application(self),
             "later application edge requirements belong to another owner"
         );
-        let _ = self
+        self.recover_later_epoch_application_edge_v1(requirements)
+    }
+
+    /// Reopen the separately persisted successor edge.  This capability is
+    /// owner-affine and is reconstructed only after the complete schema-8
+    /// ledger (including strict CEV0 authority) has been audited.
+    pub fn recover_later_epoch_application_edge_v1(
+        &self,
+        requirements: &LaterEpochApplicationEdgeRequirementsV1,
+    ) -> Result<LaterEpochApplicationEdgeV1> {
+        ensure!(
+            requirements.belongs_to_application(self),
+            "later successor edge requirements belong to another owner"
+        );
+        let fresh = self
             .inspect_later_epoch_application_edge_requirements_v1(requirements.checkpoint_block)?;
+        ensure!(
+            fresh.predecessor_edge == requirements.predecessor_edge
+                && fresh.successor_binding == requirements.successor_binding
+                && fresh.checkpoint_block == requirements.checkpoint_block
+                && fresh.checkpoint_height == requirements.checkpoint_height
+                && fresh.terminal_height == requirements.terminal_height
+                && fresh.terminal_block == requirements.terminal_block
+                && fresh.first_application_height == requirements.first_application_height
+                && fresh.checkpoint_commit_sequence == requirements.checkpoint_commit_sequence
+                && fresh.proof_context_digest == requirements.proof_context_digest
+                && fresh.successor_context_digest == requirements.successor_context_digest,
+            "later successor edge requirements are stale"
+        );
+        let _guard = self.lock_operation()?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        ensure!(
+            has_later_schema(schema_version(&connection)?) && later_table_installed(&connection)?,
+            "later successor edge ledger missing"
+        );
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let row = connection.query_row(
+            "SELECT successor_binding,predecessor_edge,checkpoint_block,checkpoint_p_digest,
+                    checkpoint_commit_sequence,checkpoint_height,checkpoint_root,terminal_height,
+                    terminal_block,first_height,proof_context_digest,successor_context_digest,
+                    authority_digest,phase,record_digest
+             FROM native_later_epoch_edge_v1 WHERE checkpoint_block=?1",
+            [requirements.checkpoint_block.as_slice()],
+            |row| {
+                Ok((
+                    col32(row, "successor_binding")?,
+                    col32(row, "predecessor_edge")?,
+                    col32(row, "checkpoint_block")?,
+                    col32(row, "checkpoint_p_digest")?,
+                    col64(row, "checkpoint_commit_sequence")?,
+                    col64(row, "checkpoint_height")?,
+                    col32(row, "checkpoint_root")?,
+                    col64(row, "terminal_height")?,
+                    col32(row, "terminal_block")?,
+                    col64(row, "first_height")?,
+                    col32(row, "proof_context_digest")?,
+                    col32(row, "successor_context_digest")?,
+                    col32(row, "authority_digest")?,
+                    row.get::<_, i64>("phase")?,
+                    col32(row, "record_digest")?,
+                ))
+            },
+        )?;
+        ensure!(row.13 == 0, "later successor edge is already consumed");
+        Ok(LaterEpochApplicationEdgeV1 {
+            owner: Arc::clone(&self.owner_affinity),
+            successor_binding: row.0,
+            predecessor_edge: row.1,
+            checkpoint_block: row.2,
+            checkpoint_p_digest: row.3,
+            checkpoint_commit_sequence: row.4,
+            checkpoint_height: row.5,
+            checkpoint_root: row.6,
+            terminal_height: row.7,
+            terminal_block: row.8,
+            first_height: row.9,
+            proof_context_digest: row.10,
+            successor_context_digest: row.11,
+            authority_digest: row.12,
+            record_digest: row.14,
+        })
+    }
+
+    /// The first-new execution path is intentionally fail-closed until it can
+    /// atomically persist C+3 P, consume this edge, and recover both states
+    /// after SIGKILL.  Holding the capability therefore cannot accidentally
+    /// route C+3 through the legacy epoch-0 edge API.
+    pub fn execute_later_epoch_first_new_block_v1(
+        &self,
+        edge: &LaterEpochApplicationEdgeV1,
+    ) -> Result<()> {
+        ensure!(
+            edge.belongs_to_application(self),
+            "later successor edge belongs to another owner"
+        );
         anyhow::bail!(
-            "later application edge ledger and first-new execution bridge are not implemented; no durable authority issued"
+            "later successor first-new execution bridge is not implemented; edge remains installed"
         )
     }
 
@@ -2442,6 +2943,7 @@ pub(super) fn inventory(
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
     (|| -> Result<_> {
         validate_later_records(connection, config)?;
+        validate_later_edges(connection, config)?;
         // Even an installed edge not yet referenced by a P must retain valid evidence.
         for edge in load_edges(connection, config)? {
             audited_lineage(connection, config, &[edge.binding])?;
@@ -3071,12 +3573,24 @@ impl DurableNativeApplicationV0 {
             "epoch commit P substituted"
         );
         validate_p(&connection, &self.config, &p)?;
-        if let Some(evidence) = later {
+        let prospective_sequence = p.commit_sequence.unwrap_or(
+            metadata
+                .durable_sequence
+                .checked_add(1)
+                .context("epoch commit sequence exhausted")?,
+        );
+        let later_facts = if let Some(evidence) = later {
             ensure!(
                 has_later_schema(schema_version(&connection)?),
                 "explicit schema8 later finality revision required"
             );
-            validate_later_preimages(&connection, &self.config, &p, evidence)?;
+            let facts = derive_later_successor_facts(
+                &connection,
+                &self.config,
+                &p,
+                prospective_sequence,
+                evidence,
+            )?;
             if p.status == 0 {
                 let count: u64 = connection.query_row(
                     "SELECT COUNT(*) FROM native_later_epoch_finality_v1",
@@ -3088,6 +3602,19 @@ impl DurableNativeApplicationV0 {
                     "later checkpoint ledger capacity unavailable"
                 );
             }
+            Some(facts)
+        } else {
+            None
+        };
+        if let Some(evidence) = later {
+            let facts = later_facts
+                .as_ref()
+                .context("later successor facts missing")?;
+            ensure!(
+                facts.proof_context_digest == evidence.context_digest
+                    && facts.predecessor_edge == evidence.predecessor_edge,
+                "later successor facts differ from proof evidence"
+            );
         } else {
             ensure!(
                 decode_header(&p.header)?.block_kind() != BlockKind::EpochCheckpoint,
@@ -3110,6 +3637,18 @@ impl DurableNativeApplicationV0 {
                     [p.block_id.as_slice()], |row| col32(row, "record_digest"),
                 )?;
                 ensure!(digest == retained, "later checkpoint conflicting retry");
+                let facts = later_facts
+                    .as_ref()
+                    .context("later successor facts missing")?;
+                let retained_edge: [u8; 32] = connection.query_row(
+                    "SELECT record_digest FROM native_later_epoch_edge_v1 WHERE checkpoint_block=?1",
+                    [p.block_id.as_slice()],
+                    |row| col32(row, "record_digest"),
+                )?;
+                ensure!(
+                    facts.record_digest == retained_edge,
+                    "later successor edge conflicting retry"
+                );
             }
             drop(connection);
             sync_store_commit_boundary_v0(&self.path)?;
@@ -3134,10 +3673,7 @@ impl DurableNativeApplicationV0 {
             metadata.head == p.parent,
             "epoch commit predecessor not current head"
         );
-        let sequence = metadata
-            .durable_sequence
-            .checked_add(1)
-            .context("epoch commit sequence exhausted")?;
+        let sequence = prospective_sequence;
         let head = p.target_head()?;
         let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         let changed=tx.execute("UPDATE native_application_metadata_v0 SET durable_sequence=?,head_height=?,head_block_id=?,head_state_root=?,head_commit_id=?,authenticated_snapshot=?,authenticated_snapshot_digest=?,replay_command_ids=?,replay_signer_nonces=? WHERE singleton=1 AND durable_sequence=? AND head_height=? AND head_block_id=? AND head_state_root=? AND head_commit_id=?",
@@ -3166,6 +3702,9 @@ impl DurableNativeApplicationV0 {
             params![self.config.store_id.as_slice(),head.block_id().as_bytes().as_slice(),head.state_root().as_bytes().as_slice(),head.commit_id().as_bytes().as_slice(),head.height().get().to_be_bytes().as_slice(),
                 sequence.to_be_bytes().as_slice(),&p.target_set,&p.target_parameters,&p.lineage,context.as_slice()])?;
         if let Some(evidence) = later {
+            let facts = later_facts
+                .as_ref()
+                .context("later successor facts missing")?;
             let digest =
                 later_record_digest(&self.config, &p.block_id, &p.p_digest, sequence, evidence);
             tx.execute(
@@ -3184,6 +3723,28 @@ impl DurableNativeApplicationV0 {
                     &evidence.new_validator_set,
                     &evidence.new_parameters,
                     digest.as_slice(),
+                ],
+            )?;
+            tx.execute(
+                "INSERT INTO native_later_epoch_edge_v1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                params![
+                    facts.successor_binding.as_slice(),
+                    facts.predecessor_edge.as_slice(),
+                    facts.checkpoint_block.as_slice(),
+                    facts.checkpoint_p_digest.as_slice(),
+                    facts.checkpoint_commit_sequence.to_be_bytes().as_slice(),
+                    facts.checkpoint_height.to_be_bytes().as_slice(),
+                    facts.checkpoint_root.as_slice(),
+                    facts.terminal_height.to_be_bytes().as_slice(),
+                    facts.terminal_block.as_slice(),
+                    facts.first_height.to_be_bytes().as_slice(),
+                    facts.proof_context_digest.as_slice(),
+                    facts.successor_context_digest.as_slice(),
+                    facts.authority_digest.as_slice(),
+                    0_i64,
+                    Option::<&[u8]>::None,
+                    Option::<&[u8]>::None,
+                    facts.record_digest.as_slice(),
                 ],
             )?;
         }

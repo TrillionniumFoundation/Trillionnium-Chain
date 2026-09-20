@@ -433,8 +433,8 @@ The implemented owner entry points are:
   Recovery selects only a binding already present in that validated history and
   re-reads the history after reconstruction. A second pending edge, duplicate
   height, malformed lineage, missing predecessor, or concurrent mutation is
-  rejected. This carrier is read/recovery state only; it does not issue a
-  second edge.
+  rejected. This schema4 carrier is read/recovery state only; schema8 owns the
+  separately audited successor-edge row.
 - `inspect_later_epoch_checkpoint_context_v1()`: owner-affine, read-only
   planning context for the next checkpoint. It verifies the consumed lineage,
   active context digest, canonical old validator set/parameters, and derives
@@ -487,11 +487,12 @@ when its artifact kind, target, prepared digest, header kind and next-epoch
 commitment match exactly. It recursively audits each predecessor `P` with a
 bounded seen-set and rejects cycles, missing predecessors and owner mismatches;
 an epoch checkpoint is admitted to descendant preparation but cannot be passed
-to ordinary `commit_epoch_finality_bytes_v1`. The later checkpoint's required
-second edge, first-new C+3, checkpoint/handoff schema4 finalized-read mapping
-and schema7 multi-edge owner/storage migration remain unimplemented. Schema8
-does durably commit and strictly reverify the later checkpoint proof record;
-neither path silently attaches a second edge to the first.
+to ordinary `commit_epoch_finality_bytes_v1`. The later checkpoint's first-new
+C+3 execution/commit, checkpoint/handoff schema4 finalized-read mapping and
+schema7 incremental multi-edge owner/storage migration remain unimplemented.
+Schema8 durably commits and strictly reverifies the later checkpoint proof
+record and its separate successor-edge row; neither path silently reuses the
+predecessor edge.
 
 ### Implemented retained edge evidence and recovery algorithm
 
@@ -712,8 +713,10 @@ sequence>P sequence, plus the existing exact owner/head/P and preparation checks
 
 Primary module: M08; producers M06 and M02, storage consumer M07. An explicit
 `upgrade_later_epoch_schema_v1(expected_head)` migrates schema4 by atomically
-adding `native_later_epoch_finality_v1` and CASing the version to 8. Ordinary
-open never migrates. Existing schema4 edge/P/context records remain unchanged.
+adding `native_later_epoch_finality_v1`, `native_later_epoch_edge_v1` and CASing
+the version to 8. A schema8 retry installs the edge table if an older schema8
+image predates it; ordinary open never migrates. Existing schema4 edge/P/context
+records remain unchanged.
 
 `commit_later_epoch_checkpoint_finality_v1` consumes the owner-bound strict
 observation for the exact prepared checkpoint. Under the owner lock it joins
@@ -735,23 +738,24 @@ proof-row insertion.
 Acceptance requires real C18/S19/S20 evidence, explicit migration and reopen,
 exact retry, foreign-owner rejection, proof/record corruption, and process
 termination before commit, after commit and after fsync. This contract advances
-the checkpoint application head only. The second durable edge, first-new C+3,
-schema7 incremental multi-edge storage and production Core/signing remain
-separate open requirements.
+the checkpoint application head and installs the successor-edge ledger row.
+First-new C+3 execution, schema7 incremental multi-edge storage and production
+Core/signing remain separate open requirements.
 
 The explicit `inspect_later_epoch_application_edge_requirements_v1(C18)` seam
-now makes the remaining edge contract executable as a fail-closed check. It
+now makes the successor contract executable. It
 reopens and validates the committed checkpoint P, parent P, proof record,
 predecessor lineage and strict CEV0 activation authority, then returns the
 predecessor binding, independently recomputed successor activation binding,
 checkpoint/terminal/first-new heights, and two context digests. The proof
 context digest is the pre-C18 context retained by schema8; the successor
 context digest is recomputed from the post-C18 head, sequence, target
-configuration and lineage. They must remain separate fields in the future
-`native_later_epoch_edge_v1` row. `require_later_epoch_application_edge_v1`
-currently rejects after these checks because that row, its atomic binding to
-the C18 P, and the C+3 first-new execution/commit path are not implemented.
-The fixture asserts predecessor H17, successor height 21, distinct non-zero
+configuration and lineage. Schema8 persists those fields in
+`native_later_epoch_edge_v1`, and `require_later_epoch_application_edge_v1`
+returns an owner-affine capability only after a complete cold audit. The
+capability's C+3 execution method still fails closed because the atomic
+first-new state/P commit and crash-recovery path are not implemented. The
+fixture asserts predecessor H17, successor height 21, distinct non-zero
 bindings and distinct context digests, and proves the old H17 edge cannot open
 an application store after C18 is committed.
 

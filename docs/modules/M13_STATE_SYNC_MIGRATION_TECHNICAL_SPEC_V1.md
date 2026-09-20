@@ -22,6 +22,13 @@ The state-sync crate now also owns a bounded, transport-neutral byte boundary:
 for a future peer adapter; it does not open a socket, choose a peer, or issue a
 trust anchor. Decoded manifests still require an independently verified trust
 path, and decoded chunks still require the session's exact manifest binding.
+`StateSyncFrameDispatcherV0` makes that handoff an executable state machine: it
+requires the first manifest to validate against the supplied
+`VerifiedTrustPathV0`, rejects chunks before that manifest, accepts only an
+exact retry of the installed manifest, and reports a deterministic progress
+digest after each accepted chunk. It remains a transport-neutral composition
+boundary; peer authentication, durable resume and installation are still
+host-owned.
 The current native lab h1-h3 sync route is bounded laboratory behavior, not
 the generic arbitrary-height/multi-epoch protocol designed below.
 

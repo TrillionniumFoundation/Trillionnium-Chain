@@ -431,11 +431,12 @@ the indexed `recover_epoch_application_edge_at_index_v1()` seam. They return
 only a recursively audited, owner-affine history: every consumed P must carry
 the complete ordered lineage, while a second unconsumed row, duplicate height,
 corrupt lineage, missing predecessor, or concurrent mutation fails closed.
-This closes the observation/recovery contract without authorizing a second
-edge. The explicit schema8 M08 consumer now durably commits a strictly
-verified later checkpoint and retains all CEV0 preimages for restart auditing;
-schema7 multi-edge storage, the second durable edge and first-new execution
-remain explicit prerequisites for full multi-epoch issuance.
+This closes the observation/recovery contract without authorizing a first-new
+execution. The explicit schema8 M08 consumer now durably commits a strictly
+verified later checkpoint, retains all CEV0 preimages for restart auditing, and
+installs a separate checksummed successor-edge row with its own binding and
+post-checkpoint context digest. The C+3 state/P commit remains an explicit
+prerequisite for full multi-epoch issuance.
 
 `DurableNativeApplicationV0::inspect_later_epoch_checkpoint_context_v1()` is
 the owner-affine context boundary. It re-reads the consumed edge lineage and
@@ -449,17 +450,18 @@ budget and strict Ed25519 checks, and revalidates the owner context after the
 cryptographic work. The feature-gated fixture proves H11-H17 ordinary old-epoch
 execution followed by C18/S19/S20 evidence and rejects a commitment-byte
 mutation. The returned observation is read-only: it cannot prepare, sign or
-commit a second edge, and the legacy `require_later_epoch_checkpoint_bridge_v1()`
+commit a C+3 block, and the legacy `require_later_epoch_checkpoint_bridge_v1()`
 continues to fail closed. M08's schema8 commit binds the checkpoint P/state
-root before the later checkpoint becomes durable; the second edge and new
-epoch application authority remain separate gates.
+root and installs the separate successor-edge row before the later checkpoint
+becomes durable; first-new application authority remains a separate gate.
 
 The post-C18 edge seam is intentionally explicit:
 `inspect_later_epoch_application_edge_requirements_v1` derives the successor
 activation binding from retained strict evidence and returns the exact
 C18/C+2/C+3 geometry while keeping the pre-C18 proof-context digest distinct
-from the recomputed post-C18 successor-context digest. It does not issue an
-execution capability. Until a versioned later-edge row is atomically committed
-with that binding and the first-new C+3 P, the old H17 edge is rejected by the
-owner when the application head is C18, and
-`require_later_epoch_application_edge_v1` remains fail-closed.
+from the recomputed post-C18 successor-context digest. Schema8 atomically
+persists that binding in `native_later_epoch_edge_v1`; `require_...` reopens it
+only after a complete cold audit and returns an owner-affine capability. The
+capability still cannot execute C+3: the atomic first-new state/P commit and
+its crash-recovery proof remain open. The old H17 edge is rejected by the
+owner once the application head is C18.

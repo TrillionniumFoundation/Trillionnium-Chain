@@ -477,7 +477,7 @@ fn real_ordinary_and_epoch_path_joins_exact_head_and_projects_snapshot_target() 
             manifest.clone(),
             application,
             readback,
-            &[retained.clone()],
+            std::slice::from_ref(&retained),
         )
         .unwrap();
         assert_eq!(resumed.readback(), readback);
