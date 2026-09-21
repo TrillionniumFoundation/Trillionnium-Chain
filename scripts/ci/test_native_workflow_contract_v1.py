@@ -159,6 +159,20 @@ class NativeWorkflowMutants(unittest.TestCase):
         )
         self.rejected("native candidate shard execution: missing")
 
+    def test_node_epoch_profile_cannot_be_removed_or_skipped(self) -> None:
+        self.replace(BASELINE, "--suite node-epoch", "--suite native")
+        self.rejected("node epoch shard execution: missing")
+        self.replace(BASELINE, "--suite native", "--suite node-epoch")
+        marker = "      - name: Verify default and explicit candidate ownership boundaries\n"
+        self.replace(BASELINE, marker, marker + "        if: false\n")
+        self.rejected("node epoch shard execution:.*conditional")
+
+    def test_node_epoch_failure_evidence_must_be_retained(self) -> None:
+        self.replace(BASELINE,
+            "always() && (steps.node_epoch_shards.outcome == 'success' || steps.node_epoch_shards.outcome == 'failure')",
+            "success()")
+        self.rejected("node epoch failure evidence must be retained")
+
     def test_runtime_matrix_cannot_skip_and_publish_success(self) -> None:
         self.replace(RUNTIME, "      - name: Run finalization-intent SIGKILL matrix\n", "      - name: Run finalization-intent SIGKILL matrix\n        if: false\n")
         self.rejected("may not skip execution")

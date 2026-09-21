@@ -17,6 +17,8 @@ from unittest.mock import patch
 
 import run_native_candidate_shards_v1 as runner
 
+NODE_NAMES = sorted(["ordinary::new_test", runner.NODE_EPOCH_PREFIX + "future_runtime", *runner.NODE_REQUIRED_DRIVERS])
+
 NAMES = sorted([
     "ordinary::new_test", runner.BRIDGE + "historical_install_is_atomic",
     runner.BRIDGE + "historical_receiver_c33_is_strict", runner.SCHEMA7 + "selects_branch",
@@ -36,9 +38,11 @@ def process_state(pid: int) -> str | None:
 
 
 class NativeCandidateShardTests(unittest.TestCase):
-    def make_workspace(self, base: Path) -> tuple[Path, Path]:
+    def make_workspace(self, base: Path, suite: str = "native") -> tuple[Path, Path]:
+        package, _, ignored, _ = runner.SUITES[suite]
+        names = NODE_NAMES if suite == "node-epoch" else NAMES
         repo = base / "repo"
-        source = repo / "trillionnium/crates/trnm-native-execution-v0/src/lib.rs"
+        source = repo / "trillionnium/crates" / package / "src/lib.rs"
         source.parent.mkdir(parents=True)
         source.write_text("// fake source used only by runner tests\n")
         for args in (["init", "-q"], ["add", "."], ["-c", "user.name=Runner test", "-c", "user.email=test@invalid", "-c", "commit.gpgsign=false", "commit", "-qm", "fixture"]):
@@ -46,7 +50,7 @@ class NativeCandidateShardTests(unittest.TestCase):
         bin_dir = base / "bin"
         bin_dir.mkdir()
         executable = bin_dir / "fake-native"
-        executable.write_text(f"#!{sys.executable}\n" + f"NAMES={NAMES!r}\nIGNORED={sorted(runner.ALLOWED_IGNORED)!r}\n" + '''
+        executable.write_text(f"#!{sys.executable}\n" + f"NAMES={names!r}\nIGNORED={sorted(ignored)!r}\n" + '''
 import os, pathlib, sys
 assert 'RUST_MIN_STACK' not in os.environ
 case = os.environ.get('SHARD_TEST_CASE', '')
@@ -55,6 +59,8 @@ ignored = set(IGNORED)
 if case == 'extra-ignored':
     ignored.add('ordinary::new_test')
 pre_handoff_driver = 'later_epoch_checkpoint_bridge::tests::later_pre_handoff_sigkill_commit_and_attach_cuts_preserve_original_evidence'
+if case == 'missing-node-driver':
+    NAMES.remove('epoch_runtime_candidate_v1::tests::actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5')
 if case == 'missing-pre-handoff-driver':
     NAMES.remove(pre_handoff_driver)
 if case == 'ignored-pre-handoff-driver':
@@ -67,7 +73,7 @@ while i < len(args):
     if not args[i].startswith('--'):
         filters.append(args[i])
     i += 1
-selected = [name for name in NAMES if (not filters or any(x in name for x in filters)) and not any(x in name for x in skips)]
+selected = [name for name in NAMES if (not filters or any(x == name if '--exact' in args else x in name for x in filters)) and not any(x in name for x in skips)]
 if '--ignored' in args:
     selected = [name for name in selected if name in ignored]
 if '--list' in args:
@@ -93,17 +99,19 @@ print(f'test result: ok. {passed} passed; 0 failed; {len(set(selected) & ignored
 ''')
         executable.chmod(0o755)
         cargo = bin_dir / "cargo"
-        cargo.write_text(f"#!{sys.executable}\n" + f"EXE={str(executable)!r}\n" + '''
+        cargo.write_text(f"#!{sys.executable}\n" + f"EXE={str(executable)!r}\nPACKAGE={package!r}\n" + '''
 import json, os, pathlib, sys
 if os.environ.get('SHARD_TEST_CASE') == 'compile-failure':
     raise SystemExit(9)
-print(json.dumps({'reason':'compiler-artifact', 'target':{'name':'trnm_native_execution_v0', 'kind':['lib'], 'src_path':str(pathlib.Path.cwd() / 'crates/trnm-native-execution-v0/src/lib.rs')}, 'profile':{'test':True}, 'executable':EXE}))
+if os.environ.get('SHARD_TEST_CASE') == 'foreign-package':
+    PACKAGE = 'trnm-native-execution-v0'
+print(json.dumps({'reason':'compiler-artifact', 'target':{'name':PACKAGE.replace('-', '_'), 'kind':['lib'], 'src_path':str(pathlib.Path.cwd() / 'crates' / PACKAGE / 'src/lib.rs')}, 'profile':{'test':True}, 'executable':EXE}))
 ''')
         cargo.chmod(0o755)
         return repo, bin_dir
 
-    def invoke(self, base: Path, case: str = "") -> tuple[int, dict, Path]:
-        repo, bin_dir = self.make_workspace(base)
+    def invoke(self, base: Path, case: str = "", suite: str = "native") -> tuple[int, dict, Path]:
+        repo, bin_dir = self.make_workspace(base, suite)
         evidence = base / "evidence"
         if case == "dirty-source":
             (repo / "untracked-before-test").write_text("untracked")
@@ -111,7 +119,7 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':'trnm_native_ex
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
         env["TRNM_EXPECTED_SOURCE_SHA"] = "0" * 40 if case == "wrong-source-pin" else head
         with patch.dict(os.environ, env), contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            code = runner.run(["--workspace", str(repo / "trillionnium"), "--evidence-dir", str(evidence), "--deadline-seconds", "30"])
+            code = runner.run(["--suite", suite, "--workspace", str(repo / "trillionnium"), "--evidence-dir", str(evidence), "--deadline-seconds", "30"])
         return code, json.loads((evidence / "summary.json").read_text()), evidence
 
     def test_actual_fake_libtest_execution_covers_inventory_and_children(self) -> None:
@@ -126,6 +134,30 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':'trnm_native_ex
         pre_handoff = summary["shards"]["later-pre-handoff"]["counts"]
         self.assertEqual((pre_handoff["passed"], pre_handoff["ignored"]), (2, 1))
         self.assertRegex(summary["executable_sha256"], r"^[0-9a-f]{64}$")
+
+    def test_node_epoch_profile_executes_every_discovered_case_exactly_once(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            code, summary, evidence = self.invoke(Path(directory), suite="node-epoch")
+            self.assertEqual(code, 0)
+            self.assertEqual(summary["package"], "trnm-poco-node")
+            self.assertEqual(summary["features"], "epoch-runtime-test-fixtures")
+            inventory = json.loads((evidence / "inventory.json").read_text())
+            self.assertEqual(sorted(sum(inventory.values(), [])), NODE_NAMES)
+            self.assertEqual(inventory["general"], ["ordinary::new_test"])
+            counts = [entry["counts"] for entry in summary["shards"].values()]
+            self.assertEqual(sum(entry["passed"] for entry in counts), len(NODE_NAMES))
+            self.assertEqual(sum(entry["ignored"] for entry in counts), 0)
+            for shard in inventory:
+                if shard != "general":
+                    self.assertEqual(len(inventory[shard]), 1)
+                    self.assertIn("--exact", (evidence / (shard + ".command")).read_text())
+
+    def test_node_epoch_profile_refuses_wrong_binary_missing_driver_or_ignored_case(self) -> None:
+        for case in ("foreign-package", "missing-node-driver", "extra-ignored", "wrong-count", "filtered-mismatch"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                code, summary, _ = self.invoke(Path(directory), case, suite="node-epoch")
+                self.assertNotEqual(code, 0)
+                self.assertEqual(summary["status"], "failed")
 
     def test_execution_failures_never_publish_success(self) -> None:
         for case in ("compile-failure", "list-failure", "filtered-mismatch", "extra-ignored", "missing-pre-handoff-driver", "ignored-pre-handoff-driver", "no-summary", "wrong-count", "dirty-source", "source-change", "binary-change", "wrong-source-pin"):

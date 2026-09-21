@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the complete native candidate libtest inventory in bounded shards."""
+"""Run complete candidate libtest inventories in source-bound, bounded shards."""
 from __future__ import annotations
 
 import argparse
@@ -35,6 +35,18 @@ REQUIRED_SIGKILL_DRIVERS = {
 }
 
 
+NODE_EPOCH_PREFIX = "epoch_runtime_candidate_v1::tests::"
+NODE_REQUIRED_DRIVERS = {
+    NODE_EPOCH_PREFIX + "actual_epoch_runtime_activation_releases_timer_then_persisted_timeout_once",
+    NODE_EPOCH_PREFIX + "actual_epoch_first_core_finalization_applies_three_real_native_executions_v2",
+    NODE_EPOCH_PREFIX + "actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5",
+}
+SUITES = {
+    "native": (PACKAGE, FEATURES, ALLOWED_IGNORED, REQUIRED_SIGKILL_DRIVERS),
+    "node-epoch": ("trnm-poco-node", "epoch-runtime-test-fixtures", set(), NODE_REQUIRED_DRIVERS),
+}
+
+
 class ShardError(RuntimeError):
     pass
 
@@ -59,11 +71,22 @@ def classify_test(name: str) -> str:
     return "later-bridge" if name.startswith(BRIDGE) else "general"
 
 
-def partition_inventory(names: Iterable[str]) -> dict[str, list[str]]:
+def partition_inventory(names: Iterable[str], suite: str = "native") -> dict[str, list[str]]:
     names = sorted(names)
-    result = {shard: [] for shard in SHARD_NAMES}
-    for name in names:
-        result[classify_test(name)].append(name)
+    if suite == "node-epoch":
+        result = {"general": []}
+        for name in names:
+            if name.startswith(NODE_EPOCH_PREFIX):
+                key = "epoch-" + hashlib.sha256(name.encode()).hexdigest()[:16]
+                if key in result:
+                    raise ShardError("duplicate node epoch shard identity")
+                result[key] = [name]
+            else:
+                result["general"].append(name)
+    else:
+        result = {shard: [] for shard in SHARD_NAMES}
+        for name in names:
+            result[classify_test(name)].append(name)
     if any(not values for values in result.values()):
         raise ShardError("empty admitted shard")
     flattened = [name for values in result.values() for name in values]
@@ -94,9 +117,10 @@ def validate_summary(counts: dict[str, int], *, planned: int, ignored: int, tota
         raise ShardError(f"parent summary differs from inventory: {counts}, expected {expected}")
 
 
-def find_executable(lines: Iterable[str], workspace: Path) -> Path:
+def find_executable(lines: Iterable[str], workspace: Path, suite: str = "native") -> Path:
     candidates = []
-    expected_source = (workspace / "crates" / PACKAGE / "src/lib.rs").resolve()
+    package = SUITES[suite][0]
+    expected_source = (workspace / "crates" / package / "src/lib.rs").resolve()
     for line in lines:
         try:
             item = json.loads(line)
@@ -105,7 +129,7 @@ def find_executable(lines: Iterable[str], workspace: Path) -> Path:
         if not isinstance(item, dict) or item.get("reason") != "compiler-artifact":
             continue
         target = item.get("target", {})
-        if (target.get("name") == "trnm_native_execution_v0"
+        if (target.get("name") == package.replace("-", "_")
                 and target.get("kind") == ["lib"]
                 and item.get("profile", {}).get("test") is True
                 and Path(target.get("src_path", "")).resolve() == expected_source
@@ -116,7 +140,9 @@ def find_executable(lines: Iterable[str], workspace: Path) -> Path:
     return candidates[0]
 
 
-def command_for_shard(executable: Path, shard: str, names: dict[str, list[str]]) -> list[str]:
+def command_for_shard(executable: Path, shard: str, names: dict[str, list[str]], suite: str = "native") -> list[str]:
+    if suite == "node-epoch" and shard != "general":
+        return [str(executable), names[shard][0], "--exact", "--nocapture", "--test-threads=2"]
     filters = {"historical-install": BRIDGE + "historical_install", "historical-replay": BRIDGE + "historical_replay", "historical-receiver": BRIDGE + "historical_receiver", "later-pre-handoff": PRE_HANDOFF, "later-bridge": BRIDGE, "schema7": SCHEMA7, "poco-sigkill": POCO_SIGKILL}
     command = [str(executable)] + ([filters[shard]] if shard != "general" else [])
     for other, values in names.items():
@@ -186,7 +212,8 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
     env.setdefault("CARGO_TERM_COLOR", "never")
     repo_root = Path(git_output(workspace, "rev-parse", "--show-toplevel"))
     source, tree = clean_source(repo_root)
-    summary.update(source=source, tree=tree)
+    package, features, allowed_ignored, required_drivers = SUITES[args.suite]
+    summary.update(source=source, tree=tree, suite=args.suite, package=package, features=features)
     if env.get("TRNM_EXPECTED_SOURCE_SHA", source) != source:
         raise ShardError("source HEAD differs from independently expected source")
     (evidence / "HEAD").write_text(source + "\n")
@@ -200,10 +227,10 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
         (evidence / f"{name}.exit-code").write_text(str(code) + "\n")
         return output, code
 
-    output, code = invoke("compile", ["cargo", "test", "-p", PACKAGE, "--features", FEATURES, "--lib", "--locked", "--no-run", "--message-format=json"], args.deadline_seconds)
+    output, code = invoke("compile", ["cargo", "test", "-p", package, "--features", features, "--lib", "--locked", "--no-run", "--message-format=json"], args.deadline_seconds)
     if code:
         return code
-    executable = find_executable(output.splitlines(), workspace)
+    executable = find_executable(output.splitlines(), workspace, args.suite)
     digest = binary_digest(executable)
     summary.update(executable=str(executable), executable_sha256=digest)
 
@@ -215,18 +242,18 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
 
     inventory = inventory_for("inventory", [str(executable)])
     ignored = set(inventory_for("ignored", [str(executable), "--ignored"], allow_empty=True))
-    if ignored != ALLOWED_IGNORED or not ignored.issubset(inventory):
+    if ignored != allowed_ignored or not ignored.issubset(inventory):
         raise ShardError("ignored inventory differs from dedicated SIGKILL children")
-    if not REQUIRED_SIGKILL_DRIVERS.issubset(set(inventory) - ignored):
+    if not required_drivers.issubset(set(inventory) - ignored):
         raise ShardError("required SIGKILL drivers are missing or ignored")
-    shards = partition_inventory(inventory)
+    shards = partition_inventory(inventory, args.suite)
     (evidence / "inventory.json").write_text(json.dumps(shards, indent=2) + "\n")
     summary["shards"] = outcomes = {}
-    for shard in SHARD_NAMES:
-        command = command_for_shard(executable, shard, shards)
+    for shard in shards:
+        command = command_for_shard(executable, shard, shards, args.suite)
         if inventory_for(shard + ".inventory", command) != shards[shard]:
             raise ShardError(f"{shard} filtered inventory differs from planned names")
-        print(f"native shard={shard} tests={len(shards[shard])} deadline={args.deadline_seconds}s", flush=True)
+        print(f"{args.suite} shard={shard} tests={len(shards[shard])} deadline={args.deadline_seconds}s", flush=True)
         output, code = invoke(shard, command, args.deadline_seconds)
         outcome = {"planned_count": len(shards[shard]), "ignored_count": len(set(shards[shard]) & ignored), "exit_code": code}
         outcomes[shard] = outcome
@@ -244,6 +271,7 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
 
 def run(argv: list[str]) -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--suite", choices=tuple(SUITES), default="native")
     parser.add_argument("--workspace", type=Path, required=True)
     parser.add_argument("--evidence-dir", type=Path, required=True)
     parser.add_argument("--deadline-seconds", type=int, default=900)

@@ -274,11 +274,20 @@ def main() -> int:
     compile_step = named_step(workflow, "Compile Python CI tooling")
     epoch_step = named_step(workflow, "Verify default and explicit candidate ownership boundaries")
     require_tokens(epoch_step, (
-        "cargo test -p trnm-poco-node --features epoch-runtime-test-fixtures --lib --locked",
+        "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+        "--suite node-epoch",
+        "--deadline-seconds 300",
+        '--evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards"',
         "cargo test -p trnm-poco-node --features epoch-runtime-candidate --doc --locked",
         "cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings",
         "cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked",
     ), "explicit epoch runtime test closure")
+    node_epoch_artifact = named_step(workflow, "Retain exact-source node epoch shard evidence")
+    require_tokens(node_epoch_artifact, (
+        "trnm-node-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}",
+        "${{ runner.temp }}/trnm-node-epoch-shards",
+        "if-no-files-found: error",
+    ), "node epoch shard evidence")
     require_tokens(exact_step, CONVERGENCE_COMMANDS + ("python3 scripts/ci/test_build_closures_v1.py",), "exact-source convergence closure")
     require_tokens(
         prospective_step,

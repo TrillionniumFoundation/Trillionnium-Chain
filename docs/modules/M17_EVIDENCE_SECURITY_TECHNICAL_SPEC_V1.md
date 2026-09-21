@@ -457,6 +457,33 @@ command runs after all shards. The shard
 artifact is source-bound and retained even when a shard fails, so a hosted
 runner timeout cannot be mistaken for a passing or complete native campaign.
 
+### Node epoch candidate execution (M17-NODE-EPOCH-SHARDS-V1)
+
+The same bounded runner accepts the closed `--suite node-epoch` profile:
+`trnm-poco-node`, feature `epoch-runtime-test-fixtures`, library tests and the
+locked dependency graph. The default native profile and its eight partitions
+remain unchanged. Cargo JSON must identify exactly the selected package's
+library source and test executable; a native binary cannot satisfy the node
+profile. The retained summary records the selected profile and compile command.
+
+Every discovered `epoch_runtime_candidate_v1::tests::` case runs in its own
+partition, using an exact libtest name and an independent 300-second deadline.
+The remaining discovered tests run together in `general` under the same
+300-second bound. The complete inventory must partition without omission or
+duplication, and every actual filtered listing and final parent summary must
+match that partition. Newly added runtime cases automatically get their own
+bounded execution; other new cases automatically enter `general`. No ignored
+node entry is admitted. The genuine initial activation, first finalization,
+and native pre-handoff settlement drivers are mandatory active inventory entries.
+
+All existing source/binary affinity, default stack, process-group cleanup,
+evidence retention and failure propagation rules above apply. Compilation is
+bounded separately from each execution. Node doc tests and strict all-target
+Clippy remain required after complete shard success. This changes the deadline
+unit from an ever-growing package to a real runtime case; it does not relax any
+case's assertions, remove a crash or cryptographic check, or count a timeout as
+success. The workflow retains node shard evidence on success and failure.
+
 ### Required security and fault matrix
 
 | Layer / producer | Fault injection | Oracle / expected result |

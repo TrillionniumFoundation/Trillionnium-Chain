@@ -281,6 +281,18 @@ def validate_contract(root: Path) -> dict[str, object]:
         "--features test-fixtures,incremental-epoch-candidate",
         "cargo clippy -p trnm-native-execution-v0",
     ), "native candidate shard execution")
+    node_epoch = step(baseline, "Verify default and explicit candidate ownership boundaries")
+    hard_step(node_epoch, "node epoch shard execution")
+    tokens(node_epoch, (
+        "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+        "--suite node-epoch", "--deadline-seconds 300",
+        '--evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards"',
+    ), "node epoch shard execution")
+    node_upload = step(baseline, "Retain exact-source node epoch shard evidence")
+    require(scalar(node_upload, "if", 8) == "always() && (steps.node_epoch_shards.outcome == 'success' || steps.node_epoch_shards.outcome == 'failure')", "node epoch failure evidence must be retained")
+    require(scalar(node_upload, "name", 10) == "trnm-node-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}", "node epoch artifact source binding differs")
+    require(scalar(node_upload, "path", 10) == "${{ runner.temp }}/trnm-node-epoch-shards", "node epoch artifact path differs")
+    require(scalar(node_upload, "if-no-files-found", 10) == "error", "node epoch artifact absence must fail")
     candidate_contract = step(baseline, "Test native candidate shard contract")
     hard_step(candidate_contract, "native candidate shard contract tests")
     tokens(candidate_contract, ("python3 ../scripts/ci/test_native_candidate_shards_v1.py",), "native candidate shard contract tests")
