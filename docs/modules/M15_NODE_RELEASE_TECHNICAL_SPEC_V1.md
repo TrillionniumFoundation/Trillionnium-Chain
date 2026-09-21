@@ -805,7 +805,8 @@ including that record's own integrity field. These definitions do not depend
 on a same-named helper in another crate or on a multi-part hash convention.
 
 Closed phase tags are 0 ActivationCommitted, 1 Ordinary, 2 EpochRetired, and
-3 EpochRetiredNative13 under M15-EPOCH-RETIREMENT-V6 below. The name
+3 EpochRetiredNative13 under M15-EPOCH-RETIREMENT-V6, and 4
+EpochHandoffAttachedNative13 under M15-HANDOFF-ATTACHMENT-V8 below. The name
 ActivationCommitted means the composite physical cut was committed; decoded
 bytes do not prove that a process received a lease. Role tags are 0 Continuing,
 1 VirginNew, 2 Removed. Predecessor kinds are 0 exact terminal V0 record,
@@ -830,6 +831,8 @@ listed below is rejected before persistence or lease issuance:
 | Ordinary / VirginNew | 0: remains absent throughout this epoch | 0: remains absent throughout this epoch | 1: same e scope/journal/profile; actual synchronized watermark | Same rules as ordinary Continuing, without invented old history |
 | EpochRetired / Continuing | 1: exact last recorded local e Safety cut before terminal transition | 1: **current e signer** retirement, replacing any incoming e-1 evidence | 0: no ordinary handle, including no terminal handle in this option | Old-role handoff only; e+1 lease requires a later ActivationCommitted |
 | EpochRetired / Removed | 1: exact last recorded local e Safety cut before terminal transition | 1: **current e signer** retirement, replacing any incoming e-1 evidence | 0 | Old-role handoff only; no next local Core or ordinary lease |
+| EpochRetiredNative13 / Continuing or Removed | 1: exact settled e source cut | 1: current e retirement bound to native13 pre-handoff owner cut | 0 | Only explicit V7 role custody and V8 attachment; no activation |
+| EpochHandoffAttachedNative13 / Continuing or Removed | 1: unchanged tag3 source cut | 1: unchanged current e retirement | 0 | Strict native joint attachment plus local comparison only; no activation |
 
 EpochRetired / VirginNew is invalid. An author that entered e as VirginNew
 changes role to Continuing or Removed when retiring e, based on the strictly
@@ -1852,3 +1855,67 @@ Readiness freshly requires the original client's accepted-work queue to be
 drained at the exact finalized height; an earlier drain observation alone does
 not waive subsequently accepted work. Ordinary read-only client responses do
 not become consensus progress or a reason to restart the terminal barrier.
+
+### Native13 joint attachment from actual role custody (M15-HANDOFF-ATTACHMENT-V8)
+
+This candidate operation consumes the actual `EpochHandoffRolesRuntimeV7<W,N,H>`.
+It retains the incoming retired W, outgoing retired N, original journal9/Core
+owner, native13 committed C, original tag3 checkpoint, and actual role journal
+and selected head. An inert role receipt, decoded node record, or peer kernel
+cannot reconstruct this owner. Continuing requires both local roles recorded;
+Removed requires the old role and never gains new-set signing. New-only entry,
+cold owner reconstruction, Journal12 activation and new ordinary custody remain
+outside this operation.
+
+`attach_joint_handoff_v8(self, kernel)` bounds the original canonical kernel at
+8 MiB before copying. Its exact descriptor, terminal header and terminal QC join
+the retained strict pre-handoff context. Local role custody is independently
+bound to its actual profile, pending-free head, old-role fence, original intent
+and original signature. A valid weighted quorum may omit the local validator;
+if a quorum includes it, its signature must equal the original recorded local
+role bytes. Structural decoding grants no certificate authority. The unchanged
+native `attach_later_epoch_handoff_v1` producer performs complete strict old/new
+quorum signatures, exact checkpoint/two-seal/prefix and deterministic selection
+validation, atomically retains the original full evidence and fsyncs it.
+
+Before native mutation, after native readback, before independent node CAS and
+after CAS/readback, the composition freshly joins its original source and role
+owners. The returned native edge must belong to this application and match C's
+P digest/commit sequence/head/parent binding, original terminal S2 and C+3
+geometry. Read-only confirmations recover that exact native edge through its
+original strict retained proof; Arc affinity or a supplied scalar is insufficient.
+Role watermark callbacks precede a fresh native/Safety/retired/checkpoint audit.
+After the final W/N retirement callback, M03-LOCAL-CUSTODY-READ-V1 rechecks the
+original role head and both original W/N retirement records without callbacks;
+the subsequent strict native/Safety/node reads also invoke no external service.
+A late retirement callback that replaces or advances the role journal must
+therefore fail before node CAS or result release.
+No role or ordinary key producer is accepted by V8. Failure or uncertainty consumes
+the entry owner; a returned attached owner latches any later failed confirmation.
+A committed native attachment with an unadvanced node checkpoint remains a fenced
+recovery case, not an excuse to reconstruct the live owner from database fields.
+
+TRNMNC01 retains its version, field grammar and all original tags 0..3 bytes and
+meanings. New closed tag4 `EpochHandoffAttachedNative13` permits only tag3→tag4,
+with generation+1 and exact predecessor checksum. It preserves source/target
+Safety, application, epoch/configuration, role and current-N retirement fields.
+The edge geometry is unchanged; `native_authorization_id` is the actual native
+successor binding. `phase_authority_binding` is the framed SHA-256 domain
+`trnm.node.epoch-handoff-attachment.v8`, using the existing node transition hash
+framing (`trnm.poco-node.epoch-native-valid.v1`, u64 domain length/domain, then
+each u64 part length/part), binding the original tag3 checksum and
+pre-handoff owner cut, every returned native edge fact, the original kernel hash,
+actual role profile/watermark/fence, and each present local intent fingerprint and
+signature. These are inert comparison fields, freshly rederived from retained
+actual owners. The original V6 tag3 record is kept separately and never relabeled.
+Tag4 has no activation or ordinary successor in this slice.
+
+`confirm_joint_handoff_exact_v8` requires byte-for-byte equality with the original
+kernel and reaudits the full attached cut without adding a signature, native
+sequence or node generation. `confirm_attached_cut_v8` returns only the original
+comparison record. Acceptance uses one genuine V5→V6→V7 execution, original local
+role signing, a real sufficient joint quorum omitting the local validator, strict
+native attachment, independent node readback, exact retry, unchanged Safety and
+signer heads, and refusal of changed kernel/custody/source. Existing tag2/tag3
+compatibility and illegal tag4 transitions remain covered. These checks do not
+claim successor activation or crash recovery of the composite owner.

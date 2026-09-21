@@ -49,6 +49,7 @@ struct Watermark(
     Arc<Mutex<Option<PathBuf>>>,
     NativePDeletionHookV2,
     NativeProgressedReplacementHookV3,
+    Arc<Mutex<Option<PathBuf>>>,
 );
 impl ExternalMonotonicWatermarkV0 for Watermark {
     fn load(
@@ -114,7 +115,14 @@ impl ExternalSignerRetirementV1 for Watermark {
         if s.0.is_some_and(|w| w.scope() != scope) {
             return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
         }
-        Ok(s.1)
+        let value = s.1;
+        drop(s);
+        if let Some(path) = self.4.lock().unwrap().take() {
+            let displaced = path.with_extension("retirement-callback-displaced");
+            std::fs::rename(&path, &displaced).unwrap();
+            std::fs::copy(&displaced, &path).unwrap();
+        }
+        Ok(value)
     }
     fn retire_signer_exact_v1(
         &mut self,
@@ -1330,3 +1338,5 @@ include!("epoch_first_finalization_v2_tests.inc");
 include!("epoch_retirement_v6_tests.inc");
 
 include!("epoch_handoff_roles_v7_tests.inc");
+
+include!("epoch_handoff_attachment_v8_tests.inc");

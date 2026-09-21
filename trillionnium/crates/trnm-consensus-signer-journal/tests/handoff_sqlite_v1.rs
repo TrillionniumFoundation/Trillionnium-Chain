@@ -2004,3 +2004,82 @@ fn exact_handoff_head_rejects_external_rollback_and_replaced_namespace() {
     fs::copy(&moved, &path).unwrap();
     assert!(!selected.belongs_to_owner_at_path_v1(&mut journal, &path));
 }
+
+#[test]
+fn local_handoff_comparison_has_no_callback_and_rejects_stale_or_replaced_owner() {
+    let dir = TempDir::new().unwrap();
+    fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let fixture = authority_fixture();
+    let path = dir.path().join("roles.db");
+    let watermark = MemoryWatermark::default();
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, fixture.role_profile(), watermark.clone())
+            .unwrap();
+    let initial = journal.confirm_head_exact_v1().unwrap();
+    let before = watermark.snapshot();
+    initial.confirm_local_owner_v1(&journal).unwrap();
+    initial.confirm_local_owner_v1(&journal).unwrap();
+    assert_eq!(
+        watermark.snapshot(),
+        before,
+        "pure local comparison must never call external service"
+    );
+    let foreign = SqliteHandoffSignerJournalV1::create_new(
+        dir.path().join("foreign.db"),
+        fixture.role_profile(),
+        MemoryWatermark::default(),
+    )
+    .unwrap();
+    assert!(initial.confirm_local_owner_v1(&foreign).is_err());
+    let mut producer = ExactProducer::new(fixture.signing_key.clone());
+    journal
+        .sign_old_set_handoff_exact_v1(
+            &fixture.old_handoff_intent(),
+            &fixture.admission(),
+            &mut producer,
+        )
+        .unwrap();
+    assert!(initial.confirm_local_owner_v1(&journal).is_err());
+    let signed = journal.confirm_head_exact_v1().unwrap();
+    let before = watermark.snapshot();
+    signed.confirm_local_owner_v1(&journal).unwrap();
+    assert_eq!(watermark.snapshot(), before);
+    let displaced = dir.path().join("displaced.db");
+    fs::rename(&path, &displaced).unwrap();
+    fs::copy(&displaced, &path).unwrap();
+    assert!(signed.confirm_local_owner_v1(&journal).is_err());
+    assert_eq!(watermark.snapshot(), before);
+}
+
+#[test]
+fn local_retirement_comparison_preserves_affinity_without_refreshing_external_trust() {
+    let fixture = authority_fixture();
+    let directory = TempDir::new().unwrap();
+    let path = protected_path(&directory, "retired-local.sqlite3");
+    let watermark = MemoryWatermark::default();
+    let old = SqliteSignerJournalV0::initialize_new(
+        &path,
+        retirement_profile(&fixture),
+        watermark.clone(),
+    )
+    .unwrap();
+    let mut retired = old
+        .retire_for_handoff_v1(
+            &retirement_context(&fixture),
+            &fixture.old_handoff_intent(),
+            retirement_host(),
+        )
+        .unwrap();
+    let original = retired.confirm_retirement_v1().unwrap();
+    original.confirm_local_owner_v1(&retired).unwrap();
+    let record = watermark.state.lock().unwrap().retirement.take();
+    // Local-only success explicitly does not refresh external authority.
+    original.confirm_local_owner_v1(&retired).unwrap();
+    assert!(!original.belongs_to_owner_v1(&mut retired));
+    watermark.state.lock().unwrap().retirement = record;
+    assert!(original.belongs_to_owner_v1(&mut retired));
+    let displaced = directory.path().join("retired-displaced.sqlite3");
+    fs::rename(&path, &displaced).unwrap();
+    fs::copy(&displaced, &path).unwrap();
+    assert!(original.confirm_local_owner_v1(&retired).is_err());
+}

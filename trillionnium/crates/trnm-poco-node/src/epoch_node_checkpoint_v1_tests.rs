@@ -137,7 +137,7 @@ fn closed_tags_and_bounded_identities_reject() {
     let bytes = initial().encode_canonical();
     for at in [10, 11, 12] {
         let mut bad = bytes.clone();
-        bad[at] = if at == 10 { 4 } else { 3 };
+        bad[at] = if at == 10 { 5 } else { 3 };
         assert_eq!(
             EpochNodeCheckpointV1::decode_canonical_exact(&bad),
             Err(EpochNodeCheckpointErrorV1::Tag)
@@ -443,7 +443,7 @@ fn native13_retirement_tag3_is_distinct_and_legacy_tag2_remains_compatible() {
         Ok(legacy)
     );
     assert_ne!(retired.checksum(), legacy.checksum());
-    for unknown in [4, 127, 255] {
+    for unknown in [5, 127, 255] {
         let mut bad = bytes.clone();
         bad[10] = unknown;
         let prefix = bad.len() - 32;
@@ -457,7 +457,7 @@ fn native13_retirement_tag3_is_distinct_and_legacy_tag2_remains_compatible() {
 }
 
 #[test]
-fn native13_retirement_tag3_rejects_changed_sources_and_all_outgoing_transitions() {
+fn native13_retirement_tag3_rejects_changed_sources_and_legacy_outgoing_transitions() {
     let (source, retired) = native13_retirement_codec_fixture_v6();
     let mutations: [fn(&mut EpochNodeCheckpointFieldsV1); 7] = [
         |f| f.target_safety.revision += 1,
@@ -500,6 +500,58 @@ fn native13_retirement_tag3_rejects_changed_sources_and_all_outgoing_transitions
         assert!(EpochNodeCheckpointV1::new(next)
             .unwrap()
             .validate_successor_of(&retired)
+            .is_err());
+    }
+}
+
+#[test]
+fn native13_joint_attachment_tag4_has_only_exact_retired_predecessor() {
+    let (ordinary, retired) = native13_retirement_codec_fixture_v6();
+    let mut f = *retired.fields();
+    f.phase = EpochCheckpointPhaseV1::EpochHandoffAttachedNative13;
+    f.generation += 1;
+    f.predecessor_checksum = retired.checksum();
+    f.phase_authority_binding = [61; 32];
+    f.edge.native_authorization_id = [62; 32];
+    let attached = EpochNodeCheckpointV1::new(f).unwrap();
+    attached.validate_successor_of(&retired).unwrap();
+    assert_eq!(attached.encode_canonical()[10], 4);
+    assert_eq!(
+        EpochNodeCheckpointV1::decode_canonical_exact(&attached.encode_canonical()),
+        Ok(attached)
+    );
+    let changes: [fn(&mut EpochNodeCheckpointFieldsV1); 9] = [
+        |f| f.target_safety.record_checksum[0] ^= 1,
+        |f| f.source_safety.as_mut().unwrap().chain_checksum[0] ^= 1,
+        |f| f.application.p_digest[0] ^= 1,
+        |f| f.retired.as_mut().unwrap().retirement_record_checksum[0] ^= 1,
+        |f| f.edge.terminal_old_qc_id[0] ^= 1,
+        |f| f.validator_set_id[0] ^= 1,
+        |f| f.role = EpochCheckpointRoleV1::Removed,
+        |f| f.owner_generation += 1,
+        |f| f.predecessor_checksum[0] ^= 1,
+    ];
+    for change in changes {
+        let mut mutant = f;
+        change(&mut mutant);
+        assert!(EpochNodeCheckpointV1::new(mutant)
+            .and_then(|v| v.validate_successor_of(&retired))
+            .is_err());
+    }
+    let mut skipped = f;
+    skipped.generation = ordinary.fields().generation + 1;
+    skipped.predecessor_checksum = ordinary.checksum();
+    assert!(EpochNodeCheckpointV1::new(skipped)
+        .unwrap()
+        .validate_successor_of(&ordinary)
+        .is_err());
+    for template in [*retired.fields(), *ordinary.fields(), f] {
+        let mut next = template;
+        next.generation = attached.fields().generation + 1;
+        next.predecessor_checksum = attached.checksum();
+        assert!(EpochNodeCheckpointV1::new(next)
+            .unwrap()
+            .validate_successor_of(&attached)
             .is_err());
     }
 }

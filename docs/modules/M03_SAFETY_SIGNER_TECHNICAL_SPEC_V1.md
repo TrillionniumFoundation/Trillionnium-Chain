@@ -1189,3 +1189,21 @@ unchanged. Exact head comparison must reject a foreign owner, stale signed head,
 changed external watermark, replaced namespace or missing/corrupt pending/fence
 row. Its caller still needs independently authenticated native/Safety/custody
 sources before any key operation.
+
+
+### Callback-free comparison of original signer facts (M03-LOCAL-CUSTODY-READ-V1)
+
+`ConfirmedHandoffJournalHeadV1::confirm_local_owner_v1` compares a previously
+minted actual-owner fact against the same live schema1 owner, original path and
+profile, complete bounded local inventory, observed head, pending fingerprint and
+terminal fence. `ConfirmedOrdinarySignerRetirementV1::confirm_local_owner_v1`
+likewise compares its original affine record against the same retired owner and
+a fresh complete read-only retired image, with namespace checks before/after.
+Neither calls an external service, updates a watermark, mints replacement facts,
+rebinds an owner or grants signing/recovery authority. Local success does not
+prove current external freshness; callers must have independently completed the
+original exact external checks first. These comparison seams close composition
+races where a later external callback changes an earlier owner's local database.
+The consumer runs all callback-free local comparisons after its last external
+callback; it must not replace them with an unbounded callback/recheck cycle.
+The existing full local/external producers keep their semantics and formats.

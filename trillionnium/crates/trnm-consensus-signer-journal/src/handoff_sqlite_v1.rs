@@ -443,6 +443,22 @@ impl ConfirmedHandoffJournalHeadV1 {
             && self.pending == other.pending
             && self.terminal_fence_checksum == other.terminal_fence_checksum
     }
+    /// Compare only the complete local cut after other owners' external I/O.
+    /// This neither refreshes external trust nor grants signing/recovery authority.
+    pub fn confirm_local_owner_v1<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        owner: &SqliteHandoffSignerJournalV1<W>,
+    ) -> Result<(), HandoffSignerJournalErrorV1> {
+        if !Arc::ptr_eq(&self.owner, &owner.owner_affinity)
+            || self.path != owner.database_path
+            || !self.matches_exact_head_v1(&owner.read_local_head_v1()?)
+        {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::CommitReadbackConflict,
+            ));
+        }
+        Ok(())
+    }
     pub fn belongs_to_owner_at_path_v1<W: ExternalMonotonicWatermarkV0>(
         &self,
         owner: &mut SqliteHandoffSignerJournalV1<W>,
@@ -652,11 +668,17 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         &mut self,
     ) -> Result<ConfirmedHandoffJournalHeadV1, HandoffSignerJournalErrorV1> {
         self.ensure_operational()?;
+        self.read_local_head_v1()
+    }
+
+    fn read_local_head_v1(
+        &self,
+    ) -> Result<ConfirmedHandoffJournalHeadV1, HandoffSignerJournalErrorV1> {
+        self.ensure_file_identity()?;
+        self.audit_local(self.owned_pending)?;
         let head = self.observed_head;
         let pending = pending_fingerprint_v1(&self.connection)?;
         let fence = read_terminal_fence_v1(&self.connection)?;
-        self.ensure_file_identity()?;
-        self.audit_local(self.owned_pending)?;
         if read_head_v1(&self.connection, self.journal_id)? != head
             || pending_fingerprint_v1(&self.connection)? != pending
             || read_terminal_fence_v1(&self.connection)? != fence
@@ -665,6 +687,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
                 HandoffSignerJournalConflictV1::CommitReadbackConflict,
             ));
         }
+        self.ensure_file_identity()?;
         Ok(ConfirmedHandoffJournalHeadV1 {
             owner: Arc::clone(&self.owner_affinity),
             path: self.database_path.clone(),

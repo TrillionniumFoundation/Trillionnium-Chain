@@ -2032,3 +2032,5 @@ include!("epoch_pre_handoff_v5.inc");
 include!("epoch_retirement_v6.inc");
 
 include!("epoch_handoff_roles_v7.inc");
+
+include!("epoch_handoff_attachment_v8.inc");

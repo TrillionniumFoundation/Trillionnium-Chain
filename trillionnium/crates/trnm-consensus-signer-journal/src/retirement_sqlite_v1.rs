@@ -28,6 +28,20 @@ impl ConfirmedOrdinarySignerRetirementV1 {
     pub const fn record_v1(&self) -> &SignerRetirementRecordV1 {
         &self.record
     }
+    /// Fresh local image comparison only, after independent external checks.
+    /// It preserves original affinity and never creates a signing/recovery owner.
+    pub fn confirm_local_owner_v1<W: ExternalSignerRetirementV1>(
+        &self,
+        owner: &RetiredSqliteSignerJournalV1<W>,
+    ) -> Result<(), SignerJournalErrorV0> {
+        if !Arc::ptr_eq(&self.owner, &owner.owner)
+            || self.record != owner.record
+            || owner.read_record_fresh()? != self.record
+        {
+            return malformed("retirement local owner comparison differs");
+        }
+        Ok(())
+    }
     pub fn belongs_to_owner_v1<W: ExternalSignerRetirementV1>(
         &self,
         owner: &mut RetiredSqliteSignerJournalV1<W>,
