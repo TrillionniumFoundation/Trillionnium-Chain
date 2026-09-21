@@ -95,6 +95,142 @@ independent real Ed25519 first-proposal tests. A real-signer, native prepared
 checkpoint receipt, journal8 ACK and strict live Core joined positive test is
 still required before candidate host activation can be claimed.
 
+### Retained activation preparation prefix (M02-EPOCH-PROVENANCE-V2)
+
+This primary-M02 contract precedes its implementation. M01 produces strict
+activation verification; a future explicitly versioned M03 preparation journal
+and Core/Safety record consume the entire retained prefix. This first slice is
+I/O-free, with no step, timer, signer, storage acknowledgement or live Core API.
+It must not serialize a contextual terminal authority into the old one-entry
+TRNMEP01 format and claim that the old decoder can recover it.
+
+`EpochPreparationEntryV2` borrows an expected activation binding, the original
+eight CEV0 roots and a canonical predecessor-header interval. Preparation takes
+1–32 ordered entries and independently supplied root validator set/parameters,
+root binding and terminal binding. The first interval is empty and M01's strict
+v0 recovery authenticates the first entry. Each later interval includes both the
+previous terminal seal and this entry's checkpoint parent; M01's strict
+successor recovery verifies its full geometry, context, signatures and binding.
+Only the preceding strict authority is retained while walking. Bindings are
+nonzero and unique. No missing history is synthesized from configuration equality.
+
+The local record is `TRNMEP02`, big-endian u16 version 2, u8 phase 0
+(EvidenceVerified), root binding[32], terminal binding[32], and u32 entry count.
+Each entry is binding[32], u32 header count, each header as u32 byte length plus
+canonical CEV0 bytes, then the eight original roots in the unchanged v1 order,
+each as u32 byte length plus bytes. There is no recursive nested preparation or
+Safety record. Unknown versions/phases, truncation and trailing bytes reject.
+Record identity is SHA-256 of the ASCII domain
+`trnm.consensus-core.epoch-preparation-provenance.v2`, a zero separator, u64
+big-endian record length, then the complete canonical record bytes. The roots
+already retain the exact independently verified root set/parameters. This digest
+is a local comparison pin, never signature, finality or activation authority.
+
+Complete framing is checked before copying roots or doing signature work. The
+whole record, including every prefix and length, is at most 64 MiB. Each entry's
+eight roots together are nonempty and at most the existing 8 MiB hard limit;
+M02 separately screens the aggregate against authenticated outgoing parameters
+(root trust for the first entry, verified predecessor for each successor) and
+the caller's smaller admission limit without replacing its work meter. Each successor interval has 2–256 headers, each at most
+4096 bytes and together at most 1 MiB. The first interval has exactly zero
+headers. Count/length arithmetic is checked before allocation. Full raw roots
+are copied only after all entries pass strict verification.
+
+Every entry uses the same mutable caller CEV0 work meter. Pre-existing work and
+charges before a later failure are retained. The 64 MiB record cap is separate
+from the 8 MiB CEV0 root cap; it must not enlarge or reset a root/work budget.
+The returned non-Clone `EpochPreparationV2` privately owns the terminal strict
+authority, complete original record and the independently supplied root set/parameters
+retained only after the complete strict fold succeeds. Its cloneable record and digest are
+inert. Recovery also requires the independently expected record digest, root
+and terminal bindings; it rechecks framing and every entry, rather than trusting
+serialized verification status. Pin mismatches issue no preparation owner.
+
+TRNMEP01 and its decoder remain byte-exact. Its producer must reject a strict
+authority whose checkpoint proof requires a prior synthetic-anchor context,
+before emitting a record. The v2 result cannot be implicitly converted into
+`EpochCoreStateV1` or codec1: those retain only terminal roots. A later explicit
+Core/Safety codec2 must consume complete preparation provenance, and a later
+journal version must bind a real settled source and durability before any ACK.
+These consumers are separate required work, not acceptance supplied by v2.
+
+Required local evidence uses the existing genuine C28/S30 → C38/S40 fixture,
+whose second checkpoint has signed mixed ordinary/S30-anchor timeout references.
+Test exact preparation/recovery, canonical record framing/digest, wrong independent
+root/terminal/digest pins, reordered/truncated prefixes, missing or substituted
+ancestry, canonical bad signatures in the second activation, all framing limits,
+and exact/insufficient/precharged shared budgets. Preserve the original v1 and
+M01 vectors and reject v1 downgrade of contextual-only evidence. This does not
+establish native candidate selection, live repeated handoff or crash durability.
+
+### Contextual full-epoch persistence (M02-EPOCH-SAFETY-PROVENANCE-V2; planned)
+
+The next Core persistence slice consumes a strictly recovered preparation V2;
+it must retain that exact complete provenance in the epoch state. A terminal
+runtime context by itself is insufficient to construct this state. The private
+epoch-state representation distinguishes the existing eight-root V1 profile
+from a V2 profile holding the complete bounded record, its independently checked
+root trust context and its root/terminal/digest bindings. Cloning inert
+SafetyState may share immutable provenance bytes; it must not duplicate a live
+owner or replace strict recovery with cached scalar assertions.
+
+`TRNMS14E` codec 2 retains SafetyState schema14 and phase7 but uses distinct
+`trnm.consensus-core.epoch-safety-context.v2` and
+`trnm.consensus-core.epoch-safety-record.v2` local hash domains. The context
+reference commits the complete existing Core configuration, owner generation,
+checkpoint artifact, independent root binding, terminal binding, preparation
+record digest and a codec2 layout discriminator. After the common
+magic/codec/schema/context/phase/revision/generation/binding/artifact fields,
+codec2 carries one length-delimited complete TRNMEP02 record in place of the
+codec1 eight-root list, followed by the existing qualified tips, state payload,
+outgoing boundary candidates/seals and domain-separated checksum. The embedded
+record must equal the strictly recovered context bytes, not merely its digest.
+Codec1 exact decoding and bytes remain unchanged; neither decoder guesses the
+other codec or falls back after failure.
+
+The explicit V2 context constructor consumes the non-cloneable preparation,
+checks the next Core configuration, actual checkpoint artifact and nonzero
+owner generation, and retains the strict terminal runtime. Minimum record
+limits account for the actual complete preparation frame, all existing bounded
+state slots and arithmetic overhead before opening any persistence owner.
+The 64 MiB provenance framing limit is never passed as an eight-root admission
+limit. Cold reconstruction rechecks the entire prefix with its retained
+independent root context and one bounded verification meter before comparing
+all derived checkpoint, terminal, anchor and configuration fields. No
+unverified decoder result is a live Core.
+
+An outgoing epoch0 terminal owner may prepare the first one-entry V2 state.
+A codec1 active source may extend only a V2 prefix whose first entry exactly
+matches its retained original activation roots and binding. A codec2 active
+source must preserve every entry and ancestry byte in its prior prefix and
+append exactly one strict successor entry; its root binding stays fixed.
+Source and target configurations must describe consecutive epochs. A V2 source
+cannot produce a codec1 successor, even if its newest proof happens to be
+context-free. Prefix replacement, truncation, extra transitions and a different
+validly signed history are rejected before producing a persistence request.
+
+Both activation and cold recovery remain inert until the exact existing owner
+barriers are reconciled. Preparation consumes the prior live Core, or uses a
+strictly recovered inert source; requires no pending sign, finalization,
+validation, synchronization or halt; requires applied equals finalized at the
+exact target checkpoint; and matches the original finality proof and native
+artifact. Revision is continuous and generation increases by exactly one.
+The resulting owner exposes only its pending initial persistence request;
+the durable acknowledgement still gates the view1 timer. M03 must separately
+version its journal/source-owner transition and perform fresh source,
+native-application and custody joins before any callback or signature. The
+existing journal9 epoch0 initializer cannot stand in for this transition.
+
+Acceptance uses the genuine contextual two-activation fixture: encode/reopen
+codec2 with original predecessor-anchor TCs, then reject a valid but different
+prefix, changed root or record digest, codec confusion, stale generation,
+foreign checkpoint artifact, unresolved source cuts and every truncation.
+Assert exact round-trip bytes, unchanged codec1 vectors, bounded allocation,
+retained work charges, no timer/signature before the matching durable barrier,
+and default-stack recovery. Process-crash, real journal transition and resumed
+live-owner evidence are additional M03/M15 obligations; this design does not
+claim those implementations or promote production activation.
+
 ### Full epoch integration (implemented inert slice; live owner pending)
 
 The pure representation uses `QualifiedFinalizedTipV1` for true finality/application

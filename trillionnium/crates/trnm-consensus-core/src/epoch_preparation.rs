@@ -130,6 +130,40 @@ impl EpochPreparationV1 {
 pub fn prepare_epoch_handoff_evidence_v1(
     authority: StrictSameVersionEpochActivationAuthorityV0,
 ) -> Result<EpochPreparationV1, EpochPreparationErrorV1> {
+    // The ordinary v0 decoder deliberately excludes both direct anchors and
+    // synthetic references nested in a TC. Generic typed finality validation
+    // alone permits such TC references, so representability needs this fence.
+    let proof = authority.old_checkpoint_finality();
+    for certified in [proof.finalized_block(), proof.child(), proof.grandchild()] {
+        if certified.justify_qc().as_ordinary().is_none()
+            || certified.epoch_anchor_authorization().is_some()
+            || certified.timeout_certificate().is_some_and(|timeout| {
+                timeout
+                    .referenced_qcs()
+                    .iter()
+                    .any(|reference| reference.as_ordinary().is_none())
+            })
+        {
+            return Err(EpochPreparationErrorV1::InvalidEncoding(
+                "v1 cannot retain contextual checkpoint evidence",
+            ));
+        }
+    }
+    // The old record stores only eight roots, so its producer must satisfy the
+    // same context-free checkpoint geometry as its exact recovery decoder.
+    // This typed structural check neither repeats signature work nor reparses
+    // a large raw proof on the default thread stack.
+    authority
+        .old_checkpoint_finality()
+        .validate_checkpoint_two_seal_kernel(
+            authority.old_validator_set(),
+            authority.old_consensus_parameters(),
+            authority.next_epoch_commitment(),
+            authority
+                .authenticated_checkpoint_parent_header()
+                .timestamp_ms(),
+        )
+        .map_err(EpochPreparationErrorV1::Canonical)?;
     let evidence = EpochActivationEvidenceBytesV0 {
         old_checkpoint_finality: authority
             .old_checkpoint_finality()

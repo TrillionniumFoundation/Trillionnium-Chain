@@ -73,11 +73,20 @@ pub use epoch_boundary_v1::{
 };
 pub use epoch_state_v1::{ConsensusAncestryBaseV1, EpochCoreStateV1, QualifiedFinalizedTipV1};
 mod epoch_preparation;
+mod epoch_preparation_v2;
 pub use epoch_preparation::{
     maximum_epoch_preparation_record_bytes_v1, prepare_epoch_handoff_evidence_v1,
     recover_epoch_preparation_v1, EpochPreparationErrorV1, EpochPreparationPhaseV1,
     EpochPreparationRecordV1, EpochPreparationV1, EPOCH_PREPARATION_RECORD_OVERHEAD_V1,
     EPOCH_PREPARATION_RECORD_SCHEMA_V1, MAX_EPOCH_PREPARATION_RECORD_BYTES_V1,
+};
+pub use epoch_preparation_v2::{
+    prepare_epoch_handoff_evidence_v2, recover_epoch_preparation_v2, EpochPreparationEntryV2,
+    EpochPreparationErrorV2, EpochPreparationRecordV2, EpochPreparationV2,
+    EPOCH_PREPARATION_RECORD_MAGIC_V2, EPOCH_PREPARATION_RECORD_SCHEMA_V2,
+    MAX_EPOCH_PREPARATION_ENTRIES_V2, MAX_EPOCH_PREPARATION_HEADERS_V2,
+    MAX_EPOCH_PREPARATION_HEADER_BYTES_V2, MAX_EPOCH_PREPARATION_INTERVAL_BYTES_V2,
+    MAX_EPOCH_PREPARATION_RECORD_BYTES_V2,
 };
 
 /// Complete proposal bodies are retained only after the existing bounded
