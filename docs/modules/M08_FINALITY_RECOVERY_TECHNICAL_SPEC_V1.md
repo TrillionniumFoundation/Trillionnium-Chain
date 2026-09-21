@@ -533,8 +533,8 @@ context's new set/parameters, retains ordinary artifact v0 and the exact
 application/consensus parent at height−1, and writes its authenticated
 snapshot through the same context list. A later binding is never passed to
 the legacy-only recovery API. This descendant path and its commit/retry
-require schema9; a readable consumed schema8 image without its C+3 proof
-cannot gain write authority through the ordinary path.
+require schema10; a readable schema8/9 image without the applicable retained
+proofs cannot gain write authority through the ordinary path.
 
 Ordinary descendant finality uses the actual immediate parent's timestamp
 and the ordinary new-set strict decoder. Only `artifact_kind=1` may consume
@@ -548,13 +548,11 @@ walk consumes already authenticated inventory and cannot re-enter inventory.
 The C18 fixture prepares C21 then C22/C23/C24, strictly verifies their signed
 ordinary three-chain for C22 and checks exact retry and cold recovery. It does
 not establish another later checkpoint/handoff or a public sync protocol.
-Schema9 retains the first-new proof only. The ordinary C22 proof is strictly
-verified at commit but is not retained by this full-snapshot path. Its cold
-audit checks P/artifact/snapshot/replay/parent consistency and the retained
-activation/C+3 authority; it does not reverify historical C22 finality
-signatures. Ordinary-history proof retention and export therefore remain a
-separate gap requiring a versioned ledger and migration rules. A local
-application-history read cannot be presented as that missing consensus proof.
+Schema9 retains the first-new proof only. Schema10 adds the separate ordinary
+proof ledger specified below; commit and cold audit both strictly verify its
+original signed proof. The private ledger is not a public proof-export or
+state-sync protocol. Those consumer interfaces remain a separate gap; an
+application-history projection alone cannot serve as consensus evidence.
 
 #### Required resolver for repeated later successors
 
@@ -583,6 +581,107 @@ wrong predecessor, forged rehashed retained proof and wrong target
 configuration. Until those checks pass, repeated later handoffs remain
 disabled; single-later C22 coverage is not evidence for them.
 
+The shared private prefix result must drive checkpoint-context selection,
+successor-fact derivation, first-new snapshot reconstruction, ordinary execution,
+reopen and both proof-ledger audits. The existing public indexed legacy history
+returns a concrete legacy capability; later entries cannot silently enter that
+API. Derive mixed context from the exact committed head's P/context lineage,
+with explicit row ownership, rather than treating the last legacy history row
+as the active epoch. For each binding retain source kind, phase/consumption,
+checkpoint head/P/sequence, coordinates and the sealed audited activation;
+do not retain full snapshots in the prefix carrier.
+
+Historical successor recovery must also survive a second application jump.
+Walk at most128 distinct committed P rows from the current head toward the
+original consumed C+3. Every cursor lineage must extend that original prefix.
+An ordinary step requires exact immediate parent head/P digest, +1 height and
+identical lineage/configuration to its own parent. A first-new step requires
+its authenticated selected edge: exact C→C+3 application jump, actual C+2
+consensus parent, parent lineage plus that one binding, authenticated old→new
+configuration, and matching consumed block/sequence/proof. This admits
+C32→C31→C28→…→C21; generic ancestor reachability is insufficient. Test C28
+against its real committed C25 cutoff, C31 strict epoch-first finality, C32
+ordinary finality, cold reopen at Installed/Consumed/progressed heads, and
+historical B recovery/C22 retry at C32. Mutants must include ambiguous dual
+table ownership and substituted jump/terminal coordinates.
+
+### Schema10 ordinary later-descendant finality contract
+
+Primary module: M08. M06 produces the prepared execution/header and M08
+consumes the strict finality proof. The candidate implementation follows this
+versioned contract; schema9 coverage alone does not satisfy it. It extends the
+full-snapshot candidate owner, not the schema7 incremental owner or production
+activation policy.
+
+Schema10 adds `native_later_epoch_descendant_finality_v1` as a STRICT table
+with exactly seven columns: `block_id BLOB(32) PRIMARY KEY`, `p_digest BLOB(32)`,
+`commit_sequence BLOB(8) UNIQUE`, `edge_binding BLOB(32)`, `proof BLOB`,
+`proof_digest BLOB(32)` and `record_digest BLOB(32)`. All columns are NOT NULL;
+SQL CHECK constraints enforce fixed lengths. Sequence encoding is u64 big
+endian. Proof length is 1 through `MAX_CEV0_ROOT_BYTES_V0` (8 MiB), row count
+at most `MAX_P_ROWS` (128), and cumulative proof bytes at most 64 MiB. Validate
+SQL types, lengths, row count and cumulative length before loading proof blobs;
+check prospective capacity before writing. `proof_digest = SHA256(proof)`.
+The framed record domain is
+`trnm.native-application.later-epoch-descendant-finality.v1`, with ordered
+fields `[store_id, block_id, p_digest, BE64(commit_sequence), edge_binding,
+proof_digest]`. The P digest binds the full header, parent, lineage, execution
+artifact and resulting snapshot. No caller-supplied validator configuration is
+stored as a substitute for authenticated history.
+
+Keep exact schema8, schema9 and schema10 inventories distinct. Schema10 retains
+the schema9 C+3 table and its one-row-per-consumed-edge invariant unchanged;
+ordinary proofs never enter that table. The explicit
+`upgrade_later_epoch_schema_v1(expected_head)` targets schema10. Under the
+owner lock and an immediate transaction, revalidate the exact source schema,
+inventory, expected head and sequence before any table creation or version CAS.
+Schema4 can add all later tables. Schema8 requires zero consumed later edges,
+because their original C+3 proofs are absent. Schema9 can migrate only when no
+Committed artifact-kind-0 Regular P ends in a later successor binding. Such
+ordinary history lacks its original proof and cannot be reconstructed from P,
+C+3 finality, reexecution or caller replacement evidence. Refusal leaves all
+source bytes/logical state unchanged. A committed C+3 with its retained proof
+and a Prepared C+4 permit migration. Preserve head and sequence; sync and fresh
+audit before success. Exact schema10 retries audit without mutation. Ordinary
+open never migrates.
+
+Classify ordinary later descendants independently from `later_application`,
+which remains restricted to first-new artifact-kind-1 commits. Preview,
+execution and commit of artifact-kind-0 Regular blocks whose last binding is a
+later successor require schema10, including locked write/retry checks. Verify
+the complete proof before mutation. The same SQLite transaction that commits
+P, state/replay data, head and runtime context inserts the exact original proof
+and its bindings. A checkpoint uses its checkpoint ledger instead. An exact
+committed retry must match the stored proof bytes, P digest, sequence, edge and
+both proof/record digests, then sync and freshly audit before returning the
+original receipt. A different valid proof for the same finalized header cannot
+replace the recorded bytes. C+3 consumption and its proof remain unchanged.
+
+Cold audit first authenticates checkpoint/successor/C+3 records, then requires
+an exact bijection between the ordinary ledger and Committed later Regular P
+records. Missing, extra, Prepared, first-new or checkpoint rows reject. Join
+each row to its exact P/sequence, full lineage, last binding and actual committed
+parent header. Derive the new validator set and parameters from strict activation
+rooted in previously authenticated history. Do not trust self-reported P
+configuration or fall back to genesis configuration. Invoke
+`decode_verify_finality_proof_strict_v0` with the full expected target header
+and immediate parent's actual timestamp/header, then compare the complete
+finalized header. Use internal helpers over the same read snapshot, without
+public recovery calls or recursive whole-inventory validation. Keep large
+cryptographic frames in non-inlined helpers so default-stack recovery remains
+supported.
+
+Required checks include exact commit/retry and cold reopen after a later head;
+schema9 C+3/Prepared-C+4 migration; refusal of schema9 committed C+4 without
+mutation; deleted proof; forged signature with recomputed proof/record hashes;
+wrong target, set, parent or lineage; and a valid byte-distinct proof retry.
+Real process kills before SQL commit, after commit and after fsync must recover
+either the exact C+3 state or the complete C+4 P/proof/head tuple, preserving
+the C+3 consumed edge. A reusable authentic prepared seed may bound fixture
+cost, but must copy the database and its owner preparation sidecar together.
+These checks do not establish repeated later handoffs, public proof export/sync,
+incremental second crossing or multi-host acceptance.
+
 ### Schema9 retained later application finality
 
 Primary owner: M08; producers are the M01 strict finality verifier and M06
@@ -603,13 +702,14 @@ inputs `store_id`, `block_id`, `p_digest`, big-endian `commit_sequence`,
 
 Migration is explicit and owner-locked through
 `upgrade_later_epoch_schema_v1(expected_head)`. It validates the original
-schema, descriptor, metadata and expected application head before an immediate
-transaction creates the missing tables and CASes schema/sequence. A schema8
+schema, descriptor, metadata and expected application head within an immediate
+transaction before creating missing tables and CASing the version. The latest
+target is schema10 under the ordinary-proof migration rules above. A schema8
 store may migrate only when it has **zero consumed later successor edges**:
 schema8 did not retain their application proofs, so an empty new ledger cannot
 certify existing consumption. A consumed schema8 image rejects without change;
 it requires a separately designed evidence-preserving recovery/import owner.
-Ordinary open never migrates. Successful migration and exact schema9 retry
+Ordinary open never migrates. Successful migration and exact current-schema retry
 require synchronization and fresh validation with unchanged application head
 and durable sequence.
 
@@ -870,15 +970,16 @@ Issuance also explicitly requires checkpoint P sequence>0 and actual commit
 sequence>P sequence, plus the existing exact owner/head/P and preparation checks.
 
 
-### Versioned later checkpoint commit contract (schema8 plus schema9)
+### Versioned later checkpoint commit contract (schemas8 through10)
 
 Primary module: M08; producers M06 and M02, storage consumer M07. An explicit
 `upgrade_later_epoch_schema_v1(expected_head)` migrates schema4 by atomically
-adding `native_later_epoch_finality_v1`, `native_later_epoch_edge_v1` and the
-schema-9 application-finality ledger, then CASing the version to 9. A legacy
-schema-8 image is accepted only by this explicit 8-to-9 migration after exact
-table/edge checks; ordinary open never migrates. Existing schema4 edge/P/context
-records remain unchanged.
+adding `native_later_epoch_finality_v1`, `native_later_epoch_edge_v1`, the
+schema9 first-new ledger and schema10 ordinary ledger, then CASing the version
+to10. Explicit migration from8 requires zero consumed later edges; migration
+from9 requires no already committed ordinary later descendant. Both require
+exact table/edge/history checks as specified above. Ordinary open never
+migrates. Existing schema4 edge/P/context records remain unchanged.
 
 `commit_later_epoch_checkpoint_finality_v1` consumes the owner-bound strict
 observation for the exact prepared checkpoint. Under the owner lock it joins
@@ -940,19 +1041,11 @@ results, not physical power-loss or repeated multi-epoch acceptance.
 
 ### Candidate schema-9 first-new application-finality ledger
 
-Schema 8 remains the immutable checkpoint/finality and successor-edge ledger.
-The C+3 application finality proof is a separate schema-9 record so schema 8
-does not silently change its table shape. The record must retain the complete
-bounded proof bytes and a checksum/domain digest bound to store, successor
-binding, C+3 block, P digest, committed sequence, target head and proof hash.
-Cold open, exact retry and owner recovery must verify this record before
-returning a committed C+3 receipt. A schema-8 database with an Installed
-phase-0 successor may migrate explicitly only after exact C18 evidence, P and
-edge checks; a schema-8 database whose successor is already Consumed but has
-no retained C+3 proof must fail closed rather than inventing a proof record.
-No ordinary open performs this migration. C+4 descendants and repeated
-handoffs remain outside this candidate until their mixed lineage and multi-host
-acceptance are implemented.
+The complete fields, bounds, digest domains, migration refusal and atomicity
+rules are defined in [Schema9 retained later application finality](#schema9-retained-later-application-finality).
+Schema10 preserves that C+3 table and adds the separate ordinary ledger above;
+ordinary commits never replace the consumed target or its retained first-new
+proof. Repeated later handoffs and multi-host acceptance remain open.
 
 ### Implemented schema7 strict commit and pending descendants
 

@@ -445,10 +445,15 @@ vectors and production activation remain acceptance gates.
 The same full-snapshot candidate can prepare ordinary C22/C23/C24 after C21
 through recovered sealed legacy/later contexts and strictly commit C22 with
 its ordinary new-set proof. Every descendant preserves the entire lineage,
-the exact application parent and target configuration. It does not consume
-the later successor again or create another first-new proof row. This does
-not extend incremental schema7 to a second crossing or permit repeated
-later-to-later handoffs.
+the exact application parent and target configuration. M08 schema10 requires
+the original ordinary proof in a separate bounded ledger, atomically with
+P/state/head, and repeats strict new-set verification against the immediate
+parent during cold recovery. Ordinary descendant preparation/commit require
+schema10; a schema9 database with an already committed ordinary descendant
+cannot migrate without its missing original proof. Ordinary commits do not
+consume the later successor again or create another first-new proof row.
+This does not extend incremental schema7 to a second crossing or permit
+repeated later-to-later handoffs.
 
 `DurableNativeApplicationV0::inspect_later_epoch_checkpoint_context_v1()` is
 the owner-affine context boundary. It re-reads the consumed edge lineage and

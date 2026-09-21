@@ -1862,6 +1862,7 @@ impl DurableNativeApplicationV0 {
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+                | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
@@ -2333,6 +2334,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+                | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
@@ -2529,6 +2531,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+                | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | 6
                 | 7
@@ -2731,6 +2734,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+                | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
@@ -2777,6 +2781,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+                | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | incremental_owner_v1::SCHEMA_VERSION
                 | 6
@@ -2855,6 +2860,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
             epoch_durable::schema_version(&connection)?,
             epoch_durable::SCHEMA_VERSION
                 | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+                | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
                 | epoch_durable::LATER_SCHEMA_VERSION
                 | 6
                 | 7
@@ -4000,6 +4006,7 @@ fn load_metadata_v0(
         APPLICATION_SCHEMA_VERSION_V0
             | epoch_durable::SCHEMA_VERSION
             | epoch_durable::LEGACY_LATER_SCHEMA_VERSION
+            | epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION
             | epoch_durable::LATER_SCHEMA_VERSION
             | incremental_owner_v1::SCHEMA_VERSION
             | 6
@@ -4406,12 +4413,12 @@ fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
                 .map(|(name, sql)| ((*name).to_string(), normalize_sql_v0(sql))),
         );
         if epoch_durable::has_later_schema(epoch_durable::schema_version(connection)?) {
-            let later_schema = if epoch_durable::schema_version(connection)?
-                == epoch_durable::LEGACY_LATER_SCHEMA_VERSION
-            {
-                epoch_durable::LATER_SCHEMA_V8
-            } else {
-                epoch_durable::LATER_SCHEMA
+            let later_schema = match epoch_durable::schema_version(connection)? {
+                epoch_durable::LEGACY_LATER_SCHEMA_VERSION => epoch_durable::LATER_SCHEMA_V8,
+                epoch_durable::APPLICATION_FINALITY_SCHEMA_VERSION => {
+                    epoch_durable::LATER_SCHEMA_V9
+                }
+                _ => epoch_durable::LATER_SCHEMA,
             };
             expected.extend(
                 later_schema

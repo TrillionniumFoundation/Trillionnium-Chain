@@ -12,7 +12,10 @@ pub(super) const SCHEMA_VERSION: u64 = 4;
 /// byte-for-byte compatible; this version is entered only by the explicit
 /// migration below and is never selected by ordinary open.
 pub(super) const LEGACY_LATER_SCHEMA_VERSION: u64 = 8;
-pub(super) const LATER_SCHEMA_VERSION: u64 = 9;
+pub(super) const APPLICATION_FINALITY_SCHEMA_VERSION: u64 = 9;
+pub(super) const LATER_SCHEMA_VERSION: u64 = 10;
+#[path = "later_epoch_descendant_finality_v1.rs"]
+mod descendant_finality;
 const MAX_P_ROWS: usize = 128;
 const MAX_PREPARED_BYTES: usize = 2 * 1024 * 1024 * 1024;
 const MAX_SNAPSHOT_BYTES: usize = 256 * 1024 * 1024;
@@ -138,23 +141,34 @@ pub(super) const LATER_SCHEMA: &[(&str, &str)] = &[
        record_digest BLOB NOT NULL CHECK(length(record_digest)=32)
      )",
     ),
+    descendant_finality::SCHEMA,
 ];
 
-/// Exact schema-8 shape retained for an explicit 8 -> 9 migration.  The
+/// Exact schema-8 shape retained for explicit migration.  The
 /// application-finality proof ledger did not exist in schema 8.
 pub(super) const LATER_SCHEMA_V8: &[(&str, &str)] = &[LATER_SCHEMA[0], LATER_SCHEMA[1]];
+/// Frozen schema-9 inventory; ordinary descendant proofs first appear in 10.
+pub(super) const LATER_SCHEMA_V9: &[(&str, &str)] =
+    &[LATER_SCHEMA[0], LATER_SCHEMA[1], LATER_SCHEMA[2]];
 
 pub(super) const fn is_epoch_schema(version: u64) -> bool {
     version == SCHEMA_VERSION
         || version == LEGACY_LATER_SCHEMA_VERSION
+        || version == APPLICATION_FINALITY_SCHEMA_VERSION
         || version == LATER_SCHEMA_VERSION
 }
 
 pub(super) const fn has_later_schema(version: u64) -> bool {
-    version == LEGACY_LATER_SCHEMA_VERSION || version == LATER_SCHEMA_VERSION
+    version == LEGACY_LATER_SCHEMA_VERSION
+        || version == APPLICATION_FINALITY_SCHEMA_VERSION
+        || version == LATER_SCHEMA_VERSION
 }
 
 pub(super) const fn has_later_application_finality_schema(version: u64) -> bool {
+    version == APPLICATION_FINALITY_SCHEMA_VERSION || version == LATER_SCHEMA_VERSION
+}
+
+pub(super) const fn has_later_descendant_finality_schema(version: u64) -> bool {
     version == LATER_SCHEMA_VERSION
 }
 
@@ -567,46 +581,28 @@ impl DurableNativeApplicationV0 {
         Ok(())
     }
 
-    /// Explicit schema-4 to schema-9 migration for later checkpoint/finality
-    /// records. The old edge and P tables are retained unchanged. A legacy
-    /// schema-8 image may explicitly add only the application-finality ledger;
-    /// ordinary open never performs either migration.
+    /// Explicit migration to schema 10. Existing ordinary later commits cannot
+    /// be upgraded: their original finality proof was never retained.
     pub fn upgrade_later_epoch_schema_v1(&self, expected: &ApplicationHeadV0) -> Result<()> {
         let _guard = self.lock_operation()?;
         let mut connection = open_writable_connection_v0(&self.path)?;
-        verify_schema_v0(&connection)?;
-        let metadata = load_metadata_v0(&connection, &self.config)?;
-        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        // Pin schema, all retained authority and the application head in the
+        // same locked snapshot before creating any new table.
+        verify_schema_v0(&tx)?;
+        let metadata = load_metadata_v0(&tx, &self.config)?;
+        validate_metadata_v0(&tx, &self.config, &metadata)?;
         ensure!(
             &metadata.head == expected,
             "later schema migration predecessor mismatch"
         );
-        let version = schema_version(&connection)?;
-        if version == LATER_SCHEMA_VERSION {
-            ensure!(
-                later_table_installed(&connection)?,
-                "later schema-9 table missing"
-            );
-            ensure!(
-                !later_edge_table_installed(&connection)?
-                    || later_edge_has_commit_id_column(&connection)?,
-                "legacy later successor edge schema requires an explicit rebuild"
-            );
-            drop(connection);
-            ensure!(
-                fresh_validate_v0(&self.path, &self.config)? == metadata,
-                "later schema retry changed application state"
-            );
-            return Ok(());
-        }
+        let version = schema_version(&tx)?;
+        ensure!(
+            is_epoch_schema(version),
+            "explicit schema4 later migration required"
+        );
         if version == LEGACY_LATER_SCHEMA_VERSION {
-            ensure!(
-                later_finality_table_installed(&connection)?
-                    && later_edge_table_installed(&connection)?
-                    && later_edge_has_commit_id_column(&connection)?,
-                "schema-8 later ledger is incomplete"
-            );
-            let consumed_edges: i64 = connection.query_row(
+            let consumed_edges: i64 = tx.query_row(
                 "SELECT COUNT(*) FROM native_later_epoch_edge_v1 WHERE phase=1",
                 [],
                 |row| row.get(0),
@@ -615,53 +611,40 @@ impl DurableNativeApplicationV0 {
                 consumed_edges == 0,
                 "schema-8 consumed successor requires retained application finality proof"
             );
-            let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
-            tx.execute_batch(LATER_SCHEMA[2].1)?;
+        }
+        if version == APPLICATION_FINALITY_SCHEMA_VERSION {
+            ensure!(
+                descendant_finality::committed_blocks(&tx)?.is_empty(),
+                "schema-9 committed later descendant requires retained original finality proof"
+            );
+        }
+        if version != LATER_SCHEMA_VERSION {
+            let existing = match version {
+                SCHEMA_VERSION => 0,
+                LEGACY_LATER_SCHEMA_VERSION => LATER_SCHEMA_V8.len(),
+                APPLICATION_FINALITY_SCHEMA_VERSION => LATER_SCHEMA_V9.len(),
+                _ => unreachable!("validated epoch schema"),
+            };
+            for (_, sql) in &LATER_SCHEMA[existing..] {
+                tx.execute_batch(sql)?;
+            }
             ensure!(
                 tx.execute(
                     "UPDATE native_application_metadata_v0 SET schema_version=?1 WHERE singleton=1 AND schema_version=?2 AND durable_sequence=?3",
                     params![
                         LATER_SCHEMA_VERSION.to_be_bytes().as_slice(),
-                        LEGACY_LATER_SCHEMA_VERSION.to_be_bytes().as_slice(),
+                        version.to_be_bytes().as_slice(),
                         metadata.durable_sequence.to_be_bytes().as_slice()
-                    ]
+                    ],
                 )? == 1,
-                "later schema 8-to-9 migration CAS failed"
+                "later schema migration CAS failed"
             );
-            tx.commit()?;
-            drop(connection);
-            sync_store_commit_boundary_v0(&self.path)?;
-            ensure!(
-                fresh_validate_v0(&self.path, &self.config)? == metadata,
-                "later schema 8-to-9 migration changed application state"
-            );
-            return Ok(());
         }
-        ensure!(
-            version == SCHEMA_VERSION,
-            "explicit schema4 later migration required"
-        );
-        let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
-        for (_, sql) in LATER_SCHEMA {
-            tx.execute_batch(sql)?;
-        }
-        ensure!(
-            tx.execute(
-                "UPDATE native_application_metadata_v0 SET schema_version=?1 WHERE singleton=1 AND schema_version=?2 AND durable_sequence=?3",
-                params![
-                    LATER_SCHEMA_VERSION.to_be_bytes().as_slice(),
-                    SCHEMA_VERSION.to_be_bytes().as_slice(),
-                    metadata.durable_sequence.to_be_bytes().as_slice()
-                ]
-            )? == 1,
-            "later schema migration CAS failed"
-        );
         tx.commit()?;
         drop(connection);
         sync_store_commit_boundary_v0(&self.path)?;
-        let after = fresh_validate_v0(&self.path, &self.config)?;
         ensure!(
-            after == metadata,
+            fresh_validate_v0(&self.path, &self.config)? == metadata,
             "later schema migration changed application state"
         );
         Ok(())
@@ -3518,6 +3501,7 @@ fn validate_p(
 /// Audit a schema-8 successor binding into the same strict activation carrier
 /// used by legacy lineage validation.  This is an internal representation
 /// join only; it does not mint the public legacy edge capability.
+#[inline(never)]
 fn audit_later_successor_for_lineage_v1(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
@@ -3949,6 +3933,9 @@ fn validate_later_inventory_v1(
         if has_later_application_finality_schema(schema) {
             validate_later_application_finality(connection, config)?;
         }
+        if has_later_descendant_finality_schema(schema) {
+            descendant_finality::audit(connection, config)?;
+        }
     }
     Ok(())
 }
@@ -4197,8 +4184,8 @@ impl DurableNativeApplicationV0 {
                 contexts.push(Box::new(self.recover_epoch_application_edge_v1(*binding)?));
             } else {
                 ensure!(
-                    has_later_application_finality_schema(schema_version(&connection)?),
-                    "later descendant authority requires schema9 application finality"
+                    has_later_descendant_finality_schema(schema_version(&connection)?),
+                    "later descendant authority requires schema10 ordinary finality"
                 );
                 let checkpoint = connection.query_row(
                     "SELECT checkpoint_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
@@ -4314,6 +4301,12 @@ impl DurableNativeApplicationV0 {
         );
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
+        if descendant_finality::binding(&connection, &p)?.is_some() {
+            ensure!(
+                has_later_descendant_finality_schema(schema_version(&connection)?),
+                "later descendant prepare requires schema10 ordinary finality"
+            );
+        }
         if let Some(existing) = load_p(&connection, &p.block_id)? {
             ensure!(
                 existing.artifact == p.artifact
@@ -4583,6 +4576,12 @@ impl DurableNativeApplicationV0 {
         let binding = *ids.last().context("epoch commit missing edge")?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
+        if descendant_finality::binding(&connection, &prepared.row)?.is_some() {
+            ensure!(
+                has_later_descendant_finality_schema(schema_version(&connection)?),
+                "later descendant commit requires schema10 ordinary finality"
+            );
+        }
         let legacy_edge = load_edges(&connection, &self.config)?
             .into_iter()
             .find(|edge| edge.binding == binding)
@@ -4802,6 +4801,16 @@ impl DurableNativeApplicationV0 {
             legacy || has_later_application_finality_schema(schema_version(&connection)?),
             "later descendant commit requires schema9 application finality"
         );
+        let ordinary_binding = descendant_finality::binding(&connection, &p)?;
+        if ordinary_binding.is_some() {
+            ensure!(
+                has_later_descendant_finality_schema(schema_version(&connection)?),
+                "later descendant commit requires schema10 ordinary finality"
+            );
+            descendant_finality::check_proof_bounds(
+                application_proof.context("later descendant finality proof missing")?,
+            )?;
+        }
         let prospective_sequence = p.commit_sequence.unwrap_or(
             metadata
                 .durable_sequence
@@ -4923,6 +4932,16 @@ impl DurableNativeApplicationV0 {
                     "later application conflicting retry"
                 );
             }
+            if let Some(binding) = ordinary_binding {
+                descendant_finality::check_retry(
+                    &connection,
+                    &self.config,
+                    &p,
+                    sequence,
+                    binding,
+                    application_proof.context("later descendant finality proof missing")?,
+                )?;
+            }
             drop(connection);
             sync_store_commit_boundary_v0(&self.path)?;
             fresh_validate_v0(&self.path, &self.config)?;
@@ -4949,6 +4968,12 @@ impl DurableNativeApplicationV0 {
         let sequence = prospective_sequence;
         let head = p.target_head()?;
         let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        if ordinary_binding.is_some() {
+            descendant_finality::check_capacity(
+                &tx,
+                application_proof.context("later descendant finality proof missing")?,
+            )?;
+        }
         let changed=tx.execute("UPDATE native_application_metadata_v0 SET durable_sequence=?,head_height=?,head_block_id=?,head_state_root=?,head_commit_id=?,authenticated_snapshot=?,authenticated_snapshot_digest=?,replay_command_ids=?,replay_signer_nonces=? WHERE singleton=1 AND durable_sequence=? AND head_height=? AND head_block_id=? AND head_state_root=? AND head_commit_id=?",
             params![sequence.to_be_bytes().as_slice(),head.height().get().to_be_bytes().as_slice(),head.block_id().as_bytes().as_slice(),head.state_root().as_bytes().as_slice(),head.commit_id().as_bytes().as_slice(),
                 &p.snapshot,p.snapshot_digest.as_slice(),&p.commands,&p.nonces,metadata.durable_sequence.to_be_bytes().as_slice(),metadata.head.height().get().to_be_bytes().as_slice(),metadata.head.block_id().as_bytes().as_slice(),
@@ -5060,6 +5085,16 @@ impl DurableNativeApplicationV0 {
                 ],
             )?;
         }
+        if let Some(binding) = ordinary_binding {
+            descendant_finality::insert(
+                &tx,
+                &self.config,
+                &p,
+                sequence,
+                binding,
+                application_proof.context("later descendant finality proof missing")?,
+            )?;
+        }
         let pruned = prepared_blocks_not_descending_from_v0(&inventory, p.block_id);
         for block in pruned {
             tx.execute(
@@ -5076,6 +5111,8 @@ impl DurableNativeApplicationV0 {
             "later_application_before_commit"
         } else if later.is_some() {
             "later_epoch_before_commit"
+        } else if ordinary_binding.is_some() {
+            "later_descendant_before_commit"
         } else {
             "epoch_before_commit"
         });
@@ -5085,6 +5122,8 @@ impl DurableNativeApplicationV0 {
             "later_application_after_commit"
         } else if later.is_some() {
             "later_epoch_after_commit"
+        } else if ordinary_binding.is_some() {
+            "later_descendant_after_commit"
         } else {
             "epoch_after_commit"
         });
@@ -5095,6 +5134,8 @@ impl DurableNativeApplicationV0 {
             "later_application_after_fsync"
         } else if later.is_some() {
             "later_epoch_after_fsync"
+        } else if ordinary_binding.is_some() {
+            "later_descendant_after_fsync"
         } else {
             "epoch_after_fsync"
         });

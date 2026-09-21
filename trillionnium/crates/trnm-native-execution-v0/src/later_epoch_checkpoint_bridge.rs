@@ -469,6 +469,8 @@ mod tests {
         NativeExpectedBlockCommitmentsV0,
     };
 
+    include!("later_epoch_descendant_tests.rs");
+
     fn key(index: usize) -> SigningKey {
         SigningKey::from_bytes(&[20 + index as u8; 32])
     }
@@ -848,13 +850,26 @@ mod tests {
         );
     }
 
-    #[test]
-    fn later_checkpoint_bridge_accepts_real_h17_c18_s19_s20_evidence() {
-        let directory = tempfile::tempdir().unwrap();
-        let path = std::env::var_os("TRNM_LATER_EPOCH_CRASH_STORE")
-            .map(std::path::PathBuf::from)
-            .unwrap_or_else(|| directory.path().join("application.sqlite3"));
-        let fixture = build_native_checkpoint_fixture_v1(&path);
+    struct LaterDescendantFixture {
+        application: DurableNativeApplicationV0,
+        prepared: crate::PreparedNativeEpochExecutionV1,
+        checkpoint_header: BlockHeader,
+        first_header: BlockHeader,
+        c22_header: BlockHeader,
+        c23_header: BlockHeader,
+        c24_header: BlockHeader,
+        c23_request: NativeBlockPreviewRequestV0,
+        c22_proof: Vec<u8>,
+        validator_set: ValidatorSet,
+        parameters: ConsensusParametersV0,
+        predecessor: [u8; 32],
+    }
+
+    // One authentic construction feeds both normal acceptance and the seeded
+    // crash harness. No child reconstructs genesis/checkpoint history.
+    #[inline(never)]
+    fn build_later_descendant_fixture(path: &std::path::Path) -> Box<LaterDescendantFixture> {
+        let fixture = build_native_checkpoint_fixture_v1(path);
         let app = fixture.application;
         let confirmed = app
             .confirm_poco_checkpoint_v0(
@@ -1064,7 +1079,7 @@ mod tests {
             .unwrap(),
         )
         .unwrap();
-        let checkpoint_p = app
+        let _checkpoint_p = app
             .execute_epoch_descendant_v1(&prepared[6], checkpoint_request, &checkpoint_header)
             .unwrap();
         let (empty_payload, empty_receipts, empty_evidence) = empty_roots();
@@ -1297,7 +1312,7 @@ mod tests {
         assert_eq!(retried.commit_sequence(), committed.commit_sequence());
         drop(app);
         let config = native_checkpoint_fixture_config_v1();
-        let reopened = DurableNativeApplicationV0::open(&path, config).unwrap();
+        let reopened = DurableNativeApplicationV0::open(path, config).unwrap();
         assert_eq!(
             reopened
                 .confirmed_committed_head_v0()
@@ -1306,7 +1321,7 @@ mod tests {
                 .as_bytes(),
             checkpoint_header.id().as_bytes()
         );
-        let record_count: i64 = rusqlite::Connection::open(&path)
+        let record_count: i64 = rusqlite::Connection::open(path)
             .unwrap()
             .query_row(
                 "SELECT COUNT(*) FROM native_later_epoch_finality_v1",
@@ -1319,7 +1334,7 @@ mod tests {
         // row cannot safely invent the committed application commit identity;
         // operators must rebuild it through an explicit migration.
         let legacy_path = path.with_extension("legacy-edge.sqlite3");
-        std::fs::copy(&path, &legacy_path).unwrap();
+        std::fs::copy(path, &legacy_path).unwrap();
         let legacy = rusqlite::Connection::open(&legacy_path).unwrap();
         legacy
             .execute_batch(
@@ -1404,7 +1419,7 @@ mod tests {
             requirements.successor_binding(),
             requirements.predecessor_edge()
         );
-        let stored_predecessor: [u8; 32] = rusqlite::Connection::open(&path)
+        let stored_predecessor: [u8; 32] = rusqlite::Connection::open(path)
             .unwrap()
             .query_row(
                 "SELECT predecessor_edge FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?",
@@ -1620,7 +1635,7 @@ mod tests {
         drop((c21, c22));
         drop(reopened);
         let reopened =
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).unwrap();
         let c22 = reopened
             .reopen_prepared_epoch_execution_v1(*c22_header.id().as_bytes())
             .unwrap();
@@ -1762,6 +1777,81 @@ mod tests {
         .unwrap()
         .try_cev0_bytes()
         .unwrap();
+        Box::new(LaterDescendantFixture {
+            application: reopened,
+            prepared: c22,
+            checkpoint_header,
+            first_header,
+            c22_header,
+            c23_header,
+            c24_header,
+            c23_request,
+            c22_proof,
+            validator_set: new_set,
+            parameters: old_parameters,
+            predecessor: *observed.lineage().last().unwrap(),
+        })
+    }
+
+    #[test]
+    fn later_checkpoint_bridge_accepts_real_h17_c18_s19_s20_evidence() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = std::env::var_os("TRNM_LATER_EPOCH_CRASH_STORE")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|| directory.path().join("application.sqlite3"));
+        let fixture = build_later_descendant_fixture(&path);
+        assert_later_descendant_fixture(&path, fixture);
+    }
+
+    #[inline(never)]
+    fn assert_later_descendant_fixture(
+        path: &std::path::Path,
+        fixture: Box<LaterDescendantFixture>,
+    ) {
+        assert_schema9_prepared_descendant_migration(path);
+        let LaterDescendantFixture {
+            application: reopened,
+            prepared: c22,
+            checkpoint_header,
+            first_header,
+            c22_header,
+            c23_header,
+            c24_header,
+            c23_request,
+            c22_proof,
+            validator_set: new_set,
+            parameters,
+            predecessor,
+        } = *fixture;
+        assert_signature_mutant_is_canonical(
+            &c22_proof,
+            &first_header,
+            &c22_header,
+            &new_set,
+            &parameters,
+        );
+        let wrong_authority =
+            wrong_descendant_authority_proofs(&first_header, &new_set, &parameters);
+        for (name, proof) in &wrong_authority {
+            assert!(
+                reopened
+                    .commit_epoch_finality_bytes_v1(
+                        &c22,
+                        proof,
+                        &mut Cev0AdmissionBudgetV0::protocol_v0()
+                    )
+                    .is_err(),
+                "signed wrong {name} proof must not commit prepared C22"
+            );
+            assert_eq!(
+                reopened
+                    .confirmed_committed_head_v0()
+                    .unwrap()
+                    .height()
+                    .get(),
+                21
+            );
+        }
         let committed_c22 = reopened
             .commit_epoch_finality_bytes_v1(
                 &c22,
@@ -1780,15 +1870,74 @@ mod tests {
             retried_c22.commit_sequence(),
             committed_c22.commit_sequence()
         );
+        let alternate_c24 = later_regular_header(&new_set, &c23_header, 24_001);
+        let alternate_proof = ordinary_later_proof(
+            &first_header,
+            &[c22_header.clone(), c23_header.clone(), alternate_c24],
+            &new_set,
+            &parameters,
+        );
+        assert_ne!(alternate_proof, c22_proof);
+        assert_valid_ordinary_later_proof(
+            &alternate_proof,
+            &first_header,
+            &c22_header,
+            &new_set,
+            &parameters,
+        );
+        let error = match reopened.commit_epoch_finality_bytes_v1(
+            &c22,
+            &alternate_proof,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        ) {
+            Ok(_) => panic!("different valid proof must not replace the original C22 proof"),
+            Err(error) => error,
+        };
+        assert!(
+            error
+                .to_string()
+                .contains("later descendant conflicting retry"),
+            "{error:#}"
+        );
+        let c25_header = later_regular_header(&new_set, &c24_header, 25_000);
+        let c23_proof = ordinary_later_proof(
+            &c22_header,
+            &[c23_header.clone(), c24_header.clone(), c25_header],
+            &new_set,
+            &parameters,
+        );
+        let c23 = reopened
+            .reopen_prepared_epoch_execution_v1(*c23_header.id().as_bytes())
+            .unwrap();
+        let committed_c23 = reopened
+            .commit_epoch_finality_bytes_v1(
+                &c23,
+                &c23_proof,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .expect("C23 must advance the ordinary head");
+        assert_eq!(committed_c23.head().height().get(), 23);
+        let later_retry = reopened
+            .commit_epoch_finality_bytes_v1(
+                &c22,
+                &c22_proof,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .expect("C22 exact retry must survive a later committed head");
+        assert_eq!(
+            later_retry.commit_sequence(),
+            committed_c22.commit_sequence()
+        );
+        assert_schema9_committed_descendant_migration_refused(path);
         drop(reopened);
         let reopened =
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).unwrap();
         let cold_head = reopened
             .confirmed_committed_head_v0()
             .expect("C+4 committed row must cold-recover");
-        assert_eq!(cold_head.height().get(), c22_header.height().get());
-        assert_eq!(cold_head.block_id().as_bytes(), c22_header.id().as_bytes());
-        let sql = rusqlite::Connection::open(&path).unwrap();
+        assert_eq!(cold_head.height().get(), c23_header.height().get());
+        assert_eq!(cold_head.block_id().as_bytes(), c23_header.id().as_bytes());
+        let sql = rusqlite::Connection::open(path).unwrap();
         let proof_count: i64 = sql
             .query_row(
                 "SELECT COUNT(*) FROM native_later_epoch_application_finality_v1",
@@ -1809,9 +1958,9 @@ mod tests {
         // schema-9 application proof ledger. Migration must fail closed
         // instead of creating an empty ledger and blessing phase=1.
         let legacy_path = path.with_extension("consumed-schema8.sqlite3");
-        std::fs::copy(&path, &legacy_path).unwrap();
+        std::fs::copy(path, &legacy_path).unwrap();
         let source_sidecar =
-            crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&path);
+            crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(path);
         let legacy_sidecar =
             crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&legacy_path);
         std::fs::copy(source_sidecar, &legacy_sidecar).unwrap();
@@ -1822,9 +1971,7 @@ mod tests {
             .reopen_prepared_epoch_execution_v1(*c22_header.id().as_bytes())
             .unwrap();
         let legacy_sql = rusqlite::Connection::open(&legacy_path).unwrap();
-        legacy_sql
-            .execute("DROP TABLE native_later_epoch_application_finality_v1", [])
-            .unwrap();
+        legacy_sql.execute_batch("DROP TABLE native_later_epoch_descendant_finality_v1; DROP TABLE native_later_epoch_application_finality_v1;").unwrap();
         legacy_sql
             .execute(
                 "UPDATE native_application_metadata_v0 SET schema_version=? WHERE singleton=1",
@@ -1838,8 +1985,22 @@ mod tests {
         assert!(
             preview_error
                 .to_string()
-                .contains("later descendant authority requires schema9 application finality"),
+                .contains("later descendant authority requires schema10 ordinary finality"),
             "schema-8 C+4 preview error: {preview_error:#}"
+        );
+        let prepare_error = copied_app
+            .execute_epoch_descendant_v1(
+                &copied_c22,
+                descendant_execution_request(&c23_request, &c23_header),
+                &c23_header,
+            )
+            .err()
+            .expect("schema8 later descendant execution must reject");
+        assert!(
+            prepare_error
+                .to_string()
+                .contains("later descendant authority requires schema10 ordinary finality"),
+            "{prepare_error:#}"
         );
         let commit_error = match copied_app.commit_epoch_finality_bytes_v1(
             &copied_c22,
@@ -1852,7 +2013,7 @@ mod tests {
         assert!(
             commit_error
                 .to_string()
-                .contains("later descendant commit requires schema9 application finality"),
+                .contains("later descendant commit requires schema10 ordinary finality"),
             "schema-8 C+4 commit error: {commit_error:#}"
         );
         drop(copied_app);
@@ -1879,7 +2040,7 @@ mod tests {
         assert!(reopened
             .execute_later_epoch_first_new_block_v1(&successor)
             .is_err());
-        let successor_count: i64 = rusqlite::Connection::open(&path)
+        let successor_count: i64 = rusqlite::Connection::open(path)
             .unwrap()
             .query_row(
                 "SELECT COUNT(*) FROM native_later_epoch_edge_v1",
@@ -1896,8 +2057,14 @@ mod tests {
             "the H17 edge cannot execute C21 after the C18 checkpoint commit"
         );
         drop(reopened);
-        assert_later_application_ledger_recovery(&path);
-        let sql = rusqlite::Connection::open(&path).unwrap();
+        assert_descendant_ledger_recovery(
+            path,
+            c22_header.id().as_bytes(),
+            &c23_proof,
+            &wrong_authority,
+        );
+        assert_later_application_ledger_recovery(path);
+        let sql = rusqlite::Connection::open(path).unwrap();
         let original_successor_record: Vec<u8> = sql
             .query_row(
                 "SELECT record_digest FROM native_later_epoch_edge_v1 WHERE checkpoint_block=?",
@@ -1911,7 +2078,7 @@ mod tests {
         )
         .unwrap();
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err(),
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_err(),
             "successor edge checksum mutation must fail cold open"
         );
         sql.execute(
@@ -1923,7 +2090,7 @@ mod tests {
         )
         .unwrap();
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_ok()
         );
         let original_finality: Vec<u8> = sql
             .query_row(
@@ -1938,7 +2105,7 @@ mod tests {
         )
         .unwrap();
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err()
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_err()
         );
         sql.execute(
             "UPDATE native_later_epoch_finality_v1 SET checkpoint_finality=? WHERE checkpoint_block=?",
@@ -1946,7 +2113,7 @@ mod tests {
         )
         .unwrap();
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_ok()
         );
         // Corrupt a signature and recompute the complete local checksum. The
         // cryptographic verifier, not the checksum, must reject cold recovery.
@@ -1966,7 +2133,7 @@ mod tests {
         .unwrap();
         rehash_record(&sql);
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err()
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_err()
         );
         sql.execute(
             "UPDATE native_later_epoch_finality_v1 SET checkpoint_finality=?",
@@ -1975,12 +2142,11 @@ mod tests {
         .unwrap();
         rehash_record(&sql);
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_ok()
         );
         // A later proof cannot advance from an edge that was rolled back to
         // the installed phase. The phase mutation is made SQL-valid by
         // clearing its consumed target, then restored byte-for-byte.
-        let predecessor = *observed.lineage().last().unwrap();
         let (consumed_block, consumed_sequence): (Vec<u8>, Vec<u8>) = sql
             .query_row(
                 "SELECT consumed_block,consumed_sequence FROM native_epoch_edge_v1 WHERE binding=?",
@@ -1994,7 +2160,7 @@ mod tests {
         )
         .unwrap();
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err(),
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_err(),
             "later proof must reject an unconsumed predecessor edge"
         );
         sql.execute(
@@ -2003,20 +2169,19 @@ mod tests {
         )
         .unwrap();
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_ok()
         );
         // Every committed checkpoint needs its retained strict record even
         // when all of its native execution data are otherwise unchanged.
         sql.execute_batch("CREATE TEMP TABLE saved_later AS SELECT * FROM native_later_epoch_finality_v1; DELETE FROM native_later_epoch_finality_v1;").unwrap();
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err()
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_err()
         );
         sql.execute_batch("INSERT INTO native_later_epoch_finality_v1 SELECT * FROM saved_later;")
             .unwrap();
         assert!(
-            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_ok()
+            DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).is_ok()
         );
-        drop(checkpoint_p);
     }
     #[cfg(unix)]
     #[test]
