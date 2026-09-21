@@ -456,11 +456,12 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use sha2::Digest;
     use trnm_consensus_types::{
-        BlockId, Epoch, EpochAnchorAuthorizationKernelV0, EpochFallbackReasonV0, EvidenceRoot,
-        FinalityProofV0, HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields,
-        Height, NextEpochCommitmentV0Fields, OrderedRootV0, PayloadDigest, ProposalWitnessV0,
-        ProtocolVersion, QcReferenceV0, QuorumCertificate, ReceiptsRoot, RootKind, Signature64,
-        SignatureShareV0, StateRoot, Validator, ValidatorSet, View, Vote, SCHEMA_VERSION_V0,
+        BlockId, CertifiedHeaderV0, Epoch, EpochAnchorAuthorizationKernelV0, EpochFallbackReasonV0,
+        EvidenceRoot, FinalityProofV0, HandoffCertificateV0, HandoffDescriptorV0,
+        HandoffDescriptorV0Fields, Height, NextEpochCommitmentV0Fields, OrderedRootV0,
+        PayloadDigest, ProposalWitnessV0, ProtocolVersion, QcReferenceV0, QuorumCertificate,
+        ReceiptsRoot, RootKind, Signature64, SignatureShareV0, StateRoot, Validator, ValidatorSet,
+        View, Vote, SCHEMA_VERSION_V0,
     };
     use trnm_native_application::{
         BlockIdV0, ChainIdV0, GenesisHashV0, Hash32V0, HeightV0, NativeBlockExecutionRequestV0,
@@ -798,13 +799,12 @@ mod tests {
 
     fn assert_later_application_ledger_recovery(path: &std::path::Path) {
         let sql = rusqlite::Connection::open(path).unwrap();
-        let (block, p_digest, sequence, edge, original, original_digest, original_record): (
-            Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>,
-        ) = sql.query_row(
+        let [block, p_digest, sequence, edge, original, original_digest, original_record]:
+            [Vec<u8>; 7] = sql.query_row(
             "SELECT block_id,p_digest,commit_sequence,edge_binding,proof,proof_digest,record_digest
              FROM native_later_epoch_application_finality_v1",
             [],
-            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?)),
+            |r| Ok([r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?]),
         ).unwrap();
         // Preserve valid framing and all local hashes while corrupting the
         // final signature. Only strict cryptographic recovery can reject it.
@@ -1476,7 +1476,7 @@ mod tests {
             EvidenceRoot::new(*first_preview.evidence_root().as_bytes()),
         );
         let first_execution = NativeEpochBlockExecutionRequestV1::new(
-            first_request,
+            first_request.clone(),
             BlockIdV0::new(*first_header.id().as_bytes()).unwrap(),
             NativeExpectedBlockCommitmentsV0::new(
                 first_preview.payload_root(),
@@ -1566,11 +1566,261 @@ mod tests {
             retry_first.commit_sequence(),
             committed_first.commit_sequence()
         );
+        let c21 = reopened
+            .reopen_prepared_epoch_execution_v1(*first_header.id().as_bytes())
+            .unwrap();
+        let c22_parent = c21.overlay_parent_head().unwrap();
+        let c22_request = NativeBlockPreviewRequestV0::new(
+            ChainIdV0::new(new_set.chain_id().as_str()).unwrap(),
+            GenesisHashV0::new(*new_set.genesis_hash().as_bytes()).unwrap(),
+            c22_parent,
+            HeightV0::new(22),
+            22_000,
+            trnm_native_application::ValidatorSetIdV0::new(*new_set.id().as_bytes()).unwrap(),
+            Vec::new(),
+        )
+        .unwrap();
+        let c22_preview = reopened
+            .preview_epoch_descendant_v1(&c21, &c22_request)
+            .expect("C+4 preview must resolve mixed later lineage");
+        let c22_header = checkpoint_like_header_at_view(
+            &new_set,
+            BlockKind::Regular,
+            22,
+            BlockId::new(*c22_request.parent().block_id().as_bytes()),
+            StateRoot::new(*c22_preview.post_state_root().as_bytes()),
+            None,
+            c22_request.timestamp_ms(),
+            PayloadDigest::new(*c22_preview.payload_root().as_bytes()),
+            ReceiptsRoot::new(*c22_preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*c22_preview.evidence_root().as_bytes()),
+            2,
+        );
+        let c22_execution = NativeBlockExecutionRequestV0::new(
+            c22_request.chain_id().clone(),
+            c22_request.genesis_hash(),
+            c22_request.parent().clone(),
+            BlockIdV0::new(*c22_header.id().as_bytes()).unwrap(),
+            c22_request.height(),
+            c22_request.timestamp_ms(),
+            c22_request.active_validator_set_id(),
+            Vec::new(),
+            NativeExpectedBlockCommitmentsV0::new(
+                c22_preview.payload_root(),
+                c22_preview.post_state_root(),
+                c22_preview.receipts_root(),
+                c22_preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let c22 = reopened
+            .execute_epoch_descendant_v1(&c21, c22_execution, &c22_header)
+            .expect("C+4 prepare must inherit the later target configuration");
+        drop((c21, c22));
+        drop(reopened);
+        let reopened =
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+        let c22 = reopened
+            .reopen_prepared_epoch_execution_v1(*c22_header.id().as_bytes())
+            .unwrap();
+        assert_ne!(c22.p_digest(), [0; 32]);
+
+        let c23_parent = c22.overlay_parent_head().unwrap();
+        let c23_request = NativeBlockPreviewRequestV0::new(
+            ChainIdV0::new(new_set.chain_id().as_str()).unwrap(),
+            GenesisHashV0::new(*new_set.genesis_hash().as_bytes()).unwrap(),
+            c23_parent,
+            HeightV0::new(23),
+            23_000,
+            trnm_native_application::ValidatorSetIdV0::new(*new_set.id().as_bytes()).unwrap(),
+            Vec::new(),
+        )
+        .unwrap();
+        let c23_preview = reopened
+            .preview_epoch_descendant_v1(&c22, &c23_request)
+            .expect("C+4 second block preview must retain mixed lineage");
+        let c23_header = checkpoint_like_header_at_view(
+            &new_set,
+            BlockKind::Regular,
+            23,
+            BlockId::new(*c23_request.parent().block_id().as_bytes()),
+            StateRoot::new(*c23_preview.post_state_root().as_bytes()),
+            None,
+            c23_request.timestamp_ms(),
+            PayloadDigest::new(*c23_preview.payload_root().as_bytes()),
+            ReceiptsRoot::new(*c23_preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*c23_preview.evidence_root().as_bytes()),
+            3,
+        );
+        let c23 = reopened
+            .execute_epoch_descendant_v1(
+                &c22,
+                NativeBlockExecutionRequestV0::new(
+                    c23_request.chain_id().clone(),
+                    c23_request.genesis_hash(),
+                    c23_request.parent().clone(),
+                    BlockIdV0::new(*c23_header.id().as_bytes()).unwrap(),
+                    c23_request.height(),
+                    c23_request.timestamp_ms(),
+                    c23_request.active_validator_set_id(),
+                    Vec::new(),
+                    NativeExpectedBlockCommitmentsV0::new(
+                        c23_preview.payload_root(),
+                        c23_preview.post_state_root(),
+                        c23_preview.receipts_root(),
+                        c23_preview.evidence_root(),
+                    )
+                    .unwrap(),
+                )
+                .unwrap(),
+                &c23_header,
+            )
+            .expect("C+4 second block prepare must succeed");
+        let c24_parent = c23.overlay_parent_head().unwrap();
+        let c24_request = NativeBlockPreviewRequestV0::new(
+            ChainIdV0::new(new_set.chain_id().as_str()).unwrap(),
+            GenesisHashV0::new(*new_set.genesis_hash().as_bytes()).unwrap(),
+            c24_parent,
+            HeightV0::new(24),
+            24_000,
+            trnm_native_application::ValidatorSetIdV0::new(*new_set.id().as_bytes()).unwrap(),
+            Vec::new(),
+        )
+        .unwrap();
+        let c24_preview = reopened
+            .preview_epoch_descendant_v1(&c23, &c24_request)
+            .expect("C+4 third block preview must retain mixed lineage");
+        let c24_header = checkpoint_like_header_at_view(
+            &new_set,
+            BlockKind::Regular,
+            24,
+            BlockId::new(*c24_request.parent().block_id().as_bytes()),
+            StateRoot::new(*c24_preview.post_state_root().as_bytes()),
+            None,
+            c24_request.timestamp_ms(),
+            PayloadDigest::new(*c24_preview.payload_root().as_bytes()),
+            ReceiptsRoot::new(*c24_preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*c24_preview.evidence_root().as_bytes()),
+            4,
+        );
+        let _c24 = reopened
+            .execute_epoch_descendant_v1(
+                &c23,
+                NativeBlockExecutionRequestV0::new(
+                    c24_request.chain_id().clone(),
+                    c24_request.genesis_hash(),
+                    c24_request.parent().clone(),
+                    BlockIdV0::new(*c24_header.id().as_bytes()).unwrap(),
+                    c24_request.height(),
+                    c24_request.timestamp_ms(),
+                    c24_request.active_validator_set_id(),
+                    Vec::new(),
+                    NativeExpectedBlockCommitmentsV0::new(
+                        c24_preview.payload_root(),
+                        c24_preview.post_state_root(),
+                        c24_preview.receipts_root(),
+                        c24_preview.evidence_root(),
+                    )
+                    .unwrap(),
+                )
+                .unwrap(),
+                &c24_header,
+            )
+            .expect("C+4 third block prepare must succeed");
+        let certify = |header: &BlockHeader, parent: &BlockHeader| {
+            let justify = QcReferenceV0::ordinary(qc(parent, &new_set));
+            let root = ProposalWitnessV0::signing_root_for(header, &justify, None, None).unwrap();
+            let proposer = new_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == header.proposer_id())
+                .unwrap();
+            CertifiedHeaderV0::new(
+                header.clone(),
+                justify,
+                None,
+                None,
+                Signature64::from_array(key(proposer).sign(root.as_bytes()).to_bytes()),
+                qc(header, &new_set),
+                &new_set,
+                None,
+                &old_parameters,
+                parent.timestamp_ms(),
+            )
+            .unwrap()
+        };
+        let c22_proof = FinalityProofV0::new(
+            certify(&c22_header, &first_header),
+            certify(&c23_header, &c22_header),
+            certify(&c24_header, &c23_header),
+            &new_set,
+            None,
+            &old_parameters,
+            first_header.timestamp_ms(),
+        )
+        .unwrap()
+        .try_cev0_bytes()
+        .unwrap();
+        let committed_c22 = reopened
+            .commit_epoch_finality_bytes_v1(
+                &c22,
+                &c22_proof,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .expect("C+4 strict ordinary finality must commit");
+        let retried_c22 = reopened
+            .commit_epoch_finality_bytes_v1(
+                &c22,
+                &c22_proof,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .expect("C+4 strict ordinary finality retry must be exact");
+        assert_eq!(
+            retried_c22.commit_sequence(),
+            committed_c22.commit_sequence()
+        );
+        drop(reopened);
+        let reopened =
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+        let cold_head = reopened
+            .confirmed_committed_head_v0()
+            .expect("C+4 committed row must cold-recover");
+        assert_eq!(cold_head.height().get(), c22_header.height().get());
+        assert_eq!(cold_head.block_id().as_bytes(), c22_header.id().as_bytes());
+        let sql = rusqlite::Connection::open(&path).unwrap();
+        let proof_count: i64 = sql
+            .query_row(
+                "SELECT COUNT(*) FROM native_later_epoch_application_finality_v1",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(proof_count, 1, "C+4 must not mint a second handoff proof");
+        let consumed_block: Vec<u8> = sql
+            .query_row(
+                "SELECT consumed_block FROM native_later_epoch_edge_v1",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(consumed_block, first_header.id().as_bytes());
         // A schema-8 image cannot represent a consumed C+3 edge without the
         // schema-9 application proof ledger. Migration must fail closed
         // instead of creating an empty ledger and blessing phase=1.
         let legacy_path = path.with_extension("consumed-schema8.sqlite3");
         std::fs::copy(&path, &legacy_path).unwrap();
+        let source_sidecar =
+            crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&path);
+        let legacy_sidecar =
+            crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&legacy_path);
+        std::fs::copy(source_sidecar, &legacy_sidecar).unwrap();
+        let copied_app =
+            DurableNativeApplicationV0::open(&legacy_path, native_checkpoint_fixture_config_v1())
+                .unwrap();
+        let copied_c22 = copied_app
+            .reopen_prepared_epoch_execution_v1(*c22_header.id().as_bytes())
+            .unwrap();
         let legacy_sql = rusqlite::Connection::open(&legacy_path).unwrap();
         legacy_sql
             .execute("DROP TABLE native_later_epoch_application_finality_v1", [])
@@ -1582,6 +1832,30 @@ mod tests {
             )
             .unwrap();
         drop(legacy_sql);
+        let preview_error = copied_app
+            .preview_epoch_descendant_v1(&copied_c22, &c23_request)
+            .unwrap_err();
+        assert!(
+            preview_error
+                .to_string()
+                .contains("later descendant authority requires schema9 application finality"),
+            "schema-8 C+4 preview error: {preview_error:#}"
+        );
+        let commit_error = match copied_app.commit_epoch_finality_bytes_v1(
+            &copied_c22,
+            &c22_proof,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        ) {
+            Ok(_) => panic!("schema-8 C+4 commit unexpectedly succeeded"),
+            Err(error) => error,
+        };
+        assert!(
+            commit_error
+                .to_string()
+                .contains("later descendant commit requires schema9 application finality"),
+            "schema-8 C+4 commit error: {commit_error:#}"
+        );
+        drop(copied_app);
         let legacy_app =
             DurableNativeApplicationV0::open(&legacy_path, native_checkpoint_fixture_config_v1())
                 .unwrap();
@@ -1593,6 +1867,15 @@ mod tests {
         );
         drop(legacy_app);
         std::fs::remove_file(&legacy_path).unwrap();
+        std::fs::remove_file(legacy_sidecar).unwrap();
+        let requirements = reopened
+            .inspect_later_epoch_application_edge_requirements_v1(
+                *checkpoint_header.id().as_bytes(),
+            )
+            .unwrap();
+        let successor = reopened
+            .require_later_epoch_application_edge_v1(&requirements)
+            .unwrap();
         assert!(reopened
             .execute_later_epoch_first_new_block_v1(&successor)
             .is_err());

@@ -442,6 +442,13 @@ successor-edge row with its own binding and post-checkpoint context digest.
 The C+3 path is implemented as a candidate owner seam with schema-9 proof
 retention, a local C21 positive fixture and three crash cuts; independent C21
 vectors and production activation remain acceptance gates.
+The same full-snapshot candidate can prepare ordinary C22/C23/C24 after C21
+through recovered sealed legacy/later contexts and strictly commit C22 with
+its ordinary new-set proof. Every descendant preserves the entire lineage,
+the exact application parent and target configuration. It does not consume
+the later successor again or create another first-new proof row. This does
+not extend incremental schema7 to a second crossing or permit repeated
+later-to-later handoffs.
 
 `DurableNativeApplicationV0::inspect_later_epoch_checkpoint_context_v1()` is
 the owner-affine context boundary. It re-reads the consumed edge lineage and

@@ -501,9 +501,10 @@ request/header-based path that prepares and strictly commits its first-new C+3.
 General sparse-history finalized RPC/proof interfaces and independent node
 checkpoint/publication ownership are still fenced or pending. Schema4 rejects
 ordinary `execute_block` so the legacy +1 path cannot synthesize application
-effects for seals. The schema-8 C+4 descendant path and repeated later handoffs
-do not yet resolve the mixed legacy/later lineage, so this is not the full
-multi-epoch default-node pipeline.
+effects for seals. Ordinary C+4 descendants can continue after one later
+successor using the mixed legacy/later lineage. Repeated later-to-later
+handoffs remain unsupported, so this is not the full multi-epoch default-node
+pipeline.
 
 The schema4/schema8 lineage audit now accepts a committed familyv1 checkpoint `P` only
 when its artifact kind, target, prepared digest, header kind and next-epoch
@@ -518,10 +519,69 @@ The schema-9 ledger retains that C+3 proof for cold re-verification. The local
 positive C21 fixture and three process-kill cuts cover the exact P/edge/proof
 retry path. The
 checkpoint/handoff schema4 finalized-read mapping, schema7 incremental
-multi-edge owner/storage migration, C+4 continuation and repeated handoffs
+multi-edge owner/storage migration and repeated later handoffs
 remain unimplemented. Schema8 durably commits and strictly reverifies the later
 checkpoint proof record and its separate successor-edge row; neither path
 silently reuses the predecessor edge.
+
+For an ordinary descendant of the later C+3 P, preview and execution recover
+each retained lineage binding into a sealed `EpochExecutionContextV1`.
+A legacy binding uses its original audited edge; a later binding resolves its
+checkpoint from the successor table and independently recovers that successor
+context. Execution inherits the complete ordered lineage and the final
+context's new set/parameters, retains ordinary artifact v0 and the exact
+application/consensus parent at height−1, and writes its authenticated
+snapshot through the same context list. A later binding is never passed to
+the legacy-only recovery API. This descendant path and its commit/retry
+require schema9; a readable consumed schema8 image without its C+3 proof
+cannot gain write authority through the ordinary path.
+
+Ordinary descendant finality uses the actual immediate parent's timestamp
+and the ordinary new-set strict decoder. Only `artifact_kind=1` may consume
+the successor or append a schema9 handoff proof; C+4 commit/retry must leave
+both the C+3 consumed block and its one proof row unchanged. When the head
+has progressed, recovery follows at most 128 committed P rows back to the
+consumed C+3 head. Every step requires exact parent head/P digest, +1 height,
+consensus parent, identical lineage and identical target configuration.
+Missing, cyclic, uncommitted or substituted ancestry rejects; this selected
+walk consumes already authenticated inventory and cannot re-enter inventory.
+The C18 fixture prepares C21 then C22/C23/C24, strictly verifies their signed
+ordinary three-chain for C22 and checks exact retry and cold recovery. It does
+not establish another later checkpoint/handoff or a public sync protocol.
+Schema9 retains the first-new proof only. The ordinary C22 proof is strictly
+verified at commit but is not retained by this full-snapshot path. Its cold
+audit checks P/artifact/snapshot/replay/parent consistency and the retained
+activation/C+3 authority; it does not reverify historical C22 finality
+signatures. Ordinary-history proof retention and export therefore remain a
+separate gap requiring a versioned ledger and migration rules. A local
+application-history read cannot be presented as that missing consensus proof.
+
+#### Required resolver for repeated later successors
+
+The current single-later-tail resolver is insufficient for a lineage such as
+`[legacy A, later B, later C]`. Its replacement must be a bounded prefix walk,
+not mutually recursive calls among P, successor and checkpoint-proof audits.
+Start with the configured genesis set/parameters and an empty authenticated
+prefix. For each of at most 32 distinct bindings, resolve exactly one legacy
+or later row; missing or ambiguous ownership rejects. A later row must join a
+committed ordinary checkpoint P whose **entire** encoded lineage equals the
+already authenticated prefix, not merely its last binding. Its predecessor,
+P/head/sequence, geometry, context digests and retained record digest must
+agree with that prefix and checkpoint.
+
+Decode and strictly verify the selected retained activation preimages using
+the current prefix's active set/parameters directly. Only that result advances
+the active set/parameters and appends the binding. The selected-row verifier
+must not call the prefix resolver, `validate_p` or whole-table inventory.
+The checkpoint-preimage audit, P validation, successor-fact derivation and
+execution-context reconstruction must consume this same authenticated result
+from one immutable read; mutations still require the existing owner lock,
+parent CAS and fresh readback. Required positives include a second later
+checkpoint and its first-new/ordinary descendants across cold reopen.
+Required negatives are prefix substitution, duplicated/cyclic bindings,
+wrong predecessor, forged rehashed retained proof and wrong target
+configuration. Until those checks pass, repeated later handoffs remain
+disabled; single-later C22 coverage is not evidence for them.
 
 ### Schema9 retained later application finality
 
@@ -584,8 +644,8 @@ cuts `later_application_before_commit`, `later_application_after_commit` and
 `later_application_after_fsync` must recover either the exact prepared
 predecessor or the entire committed P/edge/proof tuple. No cut may recover a
 consumed edge without its proof or increment the application sequence twice.
-These local checks do not close mixed-lineage C+4 continuation, repeated later
-handoffs, incremental schema7 migration or independent crash/power acceptance.
+These local checks do not close repeated later handoffs, incremental schema7
+migration or independent crash/power acceptance.
 
 ### Implemented retained edge evidence and recovery algorithm
 

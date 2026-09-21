@@ -510,8 +510,8 @@ impl DurableNativeApplicationV0 {
             "epoch descendant preview parent/owner mismatch"
         );
         let ids = decode_lineage(&parent.row.lineage)?;
-        let edge =
-            self.recover_epoch_application_edge_v1(*ids.last().context("parent lineage missing")?)?;
+        let contexts = self.recover_epoch_execution_contexts_v1(&ids)?;
+        let context = contexts.last().context("parent lineage missing")?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         let p =
@@ -523,8 +523,8 @@ impl DurableNativeApplicationV0 {
         let store = validate_p(&connection, &self.config, &p)?;
         preview_complete_native_block_v0(
             &store,
-            edge.new_validator_set(),
-            edge.new_validator_set().genesis_hash(),
+            context.new_validator_set_v1(),
+            context.new_validator_set_v1().genesis_hash(),
             request,
         )
     }
@@ -1317,6 +1317,53 @@ fn decode_lineage(bytes: &[u8]) -> Result<Vec<[u8; 32]>> {
         "duplicate lineage edge"
     );
     Ok(values)
+}
+
+// Metadata validation already authenticates these rows. Follow their exact
+// committed parent links without re-entering inventory/authority recovery.
+// A consumed handoff remains usable by ordinary descendants in its epoch.
+fn validate_consumed_later_ancestry_v1(
+    connection: &Connection,
+    head: &ApplicationHeadV0,
+    consumed: &StoredEpochPV1,
+) -> Result<()> {
+    ensure!(
+        consumed.status == 1 && consumed.artifact_kind == 1,
+        "later consumed application P phase/kind"
+    );
+    let consumed_head = consumed.target_head()?;
+    let mut cursor = head.clone();
+    for _ in 0..MAX_P_ROWS {
+        if cursor == consumed_head {
+            return Ok(());
+        }
+        let row = load_p(connection, cursor.block_id().as_bytes())?
+            .context("later consumed descendant P missing")?;
+        ensure!(
+            row.status == 1
+                && row.artifact_kind == 0
+                && row.parent_kind == 1
+                && row.target_head()? == cursor
+                && row.lineage == consumed.lineage
+                && row.target_set == consumed.target_set
+                && row.target_parameters == consumed.target_parameters
+                && row.target_height > consumed.target_height,
+            "later consumed descendant context mismatch"
+        );
+        let parent = load_p(connection, row.parent.block_id().as_bytes())?
+            .context("later consumed descendant parent missing")?;
+        ensure!(
+            parent.status == 1
+                && parent.target_head()? == row.parent
+                && row.parent_p_digest == Some(parent.p_digest)
+                && parent.target_height.checked_add(1) == Some(row.target_height)
+                && row.consensus_parent_height == parent.target_height
+                && row.consensus_parent_block == parent.block_id,
+            "later consumed descendant parent mismatch"
+        );
+        cursor = row.parent;
+    }
+    anyhow::bail!("later consumed descendant ancestry budget")
 }
 
 fn later_table_installed(connection: &Connection) -> Result<bool> {
@@ -2586,10 +2633,8 @@ impl DurableNativeApplicationV0 {
                 .map_err(|_| anyhow::anyhow!("later application edge consumed block width"))?;
             let consumed = load_p(&connection, &consumed_block)?
                 .context("later application edge consumed P missing")?;
-            ensure!(
-                consumed.status == 1 && metadata.head == consumed.target_head()?,
-                "later application edge consumed head mismatch"
-            );
+            ensure!(edge_phase == 1, "later application edge consumed phase");
+            validate_consumed_later_ancestry_v1(&connection, &metadata.head, &consumed)?;
         }
         let target_head = p.target_head()?;
         let successor_context_digest = context_digest(
@@ -2840,10 +2885,8 @@ impl DurableNativeApplicationV0 {
                 .map_err(|_| anyhow::anyhow!("later execution consumed block width"))?;
             let consumed = load_p(&connection, &consumed_block)?
                 .context("later execution consumed P missing")?;
-            ensure!(
-                phase == 1 && consumed.status == 1 && consumed.target_head()? == metadata.head,
-                "later execution checkpoint is neither current nor consumed"
-            );
+            ensure!(phase == 1, "later execution successor is not consumed");
+            validate_consumed_later_ancestry_v1(&connection, &metadata.head, &consumed)?;
         }
         let evidence = connection.query_row(
             "SELECT context_digest,predecessor_edge,checkpoint_parent_header,
@@ -4135,6 +4178,47 @@ impl DurableNativeApplicationV0 {
         self.persist_epoch_p(row)
     }
 
+    #[inline(never)]
+    fn recover_epoch_execution_contexts_v1(
+        &self,
+        bindings: &[[u8; 32]],
+    ) -> Result<Vec<Box<dyn EpochExecutionContextV1>>> {
+        let mut contexts: Vec<Box<dyn EpochExecutionContextV1>> = Vec::new();
+        for binding in bindings {
+            let connection = open_immutable_connection_v0(&self.path)?;
+            verify_schema_v0(&connection)?;
+            let legacy: bool = connection.query_row(
+                "SELECT EXISTS(SELECT 1 FROM native_epoch_edge_v1 WHERE binding=?1)",
+                [binding.as_slice()],
+                |row| row.get(0),
+            )?;
+            if legacy {
+                drop(connection);
+                contexts.push(Box::new(self.recover_epoch_application_edge_v1(*binding)?));
+            } else {
+                ensure!(
+                    has_later_application_finality_schema(schema_version(&connection)?),
+                    "later descendant authority requires schema9 application finality"
+                );
+                let checkpoint = connection.query_row(
+                    "SELECT checkpoint_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
+                    [binding.as_slice()],
+                    |row| col32(row, "checkpoint_block"),
+                )?;
+                drop(connection);
+                let requirements =
+                    self.inspect_later_epoch_application_edge_requirements_v1(checkpoint)?;
+                ensure!(
+                    requirements.successor_binding() == *binding,
+                    "descendant later successor binding"
+                );
+                let edge = self.recover_later_epoch_application_edge_v1(&requirements)?;
+                contexts.push(Box::new(self.open_later_epoch_execution_context_v1(&edge)?));
+            }
+        }
+        Ok(contexts)
+    }
+
     pub fn execute_epoch_descendant_v1(
         &self,
         parent: &PreparedNativeEpochExecutionV1,
@@ -4150,10 +4234,7 @@ impl DurableNativeApplicationV0 {
             "prepared descendant parent mismatch"
         );
         let bindings = decode_lineage(&parent.row.lineage)?;
-        let edges = bindings
-            .iter()
-            .map(|id| self.recover_epoch_application_edge_v1(*id))
-            .collect::<Result<Vec<_>>>()?;
+        let contexts = self.recover_epoch_execution_contexts_v1(&bindings)?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         let actual =
@@ -4164,11 +4245,11 @@ impl DurableNativeApplicationV0 {
         );
         let mut target = validate_p(&connection, &self.config, &actual)?;
         drop(connection);
-        let active = edges.last().context("prepared parent has no edge")?;
+        let active = contexts.last().context("prepared parent has no edge")?;
         let execution = execute_complete_native_block_v0(
             &target,
-            active.new_validator_set(),
-            active.new_validator_set().genesis_hash(),
+            active.new_validator_set_v1(),
+            active.new_validator_set_v1().genesis_hash(),
             &request,
         )?;
         let (executed, plan, replay, lifecycle) = execution.into_parts();
@@ -4182,8 +4263,12 @@ impl DurableNativeApplicationV0 {
                 identity.nonce(),
             )?;
         }
-        let snapshot =
-            target.encode_epoch_authenticated_snapshot_v1(&edges.iter().collect::<Vec<_>>())?;
+        let snapshot = target.encode_epoch_authenticated_snapshot_for_context_v1(
+            &contexts
+                .iter()
+                .map(|context| context.as_ref())
+                .collect::<Vec<_>>(),
+        )?;
         let artifact = encode_native_executed_block_artifact_v0(&executed)?;
         let (commands, nonces) = target.replay_sets_v0();
         let row = StoredEpochPV1 {
@@ -4502,14 +4587,26 @@ impl DurableNativeApplicationV0 {
             .into_iter()
             .find(|edge| edge.binding == binding)
             .map(|_| binding);
+        let later_checkpoint = if legacy_edge.is_none() {
+            ensure!(
+                has_later_application_finality_schema(schema_version(&connection)?),
+                "later descendant commit requires schema9 application finality"
+            );
+            Some(connection.query_row(
+                "SELECT checkpoint_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
+                [binding.as_slice()],
+                |row| col32(row, "checkpoint_block"),
+            )?)
+        } else {
+            None
+        };
         drop(connection);
         let edge = legacy_edge
             .map(|binding| self.recover_epoch_application_edge_v1(binding))
             .transpose()?;
-        let later_edge = if edge.is_none() {
-            let requirements = self.inspect_later_epoch_application_edge_requirements_v1(
-                *prepared.row.parent.block_id().as_bytes(),
-            )?;
+        let later_edge = if let Some(checkpoint) = later_checkpoint {
+            let requirements =
+                self.inspect_later_epoch_application_edge_requirements_v1(checkpoint)?;
             ensure!(
                 requirements.successor_binding() == binding,
                 "later first-new lineage binding"
@@ -4529,7 +4626,14 @@ impl DurableNativeApplicationV0 {
             edge.as_ref(),
             later_context.as_ref(),
         )?;
-        self.commit_epoch_p(prepared, None, later_edge.as_ref(), Some(proof_bytes))
+        self.commit_epoch_p(
+            prepared,
+            None,
+            later_edge
+                .as_ref()
+                .filter(|_| prepared.row.artifact_kind == 1),
+            Some(proof_bytes),
+        )
     }
 
     // Keep decoded proof temporaries off the authority-recovery stack: both
@@ -4557,7 +4661,9 @@ impl DurableNativeApplicationV0 {
             evidence_root: header.evidence_root(),
             parent_id: trnm_consensus_types::BlockId::new(prepared.row.consensus_parent_block),
             parent_height: trnm_consensus_types::Height::new(prepared.row.consensus_parent_height),
-            parent_timestamp_ms: if let Some(context) = later_context.as_ref() {
+            parent_timestamp_ms: if let Some(context) =
+                later_context.filter(|_| prepared.row.artifact_kind == 1)
+            {
                 context.consensus_parent_v1().timestamp_ms()
             } else if prepared.row.artifact_kind == 1 {
                 edge.as_ref()
@@ -4682,6 +4788,20 @@ impl DurableNativeApplicationV0 {
             "epoch commit P substituted"
         );
         validate_p(&connection, &self.config, &p)?;
+        // Recheck the proof-retention requirement at the locked write/retry
+        // boundary, including ordinary descendants that do not consume an
+        // edge or write a first-new proof record themselves.
+        let lineage = decode_lineage(&p.lineage)?;
+        let binding = lineage.last().context("epoch commit lineage missing")?;
+        let legacy: bool = connection.query_row(
+            "SELECT EXISTS(SELECT 1 FROM native_epoch_edge_v1 WHERE binding=?1)",
+            [binding.as_slice()],
+            |row| row.get(0),
+        )?;
+        ensure!(
+            legacy || has_later_application_finality_schema(schema_version(&connection)?),
+            "later descendant commit requires schema9 application finality"
+        );
         let prospective_sequence = p.commit_sequence.unwrap_or(
             metadata
                 .durable_sequence
