@@ -163,9 +163,9 @@ and exact/insufficient/precharged shared budgets. Preserve the original v1 and
 M01 vectors and reject v1 downgrade of contextual-only evidence. This does not
 establish native candidate selection, live repeated handoff or crash durability.
 
-### Contextual full-epoch persistence (M02-EPOCH-SAFETY-PROVENANCE-V2; planned)
+### Contextual full-epoch persistence (M02-EPOCH-SAFETY-PROVENANCE-V2)
 
-The next Core persistence slice consumes a strictly recovered preparation V2;
+The explicit Core persistence slice consumes a strictly recovered preparation V2;
 it must retain that exact complete provenance in the epoch state. A terminal
 runtime context by itself is insufficient to construct this state. The private
 epoch-state representation distinguishes the existing eight-root V1 profile
@@ -196,8 +196,11 @@ state slots and arithmetic overhead before opening any persistence owner.
 The 64 MiB provenance framing limit is never passed as an eight-root admission
 limit. Cold reconstruction rechecks the entire prefix with its retained
 independent root context and one bounded verification meter before comparing
-all derived checkpoint, terminal, anchor and configuration fields. No
-unverified decoder result is a live Core.
+all derived checkpoint, terminal, anchor and configuration fields.
+`EpochCoreStateV1::recover_preparation_v2` exposes that strict reconstruction to
+a future persistence consumer with a caller-owned meter; prior charges and
+narrower limits remain effective. It does not infer root trust from raw input.
+No unverified decoder result is a live Core.
 
 An outgoing epoch0 terminal owner may prepare the first one-entry V2 state.
 A codec1 active source may extend only a V2 prefix whose first entry exactly
@@ -208,6 +211,8 @@ Source and target configurations must describe consecutive epochs. A V2 source
 cannot produce a codec1 successor, even if its newest proof happens to be
 context-free. Prefix replacement, truncation, extra transitions and a different
 validly signed history are rejected before producing a persistence request.
+Extension compares the exact prior entry frames, including every ancestry and
+root byte; the outer record count and terminal binding necessarily change.
 
 Both activation and cold recovery remain inert until the exact existing owner
 barriers are reconciled. Preparation consumes the prior live Core, or uses a
@@ -215,7 +220,10 @@ strictly recovered inert source; requires no pending sign, finalization,
 validation, synchronization or halt; requires applied equals finalized at the
 exact target checkpoint; and matches the original finality proof and native
 artifact. Revision is continuous and generation increases by exactly one.
-The resulting owner exposes only its pending initial persistence request;
+`PreparedEpochCoreActivationV2` and `StrictEpochCoreRecoveryV2` are distinct
+inert owners with no existing candidate-host conversion. They cannot inherit
+the journal9 trusted ACK API through a public V1 wrapper. The resulting owner
+exposes only its pending initial persistence request;
 the durable acknowledgement still gates the view1 timer. M03 must separately
 version its journal/source-owner transition and perform fresh source,
 native-application and custody joins before any callback or signature. The

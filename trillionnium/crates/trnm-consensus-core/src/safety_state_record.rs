@@ -2252,6 +2252,7 @@ impl<'a> Decoder<'a> {
 
 include!("old_epoch_safety_record_v1.inc");
 include!("epoch_safety_record_v1.inc");
+include!("epoch_safety_record_v2.inc");
 
 #[cfg(test)]
 mod tests {
@@ -2774,3 +2775,7 @@ mod epoch_record_parts_tests_v1 {
         );
     }
 }
+
+#[cfg(test)]
+#[path = "epoch_safety_record_v2_tests.rs"]
+mod epoch_safety_record_v2_tests;

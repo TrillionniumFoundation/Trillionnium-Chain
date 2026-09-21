@@ -127,9 +127,9 @@ impl EpochPreparationV1 {
     }
 }
 
-pub fn prepare_epoch_handoff_evidence_v1(
-    authority: StrictSameVersionEpochActivationAuthorityV0,
-) -> Result<EpochPreparationV1, EpochPreparationErrorV1> {
+pub(crate) fn validate_legacy_epoch_evidence_v1(
+    authority: &StrictSameVersionEpochActivationAuthorityV0,
+) -> Result<(), EpochPreparationErrorV1> {
     // The ordinary v0 decoder deliberately excludes both direct anchors and
     // synthetic references nested in a TC. Generic typed finality validation
     // alone permits such TC references, so representability needs this fence.
@@ -164,6 +164,13 @@ pub fn prepare_epoch_handoff_evidence_v1(
                 .timestamp_ms(),
         )
         .map_err(EpochPreparationErrorV1::Canonical)?;
+    Ok(())
+}
+
+pub fn prepare_epoch_handoff_evidence_v1(
+    authority: StrictSameVersionEpochActivationAuthorityV0,
+) -> Result<EpochPreparationV1, EpochPreparationErrorV1> {
+    validate_legacy_epoch_evidence_v1(&authority)?;
     let evidence = EpochActivationEvidenceBytesV0 {
         old_checkpoint_finality: authority
             .old_checkpoint_finality()

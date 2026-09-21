@@ -69,15 +69,27 @@ pub fn minimum_epoch_safety_record_limits_v1(
         || config.consensus_parameters() != runtime.structural_context().new_parameters() {
         return Err(SafetyStateRecordErrorV0::ConfigMismatch);
     }
-    let base = minimum_safety_state_record_limits_any_epoch_v1(config)?;
     let authorization = runtime.structural_context().authorization().try_cev0_bytes()
         .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("epoch authorization"))?.len();
     let mut evidence_size = 0;
-    let mut maximum_blob = base.maximum_blob_bytes.max(authorization);
+    let mut maximum_blob = authorization;
     for component in epoch_evidence_components_v1(runtime.evidence_bytes()) {
         maximum_blob = maximum_blob.max(component.len());
         evidence_size = checked_capacity_add(evidence_size, checked_capacity_add(component.len(), 4)?)?;
     }
+    minimum_epoch_record_limits(config, authorization, evidence_size, maximum_blob)
+}
+
+// The two codecs share the same reachable Safety payload and boundary slots;
+// only the exact retained provenance frame differs. This changes no v1 bound.
+fn minimum_epoch_record_limits(
+    config: &CoreConfig,
+    authorization: usize,
+    evidence_size: usize,
+    maximum_provenance_blob: usize,
+) -> Result<SafetyStateRecordLimitsV0, SafetyStateRecordErrorV0> {
+    let base = minimum_safety_state_record_limits_any_epoch_v1(config)?;
+    let maximum_blob = base.maximum_blob_bytes.max(authorization).max(maximum_provenance_blob);
     // The base already covers all old field layouts. Account for every possible
     // full authorization in a proposal/finality slot plus dual-parent tags,
     // retained checkpoint/seal proposals, and exact eight-root metadata. All
@@ -126,12 +138,11 @@ pub fn encode_epoch_safety_record_v1(
     state: &SafetyState,
     context: &EpochSafetyStateRecordContextV1<'_>,
 ) -> Result<Vec<u8>, SafetyStateRecordErrorV0> {
-    let inner = context.inner();
-    validate_state_scope(state, &inner)?;
-    let boundary = state.old_epoch_boundary_v1().ok_or(SafetyStateRecordErrorV0::InvalidConsensusValue("active epoch boundary"))?;
-    if boundary.owner_generation() != context.epoch.owner_generation() || state.state_sync_anchor().is_some() {
+    if context.epoch.preparation_record_v2().is_some() {
         return Err(SafetyStateRecordErrorV0::ConfigMismatch);
     }
+    let inner = context.inner();
+    validate_epoch_record_state(state, &inner, context.epoch.owner_generation())?;
     let mut e = Encoder::new_with_blob_limit(context.limits.maximum_record_bytes, context.limits.maximum_blob_bytes);
     e.epoch_v1 = true;
     e.fixed(EPOCH_SAFETY_MAGIC_V1)?;
@@ -146,27 +157,50 @@ pub fn encode_epoch_safety_record_v1(
     for component in epoch_evidence_components_v1(context.runtime.evidence_bytes()) {
         e.blob("epoch evidence component", component, context.limits.maximum_blob_bytes)?;
     }
-    encode_qualified_tip_v1(state.qualified_finalized_v1(context.core_config.validator_set()), &mut e)?;
-    encode_qualified_tip_v1(state.qualified_application_applied_v1(context.core_config.validator_set()), &mut e)?;
-    encode_state_payload(state, &inner, &mut e)?;
-    e.u8(old_epoch_phase_tag_v1(boundary, state))?;
-    encode_count(boundary.checkpoints().len(), context.core_config.max_observed_messages(), "checkpoint candidates", &mut e)?;
-    for checkpoint in boundary.checkpoints() {
-        encode_parent(checkpoint.parent(), &inner, &mut e)?;
-        encode_signed_proposal(checkpoint.proposal(), checkpoint.parent(), &inner, &mut e)?;
+    encode_epoch_state_body(state, &inner, &mut e)?;
+    let checksum = hash_domain(EPOCH_SAFETY_DOMAIN_V1, &[e.as_slice()]);
+    e.fixed(&checksum)?;
+    Ok(e.finish())
+}
+
+fn validate_epoch_record_state(
+    state: &SafetyState,
+    inner: &SafetyStateRecordContextV0<'_>,
+    generation: u64,
+) -> Result<(), SafetyStateRecordErrorV0> {
+    validate_state_scope(state, inner)?;
+    let boundary = state.old_epoch_boundary_v1().ok_or(SafetyStateRecordErrorV0::InvalidConsensusValue("active epoch boundary"))?;
+    if boundary.owner_generation() != generation || state.state_sync_anchor().is_some() {
+        return Err(SafetyStateRecordErrorV0::ConfigMismatch);
     }
-    encode_count(boundary.seals().len(), context.core_config.max_observed_messages(), "consensus seals", &mut e)?;
+    Ok(())
+}
+
+fn encode_epoch_state_body(
+    state: &SafetyState,
+    inner: &SafetyStateRecordContextV0<'_>,
+    e: &mut Encoder,
+) -> Result<(), SafetyStateRecordErrorV0> {
+    let boundary = state.old_epoch_boundary_v1().ok_or(SafetyStateRecordErrorV0::InvalidConsensusValue("active epoch boundary"))?;
+    encode_qualified_tip_v1(state.qualified_finalized_v1(inner.core_config.validator_set()), e)?;
+    encode_qualified_tip_v1(state.qualified_application_applied_v1(inner.core_config.validator_set()), e)?;
+    encode_state_payload(state, inner, e)?;
+    e.u8(old_epoch_phase_tag_v1(boundary, state))?;
+    encode_count(boundary.checkpoints().len(), inner.core_config.max_observed_messages(), "checkpoint candidates", e)?;
+    for checkpoint in boundary.checkpoints() {
+        encode_parent(checkpoint.parent(), inner, e)?;
+        encode_signed_proposal(checkpoint.proposal(), checkpoint.parent(), inner, e)?;
+    }
+    encode_count(boundary.seals().len(), inner.core_config.max_observed_messages(), "consensus seals", e)?;
     for seal in boundary.seals() {
         let parent = boundary.checkpoints().iter().map(|c| c.proposal()).chain(boundary.seals().iter())
             .find(|p| p.block().id() == seal.block().header().parent_id())
             .ok_or(SafetyStateRecordErrorV0::InvalidConsensusValue("seal parent"))?;
         e.u64(parent.block().header().timestamp_ms())?;
         let carrier = boundary.checkpoints().first().ok_or(SafetyStateRecordErrorV0::InvalidConsensusValue("seal checkpoint"))?.parent();
-        encode_signed_proposal(seal, carrier, &inner, &mut e)?;
+        encode_signed_proposal(seal, carrier, inner, e)?;
     }
-    let checksum = hash_domain(EPOCH_SAFETY_DOMAIN_V1, &[e.as_slice()]);
-    e.fixed(&checksum)?;
-    Ok(e.finish())
+    Ok(())
 }
 
 /// Exact decoding is deliberately not recovery or activation. Every retained
@@ -175,6 +209,9 @@ pub fn decode_epoch_safety_record_v1_exact(
     bytes: &[u8],
     context: &EpochSafetyStateRecordContextV1<'_>,
 ) -> Result<UnverifiedSafetyStateRecordV0, SafetyStateRecordErrorV0> {
+    if context.epoch.preparation_record_v2().is_some() {
+        return Err(SafetyStateRecordErrorV0::ConfigMismatch);
+    }
     if bytes.len() > context.limits.maximum_record_bytes { return Err(SafetyStateRecordErrorV0::RecordTooLarge); }
     let inner = context.inner();
     let mut d = Decoder::new(bytes, context.limits);
@@ -194,41 +231,51 @@ pub fn decode_epoch_safety_record_v1_exact(
     for expected in epoch_evidence_components_v1(context.runtime.evidence_bytes()) {
         if d.blob("epoch evidence component", context.limits.maximum_blob_bytes)? != expected { return Err(SafetyStateRecordErrorV0::ConfigMismatch); }
     }
-    let finalized = decode_qualified_tip_parts_v1(&mut d)?;
-    let applied = decode_qualified_tip_parts_v1(&mut d)?;
-    let mut state = decode_state_payload(&mut d, &inner)?;
-    if state.revision() != revision
-        || !qualified_tip_matches_v1(finalized, state.qualified_finalized_v1(context.core_config.validator_set()))
-        || !qualified_tip_matches_v1(applied, state.qualified_application_applied_v1(context.core_config.validator_set())) {
-        return Err(SafetyStateRecordErrorV0::ConfigMismatch);
-    }
-    let boundary_phase = d.u8("boundary phase")?;
-    let mut boundary = crate::OldEpochBoundaryStateV1::new(context.epoch.owner_generation())
-        .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("owner generation"))?;
-    let count = d.count("checkpoint candidates", context.core_config.max_observed_messages(), MIN_BLOB_ITEM_BYTES)?;
-    for _ in 0..count {
-        let parent = decode_parent(&mut d, &inner)?;
-        let proposal = decode_signed_proposal(&mut d, &parent, &inner)?;
-        boundary.record_checkpoint(&proposal, parent, context.core_config.max_observed_messages())
-            .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("checkpoint candidate"))?;
-    }
-    let count = d.count("consensus seals", context.core_config.max_observed_messages(), MIN_BLOB_ITEM_BYTES)?;
-    for _ in 0..count {
-        let timestamp = d.u64("seal parent timestamp")?;
-        let proposal = decode_signed_proposal_at_timestamp_v1(&mut d, timestamp, &inner)?;
-        let parent = boundary.checkpoints().iter().map(|c| c.proposal()).chain(boundary.seals().iter())
-            .find(|p| p.block().id() == proposal.block().header().parent_id())
-            .ok_or(SafetyStateRecordErrorV0::InvalidConsensusValue("seal parent"))?;
-        if timestamp != parent.block().header().timestamp_ms() { return Err(SafetyStateRecordErrorV0::ConfigMismatch); }
-        boundary.record_seal(&proposal, context.core_config.consensus_parameters(), context.core_config.max_observed_messages())
-            .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("seal proposal"))?;
-    }
-    state.install_old_epoch_boundary_v1(boundary);
-    if boundary_phase != old_epoch_phase_tag_v1(state.old_epoch_boundary_v1().ok_or(SafetyStateRecordErrorV0::NonCanonical)?, &state) { return Err(SafetyStateRecordErrorV0::NonCanonical); }
+    let state = decode_epoch_state_body(&mut d, &inner, revision, context.epoch.owner_generation())?;
     let checksum_offset = d.position();
     let checksum = d.fixed::<32>("record checksum")?;
     d.finish()?;
     if checksum != hash_domain(EPOCH_SAFETY_DOMAIN_V1, &[&bytes[..checksum_offset]]) { return Err(SafetyStateRecordErrorV0::ChecksumMismatch); }
     if encode_epoch_safety_record_v1(&state, context)? != bytes { return Err(SafetyStateRecordErrorV0::NonCanonical); }
     Ok(UnverifiedSafetyStateRecordV0 { state, record_checksum: checksum })
+}
+
+fn decode_epoch_state_body(
+    d: &mut Decoder<'_>,
+    inner: &SafetyStateRecordContextV0<'_>,
+    revision: u64,
+    generation: u64,
+) -> Result<SafetyState, SafetyStateRecordErrorV0> {
+    let finalized = decode_qualified_tip_parts_v1(d)?;
+    let applied = decode_qualified_tip_parts_v1(d)?;
+    let mut state = decode_state_payload(d, inner)?;
+    if state.revision() != revision
+        || !qualified_tip_matches_v1(finalized, state.qualified_finalized_v1(inner.core_config.validator_set()))
+        || !qualified_tip_matches_v1(applied, state.qualified_application_applied_v1(inner.core_config.validator_set())) {
+        return Err(SafetyStateRecordErrorV0::ConfigMismatch);
+    }
+    let boundary_phase = d.u8("boundary phase")?;
+    let mut boundary = crate::OldEpochBoundaryStateV1::new(generation)
+        .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("owner generation"))?;
+    let count = d.count("checkpoint candidates", inner.core_config.max_observed_messages(), MIN_BLOB_ITEM_BYTES)?;
+    for _ in 0..count {
+        let parent = decode_parent(d, inner)?;
+        let proposal = decode_signed_proposal(d, &parent, inner)?;
+        boundary.record_checkpoint(&proposal, parent, inner.core_config.max_observed_messages())
+            .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("checkpoint candidate"))?;
+    }
+    let count = d.count("consensus seals", inner.core_config.max_observed_messages(), MIN_BLOB_ITEM_BYTES)?;
+    for _ in 0..count {
+        let timestamp = d.u64("seal parent timestamp")?;
+        let proposal = decode_signed_proposal_at_timestamp_v1(d, timestamp, inner)?;
+        let parent = boundary.checkpoints().iter().map(|c| c.proposal()).chain(boundary.seals().iter())
+            .find(|p| p.block().id() == proposal.block().header().parent_id())
+            .ok_or(SafetyStateRecordErrorV0::InvalidConsensusValue("seal parent"))?;
+        if timestamp != parent.block().header().timestamp_ms() { return Err(SafetyStateRecordErrorV0::ConfigMismatch); }
+        boundary.record_seal(&proposal, inner.core_config.consensus_parameters(), inner.core_config.max_observed_messages())
+            .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("seal proposal"))?;
+    }
+    state.install_old_epoch_boundary_v1(boundary);
+    if boundary_phase != old_epoch_phase_tag_v1(state.old_epoch_boundary_v1().ok_or(SafetyStateRecordErrorV0::NonCanonical)?, &state) { return Err(SafetyStateRecordErrorV0::NonCanonical); }
+    Ok(state)
 }

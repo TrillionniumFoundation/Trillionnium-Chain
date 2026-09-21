@@ -87,6 +87,63 @@ impl EpochPreparationRecordV2 {
     pub fn encode_v2(&self) -> Result<Vec<u8>> {
         Ok(self.bytes.clone())
     }
+    // Compare exact verified entry frames. The enclosing tip/count fields
+    // necessarily change when appending, so whole-record starts_with is wrong.
+    pub(crate) fn extends_record_v2(&self, previous: &Self) -> Result<bool> {
+        if self.root_binding != previous.root_binding
+            || self.entry_count != previous.entry_count + 1
+        {
+            return Ok(false);
+        }
+        let before = previous.entry_frames_v2()?;
+        let after = self.entry_frames_v2()?;
+        Ok(before == after[..before.len()])
+    }
+    pub(crate) fn extends_legacy_v1(
+        &self,
+        binding: [u8; 32],
+        evidence: EpochActivationEvidencePreimagesV0<'_>,
+    ) -> Result<bool> {
+        if self.entry_count != 2 || self.root_binding != binding {
+            return Ok(false);
+        }
+        let mut cursor = Cursor {
+            bytes: &self.bytes,
+            offset: PREFIX_BYTES,
+        };
+        if cursor.array32()? != binding || cursor.u32()? != 0 {
+            return Ok(false);
+        }
+        for root in roots(evidence) {
+            if cursor.blob(MAX_CEV0_ROOT_BYTES_V0)? != root {
+                return Ok(false);
+            }
+        }
+        Ok(true)
+    }
+    fn entry_frames_v2(&self) -> Result<Vec<&[u8]>> {
+        let mut cursor = Cursor {
+            bytes: &self.bytes,
+            offset: PREFIX_BYTES,
+        };
+        let mut frames = Vec::with_capacity(self.entry_count);
+        for _ in 0..self.entry_count {
+            let start = cursor.offset;
+            cursor.array32()?;
+            let headers = cursor.u32()?;
+            for _ in 0..headers {
+                cursor.blob(MAX_EPOCH_PREPARATION_HEADER_BYTES_V2)?;
+            }
+            for _ in 0..8 {
+                cursor.blob(MAX_CEV0_ROOT_BYTES_V0)?;
+            }
+            frames.push(&self.bytes[start..cursor.offset]);
+        }
+        if cursor.offset != self.bytes.len() {
+            return Err(EpochPreparationErrorV2::Invalid("verified record framing"));
+        }
+        Ok(frames)
+    }
 }
 
 /// Complete cryptographic preparation only: no step, timer, storage ACK,
@@ -121,6 +178,21 @@ impl EpochPreparationV2 {
     pub const fn root_parameters_v2(&self) -> &ConsensusParametersV0 {
         &self.root_parameters
     }
+    pub(crate) fn into_parts_v2(self) -> EpochPreparationPartsV2 {
+        EpochPreparationPartsV2 {
+            authority: self.authority,
+            record: self.record,
+            root_set: self.root_set,
+            root_parameters: self.root_parameters,
+        }
+    }
+}
+
+pub(crate) struct EpochPreparationPartsV2 {
+    pub authority: Box<StrictSameVersionEpochActivationAuthorityV0>,
+    pub record: EpochPreparationRecordV2,
+    pub root_set: ValidatorSet,
+    pub root_parameters: ConsensusParametersV0,
 }
 
 pub fn prepare_epoch_handoff_evidence_v2(

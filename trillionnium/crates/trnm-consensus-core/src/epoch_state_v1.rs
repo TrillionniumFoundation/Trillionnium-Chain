@@ -102,12 +102,37 @@ pub struct EpochCoreStateV1 {
     terminal: BlockHeader,
     anchor: QcReferenceV0,
     checkpoint_artifact: ValidatedPayloadArtifactRefV0,
+    provenance: EpochProvenanceV2,
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum EpochProvenanceV2 {
+    LegacyV1,
+    PrefixV2 {
+        record: Arc<crate::EpochPreparationRecordV2>,
+        root_set: Arc<ValidatorSet>,
+        root_parameters: Arc<ConsensusParametersV0>,
+    },
 }
 impl EpochCoreStateV1 {
     pub(crate) fn from_strict(
         context: &StrictEpochRuntimeContextV1,
         checkpoint_artifact: ValidatedPayloadArtifactRefV0,
         owner_generation: u64,
+    ) -> Result<Self> {
+        crate::epoch_preparation::validate_legacy_epoch_evidence_v1(context.activation())
+            .map_err(|_| CoreError::InvalidRecovery("codec1 cannot retain contextual evidence"))?;
+        Self::from_context_fields(
+            context,
+            checkpoint_artifact,
+            owner_generation,
+            EpochProvenanceV2::LegacyV1,
+        )
+    }
+    fn from_context_fields(
+        context: &StrictEpochRuntimeContextV1,
+        checkpoint_artifact: ValidatedPayloadArtifactRefV0,
+        owner_generation: u64,
+        provenance: EpochProvenanceV2,
     ) -> Result<Self> {
         let activation = context.activation();
         let checkpoint = activation
@@ -134,7 +159,102 @@ impl EpochCoreStateV1 {
             terminal: activation.terminal_old_header().clone(),
             anchor: context.anchor_reference().clone(),
             checkpoint_artifact,
+            provenance,
         })
+    }
+    pub(crate) fn from_preparation_v2(
+        preparation: crate::EpochPreparationV2,
+        checkpoint_artifact: ValidatedPayloadArtifactRefV0,
+        owner_generation: u64,
+    ) -> Result<(Self, StrictEpochRuntimeContextV1)> {
+        let parts = preparation.into_parts_v2();
+        let context = StrictEpochRuntimeContextV1::from_activation_v1(*parts.authority)?;
+        let provenance = EpochProvenanceV2::PrefixV2 {
+            record: Arc::new(parts.record),
+            root_set: Arc::new(parts.root_set),
+            root_parameters: Arc::new(parts.root_parameters),
+        };
+        let state =
+            Self::from_context_fields(&context, checkpoint_artifact, owner_generation, provenance)?;
+        Ok((state, context))
+    }
+    pub fn preparation_record_v2(&self) -> Option<&crate::EpochPreparationRecordV2> {
+        match &self.provenance {
+            EpochProvenanceV2::LegacyV1 => None,
+            EpochProvenanceV2::PrefixV2 { record, .. } => Some(record),
+        }
+    }
+    /// Strictly reconstruct the complete preparation from this privately
+    /// retained root trust and exact provenance. The caller's existing work
+    /// charges and narrower admission limits remain effective. This returns
+    /// no journal freshness, native receipt, signer lease or live Core.
+    pub fn recover_preparation_v2(
+        &self,
+        budget: &mut Cev0AdmissionBudgetV0,
+    ) -> Result<crate::EpochPreparationV2> {
+        let EpochProvenanceV2::PrefixV2 {
+            record,
+            root_set,
+            root_parameters,
+        } = &self.provenance
+        else {
+            return Err(CoreError::InvalidRecovery(
+                "legacy epoch lacks complete preparation provenance",
+            ));
+        };
+        crate::recover_epoch_preparation_v2(
+            record.as_bytes_v2(),
+            root_set,
+            root_parameters,
+            record.root_binding_v2(),
+            self.binding,
+            record.digest_v2(),
+            budget,
+        )
+        .map_err(|_| {
+            CoreError::InvalidRecovery("complete epoch provenance failed strict reconstruction")
+        })
+    }
+    pub(crate) fn check_predecessor_provenance_v2(&self, previous: Option<&Self>) -> Result<()> {
+        let EpochProvenanceV2::PrefixV2 {
+            record,
+            root_set,
+            root_parameters,
+        } = &self.provenance
+        else {
+            return Err(CoreError::InvalidRecovery(
+                "codec2 target lacks complete provenance",
+            ));
+        };
+        let valid = match previous {
+            None => record.entry_count_v2() == 1,
+            Some(previous) => match &previous.provenance {
+                EpochProvenanceV2::LegacyV1 => {
+                    root_set.as_ref() == &previous.old_set
+                        && root_parameters.as_ref() == &previous.old_parameters
+                        && record
+                            .extends_legacy_v1(previous.binding, previous.evidence.as_preimages())
+                            .map_err(|_| CoreError::InvalidRecovery("legacy provenance framing"))?
+                }
+                EpochProvenanceV2::PrefixV2 {
+                    record: prior,
+                    root_set: prior_set,
+                    root_parameters: prior_parameters,
+                } => {
+                    root_set == prior_set
+                        && root_parameters == prior_parameters
+                        && record.extends_record_v2(prior).map_err(|_| {
+                            CoreError::InvalidRecovery("provenance extension framing")
+                        })?
+                }
+            },
+        };
+        if !valid {
+            return Err(CoreError::InvalidRecovery(
+                "epoch provenance is not an exact one-entry extension",
+            ));
+        }
+        Ok(())
     }
     pub const fn owner_generation(&self) -> u64 {
         self.owner_generation
@@ -164,20 +284,41 @@ impl EpochCoreStateV1 {
         self.checkpoint_artifact
     }
     pub fn strict_context(&self) -> Result<StrictEpochRuntimeContextV1> {
-        let mut budget = Cev0AdmissionBudgetV0::for_parameters(&self.old_parameters);
-        let activation = recover_epoch_activation_authority_strict_v0(
-            self.evidence.as_preimages(),
-            &self.old_set,
-            &self.old_parameters,
-            self.binding,
-            &mut budget,
-        )
-        .map_err(|_| {
-            CoreError::InvalidRecovery("full epoch evidence failed strict reconstruction")
-        })?;
-        let context = StrictEpochRuntimeContextV1::from_activation_v1(activation)?;
-        let reconstructed =
-            Self::from_strict(&context, self.checkpoint_artifact, self.owner_generation)?;
+        let context = match &self.provenance {
+            EpochProvenanceV2::LegacyV1 => {
+                let mut budget = Cev0AdmissionBudgetV0::for_parameters(&self.old_parameters);
+                let activation = recover_epoch_activation_authority_strict_v0(
+                    self.evidence.as_preimages(),
+                    &self.old_set,
+                    &self.old_parameters,
+                    self.binding,
+                    &mut budget,
+                )
+                .map_err(|_| {
+                    CoreError::InvalidRecovery("full epoch evidence failed strict reconstruction")
+                })?;
+                StrictEpochRuntimeContextV1::from_activation_v1(activation)?
+            }
+            EpochProvenanceV2::PrefixV2 { .. } => {
+                // One bounded meter for the complete retained prefix. Every
+                // entry still enforces authenticated outgoing byte limits.
+                let mut budget = Cev0AdmissionBudgetV0::with_limits(
+                    trnm_consensus_types::MAX_CEV0_ROOT_BYTES_V0,
+                    trnm_consensus_types::MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0,
+                    trnm_consensus_types::MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
+                );
+                let preparation = self.recover_preparation_v2(&mut budget)?;
+                StrictEpochRuntimeContextV1::from_activation_v1(
+                    *preparation.into_parts_v2().authority,
+                )?
+            }
+        };
+        let reconstructed = Self::from_context_fields(
+            &context,
+            self.checkpoint_artifact,
+            self.owner_generation,
+            self.provenance.clone(),
+        )?;
         if &reconstructed != self {
             return Err(CoreError::InvalidRecovery(
                 "full epoch evidence field substitution",
@@ -207,3 +348,7 @@ impl EpochCoreStateV1 {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "epoch_provenance_tests_v2.rs"]
+mod epoch_provenance_tests_v2;

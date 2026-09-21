@@ -17068,5 +17068,6 @@ fn option_regressed(previous: Option<View>, current: Option<View>) -> bool {
 
 include!("old_epoch_core_owner_v1.inc");
 include!("epoch_core_v1.inc");
+include!("epoch_core_v2.inc");
 #[cfg(feature = "candidate-epoch-host-v1")]
 include!("candidate_epoch_host_v1.inc");

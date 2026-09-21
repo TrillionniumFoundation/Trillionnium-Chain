@@ -90,13 +90,24 @@ fn prepare_epoch_from_terminal_v1(
     old: &SafetyState,
     context: &crate::EpochSafetyStateRecordContextV1<'_>,
 ) -> Result<PreparedEpochCoreActivationV1> {
+    if old.epoch_state_v1().is_some_and(|epoch| epoch.preparation_record_v2().is_some()) {
+        return Err(CoreError::InvalidRecovery("codec2 source cannot downgrade to codec1"));
+    }
+    prepare_epoch_from_terminal_common_v2(old_config, old, context.core_config(), context.epoch(), context.runtime())
+}
+fn prepare_epoch_from_terminal_common_v2(
+    old_config: &CoreConfig,
+    old: &SafetyState,
+    next_config: &CoreConfig,
+    epoch: &crate::EpochCoreStateV1,
+    runtime: &trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+) -> Result<PreparedEpochCoreActivationV1> {
     Core::validate_persisted_state_v0(
         old_config,
         old,
         &trnm_consensus_crypto::StrictEd25519Verifier,
     )?;
-    let epoch = context.epoch();
-    let activation = context.runtime().activation();
+    let activation = runtime.activation();
     if old.pending_sign().is_some()
         || old.pending_finalize().is_some()
         || !old.finalization_queue().is_empty()
@@ -104,10 +115,11 @@ fn prepare_epoch_from_terminal_v1(
         || old.pending_tc_high_qc_sync().is_some()
         || old.pending_standalone_qc_sync().is_some()
         || old.safety_halt().is_some()
+        || old.state_sync_anchor().is_some()
         || old.finalized() != old.application_applied()
         || old_config.validator_set() != activation.old_validator_set()
         || old_config.consensus_parameters() != activation.old_consensus_parameters()
-        || old_config.local_validator() != context.core_config().local_validator()
+        || old_config.local_validator() != next_config.local_validator()
         || old
             .old_epoch_boundary_v1()
             .map(|b| b.owner_generation().checked_add(1))
@@ -123,11 +135,11 @@ fn prepare_epoch_from_terminal_v1(
         ));
     }
     let state = SafetyState::from_epoch_activation_v1(
-        context.core_config(),
+        next_config,
         epoch.clone(),
         old.revision(),
     )?;
-    let mut core = Core::empty(context.core_config().clone(), state, false);
+    let mut core = Core::empty(next_config.clone(), state, false);
     // Activation is a real pacemaker start: its exact durable ACK arms view 1.
     // Keeping this behind the existing barrier prevents timers or timeouts from
     // racing the independent host's native/custody/checkpoint join.

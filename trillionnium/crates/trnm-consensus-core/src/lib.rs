@@ -224,7 +224,7 @@ pub use crate::core::{
     OldEpochBoundaryCoreV1, PayloadValidationRecoveryChallengeV0,
     PayloadValidationRecoveryDecisionV0, PayloadValidationRecoveryReconcilerV0,
     PayloadValidationRecoverySessionV0, PreparedAuthenticatedGenesisApplicationBootstrapV0,
-    PreparedEpochCoreActivationV1, PreparedH1StateSyncBootstrapV0,
+    PreparedEpochCoreActivationV1, PreparedEpochCoreActivationV2, PreparedH1StateSyncBootstrapV0,
     StateSyncAnchorOrdinaryActivationV0, StateSyncAnchorOrdinaryRecoveryChallengeV0,
     StateSyncAnchorOrdinaryRecoveryReconcilerV0, StateSyncAnchorOrdinaryRecoverySessionV0,
     StateSyncAnchorRecoveryChallengeV0, StateSyncAnchorRecoveryReconcilerV0,
@@ -282,3 +282,15 @@ mod tests;
 
 #[cfg(any(test, feature = "test-support"))]
 pub mod epoch_state_tests_v1;
+
+pub use crate::core::StrictEpochCoreRecoveryV2;
+pub use crate::safety_state_record::{
+    decode_epoch_safety_record_v2_exact, encode_epoch_safety_record_v2,
+    epoch_safety_record_context_ref_v2, minimum_epoch_safety_record_limits_v2,
+    EpochSafetyStateRecordContextV2, EPOCH_SAFETY_CODEC_V2,
+};
+
+#[cfg(test)]
+#[allow(dead_code)]
+#[path = "../../trnm-consensus-crypto/tests/support/epoch_successor_fixture_v1.rs"]
+mod epoch_successor_fixture_tests_v2;
