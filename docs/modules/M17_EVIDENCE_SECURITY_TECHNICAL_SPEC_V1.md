@@ -83,6 +83,14 @@ returns failure even when it changes the intended file mode. A staging failure
 remains a failed run. Post-failure verification of preserved original artifacts
 is diagnostic evidence and cannot rewrite the original campaign result.
 
+The consensus-report verifier projection has the same exact schema3 version
+as its Rust signed-report producer (`consensus_report.rs`). The fleet consumer
+must accept only this version while retaining exact keys, deployment pins,
+signature/semantics checks, positive terminal heights and empty obligations.
+The older schema2 projection and unknown versions reject. A Python-only
+fixture is insufficient interoperability evidence: pass an actual strict Rust
+verifier output through the Python consumer before the fleet campaign.
+
 ### Repository-local multiprocess fault evidence
 
 `python3 scripts/poco-fleet/run_local_fault_performance_campaign_v1.py campaign

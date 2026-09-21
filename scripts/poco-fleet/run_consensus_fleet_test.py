@@ -71,7 +71,7 @@ def process(management: str) -> object:
 
 def verification() -> dict[str, object]:
     value: dict[str, object] = {
-        "schema_version": 2,
+        "schema_version": 3,
         "status": "consensus-run-report-signature-and-semantics-verified",
         "run_id": "poco-g3-7-20260814T000000Z-1234abcd",
         "validator_id": "11" * 32,
@@ -596,6 +596,18 @@ def test_verification_profile() -> None:
         coordinator_anchor=value["coordinator_manifest_sha256"],
     )
     assert accepted is value
+
+    for version in (2, 4):
+        stale = dict(value, schema_version=version)
+        expect_failure(
+            lambda: fleet.exact_verified_summary(
+                stale,
+                run_id=value["run_id"],
+                validator_id=value["validator_id"],
+                coordinator_anchor=value["coordinator_manifest_sha256"],
+            ),
+            "crosses the accepted profile",
+        )
 
     unsafe = dict(value)
     unsafe["safety_halt_count"] = 1
@@ -1577,7 +1589,7 @@ def main() -> None:
     test_native_client_bad_placement_rejects_before_effects()
     test_failure_diagnostics_are_best_effort_before_stage_cleanup()
     print(
-        "poco_g3_consensus_fleet_test=passed positives=25 negatives=44 "
+        "poco_g3_consensus_fleet_test=passed positives=25 negatives=46 "
         "parallel_process_contract=true signed_journal_required=true "
         "native_client_bad_placement_pre_effect_refusal=true "
         "fleet_start_certificate_required=true "

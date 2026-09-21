@@ -1544,7 +1544,7 @@ def exact_verified_summary(
     if set(value) != expected_keys:
         base.fail("observer consensus verification keys differ from contract")
     if (
-        value["schema_version"] != 2
+        value["schema_version"] != 3
         or value["status"]
         != "consensus-run-report-signature-and-semantics-verified"
         or value["run_id"] != run_id
