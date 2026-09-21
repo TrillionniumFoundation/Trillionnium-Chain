@@ -24,7 +24,10 @@ mod historical;
 mod pre_handoff;
 mod strict_finality;
 
-pub use pre_handoff::{verify_pre_handoff_context_strict_v1, StrictPreHandoffContextV1};
+pub use pre_handoff::{
+    decode_verify_successor_pre_handoff_context_strict_v1, verify_pre_handoff_context_strict_v1,
+    StrictPreHandoffContextV1, StrictSuccessorPreHandoffErrorV1,
+};
 
 pub use epoch_transition::{
     decode_verify_successor_epoch_activation_strict_v1,

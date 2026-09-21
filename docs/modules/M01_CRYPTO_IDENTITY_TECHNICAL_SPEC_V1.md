@@ -79,6 +79,56 @@ entrypoint and rejects an epoch anchor. Neither result activates Core or commits
 application state. Typed failures include `EpochEvidence` and `EpochActivation`
 in addition to the existing decode, context and consensus causes.
 
+### Contextual checkpoint before successor signatures (M01-SUCCESSOR-PRE-HANDOFF-V1)
+
+`decode_verify_successor_pre_handoff_context_strict_v1(predecessor,
+retained_ancestry, raw_checkpoint_finality, commitment, descriptor, new_set,
+new_parameters, budget)` returns the existing opaque `StrictPreHandoffContextV1`.
+It requires no joint handoff certificate or signature. The independently strict
+predecessor supplies the outgoing validator set, parameters and exact authorized
+synthetic anchor. The complete ordered ancestry starts at its terminal old seal
+and ends at the actual parent of the new checkpoint. Reuse the shared successor
+historical-link validation: 2..256 headers, at most 4096 canonical bytes each and
+1 MiB together, exact parent links, epoch geometry, elected proposers, increasing
+same-epoch views and timestamps. A set/hash or bare anchor is not a substitute.
+
+Decode the original proof once through the bounded runtime-context decoder;
+synthetic justify/TC references must equal the predecessor's authorized anchor.
+Reuse the existing checkpoint/two-seal structural relations and strict runtime
+finality verifier, including every nested QC, proposal and timeout signature.
+Strictly admit every key in both sets, validate the complete same-version
+commitment, bind the checkpoint to the actual retained parent and reconstruct
+every descriptor field. Frozen v0 and context-free pre-handoff behavior remain
+unchanged. No unchecked kernel, V1 downcast or handoff signature is manufactured.
+
+Before proof decoding, bound the aggregate of the original proof, canonical
+commitment, descriptor, both configurations and every retained header by the
+caller's root ceiling (intrinsically at most 8 MiB). Stage the caller's existing
+admission meter while doing structural validation; structural/work-cap refusal
+does not alter it. Publish the one proof-work charge before strict key or
+signature checks, so failed cryptography retains spent work. Do not decode or
+charge the already strict predecessor again and do not reset caller work.
+
+The binding is SHA-256 over ASCII domain
+`trnm.poco-bft.successor-pre-handoff-context.v1`, the predecessor's fixed 32-byte
+binding, the ancestry count as u64 little-endian, each canonical header framed by
+its u64 little-endian byte length, and seven similarly framed roots in this order:
+original checkpoint proof, commitment, descriptor, outgoing set, outgoing
+parameters, incoming set, incoming parameters. Recovery repeats strict
+verification of all original inputs and compares this distinct binding; a
+persisted digest alone cannot reconstruct the opaque result. This context proves
+neither deterministic application selection nor durability/custody. M08 must
+join the actual native checkpoint receipt and M03 must preserve its settled
+source and persistence-before-sign checks before either role signs.
+
+Tests use genuine skipped-view checkpoint/seal proposals with a TC containing
+both an ordinary QC and the prior authorized synthetic anchor. Require old
+context-free rejection, new acceptance without a joint certificate, exact
+reverification/binding stability, changed parent/ancestry/configuration/descriptor
+refusal, canonical nested-signature rejection with retained work, and exact
+byte/work-limit boundaries. The inert M00 structural helper cannot establish any
+signature or signing authority.
+
 ### Complete first-proposal verification (implemented candidate)
 
 ```text

@@ -12,6 +12,12 @@ use trnm_consensus_types::{
 
 use crate::{validate_validator_set_strict_ed25519_v0, StrictEd25519Verifier};
 
+#[path = "pre_handoff_successor_v1.rs"]
+mod successor;
+pub use successor::{
+    decode_verify_successor_pre_handoff_context_strict_v1, StrictSuccessorPreHandoffErrorV1,
+};
+
 /// Opaque cryptographic context shared by old and new role admissions.
 ///
 /// This is neither proof of application durability nor epoch activation. A
@@ -96,28 +102,14 @@ pub fn verify_pre_handoff_context_strict_v1(
     )?;
     // Construct the complete expected descriptor, rather than checking only a
     // subset of fields (especially role versions, views and terminal QC).
-    let expected = HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
-        genesis_hash: old_set.genesis_hash(),
-        chain_id: old_set.chain_id(),
-        old_epoch: old_set.epoch(),
-        new_epoch: new_set.epoch(),
-        old_protocol_version: old_set.protocol_version(),
-        new_protocol_version: new_set.protocol_version(),
-        old_validator_set_hash: old_set.id(),
-        new_validator_set_hash: new_set.id(),
-        old_consensus_parameters_hash: old_parameters.hash(),
-        new_consensus_parameters_hash: new_parameters.hash(),
-        checkpoint_height: checkpoint.checkpoint_height(),
-        checkpoint_block_id: checkpoint.checkpoint_block_id(),
-        checkpoint_state_root: checkpoint.checkpoint_state_root(),
-        next_epoch_commitment_digest: checkpoint.next_epoch_commitment_digest(),
-        terminal_old_height: checkpoint.terminal_old_height(),
-        terminal_old_block_id: checkpoint.terminal_old_block_id(),
-        terminal_old_qc_digest: checkpoint.terminal_old_qc_digest(),
-        terminal_old_view: proof.grandchild().header().view(),
-        activation_height: checkpoint.activation_height(),
-        initial_new_view: View::new(1),
-    })?;
+    let expected = expected_descriptor_v1(
+        proof,
+        commitment,
+        old_set,
+        old_parameters,
+        new_set,
+        new_parameters,
+    )?;
     if descriptor != &expected {
         return Err(ValidationError::InvalidEpochTransition(
             "handoff descriptor differs from strictly verified checkpoint context",
@@ -149,5 +141,39 @@ pub fn verify_pre_handoff_context_strict_v1(
         checkpoint_parent_timestamp_ms: authenticated_parent.timestamp_ms(),
         next_epoch_commitment_digest: commitment.id(),
         binding_ref: binding.finalize().into(),
+    })
+}
+
+// Called only after the shared specialized checkpoint relations have passed.
+// This reconstructs every descriptor field; it creates no authority itself.
+fn expected_descriptor_v1(
+    proof: &FinalityProofV0,
+    commitment: &NextEpochCommitmentV0,
+    old_set: &ValidatorSet,
+    old_parameters: &ConsensusParametersV0,
+    new_set: &ValidatorSet,
+    new_parameters: &ConsensusParametersV0,
+) -> Result<HandoffDescriptorV0> {
+    HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
+        genesis_hash: old_set.genesis_hash(),
+        chain_id: old_set.chain_id(),
+        old_epoch: old_set.epoch(),
+        new_epoch: new_set.epoch(),
+        old_protocol_version: old_set.protocol_version(),
+        new_protocol_version: new_set.protocol_version(),
+        old_validator_set_hash: old_set.id(),
+        new_validator_set_hash: new_set.id(),
+        old_consensus_parameters_hash: old_parameters.hash(),
+        new_consensus_parameters_hash: new_parameters.hash(),
+        checkpoint_height: proof.finalized_block().header().height(),
+        checkpoint_block_id: proof.finalized_block().header().id(),
+        checkpoint_state_root: proof.finalized_block().header().state_root(),
+        next_epoch_commitment_digest: commitment.id(),
+        terminal_old_height: proof.grandchild().header().height(),
+        terminal_old_block_id: proof.grandchild().header().id(),
+        terminal_old_qc_digest: proof.grandchild().certifying_qc().id(),
+        terminal_old_view: proof.grandchild().header().view(),
+        activation_height: commitment.fields().activation_height,
+        initial_new_view: View::new(1),
     })
 }

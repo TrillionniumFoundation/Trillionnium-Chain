@@ -289,6 +289,16 @@ activation evidence separately authenticate the complete linked history.
 
 ## Contextual successor activation (M00-SUCCESSOR-EVIDENCE-V1)
 
+For M01-SUCCESSOR-PRE-HANDOFF-V1, the narrow
+`FinalityProofV0::validate_checkpoint_two_seal_structure_v1(old_set,
+old_parameters, commitment) -> Result<()>` reuses only the existing specialized
+checkpoint/two-seal geometry, empty seal roots, carried state and commitment
+relations. It does not validate generic finality, authenticated ancestry or any
+signature, and returns no kernel or authority token. The strict consumer must
+first decode under the complete authenticated runtime context and separately
+perform strict runtime finality verification. Existing verifier-based kernel
+APIs keep their original verification semantics and frozen bytes unchanged.
+
 This candidate interface is implemented by `epoch_activation_evidence.rs` and
 `joint_handoff.rs`, with strict consumer verification in M01. Frozen v0 bytes
 and context-free decoder behavior remain unchanged. A checkpoint proof in an already
