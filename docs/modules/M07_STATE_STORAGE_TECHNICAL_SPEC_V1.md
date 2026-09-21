@@ -139,13 +139,14 @@ transaction. The pass never deletes `ni_values`, `ni_preimages`, historical
 roots or prepared records, because this owner cannot prove a value/replay
 retention floor. SQLite rollback therefore leaves both queue and nodes intact.
 
-This kernel implements ordinary +1 updates in one epoch; epoch-tagged plans and
-changed-epoch commits reject until persisted edge reconstruction is joined. The
-schema8 candidate now admits one separately checksummed later successor-edge
-row, with independently bound cutoff/predecessor evidence and a cold-recovery
-capability. The first-new C+3 sparse-root/P commit is still fail-closed, so the
-ledger does not claim production multi-epoch execution or value-retention
-qualification.
+The ordinary kernel entry points retain their +1 checks. Epoch transitions
+require the separate persisted-edge owner described below; schema6/7 provide
+the first crossing's sparse preparation/commit. The full-snapshot schema8/9
+candidate separately admits a later successor edge and commits its first-new
+C+3 P with a retained strict finality proof. That full-snapshot path does not
+implement a second crossing for the incremental schema7 store. Its sparse
+successor migration/commit remains unsupported, so neither ledger establishes
+production multi-epoch execution or value-retention qualification.
 It retains all historical roots/value floors. Current pins
 are only retained-root and speculative-parent pins; their count derives from
 commit sequence plus bounded pending rows, avoiding a history scan per prepare.

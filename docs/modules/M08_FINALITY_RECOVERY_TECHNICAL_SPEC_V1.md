@@ -523,6 +523,70 @@ remain unimplemented. Schema8 durably commits and strictly reverifies the later
 checkpoint proof record and its separate successor-edge row; neither path
 silently reuses the predecessor edge.
 
+### Schema9 retained later application finality
+
+Primary owner: M08; producers are the M01 strict finality verifier and M06
+prepared execution, and consumers are M07 durable recovery and M15 node
+composition. This is a local candidate storage contract, not a new wire proof
+or authority to activate a validator.
+
+`native_later_epoch_application_finality_v1` has exactly seven columns:
+`block_id` H32 primary key, `p_digest` H32, `commit_sequence` U64 encoded as
+eight big-endian bytes, `edge_binding` H32, `proof` BYTES, `proof_digest` H32,
+and `record_digest` H32. Each proof contains 1..67,108,864 bytes; inventory
+admits at most 32 records and checks the SQL type/length before loading proof
+blobs. `proof_digest=SHA256(proof)`. The record uses the existing framed
+`hash_domain` helper with domain
+`trnm.native-application.later-epoch-application-finality.v1` and ordered
+inputs `store_id`, `block_id`, `p_digest`, big-endian `commit_sequence`,
+`edge_binding`, `proof_digest`. Neither digest authenticates a signature.
+
+Migration is explicit and owner-locked through
+`upgrade_later_epoch_schema_v1(expected_head)`. It validates the original
+schema, descriptor, metadata and expected application head before an immediate
+transaction creates the missing tables and CASes schema/sequence. A schema8
+store may migrate only when it has **zero consumed later successor edges**:
+schema8 did not retain their application proofs, so an empty new ledger cannot
+certify existing consumption. A consumed schema8 image rejects without change;
+it requires a separately designed evidence-preserving recovery/import owner.
+Ordinary open never migrates. Successful migration and exact schema9 retry
+require synchronization and fresh validation with unchanged application head
+and durable sequence.
+
+For a later first-new block, strict finality verification precedes mutation.
+One transaction commits its P, application snapshot/replay/head/context,
+successor phase0→1 with the same block/sequence, and the exact proof record.
+The existing parent CAS and fork-retirement rules still apply. The commit
+receipt is returned only after synchronization and fresh readback. An exact
+retry must reproduce the retained proof bytes and both digests and returns the
+original sequence; even another valid proof cannot overwrite this retained
+record through retry.
+
+Cold recovery first authenticates the checkpoint and successor ledgers. It
+then requires exactly one application proof record for every consumed later
+successor, a committed `artifact_kind=1` P with matching digest/sequence and
+last lineage binding, and the same consumed block/sequence on that edge.
+It reconstructs activation from the retained checkpoint parent, checkpoint
+proof, authorization kernel, next commitment and old/new configuration.
+`decode_verify_epoch_first_finality_strict_v1` receives the authenticated old
+set/parameters as its activation trust root and verifies the first-new
+three-chain under the resulting new set. Its expected full header binds the
+P's target, roots and consensus parent, including the terminal-old timestamp.
+Missing, malformed or substituted authority rejects before any recovered
+capability is issued. This pass is read-only and must not recursively invoke
+the whole-table inventory while validating a selected successor.
+
+Required regressions include changing a retained signature and recomputing
+both local digests, deleting the proof row while leaving the consumed edge,
+and attempting schema8 migration with consumed successors. Every case must
+reject; restoring the authentic bytes must allow reopen. The process-kill
+cuts `later_application_before_commit`, `later_application_after_commit` and
+`later_application_after_fsync` must recover either the exact prepared
+predecessor or the entire committed P/edge/proof tuple. No cut may recover a
+consumed edge without its proof or increment the application sequence twice.
+These local checks do not close mixed-lineage C+4 continuation, repeated later
+handoffs, incremental schema7 migration or independent crash/power acceptance.
+
 ### Implemented retained edge evidence and recovery algorithm
 
 `evidence` is local `TRNMEVD1`, u16-be1, followed by u32-framed exact bytes in this

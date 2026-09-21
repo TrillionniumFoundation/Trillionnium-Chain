@@ -3889,24 +3889,33 @@ fn all_p(connection: &Connection) -> Result<Vec<StoredEpochPV1>> {
         .collect()
 }
 
+#[inline(never)]
+fn validate_later_inventory_v1(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+) -> Result<()> {
+    let schema = schema_version(connection)?;
+    if has_later_schema(schema) {
+        validate_later_records(connection, config)?;
+        // Authenticate the complete successor ledger before the application
+        // proof pass. The row-specific audit below must not re-run this
+        // whole-table decode while the caller is already on a deep recovery
+        // stack.
+        validate_later_edges(connection, config)?;
+        // Schema 8 has no application-proof ledger; schema 9 requires it.
+        if has_later_application_finality_schema(schema) {
+            validate_later_application_finality(connection, config)?;
+        }
+    }
+    Ok(())
+}
+
 pub(super) fn inventory(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
+    validate_later_inventory_v1(connection, config).map_err(local_error)?;
     (|| -> Result<_> {
-        let schema = schema_version(connection)?;
-        if has_later_schema(schema) {
-            validate_later_records(connection, config)?;
-            // Authenticate the complete successor ledger before the
-            // application proof pass. The row-specific audit below must not
-            // re-run this whole-table decode while the caller is already on a
-            // deep recovery stack.
-            validate_later_edges(connection, config)?;
-            // Schema 8 has no application-proof ledger; schema 9 requires it.
-            if has_later_application_finality_schema(schema) {
-                validate_later_application_finality(connection, config)?;
-            }
-        }
         // Even an installed edge not yet referenced by a P must retain valid evidence.
         for edge in load_edges(connection, config)? {
             audited_lineage(connection, config, &[edge.binding])?;
@@ -4513,6 +4522,28 @@ impl DurableNativeApplicationV0 {
             .as_ref()
             .map(|edge| self.open_later_epoch_execution_context_v1(edge))
             .transpose()?;
+        self.verify_epoch_application_finality_v1(
+            prepared,
+            proof_bytes,
+            budget,
+            edge.as_ref(),
+            later_context.as_ref(),
+        )?;
+        self.commit_epoch_p(prepared, None, later_edge.as_ref(), Some(proof_bytes))
+    }
+
+    // Keep decoded proof temporaries off the authority-recovery stack: both
+    // paths perform strict validation, but need not reserve their largest
+    // frames at the same time in unoptimized builds.
+    #[inline(never)]
+    fn verify_epoch_application_finality_v1(
+        &self,
+        prepared: &PreparedNativeEpochExecutionV1,
+        proof_bytes: &[u8],
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+        edge: Option<&crate::AuthenticatedEpochApplicationEdgeV1>,
+        later_context: Option<&LaterEpochExecutionContextV1>,
+    ) -> Result<()> {
         let header = prepared.header()?;
         ensure!(
             header.block_kind() != BlockKind::EpochCheckpoint,
@@ -4628,7 +4659,7 @@ impl DurableNativeApplicationV0 {
             final_header == header,
             "strict finality differs from complete retained header"
         );
-        self.commit_epoch_p(prepared, None, later_edge.as_ref(), Some(proof_bytes))
+        Ok(())
     }
 
     fn commit_epoch_p(
