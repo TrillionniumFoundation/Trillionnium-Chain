@@ -1,8 +1,15 @@
-//! Explicit schema7→11 migration and the closed, immutable migration projection.
-//! Later checkpoints require a separately implemented writer; this initial owner
-//! cannot prepare, commit, attach, sign, export, or discard any retained record.
+//! Explicit schema7→11 migration, immutable source and closed current inventory.
+//! Candidate continuation stops at the unattached successor checkpoint. It
+//! cannot attach an edge, activate a new epoch, sign or export state.
 use super::*;
 use rusqlite::types::{Value, ValueRef};
+#[path = "incremental_epoch_progress_v2.rs"]
+mod progress;
+pub use progress::{
+    CommittedIncrementalEpochPreHandoffV2, CommittedNativeIncrementalEpochV2,
+    ComputedIncrementalEpochSelectionV2, IncrementalPreHandoffPreimagesV2,
+    PreparedIncrementalCheckpointV2, PreparedNativeIncrementalEpochV2,
+};
 pub(in crate::durable) const SCHEMA_VERSION: u64 = 11;
 const MAX_PROOF: usize = 8 * 1024 * 1024;
 const TABLES: [&str; 6] = [
@@ -188,6 +195,18 @@ struct Projection {
     rows: Vec<ProjectedRow>,
     pin: [u8; 32],
     old_pin: [u8; 32],
+    current: Current,
+}
+struct Current {
+    base: Owner,
+    edge: EdgeRow,
+    first: commit::Commit,
+    first_p: EpochP,
+    ordinary: BTreeMap<[u8; 32], P>,
+    runtime: trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    migration_sequence: u64,
+    generation: u64,
+    pre_handoff: Option<progress::pre_handoff::PreHandoff>,
 }
 
 fn bounded_blocks(tx: &rusqlite::Transaction<'_>, table: &str) -> Result<Vec<[u8; 32]>> {
@@ -259,11 +278,7 @@ fn ordinary_replay_parent(
     }
 }
 
-fn projection(
-    tx: &rusqlite::Transaction<'_>,
-    config: &NativeApplicationConfigV0,
-    m: &MetadataV0,
-) -> Result<Projection> {
+fn screen_inventory(tx: &rusqlite::Transaction<'_>, schema: u64) -> Result<()> {
     // Screen both native P inventories before the legacy owner walks a single
     // committed artifact. The frozen legacy audit checks these totals later.
     for table in ["native_incremental_p_v1", "native_incremental_epoch_p_v1"] {
@@ -290,18 +305,92 @@ fn projection(
             "schema11 original proof capacity/type"
         );
     }
-    let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
+    if schema == SCHEMA_VERSION {
+        progress::pre_handoff::screen(tx)?;
+        for table in [
+            "native_incremental_epoch_first_commit_v2",
+            "native_incremental_epoch_ordinary_commit_v2",
+        ] {
+            let (count,bytes,invalid):(u64,u64,u64)=tx.query_row(&format!("SELECT count(*),coalesce(sum(CASE WHEN typeof(proof)='blob' THEN length(proof) ELSE 0 END),0),coalesce(sum(CASE WHEN typeof(proof)!='blob' OR length(proof)=0 OR length(proof)>8388608 THEN 1 ELSE 0 END),0) FROM {table}"),[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?;
+            ensure!(
+                count <= MAX_PREPARED as u64
+                    && bytes <= MAX_EPOCH_EVIDENCE_BYTES_V1 as u64
+                    && invalid == 0,
+                "schema11 projected proof capacity/type"
+            );
+        }
+    }
+    Ok(())
+}
+fn reserve_p_capacity(
+    tx: &rusqlite::Transaction<'_>,
+    artifact: &[u8],
+    header: &[u8],
+    replay: &[u8],
+    lifecycle: &[u8],
+) -> Result<()> {
+    ensure!(
+        !artifact.is_empty()
+            && artifact.len() <= 16 * 1024 * 1024
+            && !header.is_empty()
+            && header.len() <= 4096
+            && !replay.is_empty()
+            && replay.len() <= 16 * 1024 * 1024
+            && lifecycle.len() <= 1024 * 1024,
+        "schema11 proposed P field capacity"
+    );
+    let (count,bytes):(usize,usize)=tx.query_row("SELECT count(*),coalesce(sum(length(artifact)+length(header)+length(replay_delta)+length(lifecycle)),0) FROM native_incremental_p_v1",[],|r|Ok((r.get(0)?,r.get(1)?)))?;
+    let incoming = artifact.len() + header.len() + replay.len() + lifecycle.len();
+    ensure!(
+        count < MAX_PREPARED
+            && bytes
+                .checked_add(incoming)
+                .is_some_and(|sum| sum <= MAX_P_BYTES),
+        "schema11 prospective P capacity"
+    );
+    Ok(())
+}
+
+fn projection(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    m: &MetadataV0,
+) -> Result<Projection> {
+    projection_with_budget(
+        tx,
+        config,
+        m,
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+}
+fn projection_with_budget(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    m: &MetadataV0,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<Projection> {
     let schema = epoch_durable::schema_version(tx)?;
     ensure!(
         matches!(schema, COMMIT_SCHEMA_VERSION | SCHEMA_VERSION),
         "schema11 exact migration source"
     );
-    let policy = if schema == SCHEMA_VERSION {
-        OwnerAuditPolicy::MigrationProjection
+    screen_inventory(tx, schema)?;
+    let migration_sequence = if schema == SCHEMA_VERSION {
+        number(tx.query_row(
+            "SELECT migration_sequence FROM native_incremental_epoch_owner_v2 WHERE id=1",
+            [],
+            |r| row_blob(r, 0, 8, 8),
+        )?)?
     } else {
-        OwnerAuditPolicy::MigrationSource
+        m.durable_sequence
     };
-    let (base, edge, audited) = audit_owner_with_policy(tx, config, m, policy, &mut budget)?;
+    let (base, edge, audited) = if schema == SCHEMA_VERSION {
+        // Original source facts do not confer current ownership. The complete
+        // v2 current ledger below independently closes head and sequence.
+        audit_source_owner(tx, config, m, budget)?
+    } else {
+        audit_owner_with_policy(tx, config, m, OwnerAuditPolicy::MigrationSource, budget)?
+    };
     let coordinates = audited.coordinates(edge.binding)?;
     ni::require_absent_incremental_seals_v1(tx, coordinates)?;
     let seal_pins: u64 = tx.query_row(
@@ -320,10 +409,19 @@ fn projection(
     let geometry = trnm_consensus_types::EpochGeometryV0::new(set.epoch(), &parameters)
         .map_err(|e| anyhow::anyhow!("schema11 geometry: {e:?}"))?;
     ensure!(
-        m.head.height().get() < geometry.checkpoint_height().get(),
-        "schema11 migration after next checkpoint"
+        if schema == COMMIT_SCHEMA_VERSION {
+            m.head.height().get() < geometry.checkpoint_height().get()
+        } else {
+            m.head.height().get() <= geometry.checkpoint_height().get()
+        },
+        "schema11 migration/current checkpoint boundary"
     );
-    let first_p = load_epoch_p(tx, first.block)?.context("schema11 original first P missing")?;
+    let first_p =
+        commit::audit_record_shape(tx, config, &edge, &base.source, &audited.activation, &first)?;
+    ensure!(
+        first.sequence <= migration_sequence && migration_sequence <= m.durable_sequence,
+        "schema11 immutable migration sequence"
+    );
     // The already strict owner audit establishes terminal/active configuration;
     // use the original signed activation bytes for validating retained P forks.
     let epoch_context = EpochPContext {
@@ -382,7 +480,23 @@ fn projection(
     }
     for block in bounded_blocks(tx, "native_incremental_p_v1")? {
         let p = load_p(tx, block)?.context("schema11 ordinary P missing")?;
-        descendant::validate_p(&p, config, &set, &parameters, base.source.height().get())?;
+        if schema == SCHEMA_VERSION
+            && header(&p.header)?.block_kind() == trnm_consensus_types::BlockKind::EpochCheckpoint
+        {
+            p.validate_context_kind(
+                config,
+                &set,
+                &parameters,
+                trnm_consensus_types::BlockKind::EpochCheckpoint,
+            )?;
+            ensure!(
+                p.parent_p.is_some()
+                    && p.target()?.height().get() == geometry.checkpoint_height().get(),
+                "schema11 kind2 exact geometry"
+            );
+        } else {
+            descendant::validate_p(&p, config, &set, &parameters, base.source.height().get())?;
+        }
         descendant::validate_storage_p(tx, &p)?;
         ensure!(
             p.sequence > first_p.sequence
@@ -435,22 +549,148 @@ fn projection(
         ni_p == epochs.len() + ordinary.len() && ni_edges == 1,
         "schema11 sparse/native inventory differs"
     );
-    let records = bounded_blocks(tx, "native_incremental_epoch_descendant_commit_v1")?
+    let original_records = bounded_blocks(tx, "native_incremental_epoch_descendant_commit_v1")?
         .into_iter()
         .map(|block| {
             descendant::load_commit(tx, block)?.context("schema11 ordinary original proof missing")
         })
         .collect::<Result<Vec<_>>>()?;
+    for r in &original_records {
+        ensure!(
+            r.sequence <= migration_sequence
+                && r.checksum == descendant::commit_digest(config, &edge, r),
+            "schema11 original record changed"
+        );
+    }
+    let mut records = if schema == SCHEMA_VERSION {
+        load_ordinary_records(tx)?
+    } else {
+        original_records.clone()
+    };
+    let pre_handoff = if schema == SCHEMA_VERSION {
+        progress::pre_handoff::load(tx)?
+    } else {
+        None
+    };
+    if let Some(tail) = &pre_handoff {
+        records.push(tail.record.clone());
+    }
+    let runtime =
+        trnm_consensus_crypto::StrictEpochRuntimeContextV1::from_activation_v1(audited.activation)
+            .map_err(|e| anyhow::anyhow!("schema11 strict runtime: {e}"))?;
+    if schema == SCHEMA_VERSION {
+        let verified = runtime
+            .decode_verify_finality_v1(
+                &first.proof,
+                runtime
+                    .activation()
+                    .authorization_kernel()
+                    .terminal_old_header()
+                    .timestamp_ms(),
+                budget,
+            )
+            .map_err(|e| anyhow::anyhow!("schema11 first finality: {e}"))?;
+        ensure!(
+            verified.finalized_block().header() == &header(&first_p.header)?,
+            "schema11 first finality header"
+        );
+    }
+    let mut ordered: Vec<_> = records.iter().collect();
+    ordered.sort_by_key(|r| r.head.height().get());
+    let mut previous_head = first.head.clone();
+    let mut previous_digest = first.p_digest;
+    let mut previous_header = header(&first_p.header)?;
+    let mut previous_sequence = first.sequence;
+    let mut previous_replay = ReplayDelta::decode(&first_p.replay_delta)?.head;
+    let mut generation = 0u64;
+    for r in ordered {
+        let p = ordinary
+            .get(&r.block)
+            .context("schema11 committed P absent")?;
+        ensure!(
+            p.status == 1
+                && p.target()? == r.head
+                && p.digest == r.p_digest
+                && p.commit_sequence == Some(r.sequence)
+                && r.sequence > p.sequence
+                && r.sequence > previous_sequence
+                && p.parent == previous_head
+                && p.parent_p == Some(previous_digest)
+                && p.replay_parent == previous_replay,
+            "schema11 current committed ancestry"
+        );
+        if let Some(original) = original_records
+            .iter()
+            .find(|original| original.block == r.block)
+        {
+            ensure!(
+                original.p_digest == r.p_digest
+                    && original.sequence == r.sequence
+                    && original.head == r.head
+                    && original.proof == r.proof,
+                "schema11 immutable source proof changed"
+            );
+        } else {
+            ensure!(
+                r.sequence > migration_sequence,
+                "schema11 non-source commit below migration"
+            );
+            generation = generation
+                .checked_add(1)
+                .context("schema11 generation exhausted")?;
+        }
+        if schema == SCHEMA_VERSION
+            && pre_handoff
+                .as_ref()
+                .is_none_or(|tail| tail.record.block != r.block)
+        {
+            ensure!(
+                header(&p.header)?.block_kind() == trnm_consensus_types::BlockKind::Regular,
+                "schema11 ordinary ledger kind"
+            );
+            let verified = runtime
+                .decode_verify_finality_v1(&r.proof, previous_header.timestamp_ms(), budget)
+                .map_err(|e| anyhow::anyhow!("schema11 ordinary finality: {e}"))?;
+            ensure!(
+                verified.finalized_block().header() == &header(&p.header)?,
+                "schema11 ordinary complete finality header"
+            );
+        }
+        previous_head = r.head.clone();
+        previous_digest = p.digest;
+        previous_header = header(&p.header)?;
+        previous_sequence = r.sequence;
+        previous_replay = p.replay()?.head;
+    }
     ensure!(
-        m.head != first.head || records.is_empty(),
-        "schema11 committed ordinary rows above first head"
+        original_records
+            .iter()
+            .all(|r| records.iter().any(|v| v.block == r.block))
+            && ordinary.values().filter(|p| p.status == 1).count() == records.len()
+            && previous_head == m.head
+            && previous_sequence == base.commit_sequence
+            && previous_replay == base.replay
+            && sequences.last().copied() == Some(m.durable_sequence),
+        "schema11 closed current inventory"
     );
+    let _ = ReplayReader::new(tx, Some(base.replay), &[])?;
+    let pre_handoff_row = if let Some(tail) = &pre_handoff {
+        ensure!(
+            tail.record.head == m.head,
+            "schema11 unattached checkpoint is not current tail"
+        );
+        Some(progress::pre_handoff::audit(
+            tx, config, &base, &edge, &first_p, &ordinary, &runtime, tail, budget,
+        )?)
+    } else {
+        None
+    };
     let mut record_digests = vec![edge.checksum, first.checksum];
-    record_digests.extend(records.iter().map(|r| r.checksum));
+    record_digests.extend(original_records.iter().map(|r| r.checksum));
     record_digests.sort();
     let mut fields = vec![
         base.anchor.to_vec(),
-        m.durable_sequence.to_be_bytes().to_vec(),
+        migration_sequence.to_be_bytes().to_vec(),
     ];
     fields.extend(record_digests.iter().map(|d| d.to_vec()));
     let pin = hash_domain(
@@ -480,11 +720,11 @@ fn projection(
                 Value::Integer(1),
                 Value::Integer(2),
                 blob(base.anchor),
-                number_value(m.durable_sequence),
+                number_value(migration_sequence),
                 blob(pin),
                 blob(edge.binding),
                 blob(&prefix),
-                number_value(0),
+                number_value(generation),
             ],
         )
         .finish(
@@ -515,18 +755,14 @@ fn projection(
         )
         .finish(config, base.anchor, &[9], &[2, 11, 12, 13], &[])?,
     ];
-    for (block, digest, kind) in epochs
-        .iter()
-        .map(|p| (p.block, p.digest, 1))
-        .chain(ordinary.values().map(|p| (p.block, p.digest, 0)))
-    {
+    for p in &epochs {
         rows.push(
             ProjectedRow::new(
                 2,
                 vec![
-                    blob(block),
-                    blob(digest),
-                    Value::Integer(kind),
+                    blob(p.block),
+                    blob(p.digest),
+                    Value::Integer(1),
                     blob(&prefix),
                     Value::Null,
                     Value::Null,
@@ -536,7 +772,46 @@ fn projection(
             .finish(config, base.anchor, &[], &[4, 5, 6], &[])?,
         );
     }
-    for (table, r) in std::iter::once((4, &first)).chain(records.iter().map(|r| (5, r))) {
+    for p in ordinary.values() {
+        rows.push(
+            if header(&p.header)?.block_kind() == trnm_consensus_types::BlockKind::EpochCheckpoint {
+                progress::checkpoint::checkpoint_context(
+                    tx,
+                    config,
+                    &base,
+                    &edge,
+                    &ordinary,
+                    &set,
+                    &parameters,
+                    p,
+                )?
+            } else {
+                ProjectedRow::new(
+                    2,
+                    vec![
+                        blob(p.block),
+                        blob(p.digest),
+                        Value::Integer(0),
+                        blob(&prefix),
+                        Value::Null,
+                        Value::Null,
+                        Value::Null,
+                    ],
+                )
+                .finish(config, base.anchor, &[], &[4, 5, 6], &[])?
+            },
+        );
+    }
+    for (table, r) in std::iter::once((4, &first)).chain(
+        records
+            .iter()
+            .filter(|r| {
+                pre_handoff
+                    .as_ref()
+                    .is_none_or(|tail| tail.record.block != r.block)
+            })
+            .map(|r| (5, r)),
+    ) {
         ensure!(
             !r.proof.is_empty() && r.proof.len() <= MAX_PROOF,
             "schema11 proof bound"
@@ -557,11 +832,51 @@ fn projection(
             .finish(config, base.anchor, &[5], &[], &[])?,
         );
     }
-    Ok(Projection {
+    if let Some(row) = pre_handoff_row {
+        rows.push(row);
+    }
+    let projection = Projection {
         rows,
         pin,
         old_pin: edge.checksum,
-    })
+        current: Current {
+            base,
+            edge,
+            first,
+            first_p,
+            ordinary,
+            runtime,
+            migration_sequence,
+            generation,
+            pre_handoff,
+        },
+    };
+    if schema == SCHEMA_VERSION {
+        progress::checkpoint::audit_sidecars(tx, config, m, &projection, budget)?;
+    }
+    Ok(projection)
+}
+
+fn load_ordinary_records(tx: &rusqlite::Transaction<'_>) -> Result<Vec<commit::Commit>> {
+    let (count, bytes, invalid): (u64,u64,u64) = tx.query_row("SELECT count(*),coalesce(sum(length(proof)),0),coalesce(sum(CASE WHEN typeof(proof)!='blob' OR length(proof)=0 OR length(proof)>8388608 THEN 1 ELSE 0 END),0) FROM native_incremental_epoch_ordinary_commit_v2", [], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?;
+    ensure!(
+        count <= MAX_PREPARED as u64 && bytes <= MAX_EPOCH_EVIDENCE_BYTES_V1 as u64 && invalid == 0,
+        "schema11 current proof capacity"
+    );
+    let mut query = tx.prepare("SELECT block,p_digest,sequence,head,proof,checksum FROM native_incremental_epoch_ordinary_commit_v2 ORDER BY block LIMIT 129")?;
+    let mut rows = query.query([])?;
+    let mut result = Vec::new();
+    while let Some(r) = rows.next()? {
+        result.push(commit::Commit {
+            block: fixed(row_blob(r, 0, 32, 32)?)?,
+            p_digest: fixed(row_blob(r, 1, 32, 32)?)?,
+            sequence: number(row_blob(r, 2, 8, 8)?)?,
+            head: decode_head(&row_blob(r, 3, 104, 104)?)?,
+            proof: row_blob(r, 4, 1, MAX_PROOF)?,
+            checksum: fixed(row_blob(r, 5, 32, 32)?)?,
+        });
+    }
+    Ok(result)
 }
 
 fn compare_projection(tx: &rusqlite::Transaction<'_>, projection: &Projection) -> Result<()> {
@@ -627,7 +942,7 @@ impl DurableNativeApplicationV0 {
     /// Explicitly migrate a consumed schema7 edge and its complete original
     /// sparse execution/proof inventory. This changes no application head or
     /// sequence and grants no activation, finality, checkpoint or signing power.
-    /// Schema11 currently admits only this generation-zero migration projection.
+    /// A schema11 retry audits its current inventory against the same immutable seed.
     pub fn upgrade_incremental_multi_epoch_schema_v2(&self) -> Result<()> {
         let _guard = self.lock_operation()?;
         let mut c = open_writable_connection_v0(&self.path)?;

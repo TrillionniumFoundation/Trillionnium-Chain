@@ -19,6 +19,11 @@ pub use descendant::{
     ComputedIncrementalEpochSelectionV1, IncrementalEpochParentV1,
     PreparedNativeIncrementalEpochDescendantV1,
 };
+pub use multiple::{
+    CommittedIncrementalEpochPreHandoffV2, CommittedNativeIncrementalEpochV2,
+    ComputedIncrementalEpochSelectionV2, IncrementalPreHandoffPreimagesV2,
+    PreparedIncrementalCheckpointV2, PreparedNativeIncrementalEpochV2,
+};
 pub(in crate::durable) const COMMIT_SCHEMA_VERSION: u64 = 7;
 fn epoch_schema(c: &Connection) -> Result<bool> {
     Ok(matches!(
@@ -100,7 +105,6 @@ fn audit_owner(
 enum OwnerAuditPolicy {
     Legacy,
     MigrationSource,
-    MigrationProjection,
 }
 
 // Only the private schema11 migration auditor uses the immutable schema7
@@ -116,71 +120,18 @@ fn audit_owner_with_policy(
     EdgeRow,
     crate::epoch_recovery::AuditedEpochEvidenceV1,
 )> {
-    let migration_projection = matches!(policy, OwnerAuditPolicy::MigrationProjection);
     let shared_budget = !matches!(policy, OwnerAuditPolicy::Legacy);
     let schema = epoch_durable::schema_version(tx)?;
     ensure!(
         match policy {
             OwnerAuditPolicy::Legacy => matches!(schema, SCHEMA_VERSION | COMMIT_SCHEMA_VERSION),
             OwnerAuditPolicy::MigrationSource => schema == COMMIT_SCHEMA_VERSION,
-            OwnerAuditPolicy::MigrationProjection => schema == multiple::SCHEMA_VERSION,
         },
         "incremental epoch audit version"
     );
-    let committed_schema = schema == COMMIT_SCHEMA_VERSION || migration_projection;
-    let base = load_owner(tx)?;
-    let edge = edge_row(tx)?;
-    ensure!(
-        edge.evidence.len() <= MAX_EPOCH_EVIDENCE_BYTES_V1
-            && edge.anchor == base.anchor
-            && edge.checksum == edge.digest(config),
-        "schema6 edge checksum/source"
-    );
-    ensure!(
-        metadata.snapshot.is_empty()
-            && metadata.snapshot_digest == sha256_v0(&[])
-            && metadata.command_ids.is_empty()
-            && metadata.signer_nonces.is_empty(),
-        "schema6 exact checkpoint/no shadow snapshot"
-    );
-    ensure!(
-        base.anchor == base.source_digest(config)
-            && base.checksum == base.current_digest(&metadata.head),
-        "schema6 base owner"
-    );
-    let storage = ni::read_incremental_head_v1(tx, &namespace(config))?;
-    ensure!(
-        storage.height == metadata.head.height().get()
-            && storage.block == *metadata.head.block_id().as_bytes()
-            && storage.root == *metadata.head.state_root().as_bytes()
-            && storage.intent == *metadata.head.commit_id().as_bytes()
-            && storage.checksum == base.storage_checksum,
-        "schema6 committed storage cut"
-    );
+    let committed_schema = schema == COMMIT_SCHEMA_VERSION;
+    let (base, edge, audit) = audit_source_owner(tx, config, metadata, budget)?;
     let evidence = EpochRecoveryEvidenceV1::decode(&edge.evidence)?;
-    let audit = evidence.audit_strict(&config.validator_set, &config.parameters, budget)?;
-    let checkpoint = audit
-        .activation
-        .old_checkpoint_finality()
-        .finalized_block()
-        .header();
-    ensure!(
-        checkpoint.id().as_bytes() == base.source.block_id().as_bytes()
-            && checkpoint.height().get() == base.source.height().get()
-            && checkpoint.state_root().as_bytes() == base.source.state_root().as_bytes()
-            && evidence.checkpoint_header == base.source_header,
-        "schema6 checkpoint/context"
-    );
-    type CheckpointColumns = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>);
-    let actual: CheckpointColumns = tx.query_row("SELECT p_digest,commit_sequence,artifact_digest,status,commit_id FROM native_durable_execution_p_v0 WHERE block_id=?1", [base.source.block_id().as_bytes().as_slice()], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
-    ensure!(
-        fixed::<32>(actual.0)? == edge.checkpoint_p
-            && number(actual.1)? == edge.sequence
-            && fixed::<32>(actual.2)? == sha256_v0(&evidence.checkpoint_artifact)
-            && number(actual.3)? == P_STATUS_COMMITTED
-            && fixed::<32>(actual.4)? == *base.source.commit_id().as_bytes(),
-        "schema6 original committed P"
-    );
     let committed = commit::load(tx)?;
     if let Some(record) = &committed {
         ensure!(committed_schema, "epoch commit in prepare-only schema");
@@ -250,6 +201,74 @@ fn audit_owner_with_policy(
         "schema6 P inventory/sequence"
     );
     let _ = ReplayReader::new(tx, Some(base.replay), &[])?;
+    Ok((base, edge, audit))
+}
+// The immutable source and actual current storage cut are common facts. This
+// helper grants no version admission and does not reinterpret a legacy commit
+// ledger as current; each caller must audit its own physical version and ledger.
+fn audit_source_owner(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    metadata: &MetadataV0,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<(
+    Owner,
+    EdgeRow,
+    crate::epoch_recovery::AuditedEpochEvidenceV1,
+)> {
+    let base = load_owner(tx)?;
+    let edge = edge_row(tx)?;
+    ensure!(
+        edge.evidence.len() <= MAX_EPOCH_EVIDENCE_BYTES_V1
+            && edge.anchor == base.anchor
+            && edge.checksum == edge.digest(config),
+        "schema6 edge checksum/source"
+    );
+    ensure!(
+        metadata.snapshot.is_empty()
+            && metadata.snapshot_digest == sha256_v0(&[])
+            && metadata.command_ids.is_empty()
+            && metadata.signer_nonces.is_empty(),
+        "schema6 exact checkpoint/no shadow snapshot"
+    );
+    ensure!(
+        base.anchor == base.source_digest(config)
+            && base.checksum == base.current_digest(&metadata.head),
+        "schema6 base owner"
+    );
+    let storage = ni::read_incremental_head_v1(tx, &namespace(config))?;
+    ensure!(
+        storage.height == metadata.head.height().get()
+            && storage.block == *metadata.head.block_id().as_bytes()
+            && storage.root == *metadata.head.state_root().as_bytes()
+            && storage.intent == *metadata.head.commit_id().as_bytes()
+            && storage.checksum == base.storage_checksum,
+        "schema6 committed storage cut"
+    );
+    let evidence = EpochRecoveryEvidenceV1::decode(&edge.evidence)?;
+    let audit = evidence.audit_strict(&config.validator_set, &config.parameters, budget)?;
+    let checkpoint = audit
+        .activation
+        .old_checkpoint_finality()
+        .finalized_block()
+        .header();
+    ensure!(
+        checkpoint.id().as_bytes() == base.source.block_id().as_bytes()
+            && checkpoint.height().get() == base.source.height().get()
+            && checkpoint.state_root().as_bytes() == base.source.state_root().as_bytes()
+            && evidence.checkpoint_header == base.source_header,
+        "schema6 checkpoint/context"
+    );
+    type CheckpointColumns = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>);
+    let actual: CheckpointColumns = tx.query_row("SELECT p_digest,commit_sequence,artifact_digest,status,commit_id FROM native_durable_execution_p_v0 WHERE block_id=?1", [base.source.block_id().as_bytes().as_slice()], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?)))?;
+    ensure!(
+        fixed::<32>(actual.0)? == edge.checkpoint_p
+            && number(actual.1)? == edge.sequence
+            && fixed::<32>(actual.2)? == sha256_v0(&evidence.checkpoint_artifact)
+            && number(actual.3)? == P_STATUS_COMMITTED
+            && fixed::<32>(actual.4)? == *base.source.commit_id().as_bytes(),
+        "schema6 original committed P"
+    );
     Ok((base, edge, audit))
 }
 pub(in crate::durable) fn validate_metadata(

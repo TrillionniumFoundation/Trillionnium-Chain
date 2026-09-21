@@ -481,6 +481,12 @@ impl PocoCheckpointPreparationReplayRecordV0 {
         self.preparation_id
     }
 
+    // Inert original bytes for contextual verification by the native owner.
+    #[cfg(feature = "incremental-epoch-candidate")]
+    pub(crate) fn certified_checkpoint_parent_bytes_v1(&self) -> &[u8] {
+        &self.certified_checkpoint_parent_cev0
+    }
+
     pub(crate) const fn fields(&self) -> &PocoCheckpointPreparationReplayFieldsV0 {
         &self.fields
     }
@@ -1240,6 +1246,57 @@ impl PocoPreparationJournalV0 {
             }
         }
         bail!("retained bound preparation missing")
+    }
+
+    /// Read one original complete bound record. No reservation or capability is
+    /// constructed, and missing state is never recreated from a caller's copy.
+    #[cfg(feature = "incremental-epoch-candidate")]
+    pub(crate) fn retained_bound_replay_v1(
+        &self,
+        header: &[u8],
+    ) -> Result<PocoCheckpointPreparationReplayRecordV0> {
+        self.ensure_not_sticky_halted()?;
+        let _writer = self
+            .shared
+            .writer
+            .lock()
+            .map_err(|_| anyhow!("preparation writer lock poisoned"))?;
+        let connection = self.connect()?;
+        let connection = connection.unchecked_transaction()?;
+        validate_database(&connection)?;
+        validate_resource_budget(&connection)?;
+        ensure_not_halted_connection(&connection, &self.shared.sticky_halt)?;
+        let mut query=connection.prepare("SELECT preparation_record,bound_record FROM preparations WHERE phase=1 ORDER BY transition_key,block_kind,height_be,view_be LIMIT 1025")?;
+        let mut rows = query.query([])?;
+        let mut matched = None;
+        let mut count = 0usize;
+        while let Some(row) = rows.next()? {
+            count += 1;
+            ensure!(
+                count <= MAX_JOURNAL_PREPARATIONS as usize,
+                "preparation replay inventory count"
+            );
+            let preparation_bytes = row.get_ref(0)?.as_blob()?;
+            ensure!(
+                preparation_bytes.len() <= MAX_REPLAY_RECORD_BYTES,
+                "preparation replay record capacity"
+            );
+            let preparation =
+                PocoCheckpointPreparationReplayRecordV0::decode_exact(preparation_bytes)?;
+            let bound_bytes = row.get_ref(1)?.as_blob()?;
+            ensure!(
+                bound_bytes.len() <= MAX_REPLAY_RECORD_BYTES,
+                "preparation replay bound capacity"
+            );
+            let bound = PocoCheckpointBoundReplayRecordV0::decode_exact(bound_bytes, &preparation)?;
+            if bound.header_cev0 == header {
+                ensure!(
+                    matched.replace(preparation).is_none(),
+                    "ambiguous bound preparation header"
+                );
+            }
+        }
+        matched.context("retained bound preparation missing")
     }
 
     /// Audit the sidecar without accepting a caller-provided allowlist.  The

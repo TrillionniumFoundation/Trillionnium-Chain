@@ -890,12 +890,15 @@ multi-epoch import path.
 
 ### Required schema11 incremental multiple-edge owner
 
-The migration-only slice is implemented: explicit `7→11`, byte-preserving
-original edge/proof/P-context projection, generation-zero closed cold audit,
-metadata CAS, fsync/readback and an immutable migration pin. It preserves sparse
-state/replay and imports no new authority. The initial schema11 owner rejects
-any later generation or additional edge; checkpoint preparation, pre-handoff
-commit, attachment and repeated execution below remain required implementation.
+The candidate preserves an explicit `7→11`, byte-preserving original
+edge/proof projection, metadata CAS, fsync/readback and an immutable migration
+pin. The current inventory is audited separately from that source: native
+ordinary execution/commit advances monotonic generation; real kind2 checkpoint
+preparation binds deterministic sparse cutoff selection and its original
+preparation sidecar; strict pre-handoff commit ends at an unattached checkpoint.
+No B edge, prefix extension, handoff signature or new-epoch activation follows
+from that commit. Attachment, repeated first-new execution and later crossings
+below remain required implementation; this candidate is not production enabled.
 The old schema5/6/7 writers retain their physical version fences. Primary M07;
 M06 produces checkpoint execution, M08 consumes finality and owns recovery, and M13 remains a separate consumer. Schema11 is reserved for this
 incremental owner; schema8/9/10 belong to the full-snapshot owner. The first
@@ -991,8 +994,15 @@ its kernel's descriptor must equal the retained descriptor. The pre-handoff
 `strict_binding` and complete activation binding are distinct typed results,
 never interchangeable H32 authorities. `context_digest` binds store ID, source anchor,
 checkpoint P digest, parent Head104/P digest/actual commit sequence, complete
-preceding Prefix, authenticated old set/parameters, and the cutoff tuple. For
-the kind0 migration row it binds the retained original checkpoint/source tuple
+preceding Prefix, authenticated old set/parameters, and the cutoff tuple. Its kind1/pre-handoff frame order is store ID, immutable
+source anchor, checkpoint P digest, C17 Head104, C17 P digest and actual commit
+sequence, preceding Prefix, SHA256 of canonical old set and parameters, C15
+Head104, C15 P digest, C15 persist and actual commit sequences, SHA256 of the
+original cutoff proof, SHA256 of the complete checkpoint header, checkpoint ni
+artifact and ni persist sequence, replay parent version/root, SHA256 of the
+exact replay delta and SHA256 of the retained lifecycle bytes. U64 values use
+eight big-endian bytes; Head104 and Prefix use the inventory codecs above.
+For the kind0 migration row it binds the retained original checkpoint/source tuple
 and empty preceding Prefix under the same distinct local domain.
 
 Use the existing framed hash helper with separate domains
@@ -1022,10 +1032,16 @@ re-derives the complete exact projection from the strictly audited retained
 schema7 records and compares SQL types and every field, including original proof
 bytes, without allocating copies of untrusted v2 BLOBs. It requires one consumed
 edge, exact native/ni prepared inventory, complete actual P/replay ancestry,
-no physical seal roots/values/nodes/pins and no post-migration rows. All original SQL rows except metadata's version remain
-unchanged. Legacy proof verification is reused with one protocol work budget
-for this bounded migration audit; later prefix-once multiple-edge verification
-is still required before the repeated writer can be enabled.
+no physical seal roots/values/nodes/pins and no post-migration rows at migration.
+All original SQL rows except metadata's version remain unchanged at that cut.
+Later current-owner audit preserves the original edge and proof bytes and
+migration sequence while reconstructing each genuine native persist/commit
+event. One strict runtime is built from original A evidence; its retained
+ordinary proofs, standalone sidecar certified parent and successor pre-handoff
+proof share the bounded operation meter. Actual P/status, native/ni/replay head,
+kind2 cutoff and complete sidecar replay are rejoined on cold open. Current
+generation derives only from post-migration commits. Full repeated-prefix
+attachment/first-new recovery remains required before multiple edges are enabled.
 
 The actual `schema7_to_schema11_*` tests use signed, nonempty sparse C11→C15
 execution and retained prepared C16/C17. They check all original SQL values and
@@ -1094,6 +1110,59 @@ reservation and readback before the header enters the existing signing path.
 Preview/P persistence advances neither the committed head nor edge state and
 issues no committed checkpoint or activation authority.
 
+**M07-INCREMENTAL-CHECKPOINT-PREPARATION-V2** fixes the producer/consumer
+seam. A private owner-affine planning value binds the actual sparse C15 cutoff,
+retained C17 P/header and runtime-verified certified parent under the same
+namespace, source anchor, migration pin and observed owner generation. The
+schema11 owner alone constructs it; legacy genesis-only scheduled-cutoff
+APIs and full-snapshot receipts remain inapplicable. Before any journal or
+native write, independently derive complete selection from C15, execute the
+exact requested body over C17, validate every frozen header field and execution
+root, and strictly verify the exact parent QC with the cached epoch runtime.
+Wrong checkpoint/header, parent, cutoff or selection refuses without reservation,
+key invocation or native write. Mere supplied header/P/ni IDs grant no permission.
+
+The existing framed helper derives a distinct local comparison digest under
+`trnm.native-application.incremental-checkpoint-commitment.v2`, framing in
+order store ID, immutable source anchor, migration pin, complete preceding
+Prefix, exact cutoff Head104, cutoff P digest, cutoff persist sequence, cutoff
+commit sequence, SHA256 of the original cutoff proof, SHA256 of the canonical
+scheduled-cutoff comparison preimage, and SHA256 of each canonical old set, old
+parameters, next commitment, new set and new parameters. U64 fields are eight
+big-endian bytes. This stable digest excludes current generation/head and the
+proposal view: a later view or C16/C17 commit must not create a false transition
+conflict. It is inert and cannot reconstruct a legacy M06 authority.
+
+A separate private observation digest under
+`trnm.native-application.incremental-checkpoint-observation.v2` frames that
+stable commitment digest, observed metadata Head104 and durable sequence,
+observed generation, C17 Head104/P digest/persist sequence, a presence-tagged
+actual C17 commit sequence, SHA256 of the complete planned checkpoint header
+and SHA256 of the complete certified parent. All observations are independently
+rejoined before reservation and after native durability/readback. The prepared
+P retains its actual immutable execution identity when its formerly prepared
+parent commits; finality consumes a newly audited current-generation context,
+not the earlier observation as committed authority.
+
+Only this fresh private plan produces the existing inert
+`PocoCheckpointPreparationReplayRecordV0`. Reuse canonical scheduled-cutoff,
+native-execution, preparation and exact-header comparison encoders; the stable
+v2 commitment digest occupies the commitment-comparison field. Reserve and bind
+the original complete record in the existing preparation sidecar before issuing
+`PreparedIncrementalCheckpointV2`, and preserve its persistent conflict halt.
+The sidecar codec and legacy records remain unchanged. No new legacy opaque
+scheduled-cutoff/header capability is synthesized from replay records.
+
+The sidecar and native database are separate durability boundaries. A reservation
+without native P may be retried only by reconstructing the complete same plan;
+no capability follows from that reservation alone. A persisted P is returned
+only after native sync/fresh audit and exact bound sidecar readback plus namespace
+confirmation. Uncertain writes return no prepared capability. Recovery reopens
+both owners and re-executes/rejoins the original header, body, parent and cutoff;
+a different preimage conflicts, and no SQL receipt or scalar bypass is allowed.
+The consumer rechecks this actual native P before the existing Core/Valid and
+Safety persist-before-sign path. This required adapter does not authorize a key.
+
 After C16/C17 finality commits, checkpoint authority confirmation and C18 commit
 must reopen the actual committed C17 and C15 readers under the owner lock,
 revalidate the exact planned header, execution commitments, cutoff selection,
@@ -1129,8 +1198,8 @@ step is removed by these storage changes.
 
 #### Causal checkpoint commit and attachment (M07-INCREMENTAL-PREHANDOFF-V1)
 
-This is a required implementation contract, not implemented schema7 behavior.
-The planned owner operations are `commit_incremental_epoch_pre_handoff_v2`,
+This candidate contract is separate from frozen schema7 behavior.
+The owner operations are `commit_incremental_epoch_pre_handoff_v2`,
 `confirm_incremental_epoch_pre_handoff_v2` and
 `attach_incremental_epoch_handoff_v2`. Their exact Rust signatures remain subject
 to producer/consumer review; the input and capability boundaries here are fixed.
@@ -1262,6 +1331,12 @@ results rather than parsing/verifying a prefix separately for every row. The
 per-proof 8MiB ceiling does not authorize an 8MiB-per-root unbounded transcript:
 M01 also admits its complete ancestry/configuration/proof transcript and shared
 crypto work. Current and prospective capacity refusal leaves existing rows intact.
+Caller-budget preparation and commit APIs keep that same meter through retries
+and fresh durability readback. Before reservation or native state mutation,
+measure the current audit and admitted incoming certificate work and check that
+the same meter can also cover the prospective fresh audit. A copied meter may
+check this capacity without performing crypto; it cannot issue authority, erase
+spent work or replace the original meter used by the actual fresh audit.
 
 There are at most32 pre-handoff rows and at most64MiB of their five variable
 evidence fields in aggregate; all field caps in the inventory apply before load.

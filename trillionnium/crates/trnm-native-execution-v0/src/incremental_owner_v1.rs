@@ -166,6 +166,22 @@ impl P {
         set: &ValidatorSet,
         parameters: &ConsensusParametersV0,
     ) -> Result<()> {
+        self.validate_context_kind(
+            config,
+            set,
+            parameters,
+            trnm_consensus_types::BlockKind::Regular,
+        )
+    }
+    // Kind2 is admitted only by the private schema11 checkpoint context. Frozen
+    // schema5/7 callers keep the Regular-only wrapper above.
+    fn validate_context_kind(
+        &self,
+        config: &NativeApplicationConfigV0,
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        expected_kind: trnm_consensus_types::BlockKind,
+    ) -> Result<()> {
         ensure!(
             self.sequence > 1 && self.digest == self.calculate_digest(config),
             "incremental P digest"
@@ -189,7 +205,7 @@ impl P {
         ensure_finalized_header_binding_v0(&h, request)?;
         validate_native_finalized_execution_receipts_v0(&executed)?;
         ensure!(
-            h.block_kind() == trnm_consensus_types::BlockKind::Regular
+            h.block_kind() == expected_kind
                 && h.validator_set_id() == set.id()
                 && h.epoch() == set.epoch()
                 && h.consensus_parameters_hash() == parameters.hash(),

@@ -20,7 +20,7 @@ pub(super) struct Commit {
     pub checksum: [u8; 32],
 }
 impl Commit {
-    fn digest(&self, config: &NativeApplicationConfigV0, edge: &EdgeRow) -> [u8; 32] {
+    pub(super) fn digest(&self, config: &NativeApplicationConfigV0, edge: &EdgeRow) -> [u8; 32] {
         hash_domain(
             "trnm.native-application.incremental-epoch-commit-record.v1",
             &[
@@ -130,6 +130,20 @@ pub(super) fn audit_with_budget(
     record: &Commit,
     budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
 ) -> Result<EpochP> {
+    let p = audit_record_shape(tx, config, edge, parent, &evidence.activation, record)?;
+    verify_proof(config, edge, &p, &record.proof, budget)?;
+    Ok(p)
+}
+// Private shape join allows schema11 to verify all retained proofs with its
+// already audited strict runtime, without repeatedly decoding the prefix.
+pub(super) fn audit_record_shape(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    edge: &EdgeRow,
+    parent: &ApplicationHeadV0,
+    activation: &trnm_consensus_crypto::StrictSameVersionEpochActivationAuthorityV0,
+    record: &Commit,
+) -> Result<EpochP> {
     let p = load_epoch_p(tx, record.block)?.context("committed epoch P missing")?;
     p.validate_context(
         config,
@@ -137,12 +151,9 @@ pub(super) fn audit_with_budget(
             parent,
             checkpoint_sequence: edge.sequence,
             binding: edge.binding,
-            terminal: evidence
-                .activation
-                .authorization_kernel()
-                .terminal_old_header(),
-            set: evidence.activation.new_validator_set(),
-            parameters: evidence.activation.new_consensus_parameters(),
+            terminal: activation.authorization_kernel().terminal_old_header(),
+            set: activation.new_validator_set(),
+            parameters: activation.new_consensus_parameters(),
         },
     )?;
     p.validate_storage(tx)?;
@@ -179,7 +190,6 @@ pub(super) fn audit_with_budget(
             && p.edge == edge.binding,
         "epoch committed record binding"
     );
-    verify_proof(config, edge, &p, &record.proof, budget)?;
     let (phase, block): (u8, Vec<u8>) = tx.query_row(
         "SELECT phase,committed_block FROM ni_epoch_edge WHERE strict_binding=?1",
         [edge.binding.as_slice()],

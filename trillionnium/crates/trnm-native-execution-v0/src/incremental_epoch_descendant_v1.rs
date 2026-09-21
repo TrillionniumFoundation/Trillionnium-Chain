@@ -766,7 +766,7 @@ pub(super) fn assert_worker_parity(
     }
 }
 
-fn commit_digest(
+pub(super) fn commit_digest(
     config: &NativeApplicationConfigV0,
     edge: &EdgeRow,
     r: &commit::Commit,
