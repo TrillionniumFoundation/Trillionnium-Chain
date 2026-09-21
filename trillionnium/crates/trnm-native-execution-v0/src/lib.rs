@@ -86,8 +86,8 @@ pub use durable::{
     LaterEpochApplicationEdgeRequirementsV1, LaterEpochApplicationEdgeV1,
     LaterEpochCheckpointContextV1, NativeApplicationConfigV0,
     NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
-    NativeH1StateSyncTrustedBaseRequestV0, PreparedNativeEpochExecutionV1,
-    VerifiedNativeSignerReplayFloorV1,
+    NativeEpochFinalityPathV1, NativeEpochFinalityStepV1, NativeH1StateSyncTrustedBaseRequestV0,
+    PreparedNativeEpochExecutionV1, VerifiedNativeSignerReplayFloorV1,
 };
 pub use durable::{
     CommittedNativeIncrementalExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,

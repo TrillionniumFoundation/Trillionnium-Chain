@@ -328,6 +328,50 @@ complete snapshot requires M13's independently verified
 `NativeVerifiedSnapshotV1` capability. Block, height, state-root, binding and
 manifest substitutions remain typed fail-closed errors.
 
+### Native retained-proof consumer (M15-M13-BRIDGE-V1)
+
+The only permitted composition point for the M08 retained-proof bridge is the
+node-owned, read-only recovery path. The consumer
+`verify_retained_native_finality_path_v1(independently_configured_anchor, path,
+limits, budget)`
+budget-checks and canonical-decodes the bounded
+`NativeEpochFinalityPathV1`, then passes its ordered `EpochFirst` transitions and
+`Ordinary` links to M13's `verify_native_trust_path_v1`. The anchor is
+operator/host configured and independently pinned; bundle bytes, peer identity
+or a recovered database row cannot establish it.
+
+The consumer compares the verified terminal header against the path target
+header, parent, height, timestamp, epoch/config context and application state
+root. Target P digest, commit sequence and record digest are local M08 storage
+metadata and may receive only shape/nonzero checks; they are never remote
+authority. The consumer then returns the verified finality-path capability to a separately owned
+snapshot adapter. This phase does not feed M08's private Borsh sparse
+`PersistentAuthTreeSnapshotV0` bytes to `NativeStateSyncSessionV1`, and cannot
+issue `NativeVerifiedSnapshotV1`; snapshot manifest/chunk format, historical
+coordinate recomputation and installation require a separate versioned
+contract. The operation is one read-only M08 export followed by M13
+verification: it does not reopen M08 during verification, consume a proof,
+mutate the commit ledger, or retry with an alternate anchor.
+
+The consumer returns an explicit unsupported result for a missing schema-10
+ordinary proof, pre-schema-10 ordinary history, unknown edge schema or any
+schema-8/9 record that would require authority promotion. It must not use the
+C+3 first-new record as a substitute C+4 proof. M15 currently has no approved
+native snapshot installer, signer activation, public transport, or wiped-node
+catchup caller for this bridge; those remain closed activation gates. A
+successful consumer test therefore proves only authentic retained evidence and
+strict trust-path verification; it proves no snapshot staging or installation.
+
+The authentic native-owner fixture now exports C18→C32 across two later
+handoffs and invokes this exact consumer. The C18 pin and a negative C17 pin
+are captured from independently generated fixture headers/configuration before
+export. Both epoch transitions verify; wrong anchors, header/parent/config and
+proof substitutions, reordered/truncated steps, missing/extra epoch evidence,
+schema9 and caller byte/link limits reject. Changing nonzero local P/sequence/
+record identifiers leaves the signed finality result unchanged, demonstrating
+that those local identifiers do not grant remote trust. This test does not
+connect the bridge to a network endpoint or installer.
+
 ### Bridge-relay auxiliary contract boundary
 
 Registry-owned `contracts/bridge-relay/src/lib.rs` is an in-memory Rust model,

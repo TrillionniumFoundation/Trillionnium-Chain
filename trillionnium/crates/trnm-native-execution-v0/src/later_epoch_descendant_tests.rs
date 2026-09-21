@@ -68,6 +68,27 @@ fn assert_schema9_committed_descendant_migration_refused(source: &std::path::Pat
     let bytes = std::fs::read(&path).unwrap();
     let sidecar = crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&path);
     let sidecar_bytes = std::fs::read(&sidecar).unwrap();
+    let sql = rusqlite::Connection::open(&path).unwrap();
+    let anchor: Vec<u8> = sql
+        .query_row(
+            "SELECT block_id FROM native_durable_execution_p_v1 WHERE target_height=?",
+            [18_u64.to_be_bytes().as_slice()],
+            |r| r.get(0),
+        )
+        .unwrap();
+    drop(sql);
+    let export_error = app
+        .export_epoch_finality_path_v1(
+            BlockIdV0::new(anchor.try_into().unwrap()).unwrap(),
+            head.block_id(),
+        )
+        .unwrap_err();
+    assert!(
+        export_error
+            .to_string()
+            .contains("finality export requires explicit schema10"),
+        "{export_error:#}"
+    );
     let error = app.upgrade_later_epoch_schema_v1(&head).unwrap_err();
     assert!(
         error.to_string().contains(

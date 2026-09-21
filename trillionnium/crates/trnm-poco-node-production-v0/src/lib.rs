@@ -14,6 +14,8 @@ mod public_ingress;
 pub use public_ingress::*;
 mod tx_state_sync_bridge;
 pub use tx_state_sync_bridge::*;
+mod native_epoch_finality_consumer;
+pub use native_epoch_finality_consumer::*;
 
 use std::{error::Error, fmt};
 use trnm_node_boundary_v0::{

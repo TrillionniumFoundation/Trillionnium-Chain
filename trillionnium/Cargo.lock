@@ -1732,8 +1732,10 @@ dependencies = [
  "trnm-consensus-types",
  "trnm-finality-types",
  "trnm-native-application",
+ "trnm-poco-node-production-v0",
  "trnm-protocol",
  "trnm-runtime",
+ "trnm-state-sync-v0",
 ]
 
 [[package]]
@@ -1967,9 +1969,12 @@ name = "trnm-poco-node-production-v0"
 version = "0.1.0"
 dependencies = [
  "rusqlite",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
  "trnm-control-plane-v0",
  "trnm-durable-file-adapters-v0",
  "trnm-migration-v0",
+ "trnm-native-execution-v0",
  "trnm-node-boundary-v0",
  "trnm-state-sync-v0",
  "trnm-tx-lifecycle-v0",

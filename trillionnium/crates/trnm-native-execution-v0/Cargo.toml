@@ -70,3 +70,7 @@ trnm-runtime = { version = "0.1.0", path = "../trnm-runtime" }
 [dev-dependencies]
 ed25519-dalek = "2"
 tempfile = "3"
+# Exercise the public M15/M13 consumer with authentic durable M08 fixtures.
+# This reverse edge exists only for tests; production dependencies remain M15 -> M08.
+trnm-poco-node-production-v0 = { version = "=0.1.0", path = "../trnm-poco-node-production-v0" }
+trnm-state-sync-v0 = { version = "=0.1.0", path = "../trnm-state-sync-v0" }

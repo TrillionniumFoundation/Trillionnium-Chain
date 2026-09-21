@@ -497,6 +497,73 @@ edge schema or unsupported live epoch phase remains disabled. The path is
 candidate-only until an independent C21 proof vector and external host
 acceptance are recorded.
 
+### M08 retained-proof export bridge (M13-M08-BRIDGE-V1)
+
+The M15 adapter implements this consumer contract over the existing M13 strict
+trust verifier. M08 remains the producer of retained consensus evidence; M13 must never
+reconstruct or manufacture an epoch proof from headers, digests, or a peer
+claim. The producer-side bridge is the M08-owned
+`export_epoch_finality_path_v1(anchor_block: BlockIdV0, target_block: BlockIdV0)`
+operation and
+returns a bounded, neutral `NativeEpochFinalityPathV1` value. Its fields are
+the canonical `anchor_header_cev0`, `target_header_cev0`, target schema
+version, target P digest, target commit sequence, and ordered
+`NativeEpochFinalityStepV1` values. Each step contains canonical header bytes,
+consensus-parent header bytes, exact proof bytes, record digest, and optional
+`EpochActivationEvidenceBytesV0`. The DTO carries target state-root/schema/P
+identity only; it does not export the private M08 Borsh sparse
+`PersistentAuthTreeSnapshotV0` bytes.
+
+The DTO has no signer key, trust-anchor selection or mutable database handle.
+Its public vectors are untrusted caller input: the producer bounds its output,
+and the consumer independently screens every length and the aggregate before
+decoding or signature work. Canonical evidence roots use their existing codecs;
+the Rust DTO defines no aggregate wire encoding. The consumer verifies these
+roots without reopening the producer database. The retained
+`record_digest`, P digest and commit sequence remain local storage metadata;
+they are not remote authority or a replacement for M13 proof verification.
+
+Export takes one owner lock and one immutable SQLite read transaction. It must
+revalidate the committed target and exact C+3/C+4 ledger rows in that
+transaction, including target/parent IDs, heights, timestamps, epoch/config
+digests, commit sequence, edge binding, proof bytes and record digests. A
+missing descendant row, schema older than 10, pre-schema-10 ordinary history,
+unknown edge schema, or any digest/record mismatch returns a typed unsupported
+or integrity error. C+3 evidence may be exported only as the retained edge
+prefix; it cannot be promoted to a C+4 ordinary proof. Export does not advance
+a head, consume a proof, write a ledger row, or install a snapshot.
+
+The node consumer constructs `EpochFirst` from retained C+3 evidence and
+`Ordinary` from the retained schema-10 C+4 proof, then calls
+`verify_native_trust_path_v1` with an independently configured local anchor.
+The anchor is decoded and pinned before the bundle is considered; peer bytes
+cannot choose, replace or make an anchor fresh. For the cross-epoch route the
+anchor is the independently retained P immediately before the transition;
+the first-new target is exactly checkpoint height + 3, and every following
+ordinary target advances exactly one height. The steps are therefore ordered
+as anchor, then a bounded sequence of `EpochFirst` transitions and contiguous
+`Ordinary` suffixes; every link in the range needs its own retained canonical
+proof. The M08 export contributes at most 128 links; M13's general 4,096-link,
+64 MiB aggregate and CEV signature-work budgets remain upper bounds. Terminal
+header, state root, epoch, application schema/version and edge/config bytes
+must match the path. Target P digest, commit sequence and record digest receive
+only local metadata shape checks; they are not remote finality authority.
+
+The read-only bridge acceptance fixture must export the real schema-10
+C+3/C+4 chain, close and reopen the owner, and reproduce the same canonical
+DTO bytes and local metadata. It must reject a missing C+4 row, a schema-9 copy, a legacy
+ordinary target, altered proof/record bytes, target/parent/config substitution,
+and an independently pinned anchor mismatch before any consumer capability is
+returned. It must also prove that export performs no head/ledger mutation.
+
+This phase ends after strict finality-path verification. It must not pass the
+private M08 snapshot bytes to `NativeStateSyncSessionV1` or claim a
+`NativeVerifiedSnapshotV1`: M08's sparse snapshot format and authenticated
+historical coordinates require a separate versioned adapter, manifest and
+recomputer contract. Snapshot export, generic chunk admission, native
+recomputation, durable installation, signer activation and public transport
+remain later phases and stay closed here.
+
 ### Migration, not ordinary state sync
 
 `verify_export_v0` accepts `FinalizedExportHeaderV0`, canonical export rows and

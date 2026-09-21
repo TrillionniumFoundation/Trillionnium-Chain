@@ -518,9 +518,9 @@ commits the P, metadata/context and successor phase-1 consumption atomically.
 The schema-9 ledger retains that C+3 proof for cold re-verification. The local
 positive C21 fixture and three process-kill cuts cover the exact P/edge/proof
 retry path. The
-checkpoint/handoff schema4 finalized-read mapping, schema7 incremental
-multi-edge owner/storage migration and repeated later handoffs
-remain unimplemented. Schema8 durably commits and strictly reverifies the later
+checkpoint/handoff schema4 finalized-read mapping and schema7 incremental
+multi-edge owner/storage migration remain unimplemented. The full-snapshot
+schema10 mixed-prefix owner now supports repeated later handoffs. Schema8 durably commits and strictly reverifies the later
 checkpoint proof record and its separate successor-edge row; neither path
 silently reuses the predecessor edge.
 
@@ -541,24 +541,28 @@ and the ordinary new-set strict decoder. Only `artifact_kind=1` may consume
 the successor or append a schema9 handoff proof; C+4 commit/retry must leave
 both the C+3 consumed block and its one proof row unchanged. When the head
 has progressed, recovery follows at most 128 committed P rows back to the
-consumed C+3 head. Every step requires exact parent head/P digest, +1 height,
-consensus parent, identical lineage and identical target configuration.
+consumed C+3 head. Every step requires exact parent head/P digest. Ordinary
+steps require +1 height, the actual consensus parent, identical lineage and
+identical target configuration. A later handoff requires checkpoint C→C+3,
+the selected authenticated terminal C+2, a consumed edge with its retained
+first-new proof, and exactly one appended lineage binding/new configuration.
 Missing, cyclic, uncommitted or substituted ancestry rejects; this selected
 walk consumes already authenticated inventory and cannot re-enter inventory.
 The C18 fixture prepares C21 then C22/C23/C24, strictly verifies their signed
 ordinary three-chain for C22 and checks exact retry and cold recovery. It does
-not establish another later checkpoint/handoff or a public sync protocol.
+not by itself establish another later checkpoint/handoff or a public sync protocol.
 Schema9 retains the first-new proof only. Schema10 adds the separate ordinary
 proof ledger specified below; commit and cold audit both strictly verify its
-original signed proof. The private ledger is not a public proof-export or
-state-sync protocol. Those consumer interfaces remain a separate gap; an
-application-history projection alone cannot serve as consensus evidence.
+original signed proof. The proof exporter specified below reads these ledgers and returns their
+original evidence. Public transport and complete state-sync installation
+remain separate gaps; an application-history projection alone cannot serve
+as consensus evidence.
 
 #### Required resolver for repeated later successors
 
-The current single-later-tail resolver is insufficient for a lineage such as
-`[legacy A, later B, later C]`. Its replacement must be a bounded prefix walk,
-not mutually recursive calls among P, successor and checkpoint-proof audits.
+The private `epoch_lineage_v1` resolver uses a bounded prefix walk for lineages
+such as `[legacy A, later B, later C]`. It replaces mutually recursive calls
+among P, successor and checkpoint-proof audits.
 Start with the configured genesis set/parameters and an empty authenticated
 prefix. For each of at most 32 distinct bindings, resolve exactly one legacy
 or later row; missing or ambiguous ownership rejects. A later row must join a
@@ -578,8 +582,16 @@ parent CAS and fresh readback. Required positives include a second later
 checkpoint and its first-new/ordinary descendants across cold reopen.
 Required negatives are prefix substitution, duplicated/cyclic bindings,
 wrong predecessor, forged rehashed retained proof and wrong target
-configuration. Until those checks pass, repeated later handoffs remain
-disabled; single-later C22 coverage is not evidence for them.
+configuration. The authentic
+`repeated_later_handoffs_c28_c31_c32_recover_exact_prefix` fixture now covers
+C25 cutoff→C28 checkpoint→S29/S30→C31 first-new→C32 ordinary commit. It
+reopens Installed, Consumed and progressed states, recovers the historical B
+edge across the second later handoff, retries original C22 without changing
+its commit sequence, and rejects eight isolated corrupt database copies.
+It also exports C18→C32, including both first-new proofs and original ordinary
+proofs, with equal bytes after cold reopen. This is bounded native-owner
+evidence; production Core/custody, incremental repeated crossings and a
+network synchronization/installation path still require separate acceptance.
 
 The shared private prefix result must drive checkpoint-context selection,
 successor-fact derivation, first-new snapshot reconstruction, ordinary execution,
@@ -1039,6 +1051,60 @@ fsync; restart sees only H17 with prepared C18 or fully committed C18, and
 recovery retains the exact commit sequence. These are local process-crash
 results, not physical power-loss or repeated multi-epoch acceptance.
 
+### Schema10 retained finality path export contract
+
+The read-only producer is
+`DurableNativeApplicationV0::export_epoch_finality_path_v1(anchor_block, target_block)`.
+Both identifiers must name retained committed application P records, the anchor
+must precede the target, and the target must belong to the currently audited
+committed chain. The owner holds its operation/namespace guard, rejects SQLite
+sidecars, and audits schema, metadata, complete P inventory and both proof
+ledgers through one immutable connection. Export changes no sequence, head,
+edge phase, preparation, signer state or database schema. Schema10 is required;
+missing historical proofs cannot be manufactured from execution artifacts.
+
+`NativeEpochFinalityPathV1` is an inert public data carrier, with canonical
+anchor/target headers, target schema version, P digest, commit sequence and
+ordered `NativeEpochFinalityStepV1` records. Each record contains its exact
+canonical target and consensus-parent headers, retained original proof,
+retained record digest and optional `EpochActivationEvidenceBytesV0`. These
+fields carry no owner, installation, activation or signing authority. The
+eight epoch roots reuse existing canonical encodings; this API allocates no
+aggregate protocol wire identifier.
+
+Walk backward through exact committed application parents, at most 128 unique
+P records, then reverse the result. An ordinary step advances one height under
+the same lineage and configuration. A first-new step advances from checkpoint
+C to C+3, takes its consensus parent from the authenticated terminal seal C+2,
+and must exactly match the consumed edge, P digest and commit sequence. Its
+original proof comes from `native_later_epoch_application_finality_v1`; its
+eight evidence roots come from the strictly verified mixed-prefix activation.
+Ordinary Regular proofs come only from the schema10 descendant ledger;
+checkpoint proofs come from the retained checkpoint-finality ledger. Legacy
+first-new/ordinary history without an original retained proof is unsupported.
+Every selected row must match its P and exact parent and retain its original
+proof/record digests. SQL type/length screens precede blob allocation; exported
+headers, proofs and evidence together must fit 64 MiB, with each proof bounded
+by the existing 8 MiB CEV0 root ceiling. The final namespace/metadata observation
+must still agree with the audited read.
+
+M15 consumes these bytes as untrusted input and M13 strictly verifies every
+step from a separately configured `NativeTrustAnchorV1`. Neither the exported
+anchor header nor local P/record hashes select trust. The consumer checks full
+anchor and terminal headers and derives proof expectations from canonical
+headers, with the existing aggregate byte/link/work ceilings. Wrong anchors,
+missing/swapped proofs, wrong parents, truncated/duplicate lineage, mismatched
+sets/parameters and target substitution must reject. Acceptance requires real
+C18→C21→C22 producer-to-consumer evidence, byte-identical export after reopen,
+and fail-closed corrupted/downgraded database cases.
+
+This contract initially exports finality only. The private sparse Borsh
+snapshot needs a separately specified bounded public state codec, complete
+authenticated historical gap coordinates, application-root recomputation,
+manifest/chunk binding and atomic installation/recovery. A verified finality
+path does not complete a state-sync session or activate a signer. These
+requirements remain open until their own positive and negative evidence exists.
+
 ### Candidate schema-9 first-new application-finality ledger
 
 The complete fields, bounds, digest domains, migration refusal and atomicity
@@ -1048,6 +1114,15 @@ ordinary commits never replace the consumed target or its retained first-new
 proof. Repeated later handoffs and multi-host acceptance remain open.
 
 ### Implemented schema7 strict commit and pending descendants
+
+The next incremental revision is specified in M07's
+[required schema11 multiple-edge owner](M07_STATE_STORAGE_TECHNICAL_SPEC_V1.md#required-schema11-incremental-multiple-edge-owner).
+M08 must consume its explicitly migrated per-edge proof inventory and exact
+authenticated prefix, preserve every committed first-new/checkpoint/ordinary P
+during fork retirement, and retain byte-exact original evidence through C18 and
+C21 crash recovery. The current schema7 singleton APIs cannot serve as this
+multiple-edge authority. Schema11 implementation and its two new SIGKILL
+matrices remain open.
 
 The default-off native candidate now exposes two distinct finality consumers:
 `commit_incremental_epoch_finality_bytes_v1(&first_p, bytes, budget)` validates

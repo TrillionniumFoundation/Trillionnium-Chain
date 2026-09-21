@@ -16,6 +16,11 @@ pub(super) const APPLICATION_FINALITY_SCHEMA_VERSION: u64 = 9;
 pub(super) const LATER_SCHEMA_VERSION: u64 = 10;
 #[path = "later_epoch_descendant_finality_v1.rs"]
 mod descendant_finality;
+#[path = "epoch_lineage_v1.rs"]
+mod lineage_resolver;
+#[path = "epoch_sync_export_v1.rs"]
+mod sync_export;
+pub use sync_export::{NativeEpochFinalityPathV1, NativeEpochFinalityStepV1};
 const MAX_P_ROWS: usize = 128;
 const MAX_PREPARED_BYTES: usize = 2 * 1024 * 1024 * 1024;
 const MAX_SNAPSHOT_BYTES: usize = 256 * 1024 * 1024;
@@ -1057,7 +1062,7 @@ impl crate::epoch_edge::EpochExecutionContextV1 for LaterEpochExecutionContextV1
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct LaterSuccessorFactsV1 {
     successor_binding: [u8; 32],
     predecessor_edge: [u8; 32],
@@ -1302,11 +1307,34 @@ fn decode_lineage(bytes: &[u8]) -> Result<Vec<[u8; 32]>> {
     Ok(values)
 }
 
-// Metadata validation already authenticates these rows. Follow their exact
-// committed parent links without re-entering inventory/authority recovery.
-// A consumed handoff remains usable by ordinary descendants in its epoch.
+// The caller has authenticated inventory in this same connection. These
+// selected ancestry joins never re-enter inventory or public owner recovery.
+fn validate_prefix_current_ancestry_v1(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    head: &ApplicationHeadV0,
+    prefix: &lineage_resolver::Prefix,
+) -> Result<()> {
+    if let Some(entry) = prefix
+        .entries
+        .iter()
+        .rev()
+        .find(|entry| entry.later_facts.is_some() && entry.phase == 1)
+    {
+        let consumed = load_p(
+            connection,
+            &entry.consumed.context("later consumed block missing")?,
+        )?
+        .context("later consumed application P missing")?;
+        validate_consumed_later_ancestry_v1(connection, config, head, &consumed)?;
+    }
+    Ok(())
+}
+
+#[inline(never)]
 fn validate_consumed_later_ancestry_v1(
     connection: &Connection,
+    config: &NativeApplicationConfigV0,
     head: &ApplicationHeadV0,
     consumed: &StoredEpochPV1,
 ) -> Result<()> {
@@ -1315,21 +1343,32 @@ fn validate_consumed_later_ancestry_v1(
         "later consumed application P phase/kind"
     );
     let consumed_head = consumed.target_head()?;
+    if head == &consumed_head {
+        return Ok(());
+    }
+    let current = load_p(connection, head.block_id().as_bytes())?
+        .context("later consumed descendant P missing")?;
+    let history =
+        lineage_resolver::resolve(connection, config, &decode_lineage(&current.lineage)?)?;
+    let original = decode_lineage(&consumed.lineage)?;
+    let mut visited = BTreeSet::new();
     let mut cursor = head.clone();
     for _ in 0..MAX_P_ROWS {
         if cursor == consumed_head {
             return Ok(());
         }
+        ensure!(
+            visited.insert(*cursor.block_id().as_bytes()),
+            "later consumed ancestry cycle"
+        );
         let row = load_p(connection, cursor.block_id().as_bytes())?
             .context("later consumed descendant P missing")?;
+        let lineage = decode_lineage(&row.lineage)?;
         ensure!(
             row.status == 1
-                && row.artifact_kind == 0
                 && row.parent_kind == 1
                 && row.target_head()? == cursor
-                && row.lineage == consumed.lineage
-                && row.target_set == consumed.target_set
-                && row.target_parameters == consumed.target_parameters
+                && lineage.starts_with(&original)
                 && row.target_height > consumed.target_height,
             "later consumed descendant context mismatch"
         );
@@ -1339,11 +1378,104 @@ fn validate_consumed_later_ancestry_v1(
             parent.status == 1
                 && parent.target_head()? == row.parent
                 && row.parent_p_digest == Some(parent.p_digest)
-                && parent.target_height.checked_add(1) == Some(row.target_height)
-                && row.consensus_parent_height == parent.target_height
-                && row.consensus_parent_block == parent.block_id,
+                && parent
+                    .commit_sequence
+                    .zip(row.commit_sequence)
+                    .is_some_and(|(a, b)| a < b),
             "later consumed descendant parent mismatch"
         );
+        if row.artifact_kind == 0 {
+            ensure!(
+                row.lineage == parent.lineage
+                    && row.target_set == parent.target_set
+                    && row.target_parameters == parent.target_parameters
+                    && parent.target_height.checked_add(1) == Some(row.target_height)
+                    && row.consensus_parent_height == parent.target_height
+                    && row.consensus_parent_block == parent.block_id,
+                "later consumed ordinary parent mismatch"
+            );
+        } else {
+            ensure!(
+                row.artifact_kind == 1,
+                "later consumed descendant artifact kind"
+            );
+            let binding = lineage
+                .last()
+                .context("later consumed handoff lineage missing")?;
+            let edge = history
+                .entries
+                .iter()
+                .find(|entry| entry.binding == *binding)
+                .context("later consumed handoff edge missing")?;
+            let coordinates = edge.audit.coordinates(*binding)?;
+            let activation = &edge.audit.activation;
+            let terminal = activation.old_checkpoint_finality().grandchild().header();
+            let mut expected_lineage = decode_lineage(&parent.lineage)?;
+            expected_lineage.push(*binding);
+            ensure!(
+                edge.later_facts.is_some()
+                    && edge.phase == 1
+                    && edge.consumed == Some(row.block_id)
+                    && edge.consumed_sequence == row.commit_sequence
+                    && edge.checkpoint == row.parent
+                    && edge.checkpoint_p_digest == parent.p_digest
+                    && parent.commit_sequence == Some(edge.checkpoint_sequence)
+                    && lineage == expected_lineage
+                    && parent.target_height.checked_add(3) == Some(row.target_height)
+                    && parent.target_height == coordinates.checkpoint_version
+                    && row.target_height == coordinates.first_version
+                    && row.consensus_parent_height == coordinates.terminal_version
+                    && row.consensus_parent_block == *terminal.id().as_bytes()
+                    && parent.target_set
+                        == activation
+                            .old_validator_set()
+                            .try_cev0_bytes()
+                            .map_err(|e| anyhow::anyhow!("ancestry old set: {e:?}"))?
+                    && parent.target_parameters
+                        == activation.old_consensus_parameters().canonical_bytes()
+                    && row.target_set
+                        == activation
+                            .new_validator_set()
+                            .try_cev0_bytes()
+                            .map_err(|e| anyhow::anyhow!("ancestry new set: {e:?}"))?
+                    && row.target_parameters
+                        == activation.new_consensus_parameters().canonical_bytes(),
+                "later consumed handoff binding mismatch"
+            );
+            ensure!(
+                has_later_application_finality_schema(schema_version(connection)?),
+                "later consumed handoff proof ledger missing"
+            );
+            let proof = connection.query_row(
+                "SELECT p_digest,commit_sequence,edge_binding,proof_digest,record_digest
+                 FROM native_later_epoch_application_finality_v1 WHERE block_id=?1",
+                [row.block_id.as_slice()],
+                |r| {
+                    Ok((
+                        col32(r, "p_digest")?,
+                        col64(r, "commit_sequence")?,
+                        col32(r, "edge_binding")?,
+                        col32(r, "proof_digest")?,
+                        col32(r, "record_digest")?,
+                    ))
+                },
+            )?;
+            ensure!(
+                proof.0 == row.p_digest
+                    && Some(proof.1) == row.commit_sequence
+                    && proof.2 == *binding
+                    && proof.4
+                        == later_application_finality_record_digest(
+                            config,
+                            &row.block_id,
+                            &row.p_digest,
+                            proof.1,
+                            binding,
+                            &proof.3
+                        ),
+                "later consumed handoff proof binding mismatch"
+            );
+        }
         cursor = row.parent;
     }
     anyhow::bail!("later consumed descendant ancestry budget")
@@ -1988,146 +2120,8 @@ fn validate_later_preimages(
     p: &StoredEpochPV1,
     evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
 ) -> Result<()> {
-    let parts = [
-        (&evidence.checkpoint_parent_header, MAX_HEADER_BYTES),
-        (&evidence.checkpoint_header, MAX_HEADER_BYTES),
-        (&evidence.checkpoint_finality, MAX_EPOCH_EVIDENCE_BYTES_V1),
-        (&evidence.anchor_kernel, MAX_EPOCH_EVIDENCE_BYTES_V1),
-        (&evidence.next_epoch_commitment, MAX_HEADER_BYTES),
-        (&evidence.new_validator_set, MAX_SET_BYTES),
-        (&evidence.new_parameters, MAX_PARAMETERS_BYTES),
-    ];
-    ensure!(
-        parts
-            .iter()
-            .all(|(bytes, cap)| !bytes.is_empty() && bytes.len() <= *cap)
-            && parts.iter().map(|(bytes, _)| bytes.len()).sum::<usize>()
-                <= MAX_EPOCH_EVIDENCE_BYTES_V1,
-        "later finality aggregate byte budget"
-    );
-    let lineage = decode_lineage(&p.lineage)?;
-    ensure!(
-        lineage.last() == Some(&evidence.predecessor_edge),
-        "later predecessor lineage"
-    );
-    let predecessor = load_edges(connection, config)?
-        .into_iter()
-        .find(|edge| edge.binding == evidence.predecessor_edge)
-        .context("later predecessor edge missing")?;
-    ensure!(
-        predecessor.phase == 1
-            && predecessor.consumed.is_some()
-            && predecessor.consumed_sequence.is_some(),
-        "later predecessor edge is not consumed"
-    );
-    let audited = audited_lineage(connection, config, &lineage)?;
-    let active = &audited
-        .last()
-        .context("later predecessor edge missing")?
-        .1
-        .activation;
-    let old_set = active.new_validator_set();
-    let old_parameters = active.new_consensus_parameters();
-    let header = decode_header(&p.header)?;
-    let parent = load_p(connection, p.parent.block_id().as_bytes())?
-        .context("later checkpoint parent P missing")?;
-    ensure!(
-        p.artifact_kind == 0
-            && p.parent_kind == 1
-            && parent.status == 1
-            && parent.target_head()? == p.parent
-            && parent.lineage == p.lineage
-            && p.parent_p_digest == Some(parent.p_digest)
-            && p.target_set == parent.target_set
-            && p.target_parameters == parent.target_parameters
-            && p.header == evidence.checkpoint_header
-            && parent.header == evidence.checkpoint_parent_header,
-        "later finality native parent/configuration binding"
-    );
-    ensure!(
-        evidence.context_digest
-            == context_digest(
-                config.store_id,
-                &p.parent,
-                parent
-                    .commit_sequence
-                    .context("later parent sequence missing")?,
-                &parent.target_set,
-                &parent.target_parameters,
-                &parent.lineage,
-            ),
-        "later finality original context binding"
-    );
-    let geometry = trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), old_parameters)
-        .map_err(|e| anyhow::anyhow!("later recovery geometry: {e:?}"))?;
-    ensure!(
-        header.block_kind() == BlockKind::EpochCheckpoint
-            && header.height() == geometry.checkpoint_height()
-            && header.epoch() == old_set.epoch()
-            && old_set.epoch() > config.validator_set.epoch(),
-        "later recovery checkpoint geometry"
-    );
-    let old_set_bytes = old_set
-        .try_cev0_bytes()
-        .map_err(|e| anyhow::anyhow!("later recovery old set: {e:?}"))?;
-    let old_parameters_bytes = old_parameters.canonical_bytes();
-    let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
-        trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
-            old_checkpoint_finality: &evidence.checkpoint_finality,
-            next_epoch_commitment: &evidence.next_epoch_commitment,
-            authorization_kernel: &evidence.anchor_kernel,
-            old_validator_set: &old_set_bytes,
-            old_consensus_parameters: &old_parameters_bytes,
-            new_validator_set: &evidence.new_validator_set,
-            new_consensus_parameters: &evidence.new_parameters,
-            authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
-        },
-        old_set,
-        old_parameters,
-        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )
-    .map_err(|e| anyhow::anyhow!("later recovery bounded decode: {e:?}"))?;
-    let verified = trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
-        decoded.old_checkpoint_finality(),
-        decoded.next_epoch_commitment(),
-        decoded.authorization_kernel(),
-        old_set,
-        old_parameters,
-        decoded.new_validator_set(),
-        decoded.new_consensus_parameters(),
-        decoded.authenticated_checkpoint_parent_header(),
-    )
-    .map_err(|e| anyhow::anyhow!("later recovery strict finality: {e:?}"))?;
-    ensure!(
-        verified
-            .old_checkpoint_finality()
-            .finalized_block()
-            .header()
-            == &header,
-        "later recovery proof checkpoint substitution"
-    );
-    let cutoff_height = geometry
-        .checkpoint_height()
-        .get()
-        .checked_sub(old_parameters.snapshot_lead_blocks())
-        .context("later cutoff underflow")?;
-    let cutoff = load_committed_p_by_height(connection, cutoff_height)?
-        .context("later finality cutoff P missing")?;
-    let commitment = decoded.next_epoch_commitment().fields();
-    ensure!(
-        cutoff.status == 1
-            && cutoff.lineage == p.lineage
-            && cutoff
-                .commit_sequence
-                .context("later cutoff sequence missing")?
-                <= parent
-                    .commit_sequence
-                    .context("later parent sequence missing")?
-            && commitment.snapshot_cutoff_height.get() == cutoff_height
-            && commitment.snapshot_state_root.as_bytes()
-                == cutoff.target_head()?.state_root().as_bytes(),
-        "later finality cutoff binding"
-    );
+    let prefix = lineage_resolver::resolve(connection, config, &decode_lineage(&p.lineage)?)?;
+    lineage_resolver::verify_checkpoint(connection, config, p, evidence, &prefix)?;
     Ok(())
 }
 
@@ -2143,51 +2137,22 @@ fn derive_later_successor_facts(
     sequence: u64,
     evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
 ) -> Result<LaterSuccessorFactsV1> {
-    validate_later_preimages(connection, config, p, evidence)?;
-    let lineage = decode_lineage(&p.lineage)?;
-    let predecessor_edge = *lineage
-        .last()
-        .context("later successor predecessor missing")?;
-    let audited = audited_lineage(connection, config, &lineage)?;
-    let active = &audited
-        .last()
-        .context("later successor active epoch missing")?
-        .1
-        .activation;
-    let old_set = active.new_validator_set();
-    let old_parameters = active.new_consensus_parameters();
-    let old_set_bytes = old_set
-        .try_cev0_bytes()
-        .map_err(|e| anyhow::anyhow!("encode successor old validator set: {e:?}"))?;
-    let old_parameters_bytes = old_parameters.canonical_bytes();
-    let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
-        trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
-            old_checkpoint_finality: &evidence.checkpoint_finality,
-            next_epoch_commitment: &evidence.next_epoch_commitment,
-            authorization_kernel: &evidence.anchor_kernel,
-            old_validator_set: &old_set_bytes,
-            old_consensus_parameters: &old_parameters_bytes,
-            new_validator_set: &evidence.new_validator_set,
-            new_consensus_parameters: &evidence.new_parameters,
-            authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
-        },
-        old_set,
-        old_parameters,
-        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )
-    .map_err(|e| anyhow::anyhow!("decode successor authority evidence: {e:?}"))?;
-    let authority =
-        trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
-            decoded.old_checkpoint_finality(),
-            decoded.next_epoch_commitment(),
-            decoded.authorization_kernel(),
-            old_set,
-            old_parameters,
-            decoded.new_validator_set(),
-            decoded.new_consensus_parameters(),
-            decoded.authenticated_checkpoint_parent_header(),
-        )
-        .map_err(|e| anyhow::anyhow!("verify successor authority evidence: {e:?}"))?;
+    let prefix = lineage_resolver::resolve(connection, config, &decode_lineage(&p.lineage)?)?;
+    let audit = lineage_resolver::verify_checkpoint(connection, config, p, evidence, &prefix)?;
+    derive_later_successor_facts_from_audit(config, p, sequence, evidence, &audit)
+}
+
+fn derive_later_successor_facts_from_audit(
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    sequence: u64,
+    evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
+    audit: &crate::epoch_recovery::AuditedEpochEvidenceV1,
+) -> Result<LaterSuccessorFactsV1> {
+    let predecessor_edge = evidence.predecessor_edge;
+    let authority = &audit.activation;
+    let old_set = authority.old_validator_set();
+    let old_parameters = authority.old_consensus_parameters();
     let header = decode_header(&p.header)?;
     ensure!(
         authority
@@ -2379,18 +2344,7 @@ impl DurableNativeApplicationV0 {
     pub fn inspect_later_epoch_checkpoint_context_v1(
         &self,
     ) -> Result<LaterEpochCheckpointContextV1> {
-        let history = self.read_epoch_edge_history_v1()?;
-        let predecessor = history
-            .entries()
-            .last()
-            .context("later checkpoint requires a retained epoch edge")?;
-        ensure!(
-            predecessor.phase == EpochEdgePhaseV1::Consumed,
-            "later checkpoint requires a consumed predecessor edge"
-        );
-        let lineage = predecessor.lineage.clone();
-        let predecessor_edge = predecessor.binding;
-
+        let _guard = self.lock_operation()?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
         ensure!(
@@ -2428,10 +2382,26 @@ impl DurableNativeApplicationV0 {
                 && row.5 == metadata.durable_sequence,
             "later checkpoint context head differs from metadata"
         );
-        let expected_lineage = encode_lineage(&lineage)?;
+        let lineage = decode_lineage(&row.8)?;
+        let prefix = lineage_resolver::resolve(&connection, &self.config, &lineage)?;
+        let predecessor = prefix
+            .entries
+            .last()
+            .context("later checkpoint requires a retained epoch edge")?;
         ensure!(
-            row.8 == expected_lineage,
-            "later checkpoint context lineage differs from edge history"
+            predecessor.phase == 1,
+            "later checkpoint requires a consumed predecessor edge"
+        );
+        let predecessor_edge = predecessor.binding;
+        let old_validator_set = predecessor.audit.activation.new_validator_set().clone();
+        let old_parameters = *predecessor.audit.activation.new_consensus_parameters();
+        ensure!(
+            row.6
+                == old_validator_set
+                    .try_cev0_bytes()
+                    .map_err(|e| anyhow::anyhow!("later context set encoding: {e:?}"))?
+                && row.7 == old_parameters.canonical_bytes(),
+            "later checkpoint context differs from authenticated prefix"
         );
         ensure!(
             row.9
@@ -2445,10 +2415,6 @@ impl DurableNativeApplicationV0 {
                 ),
             "later checkpoint context digest mismatch"
         );
-        let old_validator_set = trnm_consensus_types::decode_validator_set_v0_exact(&row.6)
-            .map_err(|e| anyhow::anyhow!("later checkpoint active validator set: {e:?}"))?;
-        let old_parameters = trnm_consensus_types::decode_consensus_parameters_v0_exact(&row.7)
-            .map_err(|e| anyhow::anyhow!("later checkpoint active parameters: {e:?}"))?;
         ensure!(
             old_validator_set.chain_id() == self.config.validator_set.chain_id()
                 && old_validator_set.genesis_hash() == self.config.validator_set.genesis_hash()
@@ -2481,12 +2447,6 @@ impl DurableNativeApplicationV0 {
         ensure!(
             after == metadata,
             "later checkpoint context concurrent mutation"
-        );
-        let after_history = self.read_epoch_edge_history_v1()?;
-        ensure!(
-            after_history.application_head == history.application_head
-                && after_history.entries == history.entries,
-            "later checkpoint context lineage changed"
         );
         Ok(LaterEpochCheckpointContextV1 {
             owner: Arc::clone(&self.owner_affinity),
@@ -2532,14 +2492,9 @@ impl DurableNativeApplicationV0 {
         )
     }
 
-    /// Inspect the successor edge that a later checkpoint commit would need.
-    ///
-    /// Schema 8 durably records the checkpoint finality and its predecessor,
-    /// but it does not yet record the *new* application edge.  This method
-    /// therefore returns only independently checked requirements.  In
-    /// particular, the strict activation binding is recomputed from the
-    /// retained CEV0 preimages; it is never copied from a caller or from the
-    /// predecessor edge.
+    /// Inspect one retained later successor using the complete authenticated
+    /// prefix. Stored coordinates are compared to strict activation-derived
+    /// facts before they can enter an owner-affine recovery capability.
     pub fn inspect_later_epoch_application_edge_requirements_v1(
         &self,
         checkpoint_block: [u8; 32],
@@ -2557,177 +2512,61 @@ impl DurableNativeApplicationV0 {
         let p = load_p(&connection, &checkpoint_block)?
             .context("later application edge checkpoint P missing")?;
         ensure!(
-            p.status == 1 && p.commit_sequence.is_some(),
-            "later application edge checkpoint is not committed"
+            p.status == 1 && decode_header(&p.header)?.block_kind() == BlockKind::EpochCheckpoint,
+            "later application edge requires a committed checkpoint P"
         );
         validate_p(&connection, &self.config, &p)?;
-        let header = decode_header(&p.header)?;
-        ensure!(
-            header.block_kind() == BlockKind::EpochCheckpoint,
-            "later application edge requires a checkpoint P"
-        );
-        let parent = load_p(&connection, p.parent.block_id().as_bytes())?
-            .context("later application edge checkpoint parent P missing")?;
-        ensure!(
-            parent.status == 1
-                && parent.target_head()? == p.parent
-                && p.parent_p_digest == Some(parent.p_digest)
-                && parent.lineage == p.lineage,
-            "later application edge checkpoint parent binding"
-        );
-        let predecessor_edge = decode_lineage(&p.lineage)?
-            .last()
-            .copied()
-            .context("later application edge predecessor missing")?;
-        let (stored_p_digest, stored_sequence, stored_context, stored_predecessor) = connection
-            .query_row(
-                "SELECT p_digest,commit_sequence,context_digest,predecessor_edge
-                 FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
-                [checkpoint_block.as_slice()],
-                |row| {
-                    Ok((
-                        col32(row, "p_digest")?,
-                        col64(row, "commit_sequence")?,
-                        col32(row, "context_digest")?,
-                        col32(row, "predecessor_edge")?,
-                    ))
-                },
-            )?;
-        ensure!(
-            stored_p_digest == p.p_digest
-                && Some(stored_sequence) == p.commit_sequence
-                && stored_predecessor == predecessor_edge,
-            "later application edge finality row is not bound to checkpoint P"
-        );
-        let (edge_phase, edge_consumed): (i64, Option<Vec<u8>>) = connection.query_row(
-            "SELECT phase,consumed_block FROM native_later_epoch_edge_v1 WHERE checkpoint_block=?1",
+        let binding = connection.query_row(
+            "SELECT successor_binding FROM native_later_epoch_edge_v1 WHERE checkpoint_block=?1",
             [checkpoint_block.as_slice()],
-            |row| Ok((row.get(0)?, row.get(1)?)),
+            |row| col32(row, "successor_binding"),
         )?;
-        if edge_phase == 0 {
+        let mut ids = decode_lineage(&p.lineage)?;
+        ids.push(binding);
+        let prefix = lineage_resolver::resolve(&connection, &self.config, &ids)?;
+        let selected = prefix
+            .entries
+            .last()
+            .context("later application edge prefix missing")?;
+        let facts = selected
+            .later_facts
+            .context("later application edge selected legacy row")?;
+        if selected.phase == 0 {
             ensure!(
-                metadata.head == p.target_head()?,
+                metadata.head == selected.checkpoint,
                 "later application edge requires the committed checkpoint head"
             );
         } else {
-            let consumed_block: [u8; 32] = edge_consumed
-                .context("later application edge consumed block missing")?
-                .try_into()
-                .map_err(|_| anyhow::anyhow!("later application edge consumed block width"))?;
-            let consumed = load_p(&connection, &consumed_block)?
-                .context("later application edge consumed P missing")?;
-            ensure!(edge_phase == 1, "later application edge consumed phase");
-            validate_consumed_later_ancestry_v1(&connection, &metadata.head, &consumed)?;
+            let consumed = load_p(
+                &connection,
+                &selected
+                    .consumed
+                    .context("later application edge consumed block missing")?,
+            )?
+            .context("later application edge consumed P missing")?;
+            validate_consumed_later_ancestry_v1(
+                &connection,
+                &self.config,
+                &metadata.head,
+                &consumed,
+            )?;
         }
-        let target_head = p.target_head()?;
-        let successor_context_digest = context_digest(
-            self.config.store_id,
-            &target_head,
-            stored_sequence,
-            &p.target_set,
-            &p.target_parameters,
-            &p.lineage,
-        );
-
-        let old_set = trnm_consensus_types::decode_validator_set_v0_exact(&parent.target_set)
-            .map_err(|e| anyhow::anyhow!("later application edge old validator set: {e:?}"))?;
-        let old_parameters =
-            trnm_consensus_types::decode_consensus_parameters_v0_exact(&parent.target_parameters)
-                .map_err(|e| anyhow::anyhow!("later application edge old parameters: {e:?}"))?;
-        let geometry = trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), &old_parameters)
-            .map_err(|e| anyhow::anyhow!("later application edge geometry: {e:?}"))?;
         ensure!(
-            header.height() == geometry.checkpoint_height()
-                && header.epoch() == old_set.epoch()
-                && old_set.epoch() > self.config.validator_set.epoch(),
-            "later application edge checkpoint geometry"
-        );
-
-        // `validate_later_records` has already checked all retained rows and
-        // all CEV0 signatures during open. Re-read the exact evidence here to
-        // derive the successor binding from the strict authority once more.
-        let evidence = connection.query_row(
-            "SELECT checkpoint_parent_header,checkpoint_finality,anchor_kernel,
-                    next_epoch_commitment,new_validator_set,new_parameters
-             FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
-            [checkpoint_block.as_slice()],
-            |row| {
-                Ok((
-                    row.get::<_, Vec<u8>>(0)?,
-                    row.get::<_, Vec<u8>>(1)?,
-                    row.get::<_, Vec<u8>>(2)?,
-                    row.get::<_, Vec<u8>>(3)?,
-                    row.get::<_, Vec<u8>>(4)?,
-                    row.get::<_, Vec<u8>>(5)?,
-                ))
-            },
-        )?;
-        let old_set_bytes = old_set
-            .try_cev0_bytes()
-            .map_err(|e| anyhow::anyhow!("encode later application edge old set: {e:?}"))?;
-        let old_parameters_bytes = old_parameters.canonical_bytes();
-        let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
-            trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
-                old_checkpoint_finality: &evidence.1,
-                next_epoch_commitment: &evidence.3,
-                authorization_kernel: &evidence.2,
-                old_validator_set: &old_set_bytes,
-                old_consensus_parameters: &old_parameters_bytes,
-                new_validator_set: &evidence.4,
-                new_consensus_parameters: &evidence.5,
-                authenticated_checkpoint_parent_header: &evidence.0,
-            },
-            &old_set,
-            &old_parameters,
-            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-        )
-        .map_err(|e| anyhow::anyhow!("decode later application edge evidence: {e:?}"))?;
-        let authority =
-            trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
-                decoded.old_checkpoint_finality(),
-                decoded.next_epoch_commitment(),
-                decoded.authorization_kernel(),
-                &old_set,
-                &old_parameters,
-                decoded.new_validator_set(),
-                decoded.new_consensus_parameters(),
-                decoded.authenticated_checkpoint_parent_header(),
-            )
-            .map_err(|e| anyhow::anyhow!("later application edge strict authority: {e:?}"))?;
-        ensure!(
-            authority
-                .old_checkpoint_finality()
-                .finalized_block()
-                .header()
-                == &header,
-            "later application edge authority checkpoint substitution"
-        );
-        let terminal = authority.old_checkpoint_finality().grandchild().header();
-        ensure!(
-            terminal.height().get() == geometry.epoch_end().get(),
-            "later application edge terminal geometry"
-        );
-        let after = fresh_validate_v0(&self.path, &self.config)?;
-        ensure!(
-            after == metadata,
+            fresh_validate_v0(&self.path, &self.config)? == metadata,
             "later application edge concurrent mutation"
         );
         Ok(LaterEpochApplicationEdgeRequirementsV1 {
             owner: Arc::clone(&self.owner_affinity),
-            predecessor_edge,
-            successor_binding: *authority.binding_ref().as_bytes(),
-            checkpoint_block,
-            checkpoint_height: geometry.checkpoint_height().get(),
-            terminal_height: geometry.epoch_end().get(),
-            terminal_block: *terminal.id().as_bytes(),
-            first_application_height: geometry
-                .epoch_end()
-                .get()
-                .checked_add(1)
-                .context("later application edge first height exhausted")?,
-            checkpoint_commit_sequence: stored_sequence,
-            proof_context_digest: stored_context,
-            successor_context_digest,
+            predecessor_edge: facts.predecessor_edge,
+            successor_binding: facts.successor_binding,
+            checkpoint_block: facts.checkpoint_block,
+            checkpoint_height: facts.checkpoint_height,
+            terminal_height: facts.terminal_height,
+            terminal_block: facts.terminal_block,
+            first_application_height: facts.first_height,
+            checkpoint_commit_sequence: facts.checkpoint_commit_sequence,
+            proof_context_digest: facts.proof_context_digest,
+            successor_context_digest: facts.successor_context_digest,
         })
     }
 
@@ -2869,121 +2708,46 @@ impl DurableNativeApplicationV0 {
             let consumed = load_p(&connection, &consumed_block)?
                 .context("later execution consumed P missing")?;
             ensure!(phase == 1, "later execution successor is not consumed");
-            validate_consumed_later_ancestry_v1(&connection, &metadata.head, &consumed)?;
+            validate_consumed_later_ancestry_v1(
+                &connection,
+                &self.config,
+                &metadata.head,
+                &consumed,
+            )?;
         }
-        let evidence = connection.query_row(
-            "SELECT context_digest,predecessor_edge,checkpoint_parent_header,
-                    checkpoint_header,checkpoint_finality,anchor_kernel,
-                    next_epoch_commitment,new_validator_set,new_parameters
-             FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
-            [edge.checkpoint_block.as_slice()],
-            |row| {
-                Ok(
-                    crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1 {
-                        context_digest: col32(row, "context_digest")?,
-                        predecessor_edge: col32(row, "predecessor_edge")?,
-                        checkpoint_parent_header: row.get(2)?,
-                        checkpoint_header: row.get(3)?,
-                        checkpoint_finality: row.get(4)?,
-                        anchor_kernel: row.get(5)?,
-                        next_epoch_commitment: row.get(6)?,
-                        new_validator_set: row.get(7)?,
-                        new_parameters: row.get(8)?,
-                    },
-                )
-            },
-        )?;
-        validate_later_preimages(&connection, &self.config, &p, &evidence)?;
-        let lineage = decode_lineage(&p.lineage)?;
+        let mut ids = decode_lineage(&p.lineage)?;
         ensure!(
-            lineage.last() == Some(&edge.predecessor_edge),
+            ids.last() == Some(&edge.predecessor_edge),
             "later execution predecessor lineage"
         );
-        let audited = audited_lineage(&connection, &self.config, &lineage)?;
-        let active = &audited
+        ids.push(edge.successor_binding);
+        let prefix = lineage_resolver::resolve(&connection, &self.config, &ids)?;
+        let selected = prefix
+            .entries
             .last()
-            .context("later execution active predecessor missing")?
-            .1
-            .activation;
-        let old_validator_set = active.new_validator_set().clone();
-        let old_parameters = active.new_consensus_parameters();
-        let old_set_bytes = old_validator_set
-            .try_cev0_bytes()
-            .map_err(|e| anyhow::anyhow!("encode later execution old set: {e:?}"))?;
-        let old_parameters_bytes = old_parameters.canonical_bytes();
-        let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
-            trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
-                old_checkpoint_finality: &evidence.checkpoint_finality,
-                next_epoch_commitment: &evidence.next_epoch_commitment,
-                authorization_kernel: &evidence.anchor_kernel,
-                old_validator_set: &old_set_bytes,
-                old_consensus_parameters: &old_parameters_bytes,
-                new_validator_set: &evidence.new_validator_set,
-                new_consensus_parameters: &evidence.new_parameters,
-                authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
-            },
-            &old_validator_set,
-            old_parameters,
-            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-        )
-        .map_err(|e| anyhow::anyhow!("decode later execution authority: {e:?}"))?;
-        let verified =
-            trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
-                decoded.old_checkpoint_finality(),
-                decoded.next_epoch_commitment(),
-                decoded.authorization_kernel(),
-                &old_validator_set,
-                old_parameters,
-                decoded.new_validator_set(),
-                decoded.new_consensus_parameters(),
-                decoded.authenticated_checkpoint_parent_header(),
-            )
-            .map_err(|e| anyhow::anyhow!("verify later execution authority: {e:?}"))?;
-        let checkpoint_header = decode_header(&p.header)?;
+            .context("later execution prefix missing")?;
+        let facts = selected
+            .later_facts
+            .context("later execution selected edge is legacy")?;
         ensure!(
-            verified
-                .old_checkpoint_finality()
-                .finalized_block()
-                .header()
-                == &checkpoint_header,
-            "later execution checkpoint substitution"
+            facts.successor_binding == edge.successor_binding
+                && facts.predecessor_edge == edge.predecessor_edge
+                && facts.checkpoint_block == edge.checkpoint_block
+                && facts.checkpoint_p_digest == edge.checkpoint_p_digest
+                && facts.checkpoint_commit_sequence == edge.checkpoint_commit_sequence
+                && facts.checkpoint_height == edge.checkpoint_height
+                && facts.checkpoint_root == edge.checkpoint_root
+                && facts.checkpoint_commit_id == edge.checkpoint_commit_id
+                && facts.terminal_height == edge.terminal_height
+                && facts.terminal_block == edge.terminal_block
+                && facts.first_height == edge.first_height
+                && facts.proof_context_digest == edge.proof_context_digest
+                && facts.successor_context_digest == edge.successor_context_digest
+                && facts.authority_digest == edge.authority_digest
+                && facts.record_digest == edge.record_digest,
+            "later execution edge substituted"
         );
-        let terminal = verified
-            .old_checkpoint_finality()
-            .grandchild()
-            .header()
-            .clone();
-        ensure!(
-            terminal.height().get() == edge.terminal_height
-                && terminal.id().as_bytes() == &edge.terminal_block,
-            "later execution terminal substitution"
-        );
-        let new_validator_set = decoded.new_validator_set().clone();
-        let new_parameters = *decoded.new_consensus_parameters();
-        let application_parent = p.target_head()?;
-        ensure!(
-            application_parent.height().get() == edge.checkpoint_height
-                && application_parent.block_id().as_bytes() == &edge.checkpoint_block
-                && application_parent.state_root().as_bytes() == &edge.checkpoint_root
-                && application_parent.commit_id().as_bytes() == &edge.checkpoint_commit_id,
-            "later execution application parent substitution"
-        );
-        let coordinates = edge.coordinates_v1();
-        coordinates.validate()?;
-        ensure!(
-            coordinates.first_version == edge.first_height,
-            "later execution first height mismatch"
-        );
-        Ok(LaterEpochExecutionContextV1 {
-            application_parent,
-            consensus_parent: terminal,
-            old_validator_set,
-            old_parameters: *old_parameters,
-            new_validator_set,
-            new_parameters,
-            coordinates,
-            authorization_id: edge.successor_binding,
-        })
+        selected.context()
     }
 
     /// Derive commitments for the first application block after a later
@@ -3062,6 +2826,13 @@ impl DurableNativeApplicationV0 {
             "later first-new checkpoint is not current"
         );
         let target = validate_p(&connection, &self.config, &checkpoint)?;
+        let prior_prefix = lineage_resolver::resolve(
+            &connection,
+            &self.config,
+            &decode_lineage(&checkpoint.lineage)?,
+        )?;
+        self.require_prefix_preparations_v1(&prior_prefix)?;
+        let prior_contexts = prior_prefix.contexts()?;
         drop(connection);
         let computed = crate::complete::compute_complete_epoch_native_block_with_context_v1(
             &target,
@@ -3093,14 +2864,8 @@ impl DurableNativeApplicationV0 {
             lineage.last() == Some(&edge.predecessor_edge),
             "later first-new predecessor lineage"
         );
-        let prior_edges = lineage
-            .iter()
-            .map(|binding| self.recover_epoch_application_edge_v1(*binding))
-            .collect::<Result<Vec<_>>>()?;
-        let mut contexts: Vec<&dyn EpochExecutionContextV1> = prior_edges
-            .iter()
-            .map(|prior| prior as &dyn EpochExecutionContextV1)
-            .collect();
+        let mut contexts: Vec<&dyn EpochExecutionContextV1> =
+            prior_contexts.iter().map(|prior| prior.as_ref()).collect();
         contexts.push(&context);
         let snapshot = target.encode_epoch_authenticated_snapshot_for_context_v1(&contexts)?;
         let (commands, nonces) = target.replay_sets_v0();
@@ -3341,133 +3106,7 @@ fn audited_lineage(
     config: &NativeApplicationConfigV0,
     ids: &[[u8; 32]],
 ) -> Result<Vec<([u8; 32], crate::epoch_recovery::AuditedEpochEvidenceV1)>> {
-    audited_lineage_with_seen(connection, config, ids, &mut BTreeSet::new())
-}
-
-/// Audit an ordered edge lineage while carrying the active recursion set.
-///
-/// A later checkpoint P is itself stored in the schema-4 table and its
-/// lineage points at the already-consumed edge(s).  Reusing `validate_p`
-/// therefore makes the audit recursive.  The active set is required so a
-/// forged cycle (A -> B -> A) cannot recurse until stack exhaustion or be
-/// mistaken for a valid second epoch.
-fn audited_lineage_with_seen(
-    connection: &Connection,
-    config: &NativeApplicationConfigV0,
-    ids: &[[u8; 32]],
-    seen: &mut BTreeSet<[u8; 32]>,
-) -> Result<Vec<([u8; 32], crate::epoch_recovery::AuditedEpochEvidenceV1)>> {
-    let edges = load_edges(connection, config)?;
-    let mut old_set = config.validator_set.clone();
-    let mut parameters = config.parameters;
-    let mut previous_height = 0;
-    let mut result = Vec::new();
-    for id in ids {
-        ensure!(seen.insert(*id), "epoch lineage cycle");
-        let edge = edges
-            .iter()
-            .find(|e| &e.binding == id)
-            .context("retained epoch evidence missing")?;
-        ensure!(
-            edge.first_height > previous_height,
-            "epoch lineage height order"
-        );
-        if let Some(checkpoint) =
-            load_p_by_block_v0(connection, *edge.checkpoint.block_id().as_bytes())?
-        {
-            validate_p_v0(config, &checkpoint)?;
-            validate_target_snapshot_v0(config, &checkpoint)?;
-            ensure!(
-                checkpoint.status == P_STATUS_COMMITTED
-                    && checkpoint.p_digest == edge.checkpoint_p_digest
-                    && checkpoint.commit_sequence == Some(edge.checkpoint_sequence)
-                    && checkpoint.commit_id == Some(*edge.checkpoint.commit_id().as_bytes())
-                    && checkpoint.target_height == edge.checkpoint.height().get()
-                    && checkpoint.artifact == edge.evidence.checkpoint_artifact,
-                "retained checkpoint identity mismatch"
-            );
-        } else {
-            // A later epoch's checkpoint is a committed schema-4 ordinary P
-            // whose lineage names the already authenticated edge(s).  It is
-            // intentionally not accepted by the legacy v0 loader above.
-            let checkpoint = load_p(connection, edge.checkpoint.block_id().as_bytes())?
-                .context("retained checkpoint P missing")?;
-            ensure!(
-                checkpoint.status == P_STATUS_COMMITTED as i64
-                    && checkpoint.artifact_kind == 0
-                    && checkpoint.target_head()? == edge.checkpoint
-                    && checkpoint.p_digest == edge.checkpoint_p_digest
-                    && checkpoint.commit_sequence == Some(edge.checkpoint_sequence)
-                    && checkpoint.commit_id == Some(*edge.checkpoint.commit_id().as_bytes())
-                    && checkpoint.artifact == edge.evidence.checkpoint_artifact,
-                "retained later-epoch checkpoint identity mismatch"
-            );
-            let checkpoint_header = decode_header(&checkpoint.header)?;
-            ensure!(
-                checkpoint_header.block_kind() == BlockKind::EpochCheckpoint
-                    && checkpoint_header.next_epoch_commitment_hash().is_some(),
-                "retained later-epoch checkpoint kind/commitment"
-            );
-            // The complete later P is validated by the top-level inventory
-            // pass. Re-entering validate_p_with_seen here would recurse
-            // through a mixed legacy/later lineage when a retained edge
-            // points at this same checkpoint. Keep this nested join
-            // non-recursive and retain the canonical identity checks above.
-            ensure!(
-                checkpoint.artifact_digest == sha256_v0(&checkpoint.artifact)
-                    && checkpoint.snapshot_digest == sha256_v0(&checkpoint.snapshot)
-                    && checkpoint.lineage_digest == sha256_v0(&checkpoint.lineage)
-                    && checkpoint.p_digest == checkpoint.digest()?
-                    && checkpoint.commit_sequence.is_some()
-                    && checkpoint.commit_id == Some(checkpoint.commit_identity()),
-                "retained later-epoch checkpoint P digest/phase"
-            );
-        }
-        let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
-        let audit = edge
-            .evidence
-            .audit_strict(&old_set, &parameters, &mut budget)?;
-        let coords = audit.coordinates(*id)?;
-        ensure!(
-            coords.checkpoint_version == edge.checkpoint.height().get()
-                && &coords.checkpoint_root == edge.checkpoint.state_root().as_bytes()
-                && coords.first_version == edge.first_height
-                && coords.terminal_version == edge.terminal_height
-                && audit
-                    .activation
-                    .authorization_kernel()
-                    .terminal_old_header()
-                    .id()
-                    .as_bytes()
-                    == &edge.terminal_block,
-            "retained edge coordinate mismatch"
-        );
-        ensure!(
-            (edge.phase == 0 && edge.consumed.is_none() && edge.consumed_sequence.is_none())
-                || (edge.phase == 1 && edge.consumed.is_some() && edge.consumed_sequence.is_some()),
-            "edge phase malformed"
-        );
-        if edge.phase == 1 {
-            let consumer = load_p(
-                connection,
-                &edge.consumed.context("consumed edge target missing")?,
-            )?
-            .context("consumed edge P missing")?;
-            ensure!(
-                consumer.status == 1
-                    && consumer.artifact_kind == 1
-                    && consumer.commit_sequence == edge.consumed_sequence
-                    && decode_lineage(&consumer.lineage)?.last() == Some(id),
-                "consumed edge P mismatch"
-            );
-        }
-        old_set = audit.activation.new_validator_set().clone();
-        parameters = *audit.activation.new_consensus_parameters();
-        previous_height = edge.first_height;
-        result.push((*id, audit));
-        seen.remove(id);
-    }
-    Ok(result)
+    Ok(lineage_resolver::resolve(connection, config, ids)?.into_audits())
 }
 
 fn validate_epoch_descendant_kind(header: &BlockHeader) -> Result<()> {
@@ -3508,124 +3147,35 @@ fn audit_later_successor_for_lineage_v1(
     binding: [u8; 32],
     predecessor: [u8; 32],
 ) -> Result<crate::epoch_recovery::AuditedEpochEvidenceV1> {
-    // inventory() authenticates every successor row before entering the
-    // application-proof pass. This selected-row check avoids repeating the
-    // whole-table decode; the inventory precondition already authenticated
-    // the successor record and geometry.
-    ensure!(
-        later_edge_table_installed(connection)?
-            && later_finality_table_installed(connection)?
-            && later_edge_has_commit_id_column(connection)?,
-        "later successor tables incomplete"
-    );
-    let row = connection.query_row(
-        "SELECT checkpoint_block,checkpoint_p_digest,checkpoint_commit_sequence
-         FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
+    let checkpoint = connection.query_row(
+        "SELECT checkpoint_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
         [binding.as_slice()],
-        |row| {
-            Ok((
-                col32(row, "checkpoint_block")?,
-                col32(row, "checkpoint_p_digest")?,
-                col64(row, "checkpoint_commit_sequence")?,
-            ))
-        },
+        |row| col32(row, "checkpoint_block"),
     )?;
-    let p = load_p(connection, &row.0)?.context("later successor lineage P missing")?;
+    let p = load_p(connection, &checkpoint)?.context("later successor lineage P missing")?;
+    let mut ids = decode_lineage(&p.lineage)?;
     ensure!(
-        p.status == 1
-            && p.p_digest == row.1
-            && p.commit_sequence == Some(row.2)
-            && p.artifact_kind == 0
-            && decode_lineage(&p.lineage)?.last() == Some(&predecessor),
-        "later successor lineage checkpoint binding"
+        ids.last() == Some(&predecessor),
+        "later successor predecessor mismatch"
     );
-    let evidence = connection.query_row(
-        "SELECT context_digest,predecessor_edge,checkpoint_parent_header,
-                checkpoint_header,checkpoint_finality,anchor_kernel,
-                next_epoch_commitment,new_validator_set,new_parameters
-         FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
-        [row.0.as_slice()],
-        |r| {
-            Ok(
-                crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1 {
-                    context_digest: col32(r, "context_digest")?,
-                    predecessor_edge: col32(r, "predecessor_edge")?,
-                    checkpoint_parent_header: r.get(2)?,
-                    checkpoint_header: r.get(3)?,
-                    checkpoint_finality: r.get(4)?,
-                    anchor_kernel: r.get(5)?,
-                    next_epoch_commitment: r.get(6)?,
-                    new_validator_set: r.get(7)?,
-                    new_parameters: r.get(8)?,
-                },
-            )
-        },
-    )?;
+    ids.push(binding);
+    let mut prefix = lineage_resolver::resolve(connection, config, &ids)?;
+    let selected = prefix
+        .entries
+        .pop()
+        .context("later successor prefix empty")?;
     ensure!(
-        evidence.predecessor_edge == predecessor,
-        "later successor predecessor binding"
+        selected.later_facts.is_some(),
+        "later successor ownership mismatch"
     );
-    validate_later_preimages(connection, config, &p, &evidence)?;
-    let prior = decode_lineage(&p.lineage)?;
-    let audited = audited_lineage(connection, config, &prior)?;
-    let active = &audited
-        .last()
-        .context("later successor predecessor audit missing")?
-        .1
-        .activation;
-    ensure!(
-        prior.last() == Some(&predecessor),
-        "later successor predecessor audit binding"
-    );
-    let old_set = active.new_validator_set();
-    let old_parameters = active.new_consensus_parameters();
-    let old_set_bytes = old_set
-        .try_cev0_bytes()
-        .map_err(|e| anyhow::anyhow!("encode later successor old set: {e:?}"))?;
-    let decoded = trnm_consensus_types::decode_epoch_activation_evidence_v0_exact(
-        trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
-            old_checkpoint_finality: &evidence.checkpoint_finality,
-            next_epoch_commitment: &evidence.next_epoch_commitment,
-            authorization_kernel: &evidence.anchor_kernel,
-            old_validator_set: &old_set_bytes,
-            old_consensus_parameters: &old_parameters.canonical_bytes(),
-            new_validator_set: &evidence.new_validator_set,
-            new_consensus_parameters: &evidence.new_parameters,
-            authenticated_checkpoint_parent_header: &evidence.checkpoint_parent_header,
-        },
-        old_set,
-        old_parameters,
-        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )
-    .map_err(|e| anyhow::anyhow!("decode later successor lineage authority: {e:?}"))?;
-    let activation =
-        trnm_consensus_crypto::verify_same_version_epoch_activation_authority_strict_v0(
-            decoded.old_checkpoint_finality(),
-            decoded.next_epoch_commitment(),
-            decoded.authorization_kernel(),
-            old_set,
-            old_parameters,
-            decoded.new_validator_set(),
-            decoded.new_consensus_parameters(),
-            decoded.authenticated_checkpoint_parent_header(),
-        )
-        .map_err(|e| anyhow::anyhow!("verify later successor lineage authority: {e:?}"))?;
-    ensure!(
-        activation
-            .old_checkpoint_finality()
-            .finalized_block()
-            .header()
-            == &decode_header(&p.header)?,
-        "later successor lineage checkpoint substitution"
-    );
-    Ok(crate::epoch_recovery::AuditedEpochEvidenceV1 { activation })
+    Ok(*selected.audit)
 }
 
 fn validate_p_with_seen(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     p: &StoredEpochPV1,
-    seen: &mut BTreeSet<[u8; 32]>,
+    _seen: &mut BTreeSet<[u8; 32]>,
 ) -> Result<InMemoryNativeExecutionStoreV0> {
     ensure!(
         p.store_id == config.store_id
@@ -3677,29 +3227,7 @@ fn validate_p_with_seen(
     );
     let lineage = decode_lineage(&p.lineage)?;
     let legacy_edges = load_edges(connection, config)?;
-    let later_successor = lineage.last().and_then(|binding| {
-        (!legacy_edges.iter().any(|edge| edge.binding == *binding)).then_some(*binding)
-    });
-    let (legacy_lineage, later_audit) = if let Some(binding) = later_successor {
-        ensure!(
-            lineage.len() >= 2,
-            "later successor lineage lacks predecessor"
-        );
-        let predecessor = lineage[lineage.len() - 2];
-        (
-            &lineage[..lineage.len() - 1],
-            Some((
-                binding,
-                audit_later_successor_for_lineage_v1(connection, config, binding, predecessor)?,
-            )),
-        )
-    } else {
-        (&lineage[..], None)
-    };
-    let mut edges = audited_lineage_with_seen(connection, config, legacy_lineage, seen)?;
-    if let Some((binding, audit)) = later_audit {
-        edges.push((binding, audit));
-    }
+    let edges = audited_lineage(connection, config, &lineage)?;
     let (_, latest) = edges.last().context("epoch P has no lineage")?;
     ensure!(
         latest
@@ -4165,45 +3693,47 @@ impl DurableNativeApplicationV0 {
         self.persist_epoch_p(row)
     }
 
+    fn require_prefix_preparations_v1(&self, prefix: &lineage_resolver::Prefix) -> Result<()> {
+        if prefix
+            .entries
+            .iter()
+            .any(|entry| entry.legacy_preparation.is_some())
+        {
+            let journal = crate::poco_preparation_journal::PocoPreparationJournalV0::open_existing(
+                crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&self.path),
+            )?;
+            for entry in &prefix.entries {
+                if let Some((id, header)) = &entry.legacy_preparation {
+                    journal.require_retained_bound(*id, header)?;
+                }
+            }
+        }
+        Ok(())
+    }
+
     #[inline(never)]
     fn recover_epoch_execution_contexts_v1(
         &self,
         bindings: &[[u8; 32]],
     ) -> Result<Vec<Box<dyn EpochExecutionContextV1>>> {
-        let mut contexts: Vec<Box<dyn EpochExecutionContextV1>> = Vec::new();
-        for binding in bindings {
-            let connection = open_immutable_connection_v0(&self.path)?;
-            verify_schema_v0(&connection)?;
-            let legacy: bool = connection.query_row(
-                "SELECT EXISTS(SELECT 1 FROM native_epoch_edge_v1 WHERE binding=?1)",
-                [binding.as_slice()],
-                |row| row.get(0),
-            )?;
-            if legacy {
-                drop(connection);
-                contexts.push(Box::new(self.recover_epoch_application_edge_v1(*binding)?));
-            } else {
-                ensure!(
-                    has_later_descendant_finality_schema(schema_version(&connection)?),
-                    "later descendant authority requires schema10 ordinary finality"
-                );
-                let checkpoint = connection.query_row(
-                    "SELECT checkpoint_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
-                    [binding.as_slice()],
-                    |row| col32(row, "checkpoint_block"),
-                )?;
-                drop(connection);
-                let requirements =
-                    self.inspect_later_epoch_application_edge_requirements_v1(checkpoint)?;
-                ensure!(
-                    requirements.successor_binding() == *binding,
-                    "descendant later successor binding"
-                );
-                let edge = self.recover_later_epoch_application_edge_v1(&requirements)?;
-                contexts.push(Box::new(self.open_later_epoch_execution_context_v1(&edge)?));
-            }
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let prefix = lineage_resolver::resolve(&connection, &self.config, bindings)?;
+        if prefix
+            .entries
+            .iter()
+            .any(|entry| entry.later_facts.is_some())
+        {
+            ensure!(
+                has_later_descendant_finality_schema(schema_version(&connection)?),
+                "later descendant authority requires schema10 ordinary finality"
+            );
         }
-        Ok(contexts)
+        self.require_prefix_preparations_v1(&prefix)?;
+        validate_prefix_current_ancestry_v1(&connection, &self.config, &metadata.head, &prefix)?;
+        prefix.contexts()
     }
 
     pub fn execute_epoch_descendant_v1(
@@ -4436,50 +3966,19 @@ impl DurableNativeApplicationV0 {
         &self,
         block: [u8; 32],
     ) -> Result<PreparedNativeEpochExecutionV1> {
+        let _guard = self.lock_operation()?;
         let connection = open_immutable_connection_v0(&self.path)?;
         verify_schema_v0(&connection)?;
-        let prior = load_p(&connection, &block)?.context("epoch P missing")?;
-        let lineage = decode_lineage(&prior.lineage)?;
-        let bindings = lineage
-            .iter()
-            .map(|binding| -> Result<([u8; 32], Option<[u8; 32]>)> {
-                let legacy: bool = connection.query_row(
-                    "SELECT EXISTS(SELECT 1 FROM native_epoch_edge_v1 WHERE binding=?1)",
-                    [binding.as_slice()],
-                    |row| row.get(0),
-                )?;
-                if legacy {
-                    return Ok((*binding, None));
-                }
-                let checkpoint = connection.query_row(
-                    "SELECT checkpoint_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
-                    [binding.as_slice()],
-                    |row| col32(row, "checkpoint_block"),
-                )?;
-                Ok((*binding, Some(checkpoint)))
-            })
-            .collect::<Result<Vec<_>>>()?;
-        drop(connection);
-        for (binding, later_checkpoint) in bindings {
-            if let Some(checkpoint) = later_checkpoint {
-                let requirements =
-                    self.inspect_later_epoch_application_edge_requirements_v1(checkpoint)?;
-                ensure!(
-                    requirements.successor_binding() == binding,
-                    "reopened P later successor binding"
-                );
-                let _edge = self.recover_later_epoch_application_edge_v1(&requirements)?;
-            } else {
-                let _edge = self.recover_epoch_application_edge_v1(binding)?;
-            }
-        }
-        let _guard = self.lock_operation()?;
-        fresh_validate_v0(&self.path, &self.config)?;
-        let connection = open_immutable_connection_v0(&self.path)?;
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
         let row = load_p(&connection, &block)?.context("epoch P missing")?;
+        let prefix =
+            lineage_resolver::resolve(&connection, &self.config, &decode_lineage(&row.lineage)?)?;
+        self.require_prefix_preparations_v1(&prefix)?;
+        validate_prefix_current_ancestry_v1(&connection, &self.config, &metadata.head, &prefix)?;
         validate_p(&connection, &self.config, &row)?;
         ensure!(
-            row.p_digest == prior.p_digest,
+            fresh_validate_v0(&self.path, &self.config)? == metadata,
             "reopened P changed during edge reconstruction"
         );
         Ok(PreparedNativeEpochExecutionV1 {

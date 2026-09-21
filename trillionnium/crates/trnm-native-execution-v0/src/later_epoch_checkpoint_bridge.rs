@@ -470,6 +470,7 @@ mod tests {
     };
 
     include!("later_epoch_descendant_tests.rs");
+    include!("later_epoch_repeated_tests.rs");
 
     fn key(index: usize) -> SigningKey {
         SigningKey::from_bytes(&[20 + index as u8; 32])
@@ -863,6 +864,8 @@ mod tests {
         validator_set: ValidatorSet,
         parameters: ConsensusParametersV0,
         predecessor: [u8; 32],
+        trust_anchor: trnm_state_sync_v0::NativeTrustAnchorV1,
+        other_trust_anchor: trnm_state_sync_v0::NativeTrustAnchorV1,
     }
 
     // One authentic construction feeds both normal acceptance and the seeded
@@ -1777,6 +1780,39 @@ mod tests {
         .unwrap()
         .try_cev0_bytes()
         .unwrap();
+        // Pin the locally generated C18/epoch1 configuration before producing
+        // any untrusted export. The receiving test never derives trust from it.
+        let anchor_header = checkpoint_header.try_cev0_bytes().unwrap();
+        let anchor_set = old_set.try_cev0_bytes().unwrap();
+        let anchor_parameters = old_parameters.canonical_bytes();
+        let anchor_pin = trnm_state_sync_v0::native_trust_anchor_pin_v1(
+            &anchor_header,
+            &anchor_set,
+            &anchor_parameters,
+        )
+        .unwrap();
+        let trust_anchor = trnm_state_sync_v0::NativeTrustAnchorV1::from_pinned_bytes(
+            &anchor_header,
+            &anchor_set,
+            &anchor_parameters,
+            anchor_pin,
+        )
+        .unwrap();
+        let other_anchor_header = headers[6].try_cev0_bytes().unwrap();
+        assert_eq!(headers[6].height().get(), 17);
+        let other_anchor_pin = trnm_state_sync_v0::native_trust_anchor_pin_v1(
+            &other_anchor_header,
+            &anchor_set,
+            &anchor_parameters,
+        )
+        .unwrap();
+        let other_trust_anchor = trnm_state_sync_v0::NativeTrustAnchorV1::from_pinned_bytes(
+            &other_anchor_header,
+            &anchor_set,
+            &anchor_parameters,
+            other_anchor_pin,
+        )
+        .unwrap();
         Box::new(LaterDescendantFixture {
             application: reopened,
             prepared: c22,
@@ -1790,6 +1826,8 @@ mod tests {
             validator_set: new_set,
             parameters: old_parameters,
             predecessor: *observed.lineage().last().unwrap(),
+            trust_anchor,
+            other_trust_anchor,
         })
     }
 
@@ -1822,6 +1860,7 @@ mod tests {
             validator_set: new_set,
             parameters,
             predecessor,
+            ..
         } = *fixture;
         assert_signature_mutant_is_canonical(
             &c22_proof,
