@@ -483,6 +483,15 @@ then remove only the latest-record view. Retain collection identity to reject
 future replay; HTTP returns `TX_COLLECTED` with retained proof reference when
 available. Expiry alone does not make a nonce cryptographically unspendable.
 
+If a rejected replay-floor witness or a crash leaves a durable
+`Tombstoned(Finalized)` record, `tombstone_and_collect` must reuse its exact
+retained durable receipt and retry collection without appending another
+tombstone. This applies both within the current process and after journal
+recovery, including a lost tombstone acknowledgement. Revalidate the retained
+record digest and the supplied replay floor before deletion; an uncertain
+write still stops the coordinator until recovery. Successful recovery appends
+only the collection frame and preserves the journal's replay fence.
+
 ## Persistence and recovery
 
 The WAL stores canonical bytes or their durable content-addressed location,

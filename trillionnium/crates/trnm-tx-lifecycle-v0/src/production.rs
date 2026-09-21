@@ -1038,12 +1038,37 @@ where
         J: DurableTxJournalV0,
     {
         self.require_live().map_err(TxCollectErrorV0::Protocol)?;
+        let already_tombstoned = self
+            .lifecycle
+            .record(tx_id)
+            .map_err(|error| TxCollectErrorV0::Protocol(error.into()))?
+            .phase
+            == TxPhaseV0::Tombstoned;
         self.lifecycle
             .tombstone_finalized(tx_id)
             .map_err(|error| TxCollectErrorV0::Protocol(error.into()))?;
-        let tombstone = self
-            .persist_current(journal, tx_id)
-            .map_err(TxCollectErrorV0::Transition)?;
+        let tombstone = if already_tombstoned {
+            // A rejected floor or a recovered lost acknowledgement can leave
+            // the exact finalized tombstone durable. Reuse that receipt:
+            // appending the unchanged record is not a lifecycle successor.
+            let retained = self
+                .durable
+                .get(&tx_id)
+                .copied()
+                .ok_or(TxCollectErrorV0::Protocol(
+                    ProductionTxErrorV0::MissingDurableRecord,
+                ))?;
+            let record = self
+                .lifecycle
+                .record(tx_id)
+                .map_err(|error| TxCollectErrorV0::Protocol(error.into()))?;
+            retained
+                .validate(Some(retained.previous_record_digest), record)
+                .map_err(TxCollectErrorV0::Protocol)?
+        } else {
+            self.persist_current(journal, tx_id)
+                .map_err(TxCollectErrorV0::Transition)?
+        };
         let collected = self
             .lifecycle
             .collect(tx_id, replay_floor)
