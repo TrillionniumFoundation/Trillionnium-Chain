@@ -3080,7 +3080,7 @@ fn accept_loop(
     loop {
         if stop.load(Ordering::Acquire) {
             shutdown_all(&controls);
-            join_children(children, &controls, &terminal, &stop, &fences);
+            join_children(children, &controls, &terminal, &stop);
             return;
         }
         loop {
@@ -3104,7 +3104,7 @@ fn accept_loop(
                                 },
                             );
                             let _ = fences.release(PeerDirectionV0::Inbound, facts.remote);
-                            join_children(children, &controls, &terminal, &stop, &fences);
+                            join_children(children, &controls, &terminal, &stop);
                             return;
                         }
                         if emit_event(
@@ -3117,7 +3117,7 @@ fn accept_loop(
                         )
                         .is_err()
                         {
-                            join_children(children, &controls, &terminal, &stop, &fences);
+                            join_children(children, &controls, &terminal, &stop);
                             return;
                         }
                     }
@@ -3133,7 +3133,7 @@ fn accept_loop(
                             reason: "inbound lifecycle channel disappeared".to_owned(),
                         },
                     );
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
             }
@@ -3144,7 +3144,7 @@ fn accept_loop(
                 generations.len(),
                 expected.len()
             )));
-            join_children(children, &controls, &terminal, &stop, &fences);
+            join_children(children, &controls, &terminal, &stop);
             return;
         }
 
@@ -3176,7 +3176,7 @@ fn accept_loop(
                         let _ = setup_tx.send(SetupEventV0::Failed(
                             "inbound authentication ambiguity".to_owned(),
                         ));
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 };
@@ -3191,7 +3191,7 @@ fn accept_loop(
                             reason: "authenticated remote has no inbound byte budget".to_owned(),
                         },
                     );
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 };
                 let generation = match generations
@@ -3211,7 +3211,7 @@ fn accept_loop(
                                 reason: "session generation exhausted".to_owned(),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 };
@@ -3235,7 +3235,7 @@ fn accept_loop(
                                 reason: "superseded inbound worker panicked".to_owned(),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                     if let Err(error) = fences.release(PeerDirectionV0::Inbound, remote) {
@@ -3248,7 +3248,7 @@ fn accept_loop(
                                 reason: error.to_string(),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                     if emit_event(
@@ -3261,7 +3261,7 @@ fn accept_loop(
                     )
                     .is_err()
                     {
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 }
@@ -3280,7 +3280,7 @@ fn accept_loop(
                             reason: format!("external fence rejected inbound session: {error}"),
                         },
                     );
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
                 let host_attestation = match fences.host_attestation_admission(
@@ -3301,7 +3301,7 @@ fn accept_loop(
                             },
                         );
                         let _ = fences.release(PeerDirectionV0::Inbound, remote);
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 };
@@ -3320,7 +3320,7 @@ fn accept_loop(
                         },
                     );
                     let _ = fences.release(PeerDirectionV0::Inbound, remote);
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
                 let control = match connection.io_mut().try_clone() {
@@ -3335,7 +3335,7 @@ fn accept_loop(
                                 reason: error.to_string(),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 };
@@ -3351,13 +3351,13 @@ fn accept_loop(
                             reason: error.to_string(),
                         },
                     );
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
                 generations.insert(remote, generation);
                 if generation == 1 {
                     if setup_tx.send(SetupEventV0::Ready(facts)).is_err() {
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 } else if emit_event(
@@ -3370,7 +3370,7 @@ fn accept_loop(
                 )
                 .is_err()
                 {
-                    join_children(children, &controls, &terminal, &stop, &fences);
+                    join_children(children, &controls, &terminal, &stop);
                     return;
                 }
                 let cancel = Arc::new(AtomicBool::new(false));
@@ -3580,7 +3580,7 @@ fn accept_loop(
                                 reason: format!("spawn inbound worker: {error}"),
                             },
                         );
-                        join_children(children, &controls, &terminal, &stop, &fences);
+                        join_children(children, &controls, &terminal, &stop);
                         return;
                     }
                 }
@@ -3603,7 +3603,7 @@ fn accept_loop(
                         reason: format!("accept failed: {error}"),
                     },
                 );
-                join_children(children, &controls, &terminal, &stop, &fences);
+                join_children(children, &controls, &terminal, &stop);
                 return;
             }
         }
@@ -4086,7 +4086,6 @@ fn join_children(
     controls: &ActiveControlsV0,
     terminal: &Mutex<Option<MeshTerminalFailureV0>>,
     stop: &AtomicBool,
-    fences: &MeshFenceRegistryV1,
 ) {
     // Global teardown is not supersession. Stop and interrupt every reader,
     // but leave the edge-cancel flag reserved for explicit old-generation
@@ -4106,7 +4105,9 @@ fn join_children(
             );
         }
     }
-    let _ = fences.release_all();
+    // Only the mesh owner joins outbound workers. Global lease release belongs
+    // to close_inner/cleanup_failed_establish after all top-level joins.
+    // Releasing here races an outbound worker's final idle revalidation.
 }
 
 fn validate_limits(

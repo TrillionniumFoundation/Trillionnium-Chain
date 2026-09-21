@@ -99,6 +99,18 @@ publish into the replacement generation. Global child teardown therefore sets
 stop rather than pretending every edge was superseded; an actual child panic
 remains a retained terminal failure even while stop is already set.
 
+The acceptor owns only its inbound child subtree. Joining that subtree must
+not release the registry-wide directed leases: a separately owned outbound
+worker may still be finishing its bounded idle revalidation or send path. The
+mesh owner releases remaining global leases only after every top-level worker
+has joined, both on normal close and failed commissioning. Individual workers
+retain their existing exact-direction release behavior. A genuinely missing or
+invalid outbound lease remains an internal failure even during stop; there is
+no stop-based exemption to fence validation. A deterministic regression holds
+a real authenticated outbound session and admitted lease across the inbound
+join, then permits its original worker-side idle check before final global
+release; a deliberately missing token must still fail the same check.
+
 A successfully decoded frame waiting for its original byte reservation remains
 subject to both peer and global ceilings. If global stop ends that wait, record
 a terminal failure before releasing that frame; do not mint an unbudgeted mesh

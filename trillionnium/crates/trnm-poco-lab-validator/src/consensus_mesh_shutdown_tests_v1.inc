@@ -375,16 +375,8 @@ fn shutdown_child_join_preserves_owned_tcp_event_and_real_panic_v1() {
                 handle: child,
             },
         );
-        let context = PeerAdmissionContextV1::new(0, [0x99; 32]).unwrap();
-        let fences = MeshFenceRegistryV1::new(
-            Arc::new(TestExternalPeerLeaseAuthorityV1::new(context)),
-            ValidatorId::new([0x72; 32]),
-            context,
-            MESH_EXTERNAL_FENCE_TTL_V1,
-        )
-        .unwrap();
         let controls = Arc::new(Mutex::new(BTreeMap::new()));
-        join_children(children, &controls, &terminal, &stop, &fences);
+        join_children(children, &controls, &terminal, &stop);
         assert!(stop.load(Ordering::Acquire));
         assert!(
             !cancel.load(Ordering::Acquire),
@@ -409,4 +401,89 @@ fn shutdown_child_join_preserves_owned_tcp_event_and_real_panic_v1() {
         assert_eq!(peer.used_bytes.load(Ordering::Acquire), 0);
         assert_eq!(global.used_bytes.load(Ordering::Acquire), 0);
     }
+}
+
+#[test]
+fn shutdown_inbound_join_preserves_live_outbound_lease_until_its_worker_joins_v1() {
+    // Authentic TCP session + actual external lease. The channel fixes the
+    // observed LAN interleaving, without relying on a timer race or sleeping.
+    let (sender, _receiver) = shutdown_tcp_pair_v1();
+    let (identity, _) = authenticated_identity_fixture_v0();
+    let remote = sender.remote();
+    let context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
+    let fences = MeshFenceRegistryV1::new(
+        Arc::new(TestExternalPeerLeaseAuthorityV1::new(context)),
+        identity.local,
+        context,
+        MESH_EXTERNAL_FENCE_TTL_V1,
+    )
+    .unwrap();
+    let original = fences
+        .acquire(PeerDirectionV0::Outbound, remote, sender.session_id(), 1)
+        .unwrap();
+    let (go_tx, go_rx) = mpsc::channel();
+    let worker = thread::spawn({
+        let fences = fences.clone();
+        move || {
+            let _actual_session_owner = sender;
+            go_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+            // Identical validation to outgoing_loop's recv_timeout branch.
+            fences.renew_if_due(PeerDirectionV0::Outbound, remote)
+        }
+    });
+    let controls = Arc::new(Mutex::new(BTreeMap::new()));
+    let terminal = Mutex::new(None);
+    let stop = AtomicBool::new(false);
+    join_children(BTreeMap::new(), &controls, &terminal, &stop);
+    assert!(stop.load(Ordering::Acquire));
+    go_tx.send(()).unwrap();
+    let checked = worker.join().unwrap();
+    checked.expect("inbound subtree must not release a live outbound lease");
+    assert!(terminal.lock().unwrap().is_none());
+    assert_eq!(
+        fences.tokens.lock().unwrap()[&(PeerDirectionV0::Outbound, remote)]
+            .token
+            .scope(),
+        original.scope(),
+    );
+    // This is the all-workers-joined boundary owned by close/failed setup.
+    fences.release_all().unwrap();
+    assert_eq!(fences.active_count().unwrap(), 0);
+}
+
+#[test]
+fn shutdown_missing_outbound_lease_remains_internal_after_stop_v1() {
+    let (sender, _receiver) = shutdown_tcp_pair_v1();
+    let (identity, _) = authenticated_identity_fixture_v0();
+    let remote = sender.remote();
+    let context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
+    let fences = MeshFenceRegistryV1::new(
+        Arc::new(TestExternalPeerLeaseAuthorityV1::new(context)),
+        identity.local,
+        context,
+        MESH_EXTERNAL_FENCE_TTL_V1,
+    )
+    .unwrap();
+    fences
+        .acquire(PeerDirectionV0::Outbound, remote, sender.session_id(), 1)
+        .unwrap();
+    fences.release(PeerDirectionV0::Outbound, remote).unwrap();
+    let stop = AtomicBool::new(true);
+    let terminal = Mutex::new(None);
+    let error = fences
+        .renew_if_due(PeerDirectionV0::Outbound, remote)
+        .expect_err("actual missing lease is never a successful stop");
+    set_terminal(
+        &terminal,
+        &stop,
+        MeshTerminalFailureV0 {
+            remote,
+            direction: PeerDirectionV0::Outbound,
+            reason: format!("idle external fence revalidation failed: {error}"),
+        },
+    );
+    let failure = terminal.lock().unwrap();
+    let failure = failure.as_ref().unwrap();
+    assert_eq!(failure.remote, remote);
+    assert!(failure.reason.contains("no admitted external lease"));
 }
