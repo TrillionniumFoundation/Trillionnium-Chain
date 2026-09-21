@@ -677,6 +677,8 @@ mod tests {
         );
         (app, edge, p, proof, descendants)
     }
+    include!("incremental_epoch_selection_tests_v1.inc");
+
     #[test]
     fn schema7_first_new_strict_commit_and_restart_bind_actual_native_cut() {
         let d = tempfile::tempdir().unwrap();

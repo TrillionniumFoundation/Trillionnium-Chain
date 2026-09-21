@@ -13,7 +13,10 @@ mod commit;
 #[path = "incremental_epoch_descendant_v1.rs"]
 mod descendant;
 pub use commit::CommittedNativeIncrementalEpochExecutionV1;
-pub use descendant::{IncrementalEpochParentV1, PreparedNativeIncrementalEpochDescendantV1};
+pub use descendant::{
+    ComputedIncrementalEpochSelectionV1, IncrementalEpochParentV1,
+    PreparedNativeIncrementalEpochDescendantV1,
+};
 pub(in crate::durable) const COMMIT_SCHEMA_VERSION: u64 = 7;
 fn epoch_schema(c: &Connection) -> Result<bool> {
     Ok(matches!(

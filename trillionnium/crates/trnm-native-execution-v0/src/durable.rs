@@ -74,8 +74,9 @@ pub use epoch_durable::{
 mod incremental_owner_v1;
 #[cfg(feature = "incremental-epoch-candidate")]
 pub use incremental_owner_v1::epoch_candidate_v1::{
-    CommittedNativeIncrementalEpochExecutionV1, IncrementalEpochParentV1,
-    PreparedNativeIncrementalEpochDescendantV1, PreparedNativeIncrementalEpochExecutionV1,
+    CommittedNativeIncrementalEpochExecutionV1, ComputedIncrementalEpochSelectionV1,
+    IncrementalEpochParentV1, PreparedNativeIncrementalEpochDescendantV1,
+    PreparedNativeIncrementalEpochExecutionV1,
 };
 pub use incremental_owner_v1::{
     CommittedNativeIncrementalExecutionV1, ConfirmedPreparedNativeIncrementalExecutionV1,

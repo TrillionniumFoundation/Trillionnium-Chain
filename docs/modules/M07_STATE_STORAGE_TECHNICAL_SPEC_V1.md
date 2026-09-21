@@ -916,6 +916,38 @@ Finally, `retire_forks` protects only that singleton committed first block. Simp
 removing the height/count fences would therefore fail authority recovery and
 attempt to retire the earlier committed C11 storage delta.
 
+#### Actual incremental cutoff selection (M07-INCREMENTAL-SELECTION-V1)
+
+Before schema11 migration, schema7 may expose a read-only
+`compute_incremental_epoch_selection_v1` for its one authenticated active epoch.
+It derives the scheduled cutoff from the strict retained activation, requires
+that exact cutoff to be genuinely committed, and selects one exact native P
+by its original header height. Prepared rows, duplicate committed heights and
+wrong-epoch rows cannot supply selection. The complete existing owner, original
+commit proof, sparse artifact and replay-delta audits remain mandatory.
+
+Read the cutoff through the retained committed JMT root and its exact root pin;
+join its height/root to the committed P and independently verified finality.
+Authenticate live values through that sparse reader, validate the active
+validator lifecycle projection, then run the same private M06 deterministic
+PoCO selection used by full-snapshot execution. Never decode or materialize an
+imported full snapshot as current cutoff state, and never use the original
+source/genesis configuration as the active epoch configuration.
+
+Return only private-field inert facts: exact cutoff Head104, P digest/persist
+sequence/commit sequence, observed current head and owner checksum, activation
+binding, next commitment, complete new set and parameters. Hold the existing
+native operation lock and pinned namespace checks across the read; recheck
+namespace identity before returning. A retained cutoff may be read while the
+current application has advanced, or while speculative descendants are present,
+but a later writer must independently recompute and join the same facts. No
+signing, migration, prepared execution or checkpoint-commit permission follows.
+The method writes no tables and changes no schema7 codecs. Acceptance uses real
+incremental C11→C15 commits with genuine C16/C17 preparation, strict proof and
+sparse-root substitution rejection, wrong/uncommitted cutoff rejection, cold
+recomputation and exact unchanged database bytes on successful and refused reads.
+Schema11's later multi-prefix consumer remains separately required below.
+
 #### Closed inventory and explicit migration
 
 Schema11 preserves the exact schema7 SQL inventory and frozen codecs/domains,

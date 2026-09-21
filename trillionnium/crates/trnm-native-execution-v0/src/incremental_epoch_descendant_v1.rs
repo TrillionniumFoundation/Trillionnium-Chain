@@ -1,6 +1,9 @@
 //! Ordinary +1 descendants inside the exact authenticated new epoch lineage.
 //! These APIs cannot alter schema5's ordinary configuration or admit another edge.
 use super::*;
+#[path = "incremental_epoch_selection_v1.rs"]
+mod selection;
+pub use selection::ComputedIncrementalEpochSelectionV1;
 #[must_use]
 pub struct PreparedNativeIncrementalEpochDescendantV1 {
     owner: Arc<()>,
