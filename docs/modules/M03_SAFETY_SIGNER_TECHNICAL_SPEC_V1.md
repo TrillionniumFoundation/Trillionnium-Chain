@@ -536,15 +536,22 @@ bytes/independent root. Do not concatenate preceding Safety records or embed a
 source profile recursively. Canonical source parts can be regenerated from that
 full retained record during cold audit; no redundant part-digest table is needed.
 
-Source capture may be implemented first without a new writer. Reuse
-`SqliteEpochSafetyJournalV3::prepare_recovery_v3(expected_pin)` and its strict
-`StrictEpochCoreRecoveryV2`; a private captured-source carrier additionally binds
-actual source profile/layout, namespace/owner affinity, head pin, transition,
-epoch generation and canonical original bytes. Capture reads the source twice
-and compares all fields before returning inert facts. It performs no destination
-creation, source mutation, driver binding, ACK or key call. Capturing a pending
-state is diagnostic only: `prepare_next_epoch_v2` still rejects it. Do not add
-a public scalar source constructor merely to expose this internal reuse point.
+The bounded source-capture slice is implemented independently of the planned
+Journal12 writer. `SqliteEpochSafetyJournalV3::capture_successor_source_v3`
+takes the independently expected V3 head pin and returns the non-Clone opaque
+`ConfirmedEpochSuccessorSourceV3`. It reuses `prepare_recovery_v3` and strict
+Core recovery, retains the exact original codec2 record and all three canonical
+physical parts, and binds source profile/layout, namespace/owner affinity, head
+pin, transition bytes, epoch generation, origin and original migration facts.
+A second fresh strict read must match every field before publication. Its
+read-only owner check also repeats a strict read; equal bytes in a foreign
+namespace or newly opened process owner cannot reuse the old carrier.
+Capture performs no destination creation, source mutation, driver binding, ACK
+or key call. Capturing a pending state is diagnostic only; the carrier exposes
+no successor preparation or recovery conversion, and existing settled-source
+checks and initial-only driver guards remain unchanged. There is no public
+scalar carrier constructor. The between-read mutation hook exists only under
+`test-fixtures`; it grants no authority and still executes the second read.
 
 Initialization takes the V4 profile, actual selected source owner/pin and
 original opaque `PreparedEpochCoreActivationV2`. Before creating any path,

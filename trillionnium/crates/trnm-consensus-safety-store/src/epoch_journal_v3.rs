@@ -2,6 +2,10 @@
 //! Journal10; no public conversion exposes a Journal10 owner or profile.
 use super::*;
 
+#[path = "epoch_journal_source_capture_v3.rs"]
+mod source_capture;
+pub use source_capture::ConfirmedEpochSuccessorSourceV3;
+
 #[derive(Debug)]
 pub struct EpochJournalErrorV3(EpochJournalErrorV2);
 impl std::fmt::Display for EpochJournalErrorV3 {

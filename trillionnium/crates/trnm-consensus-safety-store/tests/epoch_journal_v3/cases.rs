@@ -1,5 +1,7 @@
 // Included in the existing codec2 integration target: one genuine source
 // builder, unchanged Journal10 tests, no synthetic settled Safety rows.
+include!("source_capture.rs");
+
 fn prepare11(
     fixture: &NativeOldEpochTerminalFixtureV1,
 ) -> (
