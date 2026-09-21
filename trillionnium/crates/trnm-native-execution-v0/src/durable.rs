@@ -59,12 +59,13 @@ use crate::{
 #[path = "epoch_durable.rs"]
 mod epoch_durable;
 pub use epoch_durable::{
-    CommittedNativeEpochExecutionV1, ConfirmedPreparedNativeEpochExecutionV1,
-    EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1, EpochEdgePhaseV1,
-    FinalizedNativeEpochApplicationReadV1, LaterEpochApplicationEdgeRequirementsV1,
-    LaterEpochApplicationEdgeV1, LaterEpochCheckpointContextV1, NativeEpochFinalityPathV1,
-    NativeEpochFinalityStepV1, NativeHistoricalRecordV1, NativeHistoricalReplayV1,
-    PreparedNativeEpochExecutionV1,
+    CommittedNativeEpochExecutionV1, ConfirmedNativeReplayAnchorV1,
+    ConfirmedPreparedNativeEpochExecutionV1, EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1,
+    EpochEdgePhaseV1, FinalizedNativeEpochApplicationReadV1,
+    LaterEpochApplicationEdgeRequirementsV1, LaterEpochApplicationEdgeV1,
+    LaterEpochCheckpointContextV1, NativeEpochFinalityPathV1, NativeEpochFinalityStepV1,
+    NativeHistoricalRecordV1, NativeHistoricalReplayV1, PreparedNativeEpochExecutionV1,
+    PreparedNativeReplayBaseV1,
 };
 
 #[path = "incremental_owner_v1.rs"]

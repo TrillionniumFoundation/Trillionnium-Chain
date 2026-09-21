@@ -229,6 +229,13 @@ impl DurableNativeApplicationV0 {
                 &new_parameters,
             )
             .map_err(|error| anyhow::anyhow!("later commitment context: {error:?}"))?;
+        let computed = cutoff.derive_next_epoch_v1(application)?;
+        ensure!(
+            computed.commitment == commitment
+                && computed.new_validator_set == new_validator_set
+                && computed.new_parameters == new_parameters,
+            "later checkpoint differs from deterministic cutoff candidate selection"
+        );
 
         let checkpoint_parent_header =
             decode_block_header_v0_exact(raw_checkpoint_parent_header_cev0)
@@ -456,12 +463,11 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use sha2::Digest;
     use trnm_consensus_types::{
-        BlockId, CertifiedHeaderV0, Epoch, EpochAnchorAuthorizationKernelV0, EpochFallbackReasonV0,
-        EvidenceRoot, FinalityProofV0, HandoffCertificateV0, HandoffDescriptorV0,
-        HandoffDescriptorV0Fields, Height, NextEpochCommitmentV0Fields, OrderedRootV0,
-        PayloadDigest, ProposalWitnessV0, ProtocolVersion, QcReferenceV0, QuorumCertificate,
+        BlockId, CertifiedHeaderV0, Epoch, EpochAnchorAuthorizationKernelV0, EvidenceRoot,
+        FinalityProofV0, HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields,
+        Height, OrderedRootV0, PayloadDigest, ProposalWitnessV0, QcReferenceV0, QuorumCertificate,
         ReceiptsRoot, RootKind, Signature64, SignatureShareV0, StateRoot, Validator, ValidatorSet,
-        View, Vote, SCHEMA_VERSION_V0,
+        View, Vote,
     };
     use trnm_native_application::{
         BlockIdV0, ChainIdV0, GenesisHashV0, Hash32V0, HeightV0, NativeBlockExecutionRequestV0,
@@ -872,6 +878,15 @@ mod tests {
     // crash harness. No child reconstructs genesis/checkpoint history.
     #[inline(never)]
     fn build_later_descendant_fixture(path: &std::path::Path) -> Box<LaterDescendantFixture> {
+        build_later_descendant_fixture_with_transactions(path, &[], None)
+    }
+
+    #[inline(never)]
+    fn build_later_descendant_fixture_with_transactions(
+        path: &std::path::Path,
+        h12_transactions: &[Vec<u8>],
+        receiver_c18_path: Option<&std::path::Path>,
+    ) -> Box<LaterDescendantFixture> {
         let fixture = build_native_checkpoint_fixture_v1(path);
         let app = fixture.application;
         let confirmed = app
@@ -930,7 +945,11 @@ mod tests {
                     *edge.new_validator_set().id().as_bytes(),
                 )
                 .unwrap(),
-                Vec::new(),
+                if height == 12 {
+                    h12_transactions.to_vec()
+                } else {
+                    Vec::new()
+                },
             )
             .unwrap();
             let preview = app
@@ -956,7 +975,7 @@ mod tests {
                 request.height(),
                 request.timestamp_ms(),
                 request.active_validator_set_id(),
-                Vec::new(),
+                request.transactions().to_vec(),
                 NativeExpectedBlockCommitmentsV0::new(
                     preview.payload_root(),
                     preview.post_state_root(),
@@ -987,53 +1006,19 @@ mod tests {
                 .unwrap();
         }
 
-        let cutoff = app
-            .read_finalized_by_height_v1(HeightV0::new(15))
-            .unwrap()
-            .finalized_head_v1()
-            .unwrap();
+        let cutoff = app.read_finalized_by_height_v1(HeightV0::new(15)).unwrap();
         let old_set = edge.new_validator_set().clone();
         let old_parameters = *edge.new_parameters();
-        let new_set = ValidatorSet::new(
-            old_set.genesis_hash(),
-            old_set.chain_id(),
-            old_set.protocol_version(),
-            Epoch::new(2),
-            old_parameters.hash(),
-            old_set
-                .validators()
-                .iter()
-                .map(|validator| {
-                    Validator::new(
-                        validator.id(),
-                        validator.consensus_key(),
-                        validator.voting_power(),
-                    )
-                    .unwrap()
-                })
-                .collect(),
-        )
-        .unwrap();
-        let geometry =
-            trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), &old_parameters).unwrap();
-        let commitment = NextEpochCommitmentV0::new(NextEpochCommitmentV0Fields {
-            schema_version: SCHEMA_VERSION_V0,
-            genesis_hash: old_set.genesis_hash(),
-            chain_id: old_set.chain_id(),
-            old_epoch: old_set.epoch(),
-            new_epoch: new_set.epoch(),
-            snapshot_cutoff_height: Height::new(15),
-            snapshot_state_root: StateRoot::new(*cutoff.state_root().as_bytes()),
-            new_protocol_version: ProtocolVersion::V0,
-            new_validator_set_hash: new_set.id(),
-            new_consensus_parameters_hash: old_parameters.hash(),
-            rollout_phase: old_parameters.rollout_phase(),
-            upgrade_plan_hash: None,
-            fallback_used: false,
-            fallback_reason: EpochFallbackReasonV0::None,
-            activation_height: geometry.epoch_end().checked_next().unwrap(),
-        })
-        .unwrap();
+        let derived = cutoff.derive_next_epoch_v1(&app).unwrap();
+        let new_set = derived.new_validator_set;
+        let commitment = derived.commitment;
+        assert_eq!(derived.new_parameters, old_parameters);
+        assert_eq!(new_set.epoch(), Epoch::new(2));
+        assert_eq!(commitment.fields().snapshot_cutoff_height, Height::new(15));
+        assert_eq!(
+            commitment.fields().snapshot_state_root.as_bytes(),
+            cutoff.finalized_head_v1().unwrap().state_root().as_bytes(),
+        );
 
         let parent = prepared[6].overlay_parent_head().unwrap();
         let request = NativeBlockPreviewRequestV0::new(
@@ -1189,7 +1174,7 @@ mod tests {
             terminal_old_block_id: seal_2.id(),
             terminal_old_qc_digest: qc(&seal_2, &old_set).id(),
             terminal_old_view: seal_2.view(),
-            activation_height: geometry.epoch_end().checked_next().unwrap(),
+            activation_height: commitment.fields().activation_height,
             initial_new_view: View::new(1),
         })
         .unwrap();
@@ -1314,6 +1299,12 @@ mod tests {
             .unwrap();
         assert_eq!(retried.commit_sequence(), committed.commit_sequence());
         drop(app);
+        if let Some(receiver_path) = receiver_c18_path {
+            // Both branches originate at this actually executed local C18.
+            // No C21 preview/P or later sender state has existed at this cut.
+            copy_later_store(path, receiver_path);
+            assert_historical_receiver_c18(receiver_path, &checkpoint_header);
+        }
         let config = native_checkpoint_fixture_config_v1();
         let reopened = DurableNativeApplicationV0::open(path, config).unwrap();
         assert_eq!(

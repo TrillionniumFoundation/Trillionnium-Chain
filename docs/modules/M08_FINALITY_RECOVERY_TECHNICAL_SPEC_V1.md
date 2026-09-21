@@ -1002,6 +1002,19 @@ still-missing genesis/archive source join or an execution-ready imported base.
 
 ### Planned imported execution base (M08-HISTORY-INSTALL-V1)
 
+Later checkpoint admission and selected-row cold verification must recompute
+the native candidate-selection result from the exact retained cutoff P/JMT
+projection, using the already authenticated old prefix. Match the entire
+next-epoch commitment, effective validator set and parameters, including fallback
+fields. A signed commitment and matching cutoff root alone do not establish
+deterministic selection. The pure computation is shared with M06 historical
+replay and the existing checkpoint owner path; it creates no preparation permit.
+The cold path decodes the selected cutoff snapshot with previously verified
+coordinates and must not recursively invoke metadata/P inventory or recovery.
+Candidate databases containing a previously unchecked, incorrect selection or
+fallback commitment now fail cold recovery. Do not rewrite signed history or
+erase the database to make this check pass; retain the rejected evidence.
+
 This is the next owner-storage implementation contract, not an enabled importer.
 The first vertical is a receiver-owned genuine committed C18 schema10 source,
 verified history through C32, explicit installation, then original-finality C33
@@ -1027,6 +1040,34 @@ screens. Head/sequence alone is insufficient: edge installation can change the
 source inventory without advancing the metadata sequence. After installation,
 hash the explicitly reconstructed frozen logical source metadata singleton;
 the mutable current schema12 head/schema must not enter this source pin.
+The typed source and required journal inventory use the framed local domain
+`trnm.native.historical-replay-source-inventory.v1`. The read-only preparation
+seam checks this inventory again from a fresh connection before returning its
+opaque result. An anchor from another owner, or one invalidated by a new
+reservation/edge/P even at an unchanged head and sequence, cannot prepare replay.
+Only bound seal reservations that exactly belong to an already audited source
+checkpoint/installed edge may lie above the source application height; unresolved
+application or checkpoint reservations above it remain disqualifying.
+
+Source confirmation and deterministic read-only preparation are implemented in
+`trillionnium/crates/trnm-native-execution-v0/src/historical_replay_owner_v1.rs`
+with the bounded typed source/journal inventory in
+`trillionnium/crates/trnm-native-execution-v0/src/historical_replay_source_v1.rs`.
+These methods require schema10 and never create schema12, change the metadata,
+write P, consume an installed edge or sign. Both restore the receiver's complete
+local replay sets before execution. The canonical NHR1 byte limit is checked
+before retention; source SQLite schema is screened at64 objects/512 KiB before
+exact schema verification, and source columns retain their individual fixed or
+variable bounds before high-level decoding. Legacy v0 and epoch-v1 P share the
+128-row limit. Every original `native_epoch_edge_v1` evidence record requires
+its exact preparation ID and bound checkpoint header in the actual journal;
+later checkpoints do not manufacture legacy preparation records.
+
+The nonempty fixture captures genuine local C18 before C21 preparation, with a
+signed H12 credit and two signed C25 transfers. It compares replayed C32 state
+and command/nonce sets to the real sender, checks repeated computation identity,
+and leaves source B installed/unconsumed. This is preparation evidence only;
+the atomic install/reopen/C33 and crash acceptance below remain open.
 
 At genuine C18, consumed prefix A and active epoch1 belong to the source P.
 Installed successor B remains phase0 with NULL consumption fields. Replay may
@@ -1051,6 +1092,9 @@ For deterministic local bookkeeping use new framed local domains
 `.historical-replay-step.v1` and `.historical-replay-base.v1` (each prefixed
 `trnm.native`). The input digest covers complete canonical NHR1 bytes. The run
 digest binds store ID, full source head/sequence/inventory, target block and input
+digest. Its source field is a framed `trnm.native.historical-replay-source-pin.v1`
+digest over store/signer policy, Head104, durable/P/commit sequences, P digest,
+exact header, snapshot/replay digests, active set/parameters, prefix and inventory
 digest. Each step's local commit ID binds run, ordinal, previous local head,
 authenticated header ID and computed artifact digest. These values never claim
 an original ancestor P/commit. The target head's commit ID is the final replay

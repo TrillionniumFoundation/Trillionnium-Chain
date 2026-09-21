@@ -329,6 +329,25 @@ fn compute_authenticated_poco_candidate_selection_v0(
         "candidate and projection cutoff authority differ"
     );
 
+    compute_poco_candidate_from_projection_v1(
+        projection,
+        cutoff_authority.epoch(),
+        cutoff_authority.cutoff_height(),
+        cutoff_authority.validator_set_id(),
+        cutoff_authority.consensus_parameters_hash(),
+    )
+}
+
+/// Pure candidate computation shared by the original owner-authorized path
+/// and historical replay. The latter must authenticate its retained tree and
+/// exact cutoff/header before comparing these inert computation facts.
+fn compute_poco_candidate_from_projection_v1(
+    projection: &ProductionPocoProjectionV0,
+    expected_epoch: Epoch,
+    cutoff_height: Height,
+    expected_set: ValidatorSetId,
+    expected_parameters: ConsensusParametersHash,
+) -> Result<AuthenticatedPocoCandidateComputationV0> {
     // This performs the complete physical/bidirectional application audit.
     // Legacy projections without kind 16 are accepted by the restore audit,
     // so the candidate join additionally requires the exact authority below.
@@ -358,9 +377,9 @@ fn compute_authenticated_poco_candidate_selection_v0(
 
     let active = active_projection_context_v0(&entries)?;
     ensure!(
-        cutoff_authority.epoch() == active.validator_set.epoch()
-            && cutoff_authority.validator_set_id() == active.validator_set.id()
-            && cutoff_authority.consensus_parameters_hash() == active.parameters.hash(),
+        expected_epoch == active.validator_set.epoch()
+            && expected_set == active.validator_set.id()
+            && expected_parameters == active.parameters.hash(),
         "candidate cutoff consensus configuration differs from authenticated projection"
     );
     let target_epoch = active
@@ -448,8 +467,8 @@ fn compute_authenticated_poco_candidate_selection_v0(
         .collect::<Result<Vec<_>>>()?;
     let transcript = UnauthenticatedCandidateSelectionTranscriptV0 {
         snapshot_epoch: active.validator_set.epoch(),
-        snapshot_height: cutoff_authority.cutoff_height(),
-        committed_snapshot_cutoff: cutoff_authority.cutoff_height(),
+        snapshot_height: cutoff_height,
+        committed_snapshot_cutoff: cutoff_height,
         candidates: candidates.into_values().collect(),
         contributions,
     };
@@ -478,6 +497,84 @@ fn compute_authenticated_poco_candidate_selection_v0(
         transcript_canonical_bytes: transcript_bytes,
         #[cfg(test)]
         result_canonical_bytes: result_bytes,
+    })
+}
+
+/// Computation facts only: no constructor can turn these fields into a
+/// scheduled cutoff, checkpoint preparation, epoch owner or signing permit.
+pub(crate) struct ComputedPocoNextEpochV1 {
+    pub(crate) new_validator_set: ValidatorSet,
+    pub(crate) new_parameters: ConsensusParametersV0,
+    pub(crate) commitment: trnm_consensus_types::NextEpochCommitmentV0,
+}
+
+pub(crate) fn derive_poco_next_epoch_from_cutoff_v1(
+    projection: &ProductionPocoProjectionV0,
+    cutoff_state_root: StateRoot,
+    old_set: &ValidatorSet,
+    old_parameters: &ConsensusParametersV0,
+) -> Result<ComputedPocoNextEpochV1> {
+    use trnm_consensus_types::{
+        EpochGeometryV0, NextEpochCommitmentV0, NextEpochCommitmentV0Fields, ProtocolVersion,
+        SCHEMA_VERSION_V0,
+    };
+    old_set
+        .validate_against_parameters(old_parameters)
+        .map_err(|error| anyhow::anyhow!("replayed cutoff old configuration: {error:?}"))?;
+    let geometry = EpochGeometryV0::new(old_set.epoch(), old_parameters)
+        .map_err(|error| anyhow::anyhow!("replayed cutoff epoch geometry: {error:?}"))?;
+    let cutoff_height = geometry
+        .checkpoint_height()
+        .get()
+        .checked_sub(old_parameters.snapshot_lead_blocks())
+        .context("replayed cutoff height underflow")?;
+    ensure!(
+        projection.manifest().cutoff_height().get() == cutoff_height
+            && old_parameters.snapshot_lead_blocks()
+                >= u64::from(old_parameters.finality_certified_chain_length()),
+        "replayed cutoff is not the exact scheduled pre-checkpoint state"
+    );
+    let computed = compute_poco_candidate_from_projection_v1(
+        projection,
+        old_set.epoch(),
+        Height::new(cutoff_height),
+        old_set.id(),
+        old_parameters.hash(),
+    )?;
+    ensure!(
+        computed.old_validator_set == *old_set && computed.old_parameters == *old_parameters,
+        "replayed cutoff computation changed the old configuration"
+    );
+    let new_validator_set = computed.kernel.effective_validator_set().clone();
+    let new_parameters = *computed.kernel.effective_parameters();
+    let commitment = NextEpochCommitmentV0::new(NextEpochCommitmentV0Fields {
+        schema_version: SCHEMA_VERSION_V0,
+        genesis_hash: old_set.genesis_hash(),
+        chain_id: old_set.chain_id(),
+        old_epoch: old_set.epoch(),
+        new_epoch: new_validator_set.epoch(),
+        snapshot_cutoff_height: Height::new(cutoff_height),
+        snapshot_state_root: cutoff_state_root,
+        new_protocol_version: ProtocolVersion::V0,
+        new_validator_set_hash: new_validator_set.id(),
+        new_consensus_parameters_hash: new_parameters.hash(),
+        rollout_phase: new_parameters.rollout_phase(),
+        upgrade_plan_hash: None,
+        fallback_used: computed.kernel.fallback_used(),
+        fallback_reason: computed.kernel.fallback_reason(),
+        activation_height: geometry
+            .epoch_end()
+            .checked_next()
+            .map_err(|error| anyhow::anyhow!("replayed cutoff activation height: {error:?}"))?,
+    })
+    .map_err(|error| anyhow::anyhow!("replayed cutoff commitment: {error:?}"))?;
+    commitment
+        .validate_same_version_context(old_set, old_parameters, &new_validator_set, &new_parameters)
+        .map_err(|error| anyhow::anyhow!("replayed cutoff commitment context: {error:?}"))?;
+    Ok(ComputedPocoNextEpochV1 {
+        new_validator_set,
+        new_parameters,
+        commitment,
     })
 }
 

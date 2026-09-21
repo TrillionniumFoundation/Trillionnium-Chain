@@ -35,10 +35,11 @@ fn assert_genuine_historical_export(
             .collect::<Vec<_>>(),
         expected.headers
     );
-    let empty = trnm_consensus_types::ApplicationPayloadV0::new(Vec::new())
-        .unwrap()
-        .try_cev0_bytes()
-        .unwrap();
+    let source = rusqlite::Connection::open_with_flags(
+        app.path(),
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+    )
+    .unwrap();
     let mut application_count = 0;
     for record in &exported.records {
         let header =
@@ -53,10 +54,39 @@ fn assert_genuine_historical_export(
                     header.block_kind(),
                     BlockKind::EpochSeal1 | BlockKind::EpochSeal2
                 ));
-                // All calls that built this genuine fixture supplied Vec::new.
-                // This establishes exact source transaction-byte preservation;
-                // it does not claim nonempty transaction/replay execution.
-                assert_eq!(application_payload_cev0, &empty);
+                let (kind, artifact, status): (i64, Vec<u8>, i64) = source.query_row(
+                    "SELECT artifact_kind,artifact,status FROM native_durable_execution_p_v1 WHERE block_id=?",
+                    [header.id().as_bytes().as_slice()],
+                    |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+                ).unwrap();
+                assert_eq!(status, 1);
+                let original_transactions = match kind {
+                    0 => {
+                        trnm_native_application::decode_native_executed_block_artifact_v0(&artifact)
+                            .unwrap()
+                            .request()
+                            .transactions()
+                            .to_vec()
+                    }
+                    1 => trnm_native_application::decode_native_executed_epoch_block_artifact_v1(
+                        &artifact,
+                    )
+                    .unwrap()
+                    .request()
+                    .preview()
+                    .transactions()
+                    .to_vec(),
+                    _ => panic!("unsupported genuine fixture artifact kind"),
+                };
+                let expected =
+                    trnm_consensus_types::ApplicationPayloadV0::new(original_transactions)
+                        .unwrap()
+                        .try_cev0_bytes()
+                        .unwrap();
+                assert_eq!(
+                    application_payload_cev0, &expected,
+                    "history must retain exact source outer transaction bytes and order"
+                );
             }
             crate::NativeHistoricalRecordV1::Seal { .. } => {
                 assert!(matches!(

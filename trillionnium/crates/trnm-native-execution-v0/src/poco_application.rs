@@ -20,7 +20,8 @@ mod poco_authenticated_candidate;
 pub(crate) use poco_authenticated_candidate::{
     authorize_authenticated_poco_candidate_selection_v0,
     authorize_authenticated_poco_cutoff_candidate_selection_v0,
-    AuthenticatedPocoCandidateSelectionV0, AuthenticatedPocoCutoffCandidateSelectionV0,
+    derive_poco_next_epoch_from_cutoff_v1, AuthenticatedPocoCandidateSelectionV0,
+    AuthenticatedPocoCutoffCandidateSelectionV0, ComputedPocoNextEpochV1,
 };
 
 use std::collections::{BTreeMap, BTreeSet};

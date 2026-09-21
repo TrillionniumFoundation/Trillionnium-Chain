@@ -553,6 +553,8 @@ pub(super) fn verify_checkpoint(
     ensure!(
         cutoff.status == 1
             && cutoff.lineage == p.lineage
+            && cutoff.target_set == p.target_set
+            && cutoff.target_parameters == p.target_parameters
             && cutoff
                 .commit_sequence
                 .context("later cutoff sequence missing")?
@@ -563,6 +565,18 @@ pub(super) fn verify_checkpoint(
             && commitment.snapshot_state_root.as_bytes()
                 == cutoff.target_head()?.state_root().as_bytes(),
         "later finality cutoff binding"
+    );
+    let coordinates = prefix
+        .entries
+        .iter()
+        .map(|entry| entry.audit.coordinates(entry.binding))
+        .collect::<Result<Vec<_>>>()?;
+    let computed = derive_poco_next_epoch_from_cutoff_p_v1(config, &cutoff, &coordinates)?;
+    ensure!(
+        &computed.commitment == decoded.next_epoch_commitment()
+            && &computed.new_validator_set == decoded.new_validator_set()
+            && &computed.new_parameters == decoded.new_consensus_parameters(),
+        "later finality differs from deterministic cutoff candidate selection"
     );
     Ok(crate::epoch_recovery::AuditedEpochEvidenceV1 {
         activation: verified,

@@ -31,6 +31,7 @@ use std::{
 
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use rusqlite::{params, Connection, OptionalExtension, Transaction, TransactionBehavior};
+use sha2::{Digest, Sha256};
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, decode_block_header_v0_exact,
@@ -966,6 +967,50 @@ pub(crate) struct PocoPreparationJournalV0 {
     shared: Arc<PocoPreparationJournalSharedStateV0>,
 }
 
+/// Bounded, read-only facts from the preparation journal.  These facts are
+/// comparison material for the historical source audit; they do not grant a
+/// preparation capability and deliberately leave the source/anchor join to
+/// the caller that has already audited the native database.
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct HistoricalReplayPreparationFactV1 {
+    pub(crate) preparation_id: [u8; 32],
+    pub(crate) height: u64,
+    pub(crate) phase: u8,
+    pub(crate) bound_header_digest: Option<[u8; 32]>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(crate) struct HistoricalReplayPreparationInventoryV1 {
+    pub(crate) digest: [u8; 32],
+    pub(crate) facts: Vec<HistoricalReplayPreparationFactV1>,
+}
+
+fn sha256_bytes(bytes: &[u8]) -> [u8; 32] {
+    Sha256::digest(bytes).into()
+}
+
+fn hash_sql_value(hasher: &mut Sha256, value: rusqlite::types::ValueRef<'_>) -> Result<()> {
+    match value {
+        rusqlite::types::ValueRef::Null => hasher.update([0]),
+        rusqlite::types::ValueRef::Integer(value) => {
+            hasher.update([1]);
+            hasher.update(value.to_be_bytes());
+        }
+        rusqlite::types::ValueRef::Real(_) => bail!("historical preparation REAL value"),
+        rusqlite::types::ValueRef::Text(value) => {
+            hasher.update([3]);
+            hasher.update((value.len() as u64).to_be_bytes());
+            hasher.update(value);
+        }
+        rusqlite::types::ValueRef::Blob(value) => {
+            hasher.update([4]);
+            hasher.update((value.len() as u64).to_be_bytes());
+            hasher.update(value);
+        }
+    }
+    Ok(())
+}
+
 impl PocoPreparationJournalV0 {
     pub(crate) fn open(database_path: impl AsRef<Path>) -> Result<Self> {
         Self::open_mode(database_path.as_ref(), true)
@@ -1074,6 +1119,16 @@ impl PocoPreparationJournalV0 {
             transaction.commit()?;
             sync_parent_directory(&requested_path)?;
         }
+        let binding_bytes: i64 = connection.query_row(
+            "SELECT COALESCE(SUM(length(binding_record)+length(binding_checksum)),0)
+             FROM transition_bindings",
+            [],
+            |row| row.get(0),
+        )?;
+        ensure!(
+            binding_bytes >= 0 && binding_bytes as u64 <= MAX_JOURNAL_SCAN_BYTES,
+            "historical preparation binding byte bound"
+        );
         validate_database(&connection)?;
         let stored_journal_id = read_journal_id(&connection)?;
         if initialize {
@@ -1140,6 +1195,170 @@ impl PocoPreparationJournalV0 {
             }
         }
         bail!("retained bound preparation missing")
+    }
+
+    /// Audit the sidecar without accepting a caller-provided allowlist.  The
+    /// native source audit must join the returned facts to its independently
+    /// verified P/edge records; an unmatched preparation above the source
+    /// anchor is therefore unresolved and must be rejected there.
+    pub(crate) fn audit_historical_source_v1(
+        &self,
+    ) -> Result<HistoricalReplayPreparationInventoryV1> {
+        self.ensure_not_sticky_halted()?;
+        let _writer = self
+            .shared
+            .writer
+            .lock()
+            .map_err(|_| anyhow!("preparation writer lock poisoned"))?;
+        let connection = self.connect()?;
+        connection.execute_batch("BEGIN DEFERRED TRANSACTION")?;
+        // Screen before any row BLOB is copied into a Vec.  The canonical
+        // validator below performs the deeper checksum/codec checks only
+        // after these limits have passed.
+        let (count, invalid, bytes): (i64, i64, i64) = connection.query_row(
+            "SELECT COUNT(*),
+                    COALESCE(SUM(CASE WHEN typeof(transition_key)='blob'
+                                      AND length(transition_key)=32
+                                      AND typeof(height_be)='blob' AND length(height_be)=8
+                                      AND typeof(view_be)='blob' AND length(view_be)=8
+                                      AND typeof(preparation_record)='blob'
+                                      AND length(preparation_record) BETWEEN 1 AND 67108864
+                                      AND typeof(preparation_checksum)='blob'
+                                      AND length(preparation_checksum)=32
+                                      AND (bound_record IS NULL OR
+                                           (typeof(bound_record)='blob' AND length(bound_record)
+                                            BETWEEN 1 AND 67108864))
+                                      AND (bound_checksum IS NULL OR
+                                           (typeof(bound_checksum)='blob' AND length(bound_checksum)=32))
+                                      AND typeof(block_kind)='integer'
+                                      AND typeof(phase)='integer'
+                                      THEN 0 ELSE 1 END),0),
+                    COALESCE(SUM(CASE WHEN typeof(preparation_record)='blob'
+                                      THEN length(preparation_record) ELSE 0 END
+                              + CASE WHEN typeof(bound_record)='blob'
+                                     THEN length(bound_record) ELSE 0 END),0)
+             FROM preparations",
+            [],
+            |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+        )?;
+        ensure!(
+            count >= 0 && count as u64 <= MAX_JOURNAL_PREPARATIONS,
+            "historical preparation row bound"
+        );
+        ensure!(invalid == 0, "historical preparation type/length bound");
+        ensure!(
+            bytes >= 0 && bytes as u64 <= MAX_JOURNAL_SCAN_BYTES,
+            "historical preparation byte bound"
+        );
+        validate_database(&connection)?;
+
+        let mut digest = Sha256::new();
+        digest.update(b"trnm.native.historical-replay-preparation-inventory.v1");
+        // Include every journal authority-bearing row, not only preparation
+        // payloads.  A changed journal identity, binding, or durable halt must
+        // change the source pin (and a halt remains an admission failure).
+        let metadata_count: i64 =
+            connection.query_row("SELECT COUNT(*) FROM metadata", [], |row| row.get(0))?;
+        ensure!(
+            (0..=2).contains(&metadata_count),
+            "historical preparation metadata row bound"
+        );
+        digest.update(b"metadata");
+        digest.update((metadata_count as u64).to_be_bytes());
+        let mut metadata = connection.prepare("SELECT key,value FROM metadata ORDER BY key")?;
+        let mut metadata_rows = metadata.query([])?;
+        while let Some(row) = metadata_rows.next()? {
+            digest.update(b"rowkey");
+            hash_sql_value(&mut digest, row.get_ref(0)?)?;
+            digest.update(b"value");
+            hash_sql_value(&mut digest, row.get_ref(1)?)?;
+        }
+        let binding_count: i64 =
+            connection.query_row("SELECT COUNT(*) FROM transition_bindings", [], |row| {
+                row.get(0)
+            })?;
+        ensure!(
+            binding_count >= 0 && binding_count as u64 <= MAX_JOURNAL_TRANSITIONS,
+            "historical binding row bound"
+        );
+        digest.update(b"transition_bindings");
+        digest.update((binding_count as u64).to_be_bytes());
+        let mut bindings = connection.prepare(
+            "SELECT transition_key,binding_record,binding_checksum
+             FROM transition_bindings ORDER BY transition_key",
+        )?;
+        let mut binding_rows = bindings.query([])?;
+        while let Some(row) = binding_rows.next()? {
+            digest.update(b"row");
+            for (index, tag) in ["transition_key", "binding_record", "binding_checksum"]
+                .into_iter()
+                .enumerate()
+            {
+                digest.update(tag.as_bytes());
+                hash_sql_value(&mut digest, row.get_ref(index)?)?;
+            }
+        }
+        digest.update(b"preparations");
+        digest.update((count as u64).to_be_bytes());
+        let mut facts = Vec::with_capacity(count as usize);
+        let mut rows = connection.prepare(
+            "SELECT transition_key,block_kind,height_be,view_be,preparation_record,
+                    preparation_checksum,bound_record,bound_checksum,phase
+             FROM preparations ORDER BY transition_key,block_kind,height_be,view_be",
+        )?;
+        let mut rows = rows.query([])?;
+        while let Some(row) = rows.next()? {
+            digest.update(b"row");
+            for (index, tag) in [
+                "transition_key",
+                "block_kind",
+                "height_be",
+                "view_be",
+                "preparation_record",
+                "preparation_checksum",
+                "bound_record",
+                "bound_checksum",
+                "phase",
+            ]
+            .into_iter()
+            .enumerate()
+            {
+                digest.update(tag.as_bytes());
+                digest.update([0]);
+                hash_sql_value(&mut digest, row.get_ref(index)?)?;
+            }
+            let preparation_bytes: Vec<u8> = row.get(4)?;
+            let preparation =
+                PocoCheckpointPreparationReplayRecordV0::decode_exact(&preparation_bytes)?;
+            let bound_header_digest = match row.get_ref(6)? {
+                rusqlite::types::ValueRef::Null => None,
+                rusqlite::types::ValueRef::Blob(bytes) => {
+                    let bound =
+                        PocoCheckpointBoundReplayRecordV0::decode_exact(bytes, &preparation)?;
+                    Some(sha256_bytes(&bound.header_cev0))
+                }
+                _ => bail!("historical preparation bound record type"),
+            };
+            facts.push(HistoricalReplayPreparationFactV1 {
+                preparation_id: preparation.preparation_id(),
+                height: preparation.fields().height.get(),
+                phase: row
+                    .get::<_, i64>(8)?
+                    .try_into()
+                    .context("historical preparation phase")?,
+                bound_header_digest,
+            });
+        }
+        let has_halt: bool =
+            connection.query_row("SELECT EXISTS(SELECT 1 FROM safety_halt)", [], |row| {
+                row.get(0)
+            })?;
+        ensure!(!has_halt, "PoCO preparation journal durable halt present");
+        connection.execute_batch("ROLLBACK")?;
+        Ok(HistoricalReplayPreparationInventoryV1 {
+            digest: Sha256::finalize(digest).into(),
+            facts,
+        })
     }
 
     #[cfg(test)]
@@ -2110,6 +2329,7 @@ fn validate_database(connection: &Connection) -> Result<()> {
 }
 
 fn validate_canonical_schema(connection: &Connection) -> Result<()> {
+    screen_journal_schema_v1(connection)?;
     let canonical = Connection::open_in_memory()?;
     canonical.execute_batch(JOURNAL_SCHEMA_SQL)?;
     let expected = journal_schema_objects(&canonical)?;
@@ -2117,6 +2337,60 @@ fn validate_canonical_schema(connection: &Connection) -> Result<()> {
     ensure!(
         actual == expected,
         "PoCO preparation journal schema differs from the canonical allowlist"
+    );
+    Ok(())
+}
+
+// These scalar screens are shared by first open, registered-sidecar reconnect,
+// and transaction audits. They must precede the String/schema loaders below;
+// a later historical-inventory screen cannot protect those earlier copies.
+fn screen_journal_schema_v1(connection: &Connection) -> Result<()> {
+    let count: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM (SELECT 1 FROM sqlite_schema LIMIT 65)",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        (0..=64).contains(&count),
+        "PoCO preparation journal schema row bound"
+    );
+    let bytes: i64 = connection.query_row(
+        "SELECT COALESCE(SUM(length(CAST(type AS BLOB))+length(CAST(name AS BLOB))
+                +length(CAST(tbl_name AS BLOB))+COALESCE(length(CAST(sql AS BLOB)),0)),0)
+         FROM sqlite_schema",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        (0..=524288).contains(&bytes),
+        "PoCO preparation journal schema byte bound"
+    );
+    Ok(())
+}
+
+fn screen_journal_metadata_v1(connection: &Connection) -> Result<()> {
+    let count: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM (SELECT 1 FROM metadata LIMIT 3)",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        (0..=2).contains(&count),
+        "PoCO preparation journal metadata row bound"
+    );
+    let (invalid, bytes): (i64, i64) = connection.query_row(
+        "SELECT COALESCE(SUM(CASE WHEN typeof(key)='text' AND typeof(value)='text'
+                                 THEN 0 ELSE 1 END),0),
+                COALESCE(SUM(CASE WHEN typeof(key)='text' THEN length(CAST(key AS BLOB)) ELSE 0 END
+                           + CASE WHEN typeof(value)='text' THEN length(CAST(value AS BLOB)) ELSE 0 END),0)
+         FROM metadata",
+        [],
+        |row| Ok((row.get(0)?, row.get(1)?)),
+    )?;
+    ensure!(invalid == 0, "PoCO preparation journal metadata type bound");
+    ensure!(
+        (0..=4096).contains(&bytes),
+        "PoCO preparation journal metadata byte bound"
     );
     Ok(())
 }
@@ -2152,6 +2426,7 @@ fn journal_schema_objects(connection: &Connection) -> Result<BTreeMap<(String, S
 }
 
 fn validate_metadata(connection: &Connection) -> Result<()> {
+    screen_journal_metadata_v1(connection)?;
     let mut statement = connection.prepare("SELECT key, value FROM metadata ORDER BY key")?;
     let rows = statement.query_map([], |row| {
         Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
@@ -2168,6 +2443,7 @@ fn validate_metadata(connection: &Connection) -> Result<()> {
 }
 
 fn validate_schema_version(connection: &Connection) -> Result<()> {
+    screen_journal_metadata_v1(connection)?;
     let schema: Option<String> = connection
         .query_row(
             "SELECT value FROM metadata WHERE key='schema_version'",
@@ -2184,6 +2460,7 @@ fn validate_schema_version(connection: &Connection) -> Result<()> {
 }
 
 fn read_journal_id(connection: &Connection) -> Result<[u8; 32]> {
+    screen_journal_metadata_v1(connection)?;
     let encoded: Option<String> = connection
         .query_row(
             "SELECT value FROM metadata WHERE key='journal_id'",
@@ -2673,6 +2950,97 @@ mod tests {
             header.id(),
         );
         PocoCheckpointBoundReplayRecordV0::new(bytes, header.id(), authorization_id).unwrap()
+    }
+
+    #[test]
+    fn historical_source_journal_inventory_is_read_only_and_tracks_bound_phase() {
+        let directory = TestDirectory::new();
+        let path = directory.join("historical-source.sqlite3");
+        let journal = PocoPreparationJournalV0::open(&path).unwrap();
+        let record = fixture(31);
+
+        let empty = journal.audit_historical_source_v1().unwrap();
+        assert!(empty.facts.is_empty());
+        let before = fs::read(&path).unwrap();
+        let repeated = journal.audit_historical_source_v1().unwrap();
+        assert_eq!(empty, repeated);
+        assert_eq!(before, fs::read(&path).unwrap());
+
+        let reservation = journal.reserve(&record).unwrap();
+        let unbound = journal.audit_historical_source_v1().unwrap();
+        assert_eq!(unbound.facts.len(), 1);
+        assert_eq!(unbound.facts[0].phase, 0);
+        assert_ne!(empty.digest, unbound.digest);
+
+        journal.bind(&reservation, &bound_fixture(&record)).unwrap();
+        let bound = journal.audit_historical_source_v1().unwrap();
+        assert_eq!(bound.facts.len(), 1);
+        assert_eq!(bound.facts[0].phase, 1);
+        assert!(bound.facts[0].bound_header_digest.is_some());
+        assert_ne!(unbound.digest, bound.digest);
+        let before_bound_read = fs::read(&path).unwrap();
+        assert_eq!(bound, journal.audit_historical_source_v1().unwrap());
+        assert_eq!(before_bound_read, fs::read(&path).unwrap());
+
+        let mut conflicting = bound_fixture(&record);
+        conflicting.header_cev0[0] ^= 1;
+        assert!(journal.bind(&reservation, &conflicting).is_err());
+        assert!(journal.audit_historical_source_v1().is_err());
+    }
+
+    #[test]
+    fn registered_sidecar_screens_metadata_before_string_decode() {
+        let directory = TestDirectory::new();
+        let path = directory.join("registered-metadata.sqlite3");
+        let journal = PocoPreparationJournalV0::open(&path).unwrap();
+        let connection = Connection::open(&path).unwrap();
+        // SQLite supplies the oversized TEXT; the test never creates a large
+        // Rust String. The old reconnect reached read_journal_id first.
+        connection
+            .execute(
+                "UPDATE metadata SET value=CAST(zeroblob(4097) AS TEXT) WHERE key='journal_id'",
+                [],
+            )
+            .unwrap();
+        let error = PocoPreparationJournalV0::open_existing(&path)
+            .expect_err("registered reconnect must reject oversized metadata");
+        assert_eq!(
+            error.to_string(),
+            "PoCO preparation journal metadata byte bound"
+        );
+        assert!(journal.shared.sticky_halt.load(Ordering::Acquire));
+    }
+
+    #[test]
+    fn registered_sidecar_screens_schema_before_object_decode() {
+        for oversized_sql in [false, true] {
+            let directory = TestDirectory::new();
+            let path = directory.join("registered-schema.sqlite3");
+            let journal = PocoPreparationJournalV0::open(&path).unwrap();
+            let connection = Connection::open(&path).unwrap();
+            let expected = if oversized_sql {
+                // A valid retained CREATE statement exceeds the SQL text
+                // budget, independently of the schema object count.
+                connection
+                    .execute_batch(&format!(
+                        "CREATE VIEW oversized AS SELECT 1 /*{}*/",
+                        "x".repeat(524288)
+                    ))
+                    .unwrap();
+                "PoCO preparation journal schema byte bound"
+            } else {
+                for index in 0..65 {
+                    connection
+                        .execute_batch(&format!("CREATE VIEW extra{index} AS SELECT 1"))
+                        .unwrap();
+                }
+                "PoCO preparation journal schema row bound"
+            };
+            let error = PocoPreparationJournalV0::open_existing(&path)
+                .expect_err("registered reconnect must reject oversized schema");
+            assert_eq!(error.to_string(), expected);
+            assert!(journal.shared.sticky_halt.load(Ordering::Acquire));
+        }
     }
 
     fn replace_preparation_record(path: &Path, record: &[u8]) {

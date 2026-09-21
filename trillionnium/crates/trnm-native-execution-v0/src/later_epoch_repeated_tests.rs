@@ -9,6 +9,27 @@ fn prepare_repeated_descendant(
     kind: BlockKind,
     commitment: Option<trnm_consensus_types::NextEpochCommitmentHash>,
 ) -> (crate::PreparedNativeEpochExecutionV1, BlockHeader) {
+    prepare_repeated_descendant_with_transactions(
+        app,
+        parent,
+        parent_header,
+        set,
+        kind,
+        commitment,
+        Vec::new(),
+    )
+}
+
+#[inline(never)]
+fn prepare_repeated_descendant_with_transactions(
+    app: &DurableNativeApplicationV0,
+    parent: &crate::PreparedNativeEpochExecutionV1,
+    parent_header: &BlockHeader,
+    set: &ValidatorSet,
+    kind: BlockKind,
+    commitment: Option<trnm_consensus_types::NextEpochCommitmentHash>,
+    transactions: Vec<Vec<u8>>,
+) -> (crate::PreparedNativeEpochExecutionV1, BlockHeader) {
     let height = parent_header.height().get() + 1;
     let request = NativeBlockPreviewRequestV0::new(
         ChainIdV0::new(set.chain_id().as_str()).unwrap(),
@@ -17,7 +38,7 @@ fn prepare_repeated_descendant(
         HeightV0::new(height),
         height * 1000,
         trnm_native_application::ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(),
-        Vec::new(),
+        transactions,
     )
     .unwrap();
     let preview = app.preview_epoch_descendant_v1(parent, &request).unwrap();
@@ -68,6 +89,14 @@ struct RepeatedCheckpointFixture {
 fn advance_repeated_checkpoint(
     seed: Box<LaterDescendantFixture>,
 ) -> Box<RepeatedCheckpointFixture> {
+    advance_repeated_checkpoint_with_transactions(seed, &[])
+}
+
+#[inline(never)]
+fn advance_repeated_checkpoint_with_transactions(
+    seed: Box<LaterDescendantFixture>,
+    c25_transactions: &[Vec<u8>],
+) -> Box<RepeatedCheckpointFixture> {
     let LaterDescendantFixture {
         application: app,
         prepared: c22,
@@ -103,13 +132,18 @@ fn advance_repeated_checkpoint(
         );
     }
     for height in 25..=27 {
-        let (p, header) = prepare_repeated_descendant(
+        let (p, header) = prepare_repeated_descendant_with_transactions(
             &app,
             &prepared[&(height - 1)],
             &headers[&(height - 1)],
             &old_set,
             BlockKind::Regular,
             None,
+            if height == 25 {
+                c25_transactions.to_vec()
+            } else {
+                Vec::new()
+            },
         );
         prepared.insert(height, p);
         headers.insert(height, header);
@@ -140,46 +174,22 @@ fn advance_repeated_checkpoint(
             c22_sequence = committed.commit_sequence();
         }
     }
-    let cutoff = app
-        .read_finalized_by_height_v1(HeightV0::new(25))
-        .unwrap()
-        .finalized_head_v1()
-        .unwrap();
-    assert_eq!(app.confirmed_committed_head_v0().unwrap(), cutoff);
-    let new_set = ValidatorSet::new(
-        old_set.genesis_hash(),
-        old_set.chain_id(),
-        old_set.protocol_version(),
-        Epoch::new(3),
-        parameters.hash(),
-        old_set.validators().to_vec(),
-    )
-    .unwrap();
-    assert_ne!(new_set.id(), old_set.id());
-    let geometry =
-        trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), &parameters).unwrap();
+    let cutoff = app.read_finalized_by_height_v1(HeightV0::new(25)).unwrap();
     assert_eq!(
-        geometry.checkpoint_height().get() - parameters.snapshot_lead_blocks(),
-        25
+        app.confirmed_committed_head_v0().unwrap(),
+        cutoff.finalized_head_v1().unwrap(),
     );
-    let commitment = NextEpochCommitmentV0::new(NextEpochCommitmentV0Fields {
-        schema_version: SCHEMA_VERSION_V0,
-        genesis_hash: old_set.genesis_hash(),
-        chain_id: old_set.chain_id(),
-        old_epoch: old_set.epoch(),
-        new_epoch: new_set.epoch(),
-        snapshot_cutoff_height: Height::new(25),
-        snapshot_state_root: StateRoot::new(*cutoff.state_root().as_bytes()),
-        new_protocol_version: ProtocolVersion::V0,
-        new_validator_set_hash: new_set.id(),
-        new_consensus_parameters_hash: parameters.hash(),
-        rollout_phase: parameters.rollout_phase(),
-        upgrade_plan_hash: None,
-        fallback_used: false,
-        fallback_reason: EpochFallbackReasonV0::None,
-        activation_height: geometry.epoch_end().checked_next().unwrap(),
-    })
-    .unwrap();
+    let derived = cutoff.derive_next_epoch_v1(&app).unwrap();
+    let new_set = derived.new_validator_set;
+    let commitment = derived.commitment;
+    assert_eq!(derived.new_parameters, parameters);
+    assert_eq!(new_set.epoch(), Epoch::new(3));
+    assert_ne!(new_set.id(), old_set.id());
+    assert_eq!(commitment.fields().snapshot_cutoff_height, Height::new(25));
+    assert_eq!(
+        commitment.fields().snapshot_state_root.as_bytes(),
+        cutoff.finalized_head_v1().unwrap().state_root().as_bytes(),
+    );
     let (_checkpoint_p, checkpoint) = prepare_repeated_descendant(
         &app,
         &prepared[&27],
@@ -848,6 +858,7 @@ fn m15_finality_transport_copy(
 
 include!("native_live_sync_tests.rs");
 include!("native_historical_sync_tests.rs");
+include!("native_historical_replay_tests.rs");
 
 fn rehash_repeated_successor(sql: &rusqlite::Connection, binding: &[u8]) {
     let mut fields: Vec<Vec<u8>> = sql.query_row(

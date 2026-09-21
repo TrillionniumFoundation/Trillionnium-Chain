@@ -16,8 +16,11 @@ pub(super) const APPLICATION_FINALITY_SCHEMA_VERSION: u64 = 9;
 pub(super) const LATER_SCHEMA_VERSION: u64 = 10;
 #[path = "later_epoch_descendant_finality_v1.rs"]
 mod descendant_finality;
+#[path = "historical_replay_owner_v1.rs"]
+mod historical_replay;
 #[path = "epoch_lineage_v1.rs"]
 mod lineage_resolver;
+pub use historical_replay::{ConfirmedNativeReplayAnchorV1, PreparedNativeReplayBaseV1};
 #[path = "native_live_export_v1.rs"]
 mod live_export;
 #[path = "epoch_sync_export_v1.rs"]
@@ -224,9 +227,23 @@ pub struct FinalizedNativeEpochApplicationReadV1 {
     row: StoredEpochPV1,
     executed: NativeExecutedBlockV0,
     receipt_commitments: Vec<Hash32V0>,
+    coordinates: Vec<crate::epoch_edge::EpochApplicationCoordinatesV1>,
 }
 
 impl FinalizedNativeEpochApplicationReadV1 {
+    /// Pure computation from this already audited cutoff. No preparation or
+    /// activation authority is issued; consumers still join the exact result.
+    pub(crate) fn derive_next_epoch_v1(
+        &self,
+        application: &DurableNativeApplicationV0,
+    ) -> Result<crate::poco_application::ComputedPocoNextEpochV1> {
+        ensure!(
+            Arc::ptr_eq(&self.owner, &application.owner_affinity),
+            "cutoff computation foreign owner"
+        );
+        derive_poco_next_epoch_from_cutoff_p_v1(&application.config, &self.row, &self.coordinates)
+    }
+
     /// The freshly validated application head observed in the same read.
     pub const fn confirmed_head_v1(&self) -> &ApplicationHeadV0 {
         &self.confirmed_head
@@ -437,6 +454,63 @@ impl StoredEpochPV1 {
 fn decode_header(bytes: &[u8]) -> Result<BlockHeader> {
     trnm_consensus_types::decode_block_header_v0_exact(bytes)
         .map_err(|e| anyhow::anyhow!("epoch P header: {e:?}"))
+}
+
+/// The selected cutoff P and coordinates belong to an already audited prefix.
+/// Decode its authenticated state directly; never re-enter prefix/P inventory.
+fn derive_poco_next_epoch_from_cutoff_p_v1(
+    config: &NativeApplicationConfigV0,
+    cutoff: &StoredEpochPV1,
+    coordinates: &[crate::epoch_edge::EpochApplicationCoordinatesV1],
+) -> Result<crate::poco_application::ComputedPocoNextEpochV1> {
+    let header = decode_header(&cutoff.header)?;
+    ensure!(
+        cutoff.status == 1
+            && cutoff.artifact_kind == 0
+            && header.block_kind() == BlockKind::Regular
+            && header.height().get() == cutoff.target_height
+            && cutoff.store_id == config.store_id
+            && cutoff.snapshot_digest == sha256_v0(&cutoff.snapshot),
+        "candidate cutoff P identity"
+    );
+    let set = trnm_consensus_types::decode_validator_set_v0_exact(&cutoff.target_set)
+        .map_err(|e| anyhow::anyhow!("candidate cutoff set: {e:?}"))?;
+    let parameters =
+        trnm_consensus_types::decode_consensus_parameters_v0_exact(&cutoff.target_parameters)
+            .map_err(|e| anyhow::anyhow!("candidate cutoff parameters: {e:?}"))?;
+    ensure!(
+        header.validator_set_id() == set.id()
+            && header.consensus_parameters_hash() == parameters.hash(),
+        "candidate cutoff header configuration"
+    );
+    let store = InMemoryNativeExecutionStoreV0::decode_epoch_snapshot_for_coordinates_v1(
+        config.chain_id.clone(),
+        config.signers.clone(),
+        parameters,
+        decode_borsh_v0(&cutoff.commands, "candidate cutoff commands")?,
+        decode_borsh_v0(&cutoff.nonces, "candidate cutoff nonces")?,
+        &cutoff.snapshot,
+        coordinates,
+    )?;
+    ensure!(
+        store.parent_version_v0()? == header.height().get()
+            && store.parent_root_v0()?.0 == *header.state_root().as_bytes(),
+        "candidate cutoff authenticated state root"
+    );
+    let mut live = store.verified_live_values_v0(header.height().get())?;
+    let lifecycle = load_validator_lifecycle_from_live_v0(&live, header.height().get())?;
+    validate_application_validator_projection_v0(&set, &lifecycle.active_validators)?;
+    let projection = crate::poco_transition::take_and_validate_production_poco_projection_v0(
+        header.height().get(),
+        &mut live,
+    )?
+    .context("candidate cutoff PoCO namespace missing")?;
+    crate::poco_application::derive_poco_next_epoch_from_cutoff_v1(
+        &projection,
+        header.state_root(),
+        &set,
+        &parameters,
+    )
 }
 
 fn local_error(_: impl std::fmt::Display) -> NativeApplicationExecutionErrorV0 {
@@ -3025,6 +3099,13 @@ impl DurableNativeApplicationV0 {
             .iter()
             .map(|receipt| Hash32V0::new(*receipt.commitment().as_bytes()))
             .collect::<Vec<_>>();
+        let prefix =
+            lineage_resolver::resolve(&connection, &self.config, &decode_lineage(&p.lineage)?)?;
+        let coordinates = prefix
+            .entries
+            .iter()
+            .map(|entry| entry.audit.coordinates(entry.binding))
+            .collect::<Result<Vec<_>>>()?;
         // A fresh immutable validation closes the read's TOCTOU window. Any
         // metadata/sequence change means this response is not coherent.
         let after = fresh_validate_v0(&self.path, &self.config)?;
@@ -3038,6 +3119,7 @@ impl DurableNativeApplicationV0 {
             row: p,
             executed,
             receipt_commitments,
+            coordinates,
         })
     }
 

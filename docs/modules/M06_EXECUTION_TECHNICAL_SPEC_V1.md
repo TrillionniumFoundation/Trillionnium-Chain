@@ -380,7 +380,7 @@ and worker count. Zero root/receipt/fee disagreement across worker counts is
 required; it is not proof of speedup. Compare 1/2/4/8 workers on disjoint,
 shared-payer, hot-object and failure-heavy mixes before changing defaults.
 
-## Planned historical replay execution (M06-HISTORY-EXEC-V1)
+## Historical replay execution (M06-HISTORY-EXEC-V1)
 
 M08-HISTORY-INSTALL-V1 owns the local source and installation; M01-HISTORY-V1
 authenticates the complete header/configuration chain first. Execution then
@@ -405,6 +405,18 @@ real C15 source and C25 replay roots. Do not require an absent individual C25
 finality proof or substitute an ordinary prepared/checkpoint permit. This context
 is internal computation data and grants no signing/activation authority.
 
+Root and manifest equality alone does not establish deterministic next-epoch
+selection. Reuse the original authenticated PoCO projection-to-candidate B2-G
+computation, including kind-16 authority, registration, proof of possession,
+bonds, jails, contribution certificates and governance-approved parameters.
+Derive the effective next validator set, parameters and every same-version
+commitment field (including fallback flag/reason) from the actual retained cutoff
+projection, then compare them exactly to the strict activation evidence. The
+shared helper returns inert computation facts only; it must not construct an
+ordinary scheduled-cutoff, checkpoint-preparation or durable epoch capability.
+Existing owner preparation retains its original authenticated cutoff tuple and
+raw finality/namespace checks around this shared pure computation.
+
 Every replayed application step must reproduce payload, evidence, state and
 receipt roots and update both replay sets using the existing executor's actual
 identity rules. Current runtime failure rejects the whole block and constructs
@@ -418,8 +430,22 @@ Test signed nonempty transactions on both sides of the local anchor, duplicate
 command IDs and signer/nonces after import, exact raw payload ordering, unsupported
 evidence, wrong cutoff/transition context, cold replay equality and ordinary C33
 continuation through the unchanged native executor. Empty-body root agreement
-alone is insufficient replay-state acceptance. This contract defines subsequent
-implementation; the current native live-state staging API remains read-only.
+alone is insufficient replay-state acceptance.
+
+The read-only computation is implemented in
+`trillionnium/crates/trnm-native-execution-v0/src/historical_replay_execution_v1.rs`,
+joined by M08's genuine source confirmation/preparation methods. It executes
+the complete nonempty C18→C32 application suffix, retaining prior command and
+signer/nonce identities, and checks all four roots against the M01 path. Replay
+step identities use the receiver's previous local commit; downloaded artifacts
+and source-local commit IDs are not reused. The result is opaque, owner-affine
+and non-Clone and has no installation or ordinary execution permit.
+
+This revision requires complete crossed activation evidence for every replayed
+checkpoint. A path ending at a checkpoint without that successor evidence is
+rejected. Schema12 installation, post-import C33/duplicate-transaction acceptance,
+and public-node composition remain unimplemented; current native live staging
+also remains read-only.
 
 ## Activation boundary
 
