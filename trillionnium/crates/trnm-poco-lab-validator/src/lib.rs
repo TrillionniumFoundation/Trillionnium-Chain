@@ -62,6 +62,7 @@ pub mod relay;
 pub mod restart_catchup;
 pub mod restart_cut;
 pub mod restart_protocol;
+mod terminal_barrier_v1;
 // Phase-bound direct-seven park aggregation is private and inert until one
 // composite durable owner is consumed by the journal-first runtime tranche.
 #[allow(dead_code)]

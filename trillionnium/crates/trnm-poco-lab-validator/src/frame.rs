@@ -77,6 +77,8 @@ pub enum FrameKind {
     /// persisted the exact Cut/Park pair and committed its local park event.
     /// Transport carriage alone grants no handoff or recovery authority.
     RestartParkedAck = 16,
+    /// Direct-seven process-local Prepare/Park termination observation.
+    TerminalBarrier = 17,
 }
 
 impl TryFrom<u8> for FrameKind {
@@ -100,6 +102,7 @@ impl TryFrom<u8> for FrameKind {
             14 => Ok(Self::RestartRecoveryStart),
             15 => Ok(Self::RestartCatchup),
             16 => Ok(Self::RestartParkedAck),
+            17 => Ok(Self::TerminalBarrier),
             _ => Err(FrameError::Malformed("unknown frame kind")),
         }
     }
@@ -828,13 +831,14 @@ mod tests {
             (FrameKind::RestartRecoveryStart, 14),
             (FrameKind::RestartCatchup, 15),
             (FrameKind::RestartParkedAck, 16),
+            (FrameKind::TerminalBarrier, 17),
         ];
         for (kind, discriminant) in frozen {
             assert_eq!(kind as u8, discriminant);
             assert_eq!(FrameKind::try_from(discriminant).unwrap(), kind);
         }
         assert!(FrameKind::try_from(0).is_err());
-        assert!(FrameKind::try_from(17).is_err());
+        assert!(FrameKind::try_from(18).is_err());
     }
 
     #[test]

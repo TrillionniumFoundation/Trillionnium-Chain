@@ -330,3 +330,13 @@ Production reachability requires the authenticated persistent listener, exact
 payload-to-Core ACK recovery, anti-replay authority across machines, bounded
 fault campaigns and independent security review. The proposed dev profile can
 be built without granting production signing, release or public-testnet status.
+
+## M04-DIRECT-TERMINAL-CARRIER-V1
+
+The candidate authenticated frame registry adds kind17 `TerminalBarrier` for
+the M15 direct-seven Prepare/Park shutdown protocol. Kinds1–16 and frame-v2
+signatures/nonce/session/sequence semantics are unchanged. Its bounded, closed
+inner phase codec is admitted only through the original authenticated inbound
+mesh owner. It is excluded from ordinary consensus, sparse relay and restart
+collectors; transport authentication never converts it into finality, signing
+or restart authority. M15 checks the exact fleet and local terminal state.

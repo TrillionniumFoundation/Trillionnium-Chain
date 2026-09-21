@@ -201,7 +201,9 @@ pub fn decode_authenticated_consensus_frame_v0(
         // Dedicated catch-up wire has its own strict subtype verifier and
         // non-evicting admission. It is not a fifth restart phase and cannot
         // enter Proposal/QC/TC collection.
-        FrameKind::RestartCatchup => Err(ConsensusIngressErrorV0::UnsupportedFrameKind),
+        FrameKind::RestartCatchup | FrameKind::TerminalBarrier => {
+            Err(ConsensusIngressErrorV0::UnsupportedFrameKind)
+        }
     }
 }
 
@@ -950,6 +952,7 @@ mod tests {
             FrameKind::RestartRecoveryReady,
             FrameKind::RestartRecoveryStart,
             FrameKind::RestartCatchup,
+            FrameKind::TerminalBarrier,
         ] {
             let frame = AuthenticatedFrame {
                 sender: set.validators()[0].id(),

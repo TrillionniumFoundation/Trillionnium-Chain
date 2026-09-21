@@ -65,8 +65,9 @@ use crate::{
     },
     continuous_runtime::{
         ContinuousRuntimeFactsV0, ContinuousSignerLifetimeBoundsV0, ContinuousValidatorAuthorityV0,
-        DirectPeerFrameOutcomeV1, RestartSignatureProducerV1, RestartSignaturePurposeV1,
-        CONTINUOUS_RUNTIME_MAXIMUM_SIGNER_INTENTS_V0, CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0,
+        ContinuousValidatorTerminalOwnerV0, DirectPeerFrameOutcomeV1, RestartSignatureProducerV1,
+        RestartSignaturePurposeV1, CONTINUOUS_RUNTIME_MAXIMUM_SIGNER_INTENTS_V0,
+        CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0,
     },
     crypto::LabFileWatermark,
     fleet_barrier::{
@@ -2948,6 +2949,9 @@ struct BoundedConsensusOwnerV1 {
     nominal_deadline: Instant,
     stopping_since: Option<Instant>,
     terminal_candidate_since: Option<Instant>,
+    terminal_barrier: Option<crate::terminal_barrier_v1::TerminalBarrierV1>,
+    terminal_prepared_snapshot: Option<RestartQuiescenceSnapshotV1>,
+    terminal_owner: Option<ContinuousValidatorTerminalOwnerV0>,
     restart_lifecycle: RestartLifecycleV1,
     prepared_normal_frame_drop_count: u64,
     os_start: RuntimeOsSampleV1,
@@ -4295,6 +4299,23 @@ impl BoundedConsensusOwnerV1 {
         .map_err(|error| anyhow!("initialize restart ingress: {error}"))?;
         let restart_relay_window = RestartRelayAdmissionWindowV1::new(config.validator_set())
             .map_err(|error| anyhow!("initialize restart relay window: {error}"))?;
+        let terminal_barrier = if preflight.transport == ConsensusTransportProfileV1::Direct
+            && config.validator_set().validators().len() == 7
+        {
+            Some(crate::terminal_barrier_v1::TerminalBarrierV1::new(
+                barrier.start_certificate.digest(),
+                config.local_validator(),
+                config
+                    .validator_set()
+                    .validators()
+                    .iter()
+                    .map(|v| v.id())
+                    .collect(),
+                mesh.initial_sessions(),
+            )?)
+        } else {
+            None
+        };
         let native_client =
             crate::native_client_runtime::NativeClientRuntimeV1::open_v1(&config, &authority)?;
         Ok(Self {
@@ -4334,6 +4355,9 @@ impl BoundedConsensusOwnerV1 {
             nominal_deadline,
             stopping_since: None,
             terminal_candidate_since: None,
+            terminal_barrier,
+            terminal_prepared_snapshot: None,
+            terminal_owner: None,
             restart_lifecycle: RestartLifecycleV1::Running,
             prepared_normal_frame_drop_count: 0,
             os_start,
@@ -4357,6 +4381,13 @@ impl BoundedConsensusOwnerV1 {
 
     fn run_loop_v1(&mut self) -> Result<BoundedConsensusLoopOutcomeV1> {
         loop {
+            if self.terminal_owner.is_some() {
+                self.require_terminal_drain_deadline_v1(Instant::now())?;
+                if self.poll_parked_terminal_v1()? {
+                    return Ok(BoundedConsensusLoopOutcomeV1::NormalTerminal);
+                }
+                continue;
+            }
             if self.restart_lifecycle.selects_process1_target_handoff_v1() {
                 return Ok(BoundedConsensusLoopOutcomeV1::Process1TargetParked);
             }
@@ -4426,7 +4457,7 @@ impl BoundedConsensusOwnerV1 {
             }
             let now = Instant::now();
             self.refresh_stop_state_v1(now)?;
-            if self.terminal_ready_v1(now)? {
+            if self.maybe_advance_terminal_barrier_v1(now)? {
                 return Ok(BoundedConsensusLoopOutcomeV1::NormalTerminal);
             }
             if let Some(stopping_since) = self.stopping_since {
@@ -4480,6 +4511,9 @@ impl BoundedConsensusOwnerV1 {
             && bounded_stop_ready_v1(self.preflight.target_height, reached_duration_bound, facts)
         {
             self.stopping_since = Some(now);
+            if let Some(client) = self.native_client.as_mut() {
+                client.stop_admission_v1();
+            }
             self.pacemaker.cancel();
         }
         if reached_duration_bound && self.stopping_since.is_none() {
@@ -4527,6 +4561,10 @@ impl BoundedConsensusOwnerV1 {
             || facts.pending_timeout_certificate_id_v0().is_some()
             || facts.finalized_height_v0() < self.config.ordinary_start_height()
             || facts.application_applied_height_v0() != facts.finalized_height_v0()
+            || self
+                .native_client
+                .as_ref()
+                .is_some_and(|client| !client.drained_v1(facts.finalized_height_v0()))
         {
             self.terminal_candidate_since = None;
             return Ok(false);
@@ -5012,6 +5050,9 @@ impl BoundedConsensusOwnerV1 {
     fn handle_mesh_event_v1(&mut self, event: MeshIngressEventV0) -> Result<bool> {
         match event {
             MeshIngressEventV0::Frame(inbound) => {
+                if let Some(barrier) = self.terminal_barrier.as_mut() {
+                    barrier.observe_session(PeerSessionFactsV0::from_inbound_owner_v1(&inbound))?;
+                }
                 self.admit_inbound_mesh_frame_session_v1(&inbound)?;
                 let remote = inbound.remote();
                 let received = authenticated_frame_wire_bytes_v1(
@@ -5025,6 +5066,10 @@ impl BoundedConsensusOwnerV1 {
                 match self.preflight.transport {
                     ConsensusTransportProfileV1::Direct => {
                         let frame = inbound.frame();
+                        if frame.kind == FrameKind::TerminalBarrier {
+                            self.terminal_barrier_mut_v1()?.admit(&inbound)?;
+                            return Ok(false);
+                        }
                         if matches!(frame.kind, FrameKind::FleetReady | FrameKind::FleetStart) {
                             return self.admit_late_fleet_barrier_statement_v1(
                                 frame.sender,
@@ -5142,6 +5187,9 @@ impl BoundedConsensusOwnerV1 {
                 Ok(true)
             }
             MeshIngressEventV0::SessionReestablished(session) => {
+                if let Some(barrier) = self.terminal_barrier.as_mut() {
+                    barrier.observe_session(session)?;
+                }
                 let current = self.observe_inbound_mesh_reestablished_v1(session)?;
                 if session.direction() != PeerDirectionV0::Inbound || current {
                     self.unavailable_sessions
@@ -7179,18 +7227,49 @@ impl BoundedConsensusOwnerV1 {
             .close()
             .context("close bounded runtime control server")?;
         self.pacemaker.cancel();
-        self.mesh
+        let mesh = self
+            .mesh
             .take()
-            .ok_or_else(|| anyhow!("consensus mesh was already consumed"))?
-            .close_if_ingress_empty_v1()
-            .context("close consensus mesh")?;
+            .context("consensus mesh was already consumed")?;
+        if self.terminal_barrier_enabled_v1() {
+            ensure!(
+                self.terminal_barrier_v1()?.complete()?
+                    && self.terminal_owner.is_some()
+                    && self.authority.is_none(),
+                "direct terminal lacks actual N/N consumed Park barrier"
+            );
+            mesh.close_with_terminal_ingress_v1(|event| {
+                let received = match &event {
+                    MeshIngressEventV0::Frame(inbound) => authenticated_frame_wire_bytes_v1(
+                        self.config.run_id(),
+                        inbound.frame().payload.len(),
+                    )?,
+                    _ => 0,
+                };
+                self.terminal_barrier_v1()?.validate_residual(event)?;
+                self.network_rx_bytes = self
+                    .network_rx_bytes
+                    .checked_add(received)
+                    .context("residual terminal receive counter overflows")?;
+                Ok(())
+            })
+            .context("close consensus mesh behind complete terminal barrier")?;
+        } else {
+            mesh.close_if_ingress_empty_v1()
+                .context("close consensus mesh")?;
+        }
         let path = {
-            let authority = self
-                .authority
-                .take()
-                .ok_or_else(|| anyhow!("continuous authority was already consumed"))?;
-            let terminal = authority.into_terminal_owner_v0()?;
-            let facts = *terminal.facts_v0();
+            let mut terminal = if let Some(terminal) = self.terminal_owner.take() {
+                terminal
+            } else {
+                self.authority
+                    .take()
+                    .context("continuous authority was already consumed")?
+                    .into_terminal_owner_v0()?
+            };
+            // Worker/P2P callbacks have all joined. Authenticate the original
+            // full durable cut again before any CleanStop or signed evidence.
+            let facts = *terminal.confirm_terminal_cut_v1()?;
             let node = facts.node_v0();
             self.event_journal
                 .record_final_tip(
@@ -7376,6 +7455,9 @@ impl BoundedConsensusOwnerV1 {
                 )?
             };
             write_runtime_final_state_v1(&self.config, &final_state)?;
+            // Evidence signers are external callbacks too. No successful run
+            // returns after any callback replaced the consumed durable cut.
+            terminal.confirm_terminal_cut_v1()?;
             path
         };
         Ok(path)
@@ -7499,6 +7581,8 @@ impl BoundedConsensusOwnerV1 {
             .ok_or_else(|| anyhow!("consensus mesh is unavailable"))
     }
 }
+
+include!("terminal_barrier_runtime_v1.inc");
 
 // Keep the pacemaker live while a last-height Vote or TC still needs a real
 // certificate transition. The hard deadline and unchanged height cap bound it.
@@ -11353,6 +11437,8 @@ mod tests {
     include!("consensus_aggregation_quorum_tests_v1.inc");
     include!("consensus_terminal_quorum_tests_v1.inc");
     include!("consensus_same_parent_body_tests_v1.inc");
+
+    include!("consensus_terminal_barrier_tests_v1.inc");
 
     fn on_consensus_owner_stack_v1<T: Send + 'static>(
         body: impl FnOnce() -> T + Send + 'static,

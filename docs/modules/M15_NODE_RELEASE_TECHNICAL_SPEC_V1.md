@@ -1761,3 +1761,94 @@ Required genuine regressions consume a real finalized/applied owner, repeat an
 unchanged exact read, then replace the native, P/K, Safety or checkpoint
 namespace or change its durable cut. Every mutation must reject and latch the
 failure; restoring original files cannot reactivate the terminal owner.
+
+## M15-DIRECT-TERMINAL-BARRIER-V1 — coordinate an actual clean stop
+
+The seven-validator direct candidate previously let the first locally quiet
+node close its sessions while other honest nodes were still establishing their
+quiet interval. Those peers then correctly refused CleanStop because an
+unavailable session remained. A common nominal deadline cannot synchronize
+these independent state machines. The correction is an explicit bounded
+Prepare/Park exchange, scoped to this direct controlled campaign.
+
+1. **Prepare.** The existing terminal predicate must pass unchanged: actual Ready,
+   original Safety/signer/native/checkpoint joins, positive applied finality, no
+   queued Core, client, network or restart work, no active/expected fault, common
+   nominal horizon and local quiet interval. A strict frame binds the original
+   fleet-start certificate digest, sender, finalized height/block/state/chain
+   roots, and independently selected local checkpoint digest. The local source
+   is freshly rechecked before publishing. Prepare is only an observation; it
+   cannot waive missing work, authorize a disconnect or grant consensus power.
+2. **Park.** After all seven exact, unique peer Prepare records agree on the
+   shared finality cut, the local cut must still match the original local
+   Prepare. The live authority is consumed through the existing
+   `ContinuousValidatorTerminalOwnerV0` constructor. This destroys live
+   application/signing paths and pins the original durable namespaces. Only
+   this inert owner can publish Park, bound to the canonical, sorted full
+   Prepare-set digest. Missing or changed source facts fail; there is no return
+   from Park to ordinary voting. A peer's earlier Prepare alone cannot park
+   the local owner.
+3. **Finish.** Every configured validator must have an authenticated Park for
+   that same original Prepare set. Outbound obligations must be drained. Only
+   disconnection of an already admitted, matching parked peer is an expected
+   shutdown; all other unavailable sessions remain blockers. After stopping
+   and joining mesh workers, every residual ingress item is still checked:
+   exact barrier repeats or matching parked-peer lifecycle observations can
+   drain; consensus/restart work, an unknown peer or conflicting barrier fails.
+   Existing signed journal, report, metrics, archive seal, final-state semantics
+   and independent full-fleet agreement verification remain mandatory.
+
+The original authenticated `MeshInboundFrameV0` owner, with its exact remote,
+session and generation check, is the admission boundary. These direct control
+messages are not transferable signatures, finality proofs, public certificates,
+restart authority, or acceptance evidence. They cannot be injected through a
+standalone byte decoder into a live owner, nor relayed under another origin.
+Each phase retains at most one bounded record per configured identity; exact
+repeats are inert, conflicts and resource exhaustion fail, and the original
+finite drain deadline applies. No extra grace sleep replaces peer agreement.
+Sparse transport retains its existing behavior and is not covered by this
+direct-profile closure. Crashes or missing peers may fail this no-fault campaign;
+this protocol is not fault-tolerant termination or recovery.
+
+Required regressions cover staggered quiet intervals, all-seven participation,
+Prepare without Park, mismatching finality or set hashes, stale fleet/session
+input, exact retries, late ordinary work, namespace substitution before local
+Park, and residual disconnect events queued behind the final quiet check. A
+new real multi-host run remains necessary; prior failed evidence is immutable.
+
+Because inbound frames and outbound lifecycle observations have separate
+workers, an exact current-session disconnect observed after local Park may be
+retained as one of at most twelve obligations until the peer's Park arrives.
+It does not explain a prior ordinary fault or permit completion. Missing Park
+still fails at the original deadline; a foreign generation/session fails
+immediately. The common Prepare-set hash contains only sorted canonical inner
+payloads, never peer-specific outer signatures, sessions or sequence numbers.
+
+The closed inner wire has magic `TRNMTB01` (8 bytes), phase u8 (1 Prepare or
+2 Park), original StartCertificate SHA-256 (32), and origin ID (32). Prepare
+then carries height u64 little-endian and five fixed 32-byte digests in order:
+block, state, chain, node checkpoint, local evidence cut (241 bytes total).
+Park instead carries the full Prepare-set SHA-256 (105 bytes total). Unknown
+phase, any other length/trailing bytes, or zero height/digest/identity rejects.
+The set digest hashes domain `TRNM/DirectSevenTerminalPrepareSet/V1` followed
+by one NUL byte, count u32 little-endian (7), then all seven canonical Prepare
+payloads sorted by validator ID. The local-cut digest hashes domain
+`TRNM/DirectSevenTerminalLocalCut/V1` plus NUL, local ID, process-instance and
+checkpoint-generation u64 little-endian, checkpoint and signer-inventory
+SHA-256, archive context SHA-256, archive sequence u64 little-endian and head
+SHA-256, journal head sequence u64 little-endian, head SHA-256, and next sequence
+u64 little-endian. These are original producer facts; no caller-selected root
+can replace the saved full snapshot comparison before authority consumption.
+
+The consumed owner is freshly reaudited before Park, after all network workers
+join, and after terminal evidence signer callbacks before success returns.
+An authenticated frame already decoded by a worker cannot disappear at stop:
+it must reach the finite residual queue or record a terminal failure if bounded
+admission is unavailable. A real internal or strict parser failure discovered
+while joining remains fatal; only shutdown-caused transport loss is inert.
+
+Selecting a normal height/duration stop also closes new native-client admission.
+Readiness freshly requires the original client's accepted-work queue to be
+drained at the exact finalized height; an earlier drain observation alone does
+not waive subsequently accepted work. Ordinary read-only client responses do
+not become consensus progress or a reason to restart the terminal barrier.

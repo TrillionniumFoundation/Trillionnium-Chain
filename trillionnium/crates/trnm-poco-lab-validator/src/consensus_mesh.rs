@@ -371,6 +371,16 @@ impl PeerSessionFactsV0 {
         self.generation
     }
 
+    /// Derive inert session coordinates only from the actual mesh queue owner.
+    pub(crate) fn from_inbound_owner_v1(inbound: &MeshInboundFrameV0) -> Self {
+        Self {
+            remote: inbound.remote,
+            direction: inbound.direction,
+            session_id: inbound.session_id,
+            generation: inbound.session_generation,
+        }
+    }
+
     /// Builds session facts for a unit test that exercises a consumer of the
     /// authenticated mesh owner.  Production code receives these facts only
     /// from the mesh lifecycle events, never from caller-supplied scalars.
@@ -2726,6 +2736,31 @@ impl PersistentAuthenticatedPeerMeshV0 {
         }
     }
 
+    /// Joins all producers before validating every finite residual event.
+    /// Only the owner of a completed terminal barrier may supply this policy.
+    pub(crate) fn close_with_terminal_ingress_v1(
+        mut self,
+        mut validate: impl FnMut(MeshIngressEventV0) -> Result<()>,
+    ) -> Result<()> {
+        self.ensure_healthy()?;
+        self.close_inner()?;
+        // A worker can discover an internal failure while being joined.
+        // The ordinary health method also rejects the intentionally closed
+        // owner, so inspect only the retained failure here.
+        if let Some(failure) = self
+            .terminal
+            .lock()
+            .map_err(|_| anyhow!("mesh terminal-state mutex poisoned"))?
+            .as_ref()
+        {
+            bail!(failure.render());
+        }
+        while let Ok(event) = self.ingress.try_recv() {
+            validate(event)?;
+        }
+        Ok(())
+    }
+
     fn close_inner(&mut self) -> Result<()> {
         if self.closed {
             return Ok(());
@@ -3825,6 +3860,7 @@ fn is_consensus_kind(kind: FrameKind) -> bool {
             | FrameKind::RestartRecoveryReady
             | FrameKind::RestartRecoveryStart
             | FrameKind::RestartCatchup
+            | FrameKind::TerminalBarrier
     )
 }
 
