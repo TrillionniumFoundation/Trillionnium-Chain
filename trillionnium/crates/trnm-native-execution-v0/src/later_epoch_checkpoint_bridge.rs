@@ -1514,6 +1514,33 @@ mod tests {
             retry_first.commit_sequence(),
             committed_first.commit_sequence()
         );
+        // A schema-8 image cannot represent a consumed C+3 edge without the
+        // schema-9 application proof ledger. Migration must fail closed
+        // instead of creating an empty ledger and blessing phase=1.
+        let legacy_path = path.with_extension("consumed-schema8.sqlite3");
+        std::fs::copy(&path, &legacy_path).unwrap();
+        let legacy_sql = rusqlite::Connection::open(&legacy_path).unwrap();
+        legacy_sql
+            .execute("DROP TABLE native_later_epoch_application_finality_v1", [])
+            .unwrap();
+        legacy_sql
+            .execute(
+                "UPDATE native_application_metadata_v0 SET schema_version=? WHERE singleton=1",
+                [8_u64.to_be_bytes().as_slice()],
+            )
+            .unwrap();
+        drop(legacy_sql);
+        let legacy_app =
+            DurableNativeApplicationV0::open(&legacy_path, native_checkpoint_fixture_config_v1())
+                .unwrap();
+        assert!(
+            legacy_app
+                .upgrade_later_epoch_schema_v1(&legacy_app.confirmed_committed_head_v0().unwrap())
+                .is_err(),
+            "schema-8 consumed successor must require a retained C+3 proof"
+        );
+        drop(legacy_app);
+        std::fs::remove_file(&legacy_path).unwrap();
         assert!(reopened
             .execute_later_epoch_first_new_block_v1(&successor)
             .is_err());

@@ -606,6 +606,15 @@ impl DurableNativeApplicationV0 {
                     && later_edge_has_commit_id_column(&connection)?,
                 "schema-8 later ledger is incomplete"
             );
+            let consumed_edges: i64 = connection.query_row(
+                "SELECT COUNT(*) FROM native_later_epoch_edge_v1 WHERE phase=1",
+                [],
+                |row| row.get(0),
+            )?;
+            ensure!(
+                consumed_edges == 0,
+                "schema-8 consumed successor requires retained application finality proof"
+            );
             let tx = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
             tx.execute_batch(LATER_SCHEMA[2].1)?;
             ensure!(
@@ -1429,6 +1438,25 @@ fn validate_later_application_finality(
         |row| row.get(0),
     )?;
     ensure!(invalid == 0, "later application finality proof bounds");
+    let consumed_edges: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM native_later_epoch_edge_v1 WHERE phase=1",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        count == consumed_edges,
+        "later application finality ledger must cover every consumed successor"
+    );
+    let missing: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM native_later_epoch_edge_v1 e
+         WHERE e.phase=1 AND NOT EXISTS (
+           SELECT 1 FROM native_later_epoch_application_finality_v1 f
+           WHERE f.edge_binding=e.successor_binding
+         )",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(missing == 0, "consumed successor application finality missing");
     let mut statement = connection.prepare(
         "SELECT block_id,p_digest,commit_sequence,edge_binding,proof,proof_digest,record_digest
          FROM native_later_epoch_application_finality_v1 ORDER BY commit_sequence",
@@ -1492,6 +1520,85 @@ fn validate_later_application_finality(
                     .map(|v| v == sequence.to_be_bytes().as_slice())
                     .unwrap_or(false),
             "later application finality edge binding"
+        );
+        let (predecessor_edge, checkpoint_block): ([u8; 32], [u8; 32]) = connection
+            .query_row(
+                "SELECT predecessor_edge,checkpoint_block
+                 FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
+                [edge_binding.as_slice()],
+                |row| {
+                    Ok((
+                        col32(row, "predecessor_edge")?,
+                        col32(row, "checkpoint_block")?,
+                    ))
+                },
+            )?;
+        let activation = audit_later_successor_for_lineage_v1(
+            connection,
+            config,
+            edge_binding,
+            predecessor_edge,
+        )?;
+        let retained = connection.query_row(
+            "SELECT checkpoint_parent_header,checkpoint_finality,anchor_kernel,
+                    next_epoch_commitment,new_validator_set,new_parameters
+             FROM native_later_epoch_finality_v1 WHERE checkpoint_block=?1",
+            [checkpoint_block.as_slice()],
+            |row| {
+                Ok((
+                    row.get::<_, Vec<u8>>(0)?,
+                    row.get::<_, Vec<u8>>(1)?,
+                    row.get::<_, Vec<u8>>(2)?,
+                    row.get::<_, Vec<u8>>(3)?,
+                    row.get::<_, Vec<u8>>(4)?,
+                    row.get::<_, Vec<u8>>(5)?,
+                ))
+            },
+        )?;
+        let old_set_bytes = activation
+            .activation
+            .new_validator_set()
+            .try_cev0_bytes()
+            .map_err(|e| anyhow::anyhow!("later application old validator set: {e:?}"))?;
+        let old_parameters = activation.activation.new_consensus_parameters();
+        let header = decode_header(&p.header)?;
+        let expected = trnm_consensus_crypto::FinalityExpectationV0 {
+            block_id: header.id(),
+            height: header.height(),
+            state_root: header.state_root(),
+            receipts_root: header.receipts_root(),
+            evidence_root: header.evidence_root(),
+            parent_id: trnm_consensus_types::BlockId::new(p.consensus_parent_block),
+            parent_height: trnm_consensus_types::Height::new(p.consensus_parent_height),
+            parent_timestamp_ms: activation
+                .activation
+                .old_checkpoint_finality()
+                .grandchild()
+                .header()
+                .timestamp_ms(),
+        };
+        let evidence = trnm_consensus_types::EpochActivationEvidencePreimagesV0 {
+            old_checkpoint_finality: &retained.1,
+            next_epoch_commitment: &retained.3,
+            authorization_kernel: &retained.2,
+            old_validator_set: &old_set_bytes,
+            old_consensus_parameters: &old_parameters.canonical_bytes(),
+            new_validator_set: &retained.4,
+            new_consensus_parameters: &retained.5,
+            authenticated_checkpoint_parent_header: &retained.0,
+        };
+        let verified = trnm_consensus_crypto::decode_verify_epoch_first_finality_strict_v1(
+            evidence,
+            &proof,
+            activation.activation.new_validator_set(),
+            old_parameters,
+            expected,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .map_err(|e| anyhow::anyhow!("later application strict finality: {e}"))?;
+        ensure!(
+            verified.proof().finalized_block().header() == &header,
+            "later application proof header binding"
         );
     }
     Ok(())
