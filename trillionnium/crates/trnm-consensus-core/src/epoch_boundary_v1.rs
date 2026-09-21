@@ -146,6 +146,7 @@ impl OldEpochBoundaryStateV1 {
         config: &crate::CoreConfig,
         state: &SafetyState,
         verifier: &V,
+        epoch_context: Option<&trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
     ) -> Result<()> {
         use trnm_consensus_types::{validate_root_bound_epoch_body_v1, EpochGeometryV0};
         if self.owner_generation == 0
@@ -222,8 +223,8 @@ impl OldEpochBoundaryStateV1 {
             .map_err(|_| {
                 CoreError::InvalidRecovery("checkpoint retained body differs from its signed roots")
             })?;
-            if let Some(epoch) = state.epoch_state_v1() {
-                epoch.strict_context()?.verify_proposal_v1(
+            if let Some(context) = epoch_context {
+                context.verify_proposal_v1(
                     p,
                     parent,
                     &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
@@ -253,8 +254,8 @@ impl OldEpochBoundaryStateV1 {
                 .chain(self.seals.iter())
                 .find(|p| p.block().id() == seal.block().header().parent_id())
                 .ok_or(CoreError::MissingBlock(seal.block().header().parent_id()))?;
-            if let Some(epoch) = state.epoch_state_v1() {
-                epoch.strict_context()?.verify_proposal_v1(
+            if let Some(context) = epoch_context {
+                context.verify_proposal_v1(
                     seal,
                     parent.block().header(),
                     &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(

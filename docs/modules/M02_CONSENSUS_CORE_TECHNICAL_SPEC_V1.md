@@ -202,6 +202,22 @@ a future persistence consumer with a caller-owned meter; prior charges and
 narrower limits remain effective. It does not infer root trust from raw input.
 No unverified decoder result is a live Core.
 
+Within one `Core::validate_runtime` invocation, reconstruct the strict epoch
+runtime exactly once from that state's complete retained provenance, keep it
+in an operation-local boxed value, and borrow it for high/locked QC references,
+other durable QCs, timeout certificates, finality proofs, payload obligations
+and retained outgoing checkpoint/seal proposals. Each witness still receives
+the same structural, signature, parent, configuration and admission-budget
+checks; sharing the immutable context must not skip witness verification or
+combine/reset its existing meters. The complete prefix uses its existing
+single bounded reconstruction meter. A later validation reconstructs again:
+no global or cross-operation cache, caller-provided verified flag, stored
+approval bit, canonical-format change or journal-freshness inference is allowed.
+Standalone witness validators retain strict context reconstruction. Regression
+tests count actual strict reconstructions on genuine contextual provenance,
+require one per invocation, and preserve rejection of independently corrupted
+durable signatures. M03 source/head/CAS/fsync and signing barriers are unchanged.
+
 An outgoing epoch0 terminal owner may prepare the first one-entry V2 state.
 A codec1 active source may extend only a V2 prefix whose first entry exactly
 matches its retained original activation roots and binding. A codec2 active

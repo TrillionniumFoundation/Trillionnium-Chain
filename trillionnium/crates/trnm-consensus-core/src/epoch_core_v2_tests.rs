@@ -189,6 +189,75 @@ fn recover_source(
     Core::prepare_epoch_recovery_v2(&record, context, record.record_checksum()).unwrap()
 }
 
+fn assert_one_context_per_validation(config: &CoreConfig, state: &SafetyState) {
+    for _ in 0..2 {
+        let (result, reconstructions) =
+            crate::epoch_state_v1::count_strict_context_calls_v1(|| {
+                Core::validate_persisted_state_v0(config, state, &StrictEd25519Verifier)
+            });
+        result.unwrap();
+        assert_eq!(
+            reconstructions, 1,
+            "each fresh validation reconstructs trust once"
+        );
+    }
+}
+
+fn assert_context_reuse_keeps_durable_signature_checks(config: &CoreConfig, state: &SafetyState) {
+    assert_one_context_per_validation(config, state);
+    let proof = state.last_finalization().unwrap().proof();
+    assert!(proof.grandchild().timeout_certificate().is_some());
+    for high in [true, false] {
+        let header = if high {
+            proof.grandchild().header()
+        } else {
+            proof.child().header()
+        };
+        // Rebuild the ordinary QC with unchanged coordinates and a single bad
+        // Ed25519 signature; its typed structure remains valid. This must fail
+        // actual witness verification after successful prefix reconstruction.
+        let bad = fixture::qc_with_signature_mutation(config.validator_set(), header, true);
+        let mut changed = Box::new(state.clone());
+        if high {
+            changed.set_high_qc(QcReferenceV0::ordinary(bad));
+        } else {
+            changed.set_locked_qc(QcReferenceV0::ordinary(bad));
+        }
+        let (result, reconstructions) =
+            crate::epoch_state_v1::count_strict_context_calls_v1(|| {
+                Core::validate_persisted_state_v0(config, &changed, &StrictEd25519Verifier)
+            });
+        assert!(matches!(
+            result,
+            Err(CoreError::Protocol(ValidationError::InvalidSignature(_)))
+        ));
+        assert_eq!(reconstructions, 1);
+    }
+    // A rejected witness cannot poison the next invocation's local authority.
+    assert_one_context_per_validation(config, state);
+}
+
+#[test]
+fn genuine_contextual_validation_reconstructs_each_invocation_once() {
+    let fixture = TransitionFixture::new();
+    let context = fixture.target_context(SOURCE_GENERATION + 1, 0x71);
+    assert_eq!(
+        context
+            .epoch()
+            .preparation_record_v2()
+            .unwrap()
+            .entry_count_v2(),
+        2
+    );
+    let state = SafetyState::from_epoch_activation_v1(
+        &fixture.next_config,
+        context.epoch().clone(),
+        SOURCE_REVISION,
+    )
+    .unwrap();
+    assert_one_context_per_validation(&fixture.next_config, &state);
+}
+
 fn assert_pending_barrier(mut prepared: PreparedEpochCoreActivationV2, previous: &SafetyState) {
     assert_eq!(prepared.predecessor(), previous);
     assert_eq!(prepared.state().revision(), previous.revision() + 1);
@@ -401,6 +470,11 @@ fn genuine_three_entry_prefix_cannot_skip_one_source_transition() {
     )
     .unwrap();
     skip.epoch().strict_context().unwrap();
+    // Reuse the genuine third activation to settle the two-entry active epoch.
+    // Its high/lock and terminal proof include independently signed contextual
+    // TCs, so one reconstruction cannot conceal skipped witness verification.
+    let settled_target = settled_source(&fixture.next_config, target.epoch().clone(), &skip);
+    assert_context_reuse_keeps_durable_signature_checks(&fixture.next_config, &settled_target);
     assert!(matches!(
         recovery.prepare_next_epoch_v2(&skip),
         Err(CoreError::InvalidRecovery(

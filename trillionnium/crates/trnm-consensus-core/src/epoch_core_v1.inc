@@ -90,10 +90,21 @@ fn prepare_epoch_from_terminal_v1(
     old: &SafetyState,
     context: &crate::EpochSafetyStateRecordContextV1<'_>,
 ) -> Result<PreparedEpochCoreActivationV1> {
-    if old.epoch_state_v1().is_some_and(|epoch| epoch.preparation_record_v2().is_some()) {
-        return Err(CoreError::InvalidRecovery("codec2 source cannot downgrade to codec1"));
+    if old
+        .epoch_state_v1()
+        .is_some_and(|epoch| epoch.preparation_record_v2().is_some())
+    {
+        return Err(CoreError::InvalidRecovery(
+            "codec2 source cannot downgrade to codec1",
+        ));
     }
-    prepare_epoch_from_terminal_common_v2(old_config, old, context.core_config(), context.epoch(), context.runtime())
+    prepare_epoch_from_terminal_common_v2(
+        old_config,
+        old,
+        context.core_config(),
+        context.epoch(),
+        context.runtime(),
+    )
 }
 fn prepare_epoch_from_terminal_common_v2(
     old_config: &CoreConfig,
@@ -134,11 +145,7 @@ fn prepare_epoch_from_terminal_common_v2(
             "epoch activation predecessor is unresolved, foreign, or not exact checkpoint",
         ));
     }
-    let state = SafetyState::from_epoch_activation_v1(
-        next_config,
-        epoch.clone(),
-        old.revision(),
-    )?;
+    let state = SafetyState::from_epoch_activation_v1(next_config, epoch.clone(), old.revision())?;
     let mut core = Core::empty(next_config.clone(), state, false);
     // Activation is a real pacemaker start: its exact durable ACK arms view 1.
     // Keeping this behind the existing barrier prevents timers or timeouts from
@@ -234,8 +241,25 @@ impl Core {
         durable: &DurableFinalizationV0,
         verifier: &V,
     ) -> Result<()> {
-        if let Some(epoch) = self.safety.epoch_state_v1() {
-            epoch.strict_context()?.verify_finality_v1(
+        let context = self
+            .safety
+            .epoch_state_v1()
+            .map(|epoch| epoch.strict_context().map(Box::new))
+            .transpose()?;
+        self.verify_durable_finalization_with_epoch_context_v1(
+            durable,
+            verifier,
+            context.as_deref(),
+        )
+    }
+    fn verify_durable_finalization_with_epoch_context_v1<V: SignatureVerifier>(
+        &self,
+        durable: &DurableFinalizationV0,
+        verifier: &V,
+        context: Option<&trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
+    ) -> Result<()> {
+        if let Some(context) = context {
+            context.verify_finality_v1(
                 durable.proof(),
                 durable.consensus_parent_tip_v1().timestamp_ms(),
                 &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
@@ -258,8 +282,25 @@ impl Core {
         certificate: &TimeoutCertificateV0,
         verifier: &V,
     ) -> Result<()> {
-        if let Some(epoch) = self.safety.epoch_state_v1() {
-            epoch.strict_context()?.verify_timeout_certificate_v1(
+        let context = self
+            .safety
+            .epoch_state_v1()
+            .map(|epoch| epoch.strict_context().map(Box::new))
+            .transpose()?;
+        self.verify_timeout_certificate_with_epoch_context_v1(
+            certificate,
+            verifier,
+            context.as_deref(),
+        )
+    }
+    fn verify_timeout_certificate_with_epoch_context_v1<V: SignatureVerifier>(
+        &self,
+        certificate: &TimeoutCertificateV0,
+        verifier: &V,
+        context: Option<&trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
+    ) -> Result<()> {
+        if let Some(context) = context {
+            context.verify_timeout_certificate_v1(
                 certificate,
                 &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
                     self.config.consensus_parameters(),
@@ -313,8 +354,12 @@ mod epoch_consumer_tests_v1 {
         core.pending_validations
             .insert(id, PendingPayloadValidationV0::new(first.clone()));
         core.safety.next_revision().unwrap();
-        core.validate_payload_validation_obligations(&StrictEd25519Verifier, true)
-            .unwrap();
+        core.validate_payload_validation_obligations(
+            &StrictEd25519Verifier,
+            true,
+            Some(context.runtime()),
+        )
+        .unwrap();
         let parent = core.safety.payload_validation_obligations()[0].parent();
         assert_eq!(parent.tip(), checkpoint);
         assert_eq!(parent.consensus_parent_tip_v1().block_id(), terminal.id());
@@ -338,7 +383,11 @@ mod epoch_consumer_tests_v1 {
         let exact = core.safety.payload_validation_obligations().to_vec();
         core.safety.set_payload_validation_obligations(substituted);
         assert!(core
-            .validate_payload_validation_obligations(&StrictEd25519Verifier, true)
+            .validate_payload_validation_obligations(
+                &StrictEd25519Verifier,
+                true,
+                Some(context.runtime()),
+            )
             .is_err());
         core.safety.set_payload_validation_obligations(exact);
         core.remove_payload_validation_obligation(PayloadValidationRouteV0::Proposal, id)

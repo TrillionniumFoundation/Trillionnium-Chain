@@ -12268,9 +12268,27 @@ impl Core {
         reference: &QcReferenceV0,
         verifier: &V,
     ) -> Result<()> {
-        if let Some(epoch) = self.safety.epoch_state_v1() {
+        // Preserve the standalone rejection order before reconstructing trust.
+        if self.safety.epoch_state_v1().is_some() {
             self.reject_epoch_anchor(reference)?;
-            epoch.strict_context()?.verify_qc_reference_v1(
+        }
+        let context = self
+            .safety
+            .epoch_state_v1()
+            .map(|epoch| epoch.strict_context().map(Box::new))
+            .transpose()?;
+        self.verify_qc_reference_with_epoch_context(reference, verifier, context.as_deref())
+    }
+
+    fn verify_qc_reference_with_epoch_context<V: SignatureVerifier>(
+        &self,
+        reference: &QcReferenceV0,
+        verifier: &V,
+        context: Option<&trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
+    ) -> Result<()> {
+        if let Some(context) = context {
+            self.reject_epoch_anchor(reference)?;
+            context.verify_qc_reference_v1(
                 reference,
                 &mut trnm_consensus_types::Cev0AdmissionBudgetV0::for_parameters(
                     self.config.consensus_parameters(),
@@ -13971,6 +13989,7 @@ impl Core {
         &self,
         verifier: &V,
         verify_durable_crypto: bool,
+        epoch_context: Option<&trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
     ) -> Result<()> {
         let obligations = self.safety.payload_validation_obligations();
         if obligations.len() > self.config.max_observed_messages() {
@@ -14117,8 +14136,7 @@ impl Core {
                 }
             }
             if verify_durable_crypto {
-                if let Some(epoch) = self.safety.epoch_state_v1() {
-                    let runtime = epoch.strict_context()?;
+                if let Some(runtime) = epoch_context {
                     let exact = parent
                         .epoch_application_parent_v1()
                         .map(|edge| edge.terminal_old_header())
@@ -15014,8 +15032,17 @@ impl Core {
                 "unsupported safety-state schema version",
             ));
         }
-        if let Some(epoch) = self.safety.epoch_state_v1() {
-            let context = epoch.strict_context()?;
+        // Only this invocation may reuse the reconstructed authority. All
+        // durable witnesses below still run their original strict checks and
+        // individual admission meters against this exact state/configuration.
+        let epoch_context = self
+            .safety
+            .epoch_state_v1()
+            .map(|epoch| epoch.strict_context().map(Box::new))
+            .transpose()?;
+        if let (Some(epoch), Some(context)) =
+            (self.safety.epoch_state_v1(), epoch_context.as_deref())
+        {
             if context.structural_context().new_validator_set() != set
                 || context.structural_context().new_parameters()
                     != self.config.consensus_parameters()
@@ -15041,10 +15068,19 @@ impl Core {
             }
         }
         if let Some(boundary) = self.safety.old_epoch_boundary_v1() {
-            boundary.validate(&self.config, &self.safety, verifier)?;
+            boundary.validate(
+                &self.config,
+                &self.safety,
+                verifier,
+                epoch_context.as_deref(),
+            )?;
         }
         self.validate_state_sync_anchor_state_v0(verifier, verify_durable_crypto)?;
-        self.validate_payload_validation_obligations(verifier, verify_durable_crypto)?;
+        self.validate_payload_validation_obligations(
+            verifier,
+            verify_durable_crypto,
+            epoch_context.as_deref(),
+        )?;
         self.validate_payload_validation_completions()?;
         self.validate_recovered_payload_validation_fence_v0()?;
         self.validate_recovered_native_finalization_applied_fence_v0()?;
@@ -15157,7 +15193,11 @@ impl Core {
         // fail-closed until atomic epoch transition is implemented.
         if verify_durable_crypto {
             for reference in self.durable_qc_references() {
-                self.verify_qc_reference(reference, verifier)?;
+                self.verify_qc_reference_with_epoch_context(
+                    reference,
+                    verifier,
+                    epoch_context.as_deref(),
+                )?;
             }
         }
         if let Some(pending) = self.safety.pending_tc_high_qc_sync() {
@@ -15165,7 +15205,11 @@ impl Core {
                 self.reject_epoch_anchor(reference)?;
             }
             if verify_durable_crypto {
-                self.verify_timeout_certificate_v1(pending.timeout_certificate(), verifier)?;
+                self.verify_timeout_certificate_with_epoch_context_v1(
+                    pending.timeout_certificate(),
+                    verifier,
+                    epoch_context.as_deref(),
+                )?;
             }
             let reconstructed = PendingTcHighQcSync::from_timeout_certificate(
                 pending.timeout_certificate().clone(),
@@ -15247,7 +15291,11 @@ impl Core {
                     ));
                 }
                 if verify_durable_crypto {
-                    self.verify_durable_finalization_v1(durable, verifier)?;
+                    self.verify_durable_finalization_with_epoch_context_v1(
+                        durable,
+                        verifier,
+                        epoch_context.as_deref(),
+                    )?;
                 }
                 let committed = durable.proof().finalized_block().header();
                 if committed.height() != self.safety.finalized().height()
@@ -15337,7 +15385,11 @@ impl Core {
                 ));
             }
             if verify_durable_crypto {
-                self.verify_durable_finalization_v1(durable, verifier)?;
+                self.verify_durable_finalization_with_epoch_context_v1(
+                    durable,
+                    verifier,
+                    epoch_context.as_deref(),
+                )?;
             }
             expected_parent = durable_finalization_target(durable);
         }
@@ -15739,7 +15791,11 @@ impl Core {
                                 ));
                             }
                             if verify_durable_crypto {
-                                self.verify_timeout_certificate_v1(certificate, verifier)?;
+                                self.verify_timeout_certificate_with_epoch_context_v1(
+                                    certificate,
+                                    verifier,
+                                    epoch_context.as_deref(),
+                                )?;
                             }
                         }
                         InvalidPayloadReference::PendingVote(intent) => {

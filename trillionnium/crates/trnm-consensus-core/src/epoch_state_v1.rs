@@ -9,6 +9,19 @@ use trnm_consensus_types::{
     EpochActivationEvidenceBytesV0, QcReferenceV0, ValidatorSet, ValidatorSetId, View,
 };
 
+#[cfg(test)]
+std::thread_local! {
+    static STRICT_CONTEXT_CALLS_V1: core::cell::Cell<usize> = const { core::cell::Cell::new(0) };
+}
+
+#[cfg(test)]
+pub(crate) fn count_strict_context_calls_v1<T>(operation: impl FnOnce() -> T) -> (T, usize) {
+    let before = STRICT_CONTEXT_CALLS_V1.with(core::cell::Cell::get);
+    let result = operation();
+    let after = STRICT_CONTEXT_CALLS_V1.with(core::cell::Cell::get);
+    (result, after - before)
+}
+
 /// Inert complete scope for a real finalized/application tip. No view from a
 /// different epoch may be ordered numerically against this tip's view.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -284,6 +297,8 @@ impl EpochCoreStateV1 {
         self.checkpoint_artifact
     }
     pub fn strict_context(&self) -> Result<StrictEpochRuntimeContextV1> {
+        #[cfg(test)]
+        STRICT_CONTEXT_CALLS_V1.with(|calls| calls.set(calls.get() + 1));
         let context = match &self.provenance {
             EpochProvenanceV2::LegacyV1 => {
                 let mut budget = Cev0AdmissionBudgetV0::for_parameters(&self.old_parameters);
