@@ -187,3 +187,94 @@ fn contextual_certified_header_requires_exact_parent_and_complete_epoch_context(
         )
         .is_err());
 }
+
+#[test]
+fn contextual_certified_header_typed_handoff_rejects_unverified_authorization_substitution() {
+    let runtime = StrictEpochRuntimeContextV1::from_activation_v1(predecessor()).unwrap();
+    let activation = runtime.activation();
+    let mut forged_evidence = runtime.evidence_bytes().clone();
+    // Keep all descriptor/anchor coordinates, but corrupt a B-role signature.
+    // The eight-root structural decoder intentionally grants no crypto claim.
+    *forged_evidence.authorization_kernel.last_mut().unwrap() ^= 1;
+    let decoded = decode_epoch_activation_evidence_v0_exact(
+        forged_evidence.as_preimages(),
+        activation.old_validator_set(),
+        activation.old_consensus_parameters(),
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    let unverified = EpochRuntimeContextDataV1::from_decoded_evidence_v1(&decoded).unwrap();
+    assert_eq!(unverified.anchor_reference(), runtime.anchor_reference());
+    assert_ne!(
+        unverified.authorization(),
+        runtime.structural_context().authorization()
+    );
+    let first = first_epoch_finality_for_context(&runtime);
+    let original = first.finalized_block();
+    let set = activation.new_validator_set();
+    let parent = activation.terminal_old_header();
+    // Re-sign the real proposal around the substituted authorization. Thus
+    // checking only QC coordinates plus proposer/QC signatures would pass.
+    let root = ProposalWitnessV0::signing_root_for(
+        original.header(),
+        unverified.anchor_reference(),
+        None,
+        Some(unverified.authorization()),
+    )
+    .unwrap();
+    let signature = Signature64::from_array(
+        signing_key(set.validator(original.header().proposer_id()).unwrap())
+            .sign(root.as_bytes())
+            .to_bytes(),
+    );
+    let substituted = CertifiedHeaderV0::new(
+        original.header().clone(),
+        unverified.anchor_reference().clone(),
+        None,
+        Some(unverified.authorization().clone()),
+        signature,
+        original.certifying_qc().clone(),
+        set,
+        Some(activation.old_validator_set()),
+        activation.new_consensus_parameters(),
+        parent.timestamp_ms(),
+    )
+    .unwrap();
+    let substituted_finality = FinalityProofV0::new(
+        substituted.clone(),
+        first.child().clone(),
+        first.grandchild().clone(),
+        set,
+        Some(activation.old_validator_set()),
+        activation.new_consensus_parameters(),
+        parent.timestamp_ms(),
+    )
+    .unwrap();
+    assert!(
+        runtime
+            .verify_finality_v1(
+                &substituted_finality,
+                parent.timestamp_ms(),
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .is_err(),
+        "existing typed finality must bind the same complete authorization"
+    );
+    assert!(
+        runtime
+            .verify_certified_header_v1(
+                &substituted,
+                parent,
+                &mut Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .is_err(),
+        "typed admission must bind the complete verified authorization"
+    );
+    assert!(runtime
+        .decode_verify_certified_header_v1(
+            &substituted.try_cev0_bytes().unwrap(),
+            parent,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .is_err());
+}

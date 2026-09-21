@@ -200,7 +200,11 @@ The ordinary and trusted-genesis decoders retain their existing restrictions.
 `verify_certified_header_v1` counterpart use the same precharged verification
 kernel. The independently authenticated complete parent must have the exact ID,
 height, chain/genesis/version, active epoch/set/parameters, valid time and geometry;
-a Handoff instead requires the context's exact terminal old header. Existing
+a Handoff instead requires the context's exact terminal old header and complete
+byte-exact epoch authorization, including its original role-signature arrays.
+Equal synthetic QC coordinates cannot substitute that authorization. The shared
+strict witness kernel enforces the same complete authorization for existing typed
+finality consumers; ordinary headers require no epoch authorization. Existing
 historical-link rules also check seal roots and retained commitment. Strict
 Ed25519 verifies the certifying QC and original proposal witness, including every
 nested TC share/reference. Synthetic references must equal this context's exact

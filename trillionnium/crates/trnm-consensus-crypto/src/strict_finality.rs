@@ -516,7 +516,14 @@ pub(crate) fn verify_epoch_proposal_witness_strict_v1(
     header: &trnm_consensus_types::BlockHeader,
     witness: &trnm_consensus_types::ProposalWitnessV0,
 ) -> Result<(), ValidationError> {
-    use trnm_consensus_types::SignatureVerifier;
+    use trnm_consensus_types::{BlockKind, SignatureVerifier};
+    let expected_authorization = (header.block_kind() == BlockKind::EpochHandoff)
+        .then_some(activation.runtime_data_v1().authorization());
+    if witness.epoch_anchor_authorization() != expected_authorization {
+        return Err(ValidationError::InvalidProposal(
+            "proposal substitutes complete strict epoch authorization",
+        ));
+    }
     let set = activation.new_validator_set();
     verify_epoch_qc_reference(activation, witness.justify_qc())?;
     if let Some(tc) = witness.timeout_certificate() {
