@@ -408,3 +408,5 @@ fn genuine_three_entry_prefix_cannot_skip_one_source_transition() {
         ))
     ));
 }
+
+include!("candidate_epoch_host_v2_tests.inc");

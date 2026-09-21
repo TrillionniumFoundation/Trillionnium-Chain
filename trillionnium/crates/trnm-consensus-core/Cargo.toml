@@ -10,6 +10,8 @@ publish = false
 default = []
 # Explicit trusted-host composition seam. No I/O or durable-authority claim.
 candidate-epoch-host-v1 = []
+# Independent codec2 trusted-host seam; never enables the codec1 driver.
+candidate-epoch-host-v2 = []
 # Test-only protocol fixture access for downstream candidate integration tests.
 # This feature exports no runtime authority; it only makes the existing real
 # Ed25519 proposal corpus callable by a fixture-enabled test crate.

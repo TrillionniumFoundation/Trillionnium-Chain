@@ -221,7 +221,7 @@ validation, synchronization or halt; requires applied equals finalized at the
 exact target checkpoint; and matches the original finality proof and native
 artifact. Revision is continuous and generation increases by exactly one.
 `PreparedEpochCoreActivationV2` and `StrictEpochCoreRecoveryV2` are distinct
-inert owners with no existing candidate-host conversion. They cannot inherit
+inert owners with no V1 candidate-host conversion. They cannot inherit
 the journal9 trusted ACK API through a public V1 wrapper. The resulting owner
 exposes only its pending initial persistence request;
 the durable acknowledgement still gates the view1 timer. M03 must separately
@@ -238,6 +238,48 @@ retained work charges, no timer/signature before the matching durable barrier,
 and default-stack recovery. Process-crash, real journal transition and resumed
 live-owner evidence are additional M03/M15 obligations; this design does not
 claim those implementations or promote production activation.
+
+### Typed codec2 candidate driver (M02-EPOCH-HOST-V2)
+
+The independent, default-off `candidate-epoch-host-v2` feature exposes a
+non-Clone `PendingEpochHostDriverV2`. It does not enable the V1 feature, expose
+the private Core or V1 wrapper, or change either record codec. Production, node
+and outgoing build closures reject the `candidate-epoch-host-*` feature family;
+this candidate API cannot promote any of those closures. Consuming
+`PreparedEpochCoreActivationV2::into_candidate_host_pending_v2` preserves the
+original pending request and process affinity. Consuming
+`StrictEpochCoreRecoveryV2::into_candidate_host_initial_pending_v2` accepts only
+the exact canonical initial codec2 state and remints a fresh process affinity
+without advancing Safety revision. Progressed/outbox states reject.
+
+The driver is trusted-host composition plumbing, not a durable receipt.
+Before the matching initial StorageAck, every other input and every application
+authority/callback entrypoint rejects. The exact ACK emits only one view1 timer;
+wrong or repeated ACKs cannot release it. Subsequent inputs and typed Valid,
+finalization and signature-release callbacks use the unchanged strict Core
+engine. M03 must bind its physical journal10 to the actual opaque request after
+fresh exact readback; M15 must additionally join native execution, retirement,
+new custody and the independent node checkpoint before acknowledging or signing.
+Neither the driver nor journal recovery proves those external joins.
+
+Both V2 and, when both explicit features are enabled, V1 pending drivers expose
+consuming `prepare_next_epoch_v2(self, context)`. It first requires completed
+initial activation, no pending persistence or signature delivery, and a strictly
+valid live Core. The existing V2 preparation then requires the exact settled
+checkpoint with applied equal to finalized, no sign/finalize/validation/sync/halt
+obligation, consecutive configuration/generation/revision and unchanged prefix
+extended by exactly one activation. Success consumes the old live driver and
+returns only the inert next preparation; failure never reconstructs that owner.
+No public conversion, mutable state constructor or codec fallback is added.
+
+Pure Core tests use genuine signed activation/ancestry evidence and distinguish
+fixture application coordinates from actual native persistence. They check
+initial ACK and callback gates, fresh recovery affinity, progressed recovery
+refusal, live pending-request/signature/unsettled-source refusal, and consuming
+codec1/codec2 successor preparation. These tests do not establish source9-to10
+or source10-to10 journal durability, custody or resumed M15 execution. Existing
+32-entry/64-MiB preparation limits and intrinsic crypto-work budgets are unchanged;
+the driver cannot replace strict context admission with a larger framing budget.
 
 ### Full epoch integration (implemented inert slice; live owner pending)
 
