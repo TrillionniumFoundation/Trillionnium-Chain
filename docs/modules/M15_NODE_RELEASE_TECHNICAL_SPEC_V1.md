@@ -1164,7 +1164,14 @@ successful application settlement, and at most three while processing the next
 complete signed ordinary proposal. The proposal must extend that exact final
 Prepared parent. Original native execution, Core-owned validation, journal9
 NativeValid persistence, signer intent persistence and before/after-key P/Valid
-revalidation all precede release of its Vote. The next exact QC lets Core derive
+revalidation all precede release of its Vote. The native-cut verifier is shared
+by normal owner refresh, post-K refresh and both sides of the actual key call:
+before first K it checks the original committed checkpoint, and afterwards the
+exact independently checkpointed committed P, head, sequence, artifact, overlay
+and active header coordinates, retaining original edge owner/binding checks.
+A valid-byte replacement of that progressed application's file during the
+external-watermark callback must reject before the actual key is called.
+The next exact QC lets Core derive
 its own queue front. Native K, the unchanged opaque apply-receipt path, exact
 journal9 tag-3 readback and independent node checkpoint CAS precede the ACK.
 Only after all of these succeed may the committed front leave the retained

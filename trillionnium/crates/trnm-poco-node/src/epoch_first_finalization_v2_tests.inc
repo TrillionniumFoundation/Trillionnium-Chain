@@ -201,8 +201,8 @@ fn first_apply_children_v2(case: Box<FirstApplyCaseV2>) -> Box<FirstApplyCaseV2>
 }
 
 #[inline(never)]
-fn first_apply_finish_v2(case: Box<FirstApplyCaseV2>) {
-    let (_directory, owner, key) = *case;
+fn first_apply_settle_v2(case: Box<FirstApplyCaseV2>) -> Box<FirstApplyCaseV2> {
+    let (directory, owner, key) = *case;
     let first = owner.prepared[0].prepared.header().unwrap();
     let third = owner.prepared[2].prepared.header().unwrap();
     let child_pins: Vec<_> = owner.prepared[1..]
@@ -282,6 +282,12 @@ fn first_apply_finish_v2(case: Box<FirstApplyCaseV2>) {
             None
         );
     }
+    Box::new((directory, owner, key))
+}
+
+#[inline(never)]
+fn first_apply_finish_v2(case: Box<FirstApplyCaseV2>) {
+    let (_directory, owner, _key) = *first_apply_settle_v2(case);
     assert!(
         owner
             .apply_first_finalization_v2(
@@ -344,3 +350,5 @@ fn actual_epoch_vote_rejects_deleted_native_p_at_external_key_boundary_v2() {
     let unsigned = first_apply_unsigned_v2(live);
     assert_vote_p_deleted_before_key_v2(unsigned);
 }
+
+include!("epoch_ordinary_continuation_v3_tests.inc");

@@ -42,11 +42,13 @@ use trnm_native_execution_v0::{
 
 type WatermarkState = (Option<SignerWatermarkV0>, Option<SignerRetirementRecordV1>);
 type NativePDeletionHookV2 = Arc<Mutex<Option<(PathBuf, [u8; 32])>>>;
+type NativeProgressedReplacementHookV3 = Arc<Mutex<Option<(PathBuf, u64)>>>;
 #[derive(Clone, Default)]
 struct Watermark(
     Arc<Mutex<WatermarkState>>,
     Arc<Mutex<Option<PathBuf>>>,
     NativePDeletionHookV2,
+    NativeProgressedReplacementHookV3,
 );
 impl ExternalMonotonicWatermarkV0 for Watermark {
     fn load(
@@ -59,6 +61,17 @@ impl ExternalMonotonicWatermarkV0 for Watermark {
         }
         let value = s.0;
         drop(s);
+        let mut progressed = self.3.lock().unwrap();
+        if progressed
+            .as_ref()
+            .is_some_and(|(_, sequence)| value.is_some_and(|w| w.sequence() == *sequence))
+        {
+            let (path, _) = progressed.take().unwrap();
+            let displaced = path.with_extension("progressed-displaced-before-key");
+            std::fs::rename(&path, &displaced).unwrap();
+            std::fs::copy(&displaced, &path).unwrap();
+        }
+        drop(progressed);
         if value.is_some_and(|w| w.sequence() == 1) {
             if let Some((path, block)) = self.2.lock().unwrap().take() {
                 let sql = rusqlite::Connection::open(&path).unwrap();
