@@ -2,6 +2,8 @@
 use super::*;
 #[path = "incremental_epoch_checkpoint_v2.rs"]
 pub(super) mod checkpoint;
+#[path = "incremental_epoch_sync_export_v2.rs"]
+mod sync_export;
 pub use checkpoint::{ComputedIncrementalEpochSelectionV2, PreparedIncrementalCheckpointV2};
 #[path = "incremental_epoch_pre_handoff_v2.rs"]
 pub(super) mod pre_handoff;

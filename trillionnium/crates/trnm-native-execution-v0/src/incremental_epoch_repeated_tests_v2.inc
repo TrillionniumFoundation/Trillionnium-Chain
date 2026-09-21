@@ -51,6 +51,7 @@ fn schema11_third_crossing(
     path: &Path,
     set: &trnm_consensus_types::ValidatorSet,
     parameters: &ConsensusParametersV0,
+    sync_anchors: &[trnm_state_sync_v0::NativeTrustAnchorV1],
 ) -> Vec<u8> {
     let tables = [
         "native_incremental_epoch_edge_v2",
@@ -329,6 +330,7 @@ fn schema11_third_crossing(
     assert_eq!(installed.application_parent().height().get(), 28);
     assert_eq!(installed.consensus_parent().height().get(), 30);
     let bytes = schema11_third_first(&app, path, set, &installed, &kernel);
+    let exports = schema11_public_sync_checks(&app, path, sync_anchors);
     drop(app);
     let cold =
         DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).unwrap();
@@ -355,6 +357,7 @@ fn schema11_third_crossing(
         }
     }
     assert_eq!(std::fs::read(path).unwrap(), bytes);
+    schema11_public_sync_cold(&cold, sync_anchors, &exports);
     drop(cold);
     // A locally rehashed three-edge prefix with B/C swapped remains invalid;
     // the cold walker must reconstruct the exact historical order itself.

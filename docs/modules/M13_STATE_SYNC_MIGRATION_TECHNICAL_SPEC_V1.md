@@ -564,6 +564,50 @@ recomputer contract. Snapshot export, generic chunk admission, native
 recomputation, durable installation, signer activation and public transport
 remain later phases and stay closed here.
 
+### Explicit schema11 evidence adapter (M07-M13-INCREMENTAL-V2)
+
+This consumer implements M07's `M07-INCREMENTAL-SYNC-V2` contract without
+expanding the V1 schema10/13 bridge. Its independent untrusted transport is
+`NativeIncrementalFinalityPathV2`, containing original canonical anchor/target
+headers and ordered `NativeIncrementalFinalityStepV2` values: full target and
+consensus-parent headers, original finality bytes, and optional eight canonical
+activation roots for first-new steps. It carries no native P, sequence, receipt
+or owner authority. The data types are independent of candidate storage
+features; the production composition adapter must not enable an incremental
+owner or import fixture dependencies merely to consume these bytes.
+
+`verify_incremental_native_finality_path_v2(anchor, path, limits, budget)` first
+screens nonempty paths, at most256 application links, at most32 epoch links,
+4096-byte headers, 8-MiB proof/evidence roots and a combined64-MiB envelope.
+These two link ceilings are independent; the caller may tighten link/byte
+bounds. Exact header decoding and full anchor equality precede verification.
+Each step's claimed parent is the actual canonical consensus parent, including
+the old terminal seal for a first-new step. M15 maps these unchanged bytes to
+M13's existing `NativeTrustStepV1::{Ordinary,EpochFirst}` and invokes
+`verify_native_trust_path_v1` with the same caller meter. Only equality of the
+verified terminal and complete exported target header returns
+`VerifiedNativeTrustPathV1`. No producer-local checksum can supply remote trust.
+
+The independently pinned anchor may be the immutable migrated C8 checkpoint
+or another retained committed checkpoint. C8→C32 covers genuine A/B/C activation
+and every retained application finality proof, including C18/C28 as old-context
+ordinary links. Starting at C18 omits its separate link but retains its exact
+checkpoint proof inside the C21 activation evidence. Historical records must
+never be decoded using the current tail's configuration. Old V1 paths cannot
+be relabeled as this owner, and schema11 remains rejected by the V1 producer.
+
+M07's separate `export_current_incremental_native_live_v2` supplies only exact
+current-head authenticated leaves through the existing M06 current-live codec.
+The V2 verified trust result is consumed directly by the unchanged
+`prepare_native_live_transfer_v1` and `NativeLiveStateSyncV1`, including real root
+recomputation and durable staging reopen. This path neither installs a schema11
+database nor exports replay history, local execution receipts, signer state or
+live Node authority. Receiver installation and execution continuation require
+separate owner contracts. Acceptance requires original proof/evidence equality
+across cold source reopen, three genuine consumed epochs, historical target
+verification, transport/config/proof/order/anchor mutants, budget refusal,
+current-head-only export and rehashed leaf corruption refusal in actual staging.
+
 ### Native current-live staging (M06-M13-LIVE-V1)
 
 This implemented candidate contract composes current-live native state with

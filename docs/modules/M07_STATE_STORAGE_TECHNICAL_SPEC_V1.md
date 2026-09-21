@@ -1563,18 +1563,46 @@ their physical child closure.
 No seal root/value/node/pin may appear. The current schema5 node-GC owner remains
 fenced from schema11; enabling schema11 GC or value/history pruning requires a
 separate retention-authority contract. This vertical patch retains data safely
-and does not claim bounded lifetime storage growth or M13 import/export support.
+and does not claim bounded lifetime storage growth or M13 installation support.
+The following separate read-only adapter provides original proof and current-live
+export to the existing M13 verifier and snapshot staging only.
 
-#### Future M13 adapter boundary
+#### Explicit M13 evidence and current-live export (M07-INCREMENTAL-SYNC-V2)
 
-Schema11 has no export or installer in this vertical patch. Its typed owner and
-schema checks must reject use through the schema10 `NativeEpochFinalityPathV1`
+The schema11 owner and schema checks reject use through the schema10
+`NativeEpochFinalityPathV1`
 producer/consumer, and reject importing schema10 local P/receipt metadata as
 incremental authority. Source anchor, migration/context/P digests and sequences
-identify local durable records only. Any future M13 transfer must still start
+identify local durable records only. Every M13 transfer must still start
 from the receiver's independently configured trust anchor.
 
-A future private schema11 owner adapter may derive the eight canonical
+The explicit read-only `export_incremental_epoch_finality_path_v2(anchor_block,
+target_block, budget)` returns distinct `NativeIncrementalFinalityPathV2`
+transport data: original canonical anchor and target headers and ordered
+`NativeIncrementalFinalityStepV2` entries with original target/consensus-parent
+headers, original finality bytes and optional eight-root activation evidence.
+There are no local P/receipt, owner, generation or commit-sequence capabilities
+in this transport. These inert types are available independently of the
+`incremental-epoch-candidate` owner feature; a public verifier must not enable
+candidate storage merely to decode evidence. This DTO defines no aggregate wire
+encoding and supplies no anchor freshness policy.
+
+The producer holds its real operation lock and one immutable read transaction,
+checks live namespace identity, strictly audits all schema11 inventories with
+the caller's shared meter, and checks namespace identity again after encoding.
+It admits only actual committed anchors/targets between the immutable source
+checkpoint and the current application head; equal/reversed ranges, seals,
+PREPARED targets, missing originals, or a disconnected anchor reject. A backward
+walk joins exact application parent Head104, P digest and monotonic commit
+sequences before reversing the output. Ordinary and checkpoint links advance
+one height, while first-new links advance three and name their actual terminal
+seal as consensus parent. The immutable source checkpoint may be the anchor;
+earlier legacy history is outside this producer. Every event is resolved under
+its own authenticated retained epoch context, including historical targets
+below the active tail. No proof is decoded under the current tail's set merely
+because that set is now active.
+
+The private schema11 adapter derives the eight canonical
 activation roots from a strictly authenticated kind1 edge: take its seven
 preimages, omit the standalone checkpoint header, then add the old validator
 set and old parameters from the authenticated preceding prefix. Caller-supplied
@@ -1583,14 +1611,51 @@ equal the retained checkpoint header and exact C head/P, its authenticated paren
 to equal the actual C-1 header, and the first-new proof/header to equal the
 retained C+3 target with the authenticated C+2 consensus parent. These joins
 precede conversion to inert bytes; converted bytes convey no local owner powers.
+Kind0 A exports its original eight retained source preimages. Kind1 B/C retain
+original checkpoint proof, kernel, commitment, new configuration and parent
+bytes; only the missing old configuration is canonically encoded from that
+edge's strictly authenticated predecessor. No proof or joint certificate is
+re-signed, reconstructed from coordinates, or replaced by another valid proof.
 
-For an anchor before C18, the future path contains C18 as an Ordinary +1 step
+For an anchor before C18, the path contains C18 as an Ordinary +1 step
 under the old set, C21 as EpochFirst +3, and C22 as Ordinary +1 under the new set.
 For an anchor exactly at C18, omit the separate C18 step while retaining the
 checkpoint finality inside C21's epoch activation evidence. The edge limit32 and
 application-link limit256 are independent caps, never `min(32, link_count)`;
-headers, proofs and evidence together remain bounded to64MiB. This is a future
-adapter contract, not an implemented export, installer or completed M13 claim.
+headers, proofs and evidence together remain bounded to64MiB. Individual headers
+are at most4096 bytes and individual proof/evidence roots at most8MiB. Producer
+and consumer independently screen these limits. The explicit M15 read-only
+consumer `verify_incremental_native_finality_path_v2` decodes exact headers and
+passes these original proofs and evidence to M13's existing
+`verify_native_trust_path_v1` under one caller meter. It requires the independently
+configured anchor to equal the exported anchor and the verified terminal to equal
+the complete exported target header. V1 schema10/13 admissions remain unchanged.
+
+The separate `export_current_incremental_native_live_v2(target_block, budget)`
+admits only the actual schema11 current committed head. In the same locked,
+closed-audited read transaction it takes all authenticated leaves from the real
+committed incremental reader, binds its height/root and exact target epoch
+configuration, and uses the existing `NativeCurrentLiveExportV1` codec and root
+recomputer. Its strict target-key readmission charges the target validator count
+on the same caller meter before invoking that recomputer. It does not export
+historical nodes, replay command/nonce sets or
+signer data. The existing `prepare_native_live_transfer_v1` and
+`NativeLiveStateSyncV1` may stage these bytes only after independently verifying
+the V2 proof path; their existing byte/chunk/schema/root limits remain unchanged.
+This closes an explicit evidence-to-staging path, never schema11 installation,
+execution continuation, Node owner recovery or signer activation.
+
+Acceptance uses the actual migrated A, consumed B and consumed C fixture through
+C32, including cold reopen, original proof/evidence equality, historical target
+export, independently pinned C8 and later checkpoint anchors, and current-live
+JMT recomputation plus durable staging reopen. Reject wrong parent/old or new
+configuration, changed proof, reordered/missing links, forged terminal, stale or
+PREPARED live target, insufficient budgets and rehashed live-leaf corruption.
+Every refused export preserves database and preparation-sidecar bytes. Existing
+legacy schema and V1 export/consumer refusal tests remain mandatory. The genuine
+`schema11_repeated_crossing_c28_c31_c32_preserves_every_consumed_prefix` test
+executes this matrix through the public V2 production consumer and existing M13
+verifier/staging; no test-specific root or finality verifier replaces them.
 
 #### Implementation and acceptance joins
 
@@ -1604,13 +1669,17 @@ sidecar joins), `incremental_epoch_pre_handoff_v2.rs` (causal checkpoint commit)
 `incremental_epoch_progress_v2.rs` (ordinary preparation, commit, historical
 retry and all-committed fork protection), and
 `incremental_epoch_handoff_signing_v2.rs` (fresh unattached native receipt and
-strict-context comparison for the M03 adapter). Shared kernels remain in
+strict-context comparison for the M03 adapter),
+`incremental_epoch_sync_export_v2.rs` (original retained proofs and current-live
+NI leaves), `incremental_sync_transport_v2.rs` (inert public evidence DTO), and
+M15 `native_incremental_finality_consumer_v2.rs` (explicit unchanged-M13
+composition). Shared kernels remain in
 `incremental_epoch_owner_v1.rs`, `incremental_epoch_commit_v1.rs`,
 `incremental_epoch_descendant_v1.rs`, `incremental_owner_v1.rs` and
 `incremental_epoch_storage_v1.rs`; reuse does not expand their frozen schema5/6/7
 public entry points. `durable.rs` explicitly routes schema11 open/audit/pin paths
 while preserving every schema6/7 descriptor and unsupported legacy entry-point
-guard. Schema11 Node/sync owner joins and the M03 typed receipt adapter remain
+guard. Schema11 Node/sync installation owner joins and the M03 typed receipt adapter remain
 unimplemented; existing singleton edge APIs cannot be relabeled as multiple-edge
 capabilities or silently admit schema11.
 

@@ -27,6 +27,9 @@
 
 #![forbid(unsafe_code)]
 
+mod incremental_sync_transport_v2;
+pub use incremental_sync_transport_v2::*;
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use anyhow::{anyhow, ensure, Context, Result};

@@ -193,6 +193,31 @@ pub(in crate::durable) struct Attachment {
     pub(in super::super::super) checksum: [u8; 32],
 }
 impl Attachment {
+    // Called only from a completely audited owner. Preserve all six original
+    // public fields; old trust comes exclusively from this exact predecessor.
+    pub(in super::super::super) fn public_evidence(
+        &self,
+        predecessor: &RetainedContextRef<'_>,
+    ) -> Result<trnm_consensus_types::EpochActivationEvidenceBytesV0> {
+        ensure!(
+            self.predecessor == predecessor.binding && self.preceding == predecessor.prefix,
+            "schema11 export predecessor context differs"
+        );
+        let active = predecessor.runtime.activation();
+        Ok(trnm_consensus_types::EpochActivationEvidenceBytesV0 {
+            old_checkpoint_finality: self.evidence.proof.clone(),
+            next_epoch_commitment: self.evidence.commitment.clone(),
+            authorization_kernel: self.evidence.kernel.clone(),
+            old_validator_set: active
+                .new_validator_set()
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("schema11 public old set: {e:?}"))?,
+            old_consensus_parameters: active.new_consensus_parameters().canonical_bytes(),
+            new_validator_set: self.evidence.set.clone(),
+            new_consensus_parameters: self.evidence.parameters.clone(),
+            authenticated_checkpoint_parent_header: self.evidence.parent.clone(),
+        })
+    }
     pub(in super::super::super) fn projected(
         &self,
         config: &NativeApplicationConfigV0,

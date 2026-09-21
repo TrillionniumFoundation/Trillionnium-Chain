@@ -582,6 +582,18 @@ fn schema11_checkpoint_fixture(repeat_third: bool) {
             &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
         )
         .unwrap();
+    // Explicit schema11 exporters cannot turn a genuine schema7 owner into
+    // a v2 producer; refusal preserves the committed predecessor bytes.
+    let legacy_before = std::fs::read(&path).unwrap();
+    assert!(app.export_incremental_epoch_finality_path_v2(
+        edge.application_parent().block_id(), first.target_head().unwrap().block_id(),
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    ).is_err());
+    assert!(app.export_current_incremental_native_live_v2(
+        first.target_head().unwrap().block_id(),
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    ).is_err());
+    assert_eq!(std::fs::read(&path).unwrap(), legacy_before);
     app.upgrade_incremental_multi_epoch_schema_v2().unwrap();
     let mut descendants = old
         .iter()
@@ -1449,6 +1461,11 @@ fn schema11_checkpoint_fixture(repeat_third: bool) {
     drop(c);
     assert_eq!(std::fs::read(&path).unwrap(), committed);
     drop(cold);
+    // Provision independent fixture trust roots before reading any exported bytes.
+    let sync_anchors = repeat_third.then(|| vec![
+        schema11_sync_anchor(&header(&edge.recovery_evidence().checkpoint_header).unwrap(), edge.old_validator_set(), edge.old_parameters()),
+        schema11_sync_anchor(&h, set, edge.new_parameters()),
+    ]);
     let committed = schema11_commit_second_first(
         &path,
         set,
@@ -1458,7 +1475,7 @@ fn schema11_checkpoint_fixture(repeat_third: bool) {
         &first_header,
         first_new.p_digest(),
         &next_descendants,
-        repeat_third,
+        sync_anchors.as_deref(),
     );
     // A locally rehashed cross-kind replacement cannot substitute the migrated
     // native authorization identity for the full successor activation binding.
@@ -2006,7 +2023,7 @@ fn schema11_commit_second_first(
     first_header: &BlockHeader,
     digest: [u8; 32],
     descendants: &[PreparedNativeIncrementalEpochV2],
-    repeat_third: bool,
+    sync_anchors: Option<&[trnm_state_sync_v0::NativeTrustAnchorV1]>,
 ) -> Vec<u8> {
     let headers = vec![
         first_header.clone(),
@@ -2150,8 +2167,8 @@ fn schema11_commit_second_first(
     assert_eq!(std::fs::read(path).unwrap(), bytes);
     drop(c);
     drop(cold);
-    if repeat_third {
-        schema11_third_crossing(path, set, parameters)
+    if let Some(anchors) = sync_anchors {
+        schema11_third_crossing(path, set, parameters, anchors)
     } else {
         bytes
     }
@@ -2474,3 +2491,5 @@ fn schema11_continue_second_epoch(
 
 include!("incremental_epoch_repeated_tests_v2.inc");
 include!("incremental_epoch_signing_tests_v2.inc");
+
+include!("incremental_epoch_sync_tests_v2.inc");
