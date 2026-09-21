@@ -1184,6 +1184,29 @@ unchanged timeout bytes and all signer facts, replay/refusal preservation,
 zero additional key calls, and subsequent genuine certificate progress. No
 missing-body hash or caller-supplied Valid fact can satisfy this path.
 
+### Durable timeout scheduling after a late Vote (M15-TIMEOUT-REARM-V1)
+
+Core's durable `last_timeout_view` is the scheduling fence, independent of the
+current Ready, VoteSigned or TimeoutSigned wrapper. Expose it only as an inert
+read-only phase fact from the owned Core. A same-view QC with another genuine
+quorum subset can restore Ready and permit a late proposal Vote while retaining
+the original timeout. Such progress must not schedule or sign another timeout
+in that view. This rule applies to initial/cold owner scheduling, progress and
+phase-only rearming, and the final expiry check before consuming an owner.
+
+If `last_timeout_view >= current_view`, keep the pacemaker disarmed. Direct
+timeout misuse is rejected before taking the live owner and changes no Safety,
+signer, application or checkpoint facts. Retain the original timeout decision,
+signature and durable sequence; do not synthesize an ACK, reconstruct a new
+timeout from a newer high QC, or weaken the exactly-one-persistence requirement
+for a fresh timeout. A genuine TC or QC advancing beyond the retained timeout
+view may arm the new view and use the unchanged persist-before-sign path once.
+
+The real-key regression covers timeout signing, a second same-parent QC at the
+same view, a late native proposal and Vote, duplicate timer/direct-call refusal
+without another key call or durable revision, and subsequent genuine TC
+advancement followed by exactly one new-view timeout.
+
 ### Per-peer ordered delivery (M15-PEER-OUTBOX-V2)
 
 A bounded broadcast queue preserves FIFO independently for each destination.

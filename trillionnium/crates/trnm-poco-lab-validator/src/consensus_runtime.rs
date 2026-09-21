@@ -4244,9 +4244,10 @@ impl BoundedConsensusOwnerV1 {
         let nominal_deadline = started_at
             .checked_add(preflight.duration)
             .ok_or_else(|| anyhow!("bounded consensus deadline overflows"))?;
-        pacemaker.arm(
+        arm_pacemaker_for_facts_v1(
+            &mut pacemaker,
             config.validator_set().epoch(),
-            initial.current_view_v0(),
+            initial,
             started_at,
         )?;
         let highest_submitted_height = config
@@ -6524,6 +6525,10 @@ impl BoundedConsensusOwnerV1 {
                 ),
             "pacemaker expiry differs from authoritative current view"
         );
+        if !facts.local_timeout_available_v1() {
+            self.pacemaker.cancel();
+            return Ok(false);
+        }
         let vote = self.authority_v1()?.begin_local_timeout_v0()?;
         self.enqueue_consensus_statement_v1(FrameKind::TimeoutVote, encode_timeout_vote(&vote))?;
         self.event_journal
@@ -6915,9 +6920,10 @@ impl BoundedConsensusOwnerV1 {
     ) -> Result<()> {
         update_pacemaker_after_progress_v1(&mut self.pacemaker, before, facts)?;
         if self.restart_lifecycle.is_running_v1() && self.stopping_since.is_none() {
-            self.pacemaker.arm(
+            arm_pacemaker_for_facts_v1(
+                &mut self.pacemaker,
                 self.config.validator_set().epoch(),
-                facts.current_view_v0(),
+                facts,
                 Instant::now(),
             )?;
         }
@@ -6926,11 +6932,15 @@ impl BoundedConsensusOwnerV1 {
 
     fn rearm_after_phase_transition_v1(&mut self, facts: ContinuousRuntimeFactsV0) -> Result<()> {
         if self.restart_lifecycle.is_running_v1() && self.stopping_since.is_none() {
-            self.pacemaker.arm_if_unarmed(
-                self.config.validator_set().epoch(),
-                facts.current_view_v0(),
-                Instant::now(),
-            )?;
+            if facts.local_timeout_available_v1() {
+                self.pacemaker.arm_if_unarmed(
+                    self.config.validator_set().epoch(),
+                    facts.current_view_v0(),
+                    Instant::now(),
+                )?;
+            } else {
+                self.pacemaker.cancel();
+            }
         }
         Ok(())
     }
@@ -7996,6 +8006,22 @@ pub(crate) fn update_pacemaker_after_progress_v1(
         pacemaker.observe_progress();
     } else if after.current_view_v0() > before.current_view_v0() {
         pacemaker.observe_view_change()?;
+    }
+    Ok(())
+}
+
+/// Scheduling is subordinate to Core's durable timeout coordinate, including
+/// when a same-view certificate restored Ready or a cold owner is installed.
+pub(crate) fn arm_pacemaker_for_facts_v1(
+    pacemaker: &mut GenerationAwarePacemakerV0,
+    epoch: trnm_consensus_types::Epoch,
+    facts: ContinuousRuntimeFactsV0,
+    now: Instant,
+) -> Result<()> {
+    if facts.local_timeout_available_v1() {
+        pacemaker.arm(epoch, facts.current_view_v0(), now)?;
+    } else {
+        pacemaker.cancel();
     }
     Ok(())
 }

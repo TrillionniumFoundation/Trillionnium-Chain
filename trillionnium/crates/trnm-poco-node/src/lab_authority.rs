@@ -721,6 +721,7 @@ pub struct PocoNodeLabPhaseFactsV0 {
     phase: PocoNodeLabAuthorityPhaseV0,
     checkpoint: ExternalNodeCheckpointV0,
     current_view: View,
+    last_timeout_view: Option<View>,
     high_qc: QcRef,
     pending_timeout_certificate_id: Option<CertificateId>,
     finalized_block_id: BlockId,
@@ -893,6 +894,12 @@ impl PocoNodeLabPhaseFactsV0 {
 
     pub const fn current_view_v0(self) -> View {
         self.current_view
+    }
+
+    /// Core's retained timeout coordinate; phase changes cannot grant another
+    /// timeout in this view. This fact is not a signing capability.
+    pub const fn last_timeout_view_v1(self) -> Option<View> {
+        self.last_timeout_view
     }
 
     pub const fn high_qc_v0(self) -> QcRef {
@@ -6648,6 +6655,7 @@ fn phase_facts_from_parts_v0(
         phase,
         checkpoint,
         current_view: safety.current_view(),
+        last_timeout_view: safety.last_timeout_view(),
         high_qc: safety.high_qc().qc_ref(),
         pending_timeout_certificate_id: safety
             .pending_tc_high_qc_sync()

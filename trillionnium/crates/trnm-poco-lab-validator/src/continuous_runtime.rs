@@ -2752,6 +2752,10 @@ impl ContinuousValidatorAuthorityV0 {
         ) {
             bail!("continuous authority cannot start another local timeout");
         }
+        ensure!(
+            self.facts_v0()?.local_timeout_available_v1(),
+            "Core already retains a local timeout for the current view"
+        );
         self.signer_lifetime.require_timeout_available_v0()?;
         let phase = self
             .phase
@@ -3302,6 +3306,7 @@ pub struct ContinuousRuntimeFactsV0 {
     signed_timeout_intents: u64,
     minimum_retained_view: View,
     current_view: View,
+    last_timeout_view: Option<View>,
     high_qc: QcRef,
     pending_timeout_certificate_id: Option<CertificateId>,
     finalized_block_id: BlockId,
@@ -3340,6 +3345,7 @@ impl ContinuousRuntimeFactsV0 {
             signed_timeout_intents: signer_lifetime.signed_timeout_intents,
             minimum_retained_view,
             current_view: facts.current_view_v0(),
+            last_timeout_view: facts.last_timeout_view_v1(),
             high_qc: facts.high_qc_v0(),
             pending_timeout_certificate_id: facts.pending_timeout_certificate_id_v0(),
             finalized_block_id: facts.finalized_block_id_v0(),
@@ -3388,6 +3394,15 @@ impl ContinuousRuntimeFactsV0 {
 
     pub const fn current_view_v0(self) -> View {
         self.current_view
+    }
+
+    pub const fn last_timeout_view_v1(self) -> Option<View> {
+        self.last_timeout_view
+    }
+
+    pub(crate) fn local_timeout_available_v1(self) -> bool {
+        self.last_timeout_view
+            .is_none_or(|last| last < self.current_view)
     }
 
     pub const fn high_qc_v0(self) -> QcRef {
@@ -8703,4 +8718,5 @@ mod tests {
         run_deployed_convergent_harness_v0(7);
     }
     include!("continuous_timeout_projection_tests_v1.inc");
+    include!("continuous_timeout_rearm_tests_v1.inc");
 }
