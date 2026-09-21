@@ -6578,11 +6578,14 @@ fn find_finalized_transaction_v1(
 }
 
 #[cfg(feature = "tx-admission-wal")]
+type FinalizedTransactionLookupV1 = Option<(u32, [u8; 32], Vec<u8>)>;
+
+#[cfg(feature = "tx-admission-wal")]
 fn locate_finalized_transaction_v1(
     transactions: &[Vec<u8>],
     receipts: &[Hash32V0],
     transaction_digest: [u8; 32],
-) -> Result<Option<(u32, [u8; 32], Vec<u8>)>, PocoNodeLabFinalizedQueryErrorV0> {
+) -> Result<FinalizedTransactionLookupV1, PocoNodeLabFinalizedQueryErrorV0> {
     if transactions.len() != receipts.len() {
         return Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(
             "application transaction and receipt vectors differ",
