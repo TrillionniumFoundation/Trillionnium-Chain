@@ -5550,6 +5550,61 @@ fn validate_state_sync_anchor_ordinary_promotion_manifest_v0(
     }
 }
 
+fn exact_epoch_first_application_step_v1(
+    state: &SafetyState,
+    predecessor: trnm_consensus_core::FinalizedTip,
+    successor: trnm_consensus_core::FinalizedTip,
+    overlay: trnm_consensus_core::BlockIdOverlayRefV0,
+) -> bool {
+    let Some(epoch) = state.epoch_state_v1() else {
+        return false;
+    };
+    let checkpoint = epoch.checkpoint_header();
+    let terminal = epoch.terminal_old_header();
+    predecessor.height() == checkpoint.height()
+        && predecessor.block_id() == checkpoint.id()
+        && predecessor.view() == checkpoint.view()
+        && predecessor.timestamp_ms() == checkpoint.timestamp_ms()
+        && checkpoint.height().get().checked_add(2) == Some(terminal.height().get())
+        && terminal.height().checked_next().ok() == Some(successor.height())
+        && overlay.block_id() == successor.block_id()
+        && overlay.parent_block_id() == checkpoint.id()
+        && overlay.epoch_parent_v1().is_some_and(|parent| {
+            parent.consensus_parent() == terminal.id()
+                && parent.activation_binding() == epoch.activation_binding()
+        })
+}
+
+fn exact_finalization_application_parent_v1(
+    state: &SafetyState,
+    front: &DurableFinalizationV0,
+) -> bool {
+    let target = front.proof().finalized_block().header();
+    let Some(parent) = front.epoch_application_parent_v1() else {
+        return front.authenticated_parent().height().checked_next().ok() == Some(target.height())
+            && front.target_overlay_ref().epoch_parent_v1().is_none();
+    };
+    let Some(epoch) = state.epoch_state_v1() else {
+        return false;
+    };
+    target.block_kind() == trnm_consensus_types::BlockKind::EpochHandoff
+        && target.parent_id() == epoch.terminal_old_header().id()
+        && parent.checkpoint_header() == epoch.checkpoint_header()
+        && parent.terminal_old_header() == epoch.terminal_old_header()
+        && parent.activation_binding() == epoch.activation_binding()
+        && exact_epoch_first_application_step_v1(
+            state,
+            front.authenticated_parent(),
+            trnm_consensus_core::FinalizedTip::new(
+                target.height(),
+                target.view(),
+                target.id(),
+                target.timestamp_ms(),
+            ),
+            front.target_overlay_ref(),
+        )
+}
+
 pub(crate) fn validate_native_finalization_applied_successor_v0(
     revision: u64,
     manifest: &NativeFinalizationAppliedPersistenceV0,
@@ -5558,9 +5613,26 @@ pub(crate) fn validate_native_finalization_applied_successor_v0(
     let readback = manifest.application_store_readback_v0();
     let predecessor = manifest.predecessor();
     let successor = manifest.successor();
+    let height_step_matches = predecessor.height().checked_next().ok() == Some(successor.height())
+        || successor_state
+            .payload_validation_completions()
+            .iter()
+            .any(|completion| {
+                completion.route() == readback.source_route()
+                    && completion.id() == readback.source_validation_id()
+                    && completion.result().artifact_ref().is_some_and(|artifact| {
+                        artifact.source_artifact_checksum() == readback.source_artifact_checksum()
+                            && exact_epoch_first_application_step_v1(
+                                successor_state,
+                                predecessor,
+                                successor,
+                                artifact.overlay(),
+                            )
+                    })
+            });
     if successor_state.revision() != revision
         || successor_state.application_applied() != successor
-        || predecessor.height().checked_next().ok() != Some(successor.height())
+        || !height_step_matches
         || readback.ordinal() != successor.height().get()
         || readback.source_validation_id().block_id() != successor.block_id()
         || readback.source_validation_id().view() != successor.view()
@@ -5617,6 +5689,7 @@ pub(crate) fn validate_native_finalization_applied_predecessor_v0(
     if predecessor_state.revision().checked_add(1) != Some(revision)
         || predecessor_state.application_applied() != manifest.predecessor()
         || front.authenticated_parent() != manifest.predecessor()
+        || !exact_finalization_application_parent_v1(predecessor_state, front)
         || native_finalization_applied_checksum_v0(front)
             != Ok(manifest
                 .application_store_readback_v0()
@@ -5714,6 +5787,7 @@ pub(crate) fn validate_persisted_native_finalization_applied_pair_v0(
     if predecessor_state.revision().checked_add(1) != Some(revision)
         || transition.completion_revision() != revision
         || predecessor_state.application_applied() != front.authenticated_parent()
+        || !exact_finalization_application_parent_v1(predecessor_state, front)
         || successor_state.application_applied().height() != target.height()
         || successor_state.application_applied().view() != target.view()
         || successor_state.application_applied().block_id() != target.id()
@@ -10254,7 +10328,7 @@ mod native_finalization_applied_pair_tests {
         }
     }
 
-    fn genesis_state() -> SafetyState {
+    pub(super) fn genesis_state() -> SafetyState {
         let parameters = ConsensusParametersV0::reference_shadow_v0();
         let validators = (1u8..=4)
             .map(|index| {
@@ -10405,6 +10479,11 @@ mod native_finalization_applied_pair_tests {
             ))
         ));
     }
+}
+
+#[cfg(all(test, target_os = "linux", feature = "test-fixtures"))]
+mod epoch_applied_parent_tests_v1 {
+    include!("epoch_applied_parent_tests_v1.inc");
 }
 
 #[cfg(test)]

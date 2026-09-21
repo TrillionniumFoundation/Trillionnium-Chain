@@ -399,6 +399,25 @@ readback yields either rejection or the exact strict inert record; none releases
 a Core or lease. The tests do not establish a complete M15 activation lease,
 repeated journal9-to-next-epoch migration, or cross-store rollback recovery.
 
+### Epoch-first application acknowledgement (M03-EPOCH-APPLIED-V1)
+
+An ordinary NativeFinalizationApplied transition advances application height by
+one. A genuine first-new application advances from checkpoint C to C+3 because
+the two intervening seals have no application execution. The exception requires
+the existing strict epoch state, exact checkpoint predecessor (height, block,
+view and timestamp), terminal-old seal at C+2, and the exact Core Valid
+completion's dual-parent overlay binding C, C+2, target and activation identity.
+A numeric three-height jump alone is never sufficient.
+
+Before writing and during retained-pair cold audit, the original Core queue
+front must be an EpochHandoff finalization with the same opaque epoch parent,
+checkpoint/terminal headers and activation binding. Existing source-artifact,
+manifest checksum, queue-pop, request-affinity, revision, post-ACK action and
+independent journal/head checks remain required. No seal receives an application
+receipt; ordinary records and all unrelated height jumps retain their prior
+rules. Acceptance requires a real three-block node/Core/native path, the actual
+tag-3 journal transition and cold readback, plus ordinary transition regressions.
+
 ### Contextual successor journal (M03-EPOCH-JOURNAL-V2; inert persistence implemented)
 
 M02's `TRNMS14E` codec2 and complete `TRNMEP02` preparation prefix require an
