@@ -287,8 +287,9 @@ pub mod epoch_state_tests_v1;
 
 pub use crate::core::StrictEpochCoreRecoveryV2;
 pub use crate::safety_state_record::{
-    decode_epoch_safety_record_v2_exact, encode_epoch_safety_record_v2,
-    epoch_safety_record_context_ref_v2, minimum_epoch_safety_record_limits_v2,
+    decode_epoch_safety_record_v2_exact, encode_epoch_safety_record_parts_v2,
+    encode_epoch_safety_record_v2, epoch_safety_record_context_ref_v2,
+    minimum_epoch_safety_record_limits_v2, EpochSafetyRecordPartsV2,
     EpochSafetyStateRecordContextV2, EPOCH_SAFETY_CODEC_V2,
 };
 

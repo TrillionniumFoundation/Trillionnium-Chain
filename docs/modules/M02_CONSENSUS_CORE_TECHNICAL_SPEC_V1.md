@@ -1,8 +1,33 @@
 # M02 Order / Consensus Kernel technical specification v1
 
-Status: **frozen ordinary v0 rules plus implemented candidate outgoing epoch-zero
-checkpoint/seal owner; new-epoch Core activation remains planned and closed**.
+Status: **frozen ordinary v0 rules and candidate outgoing/incoming epoch Core
+transitions implemented; physical host integration open; production activation closed**.
 Primary module: M02. Producers/consumers: M00/M01/M03/M04/M06/M07/M08/M13/M15.
+
+## Canonical codec2 storage parts (M02-CODEC2-PHYSICAL-PARTS-V1)
+
+M03 may store immutable preparation provenance once per physical journal while
+retaining the existing complete codec2 logical record. The producer
+`encode_epoch_safety_record_parts_v2` shares the canonical encoder and returns
+an inert owned `EpochSafetyRecordPartsV2`: original complete bytes and immutable
+views of the bytes before provenance, exact full `TRNMEP02` provenance, and the
+bytes after provenance. The encoder records the range while writing the actual
+blob grammar; consumers must not search for matching byte strings or hardcode
+an offset through the variable-length artifact reference. The original u32
+blob-length prefix stays in the before segment; the original record checksum
+stays in the after segment.
+
+Concatenating the three views must reproduce the exact existing codec2 bytes.
+The existing encoder delegates to the same implementation and returns those
+complete bytes. Codec, context identity, length ceilings, checksum domain and
+decoder behavior are unchanged. The parts object cannot be publicly assembled
+or mutated and grants no verified recovery, source ownership, persistence
+acknowledgement or signing capability. M03 must independently authenticate its
+profile and original source, restore the complete bytes under checked bounds,
+and run the existing exact decoder and strict recovery; a stored provenance
+hash cannot replace the original evidence. Tests use genuine contextual
+provenance and cover exact decomposition/reassembly, truncated segments and
+altered provenance even after recomputing the outer record checksum.
 
 ## Authority
 

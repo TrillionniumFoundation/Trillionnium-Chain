@@ -74,6 +74,51 @@ fn build_preparation() -> (
 }
 
 #[test]
+fn codec2_physical_parts_reassemble_original_context_and_reject_rehashed_substitution() {
+    let (preparation, config, artifact) = build_preparation();
+    let original_provenance = preparation.record_v2().encode_v2().unwrap();
+    let limits = minimum_epoch_safety_record_limits_v2(&config, &preparation).unwrap();
+    let context =
+        EpochSafetyStateRecordContextV2::new(&config, preparation, artifact, 41, limits).unwrap();
+    let state =
+        SafetyState::from_epoch_activation_v1(&config, context.epoch().clone(), 41).unwrap();
+    let parts = encode_epoch_safety_record_parts_v2(&state, &context).unwrap();
+    assert_eq!(parts.provenance(), original_provenance);
+    let before = parts.before_provenance();
+    assert_eq!(
+        &before[before.len() - 4..],
+        &(original_provenance.len() as u32).to_be_bytes()
+    );
+    let assembled = [before, parts.provenance(), parts.after_provenance()].concat();
+    assert_eq!(assembled, parts.record_bytes());
+    let decoded = decode_epoch_safety_record_v2_exact(&assembled, &context).unwrap();
+    assert_eq!(decoded.state(), &state);
+    assert_eq!(
+        &parts.after_provenance()[parts.after_provenance().len() - 32..],
+        &decoded.record_checksum()
+    );
+    assert!(Core::prepare_epoch_recovery_v2(&decoded, &context, decoded.record_checksum()).is_ok());
+
+    // A physical record's own checksum cannot replace the independently
+    // verified context's complete original preparation evidence.
+    let mut substituted = assembled.clone();
+    substituted[before.len()] ^= 1;
+    let checksum_offset = substituted.len() - 32;
+    let checksum = hash_domain(EPOCH_SAFETY_DOMAIN_V2, &[&substituted[..checksum_offset]]);
+    substituted[checksum_offset..].copy_from_slice(&checksum);
+    assert!(matches!(
+        decode_epoch_safety_record_v2_exact(&substituted, &context),
+        Err(SafetyStateRecordErrorV0::ConfigMismatch)
+    ));
+    let missing_provenance = [before, parts.after_provenance()].concat();
+    assert!(decode_epoch_safety_record_v2_exact(&missing_provenance, &context).is_err());
+    assert!(
+        decode_epoch_safety_record_v2_exact(&assembled[..assembled.len() - 1], &context).is_err()
+    );
+    assert_eq!(parts.into_bytes(), assembled);
+}
+
+#[test]
 fn codec2_roundtrip_retains_genuine_mixed_anchor_provenance() {
     let (preparation, config, artifact) = build_preparation();
     let limits = minimum_epoch_safety_record_limits_v2(&config, &preparation).unwrap();

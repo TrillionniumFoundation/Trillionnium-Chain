@@ -134,6 +134,44 @@ pub fn encode_epoch_safety_record_v2(
     state: &SafetyState,
     context: &EpochSafetyStateRecordContextV2<'_>,
 ) -> Result<Vec<u8>, SafetyStateRecordErrorV0> {
+    Ok(encode_epoch_safety_record_parts_v2(state, context)?.into_bytes())
+}
+
+/// Inert canonical codec2 bytes and the exact provenance blob boundaries.
+/// This is storage data, not strict recovery or persistence authority. The
+/// before segment includes the original blob length; the after segment
+/// includes the original record checksum. No byte search defines the split.
+#[derive(Debug)]
+pub struct EpochSafetyRecordPartsV2 {
+    bytes: Vec<u8>,
+    provenance: core::ops::Range<usize>,
+}
+
+impl EpochSafetyRecordPartsV2 {
+    pub fn record_bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+    pub fn before_provenance(&self) -> &[u8] {
+        &self.bytes[..self.provenance.start]
+    }
+    pub fn provenance(&self) -> &[u8] {
+        &self.bytes[self.provenance.clone()]
+    }
+    pub fn after_provenance(&self) -> &[u8] {
+        &self.bytes[self.provenance.end..]
+    }
+    pub fn into_bytes(self) -> Vec<u8> {
+        self.bytes
+    }
+}
+
+/// Encode the unchanged full logical record while identifying the complete
+/// preparation blob for an explicit physical storage layout. Consumers must
+/// reassemble all parts and retain exact decoding and strict recovery checks.
+pub fn encode_epoch_safety_record_parts_v2(
+    state: &SafetyState,
+    context: &EpochSafetyStateRecordContextV2<'_>,
+) -> Result<EpochSafetyRecordPartsV2, SafetyStateRecordErrorV0> {
     let record = context
         .epoch
         .preparation_record_v2()
@@ -154,15 +192,20 @@ pub fn encode_epoch_safety_record_v2(
     e.u64(context.epoch.owner_generation())?;
     e.fixed(&context.epoch.activation_binding())?;
     encode_artifact_ref(context.epoch.checkpoint_artifact(), &mut e)?;
+    let provenance_start = checked_capacity_add(e.as_slice().len(), 4)?;
     e.blob(
         "epoch preparation provenance",
         record.as_bytes_v2(),
         crate::MAX_EPOCH_PREPARATION_RECORD_BYTES_V2,
     )?;
+    let provenance_end = e.as_slice().len();
     encode_epoch_state_body(state, &inner, &mut e)?;
     let checksum = hash_domain(EPOCH_SAFETY_DOMAIN_V2, &[e.as_slice()]);
     e.fixed(&checksum)?;
-    Ok(e.finish())
+    Ok(EpochSafetyRecordPartsV2 {
+        bytes: e.finish(),
+        provenance: provenance_start..provenance_end,
+    })
 }
 
 /// Exact codec2 decoding only. The complete prefix must byte-match the context
