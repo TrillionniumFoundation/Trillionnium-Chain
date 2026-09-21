@@ -80,7 +80,7 @@ RUNTIME_MATRICES = {
 EPOCH_CODEC2_COMMANDS = (
     'timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --no-default-features --features candidate-epoch-host-v2 --lib candidate_host_v2 --locked',
     'timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --all-features --locked',
-    'timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-safety-store --all-features --test epoch_journal_v2 --locked',
+    'python3 ../scripts/ci/run_native_candidate_shards_v1.py --suite safety-epoch --workspace "$PWD" --evidence-dir "$RUNNER_TEMP/trnm-safety-epoch-shards" --deadline-seconds 900',
     'cargo clippy -p trnm-consensus-core -p trnm-consensus-safety-store --all-features --all-targets --locked -- -D warnings',
 )
 
@@ -288,6 +288,11 @@ def validate_contract(root: Path) -> dict[str, object]:
         "--suite node-epoch", "--deadline-seconds 300",
         '--evidence-dir "$RUNNER_TEMP/trnm-node-epoch-shards"',
     ), "node epoch shard execution")
+    safety_upload = step(baseline, "Retain exact-source Safety epoch shard evidence")
+    require(scalar(safety_upload, "if", 8) == "always() && (steps.safety_epoch_shards.outcome == 'success' || steps.safety_epoch_shards.outcome == 'failure')", "Safety epoch failure evidence must be retained")
+    require(scalar(safety_upload, "name", 10) == "trnm-safety-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}", "Safety epoch artifact source binding differs")
+    require(scalar(safety_upload, "path", 10) == "${{ runner.temp }}/trnm-safety-epoch-shards", "Safety epoch artifact path differs")
+    require(scalar(safety_upload, "if-no-files-found", 10) == "error", "Safety epoch artifact absence must fail")
     node_upload = step(baseline, "Retain exact-source node epoch shard evidence")
     require(scalar(node_upload, "if", 8) == "always() && (steps.node_epoch_shards.outcome == 'success' || steps.node_epoch_shards.outcome == 'failure')", "node epoch failure evidence must be retained")
     require(scalar(node_upload, "name", 10) == "trnm-node-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}", "node epoch artifact source binding differs")

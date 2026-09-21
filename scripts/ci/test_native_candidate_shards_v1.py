@@ -17,6 +17,8 @@ from unittest.mock import patch
 
 import run_native_candidate_shards_v1 as runner
 
+SAFETY_NAMES = sorted(["future_journal_case", *runner.SAFETY_IGNORED, *runner.SAFETY_REQUIRED_DRIVERS])
+
 NODE_NAMES = sorted(["ordinary::new_test", runner.NODE_EPOCH_PREFIX + "future_runtime", *runner.NODE_REQUIRED_DRIVERS])
 
 NAMES = sorted([
@@ -40,9 +42,12 @@ def process_state(pid: int) -> str | None:
 class NativeCandidateShardTests(unittest.TestCase):
     def make_workspace(self, base: Path, suite: str = "native") -> tuple[Path, Path]:
         package, _, ignored, _ = runner.SUITES[suite]
-        names = NODE_NAMES if suite == "node-epoch" else NAMES
+        names = {"node-epoch": NODE_NAMES, "safety-epoch": SAFETY_NAMES}.get(suite, NAMES)
+        target_kind = "test" if suite == "safety-epoch" else "lib"
+        target_name = "epoch_journal_v2" if suite == "safety-epoch" else package.replace("-", "_")
+        relative_source = "tests/epoch_journal_v2.rs" if suite == "safety-epoch" else "src/lib.rs"
         repo = base / "repo"
-        source = repo / "trillionnium/crates" / package / "src/lib.rs"
+        source = repo / "trillionnium/crates" / package / relative_source
         source.parent.mkdir(parents=True)
         source.write_text("// fake source used only by runner tests\n")
         for args in (["init", "-q"], ["add", "."], ["-c", "user.name=Runner test", "-c", "user.email=test@invalid", "-c", "commit.gpgsign=false", "commit", "-qm", "fixture"]):
@@ -57,8 +62,10 @@ case = os.environ.get('SHARD_TEST_CASE', '')
 args = sys.argv[1:]
 ignored = set(IGNORED)
 if case == 'extra-ignored':
-    ignored.add('ordinary::new_test')
+    ignored.add(next(name for name in NAMES if name not in ignored))
 pre_handoff_driver = 'later_epoch_checkpoint_bridge::tests::later_pre_handoff_sigkill_commit_and_attach_cuts_preserve_original_evidence'
+if case == 'missing-safety-driver':
+    NAMES.remove('journal12::journal12_six_sigkill_cuts_keep_actual_source_and_prefix')
 if case == 'missing-node-driver':
     NAMES.remove('epoch_runtime_candidate_v1::tests::actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5')
 if case == 'missing-pre-handoff-driver':
@@ -99,13 +106,13 @@ print(f'test result: ok. {passed} passed; 0 failed; {len(set(selected) & ignored
 ''')
         executable.chmod(0o755)
         cargo = bin_dir / "cargo"
-        cargo.write_text(f"#!{sys.executable}\n" + f"EXE={str(executable)!r}\nPACKAGE={package!r}\n" + '''
+        cargo.write_text(f"#!{sys.executable}\n" + f"EXE={str(executable)!r}\nPACKAGE={package!r}\nTARGET_KIND={target_kind!r}\nTARGET_NAME={target_name!r}\nRELATIVE_SOURCE={relative_source!r}\n" + '''
 import json, os, pathlib, sys
 if os.environ.get('SHARD_TEST_CASE') == 'compile-failure':
     raise SystemExit(9)
 if os.environ.get('SHARD_TEST_CASE') == 'foreign-package':
     PACKAGE = 'trnm-native-execution-v0'
-print(json.dumps({'reason':'compiler-artifact', 'target':{'name':PACKAGE.replace('-', '_'), 'kind':['lib'], 'src_path':str(pathlib.Path.cwd() / 'crates' / PACKAGE / 'src/lib.rs')}, 'profile':{'test':True}, 'executable':EXE}))
+print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'kind':[TARGET_KIND], 'src_path':str(pathlib.Path.cwd() / 'crates' / PACKAGE / RELATIVE_SOURCE)}, 'profile':{'test':True}, 'executable':EXE}))
 ''')
         cargo.chmod(0o755)
         return repo, bin_dir
@@ -151,6 +158,24 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':PACKAGE.replace
                 if shard != "general":
                     self.assertEqual(len(inventory[shard]), 1)
                     self.assertIn("--exact", (evidence / (shard + ".command")).read_text())
+
+    def test_safety_integration_profile_preserves_all_cases_and_actual_child_admission(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            code, summary, evidence = self.invoke(Path(directory), suite="safety-epoch")
+            self.assertEqual(code, 0)
+            self.assertEqual(summary["package"], "trnm-consensus-safety-store")
+            inventory = json.loads((evidence / "inventory.json").read_text())
+            self.assertEqual(sorted(sum(inventory.values(), [])), SAFETY_NAMES)
+            self.assertTrue(all(len(names) == 1 for names in inventory.values()))
+            self.assertIn("--all-features --test epoch_journal_v2", (evidence / "compile.command").read_text())
+            counts = [entry["counts"] for entry in summary["shards"].values()]
+            self.assertEqual(sum(entry["passed"] for entry in counts), len(SAFETY_NAMES) - 4)
+            self.assertEqual(sum(entry["ignored"] for entry in counts), 4)
+        for case in ("foreign-package", "missing-safety-driver", "extra-ignored", "wrong-count"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                code, summary, _ = self.invoke(Path(directory), case, suite="safety-epoch")
+                self.assertNotEqual(code, 0)
+                self.assertEqual(summary["status"], "failed")
 
     def test_node_epoch_profile_refuses_wrong_binary_missing_driver_or_ignored_case(self) -> None:
         for case in ("foreign-package", "missing-node-driver", "extra-ignored", "wrong-count", "filtered-mismatch"):

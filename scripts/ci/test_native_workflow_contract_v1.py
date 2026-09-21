@@ -173,6 +173,15 @@ class NativeWorkflowMutants(unittest.TestCase):
             "success()")
         self.rejected("node epoch failure evidence must be retained")
 
+    def test_safety_epoch_profile_and_failure_evidence_cannot_be_omitted(self) -> None:
+        self.replace(BASELINE, "--suite safety-epoch", "--suite native")
+        self.rejected("Verify codec2.*complete execution commands differ")
+        self.replace(BASELINE, "--suite native", "--suite safety-epoch")
+        self.replace(BASELINE,
+            "always() && (steps.safety_epoch_shards.outcome == 'success' || steps.safety_epoch_shards.outcome == 'failure')",
+            "success()")
+        self.rejected("Safety epoch failure evidence must be retained")
+
     def test_runtime_matrix_cannot_skip_and_publish_success(self) -> None:
         self.replace(RUNTIME, "      - name: Run finalization-intent SIGKILL matrix\n", "      - name: Run finalization-intent SIGKILL matrix\n        if: false\n")
         self.rejected("may not skip execution")

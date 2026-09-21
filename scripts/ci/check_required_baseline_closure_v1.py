@@ -282,6 +282,17 @@ def main() -> int:
         "cargo clippy -p trnm-poco-node --features epoch-runtime-test-fixtures --all-targets --locked -- -D warnings",
         "cargo test -p trnm-consensus-safety-store --features test-fixtures,candidate-epoch-host-v1 --test epoch_journal_v1 --locked",
     ), "explicit epoch runtime test closure")
+    safety_epoch_step = named_step(workflow, "Verify codec2 epoch host and journal10")
+    require_tokens(safety_epoch_step, (
+        "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+        "--suite safety-epoch", "--deadline-seconds 900",
+    ), "Safety epoch shard execution")
+    safety_epoch_artifact = named_step(workflow, "Retain exact-source Safety epoch shard evidence")
+    require_tokens(safety_epoch_artifact, (
+        "trnm-safety-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}",
+        "${{ runner.temp }}/trnm-safety-epoch-shards",
+        "if-no-files-found: error",
+    ), "Safety epoch shard evidence")
     node_epoch_artifact = named_step(workflow, "Retain exact-source node epoch shard evidence")
     require_tokens(node_epoch_artifact, (
         "trnm-node-epoch-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}",

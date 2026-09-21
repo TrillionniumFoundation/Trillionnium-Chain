@@ -484,6 +484,24 @@ unit from an ever-growing package to a real runtime case; it does not relax any
 case's assertions, remove a crash or cryptographic check, or count a timeout as
 success. The workflow retains node shard evidence on success and failure.
 
+### Safety successor journal execution (M17-SAFETY-EPOCH-SHARDS-V1)
+
+The closed `--suite safety-epoch` profile uses the same runner for the
+`trnm-consensus-safety-store` `epoch_journal_v2` integration target with all
+features and the locked dependency graph. Cargo JSON must bind that exact
+integration source, target kind/name and executable. Every discovered name
+gets an exact-name partition with a finite 900-second deadline, including
+new successor cases. Compilation has its own 900-second bound.
+
+The only ignored entries are Journal10's initialization and post-initial
+crash children, Journal11's crash child, and `journal12::journal12_sigkill_child`.
+All four corresponding active drivers are mandatory; the Journal12 driver
+must execute its six original initialization/append SIGKILL cuts. Listing and
+final parent counts must match the complete original inventory, and ignored
+children grant no passed tests. Source affinity, default stack, process-group
+cleanup and retained failure evidence are identical to the native profile.
+The existing Core tests and strict all-feature Core/Safety Clippy still run.
+
 ### Required security and fault matrix
 
 | Layer / producer | Fault injection | Oracle / expected result |

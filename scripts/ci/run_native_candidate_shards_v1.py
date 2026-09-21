@@ -41,9 +41,20 @@ NODE_REQUIRED_DRIVERS = {
     NODE_EPOCH_PREFIX + "actual_epoch_first_core_finalization_applies_three_real_native_executions_v2",
     NODE_EPOCH_PREFIX + "actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5",
 }
+SAFETY_IGNORED = {
+    "journal10_initialization_crash_child", "journal10_post_initial_crash_child",
+    "journal11_sigkill_child", "journal12::journal12_sigkill_child",
+}
+SAFETY_REQUIRED_DRIVERS = {
+    "journal10_sigkill_initialization_cuts_never_release_an_owner",
+    "journal10_sigkill_post_initial_cuts_recover_exact_independently_pinned_revision",
+    "journal11_six_sigkill_cuts_keep_original_provenance_and_exact_head",
+    "journal12::journal12_six_sigkill_cuts_keep_actual_source_and_prefix",
+}
 SUITES = {
     "native": (PACKAGE, FEATURES, ALLOWED_IGNORED, REQUIRED_SIGKILL_DRIVERS),
     "node-epoch": ("trnm-poco-node", "epoch-runtime-test-fixtures", set(), NODE_REQUIRED_DRIVERS),
+    "safety-epoch": ("trnm-consensus-safety-store", "--all-features", SAFETY_IGNORED, SAFETY_REQUIRED_DRIVERS),
 }
 
 
@@ -73,10 +84,10 @@ def classify_test(name: str) -> str:
 
 def partition_inventory(names: Iterable[str], suite: str = "native") -> dict[str, list[str]]:
     names = sorted(names)
-    if suite == "node-epoch":
-        result = {"general": []}
+    if suite in ("node-epoch", "safety-epoch"):
+        result = {"general": []} if suite == "node-epoch" else {}
         for name in names:
-            if name.startswith(NODE_EPOCH_PREFIX):
+            if suite == "safety-epoch" or name.startswith(NODE_EPOCH_PREFIX):
                 key = "epoch-" + hashlib.sha256(name.encode()).hexdigest()[:16]
                 if key in result:
                     raise ShardError("duplicate node epoch shard identity")
@@ -120,7 +131,10 @@ def validate_summary(counts: dict[str, int], *, planned: int, ignored: int, tota
 def find_executable(lines: Iterable[str], workspace: Path, suite: str = "native") -> Path:
     candidates = []
     package = SUITES[suite][0]
-    expected_source = (workspace / "crates" / package / "src/lib.rs").resolve()
+    target_name = "epoch_journal_v2" if suite == "safety-epoch" else package.replace("-", "_")
+    target_kind = "test" if suite == "safety-epoch" else "lib"
+    relative_source = "tests/epoch_journal_v2.rs" if suite == "safety-epoch" else "src/lib.rs"
+    expected_source = (workspace / "crates" / package / relative_source).resolve()
     for line in lines:
         try:
             item = json.loads(line)
@@ -129,8 +143,8 @@ def find_executable(lines: Iterable[str], workspace: Path, suite: str = "native"
         if not isinstance(item, dict) or item.get("reason") != "compiler-artifact":
             continue
         target = item.get("target", {})
-        if (target.get("name") == package.replace("-", "_")
-                and target.get("kind") == ["lib"]
+        if (target.get("name") == target_name
+                and target.get("kind") == [target_kind]
                 and item.get("profile", {}).get("test") is True
                 and Path(target.get("src_path", "")).resolve() == expected_source
                 and item.get("executable")):
@@ -141,7 +155,7 @@ def find_executable(lines: Iterable[str], workspace: Path, suite: str = "native"
 
 
 def command_for_shard(executable: Path, shard: str, names: dict[str, list[str]], suite: str = "native") -> list[str]:
-    if suite == "node-epoch" and shard != "general":
+    if suite != "native" and shard != "general":
         return [str(executable), names[shard][0], "--exact", "--nocapture", "--test-threads=2"]
     filters = {"historical-install": BRIDGE + "historical_install", "historical-replay": BRIDGE + "historical_replay", "historical-receiver": BRIDGE + "historical_receiver", "later-pre-handoff": PRE_HANDOFF, "later-bridge": BRIDGE, "schema7": SCHEMA7, "poco-sigkill": POCO_SIGKILL}
     command = [str(executable)] + ([filters[shard]] if shard != "general" else [])
@@ -227,7 +241,9 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
         (evidence / f"{name}.exit-code").write_text(str(code) + "\n")
         return output, code
 
-    output, code = invoke("compile", ["cargo", "test", "-p", package, "--features", features, "--lib", "--locked", "--no-run", "--message-format=json"], args.deadline_seconds)
+    feature_args = ["--all-features"] if args.suite == "safety-epoch" else ["--features", features]
+    target_args = ["--test", "epoch_journal_v2"] if args.suite == "safety-epoch" else ["--lib"]
+    output, code = invoke("compile", ["cargo", "test", "-p", package, *feature_args, *target_args, "--locked", "--no-run", "--message-format=json"], args.deadline_seconds)
     if code:
         return code
     executable = find_executable(output.splitlines(), workspace, args.suite)
