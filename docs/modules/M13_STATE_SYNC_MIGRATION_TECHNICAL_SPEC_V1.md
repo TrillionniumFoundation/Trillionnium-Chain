@@ -444,6 +444,15 @@ between durable readback and the returned resume handle. Rehash and compare the
 complete snapshot before returning it; this observation does not supply
 snapshot-completion authority.
 
+Before any durable BLOB column is materialized into a host-language byte
+buffer, the same transaction must perform a SQL-only admission scan. The scan
+must reject malformed metadata types or fixed-width digest lengths, chunk rows
+over `MAX_CHUNK_COUNT_V0`, empty or over-limit chunk lengths, malformed digest
+types/lengths, and an aggregate `SUM(length(bytes))` over
+`MAX_SNAPSHOT_BYTES_V0`. Only a successful scan may load ordered chunk bytes
+for digest verification. This bound applies to every reopen, readback, resume,
+and append read path; digest and progress checks remain required after loading.
+
 `StateSyncSessionV0::new` validates manifest against the verified terminal link.
 Require every bound and exact digest before accepting chunks. `accept_chunk`
 checks index, declared bytes and binding; identical duplicate is idempotent,

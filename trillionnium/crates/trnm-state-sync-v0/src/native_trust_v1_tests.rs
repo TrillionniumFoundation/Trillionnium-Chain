@@ -846,6 +846,139 @@ fn native_sqlite_reopen_rejects_schema_object_drift() {
 }
 
 #[test]
+fn native_sqlite_reopen_rejects_forged_blob_bounds_before_materialization() {
+    let (path, manifest, application, chunks) = durable_session_fixture();
+    let oversized_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-oversized-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let mut session =
+        NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application).unwrap();
+    let store = SqliteNativeStateSyncStoreV1::initialize(&oversized_path, &session).unwrap();
+    store
+        .append_chunk_v1(&mut session, chunks[0].clone())
+        .unwrap();
+    let connection = rusqlite::Connection::open(&oversized_path).unwrap();
+    connection
+        .execute(
+            "UPDATE native_state_sync_chunks_v1 SET bytes=zeroblob(?1) WHERE chunk_index=0",
+            rusqlite::params![i64::try_from(crate::MAX_CHUNK_BYTES_V0 + 1).unwrap()],
+        )
+        .unwrap();
+    drop(connection);
+    assert!(matches!(
+        SqliteNativeStateSyncStoreV1::open_existing(&oversized_path),
+        Err(NativeStateSyncStoreErrorV1::Protocol(
+            StateSyncErrorV0::InvalidChunk
+        ))
+    ));
+
+    let malformed_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-malformed-meta-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let session = NativeStateSyncSessionV1::begin(path, manifest, application).unwrap();
+    let _store = SqliteNativeStateSyncStoreV1::initialize(&malformed_path, &session).unwrap();
+    let connection = rusqlite::Connection::open(&malformed_path).unwrap();
+    connection
+        .execute("PRAGMA ignore_check_constraints=ON", [])
+        .unwrap();
+    connection
+        .execute(
+            "UPDATE native_state_sync_meta_v1 SET progress_digest=zeroblob(33) WHERE singleton=1",
+            [],
+        )
+        .unwrap();
+    drop(connection);
+    assert!(matches!(
+        SqliteNativeStateSyncStoreV1::open_existing(&malformed_path),
+        Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch)
+    ));
+
+    let text_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-text-chunk-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let (text_path_input, text_manifest, text_application, text_chunks) = durable_session_fixture();
+    let mut text_session =
+        NativeStateSyncSessionV1::begin(text_path_input, text_manifest, text_application).unwrap();
+    let text_store = SqliteNativeStateSyncStoreV1::initialize(&text_path, &text_session).unwrap();
+    text_store
+        .append_chunk_v1(&mut text_session, text_chunks[0].clone())
+        .unwrap();
+    let connection = rusqlite::Connection::open(&text_path).unwrap();
+    connection
+        .execute(
+            "UPDATE native_state_sync_chunks_v1 SET bytes='forged text' WHERE chunk_index=0",
+            [],
+        )
+        .unwrap();
+    drop(connection);
+    assert!(matches!(
+        SqliteNativeStateSyncStoreV1::open_existing(&text_path),
+        Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch)
+    ));
+
+    let extra_row_path = std::env::temp_dir().join(format!(
+        "trnm-native-sync-extra-meta-{}-{}.sqlite",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let (extra_path_input, extra_manifest, extra_application, _) = durable_session_fixture();
+    let extra_session =
+        NativeStateSyncSessionV1::begin(extra_path_input, extra_manifest, extra_application)
+            .unwrap();
+    let _extra_store =
+        SqliteNativeStateSyncStoreV1::initialize(&extra_row_path, &extra_session).unwrap();
+    let connection = rusqlite::Connection::open(&extra_row_path).unwrap();
+    connection
+        .execute("PRAGMA ignore_check_constraints=ON", [])
+        .unwrap();
+    connection
+        .execute(
+            "INSERT INTO native_state_sync_meta_v1
+             SELECT 2,binding_digest,trust_path_digest,terminal_block_digest,
+                    checkpoint_digest,manifest_digest,manifest_binding_digest,
+                    height,epoch,state_root,schema_digest,application_version,
+                    received_chunk_count,received_bytes,progress_digest
+                FROM native_state_sync_meta_v1 WHERE singleton=1",
+            [],
+        )
+        .unwrap();
+    drop(connection);
+    assert!(matches!(
+        SqliteNativeStateSyncStoreV1::open_existing(&extra_row_path),
+        Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch)
+    ));
+
+    for store_path in [
+        &oversized_path,
+        &malformed_path,
+        &text_path,
+        &extra_row_path,
+    ] {
+        let _ = std::fs::remove_file(store_path);
+        let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+        let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+    }
+}
+
+#[test]
 fn native_sqlite_session_child_reopen() {
     let Ok(store_path) = std::env::var("TRNM_NATIVE_SYNC_CHILD_PATH_V1") else {
         return;

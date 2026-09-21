@@ -1251,6 +1251,47 @@ fn u64_to_i64_v1(value: u64) -> Result<i64, NativeStateSyncStoreErrorV1> {
 fn read_metadata_v1(
     connection: &Connection,
 ) -> Result<NativeDurableMetadataV1, NativeStateSyncStoreErrorV1> {
+    // Screen all fixed-width and bounded fields while they are still inside
+    // SQLite.  A forged database must not make rusqlite materialize arbitrary
+    // BLOBs into Vec<u8> before the closed-world checks run.
+    let metadata_rows: i64 = connection
+        .query_row(
+            "SELECT COUNT(*) FROM native_state_sync_meta_v1",
+            [],
+            |row| row.get(0),
+        )
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    if metadata_rows != 1 {
+        return Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch);
+    }
+    connection
+        .query_row(
+            "SELECT 1 FROM native_state_sync_meta_v1 WHERE singleton=1
+             AND typeof(binding_digest)='blob' AND length(binding_digest)=32
+             AND typeof(trust_path_digest)='blob' AND length(trust_path_digest)=32
+             AND typeof(terminal_block_digest)='blob' AND length(terminal_block_digest)=32
+             AND typeof(checkpoint_digest)='blob' AND length(checkpoint_digest)=32
+             AND typeof(manifest_digest)='blob' AND length(manifest_digest)=32
+             AND typeof(manifest_binding_digest)='blob' AND length(manifest_binding_digest)=32
+             AND typeof(state_root)='blob' AND length(state_root)=32
+             AND typeof(schema_digest)='blob' AND length(schema_digest)=32
+             AND typeof(progress_digest)='blob' AND length(progress_digest)=32
+             AND typeof(height)='integer' AND height>0
+             AND typeof(epoch)='integer' AND epoch>=0
+             AND typeof(application_version)='integer' AND application_version>0
+             AND typeof(received_chunk_count)='integer'
+             AND received_chunk_count BETWEEN 0 AND ?1
+             AND typeof(received_bytes)='integer'
+             AND received_bytes BETWEEN 0 AND ?2",
+            params![
+                i64::from(crate::MAX_CHUNK_COUNT_V0),
+                i64::try_from(crate::MAX_SNAPSHOT_BYTES_V0).unwrap_or(i64::MAX),
+            ],
+            |_| Ok(()),
+        )
+        .optional()
+        .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?
+        .ok_or(NativeStateSyncStoreErrorV1::StoreSchemaMismatch)?;
     let row = connection
         .query_row(
             "SELECT binding_digest,trust_path_digest,terminal_block_digest,checkpoint_digest,manifest_digest,manifest_binding_digest,height,epoch,state_root,schema_digest,application_version,received_chunk_count,received_bytes,progress_digest FROM native_state_sync_meta_v1 WHERE singleton=1",
@@ -1319,6 +1360,51 @@ fn read_chunks_v1(
 ) -> Result<Vec<SnapshotChunkV0>, NativeStateSyncStoreErrorV1> {
     if expected_manifest_binding == Digest32V0([0; 32]) {
         return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
+    }
+    let (row_count, total_bytes, invalid_structure, invalid_bytes): (i64, i64, i64, i64) =
+        connection
+            .query_row(
+                "SELECT COUNT(*),
+                    COALESCE(SUM(CASE WHEN typeof(bytes)='blob'
+                                      THEN length(bytes) ELSE 0 END), 0),
+                    COALESCE(SUM(CASE
+                        WHEN typeof(chunk_index) != 'integer'
+                          OR chunk_index < 0
+                          OR chunk_index >= ?1
+                          OR typeof(manifest_digest) != 'blob'
+                          OR length(manifest_digest) != 32
+                          OR typeof(bytes) != 'blob'
+                          OR typeof(chunk_digest) != 'blob'
+                          OR length(chunk_digest) != 32
+                        THEN 1 ELSE 0 END), 0)
+                    ,COALESCE(SUM(CASE
+                        WHEN typeof(bytes) = 'blob'
+                         AND (length(bytes) = 0 OR length(bytes) > ?2)
+                        THEN 1 ELSE 0 END), 0)
+             FROM native_state_sync_chunks_v1",
+                params![
+                    i64::from(crate::MAX_CHUNK_COUNT_V0),
+                    i64::try_from(crate::MAX_CHUNK_BYTES_V0).unwrap_or(i64::MAX),
+                ],
+                |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?)),
+            )
+            .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
+    if row_count < 0
+        || row_count > i64::from(crate::MAX_CHUNK_COUNT_V0)
+        || total_bytes < 0
+        || u64::try_from(total_bytes).unwrap_or(u64::MAX) > crate::MAX_SNAPSHOT_BYTES_V0
+    {
+        return Err(NativeStateSyncStoreErrorV1::Protocol(
+            StateSyncErrorV0::SnapshotTooLarge,
+        ));
+    }
+    if invalid_structure != 0 {
+        return Err(NativeStateSyncStoreErrorV1::StoreSchemaMismatch);
+    }
+    if invalid_bytes != 0 {
+        return Err(NativeStateSyncStoreErrorV1::Protocol(
+            StateSyncErrorV0::InvalidChunk,
+        ));
     }
     let mut statement = connection
         .prepare("SELECT chunk_index,manifest_digest,bytes,chunk_digest FROM native_state_sync_chunks_v1 ORDER BY chunk_index")
