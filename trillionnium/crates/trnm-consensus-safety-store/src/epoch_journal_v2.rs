@@ -1,5 +1,11 @@
 //! Journal10 consumes exact codec2 provenance and an actual immediate source
 //! owner. It persists comparison facts only; no ACK, signer or live Core API.
+#[path = "epoch_journal_record_storage_v3.rs"]
+mod record_storage;
+#[path = "epoch_journal_v3.rs"]
+pub(crate) mod v3;
+use record_storage::RecordStorageV3;
+
 use crate::epoch_journal_physical_v2::{
     JournalBoundsV2, JournalLayoutV2, PhysicalJournalErrorV2, PhysicalJournalV2,
 };
@@ -19,15 +25,15 @@ use std::{
 };
 use trnm_consensus_core::{
     decode_epoch_safety_record_v1_exact, decode_epoch_safety_record_v2_exact,
-    decode_old_epoch_boundary_safety_record_v1_exact, encode_epoch_safety_record_v1,
-    encode_epoch_safety_record_v2, encode_old_epoch_boundary_safety_record_v1,
-    epoch_safety_record_context_ref_v1, epoch_safety_record_context_ref_v2,
-    old_epoch_boundary_record_context_ref_v1, Core, CoreConfig, CoreError, EpochCoreStateV1,
-    EpochSafetyStateRecordContextV1, EpochSafetyStateRecordContextV2,
-    PreparedEpochCoreActivationV2, SafetyState, SafetyStatePersistenceBindingV0,
-    SafetyStatePersistenceV0, SafetyStateRecordContextV0, SafetyStateRecordErrorV0,
-    SafetyStateRecordLimitsV0, StrictEpochCoreRecoveryV1, StrictEpochCoreRecoveryV2,
-    StrictOldEpochTerminalRecoveryV1, UnverifiedSafetyStateRecordV0,
+    decode_old_epoch_boundary_safety_record_v1_exact, encode_epoch_safety_record_parts_v2,
+    encode_epoch_safety_record_v1, encode_epoch_safety_record_v2,
+    encode_old_epoch_boundary_safety_record_v1, epoch_safety_record_context_ref_v1,
+    epoch_safety_record_context_ref_v2, old_epoch_boundary_record_context_ref_v1, Core, CoreConfig,
+    CoreError, EpochCoreStateV1, EpochSafetyRecordPartsV2, EpochSafetyStateRecordContextV1,
+    EpochSafetyStateRecordContextV2, PreparedEpochCoreActivationV2, SafetyState,
+    SafetyStatePersistenceBindingV0, SafetyStatePersistenceV0, SafetyStateRecordContextV0,
+    SafetyStateRecordErrorV0, SafetyStateRecordLimitsV0, StrictEpochCoreRecoveryV1,
+    StrictEpochCoreRecoveryV2, StrictOldEpochTerminalRecoveryV1, UnverifiedSafetyStateRecordV0,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
@@ -241,6 +247,7 @@ impl SourceContextV2<'_> {
 
 #[derive(Debug, Clone)]
 pub struct EpochSafetyJournalProfileV2 {
+    storage: RecordStorageV3,
     config: CoreConfig,
     limits: SafetyStateRecordLimitsV0,
     epoch: EpochCoreStateV1,
@@ -337,8 +344,9 @@ impl EpochSafetyJournalProfileV2 {
             })
             .ok_or(EpochJournalErrorV2::Invalid("database capacity"))?;
         let generation = context.epoch().owner_generation();
+        let storage = RecordStorageV3::Full;
         let binding = digest(
-            b"trnm.journal10.epoch.profile.v2",
+            storage.profile_domain(),
             &[
                 &[source.kind.tag()],
                 &source.profile_ref,
@@ -350,6 +358,7 @@ impl EpochSafetyJournalProfileV2 {
             ],
         );
         Ok(Self {
+            storage,
             config: context.core_config().clone(),
             limits,
             epoch: context.epoch().clone(),
@@ -645,7 +654,7 @@ impl SqliteEpochSafetyJournalV2 {
         if source_transition.len() > MAX_CONTEXT {
             return invalid("source transition capacity");
         }
-        let record = encode_epoch_safety_record_v2(request.state(), &target_context)?;
+        let record = encode_epoch_safety_record_parts_v2(request.state(), &target_context)?;
         let transition = SafetyTransitionContextV0::Ordinary;
         validate_request_manifest(request, &transition)?;
         validate_transition_context_against_state_v0(&transition, request.state())?;
@@ -654,7 +663,7 @@ impl SqliteEpochSafetyJournalV2 {
         drop(target_context);
         let physical = PhysicalJournalV2::create_new(
             path.as_ref(),
-            JournalLayoutV2::Codec2,
+            profile.storage.layout(),
             profile.binding,
             profile.bounds(),
             Some(&actual.path),
@@ -670,7 +679,14 @@ impl SqliteEpochSafetyJournalV2 {
             &source_transition,
             revision,
         );
-        let chain = chain_hash(origin, origin, revision, &record, &transition_bytes);
+        let chain = chain_hash(
+            profile.storage,
+            origin,
+            origin,
+            revision,
+            record.record_bytes(),
+            &transition_bytes,
+        );
         let expected = EpochSafetyHeadPinV2 {
             journal_id,
             revision,
@@ -684,20 +700,17 @@ impl SqliteEpochSafetyJournalV2 {
         };
         {
             let tx = store.physical.immediate_transaction()?;
-            JournalLayoutV2::Codec2.initialize_schema(&tx)?;
+            store.profile.storage.layout().initialize_schema(&tx)?;
+            store.profile.storage.initialize_prefix(&tx, &record)?;
             tx.execute("INSERT INTO epoch_metadata(singleton,journal,profile,source_kind,source_journal,source_chain,source_record,source_transition,origin,first_revision) VALUES(1,?1,?2,?3,?4,?5,?6,?7,?8,?9)",
                 params![journal_id.as_slice(), store.profile.binding.as_slice(), actual.pin.kind.tag(),
                     actual.pin.journal_id.as_slice(), actual.pin.chain_checksum.as_slice(), source_record,
                     source_transition, origin.as_slice(), revision])?;
-            tx.execute(
-                "INSERT INTO epoch_records VALUES(?1,?2,?3,?4,?5)",
-                params![
-                    revision,
-                    origin.as_slice(),
-                    chain.as_slice(),
-                    record,
-                    transition_bytes
-                ],
+            store.profile.storage.insert_record(
+                &tx,
+                (revision, origin, chain),
+                &record,
+                &transition_bytes,
             )?;
             tx.execute(
                 "INSERT INTO epoch_head VALUES(1,?1,?2)",
@@ -731,7 +744,7 @@ impl SqliteEpochSafetyJournalV2 {
     ) -> Result<Self> {
         let physical = PhysicalJournalV2::open_existing(
             path.as_ref(),
-            JournalLayoutV2::Codec2,
+            profile.storage.layout(),
             profile.binding,
             profile.bounds(),
             expected.journal_id,
@@ -886,7 +899,8 @@ impl SqliteEpochSafetyJournalV2 {
         self.profile.check_state(request.state())?;
         validate_request_manifest(request, transition)?;
         validate_transition_context_against_state_v0(transition, request.state())?;
-        let record = encode_epoch_safety_record_v2(request.state(), &self.profile.context()?)?;
+        let record =
+            encode_epoch_safety_record_parts_v2(request.state(), &self.profile.context()?)?;
         let transition_bytes = encode_transition_context_v0(transition)?;
         if transition_bytes.len() > MAX_CONTEXT {
             return invalid("transition capacity");
@@ -909,7 +923,7 @@ impl SqliteEpochSafetyJournalV2 {
         expected: EpochSafetyHeadPinV2,
         request: &SafetyStatePersistenceV0,
         transition: &SafetyTransitionContextV0,
-        record: &[u8],
+        record: &EpochSafetyRecordPartsV2,
         transition_bytes: &[u8],
         observer: &mut impl FnMut(EpochJournalCutV2, EpochSafetyHeadPinV2) -> Result<()>,
     ) -> Result<ConfirmedEpochSafetyHeadV2> {
@@ -939,10 +953,11 @@ impl SqliteEpochSafetyJournalV2 {
         }
         let revision = request.state().revision();
         let chain = chain_hash(
+            self.profile.storage,
             head.origin,
             expected.chain_checksum,
             revision,
-            record,
+            record.record_bytes(),
             transition_bytes,
         );
         let next = EpochSafetyHeadPinV2 {
@@ -961,15 +976,11 @@ impl SqliteEpochSafetyJournalV2 {
             if active != (expected.revision, expected.chain_checksum) {
                 return invalid("head changed before transaction");
             }
-            tx.execute(
-                "INSERT INTO epoch_records VALUES(?1,?2,?3,?4,?5)",
-                params![
-                    revision,
-                    expected.chain_checksum.as_slice(),
-                    chain.as_slice(),
-                    record,
-                    transition_bytes
-                ],
+            self.profile.storage.insert_record(
+                &tx,
+                (revision, expected.chain_checksum, chain),
+                record,
+                transition_bytes,
             )?;
             if tx.execute("UPDATE epoch_head SET revision=?1,chain=?2 WHERE singleton=1 AND revision=?3 AND chain=?4", params![revision,chain.as_slice(),expected.revision,expected.chain_checksum.as_slice()])? != 1 { return invalid("head CAS"); }
             tx.execute(
@@ -990,6 +1001,9 @@ impl SqliteEpochSafetyJournalV2 {
         expected: EpochSafetyHeadPinV2,
     ) -> Result<ConfirmedEpochSafetyHeadV2> {
         self.physical.check_schema(c)?;
+        self.profile
+            .storage
+            .screen_source(c, self.profile.source.limits.maximum_record_bytes())?;
         // Query scalar lengths before allocating untrusted persistent blobs.
         let sizes:(i64,i64)=c.query_row("SELECT length(source_record),length(source_transition) FROM epoch_metadata WHERE singleton=1",[],|r|Ok((r.get(0)?,r.get(1)?)))?;
         if sizes.0 <= 0
@@ -1041,18 +1055,12 @@ impl SqliteEpochSafetyJournalV2 {
         if count != if head.0 == m.first_revision { 1 } else { 2 } {
             return invalid("retained record count");
         }
-        let mut s=c.prepare("SELECT revision,predecessor,chain,length(record),length(transition) FROM epoch_records ORDER BY revision")?;
-        let coordinates = s
-            .query_map([], |r| {
-                Ok((
-                    r.get::<_, u64>(0)?,
-                    r.get::<_, [u8; 32]>(1)?,
-                    r.get::<_, [u8; 32]>(2)?,
-                    r.get::<_, i64>(3)?,
-                    r.get::<_, i64>(4)?,
-                ))
-            })?
-            .collect::<std::result::Result<Vec<_>, _>>()?;
+        let prefix = self.profile.storage.read_prefix(c, &target_context)?;
+        let coordinates = self.profile.storage.coordinates(
+            c,
+            prefix.len(),
+            self.profile.limits.maximum_record_bytes(),
+        )?;
         let mut previous: Option<(UnverifiedSafetyStateRecordV0, [u8; 32])> = None;
         let mut result = None;
         for (index, (revision, predecessor, chain, record_len, context_len)) in
@@ -1066,13 +1074,13 @@ impl SqliteEpochSafetyJournalV2 {
             {
                 return invalid("retained record bounds or revision");
             }
-            let (record_bytes, transition_bytes): (Vec<u8>, Vec<u8>) = c.query_row(
-                "SELECT record,transition FROM epoch_records WHERE revision=?1",
-                [revision],
-                |r| Ok((r.get(0)?, r.get(1)?)),
-            )?;
+            let (record_bytes, transition_bytes) =
+                self.profile
+                    .storage
+                    .read_record(c, revision, &prefix, record_len as usize)?;
             if chain
                 != chain_hash(
+                    self.profile.storage,
                     m.origin,
                     predecessor,
                     revision,
@@ -1084,6 +1092,12 @@ impl SqliteEpochSafetyJournalV2 {
             }
             let record = decode_epoch_safety_record_v2_exact(&record_bytes, &target_context)?;
             self.profile.check_state(record.state())?;
+            self.profile.storage.verify_exact_parts(
+                c,
+                revision,
+                record.state(),
+                &target_context,
+            )?;
             if record.state().revision() != revision {
                 return invalid("record revision");
             }
@@ -1176,7 +1190,7 @@ fn origin_hash(
     first_revision: u64,
 ) -> [u8; 32] {
     digest(
-        b"trnm.journal10.epoch.origin.v2",
+        profile.storage.origin_domain(),
         &[
             &profile.binding,
             &journal,
@@ -1190,6 +1204,7 @@ fn origin_hash(
     )
 }
 fn chain_hash(
+    storage: RecordStorageV3,
     origin: [u8; 32],
     previous: [u8; 32],
     revision: u64,
@@ -1197,7 +1212,7 @@ fn chain_hash(
     transition: &[u8],
 ) -> [u8; 32] {
     digest(
-        b"trnm.journal10.epoch.chain.v2",
+        storage.chain_domain(),
         &[
             &origin,
             &previous,

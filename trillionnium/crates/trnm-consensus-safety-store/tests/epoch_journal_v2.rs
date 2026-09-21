@@ -995,3 +995,5 @@ fn run_post_initial_crash_parent(fixture: &NativeOldEpochTerminalFixtureV1) {
         // claim that the immutable origin was audited after initial-row pruning.
     }
 }
+
+include!("epoch_journal_v3/cases.rs");

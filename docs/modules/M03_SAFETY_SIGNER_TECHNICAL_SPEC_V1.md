@@ -418,6 +418,65 @@ receipt; ordinary records and all unrelated height jumps retain their prior
 rules. Acceptance requires a real three-block node/Core/native path, the actual
 tag-3 journal transition and cold readback, plus ordinary transition regressions.
 
+### Prefix-once codec2 journal (M03-EPOCH-JOURNAL-V3)
+
+Journal11 is an explicit alternative physical profile for the unchanged M02
+codec2 record. Its independent application ID is `0x54524542`, user version is
+11, and lock magic is `TRNMJ11E`. Journal9/10 bytes, profiles, APIs, SQL and
+source-kind tags remain unchanged. Public V3 profile/owner/head types expose no
+V2 owner downcast. Initial scope accepts actual Journal8, Journal9 or Journal10
+owners only at an independently verified activation boundary, creating a new
+private destination; no in-place compaction, implicit upgrade, layout fallback,
+or Journal11 source adapter is permitted.
+
+The exact inventory is four STRICT tables: `epoch_metadata` and `epoch_head`
+retain Journal10 fields; singleton `epoch_provenance(singleton,provenance)`
+holds the original complete TRNMEP02 bytes once; `epoch_records` stores revision,
+predecessor, chain, singleton provenance ID, `record_before`, `record_after`,
+and transition. M02's opaque canonical encoder parts determine the exact blob
+range; its existing length prefix remains in before and original checksum in
+after. No substring search, locally invented grammar, hash-only provenance or
+changed codec2 encoding is allowed. Reconstruction is exactly before + original
+provenance + after, and the unchanged full exact decoder and strict Core
+recovery still run against independently reconstructed source/target contexts.
+Cold read also regenerates opaque canonical parts after strict state validation
+and compares all three stored segments exactly, without repeating cryptography.
+
+The V3 profile, origin and chain domains are respectively
+`trnm.journal11.epoch.profile.v3`, `trnm.journal11.epoch.origin.v3`, and
+`trnm.journal11.epoch.chain.v3`, with the existing ordered u64 length framing
+and field order. Chain hashing covers the complete reconstructed codec2 bytes,
+never a prefix reference alone. Full original source record and source
+transition remain in metadata. Target provenance must byte-match the complete
+independently verified preparation, including its independently pinned root.
+
+Before allocation, SQL scalar screens enforce exact singleton/count/type and
+bounded lengths: provenance at most 64 MiB, reconstructed record at most its
+profile limit (never over 256 MiB), transition at most 1 MiB, checked aggregate
+lengths and existing bounded database envelope. Schema inventory inspects at
+most five objects (four expected plus an unexpected-object sentinel). Existing
+layouts retain their four-object sentinel. All profile capacity facts remain
+bound in the profile hash.
+
+Initialization inserts source evidence, provenance, initial record and head in
+one IMMEDIATE transaction. It preserves fresh actual source checks before and
+after creation, namespace pins, commit, file/directory fsync and independent
+readback before returning comparison facts. Append writes only before/after,
+transition and the head CAS, then keeps exactly the current and previous record.
+Provenance and original source evidence are never pruned within this epoch.
+An exact retry does not allocate another revision and repeats the durability
+fence/readback. Any uncertain append failure fences the owner. Owner affinity,
+initial-only candidate rebind, pending ACK and persist-before-sign semantics
+are shared with Journal10; no method creates a production custody/native join.
+
+Acceptance requires original codec2 byte/checksum identity, immutable one-row
+provenance across real Core persistence, retained-row pruning, independent
+source/cold verification, foreign owner/layout/corruption rejection, and six
+actual SIGKILL cuts (three initialization, three append). This slice optimizes
+physical writes only; full logical decoding remains required, and progressed
+live-driver recovery, Journal11-to-Journal11 migration and performance claims
+remain outside its implemented scope.
+
 ### Contextual successor journal (M03-EPOCH-JOURNAL-V2; inert persistence implemented)
 
 M02's `TRNMS14E` codec2 and complete `TRNMEP02` preparation prefix require an

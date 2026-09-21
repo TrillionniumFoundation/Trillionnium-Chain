@@ -36,36 +36,42 @@ fn io(stage: &'static str, error: std::io::Error) -> PhysicalJournalErrorV2 {
 pub(crate) enum JournalLayoutV2 {
     Codec1,
     Codec2,
+    Codec2PrefixOnce,
 }
 impl JournalLayoutV2 {
     fn sql(self) -> &'static str {
         match self {
             Self::Codec1 => include_str!("epoch_journal_v1.sql"),
             Self::Codec2 => include_str!("epoch_journal_v2.sql"),
+            Self::Codec2PrefixOnce => include_str!("epoch_journal_v3.sql"),
         }
     }
     fn application_id(self) -> i64 {
         match self {
             Self::Codec1 => 0x54524539,
             Self::Codec2 => 0x54524541,
+            Self::Codec2PrefixOnce => 0x54524542,
         }
     }
     fn version(self) -> i64 {
         match self {
             Self::Codec1 => 9,
             Self::Codec2 => 10,
+            Self::Codec2PrefixOnce => 11,
         }
     }
     fn lock_magic(self) -> &'static [u8; 8] {
         match self {
             Self::Codec1 => b"TRNMJ9EP",
             Self::Codec2 => b"TRNMJ10E",
+            Self::Codec2PrefixOnce => b"TRNMJ11E",
         }
     }
     fn stage(self, codec1: &'static str, codec2: &'static str) -> &'static str {
         match self {
             Self::Codec1 => codec1,
             Self::Codec2 => codec2,
+            Self::Codec2PrefixOnce => "journal11 physical operation",
         }
     }
     pub(crate) fn initialize_schema(self, connection: &Connection) -> Result<()> {
@@ -388,7 +394,14 @@ impl PhysicalJournalV2 {
         }
         let reference = Connection::open_in_memory()?;
         reference.execute_batch(self.layout.sql())?;
-        if schema_inventory(connection)? != schema_inventory(&reference)? {
+        let inventory_limit = if self.layout == JournalLayoutV2::Codec2PrefixOnce {
+            5
+        } else {
+            4
+        };
+        if schema_inventory(connection, inventory_limit)?
+            != schema_inventory(&reference, inventory_limit)?
+        {
             return invalid(self.layout.stage(
                 "journal9 closed schema inventory",
                 "journal10 closed schema inventory",
@@ -410,10 +423,11 @@ impl PhysicalJournalV2 {
 
 fn schema_inventory(
     connection: &Connection,
+    inventory_limit: usize,
 ) -> rusqlite::Result<Vec<(String, String, String, String)>> {
     let mut rows = connection
-        .prepare("SELECT type,name,tbl_name,coalesce(sql,'') FROM sqlite_schema LIMIT 4")?
-        .query_map([], |row| {
+        .prepare("SELECT type,name,tbl_name,coalesce(sql,'') FROM sqlite_schema LIMIT ?1")?
+        .query_map([inventory_limit], |row| {
             let mut fields = Vec::with_capacity(4);
             for (index, bound) in [16, 64, 64, 4096].into_iter().enumerate() {
                 let value = row.get_ref(index)?.as_str()?;
@@ -461,6 +475,32 @@ mod tests {
     }
 
     #[test]
+    fn journal11_layout_is_distinct_and_fifth_schema_object_is_rejected() {
+        let layout = JournalLayoutV2::Codec2PrefixOnce;
+        assert_eq!(layout.application_id(), 0x54524542);
+        assert_eq!(layout.version(), 11);
+        assert_eq!(layout.lock_magic(), b"TRNMJ11E");
+        let c = Connection::open_in_memory().unwrap();
+        layout.initialize_schema(&c).unwrap();
+        let expected = schema_inventory(&c, 5).unwrap();
+        assert_eq!(expected.len(), 4);
+        c.execute_batch("CREATE TABLE fifth(x INTEGER) STRICT")
+            .unwrap();
+        let actual = schema_inventory(&c, 5).unwrap();
+        assert_eq!(actual.len(), 5);
+        assert_ne!(actual, expected);
+        assert!(c
+            .execute("INSERT INTO epoch_provenance VALUES(1,'not a blob')", [])
+            .is_err());
+        assert!(c
+            .execute(
+                "INSERT INTO epoch_provenance VALUES(1,zeroblob(67108865))",
+                []
+            )
+            .is_err());
+    }
+
+    #[test]
     fn journal10_physical_schema_rejects_unknown_source_kind() {
         let connection = Connection::open_in_memory().unwrap();
         JournalLayoutV2::Codec2
@@ -489,7 +529,11 @@ mod tests {
             max_db: 8 * 1024 * 1024,
         };
         let profile = [0x31; 32];
-        for layout in [JournalLayoutV2::Codec1, JournalLayoutV2::Codec2] {
+        for layout in [
+            JournalLayoutV2::Codec1,
+            JournalLayoutV2::Codec2,
+            JournalLayoutV2::Codec2PrefixOnce,
+        ] {
             let path = directory
                 .path()
                 .join(format!("journal{}.sqlite", layout.version()));
@@ -504,7 +548,7 @@ mod tests {
                 // this backend cannot return Core or source-owner authority.
                 let metadata = match layout {
                     JournalLayoutV2::Codec1 => "INSERT INTO epoch_metadata VALUES(1,?1,?2,zeroblob(32),zeroblob(32),x'01',x'01',zeroblob(32),1)",
-                    JournalLayoutV2::Codec2 => "INSERT INTO epoch_metadata VALUES(1,?1,?2,0,zeroblob(32),zeroblob(32),x'01',x'01',zeroblob(32),1)",
+                    JournalLayoutV2::Codec2 | JournalLayoutV2::Codec2PrefixOnce => "INSERT INTO epoch_metadata VALUES(1,?1,?2,0,zeroblob(32),zeroblob(32),x'01',x'01',zeroblob(32),1)",
                 };
                 tx.execute(
                     metadata,
@@ -525,7 +569,9 @@ mod tests {
 
             let wrong_layout = match layout {
                 JournalLayoutV2::Codec1 => JournalLayoutV2::Codec2,
-                JournalLayoutV2::Codec2 => JournalLayoutV2::Codec1,
+                JournalLayoutV2::Codec2 | JournalLayoutV2::Codec2PrefixOnce => {
+                    JournalLayoutV2::Codec1
+                }
             };
             let wrong =
                 PhysicalJournalV2::open_existing(&path, wrong_layout, profile, bounds, journal_id)

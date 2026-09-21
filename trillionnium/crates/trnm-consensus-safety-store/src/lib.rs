@@ -101,3 +101,9 @@ pub use epoch_journal_v2::{
     EpochSafetyJournalProfileV2, EpochSafetyMigrationSourceV2, EpochSafetySourceKindV2,
     EpochSafetySourceOwnerV2, EpochSafetySourcePinV2, SqliteEpochSafetyJournalV2,
 };
+
+/// Explicit Journal11 prefix-once physical owners; logical records remain codec2.
+pub use epoch_journal_v2::v3::{
+    ConfirmedEpochSafetyHeadV3, EpochJournalCutV3, EpochJournalErrorV3, EpochSafetyHeadPinV3,
+    EpochSafetyJournalProfileV3, EpochSafetySourceOwnerV3, SqliteEpochSafetyJournalV3,
+};
