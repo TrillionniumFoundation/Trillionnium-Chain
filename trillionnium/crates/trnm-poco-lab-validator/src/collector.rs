@@ -31,6 +31,12 @@ pub const MAX_PENDING_COORDINATES_V0: usize = 4_096;
 
 type QuorumCoordinateV0 = (View, Height, BlockId);
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum TimeoutCertificateResolutionV0 {
+    Complete,
+    ReadySubset,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AdmittedConsensusMessageV0 {
     Proposal(Box<UnboundProposalV0>),
@@ -554,6 +560,17 @@ impl ConsensusCertificateCollectorV0 {
         &mut self,
         timed_out_view: View,
     ) -> Result<Option<TimeoutCertificateV0>, ConsensusIngressErrorV0> {
+        self.try_timeout_certificate_with_resolution(
+            timed_out_view,
+            TimeoutCertificateResolutionV0::Complete,
+        )
+    }
+
+    fn try_timeout_certificate_with_resolution(
+        &mut self,
+        timed_out_view: View,
+        resolution: TimeoutCertificateResolutionV0,
+    ) -> Result<Option<TimeoutCertificateV0>, ConsensusIngressErrorV0> {
         if timed_out_view < self.minimum_retained_view {
             return Err(ConsensusIngressErrorV0::StaleView);
         }
@@ -563,19 +580,26 @@ impl ConsensusCertificateCollectorV0 {
         let Some(votes) = self.timeouts.get(&timed_out_view) else {
             return Ok(None);
         };
-        if signed_power(&self.validator_set, votes.keys().copied())?
-            < self.validator_set.quorum_power()
+        if resolution == TimeoutCertificateResolutionV0::Complete
+            && signed_power(&self.validator_set, votes.keys().copied())?
+                < self.validator_set.quorum_power()
         {
             return Ok(None);
         }
         let mut maximum: Option<QcRef> = None;
         let mut referenced = BTreeMap::new();
         let mut entries = Vec::with_capacity(votes.len());
+        let mut ready_authors = Vec::with_capacity(votes.len());
         for vote in votes.values() {
             let high_qc = vote.high_qc();
-            let reference = self.qc_references.get(&high_qc.qc_digest()).ok_or(
-                ConsensusIngressErrorV0::MissingQcReference(high_qc.qc_digest()),
-            )?;
+            let Some(reference) = self.qc_references.get(&high_qc.qc_digest()) else {
+                if resolution == TimeoutCertificateResolutionV0::ReadySubset {
+                    continue;
+                }
+                return Err(ConsensusIngressErrorV0::MissingQcReference(
+                    high_qc.qc_digest(),
+                ));
+            };
             if reference.qc_ref() != high_qc {
                 return Err(ConsensusIngressErrorV0::ConflictingQcReference(
                     high_qc.qc_digest(),
@@ -592,10 +616,17 @@ impl ConsensusCertificateCollectorV0 {
                 }
                 _ => Some(high_qc),
             };
+            ready_authors.push(vote.author());
             entries.push(
                 TimeoutEntryV0::new(vote.author(), high_qc, *vote.signature())
                     .map_err(invalid_certificate)?,
             );
+        }
+        if resolution == TimeoutCertificateResolutionV0::ReadySubset
+            && signed_power(&self.validator_set, ready_authors.into_iter())?
+                < self.validator_set.quorum_power()
+        {
+            return Ok(None);
         }
         let selected = maximum.ok_or_else(|| {
             ConsensusIngressErrorV0::InvalidCertificate("empty timeout quorum".to_owned())
@@ -628,10 +659,10 @@ impl ConsensusCertificateCollectorV0 {
         &mut self,
         timed_out_view: View,
     ) -> Result<Option<TimeoutCertificateV0>, ConsensusIngressErrorV0> {
-        match self.try_timeout_certificate(timed_out_view) {
-            Err(ConsensusIngressErrorV0::MissingQcReference(_)) => Ok(None),
-            result => result,
-        }
+        self.try_timeout_certificate_with_resolution(
+            timed_out_view,
+            TimeoutCertificateResolutionV0::ReadySubset,
+        )
     }
 
     /// Returns every timeout view currently retained by the collector.  The
@@ -1134,6 +1165,195 @@ mod tests {
         assert_eq!(tc.referenced_qcs().len(), 1);
         assert_eq!(tc.selected_high_qc_digest(), qc.id());
         tc.verify(&set, None, &StrictEd25519Verifier).unwrap();
+    }
+
+    #[test]
+    fn live_timeout_collection_forms_ready_quorum_around_missing_carriers() {
+        let (keys, set) = fixture();
+        let block_a = BlockId::new([0xc8; 32]);
+        let block_b = BlockId::new([0xc9; 32]);
+        let mut qc_a_collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        for index in 0..4 {
+            qc_a_collector
+                .admit_vote(vote(&keys, &set, index, 5, 3, block_a))
+                .unwrap();
+        }
+        let qc_a = qc_a_collector
+            .try_quorum_certificate(View::new(5), Height::new(3), block_a)
+            .unwrap()
+            .unwrap();
+        let mut qc_b_collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        for index in 0..4 {
+            qc_b_collector
+                .admit_vote(vote(&keys, &set, index, 4, 3, block_b))
+                .unwrap();
+        }
+        let qc_b = qc_b_collector
+            .try_quorum_certificate(View::new(4), Height::new(3), block_b)
+            .unwrap()
+            .unwrap();
+        let qc_a_ref = QcRef::from(&qc_a);
+        let qc_b_ref = QcRef::from(&qc_b);
+
+        let mut collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        collector
+            .register_qc_reference(QcReferenceV0::ordinary(qc_a.clone()))
+            .unwrap();
+        for index in 0..5 {
+            collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, qc_a_ref))
+                .unwrap();
+        }
+        for index in 5..7 {
+            collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, qc_b_ref))
+                .unwrap();
+        }
+
+        assert!(matches!(
+            collector.try_timeout_certificate(View::new(6)),
+            Err(ConsensusIngressErrorV0::MissingQcReference(id)) if id == qc_b_ref.qc_digest()
+        ));
+        let certificate = collector
+            .try_timeout_certificate_if_ready(View::new(6))
+            .unwrap()
+            .expect("known timeout votes already have quorum power");
+        assert_eq!(certificate.entries().len(), 5);
+        assert_eq!(certificate.referenced_qcs().len(), 1);
+        assert_eq!(certificate.selected_high_qc_digest(), qc_a_ref.qc_digest());
+        certificate
+            .verify(&set, None, &StrictEd25519Verifier)
+            .unwrap();
+
+        collector
+            .register_qc_reference(QcReferenceV0::ordinary(qc_b))
+            .unwrap();
+        assert_eq!(
+            collector
+                .try_timeout_certificate_if_ready(View::new(6))
+                .unwrap()
+                .expect("first live TC is frozen after late carrier"),
+            certificate
+        );
+    }
+
+    #[test]
+    fn live_timeout_collection_waits_until_ready_votes_reach_quorum() {
+        let (keys, set) = fixture();
+        let block_a = BlockId::new([0xca; 32]);
+        let block_b = BlockId::new([0xcb; 32]);
+        let mut a_builder = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        let mut b_builder = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        for index in 0..4 {
+            a_builder
+                .admit_vote(vote(&keys, &set, index, 5, 3, block_a))
+                .unwrap();
+            b_builder
+                .admit_vote(vote(&keys, &set, index, 4, 3, block_b))
+                .unwrap();
+        }
+        let qc_a = a_builder
+            .try_quorum_certificate(View::new(5), Height::new(3), block_a)
+            .unwrap()
+            .unwrap();
+        let qc_b = b_builder
+            .try_quorum_certificate(View::new(4), Height::new(3), block_b)
+            .unwrap()
+            .unwrap();
+        let qc_a_ref = QcRef::from(&qc_a);
+        let qc_b_ref = QcRef::from(&qc_b);
+        let mut collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        collector
+            .register_qc_reference(QcReferenceV0::ordinary(qc_a.clone()))
+            .unwrap();
+        for index in 0..4 {
+            collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, qc_b_ref))
+                .unwrap();
+        }
+        for index in 4..7 {
+            collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, qc_a_ref))
+                .unwrap();
+        }
+        assert!(collector
+            .try_timeout_certificate_if_ready(View::new(6))
+            .unwrap()
+            .is_none());
+        collector
+            .register_qc_reference(QcReferenceV0::ordinary(qc_b.clone()))
+            .unwrap();
+        let certificate = collector
+            .try_timeout_certificate_if_ready(View::new(6))
+            .unwrap()
+            .expect("late carrier supplies the missing ready power");
+        assert_eq!(certificate.entries().len(), 7);
+        certificate
+            .verify(&set, None, &StrictEd25519Verifier)
+            .unwrap();
+    }
+
+    #[test]
+    fn live_timeout_collection_rejects_signed_wrong_qc_context_after_carrier_arrival() {
+        let (keys, set) = fixture();
+        let block_a = BlockId::new([0xcc; 32]);
+        let block_b = BlockId::new([0xcd; 32]);
+        let mut a_builder = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        let mut b_builder = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        for index in 0..4 {
+            a_builder
+                .admit_vote(vote(&keys, &set, index, 5, 3, block_a))
+                .unwrap();
+            b_builder
+                .admit_vote(vote(&keys, &set, index, 4, 3, block_b))
+                .unwrap();
+        }
+        let qc_a = a_builder
+            .try_quorum_certificate(View::new(5), Height::new(3), block_a)
+            .unwrap()
+            .unwrap();
+        let qc_b = b_builder
+            .try_quorum_certificate(View::new(4), Height::new(3), block_b)
+            .unwrap()
+            .unwrap();
+        let qc_a_ref = QcRef::from(&qc_a);
+        let qc_b_ref = QcRef::from(&qc_b);
+        let malformed_b_ref = QcRef::new(
+            qc_b_ref.qc_digest(),
+            qc_b_ref.epoch(),
+            qc_b_ref.view(),
+            Height::new(qc_b_ref.height().get() + 1),
+            qc_b_ref.block_id(),
+            qc_b_ref.validator_set_id(),
+        );
+        let mut collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        collector
+            .register_qc_reference(QcReferenceV0::ordinary(qc_a.clone()))
+            .unwrap();
+        for index in 0..5 {
+            collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, qc_a_ref))
+                .unwrap();
+        }
+        for index in 5..7 {
+            collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, malformed_b_ref))
+                .unwrap();
+        }
+        // Do not form a certificate before the conflicting carrier arrives:
+        // the five known votes alone already have a valid ready quorum.
+        assert!(collector
+            .canonical_timeout_certificate(View::new(6))
+            .is_none());
+
+        collector
+            .register_qc_reference(QcReferenceV0::ordinary(qc_b))
+            .unwrap();
+        assert!(matches!(
+            collector.try_timeout_certificate_if_ready(View::new(6)),
+            Err(ConsensusIngressErrorV0::ConflictingQcReference(id))
+                if id == qc_b_ref.qc_digest()
+        ));
     }
 
     #[test]

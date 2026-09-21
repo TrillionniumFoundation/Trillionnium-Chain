@@ -1027,6 +1027,31 @@ rejected before any live mutation. The regression must cover an alternate
 same-coordinate QC digest, a pending TC whose exact QC arrives through a
 Proposal, malformed Proposal non-pollution, and successful TC formation.
 
+### Ready quorum with deferred QC carriers (M15-TC-READY-QUORUM-V1)
+
+The live timeout retry path may form a TC from the authenticated timeout-vote
+subset whose exact QC carriers are currently present, but only after that
+subset independently reaches validator-set quorum power. Votes whose carriers
+are absent remain retained and may be included by a later retry. The strict
+collector API remains fail-closed when any retained vote lacks its carrier.
+
+The live subset is built in deterministic signer order and includes every
+currently ready vote, with existing canonical QC-reference ordering and the
+selected-high-QC maximum. Every present carrier is checked for exact digest
+equality, canonical coordinate, and strict QC validity before the ready-power
+decision; only an absent carrier is deferred. A known conflicting, malformed,
+or non-canonical carrier therefore rejects the retry even when another ready
+subset has quorum. The candidate TC is fully shaped and verified before it is
+frozen. A later carrier cannot rebuild a different first TC, and a ready
+subset below quorum waits for a retry.
+
+This path changes no Core, owner, signer, parent, or application authority. A
+TC formed from the ready subset remains independently verifiable by Core; an
+unknown retained vote is not evidence until its exact QC carrier is admitted.
+Acceptance uses seven real signing keys and covers ready quorum with unknown
+carriers, below-quorum waiting followed by a late carrier, known-reference
+conflict rejection, and first-TC freeze after a late carrier.
+
 ### Bounded timeout-collector diagnostics (M15-TC-DIAGNOSTIC-V1)
 
 Failure-only diagnostics may record at most the last eight timeout-vote
