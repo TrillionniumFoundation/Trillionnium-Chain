@@ -1088,6 +1088,49 @@ configuration digests. A local lab test or a successful build cannot promote
 `CORE-LIVE-001`, `TX-PROD-001`, `SYNC-PROD-001` or `F1`; machine truth stays
 fail-closed until those artifacts are independently reviewed.
 
+### First-new Core application settlement (M15-EPOCH-FIRST-APPLY-V2)
+
+An explicit consuming continuation of the candidate first-new owner closes one
+Core finalization/application acknowledgement. The existing V1 first-new APIs
+and their native-only K meaning remain unchanged. The V2 continuation retains
+exactly the genuine first-new Prepared execution and at most two consecutive
+ordinary child executions. Each child is admitted as a complete signed proposal
+through the private Core, its real validation request is persisted and ACKed,
+and its original body is executed against the exact owner-affine Prepared
+parent. Fresh native P readback and strict body/receipt commitments precede
+Core's sealed Valid and exact journal9 NativeValid persistence. Proof headers
+cannot substitute for bodies, execution, validation provenance or Prepared rows.
+Both the existing online/resumed V1 Vote and this continuation re-confirm the
+exact retained native P and its matching durable Core Valid artifact/overlay
+immediately before and after the actual key producer, after external-watermark
+callbacks. An unchanged committed parent cannot stand in for that child P.
+Timeout signing retains its existing owner checks without requiring native P.
+
+Only the exact third block's authenticated QC may drive this bounded operation's
+Core finality. Core must itself emit and durably retain the first-new queue
+front before the private application host obtains its single-use apply permit.
+The host installs the matching non-cloneable apply authority once, joins the
+permit to the exact native P, original proof and durable Core Valid completion,
+then performs native K and a fresh owner-affine committed readback. Application
+readback digests bind the actual native owner configuration, previous/new heads,
+P/artifact/overlay/commit sequence, original finality and canonical accepted
+Valid result; they are comparison commitments, never substitute receipt rows
+or public caller-selected authority. The host consumes the permit only after
+this readback and gives the resulting typed receipt to the same private Core.
+
+The resulting NativeFinalizationApplied Safety request supplies the exact
+transition manifest. Journal9 persistence and fresh request confirmation, then
+the independent node checkpoint's matching Safety/native/custody CAS, precede
+StorageAck. Any uncertain write, owner substitution or failed join consumes the
+continuation without releasing signing or ACK authority. No raw Core, signer,
+permit or mutable state is exposed. This slice settles only the first-new
+application; child P remains speculative. It does not retire custody, activate
+a second epoch, recover a progressed continuation, or enable journal10.
+Acceptance uses real native bodies and signed child proposals/QCs, asserts
+Core finalized/applied equals native head, preserves the two child P rows and
+rejects foreign/missing execution, substituted finality and duplicate phases.
+Tests run on the default thread stack without stack-size overrides.
+
 ### Concrete native live staging composition
 
 M15 composes M06's codec/recomputer with M13's verified native path and bounded

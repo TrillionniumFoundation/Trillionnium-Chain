@@ -41,8 +41,13 @@ use trnm_native_execution_v0::{
 };
 
 type WatermarkState = (Option<SignerWatermarkV0>, Option<SignerRetirementRecordV1>);
+type NativePDeletionHookV2 = Arc<Mutex<Option<(PathBuf, [u8; 32])>>>;
 #[derive(Clone, Default)]
-struct Watermark(Arc<Mutex<WatermarkState>>, Arc<Mutex<Option<PathBuf>>>);
+struct Watermark(
+    Arc<Mutex<WatermarkState>>,
+    Arc<Mutex<Option<PathBuf>>>,
+    NativePDeletionHookV2,
+);
 impl ExternalMonotonicWatermarkV0 for Watermark {
     fn load(
         &mut self,
@@ -55,6 +60,17 @@ impl ExternalMonotonicWatermarkV0 for Watermark {
         let value = s.0;
         drop(s);
         if value.is_some_and(|w| w.sequence() == 1) {
+            if let Some((path, block)) = self.2.lock().unwrap().take() {
+                let sql = rusqlite::Connection::open(&path).unwrap();
+                assert_eq!(
+                    sql.execute(
+                        "DELETE FROM native_durable_execution_p_v1 WHERE block_id=?1 AND status=0",
+                        [block.as_slice()]
+                    )
+                    .unwrap(),
+                    1
+                );
+            }
             if let Some(path) = self.1.lock().unwrap().take() {
                 let displaced = path.with_extension("displaced-before-key");
                 std::fs::rename(&path, &displaced).unwrap();
@@ -1295,3 +1311,5 @@ fn assert_recovered_then_timeout_v1(
     let closed = close_actual_runtime_v1(Box::new((dir, runtime, key, recovery)));
     assert!(reopen_actual_runtime_v1(closed).is_err());
 }
+
+include!("epoch_first_finalization_v2_tests.inc");

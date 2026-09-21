@@ -687,6 +687,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                     &self.retirement,
                     &mut self.checkpoint_store,
                     &self.checkpoint,
+                    None,
                 )
             },
         };
@@ -1169,213 +1170,17 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
         self.application
             .upgrade_epoch_schema_v1(self.edge.application_parent())?;
         self.confirm_current_cut_v1()?;
-        let request = self
-            .pending_validation
-            .take()
-            .context("epoch proposal validation is not pending")?;
-        let claimed = request.try_claim().map_err(|_| {
-            anyhow::anyhow!("epoch proposal validation request was already claimed")
-        })?;
-        let (route, validation_id, block, parent, permit) = claimed.into_parts();
-        ensure!(
-            route == trnm_consensus_core::PayloadValidationRouteV0::Proposal,
-            "epoch execution requires the Proposal validation route"
-        );
-        ensure!(
-            block.header().block_kind() == BlockKind::EpochHandoff
-                && block.header().height().get() == self.edge.first_application_height(),
-            "epoch execution received a non-first-new block"
-        );
-        ensure!(
-            parent.consensus_parent_tip_v1().block_id().as_bytes()
-                == self.edge.consensus_parent().id().as_bytes(),
-            "epoch execution parent witness differs from authenticated edge"
-        );
-        let application_parent = self.edge.application_parent();
-        ensure!(
-            parent.tip().block_id().as_bytes() == application_parent.block_id().as_bytes()
-                && parent.tip().height().get() == application_parent.height().get(),
-            "epoch execution application parent witness differs from authenticated edge"
-        );
-
-        let payload = decode_application_payload_v0_exact(
-            block.application_payload(),
-            self.driver.config().consensus_parameters(),
-        )
-        .map_err(|e| anyhow::anyhow!("epoch payload decode: {e:?}"))?;
-        let native_request = self.edge.preview_request_v1(
-            block.header().timestamp_ms(),
-            payload.transactions().to_vec(),
+        let delivery = self.compute_admitted_epoch_valid_v2()?;
+        let effects = self.persist_epoch_valid_delivery_v1(
+            &delivery.accepted,
+            &delivery.confirmed,
+            delivery.route,
+            delivery.validation_id,
         )?;
-        let preview = self
-            .application
-            .preview_epoch_block_v1(&self.edge, &native_request)?;
-        ensure!(
-            *block.header().payload_root().as_bytes() == *preview.payload_root().as_bytes()
-                && *block.header().state_root().as_bytes() == *preview.post_state_root().as_bytes()
-                && *block.header().receipts_root().as_bytes()
-                    == *preview.receipts_root().as_bytes()
-                && *block.header().evidence_root().as_bytes()
-                    == *preview.evidence_root().as_bytes(),
-            "epoch proposal roots differ from deterministic native preview"
-        );
-        let expected = trnm_native_application::NativeExpectedBlockCommitmentsV0::new(
-            trnm_native_application::Hash32V0::new(*preview.payload_root().as_bytes()),
-            trnm_native_application::StateRootV0::new(*preview.post_state_root().as_bytes())?,
-            trnm_native_application::ReceiptsRootV0::new(*preview.receipts_root().as_bytes())?,
-            trnm_native_application::Hash32V0::new(*preview.evidence_root().as_bytes()),
-        )?;
-        let execution_request = trnm_native_application::NativeEpochBlockExecutionRequestV1::new(
-            native_request,
-            trnm_native_application::BlockIdV0::new(*block.id().as_bytes())?,
-            expected,
-        )?;
-        let prepared = self.application.execute_epoch_block_v1(
-            &self.edge,
-            execution_request,
-            block.header(),
-        )?;
-        let confirmed = self
-            .application
-            .confirm_prepared_epoch_execution_v1(&prepared)?;
-        ensure!(
-            confirmed.prepared().header()? == *block.header(),
-            "epoch P readback header substitution"
-        );
-        let (stored_payload, receipts) = confirmed.application_payload_and_receipts()?;
-        ensure!(
-            stored_payload == payload,
-            "epoch P readback payload substitution"
-        );
-        let evidence = block
-            .evidence_objects()
-            .iter()
-            .map(|encoded| {
-                decode_double_vote_evidence_v0_exact(encoded, self.edge.new_validator_set())
-                    .map_err(|e| anyhow::anyhow!("epoch evidence decode: {e:?}"))
-            })
-            .collect::<Result<Vec<_>>>()?;
-        let body = BlockBodyV0::new(payload, evidence)
-            .map_err(|e| anyhow::anyhow!("epoch body construction: {e:?}"))?;
-        let commitments = body
-            .validate_epoch_handoff_commitments_v1(
-                block.header(),
-                &receipts,
-                self.edge.new_parameters(),
-                block.header().state_root(),
-                self.edge.new_validator_set(),
-                &trnm_consensus_crypto::StrictEd25519Verifier,
-            )
-            .map_err(|e| anyhow::anyhow!("epoch commitment validation: {e:?}"))?;
-        let artifact = trnm_consensus_core::ValidatedPayloadArtifactRefV0::new(
-            BlockIdOverlayRefV0::for_epoch_application_v1(
-                block.id(),
-                BlockId::new(*self.edge.application_parent().block_id().as_bytes()),
-                self.edge.consensus_parent().id(),
-                self.driver
-                    .state()
-                    .epoch_state_v1()
-                    .context("epoch Core state lacks activation binding")?
-                    .activation_binding(),
-                confirmed.overlay_checksum(),
-            )
-            .map_err(|e| anyhow::anyhow!("epoch artifact binding: {e:?}"))?,
-            confirmed.artifact_checksum(),
-        );
-        let proof = self.seal_authority.seal_after_application_store_commit_v0(
-            permit,
-            commitments,
-            artifact,
-        );
-        let accepted = self
-            .driver
-            .step_application_sealed_valid_to_delivery_v1(&proof)
-            .map_err(|e| anyhow::anyhow!("epoch Core D: {e:?}"))?;
-        let persistence = accepted.persistence_request_v0();
-        let p = confirmed.prepared();
-        let request_fingerprint = epoch_transition_digest(
-            "request",
-            &[
-                block.id().as_bytes(),
-                &validation_id.view().get().to_be_bytes(),
-                &validation_id.generation().to_be_bytes(),
-                &self.edge.authorization_id(),
-            ],
-        );
-        let job_checksum =
-            epoch_transition_digest("job", &[&p.p_digest(), &p.persist_sequence().to_be_bytes()]);
-        let host_config = epoch_transition_digest(
-            "host",
-            &[
-                &self.edge.authorization_id(),
-                &self.edge.durable_checkpoint().store_id_v0(),
-            ],
-        );
-        let callback_checksum = epoch_transition_digest(
-            "callback",
-            &[
-                &confirmed.artifact_checksum(),
-                &confirmed.overlay_checksum(),
-            ],
-        );
-        let idempotency_key = epoch_transition_digest(
-            "idempotency",
-            &[block.id().as_bytes(), &accepted.delivery_digest_v0()],
-        );
-        let delivered_job = epoch_transition_digest(
-            "delivered-job",
-            &[&p.p_digest(), &accepted.valid_result_checksum_v0()],
-        );
-        let outbox_checksum =
-            epoch_transition_digest("outbox", &[&accepted.delivery_digest_v0(), &p.p_digest()]);
-        ensure!(
-            native_valid_result_checksum_v0(
-                persistence
-                    .state()
-                    .payload_validation_completions()
-                    .iter()
-                    .find(|completion| {
-                        completion.route() == route && completion.id() == validation_id
-                    })
-                    .context("epoch Core D completion missing")?
-                    .result(),
-            ) == Some(accepted.valid_result_checksum_v0()),
-            "epoch D result checksum changed before Safety C"
-        );
-        let host_manifest = NativeValidHostManifestV0::new(
-            request_fingerprint,
-            job_checksum,
-            host_config,
-            callback_checksum,
-            idempotency_key,
-            delivered_job,
-            outbox_checksum,
-        )?;
-        let transition = SafetyTransitionContextV0::native_valid(
-            NativeValidTransitionV0::from_core_delivery_v0(&accepted, host_manifest)?,
-        );
-        let head = self
-            .journal
-            .persist_exact_v1(self.pin, persistence, &transition)?;
-        self.pin = head.pin_v1();
-        let ordinary = self
-            .checkpoint
-            .fields()
-            .ordinary
-            .context("missing live ordinary cut")?;
-        self.advance_exact_cut_v1(safety_cut(&head), ordinary)?;
-        self.journal
-            .confirm_exact_request_v1(self.pin, persistence, &transition)?;
-        let effects = self
-            .driver
-            .step_v1(Input::StorageAck {
-                barrier: accepted.barrier_v0(),
-            })
-            .map_err(|e| anyhow::anyhow!("epoch Core D/K ACK: {e:?}"))?;
-        let header = block.header();
+        let header = delivery.prepared.header()?;
         self.pending_epoch_commit = Some(PendingEpochCommitV1 {
-            prepared,
-            overlay_digest: confirmed.overlay_checksum(),
+            prepared: delivery.prepared,
+            overlay_digest: delivery.confirmed.overlay_checksum(),
             epoch: header.epoch().get(),
             view: header.view().get(),
             timestamp_ms: header.timestamp_ms(),
@@ -1454,6 +1259,9 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                     &self.retirement,
                     &mut self.checkpoint_store,
                     &self.checkpoint,
+                    self.pending_epoch_commit
+                        .as_ref()
+                        .map(|pending| &pending.prepared),
                 )
             },
         };
@@ -1775,6 +1583,10 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                     &runtime.retirement,
                     &mut runtime.checkpoint_store,
                     &runtime.checkpoint,
+                    runtime
+                        .pending_epoch_commit
+                        .as_ref()
+                        .map(|pending| &pending.prepared),
                 )
             },
         };
@@ -1903,6 +1715,7 @@ fn confirm_key_owners_v1<W: ExternalSignerRetirementV1>(
     retirement: &ConfirmedOrdinarySignerRetirementV1,
     store: &mut SqliteEpochNodeCheckpointStoreV1,
     checkpoint: &EpochNodeCheckpointV1,
+    prepared_vote: Option<&PreparedNativeEpochExecutionV1>,
 ) -> Result<()> {
     store.confirm_exact(checkpoint)?;
     let safety = journal.fresh_read_v1(pin)?;
@@ -1950,6 +1763,7 @@ fn confirm_key_owners_v1<W: ExternalSignerRetirementV1>(
             && native.belongs_to_application_at_path(application, application.path()),
         "owner changed during key-boundary confirmation"
     );
+    confirm_pending_vote_native_v2(driver, application, prepared_vote)?;
     store.confirm_exact(checkpoint)?;
     Ok(())
 }
@@ -2178,6 +1992,8 @@ fn join_initial<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>(
     );
     Ok(target)
 }
+
+include!("epoch_first_finalization_v2.inc");
 
 #[cfg(all(test, feature = "epoch-runtime-test-fixtures"))]
 #[path = "epoch_runtime_candidate_v1_tests.rs"]
