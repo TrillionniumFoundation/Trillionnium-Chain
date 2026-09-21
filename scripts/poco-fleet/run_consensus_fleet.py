@@ -2452,7 +2452,7 @@ def verify_fleet_start_certificate_on_observer(
             "-o",
             "BatchMode=yes",
             observer_stage.management,
-            f"chmod 600 -- {shlex.quote(remote_certificate)}",
+            f"chmod 600 {shlex.quote(remote_certificate)}",
         ],
         timeout=60,
     )

@@ -413,7 +413,10 @@ def test_observer_fleet_certificate_command_and_strict_summary() -> None:
     assert observed == certificate
     assert calls[0][0] == "scp"
     assert calls[1][:4] == ["ssh", "-o", "BatchMode=yes", "p4-mac"]
-    assert calls[1][-1].startswith("chmod 600 -- ")
+    assert calls[1][-1] == (
+        "chmod 600 /tmp/tp3-observer/reports/"
+        f"{certificate['selected_validator_id']}.fleet-start-certificate.bin"
+    )
     assert calls[2][:4] == ["ssh", "-o", "BatchMode=yes", "p4-mac"]
     observer_command = calls[2][-1]
     assert "verify-fleet-start-certificate" in observer_command

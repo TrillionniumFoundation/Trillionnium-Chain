@@ -75,6 +75,14 @@ suite requires a network failure to remain failure, without inventing an absent
 builder; a genuinely absent platform builder and oversized probe output still
 reject. This repairs diagnostics without weakening the readiness gate.
 
+Observer artifact staging must use permission commands supported by both Linux
+and macOS. The destination is the validated absolute private stage path; use
+`chmod 600 <absolute-path>` before invoking the unchanged strict certificate
+verifier. macOS treats a `--` placed after the mode as another filename and
+returns failure even when it changes the intended file mode. A staging failure
+remains a failed run. Post-failure verification of preserved original artifacts
+is diagnostic evidence and cannot rewrite the original campaign result.
+
 ### Repository-local multiprocess fault evidence
 
 `python3 scripts/poco-fleet/run_local_fault_performance_campaign_v1.py campaign
