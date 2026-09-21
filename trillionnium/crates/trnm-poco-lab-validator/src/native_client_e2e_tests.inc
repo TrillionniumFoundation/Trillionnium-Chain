@@ -618,3 +618,78 @@ fn verify_actual_native_replay_sync_v1(
     assert!(!badroot.join("CURRENT").exists());
     NativeReplayTestExportV1 { manifest, chunks: transferred, head }
 }
+
+#[test]
+fn actual_python_campaign_encoder_rust_cli_and_native_socket_context_v1() {
+    let temp = private_temp_v0();
+    let (set, _, _) = fixture_validator_set_v0(4);
+    let profile = crate::native_client_profile::generate_isolated_native_client_profile_v1(
+        &temp.path().join("keys"),
+        set.chain_id().as_str(),
+    )
+    .unwrap();
+    let mut owner = crate::native_client_runtime::NativeClientRuntimeV1::open_parts_v1(
+        temp.path(), &set, set.validators()[0].id(), profile.clone(),
+    )
+    .unwrap();
+    let socket = temp.path().join("native-client-v1").join(&profile.socket_basename);
+    // Import the real campaign producer. Do not regenerate its bytes in Rust:
+    // that would repeat the isolated tests which missed this fleet failure.
+    let scripts = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../../scripts/poco-fleet");
+    let generated = std::process::Command::new("python3")
+        .args(["-I", "-c", r#"
+import json, sys
+sys.path.insert(0, sys.argv[1])
+import native_client_campaign_v1 as campaign
+import run_network_smoke_fleet as fleet
+valid = campaign.request_bytes_v1('status', {}, 1)
+invalid = fleet.canonical_json(json.loads(valid))
+assert valid != invalid
+print(json.dumps([valid.decode(), invalid.decode()]))
+"#])
+        .arg(scripts)
+        .output()
+        .unwrap();
+    assert!(generated.status.success(), "{}", String::from_utf8_lossy(&generated.stderr));
+    let requests: Vec<String> = serde_json::from_slice(&generated.stdout).unwrap();
+    assert_eq!(requests.len(), 2);
+    let digest = hex::encode(profile.digest_v1().unwrap());
+    let genesis = hex::encode(set.genesis_hash().as_bytes());
+    for (index, request) in requests.into_iter().enumerate() {
+        let input = temp.path().join(format!("campaign-{index}.json"));
+        let output = temp.path().join(format!("response-{index}.json"));
+        std::fs::write(&input, request).unwrap();
+        let arguments = vec![
+            std::ffi::OsString::from("request"), socket.clone().into_os_string(),
+            input.into_os_string(), output.clone().into_os_string(),
+            digest.clone().into(), genesis.clone().into(),
+        ];
+        let result = std::thread::scope(|scope| {
+            let client = scope.spawn(move || {
+                crate::native_client_tool::run_cli_v1(arguments.into_iter())
+            });
+            let deadline = Instant::now() + Duration::from_secs(3);
+            while !client.is_finished() {
+                assert!(Instant::now() < deadline, "campaign CLI/socket exchange timed out");
+                owner.poll_v1(3_000, 1).unwrap();
+                std::thread::sleep(Duration::from_millis(1));
+            }
+            client.join().unwrap()
+        });
+        if index == 0 {
+            result.unwrap();
+            let response: serde_json::Value =
+                serde_json::from_slice(&std::fs::read(&output).unwrap()).unwrap();
+            assert_eq!(response["request_id"], "campaign-1");
+            assert_eq!(response["profile_sha256"], digest);
+            assert_eq!(response["genesis_hash"], genesis);
+            assert_eq!(response["chain_id"], set.chain_id().as_str());
+            assert_eq!(response["candidate_only"], true);
+            assert_eq!(response["ok"], true);
+        } else {
+            assert!(result.unwrap_err().to_string().contains("response context mismatch"));
+            assert!(!output.exists(), "invalid request produced accepted response artifact");
+        }
+    }
+}

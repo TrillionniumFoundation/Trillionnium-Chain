@@ -213,6 +213,14 @@ sys.stdout.buffer.write(response)
 '''
 
 
+def request_bytes_v1(op: str, data: dict, sequence: int) -> bytes:
+    """M15 socket bytes: sorted compact JSON, unlike pretty fleet artifacts."""
+    return json.dumps({"schema": "trnm.native-client.request.v1",
+                       "request_id": f"campaign-{sequence}", "op": op, "data": data},
+                      sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+                      allow_nan=False).encode("utf-8")
+
+
 class NativeRequestAdapterV1:
     def __init__(self, target: NativeRequestTargetV1, digest: str, genesis: str, deadline: float):
         if any(re.fullmatch(r"[0-9a-f]{64}", value) is None for value in (digest, genesis)):
@@ -223,7 +231,7 @@ class NativeRequestAdapterV1:
     def request(self, op: str, data: dict) -> dict:
         timeout = remaining_timeout_v1(self.deadline)
         sequence = self.sequence + 1
-        raw = base.canonical_json({"schema": "trnm.native-client.request.v1", "request_id": f"campaign-{sequence}", "op": op, "data": data})
+        raw = request_bytes_v1(op, data, sequence)
         if (sequence > MAX_REQUESTS or len(raw) > REQUEST_LIMIT
                 or self.request_bytes + len(raw) > MAX_REQUEST_BYTES
                 or self.response_bytes >= MAX_RESPONSE_BYTES):

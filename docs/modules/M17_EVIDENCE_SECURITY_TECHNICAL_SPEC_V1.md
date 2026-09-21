@@ -559,9 +559,10 @@ external gates. Critical/High unresolved findings block the affected acceptance.
 
 `run_consensus_fleet.py --native-client-key-root` selects the native branch only
 when its exact coordinator manifest contains the native application profile
-and excludes both legacy workload files. The existing seven-validator/five-
-Linux-host process, Ready/Start certificate, signed terminal report, runtime
-journal, metrics, final-state and replay-archive requirements still apply.
+and excludes both legacy workload files. The existing seven-validator process,
+explicitly selected Linux placement, Ready/Start certificate, signed terminal
+report, runtime journal, metrics, final-state and replay-archive requirements
+still apply. A two-host placement remains two physical fault domains.
 Mac signs an operator funding request and bounded client Transfer requests
 using isolated campaign keys in a fresh private directory, then independently
 verifies every returned native payload/receipt/finality proof against the public
@@ -580,3 +581,23 @@ business submit to the last independent verification, including sequential SSH
 and proof latency. It is a small candidate-path measurement, not peak execution
 TPS, N/N transaction receipts, host attestation, fault-matrix completion, A-tier
 completion, production readiness or the missing full M05 intent binding.
+
+#### Native request wire encoding (M17-NATIVE-WIRE-V1)
+
+The campaign request producer uses the M15 native socket's exact encoding:
+UTF-8, sorted object keys, compact comma/colon separators, no trailing newline,
+and no non-finite JSON numbers. It applies to every actual status, submit and
+proof request. Human-readable JSON artifact encoding is a separate format and
+must not feed the socket. Request IDs remain bounded ASCII campaign sequences;
+operation/data fields retain the existing closed M15 types and bounds.
+
+The original Rust decoder still rejects alternate whitespace, key order,
+duplicate/unknown fields and invalid nested data. The CLI still binds schema,
+request ID, candidate marker, exact profile digest and genesis before writing a
+response artifact. A malformed request may return an empty ID and therefore
+fail that binding; the campaign must fix its producer, never weaken the checker.
+A cross-language regression passes the actual Python encoder through the actual
+Rust request CLI and live native socket owner, checks the returned context, and
+requires the old pretty-printed request to fail without creating an accepted
+response. This is request compatibility evidence, not transaction finality or
+fleet performance acceptance.

@@ -89,7 +89,9 @@ os.execvp(args[0],args)
                         part=client.recv(65536)
                         if not part:break
                         raw.extend(part)
-                    request=json.loads(raw);received.append(request)
+                    request=json.loads(raw)
+                    assert bytes(raw) == json.dumps(request, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode()
+                    received.append(request)
                     result={'request_id':os.environ.get('TRNM_TRANSPORT_RESPONSE_ID',request['request_id']),'ok':True,'data':{'op':request['op']}}
                     client.sendall(base.canonical_json(result))
                 except BaseException as error: failures.append(error)
