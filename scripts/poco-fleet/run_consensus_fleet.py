@@ -2517,7 +2517,7 @@ def main() -> None:
         monotonic_ns=anchor_snapshot.checked_monotonic_ns,
     )
     deployments = base.require_private_directory(args.deployment_root, "deployment root")
-    manifest, _topology, processes = base.load_contract(
+    manifest, topology, processes = base.load_contract(
         coordinator, deployments, args.validators
     )
     verify_coordinator_anchor(anchor_snapshot)
@@ -2543,6 +2543,7 @@ def main() -> None:
         "validator_count": args.validators,
         "linux_validator_host_count": len({item.host_id for item in processes}),
         "observer_host_id": "mac",
+        **base.placement_report_fields_v1(topology),
         "coordinator_manifest_sha256": coordinator_anchor,
         "duration_seconds": args.duration_seconds,
         "max_blocks": args.max_blocks,
@@ -3069,6 +3070,7 @@ def main() -> None:
             observer_verified_replay_archive_count
         ),
         "all_six_hosts_participated": False,
+        **base.placement_report_fields_v1(topology, process_results),
         "elapsed_monotonic_ns": elapsed_ns,
         "observed_fleet_launch_skew_ns": observed_launch_skew_ns,
         "fleet_launch_skew_within_allowance": (
@@ -3112,6 +3114,7 @@ def main() -> None:
         )
     print(
         f"poco_g3_consensus_fleet_runner_execution=passed validators={args.validators} "
+        f"placement={topology.get('placement_profile', base.CANONICAL_PLACEMENT)} "
         "all_six_hosts_attested=false signed_runtime_journals=true "
         "fleet_start_certificate=common "
         "signed_terminal_reports=true signed_runtime_metrics=true "

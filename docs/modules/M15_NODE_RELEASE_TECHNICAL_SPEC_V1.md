@@ -90,6 +90,71 @@ special parked outcomes rather than translating every report into success.
 The simplified `DevNodeConfigV1`/M04 TLS composition is planned, not this existing
 lab CLI's accepted configuration schema.
 
+### Reduced LAN placement (M15-LAN-PLACEMENT-V1)
+
+The laboratory planner and material generator accept the closed
+`--placement-profile` enum `canonical` (default) or `desktop4-rog3-mac-v1`.
+`canonical` retains the exact existing schema-1 topology bytes for all
+7/31/100-validator and equal/bounded-unequal combinations. The new explicit
+profile accepts only seven equal-weight validators. It emits schema 2 with
+`placement_profile` exactly `desktop4-rog3-mac-v1`: validator indices 0..3 on
+the inventory's actual `desktop`, indices 4..6 on its actual `rog`, and the
+actual `mac` as the sole nonvalidating observer. Participants are exactly those
+three physical hosts in that order. The unchanged six-host inventory remains
+the source of host identity, management alias, LAN address, OS, architecture
+and roles; neither CLI accepts an arbitrary inventory override. Validator IDs
+retain the existing fleet/index derivation, ports remain `31000 + index` and
+`32000 + index`, and all seven validators retain six direct peers.
+
+`plan_topology.py::build_topology` is the shared pure producer. Material and
+connectivity admission regenerate and compare the complete exact typed topology
+against the committed inventory, including participant order, host allocation,
+management, addresses, indices, ports, weights, identities and peer order.
+Rehashing a substituted topology or coherently rewriting its dependent configs
+does not authorize another placement. Schema 1 cannot carry a placement field;
+schema 2 requires the exact reduced profile. Unknown profiles, schema confusion,
+31/100 validators, unequal weights or a substituted observer reject before
+creating run material or opening network/signing authority. The existing
+manifest version remains unchanged because its public-file inventory already
+binds the exact topology bytes. Reports derive actual validator-host counts and
+identify the reduced placement; they cannot report five validator hosts or all
+six participants for this profile.
+
+The pure planned-P2P contract accepts the same independently supplied inventory
+and uses the shared exact topology validator. Its existing canonical plan,
+request/ack and report schema 1/profile
+`planned-p2p-connectivity-admission-v1` remain unchanged. The reduced variants
+use schema 2/profile
+`planned-p2p-connectivity-admission-desktop4-rog3-mac-v1`, two source hosts,
+seven destination endpoints, fourteen physical source-host/endpoint pairs
+(including local pairs) and the same forty-two directed logical peer edges.
+Helpers, cleanup and both sides of the report must cover that exact plan. The
+existing message kinds/domains still bind the complete plan hash; schemas and
+profiles cannot be mixed. This pure helper contract performs no network I/O
+and does not imply that the controller invokes a connectivity admission stage.
+Actual runtime reports independently record the selected placement, observed
+validator-host count and truthful participant flags. Canonical runtime plans
+and summaries retain their existing schema-1 keys. Reduced runtime plans and
+summaries use schema 2 with `placement_profile` and `participant_host_count`;
+the reduced summary also records `linux_validator_host_count`. A seven-process
+success cannot set `all_six_hosts_participated` when only three physical hosts
+participated. Existing completed full-fleet signed bundles may retain their
+run-ID topology annotation, but the raw checker requires exact equality with
+the signed summary before comparing the underlying canonical inventory plan.
+That compatibility does not admit the annotation into material generation or
+the topology planner and cannot admit reduced placement into external gates.
+
+This profile allows bounded direct-LAN connectivity, process-fault, partition,
+recovery and performance observations using fresh source-bound laboratory
+binaries and fresh ephemeral keys. It supplies two validator failure domains
+plus a real Mac observer. A physical-host loss removes three or four votes from
+a seven-vote, quorum-five deployment, so it does not establish liveness under
+one physical-host failure. Full-fleet/five-host, all-six-participant, geographic,
+WAN, independent external acceptance and production gates retain their own
+requirements. No reduced run may promote them or alter production activation.
+Fake-material tests exercise configuration and rejection only; they are not
+consensus, connectivity or performance evidence.
+
 ### Subordinate composition packages
 
 These packages remain distinct owners of local interfaces; their existence does

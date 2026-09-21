@@ -192,6 +192,8 @@ struct TopologyValidatorJson {
 #[serde(deny_unknown_fields)]
 struct TopologyJson {
     schema_version: u32,
+    #[serde(default, deserialize_with = "deserialize_present_placement_profile_v1")]
+    placement_profile: Option<String>,
     fleet_id: String,
     network_scope: String,
     geo_wan_evidence: bool,
@@ -201,6 +203,16 @@ struct TopologyJson {
     test_keys_included: bool,
     participants: Vec<ParticipantJson>,
     validators: Vec<TopologyValidatorJson>,
+}
+
+fn deserialize_present_placement_profile_v1<'de, D>(
+    deserializer: D,
+) -> std::result::Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    // Missing is the legacy default; a present null is never a schema alias.
+    String::deserialize(deserializer).map(Some)
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -1963,22 +1975,50 @@ fn validate_topology(
     manifest: &ManifestJson,
     expected_count: usize,
 ) -> Result<()> {
+    let reduced = match (
+        topology.schema_version,
+        topology.placement_profile.as_deref(),
+    ) {
+        (1, None) => false,
+        (2, Some("desktop4-rog3-mac-v1"))
+            if expected_count == 7 && topology.weight_profile == "equal" =>
+        {
+            true
+        }
+        _ => bail!("topology schema/placement profile is outside the closed lab contract"),
+    };
+    let expected_participants: Vec<_> = expected_participants()
+        .into_iter()
+        .filter(|host| !reduced || matches!(host.host_id, "desktop" | "rog" | "mac"))
+        .collect();
+    let expected_allocations = if reduced {
+        vec![4, 3, 0]
+    } else {
+        match expected_count {
+            7 => vec![2, 1, 1, 2, 1, 0],
+            31 => vec![5, 2, 10, 13, 1, 0],
+            100 => vec![20, 3, 36, 38, 3, 0],
+            _ => bail!("topology cardinality is outside the closed lab contract"),
+        }
+    };
     let expected_degree = if expected_count == 7 { 6 } else { 8 };
-    if topology.schema_version != 1
-        || topology.fleet_id != manifest.fleet_id
+    if topology.fleet_id != manifest.fleet_id
         || topology.network_scope != "single-lan"
         || topology.geo_wan_evidence
         || topology.validator_count != expected_count
         || topology.weight_profile != manifest.weight_profile
+        || !matches!(
+            topology.weight_profile.as_str(),
+            "equal" | "bounded-unequal"
+        )
         || topology.peer_degree != expected_degree
         || topology.test_keys_included
-        || topology.participants.len() != 6
+        || topology.participants.len() != expected_participants.len()
         || topology.validators.len() != expected_count
     {
-        bail!("topology differs from the frozen six-host G3 profile");
+        bail!("topology differs from the closed G3 placement profile");
     }
-    let expected_participants = expected_participants();
-    for (actual, expected) in topology.participants.iter().zip(expected_participants) {
+    for (actual, expected) in topology.participants.iter().zip(&expected_participants) {
         if actual.host_id != expected.host_id
             || actual.management != expected.management
             || actual.lan_ip != expected.lan_ip
@@ -1992,29 +2032,41 @@ fn validate_topology(
                 .collect::<Vec<_>>()
                 != expected.run_roles
         {
-            bail!("topology participant differs from the authorized six-host fleet");
+            bail!("topology participant differs from the authorized fleet placement");
         }
     }
-    let expected_allocations: [usize; 5] = match expected_count {
-        7 => [2, 1, 1, 2, 1],
-        31 => [5, 2, 10, 13, 1],
-        100 => [20, 3, 36, 38, 3],
-        _ => unreachable!("validated topology cardinality"),
-    };
-    let mut allocations = BTreeMap::<&str, Vec<usize>>::new();
+    let expected_placements: Vec<_> = expected_participants
+        .iter()
+        .zip(expected_allocations)
+        .flat_map(|(host, count)| (0..count).map(move |local| (host.host_id, local)))
+        .collect();
     let mut ids = BTreeSet::new();
     let mut endpoints = BTreeSet::new();
     for (expected_index, validator) in topology.validators.iter().enumerate() {
+        let (expected_host, expected_local_index) = expected_placements[expected_index];
+        let expected_id = hex::encode(sha256(
+            format!("{}/validator/{expected_index:03}", topology.fleet_id).as_bytes(),
+        ));
+        let expected_weight = if topology.weight_profile == "equal" {
+            1
+        } else {
+            1 + ((expected_index * 17 + 3) % 4) as u64
+        };
         let participant = topology
             .participants
             .iter()
             .find(|value| value.host_id == validator.host_id)
             .ok_or_else(|| anyhow!("topology validator names an unknown participant"))?;
         if validator.index != expected_index
+            || validator.validator_id != expected_id
+            || validator.host_id != expected_host
+            || validator.host_local_index != expected_local_index
+            || validator.p2p_port != 31_000 + expected_index as u16
+            || validator.metrics_port != 32_000 + expected_index as u16
             || !participant.validator_eligible
             || validator.management != participant.management
             || validator.lan_ip != participant.lan_ip
-            || validator.weight == 0
+            || validator.weight != expected_weight
             || validator.peers.len() != expected_degree
             || !ids.insert(validator.validator_id.as_str())
         {
@@ -2034,20 +2086,6 @@ fn validate_topology(
             || !endpoints.insert((ip, validator.metrics_port))
         {
             bail!("topology validator endpoints are invalid or duplicated");
-        }
-        allocations
-            .entry(validator.host_id.as_str())
-            .or_default()
-            .push(validator.host_local_index);
-    }
-    for (index, participant) in topology.participants[..5].iter().enumerate() {
-        let actual = allocations
-            .get(participant.host_id.as_str())
-            .map(Vec::as_slice)
-            .unwrap_or(&[]);
-        let expected: Vec<_> = (0..expected_allocations[index]).collect();
-        if actual != expected {
-            bail!("topology host-local validator allocation is non-canonical");
         }
     }
     for validator in &topology.validators {
@@ -2729,5 +2767,135 @@ fn load_application_material_v1(
         )?;
         let bootstrap = verify_public_native_bootstrap_v1(root, set, parameters, &corpus)?;
         Ok((Some(corpus), None, bootstrap))
+    }
+}
+
+#[cfg(test)]
+mod topology_tests {
+    use super::*;
+    use serde_json::{json, Value};
+    use std::process::Command;
+
+    fn planner(count: usize, weight: &str, placement: &str) -> Value {
+        let script = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../../scripts/poco-fleet/plan_topology.py");
+        let output = Command::new("python3")
+            .arg(script)
+            .arg(count.to_string())
+            .args(["--weight-profile", weight, "--placement-profile", placement])
+            .output()
+            .expect("run actual key-free topology producer");
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        serde_json::from_slice(&output.stdout).expect("planner JSON")
+    }
+
+    fn admit(value: Value) -> Result<()> {
+        let topology: TopologyJson = serde_json::from_value(value)?;
+        // This inert shim tests the same topology gate used by validator and
+        // observer loaders. It supplies no key, bootstrap or runtime authority.
+        let manifest: ManifestJson = serde_json::from_value(json!({
+            "schema_version": 3,
+            "run_id": "poco-g3-7-20260921T000000Z-01234567",
+            "fleet_id": topology.fleet_id,
+            "validator_count": topology.validator_count,
+            "weight_profile": topology.weight_profile,
+            "network_scope": "single-lan", "geo_wan_evidence": false,
+            "candidate": {
+                "source_tree_sha256": "11".repeat(32),
+                "linux_x86_64_sha256": "22".repeat(32),
+                "macos_arm64_sha256": "33".repeat(32)
+            },
+            "material_author": {"binary_sha256": "44".repeat(32), "runtime_deployed": false},
+            "validator_set_sha256": "55".repeat(32),
+            "public_files": [], "secret_files": [], "production_activation": false
+        }))?;
+        validate_topology(&topology, &manifest, topology.validator_count)
+    }
+
+    #[test]
+    fn actual_python_planner_all_canonical_and_reduced_profiles_pass_shared_loader_gate() {
+        for count in [7, 31, 100] {
+            for weight in ["equal", "bounded-unequal"] {
+                admit(planner(count, weight, "canonical")).expect("unchanged canonical plan");
+            }
+        }
+        admit(planner(7, "equal", "desktop4-rog3-mac-v1")).expect("closed reduced plan");
+    }
+
+    #[test]
+    fn placement_presence_null_and_schema_confusion_reject() {
+        let canonical = planner(7, "equal", "canonical");
+        let reduced = planner(7, "equal", "desktop4-rog3-mac-v1");
+        for base in [&canonical, &reduced] {
+            for value in [Value::Null, json!(true), json!(2), json!([])] {
+                let mut mutant = base.clone();
+                mutant["placement_profile"] = value;
+                assert!(serde_json::from_value::<TopologyJson>(mutant).is_err());
+            }
+        }
+        let mut old_present = canonical;
+        old_present["placement_profile"] = json!("desktop4-rog3-mac-v1");
+        assert!(admit(old_present).is_err());
+        for (field, value) in [
+            ("placement_profile", json!("canonical")),
+            ("placement_profile", json!("unknown")),
+            ("schema_version", json!(1)),
+            ("schema_version", json!(3)),
+            ("validator_count", json!(31)),
+            ("validator_count", json!(100)),
+            ("weight_profile", json!("bounded-unequal")),
+        ] {
+            let mut mutant = reduced.clone();
+            mutant[field] = value;
+            assert!(admit(mutant).is_err(), "accepted {field}");
+        }
+        let mut missing = reduced;
+        missing.as_object_mut().unwrap().remove("placement_profile");
+        assert!(admit(missing).is_err());
+    }
+
+    #[test]
+    fn reduced_inventory_allocation_endpoint_identity_and_peer_substitutions_reject() {
+        let original = planner(7, "equal", "desktop4-rog3-mac-v1");
+        for (field, value) in [
+            ("host_id", json!("rog")),
+            ("management", json!("foreign-desktop")),
+            ("lan_ip", json!("192.168.0.254")),
+            ("p2p_port", json!(31007)),
+            ("metrics_port", json!(32007)),
+            ("host_local_index", json!(1)),
+            ("index", json!(1)),
+            ("weight", json!(2)),
+        ] {
+            let mut mutant = original.clone();
+            mutant["validators"][0][field] = value;
+            assert!(admit(mutant).is_err(), "accepted {field}");
+        }
+        let mut mutant = original.clone();
+        mutant["participants"][2]["management"] = json!("fake-mac");
+        assert!(admit(mutant).is_err());
+        let mut mutant = original.clone();
+        mutant["participants"].as_array_mut().unwrap().swap(0, 1);
+        assert!(admit(mutant).is_err());
+        let mut mutant = original.clone();
+        mutant["validators"][0]["peers"]
+            .as_array_mut()
+            .unwrap()
+            .reverse();
+        assert!(admit(mutant).is_err());
+        let old_id = original["validators"][0]["validator_id"].as_str().unwrap();
+        let substituted = serde_json::to_string(&original)
+            .unwrap()
+            .replace(old_id, &"fe".repeat(32));
+        assert!(admit(serde_json::from_str(&substituted).unwrap()).is_err());
+        let substituted = serde_json::to_string(&original)
+            .unwrap()
+            .replace("192.168.0.4", "192.168.0.254")
+            .replace("p4-desktop", "foreign-desktop");
+        assert!(admit(serde_json::from_str(&substituted).unwrap()).is_err());
     }
 }

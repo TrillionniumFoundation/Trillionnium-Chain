@@ -26,14 +26,14 @@ import re
 import secrets
 import stat
 import subprocess
-import sys
 import tempfile
+import tomllib
 from typing import Any
 
+from plan_topology import CANONICAL_PLACEMENT, PLACEMENT_PROFILES, build_topology
 
 HERE = pathlib.Path(__file__).resolve().parent
 INVENTORY = HERE / "inventory.toml"
-PLANNER = HERE / "plan_topology.py"
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
 ED25519_SPKI_PREFIX = bytes.fromhex("302a300506032b6570032100")
@@ -137,27 +137,11 @@ def open_exact_binary(
         raise
 
 
-def planner_output(validator_count: int, profile: str) -> dict[str, Any]:
-    result = subprocess.run(
-        [
-            sys.executable,
-            str(PLANNER),
-            str(validator_count),
-            "--inventory",
-            str(INVENTORY),
-            "--weight-profile",
-            profile,
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    topology = json.loads(result.stdout)
-    if topology.get("validator_count") != validator_count:
-        fail("topology planner returned the wrong cardinality")
-    if topology.get("test_keys_included") is not False:
-        fail("topology planner must remain key-free")
-    return topology
+def planner_output(
+    validator_count: int, profile: str, placement: str = CANONICAL_PLACEMENT
+) -> dict[str, Any]:
+    with INVENTORY.open("rb") as source:
+        return build_topology(tomllib.load(source), validator_count, profile, placement)
 
 
 KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
@@ -252,6 +236,10 @@ def ref(root: pathlib.Path, path: pathlib.Path) -> dict[str, object]:
 
 
 def prepare(args: argparse.Namespace) -> pathlib.Path:
+    topology = planner_output(
+        args.validator_count, args.weight_profile,
+        getattr(args, "placement_profile", CANONICAL_PLACEMENT),
+    )
     selected_run_id = run_id(args.validator_count, args.run_id)
     source_hash = require_hash(args.source_sha256, "--source-sha256")
     linux_hash = require_hash(args.linux_sha256, "--linux-sha256")
@@ -302,7 +290,6 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
     for role in KEY_ROLES:
         (output / "secrets" / role).mkdir(mode=0o700)
 
-    topology = planner_output(args.validator_count, args.weight_profile)
     topology_bytes = canonical_json(topology)
     topology_path = output / "topology.json"
     write_new(topology_path, topology_bytes, 0o644)
@@ -702,6 +689,7 @@ def main() -> None:
     parser.add_argument(
         "--weight-profile", choices=("equal", "bounded-unequal"), default="equal"
     )
+    parser.add_argument("--placement-profile", choices=PLACEMENT_PROFILES, default=CANONICAL_PLACEMENT)
     parser.add_argument("--source-sha256", required=True)
     parser.add_argument("--linux-sha256", required=True)
     parser.add_argument("--macos-sha256", required=True)

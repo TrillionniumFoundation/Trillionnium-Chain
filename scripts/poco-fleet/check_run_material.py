@@ -23,6 +23,7 @@ import tomllib
 from typing import Any
 
 from poco_consensus_contract import canonical_lab_genesis_hash
+from plan_topology import validate_topology_v1
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -694,8 +695,7 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
         fail("manifest does not bind topology, validator-set and selected application profile")
     topology = read_json(topology_path, "topology")
     if (
-        topology.get("schema_version") != 1
-        or topology.get("fleet_id") != manifest["fleet_id"]
+        topology.get("fleet_id") != manifest["fleet_id"]
         or topology.get("validator_count") != expected_count
         or topology.get("weight_profile") != manifest["weight_profile"]
         or topology.get("network_scope") != "single-lan"
@@ -705,7 +705,10 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
         fail("topology differs from the closed run-material boundary")
     with INVENTORY.open("rb") as source:
         inventory = tomllib.load(source)
-    known_hosts = {host["id"]: host for host in inventory["hosts"]}
+    try:
+        placement_profile = validate_topology_v1(inventory, topology)
+    except (TypeError, ValueError) as error:
+        fail(f"topology differs from the closed inventory placement: {error}")
     planned = topology.get("validators")
     if not isinstance(planned, list) or len(planned) != expected_count:
         fail("topology validator cardinality mismatch")
@@ -1103,7 +1106,9 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
     if emit:
         print(
             f"poco_g3_run_material=passed validators={expected_count} "
-            "validator_hosts=5 mac_observer=true ephemeral_keys=true pop=true private_mode=0600 "
+            f"validator_hosts={len({entry['host_id'] for entry in planned})} "
+            f"placement_profile={placement_profile} "
+            "mac_observer=true ephemeral_keys=true pop=true private_mode=0600 "
             f"public_workload={str(not native_client).lower()} native_client_profile={str(native_client).lower()} ordinary_start_height={ordinary_start_height} "
             "application_private_keys=false public_bootstrap_bundle=true "
             "bootstrap_runtime_closed=false "
