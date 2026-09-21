@@ -24,7 +24,7 @@
     "release:ready": "bash ./scripts/release-ready.sh"
   },
   "dependencies": {
-    "next": "^16.2.12",
+    "next": "^16.3.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "zod": "^4.3.6"
@@ -39,17 +39,17 @@
     "@types/react-dom": "^19",
     "brace-expansion": "file:vendor/brace-expansion-cjs-compat",
     "eslint": "^9.39.3",
-    "eslint-config-next": "^16.2.12",
+    "eslint-config-next": "^16.3.3",
     "jsdom": "^25.0.1",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.11"
   },
   "overrides": {
     "brace-expansion": "$brace-expansion",
-    "js-yaml": "4.3.1",
-    "nanoid": "3.3.17",
+    "js-yaml": "4.3.2",
+    "nanoid": "3.3.18",
     "postcss": "8.5.23",
-    "sharp": "0.35.3"
+    "sharp": "0.35.4"
   }
 }
