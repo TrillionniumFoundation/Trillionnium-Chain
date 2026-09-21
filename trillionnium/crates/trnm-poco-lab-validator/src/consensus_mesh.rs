@@ -3439,21 +3439,14 @@ fn accept_loop(
                                     return;
                                 }
                                 Err(error) => {
-                                    if !stop.load(Ordering::Acquire)
-                                        && !cancel.load(Ordering::Acquire)
-                                    {
-                                        set_terminal(
-                                            &terminal,
-                                            &stop,
-                                            MeshTerminalFailureV0 {
-                                                remote,
-                                                direction: PeerDirectionV0::Inbound,
-                                                reason: format!(
-                                                    "inbound readiness probe failed: {error}"
-                                                ),
-                                            },
-                                        );
-                                    }
+                                    retain_nontransient_inbound_failure_v1(
+                                        &terminal,
+                                        &stop,
+                                        &cancel,
+                                        facts,
+                                        "inbound readiness probe failed",
+                                        &FrameError::Io(error),
+                                    );
                                     let _ = fences.release(PeerDirectionV0::Inbound, remote);
                                     return;
                                 }
@@ -3486,15 +3479,15 @@ fn accept_loop(
                                     // this worker while admission is full. It
                                     // neither reads another frame nor discards
                                     // this one; stop/cancel remains polled.
-                                    let Some(reservation) =
-                                        reserve_inbound_frame_until_available_v0(
-                                            &inbound_peer_budget,
-                                            &global_inbound_budget,
-                                            reserved_bytes,
-                                            &stop,
-                                            &cancel,
-                                        )
-                                    else {
+                                    let Some(reservation) = reserve_decoded_inbound_frame_v1(
+                                        &inbound_peer_budget,
+                                        &global_inbound_budget,
+                                        reserved_bytes,
+                                        &stop,
+                                        &cancel,
+                                        &terminal,
+                                        facts,
+                                    ) else {
                                         let _ = fences.release(PeerDirectionV0::Inbound, remote);
                                         return;
                                     };
@@ -3551,21 +3544,14 @@ fn accept_loop(
                                     return;
                                 }
                                 Err(error) => {
-                                    if !stop.load(Ordering::Acquire)
-                                        && !cancel.load(Ordering::Acquire)
-                                    {
-                                        set_terminal(
-                                            &terminal,
-                                            &stop,
-                                            MeshTerminalFailureV0 {
-                                                remote,
-                                                direction: PeerDirectionV0::Inbound,
-                                                reason: format!(
-                                                    "non-recoverable frame error: {error}"
-                                                ),
-                                            },
-                                        );
-                                    }
+                                    retain_nontransient_inbound_failure_v1(
+                                        &terminal,
+                                        &stop,
+                                        &cancel,
+                                        facts,
+                                        "non-recoverable frame error",
+                                        &error,
+                                    );
                                     let _ = fences.release(PeerDirectionV0::Inbound, remote);
                                     return;
                                 }
@@ -3884,6 +3870,63 @@ fn reserve_inbound_frame_until_available_v0(
     }
 }
 
+// A decoded frame cannot become an unbudgeted owner or disappear silently
+// when shutdown interrupts its reservation wait. Superseded edges retain their
+// prior cancellation semantics and never publish into a replacement session.
+fn reserve_decoded_inbound_frame_v1(
+    peer_budget: &Arc<MeshQueueByteBudgetV0>,
+    global_budget: &Arc<MeshQueueByteBudgetV0>,
+    reserved_bytes: usize,
+    stop: &AtomicBool,
+    edge_cancel: &AtomicBool,
+    terminal: &Mutex<Option<MeshTerminalFailureV0>>,
+    facts: PeerSessionFactsV0,
+) -> Option<InboundQueueReservationV0> {
+    let reservation = reserve_inbound_frame_until_available_v0(
+        peer_budget,
+        global_budget,
+        reserved_bytes,
+        stop,
+        edge_cancel,
+    );
+    if reservation.is_none() && stop.load(Ordering::Acquire) && !edge_cancel.load(Ordering::Acquire)
+    {
+        set_terminal(
+            terminal,
+            stop,
+            MeshTerminalFailureV0 {
+                remote: facts.remote,
+                direction: facts.direction,
+                reason: "shutdown interrupted decoded frame byte reservation".to_owned(),
+            },
+        );
+    }
+    reservation
+}
+
+// The global stop flag never hides a completed nontransient read failure.
+// Explicit transport loss and superseded-edge cancellation stay separate.
+fn retain_nontransient_inbound_failure_v1(
+    terminal: &Mutex<Option<MeshTerminalFailureV0>>,
+    stop: &AtomicBool,
+    edge_cancel: &AtomicBool,
+    facts: PeerSessionFactsV0,
+    stage: &str,
+    error: &FrameError,
+) {
+    if !edge_cancel.load(Ordering::Acquire) && !transient_frame_error(error) {
+        set_terminal(
+            terminal,
+            stop,
+            MeshTerminalFailureV0 {
+                remote: facts.remote,
+                direction: facts.direction,
+                reason: format!("{stage}: {error}"),
+            },
+        );
+    }
+}
+
 fn emit_event(
     sender: &SyncSender<MeshIngressEventV0>,
     mut event: MeshIngressEventV0,
@@ -3893,10 +3936,34 @@ fn emit_event(
     edge_cancel: Option<&AtomicBool>,
 ) -> Result<()> {
     loop {
-        if stop.load(Ordering::Acquire)
-            || edge_cancel.is_some_and(|cancel| cancel.load(Ordering::Acquire))
-        {
-            bail!("mesh stopped while applying bounded ingress backpressure");
+        if edge_cancel.is_some_and(|cancel| cancel.load(Ordering::Acquire)) {
+            bail!("mesh edge canceled while applying bounded ingress backpressure");
+        }
+        if stop.load(Ordering::Acquire) {
+            // Join cannot wait for this queue's consumer. One final bounded
+            // handoff preserves owned work for strict residual validation;
+            // inability to retain it must itself prevent successful shutdown.
+            return match sender.try_send(event) {
+                Ok(()) => Ok(()),
+                Err(error) => {
+                    let reason = match error {
+                        TrySendError::Full(_) => "shutdown ingress queue full with owned event",
+                        TrySendError::Disconnected(_) => {
+                            "shutdown ingress owner disappeared with owned event"
+                        }
+                    };
+                    set_terminal(
+                        terminal,
+                        stop,
+                        MeshTerminalFailureV0 {
+                            remote: facts.remote,
+                            direction: facts.direction,
+                            reason: reason.to_owned(),
+                        },
+                    );
+                    bail!(reason)
+                }
+            };
         }
         match sender.try_send(event) {
             Ok(()) => return Ok(()),
@@ -3905,17 +3972,15 @@ fn emit_event(
                 thread::sleep(WORKER_POLL);
             }
             Err(TrySendError::Disconnected(_)) => {
-                if !stop.load(Ordering::Acquire) {
-                    set_terminal(
-                        terminal,
-                        stop,
-                        MeshTerminalFailureV0 {
-                            remote: facts.remote,
-                            direction: facts.direction,
-                            reason: "ingress owner disappeared".to_owned(),
-                        },
-                    );
-                }
+                set_terminal(
+                    terminal,
+                    stop,
+                    MeshTerminalFailureV0 {
+                        remote: facts.remote,
+                        direction: facts.direction,
+                        reason: "ingress owner disappeared".to_owned(),
+                    },
+                );
                 bail!("mesh ingress owner disappeared")
             }
         }
@@ -4023,16 +4088,13 @@ fn join_children(
     stop: &AtomicBool,
     fences: &MeshFenceRegistryV1,
 ) {
-    // Every terminal accept-loop path must interrupt all blocking socket
-    // readers before joining them. Otherwise one unrelated healthy inbound
-    // session can keep shutdown blocked forever after a different session
-    // fails closed.
-    for worker in children.values() {
-        worker.cancel.store(true, Ordering::Release);
-    }
+    // Global teardown is not supersession. Stop and interrupt every reader,
+    // but leave the edge-cancel flag reserved for explicit old-generation
+    // replacement so already owned work still reaches shutdown accounting.
+    stop.store(true, Ordering::Release);
     shutdown_all(controls);
     for (_, worker) in children {
-        if worker.handle.join().is_err() && !stop.load(Ordering::Acquire) {
+        if worker.handle.join().is_err() {
             set_terminal(
                 terminal,
                 stop,
@@ -5831,4 +5893,5 @@ mod tests {
             .find(|validator| *validator != local)
             .expect("two-validator mesh fixture has a remote")
     }
+    include!("consensus_mesh_shutdown_tests_v1.inc");
 }

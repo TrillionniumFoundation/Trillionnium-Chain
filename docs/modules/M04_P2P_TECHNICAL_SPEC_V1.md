@@ -77,6 +77,46 @@ and local overflow/poison/host-admission failures without additional I/O or
 external signing. These are connection tests, not a claim of mesh quarantine
 or successful multi-host consensus.
 
+### Owned ingress at shutdown (M04-SHUTDOWN-INGRESS-V1)
+
+Stopping an established mesh does not erase input which a receive worker has
+already decoded or already owns behind bounded queue backpressure. Before
+workers are joined, the shared stop flag requests finite shutdown; it does not
+classify pending work as harmless or authorize CleanStop. The existing mesh
+close API and the future terminal-barrier residual consumer retain their own
+strict acceptance rules.
+
+An `emit_event` owner observing global stop attempts exactly one nonblocking
+send into the existing bounded ingress queue. Success preserves the original
+non-cloneable event and reservation for post-join examination. Full or
+disconnected ingress records the first attributed terminal failure and returns
+an error, releasing the event reservation normally; it must not silently drop
+work, wait for a consumer that is joining, allocate a second queue, or invent a
+budget exemption. A concurrent receiver disappearance records the same failure
+even if stop becomes true between observation and `try_send`. A canceled
+superseded edge retains its existing separate discard semantics and cannot
+publish into the replacement generation. Global child teardown therefore sets
+stop rather than pretending every edge was superseded; an actual child panic
+remains a retained terminal failure even while stop is already set.
+
+A successfully decoded frame waiting for its original byte reservation remains
+subject to both peer and global ceilings. If global stop ends that wait, record
+a terminal failure before releasing that frame; do not mint an unbudgeted mesh
+owner. Superseded-edge cancellation is still separate. Inbound nontransient
+readiness or receive errors remain terminal even if global stop races their
+return. Only the existing explicitly transient I/O class caused by socket
+shutdown retains the quiet shutdown treatment. Local state, malformed/signature
+errors, mutex failures and resource accounting errors are never relabeled as
+transient to complete a campaign. A first retained failure is immutable.
+
+Regression uses completed authenticated TCP handshakes and original decoded
+frames to exercise stop with an available count slot, exhausted count capacity,
+a disconnected receiver and exhausted byte capacity. It checks exact retained
+bytes/session, finite join, unchanged budget ceilings and complete reservation
+release; nontransient errors racing stop still fail while superseded cancellation
+and explicit transient I/O retain their old behavior. This producer change alone
+does not implement peer quarantine or authorize terminal-barrier completion.
+
 ### Candidate authenticated socket seam
 
 `CandidateAuthenticatedP2pTransportV0` is the socket seam for the candidate
