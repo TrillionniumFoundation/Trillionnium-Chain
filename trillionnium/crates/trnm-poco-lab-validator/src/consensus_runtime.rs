@@ -7713,6 +7713,29 @@ fn proposal_disposition_v1(
     if justify == high_qc {
         return PendingProposalDispositionV1::Vote;
     }
+    // A different signer subset at the same certified parent is still a
+    // usable body. Core retains its higher certificate digest; the actual
+    // owner rechecks the full parent context before Vote/Synced execution.
+    // Synthetic references retain the exact-identity path above.
+    if proposal.justify_qc().as_ordinary().is_some()
+        && justify.epoch() == high_qc.epoch()
+        && justify.validator_set_id() == high_qc.validator_set_id()
+        && justify.view() == high_qc.view()
+        && justify.height() == high_qc.height()
+        && justify.block_id() == high_qc.block_id()
+    {
+        return if qc_reference_execution_ready_v1(
+            proposal.justify_qc(),
+            known_executions,
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ) {
+            PendingProposalDispositionV1::Vote
+        } else {
+            PendingProposalDispositionV1::Buffer
+        };
+    }
     // Core orders QCs by view, block ID, then certificate digest. A valid
     // signer-subset variant or a later-view branch can advance that order
     // without increasing height; readiness still requires exact execution.
@@ -10321,11 +10344,11 @@ mod tests {
             Some(PendingProposalAdmissionV1::Vote(_))
         ));
         assert!(buffer.is_empty());
-        let stale = synthetic_future_proposal_v1(8, &keys, &set, parameters, &low);
+        let alternate = synthetic_future_proposal_v1(8, &keys, &set, parameters, &low);
         assert!(matches!(
             buffer
                 .admit_v1(
-                    stale,
+                    alternate.clone(),
                     QcRef::from(&high),
                     &known,
                     0,
@@ -10333,8 +10356,78 @@ mod tests {
                     View::new(0),
                 )
                 .unwrap(),
-            PendingProposalAdmissionV1::IgnoreStale(_)
+            PendingProposalAdmissionV1::Vote(_)
         ));
+        assert_eq!(
+            proposal_disposition_v1(
+                &alternate,
+                QcRef::from(&high),
+                &BTreeSet::new(),
+                0,
+                genesis.block_id(),
+                View::new(0)
+            ),
+            PendingProposalDispositionV1::Buffer,
+            "a same-parent signer subset cannot invent missing native P"
+        );
+        let reference = QcRef::from(&high);
+        // These are inert classifier inputs only, never Core authority. A
+        // single changed context/coordinate must not gain the new exception.
+        let mutants = [
+            QcRef::new(
+                reference.qc_digest(),
+                Epoch::new(reference.epoch().get() + 1),
+                reference.view(),
+                reference.height(),
+                reference.block_id(),
+                reference.validator_set_id(),
+            ),
+            QcRef::new(
+                reference.qc_digest(),
+                reference.epoch(),
+                reference.view(),
+                reference.height(),
+                reference.block_id(),
+                trnm_consensus_types::ValidatorSetId::new([0xe1; 32]),
+            ),
+            QcRef::new(
+                reference.qc_digest(),
+                reference.epoch(),
+                View::new(reference.view().get() + 1),
+                reference.height(),
+                reference.block_id(),
+                reference.validator_set_id(),
+            ),
+            QcRef::new(
+                reference.qc_digest(),
+                reference.epoch(),
+                reference.view(),
+                Height::new(reference.height().get() + 1),
+                reference.block_id(),
+                reference.validator_set_id(),
+            ),
+            QcRef::new(
+                reference.qc_digest(),
+                reference.epoch(),
+                reference.view(),
+                reference.height(),
+                BlockId::new([0xff; 32]),
+                reference.validator_set_id(),
+            ),
+        ];
+        for mutant in mutants {
+            assert_ne!(
+                proposal_disposition_v1(
+                    &alternate,
+                    mutant,
+                    &known,
+                    0,
+                    genesis.block_id(),
+                    View::new(0)
+                ),
+                PendingProposalDispositionV1::Vote
+            );
+        }
         assert!(matches!(
             buffer
                 .admit_v1(
@@ -11259,6 +11352,7 @@ mod tests {
 
     include!("consensus_aggregation_quorum_tests_v1.inc");
     include!("consensus_terminal_quorum_tests_v1.inc");
+    include!("consensus_same_parent_body_tests_v1.inc");
 
     fn on_consensus_owner_stack_v1<T: Send + 'static>(
         body: impl FnOnce() -> T + Send + 'static,

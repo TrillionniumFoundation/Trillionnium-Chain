@@ -1086,6 +1086,38 @@ older-parent waiting followed by timeout progress, and unchanged rejection of a
 valid TC paired with a substituted justify. This contract alone is not LAN
 acceptance evidence.
 
+### Same-parent pending body admission (M15-SAME-PARENT-BODY-V1)
+
+The pending-proposal classifier is an inert scheduling boundary after strict
+wire/proposer/certificate verification, before native execution or Core input.
+It must not discard a proposal solely because its ordinary justify QC has a
+smaller digest than the current Core high QC. The exception requires exact
+`epoch`, `validator_set_id`, `view`, `height` and `block_id` equality; the strict
+wire context already binds genesis, chain and protocol. Synthetic anchors retain
+byte-exact identity. A distinct subset remains a distinct certificate in every
+archive, TC, signer and persistence record.
+
+For this same-parent ordinary case, missing exact local execution keeps the
+body buffered. Only the existing native known-execution or exact durably
+subsumed-reference rule permits dispatch. Every referenced QC in a carried TC
+must pass the existing readiness predicate first. The consumer then rechecks the
+complete authenticated parent context, exact TC/justify relation, increasing
+view/time and native roots. Core keeps its higher QC; this classifier grants no
+voting, signing, Synced or persistence authority. Different parent coordinates
+retain the existing ordered stale/buffer decision and strict Core checks.
+
+Ready may execute and vote through its original persistence-before-sign path.
+TimeoutSigned may execute the eligible late body only through the existing
+Synced path, retaining the original timeout signature/intent and never signing
+a second same-view timeout. VoteSigned and all other consumer phase guards are
+unchanged. Genuine regression must pass the actual strict wire and pending
+classifier with two real quorum subsets, prove both Ready voting and late
+TimeoutSigned execution followed by a real next QC, retain the larger Core QC
+before advancement, and cover missing execution, foreign coordinates and
+non-selected missing TC references. This corrects the earlier classifier test
+which treated a smaller digest at the same parent as stale; it is not by itself
+LAN or performance acceptance.
+
 ### Leader-independent certificate delivery (M15-QUORUM-DELIVERY-V1)
 
 Every validator that locally forms a strictly verified QC or TC queues its first
