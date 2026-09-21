@@ -897,8 +897,13 @@ ordinary execution/commit advances monotonic generation; real kind2 checkpoint
 preparation binds deterministic sparse cutoff selection and its original
 preparation sidecar; strict pre-handoff commit ends at an unattached checkpoint.
 No B edge, prefix extension, handoff signature or new-epoch activation follows
-from that commit. Attachment, repeated first-new execution and later crossings
-below remain required implementation; this candidate is not production enabled.
+from that commit. A separate, strictly verified original joint kernel now
+attaches B; its affine installed context drives actual C21 epoch preparation
+and explicit first-parent C22/C23 preparation, including pending replay ancestry
+and cold recovery. The application head remains C18 and B remains installed.
+Consuming B with genuine C21 finality, advancing C22, the complete retained-prefix
+walker and later crossings remain required implementation. This candidate is
+not production enabled.
 The old schema5/6/7 writers retain their physical version fences. Primary M07;
 M06 produces checkpoint execution, M08 consumes finality and owns recovery, and M13 remains a separate consumer. Schema11 is reserved for this
 incremental owner; schema8/9/10 belong to the full-snapshot owner. The first
@@ -910,11 +915,13 @@ default closed. No schema11 file is accepted by a legacy schema5/6/7 writer.
 checkpoint contract: a checkpoint commits before either handoff role signs, and
 the complete joint kernel attaches separately. It supersedes the earlier planned
 five-table, complete-certificate-only checkpoint path. The implemented initial
-schema11 database contains all six tables, with the pre-handoff table empty;
-it has no repeated-epoch writer yet. This contract uses one physical version.
+schema11 migration creates all six tables, with the pre-handoff table empty.
+The genuine C18 commit and later B attachment populate their separate rows;
+new-epoch preparation does not fabricate a first-commit row. This contract uses
+one physical version.
 Actual native schemas5/6/7, full-snapshot schemas10/13 and M03's unrelated signer Journal11 retain their existing inventories and meaning.
 
-The current fences are material. `audit_owner` binds the singleton edge to the
+The retained legacy fences are material. `audit_owner` binds the singleton edge to the
 immutable schema5 source C8 and audits its old trust from genesis configuration.
 `P::validate_context` requires Regular, while descendant validation also requires
 height less than the next checkpoint. Both reject C18. `commit::load` retains
@@ -985,11 +992,17 @@ Kind1 is a local exact codec: bytes `NI-EP2`, followed by seven fields, each a
 four-byte big-endian length then the original bytes, in order checkpoint-parent
 header, checkpoint header, checkpoint finality, anchor authorization kernel,
 next-epoch commitment, new validator set, new parameters. Fields are nonempty;
-header/commitment/parameter limits are4096 bytes, the set limit is1MiB, and the
-complete record is at most64MiB. These match the existing M08 bounds. The old
+header/commitment/parameter limits are4096 bytes, the set limit is1MiB, each
+proof/kernel is at most8MiB, and the complete record is at most64MiB. The M01
+combined-root admission limit also applies before decoding or crypto. The old
 set/parameters are obtained from the preceding authenticated prefix, never from
 caller-supplied duplicate fields. A kind1 edge exists only after attachment and
-its proof/commitment/new-set/parameters bytes must equal its pre-handoff row;
+its `binding` is the exact full M01 activation binding derived from all original
+roots under that predecessor. Kind0 retains its original native handoff
+authorization ID byte for byte; those distinct producers are never interchanged.
+The namespace, actual P/head, context and generation remain independently bound
+by the native row checksum and private installed capability. A kind1 edge's
+proof/commitment/new-set/parameters bytes must equal its pre-handoff row;
 its kernel's descriptor must equal the retained descriptor. The pre-handoff
 `strict_binding` and complete activation binding are distinct typed results,
 never interchangeable H32 authorities. `context_digest` binds store ID, source anchor,
@@ -1298,6 +1311,50 @@ immutable, and no ni B row exists until real first-new staging. Sync and fresh
 readback precede returning an incremental installed-edge capability. This
 operation generates no signatures and cannot activate a Core or node by itself.
 
+**M07-INCREMENTAL-INSTALLED-EXECUTION-V2** fixes the native producer seam.
+`attach_incremental_epoch_handoff_v2(receipt, original_kernel, budget)` returns
+an owner-affine, private-field, non-Clone `InstalledIncrementalEpochEdgeV2`
+only after that attachment's fresh durable readback. Its fields bind the live
+owner, immutable source/migration pin, current generation, exact installed edge
+record and prefix, actual checkpoint P/head/commit sequence and complete strict
+successor runtime. `confirm_incremental_epoch_edge_v2(binding, budget)` may
+recreate it after restart only while the phase0 edge is the exact current tail
+at its checkpoint. An already consumed edge cannot return a fresh installed
+execution capability. An exact attachment retry is separately checked against
+the original kernel and pre-handoff record before reconfirming that same cut.
+
+This capability implements the existing sealed `EpochExecutionContextV1`
+privately from actual checkpoint state and strict complete activation. It never
+creates an `AuthenticatedEpochApplicationEdgeV1`, full-snapshot checkpoint
+receipt or signer lease. The complete epoch execution kernel consumes this
+context unchanged: its application parent is C18, consensus parent is the
+original S20, first height is C21, and old/new parameters and lifecycle rollover
+come from strict B evidence. The existing schema6/7 sparse staging entry keeps
+its one-edge fence; a separate private schema11 staging entry admits the bounded
+retained prefix only after the native owner has audited it.
+
+`preview_incremental_first_epoch_block_v2` and
+`execute_incremental_first_epoch_block_v2` take that installed capability and
+the actual epoch preview/execution request. The latter persists the original
+epoch artifact, full signed-header preimage, exact sparse delta, replay and
+kind1 context atomically, returning `PreparedIncrementalFirstV2` after fresh
+readback. This private-field, non-Clone type retains its distinct epoch artifact;
+it cannot be constructed by converting an ordinary P or vice versa. Explicit
+first-parent preview/execution entry points for C22 feed a private typed parent
+variant into the shared descendant engine, preserving C21's application head,
+actual P digest, replay and speculative ancestry. C22/C23 may be prepared before
+C21 commits, as required to obtain its genuine three-chain finality.
+
+`commit_incremental_first_epoch_finality_bytes_v2(first_p, original_proof,
+budget)` strictly verifies the complete C21 Handoff header/witness under B's
+cached runtime and actual S20 parent. One transaction commits C21 sparse/replay,
+inserts its first-proof row, consumes exactly B and ni B, updates native head,
+durable sequence and generation, and retires only losing pending branches.
+Ordinary continuation then selects the last consumed edge's configuration;
+an installed tail never changes the active execution configuration by itself.
+Every caller-budget path shares its meter through the independent fresh audit
+and checks prospective readback capacity before mutation.
+
 | Durable phase | Required record relation and allowed next operation |
 | --- | --- |
 | Prepared C18 | Kind2 native/ni P and exact cutoff context; no pre-handoff row or B. Commit remains blocked until C17 and C15 are genuinely committed. |
@@ -1369,8 +1426,9 @@ work, wrong cutoff/new selection, foreign owner, stale generation, path/sidecar
 replacement, reordered/missing prefix and proof substitutions with recomputed
 local hashes. Require all nine real SIGKILL cuts above, exact retries/cold byte
 equality, unchanged schema7 regressions and default-stack acceptance. These are
-acceptance requirements. The initial schema11 migration/cold-audit slice does
-not satisfy this multi-epoch campaign and is not production-enabled.
+acceptance requirements. Migration, C18 pre-handoff, B attachment and prepared
+C21/C22/C23 do not satisfy this commit-and-recovery campaign. The candidate
+remains closed until the complete acceptance path passes.
 
 #### Bounded recovery, replay, retry and retention
 

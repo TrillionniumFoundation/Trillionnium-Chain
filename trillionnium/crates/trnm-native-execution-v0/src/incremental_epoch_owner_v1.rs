@@ -22,7 +22,8 @@ pub use descendant::{
 pub use multiple::{
     CommittedIncrementalEpochPreHandoffV2, CommittedNativeIncrementalEpochV2,
     ComputedIncrementalEpochSelectionV2, IncrementalPreHandoffPreimagesV2,
-    PreparedIncrementalCheckpointV2, PreparedNativeIncrementalEpochV2,
+    InstalledIncrementalEpochEdgeV2, PreparedIncrementalCheckpointV2, PreparedIncrementalFirstV2,
+    PreparedNativeIncrementalEpochV2,
 };
 pub(in crate::durable) const COMMIT_SCHEMA_VERSION: u64 = 7;
 fn epoch_schema(c: &Connection) -> Result<bool> {

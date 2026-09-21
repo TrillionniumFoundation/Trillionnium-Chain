@@ -1,6 +1,6 @@
 //! Explicit schema7→11 migration, immutable source and closed current inventory.
-//! Candidate continuation stops at the unattached successor checkpoint. It
-//! cannot attach an edge, activate a new epoch, sign or export state.
+//! Successor attachment and preparation retain their explicit strict context.
+//! Consumed successors remain fenced until the complete first-commit ledger.
 use super::*;
 use rusqlite::types::{Value, ValueRef};
 #[path = "incremental_epoch_progress_v2.rs"]
@@ -8,7 +8,8 @@ mod progress;
 pub use progress::{
     CommittedIncrementalEpochPreHandoffV2, CommittedNativeIncrementalEpochV2,
     ComputedIncrementalEpochSelectionV2, IncrementalPreHandoffPreimagesV2,
-    PreparedIncrementalCheckpointV2, PreparedNativeIncrementalEpochV2,
+    InstalledIncrementalEpochEdgeV2, PreparedIncrementalCheckpointV2, PreparedIncrementalFirstV2,
+    PreparedNativeIncrementalEpochV2,
 };
 pub(in crate::durable) const SCHEMA_VERSION: u64 = 11;
 const MAX_PROOF: usize = 8 * 1024 * 1024;
@@ -203,10 +204,49 @@ struct Current {
     first: commit::Commit,
     first_p: EpochP,
     ordinary: BTreeMap<[u8; 32], P>,
+    epochs: BTreeMap<[u8; 32], EpochP>,
     runtime: trnm_consensus_crypto::StrictEpochRuntimeContextV1,
     migration_sequence: u64,
     generation: u64,
     pre_handoff: Option<progress::pre_handoff::PreHandoff>,
+    pending: Option<progress::pre_handoff::attachment::Pending>,
+}
+struct RetainedContextRef<'a> {
+    runtime: &'a trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    binding: [u8; 32],
+    prefix: Vec<[u8; 32]>,
+}
+impl Current {
+    fn context_for(&self, h: &BlockHeader) -> Result<RetainedContextRef<'_>> {
+        if h.epoch() == self.runtime.activation().new_validator_set().epoch() {
+            Ok(RetainedContextRef {
+                runtime: &self.runtime,
+                binding: self.edge.binding,
+                prefix: vec![self.edge.binding],
+            })
+        } else {
+            let pending = self
+                .pending
+                .as_ref()
+                .context("schema11 P epoch lacks installed context")?;
+            ensure!(
+                h.epoch() == pending.runtime().activation().new_validator_set().epoch(),
+                "schema11 P epoch outside retained prefix"
+            );
+            Ok(RetainedContextRef {
+                runtime: pending.runtime(),
+                binding: pending.binding(),
+                prefix: self.owner_prefix(),
+            })
+        }
+    }
+    fn owner_prefix(&self) -> Vec<[u8; 32]> {
+        let mut bindings = vec![self.edge.binding];
+        if let Some(pending) = &self.pending {
+            bindings.push(pending.binding());
+        }
+        bindings
+    }
 }
 
 fn bounded_blocks(tx: &rusqlite::Transaction<'_>, table: &str) -> Result<Vec<[u8; 32]>> {
@@ -239,6 +279,7 @@ fn ordinary_replay_parent(
     p: &P,
     ordinary: &BTreeMap<[u8; 32], P>,
     first: &EpochP,
+    epochs: &[EpochP],
 ) -> Result<(ReplayHead, Vec<ReplayDelta>)> {
     let mut current = p;
     let mut suffix = Vec::new();
@@ -251,6 +292,29 @@ fn ordinary_replay_parent(
                 "schema11 first replay ancestry"
             );
             return Ok((ReplayDelta::decode(&first.replay_delta)?.head, suffix));
+        }
+        if let Some(parent) = epochs
+            .iter()
+            .find(|p| p.block == *current.parent.block_id().as_bytes())
+        {
+            let delta = ReplayDelta::decode(&parent.replay_delta)?;
+            ensure!(
+                parent.edge != first.edge
+                    && current.parent == parent.target()?
+                    && current.parent_p == Some(parent.digest)
+                    && parent.sequence < current.sequence
+                    && current.replay_parent == delta.head,
+                "schema11 pending first replay ancestry"
+            );
+            bytes = bytes
+                .checked_add(parent.replay_delta.len())
+                .context("schema11 first replay overflow")?;
+            ensure!(
+                suffix.len() < 8 && bytes <= 64 * 1024 * 1024,
+                "schema11 pending first replay bound"
+            );
+            suffix.push(delta);
+            return Ok((parent.replay_parent, suffix));
         }
         let parent = ordinary
             .get(current.parent.block_id().as_bytes())
@@ -306,6 +370,7 @@ fn screen_inventory(tx: &rusqlite::Transaction<'_>, schema: u64) -> Result<()> {
         );
     }
     if schema == SCHEMA_VERSION {
+        progress::pre_handoff::attachment::screen(tx)?;
         progress::pre_handoff::screen(tx)?;
         for table in [
             "native_incremental_epoch_first_commit_v2",
@@ -441,7 +506,13 @@ fn projection_with_budget(
     let mut sequences = BTreeSet::new();
     for block in bounded_blocks(tx, "native_incremental_epoch_p_v1")? {
         let p = load_epoch_p(tx, block)?.context("schema11 epoch P missing")?;
-        p.validate_context(config, &epoch_context)?;
+        if p.edge == edge.binding {
+            p.validate_context(config, &epoch_context)?;
+        } else {
+            ensure!(schema == SCHEMA_VERSION, "successor P requires schema11");
+            // The original source does not authorize successor execution. Its
+            // context is checked below only after strict successor attachment.
+        }
         p.validate_storage(tx)?;
         ensure!(
             p.sequence > base.source_sequence
@@ -452,11 +523,12 @@ fn projection_with_budget(
         );
         let replay = ReplayReader::new(tx, Some(p.replay_parent), &[])?;
         ensure!(
-            p.replay_parent
-                == (ReplayHead {
-                    version: 0,
-                    root: base.source_replay
-                })
+            (p.edge != edge.binding
+                || p.replay_parent
+                    == (ReplayHead {
+                        version: 0,
+                        root: base.source_replay
+                    }))
                 && replay
                     .append(replay_keys(
                         p.executed()?.request().preview().transactions()
@@ -480,7 +552,12 @@ fn projection_with_budget(
     }
     for block in bounded_blocks(tx, "native_incremental_p_v1")? {
         let p = load_p(tx, block)?.context("schema11 ordinary P missing")?;
-        if schema == SCHEMA_VERSION
+        if header(&p.header)?.epoch() != set.epoch() {
+            ensure!(
+                schema == SCHEMA_VERSION && p.status == 0,
+                "schema11 successor ordinary preparation only"
+            );
+        } else if schema == SCHEMA_VERSION
             && header(&p.header)?.block_kind() == trnm_consensus_types::BlockKind::EpochCheckpoint
         {
             p.validate_context_kind(
@@ -520,7 +597,7 @@ fn projection_with_budget(
         "schema11 first commit sequence collision"
     );
     for p in ordinary.values() {
-        let (parent, suffix) = ordinary_replay_parent(p, &ordinary, &first_p)?;
+        let (parent, suffix) = ordinary_replay_parent(p, &ordinary, &first_p, &epochs)?;
         ensure!(
             ReplayReader::new(tx, Some(parent), &suffix)?
                 .append(replay_keys(p.executed()?.request().transactions())?)?
@@ -546,7 +623,7 @@ fn projection_with_budget(
         |r| Ok((r.get(0)?, r.get(1)?)),
     )?;
     ensure!(
-        ni_p == epochs.len() + ordinary.len() && ni_edges == 1,
+        ni_p == epochs.len() + ordinary.len(),
         "schema11 sparse/native inventory differs"
     );
     let original_records = bounded_blocks(tx, "native_incremental_epoch_descendant_commit_v1")?
@@ -685,6 +762,54 @@ fn projection_with_budget(
     } else {
         None
     };
+    let pending = if schema == SCHEMA_VERSION {
+        progress::pre_handoff::attachment::audit_pending(
+            tx,
+            config,
+            &base,
+            &edge,
+            &first_p,
+            &ordinary,
+            &runtime,
+            pre_handoff.as_ref(),
+            &m.head,
+            budget,
+        )?
+    } else {
+        None
+    };
+    let successor_epochs: Vec<_> = epochs.iter().filter(|p| p.edge != edge.binding).collect();
+    let staged_successor = !successor_epochs.is_empty();
+    ensure!(
+        ni_edges == 1 + usize::from(staged_successor),
+        "schema11 exact sparse edge inventory"
+    );
+    if let Some(installed) = &pending {
+        for p in successor_epochs {
+            installed.audit_prepared(tx, config, &base, p)?;
+        }
+        for p in ordinary
+            .values()
+            .filter(|p| header(&p.header).is_ok_and(|h| h.epoch() != set.epoch()))
+        {
+            installed.audit_ordinary(config, p)?;
+        }
+    } else {
+        ensure!(
+            !staged_successor
+                && ordinary
+                    .values()
+                    .all(|p| header(&p.header).is_ok_and(|h| h.epoch() == set.epoch())),
+            "schema11 successor P without strict installed edge"
+        );
+    }
+    let mut owner_prefix = vec![edge.binding];
+    if let Some(installed) = &pending {
+        owner_prefix.push(installed.binding());
+        generation = generation
+            .checked_add(1)
+            .context("schema11 attachment generation exhausted")?;
+    }
     let mut record_digests = vec![edge.checksum, first.checksum];
     record_digests.extend(original_records.iter().map(|r| r.checksum));
     record_digests.sort();
@@ -722,8 +847,8 @@ fn projection_with_budget(
                 blob(base.anchor),
                 number_value(migration_sequence),
                 blob(pin),
-                blob(edge.binding),
-                blob(&prefix),
+                blob(*owner_prefix.last().context("schema11 empty owner prefix")?),
+                blob(self::prefix(&owner_prefix)?),
                 number_value(generation),
             ],
         )
@@ -763,7 +888,11 @@ fn projection_with_budget(
                     blob(p.block),
                     blob(p.digest),
                     Value::Integer(1),
-                    blob(&prefix),
+                    blob(if p.edge == edge.binding {
+                        prefix.clone()
+                    } else {
+                        self::prefix(&owner_prefix)?
+                    }),
                     Value::Null,
                     Value::Null,
                     Value::Null,
@@ -792,7 +921,11 @@ fn projection_with_budget(
                         blob(p.block),
                         blob(p.digest),
                         Value::Integer(0),
-                        blob(&prefix),
+                        blob(if header(&p.header)?.epoch() == set.epoch() {
+                            prefix.clone()
+                        } else {
+                            self::prefix(&owner_prefix)?
+                        }),
                         Value::Null,
                         Value::Null,
                         Value::Null,
@@ -835,6 +968,9 @@ fn projection_with_budget(
     if let Some(row) = pre_handoff_row {
         rows.push(row);
     }
+    if let Some(installed) = &pending {
+        rows.push(installed.row(config, base.anchor)?);
+    }
     let projection = Projection {
         rows,
         pin,
@@ -845,10 +981,12 @@ fn projection_with_budget(
             first,
             first_p,
             ordinary,
+            epochs: epochs.into_iter().map(|p| (p.block, p)).collect(),
             runtime,
             migration_sequence,
             generation,
             pre_handoff,
+            pending,
         },
     };
     if schema == SCHEMA_VERSION {
@@ -944,6 +1082,17 @@ impl DurableNativeApplicationV0 {
     /// sequence and grants no activation, finality, checkpoint or signing power.
     /// A schema11 retry audits its current inventory against the same immutable seed.
     pub fn upgrade_incremental_multi_epoch_schema_v2(&self) -> Result<()> {
+        self.upgrade_incremental_multi_epoch_schema_with_budget_v2(
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+    }
+    // Shared operation kernel also lets the genuine source7 regression prove
+    // that readback admission fails before the schema CAS or any table creation.
+    pub(in crate::durable) fn upgrade_incremental_multi_epoch_schema_with_budget_v2(
+        &self,
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+    ) -> Result<()> {
+        let starting_work = budget.signature_work();
         let _guard = self.lock_operation()?;
         let mut c = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&c)?;
@@ -954,7 +1103,7 @@ impl DurableNativeApplicationV0 {
         );
         let tx = c.transaction_with_behavior(TransactionBehavior::Immediate)?;
         let m = load_metadata_v0(&tx, &self.config)?;
-        let expected = projection(&tx, &self.config, &m)?;
+        let expected = projection_with_budget(&tx, &self.config, &m, budget)?;
         let pinned = *self
             .incremental_migration_pin
             .lock()
@@ -964,6 +1113,10 @@ impl DurableNativeApplicationV0 {
                 || (schema == SCHEMA_VERSION && pinned == Some(expected.pin)),
             "schema11 migration owner pin changed"
         );
+        // The source7 audit repeats activation checks for each legacy proof;
+        // its measured work bounds the schema11 prefix-once fresh audit. For
+        // schema11 retry this is the identical inventory and exact same cost.
+        progress::require_readback_budget(budget, budget.signature_work() - starting_work)?;
         if schema == COMMIT_SCHEMA_VERSION {
             tx.execute_batch(SQL)?;
             for row in &expected.rows {
@@ -984,11 +1137,15 @@ impl DurableNativeApplicationV0 {
         park_for_sigkill_commit_boundary_v0("incremental_schema11_after_fsync");
         self.confirm_namespace_identity_v1()?;
         let fresh = open_immutable_connection_v0(&self.path)?;
-        let metadata = load_metadata_v0(&fresh, &self.config)?;
+        verify_schema(&fresh)?;
+        let fresh_tx = fresh.unchecked_transaction()?;
+        let metadata = load_metadata_v0(&fresh_tx, &self.config)?;
+        let confirmed = projection_with_budget(&fresh_tx, &self.config, &metadata, budget)?;
+        compare_projection(&fresh_tx, &confirmed)?;
         ensure!(
             metadata.head == m.head
                 && metadata.durable_sequence == m.durable_sequence
-                && audit_anchor(&fresh, &self.config, &metadata)? == expected.pin,
+                && confirmed.pin == expected.pin,
             "schema11 migration fresh confirmation differs"
         );
         self.confirm_namespace_identity_v1()?;

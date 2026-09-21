@@ -91,6 +91,36 @@ pub(crate) fn stage(
     block: [u8; 32],
     plan: &CompleteStatePlanV0,
 ) -> Result<PreparedIncrementalDeltaV1> {
+    stage_with_limit(transaction, namespace, context, block, plan, 1)
+}
+
+// This additional entry is only for the independently audited schema11 owner.
+// The original stage entry retains its exact one-edge admission policy.
+pub(crate) fn stage_multiple(
+    transaction: &Transaction<'_>,
+    namespace: &IncrementalNamespaceV1,
+    context: &dyn EpochExecutionContextV1,
+    block: [u8; 32],
+    plan: &CompleteStatePlanV0,
+) -> Result<PreparedIncrementalDeltaV1> {
+    let schema: Vec<u8> = transaction.query_row(
+        "SELECT CASE WHEN typeof(schema_version)='blob' AND length(schema_version)=8 THEN schema_version ELSE NULL END FROM native_application_metadata_v0 WHERE singleton=1", [], |r| r.get(0),
+    )?;
+    ensure!(
+        schema == 11u64.to_be_bytes(),
+        "multiple sparse epochs require native schema11"
+    );
+    stage_with_limit(transaction, namespace, context, block, plan, 32)
+}
+
+fn stage_with_limit(
+    transaction: &Transaction<'_>,
+    namespace: &IncrementalNamespaceV1,
+    context: &dyn EpochExecutionContextV1,
+    block: [u8; 32],
+    plan: &CompleteStatePlanV0,
+    maximum_edges: u64,
+) -> Result<PreparedIncrementalDeltaV1> {
     let coordinates = context.coordinates_v1();
     ensure!(
         plan.epoch_parent == Some(coordinates)
@@ -121,7 +151,7 @@ pub(crate) fn stage(
     } else {
         let count: u64 =
             transaction.query_row("SELECT count(*) FROM ni_epoch_edge", [], |r| r.get(0))?;
-        ensure!(count == 0, "single first-new edge candidate");
+        ensure!(count < maximum_edges, "sparse first-new edge capacity");
         transaction.execute(
             "INSERT INTO ni_epoch_edge VALUES(?1,?2,?3,?4,?5,0,NULL)",
             params![

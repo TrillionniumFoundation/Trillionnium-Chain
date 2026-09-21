@@ -628,7 +628,15 @@ pub(super) fn retire_forks(
     config: &NativeApplicationConfigV0,
     winner: [u8; 32],
 ) -> Result<()> {
-    let committed_first = commit::load(tx)?.map(|r| r.block);
+    let committed_first = commit::load(tx)?.into_iter().map(|r| r.block).collect();
+    retire_forks_with_protected_first(tx, config, winner, &committed_first)
+}
+pub(super) fn retire_forks_with_protected_first(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    winner: [u8; 32],
+    committed_first: &BTreeSet<[u8; 32]>,
+) -> Result<()> {
     let mut q=tx.prepare("SELECT block,parent,storage_artifact FROM native_incremental_p_v1 WHERE status=0 UNION ALL SELECT block,parent,storage_artifact FROM native_incremental_epoch_p_v1 LIMIT 257")?;
     let rows = q
         .query_map([], |r| {
@@ -659,7 +667,7 @@ pub(super) fn retire_forks(
     }
     let mut retired = Vec::new();
     for (block, (_, artifact)) in &parents {
-        if *block == winner || Some(*block) == committed_first {
+        if *block == winner || committed_first.contains(block) {
             continue;
         }
         let mut cursor = *block;

@@ -139,6 +139,36 @@ fn schema7_to_schema11_migration_preserves_genuine_sparse_history_and_cold_proje
     )
     .unwrap();
     drop(c);
+    let app = if std::env::var_os("TRNM_NATIVE_INCREMENTAL_MIGRATION_SIGKILL_STORE").is_none() {
+        let source = std::fs::read(&path).unwrap();
+        let mut measured = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
+        app.upgrade_incremental_multi_epoch_schema_with_budget_v2(&mut measured)
+            .unwrap();
+        drop(app);
+        std::fs::write(&path, &source).unwrap();
+        let app =
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+        let mut limited = trnm_consensus_types::Cev0AdmissionBudgetV0::new(
+            measured.maximum_root_bytes(),
+            measured.signature_work() - 1,
+        );
+        let refused = app
+            .upgrade_incremental_multi_epoch_schema_with_budget_v2(&mut limited)
+            .expect_err("migration readback capacity must refuse before CAS");
+        assert!(format!("{refused:#}").contains("prospective readback budget"));
+        assert!(
+            limited.signature_work() > 0
+                && limited.signature_work() < limited.maximum_signature_work()
+        );
+        assert_eq!(std::fs::read(&path).unwrap(), source);
+        assert_eq!(
+            epoch_durable::schema_version(&Connection::open(&path).unwrap()).unwrap(),
+            7
+        );
+        app
+    } else {
+        app
+    };
     let inventory = migration_original_inventory(&path);
     let old_pin = *app.incremental_migration_pin.lock().unwrap();
     std::fs::copy(&path, path.with_extension("source-before-migration")).unwrap();
@@ -913,7 +943,10 @@ fn schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventor
     let before = std::fs::read(&path).unwrap();
     let journal_before = std::fs::read(&sidecar).unwrap();
     let mut invalid_finality = finality.clone();
-    let signature = exact_finality.finalized_block().proposer_signature().as_bytes();
+    let signature = exact_finality
+        .finalized_block()
+        .proposer_signature()
+        .as_bytes();
     let signature_offsets = invalid_finality
         .windows(signature.len())
         .enumerate()
@@ -934,7 +967,7 @@ fn schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventor
         .commit_incremental_epoch_pre_handoff_v2(
             &recovered,
             input(&invalid_finality),
-            &mut failure_budget
+            &mut failure_budget,
         )
         .err()
         .expect("corrupt finality must fail");
@@ -954,7 +987,10 @@ fn schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventor
         .err()
         .expect("pre-handoff readback must fit caller budget before state commit");
     assert!(format!("{refused:#}").contains("prospective readback budget"));
-    assert_eq!(commit_budget.signature_work(), commit_budget.maximum_signature_work());
+    assert_eq!(
+        commit_budget.signature_work(),
+        commit_budget.maximum_signature_work()
+    );
     assert_eq!(std::fs::read(&path).unwrap(), before);
     assert_eq!(std::fs::read(&sidecar).unwrap(), journal_before);
     if std::env::var_os("TRNM_SCHEMA11_PRE_HANDOFF_SIGKILL_STORE").is_some() {
@@ -1018,7 +1054,398 @@ fn schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventor
     assert_eq!(fresh.strict_binding(), receipt.strict_binding());
     assert!(!receipt.belongs_to_application_at_path(&cold, &path));
     assert_eq!(std::fs::read(&path).unwrap(), committed);
+    // Both successor roles sign only after the actual C18 commit and a cold
+    // confirmation. This cryptographic fixture does not claim M03 custody.
+    use ed25519_dalek::Signer;
+    let descriptor_value =
+        trnm_consensus_types::decode_handoff_descriptor_v0_exact(&descriptor).unwrap();
+    let shares = |validators: &trnm_consensus_types::ValidatorSet,
+                  root: trnm_consensus_types::SigningRoot| {
+        validators
+            .validators()
+            .iter()
+            .take(3)
+            .map(|validator| {
+                let key = (0u8..100)
+                    .map(|n| ed25519_dalek::SigningKey::from_bytes(&[20 + n; 32]))
+                    .find(|key| {
+                        key.verifying_key().to_bytes() == *validator.consensus_key().as_bytes()
+                    })
+                    .unwrap();
+                trnm_consensus_types::SignatureShareV0::new(
+                    validator.id(),
+                    trnm_consensus_types::Signature64::from_array(
+                        key.sign(root.as_bytes()).to_bytes(),
+                    ),
+                )
+                .unwrap()
+            })
+            .collect()
+    };
+    let joint = trnm_consensus_types::HandoffCertificateV0::new(
+        descriptor_value.clone(),
+        shares(set, descriptor_value.old_set_signing_root()),
+        shares(
+            selected.new_validator_set(),
+            descriptor_value.new_set_signing_root(),
+        ),
+        set,
+        selected.new_validator_set(),
+    )
+    .unwrap();
+    let kernel = trnm_consensus_types::EpochAnchorAuthorizationKernelV0::from_parts_v0(
+        exact_finality.grandchild().header().clone(),
+        exact_finality.grandchild().certifying_qc().clone(),
+        joint,
+        set,
+        selected.new_validator_set(),
+    )
+    .unwrap()
+    .try_cev0_bytes()
+    .unwrap();
+    if std::env::var_os("TRNM_SCHEMA11_PRE_HANDOFF_SIGKILL_STORE").is_some() {
+        std::fs::copy(&path, path.with_extension("attachment-source")).unwrap();
+        std::fs::write(path.with_extension("attachment-kernel"), &kernel).unwrap();
+    }
+    let mut invalid_kernel = kernel.clone();
+    *invalid_kernel.last_mut().unwrap() ^= 1;
+    let mut invalid_budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
+    assert!(cold
+        .attach_incremental_epoch_handoff_v2(&fresh, &invalid_kernel, &mut invalid_budget)
+        .is_err());
+    assert_eq!(std::fs::read(&path).unwrap(), committed);
+    assert_eq!(std::fs::read(&sidecar).unwrap(), journal_before);
+    let mut limited = trnm_consensus_types::Cev0AdmissionBudgetV0::new(
+        invalid_budget.maximum_root_bytes(),
+        invalid_budget.signature_work() + 7,
+    );
+    limited.charge_signature_work(7).unwrap();
+    let refused = cold
+        .attach_incremental_epoch_handoff_v2(&fresh, &kernel, &mut limited)
+        .err()
+        .expect("attachment readback budget must fit before mutation");
+    assert!(format!("{refused:#}").contains("prospective readback budget"));
+    assert_eq!(std::fs::read(&path).unwrap(), committed);
+    let installed = cold
+        .attach_incremental_epoch_handoff_v2(
+            &fresh,
+            &kernel,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(installed.application_parent(), fresh.head());
+    assert_eq!(installed.consensus_parent().height().get(), 20);
+    assert_eq!(installed.new_validator_set(), selected.new_validator_set());
+    assert_eq!(installed.original_kernel(), kernel);
+    assert_ne!(installed.binding(), edge.authorization_id());
+    assert_ne!(installed.binding(), fresh.strict_binding());
+    assert!(installed.belongs_to_application_at_path(&cold, &path));
+    let attached = std::fs::read(&path).unwrap();
+    let retried = cold
+        .attach_incremental_epoch_handoff_v2(
+            &fresh,
+            &kernel,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(retried.binding(), installed.binding());
+    assert_eq!(std::fs::read(&path).unwrap(), attached);
+    assert_eq!(std::fs::read(&sidecar).unwrap(), journal_before);
+    let c = Connection::open(&path).unwrap();
+    let (generation, sequence, edges, ni_edges, pre_sequence): (Vec<u8>, Vec<u8>, u64, u64, Vec<u8>) = c.query_row(
+        "SELECT (SELECT generation FROM native_incremental_epoch_owner_v2),(SELECT durable_sequence FROM native_application_metadata_v0),(SELECT count(*) FROM native_incremental_epoch_edge_v2),(SELECT count(*) FROM ni_epoch_edge),(SELECT commit_sequence FROM native_incremental_epoch_pre_handoff_v2)",
+        [], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?))).unwrap();
+    assert_eq!(
+        (
+            number(generation).unwrap(),
+            number(sequence).unwrap(),
+            edges,
+            ni_edges,
+            number(pre_sequence).unwrap()
+        ),
+        (8, fresh.commit_sequence(), 2, 1, fresh.commit_sequence())
+    );
+    drop(c);
+    let binding = installed.binding();
     drop(cold);
+    let cold =
+        DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+    let restored = cold
+        .confirm_incremental_epoch_edge_v2(
+            binding,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(restored.binding(), binding);
+    assert!(!installed.belongs_to_application_at_path(&cold, &path));
+    assert_eq!(std::fs::read(&path).unwrap(), attached);
+    // A fresh valid-time command using a consumed old-epoch nonce must still
+    // fail against the persisted replay root; expiry cannot explain refusal.
+    let command = |app: &DurableNativeApplicationV0, nonce| {
+        let transaction = trnm_protocol::CanonicalTxV1 {
+            schema: trnm_protocol::CANONICAL_TX_SCHEMA_V1.into(),
+            sender: "did:operator:1".into(),
+            nonce,
+            max_gas: 100_000,
+            fee_limit: 100_000,
+            command: trnm_protocol::CanonicalCommandV1::Transfer {
+                to: "did:recipient:second-epoch".into(),
+                amount: 17,
+            },
+        };
+        serde_json::to_vec(
+            &trnm_finality_types::SignedCommandEnvelopeV1::sign(
+                &app.config.chain_id,
+                format!("schema11-second-epoch-{nonce}"),
+                "did:operator:1",
+                "operator",
+                nonce,
+                20_000,
+                30_000,
+                trnm_protocol::CANONICAL_TX_PAYLOAD_TYPE_V1,
+                &serde_json::to_vec(&transaction).unwrap(),
+                &ed25519_dalek::SigningKey::from_bytes(&[81; 32]),
+            )
+            .unwrap(),
+        )
+        .unwrap()
+    };
+    let duplicate = restored
+        .preview_request(21_000, vec![command(&cold, 2)])
+        .unwrap();
+    assert!(cold
+        .preview_incremental_first_epoch_block_v2(&restored, &duplicate)
+        .is_err());
+    assert_eq!(std::fs::read(&path).unwrap(), attached);
+    let first_request = restored
+        .preview_request(21_000, vec![command(&cold, 10)])
+        .unwrap();
+    assert!(cold
+        .preview_incremental_first_epoch_block_v2(&installed, &first_request)
+        .is_err());
+    let first_preview = cold
+        .preview_incremental_first_epoch_block_v2(&restored, &first_request)
+        .unwrap();
+    let new_set = restored.new_validator_set();
+    let first_header = BlockHeader::new(
+        new_set.genesis_hash(),
+        new_set.chain_id(),
+        new_set.protocol_version(),
+        new_set.epoch(),
+        View::new(1),
+        Height::new(21),
+        BlockKind::EpochHandoff,
+        restored.consensus_parent().id(),
+        new_set.validators()[0].id(),
+        new_set.id(),
+        restored.new_parameters().hash(),
+        PayloadDigest::new(*first_preview.payload_root().as_bytes()),
+        StateRoot::new(*first_preview.post_state_root().as_bytes()),
+        ReceiptsRoot::new(*first_preview.receipts_root().as_bytes()),
+        EvidenceRoot::new(*first_preview.evidence_root().as_bytes()),
+        21_000,
+        None,
+    )
+    .unwrap();
+    let first_request = NativeEpochBlockExecutionRequestV1::new(
+        first_request,
+        BlockIdV0::new(*first_header.id().as_bytes()).unwrap(),
+        trnm_native_application::NativeExpectedBlockCommitmentsV0::new(
+            first_preview.payload_root(),
+            first_preview.post_state_root(),
+            first_preview.receipts_root(),
+            first_preview.evidence_root(),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    let first_new = cold
+        .execute_incremental_first_epoch_block_v2(&restored, first_request.clone(), &first_header)
+        .unwrap();
+    assert_eq!(first_new.target_head().unwrap().height().get(), 21);
+    assert_eq!(
+        first_new
+            .executed()
+            .unwrap()
+            .request()
+            .preview()
+            .transactions()
+            .len(),
+        1
+    );
+    assert_eq!(first_new.edge_binding(), binding);
+    assert!(first_new.belongs_to_application_at_path(&cold, &path));
+    let committed = std::fs::read(&path).unwrap();
+    let retried = cold
+        .execute_incremental_first_epoch_block_v2(&restored, first_request, &first_header)
+        .unwrap();
+    assert_eq!(retried.p_digest(), first_new.p_digest());
+    assert_eq!(std::fs::read(&path).unwrap(), committed);
+    assert_eq!(std::fs::read(&sidecar).unwrap(), journal_before);
+    let c = Connection::open(&path).unwrap();
+    let m = load_metadata_v0(&c, &cold.config).unwrap();
+    assert_eq!(m.head.height().get(), 18);
+    assert_eq!(m.durable_sequence, first_new.persist_sequence());
+    let (edges,pending,seals):(u64,u64,u64)=c.query_row(
+        "SELECT (SELECT count(*) FROM ni_epoch_edge),(SELECT count(*) FROM ni_epoch_edge WHERE phase=0),(SELECT count(*) FROM ni_roots WHERE version>?1 AND version<?2)",
+        params![18u64.to_be_bytes().as_slice(),21u64.to_be_bytes().as_slice()],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?)),
+    ).unwrap();
+    assert_eq!((edges, pending, seals), (2, 1, 0));
+    drop(c);
+    drop(cold);
+    let cold =
+        DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+    let fresh_first = cold
+        .reopen_incremental_first_v2(*first_header.id().as_bytes(), first_new.p_digest())
+        .unwrap();
+    assert_eq!(
+        fresh_first.executed().unwrap(),
+        first_new.executed().unwrap()
+    );
+    assert!(!first_new.belongs_to_application_at_path(&cold, &path));
+    assert_eq!(std::fs::read(&path).unwrap(), committed);
+    let installed = cold
+        .confirm_incremental_epoch_edge_v2(
+            binding,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    let next_set = installed.new_validator_set();
+    let mut next_descendants: Vec<PreparedNativeIncrementalEpochV2> = Vec::new();
+    for height in [22u64, 23] {
+        let parent = next_descendants
+            .last()
+            .map(|p| p.target_head().unwrap())
+            .unwrap_or_else(|| fresh_first.target_head().unwrap());
+        let preview_request = |transactions| {
+            NativeBlockPreviewRequestV0::new(
+                ChainIdV0::new(cold.config.chain_id.clone()).unwrap(),
+                GenesisHashV0::new(cold.config.genesis_hash).unwrap(),
+                parent.clone(),
+                HeightV0::new(height),
+                height * 1000,
+                ValidatorSetIdV0::new(*next_set.id().as_bytes()).unwrap(),
+                transactions,
+            )
+            .unwrap()
+        };
+        if height == 22 {
+            let duplicate = preview_request(vec![command(&cold, 10)]);
+            assert!(cold
+                .preview_incremental_first_descendant_v2(&fresh_first, &duplicate)
+                .is_err());
+            assert_eq!(std::fs::read(&path).unwrap(), committed);
+        }
+        let request = preview_request(vec![command(&cold, height - 11)]);
+        let preview = if let Some(p) = next_descendants.last() {
+            cold.preview_incremental_epoch_descendant_v2(p, &request)
+                .unwrap()
+        } else {
+            cold.preview_incremental_first_descendant_v2(&fresh_first, &request)
+                .unwrap()
+        };
+        let header = BlockHeader::new(
+            next_set.genesis_hash(),
+            next_set.chain_id(),
+            next_set.protocol_version(),
+            next_set.epoch(),
+            View::new(height - 20),
+            Height::new(height),
+            BlockKind::Regular,
+            trnm_consensus_types::BlockId::new(*parent.block_id().as_bytes()),
+            next_set.validators()[(height - 21) as usize % next_set.validators().len()].id(),
+            next_set.id(),
+            installed.new_parameters().hash(),
+            PayloadDigest::new(*preview.payload_root().as_bytes()),
+            StateRoot::new(*preview.post_state_root().as_bytes()),
+            ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+            EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+            height * 1000,
+            None,
+        )
+        .unwrap();
+        let execution = NativeBlockExecutionRequestV0::new(
+            request.chain_id().clone(),
+            request.genesis_hash(),
+            parent,
+            BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+            request.height(),
+            request.timestamp_ms(),
+            request.active_validator_set_id(),
+            request.transactions().to_vec(),
+            trnm_native_application::NativeExpectedBlockCommitmentsV0::new(
+                preview.payload_root(),
+                preview.post_state_root(),
+                preview.receipts_root(),
+                preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        next_descendants.push(if let Some(p) = next_descendants.last() {
+            cold.execute_incremental_epoch_descendant_v2(p, execution, &header)
+                .unwrap()
+        } else {
+            cold.execute_incremental_first_descendant_v2(&fresh_first, execution, &header)
+                .unwrap()
+        });
+    }
+    let committed = std::fs::read(&path).unwrap();
+    drop(cold);
+    let cold =
+        DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+    for p in &next_descendants {
+        let fresh = cold
+            .reopen_prepared_incremental_epoch_v2(
+                *p.target_head().unwrap().block_id().as_bytes(),
+                p.p_digest(),
+            )
+            .unwrap();
+        assert_eq!(fresh.executed().unwrap(), p.executed().unwrap());
+    }
+    let c = Connection::open(&path).unwrap();
+    assert_eq!(
+        load_metadata_v0(&c, &cold.config)
+            .unwrap()
+            .head
+            .height()
+            .get(),
+        18
+    );
+    drop(c);
+    assert_eq!(std::fs::read(&path).unwrap(), committed);
+    drop(cold);
+    // A locally rehashed cross-kind replacement cannot substitute the migrated
+    // native authorization identity for the full successor activation binding.
+    let c = Connection::open(&path).unwrap();
+    let mut row:Vec<rusqlite::types::Value>=c.query_row(
+        "SELECT binding,ordinal,predecessor,prefix,checkpoint_head,checkpoint_p,checkpoint_sequence,context_digest,evidence_kind,evidence,phase,consumed_block,consumed_p,consumed_sequence FROM native_incremental_epoch_edge_v2 WHERE evidence_kind=1",
+        [], |r| (0..14).map(|i| r.get(i)).collect(),
+    ).unwrap();
+    row[8] = rusqlite::types::Value::Integer(0);
+    row[9] = rusqlite::types::Value::Blob(
+        c.query_row(
+            "SELECT evidence FROM native_incremental_epoch_owner_v1",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap(),
+    );
+    let hash = schema11_test_row_checksum(
+        &c,
+        "trnm.native-application.incremental-epoch-edge.v2",
+        &row,
+        &[9],
+        &[2, 11, 12, 13],
+    );
+    c.execute("UPDATE native_incremental_epoch_edge_v2 SET evidence_kind=0,evidence=?1,checksum=?2 WHERE binding=?3",params![row[9],hash.as_slice(),binding.as_slice()]).unwrap();
+    drop(c);
+    let corrupt = std::fs::read(&path).unwrap();
+    assert!(
+        DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).is_err()
+    );
+    assert_eq!(std::fs::read(&path).unwrap(), corrupt);
+    std::fs::write(&path, &committed).unwrap();
     // Recomputed local checksums cannot replace the signed original cutoff.
     let c = Connection::open(&path).unwrap();
     let cutoff_block = descendants[3].header().unwrap().id();
@@ -1242,5 +1669,134 @@ fn schema11_pre_handoff_sigkill_cuts_recover_only_complete_c17_or_c18() {
         assert_eq!(std::fs::read(&path).unwrap(), exact);
         drop(app);
         DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+    }
+}
+
+#[cfg(unix)]
+#[test]
+fn schema11_attachment_sigkill_preserves_checkpoint_and_original_pre_handoff() {
+    for stage in [
+        "incremental_schema11_attachment_before_commit",
+        "incremental_schema11_attachment_after_commit",
+        "incremental_schema11_attachment_after_fsync",
+    ] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("native.sqlite3");
+        let marker = directory.path().join("ready");
+        let mut child = std::process::Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "durable::incremental_owner_v1::epoch_candidate_v1::commit::tests::schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventory", "--nocapture"])
+            .env("TRNM_SCHEMA11_PRE_HANDOFF_SIGKILL_STORE", &path)
+            .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE", stage)
+            .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER", &marker).spawn().unwrap();
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(180);
+        while !marker.exists() && std::time::Instant::now() < deadline {
+            if child.try_wait().unwrap().is_some() {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        if !marker.exists() {
+            let _ = child.kill();
+            let _ = child.wait();
+            panic!("attachment child did not reach {stage}");
+        }
+        child.kill().unwrap();
+        assert!(!child.wait().unwrap().success());
+        let inputs: Vec<Vec<u8>> =
+            serde_json::from_slice(&std::fs::read(path.with_extension("prehand-input")).unwrap())
+                .unwrap();
+        let kernel = std::fs::read(path.with_extension("attachment-kernel")).unwrap();
+        let source = path.with_extension("attachment-source");
+        assert_eq!(
+            migration_original_inventory(&path),
+            migration_original_inventory(&source)
+        );
+        let app =
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+        let h = header(&inputs[8]).unwrap();
+        let c = Connection::open(&path).unwrap();
+        let count: u64 = c
+            .query_row(
+                "SELECT count(*) FROM native_incremental_epoch_edge_v2",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert_eq!(
+            count,
+            if stage.ends_with("before_commit") {
+                1
+            } else {
+                2
+            }
+        );
+        let head = load_metadata_v0(&c, &app.config).unwrap();
+        assert_eq!(head.head.height().get(), 18);
+        drop(c);
+        let receipt = app
+            .confirm_incremental_epoch_pre_handoff_v2(
+                *h.id().as_bytes(),
+                inputs[9].as_slice().try_into().unwrap(),
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        let edge = app
+            .attach_incremental_epoch_handoff_v2(
+                &receipt,
+                &kernel,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(edge.application_parent(), receipt.head());
+        assert_eq!(
+            migration_original_inventory(&path),
+            migration_original_inventory(&source)
+        );
+        for table in [
+            "native_incremental_epoch_p_context_v2",
+            "native_incremental_epoch_pre_handoff_v2",
+            "native_incremental_epoch_first_commit_v2",
+            "native_incremental_epoch_ordinary_commit_v2",
+        ] {
+            let values = |at: &Path| {
+                let c = Connection::open(at).unwrap();
+                let mut q = c
+                    .prepare(&format!("SELECT * FROM {table} ORDER BY 1"))
+                    .unwrap();
+                let count = q.column_count();
+                let values = q
+                    .query_map([], |r| {
+                        (0..count)
+                            .map(|i| r.get::<_, rusqlite::types::Value>(i))
+                            .collect::<rusqlite::Result<Vec<_>>>()
+                    })
+                    .unwrap()
+                    .collect::<rusqlite::Result<Vec<_>>>()
+                    .unwrap();
+                values
+            };
+            assert_eq!(values(&path), values(&source), "attachment changed {table}");
+        }
+        let exact = std::fs::read(&path).unwrap();
+        let retry = app
+            .attach_incremental_epoch_handoff_v2(
+                &receipt,
+                &kernel,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(retry.binding(), edge.binding());
+        assert_eq!(std::fs::read(&path).unwrap(), exact);
+        let binding = edge.binding();
+        drop(app);
+        let cold =
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+        let _ = cold
+            .confirm_incremental_epoch_edge_v2(
+                binding,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(std::fs::read(&path).unwrap(), exact);
     }
 }

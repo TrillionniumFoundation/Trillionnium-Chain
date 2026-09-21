@@ -5,6 +5,9 @@ use trnm_consensus_types::{
     decode_consensus_parameters_v0_exact, decode_handoff_descriptor_v0_exact,
     decode_next_epoch_commitment_v0_exact, decode_validator_set_v0_exact,
 };
+#[path = "incremental_epoch_attachment_v2.rs"]
+pub(in crate::durable) mod attachment;
+pub use attachment::{InstalledIncrementalEpochEdgeV2, PreparedIncrementalFirstV2};
 
 pub struct IncrementalPreHandoffPreimagesV2<'a> {
     pub checkpoint_finality: &'a [u8],
@@ -153,35 +156,7 @@ fn verify(
             && sequence > p.sequence,
         "schema11 checkpoint exact committed context"
     );
-    let mut ancestry = Vec::new();
-    let mut cursor = parent;
-    loop {
-        ensure!(
-            ancestry.len() < MAX_PREPARED && cursor.status == 1,
-            "schema11 pre-handoff committed ancestry bound"
-        );
-        ancestry.push(header(&cursor.header)?);
-        if cursor.parent == first.target()? {
-            ensure!(
-                cursor.parent_p == Some(first.digest),
-                "schema11 first ancestry digest"
-            );
-            break;
-        }
-        let previous = ordinary
-            .get(cursor.parent.block_id().as_bytes())
-            .context("schema11 pre-handoff ancestry missing")?;
-        ensure!(
-            previous.target()? == cursor.parent
-                && cursor.parent_p == Some(previous.digest)
-                && previous.commit_sequence < cursor.commit_sequence,
-            "schema11 pre-handoff ancestry splice"
-        );
-        cursor = previous;
-    }
-    ancestry.push(header(&first.header)?);
-    ancestry.push(active.terminal_old_header().clone());
-    ancestry.reverse();
+    let ancestry = retained_ancestry(first, ordinary, runtime, parent)?;
     let strict = trnm_consensus_crypto::decode_verify_successor_pre_handoff_context_strict_v1(
         active,
         &ancestry,
@@ -293,6 +268,43 @@ fn verify(
         context,
         strict_binding,
     })
+}
+fn retained_ancestry(
+    first: &EpochP,
+    ordinary: &BTreeMap<[u8; 32], P>,
+    runtime: &trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    parent: &P,
+) -> Result<Vec<BlockHeader>> {
+    let mut ancestry = Vec::new();
+    let mut cursor = parent;
+    loop {
+        ensure!(
+            ancestry.len() < MAX_PREPARED && cursor.status == 1,
+            "schema11 pre-handoff committed ancestry bound"
+        );
+        ancestry.push(header(&cursor.header)?);
+        if cursor.parent == first.target()? {
+            ensure!(
+                cursor.parent_p == Some(first.digest),
+                "schema11 first ancestry digest"
+            );
+            break;
+        }
+        let previous = ordinary
+            .get(cursor.parent.block_id().as_bytes())
+            .context("schema11 pre-handoff ancestry missing")?;
+        ensure!(
+            previous.target()? == cursor.parent
+                && cursor.parent_p == Some(previous.digest)
+                && previous.commit_sequence < cursor.commit_sequence,
+            "schema11 pre-handoff ancestry splice"
+        );
+        cursor = previous;
+    }
+    ancestry.push(header(&first.header)?);
+    ancestry.push(runtime.activation().terminal_old_header().clone());
+    ancestry.reverse();
+    Ok(ancestry)
 }
 #[allow(clippy::too_many_arguments)]
 pub(in crate::durable) fn audit(
@@ -602,7 +614,7 @@ impl DurableNativeApplicationV0 {
             &head,
             generation,
         )?;
-        descendant::retire_forks(&tx, &self.config, p.block)?;
+        retire_forks_v2(&tx, &self.config, p.block)?;
         tx.execute("DELETE FROM native_incremental_epoch_p_context_v2 WHERE block NOT IN(SELECT block FROM native_incremental_p_v1 UNION ALL SELECT block FROM native_incremental_epoch_p_v1)",[])?;
         screen_inventory(&tx, SCHEMA_VERSION)?;
         screen(&tx)?;

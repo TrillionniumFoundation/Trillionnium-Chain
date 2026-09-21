@@ -743,7 +743,8 @@ pub use durable::{
     CommittedIncrementalEpochPreHandoffV2, CommittedNativeIncrementalEpochExecutionV1,
     CommittedNativeIncrementalEpochV2, ComputedIncrementalEpochSelectionV1,
     ComputedIncrementalEpochSelectionV2, IncrementalEpochParentV1,
-    IncrementalPreHandoffPreimagesV2, PreparedIncrementalCheckpointV2,
+    IncrementalPreHandoffPreimagesV2, InstalledIncrementalEpochEdgeV2,
+    PreparedIncrementalCheckpointV2, PreparedIncrementalFirstV2,
     PreparedNativeIncrementalEpochDescendantV1, PreparedNativeIncrementalEpochExecutionV1,
     PreparedNativeIncrementalEpochV2,
 };

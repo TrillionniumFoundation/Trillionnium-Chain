@@ -5,7 +5,10 @@ pub(super) mod checkpoint;
 pub use checkpoint::{ComputedIncrementalEpochSelectionV2, PreparedIncrementalCheckpointV2};
 #[path = "incremental_epoch_pre_handoff_v2.rs"]
 pub(super) mod pre_handoff;
-pub use pre_handoff::{CommittedIncrementalEpochPreHandoffV2, IncrementalPreHandoffPreimagesV2};
+pub use pre_handoff::{
+    CommittedIncrementalEpochPreHandoffV2, IncrementalPreHandoffPreimagesV2,
+    InstalledIncrementalEpochEdgeV2, PreparedIncrementalFirstV2,
+};
 
 #[must_use]
 pub struct PreparedNativeIncrementalEpochV2 {
@@ -92,7 +95,7 @@ fn audited_current_with_budget(
 // Check the measured prospective readback cost before crossing a durability
 // boundary. This copy grants no authority and performs no crypto; the actual
 // fresh audit must still charge the original caller meter for every check.
-fn require_readback_budget(
+pub(super) fn require_readback_budget(
     budget: &trnm_consensus_types::Cev0AdmissionBudgetV0,
     work: usize,
 ) -> Result<()> {
@@ -100,6 +103,32 @@ fn require_readback_budget(
     prospective
         .charge_signature_work(work)
         .map_err(|e| anyhow::anyhow!("schema11 prospective readback budget: {e:?}"))
+}
+fn retire_forks_v2(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    winner: [u8; 32],
+) -> Result<()> {
+    ensure!(
+        epoch_durable::schema_version(tx)? == SCHEMA_VERSION,
+        "schema11 fork owner version"
+    );
+    let mut query = tx.prepare(
+        "SELECT block FROM native_incremental_epoch_first_commit_v2 ORDER BY block LIMIT 33",
+    )?;
+    let mut rows = query.query([])?;
+    let mut protected = BTreeSet::new();
+    while let Some(row) = rows.next()? {
+        ensure!(
+            protected.len() < 32 && protected.insert(fixed(row_blob(row, 0, 32, 32)?)?),
+            "schema11 protected first inventory bound"
+        );
+    }
+    ensure!(
+        !protected.is_empty(),
+        "schema11 original first record absent"
+    );
+    descendant::retire_forks_with_protected_first(tx, config, winner, &protected)
 }
 fn require_prepared(
     app: &DurableNativeApplicationV0,
@@ -109,7 +138,11 @@ fn require_prepared(
     ensure!(
         Arc::ptr_eq(&app.owner_affinity, &prepared.owner)
             && prepared.pin == current.pin
-            && prepared.edge == current.current.edge.binding,
+            && prepared.edge
+                == current
+                    .current
+                    .context_for(&header(&prepared.p.header)?)?
+                    .binding,
         "schema11 prepared owner/prefix"
     );
     let actual = current
@@ -148,6 +181,24 @@ fn resolve(current: &Current, m: &MetadataV0, p: &P) -> Result<ResolvedParent> {
             );
             break;
         }
+        if let Some(first) = current.epochs.get(cursor.parent.block_id().as_bytes()) {
+            ensure!(
+                first.parent == m.head
+                    && first.replay_parent == current.base.replay
+                    && cursor.parent == first.target()?
+                    && cursor.parent_p == Some(first.digest),
+                "schema11 pending first exact application anchor"
+            );
+            bytes = bytes
+                .checked_add(first.replay_delta.len())
+                .context("schema11 pending first replay overflow")?;
+            ensure!(
+                replay.len() < 8 && bytes <= 64 * 1024 * 1024,
+                "schema11 pending first suffix bound"
+            );
+            replay.push(ReplayDelta::decode(&first.replay_delta)?);
+            break;
+        }
         cursor = current
             .ordinary
             .get(cursor.parent.block_id().as_bytes())
@@ -163,6 +214,67 @@ fn resolve(current: &Current, m: &MetadataV0, p: &P) -> Result<ResolvedParent> {
         digest: Some(p.digest),
     })
 }
+enum ExecutionParent<'a> {
+    Ordinary(&'a PreparedNativeIncrementalEpochV2),
+    First(&'a PreparedIncrementalFirstV2),
+}
+struct ExecutionParentContext<'a> {
+    head: ApplicationHeadV0,
+    digest: [u8; 32],
+    checkpoint_height: u64,
+    resolved: ResolvedParent,
+    runtime: &'a trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+}
+fn execution_parent<'a>(
+    app: &DurableNativeApplicationV0,
+    current: &'a Projection,
+    m: &MetadataV0,
+    parent: ExecutionParent<'_>,
+) -> Result<ExecutionParentContext<'a>> {
+    match parent {
+        ExecutionParent::Ordinary(prepared) => {
+            require_prepared(app, prepared, current)?;
+            let p = current
+                .current
+                .ordinary
+                .get(&prepared.p.block)
+                .context("schema11 ordinary parent absent")?;
+            let runtime = current.current.context_for(&header(&p.header)?)?.runtime;
+            Ok(ExecutionParentContext {
+                head: p.target()?,
+                digest: p.digest,
+                checkpoint_height: runtime
+                    .activation()
+                    .old_checkpoint_finality()
+                    .finalized_block()
+                    .header()
+                    .height()
+                    .get(),
+                resolved: resolve(&current.current, m, p)?,
+                runtime,
+            })
+        }
+        ExecutionParent::First(prepared) => {
+            let p = prepared.require(app, current)?;
+            let runtime = current.current.context_for(&header(&p.header)?)?.runtime;
+            ensure!(
+                p.parent == m.head && p.replay_parent == current.current.base.replay,
+                "schema11 first-parent current checkpoint"
+            );
+            Ok(ExecutionParentContext {
+                head: p.target()?,
+                digest: p.digest,
+                checkpoint_height: p.parent.height().get(),
+                resolved: ResolvedParent {
+                    state: ni::IncrementalParentV1::Prepared(p.storage_artifact),
+                    replay: vec![ReplayDelta::decode(&p.replay_delta)?],
+                    digest: Some(p.digest),
+                },
+                runtime,
+            })
+        }
+    }
+}
 fn context_row(
     config: &NativeApplicationConfigV0,
     current: &Current,
@@ -174,7 +286,7 @@ fn context_row(
             blob(p.block),
             blob(p.digest),
             Value::Integer(0),
-            blob(prefix(&[current.edge.binding])?),
+            blob(prefix(&current.context_for(&header(&p.header)?)?.prefix)?),
             Value::Null,
             Value::Null,
             Value::Null,
@@ -190,6 +302,7 @@ fn update_owner(
     head: &ApplicationHeadV0,
     generation: u64,
 ) -> Result<()> {
+    let owner_prefix = current.owner_prefix();
     let row = ProjectedRow::new(
         0,
         vec![
@@ -198,8 +311,8 @@ fn update_owner(
             blob(current.base.anchor),
             number_value(current.migration_sequence),
             blob(pin),
-            blob(current.edge.binding),
-            blob(prefix(&[current.edge.binding])?),
+            blob(*owner_prefix.last().context("schema11 empty owner prefix")?),
+            blob(prefix(&owner_prefix)?),
             number_value(generation),
         ],
     )
@@ -210,7 +323,7 @@ fn update_owner(
         &[],
         &[&current.base.checksum, &head_bytes(head)],
     )?;
-    ensure!(tx.execute("UPDATE native_incremental_epoch_owner_v2 SET generation=?1,checksum=?2 WHERE id=1 AND migration_digest=?3 AND generation=?4", rusqlite::params_from_iter([&row.values[7],&row.values[8],&blob(pin),&number_value(current.generation)]))? == 1,"schema11 generation CAS");
+    ensure!(tx.execute("UPDATE native_incremental_epoch_owner_v2 SET generation=?1,checksum=?2,tip_binding=?5,prefix=?6 WHERE id=1 AND migration_digest=?3 AND generation=?4", rusqlite::params_from_iter([&row.values[7],&row.values[8],&blob(pin),&number_value(current.generation),&row.values[5],&row.values[6]]))? == 1,"schema11 generation CAS");
     Ok(())
 }
 impl DurableNativeApplicationV0 {
@@ -243,16 +356,34 @@ impl DurableNativeApplicationV0 {
             let _ = resolve(&current.current, &m, &p)?;
         }
         self.confirm_namespace_identity_v1()?;
+        let edge = current.current.context_for(&header(&p.header)?)?.binding;
         Ok(PreparedNativeIncrementalEpochV2 {
             owner: Arc::clone(&self.owner_affinity),
             p,
             pin: current.pin,
-            edge: current.current.edge.binding,
+            edge,
         })
     }
     pub fn preview_incremental_epoch_descendant_v2(
         &self,
         parent: &PreparedNativeIncrementalEpochV2,
+        request: &NativeBlockPreviewRequestV0,
+    ) -> Result<NativeBlockPreviewV0> {
+        self.preview_incremental_descendant_from_parent_v2(
+            ExecutionParent::Ordinary(parent),
+            request,
+        )
+    }
+    pub fn preview_incremental_first_descendant_v2(
+        &self,
+        parent: &PreparedIncrementalFirstV2,
+        request: &NativeBlockPreviewRequestV0,
+    ) -> Result<NativeBlockPreviewV0> {
+        self.preview_incremental_descendant_from_parent_v2(ExecutionParent::First(parent), request)
+    }
+    fn preview_incremental_descendant_from_parent_v2(
+        &self,
+        parent: ExecutionParent<'_>,
         request: &NativeBlockPreviewRequestV0,
     ) -> Result<NativeBlockPreviewV0> {
         let _guard = self.lock_operation()?;
@@ -261,34 +392,15 @@ impl DurableNativeApplicationV0 {
         let tx = c.unchecked_transaction()?;
         let m = load_metadata_v0(&tx, &self.config)?;
         let current = audited_current(self, &tx, &m)?;
-        require_prepared(self, parent, &current)?;
-        let p = current
-            .current
-            .ordinary
-            .get(&parent.p.block)
-            .context("schema11 preview parent")?;
+        let actual = execution_parent(self, &current, &m, parent)?;
         ensure!(
-            request.parent() == &p.target()?,
+            request.parent() == &actual.head,
             "schema11 preview actual parent"
         );
-        let resolved = resolve(&current.current, &m, p)?;
-        let mut view = execution_view(&tx, &self.config, &current.current.base, &resolved)?;
-        view.parameters = *current
-            .current
-            .runtime
-            .activation()
-            .new_consensus_parameters();
-        let result = preview_complete_native_block_v0(
-            &view,
-            current.current.runtime.activation().new_validator_set(),
-            current
-                .current
-                .runtime
-                .activation()
-                .new_validator_set()
-                .genesis_hash(),
-            request,
-        )?;
+        let mut view = execution_view(&tx, &self.config, &current.current.base, &actual.resolved)?;
+        let set = actual.runtime.activation().new_validator_set();
+        view.parameters = *actual.runtime.activation().new_consensus_parameters();
+        let result = preview_complete_native_block_v0(&view, set, set.genesis_hash(), request)?;
         self.confirm_namespace_identity_v1()?;
         Ok(result)
     }
@@ -298,20 +410,41 @@ impl DurableNativeApplicationV0 {
         request: NativeBlockExecutionRequestV0,
         h: &BlockHeader,
     ) -> Result<PreparedNativeIncrementalEpochV2> {
+        self.execute_incremental_descendant_from_parent_v2(
+            ExecutionParent::Ordinary(parent),
+            request,
+            h,
+        )
+    }
+    pub fn execute_incremental_first_descendant_v2(
+        &self,
+        parent: &PreparedIncrementalFirstV2,
+        request: NativeBlockExecutionRequestV0,
+        h: &BlockHeader,
+    ) -> Result<PreparedNativeIncrementalEpochV2> {
+        self.execute_incremental_descendant_from_parent_v2(
+            ExecutionParent::First(parent),
+            request,
+            h,
+        )
+    }
+    fn execute_incremental_descendant_from_parent_v2(
+        &self,
+        parent: ExecutionParent<'_>,
+        request: NativeBlockExecutionRequestV0,
+        h: &BlockHeader,
+    ) -> Result<PreparedNativeIncrementalEpochV2> {
+        let mut budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
         let guard = self.lock_operation()?;
         let mut c = open_writable_connection_v0(&self.path)?;
         verify_schema_v0(&c)?;
         let tx = c.transaction_with_behavior(TransactionBehavior::Immediate)?;
         let m = load_metadata_v0(&tx, &self.config)?;
-        let current = audited_current(self, &tx, &m)?;
-        require_prepared(self, parent, &current)?;
-        let actual = current
-            .current
-            .ordinary
-            .get(&parent.p.block)
-            .context("schema11 execution parent")?;
+        let current = audited_current_with_budget(self, &tx, &m, &mut budget)?;
+        let owner_work = budget.signature_work();
+        let actual = execution_parent(self, &current, &m, parent)?;
         ensure!(
-            request.parent() == &actual.target()?,
+            request.parent() == &actual.head,
             "schema11 execution actual parent"
         );
         if let Some(p) = load_p(&tx, *request.block_id().as_bytes())? {
@@ -321,20 +454,20 @@ impl DurableNativeApplicationV0 {
                     && p.parent_p == Some(actual.digest),
                 "schema11 execution exact retry"
             );
+            require_readback_budget(&budget, owner_work)?;
             drop(tx);
             drop(c);
             sync_store_commit_boundary_v0(&self.path)?;
             drop(guard);
-            return self.reopen_prepared_incremental_epoch_v2(p.block, p.digest);
+            return self.reopen_prepared_incremental_epoch_with_budget_v2(
+                p.block,
+                p.digest,
+                &mut budget,
+            );
         }
-        let resolved = resolve(&current.current, &m, actual)?;
-        let mut view = execution_view(&tx, &self.config, &current.current.base, &resolved)?;
-        let set = current.current.runtime.activation().new_validator_set();
-        let parameters = current
-            .current
-            .runtime
-            .activation()
-            .new_consensus_parameters();
+        let mut view = execution_view(&tx, &self.config, &current.current.base, &actual.resolved)?;
+        let set = actual.runtime.activation().new_validator_set();
+        let parameters = actual.runtime.activation().new_consensus_parameters();
         view.parameters = *parameters;
         let complete = execute_complete_native_block_v0(&view, set, set.genesis_hash(), &request)?;
         let (executed, plan, identities, lifecycle) = complete.into_parts();
@@ -362,10 +495,11 @@ impl DurableNativeApplicationV0 {
             &replay.encode()?,
             &serde_json::to_vec(&lifecycle)?,
         )?;
+        require_readback_budget(&budget, owner_work)?;
         let delta = ni::stage_incremental_plan_v1(
             &tx,
             &namespace(&self.config),
-            resolved.state,
+            actual.resolved.state,
             *request.block_id().as_bytes(),
             &plan,
         )?;
@@ -376,7 +510,7 @@ impl DurableNativeApplicationV0 {
                 .checked_add(1)
                 .context("schema11 persist sequence exhausted")?,
             status: 0,
-            parent: actual.target()?,
+            parent: actual.head.clone(),
             parent_p: Some(actual.digest),
             artifact: encode_native_executed_block_artifact_v0(&executed)?,
             header: h
@@ -391,13 +525,7 @@ impl DurableNativeApplicationV0 {
             commit_sequence: None,
         };
         p.digest = p.calculate_digest(&self.config);
-        descendant::validate_p(
-            &p,
-            &self.config,
-            set,
-            parameters,
-            current.current.base.source.height().get(),
-        )?;
+        descendant::validate_p(&p, &self.config, set, parameters, actual.checkpoint_height)?;
         tx.execute(
             "INSERT INTO native_incremental_p_v1 VALUES(?,?,0,?,?,?,?,?,?,?,?,?,?,?,NULL)",
             params![
@@ -424,7 +552,7 @@ impl DurableNativeApplicationV0 {
         drop(c);
         sync_store_commit_boundary_v0(&self.path)?;
         drop(guard);
-        self.reopen_prepared_incremental_epoch_v2(p.block, p.digest)
+        self.reopen_prepared_incremental_epoch_with_budget_v2(p.block, p.digest, &mut budget)
     }
     pub fn commit_incremental_epoch_descendant_finality_bytes_v2(
         &self,
@@ -562,7 +690,7 @@ impl DurableNativeApplicationV0 {
             &head,
             generation,
         )?;
-        descendant::retire_forks(&tx, &self.config, p.block)?;
+        retire_forks_v2(&tx, &self.config, p.block)?;
         tx.execute("DELETE FROM native_incremental_epoch_p_context_v2 WHERE block NOT IN(SELECT block FROM native_incremental_p_v1 UNION ALL SELECT block FROM native_incremental_epoch_p_v1)",[])?;
         screen_inventory(&tx, SCHEMA_VERSION)?;
         self.confirm_namespace_identity_v1()?;
