@@ -2028,3 +2028,5 @@ fn confirm_native_application_cut_v3(
 include!("epoch_checkpoint_preparation_v4.inc");
 
 include!("epoch_pre_handoff_v5.inc");
+
+include!("epoch_retirement_v6.inc");

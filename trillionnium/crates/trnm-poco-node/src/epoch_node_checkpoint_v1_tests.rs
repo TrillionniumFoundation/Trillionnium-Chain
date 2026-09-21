@@ -137,7 +137,7 @@ fn closed_tags_and_bounded_identities_reject() {
     let bytes = initial().encode_canonical();
     for at in [10, 11, 12] {
         let mut bad = bytes.clone();
-        bad[at] = 3;
+        bad[at] = if at == 10 { 4 } else { 3 };
         assert_eq!(
             EpochNodeCheckpointV1::decode_canonical_exact(&bad),
             Err(EpochNodeCheckpointErrorV1::Tag)
@@ -379,4 +379,127 @@ fn retired_to_next_activation_copies_current_retirement_and_removed_fences() {
         .unwrap()
         .validate_successor_of(&removed)
         .is_err());
+}
+
+// Inert codec data only. The real V6 producer test separately proves authority.
+fn native13_retirement_codec_fixture_v6() -> (EpochNodeCheckpointV1, EpochNodeCheckpointV1) {
+    let initial = initial();
+    let mut f = ordinary(&initial);
+    f.application.height = 18;
+    f.application.epoch = 1;
+    f.application.block_id = [50; 32];
+    f.application.commit_sequence += 1;
+    f.application.p_sequence += 1;
+    f.ordinary.as_mut().unwrap().sequence = 2;
+    f.ordinary.as_mut().unwrap().chain_checksum = [51; 32];
+    let source = EpochNodeCheckpointV1::new(f).unwrap();
+    source.validate_successor_of(&initial).unwrap();
+    let mut r = ordinary(&source);
+    r.phase = EpochCheckpointPhaseV1::EpochRetiredNative13;
+    r.source_safety = Some(f.target_safety);
+    r.phase_authority_binding = [54; 32];
+    r.edge.checkpoint_height = 18;
+    r.edge.checkpoint_block_id = [50; 32];
+    r.edge.terminal_old_height = 20;
+    r.edge.terminal_old_block_id = [55; 32];
+    r.edge.terminal_old_view = 12;
+    r.edge.terminal_old_qc_id = [56; 32];
+    r.edge.native_authorization_id = [57; 32];
+    let o = r.ordinary.take().unwrap();
+    let retired = r.retired.as_mut().unwrap();
+    retired.epoch = 1;
+    retired.validator_set_id = r.validator_set_id;
+    retired.parameters_hash = r.parameters_hash;
+    retired.scope = o.scope;
+    retired.journal_id = o.journal_id;
+    retired.profile_checksum = o.profile_checksum;
+    retired.source_sequence = o.sequence;
+    retired.source_chain_checksum = o.chain_checksum;
+    retired.terminal_sequence = o.sequence + 1;
+    retired.terminal_chain_checksum = [58; 32];
+    retired.retirement_record_checksum = [59; 32];
+    (source, EpochNodeCheckpointV1::new(r).unwrap())
+}
+
+#[test]
+fn native13_retirement_tag3_is_distinct_and_legacy_tag2_remains_compatible() {
+    let (source, retired) = native13_retirement_codec_fixture_v6();
+    retired.validate_successor_of(&source).unwrap();
+    let bytes = retired.encode_canonical();
+    assert_eq!(bytes[10], 3);
+    assert_eq!(
+        EpochNodeCheckpointV1::decode_canonical_exact(&bytes),
+        Ok(retired)
+    );
+    let mut legacy = *retired.fields();
+    legacy.phase = EpochCheckpointPhaseV1::EpochRetired;
+    let legacy = EpochNodeCheckpointV1::new(legacy).unwrap();
+    legacy.validate_successor_of(&source).unwrap();
+    let original_bytes = legacy.encode_canonical();
+    assert_eq!(original_bytes[10], 2);
+    assert_eq!(original_bytes.len(), bytes.len());
+    assert_eq!(
+        EpochNodeCheckpointV1::decode_canonical_exact(&original_bytes),
+        Ok(legacy)
+    );
+    assert_ne!(retired.checksum(), legacy.checksum());
+    for unknown in [4, 127, 255] {
+        let mut bad = bytes.clone();
+        bad[10] = unknown;
+        let prefix = bad.len() - 32;
+        let checksum = hash(CHECKSUM_DOMAIN, &bad[..prefix]);
+        bad[prefix..].copy_from_slice(&checksum);
+        assert_eq!(
+            EpochNodeCheckpointV1::decode_canonical_exact(&bad),
+            Err(EpochNodeCheckpointErrorV1::Tag)
+        );
+    }
+}
+
+#[test]
+fn native13_retirement_tag3_rejects_changed_sources_and_all_outgoing_transitions() {
+    let (source, retired) = native13_retirement_codec_fixture_v6();
+    let mutations: [fn(&mut EpochNodeCheckpointFieldsV1); 7] = [
+        |f| f.target_safety.revision += 1,
+        |f| f.target_safety.record_checksum[0] ^= 1,
+        |f| f.application.p_digest[0] ^= 1,
+        |f| f.source_safety.as_mut().unwrap().chain_checksum[0] ^= 1,
+        |f| {
+            let r = f.retired.as_mut().unwrap();
+            r.source_sequence += 1;
+            r.terminal_sequence += 1;
+        },
+        |f| f.retired.as_mut().unwrap().source_chain_checksum[0] ^= 1,
+        |f| f.retired.as_mut().unwrap().scope[0] ^= 1,
+    ];
+    for mutation in mutations {
+        let mut fields = *retired.fields();
+        mutation(&mut fields);
+        assert!(EpochNodeCheckpointV1::new(fields)
+            .unwrap()
+            .validate_successor_of(&source)
+            .is_err());
+    }
+    let mut activation = *source.fields();
+    activation.phase = EpochCheckpointPhaseV1::ActivationCommitted;
+    activation.application.height = activation.edge.checkpoint_height;
+    activation.application.block_id = activation.edge.checkpoint_block_id;
+    activation.application.epoch = activation.epoch - 1;
+    activation.ordinary.as_mut().unwrap().sequence = 0;
+    let activation = EpochNodeCheckpointV1::new(activation).unwrap();
+    let mut target = *retired.fields();
+    target.predecessor_checksum = activation.checksum();
+    assert!(EpochNodeCheckpointV1::new(target)
+        .unwrap()
+        .validate_successor_of(&activation)
+        .is_err());
+    for template in [*retired.fields(), *source.fields(), *activation.fields()] {
+        let mut next = template;
+        next.generation = retired.fields().generation + 1;
+        next.predecessor_checksum = retired.checksum();
+        assert!(EpochNodeCheckpointV1::new(next)
+            .unwrap()
+            .validate_successor_of(&retired)
+            .is_err());
+    }
 }

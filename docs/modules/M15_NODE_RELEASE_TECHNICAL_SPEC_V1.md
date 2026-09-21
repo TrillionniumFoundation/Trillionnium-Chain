@@ -804,7 +804,8 @@ The immutable origin checksum uses the identical H layout with domain
 including that record's own integrity field. These definitions do not depend
 on a same-named helper in another crate or on a multi-part hash convention.
 
-Closed phase tags are 0 ActivationCommitted, 1 Ordinary, 2 EpochRetired. The name
+Closed phase tags are 0 ActivationCommitted, 1 Ordinary, 2 EpochRetired, and
+3 EpochRetiredNative13 under M15-EPOCH-RETIREMENT-V6 below. The name
 ActivationCommitted means the composite physical cut was committed; decoded
 bytes do not prove that a process received a lease. Role tags are 0 Continuing,
 1 VirginNew, 2 Removed. Predecessor kinds are 0 exact terminal V0 record,
@@ -844,7 +845,7 @@ The other groups also have closed phase semantics. ActivationCommitted and
 Ordinary retain the incoming full joint `phase_authority_binding`, incoming
 C/C+2 edge and native handoff `native_authorization_id`; only target Safety,
 current real application and active ordinary watermark advance in Ordinary.
-EpochRetired replaces those three incoming bindings with the outgoing strict
+Legacy tag2 EpochRetired replaces those three incoming bindings with the outgoing strict
 pre-handoff context binding, outgoing C/C+2 edge, and freshly confirmed native
 checkpoint `post_execution_authorization_id`, respectively. Target Safety is
 the actual terminal local e cut, and current application is exactly outgoing C.
@@ -1399,6 +1400,57 @@ Checkpoint candidate selection and checkpoint/seal signing require their own
 explicit joins; this slice does not execute seals, retire the active signer,
 create journal10, activate another epoch, or recover a progressed V3 owner.
 
+### Outgoing native13 retirement (M15-EPOCH-RETIREMENT-V6)
+
+This candidate-only operation consumes the actual V5 owner after checkpoint C,
+S1 and S2 have completed native13 commit, Core application, journal9 persistence,
+independent node CAS and ACK. It retires the current ordinary signer N. The
+incoming retired signer W remains separately authenticated custody history and
+cannot stand in for N. No role key, joint certificate, activation, Core timer or
+progressed recovery capability is released by this operation.
+
+Before retiring, freshly join the exact settled private Core state and journal9
+head, immutable incoming edge/custody, original C/S1/S2 finality, actual committed
+C P/artifact/overlay/Core Valid, deterministic retained cutoff selection, native13
+receipt and independent node checkpoint. The current signer must match the
+independently recorded ordinary scope/journal/profile/watermark with no pending
+intent. The canonical old-role intent is derived from the receipt's strict
+pre-handoff descriptor and configurations. The existing owner-consuming signer
+retirement producer persists and syncs its local terminal record, advances the
+independent external terminal fence, then freshly confirms both. Its host cut
+binds journal9 owner generation/revision/checksum and the original native13
+`committed_owner_cut_ref_v1`; this never means the legacy authorization ID.
+
+At committed C, selection revalidation uses native13 receipt recovery's existing
+strict historical cutoff derivation, not the future-checkpoint planning API.
+Freshly compare the retained cutoff P/head/digest/persist and commit sequences
+to the original selection; the recovered receipt must match its complete
+commitment digest, new set and parameters. The native recovery independently
+recomputes those choices under the authenticated old context. The planner's
+requirement that the checkpoint be ahead of the committed head stays unchanged.
+
+TRNMNC01 adds only closed phase tag3 `EpochRetiredNative13`. Tags0..2 retain
+identical bytes and meanings. Tag3 retains the same field grammar/checksum domain,
+but `edge.native_authorization_id` means exactly the native13 owner-cut commitment
+and `phase_authority_binding` means its strict pre-handoff binding. The outgoing
+C/C+2 edge replaces the incoming edge; application and target Safety remain the
+exact settled source cut, source Safety equals that target, ordinary custody is
+absent, and retired custody names newly retired N. Role is Continuing iff the
+strict outgoing new set contains the author, otherwise Removed. Only actual
+Ordinary→tag3 with generation+1 and exact predecessor checksum is allowed;
+ActivationCommitted→tag3, tag2→tag3 and every tag3→activation/ordinary transition
+remain closed. Decoded bytes and scalar cut equality grant no authority.
+
+After actual retirement, rejoin the original native/Safety/cutoff/current signer
+source identity before the independent CAS. Confirm the exact target durably,
+repeat every source/custody join, then confirm the node target again. Any error
+consumes the live owner; there is no ordinary signer fallback or public Core
+escape. The retained result only supports fresh confirmation of this retired
+cut. Existing explicit signer-retirement recovery remains separate from future
+V6 whole-owner recovery. Tests must use one real V5 flow, verify the current N
+local/external terminal heads and ordinary reopen refusal, reject stale/foreign
+joins, and prove old tag2 compatibility plus unknown/illegal phase rejection.
+
 ### Checkpoint preparation from the real cutoff (M15-EPOCH-CHECKPOINT-V4)
 
 A distinct consuming V4 owner accepts only the completed V3 cutoff owner and
@@ -1486,7 +1538,8 @@ unattached; neither role signature nor a successor edge has been created.
 
 Each mutable phase consumes its private owner until complete success; uncertain
 writes or failed joins fence further progress. There is no public Core or signer
-escape, recovery rebind, retirement or activation API. Genuine acceptance runs
+escape, recovery rebind or activation API. Retirement is available only through
+the explicit consuming M15-EPOCH-RETIREMENT-V6 operation above. Genuine V5 acceptance runs
 C15→C18→S19→S20 on the default stack, checks exact queue targets and P/K/readback
 joins, retains original signed seals, rejects wrong/nonempty seal proposals and
 wrong phase/finality, and verifies the schema13 unattached receipt while custody

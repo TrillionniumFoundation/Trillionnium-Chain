@@ -1326,3 +1326,5 @@ fn assert_recovered_then_timeout_v1(
 }
 
 include!("epoch_first_finalization_v2_tests.inc");
+
+include!("epoch_retirement_v6_tests.inc");

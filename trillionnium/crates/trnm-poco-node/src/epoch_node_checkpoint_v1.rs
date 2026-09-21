@@ -56,6 +56,8 @@ pub enum EpochCheckpointPhaseV1 {
     ActivationCommitted = 0,
     Ordinary = 1,
     EpochRetired = 2,
+    /// Outgoing native13 receipt; deliberately no activation successor yet.
+    EpochRetiredNative13 = 3,
 }
 impl EpochCheckpointPhaseV1 {
     fn decode(r: &mut Reader<'_>) -> Result<Self> {
@@ -63,6 +65,7 @@ impl EpochCheckpointPhaseV1 {
             0 => Ok(Self::ActivationCommitted),
             1 => Ok(Self::Ordinary),
             2 => Ok(Self::EpochRetired),
+            3 => Ok(Self::EpochRetiredNative13),
             _ => Err(EpochNodeCheckpointErrorV1::Tag),
         }
     }
@@ -648,6 +651,24 @@ impl EpochNodeCheckpointV1 {
                     return fail();
                 }
             }
+            (EpochCheckpointPhaseV1::Ordinary, EpochCheckpointPhaseV1::EpochRetiredNative13) => {
+                let b = p.ordinary.ok_or(EpochNodeCheckpointErrorV1::Successor)?;
+                let retired = f.retired.ok_or(EpochNodeCheckpointErrorV1::Successor)?;
+                if f.epoch != p.epoch
+                    || f.validator_set_id != p.validator_set_id
+                    || f.parameters_hash != p.parameters_hash
+                    || f.source_safety != Some(p.target_safety)
+                    || f.target_safety != p.target_safety
+                    || f.application != p.application
+                    || retired.scope != b.scope
+                    || retired.journal_id != b.journal_id
+                    || retired.profile_checksum != b.profile_checksum
+                    || retired.source_sequence != b.sequence
+                    || retired.source_chain_checksum != b.chain_checksum
+                {
+                    return fail();
+                }
+            }
             (EpochCheckpointPhaseV1::EpochRetired, EpochCheckpointPhaseV1::ActivationCommitted) => {
                 let a = f.ordinary.ok_or(EpochNodeCheckpointErrorV1::Successor)?;
                 let retired = p.retired.ok_or(EpochNodeCheckpointErrorV1::Successor)?;
@@ -811,7 +832,7 @@ fn validate(f: &EpochNodeCheckpointFieldsV1) -> Result<()> {
                 return invalid("ordinary application includes virtual seals");
             }
         }
-        EpochCheckpointPhaseV1::EpochRetired => {
+        EpochCheckpointPhaseV1::EpochRetired | EpochCheckpointPhaseV1::EpochRetiredNative13 => {
             let retired = f.retired.ok_or(EpochNodeCheckpointErrorV1::Invalid(
                 "missing current retirement",
             ))?;
