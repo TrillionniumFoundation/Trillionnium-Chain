@@ -140,10 +140,12 @@ impl Request {
 /// socket profile treats the request bytes as the retry identity, so those
 /// alternate encodings must not reach the admission owner.
 fn decode_request_v1(bytes: &[u8]) -> Result<Request> {
-    let request: Request = serde_json::from_slice(bytes)
-        .context("decode native client request")?;
+    let request: Request = serde_json::from_slice(bytes).context("decode native client request")?;
     let canonical = canonical_request_bytes_v1(&request)?;
-    ensure!(canonical == bytes, "native client request is not canonical JSON");
+    ensure!(
+        canonical == bytes,
+        "native client request is not canonical JSON"
+    );
     Ok(request)
 }
 
@@ -174,9 +176,7 @@ fn canonical_request_bytes_v1(request: &Request) -> Result<Vec<u8>> {
             },
         }),
         Request::Capabilities {
-            schema,
-            request_id,
-            ..
+            schema, request_id, ..
         } => json!({
             "schema": schema,
             "request_id": request_id,
@@ -214,9 +214,7 @@ fn canonical_request_bytes_v1(request: &Request) -> Result<Vec<u8>> {
             "data": {"native_tx_hash": data.native_tx_hash},
         }),
         Request::Status {
-            schema,
-            request_id,
-            ..
+            schema, request_id, ..
         } => json!({
             "schema": schema,
             "request_id": request_id,
