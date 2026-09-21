@@ -6221,6 +6221,13 @@ impl BoundedConsensusOwnerV1 {
         match action {
             RoutedConsensusActionV0::Proposal(proposal) => {
                 self.queue_or_vote_proposal_v1(*proposal)?;
+                // A proposal ingress may carry the exact QC/TC references
+                // needed by a deferred timeout quorum.  The proposal gate
+                // can buffer or discard the body, so retry the collector
+                // independently of the authority outcome.  This only
+                // rechecks already authenticated references; it does not
+                // admit a new authority source.
+                self.queue_ready_timeout_certificates_v1()?;
                 Ok(true)
             }
             RoutedConsensusActionV0::Vote { vote, formed_qc } => {
@@ -6245,6 +6252,7 @@ impl BoundedConsensusOwnerV1 {
                             publish: true,
                         })?;
                         self.drain_pending_certificates_v1()?;
+                        self.queue_ready_timeout_certificates_v1()?;
                     }
                 }
                 let _ = vote;
@@ -6265,6 +6273,7 @@ impl BoundedConsensusOwnerV1 {
                     publish: false,
                 })?;
                 self.drain_pending_certificates_v1()?;
+                self.queue_ready_timeout_certificates_v1()?;
                 Ok(true)
             }
         }

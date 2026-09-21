@@ -120,11 +120,42 @@ binds the exact topology bytes. Reports derive actual validator-host counts and
 identify the reduced placement; they cannot report five validator hosts or all
 six participants for this profile.
 
-The reduced profile currently supports the existing nonempty workload only;
-combining it with the native-client profile must reject before plan output,
-output creation, staging or network effects until a versioned remote Unix
-request adapter is implemented, and cannot claim native-client or public
-transaction-path acceptance.
+The reduced profile additionally admits the explicit native-client candidate
+through the private transport below. This removes only the unsupported-placement
+refusal; independent full-fleet, public-network and performance gates are unchanged.
+
+### Candidate remote native request adapter (M15-NATIVE-REMOTE-REQUEST-V1)
+
+The controller prefers the existing actual local Linux validator when present;
+otherwise it deterministically selects the lowest validator ID among the actual
+Linux validator processes. Selection must match the validated process, host stage
+and per-host deployed `linux_paths` binary. The closed placement and existing
+same-source/deployed-binary checks remain prerequisites. Mac remains the sole
+application signer and independent inclusion-proof verifier. Linux receives only
+canonical request bytes (including already signed outer bytes), never application
+private keys. There is no TCP forwarding, tunnel, invented local validator or
+remote signing authority.
+
+Before output/staging/network effects, the runner checks selection and planned
+namespace geometry. Each request executes the already deployed `native-client
+request` binary on the selected host, against that validator's own private Unix
+socket. SSH uses the validated management alias, batch mode, bounded connection
+and absolute campaign deadline. Local placement uses the same adapter checks
+without SSH. Paths must be canonical and confined to the owned stage; on-host
+no-follow checks require owner-private directories, an owned regular executable,
+an owned mode-0600 socket, and fresh mode-0600 request/response files. One fresh
+request directory belongs only to this campaign; sequence reuse or preexisting
+files reject. No node, key or unrelated stage is modified.
+
+Requests retain the native CLI limit of 528384 bytes; responses retain
+8 MiB + 16 KiB. The adapter bounds stderr to 64 KiB, at most 4096 exchanges,
+64 MiB total request bytes and 256 MiB total response bytes. Request execution
+has at most 12 seconds and never extends the one absolute campaign deadline;
+SSH connection time is included. Only a specifically missing endpoint may retry
+during startup. All other process, path, protocol and transport failures retain
+the original diagnostic and abort; a consumed failure is not reported as success.
+Controlled subprocess/SSH tests prove the adapter and rejection boundaries only;
+a genuine same-source LAN native campaign remains a separate acceptance item.
 
 The consensus runner passes this already validated placement to the capacity
 gate. Canonical capacity reports retain their exact schema-1 bytes and require
@@ -965,6 +996,26 @@ own those rows; this seam therefore does not constitute complete source
 authentication for an arbitrary host manifest. A future epoch-specific sealed
 delivery-facts carrier must close that remaining boundary before production
 release.
+
+### Authenticated carrier wake-up (M15-TC-REFERENCE-WAKE-V1)
+
+When a Proposal frame has passed the authenticated wire decoder, its embedded
+QC and every QC referenced by its carried TC are independently verified
+carriers. M15 records those QC references atomically in the bounded collector
+before routing the Proposal body; the carried TC and Proposal body remain
+subject to the normal authority gate and are never frozen by this step. A
+buffered or stale Proposal therefore cannot suppress a later standalone
+certificate, while its verified QC evidence can wake pending TimeoutVotes.
+
+Every QC/TC/Proposal frame that adds a carrier must perform one bounded retry
+of pending timeout certificates after admission. Retry may only consume exact
+collector references already authenticated under the active validator set and
+parameters; it cannot promote a body, substitute a QC digest, bypass owner or
+parent checks, or refund verification work. Failed staged registration leaves
+the live collector unchanged, and malformed or conflicting carriers are
+rejected before any live mutation. The regression must cover an alternate
+same-coordinate QC digest, a pending TC whose exact QC arrives through a
+Proposal, malformed Proposal non-pollution, and successful TC formation.
 
 ### Runtime handoff and acceptance closure (M15-RUNTIME-CLOSURE-V1)
 

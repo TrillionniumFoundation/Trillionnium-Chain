@@ -2578,8 +2578,8 @@ def main() -> None:
     verify_coordinator_anchor(anchor_snapshot)
     record_lifecycle_event(lifecycle_events, "contract_loaded")
     native_application = native_campaign.application_selection(manifest, args.native_client_key_root, args.native_client_transfers)
-    if native_application and topology.get("placement_profile") == "desktop4-rog3-mac-v1":
-        base.fail("reduced placement does not support native-client campaigns: remote request adapter is not implemented")
+    if native_application:
+        native_campaign.request_process_v1(processes)
     if native_application:
         native_campaign.key_namespace(args.native_client_key_root, coordinator, deployments, (coordinator / "public/native-client-profile.json").read_bytes())
     candidate = manifest["candidate"]
@@ -2592,6 +2592,11 @@ def main() -> None:
     run_id = manifest["run_id"]
     planned_output = pathlib.Path(os.path.abspath(args.output))
     stage_plan = base.preflight_runtime_layout(processes, run_id, planned_output)
+    if native_application:
+        native_profile = native_campaign.strict_json((coordinator / "public/native-client-profile.json").read_bytes(), "native profile")
+        native_campaign.request_target_v1(processes, stage_plan,
+            {host: f"{stage.root}/bin/trnm-poco-lab-validator" for host, stage in stage_plan.items()},
+            native_profile["socket_basename"])
     plan = {
         "schema_version": 1,
         "profile": "frozen-v0-continuous-consensus-candidate",
@@ -2841,7 +2846,7 @@ def main() -> None:
         if native_application:
             native_campaign.run_campaign(
                 coordinator=coordinator, deployments=deployments, manifest=manifest,
-                processes=processes, stages=stages, linux_binary=linux_binary,
+                processes=processes, stages=stages, linux_paths=linux_paths,
                 mac_binary=mac_binary, observer_root=observer_root,
                 key_root=args.native_client_key_root, anchor=coordinator_anchor,
                 transfers=args.native_client_transfers, output=output,

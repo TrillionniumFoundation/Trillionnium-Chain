@@ -1473,7 +1473,7 @@ def test_runner_output_manifest_contract() -> None:
         )
 
 
-def test_reduced_native_client_rejects_before_effects() -> None:
+def test_native_client_bad_placement_rejects_before_effects() -> None:
     # Mock only the already-audited material/anchor reads. This is a runner
     # boundary test, not consensus or native-transaction evidence.
     with tempfile.TemporaryDirectory() as temporary:
@@ -1499,7 +1499,7 @@ def test_reduced_native_client_rejects_before_effects() -> None:
                 mock.patch.object(sys, "argv", arguments + mode),
                 mock.patch.object(fleet, "checked_coordinator_anchor", return_value=anchor),
                 mock.patch.object(fleet, "verify_coordinator_anchor"),
-                mock.patch.object(fleet.base, "load_contract", return_value=(native, topology, [process("p4-desktop"), process("p4-rog")])),
+                mock.patch.object(fleet.base, "load_contract", return_value=(native, topology, [process("p4-mac")])),
                 mock.patch.object(fleet.native_campaign, "key_namespace", side_effect=AssertionError("client key access before refusal")) as keys,
                 mock.patch.object(fleet.base, "require_binary", side_effect=AssertionError("binary access before refusal")) as binary,
                 mock.patch.object(fleet.base, "preflight_runtime_layout", side_effect=AssertionError("stage planning before refusal")) as layout,
@@ -1507,7 +1507,12 @@ def test_reduced_native_client_rejects_before_effects() -> None:
                 mock.patch.object(fleet.base, "create_stages", side_effect=AssertionError("stage creation before refusal")) as stages,
                 mock.patch.object(fleet.base, "run_checked", side_effect=AssertionError("command/network effect before refusal")) as command,
             ):
-                expect_failure(fleet.main, "reduced placement does not support native-client campaigns")
+                try:
+                    fleet.main()
+                except RuntimeError as error:
+                    assert "actual Linux placement" in str(error)
+                else:
+                    raise AssertionError("invalid native placement accepted before effects")
                 for trap in (keys, binary, layout, resources, stages, command):
                     trap.assert_not_called()
             assert not output.exists()
@@ -1566,12 +1571,12 @@ def main() -> None:
     test_independent_anchor_and_output_boundary()
     test_runner_lifecycle_contract()
     test_runner_output_manifest_contract()
-    test_reduced_native_client_rejects_before_effects()
+    test_native_client_bad_placement_rejects_before_effects()
     test_failure_diagnostics_are_best_effort_before_stage_cleanup()
     print(
         "poco_g3_consensus_fleet_test=passed positives=25 negatives=44 "
         "parallel_process_contract=true signed_journal_required=true "
-        "reduced_native_client_pre_effect_refusal=true "
+        "native_client_bad_placement_pre_effect_refusal=true "
         "fleet_start_certificate_required=true "
         "signed_report_required=true signed_metrics_required=true "
         "signed_final_state_required=true macos_independent_verifier_required=true "
