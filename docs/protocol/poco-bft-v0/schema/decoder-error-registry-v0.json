@@ -15,7 +15,7 @@
   },
   "source_sha256": {
     "rust_decoder": "ed598b96d0bcd8c4a611130f9531c28a9e0d874049e64012241f018ca6eb3e51",
-    "epoch_runtime_decoder_v1": "9de7fad04ef329acc10842d7aea8466ddaeb005ec61469eaa67f08feaf8392ea",
+    "epoch_runtime_decoder_v1": "c49fef9cb6ad69db5c1a7b9abbe7403a1a92d891da09d89a28817a84e61d6e78",
     "epoch_runtime_context_v1": "3d99daddd2070b6fad03c5406205e0e87d427322dc7e4c28a7a46aa1a5c1e1e0",
     "base_schema": "1130bac8c467baa5fded2105e316799ad01fe1e08625358b9d76c4a9837cd9f7",
     "anchor_schema": "7e561d9679b2e2dcebb7b456c743758f72978450a4856158bd552020208bb2af",
