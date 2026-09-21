@@ -491,7 +491,52 @@ commit, after commit/before sync and after sync/before readback. These checks
 establish persistence only. M15 must separately join actual committed native
 checkpoint state, role-specific retired/new custody and an independent external
 watermark before any initial ACK; journal10 must not inherit journal9's existing
-trusted-host recovery shortcut.
+trusted-host recovery shortcut or any V1 driver conversion.
+
+#### Exact initial trusted-host binding (M03-EPOCH-INITIAL-HOST-V2)
+
+The separately default-off `candidate-epoch-host-v2` feature forwards only
+Core's same-named V2 feature. It does not enable `candidate-epoch-host-v1` or
+commission an epoch owner. `prepare_candidate_host_initial_recovery_v2(pin)`
+accepts only an unbound existing journal10, its independently expected exact
+head, the immutable origin's first target revision, and Ordinary transition.
+The complete strict record must equal Core's canonical initial codec2 state;
+progressed, pending-sign/outbox, foreign-context and stale cuts reject.
+
+The method obtains an actual fresh read and strict recovery, reconstructs the
+opaque `PendingEpochHostDriverV2` without an ACK, then performs a second actual
+fresh read. Complete state, record checksum, head pin, context, generation,
+transition and immutable origin/source facts must remain identical. Only after
+both reads succeed may the journal install that driver's new process-local
+persistence affinity. The original process's request, equal scalar state from
+a foreign driver, and a second binding attempt cannot bind or confirm work.
+No revision is appended by this operation; failed checks leave the journal
+unbound. Return only `(ConfirmedEpochSafetyHeadV2, PendingEpochHostDriverV2)`
+with the initial persistence gate still closed.
+
+This is trusted-host plumbing, not a durable activation grant: it produces no
+StorageAck, timer, signature, custody lease or native callback. M15 must join
+the actual committed native checkpoint, old-role retirement, fresh new-role
+custody and independent external watermark before supplying the initial ACK.
+Tests may explicitly supply a test-only trusted-host ACK to prove the engine
+sequence, without claiming that physical M15 join. A real `LocalTimeout` must
+first emit only its opaque persistence request; only after journal10 commits,
+syncs, freshly confirms the exact request, and receives its separate ACK may
+Core emit `RequestSignature`. Reopening that progressed cut cannot use this
+initial-only binding method. The default build remains inert and unbound.
+
+Acceptance retains the real source8/native fixture and default thread stack,
+checks old/foreign affinity, stale head, repeated binding, pre-ACK input gates,
+the actual timeout persist/readback/ACK ordering, and progressed-cut refusal.
+Any post-initial crash tests retain actual opaque Core requests and independent
+expected cuts; they cannot manufacture progressed SQL records or authorize an
+ACK based solely on a self-carried checksum.
+The doc-hidden `persist_with_pin_observer_v2` supplies the actual producer's
+calculated successor pin at the before-commit, after-commit/before-sync and
+after-sync/before-readback cuts. The original observer method remains an
+adapter with its existing signature. Test observers may durably retain this
+comparison pin before killing the process; neither observation nor a recovered
+database's self-reported head provides an ACK or external rollback protection.
 
 The inert journal10 implementation and private physical backend are now present
 in `epoch_journal_v2.rs` and `epoch_journal_physical_v2.rs`. The original journal9

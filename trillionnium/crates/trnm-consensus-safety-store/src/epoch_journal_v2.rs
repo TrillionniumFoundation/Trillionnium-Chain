@@ -771,6 +771,58 @@ impl SqliteEpochSafetyJournalV2 {
         self.physical.require_namespace()?;
         Ok((confirmed, recovery))
     }
+
+    /// Default-off trusted-host plumbing for the exact initial codec2 cut.
+    /// Both actual reads precede installing the sole new process affinity.
+    /// The returned driver still waits for its initial ACK; M15 must join
+    /// native state, retired/new custody and the independent external cut
+    /// before supplying it. This method emits no ACK, callback or signature.
+    #[cfg(feature = "candidate-epoch-host-v2")]
+    pub fn prepare_candidate_host_initial_recovery_v2(
+        &mut self,
+        expected: EpochSafetyHeadPinV2,
+    ) -> Result<(
+        ConfirmedEpochSafetyHeadV2,
+        trnm_consensus_core::PendingEpochHostDriverV2,
+    )> {
+        self.physical.require_namespace()?;
+        if self.binding.is_some() {
+            return invalid("journal already bound; recovery cannot duplicate a live driver");
+        }
+        let (confirmed, recovery) = self.prepare_recovery_v2(expected)?;
+        if confirmed.revision_v2() != confirmed.source.initial_revision
+            || confirmed.transition_context_v2() != &SafetyTransitionContextV0::ordinary()
+        {
+            return invalid("candidate epoch recovery supports only the exact initial cut");
+        }
+        let driver = recovery.into_candidate_host_initial_pending_v2()?;
+        let request = driver.initial_persistence_v2();
+        let binding = driver.persistence_binding_v2();
+        if !driver.activation_persistence_pending_v2()
+            || !binding.accepts(request)
+            || driver.state() != confirmed.state_v2()
+            || request.state() != confirmed.state_v2()
+            || request.barrier().get() != confirmed.revision_v2()
+        {
+            return invalid("strict initial driver differs from fresh journal cut");
+        }
+        validate_request_manifest(request, confirmed.transition_context_v2())?;
+        let fresh = self.fresh_read_v2(expected)?;
+        if fresh.pin != confirmed.pin
+            || fresh.state_v2() != confirmed.state_v2()
+            || fresh.state_record_checksum_v2() != confirmed.state_record_checksum_v2()
+            || fresh.transition != confirmed.transition
+            || fresh.context_ref != confirmed.context_ref
+            || fresh.generation != confirmed.generation
+            || fresh.origin != confirmed.origin
+            || fresh.source != confirmed.source
+        {
+            return invalid("journal changed during initial recovery binding");
+        }
+        self.binding = Some(binding);
+        Ok((fresh, driver))
+    }
+
     pub fn confirm_exact_request_v2(
         &self,
         expected: EpochSafetyHeadPinV2,
@@ -810,6 +862,19 @@ impl SqliteEpochSafetyJournalV2 {
         transition: &SafetyTransitionContextV0,
         mut observer: impl FnMut(EpochJournalCutV2) -> Result<()>,
     ) -> Result<ConfirmedEpochSafetyHeadV2> {
+        self.persist_with_pin_observer_v2(expected, request, transition, |cut, _pin| observer(cut))
+    }
+    /// Exposes the actual producer-calculated successor pin at each real
+    /// transaction cut, for independently pinned crash reconciliation tests.
+    /// Observing the pin neither confirms durability nor acknowledges Core.
+    #[doc(hidden)]
+    pub fn persist_with_pin_observer_v2(
+        &mut self,
+        expected: EpochSafetyHeadPinV2,
+        request: &SafetyStatePersistenceV0,
+        transition: &SafetyTransitionContextV0,
+        mut observer: impl FnMut(EpochJournalCutV2, EpochSafetyHeadPinV2) -> Result<()>,
+    ) -> Result<ConfirmedEpochSafetyHeadV2> {
         self.physical.require_namespace()?;
         if !self
             .binding
@@ -846,7 +911,7 @@ impl SqliteEpochSafetyJournalV2 {
         transition: &SafetyTransitionContextV0,
         record: &[u8],
         transition_bytes: &[u8],
-        observer: &mut impl FnMut(EpochJournalCutV2) -> Result<()>,
+        observer: &mut impl FnMut(EpochJournalCutV2, EpochSafetyHeadPinV2) -> Result<()>,
     ) -> Result<ConfirmedEpochSafetyHeadV2> {
         let head = self.fresh_read_v2(expected)?;
         if head.state_v2() == request.state() && head.transition_context_v2() == transition {
@@ -911,12 +976,12 @@ impl SqliteEpochSafetyJournalV2 {
                 "DELETE FROM epoch_records WHERE revision < ?1",
                 [expected.revision],
             )?;
-            observer(EpochJournalCutV2::AfterWriteBeforeCommit)?;
+            observer(EpochJournalCutV2::AfterWriteBeforeCommit, next)?;
             tx.commit()?;
         }
-        observer(EpochJournalCutV2::AfterCommitBeforeSync)?;
+        observer(EpochJournalCutV2::AfterCommitBeforeSync, next)?;
         self.physical.close_and_sync()?;
-        observer(EpochJournalCutV2::AfterSyncBeforeReadback)?;
+        observer(EpochJournalCutV2::AfterSyncBeforeReadback, next)?;
         self.fresh_read_v2(next)
     }
     fn read_head(
