@@ -279,6 +279,25 @@ pub struct FinalizedNativeEpochApplicationReadV1 {
 }
 
 impl FinalizedNativeEpochApplicationReadV1 {
+    /// Fixture-only immutable candidate-selection facts from this real audited
+    /// cutoff. This issues no preparation, activation, signing or apply authority.
+    #[cfg(feature = "test-fixtures")]
+    pub fn test_fixture_next_epoch_facts_v1(
+        &self,
+        application: &DurableNativeApplicationV0,
+    ) -> Result<(
+        ValidatorSet,
+        ConsensusParametersV0,
+        trnm_consensus_types::NextEpochCommitmentV0,
+    )> {
+        let computed = self.derive_next_epoch_v1(application)?;
+        Ok((
+            computed.new_validator_set,
+            computed.new_parameters,
+            computed.commitment,
+        ))
+    }
+
     /// Pure computation from this already audited cutoff. No preparation or
     /// activation authority is issued; consumers still join the exact result.
     pub(crate) fn derive_next_epoch_v1(

@@ -7,7 +7,7 @@ mod source_capture;
 pub use source_capture::ConfirmedEpochSuccessorSourceV3;
 
 #[derive(Debug)]
-pub struct EpochJournalErrorV3(EpochJournalErrorV2);
+pub struct EpochJournalErrorV3(pub(super) EpochJournalErrorV2);
 impl std::fmt::Display for EpochJournalErrorV3 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "epoch journal11: {:?}", self.0)
@@ -30,7 +30,7 @@ pub type EpochJournalCutV3 = EpochJournalCutV2;
 pub type EpochSafetySourceOwnerV3<'a> = EpochSafetySourceOwnerV2<'a>;
 
 #[derive(Debug, Clone)]
-pub struct EpochSafetyJournalProfileV3(EpochSafetyJournalProfileV2);
+pub struct EpochSafetyJournalProfileV3(pub(super) EpochSafetyJournalProfileV2);
 impl EpochSafetyJournalProfileV3 {
     fn prefix_once(
         mut inner: EpochSafetyJournalProfileV2,
@@ -170,7 +170,7 @@ impl ConfirmedEpochSafetyHeadV3 {
 ///     let _ = EpochSafetySourceOwnerV2::Journal10(owner, pin);
 /// }
 /// ```
-pub struct SqliteEpochSafetyJournalV3(SqliteEpochSafetyJournalV2);
+pub struct SqliteEpochSafetyJournalV3(pub(super) SqliteEpochSafetyJournalV2);
 impl SqliteEpochSafetyJournalV3 {
     pub fn initialize_from_source_v3(
         path: impl AsRef<Path>,

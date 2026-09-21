@@ -482,14 +482,14 @@ remain outside its implemented scope.
 
 #### Successor source and stable physical revision (M03-EPOCH-SOURCE-V4)
 
-This is a required next design, not implemented behavior. Actual Journal11
+This successor-capable physical layout is implemented. Actual Journal11
 metadata has `source_kind CHECK(source_kind BETWEEN 0 AND 2)`, where tag2 is
 physical Journal10. Its public source-owner type is an alias to the V2 enum.
 Calling a Journal11 source Journal10 or widening that SQL under user_version11
 would change a committed physical contract. One successor-capable revision is
 therefore necessary; there must not be a new physical version for every epoch.
 
-The planned signer **Journal12**, distinct from M08's native schema12, uses
+The **Safety Journal12**, distinct from M08's native schema12, uses
 application ID `0x54524543`, user_version12 and lock magic `TRNMJ12E`. Its public
 V4 profile/owner/head types have no V2/V3 owner downcast. It preserves Journal11's
 exact four STRICT table shapes and prefix-once grammar except the closed
@@ -536,8 +536,8 @@ bytes/independent root. Do not concatenate preceding Safety records or embed a
 source profile recursively. Canonical source parts can be regenerated from that
 full retained record during cold audit; no redundant part-digest table is needed.
 
-The bounded source-capture slice is implemented independently of the planned
-Journal12 writer. `SqliteEpochSafetyJournalV3::capture_successor_source_v3`
+The bounded source-capture slice remains independent of the Journal12 writer.
+`SqliteEpochSafetyJournalV3::capture_successor_source_v3`
 takes the independently expected V3 head pin and returns the non-Clone opaque
 `ConfirmedEpochSuccessorSourceV3`. It reuses `prepare_recovery_v3` and strict
 Core recovery, retains the exact original codec2 record and all three canonical
@@ -587,6 +587,10 @@ this contract; physical12 is selected at a real activation boundary, and later
 can verify the retained full source evidence without reopening a now-offline
 source directory, but needs the independently commissioned flat source/target
 profiles and expected head pin, never database-supplied trust roots.
+The implemented retry entrypoint is `reopen_initial_from_source_v4`: it accepts
+that independent target pin and the same selected source and opaque preparation,
+recomputes the original initial chain/origin, strictly rejects a progressed or
+different target, and repeats sync/source-readback before returning a bound owner.
 
 All current bounds continue:32 flat activation entries/64MiB provenance, each
 source/target record at most256MiB and its narrower profile limit, transition
@@ -612,6 +616,24 @@ wrong source pin, schema-object/resource overflow, pruning and exact retries.
 Run three real SIGKILL cuts for each new initialization and append, with
 independently captured intended pins. Initial-only/capture tests cannot claim
 settled-source or live-host acceptance; synthetic settled SQL is forbidden.
+The cross-module test fixture may read deterministic next-set, parameters and
+commitment facts from an actual owner-affine native finalized cutoff through a
+`test-fixtures`-only immutable helper. These public values are not a prepared P,
+native receipt, Safety state, signing permit or ACK; the consumer must still
+execute every P/Valid/finalization/readback and real Core persistence step.
+
+The genuine Journal12 integration covers source8 initialization and actual
+native/Core execution of C11..C20 and C21..C30, including native checkpoint
+selection, P/Valid, persistence before each signature, application finalization
+and applied readback. It then migrates settled Journal11 at C18 to Journal12 and
+settled Journal12 at C28 to another Journal12 namespace with the exact original
+records and flat prefixes. Its six-cut subprocess test checks initialization and
+pending-timeout append through real SIGKILL and independently persisted intent
+pins. Physical-boundary relocation preserving complete codec2 bytes still rejects.
+These are storage/typed-Core tests: they do not claim M15 custody retirement,
+progressed live-host recovery, real networking or full-fleet acceptance. Legacy
+source9/10 retain the shared strict adapters; this new fixture does not claim
+separate genuine settled source9/10 live-host handoff coverage.
 
 #### Progressed codec2 host recovery (M03-EPOCH-RECOVERY-V1)
 

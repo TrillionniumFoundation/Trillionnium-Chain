@@ -37,6 +37,7 @@ pub(crate) enum JournalLayoutV2 {
     Codec1,
     Codec2,
     Codec2PrefixOnce,
+    Codec2SuccessorPrefixOnce,
 }
 impl JournalLayoutV2 {
     fn sql(self) -> &'static str {
@@ -44,6 +45,7 @@ impl JournalLayoutV2 {
             Self::Codec1 => include_str!("epoch_journal_v1.sql"),
             Self::Codec2 => include_str!("epoch_journal_v2.sql"),
             Self::Codec2PrefixOnce => include_str!("epoch_journal_v3.sql"),
+            Self::Codec2SuccessorPrefixOnce => include_str!("epoch_journal_v4.sql"),
         }
     }
     fn application_id(self) -> i64 {
@@ -51,6 +53,7 @@ impl JournalLayoutV2 {
             Self::Codec1 => 0x54524539,
             Self::Codec2 => 0x54524541,
             Self::Codec2PrefixOnce => 0x54524542,
+            Self::Codec2SuccessorPrefixOnce => 0x54524543,
         }
     }
     fn version(self) -> i64 {
@@ -58,6 +61,7 @@ impl JournalLayoutV2 {
             Self::Codec1 => 9,
             Self::Codec2 => 10,
             Self::Codec2PrefixOnce => 11,
+            Self::Codec2SuccessorPrefixOnce => 12,
         }
     }
     fn lock_magic(self) -> &'static [u8; 8] {
@@ -65,6 +69,7 @@ impl JournalLayoutV2 {
             Self::Codec1 => b"TRNMJ9EP",
             Self::Codec2 => b"TRNMJ10E",
             Self::Codec2PrefixOnce => b"TRNMJ11E",
+            Self::Codec2SuccessorPrefixOnce => b"TRNMJ12E",
         }
     }
     fn stage(self, codec1: &'static str, codec2: &'static str) -> &'static str {
@@ -72,6 +77,7 @@ impl JournalLayoutV2 {
             Self::Codec1 => codec1,
             Self::Codec2 => codec2,
             Self::Codec2PrefixOnce => "journal11 physical operation",
+            Self::Codec2SuccessorPrefixOnce => "journal12 physical operation",
         }
     }
     pub(crate) fn initialize_schema(self, connection: &Connection) -> Result<()> {
@@ -394,7 +400,10 @@ impl PhysicalJournalV2 {
         }
         let reference = Connection::open_in_memory()?;
         reference.execute_batch(self.layout.sql())?;
-        let inventory_limit = if self.layout == JournalLayoutV2::Codec2PrefixOnce {
+        let inventory_limit = if matches!(
+            self.layout,
+            JournalLayoutV2::Codec2PrefixOnce | JournalLayoutV2::Codec2SuccessorPrefixOnce
+        ) {
             5
         } else {
             4
@@ -501,6 +510,36 @@ mod tests {
     }
 
     #[test]
+    fn journal12_layout_has_closed_successor_sources_without_reinterpreting_journal11() {
+        let layout = JournalLayoutV2::Codec2SuccessorPrefixOnce;
+        assert_eq!(layout.application_id(), 0x54524543);
+        assert_eq!(layout.version(), 12);
+        assert_eq!(layout.lock_magic(), b"TRNMJ12E");
+        assert_eq!(
+            layout.sql(),
+            JournalLayoutV2::Codec2PrefixOnce.sql().replacen(
+                "source_kind BETWEEN 0 AND 2",
+                "source_kind BETWEEN 0 AND 4",
+                1
+            )
+        );
+        let c = Connection::open_in_memory().unwrap();
+        layout.initialize_schema(&c).unwrap();
+        let expected = schema_inventory(&c, 5).unwrap();
+        assert_eq!(expected.len(), 4);
+        let insert = "INSERT INTO epoch_metadata VALUES(1,zeroblob(32),zeroblob(32),?1,zeroblob(32),zeroblob(32),x'01',x'01',zeroblob(32),1)";
+        for kind in 0..=4 {
+            c.execute(insert, [kind]).unwrap();
+            c.execute("DELETE FROM epoch_metadata", []).unwrap();
+        }
+        for kind in [-1, 5] {
+            assert!(c.execute(insert, [kind]).is_err());
+        }
+        c.execute_batch("CREATE VIEW fifth AS SELECT 1").unwrap();
+        assert_ne!(schema_inventory(&c, 5).unwrap(), expected);
+    }
+
+    #[test]
     fn journal10_physical_schema_rejects_unknown_source_kind() {
         let connection = Connection::open_in_memory().unwrap();
         JournalLayoutV2::Codec2
@@ -533,6 +572,7 @@ mod tests {
             JournalLayoutV2::Codec1,
             JournalLayoutV2::Codec2,
             JournalLayoutV2::Codec2PrefixOnce,
+            JournalLayoutV2::Codec2SuccessorPrefixOnce,
         ] {
             let path = directory
                 .path()
@@ -548,7 +588,7 @@ mod tests {
                 // this backend cannot return Core or source-owner authority.
                 let metadata = match layout {
                     JournalLayoutV2::Codec1 => "INSERT INTO epoch_metadata VALUES(1,?1,?2,zeroblob(32),zeroblob(32),x'01',x'01',zeroblob(32),1)",
-                    JournalLayoutV2::Codec2 | JournalLayoutV2::Codec2PrefixOnce => "INSERT INTO epoch_metadata VALUES(1,?1,?2,0,zeroblob(32),zeroblob(32),x'01',x'01',zeroblob(32),1)",
+                    JournalLayoutV2::Codec2 | JournalLayoutV2::Codec2PrefixOnce | JournalLayoutV2::Codec2SuccessorPrefixOnce => "INSERT INTO epoch_metadata VALUES(1,?1,?2,0,zeroblob(32),zeroblob(32),x'01',x'01',zeroblob(32),1)",
                 };
                 tx.execute(
                     metadata,
@@ -569,9 +609,9 @@ mod tests {
 
             let wrong_layout = match layout {
                 JournalLayoutV2::Codec1 => JournalLayoutV2::Codec2,
-                JournalLayoutV2::Codec2 | JournalLayoutV2::Codec2PrefixOnce => {
-                    JournalLayoutV2::Codec1
-                }
+                JournalLayoutV2::Codec2
+                | JournalLayoutV2::Codec2PrefixOnce
+                | JournalLayoutV2::Codec2SuccessorPrefixOnce => JournalLayoutV2::Codec1,
             };
             let wrong =
                 PhysicalJournalV2::open_existing(&path, wrong_layout, profile, bounds, journal_id)

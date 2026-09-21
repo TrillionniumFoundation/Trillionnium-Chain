@@ -997,3 +997,9 @@ fn run_post_initial_crash_parent(fixture: &NativeOldEpochTerminalFixtureV1) {
 }
 
 include!("epoch_journal_v3/cases.rs");
+
+#[cfg(feature = "candidate-epoch-host-v2")]
+mod journal12 {
+    use super::*;
+    include!("epoch_journal_v4/live.rs");
+}

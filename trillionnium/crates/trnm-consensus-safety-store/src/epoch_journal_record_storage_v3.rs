@@ -6,6 +6,7 @@ use trnm_consensus_core::{EpochSafetyRecordPartsV2, MAX_EPOCH_PREPARATION_RECORD
 pub(super) enum RecordStorageV3 {
     Full,
     PrefixOnce,
+    SuccessorPrefixOnce,
 }
 pub(super) type RecordCoordinatesV3 = (u64, [u8; 32], [u8; 32], i64, i64);
 
@@ -14,24 +15,28 @@ impl RecordStorageV3 {
         match self {
             Self::Full => JournalLayoutV2::Codec2,
             Self::PrefixOnce => JournalLayoutV2::Codec2PrefixOnce,
+            Self::SuccessorPrefixOnce => JournalLayoutV2::Codec2SuccessorPrefixOnce,
         }
     }
     pub(super) fn profile_domain(self) -> &'static [u8] {
         match self {
             Self::Full => b"trnm.journal10.epoch.profile.v2",
             Self::PrefixOnce => b"trnm.journal11.epoch.profile.v3",
+            Self::SuccessorPrefixOnce => b"trnm.journal12.epoch.profile.v4",
         }
     }
     pub(super) fn origin_domain(self) -> &'static [u8] {
         match self {
             Self::Full => b"trnm.journal10.epoch.origin.v2",
             Self::PrefixOnce => b"trnm.journal11.epoch.origin.v3",
+            Self::SuccessorPrefixOnce => b"trnm.journal12.epoch.origin.v4",
         }
     }
     pub(super) fn chain_domain(self) -> &'static [u8] {
         match self {
             Self::Full => b"trnm.journal10.epoch.chain.v2",
             Self::PrefixOnce => b"trnm.journal11.epoch.chain.v3",
+            Self::SuccessorPrefixOnce => b"trnm.journal12.epoch.chain.v4",
         }
     }
     pub(super) fn initialize_prefix(
@@ -39,7 +44,7 @@ impl RecordStorageV3 {
         connection: &Connection,
         parts: &EpochSafetyRecordPartsV2,
     ) -> Result<()> {
-        if self == Self::PrefixOnce {
+        if self != Self::Full {
             connection.execute(
                 "INSERT INTO epoch_provenance VALUES(1,?1)",
                 [parts.provenance()],
@@ -66,7 +71,7 @@ impl RecordStorageV3 {
                     transition
                 ],
             )?,
-            Self::PrefixOnce => {
+            Self::PrefixOnce | Self::SuccessorPrefixOnce => {
                 // The fresh read validated the prefix before the transaction.
                 // Recheck its exact bytes under the writer transaction; never
                 // update it and never interpret a hash as the original prefix.

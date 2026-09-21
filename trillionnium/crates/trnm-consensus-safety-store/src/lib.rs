@@ -108,3 +108,10 @@ pub use epoch_journal_v2::v3::{
     EpochJournalErrorV3, EpochSafetyHeadPinV3, EpochSafetyJournalProfileV3,
     EpochSafetySourceOwnerV3, SqliteEpochSafetyJournalV3,
 };
+
+/// Explicit successor-capable Journal12; no prior physical owner is downcast.
+pub use epoch_journal_v2::v4::{
+    ConfirmedEpochSafetyHeadV4, EpochJournalCutV4, EpochJournalErrorV4, EpochSafetyHeadPinV4,
+    EpochSafetyJournalProfileV4, EpochSafetyMigrationSourceV4, EpochSafetySourceKindV4,
+    EpochSafetySourceOwnerV4, EpochSafetySourcePinV4, SqliteEpochSafetyJournalV4,
+};

@@ -4,6 +4,9 @@
 mod record_storage;
 #[path = "epoch_journal_v3.rs"]
 pub(crate) mod v3;
+#[path = "epoch_journal_v4.rs"]
+pub(crate) mod v4;
+include!("epoch_journal_source_v4.rs");
 use record_storage::RecordStorageV3;
 
 use crate::epoch_journal_physical_v2::{
@@ -115,20 +118,11 @@ pub enum EpochSafetySourceKindV2 {
     Journal9,
     Journal10,
 }
-impl EpochSafetySourceKindV2 {
-    const fn tag(self) -> u8 {
-        match self {
-            Self::Journal8 => 0,
-            Self::Journal9 => 1,
-            Self::Journal10 => 2,
-        }
-    }
-}
 /// Flat immediate-source description. The earlier journal profile is committed
 /// by reference, never recursively copied into each later profile/SQLite row.
 #[derive(Debug, Clone)]
 struct SourceDescriptorV2 {
-    kind: EpochSafetySourceKindV2,
+    kind: PhysicalSourceKindV4,
     config: CoreConfig,
     limits: SafetyStateRecordLimitsV0,
     generation: u64,
@@ -161,7 +155,7 @@ impl SourceRecoveryV2 {
 impl SourceDescriptorV2 {
     fn context(&self) -> Result<SourceContextV2<'_>> {
         Ok(match self.kind {
-            EpochSafetySourceKindV2::Journal8 => {
+            PhysicalSourceKindV4::Journal8 => {
                 if self.epoch.is_some() {
                     return invalid("journal8 source has epoch provenance");
                 }
@@ -171,7 +165,7 @@ impl SourceDescriptorV2 {
                     self.limits,
                 )?))
             }
-            EpochSafetySourceKindV2::Journal9 => {
+            PhysicalSourceKindV4::Journal9 => {
                 let epoch = self
                     .epoch
                     .as_ref()
@@ -187,7 +181,9 @@ impl SourceDescriptorV2 {
                     self.limits,
                 )?))
             }
-            EpochSafetySourceKindV2::Journal10 => {
+            PhysicalSourceKindV4::Journal10
+            | PhysicalSourceKindV4::Journal11
+            | PhysicalSourceKindV4::Journal12 => {
                 let epoch = self
                     .epoch
                     .as_ref()
@@ -265,7 +261,7 @@ impl EpochSafetyJournalProfileV2 {
         let context = source.context()?;
         Self::new(
             SourceDescriptorV2 {
-                kind: EpochSafetySourceKindV2::Journal8,
+                kind: PhysicalSourceKindV4::Journal8,
                 config: context.core_config().clone(),
                 limits: context.limits(),
                 generation: source.owner_generation_v1(),
@@ -283,7 +279,7 @@ impl EpochSafetyJournalProfileV2 {
         let context = source.context()?;
         Self::new(
             SourceDescriptorV2 {
-                kind: EpochSafetySourceKindV2::Journal9,
+                kind: PhysicalSourceKindV4::Journal9,
                 config: context.core_config().clone(),
                 limits: context.limits(),
                 generation: source.owner_generation_v1(),
@@ -300,7 +296,7 @@ impl EpochSafetyJournalProfileV2 {
     ) -> Result<Self> {
         Self::new(
             SourceDescriptorV2 {
-                kind: EpochSafetySourceKindV2::Journal10,
+                kind: PhysicalSourceKindV4::Journal10,
                 config: source.config.clone(),
                 limits: source.limits,
                 generation: source.generation,
@@ -315,6 +311,16 @@ impl EpochSafetyJournalProfileV2 {
         source: SourceDescriptorV2,
         context: &EpochSafetyStateRecordContextV2<'_>,
     ) -> Result<Self> {
+        Self::with_storage(source, context, RecordStorageV3::Full)
+    }
+    fn with_storage(
+        source: SourceDescriptorV2,
+        context: &EpochSafetyStateRecordContextV2<'_>,
+        storage: RecordStorageV3,
+    ) -> Result<Self> {
+        if storage != RecordStorageV3::SuccessorPrefixOnce && source.kind.legacy().is_none() {
+            return invalid("legacy journal cannot bind a successor physical source");
+        }
         let activation = context.runtime().activation();
         if source.config.validator_set() != activation.old_validator_set()
             || source.config.consensus_parameters() != activation.old_consensus_parameters()
@@ -344,7 +350,6 @@ impl EpochSafetyJournalProfileV2 {
             })
             .ok_or(EpochJournalErrorV2::Invalid("database capacity"))?;
         let generation = context.epoch().owner_generation();
-        let storage = RecordStorageV3::Full;
         let binding = digest(
             storage.profile_domain(),
             &[
@@ -388,7 +393,10 @@ impl EpochSafetyJournalProfileV2 {
         Ok(epoch_safety_record_context_ref_v2(&self.context()?)?)
     }
     pub const fn source_kind_v2(&self) -> EpochSafetySourceKindV2 {
-        self.source.kind
+        self.source
+            .kind
+            .legacy()
+            .expect("legacy profile constructors admit only source8/9/10")
     }
     fn bounds(&self) -> JournalBoundsV2 {
         JournalBoundsV2 {
@@ -460,13 +468,16 @@ pub enum EpochSafetySourceOwnerV2<'a> {
 struct SourceReadV2 {
     state: Box<SafetyState>,
     transition: SafetyTransitionContextV0,
-    pin: EpochSafetySourcePinV2,
+    pin: SourcePinV4,
     record_checksum: [u8; 32],
     context_ref: [u8; 32],
     profile_ref: [u8; 32],
     generation: u64,
     path: PathBuf,
     recovery: SourceRecoveryV2,
+    original_record: Option<Vec<u8>>,
+    origin: Option<[u8; 32]>,
+    owner: Option<Arc<()>>,
 }
 impl EpochSafetySourceOwnerV2<'_> {
     fn read(&self) -> Result<SourceReadV2> {
@@ -479,8 +490,8 @@ impl EpochSafetySourceOwnerV2<'_> {
                 Ok(SourceReadV2 {
                     state: Box::new(head.state_v1().clone()),
                     transition: head.transition_context_v1().clone(),
-                    pin: EpochSafetySourcePinV2 {
-                        kind: EpochSafetySourceKindV2::Journal8,
+                    pin: SourcePinV4 {
+                        kind: PhysicalSourceKindV4::Journal8,
                         journal_id: pin.journal_id,
                         revision: pin.revision,
                         chain_checksum: pin.chain_checksum,
@@ -491,6 +502,9 @@ impl EpochSafetySourceOwnerV2<'_> {
                     generation: head.owner_generation_v1(),
                     path: owner.path_v1().to_path_buf(),
                     recovery: SourceRecoveryV2::Old(Box::new(recovery)),
+                    original_record: None,
+                    origin: None,
+                    owner: None,
                 })
             }
             Self::Journal9(owner, pin) => {
@@ -501,8 +515,8 @@ impl EpochSafetySourceOwnerV2<'_> {
                 Ok(SourceReadV2 {
                     state: Box::new(head.state_v1().clone()),
                     transition: head.transition_context_v1().clone(),
-                    pin: EpochSafetySourcePinV2 {
-                        kind: EpochSafetySourceKindV2::Journal9,
+                    pin: SourcePinV4 {
+                        kind: PhysicalSourceKindV4::Journal9,
                         journal_id: pin.journal_id,
                         revision: pin.revision,
                         chain_checksum: pin.chain_checksum,
@@ -513,6 +527,9 @@ impl EpochSafetySourceOwnerV2<'_> {
                     generation: head.owner_generation_v1(),
                     path: owner.path_v1().to_path_buf(),
                     recovery: SourceRecoveryV2::Legacy(Box::new(recovery)),
+                    original_record: None,
+                    origin: None,
+                    owner: None,
                 })
             }
             Self::Journal10(owner, pin) => {
@@ -523,8 +540,8 @@ impl EpochSafetySourceOwnerV2<'_> {
                 Ok(SourceReadV2 {
                     state: Box::new(head.state_v2().clone()),
                     transition: head.transition_context_v2().clone(),
-                    pin: EpochSafetySourcePinV2 {
-                        kind: EpochSafetySourceKindV2::Journal10,
+                    pin: SourcePinV4 {
+                        kind: PhysicalSourceKindV4::Journal10,
                         journal_id: pin.journal_id,
                         revision: pin.revision,
                         chain_checksum: pin.chain_checksum,
@@ -535,6 +552,9 @@ impl EpochSafetySourceOwnerV2<'_> {
                     generation: head.owner_generation_v2(),
                     path: owner.path_v2().to_path_buf(),
                     recovery: SourceRecoveryV2::Full(Box::new(recovery)),
+                    original_record: None,
+                    origin: None,
+                    owner: None,
                 })
             }
         }
@@ -549,7 +569,7 @@ pub struct ConfirmedEpochSafetyHeadV2 {
     context_ref: [u8; 32],
     generation: u64,
     origin: [u8; 32],
-    source: EpochSafetyMigrationSourceV2,
+    source: SourceFactsV4,
     owner: Arc<()>,
 }
 impl ConfirmedEpochSafetyHeadV2 {
@@ -581,7 +601,10 @@ impl ConfirmedEpochSafetyHeadV2 {
         &self.transition
     }
     pub const fn migration_source_v2(&self) -> &EpochSafetyMigrationSourceV2 {
-        &self.source
+        self.source
+            .legacy
+            .as_ref()
+            .expect("legacy owner constructors admit only source8/9/10")
     }
     pub fn into_unverified_record_v2(self) -> UnverifiedSafetyStateRecordV0 {
         *self.record
@@ -621,6 +644,23 @@ impl SqliteEpochSafetyJournalV2 {
         profile: EpochSafetyJournalProfileV2,
         source: EpochSafetySourceOwnerV2<'_>,
         prepared: &PreparedEpochCoreActivationV2,
+        observer: impl FnMut(EpochJournalCutV2, EpochSafetyHeadPinV2) -> Result<()>,
+    ) -> Result<(Self, ConfirmedEpochSafetyHeadV2)> {
+        Self::initialize_from_reader_v4(
+            path,
+            profile,
+            SourceReaderV4::Legacy(source),
+            prepared,
+            None,
+            observer,
+        )
+    }
+    fn initialize_from_reader_v4(
+        path: impl AsRef<Path>,
+        profile: EpochSafetyJournalProfileV2,
+        source: SourceReaderV4<'_>,
+        prepared: &PreparedEpochCoreActivationV2,
+        selected_existing: Option<EpochSafetyHeadPinV2>,
         mut observer: impl FnMut(EpochJournalCutV2, EpochSafetyHeadPinV2) -> Result<()>,
     ) -> Result<(Self, ConfirmedEpochSafetyHeadV2)> {
         let actual = source.read()?;
@@ -646,7 +686,10 @@ impl SqliteEpochSafetyJournalV2 {
             return invalid("activation request differs from exact terminal successor");
         }
         profile.check_state(request.state())?;
-        let source_record = source_context.encode(&actual.state)?;
+        let source_record = match &actual.original_record {
+            Some(original) => original.clone(),
+            None => source_context.encode(&actual.state)?,
+        };
         if source_context.decode(&source_record)?.record_checksum() != actual.record_checksum {
             return invalid("source exact record");
         }
@@ -661,13 +704,23 @@ impl SqliteEpochSafetyJournalV2 {
         let transition_bytes = encode_transition_context_v0(&transition)?;
         drop(source_context);
         drop(target_context);
-        let physical = PhysicalJournalV2::create_new(
-            path.as_ref(),
-            profile.storage.layout(),
-            profile.binding,
-            profile.bounds(),
-            Some(&actual.path),
-        )?;
+        let physical = if let Some(expected) = selected_existing {
+            PhysicalJournalV2::open_existing(
+                path.as_ref(),
+                profile.storage.layout(),
+                profile.binding,
+                profile.bounds(),
+                expected.journal_id,
+            )?
+        } else {
+            PhysicalJournalV2::create_new(
+                path.as_ref(),
+                profile.storage.layout(),
+                profile.binding,
+                profile.bounds(),
+                Some(&actual.path),
+            )?
+        };
         let journal_id = physical.journal_id();
         let revision = request.state().revision();
         let origin = origin_hash(
@@ -692,13 +745,24 @@ impl SqliteEpochSafetyJournalV2 {
             revision,
             chain_checksum: chain,
         };
+        if selected_existing.is_some_and(|selected| selected != expected) {
+            return invalid("selected initialization retry differs from original source/request");
+        }
         let mut store = Self {
             physical,
             profile,
             owner: Arc::new(()),
             binding: Some(binding),
         };
-        {
+        if selected_existing.is_some() {
+            let confirmed = store.fresh_read_v2(expected)?;
+            if confirmed.state_v2() != request.state()
+                || confirmed.transition_context_v2() != &transition
+                || confirmed.origin != origin
+            {
+                return invalid("selected initialization retry is not the exact initial cut");
+            }
+        } else {
             let tx = store.physical.immediate_transaction()?;
             store.profile.storage.layout().initialize_schema(&tx)?;
             store.profile.storage.initialize_prefix(&tx, &record)?;
@@ -718,8 +782,8 @@ impl SqliteEpochSafetyJournalV2 {
             )?;
             observer(EpochJournalCutV2::AfterWriteBeforeCommit, expected)?;
             tx.commit()?;
+            observer(EpochJournalCutV2::AfterCommitBeforeSync, expected)?;
         }
-        observer(EpochJournalCutV2::AfterCommitBeforeSync, expected)?;
         store.physical.close_and_sync()?;
         observer(EpochJournalCutV2::AfterSyncBeforeReadback, expected)?;
         let after = source.read()?;
@@ -731,6 +795,13 @@ impl SqliteEpochSafetyJournalV2 {
             || after.context_ref != actual.context_ref
             || after.generation != actual.generation
             || after.path != actual.path
+            || after.original_record != actual.original_record
+            || after.origin != actual.origin
+            || !match (&after.owner, &actual.owner) {
+                (Some(after), Some(before)) => Arc::ptr_eq(after, before),
+                (None, None) => true,
+                _ => false,
+            }
         {
             return invalid("source changed during explicit migration");
         }
@@ -1149,18 +1220,18 @@ impl SqliteEpochSafetyJournalV2 {
                     context_ref: epoch_safety_record_context_ref_v2(&target_context)?,
                     generation: self.profile.generation,
                     origin: m.origin,
-                    source: EpochSafetyMigrationSourceV2 {
-                        pin: EpochSafetySourcePinV2 {
+                    source: SourceFactsV4::new(
+                        SourcePinV4 {
                             kind: self.profile.source.kind,
                             journal_id: m.source_journal,
                             revision: source.state().revision(),
                             chain_checksum: m.source_chain,
                         },
-                        record_checksum: source.record_checksum(),
-                        context_ref: source_context.context_ref()?,
-                        profile_ref: self.profile.source.profile_ref,
-                        initial_revision: m.first_revision,
-                    },
+                        source.record_checksum(),
+                        source_context.context_ref()?,
+                        self.profile.source.profile_ref,
+                        m.first_revision,
+                    ),
                     owner: Arc::clone(&self.owner),
                 });
             }
