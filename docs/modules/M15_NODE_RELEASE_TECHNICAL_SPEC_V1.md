@@ -1027,6 +1027,24 @@ rejected before any live mutation. The regression must cover an alternate
 same-coordinate QC digest, a pending TC whose exact QC arrives through a
 Proposal, malformed Proposal non-pollution, and successful TC formation.
 
+### Bounded timeout-collector diagnostics (M15-TC-DIAGNOSTIC-V1)
+
+Failure-only diagnostics may record at most the last eight timeout-vote
+coordinates: view, exact high-QC digest, signer identity, and whether the local
+authenticated collector formed a TC. Fixed counters record accepted, formed,
+queued and admitted items. The diagnostic is emitted to the existing bounded
+stderr capture and never to the signed event subject; `SafetyHalted` keeps its
+stable subject and journal semantics. It must not include signatures, raw
+frames, proposal bodies or private key material. A failure record also carries
+a fixed blocker bitmask for terminal readiness, including pending TC/certificate,
+pending proposal, outbox, authority phase, and application/finality mismatch.
+Mesh or authority fact read failures set dedicated blocker bits instead of being
+treated as an empty or ready projection.
+The terminal mask also reports active journal faults, an unmet nominal deadline,
+an unmet quiet period, and an unmet minimum metrics interval.
+“Accepted” means admitted to this runtime’s authenticated route; it is not a
+claim that a network peer received the vote.
+
 ### Runtime handoff and acceptance closure (M15-RUNTIME-CLOSURE-V1)
 
 The current continuous runtime now has an explicit ordinary follower path. A
@@ -1130,6 +1148,40 @@ Acceptance uses real native bodies and signed child proposals/QCs, asserts
 Core finalized/applied equals native head, preserves the two child P rows and
 rejects foreign/missing execution, substituted finality and duplicate phases.
 Tests run on the default thread stack without stack-size overrides.
+
+### Ordinary continuation to the authenticated cutoff (M15-EPOCH-CUTOFF-V3)
+
+A distinct consuming V3 owner may continue only a successfully settled
+M15-EPOCH-FIRST-APPLY-V2 owner. The original V1 first-new and V2 one-settlement
+APIs retain their fences; there is no public downcast or caller-supplied phase.
+The V3 bound is computed from the already authenticated active epoch geometry:
+application settlement stops at checkpoint height minus snapshot lead. This
+slice requires at least two ordinary lookahead heights before the checkpoint;
+a profile whose cutoff plus two reaches the checkpoint is rejected explicitly.
+
+The owner retains only the two outstanding real Prepared executions after each
+successful application settlement, and at most three while processing the next
+complete signed ordinary proposal. The proposal must extend that exact final
+Prepared parent. Original native execution, Core-owned validation, journal9
+NativeValid persistence, signer intent persistence and before/after-key P/Valid
+revalidation all precede release of its Vote. The next exact QC lets Core derive
+its own queue front. Native K, the unchanged opaque apply-receipt path, exact
+journal9 tag-3 readback and independent node checkpoint CAS precede the ACK.
+Only after all of these succeed may the committed front leave the retained
+window. No block is treated as Valid merely because a later proof contains it.
+
+At the cutoff, Core finalized/applied and native committed head must agree;
+the two consecutive lookahead P remain uncommitted and retain their original
+P digests. Further proposal, signing, QC and application operations on this
+bounded owner fail closed. The read-only cutoff checkpoint grants no epoch,
+retirement or recovery authority. The accepted fixture is a continuation of the
+same real first-new owner through committed C15 with original Prepared C16/C17,
+not a newly commissioned owner or synthesized settled SQL state. It also checks
+that applying/signing phases cannot be repeated or crossed out of order.
+
+Checkpoint candidate selection and checkpoint/seal signing require their own
+explicit joins; this slice does not execute seals, retire the active signer,
+create journal10, activate another epoch, or recover a progressed V3 owner.
 
 ### Concrete native live staging composition
 

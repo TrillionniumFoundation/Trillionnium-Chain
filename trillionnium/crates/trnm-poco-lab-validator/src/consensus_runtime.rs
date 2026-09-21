@@ -37,7 +37,7 @@ use trnm_consensus_signer_journal::{
 use trnm_consensus_types::{
     BlockId, ContextAuthorizedQcV0, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate,
     RecoveryContextV1, RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1,
-    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, ValidatorId, View,
+    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId, View,
     RECOVERY_PROCESS_INSTANCE_V1,
 };
 use trnm_consensus_unix_fleet_signer::{
@@ -2953,6 +2953,76 @@ struct BoundedConsensusOwnerV1 {
     network_tx_bytes: u64,
     network_rx_bytes: u64,
     preflight: ConsensusRuntimePreflightV1,
+    /// Bounded diagnostics for timeout-vote collection.  This is deliberately
+    /// a tiny failure-path ring: it records coordinates and identities only,
+    /// never signed payloads or raw consensus bytes.
+    timeout_diagnostics: TimeoutDiagnosticRingV1,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct TimeoutDiagnosticEntryV1 {
+    view: u64,
+    qc_digest: [u8; 32],
+    signer: [u8; 32],
+    outcome: u8,
+}
+
+#[derive(Debug, Default)]
+struct TimeoutDiagnosticRingV1 {
+    accepted: u64,
+    formed: u64,
+    queued: u64,
+    admitted: u64,
+    entries: VecDeque<TimeoutDiagnosticEntryV1>,
+}
+
+impl TimeoutDiagnosticRingV1 {
+    const CAPACITY: usize = 8;
+
+    fn record_vote(&mut self, vote: &TimeoutVote, formed: bool) {
+        self.accepted = self.accepted.saturating_add(1);
+        if formed {
+            self.formed = self.formed.saturating_add(1);
+        }
+        if self.entries.len() == Self::CAPACITY {
+            self.entries.pop_front();
+        }
+        let mut signer = [0u8; 32];
+        signer.copy_from_slice(vote.author().as_bytes());
+        self.entries.push_back(TimeoutDiagnosticEntryV1 {
+            view: vote.view().get(),
+            qc_digest: *vote.high_qc().qc_digest().as_bytes(),
+            signer,
+            outcome: if formed { 1 } else { 0 },
+        });
+    }
+
+    fn record_queued(&mut self) {
+        self.queued = self.queued.saturating_add(1);
+    }
+
+    fn record_admitted(&mut self) {
+        self.admitted = self.admitted.saturating_add(1);
+    }
+
+    fn summary(&self) -> String {
+        let mut summary = format!(
+            "timeout-diag:accepted={}:formed={}:queued={}:admitted={}:",
+            self.accepted, self.formed, self.queued, self.admitted
+        );
+        for entry in &self.entries {
+            use std::fmt::Write as _;
+            let _ = write!(
+                summary,
+                "{}:{}:{}:{};",
+                entry.view,
+                hex::encode(entry.qc_digest),
+                hex::encode(entry.signer),
+                entry.outcome
+            );
+        }
+        summary
+    }
 }
 
 struct CompletedFleetBarrierV1 {
@@ -4268,6 +4338,7 @@ impl BoundedConsensusOwnerV1 {
             network_tx_bytes: 0,
             network_rx_bytes: 0,
             preflight,
+            timeout_diagnostics: TimeoutDiagnosticRingV1::default(),
         })
     }
 
@@ -6245,12 +6316,15 @@ impl BoundedConsensusOwnerV1 {
                 Ok(true)
             }
             RoutedConsensusActionV0::TimeoutVote { vote, formed_tc } => {
+                self.timeout_diagnostics
+                    .record_vote(&vote, formed_tc.is_some());
                 if let Some(certificate) = formed_tc {
                     if self.is_tc_aggregator_v1(&certificate)? {
                         self.queue_certificate_v1(PendingCertificateV1::Timeout {
                             certificate: *certificate,
                             publish: true,
                         })?;
+                        self.timeout_diagnostics.record_queued();
                         self.drain_pending_certificates_v1()?;
                         self.queue_ready_timeout_certificates_v1()?;
                     }
@@ -6294,6 +6368,7 @@ impl BoundedConsensusOwnerV1 {
                     certificate,
                     publish: true,
                 })?;
+                self.timeout_diagnostics.record_queued();
                 queued = true;
             }
         }
@@ -6463,7 +6538,10 @@ impl BoundedConsensusOwnerV1 {
                 vote.view().get(),
             )
             .map_err(|error| anyhow!("append TimeoutVote broadcast event: {error}"))?;
+        let vote_diagnostic = vote.clone();
         let formed = self.authority_v1()?.admit_local_timeout_vote_v0(vote)?;
+        self.timeout_diagnostics
+            .record_vote(&vote_diagnostic, formed.is_some());
         self.pacemaker.confirm_timeout_emitted(expiry)?;
         if let Some(certificate) = formed {
             if self.is_tc_aggregator_v1(&certificate)? {
@@ -6471,6 +6549,7 @@ impl BoundedConsensusOwnerV1 {
                     certificate,
                     publish: true,
                 })?;
+                self.timeout_diagnostics.record_queued();
                 self.drain_pending_certificates_v1()?;
             }
         }
@@ -6766,6 +6845,7 @@ impl BoundedConsensusOwnerV1 {
                 certificate.timed_out_view().get(),
             )
             .map_err(|error| anyhow!("append TC admission event: {error}"))?;
+        self.timeout_diagnostics.record_admitted();
         self.record_application_progress_v1(before, after)?;
         self.applied_tcs.insert(id);
         if made_authoritative_progress_v1(before, after) {
@@ -7343,6 +7423,8 @@ impl BoundedConsensusOwnerV1 {
 
     fn fail_stop_v1(&mut self) {
         self.pacemaker.cancel();
+        let blocker_mask = self.terminal_blocker_mask_v1();
+        let timeout_diagnostics = self.timeout_diagnostics.summary();
         if let Some(control) = self.runtime_control.take() {
             let _ = control.close();
         }
@@ -7352,12 +7434,97 @@ impl BoundedConsensusOwnerV1 {
         if !self.event_journal.observation().safety_halted
             && !self.event_journal.observation().clean_stop_recorded
         {
-            let _ = self.event_journal.append(
-                RuntimeEventKindV1::SafetyHalted,
-                "bounded-consensus-runtime-failed",
-                0,
+            append_failure_diagnostics_v1(
+                &mut self.event_journal,
+                blocker_mask,
+                &timeout_diagnostics,
             );
         }
+    }
+
+    /// Diagnostic-only projection of the terminal readiness gate.  It is
+    /// emitted to stderr on failure and never becomes authority or journal
+    /// input; the bit layout stays fixed so failed runs remain comparable.
+    fn terminal_blocker_mask_v1(&mut self) -> u32 {
+        let mut mask = 0u32;
+        let now = Instant::now();
+        let ordinary_start_height = self.config.ordinary_start_height();
+        if !self.restart_lifecycle.is_running_v1() {
+            mask |= 1 << 0;
+        }
+        if self.stopping_since.is_none() {
+            mask |= 1 << 1;
+        }
+        if !self.outbox.is_empty() {
+            mask |= 1 << 2;
+        }
+        if !self.pending_proposals.is_empty() {
+            mask |= 1 << 3;
+        }
+        if !self.pending_certificates.is_empty() {
+            mask |= 1 << 4;
+        }
+        if !self.prestarted_ingress.is_empty() {
+            mask |= 1 << 5;
+        }
+        if !self.unavailable_sessions.is_empty() {
+            mask |= 1 << 6;
+        }
+        if self.post_timeout_rebase_required_finalized_height.is_some() {
+            mask |= 1 << 7;
+        }
+        if self.active_connectivity_fault.is_some() {
+            mask |= 1 << 8;
+        }
+        if let Some(control) = self.runtime_control.as_ref() {
+            if control.expected_fault().is_some() {
+                mask |= 1 << 9;
+            }
+        }
+        match self.mesh_v1() {
+            Ok(mesh) => match mesh.pending_outbound_bytes_v1() {
+                Ok(bytes) if bytes != 0 => mask |= 1 << 10,
+                Ok(_) => {}
+                Err(_) => mask |= 1 << 15,
+            },
+            Err(_) => mask |= 1 << 15,
+        }
+        match self.authority_v1() {
+            Ok(authority) => match authority.facts_v0() {
+                Ok(facts) => {
+                    if facts.phase_v0() != PocoNodeLabAuthorityPhaseV0::Ready {
+                        mask |= 1 << 11;
+                    }
+                    if facts.pending_timeout_certificate_id_v0().is_some() {
+                        mask |= 1 << 12;
+                    }
+                    if facts.finalized_height_v0() < ordinary_start_height {
+                        mask |= 1 << 13;
+                    }
+                    if facts.application_applied_height_v0() != facts.finalized_height_v0() {
+                        mask |= 1 << 14;
+                    }
+                }
+                Err(_) => mask |= 1 << 16,
+            },
+            Err(_) => mask |= 1 << 16,
+        }
+        if !self.event_journal.observation().active_faults.is_empty() {
+            mask |= 1 << 17;
+        }
+        if now < self.nominal_deadline {
+            mask |= 1 << 18;
+        }
+        let quiet_ready = self
+            .terminal_candidate_since
+            .is_some_and(|since| now.saturating_duration_since(since) >= TERMINAL_QUIET_PERIOD_V1);
+        if !quiet_ready {
+            mask |= 1 << 19;
+        }
+        if now.saturating_duration_since(self.started_at) < MINIMUM_METRICS_INTERVAL_V1 {
+            mask |= 1 << 20;
+        }
+        mask
     }
 
     fn authority_v1(&mut self) -> Result<&mut ContinuousValidatorAuthorityV0> {
@@ -7371,6 +7538,22 @@ impl BoundedConsensusOwnerV1 {
             .as_ref()
             .ok_or_else(|| anyhow!("consensus mesh is unavailable"))
     }
+}
+
+fn append_failure_diagnostics_v1(
+    journal: &mut RuntimeEventJournalV1,
+    blocker_mask: u32,
+    timeout_diagnostics: &str,
+) {
+    eprintln!(
+        "bounded-consensus-diagnostics blockers=0x{:08x} {}",
+        blocker_mask, timeout_diagnostics
+    );
+    let _ = journal.append(
+        RuntimeEventKindV1::SafetyHalted,
+        "bounded-consensus-runtime-failed",
+        0,
+    );
 }
 
 fn observed_connectivity_fault_subject_v1(
@@ -8384,6 +8567,72 @@ mod tests {
     };
 
     use super::*;
+
+    #[test]
+    fn timeout_diagnostic_ring_is_bounded_and_classifies_outcomes() {
+        let (keys, validator_set, _parameters, _genesis, parent_qc) =
+            synthetic_proposal_fixture_v1();
+        let high_qc = QcReferenceV0::ordinary(parent_qc).qc_ref();
+        let mut ring = TimeoutDiagnosticRingV1::default();
+        let votes = (0..(TimeoutDiagnosticRingV1::CAPACITY + 3))
+            .map(|index| {
+                let view = View::new(2 + index as u64);
+                let root = TimeoutVote::signing_root_for_set(&validator_set, view, high_qc)
+                    .expect("timeout diagnostic signing root");
+                TimeoutVote::new(
+                    validator_set.chain_id(),
+                    validator_set.protocol_version(),
+                    validator_set.epoch(),
+                    view,
+                    validator_set.id(),
+                    high_qc,
+                    validator_set.validators()[index % keys.len()].id(),
+                    SignatureBytes::from_array(
+                        keys[index % keys.len()].sign(root.as_bytes()).to_bytes(),
+                    ),
+                    &validator_set,
+                )
+                .expect("valid timeout diagnostic vote")
+            })
+            .collect::<Vec<_>>();
+        for (index, vote) in votes.iter().enumerate() {
+            ring.record_vote(vote, index % 2 == 0);
+        }
+        ring.record_queued();
+        ring.record_admitted();
+        let summary = ring.summary();
+        assert!(ring.entries.len() <= TimeoutDiagnosticRingV1::CAPACITY);
+        assert!(summary.len() <= 2048);
+        assert!(summary.starts_with("timeout-diag:accepted=11:formed=6:queued=1:admitted=1:"));
+        for (index, vote) in votes.iter().enumerate().skip(3) {
+            let outcome = u8::from(index % 2 == 0);
+            let tuple = format!(
+                "{}:{}:{}:{};",
+                vote.view().get(),
+                hex::encode(vote.high_qc().qc_digest().as_bytes()),
+                hex::encode(vote.author().as_bytes()),
+                outcome,
+            );
+            assert!(summary.contains(&tuple), "missing retained tuple {tuple}");
+        }
+        let removed = format!(
+            "{}:{}:{}:{};",
+            votes[2].view().get(),
+            hex::encode(votes[2].high_qc().qc_digest().as_bytes()),
+            hex::encode(votes[2].author().as_bytes()),
+            u8::from(2usize % 2 == 0),
+        );
+        assert!(!summary.contains(&removed));
+
+        let (_temporary, path, mut journal) = crate::process_event::test_started_event_journal_v1();
+        append_failure_diagnostics_v1(&mut journal, 0x4000, &summary);
+        drop(journal);
+        let events = crate::process_event::test_read_event_journal_v1(&path);
+        assert_eq!(events.len(), 2, "process start plus terminal event");
+        let terminal = events.last().expect("terminal event");
+        assert_eq!(terminal.kind, "safety_halted");
+        assert_eq!(terminal.subject, "bounded-consensus-runtime-failed");
+    }
     use crate::{
         collector::ConsensusCertificateCollectorV0,
         continuous_runtime::ContinuousValidatorAuthorityV0, frame::AuthenticatedFrame,
