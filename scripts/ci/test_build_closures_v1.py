@@ -61,6 +61,25 @@ class FeatureClosureTests(unittest.TestCase):
         with self.assertRaisesRegex(closure.ClosureError, "node-production-features: forbidden"):
             self.validate()
 
+    def test_future_epoch_host_dependency_leak_is_rejected_without_a_version_list_edit(self):
+        self.packages[CORE].features["candidate-epoch-host-v99"] = []
+        self.add_dependency_feature(NODE, CORE, "candidate-epoch-host-v99")
+        with self.assertRaisesRegex(closure.ClosureError, "node-production-features: forbidden candidate epoch host"):
+            self.validate()
+
+    def test_future_safety_epoch_host_default_cannot_leak(self):
+        self.packages[SAFETY].features["candidate-epoch-host-v99"] = []
+        self.packages[SAFETY].features["default"].append("candidate-epoch-host-v99")
+        with self.assertRaisesRegex(closure.ClosureError, "node-production-features: forbidden candidate epoch host"):
+            self.validate()
+
+    def test_future_epoch_host_remains_explicit_candidate_only(self):
+        self.packages[CORE].features["candidate-epoch-host-v99"] = []
+        self.packages[NODE].features["epoch-runtime-candidate"].append(f"{CORE}/candidate-epoch-host-v99")
+        reports = {row["id"]: row for row in self.validate()}
+        self.assertIn(f"{CORE}/candidate-epoch-host-v99", reports["epoch-runtime-features"]["resolved_features"])
+        self.assertNotIn(f"{CORE}/candidate-epoch-host-v99", reports["node-production-features"]["resolved_features"])
+
     def test_node_default_cannot_enable_epoch_candidate(self):
         self.packages[NODE].features["default"].append("epoch-runtime-candidate")
         with self.assertRaisesRegex(closure.ClosureError, "forbidden candidate features"):

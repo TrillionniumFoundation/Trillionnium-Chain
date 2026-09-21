@@ -34,6 +34,18 @@ any ordered-assignment mismatch. These digests make executor scheduling
 regressions mechanically comparable; they are not ingress TPS, consensus
 finality or multi-host performance evidence.
 
+### Epoch host feature isolation (M17-EPOCH-HOST-FEATURES-V2)
+
+The recursive Cargo feature graph must reject every
+`candidate-epoch-host-*` feature of the consensus Core or Safety store in the
+production CLI, default node component and outgoing-only authority closures.
+This applies to new version names as well as the existing explicit forbidden
+feature list. Package membership alone cannot detect an authority API enabled
+inside a package already used by production. Explicit epoch candidate builds
+may select these features; enabling a candidate host must not activate a test
+fixture or change release truth. Mutation tests cover dependency/default leaks,
+a newly named future version and explicit candidate-only selection.
+
 ### Observed fleet readiness and its limits
 
 The 2026-09-16 read-only run of `scripts/poco-fleet/probe_fleet.py` and

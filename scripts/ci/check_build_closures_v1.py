@@ -299,6 +299,18 @@ def validate_feature_closures(
         require(required <= enabled, f"{label}: required features absent: {sorted(required - enabled)}")
         require(not forbidden.intersection(enabled),
                 f"{label}: forbidden candidate features reached: {sorted(forbidden.intersection(enabled))}")
+        if label in {"node-production-features", "node-component-default-features",
+                     "outgoing-authority-features"}:
+            # Versioned APIs remain candidate authority even when a newly
+            # introduced name is not yet in the explicit historical list.
+            host_features = sorted(
+                f"{package}/{feature}"
+                for package in ("trnm-consensus-core", "trnm-consensus-safety-store")
+                for feature in active.get(package, set())
+                if feature.startswith("candidate-epoch-host-")
+            )
+            require(not host_features,
+                    f"{label}: forbidden candidate epoch host features reached: {host_features}")
         if row["forbid_test_features"]:
             fixtures = sorted(f"{package}/{feature}" for package, features in active.items()
                               for feature in features if is_test_feature(feature))
