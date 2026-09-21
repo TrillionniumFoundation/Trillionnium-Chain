@@ -1207,6 +1207,46 @@ same view, a late native proposal and Vote, duplicate timer/direct-call refusal
 without another key call or durable revision, and subsequent genuine TC
 advancement followed by exactly one new-view timeout.
 
+### Pure direct-input rejection containment (M15-DIRECT-INPUT-CONTAINMENT-V1)
+
+After the mesh owner's exact sender/session join, the direct ordinary consensus
+lane classifies rejection only at its initial, bounded, strict wire decoder.
+Malformed/truncated/oversized or invalid-signature payloads, statement-author
+mismatch and an unsupported ordinary frame kind produce a typed peer rejection
+before collector mutation. Reconfirm the pinned local set/parameter hash and
+nonzero session separately; unknown local membership or owner/context mismatch
+remains an internal fatal error. The original strict admission API still
+returns its error; only the runtime's explicitly contained entry handles the
+closed peer-rejection outcome. No arbitrary `anyhow` chain is swallowed.
+
+Retain at most one first-rejection record per actual validator ID (at most N):
+frame kind, SHA256 of original payload, a closed reason code and a checked u64
+dropped-frame count including the first rejection. This process-local direct
+input quarantine persists across transport reconnects for this owner lifetime.
+Subsequent ordinary direct frames from that peer are discarded without another
+decode or signature check. This is not a socket disconnect, new authority or
+durable recovery certificate. Emit only the bounded first-rejection diagnostic;
+keep rejection records unchanged apart from the count. Counter overflow,
+impossible inventory growth and unknown identity remain fatal.
+
+Drop/rejection is not consensus progress. The normal owner loop processes at
+most 64 queued ingress events per tick, including its initial blocking receive,
+then returns to timer/control/finality work. Preserve existing byte, crypto,
+queue, collector and pending-action ceilings. Collector errors (including
+capacity, equivocation and conflicting certificate evidence), downstream Core,
+native execution, signer, storage, fsync and namespace/CAS failures retain their
+existing fatal behavior and counters. No terminal report, zero-violation,
+quorum, clean-stop or six-host acceptance predicate is relaxed.
+
+Real-key tests require rejected Vote/QC/Proposal payloads to leave the complete
+live owner and collector unchanged, retain the exact first rejection facts,
+and allow another honest peer's genuine votes to form a QC and advance the
+same owner. Tests also retain fatal identity/collector/namespace failures and
+prove finite drain under an always-ready rejected stream. Outer authenticated
+frame/MAC failures, sparse relay, fleet barrier and restart ingress have their
+own current fatal policies; this slice does not claim their containment or
+full Byzantine-network availability.
+
 ### Per-peer ordered delivery (M15-PEER-OUTBOX-V2)
 
 A bounded broadcast queue preserves FIFO independently for each destination.

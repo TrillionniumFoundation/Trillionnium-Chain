@@ -642,6 +642,7 @@ struct ContinuousConsensusWindowsV0 {
     ingress: BoundedConsensusIngressLoopV0,
     relay: ConsensusRelayAdmissionWindowV0,
     direct_proposals: BTreeMap<DirectProposalIdentityV0, ()>,
+    direct_peer_rejections: BTreeMap<ValidatorId, DirectPeerRejectionFactsV1>,
     preflight: ContinuousRuntimeCapacityPreflightV0,
 }
 
@@ -651,6 +652,8 @@ struct DirectProposalIdentityV0 {
     block_id: BlockId,
     canonical_payload_sha256: [u8; 32],
 }
+
+include!("continuous_direct_peer_containment_v1.inc");
 
 impl ContinuousConsensusWindowsV0 {
     fn new(
@@ -684,6 +687,7 @@ impl ContinuousConsensusWindowsV0 {
             ingress,
             relay,
             direct_proposals: BTreeMap::new(),
+            direct_peer_rejections: BTreeMap::new(),
             preflight,
         })
     }
@@ -708,6 +712,14 @@ impl ContinuousConsensusWindowsV0 {
             &self.consensus_parameters,
         )
         .context("preflight authenticated consensus frame")?;
+        self.admit_predecoded_direct_frame_v1(frame, decoded)
+    }
+
+    fn admit_predecoded_direct_frame_v1(
+        &mut self,
+        frame: &AuthenticatedFrame,
+        decoded: AdmittedConsensusMessageV0,
+    ) -> Result<Option<RoutedConsensusActionV0>> {
         // Network queues can outlive a local retained-view window. The full
         // bounded decode and original signature checks above remain required,
         // but an already-pruned valid statement has no remaining local action.
@@ -8719,4 +8731,5 @@ mod tests {
     }
     include!("continuous_timeout_projection_tests_v1.inc");
     include!("continuous_timeout_rearm_tests_v1.inc");
+    include!("continuous_direct_peer_containment_tests_v1.inc");
 }

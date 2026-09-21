@@ -65,7 +65,7 @@ use crate::{
     },
     continuous_runtime::{
         ContinuousRuntimeFactsV0, ContinuousSignerLifetimeBoundsV0, ContinuousValidatorAuthorityV0,
-        RestartSignatureProducerV1, RestartSignaturePurposeV1,
+        DirectPeerFrameOutcomeV1, RestartSignatureProducerV1, RestartSignaturePurposeV1,
         CONTINUOUS_RUNTIME_MAXIMUM_SIGNER_INTENTS_V0, CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0,
     },
     crypto::LabFileWatermark,
@@ -393,6 +393,7 @@ const MESH_SETUP_TIMEOUT_V1: Duration =
     Duration::from_secs(CONSENSUS_RUNTIME_MESH_SETUP_ALLOWANCE_SECONDS_V1);
 const MESH_IO_TIMEOUT_V1: Duration = Duration::from_secs(2);
 const MESH_QUEUE_CAPACITY_V1: usize = 256;
+const MAXIMUM_INGRESS_EVENTS_PER_TICK_V1: usize = 64;
 const OWNER_POLL_INTERVAL_V1: Duration = Duration::from_millis(10);
 const PACEMAKER_BASE_TIMEOUT_V1: Duration =
     Duration::from_secs(CONSENSUS_RUNTIME_PACEMAKER_BASE_TIMEOUT_SECONDS_V1);
@@ -4449,17 +4450,15 @@ impl BoundedConsensusOwnerV1 {
     }
 
     fn drain_ready_ingress_v1(&mut self) -> Result<bool> {
-        let mut progressed = false;
-        loop {
+        drain_remaining_ingress_tick_v1(|| {
             let event = match self.prestarted_ingress.pop_front() {
                 Some(event) => Some(event),
                 None => self.mesh_v1()?.receive_timeout(Duration::ZERO)?,
             };
-            let Some(event) = event else {
-                return Ok(progressed);
-            };
-            progressed |= self.handle_mesh_event_v1(event)?;
-        }
+            event
+                .map(|event| self.handle_mesh_event_v1(event))
+                .transpose()
+        })
     }
 
     fn refresh_stop_state_v1(&mut self, now: Instant) -> Result<()> {
@@ -5044,17 +5043,15 @@ impl BoundedConsensusOwnerV1 {
                                 .transpose()
                                 .map(|progress| progress.unwrap_or(false));
                         }
-                        ensure!(
-                            frame.kind != FrameKind::ConsensusRelay,
-                            "seven-validator direct runtime rejects relay frames"
-                        );
                         if self.restart_lifecycle.is_prepared_v1() {
+                            ensure!(
+                                frame.kind != FrameKind::ConsensusRelay,
+                                "seven-validator direct runtime rejects relay frames"
+                            );
                             self.record_prepared_normal_frame_drop_v1()?;
                             return Ok(true);
                         }
-                        let action = self
-                            .authority_v1()?
-                            .admit_authenticated_consensus_frame_v0(&frame)?;
+                        let action = route_contained_direct_frame_v1(self.authority_v1()?, &frame)?;
                         match action {
                             Some(action) => self.handle_routed_action_v1(action),
                             None => Ok(false),
@@ -7992,6 +7989,41 @@ fn made_authoritative_progress_v1(
         || after.high_qc_v0() != before.high_qc_v0()
         || after.finalized_height_v0() > before.finalized_height_v0()
         || after.application_applied_height_v0() > before.application_applied_height_v0()
+}
+
+/// Uses only the typed pure-input rejection boundary. Collector and all
+/// subsequent authority/storage errors remain errors at the runtime caller.
+pub(crate) fn route_contained_direct_frame_v1(
+    authority: &mut ContinuousValidatorAuthorityV0,
+    frame: &crate::frame::AuthenticatedFrame,
+) -> Result<Option<RoutedConsensusActionV0>> {
+    match authority.admit_contained_direct_frame_v1(frame)? {
+        DirectPeerFrameOutcomeV1::Admitted(action) => Ok(action),
+        DirectPeerFrameOutcomeV1::Rejected(facts) => {
+            eprintln!(
+                "bounded-consensus direct-peer-input rejected {}",
+                facts.diagnostic_v1()
+            );
+            Ok(None)
+        }
+        DirectPeerFrameOutcomeV1::Quarantined => Ok(None),
+    }
+}
+
+/// The loop has already received at most one event before polling its timer.
+/// A perpetually ready peer cannot keep this drain from returning to control,
+/// timer and terminal checks. Rejection alone is never counted as progress.
+pub(crate) fn drain_remaining_ingress_tick_v1(
+    mut next: impl FnMut() -> Result<Option<bool>>,
+) -> Result<bool> {
+    let mut progressed = false;
+    for _ in 1..MAXIMUM_INGRESS_EVENTS_PER_TICK_V1 {
+        match next()? {
+            Some(progress) => progressed |= progress,
+            None => break,
+        }
+    }
+    Ok(progressed)
 }
 
 pub(crate) fn update_pacemaker_after_progress_v1(
