@@ -566,6 +566,9 @@ fn schema11_current_generations_continue_genuine_execution_preserving_source() {
 
 #[test]
 fn schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventory() {
+    schema11_checkpoint_fixture(false);
+}
+fn schema11_checkpoint_fixture(repeat_third: bool) {
     use crate::poco_checkpoint::native_checkpoint_fixture_v1::ordinary_epoch_finality;
     let directory = tempfile::tempdir().unwrap();
     let path = std::env::var_os("TRNM_SCHEMA11_PRE_HANDOFF_SIGKILL_STORE")
@@ -1424,13 +1427,14 @@ fn schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventor
         &first_header,
         first_new.p_digest(),
         &next_descendants,
+        repeat_third,
     );
     // A locally rehashed cross-kind replacement cannot substitute the migrated
     // native authorization identity for the full successor activation binding.
     let c = Connection::open(&path).unwrap();
     let mut row:Vec<rusqlite::types::Value>=c.query_row(
-        "SELECT binding,ordinal,predecessor,prefix,checkpoint_head,checkpoint_p,checkpoint_sequence,context_digest,evidence_kind,evidence,phase,consumed_block,consumed_p,consumed_sequence FROM native_incremental_epoch_edge_v2 WHERE evidence_kind=1",
-        [], |r| (0..14).map(|i| r.get(i)).collect(),
+        "SELECT binding,ordinal,predecessor,prefix,checkpoint_head,checkpoint_p,checkpoint_sequence,context_digest,evidence_kind,evidence,phase,consumed_block,consumed_p,consumed_sequence FROM native_incremental_epoch_edge_v2 WHERE evidence_kind=1 AND binding=?1",
+        [binding.as_slice()], |r| (0..14).map(|i| r.get(i)).collect(),
     ).unwrap();
     row[8] = rusqlite::types::Value::Integer(0);
     row[9] = rusqlite::types::Value::Blob(
@@ -1971,6 +1975,7 @@ fn schema11_commit_second_first(
     first_header: &BlockHeader,
     digest: [u8; 32],
     descendants: &[PreparedNativeIncrementalEpochV2],
+    repeat_third: bool,
 ) -> Vec<u8> {
     let headers = vec![
         first_header.clone(),
@@ -2112,7 +2117,13 @@ fn schema11_commit_second_first(
         22
     );
     assert_eq!(std::fs::read(path).unwrap(), bytes);
-    bytes
+    drop(c);
+    drop(cold);
+    if repeat_third {
+        schema11_third_crossing(path, set, parameters)
+    } else {
+        bytes
+    }
 }
 
 #[cfg(unix)]
@@ -2318,7 +2329,8 @@ fn schema11_empty_descendant(
         Height::new(h),
         BlockKind::Regular,
         parent.header().unwrap().id(),
-        set.validators()[(h as usize - 1) % set.validators().len()].id(),
+        set.validators()[parent.header().unwrap().view().get() as usize % set.validators().len()]
+            .id(),
         set.id(),
         parameters.hash(),
         PayloadDigest::new(*preview.payload_root().as_bytes()),
@@ -2428,3 +2440,5 @@ fn schema11_continue_second_epoch(
     assert_eq!(std::fs::read(path).unwrap(), bytes);
     bytes
 }
+
+include!("incremental_epoch_repeated_tests_v2.inc");

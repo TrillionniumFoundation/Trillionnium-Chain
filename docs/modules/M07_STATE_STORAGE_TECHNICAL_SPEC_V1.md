@@ -1442,16 +1442,22 @@ acceptance requirements. Migration, C18 pre-handoff, B attachment and prepared
 C21/C22/C23 do not satisfy this commit-and-recovery campaign. The candidate
 remains closed until the complete acceptance path passes.
 
-The implemented storage slice now commits and cold-reopens genuine nonempty
+The implemented storage slice commits and cold-reopens genuine nonempty
 C21/C22, rejects an independently signed alternate complete C21 header before
 writes, and retains the advanced head on exact first and historical A ordinary
-proof retries. The nine C18/attachment/C21 SIGKILL cuts and legacy schema6/7
-regressions pass on the default test stack. Cached strict contexts are privately
-heap-owned, with the same maximum32 prefix bound and no public constructor or
-Clone capability. This evidence does **not** close the third C28→C31→C32 crossing,
-M03 custody integration, schema11 node/sync wiring, or multi-host performance
-acceptance. Those remain separate required work; the count limit is not evidence
-that repeated crossings have been accepted.
+proof retries. A separate genuine fixture repeats C28→C31→C32: C25 sparse
+selection and C27 certification precede C28 native commit/cold confirmation;
+only then do both roles sign C's joint. Nonempty C31/C32 execution consumes the
+third native/ni edge, preserves every prior A/B edge and committed proof row,
+and retains C32 on exact retries of all three original first proofs. Reordering
+B/C in a locally rehashed P-context prefix rejects on cold open without writes.
+The nine C18/attachment/C21 SIGKILL cuts and legacy schema6/7 regressions pass on
+the default test stack. Cached strict contexts are privately heap-owned, with
+the same maximum32 prefix bound and no public constructor or Clone capability.
+The tested three-edge prefix closes this third storage crossing; maximum32 is a
+resource ceiling, not a 32-epoch capacity or performance result. M03 custody
+integration, schema11 node/sync wiring, and multi-host performance acceptance
+remain separate required work.
 
 #### Bounded recovery, replay, retry and retention
 
@@ -1539,17 +1545,23 @@ adapter contract, not an implemented export, installer or completed M13 claim.
 
 #### Implementation and acceptance joins
 
-The production cuts are `incremental_epoch_owner_v1.rs` (explicit migration,
-closed inventory and version dispatch), a private multi-edge resolver/context
-module, `incremental_epoch_commit_v1.rs` (per-edge first proof and historical
-retry), `incremental_epoch_descendant_v1.rs` (selected configuration, checkpoint
-kind, history walk and all-committed fork protection), `incremental_owner_v1.rs`
-(shared typed validation/view only; keep schema5 fences), and
-`incremental_epoch_storage_v1.rs` (authorized repeated stage). `durable.rs`
-must explicitly route schema11 open/audit/pin paths while preserving every
-schema6/7 descriptor and unsupported legacy entry-point guard. The node candidate
-owner join needs its own review; existing singleton edge APIs cannot be relabeled
-as multiple-edge capabilities or silently admit schema11.
+The schema11 production cuts are `incremental_epoch_owner_v2.rs` (explicit
+schema7 migration, immutable source projection and version dispatch),
+`incremental_epoch_lineage_v2.rs` (iterative retained-context and closed inventory
+audit), `incremental_epoch_first_v2.rs` (first-new preparation, commit and
+historical retry), `incremental_epoch_attachment_v2.rs` (strict successor
+attachment), `incremental_epoch_checkpoint_v2.rs` (selection, preparation and
+sidecar joins), `incremental_epoch_pre_handoff_v2.rs` (causal checkpoint commit),
+and `incremental_epoch_progress_v2.rs` (ordinary preparation, commit, historical
+retry and all-committed fork protection). Shared kernels remain in
+`incremental_epoch_owner_v1.rs`, `incremental_epoch_commit_v1.rs`,
+`incremental_epoch_descendant_v1.rs`, `incremental_owner_v1.rs` and
+`incremental_epoch_storage_v1.rs`; reuse does not expand their frozen schema5/6/7
+public entry points. `durable.rs` explicitly routes schema11 open/audit/pin paths
+while preserving every schema6/7 descriptor and unsupported legacy entry-point
+guard. Schema11 Node/sync owner joins and the M03 typed receipt adapter remain
+unimplemented; existing singleton edge APIs cannot be relabeled as multiple-edge
+capabilities or silently admit schema11.
 
 Reuse `incremental_epoch_commit_v1.rs::tests::setup` and its signed real credit,
 transfer, replay/fork and two SIGKILL harnesses. Extend those actual sparse readers
