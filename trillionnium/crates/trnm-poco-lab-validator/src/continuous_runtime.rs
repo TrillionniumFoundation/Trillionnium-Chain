@@ -1963,6 +1963,7 @@ impl ContinuousValidatorAuthorityV0 {
         &mut self,
         config: &mut LoadedValidatorConfig,
     ) -> Result<SignedProposalV0> {
+        self.rebase_ready_parent_v1()?;
         let preimage = self.proposal_preimage_from_loaded_config_v0(config)?;
         preimage.seal_with_producer_v0(&mut self.proposal_producer, PROPOSAL_SIGNER_PROFILE_REF_V0)
     }
@@ -1990,6 +1991,7 @@ impl ContinuousValidatorAuthorityV0 {
         &mut self,
         preimage: ContinuousProposalPreimageV0,
     ) -> Result<SignedProposalV0> {
+        self.rebase_ready_parent_v1()?;
         let binding = self
             .ready_runtime_v0()?
             .proposal_binding_v0()
@@ -2011,6 +2013,7 @@ impl ContinuousValidatorAuthorityV0 {
         transactions: Vec<Vec<u8>>,
         timestamp_ms: u64,
     ) -> Result<SignedProposalV0> {
+        self.rebase_ready_parent_v1()?;
         let preimage = self.native_proposal_preimage_v1(transactions, timestamp_ms)?;
         self.seal_native_proposal_v1(preimage)
     }
@@ -2077,12 +2080,43 @@ impl ContinuousValidatorAuthorityV0 {
     }
 
     /// Core Ready does not imply that a retained TC authorizes a proposal on
-    /// the locally authenticated native parent. This read grants no key lease.
-    pub(crate) fn proposal_witness_ready_v1(&self) -> Result<bool> {
+    /// the locally authenticated native parent. This preparation grants no key lease.
+    pub(crate) fn proposal_witness_ready_v1(&mut self) -> Result<bool> {
+        self.rebase_ready_parent_v1()?;
         let runtime = self.ready_runtime_v0()?;
         Ok(self
             .proposal_justify_v1(runtime.facts_v0().current_view_v0())?
             .is_some())
+    }
+
+    #[inline(never)]
+    fn rebase_boxed_ready_parent_v1(runtime: Box<LabRuntimeV0>) -> Result<Box<LabRuntimeV0>> {
+        Ok(Box::new(
+            (*runtime)
+                .rebase_synced_parent_to_high_qc_v1()
+                .map_err(|error| anyhow!("rebase Ready application parent: {error}"))?,
+        ))
+    }
+
+    /// Explicitly updates only a Ready owner's durable application projection.
+    /// A signed owner never enters this operation or loses its exact outbound.
+    fn rebase_ready_parent_v1(&mut self) -> Result<bool> {
+        let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.as_ref() else {
+            return Ok(false);
+        };
+        let facts = runtime.phase_facts_v0();
+        if facts.proposal_parent_block_id_v0() == facts.high_qc_v0().block_id()
+            && facts.proposal_parent_height_v0() == facts.high_qc_v0().height().get()
+        {
+            return Ok(false);
+        }
+        let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.take() else {
+            unreachable!("Ready projection checked above")
+        };
+        self.phase = Some(ContinuousAuthorityPhaseV0::Ready(
+            Self::rebase_boxed_ready_parent_v1(runtime)?,
+        ));
+        Ok(true)
     }
 
     fn proposal_justify_v1(&self, current_view: View) -> Result<Option<&QcReferenceV0>> {
@@ -2319,6 +2353,7 @@ impl ContinuousValidatorAuthorityV0 {
             // merely by comparing the proposal's advertised view.
             return Ok(None);
         }
+        self.rebase_ready_parent_v1()?;
         let binding = self
             .ready_runtime_v0()?
             .proposal_binding_v0()
@@ -2464,10 +2499,8 @@ impl ContinuousValidatorAuthorityV0 {
         let header = proposal.block().header();
         let parent = match self.phase.as_ref() {
             Some(ContinuousAuthorityPhaseV0::Ready(runtime)) => runtime
-                .proposal_binding_v0()
-                .map_err(|error| anyhow!("read synced proposal binding: {error}"))?
-                .parent_v0()
-                .clone(),
+                .proposal_parent_v0()
+                .map_err(|error| anyhow!("read synced proposal parent: {error}"))?,
             Some(ContinuousAuthorityPhaseV0::TimeoutSigned(signed)) => {
                 if header.view() > signed.facts_v0().view_v0()
                     || header.view() > signed.phase_facts_v0().current_view_v0()
@@ -2565,6 +2598,7 @@ impl ContinuousValidatorAuthorityV0 {
         } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
             self.advance_quorum_certificate_v0(certificate)?;
         }
+        self.rebase_ready_parent_v1()?;
         let binding = self
             .ready_runtime_v0()?
             .proposal_binding_v0()
@@ -2647,6 +2681,7 @@ impl ContinuousValidatorAuthorityV0 {
         } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
             self.advance_quorum_certificate_v0(certificate)?;
         }
+        self.rebase_ready_parent_v1()?;
         let binding = self
             .ready_runtime_v0()?
             .proposal_binding_v0()
@@ -5526,6 +5561,7 @@ mod tests {
         transactions: Vec<Vec<u8>>,
         workloads: Vec<(u64, u64, Vec<Vec<u8>>)>,
         authorities: Vec<ContinuousValidatorAuthorityV0>,
+        recovery_configs: Vec<Box<(CoreConfig, NativeApplicationConfigV0)>>,
         _temp: TempDir,
     }
 
@@ -5536,6 +5572,7 @@ mod tests {
         workloads: Vec<(u64, u64, Vec<Vec<u8>>)>,
         signing_key: SigningKey,
         authority: ContinuousValidatorAuthorityV0,
+        recovery_config: Box<(CoreConfig, NativeApplicationConfigV0)>,
     }
 
     fn commission_takeover_harness_authority_v0(
@@ -5580,6 +5617,10 @@ mod tests {
             .collect::<Vec<_>>();
         let validator_set = bundle.validator_set_v0().clone();
         let parameters = *bundle.consensus_parameters_v0();
+        let recovery_config = Box::new((
+            bundle.core_config_v0().clone(),
+            bundle.fresh_reopen_application_config_v0().unwrap(),
+        ));
         let (local, set, consensus_parameters, signing_key, start, runtime) =
             bundle.into_continuous_runtime_parts_v0();
         let authority = ContinuousValidatorAuthorityV0::from_takeover_parts_v0(
@@ -5599,6 +5640,7 @@ mod tests {
             workloads,
             signing_key,
             authority,
+            recovery_config,
         }
     }
 
@@ -5650,6 +5692,7 @@ mod tests {
         let mut workloads = None;
         let mut keys = Vec::with_capacity(validator_count);
         let mut authorities = Vec::with_capacity(validator_count);
+        let mut recovery_configs = Vec::with_capacity(validator_count);
         let handles = (0..validator_count)
             .map(|index| {
                 let authority_root = temp.path().join(format!("takeover-authority-{index:03}"));
@@ -5691,6 +5734,7 @@ mod tests {
             }
             keys.push(commissioned.signing_key);
             authorities.push(commissioned.authority);
+            recovery_configs.push(commissioned.recovery_config);
         }
 
         let workloads = workloads.expect("takeover ordinary workloads");
@@ -5706,6 +5750,7 @@ mod tests {
             transactions,
             workloads,
             authorities,
+            recovery_configs,
             _temp: temp,
         }
     }
@@ -7608,6 +7653,8 @@ mod tests {
             );
         });
     }
+
+    include!("continuous_ready_rebase_tests.inc");
 
     #[test]
     fn late_network_proposal_after_timeout_syncs_without_new_signature_v1() {

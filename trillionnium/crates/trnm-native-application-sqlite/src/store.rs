@@ -68,6 +68,15 @@ const ANCHORED_SUCCESSOR_SAFETY_CLOSURE_DOMAIN_V0: &[u8] =
 const ORDINARY_REPLAY_SAFETY_CLOSURE_DOMAIN_V0: &[u8] =
     b"TRNM_NATIVE_ORDINARY_REPLAY_SAFETY_CLOSURE_V0";
 
+#[derive(Clone, Copy)]
+enum SyncedNativeValidReadbackV1 {
+    Anchor,
+    Ordinary {
+        delivered_row_checksum: [u8; 32],
+        safety_record_checksum: [u8; 32],
+    },
+}
+
 type ReplayMetadataRowV0 = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>);
 
 const fn payload_validation_route_v0(route: ProposalRouteV0) -> PayloadValidationRouteV0 {
@@ -4811,6 +4820,49 @@ impl SqliteProposalValidationStoreV0 {
         &mut self,
         binding: &ProposalValidationBindingV0,
     ) -> ValidationStoreResultV0<SafetyTransitionContextV0> {
+        self.reconstruct_synced_native_valid_context_from_k_v1(
+            binding,
+            SyncedNativeValidReadbackV1::Anchor,
+        )
+    }
+
+    /// Inert comparison against the original strictly authenticated Safety
+    /// record. K retains its exact checksum and ordinary no-sign closure;
+    /// the original D-row checksum is carried by that record, never guessed
+    /// from the later K sequence. This grants no callback or ACK authority.
+    pub fn confirm_synced_no_sign_native_valid_context_from_k_v1(
+        &mut self,
+        binding: &ProposalValidationBindingV0,
+        original_context: &SafetyTransitionContextV0,
+        original_safety_record_checksum: [u8; 32],
+    ) -> ValidationStoreResultV0<SafetyTransitionContextV0> {
+        let transition = original_context.native_valid_transition().ok_or_else(|| {
+            error(
+                ValidationStoreErrorCodeV0::BindingMismatch,
+                "synced_recovery.native_valid_context",
+            )
+        })?;
+        let reconstructed = self.reconstruct_synced_native_valid_context_from_k_v1(
+            binding,
+            SyncedNativeValidReadbackV1::Ordinary {
+                delivered_row_checksum: transition.delivered_job_row_checksum(),
+                safety_record_checksum: original_safety_record_checksum,
+            },
+        )?;
+        if &reconstructed != original_context {
+            return Err(error(
+                ValidationStoreErrorCodeV0::BindingMismatch,
+                "synced_recovery.exact_original_context",
+            ));
+        }
+        Ok(reconstructed)
+    }
+
+    fn reconstruct_synced_native_valid_context_from_k_v1(
+        &mut self,
+        binding: &ProposalValidationBindingV0,
+        policy: SyncedNativeValidReadbackV1,
+    ) -> ValidationStoreResultV0<SafetyTransitionContextV0> {
         self.ensure_ready_v0()?;
         self.audit_database_v0()?;
         let snapshot = load_durable_snapshot_v0(self.connection_v0()?, binding.validation_id())?;
@@ -4838,7 +4890,18 @@ impl SqliteProposalValidationStoreV0 {
             || job.row_checksum != compute_row_checksum_v0(&job)
             || snapshot.outbox.is_some()
             || confirmation.validation_id != *binding.validation_id().as_bytes()
-            || !matches!(confirmation.core_revision, 2 | 4)
+            || match policy {
+                SyncedNativeValidReadbackV1::Anchor => !matches!(confirmation.core_revision, 2 | 4),
+                SyncedNativeValidReadbackV1::Ordinary {
+                    safety_record_checksum,
+                    delivered_row_checksum,
+                } => {
+                    confirmation.core_revision < 6
+                        || safety_record_checksum == [0; 32]
+                        || delivered_row_checksum == [0; 32]
+                        || safety.safety_record_digest != safety_record_checksum
+                }
+            }
             || safety.safety_revision != confirmation.core_revision
         {
             return Err(error(
@@ -4909,7 +4972,13 @@ impl SqliteProposalValidationStoreV0 {
             callback_payload_checksum,
             idempotency_key,
             1,
-            job.row_checksum,
+            match policy {
+                SyncedNativeValidReadbackV1::Anchor => job.row_checksum,
+                SyncedNativeValidReadbackV1::Ordinary {
+                    delivered_row_checksum,
+                    ..
+                } => delivered_row_checksum,
+            },
             outbox_checksum,
             NativeValidPostAckActionV0::None.code(),
             confirmation.core_revision,
@@ -4923,7 +4992,12 @@ impl SqliteProposalValidationStoreV0 {
         let revision = safety.safety_revision.to_be_bytes();
         let action_code = NativeValidPostAckActionV0::None.code().to_be_bytes();
         let no_sign_closure = domain_digest_v0(
-            ANCHORED_SUCCESSOR_SAFETY_CLOSURE_DOMAIN_V0,
+            match policy {
+                SyncedNativeValidReadbackV1::Anchor => ANCHORED_SUCCESSOR_SAFETY_CLOSURE_DOMAIN_V0,
+                SyncedNativeValidReadbackV1::Ordinary { .. } => {
+                    ORDINARY_REPLAY_SAFETY_CLOSURE_DOMAIN_V0
+                }
+            },
             &[
                 binding.validation_id().as_bytes(),
                 core_delivery.digest().as_bytes(),

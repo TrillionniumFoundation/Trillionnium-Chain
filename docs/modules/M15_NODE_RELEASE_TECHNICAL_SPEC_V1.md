@@ -1114,6 +1114,47 @@ aggregation; transport behavior with an offline peer requires separate evidence.
 Full-mesh all-validator publication has quadratic network fanout and establishes
 no throughput, offline-node or multi-host acceptance claim by itself.
 
+### Ready parent selection after late execution (M15-READY-REBASE-V1)
+
+A genuine Synced body can leave a Ready owner's retained native parent ahead of
+Core's authoritative high QC. Before proposal authoring or voting, an explicit
+Ready-only operation may restore the exact selected QC parent. This is an
+application projection update: Core state, Safety journal/profile/revision,
+record and chain checksums, and every signer identity/watermark field remain
+unchanged. Only the independent whole-node checkpoint generation increments,
+with its exact previous checksum. No Core input, StorageAck, timer, signature or
+signed-owner conversion is emitted. Existing TC persistence still requires its
+separate exact Safety revision+1 policy; exact/no-effect certificate replay
+remains an actual no-op.
+
+Hold one exclusive cross-store owner fence across fresh source checkpoint,
+Safety/signer, native committed head and source P/K reads; verify the complete
+height-contiguous selected-QC path from exact live P/K rows to the committed
+application tip before checkpoint CAS. Recheck those actual owners, the new
+checkpoint and the selected path after CAS before publishing the projection.
+Retain every existing valid prepared descendant, including the synced child
+which Core has not selected. Missing/substituted P/K, changed namespace or
+unsettled signing/validation/finalization obligations fail closed. A failed
+consuming operation cannot restore Ready from cached scalar facts.
+
+Reuse the existing committed-application-anchor / retained-selected-high-QC-path
+checkpoint profile and canonical hashes. Cold recovery must accept the exact
+unchanged Safety/signer heads and audit the complete persisted P/K inventory;
+this does not enable recovery activation or remove signed-ancestry replay gates.
+A freshly Synced cut retains NativeValid rather than Ordinary. Admit this case
+only for the original Synced/action=None transition, after joining its exact
+strict Safety record checksum to terminal K's safety closure. An inert SQLite
+helper derives all immutable manifest fields from the original K and compares
+the entire NativeValid context. The original Delivered-D row checksum is taken
+from that authenticated Safety record and is bound by K's exact Safety checksum;
+it must not be replaced with K's checksum or an invented K-sequence-minus-one.
+The ordinary no-sign closure domain, exact validation identity, completion
+revision and full P/K inventory remain mandatory. The older anchor-only V0
+reconstruction helper and its semantics remain unchanged.
+Tests reproduce real TC→Ready→late Synced child→alternate same-height proposal,
+prove zero rebase key calls and one later genuine Vote, exercise corruption
+before CAS, and cold-open a real rebased cut without fabricated rows.
+
 ### Late body after a signed timeout (M15-TIMEOUT-SYNC-V1)
 
 An existing TimeoutSigned owner may consume a genuine late ordinary proposal
@@ -1163,6 +1204,35 @@ does not establish indefinite operation during a permanent network outage.
 Tests require healthy-peer progress, per-peer FIFO after recovery, excluded
 recipients, exact byte retirement, refusal atomicity and unchanged hard limits.
 Actual host-loss acceptance still requires the signed multi-host run evidence.
+
+### Closing a bounded post-timeout context (M15-TERMINAL-DIRECT-QC-V1)
+
+A bounded height stop requires an actual Ready owner, no retained proposal TC,
+and an authoritative QC certifying at least the requested last height. Merely
+receiving or signing that last proposal cannot cancel the pacemaker: if its QC
+is missing, the real timeout/reproposal path must remain available at the same
+height. A duration stop also waits for Ready without retained TC context. Both
+stops retain the positive-finality and drained-native-work conditions; neither
+clears a post-timeout obligation. The hard drain deadline still fails an
+unfinished run and the proposal height cap never increases.
+
+A runtime that adopts a TC records the new current view as its outstanding
+post-timeout context. The context closes only after an actual durable certificate
+transition returns Ready with an authoritative QC at or above that view, no
+retained proposal TC or pending TC synchronization, and application height equal
+to finalized height. The runtime's exact native/Safety/signer/whole-node terminal
+audit and all network, pending-work and quiescence requirements remain mandatory.
+
+The old scalar rule required finality to reach the highest proposal submitted
+before the TC. That incorrectly required extra blocks beyond a bounded run's
+height limit: a QC at height11 can finalize height9 while pre-timeout height10
+is a valid retained speculative execution. Its original P/K and signer records
+must remain available, but it must not be reported as finalized. A genuine
+regression must finish with the direct QC while finality is below that submitted
+tail, then consume the real independently audited terminal owner. Signed phases,
+retained TC context and unapplied finality continue to block closure. A late TC
+that cannot obtain a direct successor QC within the run's limits remains an
+unresolved terminal result; this rule does not invent more height capacity.
 
 ### Bounded timeout-collector diagnostics (M15-TC-DIAGNOSTIC-V1)
 

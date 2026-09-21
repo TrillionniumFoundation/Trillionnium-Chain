@@ -133,6 +133,8 @@ trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", features = ["l
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 
 [dev-dependencies]
+trnm-native-application-sqlite = { version = "0.1.0", path = "../trnm-native-application-sqlite" }
+rusqlite = { version = "0.32", features = ["bundled"] }
 tempfile = "3"
 trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark" }
 trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }

@@ -2940,7 +2940,7 @@ struct BoundedConsensusOwnerV1 {
     local_proposal_views: BTreeSet<u64>,
     unavailable_sessions: BTreeSet<(PeerDirectionV0, ValidatorId)>,
     highest_submitted_height: u64,
-    post_timeout_rebase_required_finalized_height: Option<u64>,
+    post_timeout_rebase_required_direct_qc_view: Option<u64>,
     initial_consensus_view: u64,
     maximum_archivable_view: u64,
     started_at: Instant,
@@ -4325,7 +4325,7 @@ impl BoundedConsensusOwnerV1 {
             local_proposal_views: BTreeSet::new(),
             unavailable_sessions: BTreeSet::new(),
             highest_submitted_height,
-            post_timeout_rebase_required_finalized_height: None,
+            post_timeout_rebase_required_direct_qc_view: None,
             initial_consensus_view,
             maximum_archivable_view,
             started_at,
@@ -4469,7 +4469,6 @@ impl BoundedConsensusOwnerV1 {
         let positive_ordinary_finality = facts.finalized_height_v0()
             >= self.config.ordinary_start_height()
             && facts.application_applied_height_v0() == facts.finalized_height_v0();
-        let reached_height_bound = self.highest_submitted_height >= self.preflight.target_height;
         let reached_duration_bound = now >= self.nominal_deadline;
         let native_drained = self
             .native_client
@@ -4478,7 +4477,7 @@ impl BoundedConsensusOwnerV1 {
         if self.stopping_since.is_none()
             && positive_ordinary_finality
             && native_drained
-            && (reached_height_bound || reached_duration_bound)
+            && bounded_stop_ready_v1(self.preflight.target_height, reached_duration_bound, facts)
         {
             self.stopping_since = Some(now);
             self.pacemaker.cancel();
@@ -4503,7 +4502,7 @@ impl BoundedConsensusOwnerV1 {
             || !self.pending_certificates.is_empty()
             || !self.prestarted_ingress.is_empty()
             || !self.unavailable_sessions.is_empty()
-            || self.post_timeout_rebase_required_finalized_height.is_some()
+            || self.post_timeout_rebase_required_direct_qc_view.is_some()
             || self.active_connectivity_fault.is_some()
             || self
                 .runtime_control
@@ -4625,6 +4624,9 @@ impl BoundedConsensusOwnerV1 {
         if !self.authority_v1()?.proposal_witness_ready_v1()? {
             return Ok(false);
         }
+        // Witness preparation may durably rebase a late Synced native parent
+        // to Core's exact high QC. Author only from the confirmed successor.
+        let facts = self.authority_v1()?.facts_v0()?;
         let view = facts.current_view_v0();
         if leader_for(self.config.validator_set(), view) != self.config.local_validator()
             || self.local_proposal_views.contains(&view.get())
@@ -5321,9 +5323,7 @@ impl BoundedConsensusOwnerV1 {
             prestarted_ingress_count: self.prestarted_ingress.len(),
             unavailable_session_count: self.unavailable_sessions.len(),
             mesh_pending_outbound_bytes,
-            post_timeout_rebase_pending: self
-                .post_timeout_rebase_required_finalized_height
-                .is_some(),
+            post_timeout_rebase_pending: self.post_timeout_rebase_required_direct_qc_view.is_some(),
             active_connectivity_fault: self.active_connectivity_fault.is_some(),
             expected_control_fault,
             active_journal_fault_count: journal.active_faults.len(),
@@ -6824,11 +6824,9 @@ impl BoundedConsensusOwnerV1 {
         self.record_application_progress_v1(before, after)?;
         self.applied_tcs.insert(id);
         if made_authoritative_progress_v1(before, after) {
-            let required = self
-                .highest_submitted_height
-                .max(self.config.ordinary_start_height());
-            self.post_timeout_rebase_required_finalized_height = Some(
-                self.post_timeout_rebase_required_finalized_height
+            let required = after.current_view_v0().get();
+            self.post_timeout_rebase_required_direct_qc_view = Some(
+                self.post_timeout_rebase_required_direct_qc_view
                     .map_or(required, |existing| existing.max(required)),
             );
             self.rearm_after_progress_v1(before, after)?;
@@ -6890,12 +6888,6 @@ impl BoundedConsensusOwnerV1 {
                     after.finalized_height_v0(),
                 )
                 .map_err(|error| anyhow!("append finalization event: {error}"))?;
-            if self
-                .post_timeout_rebase_required_finalized_height
-                .is_some_and(|required| after.finalized_height_v0() >= required)
-            {
-                self.post_timeout_rebase_required_finalized_height = None;
-            }
         }
         if after.application_applied_height_v0() > before.application_applied_height_v0() {
             self.event_journal
@@ -6905,6 +6897,12 @@ impl BoundedConsensusOwnerV1 {
                     after.application_applied_height_v0(),
                 )
                 .map_err(|error| anyhow!("append application acknowledgement event: {error}"))?;
+        }
+        if self
+            .post_timeout_rebase_required_direct_qc_view
+            .is_some_and(|required| post_timeout_direct_qc_ready_v1(required, after))
+        {
+            self.post_timeout_rebase_required_direct_qc_view = None;
         }
         self.archive_native_finality_v1()?;
         Ok(())
@@ -7070,7 +7068,7 @@ impl BoundedConsensusOwnerV1 {
                 && self.restart_round.pending_parked_acks.is_empty()
                 && self.restart_round.admitted_parked_acks.is_empty()
                 && self.unavailable_sessions.is_empty()
-                && self.post_timeout_rebase_required_finalized_height.is_none()
+                && self.post_timeout_rebase_required_direct_qc_view.is_none()
                 && self.active_connectivity_fault.is_none()
                 && self.stopping_since.is_none()
                 && self
@@ -7425,7 +7423,7 @@ impl BoundedConsensusOwnerV1 {
         if !self.unavailable_sessions.is_empty() {
             mask |= 1 << 6;
         }
-        if self.post_timeout_rebase_required_finalized_height.is_some() {
+        if self.post_timeout_rebase_required_direct_qc_view.is_some() {
             mask |= 1 << 7;
         }
         if self.active_connectivity_fault.is_some() {
@@ -7493,6 +7491,27 @@ impl BoundedConsensusOwnerV1 {
             .as_ref()
             .ok_or_else(|| anyhow!("consensus mesh is unavailable"))
     }
+}
+
+// Keep the pacemaker live while a last-height Vote or TC still needs a real
+// certificate transition. The hard deadline and unchanged height cap bound it.
+fn bounded_stop_ready_v1(
+    target_height: u64,
+    reached_duration_bound: bool,
+    facts: ContinuousRuntimeFactsV0,
+) -> bool {
+    facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready
+        && facts.pending_timeout_certificate_id_v0().is_none()
+        && (facts.high_qc_v0().height().get() >= target_height || reached_duration_bound)
+}
+
+// Called only with facts returned by the actual durable authority path. A
+// speculative submitted height is not a finality or terminal obligation.
+fn post_timeout_direct_qc_ready_v1(required_view: u64, facts: ContinuousRuntimeFactsV0) -> bool {
+    facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready
+        && facts.pending_timeout_certificate_id_v0().is_none()
+        && facts.high_qc_v0().view().get() >= required_view
+        && facts.application_applied_height_v0() == facts.finalized_height_v0()
 }
 
 fn append_failure_diagnostics_v1(
@@ -11181,6 +11200,7 @@ mod tests {
     }
 
     include!("consensus_aggregation_quorum_tests_v1.inc");
+    include!("consensus_terminal_quorum_tests_v1.inc");
 
     fn on_consensus_owner_stack_v1<T: Send + 'static>(
         body: impl FnOnce() -> T + Send + 'static,

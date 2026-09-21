@@ -3534,6 +3534,144 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         })
     }
 
+    /// Re-selects Core's exact high-QC application parent after a real Synced
+    /// child, retaining that child and every other prepared descendant. This
+    /// consumes only Ready and emits no Core event, ACK or signature request.
+    pub fn rebase_synced_parent_to_high_qc_v1(
+        mut self,
+    ) -> Result<Self, PocoNodeLabAuthorityErrorV0> {
+        let state = self.core.safety_state();
+        if state.pending_tc_high_qc_sync().is_some()
+            || state.pending_standalone_qc_sync().is_some()
+            || state.pending_sign().is_some()
+            || state.pending_finalize().is_some()
+            || !state.finalization_queue().is_empty()
+            || !state.payload_validation_obligations().is_empty()
+            || self.pending_executions.len() > self.core.config().max_blocks()
+        {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "Ready rebase has unresolved Core obligations or capacity",
+            ));
+        }
+        let lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            self.application.path(),
+            &self.proposal_journal.store_path,
+        )
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        reconfirm_phase_neutral_owner_locked_v1(
+            &self.core,
+            &self.safety_store,
+            &self.application,
+            &mut self.signer_journal,
+            &mut self.checkpoint_store,
+            self.checkpoint,
+            &self.application_head,
+            &self.pending_executions,
+            &self.proposal_journal,
+            None,
+            &lock,
+        )?;
+        preflight_authoritative_high_qc_retained_path_locked_v1(
+            &self.core,
+            &self.application,
+            &self.proposal_journal,
+            &self.pending_executions,
+            &lock,
+        )?;
+        let high_qc = self.core.safety_state().high_qc().qc_ref();
+        if self.application_head.block_id().as_bytes() == high_qc.block_id().as_bytes()
+            && self.application_head.height().get() == high_qc.height().get()
+        {
+            return Ok(self);
+        }
+        let safety = self
+            .safety_store
+            .confirm_node_checkpoint_head_exact_v0(self.core.safety_state())
+            .map_err(PocoNodeLabAuthorityErrorV0::Safety)?;
+        let signer = self
+            .signer_journal
+            .confirm_node_checkpoint_head_exact_v0()
+            .map_err(PocoNodeLabAuthorityErrorV0::Signer)?;
+        let target = committed_rebase_checkpoint_successor_v1(
+            self.checkpoint,
+            &safety,
+            &signer,
+            &self.application,
+            RebaseSafetyRevisionV1::UnchangedReady,
+        )?;
+        let retained_keys = self
+            .pending_executions
+            .keys()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        compare_and_confirm_checkpoint_v0(
+            &mut self.checkpoint_store,
+            Some(self.checkpoint),
+            target,
+        )?;
+        rebase_to_authoritative_high_qc_v0(
+            &self.core,
+            &self.application,
+            target,
+            &self.proposal_journal,
+            &mut self.application_head,
+            &mut self.application_overlay,
+            &mut self.pending_executions,
+            Some(&lock),
+        )?;
+        if self
+            .pending_executions
+            .keys()
+            .copied()
+            .collect::<BTreeSet<_>>()
+            != retained_keys
+        {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "Ready rebase discarded a retained child",
+            ));
+        }
+        self.checkpoint = target;
+        reconfirm_phase_neutral_owner_locked_v1(
+            &self.core,
+            &self.safety_store,
+            &self.application,
+            &mut self.signer_journal,
+            &mut self.checkpoint_store,
+            self.checkpoint,
+            &self.application_head,
+            &self.pending_executions,
+            &self.proposal_journal,
+            None,
+            &lock,
+        )?;
+        preflight_authoritative_high_qc_retained_path_locked_v1(
+            &self.core,
+            &self.application,
+            &self.proposal_journal,
+            &self.pending_executions,
+            &lock,
+        )?;
+        let signer_after = self
+            .signer_journal
+            .confirm_node_checkpoint_head_exact_v0()
+            .map_err(PocoNodeLabAuthorityErrorV0::Signer)?;
+        if signer_after.journal_id() != signer.journal_id()
+            || signer_after.profile_checksum() != signer.profile_checksum()
+            || signer_after.identity() != signer.identity()
+            || signer_after.exact_watermark() != signer.exact_watermark()
+            || signer_after.capacity() != signer.capacity()
+            || signer_after.tail() != signer.tail()
+            || signer_after.pending_intent() != signer.pending_intent()
+        {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "Ready rebase changed the signer head",
+            ));
+        }
+        lock.validate_identity_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        Ok(self)
+    }
+
     /// Applies one strict ordinary QC from the Ready phase. The certificate
     /// need not contain, or even share coordinates with, a locally released
     /// Vote; Core is the sole certificate/safety authority.
@@ -6010,6 +6148,35 @@ fn reconfirm_phase_neutral_owner_v0<W: ExternalMonotonicWatermarkV0>(
         &proposal_journal.store_path,
     )
     .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+    reconfirm_phase_neutral_owner_locked_v1(
+        core,
+        safety_store,
+        application,
+        signer_journal,
+        checkpoint_store,
+        checkpoint,
+        application_head,
+        pending_executions,
+        proposal_journal,
+        live_proposal_validation_store,
+        &cross_store_lock,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn reconfirm_phase_neutral_owner_locked_v1<W: ExternalMonotonicWatermarkV0>(
+    core: &Core,
+    safety_store: &SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
+    application: &DurableNativeApplicationV0,
+    signer_journal: &mut SqliteSignerJournalV0<W>,
+    checkpoint_store: &mut SqliteExternalNodeCheckpointStoreV0,
+    checkpoint: ExternalNodeCheckpointV0,
+    application_head: &ApplicationHeadV0,
+    pending_executions: &BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
+    proposal_journal: &PocoNodeLabProposalJournalConfigV0,
+    live_proposal_validation_store: Option<&mut SqliteProposalValidationStoreV0>,
+    cross_store_lock: &CrossStoreLockGuardV0,
+) -> Result<(), PocoNodeLabAuthorityErrorV0> {
     let safety = confirm_live_or_signature_released_safety_head_v0(core, safety_store)?;
     let signer = signer_journal
         .confirm_node_checkpoint_head_exact_v0()
@@ -6054,7 +6221,7 @@ fn reconfirm_phase_neutral_owner_v0<W: ExternalMonotonicWatermarkV0>(
         application_head,
         pending_executions,
         live_proposal_validation_store,
-        Some(&cross_store_lock),
+        Some(cross_store_lock),
     )?;
     cross_store_lock
         .validate_identity_v0()
@@ -6085,6 +6252,22 @@ fn preflight_authoritative_high_qc_retained_path_v0(
         &proposal_journal.store_path,
     )
     .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+    preflight_authoritative_high_qc_retained_path_locked_v1(
+        core,
+        application,
+        proposal_journal,
+        pending_executions,
+        &cross_store_lock,
+    )
+}
+
+fn preflight_authoritative_high_qc_retained_path_locked_v1(
+    core: &Core,
+    application: &DurableNativeApplicationV0,
+    proposal_journal: &PocoNodeLabProposalJournalConfigV0,
+    pending_executions: &BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
+    cross_store_lock: &CrossStoreLockGuardV0,
+) -> Result<(), PocoNodeLabAuthorityErrorV0> {
     let safety = core.safety_state();
     if safety.pending_tc_high_qc_sync().is_some() || safety.pending_standalone_qc_sync().is_some() {
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
@@ -7046,10 +7229,40 @@ fn timeout_rebase_checkpoint_successor_v0(
     signer: &trnm_consensus_signer_journal::ConfirmedSignerNodeCheckpointFactsV0,
     application: &DurableNativeApplicationV0,
 ) -> Result<ExternalNodeCheckpointV0, PocoNodeLabAuthorityErrorV0> {
+    committed_rebase_checkpoint_successor_v1(
+        predecessor,
+        safety,
+        signer,
+        application,
+        RebaseSafetyRevisionV1::Successor,
+    )
+}
+
+#[derive(Clone, Copy)]
+enum RebaseSafetyRevisionV1 {
+    Successor,
+    UnchangedReady,
+}
+
+fn committed_rebase_checkpoint_successor_v1(
+    predecessor: ExternalNodeCheckpointV0,
+    safety: &trnm_consensus_safety_store::ConfirmedSafetyNodeCheckpointFactsV0,
+    signer: &trnm_consensus_signer_journal::ConfirmedSignerNodeCheckpointFactsV0,
+    application: &DurableNativeApplicationV0,
+    revision: RebaseSafetyRevisionV1,
+) -> Result<ExternalNodeCheckpointV0, PocoNodeLabAuthorityErrorV0> {
     let fields = predecessor.fields();
-    let expected_revision = fields.safety_revision.checked_add(1).ok_or(
-        PocoNodeLabAuthorityErrorV0::InvalidBootstrap("Safety revision exhausted"),
-    )?;
+    let expected_revision = match revision {
+        RebaseSafetyRevisionV1::Successor => fields.safety_revision.checked_add(1).ok_or(
+            PocoNodeLabAuthorityErrorV0::InvalidBootstrap("Safety revision exhausted"),
+        )?,
+        RebaseSafetyRevisionV1::UnchangedReady => {
+            // The new Ready path cannot reinterpret a changed Safety record as
+            // an unchanged revision. These are the actual freshly read owners.
+            require_checkpoint_heads_v0(predecessor, safety, signer)?;
+            fields.safety_revision
+        }
+    };
     let state = safety.state_v0();
     let finalized = state.finalized();
     let applied = state.application_applied();
