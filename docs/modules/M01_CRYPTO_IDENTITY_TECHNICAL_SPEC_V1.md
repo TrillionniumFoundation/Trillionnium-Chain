@@ -170,10 +170,11 @@ and proposer/evidence work before cryptographic verification. Every retained
 synthetic reference must equal the context's exact new view-zero anchor, including
 skipped-view TC entries; old-context certificates are rejected on active ingress.
 
-The three explicit V1 exact decoders are
+The explicit V1 exact decoders are
 `decode_epoch_runtime_qc_reference_v1_exact_with_budget`,
-`decode_epoch_runtime_timeout_certificate_v1_exact_with_budget`, and
-`decode_epoch_runtime_finality_proof_v1_exact_with_budget`. All use the complete
+`decode_epoch_runtime_timeout_certificate_v1_exact_with_budget`,
+`decode_epoch_runtime_finality_proof_v1_exact_with_budget`, and the standalone
+`decode_epoch_runtime_certified_header_v1_exact_with_budget`. All use the complete
 structural context and caller-owned byte/signature budget, exhaust the root,
 and require canonical re-encoding. `verify_proposal_v1` verifies the real parent;
 `verify_proposal_without_parent_v1` only preauthenticates Regular/checkpoint
@@ -184,6 +185,35 @@ Real Ed25519 tests cover TC-bearing first finality, exact work boundaries,
 foreign old QCs, bad shares and parent timestamp substitution. Core 14E and the
 pure SafetyRules context consume this verifier; live Core/custody activation is
 still unavailable at this checkpoint.
+
+### Standalone contextual certified header (M01-CERTIFIED-HEADER-CONTEXT-V1)
+
+`decode_epoch_runtime_certified_header_v1_exact_with_budget` decodes one complete
+original CertifiedHeader under the already established structural epoch context.
+It uses the existing contextual parser, bounds nested TC shares before allocation,
+exhausts the root, requires canonical re-encoding, and reserves all proposer,
+justify-QC, nested TC and certifying-QC work once in the caller's existing meter.
+It returns inert header/witness data and grants no application or signing owner.
+The ordinary and trusted-genesis decoders retain their existing restrictions.
+
+`StrictEpochRuntimeContextV1::decode_verify_certified_header_v1` and its typed
+`verify_certified_header_v1` counterpart use the same precharged verification
+kernel. The independently authenticated complete parent must have the exact ID,
+height, chain/genesis/version, active epoch/set/parameters, valid time and geometry;
+a Handoff instead requires the context's exact terminal old header. Existing
+historical-link rules also check seal roots and retained commitment. Strict
+Ed25519 verifies the certifying QC and original proposal witness, including every
+nested TC share/reference. Synthetic references must equal this context's exact
+anchor. No activation prefix is replayed and no new admission budget is created.
+Insufficient work fails before cryptography; bad signatures retain charged work.
+
+This header boundary authenticates neither a supplied application body nor native
+execution. M07 must join the original C17 header to its actual parent P, payload,
+receipts and execution, before reserving or recovering checkpoint preparation.
+It cannot substitute a QC variant, synthesize a three-chain or promote decoded
+replay data to authority. Real signed tests cover mixed-anchor TC headers,
+Handoff and seal links, every signature family, wrong context/parent, exact work,
+one-short work/byte limits, and trailing input.
 
 ### Identity and domain binding
 

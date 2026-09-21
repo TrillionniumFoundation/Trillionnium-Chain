@@ -1,12 +1,15 @@
 //! Strict complete-epoch verification context. No Core, storage or signer lease.
 use crate::{StrictEd25519Verifier, StrictSameVersionEpochActivationAuthorityV0};
 use trnm_consensus_types::{
-    decode_double_vote_evidence_v0_exact, decode_epoch_runtime_finality_proof_v1_exact_with_budget,
+    decode_double_vote_evidence_v0_exact,
+    decode_epoch_runtime_certified_header_v1_exact_with_budget,
+    decode_epoch_runtime_finality_proof_v1_exact_with_budget,
     decode_epoch_runtime_qc_reference_v1_exact_with_budget,
     decode_epoch_runtime_timeout_certificate_v1_exact_with_budget, validate_empty_epoch_seal_v1,
     validate_root_bound_epoch_body_v1, validate_root_bound_regular_body_v0, BlockHeader, BlockKind,
-    Cev0AdmissionBudgetV0, EpochActivationEvidenceBytesV0, EpochRuntimeContextDataV1,
-    FinalityProofV0, QcReferenceV0, SignedProposalV0, TimeoutCertificateV0, ValidationError,
+    CertifiedHeaderV0, Cev0AdmissionBudgetV0, EpochActivationEvidenceBytesV0,
+    EpochRuntimeContextDataV1, FinalityProofV0, QcReferenceV0, SignedProposalV0,
+    TimeoutCertificateV0, ValidationError,
 };
 
 /// No-Clone strict context whose constructor consumes complete verified joint
@@ -356,6 +359,78 @@ impl StrictEpochRuntimeContextV1 {
         }
         Ok(())
     }
+    /// Verifies a standalone header/witness and exact authenticated parent.
+    /// The enclosing application must independently authenticate its body.
+    pub fn verify_certified_header_v1(
+        &self,
+        certified: &CertifiedHeaderV0,
+        authenticated_parent: &BlockHeader,
+        budget: &mut Cev0AdmissionBudgetV0,
+    ) -> Result<(), ValidationError> {
+        budget
+            .admit_root_bytes(certified.try_cev0_bytes()?.len())
+            .map_err(|_| invalid("epoch certified header byte budget"))?;
+        budget
+            .charge_certified_header(certified)
+            .map_err(|_| invalid("epoch certified header work budget"))?;
+        self.verify_certified_header_precharged_v1(certified, authenticated_parent)
+    }
+
+    /// Exact contextual decoding charges the caller's meter once before the
+    /// same strict kernel used for an already typed CertifiedHeader.
+    pub fn decode_verify_certified_header_v1(
+        &self,
+        raw: &[u8],
+        authenticated_parent: &BlockHeader,
+        budget: &mut Cev0AdmissionBudgetV0,
+    ) -> Result<CertifiedHeaderV0, ValidationError> {
+        let certified = decode_epoch_runtime_certified_header_v1_exact_with_budget(
+            raw,
+            self.structural_context(),
+            authenticated_parent.timestamp_ms(),
+            budget,
+        )
+        .map_err(|_| invalid("epoch certified header exact decoding"))?;
+        self.verify_certified_header_precharged_v1(&certified, authenticated_parent)?;
+        Ok(certified)
+    }
+
+    fn verify_certified_header_precharged_v1(
+        &self,
+        certified: &CertifiedHeaderV0,
+        parent: &BlockHeader,
+    ) -> Result<(), ValidationError> {
+        let set = self.activation.new_validator_set();
+        let parameters = self.activation.new_consensus_parameters();
+        trnm_consensus_types::validate_historical_header_link_v1(
+            certified.header(),
+            parent,
+            set,
+            parameters,
+        )?;
+        if certified.header().block_kind() == BlockKind::EpochHandoff
+            && parent != self.activation.terminal_old_header()
+        {
+            return Err(invalid(
+                "epoch certified header terminal parent substitution",
+            ));
+        }
+        certified.validate(
+            set,
+            Some(self.activation.old_validator_set()),
+            parameters,
+            parent.timestamp_ms(),
+        )?;
+        certified
+            .certifying_qc()
+            .verify(set, &StrictEd25519Verifier)?;
+        crate::strict_finality::verify_epoch_proposal_witness_strict_v1(
+            &self.activation,
+            certified.header(),
+            certified.witness(),
+        )
+    }
+
     pub fn verify_finality_v1(
         &self,
         proof: &FinalityProofV0,

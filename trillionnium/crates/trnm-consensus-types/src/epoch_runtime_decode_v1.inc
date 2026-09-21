@@ -77,3 +77,31 @@ pub fn decode_epoch_runtime_finality_proof_v1_exact_with_budget(
     budget.charge_finality_proof(&proof)?;
     Ok(proof)
 }
+
+/// Exact inert CertifiedHeader decoding under the complete retained epoch
+/// context. The caller separately authenticates the parent and all signatures.
+pub fn decode_epoch_runtime_certified_header_v1_exact_with_budget(
+    bytes: &[u8],
+    context: &crate::EpochRuntimeContextDataV1,
+    authenticated_parent_timestamp_ms: u64,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<CertifiedHeaderV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_certified_header_with_epoch_context(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+        Some(context.authorization()),
+    )?;
+    cursor.finish()?;
+    let header = admit_raw_certified_header_with_reference_admission(
+        raw,
+        context.new_validator_set(),
+        context.new_parameters(),
+        authenticated_parent_timestamp_ms,
+        QcReferenceAdmissionV0::EpochContext(context.authorization(), context.old_validator_set()),
+    )?;
+    require_exact_canonical_reencoding(bytes, header.try_cev0_bytes(), 0)?;
+    budget.charge_certified_header(&header)?;
+    Ok(header)
+}

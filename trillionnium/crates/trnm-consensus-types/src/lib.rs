@@ -190,6 +190,7 @@ pub use wire_semantic::{
 };
 
 pub use cev0_decode::{
+    decode_epoch_runtime_certified_header_v1_exact_with_budget,
     decode_epoch_runtime_finality_proof_v1_exact_with_budget,
     decode_epoch_runtime_qc_reference_v1_exact_with_budget,
     decode_epoch_runtime_timeout_certificate_v1_exact_with_budget,

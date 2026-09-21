@@ -156,3 +156,5 @@ fn strict_runtime_context_rejects_a_foreign_epoch_in_retained_successor_ancestry
 }
 
 include!("epoch_runtime_successor_contextual.inc");
+
+include!("epoch_runtime_certified_contextual.inc");
