@@ -25,6 +25,16 @@ NAMES = sorted([
 ])
 
 
+def process_state(pid: int) -> str | None:
+    try:
+        raw = Path(f"/proc/{pid}/stat").read_text()
+    except (FileNotFoundError, ProcessLookupError):
+        # procfs may disappear even after open() succeeds when PID1 reaps
+        # the killed child. Other read failures must remain visible.
+        return None
+    return raw.rsplit(") ", 1)[1].split()[0]
+
+
 class NativeCandidateShardTests(unittest.TestCase):
     def make_workspace(self, base: Path) -> tuple[Path, Path]:
         repo = base / "repo"
@@ -192,12 +202,23 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':'trnm_native_ex
                 self.assertIn("TIMEOUT", output)
                 ready = next(line for line in output.splitlines() if line.startswith("READY:"))
                 child_pid = int(ready.split(":")[1])
-                stat = Path(f"/proc/{child_pid}/stat")
                 until = time.monotonic() + 1
-                while stat.exists() and stat.read_text().split(") ", 1)[1][0] != "Z" and time.monotonic() < until:
+                state = process_state(child_pid)
+                while state not in (None, "Z") and time.monotonic() < until:
                     time.sleep(0.01)
-                if stat.exists():
-                    self.assertEqual(stat.read_text().split(") ", 1)[1][0], "Z", "owned child is still running")
+                    state = process_state(child_pid)
+                self.assertIn(state, (None, "Z"), "owned child is still running")
+
+    def test_cleanup_observation_handles_reaping_without_hiding_other_failures(self) -> None:
+        for error in (FileNotFoundError(), ProcessLookupError()):
+            with self.subTest(error=type(error).__name__), patch.object(Path, "read_text", side_effect=error):
+                self.assertIsNone(process_state(123))
+        with patch.object(Path, "read_text", side_effect=PermissionError()):
+            with self.assertRaises(PermissionError):
+                process_state(123)
+        for state in ("S", "R", "Z"):
+            with patch.object(Path, "read_text", return_value=f"123 (child) {state} 1 2"):
+                self.assertEqual(process_state(123), state)
 
 
 if __name__ == "__main__":

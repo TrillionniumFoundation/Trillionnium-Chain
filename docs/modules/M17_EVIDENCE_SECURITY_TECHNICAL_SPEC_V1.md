@@ -441,6 +441,12 @@ Each child requires the exact cut marker and actual SIGKILL status within its
 entry, fails inventory admission before shard execution. Counts come from the
 discovered executable, not a fixed historical total.
 
+The process-cleanup regression observes a killed child with one `/proc/PID/stat`
+read at a time. A process may be reaped between lookup and read: ENOENT or ESRCH
+means it is absent, while a present non-zombie state still fails after the
+bounded wait. Permission errors and malformed observations remain failures.
+This observation rule does not change the actual process-group kill or deadline.
+
 Each shard has an independent finite deadline. A timeout, nonzero exit, missing
 log, missing exit code, or incomplete inventory is a failed evidence result.
 The default per-shard deadline is 900 seconds. Timeout terminates the process
