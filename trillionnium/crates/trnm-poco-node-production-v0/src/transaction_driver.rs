@@ -167,6 +167,160 @@ where
     }
 }
 
+impl<V, J, P, S, B, R> ProductionTxNodeAdapterV0<V, J, P, S, B, R>
+where
+    V: AuthorizationVerifierV0,
+    J: DurableTxJournalV0,
+    P: CoreSafetyPermitVerifierV0,
+    S: NonExportableTxSignerV0,
+    B: AuthenticatedTxBroadcasterV0,
+    R: FinalizedTxReadbackSourceV0,
+{
+    /// Run node-owned CheckTx and only then create the durable M05 record.
+    /// The exact intent is passed unchanged between both owners, preventing a
+    /// caller from checking one envelope and persisting another.
+    pub fn check_tx_and_admit<A>(
+        &mut self,
+        check_tx: &mut A,
+        intent: TxIntentV0,
+    ) -> NodeOwnedTxCheckTxResultV0<A::Error, V::Error, J::Error>
+    where
+        A: NodeOwnedTxCheckTxV0,
+    {
+        let current_height = check_tx
+            .verify_check_tx(&intent)
+            .map_err(NodeOwnedTxCheckTxErrorV0::CheckTx)?;
+        self.coordinator
+            .admit_and_persist(&mut self.journal, intent, current_height)
+            .map_err(NodeOwnedTxCheckTxErrorV0::Admission)
+    }
+
+    pub fn admit_and_persist(
+        &mut self,
+        intent: TxIntentV0,
+        current_height: u64,
+    ) -> Result<TxAdmissionReceiptV0, TxAdmissionErrorV0<V::Error, J::Error>> {
+        self.coordinator
+            .admit_and_persist(&mut self.journal, intent, current_height)
+    }
+
+    pub fn persist_proposal(
+        &mut self,
+        tx_id: TxIdV0,
+        handoff: ProposalHandoffV0,
+    ) -> Result<DurableTxRecordV0, TxTransitionErrorV0<J::Error>> {
+        self.coordinator
+            .persist_proposal(&mut self.journal, tx_id, handoff)
+    }
+
+    pub fn persist_ordered(
+        &mut self,
+        tx_id: TxIdV0,
+        ordered: OrderedPositionV0,
+    ) -> Result<DurableTxRecordV0, TxTransitionErrorV0<J::Error>> {
+        self.coordinator
+            .persist_ordered(&mut self.journal, tx_id, ordered)
+    }
+
+    pub fn persist_execution(
+        &mut self,
+        execution: ExecutionReceiptV0,
+    ) -> Result<DurableTxRecordV0, TxTransitionErrorV0<J::Error>> {
+        self.coordinator
+            .persist_execution(&mut self.journal, execution)
+    }
+
+    /// Persist sign intent and signed envelope, broadcast the exact retained
+    /// bytes, and poison the owner on an uncertain transport result. Recovery
+    /// must reopen this adapter with the same journal and retry the same bytes.
+    pub fn sign_and_broadcast(
+        &mut self,
+        claim: CoreSafetyPermitClaimV0,
+    ) -> TxBroadcastResultV0<P::Error, S::Error, B::Error, J::Error> {
+        self.coordinator.sign_and_broadcast(
+            &self.permit_verifier,
+            &mut self.signer,
+            &mut self.broadcaster,
+            &mut self.journal,
+            claim,
+        )
+    }
+
+    pub fn apply_finalized_readback(
+        &mut self,
+        tx_id: TxIdV0,
+    ) -> Result<FinalizedReadbackV0, TxFinalizationErrorV0<R::Error, J::Error>> {
+        self.coordinator
+            .apply_finalized_readback(&mut self.readback, &mut self.journal, tx_id)
+    }
+
+    /// Candidate-only composition of the durable transaction finality
+    /// readback and one fresh native state-sync store readback. The finality
+    /// transition is committed first; a later sync mismatch or SQLite error
+    /// therefore does not roll it back and is returned as `Sync`. Callers must
+    /// recover/retry the read-only join before publishing the combined result.
+    pub fn apply_finalized_readback_and_bind_native_sync_v1(
+        &mut self,
+        tx_id: TxIdV0,
+        store: &SqliteNativeStateSyncStoreV1,
+    ) -> Result<
+        FinalizedTxNativeStateSyncApplyV0,
+        FinalizedTxNativeStateSyncApplyErrorV0<R::Error, J::Error>,
+    > {
+        let finalized = self
+            .apply_finalized_readback(tx_id)
+            .map_err(FinalizedTxNativeStateSyncApplyErrorV0::Finality)?;
+        let sync_binding = bind_finalized_readback_to_native_state_sync_store_v1(&finalized, store)
+            .map_err(FinalizedTxNativeStateSyncApplyErrorV0::Sync)?;
+        Ok(FinalizedTxNativeStateSyncApplyV0 {
+            finalized,
+            sync_binding,
+        })
+    }
+
+    /// Retry only the read-only transaction-to-state-sync join after a crash
+    /// or response loss that occurred after finality was durably committed.
+    /// The recovered lifecycle is the authority for `finalized`; no external
+    /// finality source is called and no journal frame is appended. Callers
+    /// must use this method for the recovery boundary instead of submitting a
+    /// second finality readback request.
+    pub fn bind_durable_finalized_readback_to_native_sync_v1(
+        &self,
+        tx_id: TxIdV0,
+        store: &SqliteNativeStateSyncStoreV1,
+    ) -> Result<FinalizedTxNativeStateSyncBindingV0, DurableFinalizedTxNativeStateSyncBindingErrorV0>
+    {
+        let finalized = self
+            .coordinator
+            .lifecycle()
+            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Finality)?
+            .finalized_readback(tx_id)
+            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Lifecycle)?;
+        bind_durable_finalized_readback_to_native_state_sync_store_v1(&finalized, store)
+            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Sync)
+    }
+
+    pub fn tombstone_and_collect(
+        &mut self,
+        tx_id: TxIdV0,
+        replay_floor: ReplayFloorWitnessV0,
+    ) -> Result<TxRecordV0, TxCollectErrorV0<J::Error>> {
+        self.coordinator
+            .tombstone_and_collect(&mut self.journal, tx_id, replay_floor)
+    }
+
+    pub fn into_parts(self) -> (ProductionTxCoordinatorV0<V>, J, P, S, B, R) {
+        (
+            self.coordinator,
+            self.journal,
+            self.permit_verifier,
+            self.signer,
+            self.broadcaster,
+            self.readback,
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -362,159 +516,5 @@ mod tests {
         assert_eq!(checktx_calls.load(Ordering::SeqCst), 1);
         assert_eq!(journal_calls.load(Ordering::SeqCst), 0);
         assert!(!adapter.production_activation_v0());
-    }
-}
-
-impl<V, J, P, S, B, R> ProductionTxNodeAdapterV0<V, J, P, S, B, R>
-where
-    V: AuthorizationVerifierV0,
-    J: DurableTxJournalV0,
-    P: CoreSafetyPermitVerifierV0,
-    S: NonExportableTxSignerV0,
-    B: AuthenticatedTxBroadcasterV0,
-    R: FinalizedTxReadbackSourceV0,
-{
-    /// Run node-owned CheckTx and only then create the durable M05 record.
-    /// The exact intent is passed unchanged between both owners, preventing a
-    /// caller from checking one envelope and persisting another.
-    pub fn check_tx_and_admit<A>(
-        &mut self,
-        check_tx: &mut A,
-        intent: TxIntentV0,
-    ) -> NodeOwnedTxCheckTxResultV0<A::Error, V::Error, J::Error>
-    where
-        A: NodeOwnedTxCheckTxV0,
-    {
-        let current_height = check_tx
-            .verify_check_tx(&intent)
-            .map_err(NodeOwnedTxCheckTxErrorV0::CheckTx)?;
-        self.coordinator
-            .admit_and_persist(&mut self.journal, intent, current_height)
-            .map_err(NodeOwnedTxCheckTxErrorV0::Admission)
-    }
-
-    pub fn admit_and_persist(
-        &mut self,
-        intent: TxIntentV0,
-        current_height: u64,
-    ) -> Result<TxAdmissionReceiptV0, TxAdmissionErrorV0<V::Error, J::Error>> {
-        self.coordinator
-            .admit_and_persist(&mut self.journal, intent, current_height)
-    }
-
-    pub fn persist_proposal(
-        &mut self,
-        tx_id: TxIdV0,
-        handoff: ProposalHandoffV0,
-    ) -> Result<DurableTxRecordV0, TxTransitionErrorV0<J::Error>> {
-        self.coordinator
-            .persist_proposal(&mut self.journal, tx_id, handoff)
-    }
-
-    pub fn persist_ordered(
-        &mut self,
-        tx_id: TxIdV0,
-        ordered: OrderedPositionV0,
-    ) -> Result<DurableTxRecordV0, TxTransitionErrorV0<J::Error>> {
-        self.coordinator
-            .persist_ordered(&mut self.journal, tx_id, ordered)
-    }
-
-    pub fn persist_execution(
-        &mut self,
-        execution: ExecutionReceiptV0,
-    ) -> Result<DurableTxRecordV0, TxTransitionErrorV0<J::Error>> {
-        self.coordinator
-            .persist_execution(&mut self.journal, execution)
-    }
-
-    /// Persist sign intent and signed envelope, broadcast the exact retained
-    /// bytes, and poison the owner on an uncertain transport result. Recovery
-    /// must reopen this adapter with the same journal and retry the same bytes.
-    pub fn sign_and_broadcast(
-        &mut self,
-        claim: CoreSafetyPermitClaimV0,
-    ) -> TxBroadcastResultV0<P::Error, S::Error, B::Error, J::Error> {
-        self.coordinator.sign_and_broadcast(
-            &self.permit_verifier,
-            &mut self.signer,
-            &mut self.broadcaster,
-            &mut self.journal,
-            claim,
-        )
-    }
-
-    pub fn apply_finalized_readback(
-        &mut self,
-        tx_id: TxIdV0,
-    ) -> Result<FinalizedReadbackV0, TxFinalizationErrorV0<R::Error, J::Error>> {
-        self.coordinator
-            .apply_finalized_readback(&mut self.readback, &mut self.journal, tx_id)
-    }
-
-    /// Candidate-only composition of the durable transaction finality
-    /// readback and one fresh native state-sync store readback. The finality
-    /// transition is committed first; a later sync mismatch or SQLite error
-    /// therefore does not roll it back and is returned as `Sync`. Callers must
-    /// recover/retry the read-only join before publishing the combined result.
-    pub fn apply_finalized_readback_and_bind_native_sync_v1(
-        &mut self,
-        tx_id: TxIdV0,
-        store: &SqliteNativeStateSyncStoreV1,
-    ) -> Result<
-        FinalizedTxNativeStateSyncApplyV0,
-        FinalizedTxNativeStateSyncApplyErrorV0<R::Error, J::Error>,
-    > {
-        let finalized = self
-            .apply_finalized_readback(tx_id)
-            .map_err(FinalizedTxNativeStateSyncApplyErrorV0::Finality)?;
-        let sync_binding = bind_finalized_readback_to_native_state_sync_store_v1(&finalized, store)
-            .map_err(FinalizedTxNativeStateSyncApplyErrorV0::Sync)?;
-        Ok(FinalizedTxNativeStateSyncApplyV0 {
-            finalized,
-            sync_binding,
-        })
-    }
-
-    /// Retry only the read-only transaction-to-state-sync join after a crash
-    /// or response loss that occurred after finality was durably committed.
-    /// The recovered lifecycle is the authority for `finalized`; no external
-    /// finality source is called and no journal frame is appended. Callers
-    /// must use this method for the recovery boundary instead of submitting a
-    /// second finality readback request.
-    pub fn bind_durable_finalized_readback_to_native_sync_v1(
-        &self,
-        tx_id: TxIdV0,
-        store: &SqliteNativeStateSyncStoreV1,
-    ) -> Result<FinalizedTxNativeStateSyncBindingV0, DurableFinalizedTxNativeStateSyncBindingErrorV0>
-    {
-        let finalized = self
-            .coordinator
-            .lifecycle()
-            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Finality)?
-            .finalized_readback(tx_id)
-            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Lifecycle)?;
-        bind_durable_finalized_readback_to_native_state_sync_store_v1(&finalized, store)
-            .map_err(DurableFinalizedTxNativeStateSyncBindingErrorV0::Sync)
-    }
-
-    pub fn tombstone_and_collect(
-        &mut self,
-        tx_id: TxIdV0,
-        replay_floor: ReplayFloorWitnessV0,
-    ) -> Result<TxRecordV0, TxCollectErrorV0<J::Error>> {
-        self.coordinator
-            .tombstone_and_collect(&mut self.journal, tx_id, replay_floor)
-    }
-
-    pub fn into_parts(self) -> (ProductionTxCoordinatorV0<V>, J, P, S, B, R) {
-        (
-            self.coordinator,
-            self.journal,
-            self.permit_verifier,
-            self.signer,
-            self.broadcaster,
-            self.readback,
-        )
     }
 }

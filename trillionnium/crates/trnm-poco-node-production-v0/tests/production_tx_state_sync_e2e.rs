@@ -297,7 +297,9 @@ use std::os::unix::fs::PermissionsExt;
 
 #[test]
 fn finalized_readback_survives_sync_mismatch_and_exact_recovery_retry() {
-    assert!(!trnm_poco_node_production_v0::NODE_OWNED_TX_PRODUCTION_ACTIVATION_V0);
+    const {
+        assert!(!trnm_poco_node_production_v0::NODE_OWNED_TX_PRODUCTION_ACTIVATION_V0);
+    }
     let chain_id = tx_digest(1);
     let (root, journal_path) = journal_directory("retry");
     let identity = CandidateTxJournalIdentityV0 {
