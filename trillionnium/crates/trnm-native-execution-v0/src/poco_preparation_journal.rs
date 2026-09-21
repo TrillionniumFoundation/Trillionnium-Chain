@@ -983,6 +983,51 @@ pub(crate) struct HistoricalReplayPreparationFactV1 {
 pub(crate) struct HistoricalReplayPreparationInventoryV1 {
     pub(crate) digest: [u8; 32],
     pub(crate) facts: Vec<HistoricalReplayPreparationFactV1>,
+    pub(crate) selection: HistoricalReplayPreparationSelectionV1,
+}
+
+/// Exact retained SQL keys, not authority or permission to omit native joins.
+#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+pub(crate) struct HistoricalReplayPreparationKeyV1 {
+    pub(crate) transition_key: [u8; 32],
+    pub(crate) block_kind: i64,
+    pub(crate) height: u64,
+    pub(crate) view: u64,
+}
+
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
+pub(crate) struct HistoricalReplayPreparationSelectionV1 {
+    pub(crate) transition_keys: Vec<[u8; 32]>,
+    pub(crate) preparation_keys: Vec<HistoricalReplayPreparationKeyV1>,
+}
+
+impl HistoricalReplayPreparationSelectionV1 {
+    fn validate(&self) -> Result<()> {
+        ensure!(
+            self.transition_keys.len() <= MAX_JOURNAL_TRANSITIONS as usize
+                && self.preparation_keys.len() <= MAX_JOURNAL_PREPARATIONS as usize,
+            "historical preparation selection count bound"
+        );
+        ensure!(
+            self.transition_keys
+                .windows(2)
+                .all(|pair| pair[0] < pair[1])
+                && self
+                    .preparation_keys
+                    .windows(2)
+                    .all(|pair| pair[0] < pair[1]),
+            "historical preparation selection is not strictly ordered"
+        );
+        ensure!(
+            self.preparation_keys.iter().all(|key| key.block_kind == 1
+                && self
+                    .transition_keys
+                    .binary_search(&key.transition_key)
+                    .is_ok()),
+            "historical preparation selection transition binding"
+        );
+        Ok(())
+    }
 }
 
 fn sha256_bytes(bytes: &[u8]) -> [u8; 32] {
@@ -1204,6 +1249,25 @@ impl PocoPreparationJournalV0 {
     pub(crate) fn audit_historical_source_v1(
         &self,
     ) -> Result<HistoricalReplayPreparationInventoryV1> {
+        self.audit_historical_selection_v1(None)
+    }
+
+    /// Compare an original retained inventory while allowing later legitimate
+    /// appends. Every current row is still audited; only the framed comparison
+    /// digest/facts are selected. The native owner must authenticate the saved
+    /// selection and recheck every required legacy preparation and phase join.
+    pub(crate) fn audit_retained_historical_source_v1(
+        &self,
+        selection: &HistoricalReplayPreparationSelectionV1,
+    ) -> Result<HistoricalReplayPreparationInventoryV1> {
+        selection.validate()?;
+        self.audit_historical_selection_v1(Some(selection))
+    }
+
+    fn audit_historical_selection_v1(
+        &self,
+        selected: Option<&HistoricalReplayPreparationSelectionV1>,
+    ) -> Result<HistoricalReplayPreparationInventoryV1> {
         self.ensure_not_sticky_halted()?;
         let _writer = self
             .shared
@@ -1281,14 +1345,34 @@ impl PocoPreparationJournalV0 {
             binding_count >= 0 && binding_count as u64 <= MAX_JOURNAL_TRANSITIONS,
             "historical binding row bound"
         );
+        let selected_binding_count = selected.map_or(binding_count as usize, |selection| {
+            selection.transition_keys.len()
+        });
+        let selected_preparation_count =
+            selected.map_or(count as usize, |selection| selection.preparation_keys.len());
+        let mut selection = HistoricalReplayPreparationSelectionV1 {
+            transition_keys: Vec::with_capacity(selected_binding_count),
+            preparation_keys: Vec::with_capacity(selected_preparation_count),
+        };
         digest.update(b"transition_bindings");
-        digest.update((binding_count as u64).to_be_bytes());
+        digest.update((selected_binding_count as u64).to_be_bytes());
         let mut bindings = connection.prepare(
             "SELECT transition_key,binding_record,binding_checksum
              FROM transition_bindings ORDER BY transition_key",
         )?;
         let mut binding_rows = bindings.query([])?;
         while let Some(row) = binding_rows.next()? {
+            let key: [u8; 32] = row
+                .get_ref(0)?
+                .as_blob()?
+                .try_into()
+                .context("historical transition key width")?;
+            if selected
+                .is_some_and(|selection| selection.transition_keys.binary_search(&key).is_err())
+            {
+                continue;
+            }
+            selection.transition_keys.push(key);
             digest.update(b"row");
             for (index, tag) in ["transition_key", "binding_record", "binding_checksum"]
                 .into_iter()
@@ -1298,9 +1382,13 @@ impl PocoPreparationJournalV0 {
                 hash_sql_value(&mut digest, row.get_ref(index)?)?;
             }
         }
+        ensure!(
+            selection.transition_keys.len() == selected_binding_count,
+            "historical retained transition key missing"
+        );
         digest.update(b"preparations");
-        digest.update((count as u64).to_be_bytes());
-        let mut facts = Vec::with_capacity(count as usize);
+        digest.update((selected_preparation_count as u64).to_be_bytes());
+        let mut facts = Vec::with_capacity(selected_preparation_count);
         let mut rows = connection.prepare(
             "SELECT transition_key,block_kind,height_be,view_be,preparation_record,
                     preparation_checksum,bound_record,bound_checksum,phase
@@ -1308,6 +1396,32 @@ impl PocoPreparationJournalV0 {
         )?;
         let mut rows = rows.query([])?;
         while let Some(row) = rows.next()? {
+            let key = HistoricalReplayPreparationKeyV1 {
+                transition_key: row
+                    .get_ref(0)?
+                    .as_blob()?
+                    .try_into()
+                    .context("historical preparation transition key width")?,
+                block_kind: row.get(1)?,
+                height: u64::from_be_bytes(
+                    row.get_ref(2)?
+                        .as_blob()?
+                        .try_into()
+                        .context("historical preparation height width")?,
+                ),
+                view: u64::from_be_bytes(
+                    row.get_ref(3)?
+                        .as_blob()?
+                        .try_into()
+                        .context("historical preparation view width")?,
+                ),
+            };
+            if selected
+                .is_some_and(|selection| selection.preparation_keys.binary_search(&key).is_err())
+            {
+                continue;
+            }
+            selection.preparation_keys.push(key);
             digest.update(b"row");
             for (index, tag) in [
                 "transition_key",
@@ -1349,6 +1463,11 @@ impl PocoPreparationJournalV0 {
                 bound_header_digest,
             });
         }
+        ensure!(
+            selection.preparation_keys.len() == selected_preparation_count,
+            "historical retained preparation key missing"
+        );
+        selection.validate()?;
         let has_halt: bool =
             connection.query_row("SELECT EXISTS(SELECT 1 FROM safety_halt)", [], |row| {
                 row.get(0)
@@ -1358,6 +1477,7 @@ impl PocoPreparationJournalV0 {
         Ok(HistoricalReplayPreparationInventoryV1 {
             digest: Sha256::finalize(digest).into(),
             facts,
+            selection,
         })
     }
 
@@ -3009,6 +3129,134 @@ mod tests {
             "PoCO preparation journal metadata byte bound"
         );
         assert!(journal.shared.sticky_halt.load(Ordering::Acquire));
+    }
+
+    #[test]
+    fn retained_historical_journal_selection_allows_valid_appends_and_audits_them() {
+        let directory = TestDirectory::new();
+        let path = directory.join("retained-appends.sqlite3");
+        let journal = PocoPreparationJournalV0::open(&path).unwrap();
+        let first = fixture(31);
+        let reservation = journal.reserve(&first).unwrap();
+        journal.bind(&reservation, &bound_fixture(&first)).unwrap();
+        let baseline = journal.audit_historical_source_v1().unwrap();
+        assert_eq!(baseline.selection.transition_keys.len(), 1);
+        assert_eq!(baseline.selection.preparation_keys.len(), 1);
+
+        let later = fixture(32);
+        let reservation = journal.reserve(&later).unwrap();
+        journal.bind(&reservation, &bound_fixture(&later)).unwrap();
+        let complete = journal.audit_historical_source_v1().unwrap();
+        assert_ne!(complete.digest, baseline.digest);
+        assert_eq!(complete.facts.len(), 2);
+        assert_eq!(
+            journal
+                .audit_retained_historical_source_v1(&baseline.selection)
+                .unwrap(),
+            baseline
+        );
+
+        // An unselected appended row is still part of the complete safety
+        // audit. Selecting a valid old prefix cannot hide this corruption.
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "UPDATE preparations SET bound_checksum=zeroblob(32) WHERE view_be=?1",
+                [32u64.to_be_bytes().as_slice()],
+            )
+            .unwrap();
+        assert!(journal
+            .audit_retained_historical_source_v1(&baseline.selection)
+            .is_err());
+    }
+
+    #[test]
+    fn retained_historical_journal_selection_detects_required_mutation_and_deletion() {
+        let directory = TestDirectory::new();
+        let path = directory.join("retained-required.sqlite3");
+        let journal = PocoPreparationJournalV0::open(&path).unwrap();
+        let first = fixture(31);
+        let reservation = journal.reserve(&first).unwrap();
+        let baseline = journal.audit_historical_source_v1().unwrap();
+        journal.bind(&reservation, &bound_fixture(&first)).unwrap();
+        let changed = journal
+            .audit_retained_historical_source_v1(&baseline.selection)
+            .unwrap();
+        // Valid changes remain valid journal facts, but cannot equal the
+        // previously pinned native source inventory digest.
+        assert_ne!(changed.digest, baseline.digest);
+        assert_eq!(changed.facts[0].phase, 1);
+
+        let connection = Connection::open(&path).unwrap();
+        connection.execute("DELETE FROM preparations", []).unwrap();
+        assert_eq!(
+            journal
+                .audit_retained_historical_source_v1(&baseline.selection)
+                .unwrap_err()
+                .to_string(),
+            "historical retained preparation key missing"
+        );
+        connection
+            .execute("DELETE FROM transition_bindings", [])
+            .unwrap();
+        assert_eq!(
+            journal
+                .audit_retained_historical_source_v1(&baseline.selection)
+                .unwrap_err()
+                .to_string(),
+            "historical retained transition key missing"
+        );
+    }
+
+    #[test]
+    fn retained_historical_journal_selection_rejects_noncanonical_keys() {
+        let directory = TestDirectory::new();
+        let path = directory.join("retained-keys.sqlite3");
+        let journal = PocoPreparationJournalV0::open(&path).unwrap();
+        journal.reserve(&fixture(31)).unwrap();
+        journal.reserve(&fixture(32)).unwrap();
+        let baseline = journal.audit_historical_source_v1().unwrap().selection;
+        let mut mutants = Vec::new();
+        let mut oversized = baseline.clone();
+        oversized.transition_keys = vec![[1; 32]; MAX_JOURNAL_TRANSITIONS as usize + 1];
+        mutants.push(oversized);
+        let mut oversized = baseline.clone();
+        oversized.preparation_keys =
+            vec![baseline.preparation_keys[0].clone(); MAX_JOURNAL_PREPARATIONS as usize + 1];
+        mutants.push(oversized);
+        let mut duplicate = baseline.clone();
+        duplicate.transition_keys.push(duplicate.transition_keys[0]);
+        mutants.push(duplicate);
+        let mut duplicate = baseline.clone();
+        duplicate.preparation_keys[1] = duplicate.preparation_keys[0].clone();
+        mutants.push(duplicate);
+        let mut unsorted = baseline.clone();
+        unsorted.transition_keys = vec![[2; 32], [1; 32]];
+        mutants.push(unsorted);
+        let mut unsorted = baseline.clone();
+        unsorted.preparation_keys.reverse();
+        mutants.push(unsorted);
+        let mut unbound = baseline.clone();
+        unbound.transition_keys.clear();
+        mutants.push(unbound);
+        let mut wrong_kind = baseline.clone();
+        wrong_kind.preparation_keys[0].block_kind = 0;
+        mutants.push(wrong_kind);
+        for selection in mutants {
+            assert!(
+                journal
+                    .audit_retained_historical_source_v1(&selection)
+                    .is_err(),
+                "accepted malformed selection: {selection:?}"
+            );
+        }
+        assert_eq!(
+            journal
+                .audit_retained_historical_source_v1(&baseline)
+                .unwrap()
+                .selection,
+            baseline
+        );
     }
 
     #[test]

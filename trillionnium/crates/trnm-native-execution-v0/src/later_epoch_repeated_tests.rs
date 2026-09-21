@@ -350,8 +350,37 @@ fn advance_repeated_checkpoint_with_transactions(
     })
 }
 
+struct RepeatedContinuationFixture {
+    c32_header: BlockHeader,
+    c33_header: BlockHeader,
+    c34_header: BlockHeader,
+    validator_set: ValidatorSet,
+    parameters: ConsensusParametersV0,
+}
+
+struct GenuineC33ContinuationFixture {
+    header: BlockHeader,
+    sender_request: NativeBlockExecutionRequestV0,
+    original_finality_cev0: Vec<u8>,
+    sender_head: trnm_native_application::ApplicationHeadV0,
+    commit_sequence: u64,
+}
+
 #[inline(never)]
 fn complete_repeated_handoff(path: &std::path::Path, fixture: Box<RepeatedCheckpointFixture>) {
+    drop(complete_repeated_handoff_with_transactions(
+        path,
+        fixture,
+        &[],
+    ));
+}
+
+#[inline(never)]
+fn complete_repeated_handoff_with_transactions(
+    path: &std::path::Path,
+    fixture: Box<RepeatedCheckpointFixture>,
+    c33_transactions: &[Vec<u8>],
+) -> Box<RepeatedContinuationFixture> {
     let RepeatedCheckpointFixture {
         application,
         old_set,
@@ -453,8 +482,17 @@ fn complete_repeated_handoff(path: &std::path::Path, fixture: Box<RepeatedCheckp
         .unwrap();
     let (p32, h32) =
         prepare_repeated_descendant(&app, &p31, &h31, &new_set, BlockKind::Regular, None);
-    let (p33, h33) =
-        prepare_repeated_descendant(&app, &p32, &h32, &new_set, BlockKind::Regular, None);
+    // C31 and C32 finality both cover C33. Its real body must be frozen
+    // before those original proofs are constructed.
+    let (p33, h33) = prepare_repeated_descendant_with_transactions(
+        &app,
+        &p32,
+        &h32,
+        &new_set,
+        BlockKind::Regular,
+        None,
+        c33_transactions.to_vec(),
+    );
     let (_p34, h34) =
         prepare_repeated_descendant(&app, &p33, &h33, &new_set, BlockKind::Regular, None);
     let prepared_target = h33.id();
@@ -489,8 +527,12 @@ fn complete_repeated_handoff(path: &std::path::Path, fixture: Box<RepeatedCheckp
     let p32 = app
         .reopen_prepared_epoch_execution_v1(*h32.id().as_bytes())
         .unwrap();
-    let ordinary_proof =
-        ordinary_later_proof(&h31, &[h32.clone(), h33, h34], &new_set, &parameters);
+    let ordinary_proof = ordinary_later_proof(
+        &h31,
+        &[h32.clone(), h33.clone(), h34.clone()],
+        &new_set,
+        &parameters,
+    );
     let committed = app
         .commit_epoch_finality_bytes_v1(
             &p32,
@@ -638,6 +680,111 @@ fn complete_repeated_handoff(path: &std::path::Path, fixture: Box<RepeatedCheckp
     );
     drop(app);
     assert_repeated_prefix_mutants(path, &checkpoint, &h31, &h32);
+    Box::new(RepeatedContinuationFixture {
+        c32_header: h32,
+        c33_header: h33,
+        c34_header: h34,
+        validator_set: new_set,
+        parameters,
+    })
+}
+
+// This advances the genuine sender only. The caller must first retain its C32
+// export/state so an imported receiver can independently execute the C33 body
+// with its own local parent commit identity.
+#[inline(never)]
+fn commit_genuine_c33_continuation(
+    path: &std::path::Path,
+    fixture: Box<RepeatedContinuationFixture>,
+) -> Box<GenuineC33ContinuationFixture> {
+    let RepeatedContinuationFixture {
+        c32_header,
+        c33_header,
+        c34_header,
+        validator_set,
+        parameters,
+    } = *fixture;
+    let app = DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1())
+        .expect("genuine C33 producer must reopen its C32 sender");
+    let head = app.confirmed_committed_head_v0().unwrap();
+    assert_eq!(head.block_id().as_bytes(), c32_header.id().as_bytes());
+    let p33 = app
+        .reopen_prepared_epoch_execution_v1(*c33_header.id().as_bytes())
+        .unwrap();
+    let p34 = app
+        .reopen_prepared_epoch_execution_v1(*c34_header.id().as_bytes())
+        .unwrap();
+    assert_eq!(p33.header().unwrap(), c33_header);
+    assert_eq!(p34.header().unwrap(), c34_header);
+    let (p35, c35_header) = prepare_repeated_descendant(
+        &app,
+        &p34,
+        &c34_header,
+        &validator_set,
+        BlockKind::Regular,
+        None,
+    );
+    assert_eq!(p35.header().unwrap(), c35_header);
+    assert_eq!(c35_header.height(), Height::new(35));
+    let original_finality_cev0 = ordinary_later_proof(
+        &c32_header,
+        &[c33_header.clone(), c34_header, c35_header],
+        &validator_set,
+        &parameters,
+    );
+    assert_valid_ordinary_later_proof(
+        &original_finality_cev0,
+        &c32_header,
+        &c33_header,
+        &validator_set,
+        &parameters,
+    );
+    let committed = app
+        .commit_epoch_finality_bytes_v1(
+            &p33,
+            &original_finality_cev0,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .expect("genuine C33 must commit its own original 33/34/35 finality proof");
+    let sender_head = committed.head().clone();
+    let commit_sequence = committed.commit_sequence();
+    assert_eq!(sender_head.height().get(), 33);
+    let read = app.read_finalized_by_height_v1(HeightV0::new(33)).unwrap();
+    assert_eq!(read.finalized_head_v1().unwrap(), sender_head);
+    let sender_request = read.executed_v1().request().clone();
+    drop(app);
+    let cold = DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1())
+        .expect("genuine C33 proof must survive a cold sender reopen");
+    let reopened = cold
+        .reopen_prepared_epoch_execution_v1(*c33_header.id().as_bytes())
+        .unwrap();
+    let retry = cold
+        .commit_epoch_finality_bytes_v1(
+            &reopened,
+            &original_finality_cev0,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(retry.head(), &sender_head);
+    assert_eq!(retry.commit_sequence(), commit_sequence);
+    let sql =
+        rusqlite::Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+            .unwrap();
+    let retained: Vec<u8> = sql
+        .query_row(
+            "SELECT proof FROM native_later_epoch_descendant_finality_v1 WHERE block_id=?",
+            [c33_header.id().as_bytes().as_slice()],
+            |row| row.get(0),
+        )
+        .unwrap();
+    assert_eq!(retained, original_finality_cev0);
+    Box::new(GenuineC33ContinuationFixture {
+        header: c33_header,
+        sender_request,
+        original_finality_cev0,
+        sender_head,
+        commit_sequence,
+    })
 }
 
 #[inline(never)]

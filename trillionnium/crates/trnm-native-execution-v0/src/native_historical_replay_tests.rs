@@ -127,12 +127,22 @@ struct NonemptyHistoricalReplayFixture {
     history: crate::NativeHistoricalReplayV1,
     prefix: Vec<Vec<u8>>,
     suffix: Vec<Vec<u8>>,
+    continuation: Option<Box<RepeatedContinuationFixture>>,
 }
 
 #[inline(never)]
 fn build_nonempty_historical_replay_fixture(
     sender_path: &std::path::Path,
     receiver_path: &std::path::Path,
+) -> Box<NonemptyHistoricalReplayFixture> {
+    build_nonempty_historical_replay_fixture_with_continuation(sender_path, receiver_path, &[])
+}
+
+#[inline(never)]
+fn build_nonempty_historical_replay_fixture_with_continuation(
+    sender_path: &std::path::Path,
+    receiver_path: &std::path::Path,
+    c33_transactions: &[Vec<u8>],
 ) -> Box<NonemptyHistoricalReplayFixture> {
     let prefix = vec![signed_historical_runtime_transaction(
         "native-history-prefix-1",
@@ -172,7 +182,8 @@ fn build_nonempty_historical_replay_fixture(
     let source_database = std::fs::read(receiver_path).unwrap();
     drop(receiver);
     let checkpoint = advance_repeated_checkpoint_with_transactions(seed, &suffix);
-    complete_repeated_handoff(sender_path, checkpoint);
+    let continuation =
+        complete_repeated_handoff_with_transactions(sender_path, checkpoint, c33_transactions);
     assert_historical_receiver_c18(receiver_path, &source_header);
     assert_eq!(historical_fixture_state(receiver_path), source_state);
     assert_eq!(std::fs::read(receiver_path).unwrap(), source_database);
@@ -206,6 +217,7 @@ fn build_nonempty_historical_replay_fixture(
         history,
         prefix,
         suffix,
+        continuation: Some(continuation),
     })
 }
 
@@ -731,3 +743,315 @@ fn assert_historical_receiver_inventory_pins(
     assert_eq!(historical_fixture_state(&missing_path), before);
     assert_eq!(std::fs::read(&missing_path).unwrap(), database);
 }
+
+// Exact values of every retained source table, independent of the metadata
+// singleton whose explicit installation update is the subject of this test.
+fn historical_retained_rows(
+    path: &std::path::Path,
+) -> Vec<(String, Vec<Vec<rusqlite::types::Value>>)> {
+    let connection =
+        rusqlite::Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+            .unwrap();
+    [
+        "native_durable_execution_p_v0",
+        "native_h1_state_sync_trusted_base_v0",
+        "native_epoch_edge_v1",
+        "native_durable_execution_p_v1",
+        "native_application_epoch_context_v1",
+        "native_later_epoch_finality_v1",
+        "native_later_epoch_edge_v1",
+        "native_later_epoch_application_finality_v1",
+        "native_later_epoch_descendant_finality_v1",
+    ]
+    .into_iter()
+    .map(|table| {
+        let mut statement = connection
+            .prepare(&format!("SELECT * FROM {table} ORDER BY rowid"))
+            .unwrap();
+        let count = statement.column_count();
+        let rows = statement
+            .query_map([], |row| {
+                (0..count)
+                    .map(|index| row.get(index))
+                    .collect::<rusqlite::Result<Vec<_>>>()
+            })
+            .unwrap()
+            .collect::<rusqlite::Result<Vec<_>>>()
+            .unwrap();
+        (table.to_owned(), rows)
+    })
+    .collect()
+}
+
+fn recompute_historical_base_digest_for_test(connection: &rusqlite::Connection) -> [u8; 32] {
+    use trnm_finality_types::hash_domain;
+    let source: Vec<Vec<u8>> = connection.query_row(
+        "SELECT store_id,signer_policy,source_head,source_sequence,source_p_digest,source_p_sequence,
+         source_commit_sequence,source_header,source_snapshot_digest,source_commands_digest,source_nonces_digest,
+         source_active_set,source_active_parameters,source_prefix,source_inventory_digest FROM native_historical_replay_base_v1",
+        [], |row| (0..15).map(|index| row.get(index)).collect(),
+    ).unwrap();
+    let pin = hash_domain(
+        "trnm.native.historical-replay-source-pin.v1",
+        &source.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+    );
+    let fields: Vec<Vec<u8>> = connection.query_row(
+        "SELECT input_digest,run_digest,install_sequence,target_head,snapshot_digest,commands_digest,nonces_digest,lifecycle_digest
+         FROM native_historical_replay_base_v1", [], |row| (0..8).map(|index| row.get(index)).collect(),
+    ).unwrap();
+    let mut parts = vec![pin.as_slice()];
+    parts.extend(fields.iter().map(Vec::as_slice));
+    hash_domain("trnm.native.historical-replay-base.v1", &parts)
+}
+
+#[test]
+fn historical_install_is_explicit_atomic_replayed_and_preserves_source() {
+    use sha2::Digest;
+    use trnm_consensus_types::Cev0AdmissionBudgetV0;
+    let directory = tempfile::tempdir().unwrap();
+    let absent = directory.path().join("absent.sqlite3");
+    assert!(DurableNativeApplicationV0::open_historical_replay_v1(
+        &absent,
+        native_checkpoint_fixture_config_v1()
+    )
+    .is_err());
+    assert_eq!(std::fs::read_dir(directory.path()).unwrap().count(), 0);
+    let sender_path = directory.path().join("sender.sqlite3");
+    let receiver_path = directory.path().join("receiver.sqlite3");
+    let fresh = vec![signed_historical_runtime_transaction(
+        "native-history-c33-4",
+        4,
+        trnm_protocol::CanonicalCommandV1::Transfer {
+            to: "did:history:recipient".into(),
+            amount: 23,
+        },
+    )];
+    let mut fixture = build_nonempty_historical_replay_fixture_with_continuation(
+        &sender_path,
+        &receiver_path,
+        &fresh,
+    );
+    let rows = historical_retained_rows(&receiver_path);
+    let journal_path =
+        crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&receiver_path);
+    let journal = std::fs::read(&journal_path).unwrap();
+    let original = std::fs::read(&receiver_path).unwrap();
+    assert!(DurableNativeApplicationV0::open_historical_replay_v1(
+        &receiver_path,
+        native_checkpoint_fixture_config_v1()
+    )
+    .is_err());
+    assert_eq!(std::fs::read(&receiver_path).unwrap(), original);
+    let owner =
+        DurableNativeApplicationV0::open(&receiver_path, native_checkpoint_fixture_config_v1())
+            .unwrap();
+    let anchor = owner
+        .confirm_historical_replay_anchor_v1(
+            &fixture.source_head,
+            fixture.source_state.sequence,
+            &fixture.source_header,
+        )
+        .unwrap();
+    let prepared = owner
+        .prepare_historical_replay_base_v1(
+            &anchor,
+            &fixture.history,
+            &mut Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    let expected_head = prepared.target_head().clone();
+    let input = prepared.input_digest();
+    let installed = owner.install_historical_replay_base_v1(&prepared).unwrap();
+    assert!(installed.belongs_to_application(&owner));
+    assert_eq!(installed.source_head(), &fixture.source_head);
+    assert_eq!(installed.target_head(), &expected_head);
+    assert_eq!(installed.input_digest(), input);
+    assert_eq!(
+        installed.install_sequence(),
+        fixture.source_state.sequence + 1
+    );
+    let base_digest = installed.base_digest();
+    let current = historical_fixture_state(&receiver_path);
+    assert_eq!(current.sequence, installed.install_sequence());
+    assert_eq!(current.commands, fixture.target_state.commands);
+    assert_eq!(current.nonces, fixture.target_state.nonces);
+    let snapshot_digest: [u8; 32] = sha2::Sha256::digest(&current.snapshot).into();
+    assert_eq!(snapshot_digest, prepared.snapshot_digest());
+    assert_eq!(historical_retained_rows(&receiver_path), rows);
+    assert_eq!(std::fs::read(&journal_path).unwrap(), journal);
+    let retry = owner.install_historical_replay_base_v1(&prepared).unwrap();
+    assert_eq!(retry.base_digest(), base_digest);
+    assert_eq!(retry.install_sequence(), installed.install_sequence());
+    assert!(
+        owner.confirmed_committed_head_v0().is_err(),
+        "legacy owner read cannot mint imported authority"
+    );
+    assert!(owner.confirm_legacy_preparation_storage_v1().is_err());
+    assert_eq!(std::fs::read(&journal_path).unwrap(), journal);
+    drop(owner);
+    assert!(DurableNativeApplicationV0::open(
+        &receiver_path,
+        native_checkpoint_fixture_config_v1()
+    )
+    .is_err());
+    let cold = DurableNativeApplicationV0::open_historical_replay_v1(
+        &receiver_path,
+        native_checkpoint_fixture_config_v1(),
+    )
+    .unwrap();
+    assert!(!installed.belongs_to_application(&cold));
+    assert!(
+        cold.install_historical_replay_base_v1(&prepared).is_err(),
+        "old process preparation is not a new owner capability"
+    );
+    assert!(cold
+        .confirm_historical_replay_base_v1([0; 32], &expected_head)
+        .is_err());
+    let confirmed = cold
+        .confirm_historical_replay_base_v1(input, &expected_head)
+        .unwrap();
+    assert_eq!(confirmed.base_digest(), base_digest);
+    assert_eq!(confirmed.target_head(), &expected_head);
+    drop(cold);
+    for mutation in [
+        "source_proof",
+        "source_edge",
+        "required_journal",
+        "unexpected_table",
+        "replay_sets_rehashed",
+        "snapshot_rehashed",
+    ] {
+        let path = directory.path().join(format!("mutant-{mutation}.sqlite3"));
+        copy_later_store(&receiver_path, &path);
+        if mutation == "required_journal" {
+            let journal = rusqlite::Connection::open(
+                crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&path),
+            )
+            .unwrap();
+            journal.execute("DELETE FROM preparations", []).unwrap();
+        } else {
+            let connection = rusqlite::Connection::open(&path).unwrap();
+            match mutation {
+                "source_proof" => {
+                    connection
+                        .execute("DELETE FROM native_later_epoch_finality_v1", [])
+                        .unwrap();
+                }
+                "source_edge" => {
+                    connection
+                        .execute("DELETE FROM native_later_epoch_edge_v1", [])
+                        .unwrap();
+                }
+                "unexpected_table" => {
+                    connection
+                        .execute_batch("CREATE TABLE unexpected(value BLOB) STRICT;")
+                        .unwrap();
+                }
+                "replay_sets_rehashed" | "snapshot_rehashed" => {
+                    let (column, digest_column, mut bytes): (&str, &str, Vec<u8>) = if mutation
+                        == "replay_sets_rehashed"
+                    {
+                        (
+                            "commands",
+                            "commands_digest",
+                            borsh::to_vec(&std::collections::BTreeSet::<String>::new()).unwrap(),
+                        )
+                    } else {
+                        (
+                            "snapshot",
+                            "snapshot_digest",
+                            connection
+                                .query_row(
+                                    "SELECT snapshot FROM native_historical_replay_base_v1",
+                                    [],
+                                    |r| r.get(0),
+                                )
+                                .unwrap(),
+                        )
+                    };
+                    if mutation == "snapshot_rehashed" {
+                        *bytes.last_mut().unwrap() ^= 1;
+                    }
+                    let digest = sha2::Sha256::digest(&bytes).to_vec();
+                    connection.execute(&format!("UPDATE native_historical_replay_base_v1 SET {column}=?1,{digest_column}=?2"),
+                        rusqlite::params![bytes,digest]).unwrap();
+                    let base = recompute_historical_base_digest_for_test(&connection);
+                    connection
+                        .execute(
+                            "UPDATE native_historical_replay_base_v1 SET base_digest=?1",
+                            [base.as_slice()],
+                        )
+                        .unwrap();
+                }
+                _ => unreachable!(),
+            }
+        }
+        assert!(
+            DurableNativeApplicationV0::open_historical_replay_v1(
+                &path,
+                native_checkpoint_fixture_config_v1()
+            )
+            .is_err(),
+            "cold installation must reject {mutation}"
+        );
+    }
+    assert_eq!(historical_retained_rows(&receiver_path), rows);
+    assert_eq!(std::fs::read(&journal_path).unwrap(), journal);
+    // A legitimate later journal append must not erase or invalidate the
+    // exact retained source baseline. Produce the row through the real owner.
+    let appended_path = directory
+        .path()
+        .join("installed-with-journal-append.sqlite3");
+    let alternate_path = directory.path().join("actual-c8-alternate.sqlite3");
+    copy_later_store(&receiver_path, &appended_path);
+    build_genuine_alternate_c8_preparation(&receiver_path, &alternate_path);
+    let journal_connection = rusqlite::Connection::open(
+        crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&appended_path),
+    )
+    .unwrap();
+    journal_connection
+        .execute(
+            "ATTACH DATABASE ? AS alternate",
+            [
+                crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(&alternate_path)
+                    .to_str()
+                    .unwrap(),
+            ],
+        )
+        .unwrap();
+    assert_eq!(journal_connection.execute("INSERT INTO preparations SELECT * FROM alternate.preparations WHERE height_be=?1 AND view_be=?2",
+        rusqlite::params![8_u64.to_be_bytes().as_slice(),12_u64.to_be_bytes().as_slice()]).unwrap(), 1);
+    journal_connection
+        .execute_batch("DETACH DATABASE alternate")
+        .unwrap();
+    drop(journal_connection);
+    let appended = DurableNativeApplicationV0::open_historical_replay_v1(
+        &appended_path,
+        native_checkpoint_fixture_config_v1(),
+    )
+    .unwrap();
+    assert_eq!(
+        appended
+            .confirm_historical_replay_base_v1(input, &expected_head)
+            .unwrap()
+            .base_digest(),
+        base_digest
+    );
+    assert_eq!(historical_retained_rows(&appended_path), rows);
+    drop(appended);
+    // Generate the genuine original nonempty C33 continuation now, after every
+    // C32 source assertion. This is producer evidence, not receiver C33 acceptance.
+    let c33 = commit_genuine_c33_continuation(&sender_path, fixture.continuation.take().unwrap());
+    assert_eq!(c33.header.height().get(), 33);
+    assert_eq!(c33.sender_request.transactions(), fresh);
+    assert_eq!(
+        c33.sender_head.block_id().as_bytes(),
+        c33.header.id().as_bytes()
+    );
+    assert!(c33.commit_sequence > fixture.target_state.sequence);
+    assert!(!c33.original_finality_cev0.is_empty());
+}
+
+include!("native_historical_install_crash_tests.rs");
+include!("native_historical_install_race_tests.rs");
+include!("native_historical_install_fsync_tests.rs");

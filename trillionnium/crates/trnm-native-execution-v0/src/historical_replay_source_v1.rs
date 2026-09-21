@@ -12,8 +12,10 @@ use trnm_native_application::ApplicationHeadV0;
 
 use crate::poco_preparation_journal::{
     poco_preparation_sidecar_path_v0, HistoricalReplayPreparationInventoryV1,
-    PocoPreparationJournalV0,
+    HistoricalReplayPreparationSelectionV1, PocoPreparationJournalV0,
 };
+
+use super::MetadataV0;
 
 const MAX_SOURCE_ROWS: usize = 128;
 const MAX_SOURCE_BYTES: usize = 2 * 1024 * 1024 * 1024;
@@ -252,13 +254,57 @@ pub(super) fn screen_source_inventory_v1(connection: &Connection) -> Result<()> 
 /// audited preparation journal.  The caller must perform the schema-10,
 /// metadata, P/edge, and M01 lineage audits before treating this digest as a
 /// source pin; this function itself never promotes a row to authority.
+pub(super) struct AuditedSourceInventoryV1 {
+    pub(super) digest: [u8; 32],
+    pub(super) journal_selection: HistoricalReplayPreparationSelectionV1,
+}
+
 pub(super) fn audit_source_inventory_v1(
     connection: &Connection,
     application_path: &Path,
     anchor: &ApplicationHeadV0,
 ) -> Result<[u8; 32]> {
+    Ok(audit_source_inventory_with_journal_v1(connection, application_path, anchor)?.digest)
+}
+
+pub(super) fn audit_source_inventory_with_journal_v1(
+    connection: &Connection,
+    application_path: &Path,
+    anchor: &ApplicationHeadV0,
+) -> Result<AuditedSourceInventoryV1> {
+    audit_inventory_v1(connection, application_path, anchor, None)
+}
+
+pub(super) fn audit_retained_source_inventory_v1(
+    connection: &Connection,
+    application_path: &Path,
+    metadata: &MetadataV0,
+    journal_selection: &HistoricalReplayPreparationSelectionV1,
+) -> Result<AuditedSourceInventoryV1> {
+    audit_inventory_v1(
+        connection,
+        application_path,
+        &metadata.head,
+        Some((metadata, journal_selection)),
+    )
+}
+
+fn audit_inventory_v1(
+    connection: &Connection,
+    application_path: &Path,
+    anchor: &ApplicationHeadV0,
+    retained: Option<(&MetadataV0, &HistoricalReplayPreparationSelectionV1)>,
+) -> Result<AuditedSourceInventoryV1> {
     screen_source_inventory_v1(connection)?;
 
+    let replay_bytes = retained
+        .map(|(metadata, _)| -> Result<_> {
+            Ok((
+                borsh::to_vec(&metadata.command_ids)?,
+                borsh::to_vec(&metadata.signer_nonces)?,
+            ))
+        })
+        .transpose()?;
     let mut hasher = Sha256::new();
     hasher.update(b"trnm.native.historical-replay-source-inventory.v1");
     hasher.update((SOURCE_TABLES.len() as u64).to_be_bytes());
@@ -289,12 +335,29 @@ pub(super) fn audit_source_inventory_v1(
             for (index, column) in columns.iter().enumerate() {
                 hasher.update((column.len() as u64).to_be_bytes());
                 hasher.update(column.as_bytes());
+                if *table == "native_application_metadata_v0" {
+                    if let Some((metadata, _)) = retained {
+                        let (commands, nonces) = replay_bytes
+                            .as_ref()
+                            .context("retained replay encoding missing")?;
+                        hash_frozen_metadata_value_v1(
+                            &mut hasher,
+                            column,
+                            row.get_ref(index)?,
+                            metadata,
+                            commands,
+                            nonces,
+                        )?;
+                        continue;
+                    }
+                }
                 hash_value(&mut hasher, row.get_ref(index)?)?;
             }
         }
     }
 
-    let metadata_matches: bool = connection.query_row(
+    if retained.is_none() {
+        let metadata_matches: bool = connection.query_row(
         "SELECT EXISTS(SELECT 1 FROM native_application_metadata_v0
              WHERE singleton=1 AND typeof(head_height)='blob' AND length(head_height)=8
                AND head_height=?1 AND typeof(head_block_id)='blob' AND length(head_block_id)=32
@@ -308,16 +371,23 @@ pub(super) fn audit_source_inventory_v1(
         ],
         |row| row.get(0),
     )?;
-    ensure!(
-        metadata_matches,
-        "historical source anchor metadata mismatch"
-    );
+        ensure!(
+            metadata_matches,
+            "historical source anchor metadata mismatch"
+        );
+    }
 
     let journal = PocoPreparationJournalV0::open_existing(poco_preparation_sidecar_path_v0(
         application_path,
     ))?;
-    let HistoricalReplayPreparationInventoryV1 { digest, facts } =
-        journal.audit_historical_source_v1()?;
+    let HistoricalReplayPreparationInventoryV1 {
+        digest,
+        facts,
+        selection,
+    } = match retained {
+        Some((_, selection)) => journal.audit_retained_historical_source_v1(selection)?,
+        None => journal.audit_historical_source_v1()?,
+    };
     // Original legacy checkpoint evidence explicitly names its preparation.
     // Later checkpoints/ordinary P do not have such a record; never invent one.
     let mut legacy =
@@ -376,7 +446,52 @@ pub(super) fn audit_source_inventory_v1(
             hasher.update([0]);
         }
     }
-    Ok(hasher.finalize().into())
+    Ok(AuditedSourceInventoryV1 {
+        digest: hasher.finalize().into(),
+        journal_selection: selection,
+    })
+}
+
+// Only mutable metadata columns are projected back to their original source
+// values. Static identity columns still come from the real database and must
+// independently match the configured receiver identity in the caller's audit.
+fn hash_frozen_metadata_value_v1(
+    hasher: &mut Sha256,
+    column: &str,
+    physical: ValueRef<'_>,
+    metadata: &MetadataV0,
+    commands: &[u8],
+    nonces: &[u8],
+) -> Result<()> {
+    match column {
+        "schema_version" => hash_value(
+            hasher,
+            ValueRef::Blob(&super::LATER_SCHEMA_VERSION.to_be_bytes()),
+        ),
+        "durable_sequence" => hash_value(
+            hasher,
+            ValueRef::Blob(&metadata.durable_sequence.to_be_bytes()),
+        ),
+        "head_height" => hash_value(
+            hasher,
+            ValueRef::Blob(&metadata.head.height().get().to_be_bytes()),
+        ),
+        "head_block_id" => hash_value(hasher, ValueRef::Blob(metadata.head.block_id().as_bytes())),
+        "head_state_root" => hash_value(
+            hasher,
+            ValueRef::Blob(metadata.head.state_root().as_bytes()),
+        ),
+        "head_commit_id" => {
+            hash_value(hasher, ValueRef::Blob(metadata.head.commit_id().as_bytes()))
+        }
+        "authenticated_snapshot" => hash_value(hasher, ValueRef::Blob(&metadata.snapshot)),
+        "authenticated_snapshot_digest" => {
+            hash_value(hasher, ValueRef::Blob(&metadata.snapshot_digest))
+        }
+        "replay_command_ids" => hash_value(hasher, ValueRef::Blob(commands)),
+        "replay_signer_nonces" => hash_value(hasher, ValueRef::Blob(nonces)),
+        _ => hash_value(hasher, physical),
+    }
 }
 
 fn source_seals_v1(

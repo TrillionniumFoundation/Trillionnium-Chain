@@ -1,4 +1,4 @@
-//! Receiver-owned, read-only historical replay. No import, P or signer permit.
+//! Receiver-owned historical replay and explicit independently audited install.
 use super::*;
 use trnm_consensus_crypto::{
     verify_historical_header_ancestry_v1, HistoricalAncestryLimitsV1, StrictHistoricalHeaderPathV1,
@@ -7,8 +7,24 @@ use trnm_consensus_types::Cev0AdmissionBudgetV0;
 
 #[path = "historical_replay_execution_v1.rs"]
 mod execution;
+#[path = "historical_replay_install_v1.rs"]
+mod install;
 #[path = "historical_replay_source_v1.rs"]
 mod source;
+#[path = "historical_replay_storage_v1.rs"]
+mod storage;
+pub use install::ConfirmedNativeReplayBaseV1;
+
+pub(in crate::durable) fn verify_installed_schema_v1(connection: &Connection) -> Result<()> {
+    storage::verify_schema_v1(connection)
+}
+
+pub(in crate::durable) fn audit_installed_path_v1(
+    path: &Path,
+    config: &NativeApplicationConfigV0,
+) -> Result<()> {
+    install::audit_path_v1(path, config).map(|_| ())
+}
 
 #[derive(Debug, PartialEq, Eq)]
 struct SourcePinV1 {
@@ -27,6 +43,7 @@ struct SourcePinV1 {
     active_parameters: Vec<u8>,
     prefix: Vec<u8>,
     inventory_digest: [u8; 32],
+    journal_selection: crate::poco_preparation_journal::HistoricalReplayPreparationSelectionV1,
 }
 
 impl SourcePinV1 {
@@ -184,67 +201,7 @@ impl DurableNativeApplicationV0 {
         live_export::screen_legacy_export_inputs(connection)?;
         source::screen_source_inventory_v1(connection)?;
         let metadata = load_metadata_v0(connection, &self.config)?;
-        let inventory = validate_metadata_v0(connection, &self.config, &metadata)?;
-        ensure!(
-            inventory.len() <= MAX_P_ROWS
-                && inventory
-                    .iter()
-                    .all(|p| p.target_height <= metadata.head.height().get()),
-            "historical source has future prepared or committed execution"
-        );
-        let p = load_p(connection, metadata.head.block_id().as_bytes())?
-            .context("historical source genuine epoch P missing")?;
-        ensure!(
-            p.status == 1
-                && p.target_height > 0
-                && p.target_head()? == metadata.head
-                && p.snapshot == metadata.snapshot
-                && p.snapshot_digest == metadata.snapshot_digest,
-            "historical source current committed P mismatch"
-        );
-        let header = decode_header(&p.header)?;
-        let prefix =
-            lineage_resolver::resolve(connection, &self.config, &decode_lineage(&p.lineage)?)?;
-        let (set, parameters) = prefix.active(&self.config);
-        ensure!(
-            p.target_set
-                == set
-                    .try_cev0_bytes()
-                    .map_err(|e| anyhow::anyhow!("source set: {e:?}"))?
-                && p.target_parameters == parameters.canonical_bytes(),
-            "historical source active configuration mismatch"
-        );
-        let set = set.clone();
-        let parameters = *parameters;
-        let inventory_digest =
-            source::audit_source_inventory_v1(connection, &self.path, &metadata.head)?;
-        let pin = SourcePinV1 {
-            store_id: self.config.store_id,
-            signer_policy: self.config.signer_policy_commitment,
-            head: metadata.head.clone(),
-            sequence: metadata.durable_sequence,
-            p_digest: p.p_digest,
-            p_sequence: p.p_sequence,
-            commit_sequence: p
-                .commit_sequence
-                .context("historical source commit sequence")?,
-            header: p.header,
-            snapshot_digest: metadata.snapshot_digest,
-            commands_digest: sha256_v0(&p.commands),
-            nonces_digest: sha256_v0(&p.nonces),
-            active_set: p.target_set,
-            active_parameters: p.target_parameters,
-            prefix: p.lineage,
-            inventory_digest,
-        };
-        Ok(AuditedSourceV1 {
-            pin,
-            metadata,
-            header,
-            prefix,
-            set,
-            parameters,
-        })
+        audit_historical_metadata_v1(&self.path, &self.config, connection, metadata, None)
     }
 
     fn confirm_historical_source_unchanged_v1(&self, source: &SourcePinV1) -> Result<()> {
@@ -316,83 +273,20 @@ impl DurableNativeApplicationV0 {
             history.anchor_header_cev0 == anchor.pin.header,
             "historical input anchor mismatch"
         );
-        let input_digest = hash_domain("trnm.native.historical-replay-input.v1", &[&history_bytes]);
         let _guard = self.lock_operation()?;
         reject_sqlite_sidecars_v0(&self.path)?;
         let connection = open_immutable_connection_v0(&self.path)?;
         connection.execute_batch("BEGIN DEFERRED TRANSACTION")?;
         let source = self.audit_historical_source_v1(&connection)?;
         ensure!(source.pin == anchor.pin, "historical anchor stale source");
-        let header_bytes = history
-            .records
-            .iter()
-            .map(NativeHistoricalRecordV1::header_cev0)
-            .collect::<Vec<_>>();
-        let activations = history
-            .activations
-            .iter()
-            .map(|a| a.as_preimages())
-            .collect::<Vec<_>>();
-        let verified = verify_historical_header_ancestry_v1(
-            &source.header,
-            &source.set,
-            &source.parameters,
-            &header_bytes,
-            &activations,
-            &history.terminal_finality_cev0,
-            HistoricalAncestryLimitsV1::default(),
-            budget,
-        )
-        .map_err(|e| anyhow::anyhow!("historical consensus admission: {e}"))?;
-        let source_cutoff_headers =
-            source_cutoff_headers_v1(&connection, &source.pin.head, &verified)?;
-        let contexts = source.prefix.contexts()?;
-        let context_refs = contexts
-            .iter()
-            .map(|context| context.as_ref())
-            .collect::<Vec<_>>();
-        let coordinates = context_refs
-            .iter()
-            .map(|context| context.coordinates_v1())
-            .collect::<Vec<_>>();
-        // The source snapshot/replay was audited above; reuse its exact bytes
-        // and the already authenticated prefix without recursively auditing P.
-        let store = InMemoryNativeExecutionStoreV0::decode_epoch_snapshot_for_coordinates_v1(
-            self.config.chain_id.clone(),
-            self.config.signers.clone(),
-            source.parameters,
-            source.metadata.command_ids,
-            source.metadata.signer_nonces,
-            &source.metadata.snapshot,
-            &coordinates,
-        )?;
-        let run_digest = hash_domain(
-            "trnm.native.historical-replay-run.v1",
-            &[
-                &source.pin.store_id,
-                &source.pin.digest(),
-                verified.terminal_header().id().as_bytes(),
-                &input_digest,
-            ],
-        );
-        let computed = execution::replay_verified_history_v1(
-            store,
-            source.pin.head.clone(),
-            &source.header,
-            &source.set,
-            &context_refs,
-            &source_cutoff_headers,
+        let (input_digest, run_digest, computed) = replay_source_v1(
+            &self.config,
+            &connection,
+            &source,
             history,
-            &verified,
-            run_digest,
+            &history_bytes,
+            budget,
         )?;
-        ensure!(
-            computed.snapshot.len() <= MAX_SNAPSHOT_BYTES
-                && computed.commands.len() <= MAX_REPLAY_BYTES
-                && computed.nonces.len() <= MAX_REPLAY_BYTES
-                && computed.lifecycle.len() <= MAX_LIFECYCLE_BYTES,
-            "historical computed state resource bound"
-        );
         connection.execute_batch("ROLLBACK")?;
         self.confirm_historical_source_unchanged_v1(&source.pin)?;
         Ok(PreparedNativeReplayBaseV1 {
@@ -404,6 +298,180 @@ impl DurableNativeApplicationV0 {
             computed,
         })
     }
+}
+
+// Interpretation is pinned to the complete source10 tables. The metadata
+// passed here comes from the real source head or is reconstructed from its
+// retained committed P; it is never the mutable imported target head.
+fn audit_historical_metadata_v1(
+    application_path: &Path,
+    config: &NativeApplicationConfigV0,
+    connection: &Connection,
+    metadata: MetadataV0,
+    journal_selection: Option<
+        &crate::poco_preparation_journal::HistoricalReplayPreparationSelectionV1,
+    >,
+) -> Result<AuditedSourceV1> {
+    let policy = EpochReadPolicyV1::RetainedSource10(&metadata);
+    let inventory = validate_metadata_with_read_policy_v1(connection, config, &metadata, policy)?;
+    ensure!(
+        inventory.len() <= MAX_P_ROWS
+            && inventory
+                .iter()
+                .all(|p| p.target_height <= metadata.head.height().get()),
+        "historical source has future prepared or committed execution"
+    );
+    let p = load_p(connection, metadata.head.block_id().as_bytes())?
+        .context("historical source genuine epoch P missing")?;
+    ensure!(
+        p.status == 1
+            && p.target_height > 0
+            && p.target_head()? == metadata.head
+            && p.snapshot == metadata.snapshot
+            && p.snapshot_digest == metadata.snapshot_digest,
+        "historical source current committed P mismatch"
+    );
+    let header = decode_header(&p.header)?;
+    let prefix = lineage_resolver::resolve_with_read_policy(
+        connection,
+        config,
+        &decode_lineage(&p.lineage)?,
+        policy,
+    )?;
+    let (set, parameters) = prefix.active(config);
+    ensure!(
+        p.target_set
+            == set
+                .try_cev0_bytes()
+                .map_err(|e| anyhow::anyhow!("source set: {e:?}"))?
+            && p.target_parameters == parameters.canonical_bytes(),
+        "historical source active configuration mismatch"
+    );
+    let set = set.clone();
+    let parameters = *parameters;
+    let source_inventory = match journal_selection {
+        Some(selection) => source::audit_retained_source_inventory_v1(
+            connection,
+            application_path,
+            &metadata,
+            selection,
+        )?,
+        None => source::audit_source_inventory_with_journal_v1(
+            connection,
+            application_path,
+            &metadata.head,
+        )?,
+    };
+    let pin = SourcePinV1 {
+        store_id: config.store_id,
+        signer_policy: config.signer_policy_commitment,
+        head: metadata.head.clone(),
+        sequence: metadata.durable_sequence,
+        p_digest: p.p_digest,
+        p_sequence: p.p_sequence,
+        commit_sequence: p
+            .commit_sequence
+            .context("historical source commit sequence")?,
+        header: p.header,
+        snapshot_digest: metadata.snapshot_digest,
+        commands_digest: sha256_v0(&p.commands),
+        nonces_digest: sha256_v0(&p.nonces),
+        active_set: p.target_set,
+        active_parameters: p.target_parameters,
+        prefix: p.lineage,
+        inventory_digest: source_inventory.digest,
+        journal_selection: source_inventory.journal_selection,
+    };
+    Ok(AuditedSourceV1 {
+        pin,
+        metadata,
+        header,
+        prefix,
+        set,
+        parameters,
+    })
+}
+
+fn replay_source_v1(
+    config: &NativeApplicationConfigV0,
+    connection: &Connection,
+    source: &AuditedSourceV1,
+    history: &NativeHistoricalReplayV1,
+    history_bytes: &[u8],
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<([u8; 32], [u8; 32], execution::ComputedHistoricalReplayV1)> {
+    let input_digest = hash_domain("trnm.native.historical-replay-input.v1", &[history_bytes]);
+    let header_bytes = history
+        .records
+        .iter()
+        .map(NativeHistoricalRecordV1::header_cev0)
+        .collect::<Vec<_>>();
+    let activations = history
+        .activations
+        .iter()
+        .map(|a| a.as_preimages())
+        .collect::<Vec<_>>();
+    let verified = verify_historical_header_ancestry_v1(
+        &source.header,
+        &source.set,
+        &source.parameters,
+        &header_bytes,
+        &activations,
+        &history.terminal_finality_cev0,
+        HistoricalAncestryLimitsV1::default(),
+        budget,
+    )
+    .map_err(|e| anyhow::anyhow!("historical consensus admission: {e}"))?;
+    let source_cutoff_headers = source_cutoff_headers_v1(connection, &source.pin.head, &verified)?;
+    let contexts = source.prefix.contexts()?;
+    let context_refs = contexts
+        .iter()
+        .map(|context| context.as_ref())
+        .collect::<Vec<_>>();
+    let coordinates = context_refs
+        .iter()
+        .map(|context| context.coordinates_v1())
+        .collect::<Vec<_>>();
+    // The source snapshot/replay was audited above; reuse its exact bytes
+    // and the already authenticated prefix without recursively auditing P.
+    let store = InMemoryNativeExecutionStoreV0::decode_epoch_snapshot_for_coordinates_v1(
+        config.chain_id.clone(),
+        config.signers.clone(),
+        source.parameters,
+        source.metadata.command_ids.clone(),
+        source.metadata.signer_nonces.clone(),
+        &source.metadata.snapshot,
+        &coordinates,
+    )?;
+    let run_digest = hash_domain(
+        "trnm.native.historical-replay-run.v1",
+        &[
+            &source.pin.store_id,
+            &source.pin.digest(),
+            verified.terminal_header().id().as_bytes(),
+            &input_digest,
+        ],
+    );
+    let computed = execution::replay_verified_history_v1(
+        store,
+        source.pin.head.clone(),
+        &source.header,
+        &source.set,
+        &context_refs,
+        &source_cutoff_headers,
+        history,
+        &verified,
+        run_digest,
+    )?;
+    ensure!(
+        computed.snapshot.len() <= MAX_SNAPSHOT_BYTES
+            && computed.commands.len() <= MAX_REPLAY_BYTES
+            && computed.nonces.len() <= MAX_REPLAY_BYTES
+            && computed.lifecycle.len() <= MAX_LIFECYCLE_BYTES,
+        "historical computed state resource bound"
+    );
+
+    Ok((input_digest, run_digest, computed))
 }
 
 fn source_cutoff_headers_v1(

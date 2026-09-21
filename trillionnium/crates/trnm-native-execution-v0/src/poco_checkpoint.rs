@@ -1255,11 +1255,12 @@ impl DurableNativeApplicationV0 {
         prepared: &'a PreparedNativePocoCheckpointV0,
         executed: &NativeExecutedBlockV0,
     ) -> Result<PreparedCheckpointExecutionReceiptV1<'a>> {
-        let journal = self.poco_preparation_journal_v0()?;
+        let (guard, journal) = self.poco_preparation_journal_v0()?;
         crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
             &journal,
             &prepared.bound,
         )?;
+        drop(guard);
         let row = self.confirm_durable_execution_history_row_v0(executed)?;
         let request = executed.request();
         let header = prepared.header();
@@ -1287,14 +1288,15 @@ impl DurableNativeApplicationV0 {
                 && exact.execution_receipts() == prepared.receipts(),
             "checkpoint body/receipt substitution"
         );
-        crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
-            &journal,
-            &prepared.bound,
-        )?;
         ensure!(
             row.belongs_to_application_at_path_v0(self, self.path()),
             "checkpoint P owner replaced"
         );
+        let (_guard, journal) = self.poco_preparation_journal_v0()?;
+        crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
+            &journal,
+            &prepared.bound,
+        )?;
         Ok(PreparedCheckpointExecutionReceiptV1 { prepared, row })
     }
     /// Rebuild the cutoff proof from this owner's committed JMT, strictly
@@ -1330,7 +1332,11 @@ impl DurableNativeApplicationV0 {
             native,
             Vec::new(),
         )?;
-        let journal = self.poco_preparation_journal_v0()?;
+        #[cfg(test)]
+        preparation_lock_test_v1::pause(self.path(), preparation_lock_test_v1::Stage::BeforeLock)?;
+        let (_guard, journal) = self.poco_preparation_journal_v0()?;
+        #[cfg(test)]
+        preparation_lock_test_v1::pause(self.path(), preparation_lock_test_v1::Stage::BeforeWrite)?;
         let durable = reserve_prepared_poco_checkpoint_header_v0(&journal, prepared)?;
         let header = durable.fields().exact_header()?;
         let body = durable.body().clone();
@@ -1353,11 +1359,12 @@ impl DurableNativeApplicationV0 {
         prepared: PreparedNativePocoCheckpointV0,
         raw_checkpoint_two_seal_finality: &[u8],
     ) -> Result<PreHandoffCheckpointReceiptV1> {
-        let journal = self.poco_preparation_journal_v0()?;
+        let (guard, journal) = self.poco_preparation_journal_v0()?;
         crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
             &journal,
             &prepared.bound,
         )?;
+        drop(guard);
         let header = prepared.header();
         let read = self.read_finalized_by_height_v0(HeightV0::new(header.height().get()))?;
         let execution = read.executed_v0();
@@ -1450,6 +1457,11 @@ impl DurableNativeApplicationV0 {
                 &trnm_consensus_crypto::StrictEd25519Verifier,
             )
             .map_err(|e| anyhow::anyhow!("strict pre-handoff checkpoint finality: {e}"))?;
+        let (_guard, journal) = self.poco_preparation_journal_v0()?;
+        crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
+            &journal,
+            &prepared.bound,
+        )?;
         Ok(PreHandoffCheckpointReceiptV1 {
             prepared,
             read,
@@ -1468,6 +1480,11 @@ impl DurableNativeApplicationV0 {
     ) -> Result<ConfirmedNativePocoCheckpointV0> {
         let receipt =
             self.confirm_pre_handoff_checkpoint_v1(prepared, raw_checkpoint_two_seal_finality)?;
+        let (_guard, journal) = self.poco_preparation_journal_v0()?;
+        crate::poco_checkpoint_header::revalidate_durably_bound_poco_checkpoint_header_v0(
+            &journal,
+            &receipt.prepared.bound,
+        )?;
         let old_validator_set = receipt.old_validator_set().clone();
         let old_parameters = *receipt.old_parameters();
         let new_validator_set = receipt.new_validator_set().clone();
@@ -1539,7 +1556,11 @@ impl DurableNativeApplicationV0 {
 
     fn poco_preparation_journal_v0(
         &self,
-    ) -> Result<crate::poco_preparation_journal::PocoPreparationJournalV0> {
+    ) -> Result<(
+        std::sync::MutexGuard<'_, ()>,
+        crate::poco_preparation_journal::PocoPreparationJournalV0,
+    )> {
+        let guard = self.lock_legacy_preparation_storage_v1()?;
         let path = crate::poco_preparation_journal::poco_preparation_sidecar_path_v0(self.path());
         self.confirm_namespace_identity_v1()?;
         let journal = crate::poco_preparation_journal::PocoPreparationJournalV0::open(path)?;
@@ -1550,7 +1571,96 @@ impl DurableNativeApplicationV0 {
             !journal.is_halted()?,
             "native checkpoint preparation journal is halted"
         );
-        Ok(journal)
+        Ok((guard, journal))
+    }
+}
+
+#[cfg(test)]
+pub(crate) mod preparation_lock_test_v1 {
+    use std::{
+        path::{Path, PathBuf},
+        sync::{mpsc, Mutex},
+        time::Duration,
+    };
+
+    #[derive(Clone, Copy, PartialEq, Eq)]
+    pub(crate) enum Stage {
+        BeforeLock,
+        BeforeWrite,
+    }
+
+    struct Entry {
+        path: PathBuf,
+        stage: Stage,
+        reached: mpsc::SyncSender<()>,
+        release: mpsc::Receiver<()>,
+    }
+
+    static PAUSES: Mutex<Vec<Entry>> = Mutex::new(Vec::new());
+    const DEADLINE: Duration = Duration::from_secs(120);
+
+    pub(crate) struct Pause {
+        path: PathBuf,
+        reached: mpsc::Receiver<()>,
+        release: mpsc::SyncSender<()>,
+    }
+
+    pub(crate) fn arm(path: &Path, stage: Stage) -> Pause {
+        let (reached_tx, reached_rx) = mpsc::sync_channel(1);
+        let (release_tx, release_rx) = mpsc::sync_channel(1);
+        let mut pauses = PAUSES.lock().expect("preparation pause registry");
+        assert!(pauses.len() < 8, "bounded preparation pause registry");
+        assert!(pauses.iter().all(|entry| entry.path != path));
+        pauses.push(Entry {
+            path: path.to_path_buf(),
+            stage,
+            reached: reached_tx,
+            release: release_rx,
+        });
+        Pause {
+            path: path.to_path_buf(),
+            reached: reached_rx,
+            release: release_tx,
+        }
+    }
+
+    impl Pause {
+        pub(crate) fn wait_reached(&self) {
+            self.reached
+                .recv_timeout(DEADLINE)
+                .expect("real preparation did not reach bounded pause");
+        }
+
+        pub(crate) fn release(&self) {
+            self.release
+                .try_send(())
+                .expect("release preparation pause");
+        }
+    }
+
+    impl Drop for Pause {
+        fn drop(&mut self) {
+            let _ = self.release.try_send(());
+            PAUSES
+                .lock()
+                .expect("preparation pause registry")
+                .retain(|entry| entry.path != self.path);
+        }
+    }
+
+    pub(super) fn pause(path: &Path, stage: Stage) -> anyhow::Result<()> {
+        let entry = {
+            let mut pauses = PAUSES.lock().expect("preparation pause registry");
+            pauses
+                .iter()
+                .position(|entry| entry.path == path && entry.stage == stage)
+                .map(|index| pauses.remove(index))
+        };
+        if let Some(entry) = entry {
+            entry.reached.try_send(())?;
+            entry.release.recv_timeout(DEADLINE)?;
+        }
+        Ok(())
     }
 }
 

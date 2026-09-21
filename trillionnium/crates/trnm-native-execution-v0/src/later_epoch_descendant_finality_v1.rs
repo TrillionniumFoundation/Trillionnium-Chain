@@ -18,9 +18,17 @@ pub(super) const SCHEMA: (&str, &str) = (
 );
 
 pub(super) fn binding(connection: &Connection, p: &StoredEpochPV1) -> Result<Option<[u8; 32]>> {
+    binding_with_read_policy(connection, p, EpochReadPolicyV1::Physical)
+}
+
+pub(super) fn binding_with_read_policy(
+    connection: &Connection,
+    p: &StoredEpochPV1,
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<Option<[u8; 32]>> {
     if p.artifact_kind != 0
         || decode_header(&p.header)?.block_kind() != BlockKind::Regular
-        || !has_later_schema(schema_version(connection)?)
+        || !has_later_schema(policy.schema(connection)?)
     {
         return Ok(None);
     }
@@ -39,6 +47,13 @@ pub(super) fn binding(connection: &Connection, p: &StoredEpochPV1) -> Result<Opt
 /// Bounded enumeration also serves the schema-9 migration refusal: the old
 /// schema contains no original proof for any of these committed records.
 pub(super) fn committed_blocks(connection: &Connection) -> Result<BTreeSet<[u8; 32]>> {
+    committed_blocks_with_read_policy(connection, EpochReadPolicyV1::Physical)
+}
+
+pub(super) fn committed_blocks_with_read_policy(
+    connection: &Connection,
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<BTreeSet<[u8; 32]>> {
     let count: i64 = connection.query_row(
         "SELECT COUNT(*) FROM native_durable_execution_p_v1",
         [],
@@ -57,7 +72,7 @@ pub(super) fn committed_blocks(connection: &Connection) -> Result<BTreeSet<[u8; 
     let mut result = BTreeSet::new();
     for id in ids {
         let p = load_p(connection, &id)?.context("ordinary descendant P missing")?;
-        if binding(connection, &p)?.is_some() {
+        if binding_with_read_policy(connection, &p, policy)?.is_some() {
             result.insert(id);
         }
     }
@@ -216,10 +231,13 @@ pub(super) fn check_retry(
     Ok(())
 }
 
-#[inline(never)]
-pub(super) fn audit(connection: &Connection, config: &NativeApplicationConfigV0) -> Result<()> {
+pub(super) fn audit_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<()> {
     let (count, _) = statistics(connection)?;
-    let mut expected = committed_blocks(connection)?;
+    let mut expected = committed_blocks_with_read_policy(connection, policy)?;
     ensure!(
         count == expected.len(),
         "later descendant finality ledger must cover every committed ordinary P"
@@ -266,25 +284,21 @@ pub(super) fn audit(connection: &Connection, config: &NativeApplicationConfigV0)
                 && p.p_digest == p_digest
                 && p.digest()? == p_digest
                 && p.commit_sequence == Some(sequence)
-                && binding(connection, &p)? == Some(edge),
+                && binding_with_read_policy(connection, &p, policy)? == Some(edge),
             "later descendant finality P binding"
         );
-        validate_proof(connection, config, &p, edge, &proof)?;
+        validate_proof_with_read_policy(connection, config, &p, edge, &proof, policy)?;
     }
     ensure!(expected.is_empty(), "later descendant finality P missing");
     Ok(())
 }
-
-/// Keep the strict decoder's cryptographic temporaries off the inventory and
-/// activation-audit frames. The caller has already authenticated every retained
-/// checkpoint, successor and first-new proof in this same database snapshot.
-#[inline(never)]
-fn validate_proof(
+fn validate_proof_with_read_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     p: &StoredEpochPV1,
     edge: [u8; 32],
     proof: &[u8],
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<()> {
     let (predecessor, checkpoint): ([u8; 32], [u8; 32]) = connection.query_row(
         "SELECT predecessor_edge,checkpoint_block FROM native_later_epoch_edge_v1
@@ -297,7 +311,13 @@ fn validate_proof(
             ))
         },
     )?;
-    let activation = audit_later_successor_for_lineage_v1(connection, config, edge, predecessor)?;
+    let activation = audit_later_successor_for_lineage_with_read_policy(
+        connection,
+        config,
+        edge,
+        predecessor,
+        policy,
+    )?;
     let checkpoint =
         load_p(connection, &checkpoint)?.context("later descendant checkpoint P missing")?;
     let mut expected_lineage = decode_lineage(&checkpoint.lineage)?;

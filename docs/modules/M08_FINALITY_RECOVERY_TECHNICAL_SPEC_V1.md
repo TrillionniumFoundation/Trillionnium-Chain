@@ -1000,7 +1000,7 @@ Exercise truncation, trailing bytes, unknown tags, each count/length boundary an
 uncommitted/disconnected source targets. This suffix export does not claim the
 still-missing genesis/archive source join or an execution-ready imported base.
 
-### Planned imported execution base (M08-HISTORY-INSTALL-V1)
+### Imported execution base (M08-HISTORY-INSTALL-V1)
 
 Later checkpoint admission and selected-row cold verification must recompute
 the native candidate-selection result from the exact retained cutoff P/JMT
@@ -1015,7 +1015,8 @@ Candidate databases containing a previously unchecked, incorrect selection or
 fallback commitment now fail cold recovery. Do not rewrite signed history or
 erase the database to make this check pass; retain the rejected evidence.
 
-This is the next owner-storage implementation contract, not an enabled importer.
+This contract owns an explicit native storage installation API. Public-node
+integration and ordinary post-base execution are separately gated.
 The first vertical is a receiver-owned genuine committed C18 schema10 source,
 verified history through C32, explicit installation, then original-finality C33
 ordinary continuation. A peer database or a peer-computed replay set cannot
@@ -1066,8 +1067,23 @@ later checkpoints do not manufacture legacy preparation records.
 The nonempty fixture captures genuine local C18 before C21 preparation, with a
 signed H12 credit and two signed C25 transfers. It compares replayed C32 state
 and command/nonce sets to the real sender, checks repeated computation identity,
-and leaves source B installed/unconsumed. This is preparation evidence only;
-the atomic install/reopen/C33 and crash acceptance below remain open.
+and leaves source B installed/unconsumed. Explicit install/reopen is implemented
+in `historical_replay_install_v1.rs` and `historical_replay_storage_v1.rs`.
+`historical_install_is_explicit_atomic_replayed_and_preserves_source` checks
+nonempty installation, cold reexecution, exact retry, all nine retained source
+tables, source-proof/journal deletion, rehashed target snapshot/replay corruption
+and a genuine later journal append. The dedicated
+`historical_replay_install_sigkill_cuts_recover_exact_nonempty_base` harness
+exercises the three installation cuts below with actual killed subprocesses.
+`historical_replay_install_and_confirm_fsync_uncertainty_is_idempotent`
+injects database and directory fsync failures into installation, same-owner
+retry and cold confirmation; clean readback must retain the same base identity.
+`historical_install_serializes_real_checkpoint_preparation_and_rejects_late_write`
+schedules genuine checkpoint preparation on both sides of the installation
+lock: the write phase holds the lock, and an earlier computation cannot append
+a journal row after the physical schema changes.
+The fixture also produces original nonempty C33 finality on the sender; receiver
+C33 execution/commit and its replay-rejection acceptance remain unimplemented.
 
 At genuine C18, consumed prefix A and active epoch1 belong to the source P.
 Installed successor B remains phase0 with NULL consumption fields. Replay may
@@ -1121,6 +1137,18 @@ original terminal-proof bytes, ordered eight-root activations and their count.
 Reconstruct exact canonical NHR1 from this authority plus the ordered input rows
 to check the input digest and retry identity. Post-base status0 requires both
 commit columns NULL; status1 requires both non-NULL with exact widths.
+The local authority codec uses `NHA1`, BE revision1/profile0, u32-BE frames for
+the source header and terminal proof, then a u32-BE activation count and the
+eight NHR1 evidence frames per activation. Record bytes occur only in the input
+table. Their domain is `trnm.native.historical-replay-record.v1`, framing input
+digest, ordinalBE8, exact header, one-byte tag and payload (empty for a seal).
+The journal baseline codec uses `NHJ1`, the same revision/profile prefix, a
+u32-BE count of transition H32 keys, then a u32-BE count of preparation keys
+(transition H32, block-kind i64-BE, heightBE8, viewBE8). Lists are strictly ordered,
+unique and limited to64/1024 keys and64 KiB; every selected preparation requires
+its selected transition. Cold audit validates the entire current journal before
+rehashing the selected original rows. Added rows cannot hide a halt or malformed
+record; removed or changed original rows cannot preserve the baseline.
 
 Post-base P/commit/finality digests use new `trnm.native.replay-execution-p.v1`,
 `trnm.native.replay-execution-commit.v1` and
@@ -1128,6 +1156,9 @@ Post-base P/commit/finality digests use new `trnm.native.replay-execution-p.v1`,
 semantics or manufacture an old `PreparedNativeEpochExecutionV1` capability.
 Factor shared pure execution/receipt/header/snapshot checks; do not copy the
 execution engine or relax old schema10 row/proof bijections.
+The current installer creates the two post-base tables but requires them to
+remain empty. An image containing such P/proof rows fails cold admission until
+the separate ordinary continuation writer and its complete audit are implemented.
 
 Hard admission bounds: history1..256 consensus records, independently0..32 epoch
 transitions, complete retained canonical history/authority at most64 MiB; source
@@ -1147,6 +1178,18 @@ uncertain outcome requiring readback, never a fabricated rollback. Exact input
 retry identifies the existing installation byte-for-byte. After C33, retry may
 acknowledge the historical installation but cannot restore C32 metadata or issue
 a current C32 execution capability.
+Ordinary `open`, legacy metadata/P readers and all legacy preparation writers
+continue to reject schema12. Explicit `open_historical_replay_v1` requires an
+existing database and issues no execution or signing capability. Hot rollback
+may restore schema10, which must then be opened through its ordinary owner for
+a fresh installation retry. Cold installation confirmation reestablishes both
+database and directory fsync before fresh replay/readback; a readable image
+alone cannot acknowledge a prior process's uncertain COMMIT.
+Legacy checkpoint preparation takes the same owner operation lock before its
+fresh physical-schema check and retains it through journal reserve/bind. A
+checkpoint computed before installation cannot write or return preparation
+authority afterward. Read-only checkpoint confirmation releases this lock before
+entering other owner reads, then reacquires it for the final journal/owner check.
 
 Cold audit is one bounded nonrecursive pipeline: exact physical schema and SQL
 screens, frozen source10 audit, M01 retained-history verification, deterministic
@@ -1155,6 +1198,15 @@ Pass an explicit private source-read policy and the frozen C18 metadata to share
 source readers. Do not globally add12 to `is_epoch_schema`/`has_later_*`, skip
 source proof ledgers on physical12, temporarily alter schema/head, create
 compatibility views or clone a temporary database to make old audits pass.
+The internal `EpochReadPolicyV1` selects either normal physical reads or a
+retained schema10 view with an explicit frozen `MetadataV0`. It is interpretation
+data, never a verification capability. Cold reconstruction derives the frozen
+head, snapshot, replay sets and sequence from the actual retained committed P and
+complete source inventory; serialized base fields only supply comparisons.
+Thread the same policy through lineage consumption, installed-edge head checks,
+all checkpoint/first-new/ordinary proof ledgers, P validation and metadata-store
+validation. Every ordinary entry point keeps physical reads. A policy must not
+silently fall back to the mutable imported head or omit a schema10 proof ledger.
 Reuse the audited source store/prefix and sequence set once. Source sequences,
 installation sequence and new P/commit sequences must be disjoint. Persisted
 download/progress state is only a cache; restart re-verifies and reexecutes from

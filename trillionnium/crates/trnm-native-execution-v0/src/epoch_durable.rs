@@ -17,10 +17,12 @@ pub(super) const LATER_SCHEMA_VERSION: u64 = 10;
 #[path = "later_epoch_descendant_finality_v1.rs"]
 mod descendant_finality;
 #[path = "historical_replay_owner_v1.rs"]
-mod historical_replay;
+pub(super) mod historical_replay;
 #[path = "epoch_lineage_v1.rs"]
 mod lineage_resolver;
-pub use historical_replay::{ConfirmedNativeReplayAnchorV1, PreparedNativeReplayBaseV1};
+pub use historical_replay::{
+    ConfirmedNativeReplayAnchorV1, ConfirmedNativeReplayBaseV1, PreparedNativeReplayBaseV1,
+};
 #[path = "native_live_export_v1.rs"]
 mod live_export;
 #[path = "epoch_sync_export_v1.rs"]
@@ -38,6 +40,39 @@ const MAX_EDGES: usize = 32;
 const MAX_HEADER_BYTES: usize = 4096;
 const MAX_SET_BYTES: usize = 1024 * 1024;
 const MAX_PARAMETERS_BYTES: usize = 4096;
+
+/// Read interpretation for retained source data.  This is an audit selector,
+/// never an authority or migration permit.  Physical callers continue to use
+/// the live metadata schema; the installer path may explicitly interpret the
+/// preserved source tables as schema10 while the surrounding database is a
+/// newer physical schema.
+#[derive(Clone, Copy)]
+pub(super) enum EpochReadPolicyV1<'a> {
+    Physical,
+    RetainedSource10(&'a MetadataV0),
+}
+
+impl EpochReadPolicyV1<'_> {
+    pub(super) fn schema(self, connection: &Connection) -> DurableResult<u64> {
+        match self {
+            Self::Physical => schema_version(connection),
+            Self::RetainedSource10(_) => Ok(LATER_SCHEMA_VERSION),
+        }
+    }
+
+    pub(super) fn head(
+        self,
+        connection: &Connection,
+        config: &NativeApplicationConfigV0,
+    ) -> DurableResult<ApplicationHeadV0> {
+        match self {
+            Self::Physical => {
+                super::load_metadata_v0(connection, config).map(|metadata| metadata.head)
+            }
+            Self::RetainedSource10(metadata) => Ok(metadata.head.clone()),
+        }
+    }
+}
 
 pub(super) const SCHEMA: &[(&str, &str)] = &[
     ("native_epoch_edge_v1", "CREATE TABLE native_epoch_edge_v1 (
@@ -1410,6 +1445,22 @@ fn validate_prefix_current_ancestry_v1(
     head: &ApplicationHeadV0,
     prefix: &lineage_resolver::Prefix,
 ) -> Result<()> {
+    validate_prefix_current_ancestry_with_read_policy(
+        connection,
+        config,
+        head,
+        prefix,
+        EpochReadPolicyV1::Physical,
+    )
+}
+
+fn validate_prefix_current_ancestry_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    head: &ApplicationHeadV0,
+    prefix: &lineage_resolver::Prefix,
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<()> {
     if let Some(entry) = prefix
         .entries
         .iter()
@@ -1421,7 +1472,9 @@ fn validate_prefix_current_ancestry_v1(
             &entry.consumed.context("later consumed block missing")?,
         )?
         .context("later consumed application P missing")?;
-        validate_consumed_later_ancestry_v1(connection, config, head, &consumed)?;
+        validate_consumed_later_ancestry_with_read_policy(
+            connection, config, head, &consumed, policy,
+        )?;
     }
     Ok(())
 }
@@ -1433,6 +1486,22 @@ fn validate_consumed_later_ancestry_v1(
     head: &ApplicationHeadV0,
     consumed: &StoredEpochPV1,
 ) -> Result<()> {
+    validate_consumed_later_ancestry_with_read_policy(
+        connection,
+        config,
+        head,
+        consumed,
+        EpochReadPolicyV1::Physical,
+    )
+}
+
+fn validate_consumed_later_ancestry_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    head: &ApplicationHeadV0,
+    consumed: &StoredEpochPV1,
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<()> {
     ensure!(
         consumed.status == 1 && consumed.artifact_kind == 1,
         "later consumed application P phase/kind"
@@ -1443,8 +1512,12 @@ fn validate_consumed_later_ancestry_v1(
     }
     let current = load_p(connection, head.block_id().as_bytes())?
         .context("later consumed descendant P missing")?;
-    let history =
-        lineage_resolver::resolve(connection, config, &decode_lineage(&current.lineage)?)?;
+    let history = lineage_resolver::resolve_with_read_policy(
+        connection,
+        config,
+        &decode_lineage(&current.lineage)?,
+        policy,
+    )?;
     let original = decode_lineage(&consumed.lineage)?;
     let mut visited = BTreeSet::new();
     let mut cursor = head.clone();
@@ -1538,7 +1611,7 @@ fn validate_consumed_later_ancestry_v1(
                 "later consumed handoff binding mismatch"
             );
             ensure!(
-                has_later_application_finality_schema(schema_version(connection)?),
+                has_later_application_finality_schema(policy.schema(connection)?),
                 "later consumed handoff proof ledger missing"
             );
             let proof = connection.query_row(
@@ -1667,11 +1740,12 @@ fn later_application_finality_record_digest(
     )
 }
 
-fn validate_later_application_finality(
+fn validate_later_application_finality_with_read_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<()> {
-    let version = schema_version(connection)?;
+    let version = policy.schema(connection)?;
     if !has_later_application_finality_schema(version) {
         return Ok(());
     }
@@ -1792,7 +1866,7 @@ fn validate_later_application_finality(
                 ))
             },
         )?;
-        validate_later_application_finality_proof_v1(
+        validate_later_application_finality_proof_v1_with_read_policy(
             connection,
             config,
             &p,
@@ -1800,13 +1874,17 @@ fn validate_later_application_finality(
             edge_binding,
             predecessor_edge,
             checkpoint_block,
+            policy,
         )?;
     }
     Ok(())
 }
 
-#[inline(never)]
-fn validate_later_application_finality_proof_v1(
+// The proof identity tuple is intentionally explicit: each field binds a
+// distinct retained edge/checkpoint relation, and collapsing it would weaken
+// the policy-aware revalidation boundary.
+#[allow(clippy::too_many_arguments)]
+fn validate_later_application_finality_proof_v1_with_read_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     p: &StoredEpochPV1,
@@ -1814,9 +1892,15 @@ fn validate_later_application_finality_proof_v1(
     edge_binding: [u8; 32],
     predecessor_edge: [u8; 32],
     checkpoint_block: [u8; 32],
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<()> {
-    let activation =
-        audit_later_successor_for_lineage_v1(connection, config, edge_binding, predecessor_edge)?;
+    let activation = audit_later_successor_for_lineage_with_read_policy(
+        connection,
+        config,
+        edge_binding,
+        predecessor_edge,
+        policy,
+    )?;
     let retained = connection.query_row(
         "SELECT checkpoint_parent_header,checkpoint_finality,anchor_kernel,
                 next_epoch_commitment,new_validator_set,new_parameters
@@ -1882,11 +1966,12 @@ fn validate_later_application_finality_proof_v1(
     Ok(())
 }
 
-fn validate_later_records(
+fn validate_later_records_with_read_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<()> {
-    let version = schema_version(connection)?;
+    let version = policy.schema(connection)?;
     if !has_later_schema(version) {
         return Ok(());
     }
@@ -2037,13 +2122,17 @@ fn validate_later_records(
                 == preimages.checkpoint_header,
             "later finality header binding"
         );
-        validate_later_preimages(connection, config, &p, &preimages)?;
+        validate_later_preimages_with_read_policy(connection, config, &p, &preimages, policy)?;
     }
     Ok(())
 }
 
-fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfigV0) -> Result<()> {
-    let version = schema_version(connection)?;
+fn validate_later_edges_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<()> {
+    let version = policy.schema(connection)?;
     if !has_later_schema(version) {
         return Ok(());
     }
@@ -2135,9 +2224,8 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
             "later successor P binding"
         );
         if phase == 0 {
-            let metadata = load_metadata_v0(connection, config)?;
             ensure!(
-                metadata.head == p.target_head()?,
+                policy.head(connection, config)? == p.target_head()?,
                 "installed later successor requires current checkpoint head"
             );
         } else {
@@ -2183,7 +2271,9 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
                 )
             },
         )?;
-        let facts = derive_later_successor_facts(connection, config, &p, sequence, &evidence)?;
+        let facts = derive_later_successor_facts_with_read_policy(
+            connection, config, &p, sequence, &evidence, policy,
+        )?;
         ensure!(
             facts.successor_binding == successor_binding
                 && facts.predecessor_edge == predecessor_edge
@@ -2209,13 +2299,19 @@ fn validate_later_edges(connection: &Connection, config: &NativeApplicationConfi
 /// Strict recovery joins retained evidence to the authenticated local history.
 /// It deliberately uses no live context API: after C commits, the current
 /// head is C, whereas the observation's context is the retained C-1 commit.
-fn validate_later_preimages(
+fn validate_later_preimages_with_read_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     p: &StoredEpochPV1,
     evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<()> {
-    let prefix = lineage_resolver::resolve(connection, config, &decode_lineage(&p.lineage)?)?;
+    let prefix = lineage_resolver::resolve_with_read_policy(
+        connection,
+        config,
+        &decode_lineage(&p.lineage)?,
+        policy,
+    )?;
     lineage_resolver::verify_checkpoint(connection, config, p, evidence, &prefix)?;
     Ok(())
 }
@@ -2232,7 +2328,30 @@ fn derive_later_successor_facts(
     sequence: u64,
     evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
 ) -> Result<LaterSuccessorFactsV1> {
-    let prefix = lineage_resolver::resolve(connection, config, &decode_lineage(&p.lineage)?)?;
+    derive_later_successor_facts_with_read_policy(
+        connection,
+        config,
+        p,
+        sequence,
+        evidence,
+        EpochReadPolicyV1::Physical,
+    )
+}
+
+fn derive_later_successor_facts_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    sequence: u64,
+    evidence: &crate::later_epoch_checkpoint_bridge::LaterEpochFinalityPreimagesV1,
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<LaterSuccessorFactsV1> {
+    let prefix = lineage_resolver::resolve_with_read_policy(
+        connection,
+        config,
+        &decode_lineage(&p.lineage)?,
+        policy,
+    )?;
     let audit = lineage_resolver::verify_checkpoint(connection, config, p, evidence, &prefix)?;
     derive_later_successor_facts_from_audit(config, p, sequence, evidence, &audit)
 }
@@ -3209,7 +3328,16 @@ fn audited_lineage(
     config: &NativeApplicationConfigV0,
     ids: &[[u8; 32]],
 ) -> Result<Vec<([u8; 32], crate::epoch_recovery::AuditedEpochEvidenceV1)>> {
-    Ok(lineage_resolver::resolve(connection, config, ids)?.into_audits())
+    audited_lineage_with_read_policy(connection, config, ids, EpochReadPolicyV1::Physical)
+}
+
+fn audited_lineage_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    ids: &[[u8; 32]],
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<Vec<([u8; 32], crate::epoch_recovery::AuditedEpochEvidenceV1)>> {
+    Ok(lineage_resolver::resolve_with_read_policy(connection, config, ids, policy)?.into_audits())
 }
 
 fn validate_epoch_descendant_kind(header: &BlockHeader) -> Result<()> {
@@ -3237,18 +3365,27 @@ fn validate_p(
     config: &NativeApplicationConfigV0,
     p: &StoredEpochPV1,
 ) -> Result<InMemoryNativeExecutionStoreV0> {
-    validate_p_with_seen(connection, config, p, &mut BTreeSet::new())
+    validate_p_with_read_policy(connection, config, p, EpochReadPolicyV1::Physical)
+}
+
+fn validate_p_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    p: &StoredEpochPV1,
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<InMemoryNativeExecutionStoreV0> {
+    validate_p_with_seen_and_policy(connection, config, p, &mut BTreeSet::new(), policy)
 }
 
 /// Audit a schema-8 successor binding into the same strict activation carrier
 /// used by legacy lineage validation.  This is an internal representation
 /// join only; it does not mint the public legacy edge capability.
-#[inline(never)]
-fn audit_later_successor_for_lineage_v1(
+pub(super) fn audit_later_successor_for_lineage_with_read_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     binding: [u8; 32],
     predecessor: [u8; 32],
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<crate::epoch_recovery::AuditedEpochEvidenceV1> {
     let checkpoint = connection.query_row(
         "SELECT checkpoint_block FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
@@ -3262,7 +3399,7 @@ fn audit_later_successor_for_lineage_v1(
         "later successor predecessor mismatch"
     );
     ids.push(binding);
-    let mut prefix = lineage_resolver::resolve(connection, config, &ids)?;
+    let mut prefix = lineage_resolver::resolve_with_read_policy(connection, config, &ids, policy)?;
     let selected = prefix
         .entries
         .pop()
@@ -3274,11 +3411,12 @@ fn audit_later_successor_for_lineage_v1(
     Ok(*selected.audit)
 }
 
-fn validate_p_with_seen(
+fn validate_p_with_seen_and_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     p: &StoredEpochPV1,
     _seen: &mut BTreeSet<[u8; 32]>,
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<InMemoryNativeExecutionStoreV0> {
     ensure!(
         p.store_id == config.store_id
@@ -3307,7 +3445,7 @@ fn validate_p_with_seen(
     let header = decode_header(&p.header)?;
     if p.status == 1 && header.block_kind() == BlockKind::EpochCheckpoint {
         ensure!(
-            has_later_schema(schema_version(connection)?),
+            has_later_schema(policy.schema(connection)?),
             "committed later checkpoint requires schema8"
         );
         let count: i64 = connection.query_row(
@@ -3330,7 +3468,7 @@ fn validate_p_with_seen(
     );
     let lineage = decode_lineage(&p.lineage)?;
     let legacy_edges = load_edges(connection, config)?;
-    let edges = audited_lineage(connection, config, &lineage)?;
+    let edges = audited_lineage_with_read_policy(connection, config, &lineage, policy)?;
     let (_, latest) = edges.last().context("epoch P has no lineage")?;
     ensure!(
         latest
@@ -3547,44 +3685,51 @@ fn all_p(connection: &Connection) -> Result<Vec<StoredEpochPV1>> {
         .collect()
 }
 
-#[inline(never)]
-fn validate_later_inventory_v1(
+pub(super) fn validate_later_inventory_v1_with_read_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<()> {
-    let schema = schema_version(connection)?;
+    let schema = policy.schema(connection)?;
     if has_later_schema(schema) {
-        validate_later_records(connection, config)?;
+        validate_later_records_with_read_policy(connection, config, policy)?;
         // Authenticate the complete successor ledger before the application
         // proof pass. The row-specific audit below must not re-run this
         // whole-table decode while the caller is already on a deep recovery
         // stack.
-        validate_later_edges(connection, config)?;
+        validate_later_edges_with_read_policy(connection, config, policy)?;
         // Schema 8 has no application-proof ledger; schema 9 requires it.
         if has_later_application_finality_schema(schema) {
-            validate_later_application_finality(connection, config)?;
+            validate_later_application_finality_with_read_policy(connection, config, policy)?;
         }
         if has_later_descendant_finality_schema(schema) {
-            descendant_finality::audit(connection, config)?;
+            descendant_finality::audit_with_read_policy(connection, config, policy)?;
         }
     }
     Ok(())
 }
 
-pub(super) fn inventory(
+pub(super) fn inventory_with_read_policy(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
+    policy: EpochReadPolicyV1<'_>,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
-    validate_later_inventory_v1(connection, config).map_err(local_error)?;
+    validate_later_inventory_v1_with_read_policy(connection, config, policy)
+        .map_err(local_error)?;
     (|| -> Result<_> {
         // Even an installed edge not yet referenced by a P must retain valid evidence.
         for edge in load_edges(connection, config)? {
-            audited_lineage(connection, config, &[edge.binding])?;
+            lineage_resolver::resolve_with_read_policy(
+                connection,
+                config,
+                &[edge.binding],
+                policy,
+            )?;
         }
         let values = all_p(connection)?;
         let mut rows = Vec::new();
         for p in values {
-            validate_p(connection, config, &p)?;
+            validate_p_with_read_policy(connection, config, &p, policy)?;
             let head = p.target_head()?;
             rows.push(ValidatedPInventoryEntryV0 {
                 target_height: p.target_height,
@@ -3615,6 +3760,15 @@ pub(super) fn metadata_store(
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
 ) -> DurableResult<InMemoryNativeExecutionStoreV0> {
+    metadata_store_with_read_policy(connection, config, metadata, EpochReadPolicyV1::Physical)
+}
+
+pub(super) fn metadata_store_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    metadata: &MetadataV0,
+    policy: EpochReadPolicyV1<'_>,
+) -> DurableResult<InMemoryNativeExecutionStoreV0> {
     (|| -> Result<_> {
         if let Some(p) = load_p(connection, metadata.head.block_id().as_bytes())? {
             ensure!(
@@ -3624,7 +3778,7 @@ pub(super) fn metadata_store(
                     && p.snapshot_digest == metadata.snapshot_digest,
                 "epoch metadata differs from committed P"
             );
-            let store = validate_p(connection, config, &p)?;
+            let store = validate_p_with_read_policy(connection, config, &p, policy)?;
             validate_context(connection, config, &p)?;
             ensure!(
                 store.replay_sets_v0().0 == &metadata.command_ids

@@ -224,6 +224,7 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
     require('exit "$rc"' in bridge, "persistent bridge failure exit lost")
 
     candidate = named_step(baseline, "Test hosted candidate process recovery with explicit features", require)
+    require(re.search(r"(?m)^\s+id: hosted_candidate_process$", candidate) is not None, "hosted candidate producer identity missing")
     for command in CANDIDATE_TEST_COMMANDS:
         require(re.search(rf"(?m)^\s+run_candidate test [a-z0-9-]+ {re.escape(command)}$", candidate) is not None, f"hosted candidate regression missing: {command}")
     require(re.search(rf"(?m)^\s+run_candidate clippy [a-z0-9-]+ {re.escape(CANDIDATE_CLIPPY_COMMAND)}$", candidate) is not None, "hosted candidate strict clippy missing")
@@ -238,7 +239,8 @@ def validate(root: pathlib.Path, contract: dict[str, Any], require: Callable[[bo
         require(token in candidate, f"hosted candidate execution safeguard missing: {token}")
     require("continue-on-error" not in candidate and "|| true" not in candidate and not re.search(r"(?m)^\s+if:", candidate), "hosted candidate failure masking forbidden")
     retained = named_step(baseline, "Retain hosted candidate process commands and outcomes", require)
-    for token in ("if: always()", "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
+    require(re.search(r"(?m)^\s+if: always\(\) && \(steps\.hosted_candidate_process\.outcome == 'success' \|\| steps\.hosted_candidate_process\.outcome == 'failure'\)$", retained) is not None, "hosted candidate artifact must retain success/failure and exclude skipped producer")
+    for token in ("actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02", "if-no-files-found: error", "${{ runner.temp }}/trnm-hosted-candidate-process"):
         require(token in retained, f"hosted candidate artifact retention missing: {token}")
 
     workflow_paths = sorted(path for path in (root / WORKFLOWS).iterdir() if path.is_file() and path.suffix in {".yml", ".yaml"})

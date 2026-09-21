@@ -59,7 +59,7 @@ use crate::{
 #[path = "epoch_durable.rs"]
 mod epoch_durable;
 pub use epoch_durable::{
-    CommittedNativeEpochExecutionV1, ConfirmedNativeReplayAnchorV1,
+    CommittedNativeEpochExecutionV1, ConfirmedNativeReplayAnchorV1, ConfirmedNativeReplayBaseV1,
     ConfirmedPreparedNativeEpochExecutionV1, EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1,
     EpochEdgePhaseV1, FinalizedNativeEpochApplicationReadV1,
     LaterEpochApplicationEdgeRequirementsV1, LaterEpochApplicationEdgeV1,
@@ -1393,7 +1393,57 @@ impl Drop for DurableNativeApplicationV0 {
 
 impl DurableNativeApplicationV0 {
     pub fn open(path: impl AsRef<Path>, config: NativeApplicationConfigV0) -> DurableResult<Self> {
-        let (path, created) = prepare_store_file_v0(path.as_ref())?;
+        Self::open_mode_v1(path.as_ref(), config, false)
+    }
+
+    /// Reopen an already installed historical replay base through its complete
+    /// cold audit. This mode never creates a database or migrates schema10;
+    /// ordinary writers remain fenced by their physical schema checks.
+    pub fn open_historical_replay_v1(
+        path: impl AsRef<Path>,
+        config: NativeApplicationConfigV0,
+    ) -> DurableResult<Self> {
+        Self::open_mode_v1(path.as_ref(), config, true)
+    }
+
+    fn open_mode_v1(
+        path: &Path,
+        config: NativeApplicationConfigV0,
+        allow_historical: bool,
+    ) -> DurableResult<Self> {
+        let (path, created) = if allow_historical {
+            // Check existence before opening/creating even the lock file.
+            // prepare_store_file_v0 intentionally creates absent ordinary
+            // stores, so the explicit imported-store mode must not call it.
+            let metadata = fs::symlink_metadata(path).map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::Storage,
+                    "historical.open_existing",
+                )
+            })?;
+            if !metadata.file_type().is_file() || metadata.file_type().is_symlink() {
+                return Err(error(
+                    NativeApplicationExecutionErrorCodeV0::ReplacedStore,
+                    "store.file_type",
+                ));
+            }
+            let name = path.file_name().ok_or_else(|| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                    "store.file_name",
+                )
+            })?;
+            let parent = fs::canonicalize(path.parent().unwrap_or_else(|| Path::new(".")))
+                .map_err(|_| {
+                    error(
+                        NativeApplicationExecutionErrorCodeV0::Storage,
+                        "store.parent",
+                    )
+                })?;
+            (parent.join(name), false)
+        } else {
+            prepare_store_file_v0(path)?
+        };
         let lock_path = lock_path_v0(&path)?;
         let lock_file = OpenOptions::new()
             .read(true)
@@ -1408,6 +1458,12 @@ impl DurableNativeApplicationV0 {
                 "lock.exclusive",
             )
         })?;
+        #[cfg(unix)]
+        let historical_namespace = if allow_historical {
+            Some(NativeNamespaceIdentityV1::capture(&path, &lock_file)?)
+        } else {
+            None
+        };
         let mut incremental_migration_pin = None;
         if created {
             let connection = open_writable_connection_v0(&path)?;
@@ -1415,39 +1471,84 @@ impl DurableNativeApplicationV0 {
             verify_schema_v0(&connection)?;
         } else {
             if sqlite_sidecars_present_v0(&path)? {
-                recover_sqlite_rollback_journal_v0(&path)?;
+                if allow_historical {
+                    recover_sqlite_rollback_journal_with_verifier_v1(&path, |connection| {
+                        match epoch_durable::schema_version(connection)? {
+                            epoch_durable::LATER_SCHEMA_VERSION => verify_schema_v0(connection),
+                            12 => epoch_durable::historical_replay::verify_installed_schema_v1(
+                                connection,
+                            )
+                            .map_err(|_| {
+                                error(
+                                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                                    "historical.recovery_schema",
+                                )
+                            }),
+                            _ => Err(error(
+                                NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                                "historical.recovery_schema",
+                            )),
+                        }
+                    })?;
+                } else {
+                    recover_sqlite_rollback_journal_v0(&path)?;
+                }
             }
             reject_sqlite_sidecars_v0(&path)?;
             let connection = open_immutable_connection_v0(&path)?;
-            verify_schema_v0(&connection)?;
-            if metadata_exists_v0(&connection)? {
-                let metadata = load_metadata_v0(&connection, &config)?;
-                validate_metadata_v0(&connection, &config, &metadata)?;
-                if epoch_durable::schema_version(&connection)?
-                    == incremental_owner_v1::SCHEMA_VERSION
-                {
-                    incremental_migration_pin =
-                        Some(incremental_owner_v1::audited_migration_anchor(
-                            &connection,
-                            &config,
-                            &metadata,
-                        )?);
+            if allow_historical {
+                if epoch_durable::schema_version(&connection)? != 12 {
+                    return Err(error(
+                        NativeApplicationExecutionErrorCodeV0::InvalidConfiguration,
+                        "historical.open_exact_schema12",
+                    ));
                 }
-                #[cfg(feature = "incremental-epoch-candidate")]
-                if matches!(epoch_durable::schema_version(&connection)?, 6 | 7) {
-                    incremental_migration_pin =
-                        Some(incremental_owner_v1::epoch_candidate_v1::audit_anchor(
-                            &connection,
-                            &config,
-                            &metadata,
-                        )?);
-                }
+                drop(connection);
+                epoch_durable::historical_replay::audit_installed_path_v1(&path, &config).map_err(
+                    |_| {
+                        error(
+                            NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                            "historical.open_audit",
+                        )
+                    },
+                )?;
             } else {
-                validate_virgin_inventory_v0(&connection)?;
+                verify_schema_v0(&connection)?;
+                if metadata_exists_v0(&connection)? {
+                    let metadata = load_metadata_v0(&connection, &config)?;
+                    validate_metadata_v0(&connection, &config, &metadata)?;
+                    if epoch_durable::schema_version(&connection)?
+                        == incremental_owner_v1::SCHEMA_VERSION
+                    {
+                        incremental_migration_pin =
+                            Some(incremental_owner_v1::audited_migration_anchor(
+                                &connection,
+                                &config,
+                                &metadata,
+                            )?);
+                    }
+                    #[cfg(feature = "incremental-epoch-candidate")]
+                    if matches!(epoch_durable::schema_version(&connection)?, 6 | 7) {
+                        incremental_migration_pin =
+                            Some(incremental_owner_v1::epoch_candidate_v1::audit_anchor(
+                                &connection,
+                                &config,
+                                &metadata,
+                            )?);
+                    }
+                } else {
+                    validate_virgin_inventory_v0(&connection)?;
+                }
             }
         }
         #[cfg(unix)]
-        let namespace_identity = Mutex::new(NativeNamespaceIdentityV1::capture(&path, &lock_file)?);
+        let namespace_identity = Mutex::new(match historical_namespace {
+            Some(mut identity) => {
+                identity.confirm(&path)?;
+                identity
+            }
+            None => NativeNamespaceIdentityV1::capture(&path, &lock_file)?,
+        });
         Ok(Self {
             path,
             #[cfg(unix)]
@@ -1458,6 +1559,34 @@ impl DurableNativeApplicationV0 {
             owner_affinity: Arc::new(()),
             incremental_migration_pin: Mutex::new(incremental_migration_pin),
         })
+    }
+
+    /// Fresh schema/namespace check. Journal writers retain the operation
+    /// guard returned by lock_legacy_preparation_storage_v1 through their write.
+    pub(crate) fn confirm_legacy_preparation_storage_v1(&self) -> DurableResult<()> {
+        self.confirm_namespace_identity_v1()?;
+        reject_sqlite_sidecars_v0(&self.path)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        self.confirm_namespace_identity_v1()
+    }
+
+    /// Serialize the physical schema fence and preparation-journal writes
+    /// with explicit installation, which holds the same owner operation lock.
+    pub(crate) fn lock_legacy_preparation_storage_v1(
+        &self,
+    ) -> DurableResult<std::sync::MutexGuard<'_, ()>> {
+        let guard = self.lock_operation()?;
+        self.confirm_legacy_preparation_storage_v1()?;
+        Ok(guard)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn legacy_preparation_lock_held_for_test_v1(&self) -> bool {
+        matches!(
+            self.operation_lock.try_lock(),
+            Err(std::sync::TryLockError::WouldBlock)
+        )
     }
 
     /// Freshly confirm the exact initialized ordinary schema3 owner. This
@@ -3291,13 +3420,28 @@ fn validate_metadata_v0(
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
+    validate_metadata_with_read_policy_v1(
+        connection,
+        config,
+        metadata,
+        epoch_durable::EpochReadPolicyV1::Physical,
+    )
+}
+
+fn validate_metadata_with_read_policy_v1(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    metadata: &MetadataV0,
+    policy: epoch_durable::EpochReadPolicyV1<'_>,
+) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
+    let schema = policy.schema(connection)?;
     #[cfg(feature = "incremental-epoch-candidate")]
-    if matches!(epoch_durable::schema_version(connection)?, 6 | 7) {
+    if matches!(schema, 6 | 7) {
         return incremental_owner_v1::epoch_candidate_v1::validate_metadata(
             connection, config, metadata,
         );
     }
-    if epoch_durable::schema_version(connection)? == incremental_owner_v1::SCHEMA_VERSION {
+    if schema == incremental_owner_v1::SCHEMA_VERSION {
         return incremental_owner_v1::validate_metadata(connection, config, metadata);
     }
     if metadata.durable_sequence == 0 || metadata.snapshot_digest != sha256_v0(&metadata.snapshot) {
@@ -3306,8 +3450,8 @@ fn validate_metadata_v0(
             "metadata.digest_or_sequence",
         ));
     }
-    let store = if epoch_durable::is_epoch_schema(epoch_durable::schema_version(connection)?) {
-        epoch_durable::metadata_store(connection, config, metadata)?
+    let store = if epoch_durable::is_epoch_schema(schema) {
+        epoch_durable::metadata_store_with_read_policy(connection, config, metadata, policy)?
     } else {
         metadata.to_store(config)?
     };
@@ -3353,19 +3497,22 @@ fn validate_metadata_v0(
             ));
         }
     }
-    validate_p_inventory_v0(connection, config, metadata)
+    validate_p_inventory_with_read_policy_v1(connection, config, metadata, policy)
 }
 
-fn validate_p_inventory_v0(
+fn validate_p_inventory_with_read_policy_v1(
     connection: &Connection,
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
+    policy: epoch_durable::EpochReadPolicyV1<'_>,
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
     let mut rows = map_p_inventory_v0(connection, |p| {
         ValidatedPInventoryEntryV0::from_durable_v0(config, p)
     })?;
-    if epoch_durable::is_epoch_schema(epoch_durable::schema_version(connection)?) {
-        rows.extend(epoch_durable::inventory(connection, config)?);
+    if epoch_durable::is_epoch_schema(policy.schema(connection)?) {
+        rows.extend(epoch_durable::inventory_with_read_policy(
+            connection, config, policy,
+        )?);
         rows.sort_unstable_by_key(|p| p.p_sequence);
     }
     let by_block = rows
@@ -4565,6 +4712,13 @@ fn sqlite_sidecars_present_v0(path: &Path) -> DurableResult<bool> {
 /// no metadata singleton exists yet. All canonical store validation still runs
 /// on the immutable connection afterwards.
 fn recover_sqlite_rollback_journal_v0(path: &Path) -> DurableResult<()> {
+    recover_sqlite_rollback_journal_with_verifier_v1(path, verify_schema_v0)
+}
+
+fn recover_sqlite_rollback_journal_with_verifier_v1(
+    path: &Path,
+    verify_recovered_schema: impl FnOnce(&Connection) -> DurableResult<()>,
+) -> DurableResult<()> {
     let journal_path = sqlite_auxiliary_path_v0(path, "-journal");
     let wal_path = sqlite_auxiliary_path_v0(path, "-wal");
     let shm_path = sqlite_auxiliary_path_v0(path, "-shm");
@@ -4591,7 +4745,7 @@ fn recover_sqlite_rollback_journal_v0(path: &Path) -> DurableResult<()> {
     }
 
     let mut connection = open_writable_connection_v0(path)?;
-    verify_schema_v0(&connection)?;
+    verify_recovered_schema(&connection)?;
     let transaction = connection
         .transaction_with_behavior(TransactionBehavior::Immediate)
         .map_err(|_| {
@@ -4600,12 +4754,23 @@ fn recover_sqlite_rollback_journal_v0(path: &Path) -> DurableResult<()> {
                 "sqlite.journal_recovery_transaction",
             )
         })?;
-    let original: Option<Vec<u8>> = transaction
+    let original: Option<[u8; 8]> = transaction
         .query_row(
             "SELECT durable_sequence FROM native_application_metadata_v0
              WHERE singleton=1",
             [],
-            |row| row.get(0),
+            |row| match row.get_ref(0)? {
+                rusqlite::types::ValueRef::Blob(bytes) if bytes.len() == 8 => {
+                    let mut value = [0; 8];
+                    value.copy_from_slice(bytes);
+                    Ok(value)
+                }
+                value => Err(rusqlite::Error::InvalidColumnType(
+                    0,
+                    "durable_sequence".into(),
+                    value.data_type(),
+                )),
+            },
         )
         .optional()
         .map_err(|_| {
@@ -4696,22 +4861,22 @@ fn recover_sqlite_rollback_journal_v0(path: &Path) -> DurableResult<()> {
         }
         return Ok(());
     };
-    let temporary = if original == vec![0xff_u8; 8] {
-        vec![0_u8; 8]
+    let temporary = if original == [0xff_u8; 8] {
+        [0_u8; 8]
     } else {
-        vec![0xff_u8; 8]
+        [0xff_u8; 8]
     };
     transaction
         .execute(
             "UPDATE native_application_metadata_v0 SET durable_sequence=?1
              WHERE singleton=1",
-            params![temporary],
+            params![temporary.as_slice()],
         )
         .and_then(|_| {
             transaction.execute(
                 "UPDATE native_application_metadata_v0 SET durable_sequence=?1
                  WHERE singleton=1",
-                params![original],
+                params![original.as_slice()],
             )
         })
         .map_err(|_| {
@@ -4759,7 +4924,7 @@ fn reject_sqlite_sidecars_v0(path: &Path) -> DurableResult<()> {
 
 #[cfg(test)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum SyncStoreCommitBoundaryFaultPointV0 {
+pub(crate) enum SyncStoreCommitBoundaryFaultPointV0 {
     Database,
     Directory,
 }
@@ -4780,7 +4945,7 @@ fn sync_store_commit_boundary_fault_lock_v0(
 
 #[cfg(test)]
 #[must_use = "the fault guard clears only its own armed sync fault on scope exit"]
-struct SyncStoreCommitBoundaryFaultGuardV0 {
+pub(crate) struct SyncStoreCommitBoundaryFaultGuardV0 {
     identity: Arc<()>,
 }
 
@@ -4795,7 +4960,7 @@ impl Drop for SyncStoreCommitBoundaryFaultGuardV0 {
 }
 
 #[cfg(test)]
-fn arm_sync_store_commit_boundary_fault_v0(
+pub(crate) fn arm_sync_store_commit_boundary_fault_v0(
     path: &Path,
     point: SyncStoreCommitBoundaryFaultPointV0,
 ) -> SyncStoreCommitBoundaryFaultGuardV0 {

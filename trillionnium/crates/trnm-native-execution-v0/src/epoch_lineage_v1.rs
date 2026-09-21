@@ -83,9 +83,18 @@ pub(super) fn resolve(
     config: &NativeApplicationConfigV0,
     ids: &[[u8; 32]],
 ) -> Result<Prefix> {
+    resolve_with_read_policy(connection, config, ids, EpochReadPolicyV1::Physical)
+}
+
+pub(super) fn resolve_with_read_policy(
+    connection: &Connection,
+    config: &NativeApplicationConfigV0,
+    ids: &[[u8; 32]],
+    policy: EpochReadPolicyV1<'_>,
+) -> Result<Prefix> {
     ensure!(ids.len() <= MAX_EDGES, "epoch lineage count budget");
     let legacy = load_edges(connection, config)?;
-    let has_later = has_later_schema(schema_version(connection)?);
+    let has_later = has_later_schema(policy.schema(connection)?);
     let mut seen = BTreeSet::new();
     let mut prefix = Prefix {
         entries: Vec::with_capacity(ids.len()),
@@ -110,7 +119,7 @@ pub(super) fn resolve(
         );
         let entry = match old {
             Some(edge) => verify_legacy(connection, config, edge, &prefix)?,
-            None => verify_later(connection, config, *binding, &prefix)?,
+            None => verify_later(connection, config, *binding, &prefix, policy)?,
         };
         let coordinates = entry.audit.coordinates(*binding)?;
         if let Some(previous) = prefix.entries.last() {
@@ -121,7 +130,7 @@ pub(super) fn resolve(
                 "epoch lineage consumed prefix or height order"
             );
         }
-        validate_consumption(connection, config, &entry, &prefix)?;
+        validate_consumption(connection, config, &entry, &prefix, policy)?;
         prefix.entries.push(entry);
     }
     Ok(prefix)
@@ -235,6 +244,7 @@ fn validate_consumption(
     config: &NativeApplicationConfigV0,
     entry: &Entry,
     prefix: &Prefix,
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<()> {
     ensure!(
         (entry.phase == 0 && entry.consumed.is_none() && entry.consumed_sequence.is_none())
@@ -244,7 +254,7 @@ fn validate_consumption(
     if entry.phase == 0 {
         if entry.later_facts.is_some() {
             ensure!(
-                load_metadata_v0(connection, config)?.head == entry.checkpoint,
+                policy.head(connection, config)? == entry.checkpoint,
                 "installed later successor requires current checkpoint head"
             );
         }
@@ -340,7 +350,12 @@ fn verify_later(
     config: &NativeApplicationConfigV0,
     binding: [u8; 32],
     prefix: &Prefix,
+    policy: EpochReadPolicyV1<'_>,
 ) -> Result<Entry> {
+    ensure!(
+        has_later_schema(policy.schema(connection)?),
+        "later successor requires retained later schema"
+    );
     let (stored, phase, consumed, consumed_sequence) = connection.query_row(
         "SELECT * FROM native_later_epoch_edge_v1 WHERE successor_binding=?1",
         [binding.as_slice()],

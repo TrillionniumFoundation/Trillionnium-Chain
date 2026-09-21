@@ -439,13 +439,14 @@ the complete nonempty C18→C32 application suffix, retaining prior command and
 signer/nonce identities, and checks all four roots against the M01 path. Replay
 step identities use the receiver's previous local commit; downloaded artifacts
 and source-local commit IDs are not reused. The result is opaque, owner-affine
-and non-Clone and has no installation or ordinary execution permit.
+and non-Clone. Only M08's explicit installer may consume these locally computed
+facts after fresh source validation; they grant no ordinary execution permit.
 
 This revision requires complete crossed activation evidence for every replayed
 checkpoint. A path ending at a checkpoint without that successor evidence is
-rejected. Schema12 installation, post-import C33/duplicate-transaction acceptance,
-and public-node composition remain unimplemented; current native live staging
-also remains read-only.
+rejected. M08 implements explicit schema12 installation and cold reexecution;
+post-import C33/duplicate-transaction acceptance and public-node composition
+remain unimplemented. Current native live staging remains read-only.
 
 ## Activation boundary
 
