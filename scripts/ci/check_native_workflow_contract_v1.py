@@ -260,6 +260,16 @@ def validate_contract(root: Path) -> dict[str, object]:
     execution = step(baseline, "Test the unified workspace feature graph with a hard deadline")
     hard_step(execution, "workspace execution")
     tokens(execution, ("cargo test --workspace --all-targets --locked --no-fail-fast", "| tee", "timeout --signal=TERM", 'git rev-parse HEAD > "$root/HEAD"', 'git rev-parse \'HEAD^{tree}\' > "$root/TREE"'), "workspace execution")
+    candidate = step(baseline, "Verify explicit incremental epoch execution candidate")
+    hard_step(candidate, "native candidate shard execution")
+    tokens(candidate, (
+        "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+        "--features test-fixtures,incremental-epoch-candidate",
+        "cargo clippy -p trnm-native-execution-v0",
+    ), "native candidate shard execution")
+    candidate_contract = step(baseline, "Test native candidate shard contract")
+    hard_step(candidate_contract, "native candidate shard contract tests")
+    tokens(candidate_contract, ("python3 ../scripts/ci/test_native_candidate_shards_v1.py",), "native candidate shard contract tests")
     evidence = step(runtime, "Build exact-source runtime evidence record")
     hard_step(evidence, "runtime evidence")
     tokens(evidence, ('out="$RUNNER_TEMP/runtime-fault-matrix"', '"source_commit": os.environ["TRNM_EXPECTED_SOURCE_SHA"]', '"source_tree": os.environ["SOURCE_TREE"]', 'sha256sum "$out/evidence.json"'), "runtime evidence")

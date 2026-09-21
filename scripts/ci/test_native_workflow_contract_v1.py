@@ -133,6 +133,14 @@ class NativeWorkflowMutants(unittest.TestCase):
         self.replace(BASELINE, "          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace", "          set +o pipefail\n          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace")
         self.rejected("workspace execution: failure masking")
 
+    def test_native_candidate_shard_runner_cannot_be_removed(self) -> None:
+        self.replace(
+            BASELINE,
+            "          python3 ../scripts/ci/run_native_candidate_shards_v1.py \\",
+            "          # native shard runner omitted \\",
+        )
+        self.rejected("native candidate shard execution: missing")
+
     def test_runtime_matrix_cannot_skip_and_publish_success(self) -> None:
         self.replace(RUNTIME, "      - name: Run finalization-intent SIGKILL matrix\n", "      - name: Run finalization-intent SIGKILL matrix\n        if: false\n")
         self.rejected("may not skip execution")

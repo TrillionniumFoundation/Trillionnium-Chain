@@ -446,11 +446,31 @@ jobs:
           tail -n 120 "$root/pcc1-boundary.log"
           printf 'PCC1_BOUNDARY_EXIT_CODE=%s\n' "$rc"
           exit "$rc"
-      - name: Verify explicit incremental epoch execution candidate
+      - name: Test native candidate shard contract
         working-directory: trillionnium
         run: |
-          timeout --signal=TERM --kill-after=10s 900s cargo test -p trnm-native-execution-v0 --features test-fixtures,incremental-epoch-candidate --lib --locked
-          cargo clippy -p trnm-native-execution-v0 --features test-fixtures,incremental-epoch-candidate --all-targets --locked -- -D warnings
+          set -euo pipefail
+          python3 ../scripts/ci/test_native_candidate_shards_v1.py
+      - name: Verify explicit incremental epoch execution candidate
+        id: native_candidate_shards
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          python3 ../scripts/ci/run_native_candidate_shards_v1.py \
+            --workspace "$PWD" \
+            --evidence-dir "$RUNNER_TEMP/trnm-native-candidate-shards" \
+            --deadline-seconds 900
+          cargo clippy -p trnm-native-execution-v0 \
+            --features test-fixtures,incremental-epoch-candidate \
+            --all-targets --locked -- -D warnings
+      - name: Retain exact-source native candidate shard evidence
+        if: always() && (steps.native_candidate_shards.outcome == 'success' || steps.native_candidate_shards.outcome == 'failure')
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-native-candidate-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-native-candidate-shards
+          if-no-files-found: error
+          retention-days: 7
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked

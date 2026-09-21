@@ -224,6 +224,41 @@ def main() -> int:
         workflow,
         "Validate repository, development, module, node, and blocker truth",
     )
+    native_shard_step = named_step(
+        workflow,
+        "Verify explicit incremental epoch execution candidate",
+    )
+    native_shard_tests = named_step(
+        workflow,
+        "Test native candidate shard contract",
+    )
+    require_tokens(
+        native_shard_tests,
+        ("python3 ../scripts/ci/test_native_candidate_shards_v1.py",),
+        "native candidate shard contract tests",
+    )
+    require_tokens(
+        native_shard_step,
+        (
+            "python3 ../scripts/ci/run_native_candidate_shards_v1.py",
+            "--features test-fixtures,incremental-epoch-candidate",
+            "cargo clippy -p trnm-native-execution-v0",
+        ),
+        "native candidate shard execution",
+    )
+    native_shard_artifact = named_step(
+        workflow,
+        "Retain exact-source native candidate shard evidence",
+    )
+    require_tokens(
+        native_shard_artifact,
+        (
+            "trnm-native-candidate-shards-${{ env.TRNM_EXPECTED_SOURCE_SHA }}",
+            "${{ runner.temp }}/trnm-native-candidate-shards",
+            "if-no-files-found: error",
+        ),
+        "native candidate shard evidence",
+    )
     prospective_step = named_step(
         workflow,
         "Run separately bound prospective-merge regressions",

@@ -376,6 +376,48 @@ source context, terminal status, expected/actual case inventory and artifact
 digests before publishing a result; credentials used to publish cannot be made
 available to arbitrary candidate execution.
 
+### Native candidate shard execution (M17-NATIVE-SHARDS-V1)
+
+The native candidate library test is compiled exactly once with the pinned
+source, package, feature set and lockfile. `scripts/ci/run_native_candidate_shards_v1.py`
+discovers the resulting libtest executable from Cargo JSON output and records
+the exact source commit/tree, test inventory, shard commands, logs and exit
+codes. It must reject an empty, duplicate or unmapped inventory entry before
+running a shard. Admission requires a clean complete checkout and the independently
+expected source SHA when supplied; completion rechecks the same commit/tree,
+checkout cleanliness and executable SHA-256. Existing nonempty evidence
+directories are refused without modifying their contents.
+
+The inventory is partitioned into exactly these disjoint categories:
+
+* `general`: every discovered test outside the named native recovery groups;
+* `historical-install`, `historical-replay`, and `historical-receiver`: the
+  corresponding `later_epoch_checkpoint_bridge` tests;
+* `later-bridge`: remaining `later_epoch_checkpoint_bridge` tests;
+* `schema7`: schema7 incremental-owner commit tests; and
+* `poco-sigkill`: the native checkpoint SIGKILL boundary test.
+
+Every category must be nonempty and every discovered name must occur exactly
+once in the recorded partition. A new test name therefore enters `general`
+automatically unless it matches a reviewed recovery category. Child-process
+SIGKILL tests remain real process tests; ignored child entry points retain
+their ignored status and are not replaced by name filtering. The only permitted
+ignored tests are the three reviewed child entry points; their corresponding
+active parent drivers must be present. Before each execution, the filtered
+libtest listing must equal its partition. After execution, the final parent
+summary must match exact passed, ignored and filtered counts; child summaries
+cannot substitute for it. No test stack-size override is introduced.
+
+Each shard has an independent finite deadline. A timeout, nonzero exit, missing
+log, missing exit code, or incomplete inventory is a failed evidence result.
+The default per-shard deadline is 900 seconds. Timeout terminates the process
+group with bounded TERM/KILL grace and bounded output drain. Every admitted
+run retains a failed or passed summary with its last phase, including build,
+inventory and source-binding failures. The existing all-target strict Clippy
+command runs after all shards. The shard
+artifact is source-bound and retained even when a shard fails, so a hosted
+runner timeout cannot be mistaken for a passing or complete native campaign.
+
 ### Required security and fault matrix
 
 | Layer / producer | Fault injection | Oracle / expected result |
