@@ -1262,7 +1262,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0> CandidateEp
                 block.header(),
                 &receipts,
                 self.edge.new_parameters(),
-                block.header().state_root().clone(),
+                block.header().state_root(),
                 self.edge.new_validator_set(),
                 &trnm_consensus_crypto::StrictEd25519Verifier,
             )

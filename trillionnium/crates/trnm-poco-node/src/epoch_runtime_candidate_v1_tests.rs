@@ -662,10 +662,10 @@ fn native_epoch_descendants_v1(
             trnm_consensus_core::leader_for(set, view),
             set.id(),
             params.hash(),
-            parent.payload_root().clone(),
-            parent.state_root().clone(),
-            parent.receipts_root().clone(),
-            parent.evidence_root().clone(),
+            parent.payload_root(),
+            parent.state_root(),
+            parent.receipts_root(),
+            parent.evidence_root(),
             parent.timestamp_ms().checked_add(1).unwrap(),
             None,
         )
@@ -810,7 +810,7 @@ fn actual_epoch_runtime_executes_native_p_core_d_and_safety_c_without_signing() 
                 trnm_consensus_core::Effect::RequestSignature { .. }
             )));
             assert_eq!(key.calls, 10, "P/D/C must not call the signer");
-            assert_eq!(runtime.driver.state().pending_sign().is_some(), true);
+            assert!(runtime.driver.state().pending_sign().is_some());
             let (runtime, vote) = runtime
                 .sign_pending_epoch_vote_v1(&mut key)
                 .expect("online first-new Vote persists, signs, and releases");
@@ -1030,17 +1030,15 @@ fn readback_actual_progressed_v1(
     )?;
     let checkpoint_store =
         SqliteEpochNodeCheckpointStoreV1::open_existing(&closed.external_path, &closed.checkpoint)?;
-    Ok(
-        CandidateEpochRuntimeV1::recover_progressed_obligation_readback_v1(
-            journal,
-            application,
-            edge,
-            retired,
-            ordinary,
-            checkpoint_store,
-            closed.checkpoint,
-            block_id,
-        )?,
+    CandidateEpochRuntimeV1::recover_progressed_obligation_readback_v1(
+        journal,
+        application,
+        edge,
+        retired,
+        ordinary,
+        checkpoint_store,
+        closed.checkpoint,
+        block_id,
     )
 }
 
@@ -1069,17 +1067,15 @@ fn readback_actual_pending_validation_v1(
     )?;
     let checkpoint_store =
         SqliteEpochNodeCheckpointStoreV1::open_existing(&closed.external_path, &closed.checkpoint)?;
-    Ok(
-        CandidateEpochRuntimeV1::recover_pending_epoch_validation_readback_v1(
-            journal,
-            application,
-            edge,
-            retired,
-            ordinary,
-            checkpoint_store,
-            closed.checkpoint,
-            block_id,
-        )?,
+    CandidateEpochRuntimeV1::recover_pending_epoch_validation_readback_v1(
+        journal,
+        application,
+        edge,
+        retired,
+        ordinary,
+        checkpoint_store,
+        closed.checkpoint,
+        block_id,
     )
 }
 
