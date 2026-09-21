@@ -201,3 +201,79 @@ fn per_peer_outbox_byte_capacity_is_unchanged_until_last_destination() {
     assert_eq!(outbox.pending_bytes, MAXIMUM_PENDING_BROADCAST_BYTES_V1);
     assert!(outbox.enqueue(FrameKind::Vote, vec![3]).is_err());
 }
+
+#[test]
+fn per_peer_outbox_quarantine_retires_exact_obligation_without_false_progress_v1() {
+    use crate::consensus_mesh::MeshSendDispositionV0::Quarantined;
+    let [bad, good] = peers_v2();
+    let mut outbox = OrderedConsensusOutboxV1::new(vec![bad, good]);
+    for marker in 1..=3 {
+        outbox
+            .enqueue(FrameKind::Vote, vec![marker; marker as usize])
+            .unwrap();
+    }
+    for marker in 1..=3 {
+        assert_eq!(
+            outbox
+                .flush_with_v2(|peer, _, bytes| {
+                    assert_eq!(bytes.as_ref(), vec![marker; marker as usize]);
+                    Ok(if peer == bad { Quarantined } else { Queued })
+                })
+                .unwrap(),
+            (marker as u64, 1)
+        );
+    }
+    assert!(outbox.is_empty());
+    assert_eq!(outbox.pending_bytes, 0);
+    assert_eq!(outbox.quarantined_recipient_count, 3);
+    assert_eq!(outbox.quarantined_payload_bytes, 6);
+    outbox
+        .enqueue_except_v1(FrameKind::Vote, vec![7; 4], good)
+        .unwrap();
+    assert_eq!(
+        outbox
+            .flush_with_v2(|peer, _, _| {
+                assert_eq!(peer, bad);
+                Ok(Quarantined)
+            })
+            .unwrap(),
+        (0, 0)
+    );
+    assert!(outbox.is_empty());
+    assert_eq!(outbox.quarantined_recipient_count, 4);
+    assert_eq!(outbox.quarantined_payload_bytes, 10);
+}
+
+#[test]
+fn per_peer_outbox_quarantine_counter_overflow_preserves_obligation_v1() {
+    use crate::consensus_mesh::MeshSendDispositionV0::Quarantined;
+    for bytes_overflow in [false, true] {
+        let [bad, good] = peers_v2();
+        let mut outbox = OrderedConsensusOutboxV1::new(vec![bad, good]);
+        outbox
+            .enqueue_except_v1(FrameKind::Vote, vec![7; 4], good)
+            .unwrap();
+        if bytes_overflow {
+            outbox.quarantined_payload_bytes = u64::MAX;
+        } else {
+            outbox.quarantined_recipient_count = u64::MAX;
+        }
+        let before = (
+            outbox.quarantined_recipient_count,
+            outbox.quarantined_payload_bytes,
+        );
+        assert!(outbox.flush_with_v2(|_, _, _| Ok(Quarantined)).is_err());
+        assert_eq!(
+            (
+                outbox.quarantined_recipient_count,
+                outbox.quarantined_payload_bytes
+            ),
+            before
+        );
+        assert_eq!(outbox.pending_bytes, 4);
+        assert_eq!(
+            outbox.pending.front().unwrap().remaining_peers,
+            BTreeSet::from([bad])
+        );
+    }
+}

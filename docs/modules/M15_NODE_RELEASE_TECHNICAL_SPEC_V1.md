@@ -1277,10 +1277,12 @@ Real-key tests require rejected Vote/QC/Proposal payloads to leave the complete
 live owner and collector unchanged, retain the exact first rejection facts,
 and allow another honest peer's genuine votes to form a QC and advance the
 same owner. Tests also retain fatal identity/collector/namespace failures and
-prove finite drain under an always-ready rejected stream. Outer authenticated
-frame/MAC failures, sparse relay, fleet barrier and restart ingress have their
-own current fatal policies; this slice does not claim their containment or
-full Byzantine-network availability.
+prove finite drain under an always-ready rejected stream. This direct-input
+slice does not itself contain outer authenticated frame failures. Established
+outer-frame `PeerInput` now follows `M04-PEER-QUARANTINE-V1`: exact authenticated
+identity/session/generation quarantine and checked worker/lease retirement.
+Pre-authentication, sparse relay, fleet barrier and restart payload ingress keep
+their existing policies. No full Byzantine-network availability is claimed.
 
 ### Per-peer ordered delivery (M15-PEER-OUTBOX-V2)
 
@@ -1293,8 +1295,15 @@ peer from the frame's remaining destinations. Session binding, reconnect and
 transport errors retain their existing mesh semantics; no unavailable peer is
 dropped or treated as successful delivery.
 
+The only additional recipient disposition is the closed mesh `Quarantined`
+result defined in `M04-PEER-QUARANTINE-V1`. It retires that exact obligation with
+checked quarantine count/byte counters, never transmitted-byte/frame counters or
+consensus progress. Ordinary unavailable/backpressured peers retain their
+obligations. A quarantined peer still prevents terminal acceptance.
+
 A shared payload counts once toward the existing frame and byte limits until
-its last destination accepts it. Fully delivered rows may retire independently
+its last destination accepts it or receives that explicit quarantine disposition.
+Rows whose recipient obligations are resolved may retire independently
 of an earlier row that another peer still needs. Empty-destination and capacity
 refusals leave byte accounting unchanged. Each flush is bounded by retained
 broadcast and configured-peer limits. A persistently unavailable peer can still

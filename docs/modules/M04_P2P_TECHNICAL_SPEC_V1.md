@@ -129,6 +129,84 @@ release; nontransient errors racing stop still fail while superseded cancellatio
 and explicit transient I/O retain their old behavior. This producer change alone
 does not implement peer quarantine or authorize terminal-barrier completion.
 
+### Established peer quarantine (M04-PEER-QUARANTINE-V1)
+
+The G3 mesh consumes only the closed `PeerInput` result of
+`receive_classified_v1` after its authentic handshake. A private process-local
+registry is frozen from the actual directed peer plan before workers start;
+it retains at most one immutable first rejection per admitted incoming identity,
+with the original remote/session/generation and closed reason, plus checked
+reconnect/recipient counters. It accepts neither an envelope-selected identity
+nor a string-matched generic error. Transport I/O retains its existing explicit
+transient policy. Internal/poison/resource faults and failed external lease or
+host-attestation checks remain global failures.
+
+Publication is serialized with lease admission. It first revalidates the actual
+inbound lease/host receipt and exact generation, then pins the current directed
+lease coordinates and marks that identity quarantined before any cleanup or
+lifecycle event. This mark is irreversible for that mesh incarnation. A new
+handshake cannot erase it: authenticated inbound reconnect is refused before
+replacement generation or external admission, and outbound reconnect checks the
+same closed registry inside the admission lock. Pre-authentication errors retain
+their existing policy; this is not an unauthenticated-IP deny list.
+
+The acceptor owns and joins the precise offending inbound worker and its matching
+outbound worker, interrupts only those owned sockets, and confirms release of
+each pinned external lease and independent host receipt. A stale worker cannot
+release a replacement: exact directed session/generation equality and admission
+serialization are mandatory. Completed cleanup publishes the ordinary unavailable
+session facts; absent/replaced handles, panic, poisoned mutex, stale scope or
+cleanup/RPC failure stop the whole mesh. Tokens and receipts remain available
+for the existing retry path on uncertain release. Global shutdown joins all
+remaining workers and checks outstanding cleanup; it must not silently discard a
+quarantine retirement still in flight.
+
+`MeshSendDispositionV0::Quarantined` is distinct from Queued and Backpressured.
+The ordered outbox retires only that destination's original obligation with
+separate checked counters; it does not count a queued/transmitted frame or byte,
+or claim consensus progress. Healthy destinations retain their order and their
+bounded budgets. Frames queued before publication and not already in a socket
+write are canceled by that worker's retirement, with normal reservation release. No previously recorded
+fault or unavailable-session obligation is cleared; the controlled campaign
+still cannot claim CleanStop/full participation with a quarantined validator.
+These are process-local containment observations, not equivocation/finality
+proofs or restart authority.
+
+Required regressions use three real authenticated TCP identities: bad B's
+classified frame is refused, its exact worker and leases retire, B's fresh-session
+reconnect remains refused, and healthy C continues exchanging strict frames.
+They also require exact attribution for a claimed foreign sender, bounded repeat
+counters, independent host/external release failure, a stale-generation cleanup
+refusal, genuine child panic, strict global internal failure and outbox byte/
+recipient accounting. Synthetic topology scheduling tests do not establish
+cryptographic acceptance. No full-fleet, public-network or performance claim
+follows from this local candidate containment slice.
+
+Already admitted ingress owners from that identity are canceled at the bounded
+consumer boundary (one queue owner per receive call), with checked frame/byte
+counters and their original reservation release. Same-generation session must
+match the immutable rejected owner; only genuinely older owned generations may
+also be canceled. Lifecycle unavailability is retained. Publication shares the
+existing admission lock with finite outbound queue admission and with durable
+payload-replay admission, so a peer rejection cannot manufacture an internal
+missing-lease failure. A syscall already in flight at publication is not claimed
+to be retracted. The terminal close consumer checks the quarantine registry
+after joining all producers, before accepting even otherwise valid Park residuals.
+
+A completed closed `PeerInput` classification is never erased by a concurrent
+supersession cancel. The acceptor must join the old worker before releasing its
+lease, so that worker publishes from its actual old facts; the replacement path
+then completes exact quarantine cleanup and refuses the new admission. The
+completed rejection publishes its bounded lifecycle with one nonblocking send;
+an unexpectedly full or disconnected lifecycle queue is an internal fatal
+failure, never an unbounded wait behind a worker join. A global stop racing that
+completed rejection retains a terminal failure, even when supersession was also requested. A completed closed `Internal` classification
+also always retains its original failure despite cancel/stop; poisoning, local
+cursor failure and host errors cannot be relabeled as supersession. Ordinary
+canceled reads and transient I/O keep their existing separate semantics. Every
+public close joins and attempts all remaining releases before returning the original retained internal failure;
+ordinary cleanup success alone still grants no terminal acceptance.
+
 ### Candidate authenticated socket seam
 
 `CandidateAuthenticatedP2pTransportV0` is the socket seam for the candidate

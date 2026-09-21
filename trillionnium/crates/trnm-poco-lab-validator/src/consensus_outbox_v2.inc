@@ -10,6 +10,8 @@ struct OrderedConsensusOutboxV1 {
     peers: Vec<ValidatorId>,
     pending: VecDeque<OrderedBroadcastV1>,
     pending_bytes: usize,
+    quarantined_recipient_count: u64,
+    quarantined_payload_bytes: u64,
 }
 
 impl OrderedConsensusOutboxV1 {
@@ -18,6 +20,8 @@ impl OrderedConsensusOutboxV1 {
             peers,
             pending: VecDeque::new(),
             pending_bytes: 0,
+            quarantined_recipient_count: 0,
+            quarantined_payload_bytes: 0,
         }
     }
 
@@ -113,6 +117,22 @@ impl OrderedConsensusOutboxV1 {
                             .context("queued frame counter overflows")?;
                     }
                     crate::consensus_mesh::MeshSendDispositionV0::Backpressured => {}
+                    crate::consensus_mesh::MeshSendDispositionV0::Quarantined => {
+                        let count = self
+                            .quarantined_recipient_count
+                            .checked_add(1)
+                            .context("quarantined recipient counter overflows")?;
+                        let bytes = self
+                            .quarantined_payload_bytes
+                            .checked_add(
+                                u64::try_from(broadcast.payload.len())
+                                    .context("quarantined payload size does not fit u64")?,
+                            )
+                            .context("quarantined payload counter overflows")?;
+                        self.quarantined_recipient_count = count;
+                        self.quarantined_payload_bytes = bytes;
+                        broadcast.remaining_peers.remove(&peer);
+                    }
                 }
             }
             if attempted.len() == self.peers.len() {
@@ -121,7 +141,7 @@ impl OrderedConsensusOutboxV1 {
         }
         // An excluded recipient can let a later row complete before an older
         // row. Retire all completed rows, retaining each shared payload once
-        // until its last original destination has actually queued it.
+        // until each original destination has queued it or was explicitly quarantined.
         self.pending.retain(|broadcast| {
             if !broadcast.remaining_peers.is_empty() {
                 return true;
