@@ -4,6 +4,7 @@ use std::{
     fs::{self, File, OpenOptions},
     os::fd::AsRawFd,
     path::{Path, PathBuf},
+    sync::Arc,
     time::Duration,
 };
 
@@ -402,6 +403,58 @@ pub struct SqliteHandoffSignerJournalV1<W: ExternalMonotonicWatermarkV0> {
     observed_head: JournalHeadV1,
     owned_pending: Option<[u8; 32]>,
     owner_pid: u32,
+    owner_affinity: Arc<()>,
+}
+
+/// Read-only exact schema1 comparison facts. This is not signing admission,
+/// and a new process/open cannot adopt its private owner affinity.
+///
+/// ```compile_fail
+/// use trnm_consensus_signer_journal::ConfirmedHandoffJournalHeadV1;
+/// fn copy(v: ConfirmedHandoffJournalHeadV1) { let _ = v.clone(); }
+/// ```
+#[derive(Debug)]
+pub struct ConfirmedHandoffJournalHeadV1 {
+    owner: Arc<()>,
+    path: PathBuf,
+    profile_checksum: [u8; 32],
+    watermark: SignerWatermarkV0,
+    pending: Option<[u8; 32]>,
+    terminal_fence_checksum: Option<[u8; 32]>,
+}
+impl ConfirmedHandoffJournalHeadV1 {
+    pub const fn profile_checksum_v1(&self) -> [u8; 32] {
+        self.profile_checksum
+    }
+    pub const fn exact_watermark_v1(&self) -> SignerWatermarkV0 {
+        self.watermark
+    }
+    pub const fn pending_fingerprint_v1(&self) -> Option<[u8; 32]> {
+        self.pending
+    }
+    pub const fn terminal_fence_checksum_v1(&self) -> Option<[u8; 32]> {
+        self.terminal_fence_checksum
+    }
+    pub fn matches_exact_head_v1(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.owner, &other.owner)
+            && self.path == other.path
+            && self.profile_checksum == other.profile_checksum
+            && self.watermark == other.watermark
+            && self.pending == other.pending
+            && self.terminal_fence_checksum == other.terminal_fence_checksum
+    }
+    pub fn belongs_to_owner_at_path_v1<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        owner: &mut SqliteHandoffSignerJournalV1<W>,
+        path: &Path,
+    ) -> bool {
+        Arc::ptr_eq(&self.owner, &owner.owner_affinity)
+            && self.path == path
+            && owner.database_path == path
+            && owner
+                .confirm_head_exact_v1()
+                .is_ok_and(|fresh| self.matches_exact_head_v1(&fresh))
+    }
 }
 
 impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
@@ -454,6 +507,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             observed_head,
             owned_pending: None,
             owner_pid: std::process::id(),
+            owner_affinity: Arc::new(()),
         };
         store.audit_local(None)?;
         let initial = store.watermark_for(store.observed_head)?;
@@ -556,6 +610,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             observed_head,
             owned_pending: None,
             owner_pid: std::process::id(),
+            owner_affinity: Arc::new(()),
         };
         if let Some(expected) = recovery {
             let stored = read_intent_v1(&store.connection, expected.fingerprint)?.ok_or(
@@ -589,6 +644,35 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
             store.require_external_exact()?;
         }
         Ok(store)
+    }
+
+    /// Authenticate the actual local/external cut without advancing it or
+    /// releasing signing authority. Recheck local identity after external I/O.
+    pub fn confirm_head_exact_v1(
+        &mut self,
+    ) -> Result<ConfirmedHandoffJournalHeadV1, HandoffSignerJournalErrorV1> {
+        self.ensure_operational()?;
+        let head = self.observed_head;
+        let pending = pending_fingerprint_v1(&self.connection)?;
+        let fence = read_terminal_fence_v1(&self.connection)?;
+        self.ensure_file_identity()?;
+        self.audit_local(self.owned_pending)?;
+        if read_head_v1(&self.connection, self.journal_id)? != head
+            || pending_fingerprint_v1(&self.connection)? != pending
+            || read_terminal_fence_v1(&self.connection)? != fence
+        {
+            return Err(HandoffSignerJournalErrorV1::Conflict(
+                HandoffSignerJournalConflictV1::CommitReadbackConflict,
+            ));
+        }
+        Ok(ConfirmedHandoffJournalHeadV1 {
+            owner: Arc::clone(&self.owner_affinity),
+            path: self.database_path.clone(),
+            profile_checksum: self.profile.profile_checksum(),
+            watermark: self.watermark_for(head)?,
+            pending,
+            terminal_fence_checksum: fence.map(|f| f.fence_checksum),
+        })
     }
 
     pub const fn profile(&self) -> &HandoffSignerJournalProfileV1 {

@@ -1877,3 +1877,130 @@ fn ordinary_retirement_rejects_unresolved_signing_intent() {
     let mut old = SqliteSignerJournalV0::open_existing(&path, profile, w).unwrap();
     assert!(old.sign_exact_v0(&intent, &mut producer).is_ok());
 }
+
+#[test]
+fn exact_handoff_head_binds_actual_owner_and_reopen_never_rebinds() {
+    let dir = TempDir::new().unwrap();
+    fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let fixture = authority_fixture();
+    let profile = fixture.role_profile();
+    let watermark = MemoryWatermark::default();
+    let path = dir.path().join("selected.db");
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, profile.clone(), watermark.clone())
+            .unwrap();
+    let selected = journal.confirm_head_exact_v1().unwrap();
+    assert_eq!(selected.profile_checksum_v1(), profile.profile_checksum());
+    assert_eq!(selected.exact_watermark_v1().sequence(), 0);
+    assert_eq!(selected.pending_fingerprint_v1(), None);
+    assert_eq!(selected.terminal_fence_checksum_v1(), None);
+    assert!(selected.belongs_to_owner_at_path_v1(&mut journal, &path));
+    let foreign_path = dir.path().join("foreign.db");
+    let mut foreign = SqliteHandoffSignerJournalV1::create_new(
+        &foreign_path,
+        profile.clone(),
+        MemoryWatermark::default(),
+    )
+    .unwrap();
+    assert!(!selected.belongs_to_owner_at_path_v1(&mut foreign, &foreign_path));
+    assert!(!selected.belongs_to_owner_at_path_v1(&mut journal, &foreign_path));
+    let stored = selected.exact_watermark_v1();
+    drop(journal);
+    let mut reopened =
+        SqliteHandoffSignerJournalV1::open_existing(&path, profile, watermark).unwrap();
+    assert_eq!(
+        reopened
+            .confirm_head_exact_v1()
+            .unwrap()
+            .exact_watermark_v1(),
+        stored
+    );
+    assert!(!selected.belongs_to_owner_at_path_v1(&mut reopened, &path));
+}
+
+#[test]
+fn exact_handoff_head_observes_real_pending_signed_and_terminal_fence() {
+    let dir = TempDir::new().unwrap();
+    fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let fixture = authority_fixture();
+    let path = dir.path().join("roles.db");
+    let watermark = MemoryWatermark::default();
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, fixture.role_profile(), watermark.clone())
+            .unwrap();
+    let virgin = journal.confirm_head_exact_v1().unwrap();
+    let mut producer = ExactProducer::new(fixture.signing_key.clone());
+    producer.fail_after_sign_once();
+    let intent = fixture.old_handoff_intent();
+    let admission = fixture.admission();
+    assert!(journal
+        .sign_old_set_handoff_exact_v1(&intent, &admission, &mut producer)
+        .is_err());
+    let pending = journal.confirm_head_exact_v1().unwrap();
+    assert_eq!(pending.exact_watermark_v1().sequence(), 1);
+    assert_eq!(
+        pending.pending_fingerprint_v1(),
+        Some(*intent.fingerprint().as_bytes())
+    );
+    assert_eq!(pending.terminal_fence_checksum_v1(), None);
+    assert!(!virgin.belongs_to_owner_at_path_v1(&mut journal, &path));
+    let signature = journal
+        .sign_old_set_handoff_exact_v1(&intent, &admission, &mut producer)
+        .unwrap();
+    let signed = journal.confirm_head_exact_v1().unwrap();
+    assert_eq!(signed.exact_watermark_v1().sequence(), 2);
+    assert_eq!(signed.pending_fingerprint_v1(), None);
+    assert!(signed.terminal_fence_checksum_v1().is_some());
+    assert!(!pending.belongs_to_owner_at_path_v1(&mut journal, &path));
+    let calls = producer.calls();
+    assert_eq!(
+        journal
+            .sign_old_set_handoff_exact_v1(&intent, &admission, &mut producer)
+            .unwrap(),
+        signature
+    );
+    assert!(signed.matches_exact_head_v1(&journal.confirm_head_exact_v1().unwrap()));
+    assert_eq!(producer.calls(), calls);
+    // The existing immutable trigger itself refuses removal; the exact head
+    // must still be auditable and unchanged after that failed mutation.
+    assert!(Connection::open(&path)
+        .unwrap()
+        .execute("DELETE FROM terminal_old_epoch_fence_v1", [])
+        .is_err());
+    assert!(signed.matches_exact_head_v1(&journal.confirm_head_exact_v1().unwrap()));
+}
+
+#[test]
+fn exact_handoff_head_rejects_external_rollback_and_replaced_namespace() {
+    let dir = TempDir::new().unwrap();
+    fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let fixture = authority_fixture();
+    let path = dir.path().join("roles.db");
+    let watermark = MemoryWatermark::default();
+    let mut journal =
+        SqliteHandoffSignerJournalV1::create_new(&path, fixture.role_profile(), watermark.clone())
+            .unwrap();
+    let initial = journal.confirm_head_exact_v1().unwrap();
+    let mut producer = ExactProducer::new(fixture.signing_key.clone());
+    journal
+        .sign_old_set_handoff_exact_v1(
+            &fixture.old_handoff_intent(),
+            &fixture.admission(),
+            &mut producer,
+        )
+        .unwrap();
+    let current = watermark.snapshot().value;
+    watermark.state.lock().unwrap().value = Some(initial.exact_watermark_v1());
+    assert!(matches!(
+        journal.confirm_head_exact_v1(),
+        Err(HandoffSignerJournalErrorV1::Conflict(
+            HandoffSignerJournalConflictV1::ExternalWatermarkMismatch
+        ))
+    ));
+    watermark.state.lock().unwrap().value = current;
+    let selected = journal.confirm_head_exact_v1().unwrap();
+    let moved = dir.path().join("displaced.db");
+    fs::rename(&path, &moved).unwrap();
+    fs::copy(&moved, &path).unwrap();
+    assert!(!selected.belongs_to_owner_at_path_v1(&mut journal, &path));
+}

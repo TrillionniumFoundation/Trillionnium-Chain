@@ -82,8 +82,8 @@ pub use handoff_model_v1::{
     StrictNewSetHandoffAdmissionV1, StrictOldSetHandoffAdmissionV1,
 };
 pub use handoff_sqlite_v1::{
-    inspect_signer_journal_schema_read_only_v1, SignerJournalSchemaKindV1,
-    SqliteHandoffSignerJournalV1,
+    inspect_signer_journal_schema_read_only_v1, ConfirmedHandoffJournalHeadV1,
+    SignerJournalSchemaKindV1, SqliteHandoffSignerJournalV1,
 };
 pub use model::{
     signer_journal_lifecycle_nonce_v0, ExternalMonotonicWatermarkInjectionV0,

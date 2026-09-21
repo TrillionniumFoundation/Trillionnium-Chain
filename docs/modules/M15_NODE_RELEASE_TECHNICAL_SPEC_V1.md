@@ -1540,8 +1540,9 @@ After actual retirement, rejoin the original native/Safety/cutoff/current signer
 source identity before the independent CAS. Confirm the exact target durably,
 repeat every source/custody join, then confirm the node target again. Any error
 consumes the live owner; there is no ordinary signer fallback or public Core
-escape. The retained result only supports fresh confirmation of this retired
-cut. Existing explicit signer-retirement recovery remains separate from future
+escape. The retained result supports fresh confirmation of this retired cut
+and the explicit consuming M15-HANDOFF-ROLES-V7 entry below. Existing explicit
+signer-retirement recovery remains separate from future
 V6 whole-owner recovery. Tests must use one real V5 flow, verify the current N
 local/external terminal heads and ordinary reopen refusal, reject stale/foreign
 joins, and prove old tag2 compatibility plus unknown/illegal phase rejection.
@@ -1693,3 +1694,41 @@ existing durable writer, and requires exact typed/byte/signature readback. It
 also mutates the measurement while retaining the signature and rejects the
 result; lossless encoding is not measurement authenticity or performance
 acceptance. A repaired decoder cannot promote a prior failed fleet campaign.
+
+### Native13 retired-owner handoff roles (M15-HANDOFF-ROLES-V7)
+
+This bounded live-process composition consumes the actual
+`EpochRetirementRuntimeV6<W,N>` and an independently selected actual schema1
+handoff signer journal into `EpochHandoffRolesRuntimeV7<W,N,H>`. The constructor
+also consumes that journal's M03-HANDOFF-HEAD-V1 confirmation, requires the same
+owner/path and fresh exact virgin head (sequence zero, no pending intent or
+terminal fence), and joins the complete role profile to the original native13
+strict context and current retired N key identity. Its external scope differs
+from both incoming W and outgoing N scopes. The original tag3 independent node
+checkpoint remains exact and grants no activation transition.
+
+Only role-specific canonical handoff intents derived from that original strict
+descriptor/configuration are accepted. Removed members can sign OldSet only;
+continuing members can sign either distinct role through an explicitly role-enabled
+profile. Removed members may retain an OldSet-only profile; no profile is
+converted or widened by this consumer. Every invocation first
+reconfirms the exact selected schema1 head and the complete V6 native13,
+retained cutoff/P/Core Valid, journal9, W/N retirement and tag3 source. A private
+producer wrapper repeats that same V6 join immediately before and after the
+actual key call; callers cannot replace this guard. Existing schema1 intent
+commit/fsync/external advancement precedes the key, and verified signature
+commit/fsync/external advancement precedes release. The final exact schema1
+readback must advance by exactly two events for a new role or remain byte-exact
+for an already returned role; intent/signature and terminal-fence semantics must
+remain exact. Any uncertain or failed operation fences the consumed V7 owner.
+Exact successful role retry returns the original signature without another key
+call. No ordinary or proposal signing API escapes this owner.
+
+V7 retains actual journals and source owners rather than scalar custody labels.
+It adds no durable layout or tag3 successor transition. Missing independent cut,
+foreign role head/profile, stale native/Safety/retirement namespace, or producer
+callback mutation must reject before release; mutations observed before the key
+must produce zero key calls. This slice ends at durably recorded local role
+signatures. Aggregating both remote quorums, native attachment, Journal9→12/Core
+V2 activation and whole-owner recovery remain separate consuming joins; none is
+claimed by a signature receipt or by reopening a schema1 journal alone.

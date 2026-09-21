@@ -1169,3 +1169,23 @@ event, and wrong/pending source rejection. Six real SIGKILL cuts span mode file
 write/fsync/rename/directory sync and terminal append/fsync. These are process
 crash tests on the test filesystem; they do not claim physical power-cut,
 independent administrative custody or a complete activated epoch runtime.
+
+### Exact handoff custody head (M03-HANDOFF-HEAD-V1)
+
+The read-only `SqliteHandoffSignerJournalV1::confirm_head_exact_v1` returns a
+non-Clone `ConfirmedHandoffJournalHeadV1` after the original complete namespace,
+local journal and external watermark audit. Its private process-owner affinity
+and pinned path bind the actual opened journal; its comparison fields retain the
+exact profile checksum, external scope/journal/sequence/chain, pending intent
+fingerprint and terminal-fence checksum. A final local/namespace read after the
+external callback must still reproduce the same head and decision fields.
+Neither construction nor comparison creates admission, a signature, retirement,
+a Core ACK or a cold operational owner. A reopened journal has a fresh affinity;
+old confirmations cannot be rebound by copying scalar fields.
+
+This is an additive producer seam for M15-HANDOFF-ROLES-V7. Schema1 DDL, domains,
+canonical bytes, conflict keys and all existing signing/recovery methods remain
+unchanged. Exact head comparison must reject a foreign owner, stale signed head,
+changed external watermark, replaced namespace or missing/corrupt pending/fence
+row. Its caller still needs independently authenticated native/Safety/custody
+sources before any key operation.

@@ -2030,3 +2030,5 @@ include!("epoch_checkpoint_preparation_v4.inc");
 include!("epoch_pre_handoff_v5.inc");
 
 include!("epoch_retirement_v6.inc");
+
+include!("epoch_handoff_roles_v7.inc");
