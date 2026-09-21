@@ -46,6 +46,13 @@ may select these features; enabling a candidate host must not activate a test
 fixture or change release truth. Mutation tests cover dependency/default leaks,
 a newly named future version and explicit candidate-only selection.
 
+The required baseline separately executes the V2-only Core feature, all-feature
+Core tests/documentation, journal10's actual-owner and SIGKILL target, and strict
+all-target Core/Safety Clippy. The journal10 child entries are invoked only by
+their process-death parents. This is an unconditional bounded execution step;
+commented commands, extra test filters, skipped steps and masked failures reject.
+A source check of those commands is not a substitute for their actual results.
+
 ### Observed fleet readiness and its limits
 
 The 2026-09-16 read-only run of `scripts/poco-fleet/probe_fleet.py` and

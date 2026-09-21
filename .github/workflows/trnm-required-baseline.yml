@@ -474,6 +474,14 @@ jobs:
       - name: Compile every active workspace target
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
+      - name: Verify codec2 epoch host and journal10
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --no-default-features --features candidate-epoch-host-v2 --lib candidate_host_v2 --locked
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --all-features --locked
+          timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-safety-store --all-features --test epoch_journal_v2 --locked
+          cargo clippy -p trnm-consensus-core -p trnm-consensus-safety-store --all-features --all-targets --locked -- -D warnings
       - name: Verify default and explicit candidate ownership boundaries
         working-directory: trillionnium
         run: |

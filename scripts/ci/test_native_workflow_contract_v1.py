@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 from check_native_workflow_contract_v1 import (
-    BASELINE, QUICK, RETIRED, ROOT, RUNTIME, ContractError, validate_contract,
+    BASELINE, QUICK, RETIRED, ROOT, RUNTIME, EPOCH_CODEC2_COMMANDS, ContractError, validate_contract,
 )
 
 
@@ -132,6 +132,24 @@ class NativeWorkflowMutants(unittest.TestCase):
     def test_workspace_pipefail_cannot_be_disabled(self) -> None:
         self.replace(BASELINE, "          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace", "          set +o pipefail\n          timeout --signal=TERM --kill-after=30s 1800s cargo test --workspace")
         self.rejected("workspace execution: failure masking")
+
+    def test_codec2_commands_cannot_be_commented_or_filtered(self) -> None:
+        command = "          " + EPOCH_CODEC2_COMMANDS[2]
+        self.replace(BASELINE, command, "          # " + EPOCH_CODEC2_COMMANDS[2])
+        self.rejected("Verify codec2.*complete execution commands differ")
+        self.replace(BASELINE, "          # " + EPOCH_CODEC2_COMMANDS[2], command + " nonexistent_test_filter")
+        self.rejected("Verify codec2.*complete execution commands differ")
+
+    def test_codec2_execution_cannot_skip_or_mask_failure(self) -> None:
+        marker = "      - name: Verify codec2 epoch host and journal10\n"
+        self.replace(BASELINE, marker, marker + "        if: false\n")
+        self.rejected("Verify codec2.*may not be conditional")
+        self.replace(BASELINE, "        if: false\n", "        continue-on-error: true\n")
+        self.rejected("baseline: soft failure promotion is forbidden")
+        self.replace(BASELINE, "        continue-on-error: true\n", "")
+        command = "          " + EPOCH_CODEC2_COMMANDS[0]
+        self.replace(BASELINE, command, command + " || true")
+        self.rejected("Verify codec2.*failure masking")
 
     def test_native_candidate_shard_runner_cannot_be_removed(self) -> None:
         self.replace(

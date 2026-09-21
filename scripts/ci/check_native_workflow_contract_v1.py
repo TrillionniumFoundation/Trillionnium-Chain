@@ -77,6 +77,13 @@ RUNTIME_MATRICES = {
 }
 
 
+EPOCH_CODEC2_COMMANDS = (
+    'timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --no-default-features --features candidate-epoch-host-v2 --lib candidate_host_v2 --locked',
+    'timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-core --all-features --locked',
+    'timeout --signal=TERM --kill-after=10s 300s cargo test -p trnm-consensus-safety-store --all-features --test epoch_journal_v2 --locked',
+    'cargo clippy -p trnm-consensus-core -p trnm-consensus-safety-store --all-features --all-targets --locked -- -D warnings',
+)
+
 class ContractError(RuntimeError):
     pass
 
@@ -164,8 +171,9 @@ def reject_environment_shadowing(text: str, label: str) -> None:
             require(key not in OFFLINE or (label == "runtime" and indent == 4), f"{label}: local env shadows offline {key}")
 
 
-def exact_matrix_commands(body: str, expected: tuple[str, ...], name: str) -> None:
-    require(scalar(body, "working-directory", 8) == "trillionnium-chain", f"{name}: working directory differs")
+def exact_matrix_commands(body: str, expected: tuple[str, ...], name: str,
+                          working_directory: str = "trillionnium-chain") -> None:
+    require(scalar(body, "working-directory", 8) == working_directory, f"{name}: working directory differs")
     require(scalar(body, "run", 8) == "|", f"{name}: expected explicit run block")
     run = body.split("        run: |", 1)[1]
     # Join only shell line continuations; inspect complete argv of every
@@ -260,6 +268,12 @@ def validate_contract(root: Path) -> dict[str, object]:
     execution = step(baseline, "Test the unified workspace feature graph with a hard deadline")
     hard_step(execution, "workspace execution")
     tokens(execution, ("cargo test --workspace --all-targets --locked --no-fail-fast", "| tee", "timeout --signal=TERM", 'git rev-parse HEAD > "$root/HEAD"', 'git rev-parse \'HEAD^{tree}\' > "$root/TREE"'), "workspace execution")
+    epoch_name = "Verify codec2 epoch host and journal10"
+    epoch = step(baseline, epoch_name)
+    hard_step(epoch, epoch_name)
+    require(not re.search(r"^        continue-on-error:", epoch, re.M),
+            f"{epoch_name}: must propagate failure")
+    exact_matrix_commands(epoch, EPOCH_CODEC2_COMMANDS, epoch_name, "trillionnium")
     candidate = step(baseline, "Verify explicit incremental epoch execution candidate")
     hard_step(candidate, "native candidate shard execution")
     tokens(candidate, (
