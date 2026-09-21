@@ -1599,3 +1599,25 @@ schema/version itself, owns the concrete recomputer, and returns a distinct
 private-field staging result. A generic M13 snapshot result cannot substitute
 for this native validation. Execution-ready installation still requires locally
 derived replay history and an independently implemented atomic owner boundary.
+
+## M15-RUNTIME-METRICS-FLOAT-V1 — lossless signed JSON readback
+
+The existing candidate runtime metrics schema2 contains finite positive binary64
+latency samples and CPU duration. Its producer hashes the exact compact body JSON,
+signs that hash, exclusively creates and syncs the evidence file, and verifies a
+fresh typed readback before releasing the terminal evidence chain. Every finite
+metric emitted by the serializer must decode to the same binary64 value and
+re-encode to the original bytes on both Linux and macOS. The lab package enables
+serde_json's correctly rounded `float_roundtrip` decoder explicitly; it must not
+depend on feature unification by an unrelated workspace package. This preserves
+the schema, domains, signatures and measured precision. No rounding, normalization
+after signing, alternate decoder fallback, or weakening of canonical byte equality
+is permitted. Noncanonical whitespace/number encodings, nonfinite/zero samples,
+modified signed metrics, unknown fields and oversized evidence remain rejected.
+
+Regression evidence uses the actual fractional values observed in the failed LAN
+run, signs the original body with an independent test key, writes through the
+existing durable writer, and requires exact typed/byte/signature readback. It
+also mutates the measurement while retaining the signature and rejects the
+result; lossless encoding is not measurement authenticity or performance
+acceptance. A repaired decoder cannot promote a prior failed fleet campaign.
