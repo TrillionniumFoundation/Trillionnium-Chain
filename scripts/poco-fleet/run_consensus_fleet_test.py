@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tempfile
 import types
+from unittest import mock
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -1472,6 +1473,46 @@ def test_runner_output_manifest_contract() -> None:
         )
 
 
+def test_reduced_native_client_rejects_before_effects() -> None:
+    # Mock only the already-audited material/anchor reads. This is a runner
+    # boundary test, not consensus or native-transaction evidence.
+    with tempfile.TemporaryDirectory() as temporary:
+        workspace = pathlib.Path(temporary)
+        coordinator = workspace / "coordinator"
+        deployments = workspace / "deployments"
+        coordinator.mkdir(mode=0o700)
+        deployments.mkdir(mode=0o700)
+        output = workspace / "unused-output"
+        arguments = [
+            str(HERE / "run_consensus_fleet.py"), str(coordinator), str(deployments),
+            "--validators", "7", "--linux-binary", str(workspace / "unused-linux"),
+            "--macos-binary", str(workspace / "unused-macos"),
+            "--coordinator-manifest-sha256", "11" * 32,
+            "--output", str(output), "--duration-seconds", "1", "--max-blocks", "3",
+            "--native-client-key-root", str(workspace / "unused-client-keys"),
+        ]
+        native = {"public_files": [{"path": "public/native-client-profile.json"}]}
+        topology = {"schema_version": 2, "placement_profile": "desktop4-rog3-mac-v1"}
+        anchor = types.SimpleNamespace(sha256="11" * 32, checked_monotonic_ns=1)
+        for mode in ([], ["--plan-only"]):
+            with (
+                mock.patch.object(sys, "argv", arguments + mode),
+                mock.patch.object(fleet, "checked_coordinator_anchor", return_value=anchor),
+                mock.patch.object(fleet, "verify_coordinator_anchor"),
+                mock.patch.object(fleet.base, "load_contract", return_value=(native, topology, [process("p4-desktop"), process("p4-rog")])),
+                mock.patch.object(fleet.native_campaign, "key_namespace", side_effect=AssertionError("client key access before refusal")) as keys,
+                mock.patch.object(fleet.base, "require_binary", side_effect=AssertionError("binary access before refusal")) as binary,
+                mock.patch.object(fleet.base, "preflight_runtime_layout", side_effect=AssertionError("stage planning before refusal")) as layout,
+                mock.patch.object(fleet.mesh_resources, "preflight_mesh_fleet_resources_v1", side_effect=AssertionError("resource preflight before refusal")) as resources,
+                mock.patch.object(fleet.base, "create_stages", side_effect=AssertionError("stage creation before refusal")) as stages,
+                mock.patch.object(fleet.base, "run_checked", side_effect=AssertionError("command/network effect before refusal")) as command,
+            ):
+                expect_failure(fleet.main, "reduced placement does not support native-client campaigns")
+                for trap in (keys, binary, layout, resources, stages, command):
+                    trap.assert_not_called()
+            assert not output.exists()
+
+
 def main() -> None:
     test_local_and_remote_commands()
     test_observer_fleet_certificate_command_and_strict_summary()
@@ -1483,9 +1524,11 @@ def main() -> None:
     test_independent_anchor_and_output_boundary()
     test_runner_lifecycle_contract()
     test_runner_output_manifest_contract()
+    test_reduced_native_client_rejects_before_effects()
     print(
         "poco_g3_consensus_fleet_test=passed positives=24 negatives=44 "
         "parallel_process_contract=true signed_journal_required=true "
+        "reduced_native_client_pre_effect_refusal=true "
         "fleet_start_certificate_required=true "
         "signed_report_required=true signed_metrics_required=true "
         "signed_final_state_required=true macos_independent_verifier_required=true "

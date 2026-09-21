@@ -120,6 +120,29 @@ binds the exact topology bytes. Reports derive actual validator-host counts and
 identify the reduced placement; they cannot report five validator hosts or all
 six participants for this profile.
 
+The reduced profile currently supports the existing nonempty workload only;
+combining it with the native-client profile must reject before plan output,
+output creation, staging or network effects until a versioned remote Unix
+request adapter is implemented, and cannot claim native-client or public
+transaction-path acceptance.
+
+The consensus runner passes this already validated placement to the capacity
+gate. Canonical capacity reports retain their exact schema-1 bytes and require
+one local validator host. The reduced profile additionally probes the actual
+local coordinator, which hosts zero validators; it must not substitute a local
+validator or skip the probe. Both validator hosts retain all existing CPU,
+RSS, per-process file, UID-thread and system-capacity checks. The coordinator
+uses the same bounded scalar observations and inherited-limit checks, including
+the independent `7 * 2 + 128 = 142` capture-file-descriptor budget, UID/system
+thread reserve and system file-handle headroom. All three observations share
+the existing maximum 30-second epoch spread. The reduced capacity report uses
+schema 2/profile `poco-g3-mesh-host-resource-preflight-desktop4-rog3-mac-v1`,
+records `placement_profile`, keeps only desktop/rog in `hosts`, and records the
+zero-validator `local-coordinator` separately in `coordinator`. This controller
+observation adds no validating participant or full-fleet acceptance. Invalid
+placement, missing coordinator facts or insufficient resources reject before
+output creation, staging, signer launch or validator network authority.
+
 The pure planned-P2P contract accepts the same independently supplied inventory
 and uses the shared exact topology validator. Its existing canonical plan,
 request/ack and report schema 1/profile

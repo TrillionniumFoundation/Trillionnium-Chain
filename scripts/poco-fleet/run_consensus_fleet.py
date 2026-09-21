@@ -2523,6 +2523,8 @@ def main() -> None:
     verify_coordinator_anchor(anchor_snapshot)
     record_lifecycle_event(lifecycle_events, "contract_loaded")
     native_application = native_campaign.application_selection(manifest, args.native_client_key_root, args.native_client_transfers)
+    if native_application and topology.get("placement_profile") == "desktop4-rog3-mac-v1":
+        base.fail("reduced placement does not support native-client campaigns: remote request adapter is not implemented")
     if native_application:
         native_campaign.key_namespace(args.native_client_key_root, coordinator, deployments, (coordinator / "public/native-client-profile.json").read_bytes())
     candidate = manifest["candidate"]
@@ -2624,7 +2626,8 @@ def main() -> None:
     try:
         plan["mesh_resource_preflight"] = (
             mesh_resources.preflight_mesh_fleet_resources_v1(
-                processes, args.validators
+                processes, args.validators,
+                placement_profile=topology.get("placement_profile", base.CANONICAL_PLACEMENT),
             )
         )
     except RuntimeError as error:
