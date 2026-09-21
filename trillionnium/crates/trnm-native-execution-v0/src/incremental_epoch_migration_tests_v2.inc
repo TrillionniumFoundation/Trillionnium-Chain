@@ -1026,6 +1026,7 @@ fn schema11_checkpoint_fixture(repeat_third: bool) {
     assert_eq!(receipt.head().height().get(), 18);
     assert_eq!(receipt.generation(), 7);
     assert!(receipt.belongs_to_application_at_path(&cold, &path));
+    let signing_cut = schema11_signing_readback_checks(&cold, &receipt, &h, &finality);
     let c = Connection::open(&path).unwrap();
     let (pre,edges,ni_edges,ordinary_cp,seal_roots,seal_pins):(u64,u64,u64,u64,u64,u64)=c.query_row("SELECT (SELECT count(*) FROM native_incremental_epoch_pre_handoff_v2),(SELECT count(*) FROM native_incremental_epoch_edge_v2),(SELECT count(*) FROM ni_epoch_edge),(SELECT count(*) FROM native_incremental_epoch_ordinary_commit_v2 WHERE block=?1),(SELECT count(*) FROM ni_roots WHERE version>?2 AND version<?3),(SELECT count(*) FROM ni_pin WHERE version>?2 AND version<?3)",params![h.id().as_bytes().as_slice(),18u64.to_be_bytes().as_slice(),21u64.to_be_bytes().as_slice()],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?,r.get(5)?))).unwrap();
     assert_eq!(
@@ -1056,6 +1057,16 @@ fn schema11_checkpoint_fixture(repeat_third: bool) {
     assert_eq!(fresh.commit_sequence(), receipt.commit_sequence());
     assert_eq!(fresh.strict_binding(), receipt.strict_binding());
     assert!(!receipt.belongs_to_application_at_path(&cold, &path));
+    assert!(cold
+        .confirm_incremental_handoff_signing_v2(
+            &receipt,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .is_err());
+    assert_eq!(
+        schema11_signing_readback_checks(&cold, &fresh, &h, &finality),
+        signing_cut
+    );
     assert_eq!(std::fs::read(&path).unwrap(), committed);
     // Both successor roles sign only after the actual C18 commit and a cold
     // confirmation. This cryptographic fixture does not claim M03 custody.
@@ -1144,6 +1155,26 @@ fn schema11_checkpoint_fixture(repeat_third: bool) {
     assert_ne!(installed.binding(), fresh.strict_binding());
     assert!(installed.belongs_to_application_at_path(&cold, &path));
     let attached = std::fs::read(&path).unwrap();
+    assert!(cold
+        .confirm_incremental_handoff_signing_v2(
+            &fresh,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .is_err());
+    let attached_receipt = cold
+        .confirm_incremental_epoch_pre_handoff_v2(
+            *h.id().as_bytes(),
+            checkpoint.p_digest(),
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert!(cold
+        .confirm_incremental_handoff_signing_v2(
+            &attached_receipt,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .is_err());
+    assert_eq!(std::fs::read(&path).unwrap(), attached);
     let retried = cold
         .attach_incremental_epoch_handoff_v2(
             &fresh,
@@ -2442,3 +2473,4 @@ fn schema11_continue_second_epoch(
 }
 
 include!("incremental_epoch_repeated_tests_v2.inc");
+include!("incremental_epoch_signing_tests_v2.inc");

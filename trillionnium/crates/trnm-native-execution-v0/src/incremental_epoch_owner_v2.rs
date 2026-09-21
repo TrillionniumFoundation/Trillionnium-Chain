@@ -9,9 +9,9 @@ mod lineage;
 mod progress;
 pub use progress::{
     CommittedIncrementalEpochPreHandoffV2, CommittedNativeIncrementalEpochV2,
-    ComputedIncrementalEpochSelectionV2, IncrementalPreHandoffPreimagesV2,
-    InstalledIncrementalEpochEdgeV2, PreparedIncrementalCheckpointV2, PreparedIncrementalFirstV2,
-    PreparedNativeIncrementalEpochV2,
+    ComputedIncrementalEpochSelectionV2, ConfirmedIncrementalHandoffSigningV2,
+    IncrementalPreHandoffPreimagesV2, InstalledIncrementalEpochEdgeV2,
+    PreparedIncrementalCheckpointV2, PreparedIncrementalFirstV2, PreparedNativeIncrementalEpochV2,
 };
 pub(in crate::durable) const SCHEMA_VERSION: u64 = 11;
 const MAX_PROOF: usize = 8 * 1024 * 1024;
@@ -199,6 +199,7 @@ struct Projection {
     pin: [u8; 32],
     old_pin: [u8; 32],
     current: Current,
+    signing_context: Option<Box<trnm_consensus_crypto::StrictPreHandoffContextV1>>,
 }
 struct Current {
     base: Owner,
@@ -783,17 +784,20 @@ fn migration_projection_with_budget(
             tail.record.head == m.head,
             "schema11 unattached checkpoint is not current tail"
         );
-        Some(progress::pre_handoff::audit(
-            tx,
-            config,
-            &base,
-            &[edge.binding],
-            &first_p,
-            &ordinary,
-            &runtime,
-            tail,
-            budget,
-        )?)
+        Some(
+            progress::pre_handoff::audit(
+                tx,
+                config,
+                &base,
+                &[edge.binding],
+                &first_p,
+                &ordinary,
+                &runtime,
+                tail,
+                budget,
+            )?
+            .0,
+        )
     } else {
         None
     };
@@ -1010,6 +1014,7 @@ fn migration_projection_with_budget(
         rows,
         pin,
         old_pin: edge.checksum,
+        signing_context: None,
         current: Current {
             base,
             active_binding: edge.binding,

@@ -278,6 +278,7 @@ fn schema11_third_crossing(
             &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
         )
         .unwrap();
+    let _ = schema11_signing_readback_checks(&app, &receipt, &h, &proof28);
     // The second joint is signed only after actual C28 commit and cold receipt.
     use ed25519_dalek::Signer;
     let shares = |validators: &trnm_consensus_types::ValidatorSet,

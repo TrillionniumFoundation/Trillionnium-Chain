@@ -247,6 +247,11 @@ pub(super) fn verify_header_proof(
     Ok(())
 }
 
+struct AuditedHandoff {
+    head: ApplicationHeadV0,
+    strict: Box<trnm_consensus_crypto::StrictPreHandoffContextV1>,
+}
+
 // Authenticate all P/proof/sidecar records in an epoch before its successor can
 // consume that epoch's checkpoint. No mutable caller context enters this walk.
 #[allow(clippy::too_many_arguments)]
@@ -262,7 +267,7 @@ fn audit_frame(
     prehands: &[pre_handoff::PreHandoff],
     rows: &mut Vec<ProjectedRow>,
     budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
-) -> Result<()> {
+) -> Result<Option<AuditedHandoff>> {
     let set = frame.runtime.activation().new_validator_set();
     let parameters = frame.runtime.activation().new_consensus_parameters();
     let geometry = trnm_consensus_types::EpochGeometryV0::new(set.epoch(), parameters)
@@ -453,8 +458,9 @@ fn audit_frame(
         matching.len() <= 1,
         "schema11 multiple pre-handoffs in one epoch"
     );
+    let mut handoff = None;
     for r in matching {
-        rows.push(pre_handoff::audit(
+        let (row, strict) = pre_handoff::audit(
             tx,
             config,
             base,
@@ -464,9 +470,14 @@ fn audit_frame(
             &frame.runtime,
             r,
             budget,
-        )?);
+        )?;
+        rows.push(row);
+        handoff = Some(AuditedHandoff {
+            head: r.record.head.clone(),
+            strict,
+        });
     }
-    Ok(())
+    Ok(handoff)
 }
 
 pub(super) fn projection(
@@ -634,9 +645,10 @@ pub(super) fn projection(
         first: Some(original_first.clone()),
     }];
     let mut rows = Vec::new();
+    let mut signing_context = None;
     for attachment in &attachments {
         let previous = frames.last().context("schema11 empty prefix")?;
-        audit_frame(
+        if let Some(handoff) = audit_frame(
             tx,
             config,
             &base,
@@ -648,7 +660,11 @@ pub(super) fn projection(
             &prehands,
             &mut rows,
             budget,
-        )?;
+        )? {
+            if handoff.head == m.head {
+                signing_context = Some(handoff.strict);
+            }
+        }
         let checkpoint = prehands
             .iter()
             .find(|r| r.record.head == attachment.checkpoint)
@@ -691,7 +707,7 @@ pub(super) fn projection(
         });
         rows.push(attachment.projected(config, base.anchor)?);
     }
-    audit_frame(
+    if let Some(handoff) = audit_frame(
         tx,
         config,
         &base,
@@ -703,7 +719,11 @@ pub(super) fn projection(
         &prehands,
         &mut rows,
         budget,
-    )?;
+    )? {
+        if handoff.head == m.head {
+            signing_context = Some(handoff.strict);
+        }
+    }
     ensure!(
         frames.iter().filter(|f| f.first.is_some()).count() == first_records.len(),
         "schema11 orphan first proof"
@@ -929,6 +949,7 @@ pub(super) fn projection(
         rows,
         pin,
         old_pin: edge.checksum,
+        signing_context,
         current: Current {
             base,
             first_p,

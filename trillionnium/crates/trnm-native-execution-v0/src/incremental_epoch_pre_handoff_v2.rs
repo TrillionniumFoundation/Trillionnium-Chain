@@ -8,6 +8,9 @@ use trnm_consensus_types::{
 #[path = "incremental_epoch_attachment_v2.rs"]
 pub(in crate::durable) mod attachment;
 pub use attachment::{InstalledIncrementalEpochEdgeV2, PreparedIncrementalFirstV2};
+#[path = "incremental_epoch_handoff_signing_v2.rs"]
+mod signing;
+pub use signing::ConfirmedIncrementalHandoffSigningV2;
 
 pub struct IncrementalPreHandoffPreimagesV2<'a> {
     pub checkpoint_finality: &'a [u8],
@@ -103,6 +106,7 @@ struct Verified {
     row: ProjectedRow,
     context: [u8; 32],
     strict_binding: [u8; 32],
+    strict: Box<trnm_consensus_crypto::StrictPreHandoffContextV1>,
 }
 #[allow(clippy::too_many_arguments)]
 fn verify(
@@ -273,6 +277,7 @@ fn verify(
         row,
         context,
         strict_binding,
+        strict: Box::new(strict),
     })
 }
 fn retained_ancestry(
@@ -323,7 +328,10 @@ pub(in crate::durable) fn audit(
     runtime: &trnm_consensus_crypto::StrictEpochRuntimeContextV1,
     record: &PreHandoff,
     budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
-) -> Result<ProjectedRow> {
+) -> Result<(
+    ProjectedRow,
+    Box<trnm_consensus_crypto::StrictPreHandoffContextV1>,
+)> {
     let p = ordinary
         .get(&record.record.block)
         .context("schema11 pre-handoff P missing")?;
@@ -351,7 +359,7 @@ pub(in crate::durable) fn audit(
         record.context == checked.context && record.strict_binding == checked.strict_binding,
         "schema11 pre-handoff strict binding/context"
     );
-    Ok(checked.row)
+    Ok((checked.row, checked.strict))
 }
 #[must_use]
 pub struct CommittedIncrementalEpochPreHandoffV2 {
@@ -456,7 +464,7 @@ fn require_sidecar(app: &DurableNativeApplicationV0, p: &P) -> Result<()> {
 }
 fn receipt(
     app: &DurableNativeApplicationV0,
-    current: Projection,
+    current: &Projection,
     m: &MetadataV0,
     block: [u8; 32],
     digest: [u8; 32],
@@ -514,7 +522,7 @@ impl DurableNativeApplicationV0 {
         let tx = c.unchecked_transaction()?;
         let m = load_metadata_v0(&tx, &self.config)?;
         let current = audited_current_with_budget(self, &tx, &m, budget)?;
-        receipt(self, current, &m, block, digest)
+        receipt(self, &current, &m, block, digest)
     }
     pub fn commit_incremental_epoch_pre_handoff_v2(
         &self,

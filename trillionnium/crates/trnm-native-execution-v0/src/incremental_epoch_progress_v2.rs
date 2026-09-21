@@ -6,8 +6,8 @@ pub use checkpoint::{ComputedIncrementalEpochSelectionV2, PreparedIncrementalChe
 #[path = "incremental_epoch_pre_handoff_v2.rs"]
 pub(super) mod pre_handoff;
 pub use pre_handoff::{
-    CommittedIncrementalEpochPreHandoffV2, IncrementalPreHandoffPreimagesV2,
-    InstalledIncrementalEpochEdgeV2, PreparedIncrementalFirstV2,
+    CommittedIncrementalEpochPreHandoffV2, ConfirmedIncrementalHandoffSigningV2,
+    IncrementalPreHandoffPreimagesV2, InstalledIncrementalEpochEdgeV2, PreparedIncrementalFirstV2,
 };
 
 #[must_use]

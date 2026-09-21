@@ -1294,6 +1294,55 @@ retirement/new-custody protocol. It cannot downcast this receipt to the actual
 full-snapshot `PreHandoffCheckpointReceiptV1` or `LaterPreHandoffCheckpointReceiptV1`.
 Receipt creation alone acknowledges neither Core application nor signer custody.
 
+The explicit read-only M03 producer is
+`confirm_incremental_handoff_signing_v2(expected_receipt, budget)` on the actual
+schema11 native owner. It returns private-field, non-Clone
+`ConfirmedIncrementalHandoffSigningV2`; a decoded tuple, historical checkpoint,
+foreign/reopened owner receipt or full-snapshot receipt cannot construct it.
+Before its complete closed audit it checks live owner affinity and namespace;
+after that audit it requires the exact current checkpoint, no attached successor,
+no pending native P, metadata sequence equal to the checkpoint commit sequence,
+and unchanged migration pin, source anchor, generation, Head104, P digest,
+persist/commit sequences, state artifact, replay predecessor/target, checkpoint
+context, original evidence digest and strict pre-handoff binding. Namespace is
+checked again after all local readbacks. A budget refusal or mismatch makes no
+native or preparation-sidecar write and creates no namespace.
+
+The retained-context walker returns its already strictly verified current
+`StrictPreHandoffContextV1` to this producer without repeating prefix or target
+proof crypto. The caller supplies one shared admission meter. The confirmation
+owns the original full checkpoint header and exact retained finality bytes,
+the fresh typed checkpoint receipt and that strict context. Its
+`committed_owner_cut_ref_v2` uses domain
+`trnm.native-application.incremental-handoff-signing-cut.v2` with the existing
+`trnm.domain.hash.v1` prefix and u64-be length-framed domain/parts convention,
+in this exact order: store ID, source
+anchor, migration pin, generation u64-be, Head104, P digest, persist sequence
+u64-be, commit sequence u64-be, state artifact, replay-parent version u64-be and
+root, replay-target version u64-be and root, context digest, original evidence
+record digest and strict binding. This is a comparison digest, not authority.
+
+M03 must independently join its actual Safety/retired-custody/external owners;
+neither the confirmation nor `strict_context()` releases a signing lease. Its
+future consumer repeats this typed local readback before preparing a journal
+decision, immediately before and after custody, and before signature release,
+using the same operation meter and no external callback inside the final local
+confirmation. Before a journal reservation or custody call, that consumer must
+check that the remaining meter can pay every required later readback; returning
+a native confirmation does not reserve an unbounded future signing operation.
+Do not adapt full-snapshot host cuts by copying scalar fields.
+The producer alone does not complete this consumer, Node/sync wiring or M03
+custody acceptance.
+
+This native producer is implemented and exercised at genuine committed C18 and
+C28, including cold reopen. Its tests require exactly the same signature work
+as the existing closed checkpoint confirmation while retaining prior caller
+charges; insufficient budget, old-process receipts, and both stale and freshly
+reconfirmed receipts after attachment refuse without data changes. A replaced
+strict binding with a recomputed row checksum also refuses at the same live
+owner, preserving corrupt bytes for diagnosis. These are local comparison
+tests, not actual custody or external callback acceptance.
+
 Attachment accepts that fresh owner-affine receipt and the original completed
 joint kernel. It re-audits the same pre-handoff record and current exact C18,
 requires every descriptor/proof/configuration preimage to match byte for byte,
@@ -1552,8 +1601,10 @@ audit), `incremental_epoch_first_v2.rs` (first-new preparation, commit and
 historical retry), `incremental_epoch_attachment_v2.rs` (strict successor
 attachment), `incremental_epoch_checkpoint_v2.rs` (selection, preparation and
 sidecar joins), `incremental_epoch_pre_handoff_v2.rs` (causal checkpoint commit),
-and `incremental_epoch_progress_v2.rs` (ordinary preparation, commit, historical
-retry and all-committed fork protection). Shared kernels remain in
+`incremental_epoch_progress_v2.rs` (ordinary preparation, commit, historical
+retry and all-committed fork protection), and
+`incremental_epoch_handoff_signing_v2.rs` (fresh unattached native receipt and
+strict-context comparison for the M03 adapter). Shared kernels remain in
 `incremental_epoch_owner_v1.rs`, `incremental_epoch_commit_v1.rs`,
 `incremental_epoch_descendant_v1.rs`, `incremental_owner_v1.rs` and
 `incremental_epoch_storage_v1.rs`; reuse does not expand their frozen schema5/6/7
