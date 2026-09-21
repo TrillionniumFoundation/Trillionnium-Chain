@@ -445,8 +445,22 @@ facts after fresh source validation; they grant no ordinary execution permit.
 This revision requires complete crossed activation evidence for every replayed
 checkpoint. A path ending at a checkpoint without that successor evidence is
 rejected. M08 implements explicit schema12 installation and cold reexecution;
-post-import C33/duplicate-transaction acceptance and public-node composition
-remain unimplemented. Current native live staging remains read-only.
+the separate ordinary receiver path now reexecutes C33 and preserves imported
+command/signer-nonce rejection. Public-node composition and crossing the next
+checkpoint from an imported base remain unimplemented. Current native live
+staging remains read-only.
+
+The M08-REPLAY-EXECUTION-V1 consumer retains the independently replayed
+store and exact mixed epoch coordinates as private computation facts. Ordinary
+preview/execution reuses `preview_complete_native_block_v0` and
+`execute_complete_native_block_v0`, with the receiver's full local parent and
+authenticated active configuration. The executor supplies lifecycle and every
+command/signer-nonce identity; parent snapshots and replay sets may be restored
+only after independent source/history/P audit. A crate-private coordinate-based
+snapshot encoder shares the existing validator, but coordinates alone grant
+no consensus, execution-owner or signing authority. Consensus verification may
+extend a temporary header path for C33's original proof while the installed
+NHR1 bytes and all historical local commit IDs remain unchanged.
 
 ## Activation boundary
 

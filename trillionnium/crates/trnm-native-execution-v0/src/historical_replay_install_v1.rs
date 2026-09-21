@@ -141,11 +141,20 @@ fn reconstruct_source_metadata_v1(connection: &Connection) -> Result<MetadataV0>
     })
 }
 
-fn audit_installed_connection_v1(
+pub(super) struct AuditedReplayBaseV1 {
+    pub(super) stored: storage::StoredHistoricalBaseV1,
+    pub(super) source_header: BlockHeader,
+    pub(super) source_set: ValidatorSet,
+    pub(super) source_parameters: ConsensusParametersV0,
+    pub(super) store: InMemoryNativeExecutionStoreV0,
+    pub(super) coordinates: Vec<crate::epoch_edge::EpochApplicationCoordinatesV1>,
+}
+
+pub(super) fn audit_base_connection_v1(
     connection: &Connection,
     path: &Path,
     config: &NativeApplicationConfigV0,
-) -> Result<storage::StoredHistoricalBaseV1> {
+) -> Result<AuditedReplayBaseV1> {
     storage::verify_schema_v1(connection)?;
     storage::screen_inputs_v1(connection)?;
     validate_receiver_identity_v1(connection, config)?;
@@ -167,7 +176,7 @@ fn audit_installed_connection_v1(
         "installed history anchor differs from retained source"
     );
     let history_bytes = stored.history.encode_v1()?;
-    let (input, run, computed) = replay_source_v1(
+    let (input, run, replayed) = replay_source_state_v1(
         config,
         connection,
         &source,
@@ -179,35 +188,32 @@ fn audit_installed_connection_v1(
         input == stored.input_digest && run == stored.run_digest,
         "installed history input/run identity mismatch"
     );
-    ensure_same_computation_v1(&computed, &stored.computed)?;
+    let computed = &replayed.computed;
+    ensure_same_computation_v1(computed, &stored.computed)?;
     ensure!(
         source.pin.sequence.checked_add(1) == Some(stored.install_sequence)
             && stored.base_digest
-                == base_digest_v1(
-                    &source.pin,
-                    &input,
-                    &run,
-                    &computed,
-                    stored.install_sequence
-                ),
+                == base_digest_v1(&source.pin, &input, &run, computed, stored.install_sequence),
         "installed base sequence/digest mismatch"
     );
-    let matches: bool = connection.query_row(
-        "SELECT EXISTS(SELECT 1 FROM native_application_metadata_v0 WHERE singleton=1
-          AND schema_version=?1 AND durable_sequence=?2 AND head_height=?3 AND head_block_id=?4
-          AND head_state_root=?5 AND head_commit_id=?6 AND authenticated_snapshot=?7
-          AND authenticated_snapshot_digest=?8 AND replay_command_ids=?9 AND replay_signer_nonces=?10)",
-        params![storage::INSTALLED_SCHEMA_VERSION.to_be_bytes().as_slice(), stored.install_sequence.to_be_bytes().as_slice(),
-            computed.target_head.height().get().to_be_bytes().as_slice(), computed.target_head.block_id().as_bytes().as_slice(),
-            computed.target_head.state_root().as_bytes().as_slice(), computed.target_head.commit_id().as_bytes().as_slice(),
-            &computed.snapshot, sha256_v0(&computed.snapshot).as_slice(), &computed.commands, &computed.nonces],
-        |row| row.get(0),
-    )?;
-    ensure!(
-        matches,
-        "installed current metadata differs from recomputed base"
-    );
-    Ok(stored)
+    Ok(AuditedReplayBaseV1 {
+        stored,
+        source_header: source.header,
+        source_set: source.set,
+        source_parameters: source.parameters,
+        store: replayed.store,
+        coordinates: replayed.coordinates,
+    })
+}
+
+fn audit_installed_connection_v1(
+    connection: &Connection,
+    path: &Path,
+    config: &NativeApplicationConfigV0,
+) -> Result<storage::StoredHistoricalBaseV1> {
+    Ok(continuation::audit_connection_v1(connection, path, config)?
+        .base
+        .stored)
 }
 
 pub(super) fn audit_path_v1(

@@ -5,6 +5,10 @@ use trnm_consensus_crypto::{
 };
 use trnm_consensus_types::Cev0AdmissionBudgetV0;
 
+#[path = "historical_replay_continuation_owner_v1.rs"]
+mod continuation;
+#[path = "historical_replay_continuation_storage_v1.rs"]
+mod continuation_storage;
 #[path = "historical_replay_execution_v1.rs"]
 mod execution;
 #[path = "historical_replay_install_v1.rs"]
@@ -13,6 +17,9 @@ mod install;
 mod source;
 #[path = "historical_replay_storage_v1.rs"]
 mod storage;
+pub use continuation::{
+    CommittedNativeReplayExecutionV1, ConfirmedPreparedNativeReplayExecutionV1,
+};
 pub use install::ConfirmedNativeReplayBaseV1;
 
 pub(in crate::durable) fn verify_installed_schema_v1(connection: &Connection) -> Result<()> {
@@ -400,6 +407,19 @@ fn replay_source_v1(
     history_bytes: &[u8],
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> Result<([u8; 32], [u8; 32], execution::ComputedHistoricalReplayV1)> {
+    let (input, run, state) =
+        replay_source_state_v1(config, connection, source, history, history_bytes, budget)?;
+    Ok((input, run, state.computed))
+}
+
+fn replay_source_state_v1(
+    config: &NativeApplicationConfigV0,
+    connection: &Connection,
+    source: &AuditedSourceV1,
+    history: &NativeHistoricalReplayV1,
+    history_bytes: &[u8],
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<([u8; 32], [u8; 32], execution::ReplayedHistoricalStateV1)> {
     let input_digest = hash_domain("trnm.native.historical-replay-input.v1", &[history_bytes]);
     let header_bytes = history
         .records
@@ -452,7 +472,7 @@ fn replay_source_v1(
             &input_digest,
         ],
     );
-    let computed = execution::replay_verified_history_v1(
+    let state = execution::replay_verified_history_state_v1(
         store,
         source.pin.head.clone(),
         &source.header,
@@ -463,6 +483,7 @@ fn replay_source_v1(
         &verified,
         run_digest,
     )?;
+    let computed = &state.computed;
     ensure!(
         computed.snapshot.len() <= MAX_SNAPSHOT_BYTES
             && computed.commands.len() <= MAX_REPLAY_BYTES
@@ -471,7 +492,7 @@ fn replay_source_v1(
         "historical computed state resource bound"
     );
 
-    Ok((input_digest, run_digest, computed))
+    Ok((input_digest, run_digest, state))
 }
 
 fn source_cutoff_headers_v1(

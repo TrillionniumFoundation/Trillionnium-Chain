@@ -1055,3 +1055,10 @@ fn historical_install_is_explicit_atomic_replayed_and_preserves_source() {
 include!("native_historical_install_crash_tests.rs");
 include!("native_historical_install_race_tests.rs");
 include!("native_historical_install_fsync_tests.rs");
+include!("native_historical_continuation_tests.rs");
+
+include!("native_historical_continuation_crash_tests.rs");
+
+include!("native_historical_continuation_bounds_tests.rs");
+
+include!("native_historical_continuation_budget_tests.rs");

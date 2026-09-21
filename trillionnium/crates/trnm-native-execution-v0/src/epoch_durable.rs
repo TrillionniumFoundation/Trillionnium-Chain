@@ -21,7 +21,8 @@ pub(super) mod historical_replay;
 #[path = "epoch_lineage_v1.rs"]
 mod lineage_resolver;
 pub use historical_replay::{
-    ConfirmedNativeReplayAnchorV1, ConfirmedNativeReplayBaseV1, PreparedNativeReplayBaseV1,
+    CommittedNativeReplayExecutionV1, ConfirmedNativeReplayAnchorV1, ConfirmedNativeReplayBaseV1,
+    ConfirmedPreparedNativeReplayExecutionV1, PreparedNativeReplayBaseV1,
 };
 #[path = "native_live_export_v1.rs"]
 mod live_export;

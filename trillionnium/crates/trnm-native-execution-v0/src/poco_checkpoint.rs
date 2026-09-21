@@ -1332,10 +1332,10 @@ impl DurableNativeApplicationV0 {
             native,
             Vec::new(),
         )?;
-        #[cfg(test)]
+        #[cfg(all(test, feature = "test-fixtures"))]
         preparation_lock_test_v1::pause(self.path(), preparation_lock_test_v1::Stage::BeforeLock)?;
         let (_guard, journal) = self.poco_preparation_journal_v0()?;
-        #[cfg(test)]
+        #[cfg(all(test, feature = "test-fixtures"))]
         preparation_lock_test_v1::pause(self.path(), preparation_lock_test_v1::Stage::BeforeWrite)?;
         let durable = reserve_prepared_poco_checkpoint_header_v0(&journal, prepared)?;
         let header = durable.fields().exact_header()?;
@@ -1575,7 +1575,7 @@ impl DurableNativeApplicationV0 {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "test-fixtures"))]
 pub(crate) mod preparation_lock_test_v1 {
     use std::{
         path::{Path, PathBuf},

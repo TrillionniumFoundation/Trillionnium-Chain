@@ -1082,8 +1082,13 @@ retry and cold confirmation; clean readback must retain the same base identity.
 schedules genuine checkpoint preparation on both sides of the installation
 lock: the write phase holds the lock, and an earlier computation cannot append
 a journal row after the physical schema changes.
-The fixture also produces original nonempty C33 finality on the sender; receiver
-C33 execution/commit and its replay-rejection acceptance remain unimplemented.
+The receiver continuation described below executes the genuine nonempty C33
+body, retains its original proof and rejects imported command/nonce replay.
+`historical_receiver_c33_executes_original_body_and_finality_after_cold_prepare`
+checks the receiver-local parent, cold Prepared recovery, exact commit retry,
+fsync uncertainty, source preservation and independently detected state mutations.
+Its separate cold branch prepares genuine C34 above pending C33; committing C33
+must preserve that exact pending child. No C34 commit is inferred from this test.
 
 At genuine C18, consumed prefix A and active epoch1 belong to the source P.
 Installed successor B remains phase0 with NULL consumption fields. Replay may
@@ -1156,9 +1161,9 @@ Post-base P/commit/finality digests use new `trnm.native.replay-execution-p.v1`,
 semantics or manufacture an old `PreparedNativeEpochExecutionV1` capability.
 Factor shared pure execution/receipt/header/snapshot checks; do not copy the
 execution engine or relax old schema10 row/proof bijections.
-The current installer creates the two post-base tables but requires them to
-remain empty. An image containing such P/proof rows fails cold admission until
-the separate ordinary continuation writer and its complete audit are implemented.
+The installer creates empty post-base tables. Only the explicit ordinary
+continuation writer below may populate them; cold admission independently
+reexecutes every P and verifies the original proofs and current metadata.
 
 Hard admission bounds: history1..256 consensus records, independently0..32 epoch
 transitions, complete retained canonical history/authority at most64 MiB; source
@@ -1223,6 +1228,96 @@ wrong original C33 proof and stale post-C33 import retry rejected. Exercise real
 SIGKILL before COMMIT, after COMMIT/before fsync and after fsync/before response,
 with cold recovery and exact retry. Existing schema10, anti-double-sign,
 persist-before-sign and deterministic execution tests remain mandatory.
+
+### Ordinary continuation from an imported base (M08-REPLAY-EXECUTION-V1)
+
+This candidate owner implements ordinary continuation without public-node or
+next-epoch activation. Explicit APIs are `preview_replay_block_v1(request)`,
+`prepare_replay_execution_v1(request, header)`,
+`reopen_prepared_replay_execution_v1(block_id, P_digest)`,
+`commit_replay_finality_bytes_v1(prepared, proof, budget)` and
+`confirmed_replay_head_v1()`. Preparation returns a distinct owner-affine,
+private-field, non-Clone `ConfirmedPreparedNativeReplayExecutionV1`; commit
+returns `CommittedNativeReplayExecutionV1`. Neither type supplies signing or
+legacy epoch authority. Preview/head readback grant no durable capability.
+
+Every operation starts with the complete installed-base audit. Its independently
+reexecuted store, full local head/header, active configuration and mixed snapshot
+coordinates are private computation facts. Source-prefix coordinates retain
+their original bindings; replayed activations retain their strict M01 bindings.
+Only the shared M06 complete executor applies a new Regular block. The request
+must name the exact local parent Head104, chain/genesis, current set and parent+1
+height. Reconstruct the canonical payload from the request, bind every header
+field/root, enforce active epoch geometry, leader, increasing view and timestamp,
+and reject checkpoint/handoff/seal or next-epoch commitments. Apply the executor's
+state plan and command/signer-nonce identities together; derive lifecycle from
+execution, never from peer state or metadata alone. The existing sparse snapshot
+validator checks the combined audited coordinates before serialization.
+
+Parent kind0 names exactly the installed base and has no parent-P digest. Kind1
+names an exact earlier row in the new P table, including its stable prospective
+local head and P digest; it may be Prepared or Committed. No old source P is a
+post-base parent. Preparation allocates current sequence+1 and atomically writes
+the complete P plus the sequence CAS. P digest frames base digest, P sequence,
+one-byte parent kind, Head104, a tagged optional parent-P digest, and the SHA-256
+digests of header, artifact, snapshot, commands, nonces and lifecycle. Commit ID
+frames base digest, P digest, block ID and snapshot digest under the new commit
+domain; it is independent of the later commit sequence so speculative descendants
+retain their exact parent identity. Status and commit fields are not P inputs.
+
+For finality, extend only an ephemeral consensus header path: unchanged source
+anchor, original base headers/activations, exact new-P ancestor headers, then the
+target header and its original finality proof. Use M01's complete historical
+verifier, including epoch-runtime synthetic-anchor TC checks and the caller's
+remaining work meter. Match the exact target and parent timestamp. This temporary
+path retains the existing256-header/32-transition/64-MiB limits; capacity exhaustion
+rejects before mutation. Never replace the base terminal proof or reexecute an
+extended NHR1 as a new base: doing so would change its input/run/step commit IDs.
+
+Cold replay audits use one shared `Cev0AdmissionBudgetV0` for every retained
+post-base finality proof; they must not create a fresh protocol meter per row.
+Admission measures a newly submitted proof with the caller's remaining meter,
+then reserves that measured delta against the same aggregate meter before any
+P/finality transaction write. If the aggregate reservation would exhaust the
+meter, the caller's measured work remains charged and the transaction is
+rejected without a new row or status change. An exact committed retry still
+measures the proof against the caller's remaining meter, compares the retained
+proof bytes, and acknowledges without charging the aggregate meter a second
+time. The genuine-proof budget regression measures C33's work, rejects at one
+unit below that aggregate cost without changing the database, then commits,
+retries and cold-opens at the exact cost. Previously charged caller work remains
+separate from this proof's measured increment. The test-only cap is scoped to its
+thread; deployed builds always use the fixed protocol cap.
+
+Commit requires the current committed Head104 to equal the P parent. Atomically
+allocate sequence+1, change exactly that P to Committed, retain the exact original
+proof and replace current snapshot/replay/head using CAS. The finality-record
+digest frames base digest, block ID, P digest, actual commit sequence and proof
+digest. All source, installation, new-P and new-commit sequences are disjoint;
+new allocations form a contiguous suffix after installation. Exact prepare and
+commit retries allocate nothing; acknowledged commit retry requires identical
+proof bytes. Both writes fsync database and directory and fresh-audit before
+issuing receipts. Failed fences return an uncertain result; cold receipt recovery
+must reestablish both fences. Historical installation retry after C33 confirms
+only the unchanged base and never rolls back current metadata.
+
+Cold audit first reconstructs the base once, then walks new P in sequence order.
+Reexecute each row from its previously audited parent snapshot/replay sets and
+compare all artifact, root, replay, lifecycle and digest bytes. A committed child
+requires a committed parent (or base), and all committed rows form one exact
+chain from the base. Verify every original proof, enforce P/proof bijection and
+sequence uniqueness/continuity, then derive the current head and complete metadata
+from the committed chain and maximum allocated sequence. Pending forks remain
+bounded and cannot replace current state. SQL screens enforce combined source/new
+P128, pending8, per-proof8 MiB, proof aggregate64 MiB and total2 GiB before row
+allocation. No automatic pruning or second import is introduced by this revision.
+
+`historical_replay_continuation_sigkill_six_cuts_preserve_exact_c33` exercises
+prepare and commit before COMMIT, after COMMIT/before fsync and after fsync/before
+response. Each cut uses a real killed child, cold audit and exact retries over
+one genuine nonempty source fixture. `historical_continuation_sql_bounds_reject_combined_pending_and_proof_overflow`
+checks SQL admission limits independently of malformed consensus fields. These
+local regressions do not supply multi-host or physical power-loss acceptance.
 
 ## Activation boundary
 

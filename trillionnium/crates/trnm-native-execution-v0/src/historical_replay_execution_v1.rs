@@ -22,7 +22,8 @@ use trnm_native_application::{
 use crate::{
     complete::{
         compute_complete_epoch_native_block_with_context_v1, execute_complete_native_block_v0,
-        load_validator_lifecycle_from_live_v0,
+        load_validator_lifecycle_from_live_v0, preview_complete_native_block_v0,
+        CompleteBlockExecutionInputV0, NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
     },
     epoch_edge::{sealed, EpochApplicationCoordinatesV1, EpochExecutionContextV1},
     poco_checkpoint::{active_consensus_configuration, validate_application_validator_projection},
@@ -30,6 +31,8 @@ use crate::{
     store::{InMemoryNativeExecutionStoreV0, NativeExecutionStoreV0},
     NativeHistoricalRecordV1, NativeHistoricalReplayV1,
 };
+
+use std::{borrow::Cow, collections::BTreeSet};
 
 pub(super) struct ComputedHistoricalReplayV1 {
     pub(super) target_head: ApplicationHeadV0,
@@ -41,6 +44,241 @@ pub(super) struct ComputedHistoricalReplayV1 {
     pub(super) nonces: Vec<u8>,
     pub(super) lifecycle: Vec<u8>,
     pub(super) application_count: usize,
+}
+
+/// Independently replayed computation state retained only inside the owner.
+/// Neither the store nor its coordinates grant persistence or signing authority.
+pub(super) struct ReplayedHistoricalStateV1 {
+    pub(super) computed: ComputedHistoricalReplayV1,
+    pub(super) store: InMemoryNativeExecutionStoreV0,
+    pub(super) coordinates: Vec<EpochApplicationCoordinatesV1>,
+}
+
+/// Selected parent bytes already authenticated by the owner pipeline. These
+/// fields are inert comparison data and cannot authorize persistence.
+pub(super) struct ReplayExecutionParentV1<'a> {
+    pub(super) head: &'a ApplicationHeadV0,
+    pub(super) header: &'a BlockHeader,
+    pub(super) snapshot: &'a [u8],
+    pub(super) commands: &'a [u8],
+    pub(super) nonces: &'a [u8],
+    pub(super) store: Option<&'a InMemoryNativeExecutionStoreV0>,
+}
+
+pub(super) struct ReplayExecutionContextV1<'a> {
+    pub(super) config: &'a crate::durable::NativeApplicationConfigV0,
+    pub(super) active_set: &'a ValidatorSet,
+    pub(super) active_parameters: &'a ConsensusParametersV0,
+    pub(super) coordinates: &'a [EpochApplicationCoordinatesV1],
+}
+
+pub(super) struct ComputedReplayExecutionV1 {
+    pub(super) artifact: Vec<u8>,
+    pub(super) snapshot: Vec<u8>,
+    pub(super) commands: Vec<u8>,
+    pub(super) nonces: Vec<u8>,
+    pub(super) lifecycle: Vec<u8>,
+}
+
+fn restore_replay_parent<'a>(
+    context: &ReplayExecutionContextV1<'_>,
+    parent: &ReplayExecutionParentV1<'a>,
+) -> Result<Cow<'a, InMemoryNativeExecutionStoreV0>> {
+    ensure!(
+        !parent.snapshot.is_empty()
+            && parent.snapshot.len() <= 256 * 1024 * 1024
+            && (4..=16 * 1024 * 1024).contains(&parent.commands.len())
+            && (4..=16 * 1024 * 1024).contains(&parent.nonces.len())
+            && !context.coordinates.is_empty()
+            && context.coordinates.len() <= 64,
+        "replay execution parent resource bound"
+    );
+    ensure_head_header(parent.head, parent.header)?;
+    protocol(parent.header.validate_shape())?;
+    protocol(
+        context
+            .active_set
+            .validate_against_parameters(context.active_parameters),
+    )?;
+    let set = context.active_set;
+    ensure!(
+        set.chain_id().as_str() == context.config.chain_id
+            && set.genesis_hash().as_bytes() == &context.config.genesis_hash
+            && parent.header.chain_id() == set.chain_id()
+            && parent.header.genesis_hash() == set.genesis_hash()
+            && parent.header.protocol_version() == set.protocol_version()
+            && parent.header.epoch() == set.epoch()
+            && parent.header.validator_set_id() == set.id()
+            && parent.header.consensus_parameters_hash() == context.active_parameters.hash(),
+        "replay execution parent active context"
+    );
+    let store = match parent.store {
+        Some(store) => Cow::Borrowed(store),
+        None => {
+            let commands: BTreeSet<String> = borsh::from_slice(parent.commands)
+                .context("replay execution parent command identities")?;
+            let nonces: BTreeSet<(String, u64)> = borsh::from_slice(parent.nonces)
+                .context("replay execution parent signer nonces")?;
+            Cow::Owned(
+                InMemoryNativeExecutionStoreV0::decode_epoch_snapshot_for_coordinates_v1(
+                    context.config.chain_id.clone(),
+                    context.config.signers.clone(),
+                    *context.active_parameters,
+                    commands,
+                    nonces,
+                    parent.snapshot,
+                    context.coordinates,
+                )?,
+            )
+        }
+    };
+    let (version, root) = crate::store::verify_parent_root_v0(store.as_ref())?;
+    ensure!(
+        version == parent.head.height().get()
+            && root.0 == *parent.head.state_root().as_bytes()
+            && store.chain_id_v0()? == context.config.chain_id
+            && store.consensus_parameters_v0()? == *context.active_parameters
+            && store.signer_policy_commitment_v0()? == context.config.signer_policy_commitment,
+        "replay execution parent store binding"
+    );
+    let (commands, nonces) = store.replay_sets_v0();
+    ensure!(
+        borsh::to_vec(commands)? == parent.commands
+            && borsh::to_vec(nonces)? == parent.nonces
+            && store.encode_epoch_snapshot_for_coordinates_v1(context.coordinates)?
+                == parent.snapshot,
+        "replay execution parent canonical snapshot/replay binding"
+    );
+    Ok(store)
+}
+
+fn validate_replay_request<R: CompleteBlockExecutionInputV0>(
+    context: &ReplayExecutionContextV1<'_>,
+    parent: &ReplayExecutionParentV1<'_>,
+    request: &R,
+) -> Result<()> {
+    let maximum_timestamp = parent
+        .header
+        .timestamp_ms()
+        .checked_add(context.active_parameters.max_block_time_step_ms())
+        .context("replay execution parent timestamp overflow")?;
+    ensure!(
+        request.parent_v0() == parent.head
+            && parent.head.height().get().checked_add(1) == Some(request.height_v0().get())
+            && request.chain_id_v0().as_str() == context.config.chain_id
+            && request.genesis_hash_v0().as_bytes() == &context.config.genesis_hash
+            && request.active_validator_set_id_v0().as_bytes()
+                == context.active_set.id().as_bytes()
+            && request.timestamp_ms_v0() > parent.header.timestamp_ms()
+            && request.timestamp_ms_v0() <= maximum_timestamp,
+        "replay execution exact request parent/context"
+    );
+    let geometry = protocol(EpochGeometryV0::new(
+        context.active_set.epoch(),
+        context.active_parameters,
+    ))?;
+    ensure!(
+        protocol(geometry.expected_block_kind(parent.header.height()))?
+            == parent.header.block_kind()
+            && protocol(
+                geometry.expected_block_kind(trnm_consensus_types::Height::new(
+                    request.height_v0().get(),
+                ))
+            )? == BlockKind::Regular,
+        "replay execution requires ordinary epoch geometry"
+    );
+    Ok(())
+}
+
+/// A read-only preview has no proposal view/leader or finality authority. Final
+/// execution below binds those additional fields to the exact supplied header.
+pub(super) fn preview_replay_execution_v1(
+    context: &ReplayExecutionContextV1<'_>,
+    parent: &ReplayExecutionParentV1<'_>,
+    request: &NativeBlockPreviewRequestV0,
+) -> Result<NativeBlockPreviewV0> {
+    validate_replay_request(context, parent, request)?;
+    let store = restore_replay_parent(context, parent)?;
+    preview_complete_native_block_v0(
+        store.as_ref(),
+        context.active_set,
+        context.active_set.genesis_hash(),
+        request,
+    )
+}
+
+/// Compute one ordinary successor using the unchanged complete engine. The
+/// resulting artifact and state bytes are inert until the owner persists them.
+#[inline(never)]
+pub(super) fn compute_replay_execution_v1(
+    context: &ReplayExecutionContextV1<'_>,
+    parent: &ReplayExecutionParentV1<'_>,
+    request: &NativeBlockExecutionRequestV0,
+    header: &BlockHeader,
+) -> Result<ComputedReplayExecutionV1> {
+    validate_replay_request(context, parent, request)?;
+    ensure!(
+        header.block_kind() == BlockKind::Regular && header.next_epoch_commitment_hash().is_none(),
+        "replay execution requires Regular header without epoch commitment"
+    );
+    protocol(trnm_consensus_types::validate_historical_header_link_v1(
+        header,
+        parent.header,
+        context.active_set,
+        context.active_parameters,
+    ))?;
+    crate::durable::ensure_finalized_header_binding_v0(header, request)?;
+    let payload = protocol(trnm_consensus_types::ApplicationPayloadV0::new(
+        request.transactions().to_vec(),
+    ))?;
+    let block = protocol(Block::new(
+        header.clone(),
+        protocol(payload.try_cev0_bytes())?,
+        Vec::new(),
+    ))?;
+    protocol(validate_root_bound_regular_body_v0(
+        &block,
+        context.active_set,
+        context.active_parameters,
+    ))?;
+    let mut store = restore_replay_parent(context, parent)?.into_owned();
+    let (executed, plan, identities, lifecycle) = execute_complete_native_block_v0(
+        &store,
+        context.active_set,
+        context.active_set.genesis_hash(),
+        request,
+    )?
+    .into_parts();
+    crate::durable::validate_native_finalized_execution_receipts_v0(&executed)?;
+    let artifact = encode_native_executed_block_artifact_v0(&executed)?;
+    store.apply_complete_state_plan_v0(plan)?;
+    for identity in identities {
+        store.mark_committed_command_v0(
+            identity.command_id(),
+            identity.signer_id(),
+            identity.nonce(),
+        )?;
+    }
+    let snapshot = store.encode_epoch_snapshot_for_coordinates_v1(context.coordinates)?;
+    let (commands, nonces) = store.replay_sets_v0();
+    let commands = borsh::to_vec(commands)?;
+    let nonces = borsh::to_vec(nonces)?;
+    let lifecycle = serde_json::to_vec(&lifecycle)?;
+    ensure!(
+        artifact.len() <= 16 * 1024 * 1024
+            && snapshot.len() <= 256 * 1024 * 1024
+            && commands.len() <= 16 * 1024 * 1024
+            && nonces.len() <= 16 * 1024 * 1024
+            && lifecycle.len() <= 1024 * 1024,
+        "replay execution computed resource bound"
+    );
+    Ok(ComputedReplayExecutionV1 {
+        artifact,
+        snapshot,
+        commands,
+        nonces,
+        lifecycle,
+    })
 }
 
 /// A replay-local checkpoint joined to sealed M01 activation facts. It borrows
@@ -249,11 +487,11 @@ fn step_head(
     ))
 }
 
-/// Compute only. The owner must keep the source inventory pinned and must not
-/// use these bytes as an installed base or a persisted execution acknowledgement.
+/// The same deterministic replay, retaining its store and exact mixed source /
+/// historical coordinates for the owner's independently audited continuation.
 #[allow(clippy::too_many_arguments)]
 #[inline(never)]
-pub(super) fn replay_verified_history_v1(
+pub(super) fn replay_verified_history_state_v1(
     mut store: InMemoryNativeExecutionStoreV0,
     source_head: ApplicationHeadV0,
     source_header: &BlockHeader,
@@ -263,13 +501,13 @@ pub(super) fn replay_verified_history_v1(
     history: &NativeHistoricalReplayV1,
     verified: &StrictHistoricalHeaderPathV1,
     run_digest: [u8; 32],
-) -> Result<ComputedHistoricalReplayV1> {
+) -> Result<ReplayedHistoricalStateV1> {
     ensure!(
         run_digest != [0; 32],
         "historical replay missing run identity"
     );
     ensure!(
-        source_cutoff_headers.len() <= 32,
+        source_cutoff_headers.len() <= 32 && source_contexts.len() <= 32,
         "historical replay source cutoff bound"
     );
     ensure!(
@@ -521,6 +759,10 @@ pub(super) fn replay_verified_history_v1(
             .map(|context| context as &dyn EpochExecutionContextV1),
     );
     let snapshot = store.encode_epoch_authenticated_snapshot_for_context_v1(&all_contexts)?;
+    let coordinates = all_contexts
+        .iter()
+        .map(|context| context.coordinates_v1())
+        .collect();
     ensure!(
         snapshot.len() <= 256 * 1024 * 1024,
         "historical replay snapshot bound"
@@ -538,7 +780,7 @@ pub(super) fn replay_verified_history_v1(
         lifecycle.len() <= 1024 * 1024,
         "historical replay lifecycle bound"
     );
-    Ok(ComputedHistoricalReplayV1 {
+    let computed = ComputedHistoricalReplayV1 {
         target_head: head,
         target_header: verified.terminal_header().clone(),
         target_set: active_set.clone(),
@@ -548,5 +790,10 @@ pub(super) fn replay_verified_history_v1(
         nonces,
         lifecycle,
         application_count,
+    };
+    Ok(ReplayedHistoricalStateV1 {
+        computed,
+        store,
+        coordinates,
     })
 }

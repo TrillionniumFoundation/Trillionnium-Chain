@@ -274,6 +274,23 @@ pub(super) fn screen_inputs_v1(connection: &Connection) -> Result<()> {
             .checked_add(bytes as u64)
             .context("historical source size overflow")?;
     }
+    let legacy_p_count: i64 = connection.query_row(
+        "SELECT (SELECT COUNT(*) FROM native_durable_execution_p_v0)
+              + (SELECT COUNT(*) FROM native_durable_execution_p_v1)",
+        [],
+        |row| row.get(0),
+    )?;
+    let replay_p_count: i64 = connection.query_row(
+        "SELECT COUNT(*) FROM native_replay_execution_p_v1",
+        [],
+        |row| row.get(0),
+    )?;
+    ensure!(
+        legacy_p_count >= 0
+            && replay_p_count >= 0
+            && (legacy_p_count as u64).saturating_add(replay_p_count as u64) <= 128,
+        "historical combined P row bound"
+    );
     for (index, (table, _)) in SCHEMA_V1.iter().enumerate() {
         let extra = match index {
             0 => "singleton=1 AND revision=1 AND source_schema=x'000000000000000a'",
@@ -286,7 +303,28 @@ pub(super) fn screen_inputs_v1(connection: &Connection) -> Result<()> {
             match index {
                 0 => count == 1,
                 1 => (1..=256).contains(&count),
-                _ => count == 0,
+                2 => count <= 128,
+                3 => {
+                    let p_count: u64 = connection.query_row(
+                        "SELECT COUNT(*) FROM native_replay_execution_p_v1",
+                        [],
+                        |row| row.get(0),
+                    )?;
+                    let pending: i64 = connection.query_row(
+                        "SELECT COUNT(*) FROM native_replay_execution_p_v1 WHERE status=0",
+                        [],
+                        |row| row.get(0),
+                    )?;
+                    let proof_bytes: i64 = connection.query_row(
+                        "SELECT COALESCE(SUM(CASE WHEN typeof(proof)='blob' THEN length(proof) ELSE 0 END),0) FROM native_replay_execution_finality_v1",
+                        [],
+                        |row| row.get(0),
+                    )?;
+                    (0..=8).contains(&pending)
+                        && (0..=64 * 1024 * 1024).contains(&proof_bytes)
+                        && count <= p_count
+                }
+                _ => false,
             },
             "historical storage row count/profile: {table}"
         );

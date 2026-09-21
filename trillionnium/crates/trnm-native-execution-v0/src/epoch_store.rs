@@ -243,6 +243,16 @@ impl InMemoryNativeExecutionStoreV0 {
         self.encode_epoch_snapshot(&coordinates)
     }
 
+    /// Serialize only after the private caller has independently authenticated
+    /// these exact source and replay coordinates. Coordinates are comparison
+    /// data; this function issues no consensus or execution-owner capability.
+    pub(crate) fn encode_epoch_snapshot_for_coordinates_v1(
+        &self,
+        coordinates: &[EpochApplicationCoordinatesV1],
+    ) -> Result<Vec<u8>> {
+        self.encode_epoch_snapshot(coordinates)
+    }
+
     fn encode_epoch_snapshot(
         &self,
         coordinates: &[EpochApplicationCoordinatesV1],

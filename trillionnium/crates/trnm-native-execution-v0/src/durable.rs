@@ -59,13 +59,14 @@ use crate::{
 #[path = "epoch_durable.rs"]
 mod epoch_durable;
 pub use epoch_durable::{
-    CommittedNativeEpochExecutionV1, ConfirmedNativeReplayAnchorV1, ConfirmedNativeReplayBaseV1,
-    ConfirmedPreparedNativeEpochExecutionV1, EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1,
-    EpochEdgePhaseV1, FinalizedNativeEpochApplicationReadV1,
-    LaterEpochApplicationEdgeRequirementsV1, LaterEpochApplicationEdgeV1,
-    LaterEpochCheckpointContextV1, NativeEpochFinalityPathV1, NativeEpochFinalityStepV1,
-    NativeHistoricalRecordV1, NativeHistoricalReplayV1, PreparedNativeEpochExecutionV1,
-    PreparedNativeReplayBaseV1,
+    CommittedNativeEpochExecutionV1, CommittedNativeReplayExecutionV1,
+    ConfirmedNativeReplayAnchorV1, ConfirmedNativeReplayBaseV1,
+    ConfirmedPreparedNativeEpochExecutionV1, ConfirmedPreparedNativeReplayExecutionV1,
+    EpochEdgeHistoryEntryV1, EpochEdgeHistoryV1, EpochEdgePhaseV1,
+    FinalizedNativeEpochApplicationReadV1, LaterEpochApplicationEdgeRequirementsV1,
+    LaterEpochApplicationEdgeV1, LaterEpochCheckpointContextV1, NativeEpochFinalityPathV1,
+    NativeEpochFinalityStepV1, NativeHistoricalRecordV1, NativeHistoricalReplayV1,
+    PreparedNativeEpochExecutionV1, PreparedNativeReplayBaseV1,
 };
 
 #[path = "incremental_owner_v1.rs"]
@@ -1581,7 +1582,7 @@ impl DurableNativeApplicationV0 {
         Ok(guard)
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, feature = "test-fixtures"))]
     pub(crate) fn legacy_preparation_lock_held_for_test_v1(&self) -> bool {
         matches!(
             self.operation_lock.try_lock(),
