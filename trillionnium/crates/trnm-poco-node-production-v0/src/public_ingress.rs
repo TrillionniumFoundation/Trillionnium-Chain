@@ -140,6 +140,10 @@ pub enum PublicTxIngressErrorV0<CheckTxError, AuthorizationError, JournalError> 
     Admission(NodeOwnedTxCheckTxErrorV0<CheckTxError, AuthorizationError, JournalError>),
 }
 
+/// Public admission result with the CheckTx, authorization and journal errors.
+pub type PublicTxIngressResultV0<C, A, J> =
+    Result<PublicTxAdmissionReceiptV0, PublicTxIngressErrorV0<C, A, J>>;
+
 impl<C, A, J> fmt::Display for PublicTxIngressErrorV0<C, A, J>
 where
     C: fmt::Display,
@@ -216,8 +220,7 @@ where
     pub fn submit(
         &mut self,
         request: PublicTxIngressRequestV0,
-    ) -> Result<PublicTxAdmissionReceiptV0, PublicTxIngressErrorV0<A::Error, V::Error, J::Error>>
-    {
+    ) -> PublicTxIngressResultV0<A::Error, V::Error, J::Error> {
         let (request_id, intent) = request.into_parts();
         if intent.chain_id != self.adapter.chain_id() {
             return Err(PublicTxIngressErrorV0::ChainMismatch);

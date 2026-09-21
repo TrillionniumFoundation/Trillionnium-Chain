@@ -52,6 +52,10 @@ pub enum NodeOwnedTxCheckTxErrorV0<CheckTxError, AuthorizationError, JournalErro
     Admission(TxAdmissionErrorV0<AuthorizationError, JournalError>),
 }
 
+/// Result of CheckTx followed by durable admission, preserving each owner error.
+pub type NodeOwnedTxCheckTxResultV0<C, A, J> =
+    Result<TxAdmissionReceiptV0, NodeOwnedTxCheckTxErrorV0<C, A, J>>;
+
 impl<C, A, J> std::fmt::Display for NodeOwnedTxCheckTxErrorV0<C, A, J>
 where
     C: std::fmt::Display,
@@ -377,7 +381,7 @@ where
         &mut self,
         check_tx: &mut A,
         intent: TxIntentV0,
-    ) -> Result<TxAdmissionReceiptV0, NodeOwnedTxCheckTxErrorV0<A::Error, V::Error, J::Error>>
+    ) -> NodeOwnedTxCheckTxResultV0<A::Error, V::Error, J::Error>
     where
         A: NodeOwnedTxCheckTxV0,
     {
