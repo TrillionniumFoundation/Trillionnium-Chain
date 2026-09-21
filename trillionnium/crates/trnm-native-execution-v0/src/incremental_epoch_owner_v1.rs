@@ -12,6 +12,8 @@ pub(in crate::durable) const SCHEMA_VERSION: u64 = 6;
 mod commit;
 #[path = "incremental_epoch_descendant_v1.rs"]
 mod descendant;
+#[path = "incremental_epoch_owner_v2.rs"]
+pub(in crate::durable) mod multiple;
 pub use commit::CommittedNativeIncrementalEpochExecutionV1;
 pub use descendant::{
     ComputedIncrementalEpochSelectionV1, IncrementalEpochParentV1,
@@ -85,6 +87,47 @@ fn audit_owner(
     config: &NativeApplicationConfigV0,
     metadata: &MetadataV0,
 ) -> Result<(Owner, EdgeRow)> {
+    let (base, edge, _) = audit_owner_with_policy(
+        tx,
+        config,
+        metadata,
+        OwnerAuditPolicy::Legacy,
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    )?;
+    Ok((base, edge))
+}
+#[derive(Clone, Copy)]
+enum OwnerAuditPolicy {
+    Legacy,
+    MigrationSource,
+    MigrationProjection,
+}
+
+// Only the private schema11 migration auditor uses the immutable schema7
+// projection policy. Legacy entry points continue to require physical 6/7.
+fn audit_owner_with_policy(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    metadata: &MetadataV0,
+    policy: OwnerAuditPolicy,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<(
+    Owner,
+    EdgeRow,
+    crate::epoch_recovery::AuditedEpochEvidenceV1,
+)> {
+    let migration_projection = matches!(policy, OwnerAuditPolicy::MigrationProjection);
+    let shared_budget = !matches!(policy, OwnerAuditPolicy::Legacy);
+    let schema = epoch_durable::schema_version(tx)?;
+    ensure!(
+        match policy {
+            OwnerAuditPolicy::Legacy => matches!(schema, SCHEMA_VERSION | COMMIT_SCHEMA_VERSION),
+            OwnerAuditPolicy::MigrationSource => schema == COMMIT_SCHEMA_VERSION,
+            OwnerAuditPolicy::MigrationProjection => schema == multiple::SCHEMA_VERSION,
+        },
+        "incremental epoch audit version"
+    );
+    let committed_schema = schema == COMMIT_SCHEMA_VERSION || migration_projection;
     let base = load_owner(tx)?;
     let edge = edge_row(tx)?;
     ensure!(
@@ -115,11 +158,7 @@ fn audit_owner(
         "schema6 committed storage cut"
     );
     let evidence = EpochRecoveryEvidenceV1::decode(&edge.evidence)?;
-    let audit = evidence.audit_strict(
-        &config.validator_set,
-        &config.parameters,
-        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )?;
+    let audit = evidence.audit_strict(&config.validator_set, &config.parameters, budget)?;
     let checkpoint = audit
         .activation
         .old_checkpoint_finality()
@@ -144,11 +183,12 @@ fn audit_owner(
     );
     let committed = commit::load(tx)?;
     if let Some(record) = &committed {
-        ensure!(
-            epoch_durable::schema_version(tx)? == COMMIT_SCHEMA_VERSION,
-            "epoch commit in prepare-only schema"
-        );
-        let p = commit::audit(tx, config, &edge, &base.source, &audit, record)?;
+        ensure!(committed_schema, "epoch commit in prepare-only schema");
+        let p = if shared_budget {
+            commit::audit_with_budget(tx, config, &edge, &base.source, &audit, record, budget)?
+        } else {
+            commit::audit(tx, config, &edge, &base.source, &audit, record)?
+        };
         if metadata.head == record.head {
             ensure!(
                 base.commit_sequence == record.sequence
@@ -157,7 +197,18 @@ fn audit_owner(
             );
         } else {
             descendant::audit_committed_head(
-                tx, config, &evidence, &edge, &base, metadata, record,
+                tx,
+                config,
+                &evidence,
+                &edge,
+                &base,
+                metadata,
+                record,
+                if shared_budget {
+                    Some(&mut *budget)
+                } else {
+                    None
+                },
             )?;
         }
     } else {
@@ -176,10 +227,15 @@ fn audit_owner(
         r.get(0)
     })?;
     ensure!(
-        ordinary == 0 || epoch_durable::schema_version(tx)? == COMMIT_SCHEMA_VERSION,
+        ordinary == 0 || committed_schema,
         "schema6 ordinary migration history unsupported"
     );
-    let ordinary_max = descendant::audit_inventory(tx, metadata.durable_sequence, &base)?;
+    let ordinary_max = descendant::audit_inventory_with_policy(
+        tx,
+        metadata.durable_sequence,
+        &base,
+        committed_schema,
+    )?;
     let (count, bytes, maximum): (u64,u64,Option<Vec<u8>>) = tx.query_row("SELECT count(*),coalesce(sum(length(artifact)+length(header)+length(replay_delta)+length(lifecycle)),0),max(sequence) FROM native_incremental_epoch_p_v1", [], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?;
     ensure!(
         count <= MAX_PREPARED as u64
@@ -194,7 +250,7 @@ fn audit_owner(
         "schema6 P inventory/sequence"
     );
     let _ = ReplayReader::new(tx, Some(base.replay), &[])?;
-    Ok((base, edge))
+    Ok((base, edge, audit))
 }
 pub(in crate::durable) fn validate_metadata(
     c: &Connection,

@@ -2437,7 +2437,7 @@ fn decode_epoch_storage_edge_v1(
     edge.validate()?;
     Ok(edge)
 }
-fn require_absent_incremental_seals_v1(
+pub(crate) fn require_absent_incremental_seals_v1(
     tx: &Transaction<'_>,
     edge: crate::epoch_edge::EpochApplicationCoordinatesV1,
 ) -> Result<()> {

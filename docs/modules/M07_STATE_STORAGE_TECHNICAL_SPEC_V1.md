@@ -890,21 +890,26 @@ multi-epoch import path.
 
 ### Required schema11 incremental multiple-edge owner
 
-This is the required next versioned contract, not implemented schema7 behavior.
-Primary M07; M06 produces checkpoint execution, M08 consumes finality and owns
-recovery, and M13 remains a separate consumer. Schema11 is reserved for this
+The migration-only slice is implemented: explicit `7→11`, byte-preserving
+original edge/proof/P-context projection, generation-zero closed cold audit,
+metadata CAS, fsync/readback and an immutable migration pin. It preserves sparse
+state/replay and imports no new authority. The initial schema11 owner rejects
+any later generation or additional edge; checkpoint preparation, pre-handoff
+commit, attachment and repeated execution below remain required implementation.
+The old schema5/6/7 writers retain their physical version fences. Primary M07;
+M06 produces checkpoint execution, M08 consumes finality and owns recovery, and M13 remains a separate consumer. Schema11 is reserved for this
 incremental owner; schema8/9/10 belong to the full-snapshot owner. The first
 vertical acceptance path is real incremental C8→C11→C18→C21→C22, with C15 as
 the actual second cutoff. The feature remains `incremental-epoch-candidate`,
 default closed. No schema11 file is accepted by a legacy schema5/6/7 writer.
 
-**M07-INCREMENTAL-PREHANDOFF-V1** below revises this still-unimplemented
-schema11 contract: a checkpoint commits before either handoff role signs, and
+**M07-INCREMENTAL-PREHANDOFF-V1** below defines the required schema11
+checkpoint contract: a checkpoint commits before either handoff role signs, and
 the complete joint kernel attaches separately. It supersedes the earlier planned
-five-table, complete-certificate-only checkpoint path. No schema11 database or
-consumer has been implemented; this correction does not introduce another
-physical version. Actual native schemas5/6/7, full-snapshot schemas10/13 and
-M03's unrelated signer Journal11 retain their existing inventories and meaning.
+five-table, complete-certificate-only checkpoint path. The implemented initial
+schema11 database contains all six tables, with the pre-handoff table empty;
+it has no repeated-epoch writer yet. This contract uses one physical version.
+Actual native schemas5/6/7, full-snapshot schemas10/13 and M03's unrelated signer Journal11 retain their existing inventories and meaning.
 
 The current fences are material. `audit_owner` binds the singleton edge to the
 immutable schema5 source C8 and audits its old trust from genesis configuration.
@@ -1006,6 +1011,30 @@ fields include a presence byte. The owner checksum also
 binds the existing base owner's current checksum and metadata Head104. Proof
 digests are SHA256 of the exact retained bytes. A locally recomputed checksum
 never substitutes for the strict signature, parent, prefix and storage joins.
+
+The migration implementation frames INTEGER fields as signed eight-byte
+big-endian values and nullable fields as a one-byte presence flag followed by
+the encoded value when present. Empty Prefix is four zero bytes. The kind0
+context frames store ID, source anchor, checkpoint P digest, exact original
+checkpoint Head104 and commit sequence, empty Prefix, and SHA256 of the original
+old set, old parameters and cutoff finality. The generation-zero cold auditor
+re-derives the complete exact projection from the strictly audited retained
+schema7 records and compares SQL types and every field, including original proof
+bytes, without allocating copies of untrusted v2 BLOBs. It requires one consumed
+edge, exact native/ni prepared inventory, complete actual P/replay ancestry,
+no physical seal roots/values/nodes/pins and no post-migration rows. All original SQL rows except metadata's version remain
+unchanged. Legacy proof verification is reused with one protocol work budget
+for this bounded migration audit; later prefix-once multiple-edge verification
+is still required before the repeated writer can be enabled.
+
+The actual `schema7_to_schema11_*` tests use signed, nonempty sparse C11→C15
+execution and retained prepared C16/C17. They check all original SQL values and
+proof bytes, source refusal without writes, rehashed wrong-proof substitutions,
+legacy version fences, cold recovery and exact retry with source/current/foreign
+pins. Three real migration SIGKILL cuts cover before SQLite commit, after commit
+and after fsync; recovery yields a complete schema7 source or complete schema11
+projection. These migration cuts are separate from the nine later checkpoint,
+attachment and first-new cuts required below.
 
 The only initial migration is explicit `7→11`, under the native operation lock
 and one Immediate transaction after a complete schema7 audit. It requires the
@@ -1265,8 +1294,8 @@ work, wrong cutoff/new selection, foreign owner, stale generation, path/sidecar
 replacement, reordered/missing prefix and proof substitutions with recomputed
 local hashes. Require all nine real SIGKILL cuts above, exact retries/cold byte
 equality, unchanged schema7 regressions and default-stack acceptance. These are
-acceptance requirements; neither schema11 nor this multi-epoch campaign is
-implemented or production-enabled by this documentation revision.
+acceptance requirements. The initial schema11 migration/cold-audit slice does
+not satisfy this multi-epoch campaign and is not production-enabled.
 
 #### Bounded recovery, replay, retry and retention
 

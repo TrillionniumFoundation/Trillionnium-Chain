@@ -110,6 +110,26 @@ pub(super) fn audit(
     evidence: &crate::epoch_recovery::AuditedEpochEvidenceV1,
     record: &Commit,
 ) -> Result<EpochP> {
+    audit_with_budget(
+        tx,
+        config,
+        edge,
+        parent,
+        evidence,
+        record,
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+}
+#[allow(clippy::too_many_arguments)]
+pub(super) fn audit_with_budget(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    edge: &EdgeRow,
+    parent: &ApplicationHeadV0,
+    evidence: &crate::epoch_recovery::AuditedEpochEvidenceV1,
+    record: &Commit,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<EpochP> {
     let p = load_epoch_p(tx, record.block)?.context("committed epoch P missing")?;
     p.validate_context(
         config,
@@ -159,13 +179,7 @@ pub(super) fn audit(
             && p.edge == edge.binding,
         "epoch committed record binding"
     );
-    verify_proof(
-        config,
-        edge,
-        &p,
-        &record.proof,
-        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )?;
+    verify_proof(config, edge, &p, &record.proof, budget)?;
     let (phase, block): (u8, Vec<u8>) = tx.query_row(
         "SELECT phase,committed_block FROM ni_epoch_edge WHERE strict_binding=?1",
         [edge.binding.as_slice()],
@@ -678,6 +692,7 @@ mod tests {
         (app, edge, p, proof, descendants)
     }
     include!("incremental_epoch_selection_tests_v1.inc");
+    include!("incremental_epoch_migration_tests_v2.inc");
 
     #[test]
     fn schema7_first_new_strict_commit_and_restart_bind_actual_native_cut() {

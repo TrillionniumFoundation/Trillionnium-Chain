@@ -1531,6 +1531,16 @@ impl DurableNativeApplicationV0 {
                             )?);
                     }
                     #[cfg(feature = "incremental-epoch-candidate")]
+                    if epoch_durable::schema_version(&connection)? == 11 {
+                        incremental_migration_pin = Some(
+                            incremental_owner_v1::epoch_candidate_v1::multiple::audit_anchor(
+                                &connection,
+                                &config,
+                                &metadata,
+                            )?,
+                        );
+                    }
+                    #[cfg(feature = "incremental-epoch-candidate")]
                     if matches!(epoch_durable::schema_version(&connection)?, 6 | 7) {
                         incremental_migration_pin =
                             Some(incremental_owner_v1::epoch_candidate_v1::audit_anchor(
@@ -3445,6 +3455,13 @@ fn validate_metadata_with_read_policy_v1(
 ) -> DurableResult<Vec<ValidatedPInventoryEntryV0>> {
     let schema = policy.schema(connection)?;
     #[cfg(feature = "incremental-epoch-candidate")]
+    if schema == 11 {
+        incremental_owner_v1::epoch_candidate_v1::multiple::audit_anchor(
+            connection, config, metadata,
+        )?;
+        return Ok(Vec::new());
+    }
+    #[cfg(feature = "incremental-epoch-candidate")]
     if matches!(schema, 6 | 7) {
         return incremental_owner_v1::epoch_candidate_v1::validate_metadata(
             connection, config, metadata,
@@ -4171,7 +4188,8 @@ fn load_metadata_v0(
             | incremental_owner_v1::SCHEMA_VERSION
             | 6
             | 7
-    ) || (matches!(decode_u64_v0(&row.0, "metadata.schema")?, 6 | 7)
+            | 11
+    ) || (matches!(decode_u64_v0(&row.0, "metadata.schema")?, 6 | 7 | 11)
         && !cfg!(feature = "incremental-epoch-candidate"))
         || array32_v0(&row.1, "metadata.store_id")? != config.store_id
         || row.2 != config.chain_id
@@ -4512,6 +4530,10 @@ fn initialize_schema_v0(connection: &Connection) -> DurableResult<()> {
 }
 
 fn verify_schema_v0(connection: &Connection) -> DurableResult<()> {
+    #[cfg(feature = "incremental-epoch-candidate")]
+    if metadata_exists_v0(connection)? && epoch_durable::schema_version(connection)? == 11 {
+        return incremental_owner_v1::epoch_candidate_v1::multiple::verify_schema(connection);
+    }
     #[cfg(feature = "incremental-epoch-candidate")]
     if metadata_exists_v0(connection)?
         && matches!(epoch_durable::schema_version(connection)?, 6 | 7)

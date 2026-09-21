@@ -110,7 +110,9 @@ impl IncrementalEpochParentV1<'_> {
         }
     }
 }
-fn context(evidence: &EpochRecoveryEvidenceV1) -> Result<(ValidatorSet, ConsensusParametersV0)> {
+pub(super) fn context(
+    evidence: &EpochRecoveryEvidenceV1,
+) -> Result<(ValidatorSet, ConsensusParametersV0)> {
     let set = trnm_consensus_types::decode_validator_set_v0_exact(&evidence.new_set)
         .map_err(|e| anyhow::anyhow!("descendant set: {e:?}"))?;
     let params =
@@ -118,7 +120,7 @@ fn context(evidence: &EpochRecoveryEvidenceV1) -> Result<(ValidatorSet, Consensu
             .map_err(|e| anyhow::anyhow!("descendant parameters: {e:?}"))?;
     Ok((set, params))
 }
-fn validate_p(
+pub(super) fn validate_p(
     p: &P,
     config: &NativeApplicationConfigV0,
     set: &ValidatorSet,
@@ -184,12 +186,25 @@ pub(super) fn audit_inventory(
     durable_sequence: u64,
     base: &Owner,
 ) -> Result<u64> {
+    audit_inventory_with_policy(
+        tx,
+        durable_sequence,
+        base,
+        epoch_durable::schema_version(tx)? == COMMIT_SCHEMA_VERSION,
+    )
+}
+pub(super) fn audit_inventory_with_policy(
+    tx: &rusqlite::Transaction<'_>,
+    durable_sequence: u64,
+    base: &Owner,
+    include_commits: bool,
+) -> Result<u64> {
     let (count,bytes,maxp,maxc):(u64,u64,Option<Vec<u8>>,Option<Vec<u8>>)=tx.query_row("SELECT count(*),coalesce(sum(length(artifact)+length(header)+length(replay_delta)+length(lifecycle)),0),max(sequence),max(commit_sequence) FROM native_incremental_p_v1",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?)))?;
     ensure!(
         count <= MAX_PREPARED as u64 && bytes <= MAX_P_BYTES as u64,
         "epoch descendant inventory capacity"
     );
-    if epoch_durable::schema_version(tx)? == COMMIT_SCHEMA_VERSION {
+    if include_commits {
         let(proofs,proof_bytes):(u64,u64)=tx.query_row("SELECT count(*),coalesce(sum(length(proof)),0) FROM native_incremental_epoch_descendant_commit_v1",[],|r|Ok((r.get(0)?,r.get(1)?)))?;
         let committed: u64 = tx.query_row(
             "SELECT count(*) FROM native_incremental_p_v1 WHERE status=1",
@@ -209,6 +224,7 @@ pub(super) fn audit_inventory(
     ensure!(max <= durable_sequence, "epoch descendant future sequence");
     Ok(max)
 }
+#[allow(clippy::too_many_arguments)]
 pub(super) fn audit_committed_head(
     tx: &rusqlite::Transaction<'_>,
     config: &NativeApplicationConfigV0,
@@ -217,6 +233,7 @@ pub(super) fn audit_committed_head(
     base: &Owner,
     m: &MetadataV0,
     first: &commit::Commit,
+    mut budget: Option<&mut trnm_consensus_types::Cev0AdmissionBudgetV0>,
 ) -> Result<()> {
     let p =
         load_p(tx, *m.head.block_id().as_bytes())?.context("epoch committed descendant missing")?;
@@ -232,7 +249,11 @@ pub(super) fn audit_committed_head(
     );
     // Prove the retained committed ancestry, bounded by one protocol epoch and
     // the explicit local row limit; never infer descent from height alone.
-    audit_commit(tx, config, edge_row, &p, first, &set, &params)?;
+    if let Some(shared) = budget.as_deref_mut() {
+        audit_commit_with_budget(tx, config, edge_row, &p, first, &set, &params, shared)?;
+    } else {
+        audit_commit(tx, config, edge_row, &p, first, &set, &params)?;
+    }
     let mut current = p;
     let mut depth = 0;
     while current.parent != first.head {
@@ -250,7 +271,13 @@ pub(super) fn audit_committed_head(
                 && previous.commit_sequence < current.commit_sequence,
             "committed ancestor splice"
         );
-        audit_commit(tx, config, edge_row, &previous, first, &set, &params)?;
+        if let Some(shared) = budget.as_deref_mut() {
+            audit_commit_with_budget(
+                tx, config, edge_row, &previous, first, &set, &params, shared,
+            )?;
+        } else {
+            audit_commit(tx, config, edge_row, &previous, first, &set, &params)?;
+        }
         current = previous;
     }
     let count: u64 = tx.query_row(
@@ -827,6 +854,28 @@ fn audit_commit(
     set: &ValidatorSet,
     params: &ConsensusParametersV0,
 ) -> Result<()> {
+    audit_commit_with_budget(
+        tx,
+        config,
+        edge,
+        p,
+        first,
+        set,
+        params,
+        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+}
+#[allow(clippy::too_many_arguments)]
+fn audit_commit_with_budget(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    edge: &EdgeRow,
+    p: &P,
+    first: &commit::Commit,
+    set: &ValidatorSet,
+    params: &ConsensusParametersV0,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<()> {
     validate_storage_p(tx, p)?;
     let executed = p.executed()?;
     let keys: Vec<_> = executed
@@ -860,15 +909,7 @@ fn audit_commit(
             && r.checksum == commit_digest(config, edge, &r),
         "descendant commit record binding"
     );
-    verify_descendant_proof(
-        tx,
-        p,
-        first,
-        set,
-        params,
-        &r.proof,
-        &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
-    )
+    verify_descendant_proof(tx, p, first, set, params, &r.proof, budget)
 }
 impl DurableNativeApplicationV0 {
     pub fn commit_incremental_epoch_descendant_finality_bytes_v1(
