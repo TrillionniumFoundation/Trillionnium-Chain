@@ -18,6 +18,9 @@ pub(super) const PRE_HANDOFF_SCHEMA_VERSION: u64 = 13;
 #[path = "later_epoch_pre_handoff_v1.rs"]
 mod pre_handoff;
 pub use pre_handoff::CommittedLaterEpochPreHandoffV1;
+#[path = "later_epoch_selection_v1.rs"]
+mod later_selection;
+pub use later_selection::ComputedLaterEpochSelectionV1;
 pub(super) const PRE_HANDOFF_SCHEMA: (&str, &str) = pre_handoff::SCHEMA;
 #[path = "later_epoch_descendant_finality_v1.rs"]
 mod descendant_finality;
@@ -2683,13 +2686,21 @@ impl DurableNativeApplicationV0 {
                 ))
             },
         )?;
+        // Preparing genuine descendants advances the global operation counter
+        // without changing the committed epoch context. Bind its sequence to
+        // the actual committed head P, never to the latest speculative append.
+        let committed_head = load_p(&connection, metadata.head.block_id().as_bytes())?
+            .context("later checkpoint context committed head P missing")?;
         ensure!(
-            row.0 == self.config.store_id
+            committed_head.status == 1
+                && committed_head.target_head()? == metadata.head
+                && committed_head.commit_sequence == Some(row.5)
+                && row.5 <= metadata.durable_sequence
+                && row.0 == self.config.store_id
                 && row.1 == *metadata.head.block_id().as_bytes()
                 && row.2 == *metadata.head.state_root().as_bytes()
                 && row.3 == *metadata.head.commit_id().as_bytes()
-                && row.4 == metadata.head.height().get()
-                && row.5 == metadata.durable_sequence,
+                && row.4 == metadata.head.height().get(),
             "later checkpoint context head differs from metadata"
         );
         let lineage = decode_lineage(&row.8)?;

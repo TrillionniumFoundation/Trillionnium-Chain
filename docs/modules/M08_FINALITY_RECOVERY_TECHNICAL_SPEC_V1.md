@@ -5,6 +5,34 @@ multiple-epoch/default-node integration pending; production activation not grant
 
 Primary module: M08. Producers: M02/M03/M06/M07. Consumers: M02/M03/M13/M14/M15.
 
+## Read-only later cutoff selection (M08-LATER-SELECTION-V1)
+
+`compute_later_epoch_selection_v1` accepts only the cutoff height derived from
+the owner's current authenticated successor-epoch geometry, with that cutoff
+already committed and its checkpoint still ahead of the native head. It reads
+the exact committed ordinary P, verifies its complete native state, lineage,
+active validator configuration and cutoff root, then runs the existing
+deterministic candidate-selection computation. Fresh active-context reads
+before and after the calculation must agree with the cutoff read's confirmed
+head. A historic cutoff from another active epoch, an uncommitted height,
+changed context or corrupt source rejects.
+
+The active context's sequence identifies the committed head P, not the global
+durable operation counter: genuine speculative P appends may advance the latter
+without advancing the committed head. The context must match the exact committed
+head row and its commit sequence, which cannot exceed the global counter.
+
+The private-field `ComputedLaterEpochSelectionV1` exposes only inert values:
+the commitment, new validator set/parameters, exact cutoff head, P digest and
+persist/commit sequences, plus the observed active context digest. It performs
+no database write and carries no Core permit, signer custody, preparation,
+finality or activation authority. M15 compares the expected commitment to its
+private Core geometry before executing a checkpoint; M08 checkpoint validation
+independently derives and checks the same selection again. Previously returned
+values do not authorize work after an owner or epoch change. Tests must derive
+from genuine native cutoff state, prove unchanged durable rows on success and
+failure, and reject wrong heights, old-epoch history and corrupt cutoff state.
+
 ## Later checkpoint before joint signatures (M08-LATER-PREHANDOFF-V1)
 
 The later checkpoint must commit before either handoff signer consumes its
@@ -1592,7 +1620,7 @@ fsync; restart sees only H17 with prepared C18 or fully committed C18, and
 recovery retains the exact commit sequence. These are local process-crash
 results, not physical power-loss or repeated multi-epoch acceptance.
 
-### Schema10 retained finality path export contract
+### Schema10/13 retained finality path export contract
 
 The read-only producer is
 `DurableNativeApplicationV0::export_epoch_finality_path_v1(anchor_block, target_block)`.
@@ -1601,8 +1629,11 @@ must precede the target, and the target must belong to the currently audited
 committed chain. The owner holds its operation/namespace guard, rejects SQLite
 sidecars, and audits schema, metadata, complete P inventory and both proof
 ledgers through one immutable connection. Export changes no sequence, head,
-edge phase, preparation, signer state or database schema. Schema10 is required;
-missing historical proofs cannot be manufactured from execution artifacts.
+edge phase, preparation, signer state or database schema. Only explicit schema10
+and schema13 are accepted, and the carrier reports the actual source version.
+Schema13 uses the same retained complete-proof ledgers: an unattached pre-handoff
+receipt supplies no joint proof. Missing historical proofs cannot be manufactured
+from execution artifacts.
 
 `NativeEpochFinalityPathV1` is an inert public data carrier, with canonical
 anchor/target headers, target schema version, P digest, commit sequence and

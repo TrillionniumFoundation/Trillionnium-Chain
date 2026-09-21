@@ -460,6 +460,7 @@ mod tests {
     include!("later_epoch_repeated_tests.rs");
     include!("later_epoch_contextual_tests.rs");
     include!("later_epoch_pre_handoff_tests.rs");
+    include!("later_epoch_selection_tests_v1.rs");
 
     fn key(index: usize) -> SigningKey {
         SigningKey::from_bytes(&[20 + index as u8; 32])
