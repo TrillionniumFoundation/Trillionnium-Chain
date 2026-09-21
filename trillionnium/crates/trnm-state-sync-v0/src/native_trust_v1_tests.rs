@@ -620,6 +620,176 @@ fn durable_session_fixture() -> (
 }
 
 #[test]
+fn native_application_binding_requires_matching_schema_and_nonzero_version() {
+    let (path, manifest, application, _) = durable_session_fixture();
+    let session =
+        NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application).unwrap();
+    assert_eq!(session.binding().schema_digest, manifest.schema_digest);
+    // M13's general application version is independently supplied; only a
+    // concrete native profile may require it to equal the terminal height.
+    let other_version = NativeApplicationCheckpointV1 {
+        application_version: manifest.height + 1,
+        ..application
+    };
+    let other =
+        NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), other_version).unwrap();
+    assert_ne!(
+        other.binding().binding_digest,
+        session.binding().binding_digest
+    );
+    assert_eq!(other.binding().application_version, manifest.height + 1);
+
+    for invalid in [
+        NativeApplicationCheckpointV1 {
+            schema_digest: Digest32V0([6; 32]),
+            ..application
+        },
+        NativeApplicationCheckpointV1 {
+            schema_digest: Digest32V0([0; 32]),
+            ..application
+        },
+        NativeApplicationCheckpointV1 {
+            application_version: 0,
+            ..application
+        },
+    ] {
+        assert!(matches!(
+            NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), invalid),
+            Err(StateSyncErrorV0::NativeApplicationBindingMismatch)
+        ));
+    }
+    let mut zero_schema_manifest = manifest;
+    zero_schema_manifest.schema_digest = Digest32V0([0; 32]);
+    zero_schema_manifest.manifest_digest = zero_schema_manifest.canonical_digest();
+    assert!(matches!(
+        NativeStateSyncSessionV1::begin(
+            path,
+            zero_schema_manifest,
+            NativeApplicationCheckpointV1 {
+                schema_digest: Digest32V0([0; 32]),
+                ..application
+            }
+        ),
+        Err(StateSyncErrorV0::InvalidManifest)
+    ));
+}
+
+#[test]
+fn native_sqlite_resume_and_append_screen_exact_manifest_before_materialization() {
+    let (path, original_manifest, application, _) = durable_session_fixture();
+    for (case, total_bytes, rows) in [
+        ("count", 4, vec![(0, vec![7]), (1, vec![8]), (2, vec![9])]),
+        ("index", 4, vec![(2, vec![7])]),
+        ("chunk", 4, vec![(0, vec![7, 8, 9])]),
+        ("total", 3, vec![(0, vec![7, 8]), (1, vec![9, 10])]),
+    ] {
+        let mut manifest = original_manifest.clone();
+        manifest.maximum_chunk_bytes = 2;
+        manifest.total_bytes = total_bytes;
+        manifest.manifest_digest = manifest.canonical_digest();
+        let mut session =
+            NativeStateSyncSessionV1::begin(path.clone(), manifest.clone(), application).unwrap();
+        let before = session.readback();
+        let store_path = std::env::temp_dir().join(format!(
+            "trnm-native-sync-manifest-{case}-{}-{}.sqlite",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &session).unwrap();
+        let binding = manifest.chunk_binding_digest();
+        let connection = rusqlite::Connection::open(&store_path).unwrap();
+        for (index, bytes) in &rows {
+            let digest = SnapshotChunkV0::canonical_digest(binding, *index, bytes);
+            connection
+                .execute(
+                    "INSERT INTO native_state_sync_chunks_v1(chunk_index,manifest_digest,bytes,chunk_digest) VALUES(?1,?2,?3,?4)",
+                    params![i64::from(*index), &binding.0[..], bytes, &digest.0[..]],
+                )
+                .unwrap();
+        }
+        // Every forged row fits the generic protocol bounds and has a valid
+        // digest. The stale empty readback would fail only after loading all
+        // bytes; exact error assertions below require the earlier SQL screen.
+        assert_eq!(
+            read_chunks_v1(&connection, binding).unwrap().len(),
+            rows.len()
+        );
+        drop(connection);
+        let next = SnapshotChunkV0 {
+            manifest_digest: binding,
+            index: 0,
+            bytes: vec![7],
+            chunk_digest: SnapshotChunkV0::canonical_digest(binding, 0, &[7]),
+        };
+        for result in [
+            store
+                .resume_existing_v1(path.clone(), manifest.clone(), application)
+                .map(|_| ()),
+            SqliteNativeStateSyncStoreV1::resume_from_path_v1(
+                &store_path,
+                path.clone(),
+                manifest.clone(),
+                application,
+            )
+            .map(|_| ()),
+            store.append_chunk_v1(&mut session, next),
+        ] {
+            let error = result.expect_err("manifest bound must reject before readback");
+            match case {
+                "count" | "total" => assert!(matches!(
+                    error,
+                    NativeStateSyncStoreErrorV1::Protocol(StateSyncErrorV0::SnapshotTooLarge)
+                )),
+                "index" => assert!(matches!(
+                    error,
+                    NativeStateSyncStoreErrorV1::StoreSchemaMismatch
+                )),
+                "chunk" => assert!(matches!(
+                    error,
+                    NativeStateSyncStoreErrorV1::Protocol(StateSyncErrorV0::InvalidChunk)
+                )),
+                _ => unreachable!(),
+            }
+        }
+        assert_eq!(session.readback(), before);
+
+        // Even these invalid chunk rows must not be read when the freshly
+        // supplied application version belongs to another durable binding.
+        let wrong_application = NativeApplicationCheckpointV1 {
+            application_version: application.application_version + 1,
+            ..application
+        };
+        assert!(matches!(
+            SqliteNativeStateSyncStoreV1::resume_from_path_v1(
+                &store_path,
+                path.clone(),
+                manifest.clone(),
+                wrong_application,
+            ),
+            Err(NativeStateSyncStoreErrorV1::BindingMismatch)
+        ));
+        let mut wrong_session =
+            NativeStateSyncSessionV1::begin(path.clone(), manifest, wrong_application).unwrap();
+        let wrong_next = SnapshotChunkV0 {
+            manifest_digest: binding,
+            index: 0,
+            bytes: vec![7],
+            chunk_digest: SnapshotChunkV0::canonical_digest(binding, 0, &[7]),
+        };
+        assert!(matches!(
+            store.append_chunk_v1(&mut wrong_session, wrong_next),
+            Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch)
+        ));
+        let _ = std::fs::remove_file(&store_path);
+        let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
+        let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));
+    }
+}
+
+#[test]
 fn native_sqlite_session_survives_cross_process_restart_and_rejects_readback_tamper() {
     let (path, manifest, application, chunks) = durable_session_fixture();
     let store_path = std::env::temp_dir().join(format!(
@@ -805,11 +975,11 @@ fn native_sqlite_initialize_persists_prefilled_session_chunks() {
     let store = SqliteNativeStateSyncStoreV1::initialize(&store_path, &session).unwrap();
     assert_eq!(store.readback_v1().unwrap().received_chunk_count, 1);
     assert_eq!(store.retained_chunks_v1().unwrap(), vec![chunks[0].clone()]);
-    let reopened = SqliteNativeStateSyncStoreV1::open_existing(&store_path).unwrap();
-    let resumed = reopened
-        .resume_existing_v1(path, manifest, application)
-        .unwrap();
+    let (reopened, resumed) =
+        SqliteNativeStateSyncStoreV1::resume_from_path_v1(&store_path, path, manifest, application)
+            .unwrap();
     assert_eq!(resumed.readback(), session.readback());
+    assert_eq!(reopened.readback_v1().unwrap(), session.readback());
     let _ = std::fs::remove_file(&store_path);
     let _ = std::fs::remove_file(store_path.with_extension("sqlite-wal"));
     let _ = std::fs::remove_file(store_path.with_extension("sqlite-shm"));

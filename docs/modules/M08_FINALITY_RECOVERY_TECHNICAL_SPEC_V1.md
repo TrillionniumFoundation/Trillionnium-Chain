@@ -1198,3 +1198,11 @@ returns the unchanged Ready/VoteSigned/TimeoutSigned owner. It does not force a
 prepared K to match an older high QC, and it does not clear the persisted
 prepared owner. Any certificate that changes Core still goes through the full
 preflight, checkpoint CAS, and high-QC path audit above.
+
+### Current native live export boundary
+
+M08 implements the read-only schema10 owner operation specified by
+**M06-M13-LIVE-V1** in [M13](M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md).
+The export is tied to the exact current committed head under the existing owner
+lock and one immutable transaction, and uses M06's bounded leaf codec. It emits
+no replay authority, historical sparse snapshot or installer capability.

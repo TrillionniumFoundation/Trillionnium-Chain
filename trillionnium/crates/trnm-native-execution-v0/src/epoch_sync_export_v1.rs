@@ -124,6 +124,7 @@ impl DurableNativeApplicationV0 {
         reject_sqlite_sidecars_v0(&self.path)?;
         let connection = open_immutable_connection_v0(&self.path)?;
         connection.execute_batch("BEGIN DEFERRED TRANSACTION")?;
+        live_export::screen_legacy_export_inputs(&connection)?;
         verify_schema_v0(&connection)?;
         ensure!(
             schema_version(&connection)? == LATER_SCHEMA_VERSION,
@@ -302,7 +303,7 @@ impl DurableNativeApplicationV0 {
         );
         output.steps.reverse();
         connection.execute_batch("ROLLBACK")?;
-        let after = fresh_validate_v0(&self.path, &self.config)?;
+        let after = live_export::fresh_export_metadata(&self.path, &self.config)?;
         ensure!(
             after == metadata,
             "finality export concurrent metadata change"

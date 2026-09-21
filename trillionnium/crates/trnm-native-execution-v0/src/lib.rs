@@ -54,6 +54,7 @@ mod durable;
 mod epoch_edge;
 mod epoch_recovery;
 mod later_epoch_checkpoint_bridge;
+mod native_live_v1;
 mod pcc1_finality;
 mod poco_application;
 mod poco_checkpoint;
@@ -66,6 +67,13 @@ mod poco_semantics;
 mod poco_snapshot;
 mod poco_transition;
 mod store;
+pub use native_live_v1::{
+    native_current_live_schema_digest_v1, recompute_native_current_live_v1,
+    NativeCurrentLiveEntryV1, NativeCurrentLiveExportV1, MAX_NATIVE_CURRENT_LIVE_BYTES_V1,
+    NATIVE_CURRENT_LIVE_CODEC_VERSION_V1, NATIVE_CURRENT_LIVE_MAX_CHUNKS_V1,
+    NATIVE_CURRENT_LIVE_MAX_CHUNK_BYTES_V1, NATIVE_CURRENT_LIVE_MAX_ENTRIES_V1,
+    NATIVE_CURRENT_LIVE_MAX_KEY_BYTES_V1, NATIVE_CURRENT_LIVE_MAX_VALUE_BYTES_V1,
+};
 pub use store::incremental_store_v1;
 mod validator_lifecycle;
 

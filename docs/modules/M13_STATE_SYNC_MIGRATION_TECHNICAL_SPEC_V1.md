@@ -564,6 +564,144 @@ recomputer contract. Snapshot export, generic chunk admission, native
 recomputation, durable installation, signer activation and public transport
 remain later phases and stay closed here.
 
+### Native current-live staging (M06-M13-LIVE-V1)
+
+This implemented candidate contract composes current-live native state with
+M08 retained-finality export. M06 owns the native leaf codec and root computation;
+M08 owns the read-only committed export; M15 owns composition with M13. It is
+proof-bound current-state staging only. The private sparse Borsh snapshot,
+historical roots/nodes, replay command IDs and signer nonces do not cross this
+boundary. A successful staging result grants no application owner, installation,
+execution continuation, Safety or signing authority.
+
+The neutral, untrusted bytes have this exact local codec, independent of the
+consensus CEV identifiers (all integers unsigned big-endian):
+
+```text
+ASCII "TRNM-NLIVE-V1" (13 bytes)
+codec_version: u16 = 1
+application_version: u64                 # exact terminal application height
+state_root: 32 bytes
+schema_digest: 32 bytes                 # fixed digest below
+entry_count: u32
+repeat entry_count times, strict lexicographic raw-key order:
+    key_length: u32; key: key_length bytes
+    value_length: u32; value: value_length bytes
+EOF                                    # no extra fields or trailing bytes
+```
+
+`schema_digest` is SHA-256 of the exact ASCII string
+`trnm.native-current-live.v1|TRNM-NLIVE-V1|u16be-u64be-h32-h32-u32be|u32be-key-u32be-value|jmt-sha256|authenticated-state-v4`.
+It is a fixed native codec identity, not an operator or peer-selected value.
+There is no extra projection/parameter blob: the complete validator lifecycle
+and PoCO projection already reside in the committed leaves. Active consensus
+parameters and validator set come from the independently verified M13 path;
+local P/config digests cannot supply remote authority.
+
+The first native availability profile is fixed at 256 MiB canonical bytes,
+1,000,000 entries, 64 KiB/key, 16 MiB/value, 1 MiB/transfer chunk and 256 chunks.
+These are hard upper bounds, not protocol defaults or a memory-usage claim:
+parsing, live maps and tree reconstruction also require bounded overhead.
+Empty keys/values, duplicate/non-increasing keys, wrong magic/version/schema,
+truncated lengths, overflow and trailing bytes reject before JMT rebuilding.
+Screen entry count against the remaining framing minimum before allocation;
+screen key/value and aggregate lengths before copying. Unknown namespaces
+reject the entire export and import. Never filter a committed leaf to make an
+otherwise invalid root exportable. The only admitted namespaces are frozen
+native object 1, exact validator lifecycle 4/current, and fully validated PoCO
+snapshot 8. Native object records retain their exact raw key/value bytes and
+existing record codec; namespace8 uses the production manifest/entry validator,
+including rejection of hidden or unreferenced entries. The lifecycle decoder
+checks its object version against the application height, canonical value and
+active validator key/power projection against the verified terminal set.
+This projection comparison is semantic; it is not byte equality between the
+lifecycle and `ValidatorSet` encodings.
+
+`export_current_native_live_v1(target_block)` is read-only and schema10-only.
+It takes the M08 owner lock and one immutable SQLite read transaction; performs
+the existing closed-world schema, metadata, P, snapshot and active-lineage audit;
+and requires the exact target to be the current committed head. Prepared,
+historical and seal targets reject. SQL lengths are screened by the existing
+P readers before their blobs are allocated. The read-only export audit also
+preflights metadata and legacy inventory before the general owner audit: at
+most128 legacy P rows and2 GiB aggregate legacy variable fields, individual
+snapshot≤256 MiB, command and nonce sets≤16 MiB each, lifecycle≤1 MiB, and the
+existing native artifact bound. Metadata fixed fields must be exact typed widths;
+fixed-width epoch fields are read through borrowed SQLite BLOB references before
+conversion, without allocating an attacker-sized temporary vector. Exceeding
+this export profile refuses export without modifying legacy owner limits.
+Legacy-only heads without a retained canonical epoch header are unsupported.
+The verified JMT iterator proves
+each live value and raw-key hash; export includes every live leaf, checks the
+profile and semantic projection, and emits the canonical codec above. It does
+not advance the head, migrate schema, retain a new proof or change replay data.
+Cold reopen must reproduce the same bytes. The producer returns inert bytes,
+not a remotely trusted capability.
+
+M06's pure recomputation entry point accepts those bounded bytes plus the
+terminal header/set/parameters supplied by composition. It canonical-decodes
+and validates all leaves, hashes each raw key with the existing SHA-256 JMT key
+function, rejects hash collisions, and rebuilds the tree with the exact native
+SHA-256 leaf/value rules. It compares the computed root with both the encoded
+root and terminal header root, and the encoded version with terminal height.
+Seal headers reject this application profile. Regular, checkpoint and first-new
+EpochHandoff headers are application targets; the latter has a real C+3 root.
+The root may be rebuilt at local version0 because JMT state hashes do not
+commit storage node versions; no historical root or executable store is issued.
+The pure helper returns only inert root facts. It cannot accept a root callback.
+
+M15 exposes a concrete native staging wrapper constructed from
+`VerifiedNativeTrustPathV1` and a bounded manifest. It derives
+`NativeApplicationCheckpointV1` itself (fixed schema, terminal height), checks
+manifest schema/profile/terminal identity before session allocation, and owns
+its private concrete recomputer. Neither its constructor nor `verify_complete`
+accepts a caller root, application schema/version or recomputer. Generic M13
+session admission must also require application and manifest schema equality;
+M13's general version is not tied to height, but this M15 native profile is.
+Transfer package construction uses normal M13 chunk binding/root/digests; peer
+bytes remain untrusted. Verification goes through the ordinary chunk session
+and returns a separate private-field native-live staging result so a generic
+`NativeVerifiedSnapshotV1` produced with an arbitrary adapter cannot be promoted
+to a native-root proof. Durable restart requires the same freshly verified path,
+manifest and M13 content-derived readback; the wrapper supplies the fixed
+application facts and concrete recomputer again.
+The cold-open route uses `resume_from_path_v1` directly; it checks the exact
+verified binding and manifest, then SQL count/index/byte limits before reading
+chunk BLOBs. It must not call generic `open_existing` first. Resume and append
+use the smaller manifest count, per-chunk and total-byte bounds in the same
+transaction. Generic M13 readback remains a generic-profile operation.
+
+Acceptance extends the real C18-to-C32 two-handoff fixture: export current C32,
+verify its original finality with independently retained anchor/configuration,
+chunk and recompute the actual native root, persist partial chunks, reopen and
+finish under the same binding. Test byte-identical producer reopen, historical/
+prepared export refusal and unchanged application head/sequence. Reject wrong
+anchor, root, schema, application version, leaf omission/addition/duplication/
+reordering/key/value substitution, unknown namespaces, lifecycle validator
+mismatch, invalid PoCO manifest, truncated lengths and profile overflows.
+Correctly rehashing a malicious manifest/chunk envelope must not bypass native
+root/context validation. No replay list, installer or signer is accepted.
+
+The real repeated-epoch acceptance fixture now exports and verifies both the
+C31 EpochHandoff application state and C32 ordinary state through this exact
+M08→M06→M15→M13 route. C32 is split into four actual chunks; the test closes
+and cold-opens partial SQLite progress, completes verification and checks exact
+retry/substitution. Fifteen codec mutants rebuild their transport checksums;
+six separate semantic mutants also rebuild matching JMT roots and untrusted
+headers, testing namespace, object-version, lifecycle and PoCO admission rather
+than merely a root mismatch. These semantic tests do not forge a verified
+finality token. Cold application reopen reproduces identical live bytes and
+export leaves the application head/sequence unchanged. Native full-package
+regression retains its real SIGKILL checks; no power-loss, network throughput
+or execution-ready installation claim follows from this acceptance.
+
+Global command IDs and signer nonces are not committed by the v0 signed state
+root. Before a future receiver may continue execution it must derive complete
+replay history by executing authenticated bodies from a genuinely local replay
+anchor. A header-only pin does not authenticate earlier replay state. That
+historical-replay owner/atomic-install contract is separate and remains open;
+live staging must never manufacture it from peer-supplied replay metadata.
+
 ### Migration, not ordinary state sync
 
 `verify_export_v0` accepts `FinalizedExportHeaderV0`, canonical export rows and

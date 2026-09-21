@@ -435,7 +435,9 @@ impl NativeStateSyncBindingV1 {
         application: NativeApplicationCheckpointV1,
     ) -> Result<Self, StateSyncErrorV0> {
         manifest.validate(path.snapshot_trust_path())?;
-        if application.schema_digest == Digest32V0([0; 32]) || application.application_version == 0
+        if application.schema_digest == Digest32V0([0; 32])
+            || application.schema_digest != manifest.schema_digest
+            || application.application_version == 0
         {
             return Err(StateSyncErrorV0::NativeApplicationBindingMismatch);
         }
@@ -830,6 +832,26 @@ impl SqliteNativeStateSyncStoreV1 {
         Ok(store)
     }
 
+    /// Open and resume against a freshly verified path and exact manifest in
+    /// one operation. Unlike the generic `open_existing` readback, retained
+    /// chunk sizes are screened against this manifest before any chunk blob
+    /// is materialized. Consumers with tighter profiles should use this entry
+    /// point after checking their profile's manifest limits.
+    pub fn resume_from_path_v1(
+        store_path: impl Into<PathBuf>,
+        path: VerifiedNativeTrustPathV1,
+        manifest: SnapshotManifestV0,
+        application: NativeApplicationCheckpointV1,
+    ) -> Result<(Self, NativeStateSyncSessionV1), NativeStateSyncStoreErrorV1> {
+        let store = Self {
+            path: store_path.into(),
+            #[cfg(test)]
+            test_max_page_count: None,
+        };
+        let session = store.resume_existing_v1(path, manifest, application)?;
+        Ok((store, session))
+    }
+
     /// Apply a real SQLite page ceiling to the next writer connections. This
     /// is test-only fault injection: production callers cannot lower a store's
     /// durable resource policy through this API.
@@ -877,6 +899,8 @@ impl SqliteNativeStateSyncStoreV1 {
         manifest: SnapshotManifestV0,
         application: NativeApplicationCheckpointV1,
     ) -> Result<NativeStateSyncSessionV1, NativeStateSyncStoreErrorV1> {
+        let binding = NativeStateSyncBindingV1::from_path_manifest(&path, &manifest, application)
+            .map_err(NativeStateSyncStoreErrorV1::Protocol)?;
         // Keep the writer lock until the fresh authenticated session has been
         // reconstructed.  A deferred read followed by `begin` would leave a
         // gap in which another process could append a chunk and make the
@@ -890,7 +914,18 @@ impl SqliteNativeStateSyncStoreV1 {
         let metadata = read_metadata_v1(&transaction)?;
         #[cfg(test)]
         tests::pause_after_metadata_read_v1();
-        let chunks = read_chunks_v1(&transaction, metadata.manifest_binding_digest)?;
+        if binding != metadata.binding
+            || manifest.chunk_binding_digest() != metadata.manifest_binding_digest
+        {
+            return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
+        }
+        let chunks = read_chunks_with_bounds_v1(
+            &transaction,
+            metadata.manifest_binding_digest,
+            manifest.chunk_count,
+            manifest.maximum_chunk_bytes as usize,
+            manifest.total_bytes,
+        )?;
         let actual = readback_from_chunks_v1(
             metadata.binding.binding_digest,
             metadata.binding.manifest_digest,
@@ -898,13 +933,6 @@ impl SqliteNativeStateSyncStoreV1 {
         )?;
         if actual != metadata.readback {
             return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
-        }
-        let binding = NativeStateSyncBindingV1::from_path_manifest(&path, &manifest, application)
-            .map_err(NativeStateSyncStoreErrorV1::Protocol)?;
-        if binding != metadata.binding
-            || manifest.chunk_binding_digest() != metadata.manifest_binding_digest
-        {
-            return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
         }
         let resumed = NativeStateSyncSessionV1::resume(
             path,
@@ -968,17 +996,25 @@ impl SqliteNativeStateSyncStoreV1 {
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
         let metadata = read_metadata_v1(&transaction)?;
-        let current = read_chunks_v1(&transaction, metadata.manifest_binding_digest)?;
+        if session.binding() != metadata.binding
+            || session.manifest_binding_digest() != metadata.manifest_binding_digest
+        {
+            return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
+        }
+        let manifest = session.session.manifest();
+        let current = read_chunks_with_bounds_v1(
+            &transaction,
+            metadata.manifest_binding_digest,
+            manifest.chunk_count,
+            manifest.maximum_chunk_bytes as usize,
+            manifest.total_bytes,
+        )?;
         let actual = readback_from_chunks_v1(
             metadata.binding.binding_digest,
             metadata.binding.manifest_digest,
             &current,
         )?;
-        if actual != metadata.readback
-            || actual != session.readback()
-            || session.binding() != metadata.binding
-            || session.manifest_binding_digest() != metadata.manifest_binding_digest
-        {
+        if actual != metadata.readback || actual != session.readback() {
             return Err(NativeStateSyncStoreErrorV1::DurableReadbackMismatch);
         }
 
@@ -1358,6 +1394,22 @@ fn read_chunks_v1(
     connection: &Connection,
     expected_manifest_binding: Digest32V0,
 ) -> Result<Vec<SnapshotChunkV0>, NativeStateSyncStoreErrorV1> {
+    read_chunks_with_bounds_v1(
+        connection,
+        expected_manifest_binding,
+        crate::MAX_CHUNK_COUNT_V0,
+        crate::MAX_CHUNK_BYTES_V0,
+        crate::MAX_SNAPSHOT_BYTES_V0,
+    )
+}
+
+fn read_chunks_with_bounds_v1(
+    connection: &Connection,
+    expected_manifest_binding: Digest32V0,
+    maximum_chunk_count: u32,
+    maximum_chunk_bytes: usize,
+    maximum_total_bytes: u64,
+) -> Result<Vec<SnapshotChunkV0>, NativeStateSyncStoreErrorV1> {
     if expected_manifest_binding == Digest32V0([0; 32]) {
         return Err(NativeStateSyncStoreErrorV1::BindingMismatch);
     }
@@ -1383,16 +1435,16 @@ fn read_chunks_v1(
                         THEN 1 ELSE 0 END), 0)
              FROM native_state_sync_chunks_v1",
                 params![
-                    i64::from(crate::MAX_CHUNK_COUNT_V0),
-                    i64::try_from(crate::MAX_CHUNK_BYTES_V0).unwrap_or(i64::MAX),
+                    i64::from(maximum_chunk_count),
+                    i64::try_from(maximum_chunk_bytes).unwrap_or(i64::MAX),
                 ],
                 |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?)),
             )
             .map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
     if row_count < 0
-        || row_count > i64::from(crate::MAX_CHUNK_COUNT_V0)
+        || row_count > i64::from(maximum_chunk_count)
         || total_bytes < 0
-        || u64::try_from(total_bytes).unwrap_or(u64::MAX) > crate::MAX_SNAPSHOT_BYTES_V0
+        || u64::try_from(total_bytes).unwrap_or(u64::MAX) > maximum_total_bytes
     {
         return Err(NativeStateSyncStoreErrorV1::Protocol(
             StateSyncErrorV0::SnapshotTooLarge,
@@ -1422,7 +1474,7 @@ fn read_chunks_v1(
     let mut chunks = Vec::new();
     let mut total_bytes = 0_u64;
     for item in mapped {
-        if chunks.len() >= crate::MAX_CHUNK_COUNT_V0 as usize {
+        if chunks.len() >= maximum_chunk_count as usize {
             return Err(NativeStateSyncStoreErrorV1::Protocol(
                 StateSyncErrorV0::SnapshotTooLarge,
             ));
@@ -1431,7 +1483,7 @@ fn read_chunks_v1(
             item.map_err(|error| NativeStateSyncStoreErrorV1::Sqlite(error.to_string()))?;
         let index = u32::try_from(u64_from_i64_v1(index)?)
             .map_err(|_| NativeStateSyncStoreErrorV1::StoreSchemaMismatch)?;
-        if bytes.is_empty() || bytes.len() > crate::MAX_CHUNK_BYTES_V0 {
+        if bytes.is_empty() || bytes.len() > maximum_chunk_bytes {
             return Err(NativeStateSyncStoreErrorV1::Protocol(
                 StateSyncErrorV0::InvalidChunk,
             ));
@@ -1439,7 +1491,7 @@ fn read_chunks_v1(
         total_bytes = total_bytes.checked_add(bytes.len() as u64).ok_or(
             NativeStateSyncStoreErrorV1::Protocol(StateSyncErrorV0::SnapshotTooLarge),
         )?;
-        if total_bytes > crate::MAX_SNAPSHOT_BYTES_V0 {
+        if total_bytes > maximum_total_bytes {
             return Err(NativeStateSyncStoreErrorV1::Protocol(
                 StateSyncErrorV0::SnapshotTooLarge,
             ));

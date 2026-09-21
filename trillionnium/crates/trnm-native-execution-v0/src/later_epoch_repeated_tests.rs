@@ -471,6 +471,7 @@ fn complete_repeated_handoff(path: &std::path::Path, fixture: Box<RepeatedCheckp
     drop(app);
     let app = DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1())
         .expect("Consumed C31 cold reopen");
+    assert_native_handoff_live_sync(&app, &trust_anchor, old_checkpoint, &h31);
     assert_eq!(
         app.confirmed_committed_head_v0().unwrap().height().get(),
         31
@@ -573,16 +574,30 @@ fn complete_repeated_handoff(path: &std::path::Path, fixture: Box<RepeatedCheckp
         ],
     );
     assert_eq!(exported.target_commit_sequence, committed.commit_sequence());
-    assert_repeated_finality_consumer(
+    let verified = assert_repeated_finality_consumer(
         &trust_anchor,
         &other_trust_anchor,
         &exported,
         &new_set,
         &parameters,
     );
+    let live_bytes = assert_current_native_live_sync(
+        &app,
+        path,
+        &h32,
+        old_checkpoint,
+        prepared_target,
+        &verified,
+    );
     drop(app);
     let app = DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1())
         .expect("export must preserve the genuine C32 store");
+    assert_eq!(
+        app.export_current_native_live_v1(BlockIdV0::new(*h32.id().as_bytes()).unwrap())
+            .unwrap(),
+        live_bytes,
+        "cold reopen must export byte-identical current live leaves",
+    );
     assert_eq!(
         app.export_epoch_finality_path_v1(
             BlockIdV0::new(*old_checkpoint.as_bytes()).unwrap(),
@@ -674,31 +689,11 @@ fn assert_repeated_finality_consumer(
     exported: &crate::NativeEpochFinalityPathV1,
     target_set: &ValidatorSet,
     parameters: &ConsensusParametersV0,
-) {
-    use trnm_poco_node_production_v0::{NativeEpochFinalityPathV1, NativeEpochFinalityStepV1};
+) -> trnm_state_sync_v0::VerifiedNativeTrustPathV1 {
+    use trnm_poco_node_production_v0::NativeEpochFinalityPathV1;
     use trnm_state_sync_v0::NativeTrustPathLimitsV1;
 
-    // The dev dependency compiles the native library separately from its unit
-    // test crate. Copy only public transport fields across that type identity;
-    // signed bytes and untrusted local metadata remain exactly as exported.
-    let exported = NativeEpochFinalityPathV1 {
-        anchor_header_cev0: exported.anchor_header_cev0.clone(),
-        target_header_cev0: exported.target_header_cev0.clone(),
-        target_schema_version: exported.target_schema_version,
-        target_p_digest: exported.target_p_digest,
-        target_commit_sequence: exported.target_commit_sequence,
-        steps: exported
-            .steps
-            .iter()
-            .map(|step| NativeEpochFinalityStepV1 {
-                header_cev0: step.header_cev0.clone(),
-                consensus_parent_header_cev0: step.consensus_parent_header_cev0.clone(),
-                proof: step.proof.clone(),
-                record_digest: step.record_digest,
-                epoch_evidence: step.epoch_evidence.clone(),
-            })
-            .collect(),
-    };
+    let exported = m15_finality_transport_copy(exported);
     let verify = |path: &NativeEpochFinalityPathV1, limits| {
         trnm_poco_node_production_v0::verify_retained_native_finality_path_v1(
             anchor,
@@ -801,7 +796,38 @@ fn assert_repeated_finality_consumer(
             .terminal_header(),
         verified.terminal_header()
     );
+    verified
 }
+
+fn m15_finality_transport_copy(
+    exported: &crate::NativeEpochFinalityPathV1,
+) -> trnm_poco_node_production_v0::NativeEpochFinalityPathV1 {
+    // The dev dependency compiles the native library separately from its unit
+    // test crate. Copy only public transport fields across that type identity;
+    // signed bytes and untrusted local metadata remain exactly as exported.
+    trnm_poco_node_production_v0::NativeEpochFinalityPathV1 {
+        anchor_header_cev0: exported.anchor_header_cev0.clone(),
+        target_header_cev0: exported.target_header_cev0.clone(),
+        target_schema_version: exported.target_schema_version,
+        target_p_digest: exported.target_p_digest,
+        target_commit_sequence: exported.target_commit_sequence,
+        steps: exported
+            .steps
+            .iter()
+            .map(
+                |step| trnm_poco_node_production_v0::NativeEpochFinalityStepV1 {
+                    header_cev0: step.header_cev0.clone(),
+                    consensus_parent_header_cev0: step.consensus_parent_header_cev0.clone(),
+                    proof: step.proof.clone(),
+                    record_digest: step.record_digest,
+                    epoch_evidence: step.epoch_evidence.clone(),
+                },
+            )
+            .collect(),
+    }
+}
+
+include!("native_live_sync_tests.rs");
 
 fn rehash_repeated_successor(sql: &rusqlite::Connection, binding: &[u8]) {
     let mut fields: Vec<Vec<u8>> = sql.query_row(

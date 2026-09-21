@@ -18,6 +18,8 @@ pub(super) const LATER_SCHEMA_VERSION: u64 = 10;
 mod descendant_finality;
 #[path = "epoch_lineage_v1.rs"]
 mod lineage_resolver;
+#[path = "native_live_export_v1.rs"]
+mod live_export;
 #[path = "epoch_sync_export_v1.rs"]
 mod sync_export;
 pub use sync_export::{NativeEpochFinalityPathV1, NativeEpochFinalityStepV1};
@@ -442,11 +444,16 @@ fn local_error(_: impl std::fmt::Display) -> NativeApplicationExecutionErrorV0 {
 }
 
 pub(super) fn schema_version(connection: &Connection) -> DurableResult<u64> {
-    let value: Vec<u8> = connection
+    let value: [u8; 8] = connection
         .query_row(
             "SELECT schema_version FROM native_application_metadata_v0 WHERE singleton=1",
             [],
-            |r| r.get(0),
+            |r| match r.get_ref(0)? {
+                rusqlite::types::ValueRef::Blob(bytes) => {
+                    bytes.try_into().map_err(|_| rusqlite::Error::InvalidQuery)
+                }
+                _ => Err(rusqlite::Error::InvalidQuery),
+            },
         )
         .map_err(|_| {
             error(
@@ -657,30 +664,41 @@ impl DurableNativeApplicationV0 {
 }
 
 fn col32(row: &rusqlite::Row<'_>, name: &str) -> rusqlite::Result<[u8; 32]> {
-    row.get::<_, Vec<u8>>(name)?
-        .try_into()
-        .map_err(|_| rusqlite::Error::InvalidQuery)
+    match row.get_ref(name)? {
+        rusqlite::types::ValueRef::Blob(bytes) => {
+            bytes.try_into().map_err(|_| rusqlite::Error::InvalidQuery)
+        }
+        _ => Err(rusqlite::Error::InvalidQuery),
+    }
 }
 fn col64(row: &rusqlite::Row<'_>, name: &str) -> rusqlite::Result<u64> {
-    Ok(u64::from_be_bytes(
-        row.get::<_, Vec<u8>>(name)?
+    match row.get_ref(name)? {
+        rusqlite::types::ValueRef::Blob(bytes) => bytes
             .try_into()
-            .map_err(|_| rusqlite::Error::InvalidQuery)?,
-    ))
+            .map(u64::from_be_bytes)
+            .map_err(|_| rusqlite::Error::InvalidQuery),
+        _ => Err(rusqlite::Error::InvalidQuery),
+    }
 }
 fn opt32(row: &rusqlite::Row<'_>, name: &str) -> rusqlite::Result<Option<[u8; 32]>> {
-    row.get::<_, Option<Vec<u8>>>(name)?
-        .map(|v| v.try_into().map_err(|_| rusqlite::Error::InvalidQuery))
-        .transpose()
+    match row.get_ref(name)? {
+        rusqlite::types::ValueRef::Null => Ok(None),
+        rusqlite::types::ValueRef::Blob(bytes) => bytes
+            .try_into()
+            .map(Some)
+            .map_err(|_| rusqlite::Error::InvalidQuery),
+        _ => Err(rusqlite::Error::InvalidQuery),
+    }
 }
 fn opt64(row: &rusqlite::Row<'_>, name: &str) -> rusqlite::Result<Option<u64>> {
-    row.get::<_, Option<Vec<u8>>>(name)?
-        .map(|v| {
-            Ok(u64::from_be_bytes(
-                v.try_into().map_err(|_| rusqlite::Error::InvalidQuery)?,
-            ))
-        })
-        .transpose()
+    match row.get_ref(name)? {
+        rusqlite::types::ValueRef::Null => Ok(None),
+        rusqlite::types::ValueRef::Blob(bytes) => bytes
+            .try_into()
+            .map(|bytes| Some(u64::from_be_bytes(bytes)))
+            .map_err(|_| rusqlite::Error::InvalidQuery),
+        _ => Err(rusqlite::Error::InvalidQuery),
+    }
 }
 fn load_p(connection: &Connection, block: &[u8; 32]) -> Result<Option<StoredEpochPV1>> {
     // Read sizes before blobs; corrupt oversized rows are never copied into an audit.

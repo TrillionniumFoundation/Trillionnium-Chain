@@ -89,6 +89,8 @@ fn assert_schema9_committed_descendant_migration_refused(source: &std::path::Pat
             .contains("finality export requires explicit schema10"),
         "{export_error:#}"
     );
+    assert!(app.export_current_native_live_v1(head.block_id()).is_err(),
+        "current-live export cannot silently upgrade schema9");
     let error = app.upgrade_later_epoch_schema_v1(&head).unwrap_err();
     assert!(
         error.to_string().contains(

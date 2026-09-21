@@ -600,3 +600,13 @@ consumes the successor edge; phase-1 validation binds the consumed P and
 survives reopen. The old H17 edge is rejected once the application head is
 C18. Independent C21 proof vectors, external rollback anchors and production
 Core/Safety activation remain outside this candidate owner.
+
+### Native current-live codec producer
+
+M06 owns the canonical leaf codec, exact namespace/record checks and concrete
+SHA-256 JMT recomputation in **M06-M13-LIVE-V1** in
+[M13](M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md). This producer contract
+exports only the current committed state and reconstructs an inert root; it
+does not serialize the private historical snapshot or authenticate replay
+sets. M08 supplies the audited head and M15 supplies the independently verified
+terminal consensus context. An unrecognized leaf fails the whole operation.

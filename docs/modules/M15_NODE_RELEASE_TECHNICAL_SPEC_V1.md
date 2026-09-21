@@ -926,3 +926,13 @@ queue/drop rates, state bytes, restart and catch-up time, source/tree and
 configuration digests. A local lab test or a successful build cannot promote
 `CORE-LIVE-001`, `TX-PROD-001`, `SYNC-PROD-001` or `F1`; machine truth stays
 fail-closed until those artifacts are independently reviewed.
+
+### Concrete native live staging composition
+
+M15 composes M06's codec/recomputer with M13's verified native path and bounded
+chunk session under **M06-M13-LIVE-V1** in
+[M13](M13_STATE_SYNC_MIGRATION_TECHNICAL_SPEC_V1.md). Its native wrapper fixes
+schema/version itself, owns the concrete recomputer, and returns a distinct
+private-field staging result. A generic M13 snapshot result cannot substitute
+for this native validation. Execution-ready installation still requires locally
+derived replay history and an independently implemented atomic owner boundary.

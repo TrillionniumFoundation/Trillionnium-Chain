@@ -16,6 +16,8 @@ mod tx_state_sync_bridge;
 pub use tx_state_sync_bridge::*;
 mod native_epoch_finality_consumer;
 pub use native_epoch_finality_consumer::*;
+mod native_live_sync;
+pub use native_live_sync::*;
 
 use std::{error::Error, fmt};
 use trnm_node_boundary_v0::{
