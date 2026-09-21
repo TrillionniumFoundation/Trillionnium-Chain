@@ -447,6 +447,40 @@ impl ConfirmedSignedIntentReadbackV1 {
 }
 
 impl ConfirmedSignerNodeCheckpointFactsV0 {
+    /// Final local comparison after the host's last external callback. This
+    /// grants no signature authority and never consults or repairs a watermark.
+    pub fn confirm_local_owner_v1<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        journal: &SqliteSignerJournalV0<W>,
+    ) -> Result<(), SignerJournalErrorV0> {
+        if !Arc::ptr_eq(&self.owner_affinity, &journal.owner_affinity)
+            || self.journal_id != journal.journal_id
+            || self.profile_checksum != journal.profile.profile_checksum()
+            || self.identity != SignerNodeCheckpointIdentityV0::from_profile(&journal.profile)
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        journal.ensure_file_identity()?;
+        let inventory = journal.validate_database()?;
+        let head = read_head(&journal.connection, journal.journal_id)?;
+        let capacity = read_capacity(&journal.connection)?;
+        validate_capacity(&capacity, &journal.profile)?;
+        if head != journal.observed_head
+            || journal.watermark_for(head)? != self.exact_watermark
+            || inventory != self.lifetime_inventory
+            || capacity != self.capacity
+            || read_tail_facts(&journal.connection, head)? != self.tail
+            || read_pending_intent_facts(&journal.connection)? != self.pending_intent
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        journal.ensure_file_identity()
+    }
+
     pub const fn journal_id(&self) -> [u8; 32] {
         self.journal_id
     }

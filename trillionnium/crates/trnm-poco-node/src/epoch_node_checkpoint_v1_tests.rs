@@ -137,7 +137,7 @@ fn closed_tags_and_bounded_identities_reject() {
     let bytes = initial().encode_canonical();
     for at in [10, 11, 12] {
         let mut bad = bytes.clone();
-        bad[at] = if at == 10 { 5 } else { 3 };
+        bad[at] = if at == 10 { 6 } else { 3 };
         assert_eq!(
             EpochNodeCheckpointV1::decode_canonical_exact(&bad),
             Err(EpochNodeCheckpointErrorV1::Tag)
@@ -443,7 +443,7 @@ fn native13_retirement_tag3_is_distinct_and_legacy_tag2_remains_compatible() {
         Ok(legacy)
     );
     assert_ne!(retired.checksum(), legacy.checksum());
-    for unknown in [5, 127, 255] {
+    for unknown in [6, 127, 255] {
         let mut bad = bytes.clone();
         bad[10] = unknown;
         let prefix = bad.len() - 32;
@@ -552,6 +552,69 @@ fn native13_joint_attachment_tag4_has_only_exact_retired_predecessor() {
         assert!(EpochNodeCheckpointV1::new(next)
             .unwrap()
             .validate_successor_of(&attached)
+            .is_err());
+    }
+}
+
+#[test]
+fn native13_journal12_activation_tag5_requires_exact_attached_predecessor() {
+    let (ordinary, retired) = native13_retirement_codec_fixture_v6();
+    let mut f = *retired.fields();
+    f.phase = EpochCheckpointPhaseV1::EpochHandoffAttachedNative13;
+    f.generation += 1;
+    f.predecessor_checksum = retired.checksum();
+    f.phase_authority_binding = [61; 32];
+    f.edge.native_authorization_id = [62; 32];
+    let attached = EpochNodeCheckpointV1::new(f).unwrap();
+    f.phase = EpochCheckpointPhaseV1::SuccessorActivationNative13Journal12;
+    f.generation += 1;
+    f.predecessor_checksum = attached.checksum();
+    f.owner_generation += 1;
+    f.epoch += 1;
+    f.validator_set_id = [63; 32];
+    f.parameters_hash = [64; 32];
+    f.phase_authority_binding = [65; 32];
+    f.source_safety = Some(attached.fields().target_safety);
+    f.target_safety.journal_id = [66; 32];
+    f.target_safety.revision += 1;
+    f.ordinary = Some(EpochOrdinaryCustodyCutV1 {
+        scope: [67; 32],
+        journal_id: [68; 32],
+        profile_checksum: [69; 32],
+        sequence: 0,
+        chain_checksum: [70; 32],
+    });
+    let activated = EpochNodeCheckpointV1::new(f).unwrap();
+    activated.validate_successor_of(&attached).unwrap();
+    assert_eq!(activated.encode_canonical()[10], 5);
+    assert_eq!(
+        EpochNodeCheckpointV1::decode_canonical_exact(&activated.encode_canonical()),
+        Ok(activated)
+    );
+    let mutations: [fn(&mut EpochNodeCheckpointFieldsV1); 9] = [
+        |f| f.edge.native_authorization_id[0] ^= 1,
+        |f| f.application.p_digest[0] ^= 1,
+        |f| f.target_safety.revision += 1,
+        |f| f.source_safety.as_mut().unwrap().chain_checksum[0] ^= 1,
+        |f| f.owner_generation += 1,
+        |f| f.role = EpochCheckpointRoleV1::Removed,
+        |f| f.ordinary.as_mut().unwrap().sequence = 1,
+        |f| f.retired.as_mut().unwrap().retirement_record_checksum[0] ^= 1,
+        |f| f.predecessor_checksum[0] ^= 1,
+    ];
+    for mutate in mutations {
+        let mut changed = f;
+        mutate(&mut changed);
+        assert!(EpochNodeCheckpointV1::new(changed)
+            .and_then(|v| v.validate_successor_of(&attached))
+            .is_err());
+    }
+    for prior in [ordinary, retired] {
+        let mut skipped = f;
+        skipped.generation = prior.fields().generation + 1;
+        skipped.predecessor_checksum = prior.checksum();
+        assert!(EpochNodeCheckpointV1::new(skipped)
+            .and_then(|v| v.validate_successor_of(&prior))
             .is_err());
     }
 }

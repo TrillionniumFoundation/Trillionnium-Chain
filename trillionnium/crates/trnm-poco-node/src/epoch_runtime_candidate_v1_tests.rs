@@ -44,6 +44,7 @@ type WatermarkState = (Option<SignerWatermarkV0>, Option<SignerRetirementRecordV
 type NativePDeletionHookV2 = Arc<Mutex<Option<(PathBuf, [u8; 32])>>>;
 type NativeProgressedReplacementHookV3 = Arc<Mutex<Option<(PathBuf, u64)>>>;
 type RoleRetirementReplacementHookV7 = Arc<Mutex<Option<(PathBuf, u64, usize)>>>;
+type SuccessorCreatedReplacementHookV9 = Arc<Mutex<Option<(PathBuf, PathBuf)>>>;
 #[derive(Clone, Default)]
 struct Watermark(
     Arc<Mutex<WatermarkState>>,
@@ -52,6 +53,7 @@ struct Watermark(
     NativeProgressedReplacementHookV3,
     Arc<Mutex<Option<PathBuf>>>,
     RoleRetirementReplacementHookV7,
+    SuccessorCreatedReplacementHookV9,
 );
 impl ExternalMonotonicWatermarkV0 for Watermark {
     fn load(
@@ -124,6 +126,17 @@ impl ExternalSignerRetirementV1 for Watermark {
             std::fs::rename(&path, &displaced).unwrap();
             std::fs::copy(&displaced, &path).unwrap();
         }
+        let mut successor = self.6.lock().unwrap();
+        if successor
+            .as_ref()
+            .is_some_and(|(created, _)| created.is_file())
+        {
+            let (_, path) = successor.take().unwrap();
+            let displaced = path.with_extension("successor-created-displaced");
+            std::fs::rename(&path, &displaced).unwrap();
+            std::fs::copy(&displaced, &path).unwrap();
+        }
+        drop(successor);
         let mut hook = self.5.lock().unwrap();
         if let Some((path, expected_sequence, remaining)) = hook.as_mut() {
             let connection = rusqlite::Connection::open_with_flags(
@@ -1365,3 +1378,5 @@ include!("epoch_retirement_v6_tests.inc");
 include!("epoch_handoff_roles_v7_tests.inc");
 
 include!("epoch_handoff_attachment_v8_tests.inc");
+
+include!("epoch_successor_activation_v9_tests.inc");

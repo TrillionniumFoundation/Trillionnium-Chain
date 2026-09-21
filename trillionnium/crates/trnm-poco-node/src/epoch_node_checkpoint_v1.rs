@@ -60,6 +60,8 @@ pub enum EpochCheckpointPhaseV1 {
     EpochRetiredNative13 = 3,
     /// Strict native attachment only; deliberately no activation successor.
     EpochHandoffAttachedNative13 = 4,
+    /// Explicit native13 / physical Journal12 successor activation.
+    SuccessorActivationNative13Journal12 = 5,
 }
 impl EpochCheckpointPhaseV1 {
     fn decode(r: &mut Reader<'_>) -> Result<Self> {
@@ -69,6 +71,7 @@ impl EpochCheckpointPhaseV1 {
             2 => Ok(Self::EpochRetired),
             3 => Ok(Self::EpochRetiredNative13),
             4 => Ok(Self::EpochHandoffAttachedNative13),
+            5 => Ok(Self::SuccessorActivationNative13Journal12),
             _ => Err(EpochNodeCheckpointErrorV1::Tag),
         }
     }
@@ -601,8 +604,11 @@ impl EpochNodeCheckpointV1 {
             || f.chain_id != p.chain_id
             || f.protocol_version != p.protocol_version
             || f.author != p.author
-            || (f.phase != EpochCheckpointPhaseV1::ActivationCommitted
-                && f.owner_generation != p.owner_generation)
+            || (!matches!(
+                f.phase,
+                EpochCheckpointPhaseV1::ActivationCommitted
+                    | EpochCheckpointPhaseV1::SuccessorActivationNative13Journal12
+            ) && f.owner_generation != p.owner_generation)
         {
             return fail();
         }
@@ -688,6 +694,29 @@ impl EpochNodeCheckpointV1 {
                     || f.retired != p.retired
                     || f.ordinary != p.ordinary
                     || f.edge != prior_edge
+                {
+                    return fail();
+                }
+            }
+            (
+                EpochCheckpointPhaseV1::EpochHandoffAttachedNative13,
+                EpochCheckpointPhaseV1::SuccessorActivationNative13Journal12,
+            ) => {
+                let a = f.ordinary.ok_or(EpochNodeCheckpointErrorV1::Successor)?;
+                let retired = p.retired.ok_or(EpochNodeCheckpointErrorV1::Successor)?;
+                if Some(f.owner_generation) != p.owner_generation.checked_add(1)
+                    || p.role != EpochCheckpointRoleV1::Continuing
+                    || f.role != EpochCheckpointRoleV1::Continuing
+                    || Some(f.epoch) != p.epoch.checked_add(1)
+                    || f.source_safety != Some(p.target_safety)
+                    || Some(f.target_safety.revision) != p.target_safety.revision.checked_add(1)
+                    || f.target_safety.journal_id == p.target_safety.journal_id
+                    || f.application != p.application
+                    || f.retired != p.retired
+                    || f.edge != p.edge
+                    || a.sequence != 0
+                    || a.scope == retired.scope
+                    || a.journal_id == retired.journal_id
                 {
                     return fail();
                 }
@@ -792,6 +821,12 @@ fn validate(f: &EpochNodeCheckpointFieldsV1) -> Result<()> {
     {
         return invalid("application edge");
     }
+    if f.phase == EpochCheckpointPhaseV1::SuccessorActivationNative13Journal12
+        && (f.role != EpochCheckpointRoleV1::Continuing
+            || f.predecessor_kind != EpochCheckpointPredecessorV1::V1)
+    {
+        return invalid("native13 Journal12 activation role");
+    }
     match (f.predecessor_kind, f.phase, f.role) {
         (
             EpochCheckpointPredecessorV1::TerminalV0,
@@ -807,7 +842,9 @@ fn validate(f: &EpochNodeCheckpointFieldsV1) -> Result<()> {
         _ => return invalid("predecessor phase role"),
     }
     match f.phase {
-        EpochCheckpointPhaseV1::ActivationCommitted | EpochCheckpointPhaseV1::Ordinary => {
+        EpochCheckpointPhaseV1::ActivationCommitted
+        | EpochCheckpointPhaseV1::Ordinary
+        | EpochCheckpointPhaseV1::SuccessorActivationNative13Journal12 => {
             let ordinary = f.ordinary.ok_or(EpochNodeCheckpointErrorV1::Invalid(
                 "missing ordinary custody",
             ))?;
@@ -832,7 +869,11 @@ fn validate(f: &EpochNodeCheckpointFieldsV1) -> Result<()> {
                     if f.source_safety.is_none() && f.retired.is_none() => {}
                 _ => return invalid("phase role"),
             }
-            if f.phase == EpochCheckpointPhaseV1::ActivationCommitted {
+            if matches!(
+                f.phase,
+                EpochCheckpointPhaseV1::ActivationCommitted
+                    | EpochCheckpointPhaseV1::SuccessorActivationNative13Journal12
+            ) {
                 if ordinary.sequence != 0
                     || f.application.height != f.edge.checkpoint_height
                     || f.application.block_id != f.edge.checkpoint_block_id

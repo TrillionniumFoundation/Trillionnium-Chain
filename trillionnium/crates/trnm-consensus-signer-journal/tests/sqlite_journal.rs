@@ -1241,3 +1241,48 @@ fn path_with_suffix(path: &Path, suffix: &str) -> std::path::PathBuf {
     value.push(suffix);
     value.into()
 }
+
+#[test]
+fn final_local_owner_read_is_callback_free_and_rejects_stale_or_foreign_facts() {
+    let temporary = TempDir::new().unwrap();
+    let path = database_path(&temporary);
+    let (profile, _, key) = fixture();
+    let watermark = MemoryWatermark::default();
+    let mut journal =
+        SqliteSignerJournalV0::initialize_new(&path, profile.clone(), watermark.clone()).unwrap();
+    let selected = journal.confirm_node_checkpoint_head_exact_v0().unwrap();
+    let before = durable_namespace_bytes(&path);
+    let external = watermark.current().unwrap();
+    let calls = watermark.compare_calls();
+    // The preceding exact producer owns external freshness. This final local
+    // read must not invoke, repair or adopt the independently supplied head.
+    watermark.clear();
+    selected.confirm_local_owner_v1(&journal).unwrap();
+    assert_eq!(watermark.current(), None);
+    assert_eq!(watermark.compare_calls(), calls);
+    assert_durable_namespace_unchanged(&path, &before);
+    watermark.replace(external);
+    let foreign = SqliteSignerJournalV0::initialize_new(
+        temporary.path().join("foreign-local.db"),
+        profile.clone(),
+        MemoryWatermark::default(),
+    )
+    .unwrap();
+    assert!(selected.confirm_local_owner_v1(&foreign).is_err());
+    let mut producer = ExactTestProducer::new(key);
+    let intent = vote(&profile, 1, 10, 0x61);
+    journal.sign_exact_v0(&intent, &mut producer).unwrap();
+    assert!(selected.confirm_local_owner_v1(&journal).is_err());
+    let progressed = journal.confirm_node_checkpoint_head_exact_v0().unwrap();
+    progressed.confirm_local_owner_v1(&journal).unwrap();
+    let displaced = path.with_extension("local-displaced");
+    fs::rename(&path, &displaced).unwrap();
+    fs::copy(&displaced, &path).unwrap();
+    assert!(matches!(
+        progressed.confirm_local_owner_v1(&journal),
+        Err(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::FileIdentityChanged
+        ))
+    ));
+    assert_eq!(producer.calls(), 1);
+}

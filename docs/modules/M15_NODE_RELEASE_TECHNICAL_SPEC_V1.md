@@ -806,7 +806,8 @@ on a same-named helper in another crate or on a multi-part hash convention.
 
 Closed phase tags are 0 ActivationCommitted, 1 Ordinary, 2 EpochRetired, and
 3 EpochRetiredNative13 under M15-EPOCH-RETIREMENT-V6, and 4
-EpochHandoffAttachedNative13 under M15-HANDOFF-ATTACHMENT-V8 below. The name
+EpochHandoffAttachedNative13 under M15-HANDOFF-ATTACHMENT-V8, and 5
+SuccessorActivationNative13Journal12 under M15-SUCCESSOR-ACTIVATION-V9 below. The name
 ActivationCommitted means the composite physical cut was committed; decoded
 bytes do not prove that a process received a lease. Role tags are 0 Continuing,
 1 VirginNew, 2 Removed. Predecessor kinds are 0 exact terminal V0 record,
@@ -1929,7 +1930,9 @@ pre-handoff owner cut, every returned native edge fact, the original kernel hash
 actual role profile/watermark/fence, and each present local intent fingerprint and
 signature. These are inert comparison fields, freshly rederived from retained
 actual owners. The original V6 tag3 record is kept separately and never relabeled.
-Tag4 has no activation or ordinary successor in this slice.
+V8 attachment itself releases no activation. Its retained owner can be consumed
+only through the explicit tag4→tag5 activation join in M15-SUCCESSOR-ACTIVATION-V9;
+there is no implicit ordinary successor.
 
 `confirm_joint_handoff_exact_v8` requires byte-for-byte equality with the original
 kernel and reaudits the full attached cut without adding a signature, native
@@ -1968,3 +1971,58 @@ proofs, exact committed retry identity, rejection of a distinct valid signed
 transaction with unchanged admission database and unchanged consensus/signer
 facts. The old Ready-only poll must fail this test. Keep all socket frame,
 connection, proof-worker and absolute-deadline limits unchanged.
+
+### Actual native13 successor activation (M15-SUCCESSOR-ACTIVATION-V9)
+
+This default-off live composition consumes the actual V8 attached owner, a
+strict complete `EpochPreparationV2`, a fresh target Journal12 path and an actual
+virgin ordinary signer O. Continuing membership and an unchanged consensus key
+are required; Removed and new-only joins remain rejected before target writes.
+The existing incoming W, outgoing retired N and handoff-role H owners remain
+separate and retained. No receipt, scalar manifest or recovered fields can
+replace these owners. This slice does not reconstruct a live owner after crash.
+
+Before mutation, the target preparation must bind the exact original V8 kernel,
+native successor binding, checkpoint/header/terminal, old/new configurations,
+actual committed checkpoint P and the Core Valid artifact/overlay. Core's
+`prepare_next_epoch_v2` consumes the original settled V1 driver and requires an
+exact one-entry extension of its independently trusted root and original prefix
+bytes. Its actual predecessor state is retained only as inert comparison data
+for subsequent source audits; no old Core or signing capability survives. The
+new config preserves the original local author and host limits.
+
+The host uses the actual Journal9 immutable profile and exact independent pin
+with `EpochSafetyJournalProfileV4::from_journal9_v4` and Journal12's original
+`initialize_from_source_v4`. The target's opaque persistence binding, canonical
+initial state, Ordinary transition, source profile/context/record/pin and
+physical12 origin are verified by fresh readback. No invented Journal11 source
+is used. Target uncertainty consumes all live owners and never releases an ACK.
+
+TRNMNC01 adds closed tag5 `SuccessorActivationNative13Journal12`; tags0..4
+retain their exact bytes and meaning. Only tag4→tag5 is accepted initially:
+independent generation and Core owner generation each advance by one, the epoch
+advances by one, source Safety is the original tag4 target, target Safety is the
+actual Journal12 canonical initial cut at source Safety revision+1, native
+application/P/K and attached edge
+remain unchanged, current N retirement remains exact, and O is a distinct virgin
+new-set journal. A domain-separated phase binding commits original tag4, exact
+physical12/profile/context/origin/source, complete preparation digest/root/tip,
+actual native edge and all original role/current/incoming custody heads. Tag5
+does not reinterpret the legacy tag2→tag0 activation rule.
+
+Every full join calls the original external exact-head producers, then performs
+callback-free local checks of H/N/W/O, followed by fresh full native, old and new
+Safety, and independent node namespace/head reads. The independent compare-and-
+advance and exact readback precede the actual initial ACK. Core can then emit
+only its original one view1 timer. The owner retains the real V2 driver,
+Journal12, native13 and O for subsequent versioned timeout/application driving;
+it exposes no generic Core input, signer handle, unchecked ACK or recovery
+conversion. Those subsequent methods must preserve the same producer joins.
+
+Acceptance uses one genuine V5→V6→V7→V8 flow and real prefix evidence. It checks
+Journal9→12 source/target bytes, default-stack consuming Core transition, exact
+node CAS and one initial timer with zero key calls, foreign/root/prefix/target
+configuration refusal, callback-induced owner mutation before ACK, and cold
+read-only canonical journal/checkpoint verification. First timeout and nonempty
+C21/C22 execution remain open until separately exercised by this same owner;
+activation alone is not their acceptance.

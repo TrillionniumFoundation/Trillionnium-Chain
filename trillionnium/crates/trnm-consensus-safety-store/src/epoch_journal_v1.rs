@@ -500,6 +500,12 @@ impl SqliteEpochSafetyJournalV1 {
     pub fn path_v1(&self) -> &Path {
         self.physical.path()
     }
+    /// Original immutable configuration only. Freshness and source authority
+    /// still require this actual owner and its independently pinned head.
+    pub fn immutable_profile_v1(&self) -> &EpochSafetyJournalProfileV1 {
+        &self.profile
+    }
+
     pub(crate) fn immutable_profile_ref_v1(&self) -> [u8; 32] {
         self.profile.profile_ref_v1()
     }

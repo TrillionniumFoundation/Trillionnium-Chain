@@ -2034,3 +2034,5 @@ include!("epoch_retirement_v6.inc");
 include!("epoch_handoff_roles_v7.inc");
 
 include!("epoch_handoff_attachment_v8.inc");
+
+include!("epoch_successor_activation_v9.inc");

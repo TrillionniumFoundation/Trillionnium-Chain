@@ -483,7 +483,20 @@ library source and test executable; a native binary cannot satisfy the node
 profile. The retained summary records the selected profile and compile command.
 
 Every discovered `epoch_runtime_candidate_v1::tests::` case runs in its own
-partition, using an exact libtest name and an independent 300-second deadline.
+partition, using an exact libtest name and an independent 300-second deadline,
+except the following closed M15-SUCCESSOR-ACTIVATION-V9 entries, each with a
+600-second deadline:
+
+- `actual_epoch_successor_activation_preserves_owners_and_initial_ack_v9`;
+- `actual_epoch_successor_activation_after_write_callback_blocks_ack_v9`.
+
+These two exact names under `epoch_runtime_candidate_v1::tests::` are mandatory
+active inventory entries. Their genuine complete V5→V6→V7→V8→V9 source and
+Journal9→12 strict readback ran independently on the default stack; the positive
+case exceeded the original 300-second bound. The runner records the selected
+per-case deadline. The closed exception does not alter other case, compilation,
+process cleanup or external workflow deadlines.
+
 The remaining discovered tests run together in `general` under the same
 300-second bound. The complete inventory must partition without omission or
 duplication, and every actual filtered listing and final parent summary must

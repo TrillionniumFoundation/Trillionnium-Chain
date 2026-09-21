@@ -36,7 +36,12 @@ REQUIRED_SIGKILL_DRIVERS = {
 
 
 NODE_EPOCH_PREFIX = "epoch_runtime_candidate_v1::tests::"
+NODE_CASE_DEADLINES = {
+    NODE_EPOCH_PREFIX + "actual_epoch_successor_activation_preserves_owners_and_initial_ack_v9": 600,
+    NODE_EPOCH_PREFIX + "actual_epoch_successor_activation_after_write_callback_blocks_ack_v9": 600,
+}
 NODE_REQUIRED_DRIVERS = {
+    *NODE_CASE_DEADLINES,
     NODE_EPOCH_PREFIX + "actual_epoch_runtime_activation_releases_timer_then_persisted_timeout_once",
     NODE_EPOCH_PREFIX + "actual_epoch_first_core_finalization_applies_three_real_native_executions_v2",
     NODE_EPOCH_PREFIX + "actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5",
@@ -104,6 +109,12 @@ def partition_inventory(names: Iterable[str], suite: str = "native") -> dict[str
     if sorted(flattened) != names or len(flattened) != len(set(flattened)):
         raise ShardError("native inventory is omitted or duplicated")
     return result
+
+
+def shard_deadline(suite: str, names: list[str], default: int) -> int:
+    if suite == "node-epoch" and len(names) == 1:
+        return NODE_CASE_DEADLINES.get(names[0], default)
+    return default
 
 
 def final_test_result(output: str) -> str:
@@ -269,9 +280,10 @@ def execute(args: argparse.Namespace, summary: dict[str, object]) -> int:
         command = command_for_shard(executable, shard, shards, args.suite)
         if inventory_for(shard + ".inventory", command) != shards[shard]:
             raise ShardError(f"{shard} filtered inventory differs from planned names")
-        print(f"{args.suite} shard={shard} tests={len(shards[shard])} deadline={args.deadline_seconds}s", flush=True)
-        output, code = invoke(shard, command, args.deadline_seconds)
-        outcome = {"planned_count": len(shards[shard]), "ignored_count": len(set(shards[shard]) & ignored), "exit_code": code}
+        deadline = shard_deadline(args.suite, shards[shard], args.deadline_seconds)
+        print(f"{args.suite} shard={shard} tests={len(shards[shard])} deadline={deadline}s", flush=True)
+        output, code = invoke(shard, command, deadline)
+        outcome = {"deadline_seconds": deadline, "planned_count": len(shards[shard]), "ignored_count": len(set(shards[shard]) & ignored), "exit_code": code}
         outcomes[shard] = outcome
         if code:
             return code

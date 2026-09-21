@@ -1230,3 +1230,22 @@ check before the key makes zero key calls; failure after the key releases no
 signature and preserves the existing uncertain-key/recovery rules. Exact durable
 signature replay still bypasses the key and remains subject to the consumer's
 final local/external release checks.
+
+### Successor host source and final local custody reads (M03-SUCCESSOR-READ-V1)
+
+Journal9 exposes its immutable original `EpochSafetyJournalProfileV1` by a
+borrowed read-only accessor. The profile is configuration, not freshness, source
+ownership, or ACK authority. Journal12 initialization still requires the actual
+Journal9 owner, independently selected exact pin and original consuming Core
+preparation; reconstructing a source from this profile is not permitted.
+
+`ConfirmedSignerNodeCheckpointFactsV0::confirm_local_owner_v1` performs a
+callback-free final comparison against its original ordinary signer owner. It
+requires exact process/affinity and every pinned namespace, the original profile
+and observed head, full bounded canonical inventory, capacity, tail and pending
+intent. It compares the complete selected facts and finishes with namespace
+validation. No external-watermark method, repair, write, reservation, signature
+or activation occurs. The ordinary external head must already have been checked
+by the original exact-head producer. M15 runs this final local operation after
+the last external callback together with the corresponding retained role and
+retirement local checks, before publishing an activation or signature.

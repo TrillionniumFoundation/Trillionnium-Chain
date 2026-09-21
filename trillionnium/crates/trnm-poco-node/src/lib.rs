@@ -202,7 +202,7 @@ pub use epoch_runtime_candidate_v1::{
     EpochHandoffRolesRuntimeV7, EpochOrdinaryContinuationRuntimeV3, EpochPreHandoffRuntimeV5,
     EpochRetirementRuntimeV6, FirstEpochFinalizationRuntimeV2, FirstNewEpochPhaseV1,
     PendingEpochValidationRecoveryReadbackV1, ProgressedEpochRecoveryReadbackV1,
-    RecordedEpochHandoffSignatureV7,
+    RecordedEpochHandoffSignatureV7, SuccessorEpochRuntimeV9,
 };
 mod external_node_checkpoint;
 #[cfg(feature = "epoch-runtime-candidate")]

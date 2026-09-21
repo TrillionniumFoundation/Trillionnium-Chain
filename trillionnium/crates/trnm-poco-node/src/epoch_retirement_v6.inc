@@ -1,6 +1,6 @@
 // Actual journal9/native13 retirement. No caller-provided scalar can create this owner.
 struct OutgoingEpochSourceV6<W: ExternalSignerRetirementV1> {
-    driver: PendingEpochHostDriverV1,
+    driver: OutgoingEpochCoreV9,
     journal: SqliteEpochSafetyJournalV1,
     pin: EpochSafetyHeadPinV1,
     application: DurableNativeApplicationV0,
@@ -176,7 +176,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalSignerRetirementV1> EpochPreHando
         } = *inner.runtime;
         ensure!(checkpoint == predecessor, "outgoing predecessor changed");
         let mut source = Box::new(OutgoingEpochSourceV6 {
-            driver,
+            driver: OutgoingEpochCoreV9::Live(Box::new(driver)),
             journal,
             pin,
             application,

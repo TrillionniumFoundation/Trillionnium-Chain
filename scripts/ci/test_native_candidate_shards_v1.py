@@ -66,6 +66,10 @@ if case == 'extra-ignored':
 pre_handoff_driver = 'later_epoch_checkpoint_bridge::tests::later_pre_handoff_sigkill_commit_and_attach_cuts_preserve_original_evidence'
 if case == 'missing-safety-driver':
     NAMES.remove('journal12::journal12_six_sigkill_cuts_keep_actual_source_and_prefix')
+if case == 'missing-v9-positive':
+    NAMES.remove('epoch_runtime_candidate_v1::tests::actual_epoch_successor_activation_preserves_owners_and_initial_ack_v9')
+if case == 'missing-v9-callback':
+    NAMES.remove('epoch_runtime_candidate_v1::tests::actual_epoch_successor_activation_after_write_callback_blocks_ack_v9')
 if case == 'missing-node-driver':
     NAMES.remove('epoch_runtime_candidate_v1::tests::actual_epoch_seals_apply_original_fronts_then_commit_unattached_pre_handoff_v5')
 if case == 'missing-pre-handoff-driver':
@@ -158,6 +162,23 @@ print(json.dumps({'reason':'compiler-artifact', 'target':{'name':TARGET_NAME, 'k
                 if shard != "general":
                     self.assertEqual(len(inventory[shard]), 1)
                     self.assertIn("--exact", (evidence / (shard + ".command")).read_text())
+                expected_deadline = runner.NODE_CASE_DEADLINES.get(inventory[shard][0], 30)
+                self.assertEqual(summary["shards"][shard]["deadline_seconds"], expected_deadline)
+
+    def test_v9_budget_is_exact_and_both_genuine_cases_are_required(self) -> None:
+        self.assertEqual(len(runner.NODE_CASE_DEADLINES), 2)
+        for name in runner.NODE_CASE_DEADLINES:
+            self.assertEqual(runner.shard_deadline("node-epoch", [name], 300), 600)
+            self.assertEqual(runner.shard_deadline("native", [name], 900), 900)
+            self.assertEqual(runner.shard_deadline("safety-epoch", [name], 900), 900)
+            self.assertEqual(runner.shard_deadline("node-epoch", [name + "_extra"], 300), 300)
+        self.assertEqual(runner.shard_deadline("node-epoch", ["ordinary::new_test"], 300), 300)
+        self.assertEqual(runner.shard_deadline("node-epoch", list(runner.NODE_CASE_DEADLINES), 300), 300)
+        for case in ("missing-v9-positive", "missing-v9-callback"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                code, summary, _ = self.invoke(Path(directory), case, "node-epoch")
+                self.assertNotEqual(code, 0)
+                self.assertEqual(summary["status"], "failed")
 
     def test_safety_integration_profile_preserves_all_cases_and_actual_child_admission(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

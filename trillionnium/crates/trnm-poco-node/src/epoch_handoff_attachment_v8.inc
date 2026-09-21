@@ -3,7 +3,8 @@
 use trnm_native_execution_v0::LaterEpochApplicationEdgeV1;
 
 /// Retained actual role custody and a strictly attached native13 successor.
-/// There is no Core activation, ordinary custody, signing or cold conversion.
+/// Attachment alone releases no Core activation, ordinary custody or signing.
+/// Explicit V9 consumes this owner; no cold conversion is exposed.
 ///
 /// ```compile_fail
 /// use trnm_poco_node::EpochHandoffAttachedRuntimeV8;
