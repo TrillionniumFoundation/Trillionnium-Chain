@@ -696,11 +696,17 @@ regression retains its real SIGKILL checks; no power-loss, network throughput
 or execution-ready installation claim follows from this acceptance.
 
 Global command IDs and signer nonces are not committed by the v0 signed state
-root. Before a future receiver may continue execution it must derive complete
+root. Before a receiver may continue execution it must derive complete
 replay history by executing authenticated bodies from a genuinely local replay
 anchor. A header-only pin does not authenticate earlier replay state. That
-historical-replay owner/atomic-install contract is separate and remains open;
-live staging must never manufacture it from peer-supplied replay metadata.
+separate M08-HISTORY-INSTALL-V1 owner now implements explicit schema10→12
+installation and cold reexecution from a genuine local anchor; its accepted
+nonempty path is C18→C32. M08-REPLAY-EXECUTION-V1 additionally implements and
+tests receiver-local ordinary C33 preparation, original finality and restart.
+These are local owner results, not a public receive/install session, wiped-node
+bootstrap or signing activation. The remaining M15 join is specified in
+M13-HISTORICAL-RECEIVE-V1 below. Live staging must never manufacture replay
+authority from peer-supplied metadata.
 
 ### Migration, not ordinary state sync
 
@@ -952,7 +958,184 @@ Native JMT staging may consume the resulting terminal facts exactly as before.
 It still grants no replay state or application installation authority. M08 must
 independently own and audit the local replay anchor, reuse M01-HISTORY-V1 on cold
 recovery, execute all application bodies through M06 and atomically install the
-derived execution base under a separate versioned owner-storage contract.
+derived execution base under M08-HISTORY-INSTALL-V1. That bounded local owner
+and ordinary continuation are implemented; the following transport composition
+is a separate required contract and remains unimplemented.
+
+## Historical receive-to-install session (M13-HISTORICAL-RECEIVE-V1)
+
+Primary M13; M15 owns the candidate transport/session adapter, M08 owns native
+source/replay/install, and M02/M03 retain all Core and custody authority. This
+contract does not enable a production feature or alter the existing T1 ordinary
+schema3 receiver. The first acceptance path uses an already genuine receiver-owned
+schema10 C18 and an independently configured M13 C18 anchor, downloads original
+NHR1 C18→C32, and installs schema12. Genesis/H1 archive availability and a wiped
+receiver have no such source and remain unsupported. A schema13 exporter may
+serve complete attached history, but the existing receiver source API accepts
+only schema10; an export tag does not widen installation's source allowlist.
+
+The reusable implemented symbols are M08
+`confirm_historical_replay_anchor_v1`, `prepare_historical_replay_base_v1`,
+`install_historical_replay_base_v1`, `confirm_historical_replay_base_v1` and
+explicit `open_historical_replay_v1`, with the NHR1
+`NativeHistoricalReplayV1::{decode_v1,encode_v1}` codec; M13 supplies
+`NativeTrustAnchorV1::from_pinned_bytes` and
+`verify_native_historical_trust_path_v1`. Their private-field results cannot be
+serialized and restored as capabilities. M15 must use these boundaries rather
+than adapting private Borsh snapshots, generic recomputer output, remote local-P
+digests, full-snapshot live leaves or the T1 `replay_and_publish` loop into an
+installer. `native_replay_sync_v1.rs` may contribute reviewed bounded-file and
+chunk-publication helpers, but its genesis/height-indexed record grammar and
+schema3 writer remain unchanged.
+
+### Independent configuration and bounded transfer
+
+Before any request or staging-file creation, select an explicit closed historical
+receive profile, chain/genesis/protocol, trusted M13 anchor pin and canonical
+header/set/parameters, expected target height and block ID, receiver application
+path/configuration, client signer policy, and private owned staging root. The
+operator's target must be a Regular application block above the anchor in this
+first profile; no peer may shorten it or replace the anchor. Require the M13
+anchor header to equal the actual local source header;
+confirm the source's exact Head104 and durable sequence using the M08 anchor API.
+The returned source-inventory digest additionally binds unchanged-head mutations
+of P, edge and required preparation records. Source and target local application
+commit IDs never come from the peer. Larger/general-anchor mappings are outside
+this first profile.
+
+The proposed `NativeHistoricalTransferManifestV1` is a new inert envelope, not
+an extension of T1's one-proof-per-height manifest. Its exact ordered fields are
+`schema="trnm.native-historical-transfer.v1"`, bounded chain ID (128 bytes),
+genesis H32, host profile H32, independently selected anchor pin H32, canonical
+target-header bytes (1..4096), NHR1 byte length (1..64MiB), NHR1 SHA256 H32,
+and the ordered SHA256 H32 of every 64KiB chunk. The count must equal checked
+`ceil(history_bytes/65536)`, in1..1024; only the last chunk may be shorter.
+Use fixed-field-order canonical UTF-8 JSON with lowercase hex binary fields,
+reject duplicate/unknown keys, nulls, noncanonical hex, noninteger sizes and
+trailing data, and require exact canonical reencoding. Bound the raw manifest
+to128KiB before parsing. Its SHA256 binds its entire canonical byte string.
+Manifest and chunk hashes provide transfer identity, never proof authority.
+
+M15's new manifest/chunk request variants are explicitly versioned and bind
+chain/profile, anchor pin, expected target and manifest digest; a chunk request
+also binds its exact index. Responses echo that tuple and have bounded framing
+before allocating a payload. There is no peer-selected filename or path. Use at
+most2 configured peers and4 concurrent reads, a5-second per-request deadline,
+at most2 retries per peer and one absolute600-second download deadline that
+retries cannot reset. Retry a missing chunk only; changing peers never changes
+the manifest. Stage at most one64MiB history plus its bounded manifest/progress
+and four chunks; reserve at least128MiB staging disk independently of native
+installation space. A small local budget is unavailability, not invalid finality.
+Do not reuse the generic512GiB snapshot ceiling for this profile.
+
+The proposed private-field `HistoricalReplayReceiveSessionV1` has separate
+begin/resume, accept-chunk, verify-and-prepare, and install/readback operations.
+Its local binding frames the domain `trnm.state-sync.historical-receive.v1`,
+profile/anchor pins, expected target, manifest digest, receiver store/namespace
+identity and exact source Head104/sequence/inventory digest. A separate checked
+U64 progress generation starts at0, advances once for each newly published chunk
+or phase, and stays unchanged on exact retry. Every progress CAS names both the
+immutable binding and expected generation; overflow refuses. A new manifest
+requires a new owned session; it cannot replace an
+existing immutable slot. Retain an OS lock and pinned staging directory/file
+identity for the entire session. Persist canonical manifest, exact verified
+chunks, and compare-and-swap progress with create-new publication, file and
+directory fsync. Reject symlink, hardlink, foreign uid/mode and namespace
+replacement. A bitmap or progress hash alone never proves retained bytes.
+
+### Verification, local execution and installation
+
+After all chunks arrive, reread their bounded exact lengths/hashes, concatenate
+only within the64MiB cap, verify the whole NHR1 digest, and canonical-decode.
+Require exact anchor-header equality and that the last record matches the chosen
+target header. Feed all contiguous headers, ordered eight-root activations and
+the original terminal proof to M13's historical verifier with narrowed limits
+and the session's remaining work meter. This authenticates intermediate headers
+through the terminal hash ancestry; it does not demand unavailable original
+finality proofs for every ancestor. Retain the256-header and32-transition caps
+independently, complete64MiB history bound, per-root CEV0 limits and contextual
+synthetic-anchor checks. Missing pre-anchor context or an unsupported target/body
+profile rejects; there is no context-free fallback or alternate-anchor retry.
+
+On that same decoded NHR1 input, call M08's read-only prepare with the receiver's
+genuine anchor and the same remaining operation work meter. M08 independently
+verifies the history from its audited local source and executes every Application
+body through M06; Seal records never execute. This second verification is a real
+consumer check and consumes work, not a forged projection of the M13 result.
+The host may narrow the protocol work ceiling and must admit both checks within
+that one ceiling; insufficient remaining budget refuses before installation.
+Never enlarge, reset or refund it to make a second consumer pass. Keep M08's
+independent cold-admission limits unchanged.
+Require prepared source Head104/sequence/inventory equality and byte-exact target
+header, terminal validator set and parameters equality with the sealed M13 path.
+The prepared local target Head104, input/run digests, lifecycle and replay-set
+digests come only from M08. Do not equate NHR1 SHA256 with M08's separately
+framed input digest or compare a sender's local commit ID to the receiver's.
+
+Before calling install, fsync an immutable local install-intent record bound to
+session generation, manifest/history digests, M13 path digest, prepared source
+facts, M08 input/run digests and the complete **receiver-computed** target
+Head104. A session cursor is comparison data and cannot construct a prepared
+token. The only write authority is the fresh owner-affine prepared result passed
+to `install_historical_replay_base_v1`. M08 performs its own in-transaction full
+source comparison, exact10→12 CAS, source-sequence+1 allocation, atomic metadata/
+state/replay installation, fsync and independent cold-equivalent reexecution.
+Its retained source tables, replay baseline and installed source B stay exact;
+the network adapter must not consume B or insert fictional source history rows.
+
+On success, compare receipt owner/source/target/input and installation sequence
+to the intent and selected native owner. Independently call
+`confirmed_replay_head_v1` before reporting a *current* installed head. Persist
+application-only completion by generation/intent CAS with file/directory sync.
+Expose local application readback plus the verified target only; never report
+Core Ready, a signing permit or a current C32 head merely from an installation
+receipt when the owner has since legitimately progressed to C33.
+
+### Restart and custody exclusion
+
+| Restart observation | Required action |
+| --- | --- |
+| Partial or complete download, no install intent | Recheck exact local configuration, session generation, manifest and every retained chunk. Reconfirm the genuine source anchor before preparing; stale same-head inventory refuses. |
+| Intent exists, authoritative database is still schema10 | Ordinary-open that existing owner, independently redo M13 verification and M08 source confirmation/replay, require every intended prepared fact to match, then retry install. A cached snapshot or token cannot bypass this work. |
+| COMMIT outcome unknown or physical schema12 | Stop cleanup; explicit-open the existing schema12 owner, rerun M13 verification over retained exact history, then call `confirm_historical_replay_base_v1(expected_input, expected_local_head)`. Its cold audit and fresh fsync resolve the authoritative result. Never call ordinary-open or a legacy writer to force compatibility. |
+| Hot rollback restores schema10 during explicit open | Explicit open refuses; use ordinary-open and a fresh source/prepare/install retry. Do not mark target installed from the intent. |
+| Exact base is installed but current head has progressed | Confirm the historical base, audit current replay head separately, retain the advanced head, and label the response historical-installed/current-progressed. Never reinstall C32 or rewind metadata. |
+| Changed namespace, source, intent, history or independent anchor | Fence this session and preserve authoritative files and diagnostic evidence. No alternate anchor, automatic recreation, schema downgrade or blind staging deletion. |
+
+M15 must select an **application-only, no-custody** host before starting this
+first receiver profile. It cannot enter through an active validator's runtime:
+there must be no live signer lease, pending SignIntent, unacknowledged Safety
+write or competing native writer. Absence of a peer key or an empty local
+watermark is not a quiescence proof. An adapter accepting an existing live node
+instead needs a separate M02/M03 consuming pause/drain capability and an
+independent whole-node checkpoint contract, which this profile does not provide.
+During the session disable transaction admission/consensus dispatch to this
+application; immutable download work may proceed without a native write lock,
+but install uses M08's normal owner serialization and revalidation.
+
+Completion permits the explicit schema12 ordinary application continuation
+APIs only when their independently verified inputs are available. C33 preview,
+P, finality commit and restart do not restore Core/Safety/signer custody.
+Public transaction admission, cross-checkpoint continuation and any later
+validator activation stay closed until native head, exact Core/Safety journal,
+pending/outbound effects, external checkpoint and signer watermarks are joined
+by an independently reviewed typed host operation. Nothing in a session
+manifest, receipt, historical path or imported metadata can satisfy that join.
+
+Acceptance must connect the actual signed nonempty C18→C32 NHR1 exporter through
+real bounded requests/chunks, M13 independent verification, M08 replay/install
+and explicit cold open; then use the real C33 body/original proof to demonstrate
+local continuation and command/nonce replay rejection. Keep the existing local
+installer's real SIGKILL/fsync tests. Add actual process-death cuts at manifest
+publication, chunk publication, install-intent fsync, each of the three M08
+install boundaries and completion publication; every retry must converge to the
+same source or target without double installation or rollback. Test canonical
+rehashing of wrong bodies/activations, alternate anchors/targets, mismatched
+terminal configurations, stale unchanged-head source inventory, foreign owner,
+cross-session chunks, false progress, absolute-deadline exhaustion and namespace
+replacement. Assert no signing operation, Safety mutation or source-B consumption.
+Passing local tests establishes this bounded application-only session; genuine
+network/fleet failure and performance acceptance remain separate M15/M17 evidence.
 
 ## Contextual native proof steps (M13-SUCCESSOR-CONTEXT-V1)
 
@@ -993,5 +1176,7 @@ Commissioned public synchronization needs authenticated transport, general
 native proof paths, real state recomputation/installer, bounded restart and
 multi-epoch producer/consumer tests. Migration additionally requires exact
 source finality, liabilities, target-root and fresh-custody agreement.
-The general multi-epoch installer remains planned; the bounded ordinary application
-replica above is an explicit candidate capability with signing disabled.
+The local-anchor multi-epoch M08 installer and bounded C33 continuation are
+implemented. The public receive-to-install composition above and general
+genesis/wiped-node catchup remain planned. The existing ordinary schema3 replica
+and future schema12 receiver are explicit candidates with signing disabled.
