@@ -50,6 +50,14 @@ fn first_apply_qc_v2(
 fn first_apply_child_proposal_v2(
     owner: &super::FirstEpochFinalizationRuntimeV2<Watermark, Watermark>,
 ) -> SignedProposalV0 {
+    application_child_proposal_v4(owner, None)
+}
+
+#[inline(never)]
+fn application_child_proposal_v4(
+    owner: &super::FirstEpochFinalizationRuntimeV2<Watermark, Watermark>,
+    commitment: Option<trnm_consensus_types::NextEpochCommitmentHash>,
+) -> SignedProposalV0 {
     let parent = &owner.prepared.last().unwrap().prepared;
     let parent_header = parent.header().unwrap();
     let set = owner.runtime.edge.new_validator_set();
@@ -78,7 +86,11 @@ fn first_apply_child_proposal_v2(
         set.epoch(),
         view,
         trnm_consensus_types::Height::new(request.height().get()),
-        BlockKind::Regular,
+        if commitment.is_some() {
+            BlockKind::EpochCheckpoint
+        } else {
+            BlockKind::Regular
+        },
         parent_header.id(),
         proposer,
         set.id(),
@@ -88,7 +100,7 @@ fn first_apply_child_proposal_v2(
         ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
         EvidenceRoot::new(*preview.evidence_root().as_bytes()),
         request.timestamp_ms(),
-        None,
+        commitment,
     )
     .unwrap();
     let justify = QcReferenceV0::ordinary(first_apply_qc_v2(&parent_header, set));
@@ -352,3 +364,5 @@ fn actual_epoch_vote_rejects_deleted_native_p_at_external_key_boundary_v2() {
 }
 
 include!("epoch_ordinary_continuation_v3_tests.inc");
+
+include!("epoch_checkpoint_preparation_v4_tests.inc");

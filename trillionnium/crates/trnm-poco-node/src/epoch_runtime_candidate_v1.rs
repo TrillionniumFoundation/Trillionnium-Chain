@@ -1670,6 +1670,12 @@ fn confirm_key_owners_v1<W: ExternalSignerRetirementV1>(
         "owner changed during key-boundary confirmation"
     );
     confirm_pending_vote_native_v2(driver, application, prepared_vote)?;
+    if let Some(prepared) = prepared_vote {
+        let header = prepared.header()?;
+        if header.block_kind() == BlockKind::EpochCheckpoint {
+            confirm_checkpoint_selection_v4(application, edge, checkpoint, &header)?;
+        }
+    }
     store.confirm_exact(checkpoint)?;
     Ok(())
 }
@@ -1978,3 +1984,5 @@ fn confirm_native_application_cut_v3(
     }
     Ok(())
 }
+
+include!("epoch_checkpoint_preparation_v4.inc");

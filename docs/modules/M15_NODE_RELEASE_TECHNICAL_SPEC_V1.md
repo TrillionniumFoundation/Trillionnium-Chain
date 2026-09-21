@@ -1215,6 +1215,44 @@ Checkpoint candidate selection and checkpoint/seal signing require their own
 explicit joins; this slice does not execute seals, retire the active signer,
 create journal10, activate another epoch, or recover a progressed V3 owner.
 
+### Checkpoint preparation from the real cutoff (M15-EPOCH-CHECKPOINT-V4)
+
+A distinct consuming V4 owner accepts only the completed V3 cutoff owner and
+its two original uncommitted lookahead executions. This bounded profile requires
+those executions to end at checkpoint minus one; it admits one complete signed
+checkpoint proposal extending that exact Prepared parent. The checkpoint height
+and cutoff are derived from the private Core's authenticated active parameters.
+The original V1/V2/V3 phase fences and owner identities remain unchanged.
+
+Before any proposal-driven mutation, M08 recomputes deterministic selection from
+the actual committed cutoff. Its exact native head, P digest/sequence and commit
+sequence must equal the independent application checkpoint; the proposed next
+epoch commitment must equal this locally computed result. A validly signed but
+incorrect commitment is rejected without writes or key calls. This read-only
+refusal leaves the bounded owner available; once any mutable operation begins,
+the private owner is removed and restored only after complete success, so an
+uncertain write cannot be retried through an unfenced capability.
+
+The genuine Core proposal produces its own validation request. Execution uses
+the original body and exact owner-affine Prepared parent. Native P readback,
+locally executed state/receipt roots, checkpoint body commitments and the fresh
+cutoff-derived commitment precede sealed Core Valid, journal9 NativeValid,
+independent checkpoint CAS and ACK. Regular and checkpoint execution share this
+private persistence pipeline with explicit kind-specific commitment validation;
+no ordinary-only public API becomes a checkpoint route.
+
+The explicit checkpoint Vote entry retains the existing signer-journal intent
+persistence and complete owner/P/Core-Valid checks. Both sides of the actual key
+producer also recompute selection and match the independently checkpointed
+cutoff and checkpoint header. A timeout still requires no P; seals receive no
+missing-P exception. The successful terminal phase retains uncommitted C16/C17/
+C18 and only the real checkpoint Vote. It does not establish checkpoint finality,
+execute seals, apply C16/C17/C18, retire a signer, create journal10, activate a
+successor, or recover a progressed owner. Acceptance extends the genuine C15
+fixture with a signed wrong-commitment refusal, actual C18 P/D/C and Vote, exact
+journal/node readback, unchanged committed cutoff, and phase-repetition rejection
+on the default thread stack.
+
 ### Concrete native live staging composition
 
 M15 composes M06's codec/recomputer with M13's verified native path and bounded

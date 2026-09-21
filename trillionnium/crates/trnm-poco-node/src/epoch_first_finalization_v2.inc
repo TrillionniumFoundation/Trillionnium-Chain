@@ -196,7 +196,15 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
 
     /// Admit and execute one complete ordinary child against the exact retained
     /// Prepared parent. This returns before invoking the signer.
-    pub fn execute_child_proposal_v2(mut self, proposal: SignedProposalV0) -> Result<Self> {
+    pub fn execute_child_proposal_v2(self, proposal: SignedProposalV0) -> Result<Self> {
+        self.execute_application_child_v4(proposal, None)
+    }
+
+    fn execute_application_child_v4(
+        mut self,
+        proposal: SignedProposalV0,
+        checkpoint_commitment: Option<trnm_consensus_types::NextEpochCommitmentHash>,
+    ) -> Result<Self> {
         self.require_collecting()?;
         ensure!(self.prepared.len() < 3, "first continuation child bound");
         let parent = self
@@ -205,7 +213,12 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
             .context("first continuation parent missing")?;
         let parent_header = parent.prepared.header()?;
         ensure!(
-            proposal.block().header().block_kind() == BlockKind::Regular
+            proposal.block().header().block_kind()
+                == if checkpoint_commitment.is_some() {
+                    BlockKind::EpochCheckpoint
+                } else {
+                    BlockKind::Regular
+                }
                 && proposal.block().header().parent_id() == parent_header.id()
                 && proposal.block().header().height().get()
                     == parent_header
@@ -213,7 +226,7 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
                         .get()
                         .checked_add(1)
                         .context("child height overflow")?,
-            "first continuation requires an exact ordinary child"
+            "application continuation requires an exact child of the expected kind"
         );
         let expected_block = proposal.block().id();
         let effects = self
@@ -297,15 +310,43 @@ impl<W: ExternalSignerRetirementV1, N: ExternalMonotonicWatermarkV0>
             .collect::<Result<Vec<_>>>()?;
         let body = BlockBodyV0::new(payload, evidence)
             .map_err(|e| anyhow::anyhow!("child body: {e:?}"))?;
-        let commitments = body
-            .validate_ordinary_commitments(
+        let commitments = if let Some(expected) = checkpoint_commitment {
+            body.verify_evidence(
+                self.runtime.edge.new_validator_set(),
+                &trnm_consensus_crypto::StrictEd25519Verifier,
+            )
+            .map_err(|e| anyhow::anyhow!("checkpoint evidence: {e:?}"))?;
+            confirm_checkpoint_selection_v4(
+                &self.runtime.application,
+                &self.runtime.edge,
+                &self.runtime.checkpoint,
+                h,
+            )?;
+            body.validate_checkpoint_static_commitments(
+                h,
+                &receipts,
+                self.runtime.edge.new_parameters(),
+                trnm_consensus_types::StateRoot::new(
+                    *confirmed
+                        .prepared()
+                        .overlay_parent_head()?
+                        .state_root()
+                        .as_bytes(),
+                ),
+                expected,
+            )
+            .map_err(|e| anyhow::anyhow!("checkpoint commitments: {e:?}"))?
+            .application_commitments_v1()
+        } else {
+            body.validate_ordinary_commitments(
                 h,
                 &receipts,
                 self.runtime.edge.new_parameters(),
                 self.runtime.edge.new_validator_set(),
                 &trnm_consensus_crypto::StrictEd25519Verifier,
             )
-            .map_err(|e| anyhow::anyhow!("child commitments: {e:?}"))?;
+            .map_err(|e| anyhow::anyhow!("child commitments: {e:?}"))?
+        };
         let artifact = trnm_consensus_core::ValidatedPayloadArtifactRefV0::new(
             BlockIdOverlayRefV0::new(h.id(), parent_header.id(), confirmed.overlay_checksum()),
             confirmed.artifact_checksum(),
