@@ -1596,6 +1596,155 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabSignedTimeoutOwnerV0<W> {
         Ok(true)
     }
 
+    /// Comparison-only authenticated parent for a late Synced body. This is
+    /// not a Ready proposal binding and grants no signing authority.
+    pub fn synced_proposal_parent_v1(
+        &self,
+    ) -> Result<PocoNodeLabProposalParentV0, PocoNodeLabAuthorityErrorV0> {
+        authenticated_synced_parent_v1(
+            &self.core,
+            &self.application,
+            &self.application_head,
+            self.application_overlay,
+            &self.pending_executions,
+        )
+    }
+
+    /// Executes one actual late body while preserving this exact signed
+    /// timeout owner and outbound. The existing Synced closure releases no
+    /// deferred effect and never receives a signature producer.
+    pub fn drive_one_to_synced_no_sign_preserving_timeout_v1(
+        mut self,
+        proposal: SignedProposalV0,
+    ) -> Result<Self, PocoNodeLabAuthorityErrorV0> {
+        let state = self.core.safety_state();
+        let view = state.current_view();
+        let last_timeout = state.last_timeout_view();
+        let last_vote = state.last_voted_view();
+        let header = proposal.block().header();
+        let parent = self.synced_proposal_parent_v1()?;
+        if header.view() > self.facts.view
+            || header.view() > view
+            || header.parent_id().as_bytes() != parent.application_head_v0().block_id().as_bytes()
+            || header.height().get()
+                != parent
+                    .application_head_v0()
+                    .height()
+                    .get()
+                    .checked_add(1)
+                    .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                        "synced parent height overflow",
+                    ))?
+            || state.pending_tc_high_qc_sync().is_some()
+            || state.pending_standalone_qc_sync().is_some()
+            || state.pending_sign().is_some()
+            || state.pending_finalize().is_some()
+            || !state.payload_validation_obligations().is_empty()
+        {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "signed timeout late-body phase or parent",
+            ));
+        }
+        reconfirm_phase_neutral_owner_v0(
+            &self.core,
+            &self.safety_store,
+            &self.application,
+            &mut self.signer_journal,
+            &mut self.checkpoint_store,
+            self.facts.checkpoint,
+            &self.application_head,
+            &self.pending_executions,
+            &self.proposal_journal,
+            None,
+        )?;
+        let before = self
+            .signer_journal
+            .confirm_node_checkpoint_head_exact_v0()
+            .map_err(PocoNodeLabAuthorityErrorV0::Signer)?;
+        if before.exact_watermark() != self.facts.signer_exact_watermark {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "signed timeout signer head changed",
+            ));
+        }
+        let Self {
+            core,
+            seal_authority,
+            finalization_authority,
+            safety_store,
+            application,
+            signer_journal,
+            checkpoint_store,
+            application_head,
+            application_overlay,
+            pending_executions,
+            proposal_journal,
+            outbound,
+            mut facts,
+        } = self;
+        let ready = PocoNodeLabOrdinaryProposalRuntimeV0 {
+            core,
+            seal_authority,
+            finalization_authority,
+            safety_store,
+            application,
+            signer_journal,
+            checkpoint_store,
+            checkpoint: facts.checkpoint,
+            application_head,
+            application_overlay,
+            pending_executions,
+            proposal_journal,
+        };
+        let mut ready = ready.drive_one_to_synced_no_sign_v0(proposal)?;
+        reconfirm_phase_neutral_owner_v0(
+            &ready.core,
+            &ready.safety_store,
+            &ready.application,
+            &mut ready.signer_journal,
+            &mut ready.checkpoint_store,
+            ready.checkpoint,
+            &ready.application_head,
+            &ready.pending_executions,
+            &ready.proposal_journal,
+            None,
+        )?;
+        let after = ready
+            .signer_journal
+            .confirm_node_checkpoint_head_exact_v0()
+            .map_err(PocoNodeLabAuthorityErrorV0::Signer)?;
+        if after.journal_id() != before.journal_id()
+            || after.profile_checksum() != before.profile_checksum()
+            || after.identity() != before.identity()
+            || after.exact_watermark() != before.exact_watermark()
+            || after.capacity() != before.capacity()
+            || after.tail() != before.tail()
+            || after.pending_intent() != before.pending_intent()
+            || ready.core.safety_state().current_view() != view
+            || ready.core.safety_state().last_timeout_view() != last_timeout
+            || ready.core.safety_state().last_voted_view() != last_vote
+        {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "signed timeout no-sign closure changed signing state",
+            ));
+        }
+        facts.checkpoint = ready.checkpoint;
+        Ok(Self {
+            core: ready.core,
+            seal_authority: ready.seal_authority,
+            finalization_authority: ready.finalization_authority,
+            safety_store: ready.safety_store,
+            application: ready.application,
+            signer_journal: ready.signer_journal,
+            checkpoint_store: ready.checkpoint_store,
+            application_head: ready.application_head,
+            application_overlay: ready.application_overlay,
+            pending_executions: ready.pending_executions,
+            proposal_journal: ready.proposal_journal,
+            outbound,
+            facts,
+        })
+    }
+
     /// A late QC remains admissible after the local timeout vote was released.
     pub fn advance_quorum_certificate_v0(
         self,
@@ -3161,47 +3310,13 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
     pub fn proposal_parent_v0(
         &self,
     ) -> Result<PocoNodeLabProposalParentV0, PocoNodeLabAuthorityErrorV0> {
-        let mut retained_match = None;
-        for retained in self.pending_executions.values() {
-            if retained.speculative_head == self.application_head {
-                if retained_match.is_some()
-                    || self.application_overlay != Some(retained.overlay_ref)
-                {
-                    return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                        "speculative application parent is ambiguous or detached from its overlay",
-                    ));
-                }
-                retained_match = Some(retained.executed.request().timestamp_ms());
-            }
-        }
-        if let Some(authenticated_parent_timestamp_ms) = retained_match {
-            return Ok(PocoNodeLabProposalParentV0 {
-                application_head: self.application_head.clone(),
-                authenticated_parent_timestamp_ms,
-            });
-        }
-        if self.application_overlay.is_some() {
-            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "speculative application parent lacks its retained execution",
-            ));
-        }
-        let committed = self
-            .application
-            .confirmed_committed_head_v0()
-            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
-        let applied = self.core.safety_state().application_applied();
-        if committed != self.application_head
-            || committed.height().get() != applied.height().get()
-            || committed.block_id().as_bytes() != applied.block_id().as_bytes()
-        {
-            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "committed application parent differs from Core application_applied",
-            ));
-        }
-        Ok(PocoNodeLabProposalParentV0 {
-            application_head: committed,
-            authenticated_parent_timestamp_ms: applied.timestamp_ms(),
-        })
+        authenticated_synced_parent_v1(
+            &self.core,
+            &self.application,
+            &self.application_head,
+            self.application_overlay,
+            &self.pending_executions,
+        )
     }
 
     /// Returns the exact post-certificate proposal binding selected by Core
@@ -6287,6 +6402,53 @@ fn rebase_to_authoritative_high_qc_v0(
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     }
     Ok(())
+}
+
+fn authenticated_synced_parent_v1(
+    core: &Core,
+    application: &DurableNativeApplicationV0,
+    application_head: &ApplicationHeadV0,
+    application_overlay: Option<trnm_consensus_core::BlockIdOverlayRefV0>,
+    pending_executions: &BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
+) -> Result<PocoNodeLabProposalParentV0, PocoNodeLabAuthorityErrorV0> {
+    let mut retained_match = None;
+    for retained in pending_executions.values() {
+        if &retained.speculative_head == application_head {
+            if retained_match.is_some() || application_overlay != Some(retained.overlay_ref) {
+                return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                    "speculative application parent is ambiguous or detached from its overlay",
+                ));
+            }
+            retained_match = Some(retained.executed.request().timestamp_ms());
+        }
+    }
+    if let Some(authenticated_parent_timestamp_ms) = retained_match {
+        return Ok(PocoNodeLabProposalParentV0 {
+            application_head: application_head.clone(),
+            authenticated_parent_timestamp_ms,
+        });
+    }
+    if application_overlay.is_some() {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "speculative application parent lacks its retained execution",
+        ));
+    }
+    let committed = application
+        .confirmed_committed_head_v0()
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+    let applied = core.safety_state().application_applied();
+    if &committed != application_head
+        || committed.height().get() != applied.height().get()
+        || committed.block_id().as_bytes() != applied.block_id().as_bytes()
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "committed application parent differs from Core application_applied",
+        ));
+    }
+    Ok(PocoNodeLabProposalParentV0 {
+        application_head: committed,
+        authenticated_parent_timestamp_ms: applied.timestamp_ms(),
+    })
 }
 
 fn phase_facts_from_parts_v0(

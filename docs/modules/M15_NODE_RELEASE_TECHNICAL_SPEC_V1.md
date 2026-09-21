@@ -1114,6 +1114,34 @@ aggregation; transport behavior with an offline peer requires separate evidence.
 Full-mesh all-validator publication has quadratic network fanout and establishes
 no throughput, offline-node or multi-host acceptance claim by itself.
 
+### Late body after a signed timeout (M15-TIMEOUT-SYNC-V1)
+
+An existing TimeoutSigned owner may consume a genuine late ordinary proposal
+through the existing Synced no-sign application path and return the same signed
+phase. It retains the exact original TimeoutVote bytes and signing facts; this
+operation grants no Ready handle, new Vote, timeout or proposal-key capability.
+The proposal must be no newer than both the original signed timeout and current
+Core view, and must extend the actual authenticated native parent by one height.
+VoteSigned remains outside this path.
+
+Before execution and after the complete P/D/C/K, independent whole-node CAS and
+Core ACK, freshly join the actual Safety, signer, application/validation and
+checkpoint owners. Reject pending TC/QC synchronization, finalization or signing
+obligations rather than lose their deferred effects. Reuse the existing Synced
+route's exact NativeValid action=None and empty final ACK requirement. Preserve
+Core view, last timeout and last voted coordinates. Every signer identity,
+watermark, capacity, tail and pending-intent field remains byte-exact; only the
+signed owner's comparison checkpoint is refreshed to the new durable cut.
+Execution or persistence uncertainty consumes the owner and remains fail-closed.
+
+Network fallback records an execution only after this complete path succeeds.
+An exact replay or another parent is a no-progress refusal and retains the signed
+owner. Later authentic QC/TC processing still uses its existing consuming path
+to Ready. Tests require a real signed timeout, nonempty late body, real P/D/C/K,
+unchanged timeout bytes and all signer facts, replay/refusal preservation,
+zero additional key calls, and subsequent genuine certificate progress. No
+missing-body hash or caller-supplied Valid fact can satisfy this path.
+
 ### Per-peer ordered delivery (M15-PEER-OUTBOX-V2)
 
 A bounded broadcast queue preserves FIFO independently for each destination.
@@ -1158,20 +1186,22 @@ claim that a network peer received the vote.
 
 The current continuous runtime now has an explicit ordinary follower path. A
 late authenticated proposal is queued only after the signed-owner admission
-decision; `Ready` can execute it through the M13 `SyncedNoSign` route, while a
-`VoteSigned` or `TimeoutSigned` owner remains untouched. The route is
-`receive_unbound_proposal_v1` → `vote_ready_proposal_v1` →
-`sync_late_proposal_v1` → native P/D/C/K/whole-node checkpoint → `Ready`.
+decision; `Ready` can execute it through the M13 `SyncedNoSign` route.
+`TimeoutSigned` can now use the separately bounded `M15-TIMEOUT-SYNC-V1`
+closure and retain the same signed phase; `VoteSigned` remains untouched.
+The route is `receive_unbound_proposal_v1` → `vote_ready_proposal_v1` →
+`sync_late_proposal_v1` → native P/D/C/K/whole-node checkpoint → the original
+`Ready` or `TimeoutSigned` phase.
 The final Core ACK is required to emit no effects, and the external signer
 watermark must be byte-identical before and after the operation. A late-body
 fallback must restore the exact non-Ready owner before returning a no-op; it
-cannot discard or reconstruct a signed owner. Once a Ready owner has been
-consumed for native execution, an execution error still fences that owner.
+cannot discard or reconstruct a signed owner. Once either eligible owner has
+been consumed for native execution, an execution error still fences that owner.
 
 This is a concrete composition boundary, not a liveness claim. The executable
 regressions are
 `trnm-poco-lab-validator/src/continuous_runtime.rs::ready_synced_proposal_commits_without_vote_or_watermark_advance_v1`,
-`...::late_network_proposal_after_timeout_preserves_signed_owner_v1`, and
+`...::late_network_proposal_after_timeout_syncs_without_new_signature_v1`, and
 `trnm-poco-node/tests/native_signed_vote_replay.rs::synced_proposal_commits_without_creating_a_signer_intent`.
 They prove no-sign execution and signed-owner preservation with real SQLite,
 native execution and Ed25519 proposal evidence. They do not prove a production
