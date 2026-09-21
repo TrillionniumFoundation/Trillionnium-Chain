@@ -609,7 +609,7 @@ impl FinalityProofV0 {
         )
     }
 
-    fn checkpoint_two_seal_kernel(
+    pub(crate) fn checkpoint_two_seal_kernel(
         &self,
         old_validator_set: &ValidatorSet,
         old_consensus_parameters: &ConsensusParametersV0,

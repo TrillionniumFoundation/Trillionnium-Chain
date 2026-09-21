@@ -4,17 +4,18 @@ use core::fmt;
 
 use trnm_consensus_types::{
     decode_block_header_v0_exact, decode_epoch_activation_evidence_v0_exact,
-    validate_historical_header_link_v1, BlockHeader, BlockKind, Cev0AdmissionBudgetV0,
-    ConsensusParametersV0, DecodeError, DecodedEpochActivationEvidenceV0,
-    EpochActivationEvidenceErrorV0, EpochActivationEvidencePreimagesV0, EpochGeometryV0,
-    HistoricalAncestryLimitsV1, ValidationError, ValidatorSet,
+    decode_epoch_activation_evidence_with_context_v1_exact, validate_historical_header_link_v1,
+    BlockHeader, BlockKind, Cev0AdmissionBudgetV0, ConsensusParametersV0, DecodeError,
+    DecodedEpochActivationEvidenceV0, EpochActivationEvidenceErrorV0,
+    EpochActivationEvidencePreimagesV0, EpochGeometryV0, HistoricalAncestryLimitsV1,
+    ValidationError, ValidatorSet,
 };
 
 use crate::{
-    decode_verify_finality_proof_strict_v0, validate_validator_set_strict_ed25519_v0,
-    verify_same_version_epoch_activation_authority_strict_v0, FinalityExpectationV0,
-    StrictFinalityErrorV0, StrictSameVersionEpochActivationAuthorityV0,
-    POCO_THREE_CHAIN_PROOF_CLASS_V0,
+    decode_verify_finality_proof_strict_v0,
+    epoch_transition::verify_decoded_epoch_activation_strict_v0,
+    validate_validator_set_strict_ed25519_v0, FinalityExpectationV0, StrictFinalityErrorV0,
+    StrictSameVersionEpochActivationAuthorityV0, POCO_THREE_CHAIN_PROOF_CLASS_V0,
 };
 
 #[derive(Debug)]
@@ -24,6 +25,7 @@ pub enum HistoricalAncestryErrorV1 {
     Consensus(ValidationError),
     ActivationEvidence(EpochActivationEvidenceErrorV0),
     Activation(JointHandoffKernelError),
+    Successor(crate::StrictSuccessorEpochActivationErrorV1),
     Finality(StrictFinalityErrorV0),
 }
 use trnm_consensus_types::JointHandoffKernelError;
@@ -36,6 +38,7 @@ impl fmt::Display for HistoricalAncestryErrorV1 {
             Self::Consensus(error) => write!(f, "historical context: {error}"),
             Self::ActivationEvidence(error) => write!(f, "historical activation bytes: {error}"),
             Self::Activation(error) => write!(f, "historical activation signatures: {error}"),
+            Self::Successor(error) => write!(f, "historical successor activation: {error}"),
             Self::Finality(error) => write!(f, "historical terminal finality: {error}"),
         }
     }
@@ -243,7 +246,9 @@ pub fn verify_historical_header_ancestry_v1(
     }
     let mut set = anchor_set.clone();
     let mut params = *anchor_params;
-    let mut boxed = Vec::with_capacity(activations.len());
+    let mut boxed: Vec<Box<StrictSameVersionEpochActivationAuthorityV0>> =
+        Vec::with_capacity(activations.len());
+    let mut predecessor_terminal_index = None;
     let mut next_activation = 0usize;
     let mut previous = anchor;
     let mut last_decoded_activation: Option<Box<DecodedEpochActivationEvidenceV0>> = None;
@@ -252,20 +257,41 @@ pub fn verify_historical_header_ancestry_v1(
             let evidence = activations
                 .get(next_activation)
                 .ok_or(HistoricalAncestryErrorV1::Invalid("missing activation"))?;
-            let decoded_evidence =
+            let decoded_evidence = if let Some(predecessor) = boxed.last() {
+                decode_epoch_activation_evidence_with_context_v1_exact(
+                    *evidence,
+                    predecessor.runtime_data_v1(),
+                    budget,
+                )
+            } else {
                 decode_epoch_activation_evidence_v0_exact(*evidence, &set, &params, budget)
-                    .map_err(HistoricalAncestryErrorV1::ActivationEvidence)?;
-            let authority = verify_same_version_epoch_activation_authority_strict_v0(
-                decoded_evidence.old_checkpoint_finality(),
-                decoded_evidence.next_epoch_commitment(),
-                decoded_evidence.authorization_kernel(),
-                &set,
-                &params,
-                decoded_evidence.new_validator_set(),
-                decoded_evidence.new_consensus_parameters(),
-                decoded_evidence.authenticated_checkpoint_parent_header(),
-            )
-            .map_err(HistoricalAncestryErrorV1::Activation)?;
+            }
+            .map_err(HistoricalAncestryErrorV1::ActivationEvidence)?;
+            let authority = if let Some(predecessor) = boxed.last() {
+                let start = predecessor_terminal_index.ok_or(
+                    HistoricalAncestryErrorV1::Invalid("missing predecessor terminal position"),
+                )?;
+                let end = index
+                    .checked_sub(4)
+                    .ok_or(HistoricalAncestryErrorV1::Invalid(
+                        "successor checkpoint parent position",
+                    ))?;
+                let ancestry =
+                    decoded
+                        .get(start..=end)
+                        .ok_or(HistoricalAncestryErrorV1::Invalid(
+                            "successor ancestry interval",
+                        ))?;
+                crate::epoch_transition::verify_decoded_successor_epoch_activation_v1(
+                    predecessor,
+                    ancestry,
+                    &decoded_evidence,
+                )
+                .map_err(HistoricalAncestryErrorV1::Successor)?
+            } else {
+                verify_decoded_epoch_activation_strict_v0(&decoded_evidence)
+                    .map_err(HistoricalAncestryErrorV1::Activation)?
+            };
             validate_historical_header_link_v1(
                 header,
                 previous,
@@ -317,6 +343,7 @@ pub fn verify_historical_header_ancestry_v1(
             last_decoded_activation = Some(Box::new(decoded_evidence));
             set = authority.new_validator_set().clone();
             params = *authority.new_consensus_parameters();
+            predecessor_terminal_index = index.checked_sub(1);
             boxed.push(Box::new(authority));
             next_activation += 1;
         } else {

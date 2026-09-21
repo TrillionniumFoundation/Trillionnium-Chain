@@ -1,8 +1,7 @@
 //! Strict complete-epoch verification context. No Core, storage or signer lease.
 use crate::{StrictEd25519Verifier, StrictSameVersionEpochActivationAuthorityV0};
 use trnm_consensus_types::{
-    decode_double_vote_evidence_v0_exact, decode_epoch_activation_evidence_v0_exact,
-    decode_epoch_runtime_finality_proof_v1_exact_with_budget,
+    decode_double_vote_evidence_v0_exact, decode_epoch_runtime_finality_proof_v1_exact_with_budget,
     decode_epoch_runtime_qc_reference_v1_exact_with_budget,
     decode_epoch_runtime_timeout_certificate_v1_exact_with_budget, validate_empty_epoch_seal_v1,
     validate_root_bound_epoch_body_v1, validate_root_bound_regular_body_v0, BlockHeader, BlockKind,
@@ -17,41 +16,15 @@ use trnm_consensus_types::{
 #[derive(Debug, PartialEq, Eq)]
 pub struct StrictEpochRuntimeContextV1 {
     activation: StrictSameVersionEpochActivationAuthorityV0,
-    data: EpochRuntimeContextDataV1,
     evidence: EpochActivationEvidenceBytesV0,
 }
 impl StrictEpochRuntimeContextV1 {
     pub fn from_activation_v1(
         activation: StrictSameVersionEpochActivationAuthorityV0,
     ) -> Result<Self, ValidationError> {
-        let evidence = EpochActivationEvidenceBytesV0 {
-            old_checkpoint_finality: activation.old_checkpoint_finality().try_cev0_bytes()?,
-            next_epoch_commitment: activation.next_epoch_commitment().try_cev0_bytes()?,
-            authorization_kernel: activation.authorization_cev0_bytes()?,
-            old_validator_set: activation.old_validator_set().try_cev0_bytes()?,
-            old_consensus_parameters: activation.old_consensus_parameters().canonical_bytes(),
-            new_validator_set: activation.new_validator_set().try_cev0_bytes()?,
-            new_consensus_parameters: activation.new_consensus_parameters().canonical_bytes(),
-            authenticated_checkpoint_parent_header: activation
-                .authenticated_checkpoint_parent_header()
-                .try_cev0_bytes()?,
-        };
-        // A handoff can enlarge membership; old cardinality alone cannot bound
-        // new-role shares. Keep the signed root ceiling and intrinsic complete-
-        // context work cap, then meter actual old and new shares in the loader.
-        let mut budget =
-            Cev0AdmissionBudgetV0::for_parameters(activation.old_consensus_parameters());
-        let decoded = decode_epoch_activation_evidence_v0_exact(
-            evidence.as_preimages(),
-            activation.old_validator_set(),
-            activation.old_consensus_parameters(),
-            &mut budget,
-        )
-        .map_err(|_| ValidationError::InvalidProposal("strict epoch context canonical evidence"))?;
-        let data = EpochRuntimeContextDataV1::from_decoded_evidence_v1(&decoded)?;
+        let evidence = activation.canonical_evidence_bytes_v1()?;
         Ok(Self {
             activation,
-            data,
             evidence,
         })
     }
@@ -59,7 +32,7 @@ impl StrictEpochRuntimeContextV1 {
         &self.activation
     }
     pub const fn structural_context(&self) -> &EpochRuntimeContextDataV1 {
-        &self.data
+        self.activation.runtime_data_v1()
     }
     pub const fn evidence_bytes(&self) -> &EpochActivationEvidenceBytesV0 {
         &self.evidence
@@ -74,7 +47,9 @@ impl StrictEpochRuntimeContextV1 {
     /// path here prevents a caller from proving only that validator sets are
     /// equal while silently substituting an unrelated checkpoint parent.
     /// Every edge is checked for consecutive height, exact parent ID, and
-    /// chain/protocol/genesis identity.  The successor's old set and
+    /// chain/protocol/genesis identity, scheduled kind/proposer, increasing
+    /// ordinary view and valid timestamp step. The path is bounded to 256
+    /// headers and 1 MiB of canonical bytes. The successor's old set and
     /// parameters must be exactly this context's new set and parameters, and
     /// its epoch must be the checked successor epoch.
     pub fn compose_successor_v1(
@@ -126,34 +101,14 @@ impl StrictEpochRuntimeContextV1 {
         {
             return Err(invalid("successor retained ancestry endpoints differ"));
         }
-        let genesis = predecessor_activation.new_validator_set().genesis_hash();
-        let chain = predecessor_activation.new_validator_set().chain_id();
-        let protocol = predecessor_activation
-            .new_validator_set()
-            .protocol_version();
-        let successor_old_set = successor_activation.old_validator_set();
-        let successor_old_parameters = successor_activation.old_consensus_parameters();
-        for pair in retained_ancestry.windows(2) {
-            let parent = &pair[0];
-            let child = &pair[1];
-            if child.parent_id() != parent.id()
-                || child.height() != parent.height().checked_next()?
-                || child.genesis_hash() != genesis
-                || child.chain_id() != chain
-                || child.protocol_version() != protocol
-                // The first retained header is the predecessor's terminal
-                // old-set seal.  Every child belongs to the successor's old
-                // context (the predecessor new set) all the way to the
-                // successor checkpoint parent.  Without these checks a
-                // caller could splice a validly linked header chain carrying
-                // a foreign epoch/set/parameter scope into the handoff.
-                || child.epoch() != successor_old_set.epoch()
-                || child.validator_set_id() != successor_old_set.id()
-                || child.consensus_parameters_hash() != successor_old_parameters.hash()
-            {
-                return Err(invalid("successor retained ancestry edge mismatch"));
-            }
-        }
+        crate::epoch_transition::validate_successor_ancestry_links_v1(
+            predecessor_activation,
+            retained_ancestry,
+        )
+        .map_err(|error| match error {
+            crate::StrictSuccessorEpochActivationErrorV1::Invalid(reason) => invalid(reason),
+            _ => invalid("successor retained ancestry edge mismatch"),
+        })?;
         if first.genesis_hash() != predecessor_activation.old_validator_set().genesis_hash()
             || first.chain_id() != predecessor_activation.old_validator_set().chain_id()
             || first.protocol_version()
@@ -166,7 +121,7 @@ impl StrictEpochRuntimeContextV1 {
         Ok(successor)
     }
     pub const fn anchor_reference(&self) -> &QcReferenceV0 {
-        self.data.anchor_reference()
+        self.activation.runtime_data_v1().anchor_reference()
     }
 
     pub fn verify_qc_reference_v1(
@@ -197,9 +152,12 @@ impl StrictEpochRuntimeContextV1 {
         raw: &[u8],
         budget: &mut Cev0AdmissionBudgetV0,
     ) -> Result<QcReferenceV0, ValidationError> {
-        let reference =
-            decode_epoch_runtime_qc_reference_v1_exact_with_budget(raw, &self.data, budget)
-                .map_err(|_| invalid("epoch QC exact decoding"))?;
+        let reference = decode_epoch_runtime_qc_reference_v1_exact_with_budget(
+            raw,
+            self.activation.runtime_data_v1(),
+            budget,
+        )
+        .map_err(|_| invalid("epoch QC exact decoding"))?;
         crate::strict_finality::verify_epoch_qc_reference(&self.activation, &reference)?;
         Ok(reference)
     }
@@ -208,9 +166,12 @@ impl StrictEpochRuntimeContextV1 {
         raw: &[u8],
         budget: &mut Cev0AdmissionBudgetV0,
     ) -> Result<TimeoutCertificateV0, ValidationError> {
-        let certificate =
-            decode_epoch_runtime_timeout_certificate_v1_exact_with_budget(raw, &self.data, budget)
-                .map_err(|_| invalid("epoch TC exact decoding"))?;
+        let certificate = decode_epoch_runtime_timeout_certificate_v1_exact_with_budget(
+            raw,
+            self.activation.runtime_data_v1(),
+            budget,
+        )
+        .map_err(|_| invalid("epoch TC exact decoding"))?;
         crate::strict_finality::verify_epoch_timeout_certificate_strict_v1(
             &self.activation,
             &certificate,
@@ -417,7 +378,7 @@ impl StrictEpochRuntimeContextV1 {
     ) -> Result<FinalityProofV0, ValidationError> {
         let proof = decode_epoch_runtime_finality_proof_v1_exact_with_budget(
             raw,
-            &self.data,
+            self.activation.runtime_data_v1(),
             authenticated_parent_timestamp_ms,
             budget,
         )

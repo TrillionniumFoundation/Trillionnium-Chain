@@ -1,3 +1,4 @@
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt;
 
@@ -6,15 +7,26 @@ use trnm_consensus_types::{
     decode_epoch_activation_evidence_v0_exact, epoch_first_proposal_signing_root_v0,
     validate_checkpoint_parent_header_v0, verify_same_version_epoch_transition_proof_kernel_v0,
     verify_same_version_joint_handoff_kernel_v0, BlockHeader, BlockId, CertificateId,
-    Cev0AdmissionBudgetV0, ConsensusParametersV0, Epoch, EpochActivationEvidenceErrorV0,
-    EpochActivationEvidencePreimagesV0, EpochAnchorAuthorizationKernelV0, FinalityProofV0,
-    HandoffCertificateV0, Height, JointHandoffKernelError, JointHandoffKernelV0,
-    NextEpochCommitmentV0, QuorumCertificate, SameVersionEpochTransitionKernelError,
-    SameVersionEpochTransitionKernelV0, Signature64, SignatureVerifier, SigningRoot, StateRoot,
-    ValidationError, ValidatorSet, View,
+    Cev0AdmissionBudgetV0, ConsensusParametersV0, DecodedEpochActivationEvidenceV0, Epoch,
+    EpochActivationEvidenceBytesV0, EpochActivationEvidenceErrorV0,
+    EpochActivationEvidencePreimagesV0, EpochAnchorAuthorizationKernelV0,
+    EpochRuntimeContextDataV1, FinalityProofV0, HandoffCertificateV0, Height,
+    JointHandoffKernelError, JointHandoffKernelV0, NextEpochCommitmentV0, QuorumCertificate,
+    SameVersionEpochTransitionKernelError, SameVersionEpochTransitionKernelV0, Signature64,
+    SignatureVerifier, SigningRoot, StateRoot, ValidationError, ValidatorSet, View,
 };
 
 use crate::{validate_validator_set_strict_ed25519_v0, StrictEd25519Verifier};
+
+#[path = "epoch_successor_v1.rs"]
+mod successor;
+pub use successor::{
+    decode_verify_successor_epoch_activation_strict_v1,
+    recover_successor_epoch_activation_authority_strict_v1, StrictSuccessorEpochActivationErrorV1,
+};
+pub(crate) use successor::{
+    validate_successor_ancestry_links_v1, verify_decoded_successor_epoch_activation_v1,
+};
 
 const STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0: &[u8] =
     b"trnm.poco-bft.strict-epoch-activation-binding-ref.v0";
@@ -29,8 +41,8 @@ const STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0: &[u8] =
 /// This value deliberately has no public raw constructor and is neither
 /// `Clone` nor `Copy`. It cannot construct an authority, epoch anchor, signer
 /// lease, Core, or recovery capability. A recovery path may persist the raw
-/// bytes, but must re-run
-/// [`verify_same_version_epoch_activation_authority_strict_v0`] and compare
+/// bytes, but must repeat strict verification under the independently trusted
+/// context, including the predecessor for a successor activation, and compare
 /// the newly derived reference; stored bytes alone never recreate this type.
 ///
 /// ```compile_fail
@@ -61,8 +73,9 @@ impl StrictEpochActivationBindingRefV0 {
 /// proof, the exact next-epoch commitment and old/new validator/parameter
 /// preimages, the terminal seal-2 header/QC, both handoff quorums, the exact
 /// authenticated checkpoint-parent header, and the exact authorization bytes.
-/// Construction re-runs [`verify_same_version_joint_handoff_kernel_v0`] with
-/// [`StrictEd25519Verifier`]; certificate-only validation cannot construct
+/// Construction repeats complete strict verification through the v0 joint
+/// verifier or the predecessor-bound successor path, using
+/// [`StrictEd25519Verifier`]. Certificate-only validation cannot construct
 /// this value.
 ///
 /// No `EpochAnchorQcV0` or `QcReferenceV0` is released from this boundary.
@@ -116,9 +129,29 @@ pub struct StrictSameVersionEpochActivationAuthorityV0 {
     authenticated_checkpoint_parent_header: BlockHeader,
     authorization_kernel: EpochAnchorAuthorizationKernelV0,
     binding_ref: StrictEpochActivationBindingRefV0,
+    runtime_data: Box<EpochRuntimeContextDataV1>,
 }
 
 impl StrictSameVersionEpochActivationAuthorityV0 {
+    pub(crate) const fn runtime_data_v1(&self) -> &EpochRuntimeContextDataV1 {
+        &self.runtime_data
+    }
+
+    pub(crate) fn canonical_evidence_bytes_v1(
+        &self,
+    ) -> trnm_consensus_types::Result<EpochActivationEvidenceBytesV0> {
+        canonical_evidence_from_parts_v1(
+            &self.old_checkpoint_finality,
+            &self.next_epoch_commitment,
+            &self.authorization_kernel,
+            &self.old_validator_set,
+            &self.old_consensus_parameters,
+            &self.new_validator_set,
+            &self.new_consensus_parameters,
+            &self.authenticated_checkpoint_parent_header,
+        )
+    }
+
     pub const fn joint_handoff(&self) -> &JointHandoffKernelV0 {
         &self.joint_handoff
     }
@@ -204,6 +237,54 @@ pub fn verify_same_version_epoch_activation_authority_strict_v0(
     new_consensus_parameters: &ConsensusParametersV0,
     authenticated_checkpoint_parent_header: &BlockHeader,
 ) -> Result<StrictSameVersionEpochActivationAuthorityV0, JointHandoffKernelError> {
+    let joint_handoff = verify_activation_joint_strict_v0(
+        old_checkpoint_finality,
+        next_epoch_commitment,
+        anchor_certificate_kernel,
+        old_validator_set,
+        old_consensus_parameters,
+        new_validator_set,
+        new_consensus_parameters,
+        authenticated_checkpoint_parent_header,
+    )?;
+    let encoded = canonical_evidence_from_parts_v1(
+        old_checkpoint_finality,
+        next_epoch_commitment,
+        anchor_certificate_kernel,
+        old_validator_set,
+        old_consensus_parameters,
+        new_validator_set,
+        new_consensus_parameters,
+        authenticated_checkpoint_parent_header,
+    )
+    .map_err(|_| JointHandoffKernelError::invalid_old_context())?;
+    // Derive and retain the complete inert context once. Later runtime
+    // construction must not reinterpret contextual evidence through v0.
+    let decoded = decode_epoch_activation_evidence_v0_exact(
+        encoded.as_preimages(),
+        old_validator_set,
+        old_consensus_parameters,
+        &mut Cev0AdmissionBudgetV0::for_parameters(old_consensus_parameters),
+    )
+    .map_err(|_| JointHandoffKernelError::invalid_old_context())?;
+    strict_authority_from_decoded_v1(&decoded, joint_handoff)
+        .map_err(|_| JointHandoffKernelError::invalid_old_context())
+}
+
+// Share all strict checks while allowing recovery to reuse its complete
+// admitted evidence. Nesting another large raw decoder here exhausts the
+// default thread stack on the real Core recovery path.
+#[allow(clippy::too_many_arguments)]
+fn verify_activation_joint_strict_v0(
+    old_checkpoint_finality: &FinalityProofV0,
+    next_epoch_commitment: &NextEpochCommitmentV0,
+    anchor_certificate_kernel: &EpochAnchorAuthorizationKernelV0,
+    old_validator_set: &ValidatorSet,
+    old_consensus_parameters: &ConsensusParametersV0,
+    new_validator_set: &ValidatorSet,
+    new_consensus_parameters: &ConsensusParametersV0,
+    authenticated_checkpoint_parent_header: &BlockHeader,
+) -> Result<JointHandoffKernelV0, JointHandoffKernelError> {
     // The generic CEV0 constructor intentionally admits algorithm-neutral
     // nonzero key bytes.  This strict activation boundary must reject every
     // invalid/weak key, including a member whose signature is not present in
@@ -216,7 +297,7 @@ pub fn verify_same_version_epoch_activation_authority_strict_v0(
         old_checkpoint_finality,
         authenticated_checkpoint_parent_header,
     )?;
-    let joint_handoff = verify_same_version_joint_handoff_kernel_v0(
+    verify_same_version_joint_handoff_kernel_v0(
         old_checkpoint_finality,
         next_epoch_commitment,
         anchor_certificate_kernel,
@@ -226,29 +307,80 @@ pub fn verify_same_version_epoch_activation_authority_strict_v0(
         new_consensus_parameters,
         authenticated_checkpoint_parent_header.timestamp_ms(),
         &StrictEd25519Verifier,
-    )?;
-    let binding_ref = strict_epoch_activation_binding_ref_v0(
-        old_checkpoint_finality,
-        next_epoch_commitment,
-        anchor_certificate_kernel,
-        old_validator_set,
-        old_consensus_parameters,
-        new_validator_set,
-        new_consensus_parameters,
-        authenticated_checkpoint_parent_header,
-    );
+    )
+}
 
+pub(crate) fn verify_decoded_epoch_activation_strict_v0(
+    evidence: &DecodedEpochActivationEvidenceV0,
+) -> Result<StrictSameVersionEpochActivationAuthorityV0, JointHandoffKernelError> {
+    let joint = verify_activation_joint_strict_v0(
+        evidence.old_checkpoint_finality(),
+        evidence.next_epoch_commitment(),
+        evidence.authorization_kernel(),
+        evidence.old_validator_set(),
+        evidence.old_consensus_parameters(),
+        evidence.new_validator_set(),
+        evidence.new_consensus_parameters(),
+        evidence.authenticated_checkpoint_parent_header(),
+    )?;
+    strict_authority_from_decoded_v1(evidence, joint)
+        .map_err(|_| JointHandoffKernelError::invalid_old_context())
+}
+
+fn strict_authority_from_decoded_v1(
+    evidence: &DecodedEpochActivationEvidenceV0,
+    joint_handoff: JointHandoffKernelV0,
+) -> Result<StrictSameVersionEpochActivationAuthorityV0, ValidationError> {
+    let runtime_data = Box::new(EpochRuntimeContextDataV1::from_decoded_evidence_v1(
+        evidence,
+    )?);
+    let binding_ref = strict_epoch_activation_binding_ref_v0(
+        evidence.old_checkpoint_finality(),
+        evidence.next_epoch_commitment(),
+        evidence.authorization_kernel(),
+        evidence.old_validator_set(),
+        evidence.old_consensus_parameters(),
+        evidence.new_validator_set(),
+        evidence.new_consensus_parameters(),
+        evidence.authenticated_checkpoint_parent_header(),
+    );
     Ok(StrictSameVersionEpochActivationAuthorityV0 {
         joint_handoff,
-        old_checkpoint_finality: old_checkpoint_finality.clone(),
-        next_epoch_commitment: *next_epoch_commitment,
-        old_validator_set: old_validator_set.clone(),
-        old_consensus_parameters: *old_consensus_parameters,
-        new_validator_set: new_validator_set.clone(),
-        new_consensus_parameters: *new_consensus_parameters,
-        authenticated_checkpoint_parent_header: authenticated_checkpoint_parent_header.clone(),
-        authorization_kernel: anchor_certificate_kernel.clone(),
+        old_checkpoint_finality: evidence.old_checkpoint_finality().clone(),
+        next_epoch_commitment: *evidence.next_epoch_commitment(),
+        old_validator_set: evidence.old_validator_set().clone(),
+        old_consensus_parameters: *evidence.old_consensus_parameters(),
+        new_validator_set: evidence.new_validator_set().clone(),
+        new_consensus_parameters: *evidence.new_consensus_parameters(),
+        authenticated_checkpoint_parent_header: evidence
+            .authenticated_checkpoint_parent_header()
+            .clone(),
+        authorization_kernel: evidence.authorization_kernel().clone(),
         binding_ref,
+        runtime_data,
+    })
+}
+
+#[allow(clippy::too_many_arguments)]
+fn canonical_evidence_from_parts_v1(
+    proof: &FinalityProofV0,
+    commitment: &NextEpochCommitmentV0,
+    kernel: &EpochAnchorAuthorizationKernelV0,
+    old_set: &ValidatorSet,
+    old_parameters: &ConsensusParametersV0,
+    new_set: &ValidatorSet,
+    new_parameters: &ConsensusParametersV0,
+    parent: &BlockHeader,
+) -> trnm_consensus_types::Result<EpochActivationEvidenceBytesV0> {
+    Ok(EpochActivationEvidenceBytesV0 {
+        old_checkpoint_finality: proof.try_cev0_bytes()?,
+        next_epoch_commitment: commitment.try_cev0_bytes()?,
+        authorization_kernel: kernel.try_cev0_bytes()?,
+        old_validator_set: old_set.try_cev0_bytes()?,
+        old_consensus_parameters: old_parameters.canonical_bytes(),
+        new_validator_set: new_set.try_cev0_bytes()?,
+        new_consensus_parameters: new_parameters.canonical_bytes(),
+        authenticated_checkpoint_parent_header: parent.try_cev0_bytes()?,
     })
 }
 
@@ -263,41 +395,31 @@ fn strict_epoch_activation_binding_ref_v0(
     new_consensus_parameters: &ConsensusParametersV0,
     authenticated_checkpoint_parent_header: &BlockHeader,
 ) -> StrictEpochActivationBindingRefV0 {
-    let old_checkpoint_finality_cev0 = old_checkpoint_finality
-        .try_cev0_bytes()
-        .expect("strictly verified checkpoint finality has bounded CEV0");
-    let next_epoch_commitment_cev0 = next_epoch_commitment
-        .try_cev0_bytes()
-        .expect("strictly verified next-epoch commitment has bounded CEV0");
-    let authorization_kernel_cev0 = authorization_kernel
-        .try_cev0_bytes()
-        .expect("strictly verified authorization kernel has bounded CEV0");
-    let old_validator_set_cev0 = old_validator_set
-        .try_cev0_bytes()
-        .expect("strictly verified old validator set has bounded CEV0");
-    let old_consensus_parameters_cev0 = old_consensus_parameters.canonical_bytes();
-    let new_validator_set_cev0 = new_validator_set
-        .try_cev0_bytes()
-        .expect("strictly verified new validator set has bounded CEV0");
-    let new_consensus_parameters_cev0 = new_consensus_parameters.canonical_bytes();
-    let authenticated_checkpoint_parent_header_cev0 = authenticated_checkpoint_parent_header
-        .try_cev0_bytes()
-        .expect("authenticated checkpoint-parent header has bounded CEV0");
-
+    let evidence = canonical_evidence_from_parts_v1(
+        old_checkpoint_finality,
+        next_epoch_commitment,
+        authorization_kernel,
+        old_validator_set,
+        old_consensus_parameters,
+        new_validator_set,
+        new_consensus_parameters,
+        authenticated_checkpoint_parent_header,
+    )
+    .expect("strictly verified complete evidence has bounded canonical bytes");
     StrictEpochActivationBindingRefV0(strict_epoch_activation_binding_digest_v0([
-        old_checkpoint_finality_cev0.as_slice(),
-        next_epoch_commitment_cev0.as_slice(),
-        authorization_kernel_cev0.as_slice(),
-        old_validator_set_cev0.as_slice(),
-        old_consensus_parameters_cev0.as_slice(),
-        new_validator_set_cev0.as_slice(),
-        new_consensus_parameters_cev0.as_slice(),
-        authenticated_checkpoint_parent_header_cev0.as_slice(),
+        &evidence.old_checkpoint_finality,
+        &evidence.next_epoch_commitment,
+        &evidence.authorization_kernel,
+        &evidence.old_validator_set,
+        &evidence.old_consensus_parameters,
+        &evidence.new_validator_set,
+        &evidence.new_consensus_parameters,
+        &evidence.authenticated_checkpoint_parent_header,
     ]))
 }
 
 /// Failures while rebuilding strict authority from independently persisted
-/// canonical preimages. No failure consumes the caller's admission budget.
+/// canonical preimages. Reserved cryptographic work is not refunded on failure.
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum EpochActivationRecoveryErrorV0 {
@@ -359,17 +481,8 @@ pub fn recover_epoch_activation_authority_strict_v0(
         budget,
     )
     .map_err(EpochActivationRecoveryErrorV0::Evidence)?;
-    let authority = verify_same_version_epoch_activation_authority_strict_v0(
-        evidence.old_checkpoint_finality(),
-        evidence.next_epoch_commitment(),
-        evidence.authorization_kernel(),
-        evidence.old_validator_set(),
-        evidence.old_consensus_parameters(),
-        evidence.new_validator_set(),
-        evidence.new_consensus_parameters(),
-        evidence.authenticated_checkpoint_parent_header(),
-    )
-    .map_err(EpochActivationRecoveryErrorV0::Verification)?;
+    let authority = verify_decoded_epoch_activation_strict_v0(&evidence)
+        .map_err(EpochActivationRecoveryErrorV0::Verification)?;
     if authority.binding_ref().as_bytes() != &expected_binding {
         return Err(EpochActivationRecoveryErrorV0::BindingMismatch);
     }

@@ -64,12 +64,25 @@ fn signing_key(validator: &Validator) -> SigningKey {
 }
 
 fn qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
+    qc_with_signature_mutation(set, header, false)
+}
+
+fn qc_with_signature_mutation(
+    set: &ValidatorSet,
+    header: &BlockHeader,
+    corrupt: bool,
+) -> QuorumCertificate {
     let root =
         Vote::signing_root_for_set(set, header.view(), header.height(), header.id()).unwrap();
     let votes = set
         .validators()
         .iter()
-        .map(|validator| {
+        .enumerate()
+        .map(|(index, validator)| {
+            let mut signature = signing_key(validator).sign(root.as_bytes()).to_bytes();
+            if corrupt && index == 0 {
+                signature[0] ^= 1;
+            }
             Vote::new(
                 set.chain_id(),
                 set.protocol_version(),
@@ -79,7 +92,7 @@ fn qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
                 header.id(),
                 set.id(),
                 validator.id(),
-                SignatureBytes::from_array(signing_key(validator).sign(root.as_bytes()).to_bytes()),
+                SignatureBytes::from_array(signature),
                 set,
             )
             .unwrap()
@@ -151,27 +164,32 @@ fn header(
     .unwrap()
 }
 
+#[allow(clippy::too_many_arguments)]
 fn certified(
     set: &ValidatorSet,
     params: &ConsensusParametersV0,
     header: BlockHeader,
     justify: QuorumCertificate,
     parent_timestamp: u64,
+    timeout: Option<TimeoutCertificateV0>,
+    certifying: QuorumCertificate,
+    corrupt: bool,
 ) -> CertifiedHeaderV0 {
-    let justify_ref = QcReferenceV0::ordinary(justify.clone());
-    let root = ProposalWitnessV0::signing_root_for(&header, &justify_ref, None, None).unwrap();
-    let signature = Signature64::from_array(
-        signing_key(set.validator(header.proposer_id()).unwrap())
-            .sign(root.as_bytes())
-            .to_bytes(),
-    );
-    let certifying = qc(set, &header);
+    let justify_ref = QcReferenceV0::ordinary(justify);
+    let root =
+        ProposalWitnessV0::signing_root_for(&header, &justify_ref, timeout.as_ref(), None).unwrap();
+    let mut signature = signing_key(set.validator(header.proposer_id()).unwrap())
+        .sign(root.as_bytes())
+        .to_bytes();
+    if corrupt {
+        signature[0] ^= 1;
+    }
     CertifiedHeaderV0::new(
         header,
         justify_ref,
+        timeout,
         None,
-        None,
-        signature,
+        Signature64::from_array(signature),
         certifying,
         set,
         None,
@@ -181,8 +199,80 @@ fn certified(
     .unwrap()
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum SuccessorBadSignature {
+    None,
+    ParentQc,
+    CheckpointQc,
+    Seal1Qc,
+    Seal2Qc,
+    CheckpointProposal,
+    Seal1Proposal,
+    Seal2Proposal,
+    CheckpointTimeout,
+    Seal1Timeout,
+    Seal2Timeout,
+    OldHandoff,
+    NewHandoff,
+}
+
+fn mixed_timeout(
+    set: &ValidatorSet,
+    parent_qc: &QuorumCertificate,
+    anchor: &QcReferenceV0,
+    view: View,
+    corrupt: bool,
+) -> TimeoutCertificateV0 {
+    let ordinary = QcReferenceV0::ordinary(parent_qc.clone());
+    let entries = set
+        .validators()
+        .iter()
+        .enumerate()
+        .map(|(index, validator)| {
+            let reference = if index == 0 { anchor } else { &ordinary };
+            let root = TimeoutVote::signing_root_for_set(set, view, reference.qc_ref()).unwrap();
+            let mut signature = signing_key(validator).sign(root.as_bytes()).to_bytes();
+            if corrupt && index == 0 {
+                signature[0] ^= 1;
+            }
+            TimeoutEntryV0::new(
+                validator.id(),
+                reference.qc_ref(),
+                SignatureBytes::from_array(signature),
+            )
+            .unwrap()
+        })
+        .collect();
+    let mut references = vec![ordinary.clone(), anchor.clone()];
+    references.sort_by_key(QcReferenceV0::id);
+    TimeoutCertificateV0::new(view, entries, references, ordinary.id(), set).unwrap()
+}
+
+// A comparison digest, not a constructor of strict activation authority.
+fn evidence_binding(e: &EpochActivationEvidenceBytesV0) -> [u8; 32] {
+    let domain = b"trnm.poco-bft.strict-epoch-activation-binding-ref.v0";
+    let mut hasher = Sha256::new();
+    hasher.update(b"trnm.domain.hash.v1");
+    hasher.update((domain.len() as u64).to_be_bytes());
+    hasher.update(domain);
+    for root in [
+        &e.old_checkpoint_finality,
+        &e.next_epoch_commitment,
+        &e.authorization_kernel,
+        &e.old_validator_set,
+        &e.old_consensus_parameters,
+        &e.new_validator_set,
+        &e.new_consensus_parameters,
+        &e.authenticated_checkpoint_parent_header,
+    ] {
+        hasher.update((root.len() as u64).to_be_bytes());
+        hasher.update(root);
+    }
+    hasher.finalize().into()
+}
+
 fn successor_evidence(
-    predecessor: &trnm_consensus_crypto::StrictSameVersionEpochActivationAuthorityV0,
+    predecessor: &StrictEpochRuntimeContextV1,
 ) -> (
     EpochActivationEvidenceBytesV0,
     ValidatorSet,
@@ -190,6 +280,36 @@ fn successor_evidence(
     [u8; 32],
     Vec<BlockHeader>,
 ) {
+    successor_evidence_variant(predecessor, false, SuccessorBadSignature::None)
+}
+
+fn successor_evidence_variant(
+    context: &StrictEpochRuntimeContextV1,
+    with_timeout: bool,
+    bad: SuccessorBadSignature,
+) -> (
+    EpochActivationEvidenceBytesV0,
+    ValidatorSet,
+    ConsensusParametersV0,
+    [u8; 32],
+    Vec<BlockHeader>,
+) {
+    successor_evidence_with_ancestry_variant(context, with_timeout, bad, false)
+}
+
+fn successor_evidence_with_ancestry_variant(
+    context: &StrictEpochRuntimeContextV1,
+    with_timeout: bool,
+    bad: SuccessorBadSignature,
+    repeated_ancestry_view: bool,
+) -> (
+    EpochActivationEvidenceBytesV0,
+    ValidatorSet,
+    ConsensusParametersV0,
+    [u8; 32],
+    Vec<BlockHeader>,
+) {
+    let predecessor = context.activation();
     let old_set = predecessor.new_validator_set().clone();
     let old_params = *predecessor.new_consensus_parameters();
     let geometry = EpochGeometryV0::new(old_set.epoch(), &old_params).unwrap();
@@ -249,12 +369,17 @@ fn successor_evidence(
     for height in (parent.height().get() + 1)..=geometry.last_pre_checkpoint_height().unwrap().get()
     {
         let kind = geometry.expected_block_kind(Height::new(height)).unwrap();
+        let view = if repeated_ancestry_view {
+            1
+        } else {
+            height - predecessor.terminal_old_header().height().get()
+        };
         let proposer =
-            old_set.validators()[((height - parent.height().get() - 1) % 4) as usize].id();
+            old_set.validators()[((view - 1) % old_set.validators().len() as u64) as usize].id();
         parent = header(
             &old_set,
             kind,
-            1,
+            view,
             height,
             parent.id(),
             proposer,
@@ -265,66 +390,115 @@ fn successor_evidence(
         );
         ancestry.push(parent.clone());
     }
+    let gap = if with_timeout { 2 } else { 1 };
+    let checkpoint_view = parent.view().get() + gap;
+    let proposer = |view: u64| {
+        old_set.validators()[((view - 1) % old_set.validators().len() as u64) as usize].id()
+    };
     let checkpoint = header(
         &old_set,
         BlockKind::EpochCheckpoint,
-        2,
+        checkpoint_view,
         geometry.checkpoint_height().get(),
         parent.id(),
-        old_set.validators()[1].id(),
+        proposer(checkpoint_view),
         StateRoot::new([74; 32]),
         Some(commitment.id()),
         parent.timestamp_ms() + 1,
         false,
     );
-    let checkpoint_qc = qc(&old_set, &checkpoint);
+    let checkpoint_qc = qc_with_signature_mutation(
+        &old_set,
+        &checkpoint,
+        bad == SuccessorBadSignature::CheckpointQc,
+    );
     let seal_1 = header(
         &old_set,
         BlockKind::EpochSeal1,
-        3,
+        checkpoint_view + gap,
         geometry.seal_1_height().get(),
         checkpoint.id(),
-        old_set.validators()[2].id(),
+        proposer(checkpoint_view + gap),
         checkpoint.state_root(),
         Some(commitment.id()),
         checkpoint.timestamp_ms() + 1,
         true,
     );
-    let seal_1_qc = qc(&old_set, &seal_1);
+    let seal_1_qc =
+        qc_with_signature_mutation(&old_set, &seal_1, bad == SuccessorBadSignature::Seal1Qc);
     let seal_2 = header(
         &old_set,
         BlockKind::EpochSeal2,
-        4,
+        checkpoint_view + 2 * gap,
         geometry.seal_2_height().get(),
         seal_1.id(),
-        old_set.validators()[3].id(),
+        proposer(checkpoint_view + 2 * gap),
         checkpoint.state_root(),
         Some(commitment.id()),
         seal_1.timestamp_ms() + 1,
         true,
     );
-    let seal_2_qc = qc(&old_set, &seal_2);
+    let seal_2_qc =
+        qc_with_signature_mutation(&old_set, &seal_2, bad == SuccessorBadSignature::Seal2Qc);
+    let parent_qc = if bad == SuccessorBadSignature::ParentQc {
+        qc_with_signature_mutation(&old_set, &parent, true)
+    } else {
+        qc(&old_set, &parent)
+    };
+    let anchor = context.anchor_reference();
+    let timeout = |header: &BlockHeader, justify: &QuorumCertificate, bad_kind| {
+        with_timeout.then(|| {
+            mixed_timeout(
+                &old_set,
+                justify,
+                anchor,
+                View::new(header.view().get() - 1),
+                bad == bad_kind,
+            )
+        })
+    };
     let finality = FinalityProofV0::new(
         certified(
             &old_set,
             &old_params,
-            checkpoint,
-            qc(&old_set, &parent),
+            checkpoint.clone(),
+            parent_qc.clone(),
             parent.timestamp_ms(),
+            timeout(
+                &checkpoint,
+                &parent_qc,
+                SuccessorBadSignature::CheckpointTimeout,
+            ),
+            checkpoint_qc.clone(),
+            bad == SuccessorBadSignature::CheckpointProposal,
         ),
         certified(
             &old_set,
             &old_params,
-            seal_1,
+            seal_1.clone(),
             checkpoint_qc,
-            parent.timestamp_ms() + 1,
+            checkpoint.timestamp_ms(),
+            timeout(
+                &seal_1,
+                &qc_with_signature_mutation(
+                    &old_set,
+                    &checkpoint,
+                    bad == SuccessorBadSignature::CheckpointQc,
+                ),
+                SuccessorBadSignature::Seal1Timeout,
+            ),
+            seal_1_qc.clone(),
+            bad == SuccessorBadSignature::Seal1Proposal,
         ),
         certified(
             &old_set,
             &old_params,
             seal_2.clone(),
-            seal_1_qc,
-            parent.timestamp_ms() + 2,
+            seal_1_qc.clone(),
+            seal_1.timestamp_ms(),
+            timeout(&seal_2, &seal_1_qc, SuccessorBadSignature::Seal2Timeout),
+            seal_2_qc.clone(),
+            bad == SuccessorBadSignature::Seal2Proposal,
         ),
         &old_set,
         None,
@@ -357,25 +531,24 @@ fn successor_evidence(
     .unwrap();
     let old_root = descriptor.old_set_signing_root();
     let new_root = descriptor.new_set_signing_root();
-    let shares = |set: &ValidatorSet, root: SigningRoot| {
+    let shares = |set: &ValidatorSet, root: SigningRoot, corrupt: bool| {
         set.validators()
             .iter()
             .take(3)
-            .map(|validator| {
-                SignatureShareV0::new(
-                    validator.id(),
-                    Signature64::from_array(
-                        signing_key(validator).sign(root.as_bytes()).to_bytes(),
-                    ),
-                )
-                .unwrap()
+            .enumerate()
+            .map(|(index, validator)| {
+                let mut signature = signing_key(validator).sign(root.as_bytes()).to_bytes();
+                if corrupt && index == 0 {
+                    signature[0] ^= 1;
+                }
+                SignatureShareV0::new(validator.id(), Signature64::from_array(signature)).unwrap()
             })
             .collect()
     };
     let handoff = HandoffCertificateV0::new(
         descriptor,
-        shares(&old_set, old_root),
-        shares(&new_set, new_root),
+        shares(&old_set, old_root, bad == SuccessorBadSignature::OldHandoff),
+        shares(&new_set, new_root, bad == SuccessorBadSignature::NewHandoff),
         &old_set,
         &new_set,
     )
@@ -394,24 +567,22 @@ fn successor_evidence(
         new_consensus_parameters: old_params.canonical_bytes(),
         authenticated_checkpoint_parent_header: parent.try_cev0_bytes().unwrap(),
     };
-    let verified = verify_same_version_epoch_activation_authority_strict_v0(
-        &finality,
-        &commitment,
-        &kernel,
-        &old_set,
-        &old_params,
-        &new_set,
-        &old_params,
-        &parent,
-    )
-    .unwrap();
-    (
-        evidence,
-        old_set,
-        old_params,
-        *verified.binding_ref().as_bytes(),
-        ancestry,
-    )
+    let binding = evidence_binding(&evidence);
+    if !with_timeout && bad == SuccessorBadSignature::None {
+        let verified = verify_same_version_epoch_activation_authority_strict_v0(
+            &finality,
+            &commitment,
+            &kernel,
+            &old_set,
+            &old_params,
+            &new_set,
+            &old_params,
+            &parent,
+        )
+        .unwrap();
+        assert_eq!(*verified.binding_ref().as_bytes(), binding);
+    }
+    (evidence, old_set, old_params, binding, ancestry)
 }
 
 #[test]
@@ -419,7 +590,7 @@ fn strict_runtime_context_accepts_a_real_repeated_epoch_successor() {
     let predecessor_context =
         StrictEpochRuntimeContextV1::from_activation_v1(predecessor()).unwrap();
     let (evidence, old_set, old_params, binding, ancestry) =
-        successor_evidence(predecessor_context.activation());
+        successor_evidence(&predecessor_context);
     let successor = recover_epoch_activation_authority_strict_v0(
         evidence.as_preimages(),
         &old_set,
@@ -450,7 +621,7 @@ fn strict_runtime_context_rejects_a_successor_endpoint_substitution() {
     let predecessor_context =
         StrictEpochRuntimeContextV1::from_activation_v1(predecessor()).unwrap();
     let (evidence, old_set, old_params, binding, mut ancestry) =
-        successor_evidence(predecessor_context.activation());
+        successor_evidence(&predecessor_context);
     let successor = recover_epoch_activation_authority_strict_v0(
         evidence.as_preimages(),
         &old_set,
@@ -475,7 +646,7 @@ fn strict_runtime_context_rejects_a_disconnected_successor_ancestry_edge() {
     let predecessor_context =
         StrictEpochRuntimeContextV1::from_activation_v1(predecessor()).unwrap();
     let (evidence, old_set, old_params, binding, mut ancestry) =
-        successor_evidence(predecessor_context.activation());
+        successor_evidence(&predecessor_context);
     let successor = recover_epoch_activation_authority_strict_v0(
         evidence.as_preimages(),
         &old_set,
@@ -520,7 +691,7 @@ fn strict_runtime_context_rejects_a_foreign_epoch_in_retained_successor_ancestry
     let predecessor_context =
         StrictEpochRuntimeContextV1::from_activation_v1(predecessor()).unwrap();
     let (evidence, old_set, old_params, binding, mut ancestry) =
-        successor_evidence(predecessor_context.activation());
+        successor_evidence(&predecessor_context);
     let successor = recover_epoch_activation_authority_strict_v0(
         evidence.as_preimages(),
         &old_set,
@@ -559,3 +730,5 @@ fn strict_runtime_context_rejects_a_foreign_epoch_in_retained_successor_ancestry
     .expect_err("a foreign epoch ancestry child must not compose");
     assert!(format!("{error:?}").contains("successor retained ancestry edge mismatch"));
 }
+
+include!("epoch_runtime_successor_contextual.inc");

@@ -27,11 +27,15 @@ mod strict_finality;
 pub use pre_handoff::{verify_pre_handoff_context_strict_v1, StrictPreHandoffContextV1};
 
 pub use epoch_transition::{
-    recover_epoch_activation_authority_strict_v0, verify_first_epoch_proposal_header_strict_v0,
+    decode_verify_successor_epoch_activation_strict_v1,
+    recover_epoch_activation_authority_strict_v0,
+    recover_successor_epoch_activation_authority_strict_v1,
+    verify_first_epoch_proposal_header_strict_v0,
     verify_same_version_epoch_activation_authority_strict_v0,
     verify_same_version_epoch_transition_strict_v0, EpochActivationRecoveryErrorV0,
     StrictEpochActivationBindingRefV0, StrictEpochFirstProposalHeaderV0,
     StrictSameVersionEpochActivationAuthorityV0, StrictSameVersionEpochTransitionV0,
+    StrictSuccessorEpochActivationErrorV1,
 };
 pub use historical::{
     verify_historical_header_ancestry_v1, HistoricalAncestryErrorV1, StrictHistoricalHeaderPathV1,

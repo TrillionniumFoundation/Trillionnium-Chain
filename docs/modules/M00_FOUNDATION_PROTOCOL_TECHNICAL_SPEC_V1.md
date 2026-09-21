@@ -287,6 +287,43 @@ not claim QC, TC or proposal-signature verification and cannot authorize Core,
 signing or application execution. Strict terminal finality and original ordered
 activation evidence separately authenticate the complete linked history.
 
+## Contextual successor activation (M00-SUCCESSOR-EVIDENCE-V1)
+
+This candidate interface is implemented by `epoch_activation_evidence.rs` and
+`joint_handoff.rs`, with strict consumer verification in M01. Frozen v0 bytes
+and context-free decoder behavior remain unchanged. A checkpoint proof in an already
+activated epoch may contain a timeout certificate with a reference to that
+epoch's authorized synthetic anchor. The reference names the predecessor's
+terminal seal and view0; it does not name the first application block.
+
+`decode_epoch_activation_evidence_with_context_v1_exact(preimages,
+predecessor_context, budget)` uses the complete inert
+`EpochRuntimeContextDataV1` as decoding context. Its active set and parameters
+are the predecessor context's new set and parameters. Decode the same eight
+canonical roots and reuse the existing aggregate byte/work limits, parent
+binding, commitment/configuration checks and complete composition relations.
+Decode the checkpoint proof through the existing bounded runtime finality parser,
+then require the exact checkpoint/two-seal geometry, commitment and
+state-preserving empty seals. Exact reencoding and parser exhaustion are mandatory.
+Structural failure keeps the supplied meter unchanged; successful decoding reserves
+all later signature work. The old v0 entrypoint supplies no predecessor context
+and continues to reject unauthorized synthetic references.
+
+Factor checkpoint relations and joint composition into shared internal functions.
+`derive_successor_epoch_joint_structure_v1(decoded, predecessor_context)` returns
+only the existing inert joint facts after complete structural checks, including
+exact active set/parameters and exact synthetic-reference binding. It performs no
+signature verification and cannot create M01 strict authority. Its public contract
+must say so explicitly. Existing verifier-based v0 wrappers continue performing
+all their original signature checks before returning the same inert facts.
+
+M01 consumes these structural results only together with an independently verified
+predecessor and strict checkpoint, terminal-QC and both-role handoff verification.
+No bare set, kernel, peer-provided anchor or stored digest can replace that owner.
+The new decoder and structural path require real signed skipped-view checkpoint
+fixtures, changed-context/anchor negatives, all retained two-seal mutants,
+canonical-byte rejection and exact work-boundary tests.
+
 ## Activation boundary
 
 The design authorizes implementation work, not new network formats. A new

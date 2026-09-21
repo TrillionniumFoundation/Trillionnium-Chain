@@ -12,10 +12,12 @@ use core::fmt;
 use crate::{
     decode_block_header_v0_exact, decode_checkpoint_finality_proof_v0_exact_with_budget,
     decode_consensus_parameters_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
+    decode_epoch_runtime_finality_proof_v1_exact_with_budget,
     decode_next_epoch_commitment_v0_exact, decode_validator_set_v0_exact,
     validate_checkpoint_parent_header_v0, BlockHeader, Cev0AdmissionBudgetV0,
-    ConsensusParametersV0, DecodeError, EpochAnchorAuthorizationKernelV0, FinalityProofV0,
-    JointHandoffKernelError, NextEpochCommitmentV0, ValidationError, ValidatorSet,
+    ConsensusParametersV0, DecodeError, EpochAnchorAuthorizationKernelV0,
+    EpochRuntimeContextDataV1, FinalityProofV0, JointHandoffKernelError, NextEpochCommitmentV0,
+    ValidationError, ValidatorSet,
 };
 
 /// Borrowed, independently encoded CEV0 roots in strict activation-binding order.
@@ -245,6 +247,44 @@ pub fn decode_epoch_activation_evidence_v0_exact(
     trusted_old_params: &ConsensusParametersV0,
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> core::result::Result<DecodedEpochActivationEvidenceV0, EpochActivationEvidenceErrorV0> {
+    decode_epoch_activation_evidence_exact(
+        preimages,
+        trusted_old_set,
+        trusted_old_params,
+        None,
+        budget,
+    )
+}
+
+/// Decodes the same eight canonical roots under a complete predecessor context.
+///
+/// The successor's old set and parameters must exactly equal the context's
+/// active new set and parameters. Synthetic references in its checkpoint proof
+/// must name that context's exact authorized anchor. This performs structural
+/// checks only: neither the context nor the result authenticates signatures or
+/// grants activation authority. Structural failure leaves `budget` unchanged;
+/// success reserves the checkpoint, terminal-QC and both handoff-role work.
+pub fn decode_epoch_activation_evidence_with_context_v1_exact(
+    preimages: EpochActivationEvidencePreimagesV0<'_>,
+    predecessor_context: &EpochRuntimeContextDataV1,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> core::result::Result<DecodedEpochActivationEvidenceV0, EpochActivationEvidenceErrorV0> {
+    decode_epoch_activation_evidence_exact(
+        preimages,
+        predecessor_context.new_validator_set(),
+        predecessor_context.new_parameters(),
+        Some(predecessor_context),
+        budget,
+    )
+}
+
+fn decode_epoch_activation_evidence_exact(
+    preimages: EpochActivationEvidencePreimagesV0<'_>,
+    trusted_old_set: &ValidatorSet,
+    trusted_old_params: &ConsensusParametersV0,
+    predecessor_context: Option<&EpochRuntimeContextDataV1>,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> core::result::Result<DecodedEpochActivationEvidenceV0, EpochActivationEvidenceErrorV0> {
     use EpochActivationEvidenceComponentV0 as Component;
 
     let mut staged_budget = *budget;
@@ -304,15 +344,33 @@ pub fn decode_epoch_activation_evidence_v0_exact(
     let authenticated_checkpoint_parent_header =
         decode_block_header_v0_exact(preimages.authenticated_checkpoint_parent_header)
             .map_err(|error| decode_error(Component::AuthenticatedCheckpointParentHeader, error))?;
-    let old_checkpoint_finality = decode_checkpoint_finality_proof_v0_exact_with_budget(
-        preimages.old_checkpoint_finality,
-        &old_validator_set,
-        &old_consensus_parameters,
-        &next_epoch_commitment,
-        authenticated_checkpoint_parent_header.timestamp_ms(),
-        &mut staged_budget,
-    )
-    .map_err(|error| decode_error(Component::OldCheckpointFinality, error))?;
+    let old_checkpoint_finality = if let Some(context) = predecessor_context {
+        let proof = decode_epoch_runtime_finality_proof_v1_exact_with_budget(
+            preimages.old_checkpoint_finality,
+            context,
+            authenticated_checkpoint_parent_header.timestamp_ms(),
+            &mut staged_budget,
+        )
+        .map_err(|error| decode_error(Component::OldCheckpointFinality, error))?;
+        proof
+            .checkpoint_two_seal_kernel(
+                &old_validator_set,
+                &old_consensus_parameters,
+                &next_epoch_commitment,
+            )
+            .map_err(|error| validation_error(Component::OldCheckpointFinality, error))?;
+        proof
+    } else {
+        decode_checkpoint_finality_proof_v0_exact_with_budget(
+            preimages.old_checkpoint_finality,
+            &old_validator_set,
+            &old_consensus_parameters,
+            &next_epoch_commitment,
+            authenticated_checkpoint_parent_header.timestamp_ms(),
+            &mut staged_budget,
+        )
+        .map_err(|error| decode_error(Component::OldCheckpointFinality, error))?
+    };
     validate_checkpoint_parent_header_v0(
         &old_checkpoint_finality,
         &authenticated_checkpoint_parent_header,

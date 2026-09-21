@@ -477,6 +477,92 @@ construction/Clone rejection. Header authentication alone makes no statement
 about body execution, replay completeness, snapshot installation or network
 acceptance. The genesis/wiped-node history source join remains separate work.
 
+## Contextual successor verification (M01-SUCCESSOR-ACTIVATION-V1)
+
+This primary-M01 candidate is implemented in `epoch_successor_v1.rs`. Its scope
+is strict verification and recovery of the next activation, including
+checkpoint/seal TC references to the current epoch's already authorized synthetic anchor. It grants
+no application commit, Core readiness, signer lease or production activation.
+Frozen v0 evidence bytes and the existing eight-root binding digest do not change.
+
+`decode_verify_successor_epoch_activation_strict_v1(predecessor,
+retained_ancestry, preimages, budget)` requires an existing private-field
+`StrictSameVersionEpochActivationAuthorityV0`. Its independently verified new set
+and parameters must exactly equal the successor evidence's old set and parameters.
+Use M00-SUCCESSOR-EVIDENCE-V1 to decode all eight roots under the predecessor's
+complete context. Never construct context from a bare synthetic reference.
+
+The retained ancestry contains both endpoints: the predecessor terminal seal and
+the successor checkpoint's authenticated immediate parent. Bound it to at most 256
+headers and 1 MiB of canonical bytes before copying. Check every consecutive
+height, exact parent ID, genesis/chain/protocol, active geometry/set/parameters,
+elected proposer, increasing view and timestamp with the existing historical link
+validator. The first edge is the authorized handoff. Every endpoint must match
+its exact evidence header, and the target checkpoint proof must bind the final
+parent header. Equal configurations alone cannot connect unrelated histories.
+
+The existing `StrictEpochRuntimeContextV1::compose_successor_v1` entrypoint must
+apply the same bounded historical-link validator, including when its successor
+was independently verified through the context-free v0 constructor. Strict
+checkpoint signatures do not replace validation of the retained intermediate
+headers. Both entrypoints retain their exact context and endpoint checks and
+share one implementation of the count/byte bounds and every historical link
+rule. The original public APIs and existing context/endpoint/edge error classes
+remain stable. A genuine signed v0 successor with a complete, correctly hashed
+ancestry containing repeated ordinary views must fail composition; a broken
+hash chain alone is not sufficient regression evidence.
+
+After complete structural admission, reuse M01's existing
+`verify_epoch_finality_precharged_v1` with the predecessor authority for the
+checkpoint and two seals. This checks all proposal, ordinary QC and optional TC
+signatures and exact synthetic references. Reuse the existing strict certificate
+kernel for the terminal old QC and both old/new handoff roles. Validate all old
+and new validator keys, including nonsigners. Shared M00 joint relations then
+supply inert facts; they are never sufficient to mint the strict return value.
+Do not introduce another TC/QC/proposal signature algorithm or accepting verifier.
+The caller's remaining meter covers every reserved signature check; failure after
+cryptographic work starts does not refund that work.
+
+A successful authority caches only its completely derived inert runtime context
+in a private `Box`, keeping that complete context out of every inline authority
+stack frame. This is an ownership/layout choice, not a larger thread-stack limit.
+`StrictEpochRuntimeContextV1::from_activation_v1` retains the strict authority
+and borrows its cached context for decoding, rather than passing valid contextual
+evidence through the old context-free decoder again.
+The v0 constructor derives the same data from its complete accepted evidence, so
+no public unchecked context constructor or restored serialized authority appears.
+Recovery and the historical walker reuse their complete decoded evidence through
+a private strict verifier, which repeats all key, parent and joint signature
+checks before minting authority. They do not nest a second raw decoder inside
+Core recovery; admission charges and the eight-root binding remain unchanged.
+Recovery takes the independently reverified predecessor, the same retained ancestry,
+original eight roots and expected current binding, and repeats this verification.
+Persisting a predecessor association belongs to the enclosing bounded owner prefix;
+its digest cannot replace strict reconstruction or silently change the v0 binding.
+
+The historical verifier selects this entrypoint after its first verified activation
+and supplies the exact previously authenticated header interval. A starting anchor
+without earlier activation evidence still cannot authorize an unknown pre-anchor
+synthetic reference. M08 prefix/checkpoint recovery and history export, M13's
+historical consumer and M02 recovery must use the same contextual result where
+needed; each missing integration remains an explicit boundary, never a fallback
+to unchecked evidence or a fabricated anchor.
+
+Required evidence uses a real successor checkpoint/two-seal proof whose skipped
+view TC includes both an ordinary highest QC and the exact predecessor-authorized
+terminal-seal/view0 reference. The context-free path rejects it; contextual
+verification, runtime construction and recovery accept it. Wrong predecessor,
+missing or substituted ancestry, altered terminal seal/commitment, any proposal,
+QC, timeout or handoff signature corruption, and insufficient work budgets reject.
+Existing frozen checkpoint/joint/activation vectors and their negative cases remain
+required. `epoch_runtime_successor.rs` exercises real mixed-reference TCs on
+the checkpoint and both seals, twelve signature-family mutations that still pass
+structural admission, all eight trailing-root cases, exact/one-short budgets and
+next-successor context reuse. Its C28→C41 historical case verifies thirteen
+linked headers, two original activations and a genuine C41/C42/C43 terminal
+proof; a changed terminal signature and missing interval header reject.
+Imported-base checkpoint execution, default-node signing and multi-host acceptance are outside this cryptographic result and remain independently gated.
+
 ## Activation boundary
 
 Existing strict v0 operations remain unchanged. Planned general identity/cache

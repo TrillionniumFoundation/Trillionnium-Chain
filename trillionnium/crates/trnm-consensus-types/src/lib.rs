@@ -103,7 +103,8 @@ pub use epoch::{
     EpochFallbackReasonV0, EpochGeometryV0, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
 };
 pub use epoch_activation_evidence::{
-    decode_epoch_activation_evidence_v0_exact, epoch_first_proposal_signing_root_v0,
+    decode_epoch_activation_evidence_v0_exact,
+    decode_epoch_activation_evidence_with_context_v1_exact, epoch_first_proposal_signing_root_v0,
     DecodedEpochActivationEvidenceV0, EpochActivationEvidenceBytesV0,
     EpochActivationEvidenceComponentV0, EpochActivationEvidenceErrorV0,
     EpochActivationEvidencePreimagesV0,
@@ -134,7 +135,8 @@ pub use ids::{
     VotingPower, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATOR_ID_BYTES, SIGNATURE_BYTES,
 };
 pub use joint_handoff::{
-    validate_checkpoint_parent_header_v0, verify_same_version_epoch_transition_proof_kernel_v0,
+    derive_successor_epoch_joint_structure_v1, validate_checkpoint_parent_header_v0,
+    verify_same_version_epoch_transition_proof_kernel_v0,
     verify_same_version_joint_handoff_kernel_v0, JointHandoffKernelError,
     JointHandoffKernelErrorCode, JointHandoffKernelResult, JointHandoffKernelV0,
     SameVersionEpochTransitionKernelError, SameVersionEpochTransitionKernelErrorCode,
