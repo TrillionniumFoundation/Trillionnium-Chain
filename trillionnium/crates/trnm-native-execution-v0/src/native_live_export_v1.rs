@@ -193,8 +193,11 @@ pub(super) fn fresh_export_metadata(
     screen_legacy_export_inputs(&connection)?;
     verify_schema_v0(&connection)?;
     ensure!(
-        schema_version(&connection)? == LATER_SCHEMA_VERSION,
-        "native export requires explicit schema10"
+        matches!(
+            schema_version(&connection)?,
+            LATER_SCHEMA_VERSION | PRE_HANDOFF_SCHEMA_VERSION
+        ),
+        "native export requires explicit schema10 or schema13"
     );
     let metadata = load_metadata_v0(&connection, config)?;
     validate_metadata_v0(&connection, config, &metadata)?;
@@ -216,8 +219,11 @@ impl DurableNativeApplicationV0 {
             screen_legacy_export_inputs(&connection)?;
             verify_schema_v0(&connection)?;
             ensure!(
-                schema_version(&connection)? == LATER_SCHEMA_VERSION,
-                "native live requires explicit schema10"
+                matches!(
+                    schema_version(&connection)?,
+                    LATER_SCHEMA_VERSION | PRE_HANDOFF_SCHEMA_VERSION
+                ),
+                "native live requires explicit schema10 or schema13"
             );
             let metadata = load_metadata_v0(&connection, &self.config)?;
             ensure!(

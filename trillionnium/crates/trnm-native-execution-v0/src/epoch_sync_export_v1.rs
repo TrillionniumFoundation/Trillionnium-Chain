@@ -145,9 +145,13 @@ impl DurableNativeApplicationV0 {
         connection.execute_batch("BEGIN DEFERRED TRANSACTION")?;
         live_export::screen_legacy_export_inputs(&connection)?;
         verify_schema_v0(&connection)?;
+        let source_schema = schema_version(&connection)?;
         ensure!(
-            schema_version(&connection)? == LATER_SCHEMA_VERSION,
-            "finality export requires explicit schema10"
+            matches!(
+                source_schema,
+                LATER_SCHEMA_VERSION | PRE_HANDOFF_SCHEMA_VERSION
+            ),
+            "finality export requires explicit schema10 or schema13"
         );
         let metadata = load_metadata_v0(&connection, &self.config)?;
         validate_metadata_v0(&connection, &self.config, &metadata)?;
@@ -171,7 +175,7 @@ impl DurableNativeApplicationV0 {
         let mut output = NativeEpochFinalityPathV1 {
             anchor_header_cev0: anchor.header.clone(),
             target_header_cev0: target.header.clone(),
-            target_schema_version: LATER_SCHEMA_VERSION,
+            target_schema_version: source_schema,
             target_p_digest: target.p_digest,
             target_commit_sequence: target
                 .commit_sequence

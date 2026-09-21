@@ -459,6 +459,16 @@ budget-checks and canonical-decodes the bounded
 operator/host configured and independently pinned; bundle bytes, peer identity
 or a recovered database row cannot establish it.
 
+M08-PREHANDOFF-EXPORT-V1 extends this consumer's local-storage tag allowlist to
+exactly 10 and 13. Both use identical independently anchored M13 verification;
+the tag cannot supply a validator set, joint certificate or successor context.
+All other tags reject before signature work. Schema13 finality/history export
+still requires the original complete proof ledgers: a pre-handoff receipt alone
+cannot substitute for a missing attached checkpoint certificate. The producer
+and consumer regression must verify a genuine attached checkpoint after cold
+open, preserve previously available schema10 history across migration, and
+reject unavailable pre-attachment paths and unsupported tags.
+
 The consumer compares the verified terminal header against the path target
 header, parent, height, timestamp, epoch/config context and application state
 root. Target P digest, commit sequence and record digest are local M08 storage

@@ -100,7 +100,7 @@ pub fn verify_retained_native_finality_path_v1(
 ) -> Result<VerifiedNativeTrustPathV1, NativeEpochFinalityConsumerErrorV1> {
     // Local M08 metadata is screened before any M13 signature work. It is a
     // shape/integrity gate only and never becomes remote authority.
-    if path.target_schema_version != 10
+    if !matches!(path.target_schema_version, 10 | 13)
         || path.target_p_digest == [0; 32]
         || path.target_commit_sequence == 0
     {

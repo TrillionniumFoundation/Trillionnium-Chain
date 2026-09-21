@@ -1,4 +1,4 @@
-//! Inert, bounded history transport from a fully audited schema10 source.
+//! Inert, bounded history transport from a fully audited schema10/schema13 source.
 use super::*;
 use trnm_consensus_types::{
     decode_consensus_parameters_v0_exact, decode_validator_set_v0_exact,

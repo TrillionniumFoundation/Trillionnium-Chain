@@ -54,8 +54,36 @@ Creation/commit/attachment use existing namespace, lock, rollback-journal,
 database/directory fsync and immutable readback rules. Actual tests must exercise
 commit without joint signatures, recovery before attachment, genuine attachment,
 exact retry, altered evidence, foreign ownership and real process-death cuts.
-Schema13 historical export/import and default-node activation remain separate
-consumers until explicitly joined and tested.
+Schema13 read-only export follows M08-PREHANDOFF-EXPORT-V1 below. Import and
+default-node activation remain separate consumers until explicitly joined and tested.
+
+### Read-only schema13 compatibility (M08-PREHANDOFF-EXPORT-V1)
+
+The existing finality-path, NHR1 history and current-live exporters accept only
+the explicit physical schema10 or schema13 inventories. Schema13 uses the same
+audited original-proof ledgers, parent walk, byte/work ceilings, namespace lock
+and fresh readback as schema10. The finality path reports its actual physical
+schema version; NHR1 and current-live encodings remain unchanged. A migration
+must preserve every previously exportable path and its original proof/body
+bytes. Missing historical proof rows remain unavailable after migration.
+
+A newly committed pre-handoff checkpoint has no complete checkpoint-finality
+ledger row until attachment. Exporting a finality/history path through that
+checkpoint therefore rejects; the pre-handoff receipt cannot stand in for its
+joint certificate or successor activation. Once attachment has independently
+verified both signer roles and retained the existing full records, export uses
+those original records. Current-live export is inert state data and may read
+the committed old-epoch checkpoint before attachment; it grants no verified
+finality, successor context, installation or signing authority.
+
+M15's existing retained-proof consumer accepts exactly schema tags 10 and 13
+as local-storage metadata, then runs the same independent M13 anchor and proof
+verification. Every other tag rejects before cryptographic work. Required
+regressions cover real available history and live-byte preservation across
+migration/cold open, unchanged refusal of legacy missing proofs, refusal before
+attachment, successful original-proof verification after attachment, and
+unsupported schema tags. Schema12 import, protocol bytes and default feature
+closure are unchanged.
 
 ## Authority
 

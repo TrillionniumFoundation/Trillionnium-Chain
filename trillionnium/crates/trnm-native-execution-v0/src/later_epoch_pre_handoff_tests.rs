@@ -720,3 +720,265 @@ fn later_pre_handoff_sigkill_commit_and_attach_cuts_preserve_original_evidence()
         assert_eq!(pre_handoff_counts(&path), (before.0 + 1, 1, 1, 1));
     }
 }
+
+#[inline(never)]
+fn assert_pre_handoff_export_consumers(
+    app: &DurableNativeApplicationV0,
+    anchor: &trnm_state_sync_v0::NativeTrustAnchorV1,
+    exported: &crate::NativeEpochFinalityPathV1,
+) -> (Vec<u8>, Vec<u8>) {
+    use trnm_poco_node_production_v0::{
+        prepare_native_live_transfer_v1, verify_retained_native_finality_path_v1,
+        NativeLiveStateSyncV1,
+    };
+    let verified = verify_retained_native_finality_path_v1(
+        anchor,
+        &m15_finality_transport_copy(exported),
+        trnm_state_sync_v0::NativeTrustPathLimitsV1::default(),
+        &mut Cev0AdmissionBudgetV0::protocol_v0(),
+    )
+    .unwrap();
+    assert_eq!(
+        verified.terminal_header().try_cev0_bytes().unwrap(),
+        exported.target_header_cev0
+    );
+    let (history, encoded) = assert_genuine_historical_export(app, anchor, exported);
+    let historical_verified = verify_genuine_historical_path(anchor, &history).unwrap();
+    assert_eq!(
+        historical_verified.terminal_header(),
+        verified.terminal_header()
+    );
+    assert_eq!(
+        historical_verified.terminal_validator_set(),
+        verified.terminal_validator_set()
+    );
+    let live = app
+        .export_current_native_live_v1(
+            BlockIdV0::new(*verified.terminal_header().id().as_bytes()).unwrap(),
+        )
+        .unwrap();
+    assert_eq!(
+        crate::NativeCurrentLiveExportV1::decode(&live)
+            .unwrap()
+            .encode()
+            .unwrap(),
+        live
+    );
+    // Real M15/M13 proof-bound staging, never a native installation receipt.
+    let transfer = prepare_native_live_transfer_v1(&verified, &live).unwrap();
+    let mut staging = NativeLiveStateSyncV1::begin(verified, transfer.manifest).unwrap();
+    for chunk in transfer.chunks {
+        staging.accept_chunk(chunk).unwrap();
+    }
+    assert!(staging.missing_chunks().is_empty());
+    let staged = staging.verify_complete().unwrap();
+    assert_eq!(
+        staged.binding().terminal_block_digest.0,
+        *historical_verified.terminal_header().id().as_bytes()
+    );
+    assert_eq!(
+        staged.binding().state_root.0,
+        *historical_verified
+            .terminal_header()
+            .state_root()
+            .as_bytes()
+    );
+    (live, encoded)
+}
+
+#[inline(never)]
+fn assert_existing_exports_survive_pre_handoff_migration(path: &std::path::Path) {
+    let LaterDescendantFixture {
+        application: app,
+        checkpoint_header,
+        first_header,
+        trust_anchor: anchor,
+        ..
+    } = *build_later_descendant_fixture(path);
+    let checkpoint = BlockIdV0::new(*checkpoint_header.id().as_bytes()).unwrap();
+    let target = BlockIdV0::new(*first_header.id().as_bytes()).unwrap();
+    let before = app
+        .export_epoch_finality_path_v1(checkpoint, target)
+        .unwrap();
+    assert_eq!(before.target_schema_version, 10);
+    let (live, history) = assert_pre_handoff_export_consumers(&app, &anchor, &before);
+    let head = app.confirmed_committed_head_v0().unwrap();
+    assert_eq!(head.height().get(), 21);
+    app.upgrade_later_epoch_pre_handoff_schema_v1(&head)
+        .unwrap();
+    let after = app
+        .export_epoch_finality_path_v1(checkpoint, target)
+        .unwrap();
+    let mut expected = before;
+    expected.target_schema_version = 13;
+    assert_eq!(after, expected, "only physical schema metadata changes");
+    assert_eq!(
+        assert_pre_handoff_export_consumers(&app, &anchor, &after),
+        (live.clone(), history.clone())
+    );
+    for unsupported in [0, 4, 9, 11, 12, 14, u64::MAX] {
+        let mut bad = after.clone();
+        bad.target_schema_version = unsupported;
+        let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+        budget.charge_signature_work(7).unwrap();
+        assert!(matches!(
+            trnm_poco_node_production_v0::verify_retained_native_finality_path_v1(
+                &anchor,
+                &m15_finality_transport_copy(&bad),
+                trnm_state_sync_v0::NativeTrustPathLimitsV1::default(),
+                &mut budget,
+            ),
+            Err(trnm_poco_node_production_v0::NativeEpochFinalityConsumerErrorV1::MetadataMismatch)
+        ));
+        assert_eq!(
+            budget.signature_work(),
+            7,
+            "unsupported tag rejects before crypto"
+        );
+    }
+    drop(app);
+    let cold =
+        DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).unwrap();
+    let recovered = cold
+        .export_epoch_finality_path_v1(checkpoint, target)
+        .unwrap();
+    assert_eq!(recovered, expected);
+    assert_eq!(
+        assert_pre_handoff_export_consumers(&cold, &anchor, &recovered),
+        (live, history)
+    );
+    assert_eq!(cold.confirmed_committed_head_v0().unwrap(), head);
+}
+
+#[test]
+#[inline(never)]
+fn later_pre_handoff_schema13_exports_preserve_history_and_require_attachment() {
+    let directory = tempfile::tempdir().unwrap();
+    assert_existing_exports_survive_pre_handoff_migration(
+        &directory.path().join("existing.sqlite3"),
+    );
+
+    let path = directory.path().join("new-checkpoint.sqlite3");
+    let fixture = build_later_pre_handoff_fixture(&path, &[]);
+    let inputs = PreHandoffInputsV1::from_fixture(&fixture);
+    let old_set = fixture.old_set.clone();
+    let terminal = fixture.seal_2.clone();
+    let parent = fixture.application.confirmed_committed_head_v0().unwrap();
+    let parent_header = fixture.headers.last().unwrap().try_cev0_bytes().unwrap();
+    let set_bytes = fixture.old_set.try_cev0_bytes().unwrap();
+    let parameters = fixture.old_parameters.canonical_bytes();
+    // Pin genuine receiver configuration before reading either untrusted export.
+    let pin =
+        trnm_state_sync_v0::native_trust_anchor_pin_v1(&parent_header, &set_bytes, &parameters)
+            .unwrap();
+    let anchor = trnm_state_sync_v0::NativeTrustAnchorV1::from_pinned_bytes(
+        &parent_header,
+        &set_bytes,
+        &parameters,
+        pin,
+    )
+    .unwrap();
+    let legacy_parent = BlockIdV0::new(*fixture.headers[5].id().as_bytes()).unwrap();
+    fixture
+        .application
+        .upgrade_later_epoch_schema_v1(&parent)
+        .unwrap();
+    let before_live = fixture
+        .application
+        .export_current_native_live_v1(parent.block_id())
+        .unwrap();
+    assert!(fixture
+        .application
+        .export_epoch_finality_path_v1(legacy_parent, parent.block_id())
+        .unwrap_err()
+        .to_string()
+        .contains("legacy ordinary proof unavailable"));
+    assert!(fixture
+        .application
+        .export_historical_replay_v1(legacy_parent, parent.block_id())
+        .is_err());
+    fixture
+        .application
+        .upgrade_later_epoch_pre_handoff_schema_v1(&parent)
+        .unwrap();
+    assert_eq!(
+        fixture
+            .application
+            .export_current_native_live_v1(parent.block_id())
+            .unwrap(),
+        before_live
+    );
+    assert!(fixture
+        .application
+        .export_epoch_finality_path_v1(legacy_parent, parent.block_id())
+        .unwrap_err()
+        .to_string()
+        .contains("legacy ordinary proof unavailable"));
+    assert!(fixture
+        .application
+        .export_historical_replay_v1(legacy_parent, parent.block_id())
+        .is_err());
+    drop(fixture);
+    let app =
+        DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+    assert_eq!(
+        app.export_current_native_live_v1(parent.block_id())
+            .unwrap(),
+        before_live
+    );
+    let prepared = app
+        .reopen_prepared_epoch_execution_v1(inputs.block())
+        .unwrap();
+    let receipt = inputs
+        .commit(&app, &prepared, &mut Cev0AdmissionBudgetV0::protocol_v0())
+        .unwrap();
+    let target = receipt.head().block_id();
+    assert!(app
+        .export_epoch_finality_path_v1(parent.block_id(), target)
+        .is_err());
+    assert!(app
+        .export_historical_replay_v1(parent.block_id(), target)
+        .is_err());
+    let inert_live = app.export_current_native_live_v1(target).unwrap();
+    crate::recompute_native_current_live_v1(
+        &inert_live,
+        receipt.header(),
+        &old_set,
+        receipt.strict_context().old_consensus_parameters(),
+    )
+    .unwrap();
+    let kernel = sign_committed_pre_handoff_anchor(&receipt, &terminal);
+    let _edge = app
+        .attach_later_epoch_handoff_v1(&receipt, &kernel)
+        .unwrap();
+    let exported = app
+        .export_epoch_finality_path_v1(parent.block_id(), target)
+        .unwrap();
+    assert_eq!(exported.target_schema_version, 13);
+    assert_eq!(exported.steps.len(), 1);
+    assert_eq!(exported.steps[0].proof, inputs.proof);
+    assert!(
+        exported.steps[0].epoch_evidence.is_none(),
+        "C18 remains the old epoch checkpoint"
+    );
+    let (live, history) = assert_pre_handoff_export_consumers(&app, &anchor, &exported);
+    assert_eq!(live, inert_live);
+    let decoded = crate::NativeHistoricalReplayV1::decode_v1(&history).unwrap();
+    assert_eq!(decoded.records.len(), 1);
+    assert!(
+        decoded.activations.is_empty(),
+        "checkpoint proof is not successor activation"
+    );
+    drop(app);
+    let cold =
+        DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+    assert_eq!(
+        cold.export_epoch_finality_path_v1(parent.block_id(), target)
+            .unwrap(),
+        exported
+    );
+    assert_eq!(
+        assert_pre_handoff_export_consumers(&cold, &anchor, &exported),
+        (live, history)
+    );
+}
