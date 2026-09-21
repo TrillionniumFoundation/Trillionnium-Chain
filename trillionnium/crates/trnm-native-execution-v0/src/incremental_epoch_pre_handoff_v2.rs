@@ -55,23 +55,31 @@ pub(in crate::durable) struct PreHandoff {
 }
 pub(in crate::durable) fn screen(tx: &rusqlite::Transaction<'_>) -> Result<()> {
     let (count,bytes,invalid):(u64,u64,u64)=tx.query_row("SELECT count(*),coalesce(sum(length(checkpoint_finality)+length(descriptor)+length(next_epoch_commitment)+length(new_validator_set)+length(new_parameters)),0),coalesce(sum(CASE WHEN typeof(checkpoint_finality)!='blob' OR length(checkpoint_finality)=0 OR length(checkpoint_finality)>8388608 OR typeof(descriptor)!='blob' OR length(descriptor)=0 OR length(descriptor)>4096 OR typeof(next_epoch_commitment)!='blob' OR length(next_epoch_commitment)=0 OR length(next_epoch_commitment)>4096 OR typeof(new_validator_set)!='blob' OR length(new_validator_set)=0 OR length(new_validator_set)>1048576 OR typeof(new_parameters)!='blob' OR length(new_parameters)=0 OR length(new_parameters)>4096 THEN 1 ELSE 0 END),0) FROM native_incremental_epoch_pre_handoff_v2",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?;
-    // This implementation stops at one unattached successor checkpoint. Later
-    // installed-edge support must add the bounded prefix resolver first.
     ensure!(
-        count <= 1 && bytes <= MAX_EPOCH_EVIDENCE_BYTES_V1 as u64 && invalid == 0,
+        count <= 32 && bytes <= MAX_EPOCH_EVIDENCE_BYTES_V1 as u64 && invalid == 0,
         "schema11 pre-handoff inventory capacity/type"
     );
     Ok(())
 }
 pub(in crate::durable) fn load(tx: &rusqlite::Transaction<'_>) -> Result<Option<PreHandoff>> {
+    let mut values = load_all(tx)?;
+    ensure!(values.len() <= 1, "schema11 legacy single-tail projection");
+    Ok(values.pop())
+}
+pub(in crate::durable) fn load_all(tx: &rusqlite::Transaction<'_>) -> Result<Vec<PreHandoff>> {
     screen(tx)?;
-    let mut q=tx.prepare("SELECT checkpoint_block,p_digest,commit_sequence,checkpoint_head,context_digest,checkpoint_finality,descriptor,next_epoch_commitment,new_validator_set,new_parameters,strict_binding,checksum FROM native_incremental_epoch_pre_handoff_v2 LIMIT 2")?;
+    let mut q=tx.prepare("SELECT checkpoint_block,p_digest,commit_sequence,checkpoint_head,context_digest,checkpoint_finality,descriptor,next_epoch_commitment,new_validator_set,new_parameters,strict_binding,checksum FROM native_incremental_epoch_pre_handoff_v2 ORDER BY checkpoint_block LIMIT 33")?;
     let mut rows = q.query([])?;
-    let Some(r) = rows.next()? else {
-        return Ok(None);
-    };
+    let mut values = Vec::new();
+    while let Some(row) = rows.next()? {
+        ensure!(values.len() < 32, "schema11 retained checkpoint bound");
+        values.push(decode_record(row)?);
+    }
+    Ok(values)
+}
+fn decode_record(r: &rusqlite::Row<'_>) -> Result<PreHandoff> {
     let proof = row_blob(r, 5, 1, MAX_PROOF)?;
-    let result = PreHandoff {
+    Ok(PreHandoff {
         record: commit::Commit {
             block: fixed(row_blob(r, 0, 32, 32)?)?,
             p_digest: fixed(row_blob(r, 1, 32, 32)?)?,
@@ -89,12 +97,7 @@ pub(in crate::durable) fn load(tx: &rusqlite::Transaction<'_>) -> Result<Option<
         },
         context: fixed(row_blob(r, 4, 32, 32)?)?,
         strict_binding: fixed(row_blob(r, 10, 32, 32)?)?,
-    };
-    ensure!(
-        rows.next()?.is_none(),
-        "schema11 unattached tail cardinality"
-    );
-    Ok(Some(result))
+    })
 }
 struct Verified {
     row: ProjectedRow,
@@ -106,7 +109,7 @@ fn verify(
     tx: &rusqlite::Transaction<'_>,
     config: &NativeApplicationConfigV0,
     base: &Owner,
-    edge: &EdgeRow,
+    bindings: &[[u8; 32]],
     first: &EpochP,
     ordinary: &BTreeMap<[u8; 32], P>,
     runtime: &trnm_consensus_crypto::StrictEpochRuntimeContextV1,
@@ -200,7 +203,10 @@ fn verify(
         .find(|r| r.block == selected.cutoff.block)
         .context("schema11 cutoff original proof missing")?
         .proof;
-    let preceding = prefix(&[edge.binding])?;
+    let preceding = prefix(bindings)?;
+    let predecessor = *bindings
+        .last()
+        .context("schema11 pre-handoff empty predecessor prefix")?;
     ensure!(
         preceding.len() < 4 + 32 * 32,
         "schema11 successor attachment capacity"
@@ -251,7 +257,7 @@ fn verify(
             blob(p.digest),
             number_value(sequence),
             blob(head_bytes(&p.target()?)),
-            blob(edge.binding),
+            blob(predecessor),
             blob(preceding),
             blob(context),
             blob(&evidence.proof),
@@ -311,7 +317,7 @@ pub(in crate::durable) fn audit(
     tx: &rusqlite::Transaction<'_>,
     config: &NativeApplicationConfigV0,
     base: &Owner,
-    edge: &EdgeRow,
+    bindings: &[[u8; 32]],
     first: &EpochP,
     ordinary: &BTreeMap<[u8; 32], P>,
     runtime: &trnm_consensus_crypto::StrictEpochRuntimeContextV1,
@@ -332,7 +338,7 @@ pub(in crate::durable) fn audit(
         tx,
         config,
         base,
-        edge,
+        bindings,
         first,
         ordinary,
         runtime,
@@ -564,7 +570,7 @@ impl DurableNativeApplicationV0 {
             &tx,
             &self.config,
             &current.current.base,
-            &current.current.edge,
+            &current.current.active_prefix,
             &current.current.first_p,
             &current.current.ordinary,
             &current.current.runtime,

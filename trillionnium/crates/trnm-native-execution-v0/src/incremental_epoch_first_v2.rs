@@ -347,13 +347,9 @@ impl DurableNativeApplicationV0 {
             .epochs
             .remove(&block)
             .context("schema11 first P absent")?;
-        let pending = current
-            .current
-            .pending
-            .as_ref()
-            .context("schema11 first edge is not installed")?;
+        let context = current.current.context_for(&header(&p.header)?)?;
         ensure!(
-            p.digest == digest && p.edge == pending.binding(),
+            p.digest == digest && p.edge == context.binding,
             "schema11 first P identity/context"
         );
         self.confirm_namespace_identity_v1()?;
@@ -361,6 +357,193 @@ impl DurableNativeApplicationV0 {
             owner: Arc::clone(&self.owner_affinity),
             pin: current.pin,
             p,
+        })
+    }
+}
+
+impl DurableNativeApplicationV0 {
+    /// Consume the exact installed edge with original first-new finality. The
+    /// sparse/replay application and the complete proof ledger commit together.
+    pub fn commit_incremental_first_epoch_finality_bytes_v2(
+        &self,
+        prepared: &PreparedIncrementalFirstV2,
+        proof: &[u8],
+        budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+    ) -> Result<CommittedNativeIncrementalEpochV2> {
+        ensure!(
+            !proof.is_empty() && proof.len() <= MAX_PROOF,
+            "schema11 first proof bound"
+        );
+        let starting_work = budget.signature_work();
+        let guard = self.lock_operation()?;
+        let mut c = open_writable_connection_v0(&self.path)?;
+        verify_schema_v0(&c)?;
+        let tx = c.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let m = load_metadata_v0(&tx, &self.config)?;
+        let mut current = audited_current_with_budget(self, &tx, &m, budget)?;
+        let owner_work = budget.signature_work() - starting_work;
+        let p = prepared.require(self, &current)?.clone();
+        let context = current.current.context_for(&header(&p.header)?)?;
+        ensure!(
+            p.edge == context.binding,
+            "schema11 first finality edge context"
+        );
+        lineage::verify_header_proof(
+            context.runtime,
+            proof,
+            context
+                .runtime
+                .activation()
+                .terminal_old_header()
+                .timestamp_ms(),
+            &header(&p.header)?,
+            budget,
+        )?;
+        let existing = lineage::load_first_records(&tx)?;
+        if let Some(record) = existing.iter().find(|r| r.block == p.block) {
+            ensure!(
+                record.proof == proof && record.p_digest == p.digest,
+                "schema11 first committed exact retry differs"
+            );
+            require_readback_budget(budget, owner_work)?;
+            let head = record.head.clone();
+            let sequence = record.sequence;
+            let generation = current.current.generation;
+            drop(tx);
+            drop(c);
+            sync_store_commit_boundary_v0(&self.path)?;
+            drop(guard);
+            let _ = self.reopen_incremental_first_with_budget_v2(p.block, p.digest, budget)?;
+            return Ok(CommittedNativeIncrementalEpochV2 {
+                head,
+                p_digest: p.digest,
+                sequence,
+                generation,
+            });
+        }
+        ensure!(existing.len() < 32, "schema11 first proof capacity");
+        let proof_bytes: usize = tx.query_row(
+            "SELECT coalesce(sum(length(proof)),0) FROM native_incremental_epoch_first_commit_v2",
+            [],
+            |r| r.get(0),
+        )?;
+        ensure!(
+            proof_bytes
+                .checked_add(proof.len())
+                .is_some_and(|n| n <= MAX_EPOCH_EVIDENCE_BYTES_V1),
+            "schema11 first aggregate proof capacity"
+        );
+        let pending = current
+            .current
+            .pending
+            .as_ref()
+            .context("schema11 first edge not installed")?;
+        ensure!(
+            pending.binding() == p.edge
+                && pending.record.consumed.is_none()
+                && m.head == p.parent
+                && pending.record.checkpoint == m.head
+                && p.replay_parent == current.current.base.replay,
+            "schema11 first exact current checkpoint"
+        );
+        let replay = ReplayReader::new(&tx, Some(current.current.base.replay), &[])?.append(
+            replay_keys(p.executed()?.request().preview().transactions())?,
+        )?;
+        ensure!(
+            replay.encode()? == p.replay_delta,
+            "schema11 first replay differs"
+        );
+        // Adding this exact first proof is the only additional crypto work in
+        // the prospective cold inventory. Capacity is checked before sparse SQL.
+        require_readback_budget(budget, budget.signature_work() - starting_work)?;
+        let head = p.target()?;
+        let before = ni::read_incremental_head_v1(&tx, &namespace(&self.config))?;
+        let next = ni::epoch_candidate_v1::apply(
+            &tx,
+            &namespace(&self.config),
+            pending,
+            &before,
+            &p.storage()?,
+            *head.commit_id().as_bytes(),
+        )?;
+        replay::apply(&tx, &replay)?;
+        let sequence = m
+            .durable_sequence
+            .checked_add(1)
+            .context("schema11 first commit sequence exhausted")?;
+        let generation = current
+            .current
+            .generation
+            .checked_add(1)
+            .context("schema11 first generation exhausted")?;
+        ProjectedRow::new(
+            4,
+            vec![
+                blob(p.block),
+                blob(p.edge),
+                blob(p.digest),
+                number_value(sequence),
+                blob(head_bytes(&head)),
+                blob(proof),
+                blob(sha256_v0(proof)),
+            ],
+        )
+        .finish(&self.config, current.current.base.anchor, &[5], &[], &[])?
+        .insert(&tx)?;
+        let pending = current
+            .current
+            .pending
+            .as_mut()
+            .context("schema11 first pending disappeared")?;
+        let old_checksum = pending.record.checksum;
+        pending.record.consumed = Some(Consumed {
+            block: p.block,
+            p_digest: p.digest,
+            sequence,
+        });
+        let row = pending
+            .record
+            .projected(&self.config, current.current.base.anchor)?;
+        let checksum = row
+            .values
+            .last()
+            .context("schema11 consumed row checksum absent")?;
+        ensure!(tx.execute("UPDATE native_incremental_epoch_edge_v2 SET phase=1,consumed_block=?,consumed_p=?,consumed_sequence=?,checksum=? WHERE binding=? AND phase=0 AND checksum=?",params![p.block.as_slice(),p.digest.as_slice(),sequence.to_be_bytes().as_slice(),checksum,p.edge.as_slice(),old_checksum.as_slice()])?==1,"schema11 consume edge CAS");
+        ensure!(tx.execute("UPDATE native_application_metadata_v0 SET durable_sequence=?,head_height=?,head_block_id=?,head_state_root=?,head_commit_id=? WHERE singleton=1 AND schema_version=? AND durable_sequence=? AND head_block_id=? AND head_state_root=? AND head_commit_id=?",params![sequence.to_be_bytes().as_slice(),head.height().get().to_be_bytes().as_slice(),head.block_id().as_bytes().as_slice(),head.state_root().as_bytes().as_slice(),head.commit_id().as_bytes().as_slice(),SCHEMA_VERSION.to_be_bytes().as_slice(),m.durable_sequence.to_be_bytes().as_slice(),m.head.block_id().as_bytes().as_slice(),m.head.state_root().as_bytes().as_slice(),m.head.commit_id().as_bytes().as_slice()])?==1,"schema11 first head CAS");
+        let base = &mut current.current.base;
+        base.commit_sequence = sequence;
+        base.storage_checksum = next.checksum;
+        base.replay = replay.head;
+        base.checksum = base.current_digest(&head);
+        ensure!(tx.execute("UPDATE native_incremental_owner_v1 SET head_commit_sequence=?,storage_checksum=?,replay_version=?,replay_root=?,owner_checksum=? WHERE id=1",params![sequence.to_be_bytes().as_slice(),base.storage_checksum.as_slice(),base.replay.version.to_be_bytes().as_slice(),base.replay.root.as_slice(),base.checksum.as_slice()])?==1,"schema11 first base owner CAS");
+        update_owner(
+            &tx,
+            &self.config,
+            &current.current,
+            current.pin,
+            &head,
+            generation,
+        )?;
+        retire_forks_v2(&tx, &self.config, p.block)?;
+        tx.execute("DELETE FROM native_incremental_epoch_p_context_v2 WHERE block NOT IN(SELECT block FROM native_incremental_p_v1 UNION ALL SELECT block FROM native_incremental_epoch_p_v1)",[])?;
+        screen_inventory(&tx, SCHEMA_VERSION)?;
+        self.confirm_namespace_identity_v1()?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("incremental_schema11_first_before_commit");
+        tx.commit()?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("incremental_schema11_first_after_commit");
+        drop(c);
+        sync_store_commit_boundary_v0(&self.path)?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("incremental_schema11_first_after_fsync");
+        drop(guard);
+        let _ = self.reopen_incremental_first_with_budget_v2(p.block, p.digest, budget)?;
+        Ok(CommittedNativeIncrementalEpochV2 {
+            head,
+            p_digest: p.digest,
+            sequence,
+            generation,
         })
     }
 }

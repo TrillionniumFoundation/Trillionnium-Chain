@@ -113,7 +113,7 @@ impl Kind1Evidence {
         p: &P,
         record: &PreHandoff,
         budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
-    ) -> Result<trnm_consensus_crypto::StrictEpochRuntimeContextV1> {
+    ) -> Result<Box<trnm_consensus_crypto::StrictEpochRuntimeContextV1>> {
         ensure!(
             self.checkpoint == p.header
                 && self.proof == record.evidence.proof
@@ -169,30 +169,31 @@ impl Kind1Evidence {
             runtime,
             ancestry,
         )
+        .map(Box::new)
         .map_err(|e| anyhow::anyhow!("schema11 attachment predecessor: {e}"))
     }
 }
 
-struct Consumed {
-    block: [u8; 32],
-    p_digest: [u8; 32],
-    sequence: u64,
+pub(in super::super::super) struct Consumed {
+    pub(in super::super::super) block: [u8; 32],
+    pub(in super::super::super) p_digest: [u8; 32],
+    pub(in super::super::super) sequence: u64,
 }
 pub(in crate::durable) struct Attachment {
-    binding: [u8; 32],
-    ordinal: u64,
-    predecessor: [u8; 32],
-    preceding: Vec<[u8; 32]>,
-    checkpoint: ApplicationHeadV0,
-    checkpoint_p: [u8; 32],
-    checkpoint_sequence: u64,
-    context: [u8; 32],
+    pub(in super::super::super) binding: [u8; 32],
+    pub(in super::super::super) ordinal: u64,
+    pub(in super::super::super) predecessor: [u8; 32],
+    pub(in super::super::super) preceding: Vec<[u8; 32]>,
+    pub(in super::super::super) checkpoint: ApplicationHeadV0,
+    pub(in super::super::super) checkpoint_p: [u8; 32],
+    pub(in super::super::super) checkpoint_sequence: u64,
+    pub(in super::super::super) context: [u8; 32],
     evidence: Kind1Evidence,
-    consumed: Option<Consumed>,
-    checksum: [u8; 32],
+    pub(in super::super::super) consumed: Option<Consumed>,
+    pub(in super::super::super) checksum: [u8; 32],
 }
 impl Attachment {
-    fn projected(
+    pub(in super::super::super) fn projected(
         &self,
         config: &NativeApplicationConfigV0,
         anchor: [u8; 32],
@@ -226,8 +227,8 @@ impl Attachment {
     }
 }
 pub(in crate::durable) struct Pending {
-    record: Attachment,
-    runtime: trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    pub(in super::super::super) record: Attachment,
+    pub(in super::super::super) runtime: Box<trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
 }
 impl Pending {
     pub(in crate::durable) fn runtime(
@@ -328,6 +329,35 @@ pub(in crate::durable) fn audit_pending(
         return Ok(None);
     };
     let checkpoint = pre_handoff.context("schema11 installed edge without pre-handoff")?;
+    ensure!(
+        record.consumed.is_none() && record.checkpoint == *current_head,
+        "schema11 installed successor exact current tail"
+    );
+    let runtime = verify_record(
+        config,
+        base,
+        &record,
+        &[source.binding],
+        first,
+        ordinary,
+        predecessor,
+        checkpoint,
+        budget,
+    )?;
+    Ok(Some(Pending { record, runtime }))
+}
+#[allow(clippy::too_many_arguments)]
+pub(in super::super::super) fn verify_record(
+    config: &NativeApplicationConfigV0,
+    base: &Owner,
+    record: &Attachment,
+    preceding: &[[u8; 32]],
+    first: &EpochP,
+    ordinary: &BTreeMap<[u8; 32], P>,
+    predecessor: &trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    checkpoint: &PreHandoff,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<Box<trnm_consensus_crypto::StrictEpochRuntimeContextV1>> {
     let p = ordinary
         .get(&checkpoint.record.block)
         .context("schema11 attached checkpoint P absent")?;
@@ -335,17 +365,15 @@ pub(in crate::durable) fn audit_pending(
         .get(p.parent.block_id().as_bytes())
         .context("schema11 attached parent P absent")?;
     ensure!(
-        record.ordinal == 1
-            && record.predecessor == source.binding
-            && record.preceding == [source.binding]
-            && record.consumed.is_none()
-            && record.binding != source.binding
-            && record.checkpoint == *current_head
+        record.ordinal == u64::try_from(preceding.len())?
+            && Some(&record.predecessor) == preceding.last()
+            && record.preceding == preceding
+            && !preceding.contains(&record.binding)
             && record.checkpoint == checkpoint.record.head
             && record.checkpoint_p == p.digest
             && record.checkpoint_sequence == checkpoint.record.sequence
             && record.context == checkpoint.context,
-        "schema11 installed successor exact prefix/checkpoint"
+        "schema11 successor exact prefix/checkpoint"
     );
     let ancestry = retained_ancestry(first, ordinary, predecessor, parent)?;
     let runtime = record
@@ -360,7 +388,7 @@ pub(in crate::durable) fn audit_pending(
         projected.values.last() == Some(&blob(record.checksum)),
         "schema11 attached edge checksum"
     );
-    Ok(Some(Pending { record, runtime }))
+    Ok(runtime)
 }
 
 fn decode_prefix(raw: &[u8]) -> Result<Vec<[u8; 32]>> {
@@ -445,7 +473,7 @@ pub struct InstalledIncrementalEpochEdgeV2 {
     anchor: [u8; 32],
     generation: u64,
     record: Attachment,
-    runtime: trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    runtime: Box<trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
 }
 impl InstalledIncrementalEpochEdgeV2 {
     pub const fn binding(&self) -> [u8; 32] {
@@ -549,6 +577,51 @@ impl crate::epoch_edge::EpochExecutionContextV1 for InstalledIncrementalEpochEdg
             terminal_version: self.consensus_parent().height().get(),
             first_version: self.first_application_height_v1(),
             authorization_id: self.binding(),
+        }
+    }
+}
+
+// Constructed only by the full native cold audit; this private sealed context
+// permits the common sparse apply kernel to consume the exact audited edge.
+impl crate::epoch_edge::sealed::Sealed for Pending {}
+impl crate::epoch_edge::EpochExecutionContextV1 for Pending {
+    fn application_parent_v1(&self) -> &ApplicationHeadV0 {
+        &self.record.checkpoint
+    }
+    fn consensus_parent_v1(&self) -> &BlockHeader {
+        self.runtime.activation().terminal_old_header()
+    }
+    fn first_application_height_v1(&self) -> u64 {
+        self.runtime
+            .activation()
+            .handoff_certificate()
+            .descriptor()
+            .fields()
+            .activation_height
+            .get()
+    }
+    fn old_validator_set_v1(&self) -> &trnm_consensus_types::ValidatorSet {
+        self.runtime.activation().old_validator_set()
+    }
+    fn old_parameters_v1(&self) -> &ConsensusParametersV0 {
+        self.runtime.activation().old_consensus_parameters()
+    }
+    fn new_validator_set_v1(&self) -> &trnm_consensus_types::ValidatorSet {
+        self.runtime.activation().new_validator_set()
+    }
+    fn new_parameters_v1(&self) -> &ConsensusParametersV0 {
+        self.runtime.activation().new_consensus_parameters()
+    }
+    fn authorization_id_v1(&self) -> [u8; 32] {
+        self.record.binding
+    }
+    fn coordinates_v1(&self) -> crate::epoch_edge::EpochApplicationCoordinatesV1 {
+        crate::epoch_edge::EpochApplicationCoordinatesV1 {
+            checkpoint_version: self.record.checkpoint.height().get(),
+            checkpoint_root: *self.record.checkpoint.state_root().as_bytes(),
+            terminal_version: self.consensus_parent_v1().height().get(),
+            first_version: self.first_application_height_v1(),
+            authorization_id: self.record.binding,
         }
     }
 }
@@ -669,14 +742,14 @@ impl DurableNativeApplicationV0 {
             evidence.verify(&current.current.runtime, &ancestry, p, checkpoint, budget)?;
         let binding = *runtime.activation().binding_ref().as_bytes();
         ensure!(
-            binding != current.current.edge.binding,
+            !current.current.owner_prefix().contains(&binding),
             "schema11 cross-kind binding collision"
         );
         let mut record = Attachment {
             binding,
-            ordinal: 1,
-            predecessor: current.current.edge.binding,
-            preceding: vec![current.current.edge.binding],
+            ordinal: u64::try_from(current.current.active_prefix.len())?,
+            predecessor: current.current.active_binding,
+            preceding: current.current.active_prefix.clone(),
             checkpoint: checkpoint.record.head.clone(),
             checkpoint_p: p.digest,
             checkpoint_sequence: checkpoint.record.sequence,

@@ -257,17 +257,30 @@ fn execution_parent<'a>(
         ExecutionParent::First(prepared) => {
             let p = prepared.require(app, current)?;
             let runtime = current.current.context_for(&header(&p.header)?)?.runtime;
+            let committed = p.target()? == m.head;
             ensure!(
-                p.parent == m.head && p.replay_parent == current.current.base.replay,
-                "schema11 first-parent current checkpoint"
+                if committed {
+                    ReplayDelta::decode(&p.replay_delta)?.head == current.current.base.replay
+                } else {
+                    p.parent == m.head && p.replay_parent == current.current.base.replay
+                },
+                "schema11 first-parent current application cut"
             );
             Ok(ExecutionParentContext {
                 head: p.target()?,
                 digest: p.digest,
                 checkpoint_height: p.parent.height().get(),
                 resolved: ResolvedParent {
-                    state: ni::IncrementalParentV1::Prepared(p.storage_artifact),
-                    replay: vec![ReplayDelta::decode(&p.replay_delta)?],
+                    state: if committed {
+                        ni::IncrementalParentV1::Committed(p.block)
+                    } else {
+                        ni::IncrementalParentV1::Prepared(p.storage_artifact)
+                    },
+                    replay: if committed {
+                        Vec::new()
+                    } else {
+                        vec![ReplayDelta::decode(&p.replay_delta)?]
+                    },
                     digest: Some(p.digest),
                 },
                 runtime,
@@ -575,27 +588,33 @@ impl DurableNativeApplicationV0 {
             header(&p.header)?.block_kind() == trnm_consensus_types::BlockKind::Regular,
             "schema11 ordinary finality kind"
         );
-        let parent_header = if p.parent == current.current.first.head {
-            header(&current.current.first_p.header)?
-        } else {
-            header(
-                &current
-                    .current
-                    .ordinary
-                    .get(p.parent.block_id().as_bytes())
-                    .context("schema11 proof parent missing")?
-                    .header,
-            )?
-        };
-        let verified = current
-            .current
+        let parent_header =
+            if let Some(parent) = current.current.epochs.get(p.parent.block_id().as_bytes()) {
+                header(&parent.header)?
+            } else {
+                header(
+                    &current
+                        .current
+                        .ordinary
+                        .get(p.parent.block_id().as_bytes())
+                        .context("schema11 proof parent missing")?
+                        .header,
+                )?
+            };
+        let actual = current.current.context_for(&header(&p.header)?)?;
+        let epoch = actual
             .runtime
-            .decode_verify_finality_v1(proof, parent_header.timestamp_ms(), budget)
-            .map_err(|e| anyhow::anyhow!("schema11 strict finality: {e}"))?;
-        ensure!(
-            verified.finalized_block().header() == &header(&p.header)?,
-            "schema11 full finality header"
-        );
+            .activation()
+            .new_validator_set()
+            .epoch()
+            .get();
+        lineage::verify_header_proof(
+            actual.runtime,
+            proof,
+            parent_header.timestamp_ms(),
+            &header(&p.header)?,
+            budget,
+        )?;
         if p.status == 1 {
             let record = load_ordinary_records(&tx)?
                 .into_iter()
@@ -642,13 +661,7 @@ impl DurableNativeApplicationV0 {
             &before,
             &p.storage()?,
             *head.commit_id().as_bytes(),
-            current
-                .current
-                .runtime
-                .activation()
-                .new_validator_set()
-                .epoch()
-                .get(),
+            epoch,
         )?;
         replay::apply(&tx, &delta)?;
         let sequence = m
@@ -664,7 +677,7 @@ impl DurableNativeApplicationV0 {
             5,
             vec![
                 blob(p.block),
-                blob(current.current.edge.binding),
+                blob(current.current.context_for(&header(&p.header)?)?.binding),
                 blob(p.digest),
                 number_value(sequence),
                 blob(head_bytes(&head)),

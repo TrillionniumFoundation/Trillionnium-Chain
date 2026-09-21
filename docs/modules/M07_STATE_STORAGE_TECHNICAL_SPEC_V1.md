@@ -1355,6 +1355,18 @@ an installed tail never changes the active execution configuration by itself.
 Every caller-budget path shares its meter through the independent fresh audit
 and checks prospective readback capacity before mutation.
 
+The cold schema11 walk keeps original kind0 A immutable and builds each kind1
+context iteratively from its own authenticated predecessor. Historical checkpoint
+sidecars use their own prefix and old epoch configuration, including exact C15
+selection, C17 certified parent and original reservation replay; the current tail
+configuration must never reinterpret a prior checkpoint. After checking every
+retained P, original proof and sparse edge, one bounded backward application walk
+joins all committed first/ordinary/checkpoint records to the immutable source,
+including replay heads and monotonic commit/persist sequences. All retained first
+commit rows protect their winning epoch P from pending-fork retirement. A phase0
+edge may only be the last prefix element and stays at its actual checkpoint; a
+phase1 edge requires the exact first proof and native/ni consumption relation.
+
 | Durable phase | Required record relation and allowed next operation |
 | --- | --- |
 | Prepared C18 | Kind2 native/ni P and exact cutoff context; no pre-handoff row or B. Commit remains blocked until C17 and C15 are genuinely committed. |
@@ -1429,6 +1441,17 @@ equality, unchanged schema7 regressions and default-stack acceptance. These are
 acceptance requirements. Migration, C18 pre-handoff, B attachment and prepared
 C21/C22/C23 do not satisfy this commit-and-recovery campaign. The candidate
 remains closed until the complete acceptance path passes.
+
+The implemented storage slice now commits and cold-reopens genuine nonempty
+C21/C22, rejects an independently signed alternate complete C21 header before
+writes, and retains the advanced head on exact first and historical A ordinary
+proof retries. The nine C18/attachment/C21 SIGKILL cuts and legacy schema6/7
+regressions pass on the default test stack. Cached strict contexts are privately
+heap-owned, with the same maximum32 prefix bound and no public constructor or
+Clone capability. This evidence does **not** close the third C28→C31→C32 crossing,
+M03 custody integration, schema11 node/sync wiring, or multi-host performance
+acceptance. Those remain separate required work; the count limit is not evidence
+that repeated crossings have been accepted.
 
 #### Bounded recovery, replay, retry and retention
 

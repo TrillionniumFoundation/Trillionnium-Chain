@@ -1,8 +1,10 @@
 //! Explicit schema7→11 migration, immutable source and closed current inventory.
 //! Successor attachment and preparation retain their explicit strict context.
-//! Consumed successors remain fenced until the complete first-commit ledger.
+//! Consumed successors use the complete bounded first/ordinary/checkpoint ledger.
 use super::*;
 use rusqlite::types::{Value, ValueRef};
+#[path = "incremental_epoch_lineage_v2.rs"]
+mod lineage;
 #[path = "incremental_epoch_progress_v2.rs"]
 mod progress;
 pub use progress::{
@@ -200,16 +202,22 @@ struct Projection {
 }
 struct Current {
     base: Owner,
-    edge: EdgeRow,
-    first: commit::Commit,
     first_p: EpochP,
     ordinary: BTreeMap<[u8; 32], P>,
     epochs: BTreeMap<[u8; 32], EpochP>,
-    runtime: trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    runtime: Box<trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
+    active_binding: [u8; 32],
+    active_prefix: Vec<[u8; 32]>,
+    historical: Vec<HistoricalContext>,
     migration_sequence: u64,
     generation: u64,
     pre_handoff: Option<progress::pre_handoff::PreHandoff>,
     pending: Option<progress::pre_handoff::attachment::Pending>,
+}
+struct HistoricalContext {
+    runtime: Box<trnm_consensus_crypto::StrictEpochRuntimeContextV1>,
+    binding: [u8; 32],
+    prefix: Vec<[u8; 32]>,
 }
 struct RetainedContextRef<'a> {
     runtime: &'a trnm_consensus_crypto::StrictEpochRuntimeContextV1,
@@ -219,29 +227,36 @@ struct RetainedContextRef<'a> {
 impl Current {
     fn context_for(&self, h: &BlockHeader) -> Result<RetainedContextRef<'_>> {
         if h.epoch() == self.runtime.activation().new_validator_set().epoch() {
-            Ok(RetainedContextRef {
+            return Ok(RetainedContextRef {
                 runtime: &self.runtime,
-                binding: self.edge.binding,
-                prefix: vec![self.edge.binding],
-            })
-        } else {
-            let pending = self
-                .pending
-                .as_ref()
-                .context("schema11 P epoch lacks installed context")?;
-            ensure!(
-                h.epoch() == pending.runtime().activation().new_validator_set().epoch(),
-                "schema11 P epoch outside retained prefix"
-            );
-            Ok(RetainedContextRef {
+                binding: self.active_binding,
+                prefix: self.active_prefix.clone(),
+            });
+        }
+        if let Some(pending) = self
+            .pending
+            .as_ref()
+            .filter(|p| h.epoch() == p.runtime().activation().new_validator_set().epoch())
+        {
+            return Ok(RetainedContextRef {
                 runtime: pending.runtime(),
                 binding: pending.binding(),
                 prefix: self.owner_prefix(),
-            })
+            });
         }
+        let context = self
+            .historical
+            .iter()
+            .find(|c| h.epoch() == c.runtime.activation().new_validator_set().epoch())
+            .context("schema11 P epoch outside retained prefix")?;
+        Ok(RetainedContextRef {
+            runtime: &context.runtime,
+            binding: context.binding,
+            prefix: context.prefix.clone(),
+        })
     }
     fn owner_prefix(&self) -> Vec<[u8; 32]> {
-        let mut bindings = vec![self.edge.binding];
+        let mut bindings = self.active_prefix.clone();
         if let Some(pending) = &self.pending {
             bindings.push(pending.binding());
         }
@@ -434,9 +449,21 @@ fn projection_with_budget(
     m: &MetadataV0,
     budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
 ) -> Result<Projection> {
+    if epoch_durable::schema_version(tx)? == SCHEMA_VERSION {
+        lineage::projection(tx, config, m, budget)
+    } else {
+        migration_projection_with_budget(tx, config, m, budget)
+    }
+}
+fn migration_projection_with_budget(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    m: &MetadataV0,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<Projection> {
     let schema = epoch_durable::schema_version(tx)?;
     ensure!(
-        matches!(schema, COMMIT_SCHEMA_VERSION | SCHEMA_VERSION),
+        schema == COMMIT_SCHEMA_VERSION,
         "schema11 exact migration source"
     );
     screen_inventory(tx, schema)?;
@@ -757,7 +784,15 @@ fn projection_with_budget(
             "schema11 unattached checkpoint is not current tail"
         );
         Some(progress::pre_handoff::audit(
-            tx, config, &base, &edge, &first_p, &ordinary, &runtime, tail, budget,
+            tx,
+            config,
+            &base,
+            &[edge.binding],
+            &first_p,
+            &ordinary,
+            &runtime,
+            tail,
+            budget,
         )?)
     } else {
         None
@@ -908,7 +943,7 @@ fn projection_with_budget(
                     tx,
                     config,
                     &base,
-                    &edge,
+                    &[edge.binding],
                     &ordinary,
                     &set,
                     &parameters,
@@ -977,12 +1012,13 @@ fn projection_with_budget(
         old_pin: edge.checksum,
         current: Current {
             base,
-            edge,
-            first,
+            active_binding: edge.binding,
+            active_prefix: vec![edge.binding],
+            historical: Vec::new(),
             first_p,
             ordinary,
             epochs: epochs.into_iter().map(|p| (p.block, p)).collect(),
-            runtime,
+            runtime: Box::new(runtime),
             migration_sequence,
             generation,
             pre_handoff,

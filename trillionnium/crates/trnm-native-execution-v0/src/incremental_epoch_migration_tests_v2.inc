@@ -1415,6 +1415,16 @@ fn schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventor
     drop(c);
     assert_eq!(std::fs::read(&path).unwrap(), committed);
     drop(cold);
+    let committed = schema11_commit_second_first(
+        &path,
+        set,
+        selected.new_validator_set(),
+        installed.new_parameters(),
+        &kernel,
+        &first_header,
+        first_new.p_digest(),
+        &next_descendants,
+    );
     // A locally rehashed cross-kind replacement cannot substitute the migrated
     // native authorization identity for the full successor activation binding.
     let c = Connection::open(&path).unwrap();
@@ -1799,4 +1809,622 @@ fn schema11_attachment_sigkill_preserves_checkpoint_and_original_pre_handoff() {
             .unwrap();
         assert_eq!(std::fs::read(&path).unwrap(), exact);
     }
+}
+
+// Fixture signatures follow each actual consensus key; epoch selection may
+// reorder validators, so positional genesis key helpers are deliberately unused.
+fn schema11_key(validator: &trnm_consensus_types::Validator) -> ed25519_dalek::SigningKey {
+    (0..4u8)
+        .map(|n| ed25519_dalek::SigningKey::from_bytes(&[20 + n; 32]))
+        .find(|key| key.verifying_key().to_bytes() == *validator.consensus_key().as_bytes())
+        .unwrap()
+}
+fn schema11_qc(
+    h: &BlockHeader,
+    set: &trnm_consensus_types::ValidatorSet,
+) -> trnm_consensus_types::QuorumCertificate {
+    use ed25519_dalek::Signer;
+    use trnm_consensus_types::{QuorumCertificate, Signature64, Vote};
+    let root = Vote::signing_root_for_set(set, h.view(), h.height(), h.id()).unwrap();
+    let votes = set
+        .validators()
+        .iter()
+        .take(3)
+        .map(|v| {
+            Vote::new(
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                h.view(),
+                h.height(),
+                h.id(),
+                set.id(),
+                v.id(),
+                Signature64::from_array(schema11_key(v).sign(root.as_bytes()).to_bytes()),
+                set,
+            )
+            .unwrap()
+        })
+        .collect();
+    QuorumCertificate::new(
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        h.view(),
+        h.height(),
+        h.id(),
+        set.id(),
+        votes,
+        set,
+    )
+    .unwrap()
+}
+fn schema11_first_proof(
+    headers: &[BlockHeader],
+    old_set: &trnm_consensus_types::ValidatorSet,
+    set: &trnm_consensus_types::ValidatorSet,
+    parameters: &trnm_consensus_types::ConsensusParametersV0,
+    kernel: &[u8],
+) -> Vec<u8> {
+    use ed25519_dalek::Signer;
+    use trnm_consensus_types::{CertifiedHeaderV0, ProposalWitnessV0, QcReferenceV0, Signature64};
+    let authorization = trnm_consensus_types::decode_epoch_anchor_authorization_kernel_v0_exact(
+        kernel, old_set, set,
+    )
+    .unwrap();
+    let common = || {
+        let mut bytes = 0u16.to_be_bytes().to_vec();
+        bytes.extend(set.genesis_hash().as_bytes());
+        bytes.extend(
+            u16::try_from(set.chain_id().as_bytes().len())
+                .unwrap()
+                .to_be_bytes(),
+        );
+        bytes.extend(set.chain_id().as_bytes());
+        bytes.extend(set.protocol_version().get().to_be_bytes());
+        bytes.extend(set.epoch().get().to_be_bytes());
+        bytes.extend(set.id().as_bytes());
+        bytes
+    };
+    let mut bytes = common();
+    bytes.extend(parameters.hash().as_bytes());
+    let mut anchor = common();
+    anchor.extend(0u64.to_be_bytes());
+    anchor.extend(
+        authorization
+            .terminal_old_header()
+            .height()
+            .get()
+            .to_be_bytes(),
+    );
+    anchor.extend(authorization.terminal_old_header().id().as_bytes());
+    anchor.extend(0u32.to_be_bytes());
+    for (i, h) in headers.iter().enumerate() {
+        let proposer = set
+            .validators()
+            .iter()
+            .find(|v| v.id() == h.proposer_id())
+            .unwrap();
+        if i == 0 {
+            let root = trnm_consensus_types::epoch_first_proposal_signing_root_v0(
+                h,
+                &authorization,
+                old_set,
+                set,
+                parameters,
+            )
+            .unwrap();
+            bytes.extend(h.try_cev0_bytes().unwrap());
+            bytes.extend(&anchor);
+            bytes.push(0);
+            bytes.push(1);
+            bytes.extend(kernel);
+            bytes.extend(schema11_key(proposer).sign(root.as_bytes()).to_bytes());
+            bytes.extend(schema11_qc(h, set).try_cev0_bytes().unwrap());
+        } else {
+            let justify = QcReferenceV0::ordinary(schema11_qc(&headers[i - 1], set));
+            let witness = ProposalWitnessV0::new(
+                h,
+                justify.clone(),
+                None,
+                None,
+                Signature64::from_array([1; 64]),
+                set,
+                None,
+                parameters,
+                headers[i - 1].timestamp_ms(),
+            )
+            .unwrap();
+            let signature = Signature64::from_array(
+                schema11_key(proposer)
+                    .sign(witness.signing_root_for_header(h).unwrap().as_bytes())
+                    .to_bytes(),
+            );
+            bytes.extend(
+                CertifiedHeaderV0::new(
+                    h.clone(),
+                    justify,
+                    None,
+                    None,
+                    signature,
+                    schema11_qc(h, set),
+                    set,
+                    None,
+                    parameters,
+                    headers[i - 1].timestamp_ms(),
+                )
+                .unwrap()
+                .try_cev0_bytes()
+                .unwrap(),
+            );
+        }
+    }
+    bytes
+}
+#[allow(clippy::too_many_arguments)]
+fn schema11_commit_second_first(
+    path: &std::path::Path,
+    old_set: &trnm_consensus_types::ValidatorSet,
+    set: &trnm_consensus_types::ValidatorSet,
+    parameters: &trnm_consensus_types::ConsensusParametersV0,
+    kernel: &[u8],
+    first_header: &BlockHeader,
+    digest: [u8; 32],
+    descendants: &[PreparedNativeIncrementalEpochV2],
+) -> Vec<u8> {
+    let headers = vec![
+        first_header.clone(),
+        descendants[0].header().unwrap(),
+        descendants[1].header().unwrap(),
+    ];
+    let proof = schema11_first_proof(&headers, old_set, set, parameters, kernel);
+    let app =
+        DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).unwrap();
+    let prepared = app
+        .reopen_incremental_first_v2(*first_header.id().as_bytes(), digest)
+        .unwrap();
+    let before = std::fs::read(path).unwrap();
+    // A genuinely signed alternate three-chain shares B's exact authorization
+    // but finalizes another complete C21 header. Signature validity is not P.
+    let mut alternate: Vec<BlockHeader> = Vec::new();
+    for (i, h) in headers.iter().enumerate() {
+        alternate.push(
+            BlockHeader::new(
+                h.genesis_hash(),
+                h.chain_id(),
+                h.protocol_version(),
+                h.epoch(),
+                h.view(),
+                h.height(),
+                h.block_kind(),
+                alternate
+                    .last()
+                    .map(BlockHeader::id)
+                    .unwrap_or_else(|| h.parent_id()),
+                h.proposer_id(),
+                h.validator_set_id(),
+                h.consensus_parameters_hash(),
+                h.payload_root(),
+                h.state_root(),
+                h.receipts_root(),
+                h.evidence_root(),
+                h.timestamp_ms() + u64::from(i == 0),
+                h.next_epoch_commitment_hash(),
+            )
+            .unwrap(),
+        );
+    }
+    let wrong_proof = schema11_first_proof(&alternate, old_set, set, parameters, kernel);
+    let refused = app
+        .commit_incremental_first_epoch_finality_bytes_v2(
+            &prepared,
+            &wrong_proof,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .err()
+        .expect("genuine wrong header must not commit native P");
+    assert!(format!("{refused:#}").contains("complete finalized header differs"));
+    assert_eq!(std::fs::read(path).unwrap(), before);
+    let mut corrupt = proof.clone();
+    *corrupt.last_mut().unwrap() ^= 1;
+    let mut refused_budget = trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0();
+    assert!(app
+        .commit_incremental_first_epoch_finality_bytes_v2(&prepared, &corrupt, &mut refused_budget)
+        .is_err());
+    assert_eq!(std::fs::read(path).unwrap(), before);
+    let mut limited = trnm_consensus_types::Cev0AdmissionBudgetV0::new(
+        refused_budget.maximum_root_bytes(),
+        refused_budget.signature_work() + 7,
+    );
+    limited.charge_signature_work(7).unwrap();
+    let refused = app
+        .commit_incremental_first_epoch_finality_bytes_v2(&prepared, &proof, &mut limited)
+        .err()
+        .expect("first prospective budget refuses before mutation");
+    assert!(format!("{refused:#}").contains("prospective readback budget"));
+    assert_eq!(std::fs::read(path).unwrap(), before);
+    if std::env::var_os("TRNM_SCHEMA11_PRE_HANDOFF_SIGKILL_STORE").is_some() {
+        std::fs::write(path.with_extension("first-source"), &before).unwrap();
+        std::fs::write(path.with_extension("first-proof"), &proof).unwrap();
+    }
+    let committed = app
+        .commit_incremental_first_epoch_finality_bytes_v2(
+            &prepared,
+            &proof,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(committed.head().height().get(), 21);
+    assert_eq!(committed.generation(), 9);
+    assert_eq!(committed.p_digest(), digest);
+    assert!(committed.commit_sequence() > descendants[1].persist_sequence());
+    let bytes = std::fs::read(path).unwrap();
+    let retried = app
+        .commit_incremental_first_epoch_finality_bytes_v2(
+            &prepared,
+            &proof,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(retried.commit_sequence(), committed.commit_sequence());
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
+    drop(app);
+    let app =
+        DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).unwrap();
+    let _ = app
+        .reopen_incremental_first_v2(*first_header.id().as_bytes(), digest)
+        .unwrap();
+    assert!(!prepared.belongs_to_application_at_path(&app, path));
+    assert!(app
+        .confirm_incremental_epoch_edge_v2(
+            prepared.edge_binding(),
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0()
+        )
+        .is_err());
+    let c = Connection::open(path).unwrap();
+    let m = load_metadata_v0(&c, &app.config).unwrap();
+    assert_eq!(m.head, committed.head().clone());
+    assert_eq!(m.durable_sequence, committed.commit_sequence());
+    let (firsts,consumed,seals):(u64,u64,u64)=c.query_row("SELECT (SELECT count(*) FROM native_incremental_epoch_first_commit_v2),(SELECT count(*) FROM ni_epoch_edge WHERE phase=1),(SELECT count(*) FROM ni_roots WHERE version>?1 AND version<?2)",params![18u64.to_be_bytes().as_slice(),21u64.to_be_bytes().as_slice()],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?))).unwrap();
+    assert_eq!((firsts, consumed, seals), (2, 2, 0));
+    drop(c);
+    for p in descendants {
+        let _ = app
+            .reopen_prepared_incremental_epoch_v2(
+                *p.target_head().unwrap().block_id().as_bytes(),
+                p.p_digest(),
+            )
+            .unwrap();
+    }
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
+    let bytes =
+        schema11_continue_second_epoch(&app, path, set, parameters, descendants, &prepared, &proof);
+    drop(app);
+    let cold =
+        DurableNativeApplicationV0::open(path, native_checkpoint_fixture_config_v1()).unwrap();
+    let c = Connection::open(path).unwrap();
+    assert_eq!(
+        load_metadata_v0(&c, &cold.config)
+            .unwrap()
+            .head
+            .height()
+            .get(),
+        22
+    );
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
+    bytes
+}
+
+#[cfg(unix)]
+#[test]
+fn schema11_first_commit_sigkill_recovers_only_complete_checkpoint_or_first() {
+    for stage in [
+        "incremental_schema11_first_before_commit",
+        "incremental_schema11_first_after_commit",
+        "incremental_schema11_first_after_fsync",
+    ] {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("native.sqlite3");
+        let marker = directory.path().join("ready");
+        let mut child=std::process::Command::new(std::env::current_exe().unwrap()).args(["--exact","durable::incremental_owner_v1::epoch_candidate_v1::commit::tests::schema11_checkpoint_preparation_and_pre_handoff_close_genuine_causal_inventory","--nocapture"]).env("TRNM_SCHEMA11_PRE_HANDOFF_SIGKILL_STORE",&path).env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE",stage).env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER",&marker).spawn().unwrap();
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(180);
+        while !marker.exists() && std::time::Instant::now() < deadline {
+            if child.try_wait().unwrap().is_some() {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+        if !marker.exists() {
+            let _ = child.kill();
+            let _ = child.wait();
+            panic!("first child did not reach {stage}");
+        }
+        child.kill().unwrap();
+        assert!(!child.wait().unwrap().success());
+        let source = path.with_extension("first-source");
+        let proof = std::fs::read(path.with_extension("first-proof")).unwrap();
+        let c = Connection::open(&path).unwrap();
+        let (block,digest):(Vec<u8>,Vec<u8>)=c.query_row("SELECT p.block,p.digest FROM native_incremental_epoch_p_v1 p JOIN native_incremental_epoch_edge_v2 e ON p.edge=e.binding WHERE e.evidence_kind=1",[],|r|Ok((r.get(0)?,r.get(1)?))).unwrap();
+        let (height,count,phase):(Vec<u8>,u64,u8)=c.query_row("SELECT (SELECT head_height FROM native_application_metadata_v0),(SELECT count(*) FROM native_incremental_epoch_first_commit_v2),(SELECT phase FROM ni_epoch_edge WHERE strict_binding=(SELECT binding FROM native_incremental_epoch_edge_v2 WHERE evidence_kind=1))",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?))).unwrap();
+        assert_eq!(
+            (number(height).unwrap(), count, phase),
+            if stage.ends_with("before_commit") {
+                (18, 1, 0)
+            } else {
+                (21, 2, 1)
+            }
+        );
+        drop(c);
+        let app =
+            DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+        let p = app
+            .reopen_incremental_first_v2(fixed(block).unwrap(), fixed(digest).unwrap())
+            .unwrap();
+        let committed = app
+            .commit_incremental_first_epoch_finality_bytes_v2(
+                &p,
+                &proof,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(committed.head().height().get(), 21);
+        for table in [
+            "native_incremental_epoch_owner_v1",
+            "native_incremental_epoch_commit_v1",
+            "native_incremental_epoch_descendant_commit_v1",
+            "native_incremental_epoch_pre_handoff_v2",
+            "native_incremental_epoch_ordinary_commit_v2",
+        ] {
+            let values = |at: &Path| {
+                let c = Connection::open(at).unwrap();
+                let mut q = c
+                    .prepare(&format!("SELECT * FROM {table} ORDER BY 1"))
+                    .unwrap();
+                let count = q.column_count();
+                q.query_map([], |r| {
+                    (0..count)
+                        .map(|i| r.get::<_, rusqlite::types::Value>(i))
+                        .collect::<rusqlite::Result<Vec<_>>>()
+                })
+                .unwrap()
+                .collect::<rusqlite::Result<Vec<_>>>()
+                .unwrap()
+            };
+            assert_eq!(
+                values(&path),
+                values(&source),
+                "first changed immutable {table}"
+            );
+        }
+        let exact = std::fs::read(&path).unwrap();
+        let retried = app
+            .commit_incremental_first_epoch_finality_bytes_v2(
+                &p,
+                &proof,
+                &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+            )
+            .unwrap();
+        assert_eq!(retried.commit_sequence(), committed.commit_sequence());
+        assert_eq!(std::fs::read(&path).unwrap(), exact);
+        drop(app);
+        DurableNativeApplicationV0::open(&path, native_checkpoint_fixture_config_v1()).unwrap();
+    }
+}
+
+fn schema11_certified(
+    h: &BlockHeader,
+    parent: &BlockHeader,
+    set: &trnm_consensus_types::ValidatorSet,
+    parameters: &ConsensusParametersV0,
+) -> trnm_consensus_types::CertifiedHeaderV0 {
+    use ed25519_dalek::Signer;
+    use trnm_consensus_types::{CertifiedHeaderV0, ProposalWitnessV0, QcReferenceV0, Signature64};
+    let justify = QcReferenceV0::ordinary(schema11_qc(parent, set));
+    let witness = ProposalWitnessV0::new(
+        h,
+        justify.clone(),
+        None,
+        None,
+        Signature64::from_array([1; 64]),
+        set,
+        None,
+        parameters,
+        parent.timestamp_ms(),
+    )
+    .unwrap();
+    let proposer = set
+        .validators()
+        .iter()
+        .find(|v| v.id() == h.proposer_id())
+        .unwrap();
+    let signature = Signature64::from_array(
+        schema11_key(proposer)
+            .sign(witness.signing_root_for_header(h).unwrap().as_bytes())
+            .to_bytes(),
+    );
+    CertifiedHeaderV0::new(
+        h.clone(),
+        justify,
+        None,
+        None,
+        signature,
+        schema11_qc(h, set),
+        set,
+        None,
+        parameters,
+        parent.timestamp_ms(),
+    )
+    .unwrap()
+}
+fn schema11_ordinary_proof(
+    headers: &[BlockHeader],
+    parent: &BlockHeader,
+    set: &trnm_consensus_types::ValidatorSet,
+    parameters: &ConsensusParametersV0,
+) -> Vec<u8> {
+    let mut bytes = 0u16.to_be_bytes().to_vec();
+    bytes.extend(set.genesis_hash().as_bytes());
+    bytes.extend(
+        u16::try_from(set.chain_id().as_bytes().len())
+            .unwrap()
+            .to_be_bytes(),
+    );
+    bytes.extend(set.chain_id().as_bytes());
+    bytes.extend(set.protocol_version().get().to_be_bytes());
+    bytes.extend(set.epoch().get().to_be_bytes());
+    bytes.extend(set.id().as_bytes());
+    bytes.extend(parameters.hash().as_bytes());
+    for (i, h) in headers.iter().enumerate() {
+        bytes.extend(
+            schema11_certified(
+                h,
+                if i == 0 { parent } else { &headers[i - 1] },
+                set,
+                parameters,
+            )
+            .try_cev0_bytes()
+            .unwrap(),
+        );
+    }
+    bytes
+}
+fn schema11_empty_descendant(
+    app: &DurableNativeApplicationV0,
+    parent: &PreparedNativeIncrementalEpochV2,
+    set: &trnm_consensus_types::ValidatorSet,
+    parameters: &ConsensusParametersV0,
+) -> PreparedNativeIncrementalEpochV2 {
+    let parent_head = parent.target_head().unwrap();
+    let h = parent_head.height().get() + 1;
+    let request = NativeBlockPreviewRequestV0::new(
+        ChainIdV0::new(app.config.chain_id.clone()).unwrap(),
+        GenesisHashV0::new(app.config.genesis_hash).unwrap(),
+        parent_head.clone(),
+        HeightV0::new(h),
+        h * 1000,
+        ValidatorSetIdV0::new(*set.id().as_bytes()).unwrap(),
+        Vec::new(),
+    )
+    .unwrap();
+    let preview = app
+        .preview_incremental_epoch_descendant_v2(parent, &request)
+        .unwrap();
+    let header = BlockHeader::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        View::new(parent.header().unwrap().view().get() + 1),
+        Height::new(h),
+        BlockKind::Regular,
+        parent.header().unwrap().id(),
+        set.validators()[(h as usize - 1) % set.validators().len()].id(),
+        set.id(),
+        parameters.hash(),
+        PayloadDigest::new(*preview.payload_root().as_bytes()),
+        StateRoot::new(*preview.post_state_root().as_bytes()),
+        ReceiptsRoot::new(*preview.receipts_root().as_bytes()),
+        EvidenceRoot::new(*preview.evidence_root().as_bytes()),
+        h * 1000,
+        None,
+    )
+    .unwrap();
+    let execution = NativeBlockExecutionRequestV0::new(
+        request.chain_id().clone(),
+        request.genesis_hash(),
+        parent_head,
+        BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+        request.height(),
+        request.timestamp_ms(),
+        request.active_validator_set_id(),
+        Vec::new(),
+        trnm_native_application::NativeExpectedBlockCommitmentsV0::new(
+            preview.payload_root(),
+            preview.post_state_root(),
+            preview.receipts_root(),
+            preview.evidence_root(),
+        )
+        .unwrap(),
+    )
+    .unwrap();
+    app.execute_incremental_epoch_descendant_v2(parent, execution, &header)
+        .unwrap()
+}
+#[allow(clippy::too_many_arguments)]
+fn schema11_continue_second_epoch(
+    app: &DurableNativeApplicationV0,
+    path: &Path,
+    set: &trnm_consensus_types::ValidatorSet,
+    parameters: &ConsensusParametersV0,
+    descendants: &[PreparedNativeIncrementalEpochV2],
+    old_prepared: &PreparedIncrementalFirstV2,
+    first_proof: &[u8],
+) -> Vec<u8> {
+    let c22 = app
+        .reopen_prepared_incremental_epoch_v2(
+            *descendants[0].target_head().unwrap().block_id().as_bytes(),
+            descendants[0].p_digest(),
+        )
+        .unwrap();
+    let c23 = app
+        .reopen_prepared_incremental_epoch_v2(
+            *descendants[1].target_head().unwrap().block_id().as_bytes(),
+            descendants[1].p_digest(),
+        )
+        .unwrap();
+    let c24 = schema11_empty_descendant(app, &c23, set, parameters);
+    let first = app
+        .reopen_incremental_first_v2(
+            *old_prepared.target_head().unwrap().block_id().as_bytes(),
+            old_prepared.p_digest(),
+        )
+        .unwrap();
+    let proof = schema11_ordinary_proof(
+        &[
+            c22.header().unwrap(),
+            c23.header().unwrap(),
+            c24.header().unwrap(),
+        ],
+        &first.header().unwrap(),
+        set,
+        parameters,
+    );
+    let committed = app
+        .commit_incremental_epoch_descendant_finality_bytes_v2(
+            &c22,
+            &proof,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(committed.head().height().get(), 22);
+    assert_eq!(committed.generation(), 10);
+    let bytes = std::fs::read(path).unwrap();
+    // Retained first finality retry under an advanced head must preserve C22.
+    let retried = app
+        .commit_incremental_first_epoch_finality_bytes_v2(
+            &first,
+            first_proof,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(retried.head().height().get(), 21);
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
+    // An earlier epoch's genuine original proof uses its historical strict
+    // runtime, even though the active execution configuration is now epoch B.
+    let c = Connection::open(path).unwrap();
+    let (block,digest,old_proof):(Vec<u8>,Vec<u8>,Vec<u8>)=c.query_row("SELECT block,p_digest,proof FROM native_incremental_epoch_ordinary_commit_v2 ORDER BY sequence LIMIT 1",[],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?))).unwrap();
+    drop(c);
+    let historical = app
+        .reopen_prepared_incremental_epoch_v2(fixed(block).unwrap(), fixed(digest).unwrap())
+        .unwrap();
+    let receipt = app
+        .commit_incremental_epoch_descendant_finality_bytes_v2(
+            &historical,
+            &old_proof,
+            &mut trnm_consensus_types::Cev0AdmissionBudgetV0::protocol_v0(),
+        )
+        .unwrap();
+    assert_eq!(receipt.head().height().get(), 12);
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
+    bytes
 }

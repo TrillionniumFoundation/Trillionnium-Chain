@@ -93,7 +93,13 @@ pub(super) fn selection<'a>(
     )?;
     let h = header(&cutoff.header)?;
     ensure!(
-        reader.version() == height && reader.root().0 == *h.state_root().as_bytes(),
+        reader.version() == height
+            && reader.root().0 == *h.state_root().as_bytes()
+            && h.epoch() == set.epoch()
+            && h.validator_set_id() == set.id()
+            && h.consensus_parameters_hash() == parameters.hash()
+            && h.chain_id() == set.chain_id()
+            && h.genesis_hash() == set.genesis_hash(),
         "schema11 cutoff sparse root"
     );
     let mut live = reader.verified_live_values_v1()?;
@@ -135,7 +141,7 @@ pub(in crate::durable) fn checkpoint_context(
     tx: &rusqlite::Transaction<'_>,
     config: &NativeApplicationConfigV0,
     base: &Owner,
-    edge: &EdgeRow,
+    bindings: &[[u8; 32]],
     ordinary: &BTreeMap<[u8; 32], P>,
     set: &ValidatorSet,
     parameters: &ConsensusParametersV0,
@@ -156,7 +162,7 @@ pub(in crate::durable) fn checkpoint_context(
             blob(p.block),
             blob(p.digest),
             Value::Integer(2),
-            blob(prefix(&[edge.binding])?),
+            blob(prefix(bindings)?),
             blob(head_bytes(&selected.cutoff.target()?)),
             blob(selected.cutoff.digest),
             number_value(
@@ -174,6 +180,17 @@ struct CheckpointPlan {
     observation: [u8; 32],
     stable: [u8; 32],
 }
+struct CheckpointReplayPlan {
+    replay: PocoCheckpointPreparationReplayRecordV0,
+    stable: [u8; 32],
+}
+pub(in super::super) struct PlanningContext<'a> {
+    pub(in super::super) base: &'a Owner,
+    pub(in super::super) ordinary: &'a BTreeMap<[u8; 32], P>,
+    pub(in super::super) runtime: &'a trnm_consensus_crypto::StrictEpochRuntimeContextV1,
+    pub(in super::super) bindings: &'a [[u8; 32]],
+    pub(in super::super) pin: [u8; 32],
+}
 #[allow(clippy::too_many_arguments)]
 fn checkpoint_plan(
     config: &NativeApplicationConfigV0,
@@ -185,10 +202,46 @@ fn checkpoint_plan(
     certified: &CertifiedHeaderV0,
     executed: &NativeExecutedBlockV0,
 ) -> Result<CheckpointPlan> {
-    let active = &current.current;
+    let planned = checkpoint_plan_for_context(
+        config,
+        tx,
+        &PlanningContext {
+            base: &current.current.base,
+            ordinary: &current.current.ordinary,
+            runtime: &current.current.runtime,
+            bindings: &current.current.active_prefix,
+            pin: current.pin,
+        },
+        parent,
+        h,
+        certified,
+        executed,
+    )?;
+    Ok(CheckpointPlan {
+        observation: observation(
+            planned.stable,
+            m,
+            current.current.generation,
+            parent,
+            h,
+            &certified.try_cev0_bytes().native()?,
+        )?,
+        replay: planned.replay,
+        stable: planned.stable,
+    })
+}
+fn checkpoint_plan_for_context(
+    config: &NativeApplicationConfigV0,
+    tx: &rusqlite::Transaction<'_>,
+    active: &PlanningContext<'_>,
+    parent: &P,
+    h: &BlockHeader,
+    certified: &CertifiedHeaderV0,
+    executed: &NativeExecutedBlockV0,
+) -> Result<CheckpointReplayPlan> {
     let set = active.runtime.activation().new_validator_set();
     let parameters = active.runtime.activation().new_consensus_parameters();
-    let selected = selection(tx, config, &active.ordinary, set, parameters)?;
+    let selected = selection(tx, config, active.ordinary, set, parameters)?;
     let parent_header = header(&parent.header)?;
     ensure!(
         certified.header() == &parent_header
@@ -220,8 +273,8 @@ fn checkpoint_plan(
         &[
             &config.store_id,
             &active.base.anchor,
-            &current.pin,
-            &prefix(&[active.edge.binding])?,
+            &active.pin,
+            &prefix(active.bindings)?,
             &head_bytes(&selected.cutoff.target()?),
             &selected.cutoff.digest,
             &selected.cutoff.sequence.to_be_bytes(),
@@ -306,7 +359,6 @@ fn checkpoint_plan(
         new_parameters_cev0: new_parameters,
         commitment_cev0: commitment,
     };
-    let observation = observation(stable, m, active.generation, parent, h, &certified_bytes)?;
     let replay = PocoCheckpointPreparationReplayRecordV0::new(
         binding,
         fields,
@@ -324,11 +376,7 @@ fn checkpoint_plan(
             .collect::<std::result::Result<Vec<_>, _>>()
             .native()?,
     )?;
-    Ok(CheckpointPlan {
-        replay,
-        observation,
-        stable,
-    })
+    Ok(CheckpointReplayPlan { replay, stable })
 }
 fn observation(
     stable: [u8; 32],
@@ -363,7 +411,7 @@ fn observation(
 pub(in crate::durable) fn audit_sidecars(
     tx: &rusqlite::Transaction<'_>,
     config: &NativeApplicationConfigV0,
-    m: &MetadataV0,
+    _m: &MetadataV0,
     current: &Projection,
     budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
 ) -> Result<()> {
@@ -376,44 +424,57 @@ pub(in crate::durable) fn audit_sidecars(
     if checkpoints.is_empty() {
         return Ok(());
     }
+    let context = PlanningContext {
+        base: &current.current.base,
+        ordinary: &current.current.ordinary,
+        runtime: &current.current.runtime,
+        bindings: &current.current.active_prefix,
+        pin: current.pin,
+    };
+    for p in checkpoints {
+        audit_sidecar_for_context(tx, config, &context, p, budget)?;
+    }
+    Ok(())
+}
+pub(in super::super) fn audit_sidecar_for_context(
+    tx: &rusqlite::Transaction<'_>,
+    config: &NativeApplicationConfigV0,
+    context: &PlanningContext<'_>,
+    p: &P,
+    budget: &mut trnm_consensus_types::Cev0AdmissionBudgetV0,
+) -> Result<()> {
     let path = Path::new(tx.path().context("schema11 native path absent")?);
     let journal = PocoPreparationJournalV0::open_existing(poco_preparation_sidecar_path_v0(path))?;
-    for p in checkpoints {
-        let original = journal.retained_bound_replay_v1(&p.header)?;
-        let parent = current
-            .current
-            .ordinary
-            .get(p.parent.block_id().as_bytes())
-            .context("schema11 sidecar actual parent missing")?;
-        let grandparent = current
-            .current
-            .ordinary
-            .get(parent.parent.block_id().as_bytes())
-            .context("schema11 sidecar parent ancestry missing")?;
-        let certified = current
-            .current
-            .runtime
-            .decode_verify_certified_header_v1(
-                original.certified_checkpoint_parent_bytes_v1(),
-                &header(&grandparent.header)?,
-                budget,
-            )
-            .native()?;
-        let planned = checkpoint_plan(
-            config,
-            tx,
-            m,
-            current,
-            parent,
-            &header(&p.header)?,
-            &certified,
-            &p.executed()?,
-        )?;
-        ensure!(
-            original == planned.replay,
-            "schema11 sidecar complete original replay differs"
-        );
-    }
+    let original = journal.retained_bound_replay_v1(&p.header)?;
+    let parent = context
+        .ordinary
+        .get(p.parent.block_id().as_bytes())
+        .context("schema11 sidecar actual parent missing")?;
+    let grandparent = context
+        .ordinary
+        .get(parent.parent.block_id().as_bytes())
+        .context("schema11 sidecar parent ancestry missing")?;
+    let certified = context
+        .runtime
+        .decode_verify_certified_header_v1(
+            original.certified_checkpoint_parent_bytes_v1(),
+            &header(&grandparent.header)?,
+            budget,
+        )
+        .native()?;
+    let planned = checkpoint_plan_for_context(
+        config,
+        tx,
+        context,
+        parent,
+        &header(&p.header)?,
+        &certified,
+        &p.executed()?,
+    )?;
+    ensure!(
+        original == planned.replay,
+        "schema11 sidecar complete original replay differs"
+    );
     Ok(())
 }
 
@@ -648,7 +709,7 @@ impl DurableNativeApplicationV0 {
                 &tx,
                 &self.config,
                 &current.current.base,
-                &current.current.edge,
+                &current.current.active_prefix,
                 &current.current.ordinary,
                 set,
                 parameters,
@@ -692,7 +753,7 @@ impl DurableNativeApplicationV0 {
             owner: Arc::clone(&self.owner_affinity),
             p: fresh_p,
             pin: fresh_owner.pin,
-            edge: fresh_owner.current.edge.binding,
+            edge: fresh_owner.current.active_binding,
         };
         drop(guard);
         Ok(PreparedIncrementalCheckpointV2 {
