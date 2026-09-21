@@ -112,6 +112,7 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/run_consensus_fleet_test.py"
   "scripts/poco-fleet/run_fault_restart_fleet_v1.py"
   "scripts/poco-fleet/run_fault_restart_fleet_v1_test.py"
+  "scripts/poco-fleet/run_fault_selection_v1_test.py"
   "scripts/poco-fleet/run_fault_restart_handoff_v1_test.py"
   "scripts/poco-fleet/run_isolated_startup_rejection_v1.py"
   "scripts/poco-fleet/run_isolated_startup_rejection_v1_test.py"
@@ -191,6 +192,7 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/run_consensus_fleet_test.py"
   "scripts/poco-fleet/run_fault_restart_fleet_v1.py"
   "scripts/poco-fleet/run_fault_restart_fleet_v1_test.py"
+  "scripts/poco-fleet/run_fault_selection_v1_test.py"
   "scripts/poco-fleet/run_fault_restart_handoff_v1_test.py"
   "scripts/poco-fleet/run_isolated_startup_rejection_v1.py"
   "scripts/poco-fleet/run_isolated_startup_rejection_v1_test.py"
@@ -224,6 +226,7 @@ readonly -a NO_CARGO_SELF_TESTS=(
   "scripts/poco-fleet/fault_evidence_semantics_v1_test.py"
   "scripts/poco-fleet/run_isolated_startup_rejection_v1_test.py"
   "scripts/poco-fleet/run_fault_restart_fleet_v1_test.py"
+  "scripts/poco-fleet/run_fault_selection_v1_test.py"
   "scripts/poco-fleet/run_fault_restart_handoff_v1_test.py"
   "scripts/poco-fleet/check_run_evidence_test.py"
   "scripts/poco-fleet/check_run_bundle_test.py"
@@ -250,11 +253,12 @@ readonly -a NO_CARGO_EXPECTED_SUMMARIES=(
   'poco_g3_network_smoke_fleet_test=passed positives=19 negatives=15 unique_json=true safe_remote_paths=true input_symlinks_rejected=true file_backed_process_io=true partial_cleanup=true local_stage_directories=true remote_binary_hash=true frozen_alias_deploy=true exact_scp_alias=true public_schema_unchanged=true runtime_stage_short=true aliases_100_unique=true socket_bytes_100_accepted=true socket_bytes_101_rejected=true generation_u64_max_bound=true old_207_rejected=true layout_collision_rejected=true frozen_stage_plan=true preflight_effects_zero=true plan_only_layout_frozen=true reduced_actual_hosts=true seven_processes_not_six_hosts=true validator_run_completed=false fault_matrix_completed=false performance_evidence=false g3_complete=false geo_wan=false production_activation=false'
   'trnm_local_fault_performance_campaign_v1_test=passed real_endpoint_processes=true real_proxy_process=true partition_heal=true proxy_restart=true candidate_only=true independent_multihost=false performance_acceptance=false'
   'poco_g3_mesh_resource_preflight_v1_test=passed positives=18 negatives=11 topology=100 per_process_rlimit=distinct host_file_capacity=system-wide uid_threads=bounded system_threads=bounded rss=bounded coordinator_capture_fds=per-process-bounded inherited_rlimit=true reduced_coordinator_separate=true reduced_capacity_controls=true canonical_bytes_preserved=true pre_effect_runners=consensus,fault ulimit_elevation=false validator_run=false g3_complete=false'
-  'poco_g3_consensus_fleet_test=passed positives=25 negatives=44 parallel_process_contract=true signed_journal_required=true native_client_bad_placement_pre_effect_refusal=true fleet_start_certificate_required=true signed_report_required=true signed_metrics_required=true signed_final_state_required=true macos_independent_verifier_required=true sealed_replay_archive_export_required=true macos_replay_archive_verifier_required=true fault_matrix_completed=false performance_evidence=false g3_complete=false geo_wan=false production_activation=false'
+  'poco_g3_consensus_fleet_test=passed positives=25 negatives=46 parallel_process_contract=true signed_journal_required=true native_client_bad_placement_pre_effect_refusal=true fleet_start_certificate_required=true signed_report_required=true signed_metrics_required=true signed_final_state_required=true macos_independent_verifier_required=true sealed_replay_archive_export_required=true macos_replay_archive_verifier_required=true fault_matrix_completed=false performance_evidence=false g3_complete=false geo_wan=false production_activation=false'
   'sealed_artifact_transport_v1_test=passed positives=5 negatives=13 nofollow=true o_excl=true double_hash=true fixed_frames=true observer_receipt=true source_mutation_fail_closed=true runtime_evidence_observed=false g3_complete=false'
   'poco_g3_fault_evidence_semantics_v1_test=passed positives=25 negatives=5 connectivity_primary_signed=3 restart_catchup=distinct negative_startup_isolated=2 bounded_delay_degraded=required epoch_handoff_signed=required active_campaign=fail-closed active_bundle_assembly=fail-closed g3_complete=false'
   'isolated startup rejection runner: positives=3 negatives=5'
   'poco_g3_fault_restart_fleet_v1_test=passed positives=36 negatives=19 fault_order=fixed-8 restart=exactly-1 runtime_control=exact mixed_fault_authority=exact active_campaign=fail-closed driver_not_evidence=true fault_driver_pinned=true safe_remote_paths=true file_backed_io=true plan_only_no_effect=true reverse_failure_cleanup=true fleet_start_certificate_required=true signed_journal_report_metrics_final_state_required=true fault_matrix_completed=false g3_complete=false geo_wan=false production_activation=false'
+  'poco_fault_selection_v1_test=passed closed_selections=3 default_all_unchanged=true pre_effect_rejection=true controlled_execute=true exact_fault_labels=true source_anchor=true reduced_resources=true external_lease=true mac_paths=true fixture_only=true fault_matrix_completed=false'
   'poco_fault_restart_handoff_v1_test=passed target_only=true exit75_exact=true exit75_ssh_preserved=true schema2_exact=true p1_locator_digest_unlink=true peer_liveness=true single_p2_launch=true normal_artifacts_absent=true truth_bits_unchanged=true'
   'poco_g3_run_evidence_self_test=passed positives=3 negatives=33 topologies=7,31,100 geo_wan=false production_activation=false'
   'poco_g3_run_bundle_self_test=passed positives=3 negatives=58 topologies=7,31,100 content_addressed=true raw_summary_derived=true unique_json_keys=true exact_validator_set_hash=true ordered_recovery_state_machines=true'

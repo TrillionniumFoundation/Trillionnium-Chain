@@ -91,6 +91,95 @@ The older schema2 projection and unknown versions reject. A Python-only
 fixture is insufficient interoperability evidence: pass an actual strict Rust
 verifier output through the Python consumer before the fleet campaign.
 
+### Explicit connectivity fault selection (M17-FAULT-SELECTION-V1)
+
+`run_fault_restart_fleet_v1.py --campaign` is a closed selector: `all`
+(default), `leader_loss`, `asymmetric_partition`, or `connectivity` (exactly
+leader loss then asymmetric partition). The existing `all` plan remains
+schema 1/profile `poco-g3-seven-validator-fault-restart-campaign-v1`, with all
+eight faults, one restart and its existing authority blockers. Actual `all`
+execution still rejects before output creation, staging or any fault effect.
+An arbitrary comma-separated list, an empty choice, `host_loss`, restart,
+delay, stale snapshot, rollback and handoff selections are not accepted.
+
+Explicit selections use schema 2/profile
+`poco-g3-seven-validator-connectivity-subset-v1`. Both plan and summary bind the
+selection, exact ordered fault list, independently supplied coordinator manifest digest, candidate
+source/binary identities, topology digest, placement profile and actual
+validator host allocations. Selected invocations require
+`--coordinator-manifest-sha256 <independently-computed-sha256>`; a hash computed
+only after deployment is not this input anchor. Only the previously validated canonical placement
+or `desktop4-rog3-mac-v1` is admitted. Resource admission uses that placement;
+the reduced run independently probes its actual local zero-validator
+coordinator and does not invent a local validator. The Mac observer comes from
+the same validated participant inventory. Plans are regenerated and compared
+before effects, including target observer identities and every refusal flag.
+The selected duration must contain its one or two bounded fault windows;
+selection never increases the validator runtime's existing bounds.
+
+A step's legacy `target_validator_id`/`target_host_id` names the **observing
+runtime** whose control socket selects and reads the condition. It is not a
+claim that this process or every validator on that host was stopped. The
+existing external driver contract is pinned by content digest, runs through
+bounded file-backed I/O and receives schema version, phase (`apply`/`restore`), kind, observer ID,
+host, management locator, exact newly owned run root, PID, process instance and
+window. Restore must return the same nonzero effect digest as apply; the exact
+restoration obligation is registered before invoking apply, including partial
+apply failure. Cleanup may retry restoration and a driver must make that exact
+owned restore idempotent. Apply/restore command results are diagnostic observations only. A
+reviewed driver must act only on this campaign's owned process or peer-session
+resources and restore its exact effect; it must not turn a control expectation
+into evidence, relabel a host-wide failure as one validator, target an unrelated
+PID or alter the signed deployment configuration. This selector introduces no
+privileged network commands, tunnels, synthetic event injector or unreviewed
+fault driver. The repository currently lacks an unprivileged deployed-session
+injection seam; a real run additionally requires an independently reviewed
+working driver. `SIGSTOP` alone is not proof of a closed authenticated session.
+
+The actual M15 producer is
+`BoundedConsensusOwner::reconcile_expected_connectivity_fault_v1`:
+`leader_loss` requires both directions unavailable for the current scheduled
+remote leader; `asymmetric_partition` requires exactly one direction unavailable
+for a remote identity. `FaultRecovered` additionally requires both directions
+restored and strictly later finality. Expectations and driver stdout do not
+mint these signed transitions. The current `host_loss` projection proves only
+a remote connection loss; it does not attest a physical host or all its
+validators and is deliberately excluded from selected execution. On desktop4/
+rog3, losing a host removes three or four of seven votes, outside quorum-five
+liveness assumptions. Neither selected campaign establishes host-failure
+fault tolerance, f=2 independent physical failures, or a public transaction test.
+
+Selection retains all seven original signed runtime journals, FleetStart
+certificates, terminal reports, runtime metrics and final-state envelopes; the
+Mac verifier must independently authenticate their exact original source,
+configuration, binary, coordinator pin and cross-artifact terminal joins.
+Before injection every runtime must report its real FleetStart phase as started;
+an available control socket alone is not a started consensus fleet.
+Startup reuses the genuine per-host peer-lease daemons and passes their exact
+owned socket to every validator, including SSH children. Teardown joins all
+validator children before stopping those daemons and cleaning owned stages.
+No process-local lease fallback is admitted. The coordinator anchor is freshly
+rechecked before deployment and after collection. The raw journal is retained
+byte-exact before/after Mac replay; its actual fault labels and terminal hash
+must join the independently verified projection (a recovered count is insufficient).
+Every selected fault must have Applied/Recovered in the correct observing
+journal, with no unplanned fault labels; a driver success without those signed
+facts fails. All seven validators must agree on their final state and clean
+stop, and every selected step must restore successfully. Selected runs require
+zero restarts. Failure or cleanup error remains failure, preserves bounded raw
+observations and never fills in missing journal evidence. Only this subset can
+set `selected_campaign_completed=true`; `fault_restart_profile_completed`,
+`fault_matrix_completed`, `validator_run_completed`, full-fleet/G3, geographic,
+performance and production flags remain false. Existing full-bundle/eight-fault
+and external acceptance checkers remain unchanged and reject a subset.
+
+Tests exercise the real Python orchestration with controlled process/SSH/driver
+and verifier seams: default pre-effect refusal, exact single/dual selection,
+reduced resource forwarding, zero-restart completion, missing signed transition,
+wrong or extra fault labels, wrong source/plan and failed restoration. These
+fixtures test control flow and rejection, not cryptographic or LAN acceptance;
+actual campaign evidence requires the genuine runtime and Mac verification.
+
 ### Repository-local multiprocess fault evidence
 
 `python3 scripts/poco-fleet/run_local_fault_performance_campaign_v1.py campaign

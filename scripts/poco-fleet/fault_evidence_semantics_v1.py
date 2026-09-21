@@ -24,6 +24,34 @@ FAULT_ORDER = (
     "epoch_handoff",
 )
 
+# Closed execution choices; the whole-host name currently attests only a
+# remote connection and therefore cannot enter the bounded subset.
+CAMPAIGN_FAULTS = {
+    "all": FAULT_ORDER,
+    "leader_loss": ("leader_loss",),
+    "asymmetric_partition": ("asymmetric_partition",),
+    "connectivity": ("leader_loss", "asymmetric_partition"),
+}
+
+
+def campaign_faults(selection: str) -> tuple[str, ...]:
+    if not isinstance(selection, str) or selection not in CAMPAIGN_FAULTS:
+        raise ValueError("unknown closed fault campaign selection")
+    return CAMPAIGN_FAULTS[selection]
+
+
+def require_campaign_supported(selection: str) -> None:
+    kinds = campaign_faults(selection)
+    if selection == "all":
+        require_active_campaign_supported()
+        return
+    for kind in kinds:
+        policy = policy_for(kind)
+        if not policy.runner_execution_supported or not policy.runtime_authority_supported:
+            raise RuntimeError(f"selected fault lacks actual runtime authority: {kind}")
+        require_primary_signed_transition(kind)
+
+
 SIGNED_CONNECTIVITY_TRANSITION = "signed-runtime-connectivity-transition-v1"
 SIGNED_RESTART_CATCHUP = "signed-runtime-restart-catchup-v1"
 ISOLATED_STARTUP_REJECTION = "isolated-negative-startup-rejection-v1"
